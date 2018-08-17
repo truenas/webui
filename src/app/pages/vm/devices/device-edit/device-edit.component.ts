@@ -208,11 +208,10 @@ export class DeviceEditComponent implements OnInit {
           tooltip : 'Browse to an existing <a\
                      href="..//docs/storage.html#adding-zvols"\
                      target="_blank">Zvol</a>.',
-          type: 'explorer',
-          explorerType: "zvol",
-          initial: '/mnt',
+          type: 'select',
           required: true,
-          validation : [Validators.required]
+          validation : [Validators.required],
+          options:[]
         },
         {
           name : 'DISK_mode',
@@ -375,6 +374,15 @@ export class DeviceEditComponent implements OnInit {
         ];
       }
       else if (device[0].dtype === 'DISK'){
+        this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]]]).subscribe((zvols)=>{
+          zvols.forEach(zvol => {
+            _.find(this.fieldSets[0].config, {name:'DISK_zvol'}).options.push(
+              {
+                label : zvol.id, value : '/dev/zvol/' + zvol.id
+              }
+            );   
+          });
+        });
         this.DISK_zvol = _.find(this.fieldSets[0].config, {name:'DISK_zvol'});
         this.setgetValues(device[0].attributes, disk_lookup_table);
       }
@@ -395,6 +403,15 @@ export class DeviceEditComponent implements OnInit {
   }
 
   setgetValues(data, lookupTable) {
+    const tempdata = {}
+    for (const tempi in data){
+      for (const tempj in lookupTable){
+        if (tempi === tempj){
+          tempdata[tempi] = data[tempi]
+        }
+      }
+    }
+    data = tempdata;
     let fg: any
     for (const i in data) {
       if(this.formGroup.controls[lookupTable[i]]){
@@ -462,6 +479,7 @@ export class DeviceEditComponent implements OnInit {
             payload['attributes'] = {
                 'type' : formvalue.DISK_mode,
                 'path' : formvalue.DISK_zvol,
+                'sectorsize' : formvalue.DISK_sectorsize,
               }
             }
         if (this.dtype === 'CDROM') {

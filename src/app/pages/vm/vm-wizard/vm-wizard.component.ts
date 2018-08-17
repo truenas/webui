@@ -121,7 +121,6 @@ export class VMWizardComponent {
                       CPU limits the maximum. The VM operating system\
                       might also have operational or licensing\
                       restrictions on the number of CPUs.'),
-          required: true,
         },
         {
           type: 'input',
@@ -130,6 +129,10 @@ export class VMWizardComponent {
           inputType: 'number',
           min: 128,
           validation : [ Validators.required, Validators.min(128)],
+          required: true,
+          blurStatus: true,
+          blurEvent: this.blurEvent2,
+          parent: this,
           tooltip: T('Allocate a number of megabytes of RAM for the VM.'),
         },
       ]
@@ -172,13 +175,12 @@ export class VMWizardComponent {
           explorerType: 'directory'
         },
         {
-          type: 'explorer',
+          type: 'select',
           name: 'hdd_path',
           placeholder: T('Select an existing disk'),
           tooltip: T('Browse to the desired pool or dataset on the disk.'),
-          explorerType: "zvol",
-          initial: '/mnt',
-          isHidden: true
+          isHidden: true,
+          options:[]
         },
       ]
     },
@@ -284,6 +286,16 @@ export class VMWizardComponent {
   }
   afterInit(entityWizard: EntityWizardComponent) {
 
+    this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]]]).subscribe((zvols)=>{
+      zvols.forEach(zvol => {
+        _.find(this.wizardConfig[3].fieldConfig, {name : 'hdd_path'}).options.push(
+          {
+            label : zvol.id, value : zvol.id
+          }
+        );   
+      });
+    });
+
     ( < FormGroup > entityWizard.formArray.get([0]).get('wizard_type')).valueChanges.subscribe((res) => {
       if (res === 'docker') {
         this.router.navigate(new Array('/').concat(['vm','dockerwizard']))
@@ -312,25 +324,63 @@ export class VMWizardComponent {
       ( < FormGroup > entityWizard.formArray.get([2])).get('memory').valueChanges.subscribe((memory) => {
         this.summary[T('Memory')] = memory + ' MiB';
       });
+
       ( < FormGroup > entityWizard.formArray.get([3])).get('volsize').valueChanges.subscribe((volsize) => {
         this.summary[T('Hard Disk Size')] = volsize + ' GiB';
       });
+
+      ( < FormGroup > entityWizard.formArray.get([3])).get('disk_radio').valueChanges.subscribe((disk_radio)=>{
+        if(this.summary[T('Hard Disk')] || this.summary[T('Hard Disk Size')]){
+          delete this.summary[T('Hard Disk')];
+          delete this.summary[T('Hard Disk Size')];
+        }
+        if(disk_radio) {
+          this.summary[T('Hard Disk Size')] = ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].value + ' Gib';
+            ( < FormGroup > entityWizard.formArray.get([3])).get('volsize').valueChanges.subscribe((volsize) => {
+              this.summary[T('Hard Disk Size')] = volsize + ' GiB';
+            });
+        } else {
+          this.summary[T('Hard Disk')] = ( < FormGroup > entityWizard.formArray.get([3])).controls['hdd_path'].value;
+            ( < FormGroup > entityWizard.formArray.get([3])).get('hdd_path').valueChanges.subscribe((existing_hdd_path)=>{
+              this.summary[T('Hard Disk')] = existing_hdd_path;
+            })
+        }
+      });
+
       ( < FormGroup > entityWizard.formArray.get([5]).get('iso_path')).valueChanges.subscribe((iso_path) => {
         this.summary[T('Installation Media')] = iso_path;
       });
       this.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
         ( < FormGroup > entityWizard.formArray.get([5]).get('iso_path')).setValue(message);
       })
-      if (res === 'Windows') {
-        ( < FormGroup > entityWizard.formArray.get([2])).controls['vcpus'].setValue(2);
-        ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(4096);
-        ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(40);
-      }
-      else {
-        ( < FormGroup > entityWizard.formArray.get([2])).controls['vcpus'].setValue(1);
-        ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(512);
-        ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(10);
-      }
+      this.ws.call('vm.get_available_memory').subscribe((available_memory)=>{
+        if (available_memory > 512 * 1024* 1024) {
+          if (res === 'Windows') {
+            ( < FormGroup > entityWizard.formArray.get([2])).controls['vcpus'].setValue(2);
+            ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(4096);
+            ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(40);
+          }
+          else {
+            ( < FormGroup > entityWizard.formArray.get([2])).controls['vcpus'].setValue(1);
+            ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(512);
+            ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(10);
+          }
+
+        } else {
+          if (res === 'Windows') {
+            ( < FormGroup > entityWizard.formArray.get([2])).controls['vcpus'].setValue(2);
+            ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(0);
+            ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(40);
+          }
+          else {
+            ( < FormGroup > entityWizard.formArray.get([2])).controls['vcpus'].setValue(1);
+            ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(0);
+            ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(10);
+          }
+
+        }
+      })
+
     });
     ( < FormGroup > entityWizard.formArray.get([3]).get('disk_radio')).valueChanges.subscribe((res) => {
       if (res){
@@ -421,6 +471,19 @@ blurEvent(parent){
   })
 }
 
+blurEvent2(parent){
+  const vm_memory_requested = parent.entityWizard.formGroup.value.formArray[2].memory
+  const vm_name = parent.entityWizard.formGroup.value.formArray[1].name
+  parent.ws.call('vm.get_available_memory').subscribe((vm_memory_available)=>{
+    if( vm_memory_requested *1024*1024> vm_memory_available){
+      parent.dialogService.Info("Error", `Cannot allocate ${vm_memory_requested} Mib to virtual machine: ${vm_name}.`).subscribe(()=>{
+        parent.entityWizard.formArray.get([2]).get('memory').setValue(0);
+      })
+
+    }
+  })
+}
+
 async customSubmit(value) {
     value.datastore = value.datastore.replace('/mnt/','')
     const hdd = value.datastore+"/"+value.name.replace(/\s+/g, '-')+"-"+Math.random().toString(36).substring(7);
@@ -453,7 +516,7 @@ async customSubmit(value) {
     if( value.hdd_path ){
       for (const device of vm_payload["devices"]){
         if (device.dtype === "DISK"){
-          device.attributes.path = '/dev/zvol/'+ value.hdd_path.substring(5);
+          device.attributes.path = '/dev/zvol/'+ value.hdd_path;
         };
       };
       this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
@@ -466,7 +529,7 @@ async customSubmit(value) {
 
     } else {
       for (const device of vm_payload["devices"]){
-        if (device.dtype === "DISK"){
+        if (device.dtype === "DISK"){          
           const orig_hdd = device.attributes.path;
           const create_zvol = zvol_payload['create_zvol']
           const zvol_name = zvol_payload['zvol_name']

@@ -65,14 +65,13 @@ export class VMwareSnapshotFormComponent {
       hideButton: false
     },
     {
-      type: 'explorer',
+      type: 'select',
       name: 'filesystem',
       placeholder: T('ZFS Filesystem'),
       tooltip: T('Enter the filesystem to snapshot.'),
-      explorerType: "zvol",
-      initial: '/mnt',
       validation: [Validators.required],
-      required: true
+      required: true,
+      options: []
     },
     {
       type: 'select',
@@ -99,7 +98,7 @@ export class VMwareSnapshotFormComponent {
           this.entityForm.formGroup.controls['hostname'].value === undefined ||
           this.entityForm.formGroup.controls['username'].value === undefined ||
           this.entityForm.formGroup.controls['password'].value === undefined
-        ) { this.dialogService.Info(T('VM Snapshot'), T("Please enter valid vmware ESXI/vsphere credentials to fetch datastores.")) }
+        ) { this.dialogService.Info(T('VM Snapshot'), T("Enter valid VMware ESXI/vSphere credentials to fetch datastores.")) }
         else {
           this.blurEvent(this);
         }
@@ -110,7 +109,6 @@ export class VMwareSnapshotFormComponent {
 
   resourceTransformIncomingRestData(data: any): any {
     data.password = '';
-    data.filesystem = '/mnt/' + data.filesystem;
     return data;
   };
 
@@ -119,19 +117,37 @@ export class VMwareSnapshotFormComponent {
     protected _injector: Injector, protected _appRef: ApplicationRef, protected dialogService: DialogService, 
     protected loader: AppLoaderService,) { }
 
-
+  preInit(entityForm: any) {
+    const queryPayload = []
+    this.route.params.subscribe(params => {
+      queryPayload.push("id");
+      queryPayload.push("=");
+      queryPayload.push(parseInt(params['pk'],10));
+      this.pk = [queryPayload];
+  });
+  }
 
   afterInit(entityForm: any) {
     this.entityForm = entityForm;
+
+    this.ws.call("pool.filesystem_choices").subscribe((filesystem_response)=>{
+      filesystem_response.forEach(filesystem_item => {
+        _.find(this.fieldConfig, {name : 'filesystem'}).options.push(
+          {
+            label : filesystem_item, value : filesystem_item
+          }
+        );   
+      });
+    });
     if(this.entityForm.pk){
       this.datastore = _.find(this.fieldConfig, { 'name': 'datastore' });
       this.datastore.options.length = 0;
-    } 
+    }
   }
 
   beforeSubmit(entityForm: any) {
     if (entityForm.filesystem !== undefined) {
-      entityForm.filesystem = entityForm.filesystem.slice(5);
+      entityForm.filesystem = entityForm.filesystem;
     }
   }
 

@@ -80,9 +80,9 @@ export class ZvolFormComponent {
       type: 'input',
       name: 'name',
       placeholder: T('zvol name:'),
-      tooltip: T('Keep the <b>zvol name</b> short. Using a <b>zvol name</b>\
-                  longer than 63 characters can prevent accessing the\
-                  zvol as a device.'),
+      tooltip: T('Keep the zvol name short. Using a zvol name longer \
+                  than 63 characters can prevent accessing the zvol as \
+                  a device.'),
       validation: [Validators.required],
       required: true,
       isHidden: false
@@ -190,7 +190,7 @@ export class ZvolFormComponent {
       tooltip : T('Set to provide <a\
                    href="https://searchstorage.techtarget.com/definition/thin-provisioning"\
                    target="_blank">thin provisioning</a>.\
-                   </b>Caution:</b> writes can fail when the pool is low\
+                   <b>Caution:</b> writes can fail when the pool is low\
                    on space.'),
       isHidden: false
     },
@@ -447,7 +447,7 @@ export class ZvolFormComponent {
         });
       } else{
         this.loader.close();
-        this.dialogService.Info(T("Error saving ZVOL"), "You cannot shrink a ZVOL from gui this may lead to data loss.")
+        this.dialogService.Info(T("Error saving ZVOL."), "Shrinking a ZVOL is not allowed in the User Interface. This can lead to data loss.")
       }
     })
   }

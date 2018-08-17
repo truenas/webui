@@ -335,7 +335,7 @@ export class PluginAddComponent implements OnInit {
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
       this.dialogRef.close(false);
-      this.snackBar.open(T("Plugin sucessfully installed"), T("Close"), { duration: 5000 });
+      this.snackBar.open(T("Plugin installed."), T("Close"), { duration: 5000 });
       this.router.navigate(new Array('/').concat(this.route_success));
     });
     this.dialogRef.componentInstance.failure.subscribe((error) => {
@@ -360,7 +360,7 @@ export class PluginAddComponent implements OnInit {
     //         }
     //       );
     //     } else {
-    //       this.snackBar.open(T("Plugin sucessfully installed"), T("Close"), { duration: 5000 });
+    //       this.snackBar.open(T("Plugin installed."), T("Close"), { duration: 5000 });
     //       this.router.navigate(new Array('/').concat(this.route_success));
     //     }
     //   },

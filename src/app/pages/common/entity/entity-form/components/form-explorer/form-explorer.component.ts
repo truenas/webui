@@ -39,7 +39,10 @@ export class FormExplorerComponent implements Field, OnInit {
       }
     },
     keys: {
-      [KEYS.ENTER]: (tree, node, $event) => alert('This is ${node.data.mountpoint}')
+      [KEYS.ENTER]: (tree, node, $event) => {
+        this.setPath(node);
+        TREE_ACTIONS.FOCUS(tree, node, $event);  
+      }
     }
   }
 

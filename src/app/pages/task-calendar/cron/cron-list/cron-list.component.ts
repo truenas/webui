@@ -52,7 +52,7 @@ export class CronListComponent {
       label : T("Run Now"),
       id: "run",
       onClick : (members) => {
-        this.dialog.confirm(T("Run Now"), T(" Would you like to run this cron job now?"), true, T('Run Now')).subscribe((run) => {
+        this.dialog.confirm(T("Run Now"), T("Run this cron job now?"), true).subscribe((run) => {
           if (run) {
             this.rest.post(this.resource_name + '/' + row.id + '/run/', {} ).subscribe((res) => {
               this.translate.get("close").subscribe((close) => {
