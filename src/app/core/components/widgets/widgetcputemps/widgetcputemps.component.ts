@@ -54,6 +54,7 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
 
   ngOnDestroy(){
     this.core.emit({name:"StatsRemoveListener", data:{name:"CpuTemp", obj:this}});
+    this.core.unregister({observerClass:this});
   }
 
   ngAfterViewInit(){

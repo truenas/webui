@@ -70,6 +70,7 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
 
   ngOnDestroy(){
     this.core.emit({name:"StatsRemoveListener", data:{name:"NIC", obj:this}});
+    this.core.unregister({observerClass:this});
   }
 
   ngOnInit(){

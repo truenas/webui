@@ -44,6 +44,7 @@ export class WidgetMemoryHistoryComponent extends WidgetChartComponent implement
 
   ngOnDestroy(){
     this.core.emit({name:"StatsRemoveListener", data:{name:"Memory", obj:this}});
+    this.core.unregister({observerClass:this});
   }
 
   ngAfterViewInit(){

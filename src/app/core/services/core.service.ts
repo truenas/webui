@@ -41,11 +41,13 @@ export class CoreService {
   private debug:boolean;
   debug_show_subscription_type:boolean;
   debug_show_dispatch_table:boolean;
+  debug_show_emit_logs:boolean;
   //private debug_show_data:boolean
   constructor() {
     /////////////////////////////
     //Set Debug options here
     this.debug = false;
+    this.debug_show_emit_logs = false;
     this.debug_show_subscription_type = false;
     this.debug_show_dispatch_table = false;
     /////////////////////////////
@@ -72,6 +74,10 @@ export class CoreService {
   }
 
   public unregister(reg: Registration){
+    if(this.debug){
+      console.log("CoreService: Unregistering the following ObserverClass...")
+      console.log(reg.observerClass);
+    }
     let clone = [];// New Dispatch Table
     if(!reg.eventName){
       for(var i = 0; i < this.dispatchTable.length; i++){
@@ -100,7 +106,7 @@ export class CoreService {
   }
 
   public emit(evt: CoreEvent){
-    if(this.debug){ 
+    if(this.debug && this.debug_show_emit_logs){ 
       console.log("*******************************************************");
       console.log("CORESERVICE: Emitting " + evt.name);
       if(this.debug_show_dispatch_table){
@@ -133,7 +139,7 @@ export class CoreService {
       }
 
       if(reg.eventName == evt.name && reg.sender == evt.sender && subscriptionType == "NameSender"){
-        if(this.debug){
+        if(this.debug && this.debug_show_emit_logs){
           console.log(">>>>>>>>");
           console.log("Matched name and sender");
           console.log(reg.observerClass);
@@ -142,7 +148,7 @@ export class CoreService {
         }
 	reg.observable.next(evt);
       } else if(evt.name && reg.eventName == evt.name && subscriptionType == "Name"){
-        if(this.debug){
+        if(this.debug && this.debug_show_emit_logs){
           console.log(">>>>>>>>");
           console.log("Matched name only");
           console.log(reg.observerClass);
@@ -151,7 +157,7 @@ export class CoreService {
         }
 	reg.observable.next(evt);
       } else if(evt.sender && reg.sender == evt.sender && subscriptionType == "Sender"){
-        if(this.debug){
+        if(this.debug && this.debug_show_emit_logs){
           console.log(">>>>>>>>");
           console.log("Matched sender only");
           console.log(reg.observerClass);
@@ -163,7 +169,7 @@ export class CoreService {
         //DEBUG: console.log("No match found");
       }
     }
-    if(this.debug){ 
+    if(this.debug && this.debug_show_emit_logs){ 
       console.log("*******************************************************");
     }
     return this;
