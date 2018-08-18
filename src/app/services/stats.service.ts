@@ -576,7 +576,7 @@ export class StatsService {
        }
      }
 
-     if(messageList.length == 0){
+     if(!messageList || messageList.length == 0){
        this.stopBroadcast(messageList);
      }
   }

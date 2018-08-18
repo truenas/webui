@@ -30,6 +30,7 @@ export class WidgetLoadHistoryComponent extends WidgetComponent implements After
 
   ngOnDestroy(){
     this.core.emit({name:"StatsRemoveListener", data:{name:"Processes",obj:this}});
+    this.core.unregister({observerClass:this});
   }
 
   ngAfterViewInit(){

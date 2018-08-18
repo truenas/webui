@@ -71,24 +71,24 @@ export class VmTableComponent implements OnChanges{
 
   ngOnChanges(changes) {
     if(changes.data){
-      console.log("VM Table: DATA CHANGED!");
+      //console.log("VM Table: DATA CHANGED!");
       let newData = Object.assign(this.data,{});
       this.data = newData;
     }
-    console.log("******** VM-CARDS ********");
+    //console.log("******** VM-CARDS ********");
     this.datatable.limit = this.pageSize; // items per page
     this.datatable.pageSize = 8;//this.pageSize;
     this.datatable.recalculate();
-    console.log(this.datatable);
+    //console.log(this.datatable);
     this.setTableHeight(this.datatable);
   }
 
   setTableHeight(t){
-    console.log("Row: " + t.rowHeight);
-    console.log("Header: " + t.headerHeight);
-    console.log("Footer: " + t.footerHeight);
+    //console.log("Row: " + t.rowHeight);
+    //console.log("Header: " + t.headerHeight);
+    //console.log("Footer: " + t.footerHeight);
     let height = (50*this.pageSize) + 100;
-    console.log("******** New tableHeight = " + height);
+    //console.log("******** New tableHeight = " + height);
     //return String(height) + "px";
     this.tableHeight = height;
   }

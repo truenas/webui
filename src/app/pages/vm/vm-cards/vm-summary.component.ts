@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChild, Input } from '@angular/core';
+import { Component,OnDestroy, AfterViewInit, ViewChild, Input } from '@angular/core';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
@@ -12,7 +12,7 @@ import { Subject } from 'rxjs/Subject';
   templateUrl: './vm-summary.component.html',
   styleUrls: ['./vm-summary.component.css']
 })
-export class VmSummaryComponent implements AfterViewInit {
+export class VmSummaryComponent implements AfterViewInit, OnDestroy {
 
   @ViewChild('cpu') cpuChart:ViewChartLineComponent;
   @ViewChild('zpool') zpoolChart:ViewChartDonutComponent;
@@ -28,23 +28,23 @@ export class VmSummaryComponent implements AfterViewInit {
   ngAfterViewInit() {
 
     this.core.register({observerClass:this,eventName:"PoolData"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
+      //console.log(evt);
       this.setPoolData(evt);
     });
 
     this.core.register({observerClass:this,eventName:"StatsCpuData"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
+      //console.log(evt);
       this.setCPUData(evt);
       //this.setNetData(evt);
     });
 
     this.core.register({observerClass:this,eventName:"StatsVmemoryUsage"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
+      //console.log(evt);
       this.setMemData(evt);
     });
 
     this.core.register({observerClass:this,eventName:"SysInfo"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
+      //console.log(evt);
       this.setMemTotal(evt);
     });
 
@@ -65,6 +65,10 @@ export class VmSummaryComponent implements AfterViewInit {
     this.core.emit({name:"StatsCpuRequest", data:[['user','interrupt','system'/*,'idle','nice'*/],{step:'10', start:'now-10m'}]});
 
    }
+
+  ngOnDestroy(){
+    this.core.unregister({observerClass:this});
+  }
 
   setMemData(evt:CoreEvent){
     this.memChart.title = "vMemory in Use";
@@ -119,14 +123,14 @@ export class VmSummaryComponent implements AfterViewInit {
     this.zpoolChart.units = 'GB';
     this.zpoolChart.title = 'Zpool';
     this.zpoolChart.data = [used,available];
-    console.log(this.zpoolChart.data);
+    //console.log(this.zpoolChart.data);
     this.zpoolChart.width = this.chartSize;
     this.zpoolChart.height = this.chartSize;
   }
 
   setCPUData(evt:CoreEvent){
-    console.log("SET CPU DATA");
-    console.log(evt.data);
+    //console.log("SET CPU DATA");
+    //console.log(evt.data);
     let cpuUserObj = evt.data;
 
     let parsedData = [];
@@ -147,7 +151,7 @@ export class VmSummaryComponent implements AfterViewInit {
     this.cpuChart.units = '%';
     this.cpuChart.timeSeries = true;
     this.cpuChart.timeFormat = '%H:%M';// eg. %m-%d-%Y %H:%M:%S.%L
-      this.cpuChart.timeData = evt.data.meta;
+    this.cpuChart.timeData = evt.data.meta;
     this.cpuChart.data = parsedData;//[cpuUser];
     this.cpuChart.width = this.chartSize;
     this.cpuChart.height = this.chartSize;

@@ -93,6 +93,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
 
   ngOnDestroy(){
     //this.core.emit({name:"StatsRemoveListener", data:{name:"Pool",obj:this}});
+    this.core.unregister({observerClass:this});
   }
 
   ngAfterViewInit(){
