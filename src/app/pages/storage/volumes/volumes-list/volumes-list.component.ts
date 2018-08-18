@@ -323,7 +323,7 @@ export class VolumesListTableConfig implements InputTableConf {
               type: 'checkbox',
               name: 'cascade',
               value: true,
-              placeholder: T("Also delete the share's configuration?"),
+              placeholder: T("Delete configuration of shares that used this pool?"),
             }, {
               type: 'checkbox',
               name: 'confirm',
