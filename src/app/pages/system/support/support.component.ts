@@ -157,7 +157,6 @@ export class SupportComponent  {
     }),
     dialogRef.componentInstance.failure.subscribe((res) => {
       dialogRef.componentInstance.setDescription(res.error);
-      this.router.navigate(new Array('/').concat(this.route_success));
     });
   }
 
