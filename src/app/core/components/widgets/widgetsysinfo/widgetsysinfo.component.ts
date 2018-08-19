@@ -57,7 +57,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
       let minutes = build.getUTCMinutes();
       this.buildDate = month + " " +  day + ", " + year + " " + hours + ":" + minutes;
 
-      this.memory = this.formatMemory(this.data.physmem, "GB");
+      this.memory = this.formatMemory(this.data.physmem, "GiB");
       if(this.data.system_manufacturer && this.data.system_manufacturer.toLowerCase() == 'ixsystems'){
         this.manufacturer = "ixsystems";
       } else {
@@ -89,7 +89,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
     this.core.emit({name:"SysInfoRequest"});
     this.core.emit({name:"UpdateCheck"});
   }
-  
+
   ngOnInit(){
   }
 
@@ -119,11 +119,11 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   }
 
   formatMemory(physmem:number, units:string){
-    let result:string; 
-    if(units == "MB"){
-      result = Number(physmem / 1024 / 1024).toFixed(0) + ' MB';
-    } else if(units == "GB"){
-      result = Number(physmem / 1024 / 1024 / 1024).toFixed(0) + ' GB';
+    let result:string;
+    if(units == "MiB"){
+      result = Number(physmem / 1024 / 1024).toFixed(0) + ' MiB';
+    } else if(units == "GiB"){
+      result = Number(physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB';
     }
     return result;
   }

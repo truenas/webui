@@ -97,17 +97,17 @@ export class WidgetStorageComponent extends ViewControllerComponent implements A
 
     let usedObj = (<any>window).filesize(evt.data[0].used, {output: "object", exponent:3});
     let used: ChartData = {
-      legend: 'Used', 
+      legend: 'Used',
       data: [usedObj.value]
     };
 
     let  availableObj = (<any>window).filesize(evt.data[0].avail, {output: "object", exponent:3});
     let available: ChartData = {
-      legend:'Available', 
+      legend:'Available',
       data: [availableObj.value]
     };
 
-    this.chartZpool.units = 'GB';
+    this.chartZpool.units = 'GiB';
     this.chartZpool.title = 'Zpool';
     this.chartZpool.data = [used,available];
     console.log(this.chartZpool.data);

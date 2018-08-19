@@ -121,7 +121,7 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
     meta.legend = legend;
     let result:any = {
       data: mergedData,
-      meta: meta 
+      meta: meta
     }
     return result;
   }
@@ -200,7 +200,7 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
       let dataTypes = [];
       dataTypes = evt.data.meta.legend;
 
-      // populate parsedData 
+      // populate parsedData
       for(let index in dataTypes){
         let chartData:ChartData = {
           legend: dataTypes[index],
@@ -264,11 +264,11 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
     }
 
     formatMemory(physmem:number, units:string){
-      let result:string; 
-      if(units == "MB"){
-        result = Number(physmem / 1024 / 1024).toFixed(0)// + ' MB';
-      } else if(units == "GB"){
-        result = Number(physmem / 1024 / 1024 / 1024).toFixed(0)// + ' GB';
+      let result:string;
+      if(units == "MiB"){
+        result = Number(physmem / 1024 / 1024).toFixed(0)// + ' MiB';
+      } else if(units == "GiB"){
+        result = Number(physmem / 1024 / 1024 / 1024).toFixed(0)// + ' GiB';
       }
       return Number(result)
     }
