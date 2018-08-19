@@ -145,8 +145,8 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
           type: 'checkbox',
           name: 'hasDarkLogo',
           width:'100%',
-          placeholder: 'Choose Logo Type',
-          tooltip: "Choose the logo type",
+          placeholder: 'Enable Dark Logo',
+          tooltip: `Enable this to give the FreeNAS Logo a dark fill color`,
           class:'inline'
         },
         {

@@ -173,7 +173,7 @@ export class ThemeService {
         this.core.emit({ name:"UserDataRequest",data:[[["id", "=", 1]]] });
       } else {
         //console.warn("SETTING DEFAULT THEME");
-        this.setDefaultTheme();
+        this.resetToDefaultTheme();
       }
     });
 
@@ -196,13 +196,12 @@ export class ThemeService {
 
     this.core.register({observerClass:this,eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
       if(evt.data.customThemes){
-        //console.log("Custom Themes Detected");
         this.customThemes = evt.data.customThemes;
       }
 
       //if(evt.data.userTheme !== this.activeTheme){
         this.activeTheme = evt.data.userTheme;
-        this.setCssVars(this.findTheme(this.activeTheme));
+        this.setCssVars(this.findTheme(this.activeTheme, true));
         this.core.emit({name:'ThemeChanged'});
       //}
 
@@ -214,7 +213,7 @@ export class ThemeService {
     });
   }
 
-  setDefaultTheme(){
+  resetToDefaultTheme(){
     this.activeTheme = "ix-blue";
     this.changeTheme(this.activeTheme);
   }
@@ -223,15 +222,20 @@ export class ThemeService {
     return this.findTheme(this.activeTheme);
   }
 
-  findTheme(name:string):Theme{
+  findTheme(name:string, reset?:boolean):Theme{
     for(let i in this.allThemes){
       let t = this.allThemes[i];
       if(t.name == name){ return t;}
     }
+    if(reset){
+      //Optionally reset if not found
+      this.resetToDefaultTheme();
+      return this.freenasThemes[this.freeThemeDefaultIndex];
+    }
   }
 
   changeTheme(theme:string) {
-    //console.log("THEME SERVICE THEMECHANGE: changing to " + theme + " theme");
+    console.log("THEME SERVICE THEMECHANGE: changing to " + theme + " theme");
     this.core.emit({name:"ChangeThemePreference", data:theme, sender:this});
     //this.core.emit({name:'ThemeChanged'});
     }
