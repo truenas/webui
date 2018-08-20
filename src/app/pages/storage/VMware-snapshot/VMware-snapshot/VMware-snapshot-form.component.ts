@@ -98,7 +98,7 @@ export class VMwareSnapshotFormComponent {
           this.entityForm.formGroup.controls['hostname'].value === undefined ||
           this.entityForm.formGroup.controls['username'].value === undefined ||
           this.entityForm.formGroup.controls['password'].value === undefined
-        ) { this.dialogService.Info(T('VM Snapshot'), T("Please enter valid vmware ESXI/vsphere credentials to fetch datastores.")) }
+        ) { this.dialogService.Info(T('VM Snapshot'), T("Enter valid VMware ESXI/vSphere credentials to fetch datastores.")) }
         else {
           this.blurEvent(this);
         }
@@ -142,7 +142,7 @@ export class VMwareSnapshotFormComponent {
     if(this.entityForm.pk){
       this.datastore = _.find(this.fieldConfig, { 'name': 'datastore' });
       this.datastore.options.length = 0;
-    } 
+    }
   }
 
   beforeSubmit(entityForm: any) {

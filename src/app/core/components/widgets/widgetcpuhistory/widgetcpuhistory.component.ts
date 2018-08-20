@@ -36,6 +36,7 @@ export class WidgetCpuHistoryComponent extends WidgetChartComponent implements A
 
   ngOnDestroy(){
     this.core.emit({name:"StatsRemoveListener", data:{name:"CpuAggregate", obj:this}});
+    this.core.unregister({observerClass:this});
   }
 
   ngAfterViewInit(){

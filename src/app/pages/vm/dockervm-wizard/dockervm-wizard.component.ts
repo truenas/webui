@@ -100,7 +100,7 @@ export class DockerVMWizardComponent {
           value: 2048,
           inputType: 'number',
           min: 2048,
-          validation : [ Validators.required],
+          validation : [ Validators.required, Validators.min(2048)],
           required: true,
           blurStatus: true,
           blurEvent: this.blurEvent2,

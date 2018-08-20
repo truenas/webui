@@ -35,5 +35,11 @@ export class ShutdownComponent implements OnInit {
       () => {
         this.ws.prepare_shutdown();
       });
+      // fade to black after 60 sec on shut down
+      setTimeout(() => {
+        let overlay = document.getElementById('overlay');
+        overlay.setAttribute('class', 'blackout');
+
+      }, 60000);
   }
 }

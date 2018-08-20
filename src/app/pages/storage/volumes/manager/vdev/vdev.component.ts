@@ -30,7 +30,7 @@ export class VdevComponent implements OnInit {
   public rawSize = 0;
   public firstdisksize;
   public error;
-  public diskSizeErrorMsg = T('Mixing disks of different sizes in a vdev is not recommended.');
+  public diskSizeErrorMsg = T('Mixing disks of different sizes in a VDEV is not recommended.');
   public vdev_type_tooltip = T('Choose a <i>Stripe</i>, <i>Mirror</i>,\
                                 or <i>Raid-Z</i> configuration for the\
                                 chosen disk layout. See the <a\

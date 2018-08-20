@@ -30,26 +30,28 @@ import { T } from '../../../../translate-marker';
 
 export class ServiceWebdavComponent implements OnInit, OnDestroy {
 
-  protected resource_name: string = 'services/webdav';
+  //protected resource_name: string = 'services/webdav';
+  protected queryCall: string = 'webdav.config';
+  protected editCall: string = 'webdav.update';
   protected route_success: string[] = [ 'services' ];
 
   public fieldConfig: FieldConfig[] = [
     {
       type : 'select',
-      name : 'webdav_protocol',
+      name : 'protocol',
       placeholder : T('Protocol'),
       tooltip : T('<i>HTTP</i> will keep the connection unencrypted.\
                    <i>HTTPS</i> encrypts the connection.\
                    <i>HTTP+HTTPS</i> allows both types of connections.'),
       options : [
-        {label : 'HTTP', value : 'http'},
-        {label : 'HTTPS', value : 'https'},
-        {label : 'HTTP+HTTPS', value : 'httphttps'},
+        {label : 'HTTP', value : 'HTTP'},
+        {label : 'HTTPS', value : 'HTTPS'},
+        {label : 'HTTP+HTTPS', value : 'HTTPHTTPS'},
       ]
     },
     {
       type : 'input',
-      name : 'webdav_tcpport',
+      name : 'tcpport',
       placeholder : T('HTTP Port'),
       tooltip : T('Specify a port for unencrypted connections. The\
                    default port <i>8080</i> is recommended. Do not reuse\
@@ -57,7 +59,7 @@ export class ServiceWebdavComponent implements OnInit, OnDestroy {
     },
     {
       type : 'input',
-      name : 'webdav_tcpportssl',
+      name : 'tcpportssl',
       placeholder : T('HTTPS Port'),
       tooltip : T('Specify a port for encrypted connections. The\
                    default port <i>8081</i> is recommended. Do not reuse\
@@ -65,7 +67,7 @@ export class ServiceWebdavComponent implements OnInit, OnDestroy {
     },
     {
       type : 'select',
-      name : 'webdav_certssl',
+      name : 'certssl',
       placeholder : T('Webdav SSL Certificate'),
       tooltip : T('Select the <a href="..//docs/system.html#certificates"\
                    target="_blank">SSL certificate</a> to use for\
@@ -76,29 +78,29 @@ export class ServiceWebdavComponent implements OnInit, OnDestroy {
     },
     {
       type : 'select',
-      name : 'webdav_htauth',
+      name : 'htauth',
       placeholder : T('HTTP Authentication'),
       tooltip : T('<i>Basic Authentication</i> is unencrypted.\
                    <i>Digest Authentication</i> is encrypted.'),
       options : [
-        {label : 'No Authentication', value: 'none'},
-        {label : 'Basic Authentication', value : 'basic'},
-        {label : 'Digest Authentication', value : 'digest'},
+        {label : 'No Authentication', value: 'NONE'},
+        {label : 'Basic Authentication', value : 'BASIC'},
+        {label : 'Digest Authentication', value : 'DIGEST'},
       ]
     },
     {
       type : 'input',
-      name : 'webdav_password',
+      name : 'password',
       placeholder : T('Webdav Password'),
       tooltip : T('The default of <i>davtest</i> is recommended to\
                    change. <i>davtest</i> is a known value.'),
       inputType : 'password',
       value : 'davtest',
-      validation : [ matchOtherValidator('webdav_password2') ]
+      validation : [ matchOtherValidator('password2') ]
     },
     {
       type : 'input',
-      name : 'webdav_password2',
+      name : 'password2',
       placeholder : T('Confirm Password'),
       inputType : 'password',
     },
@@ -113,6 +115,7 @@ export class ServiceWebdavComponent implements OnInit, OnDestroy {
   private webdav_htauth_subscription: any;
   private webdav_password: any;
   private webdav_password2: any;
+  private entityForm: any;
 
   constructor(
       protected router: Router,
@@ -125,9 +128,9 @@ export class ServiceWebdavComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.webdav_certssl =
+      _.find(this.fieldConfig, {'name' : 'certssl'});
     this.systemGeneralService.getCertificates().subscribe((res) => {
-      this.webdav_certssl =
-          _.find(this.fieldConfig, {'name' : 'webdav_certssl'});
       if (res.length > 0) {
         res.forEach((item) => {
           this.webdav_certssl.options.push(
@@ -138,17 +141,23 @@ export class ServiceWebdavComponent implements OnInit, OnDestroy {
   }
 
   resourceTransformIncomingRestData(data) {
-    delete(data['webdav_password']);
+    const certificate = data['certssl'];
+    if (certificate && certificate.id) {
+      data['certssl'] = certificate.id;
+    }
+    delete data['password'];
     return data;
   }
 
   afterInit(entityForm: any) {
-    this.webdav_tcpport = _.find(this.fieldConfig, {'name': 'webdav_tcpport'});
-    this.webdav_tcpportssl = _.find(this.fieldConfig, {'name': 'webdav_tcpportssl'});
-    this.webdav_password = _.find(this.fieldConfig, {'name': 'webdav_password'});
-    this.webdav_password2 = _.find(this.fieldConfig, {'name': 'webdav_password2'});
-    this.webdav_htauth = entityForm.formGroup.controls['webdav_htauth'];
-    this.webdav_protocol = entityForm.formGroup.controls['webdav_protocol'];
+    this.entityForm = entityForm;
+    this.entityForm.submitFunction = this.submitFunction;
+    this.webdav_tcpport = _.find(this.fieldConfig, {'name': 'tcpport'});
+    this.webdav_tcpportssl = _.find(this.fieldConfig, {'name': 'tcpportssl'});
+    this.webdav_password = _.find(this.fieldConfig, {'name': 'password'});
+    this.webdav_password2 = _.find(this.fieldConfig, {'name': 'password2'});
+    this.webdav_htauth = entityForm.formGroup.controls['htauth'];
+    this.webdav_protocol = entityForm.formGroup.controls['protocol'];
     this.handleProtocol(this.webdav_protocol.value);
     this.handleAuth(this.webdav_htauth.value);
     this.webdav_protocol_subscription = this.webdav_protocol.valueChanges.subscribe((value) => {
@@ -160,15 +169,15 @@ export class ServiceWebdavComponent implements OnInit, OnDestroy {
   }
 
   handleProtocol(value: any) {
-    if (value === 'http') {
+    if (value === 'HTTP') {
       this.webdav_tcpport.isHidden = false;
       this.webdav_tcpportssl.isHidden = true;
       this.webdav_certssl.isHidden = true;
-    } else if (value === 'https') {
+    } else if (value === 'HTTPS') {
       this.webdav_tcpport.isHidden = true;
       this.webdav_tcpportssl.isHidden = false;
       this.webdav_certssl.isHidden = false;
-    } else if (value === 'httphttps') {
+    } else if (value === 'HTTPHTTPS') {
       this.webdav_tcpport.isHidden = false;
       this.webdav_tcpportssl.isHidden = false;
       this.webdav_certssl.isHidden = false;
@@ -176,17 +185,22 @@ export class ServiceWebdavComponent implements OnInit, OnDestroy {
   }
 
   handleAuth(value: any) {
-    if (value === 'none') {
-      this.webdav_password.isHidden = true;
-      this.webdav_password2.isHidden = true;
+    if (value === 'NONE') {
+      this.entityForm.setDisabled('password', true, true);
+      this.entityForm.setDisabled('password2', true, true);
     } else {
-      this.webdav_password.isHidden = false;
-      this.webdav_password2.isHidden = false;
+      this.entityForm.setDisabled('password', false, false);
+      this.entityForm.setDisabled('password2', false, false);
     }
   }
 
   ngOnDestroy() {
     this.webdav_protocol_subscription.unsubscribe();
     this.webdav_htauth_subscription.unsubscribe();
+  }
+
+  submitFunction(this: any, body: any,){
+    delete body['password2'];
+    return this.ws.call('webdav.update', [body]);
   }
 }

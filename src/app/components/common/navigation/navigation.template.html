@@ -8,7 +8,7 @@
         </div>
         <!-- Icon menu items -->
         <div class="icon-menu-item" *ngFor="let item of menuItems">
-            <button *ngIf="!item.disabled && item.type === 'icon'" mat-raised-button [matTooltip]="item.tooltip" (click)="transferToState(item.state)" routerLinkActive="mat-bg-primary"><mat-icon>{{item.icon}}</mat-icon></button>
+            <button *ngIf="!item.disabled && item.type === 'icon'" mat-button [matTooltip]="item.tooltip" (click)="transferToState(item.state)" routerLinkActive="mat-bg-primary"><mat-icon>{{item.icon}}</mat-icon></button>
         </div>
     </div>
     <!-- Regular menu items -->

@@ -69,28 +69,27 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   protected current_layout: any;
   protected existing_pool: any;
   protected needs_disk = true;
-  protected needsDiskMessage = T("Please add one or more disks to be used for data");
-  protected extendedNeedsDiskMessage = T("Please add one or more disks to extend your pool");
+  protected needsDiskMessage = T("Add one or more disks to be used for data.");
+  protected extendedNeedsDiskMessage = T("Add one or more disks to extend the pool.");
   public size;
   protected extendedAvailable;
-  public sizeMessage = T("Estimated total raw data capacity");
-  protected extendedSizeMessage = T("Estimated data capacity available after extending");
+  public sizeMessage = T("Estimated total raw data capacity.");
+  protected extendedSizeMessage = T("Estimated data capacity available after extension.");
 
   public disknumError = null;
-  public disknumErrorMessage = T("WARNING: Adding data vdevs with different amounts of \
+  public disknumErrorMessage = T("WARNING: Adding data vdevs with different numbers of \
       disks is not recommended.");
-  public disknumErrorConfirmMessage = T("Creating a pool with vdevs containing different \
-      amounts of disks is not recommended, do you wish to continue?");
-  public disknumExtendConfirmMessage = T("Extending a pool with one or more vdevs containing \
-      different amounts of disks is not recommended, do you wish to continue?");
+  public disknumErrorConfirmMessage = T("It is not recommended to create a pool with vdevs \
+      containing different numbers of disks. Continue?");
+  public disknumExtendConfirmMessage = T("It is not recommended to extend a pool with one or \
+      more vdevs containing different numbers of disks. Continue?");
 
   public vdevtypeError = null;
-  public vdevtypeErrorMessage = T("WARNING: Adding data vdevs of different types is not \
-      supported.");
+  public vdevtypeErrorMessage = T("Adding data vdevs of different types is not supported.");
 
   public diskAddWarning = T("The contents of all added disks will be erased.");
-  public diskExtendWarning = T("The contents of all newly added disks will be erased.  Your pool \
-      will be extended to the new topology with its data left in tact.");
+  public diskExtendWarning = T("The contents of all newly added disks will be erased. The pool \
+      will be extended to the new topology with existing data left intact.");
 
   first_data_vdev_type: string;
   first_data_vdev_disknum: number;
@@ -114,9 +113,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public suggested_layout_tooltip = T('Create a recommended formation\
                                        of vdevs in a pool.');
 
-  public encryption_message = T("Always back up the key! If the key is\
-                                 lost, the data on the disks is also\
-                                 lost with no hope of recovery.");
+  public encryption_message = T("Always back up the key! Losing the key \
+                                 will also lose all data on the disks with \
+                                 no chance of recovery.");
 
   constructor(
     private rest: RestService,
@@ -275,8 +274,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
                                              same size and type as those\
                                              already in the pool. This\
                                              operation cannot be reversed.\
-                                             Are you sure you wish to\
-                                             continue?"), false, T("Continue")).subscribe((res) => {
+                                             Continue?"), false, T("Continue")).subscribe((res) => {
           if (!res) {
             this.goBack();
           }
@@ -405,7 +403,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       diskWarning = this.diskExtendWarning;
     }
 
-    this.dialog.confirm(T("Warning"), diskWarning).subscribe((res) => {
+    this.dialog.confirm(T("Warning"), diskWarning, false, T('Create Pool')).subscribe((res) => {
       if (res) {
         this.error = null;
 
@@ -454,7 +452,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
                   res.error[i].forEach(
                     (error) => { this.error += error + '<br />'; });
                 }
-              } else { 
+              } else {
                 this.dialog.errorReport(T('Error creating pool'), res.error.error_message, res.error.traceback);
               }
             });
@@ -474,7 +472,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   openDialog() {
     if(this.isEncrypted) {
-      this.dialog.confirm(T("Warning"), this.encryption_message).subscribe((res) => {
+      this.dialog.confirm(T("Warning"), this.encryption_message, false, T('I Understand')).subscribe((res) => {
         if (res) {
           this.isEncrypted = true;
           this.vol_encrypt = 1
@@ -563,7 +561,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   checkPoolName() {
     if(_.find(this.existing_pools, {"name": this.name})) {
-      this.poolError = T("A pool with that name already exists."); 
+      this.poolError = T("A pool with this name already exists."); 
     } else {
       this.poolError = null;
     }

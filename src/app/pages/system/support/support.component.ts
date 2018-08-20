@@ -36,8 +36,6 @@ export class SupportComponent  {
   public category: any;
   public payload = {};
   public entityEdit: any;
-  public route_success: string[] = ['system','support'];
-  public route_cancel: string[] = ['system'];
   public saveSubmitText = "Submit";
   public registerUrl = " https://redmine.ixsystems.com/account/register"
 
@@ -159,7 +157,6 @@ export class SupportComponent  {
     }),
     dialogRef.componentInstance.failure.subscribe((res) => {
       dialogRef.componentInstance.setDescription(res.error);
-      this.router.navigate(new Array('/').concat(this.route_success));
     });
   }
 

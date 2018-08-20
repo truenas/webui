@@ -8,7 +8,7 @@ import { Component } from '@angular/core';
     <div mat-dialog-actions>
     <button 
     type="button" 
-    mat-raised-button
+    mat-button
     color="primary" 
     (click)="dialogRef.close(true)">OK</button>
     &nbsp;
@@ -16,7 +16,7 @@ import { Component } from '@angular/core';
     <button 
     type="button"
     color="accent"
-    mat-raised-button 
+    mat-button 
     (click)="dialogRef.close(false)">Cancel</button>
     </div>`,
 })

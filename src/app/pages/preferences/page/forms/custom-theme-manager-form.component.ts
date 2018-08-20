@@ -1,4 +1,4 @@
-import { ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, ViewContainerRef, OnChanges } from '@angular/core';
+import { ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, OnDestroy, ViewContainerRef, OnChanges } from '@angular/core';
 import { NgModel }   from '@angular/forms';
 import {Router} from '@angular/router';
 import * as _ from 'lodash';
@@ -12,9 +12,9 @@ import { Subject } from 'rxjs/Subject';
 
 @Component({
   selector : 'custom-theme-manager-form',
-  template:`<entity-form-embedded fxFlex="100" fxFlex.gt-xs="320px" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>`
+  template:`<entity-form-embedded fxFlex="100" fxFlex.gt-xs="350px" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>`
 })
-export class CustomThemeManagerFormComponent implements OnInit, OnChanges {
+export class CustomThemeManagerFormComponent implements OnInit, OnChanges, OnDestroy {
 
   /*
    //Preferences Object Structure
@@ -81,6 +81,10 @@ export class CustomThemeManagerFormComponent implements OnInit, OnChanges {
         this.initForm();
       });
 
+    }
+
+    ngOnDestroy(){
+      this.core.unregister({observerClass:this});
     }
 
     ngOnChanges(changes){

@@ -107,7 +107,7 @@ export class DiskWipeComponent implements OnInit {
     event.preventDefault();
     event.stopPropagation();
 
-    this.dialogService.confirm(T("Wipe Disk"), T("Are you sure you want to wipe disk?")).subscribe((res) => {
+    this.dialogService.confirm(T("Wipe Disk"), T("Wipe this disk?")).subscribe((res) => {
       if (res) {
         let formValue = _.cloneDeep(this.formGroup.value);
 

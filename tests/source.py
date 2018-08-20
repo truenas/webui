@@ -4,6 +4,7 @@
 
 from os import getcwd
 
+#ACCOUNTS
 # username for the machine
 username = "root"
 # password for the machine
@@ -30,6 +31,12 @@ superuserfname = "super NAS"
 superuserpassword = "abcd1234"
 
 supergroupname = "supergroupNAS"
+
+
+#STORAGE
+pool1 = "testPool1"
+pool2 = "testPool2"
+
 
 results_xml = getcwd() + '/results/'
 

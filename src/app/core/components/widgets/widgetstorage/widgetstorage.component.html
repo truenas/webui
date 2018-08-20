@@ -39,7 +39,6 @@
           </div>
         </div>
       </mat-card-content>
-      <!--<div class="widget-footer"><button md-raised-button color="primary" (click)="toggleConfig()">Flip</button></div>-->
     </mat-card>
     <mat-card class="back">
       <mat-card-content fxLayout="column" fxLayoutAlign="start stretch" fxFlex="100">
@@ -52,8 +51,8 @@
         </form>
       </mat-card-content>
       <div class="widget-footer">
-        <button mat-raised-button color="accent" (click)="toggleConfig()">{{"Cancel" | translate}}</button>
-        <button mat-raised-button color="primary" type="submit" form="preferences" (click)="toggleConfig()">{{"Save" | translate}}</button>
+        <button mat-button color="accent" (click)="toggleConfig()">{{"Cancel" | translate}}</button>
+        <button mat-button color="primary" type="submit" form="preferences" (click)="toggleConfig()">{{"Save" | translate}}</button>
       </div>
     </mat-card>
   </div>

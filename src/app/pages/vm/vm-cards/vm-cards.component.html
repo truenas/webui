@@ -141,21 +141,21 @@
 
 
         <div class="vm-controls">
-              <button *ngIf="cards[i].vm_type === 'Bhyve'" mat-raised-button color="primary" [disabled]="(cards[i].state == 'stopped')" [matMenuTriggerFor]="appMenu">Connect</button>
+              <button *ngIf="cards[i].vm_type === 'Bhyve'" mat-button color="primary" [disabled]="(cards[i].state == 'stopped')" [matMenuTriggerFor]="appMenu">Connect</button>
                 <mat-menu #appMenu="matMenu">
                   <button  mat-menu-item color="primary" [disabled]="(!cards[i].vnc || cards[i].state === 'stopped')" (click)="vnc(i)">VNC</button>
                   <button  mat-menu-item color="primary" [disabled]="(cards[i].state === 'stopped')" (click)="serial(i)">Serial</button>
                 </mat-menu>
-              <button *ngIf="cards[i].vm_type === 'Container Provider'" mat-raised-button color="primary" [disabled]="(cards[i].state == 'stopped')" [matMenuTriggerFor]="appMenu2">Connect</button>
+              <button *ngIf="cards[i].vm_type === 'Container Provider'" mat-button color="primary" [disabled]="(cards[i].state == 'stopped')" [matMenuTriggerFor]="appMenu2">Connect</button>
                 <mat-menu  #appMenu2="matMenu">
                   <button mat-menu-item color="primary" [disabled]="(cards[i].state === 'stopped')" (click)="serial(i)">Serial</button>
                 </mat-menu>
                 
           <!-- <span matTooltip="Edit Devices" matTooltipPosition="above">
-           <button mat-raised-button color="primary" (click)="goToDevices(i)">Devices</button>
+           <button mat-button color="primary" (click)="goToDevices(i)">Devices</button>
           </span>
           <span matTooltip="{{(cards[i].state == 'running') ? 'Cannot edit VM if running' : 'Edit VM'}}" matTooltipPosition="above">
-            <button mat-raised-button color="primary" [disabled]="(cards[i].state == 'running')" (click)="toggleForm(true,cards[i],'edit');">Edit</button>
+            <button mat-button color="primary" [disabled]="(cards[i].state == 'running')" (click)="toggleForm(true,cards[i],'edit');">Edit</button>
           </span> -->
         </div>
       </div>

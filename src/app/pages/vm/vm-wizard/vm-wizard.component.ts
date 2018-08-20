@@ -485,6 +485,7 @@ blurEvent2(parent){
 }
 
 async customSubmit(value) {
+    value.datastore = value.datastore.replace('/mnt/','')
     const hdd = value.datastore+"/"+value.name.replace(/\s+/g, '-')+"-"+Math.random().toString(36).substring(7);
     const vm_payload = {}
     const zvol_payload = {}
@@ -528,7 +529,7 @@ async customSubmit(value) {
 
     } else {
       for (const device of vm_payload["devices"]){
-        if (device.dtype === "DISK"){
+        if (device.dtype === "DISK"){          
           const orig_hdd = device.attributes.path;
           const create_zvol = zvol_payload['create_zvol']
           const zvol_name = zvol_payload['zvol_name']

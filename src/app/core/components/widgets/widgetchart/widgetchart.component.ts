@@ -70,6 +70,7 @@ export class WidgetChartComponent extends WidgetComponent implements AfterViewIn
   }
 
   ngOnDestroy(){
+    this.core.unregister({observerClass:this});
   }
 
   ngAfterViewInit(){ 

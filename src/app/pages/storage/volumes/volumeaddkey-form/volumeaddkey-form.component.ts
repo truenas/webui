@@ -89,18 +89,18 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
       if (res) {
         this.rest.post(this.resource_name + "/" + value.name + "/recoverykey/", {}).subscribe((restPostResp) => {
           this.loader.close();
-          this.snackBar.open(T("Successfully added recovery key to pool ") + value.name, 'close', { duration: 5000 });
+          this.snackBar.open(T("Recovery key added to pool ") + value.name, 'close', { duration: 5000 });
           this.storage.downloadFile('geli_recovery.key', restPostResp.data.content, 'application/octet-stream');
           this.router.navigate(new Array('/').concat(
             this.route_success));
         }, (res) => {
           this.loader.close();
-          this.dialogService.errorReport(T("Error adding recovery key to pool"), res.error.error_message, res.error.traceback);
+          this.dialogService.errorReport(T("Error adding recovery key to pool."), res.error.error_message, res.error.traceback);
         });
       }
       else {
         this.loader.close();
-        this.dialogService.Info(T("Invalid password"), T("Invalid password, please try again"));
+        this.dialogService.Info(T("Invalid password"), T("Please enter the correct password."));
       }
     }, (res) => {
       this.loader.close();

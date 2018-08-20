@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, Input, ViewChild, Renderer2, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, Input, ViewChild, Renderer2, ElementRef } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { Router } from '@angular/router';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
@@ -21,7 +21,7 @@ import { T } from '../../../../translate-marker';
   templateUrl:'./widgetsysinfo.component.html',
   styleUrls: ['./widgetsysinfo.component.css']
 })
-export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, AfterViewInit {
+export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,OnDestroy, AfterViewInit {
   public title: string = T("System Info");
   public data: any;
   public memory:string;
@@ -57,7 +57,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, A
       let minutes = build.getUTCMinutes();
       this.buildDate = month + " " +  day + ", " + year + " " + hours + ":" + minutes;
 
-      this.memory = this.formatMemory(this.data.physmem, "GB");
+      this.memory = this.formatMemory(this.data.physmem, "GiB");
       if(this.data.system_manufacturer && this.data.system_manufacturer.toLowerCase() == 'ixsystems'){
         this.manufacturer = "ixsystems";
       } else {
@@ -89,8 +89,12 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, A
     this.core.emit({name:"SysInfoRequest"});
     this.core.emit({name:"UpdateCheck"});
   }
-  
+
   ngOnInit(){
+  }
+
+  ngOnDestroy(){
+    this.core.unregister({observerClass:this});
   }
 
   getCardBg(){
@@ -115,11 +119,11 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, A
   }
 
   formatMemory(physmem:number, units:string){
-    let result:string; 
-    if(units == "MB"){
-      result = Number(physmem / 1024 / 1024).toFixed(0) + ' MB';
-    } else if(units == "GB"){
-      result = Number(physmem / 1024 / 1024 / 1024).toFixed(0) + ' GB';
+    let result:string;
+    if(units == "MiB"){
+      result = Number(physmem / 1024 / 1024).toFixed(0) + ' MiB';
+    } else if(units == "GiB"){
+      result = Number(physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB';
     }
     return result;
   }
