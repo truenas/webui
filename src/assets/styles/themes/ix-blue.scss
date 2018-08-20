@@ -325,16 +325,20 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
 .app-user .app-user-name, .text-muted,
 .mat-expansion-panel-header-title,
 .mat-expansion-panel-header-description, 
-.mat-expansion-indicator,
+
 .mat-list .mat-list-item,
 .mat-menu-panel button,
 .mat-paginator-navigation-next, .mat-paginator-navigation-previous,
-.mat-expansion-panel span.mat-expansion-indicator,
+
 .mat-nav-list .mat-list-item, 
 .mat-form-field-label,
 .mat-selection-list .mat-list-item,.mat-option,
-.mat-select-arrow, .mat-select-value{
-  @include variable(color, --fg2, $fg2);
+.mat-select-arrow, .mat-select-value {
+  @include variable(color, --fg2, $fg2, !important);
+}
+
+.mat-form-field .mat-select.mat-select-disabled .mat-select-arrow {
+  opacity: 0.38;
 }
 
 .mat-menu-panel,
@@ -352,7 +356,7 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
 .mat-button.mat-primary,
 .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > a > span, 
 .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a,
-.mat-form-field.mat-focused.mat-primary .mat-select-arrow,
+.mat-form-field.mat-focused.mat-primary
 .mat-focused .mat-form-field-label{
   @include variable(color, --primary, $primary, !important);
 }
@@ -402,10 +406,25 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
   opacity:0.38;
 }
 
-.egret-swatch,
-.mat-checkbox-frame,
-{ 
-  @include variable(border-color, --alt-fg1, $alt-fg1);
+.egret-swatch, .mat-checkbox-frame, .mat-radio-outer-circle { 
+  @include variable(border-color, --primary-txt, $primary-txt);
+}
+
+.ngx-datatable .datatable-body .mat-checkbox-frame {
+  @include variable(border-color, --alt-fg1, $alt-fg1, !important);
+}
+
+.mat-expansion-indicator::after, button.card-close, .mat-pseudo-checkbox {
+  @include variable(color, --primary-txt, $primary-txt);
+}
+
+.toggle-children {
+  filter: invert(50%);
+}
+
+.mat-menu-item[disabled] {
+  @include variable(color, --primary-txt, $primary-txt);
+  opacity: 0.38;
 }
 
 .spacer{
