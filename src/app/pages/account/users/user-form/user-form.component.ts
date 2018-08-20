@@ -348,6 +348,8 @@ export class UserFormComponent {
         if (entityForm.isNew) {
           if(item[1] !== "netcli.sh"){
             this.shell.options.push({label : item[1], value : item[0]});
+            entityForm.formGroup.controls['shell'].setValue(
+            this.shells[1][0]);
           };
         }
         else {
@@ -360,8 +362,6 @@ export class UserFormComponent {
           } 
         } 
         });
-        entityForm.formGroup.controls['shell'].setValue(
-            this.shells[1][0]);
       });
     });
     if (!entityForm.isNew){
