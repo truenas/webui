@@ -258,31 +258,11 @@ export class UserFormComponent {
               private dialog:DialogService, private cdRef:ChangeDetectorRef ) {}
 
 
-  afterInit(entityForm: any) {
+   afterInit(entityForm: any) {
     this.isNew = entityForm.isNew;
     this.password_disabled = entityForm.formGroup.controls['password_disabled'];
     this.sudo = entityForm.formGroup.controls['sudo'];
     this.locked = entityForm.formGroup.controls['locked'];
-
-    entityForm.ws.call('notifier.choices', [ 'SHELL_CHOICES' ]).subscribe((res) => {
-      this.shell = _.find(this.fieldConfig, {name : "shell"});
-      this.shells = res;
-      res.forEach((item) => {
-      if (entityForm.isNew && item[1] !== "netcli.sh") {
-        this.shell.options.push({label : item[1], value : item[0]});
-      }
-      else if(!entityForm.isNew){
-        if(entityForm.data.bsdusr_builtin) {
-          this.shell.options.push({label : item[1], value : item[0]});
-        } else if(item[1] !== "netcli.sh") {
-          this.shell.options.push({label : item[1], value : item[0]});
-        } 
-      } 
-      });
-      entityForm.formGroup.controls['shell'].setValue(
-          this.shells[1][0]);
-    });
-
     this.password_disabled.valueChanges.subscribe((password_disabled)=>{
       if(password_disabled){
         _.find(this.fieldConfig, {name : "locked"}).isHidden = password_disabled;
@@ -361,6 +341,28 @@ export class UserFormComponent {
           entityForm.formGroup.controls['uid'].setValue(next_uid);
         })
       }
+      entityForm.ws.call('notifier.choices', [ 'SHELL_CHOICES' ]).subscribe((SHELL_CHOICES) => {
+        this.shell = _.find(this.fieldConfig, {name : "shell"});
+        this.shells = SHELL_CHOICES;
+        SHELL_CHOICES.forEach((item) => {
+        if (entityForm.isNew) {
+          if(item[1] !== "netcli.sh"){
+            this.shell.options.push({label : item[1], value : item[0]});
+          };
+        }
+        else {
+          if(entityForm.data && !entityForm.data.bsdusr_builtin) {
+            if(item[1] !== "netcli.sh"){
+              this.shell.options.push({label : item[1], value : item[0]});
+            }
+          } else {
+            this.shell.options.push({label : item[1], value : item[0]});
+          } 
+        } 
+        });
+        entityForm.formGroup.controls['shell'].setValue(
+            this.shells[1][0]);
+      });
     });
     if (!entityForm.isNew){
       entityForm.submitFunction = this.submitFunction;
