@@ -338,37 +338,6 @@ export class PluginAddComponent implements OnInit {
       this.snackBar.open(T("Plugin installed."), T("Close"), { duration: 5000 });
       this.router.navigate(new Array('/').concat(this.route_success));
     });
-    this.dialogRef.componentInstance.failure.subscribe((error) => {
-      this.ws.call('jail.delete', [this.pluginName]).subscribe(
-          (jailDeleteRes) => {},
-          (jailDeleteRes) => {
-            new EntityUtils().handleWSError(this, jailDeleteRes);
-          }
-        );
-    });
-
-    // this.loader.open();
-    // this.ws.job(this.addCall, [value]).subscribe(
-    //   (res) => {
-    //     this.loader.close();
-    //     if (res.error) {
-    //       this.dialogService.errorReport(res.error, '', res.exception);
-    //       this.ws.call('jail.delete', [this.pluginName]).subscribe(
-    //         (jailDeleteRes) => {},
-    //         (jailDeleteRes) => {
-    //           new EntityUtils().handleError(this, jailDeleteRes);
-    //         }
-    //       );
-    //     } else {
-    //       this.snackBar.open(T("Plugin installed."), T("Close"), { duration: 5000 });
-    //       this.router.navigate(new Array('/').concat(this.route_success));
-    //     }
-    //   },
-    //   (res) => {
-    //     this.loader.close();
-    //     this.dialogService.errorReport('Error ' + res.error + ':' + res.reason, res.trace.class, res.trace.formatted);
-    //   }
-    // );
   }
 
   setDisabled(name: string, disable: boolean) {

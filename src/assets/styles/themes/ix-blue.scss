@@ -43,6 +43,10 @@ $accent: $yellow;
 $warn: $red;
 $tooltip:'inline';//display property
 
+// Logo images
+$logo: url('assets/images/light-logo.svg');
+$logo-text: url('assets/images/light-logo-text.svg');
+
 $md-primary: (
     50 : #e0f2fa,
     100 : #b3dff2,
@@ -276,7 +280,9 @@ h4{
 .mat-step-header .mat-step-icon,
 div.hopscotch-bubble{
       @include variable(background, --primary, $primary, !important);
-      @include variable(color, #fff, #fff, !important);
+      //@include variable(color, #fff, #fff, !important);
+      @include variable(color, --primary-txt, $primary-txt, !important);
+
 }
 
 .mat-bg-accent,
@@ -853,4 +859,32 @@ iscsi .mat-ink-bar {
 
 .mat-drawer {
   overflow-y: hidden !important;
+}
+
+// pw show button on entity tables
+// #show-pw {
+//   @include variable(background-color, --primary, $primary);
+//   color: white;
+// }
+
+// Define logo via CSS properties
+.logo{
+ /*   @include variable(background-image, --logo, $logo !important); //url(assets/images/logo.svg);
+    background-size: contain;
+    width: 52px;
+    height: 48px;
+    background-repeat: no-repeat;
+    background-position: 0 4px;
+    left: -6px;
+    position: relative;*/
+}
+.logo-text{
+   /* @include variable(background-image, --logo-text, $logo-text !important); //url(assets/images/logo-text.svg);
+    width: 112px;
+    height: 40px;
+    position: relative;
+    top: 0;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: 2px 0;*/
 }
