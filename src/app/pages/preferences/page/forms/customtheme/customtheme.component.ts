@@ -37,7 +37,7 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
 
   // EXAMPLE THEME
   public values:Theme = {
-    name:'',
+    name:'New Theme',
     description:'',
     label:'',
     labelSwatch:'',
@@ -476,7 +476,7 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
       let palette = Object.keys(ct);
       palette.splice(0,6);
 
-      palette.forEach(function(color){
+      palette.forEach((color)=>{
         values[color] = ct[color];
       });
 
@@ -487,7 +487,7 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
       let palette = Object.keys(theme);
       palette.splice(0,5);
 
-      palette.forEach(function(color){
+      palette.forEach((color)=>{
       let swatch = theme[color];
       (<any>document).querySelector('#theme-preview').style.setProperty("--" + color, theme[color]);
       });
