@@ -264,6 +264,25 @@ export class UserFormComponent {
     this.sudo = entityForm.formGroup.controls['sudo'];
     this.locked = entityForm.formGroup.controls['locked'];
 
+    entityForm.ws.call('notifier.choices', [ 'SHELL_CHOICES' ]).subscribe((res) => {
+      this.shell = _.find(this.fieldConfig, {name : "shell"});
+      this.shells = res;
+      res.forEach((item) => {
+      if (entityForm.isNew && item[1] !== "netcli.sh") {
+        this.shell.options.push({label : item[1], value : item[0]});
+      }
+      else if(!entityForm.isNew){
+        if(entityForm.data.bsdusr_builtin) {
+          this.shell.options.push({label : item[1], value : item[0]});
+        } else if(item[1] !== "netcli.sh") {
+          this.shell.options.push({label : item[1], value : item[0]});
+        } 
+      } 
+      });
+      entityForm.formGroup.controls['shell'].setValue(
+          this.shells[1][0]);
+    });
+
     this.password_disabled.valueChanges.subscribe((password_disabled)=>{
       if(password_disabled){
         _.find(this.fieldConfig, {name : "locked"}).isHidden = password_disabled;
@@ -343,18 +362,6 @@ export class UserFormComponent {
         })
       }
     });
-    /* list shells */
-    entityForm.ws.call('notifier.choices', [ 'SHELL_CHOICES' ])
-        .subscribe((res) => {
-          this.shell = _.find(this.fieldConfig, {name : "shell"});
-          this.shells = res;
-          const bsduser_shell = this.shell
-          res.forEach((item) => {
-            this.shell.options.push({label : item[1], value : item[0]});
-          });
-          entityForm.formGroup.controls['shell'].setValue(
-              this.shells[1][0]);
-        });
     if (!entityForm.isNew){
       entityForm.submitFunction = this.submitFunction;
     }
