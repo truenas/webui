@@ -408,6 +408,10 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
   @include variable(color, --primary-txt, $primary-txt);
 }
 
+.toggle-children {
+  filter: invert(50%);
+}
+
 .spacer{
   flex: 1 1 auto;
 }
