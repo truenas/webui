@@ -35,6 +35,8 @@ $violet-txt:'#fff';
 $blue-txt:'#fff';
 $cyan-txt:'#333';
 $green-txt:'#fff';
+$primary-txt:'#fff';
+$accent-txt:'#333';
 
 $primary: $blue;
 $accent: $yellow;
@@ -317,11 +319,11 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
 .app-user .app-user-name, .text-muted,
 .mat-expansion-panel-header-title,
 .mat-expansion-panel-header-description, 
-.mat-expansion-indicator,
+
 .mat-list .mat-list-item,
 .mat-menu-panel button,
 .mat-paginator-navigation-next, .mat-paginator-navigation-previous,
-.mat-expansion-panel span.mat-expansion-indicator,
+
 .mat-nav-list .mat-list-item, 
 .mat-form-field-label,
 .mat-selection-list .mat-list-item,.mat-option,
@@ -394,10 +396,16 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
   opacity:0.38;
 }
 
-.egret-swatch,
-.mat-checkbox-frame,
-{ 
-  @include variable(border-color, --alt-fg1, $alt-fg1);
+.egret-swatch, .mat-checkbox-frame, .mat-radio-outer-circle { 
+  @include variable(border-color, --primary-txt, $primary-txt);
+}
+
+.ngx-datatable .datatable-body .mat-checkbox-frame {
+  @include variable(border-color, --alt-fg1, $alt-fg1, !important);
+}
+
+.mat-expansion-indicator::after {
+  @include variable(color, --primary-txt, $primary-txt);
 }
 
 .spacer{
@@ -833,9 +841,3 @@ iscsi .mat-ink-bar {
 .mat-drawer {
   overflow-y: hidden !important;
 }
-
-// pw show button on entity tables
-// #show-pw {
-//   @include variable(background-color, --primary, $primary);
-//   color: white;
-// }
