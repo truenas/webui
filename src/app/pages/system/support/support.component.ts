@@ -48,8 +48,7 @@ export class SupportComponent  {
       name: 'support_text',
       paraText: this.sanitizer.bypassSecurityTrustHtml(
         'Search the <a href="https://redmine.ixsystems.com/projects/freenas" \
-         target="_blank" \
-         style="text-decoration:underline;">FreeNAS issue tracker</a>
+         target="_blank" style="text-decoration:underline;">FreeNAS issue tracker</a> \
          to ensure the issue has not already been reported before \
          filing a bug report or feature request. If an issue has \
          already been created, add a comment to the existing issue. \
