@@ -67,7 +67,7 @@ ul.schedule-list li:nth-child(odd){
   top:0;
   right:0;*/
   background-color:var(--primary);
-  color:var(--alt-bg1);
+  color:var(--primary-txt);
   text-align:center;
   padding:0;
 }
@@ -77,7 +77,7 @@ ul.schedule-list li:nth-child(odd){
 }
 
 ::ng-deep .cron-fields .mat-checkbox-frame{
-  border-color:var(--alt-bg1);
+  border-color:var(--primary-txt);
 }
 
 ::ng-deep .cron-fields .mat-form-field-label,
@@ -85,13 +85,13 @@ ul.schedule-list li:nth-child(odd){
 ::ng-deep .cron-fields label.mat-form-field-placeholder,
 ::ng-deep .cron-fields .mat-input-infix,
 .cron-fields .mat-form-field-should-float.mat-focused label{
-  color:var(--alt-bg1) !important;
+  color:var(--primary-txt) !important;
 }
 
 ::ng-deep .mat-form-field-underline,
 ::ng-deep .mat-focused .mat-form-field-underline,
 ::ng-deep .mat-form-field-underline .mat-form-field-ripple{
-  background-color:var(--alt-bg1);
+  background-color:var(--primary-txt);
 }
 
 .cron-fields section{

@@ -7,7 +7,7 @@ export const routes: Routes = [
   {
     path: '',
     component : PreferencesPage,
-    data: {title: 'UI Preferences', breadcrumb:'UI Preferences'},
+    data: {title: 'Web Interface Preferences', breadcrumb:'Web Interface Preferences'},
     pathMatch : 'full'
   },
   {

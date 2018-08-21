@@ -321,6 +321,11 @@ export class VolumesListTableConfig implements InputTableConf {
               placeholder: T("Destroy data on this pool?"),
             }, {
               type: 'checkbox',
+              name: 'cascade',
+              value: true,
+              placeholder: T("Delete configuration of shares that used this pool?"),
+            }, {
+              type: 'checkbox',
               name: 'confirm',
               placeholder: T("Confirm detach"),
               required: true
@@ -346,7 +351,7 @@ export class VolumesListTableConfig implements InputTableConf {
               const value = entityDialog.formValue;
               localLoader.open();
               if (value.destroy === false) { 
-                return localRest.delete("storage/volume/" + row1.name, { body: JSON.stringify({ destroy: value.destroy }) 
+                return localRest.delete("storage/volume/" + row1.name, { body: JSON.stringify({ destroy: value.destroy, cascade: value.cascade }) 
                   }).subscribe((res) => {
                     entityDialog.dialogRef.close(true);
                     localLoader.close();
