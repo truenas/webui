@@ -70,7 +70,7 @@ export class JailAddComponent implements OnInit {
       name: 'vnet',
       placeholder: T('VNET'),
       tooltip: T('Set to use <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=vnet&sektion=9"\
+                  href="https://www.freebsd.org/cgi/man.cgi?query=vnet"\
                   target="_blank">VNET(9)</a> to emulate network \
                   devices for the jail. \
                   A fully virtualized per-jail network stack will be \
@@ -81,7 +81,7 @@ export class JailAddComponent implements OnInit {
       name: 'bpf',
       placeholder: T('Berkeley Packet Filter'),
       tooltip: T('Set to use the Berkeley Packet Filter (<a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=bpf&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+                  href="https://www.freebsd.org/cgi/man.cgi?query=bpf"\
                   target="_blank">BPF(4)</a>) to data link layers in a \
                   protocol independent fashion.'),
     },
@@ -107,7 +107,7 @@ export class JailAddComponent implements OnInit {
       placeholder: T('IPv4 Address'),
       tooltip: T('Configure IPv4 networking or internet access for the \
                   jail. Enter the IPv4 address for <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=vnet&apropos=0&sektion=0&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+                  href="https://www.freebsd.org/cgi/man.cgi?query=vnet"\
                   target="_blank">VNET(9)</a> and shared IP jails. \
                   <br>Single interface format: <b>[interface|]\
                   ip-address\
@@ -187,7 +187,7 @@ export class JailAddComponent implements OnInit {
       placeholder: T('IPv6 Address'),
       tooltip: T('Configure IPv6 networking or internet access for the \
                   jail. Enter the IPv6 address for <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=vnet&apropos=0&sektion=0&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+                  href="https://www.freebsd.org/cgi/man.cgi?query=vnet"\
                   target="_blank">VNET(9)</a> and shared IP jails. \
                   <br>Single interface format: <b>[interface|]\
                   ip-address[/netmask]</b>. <br>\
@@ -247,7 +247,7 @@ export class JailAddComponent implements OnInit {
       name: 'devfs_ruleset',
       placeholder: T('devfs_ruleset'),
       tooltip: T('The number of the <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=devfs&apropos=0&sektion=0&manpath=FreeBSD+11.1-RELEASE+and+Ports\
+                  href="https://www.freebsd.org/cgi/man.cgi?query=devfs\
                   "target="_blank">devfs(8) ruleset</a> to enforce when\
                   mounting <b>devfs</b> in the jail. The default value \
                   of <i>0</i> means no ruleset is enforced. Mounting \
@@ -263,7 +263,7 @@ export class JailAddComponent implements OnInit {
       tooltip: T('Commands to run in the jail environment when the jail \
                   is created. Example: <b>sh /etc/rc</b>. The pseudo-\
                   parameters section of <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=jail&apropos=0&sektion=0&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+                  href="https://www.freebsd.org/cgi/man.cgi?query=jail"\
                   target="_blank">JAIL(8)</a> describes \
                   <b>exec.start</b> usage.'),
     },
@@ -345,7 +345,7 @@ export class JailAddComponent implements OnInit {
       tooltip: T('Set this boolean option to <i>True</i> to look for \
                   the <b>exec.jail_user</b> in the system \
                   <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=passwd&sektion=5&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+                  href="https://www.freebsd.org/cgi/man.cgi?query=passwd"\
                   target="_blank">passwd(5)</a> file <i>instead</i> of \
                   the jail passwd.'),
     },
@@ -361,7 +361,7 @@ export class JailAddComponent implements OnInit {
       name: 'mount_devfs',
       placeholder: T('mount.devfs'),
       tooltip: T('Mount a <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=devfs&sektion=5&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+                  href="https://www.freebsd.org/cgi/man.cgi?query=devfs"\
                   target="_blank">devfs(5)</a> filesystem on the \
                   <i>chrooted /dev directory</i> and apply the ruleset \
                   in the <b>devfs_ruleset</b> parameter to restrict \
@@ -372,7 +372,7 @@ export class JailAddComponent implements OnInit {
       name: 'mount_fdescfs',
       placeholder: T('mount.fdescfs'),
       tooltip: T('Mount an <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=fdescfs&sektion=5&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+                  href="https://www.freebsd.org/cgi/man.cgi?query=fdescfs"\
                   target="_blank">fdescfs(5)</a> filesystem in the \
                   jail <i>/dev/fd</i> directory.'),
     },
@@ -384,13 +384,13 @@ export class JailAddComponent implements OnInit {
       tooltip: T('Determine which information the processes in a jail \
                   are able to obtain about mount points. The behavior \
                   of multiple syscalls is affected. <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=statfs&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+                  href="https://www.freebsd.org/cgi/man.cgi?query=statfs"\
                   target="_blank">statfs(2)</a>, <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=statfs&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+                  href="https://www.freebsd.org/cgi/man.cgi?query=statfs"\
                   target="_blank">fstatfs(2)</a>, <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=getfsstat&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+                  href="https://www.freebsd.org/cgi/man.cgi?query=getfsstat"\
                   target="_blank">getfsstat(2)</a>, <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=fhstatfs&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+                  href="https://www.freebsd.org/cgi/man.cgi?query=fhstatfs"\
                   target="_blank">fhstatfs(2)</a>, and other similar \
                   compatibility syscalls. <br> \
                   Set to <i>0</i>: All mount points are available \
@@ -418,7 +418,7 @@ export class JailAddComponent implements OnInit {
                   jail or other jails under this jail. A limit of \
                   <i>0</i> restricts the jail from creating child \
                   jails. Hierarchical Jails in the <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=jail&apropos=0&sektion=0&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+                  href="https://www.freebsd.org/cgi/man.cgi?query=jail"\
                   target="_blank">JAIL(8)</a> man page explains the \
                   finer details.'),
     },
@@ -427,7 +427,7 @@ export class JailAddComponent implements OnInit {
       name: 'login_flags',
       placeholder: T('login_flags'),
       tooltip: T('Flags to pass to <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=login&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+                  href="https://www.freebsd.org/cgi/man.cgi?query=login"\
                   target="_blank">LOGIN(1)</a> when logging in to the \
                   jail using the <b>console</b> function.'),
     },
@@ -544,9 +544,9 @@ export class JailAddComponent implements OnInit {
       name: 'allow_raw_sockets',
       placeholder: T('allow.raw_sockets'),
       tooltip: T('Set to allow raw sockets. Utilities like <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=ping&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+                  href="https://www.freebsd.org/cgi/man.cgi?query=ping"\
                   target="_blank">ping(8)</a> and <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=traceroute&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+                  href="https://www.freebsd.org/cgi/man.cgi?query=traceroute"\
                   target="_blank">traceroute(8)</a> require raw \
                   sockets. When set, source IP addresses are enforced \
                   to comply with the IP addresses bound to the jail, \
@@ -617,7 +617,7 @@ export class JailAddComponent implements OnInit {
                   permission is only effective when <b>allow_mount</b> \
                   is set and <b>enforce_statfs</b> is set to a value \
                   lower than <i>2</i>. The <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=zfs&sektion=8&apropos=0&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+                  href="https://www.freebsd.org/cgi/man.cgi?query=zfs"\
                   target="_blank">ZFS(8)</a> man page has information \
                   on how to configure \
                   the ZFS filesystem to operate from within a jail.'),
@@ -671,7 +671,7 @@ export class JailAddComponent implements OnInit {
       name: 'exec_fib',
       placeholder: T('exec.fib'),
       tooltip: T('This number selects the routing table (<a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=setfib&sektion=1&apropos=0&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+                  href="https://www.freebsd.org/cgi/man.cgi?query=setfib"\
                   target="_blank">FIB</a>) \
                   used when running commands inside the jail.'),
 //There is SETFIB(1) that is network related, and SETFIB(2) that
@@ -830,7 +830,7 @@ export class JailAddComponent implements OnInit {
       name: 'mount_procfs',
       placeholder: T('mount_procfs'),
       tooltip: T('Set to mount a <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=procfs&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+                  href="https://www.freebsd.org/cgi/man.cgi?query=procfs"\
                   target="_blank">procfs(5)</a> filesystems in the \
                   jail <i>/dev/proc</i> directory.'),
     },
@@ -839,7 +839,7 @@ export class JailAddComponent implements OnInit {
       name: 'mount_linprocfs',
       placeholder: T('mount_linprocfs'),
       tooltip: T('Set to mount a <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=linprocfs&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+                  href="https://www.freebsd.org/cgi/man.cgi?query=linprocfs"\
                   target="_blank">linprocfs(5)</a> filesystem in the \
                   jail.'),
     },
@@ -890,7 +890,7 @@ export class JailAddComponent implements OnInit {
  //      name: 'memoryuse',
  //      placeholder: T('memoryuse'),
  //      tooltip: T('Resident set size in bytes. See <a\
- // href="https://www.freebsd.org/cgi/man.cgi?query=rctl&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+ // href="https://www.freebsd.org/cgi/man.cgi?query=rctl"\
  // target="_blank">RCTL(8)</a> for more details.'),
  //    },
  //    {
@@ -912,7 +912,7 @@ export class JailAddComponent implements OnInit {
  //      name: 'rlimits',
  //      placeholder: T('rlimits'),
  //      tooltip: T('Set resource limitations of the jail using the <a\
- // href="https://www.freebsd.org/cgi/man.cgi?query=setrlimit&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+ // href="https://www.freebsd.org/cgi/man.cgi?query=setrlimit"\
  // target="_blank">getrlimit(2)</a> utility.'),
  //    },
  //    {
@@ -1014,7 +1014,7 @@ export class JailAddComponent implements OnInit {
  //      placeholder: T('nsemop'),
  //      tooltip: T('Number of SysV semaphores modified in a single\
  // <a\
- // href="https://www.freebsd.org/cgi/man.cgi?query=semop&sektion=2&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+ // href="https://www.freebsd.org/cgi/man.cgi?query=semop"\
  // target="_blank">semop(2)</a> call.'),
  //    },
  //    {
