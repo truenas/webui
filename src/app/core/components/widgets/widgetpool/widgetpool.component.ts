@@ -171,16 +171,28 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   }
 
   parseVolumeData(){
-    let usedObj = (<any>window).filesize(this.volumeData.used, {output: "object", exponent:3});
+    let usedValue;
+    if (isNaN(this.volumeData.used)) {
+      usedValue = this.volumeData.used;
+    } else {
+      let usedObj = (<any>window).filesize(this.volumeData.used, {output: "object", exponent:3});
+      usedValue = usedObj.value;
+    }
     let used: ChartData = {
       legend: 'Used', 
-      data: [usedObj.value]
+      data: [usedValue]
     };
 
-    let  availableObj = (<any>window).filesize(this.volumeData.avail, {output: "object", exponent:3});
+    let availableValue;
+    if (isNaN(this.volumeData.avail)) {
+      availableValue = this.volumeData.avail;
+    } else {
+      let availableObj = (<any>window).filesize(this.volumeData.avail, {output: "object", exponent:3});
+      availableValue = availableObj.value;
+    }
     let available: ChartData = {
       legend:'Available', 
-      data: [availableObj.value]
+      data: [availableValue]
     };
 
     let percentage = this.volumeData.used_pct.split("%");
