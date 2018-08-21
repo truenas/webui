@@ -24,7 +24,8 @@ import { MatSnackBar, MatDialog } from '@angular/material';
 export class PluginAddComponent implements OnInit {
 
   protected addCall: string = 'jail.fetch';
-  public route_success: string[] = ['plugins', 'available'];
+  public route_goback: string[] = ['plugins', 'available'];
+  public route_success: string[] = ['plugins', 'installed'];
   protected isEntity: boolean = false;
 
   public fieldConfig: FieldConfig[] = [{
@@ -287,7 +288,7 @@ export class PluginAddComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(new Array('').concat(this.route_success));
+    this.router.navigate(new Array('').concat(this.route_goback));
   }
 
   onSubmit(event: Event) {
