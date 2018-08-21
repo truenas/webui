@@ -47,6 +47,7 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
 
   public widgetColorCssVar = "var(--cyan)";
   private chartData:CoreEvent;
+  public invalidData:boolean = false;
 
   constructor(public router: Router, public translate: TranslateService){
     super(router, translate);
@@ -74,7 +75,20 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
   registerObservers(cores){
     for(let i = 0; i < cores; i++){
       this.core.register({observerClass:this,eventName:"StatsCpuTemp" + i}).subscribe((evt:CoreEvent) => {
-        this.collectData(i, evt.data);
+        let valid = true;
+        for(let i = 0; i < evt.data.data.length; i++){
+          if(evt.data.data[i] !== -1 && parseInt(evt.data.data[i]) >= 0){
+            break;
+          } else {
+            valid = false;
+          }
+        }
+        if(!valid){
+          this.invalidData = true;
+          this.loader = false;
+        } else {
+          this.collectData(i, evt.data);
+        }
       });
     }
   }

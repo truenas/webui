@@ -64,6 +64,16 @@
   fill:var(--bg2) !important;
 }
 
+/* Invalid Data Message*/
+.message-invalid-data{
+  min-height:176px;
+  padding-top:80px;
+  text-align:center;
+}
+.message-invalid-data h3{
+  opacity:0.75;
+}
+
 /* NARROW SCREENS */
 .xs.widget{
   width:100%;

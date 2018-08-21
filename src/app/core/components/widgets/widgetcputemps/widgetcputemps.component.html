@@ -11,11 +11,19 @@
         <!--<viewchartline fxFlex="100" fxFlexAlign="end" #chartCpu width="600" height="160" [style.display]="isFlipped ? 'none': 'block'"></viewchartline>-->
         <!-- Chart -->
         <div class="chart-wrapper">
+          <ng-container *ngIf="!invalidData">
           <div [id]="chartId"></div>
           <div class="x-axis">
             <div class="start-time">{{startTime}}</div>
             <div class="end-time">{{endTime}}</div>
           </div>
+          </ng-container>
+          <ng-container *ngIf="invalidData">
+            <div class="message-invalid-data">
+              <h3>CPU temperature data unavailable.</h3>
+              <!--<p>(Is this a virtual machine?)</p>-->
+            </div>
+          </ng-container>
         </div>
 
         <!-- DETAILS -->
