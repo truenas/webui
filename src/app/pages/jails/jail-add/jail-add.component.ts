@@ -870,9 +870,8 @@ export class JailAddComponent implements OnInit {
       placeholder: T('jail_zfs_dataset'),
       tooltip: T('Define the dataset to be jailed and fully handed \
                   over to a jail. Enter a ZFS filesystem name \
-                  <i>without</i> a pool name. <br> \
-                  The <b>jail_zfs</b> option must be set for this \
-                  option to work.'),
+                  <i>without</i> a pool name. <b>jail_zfs</b> must \
+                  be set for this option to work.'),
     },
     {
       type: 'input',
