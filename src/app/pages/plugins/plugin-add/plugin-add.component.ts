@@ -334,9 +334,21 @@ export class PluginAddComponent implements OnInit {
     this.dialogRef.componentInstance.setCall(this.addCall, [value]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
-      this.dialogRef.close(false);
-      this.snackBar.open(T("Plugin installed."), T("Close"), { duration: 5000 });
-      this.router.navigate(new Array('/').concat(this.route_success));
+      this.dialogRef.componentInstance.setTitle(T("Plugin installed successfully"));
+      let install_notes = '<p><b>Install Notes:</b></p>';
+      for (let i in res.result.install_notes) {
+        if (res.result.install_notes[i] == "") {
+          install_notes += '<br>';
+        } else {
+          install_notes += '<p>' + res.result.install_notes[i] + '</p>';
+        }
+      }
+      this.dialogRef.componentInstance.setDescription(install_notes);
+      this.dialogRef.componentInstance.showCloseButton = true;
+
+      this.dialogRef.afterClosed().subscribe(result => {
+        this.router.navigate(new Array('/').concat(this.route_success));
+      });
     });
   }
 
