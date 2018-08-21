@@ -12,7 +12,7 @@ export class ConfirmDialog {
 
   public title: string;
   public message: string;
-  public buttonMsg: string = T("Ok");
+  public buttonMsg: string = T("Continue");
   public hideCheckBox = false;
   public isSubmitEnabled = false;
   public secondaryCheckBox = false;

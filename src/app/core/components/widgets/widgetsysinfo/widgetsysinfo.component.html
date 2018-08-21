@@ -5,15 +5,8 @@
         <mat-progress-bar class="widget-loader" *ngIf="loader" mode="indeterminate"></mat-progress-bar>
         <!-- Summary Section -->
         <div fxFlex="100" fxFlex.gt-xs="40" class="card-bg-wrapper">
-          <!--
-          <div class="card-bg" [ngStyle]="{'background-image': 'url(assets/images/' + cardBg + ')'}" *ngIf="cardBg !== 'logo.svg'"></div>
-          <div class="logo-bg" id="widget-sysinfo-logo-bg"  *ngIf="cardBg == 'logo.svg'"><img class="os-logo" src="assets/images/logo.svg"></div>
-          -->
           <div class="platform-image">
-            <!--<img src="assets/images/{{cardBg}}">-->
-            <!--<div class="card-bg" [ngStyle]="{'background-image': 'url(assets/images/' + cardBg + ')'}" *ngIf="cardBg !== 'logo.svg'"></div>
-              <div class="logo-bg" id="widget-sysinfo-logo-bg"  *ngIf="cardBg == 'logo.svg'"><img class="os-logo" src="assets/images/logo.svg"></div>-->
-            <div class="card-bg" [ngStyle]="{'background-image': 'url(assets/images/' + cardBg + ')'}"></div>
+              <div class="card-bg" [style.background-image]="cardBg ? 'url(assets/images/' + cardBg + ')' : 'none'"></div>
           </div>
           <div class="title-wrapper">
             <p class="platform-logo"><img src="assets/images/light-logo-full.svg"></p>
@@ -38,10 +31,6 @@
             </div>
           </div>
 
-          <!--<div class="data-row">
-            <div class="data-inline"><span class="label bold"><strong>{{"HostName" | translate}}:</strong> </span>  <p class="value">{{data.hostname}}</p></div>
-            <div class="data-inline"><span class="label bold"><strong>{{"IP Address" | translate}}:</strong> </span>  <p class="value">{{connectionIp}}</p></div>
-            </div>-->
           <div class="data-row"><span class="label bold"><strong>{{"HostName" | translate}}:</strong> </span>  <p class="value">{{data.hostname}}</p></div>
           <div class="data-row"><span class="label bold"><strong>{{"Uptime" | translate}}:</strong> </span>  <p class="value">{{data.uptime}}</p></div>
           <div class="data-row">
@@ -53,7 +42,6 @@
           <button class="update-btn" mat-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])">{{updateBtnLabel | translate}}</button>
         </div>
       </mat-card-content>
-      <!--<div class="widget-footer"><button md-raised-button color="primary" (click)="toggleConfig()">Flip</button></div>-->
     </mat-card>
 
     <!-- Flip Side -->
@@ -61,7 +49,7 @@
       <mat-card-content>
         <h3>Form goes here</h3>
       </mat-card-content>
-      <div class="widget-footer"><button mat-raised-button color="primary" (click)="toggleConfig()">{{"Flip" | translate}}</button></div>
+      <div class="widget-footer"><button mat-button color="primary" (click)="toggleConfig()">{{"Flip" | translate}}</button></div>
     </mat-card>
   </div>
 </div>

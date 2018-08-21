@@ -35,11 +35,17 @@ $violet-txt:'#fff';
 $blue-txt:'#fff';
 $cyan-txt:'#333';
 $green-txt:'#fff';
+$primary-txt:'#fff';
+$accent-txt:'#333';
 
 $primary: $blue;
 $accent: $yellow;
 $warn: $red;
 $tooltip:'inline';//display property
+
+// Logo images
+$logo: url('assets/images/light-logo.svg');
+$logo-text: url('assets/images/light-logo-text.svg');
 
 $md-primary: (
     50 : #e0f2fa,
@@ -274,7 +280,9 @@ h4{
 .mat-step-header .mat-step-icon,
 div.hopscotch-bubble{
       @include variable(background, --primary, $primary, !important);
-      @include variable(color, #fff, #fff, !important);
+      //@include variable(color, #fff, #fff, !important);
+      @include variable(color, --primary-txt, $primary-txt, !important);
+
 }
 
 .mat-bg-accent,
@@ -317,16 +325,20 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
 .app-user .app-user-name, .text-muted,
 .mat-expansion-panel-header-title,
 .mat-expansion-panel-header-description, 
-.mat-expansion-indicator,
+
 .mat-list .mat-list-item,
 .mat-menu-panel button,
 .mat-paginator-navigation-next, .mat-paginator-navigation-previous,
-.mat-expansion-panel span.mat-expansion-indicator,
+
 .mat-nav-list .mat-list-item, 
 .mat-form-field-label,
 .mat-selection-list .mat-list-item,.mat-option,
-.mat-select-arrow, .mat-select-value{
-  @include variable(color, --fg2, $fg2);
+.mat-select-arrow, .mat-select-value {
+  @include variable(color, --fg2, $fg2, !important);
+}
+
+.mat-form-field .mat-select.mat-select-disabled .mat-select-arrow {
+  opacity: 0.38;
 }
 
 .mat-menu-panel,
@@ -344,7 +356,7 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
 .mat-button.mat-primary,
 .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > a > span, 
 .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a,
-.mat-form-field.mat-focused.mat-primary .mat-select-arrow,
+.mat-form-field.mat-focused.mat-primary
 .mat-focused .mat-form-field-label{
   @include variable(color, --primary, $primary, !important);
 }
@@ -394,10 +406,34 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
   opacity:0.38;
 }
 
-.egret-swatch,
-.mat-checkbox-frame,
-{ 
-  @include variable(border-color, --alt-fg1, $alt-fg1);
+.egret-swatch, .mat-checkbox-frame, .mat-radio-outer-circle { 
+  @include variable(border-color, --fg1, $fg1);
+  // border-color: gray;
+}
+
+.headerCheckBox .mat-checkbox-frame {
+  @include variable(border-color, --primary-txt, $primary-txt);
+}
+
+// #select-all-checkbox-and-label .mat-checkbox {
+//   @include variable(border-color, --primary-txt, $primary-txt);
+// }
+
+.ngx-datatable .datatable-body .mat-checkbox-frame {
+  @include variable(border-color, --alt-fg1, $alt-fg1, !important);
+}
+
+.mat-expansion-indicator::after, button.card-close, .mat-pseudo-checkbox {
+  @include variable(color, --primary-txt, $primary-txt);
+}
+
+.toggle-children {
+  filter: invert(50%);
+}
+
+.mat-menu-item[disabled] {
+  @include variable(color, --primary-txt, $primary-txt);
+  opacity: 0.38;
 }
 
 .spacer{
@@ -751,7 +787,7 @@ iscsi .mat-ink-bar {
 }
 
 // Keeps buttons on UI prefs form from overflowing page
-@media (min-width: 600px) and (max-width:715px) {
+@media (min-width: 600px) and (max-width:740px) {
   .prefs-form button {
     display: block;
     margin-bottom: 10px !important;
@@ -805,7 +841,7 @@ iscsi .mat-ink-bar {
   @include variable(background-color, --primary, $primary);
 }
 
-.mat-dialog-container .mat-button {
+.mat-dialog-container .mat-button, .mat-button {
   text-transform: uppercase !important;
   font-weight: 500 !important;
 }
@@ -835,7 +871,29 @@ iscsi .mat-ink-bar {
 }
 
 // pw show button on entity tables
-#show-pw {
-  @include variable(background-color, --primary, $primary);
-  color: white;
+// #show-pw {
+//   @include variable(background-color, --primary, $primary);
+//   color: white;
+// }
+
+// Define logo via CSS properties
+.logo{
+ /*   @include variable(background-image, --logo, $logo !important); //url(assets/images/logo.svg);
+    background-size: contain;
+    width: 52px;
+    height: 48px;
+    background-repeat: no-repeat;
+    background-position: 0 4px;
+    left: -6px;
+    position: relative;*/
+}
+.logo-text{
+   /* @include variable(background-image, --logo-text, $logo-text !important); //url(assets/images/logo-text.svg);
+    width: 112px;
+    height: 40px;
+    position: relative;
+    top: 0;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: 2px 0;*/
 }

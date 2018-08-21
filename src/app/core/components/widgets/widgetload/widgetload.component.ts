@@ -33,6 +33,7 @@ export class WidgetLoadComponent extends WidgetChartComponent implements AfterVi
 
   ngOnDestroy(){
     this.core.emit({name:"StatsRemoveListener", data:{name:"Load", obj:this}});
+    this.core.unregister({observerClass:this});
   }
 
   ngAfterViewInit(){

@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChild, Input } from '@angular/core';
+import { Component,OnDestroy, AfterViewInit, ViewChild, Input } from '@angular/core';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
@@ -12,7 +12,7 @@ import { Subject } from 'rxjs/Subject';
   templateUrl: './vm-summary.component.html',
   styleUrls: ['./vm-summary.component.css']
 })
-export class VmSummaryComponent implements AfterViewInit {
+export class VmSummaryComponent implements AfterViewInit, OnDestroy {
 
   @ViewChild('cpu') cpuChart:ViewChartLineComponent;
   @ViewChild('zpool') zpoolChart:ViewChartDonutComponent;
@@ -28,23 +28,23 @@ export class VmSummaryComponent implements AfterViewInit {
   ngAfterViewInit() {
 
     this.core.register({observerClass:this,eventName:"PoolData"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
+      //console.log(evt);
       this.setPoolData(evt);
     });
 
     this.core.register({observerClass:this,eventName:"StatsCpuData"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
+      //console.log(evt);
       this.setCPUData(evt);
       //this.setNetData(evt);
     });
 
     this.core.register({observerClass:this,eventName:"StatsVmemoryUsage"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
+      //console.log(evt);
       this.setMemData(evt);
     });
 
     this.core.register({observerClass:this,eventName:"SysInfo"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
+      //console.log(evt);
       this.setMemTotal(evt);
     });
 
@@ -66,11 +66,15 @@ export class VmSummaryComponent implements AfterViewInit {
 
    }
 
+  ngOnDestroy(){
+    this.core.unregister({observerClass:this});
+  }
+
   setMemData(evt:CoreEvent){
     this.memChart.title = "vMemory in Use";
-    this.memChart.units="GB";
+    this.memChart.units="GiB";
 
-    // Convert to GB
+    // Convert to GiB
     let RNP = (<any>window).filesize(evt.data.RNP, {output: "object", exponent:3});
     let PRD = (<any>window).filesize(evt.data.PRD, {output: "object", exponent:3});
     let RPRD = (<any>window).filesize(evt.data.RPRD, {output: "object", exponent:3});
@@ -106,27 +110,27 @@ export class VmSummaryComponent implements AfterViewInit {
   setPoolData(evt:CoreEvent){
     let usedObj = (<any>window).filesize(evt.data[0].used, {output: "object", exponent:3});
     let used: ChartData = {
-      legend: 'Used', 
+      legend: 'Used',
       data: [usedObj.value]
     };
 
     let  availableObj = (<any>window).filesize(evt.data[0].avail, {output: "object", exponent:3});
     let available: ChartData = {
-      legend:'Available', 
+      legend:'Available',
       data: [availableObj.value]
     };
 
-    this.zpoolChart.units = 'GB';
+    this.zpoolChart.units = 'GiB';
     this.zpoolChart.title = 'Zpool';
     this.zpoolChart.data = [used,available];
-    console.log(this.zpoolChart.data);
+    //console.log(this.zpoolChart.data);
     this.zpoolChart.width = this.chartSize;
     this.zpoolChart.height = this.chartSize;
   }
 
   setCPUData(evt:CoreEvent){
-    console.log("SET CPU DATA");
-    console.log(evt.data);
+    //console.log("SET CPU DATA");
+    //console.log(evt.data);
     let cpuUserObj = evt.data;
 
     let parsedData = [];
@@ -147,7 +151,7 @@ export class VmSummaryComponent implements AfterViewInit {
     this.cpuChart.units = '%';
     this.cpuChart.timeSeries = true;
     this.cpuChart.timeFormat = '%H:%M';// eg. %m-%d-%Y %H:%M:%S.%L
-      this.cpuChart.timeData = evt.data.meta;
+    this.cpuChart.timeData = evt.data.meta;
     this.cpuChart.data = parsedData;//[cpuUser];
     this.cpuChart.width = this.chartSize;
     this.cpuChart.height = this.chartSize;

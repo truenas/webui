@@ -24,7 +24,8 @@ import { MatSnackBar, MatDialog } from '@angular/material';
 export class PluginAddComponent implements OnInit {
 
   protected addCall: string = 'jail.fetch';
-  public route_success: string[] = ['plugins', 'available'];
+  public route_goback: string[] = ['plugins', 'available'];
+  public route_success: string[] = ['plugins', 'installed'];
   protected isEntity: boolean = false;
 
   public fieldConfig: FieldConfig[] = [{
@@ -287,7 +288,7 @@ export class PluginAddComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(new Array('').concat(this.route_success));
+    this.router.navigate(new Array('').concat(this.route_goback));
   }
 
   onSubmit(event: Event) {
@@ -334,41 +335,22 @@ export class PluginAddComponent implements OnInit {
     this.dialogRef.componentInstance.setCall(this.addCall, [value]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
-      this.dialogRef.close(false);
-      this.snackBar.open(T("Plugin installed."), T("Close"), { duration: 5000 });
-      this.router.navigate(new Array('/').concat(this.route_success));
-    });
-    this.dialogRef.componentInstance.failure.subscribe((error) => {
-      this.ws.call('jail.delete', [this.pluginName]).subscribe(
-          (jailDeleteRes) => {},
-          (jailDeleteRes) => {
-            new EntityUtils().handleWSError(this, jailDeleteRes);
-          }
-        );
-    });
+      this.dialogRef.componentInstance.setTitle(T("Plugin installed successfully"));
+      let install_notes = '<p><b>Install Notes:</b></p>';
+      for (let i in res.result.install_notes) {
+        if (res.result.install_notes[i] == "") {
+          install_notes += '<br>';
+        } else {
+          install_notes += '<p>' + res.result.install_notes[i] + '</p>';
+        }
+      }
+      this.dialogRef.componentInstance.setDescription(install_notes);
+      this.dialogRef.componentInstance.showCloseButton = true;
 
-    // this.loader.open();
-    // this.ws.job(this.addCall, [value]).subscribe(
-    //   (res) => {
-    //     this.loader.close();
-    //     if (res.error) {
-    //       this.dialogService.errorReport(res.error, '', res.exception);
-    //       this.ws.call('jail.delete', [this.pluginName]).subscribe(
-    //         (jailDeleteRes) => {},
-    //         (jailDeleteRes) => {
-    //           new EntityUtils().handleError(this, jailDeleteRes);
-    //         }
-    //       );
-    //     } else {
-    //       this.snackBar.open(T("Plugin installed."), T("Close"), { duration: 5000 });
-    //       this.router.navigate(new Array('/').concat(this.route_success));
-    //     }
-    //   },
-    //   (res) => {
-    //     this.loader.close();
-    //     this.dialogService.errorReport('Error ' + res.error + ':' + res.reason, res.trace.class, res.trace.formatted);
-    //   }
-    // );
+      this.dialogRef.afterClosed().subscribe(result => {
+        this.router.navigate(new Array('/').concat(this.route_success));
+      });
+    });
   }
 
   setDisabled(name: string, disable: boolean) {

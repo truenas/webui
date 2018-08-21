@@ -139,53 +139,7 @@ export class VolumesListTableConfig implements InputTableConf {
         actions.push({
           label: T("Unlock"),
           onClick: (row1) => {
-            let localLoader = this.loader,
-            localRest = this.rest,
-            localParentVol = this.parentVolumesListComponent,
-            localDialogService = this.dialogService,
-            localSnackBar = this.snackBar;
-
-            const conf: DialogFormConfiguration = {
-              title: "Unlock " + row1.name,
-              fieldConfig: [{
-                type : 'input',
-                inputType: 'password',
-                name : 'passphrase',
-                placeholder: T('Passphrase'),
-              },
-              {
-                type: 'input',
-                name: 'recovery_key',
-                placeholder: T('Recovery Key'),
-                tooltip: T('Click <b>Browse</b> to select a recovery key to\
-                            upload. This allows the system to decrypt the\
-                            disks.'),
-                inputType: 'file',
-                fileType: 'binary'
-              },
-              ],
-
-              saveButtonText: T("Unlock"),
-              customSubmit: function (entityDialog) {
-                const value = entityDialog.formValue;
-                localLoader.open();
-                return localRest.post("storage/volume/" + row1.name + "/unlock/",
-                  { body: JSON.stringify({
-                     passphrase: value.passphrase,
-                     recovery_key: value.recovery_key 
-                    }) 
-                  }).subscribe((restPostResp) => {
-                  entityDialog.dialogRef.close(true);
-                  localLoader.close();
-                  localParentVol.repaintMe();
-                  localSnackBar.open(row1.name + " has been unlocked.", 'close', { duration: 5000 });
-                }, (res) => {
-                  localLoader.close();
-                  localDialogService.errorReport(T("Error Unlocking"), res.error, res.stack);
-                });
-              }
-            }
-            this.dialogService.dialogForm(conf);
+            this.unlockAction(row1);
           }
         });
       }
@@ -264,6 +218,56 @@ export class VolumesListTableConfig implements InputTableConf {
     return actions;
   }
 
+  unlockAction(row1) {
+    let localLoader = this.loader,
+    localRest = this.rest,
+    localParentVol = this.parentVolumesListComponent,
+    localDialogService = this.dialogService,
+    localSnackBar = this.snackBar;
+
+    const conf: DialogFormConfiguration = {
+      title: "Unlock " + row1.name,
+      fieldConfig: [{
+        type : 'input',
+        inputType: 'password',
+        name : 'passphrase',
+        placeholder: T('Passphrase'),
+      },
+      {
+        type: 'input',
+        name: 'recovery_key',
+        placeholder: T('Recovery Key'),
+        tooltip: T('Click <b>Browse</b> to select a recovery key to\
+                    upload. This allows the system to decrypt the\
+                    disks.'),
+        inputType: 'file',
+        fileType: 'binary'
+      },
+      ],
+
+      saveButtonText: T("Unlock"),
+      customSubmit: function (entityDialog) {
+        const value = entityDialog.formValue;
+        localLoader.open();
+        return localRest.post("storage/volume/" + row1.name + "/unlock/",
+          { body: JSON.stringify({
+             passphrase: value.passphrase,
+             recovery_key: value.recovery_key 
+            }) 
+          }).subscribe((restPostResp) => {
+          entityDialog.dialogRef.close(true);
+          localLoader.close();
+          localParentVol.repaintMe();
+          localSnackBar.open(row1.name + " has been unlocked.", 'close', { duration: 5000 });
+        }, (res) => {
+          localLoader.close();
+          localDialogService.errorReport(T("Error Unlocking"), res.error, res.stack);
+        });
+      }
+    }
+    this.dialogService.dialogForm(conf);
+  }
+
   getPoolData(poolId: number) {
     return this.ws.call('pool.query', [
       [
@@ -317,6 +321,11 @@ export class VolumesListTableConfig implements InputTableConf {
               placeholder: T("Destroy data on this pool?"),
             }, {
               type: 'checkbox',
+              name: 'cascade',
+              value: true,
+              placeholder: T("Delete configuration of shares that used this pool?"),
+            }, {
+              type: 'checkbox',
               name: 'confirm',
               placeholder: T("Confirm detach"),
               required: true
@@ -342,7 +351,7 @@ export class VolumesListTableConfig implements InputTableConf {
               const value = entityDialog.formValue;
               localLoader.open();
               if (value.destroy === false) { 
-                return localRest.delete("storage/volume/" + row1.name, { body: JSON.stringify({ destroy: value.destroy }) 
+                return localRest.delete("storage/volume/" + row1.name, { body: JSON.stringify({ destroy: value.destroy, cascade: value.cascade }) 
                   }).subscribe((res) => {
                     entityDialog.dialogRef.close(true);
                     localLoader.close();
@@ -372,90 +381,92 @@ export class VolumesListTableConfig implements InputTableConf {
         }
       });
 
-      actions.push({
-        label: T("Extend"),
-        onClick: (row1) => {
-          this._router.navigate(new Array('/').concat(
-            ["storage", "pools", "manager", row1.id]));
-        }
-      });
-      actions.push({
-        label: T("Scrub Pool"),
-        onClick: (row1) => {
-          this.getPoolData(row1.id).subscribe((res) => {
-            if (res[0]) {
-              if (res[0].scan.function === "SCRUB" && res[0].scan.state === "SCANNING") {
-                const message = "Stop the scrub on " + row1.name + "?";
-                this.dialogService.confirm("Scrub Pool", message, false, T("Stop Scrub")).subscribe((res) => {
-                  if (res) {
-                    this.loader.open();
-                    this.rest.delete("storage/volume/" + row1.id + "/scrub/", { body: JSON.stringify({}) }).subscribe(
-                      (res) => {
-                        this.loader.close();
-                        this.snackBar.open(res.data, 'close', { duration: 5000 });
-                      },
-                      (res) => {
-                        this.loader.close();
-                        new EntityUtils().handleError(this, res);
-                      });
-                  }
-                });
-              } else {
-                const message = "Start a scrub on " + row1.name + "?";
-                this.dialogService.confirm("Scrub Pool", message, false, T("Start Scrub")).subscribe((res) => {
-                  if (res) {
-                    this.loader.open();
-                    this.rest.post("storage/volume/" + row1.id + "/scrub/", { body: JSON.stringify({}) }).subscribe(
-                      (res) => {
-                        this.loader.close();
-                        this.snackBar.open(res.data, 'close', { duration: 5000 });
-                      },
-                      (res) => {
-                        this.loader.close();
-                        new EntityUtils().handleError(this, res);
-                      });
-                  }
-                });
-              }
-            }
-          })
-        }
-      });
-      actions.push({
-        label: T("Status"),
-        onClick: (row1) => {
-          this._router.navigate(new Array('/').concat(
-            ["storage", "pools", "status", row1.id]));
-        }
-      });
-
-      if (rowData.is_upgraded === false) {
-
+      if (rowData.is_decrypted) {
         actions.push({
-          label: T("Upgrade Pool"),
+          label: T("Extend"),
           onClick: (row1) => {
-
-            this.dialogService.confirm(T("Upgrade Pool"), T("Proceed with upgrading the pool? WARNING: Upgrading a pool is a\
-                                                             one-way operation that might make some features of \
-                                                             the pool incompatible with older versions of FreeNAS: ") + row1.name).subscribe((confirmResult) => {
-                if (confirmResult === true) {
-                  this.loader.open();
-
-                  this.rest.post("storage/volume/" + row1.id + "/upgrade", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-                    this.loader.close();
-
-                    this.dialogService.Info(T("Upgraded"), T("Successfully Upgraded ") + row1.name).subscribe((infoResult) => {
-                      this.parentVolumesListComponent.repaintMe();
-                    });
-                  }, (res) => {
-                    this.loader.close();
-                    this.dialogService.errorReport(T("Error Upgrading Pool ") + row1.name, res.message, res.stack);
-                  });
-                }
-              });
-
+            this._router.navigate(new Array('/').concat(
+              ["storage", "pools", "manager", row1.id]));
           }
         });
+        actions.push({
+          label: T("Scrub Pool"),
+          onClick: (row1) => {
+            this.getPoolData(row1.id).subscribe((res) => {
+              if (res[0]) {
+                if (res[0].scan.function === "SCRUB" && res[0].scan.state === "SCANNING") {
+                  const message = "Stop the scrub on " + row1.name + "?";
+                  this.dialogService.confirm("Scrub Pool", message, false, T("Stop Scrub")).subscribe((res) => {
+                    if (res) {
+                      this.loader.open();
+                      this.rest.delete("storage/volume/" + row1.id + "/scrub/", { body: JSON.stringify({}) }).subscribe(
+                        (res) => {
+                          this.loader.close();
+                          this.snackBar.open(res.data, 'close', { duration: 5000 });
+                        },
+                        (res) => {
+                          this.loader.close();
+                          new EntityUtils().handleError(this, res);
+                        });
+                    }
+                  });
+                } else {
+                  const message = "Start a scrub on " + row1.name + "?";
+                  this.dialogService.confirm("Scrub Pool", message, false, T("Start Scrub")).subscribe((res) => {
+                    if (res) {
+                      this.loader.open();
+                      this.rest.post("storage/volume/" + row1.id + "/scrub/", { body: JSON.stringify({}) }).subscribe(
+                        (res) => {
+                          this.loader.close();
+                          this.snackBar.open(res.data, 'close', { duration: 5000 });
+                        },
+                        (res) => {
+                          this.loader.close();
+                          new EntityUtils().handleError(this, res);
+                        });
+                    }
+                  });
+                }
+              }
+            })
+          }
+        });
+        actions.push({
+          label: T("Status"),
+          onClick: (row1) => {
+            this._router.navigate(new Array('/').concat(
+              ["storage", "pools", "status", row1.id]));
+          }
+        });
+
+        if (rowData.is_upgraded === false) {
+
+          actions.push({
+            label: T("Upgrade Pool"),
+            onClick: (row1) => {
+
+              this.dialogService.confirm(T("Upgrade Pool"), T("Proceed with upgrading the pool? WARNING: Upgrading a pool is a\
+                                                              one-way operation that might make some features of \
+                                                              the pool incompatible with older versions of FreeNAS: ") + row1.name).subscribe((confirmResult) => {
+                  if (confirmResult === true) {
+                    this.loader.open();
+
+                    this.rest.post("storage/volume/" + row1.id + "/upgrade", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+                      this.loader.close();
+
+                      this.dialogService.Info(T("Upgraded"), T("Successfully Upgraded ") + row1.name).subscribe((infoResult) => {
+                        this.parentVolumesListComponent.repaintMe();
+                      });
+                    }, (res) => {
+                      this.loader.close();
+                      this.dialogService.errorReport(T("Error Upgrading Pool ") + row1.name, res.message, res.stack);
+                    });
+                  }
+                });
+
+            }
+          });
+        }
       }
     }
 
@@ -505,7 +516,7 @@ export class VolumesListTableConfig implements InputTableConf {
           onClick: (row1) => {
 
             this.dialogService.confirm(T("Delete"), T("This action is irreversible and will \
-             delete any existing snapshots of this dataset (" + row1.path + ").  Please confirm."), false).subscribe((res) => {
+             delete any existing snapshots of this dataset (" + row1.path + ").  Please confirm."), false, T('Delete Dataset')).subscribe((res) => {
                 if (res) {
 
                   this.loader.open();
@@ -553,7 +564,7 @@ export class VolumesListTableConfig implements InputTableConf {
       actions.push({
         label: T("Delete zvol"),
         onClick: (row1) => {
-          this.dialogService.confirm(T("Delete zvol:" + row1.path), T("Please confirm the deletion of zvol:" + row1.path), false).subscribe((confirmed) => {
+          this.dialogService.confirm(T("Delete zvol:" + row1.path), T("Please confirm the deletion of zvol:" + row1.path), false, T('Delete Zvol')).subscribe((confirmed) => {
             if (confirmed === true) {
               this.loader.open();
 

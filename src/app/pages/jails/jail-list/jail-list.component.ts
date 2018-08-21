@@ -31,12 +31,12 @@ export class JailListComponent implements OnInit {
   protected route_add_tooltip = "Add Jail";
 
   public columns: Array < any > = [
-    { name: 'Jail', prop: 'host_hostuuid', always_display: true },
-    { name: 'IPv4 Address', prop: 'ip4_addr' },
-    { name: 'IPv6 Address', prop: 'ip6_addr' },
-    { name: 'Status', prop: 'state' },
-    { name: 'Type', prop: 'type', hidden: true },
-    { name: 'Release', prop: 'release' },
+    { name: T('Jail'), prop: 'host_hostuuid', always_display: true },
+    { name: T('IPv4 Address'), prop: 'ip4_addr' },
+    { name: T('IPv6 Address'), prop: 'ip6_addr' },
+    { name: T('Status'), prop: 'state' },
+    { name: T('Type'), prop: 'type', hidden: true },
+    { name: T('Release'), prop: 'release' },
   ];
   public config: any = {
     paging: true,
@@ -45,7 +45,7 @@ export class JailListComponent implements OnInit {
   };
   public multiActions: Array < any > = [{
       id: "mstart",
-      label: "Start",
+      label: T("Start"),
       icon: "play_arrow",
       enable: true,
       ttpos: "above", // tooltip position
@@ -63,13 +63,13 @@ export class JailListComponent implements OnInit {
             },
             (res) => {
               this.loader.close();
-              new EntityUtils().handleError(this, res);
+              new EntityUtils().handleWSError(this.entityList, res);
             });
       }
     },
     {
       id: "mstop",
-      label: "Stop",
+      label: T("Stop"),
       icon: "stop",
       enable: true,
       ttpos: "above",
@@ -91,7 +91,7 @@ export class JailListComponent implements OnInit {
                 },
                 (res) => {
                   this.loader.close();
-                  new EntityUtils().handleError(this, res);
+                  new EntityUtils().handleWSError(this.entityList, res);
                 });
           }
         })
@@ -99,7 +99,7 @@ export class JailListComponent implements OnInit {
     },
     {
       id: "mupdate",
-      label: "Update",
+      label: T("Update"),
       icon: "update",
       enable: true,
       ttpos: "above",
@@ -113,13 +113,13 @@ export class JailListComponent implements OnInit {
             },
             (res) => {
               this.loader.close();
-              new EntityUtils().handleError(this, res);
+              new EntityUtils().handleWSError(this.entityList, res);
             });
       }
     },
     {
       id: "mdelete",
-      label: "Delete",
+      label: T("Delete"),
       icon: "delete",
       enable: true,
       ttpos: "above",
@@ -184,7 +184,7 @@ export class JailListComponent implements OnInit {
   getActions(parentRow) {
     return [{
         id: "edit",
-        label: "Edit",
+        label: T("Edit"),
         onClick: (row) => {
           this.ws.call(this.queryCall, [[["host_hostuuid", "=", row.host_hostuuid]]]).subscribe(
             (res) => {
@@ -199,7 +199,7 @@ export class JailListComponent implements OnInit {
       },
       {
         id: "mount",
-        label: "Mount points",
+        label: T("Mount points"),
         onClick: (row) => {
           this.router.navigate(
             //new Array('').concat(["jails", "storage", "add", row.host_hostuuid]));
@@ -208,29 +208,41 @@ export class JailListComponent implements OnInit {
       },
       {
         id: "start",
-        label: "Start",
+        label: T("Start"),
         onClick: (row) => {
           this.entityList.busy =
+            this.loader.open();
             this.ws.call('jail.start', [row.host_hostuuid]).subscribe(
-              (res) => { row.state = 'up'; this.updateMultiAction([row]); },
               (res) => {
-                new EntityUtils().handleError(this, res);
+                this.loader.close();
+                row.state = 'up';
+                this.updateMultiAction([row]);
+              },
+              (res) => {
+                this.loader.close();
+                new EntityUtils().handleWSError(this.entityList, res);
               });
         }
       },
       {
         id: "stop",
-        label: "Stop",
+        label: T("Stop"),
         onClick: (row) => {
           let dialog = {};
           this.dialogService.confirm("Stop", "Stop the selected jails?", 
             dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : true , T('Stop')).subscribe((res) => {
             if (res) {
+              this.loader.open();
               this.entityList.busy =
                 this.ws.call('jail.stop', [row.host_hostuuid]).subscribe(
-                  (res) => { row.state = 'down'; this.updateMultiAction([row]);},
                   (res) => {
-                    new EntityUtils().handleError(this, res);
+                    this.loader.close();
+                    row.state = 'down';
+                    this.updateMultiAction([row]);
+                  },
+                  (res) => {
+                    this.loader.close();
+                    new EntityUtils().handleWSError(this.entityList, res);
                   });
             }
           })
@@ -238,7 +250,7 @@ export class JailListComponent implements OnInit {
       },
       {
         id: "update",
-        label: "Update",
+        label: T("Update"),
         onClick: (row) => {
           this.loader.open();
           this.entityList.busy =
@@ -248,13 +260,13 @@ export class JailListComponent implements OnInit {
               },
               (res) => {
                 this.loader.close();
-                new EntityUtils().handleError(this, res);
+                new EntityUtils().handleWSError(this.entityList, res);
               });
         }
       },
       {
         id: "shell",
-        label: "Shell",
+        label: T("Shell"),
         onClick: (row) => {
           this.router.navigate(
             new Array('').concat(["jails", "shell", row.host_hostuuid]));
@@ -262,7 +274,7 @@ export class JailListComponent implements OnInit {
       },
       {
         id: "delete",
-        label: "Delete",
+        label: T("Delete"),
         onClick: (row) => {
           this.entityList.doDelete(row.host_hostuuid);
         }

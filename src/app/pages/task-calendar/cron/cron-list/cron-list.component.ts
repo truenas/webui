@@ -23,17 +23,17 @@ export class CronListComponent {
   protected entityList: any;
 
   public columns: Array < any > = [
-    { name: 'Users', prop: 'cron_user' },
-    { name: 'Command', prop: 'cron_command' },
-    { name: 'Description', prop: 'cron_description' },
-    { name: 'Minute', prop: 'cron_minute' },
-    { name: 'Hour', prop: 'cron_hour' },
-    { name: 'Day of Month', prop: 'cron_daymonth' },
-    { name: 'Month', prop: 'cron_month' },
-    { name: 'Day of Week', prop: 'cron_dayweek' },
-    { name: 'Redirect Stdout', prop: 'cron_stdout', hidden: true },
-    { name: 'Redirect Stderr', prop: 'cron_stderr', hidden: true },
-    { name: 'Enabled', prop: 'cron_enabled' },
+    { name: T('Users'), prop: 'cron_user' },
+    { name: T('Command'), prop: 'cron_command' },
+    { name: T('Description'), prop: 'cron_description' },
+    { name: T('Minute'), prop: 'cron_minute' },
+    { name: T('Hour'), prop: 'cron_hour' },
+    { name: T('Day of Month'), prop: 'cron_daymonth' },
+    { name: T('Month'), prop: 'cron_month' },
+    { name: T('Day of Week'), prop: 'cron_dayweek' },
+    { name: T('Redirect Stdout'), prop: 'cron_stdout', hidden: true },
+    { name: T('Redirect Stderr'), prop: 'cron_stderr', hidden: true },
+    { name: T('Enabled'), prop: 'cron_enabled' },
   ];
   public config: any = {
     paging: true,
@@ -52,7 +52,7 @@ export class CronListComponent {
       label : T("Run Now"),
       id: "run",
       onClick : (members) => {
-        this.dialog.confirm(T("Run Now"), T(" Would you like to run this cron job now?"), true).subscribe((run) => {
+        this.dialog.confirm(T("Run Now"), T("Run this cron job now?"), true).subscribe((run) => {
           if (run) {
             this.rest.post(this.resource_name + '/' + row.id + '/run/', {} ).subscribe((res) => {
               this.translate.get("close").subscribe((close) => {

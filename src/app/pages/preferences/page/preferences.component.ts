@@ -1,4 +1,4 @@
-import { ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, ViewContainerRef, OnChanges } from '@angular/core';
+import { ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, ViewContainerRef, OnChanges, OnDestroy } from '@angular/core';
 import { NgModel }   from '@angular/forms';
 import {Router} from '@angular/router';
 import * as _ from 'lodash';
@@ -25,7 +25,7 @@ import { Subject } from 'rxjs/Subject';
   </mat-card>
   `
 })
-export class PreferencesPage implements OnInit {
+export class PreferencesPage implements OnInit, OnDestroy {
 
   /*
    //Preferences Object Structure
@@ -53,6 +53,10 @@ export class PreferencesPage implements OnInit {
 
     ngOnInit(){
       //this.init();
+    }
+
+    ngOnDestroy(){
+      this.core.unregister({observerClass:this});
     }
 
     /*ngOnChanges(changes){
