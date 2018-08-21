@@ -459,13 +459,44 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     let colProp = event.column.prop;
     const sort = event.sorts[0];
     const rows = this.currentRows;
-    rows.sort((a, b) => {
-      return a[sort.prop].localeCompare(b[sort.prop]) * (sort.dir === 'desc' ? -1 : 1);
-    });
-    console.log(rows[0].refer)
+    // rows.sort((a, b) => {
+    //   return a[sort.prop].localeCompare(b[sort.prop]) * (sort.dir === 'desc' ? -1 : 1);
+    // });
+
+    // console.log(sort.prop, sort.dir)
+
+    this.sorter(rows, sort.prop, sort.dir);
+    // console.log(rows[0].refer)
     this.rows = rows;
     this.setPaginationInfo();
   }
+
+  // Sorts array 'natural' order, ie, allowing for letter and numbers together
+  public sorter(arr, key, asc) {
+    const tempArr = [];
+    let v;
+    arr.forEach((item) => {
+        tempArr.push(item[key]);
+    });
+    // console.log(tempArr)
+    // The Intl Collator allows language-sensitive str comparison and can allow for numbers
+    const myCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+    // Sort keys into 'natural' order
+    const sorter = tempArr.sort(myCollator.compare);
+    // console.log(sorter)
+    asc==='asc' ? (v = 1) : (v = -1);
+    // Takes the key list and matches it to the sorted array of keys
+    arr.sort((a, b) => {
+        const A = a[key],
+            B = b[key];
+        if (sorter.indexOf(A) > sorter.indexOf(B)) {
+            return 1 * v;
+        } else {
+            return -1 * v;
+        }
+    });
+    return arr;
+    }
 
   /**
    * some structure... should be the same as the other rows.
