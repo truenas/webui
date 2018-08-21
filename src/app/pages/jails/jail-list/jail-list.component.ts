@@ -7,6 +7,7 @@ import { EntityUtils } from '../../common/entity/utils';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogService } from '../../../../app/services';
 import { T } from '../../../translate-marker';
+import { MatSnackBar } from '@angular/material';
 
 
 @Component({
@@ -63,7 +64,7 @@ export class JailListComponent implements OnInit {
             },
             (res) => {
               this.loader.close();
-              new EntityUtils().handleWSError(this.entityList, res);
+              new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
             });
       }
     },
@@ -91,7 +92,7 @@ export class JailListComponent implements OnInit {
                 },
                 (res) => {
                   this.loader.close();
-                  new EntityUtils().handleWSError(this.entityList, res);
+                  new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
                 });
           }
         })
@@ -110,10 +111,15 @@ export class JailListComponent implements OnInit {
           this.ws.job('core.bulk', ["jail.update_to_latest_patch", selectedJails]).subscribe(
             (res) => {
               this.loader.close();
+              if (res.state == 'SUCCESS') {
+                this.snackBar.open(T("Selected Jail(s) updated successfully."), T("Close"), { duration: 5000 });
+              } else {
+                new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
+              }
             },
             (res) => {
               this.loader.close();
-              new EntityUtils().handleWSError(this.entityList, res);
+              new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
             });
       }
     },
@@ -130,7 +136,8 @@ export class JailListComponent implements OnInit {
   ];
 
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, 
-    protected loader: AppLoaderService, protected dialogService: DialogService, private translate: TranslateService) {}
+    protected loader: AppLoaderService, protected dialogService: DialogService, private translate: TranslateService,
+    protected snackBar: MatSnackBar) {}
 
   public tooltipMsg: any = T("Choose a pool where the iocage jail manager \
                               can create the /iocage dataset. The /iocage \
@@ -220,7 +227,7 @@ export class JailListComponent implements OnInit {
               },
               (res) => {
                 this.loader.close();
-                new EntityUtils().handleWSError(this.entityList, res);
+                new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
               });
         }
       },
@@ -242,7 +249,7 @@ export class JailListComponent implements OnInit {
                   },
                   (res) => {
                     this.loader.close();
-                    new EntityUtils().handleWSError(this.entityList, res);
+                    new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
                   });
             }
           })
@@ -257,10 +264,15 @@ export class JailListComponent implements OnInit {
             this.ws.job('jail.update_to_latest_patch', [row.host_hostuuid]).subscribe(
               (res) => {
                 this.loader.close();
+                if (res.state == 'SUCCESS') {
+                  this.snackBar.open(T("Jail updated successfully."), T("Close"), { duration: 5000 });
+                } else {
+                  new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
+                }
               },
               (res) => {
                 this.loader.close();
-                new EntityUtils().handleWSError(this.entityList, res);
+                new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
               });
         }
       },
