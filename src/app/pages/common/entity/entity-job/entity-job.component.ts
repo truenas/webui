@@ -8,6 +8,7 @@ import { Http } from '@angular/http';
 @Component({
   selector: 'entity-job',
   templateUrl: 'entity-job.component.html',
+  styleUrls: ['./entity-job.component.css'],
 })
 export class EntityJobComponent implements OnInit {
 
@@ -34,7 +35,7 @@ export class EntityJobComponent implements OnInit {
     // this.dialogRef.updateSize('35%', '200px');
 
     if (this.data.title) {
-      this.title = this.data.title;
+      this.setTitle(this.data.title);
     }
 
     if (this.dialogRef.disableClose) {
@@ -51,6 +52,10 @@ export class EntityJobComponent implements OnInit {
 
   setDescription(desc: string) {
     this.description = desc;
+  }
+
+  setTitle(title: string) {
+    this.title = title;
   }
 
   @HostListener('progress', ['$event'])
