@@ -62,6 +62,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
       this.loader = false;
     }
   }
+  public voldataavail = false;
 
   public title:string = T("ZFS Pool");
   @Input() volumeData:VolumeData;
@@ -189,6 +190,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     } else {
       let availableObj = (<any>window).filesize(this.volumeData.avail, {output: "object", exponent:3});
       availableValue = availableObj.value;
+      this.voldataavail = true;
     }
     let available: ChartData = {
       legend:'Available', 
