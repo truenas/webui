@@ -79,7 +79,7 @@ export class StorageListComponent {
         this.loader.open();
         this.loaderOpen = true;
         let data = {};
-        this.busy = this.ws.call('jail.fstab', [this.jailId, { "action": "REMOVE", "source": "", "destination": "", "fstype": "", "fsoptions": "", "dump": "", "pass": "" , "index": id}]).subscribe(
+        this.busy = this.ws.call('jail.fstab', [this.jailId, { "action": "REMOVE", "index": id}]).subscribe(
           (res) => { this.getData() },
           (res) => {
             new EntityUtils().handleError(this, res);
