@@ -302,6 +302,16 @@ export class VMWizardComponent {
       }
     });
 
+    ( < FormGroup > entityWizard.formArray.get([1]).get('bootloader')).valueChanges.subscribe((bootloader) => {
+      if(bootloader === "UEFI_CSM"){
+        _.find(this.wizardConfig[1].fieldConfig, {name : 'enable_vnc'}).isHidden = true;
+      } else {
+        _.find(this.wizardConfig[1].fieldConfig, {name : 'enable_vnc'}).isHidden = false;
+      }
+
+
+    });
+
 
     ( < FormGroup > entityWizard.formArray.get([1]).get('os')).valueChanges.subscribe((res) => {
       this.summary[T('Guest Operating System')] = res;
