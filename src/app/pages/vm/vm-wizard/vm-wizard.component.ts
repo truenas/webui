@@ -499,7 +499,7 @@ async customSubmit(value) {
       {"dtype": "DISK", "attributes": {"path": hdd, "type": "AHCI", "sectorsize": 0}},
       {"dtype": "CDROM", "attributes": {"path": value.iso_path}},
     ]
-    if(value.enable_vnc &&value.bootloader !== "UEFI_CSM"){
+    if(value.enable_vnc){
       await this.create_vnc_device(vm_payload);
     };
     this.loader.open();
