@@ -374,7 +374,7 @@ export class DeviceEditComponent implements OnInit {
       'size': 'RAW_size',
       'order': 'RAW_order'
     };
-    this.ws.call('datastore.query', ['vm.device', [["id", "=", this.pk]]]).subscribe((device)=>{
+    this.ws.call('vm.device.query', [[['id', '=', parseInt(this.pk,10)]]]).subscribe((device)=>{
       if (device[0].dtype === 'CDROM'){
         this.setgetValues(device[0].attributes, cdrom_lookup_table);
         this.setgetValues(device[0], cdrom_lookup_table);
