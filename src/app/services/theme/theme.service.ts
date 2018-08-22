@@ -12,6 +12,8 @@ export interface Theme {
   accentColors: string[];
   favorite:boolean;
   hasDarkLogo: boolean;
+  logoPath?:string;
+  logoTextPath?:string;
   primary:string;
   accent:string;
   bg1:string
@@ -51,6 +53,8 @@ export class ThemeService {
       labelSwatch:"blue",
       description:'iX System Colors',
       hasDarkLogo:false,
+      logoPath:'assets/images/light-logo.svg',
+      logoTextPath:'light-logo-text.svg',
       favorite:false,
       accentColors:['blue', 'orange','green', 'violet','cyan', 'magenta', 'yellow','red'],
       primary:"var(--blue)",
@@ -78,6 +82,8 @@ export class ThemeService {
       labelSwatch:"blue",
       description:'Dracula color theme',
       hasDarkLogo:false,
+      logoPath:'assets/images/light-logo.svg',
+      logoTextPath:'light-logo-text.svg',
       favorite:false,
       accentColors:['blue', 'green','violet', 'yellow', 'red', 'cyan', 'magenta', 'orange'],
       primary:"var(--blue)",
@@ -105,6 +111,8 @@ export class ThemeService {
       labelSwatch:"bg2",
       description:'Solarized dark color scheme',
       hasDarkLogo:false,
+      logoPath:'assets/images/light-logo.svg',
+      logoTextPath:'light-logo-text.svg',
       favorite:false,
       accentColors:['red', 'blue', 'magenta', 'cyan', 'violet', 'green', 'orange', 'yellow'],
       primary:"var(--fg1)",
@@ -132,6 +140,8 @@ export class ThemeService {
       labelSwatch:"bg2",
       description:'Based on Solarized light color scheme',
       hasDarkLogo:false,
+      logoPath:'assets/images/light-logo.svg',
+      logoTextPath:'light-logo-text.svg',
       favorite:false,
       accentColors:['orange', 'green', 'cyan', 'yellow', 'violet', 'magenta', 'red', 'blue'],
       primary:"var(--alt-bg2)",
@@ -168,12 +178,13 @@ export class ThemeService {
     this.themesMenu = this.freenasThemes;
 
     this.core.register({observerClass:this,eventName:"Authenticated", sender:this.api}).subscribe((evt:CoreEvent) => {
+      this.core.emit({name:"ThemeChanged", data:this.findTheme(this.activeTheme), sender:this});
       this.loggedIn = evt.data;
       if(this.loggedIn == true){
         this.core.emit({ name:"UserDataRequest",data:[[["id", "=", 1]]] });
       } else {
         //console.warn("SETTING DEFAULT THEME");
-        this.setDefaultTheme();
+        this.resetToDefaultTheme();
       }
     });
 
@@ -196,14 +207,13 @@ export class ThemeService {
 
     this.core.register({observerClass:this,eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
       if(evt.data.customThemes){
-        //console.log("Custom Themes Detected");
         this.customThemes = evt.data.customThemes;
       }
 
       //if(evt.data.userTheme !== this.activeTheme){
         this.activeTheme = evt.data.userTheme;
-        this.setCssVars(this.findTheme(this.activeTheme));
-        this.core.emit({name:'ThemeChanged'});
+        this.setCssVars(this.findTheme(this.activeTheme, true));
+        this.core.emit({name:'ThemeChanged', data: this.findTheme(this.activeTheme), sender:this});
       //}
 
       if(evt.data.showTooltips){
@@ -214,7 +224,7 @@ export class ThemeService {
     });
   }
 
-  setDefaultTheme(){
+  resetToDefaultTheme(){
     this.activeTheme = "ix-blue";
     this.changeTheme(this.activeTheme);
   }
@@ -223,10 +233,15 @@ export class ThemeService {
     return this.findTheme(this.activeTheme);
   }
 
-  findTheme(name:string):Theme{
+  findTheme(name:string, reset?:boolean):Theme{
     for(let i in this.allThemes){
       let t = this.allThemes[i];
       if(t.name == name){ return t;}
+    }
+    if(reset){
+      //Optionally reset if not found
+      this.resetToDefaultTheme();
+      return this.freenasThemes[this.freeThemeDefaultIndex];
     }
   }
 
@@ -244,6 +259,8 @@ export class ThemeService {
 
   setCssVars(theme:Theme){ 
     let palette = Object.keys(theme);
+
+    // Isolate palette colors
     palette.splice(0,7);
 
     palette.forEach((color) => {
@@ -257,11 +274,30 @@ export class ThemeService {
 
       (<any>document).documentElement.style.setProperty("--" + color, theme[color]);
     });
+
+    // Set Material palette colors
     (<any>document).documentElement.style.setProperty("--primary",theme["primary"]);
     (<any>document).documentElement.style.setProperty("--accent",theme["accent"]);
+
+    // Set Material aux. text styles
+    let primaryColor = this.colorFromMeta(theme["primary"]); // eg. blue
+    let accentColor = this.colorFromMeta(theme["accent"]); // eg. yellow
+    let primaryTextColor = this.textContrast(theme[primaryColor], theme["bg2"]);
+    let accentTextColor = this.textContrast(theme[accentColor], theme["bg2"]);
+    (<any>document).documentElement.style.setProperty("--primary-txt", /*'var(--' + primaryColor + '-txt)'*/primaryTextColor);
+    (<any>document).documentElement.style.setProperty("--accent-txt", /*'var(--' + accentColor + '-txt)'*/accentTextColor);
+
+    // Logo light/dark
+    if(theme["hasDarkLogo"]){
+      theme.logoPath = 'assets/images/logo.svg';
+      theme.logoTextPath = 'assets/images/logo-text.svg';
+    } else {
+      theme.logoPath = 'assets/images/light-logo.svg';
+      theme.logoTextPath = 'assets/images/light-logo-text.svg';
+    }
   }
 
-  textContrast(cssVar, bgVar){
+  public textContrast(cssVar, bgVar){
     let txtColor = '';
     // Convert hex value to RGB
     let props = this.hexToRGB(cssVar); 
@@ -311,6 +347,12 @@ export class ThemeService {
       hex:hex,
       rgb:rgb
     }
+  }
+  
+  public colorFromMeta(meta:string){
+    let trimFront = meta.replace('var(--','');
+    let trimmed = trimFront.replace(')','');
+    return trimmed;
   }
 
   get customThemes(){

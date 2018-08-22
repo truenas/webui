@@ -28,16 +28,20 @@ export class LaggFormComponent {
       type : 'input',
       name : 'lagg_interface',
       placeholder : T('Lagg Interface'),
-      tooltip : T('Enter a descriptive name for the new interface.'),
+      tooltip : T('Description of the lagg interface.'),
     },
     {
       type : 'select',
       name : 'lagg_protocol',
       placeholder : T('Lagg Protocol'),
-      tooltip : T('Select the desired Protocol Type. <i>LACP</i> is\
-                   recommended if the switch is configured for <i>active\
-                   LACP</i>. Choose <i>Failover</i> if the network\
-                   switch does not support acive LACP.'),
+      tooltip : T('Select the <a\
+                   href="../docs/network.html#link-aggregations"\
+                   target="_blank">Protocol Type</a>.<br>\
+                   <i>LACP</i> is the recommended protocol if the network\
+                   switch is capable of active LACP.<br>\
+                   <i>Failover</i> is the default protocol choice and\
+                   should only be used if the network switch does not\
+                   support active LACP.'),
       options : [],
       required: true,
       validation : [ Validators.required ]
@@ -46,9 +50,9 @@ export class LaggFormComponent {
       type : 'select',
       name : 'lagg_interfaces',
       placeholder : T('Lagg Interfaces'),
-      tooltip : T('Choose network interfaces to use in the aggregation.\
-                   <b>Warning:</b> Lagg creation fails if the interfaces\
-                   are manually configured.'),
+      tooltip : T('Select the interfaces to use in the aggregation.<br>\
+                   Warning: Lagg creation fails if any of the selected\
+                   interfaces have been manually configured.'),
       options : [],
       multiple : true,
       required: true,

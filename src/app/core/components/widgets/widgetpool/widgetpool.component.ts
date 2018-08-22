@@ -62,6 +62,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
       this.loader = false;
     }
   }
+  public voldataavail = false;
 
   public title:string = T("ZFS Pool");
   @Input() volumeData:VolumeData;
@@ -93,6 +94,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
 
   ngOnDestroy(){
     //this.core.emit({name:"StatsRemoveListener", data:{name:"Pool",obj:this}});
+    this.core.unregister({observerClass:this});
   }
 
   ngAfterViewInit(){
@@ -170,16 +172,29 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   }
 
   parseVolumeData(){
-    let usedObj = (<any>window).filesize(this.volumeData.used, {output: "object", exponent:3});
+    let usedValue;
+    if (isNaN(this.volumeData.used)) {
+      usedValue = this.volumeData.used;
+    } else {
+      let usedObj = (<any>window).filesize(this.volumeData.used, {output: "object", exponent:3});
+      usedValue = usedObj.value;
+    }
     let used: ChartData = {
       legend: 'Used', 
-      data: [usedObj.value]
+      data: [usedValue]
     };
 
-    let  availableObj = (<any>window).filesize(this.volumeData.avail, {output: "object", exponent:3});
+    let availableValue;
+    if (isNaN(this.volumeData.avail)) {
+      availableValue = this.volumeData.avail;
+    } else {
+      let availableObj = (<any>window).filesize(this.volumeData.avail, {output: "object", exponent:3});
+      availableValue = availableObj.value;
+      this.voldataavail = true;
+    }
     let available: ChartData = {
       legend:'Available', 
-      data: [availableObj.value]
+      data: [availableValue]
     };
 
     let percentage = this.volumeData.used_pct.split("%");

@@ -22,9 +22,10 @@ export class PluginsInstalledListComponent {
 
   public columns: Array < any > = [
     { name: T('Jail'), prop: '1' },
+    { name: T('Status'), prop: '3' },
     { name: T('IPv4 Address'), prop: '6' },
     { name: T('IPv6 Address'), prop: '7' },
-    { name: T('Status'), prop: '3' },
+    { name: T('Version'), prop: '10' },
     // { name: T('Boot'), prop: '2' },
     // { name: 'Type', prop: '4' },
     { name: T('Release'), prop: '5' },
