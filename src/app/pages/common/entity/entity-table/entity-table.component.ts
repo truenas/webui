@@ -459,12 +459,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     const colProp = event.column.prop,
       sort = event.sorts[0],
       rows = this.currentRows;
-    this.sorter(rows, sort.prop, sort.dir);
+    this.tableSorter(rows, sort.prop, sort.dir);
     this.rows = rows;
     this.setPaginationInfo();
   }
 
-  sorter(arr, key, asc) {
+  tableSorter(arr, key, asc) {
     let tempArr = [],
       sort,
       myCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
