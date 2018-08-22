@@ -92,6 +92,15 @@ export class ApiService {
         return cloneRes;
       }
     },
+    PrimaryNicInfoRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        namespace:"interfaces.websocket_interface",
+        args: [],
+        responseEvent: "PrimaryNicInfo"
+      }
+    },
     NetInfoRequest:{
       apiCall:{
         protocol:"websocket",

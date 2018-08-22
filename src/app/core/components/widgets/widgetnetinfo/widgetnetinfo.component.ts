@@ -34,7 +34,7 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
   private _updateBtnStatus:string = "default";
   public updateBtnLabel:string = T("Check for Updates")
   private _themeAccentColors: string[];
-  public connectionIp = environment.remote
+  public connectionIp:string = 'unknown' //= environment.remote
   public manufacturer:string = '';
   public buildDate:string;
   public loader:boolean = false;
@@ -77,6 +77,7 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
 
     //Get Network info and determine Primary interface
     this.core.register({observerClass:this,eventName:"NetInfo"}).subscribe((evt:CoreEvent) => {
+      
       this.defaultRoutes = evt.data.default_routes.toString();
       this.nameServers = evt.data.nameservers.toString().replace(/,/g, " , ");
       this.data = evt.data;
@@ -110,7 +111,19 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
       }
 
     });
-    this.core.emit({name:"NetInfoRequest"});
+
+    this.core.register({observerClass:this, eventName:"PrimaryNicInfo"}).subscribe((evt:CoreEvent) => {
+      let aliases = evt.data.aliases;
+      for(let i = 0; i < aliases.length; i++){
+        if(aliases[i].type == "INET"){
+          this.connectionIp = aliases[i].address;
+        }
+      }
+      
+      this.core.emit({name:"NetInfoRequest"});
+    });
+
+    this.core.emit({name:"PrimaryNicInfoRequest"});
 
   }
 
