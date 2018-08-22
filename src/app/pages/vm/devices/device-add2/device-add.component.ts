@@ -357,9 +357,9 @@ export class DeviceAddComponent implements OnInit {
         );   
       });
     });
-    // if bootloader == 'GRUB' or bootloader == "UEFI_CSM" or if VM has existing VNC device, hide VNC option
+    // if bootloader == 'GRUB' or if VM has existing VNC device, hide VNC option
     this.ws.call('vm.query', [[['id', '=', parseInt(this.vmid,10)]]]).subscribe((vm)=>{
-      if (vm[0].bootloader === 'GRUB' || vm[0].bootloader === "UEFI_CSM" || _.find(vm[0].devices, {dtype:'VNC'})){
+      if (vm[0].bootloader === 'GRUB' || _.find(vm[0].devices, {dtype:'VNC'})){
         const dtypeField = _.find(this.fieldConfig, {name: "dtype"});
         for (const i in dtypeField.options) {
           if (dtypeField.options[i].label === 'VNC') {
