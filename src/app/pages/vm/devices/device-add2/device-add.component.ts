@@ -358,7 +358,7 @@ export class DeviceAddComponent implements OnInit {
       });
     });
     // if bootloader == 'GRUB' or bootloader == "UEFI_CSM" or if VM has existing VNC device, hide VNC option
-    this.ws.call('vm.query', [[['id', '=', this.vmid]]]).subscribe((vm)=>{
+    this.ws.call('vm.query', [[['id', '=', parseInt(this.vmid,10)]]]).subscribe((vm)=>{
       if (vm[0].bootloader === 'GRUB' || vm[0].bootloader === "UEFI_CSM" || _.find(vm[0].devices, {dtype:'VNC'})){
         const dtypeField = _.find(this.fieldConfig, {name: "dtype"});
         for (const i in dtypeField.options) {
@@ -390,12 +390,6 @@ export class DeviceAddComponent implements OnInit {
     const payload = {
       'devices': [],
     };
-
-    const device = _.cloneDeep(this.formGroup.value);
-    const deviceValue = _.cloneDeep(this.activeFormGroup.value);
-
-    device['attributes'] = deviceValue;
-    payload['devices'].push(device);
 
     this.loader.open();
     this.ws.call(this.addCall, [this.vmid, payload]).subscribe(
