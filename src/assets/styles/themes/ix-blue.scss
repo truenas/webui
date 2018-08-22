@@ -415,16 +415,14 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
   @include variable(border-color, --primary-txt, $primary-txt);
 }
 
-// #select-all-checkbox-and-label .mat-checkbox {
-//   @include variable(border-color, --primary-txt, $primary-txt);
-// }
+
 
 .ngx-datatable .datatable-body .mat-checkbox-frame {
   @include variable(border-color, --alt-fg1, $alt-fg1, !important);
 }
 
 .mat-expansion-indicator::after, button.card-close, .mat-pseudo-checkbox {
-  @include variable(color, --primary-txt, $primary-txt);
+  @include variable(color, --fg1, $fg1);
 }
 
 .toggle-children {
