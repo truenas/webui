@@ -47,14 +47,14 @@ export class SnapshotListComponent {
     protected _injector: Injector, protected _appRef: ApplicationRef) { }
 
   rowValue(row, attr) {
-    // switch (attr) {
-    //   case 'used':
-    //     return (<any>window).filesize(row[attr], { standard: "iec" });
-    //   case 'refer':
-    //     return (<any>window).filesize(row[attr], { standard: "iec" });
-    //   default:
+    switch (attr) {
+      case 'used':
+        return (<any>window).filesize(row[attr], { standard: "iec" });
+      case 'refer':
+        return (<any>window).filesize(row[attr], { standard: "iec" });
+      default:
         return row[attr];
-    // }
+    }
   }
 
   sortValue(row, attr) {

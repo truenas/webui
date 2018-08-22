@@ -456,48 +456,74 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
   reorderEvent(event) {
     this.paginationPageIndex = 0;
-    let colProp = event.column.prop;
-    const sort = event.sorts[0];
-    const rows = this.currentRows;
-    // rows.sort((a, b) => {
-    //   return a[sort.prop].localeCompare(b[sort.prop]) * (sort.dir === 'desc' ? -1 : 1);
-    // });
-
-    // console.log(sort.prop, sort.dir)
-
+    const colProp = event.column.prop,
+      sort = event.sorts[0],
+      rows = this.currentRows;
     this.sorter(rows, sort.prop, sort.dir);
-    // console.log(rows[0].refer)
     this.rows = rows;
     this.setPaginationInfo();
   }
 
-  // Sorts array 'natural' order, ie, allowing for letter and numbers together
-  public sorter(arr, key, asc) {
-    const tempArr = [];
-    let v;
+  sorter(arr, key, asc) {
+    let tempArr = [],
+      sort,
+      myCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+    
     arr.forEach((item) => {
-        tempArr.push(item[key]);
+      tempArr.push(item[key]);
     });
-    // console.log(tempArr)
-    // The Intl Collator allows language-sensitive str comparison and can allow for numbers
-    const myCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
-    // Sort keys into 'natural' order
-    const sorter = tempArr.sort(myCollator.compare);
-    // console.log(sorter)
-    asc==='asc' ? (v = 1) : (v = -1);
-    // Takes the key list and matches it to the sorted array of keys
-    arr.sort((a, b) => {
+
+    if (tempArr[0].slice(-2) === ' B' || tempArr[0].slice(-2) === 'iB') {
+
+    let bytes = [], kbytes = [], mbytes = [], gbytes = [], tbytes = [];
+    for (let i of tempArr) {
+      if (i.slice(-2) === ' B') {
+        bytes.push(i);
+      } else {
+        switch (i.slice(-3)) {
+          case 'KiB':
+            kbytes.push(i);
+            break;
+          case 'MiB':
+            mbytes.push(i);
+            break;
+          case 'GiB':
+            gbytes.push(i);
+            break;
+          case 'TiB':
+            tbytes.push(i);
+        }
+      }
+    }
+
+    bytes = bytes.sort(myCollator.compare);
+    kbytes = kbytes.sort(myCollator.compare);
+    mbytes = mbytes.sort(myCollator.compare);
+    gbytes = gbytes.sort(myCollator.compare);
+    tbytes = tbytes.sort(myCollator.compare);
+    
+    sort = bytes.concat(kbytes, mbytes, gbytes, tbytes)
+
+    
+    } else {
+      sort = tempArr.sort(myCollator.compare);
+    }
+      let v;
+      asc==='asc' ? (v = 1) : (v = -1);
+      arr.sort((a, b) => {
         const A = a[key],
             B = b[key];
-        if (sorter.indexOf(A) > sorter.indexOf(B)) {
+        if (sort.indexOf(A) > sort.indexOf(B)) {
             return 1 * v;
         } else {
             return -1 * v;
         }
-    });
+      });
+          
+    console.log(arr)
     return arr;
-    }
-
+  }  
+  
   /**
    * some structure... should be the same as the other rows.
    * which are field maps.  
