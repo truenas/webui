@@ -456,8 +456,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
   reorderEvent(event) {
     this.paginationPageIndex = 0;
-    const colProp = event.column.prop,
-      sort = event.sorts[0],
+    let sort = event.sorts[0],
       rows = this.currentRows;
     this.tableSorter(rows, sort.prop, sort.dir);
     this.rows = rows;
@@ -466,14 +465,15 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
   tableSorter(arr, key, asc) {
     let tempArr = [],
-      sort,
+      sorter,
       myCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
     
     arr.forEach((item) => {
       tempArr.push(item[key]);
     });
 
-    if (tempArr[0].slice(-2) === ' B' || tempArr[0].slice(-2) === 'iB') {
+    if (typeof(tempArr[0]) === 'string' && 
+      (tempArr[0].slice(-2) === ' B' || tempArr[0].slice(-2) === 'iB')) {
 
     let bytes = [], kbytes = [], mbytes = [], gbytes = [], tbytes = [];
     for (let i of tempArr) {
@@ -502,25 +502,23 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     gbytes = gbytes.sort(myCollator.compare);
     tbytes = tbytes.sort(myCollator.compare);
     
-    sort = bytes.concat(kbytes, mbytes, gbytes, tbytes)
+    sorter = bytes.concat(kbytes, mbytes, gbytes, tbytes)
 
-    
-    } else {
-      sort = tempArr.sort(myCollator.compare);
+  } else {
+      sorter = tempArr.sort(myCollator.compare);
     }
       let v;
       asc==='asc' ? (v = 1) : (v = -1);
       arr.sort((a, b) => {
         const A = a[key],
             B = b[key];
-        if (sort.indexOf(A) > sort.indexOf(B)) {
+        if (sorter.indexOf(A) > sorter.indexOf(B)) {
             return 1 * v;
         } else {
             return -1 * v;
         }
       });
           
-    console.log(arr)
     return arr;
   }  
   
