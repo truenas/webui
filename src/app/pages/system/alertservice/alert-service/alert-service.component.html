@@ -26,16 +26,19 @@
             <div *ngFor="let awssnsField of fieldSet.awssnsFieldConfig;">
               <div dynamicField [config]="awssnsField" [group]="awssnsFormGroup"></div>
             </div>
+            <button type="button" mat-button id="show-pw" (click)="togglePW()">{{"Show/Hide Passwords" | translate}}</button>
           </div>
           <div *ngIf="selectedType == 'InfluxDB'" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
             <div *ngFor="let influxdbField of fieldSet.influxdbFieldConfig;">
               <div dynamicField [config]="influxdbField" [group]="influxdbFormGroup"></div>
             </div>
+            <button type="button" mat-button id="show-pw" (click)="togglePW()">{{"Show/Hide Passwords" | translate}}</button>
           </div>
           <div *ngIf="selectedType == 'Mattermost'" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
             <div *ngFor="let mattermostField of fieldSet.mattermostFieldConfig;">
               <div dynamicField [config]="mattermostField" [group]="mattermostFormGroup"></div>
             </div>
+            <button type="button" mat-button id="show-pw" (click)="togglePW()">{{"Show/Hide Passwords" | translate}}</button>
           </div>
           <div *ngIf="selectedType == 'OpsGenie'" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
             <div *ngFor="let opsgenieField of fieldSet.opsgenieFieldConfig;">
