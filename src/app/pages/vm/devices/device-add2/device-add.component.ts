@@ -18,7 +18,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 })
 export class DeviceAddComponent implements OnInit {
 
-  protected addCall = 'vm.create_device';
+  protected addCall = 'vm.device.create';
   protected route_success: string[];
   public vmid: any;
   public vmname: any;
@@ -65,6 +65,14 @@ export class DeviceAddComponent implements OnInit {
       validation : [ Validators.required ],
       required: true
     },
+    {
+      name : 'order',
+      placeholder : 'Device Order',
+      tooltip : '',
+      type: 'input',
+      value: null,
+      inputType: 'number'
+    },
   ];
   //disk 
   public diskFieldConfig: FieldConfig[] = [
@@ -101,6 +109,14 @@ export class DeviceAddComponent implements OnInit {
       type: 'input',
       value: 0
     },
+    {
+      name : 'order',
+      placeholder : 'Device Order',
+      tooltip : '',
+      type: 'input',
+      value: null,
+      inputType: 'number'
+    },
   ];
   //nic
   public nicFieldConfig: FieldConfig[] = [
@@ -135,6 +151,14 @@ export class DeviceAddComponent implements OnInit {
       options: [],
       validation: [Validators.required],
       required: true
+    },
+    {
+      name : 'order',
+      placeholder : 'Device Order',
+      tooltip : '',
+      type: 'input',
+      value: null,
+      inputType: 'number'
     },
   ];
   protected nic_attach: any;
@@ -174,6 +198,14 @@ export class DeviceAddComponent implements OnInit {
         {label : 'AHCI', value : 'AHCI'},
         {label : 'VirtIO', value : 'VIRTIO'},
       ],
+    },
+    {
+      name : 'order',
+      placeholder : 'Device Order',
+      tooltip : '',
+      type: 'input',
+      value: null,
+      inputType: 'number'
     },
   ];
 
@@ -232,6 +264,14 @@ export class DeviceAddComponent implements OnInit {
       placeholder : 'Web Interface',
       tooltip : 'Set to enable connecting to the VNC web interface.',
       type: 'checkbox'
+    },
+    {
+      name : 'order',
+      placeholder : 'Device Order',
+      tooltip : '',
+      type: 'input',
+      value: null,
+      inputType: 'number'
     },
   ];
   protected ipAddress: any = [];
@@ -357,9 +397,9 @@ export class DeviceAddComponent implements OnInit {
         );   
       });
     });
-    // if bootloader == 'GRUB' or if VM has existing VNC device, hide VNC option
+    // if bootloader == 'GRUB' or bootloader == "UEFI_CSM" or if VM has existing VNC device, hide VNC option
     this.ws.call('vm.query', [[['id', '=', parseInt(this.vmid,10)]]]).subscribe((vm)=>{
-      if (vm[0].bootloader === 'GRUB' || _.find(vm[0].devices, {dtype:'VNC'})){
+      if (vm[0].bootloader === 'GRUB' || vm[0].bootloader === "UEFI_CSM" || _.find(vm[0].devices, {dtype:'VNC'})){
         const dtypeField = _.find(this.fieldConfig, {name: "dtype"});
         for (const i in dtypeField.options) {
           if (dtypeField.options[i].label === 'VNC') {
@@ -386,21 +426,30 @@ export class DeviceAddComponent implements OnInit {
     this.router.navigate(new Array('/').concat(this.route_success));
   }
 
-  onSubmit(event: Event) {
-    const payload = {
-      'devices': [],
-    };
+  onSubmit() {
+    this.aroute.params.subscribe(params => {
+      const device = _.cloneDeep(this.formGroup.value);
+      const deviceValue = _.cloneDeep(this.activeFormGroup.value);
+      const deviceOrder = deviceValue['order'];
+      delete deviceValue.order;
 
-    this.loader.open();
-    this.ws.call(this.addCall, [this.vmid, payload]).subscribe(
-      (res) => {
-        this.loader.close();
-        this.router.navigate(new Array('/').concat(this.route_success));
-      },
-      (res) => {
-        this.loader.close();
-        new EntityUtils().handleError(this, res);
-      }
-    );
+      const payload = {
+        "vm": parseInt(params['pk'],10),
+        "dtype": device.dtype,
+        "attributes":deviceValue,
+        "order": deviceOrder
+      };
+  
+      this.loader.open();
+      this.ws.call(this.addCall, [payload]).subscribe(() => {
+          this.loader.close();
+          this.router.navigate(new Array('/').concat(this.route_success));
+        },
+        (e_res) => {
+          this.loader.close();
+          new EntityUtils().handleError(this, e_res);
+        }
+      );
+    });
   }
 }
