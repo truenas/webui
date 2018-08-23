@@ -58,8 +58,9 @@ export class StorageService {
     });
 
     // Select table columns labled with GiB, Mib, etc
+    // Regex checks for ' XiB' with a leading space and X === K, M, G or T 
     if (typeof(tempArr[0]) === 'string' && 
-      (tempArr[0].slice(-2) === ' B' || tempArr[0].slice(-2) === 'iB')) {
+      (tempArr[0].slice(-2) === ' B' || /\s[KMGT]iB$/.test(tempArr[0].slice(-4) ))) {
 
     let bytes = [], kbytes = [], mbytes = [], gbytes = [], tbytes = [];
     for (let i of tempArr) {
