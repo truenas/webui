@@ -18,6 +18,7 @@ import { EntityUtils } from '../utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../../services';
 import { ErdService } from '../../../../services/erd.service';
+import { StorageService } from '../../../../services/storage.service'
 import { Subscription } from 'rxjs/Subscription';
 
 
@@ -66,7 +67,7 @@ export interface TableConfig {
   selector: 'entity-table',
   templateUrl: './entity-table.component.html',
   styleUrls: ['./entity-table.component.scss'],
-  providers: [DialogService]
+  providers: [DialogService, StorageService]
 })
 export class EntityTableComponent implements OnInit, AfterViewInit {
 
@@ -109,7 +110,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService, 
-    protected erdService: ErdService, protected translate: TranslateService, protected snackBar: MatSnackBar) { }
+    protected erdService: ErdService, protected translate: TranslateService, protected snackBar: MatSnackBar,
+    public sorter: StorageService) { }
 
   ngOnInit() {
     
@@ -458,70 +460,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     this.paginationPageIndex = 0;
     let sort = event.sorts[0],
       rows = this.currentRows;
-    this.tableSorter(rows, sort.prop, sort.dir);
+    this.sorter.tableSorter(rows, sort.prop, sort.dir);
     this.rows = rows;
     this.setPaginationInfo();
   }
 
-  tableSorter(arr, key, asc) {
-    let tempArr = [],
-      sorter,
-      myCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
-    
-    arr.forEach((item) => {
-      tempArr.push(item[key]);
-    });
-
-    if (typeof(tempArr[0]) === 'string' && 
-      (tempArr[0].slice(-2) === ' B' || tempArr[0].slice(-2) === 'iB')) {
-
-    let bytes = [], kbytes = [], mbytes = [], gbytes = [], tbytes = [];
-    for (let i of tempArr) {
-      if (i.slice(-2) === ' B') {
-        bytes.push(i);
-      } else {
-        switch (i.slice(-3)) {
-          case 'KiB':
-            kbytes.push(i);
-            break;
-          case 'MiB':
-            mbytes.push(i);
-            break;
-          case 'GiB':
-            gbytes.push(i);
-            break;
-          case 'TiB':
-            tbytes.push(i);
-        }
-      }
-    }
-
-    bytes = bytes.sort(myCollator.compare);
-    kbytes = kbytes.sort(myCollator.compare);
-    mbytes = mbytes.sort(myCollator.compare);
-    gbytes = gbytes.sort(myCollator.compare);
-    tbytes = tbytes.sort(myCollator.compare);
-    
-    sorter = bytes.concat(kbytes, mbytes, gbytes, tbytes)
-
-  } else {
-      sorter = tempArr.sort(myCollator.compare);
-    }
-      let v;
-      asc==='asc' ? (v = 1) : (v = -1);
-      arr.sort((a, b) => {
-        const A = a[key],
-            B = b[key];
-        if (sorter.indexOf(A) > sorter.indexOf(B)) {
-            return 1 * v;
-        } else {
-            return -1 * v;
-        }
-      });
-          
-    return arr;
-  }  
-  
   /**
    * some structure... should be the same as the other rows.
    * which are field maps.  

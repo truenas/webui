@@ -60,7 +60,7 @@ export class VdevComponent implements OnInit {
     this.disks = [...this.disks];
     this.guessVdevType();
     this.estimateSize();
-    this.disks = this.sorter.mySorter(this.disks, 'devname');
+    this.disks = this.sorter.tableSorter(this.disks, 'devname', 'asc');
   }
 
   removeDisk(disk: any) {
@@ -162,5 +162,11 @@ export class VdevComponent implements OnInit {
       this.manager.addDisk(this.disks.pop());
     }
     this.manager.removeVdev(this);
+  }
+
+  reorderEvent(event) {
+    let sort = event.sorts[0],
+      rows = this.disks;
+    this.sorter.tableSorter(rows, sort.prop, sort.dir);
   }
 }

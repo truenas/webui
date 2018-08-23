@@ -784,7 +784,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
     public sorter: StorageService, protected snackBar: MatSnackBar) {
-    super(rest, router, ws, _eRef, dialogService, loader, erdService, translate, snackBar);
+    super(rest, router, ws, _eRef, dialogService, loader, erdService, translate, snackBar, sorter);
   }
 
   public repaintMe() {
@@ -820,7 +820,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
           this.zfsPoolRows.push(volume);
         });
 
-        this.zfsPoolRows = this.sorter.mySorter(this.zfsPoolRows, 'name');
+        this.zfsPoolRows = this.sorter.tableSorter(this.zfsPoolRows, 'name', 'asc');
 
         if (this.zfsPoolRows.length === 1) {
           this.expanded = true;
