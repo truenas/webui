@@ -870,12 +870,6 @@ iscsi .mat-ink-bar {
   overflow-y: hidden !important;
 }
 
-// pw show button on entity tables
-// #show-pw {
-//   @include variable(background-color, --primary, $primary);
-//   color: white;
-// }
-
 // Define logo via CSS properties
 .logo{
  /*   @include variable(background-image, --logo, $logo !important); //url(assets/images/logo.svg);
@@ -898,17 +892,20 @@ iscsi .mat-ink-bar {
     background-position: 2px 0;*/
 }
 
-#password, #bsdusr_password {
+#password, #bsdusr_password, #sed_passwd, #em_pass1,
+  #Passphrase, #passphrase, #disk_passwd, #ldap_bindpw, #iscsi_target_auth_secret,
+    #iscsi_target_auth_peersecret, #dc_passwd, #secret_key {
   width: 70%;
-  background-color: aquamarine;
+  display: inline-block;
 }
 
-#password_conf, #bsdusr_password_conf {
+#password_conf, #bsdusr_password_conf, #sed_passwd2, #em_pass2,
+  #Passphrase2, #passphrase2, #disk_passwd2, #iscsi_target_auth_secret_confirm,
+    #iscsi_target_auth_peersecret_confirm, #password2, #dc_passwd2, #secret_key2 {
   width: 67.5%;
-  background-color: aquamarine;
+  display: inline-block;
 }
 
-// #show-pw {
-//   position: absolute;
-//   top: 300px;
-// }
+#show-pw {
+  margin-left: -10px;
+}

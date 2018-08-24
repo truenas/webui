@@ -614,7 +614,6 @@ export class CloudCredentialsFormComponent {
       placeholder: T('Access Token'),
       required: true,
       isHidden: true,
-      hideButton: false,
       relation: [
         {
           action: 'SHOW',

@@ -92,6 +92,7 @@ export class AuthorizedAccessFormComponent {
       name : 'iscsi_target_auth_peersecret_confirm',
       placeholder : T('Peer Secret (Confirm)'),
       inputType : 'password',
+      hideButton: false
     },
   ];
 
