@@ -872,12 +872,6 @@ iscsi .mat-ink-bar {
   overflow-y: hidden !important;
 }
 
-// pw show button on entity tables
-// #show-pw {
-//   @include variable(background-color, --primary, $primary);
-//   color: white;
-// }
-
 // Define logo via CSS properties
 .logo{
  /*   @include variable(background-image, --logo, $logo !important); //url(assets/images/logo.svg);
@@ -898,4 +892,13 @@ iscsi .mat-ink-bar {
     background-size: contain;
     background-repeat: no-repeat;
     background-position: 2px 0;*/
+}
+
+.ix-blue .mat-progress-bar-fill::after {
+  @include variable(background-color, --primary, $primary);
+}
+
+.ix-blue .mat-progress-bar-buffer {
+  @include variable(background-color, --primary, $primary);
+  opacity: 0.5;
 }
