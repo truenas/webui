@@ -21,7 +21,7 @@
               </mat-input-container>
             </div>
             <div class="">
-              <mat-input-container >
+              <mat-input-container class="full-width">
                 <input type="password" name="password" required matInput [(ngModel)]="signinData.password" #password="ngModel" placeholder="{{'Password' | translate}}" value="">
                 <mat-error *ngIf="password.errors && (password.dirty || password.touched) && (password.errors.required)">
                     <span *ngIf="!failed">{{"Please enter your password" | translate}}</span>
