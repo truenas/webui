@@ -129,7 +129,7 @@ export class Services implements OnInit {
     }
 
     if (rpc === 'service.stop') {
-      let confirm = this.confirmService.confirm('Alert', 'Stop this service?');
+      let confirm = this.confirmService.confirm('Alert', 'Stop this service?', 'Stop');
       confirm.subscribe(res => {
         if (res) {
           this.updateService(rpc, service);
