@@ -231,6 +231,7 @@ export class VolumesListTableConfig implements InputTableConf {
         type : 'input',
         inputType: 'password',
         name : 'passphrase',
+        hideButton: false,
         placeholder: T('Passphrase'),
       },
       {

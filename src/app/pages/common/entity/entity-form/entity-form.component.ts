@@ -347,21 +347,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     // ...but for entity forms that don't make a data request, this kicks in 
     setTimeout(() => { this.setShowDefaults(); }, 500);
 
-    this.addPasswordClass();    
-
   }
 
   setShowDefaults() {
     this.showDefaults = true;
-  }
-
-  addPasswordClass() {
-    let inputs = document.getElementsByTagName('input');
-    for (let i = 0; i < inputs.length; i++) {
-      if (inputs[i].type === "password") {
-        inputs[i].classList.add('password-field');
-      }
-     }
   }
 
   togglePW() {
