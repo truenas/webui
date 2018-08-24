@@ -897,15 +897,21 @@ iscsi .mat-ink-bar {
     #iscsi_target_auth_peersecret, #dc_passwd, #secret_key {
   width: 70%;
   display: inline-block;
+  @include variable (background, --bg1, $bg1);
+  padding: 0 5px 0 5px;
 }
 
 #password_conf, #bsdusr_password_conf, #sed_passwd2, #em_pass2,
   #Passphrase2, #passphrase2, #disk_passwd2, #iscsi_target_auth_secret_confirm,
     #iscsi_target_auth_peersecret_confirm, #password2, #dc_passwd2, #secret_key2 {
-  width: 67.5%;
+  width: 70%;
   display: inline-block;
+  @include variable (background, --bg1, $bg1);
+  padding: 0 25px 0 5px;
 }
 
 #show-pw {
-  margin-left: -10px;
+  position: relative;
+  top: -10px;
+  right: 40px;
 }
