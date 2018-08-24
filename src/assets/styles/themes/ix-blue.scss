@@ -369,6 +369,10 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
   opacity: .38;
 }
 
+#test-alert {
+  @include variable(color, --fg2, $fg2);
+}
+
 .mat-form-field-ripple{
   @include variable(background-color, --primary, $primary);
 }
