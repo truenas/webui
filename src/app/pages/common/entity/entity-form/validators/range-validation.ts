@@ -7,13 +7,11 @@ export function rangeValidator(min: number, max?: number) {
 
   return function rangeValidate(control: FormControl) {
     let regex;
-    console.log(min);
     if (min === 0) {
       regex = /^(0|[1-9]\d*)$/
     } else {
       regex = /^[1-9]\d*$/
     }
-    console.log(regex);
 
     if (!control.parent) {
       return null;
