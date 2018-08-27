@@ -10,7 +10,7 @@ import { Component } from '@angular/core';
     type="button"
     color="accent"
     mat-button 
-    (click)="dialogRef.close(false)">Cancel</button>
+    (click)="dialogRef.close(false)">{{'Cancel'}}</button>
     <button 
     type="button" 
     mat-button
