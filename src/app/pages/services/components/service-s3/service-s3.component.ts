@@ -76,6 +76,7 @@ export class ServiceS3Component implements OnDestroy {
       type : 'input',
       name : 'secret_key',
       placeholder : T('Secret Key'),
+      hideButton: false,
       tooltip: T('Enter the password that must be used by connecting S3\
                   systems.'),
       inputType : 'password',
@@ -88,7 +89,6 @@ export class ServiceS3Component implements OnDestroy {
       name : 'secret_key2',
       placeholder : T('Confirm Secret Key'),
       inputType : 'password',
-      hideButton: false,
       required: true,
       validation : [ matchOtherValidator('secret_key'), Validators.required,
                                regexValidator(/^\w+$/)],

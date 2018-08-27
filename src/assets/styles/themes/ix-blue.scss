@@ -894,7 +894,7 @@ iscsi .mat-ink-bar {
 
 #password, #bsdusr_password, #sed_passwd, #em_pass1,
   #Passphrase, #passphrase, #disk_passwd, #ldap_bindpw, #iscsi_target_auth_secret,
-    #iscsi_target_auth_peersecret, #dc_passwd, #secret_key {
+    #iscsi_target_auth_peersecret, #dc_passwd, #secret_key, #ad_bindpw {
   width: 70%;
   display: inline-block;
   @include variable (background, --bg1, $bg1);
@@ -912,6 +912,10 @@ iscsi .mat-ink-bar {
 
 #show-pw {
   position: relative;
-  top: -10px;
-  right: 40px;
+  margin-bottom: 0px !important;
+  right: 65px;
+}
+
+#secret_key2 {
+  margin-bottom: 5px;
 }

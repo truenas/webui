@@ -61,7 +61,8 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
       placeholder: T('Passphrase'),
       tooltip: T('Enter the GELI passphrase.'),
       validation: [Validators.required],
-      required: true
+      required: true,
+      hideButton : false
     },{
       type : 'input',
       inputType: 'password',
@@ -69,8 +70,7 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
       placeholder: T('Verify passphrase'),
       tooltip: T('Confirm the GELI passphrase.'),
       validation: [Validators.required],
-      required: true,
-      hideButton: false
+      required: true
     }
   ];
 

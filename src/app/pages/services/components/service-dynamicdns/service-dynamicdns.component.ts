@@ -122,6 +122,7 @@ export class ServiceDDNSComponent {
       tooltip: T('Enter the password used to log in to the provider\
                   and update the record.'),
       inputType : 'password',
+      hideButton: false,
       validation :
           [ Validators.minLength(8), matchOtherValidator('password2'), Validators.required ],
       required: true
@@ -131,8 +132,7 @@ export class ServiceDDNSComponent {
       name : 'password2',
       placeholder : T('Confirm Password'),
       inputType : 'password',
-      required: true,
-      hideButton: false
+      required: true
     },
     {
       type : 'input',

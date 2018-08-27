@@ -89,6 +89,7 @@ export class DiskFormComponent {
       tooltip: T('Password for SED'),
       inputType: 'password',
       value: '',
+      hideButton: false
     },
     {
       type: 'input',
@@ -97,8 +98,7 @@ export class DiskFormComponent {
       tooltip: T(''),
       inputType: 'password',
       value: '',
-      validation : [ matchOtherValidator('disk_passwd') ],
-      hideButton: false
+      validation : [ matchOtherValidator('disk_passwd') ]
     },
   ];
 

@@ -199,14 +199,14 @@ export class CertificateAddComponent {
       inputType : 'password',
       validation : [ matchOtherValidator('Passphrase2') ],
       isHidden: true,
+      hideButton : false
     },
     {
       type : 'input',
       name : 'Passphrase2',
       inputType : 'password',
       placeholder : T('Confirm Passphrase'),
-      isHidden : true,
-      hideButton : false
+      isHidden : true
     },
   ];
 

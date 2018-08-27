@@ -80,6 +80,7 @@ export class IPMIComponent {
       inputType: 'password',
       name : 'password',
       placeholder : T('Password'),
+      hideButton: false,
       tooltip : T('Enter the password used to connect to the IPMI\
                    interface from a web browser.'),
 
@@ -89,7 +90,6 @@ export class IPMIComponent {
       name : 'conf_password',
       inputType: 'password',
       placeholder : T('Confirm Password'),
-      hideButton: false,
       validation : [ matchOtherValidator('password') ]
     },
     {
