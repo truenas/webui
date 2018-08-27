@@ -1328,15 +1328,17 @@ export class JailAddComponent implements OnInit {
     this.error = null;
     let property: any = [];
     let value = _.cloneDeep(this.formGroup.value);
-    if (value['ip4_addr'] == '') {
-      value['ip4_addr'] = 'none';
+    console.log(value['ip4_addr']);
+    console.log(value['ip6_addr']);
+    if (value['ip4_addr'] == '' || value['ip4_addr'] == undefined) {
+      delete value['ip4_addr'];
     } else {
       value['ip4_addr'] = value['ip4_interface'] + '|' + value['ip4_addr'] + '/' + value['ip4_netmask'];
     }
     delete value['ip4_interface'];
     delete value['ip4_netmask'];
-    if (value['ip6_addr'] == '') {
-      value['ip6_addr'] = 'none';
+    if (value['ip6_addr'] == '' || value['ip4_addr'] == undefined) {
+      delete value['ip6_addr'];
     } else {
       value['ip6_addr'] = value['ip6_interface'] + '|' + value['ip6_addr'] + '/' + value['ip6_prefix'];
     }
