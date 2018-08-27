@@ -205,7 +205,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   onGoToLegacy() {
-    this.dialogService.confirm(T("Switch to Legacy User Interface?"), T("Switch to the legacy user interface."), true, T("Switch")).subscribe((res) => {
+    this.dialogService.confirm(T("Switch to Legacy User Interface?"), T(""), true, T("Continue")).subscribe((res) => {
       if (res) {
         window.location.href = '/legacy/';
       }
