@@ -1328,8 +1328,6 @@ export class JailAddComponent implements OnInit {
     this.error = null;
     let property: any = [];
     let value = _.cloneDeep(this.formGroup.value);
-    console.log(value['ip4_addr']);
-    console.log(value['ip6_addr']);
     if (value['ip4_addr'] == '' || value['ip4_addr'] == undefined) {
       delete value['ip4_addr'];
     } else {
