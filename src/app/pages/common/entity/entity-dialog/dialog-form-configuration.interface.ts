@@ -11,5 +11,7 @@ export interface DialogFormConfiguration {
   customSubmit?: any,
   isCustActionVisible?: any,
   hideButton?: boolean,
-  message?: any
+  message?: any,
+  preInit?: any,
+  parent?: any
 }

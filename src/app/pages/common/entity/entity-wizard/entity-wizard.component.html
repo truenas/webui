@@ -1,6 +1,6 @@
 <!-- <ng-template [ngTemplateOutlet]="templateTop" [ngTemplateOutletContext]="this"></ng-template> -->
 <mat-card>
-  <form [formGroup]="formGroup" #entityForm="ngForm">
+  <form [formGroup]="formGroup" #entityForm="ngForm" (keydown.enter)="$event.preventDefault()">
     <mat-horizontal-stepper [linear]="conf?.isLinear" formArrayName="formArray" #stepper>
       <div *ngFor="let step of conf.wizardConfig; let i = index">
         <mat-step formGroupName="{{i}}" [stepControl]="formArray?.get([i])">
