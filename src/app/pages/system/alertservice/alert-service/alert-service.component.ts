@@ -90,7 +90,7 @@ export class AlertServiceComponent implements OnInit {
       type : 'input',
       name : 'region',
       placeholder : 'AWS Region',
-      hideButton: false,
+      togglePw: true,
       tooltip: 'Enter the <a\
                 href="https://docs.aws.amazon.com/sns/latest/dg/sms_supported-countries.html"\
                 target="_blank">AWS account region</a>.',
@@ -113,6 +113,7 @@ export class AlertServiceComponent implements OnInit {
       name: 'aws_secret_access_key',
       placeholder: 'Secret Key',
       inputType: 'password',
+      togglePw: true,
       tooltip: 'Enter the Secret Access Key for the linked AWS account.',
     },
   ];
@@ -170,6 +171,7 @@ export class AlertServiceComponent implements OnInit {
       name : 'password',
       placeholder: 'Password',
       inputType: 'password',
+      togglePw: true,
       tooltip: 'Enter password.',
     }, {
       type : 'input',
@@ -209,6 +211,7 @@ export class AlertServiceComponent implements OnInit {
       inputType: 'password',
       name : 'password',
       placeholder: 'Password',
+      togglePw: true,
       tooltip: 'Enter the Mattermost password.',
     }, {
       type : 'input',
@@ -532,23 +535,5 @@ export class AlertServiceComponent implements OnInit {
 
   goBack() {
     this.router.navigate(new Array('/').concat(this.route_success));
-  }
-
-  togglePW() {
-    let inputs = document.getElementsByTagName('input');
-    for (let i = 0; i < inputs.length; i++) {
-      if (!inputs[i].placeholder.toLowerCase().includes('current') && 
-          !inputs[i].placeholder.toLowerCase().includes('root')) {
-        if (inputs[i].placeholder.toLowerCase().includes('password') || 
-        inputs[i].placeholder.toLowerCase().includes('passphrase') ||
-        inputs[i].placeholder.toLowerCase().includes('secret')) {
-          if (inputs[i].type === 'password') {
-            inputs[i].type = 'text';
-          } else {
-            inputs[i].type = 'password';
-          }
-        }
-      }
-    }
   }
 }

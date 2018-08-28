@@ -103,7 +103,6 @@ export class VolumeImportWizardComponent {
           message: this.messageService,
           updater: this.updater,
           parent: this,
-          hideButton:true,
           isHidden: true,
           relation: [{
             action: 'DISABLE',
@@ -119,6 +118,7 @@ export class VolumeImportWizardComponent {
           placeholder: T('Passphrase'),
           tooltip: T('Enter the decryption passphrase.'),
           inputType: 'password',
+          togglePw: true,
           isHidden: true,
           relation: [{
             action: 'DISABLE',

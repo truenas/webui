@@ -73,7 +73,7 @@ export class UserFormComponent {
           tooltip : T('Required unless <b>Enable password login</b> is\
                       <i>No</i>. Passwords cannot contain a <b>?</b>.'),
           inputType : 'password',
-          hideButton: false
+          togglePw: true,
         },
         {
           type : 'input',

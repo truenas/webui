@@ -155,7 +155,7 @@ export class EmailComponent implements OnDestroy {
         },
       ],
       required: true,
-      hideButton : true,
+      togglePw : true,
       validation : [ matchOtherValidator('em_pass2'), Validators.required ]
     },
     {

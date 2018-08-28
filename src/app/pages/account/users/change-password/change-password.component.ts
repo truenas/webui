@@ -32,6 +32,7 @@ export class ChangePasswordComponent {
       name : 'bsdusr_password',
       placeholder : T('New Password'),
       inputType : 'password',
+      togglePw: true,
       tooltip : T('Passwords cannot contain a <b>?</b>. Passwords should\
        be at least eight characters and contain a mix of lower and\
        upper case, numbers, and special characters.')
@@ -41,7 +42,6 @@ export class ChangePasswordComponent {
       name : 'bsdusr_password_conf',
       placeholder : T('Confirm Password'),
       inputType : 'password',
-      hideButton : false,
       validation : [ matchOtherValidator('bsdusr_password') ]
     },
   ];

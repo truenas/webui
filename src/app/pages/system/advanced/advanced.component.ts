@@ -242,7 +242,7 @@ export class AdvancedComponent implements OnDestroy {
     placeholder: T('SED Password'),
     tooltip: T('Global password to unlock SEDs.'),
     inputType: 'password',
-    hideButton: false,
+    togglePw: true,
   },
   {
     type: 'input',

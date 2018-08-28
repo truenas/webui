@@ -76,7 +76,7 @@ export class ServiceS3Component implements OnDestroy {
       type : 'input',
       name : 'secret_key',
       placeholder : T('Secret Key'),
-      hideButton: false,
+      togglePw: true,
       tooltip: T('Enter the password that must be used by connecting S3\
                   systems.'),
       inputType : 'password',

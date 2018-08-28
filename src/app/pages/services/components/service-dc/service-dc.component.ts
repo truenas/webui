@@ -97,7 +97,7 @@ export class ServiceDCComponent {
       name : 'dc_passwd',
       inputType : 'password',
       placeholder : T('Administrator Password'),
-      hideButton: false,
+      togglePw: true,
       tooltip: T('Enter the password to be used for the\
                   <a href="..//docs/directoryservice.html#active-directory"\
                   target=”_blank”>Active Directory</a> administrator\

@@ -104,7 +104,7 @@ export class ServiceSNMPComponent {
       name : 'v3_password',
       inputType : 'password',
       placeholder : T('Password'),
-      hideButton: false,
+      togglePw: true,
       tooltip: T('Enter a password of at least eight characters.'),
       required: true,
       validation :
@@ -145,6 +145,7 @@ export class ServiceSNMPComponent {
       type : 'input',
       name : 'v3_privpassphrase',
       inputType : 'password',
+      togglePw: true,
       placeholder : T('Privacy Passphrase'),
       tooltip: T('Enter a separate privacy passphrase. <b>Password</b>\
                   is used when this is left empty.'),

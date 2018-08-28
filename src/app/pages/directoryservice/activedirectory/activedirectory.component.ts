@@ -81,7 +81,7 @@ export class ActiveDirectoryComponent {
       placeholder : T('Domain Account Password'),
       tooltip : T('Enter the administrator account password.'),
       inputType : 'password',
-      hideButton: false,
+      togglePw: true,
       required: true,
       validation : [ Validators.required ],
       disabled: false,
