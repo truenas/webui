@@ -895,3 +895,7 @@ iscsi .mat-ink-bar {
     background-repeat: no-repeat;
     background-position: 2px 0;*/
 }
+
+datatable-selection > .empty-row {
+  color: var(--alt-fg1);
+}
