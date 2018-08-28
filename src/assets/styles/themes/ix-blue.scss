@@ -892,7 +892,8 @@ iscsi .mat-ink-bar {
 
 #password, #bsdusr_password, #sed_passwd, #em_pass1,
   #Passphrase, #passphrase, #disk_passwd, #ldap_bindpw, #iscsi_target_auth_secret,
-    #iscsi_target_auth_peersecret, #dc_passwd, #secret_key, #ad_bindpw {
+    #iscsi_target_auth_peersecret, #dc_passwd, #secret_key, #ad_bindpw, #v3_password,
+    #secret_access_key-S3 {
   width: 70%;
   display: inline-block;
   @include variable (background, --bg1, $bg1);
@@ -901,7 +902,7 @@ iscsi .mat-ink-bar {
 
 #password_conf, #bsdusr_password_conf, #sed_passwd2, #em_pass2,
   #Passphrase2, #passphrase2, #disk_passwd2, #iscsi_target_auth_secret_confirm,
-    #iscsi_target_auth_peersecret_confirm, #password2, #dc_passwd2, #secret_key2 {
+    #iscsi_target_auth_peersecret_confirm, #password2, #dc_passwd2, #secret_key2, #v3_password2 {
   width: 70%;
   display: inline-block;
   @include variable (background, --bg1, $bg1);

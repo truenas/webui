@@ -90,6 +90,7 @@ export class AlertServiceComponent implements OnInit {
       type : 'input',
       name : 'region',
       placeholder : 'AWS Region',
+      hideButton: false,
       tooltip: 'Enter the <a\
                 href="https://docs.aws.amazon.com/sns/latest/dg/sms_supported-countries.html"\
                 target="_blank">AWS account region</a>.',

@@ -96,6 +96,7 @@ export class CloudCredentialsFormComponent {
       type: 'input',
       name: 'secret_access_key-S3',
       placeholder: T('Secret Access Key'),
+      hideButton: false,
       required: true,
       isHidden: true,
       inputType: 'password',

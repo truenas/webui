@@ -104,6 +104,7 @@ export class ServiceSNMPComponent {
       name : 'v3_password',
       inputType : 'password',
       placeholder : T('Password'),
+      hideButton: false,
       tooltip: T('Enter a password of at least eight characters.'),
       required: true,
       validation :
