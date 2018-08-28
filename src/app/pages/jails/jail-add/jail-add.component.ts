@@ -1387,7 +1387,9 @@ export class JailAddComponent implements OnInit {
         if (res.error) {
           this.error = res.error;
         } else {
-          this.router.navigate(new Array('/').concat(this.route_success));
+          if (res.state && res.state === "SUCCESS") {
+            this.router.navigate(new Array('/').concat(this.route_success));
+          }
         }
       },
       (res) => {
