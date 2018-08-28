@@ -150,10 +150,12 @@ export class EntityWizardComponent implements OnInit {
           if (res.error) {
             this.dialog.errorReport(res.error, res.reason, res.exception);
           } else {
-            if (this.conf.route_success) {
-              this.router.navigate(new Array('/').concat(this.conf.route_success));
-            } else {
-              this.snackBar.open("All your settings are saved.", 'close', { duration: 5000 })
+            if (res.state === "SUCCESS") {
+              if (this.conf.route_success) {
+                this.router.navigate(new Array('/').concat(this.conf.route_success));
+              } else {
+                this.snackBar.open("All your settings are saved.", 'close', { duration: 5000 })
+              }
             }
           }
         },
