@@ -444,7 +444,7 @@ export class AlertServiceComponent implements OnInit {
         this.isNew = false;
         this.ws.call(this.queryCall, [
           [
-            ['id', '=', this.pk]
+            ['id', '=', Number(this.pk)]
           ]
         ]).subscribe((res) => {
           if ((<any>Object).keys(res[0].settings).length > 0) {

@@ -47,6 +47,7 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
 
   public widgetColorCssVar = "var(--cyan)";
   private chartData:CoreEvent;
+  public invalidData:boolean = false;
 
   constructor(public router: Router, public translate: TranslateService){
     super(router, translate);
@@ -54,6 +55,7 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
 
   ngOnDestroy(){
     this.core.emit({name:"StatsRemoveListener", data:{name:"CpuTemp", obj:this}});
+    this.core.unregister({observerClass:this});
   }
 
   ngAfterViewInit(){
@@ -73,7 +75,20 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
   registerObservers(cores){
     for(let i = 0; i < cores; i++){
       this.core.register({observerClass:this,eventName:"StatsCpuTemp" + i}).subscribe((evt:CoreEvent) => {
-        this.collectData(i, evt.data);
+        let valid = true;
+        for(let i = 0; i < evt.data.data.length; i++){
+          if(evt.data.data[i] !== -1 && parseInt(evt.data.data[i]) >= 0){
+            break;
+          } else {
+            valid = false;
+          }
+        }
+        if(!valid){
+          this.invalidData = true;
+          this.loader = false;
+        } else {
+          this.collectData(i, evt.data);
+        }
       });
     }
   }
@@ -120,7 +135,7 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
     meta.legend = legend;
     let result:any = {
       data: mergedData,
-      meta: meta 
+      meta: meta
     }
     return result;
   }
@@ -199,7 +214,7 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
       let dataTypes = [];
       dataTypes = evt.data.meta.legend;
 
-      // populate parsedData 
+      // populate parsedData
       for(let index in dataTypes){
         let chartData:ChartData = {
           legend: dataTypes[index],
@@ -263,11 +278,11 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
     }
 
     formatMemory(physmem:number, units:string){
-      let result:string; 
-      if(units == "MB"){
-        result = Number(physmem / 1024 / 1024).toFixed(0)// + ' MB';
-      } else if(units == "GB"){
-        result = Number(physmem / 1024 / 1024 / 1024).toFixed(0)// + ' GB';
+      let result:string;
+      if(units == "MiB"){
+        result = Number(physmem / 1024 / 1024).toFixed(0)// + ' MiB';
+      } else if(units == "GiB"){
+        result = Number(physmem / 1024 / 1024 / 1024).toFixed(0)// + ' GiB';
       }
       return Number(result)
     }

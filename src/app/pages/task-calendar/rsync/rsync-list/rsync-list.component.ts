@@ -23,10 +23,10 @@ export class RsyncListComponent {
   protected entityList: any;
 
   public columns: Array < any > = [
-    { name: 'Path', prop: 'rsync_path' },
-    { name: 'Remote Host', prop: 'rsync_remotehost' },
-    { name: 'Remote Module Name', prop: 'rsync_remotemodule' },
-    { name: 'User', prop: 'rsync_user' },
+    { name: T('Path'), prop: 'rsync_path' },
+    { name: T('Remote Host'), prop: 'rsync_remotehost' },
+    { name: T('Remote Module Name'), prop: 'rsync_remotemodule' },
+    { name: T('User'), prop: 'rsync_user' },
   ];
   public config: any = {
     paging: true,
@@ -44,7 +44,7 @@ export class RsyncListComponent {
       label : T("Run Now"),
       id: "run",
       onClick : (members) => {
-        this.dialog.confirm(T("Run Now"), T(" Would you like to run this rsync task now?"), true).subscribe((run) => {
+        this.dialog.confirm(T("Run Now"), T("Run this rsync now?"), true).subscribe((run) => {
           if (run) {
             this.rest.post(this.resource_name + '/' + row.id + '/run/', {} ).subscribe((res) => {
               this.translate.get("close").subscribe((close) => {

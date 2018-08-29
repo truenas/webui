@@ -26,8 +26,8 @@
                 class="form-error-msg"> Password is required </small>
             </div>
             
-            <button mat-raised-button class="mat-primary full-width mb-05" [disabled]="lockscreenForm.invalid">Unlock</button>
-            <button mat-raised-button [routerLink]="['/sessions/signin']" color="accent" class="mat-primary full-width">It's not me!</button>
+            <button mat-button class="mat-primary full-width mb-05" [disabled]="lockscreenForm.invalid">Unlock</button>
+            <button mat-button [routerLink]="['/sessions/signin']" color="accent" class="mat-primary full-width">It's not me!</button>
           </form>
         </div>
       </mat-card-content>

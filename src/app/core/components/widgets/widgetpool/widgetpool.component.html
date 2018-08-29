@@ -18,13 +18,24 @@
         <div class="card-bg-wrapper" fxFlex.gt-xs="45" fxFlex.xs="100">
 
           <div class="pool-summary">
-            <p class="pool-status"><span>{{volumeData.status}}</span><mat-icon>check_circle</mat-icon></p>
-  
+            <p class="pool-status"><span>{{volumeData.status}}</span>
+              <span *ngIf="!volumeData.is_decrypted;else unlockedPool">
+                <mat-icon>lock</mat-icon>
+              </span>
+              <ng-template #unlockedPool>
+                <mat-icon>check_circle</mat-icon>
+              </ng-template>
+            </p>
             <div class="pool-data">
               <div class="inner">
-                <span class="value">{{(volumeData.avail/1073741824).toFixed(2)}}</span>
-                <span class="value-units">GB</span>
-                <p class="label">Available</p>
+                <span *ngIf="voldataavail;else unavail">
+                  <span class="value">{{(volumeData.avail/1073741824).toFixed(2)}}</span>
+                  <span class="value-units">GiB</span>
+                  <p class="label">Available</p>
+                </span>
+                <ng-template #unavail>
+                  <span class="value">{{volumeData.avail}}</span>
+                </ng-template>
               </div>
             </div>
           </div>
@@ -57,7 +68,7 @@
                 </ng-container>
               </mat-grid-tile>
             </mat-grid-list>
-  
+
             <!-- Sets of Disks -->
             <div class="diskset-wrapper-mask">
               <div class="diskset-wrapper" [ngStyle]="{width: diskSets.length*100+'%', 'margin-left':currentDiskSet*-100+'%'}">
@@ -88,7 +99,7 @@
 
                 <div class="disk-detail-item">
                   <p class="label">{{"Disk" | translate}} :</p>
-                  <p class="value">{{diskDetails[selectedDisk].name}} ({{(diskDetails[selectedDisk].size/1073741824).toFixed(2)}} GB)</p>
+                  <p class="value">{{diskDetails[selectedDisk].name}} ({{(diskDetails[selectedDisk].size/1073741824).toFixed(2)}} GiB)</p>
                 </div>
 
                 <div class="disk-detail-item">
@@ -150,7 +161,6 @@
         <button class="reports-btn" mat-button (click)="router.navigate(['reportsdashbaord'])">REPORTS</button>
       </div>
       </mat-card-content>
-      <!--<div class="widget-footer"><button md-raised-button color="primary" (click)="toggleConfig()">Flip</button></div>-->
     </mat-card>
 
     <!-- Back Face -->
@@ -166,8 +176,8 @@
         </form>
       </mat-card-content>
       <div class="widget-footer">
-        <button mat-raised-button color="accent" (click)="toggleConfig()">{{"Cancel" | translate}}</button>
-        <button mat-raised-button color="primary" type="submit" form="preferences" (click)="toggleConfig()">{{"Save" | translate}}</button>
+        <button mat-button color="accent" (click)="toggleConfig()">{{"Cancel" | translate}}</button>
+        <button mat-button color="primary" type="submit" form="preferences" (click)="toggleConfig()">{{"Save" | translate}}</button>
       </div>
     </mat-card>
     </ng-template>

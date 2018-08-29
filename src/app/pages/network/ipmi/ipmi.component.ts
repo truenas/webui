@@ -95,35 +95,34 @@ export class IPMIComponent {
       type : 'checkbox',
       name : 'dhcp',
       placeholder : T('DHCP'),
-      tooltip : T('Unset to manually configure <b>IPv4</b>.'),
+      tooltip : T('Use DHCP. Unset to manually configure a static IPv4\
+                   connection.'),
     },
     {
       type : 'input',
       name : 'ipaddress',
       placeholder : T('IPv4 Address'),
-      tooltip : T('Enter the IP address used to connect to the IPMI web\
-                   interface'),
+      tooltip : T('Static IPv4 address of the IPMI web interface.'),
     },
     {
       type : 'input',
       name : 'netmask',
       placeholder : T('IPv4 Netmask'),
-      tooltip : T('Choose the subnet mask associated with the IP address.'),
+      tooltip : T('Subnet mask of the IPv4 address.'),
     },
     {
       type : 'input',
       name : 'gateway',
       placeholder : T('IPv4 Default Gateway'),
-      tooltip : T('Enter the default gateway associated with the IP\
-                   address.'),
+      tooltip : T('Enter the default gateway of the IPv4 connection.'),
     },
     {
       type : 'input',
       name : 'vlan',
       placeholder : T('VLAN ID'),
-      tooltip : T('Enter the VLAN identifier if the IPMI out-of-band\
-                   management interface is not on the same VLAN as\
-                   management networking.'),
+      tooltip : T('If the IPMI out-of-band management interface is on a\
+                   different VLAN from the management network, enter the\
+                   IPMI VLAN.'),
       inputType: 'number',
     },
   ];

@@ -20,7 +20,7 @@
           <tooltip class="volumeTooltip" [message]=encryption_tooltip></tooltip>
           <div *ngIf="poolError" [style.color]="'red'" [innerHTML]="poolError"></div>
           <div>
-            <button *ngIf="suggestable_disks.length <= 8" [disabled]="dirty" mat-raised-button class="btn btn-accent" (click)="suggestLayout()">{{"Suggest Layout" | translate}}</button>
+            <button *ngIf="suggestable_disks.length <= 8" [disabled]="dirty" mat-button class="btn btn-accent" (click)="suggestLayout()">{{"Suggest Layout" | translate}}</button>
             <tooltip class="volumeTooltip" [message]=suggested_layout_tooltip></tooltip>
           </div>
         </div>
@@ -28,7 +28,7 @@
           <mat-input-container>
             <input matInput placeholder="Name" [value]="name" disabled>
           </mat-input-container>
-          <mat-error *ngIf="isEncrypted">{{"Extending an encrypted pool will reset the passphrase and recovery key!" | translate }}</mat-error>
+          <mat-error *ngIf="isEncrypted">{{"Extending an encrypted pool resets the passphrase and recovery key!" | translate }}</mat-error>
         </ng-template>
       </div>
       <div class="wrapper">
@@ -52,7 +52,7 @@
                       <mat-checkbox [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>
                     </div>
                   </ng-template>
-          
+
                   <ng-template ngx-datatable-cell-template let-value="value" let-rowIndex="rowIndex" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
                     <div>
                       <mat-checkbox name="disk_{{rowIndex}}_checkbox" [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></mat-checkbox>
@@ -66,13 +66,13 @@
                   [draggable]="false"
                   [resizeable]="false">
                 </ngx-datatable-column>
-                <ngx-datatable-column 
-                  [width]="120" 
-                  name="Disk" 
+                <ngx-datatable-column
+                  [width]="120"
+                  name="Disk"
                   prop="devname"></ngx-datatable-column>
-                <ngx-datatable-column 
-                  [width]="120" 
-                  name="Capacity" 
+                <ngx-datatable-column
+                  [width]="120"
+                  name="Capacity"
                   prop="capacity"></ngx-datatable-column>
               </ngx-datatable>
               <mat-input-container>
@@ -117,12 +117,12 @@
       <div *ngIf="vdevtypeError" [style.color]="'red'" [innerHTML]="vdevtypeError"></div>
       <div *ngIf="error" [style.color]="'red'" [innerHTML]="error"></div>
       <div class="buttons">
-        <button mat-raised-button name="create-button" class="btn btn-primary" (click)="checkSubmit()" color="primary" [disabled]="!canSave()">{{submitTitle | translate }}</button>
-        <button mat-raised-button class="btn  btn-block btn-raised btn-lg btn-primary" type="button" (click)="goBack()" color="accent">{{"Cancel" | translate}}</button>
-        <button mat-raised-button class="btn btn-accent" (click)="addVdev('data')">{{"Add Data" | translate}}</button>
-        <button [disabled]="vdevs.cache.length > 0" mat-raised-button class="btn btn-accent" (click)="addVdev('cache')">{{"Add Cache" | translate}}</button>
-        <button [disabled]="vdevs.log.length > 0" mat-raised-button class="btn btn-accent" (click)="addVdev('log')">{{"Add Log" | translate}}</button>
-        <button [disabled]="vdevs.spare.length > 0" mat-raised-button class="btn btn-accent" (click)="addVdev('spare')">{{"Add Spare" | translate}}</button>
+        <button mat-button name="create-button" class="btn btn-primary" (click)="checkSubmit()" color="primary" [disabled]="!canSave()">{{submitTitle | translate }}</button>
+        <button mat-button class="btn  btn-block btn-lg btn-primary" type="button" (click)="goBack()" color="accent">{{"Cancel" | translate}}</button>
+        <button mat-button class="btn btn-accent" (click)="addVdev('data')">{{"Add Data" | translate}}</button>
+        <button [disabled]="vdevs.cache.length > 0" mat-button class="btn btn-accent" (click)="addVdev('cache')">{{"Add Cache" | translate}}</button>
+        <button [disabled]="vdevs.log.length > 0" mat-button class="btn btn-accent" (click)="addVdev('log')">{{"Add Log" | translate}}</button>
+        <button [disabled]="vdevs.spare.length > 0" mat-button class="btn btn-accent" (click)="addVdev('spare')">{{"Add Spare" | translate}}</button>
       </div>
     </div>
   </div>

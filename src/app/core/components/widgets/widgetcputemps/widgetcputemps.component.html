@@ -11,11 +11,19 @@
         <!--<viewchartline fxFlex="100" fxFlexAlign="end" #chartCpu width="600" height="160" [style.display]="isFlipped ? 'none': 'block'"></viewchartline>-->
         <!-- Chart -->
         <div class="chart-wrapper">
+          <ng-container *ngIf="!invalidData">
           <div [id]="chartId"></div>
           <div class="x-axis">
             <div class="start-time">{{startTime}}</div>
             <div class="end-time">{{endTime}}</div>
           </div>
+          </ng-container>
+          <ng-container *ngIf="invalidData">
+            <div class="message-invalid-data">
+              <h3>CPU temperature data unavailable.</h3>
+              <!--<p>(Is this a virtual machine?)</p>-->
+            </div>
+          </ng-container>
         </div>
 
         <!-- DETAILS -->
@@ -32,15 +40,15 @@
           <button mat-button class="reports-btn" (click)="router.navigate(['reportsdashboard'])">REPORTS</button>
         </div>
       </mat-card-content>
-      <!--<div class="widget-footer"><button md-raised-button color="primary" (click)="toggleConfig()">Flip</button></div>-->
+      <!--<div class="widget-footer"><button md-button color="primary" (click)="toggleConfig()">Flip</button></div>-->
     </mat-card>
     <ng-template *ngIf="configurable">
     <mat-card class="back">
       <mat-card-content fxLayout="column" fxLayoutAlign="start stretch" fxFlex="100">
       </mat-card-content>
       <div class="widget-footer">
-        <button mat-raised-button color="accent" (click)="toggleConfig()">{{"Cancel" | translate}}</button>
-        <button mat-raised-button color="primary" type="submit" form="preferences" (click)="toggleConfig()">{{"Save" | translate}}</button>
+        <button mat-button color="accent" (click)="toggleConfig()">{{"Cancel" | translate}}</button>
+        <button mat-button color="primary" type="submit" form="preferences" (click)="toggleConfig()">{{"Save" | translate}}</button>
       </div>
     </mat-card>
     </ng-template>

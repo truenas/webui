@@ -160,6 +160,11 @@ export class StorageFormComponent {
     let value = _.cloneDeep(this.formGroup.value);
     let mountPoint: MountPoint;
 
+    let destination_field = _.find(this.fieldConfig, { 'name': 'destination' });
+    if (_.startsWith(value['destination'], destination_field.initial)) {
+      value['destination'] = value['destination'].substring(destination_field.initial.length);
+    }
+
     if (this.mountpointId) {
       //edit mode
       this.mountPointEdit.source = value['source'];

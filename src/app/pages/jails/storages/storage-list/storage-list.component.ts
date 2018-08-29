@@ -4,6 +4,7 @@ import { DialogService, WebSocketService } from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { Subscription } from 'rxjs';
 import { EntityUtils } from '../../../common/entity/utils';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'app-storage-list',
@@ -36,8 +37,8 @@ export class StorageListComponent {
   }
 
   public columns: Array < any > = [
-    { name: 'Source', prop: 'source' },
-    { name: 'Destination', prop: 'destination' },
+    { name: T('Source'), prop: 'source' },
+    { name: T('Destination'), prop: 'destination' },
   ];
   public config: any = {
     paging: true,
@@ -73,12 +74,12 @@ export class StorageListComponent {
   }
 
   doDelete(id) {
-    this.dialog.confirm("Delete", "Delete this item?").subscribe((res) => {
+    this.dialog.confirm(T("Delete"), T("Delete this item?"), false, T('Delete Mount Point')).subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
         let data = {};
-        this.busy = this.ws.call('jail.fstab', [this.jailId, { "action": "REMOVE", "source": "", "destination": "", "fstype": "", "fsoptions": "", "dump": "", "pass": "" , "index": id}]).subscribe(
+        this.busy = this.ws.call('jail.fstab', [this.jailId, { "action": "REMOVE", "index": id}]).subscribe(
           (res) => { this.getData() },
           (res) => {
             new EntityUtils().handleError(this, res);
@@ -91,7 +92,7 @@ export class StorageListComponent {
 
   getAddActions() {
     return [{
-      label: "Go Back to Jails",
+      label: T("Go Back to Jails"),
       icon: "reply",
       onClick: () => {
         this.router.navigate(new Array('').concat(['jails']));

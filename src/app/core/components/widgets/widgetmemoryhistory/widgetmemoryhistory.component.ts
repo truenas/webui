@@ -28,7 +28,7 @@ export class WidgetMemoryHistoryComponent extends WidgetChartComponent implement
   public title:string = T("Memory Usage");
   protected _subtitle:string;
   get subtitle(){
-    let value = T("of " + this.totalMemory + "GB total");
+    let value = T("of " + this.totalMemory + "GiB total");
     return value;
   }
   set subtitle(val){
@@ -44,6 +44,7 @@ export class WidgetMemoryHistoryComponent extends WidgetChartComponent implement
 
   ngOnDestroy(){
     this.core.emit({name:"StatsRemoveListener", data:{name:"Memory", obj:this}});
+    this.core.unregister({observerClass:this});
   }
 
   ngAfterViewInit(){
@@ -60,12 +61,12 @@ export class WidgetMemoryHistoryComponent extends WidgetChartComponent implement
     });
 
     this.core.register({observerClass:this,eventName:"SysInfo"}).subscribe((evt:CoreEvent) => {
-      this.totalMemory = this.formatMemory(evt.data.physmem, "GB");
+      this.totalMemory = this.formatMemory(evt.data.physmem, "GiB");
       this.chartSetup();
       if(this.chartData){
         this.setChartData(this.chartData);
       } else {
-        
+
       }
     });
 
@@ -109,12 +110,12 @@ export class WidgetMemoryHistoryComponent extends WidgetChartComponent implement
            tick: {
              count:3,
              values: [
-               (this.totalMemory * 0.25), 
-               (this.totalMemory * 0.5), 
-               (this.totalMemory * 0.75), 
+               (this.totalMemory * 0.25),
+               (this.totalMemory * 0.5),
+               (this.totalMemory * 0.75),
                this.totalMemory
              ],
-             format: (y) => { return y + "GB" }
+             format: (y) => { return y + "GiB" }
            }
          }
        },
@@ -134,7 +135,7 @@ export class WidgetMemoryHistoryComponent extends WidgetChartComponent implement
            if(!this.showLegendValues){
              this.showLegendValues = true;
            }
-           this.altTitle = "Memory Used " + raw[0].value + "GB";
+           this.altTitle = "Memory Used " + raw[0].value + "GiB";
            this.altSubtitle = raw[0].x;
 
            return '<div style="display:none">' + raw[0].x + '</div>';
@@ -149,7 +150,7 @@ export class WidgetMemoryHistoryComponent extends WidgetChartComponent implement
     let dataTypes = [];
     dataTypes = evt.data.meta.legend;
 
-    // populate parsedData 
+    // populate parsedData
     for(let index in dataTypes){
       let chartData:ChartData = {
         legend: dataTypes[index],
@@ -170,7 +171,7 @@ export class WidgetMemoryHistoryComponent extends WidgetChartComponent implement
     this.startTime = this.timeFromDate(xColumn[1]);
 
     this.endTime = this.timeFromDate(xColumn[xColumn.length - 1]);
-    
+
     let cols = this.makeColumns([finalStat]);
     cols.unshift(xColumn);
     this.chart.load({
@@ -216,14 +217,13 @@ export class WidgetMemoryHistoryComponent extends WidgetChartComponent implement
   }
 
   formatMemory(physmem:number, units:string){
-    let result:string; 
-    if(units == "MB"){
+    let result:string;
+    if(units == "MiB"){
       result = Number(physmem / 1024 / 1024).toFixed(0)
-    } else if(units == "GB"){
+    } else if(units == "GiB"){
       result = Number(physmem / 1024 / 1024 / 1024).toFixed(0)
     }
     return Number(result)
   }
 
 }
-
