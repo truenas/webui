@@ -868,53 +868,62 @@ iscsi .mat-ink-bar {
   overflow-y: hidden !important;
 }
 
-// Define logo via CSS properties
-.logo{
- /*   @include variable(background-image, --logo, $logo !important); //url(assets/images/logo.svg);
-    background-size: contain;
-    width: 52px;
-    height: 48px;
-    background-repeat: no-repeat;
-    background-position: 0 4px;
-    left: -6px;
-    position: relative;*/
-}
-.logo-text{
-   /* @include variable(background-image, --logo-text, $logo-text !important); //url(assets/images/logo-text.svg);
-    width: 112px;
-    height: 40px;
-    position: relative;
-    top: 0;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: 2px 0;*/
-}
+// // Define logo via CSS properties
+// .logo{
+//  /*   @include variable(background-image, --logo, $logo !important); //url(assets/images/logo.svg);
+//     background-size: contain;
+//     width: 52px;
+//     height: 48px;
+//     background-repeat: no-repeat;
+//     background-position: 0 4px;
+//     left: -6px;
+//     position: relative;*/
+// }
+// .logo-text{
+//    /* @include variable(background-image, --logo-text, $logo-text !important); //url(assets/images/logo-text.svg);
+//     width: 112px;
+//     height: 40px;
+//     position: relative;
+//     top: 0;
+//     background-size: contain;
+//     background-repeat: no-repeat;
+//     background-position: 2px 0;*/
+// }
 
-#password, #bsdusr_password, #sed_passwd, #em_pass1,
+#password, #sed_passwd, #em_pass1, #bsdusr_passwd_currnt,
   #Passphrase, #passphrase, #disk_passwd, #ldap_bindpw, #iscsi_target_auth_secret,
     #iscsi_target_auth_peersecret, #dc_passwd, #secret_key, #ad_bindpw, #v3_password,
     #secret_access_key-S3, #v3_privpassphrase, #secret_access_key-S3, #pass-FTP, 
     #pass-MEGA, #pass-SFTP, #pass-WEBDAV, #aws_secret_access_key {
   width: 70%;
-  display: inline-block;
-  @include variable (background, --bg1, $bg1);
-  padding: 0 5px 0 5px;
+  max-width: 640px;
+  // @include variable (background, --bg1, $bg1);
+  // padding: 0 5px 0 10px;
 }
 
-#password_conf, #bsdusr_password_conf, #sed_passwd2, #em_pass2,
+#password_conf, #bsdusr_password, #bsdusr_password_conf, #sed_passwd2, #em_pass2,
   #Passphrase2, #passphrase2, #disk_passwd2, #iscsi_target_auth_secret_confirm,
     #iscsi_target_auth_peersecret_confirm, #password2, #dc_passwd2, #secret_key2, #v3_password2,
     #v3_privpassphrase2 {
   width: 70%;
-  display: inline-block;
-  @include variable (background, --bg1, $bg1);
-  padding: 0 25px 0 5px;
+  max-width: 450px;
+  // @include variable (background, --bg1, $bg1);
+  // padding: 0 30px 0 10px;
 }
 
-// #toggle_pw {
-//   position: absolute;
-//   right: 340px;
-// }
+.has-pwtoggle > mat-input-container {
+	width: 70% !important;
+}
+
+app-entity-dialog .has-pwtoggle  {
+  padding: 0 0 10px 0 !important;
+  width: 385px !important;
+  background: rgba(0, 0, 0, 0) !important;
+
+  mat-input-container {
+    width: 86.3% !important;
+  }
+}
 
 #secret_key2 {
   margin-bottom: 5px;

@@ -18,7 +18,7 @@ import { DatePipe } from '@angular/common';
 @Component({
   selector: 'app-entity-dialog',
   templateUrl: './entity-dialog.component.html',
-  styles: [`#dialog-pw-toggle { margin-left: 15px; }`],
+  styles: [],
   providers: [EntityFormService, DatePipe]
 })
 export class EntityDialogComponent implements OnInit {
