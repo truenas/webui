@@ -4,6 +4,8 @@ import { RestService, WebSocketService } from '../../../services';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
+import { MatDialog, MatDialogRef } from '@angular/material';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import * as _ from 'lodash';
 import { JailService, NetworkService, DialogService } from '../../../services/';
 import { EntityUtils } from '../../common/entity/utils';
@@ -207,6 +209,7 @@ export class JailWizardComponent {
   protected ip4_netmaskField: any;
   protected ip6_interfaceField: any;
   protected ip6_prefixField: any;
+  protected dialogRef: any;
 
   public ipv4: any;
   public ipv6: any;
@@ -215,6 +218,7 @@ export class JailWizardComponent {
               protected jailService: JailService,
               protected router: Router,
               protected networkService: NetworkService,
+              protected dialog: MatDialog,
               protected dialogService: DialogService) {
 
   }
@@ -422,6 +426,20 @@ export class JailWizardComponent {
     value['props'] = property;
 
     return value;
+  }
+
+  customSubmit(value) {
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Creating Jail") }, disableClose: true});
+    this.dialogRef.componentInstance.setDescription(T("Creating Jail..."));
+    this.dialogRef.componentInstance.setCall(this.addWsCall, [value]);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.dialogRef.close(true);
+      this.router.navigate(new Array('/').concat(this.route_success));
+    });
+    this.dialogRef.componentInstance.failure.subscribe((res) => {
+      this.dialogService.errorReport('Error ' + res.error + ':' + res.reason, res.trace.class, res.trace.formatted);
+    });
   }
 
   isCustActionVisible(id, stepperIndex) {

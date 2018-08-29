@@ -4,6 +4,9 @@ import { T } from '../../../translate-marker'
 import { TranslateService } from '@ngx-translate/core'
 import { Validators } from '@angular/forms';
 
+import { MatDialog, MatDialogRef } from '@angular/material';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { JailService } from '../../../services/';
@@ -35,6 +38,7 @@ export class JailAddComponent implements OnInit {
   public error: string;
   public busy: Subscription;
 
+  protected dialogRef: any;
   protected formFileds: FieldConfig[];
   public basicfieldConfig: FieldConfig[] = [
     {
@@ -1108,6 +1112,7 @@ export class JailAddComponent implements OnInit {
     protected fieldRelationService: FieldRelationService,
     protected loader: AppLoaderService,
     public translate: TranslateService,
+    protected dialog: MatDialog,
     protected dialogService: DialogService,
     protected networkService: NetworkService) {}
 
@@ -1380,21 +1385,17 @@ export class JailAddComponent implements OnInit {
     }
     value['props'] = property;
 
-    this.loader.open();
-    this.ws.job(this.addCall, [value]).subscribe(
-      (res) => {
-        this.loader.close();
-        if (res.error) {
-          this.error = res.error;
-        } else {
-          this.router.navigate(new Array('/').concat(this.route_success));
-        }
-      },
-      (res) => {
-        this.loader.close();
-        this.dialogService.errorReport('Error ' + res.error + ':' + res.reason, res.trace.class, res.trace.formatted);
-      }
-    );
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Creating Jail") }, disableClose: true });
+    this.dialogRef.componentInstance.setDescription(T("Creating Jail..."));
+    this.dialogRef.componentInstance.setCall(this.addCall, [value]);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.dialogRef.close(true);
+      this.router.navigate(new Array('/').concat(this.route_success));
+    });
+    this.dialogRef.componentInstance.failure.subscribe((res) => {
+      this.dialogService.errorReport('Error ' + res.error + ':' + res.reason, res.trace.class, res.trace.formatted);
+    });
   }
 
   setStep(index: number) {
