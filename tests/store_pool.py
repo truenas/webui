@@ -43,7 +43,7 @@ xpaths = {
         'createButton': '/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-manager/mat-card/div[2]/div/div[4]/button[1]',
         #very important and useful
         'confirmCheckbox': '//*[contains(@name, "confirm_checkbox")]',
-        'okButton': '//*[contains(text(), "OK")]'
+        'createpoolButton': '//*[contains(text(), "CREATE POOL")]'
         }
 
 
@@ -105,7 +105,7 @@ class create_pool_test(unittest.TestCase):
             # checkbox confirmation
             driver.find_element_by_xpath(xpaths['confirmCheckbox']).click()
             # Click Ok Button
-            driver.find_element_by_xpath(xpaths['okButton']).click()
+            driver.find_element_by_xpath(xpaths['createpoolButton']).click()
             #taking screenshot
             function.screenshot(driver, self)
             self.error_check()
