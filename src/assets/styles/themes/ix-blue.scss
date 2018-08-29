@@ -895,20 +895,27 @@ iscsi .mat-ink-bar {
     #iscsi_target_auth_peersecret, #dc_passwd, #secret_key, #ad_bindpw, #v3_password,
     #secret_access_key-S3, #v3_privpassphrase, #secret_access_key-S3, #pass-FTP, 
     #pass-MEGA, #pass-SFTP, #pass-WEBDAV, #aws_secret_access_key {
-  width: 70%;
   max-width: 640px;
-  // @include variable (background, --bg1, $bg1);
-  // padding: 0 5px 0 10px;
+  min-width: 225px;
 }
 
-#password_conf, #bsdusr_password, #bsdusr_password_conf, #sed_passwd2, #em_pass2,
+#password_conf, #bsdusr_password_conf, #sed_passwd2, #em_pass2,
   #Passphrase2, #passphrase2, #disk_passwd2, #iscsi_target_auth_secret_confirm,
     #iscsi_target_auth_peersecret_confirm, #password2, #dc_passwd2, #secret_key2, #v3_password2,
     #v3_privpassphrase2 {
   width: 70%;
   max-width: 450px;
-  // @include variable (background, --bg1, $bg1);
-  // padding: 0 30px 0 10px;
+}
+
+#bsdusr_password {
+  width: 70%;
+  max-width: 475px;
+  min-width: 225px;
+}
+
+app-createpassphrase-form .has-tooltip {
+  width: 100% !important;
+  max-width: 450px !important;
 }
 
 .has-pwtoggle > mat-input-container {

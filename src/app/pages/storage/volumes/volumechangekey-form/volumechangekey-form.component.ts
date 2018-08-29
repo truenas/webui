@@ -49,6 +49,7 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
     },{
       type : 'input',
       inputType: 'password',
+      togglePw : true,
       name : 'adminpw',
       placeholder: T('Root Password'),
       tooltip: T('Enter the root password.'),
@@ -62,7 +63,6 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
       tooltip: T('Enter the GELI passphrase.'),
       validation: [Validators.required],
       required: true,
-      togglePw : true
     },{
       type : 'input',
       inputType: 'password',
