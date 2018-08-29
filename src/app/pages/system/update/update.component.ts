@@ -39,7 +39,7 @@ export class UpdateComponent implements OnInit {
     "SDK": T("Changing SDK version is not a supported operation. Activate an existing boot environment that uses the desired train and boot into it to switch to that train."),
     "NIGHTLY_UPGRADE": T("Changing to a nightly train is one-way. Changing back to a stable train is not supported!")
   }
- 
+
   public busy: Subscription;
   public busy2: Subscription;
 
@@ -71,22 +71,22 @@ export class UpdateComponent implements OnInit {
       version.push(branch);
     }
 
-    
+
     return version;
   }
 
   compareTrains(t1, t2) {
     const v1 = this.parseTrainName(t1)
     const v2 = this.parseTrainName(t2);
-    
+
     try {
       if(v1[0] !== v2[0] ) {
 
-        const version1 = v1[0].split('.'); 
+        const version1 = v1[0].split('.');
         const version2 = v2[0].split('.');
         const branch1 = v1[1].toLowerCase();
         const branch2 = v2[1].toLowerCase();
-        
+
 
 
         if(branch1 !== branch2) {
@@ -136,11 +136,11 @@ export class UpdateComponent implements OnInit {
             }
           } else {
             if(branch2 === "nightlies" && branch1 === "nightlies") {
-  
+
             }
-  
+
           }
-          
+
         }
         else {
           if(v2[2]||v1[2]){
@@ -270,28 +270,28 @@ export class UpdateComponent implements OnInit {
                     this.dialogRef.close(false);
                     this.snackBar.open(T("Updates successfully downloaded"),'close', { duration: 5000 });
                     this.pendingupdates();
-                    
+
                   });
                   this.dialogRef.componentInstance.failure.subscribe((failure) => {
                     this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
                   });
-  
+
                 }
                 else{
                   this.update();
                 }
-  
+
               }
-              
+
             })
           } else if (res.status === 'UNAVAILABLE'){
-            this.dialogService.Info(T('Check Now'), T('No updates available'))
+            this.dialogService.Info(T('Check Now'), T('No updates available.'))
           }
         },
         (err) => {
           this.loader.close();
-          this.dialogService.errorReport(T("Error checking for updates"), err.reason, err.trace.formatted);
-        }, 
+          this.dialogService.errorReport(T("Error checking for updates."), err.reason, err.trace.formatted);
+        },
         () => {
           this.loader.close();
         });
@@ -310,7 +310,7 @@ export class UpdateComponent implements OnInit {
   }
   ApplyPendingUpdate() {
     const apply_pending_update_ds  = this.dialogService.confirm(
-      T("Apply Pending Updates"), T("The system will be rebooted after updates are applied. Do you want to continue?")
+      T("Apply Pending Updates"), T("The system will reboot and be briefly unavailable after applying updates. Continue?")
     ).subscribe((res)=>{
       if(res){
        this.update();
@@ -377,8 +377,8 @@ export class UpdateComponent implements OnInit {
           }
         },
         (err) => {
-          this.general_update_error =  err.reason.replace('>', '').replace('<','') + T(":  Automatic update check failed. Please check system network settings.")
-        }, 
+          this.general_update_error =  err.reason.replace('>', '').replace('<','') + T(": Automatic update check failed. Please check system network settings.")
+        },
         () => {
         });
   }
