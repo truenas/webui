@@ -43,7 +43,7 @@ xpaths = {
         'createButton': '/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-manager/mat-card/div[2]/div/div[4]/button[1]',
         #very important and useful
         'confirmCheckbox': '//*[contains(@name, "confirm_checkbox")]',
-        'okButton': '//*[contains(text(), "OK")]'
+        'createpoolButton': '//*[contains(text(), "CREATE POOL")]'
         }
 
 
@@ -79,7 +79,7 @@ class create_pool_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
@@ -105,7 +105,7 @@ class create_pool_test(unittest.TestCase):
             # checkbox confirmation
             driver.find_element_by_xpath(xpaths['confirmCheckbox']).click()
             # Click Ok Button
-            driver.find_element_by_xpath(xpaths['okButton']).click()
+            driver.find_element_by_xpath(xpaths['createpoolButton']).click()
             #taking screenshot
             function.screenshot(driver, self)
             self.error_check()
@@ -114,7 +114,7 @@ class create_pool_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
@@ -150,7 +150,7 @@ class create_pool_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_04_close_navStorage(self):
@@ -163,7 +163,7 @@ class create_pool_test(unittest.TestCase):
             exc_info_p = traceback.format_exception(*sys.exc_info())
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 

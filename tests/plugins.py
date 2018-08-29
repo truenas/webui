@@ -1,7 +1,7 @@
 # Author: Rishabh Chauhan
 # License: BSD
 # Location for tests  of FreeNAS new GUI
-# Test case count: 2
+# Test case count: 5
 
 import function
 from source import *
@@ -14,6 +14,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
+
 
 #error handling/screenshotsave
 import sys
@@ -30,33 +31,39 @@ try:
 except ImportError:
     import unittest
 
-xpaths = { 'outgoingMail' : '//*[@id="em_outgoingserver"]/mat-input-container/div/div[1]/div/input',
-           'navSystem' : '//*[@id="nav-2"]/div/a[1]',
-           'submenuEmail' : '//*[@id="2-4"]'
-         }
 
-class conf_system_email_test(unittest.TestCase):
+xpaths = {
+        'navPlugins' : '//*[@id="nav-9"]/div/a[1]',
+        'submenuAvailable' : '//*[@id="9-0"]',
+        'submenuInstalled' : '//*[@id="9-1"]',
+        'listItemcount' : '//*[@id="entity-table-component"]/div[3]/mat-paginator/div/div[1]/mat-form-field/div/div[1]/div',
+        'count100' : '//*[text()="100"][@class="mat-option-text"]'
+        }
+
+class plugin_test(unittest.TestCase):
     @classmethod
     def setUpClass(inst):
         driver.implicitly_wait(30)
         pass
 
     # Test navigation Account>Users>Hover>New User and enter username,fullname,password,confirmation and wait till user is  visibile in the list
-    def test_01_nav_system_email(self):
+    def test_01_00_nav_plug_available(self):
         try:
-    #        driver.find_element_by_xpath(xpaths['navSystem']).click()
+            # Click PLugin menu
+            print (" navigating to the Install submenu")
+            a = driver.find_element_by_xpath(xpaths['navPlugins'])
+            a.click()
+            # allowing the button to load
             time.sleep(1)
-            driver.find_element_by_xpath(xpaths['submenuEmail']).click()
-            # cancelling the tour
-            if self.is_element_present(By.XPATH,'/html/body/div[6]/div[1]/button'):
-                driver.find_element_by_xpath('/html/body/div[6]/div[1]/button').click()
+            # Click User submenu
+            driver.find_element_by_xpath(xpaths['submenuAvailable']).click()
             # get the ui element
             ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li[2]/a')
             # get the weather data
             page_data=ui_element.text
             print ("the Page now is: " + page_data)
             # assert response
-            self.assertTrue("Email" in page_data)
+            self.assertTrue("Available" in page_data)
             #taking screenshot
             function.screenshot(driver, self)
         except Exception:
@@ -67,14 +74,16 @@ class conf_system_email_test(unittest.TestCase):
                 print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
-    def test_02_configure_email(self):
+
+
+    def test_01_01_show100_plugins(self):
         try:
-            # Close the System Tab
-            driver.find_element_by_xpath(xpaths['outgoingMail']).clear()
-            print ("configuring outgoing server to test@ixsystems.com")
-            driver.find_element_by_xpath(xpaths['outgoingMail']).send_keys("test@ixsystems.com")
-            driver.find_element_by_xpath('//*[@id="save_button"]').click()
-            time.sleep(5)
+            print ("Changing list from 10 to 100 ")
+            time.sleep(2)
+            #click on the list
+            driver.find_element_by_xpath(xpaths['listItemcount']).click()
+            time.sleep(1)
+            driver.find_element_by_xpath(xpaths['count100']).click()
             #taking screenshot
             function.screenshot(driver, self)
         except Exception:
@@ -84,6 +93,30 @@ class conf_system_email_test(unittest.TestCase):
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
+
+
+    def test_02_00_install_plugin_jenkin(self):
+        try:
+            print ("Installing jenkins plugin")
+            # finding jenkin plugin
+            function.plugin_install(driver, self, "install", "Jenkins")
+            time.sleep(20)
+            #taking screenshot
+            function.screenshot(driver, self)
+            wait = WebDriverWait(driver, 120)
+            element = wait.until(EC.element_to_be_clickable((By.XPATH, xpaths['submenuAvailable'])))
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            #taking screenshot
+            function.screenshot(driver, self)
+            for i in range(1,len(exc_info_p)):
+                print (exc_info_p[i].rstrip())
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
+
+    # Next step-- To check if the new user is present in the list via automation
+
 
     # method to test if an element is present
     def is_element_present(self, how, what):
@@ -96,13 +129,20 @@ class conf_system_email_test(unittest.TestCase):
         except NoSuchElementException: return False
         return True
 
+    def error_check(self):
+        if self.is_element_present(By.XPATH,'/html/body/div[3]/div/div[2]/md-dialog-container/error-dialog/div[1]/p'):
+            ui_element=driver.find_element_by_xpath('/html/body/div[3]/div/div[2]/md-dialog-container/error-dialog/div[1]/p')
+            error_element=ui_element.text
+            print (error_element)
+            driver.find_element_by_xpath('/html/body/div[3]/div/div[2]/md-dialog-container/error-dialog/div[2]/button').click()
+
 
     @classmethod
     def tearDownClass(inst):
         pass
 
-def run_conf_email_test(webdriver):
+def run_plugin_test(webdriver):
     global driver
     driver = webdriver
-    suite = unittest.TestLoader().loadTestsFromTestCase(conf_system_email_test)
+    suite = unittest.TestLoader().loadTestsFromTestCase(plugin_test)
     xmlrunner.XMLTestRunner(output=results_xml, verbosity=2).run(suite)

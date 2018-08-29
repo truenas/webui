@@ -4,6 +4,14 @@
 # Location for tests  of FreeNAS new GUI
 # Test case count: 1
 
+import sys
+import getopt
+from shutil import copyfile
+from subprocess import call
+from os import path
+from driverU import webDriver
+
+
 import function
 from source import *
 from selenium.webdriver.common.keys import Keys
@@ -32,15 +40,33 @@ try:
 except ImportError:
     import unittest
 
-xpaths = {'usernameTxtBox': '/html/body/app-root/app-auth-layout/app-signin/div/div/mat-card/mat-card-content/div[1]/form/div[1]/mat-input-container/div/div[1]/div/input',
+sys.stdout.flush()
+
+argument = sys.argv
+
+ip = "10.20.21.232"
+
+
+xpaths = {
+          'usernameTxtBox': '/html/body/app-root/app-auth-layout/app-signin/div/div/mat-card/mat-card-content/div[1]/form/div[1]/mat-input-container/div/div[1]/div/input',
           'passwordTxtBox': '/html/body/app-root/app-auth-layout/app-signin/div/div/mat-card/mat-card-content/div[1]/form/div[2]/mat-input-container/div/div[1]/div/input',
-          'submitButton': '/html/body/app-root/app-auth-layout/app-signin/div/div/mat-card/mat-card-content/div[1]/form/button'
+          'submitButton': '/html/body/app-root/app-auth-layout/app-signin/div/div/mat-card/mat-card-content/div[1]/form/button',
+          'rootButton' : "/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/topbar/mat-toolbar/mat-toolbar-row/button[6]/span/mat-icon",
+          'logoutButton' : "//*[contains(text(), 'Log out')]",
+          'logoutconfirmationCheckbox' : "/html/body/div[3]/div[2]/div[2]/md-dialog-container/confirm-dialog/div[1]/md-checkbox/label/div",
+          'logoutconfirmationButton' : "//*[contains(@name, 'ok_button')]"
           }
 
+ui_url = "http://%s/ui" % ip
 
-class login_test(unittest.TestCase):
+
+class plugin_test(unittest.TestCase):
     @classmethod
     def setUpClass(inst):
+        global driver
+        driver = webdriver.Firefox()
+        driver.implicitly_wait(30)
+        driver.maximize_window()
         driver.get(ui_url)
 
     def test_01_login(self):
@@ -55,8 +81,6 @@ class login_test(unittest.TestCase):
             driver.find_element_by_xpath(xpaths['submitButton']).click()
             # check if the dashboard opens
             time.sleep(1)
-            self.error_check()
-            self.error_check()
             # get the ui element
             ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li/a')
             # get the weather data
@@ -75,28 +99,36 @@ class login_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i].rstrip())
+                print (exc_info_p[i])
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
+    def test_05_logout(self):
+        try:
+            print (" loging out of the ui, see ya")
+            # Click on root account
+            driver.find_element_by_xpath(xpaths['rootButton']).click()
+            # Click on logout
+            time.sleep(2)
+            driver.find_element_by_xpath(xpaths['logoutButton']).click()
+            time.sleep(2)
+            # Click on OK when re-confirm logout
+            driver.find_element_by_xpath(xpaths['logoutconfirmationButton']).click()
+            time.sleep(2)
+            #taking screenshot
+            function.screenshot(driver, self)
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            #taking screenshot
+            function.screenshot(driver, self)
+            for i in range(1,len(exc_info_p)):
+                print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
-    def error_check(self):
-        if function.is_element_present(driver, self, By.XPATH, '//*[contains(text(), "Close")]'):
-            if function.is_element_present(driver, self, By.XPATH,'/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
-                ui_element=driver.find_element_by_xpath('/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1')
-                error_element=ui_element.text
-                print (error_element)
-            driver.find_element_by_xpath('//*[contains(text(), "Close")]').click()
-            print ("rdd error closed")
-
-
     @classmethod
-    def tearDownClass(inst):
-        pass
+    def tearDown(inst):
+        # close the browser window
+        driver.close()
 
-def run_login_test(webdriver, ip):
-    global driver
-    driver = webdriver
-    global ui_url
-    ui_url = "http://%s/ui" % ip
-    suite = unittest.TestLoader().loadTestsFromTestCase(login_test)
-    xmlrunner.XMLTestRunner(output=results_xml, verbosity=2).run(suite)
+if __name__ == '__main__':
+    unittest.main()
