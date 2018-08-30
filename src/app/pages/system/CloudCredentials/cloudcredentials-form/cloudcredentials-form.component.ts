@@ -49,10 +49,7 @@ export class CloudCredentialsFormComponent {
       placeholder: T('Amazon Application Client ID'),
       tooltip:T('Client ID for the <a\
                  href="https://developer.amazon.com/docs/amazon-drive/ad-get-started.html"\
-                 target="_blank">Amazon Drive account</a>. Note: <a\
-                 href="https://rclone.org/amazonclouddrive/"\
-                 target="_blank">rclone</a> only supports Amazon Drive\
-                 accounts that have an existing set of API keys.'),
+                 target="_blank">Amazon Drive account</a>.'),
       required: true,
       isHidden: true,
       relation: [
@@ -69,8 +66,7 @@ export class CloudCredentialsFormComponent {
       type: 'input',
       name: 'client_secret-AMAZON_CLOUD_DRIVE',
       placeholder: T('Application Client Secret'),
-      tooltip: T('Client secret for an existing Amazon Drive account.\
-                  This must come from an existing Amazon Drive account.'),
+      tooltip: T('Client secret for the Amazon Drive account.'),
       required: true,
       isHidden: true,
       relation: [
@@ -109,10 +105,10 @@ export class CloudCredentialsFormComponent {
       type: 'input',
       name: 'secret_access_key-S3',
       placeholder: T('Secret Access Key'),
-      tooltip: T('Amazon Web Services password. Create a new key\
-                  pair on the same AWS screen where the Access Key is\
-                  generated if the Secret Access Key cannot be found or\
-                  remembered.'),
+      tooltip: T('Amazon Web Services password. If the Secret Access Key\
+                  cannot be found or remembered, go to <i>My Account >\
+                  Security Credentials > Access Keys</i> and create a\
+                  new key pair.'),
       required: true,
       isHidden: true,
       relation: [
@@ -157,8 +153,8 @@ export class CloudCredentialsFormComponent {
       tooltip: T('<a\
                   href="https://www.backblaze.com/b2/cloud-storage.html"\
                   target="_blank">Backblaze B2</a> account ID. This is\
-                  an alphanumeric string found after logging into an\
-                  existing B2 account.'),
+                  an alphanumeric string seen after logging into a B2\
+                  account.'),
       required: true,
       isHidden: true,
       relation: [
@@ -175,9 +171,8 @@ export class CloudCredentialsFormComponent {
       type: 'input',
       name: 'key-B2',
       placeholder: T('Application Key'),
-      tooltip: T('Backblaze B2 Bucket Application Key. This is\
-                  generated after logging into a B2 account and going to\
-                  the Buckets page. <a\
+      tooltip: T('Backblaze B2 Bucket Application Key. Log in to the B2\
+                  account and generate the key on the Buckets page. <a\
                   href="https://help.backblaze.com/hc/en-us/articles/224991568-Where-can-I-find-my-Account-ID-and-Application-Key-"\
                   target="_blank">Generating a new Application Key</a>\
                   for a bucket might invalidate an existing key and\
