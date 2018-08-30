@@ -8,4 +8,5 @@ export interface UserPreferences {
   favoriteThemes?: string[]; // Theme Names
   showTooltips:boolean; // Form Tooltips on/off
   metaphor:string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
+  allowPwToggle:boolean;
 }

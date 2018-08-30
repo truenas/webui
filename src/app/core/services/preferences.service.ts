@@ -17,6 +17,7 @@ export interface UserPreferences {
   showGuide:boolean; // Guided Tour on/off
   showTooltips:boolean; // Form Tooltips on/off
   metaphor:string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
+  allowPwToggle:boolean;
 }
 
 @Injectable()
@@ -30,7 +31,8 @@ export class PreferencesService {
     "favoriteThemes": [], // Theme Names
     "showGuide":true,
     "showTooltips":true,
-    "metaphor":"auto"
+    "metaphor":"auto",
+    "allowPwToggle":true
   }
   constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router) {
     console.log("*** New Instance of Preferences Service ***");
