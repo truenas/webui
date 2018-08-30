@@ -25,7 +25,7 @@ bsdgrp_sudo_tooltip: T('Allow group members to use <a\
  for their password when using <b>sudo</b>.'),
 
 allow_placeholder: T('Allow repeated GIDs'),
-allow_tooltip: T('<b>Not recommended.</b> Allow multiple groups to share \
+allow_tooltip: T('<b>Not recommended.</b> Allow multiple groups to share\
  the same group ID.'),
 
 }
