@@ -6,14 +6,3 @@
 .copyright-txt a:link {
     color: #396f9d;
 }
-
-.password-container {
-    width: 90%;
-    display: inline-block;
-}
-
-#signin-pw-toggle {
-    position: absolute;
-    right: 12px;
-    top: 165px;
-}
