@@ -34,7 +34,7 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
   private _updateBtnStatus:string = "default";
   public updateBtnLabel:string = T("Check for Updates")
   private _themeAccentColors: string[];
-  public connectionIp = environment.remote
+  public connectionIp:string = 'unknown' //= environment.remote
   public manufacturer:string = '';
   public buildDate:string;
   public loader:boolean = false;
@@ -77,6 +77,7 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
 
     //Get Network info and determine Primary interface
     this.core.register({observerClass:this,eventName:"NetInfo"}).subscribe((evt:CoreEvent) => {
+      
       this.defaultRoutes = evt.data.default_routes.toString();
       this.nameServers = evt.data.nameservers.toString().replace(/,/g, " , ");
       this.data = evt.data;
@@ -110,7 +111,19 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
       }
 
     });
-    this.core.emit({name:"NetInfoRequest"});
+
+    this.core.register({observerClass:this, eventName:"PrimaryNicInfo"}).subscribe((evt:CoreEvent) => {
+      let aliases = evt.data.aliases;
+      for(let i = 0; i < aliases.length; i++){
+        if(aliases[i].type == "INET"){
+          this.connectionIp = aliases[i].address;
+        }
+      }
+      
+      this.core.emit({name:"NetInfoRequest"});
+    });
+
+    this.core.emit({name:"PrimaryNicInfoRequest"});
 
   }
 
@@ -180,9 +193,9 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
       let key = "interface-" + this.primaryNIC + "/if_octets"
       if(x == key && !rxIndex){
         rxIndex = l;
-      } else if(x == key && rxIndex){
-        txIndex = l;
-      }
+        txIndex = l + 1;
+        break;
+      } 
     }
 
     let rx:number[] = [];
@@ -190,25 +203,22 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
 
     // Get the most current values (ignore undefined)
     for(let i = data.length - 1; i >= 0; i--){
-      if(!data[i]){continue;}
+      let value:number[] = data[i];
+      // Skip if there is no value
+      if(!value || typeof value == "undefined"){continue;}
+      //End loop if both values have been assigned
       if(rx.length > 0 && tx.length > 0){
         this.loader = false;
         break;
       }
-      // RX
-      if(data[i] && rx.length == 0 && data[i][rxIndex]){
-        rx.push(data[i][rxIndex]);
-        continue;
-      } else if(!data[i][rxIndex]){
-        rx = [];
-      } 
 
-      // TX
-      if(data[i] && tx.length == 0 && data[i][txIndex]){
-        tx.push(data[i][txIndex]);
+      // RX
+      if(value && rx.length == 0 && value[rxIndex] && value[txIndex]){
+        rx.push(value[rxIndex]);
+        tx.push(value[txIndex]);
         continue;
-      } else if(!data[i][txIndex]){
-        tx = [];
+      } else if(!value[rxIndex]){
+        rx = [];
       } 
     }
 
@@ -228,6 +238,8 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
       return result.toFixed(3);
     } else if(result < 10){
       return result.toFixed(4);
+    } else {
+      return -1;
     }
     
   }

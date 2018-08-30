@@ -103,6 +103,14 @@ export class DeviceEditComponent implements OnInit {
           tooltip : 'Browse to a CD-ROM file present on the system\
                      storage.',
         },
+        {
+          name : 'CDROM_order',
+          placeholder : 'Device Order',
+          tooltip : '',
+          type: 'input',
+          value: null,
+          inputType: 'number'
+        },
       ];
     } else if (this.dtype === "NIC") {
       this.fieldSets[0].config = [
@@ -141,6 +149,14 @@ export class DeviceEditComponent implements OnInit {
           options : [],
           required: true,
           validation : [Validators.required]
+        },
+        {
+          name : 'NIC_order',
+          placeholder : 'Device Order',
+          tooltip : '',
+          type: 'input',
+          value: null,
+          inputType: 'number'
         },
       ];
     } else if (this.dtype === "VNC") {
@@ -199,6 +215,14 @@ export class DeviceEditComponent implements OnInit {
           tooltip : 'Set to enable connecting to the VNC web interface.',
           type: 'checkbox'
         },
+        {
+          name : 'VNC_order',
+          placeholder : 'Device Order',
+          tooltip : '',
+          type: 'input',
+          value: null,
+          inputType: 'number'
+        },
       ];
     } else if (this.dtype === "DISK") {
       this.fieldSets[0].config = [
@@ -233,6 +257,14 @@ export class DeviceEditComponent implements OnInit {
           tooltip : 'Enter the sector size in bytes. The default <i>0</i>\
                      leaves the sector size unset.',
           type: 'input',
+        },
+        {
+          name : 'DISK_order',
+          placeholder : 'Device Order',
+          tooltip : '',
+          type: 'input',
+          value: null,
+          inputType: 'number'
         },
       ];
     } else if (this.dtype === "RAW") {
@@ -293,6 +325,14 @@ export class DeviceEditComponent implements OnInit {
           inputType : 'number',
           isHidden: true
         },
+        {
+          name : 'RAW_order',
+          placeholder : 'Device Order',
+          tooltip : '',
+          type: 'input',
+          value: null,
+          inputType: 'number'
+        },
       ];
     }
     this.afterInit();
@@ -306,20 +346,24 @@ export class DeviceEditComponent implements OnInit {
       'wait' : 'VNC_wait',
       'vnc_bind':'vnc_bind',
       'vnc_password':'vnc_password',
-      'vnc_web':'vnc_web'
+      'vnc_web':'vnc_web',
+      'order': 'VNC_order'
     };
     const nic_lookup_table: Object = {
       'mac' : 'NIC_mac',
       'type' : 'NIC_type',
-      'nic_attach':'nic_attach'
+      'nic_attach':'nic_attach',
+      'order': 'NIC_order'
     };
     const disk_lookup_table: Object = {
       'path' : "DISK_zvol",
       'type' : "DISK_mode",
       'sectorsize': "DISK_sectorsize",
+      'order': 'DISK_order'
     };
     const cdrom_lookup_table: Object = {
       'path' : "CDROM_path",
+      'order': 'CDROM_order'
     };
     const rawfile_lookup_table: Object = {
       'path' : 'RAW_path',
@@ -327,11 +371,13 @@ export class DeviceEditComponent implements OnInit {
       'type':'RAW_mode',
       'boot': 'RAW_boot',
       'rootpwd': 'RAW_rootpwd',
-      'size': 'RAW_size'
+      'size': 'RAW_size',
+      'order': 'RAW_order'
     };
-    this.ws.call('datastore.query', ['vm.device', [["id", "=", this.pk]]]).subscribe((device)=>{
+    this.ws.call('vm.device.query', [[['id', '=', parseInt(this.pk,10)]]]).subscribe((device)=>{
       if (device[0].dtype === 'CDROM'){
         this.setgetValues(device[0].attributes, cdrom_lookup_table);
+        this.setgetValues(device[0], cdrom_lookup_table);
       }
       else if(device[0].dtype === 'VNC'){
         this.systemGeneralService.getIPChoices().subscribe((ipchoices) => {
@@ -341,6 +387,7 @@ export class DeviceEditComponent implements OnInit {
           }
         });
         this.setgetValues(device[0].attributes, vnc_lookup_table);
+        this.setgetValues(device[0], vnc_lookup_table);
       }
       else if(device[0].dtype === 'NIC'){
         this.networkService.getAllNicChoices().subscribe((nics) => {
@@ -361,6 +408,7 @@ export class DeviceEditComponent implements OnInit {
           }
         });
         this.setgetValues(device[0].attributes, nic_lookup_table);
+        this.setgetValues(device[0], nic_lookup_table);
         this.custActions = [
           {
             id: 'generate_mac_address',
@@ -385,6 +433,7 @@ export class DeviceEditComponent implements OnInit {
         });
         this.DISK_zvol = _.find(this.fieldSets[0].config, {name:'DISK_zvol'});
         this.setgetValues(device[0].attributes, disk_lookup_table);
+        this.setgetValues(device[0], disk_lookup_table);
       }
       else {
         if (device[0].vm.vm_type==="Container Provider"){
@@ -397,6 +446,7 @@ export class DeviceEditComponent implements OnInit {
         }
 
         this.setgetValues(device[0].attributes, rawfile_lookup_table);
+        this.setgetValues(device[0], rawfile_lookup_table);
         }
 
     })
@@ -460,6 +510,7 @@ export class DeviceEditComponent implements OnInit {
             'mac' : formvalue.NIC_mac,
             'nic_attach' : formvalue.nic_attach
             }
+            payload['order'] =  formvalue.NIC_order
           }
 
           if (this.dtype === 'VNC') {
@@ -472,6 +523,7 @@ export class DeviceEditComponent implements OnInit {
               'vnc_password' : formvalue.vnc_password,
               'vnc_web' : formvalue.vnc_web,
           }
+          payload['order'] =  formvalue.VNC_order
         }
 
         if (this.dtype  === 'DISK') {
@@ -481,12 +533,14 @@ export class DeviceEditComponent implements OnInit {
                 'path' : formvalue.DISK_zvol,
                 'sectorsize' : formvalue.DISK_sectorsize,
               }
+              payload['order'] =  formvalue.DISK_order
             }
         if (this.dtype === 'CDROM') {
             payload['dtype'] = 'CDROM'
             payload['attributes'] = {
               'path' : formvalue.CDROM_path
             }
+            payload['order'] =  formvalue.CDROM_order
             }
         if (this.dtype === 'RAW') {
             payload['dtype'] ='RAW'
@@ -495,6 +549,7 @@ export class DeviceEditComponent implements OnInit {
               'sectorsize' : formvalue.RAW_sectorsize,
               'mode': formvalue.RAW_mode,
               }
+              payload['order'] =  formvalue.RAW_order
             if (formvalue.RAW_boot || formvalue.RAW_rootpwd || formvalue.RAW_size ){
               Object.assign(
                 payload['attributes'],

@@ -65,7 +65,7 @@ class conf_lldp_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_02_checkif_lldp_on (self):
@@ -81,7 +81,7 @@ class conf_lldp_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_03_turnoff_lldp (self):
@@ -98,7 +98,7 @@ class conf_lldp_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_04_checkif_lldp_off (self):
@@ -115,7 +115,7 @@ class conf_lldp_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     #method to test if an element is present

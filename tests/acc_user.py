@@ -81,7 +81,7 @@ class create_user_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
@@ -133,7 +133,7 @@ class create_user_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_03_create_newuser_primarygroup_uncheck(self):
@@ -237,7 +237,7 @@ class create_user_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_05_create_duplicateuser(self):
@@ -282,7 +282,7 @@ class create_user_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_06_close_navAccount(self):
@@ -295,7 +295,7 @@ class create_user_test(unittest.TestCase):
             exc_info_p = traceback.format_exception(*sys.exc_info())
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
