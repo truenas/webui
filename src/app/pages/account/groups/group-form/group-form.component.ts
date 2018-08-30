@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
-import {Validators} from '@angular/forms';
 import { T } from '../../../../translate-marker';
-import strings from '../strings';
+import helptext from '../../../../helptext/account/groups';
 
 import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -25,30 +24,30 @@ export class GroupFormComponent {
   protected fieldConfig: FieldConfig[] = [{
       type: 'input',
       name: 'bsdgrp_gid',
-      placeholder: T('GID'),
-      tooltip: strings.bsdgrp_gid_tooltip,
-      validation : [ Validators.required, regexValidator(/^\d+$/) ],
+      placeholder: helptext.bsdgrp_gid_placeholder,
+      tooltip: helptext.bsdgrp_gid_tooltip,
+      validation : helptext.bsdgrp_gid_validation,
       required: true,
     },
     {
       type: 'input',
       name: 'bsdgrp_group',
-      placeholder: T('Name'),
-      tooltip: strings.bsdgrp_group_tooltip,
-      validation : [ Validators.required, regexValidator(/^\w+$/) ],
+      placeholder: helptext.bsdgrp_group_placeholder,
+      tooltip: helptext.bsdgrp_group_tooltip,
+      validation : helptext.bsdgrp_group_validation,
       required: true
     },
     {
       type: 'checkbox',
       name: 'bsdgrp_sudo',
-      placeholder: T('Permit Sudo'),
-      tooltip: strings.bsdgrp_sudo_tooltip,
+      placeholder: helptext.bsdgrp_sudo_placeholder,
+      tooltip: helptext.bsdgrp_sudo_tooltip,
     },
     {
       type: 'checkbox',
       name: 'allow',
-      placeholder: T('Allow repeated GIDs'),
-      tooltip: strings.allow_tooltip,
+      placeholder: helptext.allow_placeholder,
+      tooltip: helptext.allow_tooltip,
       disabled: false
     },
   ];
