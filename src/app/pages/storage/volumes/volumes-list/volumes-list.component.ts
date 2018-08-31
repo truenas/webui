@@ -264,7 +264,6 @@ export class VolumesListTableConfig implements InputTableConf {
       customSubmit: function (entityDialog) {
         const value = entityDialog.formValue;
         localLoader.open();
-        console.log(value.services);
         return localRest.post("storage/volume/" + row1.name + "/unlock/",
           { body: JSON.stringify({
              passphrase: value.passphrase,
