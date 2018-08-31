@@ -243,16 +243,33 @@ export class VolumesListTableConfig implements InputTableConf {
         inputType: 'file',
         fileType: 'binary'
       },
+      {
+        type: 'select',
+        name: 'services',
+        placeholder: T('Restart Services'),
+        tooltip: T(''),
+        multiple: true,
+        value: ['afp','cifs','ftp','iscsitarget','nfs','webdav','jails'],
+        options: [{label: 'AFP', value: 'afp'},
+                 {label: 'SMB', value: 'cifs'},
+                 {label: 'FTP', value: 'ftp'},
+                 {label: 'iSCSI', value: 'iscsitarget'},
+                 {label: 'NFS', value: 'nfs'},
+                 {label: 'WebDAV', value: 'webdav'},
+                 {label: 'Jails/Plugins', value: 'jails'}]
+      }
       ],
 
       saveButtonText: T("Unlock"),
       customSubmit: function (entityDialog) {
         const value = entityDialog.formValue;
         localLoader.open();
+        console.log(value.services);
         return localRest.post("storage/volume/" + row1.name + "/unlock/",
           { body: JSON.stringify({
              passphrase: value.passphrase,
-             recovery_key: value.recovery_key 
+             recovery_key: value.recovery_key,
+             services: value.services
             }) 
           }).subscribe((restPostResp) => {
           entityDialog.dialogRef.close(true);
