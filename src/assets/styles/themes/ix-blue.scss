@@ -42,6 +42,7 @@ $primary: $blue;
 $accent: $yellow;
 $warn: $red;
 $tooltip:'inline';//display property
+$toggle_pw_display_prop: inline;
 
 // Logo images
 $logo: url('assets/images/light-logo.svg');
@@ -121,6 +122,25 @@ $freenas-accent:  mat-palette($md-accent);
 $freenas-theme: mat-light-theme($freenas-primary, $freenas-accent);
 
 $primary-dark: darken( map-get($md-primary, 500), 8% );
+
+// Bring theme colors to various ripple effects
+@mixin mat-ripple-theme($theme) {
+  .mat-checkbox .mat-ripple-element, .mat-radio-button .mat-ripple-element {
+    @include variable(background, --accent, $accent, !important);
+    opacity: 0.4;
+  }
+  .mat-button.mat-primary .mat-ripple-element, .mat-tab-label .mat-ripple-element {
+    @include variable(background, --primary, $primary, !important);
+    opacity: 0.2;
+  }
+  .mat-button.mat-accent .mat-ripple-element, .mat-slide-toggle .mat-ripple-element {
+    @include variable(background, --accent, $accent, !important);
+    opacity: 0.2;
+  }
+  .mat-button .mat-ripple-element, .mat-raised-button .mat-ripple-element {
+    background: rgba(0, 0, 0, .12);
+  }
+}
 
 // include the custom theme object into the angular material theme
 .ix-blue {
@@ -209,7 +229,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
     }
     .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-bar {
-          background-color: map-get($md-accent, 200);
+      @include variable(background, --accent, $accent, !important);
 
     }
     .mat-bg-accent,
@@ -868,30 +888,91 @@ iscsi .mat-ink-bar {
   overflow-y: hidden !important;
 }
 
-// pw show button on entity tables
-// #show-pw {
-//   @include variable(background-color, --primary, $primary);
-//   color: white;
+// // Define logo via CSS properties
+// .logo{
+//  /*   @include variable(background-image, --logo, $logo !important); //url(assets/images/logo.svg);
+//     background-size: contain;
+//     width: 52px;
+//     height: 48px;
+//     background-repeat: no-repeat;
+//     background-position: 0 4px;
+//     left: -6px;
+//     position: relative;*/
+// }
+// .logo-text{
+//    /* @include variable(background-image, --logo-text, $logo-text !important); //url(assets/images/logo-text.svg);
+//     width: 112px;
+//     height: 40px;
+//     position: relative;
+//     top: 0;
+//     background-size: contain;
+//     background-repeat: no-repeat;
+//     background-position: 2px 0;*/
 // }
 
-// Define logo via CSS properties
-.logo{
- /*   @include variable(background-image, --logo, $logo !important); //url(assets/images/logo.svg);
-    background-size: contain;
-    width: 52px;
-    height: 48px;
-    background-repeat: no-repeat;
-    background-position: 0 4px;
-    left: -6px;
-    position: relative;*/
+#password, #sed_passwd, #em_pass1, #bsdusr_passwd_currnt,
+  #Passphrase, #passphrase, #disk_passwd, #ldap_bindpw, #iscsi_target_auth_secret,
+    #iscsi_target_auth_peersecret, #dc_passwd, #secret_key, #ad_bindpw, #v3_password,
+    #secret_access_key-S3, #v3_privpassphrase, #secret_access_key-S3, #pass-FTP, 
+    #pass-MEGA, #pass-SFTP, #pass-WEBDAV, #aws_secret_access_key {
+  max-width: 640px;
+  min-width: 225px;
 }
-.logo-text{
-   /* @include variable(background-image, --logo-text, $logo-text !important); //url(assets/images/logo-text.svg);
-    width: 112px;
-    height: 40px;
-    position: relative;
-    top: 0;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: 2px 0;*/
+
+#password_conf, #bsdusr_password_conf, #sed_passwd2, #em_pass2,
+  #Passphrase2, #passphrase2, #disk_passwd2, #iscsi_target_auth_secret_confirm,
+    #iscsi_target_auth_peersecret_confirm, #password2, #dc_passwd2, #secret_key2, #v3_password2,
+    #v3_privpassphrase2 {
+  width: 70%;
+  max-width: 450px;
+}
+
+#bsdusr_password {
+  width: 70%;
+  max-width: 475px;
+  min-width: 225px;
+}
+
+app-createpassphrase-form .has-tooltip {
+  width: 100% !important;
+  max-width: 450px !important;
+}
+
+.has-pwtoggle > mat-input-container {
+	width: 70% !important;
+}
+
+app-entity-dialog .has-pwtoggle  {
+  padding: 0 0 10px 0 !important;
+  width: 385px !important;
+  background: rgba(0, 0, 0, 0) !important;
+
+  mat-input-container {
+    width: 86.3% !important;
+  }
+}
+
+#secret_key2 {
+  margin-bottom: 5px;
+}
+
+#toggle_pw {
+  @include variable(display, --toggle_pw_display_prop, $toggle_pw_display_prop);
+}
+
+// Bring theme colors to rollover effect for standard primary buttons
+.mat-button.mat-primary:hover .mat-button-focus-overlay {
+  @include variable(background-color, --primary, $primary);
+  opacity: .12;
+}
+
+// Bring theme colors to rollover effect for standard accent buttons
+.mat-button.mat-accent:hover .mat-button-focus-overlay {
+  @include variable(background-color, --accent, $accent);
+  opacity: .12;
+}
+
+// Bring theme color to tab underline on Theme Preview
+#theme-preview .mat-ink-bar {
+  @include variable(background-color, --primary, $primary !important);
 }
