@@ -58,7 +58,46 @@ export class LdapComponent {
 
         })
       }
-    }
+    },
+    {
+      id : 'reset_config',
+      name : 'reset ldap to default',
+      function : () => { 
+        this.rest.put('directoryservice/ldap',{ 
+          body: 
+            {
+              "ldap_anonbind": false,
+              "ldap_auxiliary_parameters": "",
+              "ldap_basedn": "",
+              "ldap_binddn": "",
+              "ldap_bindpw": "",
+              "ldap_certificate": null,
+              "ldap_dns_timeout": 10,
+              "ldap_enable": false,
+              "ldap_groupsuffix": "",
+              "ldap_has_samba_schema": false,
+              "ldap_hostname": "",
+              "ldap_idmap_backend": "ldap",
+              "ldap_kerberos_principal": null,
+              "ldap_kerberos_realm": null,
+              "ldap_machinesuffix": "",
+              "ldap_netbiosalias": "",
+              "ldap_netbiosname_a": "NAS",
+              "ldap_passwordsuffix": "",
+              "ldap_schema": "rfc2307",
+              "ldap_ssl": "off",
+              "ldap_sudosuffix": "",
+              "ldap_timeout": 10,
+              "ldap_usersuffix": ""
+          }
+        
+      }).subscribe((res)=>{
+
+        },(err)=> {
+
+        })
+       }
+    },
   ];
 
   public fieldConfig: FieldConfig[] = [
