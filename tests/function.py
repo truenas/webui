@@ -45,8 +45,8 @@ xpaths = {
         'confirmCheckbox': '//*[contains(@name, "confirm_checkbox")]',
         'deleteButton': '//*[contains(@name, "ok_button")]',
         'detachButton': '//*[contains(@name, "Detach_button")]',
-        'closeButton' : '//*[contains(text(), "Close")]'
-
+        'closeButton' : '//*[contains(text(), "Close")]',
+        'turnoffConfirm': '//*[contains(text(), "OK")]'
 #        'detachButton': '/html/body/div[5]/div[3]/div/mat-dialog-container/app-entity-dialog/div[3]/button[2]'
 #        'closeButton' : '/html/body/div[5]/div[2]/div/mat-dialog-container/info-dialog/div[2]/button'
         }
@@ -83,11 +83,36 @@ def screenshot(driver, self):
 
 # status check for services
 def status_check(driver, which):
-    ui_element_status=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[' + str(which) + ']/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[1]/mat-chip')
+    ui_element_status=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[' + str(which) + ']/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[1]/div/mat-chip')
     # get the status data
     status_data=ui_element_status.text
     print ("current status is: " + status_data)
 
+def status_change(driver,self, which, to):
+    print ("executing the status change function with input " + str(which) + " + " + str(to))
+    # get the ui element
+    ui_element_status=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[' + str(which) + ']/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[1]/div/mat-chip')
+    # get the status data
+    status_data=ui_element_status.text
+    buttonToggle = driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[' + str(which) + ']/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[1]/button')
+    if to == "start":
+        if status_data == "STOPPED":
+            # Click on the toggle button
+            buttonToggle.click()
+            time.sleep(1)
+            print ("status has now changed to running")
+        else:
+            print ("the status is already " + status_data)
+    elif to == "stop":
+        if status_data == "RUNNING":
+            #Click on the toggle button
+            buttonToggle.click()
+            time.sleep(1)
+            # re-confirming if the turning off the service
+            if self.is_element_present(By.XPATH,xpaths['turnoffConfirm']):
+                driver.find_element_by_xpath(xpaths['turnoffConfirm']).click()
+        else:
+            print ("the status is already" + status_data)
 
 def user_edit(driver, self, type, name):
     # the convention is set in such a way tha a single funtion can cleanup both type:user/group, name:name of the group or user
