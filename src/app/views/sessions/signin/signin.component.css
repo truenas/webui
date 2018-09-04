@@ -8,7 +8,7 @@
 }
 
 #signin_button {
-    background: var(--primary);
-    color: white !important;
+    background: var(--accent);
+    color: black !important;
     font-weight: 700;
 }
