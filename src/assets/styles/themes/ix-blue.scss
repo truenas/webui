@@ -611,6 +611,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .headerCheckBox {
     position: relative;
     left: 2px;
+    margin-top: 9px;
   }
 
   // For Detach Pools functions on volumes-list.component.ts
@@ -636,10 +637,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
   // ---------------
 
-  // Vertically align header-footer items on entity tables  
+  // Vertically align header-footer items on datatables  
   .datatable-header-cell {
     position: relative;
-    bottom: -6px;
+    top: -5px;
     left: 14px;
   }
 
@@ -648,6 +649,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     margin-left: -7px;
     text-align: center;
     position: relative;
+    top: 10px;
   }
 
   // Resizes loader dialog which appears on update, wipe disk, etc.
@@ -906,6 +908,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   .mat-icon-button.mat-accent {
     @include variable(color, --accent, $accent !important);  
+  }
+
+  // Make room for checkbox ripple effect in datatables
+  .datatable-header-cell .mat-checkbox, .datatable-body-cell .mat-checkbox {
+    margin-left: 5px;
   }
 
 } // end of ix theme
