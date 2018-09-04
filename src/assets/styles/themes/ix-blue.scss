@@ -915,4 +915,13 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     margin-left: 5px;
   }
 
+  // Adjustments to checkboxes and header labels on unique tables
+  services .datatable-body-cell .mat-checkbox {
+    bottom: 7px !important;
+  }
+
+  services .datatable-header-cell, app-vm-list .datatable-header-cell {
+    top: 6px;
+  }
+
 } // end of ix theme
