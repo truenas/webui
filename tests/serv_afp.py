@@ -101,7 +101,7 @@ class conf_afp_test(unittest.TestCase):
         try:
             print (" turning off the afp service")
             time.sleep(2)
-            function.status_change(driver,self, "1", "stop")
+            function.status_change(driver, self, "1", "stop")
             #taking screenshot
             function.screenshot(driver, self)
         except Exception:
