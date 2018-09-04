@@ -153,7 +153,7 @@ export class CloudCredentialsFormComponent {
       tooltip: T('<a\
                   href="https://www.backblaze.com/b2/cloud-storage.html"\
                   target="_blank">Backblaze B2</a> account ID. This is\
-                  an alphanumeric string seen after logging into a B2\
+                  an alphanumeric string shown after logging into the B2\
                   account.'),
       required: true,
       isHidden: true,
