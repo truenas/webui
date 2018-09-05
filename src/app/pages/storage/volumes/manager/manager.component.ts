@@ -73,7 +73,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   protected extendedNeedsDiskMessage = T("Add one or more disks to extend the pool.");
   public size;
   protected extendedAvailable;
-  public sizeMessage = T("Estimated total raw data capacity.");
+  public sizeMessage = T("Estimated total raw data capacity");
   protected extendedSizeMessage = T("Estimated data capacity available after extension.");
 
   public disknumError = null;

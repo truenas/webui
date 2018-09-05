@@ -97,6 +97,7 @@ export class ServiceDCComponent {
       name : 'dc_passwd',
       inputType : 'password',
       placeholder : T('Administrator Password'),
+      togglePw: true,
       tooltip: T('Enter the password to be used for the\
                   <a href="..//docs/directoryservice.html#active-directory"\
                   target=”_blank”>Active Directory</a> administrator\
@@ -108,7 +109,7 @@ export class ServiceDCComponent {
       type : 'input',
       name : 'dc_passwd2',
       inputType : T('password'),
-      placeholder : T('Confirm password'),
+      placeholder : T('Confirm password')
     },
     {
       type : 'select',

@@ -98,6 +98,8 @@ export class CloudCredentialsFormComponent {
       placeholder: T('Secret Access Key'),
       required: true,
       isHidden: true,
+      inputType: 'password',
+      
       relation: [
         {
           action: 'SHOW',
@@ -106,7 +108,8 @@ export class CloudCredentialsFormComponent {
             value: 'S3',
            }]
         }
-      ]
+      ],
+      togglePw: true
     },
     {
       type: 'input',
@@ -244,6 +247,8 @@ export class CloudCredentialsFormComponent {
       placeholder: T('Password'),
       required: true,
       isHidden: true,
+      inputType: 'password',
+      togglePw: true,
       relation: [
         {
           action: 'SHOW',
@@ -361,6 +366,8 @@ export class CloudCredentialsFormComponent {
       placeholder: T('Password'),
       required: true,
       isHidden: true,
+      inputType: 'password',
+      togglePw : true,
       relation: [
         {
           action: 'SHOW',
@@ -492,6 +499,8 @@ export class CloudCredentialsFormComponent {
       placeholder: T('Password'),
       required: true,
       isHidden: true,
+      inputType: 'password',
+      togglePw: true,
       relation: [
         {
           action: 'SHOW',
@@ -592,6 +601,8 @@ export class CloudCredentialsFormComponent {
       placeholder: T('Password'),
       required: true,
       isHidden: true,
+      inputType: 'password',
+      togglePw: true,
       relation: [
         {
           action: 'SHOW',
