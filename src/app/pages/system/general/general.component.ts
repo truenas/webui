@@ -189,7 +189,6 @@ export class GeneralComponent implements OnDestroy {
       placeholder : T('Select Configuration File'),
       tooltip: 'Browse to the locally saved configuration file.',
       fileLocation: '',
-      hideButton: true,
       updater: this.updater,
       parent: this,
     }

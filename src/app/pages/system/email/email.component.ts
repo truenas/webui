@@ -155,6 +155,7 @@ export class EmailComponent implements OnDestroy {
         },
       ],
       required: true,
+      togglePw : true,
       validation : [ matchOtherValidator('em_pass2'), Validators.required ]
     },
     {
@@ -173,7 +174,6 @@ export class EmailComponent implements OnDestroy {
         },
       ],
       required : true,
-      hideButton : true,
       validation : [ Validators.required ]
     },
   ];
@@ -214,7 +214,7 @@ afterInit(entityEdit: any) {
       this.em_user.isHidden = !value;
       this.em_pass1.isHidden = !value;
       this.em_pass2.isHidden = !value;
-      this.em_pass2.hideButton = !value;
+      this.em_pass1.hideButton = !value;
     });
   }
 

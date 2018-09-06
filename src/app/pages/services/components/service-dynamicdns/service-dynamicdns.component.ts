@@ -122,6 +122,7 @@ export class ServiceDDNSComponent {
       tooltip: T('Enter the password used to log in to the provider\
                   and update the record.'),
       inputType : 'password',
+      togglePw: true,
       validation :
           [ Validators.minLength(8), matchOtherValidator('password2'), Validators.required ],
       required: true
@@ -170,9 +171,13 @@ export class ServiceDDNSComponent {
     return value;
   }
 
-  submitFunction(this: any, entityForm: any,){
-    entityForm.domain = entityForm.domain.split(/[\s,\t|{}()\[\]"']+/)
-
+  submitFunction(this: any, entityForm: any,) {
+    if(entityForm.domain.length === 0) {
+      entityForm.domain = [];
+    }
+    if(typeof entityForm.domain === "string") {
+      entityForm.domain = entityForm.domain.split(/[\s,\t|{}()\[\]"']+/);
+    }
     return this.ws.call('dyndns.update', [entityForm]);
 
   }

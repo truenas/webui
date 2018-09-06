@@ -92,6 +92,7 @@ export class ServiceWebdavComponent implements OnInit, OnDestroy {
       type : 'input',
       name : 'password',
       placeholder : T('Webdav Password'),
+      togglePw: true,
       tooltip : T('The default of <i>davtest</i> is recommended to\
                    change. <i>davtest</i> is a known value.'),
       inputType : 'password',
@@ -102,7 +103,7 @@ export class ServiceWebdavComponent implements OnInit, OnDestroy {
       type : 'input',
       name : 'password2',
       placeholder : T('Confirm Password'),
-      inputType : 'password',
+      inputType : 'password'
     },
   ];
 
