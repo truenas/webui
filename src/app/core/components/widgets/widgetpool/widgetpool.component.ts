@@ -200,21 +200,21 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
       data: [availableValue]
     };
 
+    let percentage = this.volumeData.used_pct.split("%");
+    this.core.emit({name:"PoolDisksRequest",data:[this.volumeData.id]});
+
     this.displayValue = (<any>window).filesize(this.volumeData.avail, {standard: "iec"});
     if (this.displayValue.slice(-2) === ' B') {
       this.diskSizeLabel = this.displayValue.slice(-1);
-      this.diskSize = (this.displayValue.slice(0, -2)).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      this.diskSize = new Intl.NumberFormat().format(parseFloat(this.displayValue.slice(0, -2)))
     } else {
       this.diskSizeLabel = this.displayValue.slice(-3);
-      // this.diskSize = (this.displayValue.slice(0, -4)).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       this.diskSize = new Intl.NumberFormat().format(parseFloat(this.displayValue.slice(0, -4)))
     }
     if (this.diskSize.charAt(this.diskSize.length - 2) === '.') {
       this.diskSize = this.diskSize.concat('0')
     };
 
-    let percentage = this.volumeData.used_pct.split("%");
-    this.core.emit({name:"PoolDisksRequest",data:[this.volumeData.id]});
   };
 
   setPreferences(form:NgForm){
