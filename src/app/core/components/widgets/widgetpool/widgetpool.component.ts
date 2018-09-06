@@ -76,6 +76,8 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   public currentDiskSet:number = 0;
   private simulateDiskArray:number;
   public displayValue: any;
+  public diskSize: any;
+  public diskSizeLabel: string;
   @Input() configurable:boolean;
 
   constructor(public router: Router, public translate: TranslateService){
@@ -190,10 +192,17 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
       availableValue = this.volumeData.avail;
     } else {
       let availableObj = (<any>window).filesize(this.volumeData.avail, {output: "object", exponent:3});
-      this.displayValue = (<any>window).filesize(this.volumeData.avail, {standard: "iec"});
-      console.log(this.displayValue)
       availableValue = availableObj.value;
       this.voldataavail = true;
+
+      this.displayValue = (<any>window).filesize(this.volumeData.avail, {standard: "iec"});
+      if (this.displayValue.slice(-2) === ' B') {
+        this.diskSizeLabel = this.displayValue.slice(-1);
+        this.diskSize = parseFloat(this.displayValue.slice(0, -2));
+      } else {
+        this.diskSizeLabel = this.displayValue.slice(-3);
+        this.diskSize = parseFloat(this.displayValue.slice(0, -4));
+      }
     }
     let available: ChartData = {
       legend:'Available', 
