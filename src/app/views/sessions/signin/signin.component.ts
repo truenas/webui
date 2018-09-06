@@ -89,7 +89,10 @@ export class SigninComponent implements OnInit {
   }
 
   setpassword() {
-    console.log('setPassword', this.setPasswordFormGroup);
+    this.ws.call('user.set_root_password', [this.password.value]).subscribe(
+      (res)=>{
+        this.loginCallback(res);
+      });
   }
 
   loginCallback(result) {
