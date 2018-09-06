@@ -111,14 +111,10 @@ export class SigninComponent implements OnInit {
   }
 
   onGoToLegacy() {
-    this.translate.get('Switch to Legacy UI?').subscribe((gotolegacy: string) => {
-      this.translate.get("Return to the previous graphical user interface.").subscribe((gotolegacy_prompt) => {
-        this.dialogService.confirm("Log in to Legacy User Interface?", "", true, T('Continue')).subscribe((res) => {
-          if (res) {
-            window.location.href = '/legacy/';
-          }
-        });
-      });
+    this.dialogService.confirm(T("Log in to Legacy User Interface?"), "", true, T('Continue')).subscribe((res) => {
+      if (res) {
+        window.location.href = '/legacy/';
+      }
     });
   }
 
