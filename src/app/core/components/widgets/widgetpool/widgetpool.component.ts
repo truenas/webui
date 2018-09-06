@@ -206,7 +206,8 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
       this.diskSize = (this.displayValue.slice(0, -2)).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     } else {
       this.diskSizeLabel = this.displayValue.slice(-3);
-      this.diskSize = (this.displayValue.slice(0, -4)).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      // this.diskSize = (this.displayValue.slice(0, -4)).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      this.diskSize = new Intl.NumberFormat().format(parseFloat(this.displayValue.slice(0, -4)))
     }
     if (this.diskSize.charAt(this.diskSize.length - 2) === '.') {
       this.diskSize = this.diskSize.concat('0')
