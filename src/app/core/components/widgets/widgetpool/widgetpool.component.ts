@@ -75,6 +75,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   public gridCols:number = 8;
   public currentDiskSet:number = 0;
   private simulateDiskArray:number;
+  public displayValue: any;
   @Input() configurable:boolean;
 
   constructor(public router: Router, public translate: TranslateService){
@@ -189,6 +190,8 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
       availableValue = this.volumeData.avail;
     } else {
       let availableObj = (<any>window).filesize(this.volumeData.avail, {output: "object", exponent:3});
+      this.displayValue = (<any>window).filesize(this.volumeData.avail, {standard: "iec"});
+      console.log(this.displayValue)
       availableValue = availableObj.value;
       this.voldataavail = true;
     }
