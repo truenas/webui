@@ -194,19 +194,22 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
       let availableObj = (<any>window).filesize(this.volumeData.avail, {output: "object", exponent:3});
       availableValue = availableObj.value;
       this.voldataavail = true;
-
-      this.displayValue = (<any>window).filesize(this.volumeData.avail, {standard: "iec"});
-      if (this.displayValue.slice(-2) === ' B') {
-        this.diskSizeLabel = this.displayValue.slice(-1);
-        this.diskSize = parseFloat(this.displayValue.slice(0, -2));
-      } else {
-        this.diskSizeLabel = this.displayValue.slice(-3);
-        this.diskSize = parseFloat(this.displayValue.slice(0, -4));
-      }
     }
     let available: ChartData = {
       legend:'Available', 
       data: [availableValue]
+    };
+
+    this.displayValue = (<any>window).filesize(this.volumeData.avail, {standard: "iec"});
+    if (this.displayValue.slice(-2) === ' B') {
+      this.diskSizeLabel = this.displayValue.slice(-1);
+      this.diskSize = (this.displayValue.slice(0, -2)).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    } else {
+      this.diskSizeLabel = this.displayValue.slice(-3);
+      this.diskSize = (this.displayValue.slice(0, -4)).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    if (this.diskSize.charAt(this.diskSize.length - 2) === '.') {
+      this.diskSize = this.diskSize.concat('0')
     };
 
     let percentage = this.volumeData.used_pct.split("%");
