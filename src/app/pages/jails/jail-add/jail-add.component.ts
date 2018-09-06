@@ -1148,7 +1148,7 @@ export class JailAddComponent implements OnInit {
         });
     },
     (res) => {
-      new EntityUtils().handleError(this, res);
+      new EntityUtils().handleWSError(this, res, this.dialogService);
     });
 
     this.ip4_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip4_interface'});
@@ -1173,7 +1173,7 @@ export class JailAddComponent implements OnInit {
         }
       },
       (res)=>{
-        new EntityUtils().handleError(this, res);
+        new EntityUtils().handleWSError(this, res, this.dialogService);
       }
     );
 
@@ -1394,7 +1394,8 @@ export class JailAddComponent implements OnInit {
       this.router.navigate(new Array('/').concat(this.route_success));
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
-      this.dialogService.errorReport('Error ' + res.error + ':' + res.reason, res.trace.class, res.trace.formatted);
+      this.dialogRef.close();
+      new EntityUtils().handleWSError(this, res, this.dialogService);
     });
   }
 

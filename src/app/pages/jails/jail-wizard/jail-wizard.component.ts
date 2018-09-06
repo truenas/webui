@@ -438,7 +438,8 @@ export class JailWizardComponent {
       this.router.navigate(new Array('/').concat(this.route_success));
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
-      this.dialogService.errorReport('Error ' + res.error + ':' + res.reason, res.trace.class, res.trace.formatted);
+      this.dialogRef.close();
+      new EntityUtils().handleWSError(this, res, this.dialogService);
     });
   }
 

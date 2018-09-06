@@ -1150,7 +1150,7 @@ export class JailEditComponent implements OnInit {
       });
     },
     (res) => {
-      new EntityUtils().handleError(this, res);
+      new EntityUtils().handleWSError(this, res, this.dialogService);
     });
 
     this.ip4_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip4_interface'});
@@ -1175,7 +1175,7 @@ export class JailEditComponent implements OnInit {
         }
       },
       (res)=>{
-        new EntityUtils().handleError(this, res);
+        new EntityUtils().handleWSError(this, res, this.dialogService);
       }
     );
 
@@ -1306,7 +1306,7 @@ export class JailEditComponent implements OnInit {
         }
       },
       (res) => {
-        new EntityUtils().handleError(this, res);
+        new EntityUtils().handleWSError(this, res, this.dialogService);
       });
     });
 
@@ -1436,7 +1436,7 @@ export class JailEditComponent implements OnInit {
             },
             (res_upgrate) => {
               this.loader.close();
-              new EntityUtils().handleWSError(this, res_upgrate);
+              new EntityUtils().handleWSError(this, res_upgrate, this.dialogService);
             }
           );
         } else {
@@ -1450,7 +1450,7 @@ export class JailEditComponent implements OnInit {
       },
       (res) => {
         this.loader.close();
-        this.dialogService.errorReport('Error ' + res.error + ':' + res.reason, res.trace.class, res.trace.formatted);
+        new EntityUtils().handleWSError(this, res, this.dialogService);
       }
     );
   }

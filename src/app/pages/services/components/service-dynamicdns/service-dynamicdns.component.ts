@@ -171,9 +171,13 @@ export class ServiceDDNSComponent {
     return value;
   }
 
-  submitFunction(this: any, entityForm: any,){
-    entityForm.domain = entityForm.domain.split(/[\s,\t|{}()\[\]"']+/)
-
+  submitFunction(this: any, entityForm: any,) {
+    if(entityForm.domain.length === 0) {
+      entityForm.domain = [];
+    }
+    if(typeof entityForm.domain === "string") {
+      entityForm.domain = entityForm.domain.split(/[\s,\t|{}()\[\]"']+/);
+    }
     return this.ws.call('dyndns.update', [entityForm]);
 
   }
