@@ -10,7 +10,7 @@
               <img src="assets/images/truenas-logo.svg" alt="TrueNAS logo">
             </ng-template>
           </div>
-          <form #signinForm="ngForm" (ngSubmit)="signin()">
+          <form #signinForm="ngForm" (ngSubmit)="signin()" *ngIf="has_root_password; else setPassword">
             <div class="">
               <mat-input-container class="full-width">
                 <input autofocus matInput name="username" required [(ngModel)]="signinData.username" #username="ngModel" placeholder="{{'Username' | translate}}" value="">
@@ -31,6 +31,30 @@
             </div>
             <button name="signin_button" mat-button class="mat-accent full-width mb-1" [disabled]="username.errors || password.errors">{{"Sign in" | translate}}</button>
           </form>
+          <ng-template #setPassword>
+            <form (ngSubmit)="setpassword()" [formGroup]="setPasswordFormGroup" #setPasswordForm="ngForm">
+              <div>
+                <span>{{"Set new root account password:" | translate}}</span>
+              </div>
+              <div class="">
+                <mat-input-container class="full-width">
+                  <input matInput type="password" id="password" formControlName="password" required placeholder="{{'Password' | translate}}">
+                  <mat-error *ngIf="password.errors && (password.dirty || password.touched)">
+                    <span *ngIf="password.errors.required">{{"This field is required" | translate}}</span>
+                  </mat-error>
+                </mat-input-container>
+              </div>
+              <div class="">
+                <mat-input-container class="full-width">
+                  <input matInput type="password" name="password2" formControlName="password2" required placeholder="{{'Confirm Password' | translate}}">
+                  <mat-error *ngIf="password2.errors && (password2.dirty || password2.touched)">
+                    <span *ngIf="password2.errors">{{"Passwords do not match" | translate}}</span>
+                  </mat-error>
+                </mat-input-container>
+              </div>
+              <button name="signin_button2" mat-button class="mat-accent full-width mb-1" type="submit" [disabled]="!setPasswordForm.form.valid">{{"Sign in" | translate}}</button>
+            </form>
+          </ng-template>
           <div>
             <a mat-button color="primary" (click)="onGoToLegacy()">{{"Legacy Web Interface" | translate}}</a>
           </div>
