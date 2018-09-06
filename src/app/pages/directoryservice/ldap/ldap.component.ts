@@ -32,6 +32,7 @@ export class LdapComponent {
   protected ldap_idmap_backend: any;
   protected ldap_schema: any;
   protected ldap_hostname: any;
+  protected entityForm: any;
   public custActions: Array<any> = [
     {
       id : 'basic_mode',
@@ -68,6 +69,15 @@ export class LdapComponent {
       name : 'ldap_hostname',
       placeholder : T('Hostname'),
       tooltip: T('The hostname or IP address of the LDAP server.'),
+      required: true,
+      validation: [Validators.required]
+    },
+    {
+      type : 'input',
+      name : 'ldap_hostname_noreq',
+      placeholder : T('Hostname'),
+      tooltip: T('The hostname or IP address of the LDAP server.'),
+      
     },
     {
       type : 'input',
@@ -284,10 +294,12 @@ export class LdapComponent {
 
   resourceTransformIncomingRestData(data) {
     delete data['ldap_bindpw'];
+    data['ldap_hostname_noreq'] = data['ldap_hostname'];
     return data;
   }
 
   afterInit(entityEdit: any) {
+    this.entityForm = entityEdit;
     this.rest.get("directoryservice/kerberosrealm", {}).subscribe((res) => {
       this.ldap_kerberos_realm = _.find(this.fieldConfig, {name : 'ldap_kerberos_realm'});
       res.data.forEach((item) => {
@@ -340,14 +352,26 @@ export class LdapComponent {
     entityEdit.formGroup.controls['ldap_idmap_backend'].valueChanges.subscribe((res)=> {
       this.idmapBacked = res;
     })
+    const enabled = entityEdit.formGroup.controls['ldap_enable'].value;
+    this.entityForm.setDisabled('ldap_hostname', !enabled, !enabled);
+    this.entityForm.setDisabled('ldap_hostname_noreq', enabled, enabled);
     entityEdit.formGroup.controls['ldap_enable'].valueChanges.subscribe((res)=> {
-      this.ldap_hostname = _.find(this.fieldConfig, {name: 'ldap_hostname'});
-      if(res){
-        this.ldap_hostname.required = true;
-      } else {
-        this.ldap_hostname.required = false;
-
+      this.entityForm.setDisabled('ldap_hostname', !res, !res);
+      this.entityForm.setDisabled('ldap_hostname_noreq', res, res);
+      if(!res){
+        this.entityForm.formGroup.controls['ldap_hostname_noreq'].setValue(this.entityForm.formGroup.controls['ldap_hostname'].value);
       }
+      else{
+        this.entityForm.formGroup.controls['ldap_hostname'].setValue(this.entityForm.formGroup.controls['ldap_hostname_noreq'].value);
+      }
+      
     })
+  }
+  beforeSubmit(data){
+    if(data["ldap_enable"]){
+      data["ldap_hostname_noreq"] = data["ldap_hostname"];
+    } else {
+      data["ldap_hostname"] = data["ldap_hostname_noreq"];
+    }
   }
 }
