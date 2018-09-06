@@ -31,6 +31,7 @@ export class LdapComponent {
   protected ldapCertificate: any;
   protected ldap_idmap_backend: any;
   protected ldap_schema: any;
+  protected ldap_hostname: any;
   public custActions: Array<any> = [
     {
       id : 'basic_mode',
@@ -59,45 +60,6 @@ export class LdapComponent {
         })
       }
     },
-    {
-      id : 'reset_config',
-      name : 'reset ldap to default',
-      function : () => { 
-        this.rest.put('directoryservice/ldap',{ 
-          body: 
-            {
-              "ldap_anonbind": false,
-              "ldap_auxiliary_parameters": "",
-              "ldap_basedn": "",
-              "ldap_binddn": "",
-              "ldap_bindpw": "",
-              "ldap_certificate": null,
-              "ldap_dns_timeout": 10,
-              "ldap_enable": false,
-              "ldap_groupsuffix": "",
-              "ldap_has_samba_schema": false,
-              "ldap_hostname": "",
-              "ldap_idmap_backend": "ldap",
-              "ldap_kerberos_principal": null,
-              "ldap_kerberos_realm": null,
-              "ldap_machinesuffix": "",
-              "ldap_netbiosalias": "",
-              "ldap_netbiosname_a": "NAS",
-              "ldap_passwordsuffix": "",
-              "ldap_schema": "rfc2307",
-              "ldap_ssl": "off",
-              "ldap_sudosuffix": "",
-              "ldap_timeout": 10,
-              "ldap_usersuffix": ""
-          }
-        
-      }).subscribe((res)=>{
-
-        },(err)=> {
-
-        })
-       }
-    },
   ];
 
   public fieldConfig: FieldConfig[] = [
@@ -106,8 +68,6 @@ export class LdapComponent {
       name : 'ldap_hostname',
       placeholder : T('Hostname'),
       tooltip: T('The hostname or IP address of the LDAP server.'),
-      required: true,
-      validation : [ Validators.required ]
     },
     {
       type : 'input',
@@ -379,6 +339,15 @@ export class LdapComponent {
 
     entityEdit.formGroup.controls['ldap_idmap_backend'].valueChanges.subscribe((res)=> {
       this.idmapBacked = res;
+    })
+    entityEdit.formGroup.controls['ldap_enable'].valueChanges.subscribe((res)=> {
+      this.ldap_hostname = _.find(this.fieldConfig, {name: 'ldap_hostname'});
+      if(res){
+        this.ldap_hostname.required = true;
+      } else {
+        this.ldap_hostname.required = false;
+
+      }
     })
   }
 }
