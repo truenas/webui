@@ -19,6 +19,7 @@ export class SigninComponent implements OnInit {
   private failed: Boolean = false;
   public is_freenas: Boolean = false;
   public logo_ready: Boolean = false;
+  public showPassword = false;
 
   signinData = {
     username: '',
@@ -121,5 +122,4 @@ export class SigninComponent implements OnInit {
       });
     });
   }
-
 }
