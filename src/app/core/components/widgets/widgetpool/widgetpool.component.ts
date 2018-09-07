@@ -211,8 +211,11 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
       this.diskSizeLabel = this.displayValue.slice(-3);
       this.diskSize = new Intl.NumberFormat().format(parseFloat(this.displayValue.slice(0, -4)))
     }
-    if (this.diskSize.charAt(this.diskSize.length - 2) === '.') {
+    if (this.diskSize.charAt(this.diskSize.length - 2) === '.' || this.diskSize.charAt(this.diskSize.length - 3) === ',') {
       this.diskSize = this.diskSize.concat('0')
+    };
+    if (this.diskSize.charAt(this.diskSize.length - 2) === ',') {
+      this.diskSize = this.diskSize.concat('00')
     };
 
   };
