@@ -97,6 +97,8 @@ for output, arg in myopts:
         test_name = arg
     if output == "--driver":
         driver_v = arg
+    else:
+        driver_v
 
 try:
     ip
