@@ -369,6 +369,23 @@ export class CloudCredentialsFormComponent {
         }
       ]
     },
+    {
+      type: 'input',
+      name: 'team_drive-GOOGLE_DRIVE',
+      placeholder: T('Team Drive ID (if connecting to Team Drive)'),
+      // tooltip: T(''),
+      required: false,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'GOOGLE_DRIVE',
+           }]
+        }
+      ]
+    },
     // http
     {
       type: 'input',
