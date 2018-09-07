@@ -227,6 +227,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
     const conf: DialogFormConfiguration = {
       title: "Unlock " + row1.name,
+      formname: 'unlock-pool',
       fieldConfig: [{
         type : 'input',
         inputType: 'password',
@@ -602,6 +603,7 @@ export class VolumesListTableConfig implements InputTableConf {
         onClick: (row) => {
           const conf: DialogFormConfiguration = {
             title: "One time snapshot of " + row.path,
+            formname: 'pool-snapshot',
             fieldConfig: [
               {
                 type: 'input',

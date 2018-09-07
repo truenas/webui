@@ -17,7 +17,7 @@ export class DialogService {
 
     constructor(private dialog: MatDialog, private ws: WebSocketService, public snackBar: MatSnackBar,protected loader: AppLoaderService) { }
 
-    public confirm(title: string, message: string, hideCheckBox?: boolean, buttonMsg?: string, secondaryCheckBox?: boolean, secondaryCheckBoxMsg?: string, method?:string, data?:any): any {
+    public confirm(title: string, message: string, hideCheckBox?: boolean, buttonMsg?: string, secondaryCheckBox?: boolean, secondaryCheckBoxMsg?: string, method?:string, data?:any, formname?: string): any {
 
         let dialogRef: MatDialogRef<ConfirmDialog>;
 
@@ -25,6 +25,7 @@ export class DialogService {
 
         dialogRef.componentInstance.title = title;
         dialogRef.componentInstance.message = message;
+        dialogRef.componentInstance.formname = formname;
 
         if(buttonMsg) {
             dialogRef.componentInstance.buttonMsg = buttonMsg;
@@ -33,7 +34,7 @@ export class DialogService {
         if(hideCheckBox) {
             dialogRef.componentInstance.hideCheckBox = hideCheckBox;
         } 
-        
+
         if(secondaryCheckBox) {
             dialogRef.componentInstance.secondaryCheckBox = secondaryCheckBox;
             dialogRef.componentInstance.secondaryCheckBoxMsg = secondaryCheckBoxMsg;
