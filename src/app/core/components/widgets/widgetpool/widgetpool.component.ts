@@ -26,6 +26,7 @@ export interface Disk {
   serial?: string;
   smartoptions?: string;
   temp?: number;
+  displaysize?: string;
 }
 
 export interface VolumeData {
@@ -167,11 +168,14 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
         hddstandby: evt.data[i].hddstandby,
         serial: evt.data[i].serial,
         smartoptions: evt.data[i].smartoptions,
-        temp:0
+        temp:0,
+        displaysize: (<any>window).filesize(Number(evt.data[i].size), {standard: "iec"})
       }
     
       this.diskDetails.push(disk);
+
     }
+    
   }
 
   parseVolumeData(){
@@ -211,13 +215,10 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
       this.diskSizeLabel = this.displayValue.slice(-3);
       this.diskSize = new Intl.NumberFormat().format(parseFloat(this.displayValue.slice(0, -4)))
     }
-    if (this.diskSize.charAt(this.diskSize.length - 2) === '.' || this.diskSize.charAt(this.diskSize.length - 3) === ',') {
+    // Adds a zero to numbers with one (and only one) digit after the decimal
+    if (this.diskSize.charAt(this.diskSize.length - 2) === '.' || this.diskSize.charAt(this.diskSize.length - 2) === ',') {
       this.diskSize = this.diskSize.concat('0')
     };
-    if (this.diskSize.charAt(this.diskSize.length - 2) === ',') {
-      this.diskSize = this.diskSize.concat('00')
-    };
-
   };
 
   setPreferences(form:NgForm){
