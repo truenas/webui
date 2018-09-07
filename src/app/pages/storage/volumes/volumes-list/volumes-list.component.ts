@@ -298,6 +298,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
           const conf: DialogFormConfiguration = { 
             title: "Detach pool: '" + row1.name + "'",
+            formname: 'detach-pool',
             fieldConfig: [{
               type: 'paragraph',
               name: 'pool_detach_warning',

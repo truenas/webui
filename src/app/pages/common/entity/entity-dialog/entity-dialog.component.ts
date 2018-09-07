@@ -36,6 +36,7 @@ export class EntityDialogComponent implements OnInit {
   public formValue: any;
   public showPassword = false;
   public parent: any;
+  public formname: string;
   
 
   constructor(public dialogRef: MatDialogRef < EntityDialogComponent >,
@@ -51,6 +52,7 @@ export class EntityDialogComponent implements OnInit {
   ngOnInit() {
     this.title = this.conf.title;
     this.fieldConfig = this.conf.fieldConfig;
+    this.formname = this.conf.formname;
     
     if(this.conf.parent) {
       this.parent = this.conf.parent;

@@ -3,13 +3,7 @@
 <div mat-dialog-content>
   <span [innerHTML]="conf.message"></span>
   <br>
-  <ng-container *ngFor="let field of fieldConfig;" dynamicField [config]="field" [group]="formGroup" [fieldShow]="'show'">
-    <button mat-icon-button type="button" *ngIf="field.hideButton===false" (click)="togglePW()" matTooltip="Show or hide">
-      <mat-icon *ngIf="!showPassword">visibility</mat-icon>
-      <mat-icon *ngIf="showPassword">visibility_off</mat-icon>
-  </button>
-  
-  </ng-container>
+  <ng-container *ngFor="let field of fieldConfig;" dynamicField [config]="field" [group]="formGroup" [fieldShow]="'show'"></ng-container>
 </div>
 <div>
   <p *ngIf="error" type="danger" id="error_message"><span [innerHTML]="error"></span></p>
@@ -22,7 +16,7 @@
       *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" 
       (click)="custBtn['function']()" [name]="custBtn.name + '_button'">{{custBtn.name | translate}}</button>
   </span>
-  <button mat-button class="mat-button mat-accent" (click)="cancel()" [name]="cancelButtonText + '_button'">{{cancelButtonText | translate}}</button>
-  <button mat-button class="mat-button mat-primary" (click)="submit()" [disabled]="!formGroup.valid" 
+  <button id="{{ formname  }}__cancel-button" mat-button class="mat-button mat-accent" (click)="cancel()" [name]="cancelButtonText + '_button'">{{cancelButtonText | translate}}</button>
+  <button id="{{ formname  }}__action-button" mat-button class="mat-button mat-primary" (click)="submit()" [disabled]="!formGroup.valid" 
     *ngIf="saveButtonText" [name]="saveButtonText + '_button'">{{saveButtonText | translate}}</button>
 </div>
