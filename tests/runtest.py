@@ -98,7 +98,7 @@ for output, arg in myopts:
     if output == "--driver":
         driver_v = arg
     else:
-        driver_v
+        driver_v = "NULL"
 
 try:
     ip
@@ -110,7 +110,7 @@ except NameError:
 global runDriver
 
 try:
-    driver_v
+    driver_v = "NULL"
 except NameError:
     from driverG import webDriver
     print("Running Selenium Grid")
