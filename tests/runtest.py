@@ -50,7 +50,7 @@ if path.exists("/usr/local/etc/ixautomation.conf"):
     else:
         grid_server_ip = "127.0.0.1"
 else:
-    grid_server_ip = "10.20.21.203"
+    grid_server_ip = "enter.ip.via.argument"
 
 sys.stdout.flush()
 
@@ -97,8 +97,8 @@ for output, arg in myopts:
         test_name = arg
     if output == "--driver":
         driver_v = arg
-    else:
-        driver_v = "NULL"
+
+driver_v = "NULL"
 
 try:
     ip
