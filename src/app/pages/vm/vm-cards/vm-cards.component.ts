@@ -524,11 +524,11 @@ export class VmCardsComponent implements OnInit,OnDestroy {
     }
      else {
       if(poweroff){
-         this.off_text =  `Power off to ${vm.name} ?`;
+         this.off_text =  `Turn off power to virtual machine "${vm.name}"?`;
          this.off_button_text = 'Power off';
       }
       else {
-        this.off_text =  `Stop virtual machine ${vm.name} ?`;
+        this.off_text =  `Stop virtual machine "${vm.name}"?`;
         this.off_button_text = 'Stop virtual machine';
       }
         this.dialog.confirm("Alert",this.off_text, false, this.off_button_text).subscribe((res)=>{
