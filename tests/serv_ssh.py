@@ -54,7 +54,7 @@ class conf_ssh_test(unittest.TestCase):
             # scroll down
             driver.find_element_by_tag_name('body').send_keys(Keys.END)
             time.sleep(2)
-            self.status_change("14", "start")
+            function.status_change(driver, self, "14", "start")
             #taking screenshot
             function.screenshot(driver, self)
         except Exception:
@@ -114,7 +114,7 @@ class conf_ssh_test(unittest.TestCase):
             # scroll down
             driver.find_element_by_tag_name('html').send_keys(Keys.END)
             time.sleep(2)
-            self.status_change("14", "stop")
+            function.status_change(driver, self, "14", "stop")
             #taking screenshot
             function.screenshot(driver, self)
         except Exception:
