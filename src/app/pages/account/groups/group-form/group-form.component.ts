@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
-import {Validators} from '@angular/forms';
 import { T } from '../../../../translate-marker';
+import helptext from '../../../../helptext/account/groups';
 
 import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -24,38 +24,30 @@ export class GroupFormComponent {
   protected fieldConfig: FieldConfig[] = [{
       type: 'input',
       name: 'bsdgrp_gid',
-      placeholder: T('GID'),
-      tooltip: T('The Group ID (GID) is a unique number used to identify\
-                  a Unix group. Enter a number above 1000 for a group\
-                  with user accounts. Groups used by a service must have\
-                  an ID that matches the default port number used by the\
-                  service.'),
-      validation : [ Validators.required, regexValidator(/^\d+$/) ],
+      placeholder: helptext.bsdgrp_gid_placeholder,
+      tooltip: helptext.bsdgrp_gid_tooltip,
+      validation : helptext.bsdgrp_gid_validation,
       required: true,
     },
     {
       type: 'input',
       name: 'bsdgrp_group',
-      placeholder: T('Name'),
-      tooltip: T('Enter an alphanumeric name for the group.'),
-      validation : [ Validators.required, regexValidator(/^\w+$/) ],
+      placeholder: helptext.bsdgrp_group_placeholder,
+      tooltip: helptext.bsdgrp_group_tooltip,
+      validation : helptext.bsdgrp_group_validation,
       required: true
     },
     {
       type: 'checkbox',
       name: 'bsdgrp_sudo',
-      placeholder: T('Permit Sudo'),
-      tooltip: T('Allow group members to use <a\
-                  href="https://www.freebsd.org/cgi/man.cgi?query=sudo&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
-                  target="_blank">sudo</a>. Group members are prompted\
-                  for their password when using <b>sudo</b>.'),
+      placeholder: helptext.bsdgrp_sudo_placeholder,
+      tooltip: helptext.bsdgrp_sudo_tooltip,
     },
     {
       type: 'checkbox',
       name: 'allow',
-      placeholder: T('Allow repeated GIDs'),
-      tooltip: T('<b>Not recommended.</b> Allow multiple groups to share\
-                  the same group ID.'),
+      placeholder: helptext.allow_placeholder,
+      tooltip: helptext.allow_tooltip,
       disabled: false
     },
   ];
