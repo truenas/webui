@@ -142,10 +142,11 @@ export class VmCardsComponent implements OnInit,OnDestroy {
 
     this.core.register({observerClass:this,eventName:"VmStatus"}).subscribe((evt:CoreEvent) => {
       const cardIndex = this.getCardIndex('id',evt.data.id);
-      this.cards[cardIndex].state = evt.data.state.toLowerCase();
-
-      const cacheIndex = this.getCardIndex('id',evt.data.id,true);
-      this.cache[cacheIndex].state = evt.data.state.toLowerCase();
+      if(evt.data.state && this.cards[cardIndex]){ 
+        this.cards[cardIndex].state = evt.data.state.toLowerCase();
+        const cacheIndex = this.getCardIndex('id',evt.data.id,true);
+        this.cache[cacheIndex].state = evt.data.state.toLowerCase();
+      }
     });
 
     this.core.register({observerClass:this,eventName:"VmStarted"}).subscribe((evt:CoreEvent) => {
