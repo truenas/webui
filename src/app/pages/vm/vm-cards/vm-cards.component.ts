@@ -68,6 +68,8 @@ export class VmCardsComponent implements OnInit,OnDestroy {
   public spin = true;
   public direction ='down';
   public animationMode = 'fling';
+  public off_text: string;  
+  public off_button_text: string;
 
   public actions: any = [
     {
@@ -523,12 +525,24 @@ export class VmCardsComponent implements OnInit,OnDestroy {
     }
      else {
       if(poweroff){
-        eventName = "VmPowerOff";
-      } else {
-        eventName = "VmStop";
+         this.off_text =  `Turn off power to virtual machine "${vm.name}"?`;
+         this.off_button_text = 'Power off';
       }
-      this.cards[index].state = "stopping";
-      this.core.emit({name: eventName, data:[vm.id]});
+      else {
+        this.off_text =  `Stop virtual machine "${vm.name}"?`;
+        this.off_button_text = 'Stop virtual machine';
+      }
+        this.dialog.confirm("Alert",this.off_text, false, this.off_button_text).subscribe((res)=>{
+          if(res) {
+           if(poweroff){
+             eventName = "VmPowerOff";
+           } else {
+             eventName = "VmStop";
+           }
+           this.cards[index].state = "stopping";
+           this.core.emit({name: eventName, data:[vm.id]});
+          }
+        })
     }
   }
 
