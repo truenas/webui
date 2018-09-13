@@ -70,7 +70,7 @@ class delete_pool_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_01_delete_pool1(self):
@@ -85,7 +85,7 @@ class delete_pool_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
             #temporary
             driver.refresh()
@@ -102,7 +102,7 @@ class delete_pool_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
             #temporary
             driver.refresh()
@@ -117,7 +117,7 @@ class delete_pool_test(unittest.TestCase):
             exc_info_p = traceback.format_exception(*sys.exc_info())
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 

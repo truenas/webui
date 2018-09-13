@@ -62,7 +62,7 @@ export class VMwareSnapshotFormComponent {
       blurStatus: true,
       parent: this,
       blurEvent: this.blurEvent,
-      hideButton: false
+      togglePw: true
     },
     {
       type: 'select',

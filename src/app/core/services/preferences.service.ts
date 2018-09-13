@@ -17,6 +17,7 @@ export interface UserPreferences {
   showGuide:boolean; // Guided Tour on/off
   showTooltips:boolean; // Form Tooltips on/off
   metaphor:string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
+  allowPwToggle:boolean;
 }
 
 @Injectable()
@@ -30,7 +31,8 @@ export class PreferencesService {
     "favoriteThemes": [], // Theme Names
     "showGuide":true,
     "showTooltips":true,
-    "metaphor":"auto"
+    "metaphor":"auto",
+    "allowPwToggle":true
   }
   constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router) {
     console.log("*** New Instance of Preferences Service ***");
@@ -43,12 +45,22 @@ export class PreferencesService {
     });
 
     this.core.register({observerClass:this, eventName:"UserData", sender:this.api }).subscribe((evt:CoreEvent) => {
-      //console.log(evt);
-      if(evt.data[0].attributes.preferences){
-        this.updatePreferences(evt.data[0].attributes.preferences);
-      } else if(!evt.data[0].attributes.preferences){
+      let data = evt.data[0].attributes.preferences;
+
+      let preferencesFromUI = Object.keys(this.preferences);
+      let preferencesFromMiddleware = Object.keys(data);
+      let keysMatch = (preferencesFromUI == preferencesFromMiddleware);
+      if(data && keysMatch){
+        // If preferences exist and there are no unknown properties
+        this.updatePreferences(data);
+      } else if(data && !keysMatch){
+        // Add missing properties to inbound preferences from middleware
+        let merged = this.mergeProperties(this.preferences, data);
+        this.updatePreferences(data);
+      } else if(!data){
+        // If preferences do not exist
         this.savePreferences();
-        //console.warn("No Preferences Found in Middleware");
+        console.warn("No Preferences Found in Middleware");
       }
     });
 
@@ -128,6 +140,22 @@ export class PreferencesService {
     } else if(!value) {
       localStorage.setItem(this.router.url,'false')
     }
+  }
+
+  mergeProperties(fui, fmw){
+    // Use this to add newer properties from middleware responses
+    // fetched after updates. Handy for when update contains new
+    // preference options.
+    // fui = from UI && fmw = from middleware
+    let merged = Object.assign(fmw, {});
+    let keys = Object.keys(fui);
+    let newProps = keys.filter(x => !fmw[x]);
+    
+    newProps.forEach((item, index) => {
+    	merged[item] = fui[item];	
+    });
+    console.log(merged)
+    return merged;
   }
 
 }
