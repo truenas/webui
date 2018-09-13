@@ -59,8 +59,13 @@ export class EntityUtils {
   }
 
   handleWSError(entity: any, res: any, dialogService?: any) {
+    let dialog;
     if (dialogService) {
-      entity.dialog = dialogService;
+      dialog = dialogService;
+    } else {
+      if (entity) {
+        dialog = entity.dialog;
+      }
     }
 
     if (res.extra && entity.fieldConfig) {
@@ -89,10 +94,10 @@ export class EntityUtils {
         }
       }
     } else {
-      if (res.trace && res.trace.formatted && entity.dialog) {
-        entity.dialog.errorReport(res.trace.class, res.reason, res.trace.formatted);
-      } else if (res.state && res.error && res.exception) {
-        entity.dialog.errorReport(res.state, res.error, res.exception);
+      if (res.trace && res.trace.formatted && dialog) {
+        dialog.errorReport(res.trace.class, res.reason, res.trace.formatted);
+      } else if (res.state && res.error && res.exception && dialog) {
+        dialog.errorReport(res.state, res.error, res.exception);
       } else {
         // if it can't print the error at least put it on the console.
         console.log(res);

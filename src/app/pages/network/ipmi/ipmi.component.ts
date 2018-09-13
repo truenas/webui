@@ -80,6 +80,7 @@ export class IPMIComponent {
       inputType: 'password',
       name : 'password',
       placeholder : T('Password'),
+      togglePw: true,
       tooltip : T('Enter the password used to connect to the IPMI\
                    interface from a web browser.'),
 

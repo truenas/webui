@@ -1148,7 +1148,7 @@ export class JailAddComponent implements OnInit {
         });
     },
     (res) => {
-      new EntityUtils().handleError(this, res);
+      new EntityUtils().handleWSError(this, res, this.dialogService);
     });
 
     this.ip4_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip4_interface'});
@@ -1173,7 +1173,7 @@ export class JailAddComponent implements OnInit {
         }
       },
       (res)=>{
-        new EntityUtils().handleError(this, res);
+        new EntityUtils().handleWSError(this, res, this.dialogService);
       }
     );
 
@@ -1256,21 +1256,21 @@ export class JailAddComponent implements OnInit {
             this.formGroup.controls[i].setValue('');
             continue;
           }
-          if (_.indexOf(this.TFfields, i) > 0) {
+          if (_.indexOf(this.TFfields, i) > -1) {
             if (res[0][i] == '1') {
               res[0][i] = true;
             } else {
               res[0][i] = false;
             }
           }
-          if (_.indexOf(this.OFfields, i) > 0) {
+          if (_.indexOf(this.OFfields, i) > -1) {
             if (res[0][i] == 'on') {
               res[0][i] = true;
             } else {
               res[0][i] = false;
             }
           }
-          if (_.indexOf(this.YNfields, i) > 0) {
+          if (_.indexOf(this.YNfields, i) > -1) {
             if (res[0][i] == 'yes') {
               res[0][i] = true;
             } else {
@@ -1394,7 +1394,8 @@ export class JailAddComponent implements OnInit {
       this.router.navigate(new Array('/').concat(this.route_success));
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
-      this.dialogService.errorReport('Error ' + res.error + ':' + res.reason, res.trace.class, res.trace.formatted);
+      this.dialogRef.close();
+      new EntityUtils().handleWSError(this, res, this.dialogService);
     });
   }
 
