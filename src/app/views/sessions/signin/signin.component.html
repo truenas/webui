@@ -29,10 +29,10 @@
                 </mat-error>
               </mat-input-container>
             </div>
-            <button name="signin_button" mat-button class="mat-accent full-width mb-1" [disabled]="username.errors || password.errors">{{"Sign in" | translate}}</button>
+            <button name="signin_button" mat-button class="mat-accent full-width mb-1" id="signin_button" [disabled]="username.errors || password.errors">{{"Log in" | translate}}</button>
           </form>
           <div>
-            <a mat-button color="primary" (click)="onGoToLegacy()">{{"Legacy Web Interface" | translate}}</a>
+            <button mat-button color="primary" class="full-width mb-1" (click)="onGoToLegacy()">{{"Legacy Web Interface" | translate}}</button>
           </div>
           <div>
             <span fxFlex class="copyright-txt">
