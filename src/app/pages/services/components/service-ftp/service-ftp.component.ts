@@ -10,8 +10,8 @@ import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
 import { T } from '../../../../translate-marker';
 import {
-  regexValidator
-} from '../../../common/entity/entity-form/validators/regex-validation';
+  rangeValidator
+} from '../../../common/entity/entity-form/validators/range-validation';
 
 import {
   RestService,
@@ -46,7 +46,7 @@ export class ServiceFTPComponent implements OnInit {
       placeholder : T('Port'),
       tooltip: T('Set the port the FTP service listens on.'),
       required: true,
-      validation: [Validators.min(1), Validators.max(65535), Validators.required, regexValidator(/^\d+$/)]
+      validation: [rangeValidator(1, 65535), Validators.required]
     },
     {
       type : 'input',
@@ -54,7 +54,7 @@ export class ServiceFTPComponent implements OnInit {
       placeholder : T('Clients'),
       tooltip: T('The maximum number of simultaneous clients.'),
       required: true,
-      validation : [Validators.min(1), Validators.max(10000), Validators.required, regexValidator(/^\d+$/)]
+      validation : [rangeValidator(1, 10000), Validators.required]
     },
     {
       type : 'input',
@@ -63,7 +63,7 @@ export class ServiceFTPComponent implements OnInit {
       tooltip: T('Set the maximum number of connections per IP address.\
                   <i>0</i> means unlimited.'),
       required: true,
-      validation : [Validators.min(0), Validators.max(1000), Validators.required, regexValidator(/^\d+$/)]
+      validation : [rangeValidator(0, 1000), Validators.required]
     },
     {
       type : 'input',
@@ -72,7 +72,7 @@ export class ServiceFTPComponent implements OnInit {
       tooltip: T('Enter the maximum number of attempts before client is\
                   disconnected. Increase this if users are prone to typos.'),
       required: true,
-      validation : [Validators.min(0), Validators.max(1000), Validators.required, regexValidator(/^\d+$/)]
+      validation : [rangeValidator(0, 1000), Validators.required]
     },
     {
       type : 'input',
@@ -81,7 +81,7 @@ export class ServiceFTPComponent implements OnInit {
       tooltip: T('Maximum client idle time in seconds before client is\
                   disconnected.'),
       required: true,
-      validation : [Validators.min(0), Validators.max(10000), Validators.required, regexValidator(/^\d+$/)]
+      validation : [rangeValidator(0, 10000), Validators.required]
     },
     {
       type : 'checkbox',
@@ -186,7 +186,7 @@ export class ServiceFTPComponent implements OnInit {
       tooltip: T('Used by clients in PASV mode. A default of <i>0</i>\
                   means any port above 1023.'),
       required: true,
-      validation: [Validators.min(0), Validators.max(65535), Validators.required, regexValidator(/^\d+$/)]
+      validation: [rangeValidator(0, 65535), Validators.required]
     },
     {
       type : 'input',
@@ -195,7 +195,7 @@ export class ServiceFTPComponent implements OnInit {
       tooltip: T('Used by clients in PASV mode. A default of <i>0</i>\
                   means any port above 1023.'),
       required: true,
-      validation: [Validators.min(0), Validators.max(65535), Validators.required, regexValidator(/^\d+$/)]
+      validation: [rangeValidator(0, 65535), Validators.required]
     },
     {
       type : 'input',
@@ -203,7 +203,7 @@ export class ServiceFTPComponent implements OnInit {
       placeholder : T('Local User Upload Bandwidth'),
       tooltip: T('In KiB/s. A default of <i>0</i> means unlimited.'),
       required: true,
-      validation: [Validators.min(0), Validators.required, regexValidator(/^\d+$/)]
+      validation: [rangeValidator(0), Validators.required]
     },
     {
       type : 'input',
@@ -211,7 +211,7 @@ export class ServiceFTPComponent implements OnInit {
       placeholder : T('Local User Download Bandwidth'),
       tooltip: T('In KiB/s. A default of <i>0</i> means unlimited.'),
       required: true,
-      validation: [Validators.min(0), Validators.required, regexValidator(/^\d+$/)]
+      validation: [rangeValidator(0), Validators.required]
     },
     {
       type : 'input',
@@ -219,7 +219,7 @@ export class ServiceFTPComponent implements OnInit {
       placeholder : T('Anonymous User Upload Bandwidth'),
       tooltip: T('In KiB/s. A default of <i>0</i> means unlimited.'),
       required: true,
-      validation: [Validators.min(0), Validators.required, regexValidator(/^\d+$/)]
+      validation: [rangeValidator(0), Validators.required]
     },
     {
       type : 'input',
@@ -227,7 +227,7 @@ export class ServiceFTPComponent implements OnInit {
       placeholder : T('Anonymous User Download Bandwidth'),
       tooltip: T('In KiB/s. A default of <i>0</i> means unlimited.'),
       required: true,
-      validation: [Validators.min(0), Validators.required, regexValidator(/^\d+$/)]
+      validation: [rangeValidator(0), Validators.required]
     },
     {
       type : 'checkbox',

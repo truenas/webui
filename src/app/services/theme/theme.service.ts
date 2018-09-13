@@ -221,6 +221,12 @@ export class ThemeService {
       } else if(!evt.data.showTooltips){
         (<any>document).documentElement.style.setProperty("--tooltip","none");
       }
+
+      if(evt.data.allowPwToggle){
+        (<any>document).documentElement.style.setProperty("--toggle_pw_display_prop","inline");
+      } else if(!evt.data.allowPwToggle){
+        (<any>document).documentElement.style.setProperty("--toggle_pw_display_prop", "none");
+      }
     });
   }
 

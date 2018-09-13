@@ -4,6 +4,9 @@ import { T } from '../../../translate-marker'
 import { TranslateService } from '@ngx-translate/core'
 import { Validators } from '@angular/forms';
 
+import { MatDialog, MatDialogRef } from '@angular/material';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { JailService } from '../../../services/';
@@ -35,6 +38,7 @@ export class JailAddComponent implements OnInit {
   public error: string;
   public busy: Subscription;
 
+  protected dialogRef: any;
   protected formFileds: FieldConfig[];
   public basicfieldConfig: FieldConfig[] = [
     {
@@ -1108,6 +1112,7 @@ export class JailAddComponent implements OnInit {
     protected fieldRelationService: FieldRelationService,
     protected loader: AppLoaderService,
     public translate: TranslateService,
+    protected dialog: MatDialog,
     protected dialogService: DialogService,
     protected networkService: NetworkService) {}
 
@@ -1143,7 +1148,7 @@ export class JailAddComponent implements OnInit {
         });
     },
     (res) => {
-      new EntityUtils().handleError(this, res);
+      new EntityUtils().handleWSError(this, res, this.dialogService);
     });
 
     this.ip4_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip4_interface'});
@@ -1168,7 +1173,7 @@ export class JailAddComponent implements OnInit {
         }
       },
       (res)=>{
-        new EntityUtils().handleError(this, res);
+        new EntityUtils().handleWSError(this, res, this.dialogService);
       }
     );
 
@@ -1251,21 +1256,21 @@ export class JailAddComponent implements OnInit {
             this.formGroup.controls[i].setValue('');
             continue;
           }
-          if (_.indexOf(this.TFfields, i) > 0) {
+          if (_.indexOf(this.TFfields, i) > -1) {
             if (res[0][i] == '1') {
               res[0][i] = true;
             } else {
               res[0][i] = false;
             }
           }
-          if (_.indexOf(this.OFfields, i) > 0) {
+          if (_.indexOf(this.OFfields, i) > -1) {
             if (res[0][i] == 'on') {
               res[0][i] = true;
             } else {
               res[0][i] = false;
             }
           }
-          if (_.indexOf(this.YNfields, i) > 0) {
+          if (_.indexOf(this.YNfields, i) > -1) {
             if (res[0][i] == 'yes') {
               res[0][i] = true;
             } else {
@@ -1328,15 +1333,15 @@ export class JailAddComponent implements OnInit {
     this.error = null;
     let property: any = [];
     let value = _.cloneDeep(this.formGroup.value);
-    if (value['ip4_addr'] == '') {
-      value['ip4_addr'] = 'none';
+    if (value['ip4_addr'] == '' || value['ip4_addr'] == undefined) {
+      delete value['ip4_addr'];
     } else {
       value['ip4_addr'] = value['ip4_interface'] + '|' + value['ip4_addr'] + '/' + value['ip4_netmask'];
     }
     delete value['ip4_interface'];
     delete value['ip4_netmask'];
-    if (value['ip6_addr'] == '') {
-      value['ip6_addr'] = 'none';
+    if (value['ip6_addr'] == '' || value['ip4_addr'] == undefined) {
+      delete value['ip6_addr'];
     } else {
       value['ip6_addr'] = value['ip6_interface'] + '|' + value['ip6_addr'] + '/' + value['ip6_prefix'];
     }
@@ -1380,21 +1385,18 @@ export class JailAddComponent implements OnInit {
     }
     value['props'] = property;
 
-    this.loader.open();
-    this.ws.job(this.addCall, [value]).subscribe(
-      (res) => {
-        this.loader.close();
-        if (res.error) {
-          this.error = res.error;
-        } else {
-          this.router.navigate(new Array('/').concat(this.route_success));
-        }
-      },
-      (res) => {
-        this.loader.close();
-        this.dialogService.errorReport('Error ' + res.error + ':' + res.reason, res.trace.class, res.trace.formatted);
-      }
-    );
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Creating Jail") }, disableClose: true });
+    this.dialogRef.componentInstance.setDescription(T("Creating Jail..."));
+    this.dialogRef.componentInstance.setCall(this.addCall, [value]);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.dialogRef.close(true);
+      this.router.navigate(new Array('/').concat(this.route_success));
+    });
+    this.dialogRef.componentInstance.failure.subscribe((res) => {
+      this.dialogRef.close();
+      new EntityUtils().handleWSError(this, res, this.dialogService);
+    });
   }
 
   setStep(index: number) {

@@ -69,7 +69,7 @@ export class EntityFormService {
   getFilesystemListdirChildren(node: any, explorerType?: string, showHiddenFiles = false) {
     const children = [];
 
-    return this.ws.call('filesystem.listdir', [node.data.name]).toPromise().then(res => {
+    return this.ws.call('filesystem.listdir', [node.data.name, [], {"order_by": ["name"]}] ).toPromise().then(res => {
       for (let i = 0; i < res.length; i++) {
         const child = {};
         if(!showHiddenFiles){

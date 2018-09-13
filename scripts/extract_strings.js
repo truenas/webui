@@ -15,18 +15,22 @@ fs.readdir( translations, function( err, files ) {
         process.exit( 1 );
     } 
 
+    var pos = "";
+
     files.forEach( function( file, index ) {
         if (file.match(/\.po$/)) {
-            exec('ngx-translate-extract --input src --output ' + translations + file + ' --clean --sort --format pot -m T', (err, stdout, stderr) => {
-                if (err) {
-                    console.error(err);
-                    console.error( "Error extracting strings to file.", file );
-                    // node couldn't execute the command
-                    return;
-                }
-                console.log(stdout);
-                console.error(stderr);
-            });
+            pos += translations + file + " ";
         }
+    });
+
+    exec('ngx-translate-extract --input src --output ' + pos + ' --clean --sort --format pot -m T', (err, stdout, stderr) => {
+        if (err) {
+            console.error(err);
+            console.error( "Error extracting strings." );
+            // node couldn't execute the command
+            return;
+        }
+        console.log(stdout);
+        console.error(stderr);
     });
 });

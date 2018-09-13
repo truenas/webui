@@ -444,7 +444,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     const beginIndex = this.paginationPageIndex * this.paginationPageSize;
     const endIndex = beginIndex + this.paginationPageSize ;
 
-    if( beginIndex < this.currentRows.length && endIndex > this.currentRows.length ) {
+    if( beginIndex < this.currentRows.length && endIndex >= this.currentRows.length ) {
       this.seenRows = this.currentRows.slice(beginIndex, this.currentRows.length);
     } else if( endIndex < this.currentRows.length ) {
       this.seenRows = this.currentRows.slice(beginIndex, endIndex);

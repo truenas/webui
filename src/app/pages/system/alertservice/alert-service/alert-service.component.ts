@@ -90,6 +90,7 @@ export class AlertServiceComponent implements OnInit {
       type : 'input',
       name : 'region',
       placeholder : 'AWS Region',
+      togglePw: true,
       tooltip: 'Enter the <a\
                 href="https://docs.aws.amazon.com/sns/latest/dg/sms_supported-countries.html"\
                 target="_blank">AWS account region</a>.',
@@ -111,6 +112,8 @@ export class AlertServiceComponent implements OnInit {
       type: 'input',
       name: 'aws_secret_access_key',
       placeholder: 'Secret Key',
+      inputType: 'password',
+      togglePw: true,
       tooltip: 'Enter the Secret Access Key for the linked AWS account.',
     },
   ];
@@ -167,6 +170,8 @@ export class AlertServiceComponent implements OnInit {
       type : 'input',
       name : 'password',
       placeholder: 'Password',
+      inputType: 'password',
+      togglePw: true,
       tooltip: 'Enter password.',
     }, {
       type : 'input',
@@ -206,6 +211,7 @@ export class AlertServiceComponent implements OnInit {
       inputType: 'password',
       name : 'password',
       placeholder: 'Password',
+      togglePw: true,
       tooltip: 'Enter the Mattermost password.',
     }, {
       type : 'input',

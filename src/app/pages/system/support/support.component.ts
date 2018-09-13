@@ -79,7 +79,7 @@ export class SupportComponent  {
       blurStatus : true,
       blurEvent : this.blurEvent,
       parent : this,
-      hideButton : false
+      togglePw : true
     },
     {
       type : 'select',
