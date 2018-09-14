@@ -248,7 +248,8 @@ export class VolumesListTableConfig implements InputTableConf {
         type: 'select',
         name: 'services',
         placeholder: T('Restart Services'),
-        tooltip: T(''),
+        tooltip: T('List of system services to restart when the pool is\
+                    unlocked.'),
         multiple: true,
         value: ['afp','cifs','ftp','iscsitarget','nfs','webdav','jails'],
         options: [{label: 'AFP', value: 'afp'},
