@@ -1255,9 +1255,16 @@ export class JailEditComponent implements OnInit {
               if (res[0][i] == 'none' || res[0][i] == '') {
                 this.formGroup.controls['ip4_addr'].setValue('');
               } else {
-                this.formGroup.controls['ip4_interface'].setValue(_.split(res[0][i], '|', 1)[0]);
-                this.formGroup.controls['ip4_addr'].setValue(_.split(res[0][i], '|', 2)[1].split('/')[0]);
-                this.formGroup.controls['ip4_netmask'].setValue(_.split(res[0][i], '|', 2)[1].split('/')[1]);
+                if (res[0][i].indexOf('|') > 0) {
+                  this.formGroup.controls['ip4_interface'].setValue(res[0][i].split('|')[0]);
+                  res[0][i] = res[0][i].split('|')[1];
+                }
+                if (res[0][i].indexOf('/') > 0) {
+                  this.formGroup.controls['ip4_addr'].setValue(res[0][i].split('/')[0]);
+                  this.formGroup.controls['ip4_netmask'].setValue(res[0][i].split('/')[1]);
+                } else {
+                  this.formGroup.controls['ip4_addr'].setValue(res[0][i]);
+                }
               }
               continue;
             }
@@ -1265,9 +1272,16 @@ export class JailEditComponent implements OnInit {
               if (res[0][i] == 'none' || res[0][i] == '') {
                 this.formGroup.controls['ip6_addr'].setValue('');
               } else {
-                this.formGroup.controls['ip6_interface'].setValue(_.split(res[0][i], '|', 1)[0]);
-                this.formGroup.controls['ip6_addr'].setValue(_.split(res[0][i], '|', 2)[1].split('/')[0]);
-                this.formGroup.controls['ip6_prefix'].setValue(_.split(res[0][i], '|', 2)[1].split('/')[1]);
+                if (res[0][i].indexOf('|') > 0) {
+                  this.formGroup.controls['ip6_interface'].setValue(res[0][i].split('|')[0]);
+                  res[0][i] = res[0][i].split('|')[1];
+                }
+                if (res[0][i].indexOf('/') > 0) {
+                  this.formGroup.controls['ip6_addr'].setValue(res[0][i].split('/')[0]);
+                  this.formGroup.controls['ip6_prefix'].setValue(res[0][i].split('/')[1]);
+                } else {
+                  this.formGroup.controls['ip6_addr'].setValue(res[0][i]);
+                }
               }
               continue;
             }
