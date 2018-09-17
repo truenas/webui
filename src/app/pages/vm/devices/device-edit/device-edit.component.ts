@@ -259,9 +259,10 @@ export class DeviceEditComponent implements OnInit {
           name : 'DISK_sectorsize',
           placeholder : 'Disk sector size',
           tooltip : 'A fixed amount of data that is the minimum storage\
-                     unit of a hard drive. Enter the sector size in\
-                     bytes. The default <i>0</i> uses an autotuner that\
-                     determines the best sector size to use.',
+                     unit of a hard drive. The default <i>0</i> uses an\
+                     autotuner that determines the best sector size to\
+                     use. If a custom size is needed, enter the value in\
+                     bytes. ',
           type: 'input',
         },
         {
