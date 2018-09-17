@@ -27,7 +27,7 @@ export class InitiatorListComponent {
       prop : 'iscsi_target_initiator_initiators',
     },
     {
-      name : 'Authorized Network',
+      name : 'Authorized Networks',
       prop : 'iscsi_target_initiator_auth_network',
     },
     {

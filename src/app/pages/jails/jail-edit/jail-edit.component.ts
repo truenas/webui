@@ -30,7 +30,6 @@ export class JailEditComponent implements OnInit {
   protected route_conf: string[] = ['jails', 'configuration'];
 
   public formGroup: any;
-  public error: string;
   public busy: Subscription;
   public custActions: any;
   public pk: any;
@@ -1354,7 +1353,6 @@ export class JailEditComponent implements OnInit {
   }
 
   onSubmit() {
-    this.error = null;
     let updateRelease: boolean = false;
     let newRelease: any;
     let value = _.cloneDeep(this.formGroup.value);
@@ -1429,7 +1427,7 @@ export class JailEditComponent implements OnInit {
             (res_upgrade) => {
               this.loader.close();
               if (res_upgrade.error) {
-                this.error = res_upgrade.error;
+                new EntityUtils().handleWSError(this, res_upgrade, this.dialogService);
               } else {
                 this.router.navigate(new Array('/').concat(this.route_success));
               }
@@ -1442,7 +1440,7 @@ export class JailEditComponent implements OnInit {
         } else {
           this.loader.close();
           if (res.error) {
-            this.error = res.error;
+            new EntityUtils().handleWSError(this, res, this.dialogService);
           } else {
             this.router.navigate(new Array('/').concat(this.route_success));
           }

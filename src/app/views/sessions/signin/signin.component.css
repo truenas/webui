@@ -6,3 +6,9 @@
 .copyright-txt a:link {
     color: #396f9d;
 }
+
+#signin_button {
+    background: var(--accent);
+    color: black !important;
+    font-weight: 700;
+}
