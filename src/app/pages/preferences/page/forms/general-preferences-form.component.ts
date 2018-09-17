@@ -72,6 +72,15 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
             value:this.prefs.preferences.showTooltips,
             tooltip: 'Display Help Text icons with text in forms.',
             class:'inline'
+          },
+          { 
+            type: 'checkbox', 
+            name: 'allowPwToggle', 
+            width: '300px',
+            placeholder: 'Enable Password Toggle',
+            value:this.prefs.preferences.allowPwToggle,
+            tooltip: 'This option enables/disables a password toggle button.',
+            class:'inline'
           }
         ]
       }

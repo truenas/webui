@@ -19,6 +19,7 @@ export class SigninComponent implements OnInit {
   private failed: Boolean = false;
   public is_freenas: Boolean = false;
   public logo_ready: Boolean = false;
+  public showPassword = false;
 
   signinData = {
     username: '',
@@ -111,15 +112,10 @@ export class SigninComponent implements OnInit {
   }
 
   onGoToLegacy() {
-    this.translate.get('Switch to Legacy UI?').subscribe((gotolegacy: string) => {
-      this.translate.get("Return to the previous graphical user interface.").subscribe((gotolegacy_prompt) => {
-        this.dialogService.confirm("Switch to Legacy UI?", "Return to the previous graphical user interface.", true, T('Switch')).subscribe((res) => {
-          if (res) {
-            window.location.href = '/legacy/';
-          }
-        });
-      });
+    this.dialogService.confirm(T("Log in to Legacy User Interface?"), "", true, T('Continue')).subscribe((res) => {
+      if (res) {
+        window.location.href = '/legacy/';
+      }
     });
   }
-
 }

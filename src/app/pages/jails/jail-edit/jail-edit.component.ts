@@ -30,7 +30,6 @@ export class JailEditComponent implements OnInit {
   protected route_conf: string[] = ['jails', 'configuration'];
 
   public formGroup: any;
-  public error: string;
   public busy: Subscription;
   public custActions: any;
   public pk: any;
@@ -1150,7 +1149,7 @@ export class JailEditComponent implements OnInit {
       });
     },
     (res) => {
-      new EntityUtils().handleError(this, res);
+      new EntityUtils().handleWSError(this, res, this.dialogService);
     });
 
     this.ip4_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip4_interface'});
@@ -1175,7 +1174,7 @@ export class JailEditComponent implements OnInit {
         }
       },
       (res)=>{
-        new EntityUtils().handleError(this, res);
+        new EntityUtils().handleWSError(this, res, this.dialogService);
       }
     );
 
@@ -1306,7 +1305,7 @@ export class JailEditComponent implements OnInit {
         }
       },
       (res) => {
-        new EntityUtils().handleError(this, res);
+        new EntityUtils().handleWSError(this, res, this.dialogService);
       });
     });
 
@@ -1354,7 +1353,6 @@ export class JailEditComponent implements OnInit {
   }
 
   onSubmit() {
-    this.error = null;
     let updateRelease: boolean = false;
     let newRelease: any;
     let value = _.cloneDeep(this.formGroup.value);
@@ -1429,20 +1427,20 @@ export class JailEditComponent implements OnInit {
             (res_upgrade) => {
               this.loader.close();
               if (res_upgrade.error) {
-                this.error = res_upgrade.error;
+                new EntityUtils().handleWSError(this, res_upgrade, this.dialogService);
               } else {
                 this.router.navigate(new Array('/').concat(this.route_success));
               }
             },
             (res_upgrate) => {
               this.loader.close();
-              new EntityUtils().handleWSError(this, res_upgrate);
+              new EntityUtils().handleWSError(this, res_upgrate, this.dialogService);
             }
           );
         } else {
           this.loader.close();
           if (res.error) {
-            this.error = res.error;
+            new EntityUtils().handleWSError(this, res, this.dialogService);
           } else {
             this.router.navigate(new Array('/').concat(this.route_success));
           }
@@ -1450,7 +1448,7 @@ export class JailEditComponent implements OnInit {
       },
       (res) => {
         this.loader.close();
-        this.dialogService.errorReport('Error ' + res.error + ':' + res.reason, res.trace.class, res.trace.formatted);
+        new EntityUtils().handleWSError(this, res, this.dialogService);
       }
     );
   }

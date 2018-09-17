@@ -4,6 +4,11 @@
   <span [innerHTML]="conf.message"></span>
   <br>
   <ng-container *ngFor="let field of fieldConfig;" dynamicField [config]="field" [group]="formGroup" [fieldShow]="'show'">
+    <button mat-icon-button type="button" *ngIf="field.hideButton===false" (click)="togglePW()" matTooltip="Show or hide">
+      <mat-icon *ngIf="!showPassword">visibility</mat-icon>
+      <mat-icon *ngIf="showPassword">visibility_off</mat-icon>
+  </button>
+  
   </ng-container>
 </div>
 <div>

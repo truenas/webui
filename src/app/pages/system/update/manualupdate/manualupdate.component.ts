@@ -68,7 +68,6 @@ export class ManualUpdateComponent {
       acceptedFiles: '.tar',
       updater: this.updater,
       parent: this,
-      hideButton:true,
       required: true
     },
   ];

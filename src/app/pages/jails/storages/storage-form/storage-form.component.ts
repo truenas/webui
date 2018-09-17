@@ -7,6 +7,7 @@ import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../../services/';
 import { DialogService } from '../../../../services/';
+import { EntityUtils } from '../../../common/entity/utils';
 
 import { JailService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -199,7 +200,7 @@ export class StorageFormComponent {
       },
       (res) => {
         this.loader.close();
-        this.dialog.errorReport(res.error, res.reason, res.trace.formatted);
+        new EntityUtils().handleWSError(this, res);
       }
     );
   }
