@@ -85,7 +85,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   public displayedColumns: string[] = [];
   public busy: Subscription;
   public columns: Array<any> = [];
-  public tableHeight:number = 600;
+  public tableHeight:number = (this.paginationPageSize * 50) + 100;
 
   public allColumns: Array<any> = []; // Need this for the checkbox headings
   public filterColumns: Array<any> = []; // Need this for the filter function
@@ -305,15 +305,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     }
     
     this.currentRows = this.rows;
-
-    if (this.currentRows.length === 0) {
-      this.tableHeight = 153;
-    } else if ( this.currentRows.length > 0 && this.currentRows.length < (this.tableHeight - 100)/50) {
-      this.tableHeight = (this.currentRows.length * 50) + 110
-    } else {
-      this.tableHeight = 600;
-    }
-    
     this.paginationPageIndex  = 0;
     this.setPaginationInfo();
     this.showDefaults = true;
@@ -454,7 +445,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     const beginIndex = this.paginationPageIndex * this.paginationPageSize;
     const endIndex = beginIndex + this.paginationPageSize ;
 
-    if( beginIndex < this.currentRows.length && endIndex >= this.currentRows.length ) {
+    if( beginIndex < this.currentRows.length && endIndex >= this.currentRows.length) {
       this.seenRows = this.currentRows.slice(beginIndex, this.currentRows.length);
     } else if( endIndex < this.currentRows.length ) {
       this.seenRows = this.currentRows.slice(beginIndex, endIndex);
@@ -462,6 +453,18 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       this.seenRows = this.currentRows;
     }
 
+    // This section controls page height for infinite scrolling
+    if (this.currentRows.length === 0) {
+      this.tableHeight = 153;
+    } else if (this.currentRows.length > 0 && this.currentRows.length < this.paginationPageSize) {
+      this.tableHeight = (this.currentRows.length * 50) + 110;
+    } else {
+      this.tableHeight = (this.paginationPageSize * 50) + 100;
+    } 
+    // Displays an accurate number for some edge cases
+    if (this.paginationPageSize > this.currentRows.length) {
+      this.paginationPageSize = this.currentRows.length;
+    }
   }
 
   reorderEvent($event) {
