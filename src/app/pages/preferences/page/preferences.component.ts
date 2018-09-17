@@ -99,7 +99,7 @@ export class PreferencesPage implements OnInit, OnDestroy {
            width: '200px',
            placeholder:theme.label,
            value: false,
-           tooltip: 'Add ' + theme.label + ' to the favorites',
+           tooltip: 'Add ' + theme.label + ' to favorites',
            class:'inline'
          }
          this.favoriteFields.push(field);

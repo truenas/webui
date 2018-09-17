@@ -310,7 +310,7 @@ export class UpdateComponent implements OnInit {
   }
   ApplyPendingUpdate() {
     const apply_pending_update_ds  = this.dialogService.confirm(
-      T("Apply Pending Updates"), T("The system will reboot and be briefly unavailable after applying updates. Continue?")
+      T("Apply Pending Updates"), T("The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?")
     ).subscribe((res)=>{
       if(res){
        this.update();

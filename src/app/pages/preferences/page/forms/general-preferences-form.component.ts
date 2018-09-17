@@ -70,7 +70,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
             width: '300px',
             placeholder: 'Enable Help Text in Forms',
             value:this.prefs.preferences.showTooltips,
-            tooltip: 'Display Help Text icons with text in forms.',
+            tooltip: 'Display help icons in forms.',
             class:'inline'
           },
           { 
@@ -153,7 +153,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
            width: '200px',
            placeholder:theme.label,
            value: false,
-           tooltip: 'Add ' + theme.label + ' to the favorites',
+           tooltip: 'Add ' + theme.label + ' to favorites',
            class:'inline'
          }
          this.favoriteFields.push(field);

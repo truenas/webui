@@ -59,9 +59,9 @@ export class ManualUpdateComponent {
       name: 'filename',
       placeholder: T('Update File'),
       tooltip: T('The file used to manually update the system. Browse to\
-                  the update file on the local system to upload and\
-                  apply to this system. Update files end with\
-                  <i>-manual-update-unsigned.tar</i>'),
+                  the update file stored on the system logged into the\
+                  web interface to upload and apply. Update file names\
+                  end with <i>-manual-update-unsigned.tar</i>'),
       validation : [ Validators.required],
       fileLocation: '',
       message: this.messageService,
@@ -135,7 +135,7 @@ export class ManualUpdateComponent {
     this.dialogRef.componentInstance.success.subscribe((succ)=>{
       this.dialogRef.close(false);
       this.translate.get('Restart').subscribe((reboot: string) => {
-        this.translate.get('The update is successfully applied. Please reboot the machine for the update to take effect. Reboot now?').subscribe((reboot_prompt: string) => {
+        this.translate.get('Update successfull. Please reboot for the update to take effect. Reboot now?').subscribe((reboot_prompt: string) => {
           this.dialogService.confirm(reboot, reboot_prompt).subscribe((reboot_res) => {
             if (reboot_res) {
               this.router.navigate(['/others/reboot']);
