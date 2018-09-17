@@ -148,7 +148,7 @@
           name="{{col.name | translate}}">
           <ng-template let-row="row" ngx-datatable-cell-template>
             <div id="{{col.prop}}_{{row[col.prop]}}" 
-                 title="{{row[col.prop]}}">
+                 title="{{convertDisplayValue(row[col.prop])}}">
               {{convertDisplayValue(row[col.prop])}}
             </div>
           </ng-template>
@@ -160,7 +160,7 @@
                name="{{col.name | translate}}">
         <ng-template let-row="row" ngx-datatable-cell-template>
           <div id="{{col.prop}}_{{row[col.prop]}}" 
-               title="{{row[col.prop]}}" [ngClass]="col.icon ? 'IconCell' : ''">
+               title="{{convertDisplayValue(row[col.prop])}}" [ngClass]="col.icon ? 'IconCell' : ''">
             <img *ngIf="col.icon" width="20" src="{{row[col.icon]}}"/>
             <button mat-icon-button *ngIf="col.state; else colInfo" (click)="conf.stateButton(row)">
               <mat-spinner *ngIf="row[col.state] == 'RUNNING'" [diameter]='24'></mat-spinner>
