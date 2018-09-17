@@ -73,7 +73,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   protected extendedNeedsDiskMessage = T("Add one or more disks to extend the pool.");
   public size;
   protected extendedAvailable;
-  public sizeMessage = T("Estimated total raw data capacity.");
+  public sizeMessage = T("Estimated total raw data capacity");
   protected extendedSizeMessage = T("Estimated data capacity available after extension.");
 
   public disknumError = null;
@@ -317,6 +317,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     let data_vdev_disknum = 0;
     let data_disk_found = false;
+    let any_disk_found = false;
     let data_vdev_type;
     this.disknumError = null;
     this.vdevtypeError = null;
@@ -349,16 +350,21 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
           }
         }
 
-      }
-      if (!this.isNew) {
+      } else {
         if (vdev.disks.length > 0) {
-          this.needs_disk = false;
+          any_disk_found = true;
         }
       }
 
     });
     if (this.isNew) {
       this.needs_disk = !data_disk_found;
+    } else {
+      if (data_disk_found || any_disk_found) {
+        this.needs_disk = false;
+      } else {
+        this.needs_disk = true;
+      }
     }
     this.size = (<any>window).filesize(size_estimate, {standard : "iec"});
   }

@@ -54,7 +54,7 @@ class conf_dc_test(unittest.TestCase):
             print ("the Page now is: " + page_data)
             # assert response
             self.assertTrue("Services" in page_data)
-            self.status_change("3", "start")
+            function.status_change(driver, self, "2", "start")
             # dc test takes almost takes 18 seconds to turn on
             time.sleep(18)
             #taking screenshot
@@ -64,7 +64,7 @@ class conf_dc_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_02_checkif_dc_on (self):
@@ -72,7 +72,7 @@ class conf_dc_test(unittest.TestCase):
             print (" check if dc turned on")
             time.sleep(2)
             #status check
-            function.status_check(driver, "3")
+            function.status_check(driver, "2")
             #taking screenshot
             function.screenshot(driver, self)
         except Exception:
@@ -80,14 +80,14 @@ class conf_dc_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_03_turnoff_dc (self):
         try:
             print (" turning off the dc service")
             time.sleep(2)
-            self.status_change("3", "stop")
+            function.status_change(driver, self, "2", "stop")
             # dc takes almost 22 sec to turn off
             time.sleep(22)
             #taking screenshot
@@ -97,7 +97,7 @@ class conf_dc_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_04_checkif_dc_off (self):
@@ -105,7 +105,7 @@ class conf_dc_test(unittest.TestCase):
             print (" check if dc turned off")
             time.sleep(2)
             #status check
-            function.status_check(driver, "3")
+            function.status_check(driver, "2")
             time.sleep(10)
             #taking screenshot
             function.screenshot(driver, self)
@@ -114,7 +114,7 @@ class conf_dc_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     #method to test if an element is present
@@ -128,32 +128,6 @@ class conf_dc_test(unittest.TestCase):
         except NoSuchElementException: return False
         return True
 
-
-    def status_change(self, which, to):
-        print ("executing the status change function with input " + which + " + " + to)
-        # get the ui element
-        ui_element_status=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[' + str(which) + ']/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[1]/mat-chip')
-        # get the status data
-        status_data=ui_element_status.text
-        buttonToggle = driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[' + str(which) + ']/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[1]/button')
-        if to == "start":
-            if status_data == "STOPPED":
-                # Click on the toggle button
-                buttonToggle.click()
-                time.sleep(1)
-                print ("status has now changed to running")
-            else:
-                print ("the status is already " + status_data)
-        elif to == "stop":
-            if status_data == "RUNNING":
-                #Click on the toggle button
-                buttonToggle.click()
-                time.sleep(1)
-                # re-confirming if the turning off the service
-                if self.is_element_present(By.XPATH,xpaths['turnoffConfirm']):
-                    driver.find_element_by_xpath(xpaths['turnoffConfirm']).click()
-            else:
-                print ("the status is already" + status_data)
 
 
     def service_search(self, which):

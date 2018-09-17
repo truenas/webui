@@ -167,6 +167,7 @@ export class ServiceUPSComponent implements OnDestroy {
       type : 'input',
       name : 'ups_monpwd',
       inputType: 'password',
+      togglePw: true,
       placeholder : T('Monitor Password'),
       tooltip : T('Change the default password to improve system\
                    security. The new password cannot contain a\

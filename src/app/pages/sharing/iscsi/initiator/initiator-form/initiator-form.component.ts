@@ -30,7 +30,7 @@ export class InitiatorFormComponent {
     {
       type : 'input',
       name : 'iscsi_target_initiator_auth_network',
-      placeholder : T('Authorized Network'),
+      placeholder : T('Authorized Networks'),
       tooltip: T('Network addresses that can use this initiator. Use\
                   <i>ALL</i> or list network addresses with a\
                   <a href="https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing"\

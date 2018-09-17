@@ -114,6 +114,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   public wsResponseIdx;
   public queryResponse;
   public saveSubmitText = "Save";
+  public showPassword = false;
 
   get controls() {
     return this.fieldConfig.filter(({type}) => type !== 'button');
@@ -345,26 +346,11 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
     // ...but for entity forms that don't make a data request, this kicks in 
     setTimeout(() => { this.setShowDefaults(); }, 500);
+
   }
 
   setShowDefaults() {
     this.showDefaults = true;
-  }
-
-  // rough draft pw show button - positioned correctly only on Users/Add
-  togglePW() {
-    let inputs = document.getElementsByTagName('input');
-    for (let i = 0; i < inputs.length; i++) {
-      if (inputs[i].placeholder.includes('Password') || 
-        inputs[i].placeholder.includes('Passphrase') ||
-        inputs[i].placeholder.includes('Secret')) {
-        if (inputs[i].type === 'password') {
-          inputs[i].type = 'text';
-        } else {
-          inputs[i].type = 'password';
-        }
-      }
-    }
   }
 
   ngOnChanges() {
