@@ -141,7 +141,7 @@ class create_pool_test(unittest.TestCase):
             # checkbox confirmation
             driver.find_element_by_xpath(xpaths['confirmCheckbox']).click()
             # Click Ok Button
-            driver.find_element_by_xpath(xpaths['okButton']).click()
+            driver.find_element_by_xpath(xpaths['createpoolButton']).click()
             #taking screenshot
             function.screenshot(driver, self)
             self.error_check()
