@@ -472,7 +472,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   openDialog() {
     if(this.isEncrypted) {
-      this.dialog.confirm(T("Warning"), this.encryption_message, false, T('I Understand'), false, "x", "v", "b", "encrypt-dialog").subscribe((res) => {
+      this.dialog.confirm(T("Warning"), this.encryption_message, false, T('I Understand'), false, "", "", "", "encrypt-dialog").subscribe((res) => {
         if (res) {
           this.isEncrypted = true;
           this.vol_encrypt = 1
