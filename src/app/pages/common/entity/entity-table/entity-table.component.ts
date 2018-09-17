@@ -85,6 +85,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   public displayedColumns: string[] = [];
   public busy: Subscription;
   public columns: Array<any> = [];
+  public tableHeight:number = 600;
 
   public allColumns: Array<any> = []; // Need this for the checkbox headings
   public filterColumns: Array<any> = []; // Need this for the filter function
@@ -190,7 +191,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         this.currentPreferredCols = this.conf.columns;
       }
         // End of checked/display section ------------
-            
+           
   }
 
   setShowSpinner() {
@@ -304,6 +305,15 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     }
     
     this.currentRows = this.rows;
+
+    if (this.currentRows.length === 0) {
+      this.tableHeight = 153;
+    } else if ( this.currentRows.length > 0 && this.currentRows.length < (this.tableHeight - 100)/50) {
+      this.tableHeight = (this.currentRows.length * 50) + 110
+    } else {
+      this.tableHeight = 600;
+    }
+    
     this.paginationPageIndex  = 0;
     this.setPaginationInfo();
     this.showDefaults = true;

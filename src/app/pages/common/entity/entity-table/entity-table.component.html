@@ -23,8 +23,8 @@
       </span>
     </div>
 
-    <mat-paginator fxFlex="auto" [length]="currentRows.length" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" [pageIndex]="paginationPageIndex" (page)="paginationUpdate($event)">
-    </mat-paginator>
+    <!-- <mat-paginator fxFlex="auto" [length]="currentRows.length" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" [pageIndex]="paginationPageIndex" (page)="paginationUpdate($event)">
+    </mat-paginator> -->
   </div>
 
 
@@ -77,12 +77,12 @@
 
   <div>
     <ngx-datatable *ngIf="showDefaults" class='material' 
-      [rows]='seenRows' 
+      [rows]='currentRows' 
       [columns]="conf.columns" 
       [columnMode]="'force'" 
       [columnWidth]="'auto'"
       [headerHeight]="'50'" 
-      [footerHeight]="'auto'" 
+      [footerHeight]="'50'" 
       [rowHeight]="50" 
       [reorderable]="true"
       [limit]="paginationPageSize" 
@@ -94,7 +94,9 @@
       [selectionType]="'checkbox'"
       [selected]='selected'
       (select)='onSelect($event)'
+      [style.height.px]="tableHeight"
       [scrollbarH]='true'
+      [scrollbarV]='true'
       #entityTable>
 
       <ngx-datatable-footer>
