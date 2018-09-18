@@ -112,7 +112,7 @@ export class SigninComponent implements OnInit {
   }
 
   onGoToLegacy() {
-    this.dialogService.confirm(T("Log in to Legacy User Interface?"), "", true, T('Continue')).subscribe((res) => {
+    this.dialogService.confirm(T("Log in to Legacy User Interface?"), "", true, T('Continue'), false, '', '', '', 'gotolegacy').subscribe((res) => {
       if (res) {
         window.location.href = '/legacy/';
       }

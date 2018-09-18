@@ -396,7 +396,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         dialog.hasOwnProperty("title") ? dialog['title'] : T("Delete"), 
         dialog.hasOwnProperty("message") ? dialog['message'] : T("Are you sure you want to delete the selected item?"), 
         dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : false, 
-        dialog.hasOwnProperty("button") ? dialog['button'] : T("Delete")).subscribe((res) => {
+        dialog.hasOwnProperty("button") ? dialog['button'] : T("Delete"), false, '', '', '', 'delete-items').subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
@@ -473,7 +473,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   }
 
   doMultiDelete(selected) {
-    this.dialogService.confirm("Delete", "Are you sure you want to delete selected item(s)?", false, T("Delete")).subscribe((res) => {
+    this.dialogService.confirm("Delete", "Are you sure you want to delete selected item(s)?", false, T("Delete"), false, '', '', '', 'delete-items').subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;

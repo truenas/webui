@@ -157,7 +157,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   onShutdown() {
     this.translate.get('Shut down').subscribe((shutdown: string) => {
       this.translate.get('Are you sure you wish to shut down the system?').subscribe((shutdown_prompt: string) => {
-        this.dialogService.confirm(shutdown, shutdown_prompt, false, T('Shut Down')).subscribe((res) => {
+        this.dialogService.confirm(shutdown, shutdown_prompt, false, T('Shut Down'), false, '', '', '', 'shutdown').subscribe((res) => {
           if (res) {
             this.router.navigate(['/others/shutdown']);
           }
@@ -169,7 +169,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   onReboot() {
     this.translate.get('Restart').subscribe((reboot: string) => {
       this.translate.get('Are you sure you wish to restart the system?').subscribe((reboot_prompt: string) => {
-        this.dialogService.confirm(reboot, reboot_prompt, false, T('Restart')).subscribe((res) => {
+        this.dialogService.confirm(reboot, reboot_prompt, false, T('Restart'), false, '', '', '', 'restart').subscribe((res) => {
           if (res) {
             this.router.navigate(['/others/reboot']);
           }
@@ -205,7 +205,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   onGoToLegacy() {
-    this.dialogService.confirm(T("Switch to Legacy User Interface?"), T(""), true, T("Continue")).subscribe((res) => {
+    this.dialogService.confirm(T("Switch to Legacy User Interface?"), T(""), true, T("Continue"), false, '', '', '', 'legacy').subscribe((res) => {
       if (res) {
         window.location.href = '/legacy/';
       }

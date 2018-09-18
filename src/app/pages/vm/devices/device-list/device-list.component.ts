@@ -113,7 +113,7 @@ export class DeviceListComponent {
     }
   
   deviceDelete(id){
-    this.dialogService.confirm(T("Delete"), T("Delete this device?"), true, T('Delete Device')).subscribe((res) => {
+    this.dialogService.confirm(T("Delete"), T("Delete this device?"), true, T('Delete Device'), false, '', '', '', 'delete-device').subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
