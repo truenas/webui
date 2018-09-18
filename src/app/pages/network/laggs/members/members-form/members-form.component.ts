@@ -34,12 +34,14 @@ export class LaggMembersFormComponent {
       type : 'input',
       name : 'id',
       placeholder : T("Id"),
+      tooltip: T(''),
       isHidden: true
     },
     {
       type : 'select',
       name : 'lagg_interfacegroup',
       placeholder : T('Lagg Interface Group'),
+      tooltip: T('The member interface to configure.'),
       options : [],
       required: true,
       validation : [ Validators.required ]
@@ -49,6 +51,9 @@ export class LaggMembersFormComponent {
       name : 'lagg_ordernum',
       inputType: 'number',
       placeholder : T('Lagg Priority Number'),
+      tooltip: T('Order of selected interface within the lagg. Configure\
+                  a failover to set the master interface to <i>0</i> and\
+                  the other interfaces to <i>1</i>, <i>2</i>, etc.'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -56,6 +61,7 @@ export class LaggMembersFormComponent {
       type : 'input',
       name : 'lagg_physnic',
       placeholder : T('Lagg Physical NIC'),
+      tooltip: T('Physical interface of the selected member.'),
       options : [],
       required: true,
       validation : [ Validators.required ]
@@ -64,6 +70,9 @@ export class LaggMembersFormComponent {
       type : 'input',
       name : 'lagg_deviceoptions',
       placeholder : T('Options'),
+      tooltip: T('Additional parameters from <a\
+                  href="https://www.freebsd.org/cgi/man.cgi?query=ifconfig"\
+                  target="_blank">ifconfig(8)</a>.'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -110,6 +119,6 @@ export class LaggMembersFormComponent {
           this.lagg_physnic.options.push({label : item[1], value : item[0]});
         });
       });
-    } 
+    }
   }
 }
