@@ -77,7 +77,7 @@ export class DeviceAddComponent implements OnInit {
   //disk 
   public diskFieldConfig: FieldConfig[] = [
     {
-      name : 'DISK_zvol',
+      name : 'path',
       placeholder : 'Zvol',
       tooltip : 'Browse to an existing <a\
                  href="..//docs/storage.html#adding-zvols"\
@@ -170,7 +170,7 @@ export class DeviceAddComponent implements OnInit {
     {
       type : 'explorer',
       initial: '/mnt',
-      name : 'RAW_path',
+      name : 'path',
       placeholder : 'Raw File',
       tooltip : 'Browse to a storage location and add the name of the\
                  new raw file on the end of the path.',
@@ -179,14 +179,14 @@ export class DeviceAddComponent implements OnInit {
     },
     {
       type : 'input',
-      name : 'RAW_sectorsize',
+      name : 'sectorsize',
       placeholder : 'Disk sector size',
       tooltip : 'Enter a sector size in bytes. <i>0</i> leaves the\
                  sector size unset.',
       inputType : 'number',
     },
     {
-      name : 'RAW_mode',
+      name : 'mode',
       placeholder : 'Mode',
       tooltip : '<i>AHCI</i> emulates an AHCI hard disk for best\
                  software compatibility. <i>VirtIO</i> uses\
@@ -390,7 +390,7 @@ export class DeviceAddComponent implements OnInit {
 
     this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]]]).subscribe((zvols)=>{
       zvols.forEach(zvol => {
-        _.find(this.diskFieldConfig, {name:'DISK_zvol'}).options.push(
+        _.find(this.diskFieldConfig, {name:'path'}).options.push(
           {
             label : zvol.id, value : '/dev/zvol/' + zvol.id
           }

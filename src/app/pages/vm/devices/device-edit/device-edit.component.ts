@@ -310,13 +310,6 @@ export class DeviceEditComponent implements OnInit {
           ],
         },
         {
-          type : 'checkbox',
-          name : 'RAW_boot',
-          placeholder : 'Boot',
-          tooltip : 'Set to boot the VM from this device.',
-          isHidden: true
-        },
-        {
           type : 'input',
           name : 'RAW_rootpwd',
           placeholder : 'password',
@@ -377,9 +370,8 @@ export class DeviceEditComponent implements OnInit {
     const rawfile_lookup_table: Object = {
       'path' : 'RAW_path',
       'sectorsize': 'RAW_sectorsize',
-      'type':'RAW_mode',
-      'boot': 'RAW_boot',
-      'rootpwd': 'RAW_rootpwd',
+      'mode':'RAW_mode',
+      'root_password': 'RAW_rootpwd',
       'size': 'RAW_size',
       'order': 'RAW_order'
     };
@@ -445,15 +437,14 @@ export class DeviceEditComponent implements OnInit {
         this.setgetValues(device[0], disk_lookup_table);
       }
       else {
-        if (device[0].vm.vm_type==="Container Provider"){
-          this.RAW_boot = _.find(this.fieldSets[0].config, {name:'RAW_boot'})
-          this.RAW_rootpwd = _.find(this.fieldSets[0].config, {name:'RAW_rootpwd'})
-          this.RAW_size = _.find(this.fieldSets[0].config, {name:'RAW_size'})
-          this.RAW_boot.isHidden = false
-          this.RAW_rootpwd.isHidden = false
-          this.RAW_size.isHidden = false
-        }
-
+        this.ws.call('vm.query', [[['id', '=', parseInt(this.vmid,10)]]]).subscribe((vm)=>{
+          if (vm[0].vm_type==="Container Provider") {
+            this.RAW_rootpwd = _.find(this.fieldSets[0].config, {name:'RAW_rootpwd'});
+            this.RAW_size = _.find(this.fieldSets[0].config, {name:'RAW_size'});
+            this.RAW_rootpwd.isHidden = false
+            this.RAW_size.isHidden = false
+          }
+        })
         this.setgetValues(device[0].attributes, rawfile_lookup_table);
         this.setgetValues(device[0], rawfile_lookup_table);
         }
@@ -559,11 +550,10 @@ export class DeviceEditComponent implements OnInit {
               'mode': formvalue.RAW_mode,
               }
               payload['order'] =  formvalue.RAW_order
-            if (formvalue.RAW_boot || formvalue.RAW_rootpwd || formvalue.RAW_size ){
+            if (formvalue.RAW_rootpwd || formvalue.RAW_size ){
               Object.assign(
                 payload['attributes'],
-                { "boot": formvalue.RAW_boot},
-                {"rootpwd" :formvalue.RAW_rootpwd},
+                {"root_password" :formvalue.RAW_rootpwd},
                 {"size":formvalue.RAW_size}
                )
             }

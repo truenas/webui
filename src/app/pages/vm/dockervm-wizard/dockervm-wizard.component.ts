@@ -6,6 +6,7 @@ import { Wizard } from '../../common/entity/entity-form/models/wizard.interface'
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
 import * as _ from 'lodash';
 
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../common/entity/utils';
 import {VmService} from '../../../services/vm.service';
 import {regexValidator} from '../../common/entity/entity-form/validators/regex-validation';
@@ -315,41 +316,29 @@ async customSubmit(value) {
   const path = value.raw_file_directory+ '/' + value.raw_filename+ '_'+ value.name;
     const payload = {}
     const vm_payload = {}
-    vm_payload["vm_type"]= "Container Provider";
+    vm_payload["type"]= "RancherOS";
     vm_payload["memory"]= String(value.memory);
     vm_payload["name"] = value.name;
     vm_payload["vcpus"] = String(value.vcpus);
-    vm_payload["bootloader"] = 'GRUB';
     vm_payload["autostart"] = value.autostart;
+    vm_payload["root_password"] = "docker"
     vm_payload["devices"] = [
       {"dtype": "NIC", "attributes": {"type": value.NIC_type, "mac": value.NIC_mac, "nic_attach":value.nic_attach}},
-      {"dtype": "RAW", "attributes": {"path": path, "type": "AHCI", "rootpwd":"docker", "boot": true, "size": value.size, sectorsize: 0}},
+      {"dtype": "RAW", "attributes": {"path": path,exists: false, "type": "AHCI", "size": value.size, sectorsize: 0}},
     ]
-    this.loader.open();
-    this.ws.call('vm.get_sharefs').subscribe((get_sharefs)=>{
-      if(!get_sharefs){
-        this.ws.call('vm.activate_sharefs').subscribe((sharefs)=>{
-          this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
-            this.loader.close();
-            this.router.navigate(['/vm']);
-          },(error) => {
-            this.loader.close();
-          });
-        })
-      }
-      else {
-        this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
-          this.loader.close();
-          this.router.navigate(['/vm']);
-        },(error) => {
-          this.loader.close();
-        });
-      }
-    },
-    (error_res) => {
-      new EntityUtils().handleError(this, error_res);
-      this.loader.close();
-    })
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Docker VM") }});
+    this.dialogRef.componentInstance.progressNumberType = "nopercent";
+    this.dialogRef.componentInstance.setCall('vm.create_container', [vm_payload]);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.entityWizard.success = true;
+      this.entityWizard.snackBar.open(T("Docker VM successfully Created"), T("Success"));
+      this.router.navigate(['/vm']);
+    });
+    this.dialogRef.componentInstance.failure.subscribe((res) => {
+      new EntityUtils().handleWSError(this.entityWizard, res);
+    });
+
   }
 
 }
