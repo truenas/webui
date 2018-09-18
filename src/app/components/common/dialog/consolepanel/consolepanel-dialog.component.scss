@@ -1,7 +1,6 @@
 .message {
-	max-width: 500px;
   max-height: 340px;
-  width: 100vw;
+  width: 99%;
   height: 100vh;
   overflow-y: auto;
   border: none;
@@ -12,4 +11,25 @@
   color: #00ff00;
   font-family: "Courier New", Courier, monospace;
   white-space: pre-wrap;
+}
+
+#console-box {
+  max-width: 900px;
+}
+
+.mat-checkbox {
+  display: inline-block;
+  margin-top: 15px;
+}
+
+.mat-button {
+  bottom: 40px;
+}
+
+.mat-dialog-actions {
+  margin-bottom: -50px;
+}
+
+#placeholder {
+  min-width: 730px;
 }
