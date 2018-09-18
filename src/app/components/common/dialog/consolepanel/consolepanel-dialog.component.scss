@@ -1,5 +1,5 @@
 .message {
-  max-height: 340px;
+  max-height: 500px;
   width: 99%;
   height: 100vh;
   overflow-y: auto;
@@ -15,6 +15,7 @@
 
 #console-box {
   max-width: 1300px;
+  max-height: 575px;
 }
 
 .mat-checkbox {
@@ -32,4 +33,9 @@
 
 #placeholder {
   min-width: 945px;
+}
+
+@media screen and (max-height: 750px) {
+  .message { max-height: 340px;}
+  #console-box { max-height: 415px }
 }
