@@ -204,10 +204,9 @@ mat-chip.vm-state-on,
 }
 
 .slim .vm-power-btn{  
-  top: initial;
-  bottom: 90px;
+  top: 285px;
   left: 116px;
-  position: fixed;
+  position: absolute;
 }
 
 /* Fix layout on Ffx, adujst on Webkit */
