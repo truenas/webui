@@ -337,7 +337,8 @@ async customSubmit(value) {
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
       this.entityWizard.success = true;
-      this.entityWizard.snackBar.open(T("Docker VM successfully Created"), T("Success"));
+      this.dialogRef.close(true);
+      this.entityWizard.snackBar.open(T("Docker VM successfully Created"), T("Success"),{ duration: 5000 });
       this.router.navigate(['/vm']);
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
