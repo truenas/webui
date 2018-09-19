@@ -372,7 +372,7 @@ export class DeviceEditComponent implements OnInit {
       'path' : 'RAW_path',
       'sectorsize': 'RAW_sectorsize',
       'type':'RAW_mode',
-      'root_password': 'RAW_rootpwd',
+      'rootpwd': 'RAW_rootpwd',
       'size': 'RAW_size',
       'order': 'RAW_order'
     };
@@ -550,6 +550,7 @@ export class DeviceEditComponent implements OnInit {
               'path' : formvalue.RAW_path,
               'sectorsize' : formvalue.RAW_sectorsize,
               'type': formvalue.RAW_mode,
+              'size': formvalue.RAW_size
               }
               if(this.vm_type === "Container Provider") {
                 payload['attributes']['rootpwd'] = formvalue.RAW_rootpwd;
