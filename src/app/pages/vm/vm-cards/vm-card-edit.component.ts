@@ -136,12 +136,16 @@ export class VmCardEditComponent implements OnChanges {
   }
 
   afterInit(entityForm: any) {
-    entityForm.ws.call('notifier.choices', [ 'VM_BOOTLOADER' ]).subscribe((res) => {
-      this.bootloader =_.find(this.fieldConfig, {name : 'bootloader'});
-      for (let item of res){
-        this.bootloader.options.push({label : item[1], value : item[0]})
-      }
-    });
+    this.bootloader =_.find(this.fieldConfig, {name : 'bootloader'});
+    if( entityForm.data.bootloader === "GRUB") {
+      this.bootloader.options.push({label : 'GRUB', value : 'GRUB'});
+    } else { 
+      entityForm.ws.call('notifier.choices', [ 'VM_BOOTLOADER' ]).subscribe((res) => {
+        for (let item of res){
+          this.bootloader.options.push({label : item[1], value : item[0]})
+        }
+      });
+    }
   }
 
   generateFieldConfig(){
