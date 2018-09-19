@@ -9,7 +9,8 @@ import { T } from '../../../translate-marker';
 
 @Component({
   selector: 'app-plugins-installed-list',
-  template: `<entity-table [title]="title" [conf]="this"></entity-table>`
+  // template: `<entity-table [title]="title" [conf]="this"></entity-table>`
+  templateUrl: './plugins-installed.component.html'
 })
 export class PluginsInstalledListComponent {
 
@@ -96,7 +97,34 @@ export class PluginsInstalledListComponent {
       }
     },
   ];
-  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected loader: AppLoaderService) {}
+
+  public isPoolActivated: boolean;
+  public selectedPool;
+  public activatedPool: any;
+  public availablePools: any = [];
+
+  constructor(protected router: Router, protected rest: RestService,
+              protected ws: WebSocketService, protected loader: AppLoaderService) {
+    this.getActivatedPool();
+    this.getAvailablePools();
+  }
+
+  getActivatedPool(){
+    this.ws.call('jail.get_activated_pool').subscribe((res)=>{
+      if (res != null) {
+        this.activatedPool = res;
+        this.isPoolActivated = true;
+      } else {
+        this.isPoolActivated = false;
+      }
+    })
+  }
+
+  getAvailablePools(){
+    this.ws.call('pool.query').subscribe( (res)=> {
+      this.availablePools = res;
+    })
+  }
 
   afterInit(entityList: any) { this.entityList = entityList; }
 
