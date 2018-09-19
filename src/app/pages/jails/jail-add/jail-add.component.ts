@@ -1395,7 +1395,19 @@ export class JailAddComponent implements OnInit {
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
       this.dialogRef.close();
-      new EntityUtils().handleWSError(this, res, this.dialogService);
+      // show error inline if error is EINVAL
+      if (res.error.indexOf('[EINVAL]') > -1) {
+        res.error = res.error.substring(9).split(':');
+        const field = res.error[0];
+        const error = res.error[1];
+        const fc = _.find(this.formFileds, {'name' : field});
+        if (fc && !fc.isHidden) {
+          fc.hasErrors = true;
+          fc.errors = error;
+        }
+      } else {
+        new EntityUtils().handleWSError(this, res, this.dialogService);
+      }
     });
   }
 
