@@ -52,6 +52,7 @@ export class Services implements OnInit {
 
   public cache = [];
   public showSpinner: boolean = true;
+  public viewValue: any;
 
   constructor(protected rest: RestService, protected ws: WebSocketService, protected router: Router,
     private confirmService: AppConfirmService, private dialog: DialogService) {}
@@ -72,8 +73,7 @@ export class Services implements OnInit {
   }
 
   ngOnInit() {
-    this.viewMode.value = "cards";
-
+    window.localStorage.getItem('viewValue') ? this.viewMode.value = window.localStorage.getItem('viewValue') : this.viewMode.value = 'cards';
     this.busy =
       this.ws.call('service.query', [
         [], { "order_by": ["service"] }
@@ -192,5 +192,9 @@ export class Services implements OnInit {
       // Determines the route path
       this.router.navigate(new Array('').concat(['services', service]));
     }
+  }
+
+  saveValue(value) {
+    this.viewValue = window.localStorage.setItem('viewValue', value);
   }
 }
