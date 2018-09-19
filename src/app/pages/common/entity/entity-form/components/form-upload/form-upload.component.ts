@@ -44,7 +44,7 @@ export class FormUploadComponent {
       return;
     }
   this.loader.open();
-  
+
   const fileBrowser = this.fileInput.nativeElement;
   if (fileBrowser.files && fileBrowser.files[0]) {
     const formData: FormData = new FormData();
@@ -58,7 +58,7 @@ export class FormUploadComponent {
       (data) => {
         this.newMessage(location + '/' + fileBrowser.files[0].name);
         this.loader.close();
-        this.snackBar.open("your files are uploaded", 'close', { duration: 5000 });
+        this.snackBar.open("File upload complete.", 'close', { duration: 5000 });
       },
       (error) => {
         this.loader.close();
@@ -73,6 +73,6 @@ newMessage(message){
   if(this.config.message){
     this.config.message.newMessage(message);
   }
-  
+
 }
 }

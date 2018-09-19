@@ -6,7 +6,7 @@
 
 /* Tooltip text */
 .tooltip .tooltiptext {
-    position: absolute;    
+    position: absolute;
     background-color: black;
     max-width: 400px;
     width: 90vw;
@@ -23,7 +23,7 @@
     transition: visibility 0s linear 0.33s, opacity 0.33s linear;
 }
 
-/* Show the tooltip text when you mouse over the tooltip container */
+/* Show the tooltip text when the mouse is hovering over the tooltip container */
 .tooltip .tooltiptext.show {
     visibility: visible;
     opacity: 1;
