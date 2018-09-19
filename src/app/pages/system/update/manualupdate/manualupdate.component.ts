@@ -48,7 +48,7 @@ export class ManualUpdateComponent {
     {
       type: 'select',
       name: 'filelocation',
-      placeholder: T('Location to temporarily store update file'),
+      placeholder: T('Update File Temporary Storage Location'),
       tooltip: T('The update file is temporarily stored here before being applied.'),
       options:[{ label : 'Memory device', value : ':temp:'}],
       required: true,
@@ -57,15 +57,17 @@ export class ManualUpdateComponent {
     {
       type: 'upload',
       name: 'filename',
-      placeholder: T('Update file to be installed'),
-      tooltip: T(''),
+      placeholder: T('Update File'),
+      tooltip: T('The file used to manually update the system. Browse to\
+                  the update file stored on the system logged into the\
+                  web interface to upload and apply. Update file names\
+                  end with <i>-manual-update-unsigned.tar</i>'),
       validation : [ Validators.required],
       fileLocation: '',
       message: this.messageService,
       acceptedFiles: '.tar',
       updater: this.updater,
       parent: this,
-      hideButton:true,
       required: true
     },
   ];
@@ -108,7 +110,7 @@ export class ManualUpdateComponent {
             _.find(this.fieldConfig, {'name' : 'filelocation'}).options.push({
               label : '/mnt/'+pool.name, value : '/mnt/'+pool.name
             })
-            
+
           }
         });
       }
@@ -133,7 +135,7 @@ export class ManualUpdateComponent {
     this.dialogRef.componentInstance.success.subscribe((succ)=>{
       this.dialogRef.close(false);
       this.translate.get('Restart').subscribe((reboot: string) => {
-        this.translate.get('The update has been successfully applied, it is recommended that you reboot the machine now for the update to take effect. Do you wish to reboot?').subscribe((reboot_prompt: string) => {
+        this.translate.get('Update successfull. Please reboot for the update to take effect. Reboot now?').subscribe((reboot_prompt: string) => {
           this.dialogService.confirm(reboot, reboot_prompt).subscribe((reboot_res) => {
             if (reboot_res) {
               this.router.navigate(['/others/reboot']);

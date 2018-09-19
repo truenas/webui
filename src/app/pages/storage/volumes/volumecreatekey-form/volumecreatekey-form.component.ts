@@ -53,7 +53,8 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
       placeholder: T('Passphrase'),
       tooltip: T('Enter the GELI passphrase.'),
       validation: [Validators.required],
-      required: true
+      required: true,
+      togglePw: true
     },{
       type : 'input',
       inputType: 'password',

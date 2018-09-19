@@ -1,4 +1,4 @@
-import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
+import { ApplicationRef, Component, Injector } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import * as _ from 'lodash';
@@ -27,7 +27,7 @@ import { Validators } from '@angular/forms';
   providers: [IscsiService, IdmapService],
 })
 
-export class ServiceSMBComponent implements OnInit {
+export class ServiceSMBComponent {
 
   protected resource_name: string = 'services/cifs';
   protected route_success: string[] = ['services'];
@@ -81,18 +81,7 @@ export class ServiceSMBComponent implements OnInit {
       placeholder: T('DOS Charset'),
       tooltip: T('The character set Samba uses when communicating with\
                   DOS and Windows 9x/ME clients. Default is CP437.'),
-      options: [
-        { label: 'CP437', value: 'CP437' },
-        { label: 'CP850', value: 'CP850' },
-        { label: 'CP852', value: 'CP852' },
-        { label: 'CP866', value: 'CP866' },
-        { label: 'CP932', value: 'CP932' },
-        { label: 'CP949', value: 'CP949' },
-        { label: 'CP950', value: 'CP950' },
-        { label: 'CP1026', value: 'CP1026' },
-        { label: 'CP1251', value: 'CP1251' },
-        { label: 'ASCII', value: 'ASCII' },
-      ],
+      options: [],
     },
     {
       type: 'select',
@@ -100,14 +89,7 @@ export class ServiceSMBComponent implements OnInit {
       placeholder: T('UNIX Charset'),
       tooltip: T('Default is UTF-8 which supports all characters in\
                   all languages.'),
-      options: [
-        { label: 'UTF-8', value: 'UTF-8' },
-        { label: 'iso-8859-1', value: 'ISO-8859-1' },
-        { label: 'iso-8859-15', value: 'ISO-8859-15' },
-        { label: 'gb2312', value: 'GB2312' },
-        { label: 'EUC-JP', value: 'EUC-JP' },
-        { label: 'ASCII', value: 'ASCII' },
-      ],
+      options: [],
     },
     {
       type: 'select',
@@ -277,11 +259,28 @@ export class ServiceSMBComponent implements OnInit {
 
   private cifs_srv_bindip: any;
   private cifs_srv_guest: any;
+  private cifs_srv_doscharset: any;
+  private cifs_srv_unixcharset: any;
   protected defaultIdmap: any;
   protected idmap_tdb_range_low: any;
   protected idmap_tdb_range_high: any;
   protected dialogRef: any;
-  ngOnInit() {
+
+  preInit(entityForm: any) {
+    this.cifs_srv_doscharset = _.find(this.fieldConfig, {"name": "cifs_srv_doscharset"});
+    this.cifs_srv_unixcharset = _.find(this.fieldConfig, {"name": "cifs_srv_unixcharset"});
+    this.ws.call("smb.doscharset_choices").subscribe((res) => {
+      const values = Object.values(res);
+      for (let i = 0; i < values.length; i++) {
+        this.cifs_srv_doscharset.options.push({label: values[i], value: values[i]});
+      }
+    });
+    this.ws.call("smb.unixcharset_choices").subscribe((res) => {
+      const values = Object.values(res);
+      for (let i = 0; i < values.length; i++) {
+        this.cifs_srv_unixcharset.options.push({label: values[i], value: values[i]});
+      }
+    });
     this.iscsiService.getIpChoices().subscribe((res) => {
       this.cifs_srv_bindip =
         _.find(this.fieldConfig, { 'name': 'cifs_srv_bindip' });

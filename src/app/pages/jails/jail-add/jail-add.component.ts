@@ -1256,21 +1256,21 @@ export class JailAddComponent implements OnInit {
             this.formGroup.controls[i].setValue('');
             continue;
           }
-          if (_.indexOf(this.TFfields, i) > 0) {
+          if (_.indexOf(this.TFfields, i) > -1) {
             if (res[0][i] == '1') {
               res[0][i] = true;
             } else {
               res[0][i] = false;
             }
           }
-          if (_.indexOf(this.OFfields, i) > 0) {
+          if (_.indexOf(this.OFfields, i) > -1) {
             if (res[0][i] == 'on') {
               res[0][i] = true;
             } else {
               res[0][i] = false;
             }
           }
-          if (_.indexOf(this.YNfields, i) > 0) {
+          if (_.indexOf(this.YNfields, i) > -1) {
             if (res[0][i] == 'yes') {
               res[0][i] = true;
             } else {

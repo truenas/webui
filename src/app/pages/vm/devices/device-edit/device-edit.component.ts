@@ -106,7 +106,8 @@ export class DeviceEditComponent implements OnInit {
         {
           name : 'CDROM_order',
           placeholder : 'Device Order',
-          tooltip : '',
+          tooltip : 'Boot order for this device. Lower numbers are\
+                     higher in priority.',
           type: 'input',
           value: null,
           inputType: 'number'
@@ -153,7 +154,8 @@ export class DeviceEditComponent implements OnInit {
         {
           name : 'NIC_order',
           placeholder : 'Device Order',
-          tooltip : '',
+          tooltip : 'Boot order for this device. Lower numbers are\
+                     higher in priority.',
           type: 'input',
           value: null,
           inputType: 'number'
@@ -218,7 +220,8 @@ export class DeviceEditComponent implements OnInit {
         {
           name : 'VNC_order',
           placeholder : 'Device Order',
-          tooltip : '',
+          tooltip : 'Boot order for this device. Lower numbers are\
+                     higher in priority.',
           type: 'input',
           value: null,
           inputType: 'number'
@@ -229,9 +232,9 @@ export class DeviceEditComponent implements OnInit {
         {
           name : 'DISK_zvol',
           placeholder : 'Zvol',
-          tooltip : 'Browse to an existing <a\
-                     href="..//docs/storage.html#adding-zvols"\
-                     target="_blank">Zvol</a>.',
+          tooltip : 'The zvol directory on the system acting as the\
+                     Virtual Machine disk. Select an existing zvol\
+                     to use for VM storage.',
           type: 'select',
           required: true,
           validation : [Validators.required],
@@ -240,8 +243,9 @@ export class DeviceEditComponent implements OnInit {
         {
           name : 'DISK_mode',
           placeholder : 'Mode',
-          tooltip : '<i>AHCI</i> emulates an AHCI hard disk for better\
-                     software compatibility. <i>VirtIO</i> uses\
+          tooltip : 'The disk mode to use for communicating with the\
+                     system. <i>AHCI</i> emulates an AHCI hard disk for\
+                     better software compatibility. <i>VirtIO</i> uses\
                      paravirtualized drivers and can provide better\
                      performance, but requires the operating system\
                      installed in the VM to support VirtIO disk devices.',
@@ -254,14 +258,18 @@ export class DeviceEditComponent implements OnInit {
         {
           name : 'DISK_sectorsize',
           placeholder : 'Disk sector size',
-          tooltip : 'Enter the sector size in bytes. The default <i>0</i>\
-                     leaves the sector size unset.',
+          tooltip : 'A fixed amount of data that is the minimum storage\
+                     unit of a hard drive. The default <i>0</i> uses an\
+                     autotuner that determines the best sector size to\
+                     use. If a custom size is needed, enter the value in\
+                     bytes. ',
           type: 'input',
         },
         {
           name : 'DISK_order',
           placeholder : 'Device Order',
-          tooltip : '',
+          tooltip : 'Boot order for this device. Lower numbers are\
+                     higher in priority.',
           type: 'input',
           value: null,
           inputType: 'number'
@@ -328,7 +336,8 @@ export class DeviceEditComponent implements OnInit {
         {
           name : 'RAW_order',
           placeholder : 'Device Order',
-          tooltip : '',
+          tooltip : 'Boot order for this device. Lower numbers are\
+                     higher in priority.',
           type: 'input',
           value: null,
           inputType: 'number'
@@ -428,7 +437,7 @@ export class DeviceEditComponent implements OnInit {
               {
                 label : zvol.id, value : '/dev/zvol/' + zvol.id
               }
-            );   
+            );
           });
         });
         this.DISK_zvol = _.find(this.fieldSets[0].config, {name:'DISK_zvol'});

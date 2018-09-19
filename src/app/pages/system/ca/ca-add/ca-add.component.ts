@@ -199,14 +199,14 @@ export class CertificateAuthorityAddComponent {
       inputType : 'password',
       validation : [ matchOtherValidator('Passphrase2') ],
       isHidden: true,
+      togglePw : true
     },
     {
       type : 'input',
       name : 'Passphrase2',
       inputType : 'password',
       placeholder : T('Confirm Passphrase'),
-      isHidden : true,
-      hideButton : false
+      isHidden : true
     },
   ];
 
