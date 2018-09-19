@@ -38,6 +38,7 @@ export class SupportComponent  {
   public entityEdit: any;
   public saveSubmitText = "Submit";
   public registerUrl = " https://redmine.ixsystems.com/account/register"
+  public password_fc: any;
 
 
   public fieldConfig: FieldConfig[] = [
@@ -173,6 +174,7 @@ export class SupportComponent  {
 
   blurEvent(parent){
     this.category = _.find(parent.fieldConfig, {name: "category"});
+    this.password_fc = _.find(parent.fieldConfig, { name: 'password' });
       if(parent.entityEdit){
         this.username  = parent.entityEdit.formGroup.controls['username'].value;
         this.password  = parent.entityEdit.formGroup.controls['password'].value;
@@ -188,14 +190,15 @@ export class SupportComponent  {
           }
           if(this.category.options.length === 0 ){
             parent.ws.call('support.fetch_categories',[this.username,this.password]).subscribe((res)=>{
+              this.password_fc.hasErrors = false;
+              this.password_fc.errors = '';
               for (const property in res) {
                 if (res.hasOwnProperty(property)) {
                   this.category.options.push({label : property, value : res[property]});
                 }
               }},(error)=>{
-                if(parent.dialogService){
-                    parent.dialogService.errorReport(error.error, error.reason,error.trace.formatted);
-                }
+                this.password_fc.hasErrors = true;
+                this.password_fc.errors = 'Incorrect username/password';
               });
           }
       }
