@@ -308,7 +308,7 @@ blurEvent2(parent){
         parent.entityWizard.formArray.get([2]).get('memory').setValue(0);
       })
 
-    } else if (vm_memory_requested < 2048 * 1024*1024) {
+    } else if (vm_memory_requested * 1024*1024 < 2048 * 1024*1024) {
       parent.dialogService.Info("Error", `Docker Container: "${vm_name}" needs at least 2048 MiBs Memory to operate.`).subscribe(()=>{
         parent.entityWizard.formArray.get([2]).get('memory').setValue(0);
       })

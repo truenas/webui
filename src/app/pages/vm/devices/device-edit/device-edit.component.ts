@@ -68,6 +68,7 @@ export class DeviceEditComponent implements OnInit {
   private RAW_rootpwd: any;
   private RAW_size: any;
   public custActions: any[];
+  public vm_type: string;
 
   templateTop: TemplateRef<any>;
   @ContentChildren(EntityTemplateDirective)
@@ -370,7 +371,7 @@ export class DeviceEditComponent implements OnInit {
     const rawfile_lookup_table: Object = {
       'path' : 'RAW_path',
       'sectorsize': 'RAW_sectorsize',
-      'mode':'RAW_mode',
+      'type':'RAW_mode',
       'root_password': 'RAW_rootpwd',
       'size': 'RAW_size',
       'order': 'RAW_order'
@@ -438,6 +439,7 @@ export class DeviceEditComponent implements OnInit {
       }
       else {
         this.ws.call('vm.query', [[['id', '=', parseInt(this.vmid,10)]]]).subscribe((vm)=>{
+          this.vm_type = vm[0].vm_type;
           if (vm[0].vm_type==="Container Provider") {
             this.RAW_rootpwd = _.find(this.fieldSets[0].config, {name:'RAW_rootpwd'});
             this.RAW_size = _.find(this.fieldSets[0].config, {name:'RAW_size'});
@@ -547,14 +549,17 @@ export class DeviceEditComponent implements OnInit {
             payload['attributes'] = {
               'path' : formvalue.RAW_path,
               'sectorsize' : formvalue.RAW_sectorsize,
-              'mode': formvalue.RAW_mode,
+              'type': formvalue.RAW_mode,
+              }
+              if(this.vm_type === "Container Provider") {
+                payload['attributes']['rootpwd'] = formvalue.RAW_rootpwd;
+                payload['attributes']['boot'] = true;
+
               }
               payload['order'] =  formvalue.RAW_order
             if (formvalue.RAW_rootpwd || formvalue.RAW_size ){
               Object.assign(
-                payload['attributes'],
-                {"root_password" :formvalue.RAW_rootpwd},
-                {"size":formvalue.RAW_size}
+                payload['attributes']
                )
             }
             }
