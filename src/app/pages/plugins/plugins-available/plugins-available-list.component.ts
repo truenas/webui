@@ -29,7 +29,7 @@ export class PluginsAvailabelListComponent {
     sorting: { columns: this.columns },
   };
 
-  public isPoolActivated: boolean = true;
+  public isPoolActivated: boolean;
   public selectedPool;
   public activatedPool: any;
   public availablePools: any = [];
