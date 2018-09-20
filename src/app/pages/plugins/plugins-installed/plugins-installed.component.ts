@@ -4,13 +4,15 @@ import * as _ from 'lodash';
 
 import { RestService, WebSocketService } from '../../../services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { DialogService } from '../../../../app/services';
 import { EntityUtils } from '../../common/entity/utils';
 import { T } from '../../../translate-marker';
 
 @Component({
   selector: 'app-plugins-installed-list',
   // template: `<entity-table [title]="title" [conf]="this"></entity-table>`
-  templateUrl: './plugins-installed.component.html'
+  templateUrl: './plugins-installed.component.html',
+  providers: [ DialogService ]
 })
 export class PluginsInstalledListComponent {
 
@@ -56,7 +58,7 @@ export class PluginsInstalledListComponent {
               this.loader.close();
             },
             (res) => {
-              new EntityUtils().handleWSError(this, res);
+              new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
               this.loader.close();
             });
             
@@ -81,7 +83,7 @@ export class PluginsInstalledListComponent {
               this.loader.close();
             },
             (res) => {
-              new EntityUtils().handleWSError(this, res);
+              new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
               this.loader.close();
             });
       }
@@ -104,7 +106,8 @@ export class PluginsInstalledListComponent {
   public availablePools: any = [];
 
   constructor(protected router: Router, protected rest: RestService,
-              protected ws: WebSocketService, protected loader: AppLoaderService) {
+              protected ws: WebSocketService, protected loader: AppLoaderService,
+              protected dialogService: DialogService) {
     this.getActivatedPool();
     this.getAvailablePools();
   }
@@ -153,7 +156,7 @@ export class PluginsInstalledListComponent {
               },
               (res) => {
                 this.loader.close();
-                new EntityUtils().handleWSError(this, res);
+                new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
               });
         }
       },
@@ -170,7 +173,7 @@ export class PluginsInstalledListComponent {
               },
               (res) => {
                 this.loader.close();
-                new EntityUtils().handleWSError(this, res);
+                new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
               });
         }
       },
