@@ -184,15 +184,20 @@ export class DeviceAddComponent implements OnInit {
       validation: [Validators.required]
     },
     {
-      type : 'input',
+      type : 'select',
       name : 'sectorsize',
       placeholder : 'Disk sector size',
       tooltip : 'Enter a sector size in bytes. <i>0</i> leaves the\
                  sector size unset.',
-      inputType : 'number',
+      options: [
+        { label: 'Default', value:0 },
+        { label: '512', value:512 },
+        { label: '4096', value:4096 },
+              ],
+      value: 0
     },
     {
-      name : 'mode',
+      name : 'type',
       placeholder : 'Mode',
       tooltip : '<i>AHCI</i> emulates an AHCI hard disk for best\
                  software compatibility. <i>VirtIO</i> uses\
