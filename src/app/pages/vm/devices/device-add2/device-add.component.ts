@@ -88,7 +88,7 @@ export class DeviceAddComponent implements OnInit {
       options:[]
     },
     {
-      name : 'DISK_mode',
+      name : 'type',
       placeholder : 'Mode',
       tooltip : '<i>AHCI</i> emulates an AHCI hard disk for better\
                  software compatibility. <i>VirtIO</i> uses\
@@ -106,7 +106,13 @@ export class DeviceAddComponent implements OnInit {
       placeholder : 'Disk sector size',
       tooltip : 'Enter the sector size in bytes. The default <i>0</i>\
                  leaves the sector size unset.',
-      type: 'input',
+      type: 'select',
+      options: [
+        { label: 'Default', value:0 },
+        { label: '512', value:512 },
+        { label: '4096', value:4096 },
+
+      ],
       value: 0
     },
     {
@@ -121,7 +127,7 @@ export class DeviceAddComponent implements OnInit {
   //nic
   public nicFieldConfig: FieldConfig[] = [
     {
-      name: 'NIC_type',
+      name: 'type',
       placeholder: 'Adapter Type:',
       tooltip: 'Emulating an <i>Intel e82545 (e1000)</i> Ethernet card\
                 provides compatibility with most operating systems. Change to\
@@ -133,7 +139,7 @@ export class DeviceAddComponent implements OnInit {
       required: true
     },
     {
-      name: 'NIC_mac',
+      name: 'mac',
       placeholder: 'MAC Address',
       tooltip: 'By default, the VM receives an auto-generated random\
                 MAC address. Enter a custom address into the field to\
@@ -212,7 +218,7 @@ export class DeviceAddComponent implements OnInit {
   //vnc
   public vncFieldConfig: FieldConfig[]  = [
     {
-      name : 'VNC_port',
+      name : 'vnc_port',
       placeholder : 'Port',
       tooltip : 'Can be set to <i>0</i>, left empty for FreeNAS to\
                  assign a port when the VM is started, or set to a\
@@ -221,14 +227,14 @@ export class DeviceAddComponent implements OnInit {
       inputType: 'number'
     },
     {
-      name : 'VNC_wait',
+      name : 'wait',
       placeholder : 'Wait to boot',
       tooltip : 'Set for the VNC client to wait until the VM has\
                  booted before attempting the connection.',
       type: 'checkbox'
     },
     {
-      name : 'VNC_resolution',
+      name : 'vnc_resolution',
       placeholder : 'Resolution',
       tooltip : 'Select a screen resolution to use for VNC sessions.',
       type: 'select',
@@ -319,7 +325,7 @@ export class DeviceAddComponent implements OnInit {
     });
     this.ws.call('notifier.choices', ['VM_NICTYPES']).subscribe(
       (res) => {
-        this.nicType = _.find(this.nicFieldConfig, { name: "NIC_type" });
+        this.nicType = _.find(this.nicFieldConfig, { name: "type" });
         res.forEach((item) => {
           this.nicType.options.push({ label: item[1], value: item[0] });
         });
@@ -415,7 +421,7 @@ export class DeviceAddComponent implements OnInit {
         name: 'Generate MAC Address',
         function: () => {
           this.ws.call('vm.random_mac').subscribe((random_mac) => {
-            this.nicFormGroup.controls['NIC_mac'].setValue(random_mac);
+            this.nicFormGroup.controls['mac'].setValue(random_mac);
           })
         }
       }
