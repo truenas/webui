@@ -36,7 +36,7 @@
         <div class="disks">
             <h4>{{"Available Disks" | translate }}</h4>
               <ngx-datatable
-                id="pool-manager__available-disks-table"
+                id="pool-manager__disks-table"
                 #table
                 class="material ml-1 mt-1 mb-1 mr-1 mat-box-shadow"
                 [rows]="disks"
@@ -51,13 +51,13 @@
                 <ngx-datatable-column [width]="80" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
                   <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
                     <div class="headerCheckBox">
-                      <mat-checkbox id="pool-manager__available-disks-table-checkall" [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>
+                      <mat-checkbox id="pool-manager__disks-table-checkall" [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>
                     </div>
                   </ng-template>
 
                   <ng-template ngx-datatable-cell-template let-value="value" let-rowIndex="rowIndex" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
                     <div>
-                      <mat-checkbox id="pool-manager__available-disks-{{disks[rowIndex].devname}}" name="disk_{{rowIndex}}_checkbox" [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></mat-checkbox>
+                      <mat-checkbox id="pool-manager__disks-{{disks[rowIndex].devname}}" name="disk_{{rowIndex}}_checkbox" [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></mat-checkbox>
                     </div>
                   </ng-template>
                 </ngx-datatable-column>

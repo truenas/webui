@@ -153,7 +153,7 @@ export class VolumeStatusComponent implements OnInit {
           }
           this.dialogService.confirm(
             "Offline",
-            "Offline disk " + name + "?", false, T('Offline'), false, '', '', '', 'offline-disk'
+            "Offline disk " + name + "?", false, T('Offline')
           ).subscribe((res) => {
             if (res) {
               this.loader.open();
@@ -179,7 +179,7 @@ export class VolumeStatusComponent implements OnInit {
         onClick: (row) => {
           this.dialogService.confirm(
             "Online",
-            "Online disk " + _.split(row.name, 'p')[0] + "?", false, T('Online'), false, '', '', '', 'online-disk'
+            "Online disk " + _.split(row.name, 'p')[0] + "?", false, T('Online')
           ).subscribe((res) => {
             if (res) {
               this.loader.open();
@@ -223,7 +223,7 @@ export class VolumeStatusComponent implements OnInit {
         onClick: (row) => {
           this.dialogService.confirm(
             "Remove",
-            "Remove disk " + _.split(row.name, 'p')[0] + "?", false, T('Remove'), false, '', '', '', 'remove-disk'
+            "Remove disk " + _.split(row.name, 'p')[0] + "?", false, T('Remove')
           ).subscribe((res) => {
             if (res) {
               this.loader.open();

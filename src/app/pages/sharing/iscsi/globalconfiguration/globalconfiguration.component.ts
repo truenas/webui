@@ -60,7 +60,7 @@ export class GlobalconfigurationComponent {
       if (!service.enable) {
         this.dialogService.confirm(T("Enable service"),
           T("Enable this service?"),
-          true, T("Enable Service"), false, '', '', '', 'enable-service').subscribe((dialogRes) => {
+          true, T("Enable Service")).subscribe((dialogRes) => {
             if (dialogRes) {
               this.loader.open();
               this.ws.call('service.update', [service.id, { enable: true }]).subscribe((updateRes) => {

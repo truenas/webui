@@ -2,7 +2,6 @@ import { FieldConfig } from '../entity-form/models/field-config.interface';
 
 export interface DialogFormConfiguration {
   title: string,
-  formname?: string,
   fieldConfig: Array<FieldConfig>,
   method_rest?: string,
   method_ws?: string,
@@ -14,5 +13,5 @@ export interface DialogFormConfiguration {
   hideButton?: boolean,
   message?: any,
   preInit?: any,
-  parent?: any,
+  parent?: any
 }

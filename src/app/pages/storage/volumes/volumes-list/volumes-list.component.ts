@@ -119,7 +119,7 @@ export class VolumesListTableConfig implements InputTableConf {
         actions.push({
           label: T("Lock"),
           onClick: (row1) => {
-            this.dialogService.confirm(T("Lock Pool"), T("Lock ") + row1.name + "?", false, 'Continue', false, '', '', '', 'lock-pool').subscribe((confirmResult) => {
+            this.dialogService.confirm(T("Lock Pool"), T("Lock ") + row1.name + "?").subscribe((confirmResult) => {
               if (confirmResult === true) {
                 this.loader.open();
                 this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
@@ -177,7 +177,7 @@ export class VolumesListTableConfig implements InputTableConf {
       actions.push({
         label: T("Delete Recovery Key"),
         onClick: (row1) => {
-          this.dialogService.confirm(T("Delete Recovery Key"), T("Delete recovery key for ") + row1.name + "?", false, 'Continue', false, '', '', '', 'delete-key').subscribe((confirmResult) => {
+          this.dialogService.confirm(T("Delete Recovery Key"), T("Delete recovery key for ") + row1.name + "?").subscribe((confirmResult) => {
             if (confirmResult === true) {
               this.loader.open();
 
@@ -227,7 +227,6 @@ export class VolumesListTableConfig implements InputTableConf {
 
     const conf: DialogFormConfiguration = {
       title: "Unlock " + row1.name,
-      formname: 'unlock-pool',
       fieldConfig: [{
         type : 'input',
         inputType: 'password',
@@ -315,7 +314,6 @@ export class VolumesListTableConfig implements InputTableConf {
 
           const conf: DialogFormConfiguration = { 
             title: "Detach pool: '" + row1.name + "'",
-            formname: 'detach-pool',
             fieldConfig: [{
               type: 'paragraph',
               name: 'pool_detach_warning',
@@ -415,7 +413,7 @@ export class VolumesListTableConfig implements InputTableConf {
               if (res[0]) {
                 if (res[0].scan.function === "SCRUB" && res[0].scan.state === "SCANNING") {
                   const message = "Stop the scrub on " + row1.name + "?";
-                  this.dialogService.confirm("Scrub Pool", message, false, T("Stop Scrub"), false, '', '', '', 'start-scrub').subscribe((res) => {
+                  this.dialogService.confirm("Scrub Pool", message, false, T("Stop Scrub")).subscribe((res) => {
                     if (res) {
                       this.loader.open();
                       this.rest.delete("storage/volume/" + row1.id + "/scrub/", { body: JSON.stringify({}) }).subscribe(
@@ -431,7 +429,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   });
                 } else {
                   const message = "Start a scrub on " + row1.name + "?";
-                  this.dialogService.confirm("Scrub Pool", message, false, T("Start Scrub"), false, '', '', '', 'start-scrub').subscribe((res) => {
+                  this.dialogService.confirm("Scrub Pool", message, false, T("Start Scrub")).subscribe((res) => {
                     if (res) {
                       this.loader.open();
                       this.rest.post("storage/volume/" + row1.id + "/scrub/", { body: JSON.stringify({}) }).subscribe(
@@ -619,7 +617,6 @@ export class VolumesListTableConfig implements InputTableConf {
         onClick: (row) => {
           const conf: DialogFormConfiguration = {
             title: "One time snapshot of " + row.path,
-            formname: 'pool-snapshot',
             fieldConfig: [
               {
                 type: 'input',

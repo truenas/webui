@@ -25,7 +25,6 @@ export class DialogService {
 
         dialogRef.componentInstance.title = title;
         dialogRef.componentInstance.message = message;
-        dialogRef.componentInstance.formname = formname;
 
         if(buttonMsg) {
             dialogRef.componentInstance.buttonMsg = buttonMsg;

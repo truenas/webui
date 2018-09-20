@@ -77,7 +77,7 @@ export class JailListComponent implements OnInit {
       onClick: (selected) => {
         let dialog = {};
         this.dialogService.confirm("Stop", "Stop the selected jails?",
-          dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : true, T('Stop'), false, '', '', '', 'stop-jail').subscribe((res) => {
+          dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : true, T('Stop')).subscribe((res) => {
           if (res) {
             let selectedJails = this.getSelectedNames(selected);
             this.loader.open();
@@ -237,7 +237,7 @@ export class JailListComponent implements OnInit {
         onClick: (row) => {
           let dialog = {};
           this.dialogService.confirm("Stop", "Stop the selected jails?", 
-            dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : true , T('Stop'), false, '', '', '', 'stop-jail').subscribe((res) => {
+            dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : true , T('Stop')).subscribe((res) => {
             if (res) {
               this.loader.open();
               this.entityList.busy =
