@@ -24,6 +24,19 @@ export class DeviceAddComponent implements OnInit {
   public vmname: any;
   public fieldSets: any;
   public isCustActionVisible = false;
+  public selectedType = 'CDROM';
+  public formGroup: any;
+  public activeFormGroup: any;
+  public cdromFormGroup: any;
+  public diskFormGroup: any;
+  public nicFormGroup: any;
+  public rawfileFormGroup: any;
+  public vncFormGroup: any;
+  public rootpwd: any;
+  public vminfo: any;
+  public boot: any;
+
+  public custActions: any[];
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -218,6 +231,29 @@ export class DeviceAddComponent implements OnInit {
       value: null,
       inputType: 'number'
     },
+    {
+      type : 'input',
+      name : 'size',
+      placeholder : 'Raw filesize',
+      tooltip : 'Define the size of the raw file in GiB.',
+      inputType : 'number',
+    },
+    {
+      type : 'input',
+      name : 'rootpwd',
+      placeholder : 'password',
+      tooltip : 'Enter a password for the <i>rancher</i> user. This\
+                 is used to log in to the VM from the serial shell.',
+      inputType : 'password',
+      isHidden: true
+    },
+    {
+      type : 'checkbox',
+      name : 'boot',
+      placeholder : 'boot',
+      tooltip : '',
+      isHidden: true
+    },
   ];
 
   //vnc
@@ -288,16 +324,7 @@ export class DeviceAddComponent implements OnInit {
   protected ipAddress: any = [];
 
 
-  public selectedType = 'CDROM';
-  public formGroup: any;
-  public activeFormGroup: any;
-  public cdromFormGroup: any;
-  public diskFormGroup: any;
-  public nicFormGroup: any;
-  public rawfileFormGroup: any;
-  public vncFormGroup: any;
 
-  public custActions: any[];
 
   constructor(protected router: Router,
               protected aroute: ActivatedRoute,
@@ -408,7 +435,7 @@ export class DeviceAddComponent implements OnInit {
         );   
       });
     });
-    // if bootloader == 'GRUB' or bootloader == "UEFI_CSM" or if VM has existing VNC device, hide VNC option
+    // if bootloader == 'GRUB' or bootloader == "UEFI_CSM" or if VM has existing VNC device, hide VNC option.
     this.ws.call('vm.query', [[['id', '=', parseInt(this.vmid,10)]]]).subscribe((vm)=>{
       if (vm[0].bootloader === 'GRUB' || vm[0].bootloader === "UEFI_CSM" || _.find(vm[0].devices, {dtype:'VNC'})){
         const dtypeField = _.find(this.fieldConfig, {name: "dtype"});
@@ -417,7 +444,23 @@ export class DeviceAddComponent implements OnInit {
             _.pull(dtypeField.options, dtypeField.options[i]);
           }
         }
-      };
+      } 
+      // if type == 'Container Provider' and rawfile boot device exists, hide rootpwd and boot fields.
+      if (_.find(vm[0].devices, {dtype:'RAW'}) && vm[0].type ==="Container Provider") {
+        vm[0].devices.forEach(element => {
+          if(element.dtype === "RAW") {
+            if (element.attributes.boot) {
+              this.rootpwd = _.find(this.rawfileFieldConfig, {'name': 'rootpwd'});
+              this.rootpwd.isHidden = false;
+              this.boot = _.find(this.rawfileFieldConfig, {'name': 'boot'});
+              this.boot.isHidden = false;
+            }
+
+          }
+          
+        });
+
+      }
     });
 
     this.custActions = [
