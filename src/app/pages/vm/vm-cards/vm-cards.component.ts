@@ -482,11 +482,13 @@ export class VmCardsComponent implements OnInit,OnDestroy {
           if(res) {
            if(poweroff){
              eventName = "VmPowerOff";
+             this.cards[index].state = "stopping";
+             this.core.emit({name: eventName, data:[vm.id, true]});
            } else {
              eventName = "VmStop";
+             this.cards[index].state = "stopping";
+             this.core.emit({name: eventName, data:[vm.id]});
            }
-           this.cards[index].state = "stopping";
-           this.core.emit({name: eventName, data:[vm.id, true]});
           }
         })
     }
