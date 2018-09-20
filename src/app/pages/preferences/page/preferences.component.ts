@@ -32,7 +32,7 @@ export class PreferencesPage implements OnInit, OnDestroy {
    platform:string; // FreeNAS || TrueNAS
    timestamp:Date;
    userTheme:string; // Theme name
-   customThemes?: Theme[]; 
+   customThemes?: Theme[];
    favoriteThemes?: string[]; // Theme Names
    showTooltips:boolean; // Form Tooltips on/off
    metaphor:string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
@@ -42,10 +42,10 @@ export class PreferencesPage implements OnInit, OnDestroy {
   //public target: Subject<CoreEvent> = new Subject();
 
     constructor(
-      protected router: Router, 
+      protected router: Router,
       protected rest: RestService,
       protected ws: WebSocketService,
-      protected _injector: Injector, 
+      protected _injector: Injector,
       protected _appRef: ApplicationRef,
       public themeService:ThemeService,
       private core:CoreService
@@ -87,23 +87,23 @@ export class PreferencesPage implements OnInit, OnDestroy {
       this.generateFieldConfig();
     }
 
-   
-  
+
+
 
      setFavoriteFields(){
        for(let i = 0; i < this.themeService.freenasThemes.length; i++){
          let theme = this.themeService.freenasThemes[i];
-         let field = { 
-           type: 'checkbox', 
+         let field = {
+           type: 'checkbox',
            name: theme.name,
            width: '200px',
            placeholder:theme.label,
            value: false,
-           tooltip: 'Add ' + theme.label + ' to your favorites',
+           tooltip: 'Add ' + theme.label + ' to favorites',
            class:'inline'
          }
          this.favoriteFields.push(field);
-       }   
+       }
      }
 
      setThemeOptions(){

@@ -45,6 +45,8 @@
                 [limit]="10"
                 [selected] = "selected"
                 [selectionType]="'checkbox'"
+                [externalSorting]="true"
+                (sort)='reorderEvent($event)'
                 (select)='onSelect($event)'>
                 <ngx-datatable-column [width]="85" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
                   <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
