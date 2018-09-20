@@ -99,7 +99,7 @@ export class UserListComponent implements OnInit {
       true,
       T('Keep user primary group'),
       'user.delete', 
-      params, 'delete-user');
+      params);
     ds.afterClosed().subscribe((status)=>{
       if(status){
         this.loader.open();

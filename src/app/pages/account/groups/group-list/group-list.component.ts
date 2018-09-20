@@ -77,7 +77,7 @@ export class GroupListComponent {
       true,
       T('Delete all users with this primary group?'),
       'group.delete',
-      params, 'delete-group');
+      params);
     ds.afterClosed().subscribe((status)=>{
       if(status){
         this.loader.open();
