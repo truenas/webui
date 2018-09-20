@@ -19,7 +19,6 @@ export class ConfirmDialog {
   public secondaryCheckBoxMsg = '';
   public method: string;
   public data: string;
-  
   @Output() switchSelectionEmitter = new EventEmitter<any>();
 
   constructor(public dialogRef: MatDialogRef < ConfirmDialog >, protected translate: TranslateService ) {
