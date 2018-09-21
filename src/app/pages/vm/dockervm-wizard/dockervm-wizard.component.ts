@@ -182,14 +182,17 @@ export class DockerVMWizardComponent {
           required: true
         },
         {
-          type: 'input',
-          name: 'sectorsize',
-          placeholder : T('Disk sector size (Bytes)'),
-          tooltip: T('Disk sector size in bytes. Enter\
-                      <i>0</i> to leave the sector size unset.'),
-          value: 0,
-          inputType: 'number',
-          min: 0
+          type : 'select',
+          name : 'sectorsize',
+          placeholder : 'Disk sector size',
+          tooltip : 'Enter a sector size in bytes. <i>0</i> leaves the\
+                     sector size unset.',
+          options: [
+            { label: 'Default', value:0 },
+            { label: '512', value:512 },
+            { label: '4096', value:4096 },
+                  ],
+          value: 0
         },
       ]
     },
@@ -331,8 +334,8 @@ async customSubmit(value) {
       {"dtype": "NIC", "attributes": {"type": value.NIC_type, "mac": value.NIC_mac, "nic_attach":value.nic_attach}},
       {"dtype": "RAW", "attributes": {"path": path,exists: false, "type": "AHCI", "size": value.size, sectorsize: 0}},
     ]
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Docker VM") }});
-    this.dialogRef.componentInstance.progressNumberType = "nopercent";
+    console.log(JSON.stringify([vm_payload]));
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Docker VM") }, disableClose: true });
     this.dialogRef.componentInstance.setCall('vm.create_container', [vm_payload]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
