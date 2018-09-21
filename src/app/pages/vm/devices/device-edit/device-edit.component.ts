@@ -120,9 +120,9 @@ export class DeviceEditComponent implements OnInit {
     {
       name : 'sectorsize',
       placeholder : 'Disk sector size',
-      tooltip : 'Enter the sector size in bytes. The default <i>0</i>\
+      tooltip : 'Select the sector size in bytes. The default <i>0</i>\
                  leaves the sector size unset.',
-      type: 'select',
+      type: 'elect',
       options: [
         { label: 'Default', value:0 },
         { label: '512', value:512 },
@@ -203,7 +203,7 @@ export class DeviceEditComponent implements OnInit {
       type : 'select',
       name : 'sectorsize',
       placeholder : 'Disk sector size',
-      tooltip : 'Enter a sector size in bytes. <i>0</i> leaves the\
+      tooltip : 'Select a sector size in bytes. <i>0</i> leaves the\
                  sector size unset.',
       options: [
         { label: 'Default', value:0 },
