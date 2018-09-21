@@ -12,7 +12,7 @@ import {
   NetworkService
 } from '../../../services/';
 import {
-  FormGroup,
+  FormGroup, Validators,
 } from '@angular/forms';
 import {EntityFormComponent} from '../../common/entity/entity-form';
 import {
@@ -80,6 +80,10 @@ export class IPMIComponent {
       inputType: 'password',
       name : 'password',
       placeholder : T('Password'),
+      validation: Validators.maxLength(20),
+      blurStatus: true,
+      blurEvent: this.blurEvent,
+      parent: this,
       togglePw: true,
       tooltip : T('Enter the password used to connect to the IPMI\
                    interface from a web browser.'),
@@ -183,6 +187,9 @@ export class IPMIComponent {
           this.entityEdit.formGroup.controls['vlan'].setValue(res[i].vlan);
         }
       });
+    }
 
+    blurEvent(parent) {
+      console.log(parent)
     }
 }
