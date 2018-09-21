@@ -185,7 +185,7 @@ export class DockerVMWizardComponent {
           type : 'select',
           name : 'sectorsize',
           placeholder : 'Disk sector size',
-          tooltip : 'Select a sector size in bytes. <i>0</i> leaves the\
+          tooltip : 'Select a sector size in bytes. <i>Default/i> leaves the\
                      sector size unset.',
           options: [
             { label: 'Default', value:0 },
