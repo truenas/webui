@@ -369,6 +369,24 @@ export class CloudCredentialsFormComponent {
         }
       ]
     },
+    {
+      type: 'input',
+      name: 'team_drive-GOOGLE_DRIVE',
+      placeholder: T('Team Drive ID'),
+      tooltip: T('Only needed when connecting to a Team Drive. The ID of\
+                  the top level folder of the Team Drive.'),
+      required: false,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'GOOGLE_DRIVE',
+           }]
+        }
+      ]
+    },
     // http
     {
       type: 'input',

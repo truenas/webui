@@ -56,6 +56,7 @@ export class SnapshotListComponent {
         return row[attr];
     }
   }
+
   afterInit(entityList: any) {
     this.entityList = entityList;
   }

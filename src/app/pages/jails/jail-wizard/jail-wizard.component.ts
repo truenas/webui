@@ -91,7 +91,10 @@ export class JailWizardComponent {
           name: 'ip4_interface',
           placeholder: T('IPv4 interface'),
           tooltip: T('IPv4 interface for the jail.'),
-          options: [],
+          options: [{
+            label: '------',
+            value: '',
+          }],
           relation: [{
             action: 'DISABLE',
             when: [{
@@ -101,6 +104,7 @@ export class JailWizardComponent {
           }],
           class: 'inline',
           width: '30%',
+          value: '',
         },
         {
           type: 'input',
@@ -137,7 +141,6 @@ export class JailWizardComponent {
               value: true,
             }]
           }],
-          required: false,
           class: 'inline',
           width: '20%',
         },
@@ -167,9 +170,13 @@ export class JailWizardComponent {
           name: 'ip6_interface',
           placeholder: T('IPv6 Interface'),
           tooltip: T('IPv6 interface for the jail.'),
-          options: [],
+          options: [{
+            label: '------',
+            value: '',
+          }],
           class: 'inline',
           width: '30%',
+          value: '',
         },
         {
           type: 'input',
@@ -185,9 +192,13 @@ export class JailWizardComponent {
           name: 'ip6_prefix',
           placeholder: T('IPv6 Prefix'),
           tooltip: T('IPv6 prefix for the jail.'),
-          options: [],
+          options: [{
+            label: '------',
+            value: '',
+          }],
           class: 'inline',
           width: '20%',
+          value: '',
         },
         {
           type: 'input',
@@ -292,10 +303,16 @@ export class JailWizardComponent {
       let ip4_netmask_control = (< FormGroup > entityWizard.formArray.get([1])).controls['ip4_netmask'];
       if (ip4_address_control.value == undefined || ip4_address_control.value == '') {
         delete this.summary[T('IPv4 Address')];
-        this.ip4_netmaskField.required = false;
       } else {
-        this.ip4_netmaskField.required = true;
-        this.summary[T('IPv4 Address')] = ip4_interface_control.value + '|' + ip4_address_control.value + '/' + ip4_netmask_control.value;
+        let full_address = ip4_address_control.value;
+        if (ip4_interface_control.value != '') {
+          full_address = ip4_interface_control.value + '|' + ip4_address_control.value;
+        }
+        if (ip4_netmask_control.value != '') {
+          full_address += '/' + ip4_netmask_control.value;
+        }
+
+        this.summary[T('IPv4 Address')] = full_address;
       }
       this.ipv4 = this.summary[T('IPv4 Address')];
     } else {
@@ -304,10 +321,16 @@ export class JailWizardComponent {
       let ip6_prefix_control = (< FormGroup > entityWizard.formArray.get([1])).controls['ip6_prefix'];
       if (ip6_address_control.value == undefined || ip6_address_control.value == '') {
         delete this.summary[T('IPv6 Address')];
-        this.ip6_prefixField.required = false;
       } else {
-        this.ip6_prefixField.required = true;
-        this.summary[T('IPv6 Address')] = ip6_interface_control.value + '|' + ip6_address_control.value + '/' + ip6_prefix_control.value;
+        let full_address = ip6_address_control.value;
+        if (ip6_interface_control.value != '') {
+          full_address = ip6_interface_control.value + '|' + ip6_address_control.value;
+        }
+        if (ip6_prefix_control.value != '') {
+          full_address += '/' + ip6_prefix_control.value;
+        }
+
+        this.summary[T('IPv6 Address')] = full_address;
       }
       this.ipv6 = this.summary[T('IPv6 Address')];
     }
