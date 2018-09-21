@@ -8,6 +8,7 @@ import { RestService, SystemGeneralService, WebSocketService } from '../../../..
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
 import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
+import { validateValue } from '@angular/flex-layout';
 
 @Component({
   selector : 'system-ca-add',
@@ -27,7 +28,10 @@ export class CertificateAuthorityAddComponent {
       placeholder : T('Identifier'),
       tooltip: T('Enter a description of the CA.'),
       required: true,
-      validation : [ Validators.required ]
+      validation : [ Validators.required, Validators.pattern('[A-Za-z0-9_-]+$')],
+      blurStatus: true,
+      blurEvent: this.blurEvent,
+      parent: this
     },
     {
       type : 'select',
@@ -245,6 +249,8 @@ export class CertificateAuthorityAddComponent {
   private country: any;
   private signedby: any;
 
+  public identifier: any;
+
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected systemGeneralService: SystemGeneralService) {}
@@ -326,5 +332,10 @@ export class CertificateAuthorityAddComponent {
     } else {
       data.san = _.split(data.san, ' ');
     }
+  }
+
+  blurEvent(parent) {
+    this.identifier = _.find(parent.fieldConfig, { name: 'name' });
+    console.log(parent)
   }
 }
