@@ -173,7 +173,7 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'key-B2',
-      placeholder: T('Application Key'),
+      placeholder: T('Master Application Key'),
       tooltip: T('Backblaze B2 Bucket Application Key. Log in to the B2\
                   account and generate the key on the Buckets page. <a\
                   href="https://help.backblaze.com/hc/en-us/articles/224991568-Where-can-I-find-my-Account-ID-and-Application-Key-"\
