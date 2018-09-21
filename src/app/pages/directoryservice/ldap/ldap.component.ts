@@ -373,5 +373,6 @@ export class LdapComponent {
     } else {
       data["ldap_hostname"] = data["ldap_hostname_noreq"];
     }
+    delete(data['ldap_hostname_noreq']);
   }
 }
