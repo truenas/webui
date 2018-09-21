@@ -39,6 +39,7 @@ export class SupportComponent  {
   public saveSubmitText = "Submit";
   public registerUrl = " https://redmine.ixsystems.com/account/register"
   public password_fc: any;
+  public username_fc: any;
 
 
   public fieldConfig: FieldConfig[] = [
@@ -175,6 +176,7 @@ export class SupportComponent  {
   blurEvent(parent){
     this.category = _.find(parent.fieldConfig, {name: "category"});
     this.password_fc = _.find(parent.fieldConfig, { name: 'password' });
+    this.username_fc = _.find(parent.fieldConfig, { name: 'username' });
       if(parent.entityEdit){
         this.username  = parent.entityEdit.formGroup.controls['username'].value;
         this.password  = parent.entityEdit.formGroup.controls['password'].value;
@@ -183,8 +185,22 @@ export class SupportComponent  {
           !this.username && this.password ||
           this.username && !this.password ||
           this.username === "" && this.password === "" ){
+            this.password_fc.hasErrors = true;
+            this.password_fc.errors = 'password is required fields';
+            this.username_fc.hasErrors = true;
+            this.username_fc.errors = 'username is required fields';
           return;
         }
+        if (this.username === ""){
+          this.username_fc.hasErrors = true;
+          this.username_fc.errors = 'username is required field';
+          return;
+         }
+         if (this.password === ""){
+          this.password_fc.hasErrors = true;
+          this.password_fc.errors = 'password is required field';
+          return;
+         }
           if(this.category.options.length > 0){
             this.category.options = [];
           }
