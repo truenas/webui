@@ -28,7 +28,9 @@ export class CertificateAuthorityAddComponent {
       placeholder : T('Identifier'),
       tooltip: T('Enter a description of the CA.'),
       required: true,
-      validation : [ Validators.required, Validators.pattern('[A-Za-z0-9_-]+$')],
+      validation : [ Validators.pattern('[A-Za-z0-9_-]+$')],
+      hasErrors: false,
+      errors: 'Use alphanumeric characters, "_" and "-".',
       blurStatus: true,
       blurEvent: this.blurEvent,
       parent: this
