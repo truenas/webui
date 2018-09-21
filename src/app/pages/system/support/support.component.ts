@@ -186,19 +186,19 @@ export class SupportComponent  {
           this.username && !this.password ||
           this.username === "" && this.password === "" ){
             this.password_fc.hasErrors = true;
-            this.password_fc.errors = 'password is required fields';
+            this.password_fc.errors = 'Password is a required field.';
             this.username_fc.hasErrors = true;
-            this.username_fc.errors = 'username is required fields';
+            this.username_fc.errors = 'Username is a required field.';
           return;
         }
         if (this.username === ""){
           this.username_fc.hasErrors = true;
-          this.username_fc.errors = 'username is required field';
+          this.username_fc.errors = 'Username is a required field.';
           return;
          }
          if (this.password === ""){
           this.password_fc.hasErrors = true;
-          this.password_fc.errors = 'password is required field';
+          this.password_fc.errors = 'Password is a required field.';
           return;
          }
           if(this.category.options.length > 0){
@@ -214,7 +214,7 @@ export class SupportComponent  {
                 }
               }},(error)=>{
                 this.password_fc.hasErrors = true;
-                this.password_fc.errors = 'Incorrect username/password';
+                this.password_fc.errors = 'Incorrect Username/Password.';
               });
           }
       }
