@@ -81,6 +81,8 @@ export class IPMIComponent {
       name : 'password',
       placeholder : T('Password'),
       validation: Validators.maxLength(20),
+      hasErrors: false,
+      errors: '20 characters maximum',
       blurStatus: true,
       blurEvent: this.blurEvent,
       parent: this,
