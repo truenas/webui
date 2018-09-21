@@ -334,7 +334,6 @@ async customSubmit(value) {
       {"dtype": "NIC", "attributes": {"type": value.NIC_type, "mac": value.NIC_mac, "nic_attach":value.nic_attach}},
       {"dtype": "RAW", "attributes": {"path": path,exists: false, "type": "AHCI", "size": value.size, sectorsize: 0}},
     ]
-    console.log(JSON.stringify([vm_payload]));
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Docker VM") }, disableClose: true });
     this.dialogRef.componentInstance.setCall('vm.create_container', [vm_payload]);
     this.dialogRef.componentInstance.submit();
