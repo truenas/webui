@@ -72,7 +72,8 @@ export class SupportComponent  {
       blurStatus : true,
       blurEvent : this.blurEvent,
       parent : this,
-      togglePw : true
+      togglePw : true,
+      value: '',
     },
     {
       type : 'input',
@@ -85,7 +86,8 @@ export class SupportComponent  {
       blurStatus : true,
       blurEvent : this.blurEvent,
       parent : this,
-      togglePw : true
+      togglePw : true,
+      value: '',
     },
     {
       type : 'select',
@@ -184,52 +186,25 @@ export class SupportComponent  {
       if(parent.entityEdit){
         this.username  = parent.entityEdit.formGroup.controls['username'].value;
         this.password  = parent.entityEdit.formGroup.controls['password'].value;
-        if ( this.username === "" && this.password !== "" || !this.username && this.password) {
-          this.username_fc.hasErrors = true;
-          this.username_fc.errors = 'Username is a required field.';
-          this.password_fc.hasErrors = false;
-          this.password_fc.errors = '';
-          return;
-         }
-         if (this.password === "" && this.username !== "" || this.username && !this.password) {
-          this.password_fc.hasErrors = true;
-          this.password_fc.errors = 'Password is a required field.';
-          this.username_fc.hasErrors = false;
-          this.username_fc.errors = '';
-          return;
-         }
-        if(
-          !this.username && !this.password ||
-          !this.username && this.password ||
-          this.username && !this.password ||
-          this.username === "" && this.password === "" ){
-            this.password_fc.hasErrors = true;
-            this.password_fc.errors = 'Password is a required field.';
-            this.username_fc.hasErrors = true;
-            this.username_fc.errors = 'Username is a required field.';
-          return;
-        }
+        this.password_fc.hasErrors = false;
+        this.password_fc.errors = '';
+        this.username_fc.hasErrors = false;
+        this.username_fc.errors = '';
 
-          if(this.category.options.length > 0){
-            this.category.options = [];
-          }
-          if(this.category.options.length === 0 ){
-            parent.ws.call('support.fetch_categories',[this.username,this.password]).subscribe((res)=>{
-              this.password_fc.hasErrors = false;
-              this.password_fc.errors = '';
-              this.username_fc.hasErrors = false;
-              this.username_fc.errors = '';
-              for (const property in res) {
-                if (res.hasOwnProperty(property)) {
-                  this.category.options.push({label : property, value : res[property]});
-                }
-              }},(error)=>{
-                this.password_fc.hasErrors = true;
-                this.username_fc.hasErrors = true;
-                this.password_fc.errors = 'Incorrect Username/Password.';
-                this.username_fc.errors = 'Incorrect Username/Password.';
-              });
-          }
+        if(this.category.options.length > 0){
+          this.category.options = [];
+        }
+        if(this.category.options.length === 0 && this.username !== '' && this.password !== ''){
+          parent.ws.call('support.fetch_categories',[this.username,this.password]).subscribe((res)=>{
+            for (const property in res) {
+              if (res.hasOwnProperty(property)) {
+                this.category.options.push({label : property, value : res[property]});
+              }
+            }},(error)=>{
+              this.password_fc.hasErrors = true;
+              this.password_fc.errors = 'Incorrect Username/Password.';
+            });
+        }
       }
   }
 
