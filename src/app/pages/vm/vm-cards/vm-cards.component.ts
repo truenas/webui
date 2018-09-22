@@ -1,8 +1,6 @@
-import { Component, OnInit, AfterViewInit,OnDestroy, Input, ElementRef, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit,OnDestroy, Input, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { MaterialModule } from '../../../appMaterial.module';
 import { MatButtonToggleGroup } from '@angular/material/button-toggle';
-import { EntityModule } from '../../common/entity/entity.module';
 import { WebSocketService, RestService } from '../../../services/';
 import { DialogService } from '../../../services/dialog.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
@@ -13,9 +11,7 @@ import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/observable/fromEvent';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { EntityUtils } from '../../../pages/common/entity/utils';
-import { MatDialog, MatDialogRef, MatSnackBar } from '@angular/material';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { MatDialog } from '@angular/material';
 import { T } from '../../../translate-marker';
 import 'rxjs/add/observable/interval';
 
@@ -91,7 +87,7 @@ export class VmCardsComponent implements OnInit,OnDestroy {
 
   ngOnInit() {
     this.viewMode.value = "cards";
-    Observable.interval(1000).subscribe((val) => { 
+    Observable.interval(5000).subscribe((val) => { 
       this.checkStatus();
      })
     /*
@@ -159,12 +155,14 @@ export class VmCardsComponent implements OnInit,OnDestroy {
         const cacheIndex = this.getCardIndex('id',evt.data.id,true);
         this.cache[cacheIndex].state = 'running';
       } else {
-        this.dialog.errorReport(T('VM failed to start') , evt.data.reason, evt.data.trace.formatted)
-        const cardIndex = this.getCardIndex('id',evt.data.id[0]);
-        this.cards[cardIndex].state = 'stopped';
-
-        const cacheIndex = this.getCardIndex('id',evt.data.id[0],true);
-        this.cache[cacheIndex].state = 'stopped';
+        if (evt.data.trace) {
+          this.dialog.errorReport(T('VM failed to start') , evt.data.reason, evt.data.trace.formatted)
+          const cardIndex = this.getCardIndex('id',evt.data.id[0]);
+          this.cards[cardIndex].state = 'stopped';
+  
+          const cacheIndex = this.getCardIndex('id',evt.data.id[0],true);
+          this.cache[cacheIndex].state = 'stopped';
+        }
       }
     });
 
@@ -466,61 +464,9 @@ export class VmCardsComponent implements OnInit,OnDestroy {
     let eventName: string;
     if (vm.state !== 'running') {
       this.ws.call('vm.query', [[['id', '=', vm.id]]]).subscribe((res)=>{
-        for (const device of res[0].devices){
-          if(device.dtype === 'RAW' && device.attributes.boot){
-            this.raw_file_path = device.attributes.path;
-            this.raw_file_path_size = String(device.attributes.size);
-          }
-        }
-          if (res[0].vm_type === "Container Provider"){
-            this.dialogRef = this.matdialog.open(EntityJobComponent, { data: {title: 'Fetching RancherOS'}, disableClose: false});
-            // this.dialogRef.componentInstance.progressNumberType = "nopercent";
-            this.dialogRef.componentInstance.setCall('vm.fetch_image', ['RancherOS']);
-            this.dialogRef.componentInstance.submit();
-            this.dialogRef.componentInstance.success.subscribe((sucess_res) => {
-              this.loader.open();
-              this.ws.call('vm.image_path', ['RancherOS']).subscribe((img_path)=>{
-                if(!img_path){
-                  this.dialog.Info('CHECKSUM MISMATCH', 'System checks failed to verify ISO. Please try again.');
-                  this.loader.close();
-                  return;
-                };
-                this.ws.call('vm.decompress_gzip',[img_path, this.raw_file_path]).subscribe((decompress_gzip)=>{
-                  this.ws.call('vm.raw_resize',[this.raw_file_path, this.raw_file_path_size]).subscribe((raw_resize)=>{
-                    // this.ws.call('vm.start',[this.cards[index].id]).subscribe((vm_start)=>{
-                    //     this.loader.close();
-                    //     if(!vm_start){
-                    //       this.dialog.Info('ERROR', 'VM failed to start. Check system log.');
-                    //       return;
-                    //     }
-                    //     this.refreshVM(index, this.cards[index].id);
-
-                    //   });
-                    this.core.emit({name: "VmStart", data:[vm.id]});
-                    this.loader.close();
-                    },
-                    (error_raw_resize)=>{
-                      this.loader.close();
-                      new EntityUtils().handleError(this, error_raw_resize);
-                    })
-                },(decompress_gzip)=>{
-                  this.loader.close();
-                  new EntityUtils().handleError(this, decompress_gzip);
-              });
-              },(error_img_path)=>{
-                this.loader.close();
-                new EntityUtils().handleError(this, error_img_path);
-              });
-              this.dialogRef.close(false);
-              this.dialogRef.componentInstance.setDescription("");
-            });
-            this.dialogRef.componentInstance.failure.subscribe((failed_res) => {});
-          }
-          else {
             eventName = "VmStart";
             this.cards[index].state = "starting";
             this.core.emit({name: eventName, data:[vm.id]});
-          }
       });
     }
      else {
@@ -536,11 +482,13 @@ export class VmCardsComponent implements OnInit,OnDestroy {
           if(res) {
            if(poweroff){
              eventName = "VmPowerOff";
+             this.cards[index].state = "stopping";
+             this.core.emit({name: eventName, data:[vm.id, true]});
            } else {
              eventName = "VmStop";
+             this.cards[index].state = "stopping";
+             this.core.emit({name: eventName, data:[vm.id]});
            }
-           this.cards[index].state = "stopping";
-           this.core.emit({name: eventName, data:[vm.id]});
           }
         })
     }
