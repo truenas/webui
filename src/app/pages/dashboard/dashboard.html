@@ -11,17 +11,17 @@
        fxLayoutAlign="center center"
        fxLayoutAlign.gt-sm="space-around center">
 
-    <widget-sysinfo fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium" animate [animation]="animation" [shake]="shake"></widget-sysinfo>
-    <widget-netinfo fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium" animate [animation]="animation" [shake]="shake"></widget-netinfo>
+    <widget-sysinfo fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"></widget-sysinfo>
+    <widget-netinfo fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"></widget-netinfo>
 
       <ng-container  *ngFor="let volume of volumes; let i=index">
-        <widget-pool [volumeData]="volumes[i]" fxFlex.xs="100" fxFlex="600px" [widgetSize]="medium" animate [animation]="animation" [shake]="shake" configurable="false"></widget-pool>
+        <widget-pool [volumeData]="volumes[i]" fxFlex.xs="100" fxFlex="600px" [widgetSize]="medium"   configurable="false"></widget-pool>
       </ng-container>
 
-    <widget-memory-history fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium" animate [animation]="animation" [shake]="shake"configurable="false"></widget-memory-history>
-    <widget-cpu-history fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium" animate [animation]="animation" [shake]="shake" configurable="false"></widget-cpu-history>
-    <widget-cpu-temps fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium" animate [animation]="animation" [shake]="shake" configurable="false"></widget-cpu-temps>
-    <widget-load fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium" animate [animation]="animation" [shake]="shake" configurable="false"></widget-load>
+    <widget-memory-history fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"  configurable="false"></widget-memory-history>
+    <widget-cpu-history fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"   configurable="false"></widget-cpu-history>
+    <widget-cpu-temps fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"   configurable="false"></widget-cpu-temps>
+    <widget-load fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"   configurable="false"></widget-load>
 
 
 

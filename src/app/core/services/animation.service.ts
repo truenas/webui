@@ -1,310 +1,318 @@
 import { Injectable, ElementRef  } from '@angular/core';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { tween, styler, keyframes, physics } from 'popmotion';
-import  scroll  from 'stylefire/scroll';
-import  css  from 'stylefire/css';
-import { TweenProps } from 'popmotion/src/animations/tween/types';
-import { Value } from 'popmotion/src/reactions/value';
+import { CoreService, CoreEvent } from './core.service';
 import { Subject } from 'rxjs/Subject';
+import { DisplayObject } from '../classes/display-object';
+import {
+  tween,
+  styler,
+  listen,
+  pointer,
+  value,
+  decay,
+  spring,
+  physics,
+  easing,
+  everyFrame,
+  keyframes,
+  timeline,
+  //velocity,
+  multicast,
+  action,
+  transform,
+  //transformMap,
+  //clamp
+  } from 'popmotion';
 
-interface Coordinates {
-  x?: string;
-  y?: string;
-}
+  const transformMap = transform.transformMap;
+  const { clamp } = transform
 
-@Injectable()
-export class AnimationService {
-
-  private doc:any; //Document Object
-  private colorLoopActive:any;
-  private activeAnimations: any[] = [];
-
-  constructor(private core:CoreService){
-    this.core.register({observerClass:this,eventName:"ScrollTo"}).subscribe((evt:CoreEvent) => {
-      //DEBUG: console.log("Message Received");
-      //DEBUG: console.log(evt.data);
-      this.scrollTo(evt.data);
-    });
-
-    this.core.register({observerClass:this,eventName:"AnimateColorLoopStart"}).subscribe((evt:CoreEvent) => {
-      //DEBUG: console.log("Message Received");
-      //DEBUG: console.log(evt.data);
-      this.colorLoopAnimation(evt.data.element,evt.data.colors);
-    });
+  export interface AnimationConfig {
+    animationTarget: DisplayObject; // Support DisplayObject
+    animation: string; // eg. fadeIn, slideOut etc
+    finishState: string; // In || Out || Start || Stop
+    finishPosition?:any; // XY?  Haven't decided how this one will work yet
   }
 
-  private scrollTo(destination:string, obj?:any){
-    if(!obj){obj = ".rightside-content-hold"};
-    // Grab reference to the element that has the scroll bar
-    const target = (<any>document).querySelector(obj);
-
-    // Grab reference to the target element 
-    // you want to scroll to
-    const dest = (<any>document).querySelector(destination);
-    //DEBUG: console.log(dest)
-    const elementScroll = scroll(target);
-
-    //elementScroll.set('top', 400);
-
-    physics({
-      from: elementScroll.get('top'),
-      to: dest.offsetTop,//500
-      springStrength: 600,
-      friction: 1
-    }).start((v) => elementScroll.set('top', v));
+  export interface GroupAnimationConfig {
+    animationTargets: DisplayObject[]; // Supports DisplayObjects only
+    animation: string; // eg. fadeIn, slideOut etc
+    finishState: string; // In || Out || Start || Stop
+    finishPosition?:any; // XY?  Haven't decided how this one will work yet
+    staggered?: boolean;
   }
 
-  colorLoopAnimation(obj,colors){
-    const target = (<any>document).querySelector(obj);
-    const elStyler:any = styler(target,{});
-    //DEBUG: console.warn(elStyler);
-    const s = keyframes({
-      values: colors,
-      duration: 60000,
-      //ease: easing.linear,
-      loop: Infinity,
-    });
+  @Injectable()
+  export class AnimationService {
 
-    const startColorLoop = () => { 
-      //DEBUG: console.warn(elStyler);
-      const a = s.start(elStyler.set('background-color'));
-       return a;
+    private doc:any; //Document Object
+    private colorLoopActive:any;
+    private activeAnimations: any = {};
+
+    constructor(private core:CoreService){
+      this.core.register({observerClass:this,eventName:"ScrollTo"}).subscribe((evt:CoreEvent) => {
+        this.scrollTo(evt.data);
+      });
+
+      core.register({observerClass:this, eventName:"Animate"}).subscribe((evt:CoreEvent) => { 
+        let config: AnimationConfig = evt.data;
+        let missingFinishState: string = "This animation requires you to specify a finishState property which was not given."
+          switch(config.animation){
+          case "Flip":
+            this.flip(config.animationTarget, config.finishState);
+            break;
+          case "Fade":
+            this.fade(config.animationTarget, config.finishState);
+            break;
+          case "Scale":
+            this.scale(config.animationTarget, config.finishState);
+            break;
+          case "ElasticScale":
+            this.elasticScale(config.animationTarget, config.finishState);
+            break;
+          case "Bounce":
+            this.bounce(config.animationTarget, config.finishState);
+            break;
+          case "Radiate":
+            this.radiate(config.animationTarget, config.finishState);
+            break;
+          }
+      });
+
+      this.core.register({observerClass:this,eventName:"AnimateGroup"}).subscribe((evt:CoreEvent) => {
+        let config: GroupAnimationConfig = evt.data;
+        let animationTargets = config.animationTargets;
+        let animation = config.animation;
+      });
+
     }
 
-    if(!this.colorLoopActive && colors.length > 0){
-     this.colorLoopActive  = startColorLoop();
+
+
+    private flip(animationTarget:DisplayObject, finishState:string){
+      let target = animationTarget//.target;
+      if(target.width > target.height){
+        this.flipVertical(animationTarget, finishState);
+      } else if(target.width < target.height){
+        this.flipHorizontal(animationTarget, finishState);
+      } else {
+        console.warn("Could not determine orientation of element.");
+        console.log(target);
+      }
     }
 
-    const reset = () => {
-      this.colorLoopActive.stop();
-      elStyler.set({'background-color':'rgba(0,0,0,0.15)'})
+    private flipVertical(animationTarget:DisplayObject, finishState:string){
+      console.log("Flip Vertical Method");
+      // Setup parent element so perspectives are properly set...
+      animationTarget.rawTarget.parentNode.style["perspective"] = (animationTarget.target.get('width') * 10) + "px"
+      //animationTarget.rawTarget.parentNode.style["perspective"] = '1520px'; // Hard coded value from FreeNAS
+      animationTarget.rawTarget.parentNode.style["perspective-origin"] = "50% 50%";
+      animationTarget.rawTarget.parentNode.style["transform-style"] = "preserve-3d";
+
+      let start:number;
+      let finish:number;
+      if(finishState == "In"){
+        start = -180;
+        finish = 0;
+      } else if(finishState == "Out"){
+        start = 0;
+        finish = -180;
+      }
+
+      // Using timeline because using start/finish variables in tween() throws type error. Problem with popmotion types?
+      timeline([
+        {track:'rotateX', from: start, to:finish, duration:300}
+      ]).start(animationTarget.target.set)
     }
-    reset();
 
-    if(colors){
-      //DEBUG: console.log("Starting the Color Loop");
-      this.colorLoopActive.resume();
-    } else if(!colors){
-      //DEBUG: console.log("Stopping the Color Loop");
-      reset();
+    private flipHorizontal(animationTarget:DisplayObject, finishState:string){
+      console.log("Flip Horizontal Method");
+      // Setup parent element so perspectives are properly set...
+      animationTarget.rawTarget.parentNode.style["perspective"] = (animationTarget.target.get('height') * 80) + "px";
+      animationTarget.rawTarget.parentNode.style["perspective-origin"] = "center";
+      animationTarget.rawTarget.parentNode.style["transform-style"] = "preserve-3d";
+
+      console.log("Initial Rotation = " + animationTarget.target.get('rotateY'))
+
+      let start:number;
+      let finish:number;
+      if(finishState == "In"){
+        start = -180;
+        finish = 0;
+      } else if(finishState == "Out"){
+        start = 0;
+        finish = -180;
+      }
+
+      // Using timeline because using start/finish variables in tween() throws type error. Problem with popmotion types?
+      timeline([
+        {track:'rotateY', from: start, to:finish, duration:300}
+      ]).start(animationTarget.target.set)
     }
-    //return s;
+
+    private fade(animationTarget:DisplayObject, finishState: string){ 
+      console.log("Fade" + finishState);
+      let startOpacity; //animationTarget.target.get('opacity');
+      let finishOpacity;
+      if(finishState == "In"){
+        startOpacity = 0;
+        finishOpacity = 1;
+      } else if(finishState = "Out"){
+        startOpacity = 1;
+        finishOpacity = 0;
+      }
+
+      tween({
+        from: {opacity: startOpacity},
+        to: {opacity:finishOpacity},
+        duration:500
+      }).start(animationTarget.target.set);
     }
 
-  /*parent: any;
-   //@Input() target:ElementRef; //May have to implement this later
-   @Input() animation: string;
-   @Input() reverse:boolean;
-   @Input() slideProps:Coordinates;
+    private scale(animationTarget: DisplayObject, finishState: string){
+      console.log("Scale" + finishState);
+      let startScale;
+      let finishScale;
+      if(finishState == "In"){
+        startScale = 0;
+        finishScale = 1;
+      } else if(finishState = "Out"){
+        startScale = 1;
+        finishScale = 0;
+      }
 
-   // Use these for looped animations
-   @Input() shake:boolean;
-   @Input() shaking: any;
-   @Input() colorLoop: string[];
-   @Input() colorLoopActive:any;
+      tween({
+        from: {scale: startScale},
+        to: {scale:finishScale},
+        duration:250,
+        ease: easing.easeInOut,
+      }).start(animationTarget.target.set);
+    }
 
+    private elasticScale(animationTarget: DisplayObject, finishState: string){
+      if(finishState == "Out"){
+        this.scale(animationTarget, finishState);
+        return ;
+      }
 
-   private elStyler: any;
-   private motion: any; // Stores Tweens
-   private inMotion: any; // Stores Tweens running in a loop
+      let startScale;
+      let finishScale;
+      if(finishState == "In"){
+        startScale = 0;
+        finishScale = 1;
+      } else if(finishState = "Out"){
+        startScale = 1;
+        finishScale = 0;
+      }
 
-   constructor(private elRef: ElementRef, private renderer: Renderer2){ 
-   }
+      spring({
+        from: {scale: startScale},
+        to: {scale:finishScale}, 
+        stiffness: {scale:150},
+        damping:{scale:15},
+        velocity:20
+      }).start(animationTarget.target.set);
+    }
 
-   ngOnChanges(changes){
-     this.parent = this.elRef.nativeElement;
-     this.elStyler = styler(this.parent); // fixme: passing empty props for now to fix the build
+    private bounce(animationTarget: DisplayObject, finishState: string){
+      if(finishState == "Stop"){
+        let savedState = this.activeAnimations[animationTarget.id];
+        let animation = savedState.animation;
+        let finishPosition = savedState.originalState;
+        clearInterval(animation);
+        delete this.activeAnimations[animationTarget.id];
+        return ;
+      }
 
-       if(changes.animation){
-         this.animate();
-       }
-       if(changes.slideProps){
-         this.animate();
-       }
+      const startY = animationTarget.target.get('y');
+      const targetY = value(startY, animationTarget.target.set('y'));
 
-       if(changes.shake){
-         this.shakeAnimation();
-       }
+      const gravity = (start) => {
+        const g = physics({
+          acceleration: 2500,
+          to: (startY - 200),
+          //restSpeed: false
+        }).while(v => v <= start).start({
+          update: v => { animationTarget.target.set('y',v)},
+          complete(){
+          tween({
+              from: { y: animationTarget.target.get('y') },
+              to: { y: startY },
+              duration: 100
+            }).start(animationTarget.target.set);
+          }
+        });
+        g.set(Math.min(animationTarget.target.get('y')))
+          .setSpringTarget(startY)
+          .setVelocity(-1200)
+        return g;
+      }
 
-       if(changes.colorLoop){
-         //this.parent = this.elRef.nativeElement;
-         //this.elStyler = styler(this.parent);
-         this.colorLoopAnimation();
-       }
-   }
+      const bounce = setInterval(() => {
+        gravity(startY);
+      },2000);
 
-   // HELLO WORLD!
-   animate(){
-     //DEBUG: console.log(this.animation);
-     switch(this.animation){
-     case 'stop':
-       //DEBUG: console.log("Stopping animations");
-       if(this.inMotion){
-         //DEBUG: console.log(this.inMotion);
-         this.inMotion.pause()
-       }
-       break;
-      case 'slide':
-        this.motion = this.slide();
-        this.motion.start(this.elStyler.set);
-        break;
-      case 'flipV':
-        this.motion = this.flipV();
-        this.motion.start(this.elStyler.set);
-        break;
-      case 'unflipV':
-        this.motion = this.flipV(true);
-        this.motion.start(this.elStyler.set);
-        break;
-      case 'flipH':
-        this.motion = this.flipH();
-        this.motion.start(this.elStyler.set);
-        break;
-      case 'unflipH':
-        this.motion = this.flipH(true);
-        this.motion.start(this.elStyler.set);
-        break;
-      default:
-        break;
-     }
-   }
+      this.activeAnimations[animationTarget.id] = { animation: bounce, originalState: startY };
+    }
 
-   shakeAnimation(){
-     const s = tween({
-       from: { rotate: -1.25, scale:1},
-       to: { rotate: 1.25, scale: 1 },
-       //ease: easing.easeInOut,
-       flip: Infinity,
-       duration: 100
-     });
+    private radiate(animationTarget:DisplayObject, finishState: string){
+      console.log("Radiate method")
+      let startShadow = animationTarget.element.get('box-shadow'); // Styler
 
-     const startShaking = () => { 
-       const a = s.start({
-         update:this.elStyler.set
-       });
-       return a;
-     }
+      if(finishState == "Stop"){
+        let reference = this.activeAnimations[animationTarget.id];
 
-     if(!this.shaking){
-       this.shaking  = startShaking();
-     }
+        animationTarget.element.set('box-shadow', reference.originalState);
 
-     const reset = () => {
-       this.shaking.stop();
-       this.elStyler.set({rotate:0,scale:1})
-     }
-     reset();
+        clearInterval(reference.animation);
+        delete this.activeAnimations[animationTarget.id];
+        return ;
+      }
 
-     if(this.shake){
-       //DEBUG: console.log("Starting the shaking");
-       this.shaking.resume();
-     } else if(!this.shake){
-       //DEBUG: console.log("Stopping the shaking");
-       reset();
-     }
-     //return s;
-     }
+      const elementBorder = value({borderColor: '', borderWidth: 0 }, ({ borderColor, borderWidth }) => animationTarget.element.set({
+        boxShadow: `0 0 0 ${borderWidth}px ${borderColor}` 
+        //border: `solid ${borderWidth} ${borderColor}px`
+      }));
 
-   flipV(reverse?:boolean){
-     //DEBUG: console.log("**** FLIP ANIMATION ****");
+      const radiation = (start, elementBorder) => {
+        const r = keyframes({
+          values: [
+            { borderWidth: 0, borderColor: 'rgb(204, 0, 0, 1)' },
+            { borderWidth: 30, borderColor: 'rgb(204, 0, 0, 0)' } 
+          ],
+          duration:750
+        }).start(elementBorder);
+      }
 
-     let start: number;
-     let finish: number;
+      const radiate = setInterval(() => {
+        radiation(startShadow, elementBorder);
+      },1500);
 
-     if(!reverse){
-       start = 0;
-       finish = -180;
-     } else {
-       start = -180;
-       finish = 0;
-     }
-     let s = tween({
-       from: { rotateX: start, scale:1},
-       to: { rotateX: finish, scale: 1 },
-       //ease: easing.easeInOut,
-       //flip: 0,
-       duration: 500
-     })
-     return s;
-   }
+      this.activeAnimations[animationTarget.id] = { animation: radiate, originalState: startShadow};
+      
+    }
 
-   flipH(reverse?:boolean){
-     //DEBUG: console.log("**** FLIP ANIMATION ****");
+    private scrollTo(destination:string, obj?:any){
+      //if(!obj){obj = ".rightside-content-hold"};
+      if(!obj){obj = "body"};
+      // Grab reference to the element that has the scroll bar
+      const target = (<any>document).querySelector(obj);
 
-     let start: number;
-     let finish: number;
+      // Grab reference to the target element 
+      // you want to scroll to
+      const dest = (<any>document).querySelector(destination);
+      //DEBUG: console.log(dest)
+      const elementScroll = scroll(target);
 
-     if(!reverse){
-       start = 0;
-       finish = -180;
-     } else {
-       start = -180;
-       finish = 0;
-     }
-     let s = tween({
-       from: { rotateY: start, scale:1},
-       to: { rotateY: finish, scale: 1 },
-       //ease: easing.easeInOut,
-       //flip: 0,
-       duration: 500
-     })
-     return s;
-   }
+      //elementScroll.set('top', 400);
 
-   slide(){
-     //DEBUG: console.log("**** SLIDE ANIMATION ****");
+      // Fix this later...
+      /*physics({
+       from: elementScroll.get('top'),
+       to: dest.offsetTop,//500
+       springStrength: 600,
+       friction: 1
+      }).start((v) => elementScroll.set('top', v));*/
+    }
 
-     let startX:  number;
-     let finishX:  number;
-     let startY:  number;
-     let finishY:  number;
-
-
-     let fromProps:any = {};
-     let toProps:any = {};
-
-     if(this.slideProps.x){
-       // Detect and convert if percentage value
-       if(this.slideProps.x.search("%") != -1){
-         finishX = this.percentToPx(this.slideProps.x,'width');
-       } else {
-         finishX = Number(this.slideProps.x);
-       }
-       startX = this.elStyler.get('translateX');
-       fromProps.x = startX;
-       toProps.x = finishX;
-       //DEBUG: console.warn(startX)
-     }
-     if(this.slideProps.y){
-       // Detect and convert if percentage value
-       if(this.slideProps.y.search("%") != -1){
-         finishY = this.percentToPx(this.slideProps.y,'height');
-       } else {
-         finishY = Number(this.slideProps.y);
-       }
-       startY = this.elStyler.get('translateY');
-       fromProps.y = startY;
-       toProps.y = finishY;
-     }
-
-     let s = tween({
-       from: fromProps,
-       to: toProps,
-       //ease: easing.easeInOut,
-       //flip: 0,
-       duration: 500
-     });
-     return s;
-   }*/
-
-   /*percentToPx(value:string,dim:string):number{
-    let d = this.elStyler.get(dim);
-    let spl = value.split('%');
-    let num = Number(spl[0])/100;
-    let result = d*num;
-    //DEBUG: console.warn(result);
-    return result;
-   }*/
-
-}
+  }
 

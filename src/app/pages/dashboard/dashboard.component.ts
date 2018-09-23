@@ -5,7 +5,6 @@ import { StatsService } from 'app/services/stats.service';
 import { Subject } from 'rxjs/Subject';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component'; // POC
 import { Disk, VolumeData } from 'app/core/components/widgets/widgetpool/widgetpool.component';
-import { AnimationDirective } from 'app/core/directives/animation.directive';
 
 import {RestService,WebSocketService} from '../../services/';
 
@@ -67,8 +66,8 @@ export class DashboardComponent implements OnInit,OnDestroy {
 
 
   setDisksData(evt:CoreEvent){
-    //DEBUG: console.log("******** DISKS INFO ********");
-    //DEBUG: console.log(evt);
+    console.log("******** DISKS INFO ********");
+    console.log(evt);
     for(let i in evt.data){
       let disk:Disk = {
         name:evt.data[i].name,
@@ -88,8 +87,8 @@ export class DashboardComponent implements OnInit,OnDestroy {
   }
 
   setPoolData(evt:CoreEvent){
-    //DEBUG: console.log("******** ZPOOL DATA ********");
-    //DEBUG: console.log(evt.data);
+    console.log("******** ZPOOL DATA ********");
+    console.log(evt.data);
     let result = [];
     for(let i in evt.data){
       let zvol = {
