@@ -31,9 +31,6 @@ export class CertificateAuthorityAddComponent {
       validation : [ Validators.pattern('[A-Za-z0-9_-]+$')],
       hasErrors: false,
       errors: 'Use alphanumeric characters, "_" and "-".',
-      blurStatus: true,
-      blurEvent: this.blurEvent,
-      parent: this
     },
     {
       type : 'select',
@@ -251,8 +248,6 @@ export class CertificateAuthorityAddComponent {
   private country: any;
   private signedby: any;
 
-  public identifier: any;
-
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected systemGeneralService: SystemGeneralService) {}
@@ -288,6 +283,7 @@ export class CertificateAuthorityAddComponent {
     }
 
     entity.formGroup.controls['create_type'].valueChanges.subscribe((res) => {
+      console.log(res)
       if (res == 'CA_CREATE_INTERNAL') {
         for (let i in this.intermediatecaFields) {
           this.hideField(this.intermediatecaFields[i], true, entity);
@@ -320,6 +316,15 @@ export class CertificateAuthorityAddComponent {
         }
       }
     })
+
+    entity.formGroup.controls['name'].statusChanges.subscribe((res) => {
+      if (res === 'INVALID') {
+        _.find(this.fieldConfig).hasErrors = true;
+      } else {
+        _.find(this.fieldConfig).hasErrors = false;
+      }
+    })
+
   }
 
   hideField(fieldName: any, show: boolean, entity: any) {
@@ -336,8 +341,4 @@ export class CertificateAuthorityAddComponent {
     }
   }
 
-  blurEvent(parent) {
-    this.identifier = _.find(parent.fieldConfig, { name: 'name' });
-    console.log(parent)
-  }
 }
