@@ -115,9 +115,10 @@ export class VmCardsComponent implements OnInit,OnDestroy {
         case "FormCancelled":
           this.cancel(index);
         break;
-        case "CloningVM":
+        case "CloneVM":
           this.cards[index].state = "creating clone";
           this.cancel(index);
+          this.core.emit({name:"VmClone", data: this.cards[index].id, sender:this});
         break;
       default:
       break;
@@ -435,19 +436,6 @@ export class VmCardsComponent implements OnInit,OnDestroy {
       new Array('').concat([ "vm", this.cards[index].id, "devices", this.cards[index].name ])
     );
   }
-
-  /*cloneVM(index){
-    this.loader.open();
-    this.loaderOpen = true;
-    this.ws.call('vm.clone', [this.cards[index].id]).subscribe((res)=>{
-      this.loader.close();
-      this.getVmList();
-    },
-  (eres)=>{
-    new EntityUtils().handleError(this, eres);
-    this.loader.close();
-    });
-  }*/
 
   toggleForm(flipState, card, template){
     // load #cardBack template with code here

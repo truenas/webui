@@ -233,6 +233,11 @@ export class ApiService {
         args:[],
         responseEvent:"VmProfilesRequest"
       },
+      preProcessor(def:ApiCall){
+        let redef = Object.assign({}, def);
+        redef.args = [def.args];
+        return redef;
+      },
       postProcessor(res,callArgs){
         //console.log(res);
         let cloneRes = Object.assign({},res);
@@ -635,6 +640,7 @@ export class ApiService {
           this.core.emit({name:call.responseEvent, data:res, sender:this });
         }
       },(error)=>{
+        console.log(error);
         if(call.responseFailedEvent){
           error.id = call.args;
           this.core.emit({name:call.responseFailedEvent, data:error, sender: this});
