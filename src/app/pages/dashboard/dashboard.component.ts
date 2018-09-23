@@ -66,8 +66,8 @@ export class DashboardComponent implements OnInit,OnDestroy {
 
 
   setDisksData(evt:CoreEvent){
-    console.log("******** DISKS INFO ********");
-    console.log(evt);
+    //DEBUG: console.log("******** DISKS INFO ********");
+    //DEBUG: console.log(evt);
     for(let i in evt.data){
       let disk:Disk = {
         name:evt.data[i].name,
@@ -87,8 +87,8 @@ export class DashboardComponent implements OnInit,OnDestroy {
   }
 
   setPoolData(evt:CoreEvent){
-    console.log("******** ZPOOL DATA ********");
-    console.log(evt.data);
+    //DEBUG: console.log("******** ZPOOL DATA ********");
+    //DEBUG: console.log(evt.data);
     let result = [];
     for(let i in evt.data){
       let zvol = {
