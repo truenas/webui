@@ -8,7 +8,6 @@ import { RestService, SystemGeneralService, WebSocketService } from '../../../..
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
 import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
-import { validateValue } from '@angular/flex-layout';
 
 @Component({
   selector : 'system-ca-add',
@@ -28,7 +27,7 @@ export class CertificateAuthorityAddComponent {
       placeholder : T('Identifier'),
       tooltip: T('Enter a description of the CA.'),
       required: true,
-      validation : [ Validators.pattern('[A-Za-z0-9_-]+$')],
+      validation : [ Validators.required, Validators.pattern('[A-Za-z0-9_-]+$') ],
       hasErrors: false,
       errors: 'Use alphanumeric characters, "_" and "-".',
     },
@@ -283,7 +282,6 @@ export class CertificateAuthorityAddComponent {
     }
 
     entity.formGroup.controls['create_type'].valueChanges.subscribe((res) => {
-      console.log(res)
       if (res == 'CA_CREATE_INTERNAL') {
         for (let i in this.intermediatecaFields) {
           this.hideField(this.intermediatecaFields[i], true, entity);
@@ -317,12 +315,9 @@ export class CertificateAuthorityAddComponent {
       }
     })
 
+    // Live error check on Identifier (name) field
     entity.formGroup.controls['name'].statusChanges.subscribe((res) => {
-      if (res === 'INVALID') {
-        _.find(this.fieldConfig).hasErrors = true;
-      } else {
-        _.find(this.fieldConfig).hasErrors = false;
-      }
+      res === 'INVALID' ? _.find(this.fieldConfig).hasErrors = true : _.find(this.fieldConfig).hasErrors = false;
     })
 
   }
