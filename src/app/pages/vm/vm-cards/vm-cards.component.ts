@@ -398,6 +398,13 @@ export class VmCardsComponent implements OnInit,OnDestroy {
     })
   }
 
+  restartVM(index:number){
+    const vm = this.cards[index];
+    vm.transitionalState = true;
+    vm.state = "restarting"
+    this.core.emit({name:"", data: [vm.id]});
+  }
+
   removeVM(evt:CoreEvent){
     const index = this.getCardIndex("id", evt.sender);
 

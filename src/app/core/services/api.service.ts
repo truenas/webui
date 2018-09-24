@@ -180,6 +180,20 @@ export class ApiService {
         return cloneRes;
       }
     },
+    VmRestart:{
+      apiCall:{
+        protocol:"websocket",
+        version:"1",
+        namespace:"vm.restart",
+        args:[],
+        responseEvent:"VmStarted"
+      },
+      postProcessor(res,callArgs){
+        let cloneRes = Object.assign({},res);
+        cloneRes = {id:callArgs[0] ,state: res} // res:boolean
+        return cloneRes;
+      }
+    },
     VmStop:{
       apiCall:{
         protocol:"websocket",
