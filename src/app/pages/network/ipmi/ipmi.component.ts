@@ -82,10 +82,7 @@ export class IPMIComponent {
       placeholder : T('Password'),
       validation: Validators.maxLength(20),
       hasErrors: false,
-      errors: '20 characters maximum',
-      blurStatus: true,
-      blurEvent: this.blurEvent,
-      parent: this,
+      errors: T('20 characters is the maximum length.'),
       togglePw: true,
       tooltip : T('Enter the password used to connect to the IPMI\
                    interface from a web browser.'),
@@ -157,7 +154,11 @@ export class IPMIComponent {
     entityEdit.submitFunction = this.submitFunction;
     this.entityEdit = entityEdit;
     this.loadData();
-    }
+
+    entityEdit.formGroup.controls['password'].statusChanges.subscribe((res) => {
+      res === 'INVALID' ? _.find(this.fieldConfig).hasErrors = true : _.find(this.fieldConfig).hasErrors = false;
+    })
+  }
     submitFunction({}){
       const payload = {}
       const formvalue = _.cloneDeep(this.formGroup.value);
@@ -191,7 +192,4 @@ export class IPMIComponent {
       });
     }
 
-    blurEvent(parent) {
-      console.log(parent)
-    }
 }
