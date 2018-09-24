@@ -493,7 +493,6 @@ async customSubmit(value) {
     // zvol_payload only applies if the user is creating one
     zvol_payload['create_zvol'] = true
     zvol_payload["zvol_name"] = hdd
-    zvol_payload["zvol_type"] = "VOLUME";
     zvol_payload["zvol_volsize"] = value.volsize * 1024 * 1000 * 1000;
 
     vm_payload["vm_type"]= "Bhyve";
