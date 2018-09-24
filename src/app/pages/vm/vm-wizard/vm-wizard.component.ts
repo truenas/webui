@@ -533,13 +533,11 @@ async customSubmit(value) {
           const orig_hdd = device.attributes.path;
           const create_zvol = zvol_payload['create_zvol']
           const zvol_name = zvol_payload['zvol_name']
-          const zvol_type = zvol_payload['zvol_type']
           const zvol_volsize = zvol_payload['zvol_volsize']
 
           device.attributes.path = '/dev/zvol/' + orig_hdd
           device.attributes.create_zvol = create_zvol
           device.attributes.zvol_name = zvol_name
-          device.attributes.zvol_type = zvol_type
           device.attributes.zvol_volsize = zvol_volsize
         };
       };
