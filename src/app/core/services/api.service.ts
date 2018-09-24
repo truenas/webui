@@ -189,6 +189,7 @@ export class ApiService {
         responseEvent:"VmStarted"
       },
       postProcessor(res,callArgs){
+        console.log(res)
         let cloneRes = Object.assign({},res);
         cloneRes = {id:callArgs[0] ,state: res} // res:boolean
         return cloneRes;
@@ -224,7 +225,7 @@ export class ApiService {
         return redef;
       },
       postProcessor(res,callArgs){
-        //DEBUG: console.log(res);
+        console.log(res);
         let cloneRes = Object.assign({},res);
         cloneRes = {id:callArgs[0]} // res:boolean
         return cloneRes;

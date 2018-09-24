@@ -96,7 +96,9 @@ export class VmCardsComponent implements OnInit, OnDestroy {
      * */
 
     this.controlEvents.subscribe((evt:CoreEvent) => {
-      const index = this.getCardIndex("id",evt.sender.machineId);
+      //if(evt.sender){
+        const index = this.getCardIndex("id",evt.sender.machineId);
+      //}
       switch(evt.name){
         case "FormSubmitted":
           //evt.data.autostart = evt.data.autostart.toString();
@@ -119,6 +121,9 @@ export class VmCardsComponent implements OnInit, OnDestroy {
           this.cards[index].state = "creating clone";
           this.cancel(index);
           this.core.emit({name:"VmClone", data: this.cards[index].id, sender:this});
+        break;
+        case "RestartVM":
+          this.restartVM(index);
         break;
       default:
       break;
@@ -170,6 +175,8 @@ export class VmCardsComponent implements OnInit, OnDestroy {
 
     this.core.register({observerClass:this,eventName:"VmStopped"}).subscribe((evt:CoreEvent) => {
       const cardIndex = this.getCardIndex('id',evt.data.id);
+      console.log(evt);
+      console.log(cardIndex)
       this.cards[cardIndex].state = 'stopped';
       this.cards[cardIndex].transitionalState = false;
 
@@ -409,11 +416,11 @@ export class VmCardsComponent implements OnInit, OnDestroy {
     })
   }
 
-  restartVM(index:number){
+  restartVM(index:number){ 
     const vm = this.cards[index];
     vm.transitionalState = true;
     vm.state = "restarting"
-    this.core.emit({name:"", data: [vm.id]});
+    this.core.emit({name:"VmRestart", data: [vm.id]});
   }
 
   removeVM(evt:CoreEvent){
@@ -494,7 +501,7 @@ export class VmCardsComponent implements OnInit, OnDestroy {
            if(poweroff){
              eventName = "VmPowerOff";
              this.cards[index].state = "stopping";
-             this.core.emit({name: eventName, data:[vm.id, true]});
+             this.core.emit({name: eventName, data:[vm.id]});
            } else {
              eventName = "VmStop";
              this.cards[index].state = "stopping";
