@@ -11,6 +11,7 @@ import * as hopscotch from 'hopscotch';
 import { RestService } from './services/rest.service';
 import { ApiService } from 'app/core/services/api.service';
 import { AnimationService } from 'app/core/services/animation.service';
+import { InteractionManagerService } from 'app/core/services/interaction-manager.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { WebSocketService } from './services/ws.service';
@@ -36,6 +37,7 @@ export class AppComponent {
     private rest: RestService,
     private api: ApiService,
     private animations: AnimationService,
+    private ims: InteractionManagerService,
     private core: CoreService,
     public preferencesService: PreferencesService,
     public themeservice: ThemeService,

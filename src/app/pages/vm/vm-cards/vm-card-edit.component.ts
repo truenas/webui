@@ -125,11 +125,6 @@ export class VmCardEditComponent implements OnChanges {
 
   ngOnInit(){
     this.generateFieldConfig();
-    this.target.subscribe((evt) => {
-      if(evt.name == "CloneVM"){
-        this.cloneVM();
-      }
-    });
   }
 
   ngOnChanges(changes){
@@ -154,10 +149,6 @@ export class VmCardEditComponent implements OnChanges {
         this.fieldConfig.push(this.fieldSets[i].config[ii]);
       }
     }
-  }
-  cloneVM(){
-    this.core.emit({name:"VmClone",data:[this.machineId]});
-    this.target.next({name:"CloningVM", sender:this});
   }
 
 }

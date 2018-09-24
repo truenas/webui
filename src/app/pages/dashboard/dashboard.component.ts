@@ -5,7 +5,6 @@ import { StatsService } from 'app/services/stats.service';
 import { Subject } from 'rxjs/Subject';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component'; // POC
 import { Disk, VolumeData } from 'app/core/components/widgets/widgetpool/widgetpool.component';
-import { AnimationDirective } from 'app/core/directives/animation.directive';
 
 import {RestService,WebSocketService} from '../../services/';
 
