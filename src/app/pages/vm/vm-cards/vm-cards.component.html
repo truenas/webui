@@ -177,7 +177,7 @@
     </ng-template>
 
     <!-- Create your cards here -->
-    <entity-card [ngStyle]="cardStyles()" [conf]="cards[i]" [front]="cardfront" [back]="cardback" [lazyLoaded]="cards[i].lazyLoaded"></entity-card>
+    <entity-card id="{{cards[i].domId}}" [ngStyle]="cardStyles()" [conf]="cards[i]" [front]="cardfront" [back]="cardback" [lazyLoaded]="cards[i].lazyLoaded"></entity-card>
 
   </div>
 

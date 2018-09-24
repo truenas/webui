@@ -13,17 +13,22 @@ import { Subject } from 'rxjs/Subject';
 @Component({
   selector : 'ui-preferences',
   template:`
-  <mat-card>
-  <mat-toolbar-row style="margin-bottom:16px;">
+  <mat-card class="prefs-card">
+  <!--<mat-toolbar-row style="margin-bottom:16px;">
   <h4>User Preferences</h4>
   </mat-toolbar-row>
-  <mat-divider></mat-divider>
-  <mat-card-content fxLayout="row wrap" fxLayoutAlign="space-between start" style="margin-top:32px;">
-    <general-preferences-form fxFlex="100" fxFlex.gt-xs="300px" class="prefs-form"></general-preferences-form>
-    <custom-theme-manager-form fxFlex="100" fxFlex.gt-xs="calc(100% - 300px)" class="prefs-form"></custom-theme-manager-form>
+  <mat-divider></mat-divider>-->
+  <mat-card-content>
+    <general-preferences-form  class="prefs-form"></general-preferences-form>
   </mat-card-content>
+  <mat-divider></mat-divider>
+  <mat-card-content>
+    <custom-theme-manager-form  class="prefs-form"></custom-theme-manager-form>
+  </mat-card-content>
+
   </mat-card>
-  `
+  `,
+  styleUrls: ['./preferences.component.css']
 })
 export class PreferencesPage implements OnInit, OnDestroy {
 

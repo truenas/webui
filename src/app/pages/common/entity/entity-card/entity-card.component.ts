@@ -8,6 +8,7 @@ import { Subscription } from 'rxjs';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/merge';
 import 'rxjs/add/operator/map';
+import {iXObject} from 'app/core/classes/ix-object';
 import { TranslateService } from '@ngx-translate/core';
 
 //local libs
@@ -23,7 +24,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
   styleUrls: ['./entity-card.component.css'],
   providers: [DialogService]
 })
-export class EntityCardComponent implements OnInit {
+export class EntityCardComponent extends iXObject implements OnInit {
 
   @Input('conf') conf: any;
   @Input() width: string;
@@ -53,7 +54,9 @@ export class EntityCardComponent implements OnInit {
 
   constructor(protected rest: RestService, protected ws: WebSocketService,  protected router: Router,
     protected _eRef: ElementRef, private dialog: DialogService, protected loader: AppLoaderService, 
-    translate: TranslateService) {}
+    translate: TranslateService) {
+    super()
+  }
 
   ngOnInit() {
     if (this.conf.preInit) {
