@@ -1,4 +1,5 @@
-import { Component, OnInit,OnDestroy, Input, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, ElementRef, ViewChild} from '@angular/core';
+import { UUID } from 'angular2-uuid';
 import { Router } from '@angular/router';
 import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { WebSocketService, RestService } from '../../../services/';
@@ -18,6 +19,7 @@ import 'rxjs/add/observable/interval';
 interface VmProfile {
   name?:string;
   id?:string;
+  domId?: string;
   description?:string;
   info?:string;
   bootloader?:string;
@@ -40,9 +42,9 @@ interface VmProfile {
   templateUrl: './vm-cards.component.html',
   styleUrls: ['./vm-cards.component.css'],
 })
-export class VmCardsComponent implements OnInit,OnDestroy {
+export class VmCardsComponent implements OnInit, OnDestroy {
 
-  @ViewChild('filter') filter: ElementRef;
+  @ViewChild('filter') filter: ElementRef; 
   @Input() searchTerm = '';
   @Input() cards = []; // Display List
   @Input() cache = []; // Master List:
@@ -222,7 +224,7 @@ export class VmCardsComponent implements OnInit,OnDestroy {
   }
 
   parseResponse(data:any, formatForUpdate?:boolean){
-    const card: VmProfile = {
+    let card: VmProfile = {
       name:data.name,
       description:data.description,
       info:data.info,
@@ -232,7 +234,8 @@ export class VmCardsComponent implements OnInit,OnDestroy {
       memory:data.memory,
       //lazyLoaded: false,
       devices:data.devices,
-      vm_type: data.vm_type
+      vm_type: data.vm_type,
+      domId: "id-" + UUID.UUID()
     }
 
     // Leave out properties not used for update requests
@@ -260,7 +263,8 @@ export class VmCardsComponent implements OnInit,OnDestroy {
   }
 
   scrollTo(destination:string){
-    this.core.emit({name:"ScrollTo", data: destination});
+    //console.log(destination)
+    this.core.emit({name:"ScrollTo", data: "#" + destination});
   }
 
   getVmList(){
@@ -277,23 +281,26 @@ export class VmCardsComponent implements OnInit,OnDestroy {
 
     this.cache = [];
     for(let i = 0; i < res.data.length; i++){
-      const card = this.parseResponse(res.data[i]);
-      //this.checkVnc(card);
+      let card = this.parseResponse(res.data[i]);
       this.cache.push(card);
     }
+
     if(init){
       this.displayAll();
     } else {
       this.updateCards();
     }
+
     this.checkStatus();
     if(scroll && this.cards.length == res.data.length){
       setTimeout(()=>{
       let test = (<any>document).querySelector('.vm-card-' + this.cards[this.cards.length-1].id);
-      this.scrollTo(String('.vm-card-' + this.cards[this.cards.length-1].id));
+      this.scrollTo(String(this.cards[this.cards.length-1].domId));
+      
       //this.scrollTo('#animation-target');
       },1000);
     }
+
   }
 
 

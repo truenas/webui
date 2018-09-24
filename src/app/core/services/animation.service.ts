@@ -291,27 +291,22 @@ import {
       
     }
 
-    private scrollTo(destination:string, obj?:any){
-      //if(!obj){obj = ".rightside-content-hold"};
-      if(!obj){obj = "body"};
-      // Grab reference to the element that has the scroll bar
-      const target = (<any>document).querySelector(obj);
+    private scrollTo(destination:string, obj?:any){ 
+      let container;
+      let rawContainer;
+      if(!obj){
+        rawContainer = (<any>document).querySelector('body');
+        container = styler(rawContainer, {});
+      } else {
+        // Grab reference to the element that has the scroll bar
+        rawContainer = (<any>document).querySelector(obj);
+        container = styler(rawContainer, {});
+      }
+      const rawScrollTarget = (<any>document).querySelector(destination);
+      const scrollTarget = styler(rawScrollTarget, {});
 
-      // Grab reference to the target element 
-      // you want to scroll to
-      const dest = (<any>document).querySelector(destination);
-      //DEBUG: console.log(dest)
-      const elementScroll = scroll(target);
-
-      //elementScroll.set('top', 400);
-
-      // Fix this later...
-      /*physics({
-       from: elementScroll.get('top'),
-       to: dest.offsetTop,//500
-       springStrength: 600,
-       friction: 1
-      }).start((v) => elementScroll.set('top', v));*/
+      //container.set('scrollTop', rawScrollTarget.offsetTop);// Taken from popmotion docs examples but does not work
+      rawScrollTarget.scrollIntoView(); // native method works but without a smooth transition
     }
 
   }
