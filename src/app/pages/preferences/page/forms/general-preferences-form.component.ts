@@ -55,7 +55,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
             tooltip:'Choose a preferred theme.',
             class:'inline'
           },
-          {
+          /*{
             type: 'radio',
             name: 'metaphor',
             width:'300px',
@@ -63,7 +63,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
             options:[{label:'Cards',value:'cards'},{label:'Tables',value:'tables'},{label:'Auto',value:'auto'}],
             value:'cards',
             tooltip: 'Choose the preferred view type.',
-          },
+          },*/
           {
             type: 'checkbox',
             name: 'showTooltips',
