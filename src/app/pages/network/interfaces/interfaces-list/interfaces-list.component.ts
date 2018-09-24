@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {Router} from '@angular/router';
 
-import {RestService} from '../../../../services/rest.service';
+import {RestService, NetworkService} from '../../../../services';
 import { T } from '../../../../translate-marker';
 
 @Component({
@@ -14,6 +14,7 @@ export class InterfacesListComponent {
   protected resource_name: string = 'network/interface/';
   protected route_add: string[] = [ 'network', 'interfaces', 'add' ];
   protected route_add_tooltip: string = "Add Interface";
+  protected add_disabled: boolean;
   protected route_edit: string[] = [ 'network', 'interfaces', 'edit' ];
   protected confirmDeleteDialog = {
     message: T("Network connectivity will be interrupted. Delete the selected interface?"),
@@ -34,7 +35,17 @@ export class InterfacesListComponent {
     sorting : {columns : this.columns},
   };
 
-  constructor(_rest: RestService, _router: Router) {}
+  constructor(_rest: RestService, _router: Router, protected networkService: NetworkService) {
+    this.networkService.getInterfaceNicChoices().subscribe(
+      (res)=>{
+        if (res.length == 0) {
+          this.add_disabled = true;
+        } else {
+          this.add_disabled = false;
+        }
+      }
+    )
+  }
 
   rowValue(row, attr) {
     if (attr == 'ipv4_addresses' || attr == 'ipv6_addresses') {
