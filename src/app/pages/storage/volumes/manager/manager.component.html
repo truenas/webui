@@ -20,7 +20,7 @@
           <tooltip class="volumeTooltip" [message]=encryption_tooltip></tooltip>
           <div *ngIf="poolError" [style.color]="'red'" [innerHTML]="poolError"></div>
           <div>
-            <button *ngIf="suggestable_disks.length <= 8" [disabled]="dirty" mat-button class="btn btn-accent" (click)="suggestLayout()">{{"Suggest Layout" | translate}}</button>
+            <button *ngIf="suggestable_disks.length <= 8" [disabled]="dirty" mat-button class="btn btn-accent mat-basic" (click)="suggestLayout()">{{"Suggest Layout" | translate}}</button>
             <tooltip class="volumeTooltip" [message]=suggested_layout_tooltip></tooltip>
           </div>
         </div>
@@ -121,10 +121,10 @@
       <div class="buttons">
         <button mat-button name="create-button" class="btn btn-primary" (click)="checkSubmit()" color="primary" [disabled]="!canSave()">{{submitTitle | translate }}</button>
         <button mat-button class="btn  btn-block btn-lg btn-primary" type="button" (click)="goBack()" color="accent">{{"Cancel" | translate}}</button>
-        <button mat-button class="btn btn-accent" (click)="addVdev('data')">{{"Add Data" | translate}}</button>
-        <button [disabled]="vdevs.cache.length > 0" mat-button class="btn btn-accent" (click)="addVdev('cache')">{{"Add Cache" | translate}}</button>
-        <button [disabled]="vdevs.log.length > 0" mat-button class="btn btn-accent" (click)="addVdev('log')">{{"Add Log" | translate}}</button>
-        <button [disabled]="vdevs.spare.length > 0" mat-button class="btn btn-accent" (click)="addVdev('spare')">{{"Add Spare" | translate}}</button>
+        <button mat-button class="btn btn-accent mat-basic" (click)="addVdev('data')">{{"Add Data" | translate}}</button>
+        <button [disabled]="vdevs.cache.length > 0" mat-button class="btn btn-accent mat-basic" (click)="addVdev('cache')">{{"Add Cache" | translate}}</button>
+        <button [disabled]="vdevs.log.length > 0" mat-button class="btn btn-accent mat-basic" (click)="addVdev('log')">{{"Add Log" | translate}}</button>
+        <button [disabled]="vdevs.spare.length > 0" mat-button class="btn btn-accent mat-basic" (click)="addVdev('spare')">{{"Add Spare" | translate}}</button>
       </div>
     </div>
   </div>
