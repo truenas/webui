@@ -29,7 +29,7 @@ export class CertificateAuthorityAddComponent {
       required: true,
       validation : [ Validators.required, Validators.pattern('[A-Za-z0-9_-]+$') ],
       hasErrors: false,
-      errors: 'Use alphanumeric characters, "_" and "-".',
+      errors: 'Allowed characters: letters, numbers, underscore (_), and dash (-).'
     },
     {
       type : 'select',
