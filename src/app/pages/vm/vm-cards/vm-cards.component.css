@@ -174,7 +174,7 @@ mat-chip.vm-state-on,
 .card-close{
     background: none;
     border: none;
-    position: fixed;
+    position: absolute;
     top: 5px;
     right:0px;
     color: rgba(0,0,0,0.35);
