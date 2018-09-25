@@ -199,12 +199,17 @@ mat-chip.vm-state-on,
   margin:0;
 }
 
+.slim .side-content .stats-info {
+  position: relative;
+  top: -30px;
+}
+
 .slim .vm-controls{
   width:100%;
 }
 
 .slim .vm-power-btn{  
-  top: 285px;
+  top: 260px;
   left: 116px;
   position: absolute;
 }
