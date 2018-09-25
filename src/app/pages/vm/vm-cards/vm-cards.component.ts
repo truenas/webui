@@ -154,7 +154,6 @@ export class VmCardsComponent implements OnInit, OnDestroy {
     });
 
     this.core.register({observerClass:this,eventName:"VmStarted"}).subscribe((evt:CoreEvent) => {
-      console.log(evt)
         if (evt.data.trace) {
           this.dialog.errorReport(T('VM failed to start') , evt.data.reason, evt.data.trace.formatted)
           const cardIndex = this.getCardIndex('id',evt.data.id[0]);
@@ -175,8 +174,6 @@ export class VmCardsComponent implements OnInit, OnDestroy {
 
     this.core.register({observerClass:this,eventName:"VmStopped"}).subscribe((evt:CoreEvent) => {
       const cardIndex = this.getCardIndex('id',evt.data.id);
-      console.log(evt);
-      console.log(cardIndex)
       this.cards[cardIndex].state = 'stopped';
       this.cards[cardIndex].transitionalState = false;
 
@@ -556,8 +553,7 @@ export class VmCardsComponent implements OnInit, OnDestroy {
     }
   }
 
-  checkStatus(id?:number){
-    console.log("checking status...")
+  checkStatus(id?:number){ 
     if(id){
       this.core.emit({
         name:"VmStatusRequest",

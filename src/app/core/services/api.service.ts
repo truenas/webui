@@ -189,7 +189,6 @@ export class ApiService {
         responseEvent:"VmStarted"
       },
       postProcessor(res,callArgs){
-        console.log(res)
         let cloneRes = Object.assign({},res);
         cloneRes = {id:callArgs[0] ,state: res} // res:boolean
         return cloneRes;
@@ -225,7 +224,6 @@ export class ApiService {
         return redef;
       },
       postProcessor(res,callArgs){
-        console.log(res);
         let cloneRes = Object.assign({},res);
         cloneRes = {id:callArgs[0]} // res:boolean
         return cloneRes;
@@ -519,7 +517,6 @@ export class ApiService {
     this.ws.authStatus.subscribe((evt:any) =>{
       this.core.emit({name:"Authenticated",data:evt,sender:this});
     });
-    console.log("*** New Instance of API Service ***");
     this.registerDefinitions();
   }
 
