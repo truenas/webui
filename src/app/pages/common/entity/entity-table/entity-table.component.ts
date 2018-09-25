@@ -76,7 +76,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   @ViewChild('filter') filter: ElementRef;
 
   // MdPaginator Inputs
-  public paginationPageSize = 10;
+  public paginationPageSize: number = 8;
   public paginationPageSizeOptions = [5, 10, 20, 100, 1000];
   public paginationPageIndex = 0;
   public paginationPageEvent: any;
@@ -86,6 +86,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   public busy: Subscription;
   public columns: Array<any> = [];
   public tableHeight:number = (this.paginationPageSize * 50) + 100;
+  public windowHeight: number;
 
   public allColumns: Array<any> = []; // Need this for the checkbox headings
   public filterColumns: Array<any> = []; // Need this for the filter function
@@ -114,6 +115,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
 
+    this.setTableHeight(); 
+  
     if (this.conf.preInit) {
       this.conf.preInit(this);
     }
@@ -190,8 +193,20 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
         this.currentPreferredCols = this.conf.columns;
       }
-        // End of checked/display section ------------
-           
+        // End of checked/display section ------------                 
+  }
+
+  setTableHeight() {
+    window.onresize = () => {
+      let x = window.innerHeight;
+      if (x <=780) {
+        this.paginationPageSize = 9;
+      } else {
+        let y = x - 800;
+        this.paginationPageSize = 9 + Math.floor(y/50);
+      }
+      this.setPaginationInfo();
+    }
   }
 
   setShowSpinner() {
@@ -461,6 +476,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     } else {
       this.tableHeight = (this.paginationPageSize * 50) + 100;
     } 
+    
     // Displays an accurate number for some edge cases
     if (this.paginationPageSize > this.currentRows.length) {
       this.paginationPageSize = this.currentRows.length;

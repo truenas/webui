@@ -6,3 +6,8 @@
 	position: relative;
 	top: 13px;
 }
+
+/* To get rid of VScroll on entity tables */
+.rightside-content-hold {
+	padding-bottom: 5px;
+}
