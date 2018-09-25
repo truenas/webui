@@ -1,5 +1,5 @@
 <div class="mat-content">
-  <mat-card>
+  <mat-card *ngIf="availablePools != undefined">
     <div *ngIf="availablePools.length > 0">
       <form (ngSubmit)="activatePool($event)">
         <label *ngIf="activatedPool">
