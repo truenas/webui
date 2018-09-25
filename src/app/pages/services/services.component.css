@@ -199,3 +199,7 @@ mat-chip.service-state-on,
   top: 25px;
   left: 47%;
 }
+
+#filter-input{
+  width: 300px;
+}

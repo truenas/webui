@@ -8,16 +8,16 @@
     <div class="filter-field">
       <mat-icon role="img">search</mat-icon>
       <div class="card-filter-field">
-        <mat-input-container floatPlaceholder="Filter Service">
+        <mat-input-container floatPlaceholder="Filter Service" id="filter-input">
           <input matInput #filter placeholder="Filter Service" [ngModel]="searchTerm" (ngModelChange)="displayFilter('title',$event)">
         </mat-input-container>
       </div>
     </div>
     <div class="view-controls">
       <mat-button-toggle-group #viewMode="matButtonToggleGroup">
-        <mat-button-toggle value="cards" (click)="saveValue('cards')">Cards</mat-button-toggle>
+        <!-- <mat-button-toggle value="cards" (click)="saveValue('cards')">Cards</mat-button-toggle>
         <mat-button-toggle value="slim" (click)="saveValue('slim')">Slim</mat-button-toggle>
-        <mat-button-toggle value="table" (click)="saveValue('table')">Table</mat-button-toggle>
+        <mat-button-toggle value="table" (click)="saveValue('table')">Table</mat-button-toggle> -->
       </mat-button-toggle-group>
     </div>
   </mat-card-header>

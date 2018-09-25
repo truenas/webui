@@ -52,7 +52,7 @@ export class Services implements OnInit {
 
   public cache = [];
   public showSpinner: boolean = true;
-  public viewValue: any;
+  // public viewValue: any;
 
   constructor(protected rest: RestService, protected ws: WebSocketService, protected router: Router,
     private confirmService: AppConfirmService, private dialog: DialogService) {}
@@ -73,7 +73,8 @@ export class Services implements OnInit {
   }
 
   ngOnInit() {
-    window.localStorage.getItem('viewValue') ? this.viewMode.value = window.localStorage.getItem('viewValue') : this.viewMode.value = 'cards';
+    // window.localStorage.getItem('viewValue') ? this.viewMode.value = window.localStorage.getItem('viewValue') : this.viewMode.value = 'cards';
+    this.viewMode.value = 'table';   
     this.busy =
       this.ws.call('service.query', [
         [], { "order_by": ["service"] }
@@ -111,14 +112,14 @@ export class Services implements OnInit {
     this.cards = this.cache;
   }
 
-  cardStyles() {
-    let cardStyles = {
-      'width': this.viewMode.value == 'slim' ? '285px' : '380px',
-      'height': '250px',
-      'margin': '25px auto'
-    }
-    return cardStyles;
-  }
+  // cardStyles() {
+  //   let cardStyles = {
+  //     'width': this.viewMode.value == 'slim' ? '285px' : '380px',
+  //     'height': '250px',
+  //     'margin': '25px auto'
+  //   }
+  //   return cardStyles;
+  // }
 
   toggle(service: any) {
     let rpc: string;
@@ -194,7 +195,7 @@ export class Services implements OnInit {
     }
   }
 
-  saveValue(value) {
-    this.viewValue = window.localStorage.setItem('viewValue', value);
-  }
+  // saveValue(value) {
+  //   this.viewValue = window.localStorage.setItem('viewValue', value);
+  // }
 }
