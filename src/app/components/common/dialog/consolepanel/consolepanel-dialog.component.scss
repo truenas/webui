@@ -1,7 +1,6 @@
 .message {
-	max-width: 500px;
-  max-height: 340px;
-  width: 100vw;
+  max-height: 500px;
+  width: 100%;
   height: 100vh;
   overflow-y: auto;
   border: none;
@@ -12,4 +11,32 @@
   color: #00ff00;
   font-family: "Courier New", Courier, monospace;
   white-space: pre-wrap;
+}
+
+#console-box {
+  max-width: 103%;
+  max-height: 575px;
+}
+
+.mat-checkbox {
+  display: inline-block;
+  margin-top: 15px;
+}
+
+.mat-button {
+  bottom: 40px;
+}
+
+.mat-dialog-actions {
+  margin-bottom: -50px;
+}
+
+#placeholder {
+  // min-width: 945px;
+  min-width: 80vw;
+}
+
+@media screen and (max-height: 750px) {
+  .message { max-height: 340px;}
+  #console-box { max-height: 415px }
 }

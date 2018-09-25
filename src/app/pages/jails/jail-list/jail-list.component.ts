@@ -19,7 +19,7 @@ import { MatSnackBar } from '@angular/material';
 })
 export class JailListComponent implements OnInit {
 
-  public isPoolActivated: boolean = true;
+  public isPoolActivated: boolean;
   public selectedPool;
   public activatedPool: any;
   public availablePools: any = [];

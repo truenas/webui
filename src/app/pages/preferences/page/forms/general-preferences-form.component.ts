@@ -22,7 +22,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
    platform:string; // FreeNAS || TrueNAS
    timestamp:Date;
    userTheme:string; // Theme name
-   customThemes?: Theme[]; 
+   customThemes?: Theme[];
    favoriteThemes?: string[]; // Theme Names
    showTooltips:boolean; // Form Tooltips on/off
    metaphor:string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
@@ -33,7 +33,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
   public values = [];
   public saveSubmitText = "Update Settings";
   protected isEntity: boolean = true; // was true
-  private colorOptions: any[] = []; 
+  private colorOptions: any[] = [];
   private themeOptions: any[] = [];
   private favoriteFields: any[] = []
   public fieldConfig:FieldConfig[] = [];
@@ -45,32 +45,32 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
         label:true,
         width:'300px',
         config:[
-          { 
-            type: 'select', 
-            name: 'userTheme', 
+          {
+            type: 'select',
+            name: 'userTheme',
             width:'300px',
-            placeholder: 'Choose Theme', 
+            placeholder: 'Choose Theme',
             options: this.themeOptions,
             value:this.themeService.activeTheme,
-            tooltip:'Pick your preferred theme.',
+            tooltip:'Choose a preferred theme.',
             class:'inline'
           },
-          { 
-            type: 'radio', 
-            name: 'metaphor', 
+          /*{
+            type: 'radio',
+            name: 'metaphor',
             width:'300px',
             placeholder: 'View Type Preference',
             options:[{label:'Cards',value:'cards'},{label:'Tables',value:'tables'},{label:'Auto',value:'auto'}],
             value:'cards',
-            tooltip: 'Choose your preferred view type.',
-          },
-          { 
-            type: 'checkbox', 
-            name: 'showTooltips', 
+            tooltip: 'Choose the preferred view type.',
+          },*/
+          {
+            type: 'checkbox',
+            name: 'showTooltips',
             width: '300px',
-            placeholder: 'Enable Helpful Tooltips in Forms',
+            placeholder: 'Enable Help Text in Forms',
             value:this.prefs.preferences.showTooltips,
-            tooltip: 'This option enables/disables tooltips in forms.',
+            tooltip: 'Display help icons in forms.',
             class:'inline'
           },
           { 
@@ -95,10 +95,10 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
     ]*/
 
     constructor(
-      protected router: Router, 
+      protected router: Router,
       protected rest: RestService,
       protected ws: WebSocketService,
-      protected _injector: Injector, 
+      protected _injector: Injector,
       protected _appRef: ApplicationRef,
       public themeService:ThemeService,
       public prefs:PreferencesService,
@@ -147,17 +147,17 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
      /*setFavoriteFields(){
        for(let i = 0; i < this.themeService.freenasThemes.length; i++){
          let theme = this.themeService.freenasThemes[i];
-         let field = { 
-           type: 'checkbox', 
+         let field = {
+           type: 'checkbox',
            name: theme.name,
            width: '200px',
            placeholder:theme.label,
            value: false,
-           tooltip: 'Add ' + theme.label + ' to your favorites',
+           tooltip: 'Add ' + theme.label + ' to favorites',
            class:'inline'
          }
          this.favoriteFields.push(field);
-       }   
+       }
      }*/
 
      setThemeOptions(){

@@ -16,29 +16,6 @@ export class StorageService {
     return this.ws.call(this.diskResource, []);
   }
 
-  // Sorts array by disk names into 'natural' order
-  mySorter(myArray, key) {
-  let tempArr = [];
-  myArray.forEach((item) => {
-    tempArr.push(item[key]);
-  })
-  // The Intl Collator allows language-sensitive str comparison and can allow for numbers
-  let myCollator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
-  // Sort devnames (only) into 'natural' order
-  let sorter = tempArr.sort(myCollator.compare);
-
-  // Takes the disk list and matches it to the sorted array of devnames only    
-  myArray.sort((a, b) => {
-    let A = a[key], B = b[key];
-    if (sorter.indexOf(A) > sorter.indexOf(B)) {
-      return 1;
-    } else {
-      return -1;
-    }
-  });
-  return myArray
-  }
-
   downloadFile(filename, contents, mime_type){
     mime_type = mime_type || "text/plain";
 
@@ -68,4 +45,70 @@ export class StorageService {
     dlink.click();
     dlink.remove();
   }
+
+  // Handles sorting for eneity tables and some other ngx datatables 
+  tableSorter(arr, key, asc) {
+    let tempArr = [],
+      sorter,
+      myCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+    
+    // Breaks out the key to sort by
+    arr.forEach((item) => {
+      tempArr.push(item[key]);
+    });
+
+    // Select table columns labled with GiB, Mib, etc
+    // Regex checks for ' XiB' with a leading space and X === K, M, G or T 
+    if (typeof(tempArr[0]) === 'string' && 
+      (tempArr[0].slice(-2) === ' B' || /\s[KMGT]iB$/.test(tempArr[0].slice(-4) ))) {
+
+    let bytes = [], kbytes = [], mbytes = [], gbytes = [], tbytes = [];
+    for (let i of tempArr) {
+      if (i.slice(-2) === ' B') {
+        bytes.push(i);
+      } else {
+        switch (i.slice(-3)) {
+          case 'KiB':
+            kbytes.push(i);
+            break;
+          case 'MiB':
+            mbytes.push(i);
+            break;
+          case 'GiB':
+            gbytes.push(i);
+            break;
+          case 'TiB':
+            tbytes.push(i);
+        }
+      }
+    }
+
+    // Sort each array independently, then put them back together
+    bytes = bytes.sort(myCollator.compare);
+    kbytes = kbytes.sort(myCollator.compare);
+    mbytes = mbytes.sort(myCollator.compare);
+    gbytes = gbytes.sort(myCollator.compare);
+    tbytes = tbytes.sort(myCollator.compare);
+    
+    sorter = bytes.concat(kbytes, mbytes, gbytes, tbytes)
+
+  } else {
+      sorter = tempArr.sort(myCollator.compare);
+    }
+      // Rejoins the sorted keys with the rest of the row data
+      let v;
+      // ascending or decending
+      asc==='asc' ? (v = 1) : (v = -1);
+      arr.sort((a, b) => {
+        const A = a[key],
+            B = b[key];
+        if (sorter.indexOf(A) > sorter.indexOf(B)) {
+            return 1 * v;
+        } else {
+            return -1 * v;
+        }
+      });
+          
+    return arr;
+  } 
 }

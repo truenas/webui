@@ -89,7 +89,11 @@ export class JailEditComponent implements OnInit {
       name: 'ip4_interface',
       placeholder: T('IPv4 interface'),
       tooltip: T('IPv4 interface for the jail.'),
-      options: [],
+      options: [{
+        label: '------',
+        value: '',
+      }],
+      value: '',
       relation: [{
         action: 'DISABLE',
         when: [{
@@ -134,7 +138,7 @@ export class JailEditComponent implements OnInit {
       tooltip: T('IPv4 netmask for the jail.'),
       options: [
         {
-          label: '---------',
+          label: '------',
           value: '',
         }
       ],
@@ -146,7 +150,6 @@ export class JailEditComponent implements OnInit {
           value: true,
         }]
       }],
-      required: false,
       class: 'inline',
       width: '20%',
     },
@@ -177,7 +180,11 @@ export class JailEditComponent implements OnInit {
       name: 'ip6_interface',
       placeholder: T('IPv6 Interface'),
       tooltip: T('IPv6 interface for the jail.'),
-      options: [],
+      options: [{
+        label: '------',
+        value: '',
+      }],
+      value: '',
       class: 'inline',
       width: '30%',
     },
@@ -212,7 +219,6 @@ export class JailEditComponent implements OnInit {
         }
       ],
       value: '',
-      required: false,
       class: 'inline',
       width: '20%',
     },
@@ -1201,15 +1207,19 @@ export class JailEditComponent implements OnInit {
     });
     this.formGroup.controls['vnet'].valueChanges.subscribe((res) => {
       if (res) {
-        if (!_.find(this.ip4_interfaceField.options, { label: 'vnet0'})) {
+        if (_.find(this.ip4_interfaceField.options, { label: 'vnet0'}) == undefined) {
           this.ip4_interfaceField.options.push({ label: 'vnet0', value: 'vnet0'});
         }
-        if (!_.find(this.ip6_interfaceField.options, { label: 'vnet0'})) {
+        if (_.find(this.ip6_interfaceField.options, { label: 'vnet0'}) == undefined) {
           this.ip6_interfaceField.options.push({ label: 'vnet0', value: 'vnet0'});
         }
       } else {
-        this.ip4_interfaceField.options.pop({ label: 'vnet0', value: 'vnet0'});
-        this.ip6_interfaceField.options.pop({ label: 'vnet0', value: 'vnet0'});
+        if (_.find(this.ip4_interfaceField.options, { 'label': 'vnet0'}) != undefined) {
+          this.ip4_interfaceField.options.pop({ label: 'vnet0', value: 'vnet0'});
+        }
+        if (_.find(this.ip6_interfaceField.options, { 'label': 'vnet0'}) != undefined) {
+          this.ip6_interfaceField.options.pop({ label: 'vnet0', value: 'vnet0'});
+        }
       }
 
       if (this.formGroup.controls['dhcp'].value && !res) {
@@ -1229,20 +1239,6 @@ export class JailEditComponent implements OnInit {
         _.find(this.basicfieldConfig, { 'name': 'bpf' }).errors = '';
       }
     });
-    this.formGroup.controls['ip4_addr'].valueChanges.subscribe((res) => {
-      if (res == undefined || res == 'none' || res == '') {
-        this.ip4_netmaskField.required = false;
-      } else {
-        this.ip4_netmaskField.required = true;
-      }
-    });
-    this.formGroup.controls['ip6_addr'].valueChanges.subscribe((res) => {
-      if (res == undefined || res == 'none' || res == '') {
-        this.ip6_prefixField.required = false;
-      } else {
-        this.ip6_prefixField.required = true;
-      }
-    });
 
     this.aroute.params.subscribe(params => {
       this.pk = params['pk'];
@@ -1259,9 +1255,16 @@ export class JailEditComponent implements OnInit {
               if (res[0][i] == 'none' || res[0][i] == '') {
                 this.formGroup.controls['ip4_addr'].setValue('');
               } else {
-                this.formGroup.controls['ip4_interface'].setValue(_.split(res[0][i], '|', 1)[0]);
-                this.formGroup.controls['ip4_addr'].setValue(_.split(res[0][i], '|', 2)[1].split('/')[0]);
-                this.formGroup.controls['ip4_netmask'].setValue(_.split(res[0][i], '|', 2)[1].split('/')[1]);
+                if (res[0][i].indexOf('|') > 0) {
+                  this.formGroup.controls['ip4_interface'].setValue(res[0][i].split('|')[0]);
+                  res[0][i] = res[0][i].split('|')[1];
+                }
+                if (res[0][i].indexOf('/') > 0) {
+                  this.formGroup.controls['ip4_addr'].setValue(res[0][i].split('/')[0]);
+                  this.formGroup.controls['ip4_netmask'].setValue(res[0][i].split('/')[1]);
+                } else {
+                  this.formGroup.controls['ip4_addr'].setValue(res[0][i]);
+                }
               }
               continue;
             }
@@ -1269,9 +1272,16 @@ export class JailEditComponent implements OnInit {
               if (res[0][i] == 'none' || res[0][i] == '') {
                 this.formGroup.controls['ip6_addr'].setValue('');
               } else {
-                this.formGroup.controls['ip6_interface'].setValue(_.split(res[0][i], '|', 1)[0]);
-                this.formGroup.controls['ip6_addr'].setValue(_.split(res[0][i], '|', 2)[1].split('/')[0]);
-                this.formGroup.controls['ip6_prefix'].setValue(_.split(res[0][i], '|', 2)[1].split('/')[1]);
+                if (res[0][i].indexOf('|') > 0) {
+                  this.formGroup.controls['ip6_interface'].setValue(res[0][i].split('|')[0]);
+                  res[0][i] = res[0][i].split('|')[1];
+                }
+                if (res[0][i].indexOf('/') > 0) {
+                  this.formGroup.controls['ip6_addr'].setValue(res[0][i].split('/')[0]);
+                  this.formGroup.controls['ip6_prefix'].setValue(res[0][i].split('/')[1]);
+                } else {
+                  this.formGroup.controls['ip6_addr'].setValue(res[0][i]);
+                }
               }
               continue;
             }
@@ -1352,24 +1362,33 @@ export class JailEditComponent implements OnInit {
     this.router.navigate(new Array('').concat(this.route_success));
   }
 
+  getFullIP(ipInterface: string, ip: string, netmask: string) {
+    let full_address = ip;
+    if (ipInterface != '') {
+      full_address = ipInterface + '|' + ip;
+    }
+    if (netmask != '') {
+      full_address += '/' + netmask;
+    }
+    return full_address;
+  }
+
   onSubmit() {
     let updateRelease: boolean = false;
     let newRelease: any;
     let value = _.cloneDeep(this.formGroup.value);
 
-    if (value['ip4_addr']) {
-      if (value['ip4_addr'] == '') {
-        value['ip4_addr'] = 'none';
-      } else {
-        value['ip4_addr'] = value['ip4_interface'] + '|' + value['ip4_addr'] + '/' + value['ip4_netmask'];
-      }
-      delete value['ip4_interface'];
-      delete value['ip4_netmask'];
-    }
-    if (value['ip6_addr'] == '') {
-      value['ip6_addr'] = 'none';
+    if (value['ip4_addr'] == '' || value['ip4_addr'] == undefined) {
+      delete value['ip4_addr'];
     } else {
-      value['ip6_addr'] = value['ip6_interface'] + '|' + value['ip6_addr'] + '/' + value['ip6_prefix'];
+      value['ip4_addr'] = this.getFullIP(value['ip4_interface'], value['ip4_addr'], value['ip4_netmask']);
+    }
+    delete value['ip4_interface'];
+    delete value['ip4_netmask'];
+    if (value['ip6_addr'] == '' || value['ip6_addr'] == undefined) {
+      delete value['ip6_addr'];
+    } else {
+      value['ip6_addr'] = this.getFullIP(value['ip6_interface'], value['ip6_addr'], value['ip6_prefix']);
     }
     delete value['ip6_interface'];
     delete value['ip6_prefix'];

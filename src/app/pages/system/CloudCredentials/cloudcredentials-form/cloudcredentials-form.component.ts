@@ -173,7 +173,7 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'key-B2',
-      placeholder: T('Application Key'),
+      placeholder: T('Master Application Key'),
       tooltip: T('Backblaze B2 Bucket Application Key. Log in to the B2\
                   account and generate the key on the Buckets page. <a\
                   href="https://help.backblaze.com/hc/en-us/articles/224991568-Where-can-I-find-my-Account-ID-and-Application-Key-"\
@@ -358,6 +358,24 @@ export class CloudCredentialsFormComponent {
                   target="_blank">Google Drive</a>. Access Tokens expire\
                   periodically and must be refreshed.'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'GOOGLE_DRIVE',
+           }]
+        }
+      ]
+    },
+    {
+      type: 'input',
+      name: 'team_drive-GOOGLE_DRIVE',
+      placeholder: T('Team Drive ID'),
+      tooltip: T('Only needed when connecting to a Team Drive. The ID of\
+                  the top level folder of the Team Drive.'),
+      required: false,
       isHidden: true,
       relation: [
         {

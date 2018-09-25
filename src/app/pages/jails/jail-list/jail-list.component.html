@@ -1,4 +1,4 @@
-<div *ngIf="!isPoolActivated;else jail_list">
+<div *ngIf="isPoolActivated == false">
   <div class="mat-content">
     <mat-card>
       <div *ngIf="availablePools.length > 0; else noPool">
@@ -26,6 +26,5 @@
     </mat-card>
   </div>
 </div>
-<ng-template #jail_list>
-  <entity-table [title]="title" [conf]="this "></entity-table>
-</ng-template>
+
+<entity-table [title]="title" [conf]="this" *ngIf="isPoolActivated"></entity-table>

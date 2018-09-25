@@ -154,7 +154,6 @@ export class PreferencesService {
     newProps.forEach((item, index) => {
     	merged[item] = fui[item];	
     });
-    console.log(merged)
     return merged;
   }
 
