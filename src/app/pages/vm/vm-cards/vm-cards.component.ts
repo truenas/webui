@@ -96,7 +96,9 @@ export class VmCardsComponent implements OnInit, OnDestroy {
      * */
 
     this.controlEvents.subscribe((evt:CoreEvent) => {
-      const index = this.getCardIndex("id",evt.sender.machineId);
+      //if(evt.sender){
+        const index = this.getCardIndex("id",evt.sender.machineId);
+      //}
       switch(evt.name){
         case "FormSubmitted":
           //evt.data.autostart = evt.data.autostart.toString();
@@ -119,6 +121,9 @@ export class VmCardsComponent implements OnInit, OnDestroy {
           this.cards[index].state = "creating clone";
           this.cancel(index);
           this.core.emit({name:"VmClone", data: this.cards[index].id, sender:this});
+        break;
+        case "RestartVM":
+          this.restartVM(index);
         break;
       default:
       break;
@@ -149,7 +154,6 @@ export class VmCardsComponent implements OnInit, OnDestroy {
     });
 
     this.core.register({observerClass:this,eventName:"VmStarted"}).subscribe((evt:CoreEvent) => {
-      console.log(evt)
         if (evt.data.trace) {
           this.dialog.errorReport(T('VM failed to start') , evt.data.reason, evt.data.trace.formatted)
           const cardIndex = this.getCardIndex('id',evt.data.id[0]);
@@ -409,6 +413,13 @@ export class VmCardsComponent implements OnInit, OnDestroy {
     })
   }
 
+  restartVM(index:number){ 
+    const vm = this.cards[index];
+    vm.transitionalState = true;
+    vm.state = "restarting"
+    this.core.emit({name:"VmRestart", data: [vm.id]});
+  }
+
   removeVM(evt:CoreEvent){
     const index = this.getCardIndex("id", evt.sender);
 
@@ -487,7 +498,7 @@ export class VmCardsComponent implements OnInit, OnDestroy {
            if(poweroff){
              eventName = "VmPowerOff";
              this.cards[index].state = "stopping";
-             this.core.emit({name: eventName, data:[vm.id, true]});
+             this.core.emit({name: eventName, data:[vm.id]});
            } else {
              eventName = "VmStop";
              this.cards[index].state = "stopping";
@@ -542,8 +553,7 @@ export class VmCardsComponent implements OnInit, OnDestroy {
     }
   }
 
-  checkStatus(id?:number){
-    console.log("checking status...")
+  checkStatus(id?:number){ 
     if(id){
       this.core.emit({
         name:"VmStatusRequest",
