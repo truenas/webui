@@ -167,8 +167,12 @@ export class DockerVMWizardComponent {
           value: 20,
           inputType: 'number',
           min: 20,
-          validation : [ Validators.required ],
           required: true
+          isHidden: false,
+          blurStatus: true,
+          blurEvent: this.blurEvent3,
+          parent: this,
+          validation: [Validators.required, Validators.min(20)]
         },
         {
           type: 'explorer',
@@ -286,6 +290,14 @@ export class DockerVMWizardComponent {
       ( < FormGroup > entityWizard.formArray.get([4])).get('size').valueChanges.subscribe((size) => {
         this.summary[T('Raw file size')] = size + ' GiB';
       });
+      ( < FormGroup > entityWizard.formArray.get([4])).get('raw_file_directory').valueChanges.subscribe((raw_file_directory)=>{
+        const volsize = ( < FormGroup > entityWizard.formArray.get([4])).controls['size'].value * 1024 * 1024 * 1024;
+        this.ws.call('filesystem.statfs',[raw_file_directory]).subscribe((stat)=> {
+         if (stat.free_bytes < volsize ) {
+          ( < FormGroup > entityWizard.formArray.get([4])).controls['size'].setValue(Math.floor(stat.free_bytes / (1024 * 1024 * 1024)));
+         }
+        })
+      });
     });
   }
   getRndInteger(min, max) {
@@ -318,6 +330,21 @@ blurEvent2(parent){
 
     }
   })
+}
+blurEvent3(parent){
+  if(parent.entityWizard.formArray.controls[4].value.size > 0 ) {
+    const size = parent.entityWizard.formArray.controls[4].value.size * 1024 * 1024 * 1024;
+    const raw_file_directory = parent.entityWizard.formArray.controls[4].value.raw_file_directory;
+    const vm_name = parent.entityWizard.formGroup.value.formArray[1].name;
+    parent.ws.call('filesystem.statfs',[raw_file_directory]).subscribe((stat)=> {
+      if (stat.free_bytes < size ) {
+        parent.dialogService.Info("Error", `Cannot allocate ${size / (1024 * 1024 * 1024)} Gib to for storage docker machine: ${vm_name}.`).subscribe(()=>{
+          parent.entityWizard.formArray.get([4]).get('size').setValue(Math.floor(stat.free_bytes / (1024 * 1024 * 1024)));
+        })
+        
+       }
+    })
+  }
 }
 
 async customSubmit(value) {

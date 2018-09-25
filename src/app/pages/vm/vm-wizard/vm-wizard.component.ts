@@ -158,7 +158,11 @@ export class VMWizardComponent {
           placeholder : T('Define the size (GiB) for the zvol'),
           tooltip: T('Allocate a number of gigabytes of space for the\
                       new zvol.'),
-          isHidden: false
+          isHidden: false,
+          blurStatus: true,
+          blurEvent: this.blurEvent3,
+          parent: this,
+          validation: [Validators.required, Validators.min(1)]
         },
         {
           type: 'paragraph',
@@ -347,6 +351,14 @@ export class VMWizardComponent {
         }
       });
 
+      ( < FormGroup > entityWizard.formArray.get([3])).get('datastore').valueChanges.subscribe((datastore)=>{
+        const volsize = ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].value * 1024 * 1024 * 1024;
+        this.ws.call('filesystem.statfs',[datastore]).subscribe((stat)=> {
+         if (stat.free_bytes < volsize ) {
+          ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(Math.floor(stat.free_bytes / (1024 * 1024 * 1024)));
+         }
+        })
+      });
       ( < FormGroup > entityWizard.formArray.get([5]).get('iso_path')).valueChanges.subscribe((iso_path) => {
         this.summary[T('Installation Media')] = iso_path;
       });
@@ -355,6 +367,7 @@ export class VMWizardComponent {
       })
       this.ws.call('vm.get_available_memory').subscribe((available_memory)=>{
         if (available_memory > 512 * 1024* 1024) {
+          this.populate_ds(this,res);
           if (res === 'Windows') {
             ( < FormGroup > entityWizard.formArray.get([2])).controls['vcpus'].setValue(2);
             ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(4096);
@@ -410,18 +423,7 @@ export class VMWizardComponent {
       }
 
     });
-    this.ws.call('pool.dataset.query').subscribe((filesystem_res)=>{
-      this.datastore = _.find(this.wizardConfig[3].fieldConfig, { name : 'datastore' });
-      for (const idx in filesystem_res) {
-        if(!filesystem_res[idx].name.includes("/") && !filesystem_res[idx].name.includes("freenas-boot")){
-          this.datastore.options.push(
-            {label : filesystem_res[idx].name, value : filesystem_res[idx].name});
-        }
-      };
-    ( < FormGroup > entityWizard.formArray.get([3])).controls['datastore'].setValue(
-      '/mnt/'+this.datastore.options[0].value
-    )
-    });
+    this.populate_ds(this);
 
     this.networkService.getAllNicChoices().subscribe((res) => {
       this.nic_attach = _.find(this.wizardConfig[4].fieldConfig, {'name' : 'nic_attach'});
@@ -482,6 +484,47 @@ blurEvent2(parent){
 
     }
   })
+}
+blurEvent3(parent){
+  if(parent.entityWizard.formArray.controls[3].value.volsize > 0 ) {
+    const volsize = parent.entityWizard.formArray.controls[3].value.volsize * 1024 * 1024 * 1024;
+    const datastore = parent.entityWizard.formArray.controls[3].value.datastore;
+    const vm_name = parent.entityWizard.formGroup.value.formArray[1].name;
+    parent.ws.call('filesystem.statfs',[datastore]).subscribe((stat)=> {
+      if (stat.free_bytes < volsize ) {
+        parent.dialogService.Info("Error", `Cannot allocate ${volsize / (1024 * 1024 * 1024)} Gib to for storage virtual machine: ${vm_name}.`).subscribe(()=>{
+          parent.entityWizard.formArray.get([3]).get('volsize').setValue(Math.floor(stat.free_bytes / (1024 * 1024 * 1024)));
+        })
+        
+       }
+    })
+  }
+}
+populate_ds(this, res? string) {
+  this.ws.call('pool.dataset.query').subscribe((filesystem_res)=>{
+    this.datastore = _.find(this.wizardConfig[3].fieldConfig, { name : 'datastore' });
+    for (const idx in filesystem_res) {
+      if(!filesystem_res[idx].name.includes("/") && !filesystem_res[idx].name.includes("freenas-boot")){
+        this.datastore.options.push(
+          {label : filesystem_res[idx].name, value : filesystem_res[idx].name});
+      }
+    };
+  this.entityWizard.formArray.get([3]).controls['datastore'].setValue(
+    '/mnt/'+this.datastore.options[0].value
+  )
+  this.ws.call('filesystem.statfs',['/mnt/'+this.datastore.options[0].value]).subscribe((stat)=> {
+    if (res === "Windows") {
+      const storage = 40*1024*1024*1024
+    }
+    else {
+      const storage = 10*1024*1024*1024
+    }
+    const volsize = storage*1024*1024*1024;
+    if (volsize && stat.free_bytes < volsize ) {
+      this.entityWizard.formArray.get([3]).controls['volsize'].setValue(Math.floor(stat.free_bytes / (1024 * 1024 * 1024))); 
+    };
+   });
+  });
 }
 
 async customSubmit(value) {
