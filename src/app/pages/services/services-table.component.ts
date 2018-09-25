@@ -25,6 +25,8 @@ export class ServicesTableComponent implements OnChanges {
     { name: 'Actions', prop: 'cardActions' }
   ];
 
+  public checked: boolean;
+
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService) {}
 
   ngOnChanges() {
