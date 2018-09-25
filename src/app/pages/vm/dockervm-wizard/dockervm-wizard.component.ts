@@ -260,13 +260,24 @@ export class DockerVMWizardComponent {
     ( < FormGroup > entityWizard.formArray.get([1]).get('name')).valueChanges.subscribe((name) => {
       this.summary[T('Name')] = name;
       this.summary[T('Number of CPUs')] = ( < FormGroup > entityWizard.formArray.get([2])).get('vcpus').value;
-
+    });
+    
       ( < FormGroup > entityWizard.formArray.get([2])).get('vcpus').valueChanges.subscribe((vcpus) => {
         this.summary[T('Number of CPUs')] = vcpus;
       });
       this.summary[T('Memory')] = ( < FormGroup > entityWizard.formArray.get([2])).get('memory').value + ' MiB';
       ( < FormGroup > entityWizard.formArray.get([2])).get('memory').valueChanges.subscribe((memory) => {
         this.summary[T('Memory')] = memory + ' MiB';
+      });
+
+      this.ws.call('vm.get_available_memory').subscribe((vm_memory_available)=>{
+        const vm_memory_requested = 2048;
+        if( vm_memory_requested *1024*1024 > vm_memory_available){
+          this.entityWizard.formArray.get([2]).get('memory').setValue(Math.floor(vm_memory_available/(1024*1024)));
+        }
+        else {
+          this.entityWizard.formArray.get([2]).get('memory').setValue(0);
+        }
       });
 
       this.ws.call('vm.get_available_memory').subscribe((available_memory)=>{
@@ -294,11 +305,11 @@ export class DockerVMWizardComponent {
         const volsize = ( < FormGroup > entityWizard.formArray.get([4])).controls['size'].value * 1024 * 1024 * 1024;
         this.ws.call('filesystem.statfs',[raw_file_directory]).subscribe((stat)=> {
          if (stat.free_bytes < volsize ) {
-          ( < FormGroup > entityWizard.formArray.get([4])).controls['size'].setValue(Math.floor(stat.free_bytes / (1024 * 1024 * 1024)));
+          ( < FormGroup > entityWizard.formArray.get([4])).controls['size'].setValue(Math.floor(stat.free_bytes * 0.75 / (1024 * 1024 * 1024)));
          }
         })
       });
-    });
+    
   }
   getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
@@ -339,7 +350,7 @@ blurEvent3(parent){
     parent.ws.call('filesystem.statfs',[raw_file_directory]).subscribe((stat)=> {
       if (stat.free_bytes < size ) {
         parent.dialogService.Info("Error", `Cannot allocate ${size / (1024 * 1024 * 1024)} Gib to for storage docker machine: ${vm_name}.`).subscribe(()=>{
-          parent.entityWizard.formArray.get([4]).get('size').setValue(Math.floor(stat.free_bytes / (1024 * 1024 * 1024)));
+          parent.entityWizard.formArray.get([4]).get('size').setValue(Math.floor(stat.free_bytes * 0.75 / (1024 * 1024 * 1024)));
         })
         
        }

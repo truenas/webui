@@ -355,7 +355,7 @@ export class VMWizardComponent {
         const volsize = ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].value * 1024 * 1024 * 1024;
         this.ws.call('filesystem.statfs',[datastore]).subscribe((stat)=> {
          if (stat.free_bytes < volsize ) {
-          ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(Math.floor(stat.free_bytes / (1024 * 1024 * 1024)));
+          ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(Math.floor(stat.free_bytes * 0.75  / (1024 * 1024 * 1024)));
          }
         })
       });
@@ -521,8 +521,21 @@ populate_ds(this, res? string) {
     }
     const volsize = storage*1024*1024*1024;
     if (volsize && stat.free_bytes < volsize ) {
-      this.entityWizard.formArray.get([3]).controls['volsize'].setValue(Math.floor(stat.free_bytes / (1024 * 1024 * 1024))); 
+      this.entityWizard.formArray.get([3]).controls['volsize'].setValue(Math.floor(stat.free_bytes * 0.75  / (1024 * 1024 * 1024))); 
     };
+    if (res === "Windows") {
+      const vm_name = this.entityWizard.formGroup.value.formArray[1].name
+      const vm_memory_requested = 40*1024*1024;
+    }
+    else {
+      const vm_name = this.entityWizard.formGroup.value.formArray[1].name
+      const vm_memory_requested = 10*1024*1024;
+    }
+    this.ws.call('vm.get_available_memory').subscribe((vm_memory_available)=>{
+      if( vm_memory_requested *1024*1024> vm_memory_available){
+        this.entityWizard.formArray.get([2]).get('memory').setValue(Math.floor(vm_memory_available/(1024*1024)));
+      }
+    })
    });
   });
 }
