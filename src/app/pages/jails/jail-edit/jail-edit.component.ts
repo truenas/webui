@@ -94,6 +94,7 @@ export class JailEditComponent implements OnInit {
         value: '',
       }],
       value: '',
+      required: false,
       relation: [{
         action: 'DISABLE',
         when: [{
@@ -185,6 +186,7 @@ export class JailEditComponent implements OnInit {
         value: '',
       }],
       value: '',
+      required: false,
       class: 'inline',
       width: '30%',
     },
@@ -1130,6 +1132,25 @@ export class JailEditComponent implements OnInit {
     return false;
   }
 
+  updateInterfaceValidation() {
+    let dhcp_ctrl = this.formGroup.controls['dhcp'];
+    let vnet_ctrl = this.formGroup.controls['vnet'];
+    let ip4_addr_ctrl = this.formGroup.controls['ip4_addr'];
+    let ip6_addr_ctrl = this.formGroup.controls['ip6_addr'];
+
+    if (dhcp_ctrl.value != true && vnet_ctrl.value == true && ip4_addr_ctrl.value != undefined && ip4_addr_ctrl.value != '') {
+        this.ip4_interfaceField.required = true;
+    } else {
+      this.ip4_interfaceField.required = false;
+    }
+
+    if (dhcp_ctrl.value != true && vnet_ctrl.value == true && ip6_addr_ctrl.value != undefined && ip6_addr_ctrl.value != '') {
+        this.ip6_interfaceField.required = true;
+    } else {
+      this.ip6_interfaceField.required = false;
+    }
+  }
+
   ngOnInit() {
     this.releaseField = _.find(this.basicfieldConfig, { 'name': 'release' });
 
@@ -1229,6 +1250,8 @@ export class JailEditComponent implements OnInit {
         _.find(this.basicfieldConfig, { 'name': 'vnet' }).hasErrors = false;
         _.find(this.basicfieldConfig, { 'name': 'vnet' }).errors = '';
       }
+
+      this.updateInterfaceValidation();
     });
     this.formGroup.controls['bpf'].valueChanges.subscribe((res) => {
       if (this.formGroup.controls['dhcp'].value && !res) {
@@ -1238,6 +1261,13 @@ export class JailEditComponent implements OnInit {
         _.find(this.basicfieldConfig, { 'name': 'bpf' }).hasErrors = false;
         _.find(this.basicfieldConfig, { 'name': 'bpf' }).errors = '';
       }
+    });
+
+    this.formGroup.controls['ip4_addr'].valueChanges.subscribe((res) => {
+      this.updateInterfaceValidation();
+    });
+    this.formGroup.controls['ip6_addr'].valueChanges.subscribe((res) => {
+      this.updateInterfaceValidation();
     });
 
     this.aroute.params.subscribe(params => {
