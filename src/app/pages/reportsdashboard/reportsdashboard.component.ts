@@ -64,7 +64,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
       paginationChartData = paginationChartData.slice(beginIndex, endIndex);
     }
 
-    tabChartsMappingDataSelected.paginatedChartConfigData = paginationChartData;
+    tabChartsMappingDataSelected.paginatedChartConfigData = paginationChartData; 
 
     this.paginationLength = this.tabChartsMappingDataSelected.chartConfigData.length;
     

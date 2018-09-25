@@ -1,6 +1,8 @@
 import 'style-loader!./lineChart.scss';
+import { Subject } from 'rxjs/Subject';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
 
-import {Component, Input, OnInit, AfterViewInit} from '@angular/core';
+import {Component, Input, OnInit, AfterViewInit, OnDestroy} from '@angular/core';
 import * as ChartistLegend from 'chartist-plugin-legend';
 import {UUID} from 'angular2-uuid';
 import * as c3 from 'c3';
@@ -14,7 +16,7 @@ export interface ChartFormatter {
 
 
 @Component({selector: 'line-chart', templateUrl: './lineChart.html'})
-export class LineChartComponent implements OnInit, AfterViewInit, HandleDataFunc {
+export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, HandleDataFunc {
 
   @Input() dataList: DataListItem[];
 
@@ -33,16 +35,22 @@ export class LineChartComponent implements OnInit, AfterViewInit, HandleDataFunc
   @Input() type: string;
   @Input() divideBy: number;
   @Input() chartFormatter: ChartFormatter;
+
+  public controlEvents: Subject<any>;
+  public legendEvents: Subject<any>;
   data: LineChartData = {
     labels: [],
     series: [],
   };
   colorPattern = ["#2196f3", "#009688", "#ffc107", "#9c27b0", "#607d8b", "#00bcd4", "#8bc34a", "#ffeb3b", "#e91e63", "#3f51b5"];
+  
 
   controlUid: string;
 
 
-  constructor(private _lineChartService: LineChartService) {}
+  constructor(private core:CoreService, private _lineChartService: LineChartService) {
+
+  }
 
   handleDataFunc(linechartData: LineChartData) {
 
@@ -100,7 +108,7 @@ export class LineChartComponent implements OnInit, AfterViewInit, HandleDataFunc
       	columns: columns,
       	x: 'xValues',
       	//xFormat: '%H:%M',
-      	type: 'area-spline'
+      	type: 'line'
       },
       axis: {
       	x: {
@@ -132,7 +140,7 @@ export class LineChartComponent implements OnInit, AfterViewInit, HandleDataFunc
       	}
       },
       zoom: {
-        enabled: true
+        enabled: false
       }
     });
 
@@ -155,8 +163,24 @@ export class LineChartComponent implements OnInit, AfterViewInit, HandleDataFunc
 
   }
 
-  ngOnInit() {
+  private processThemeColors(theme):string[]{
+    let colors: string[] = [];
+    theme.accentColors.map((color) => {
+      colors.push(theme[color]);
+    }); 
+    return colors;
+  }
 
+  ngOnInit() {
+    this.core.register({ observerClass:this, eventName:"ThemeData" }).subscribe((evt:CoreEvent)=>{ 
+      this.colorPattern = this.processThemeColors(evt.data);
+    });
+
+    this.core.register({ observerClass:this, eventName:"ThemeChanged" }).subscribe((evt:CoreEvent)=>{ 
+      this.colorPattern = this.processThemeColors(evt.data);
+    });
+
+    this.core.emit({name:"ThemeDataRequest"});
     this.controlUid = "chart_" + UUID.UUID();
   }
 
@@ -168,6 +192,10 @@ export class LineChartComponent implements OnInit, AfterViewInit, HandleDataFunc
 	      this._lineChartService.getData(this, this.dataList);
       }
     }
+  }
+
+  ngOnDestroy(){
+    this.core.unregister({observerClass:this});
   }
 
 }

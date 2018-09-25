@@ -187,6 +187,10 @@ export class ThemeService {
       }
     });
 
+    this.core.register({observerClass:this, eventName:"ThemeDataRequest"}).subscribe((evt:CoreEvent) => {
+      this.core.emit({name:"ThemeData", data:this.findTheme(this.activeTheme), sender:this});
+    });
+
     this.core.register({observerClass:this,eventName:"GlobalPreviewChanged"}).subscribe((evt:CoreEvent) => {
       console.log("GlobalPreview callback")
       //this.globalPreview = !this.globalPreview;
