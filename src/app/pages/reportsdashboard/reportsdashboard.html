@@ -1,36 +1,44 @@
-<mat-spinner 
-  [diameter]='40' 
-  id="reporting-spinner"
-  *ngIf="showSpinner"
->
-</mat-spinner> 
-<div id="dashboardcontainerdiv">
-  <mat-tab-group *ngIf="drawTabs" (selectChange)="tabSelectChangeHandler($event)">
-    <mat-tab *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray" label="{{ tabChartsMappingDataItem.keyName | translate }}">
-      <div *ngIf="tabChartsMappingDataSelected.keyName === tabChartsMappingDataItem.keyName">
+<div> <!-- Is this needed for flex layout? -->
+  <mat-spinner 
+    [diameter]='40' 
+    id="reporting-spinner"
+    *ngIf="showSpinner"
+    >
+  </mat-spinner> 
+    <div id="dashboardcontainerdiv">
+      <mat-tab-group *ngIf="drawTabs" (selectChange)="tabSelectChangeHandler($event)">
+        <mat-tab *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray" label="{{ tabChartsMappingDataItem.keyName | translate }}">
+          <div *ngIf="tabChartsMappingDataSelected.keyName === tabChartsMappingDataItem.keyName">
 
-        <div *ngIf="paginationLength > paginationPageSize">
-          <mat-paginator [length]="paginationLength" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" (page)="paginationUpdate($event)">
-          </mat-paginator>
-        </div>
+            <!--<div *ngIf="paginationLength > paginationPageSize">
+              <mat-paginator [length]="paginationLength" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" (page)="paginationUpdate($event)">
+              </mat-paginator>
+              </div>-->
 
-        <mat-card *ngFor="let chartConfigData of tabChartsMappingDataSelected.paginatedChartConfigData">
-          <mat-card-title>{{ chartConfigData.title  | translate }}</mat-card-title>
-          <mat-card-content>
-            <line-chart [dataList]="chartConfigData.dataList" [legends]="chartConfigData.legends" [type]='"Line"' [divideBy]="chartConfigData.divideBy"></line-chart>
-            
-          </mat-card-content>
-        </mat-card>
+              <!--<mat-card *ngFor="let chartConfigData of tabChartsMappingDataSelected.paginatedChartConfigData">
+                <mat-card-title>{{ chartConfigData.title  | translate }}</mat-card-title>
+                <mat-card-content>
+                <line-chart [dataList]="chartConfigData.dataList" [legends]="chartConfigData.legends" [type]='"Line"' [divideBy]="chartConfigData.divideBy"></line-chart>
 
-        <div class="give_me_space_bottom">
-          <br/>
-        </div>
-      </div>
-    </mat-tab>
-  </mat-tab-group>
+                </mat-card-content>
+                </mat-card>-->
 
-  <!-- Silly but stops the footer from scrunching up into my action. -->
-  <div class="give_me_space_bottom"></div>
+                <div fxLayout="row wrap" fxLayoutAlign="space-around center">
+                  <div  fxFlex="46" *ngFor="let chartConfigData of tabChartsMappingDataSelected.paginatedChartConfigData">
+                    <report [title]="chartConfigData.title" [lineChartConfig]="chartConfigData"></report>
+                  </div>
+                </div>
+
+                <!--<div class="give_me_space_bottom">
+                  <br/>
+                  </div>-->
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+
+      <!-- Silly but stops the footer from scrunching up into my action. -->
+      <!--<div class="give_me_space_bottom"></div>-->
 
 
+    </div>
 </div>

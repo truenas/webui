@@ -1,5 +1,5 @@
 import 'style-loader!./lineChart.scss';
-import { Subject } from 'rxjs/Subject';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 
 import {Component, Input, OnInit, AfterViewInit, OnDestroy} from '@angular/core';
@@ -14,7 +14,6 @@ export interface ChartFormatter {
   format (value, ratio, id);
 }
 
-
 @Component({selector: 'line-chart', templateUrl: './lineChart.html'})
 export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, HandleDataFunc {
 
@@ -25,8 +24,8 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
    *    This fits in with how C3 charts work.
    *
    *     [ ["nameOfField_1", number, number, number, number],
-   *       ["nameOfField_2", number, number, number, number]
-   *     ]
+     *       ["nameOfField_2", number, number, number, number]
+     *     ]
    */
   @Input() series: any[][];
 
@@ -36,20 +35,21 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
   @Input() divideBy: number;
   @Input() chartFormatter: ChartFormatter;
 
-  public controlEvents: Subject<any>;
-  public legendEvents: Subject<any>;
+  public chart:any;
+  public showLegendValues: boolean = false;
+  public legendEvents: BehaviorSubject<any>;
   data: LineChartData = {
     labels: [],
     series: [],
   };
   colorPattern = ["#2196f3", "#009688", "#ffc107", "#9c27b0", "#607d8b", "#00bcd4", "#8bc34a", "#ffeb3b", "#e91e63", "#3f51b5"];
-  
+
 
   controlUid: string;
 
 
   constructor(private core:CoreService, private _lineChartService: LineChartService) {
-
+    this.legendEvents = new BehaviorSubject(false);
   }
 
   handleDataFunc(linechartData: LineChartData) {
@@ -61,17 +61,17 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
     linechartData.series.forEach((dataSeriesArray) => {
 
       if (typeof (this.divideBy) !== 'undefined') {
-      	const newArray = new Array();
-      	dataSeriesArray.forEach((numberVal) => {
+        const newArray = new Array();
+        dataSeriesArray.forEach((numberVal) => {
 
-      	  if (numberVal > 0) {
-      	    newArray.push(numberVal / this.divideBy);
-      	  } else {
-      	    newArray.push(numberVal);
-      	  }
-  	    });
+          if (numberVal > 0) {
+            newArray.push(numberVal / this.divideBy);
+          } else {
+            newArray.push(numberVal);
+          }
+        });
 
-  	    dataSeriesArray = newArray;
+        dataSeriesArray = newArray;
       }
       this.data.series.push(dataSeriesArray);
     });
@@ -92,55 +92,69 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
       const legend: string = this.legends[i];
       let series: any[] = this.data.series[i];
       if( typeof(series) !== 'undefined' && series.length > 0 ) {
-	      series.unshift(legend);
+        series.unshift(legend);
       } else {
-	      series = [legend];
+        series = [legend];
       }
       columns.push(series);
     }
 
-    const chart = c3.generate({
+    this.chart = c3.generate({
       bindto: '#' + this.controlUid,
       color: {
-	      pattern: this.colorPattern
+        pattern: this.colorPattern
       },
       data: {
-      	columns: columns,
-      	x: 'xValues',
-      	//xFormat: '%H:%M',
-      	type: 'line'
+        columns: columns,
+        x: 'xValues',
+        //xFormat: '%H:%M',
+        type: 'line',
+        onmouseout: (d) => {
+          this.showLegendValues = false;
+        }
       },
       axis: {
-      	x: {
-      	  type: 'timeseries',
-      	  tick: {
-      	    format: '%H:%M:%S',
-      	    fit: true//,
-      	    //values: ['01:10', '03:10', '06:10']
-      	  }
-      	}
+        x: {
+          type: 'timeseries',
+          tick: {
+            format: '%H:%M:%S',
+            fit: true//,
+            //values: ['01:10', '03:10', '06:10']
+            }
+        }
       },
       grid:{
-      	x:{
-      	  show: false
-      	},
-      	y:{
-      	  show: true
-      	}
+        x:{
+          show: false
+        },
+        y:{
+          show: true
+        }
       },
       subchart: {
-	      show: true
+        show: true
       },
       legend: {
-      	inset: {
-      	  anchor: 'top-right',
-      	  x: 20,
-      	  y: 10,
-      	  step: 2
-      	}
+        show:false
+        /*inset: {
+         anchor: 'top-right',
+         x: 20,
+         y: 10,
+         step: 2
+        }*/
       },
       zoom: {
         enabled: false
+      },
+      tooltip: {
+        show: true,
+        contents: (raw, defaultTitleFormat, defaultValueFormat, color) => {
+          if(!this.showLegendValues){
+            this.showLegendValues = true;
+          }
+          this.legendEvents.next(raw);
+          return '<div style="display:none">' + raw[0].x + '</div>';
+        }
       }
     });
 
@@ -151,13 +165,13 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
     const chart = c3.generate({
       bindto: '#' + this.controlUid,
       data: {
-      	columns: this.series,
-      	type: 'pie'
+        columns: this.series,
+        type: 'pie'
       },
       pie: {
-      	label: {
-      	  format: this.chartFormatter.format
-      	}
+        label: {
+          format: this.chartFormatter.format
+        }
       }
     });
 
@@ -189,7 +203,7 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
       this.setupPiechart();
     } else {
       if (this.dataList.length > 0) {
-	      this._lineChartService.getData(this, this.dataList);
+        this._lineChartService.getData(this, this.dataList);
       }
     }
   }
