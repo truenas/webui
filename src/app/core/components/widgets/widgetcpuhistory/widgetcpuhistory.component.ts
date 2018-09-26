@@ -10,7 +10,6 @@ import { UUID } from 'angular2-uuid';
 import * as d3 from 'd3';
 import * as c3 from 'c3';
 
-import { AnimationDirective } from 'app/core/directives/animation.directive';
 import filesize from 'filesize';
 //import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { WidgetChartComponent, TimeData } from 'app/core/components/widgets/widgetchart/widgetchart.component';

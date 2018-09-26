@@ -2,6 +2,7 @@ import {Component, OnChanges, ElementRef, OnInit, AfterViewInit, ViewChild, Inpu
 import {Router} from '@angular/router';
 import {Subscription} from 'rxjs';
 import {Observable} from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import {RestService, WebSocketService} from '../../../services/';
@@ -55,6 +56,7 @@ export class VmTableComponent implements OnChanges{
   ];
 
   @Input() data: any[];
+  @Input() target: Subject<any>;
   @Output() edit: EventEmitter<any> = new EventEmitter<any>();
   @Output() delete: EventEmitter<any> = new EventEmitter<any>();
   @Output() power: EventEmitter<any> = new EventEmitter<any>();
@@ -168,6 +170,13 @@ export class VmTableComponent implements OnChanges{
     let index = this.data.indexOf(row);
     console.log(index);
     this.power.emit(index);
+  }
+
+  onRestart(row){
+    let index = this.data.indexOf(row);
+    let machine = Object.assign({}, row);
+    machine.machineId = row.id;
+    this.target.next({name:"RestartVM", data:index, sender:machine})
   }
 
 }

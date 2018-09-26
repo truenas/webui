@@ -38,6 +38,8 @@ export class SupportComponent  {
   public entityEdit: any;
   public saveSubmitText = "Submit";
   public registerUrl = " https://redmine.ixsystems.com/account/register"
+  public password_fc: any;
+  public username_fc: any;
 
 
   public fieldConfig: FieldConfig[] = [
@@ -67,6 +69,11 @@ export class SupportComponent  {
                    target="_blank">FreeNAS bug tracking system</a>'),
       required: true,
       validation : [ Validators.required ],
+      blurStatus : true,
+      blurEvent : this.blurEvent,
+      parent : this,
+      togglePw : true,
+      value: '',
     },
     {
       type : 'input',
@@ -79,7 +86,8 @@ export class SupportComponent  {
       blurStatus : true,
       blurEvent : this.blurEvent,
       parent : this,
-      togglePw : true
+      togglePw : true,
+      value: '',
     },
     {
       type : 'select',
@@ -173,31 +181,30 @@ export class SupportComponent  {
 
   blurEvent(parent){
     this.category = _.find(parent.fieldConfig, {name: "category"});
+    this.password_fc = _.find(parent.fieldConfig, { name: 'password' });
+    this.username_fc = _.find(parent.fieldConfig, { name: 'username' });
       if(parent.entityEdit){
         this.username  = parent.entityEdit.formGroup.controls['username'].value;
         this.password  = parent.entityEdit.formGroup.controls['password'].value;
-        if(
-          !this.username && !this.password ||
-          !this.username && this.password ||
-          this.username && !this.password ||
-          this.username === "" && this.password === "" ){
-          return;
+        this.password_fc.hasErrors = false;
+        this.password_fc.errors = '';
+        this.username_fc.hasErrors = false;
+        this.username_fc.errors = '';
+
+        if(this.category.options.length > 0){
+          this.category.options = [];
         }
-          if(this.category.options.length > 0){
-            this.category.options = [];
-          }
-          if(this.category.options.length === 0 ){
-            parent.ws.call('support.fetch_categories',[this.username,this.password]).subscribe((res)=>{
-              for (const property in res) {
-                if (res.hasOwnProperty(property)) {
-                  this.category.options.push({label : property, value : res[property]});
-                }
-              }},(error)=>{
-                if(parent.dialogService){
-                    parent.dialogService.errorReport(error.error, error.reason,error.trace.formatted);
-                }
-              });
-          }
+        if(this.category.options.length === 0 && this.username !== '' && this.password !== ''){
+          parent.ws.call('support.fetch_categories',[this.username,this.password]).subscribe((res)=>{
+            for (const property in res) {
+              if (res.hasOwnProperty(property)) {
+                this.category.options.push({label : property, value : res[property]});
+              }
+            }},(error)=>{
+              this.password_fc.hasErrors = true;
+              this.password_fc.errors = 'Incorrect Username/Password.';
+            });
+        }
       }
   }
 

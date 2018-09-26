@@ -174,7 +174,7 @@ mat-chip.vm-state-on,
 .card-close{
     background: none;
     border: none;
-    position: fixed;
+    position: absolute;
     top: 5px;
     right:0px;
     color: rgba(0,0,0,0.35);
@@ -199,12 +199,17 @@ mat-chip.vm-state-on,
   margin:0;
 }
 
+.slim .side-content .stats-info {
+  position: relative;
+  top: -30px;
+}
+
 .slim .vm-controls{
   width:100%;
 }
 
 .slim .vm-power-btn{  
-  top: 280px;
+  top: 260px;
   left: 116px;
   position: absolute;
 }

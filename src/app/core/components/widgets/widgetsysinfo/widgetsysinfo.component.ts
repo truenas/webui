@@ -7,7 +7,7 @@ import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
 import { ViewChartLineComponent } from 'app/core/components/viewchartline/viewchartline.component';
-import { AnimationDirective } from 'app/core/directives/animation.directive';
+
 import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { environment } from 'app/../environments/environment';

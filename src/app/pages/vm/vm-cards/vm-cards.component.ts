@@ -1,4 +1,5 @@
-import { Component, OnInit,OnDestroy, Input, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, ElementRef, ViewChild} from '@angular/core';
+import { UUID } from 'angular2-uuid';
 import { Router } from '@angular/router';
 import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { WebSocketService, RestService } from '../../../services/';
@@ -18,6 +19,7 @@ import 'rxjs/add/observable/interval';
 interface VmProfile {
   name?:string;
   id?:string;
+  domId?: string;
   description?:string;
   info?:string;
   bootloader?:string;
@@ -33,6 +35,7 @@ interface VmProfile {
   vm_type?: string;
   vm_comport?:string
   isNew?:boolean;
+  transitionalState?:boolean;
 }
 
 @Component({
@@ -40,9 +43,9 @@ interface VmProfile {
   templateUrl: './vm-cards.component.html',
   styleUrls: ['./vm-cards.component.css'],
 })
-export class VmCardsComponent implements OnInit,OnDestroy {
+export class VmCardsComponent implements OnInit, OnDestroy {
 
-  @ViewChild('filter') filter: ElementRef;
+  @ViewChild('filter') filter: ElementRef; 
   @Input() searchTerm = '';
   @Input() cards = []; // Display List
   @Input() cache = []; // Master List:
@@ -87,37 +90,49 @@ export class VmCardsComponent implements OnInit,OnDestroy {
 
   ngOnInit() {
     this.viewMode.value = "cards";
-    Observable.interval(5000).subscribe((val) => { 
-      this.checkStatus();
-     })
     /*
      * Communication Downwards:
      * Listen for events from UI controls
      * */
 
     this.controlEvents.subscribe((evt:CoreEvent) => {
-      const index = this.getCardIndex("id",evt.sender.machineId);
+      //if(evt.sender){
+        const index = this.getCardIndex("id",evt.sender.machineId);
+      //}
       switch(evt.name){
         case "FormSubmitted":
           //evt.data.autostart = evt.data.autostart.toString();
+          this.cards[index].state = "Saving"
+          const profile = this.stripUIProperties(evt.data);
           if(evt.sender.isNew){
             const i = this.getCardIndex('isNew',true);
             this.cards[i].name = evt.data.name;
             this.cards[i].state = "Loading...";
-            this.core.emit({name:"VmCreate",data:[evt.data] ,sender:evt.sender.machineId});
+            this.core.emit({name:"VmCreate",data:[profile] ,sender:evt.sender.machineId});
           } else {
             const formValue = this.parseResponse(evt.data,true);
-            this.core.emit({name:"VmProfileUpdate",data:[evt.sender.machineId,formValue] ,sender:evt.sender.machineId});
-            this.toggleForm(false,this.cards[index],'none');
-            //this.refreshVM(index,evt.sender.machineId);
+            this.core.emit({name:"VmProfileUpdate",data:[evt.sender.machineId,this.stripUIProperties(formValue)] ,sender:evt.sender.machineId});
+            this.toggleForm(false,this.cards[index],'none'); 
           }
         break;
         case "FormCancelled":
           this.cancel(index);
         break;
-        case "CloningVM":
+        case "CloneVM":
           this.cards[index].state = "creating clone";
           this.cancel(index);
+          this.core.emit({name:"VmClone", data: this.cards[index].id, sender:this});
+          this.core.register({observerClass:this,eventName:"VmProfilesRequest"}).subscribe((clone_evt:CoreEvent) => {
+           if (clone_evt.data && clone_evt.data.trace) {
+            this.dialog.errorReport(
+              T('VM failed to cloned') , clone_evt.data.reason, clone_evt.data.trace.formatted).subscribe((result)=>{
+                this.core.emit({name:"VmProfilesRequest"});
+              })
+           };
+          })
+        break;
+        case "RestartVM":
+          this.restartVM(index);
         break;
       default:
       break;
@@ -148,13 +163,6 @@ export class VmCardsComponent implements OnInit,OnDestroy {
     });
 
     this.core.register({observerClass:this,eventName:"VmStarted"}).subscribe((evt:CoreEvent) => {
-      if(typeof evt.data.id == "string"){
-        const cardIndex = this.getCardIndex('id',evt.data.id);
-        this.cards[cardIndex].state = 'running';
-
-        const cacheIndex = this.getCardIndex('id',evt.data.id,true);
-        this.cache[cacheIndex].state = 'running';
-      } else {
         if (evt.data.trace) {
           this.dialog.errorReport(T('VM failed to start') , evt.data.reason, evt.data.trace.formatted)
           const cardIndex = this.getCardIndex('id',evt.data.id[0]);
@@ -162,16 +170,25 @@ export class VmCardsComponent implements OnInit,OnDestroy {
   
           const cacheIndex = this.getCardIndex('id',evt.data.id[0],true);
           this.cache[cacheIndex].state = 'stopped';
+        } else {
+          const cardIndex = this.getCardIndex('id',evt.data.id);
+          this.cards[cardIndex].state = 'running';
+          this.cards[cardIndex].transitionalState = false;
+  
+          const cacheIndex = this.getCardIndex('id',evt.data.id,true);
+          this.cache[cacheIndex].state = 'running';
+          this.cache[cacheIndex].transitionalState =  false;
         }
-      }
     });
 
     this.core.register({observerClass:this,eventName:"VmStopped"}).subscribe((evt:CoreEvent) => {
       const cardIndex = this.getCardIndex('id',evt.data.id);
       this.cards[cardIndex].state = 'stopped';
+      this.cards[cardIndex].transitionalState = false;
 
       const cacheIndex = this.getCardIndex('id',evt.data.id,true);
       this.cache[cacheIndex].state = 'stopped';
+      this.cache[cacheIndex].transitionalState =  false;
     });
 
     this.core.register({observerClass:this,eventName:"VmCreated"}).subscribe((evt:CoreEvent) => {
@@ -221,7 +238,7 @@ export class VmCardsComponent implements OnInit,OnDestroy {
   }
 
   parseResponse(data:any, formatForUpdate?:boolean){
-    const card: VmProfile = {
+    let card: VmProfile = {
       name:data.name,
       description:data.description,
       info:data.info,
@@ -231,7 +248,9 @@ export class VmCardsComponent implements OnInit,OnDestroy {
       memory:data.memory,
       //lazyLoaded: false,
       devices:data.devices,
-      vm_type: data.vm_type
+      vm_type: data.vm_type,
+      domId: "id-" + UUID.UUID(),
+      transitionalState: false
     }
 
     // Leave out properties not used for update requests
@@ -259,7 +278,8 @@ export class VmCardsComponent implements OnInit,OnDestroy {
   }
 
   scrollTo(destination:string){
-    this.core.emit({name:"ScrollTo", data: destination});
+    //console.log(destination)
+    this.core.emit({name:"ScrollTo", data: "#" + destination});
   }
 
   getVmList(){
@@ -276,23 +296,26 @@ export class VmCardsComponent implements OnInit,OnDestroy {
 
     this.cache = [];
     for(let i = 0; i < res.data.length; i++){
-      const card = this.parseResponse(res.data[i]);
-      //this.checkVnc(card);
+      let card = this.parseResponse(res.data[i]);
       this.cache.push(card);
     }
+
     if(init){
       this.displayAll();
     } else {
       this.updateCards();
     }
+
     this.checkStatus();
     if(scroll && this.cards.length == res.data.length){
       setTimeout(()=>{
       let test = (<any>document).querySelector('.vm-card-' + this.cards[this.cards.length-1].id);
-      this.scrollTo(String('.vm-card-' + this.cards[this.cards.length-1].id));
+      this.scrollTo(String(this.cards[this.cards.length-1].domId));
+      
       //this.scrollTo('#animation-target');
       },1000);
     }
+
   }
 
 
@@ -369,6 +392,7 @@ export class VmCardsComponent implements OnInit,OnDestroy {
       memory:"",
       lazyLoaded: false,
       template:'',
+      transitionalState: false,
       isNew:true
     }
     //this.cards.push(card);
@@ -396,6 +420,13 @@ export class VmCardsComponent implements OnInit,OnDestroy {
         this.core.emit({name:"VmDelete", data:[this.cards[index].id], sender:index});
       }
     })
+  }
+
+  restartVM(index:number){ 
+    const vm = this.cards[index];
+    vm.transitionalState = true;
+    vm.state = "restarting"
+    this.core.emit({name:"VmRestart", data: [vm.id]});
   }
 
   removeVM(evt:CoreEvent){
@@ -436,19 +467,6 @@ export class VmCardsComponent implements OnInit,OnDestroy {
     );
   }
 
-  /*cloneVM(index){
-    this.loader.open();
-    this.loaderOpen = true;
-    this.ws.call('vm.clone', [this.cards[index].id]).subscribe((res)=>{
-      this.loader.close();
-      this.getVmList();
-    },
-  (eres)=>{
-    new EntityUtils().handleError(this, eres);
-    this.loader.close();
-    });
-  }*/
-
   toggleForm(flipState, card, template){
     // load #cardBack template with code here
     card.template = template;
@@ -461,6 +479,12 @@ export class VmCardsComponent implements OnInit,OnDestroy {
   // toggles VM on/off
   toggleVmState(index, poweroff?:boolean){
     const vm = this.cards[index];
+    if(vm.transitionalState){
+      return ;
+    } else {
+      // Use transitionalState to avoid errors from multiple button presses
+      vm.transitionalState = true;
+    }
     let eventName: string;
     if (vm.state !== 'running') {
       this.ws.call('vm.query', [[['id', '=', vm.id]]]).subscribe((res)=>{
@@ -483,7 +507,7 @@ export class VmCardsComponent implements OnInit,OnDestroy {
            if(poweroff){
              eventName = "VmPowerOff";
              this.cards[index].state = "stopping";
-             this.core.emit({name: eventName, data:[vm.id, true]});
+             this.core.emit({name: eventName, data:[vm.id]});
            } else {
              eventName = "VmStop";
              this.cards[index].state = "stopping";
@@ -538,7 +562,7 @@ export class VmCardsComponent implements OnInit,OnDestroy {
     }
   }
 
-  checkStatus(id?:number){
+  checkStatus(id?:number){ 
     if(id){
       this.core.emit({
         name:"VmStatusRequest",
@@ -552,5 +576,12 @@ export class VmCardsComponent implements OnInit,OnDestroy {
         });
     }
     }
+  }
+  
+  stripUIProperties(profile:VmProfile){
+    let clone = Object.assign({}, profile);
+    delete clone.domId;
+    delete clone.transitionalState;
+    return clone;
   }
 }
