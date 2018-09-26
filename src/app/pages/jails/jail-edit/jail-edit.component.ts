@@ -1139,15 +1139,23 @@ export class JailEditComponent implements OnInit {
     let ip6_addr_ctrl = this.formGroup.controls['ip6_addr'];
 
     if (dhcp_ctrl.value != true && vnet_ctrl.value == true && ip4_addr_ctrl.value != undefined && ip4_addr_ctrl.value != '') {
-        this.ip4_interfaceField.required = true;
+      this.ip4_interfaceField.required = true;
+      this.formGroup.controls['ip4_interface'].setValidators([Validators.required]);
+      this.formGroup.controls['ip4_interface'].updateValueAndValidity();
     } else {
       this.ip4_interfaceField.required = false;
+      this.formGroup.controls['ip4_interface'].clearValidators();
+      this.formGroup.controls['ip4_interface'].updateValueAndValidity();
     }
 
     if (dhcp_ctrl.value != true && vnet_ctrl.value == true && ip6_addr_ctrl.value != undefined && ip6_addr_ctrl.value != '') {
-        this.ip6_interfaceField.required = true;
+      this.ip6_interfaceField.required = true;
+      this.formGroup.controls['ip6_interface'].setValidators([Validators.required]);
+      this.formGroup.controls['ip6_interface'].updateValueAndValidity();
     } else {
       this.ip6_interfaceField.required = false;
+      this.formGroup.controls['ip6_interface'].clearValidators();
+      this.formGroup.controls['ip6_interface'].updateValueAndValidity();
     }
   }
 
