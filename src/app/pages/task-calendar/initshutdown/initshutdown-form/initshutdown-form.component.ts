@@ -9,6 +9,7 @@ import { TaskService, UserService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { FormGroup, Validators } from '@angular/forms';
 import { T } from '../../../../translate-marker';
+import helptext from '../../../../helptext/task-calendar/initshutdown/initshutdown';
 
 @Component({
   selector: 'cron-initshutdown-add',
@@ -25,9 +26,8 @@ export class InitshutdownFormComponent {
   public fieldConfig: FieldConfig[] = [{
     type: 'select',
     name: 'ini_type',
-    placeholder: T('Type'),
-    tooltip: T('Select <i>Command</i> for an executable or\
-                <i>Script</i> for an executable script.'),
+    placeholder: helptext.ini_type_placeholder,
+    tooltip: helptext.ini_type_tooltip,
     options: [{
       label: 'Command',
       value: 'command',
@@ -39,28 +39,24 @@ export class InitshutdownFormComponent {
   }, {
     type: 'input',
     name: 'ini_command',
-    placeholder: T('Command'),
-    tooltip: T('Enter the command and any options.'),
+    placeholder: helptext.ini_command_placeholder,
+    tooltip: helptext.ini_command_tooltip,
     required: true,
-    validation : [ Validators.required ],
+    validation : helptext.ini_command_validation,
   }, {
     type : 'explorer',
     initial: '/mnt',
     name: 'ini_script',
-    placeholder: T('Script'),
+    placeholder: helptext.ini_script_placeholder,
     explorerType: 'file',
     required: true,
-    validation : [ Validators.required ],
-    tooltip: T('Browse to the script location.'),
+    validation : helptext.ini_script_validation,
+    tooltip: helptext.ini_script_tooltip,
   }, {
     type: 'select',
     name: 'ini_when',
-    placeholder: T('When'),
-    tooltip: T('Select when the command or script runs. <i>Pre Init</i>\
-                is very early in the boot process before mounting\
-                filesystems, <i>Post Init</i> is towards the end of the\
-                boot process before FreeNAS services start, or at\
-                <i>Shutdown</i>.'),
+    placeholder: helptext.ini_when_placeholder,
+    tooltip: helptext.ini_when_tooltip,
     options: [{
       label: '---------',
       value: '',
@@ -76,13 +72,12 @@ export class InitshutdownFormComponent {
     }],
     value: '',
     required: true,
-    validation : [ Validators.required ],
+    validation : helptext.ini_when_validation,
   }, {
     type: 'checkbox',
     name: 'ini_enabled',
-    placeholder: T('Enabled'),
-    tooltip: T('Enable this task. Unset to disable the task without\
-                deleting it.'),
+    placeholder: helptext.ini_enabled_placeholder,
+    tooltip: helptext.ini_enabled_tooltip,
     value: true,
   }];
 
