@@ -7,6 +7,7 @@ import { FieldConfig } from '../../common/entity/entity-form/models/field-config
 import { TaskService } from '../../../services/';
 import { FormGroup, Validators } from '@angular/forms';
 import { T } from '../../../translate-marker';
+import helptext from '../../../helptext/task-calendar/resilver/resilver';
 
 @Component({
   selector: 'resilver-priority',
@@ -20,31 +21,28 @@ export class ResilverComponent {
   public fieldConfig: FieldConfig[] = [{
     type: 'checkbox',
     name: 'enabled',
-    placeholder: T('Enabled'),
-    tooltip: T('Set to run resilver tasks between the configured times.'),
+    placeholder: helptext.enabled_placeholder,
+    tooltip: helptext.enabled_tooltip,
     value: true,
   }, {
     type: 'select',
     name: 'begin',
-    placeholder: T('Begin Time'),
-    tooltip: T('Choose the hour and minute when resilver tasks can be\
-                started.'),
+    placeholder: helptext.begin_placeholder,
+    tooltip: helptext.begin_tooltip,
     options: [],
     value: '',
   }, {
     type: 'select',
     name: 'end',
-    placeholder: T('End Time'),
-    tooltip: T('Choose the hour and minute when new resilver tasks\
-                are not allowed to start. This does not affect active\
-                resilver tasks.'),
+    placeholder: helptext.end_placeholder,
+    tooltip: helptext.end_tooltip,
     options: [],
     value: '',
   }, {
     type: 'select',
     name: 'weekday',
-    placeholder: T('Days of the Week'),
-    tooltip: T('Select the days to run resilver tasks.'),
+    placeholder: helptext.weekday_placeholder,
+    tooltip: helptext.weekday_placeholder,
     multiple: true,
     options: [{
       label: 'Monday',
@@ -70,7 +68,7 @@ export class ResilverComponent {
     }],
     value: ['1', '2', '3', '4', '5', '6', '7'],
     required: true,
-    validation : [ Validators.required ],
+    validation : helptext.weekday_validation
   }];
 
   protected begin_field: any;
