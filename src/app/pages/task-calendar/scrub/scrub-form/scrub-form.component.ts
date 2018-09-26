@@ -8,8 +8,8 @@ import { EntityTaskComponent } from '../../../common/entity/entity-task';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { TaskService, UserService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { FormGroup, Validators } from '@angular/forms';
-import { T } from '../../../../translate-marker';
+
+import helptext from '../../../../helptext/task-calendar/scrub/scrub-form';
 
 @Component({
   selector: 'scrub-task-add',
@@ -27,44 +27,38 @@ export class ScrubFormComponent {
   public fieldConfig: FieldConfig[] = [{
       type: 'select',
       name: 'scrub_volume',
-      placeholder: T('Pool'),
-      tooltip : T('Choose a pool to scrub.'),
+      placeholder: helptext.scrub_volume_placeholder,
+      tooltip : helptext.scrub_volume_tooltip,
       options: [],
       required: true,
-      validation : [ Validators.required ],
+      validation : helptext.scrub_volume_validation,
       value: '',
     }, {
       type: 'input',
       inputType: 'number',
       name: 'scrub_threshold',
-      placeholder: T('Threshold days'),
-      tooltip: T('Define the number of days to prevent a scrub from\
-                  running after the last has completed. This ignores any\
-                  other calendar schedule. The default is a multiple of\
-                  7 to ensure the scrub always occurs on the same\
-                  weekday.'),
+      placeholder: helptext.scrub_threshold_placeholder,
+      tooltip: helptext.scrub_threshold_tooltip,
       value: 35,
       min: 0,
       required: true,
-      validation: [ Validators.min(0), Validators.required ]
+      validation: helptext.scrub_threshold_validation
     }, {
       type: 'input',
       name: 'scrub_description',
-      placeholder: T('Description'),
-      tooltip : T('Describe the scrub task.'),
+      placeholder: helptext.scrub_description_placeholder,
+      tooltip : helptext.scrub_description_tooltip,
     }, {
       type: 'scheduler',
       name: 'scrub_picker',
-      placeholder: T('Schedule the Scrub Task'),
-      tooltip: T('Choose one of the convenient presets\
-        or choose <b>Custom</b> to trigger the advanced scheduler UI'),
+      placeholder: helptext.scrub_picker_placeholder,
+      tooltip: helptext.scrub_picker_tooltip,
       required: true,
     }, {
       type: 'checkbox',
       name: 'scrub_enabled',
-      placeholder: T('Enabled'),
-      tooltip : T('Unset to disable the scheduled scrub without\
-                   deleting it.'),
+      placeholder: helptext.scrub_enabled_placeholder,
+      tooltip : helptext.scrub_enabled_tooltip,
       value: true,
     }
   ];
