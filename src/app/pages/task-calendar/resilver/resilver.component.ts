@@ -5,8 +5,6 @@ import * as _ from 'lodash';
 
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { TaskService } from '../../../services/';
-import { FormGroup, Validators } from '@angular/forms';
-import { T } from '../../../translate-marker';
 import helptext from '../../../helptext/task-calendar/resilver/resilver';
 
 @Component({
@@ -42,7 +40,7 @@ export class ResilverComponent {
     type: 'select',
     name: 'weekday',
     placeholder: helptext.weekday_placeholder,
-    tooltip: helptext.weekday_placeholder,
+    tooltip: helptext.weekday_tooltip,
     multiple: true,
     options: [{
       label: 'Monday',

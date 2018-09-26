@@ -2,8 +2,6 @@ import {
   ApplicationRef,
   Component,
   Injector,
-  OnInit,
-  ViewContainerRef,
   ElementRef,
   AfterViewInit
 } from '@angular/core';
@@ -13,10 +11,11 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
-import {ActivatedRoute, Router, RouterModule} from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
-import {RestService, WebSocketService} from '../../../../services/';
+
+import { RestService, WebSocketService } from '../../../../services/';
 import { DialogService } from '../../../../services/';
 import {
   FieldConfig
@@ -24,7 +23,6 @@ import {
 import { ReplicationService } from 'app/pages/task-calendar/replication/replication.service';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/task-calendar/replication-form/replication-form';
 
 @Component({
@@ -157,9 +155,6 @@ export class ReplicationFormComponent implements AfterViewInit {
   ) {
 
     const theThis = this;
-
-
-
 
     this.fieldConfig =
     [

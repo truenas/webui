@@ -21,5 +21,5 @@ export default {
     smarttest_picker_placeholder: T('Schedule the S.M.A.R.T. Test'),
     smarttest_picker_tooltip: T('Choose one of the convenient presets\
     or choose <b>Custom</b> to trigger the advanced scheduler UI'),
-    smarttest_picker_validation: [ Validators.required ],
+    smarttest_picker_validation: [ Validators.required ]
 }

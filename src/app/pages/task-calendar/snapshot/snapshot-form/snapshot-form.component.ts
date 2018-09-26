@@ -7,9 +7,7 @@ import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { TaskService, UserService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { FormGroup, Validators } from '@angular/forms';
 import { EntityUtils } from '../../../common/entity/utils';
-import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/task-calendar/snapshot/snapshot-form';
 
 

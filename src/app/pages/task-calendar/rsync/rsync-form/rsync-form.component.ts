@@ -8,9 +8,6 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { TaskService, UserService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { FormGroup } from '@angular/forms';
-import { T } from '../../../../translate-marker';
-import { Validators } from '@angular/forms';
 import helptext from '../../../../helptext/task-calendar/resync/resync-form';
 
 @Component({
