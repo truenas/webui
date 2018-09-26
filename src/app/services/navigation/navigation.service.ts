@@ -29,9 +29,9 @@ export class NavigationService {
       state: 'dashboard',
     },
     {
-      name: T('Account'),
+      name: T('Accounts'),
       type: 'dropDown',
-      tooltip: T('Account'),
+      tooltip: T('Accounts'),
       icon: 'people',
       state: 'account',
       sub: [
