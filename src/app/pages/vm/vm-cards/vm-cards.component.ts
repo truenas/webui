@@ -123,8 +123,11 @@ export class VmCardsComponent implements OnInit, OnDestroy {
           this.cancel(index);
           this.core.emit({name:"VmClone", data: this.cards[index].id, sender:this});
           this.core.register({observerClass:this,eventName:"VmProfilesRequest"}).subscribe((clone_evt:CoreEvent) => {
-           if (clone_evt.data.trace) {
-            this.dialog.errorReport(T('VM failed to cloned') , clone_evt.data.reason, clone_evt.data.trace.formatted);
+           if (clone_evt.data && clone_evt.data.trace) {
+            this.dialog.errorReport(
+              T('VM failed to cloned') , clone_evt.data.reason, clone_evt.data.trace.formatted).subscribe((result)=>{
+                this.core.emit({name:"VmProfilesRequest"});
+              })
            };
           })
         break;
