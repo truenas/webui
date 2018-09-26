@@ -32,6 +32,7 @@ export class VMWizardComponent {
   summary_title = "VM Summary";
 
   entityWizard: any;
+  public res;
 
   protected wizardConfig: Wizard[] = [
 
@@ -367,7 +368,8 @@ export class VMWizardComponent {
       })
       this.ws.call('vm.get_available_memory').subscribe((available_memory)=>{
         if (available_memory > 512 * 1024* 1024) {
-          this.populate_ds(this,res);
+          this.res = res;
+          this.populate_ds();
           if (res === 'Windows') {
             ( < FormGroup > entityWizard.formArray.get([2])).controls['vcpus'].setValue(2);
             ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(4096);
@@ -423,7 +425,7 @@ export class VMWizardComponent {
       }
 
     });
-    this.populate_ds(this);
+    this.populate_ds();
 
     this.networkService.getAllNicChoices().subscribe((res) => {
       this.nic_attach = _.find(this.wizardConfig[4].fieldConfig, {'name' : 'nic_attach'});
@@ -500,7 +502,7 @@ blurEvent3(parent){
     })
   }
 }
-populate_ds(this, res? string) {
+populate_ds(this) {
   this.ws.call('pool.dataset.query').subscribe((filesystem_res)=>{
     this.datastore = _.find(this.wizardConfig[3].fieldConfig, { name : 'datastore' });
     for (const idx in filesystem_res) {
@@ -512,33 +514,30 @@ populate_ds(this, res? string) {
   this.entityWizard.formArray.get([3]).controls['datastore'].setValue(
     '/mnt/'+this.datastore.options[0].value
   )
-  this.ws.call('filesystem.statfs',['/mnt/'+this.datastore.options[0].value]).subscribe((stat)=> {
-    if (res === "Windows") {
-      const storage = 40*1024*1024*1024
-    }
-    else {
-      const storage = 10*1024*1024*1024
-    }
-    const volsize = storage*1024*1024*1024;
-    if (volsize && stat.free_bytes < volsize ) {
-      this.entityWizard.formArray.get([3]).controls['volsize'].setValue(Math.floor(stat.free_bytes * 0.75  / (1024 * 1024 * 1024))); 
-    };
-    if (res === "Windows") {
+  if (this.res) {
+    this.ws.call('filesystem.statfs',['/mnt/'+this.datastore.options[0].value]).subscribe((stat)=> {
+      let storage = 10*1024*1024*1024
+      let vm_memory_requested = 10*1024*1024;
       const vm_name = this.entityWizard.formGroup.value.formArray[1].name
-      const vm_memory_requested = 40*1024*1024;
-    }
-    else {
-      const vm_name = this.entityWizard.formGroup.value.formArray[1].name
-      const vm_memory_requested = 10*1024*1024;
-    }
-    this.ws.call('vm.get_available_memory').subscribe((vm_memory_available)=>{
-      if( vm_memory_requested *1024*1024> vm_memory_available){
-        this.entityWizard.formArray.get([2]).get('memory').setValue(Math.floor(vm_memory_available/(1024*1024)));
+      if (this.res === "Windows") {
+        storage = 40*1024*1024*1024
       }
-    })
-   });
+      const volsize = storage*1024*1024*1024;
+      if (volsize && stat.free_bytes < volsize ) {
+        this.entityWizard.formArray.get([3]).controls['volsize'].setValue(Math.floor(stat.free_bytes * 0.75  / (1024 * 1024 * 1024))); 
+      };
+      if(this.res === "Windows") {
+        vm_memory_requested = 40*1024*1024;
+      }
+      this.ws.call('vm.get_available_memory').subscribe((vm_memory_available)=>{
+        if( vm_memory_requested *1024*1024> vm_memory_available){
+          this.entityWizard.formArray.get([2]).get('memory').setValue(Math.floor(vm_memory_available/(1024*1024)));
+        }
+      })
+     });
+    };
   });
-}
+};
 
 async customSubmit(value) {
     value.datastore = value.datastore.replace('/mnt/','')

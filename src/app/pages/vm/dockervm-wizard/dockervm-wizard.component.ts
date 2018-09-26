@@ -167,7 +167,7 @@ export class DockerVMWizardComponent {
           value: 20,
           inputType: 'number',
           min: 20,
-          required: true
+          required: true,
           isHidden: false,
           blurStatus: true,
           blurEvent: this.blurEvent3,
