@@ -1,14 +1,22 @@
 <ngx-datatable #datatable class='material' [rows]='data' [columnMode]="'force'" [rowHeight]="50" [headerHeight]="50" [footerHeight]="50">
+  <ngx-datatable-column name="Label">
+    <ng-template let-column="column" ngx-datatable-header-template>
+      Name
+    </ng-template>
+    <ng-template let-value="value" ngx-datatable-cell-template>
+      <div>{{value}}</div>
+    </ng-template>
+  </ngx-datatable-column>
   <ngx-datatable-column name="State">
     <ng-template let-column="column" ngx-datatable-header-template>
-      {{column.name}}
+      Running
     </ng-template>
     <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
       <mat-spinner [diameter]='40' *ngIf="row['onChanging']; else actionButtons"></mat-spinner>
       <ng-template #actionButtons>
           <mat-slide-toggle
-          [checked]="value === 'RUNNING' ? true : false"
           (click)="this.conf.toggle(row)"
+          [checked]="value === 'RUNNING' ? true : false"
           matTooltip="{{value}}" matTooltipPosition="right"
           id="slide-toggle__{{row.label}}">
       </mat-slide-toggle>
@@ -18,20 +26,12 @@
       </ng-template>
     </ng-template>
   </ngx-datatable-column>
-  <ngx-datatable-column name="Label">
-    <ng-template let-column="column" ngx-datatable-header-template>
-      Name
-    </ng-template>
-    <ng-template let-value="value" ngx-datatable-cell-template>
-      <div>{{value}}</div>
-    </ng-template>
-  </ngx-datatable-column>
   <ngx-datatable-column name="Enable">
     <ng-template let-column="column" ngx-datatable-header-template>
-      Start on boot
+      Start Automatically
     </ng-template>
     <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-      <mat-checkbox id="checkbox__{{row.label}}" style="position:absolute;bottom:16px;" [(ngModel)]="row.enable" (change)="this.conf.enableToggle($event, row)"></mat-checkbox>
+      <mat-checkbox id="checkbox__{{row.label}}" class="checkbox" style="position:absolute;bottom:16px;" [(ngModel)]="row.enable" (change)="this.conf.enableToggle($event, row)"></mat-checkbox>
     </ng-template>
   </ngx-datatable-column>
   <ngx-datatable-column name="Actions" [flexGrow]="2">

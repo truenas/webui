@@ -5,3 +5,14 @@ mat-icon.service-power-btn-on{
 mat-icon.service-power-btn-off{
   color: #900 !important;
 }
+
+.checkbox {
+  position: relative !important;
+  left: 43px;
+  top: 1px;
+}
+
+.mat-slide-toggle {
+  position: relative;
+  top: 2px;
+}

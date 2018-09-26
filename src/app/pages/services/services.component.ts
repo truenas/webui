@@ -139,6 +139,7 @@ export class Services implements OnInit {
     } else {
       this.updateService(rpc, service);
     }
+
   }
 
   updateService(rpc, service) {

@@ -19,7 +19,7 @@ export class ServicesTableComponent implements OnChanges {
   @Input() data: any[];
 
   public columns: Array < any > = [
-    { name: 'State', prop: 'state' },
+    { name: 'Running', prop: 'state' },
     { name: 'Label', prop: 'label' },
     { name: 'Enable', prop: 'enable' },
     { name: 'Actions', prop: 'cardActions' }
