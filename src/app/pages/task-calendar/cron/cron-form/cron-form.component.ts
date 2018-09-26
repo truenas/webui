@@ -16,6 +16,7 @@ import { Subject } from 'rxjs/Subject';
 import { T } from '../../../../translate-marker';
 import {RestService, WebSocketService} from 'app/services/';
 import { TranslateService } from '@ngx-translate/core';
+import helptext from '../../../../helptext/task-calendar/cron/cron-form';
 
 @Component({
   selector: 'cron-job-add',
@@ -47,65 +48,56 @@ export class CronFormComponent {
        width:'300px',
        config: [
          {
-           type: 'input',
-           name: 'cron_description',
-           placeholder: T('Description'),
-           tooltip: T('Enter a description of the cron job.'),
+          type: 'input',
+          name: 'cron_description',
+          placeholder: helptext.cron_description_placeholder,
+          tooltip: helptext.cron_description_tooltip
          },
          {
-           type: 'input',
-           name: 'cron_command',
-           placeholder: T('Command'),
-           required: true,
-           validation : [ Validators.required ],
-           tooltip: T('Enter the full path to the command or script to\
-                       be run.'),
+          type: 'input',
+          name: 'cron_command',
+          placeholder: helptext.cron_command_placeholder,
+          required: true,
+          validation : helptext.cron_command_validation,
+          tooltip: helptext.cron_command_tooltip
          },
          {
            type: 'combobox',
            name: 'cron_user',
-           placeholder: T('Run As User'),
-           tooltip: T('Select a user account to run the command. The\
-                       user must have permissions allowing them to run\
-                       the command or script.'),
+           placeholder: helptext.cron_user_placeholder,
+           tooltip: helptext.cron_user_tooltip,
            options: [],
            required: true,
-           validation : [ Validators.required ],
+           validation : helptext.cron_user_validation
          },
          {
            type: 'scheduler',
            name: 'cron_picker',
-           placeholder: T('Schedule a Cron Job'),
-           tooltip: T('Select a schedule preset or choose <i>Custom</i>\
-                       to open the advanced scheduler.'),
-           validation: [ Validators.required ],
+           placeholder: helptext.cron_picker_placeholder,
+           tooltip: helptext.cron_picker_tooltip,
+           validation: helptext.cron_picker_validation,
            required: true,
            value: "0 0 * * *"
          },
          {
            type: 'checkbox',
            name: 'cron_stdout',
-           placeholder: T('Redirect Standard Output'),
-           tooltip: T('Redirect stdout to /dev/null. When unset, output\
-                       from the command is mailed to the user running\
-                       the cron job.'),
+           placeholder: helptext.cron_stdout_placeholder,
+           tooltip: helptext.cron_stdout_tooltip,
            value: true,
          },
          {
            type: 'checkbox',
            name: 'cron_stderr',
-           placeholder: T('Redirect Standard Error'),
-           tooltip: T('Redirect stderr to /dev/null. When unset, error\
-                       output from the command is mailed to the user\
-                       running the cron job.'),
+           placeholder: helptext.cron_stderr_placeholder,
+           tooltip: helptext.cron_stderr_tooltip,
            value: false,
          },
          {
            type: 'checkbox',
            name: 'cron_enabled',
-           placeholder: T('Enabled'),
-           tooltip: T('Enable this cron job. When unset, disable the\
-                       cron job without deleting it.'),
+           placeholder: helptext.cron_enabled_placeholder,
+           tooltip: helptext.cron_enabled_tooltip,
            value: true,
          }
        ]

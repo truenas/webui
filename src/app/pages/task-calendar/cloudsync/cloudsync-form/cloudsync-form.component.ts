@@ -10,7 +10,7 @@ import { EntityFormService } from '../../../common/entity/entity-form/services/e
 import { FieldRelationService } from '../../../common/entity/entity-form/services/field-relation.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../translate-marker';
-import helptext from '../../../../helptext/cloudsync/cloudsync-form';
+import helptext from '../../../../helptext/task-calendar/cloudsync/cloudsync-form';
 
 
 @Component({
