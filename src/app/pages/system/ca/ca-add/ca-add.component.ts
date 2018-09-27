@@ -320,12 +320,9 @@ export class CertificateAuthorityAddComponent {
     })
 
     entity.formGroup.controls['name'].statusChanges.subscribe((res) => {
-      if (this.identifier === '' && res === 'INVALID') {
-        _.find(this.fieldConfig).hasErrors = false;
-      } else if (this.identifier && res === 'INVALID') {
+      if (this.identifier && res === 'INVALID') {
         _.find(this.fieldConfig).hasErrors = true;
-      }
-      else {
+      } else {
         _.find(this.fieldConfig).hasErrors = false;
       }
     })
