@@ -71,11 +71,21 @@ export class UserFormComponent {
           type : 'input',
           name : 'password',
           placeholder : T('Password'),
-          tooltip : T('Required unless <b>Enable password login</b> is\
+          tooltip : T('Enter password of nine characters or less\
+                      Required unless <b>Enable password login</b> is\
                       <i>No</i>. Passwords cannot contain a <b>?</b>.'),
           inputType : 'password',
           togglePw: true,
-          validation : [ Validators.pattern('^[^?]*$'), Validators.maxLength(9) ]
+          validation : [ Validators.pattern('^[^?]*$'), Validators.maxLength(9) ],
+          relation : [
+            {
+              action : 'DISABLE',
+              when : [ {
+                name : 'password_disabled',
+                value : true,
+              } ]
+            },
+          ],
         },
         {
           type : 'input',
@@ -83,6 +93,15 @@ export class UserFormComponent {
           placeholder : T('Confirm Password'),
           inputType : 'password',
           validation : [ matchOtherValidator('password'), Validators.pattern('^[^?]*$'), Validators.maxLength(9) ],
+          relation : [
+            {
+              action : 'DISABLE',
+              when : [ {
+                name : 'password_disabled',
+                value : true,
+              } ]
+            },
+          ],
         },
       ]
     },
