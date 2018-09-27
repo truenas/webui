@@ -5,6 +5,14 @@
   width:100%;
 }
 
+/*.report.widget{
+  height: 480px;
+}*/
+
+.widget .mat-card-content{
+  margin:0;
+}
+
 .card-title-text{
   display:table;
   font-size:1.42em;
@@ -17,22 +25,39 @@
   vertical-align:middle;
 }
 
-.widget ul.legend {
-  list-style-type:none;
+.legend {
+  display:table; 
+  margin-left:16px;
 }
 
-.widget ul.legend li div {
+.legend-label  {
+  
+  font-weight:500;
+}
+
+.legend-label div {
   display:inline-block;
 }
 
-.widget ul.legend .swatch{
+.legend .swatch{
   border-radius:50%;
   width:12px;
   height:12px;
   margin-right:8px;
 }
 
-.widget ul.legend .tooltip-wrapper{
+.legend .tooltip-wrapper{
+  padding-left:8px;
+  height:20px;
+}
+
+.legend-timestamp{
+  height:20px;
+  margin:16px;
+}
+
+.legend-item{
+  padding:4px 0;
   text-align:right;
 }
 
@@ -265,15 +290,44 @@ span.disk-detail-subtitle {
 }
 
 .card-bg-wrapper{
-  height:100%;
-  background-color:var(--primary);
-  color:var(--primary-txt);
+  min-height:100%;
+  /*background-color:var(--primary);
+  color:var(--primary-txt);*/
   /*background-color:#333;
   color:#fff;*/
 }
 
 .zero-state h4 {
   margin:8px 0 0 8px;
+}
+
+div.line-chart-tools-wrapper{
+  text-align:right;
+}
+
+div.line-chart-tools-wrapper button{
+  display:inline-block;
+  width:64px
+}
+
+div.line-chart-tools{
+  /*width:64px;
+  min-height:100%;
+  margin-left:16px;*/
+  text-align:right;
+  /*background-color:var(--primary);
+  color:var(--primary-txt);*/
+}
+
+div.line-chart-tools ul{
+  list-style-type:none;
+}
+
+div.line-chart-tools li{}
+
+div.line-chart-tools .tool-icon{
+  width:64px; 
+  font-size:18px;
 }
 
 /* Mobile */
@@ -291,12 +345,19 @@ height:calc(100% - 48px);
 }*/
 
   /* IMPORTED */
+  /*.card-bg-wrapper,
+  .chart-wrapper{
+    height:calc(100% - 64px);
+  }*/
+  .chart-wrapper{
+    height:320px;
+  }
+
   .card-bg-wrapper{
-    width:40%;
-    height:100%;
-    position:relative;
-    text-align:center;
-    /*background-color:var(--primary);*/
+    /*width:40%;*/
+    /*border-right:solid 1px var(--bg1);
+    background-color:var(--primary);
+    color:var(--primary-txt);*/
   }
 
   .card-bg{
@@ -306,6 +367,11 @@ height:calc(100% - 48px);
     background-position:50%;
     /*background-color:rgba(0,0,0,0.15);*/
     background-repeat:no-repeat;
+  }
+
+  .report .card-bg-wrapper h3{
+    text-align:left;
+    margin:16px;
   }
 
   /*.logo-bg{
@@ -384,7 +450,7 @@ height:calc(100% - 48px);
   background-color:rgba(0,0,0,0.1);
   height:45%;
   text-align: left;
-  padding: 16px;
+  padding: 16px; 
 }
 
 .title-wrapper .title{

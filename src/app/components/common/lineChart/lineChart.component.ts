@@ -34,6 +34,9 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
   @Input() type: string;
   @Input() divideBy: number;
   @Input() chartFormatter: ChartFormatter;
+  @Input() minY?: number = 0;
+  @Input() maxY?: number = 100;
+  @Input() labelY?: string = 'Label Y';
 
   public chart:any;
   public showLegendValues: boolean = false;
@@ -121,6 +124,15 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
             fit: true//,
             //values: ['01:10', '03:10', '06:10']
             }
+        },
+        y:{
+          label: {
+            text:this.labelY,
+            position: 'outer-middle'
+          }
+          //default: [this.minY,this.maxY],
+          /*min: this.minY,
+          max: this.maxY*/
         }
       },
       grid:{
@@ -136,12 +148,6 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
       },
       legend: {
         show:false
-        /*inset: {
-         anchor: 'top-right',
-         x: 20,
-         y: 10,
-         step: 2
-        }*/
       },
       zoom: {
         enabled: false

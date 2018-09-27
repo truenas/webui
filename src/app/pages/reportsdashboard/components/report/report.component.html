@@ -1,73 +1,79 @@
-<div class="widget" ngClass.xs="double-height xs">
+<div class="report" ngClass.xs="double-height xs">
   <div class="card-container  front">
-    <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
-      <!--<mat-toolbar-row fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" fxFlex="100" class="mat-card-toolbar">
-        <h4 class="mat-card-title-text"><div class="card-title-text">{{title | translate}}</div></h4>
-        <ng-template *ngIf="configurable"><button mat-icon-button (click)="toggleConfig()">
-          <mat-icon>settings</mat-icon>
-          </button></ng-template>
-          </mat-toolbar-row>-->
-      <mat-card-content fxLayout="row" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between center" fxFlex="100">
-        <!-- Legend Section -->
-        <div fxFlex="240px" class="card-bg-wrapper">
-          <div class="title-wrapper">
-            <p class="title">{{title}}</p> 
-            <ul class="legend" *ngIf="lineChartConfig && lineChartConfig.legends">
-              
-              <li fxLayout="row" fxLayoutAlign="space-between center" *ngFor="let legendItem of lineChartConfig.legends; let i=index">
-                <div fxFlex="12px" class="swatch" [style.background-color]="lineChart.colorPattern[i]" ></div>
-                <div fxFlex="88px" class="legend-item">{{legendItem}}</div>
-                <div fxFlex="120px" class="tooltip-wrapper" *ngIf="lineChart.legendEvents | async as tooltip">
-                  <div  *ngIf="lineChart.showLegendValues" class="tooltip-value" >
-                    {{tooltip[i].value}}
-                  </div>
-                </div>
-              </li>
-              
-            </ul>
+    <mat-card class="front" fxLayout="row wrap" fxlayoutGap="16px" fxLayoutAlign="space-between stretch">
+      <mat-toolbar-row fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" fxFlex="100" class="mat-card-toolbar">
+        <mat-card-title fxFlex="240px"><h3>{{title}}</h3></mat-card-title>
+        <!-- Controls/Tools -->
+        <div fxFlex="calc(100% - 240px)" class="line-chart-tools-wrapper">
+          <div class="line-chart-tools">
+                  <button class="tool-icon" mat-icon-button>
+                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-magnify-plus"></mat-icon>
+                  </button>
+                
+                  <button class="tool-icon" mat-icon-button>
+                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-magnify-minus"></mat-icon>
+                  </button>
+                
+                  <button class="tool-icon" mat-icon-button>
+                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-rewind"></mat-icon>
+                  </button>
+                
+                  <button class="tool-icon" mat-icon-button>
+                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-fast-forward"></mat-icon>
+                  </button>
           </div>
         </div>
+      </mat-toolbar-row>
 
-        <!--<viewchartline fxFlex="100" fxFlexAlign="end" #chartCpu width="600" height="160" [style.display]="isFlipped ? 'none': 'block'"></viewchartline>-->
-        <!-- Chart -->
-        <div class="chart-wrapper" fxFlex="calc(100% - 240px)">
-          <line-chart 
-             [dataList]="lineChartConfig.dataList"
-             [legends]="lineChartConfig.legends"
-             [divideBy]="lineChartConfig.divideBy"
-            >
-          </line-chart>
-          <!--<div [id]="chartId"></div>
-          <div class="x-axis">
-            <div class="start-time">{{startTime}}</div>
-            <div class="end-time">{{endTime}}</div>
-          </div>-->
-        </div>
+        <mat-card-content fxLayout="row wrap" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between center" fxFlex="100">
 
-        <!-- DETAILS -->
-        <!--<div class="title-wrapper" fxFlex="100">
-          <ng-container *ngIf="showLegendValues">
-            <p class="title">{{altTitle}}</p>
-            <p class="subtitle">{{altSubtitle}}</p>
-          </ng-container>
-          <ng-container *ngIf="!showLegendValues">
-            <p class="title">{{title}}</p>
-            <p class="subtitle">{{subtitle}}</p>
-          </ng-container>
-          
-          </div>-->
+          <!--<viewchartline fxFlex="100" fxFlexAlign="end" #chartCpu width="600" height="160" [style.display]="isFlipped ? 'none': 'block'"></viewchartline>-->
+          <!-- Chart -->
+          <div class="chart-wrapper" fxFlex="100">
+            <line-chart 
+              [dataList]="lineChartConfig.dataList"
+              [legends]="lineChartConfig.legends"
+              [divideBy]="lineChartConfig.divideBy">
+            </line-chart>
+          </div>
 
-      </mat-card-content>
+          <!-- Legend Section -->
+          <div fxFlex="100" class="">         
+          <!-- Time Stamp -->
+          <div class="legend-timestamp">
+            <div *ngIf="lineChart.showLegendValues"><span *ngIf="lineChart.legendEvents | async as timestamp">{{timestamp[0].x}}</span></div>
+          </div>
+          <section class="legend" fxLayout="row wrap" fxLayoutAlign="none"  *ngIf="lineChartConfig && lineChartConfig.legends">
+              <div class="legend-group" fxFlex="120px" *ngFor="let legendItem of lineChartConfig.legends; let i=index">
+
+                <div class="legend-label">
+                  <div class="swatch" [style.background-color]="lineChart.colorPattern[i]" ></div>
+                  <div class="legend-item">{{legendItem}}</div>
+                </div>
+
+                <div class="tooltip-wrapper legend-value"> 
+                  <div *ngIf="lineChart.legendEvents | async as tooltip">
+                    <div  *ngIf="lineChart.showLegendValues" class="tooltip-value" >
+                      {{tooltip[i].value}}
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </section>
+          </div>
+        </mat-card-content>
+
     </mat-card>
     <ng-template *ngIf="configurable">
-    <mat-card class="back">
-      <mat-card-content fxLayout="column" fxLayoutAlign="start stretch" fxFlex="100">
-      </mat-card-content>
-      <div class="widget-footer">
-        <button mat-button color="accent" (click)="toggleConfig()">{{"Cancel" | translate}}</button>
-        <button mat-button color="primary" type="submit" form="preferences" (click)="toggleConfig()">{{"Save" | translate}}</button>
-      </div>
-    </mat-card>
+      <mat-card class="back">
+        <mat-card-content fxLayout="column" fxLayoutAlign="start stretch" fxFlex="100">
+        </mat-card-content>
+        <div class="widget-footer">
+          <button mat-button color="accent" (click)="toggleConfig()">{{"Cancel" | translate}}</button>
+          <button mat-button color="primary" type="submit" form="preferences" (click)="toggleConfig()">{{"Save" | translate}}</button>
+        </div>
+      </mat-card>
     </ng-template>
   </div>
 </div>

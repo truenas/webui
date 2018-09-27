@@ -270,7 +270,7 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
   text-align:center;
 }
 
-.widget .card-title-text{
+.report .card-title-text{
   font-size:20px;
 }
 
@@ -282,11 +282,17 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
   height:82px;
 }
 
-.widget .c3 .tick text{
+.c3 .tick text,
+.c3 text.c3-axis-y-label{
   fill: var(--fg2);
   font-weight: 500;
   opacity: 0.8;
 }
+
+.c3 text.c3-axis-y-label{
+  font-size:22px;
+}
+
 .widget .c3 g.c3-axis{
   opacity:0.75;
 }

@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, EventEmitter, Output, ViewChild } from '@angular/core';
+import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 import * as _ from 'lodash';
 import {LineChartService, ChartConfigData, HandleChartConfigDataFunc} from '../../components/common/lineChart/lineChart.service';
 
@@ -45,6 +46,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   public tabChartsMappingDataArray: TabChartsMappingData[] = [];
   public tabChartsMappingDataSelected: TabChartsMappingData;
   public showSpinner: boolean = true;
+  @ViewChild('chartWidth') chartWidth: MatButtonToggleGroup;
   
 
 
