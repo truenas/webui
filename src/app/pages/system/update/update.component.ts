@@ -39,6 +39,10 @@ export class UpdateComponent implements OnInit {
     "SDK": T("Changing SDK version is not a supported operation. Activate an existing boot environment that uses the desired train and boot into it to switch to that train."),
     "NIGHTLY_UPGRADE": T("Changing to a nightly train is one-way. Changing back to a stable train is not supported!")
   }
+  public stable_warning = [
+    "This is not a production release, and should only be used for testing. Latest commits: ",
+    "Before updating, please read the release notes at..."
+  ]
 
   public busy: Subscription;
   public busy2: Subscription;
@@ -78,6 +82,7 @@ export class UpdateComponent implements OnInit {
   compareTrains(t1, t2) {
     const v1 = this.parseTrainName(t1)
     const v2 = this.parseTrainName(t2);
+    console.log(v1, v2)
 
     try {
       if(v1[0] !== v2[0] ) {
@@ -157,6 +162,7 @@ export class UpdateComponent implements OnInit {
 
   ngOnInit() {
     this.busy = this.rest.get('system/update', {}).subscribe((res) => {
+      console.log(res)
       this.autoCheck = res.data.upd_autocheck;
       this.train = res.data.upd_train;
       if (this.autoCheck){
@@ -335,6 +341,7 @@ export class UpdateComponent implements OnInit {
     this.ws.call('update.check_available', [{ train: this.train }])
       .subscribe(
         (res) => {
+          console.log(this.train)
           this.status = res.status;
           if (res.status === 'AVAILABLE') {
             this.packages = [];
@@ -374,6 +381,7 @@ export class UpdateComponent implements OnInit {
             if (res.notes) {
               this.releaseNotes = res.notes.ReleaseNotes;
             }
+            console.log(this.packages)
           }
         },
         (err) => {

@@ -7,3 +7,16 @@
 .update-button {
     margin-right: 3px;
 }
+
+.changelog {
+    height: 350px;
+}
+
+#changelog-box {
+    max-height: 220px;
+    overflow-y: scroll;
+}
+
+/* #button-card {
+    width: 85%;
+} */
