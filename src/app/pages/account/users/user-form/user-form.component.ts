@@ -76,7 +76,8 @@ export class UserFormComponent {
                       <i>No</i>. Passwords cannot contain a <b>?</b>.'),
           inputType : 'password',
           togglePw: true,
-          validation : [ Validators.pattern('^[^?]*$'), Validators.maxLength(9) ],
+          required: true,
+          validation : [ Validators.pattern('^[^?]*$'), Validators.maxLength(9), Validators.required ],
           relation : [
             {
               action : 'DISABLE',
@@ -92,7 +93,8 @@ export class UserFormComponent {
           name : 'password_conf',
           placeholder : T('Confirm Password'),
           inputType : 'password',
-          validation : [ matchOtherValidator('password'), Validators.pattern('^[^?]*$'), Validators.maxLength(9) ],
+          required: true,
+          validation : [ matchOtherValidator('password'), Validators.pattern('^[^?]*$'), Validators.maxLength(9), Validators.required ],
           relation : [
             {
               action : 'DISABLE',
