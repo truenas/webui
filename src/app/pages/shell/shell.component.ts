@@ -116,7 +116,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
       // 'rows': parseInt(rowNum.toFixed(),10),
       'focus': true
     });
-    this.xterm.open(this.container.nativeElement);
+    this.xterm.open(this.container.nativeElement, true);
     this.xterm.attach(this.ss);
     this.xterm._initialized = true;
   }
