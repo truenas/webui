@@ -90,6 +90,12 @@ export class VmCardsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.viewMode.value = "cards";
+    /* TODO: remove this after middleware part is ready to give back
+    correct state.
+    */
+    Observable.interval(5000).subscribe((val) => {
+      this.checkStatus();
+     });
     /*
      * Communication Downwards:
      * Listen for events from UI controls
@@ -125,7 +131,7 @@ export class VmCardsComponent implements OnInit, OnDestroy {
           this.core.register({observerClass:this,eventName:"VmProfilesRequest"}).subscribe((clone_evt:CoreEvent) => {
            if (clone_evt.data && clone_evt.data.trace) {
             this.dialog.errorReport(
-              T('VM failed to cloned') , clone_evt.data.reason, clone_evt.data.trace.formatted).subscribe((result)=>{
+              T('VM clone failed.') , clone_evt.data.reason, clone_evt.data.trace.formatted).subscribe((result)=>{
                 this.core.emit({name:"VmProfilesRequest"});
               })
            };
@@ -154,14 +160,16 @@ export class VmCardsComponent implements OnInit, OnDestroy {
     });
 
     this.core.register({observerClass:this,eventName:"VmStatus"}).subscribe((evt:CoreEvent) => {
-      const cardIndex = this.getCardIndex('id',evt.data.id);
-      if(evt.data.state && this.cards[cardIndex]){ 
-        this.cards[cardIndex].state = evt.data.state.toLowerCase();
-        const cacheIndex = this.getCardIndex('id',evt.data.id,true);
-        this.cache[cacheIndex].state = evt.data.state.toLowerCase();
-      }
-    });
+      evt.data.forEach(vmstatus => {
+        const cardIndex = this.getCardIndex('id',vmstatus.id);
+        if(vmstatus.state && this.cards[cardIndex]){
+          this.cards[cardIndex].state = vmstatus.state.toLowerCase();
+          const cacheIndex = this.getCardIndex('id',vmstatus.id,true);
+          this.cache[cacheIndex].state = vmstatus.state.toLowerCase();
+        };
+      });
 
+    });
     this.core.register({observerClass:this,eventName:"VmStarted"}).subscribe((evt:CoreEvent) => {
         if (evt.data.trace) {
           this.dialog.errorReport(T('VM failed to start') , evt.data.reason, evt.data.trace.formatted)
@@ -563,19 +571,10 @@ export class VmCardsComponent implements OnInit, OnDestroy {
   }
 
   checkStatus(id?:number){ 
-    if(id){
-      this.core.emit({
-        name:"VmStatusRequest",
-        data:[id]
-      });
-    } else {
-      for(let i = 0; i < this.cache.length; i++){
-        this.core.emit({
-          name:"VmStatusRequest",
-          data:[this.cache[i].id]
-        });
-    }
-    }
+    this.core.emit({
+      name:"VmStatusRequest",
+      data:[]
+    });
   }
   
   stripUIProperties(profile:VmProfile){

@@ -4,12 +4,10 @@ import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
 import { EntityFormComponent } from '../../../common/entity/entity-form';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { TaskService, StorageService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { FormGroup, Validators } from '@angular/forms';
-import { T } from '../../../../translate-marker';
+import helptext from '../../../../helptext/task-calendar/smart/smart-form';
 
 @Component({
   selector: 'smart-test-add',
@@ -34,38 +32,32 @@ export class SmartFormComponent {
       {
         type: 'select',
         name: 'smarttest_disks',
-        placeholder: T('Disks'),
-        tooltip : T('Select the disks to monitor.'),
+        placeholder: helptext.smarttest_disks_placeholder,
+        tooltip : helptext.smarttest_disks_tooltip,
         options: [],
         multiple: true,
         required: true,
-        validation : [ Validators.required ]
+        validation : helptext.smarttest_disks_validation
       }, {
         type: 'select',
         name: 'smarttest_type',
-        placeholder: T('Type'),
-        tooltip : T('Choose the test type. See <a\
-                   href="https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8.in"\
-                   target="_blank">smartctl(8)</a> for descriptions of\
-                   each type. Some types will degrade performance or\
-                   take disks offline. Avoid scheduling S.M.A.R.T. tests\
-                   simultaneously with scrub or resilver operations.'),
+        placeholder: helptext.smarttest_type_placeholder,
+        tooltip : helptext.smarttest_type_tooltip,
         options: [],
         required: true,
-        validation : [ Validators.required ]
+        validation : helptext.smarttest_type_validation
       }, {
         type: 'input',
         name: 'smarttest_desc',
-        placeholder: T('Short description'),
-        tooltip : T('Enter a description of the S.M.A.R.T. test.'),
+        placeholder: helptext.smarttest_desc_placeholder,
+        tooltip : helptext.smarttest_desc_tooltip
       },
       {
         type: 'scheduler',
         name: 'smarttest_picker',
-        placeholder: T('Schedule the S.M.A.R.T. Test'),
-        tooltip: T('Choose one of the convenient presets\
-          or choose <b>Custom</b> to trigger the advanced scheduler UI'),
-        validation: [ Validators.required ],
+        placeholder: helptext.smarttest_picker_placeholder,
+        tooltip: helptext.smarttest_picker_tooltip,
+        validation: helptext.smarttest_picker_validation,
         required: true,
         value: "0 0 * * *",
         noMinutes:true
