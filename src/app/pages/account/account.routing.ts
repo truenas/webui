@@ -11,7 +11,7 @@ import { EntityDashboardComponent } from '../common/entity/entity-dashboard/enti
 
 export const routes: Routes = [{
   path: '',
-  data: { title: 'Account' },
+  data: { title: 'Accounts' },
   children: [{
     path: '',
     component: EntityDashboardComponent,

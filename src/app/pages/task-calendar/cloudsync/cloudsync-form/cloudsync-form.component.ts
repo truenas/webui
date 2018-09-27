@@ -249,6 +249,7 @@ export class CloudsyncFormComponent implements OnInit {
   protected dom_field: any;
   protected credentials: any;
   protected bucket_field: any;
+  protected bucket_input_field: any;
 
   public credentials_list = [];
 
@@ -328,6 +329,7 @@ export class CloudsyncFormComponent implements OnInit {
   ngOnInit() {
     this.credentials = _.find(this.fieldConfig, { 'name': 'credentials' });
     this.bucket_field = _.find(this.fieldConfig, {'name': 'bucket'});
+    this.bucket_input_field = _.find(this.fieldConfig, {'name': 'bucket_input'});
 
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
@@ -339,11 +341,25 @@ export class CloudsyncFormComponent implements OnInit {
     }
 
     this.formGroup.controls['credentials'].valueChanges.subscribe((res)=>{
+      console.log(res);
       if (res!=null) {
         this.credentials_list.forEach((item)=>{
           if (item.id == res) {
             if (_.find(this.providers, {"name": item.provider}).buckets) {
               this.loader.open();
+              // update bucket fields name and tooltips based on provider
+              if (item.provider == "AZUREBLOB" || item.provider == "HUBIC" ) {
+                this.bucket_field.placeholder = T("Container");
+                this.bucket_field.tooltip = T('Select the pre-defined container to use.');
+                this.bucket_input_field.placeholder = T("Container");
+                this.bucket_input_field.tooltip = T('Input the pre-defined container to use.');
+              } else {
+                this.bucket_field.placeholder = T("Bucket");
+                this.bucket_field.tooltip = T('Select the pre-defined S3 bucket to use.');
+                this.bucket_input_field.placeholder = T("Bucket");
+                this.bucket_input_field.tooltip = T('Input the pre-defined S3 bucket to use.');
+              }
+
               this.getBuckets(item).subscribe(
                 (res) => {
                   this.loader.close();

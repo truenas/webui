@@ -22,7 +22,7 @@ export class JailListComponent implements OnInit {
   public isPoolActivated: boolean;
   public selectedPool;
   public activatedPool: any;
-  public availablePools: any = [];
+  public availablePools: any;
   public title = "Jails";
   protected queryCall = 'jail.query';
   protected wsDelete = 'jail.do_delete';
@@ -30,6 +30,7 @@ export class JailListComponent implements OnInit {
   protected entityList: any;
   protected route_add = ["jails", "add", "wizard"];
   protected route_add_tooltip = "Add Jail";
+  public toActivatePool: boolean = false;
 
   public columns: Array < any > = [
     { name: T('Jail'), prop: 'host_hostuuid', always_display: true },
@@ -169,6 +170,7 @@ export class JailListComponent implements OnInit {
     this.ws.call('jail.get_activated_pool').subscribe((res)=>{
       if (res != null) {
         this.activatedPool = res;
+        this.selectedPool = res;
         this.isPoolActivated = true;
       } else {
         this.isPoolActivated = false;
@@ -183,9 +185,19 @@ export class JailListComponent implements OnInit {
   }
 
   activatePool(event: Event){
-    this.ws.call('jail.activate', [this.selectedPool.name]).subscribe(
+    this.loader.open();
+    this.ws.call('jail.activate', [this.selectedPool]).subscribe(
       (res)=>{
+        this.loader.close();
         this.isPoolActivated = true;
+        this.activatedPool = this.selectedPool;
+        if (this.toActivatePool) {
+          this.entityList.getData();
+        }
+        this.entityList.snackBar.open("Successfully activate pool " + this.selectedPool , 'close', { duration: 5000 });
+      },
+      (res) => {
+        new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
       });
   }
   getActions(parentRow) {

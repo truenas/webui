@@ -35,7 +35,7 @@ interface VmProfile {
   vm_type?: string;
   vm_comport?:string
   isNew?:boolean;
-  transitionalState:boolean;
+  transitionalState?:boolean;
 }
 
 @Component({
@@ -102,16 +102,17 @@ export class VmCardsComponent implements OnInit, OnDestroy {
       switch(evt.name){
         case "FormSubmitted":
           //evt.data.autostart = evt.data.autostart.toString();
+          this.cards[index].state = "Saving"
+          const profile = this.stripUIProperties(evt.data);
           if(evt.sender.isNew){
             const i = this.getCardIndex('isNew',true);
             this.cards[i].name = evt.data.name;
             this.cards[i].state = "Loading...";
-            this.core.emit({name:"VmCreate",data:[evt.data] ,sender:evt.sender.machineId});
+            this.core.emit({name:"VmCreate",data:[profile] ,sender:evt.sender.machineId});
           } else {
             const formValue = this.parseResponse(evt.data,true);
-            this.core.emit({name:"VmProfileUpdate",data:[evt.sender.machineId,formValue] ,sender:evt.sender.machineId});
-            this.toggleForm(false,this.cards[index],'none');
-            //this.refreshVM(index,evt.sender.machineId);
+            this.core.emit({name:"VmProfileUpdate",data:[evt.sender.machineId,this.stripUIProperties(formValue)] ,sender:evt.sender.machineId});
+            this.toggleForm(false,this.cards[index],'none'); 
           }
         break;
         case "FormCancelled":
@@ -121,6 +122,14 @@ export class VmCardsComponent implements OnInit, OnDestroy {
           this.cards[index].state = "creating clone";
           this.cancel(index);
           this.core.emit({name:"VmClone", data: this.cards[index].id, sender:this});
+          this.core.register({observerClass:this,eventName:"VmProfilesRequest"}).subscribe((clone_evt:CoreEvent) => {
+           if (clone_evt.data && clone_evt.data.trace) {
+            this.dialog.errorReport(
+              T('VM failed to cloned') , clone_evt.data.reason, clone_evt.data.trace.formatted).subscribe((result)=>{
+                this.core.emit({name:"VmProfilesRequest"});
+              })
+           };
+          })
         break;
         case "RestartVM":
           this.restartVM(index);
@@ -567,5 +576,12 @@ export class VmCardsComponent implements OnInit, OnDestroy {
         });
     }
     }
+  }
+  
+  stripUIProperties(profile:VmProfile){
+    let clone = Object.assign({}, profile);
+    delete clone.domId;
+    delete clone.transitionalState;
+    return clone;
   }
 }

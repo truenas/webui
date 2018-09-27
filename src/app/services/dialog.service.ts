@@ -33,7 +33,7 @@ export class DialogService {
         if(hideCheckBox) {
             dialogRef.componentInstance.hideCheckBox = hideCheckBox;
         } 
-        
+
         if(secondaryCheckBox) {
             dialogRef.componentInstance.secondaryCheckBox = secondaryCheckBox;
             dialogRef.componentInstance.secondaryCheckBoxMsg = secondaryCheckBoxMsg;
