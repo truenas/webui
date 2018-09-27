@@ -26,9 +26,9 @@ export class CertificateAuthorityAddComponent {
       placeholder : T('Identifier'),
       tooltip: T('Enter a description of the CA.'),
       required: true,
-      validation : [ Validators.pattern('[A-Za-z0-9_-]+$')],
+      validation : [ Validators.required, Validators.pattern('[A-Za-z0-9_-]+$') ],
       hasErrors: false,
-      errors: 'Use alphanumeric characters, "_" and "-".',
+      errors: 'Allowed characters: letters, numbers, underscore (_), and dash (-).'
     },
     {
       type : 'select',
@@ -282,7 +282,6 @@ export class CertificateAuthorityAddComponent {
     }
 
     entity.formGroup.controls['create_type'].valueChanges.subscribe((res) => {
-      console.log(res)
       if (res == 'CA_CREATE_INTERNAL') {
         for (let i in this.intermediatecaFields) {
           this.hideField(this.intermediatecaFields[i], true, entity);
