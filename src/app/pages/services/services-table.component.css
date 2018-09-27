@@ -16,3 +16,7 @@ mat-icon.service-power-btn-off{
   position: relative;
   top: 2px;
 }
+
+.service-toggle {
+  width: 48px;
+}

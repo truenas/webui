@@ -195,8 +195,4 @@ export class Services implements OnInit {
       this.router.navigate(new Array('').concat(['services', service]));
     }
   }
-
-  // saveValue(value) {
-  //   this.viewValue = window.localStorage.setItem('viewValue', value);
-  // }
 }
