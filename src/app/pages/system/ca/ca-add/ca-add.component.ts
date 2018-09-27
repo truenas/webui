@@ -2,13 +2,11 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Validators } from '@angular/forms';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
 
 import { RestService, SystemGeneralService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
 import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
-import { validateValue } from '@angular/flex-layout';
 
 @Component({
   selector : 'system-ca-add',
@@ -247,6 +245,7 @@ export class CertificateAuthorityAddComponent {
 
   private country: any;
   private signedby: any;
+  public identifier: any;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
@@ -317,10 +316,17 @@ export class CertificateAuthorityAddComponent {
       }
     })
 
+    entity.formGroup.controls['name'].valueChanges.subscribe((res) => {
+      this.identifier = res;
+    })
+
     entity.formGroup.controls['name'].statusChanges.subscribe((res) => {
-      if (res === 'INVALID') {
+      if (this.identifier === '' && res === 'INVALID') {
+        _.find(this.fieldConfig).hasErrors = false;
+      } else if (this.identifier && res === 'INVALID') {
         _.find(this.fieldConfig).hasErrors = true;
-      } else {
+      }
+      else {
         _.find(this.fieldConfig).hasErrors = false;
       }
     })
