@@ -40,6 +40,7 @@ export class UpdateComponent implements OnInit {
     "NIGHTLY_UPGRADE": T("Changing to a nightly train is one-way. Changing back to a stable train is not supported!")
   }
   public stable_train: boolean;  
+  public updates_available: boolean = false;
 
   public busy: Subscription;
   public busy2: Subscription;
@@ -79,7 +80,6 @@ export class UpdateComponent implements OnInit {
   compareTrains(t1, t2) {
     const v1 = this.parseTrainName(t1)
     const v2 = this.parseTrainName(t2);
-    console.log(v1, v2)
 
     try {
       if(v1[0] !== v2[0] ) {
@@ -159,7 +159,6 @@ export class UpdateComponent implements OnInit {
 
   ngOnInit() {
     this.busy = this.rest.get('system/update', {}).subscribe((res) => {
-      console.log(res)
       this.autoCheck = res.data.upd_autocheck;
       this.train = res.data.upd_train;
       if (this.autoCheck){
@@ -338,9 +337,9 @@ export class UpdateComponent implements OnInit {
     this.ws.call('update.check_available', [{ train: this.train }])
       .subscribe(
         (res) => {
-          console.log(this.train)
           this.status = res.status;
           if (res.status === 'AVAILABLE') {
+            this.updates_available = true;
             this.packages = [];
             res.changes.forEach((item) => {
               if (item.operation === 'upgrade') {

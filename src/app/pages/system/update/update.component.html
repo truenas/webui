@@ -11,13 +11,6 @@
       </mat-select>
     </div>
 
-    <div class="stable-warning" *ngIf="!stable_train; else stableMessage"><strong>This is not a production release, and should only be used for testing.</strong></div>
-    
-    <ng-template #stableMessage>
-      <div class="stable-warning">Before updating, please read the 
-        <a href='https://www.ixsystems.com/blog/knowledgebase_category/freenas/?latest-true' target="new">release notes</a>.</div>
-    </ng-template>
-
     <div class="row">
         <div class="col-md-12">
         <div *ngIf="status == 'REBOOT_REQUIRED'">
@@ -81,7 +74,14 @@
   </mat-card-content>
 </mat-card>
 
-<mat-card id="button-card">
+<mat-card id="button-card" *ngIf="updates_available">
+    <div class="stable-warning" *ngIf="!stable_train; else stableMessage"><strong>This is not a production release, and should only be used for testing.</strong></div>
+    
+    <ng-template #stableMessage>
+      <div class="stable-warning">Before updating, please read the 
+        <a href='https://www.ixsystems.com/blog/knowledgebase_category/freenas/?latest-true' target="new">release notes</a>.</div>
+    </ng-template>
+    
   <div class="row">
     <div class="col-md-12">
       <button mat-button class="btn btn-success update-button" (click)="downloadUpdate()" [disabled]="status == 'REBOOT_REQUIRED'">{{"Fetch and Install Updates" | translate}}</button>
