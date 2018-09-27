@@ -4,7 +4,7 @@
         <mat-spinner 
           [diameter]='40' 
           id="entity-spinner"
-          *ngIf="!showDefaults && showSpinner">
+          *ngIf="!showDefaults && showSpinner" #entityspinner>
         </mat-spinner> 
     <app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
   </div>
@@ -18,13 +18,14 @@
 
 
 
-  <div fxLayout="row wrap" fxLayoutAlign="space-between center" fxlayout.sm="column" fxLayout.xs="column">
-    <div fxFlex="calc(100% - 400px)" class="padding_all">
-
+  <!-- <div fxLayout="row wrap" fxLayoutAlign="space-between center" fxlayout.sm="column" fxLayout.xs="column">
+    <div fxFlex="calc(100% - 400px)" class="padding_all"> -->
+<div id="action-button-wrapper">
       <span *ngFor="let custBtn of conf.custActions">
           <button id="cust_button_{{custBtn.name}}" mat-button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" (click)="custBtn['function']()">{{custBtn.name | translate}}</button>
       </span>
     </div>
+    <!-- </div> -->
 
 <!-- Selected columns checkbox ----------------- -->
 <div id="col-select-box" class="selected-columns" *ngIf="allColumns.length > 10 ? true : false">
@@ -180,7 +181,6 @@
           </app-entity-table-actions>
         </ng-template>
       </ngx-datatable-column>
-
     </ngx-datatable>
   </div>
 

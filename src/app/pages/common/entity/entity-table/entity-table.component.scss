@@ -15,9 +15,10 @@
     padding-left: 5px;
 }
 
-// .multiActionsButton {
-// 	height: 40px;
-// }
+.multiActionsButton {
+    position: relative;
+    top: -36px;
+}
 
 #col-select-box {
     margin-left: 20px;
@@ -75,5 +76,9 @@
     left: 250px;
     top: 9px;
     z-index: 10;
+}
+
+#action-button-wrapper {
+    height: 36px;
 }
 
