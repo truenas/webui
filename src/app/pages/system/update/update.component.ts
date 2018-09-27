@@ -39,10 +39,7 @@ export class UpdateComponent implements OnInit {
     "SDK": T("Changing SDK version is not a supported operation. Activate an existing boot environment that uses the desired train and boot into it to switch to that train."),
     "NIGHTLY_UPGRADE": T("Changing to a nightly train is one-way. Changing back to a stable train is not supported!")
   }
-  public stable_warning = [
-    "This is not a production release, and should only be used for testing. Latest commits: ",
-    "Before updating, please read the release notes at..."
-  ]
+  public stable_train: boolean;  
 
   public busy: Subscription;
   public busy2: Subscription;
@@ -381,7 +378,13 @@ export class UpdateComponent implements OnInit {
             if (res.notes) {
               this.releaseNotes = res.notes.ReleaseNotes;
             }
-            console.log(this.packages)
+          }
+          
+          let tempTrain = this.train.toLowerCase();
+          if (tempTrain.includes('night')) {
+            this.stable_train = false;
+          } else if (tempTrain.includes('stable')) {
+            this.stable_train = true;
           }
         },
         (err) => {

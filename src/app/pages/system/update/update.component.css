@@ -17,6 +17,11 @@
     overflow-y: scroll;
 }
 
-/* #button-card {
-    width: 85%;
-} */
+.stable-warning {
+    margin: 20px 0;
+    font-size: 1.1rem;
+}
+
+.stable-warning a {
+    text-decoration: underline;
+}
