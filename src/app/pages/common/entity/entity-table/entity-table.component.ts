@@ -35,6 +35,7 @@ export interface InputTableConf {
   queryRes?: any [];
   isActionVisible?: any;
   custActions?: any[];
+  multiActions?:any[];
   config?: any;
   confirmDeleteDialog?: Object;
   checkbox_confirm?: any;
