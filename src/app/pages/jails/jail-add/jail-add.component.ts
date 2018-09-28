@@ -49,6 +49,9 @@ export class JailAddComponent implements OnInit {
                   (Aa-Zz 0-9), dashes (-), or underscores (\_).'),
       required: true,
       validation: [ regexValidator(/^[a-zA-Z0-9-_]+$/) ],
+      blurStatus: true,
+      blurEvent: this.blurEvent,
+      parent: this
     },
     {
       type: 'select',
@@ -1465,5 +1468,21 @@ export class JailAddComponent implements OnInit {
 
   prevStep() {
     this.step--;
+  }
+  blurEvent(parent){
+    
+    const jail_name = parent.formGroup.value.uuid;
+    parent.ws.call('jail.query', [[["id","=",jail_name]]]).subscribe((jail_wizard_res)=>{
+      if(jail_wizard_res.length > 0){
+        _.find(parent.formFileds, {'name' : 'uuid'}).hasErrors = true;
+        _.find(parent.formFileds, {'name' : 'uuid'}).errors = `Jail ${jail_wizard_res[0].id} already exists.`;
+        parent.formGroup.controls.uuid.setValue("");
+  
+      } else {
+        _.find(parent.formFileds, {'name' : 'uuid'}).hasErrors = false;
+        _.find(parent.formFileds, {'name' : 'uuid'}).errors = '';
+
+      }
+    })
   }
 }
