@@ -176,7 +176,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
         this.currentRows = newData;
         this.paginationPageIndex  = 0;
-        this.setPaginationInfo();
+        this.setTableHeight();
       });
 
       // Delay spinner 500ms so it won't show up on a fast-loading page
@@ -201,13 +201,14 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   setTableHeight() {
     if (this.title === 'Boot Environments') {
       this.paginationPageSize = 6;
+    } else if (this.title === 'Jails') {
+      this.paginationPageSize = 8
     } else {
       let n = 0;
       let rowNum = 9;
-      console.log(this.title==='Boot Environments')
       if (this.conf.columns.length > 10) {
         n = 2;
-      } console.log(rowNum)
+      } 
       window.onresize = () => {
         let x = window.innerHeight;
         if (x <=780) {
