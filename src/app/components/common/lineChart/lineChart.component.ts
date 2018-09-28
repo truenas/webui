@@ -105,13 +105,15 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
       columns.push(series);
     }
 
+
     this.chart = c3.generate({
       bindto: '#' + this.controlUid,
-      color: {
+      /*color: {
         pattern: this.colorPattern
-      },
+      },*/
       data: {
         columns: columns,
+        colors: this.createColorObject(),
         x: 'xValues',
         //xFormat: '%H:%M',
         type: 'line',
@@ -194,6 +196,14 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
     return colors;
   }
 
+  private createColorObject(){
+    let obj = {};
+    this.legends.forEach((item, index)=>{
+      obj[item] = this.colorPattern[index]
+    })
+    return obj;
+  }
+
   public fetchData(timeframe:string){
     // This is the time portion of the API call. 
     this._lineChartService.getData(this, this.dataList, timeframe);
@@ -202,10 +212,16 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
   ngOnInit() {
     this.core.register({ observerClass:this, eventName:"ThemeData" }).subscribe((evt:CoreEvent)=>{ 
       this.colorPattern = this.processThemeColors(evt.data);
+      if(this.chart){ 
+        this.chart.data.colors(this.createColorObject())
+      }
     });
 
     this.core.register({ observerClass:this, eventName:"ThemeChanged" }).subscribe((evt:CoreEvent)=>{ 
       this.colorPattern = this.processThemeColors(evt.data);
+      if(this.chart){ 
+        this.chart.data.colors(this.createColorObject())
+      }
     });
 
     this.core.emit({name:"ThemeDataRequest"});
