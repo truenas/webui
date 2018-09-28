@@ -52,6 +52,7 @@ export interface InputTableConf {
   wsMultiDelete?(resp): any;
   wsMultiDeleteParams?(selected): any;
   updateMultiAction?(selected): any;
+  doAdd?();
 }
 
 export interface SortingConfig {
@@ -377,7 +378,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   }
 
   doAdd() {
-    this.router.navigate(new Array('/').concat(this.conf.route_add));
+    if (this.conf.doAdd) {
+      this.conf.doAdd();
+    } else {
+      this.router.navigate(new Array('/').concat(this.conf.route_add));
+    }
   }
 
   doEdit(id) {
