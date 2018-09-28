@@ -55,7 +55,7 @@
 <!-- End checkbox ------------------------------ -->
 
   <div fxLayout="row wrap" fxLayoutAlign="start center" class="multiActionsButton">
-    <div *ngIf="selected.length > 0 ? true : false" >
+    <div [style.visibility]="selected.length > 0 ? 'visible' : 'hidden'" >
       <div *ngIf="conf.multiActions; else defaultMultiActions" fxFlex="100">
         <span *ngFor="let maction of conf.multiActions">
           <button id="{{ maction?.id }}" 
