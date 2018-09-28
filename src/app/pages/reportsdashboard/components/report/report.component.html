@@ -41,7 +41,11 @@
           <div fxFlex="100" class="">         
           <!-- Time Stamp -->
           <div class="legend-timestamp">
-            <div *ngIf="lineChart.showLegendValues"><span *ngIf="lineChart.legendEvents | async as timestamp">{{timestamp[0].x}}</span></div>
+            <div *ngIf="lineChart.showLegendValues">
+              <span *ngIf="lineChart.legendEvents | async as timestamp">
+                <h4>Timestamp: {{timestamp[0].x}}</h4>
+              </span>
+            </div>
           </div>
           <section class="legend" fxLayout="row wrap" fxLayoutAlign="none"  *ngIf="lineChartConfig && lineChartConfig.legends">
               <div class="legend-group" fxFlex="120px" *ngFor="let legendItem of lineChartConfig.legends; let i=index">
