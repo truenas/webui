@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card id="upgrades-card">
   <div>
     <div class="row">
       <mat-checkbox [(ngModel)]="autoCheck" id="autocheck" [ngModelOptions]="{standalone: true}"
@@ -51,6 +51,7 @@
     </div>
   </div>
 </mat-card>
+
 <mat-card class="p-0" *ngIf="releaseNotes">
   <mat-card-title>
     <div class="mat-toolbar mat-card-toolbar">
@@ -61,20 +62,21 @@
     <a mat-button href="{{releaseNotes}}" target="_blank">{{"Check Release Notes" | translate}}</a>
   </mat-card-content>
 </mat-card>
-<mat-card class="p-0 changelog" *ngIf="changeLog">
+
+<mat-card class="p-0" id="changelog-card" *ngIf="changeLog">
   <mat-card-title>
     <div class="mat-toolbar mat-card-toolbar">
       <div class="mat-card-title-text">{{"Change log" | translate}}</div>
     </div>
   </mat-card-title>
-  <mat-card-content id="changelog-box">
+  <mat-card-content id="changelog-scrollbox">
       <markdown>
           {{changeLog}}
       </markdown>
   </mat-card-content>
 </mat-card>
 
-<mat-card *ngIf="updates_available">
+<mat-card *ngIf="updates_available" id="stable-warning-card">
     <div class="stable-warning" *ngIf="!stable_train; else stableMessage"><strong>This is not a production release, and should only be used for testing.</strong></div>
     <ng-template #stableMessage>
       <div class="stable-warning">Before updating, please read the 
@@ -82,13 +84,12 @@
     </ng-template>
 </mat-card>
 
-<mat-card>
+<mat-card id="button-card">
   <div class="row">
     <div class="col-md-12">
       <button *ngIf="updates_available" mat-button class="btn btn-success update-button" (click)="downloadUpdate()" [disabled]="status == 'REBOOT_REQUIRED'">{{"Fetch and Install Updates" | translate}}</button>
       <button mat-button class="btn btn-success update-button" *ngIf="update_downloaded && status !== 'UNAVAILABLE'" mat-button class="btn btn-success" (click)="ApplyPendingUpdate()" >{{"Apply Pending update" | translate}}</button>
       <button mat-button class="btn btn-success update-button" (click)="ManualUpdate()" >{{"Install Manual Update File" | translate}}</button>
-      
       <p><font color ="red">{{general_update_error}}</font></p>
     </div>
   </div>
