@@ -87,6 +87,7 @@
       [count]="currentRows.length"
       [offset]="paginationPageIndex"
       (page)='paginationUpdate($event)'
+      [externalSorting]="true"
       (sort)='reorderEvent($event)'
       [selectionType]="'checkbox'"
       [selected]='selected'

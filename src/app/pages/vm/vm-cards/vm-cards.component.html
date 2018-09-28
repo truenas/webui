@@ -62,7 +62,7 @@
       </div>
 
       <!-- Table data -->
-      <vm-table [data]="cards" fxFlex="100" fxLayout="column"
+      <vm-table [target]="controlEvents" [data]="cards" fxFlex="100" fxLayout="column"
         (edit)="focusVM($event);toggleForm(true,cards[focusedVM],'edit');"
         (delete)="deleteVM($event)"
         (power)="toggleVmState($event)"
@@ -108,6 +108,7 @@
             <button *ngIf="cards[i].state == 'running'" mat-menu-item (click)="toggleVmState(i)">Stop</button>
             <button *ngIf="cards[i].state == 'stopped'" mat-menu-item (click)="toggleVmState(i)">Start</button>
             <button *ngIf="cards[i].state == 'running'" mat-menu-item (click)="toggleVmState(i,true)">Power Off</button>
+            <button *ngIf="cards[i].state == 'running'" mat-menu-item (click)="restartVM(i)">Restart</button>
             <button *ngIf="cards[i].state == 'stopped'" mat-menu-item disabled>Power Off</button>
             <button mat-menu-item (click)="deleteVM(i)">Delete</button>
             <button mat-menu-item color="primary" (click)="goToDevices(i)">Devices</button>
@@ -176,7 +177,7 @@
     </ng-template>
 
     <!-- Create your cards here -->
-    <entity-card [ngStyle]="cardStyles()" [conf]="cards[i]" [front]="cardfront" [back]="cardback" [lazyLoaded]="cards[i].lazyLoaded"></entity-card>
+    <entity-card id="{{cards[i].domId}}" [ngStyle]="cardStyles()" [conf]="cards[i]" [front]="cardfront" [back]="cardback" [lazyLoaded]="cards[i].lazyLoaded"></entity-card>
 
   </div>
 

@@ -184,10 +184,9 @@ mat-chip.service-state-on,
 }
 
 .slim .service-power-btn {
-  top: initial;
-  bottom: 65px;
-  left: 114.5px;
-  position: fixed;
+  top: 130px;
+  left: 116px;
+  position: absolute;
 }
 
 #start-label {

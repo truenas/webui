@@ -156,13 +156,15 @@ export class ApiService {
       apiCall:{
         protocol:"websocket",
         version:"2.0",
-        namespace:"vm.status",
+        namespace:"vm.query",
         args: [],// eg. [["id", "=", "foo"]]
         responseEvent: "VmStatus"
       },
       postProcessor(res,callArgs){
-        let cloneRes = Object.assign({},res);
-        cloneRes = {id:callArgs[0] ,state: res.state}
+        const cloneRes = [];
+        for (const vmstatus of res) {
+          cloneRes.push({id:vmstatus.id ,state: vmstatus.status.state})
+        }
         return cloneRes;
       }
     },
@@ -171,6 +173,20 @@ export class ApiService {
         protocol:"websocket",
         version:"1",
         namespace:"vm.start",
+        args:[],
+        responseEvent:"VmStarted"
+      },
+      postProcessor(res,callArgs){
+        let cloneRes = Object.assign({},res);
+        cloneRes = {id:callArgs[0] ,state: res} // res:boolean
+        return cloneRes;
+      }
+    },
+    VmRestart:{
+      apiCall:{
+        protocol:"websocket",
+        version:"1",
+        namespace:"vm.restart",
         args:[],
         responseEvent:"VmStarted"
       },
@@ -210,7 +226,6 @@ export class ApiService {
         return redef;
       },
       postProcessor(res,callArgs){
-        //DEBUG: console.log(res);
         let cloneRes = Object.assign({},res);
         cloneRes = {id:callArgs[0]} // res:boolean
         return cloneRes;
@@ -232,6 +247,11 @@ export class ApiService {
         namespace:"vm.clone",
         args:[],
         responseEvent:"VmProfilesRequest"
+      },
+      preProcessor(def:ApiCall){
+        let redef = Object.assign({}, def);
+        redef.args = [def.args];
+        return redef;
       },
       postProcessor(res,callArgs){
         //console.log(res);
@@ -499,7 +519,6 @@ export class ApiService {
     this.ws.authStatus.subscribe((evt:any) =>{
       this.core.emit({name:"Authenticated",data:evt,sender:this});
     });
-    console.log("*** New Instance of API Service ***");
     this.registerDefinitions();
   }
 
@@ -635,6 +654,7 @@ export class ApiService {
           this.core.emit({name:call.responseEvent, data:res, sender:this });
         }
       },(error)=>{
+        console.log(error);
         if(call.responseFailedEvent){
           error.id = call.args;
           this.core.emit({name:call.responseFailedEvent, data:error, sender: this});

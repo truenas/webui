@@ -29,8 +29,9 @@ export class NFSFormComponent {
       formarray: [{
         name: 'path',
         placeholder: T('Path'),
-        tooltip: T('Browse to the pool or dataset to be shared. Click\
-                    <b>Add extra path</b> to select multiple paths.'),
+        tooltip: T('Full path to the pool or dataset to share. Mandatory.\
+                    Click <b>ADD ADDITIONAL PATH</b> to configure\
+                    multiple paths.'),
         type: 'explorer',
         explorerType: 'directory',
         initial: '/mnt',

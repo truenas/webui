@@ -18,6 +18,7 @@ import { EntityUtils } from '../utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../../services';
 import { ErdService } from '../../../../services/erd.service';
+import { StorageService } from '../../../../services/storage.service'
 import { Subscription } from 'rxjs/Subscription';
 
 
@@ -66,7 +67,7 @@ export interface TableConfig {
   selector: 'entity-table',
   templateUrl: './entity-table.component.html',
   styleUrls: ['./entity-table.component.scss'],
-  providers: [DialogService]
+  providers: [DialogService, StorageService]
 })
 export class EntityTableComponent implements OnInit, AfterViewInit {
 
@@ -111,7 +112,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService, 
-    protected erdService: ErdService, protected translate: TranslateService, protected snackBar: MatSnackBar) { }
+    protected erdService: ErdService, protected translate: TranslateService, protected snackBar: MatSnackBar,
+    public sorter: StorageService) { }
 
   ngOnInit() {
 
@@ -492,8 +494,13 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     }
   }
 
-  reorderEvent($event) {
+  reorderEvent(event) {
     this.paginationPageIndex = 0;
+    let sort = event.sorts[0],
+      rows = this.currentRows;
+    this.sorter.tableSorter(rows, sort.prop, sort.dir);
+    this.rows = rows;
+    this.setPaginationInfo();
   }
 
   /**

@@ -9,7 +9,7 @@ import { NgForm } from '@angular/forms';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
-import { AnimationDirective } from 'app/core/directives/animation.directive';
+
 //import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import {CardComponent, CardComponentMetadata} from 'app/core/components/card/card.component';
 import filesize from 'filesize';

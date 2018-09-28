@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatProgressBar, MatButton, MatSnackBar } from '@angular/material';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { matchOtherValidator } from '../../../pages/common/entity/entity-form/validators/password-validation';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../translate-marker';
 
@@ -25,9 +27,12 @@ export class SigninComponent implements OnInit {
     username: '',
     password: ''
   }
+  public setPasswordFormGroup: FormGroup;
+  public has_root_password: Boolean = true;
   constructor(private ws: WebSocketService, private router: Router,
     private snackBar: MatSnackBar, public translate: TranslateService,
-    private dialogService: DialogService) {
+    private dialogService: DialogService,
+    private fb: FormBuilder) {
     this.ws = ws;
     this.ws.call('system.is_freenas').subscribe((res)=>{
       this.logo_ready = true;
@@ -36,6 +41,10 @@ export class SigninComponent implements OnInit {
    }
 
   ngOnInit() {
+    this.ws.call('user.has_root_password').subscribe((res) => {
+      this.has_root_password = res;
+    })
+
     if (window['MIDDLEWARE_TOKEN']) {
       this.ws.login_token(window['MIDDLEWARE_TOKEN'])
       .subscribe((result) => {
@@ -54,6 +63,17 @@ export class SigninComponent implements OnInit {
       this.ws.login_token(this.ws.token)
                        .subscribe((result) => { this.loginCallback(result); });
     }
+    this.setPasswordFormGroup = this.fb.group({
+      password: new FormControl('', [Validators.required]),
+      password2: new FormControl('', [Validators.required, matchOtherValidator('password')]),
+    })
+  }
+
+  get password() {
+    return this.setPasswordFormGroup.get('password');
+  }
+  get password2() {
+    return this.setPasswordFormGroup.get('password2');
   }
 
   connected() {
@@ -66,6 +86,14 @@ export class SigninComponent implements OnInit {
 
     this.ws.login(this.signinData.username, this.signinData.password)
                       .subscribe((result) => { this.loginCallback(result); });
+  }
+
+  setpassword() {
+    this.ws.call('user.set_root_password', [this.password.value]).subscribe(
+      (res)=>{
+        this.ws.login('root', this.password.value)
+                      .subscribe((result) => { this.loginCallback(result); });
+      });
   }
 
   loginCallback(result) {

@@ -171,7 +171,6 @@ export class ThemeService {
   public globalPreviewData: any;
 
   constructor(private rest: RestService, private ws: WebSocketService, private core:CoreService, private api:ApiService) {
-    console.log("*** New Instance of Theme Service ***");
 
     // Set default list
     this.allThemes = this.freenasThemes;

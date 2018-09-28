@@ -33,7 +33,6 @@ import { WidgetNoteComponent } from 'app/core/components/widgets/widgetnote/widg
 import { WidgetNotesCollectionComponent } from 'app/core/components/widgets/widgetnotescollection/widgetnotescollection.component';
 import { WidgetPoolComponent } from 'app/core/components/widgets/widgetpool/widgetpool.component';
 
-import { AnimationDirective } from 'app/core/directives/animation.directive';
 
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -54,7 +53,6 @@ import { TranslateModule } from '@ngx-translate/core';
     TranslateModule
   ],
   declarations: [
-    AnimationDirective,
     PageComponent,
     ViewComponent,
     CardComponent,
@@ -88,7 +86,6 @@ import { TranslateModule } from '@ngx-translate/core';
     CommonModule,
     MaterialModule,
     FlexLayoutModule,
-    AnimationDirective,
     Display,
     DisplayContainer,
     PageComponent,
