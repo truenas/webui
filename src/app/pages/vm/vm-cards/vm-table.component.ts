@@ -59,7 +59,7 @@ export class VmTableComponent implements OnChanges{
 
   public rows = new Array<any>();
   public cache: any = {};
-  public pageSize:number = 8;
+  public pageSize = 8;
   public tableHeight:number;
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService) {
     this.page.pageNumber = 0;
@@ -147,9 +147,14 @@ export class VmTableComponent implements OnChanges{
     this.delete.emit(index);
   }
 
-  onPower(row){
+  onPower(row, power?){
     const index = this.data.indexOf(row);
-    this.power.emit(index);
+    if (power) {
+      this.power.emit({index:index, force:power});
+    } else {
+      this.power.emit(index);
+    };
+    
   }
 
   onRestart(row){
