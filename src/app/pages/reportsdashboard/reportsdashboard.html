@@ -9,7 +9,7 @@
 
       <div class="reports-dash-global-controls">
           <mat-button-toggle-group #chartWidth="matButtonToggleGroup">
-            <mat-button-toggle checked value="800px">
+            <mat-button-toggle checked="true" value="800px">
               <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-view-parallel"></mat-icon>
             </mat-button-toggle>
             <mat-button-toggle value="100%">
@@ -18,10 +18,45 @@
           </mat-button-toggle-group>
         </div>
 
-      <mat-tab-group *ngIf="drawTabs" (selectChange)="tabSelectChangeHandler($event)">
-        
+      <!--<mat-tab-group *ngIf="drawTabs" (selectChange)="tabSelectChangeHandler($event)">
         <mat-tab *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray" label="{{ tabChartsMappingDataItem.keyName | translate }}">
           <div *ngIf="tabChartsMappingDataSelected.keyName === tabChartsMappingDataItem.keyName">
+                <div fxLayout="row wrap" fxLayoutAlign="space-around center">
+                  <div  [fxFlex]="chartWidth.value" *ngFor="let chartConfigData of tabChartsMappingDataSelected.paginatedChartConfigData">
+                    <report [title]="chartConfigData.title" [lineChartConfig]="chartConfigData"></report>
+                  </div>
+                </div>
+          </div>
+        </mat-tab>
+        </mat-tab-group>-->
+
+      <nav mat-tab-nav-bar *ngIf="drawTabs" (selectChange)="tabSelectChangeHandler($event)">
+        <a mat-tab-link *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray"
+          [active]="isActiveTab(tabChartsMappingDataItem.keyName)"
+          (click)="updateActiveTab(tabChartsMappingDataItem.keyName)">
+          
+        <!--<a mat-tab-link *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray"
+          [routerLink]="tabChartsMappingDataItem.keyName.toLowerCase()"
+          routerLinkActive #tab="routerLinkActive"
+                                         [active]="tab.isActive">-->
+          {{ tabChartsMappingDataItem.keyName | translate }} 
+        </a>
+      </nav>
+
+      <div *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray">
+          <div *ngIf="tabChartsMappingDataSelected.keyName === tabChartsMappingDataItem.keyName">
+                <div fxLayout="row wrap" fxLayoutAlign="space-around center">
+                  <div  [fxFlex]="chartWidth.value" *ngFor="let chartConfigData of tabChartsMappingDataSelected.paginatedChartConfigData">
+                    <report [title]="chartConfigData.title" [lineChartConfig]="chartConfigData"></report>
+                  </div>
+                </div>
+              </div>
+          </div>
+
+          <!--<router-outlet></router-outlet>-->
+
+    </div>
+</div>
 
             <!--<div *ngIf="paginationLength > paginationPageSize">
               <mat-paginator [length]="paginationLength" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" (page)="paginationUpdate($event)">
@@ -36,22 +71,3 @@
                 </mat-card-content>
                 </mat-card>-->
 
-                <div fxLayout="row wrap" fxLayoutAlign="space-around center">
-                  <div  [fxFlex]="chartWidth.value" *ngFor="let chartConfigData of tabChartsMappingDataSelected.paginatedChartConfigData">
-                    <report [title]="chartConfigData.title" [lineChartConfig]="chartConfigData"></report>
-                  </div>
-                </div>
-
-                <!--<div class="give_me_space_bottom">
-                  <br/>
-                  </div>-->
-          </div>
-        </mat-tab>
-      </mat-tab-group>
-
-      <!-- Silly but stops the footer from scrunching up into my action. -->
-      <!--<div class="give_me_space_bottom"></div>-->
-
-
-    </div>
-</div>

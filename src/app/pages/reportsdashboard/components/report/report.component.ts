@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Input, ViewChild, OnDestroy} from '@angular/core';
+import { Component, AfterViewInit, Input, ViewChild, OnDestroy, OnChanges} from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { MaterialModule } from 'app/appMaterial.module';
@@ -35,7 +35,7 @@ interface LineChartConfig {
   templateUrl:'./report.component.html',
   styleUrls: ['./report.component.css']
 })
-export class ReportComponent extends WidgetComponent implements AfterViewInit, OnDestroy {
+export class ReportComponent extends WidgetComponent implements AfterViewInit, OnChanges ,OnDestroy {
 
   //Chart
   @ViewChild(LineChartComponent) lineChart:LineChartComponent;
@@ -47,6 +47,15 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   public altTitle: string = '';
   public altSubtitle: string = '';
   public widgetColorCssVar: string = 'var(--primary)';
+
+  private timeZoomIndex:number = 4;
+  private zoomLevels: string[] = [
+    '5M',// 6 months
+    '1M',// 1 month
+    '7d',// 1 week
+    '24h',// 24hrs
+    '60m',// 60 minutes
+  ]
 
   // Loader
   public loader:boolean = false;
@@ -64,7 +73,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   // Chart Options
   //public showLegendValues:boolean = false;
   public chartId = "chart-" + UUID.UUID();
-   
+
   public startTime;
   public endTime;
 
@@ -87,7 +96,29 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
       //console.log(evt);
       //console.log(this.lineChart.colorPattern);
       //console.log(this.lineChartConfig.legends);
-    });
+      });
+  }
+
+  ngOnChanges(changes){
+    if(changes.lineChartConfig){
+      //
+      }
+  }
+
+  timeZoomIn(){
+    // more detail
+    const max = 4; 
+    if(this.timeZoomIndex == max){ return;}
+    this.timeZoomIndex += 1;
+    this.lineChart.fetchData('now-' + this.zoomLevels[this.timeZoomIndex]);
+  }
+
+  timeZoomOut(){
+    // less detail
+    const min = Number(0);
+    if(this.timeZoomIndex == min){ return;}
+    this.timeZoomIndex -= 1;
+    this.lineChart.fetchData('now-' + this.zoomLevels[this.timeZoomIndex]);
   }
 
   setChartData(evt:CoreEvent){

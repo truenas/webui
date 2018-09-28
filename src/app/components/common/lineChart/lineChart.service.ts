@@ -78,9 +78,10 @@ export class LineChartService {
 
   constructor(private _ws: WebSocketService) {}
 
-  public getData(dataHandlerInterface: HandleDataFunc, dataList: any[]) {
-
-    this._ws.call('stats.get_data', [dataList, {step: '10', start: 'now-10m'}]).subscribe((res) => {
+  public getData(dataHandlerInterface: HandleDataFunc, dataList: any[], timeframe?:string) {
+    if(!timeframe){timeframe = 'now-10m';}
+    this._ws.call('stats.get_data', [dataList, {step: '10', start:timeframe}]).subscribe((res) => {
+      //console.log(res)
       const linechartData: LineChartData = {
         labels: new Array<Date>(),
         series: new Array<any>()
@@ -94,7 +95,6 @@ export class LineChartService {
           linechartData.series[x].push(item[x]);
         }
       });
-
       dataHandlerInterface.handleDataFunc(linechartData);
     });
   }

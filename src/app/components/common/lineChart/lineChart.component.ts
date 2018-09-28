@@ -14,7 +14,10 @@ export interface ChartFormatter {
   format (value, ratio, id);
 }
 
-@Component({selector: 'line-chart', templateUrl: './lineChart.html'})
+@Component({
+  selector: 'line-chart', 
+  template: `<div id="{{controlUid}}"></div>`
+})
 export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, HandleDataFunc {
 
   @Input() dataList: DataListItem[];
@@ -191,6 +194,11 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
     return colors;
   }
 
+  public fetchData(timeframe:string){
+    // This is the time portion of the API call. 
+    this._lineChartService.getData(this, this.dataList, timeframe);
+  }
+
   ngOnInit() {
     this.core.register({ observerClass:this, eventName:"ThemeData" }).subscribe((evt:CoreEvent)=>{ 
       this.colorPattern = this.processThemeColors(evt.data);
@@ -209,7 +217,7 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
       this.setupPiechart();
     } else {
       if (this.dataList.length > 0) {
-        this._lineChartService.getData(this, this.dataList);
+        this.fetchData('now-10m');
       }
     }
   }

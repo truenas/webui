@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 import * as _ from 'lodash';
 import {LineChartService, ChartConfigData, HandleChartConfigDataFunc} from '../../components/common/lineChart/lineChart.service';
@@ -46,12 +47,12 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   public tabChartsMappingDataArray: TabChartsMappingData[] = [];
   public tabChartsMappingDataSelected: TabChartsMappingData;
   public showSpinner: boolean = true;
+  public activeTab: string;
   @ViewChild('chartWidth') chartWidth: MatButtonToggleGroup;
   
 
 
-  constructor(private _lineChartService: LineChartService, private erdService: ErdService, public translate: TranslateService) {
-    
+  constructor(private _lineChartService: LineChartService, private erdService: ErdService, public translate: TranslateService, private router:Router) {
   }
 
   private setPaginationInfo(tabChartsMappingDataSelected: TabChartsMappingData) {
@@ -192,6 +193,31 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   
     this.drawTabs = true;
     this.showSpinner = false;
+  }
+
+  isActiveTab(str:string){
+    let test: boolean;
+    if(!this.activeTab){ 
+      test = ('/reportsdashboard/' + str.toLowerCase()) == this.router.url;
+    } else {
+      test = (this.activeTab == str.toLowerCase());
+    }
+     return test;
+  }
+
+  updateActiveTab(tabName:string){
+    // Change the URL without reloading page/component
+    // the old fashioned way 
+    window.history.replaceState({}, '','/reportsdashboard/' + tabName.toLowerCase());
+
+    // Simulate tab event
+    let evt = {
+      tab: {
+        textLabel: tabName
+      }
+    }
+    this.tabSelectChangeHandler(evt);
+    this.activeTab = tabName.toLowerCase(); 
   }
 
   tabSelectChangeHandler($event) {
