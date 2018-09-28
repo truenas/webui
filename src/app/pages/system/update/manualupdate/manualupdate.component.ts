@@ -68,7 +68,8 @@ export class ManualUpdateComponent {
       acceptedFiles: '.tar',
       updater: this.updater,
       parent: this,
-      required: true
+      required: true,
+      hideButton: true,
     },
   ];
   protected saveConfigFieldConf: FieldConfig[] = [
