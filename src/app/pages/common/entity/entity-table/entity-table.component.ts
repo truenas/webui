@@ -202,7 +202,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     let rowNum = 9, n;
     if (this.title === 'Boot Environments') {
       n = 5;
-    } else if (this.title === 'Jails') {
+    } else if (this.title === 'Jails' || this.title === 'Available Plugins' || this.title === 'Installed Plugins') {
       n = 3;
     } else {
       n = 0;
