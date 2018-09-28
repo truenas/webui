@@ -7,7 +7,6 @@ import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-
 import * as _ from 'lodash';
 
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { EntityUtils } from '../../common/entity/utils';
 import {VmService} from '../../../services/vm.service';
 import {regexValidator} from '../../common/entity/entity-form/validators/regex-validation';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
@@ -33,6 +32,7 @@ export class DockerVMWizardComponent {
   objectKeys = Object.keys;
   summary_title = "Docker Summary";
   entityWizard: any;
+  name: any;
 
   protected wizardConfig: Wizard[] = [
     {
@@ -230,6 +230,7 @@ export class DockerVMWizardComponent {
       }
     });
     ( < FormGroup > entityWizard.formArray.get([1])).get('name').valueChanges.subscribe((name) => {
+      this.name = name;
       this.summary[T('Name')] = name;
     });
 
@@ -285,12 +286,7 @@ export class DockerVMWizardComponent {
       });
       ( < FormGroup > entityWizard.formArray.get([4])).get('raw_filename').valueChanges.subscribe((raw_filename) => {
         ( < FormGroup > entityWizard.formArray.get([4])).get('raw_file_directory').valueChanges.subscribe((raw_file_directory)=>{
-          this.summary[T('Raw file location')] = raw_file_directory + "/" +raw_filename+"_"+name;
-        })
-      });
-      ( < FormGroup > entityWizard.formArray.get([4])).get('raw_file_directory').valueChanges.subscribe((raw_file_directory) => {
-        ( < FormGroup > entityWizard.formArray.get([4])).get('raw_filename').valueChanges.subscribe((raw_filename)=>{
-          this.summary[T('Raw file location')] = raw_file_directory + "/" +raw_filename+"_"+name;
+          this.summary[T('Raw file location')] = raw_file_directory + "/" +raw_filename+"_"+this.name;
         })
       });
       this.summary[T('Raw file size')] = ( < FormGroup > entityWizard.formArray.get([4])).get('size').value + ' GiB';
@@ -393,7 +389,6 @@ async customSubmit(value) {
       this.router.navigate(['/vm']);
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
-      new EntityUtils().handleWSError(this.entityWizard, res);
     });
 
   }
