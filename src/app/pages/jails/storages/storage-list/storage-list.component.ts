@@ -54,17 +54,20 @@ export class StorageListComponent {
 
   dataHandler(entityList: any) {
     entityList.rows = [];
+
     if (this.queryRes[0]) {
       for (let i = 0; i < Object.keys(this.queryRes[0]).length - 1; i++) {
-        let row = [];
-        row['source'] = this.queryRes[0][i][0];
-        row['destination'] = this.queryRes[0][i][1];
-        row['fstype'] = this.queryRes[0][i][2];
-        row['fsoptions'] = this.queryRes[0][i][3];
-        row['dump'] = this.queryRes[0][i][4];
-        row['_pass'] = this.queryRes[0][i][5];
-        row['id'] = i;
-        entityList.rows.push(row);
+        if (this.queryRes[0][i].type != "SYSTEM") {
+          let row = [];
+          row['source'] = this.queryRes[0][i].entry[0];
+          row['destination'] = this.queryRes[0][i].entry[1];
+          row['fstype'] = this.queryRes[0][i].entry[2];
+          row['fsoptions'] = this.queryRes[0][i].entry[3];
+          row['dump'] = this.queryRes[0][i].entry[4];
+          row['_pass'] = this.queryRes[0][i].entry[5];
+          row['id'] = i;
+          entityList.rows.push(row);
+        }
       }
     }
   }
