@@ -199,29 +199,27 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   }
 
   setTableHeight() {
-    let rowNum = 1;
+    let rowNum = 9, n;
     if (this.title === 'Boot Environments') {
-      this.paginationPageSize = 6;
+      n = 5;
     } else if (this.title === 'Jails') {
-      this.paginationPageSize = 8
+      n = 3;
     } else {
-      let n = 0;
-      rowNum = 9;
-      if (this.conf.columns.length > 10) {
-        n = 2;
-      } 
-      window.onresize = () => {
-        let x = window.innerHeight;
-        if (x <=780) {
-          this.paginationPageSize = rowNum - n;
-        } else {
-          let y = x - 800;
-          this.paginationPageSize = rowNum - n + Math.floor(y/50);
-        }
-        this.setPaginationInfo();
-      }
+      n = 0;
     }
-
+    if (this.conf.columns.length > 10) {
+        n = n + 2;
+    } 
+    window.onresize = () => {
+      let x = window.innerHeight;
+      if (x <=780) {
+        this.paginationPageSize = rowNum - n;
+      } else {
+        let y = x - 800;
+        this.paginationPageSize = rowNum - n + Math.floor(y/50);
+      }
+      this.setPaginationInfo();
+    }
   }
 
   setShowSpinner() {
