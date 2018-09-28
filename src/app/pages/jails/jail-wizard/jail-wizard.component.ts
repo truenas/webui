@@ -167,6 +167,11 @@ export class JailWizardComponent {
           }]
         },
         {
+          type: 'checkbox',
+          name: 'auto_configure_ip6',
+          placeholder: T('Auto configure IPv6'),
+        },
+        {
           type: 'select',
           name: 'ip6_interface',
           placeholder: T('IPv6 Interface'),
@@ -179,6 +184,13 @@ export class JailWizardComponent {
           width: '30%',
           value: '',
           required: false,
+          relation: [{
+            action: 'DISABLE',
+            when: [{
+              name: 'auto_configure_ip6',
+              value: true,
+            }]
+          }]
         },
         {
           type: 'input',
@@ -188,6 +200,13 @@ export class JailWizardComponent {
           validation : [ regexValidator(this.networkService.ipv6_regex) ],
           class: 'inline',
           width: '30%',
+          relation: [{
+            action: 'DISABLE',
+            when: [{
+              name: 'auto_configure_ip6',
+              value: true,
+            }]
+          }]
         },
         {
           type: 'select',
@@ -201,6 +220,13 @@ export class JailWizardComponent {
           class: 'inline',
           width: '20%',
           value: '',
+          relation: [{
+            action: 'DISABLE',
+            when: [{
+              name: 'auto_configure_ip6',
+              value: true,
+            }]
+          }]
         },
         {
           type: 'input',
@@ -318,23 +344,28 @@ export class JailWizardComponent {
       }
       this.ipv4 = this.summary[T('IPv4 Address')];
     } else {
-      let ip6_interface_control = (< FormGroup > entityWizard.formArray.get([1])).controls['ip6_interface'];
-      let ip6_address_control = (< FormGroup > entityWizard.formArray.get([1])).controls['ip6_addr'];
-      let ip6_prefix_control = (< FormGroup > entityWizard.formArray.get([1])).controls['ip6_prefix'];
-      if (ip6_address_control.value == undefined || ip6_address_control.value == '') {
-        delete this.summary[T('IPv6 Address')];
+      if ((< FormGroup > entityWizard.formArray.get([1])).controls['auto_configure_ip6'].value) {
+        this.summary[T('IPv6 Address')] = T("Auto configure IPv6");
+        this.ipv6 = "vnet0|accept_rtadv";
       } else {
-        let full_address = ip6_address_control.value;
-        if (ip6_interface_control.value != '') {
-          full_address = ip6_interface_control.value + '|' + ip6_address_control.value;
-        }
-        if (ip6_prefix_control.value != '') {
-          full_address += '/' + ip6_prefix_control.value;
-        }
+        let ip6_interface_control = (< FormGroup > entityWizard.formArray.get([1])).controls['ip6_interface'];
+        let ip6_address_control = (< FormGroup > entityWizard.formArray.get([1])).controls['ip6_addr'];
+        let ip6_prefix_control = (< FormGroup > entityWizard.formArray.get([1])).controls['ip6_prefix'];
+        if (ip6_address_control.value == undefined || ip6_address_control.value == '') {
+          delete this.summary[T('IPv6 Address')];
+        } else {
+          let full_address = ip6_address_control.value;
+          if (ip6_interface_control.value != '') {
+            full_address = ip6_interface_control.value + '|' + ip6_address_control.value;
+          }
+          if (ip6_prefix_control.value != '') {
+            full_address += '/' + ip6_prefix_control.value;
+          }
 
-        this.summary[T('IPv6 Address')] = full_address;
+          this.summary[T('IPv6 Address')] = full_address;
+        }
+        this.ipv6 = this.summary[T('IPv6 Address')];
       }
-      this.ipv6 = this.summary[T('IPv6 Address')];
     }
   }
 
@@ -392,6 +423,17 @@ export class JailWizardComponent {
         this.summary[T('Default Router For IPv4')] = res;
       }
     });
+
+    ( < FormGroup > entityWizard.formArray.get([1]).get('auto_configure_ip6')).valueChanges.subscribe((res) => {
+      let vnet_ctrl = ( < FormGroup > entityWizard.formArray.get([1])).controls['vnet'];
+      if (res) {
+        vnet_ctrl.setValue(true);
+      } else {
+        vnet_ctrl.setValue(vnet_ctrl.value);
+      }
+      _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).required = res;
+    });
+
     // update ipv6
     ( < FormGroup > entityWizard.formArray.get([1])).get('ip6_interface').valueChanges.subscribe((res) => {
       this.updateIpAddress(entityWizard, 'ipv6');
@@ -434,7 +476,8 @@ export class JailWizardComponent {
         this.ip6_interfaceField.options.pop({ label: 'vnet0', value: 'vnet0'});
       }
 
-      if (( < FormGroup > entityWizard.formArray.get([1])).controls['dhcp'].value && !res) {
+      if ((( < FormGroup > entityWizard.formArray.get([1])).controls['dhcp'].value ||
+           ( < FormGroup > entityWizard.formArray.get([1])).controls['auto_configure_ip6'].value) && !res) {
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).hasErrors = true;
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).errors = 'VNET is required.';
       } else {
@@ -453,6 +496,8 @@ export class JailWizardComponent {
     delete value['ip6_interface'];
     delete value['ip6_prefix'];
     value['ip6_addr'] = this.ipv6;
+
+    delete value['auto_configure_ip6'];
 
     for (let i in value) {
       if (value.hasOwnProperty(i)) {
