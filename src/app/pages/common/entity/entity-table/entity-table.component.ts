@@ -197,16 +197,27 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   }
 
   setTableHeight() {
-    window.onresize = () => {
-      let x = window.innerHeight;
-      if (x <=780) {
-        this.paginationPageSize = 9;
-      } else {
-        let y = x - 800;
-        this.paginationPageSize = 9 + Math.floor(y/50);
+    if (this.title === 'Boot Environments') {
+      this.paginationPageSize = 6;
+    } else {
+      let n = 0;
+      let rowNum = 9;
+      console.log(this.title==='Boot Environments')
+      if (this.conf.columns.length > 10) {
+        n = 2;
+      } console.log(rowNum)
+      window.onresize = () => {
+        let x = window.innerHeight;
+        if (x <=780) {
+          this.paginationPageSize = rowNum - n;
+        } else {
+          let y = x - 800;
+          this.paginationPageSize = rowNum - n + Math.floor(y/50);
+        }
+        this.setPaginationInfo();
       }
-      this.setPaginationInfo();
     }
+
   }
 
   setShowSpinner() {
@@ -440,11 +451,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     })
   }
 
-
   setPaginationPageSizeOptions(setPaginationPageSizeOptionsInput: string) {
     this.paginationPageSizeOptions = setPaginationPageSizeOptionsInput.split(',').map(str => +str);
   }
-
 
   paginationUpdate($pageEvent: any) {
 

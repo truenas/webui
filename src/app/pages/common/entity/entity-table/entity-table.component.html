@@ -16,11 +16,9 @@
       <tooltip message="{{'Show only entries that contain this text' | translate}}"></tooltip>
     </div>
 
-
-
   <!-- <div fxLayout="row wrap" fxLayoutAlign="space-between center" fxlayout.sm="column" fxLayout.xs="column">
     <div fxFlex="calc(100% - 400px)" class="padding_all"> -->
-<div id="action-button-wrapper">
+<div id="action-button-wrapper" *ngIf="conf.custActions">
       <span *ngFor="let custBtn of conf.custActions">
           <button id="cust_button_{{custBtn.name}}" mat-button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" (click)="custBtn['function']()">{{custBtn.name | translate}}</button>
       </span>
