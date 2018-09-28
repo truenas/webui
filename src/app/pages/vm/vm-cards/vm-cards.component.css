@@ -130,6 +130,13 @@ vm-cards mat-card.front {
   bottom:0;
 }
 
+.side-content .stats-info {
+  position: relative;
+  overflow: hidden;
+  width: 250px;
+  margin: 0 auto;
+}
+
 .side-content .stats-info table{
   width:80%;
   margin:40px auto 0;
@@ -201,7 +208,10 @@ mat-chip.vm-state-on,
 
 .slim .side-content .stats-info {
   position: relative;
-  top: -30px;
+  top: -40px;
+  overflow: hidden;
+  width: 250px;
+  margin: 0 auto;
 }
 
 .slim .vm-controls{
@@ -209,7 +219,7 @@ mat-chip.vm-state-on,
 }
 
 .slim .vm-power-btn{  
-  top: 260px;
+  top: 267px;
   left: 116px;
   position: absolute;
 }
