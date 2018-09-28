@@ -16,6 +16,7 @@ import { T } from '../../translate-marker';
 
 interface TabChartsMappingData {
   keyName: string;
+  path: string;
   chartConfigData: ChartConfigData[];
   paginatedChartConfigData: ChartConfigData[]
 }
@@ -81,7 +82,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   }
 
   ngAfterViewInit(): void {
-    this.erdService.attachResizeEventToElement("dashboardcontainerdiv");
+    this.erdService.attachResizeEventToElement("dashboardcontainerdiv"); 
   }
 
   /**
@@ -94,6 +95,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
     // For every one of these map entries.. You see one tab in the UI With the charts collected for that tab
     map.set("CPU", {
       keyName: T("CPU"),
+      path:"cpu",
       chartConfigData: [],
       paginatedChartConfigData: []
 
@@ -101,18 +103,21 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
 
     map.set("Disk", {
       keyName: T("Disk"),
+      path:"disk",
       chartConfigData: [],
       paginatedChartConfigData: []
     });
 
     map.set("Memory", {
       keyName: T("Memory"),
+      path:"memory",
       chartConfigData: [],
       paginatedChartConfigData: []
     });
 
     map.set("Network", {
       keyName: T("Network"),
+      path:"network",
       chartConfigData: [],
       paginatedChartConfigData: []
     });
@@ -120,24 +125,28 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
 
     map.set("Partition", {
       keyName: T("Partition"),
+      path:"partition",
       chartConfigData: [],
       paginatedChartConfigData: []
     });
 
     map.set("System", {
       keyName: T("System"),
+      path:"system",
       chartConfigData: [],
       paginatedChartConfigData: []
     });
 
     map.set("Target", {
       keyName: T("Target"),
+      path:"target",
       chartConfigData: [],
       paginatedChartConfigData: []
     });
 
     map.set("ZFS", {
       keyName: T("ZFS"),
+      path:"zfs",
       chartConfigData: [],
       paginatedChartConfigData: []
     });
@@ -193,6 +202,15 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   
     this.drawTabs = true;
     this.showSpinner = false;
+    this.activateTabFromUrl();
+  }
+
+  activateTabFromUrl (){
+    let subpath = this.router.url.split("/reportsdashboard/"); 
+    let tabFound = this.tabChartsMappingDataArray.find((tab) =>{
+      return tab.keyName.toLowerCase() === subpath[1];
+    });
+    this.updateActiveTab(tabFound.keyName);
   }
 
   isActiveTab(str:string){
