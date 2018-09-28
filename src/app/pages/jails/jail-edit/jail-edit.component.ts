@@ -764,6 +764,17 @@ export class JailEditComponent implements OnInit {
                   <b>Example:</b> <i>E4F4C6</i>'),
     },
     {
+      type: 'select',
+      name: 'vnet_default_interface',
+      placeholder: T('vnet_default_interface'),
+      options: [
+        {
+          label: 'none',
+          value: 'none',
+        }
+      ]
+    },
+    {
       type: 'input',
       name: 'vnet0_mac',
       placeholder: T('vnet0_mac'),
@@ -1113,6 +1124,7 @@ export class JailEditComponent implements OnInit {
   protected ip4_netmaskField: any;
   protected ip6_interfaceField: any;
   protected ip6_prefixField: any;
+  protected vnet_default_interfaceField:any;
 
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
@@ -1191,7 +1203,9 @@ export class JailEditComponent implements OnInit {
     this.ip4_netmaskField = _.find(this.basicfieldConfig, {'name': 'ip4_netmask'});
     this.ip6_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip6_interface'});
     this.ip6_prefixField = _.find(this.basicfieldConfig, {'name': 'ip6_prefix'});
-    // get netmask/prefix for ipv4/6
+    this.vnet_default_interfaceField = _.find(this.networkfieldConfig, {'name': 'vnet_default_interface'});
+
+    // get netmask/prefix for ipv4/6, vnet_default_interfaceField
     let v4netmask = this.networkService.getV4Netmasks();
     let v6prefix = this.networkService.getV6PrefixLength();
     for (let i = 0; i < v4netmask.length; i++) {
@@ -1206,6 +1220,7 @@ export class JailEditComponent implements OnInit {
         for (let i in res) {
           this.ip4_interfaceField.options.push({ label: res[i].name, value: res[i].name});
           this.ip6_interfaceField.options.push({ label: res[i].name, value: res[i].name});
+          this.vnet_default_interfaceField.options.push({ label: res[i].name, value: res[i].name});
         }
       },
       (res)=>{
