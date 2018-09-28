@@ -77,16 +77,7 @@ export class UserFormComponent {
           inputType : 'password',
           togglePw: true,
           required: true,
-          validation : [ Validators.pattern('^[^?]*$'), Validators.maxLength(9), Validators.required ],
-          relation : [
-            {
-              action : 'DISABLE',
-              when : [ {
-                name : 'password_disabled',
-                value : true,
-              } ]
-            },
-          ],
+          validation : [ Validators.pattern('^[^?]*$'), Validators.maxLength(9), Validators.required ]
         },
         {
           type : 'input',
@@ -94,16 +85,7 @@ export class UserFormComponent {
           placeholder : T('Confirm Password'),
           inputType : 'password',
           required: true,
-          validation : [ matchOtherValidator('password'), Validators.pattern('^[^?]*$'), Validators.maxLength(9), Validators.required ],
-          relation : [
-            {
-              action : 'DISABLE',
-              when : [ {
-                name : 'password_disabled',
-                value : true,
-              } ]
-            },
-          ],
+          validation : [ matchOtherValidator('password'), Validators.pattern('^[^?]*$'), Validators.maxLength(9), Validators.required ]
         },
       ]
     },
