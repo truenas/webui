@@ -6,11 +6,11 @@
         <!-- Controls/Tools -->
         <div fxFlex="calc(100% - 240px)" class="line-chart-tools-wrapper">
           <div class="line-chart-tools">
-                  <button class="tool-icon" mat-icon-button>
+                  <button class="tool-icon" mat-icon-button [disabled]="timeZoomIndex >= (zoomLevels.length - 1)" >
                     <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-magnify-plus" (click)="timeZoomIn()"></mat-icon>
                   </button>
                 
-                  <button class="tool-icon" mat-icon-button>
+                  <button class="tool-icon" mat-icon-button [disabled]="timeZoomIndex <= 0">
                     <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-magnify-minus" (click)="timeZoomOut()"></mat-icon>
                   </button>
                 
