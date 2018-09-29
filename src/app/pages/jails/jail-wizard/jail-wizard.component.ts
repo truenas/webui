@@ -132,12 +132,7 @@ export class JailWizardComponent {
           name: 'ip4_netmask',
           placeholder: T('IPv4 Netmask'),
           tooltip: T('IPv4 netmask for the jail.'),
-          options: [
-            {
-              label: '------',
-              value: '',
-            }
-          ],
+          options: this.networkService.getV4Netmasks(),
           value: '',
           relation: [{
             action: 'DISABLE',
@@ -198,10 +193,7 @@ export class JailWizardComponent {
           name: 'ip6_prefix',
           placeholder: T('IPv6 Prefix'),
           tooltip: T('IPv6 prefix for the jail.'),
-          options: [{
-            label: '------',
-            value: '',
-          }],
+          options: this.networkService.getV6PrefixLength(),
           class: 'inline',
           width: '20%',
           value: '',
@@ -279,15 +271,7 @@ export class JailWizardComponent {
     this.ip4_netmaskField = _.find(this.wizardConfig[1].fieldConfig, {'name': 'ip4_netmask'});
     this.ip6_interfaceField = _.find(this.wizardConfig[1].fieldConfig, {'name': 'ip6_interface'});
     this.ip6_prefixField = _.find(this.wizardConfig[1].fieldConfig, {'name': 'ip6_prefix'});
-    // get netmask/prefix for ipv4/6
-    let v4netmask = this.networkService.getV4Netmasks();
-    let v6prefix = this.networkService.getV6PrefixLength();
-    for (let i = 0; i < v4netmask.length; i++) {
-      this.ip4_netmaskField.options.push(v4netmask[i]);
-    }
-    for (let i = 0; i < v6prefix.length; i++) {
-      this.ip6_prefixField.options.push(v6prefix[i]);
-    }
+
     // get interface options
     this.ws.call('interfaces.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
       (res)=>{
