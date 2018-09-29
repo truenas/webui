@@ -132,6 +132,7 @@ vm-cards mat-card.front {
 
 .side-content .stats-info {
   position: relative;
+  top: -20px;
   overflow: hidden;
   width: 250px;
   margin: 0 auto;
