@@ -49,6 +49,9 @@ export class JailAddComponent implements OnInit {
                   (Aa-Zz 0-9), dashes (-), or underscores (\_).'),
       required: true,
       validation: [ regexValidator(/^[a-zA-Z0-9-_]+$/) ],
+      blurStatus: true,
+      blurEvent: this.blurEvent,
+      parent: this
     },
     {
       type: 'select',
@@ -771,6 +774,17 @@ export class JailAddComponent implements OnInit {
                   <b>Example:</b> <i>E4F4C6</i>'),
     },
     {
+      type: 'select',
+      name: 'vnet_default_interface',
+      placeholder: T('vnet_default_interface'),
+      options: [
+        {
+          label: 'none',
+          value: 'none',
+        }
+      ]
+    },
+    {
       type: 'input',
       name: 'vnet0_mac',
       placeholder: T('vnet0_mac'),
@@ -1113,6 +1127,7 @@ export class JailAddComponent implements OnInit {
   protected ip4_netmaskField: any;
   protected ip6_interfaceField: any;
   protected ip6_prefixField: any;
+  protected vnet_default_interfaceField:any;
 
   constructor(protected router: Router,
     protected jailService: JailService,
@@ -1191,7 +1206,9 @@ export class JailAddComponent implements OnInit {
     this.ip4_netmaskField = _.find(this.basicfieldConfig, {'name': 'ip4_netmask'});
     this.ip6_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip6_interface'});
     this.ip6_prefixField = _.find(this.basicfieldConfig, {'name': 'ip6_prefix'});
-    // get netmask/prefix for ipv4/6
+    this.vnet_default_interfaceField = _.find(this.networkfieldConfig, {'name': 'vnet_default_interface'});
+
+    // get netmask/prefix for ipv4/6, vnet_default_interfaceField
     let v4netmask = this.networkService.getV4Netmasks();
     let v6prefix = this.networkService.getV6PrefixLength();
     for (let i = 0; i < v4netmask.length; i++) {
@@ -1206,6 +1223,7 @@ export class JailAddComponent implements OnInit {
         for (let i in res) {
           this.ip4_interfaceField.options.push({ label: res[i].name, value: res[i].name});
           this.ip6_interfaceField.options.push({ label: res[i].name, value: res[i].name});
+          this.vnet_default_interfaceField.options.push({ label: res[i].name, value: res[i].name});
         }
       },
       (res)=>{
@@ -1465,5 +1483,21 @@ export class JailAddComponent implements OnInit {
 
   prevStep() {
     this.step--;
+  }
+  blurEvent(parent){
+    
+    const jail_name = parent.formGroup.value.uuid;
+    parent.ws.call('jail.query', [[["id","=",jail_name]]]).subscribe((jail_wizard_res)=>{
+      if(jail_wizard_res.length > 0){
+        _.find(parent.formFileds, {'name' : 'uuid'}).hasErrors = true;
+        _.find(parent.formFileds, {'name' : 'uuid'}).errors = `Jail ${jail_wizard_res[0].id} already exists.`;
+        parent.formGroup.controls.uuid.setValue("");
+  
+      } else {
+        _.find(parent.formFileds, {'name' : 'uuid'}).hasErrors = false;
+        _.find(parent.formFileds, {'name' : 'uuid'}).errors = '';
+
+      }
+    })
   }
 }

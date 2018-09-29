@@ -7,7 +7,6 @@ import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-
 import * as _ from 'lodash';
 
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { EntityUtils } from '../../common/entity/utils';
 import {VmService} from '../../../services/vm.service';
 import {regexValidator} from '../../common/entity/entity-form/validators/regex-validation';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
@@ -33,6 +32,7 @@ export class DockerVMWizardComponent {
   objectKeys = Object.keys;
   summary_title = "Docker Summary";
   entityWizard: any;
+  name: any;
 
   protected wizardConfig: Wizard[] = [
     {
@@ -167,8 +167,12 @@ export class DockerVMWizardComponent {
           value: 20,
           inputType: 'number',
           min: 20,
-          validation : [ Validators.required ],
-          required: true
+          required: true,
+          isHidden: false,
+          blurStatus: true,
+          blurEvent: this.blurEvent3,
+          parent: this,
+          validation: [Validators.required, Validators.min(20)]
         },
         {
           type: 'explorer',
@@ -226,6 +230,7 @@ export class DockerVMWizardComponent {
       }
     });
     ( < FormGroup > entityWizard.formArray.get([1])).get('name').valueChanges.subscribe((name) => {
+      this.name = name;
       this.summary[T('Name')] = name;
     });
 
@@ -256,7 +261,8 @@ export class DockerVMWizardComponent {
     ( < FormGroup > entityWizard.formArray.get([1]).get('name')).valueChanges.subscribe((name) => {
       this.summary[T('Name')] = name;
       this.summary[T('Number of CPUs')] = ( < FormGroup > entityWizard.formArray.get([2])).get('vcpus').value;
-
+    });
+    
       ( < FormGroup > entityWizard.formArray.get([2])).get('vcpus').valueChanges.subscribe((vcpus) => {
         this.summary[T('Number of CPUs')] = vcpus;
       });
@@ -265,28 +271,47 @@ export class DockerVMWizardComponent {
         this.summary[T('Memory')] = memory + ' MiB';
       });
 
+
       this.ws.call('vm.get_available_memory').subscribe((available_memory)=>{
-        if (available_memory > 2048 * 1024* 1024) {
+        const vm_memory_requested = 2147483648;
+        if (available_memory > vm_memory_requested) {
           ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(2048);
+          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'memory'}).hasErrors = false;
+          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'memory'}).errors = '';
         } else {
           ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(0);
+          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'memory'}).hasErrors = true;
+          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'memory'}).errors = `Docker Container needs at least 2048 MiBs Memory to operate.`
         }
       });
       ( < FormGroup > entityWizard.formArray.get([4])).get('raw_filename').valueChanges.subscribe((raw_filename) => {
         ( < FormGroup > entityWizard.formArray.get([4])).get('raw_file_directory').valueChanges.subscribe((raw_file_directory)=>{
-          this.summary[T('Raw file location')] = raw_file_directory + "/" +raw_filename+"_"+name;
-        })
-      });
-      ( < FormGroup > entityWizard.formArray.get([4])).get('raw_file_directory').valueChanges.subscribe((raw_file_directory) => {
-        ( < FormGroup > entityWizard.formArray.get([4])).get('raw_filename').valueChanges.subscribe((raw_filename)=>{
-          this.summary[T('Raw file location')] = raw_file_directory + "/" +raw_filename+"_"+name;
+          this.summary[T('Raw file location')] = raw_file_directory + "/" +raw_filename+"_"+this.name;
         })
       });
       this.summary[T('Raw file size')] = ( < FormGroup > entityWizard.formArray.get([4])).get('size').value + ' GiB';
       ( < FormGroup > entityWizard.formArray.get([4])).get('size').valueChanges.subscribe((size) => {
         this.summary[T('Raw file size')] = size + ' GiB';
       });
-    });
+      ( < FormGroup > entityWizard.formArray.get([4])).get('raw_file_directory').valueChanges.subscribe((raw_file_directory)=>{
+        const volsize = ( < FormGroup > entityWizard.formArray.get([4])).controls['size'].value * 1073741824;
+        this.ws.call('filesystem.statfs',[raw_file_directory]).subscribe((stat)=> {
+         if (stat.free_bytes < volsize && stat.free_bytes <= 21474836480) {
+          ( < FormGroup > entityWizard.formArray.get([4])).controls['size'].setValue(Math.floor(stat.free_bytes / (1073741824)));
+          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'}).hasErrors = true;
+          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'}).errors = 'Docker Container needs at least 20 Gibs';
+         } else if(stat.free_bytes >= 21474836480) {
+          ( < FormGroup > entityWizard.formArray.get([4])).controls['size'].setValue(20);
+          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'}).hasErrors = false;
+          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'}).errors = '';
+         } else {
+          ( < FormGroup > entityWizard.formArray.get([4])).controls['size'].setValue(Math.floor(stat.free_bytes / (1073741824)));
+          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'}).hasErrors = true;
+          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'}).errors = 'Docker Container needs at least 20 Gibs';
+         }
+        })
+      });
+    
   }
   getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
@@ -295,10 +320,11 @@ blurEvent(parent){
   const vm_name = parent.entityWizard.formGroup.value.formArray[1].name
   parent.ws.call('vm.query', [[["name","=",vm_name]]]).subscribe((vm_wizard_res)=>{
     if(vm_wizard_res.length > 0){
-      parent.dialogService.Info("Error", `Virtual machine ${vm_wizard_res[0].name} already exists.`).subscribe(()=>{
-        parent.entityWizard.formArray.get([1]).get('name').setValue("");
-      })
 
+      _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'}).hasErrors = true;
+      _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'}).errors = `Docker Container: ${vm_wizard_res[0].name} already exists.`;
+      parent.entityWizard.formArray.get([0]).get('name').setValue("");
+      
     }
   })
 }
@@ -306,19 +332,38 @@ blurEvent2(parent){
   const vm_memory_requested = parent.entityWizard.formGroup.value.formArray[2].memory
   const vm_name = parent.entityWizard.formGroup.value.formArray[1].name
   parent.ws.call('vm.get_available_memory').subscribe((vm_memory_available)=>{
-    if( vm_memory_requested *1024*1024> vm_memory_available){
-      parent.dialogService.Info("Error", `Cannot allocate ${vm_memory_requested} Mib to docker: ${vm_name}.`).subscribe(()=>{
-        parent.entityWizard.formArray.get([2]).get('memory').setValue(0);
-      })
+    if( vm_memory_requested * 1048576 > vm_memory_available){
+      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'}).hasErrors = true;
+      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'}).errors = `Cannot allocate ${vm_memory_requested} Mib to docker: ${vm_name}.`;
+      parent.entityWizard.formArray.get([2]).get('memory').setValue(0);
 
-    } else if (vm_memory_requested * 1024*1024 < 2048 * 1024*1024) {
-      parent.dialogService.Info("Error", `Docker Container: "${vm_name}" needs at least 2048 MiBs Memory to operate.`).subscribe(()=>{
-        parent.entityWizard.formArray.get([2]).get('memory').setValue(0);
-      })
+    } else if (vm_memory_requested * 1048576 < 2147483648) {
+      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'}).hasErrors = true;
+      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'}).errors = `Docker Container: "${vm_name}" needs at least 2048 MiBs Memory to operate.`;
+      parent.entityWizard.formArray.get([2]).get('memory').setValue(0);
+
+    } else {
+      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'}).hasErrors = false;
+      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'}).errors = '';
 
     }
   })
 }
+blurEvent3(parent){
+  if(parent.entityWizard.formArray.controls[4].value.size > 0 ) {
+    const size = parent.entityWizard.formArray.controls[4].value.size * 1073741824;
+    const raw_file_directory = parent.entityWizard.formArray.controls[4].value.raw_file_directory;
+    const vm_name = parent.entityWizard.formGroup.value.formArray[1].name;
+    parent.ws.call('filesystem.statfs',[raw_file_directory]).subscribe((stat)=> {
+      if (stat.free_bytes < size ) {
+        _.find(parent.wizardConfig[4].fieldConfig, {'name' : 'size'}).hasErrors = true;
+        _.find(parent.wizardConfig[4].fieldConfig, {'name' : 'size'}).errors = `Cannot allocate ${size / (1073741824)} Gib to for storage docker machine: ${vm_name}.`;
+        parent.entityWizard.formArray.get([4]).get('size').setValue(0);
+        
+       };
+    });
+  };
+};
 
 async customSubmit(value) {
   const path = value.raw_file_directory+ '/' + value.raw_filename+ '_'+ value.name;
@@ -344,7 +389,6 @@ async customSubmit(value) {
       this.router.navigate(['/vm']);
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
-      new EntityUtils().handleWSError(this.entityWizard, res);
     });
 
   }

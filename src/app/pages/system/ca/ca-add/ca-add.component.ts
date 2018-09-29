@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Validators } from '@angular/forms';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
 
 import { RestService, SystemGeneralService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -27,7 +26,9 @@ export class CertificateAuthorityAddComponent {
       placeholder : T('Identifier'),
       tooltip: T('Enter a description of the CA.'),
       required: true,
-      validation : [ Validators.required ]
+      validation : [ Validators.required, Validators.pattern('[A-Za-z0-9_-]+$') ],
+      hasErrors: false,
+      errors: 'Allowed characters: letters, numbers, underscore (_), and dash (-).'
     },
     {
       type : 'select',
@@ -244,6 +245,7 @@ export class CertificateAuthorityAddComponent {
 
   private country: any;
   private signedby: any;
+  public identifier: any;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
@@ -312,6 +314,19 @@ export class CertificateAuthorityAddComponent {
         }
       }
     })
+
+    entity.formGroup.controls['name'].valueChanges.subscribe((res) => {
+      this.identifier = res;
+    })
+
+    entity.formGroup.controls['name'].statusChanges.subscribe((res) => {
+      if (this.identifier && res === 'INVALID') {
+        _.find(this.fieldConfig).hasErrors = true;
+      } else {
+        _.find(this.fieldConfig).hasErrors = false;
+      }
+    })
+
   }
 
   hideField(fieldName: any, show: boolean, entity: any) {
@@ -327,4 +342,5 @@ export class CertificateAuthorityAddComponent {
       data.san = _.split(data.san, ' ');
     }
   }
+
 }

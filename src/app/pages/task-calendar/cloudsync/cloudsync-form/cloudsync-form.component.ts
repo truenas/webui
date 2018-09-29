@@ -10,8 +10,8 @@ import { EntityFormService } from '../../../common/entity/entity-form/services/e
 import { FieldRelationService } from '../../../common/entity/entity-form/services/field-relation.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../translate-marker';
-import { TranslateService } from '@ngx-translate/core';
-import { Validators } from '@angular/forms';
+import helptext from '../../../../helptext/task-calendar/cloudsync/cloudsync-form';
+
 
 @Component({
   selector: 'cloudsync-add',
@@ -31,40 +31,38 @@ export class CloudsyncFormComponent implements OnInit {
   public fieldConfig: FieldConfig[] = [{
     type: 'input',
     name: 'description',
-    placeholder: T('Description'),
-    tooltip: T('Enter a description of the Cloud Sync Task.'),
+    placeholder: helptext.description_placeholder,
+    tooltip: helptext.description_tooltip,
     required: true,
-    validation : [ Validators.required ]
+    validation : helptext.description_validation,
   }, {
     type: 'select',
     name: 'direction',
-    placeholder: T('Direction'),
-    tooltip: T('<i>Push</i> sends data to cloud storage. <i>Pull</i>\
-                receives data from cloud storage.'),
+    placeholder: helptext.direction_placeholder,
+    tooltip: helptext.direction_tooltip,
     options: [
       { label: 'PUSH', value: 'PUSH' },
       { label: 'PULL', value: 'PULL' },
     ],
     value: 'PUSH',
     required: true,
-    validation : [ Validators.required ]
+    validation : helptext.direction_validation,
   }, {
     type: 'select',
     name: 'credentials',
-    placeholder: T('Credential'),
-    tooltip: T('Select the cloud storage provider credentials from the\
-                list of available Cloud Credentials.'),
+    placeholder: helptext.credentials_placeholder,
+    tooltip: helptext.credentials_tooltip,
     options: [{
       label: '----------', value: null
     }],
     value: null,
     required: true,
-    validation : [ Validators.required ],
+    validation : helptext.credentials_validation,
   }, {
     type: 'select',
     name: 'bucket',
-    placeholder: T('Bucket'),
-    tooltip: T('Select the pre-defined S3 bucket to use.'),
+    placeholder: helptext.bucket_placeholder,
+    tooltip: helptext.bucket_tooltip,
     options: [{
       label: '----------', value: ''
     }],
@@ -81,21 +79,21 @@ export class CloudsyncFormComponent implements OnInit {
       }
     ],
     required: true,
-    validation : [ Validators.required ],
+    validation : helptext.bucket_validation
   }, {
     type: 'input',
     name: 'bucket_input',
-    placeholder: T('Bucket'),
-    tooltip: T('Input the pre-defined S3 bucket to use.'),
+    placeholder: helptext.bucket_input_placeholder,
+    tooltip: helptext.bucket_input_tooltip,
     isHidden: true,
     disabled: true,
     required: true,
-    validation : [ Validators.required ],
+    validation : helptext.bucket_input_validation
   }, {
     type: 'input',
     name: 'folder',
-    placeholder: T('Folder'),
-    tooltip: T('Enter the name of the destination folder.'),
+    placeholder: helptext.folder_placeholder,
+    tooltip: helptext.folder_tooltip,
     isHidden: true,
     disabled: true,
     relation: [
@@ -111,8 +109,8 @@ export class CloudsyncFormComponent implements OnInit {
   }, {
     type: 'select',
     name: 'encryption',
-    placeholder: T('Server Side Encryption'),
-    tooltip: T('Choose <i>AES-256</i> or <i>None</i>.'),
+    placeholder: helptext.encryption_placeholder,
+    tooltip: helptext.encryption_tooltip,
     options: [
       {label: "None", value: ""},
       {label: "AES-256", value: "AES256"},
@@ -123,27 +121,16 @@ export class CloudsyncFormComponent implements OnInit {
     initial: '/mnt',
     explorerType: 'directory',
     name: 'path',
-    placeholder: T('Directory/Files'),
+    placeholder: helptext.path_placeholder,
     value: '/mnt',
-    tooltip: T('Select the directories or files to be sent to the cloud\
-                for Push syncs, or the destination to be written for\
-                Pull syncs. Be cautious about the destination of Pull\
-                jobs to avoid overwriting existing files.'),
+    tooltip: helptext.path_tooltip,
     required: true,
-    validation : [ Validators.required ]
+    validation : helptext.path_validation
   }, {
     type: 'select',
     name: 'transfer_mode',
-    placeholder: T('Transfer Mode'),
-    tooltip: T('<i>SYNC</i> makes files on the destination system identical\
-                to those on the source. Files that have been removed from\
-                the source are removed from the destination, similar to\
-                <i>rsync --delete</i>.\
-                <i>COPY</i> copies files from source to destination,\
-                skipping files that are identical, similar to <i>rsync</i>.\
-                <i>MOVE</i> copies files from source to destination,\
-                deleting files from the source after the copy, similar\
-                to <i>mv</i>.'),
+    placeholder: helptext.transfer_mode_placeholder,
+    tooltip: helptext.transfer_mode_tooltip,
     options: [
       { label: 'SYNC', value: 'SYNC' },
       { label: 'COPY', value: 'COPY' },
@@ -151,24 +138,21 @@ export class CloudsyncFormComponent implements OnInit {
     ],
     value: 'SYNC',
     required: true,
-    validation : [ Validators.required ]
+    validation : helptext.transfer_mode_validation
   },
   {
     type: 'checkbox',
     name: 'encryption',
-    placeholder: T('Remote encryption'),
-    tooltip: T('Set to encrypt files before transfer and store the\
-                encrypted files on the remote system.\
-                <a href="https://rclone.org/crypt/"\
-                target="_blank">rclone Crypt</a> is used.'),
+    placeholder: helptext.remote_encryption_placeholder,
+    tooltip: helptext.remote_encryption_tooltip,
     value: false,
   },
   {
     type: 'checkbox',
     name: 'filename_encryption',
-    placeholder: T('Filename encryption'),
+    placeholder: helptext.filename_encryption_placeholder,
     value: true,
-    tooltip: T('Set to encrypt the shared file names.'),
+    tooltip: helptext.filename_encryption_tooltip,
     isHidden: true,
     relation: [
       {
@@ -183,10 +167,8 @@ export class CloudsyncFormComponent implements OnInit {
   {
     type: 'input',
     name: 'encryption_password',
-    placeholder: T('Encryption password'),
-    tooltip: T('Enter the password to encrypt and decrypt remote data.\
-                <b>Warning</b>: Always save and back up this password.\
-                Losing the encryption password can result in data loss.'),
+    placeholder: helptext.encryption_password_placeholder,
+    tooltip: helptext.encryption_password_tooltip,
     isHidden: true,
     relation: [
       {
@@ -201,12 +183,8 @@ export class CloudsyncFormComponent implements OnInit {
   {
     type: 'input',
     name: 'encryption_salt',
-    placeholder: T('Encryption salt'),
-    tooltip: T('Enter a long string of random characters for use as\
-                <a href="https://searchsecurity.techtarget.com/definition/salt"\
-                target="_blank">salt</a> for the encryption password.\
-                <b>Warning:</b> Save and back up the encryption salt\
-                value. Losing the salt value can result in data loss.'),
+    placeholder: helptext.encryption_salt_placeholder,
+    tooltip: helptext.encryption_salt_tooltip,
     isHidden: true,
     relation: [
       {
@@ -221,24 +199,22 @@ export class CloudsyncFormComponent implements OnInit {
   {
     type: 'textarea',
     name: 'args',
-    placeholder: T('Auxiliary arguments'),
+    placeholder: helptext.args_placeholder,
     value: "",
     isHidden: true,
   },
   {
     type: 'scheduler',
     name: 'cloudsync_picker',
-    placeholder: T('Schedule the Cloud Sync Task'),
-    tooltip: T('Select a schedule preset or choose <i>Custom</i> to open\
-                the advanced scheduler.'),
+    placeholder: helptext.cloudsync_picker_placeholder,
+    tooltip: helptext.cloudsync_picker_tooltip,
     required: true
   },
   {
     type: 'checkbox',
     name: 'enabled',
-    placeholder: T('Enabled'),
-    tooltip: T('Enable this Cloud Sync Task. Unset to disable this Cloud\
-                Sync Task without deleting it.'),
+    placeholder: helptext.enabled_placeholder,
+    tooltip: helptext.enabled_tooltip,
     value: true,
   }];
 
