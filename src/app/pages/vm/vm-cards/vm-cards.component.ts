@@ -486,6 +486,10 @@ export class VmCardsComponent implements OnInit, OnDestroy {
 
   // toggles VM on/off
   toggleVmState(index, poweroff?:boolean){
+    if (index.force) {
+      poweroff = index.force;
+      index = index.index;
+    };
     const vm = this.cards[index];
     if(vm.transitionalState){
       return ;
@@ -521,6 +525,8 @@ export class VmCardsComponent implements OnInit, OnDestroy {
              this.cards[index].state = "stopping";
              this.core.emit({name: eventName, data:[vm.id]});
            }
+          } else {
+            vm.transitionalState = false;
           }
         })
     }

@@ -62,11 +62,11 @@
       </div>
 
       <!-- Table data -->
-      <vm-table [target]="controlEvents" [data]="cards" fxFlex="100" fxLayout="column"
+      <app-vm-table [target]="controlEvents" [data]="cards" fxFlex="100" fxLayout="column"
         (edit)="focusVM($event);toggleForm(true,cards[focusedVM],'edit');"
         (delete)="deleteVM($event)"
         (power)="toggleVmState($event)"
-        ></vm-table>
+        ></app-vm-table>
 
     </div>
   </mat-card-content>
