@@ -514,9 +514,9 @@ blurEvent3(parent){
         _.find(parent.wizardConfig[3].fieldConfig, {'name' : 'volsize'}).errors = '';
         const vm_os = parent.entityWizard.formArray.controls[1].os;
         if (vm_os === "Windows"){
-          parent.entityWizard.formArray.get([3]).get('volsize').setValue(40);
+          parent.entityWizard.formArray.get([3]).get('volsize').setValue(volsize/1073741824);
         } else {
-          parent.entityWizard.formArray.get([3]).get('volsize').setValue(10);
+          parent.entityWizard.formArray.get([3]).get('volsize').setValue(volsize/1073741824);
         };
        }
     })
