@@ -24,6 +24,7 @@ export class JailWizardComponent {
   public summary = {};
   summary_title = "Jail Summary";
   objectKeys = Object.keys;
+  entityWizard: any;
 
   isLinear = true;
   firstFormGroup: FormGroup;
@@ -48,6 +49,9 @@ export class JailWizardComponent {
           tooltip: T('Required. Can only contain alphanumeric characters \
                       Aa-Zz 0-9), dashes (-), or underscores (_).'),
           validation: [ regexValidator(/^[a-zA-Z0-9-_]+$/) ],
+          blurStatus: true,
+          blurEvent: this.blurEvent,
+          parent: this
         },
         {
           type: 'select',
@@ -398,6 +402,7 @@ export class JailWizardComponent {
   }
 
   afterInit(entityWizard: EntityWizardComponent) {
+    this.entityWizard = entityWizard;
     ( < FormGroup > entityWizard.formArray.get([0]).get('uuid')).valueChanges.subscribe((res) => {
       this.summary[T('Jail Name')] = res;
     });
@@ -542,6 +547,24 @@ export class JailWizardComponent {
       this.dialogRef.close();
       new EntityUtils().handleWSError(this, res, this.dialogService);
     });
+  }
+
+  blurEvent(parent){
+    
+    const jail_name = parent.entityWizard.formGroup.value.formArray[0].uuid;
+    parent.ws.call('jail.query', [[["id","=",jail_name]]]).subscribe((jail_wizard_res)=>{
+      if(jail_wizard_res.length > 0){
+        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'}).hasErrors = true;
+        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'}).errors = `Jail ${jail_wizard_res[0].id} already exists.`;
+        parent.entityWizard.formGroup.controls.formArray.controls[0].controls.uuid.setValue("");
+
+  
+      } else {
+        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'}).hasErrors = false;
+        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'}).errors = '';
+
+      }
+    })
   }
 
   isCustActionVisible(id, stepperIndex) {

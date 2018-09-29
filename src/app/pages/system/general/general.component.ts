@@ -191,6 +191,7 @@ export class GeneralComponent implements OnDestroy {
       fileLocation: '',
       updater: this.updater,
       parent: this,
+      hideButton: true,
     }
   ];
   public uploadConfigFormConf: DialogFormConfiguration = {

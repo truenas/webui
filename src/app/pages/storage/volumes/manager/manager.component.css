@@ -40,6 +40,10 @@
 	display: flex;
 }
 
+button {
+	margin-right: 5px;
+}
+
 h4 {
 	text-align: center;
 }
