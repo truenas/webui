@@ -1031,4 +1031,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(display, --toggle_pw_display_prop, $toggle_pw_display_prop);
   }
 
+  #update-info {
+    color: var(--accent);
+  }
+
 } // end of ix theme

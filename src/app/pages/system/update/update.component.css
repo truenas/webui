@@ -23,7 +23,7 @@
 }
 
 .stable-warning {
-    margin: 10px 0;
+    margin: 10px 0 !important;
     font-size: 1.1rem;
 }
 
@@ -33,6 +33,12 @@
 
 .update-button {
     margin-right: 3px;
+}
+
+#update-info {
+    position: relative;
+    top: 3px;
+    margin-right: 10px;
 }
 
 
