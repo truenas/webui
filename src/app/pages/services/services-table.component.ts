@@ -54,15 +54,11 @@ export class ServicesTableComponent implements OnChanges, OnInit {
 
   ngOnChanges(changes) {
     if(changes.data){
-      console.log("VM Table: DATA CHANGED!");
       let newData = Object.assign(this.data,{});
       this.data = newData;
     }
-    //console.log("******** VM-CARDS ********");
     this.datatable.limit = this.pageSize; // items per page
-    // this.datatable.pageSize = 8;//this.pageSize;
     this.datatable.recalculate();
-    //console.log(this.datatable);
     this.setTableHeight(this.datatable);
   }
 
