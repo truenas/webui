@@ -81,7 +81,7 @@
       [reorderable]="true"
       [limit]="paginationPageSize" 
       [externalPaging]="true"
-      [count]="currentRows.length"
+      [count]="currentRows.length || 1"
       [offset]="paginationPageIndex"
       (page)='paginationUpdate($event)'
       [externalSorting]="true"
