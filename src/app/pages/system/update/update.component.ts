@@ -42,6 +42,7 @@ export class UpdateComponent implements OnInit {
   public stable_train: boolean;  
   public updates_available: boolean = false;
   public tempTrain: string;
+  public tempTrainList: string;
 
   public busy: Subscription;
   public busy2: Subscription;
@@ -168,6 +169,8 @@ export class UpdateComponent implements OnInit {
     });
     this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
       this.tempTrain = res.current.toLowerCase();
+      // this.tempTrainList === res.trains[this.tempTrain].toLowerCase();
+
       this.trains = [];
       for (const i in res.trains) {
         this.trains.push({ name: i });
@@ -381,6 +384,10 @@ export class UpdateComponent implements OnInit {
             }
           }
           
+          //  if (this.tempTrainList.includes('tag')) {
+            
+          //  } 
+console.log(this.tempTrain)
           if (this.tempTrain.includes('night')) {
             this.stable_train = false;
           } else if (this.tempTrain.includes('stable')) {
