@@ -1,19 +1,13 @@
-import { ApplicationRef, Component, Injector, OnInit, Inject, NgZone, ViewChild, EventEmitter } from '@angular/core';
-import { AbstractControl, FormArray, FormGroup, Validator } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { Observable, Observer, Subscription, Subject } from 'rxjs';
-import { HttpClient, HttpParams, HttpRequest, HttpEvent, HttpHeaders } from '@angular/common/http';
+import {  Component,  ViewChild, } from '@angular/core';
+import { FormGroup } from '@angular/forms';
+import { Subscription } from 'rxjs/Subscription';
+import { Observer  } from 'rxjs/Observer';
+import { HttpClient} from '@angular/common/http';
 import { TranslateService } from '@ngx-translate/core';
-
 import { FieldConfig } from '../../models/field-config.interface';
-import { Field } from '../../models/field.interface';
-import { RestService, WebSocketService, DialogService } from '../../../../../../services/';
+import { WebSocketService, DialogService } from '../../../../../../services/';
 import { AppLoaderService } from '../../../../../../services/app-loader/app-loader.service';
-import { EntityJobComponent } from '../../../entity-job/entity-job.component';
-import { TooltipComponent } from '../tooltip/tooltip.component';
-
-import { RequestOptions, Http } from '@angular/http';
-import { Headers } from '@angular/http';
+import { Http } from '@angular/http';
 import { MatSnackBar } from '@angular/material';
 
 
