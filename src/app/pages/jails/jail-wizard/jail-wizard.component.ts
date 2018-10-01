@@ -24,6 +24,7 @@ export class JailWizardComponent {
   public summary = {};
   summary_title = "Jail Summary";
   objectKeys = Object.keys;
+  entityWizard: any;
 
   isLinear = true;
   firstFormGroup: FormGroup;
@@ -48,6 +49,9 @@ export class JailWizardComponent {
           tooltip: T('Required. Can only contain alphanumeric characters \
                       Aa-Zz 0-9), dashes (-), or underscores (_).'),
           validation: [ regexValidator(/^[a-zA-Z0-9-_]+$/) ],
+          blurStatus: true,
+          blurEvent: this.blurEvent,
+          parent: this
         },
         {
           type: 'select',
@@ -102,6 +106,7 @@ export class JailWizardComponent {
               value: true,
             }]
           }],
+          required: false,
           class: 'inline',
           width: '30%',
           value: '',
@@ -127,12 +132,7 @@ export class JailWizardComponent {
           name: 'ip4_netmask',
           placeholder: T('IPv4 Netmask'),
           tooltip: T('IPv4 netmask for the jail.'),
-          options: [
-            {
-              label: '------',
-              value: '',
-            }
-          ],
+          options: this.networkService.getV4Netmasks(),
           value: '',
           relation: [{
             action: 'DISABLE',
@@ -166,6 +166,11 @@ export class JailWizardComponent {
           }]
         },
         {
+          type: 'checkbox',
+          name: 'auto_configure_ip6',
+          placeholder: T('Auto configure IPv6'),
+        },
+        {
           type: 'select',
           name: 'ip6_interface',
           placeholder: T('IPv6 Interface'),
@@ -177,6 +182,14 @@ export class JailWizardComponent {
           class: 'inline',
           width: '30%',
           value: '',
+          required: false,
+          relation: [{
+            action: 'DISABLE',
+            when: [{
+              name: 'auto_configure_ip6',
+              value: true,
+            }]
+          }]
         },
         {
           type: 'input',
@@ -186,19 +199,30 @@ export class JailWizardComponent {
           validation : [ regexValidator(this.networkService.ipv6_regex) ],
           class: 'inline',
           width: '30%',
+          relation: [{
+            action: 'DISABLE',
+            when: [{
+              name: 'auto_configure_ip6',
+              value: true,
+            }]
+          }]
         },
         {
           type: 'select',
           name: 'ip6_prefix',
           placeholder: T('IPv6 Prefix'),
           tooltip: T('IPv6 prefix for the jail.'),
-          options: [{
-            label: '------',
-            value: '',
-          }],
+          options: this.networkService.getV6PrefixLength(),
           class: 'inline',
           width: '20%',
           value: '',
+          relation: [{
+            action: 'DISABLE',
+            when: [{
+              name: 'auto_configure_ip6',
+              value: true,
+            }]
+          }]
         },
         {
           type: 'input',
@@ -273,15 +297,7 @@ export class JailWizardComponent {
     this.ip4_netmaskField = _.find(this.wizardConfig[1].fieldConfig, {'name': 'ip4_netmask'});
     this.ip6_interfaceField = _.find(this.wizardConfig[1].fieldConfig, {'name': 'ip6_interface'});
     this.ip6_prefixField = _.find(this.wizardConfig[1].fieldConfig, {'name': 'ip6_prefix'});
-    // get netmask/prefix for ipv4/6
-    let v4netmask = this.networkService.getV4Netmasks();
-    let v6prefix = this.networkService.getV6PrefixLength();
-    for (let i = 0; i < v4netmask.length; i++) {
-      this.ip4_netmaskField.options.push(v4netmask[i]);
-    }
-    for (let i = 0; i < v6prefix.length; i++) {
-      this.ip6_prefixField.options.push(v6prefix[i]);
-    }
+
     // get interface options
     this.ws.call('interfaces.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
       (res)=>{
@@ -316,27 +332,61 @@ export class JailWizardComponent {
       }
       this.ipv4 = this.summary[T('IPv4 Address')];
     } else {
-      let ip6_interface_control = (< FormGroup > entityWizard.formArray.get([1])).controls['ip6_interface'];
-      let ip6_address_control = (< FormGroup > entityWizard.formArray.get([1])).controls['ip6_addr'];
-      let ip6_prefix_control = (< FormGroup > entityWizard.formArray.get([1])).controls['ip6_prefix'];
-      if (ip6_address_control.value == undefined || ip6_address_control.value == '') {
-        delete this.summary[T('IPv6 Address')];
+      if ((< FormGroup > entityWizard.formArray.get([1])).controls['auto_configure_ip6'].value) {
+        this.summary[T('IPv6 Address')] = T("Auto configure IPv6");
+        this.ipv6 = "vnet0|accept_rtadv";
       } else {
-        let full_address = ip6_address_control.value;
-        if (ip6_interface_control.value != '') {
-          full_address = ip6_interface_control.value + '|' + ip6_address_control.value;
-        }
-        if (ip6_prefix_control.value != '') {
-          full_address += '/' + ip6_prefix_control.value;
-        }
+        let ip6_interface_control = (< FormGroup > entityWizard.formArray.get([1])).controls['ip6_interface'];
+        let ip6_address_control = (< FormGroup > entityWizard.formArray.get([1])).controls['ip6_addr'];
+        let ip6_prefix_control = (< FormGroup > entityWizard.formArray.get([1])).controls['ip6_prefix'];
+        if (ip6_address_control.value == undefined || ip6_address_control.value == '') {
+          delete this.summary[T('IPv6 Address')];
+        } else {
+          let full_address = ip6_address_control.value;
+          if (ip6_interface_control.value != '') {
+            full_address = ip6_interface_control.value + '|' + ip6_address_control.value;
+          }
+          if (ip6_prefix_control.value != '') {
+            full_address += '/' + ip6_prefix_control.value;
+          }
 
-        this.summary[T('IPv6 Address')] = full_address;
+          this.summary[T('IPv6 Address')] = full_address;
+        }
+        this.ipv6 = this.summary[T('IPv6 Address')];
       }
-      this.ipv6 = this.summary[T('IPv6 Address')];
+    }
+  }
+
+  updateInterfaceValidation(entityWizard) {
+
+    let dhcp_ctrl = ( < FormGroup > entityWizard.formArray.get([1])).controls['dhcp'];
+    let vnet_ctrl = ( < FormGroup > entityWizard.formArray.get([1])).controls['vnet'];
+    let ip4_addr_ctrl = ( < FormGroup > entityWizard.formArray.get([1])).controls['ip4_addr'];
+    let ip6_addr_ctrl = ( < FormGroup > entityWizard.formArray.get([1])).controls['ip6_addr'];
+
+    if (dhcp_ctrl.value != true && vnet_ctrl.value == true && ip4_addr_ctrl.value != undefined && ip4_addr_ctrl.value != '') {
+      this.ip4_interfaceField.required = true;
+      ( < FormGroup > entityWizard.formArray.get([1])).controls['ip4_interface'].setValidators([Validators.required]);
+      ( < FormGroup > entityWizard.formArray.get([1])).controls['ip4_interface'].updateValueAndValidity();
+    } else {
+      this.ip4_interfaceField.required = false;
+      ( < FormGroup > entityWizard.formArray.get([1])).controls['ip4_interface'].clearValidators();
+      ( < FormGroup > entityWizard.formArray.get([1])).controls['ip4_interface'].updateValueAndValidity();
+    }
+
+    if (dhcp_ctrl.value != true && vnet_ctrl.value == true && ip6_addr_ctrl.value != undefined && ip6_addr_ctrl.value != '') {
+      this.ip6_interfaceField.required = true;
+      ( < FormGroup > entityWizard.formArray.get([1])).controls['ip6_interface'].setValidators([Validators.required]);
+      ( < FormGroup > entityWizard.formArray.get([1])).controls['ip6_interface'].updateValueAndValidity();
+    } else {
+      this.ip6_interfaceField.required = false;
+      ( < FormGroup > entityWizard.formArray.get([1])).controls['ip6_interface'].clearValidators();
+      ( < FormGroup > entityWizard.formArray.get([1])).controls['ip6_interface'].updateValueAndValidity();
     }
   }
 
   afterInit(entityWizard: EntityWizardComponent) {
+    this.entityWizard = entityWizard;
     ( < FormGroup > entityWizard.formArray.get([0]).get('uuid')).valueChanges.subscribe((res) => {
       this.summary[T('Jail Name')] = res;
     });
@@ -352,6 +402,7 @@ export class JailWizardComponent {
     });
     ( < FormGroup > entityWizard.formArray.get([1])).get('ip4_addr').valueChanges.subscribe((res) => {
       this.updateIpAddress(entityWizard, 'ipv4');
+      this.updateInterfaceValidation(entityWizard);
     });
 
     ( < FormGroup > entityWizard.formArray.get([1]).get('defaultrouter')).valueChanges.subscribe((res) => {
@@ -361,6 +412,17 @@ export class JailWizardComponent {
         this.summary[T('Default Router For IPv4')] = res;
       }
     });
+
+    ( < FormGroup > entityWizard.formArray.get([1]).get('auto_configure_ip6')).valueChanges.subscribe((res) => {
+      let vnet_ctrl = ( < FormGroup > entityWizard.formArray.get([1])).controls['vnet'];
+      if (res) {
+        vnet_ctrl.setValue(true);
+      } else {
+        vnet_ctrl.setValue(vnet_ctrl.value);
+      }
+      _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).required = res;
+    });
+
     // update ipv6
     ( < FormGroup > entityWizard.formArray.get([1])).get('ip6_interface').valueChanges.subscribe((res) => {
       this.updateIpAddress(entityWizard, 'ipv6');
@@ -370,6 +432,7 @@ export class JailWizardComponent {
     });
     ( < FormGroup > entityWizard.formArray.get([1])).get('ip6_addr').valueChanges.subscribe((res) => {
       this.updateIpAddress(entityWizard, 'ipv6');
+      this.updateInterfaceValidation(entityWizard);
     });
 
     ( < FormGroup > entityWizard.formArray.get([1]).get('defaultrouter6')).valueChanges.subscribe((res) => {
@@ -402,13 +465,15 @@ export class JailWizardComponent {
         this.ip6_interfaceField.options.pop({ label: 'vnet0', value: 'vnet0'});
       }
 
-      if (( < FormGroup > entityWizard.formArray.get([1])).controls['dhcp'].value && !res) {
+      if ((( < FormGroup > entityWizard.formArray.get([1])).controls['dhcp'].value ||
+           ( < FormGroup > entityWizard.formArray.get([1])).controls['auto_configure_ip6'].value) && !res) {
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).hasErrors = true;
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).errors = 'VNET is required.';
       } else {
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).hasErrors = false;
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).errors = '';
       }
+      this.updateInterfaceValidation(entityWizard);
     });
   }
 
@@ -420,6 +485,8 @@ export class JailWizardComponent {
     delete value['ip6_interface'];
     delete value['ip6_prefix'];
     value['ip6_addr'] = this.ipv6;
+
+    delete value['auto_configure_ip6'];
 
     for (let i in value) {
       if (value.hasOwnProperty(i)) {
@@ -464,6 +531,24 @@ export class JailWizardComponent {
       this.dialogRef.close();
       new EntityUtils().handleWSError(this, res, this.dialogService);
     });
+  }
+
+  blurEvent(parent){
+    
+    const jail_name = parent.entityWizard.formGroup.value.formArray[0].uuid;
+    parent.ws.call('jail.query', [[["id","=",jail_name]]]).subscribe((jail_wizard_res)=>{
+      if(jail_wizard_res.length > 0){
+        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'}).hasErrors = true;
+        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'}).errors = `Jail ${jail_wizard_res[0].id} already exists.`;
+        parent.entityWizard.formGroup.controls.formArray.controls[0].controls.uuid.setValue("");
+
+  
+      } else {
+        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'}).hasErrors = false;
+        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'}).errors = '';
+
+      }
+    })
   }
 
   isCustActionVisible(id, stepperIndex) {

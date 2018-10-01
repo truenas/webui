@@ -68,6 +68,7 @@ export class InterfacesFormComponent implements OnDestroy {
       placeholder : T('IPv4 Netmask'),
       tooltip : T('Enter a netmask.'),
       options : this.networkService.getV4Netmasks(),
+      value: '',
       relation : [
         {action : "DISABLE", when : [ {name : "int_dhcp", value : true} ]}
       ]
@@ -98,6 +99,7 @@ export class InterfacesFormComponent implements OnDestroy {
       placeholder : T('IPv6 Prefix Length'),
       tooltip : T('Select the prefix length used on the network.'),
       options : this.networkService.getV6PrefixLength(),
+      value: '',
       relation : [
         {action : "DISABLE", when : [ {name : "int_ipv6auto", value : true} ]}
       ]
@@ -127,7 +129,8 @@ export class InterfacesFormComponent implements OnDestroy {
         placeholder: T('IPv4 Netmask'),
         tooltip : T('Enter a netmask.'),
         type: 'select',
-        options : this.networkService.getV4Netmasks()
+        options : this.networkService.getV4Netmasks(),
+        value: '',
       },
       {
         type: 'checkbox',
@@ -153,7 +156,8 @@ export class InterfacesFormComponent implements OnDestroy {
         placeholder: T('IPv6 Prefix Length'),
         tooltip : T('Select the prefix length used on the network.'),
         type: 'select',
-        options : this.networkService.getV6PrefixLength()
+        options : this.networkService.getV6PrefixLength(),
+        value: '',
       },
       {
         type: 'checkbox',

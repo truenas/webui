@@ -18,6 +18,7 @@ import {
 import {  DialogService } from '../../../../services/';
 import {Validators} from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
+import validator from 'devextreme/ui/validator';
 
 @Component({
   selector : 'app-user-form',
@@ -50,7 +51,7 @@ export class UserFormComponent {
                       . A <b>$</b> can only be used as the last\
                       character.'),
           required: true,
-          validation : [ Validators.required ]
+          validation : [ Validators.required, Validators.pattern('[a-z_][a-z0-9_-]*[$]?'),  Validators.maxLength(8) ]
         },
         {
           type : 'input',
@@ -70,17 +71,21 @@ export class UserFormComponent {
           type : 'input',
           name : 'password',
           placeholder : T('Password'),
-          tooltip : T('Required unless <b>Enable password login</b> is\
+          tooltip : T('Enter password of nine characters or less\
+                      Required unless <b>Enable password login</b> is\
                       <i>No</i>. Passwords cannot contain a <b>?</b>.'),
           inputType : 'password',
           togglePw: true,
+          required: true,
+          validation : [ Validators.pattern('^[^?]*$'), Validators.maxLength(9), Validators.required ]
         },
         {
           type : 'input',
           name : 'password_conf',
           placeholder : T('Confirm Password'),
           inputType : 'password',
-          validation : [ matchOtherValidator('password') ],
+          required: true,
+          validation : [ matchOtherValidator('password'), Validators.pattern('^[^?]*$'), Validators.maxLength(9), Validators.required ]
         },
       ]
     },

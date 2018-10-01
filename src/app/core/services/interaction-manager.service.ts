@@ -41,7 +41,6 @@ export class InteractionManagerService {
 
   constructor(messageBus:CoreService){
     this.messageBus = messageBus;
-    console.log("InteractionManagerService Constructor");
 
     messageBus.register({observerClass:this, eventName:"RegisterLayout"}).subscribe((evt:CoreEvent) => {
       // Expects LayoutObject and array of CSS selectors

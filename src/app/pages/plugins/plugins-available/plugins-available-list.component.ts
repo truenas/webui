@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { T } from '../../../translate-marker';
+import { EntityUtils } from '../../common/entity/utils';
 
 @Component({
   selector: 'app-plugins-available-list',
@@ -17,6 +18,7 @@ export class PluginsAvailabelListComponent {
   protected queryCall = 'jail.list_resource';
   protected queryCallOption = ["PLUGIN", true];
   protected entityList: any;
+  public toActivatePool: boolean = false;
 
   public columns: Array < any > = [
     { name: T('Name'), prop: '0', icon: '5' },
@@ -32,7 +34,7 @@ export class PluginsAvailabelListComponent {
   public isPoolActivated: boolean;
   public selectedPool;
   public activatedPool: any;
-  public availablePools: any = [];
+  public availablePools: any;
 
   public tooltipMsg: any = T("Choose an existing ZFS Pool to allow the \
                               iocage jail manager to create a /iocage \
@@ -47,6 +49,10 @@ export class PluginsAvailabelListComponent {
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected loader: AppLoaderService) {
     this.getActivatedPool();
     this.getAvailablePools();
+  }
+
+  afterInit(entityList: any) {
+    this.entityList = entityList;
   }
 
   getActions(parentRow) {
@@ -65,6 +71,7 @@ export class PluginsAvailabelListComponent {
     this.ws.call('jail.get_activated_pool').subscribe((res)=>{
       if (res != null) {
         this.activatedPool = res;
+        this.selectedPool = res;
         this.isPoolActivated = true;
       } else {
         this.isPoolActivated = false;
@@ -79,9 +86,19 @@ export class PluginsAvailabelListComponent {
   }
 
   activatePool(event: Event){
-    this.ws.call('jail.activate', [this.selectedPool.name]).subscribe(
+    this.loader.open();
+    this.ws.call('jail.activate', [this.selectedPool]).subscribe(
       (res)=>{
+        this.loader.close();
         this.isPoolActivated = true;
+        this.activatedPool = this.selectedPool;
+        if (this.toActivatePool) {
+          this.entityList.getData();
+        }
+        this.entityList.snackBar.open("Successfully activate pool " + this.selectedPool , 'close', { duration: 5000 });
+      },
+      (res) => {
+        new EntityUtils().handleWSError(this.entityList, res);
       });
   }
 }

@@ -1,4 +1,12 @@
-<ngx-datatable #datatable class='material' [rows]='data' [columnMode]="'force'" [rowHeight]="50" [headerHeight]="50" [footerHeight]="50">
+<ngx-datatable 
+    #datatable class='material' 
+    [style.height.px]="tableHeight"
+    [rows]='data' 
+    [columnMode]="'force'" 
+    [rowHeight]="50" 
+    [headerHeight]="50" 
+    [footerHeight]="50"
+    [scrollbarV]="true">
   <ngx-datatable-column name="Label">
     <ng-template let-column="column" ngx-datatable-header-template>
       Name

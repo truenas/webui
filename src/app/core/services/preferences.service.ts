@@ -35,7 +35,6 @@ export class PreferencesService {
     "allowPwToggle":true
   }
   constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router) {
-    console.log("*** New Instance of Preferences Service ***");
 
     this.core.register({observerClass:this, eventName:"Authenticated",sender:this.api}).subscribe((evt:CoreEvent) => {
       //console.log(evt.data);

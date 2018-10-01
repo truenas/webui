@@ -94,6 +94,7 @@ export class JailEditComponent implements OnInit {
         value: '',
       }],
       value: '',
+      required: false,
       relation: [{
         action: 'DISABLE',
         when: [{
@@ -136,12 +137,7 @@ export class JailEditComponent implements OnInit {
       name: 'ip4_netmask',
       placeholder: T('IPv4 Netmask'),
       tooltip: T('IPv4 netmask for the jail.'),
-      options: [
-        {
-          label: '------',
-          value: '',
-        }
-      ],
+      options: this.networkService.getV4Netmasks(),
       value: '',
       relation: [{
         action: 'DISABLE',
@@ -176,6 +172,11 @@ export class JailEditComponent implements OnInit {
       }]
     },
     {
+      type: 'checkbox',
+      name: 'auto_configure_ip6',
+      placeholder: T('Auto configure IPv6'),
+    },
+    {
       type: 'select',
       name: 'ip6_interface',
       placeholder: T('IPv6 Interface'),
@@ -185,8 +186,16 @@ export class JailEditComponent implements OnInit {
         value: '',
       }],
       value: '',
+      required: false,
       class: 'inline',
       width: '30%',
+      relation: [{
+        action: 'DISABLE',
+        when: [{
+          name: 'auto_configure_ip6',
+          value: true,
+        }]
+      }]
     },
     {
       type: 'input',
@@ -206,21 +215,30 @@ export class JailEditComponent implements OnInit {
       validation : [ regexValidator(this.networkService.ipv6_regex) ],
       class: 'inline',
       width: '50%',
+      relation: [{
+        action: 'DISABLE',
+        when: [{
+          name: 'auto_configure_ip6',
+          value: true,
+        }]
+      }]
     },
     {
       type: 'select',
       name: 'ip6_prefix',
       placeholder: T('IPv6 Prefix'),
       tooltip: T('IPv6 prefix for the jail.'),
-      options: [
-        {
-          label: '---------',
-          value: '',
-        }
-      ],
+      options: this.networkService.getV6PrefixLength(),
       value: '',
       class: 'inline',
       width: '20%',
+      relation: [{
+        action: 'DISABLE',
+        when: [{
+          name: 'auto_configure_ip6',
+          value: true,
+        }]
+      }]
     },
     {
       type: 'input',
@@ -762,6 +780,17 @@ export class JailEditComponent implements OnInit {
                   <b>Example:</b> <i>E4F4C6</i>'),
     },
     {
+      type: 'select',
+      name: 'vnet_default_interface',
+      placeholder: T('vnet_default_interface'),
+      options: [
+        {
+          label: 'none',
+          value: 'none',
+        }
+      ]
+    },
+    {
       type: 'input',
       name: 'vnet0_mac',
       placeholder: T('vnet0_mac'),
@@ -1111,6 +1140,7 @@ export class JailEditComponent implements OnInit {
   protected ip4_netmaskField: any;
   protected ip6_interfaceField: any;
   protected ip6_prefixField: any;
+  protected vnet_default_interfaceField:any;
 
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
@@ -1128,6 +1158,33 @@ export class JailEditComponent implements OnInit {
       return true;
     }
     return false;
+  }
+
+  updateInterfaceValidation() {
+    let dhcp_ctrl = this.formGroup.controls['dhcp'];
+    let vnet_ctrl = this.formGroup.controls['vnet'];
+    let ip4_addr_ctrl = this.formGroup.controls['ip4_addr'];
+    let ip6_addr_ctrl = this.formGroup.controls['ip6_addr'];
+
+    if (dhcp_ctrl.value != true && vnet_ctrl.value == true && ip4_addr_ctrl.value != undefined && ip4_addr_ctrl.value != '') {
+      this.ip4_interfaceField.required = true;
+      this.formGroup.controls['ip4_interface'].setValidators([Validators.required]);
+      this.formGroup.controls['ip4_interface'].updateValueAndValidity();
+    } else {
+      this.ip4_interfaceField.required = false;
+      this.formGroup.controls['ip4_interface'].clearValidators();
+      this.formGroup.controls['ip4_interface'].updateValueAndValidity();
+    }
+
+    if (dhcp_ctrl.value != true && vnet_ctrl.value == true && ip6_addr_ctrl.value != undefined && ip6_addr_ctrl.value != '') {
+      this.ip6_interfaceField.required = true;
+      this.formGroup.controls['ip6_interface'].setValidators([Validators.required]);
+      this.formGroup.controls['ip6_interface'].updateValueAndValidity();
+    } else {
+      this.ip6_interfaceField.required = false;
+      this.formGroup.controls['ip6_interface'].clearValidators();
+      this.formGroup.controls['ip6_interface'].updateValueAndValidity();
+    }
   }
 
   ngOnInit() {
@@ -1162,21 +1219,15 @@ export class JailEditComponent implements OnInit {
     this.ip4_netmaskField = _.find(this.basicfieldConfig, {'name': 'ip4_netmask'});
     this.ip6_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip6_interface'});
     this.ip6_prefixField = _.find(this.basicfieldConfig, {'name': 'ip6_prefix'});
-    // get netmask/prefix for ipv4/6
-    let v4netmask = this.networkService.getV4Netmasks();
-    let v6prefix = this.networkService.getV6PrefixLength();
-    for (let i = 0; i < v4netmask.length; i++) {
-      this.ip4_netmaskField.options.push(v4netmask[i]);
-    }
-    for (let i = 0; i < v6prefix.length; i++) {
-      this.ip6_prefixField.options.push(v6prefix[i]);
-    }
+    this.vnet_default_interfaceField = _.find(this.networkfieldConfig, {'name': 'vnet_default_interface'});
+
     // get interface options
     this.ws.call('interfaces.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
       (res)=>{
         for (let i in res) {
           this.ip4_interfaceField.options.push({ label: res[i].name, value: res[i].name});
           this.ip6_interfaceField.options.push({ label: res[i].name, value: res[i].name});
+          this.vnet_default_interfaceField.options.push({ label: res[i].name, value: res[i].name});
         }
       },
       (res)=>{
@@ -1222,13 +1273,15 @@ export class JailEditComponent implements OnInit {
         }
       }
 
-      if (this.formGroup.controls['dhcp'].value && !res) {
+      if ((this.formGroup.controls['dhcp'].value || this.formGroup.controls['auto_configure_ip6'].value) && !res) {
         _.find(this.basicfieldConfig, { 'name': 'vnet' }).hasErrors = true;
         _.find(this.basicfieldConfig, { 'name': 'vnet' }).errors = 'VNET is required.';
       } else {
         _.find(this.basicfieldConfig, { 'name': 'vnet' }).hasErrors = false;
         _.find(this.basicfieldConfig, { 'name': 'vnet' }).errors = '';
       }
+
+      this.updateInterfaceValidation();
     });
     this.formGroup.controls['bpf'].valueChanges.subscribe((res) => {
       if (this.formGroup.controls['dhcp'].value && !res) {
@@ -1238,6 +1291,21 @@ export class JailEditComponent implements OnInit {
         _.find(this.basicfieldConfig, { 'name': 'bpf' }).hasErrors = false;
         _.find(this.basicfieldConfig, { 'name': 'bpf' }).errors = '';
       }
+    });
+    this.formGroup.controls['auto_configure_ip6'].valueChanges.subscribe((res) => {
+      let vnet_ctrl = this.formGroup.controls['vnet'];
+      if (res) {
+        vnet_ctrl.setValue(true);
+      } else {
+        vnet_ctrl.setValue(vnet_ctrl.value);
+      }
+      _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = res;
+    });
+    this.formGroup.controls['ip4_addr'].valueChanges.subscribe((res) => {
+      this.updateInterfaceValidation();
+    });
+    this.formGroup.controls['ip6_addr'].valueChanges.subscribe((res) => {
+      this.updateInterfaceValidation();
     });
 
     this.aroute.params.subscribe(params => {
@@ -1272,6 +1340,9 @@ export class JailEditComponent implements OnInit {
               if (res[0][i] == 'none' || res[0][i] == '') {
                 this.formGroup.controls['ip6_addr'].setValue('');
               } else {
+                if (res[0][i] == 'vnet0|accept_rtadv') {
+                  this.formGroup.controls['auto_configure_ip6'].setValue(true);
+                }
                 if (res[0][i].indexOf('|') > 0) {
                   this.formGroup.controls['ip6_interface'].setValue(res[0][i].split('|')[0]);
                   res[0][i] = res[0][i].split('|')[1];
@@ -1283,6 +1354,7 @@ export class JailEditComponent implements OnInit {
                   this.formGroup.controls['ip6_addr'].setValue(res[0][i]);
                 }
               }
+
               continue;
             }
             if (i == 'release') {
@@ -1392,6 +1464,11 @@ export class JailEditComponent implements OnInit {
     }
     delete value['ip6_interface'];
     delete value['ip6_prefix'];
+
+    if (value['auto_configure_ip6']) {
+      value['ip6_addr'] = "vnet0|accept_rtadv";
+    }
+    delete value['auto_configure_ip6'];
 
     for (let i in value) {
       // do not send value[i] if value[i] no change

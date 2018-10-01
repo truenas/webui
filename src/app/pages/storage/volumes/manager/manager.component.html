@@ -7,10 +7,11 @@
       <div class="fields m-3">
         <div *ngIf="isNew;else extend">
           <mat-input-container>
-            <input matInput name="poolname" placeholder="{{'Name' | translate}}" [(ngModel)]="name" (input)="checkPoolName()" required>
+            <input matInput name="poolname" id="pool-manager__name-input-field" placeholder="{{'Name' | translate}}" [(ngModel)]="name" (input)="checkPoolName()" required>
           </mat-input-container>
           <tooltip class="volumeTooltip" [message]=name_tooltip></tooltip>
           <mat-checkbox
+            id="pool-manager__encryption-checkbox"
             [(ngModel)]="isEncrypted"
             class="form-control"
              placeholder="Encryption"
@@ -20,13 +21,13 @@
           <tooltip class="volumeTooltip" [message]=encryption_tooltip></tooltip>
           <div *ngIf="poolError" [style.color]="'red'" [innerHTML]="poolError"></div>
           <div>
-            <button *ngIf="suggestable_disks.length <= 8" [disabled]="dirty" mat-button class="btn btn-accent" (click)="suggestLayout()">{{"Suggest Layout" | translate}}</button>
+            <button id="pool-manager__suggest-layout-button" *ngIf="suggestable_disks.length <= 8" [disabled]="dirty" mat-button class="btn btn-accent" (click)="suggestLayout()">{{"Suggest Layout" | translate}}</button>
             <tooltip class="volumeTooltip" [message]=suggested_layout_tooltip></tooltip>
           </div>
         </div>
         <ng-template #extend>
           <mat-input-container>
-            <input matInput placeholder="Name" [value]="name" disabled>
+            <input id="pool-manager__extend-name-input-field" matInput placeholder="Name" [value]="name" disabled>
           </mat-input-container>
           <mat-error *ngIf="isEncrypted">{{"Extending an encrypted pool resets the passphrase and recovery key!" | translate }}</mat-error>
         </ng-template>
@@ -35,6 +36,7 @@
         <div class="disks">
             <h4>{{"Available Disks" | translate }}</h4>
               <ngx-datatable
+                id="pool-manager__disks-table"
                 #table
                 class="material ml-1 mt-1 mb-1 mr-1 mat-box-shadow"
                 [rows]="disks"
@@ -51,13 +53,13 @@
                 <ngx-datatable-column [width]="85" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
                   <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
                     <div class="headerCheckBox">
-                      <mat-checkbox [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>
+                      <mat-checkbox id="pool-manager__disks-table-checkall" [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>
                     </div>
                   </ng-template>
 
                   <ng-template ngx-datatable-cell-template let-value="value" let-rowIndex="rowIndex" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
                     <div>
-                      <mat-checkbox name="disk_{{rowIndex}}_checkbox" [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></mat-checkbox>
+                      <mat-checkbox id="pool-manager__disks-{{disks[rowIndex].devname}}" name="disk_{{rowIndex}}_checkbox" [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></mat-checkbox>
                     </div>
                   </ng-template>
                 </ngx-datatable-column>
@@ -79,7 +81,7 @@
               </ngx-datatable>
               <mat-input-container>
                   <input matInput
-                    id="nameFilter"
+                    id="pool-manager__nameFilter"
                     type='text'
                     placeholder='Filter disks by name'
                     (keyup)='updateFilter($event)'
@@ -87,7 +89,7 @@
                 </mat-input-container>
                 <mat-input-container>
                   <input matInput
-                    id="capacityFilter"
+                    id="pool-manager__capacityFilter"
                     type='text'
                     placeholder='Filter disks by capacity'
                     (keyup)='updateFilter($event)'
@@ -118,13 +120,13 @@
       <div *ngIf="disknumError" [style.color]="'red'" [innerHTML]="disknumError"></div>
       <div *ngIf="vdevtypeError" [style.color]="'red'" [innerHTML]="vdevtypeError"></div>
       <div *ngIf="error" [style.color]="'red'" [innerHTML]="error"></div>
-      <div class="buttons">
-        <button mat-button name="create-button" class="btn btn-primary" (click)="checkSubmit()" color="primary" [disabled]="!canSave()">{{submitTitle | translate }}</button>
-        <button mat-button class="btn  btn-block btn-lg btn-primary" type="button" (click)="goBack()" color="accent">{{"Cancel" | translate}}</button>
-        <button mat-button class="btn btn-accent" (click)="addVdev('data')">{{"Add Data" | translate}}</button>
-        <button [disabled]="vdevs.cache.length > 0" mat-button class="btn btn-accent" (click)="addVdev('cache')">{{"Add Cache" | translate}}</button>
-        <button [disabled]="vdevs.log.length > 0" mat-button class="btn btn-accent" (click)="addVdev('log')">{{"Add Log" | translate}}</button>
-        <button [disabled]="vdevs.spare.length > 0" mat-button class="btn btn-accent" (click)="addVdev('spare')">{{"Add Spare" | translate}}</button>
+      <div class="buttons" id="pool-manager__button-group">
+        <button id="pool-manager__create-button" mat-button name="create-button" class="btn btn-primary" (click)="checkSubmit()" color="primary" [disabled]="!canSave()">{{submitTitle | translate }}</button>
+        <button id="pool-manager__cancel-button" mat-button class="btn  btn-block btn-lg btn-primary" type="button" (click)="goBack()" color="accent">{{"Cancel" | translate}}</button>
+        <button id="pool-manager__add-data-button" mat-button class="btn btn-accent mat-basic" (click)="addVdev('data')">{{"Add Data" | translate}}</button>
+        <button id="pool-manager__add-cache-button" [disabled]="vdevs.cache.length > 0" mat-button class="btn btn-accent mat-basic" (click)="addVdev('cache')">{{"Add Cache" | translate}}</button>
+        <button id="pool-manager__add-log-button"[disabled]="vdevs.log.length > 0" mat-button class="btn btn-accent mat-basic" (click)="addVdev('log')">{{"Add Log" | translate}}</button>
+        <button id="pool-manager__add-spare-button" [disabled]="vdevs.spare.length > 0" mat-button class="btn btn-accent mat-basic" (click)="addVdev('spare')">{{"Add Spare" | translate}}</button>
       </div>
     </div>
   </div>

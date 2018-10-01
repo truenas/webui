@@ -22,7 +22,7 @@ export class JailListComponent implements OnInit {
   public isPoolActivated: boolean;
   public selectedPool;
   public activatedPool: any;
-  public availablePools: any = [];
+  public availablePools: any;
   public title = "Jails";
   protected queryCall = 'jail.query';
   protected wsDelete = 'jail.do_delete';
@@ -30,6 +30,7 @@ export class JailListComponent implements OnInit {
   protected entityList: any;
   protected route_add = ["jails", "add", "wizard"];
   protected route_add_tooltip = "Add Jail";
+  public toActivatePool: boolean = false;
 
   public columns: Array < any > = [
     { name: T('Jail'), prop: 'host_hostuuid', always_display: true },
@@ -58,6 +59,7 @@ export class JailListComponent implements OnInit {
             (res) => {
               for (let i in selected) {
                 selected[i].state = 'up';
+                this.updateRow(selected[i]);
               }
               this.updateMultiAction(selected);
               this.loader.close();
@@ -86,6 +88,7 @@ export class JailListComponent implements OnInit {
                 (res) => {
                   for (let i in selected) {
                     selected[i].state = 'down';
+                    this.updateRow(selected[i]);
                   }
                   this.updateMultiAction(selected);
                   this.loader.close();
@@ -169,6 +172,7 @@ export class JailListComponent implements OnInit {
     this.ws.call('jail.get_activated_pool').subscribe((res)=>{
       if (res != null) {
         this.activatedPool = res;
+        this.selectedPool = res;
         this.isPoolActivated = true;
       } else {
         this.isPoolActivated = false;
@@ -183,9 +187,19 @@ export class JailListComponent implements OnInit {
   }
 
   activatePool(event: Event){
-    this.ws.call('jail.activate', [this.selectedPool.name]).subscribe(
+    this.loader.open();
+    this.ws.call('jail.activate', [this.selectedPool]).subscribe(
       (res)=>{
+        this.loader.close();
         this.isPoolActivated = true;
+        this.activatedPool = this.selectedPool;
+        if (this.toActivatePool) {
+          this.entityList.getData();
+        }
+        this.entityList.snackBar.open("Successfully activate pool " + this.selectedPool , 'close', { duration: 5000 });
+      },
+      (res) => {
+        new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
       });
   }
   getActions(parentRow) {
@@ -221,9 +235,10 @@ export class JailListComponent implements OnInit {
             this.loader.open();
             this.ws.call('jail.start', [row.host_hostuuid]).subscribe(
               (res) => {
-                this.loader.close();
                 row.state = 'up';
+                this.updateRow(row);
                 this.updateMultiAction([row]);
+                this.loader.close();
               },
               (res) => {
                 this.loader.close();
@@ -243,9 +258,10 @@ export class JailListComponent implements OnInit {
               this.entityList.busy =
                 this.ws.call('jail.stop', [row.host_hostuuid]).subscribe(
                   (res) => {
-                    this.loader.close();
                     row.state = 'down';
+                    this.updateRow(row);
                     this.updateMultiAction([row]);
+                    this.loader.close();
                   },
                   (res) => {
                     this.loader.close();
@@ -302,6 +318,21 @@ export class JailListComponent implements OnInit {
     return selected;
   }
 
+  updateRow(row) {
+    this.ws.call(this.queryCall, [[["host_hostuuid", "=", row.host_hostuuid]]]).subscribe(
+      (res) => {
+        if (res[0]) {
+          for (let i in this.columns) {
+            if (this.columns[i].prop == 'ip4_addr' && _.split(res[0].ip4_addr, '|').length > 1) {
+              row.ip4_addr = _.split(res[0].ip4_addr, '|')[1];
+            } else {
+              row[this.columns[i].prop] = res[0][this.columns[i].prop];
+            }
+          }
+        }
+      });
+  }
+
   updateMultiAction(selected: any) {
     if (_.find(selected, ['state', 'up'])) {
      _.find(this.multiActions, {'id': 'mstop'})['enable'] = true;
@@ -326,6 +357,9 @@ export class JailListComponent implements OnInit {
     for (let i = 0; i < entityList.rows.length; i++) {
       if (_.split(entityList.rows[i].ip4_addr, '|').length > 1) {
         entityList.rows[i].ip4_addr = _.split(entityList.rows[i].ip4_addr, '|')[1];
+      }
+      if (entityList.rows[i].ip6_addr == 'vnet0|accept_rtadv') {
+        entityList.rows[i].ip6_addr = 'Auto';
       }
     }
   }

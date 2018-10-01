@@ -35,6 +35,7 @@ export interface InputTableConf {
   queryRes?: any [];
   isActionVisible?: any;
   custActions?: any[];
+  multiActions?:any[];
   config?: any;
   confirmDeleteDialog?: Object;
   checkbox_confirm?: any;
@@ -52,6 +53,7 @@ export interface InputTableConf {
   wsMultiDelete?(resp): any;
   wsMultiDeleteParams?(selected): any;
   updateMultiAction?(selected): any;
+  doAdd?();
 }
 
 export interface SortingConfig {
@@ -77,7 +79,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   @ViewChild('filter') filter: ElementRef;
 
   // MdPaginator Inputs
-  public paginationPageSize = 10;
+  public paginationPageSize: number = 8;
   public paginationPageSizeOptions = [5, 10, 20, 100, 1000];
   public paginationPageIndex = 0;
   public paginationPageEvent: any;
@@ -86,6 +88,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   public displayedColumns: string[] = [];
   public busy: Subscription;
   public columns: Array<any> = [];
+  public tableHeight:number = (this.paginationPageSize * 50) + 100;
+  public windowHeight: number;
 
   public allColumns: Array<any> = []; // Need this for the checkbox headings
   public filterColumns: Array<any> = []; // Need this for the filter function
@@ -115,6 +119,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
 
+    this.setTableHeight(); 
+  
     if (this.conf.preInit) {
       this.conf.preInit(this);
     }
@@ -191,8 +197,31 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
         this.currentPreferredCols = this.conf.columns;
       }
-        // End of checked/display section ------------
+        // End of checked/display section ------------                 
+  }
 
+  setTableHeight() {
+    let rowNum = 9, n;
+    if (this.title === 'Boot Environments') {
+      n = 5;
+    } else if (this.title === 'Jails' || this.title === 'Available Plugins' || this.title === 'Installed Plugins') {
+      n = 3;
+    } else {
+      n = 0;
+    }
+    if (this.conf.columns.length > 10) {
+        n = n + 2;
+    } 
+    window.onresize = () => {
+      let x = window.innerHeight;
+      if (x <=780) {
+        this.paginationPageSize = rowNum - n;
+      } else {
+        let y = x - 800;
+        this.paginationPageSize = rowNum - n + Math.floor(y/50);
+      }
+      this.setPaginationInfo();
+    }
   }
 
   setShowSpinner() {
@@ -377,7 +406,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   }
 
   doAdd() {
-    this.router.navigate(new Array('/').concat(this.conf.route_add));
+    if (this.conf.doAdd) {
+      this.conf.doAdd();
+    } else {
+      this.router.navigate(new Array('/').concat(this.conf.route_add));
+    }
   }
 
   doEdit(id) {
@@ -426,11 +459,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     })
   }
 
-
   setPaginationPageSizeOptions(setPaginationPageSizeOptionsInput: string) {
     this.paginationPageSizeOptions = setPaginationPageSizeOptionsInput.split(',').map(str => +str);
   }
-
 
   paginationUpdate($pageEvent: any) {
 
@@ -446,7 +477,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     const beginIndex = this.paginationPageIndex * this.paginationPageSize;
     const endIndex = beginIndex + this.paginationPageSize ;
 
-    if( beginIndex < this.currentRows.length && endIndex >= this.currentRows.length ) {
+    if( beginIndex < this.currentRows.length && endIndex >= this.currentRows.length) {
       this.seenRows = this.currentRows.slice(beginIndex, this.currentRows.length);
     } else if( endIndex < this.currentRows.length ) {
       this.seenRows = this.currentRows.slice(beginIndex, endIndex);
@@ -454,6 +485,19 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       this.seenRows = this.currentRows;
     }
 
+    // This section controls page height for infinite scrolling
+    if (this.currentRows.length === 0) {
+      this.tableHeight = 153;
+    } else if (this.currentRows.length > 0 && this.currentRows.length < this.paginationPageSize) {
+      this.tableHeight = (this.currentRows.length * 50) + 110;
+    } else {
+      this.tableHeight = (this.paginationPageSize * 50) + 100;
+    } 
+    
+    // Displays an accurate number for some edge cases
+    if (this.paginationPageSize > this.currentRows.length) {
+      this.paginationPageSize = this.currentRows.length;
+    }
   }
 
   reorderEvent(event) {

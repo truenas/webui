@@ -35,7 +35,7 @@ interface VmProfile {
   vm_type?: string;
   vm_comport?:string
   isNew?:boolean;
-  transitionalState:boolean;
+  transitionalState?:boolean;
 }
 
 @Component({
@@ -90,26 +90,35 @@ export class VmCardsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.viewMode.value = "cards";
+    /* TODO: remove this after middleware part is ready to give back
+    correct state.
+    */
+    Observable.interval(5000).subscribe((val) => {
+      this.checkStatus();
+     });
     /*
      * Communication Downwards:
      * Listen for events from UI controls
      * */
 
     this.controlEvents.subscribe((evt:CoreEvent) => {
-      const index = this.getCardIndex("id",evt.sender.machineId);
+      //if(evt.sender){
+        const index = this.getCardIndex("id",evt.sender.machineId);
+      //}
       switch(evt.name){
         case "FormSubmitted":
           //evt.data.autostart = evt.data.autostart.toString();
+          this.cards[index].state = "Saving"
+          const profile = this.stripUIProperties(evt.data);
           if(evt.sender.isNew){
             const i = this.getCardIndex('isNew',true);
             this.cards[i].name = evt.data.name;
             this.cards[i].state = "Loading...";
-            this.core.emit({name:"VmCreate",data:[evt.data] ,sender:evt.sender.machineId});
+            this.core.emit({name:"VmCreate",data:[profile] ,sender:evt.sender.machineId});
           } else {
             const formValue = this.parseResponse(evt.data,true);
-            this.core.emit({name:"VmProfileUpdate",data:[evt.sender.machineId,formValue] ,sender:evt.sender.machineId});
-            this.toggleForm(false,this.cards[index],'none');
-            //this.refreshVM(index,evt.sender.machineId);
+            this.core.emit({name:"VmProfileUpdate",data:[evt.sender.machineId,this.stripUIProperties(formValue)] ,sender:evt.sender.machineId});
+            this.toggleForm(false,this.cards[index],'none'); 
           }
         break;
         case "FormCancelled":
@@ -119,6 +128,17 @@ export class VmCardsComponent implements OnInit, OnDestroy {
           this.cards[index].state = "creating clone";
           this.cancel(index);
           this.core.emit({name:"VmClone", data: this.cards[index].id, sender:this});
+          this.core.register({observerClass:this,eventName:"VmProfilesRequest"}).subscribe((clone_evt:CoreEvent) => {
+           if (clone_evt.data && clone_evt.data.trace) {
+            this.dialog.errorReport(
+              T('VM clone failed.') , clone_evt.data.reason, clone_evt.data.trace.formatted).subscribe((result)=>{
+                this.core.emit({name:"VmProfilesRequest"});
+              })
+           };
+          })
+        break;
+        case "RestartVM":
+          this.restartVM(index);
         break;
       default:
       break;
@@ -140,16 +160,17 @@ export class VmCardsComponent implements OnInit, OnDestroy {
     });
 
     this.core.register({observerClass:this,eventName:"VmStatus"}).subscribe((evt:CoreEvent) => {
-      const cardIndex = this.getCardIndex('id',evt.data.id);
-      if(evt.data.state && this.cards[cardIndex]){ 
-        this.cards[cardIndex].state = evt.data.state.toLowerCase();
-        const cacheIndex = this.getCardIndex('id',evt.data.id,true);
-        this.cache[cacheIndex].state = evt.data.state.toLowerCase();
-      }
-    });
+      evt.data.forEach(vmstatus => {
+        const cardIndex = this.getCardIndex('id',vmstatus.id);
+        if(vmstatus.state && this.cards[cardIndex]){
+          this.cards[cardIndex].state = vmstatus.state.toLowerCase();
+          const cacheIndex = this.getCardIndex('id',vmstatus.id,true);
+          this.cache[cacheIndex].state = vmstatus.state.toLowerCase();
+        };
+      });
 
+    });
     this.core.register({observerClass:this,eventName:"VmStarted"}).subscribe((evt:CoreEvent) => {
-      console.log(evt)
         if (evt.data.trace) {
           this.dialog.errorReport(T('VM failed to start') , evt.data.reason, evt.data.trace.formatted)
           const cardIndex = this.getCardIndex('id',evt.data.id[0]);
@@ -409,6 +430,13 @@ export class VmCardsComponent implements OnInit, OnDestroy {
     })
   }
 
+  restartVM(index:number){ 
+    const vm = this.cards[index];
+    vm.transitionalState = true;
+    vm.state = "restarting"
+    this.core.emit({name:"VmRestart", data: [vm.id]});
+  }
+
   removeVM(evt:CoreEvent){
     const index = this.getCardIndex("id", evt.sender);
 
@@ -458,6 +486,10 @@ export class VmCardsComponent implements OnInit, OnDestroy {
 
   // toggles VM on/off
   toggleVmState(index, poweroff?:boolean){
+    if (index.force) {
+      poweroff = index.force;
+      index = index.index;
+    };
     const vm = this.cards[index];
     if(vm.transitionalState){
       return ;
@@ -487,12 +519,14 @@ export class VmCardsComponent implements OnInit, OnDestroy {
            if(poweroff){
              eventName = "VmPowerOff";
              this.cards[index].state = "stopping";
-             this.core.emit({name: eventName, data:[vm.id, true]});
+             this.core.emit({name: eventName, data:[vm.id]});
            } else {
              eventName = "VmStop";
              this.cards[index].state = "stopping";
              this.core.emit({name: eventName, data:[vm.id]});
            }
+          } else {
+            vm.transitionalState = false;
           }
         })
     }
@@ -542,20 +576,17 @@ export class VmCardsComponent implements OnInit, OnDestroy {
     }
   }
 
-  checkStatus(id?:number){
-    console.log("checking status...")
-    if(id){
-      this.core.emit({
-        name:"VmStatusRequest",
-        data:[id]
-      });
-    } else {
-      for(let i = 0; i < this.cache.length; i++){
-        this.core.emit({
-          name:"VmStatusRequest",
-          data:[this.cache[i].id]
-        });
-    }
-    }
+  checkStatus(id?:number){ 
+    this.core.emit({
+      name:"VmStatusRequest",
+      data:[]
+    });
+  }
+  
+  stripUIProperties(profile:VmProfile){
+    let clone = Object.assign({}, profile);
+    delete clone.domId;
+    delete clone.transitionalState;
+    return clone;
   }
 }
