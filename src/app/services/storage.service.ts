@@ -56,7 +56,6 @@ export class StorageService {
     arr.forEach((item) => {
       tempArr.push(item[key]);
     });
-    console.log(tempArr[0][tempArr[0].length-1])
     // Select table columns labled with GiB, Mib, etc
     // Regex checks for ' XiB' with a leading space and X === K, M, G or T 
     if (typeof(tempArr[0]) === 'string' && 
