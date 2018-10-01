@@ -168,8 +168,8 @@ export class UpdateComponent implements OnInit {
       }
     });
     this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
-      this.tempTrain = res.current.toLowerCase();
-      // this.tempTrainList === res.trains[this.tempTrain].toLowerCase();
+      this.tempTrain = res.current;
+      this.tempTrainList === res.trains[this.tempTrain].toLowerCase();
 
       this.trains = [];
       for (const i in res.trains) {
@@ -384,13 +384,9 @@ export class UpdateComponent implements OnInit {
             }
           }
           
-          //  if (this.tempTrainList.includes('tag')) {
-            
-          //  } 
-console.log(this.tempTrain)
-          if (this.tempTrain.includes('night')) {
+          if (this.tempTrainList.includes('experimental')) {
             this.stable_train = false;
-          } else if (this.tempTrain.includes('stable')) {
+          } else if (this.tempTrainList.includes('stable')) {
             this.stable_train = true;
           }
         },
