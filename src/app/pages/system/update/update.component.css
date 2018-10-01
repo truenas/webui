@@ -9,12 +9,12 @@
 #train-selector {
     max-width: 200px;
 }
-.changelog {
-    height: 350px;
+#changelog-card {
+    height: 230px;
 }
 
 #changelog-scrollbox {
-    max-height: 220px;
+    max-height:100px;
     overflow-y: scroll;
 }
 
