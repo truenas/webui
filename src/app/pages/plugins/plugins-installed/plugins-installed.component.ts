@@ -54,7 +54,8 @@ export class PluginsInstalledListComponent {
           this.ws.job('core.bulk', ["jail.start", selectedJails]).subscribe(
             (res) => {
               for (let i in selected) {
-                this.updateRow(selected[i])
+                selected[i][3] = 'up';
+                this.updateRow(selected[i]);
               }
               this.updateMultiAction(selected);
               this.loader.close();
@@ -79,7 +80,8 @@ export class PluginsInstalledListComponent {
           this.ws.job('core.bulk', ["jail.stop", selectedJails]).subscribe(
             (res) => {
               for (let i in selected) {
-                this.updateRow(selected[i])
+                selected[i][3] = 'down';
+                this.updateRow(selected[i]);
               }
               this.updateMultiAction(selected);
               this.loader.close();
@@ -246,13 +248,13 @@ export class PluginsInstalledListComponent {
   }
 
   updateMultiAction(selected: any) {
-    if (_.find(selected, ['3', 'up'])) {
+    if (_.find(selected, function(plugin) { return plugin[3] == 'up'; })) {
      _.find(this.multiActions, {'id': 'mstop'})['enable'] = true;
     } else {
       _.find(this.multiActions, {'id': 'mstop'})['enable'] = false;
     }
 
-    if (_.find(selected, ['3', 'down'])) {
+    if (_.find(selected, function(plugin) { return plugin[3] == 'down'; })) {
      _.find(this.multiActions, {'id': 'mstart'})['enable'] = true;
     } else {
       _.find(this.multiActions, {'id': 'mstart'})['enable'] = false;
