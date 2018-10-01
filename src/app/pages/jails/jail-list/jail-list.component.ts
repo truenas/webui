@@ -339,6 +339,9 @@ export class JailListComponent implements OnInit {
       if (_.split(entityList.rows[i].ip4_addr, '|').length > 1) {
         entityList.rows[i].ip4_addr = _.split(entityList.rows[i].ip4_addr, '|')[1];
       }
+      if (entityList.rows[i].ip6_addr == 'vnet0|accept_rtadv') {
+        entityList.rows[i].ip6_addr = 'Auto';
+      }
     }
   }
 
