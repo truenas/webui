@@ -1,8 +1,9 @@
 import {Component} from '@angular/core';
 import {Router} from '@angular/router';
 
-import {RestService} from '../../../../services/rest.service';
+import { RestService, NetworkService } from '../../../../services';
 import { T } from '../../../../translate-marker';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector : 'app-interfaces-list',
@@ -34,12 +35,25 @@ export class InterfacesListComponent {
     sorting : {columns : this.columns},
   };
 
-  constructor(_rest: RestService, _router: Router) {}
+  constructor(_rest: RestService, private router: Router, private networkService: NetworkService,
+              private snackBar: MatSnackBar) {}
 
   rowValue(row, attr) {
     if (attr == 'ipv4_addresses' || attr == 'ipv6_addresses') {
       return row[attr].join(', ');
     }
     return row[attr];
+  }
+
+  doAdd() {
+    this.networkService.getInterfaceNicChoices().subscribe(
+      (res)=>{
+        if (res.length == 0) {
+          this.snackBar.open("All interfaces are already in use.", 'close', { duration: 5000 });
+        } else {
+          this.router.navigate(new Array('/').concat(this.route_add));
+        }
+      }
+    )
   }
 }
