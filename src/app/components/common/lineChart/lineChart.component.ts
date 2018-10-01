@@ -7,7 +7,7 @@ import * as ChartistLegend from 'chartist-plugin-legend';
 import {UUID} from 'angular2-uuid';
 import * as c3 from 'c3';
 
-import { LineChartService, HandleDataFunc, LineChartData, DataListItem } from './lineChart.service';
+import { LineChartService, HandleDataFunc, LineChartData,LineChartMetadata, DataListItem } from './lineChart.service';
 
 
 export interface ChartFormatter {
@@ -31,9 +31,7 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
      *     ]
    */
   @Input() series: any[][];
-
-
-  @Input() legends: string[];
+  @Input() legends: string[]; 
   @Input() type: string;
   @Input() divideBy: number;
   @Input() chartFormatter: ChartFormatter;
@@ -47,6 +45,7 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
   data: LineChartData = {
     labels: [],
     series: [],
+    //meta: {}
   };
   colorPattern = ["#2196f3", "#009688", "#ffc107", "#9c27b0", "#607d8b", "#00bcd4", "#8bc34a", "#ffeb3b", "#e91e63", "#3f51b5"];
 
@@ -59,6 +58,7 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
   }
 
   handleDataFunc(linechartData: LineChartData) {
+    //console.log(linechartData)
 
     this.data.labels.splice(0, this.data.labels.length);
     this.data.series.splice(0, this.data.series.length);
@@ -131,9 +131,12 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
             }
         },
         y:{
+          tick: {
+            format: (y) => { return y + linechartData.meta.units}
+          },
           label: {
-            text:this.labelY,
-            position: 'outer-middle'
+            text:linechartData.meta. labelY,
+            position: 'outer-middle',
           }
           //default: [this.minY,this.maxY],
           /*min: this.minY,
@@ -142,7 +145,7 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
       },
       grid:{
         x:{
-          show: false
+          show: true
         },
         y:{
           show: true
@@ -163,6 +166,11 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
           if(!this.showLegendValues){
             this.showLegendValues = true;
           }
+
+          if(raw.value == Number(0)){
+            raw.value == raw.value.toString()
+          }
+          
           this.legendEvents.next(raw);
           return '<div style="display:none">' + raw[0].x + '</div>';
         }

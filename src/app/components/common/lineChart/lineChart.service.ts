@@ -3,12 +3,25 @@ import {Injectable} from '@angular/core';
 import {WebSocketService} from '../../../services';
 
 
+
+/*
+ * For missing chart metadata like units
+ * for axis labels etc
+ * */
+ export interface LineChartMetadata {
+  source: string;
+  units: string;
+  labelY:string;
+  unitsProvided?:string;
+ }
+
 /*
  * Fed to the LineChart ./lineChart.component.ts
  */
 export interface LineChartData {
   labels: Date[];
   series: any[];
+  meta?: LineChartMetadata;
 }
 
 
@@ -81,10 +94,12 @@ export class LineChartService {
   public getData(dataHandlerInterface: HandleDataFunc, dataList: any[], timeframe?:string) {
     if(!timeframe){timeframe = 'now-10m';}
     this._ws.call('stats.get_data', [dataList, {step: '10', start:timeframe}]).subscribe((res) => {
-      console.log(res)
+      //console.log(res);
+      let meta = this.generateMetaData(res);
       const linechartData: LineChartData = {
         labels: new Array<Date>(),
-        series: new Array<any>()
+        series: new Array<any>(),
+        meta: meta
       }
 
       dataList.forEach(() => {linechartData.series.push([]);})
@@ -97,6 +112,44 @@ export class LineChartService {
       });
       dataHandlerInterface.handleDataFunc(linechartData);
     });
+  }
+
+  generateMetaData(res){
+    // This should ideally be done server side but putting it in so we can have proper labels 
+    // in time for this 11.2 release
+
+    //console.log(res);
+
+    const spl = res.meta.legend[0].split('/');
+    const prefix = spl[0];
+    const dataName = spl[1];
+
+    let dictionary: LineChartMetadata[] = [
+      {source :'aggregation-cpu-sum', units:'%', labelY:'% CPU'},
+      {source :'memory', units:'GiB', labelY:'Gigabytes'},
+      {source :'swap', units:'GiB', labelY:'Gigabytes'},
+      {source :'if_errors', units:'', labelY:'Bits/s'},
+      {source :'if_octets', units:'', labelY:'Bits/s'},
+      {source :'if_packets', units:'', labelY:'Bits/s'},
+      {source :'df-mnt-', units:'GiB', labelY: 'Gigabytes'},
+      {source :'disk_time', units:'k', labelY: 'Bytes/s'},
+      {source :'disk_octets', units:'k', labelY: 'Bytes/s'},
+      {source :'disk_io_time', units:'k', labelY: 'Bytes/s'},
+      {source :'disk_ops', units:'', labelY: 'Operations/s'},
+      {source :'processes', units:'', labelY: 'Processes'},
+      {source :'uptime', units:'', labelY: 'Days'},
+      {source :'cache_size-arc', units:'G', labelY: 'Bytes'},
+      {source :'cache_ratio-arc', units:'%', labelY: 'Hits'},
+      {source :'cache_result-demand_data-hit', units:'', labelY: 'Requests'},
+      {source :'cache_result-demand_metadata-hit', units:'k', labelY: 'Requests'},
+      {source :'cache_result-prefetch_data-hit', units:'', labelY: 'Requests'},
+      {source :'cache_result-prefetch_metadata-hit', units:'m', labelY: 'Requests'},
+      {source :'load', units:'m', labelY:'CPU Time'}// Keep this last to avoid false positives like 'download'
+    ]
+
+    const result = dictionary.find(item => prefix.includes(item.source) || item.source == dataName); 
+    //console.log(result);
+    return result;
   }
 
 
