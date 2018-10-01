@@ -226,7 +226,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   updateActiveTab(tabName:string){
     // Change the URL without reloading page/component
     // the old fashioned way 
-    window.history.replaceState({}, '','/reportsdashboard/' + tabName.toLowerCase());
+    //window.history.replaceState({}, '','/reportsdashboard/' + tabName.toLowerCase());
 
     // Simulate tab event
     let evt = {
@@ -236,6 +236,11 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
     }
     this.tabSelectChangeHandler(evt);
     this.activeTab = tabName.toLowerCase(); 
+  }
+
+  navigateToTab(tabName){
+    const link = '/reportsdashboard/' + tabName.toLowerCase()
+    this.router.navigate([link]);
   }
 
   tabSelectChangeHandler($event) {

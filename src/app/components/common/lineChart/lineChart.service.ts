@@ -81,7 +81,7 @@ export class LineChartService {
   public getData(dataHandlerInterface: HandleDataFunc, dataList: any[], timeframe?:string) {
     if(!timeframe){timeframe = 'now-10m';}
     this._ws.call('stats.get_data', [dataList, {step: '10', start:timeframe}]).subscribe((res) => {
-      //console.log(res)
+      console.log(res)
       const linechartData: LineChartData = {
         labels: new Array<Date>(),
         series: new Array<any>()
