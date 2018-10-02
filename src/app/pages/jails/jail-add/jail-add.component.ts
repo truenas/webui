@@ -804,29 +804,41 @@ export class JailAddComponent implements OnInit {
       type: 'input',
       name: 'vnet0_mac',
       placeholder: T('vnet0_mac'),
-      tooltip: T('Enter a valid MAC address for the VNET0 \
-                  interface.'),
+      tooltip: T('Leave this field empty to generate random MAC \
+                  addresses for the host and jail. To assign fixed MAC \
+                  addresses, enter the MAC address to be assigned to \
+                  the host, a space, then the MAC address to be \
+                  assigned to the jail.'),
     },
     {
       type: 'input',
       name: 'vnet1_mac',
       placeholder: T('vnet1_mac'),
-      tooltip: T('Enter a valid MAC address for the VNET1 \
-                  interface.'),
+      tooltip: T('Leave this field empty to generate random MAC \
+                  addresses for the host and jail. To assign fixed MAC \
+                  addresses, enter the MAC address to be assigned to \
+                  the host, a space, then the MAC address to be \
+                  assigned to the jail.'),
     },
     {
       type: 'input',
       name: 'vnet2_mac',
       placeholder: T('vnet2_mac'),
-      tooltip: T('Enter a valid MAC address for the VNET2 \
-                  interface.'),
+      tooltip: T('Leave this field empty to generate random MAC \
+                  addresses for the host and jail. To assign fixed MAC \
+                  addresses, enter the MAC address to be assigned to \
+                  the host, a space, then the MAC address to be \
+                  assigned to the jail.'),
     },
     {
       type: 'input',
       name: 'vnet3_mac',
       placeholder: T('vnet3_mac'),
-      tooltip: T('Enter a valid MAC address for the VNET3 \
-                  interface.'),
+      tooltip: T('Leave this field empty to generate random MAC \
+                  addresses for the host and jail. To assign fixed MAC \
+                  addresses, enter the MAC address to be assigned to \
+                  the host, a space, then the MAC address to be \
+                  assigned to the jail.'),
     },
   ];
   public customConfig: FieldConfig[] = [
