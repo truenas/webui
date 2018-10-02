@@ -145,12 +145,7 @@ export class JailAddComponent implements OnInit {
       name: 'ip4_netmask',
       placeholder: T('IPv4 Netmask'),
       tooltip: T('IPv4 netmask for the jail.'),
-      options: [
-        {
-          label: '------',
-          value: '',
-        }
-      ],
+      options: this.networkService.getV4Netmasks(),
       value: '',
       relation: [{
         action: 'DISABLE',
@@ -184,6 +179,11 @@ export class JailAddComponent implements OnInit {
       }]
     },
     {
+      type: 'checkbox',
+      name: 'auto_configure_ip6',
+      placeholder: T('Auto configure IPv6'),
+    },
+    {
       type: 'select',
       name: 'ip6_interface',
       placeholder: T('IPv6 Interface'),
@@ -196,6 +196,13 @@ export class JailAddComponent implements OnInit {
       required: false,
       class: 'inline',
       width: '30%',
+      relation: [{
+        action: 'DISABLE',
+        when: [{
+          name: 'auto_configure_ip6',
+          value: true,
+        }]
+      }]
     },
     {
       type: 'input',
@@ -215,21 +222,30 @@ export class JailAddComponent implements OnInit {
       validation : [ regexValidator(this.networkService.ipv6_regex) ],
       class: 'inline',
       width: '50%',
+      relation: [{
+        action: 'DISABLE',
+        when: [{
+          name: 'auto_configure_ip6',
+          value: true,
+        }]
+      }]
     },
     {
       type: 'select',
       name: 'ip6_prefix',
       placeholder: T('IPv6 Prefix'),
       tooltip: T('IPv6 prefix for the jail.'),
-      options: [
-        {
-          label: '------',
-          value: '',
-        }
-      ],
+      options: this.networkService.getV6PrefixLength(),
       value: '',
       class: 'inline',
       width: '20%',
+      relation: [{
+        action: 'DISABLE',
+        when: [{
+          name: 'auto_configure_ip6',
+          value: true,
+        }]
+      }]
     },
     {
       type: 'input',
@@ -1208,15 +1224,6 @@ export class JailAddComponent implements OnInit {
     this.ip6_prefixField = _.find(this.basicfieldConfig, {'name': 'ip6_prefix'});
     this.vnet_default_interfaceField = _.find(this.networkfieldConfig, {'name': 'vnet_default_interface'});
 
-    // get netmask/prefix for ipv4/6, vnet_default_interfaceField
-    let v4netmask = this.networkService.getV4Netmasks();
-    let v6prefix = this.networkService.getV6PrefixLength();
-    for (let i = 0; i < v4netmask.length; i++) {
-      this.ip4_netmaskField.options.push(v4netmask[i]);
-    }
-    for (let i = 0; i < v6prefix.length; i++) {
-      this.ip6_prefixField.options.push(v6prefix[i]);
-    }
     // get interface options
     this.ws.call('interfaces.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
       (res)=>{
@@ -1269,7 +1276,7 @@ export class JailAddComponent implements OnInit {
         }
       }
 
-      if (this.formGroup.controls['dhcp'].value && !res) {
+      if ((this.formGroup.controls['dhcp'].value || this.formGroup.controls['auto_configure_ip6'].value) && !res) {
         _.find(this.basicfieldConfig, { 'name': 'vnet' }).hasErrors = true;
         _.find(this.basicfieldConfig, { 'name': 'vnet' }).errors = 'VNET is required.';
       } else {
@@ -1287,7 +1294,15 @@ export class JailAddComponent implements OnInit {
         _.find(this.basicfieldConfig, { 'name': 'bpf' }).errors = '';
       }
     });
-
+    this.formGroup.controls['auto_configure_ip6'].valueChanges.subscribe((res) => {
+      let vnet_ctrl = this.formGroup.controls['vnet'];
+      if (res) {
+        vnet_ctrl.setValue(true);
+      } else {
+        vnet_ctrl.setValue(vnet_ctrl.value);
+      }
+      _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = res;
+    });
     this.formGroup.controls['ip4_addr'].valueChanges.subscribe((res) => {
       this.updateInterfaceValidation();
     });
@@ -1409,6 +1424,11 @@ export class JailAddComponent implements OnInit {
     }
     delete value['ip6_interface'];
     delete value['ip6_prefix'];
+
+    if (value['auto_configure_ip6']) {
+      value['ip6_addr'] = "vnet0|accept_rtadv";
+    }
+    delete value['auto_configure_ip6'];
 
     for (let i in value) {
       if (value.hasOwnProperty(i)) {

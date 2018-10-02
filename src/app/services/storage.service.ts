@@ -46,7 +46,7 @@ export class StorageService {
     dlink.remove();
   }
 
-  // Handles sorting for eneity tables and some other ngx datatables 
+  // Handles sorting for entity tables and some other ngx datatables 
   tableSorter(arr, key, asc) {
     let tempArr = [],
       sorter,
@@ -56,7 +56,6 @@ export class StorageService {
     arr.forEach((item) => {
       tempArr.push(item[key]);
     });
-
     // Select table columns labled with GiB, Mib, etc
     // Regex checks for ' XiB' with a leading space and X === K, M, G or T 
     if (typeof(tempArr[0]) === 'string' && 
@@ -92,7 +91,41 @@ export class StorageService {
     
     sorter = bytes.concat(kbytes, mbytes, gbytes, tbytes)
 
-  } else {
+  } else if (typeof(tempArr[0]) === 'string' && 
+      tempArr[0][tempArr[0].length-1].match(/[KMGTB]/) &&
+      tempArr[0][tempArr[0].length-2].match(/[0-9]/)) {
+        
+      let B = [], K = [], M = [], G = [], T = [];
+      for (let i of tempArr) {
+        switch (i.slice(-1)) {
+            case 'B':
+              B.push(i);
+              break;
+            case 'K':
+              K.push(i);
+              break;
+            case 'M':
+              M.push(i);
+              break;
+            case 'G':
+              G.push(i);
+              break;
+            case 'T':
+              T.push(i);
+          }
+        }
+
+      // Sort each array independently, then put them back together
+      B = B.sort(myCollator.compare);
+      K = K.sort(myCollator.compare);
+      M = M.sort(myCollator.compare);
+      G = G.sort(myCollator.compare);
+      T = T.sort(myCollator.compare);
+      
+      sorter = B.concat(K, M, G, T)
+  }
+  
+    else {
       sorter = tempArr.sort(myCollator.compare);
     }
       // Rejoins the sorted keys with the rest of the row data

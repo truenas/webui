@@ -7,18 +7,17 @@ mat-card.card-filter.mat-card {
   padding: 0;
 }
 
-mat-card.card-filter.mat-card .mat-card-content {
+/* mat-card.card-filter.mat-card .mat-card-content {
   padding: 8px 0;
 }
 
 mat-card.card-filter.mat-card .mat-card-header>div {
-  /*display:inline-block;*/
-}
+  display:inline-block;
+} */
 
 
 mat-card.card-filter .filter-field {
-  width: 70%;
-  margin-right: 5%;
+  width: 350px;
   margin-top: 12px;
 }
 

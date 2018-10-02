@@ -1,17 +1,12 @@
-<ngx-datatable #datatable class='material' [rows]='data' [columnMode]="'force'" [rowHeight]="50" [headerHeight]="50" [footerHeight]="50">
-  <ngx-datatable-column name="State">
-    <ng-template let-column="column" ngx-datatable-header-template>
-      {{column.name}}
-    </ng-template>
-    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-      <mat-spinner [diameter]='40' *ngIf="row['onChanging']; else actionButtons"></mat-spinner>
-      <ng-template #actionButtons>
-        <button mat-icon-button (click)="this.conf.toggle(row)" style="position:absolute;bottom:6px;" matTooltip="{{value}}" matTooltipPosition="right">
-          <mat-icon [style.color]="value == 'RUNNING' ? '#41bd45' : '#900'">power_settings_new</mat-icon>
-        </button>
-      </ng-template>
-    </ng-template>
-  </ngx-datatable-column>
+<ngx-datatable 
+    #datatable class='material' 
+    [style.height.px]="tableHeight"
+    [rows]='data' 
+    [columnMode]="'force'" 
+    [rowHeight]="50" 
+    [headerHeight]="50" 
+    [footerHeight]="50"
+    [scrollbarV]="true">
   <ngx-datatable-column name="Label">
     <ng-template let-column="column" ngx-datatable-header-template>
       Name
@@ -20,12 +15,30 @@
       <div>{{value}}</div>
     </ng-template>
   </ngx-datatable-column>
-  <ngx-datatable-column name="Enable">
+  <ngx-datatable-column name="State">
     <ng-template let-column="column" ngx-datatable-header-template>
-      Start on boot
+      Running
     </ng-template>
     <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-      <mat-checkbox style="position:absolute;bottom:16px;" [(ngModel)]="row.enable" (change)="this.conf.enableToggle($event, row)"></mat-checkbox>
+      <mat-spinner [diameter]='40' *ngIf="row['onChanging']; else actionButtons"></mat-spinner>
+      <ng-template #actionButtons>
+        <div class="clickable" 
+          (click)="this.conf.toggle(row)" 
+          matTooltip="{{value}}" matTooltipPosition="right">
+        </div>
+        <mat-slide-toggle
+          [checked]="value === 'RUNNING' ? true : false"
+          id="slide-toggle__{{row.label}}">
+        </mat-slide-toggle>
+      </ng-template>
+    </ng-template>
+  </ngx-datatable-column>
+  <ngx-datatable-column name="Enable">
+    <ng-template let-column="column" ngx-datatable-header-template>
+      Start Automatically
+    </ng-template>
+    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+      <mat-checkbox id="checkbox__{{row.label}}" class="checkbox" style="position:absolute;bottom:16px;" [(ngModel)]="row.enable" (change)="this.conf.enableToggle($event, row)"></mat-checkbox>
     </ng-template>
   </ngx-datatable-column>
   <ngx-datatable-column name="Actions" [flexGrow]="2">
@@ -33,8 +46,8 @@
       Actions
     </ng-template>
     <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-      <button mat-icon-button (click)="this.conf.editService(row.title)" style="position:absolute;bottom:6px;"  matTooltip="Configure" matTooltipPosition="right" *ngIf="row.title != 'netdata'">
-        <mat-icon>settings</mat-icon>
+      <button mat-icon-button id="action-button__{{row.label}}" (click)="this.conf.editService(row.title)" style="position:absolute;bottom:6px;"  matTooltip="Configure" matTooltipPosition="right" *ngIf="row.title != 'netdata'">
+        <mat-icon>edit</mat-icon>
       </button>
       <button mat-icon-button (click)="this.conf.editService(row.title)" style="position:absolute;bottom:6px;"  matTooltip="Launch" matTooltipPosition="right" *ngIf="row.title == 'netdata' && row.state == 'RUNNING'">
         <mat-icon>featured_play_list</mat-icon>

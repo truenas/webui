@@ -1,4 +1,6 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
+import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 import * as _ from 'lodash';
 import {LineChartService, ChartConfigData, HandleChartConfigDataFunc} from '../../components/common/lineChart/lineChart.service';
 
@@ -14,6 +16,7 @@ import { T } from '../../translate-marker';
 
 interface TabChartsMappingData {
   keyName: string;
+  path: string;
   chartConfigData: ChartConfigData[];
   paginatedChartConfigData: ChartConfigData[]
 }
@@ -45,11 +48,12 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   public tabChartsMappingDataArray: TabChartsMappingData[] = [];
   public tabChartsMappingDataSelected: TabChartsMappingData;
   public showSpinner: boolean = true;
+  public activeTab: string;
+  @ViewChild('chartWidth') chartWidth: MatButtonToggleGroup; 
   
 
 
-  constructor(private _lineChartService: LineChartService, private erdService: ErdService, public translate: TranslateService) {
-    
+  constructor(private _lineChartService: LineChartService, private erdService: ErdService, public translate: TranslateService, private router:Router) {
   }
 
   private setPaginationInfo(tabChartsMappingDataSelected: TabChartsMappingData) {
@@ -64,7 +68,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
       paginationChartData = paginationChartData.slice(beginIndex, endIndex);
     }
 
-    tabChartsMappingDataSelected.paginatedChartConfigData = paginationChartData;
+    tabChartsMappingDataSelected.paginatedChartConfigData = paginationChartData; 
 
     this.paginationLength = this.tabChartsMappingDataSelected.chartConfigData.length;
     
@@ -78,7 +82,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   }
 
   ngAfterViewInit(): void {
-    this.erdService.attachResizeEventToElement("dashboardcontainerdiv");
+    this.erdService.attachResizeEventToElement("dashboardcontainerdiv"); 
   }
 
   /**
@@ -91,6 +95,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
     // For every one of these map entries.. You see one tab in the UI With the charts collected for that tab
     map.set("CPU", {
       keyName: T("CPU"),
+      path:"cpu",
       chartConfigData: [],
       paginatedChartConfigData: []
 
@@ -98,18 +103,21 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
 
     map.set("Disk", {
       keyName: T("Disk"),
+      path:"disk",
       chartConfigData: [],
       paginatedChartConfigData: []
     });
 
     map.set("Memory", {
       keyName: T("Memory"),
+      path:"memory",
       chartConfigData: [],
       paginatedChartConfigData: []
     });
 
     map.set("Network", {
       keyName: T("Network"),
+      path:"network",
       chartConfigData: [],
       paginatedChartConfigData: []
     });
@@ -117,24 +125,28 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
 
     map.set("Partition", {
       keyName: T("Partition"),
+      path:"partition",
       chartConfigData: [],
       paginatedChartConfigData: []
     });
 
     map.set("System", {
       keyName: T("System"),
+      path:"system",
       chartConfigData: [],
       paginatedChartConfigData: []
     });
 
     map.set("Target", {
       keyName: T("Target"),
+      path:"target",
       chartConfigData: [],
       paginatedChartConfigData: []
     });
 
     map.set("ZFS", {
       keyName: T("ZFS"),
+      path:"zfs",
       chartConfigData: [],
       paginatedChartConfigData: []
     });
@@ -190,6 +202,57 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   
     this.drawTabs = true;
     this.showSpinner = false;
+    this.activateTabFromUrl();
+  }
+
+  activeTabToKeyname(){
+    if(this.activeTab){ return "false"}
+
+    let subpath = this.router.url.split("/reportsdashboard/"); 
+    let tabFound = this.tabChartsMappingDataArray.find((tab) =>{
+      //return tab.keyName.toLowerCase() === subpath[1];
+      return tab.path === subpath[1];
+    });
+    return tabFound.keyName;
+  }
+
+  activateTabFromUrl (){ 
+    let subpath = this.router.url.split("/reportsdashboard/"); 
+    let tabFound = this.tabChartsMappingDataArray.find((tab) =>{
+      //return tab.keyName.toLowerCase() === subpath[1];
+      return tab.path === subpath[1];
+    });
+    this.updateActiveTab(tabFound.keyName);
+  }
+
+  isActiveTab(str:string){
+    let test: boolean;
+    if(!this.activeTab){ 
+      test = ('/reportsdashboard/' + str.toLowerCase()) == this.router.url;
+    } else {
+      test = (this.activeTab == str.toLowerCase());
+    }
+     return test;
+  }
+
+  updateActiveTab(tabName:string){
+    // Change the URL without reloading page/component
+    // the old fashioned way 
+    window.history.replaceState({}, '','/reportsdashboard/' + tabName.toLowerCase());
+
+    // Simulate tab event
+    let evt = {
+      tab: {
+        textLabel: tabName
+      }
+    }
+    this.tabSelectChangeHandler(evt);
+    this.activeTab = tabName.toLowerCase(); 
+  }
+
+  navigateToTab(tabName){
+    const link = '/reportsdashboard/' + tabName.toLowerCase()
+    this.router.navigate([link]);
   }
 
   tabSelectChangeHandler($event) {

@@ -59,6 +59,7 @@ export class JailListComponent implements OnInit {
             (res) => {
               for (let i in selected) {
                 selected[i].state = 'up';
+                this.updateRow(selected[i]);
               }
               this.updateMultiAction(selected);
               this.loader.close();
@@ -87,6 +88,7 @@ export class JailListComponent implements OnInit {
                 (res) => {
                   for (let i in selected) {
                     selected[i].state = 'down';
+                    this.updateRow(selected[i]);
                   }
                   this.updateMultiAction(selected);
                   this.loader.close();
@@ -233,9 +235,10 @@ export class JailListComponent implements OnInit {
             this.loader.open();
             this.ws.call('jail.start', [row.host_hostuuid]).subscribe(
               (res) => {
-                this.loader.close();
                 row.state = 'up';
+                this.updateRow(row);
                 this.updateMultiAction([row]);
+                this.loader.close();
               },
               (res) => {
                 this.loader.close();
@@ -255,9 +258,10 @@ export class JailListComponent implements OnInit {
               this.entityList.busy =
                 this.ws.call('jail.stop', [row.host_hostuuid]).subscribe(
                   (res) => {
-                    this.loader.close();
                     row.state = 'down';
+                    this.updateRow(row);
                     this.updateMultiAction([row]);
+                    this.loader.close();
                   },
                   (res) => {
                     this.loader.close();
@@ -314,6 +318,21 @@ export class JailListComponent implements OnInit {
     return selected;
   }
 
+  updateRow(row) {
+    this.ws.call(this.queryCall, [[["host_hostuuid", "=", row.host_hostuuid]]]).subscribe(
+      (res) => {
+        if (res[0]) {
+          for (let i in this.columns) {
+            if (this.columns[i].prop == 'ip4_addr' && _.split(res[0].ip4_addr, '|').length > 1) {
+              row.ip4_addr = _.split(res[0].ip4_addr, '|')[1];
+            } else {
+              row[this.columns[i].prop] = res[0][this.columns[i].prop];
+            }
+          }
+        }
+      });
+  }
+
   updateMultiAction(selected: any) {
     if (_.find(selected, ['state', 'up'])) {
      _.find(this.multiActions, {'id': 'mstop'})['enable'] = true;
@@ -338,6 +357,9 @@ export class JailListComponent implements OnInit {
     for (let i = 0; i < entityList.rows.length; i++) {
       if (_.split(entityList.rows[i].ip4_addr, '|').length > 1) {
         entityList.rows[i].ip4_addr = _.split(entityList.rows[i].ip4_addr, '|')[1];
+      }
+      if (entityList.rows[i].ip6_addr == 'vnet0|accept_rtadv') {
+        entityList.rows[i].ip6_addr = 'Auto';
       }
     }
   }

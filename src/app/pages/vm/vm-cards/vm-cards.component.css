@@ -130,6 +130,14 @@ vm-cards mat-card.front {
   bottom:0;
 }
 
+.side-content .stats-info {
+  position: relative;
+  top: -35px;
+  overflow: hidden;
+  width: 250px;
+  margin: 0 auto;
+}
+
 .side-content .stats-info table{
   width:80%;
   margin:40px auto 0;
@@ -138,6 +146,7 @@ vm-cards mat-card.front {
 .side-content .stats-info td.stat-label,
 .side-content .stats-info td.stat{
   text-align:left;
+  vertical-align: top;
 }
 
 .vm-power-btn.mat-fab,
@@ -199,9 +208,16 @@ mat-chip.vm-state-on,
   margin:0;
 }
 
+.slim .side-content .side-content-header {
+  padding-left: 100px;
+}
+
 .slim .side-content .stats-info {
   position: relative;
-  top: -30px;
+  top: -35px;
+  overflow: hidden;
+  width: 250px;
+  margin: 0 auto;
 }
 
 .slim .vm-controls{
@@ -209,10 +225,12 @@ mat-chip.vm-state-on,
 }
 
 .slim .vm-power-btn{  
-  top: 260px;
-  left: 116px;
+  top: 20px;
+  left: 40px;
   position: absolute;
 }
+
+td
 
 /* Fix layout on Ffx, adujst on Webkit */
 #add-vm-button {

@@ -42,8 +42,9 @@ export class VmCardEditComponent implements OnChanges {
           { type: 'input',
             name : 'description',
             width:'100%',
-            placeholder : 'Description',
+            placeholder : 'Description (max. 25 characters)',
             tooltip: 'Describe the VM or its purpose.',
+            validation: Validators.maxLength(25),
           }
         ]
       },

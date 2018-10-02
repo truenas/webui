@@ -122,7 +122,7 @@ export class DeviceEditComponent implements OnInit {
       placeholder : 'Disk sector size',
       tooltip : 'Select the sector size in bytes. The default <i>0</i>\
                  leaves the sector size unset.',
-      type: 'elect',
+      type: 'select',
       options: [
         { label: 'Default', value:0 },
         { label: '512', value:512 },
