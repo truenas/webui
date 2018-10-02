@@ -43,6 +43,7 @@ export class UpdateComponent implements OnInit {
   public updates_available: boolean = false;
   public tempTrain: string;
   public tempTrainList: string;
+  public fullTrainList: any[];
 
   public busy: Subscription;
   public busy2: Subscription;
@@ -170,6 +171,7 @@ export class UpdateComponent implements OnInit {
     this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
       this.tempTrain = res.current;
       this.tempTrainList = res.trains[this.tempTrain].description.toLowerCase();
+      this.fullTrainList = res.trains;
 
       this.trains = [];
       for (const i in res.trains) {
@@ -190,18 +192,20 @@ export class UpdateComponent implements OnInit {
     } else if(compare === "NIGHTLY_UPGRADE"){
         this.dialogService.confirm(T("Warning"), this.train_msg[compare]).subscribe((res)=>{
           if (res){
-            this.check();
             this.train = event.value;
+            this.tempTrainList = this.fullTrainList[this.train].description.toLowerCase();
+            this.check();
           } else {
             this.train = this.selectedTrain;
+            this.tempTrainList = this.fullTrainList[this.train].description.toLowerCase();
           }
         })
     } else if (compare === "ALLOWED") {
       this.dialogService.confirm(T("Switch Train"), T("Switch update trains?")).subscribe((train_res)=>{
         if(train_res){
-          this.check();
           this.train = event.value;
-
+          this.tempTrainList = this.fullTrainList[this.train].description.toLowerCase();
+          this.check();
         }
 
       })
@@ -383,9 +387,9 @@ export class UpdateComponent implements OnInit {
               this.releaseNotes = res.notes.ReleaseNotes;
             }
           }
-          if (this.tempTrainList.includes('experimental')) {
+          if (this.tempTrainList.includes('[experimental]')) {
             this.stable_train = false;
-          } else if (this.tempTrainList.includes('stable')) {
+          } else if (this.tempTrainList.includes('[stable]')) {
             this.stable_train = true;
           }
         },
