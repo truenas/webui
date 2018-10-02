@@ -689,7 +689,11 @@ export class VolumesListTableConfig implements InputTableConf {
         dataObj.nodePath = "/mnt/" + dataObj.path;
       }
 
-      dataObj.parentPath = dataObj.nodePath.slice(0, dataObj.nodePath.lastIndexOf("/"));
+      if (dataObj.name === 'iocage') {
+        dataObj.parentPath = '/mnt/' + dataObj.path.slice(0, dataObj.path.indexOf('/'));
+      } else {
+        dataObj.parentPath = dataObj.nodePath.slice(0, dataObj.nodePath.lastIndexOf("/"));
+      }
 
       if (dataObj.status !== '-') {
         // THEN THIS A ZFS_POOL DON'T ADD    dataObj.type = 'zpool'
@@ -700,10 +704,6 @@ export class VolumesListTableConfig implements InputTableConf {
 
       if ("/mnt" === dataObj.parentPath) {
         dataObj.parentPath = "0";
-      }
-
-      if (dataObj.name === 'iocage') {
-        dataObj.parentPath = '/mnt/' + dataObj.path.slice(0, dataObj.path.indexOf('/'));
       }
 
       try {
