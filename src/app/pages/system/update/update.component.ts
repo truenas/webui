@@ -39,7 +39,7 @@ export class UpdateComponent implements OnInit {
     "SDK": T("Changing SDK version is not a supported operation. Activate an existing boot environment that uses the desired train and boot into it to switch to that train."),
     "NIGHTLY_UPGRADE": T("Changing to a nightly train is one-way. Changing back to a stable train is not supported!")
   }
-  public stable_train: boolean;  
+  public release_train: boolean;  
   public updates_available: boolean = false;
   public tempTrain: string;
   public tempTrainList: string;
@@ -387,10 +387,11 @@ export class UpdateComponent implements OnInit {
               this.releaseNotes = res.notes.ReleaseNotes;
             }
           }
-          if (this.tempTrainList.includes('[experimental]')) {
-            this.stable_train = false;
-          } else if (this.tempTrainList.includes('[stable]')) {
-            this.stable_train = true;
+
+          if (this.tempTrainList.includes('[release]')) {
+            this.release_train = true;
+          } else {
+            this.release_train = false;
           }
         },
         (err) => {
