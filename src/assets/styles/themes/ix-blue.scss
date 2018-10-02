@@ -1033,10 +1033,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   #update-info {
     color: var(--accent);
+  }
 
   .services-table .service-toggle-running {
     @include variable(fill, --accent, $accent);
-
   }
 
 } // end of ix theme
