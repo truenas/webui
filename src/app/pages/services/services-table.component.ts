@@ -22,7 +22,7 @@ export class ServicesTableComponent implements OnChanges, OnInit {
 
 
   public columns: Array < any > = [
-    { name: 'State', prop: 'state' },
+    { name: 'Running', prop: 'state' },
     { name: 'Label', prop: 'label' },
     { name: 'Enable', prop: 'enable' },
     { name: 'Actions', prop: 'cardActions' }

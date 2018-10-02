@@ -1031,4 +1031,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(display, --toggle_pw_display_prop, $toggle_pw_display_prop);
   }
 
+  .services-table .service-toggle-running {
+    @include variable(fill, --accent, $accent);
+  }
+
 } // end of ix theme
