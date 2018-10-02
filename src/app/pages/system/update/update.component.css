@@ -1,9 +1,45 @@
+#upgrades-card {
+    max-height: 220px;
+    overflow-y: scroll;
+}
+
 .row {
     margin-bottom: 10px;
 }
 #train-selector {
     max-width: 200px;
 }
+#changelog-card {
+    height: 230px;
+}
+
+#changelog-scrollbox {
+    max-height:100px;
+    overflow-y: scroll;
+}
+
+#stable-warning-card {
+    padding: 2px 20px;
+}
+
+.stable-warning {
+    margin: 10px 0 !important;
+    font-size: 1.1rem;
+}
+
+.stable-warning a {
+    text-decoration: underline;
+}
+
 .update-button {
     margin-right: 3px;
 }
+
+#update-info {
+    position: relative;
+    top: 3px;
+    margin-right: 10px;
+}
+
+
+

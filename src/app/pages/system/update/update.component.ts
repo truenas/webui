@@ -39,6 +39,11 @@ export class UpdateComponent implements OnInit {
     "SDK": T("Changing SDK version is not a supported operation. Activate an existing boot environment that uses the desired train and boot into it to switch to that train."),
     "NIGHTLY_UPGRADE": T("Changing to a nightly train is one-way. Changing back to a stable train is not supported!")
   }
+  public release_train: boolean;  
+  public updates_available: boolean = false;
+  public tempTrain: string;
+  public tempTrainList: string;
+  public fullTrainList: any[];
 
   public busy: Subscription;
   public busy2: Subscription;
@@ -164,6 +169,10 @@ export class UpdateComponent implements OnInit {
       }
     });
     this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
+      this.tempTrain = res.current;
+      this.tempTrainList = res.trains[this.tempTrain].description.toLowerCase();
+      this.fullTrainList = res.trains;
+
       this.trains = [];
       for (const i in res.trains) {
         this.trains.push({ name: i });
@@ -183,18 +192,20 @@ export class UpdateComponent implements OnInit {
     } else if(compare === "NIGHTLY_UPGRADE"){
         this.dialogService.confirm(T("Warning"), this.train_msg[compare]).subscribe((res)=>{
           if (res){
-            this.check();
             this.train = event.value;
+            this.tempTrainList = this.fullTrainList[this.train].description.toLowerCase();
+            this.check();
           } else {
             this.train = this.selectedTrain;
+            this.tempTrainList = this.fullTrainList[this.train].description.toLowerCase();
           }
         })
     } else if (compare === "ALLOWED") {
       this.dialogService.confirm(T("Switch Train"), T("Switch update trains?")).subscribe((train_res)=>{
         if(train_res){
-          this.check();
           this.train = event.value;
-
+          this.tempTrainList = this.fullTrainList[this.train].description.toLowerCase();
+          this.check();
         }
 
       })
@@ -337,6 +348,7 @@ export class UpdateComponent implements OnInit {
         (res) => {
           this.status = res.status;
           if (res.status === 'AVAILABLE') {
+            this.updates_available = true;
             this.packages = [];
             res.changes.forEach((item) => {
               if (item.operation === 'upgrade') {
@@ -374,6 +386,12 @@ export class UpdateComponent implements OnInit {
             if (res.notes) {
               this.releaseNotes = res.notes.ReleaseNotes;
             }
+          }
+
+          if (this.tempTrainList.includes('[release]')) {
+            this.release_train = true;
+          } else {
+            this.release_train = false;
           }
         },
         (err) => {
