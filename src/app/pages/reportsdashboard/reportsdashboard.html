@@ -30,11 +30,12 @@
         </mat-tab>
         </mat-tab-group>-->
 
-      <nav mat-tab-nav-bar *ngIf="drawTabs" (selectChange)="tabSelectChangeHandler($event)">
-        <!--<a mat-tab-link *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray"
+      <nav mat-tab-nav-bar *ngIf="drawTabs && activeTab" (selectChange)="tabSelectChangeHandler($event)">
+        <a mat-tab-link *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray"
           [active]="isActiveTab(tabChartsMappingDataItem.keyName)"
-          (click)="updateActiveTab(tabChartsMappingDataItem.keyName)">-->
-          
+          (click)="updateActiveTab(tabChartsMappingDataItem.keyName)">
+          {{ tabChartsMappingDataItem.keyName | translate }} 
+        </a>
         <!--<a mat-tab-link *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray"
           [routerLink]="tabChartsMappingDataItem.keyName.toLowerCase()"
           routerLinkActive #tab="routerLinkActive"
@@ -42,12 +43,12 @@
           {{ tabChartsMappingDataItem.keyName | translate }} 
           </a>-->
           
-        <a mat-tab-link *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray"
+        <!--<a mat-tab-link *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray"
           (click)="navigateToTab(tabChartsMappingDataItem.path)"
           routerLinkActive #tab="routerLinkActive"
-                                         [active]="tab.isActive">
-          {{ tabChartsMappingDataItem.keyName | translate }} 
-        </a>
+          [active]="activeTab">
+          {{ tabChartsMappingDataItem.keyName | translate }}  
+          </a>-->
       </nav>
 
       <div *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray">
@@ -60,7 +61,7 @@
               </div>
           </div>
 
-          <router-outlet></router-outlet>
+          <!--<router-outlet></router-outlet>-->
 
     </div>
 </div>

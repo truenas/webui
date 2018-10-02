@@ -49,7 +49,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   public tabChartsMappingDataSelected: TabChartsMappingData;
   public showSpinner: boolean = true;
   public activeTab: string;
-  @ViewChild('chartWidth') chartWidth: MatButtonToggleGroup;
+  @ViewChild('chartWidth') chartWidth: MatButtonToggleGroup; 
   
 
 
@@ -205,10 +205,22 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
     this.activateTabFromUrl();
   }
 
-  activateTabFromUrl (){
+  activeTabToKeyname(){
+    if(this.activeTab){ return "false"}
+
     let subpath = this.router.url.split("/reportsdashboard/"); 
     let tabFound = this.tabChartsMappingDataArray.find((tab) =>{
-      return tab.keyName.toLowerCase() === subpath[1];
+      //return tab.keyName.toLowerCase() === subpath[1];
+      return tab.path === subpath[1];
+    });
+    return tabFound.keyName;
+  }
+
+  activateTabFromUrl (){ 
+    let subpath = this.router.url.split("/reportsdashboard/"); 
+    let tabFound = this.tabChartsMappingDataArray.find((tab) =>{
+      //return tab.keyName.toLowerCase() === subpath[1];
+      return tab.path === subpath[1];
     });
     this.updateActiveTab(tabFound.keyName);
   }
@@ -226,7 +238,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   updateActiveTab(tabName:string){
     // Change the URL without reloading page/component
     // the old fashioned way 
-    //window.history.replaceState({}, '','/reportsdashboard/' + tabName.toLowerCase());
+    window.history.replaceState({}, '','/reportsdashboard/' + tabName.toLowerCase());
 
     // Simulate tab event
     let evt = {
