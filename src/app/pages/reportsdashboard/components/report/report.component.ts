@@ -48,8 +48,8 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   public altSubtitle: string = '';
   public widgetColorCssVar: string = 'var(--primary)';
 
-  private timeZoomIndex:number = 4;
-  private zoomLevels: string[] = [
+  public timeZoomIndex:number = 4;
+  public zoomLevels: string[] = [
     '5M',// 6 months
     '1M',// 1 month
     '7d',// 1 week
