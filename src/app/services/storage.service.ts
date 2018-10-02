@@ -123,8 +123,18 @@ export class StorageService {
       T = T.sort(myCollator.compare);
       
       sorter = B.concat(K, M, G, T)
-  }
   
+    } else if (typeof(tempArr[0]) === 'string' && 
+      typeof(Date.parse(tempArr[0])) === 'number') {
+        let timeArr = [];
+        for (let i of tempArr) {
+          timeArr.push(Date.parse(i));
+        }
+        asc==='asc' ? timeArr.sort() : timeArr.sort().reverse;
+        console.log(timeArr);
+        // use moment here to convert back to time
+        return timeArr;
+      }
     else {
       sorter = tempArr.sort(myCollator.compare);
     }
