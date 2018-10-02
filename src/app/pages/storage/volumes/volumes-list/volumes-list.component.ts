@@ -702,6 +702,10 @@ export class VolumesListTableConfig implements InputTableConf {
         dataObj.parentPath = "0";
       }
 
+      if (dataObj.name === 'iocage') {
+        dataObj.parentPath = '/mnt/' + dataObj.path.slice(0, dataObj.path.indexOf('/'));
+      }
+
       try {
         dataObj.availStr = (<any>window).filesize(dataObj.avail, { standard: "iec" });
       } catch (error) {
