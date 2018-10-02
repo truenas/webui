@@ -2,8 +2,6 @@ import {
   ApplicationRef,
   Component,
   Injector,
-  OnInit,
-  ViewContainerRef,
   ElementRef,
   AfterViewInit
 } from '@angular/core';
@@ -13,10 +11,11 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
-import {ActivatedRoute, Router, RouterModule} from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
-import {RestService, WebSocketService} from '../../../../services/';
+
+import { RestService, WebSocketService } from '../../../../services/';
 import { DialogService } from '../../../../services/';
 import {
   FieldConfig
@@ -24,7 +23,7 @@ import {
 import { ReplicationService } from 'app/pages/task-calendar/replication/replication.service';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { T } from '../../../../translate-marker';
+import helptext from '../../../../helptext/task-calendar/replication-form/replication-form';
 
 @Component({
   selector : 'app-replication-form',
@@ -157,55 +156,44 @@ export class ReplicationFormComponent implements AfterViewInit {
 
     const theThis = this;
 
-
-
-
     this.fieldConfig =
     [
       {
         type : 'select',
         name : 'repl_filesystem',
-        placeholder : T('Pool/Dataset'),
-        tooltip : T('On the source computer with snapshots to replicate,\
-                     choose an existing ZFS pool or dataset with an\
-                     active periodic snapshot task.'),
+        placeholder : helptext.repl_filesystem_placeholder,
+        tooltip : helptext.repl_filesystem_tooltip,
         options : [],
         required: true,
-        validation : Validators.required
+        validation : helptext.repl_filesystem_validation
       },
       {
         type : 'input',
         name : 'repl_zfs',
-        placeholder : T("Remote ZFS Pool/Dataset"),
-        tooltip : T('Enter the ZFS pool/dataset on the remote or\
-                     destination computer which will store snapshots.\
-                     Example: Poolname/Datasetname, not the mountpoint\
-                     or filesystem path.'),
+        placeholder : helptext.repl_zfs_placeholder,
+        tooltip : helptext.repl_zfs_tooltip,
         required: true,
-        validation : Validators.required
+        validation : helptext.repl_zfs_validation
       },
       {
         type : 'checkbox',
         name : 'repl_userepl',
-        placeholder : T('Recursively Replicate Child Dataset Snapshots'),
-        tooltip : T('Include snapshots of child datasets from the\
-                     primary dataset.'),
+        placeholder : helptext.repl_userepl_placeholder,
+        tooltip : helptext.repl_userepl_tooltip,
         value : false
       },
       {
         type : 'checkbox',
         name : 'repl_followdelete',
-        placeholder : T('Delete Stale Snapshots on Remote System'),
-        tooltip : T('Delete snapshots from the remote system which are\
-                     also no longer present on the source computer.'),
+        placeholder : helptext.repl_followdelete_placeholder,
+        tooltip : helptext.repl_followdelete_tooltip,
         value : false
       },
       {
         type : 'select',
         name : 'repl_compression',
-        placeholder : T('Replication Stream Compression'),
-        tooltip : T('Select a compression algorithm to reduce the size\
-                     of the data being replicated.'),
+        placeholder : helptext.repl_compression_placeholder,
+        tooltip : helptext.repl_compression_tooltip,
         options : [
           {label : 'Off', value : 'off'},
           {label : 'lz4 (fastest)', value : 'lz4'},
@@ -216,44 +204,37 @@ export class ReplicationFormComponent implements AfterViewInit {
       {
         type : 'input',
         name : 'repl_limit',
-        placeholder : T('Limit (kpbs)'),
-        tooltip : T('Limit replication speed to the specified value in\
-                     kilobits/second. The default <i>0</i> is unlimited.'),
-        inputType : 'number',
+        placeholder : helptext.repl_limit_placeholder,
+        tooltip :helptext.repl_limit_tooltip,
         value : 0,
-        validation : [Validators.min(0)]
+        validation : helptext.repl_limit_validation
       },
       {
         type : 'select',
         name : 'repl_begin',
-        placeholder : T('Begin Time'),
-        tooltip : T('Define a time to start the replication task.'),
+        placeholder : helptext.repl_begin_placeholder,
+        tooltip : helptext.repl_begin_tooltip,
         options : this.times
       },
       {
         type : 'select',
         name : 'repl_end',
-        placeholder : T('End Time'),
-        tooltip : T('Define the point in time by which replication must\
-                     start. A started replication task continues until\
-                     it is finished.'),
+        placeholder : helptext.repl_end_placeholder,
+        tooltip : helptext.repl_end_tooltip,
         options : this.times
       },
       {
         type : 'checkbox',
         name : 'repl_enabled',
-        placeholder : T('Enabled'),
-        tooltip : T('Unset to disable this replication task without\
-                     deleting it.'),
+        placeholder : helptext.repl_enabled_placeholder,
+        tooltip : helptext.repl_enabled_tooltip,
         value: true
       },
       {
         type : 'select',
         name : 'repl_remote_mode',
-        placeholder : T('Setup Mode'),
-        tooltip : T('Choose the configuration mode for the remote.\
-                     <i>Semi-automatic</i> only works with remote\
-                     version 9.10.2 or later.'),
+        placeholder : helptext.repl_remote_mode_placeholder,
+        tooltip : helptext.repl_remote_mode_tooltip,
         options : [
           {label : 'Manual', value : 'MANUAL'},
           {label : 'Semi-Automatic', value : 'SEMIAUTOMATIC'}
@@ -263,63 +244,50 @@ export class ReplicationFormComponent implements AfterViewInit {
       {
         type : 'input',
         name : 'repl_remote_hostname',
-        placeholder : T('Remote Hostname'),
-        tooltip : T('Enter the IP address or DNS name of the remote\
-                     system to receive the replication data.'),
+        placeholder : helptext.repl_remote_hostname_placeholder,
+        tooltip : helptext.repl_remote_hostname_tooltip,
         required: true,
-        validation: Validators.required
+        validation: helptext.repl_remote_hostname_validation
       },
       {
         type : 'input',
         name : 'repl_remote_port',
-        placeholder : T('Remote Port'),
-        tooltip : T('Enter the port used by the SSH server on the remote\
-                     system.'),
+        placeholder : helptext.repl_remote_port_placeholder,
+        tooltip : helptext.repl_remote_port_tooltip,
         inputType : 'number',
         value : 22,
-        validation : [Validators.min(0)],
+        validation : helptext.repl_remote_port_validation,
         isHidden : false
       },
       {
         type : 'input',
         name : 'repl_remote_http_port',
-        placeholder : T('Remote HTTP/HTTPS Port'),
-        tooltip : T('Set to the HTTPS port (usually 443) when <b>WebGUI\
-                     HTTP -> HTTPS Redirect</b> is enabled in <a\
-                     href="system/general"\
-                     target="_blank">System/General</a> on the\
-                     destination system. <b>Remote HTTPS</b> must also\
-                     be enabled when creating the replication on the\
-                     source system.'),
+        placeholder : helptext.repl_remote_http_port_placeholder,
+        tooltip : helptext.repl_remote_http_port_tooltip,
         inputType : 'number',
         value : 80,
-        validation : [Validators.min(0)],
+        validation : helptext.repl_remote_http_port_validation,
         isHidden : true,
       },
       {
         type : 'checkbox',
         name : 'repl_remote_https',
-        placeholder : T('Remote HTTPS'),
-        tooltip : T('Unset to disable secure connections.'),
+        placeholder :  helptext.repl_remote_https_placeholder,
+        tooltip : helptext.repl_remote_https_tooltip,
         isHidden : true,
       },
       {
         type : 'input',
         name : 'repl_remote_token',
-        placeholder : T('Remote Auth Token'),
-        tooltip : T('Enter or paste the temporary token from the system\
-                     with the <b>Remote ZFS Pool/Dataset</b>.'),
+        placeholder : helptext.repl_remote_token_placeholder,
+        tooltip : helptext.repl_remote_token_tooltip,
         isHidden : true,
       },
       {
         type : 'select',
         name : 'repl_remote_cipher',
-        placeholder : T('Encryption Cipher'),
-        tooltip : T('<i>Standard</i> provides the best security.\
-         <i>Fast</i> is less secure, but has better transfer rates for\
-         devices with limited cryptographic speed. <i>Disabled</i> is\
-         for networks where the entire path between sources and\
-         destinations is trusted.'),
+        placeholder : helptext.repl_remote_cipher_placeholder,
+        tooltip : helptext.repl_remote_cipher_tooltip,
         options : [
           {label : 'standard', value : 'standard'},
           {label : 'fast', value : 'fast'},
@@ -329,15 +297,14 @@ export class ReplicationFormComponent implements AfterViewInit {
       {
         type : 'checkbox',
         name : 'repl_remote_dedicateduser_enabled',
-        placeholder : T('Dedicated User Enabled'),
-        tooltip : T('Set to allow a user account other than <i>root</i>\
-                     to be used for replication.'),
+        placeholder : helptext.repl_remote_dedicateduser_enabled_placeholder,
+        tooltip : helptext.repl_remote_dedicateduser_enabled_tooltip,
     },
       {
         type : 'select',
         name : 'repl_remote_dedicateduser',
-        placeholder : T('Dedicated User'),
-        tooltip : T('Select the user account to use for replication.'),
+        placeholder : helptext.repl_remote_dedicateduser_placeholder,
+        tooltip : helptext.repl_remote_dedicateduser_tooltip,
         options : [],
         relation : [ {
           action : "DISABLE",
@@ -347,18 +314,15 @@ export class ReplicationFormComponent implements AfterViewInit {
       {
         type : 'textareabutton',
         name : 'repl_remote_hostkey',
-        placeholder : T('Remote Hostkey'),
-        tooltip : T('Paste the host key of the destination NAS\
-                     for the Replication Task. Use the\
-                     Scan SSH Key button to automatically retrieve the\
-                     public host key of the remote system.'),
+        placeholder : helptext.repl_remote_hostkey_placeholder,
+        tooltip : helptext.repl_remote_hostkey_tooltip,
         customEventActionLabel : 'Scan SSH Key',
         customEventMethod : function(data) {
           theThis.customEventMethod(data);
         },
         isHidden : false,
         required: true,
-        validation : [ Validators.required ]
+        validation : helptext.repl_remote_hostkey_validation
       },
     ];
   }

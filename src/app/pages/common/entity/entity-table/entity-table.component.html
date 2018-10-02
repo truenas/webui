@@ -1,32 +1,26 @@
 <div id="entity-table-component" class="material mat-card mat-card-table">
   <div class="mat-toolbar mat-card-toolbar" *ngIf="hideTopActions === false">
     <div class="mat-card-title-text">{{ title | translate }}</div>
-        <mat-spinner 
-          [diameter]='40' 
-          id="entity-spinner"
-          *ngIf="!showDefaults && showSpinner">
-        </mat-spinner> 
+    <mat-spinner 
+      [diameter]='40' 
+      id="entity-spinner"
+      *ngIf="!showDefaults && showSpinner" #entityspinner>
+    </mat-spinner> 
     <app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
   </div>
-  <div>
-    <br/>
-  </div>
-  <div fxLayout="row wrap" fxLayoutAlign="space-between center" fxlayout.sm="column" fxLayout.xs="column">
-    <div fxFlex="calc(100% - 400px)" class="padding_all">
-      <mat-input-container floatPlaceholder="never">
-        <input matInput #filter placeholder="{{'Filter' | translate}} {{title | translate}}">
-      </mat-input-container>
-      <tooltip message="{{'Show only entries that contain this text' | translate}}"></tooltip>
 
-      <span *ngFor="let custBtn of conf.custActions">
-          <button id="cust_button_{{custBtn.name}}" mat-button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" (click)="custBtn['function']()">{{custBtn.name | translate}}</button>
-      </span>
-    </div>
-
-    <mat-paginator fxFlex="auto" [length]="currentRows.length" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" [pageIndex]="paginationPageIndex" (page)="paginationUpdate($event)">
-    </mat-paginator>
+  <div id="filter">
+    <mat-input-container floatPlaceholder="never">
+      <input matInput #filter placeholder="{{'Filter' | translate}} {{title | translate}}">
+    </mat-input-container>
+    <tooltip message="{{'Show only entries that contain this text' | translate}}"></tooltip>
   </div>
 
+  <div id="action-button-wrapper" *ngIf="conf.custActions">
+    <span *ngFor="let custBtn of conf.custActions">
+      <button id="cust_button_{{custBtn.name}}" mat-button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" (click)="custBtn['function']()">{{custBtn.name | translate}}</button>
+    </span>
+  </div>
 
 <!-- Selected columns checkbox ----------------- -->
 <div id="col-select-box" class="selected-columns" *ngIf="allColumns.length > 10 ? true : false">
@@ -58,7 +52,7 @@
 <!-- End checkbox ------------------------------ -->
 
   <div fxLayout="row wrap" fxLayoutAlign="start center" class="multiActionsButton">
-    <div *ngIf="selected.length > 0 ? true : false" >
+    <div [style.visibility]="selected.length > 0 ? 'visible' : 'hidden'" >
       <div *ngIf="conf.multiActions; else defaultMultiActions" fxFlex="100">
         <span *ngFor="let maction of conf.multiActions">
           <button id="{{ maction?.id }}" 
@@ -77,17 +71,17 @@
 
   <div>
     <ngx-datatable *ngIf="showDefaults" class='material' 
-      [rows]='seenRows' 
+      [rows]='currentRows' 
       [columns]="conf.columns" 
       [columnMode]="'force'" 
       [columnWidth]="'auto'"
       [headerHeight]="'50'" 
-      [footerHeight]="'auto'" 
+      [footerHeight]="'50'" 
       [rowHeight]="50" 
       [reorderable]="true"
       [limit]="paginationPageSize" 
       [externalPaging]="true"
-      [count]="currentRows.length"
+      [count]="currentRows.length || 1"
       [offset]="paginationPageIndex"
       (page)='paginationUpdate($event)'
       [externalSorting]="true"
@@ -95,7 +89,9 @@
       [selectionType]="'checkbox'"
       [selected]='selected'
       (select)='onSelect($event)'
+      [style.height.px]="tableHeight"
       [scrollbarH]='true'
+      [scrollbarV]='true'
       #entityTable>
 
       <ngx-datatable-footer>
@@ -181,7 +177,6 @@
           </app-entity-table-actions>
         </ng-template>
       </ngx-datatable-column>
-
     </ngx-datatable>
   </div>
 

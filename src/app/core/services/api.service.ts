@@ -156,13 +156,15 @@ export class ApiService {
       apiCall:{
         protocol:"websocket",
         version:"2.0",
-        namespace:"vm.status",
+        namespace:"vm.query",
         args: [],// eg. [["id", "=", "foo"]]
         responseEvent: "VmStatus"
       },
       postProcessor(res,callArgs){
-        let cloneRes = Object.assign({},res);
-        cloneRes = {id:callArgs[0] ,state: res.state}
+        const cloneRes = [];
+        for (const vmstatus of res) {
+          cloneRes.push({id:vmstatus.id ,state: vmstatus.status.state})
+        }
         return cloneRes;
       }
     },

@@ -112,7 +112,7 @@ export class CloudCredentialsFormComponent {
       required: true,
       isHidden: true,
       inputType: 'password',
-      
+
       relation: [
         {
           action: 'SHOW',
@@ -174,12 +174,13 @@ export class CloudCredentialsFormComponent {
       type: 'input',
       name: 'key-B2',
       placeholder: T('Master Application Key'),
-      tooltip: T('Backblaze B2 Bucket Application Key. Log in to the B2\
-                  account and generate the key on the Buckets page. <a\
+      tooltip: T('Backblaze B2 Bucket Master Application Key. Log in to\
+                  the B2 account and generate the key on the Buckets\
+                  page. <a\
                   href="https://help.backblaze.com/hc/en-us/articles/224991568-Where-can-I-find-my-Account-ID-and-Application-Key-"\
-                  target="_blank">Generating a new Application Key</a>\
-                  for a bucket might invalidate an existing key and\
-                  require entering the new Application Key.'),
+                  target="_blank">Generating a new Master Application Key</a>\
+                  for a bucket will invalidate an existing key and\
+                  require updating this field.'),
       required: true,
       isHidden: true,
       relation: [

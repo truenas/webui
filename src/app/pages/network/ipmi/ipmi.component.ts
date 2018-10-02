@@ -12,7 +12,7 @@ import {
   NetworkService
 } from '../../../services/';
 import {
-  FormGroup,
+  FormGroup, Validators,
 } from '@angular/forms';
 import {EntityFormComponent} from '../../common/entity/entity-form';
 import {
@@ -80,6 +80,9 @@ export class IPMIComponent {
       inputType: 'password',
       name : 'password',
       placeholder : T('Password'),
+      validation: Validators.maxLength(20),
+      hasErrors: false,
+      errors: T('20 characters is the maximum length.'),
       togglePw: true,
       tooltip : T('Enter the password used to connect to the IPMI\
                    interface from a web browser.'),
@@ -151,7 +154,11 @@ export class IPMIComponent {
     entityEdit.submitFunction = this.submitFunction;
     this.entityEdit = entityEdit;
     this.loadData();
-    }
+
+    entityEdit.formGroup.controls['password'].statusChanges.subscribe((res) => {
+      res === 'INVALID' ? _.find(this.fieldConfig).hasErrors = true : _.find(this.fieldConfig).hasErrors = false;
+    })
+  }
     submitFunction({}){
       const payload = {}
       const formvalue = _.cloneDeep(this.formGroup.value);
@@ -183,6 +190,6 @@ export class IPMIComponent {
           this.entityEdit.formGroup.controls['vlan'].setValue(res[i].vlan);
         }
       });
-
     }
+
 }

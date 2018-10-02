@@ -40,12 +40,22 @@ export class NetworkService {
   }
 
   getV4Netmasks() {
-    return Array(32).fill(0).map(
-        (x, i) => { return {label : String(32 - i), value : String(32 - i)}; });
+    return Array(33).fill(0).map(
+        (x, i) => {
+          if (i == 0) {
+            return {label : '---------', value : ''};
+          }
+          return {label : String(33 - i), value : String(33 - i)};
+        });
   }
 
   getV6PrefixLength() {
-    return Array(33).fill(0).map(
-        (x, i) => { return {label : String((32 - i) * 4), value : String((32 - i) * 4)}; });
+    return Array(34).fill(0).map(
+        (x, i) => {
+          if (i == 0) {
+            return {label : '---------', value : ''};
+          }
+          return {label : String((33 - i) * 4), value : String((33 - i) * 4)};
+        });
   }
 }

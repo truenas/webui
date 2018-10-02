@@ -29,8 +29,9 @@ export class NFSFormComponent {
       formarray: [{
         name: 'path',
         placeholder: T('Path'),
-        tooltip: T('Browse to the pool or dataset to be shared. Click\
-                    <b>Add extra path</b> to select multiple paths.'),
+        tooltip: T('Full path to the pool or dataset to share. Mandatory.\
+                    Click <b>ADD ADDITIONAL PATH</b> to configure\
+                    multiple paths.'),
         type: 'explorer',
         explorerType: 'directory',
         initial: '/mnt',
@@ -94,7 +95,8 @@ export class NFSFormComponent {
       placeholder: T('Maproot User'),
       tooltip: T('When a user is selected, the <i>root</i> user is\
                   limited to the permissions of that user.'),
-      options: []
+      options: [],
+      value: '',
     },
     {
       type: 'select',
@@ -102,7 +104,8 @@ export class NFSFormComponent {
       placeholder: T('Maproot Group'),
       tooltip: T('When a group is selected, the <i>root</i> user is also\
                   limited to the permissions of that group.'),
-      options: []
+      options: [],
+      value: '',
     },
     {
       type: 'select',
@@ -110,7 +113,8 @@ export class NFSFormComponent {
       placeholder: T('Mapall User'),
       tooltip: T('The specified permissions of that user are used\
                   by all clients.'),
-      options: []
+      options: [],
+      value: '',
     },
     {
       type: 'select',
@@ -118,7 +122,8 @@ export class NFSFormComponent {
       placeholder: T('Mapall Group'),
       tooltip: T('The specified permissions of that group are used\
                   by all clients.'),
-      options: []
+      options: [],
+      value: '',
     },
     {
       type: 'select',
@@ -228,7 +233,10 @@ export class NFSFormComponent {
     this.formArray = EntityForm.formGroup.controls['nfs_paths'];
 
     this.userService.listUsers().subscribe(res => {
-      let users = [];
+      let users = [{
+        label: '---------',
+        value: '',
+      }];
       for (let user of res.data) {
         users.push({label: user['bsdusr_username'], value: user['bsdusr_username']});
       }
@@ -239,7 +247,10 @@ export class NFSFormComponent {
     });
 
     this.userService.listGroups().subscribe(res => {
-      let groups = [];
+      let groups = [{
+        label: '---------',
+        value: '',
+      }];
       for (let group of res.data) {
         groups.push({label: group['bsdgrp_group'], value: group['bsdgrp_group']});
       }
