@@ -92,7 +92,7 @@ export class BootEnvironmentListComponent {
 
   rowValue(row, attr) {
     if (attr === 'created'){
-      return moment(row.created.$date).format('MMMM Do YYYY, h:mm:ss a')
+      return moment(row.created.$date).format('l LT')
     }
     if (attr === 'active'){
       if (row.active === 'N'){
