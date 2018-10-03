@@ -101,7 +101,7 @@ export class UpdateComponent implements OnInit {
           if(branch2 === "nightlies") {
             return "NIGHTLY_UPGRADE";
           } else if(branch1 === "nightlies") {
-            return "ALLOWED";
+            return "NIGHTLY_DOWNGRADE";
           }
         } else {
           if(version2[0] ==="HEAD"){
