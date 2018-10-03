@@ -71,11 +71,11 @@ export class DialogService {
         return dialogRef.afterClosed();
     }
 
-    public Info(title: string, info: string ): Observable<boolean> {
+    public Info(title: string, info: string, width='500px' ): Observable<boolean> {
         
         let dialogRef: MatDialogRef<InfoDialog>;
 
-        dialogRef = this.dialog.open(InfoDialog);
+        dialogRef = this.dialog.open(InfoDialog, {width: width});
 
         dialogRef.componentInstance.title = title;
         dialogRef.componentInstance.info = info;
