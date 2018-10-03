@@ -93,6 +93,7 @@ export class StorageService {
     
     sorter = bytes.concat(kbytes, mbytes, gbytes, tbytes)
 
+  // Select disks where last two chars = a digit and the one letter space abbrev  
   } else if (typeof(tempArr[0]) === 'string' && 
       tempArr[0][tempArr[0].length-1].match(/[KMGTB]/) &&
       tempArr[0][tempArr[0].length-2].match(/[0-9]/)) {
@@ -126,20 +127,19 @@ export class StorageService {
       
       sorter = B.concat(K, M, G, T)
   
+    // Select strings that Date.parse can turn into a number (ie, that are a legit date)
     } else if (typeof(tempArr[0]) === 'string' && 
       typeof(Date.parse(tempArr[0])) === 'number') {
         let timeArr = [];
         for (let i of tempArr) {
           timeArr.push(Date.parse(i));
         }
-        // asc==='asc' ? timeArr.sort() : timeArr.sort().reverse();
         timeArr = timeArr.sort();
 
-        sorter=[];
+        sorter = [];
         for (let elem of timeArr) {
          sorter.push(moment(elem).format('l LT'));
         }
-        // return arr;
       }
     else {
       sorter = tempArr.sort(myCollator.compare);
