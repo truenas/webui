@@ -147,7 +147,6 @@ export class StorageService {
       // Rejoins the sorted keys with the rest of the row data
       let v;
       // ascending or decending
-      console.log(sorter)
       asc==='asc' ? (v = 1) : (v = -1);
       arr.sort((a, b) => {
         const A = a[key],
