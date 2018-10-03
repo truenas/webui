@@ -71,7 +71,7 @@ export class DialogService {
         return dialogRef.afterClosed();
     }
 
-    public Info(title: string, info: string, width='500px' ): Observable<boolean> {
+    public Info(title: string, info: string, width='500px', icon="report_problem" ): Observable<boolean> {
         
         let dialogRef: MatDialogRef<InfoDialog>;
 
@@ -79,6 +79,7 @@ export class DialogService {
 
         dialogRef.componentInstance.title = title;
         dialogRef.componentInstance.info = info;
+        dialogRef.componentInstance.icon = icon;
 
         return dialogRef.afterClosed();
     }

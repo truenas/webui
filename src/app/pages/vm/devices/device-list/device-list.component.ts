@@ -117,7 +117,7 @@ export class DeviceListComponent {
           for (const attribute in device.attributes) {
             details = `${attribute}: ${device.attributes[attribute]} \n` + details;
           }
-          this.dialogService.Info(`Details`, details);
+          this.dialogService.Info(`Details`, details,'500px','info');
         },
       });
     return actions;
