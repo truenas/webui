@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { WebSocketService } from './ws.service';
 import { RestService } from './rest.service';
 
+import * as moment from 'moment';
+
 @Injectable()
 export class StorageService {
   protected diskResource: string = 'disk.query';
@@ -130,10 +132,14 @@ export class StorageService {
         for (let i of tempArr) {
           timeArr.push(Date.parse(i));
         }
-        asc==='asc' ? timeArr.sort() : timeArr.sort().reverse;
-        console.log(timeArr);
-        // use moment here to convert back to time
-        return timeArr;
+        // asc==='asc' ? timeArr.sort() : timeArr.sort().reverse();
+        timeArr = timeArr.sort();
+
+        sorter=[];
+        for (let elem of timeArr) {
+         sorter.push(moment(elem).format('l LT'));
+        }
+        // return arr;
       }
     else {
       sorter = tempArr.sort(myCollator.compare);
@@ -141,6 +147,7 @@ export class StorageService {
       // Rejoins the sorted keys with the rest of the row data
       let v;
       // ascending or decending
+      console.log(sorter)
       asc==='asc' ? (v = 1) : (v = -1);
       arr.sort((a, b) => {
         const A = a[key],
