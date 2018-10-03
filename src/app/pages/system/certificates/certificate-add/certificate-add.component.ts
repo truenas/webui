@@ -340,6 +340,14 @@ export class CertificateAddComponent {
     } else {
       data.san = _.split(data.san, ' ');
     }
+
+    if (data.Passphrase == '') {
+      data.Passphrase = undefined;
+    }
+    if (data.Passphrase2 == '') {
+      data.Passphrase2 = undefined;
+    }    
+    console.log(data)
   }
 
 
