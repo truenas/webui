@@ -64,7 +64,7 @@
   </mat-card-content>
 </mat-card>
 
-<mat-card class="p-0" id="changelog-card" *ngIf="changeLog">
+<mat-card class="p-0" id="changelog-card" *ngIf="changeLog && nightly_train">
   <mat-card-title>
     <div class="mat-toolbar mat-card-toolbar">
       <div class="mat-card-title-text">{{"Change log" | translate}}</div>
@@ -77,12 +77,21 @@
   </mat-card-content>
 </mat-card>
 
-<mat-card *ngIf="updates_available" id="stable-warning-card">
-    <div class="stable-warning" *ngIf="!release_train; else stableMessage"><i class="material-icons" id="update-info">info</i><strong>This is not a production release, and should only be used for testing.</strong></div>
-    <ng-template #stableMessage>
-      <div class="stable-warning">Before updating, please read the 
-        <a href='https://www.ixsystems.com/blog/knowledgebase_category/freenas/?latest-true' target="new">release notes</a>.</div>
-    </ng-template>
+<mat-card *ngIf="updates_available && pre_release_train" id="stable-warning-card">
+    <div class="stable-warning"><i class="material-icons" id="update-info">info</i><strong>This is not a production release, and should only be used for testing.</strong></div>
+    <div class="stable-warning" id="stable_warning_line_2">Before updating, please read the 
+      <a href='https://www.ixsystems.com/blog/library/freenas-11-2-rc1' target="new">release notes</a>.</div>
+</mat-card>
+
+<mat-card *ngIf="updates_available && release_train" id="stable-warning-card">
+  <div class="stable-warning"><i class="material-icons" id="update-info">info</i>Before updating, please read the 
+    <a href='https://www.ixsystems.com/blog/library/freenas-11-2-rc1' target="new">release notes</a>.</div>
+</mat-card>
+
+<mat-card *ngIf="updates_available && nightly_train" id="stable-warning-card">
+  <div class="stable-warning"><i class="material-icons" id="update-info">info</i>
+    <strong>This is not a production release, and should only be used for testing.</strong>
+  </div>
 </mat-card>
 
 <mat-card id="button-card">

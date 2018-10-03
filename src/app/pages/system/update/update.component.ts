@@ -40,9 +40,11 @@ export class UpdateComponent implements OnInit {
     "NIGHTLY_UPGRADE": T("Changing to a nightly train is one-way. Changing back to a stable train is not supported!")
   }
   public release_train: boolean;  
+  public pre_release_train: boolean;  
+  public nightly_train: boolean;  
   public updates_available: boolean = false;
-  public tempTrain: string;
-  public tempTrainList: string;
+  public currentTrainName: string;
+  public currentTrainDescription: string;
   public fullTrainList: any[];
 
   public busy: Subscription;
@@ -99,7 +101,7 @@ export class UpdateComponent implements OnInit {
           if(branch2 === "nightlies") {
             return "NIGHTLY_UPGRADE";
           } else if(branch1 === "nightlies") {
-            return "NIGHTLY_DOWNGRADE";
+            return "ALLOWED";
           }
         } else {
           if(version2[0] ==="HEAD"){
@@ -162,6 +164,7 @@ export class UpdateComponent implements OnInit {
 
   ngOnInit() {
     this.busy = this.rest.get('system/update', {}).subscribe((res) => {
+      console.log(res)
       this.autoCheck = res.data.upd_autocheck;
       this.train = res.data.upd_train;
       if (this.autoCheck){
@@ -169,10 +172,25 @@ export class UpdateComponent implements OnInit {
       }
     });
     this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
-      this.tempTrain = res.current;
-      this.tempTrainList = res.trains[this.tempTrain].description.toLowerCase();
+      if (!this.train) {
+        this.train = res.selected;
+        console.log(this.train)
+      }
+      this.currentTrainName = res.current;
       this.fullTrainList = res.trains;
 
+      // The following is a kluge until we get middleware(?) to stop overwriting the description of the currently
+      //  running OS along with its tags we want to use for sorting - [release], [prerelease], and [nightly]
+      if (this.currentTrainName.toLowerCase().includes('nightlies')) {
+        this.currentTrainDescription = '[nightly]';
+      } else if (this.currentTrainName.toLowerCase().includes('11-stable')) {
+        this.currentTrainDescription = '[release]';
+      } else if (this.currentTrainName.toLowerCase().includes('11.2-stable')) {
+        this.currentTrainDescription = '[prerelease]';
+      } else {
+        this.currentTrainDescription = res.trains[this.currentTrainName].description.toLowerCase();
+      }
+      
       this.trains = [];
       for (const i in res.trains) {
         this.trains.push({ name: i });
@@ -181,7 +199,6 @@ export class UpdateComponent implements OnInit {
       this.selectedTrain = res.selected;
     });
   }
-
 
   onTrainChanged(event){
     const compare = this.compareTrains(this.selectedTrain, event.value);
@@ -192,24 +209,24 @@ export class UpdateComponent implements OnInit {
     } else if(compare === "NIGHTLY_UPGRADE"){
         this.dialogService.confirm(T("Warning"), this.train_msg[compare]).subscribe((res)=>{
           if (res){
+            console.log(res)
             this.train = event.value;
-            this.tempTrainList = this.fullTrainList[this.train].description.toLowerCase();
+            this.currentTrainDescription = this.fullTrainList[this.train].description.toLowerCase();
             this.check();
           } else {
             this.train = this.selectedTrain;
-            this.tempTrainList = this.fullTrainList[this.train].description.toLowerCase();
+            this.currentTrainDescription = this.fullTrainList[this.train].description.toLowerCase();
           }
         })
     } else if (compare === "ALLOWED") {
       this.dialogService.confirm(T("Switch Train"), T("Switch update trains?")).subscribe((train_res)=>{
         if(train_res){
+          console.log(train_res)
           this.train = event.value;
-          this.tempTrainList = this.fullTrainList[this.train].description.toLowerCase();
+          this.currentTrainDescription = this.fullTrainList[this.train].description.toLowerCase();
           this.check();
         }
-
       })
-
     }
   }
 
@@ -387,11 +404,19 @@ export class UpdateComponent implements OnInit {
               this.releaseNotes = res.notes.ReleaseNotes;
             }
           }
-
-          if (this.tempTrainList.includes('[release]')) {
+          console.log(this.currentTrainDescription)
+          if (this.currentTrainDescription.includes('[release]')) {
             this.release_train = true;
+            this.pre_release_train = false;
+            this.nightly_train = false;
+          } else if(this.currentTrainDescription.includes('[prerelease]')) {
+            this.release_train = false;
+            this.pre_release_train = true;
+            this.nightly_train = false;
           } else {
             this.release_train = false;
+            this.pre_release_train = false;
+            this.nightly_train = true;
           }
         },
         (err) => {
