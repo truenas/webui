@@ -3,6 +3,7 @@ import {Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import {RestService, WebSocketService} from '../../../services/';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
 
 export class Page {
     //The number of elements in the page
@@ -61,11 +62,17 @@ export class VmTableComponent implements OnChanges{
   public cache: any = {};
   public pageSize = 8;
   public tableHeight:number;
-  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService) {
+  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, private core:CoreService) {
     this.page.pageNumber = 0;
   }
 
   ngOnChanges(changes) {
+    /* TODO: remove this after middleware part is ready to give back
+    correct state.
+    */
+   Observable.interval(5000).subscribe((val) => {
+    this.checkStatus();
+   });
     if(changes.data){
       const newData = Object.assign(this.data,{});
       this.data = newData;
@@ -162,6 +169,12 @@ export class VmTableComponent implements OnChanges{
     const machine = Object.assign({}, row);
     machine.machineId = row.id;
     this.target.next({name:"RestartVM", data:index, sender:machine})
+  }
+  checkStatus(id?:number){ 
+    this.core.emit({
+      name:"VmStatusRequest",
+      data:[]
+    });
   }
 
 }
