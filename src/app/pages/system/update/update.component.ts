@@ -164,7 +164,6 @@ export class UpdateComponent implements OnInit {
 
   ngOnInit() {
     this.busy = this.rest.get('system/update', {}).subscribe((res) => {
-      console.log(res)
       this.autoCheck = res.data.upd_autocheck;
       this.train = res.data.upd_train;
       if (this.autoCheck){
@@ -174,7 +173,6 @@ export class UpdateComponent implements OnInit {
     this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
       if (!this.train) {
         this.train = res.selected;
-        console.log(this.train)
       }
       this.currentTrainName = res.current;
       this.fullTrainList = res.trains;
@@ -209,7 +207,6 @@ export class UpdateComponent implements OnInit {
     } else if(compare === "NIGHTLY_UPGRADE"){
         this.dialogService.confirm(T("Warning"), this.train_msg[compare]).subscribe((res)=>{
           if (res){
-            console.log(res)
             this.train = event.value;
             this.currentTrainDescription = this.fullTrainList[this.train].description.toLowerCase();
             this.check();
@@ -221,7 +218,6 @@ export class UpdateComponent implements OnInit {
     } else if (compare === "ALLOWED") {
       this.dialogService.confirm(T("Switch Train"), T("Switch update trains?")).subscribe((train_res)=>{
         if(train_res){
-          console.log(train_res)
           this.train = event.value;
           this.currentTrainDescription = this.fullTrainList[this.train].description.toLowerCase();
           this.check();
@@ -404,7 +400,6 @@ export class UpdateComponent implements OnInit {
               this.releaseNotes = res.notes.ReleaseNotes;
             }
           }
-          console.log(this.currentTrainDescription)
           if (this.currentTrainDescription.includes('[release]')) {
             this.release_train = true;
             this.pre_release_train = false;
