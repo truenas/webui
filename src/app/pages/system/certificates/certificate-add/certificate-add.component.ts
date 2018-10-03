@@ -341,6 +341,7 @@ export class CertificateAddComponent {
       data.san = _.split(data.san, ' ');
     }
 
+    // Addresses non-pristine field being mistaken for a passphrase of ''
     if (data.Passphrase == '') {
       data.Passphrase = undefined;
     }
