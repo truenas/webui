@@ -36,7 +36,8 @@ export class DeviceListComponent {
   public busy: Subscription;
   protected loaderOpen = false;
   public columns: Array<any> = [
-    {name : 'Type', prop : 'dtype'},
+    {name: 'Device ID', prop:'id'},
+    {name : 'Device', prop : 'dtype'},
     {name : 'Order', prop : 'order'},
   ];
   public title = "VM ";
@@ -108,7 +109,17 @@ export class DeviceListComponent {
           }
           this.dialogService.dialogForm(conf);
         }
-      })
+      }),
+      actions.push({
+        label : T("Details"),
+        onClick : (device) => {
+          let details = ``
+          for (const attribute in device.attributes) {
+            details = `${attribute}: ${device.attributes[attribute]} \n` + details;
+          }
+          this.dialogService.Info(`Details`, details,'500px','info');
+        },
+      });
     return actions;
     }
   
