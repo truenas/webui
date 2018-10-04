@@ -170,7 +170,7 @@ export class UpdateComponent implements OnInit {
       }
     });
     this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
-      this.currentTrainName = res.current;
+      this.currentTrainName = res.selected;
       this.fullTrainList = res.trains;
       this.train = res.selected;
       this.selectedTrain = res.selected;
