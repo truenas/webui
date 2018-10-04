@@ -14,7 +14,7 @@ import {EntityTableComponent} from './entity-table.component';
 		<smd-fab-speed-dial id="myFab" #myFab [direction]="direction" [animationMode]="animationMode"
 				(mouseenter)="myFab.open = true" (mouseleave)="myFab.open = false">
 			<smd-fab-trigger [spin]="!this.entity.conf.route_add">
-				<button id="add_action_button" style="top: -26px" *ngIf="this.entity.conf.route_add; else elseBlock" mat-fab (click)="this.entity.doAdd()" matTooltip="{{this.entity.conf.route_add_tooltip | translate}}">
+				<button id="add_action_button" *ngIf="this.entity.conf.route_add; else elseBlock" mat-fab (click)="this.entity.doAdd()" matTooltip="{{this.entity.conf.route_add_tooltip | translate}}">
 					<mat-icon>add</mat-icon>
 				</button>
 				<ng-template #elseBlock>
