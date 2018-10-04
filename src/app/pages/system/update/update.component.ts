@@ -165,19 +165,22 @@ export class UpdateComponent implements OnInit {
   ngOnInit() {
     this.busy = this.rest.get('system/update', {}).subscribe((res) => {
       this.autoCheck = res.data.upd_autocheck;
-      this.train = res.data.upd_train;
       if (this.autoCheck){
         this.check();
       }
     });
     this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
-      if (!this.train) {
-        this.train = res.selected;
-      }
       this.currentTrainName = res.current;
       this.fullTrainList = res.trains;
+      this.train = res.selected;
+      this.selectedTrain = res.selected;
 
-      // The following is a kluge until we get middleware(?) to stop overwriting the description of the currently
+      this.trains = [];
+      for (const i in res.trains) {
+        this.trains.push({ name: i });
+      }
+
+      // The following is a kluge until we stop overwriting (via middleware?) the description of the currently
       //  running OS along with its tags we want to use for sorting - [release], [prerelease], and [nightly]
       if (this.currentTrainName.toLowerCase().includes('nightlies')) {
         this.currentTrainDescription = '[nightly]';
@@ -188,13 +191,6 @@ export class UpdateComponent implements OnInit {
       } else {
         this.currentTrainDescription = res.trains[this.currentTrainName].description.toLowerCase();
       }
-      
-      this.trains = [];
-      for (const i in res.trains) {
-        this.trains.push({ name: i });
-      }
-      this.train = res.selected;
-      this.selectedTrain = res.selected;
     });
   }
 
