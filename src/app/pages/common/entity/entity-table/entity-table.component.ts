@@ -418,15 +418,30 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       new Array('/').concat(this.conf.route_edit).concat(id));
   }
 
-  doDelete(item) {
-    //generate delete msg
+  //generate delete msg
+  getDeleteMessage(item) {
     let deleteMsg = "Delete the selected item?";
     if (this.conf.config.deleteMsg) {
-      deleteMsg = "Delete " + this.conf.config.deleteMsg.title + ' <b>' + item[this.conf.config.deleteMsg.name_prop] + "</b>?";
+      deleteMsg = "Delete " + this.conf.config.deleteMsg.title;
+      let msg_content = ' <b>' + item[this.conf.config.deleteMsg.key_props[0]];
+      if (this.conf.config.deleteMsg.key_props.length > 1) {
+        for (let i = 1; i < this.conf.config.deleteMsg.key_props.length; i++) {
+          if (item[this.conf.config.deleteMsg.key_props[i]] != '') {
+            msg_content = msg_content + ' - ' + item[this.conf.config.deleteMsg.key_props[i]];
+          }
+        }
+      }
+      msg_content += "</b>?";
+      deleteMsg += msg_content;
     }
     this.translate.get(deleteMsg).subscribe((res) => {
       deleteMsg = res;
     });
+    return deleteMsg;
+  }
+
+  doDelete(item) {
+    let deleteMsg = this.getDeleteMessage(item);
 
     let dialog = {};
     if (this.conf.checkbox_confirm && this.conf.checkbox_confirm_show && this.conf.checkbox_confirm_show(item.id)) {
