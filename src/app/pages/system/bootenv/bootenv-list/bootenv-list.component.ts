@@ -49,6 +49,10 @@ export class BootEnvironmentListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    deleteMsg: {
+      title: 'Boot Environment',
+      name_prop: 'name'
+    },
   };
 
   preInit(){
@@ -130,7 +134,7 @@ export class BootEnvironmentListComponent {
         label : "Delete",
         id: "delete",
         onClick : (row) => {
-          this.entityList.doDelete(row.id);
+          this.entityList.doDelete(row);
         }
       });
     }

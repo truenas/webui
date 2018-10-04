@@ -25,5 +25,9 @@ export class NTPServerListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    deleteMsg: {
+      title: 'NTP Server',
+      name_prop: 'ntp_address'
+    },
   };
 }
