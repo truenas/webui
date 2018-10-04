@@ -364,7 +364,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       }, {
         id: "delete",
         label: "Delete",
-        onClick: (rowinner) => { this.doDelete(rowinner.id); },
+        onClick: (rowinner) => { this.doDelete(rowinner); },
       },]
     }
   }
@@ -418,18 +418,28 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       new Array('/').concat(this.conf.route_edit).concat(id));
   }
 
-  doDelete(id) {
+  doDelete(item) {
+    //generate delete msg
+    let deleteMsg = "Delete the selected item?";
+    if (this.conf.config.deleteMsg) {
+      deleteMsg = "Delete " + this.conf.config.deleteMsg.title + ' <b>' + item[this.conf.config.deleteMsg.name_prop] + "</b>?";
+    }
+    this.translate.get(deleteMsg).subscribe((res) => {
+      deleteMsg = res;
+    });
+
     let dialog = {};
-    if (this.conf.checkbox_confirm && this.conf.checkbox_confirm_show && this.conf.checkbox_confirm_show(id)) {
-      this.conf.checkbox_confirm(id);
+    if (this.conf.checkbox_confirm && this.conf.checkbox_confirm_show && this.conf.checkbox_confirm_show(item.id)) {
+      this.conf.checkbox_confirm(item.id);
       return;
     }
     if (this.conf.confirmDeleteDialog) {
       dialog = this.conf.confirmDeleteDialog;
     }
+
     this.dialogService.confirm(
         dialog.hasOwnProperty("title") ? dialog['title'] : T("Delete"),
-        dialog.hasOwnProperty("message") ? dialog['message'] : T("Delete the selected item?"), 
+        dialog.hasOwnProperty("message") ? dialog['message'] : deleteMsg,
         dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : false, 
         dialog.hasOwnProperty("button") ? dialog['button'] : T("Delete")).subscribe((res) => {
       if (res) {
@@ -437,7 +447,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         this.loaderOpen = true;
         const data = {};
         if (this.conf.wsDelete) {
-          this.busy = this.ws.call(this.conf.wsDelete, [id]).subscribe(
+          this.busy = this.ws.call(this.conf.wsDelete, [item.id]).subscribe(
             (resinner) => { this.getData() },
             (resinner) => {
               new EntityUtils().handleError(this, resinner);
@@ -445,7 +455,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
             }
           );
         } else {
-          this.busy = this.rest.delete(this.conf.resource_name + '/' + id, data).subscribe(
+          this.busy = this.rest.delete(this.conf.resource_name + '/' + item.id, data).subscribe(
             (resinner) => {
               this.getData();
             },
