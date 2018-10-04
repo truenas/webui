@@ -341,6 +341,13 @@ export class CertificateAuthorityAddComponent {
     } else {
       data.san = _.split(data.san, ' ');
     }
-  }
 
+    // Addresses non-pristine field being mistaken for a passphrase of ''
+    if (data.Passphrase == '') {
+      data.Passphrase = undefined;
+    }
+    if (data.Passphrase2 == '') {
+      data.Passphrase2 = undefined;
+    }
+  }
 }
