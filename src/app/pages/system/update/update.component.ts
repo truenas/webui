@@ -43,7 +43,6 @@ export class UpdateComponent implements OnInit {
   public pre_release_train: boolean;  
   public nightly_train: boolean;  
   public updates_available: boolean = false;
-  public currentTrainName: string;
   public currentTrainDescription: string;
   public fullTrainList: any[];
 
@@ -170,7 +169,6 @@ export class UpdateComponent implements OnInit {
       }
     });
     this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
-      this.currentTrainName = res.selected;
       this.fullTrainList = res.trains;
       this.train = res.selected;
       this.selectedTrain = res.selected;
@@ -182,14 +180,14 @@ export class UpdateComponent implements OnInit {
 
       // The following is a kluge until we stop overwriting (via middleware?) the description of the currently
       //  running OS along with its tags we want to use for sorting - [release], [prerelease], and [nightly]
-      if (this.currentTrainName.toLowerCase().includes('nightlies')) {
+      if (this.selectedTrain.toLowerCase().includes('nightlies')) {
         this.currentTrainDescription = '[nightly]';
-      } else if (this.currentTrainName.toLowerCase().includes('11-stable')) {
+      } else if (this.selectedTrain.toLowerCase().includes('11-stable')) {
         this.currentTrainDescription = '[release]';
-      } else if (this.currentTrainName.toLowerCase().includes('11.2-stable')) {
+      } else if (this.selectedTrain.toLowerCase().includes('11.2-stable')) {
         this.currentTrainDescription = '[prerelease]';
       } else {
-        this.currentTrainDescription = res.trains[this.currentTrainName].description.toLowerCase();
+        this.currentTrainDescription = res.trains[this.selectedTrain].description.toLowerCase();
       }
     });
   }
