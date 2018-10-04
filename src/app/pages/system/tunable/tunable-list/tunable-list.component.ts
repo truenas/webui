@@ -37,6 +37,10 @@ export class TunableListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    deleteMsg: {
+      title: 'Tunable',
+      name_prop: 'tun_var'
+    },
   }
 
   preInit(entityList: any) {
