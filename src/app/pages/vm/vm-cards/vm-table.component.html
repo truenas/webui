@@ -72,8 +72,9 @@
 	  <mat-icon>more_vert</mat-icon>
 	 </button>
 	 <mat-menu #menu="matMenu">
+      <button *ngIf="row.state != 'stopped'" mat-menu-item (click)="onPower(row)">Stop</button>
+      <button *ngIf="row.state == 'stopped'"mat-menu-item (click)="onPower(row)">Start</button>
       <button mat-menu-item (click)="onPower(row, true)" [disabled]="row.state == 'stopped'">Power Off</button>
-      <button mat-menu-item (click)="onPower(row)" [disabled]="row.state == 'stopped'">Stop</button>
 	    <button mat-menu-item (click)="onRestart(row)" *ngIf="row.state == 'running'">Restart</button>
 	    <button mat-menu-item (click)="editRow(row)" [disabled]="row.state !== 'stopped'">Edit</button>
 	    <button mat-menu-item (click)="goToDevices(row)" [disabled]="row.state !== 'stopped'">Devices</button>
