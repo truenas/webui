@@ -26,7 +26,7 @@ export class AlertServiceListComponent {
     sorting: { columns: this.columns },
     deleteMsg: {
       title: 'Alert Service',
-      name_prop: 'name'
+      key_props: ['name']
     },
   };
 

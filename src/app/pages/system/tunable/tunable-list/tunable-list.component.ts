@@ -39,7 +39,7 @@ export class TunableListComponent {
     sorting: { columns: this.columns },
     deleteMsg: {
       title: 'Tunable',
-      name_prop: 'tun_var'
+      key_props: ['tun_var']
     },
   }
 
