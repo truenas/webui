@@ -348,7 +348,6 @@ export class CertificateAddComponent {
     if (data.Passphrase2 == '') {
       data.Passphrase2 = undefined;
     }    
-    console.log(data)
   }
 
 
