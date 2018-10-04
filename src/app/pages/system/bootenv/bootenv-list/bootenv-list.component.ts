@@ -51,7 +51,7 @@ export class BootEnvironmentListComponent {
     sorting : {columns : this.columns},
     deleteMsg: {
       title: 'Boot Environment',
-      name_prop: 'name'
+      key_props: ['name']
     },
   };
 

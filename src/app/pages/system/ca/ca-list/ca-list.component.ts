@@ -45,7 +45,7 @@ export class CertificateAuthorityListComponent {
     sorting: { columns: this.columns },
     deleteMsg: {
       title: 'Certificate Authority',
-      name_prop: 'name'
+      key_props: ['name']
     },
   }
 

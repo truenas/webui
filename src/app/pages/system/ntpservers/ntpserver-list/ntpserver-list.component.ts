@@ -27,7 +27,7 @@ export class NTPServerListComponent {
     sorting : {columns : this.columns},
     deleteMsg: {
       title: 'NTP Server',
-      name_prop: 'ntp_address'
+      key_props: ['ntp_address']
     },
   };
 }

@@ -39,7 +39,7 @@ export class CertificateListComponent {
     sorting: { columns: this.columns },
     deleteMsg: {
       title: 'Certificate',
-      name_prop: 'name'
+      key_props: ['name']
     },
   }
 

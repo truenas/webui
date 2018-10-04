@@ -27,7 +27,7 @@ export class CloudCredentialsListComponent {
       sorting : {columns : this.columns},
       deleteMsg: {
         title: 'Cloud Credential',
-        name_prop: 'name'
+        key_props: ['name']
       },
     };
 
