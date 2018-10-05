@@ -553,8 +553,35 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     this.setPaginationInfo();
   }
 
+  getMultiDeleteMessage(items) {
+    let deleteMsg = "Delete the selected items?";
+    if (this.conf.config.deleteMsg) {
+      deleteMsg = "Delete selected " + this.conf.config.deleteMsg.title + "(s)?";
+      let msg_content = "<ul>";
+      for (let j = 0; j < items.length; j++) {
+        let sub_msg_content = '<li>' + items[j][this.conf.config.deleteMsg.key_props[0]];
+        if (this.conf.config.deleteMsg.key_props.length > 1) {
+          for (let i = 1; i < this.conf.config.deleteMsg.key_props.length; i++) {
+            if (items[j][this.conf.config.deleteMsg.key_props[i]] != '') {
+              msg_content = msg_content + ' - ' + items[j][this.conf.config.deleteMsg.key_props[i]];
+            }
+          }
+        }
+        sub_msg_content += "</li>";
+        msg_content += sub_msg_content;
+      }
+      msg_content += "</ul>";
+      deleteMsg += msg_content;
+    }
+    this.translate.get(deleteMsg).subscribe((res) => {
+      deleteMsg = res;
+    });
+    return deleteMsg;
+  }
+
   doMultiDelete(selected) {
-    this.dialogService.confirm("Delete", "Delete the selected items?", false, T("Delete")).subscribe((res) => {
+    let multiDeleteMsg = this.getMultiDeleteMessage(selected);
+    this.dialogService.confirm("Delete", multiDeleteMsg, false, T("Delete")).subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
