@@ -41,6 +41,10 @@ export class UserListComponent implements OnInit {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    deleteMsg: {
+      title: 'User',
+      key_props: ['bsdusr_username']
+    },
   };
 
   isActionVisible(actionId: string, row: any) {
@@ -83,18 +87,18 @@ export class UserListComponent implements OnInit {
       actions.push({
         label : T("Delete"),
         onClick : (users_edit) => {
-          this.entityList.doDelete(users_edit.id );
+          this.entityList.doDelete(users_edit);
         },
       });
 
     }
     return actions;
   }
-  checkbox_confirm(id: any){
+  checkbox_confirm(id: any, deleteMsg: any){
     const params = [id, {"delete_group": true}]
     const ds = this.dialogService.confirm(
       T("Delete"), 
-      T("Delete the user?"), 
+      deleteMsg,
       false, T("Delete"),
       true,
       T('Keep user primary group'),
