@@ -450,7 +450,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     }
     let dialog = {};
     if (this.conf.checkbox_confirm && this.conf.checkbox_confirm_show && this.conf.checkbox_confirm_show(id)) {
-      this.conf.checkbox_confirm(id);
+      this.conf.checkbox_confirm(id, deleteMsg);
       return;
     }
     if (this.conf.confirmDeleteDialog) {
