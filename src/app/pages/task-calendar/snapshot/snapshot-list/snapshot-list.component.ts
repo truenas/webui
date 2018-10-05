@@ -74,6 +74,10 @@ export class SnapshotListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    deleteMsg: {
+      title: 'Periodic Snapshot Task',
+      key_props: ['task_filesystem', 'frequency']
+    },
   };
 
   constructor(protected router: Router, protected rest: RestService, protected taskService: TaskService) {}
