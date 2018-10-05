@@ -442,10 +442,15 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
   doDelete(item) {
     let deleteMsg = this.getDeleteMessage(item);
-
+    let id;
+    if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.id_prop) {
+      id = item[this.conf.config.deleteMsg.id_prop];
+    } else {
+      id = item.id;
+    }
     let dialog = {};
-    if (this.conf.checkbox_confirm && this.conf.checkbox_confirm_show && this.conf.checkbox_confirm_show(item.id)) {
-      this.conf.checkbox_confirm(item.id);
+    if (this.conf.checkbox_confirm && this.conf.checkbox_confirm_show && this.conf.checkbox_confirm_show(id)) {
+      this.conf.checkbox_confirm(id);
       return;
     }
     if (this.conf.confirmDeleteDialog) {
@@ -462,7 +467,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         this.loaderOpen = true;
         const data = {};
         if (this.conf.wsDelete) {
-          this.busy = this.ws.call(this.conf.wsDelete, [item.id]).subscribe(
+          this.busy = this.ws.call(this.conf.wsDelete, [id]).subscribe(
             (resinner) => { this.getData() },
             (resinner) => {
               new EntityUtils().handleError(this, resinner);
@@ -470,7 +475,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
             }
           );
         } else {
-          this.busy = this.rest.delete(this.conf.resource_name + '/' + item.id, data).subscribe(
+          this.busy = this.rest.delete(this.conf.resource_name + '/' + id, data).subscribe(
             (resinner) => {
               this.getData();
             },
