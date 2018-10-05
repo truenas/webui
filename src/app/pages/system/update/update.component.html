@@ -1,17 +1,22 @@
-<mat-card>
+<mat-card id="train-card">
   <div>
-    <div class="row">
+    <div class="train-card-row">
       <mat-checkbox [(ngModel)]="autoCheck" id="autocheck" [ngModelOptions]="{standalone: true}"
         (change)="toggleAutoCheck()">{{"Automatically check for new updates" | translate}}</mat-checkbox>
     </div>
-    <div class="row">
-      <mat-label>{{"Train" | translate}}</mat-label>
+    <div class="train-card-row" *ngIf="trains.length > 1; else trainName">
+      <mat-label id="train-label">{{"Train" | translate}}</mat-label>
       <mat-select class="form-control full-width" id="train-selector" [(ngModel)]="train"  (change)="onTrainChanged($event)">
         <mat-option *ngFor="let train of trains" [value]="train.name">{{ train.name }}</mat-option>
       </mat-select>
     </div>
+    <ng-template #trainName>
+      <div class=train-card-row >
+        Current Train: {{ train }}
+      </div>
+    </ng-template>
   </div>
-  <div class="row">
+  <div class="train-card-row">
     <div class="col-md-12">
       <div *ngIf="status == 'REBOOT_REQUIRED'">
         {{"An update is already applied. Please reboot the system." | translate}}
@@ -23,7 +28,7 @@
       </div>
     </div>
   </div>
-  <div class="row">
+  <div class="train-card-row">
     <div class="col-md-12">
       <div *ngIf="error">
         {{ error }}
@@ -33,6 +38,7 @@
 </mat-card>
 
 <mat-card *ngIf="status == 'AVAILABLE' && !updating" id="upgrades-card">
+  <mat-card-content id="upgrades-card-scrollbox">
   <table  class="table table-striped table-sm">
     <thead>
       <tr>
@@ -50,6 +56,7 @@
       </tr>
     </tbody>
   </table>
+  </mat-card-content>
 </mat-card>
 
 <mat-card class="p-0" *ngIf="releaseNotes">
@@ -64,10 +71,10 @@
 </mat-card>
 
 <mat-card class="p-0" id="changelog-card" *ngIf="changeLog && nightly_train">
-  <mat-card-title>
-    <div class="mat-toolbar mat-card-toolbar">
-      <div class="mat-card-title-text">{{"Change log" | translate}}</div>
-    </div>
+  <mat-card-title id="changelog-title">
+    <!-- <div class="mat-toolbar mat-card-toolbar"> -->
+      <div >{{"Change log" | translate}}</div>
+    <!-- </div> -->
   </mat-card-title>
   <mat-card-content id="changelog-scrollbox">
     <markdown>
