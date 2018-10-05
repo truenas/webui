@@ -1,20 +1,43 @@
+#train-card {
+    padding: 15px 20px 20px 20px;
+    height: 60px;
+}
+
+.train-card-row {
+    margin-bottom: 10px;
+}
+
+#train-label {
+    margin-right: 10px;
+}
+
+#train-selector {
+    max-width: 200px;
+    border: 1px solid;
+    padding: 3px 5px;
+}
+
 #upgrades-card {
     max-height: 180px;
+}
+
+#upgrades-card-scrollbox {
+    height:170px;
     overflow-y: scroll;
 }
 
-.row {
-    margin-bottom: 10px;
-}
-#train-selector {
-    max-width: 200px;
-}
 #changelog-card {
     height: 230px;
 }
 
+#changelog-title {
+    margin: 10px 25px;
+    padding-top: 15px;
+    font-weight: 700;
+}
+
 #changelog-scrollbox {
-    max-height:100px;
+    height:140px;
     overflow-y: scroll;
 }
 
@@ -31,6 +54,10 @@
     text-decoration: underline;
 }
 
+#stable_warning_line_2 {
+    padding-left: 35px;
+}
+
 .update-button {
     margin-right: 3px;
 }
@@ -39,10 +66,6 @@
     position: relative;
     top: 3px;
     margin-right: 10px;
-}
-
-#stable_warning_line_2 {
-    padding-left: 35px;
 }
 
 

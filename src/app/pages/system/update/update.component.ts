@@ -28,7 +28,7 @@ export class UpdateComponent implements OnInit {
   public error: string;
   public autoCheck = false;
   public train: string;
-  public trains: any[];
+  public trains: any[]=[];
   public selectedTrain;
   public general_update_error;
   public update_downloaded=false;
@@ -181,6 +181,7 @@ export class UpdateComponent implements OnInit {
           this.trains.push({ name: i });
         }
       }
+      console.log(this.trains.length)
 
       // The following is a kluge until we stop overwriting (via middleware?) the description of the currently
       //  running OS along with its tags we want to use for sorting - [release], [prerelease], and [nightly]
