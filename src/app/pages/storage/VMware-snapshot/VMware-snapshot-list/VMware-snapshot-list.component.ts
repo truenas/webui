@@ -23,6 +23,10 @@ export class VMwareSnapshotListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    deleteMsg: {
+      title: 'VMware Snapshot',
+      key_props: ['hostname', 'filesystem']
+    },
   };
 
   constructor(_rest: RestService, private _router: Router,
@@ -40,7 +44,7 @@ export class VMwareSnapshotListComponent {
     actions.push({
       label : T("Delete"),
       onClick : (row) => {
-        this.entityList.doDelete(row.id);
+        this.entityList.doDelete(row);
       }
     });
       actions.push({
