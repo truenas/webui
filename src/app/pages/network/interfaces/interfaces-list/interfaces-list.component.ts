@@ -17,7 +17,7 @@ export class InterfacesListComponent {
   protected route_add_tooltip: string = "Add Interface";
   protected route_edit: string[] = [ 'network', 'interfaces', 'edit' ];
   protected confirmDeleteDialog = {
-    message: T("Network connectivity will be interrupted. Delete the selected interface?"),
+    message: T("Network connectivity will be interrupted. "),
   }
 
   public columns: Array<any> = [
@@ -33,6 +33,10 @@ export class InterfacesListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    deleteMsg: {
+      title: 'Interface',
+      key_props: ['int_interface']
+    },
   };
 
   constructor(_rest: RestService, private router: Router, private networkService: NetworkService,
