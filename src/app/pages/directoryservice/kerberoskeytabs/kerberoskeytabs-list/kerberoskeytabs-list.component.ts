@@ -21,6 +21,10 @@ export class KerberosKeytabsListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    deleteMsg: {
+      title: 'Kerberos Keytab',
+      key_props: ['keytab_name']
+    },
   };
 
   constructor(protected rest: RestService, private router: Router) {}
@@ -34,7 +38,7 @@ export class KerberosKeytabsListComponent {
       id: "delete",
       label: "Delete",
       onClick: (row) => {
-        this.entityList.doDelete(row.id);
+        this.entityList.doDelete(row);
       }
     }]
   }
