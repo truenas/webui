@@ -177,7 +177,9 @@ export class UpdateComponent implements OnInit {
 
       this.trains = [];
       for (const i in res.trains) {
-        this.trains.push({ name: i });
+        if (this.compareTrains(this.train, i) === 'ALLOWED' || this.train === i) {
+          this.trains.push({ name: i });
+        }
       }
 
       // The following is a kluge until we stop overwriting (via middleware?) the description of the currently
@@ -196,6 +198,7 @@ export class UpdateComponent implements OnInit {
 
   onTrainChanged(event){
     const compare = this.compareTrains(this.selectedTrain, event.value);
+    console.log(compare)
     if(compare === "NIGHTLY_DOWNGRADE" || compare === "MINOR_DOWNGRADE" || compare === "MAJOR_DOWNGRADE" || compare ==="SDK") {
       this.dialogService.Info("Error", this.train_msg[compare]).subscribe((res)=>{
         this.train = this.selectedTrain;
@@ -220,6 +223,7 @@ export class UpdateComponent implements OnInit {
         }
       })
     }
+    console.log(this.train)
   }
 
   toggleAutoCheck() {
