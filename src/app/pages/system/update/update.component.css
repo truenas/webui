@@ -28,6 +28,7 @@
 
 #changelog-card {
     height: 230px;
+    padding-right: 24px !important;
 }
 
 #changelog-title {
