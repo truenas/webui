@@ -1,6 +1,6 @@
 #train-card {
     padding: 15px 20px 20px 20px;
-    height: 60px;
+    max-height: 85px;
 }
 
 .train-card-row {
