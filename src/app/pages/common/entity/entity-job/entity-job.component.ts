@@ -178,6 +178,7 @@ export class EntityJobComponent implements OnInit {
 
   wsjobUpdate(job) {
     this.job = job;
+    this.job.state = job.fields.state;
     if (job.progress) {
       this.progress.emit(job.progress);
     }
