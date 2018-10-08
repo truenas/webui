@@ -182,6 +182,8 @@ export class JailAddComponent implements OnInit {
       type: 'checkbox',
       name: 'auto_configure_ip6',
       placeholder: T('Auto configure IPv6'),
+      tooltip: T('Set this if the network has a DHCPv6 server \
+                  and IPv6 will be used to access jails.'),
     },
     {
       type: 'select',
