@@ -43,7 +43,7 @@ export class JailListComponent implements OnInit {
   ];
   public config: any = {
     paging: true,
-    sorting: { columns: this.columns[0] },
+    sorting: { columns: this.columns },
     multiSelect: true,
   };
   public multiActions: Array < any > = [{
