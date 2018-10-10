@@ -53,7 +53,7 @@ export class ServiceSSHComponent implements OnInit {
     {
       type : 'checkbox',
       name : 'ssh_rootlogin',
-      placeholder : T('Login as Root with Password'),
+      placeholder : T('Log in as Root with Password'),
       tooltip: T('<b>Root logins are discouraged.</b> Set to allow root\
                   logins. A password must be set for the <i>root</i>\
                   user in <a href="..//docs/account.html#users"\
