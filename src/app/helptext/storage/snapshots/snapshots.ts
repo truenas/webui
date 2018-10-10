@@ -19,7 +19,4 @@ export default {
     snapshot_clone_name_tooltip: T('Enter a name for the cloned snapshot.'),
     snapshot_clone_name_validation : [ Validators.required ],
   
-
-
-  
 }
