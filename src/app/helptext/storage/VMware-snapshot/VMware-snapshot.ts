@@ -28,8 +28,4 @@ export default {
                 select the datastore to be synchronized.'),
     VMware_snapshot_form_datastore_validation: [Validators.required],
 
-    // storage/VMware-snapshot/VMware-snapshot-list
-
-
-  
 }
