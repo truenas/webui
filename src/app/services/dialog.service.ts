@@ -50,6 +50,9 @@ export class DialogService {
                 if(data[0] && data[0].hasOwnProperty('reboot')){
                     data[0].reboot = !data[0].reboot;
                 }
+                if(data[0] && data[0].hasOwnProperty('overcommit')){
+                    data[0].overcommit = !data[0].overcommit;
+                }
                 return dialogRef;
             }
         });
