@@ -22,6 +22,8 @@ import { StorageService } from '../../../../services/storage.service'
 import { EntityUtils } from '../../../common/entity/utils';
 import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { T } from '../../../../translate-marker';
+import helptext from '../../../../helptext/storage/volumes/manager/manager';
+
 
 @Component({
   selector: 'app-manager',
@@ -69,20 +71,17 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   protected current_layout: any;
   protected existing_pool: any;
   protected needs_disk = true;
-  protected needsDiskMessage = T("Add one or more disks to be used for data.");
-  protected extendedNeedsDiskMessage = T("Add one or more disks to extend the pool.");
+  protected needsDiskMessage = helptext.manager_needsDiskMessage;
+  protected extendedNeedsDiskMessage = helptext.manager_extendedNeedsDiskMessage;
   public size;
   protected extendedAvailable;
-  public sizeMessage = T("Estimated total raw data capacity");
-  protected extendedSizeMessage = T("Estimated data capacity available after extension.");
+  public sizeMessage = helptext.manager_sizeMessage;
+  protected extendedSizeMessage = helptext.manager_extendedSizeMessage;
 
   public disknumError = null;
-  public disknumErrorMessage = T("WARNING: Adding data vdevs with different numbers of \
-      disks is not recommended.");
-  public disknumErrorConfirmMessage = T("It is not recommended to create a pool with vdevs \
-      containing different numbers of disks. Continue?");
-  public disknumExtendConfirmMessage = T("It is not recommended to extend a pool with one or \
-      more vdevs containing different numbers of disks. Continue?");
+  public disknumErrorMessage = helptext.manager_disknumErrorMessage;
+  public disknumErrorConfirmMessage = helptext.manager_disknumErrorConfirmMessage;
+  public disknumExtendConfirmMessage = helptext.manager_disknumExtendConfirmMessage;
 
   public vdevtypeError = null;
   public vdevtypeErrorMessage = T("Adding data vdevs of different types is not supported.");
