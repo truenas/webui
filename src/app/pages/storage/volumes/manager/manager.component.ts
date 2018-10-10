@@ -84,37 +84,23 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public disknumExtendConfirmMessage = helptext.manager_disknumExtendConfirmMessage;
 
   public vdevtypeError = null;
-  public vdevtypeErrorMessage = T("Adding data vdevs of different types is not supported.");
+  public vdevtypeErrorMessage = helptext.manager_vdevtypeErrorMessage;
 
-  public diskAddWarning = T("The contents of all added disks will be erased.");
-  public diskExtendWarning = T("The contents of all newly added disks will be erased. The pool \
-      will be extended to the new topology with existing data left intact.");
+  public diskAddWarning = helptext.manager_diskExtendWarning;
+  public diskExtendWarning = helptext.manager_diskExtendWarning;
 
   first_data_vdev_type: string;
   first_data_vdev_disknum: number;
 
   public busy: Subscription;
 
-  public name_tooltip = T('ZFS pools must conform to strict naming <a\
-                           href="https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html"\
-                           target="_blank">conventions</a>. Choose a\
-                           memorable name.');
+  public name_tooltip = helptext.manager_name_tooltip;
 
-  public encryption_tooltip = T('<a href="https://www.freebsd.org/cgi/man.cgi?query=geli&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
-                                 target="_blank">GELI</a> encryption is\
-                                 available for ZFS pools. <b>WARNING:</b>\
-                                 Read the <a\
-                                 href="..//docs/storage.html#managing-encrypted-pools"\
-                                 target="_blank">Encryption section</a>\
-                                 of the guide before activating this\
-                                 option.');
+  public encryption_tooltip = helptext.manager_encryption_tooltip;
 
-  public suggested_layout_tooltip = T('Create a recommended formation\
-                                       of vdevs in a pool.');
+  public suggested_layout_tooltip = helptext.manager_suggested_layout_tooltip;
 
-  public encryption_message = T("Always back up the key! Losing the key \
-                                 will also lose all data on the disks with \
-                                 no chance of recovery.");
+  public encryption_message = helptext.manager_encryption_message;
 
   constructor(
     private rest: RestService,
@@ -266,14 +252,8 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit() {
     if (!this.isNew) {
       setTimeout(() => { // goofy workaround for stupid angular error
-        this.dialog.confirm(T("Warning"), T("Extending the pool adds new\
-                                             vdevs in a stripe with the\
-                                             existing vdevs. It is important\
-                                             to only use new vdevs of the\
-                                             same size and type as those\
-                                             already in the pool. This\
-                                             operation cannot be reversed.\
-                                             Continue?"), false, T("Continue")).subscribe((res) => {
+        this.dialog.confirm(T("Warning"), helptext.manager_extend_warning, 
+            false, T("Continue")).subscribe((res) => {
           if (!res) {
             this.goBack();
           }
