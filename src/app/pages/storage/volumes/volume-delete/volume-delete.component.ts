@@ -1,9 +1,7 @@
 import {
   ApplicationRef,
   Component,
-  Injector,
-  OnInit,
-  ViewContainerRef
+  Injector
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -14,7 +12,7 @@ import { WebSocketService } from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { T } from '../../../../translate-marker';
-import { Validators } from '@angular/forms';
+import helptext from '../../../../helptext/storage/volumes/volume_delete';
 
 @Component({
   selector: 'app-volume-delete',
@@ -33,24 +31,23 @@ export class VolumeDeleteComponent implements Formconfiguration {
     {
       type: 'input',
       name: 'name',
-      label: T('name'),
+      label: helptext.volume_delete_name_label,
       isHidden: true
     }, {
       type: 'checkbox',
       name: 'destroy',
-      label: T('destroy'),
+      label: helptext.volume_delete_destroy_label,
       value: false,
-      placeholder: T("Destroy data on this pool?"),
-      tooltip: T("Set to permanently erase all information stored on\
-                  this pool when the detach operation is confirmed.")
+      placeholder: helptext.volume_delete_destroy_placeholder,
+      tooltip: helptext.volume_delete_destroy_tooltip
 
     }, {
       type: 'checkbox',
       name: 'confirm_detach_checkbox',
-      label: T("Confirm it is okay to proceed with Detach."),
-      placeholder: T("Confirm detach"),
-      tooltip: T("Set to confirm detaching the pool."),
-      validation: [Validators.required],
+      label: helptext.volume_delete_confirm_detach_checkbox_label,
+      placeholder: helptext.volume_delete_confirm_detach_checkbox_placeholder,
+      tooltip: helptext.volume_delete_confirm_detach_checkbox_tooltip,
+      validation: helptext.volume_delete_confirm_detach_checkbox_validation,
       required: true
 
     }
