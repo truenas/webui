@@ -179,7 +179,11 @@ export class ApiService {
       },
       async preProcessor(def:ApiCall, self) {
         const params = [{"overcommit": false}]
-        return self.dialog.confirm("Power",undefined, true, "Power On",true,'OverCommit?',undefined, params).afterClosed().toPromise().then(res=>{
+        return self.dialog.confirm("Power",undefined, true, "Power On",true,'Overcommit Memory?',undefined, params, 
+        "Memory overcommitment allows multiple VMs to \
+        be launched when there is not enough free memory \
+        for configured RAM of all VMs. Use with caution."
+        ).afterClosed().toPromise().then(res=>{
           if (res) {
             def.args.push({"overcommit": true});
             return def;
