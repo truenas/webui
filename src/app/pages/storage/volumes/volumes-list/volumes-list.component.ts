@@ -1,7 +1,6 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { RestService } from '../../../../services/';
-import { debug } from 'util';
 import { EntityUtils } from '../../../common/entity/utils';
 import { EntityTableComponent, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { DialogService } from 'app/services/dialog.service';
@@ -15,15 +14,11 @@ import * as _ from 'lodash';
 import { MatSnackBar } from '@angular/material';
 import * as moment from 'moment';
 
-import { Injectable } from '@angular/core';
 import { ErdService } from 'app/services/erd.service';
 import { T } from '../../../../translate-marker';
-import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { StorageService } from '../../../../services/storage.service';
-import { Validators } from '@angular/forms'
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-
+import helptext from '../../../../helptext/storage/volumes/volume-list';
 
 export interface ZfsPoolData {
   avail?: number;
@@ -55,9 +50,7 @@ export interface ZfsPoolData {
   comments?: string;
   compressionRatio?: any;
   volumesListTableConfig?: VolumesListTableConfig;
-
 }
-
 
 export class VolumesListTableConfig implements InputTableConf {
   public hideTopActions = true;
@@ -71,8 +64,6 @@ export class VolumesListTableConfig implements InputTableConf {
   public showSpinner:boolean;
   public encryptedStatus: any;
   public custActions: Array<any> = [];
-
-
 
   constructor(
     private parentVolumesListComponent: VolumesListComponent,
@@ -232,24 +223,21 @@ export class VolumesListTableConfig implements InputTableConf {
         inputType: 'password',
         name : 'passphrase',
         togglePw: true,
-        placeholder: T('Passphrase'),
+        placeholder: helptext.unlockDialog_password_placeholder,
       },
       {
         type: 'input',
         name: 'recovery_key',
-        placeholder: T('Recovery Key'),
-        tooltip: T('Click <b>Browse</b> to select a recovery key to\
-                    upload. This allows the system to decrypt the\
-                    disks.'),
+        placeholder: helptext.unlockDialog_recovery_key_placeholder,
+        tooltip: helptext.unlockDialog_recovery_key_tooltip,
         inputType: 'file',
         fileType: 'binary'
       },
       {
         type: 'select',
         name: 'services',
-        placeholder: T('Restart Services'),
-        tooltip: T('List of system services to restart when the pool is\
-                    unlocked.'),
+        placeholder: helptext.unlockDialog_services_placeholder,
+        tooltip: helptext.unlockDialog_services_tooltip,
         multiple: true,
         value: ['afp','cifs','ftp','iscsitarget','nfs','webdav','jails'],
         options: [{label: 'AFP', value: 'afp'},
@@ -318,34 +306,28 @@ export class VolumesListTableConfig implements InputTableConf {
             fieldConfig: [{
               type: 'paragraph',
               name: 'pool_detach_warning',
-              paraText: T("WARNING: Detaching '" + row1.name + "'. \
-                           Detaching a pool makes the data unavailable. \
-                           The pool data can also be wiped by setting the\
-                           related option. Back up any critical data \
-                           before detaching a pool."),
+              paraText: helptext.detachDialog_pool_detach_warning_paratext_a + row1.name +
+                helptext.detachDialog_pool_detach_warning_paratext_b,
               isHidden: false
             }, {
               type: 'paragraph',
               name: 'pool_detach_warning',
-              paraText: T("'" + row1.name + "' is encrypted! If the passphrase for \
-                           this encrypted pool has been lost, the data will be PERMANENTLY UNRECOVERABLE! \
-                           Before detaching encrypted pools, download and safely\
-                           store the recovery key."),
+              paraText: "'" + row1.name + helptext.detachDialog_pool_detach_warning__encrypted_paratext,
               isHidden: encryptedStatus !== '' ? false : true
             }, {
               type: 'checkbox',
               name: 'destroy',
               value: false,
-              placeholder: T("Destroy data on this pool?"),
+              placeholder: helptext.detachDialog_pool_detach_destroy_checkbox_placeholder,
             }, {
               type: 'checkbox',
               name: 'cascade',
               value: true,
-              placeholder: T("Delete configuration of shares that used this pool?"),
+              placeholder: helptext.detachDialog_pool_detach_cascade_checkbox_placeholder,
             }, {
               type: 'checkbox',
               name: 'confirm',
-              placeholder: T("Confirm detach"),
+              placeholder: helptext.detachDialog_pool_detach_confim_checkbox_placeholder,
               required: true
             }],
             isCustActionVisible(actionId: string) {
@@ -463,9 +445,7 @@ export class VolumesListTableConfig implements InputTableConf {
             label: T("Upgrade Pool"),
             onClick: (row1) => {
 
-              this.dialogService.confirm(T("Upgrade Pool"), T("Proceed with upgrading the pool? WARNING: Upgrading a pool is a\
-                                                              one-way operation that might make some features of \
-                                                              the pool incompatible with older versions of FreeNAS: ") + row1.name).subscribe((confirmResult) => {
+              this.dialogService.confirm(T("Upgrade Pool"), helptext.upgradePoolDialog_warning + row1.name).subscribe((confirmResult) => {
                   if (confirmResult === true) {
                     this.loader.open();
 
@@ -622,7 +602,7 @@ export class VolumesListTableConfig implements InputTableConf {
               {
                 type: 'input',
                 name: 'dataset',
-                placeholder: T('Pool/Dataset'),
+                placeholder: helptext.snapshotDialog_dataset_placeholder,
                 value: row.path,
                 isHidden: true,
                 readonly: true
@@ -630,16 +610,16 @@ export class VolumesListTableConfig implements InputTableConf {
               {
                 type: 'input',
                 name: 'name',
-                placeholder: T('Name'),
-                tooltip: T('Add a name for the new snapshot.'),
-                validation: [Validators.required],
+                placeholder: helptext.snapshotDialog_name_placeholder,
+                tooltip: helptext.snapshotDialog_name_tooltip,
+                validation: helptext.snapshotDialog_name_validation,
                 required: true,
                 value: "manual" + '-' + this.getTimestamp()            },
               {
                 type: 'checkbox',
                 name: 'recursive',
-                placeholder: T('Recursive'),
-                tooltip: T('Set to include child datasets of the chosen dataset.'),
+                placeholder: helptext.snapshotDialog_recursive_placeholder,
+                tooltip: helptext.snapshotDialog_recursive_tooltip,
               }
             ],
             method_rest: "storage/snapshot",
@@ -650,8 +630,8 @@ export class VolumesListTableConfig implements InputTableConf {
               const vmware_cb = {
                 type: 'checkbox',
                 name: 'vmware_sync',
-                placeholder: T('VMWare Sync'),
-                tooltip: T(''),
+                placeholder: helptext.vmware_sync_placeholder,
+                tooltip: helptext.vmware_sync_tooltip,
               }
               conf.fieldConfig.push(vmware_cb);
             }
