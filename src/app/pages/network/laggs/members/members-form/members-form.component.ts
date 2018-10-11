@@ -1,17 +1,10 @@
-import {Component} from '@angular/core';
-import {Router, ActivatedRoute} from '@angular/router';
-import {Validators} from '@angular/forms';
+import { Component } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 import * as _ from 'lodash';
 
-import {
-  NetworkService,
-  RestService,
-  WebSocketService
-} from '../../../../../services/';
-import {
-  FieldConfig
-} from '../../../../common/entity/entity-form/models/field-config.interface';
-import { T } from '../../../../../translate-marker';
+import { NetworkService, RestService, WebSocketService } from '../../../../../services/';
+import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
+import helptext from '../../../../../helptext/network/laggs/lagg';
 
 @Component({
   selector : 'app-lagg-form',
@@ -33,48 +26,44 @@ export class LaggMembersFormComponent {
     {
       type : 'input',
       name : 'id',
-      placeholder : T("Id"),
-      tooltip: T(''),
+      placeholder : helptext.id_placeholder,
+      tooltip: helptext.id_tooltip,
       isHidden: true
     },
     {
       type : 'select',
       name : 'lagg_interfacegroup',
-      placeholder : T('Lagg Interface Group'),
-      tooltip: T('The member interface to configure.'),
+      placeholder : helptext.lagg_interfacegroup_placeholder,
+      tooltip: helptext.lagg_interfacegroup_tooltip,
       options : [],
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext.lagg_interfacegroup_validation
     },
     {
       type : 'input',
       name : 'lagg_ordernum',
       inputType: 'number',
-      placeholder : T('Lagg Priority Number'),
-      tooltip: T('Order of selected interface within the lagg. Configure\
-                  a failover to set the master interface to <i>0</i> and\
-                  the other interfaces to <i>1</i>, <i>2</i>, etc.'),
+      placeholder : helptext.lagg_ordernum_placeholder,
+      tooltip: helptext.lagg_ordernum_tooltip,
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext.lagg_ordernum_validation
     },
     {
       type : 'input',
       name : 'lagg_physnic',
-      placeholder : T('Lagg Physical NIC'),
-      tooltip: T('Physical interface of the selected member.'),
+      placeholder : helptext.lagg_physnic_placeholder,
+      tooltip: helptext.lagg_physnic_tooltip,
       options : [],
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext.lagg_physnic_validation
     },
     {
       type : 'input',
       name : 'lagg_deviceoptions',
-      placeholder : T('Options'),
-      tooltip: T('Additional parameters from <a\
-                  href="https://www.freebsd.org/cgi/man.cgi?query=ifconfig"\
-                  target="_blank">ifconfig(8)</a>.'),
+      placeholder : helptext.lagg_deviceoptions_placeholder,
+      tooltip: helptext.lagg_deviceoptions_tooltip,
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext.lagg_deviceoptions_validation
     },
   ];
 
