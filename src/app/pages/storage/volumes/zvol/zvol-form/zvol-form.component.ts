@@ -12,8 +12,7 @@ import { T } from '../../../../../translate-marker';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormComponent } from '../../../../common/entity/entity-form';
 import { EntityUtils } from '../../../../common/entity/utils';
-
-
+import helptext from '../../../../../helptext/storage/volumes/zvol-form';
 
 interface ZvolFormData {
   name: string;
@@ -28,7 +27,6 @@ interface ZvolFormData {
   volblocksize: string;
   type: string;
 };
-
 
 @Component({
   selector : 'app-zvol-add',
@@ -68,7 +66,6 @@ export class ZvolFormComponent {
     }
   ];
 
-
   protected byteMap: Object= {
     'T': 1099511627776,
     'G': 1073741824,
@@ -80,26 +77,24 @@ export class ZvolFormComponent {
     {
       type: 'input',
       name: 'name',
-      placeholder: T('zvol name:'),
-      tooltip: T('Keep the zvol name short. Using a zvol name longer \
-                  than 63 characters can prevent accessing the zvol as \
-                  a device.'),
-      validation: [Validators.required],
+      placeholder: helptext.zvol_name_placeholder,
+      tooltip: helptext.zvol_name_tooltip,
+      validation: helptext.zvol_name_validation,
       required: true,
       isHidden: false
     },
     {
       type: 'input',
       name: 'comments',
-      placeholder: T('Comments'),
-      tooltip: T('Add any notes about this zvol.'),
+      placeholder: helptext.zvol_comments_placeholder,
+      tooltip: helptext.zvol_comments_tooltip,
     },
     {
       type: 'input',
       name: 'volsize',
       inputType: 'number',
-      placeholder: T('Size for this zvol'),
-      tooltip : T('Specify a size and value such as <i>10 GiB</i>.'),
+      placeholder: helptext.zvol_volsize_placeholder,
+      tooltip : helptext.zvol_volsize_tooltip,
       validation: [Validators.required, Validators.min(0)],
       required: true,
       class: 'inline',
@@ -130,21 +125,14 @@ export class ZvolFormComponent {
     {
       type: 'checkbox',
       name : 'force_size',
-      placeholder: T('Force size'),
-      tooltip : T('The system restricts creating a zvol that brings the\
-                   pool to over 80% capacity. Set to force creation of\
-                   the zvol (<b>NOT Recommended</b>).'),
+      placeholder: helptext.zvol_forcesize_placeholder,
+      tooltip : helptext.zvol_forcesize_tooltip,
     },
     {
       type: 'select',
       name: 'sync',
-      placeholder: T('Sync'),
-      tooltip: T('Sets the data write synchronization. <i>Inherit</i>\
-                  takes the sync settings from the parent dataset,\
-                  <i>Standard</i> uses the settings that have been\
-                  requested by the client software, <i>Always</i> waits\
-                  for data writes to complete, and <i>Disabled</i> never\
-                  waits for writes to complete.'),
+      placeholder: helptext.zvol_sync_placeholder,
+      tooltip: helptext.zvol_sync_tooltip,
       options: [
         { label: 'Standard', value: 'STANDARD' },
         { label: 'Always', value: 'ALWAYS' },
@@ -154,10 +142,8 @@ export class ZvolFormComponent {
     {
       type: 'select',
       name: 'compression',
-      placeholder: T('Compression level'),
-      tooltip: T('Automatically compress data written to the zvol.\
-                  Choose a <a href="%%docurl%%/storage.html%%webversion%%#compression"\
-                  target="_blank">compression algorithm</a>.'),
+      placeholder: helptext.zvol_compression_placeholder,
+      tooltip: helptext.zvol_compression_tooltip,
       options: [
         {label : 'Off', value : "OFF"},
         {label : 'lz4 (recommended)', value : "LZ4"},
@@ -167,44 +153,34 @@ export class ZvolFormComponent {
         {label : 'zle (runs of zeros)', value : "ZLE"},
         {label : 'lzjb (legacy, not recommended)', value : "LZJB"},
       ],
-      validation: [Validators.required],
+      validation: helptext.zvol_compression_validation,
       required: true,
     },
     {
       type: 'select',
       name: 'deduplication',
-      placeholder: T('ZFS Deduplication'),
-      tooltip : T('Activates the process for ZFS to transparently reuse\
-                   a single copy of duplicated data to save space. The\
-                   <a href="%%docurl%%/storage.html%%webversion%%#deduplication"\
-                   target="_blank">Deduplication section</a> of the Guide\
-                   describes each option.'),
+      placeholder: helptext.zvol_deduplication_placeholder,
+      tooltip : helptext.zvol_deduplication_tooltip,
       options: [
         {label : 'On', value : "ON"},
         {label : 'Verify', value : "VERIFY"},
         {label : 'Off', value : "OFF"},
       ],
-      validation: [Validators.required],
+      validation: helptext.zvol_deduplication_validation,
       required: true,
     },
     {
       type: 'checkbox',
       name : 'sparse',
-      placeholder: T('Sparse'),
-      tooltip : T('Set to provide <a\
-                   href="https://searchstorage.techtarget.com/definition/thin-provisioning"\
-                   target="_blank">thin provisioning</a>.\
-                   <b>Caution:</b> writes can fail when the pool is low\
-                   on space.'),
+      placeholder: helptext.zvol_sparse_placeholder,
+      tooltip : helptext.zvol_sparse_tooltip,
       isHidden: false
     },
     {
       type: 'select',
       name: 'volblocksize',
-      placeholder: T('Block size'),
-      tooltip: T('The zvol default block size is automatically chosen\
-                  based on the number of the disks in the pool for a\
-                  general use case.'),
+      placeholder: helptext.zvol_volblocksize_placeholder,
+      tooltip: helptext.zvol_volblocksize_tooltip,
       options: [
         { label: '4K', value: '4K' },
         { label: '8K', value: '8K' },
