@@ -15,6 +15,7 @@ import {
 import {Tooltip} from '../../common/tooltip';
 import {TOOLTIPS} from '../../common/tooltips';
 import { T } from '../../../translate-marker';
+import helptext from '../../../helptext/network/configuration/configuration';
 
 @Component({
   selector : 'app-networkconfiguration',
