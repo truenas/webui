@@ -1,5 +1,5 @@
 import { T } from '../../../translate-marker';
-import {Validators} from '@angular/forms';
+import { Validators } from '@angular/forms';
 
 export default {
     // lagg form

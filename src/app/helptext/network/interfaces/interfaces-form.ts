@@ -1,6 +1,5 @@
 import { T } from '../../../translate-marker';
-import {Validators} from '@angular/forms';
-import { regexValidator } from '../../../pages/common/entity/entity-form/validators/regex-validation';
+import { Validators } from '@angular/forms';
 
 export default {
     int_interface_placeholder : T('NIC'),
@@ -19,7 +18,6 @@ export default {
 
     int_ipv4address_placeholder : T('IPv4 Address'),
     int_ipv4address_tooltip : T('Enter a static IPv4 address. Example: <i>10.0.0.2</i>.'),
-    int_ipv4address_validation : [ regexValidator(this.networkService.ipv4_regex) ],
 
     int_v4netmaskbit_placeholder : T('IPv4 Netmask'),
     int_v4netmaskbit_tooltip : T('Enter a netmask.'),
@@ -33,7 +31,6 @@ export default {
     int_ipv6address_placeholder : T('IPv6 Address'),
     int_ipv6address_tooltip : T('Enter a static IPv6 address. Example:\
                    <i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>.'),
-    int_ipv6address_validation : [ regexValidator(this.networkService.ipv6_regex) ],
 
     int_v6netmaskbit_placeholder : T('IPv6 Prefix Length'),
     int_v6netmaskbit_tooltip : T('Select the prefix length used on the network.'),
@@ -46,7 +43,6 @@ export default {
     alias_address_placeholder: T('IPv4 Address'),
     alias_address_tooltip: T('Enter a static IPv4 address. Example:\
                     <i>10.0.0.3</i>.'),
-    alias_address_validation : [ regexValidator(this.networkService.ipv4_regex) ],
 
     alias_netmaskbit_placeholder: T('IPv4 Netmask'),
     alias_netmaskbit_tooltip : T('Enter a netmask.'),
@@ -57,13 +53,11 @@ export default {
     alias_address6_placeholder: T('IPv6 Address'),
     alias_address6_tooltip: T('Enter a static IPv6 address if DHCP is unset.\
                     Example: <i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>'),
-    alias_address6_validation : [ regexValidator(this.networkService.ipv6_regex) ],
 
     alias_netmaskbit6_placeholder: T('IPv6 Prefix Length'),
     alias_netmaskbit6_tooltip : T('Select the prefix length used on the network.'),
 
     delete_placeholder6: T('Delete'),
     delete_tooltip6: T('Set to delete this alias.'),
-
 
 }

@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
 import { RestService, TooltipsService, WebSocketService } from '../../../services/';
-import {EntityFormComponent} from '../../common/entity/entity-form';
+import { EntityFormComponent } from '../../common/entity/entity-form';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../helptext/network/configuration/configuration';
 
