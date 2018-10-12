@@ -7,6 +7,7 @@ import { NetworkService, RestService, DialogService, WebSocketService } from '..
 
 import { T } from '../../../../translate-marker';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from '../../../common/entity/utils';
 import helptext from '../../../../helptext/network/interfaces/interfaces-form';
@@ -26,7 +27,7 @@ export class InterfacesFormComponent implements OnDestroy {
       type : 'input',
       name : 'int_interface',
       placeholder : helptext.int_interface_placeholder,
-      tooltip : helptext.int_ipv4address_tooltip,
+      tooltip : helptext.int_interface_tooltip,
       required: true,
       validation : helptext.int_interface_validation
     },
@@ -49,7 +50,7 @@ export class InterfacesFormComponent implements OnDestroy {
       name : 'int_ipv4address',
       placeholder : helptext.int_ipv4address_placeholder,
       tooltip : helptext.int_ipv4address_tooltip,
-      validation : helptext.int_ipv4address_validation,
+      validation : [ regexValidator(this.networkService.ipv4_regex) ],
       relation : [
         {action : "DISABLE", when : [ {name : "int_dhcp", value : true} ]}
       ]
@@ -76,7 +77,7 @@ export class InterfacesFormComponent implements OnDestroy {
       name : 'int_ipv6address',
       placeholder : helptext.int_ipv6address_placeholder,
       tooltip : helptext.int_ipv6address_tooltip,
-      validation : helptext.int_ipv6address_validation,
+      validation : [ regexValidator(this.networkService.ipv6_regex) ],
       relation : [
         {action : "DISABLE", when : [ {name : "int_ipv6auto", value : true} ]}
       ]
@@ -107,7 +108,7 @@ export class InterfacesFormComponent implements OnDestroy {
         placeholder: helptext.alias_address_placeholder,
         tooltip: helptext.alias_address_tooltip,
         type: 'input',
-        validation : helptext.alias_address_validation
+        validation : [ regexValidator(this.networkService.ipv4_regex) ]
       },
       {
         name: 'alias_netmaskbit',
@@ -133,7 +134,7 @@ export class InterfacesFormComponent implements OnDestroy {
         placeholder: helptext.alias_address6_placeholder,
         tooltip: helptext.alias_address6_tooltip,
         type: 'input',
-        validation : helptext.alias_address6_validation
+        validation : [ regexValidator(this.networkService.ipv6_regex) ]
       },
       {
         name: 'alias_netmaskbit',
