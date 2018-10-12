@@ -2,9 +2,9 @@
   <div class="card-container  front">
     <mat-card class="front" fxLayout="row wrap" fxlayoutGap="16px" fxLayoutAlign="space-between stretch">
       <mat-toolbar-row fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" fxFlex="100" class="mat-card-toolbar">
-        <mat-card-title fxFlex="240px"><h3>{{title}}</h3></mat-card-title>
+        <mat-card-title fxFlex="65%"><h3>{{title}}</h3></mat-card-title>
         <!-- Controls/Tools -->
-        <div fxFlex="calc(100% - 240px)" class="line-chart-tools-wrapper">
+        <div fxFlex="calc(35%)" class="line-chart-tools-wrapper">
           <div class="line-chart-tools">
                   <button class="tool-icon" mat-icon-button [disabled]="timeZoomIndex >= (zoomLevels.length - 1)" >
                     <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-magnify-plus" (click)="timeZoomIn()"></mat-icon>
