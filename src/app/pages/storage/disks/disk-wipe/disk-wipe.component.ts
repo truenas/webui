@@ -13,7 +13,6 @@ import { DialogService } from '../../../../services/dialog.service';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/storage/disks/disk-wipe';
 
-
 @Component({
   selector: 'app-disk-wipe',
   templateUrl: './disk-wipe.component.html',
