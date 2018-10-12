@@ -534,3 +534,10 @@ p.value{
 .xs .title-wrapper .reports-btn{
   display:none;
 }
+
+.legend-group {
+  min-width: 220px !important;
+  width: 220px !important;
+  max-width: 220px !important;
+  margin-right: 20px;
+}
