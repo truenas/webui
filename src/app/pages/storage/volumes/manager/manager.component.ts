@@ -86,7 +86,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public vdevtypeError = null;
   public vdevtypeErrorMessage = helptext.manager_vdevtypeErrorMessage;
 
-  public diskAddWarning = helptext.manager_diskExtendWarning;
+  public diskAddWarning = helptext.manager_diskAddWarning;
   public diskExtendWarning = helptext.manager_diskExtendWarning;
 
   first_data_vdev_type: string;
