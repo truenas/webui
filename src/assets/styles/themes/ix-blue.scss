@@ -771,13 +771,13 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   // Fix a layout problem on Sharing/ISCSI page with ink-bar under active link...
-  iscsi .mat-tab-label-active {
+  iscsi .mat-tab-label-active, reportsdashboard .mat-tab-label-active  {
     border-bottom: 2px solid;
     @include variable(border-color, --primary, $primary);
   }
 
   //...by hiding ink bar, replacing it with a bottom border, above.
-  iscsi .mat-ink-bar {
+  iscsi .mat-ink-bar, reportsdashboard .mat-ink-bar {
     opacity: 0;
   }
 
