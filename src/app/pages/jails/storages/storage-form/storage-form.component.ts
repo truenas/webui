@@ -25,7 +25,7 @@ interface MountPoint {
 }
 @Component({
   selector: 'app-storage-add',
-  template: `<entity-form [conf]="this"></entity-form>`
+  template: `<entity-form *ngIf="isReady" [conf]="this"></entity-form>`
 })
 export class StorageFormComponent {
 
@@ -71,7 +71,7 @@ export class StorageFormComponent {
     },
     {
       type: 'explorer',
-      initial: '/mnt/iocage/jails',
+      initial: '/mnt',
       explorerType: 'directory',
       name: 'destination',
       placeholder: T('Destination'),
@@ -95,9 +95,23 @@ export class StorageFormComponent {
   protected error: any;
   protected jailID: any;
 
+  public isReady: boolean = false;
+  protected mountpoint: string;
   constructor(protected router: Router, protected aroute: ActivatedRoute,
     protected jailService: JailService, protected loader: AppLoaderService, protected ws: WebSocketService,
     private dialog: DialogService) {}
+
+  ngOnInit() {
+    this.ws.call('jail.get_activated_pool').subscribe((res)=>{
+          if (res != null) {
+            this.ws.call('zfs.dataset.query', [[["name", "=", res+"/iocage"]]]).subscribe(
+              (res)=> {
+                this.mountpoint = res[0].mountpoint;
+                this.isReady = true;
+              });
+          }
+    });
+  }
 
   preInit(entityForm: any) {
     let destination_field = _.find(this.fieldConfig, { 'name': 'destination' });
@@ -110,7 +124,7 @@ export class StorageFormComponent {
       this.queryCallOption = { "action": "LIST", "source": "", "destination": "", "fstype": "", "fsoptions": "", "dump": "", "pass": "" };
       if (this.jailID) {
         this.jail.value = this.jailID;
-        destination_field.initial += '/' + this.jailID + '/root';
+        destination_field.initial = this.mountpoint + '/jails/' + this.jailID + '/root';
       }
     });
   }
