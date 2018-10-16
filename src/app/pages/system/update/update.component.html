@@ -1,4 +1,10 @@
+
 <mat-card id="train-card">
+  <mat-spinner 
+    [diameter]='40' 
+    id="update-spinner"
+    *ngIf="showSpinner" #updatespinner>
+  </mat-spinner>
   <div>
     <div class="train-card-row">
       <mat-checkbox [(ngModel)]="autoCheck" id="autocheck" [ngModelOptions]="{standalone: true}"
