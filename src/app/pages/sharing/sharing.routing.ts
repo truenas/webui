@@ -19,6 +19,7 @@ import { InitiatorFormComponent } from './iscsi/initiator/initiator-form/';
 import { AuthorizedAccessListComponent } from './iscsi/authorizedaccess/authorizedaccess-list/';
 import { AuthorizedAccessFormComponent } from './iscsi/authorizedaccess/authorizedaccess-form/';
 import { TargetListComponent} from './iscsi/target/target-list/';
+import { TargetFormComponent} from './iscsi/target/target-form/';
 import { TargetAddComponent } from './iscsi/target/target-add/';
 import { TargetEditComponent} from './iscsi/target/target-edit/';
 import { ExtentListComponent } from './iscsi/extent/extent-list/';
@@ -159,11 +160,11 @@ export const routes: Routes = [
           data: { title: 'Targets', breadcrumb: 'Targets'},
           children: [{
             path: 'add',
-            component: TargetAddComponent,
+            component: TargetFormComponent,
             data: { title: 'Add', breadcrumb: 'Add' },
           },{
             path: 'edit/:pk',
-            component: TargetEditComponent,
+            component: TargetFormComponent,
             data: { title: 'Edit', breadcrumb: 'Edit' },
           }]
         },
