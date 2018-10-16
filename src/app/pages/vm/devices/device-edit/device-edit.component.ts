@@ -217,7 +217,7 @@ export class DeviceEditComponent implements OnInit {
     {
       name : 'wait',
       placeholder : helptext.wait_placeholder,
-      tooltip : helptext.wait_tooltip.,
+      tooltip : helptext.wait_tooltip,
       type: 'checkbox'
     },
     {
