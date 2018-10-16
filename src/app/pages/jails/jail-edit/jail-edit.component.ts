@@ -785,6 +785,10 @@ export class JailEditComponent implements OnInit {
       type: 'select',
       name: 'vnet_default_interface',
       placeholder: T('vnet_default_interface'),
+      tooltip: T('Default network interface used for the VNET bridge\
+                  interface in the jail. Only takes effect when\
+                  <i>VNET</i> is set and bridge interfaces are not\
+                  active.'),
       options: [
         {
           label: 'none',
