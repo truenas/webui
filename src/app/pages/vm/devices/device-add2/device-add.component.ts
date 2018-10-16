@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { RestService, WebSocketService, SystemGeneralService, NetworkService } from '../../../../services/';
 import { EntityUtils } from '../../../common/entity/utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import helptext from '../../../../helptext/vm/devices/device-add';
+import helptext from '../../../../helptext/vm/devices/device-add-edit';
 
 @Component({
   selector : 'app-device-add2',
