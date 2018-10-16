@@ -49,6 +49,7 @@ export class UpdateComponent implements OnInit {
 
   public busy: Subscription;
   public busy2: Subscription;
+  public showSpinner: boolean = false;
 
   protected dialogRef: any;
   constructor(protected router: Router, protected route: ActivatedRoute, protected snackBar: MatSnackBar,
@@ -229,6 +230,9 @@ export class UpdateComponent implements OnInit {
       this.rest
       .put('system/update', { body: JSON.stringify({ upd_autocheck: this.autoCheck }) })
       .subscribe((res) => {
+        if(res.data.upd_autocheck === true) {
+          this.check();
+        }
       });
   }
 
@@ -352,6 +356,7 @@ export class UpdateComponent implements OnInit {
 }
 
   check() {
+    this.showSpinner = true;
     this.pendingupdates();
     this.error = null;
     this.ws.call('update.check_available', [{ train: this.train }])
@@ -416,6 +421,7 @@ export class UpdateComponent implements OnInit {
           this.general_update_error =  err.reason.replace('>', '').replace('<','') + T(": Automatic update check failed. Please check system network settings.")
         },
         () => {
+          this.showSpinner = false;
         });
   }
 }
