@@ -164,6 +164,8 @@ export class JailListComponent implements OnInit {
       return false;
     } else if (actionId === 'shell' && row.state === "down") {
       return false;
+    } if (actionId === 'restart' && row.state === "down") {
+      return false;
     }
     return true;
   }
@@ -239,6 +241,33 @@ export class JailListComponent implements OnInit {
                 this.updateRow(row);
                 this.updateMultiAction([row]);
                 this.loader.close();
+              },
+              (res) => {
+                this.loader.close();
+                new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
+              });
+        }
+      },
+      {
+        id: "restart",
+        label: T("Restart"),
+        onClick: (row) => {
+          this.entityList.busy =
+            this.loader.open();
+            row.state = 'restarting';
+            this.ws.call('jail.stop', [row.host_hostuuid]).subscribe(
+              (res) => {
+                this.ws.call('jail.start', [row.host_hostuuid]).subscribe(
+                  (res) => {
+                    row.state = 'up';
+                    this.updateRow(row);
+                    this.updateMultiAction([row]);
+                    this.loader.close();
+                  },
+                  (res) => {
+                    this.loader.close();
+                    new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
+                  });
               },
               (res) => {
                 this.loader.close();
