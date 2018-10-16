@@ -160,6 +160,8 @@ export class PluginsInstalledListComponent {
       return false;
     } else if (actionId === 'management' && (row[3] === "down" || row[9] == null)) {
       return false;
+    } else if (actionId === 'restart' && row[3] === "down") {
+      return false;
     }
     return true;
   }
@@ -198,6 +200,31 @@ export class PluginsInstalledListComponent {
               (res) => {
                 this.loader.close();
                 this.updateRow(row);
+              },
+              (res) => {
+                this.loader.close();
+                new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
+              });
+        }
+      },
+      {
+        id: "restart",
+        label: T("Retart"),
+        onClick: (row) => {
+          this.loader.open();
+          row[3] = 'restarting';
+          this.entityList.busy =
+            this.ws.call('jail.stop', [row[1]]).subscribe(
+              (res) => {
+                this.ws.call('jail.start', [row[1]]).subscribe(
+                  (res) => {
+                    this.loader.close();
+                    this.updateRow(row);
+                  },
+                  (res) => {
+                    this.loader.close();
+                    new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
+                  });
               },
               (res) => {
                 this.loader.close();
