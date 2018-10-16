@@ -4,16 +4,16 @@ import { RestService, WebSocketService, NetworkService } from '../../../services
 import { FormGroup, Validators } from '@angular/forms';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
-import {MessageService} from '../../common/entity/entity-form/services/message.service';
+import { MessageService } from '../../common/entity/entity-form/services/message.service';
 import * as _ from 'lodash';
 
-import {VmService} from '../../../services/vm.service';
-import {regexValidator} from '../../common/entity/entity-form/validators/regex-validation';
+import { VmService } from '../../../services/vm.service';
+import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { MatDialog } from '@angular/material';
 import { T } from '../../../translate-marker';
 import { DialogService } from '../../../services/dialog.service';
-
+import helptext from '../../../helptext/vm/vm-wizard';
 
 @Component({
   selector: 'app-vm-wizard',
@@ -37,47 +37,39 @@ export class VMWizardComponent {
   protected wizardConfig: Wizard[] = [
 
     {
-      label: T('Select VM wizard type'),
+      label: helptext.wizard_type_label,
       fieldConfig: [
 
         {
           type: 'select',
           name: 'wizard_type',
           required: true,
-          placeholder: T('Virtual Machine (VM) Wizard type.'),
-          tooltip: T('Select the Virtual Machine (VM) Wizard type.'),
-          options: [
-            {label: 'Virtual Machine (VM)', value: 'vm'},
-            {label: 'Docker Host', value: 'docker'},
-          ],
+          placeholder: helptext.wizard_type_placeholder,
+          tooltip: helptext.wizard_type_tooltip,
+          options: helptext.wizard_type_options,
           validation : [ Validators.required ],
           value: 'vm'
         },
       ]
     },
 
-
     {
-      label: T('Operating System'),
+      label: helptext.os_label,
       fieldConfig: [
         {
           type: 'select',
           name: 'os',
           required: true,
-          placeholder: T('Guest Operating System'),
-          tooltip: T('Choose the VM operating system type.'),
-          options: [
-            {label: 'Windows', value: 'Windows'},
-            {label: 'Linux', value: 'Linux'},
-            {label: 'FreeBSD', value: 'FreeBSD'},
-          ],
-          validation : [ Validators.required ],
+          placeholder: helptext.os_placeholder,
+          tooltip: helptext.os_tooltip,
+          options: helptext.os_options,
+          validation : helptext.os_validation,
         },
       { type: 'input',
         name : 'name',
-        placeholder : T('Name'),
-        tooltip : T('Enter an alphanumeric name for the virtual machine.'),
-        validation : [ Validators.required ],
+        placeholder : helptext.name_placeholder,
+        tooltip : helptext.name_tooltip,
+        validation : helptext.name_validation,
         required: true,
         blurStatus: true,
         blurEvent: this.blurEvent,
@@ -85,96 +77,81 @@ export class VMWizardComponent {
       },
       { type: 'select',
         name : 'bootloader',
-        placeholder : T('Boot Method'),
-        tooltip : T('Select <i>UEFI</i> for newer operating systems or\
-                     <i>UEFI-CSM</i> (Compatibility Support Mode) for\
-                     older operating systems that only support BIOS\
-                     booting.'),
+        placeholder : helptext.bootloader_placeholder,
+        tooltip : helptext.bootloader_tooltip,
         options: []
       },
       { type: 'checkbox',
         name : 'autostart',
-        placeholder : T('Start on Boot'),
-        tooltip : T('Set to start this VM when the system boots.'),
+        placeholder : helptext.autostart_placeholder,
+        tooltip : helptext.autostart_tooltip,
         value: true
       },
       { type: 'checkbox',
       name : 'enable_vnc',
-      placeholder : T('Enable VNC'),
-      tooltip : T('Enable a VNC (Virtual Network Computing) remote\
-                   connection. Requires <i>UEFI</i> booting.'),
+      placeholder : helptext.enable_vnc_placeholder,
+      tooltip : helptext.enable_vnc_tooltip,
       value: true,
       isHidden: false
     }
       ]
     },
     {
-      label: T('CPU and Memory'),
+      label: helptext.vcpus_label,
       fieldConfig: [{
           type: 'input',
           name: 'vcpus',
-          placeholder: T('Virtual CPUs'),
+          placeholder: helptext.vcpus_placeholder,
           inputType: 'number',
           min: 1,
           validation : [ Validators.required, Validators.min(1), Validators.max(16) ],
-          tooltip: T('Number of virtual CPUs to allocate to the virtual\
-                      machine. The maximum is 16, or fewer if the host\
-                      CPU limits the maximum. The VM operating system\
-                      might also have operational or licensing\
-                      restrictions on the number of CPUs.'),
+          tooltip: helptext.vcpus_tooltip,
         },
         {
           type: 'input',
           name: 'memory',
-          placeholder: T('Memory Size (MiB)'),
+          placeholder: helptext.memory_placeholder,
           inputType: 'number',
           min: 128,
-          validation : [ Validators.required, Validators.min(128)],
+          validation : helptext.memory_validation,
           required: true,
           blurStatus: true,
           blurEvent: this.blurEvent2,
           parent: this,
-          tooltip: T('Allocate a number of megabytes of RAM for the VM.'),
+          tooltip: helptext.memory_tooltip,
         },
       ]
     },
     {
-      label: T('Hard Disks'),
+      label: helptext.disks_label,
       fieldConfig: [
         {
           type: 'radio',
           name: 'disk_radio',
-          tooltip: 'Select <i>Create new disk image</i> to create a new\
-                    zvol on an existing dataset. This is used as a\
-                    virtual hard drive for the VM. Select <i>Use\
-                    existing disk image</i> to use an existing zvol or\
-                    file for the VM.',
-          options:[{label:T("Create new disk image"), value: true},
-                   {label:T("Use existing disk image"), value: false}],
+          tooltip: helptext.disk_radio_tooltip,
+          options: helptext.disk_radio_options,
           value: true,
         },
         {
           type: 'input',
           name: 'volsize',
-          placeholder : T('Define the size (GiB) for the zvol'),
-          tooltip: T('Allocate a number of gigabytes of space for the\
-                      new zvol.'),
+          placeholder : helptext.volsize_placeholder,
+          tooltip: helptext.volsize_tooltip,
           isHidden: false,
           blurStatus: true,
           blurEvent: this.blurEvent3,
           parent: this,
-          validation: [Validators.required, Validators.min(1)],
-          required: true
+          validation: helptext.volsize_validation
         },
         {
           type: 'paragraph',
           name: 'pool_detach_warning',
-          paraText: T("Select a pool or dataset"),
+          paraText: helptext.pool_detach_warning_paraText,
         },
         {
           type: 'explorer',
           name: 'datastore',
-          tooltip: T('Choose a pool or dataset for the new zvol.'),
+          tooltip: helptext.datastore_tooltip,
           options: [],
           isHidden: false,
           initial: '/mnt',
@@ -197,8 +174,8 @@ export class VMWizardComponent {
         {
           type: 'select',
           name: 'hdd_path',
-          placeholder: T('Select an existing disk'),
-          tooltip: T('Browse to the desired pool or dataset on the disk.'),
+          placeholder: helptext.hdd_path_placeholder,
+          tooltip: helptext.hdd_path_tooltip,
           isHidden: true,
           options:[]
         },
