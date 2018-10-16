@@ -8,7 +8,7 @@ import { UserService } from '../../../../services/user.service';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { RestService, WebSocketService, DialogService } from '../../../../services/';
 import { T } from '../../../../translate-marker';
-
+import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
 @Component({
   selector : 'app-nfs-form',
   template : `<entity-form [conf]="this"></entity-form>`
@@ -81,6 +81,7 @@ export class NFSFormComponent {
                   network/mask CIDR notation.\
                   Example: <i>1.2.3.0/24</i>. Leave empty\
                   to allow all.'),
+      validation: [regexValidator(/^([01]?\d\d?|2[0-4]\d|25[0-5])(?:\.[01]?\d\d?|2[0-4]\d|25[0-5]){3}(?:\/[0-2]\d|\/3[0-2])?(\s+([01]?\d\d?|2[0-4]\d|25[0-5])(?:\.[01]?\d\d?|2[0-4]\d|25[0-5]){3}(?:\/[0-2]\d|\/3[0-2]))*$/)]
     },
        {
       type: 'textarea',
@@ -88,6 +89,7 @@ export class NFSFormComponent {
       placeholder: T('Authorized Hosts and IP addresses'),
       tooltip: T('Space-delimited list of allowed IP addresses or\
                   hostnames. Leave empty to allow all.'),
+      validation: [regexValidator(/^(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5])).(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5])).(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5])).(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5]))(\s(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5])).(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5])).(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5])).(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5])))*$/)]
     },
     {
       type: 'select',
