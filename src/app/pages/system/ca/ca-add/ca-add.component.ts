@@ -343,8 +343,8 @@ export class CertificateAuthorityAddComponent {
     }
 
     // Addresses non-pristine field being mistaken for a passphrase of ''
-    if (data.Passphrase == '') {
-      data.Passphrase = undefined;
+    if (data.passphrase == '') {
+      data.passphrase = undefined;
     }
     if (data.passphrase2) {
       delete data.passphrase2;
