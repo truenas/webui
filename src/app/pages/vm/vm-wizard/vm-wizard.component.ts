@@ -8,7 +8,6 @@ import { MessageService } from '../../common/entity/entity-form/services/message
 import * as _ from 'lodash';
 
 import { VmService } from '../../../services/vm.service';
-import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { MatDialog } from '@angular/material';
 import { T } from '../../../translate-marker';
@@ -168,81 +167,74 @@ export class VMWizardComponent {
       ]
     },
     {
-      label: T('Network Interface'),
+      label: helptext.NIC_label,
       fieldConfig: [
         {
           name : 'NIC_type',
-          placeholder : T('Adapter Type'),
-          tooltip : T('<i>Intel e82545 (e1000)</i> emulates the same\
-                       Intel Ethernet card. This provides compatibility\
-                       with most operating systems. <i>VirtIO</i>\
-                       provides better performance when the operating\
-                       system installed in the VM supports VirtIO\
-                       paravirtualized network drivers.'),
+          placeholder : helptext.NIC_type_placeholder,
+          tooltip : helptext.NIC_type_tooltip,
           type: 'select',
           options : [],
-          validation : [ Validators.required ],
+          validation : helptext.NIC_type_validation,
           required: true,
         },
         {
           name : 'NIC_mac',
-          placeholder : T('Mac Address'),
-          tooltip : T('Enter the desired address into the field to\
-                       override the randomized MAC address.'),
+          placeholder : helptext.NIC_mac_placeholder,
+          tooltip : helptext.NIC_mac_tooltip,
           type: 'input',
-          value : '00:a0:98:FF:FF:FF',
-          validation : [ regexValidator(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i) ],
+          value : helptext.NIC_mac_value,
+          validation : helptext.NIC_mac_validation,
         },
         {
           name : 'nic_attach',
-          placeholder : T('Attach NIC'),
-          tooltip : T('Select the physical interface to associate with\
-                       the VM.'),
+          placeholder : helptext.nic_attach_placeholder,
+          tooltip : helptext.nic_attach_tooltip,
           type: 'select',
           options : [],
-          validation : [ Validators.required ],
+          validation : helptext.nic_attach_validation,
           required: true,
         },
       ]
     },
     {
-      label: T('Installation Media'),
+      label: helptext.media_label,
       fieldConfig: [
         {
           type: 'explorer',
           name: 'iso_path',
-          placeholder : T('Choose installation media image'),
+          placeholder : helptext.iso_path_placeholder,
           initial: '/mnt',
-          tooltip: T('Browse to the operating system installer image file.'),
-          validation : [ Validators.required ],
+          tooltip: helptext.iso_path_tooltip,
+          validation : helptext.iso_path_validation,
           required: true,
         },
         {
           type: 'checkbox',
           name: 'upload_iso_checkbox',
-          placeholder : T('Upload an installer image file'),
-          tooltip: T('Set to display image upload options.'),
+          placeholder : helptext.upload_iso_checkbox_placeholder,
+          tooltip: helptext.upload_iso_checkbox_tooltip,
           value: false,
         },
         {
           type: 'explorer',
           name: 'upload_iso_path',
-          placeholder : 'ISO save location',
+          placeholder : helptext.iso_path_placeholder,
           initial: '/mnt',
-          tooltip: T('Choose a location to store the installer image file.'),
+          tooltip: helptext.iso_path_tooltip,
           explorerType: 'directory',
           isHidden: true,
-          validation : [],
+          validation : helptext.iso_path_validation,
         },
         {
           type: 'upload',
           name: 'upload_iso',
-          placeholder : 'ISO upload location',
-          tooltip: 'Browse to the installer image file and click <b>Upload</b>.',
+          placeholder : helptext.upload_iso_placeholder,
+          tooltip: helptext.upload_iso_tooltip,
           isHidden: true,
           acceptedFiles: '.img,.iso',
           fileLocation: '',
-          validation : [  ],
+          validation : helptext.upload_iso_validation,
           message: this.messageService
         },
       ]
