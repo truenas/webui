@@ -1,6 +1,6 @@
-import { T } from '../../translate-marker';
+import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
-import { regexValidator } from '../../pages/common/entity/entity-form/validators/regex-validation';
+import { regexValidator } from '../../../pages/common/entity/entity-form/validators/regex-validation';
 
 export default {
     wizard_type_label: T('Select VM wizard type'),
@@ -72,6 +72,14 @@ export default {
 
     datastore_tooltip: T('Choose a pool or dataset for the new zvol.'),
 
+    hdd_type_placeholder: T('Select desired type of disk'),
+    hdd_type_tooltip: T('Select desired disk type.'),
+    hdd_type_options : [
+      {label : 'AHCI', value : 'AHCI'},
+      {label : 'VirtIO', value : 'VIRTIO'},
+    ],
+    hdd_type_value: 'AHCI',
+
     hdd_path_placeholder: T('Select an existing disk'),
     hdd_path_tooltip: T('Browse to the desired pool or dataset on the disk.'),
 
@@ -107,6 +115,7 @@ export default {
 
     upload_iso_path_placeholder : 'ISO save location',
     upload_iso_path_tooltip: T('Choose a location to store the installer image file.'),
+    upload_iso_path_validation: [],
     
     upload_iso_placeholder : 'ISO upload location',
     upload_iso_tooltip: 'Browse to the installer image file and click <b>Upload</b>.',
