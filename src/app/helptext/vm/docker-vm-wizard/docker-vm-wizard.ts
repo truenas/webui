@@ -74,7 +74,7 @@ export default {
     raw_file_directory_validation : [ Validators.required ],
 
     sectorsize_placeholder : 'Disk sector size',
-    sectorsize_tooltip : 'Select a sector size in bytes. <i>Default/i> leaves the\
+    sectorsize_tooltip : 'Select a sector size in bytes. <i>Default</i> leaves the\
                        sector size unset.',
     sectorsize_options: [
               { label: 'Default', value:0 },
