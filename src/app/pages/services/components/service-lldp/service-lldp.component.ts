@@ -1,19 +1,10 @@
-import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
-import {
-  AbstractControl,
-  FormArray,
-  FormGroup,
-  Validators
-} from '@angular/forms';
-import {ActivatedRoute, Router, RouterModule} from '@angular/router';
+import { ApplicationRef, Component, Injector } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
 
-import {RestService, WebSocketService} from '../../../../services/';
-import {
-  FieldConfig
-} from '../../../common/entity/entity-form/models/field-config.interface';
-import { T } from '../../../../translate-marker';
+import { RestService, WebSocketService } from '../../../../services/';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import helptext from '../../../../helptext/services/components/service-lldp';
 
 @Component({
   selector : 'lldp-edit',
@@ -28,23 +19,20 @@ export class ServiceLLDPComponent {
     {
       type : 'checkbox',
       name : 'lldp_intdesc',
-      placeholder : T('Interface Description'),
-      tooltip: T('Set to enable <i>receive</i> mode. Any received peer\
-                  information is saved in interface descriptions.'),
+      placeholder : helptext.lldp_intdesc_placeholder,
+      tooltip: helptext.lldp_intdesc_tooltip,
     },
     {
       type : 'input',
       name : 'lldp_country',
-      placeholder : T('Country Code'),
-      tooltip: T('Required for <a href="..//docs/services.html#lldp"\
-                  target="_blank">LLDP</a> location support. Enter a\
-                  two-letter ISO 3166 country code.'),
+      placeholder : helptext.lldp_country_placeholder,
+      tooltip: helptext.lldp_country_tooltip,
     },
     {
       type : 'input',
       name : 'lldp_location',
-      placeholder : T('Location'),
-      tooltip: T('Specify the physical location of the host.'),
+      placeholder : helptext.lldp_location_placeholder,
+      tooltip: helptext.lldp_location_tooltip
     },
   ];
 
