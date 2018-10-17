@@ -12,7 +12,7 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 import { MatDialog } from '@angular/material';
 import { T } from '../../../translate-marker';
 import { DialogService } from '../../../services/dialog.service';
-import helptext from '../../../helptext/vm/vm-wizard';
+import helptext from '../../../helptext/vm/vm-wizard/vm-wizard';
 
 @Component({
   selector: 'app-vm-wizard',
@@ -158,6 +158,15 @@ export class VMWizardComponent {
         },
         {
           type: 'select',
+          name: 'hdd_type',
+          placeholder: helptext.hdd_type_placeholder,
+          tooltip: helptext.hdd_type_tooltip,
+          isHidden: false,
+          options : helptext.hdd_type_options,
+          value: helptext.hdd_type_value
+        },
+        {
+          type: 'select',
           name: 'hdd_path',
           placeholder: helptext.hdd_path_placeholder,
           tooltip: helptext.hdd_path_tooltip,
@@ -219,12 +228,12 @@ export class VMWizardComponent {
         {
           type: 'explorer',
           name: 'upload_iso_path',
-          placeholder : helptext.iso_path_placeholder,
+          placeholder : helptext.upload_iso_path_placeholder,
           initial: '/mnt',
-          tooltip: helptext.iso_path_tooltip,
+          tooltip: helptext.upload_iso_path_tooltip,
           explorerType: 'directory',
           isHidden: true,
-          validation : helptext.iso_path_validation,
+          validation : helptext.upload_iso_path_validation,
         },
         {
           type: 'upload',
