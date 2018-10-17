@@ -61,7 +61,7 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
     return data;
   };
 
-
+  pk: any;
   constructor(
       protected router: Router,
       protected route: ActivatedRoute,
@@ -75,6 +75,12 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
 
   }
 
+  preInit(entityForm: any) {
+    this.route.params.subscribe(params => {
+      this.pk = params['pk'];
+    });
+  }
+
   afterInit(entityForm: any) {
 
   }
@@ -82,7 +88,7 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
   customSubmit(value) {
     this.loader.open();
 
-    return this.rest.post(this.resource_name + "/" + value.name + "/rekey/", { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
+    return this.rest.post(this.resource_name + "/" + this.pk + "/rekey/", { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
       console.log("restPostResp", restPostResp);
       this.loader.close();
       this.dialogService.Info(T("Re-keyed Pool"), T("Successfully re-keyed pool ") + value.name);
