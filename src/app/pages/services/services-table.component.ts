@@ -57,9 +57,11 @@ export class ServicesTableComponent implements OnChanges, OnInit {
       let newData = Object.assign(this.data,{});
       this.data = newData;
     }
-    this.datatable.limit = this.pageSize; // items per page
-    this.datatable.recalculate();
-    this.setTableHeight(this.datatable);
+    if (this.datatable) {
+      this.datatable.limit = this.pageSize; // items per page
+      this.datatable.recalculate();
+      this.setTableHeight(this.datatable);
+    }
   }
 
   setTableHeight(t){
