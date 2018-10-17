@@ -1,27 +1,11 @@
-import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
-import {
-  AbstractControl,
-  FormArray,
-  FormGroup,
-  Validators
-} from '@angular/forms';
-import {ActivatedRoute, Router, RouterModule} from '@angular/router';
+import { ApplicationRef, Component, Injector } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
 
-import {
-  IdmapService,
-  IscsiService,
-  RestService,
-  WebSocketService
-} from '../../../../services/';
-import {
-  FieldConfig
-} from '../../../common/entity/entity-form/models/field-config.interface';
-import {
-  matchOtherValidator
-} from '../../../common/entity/entity-form/validators/password-validation';
+import { RestService, WebSocketService } from '../../../../services/';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
+import helptext from '../../../../helptext/services/components/service-dc';
 
 @Component({
   selector : 'domaincontroller-edit',
@@ -36,93 +20,68 @@ export class ServiceDCComponent {
     {
       type : 'input',
       name : 'dc_realm',
-      label : 'Realm',
-      placeholder : T('Realm'),
-      tooltip: T('Enter a capitalized DNS realm name.'),
+      label : helptext.dc_realm_label,
+      placeholder : helptext.dc_realm_placeholder,
+      tooltip: helptext.dc_realm_tooltip,
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext.dc_realm_validation
     },
     {
       type : 'input',
       name : 'dc_domain',
-      label : 'Domain',
-      placeholder : T('Domain'),
-      tooltip: T('Enter a capitalized domain name.'),
+      label : helptext.dc_domain_label,
+      placeholder : helptext.dc_domain_placeholder,
+      tooltip: helptext.dc_domain_tooltip,
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext.dc_domain_validation
     },
     {
       type : 'select',
       name : 'dc_role',
-      label : 'Server Role',
-      placeholder : T('Server Role'),
-      tooltip: T('The only server role available is the domain\
-                  controller for a new domain.'),
-      options : [
-        {label : 'DC', value : 'dc'},
-      ],
+      label : helptext.dc_role_label,
+      placeholder : helptext.dc_role_placeholder,
+      tooltip: helptext.dc_role_tooltip,
+      options : helptext.dc_role_options,
     },
     {
       type : 'input',
       name : 'dc_dns_forwarder',
-      label : 'DNS Forwarder',
-      placeholder : T('DNS Forwarder'),
-      tooltip: T('Enter the IP address of a DNS forwarder. Required for\
-                  recursive queries when <i>SAMBA_INTERNAL</i> is\
-                  selected.'),
+      label : helptext.dc_dns_forwarder_label,
+      placeholder : helptext.dc_dns_forwarder_placeholder,
+      tooltip: helptext.dc_dns_forwarder_tooltip,
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext.dc_dns_forwarder_validation
     },
     {
       type : 'select',
       name : 'dc_forest_level',
-      label : 'Domain Forest Level',
-      placeholder : T('Domain Forest Level'),
-      tooltip: T('Choices are <i>2000, 2003, 2008, 2008_R2, 2012,</i> or <i>2012_R2</i>.\
-                  Refer to <a\
-                  href="https://docs.microsoft.com/en-us/windows-server/identity/ad-ds/active-directory-functional-levels"\
-                  target="_blank">Understanding Active Directory Domain Services (AD DS)\
-                  Functional Levels</a> for more details.'),
-      options : [
-        {label : '2000', value : '2000'},
-        {label : '2003', value : '2003'},
-        {label : '2008', value : '2008'},
-        {label : '2008_R2', value : '2008_R2'},
-        {label : '2012', value : '2012'},
-        {label : '2012_R2', value : '2012_R2'},
-      ],
+      label : helptext.dc_forest_level_label,
+      placeholder : helptext.dc_forest_level_placeholder,
+      tooltip: helptext.dc_forest_level_tooltip,
+      options : helptext.dc_forest_level_options,
     },
     {
       type : 'input',
       name : 'dc_passwd',
       inputType : 'password',
-      placeholder : T('Administrator Password'),
+      placeholder : helptext.dc_passwd_placeholder,
       togglePw: true,
-      tooltip: T('Enter the password to be used for the\
-                  <a href="..//docs/directoryservice.html#active-directory"\
-                  target=”_blank”>Active Directory</a> administrator\
-                  account.'),
-      validation :
-          [ Validators.minLength(8), matchOtherValidator('dc_passwd2') ]
+      tooltip: helptext.dc_passwd_tooltip,
+      validation : helptext.dc_passwd_validation 
     },
     {
       type : 'input',
       name : 'dc_passwd2',
       inputType : T('password'),
-      placeholder : T('Confirm password')
+      placeholder : helptext.dc_passwd2_placeholder
     },
     {
       type : 'select',
       name : 'afp_srv_map_acls',
-      label : 'Kerberos Realm:',
-      placeholder : T('Kerberos Realm'),
-      tooltip : T('Auto-populates with information from the <b>Realm</b>\
-                   when the settings in this screen are saved.'),
-      options : [
-        {label : 'Rights', value : 'rights'},
-        {label : 'None', value : 'none'},
-        {label : 'Mode', value : 'mode'},
-      ],
+      label : helptext.afp_srv_map_acls_label,
+      placeholder : helptext.afp_srv_map_acls_placeholder,
+      tooltip : helptext.afp_srv_map_acls_tooltip,
+      options : helptext.afp_srv_map_acls_options,
     },
   ];
 
