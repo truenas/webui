@@ -40,7 +40,7 @@ export class DiskListComponent {
 		ttpos: "above", // tooltip position
 		onClick: (selected) => {
 			this.router.navigate(new Array('/').concat([
-				"storage", "disks", "edit", selected[0].identifier
+				"storage", "disks", "bulk-edit"
 			]));
 		}
 	}]
