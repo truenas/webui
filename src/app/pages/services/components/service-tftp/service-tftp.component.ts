@@ -1,28 +1,10 @@
-import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
-import {
-  AbstractControl,
-  FormArray,
-  FormGroup,
-  Validators
-} from '@angular/forms';
-import {ActivatedRoute, Router, RouterModule} from '@angular/router';
+import { ApplicationRef, Component, Injector } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
 
-import {
-  RestService,
-  SystemGeneralService,
-  WebSocketService,
-  UserService
-} from '../../../../services/';
-import {
-  FieldConfig
-} from '../../../common/entity/entity-form/models/field-config.interface';
-import {
-  matchOtherValidator
-} from '../../../common/entity/entity-form/validators/password-validation';
-import { T } from '../../../../translate-marker';
-import { parse } from 'path';
+import { RestService, WebSocketService, UserService } from '../../../../services/';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import helptext from '../../../../helptext/services/components/service-tftp';
 
 @Component({
   selector : 'tftp-edit',
@@ -40,48 +22,40 @@ export class ServiceTFTPComponent {
       initial: '/mnt',
       explorerType: 'directory',
       name : 'tftp_directory',
-      placeholder : T('Directory'),
-      tooltip : T('Browse to an <b>existing</b> directory to use for\
-                   storage. Some devices can require a specific\
-                   directory name. Consult the documentation for that\
-                   device to see if there are any restrictions.'),
+      placeholder : helptext.tftp_directory_placeholder,
+      tooltip : helptext.tftp_directory_tooltip,
     },
     {
       type : 'checkbox',
       name : 'tftp_newfiles',
-      placeholder : T('Allow New Files'),
-      tooltip : T('Set when network devices need to send files to\
-                   the system.'),
+      placeholder : helptext.tftp_newfiles_placeholder,
+      tooltip : helptext.tftp_newfiles_tooltip,
     },
     {
       type : 'input',
       name : 'tftp_port',
-      placeholder : T('Port'),
-      tooltip : T('Enter a UDP prort to listen for TFTP requests.'),
+      placeholder : helptext.tftp_port_placeholder,
+      tooltip : helptext.tftp_port_tooltip,
     },
     {
       type : 'combobox',
       name : 'tftp_username',
-      placeholder : T('Username'),
-      tooltip : T('Select the account to use for TFTP requests. This\
-                   account must have permission to the <b>Directory</b>.'),
+      placeholder : helptext.tftp_username_placeholder,
+      tooltip : helptext.tftp_username_tooltip,
       options : []
     },
     {
       type : 'permissions',
       name : 'tftp_umask',
       noexec: true,
-      placeholder : T('File Permissions'),
-      tooltip : T('Adjust the file permissions using the checkboxes.'),
+      placeholder : helptext.tftp_umask_placeholder,
+      tooltip : helptext.tftp_umask_tooltip,
     },
     {
       type : 'textarea',
       name : 'tftp_options',
-      placeholder : T('Extra options'),
-      tooltip : T('Add more options from <a\
-                   href="https://www.freebsd.org/cgi/man.cgi?query=tftpd"\
-                   target="_blank">tftpd(8)</a>. Add one option on each\
-                   line.'),
+      placeholder : helptext.tftp_options_placeholder,
+      tooltip : helptext.tftp_options_tooltip
     },
   ];
 
