@@ -1,26 +1,10 @@
-import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
-import {
-  AbstractControl,
-  FormArray,
-  FormGroup,
-  Validators
-} from '@angular/forms';
-import {ActivatedRoute, Router, RouterModule} from '@angular/router';
+import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
 
-import {
-  NetworkService,
-  RestService,
-  WebSocketService
-} from '../../../../services/';
-import {
-  FieldConfig
-} from '../../../common/entity/entity-form/models/field-config.interface';
-import {
-  matchOtherValidator
-} from '../../../common/entity/entity-form/validators/password-validation';
-import { T } from '../../../../translate-marker';
+import { NetworkService, RestService, WebSocketService } from '../../../../services/';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import helptext from '../../../../helptext/services/components/service-ssh';
 
 @Component({
   selector : 'ssh-edit',
@@ -38,116 +22,66 @@ export class ServiceSSHComponent implements OnInit {
     {
       type : 'select',
       name : 'ssh_bindiface',
-      placeholder : T('Bind Interfaces'),
-      tooltip: T('Select interfaces for SSH to listen on. Leave all\
-                  options unselected for SSH to listen on all interfaces.'),
+      placeholder : helptext.ssh_bindiface_placeholder,
+      tooltip: helptext.ssh_bindiface_tooltip,
       multiple : true,
       options : []
     },
     {
       type : 'input',
       name : 'ssh_tcpport',
-      placeholder : T('TCP Port'),
-      tooltip: 'Open a port for SSH connection requests.',
+      placeholder : helptext.ssh_tcpport_placeholder,
+      tooltip: helptext.ssh_tcpport_tooltip,
     },
     {
       type : 'checkbox',
       name : 'ssh_rootlogin',
-      placeholder : T('Login as Root with Password'),
-      tooltip: T('<b>Root logins are discouraged.</b> Set to allow root\
-                  logins. A password must be set for the <i>root</i>\
-                  user in <a href="..//docs/account.html#users"\
-                  target="_blank">Users</a>.'),
+      placeholder : helptext.ssh_rootlogin_placeholder,
+      tooltip: helptext.ssh_rootlogin_tooltip,
     },
     {
       type : 'checkbox',
       name : 'ssh_passwordauth',
-      placeholder : T('Allow Password Authentication'),
-      tooltip: T('Unset to require key-based authentication for\
-                  all users. This requires <a\
-                  href="http://the.earth.li/%7Esgtatham/putty/0.55/htmldoc/Chapter8.html"\
-                  target="_blank">additional setup</a> on both the SSH\
-                  client and server.'),
+      placeholder : helptext.ssh_passwordauth_placeholder,
+      tooltip: helptext.ssh_passwordauth_tooltip,
     },
     {
       type : 'checkbox',
       name : 'ssh_kerberosauth',
-      placeholder : T('Allow Kerberos Authentication'),
-      tooltip: T('Ensure <a\
-                  href="..//docs/directoryservice.html#kerberos-realms"\
-                  target="_blank">Kerberos Realms</a> and <a\
-                  href="..//docs/directoryservice.html#kerberos-keytabs"\
-                  target="_blank">Kerberos Keytabs</a> are configured\
-                  and the system can communicate with the Kerberos\
-                  Domain Controller before setting.'),
+      placeholder : helptext.ssh_kerberosauth_placeholder,
+      tooltip: helptext.ssh_kerberosauth_tooltip,
     },
     {
       type : 'checkbox',
       name : 'ssh_tcpfwd',
-      placeholder : T('Allow TCP Port Forwarding'),
-      tooltip: T('Set to allow users to bypass firewall restrictions\
-                  using the SSH port <a\
-                  href="https://www.symantec.com/connect/articles/ssh-port-forwarding"\
-                  target="_blank">forwarding feature</a>.'),
+      placeholder : helptext.ssh_tcpfwd_placeholder,
+      tooltip: helptext.ssh_tcpfwd_tooltip,
     },
     {
       type : 'checkbox',
       name : 'ssh_compression',
-      placeholder : T('Compress Connections'),
-      tooltip: T('Set to attempt to reduce latency over slow networks.'),
+      placeholder : helptext.ssh_compression_placeholder,
+      tooltip: helptext.ssh_compression_tooltip,
     },
     {
       type : 'select',
       name : 'ssh_sftp_log_level',
-      placeholder : T('SFTP Log Level'),
-      tooltip: T('Select the <a\
-                  href="https://www.freebsd.org/cgi/man.cgi?query=syslog"\
-                  target="_blank">syslog(3)</a> level of the SFTP server.'),
-      options : [
-        {label : '', value : ''},
-        {label : 'Quiet', value : 'QUIET'},
-        {label : 'Fatal', value : 'FATAL'},
-        {label : 'Error', value : 'ERROR'},
-        {label : 'Info', value : 'INFO'},
-        {label : 'Verbose', value : 'VERBOSE'},
-        {label : 'Debug', value : 'DEBUG'},
-        {label : 'Debug2', value : 'DEBUG2'},
-        {label : 'Debug3', value : 'DEBUG3'},
-      ],
+      placeholder : helptext.ssh_sftp_log_level_placeholder,
+      tooltip: helptext.ssh_sftp_log_level_tooltip,
+      options : helptext.ssh_sftp_log_level_options,
     },
     {
       type : 'select',
       name : 'ssh_sftp_log_facility',
-      placeholder : T('SFTP Log Facility'),
-      tooltip: T('Select the <a\
-                  href="https://www.freebsd.org/cgi/man.cgi?query=syslog"\
-                  target="_blank">syslog(3)</a> facility of the SFTP\
-                  server.'),
-      options : [
-        {label : '', value : ''},
-        {label : 'Daemon', value : 'DAEMON'},
-        {label : 'User', value : 'USER'},
-        {label : 'Auth', value : 'AUTH'},
-        {label : 'Local 0', value : 'LOCAL0'},
-        {label : 'Local 1', value : 'LOCAL1'},
-        {label : 'Local 2', value : 'LOCAL2'},
-        {label : 'Local 3', value : 'LOCAL3'},
-        {label : 'Local 4', value : 'LOCAL4'},
-        {label : 'Local 5', value : 'LOCAL5'},
-        {label : 'Local 6', value : 'LOCAL6'},
-        {label : 'Local 7', value : 'LOCAL7'},
-      ],
+      placeholder : helptext.ssh_sftp_log_facility_placeholder,
+      tooltip: helptext.ssh_sftp_log_facility_tooltip,
+      options : helptext.ssh_sftp_log_facility_options,
     },
     {
       type : 'textarea',
       name : 'ssh_options',
-      placeholder : T('Extra options'),
-      tooltip: T('Add any more <a\
-                  href="https://www.freebsd.org/cgi/man.cgi?query=sshd_config"\
-                  target="_blank">sshd_config(5)</a> options not covered\
-                  in this screen. Enter one option per line. These\
-                  options are case-sensitive. Misspellings can prevent\
-                  the SSH service from starting.'),
+      placeholder : helptext.ssh_options_placeholder,
+      tooltip: helptext.ssh_options_tooltip,
     },
   ];
   protected advanced_field: Array<any> = [
