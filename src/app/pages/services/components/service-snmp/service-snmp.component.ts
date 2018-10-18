@@ -1,28 +1,10 @@
-import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
-import {
-  AbstractControl,
-  FormArray,
-  FormGroup,
-  Validators
-} from '@angular/forms';
-import {ActivatedRoute, Router, RouterModule} from '@angular/router';
+import { ApplicationRef, Component, Injector } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
 
-
-import {
-  IdmapService,
-  IscsiService,
-  RestService,
-  WebSocketService
-} from '../../../../services/';
-import {
-  FieldConfig
-} from '../../../common/entity/entity-form/models/field-config.interface';
-import {
-  matchOtherValidator
-} from '../../../common/entity/entity-form/validators/password-validation';
-import { T } from '../../../../translate-marker';
+import { IdmapService, IscsiService, RestService, WebSocketService } from '../../../../services/';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import helptext from '../../../../helptext/services/components/service-snmp';
 
 @Component({
   selector : 'snmp-edit',
@@ -38,161 +20,105 @@ export class ServiceSNMPComponent {
     {
       type : 'input',
       name : 'location',
-      placeholder : T('Location'),
-      tooltip: T('Enter the location of the system.'),
-      label : 'Location',
+      placeholder : helptext.location_placeholder,
+      tooltip: helptext.location_tooltip,
+      label : helptext.location_label,
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext.location_validation
     },
     {
       type : 'input',
       name : 'contact',
-      placeholder : T('Contact'),
-      tooltip: T('Enter an email address to receive messages from the\
-                  <a href="..//docs/services.html#snmp"\
-                  target="_blank">SNMP service</a>.'),
+      placeholder : helptext.contact_placeholder,
+      tooltip: helptext.contact_tooltip,
       required: true,
-      validation: [Validators.required, Validators.email]
+      validation: helptext.contact_validation
     },
     {
       type : 'input',
       name : 'community',
-      placeholder : T('Community'),
-      tooltip: T('Change from <i>public</i to increase system security.\
-                  Can only contain alphanumeric characters, underscores,\
-                  dashes, periods, and spaces. This can be left empty\
-                  for <i>SNMPv3</i> networks.'),
-      validation: [Validators.pattern(/^[\w\_\-\.\s]*$/)]
+      placeholder : helptext.community_placeholder,
+      tooltip: helptext.community_tooltip,
+      validation: helptext.community_validation
     },
     {
       type : 'checkbox',
       name : 'v3',
-      placeholder : T('SNMP v3 Support'),
-      tooltip: T('Set to to enable support for <a\
-                  href="https://tools.ietf.org/html/rfc3410"\
-                  target="_blank">SNMP version 3</a>. See <a\
-                  href="http://net-snmp.sourceforge.net/docs/man/snmpd.conf.html"\
-                  target="_blank">snmpd.conf(5)</a> for configuration\
-                  details.'),
+      placeholder : helptext.v3_placeholder,
+      tooltip: helptext.v3_tooltip,
     },
     {
       type : 'input',
       name : 'v3_username',
-      placeholder : T('Username'),
-      tooltip: T('Enter a username to register with this service.'),
-      relation : [ {
-        action : 'HIDE',
-        when : [ {name : 'v3', value : false} ]
-      } ]
+      placeholder : helptext.v3_username_placeholder,
+      tooltip: helptext.v3_username_tooltip,
+      relation : helptext.v3_username_relation
     },
     {
       type : 'select',
       name : 'v3_authtype',
-      placeholder : T('Authentication Type'),
-      tooltip: T('Choose an authentication method.'),
-      options : [
-        {label : '---', value : ""}, {label : 'MD5', value : 'MD5'},
-        {label : 'SHA', value : 'SHA'}
-      ],
-      relation : [ {
-        action : 'HIDE',
-        when : [ {name : 'v3', value : false} ]
-      } ],
+      placeholder : helptext.v3_authtype_placeholder,
+      tooltip: helptext.v3_authtype_tooltip,
+      options : helptext.v3_authtype_options,
+      relation : helptext.v3_authtype_relation
     },
     {
       type : 'input',
       name : 'v3_password',
       inputType : 'password',
-      placeholder : T('Password'),
+      placeholder : helptext.v3_password_placeholder,
       togglePw: true,
-      tooltip: T('Enter a password of at least eight characters.'),
+      tooltip: helptext.v3_password_tooltip,
       required: true,
-      validation :
-          [ Validators.minLength(8), matchOtherValidator('v3_password2'), Validators.required ],
-      relation : [ {
-        action : 'HIDE',
-        when : [ {name : 'v3', value : false} ]
-      } ]
+      validation : helptext.v3_password_validation,
+      relation : helptext.v3_password_relation
     },
     {
       type : 'input',
       name : 'v3_password2',
       inputType : 'password',
-      placeholder : T('Confirm Password'),
+      placeholder : helptext.v3_password2_placeholder,
       required: true,
-      validation: [ Validators.required ],
-      relation : [ {
-        action : 'HIDE',
-        when : [ {name : 'v3', value : false} ]
-      } ]
+      validation: helptext.v3_password2_validation,
+      relation : helptext.v3_password2_relation
     },
     {
       type : 'select',
       name : 'v3_privproto',
-      placeholder : T('Privacy Protocol'),
-      tooltip: T('Choose a privacy protocol.'),
-      options : [
-        {label : '---', value : null},
-        {label : 'AES', value : 'AES'},
-        {label : 'DES', value : 'DES'},
-      ],
-      relation : [ {
-        action : 'HIDE',
-        when : [ {name : 'v3', value : false} ]
-      } ]
+      placeholder : helptext.v3_privproto_placeholder,
+      tooltip: helptext.v3_privproto_tooltip,
+      options : helptext.v3_privproto_options,
+      relation : helptext.v3_privproto_relation
     },
     {
       type : 'input',
       name : 'v3_privpassphrase',
       inputType : 'password',
       togglePw: true,
-      placeholder : T('Privacy Passphrase'),
-      tooltip: T('Enter a separate privacy passphrase. <b>Password</b>\
-                  is used when this is left empty.'),
-      validation : [
-        Validators.minLength(8), matchOtherValidator('v3_privpassphrase2')
-      ],
-      relation : [ {
-        action : 'HIDE',
-        when : [ {name : 'v3', value : false} ]
-      } ]
+      placeholder : helptext.v3_privpassphrase_placeholder,
+      tooltip: helptext.v3_privpassphrase_tooltip,
+      validation : helptext.v3_privpassphrase_validation,
+      relation : helptext.v3_privpassphrase_relation
     },
     {
       type : 'input',
       name : 'v3_privpassphrase2',
       inputType : 'password',
-      placeholder : T('Confirm Privacy Passphrase'),
-      relation : [ {
-        action : 'HIDE',
-        when : [ {name : 'v3', value : false} ]
-      } ]
+      placeholder : helptext.v3_privpassphrase2_placeholder,
+      relation : helptext.v3_privpassphrase2_relation
     },
     {
       type : 'textarea',
       name : 'options',
-      placeholder : T('Auxiliary Parameters'),
-      tooltip: T('Enter any additional <a\
-                  href="http://net-snmp.sourceforge.net/docs/man/snmpd.conf.html"\
-                  target="_blank">snmpd.conf(5)</a> options. Add one\
-                  option for each line.'),
+      placeholder : helptext.options_placeholder,
+      tooltip: helptext.options_tooltip,
     },
     {
       type : 'select',
       name : 'loglevel',
-      placeholder : T('Log Level'),
-      tooltip : T('Choose how many log entries to create. Choices range\
-                   from the least log entries (<i>Emergency</i>) to the\
-                   most (<i>Debug</i>).'),
-      options : [
-        {label : 'Emergency', value :0},
-        {label : 'Alert', value :1},
-        {label : 'Critical', value :2},
-        {label : 'Error', value :3},
-        {label : 'Warning', value :4},
-        {label : 'Notice', value :5},
-        {label : 'Info', value :6},
-        {label : 'Debug', value :7},
-      ]
+      placeholder : helptext.loglevel_placeholder,
+      tooltip : helptext.loglevel_tooltip,
+      options : helptext.loglevel_options
     },
   ];
 
