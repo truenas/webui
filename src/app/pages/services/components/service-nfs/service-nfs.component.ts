@@ -1,11 +1,9 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
-import { Validators } from '@angular/forms';
 import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { T } from '../../../../translate-marker';
+import helptext from '../../../../helptext/services/components/service-nfs';
 
 @Component({
   selector: 'nfs-edit',
@@ -18,126 +16,87 @@ export class ServiceNFSComponent {
   public fieldConfig: FieldConfig[] = [{
       type: 'input',
       name: 'nfs_srv_servers',
-      placeholder: T('Number of servers'),
-      tooltip: T('Specify how many servers to create. Increase if NFS\
-                  client responses are slow. Keep this less than or\
-                  equal to the number of CPUs reported by <b>sysctl -n\
-                  kern.smp.cpus</b> to limit CPU context switching.'),
+      placeholder: helptext.nfs_srv_servers_placeholder,
+      tooltip: helptext.nfs_srv_servers_tooltip,
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext.nfs_srv_servers_validation
     },
     {
       type: 'checkbox',
       name: 'nfs_srv_udp',
-      placeholder: T('Serve UDP NFS clients'),
-      tooltip: T('Set if NFS clients need to use UDP.'),
+      placeholder: helptext.nfs_srv_udp_placeholder,
+      tooltip: helptext.nfs_srv_udp_tooltip,
     },
     {
       type: 'select',
       name: 'nfs_srv_bindip',
-      placeholder: T('Bind IP Addresses'),
-      tooltip: T('Select IP addresses to listen to for NFS requests.\
-                  Leave empty for NFS to listen to all available\
-                  addresses.'),
+      placeholder: helptext.nfs_srv_bindip_placeholder,
+      tooltip: helptext.nfs_srv_bindip_tooltip,
       options: [],
       multiple: true
     },
     {
       type: 'checkbox',
       name: 'nfs_srv_allow_nonroot',
-      placeholder: T('Allow non-root mount'),
-      tooltip: T('Set only if required by the NFS client. Set to allow\
-                  serving non-root mount requests.'),
+      placeholder: helptext.nfs_srv_allow_nonroot_placeholder,
+      tooltip: helptext.nfs_srv_allow_nonroot_tooltip,
     },
     {
       type: 'checkbox',
       name: 'nfs_srv_v4',
-      placeholder: T('Enable NFSv4'),
-      tooltip: T('Set to switch from NFSv3 to NFSv4.'),
+      placeholder: helptext.nfs_srv_v4_placeholder,
+      tooltip: helptext.nfs_srv_v4_tooltip,
       value: false,
     },
     {
       type: 'checkbox',
       name: 'nfs_srv_v4_v3owner',
-      placeholder: T('NFSv3 ownership model for NFSv4'),
-      tooltip: T('Set when NFSv4 ACL support is needed without requiring\
-                  the client and the server to sync users and groups.'),
-      relation: [
-      {
-        action: 'DISABLE',
-        when: [{
-          name: 'nfs_srv_v4',
-          value: false,
-        }]
-      }],
+      placeholder: helptext.nfs_srv_v4_v3owner_placeholder,
+      tooltip: helptext.nfs_srv_v4_v3owner_tooltip,
+      relation: helptext.nfs_srv_v4_v3owner_relation,
     },
     {
       type: 'checkbox',
       name: 'nfs_srv_v4_krb',
-      placeholder: T('Require Kerberos for NFSv4'),
-      tooltip: T('Set to force NFS shares to fail if the Kerberos ticket\
-                  is unavailable.'),
+      placeholder: helptext.nfs_srv_v4_krb_placeholder,
+      tooltip: helptext.nfs_srv_v4_krb_tooltip,
     },
     {
       type: 'input',
       name: 'nfs_srv_mountd_port',
-      placeholder: T('mountd(8) bind port'),
-      tooltip: T('Enter a port to bind <a\
-                  href="https://www.freebsd.org/cgi/man.cgi?query=mountd"\
-                  target="_blank">mountd(8)</a>.'),
+      placeholder: helptext.nfs_srv_mountd_port_placeholder,
+      tooltip: helptext.nfs_srv_mountd_port_tooltip,
     },
     {
       type: 'input',
       name: 'nfs_srv_rpcstatd_port',
-      placeholder: T('rpc.statd(8) bind port'),
-      tooltip: T('Enter a port to bind <a\
-                  href="https://www.freebsd.org/cgi/man.cgi?query=rpc.statd"\
-                  target="_blank">rpc.statd(8)</a>.'),
+      placeholder: helptext.nfs_srv_rpcstatd_port_placeholder,
+      tooltip: helptext.nfs_srv_rpcstatd_port_tooltip,
     },
     {
       type: 'input',
       name: 'nfs_srv_rpclockd_port',
-      placeholder: T('rpc.lockd(8) bind port'),
-      tooltip: T('Enter a port to bind <a\
-                  href="https://www.freebsd.org/cgi/man.cgi?query=rpc.lockd"\
-                  target="_blank">rpc.lockd(8)</a>.'),
+      placeholder: helptext.nfs_srv_rpclockd_port_placeholder,
+      tooltip: helptext.nfs_srv_rpclockd_port_tooltip,
     },
     {
       type: 'checkbox',
       name: 'nfs_srv_16',
-      placeholder: T('Support >16 groups'),
-      tooltip: T('Set when a user is a member of more than 16 groups.\
-                  This assumes group membership is configured correctly\
-                  on the NFS server.'),
-      relation: [{
-        action: 'DISABLE',
-        connective: 'AND',
-        when: [{
-          name: 'nfs_srv_v4',
-          value: true,
-        }, {
-          name: 'nfs_srv_v4_v3owner',
-          value: true,
-        }]
-      }],
+      placeholder: helptext.nfs_srv_16_placeholder,
+      tooltip: helptext.nfs_srv_16_tooltip,
+      relation: helptext.nfs_srv_16_relation,
     },
     {
       type: 'checkbox',
       name: 'nfs_srv_mountd_log',
-      placeholder: T('Log mountd(8) requests'),
-      tooltip: T('Set to log <a\
-                  href="https://www.freebsd.org/cgi/man.cgi?query=mountd"\
-                  target="_blank">mountd(8)</a> syslog requests.'),
+      placeholder: helptext.nfs_srv_mountd_log_placeholder,
+      tooltip: helptext.nfs_srv_mountd_log_tooltip,
     },
     {
       type: 'checkbox',
       name: 'nfs_srv_statd_lockd_log',
-      placeholder: T('Log rpc.statd(8) and rpc.lockd(8)'),
-      tooltip: T('Set to log <a\
-                  href="https://www.freebsd.org/cgi/man.cgi?query=rpc.statd"\
-                  target="_blank">rpc.statd(8)</a> and <a\
-                  href="https://www.freebsd.org/cgi/man.cgi?query=rpc.lockd"\
-                  target="_blank">rpc.lockd(8)</a> syslog requests.'),
+      placeholder: helptext.nfs_srv_statd_lockd_log_placeholder,
+      tooltip: helptext.nfs_srv_statd_lockd_log_tooltip,
     },
   ];
 
