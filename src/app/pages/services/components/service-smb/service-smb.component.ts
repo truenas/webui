@@ -1,26 +1,11 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
 import { MatDialog, MatDialogRef } from '@angular/material';
-import {
-  regexValidator
-} from '../../../common/entity/entity-form/validators/regex-validation';
 
-import {
-  IdmapService,
-  IscsiService,
-  RestService,
-  WebSocketService
-} from '../../../../services/';
-import {
-  FieldConfig
-} from '../../../common/entity/entity-form/models/field-config.interface';
+import { IdmapService, IscsiService, RestService, WebSocketService } from '../../../../services/';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
-import { T } from '../../../../translate-marker';
-import { Validators } from '@angular/forms';
 import helptext from '../../../../helptext/services/components/service-smb';
 
 @Component({
