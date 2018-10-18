@@ -18,6 +18,7 @@ export interface UserPreferences {
   showTooltips:boolean; // Form Tooltips on/off
   metaphor:string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
   allowPwToggle:boolean;
+  showWarning:boolean;
 }
 
 @Injectable()
@@ -32,7 +33,8 @@ export class PreferencesService {
     "showGuide":true,
     "showTooltips":true,
     "metaphor":"auto",
-    "allowPwToggle":true
+    "allowPwToggle":true,
+    "showWarning": true
   }
   constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router) {
 
