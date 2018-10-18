@@ -81,6 +81,15 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
             value:this.prefs.preferences.allowPwToggle,
             tooltip: 'This option enables/disables a password toggle button.',
             class:'inline'
+          },
+          { 
+            type: 'checkbox', 
+            name: 'showWarning', 
+            width: '300px',
+            placeholder: 'Display warning config on upgrade.',
+            value:this.prefs.preferences.showWarning,
+            tooltip: 'This option enables/disables warning config on upgrade.',
+            class:'inline'
           }
         ]
       }

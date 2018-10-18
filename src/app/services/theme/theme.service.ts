@@ -230,6 +230,13 @@ export class ThemeService {
       } else if(!evt.data.allowPwToggle){
         (<any>document).documentElement.style.setProperty("--toggle_pw_display_prop", "none");
       }
+      
+      if(evt.data.showWarning){
+        (<any>document).documentElement.style.setProperty("--showWarning","inline");
+      } else if(!evt.data.allowPwToggle){
+        (<any>document).documentElement.style.setProperty("--showWarning", "none");
+      }
+
     });
   }
 
