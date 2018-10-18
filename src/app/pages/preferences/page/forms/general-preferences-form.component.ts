@@ -84,10 +84,10 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
           },
           { 
             type: 'checkbox', 
-            name: 'showWarning', 
+            name: 'hideWarning', 
             width: '300px',
-            placeholder: 'Display warning config on upgrade.',
-            value:this.prefs.preferences.showWarning,
+            placeholder: 'Hide warning config prompt on upgrade.',
+            value:this.prefs.preferences.hideWarning,
             tooltip: 'This option enables/disables warning config on upgrade.',
             class:'inline'
           }

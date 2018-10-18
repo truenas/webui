@@ -59,7 +59,7 @@ export class UpdateComponent implements OnInit {
     },
     {
       type: 'checkbox',
-      name: 'showWarning',
+      name: 'hideWarning',
       placeholder: T('Don\'t show this again'),
     }
   ];
@@ -185,8 +185,8 @@ export class UpdateComponent implements OnInit {
 
   ngOnInit() {
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
-      if(!ures[0].attributes.preferences.showWarning) {
-        ures[0].attributes.preferences['showWarning'] = true;
+      if(!ures[0].attributes.preferences.hideWarning) {
+        ures[0].attributes.preferences['hideWarning'] = false;
         this.ws.call('user.set_attribute', [1, 'preferences', ures[0].attributes.preferences]).subscribe((res)=>{
         });
       }
@@ -305,7 +305,7 @@ export class UpdateComponent implements OnInit {
               this.releaseNotes = res.notes.ReleaseNotes;
             }
             this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
-              if(!ures[0].attributes.preferences.showWarning) {
+              if(ures[0].attributes.preferences.hideWarning) {
                 const ds  = this.dialogService.confirm(
                   "Download Update", "Continue with download?",true,"",true,"Apply updates and reboot system after downloading.","update.update",[{ train: this.train, reboot: false }]
                 )
@@ -388,7 +388,7 @@ export class UpdateComponent implements OnInit {
 
   ApplyPendingUpdate() {
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
-      if(!ures[0].attributes.preferences.showWarning) {
+      if(ures[0].attributes.preferences.hideWarning) {
         this.dialogService.confirm(
           T("Apply Pending Updates"), T("The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?")
         ).subscribe((res)=>{
@@ -491,8 +491,15 @@ export class UpdateComponent implements OnInit {
         });
   }
 
-  saveConfigSubmit(entityDialog) {
-    entityDialog.ws.call('system.info', []).subscribe((res) => {
+  async saveConfigSubmit(entityDialog) {
+    if(entityDialog.formValue['hideWarning']) {
+      await entityDialog.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
+        ures[0].attributes.preferences['hideWarning'] = true;
+        entityDialog.ws.call('user.set_attribute', [1, 'preferences', ures[0].attributes.preferences]).subscribe((res)=>{
+        });
+      });
+    };
+    await entityDialog.ws.call('system.info', []).subscribe((res) => {
       let fileName = "";
       if (res) {
         const hostname = res.hostname.split('.')[0];
@@ -511,7 +518,7 @@ export class UpdateComponent implements OnInit {
             entityDialog.snackBar.open("Download Sucessful", "Success" , {
               duration: 5000
             });
-            window.location.href = succ[1];
+            // window.location.href = succ[1];
             entityDialog.dialogRef.close();
           },
           (err) => {
