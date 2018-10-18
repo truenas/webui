@@ -21,6 +21,8 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { T } from '../../../../translate-marker';
 import { Validators } from '@angular/forms';
+import helptext from '../../../../helptext/services/components/service-smb';
+
 @Component({
   selector: 'smb-edit',
   template: ` <entity-form [conf]="this"></entity-form>`,
@@ -42,218 +44,163 @@ export class ServiceSMBComponent {
   public fieldConfig: FieldConfig[] = [{
       type: 'input',
       name: 'cifs_srv_netbiosname',
-      placeholder: T('NetBIOS Name'),
-      tooltip: T('Automatically populated with the original hostname\
-                  of the system. This name is limited to 15 characters and\
-                  cannot be the <b>Workgroup</b> name.'),
+      placeholder: helptext.cifs_srv_netbiosname_placeholder,
+      tooltip: helptext.cifs_srv_netbiosname_tooltip,
       required: true,
-      validation : [ Validators.required, Validators.maxLength(15) ]
+      validation : helptext.cifs_srv_netbiosname_validation
     },
     {
       type: 'input',
       name: 'cifs_srv_netbiosalias',
-      placeholder: T('NetBIOS Alias'),
-      tooltip: T('Enter an alias. Limited to 15 characters.'),
-      validation: [ Validators.maxLength(15) ]
+      placeholder: helptext.cifs_srv_netbiosalias_placeholder,
+      tooltip: helptext.cifs_srv_netbiosalias_tooltip,
+      validation: helptext.cifs_srv_netbiosalias_validation
     },
     {
       type: 'input',
       name: 'cifs_srv_workgroup',
-      placeholder: T('Workgroup'),
-      tooltip: T('Must match Windows workgroup\
-                  name. This setting is ignored if the\
-                  <a href="..//docs/directoryservice.html#active-directory"\
-                  target="_blank">Active Directory</a> or <a\
-                  href="..//docs/directoryservice.html#ldap"\
-                  target="_blank">LDAP</a> service is running.'),
+      placeholder: helptext.cifs_srv_workgroup_placeholder,
+      tooltip: helptext.cifs_srv_workgroup_tooltip,
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext.cifs_srv_workgroup_validation
     },
     {
       type: 'input',
       name: 'cifs_srv_description',
-      placeholder: T('Description'),
-      tooltip: T('Optional. Enter a server description.'),
+      placeholder: helptext.cifs_srv_description_placeholder,
+      tooltip: helptext.cifs_srv_description_tooltip,
     },
     {
       type: 'select',
       name: 'cifs_srv_doscharset',
-      placeholder: T('DOS Charset'),
-      tooltip: T('The character set Samba uses when communicating with\
-                  DOS and Windows 9x/ME clients. Default is CP437.'),
+      placeholder: helptext.cifs_srv_doscharset_placeholder,
+      tooltip: helptext.cifs_srv_doscharset_tooltip,
       options: [],
     },
     {
       type: 'select',
       name: 'cifs_srv_unixcharset',
-      placeholder: T('UNIX Charset'),
-      tooltip: T('Default is UTF-8 which supports all characters in\
-                  all languages.'),
+      placeholder: helptext.cifs_srv_unixcharset_placeholder,
+      tooltip: helptext.cifs_srv_unixcharset_tooltip,
       options: [],
     },
     {
       type: 'select',
       name: 'cifs_srv_loglevel',
-      placeholder: T('Log Level'),
-      tooltip: T('Choices are <i>Minimum, Normal, or Debug</i>.'),
-      options: [
-        { label: 'None', value: 0 },
-        { label: 'Minimum', value: 1 },
-        { label: 'Normal', value: 2 },
-        { label: 'Full', value: 3 },
-        { label: 'Debug', value: 10 },
-      ],
+      placeholder: helptext.cifs_srv_loglevel_placeholder,
+      tooltip: helptext.cifs_srv_loglevel_tooltip,
+      options: helptext.cifs_srv_loglevel_options,
     },
     {
       type: 'checkbox',
       name: 'cifs_srv_syslog',
-      placeholder: T('Use syslog only'),
-      tooltip: T('Set to log authentication failures in <i>/var/log/messages</i>\
-                  instead of the default of <i>/var/log/samba4/log.smbd</i>.'),
+      placeholder: helptext.cifs_srv_syslog_placeholder,
+      tooltip: helptext.cifs_srv_syslog_tooltip,
     },
     {
       type: 'checkbox',
       name: 'cifs_srv_localmaster',
-      placeholder: T('Local Master'),
-      tooltip: T('Set to determine if the system participates in\
-                  a browser election. Leave unset when the network contains an AD\
-                  or LDAP server, or when Vista or Windows 7 machines\
-                  are present.'),
+      placeholder: helptext.cifs_srv_localmaster_placeholder,
+      tooltip: helptext.cifs_srv_localmaster_tooltip,
     },
     {
       type: 'checkbox',
       name: 'cifs_srv_domain_logons',
-      placeholder: T('Domain Logons'),
-      tooltip: T('Set if it is necessary to provide the netlogin\
-                  service for older Windows clients.'),
+      placeholder: helptext.cifs_srv_domain_logons_placeholder,
+      tooltip: helptext.cifs_srv_domain_logons_tooltip,
     },
     {
       type: 'checkbox',
       name: 'cifs_srv_timeserver',
-      placeholder: T('Time Server For Domain'),
-      tooltip: T(' Enable to determine if the system advertises\
-                   itself as a time server to Windows clients.\
-                   Disable when the network contains an AD or LDAP server.'),
+      placeholder: helptext.cifs_srv_timeserver_placeholder,
+      tooltip: helptext.cifs_srv_timeserver_tooltip,
     },
     {
       type: 'select',
       name: 'cifs_srv_guest',
-      placeholder: T('Guest Account'),
+      placeholder: helptext.cifs_srv_guest_placeholder,
       options: [],
-      tooltip: T('Account to be used for guest access. Default is\
-                  nobody. Account is required to have permissions to\
-                  the shared pool or dataset.\
-                  When the Guest Account user is deleted it resets to nobody.'),
+      tooltip: helptext.cifs_srv_guest_tooltip,
     },
     { type: 'input',
       name: 'cifs_srv_filemask',
-      placeholder: T('File Mask'),
-      tooltip: T('Overrides default file creation mask of <i>0666</i> which\
-                  creates files with read and write access for everybody.'),
-      validation : [ regexValidator(/^[0-1]?[0-7][0-7][0-7]$/) ],
+      placeholder: helptext.cifs_srv_filemask_placeholder,
+      tooltip: helptext.cifs_srv_filemask_tooltip,
+      validation : helptext.cifs_srv_filemask_validation
     },
     { type: 'input',
       name: 'cifs_srv_dirmask',
-      placeholder: T('Directory Mask'),
-      tooltip: T('Overrides default directory creation mask of <i>0777</i>\
-                  which grants directory read, write and execute access\
-                  for everybody.'),
-      validation : [ regexValidator(/^[0-1]?[0-7][0-7][0-7]$/) ],
+      placeholder: helptext.cifs_srv_dirmask_placeholder,
+      tooltip: helptext.cifs_srv_dirmask_tooltip,
+      validation : helptext.cifs_srv_dirmask_validation
     },
     {
       type: 'checkbox',
       name: 'cifs_srv_nullpw',
-      placeholder: T('Allow Empty Password'),
-      tooltip: T('If set, users can press <b>Enter</b>\
-                  when prompted for a password. Requires the username\
-                  and password to be the same as the Windows user account.'),
+      placeholder: helptext.cifs_srv_nullpw_placeholder,
+      tooltip: helptext.cifs_srv_nullpw_tooltip,
     },
     {
       type: 'textarea',
       name: 'cifs_srv_smb_options',
-      placeholder: T('Auxiliary Parameters'),
-      tooltip: T('Enter additional <b>smb.conf</b> options. See the <a href="http://www.oreilly.com/openbook/samba/book/appb_02.html"\
-                  target="_blank">Samba Guide</a>\
-                  for more information on these settings.'),
+      placeholder: helptext.cifs_srv_smb_options_placeholder,
+      tooltip: helptext.cifs_srv_smb_options_tooltip,
     },
     {
       type: 'checkbox',
       name: 'cifs_srv_unixext',
-      placeholder: T('UNIX Extensions'),
-      tooltip: T('Set to allow non-Windows SMB clients to access symbolic\
-                  links and hard links. Has no effect on Windows clients.'),
+      placeholder: helptext.cifs_srv_unixext_placeholder,
+      tooltip: helptext.cifs_srv_unixext_tooltip,
     },
     {
       type: 'checkbox',
       name: 'cifs_srv_zeroconf',
-      placeholder: T('Zeroconf share discovery'),
-      tooltip: T('Enable if Mac clients will be connecting to the SMB share.'),
+      placeholder: helptext.cifs_srv_zeroconf_placeholder,
+      tooltip: helptext.cifs_srv_zeroconf_tooltip,
     },
     {
       type: 'checkbox',
       name: 'cifs_srv_hostlookup',
-      placeholder: T('Hostnames Lookups'),
-      tooltip: T('Set to allow using hostnames rather than IP addresses in\
-                  the <i>Hosts Allow</b> or </i>Hosts Deny</b> fields\
-                  of a SMB share. Leave this option\
-                  unset when IP addresses are used to avoid the delay of a host lookup.'),
+      placeholder: helptext.cifs_srv_hostlookup_placeholder,
+      tooltip: helptext.cifs_srv_hostlookup_tooltip,
     },
     {
       type: 'checkbox',
       name: 'cifs_srv_allow_execute_always',
-      placeholder: T('Allow Execute Always'),
-      tooltip: T('When selected, Samba allows the user to execute\
-                  a file, even if that user’s permissions are not set\
-                  to execute.'),
+      placeholder: helptext.cifs_srv_allow_execute_always_placeholder,
+      tooltip: helptext.cifs_srv_allow_execute_always_tooltip,
     },
     {
       type: 'checkbox',
       name: 'cifs_srv_obey_pam_restrictions',
-      placeholder: T('Obey Pam Restrictions'),
-      tooltip: T('Unselect this option to allow cross-domain\
-                  authentication, users and groups to be managed on\
-                  another forest, and permissions to be delegated from\
-                  <a href="..//docs/directoryservice.html#active-directory"\
-                  target="_blank">Active Directory</a>\
-                  users and groups to domain admins on another forest.'),
+      placeholder: helptext.cifs_srv_obey_pam_restrictions_placeholder,
+      tooltip: helptext.cifs_srv_obey_pam_restrictions_tooltip,
     },
     {
       type: 'checkbox',
       name: 'cifs_srv_ntlmv1_auth',
-      placeholder: T('NTLMv1 Auth'),
-      tooltip: T('Off by default. When set,\
-                  <a href="https://www.freebsd.org/cgi/man.cgi?query=smbd" target="_blank">smbd(8)</a>\
-                  attempts to authenticate users with the insecure\
-                  and vulnerable NTLMv1 encryption. This setting allows\
-                  backward compatibility with older versions of Windows,\
-                  but is not recommended and should not be used on\
-                  untrusted networks.'),
+      placeholder: helptext.cifs_srv_ntlmv1_auth_placeholder,
+      tooltip: helptext.cifs_srv_ntlmv1_auth_tooltip,
     },
     {
       type: 'select',
       name: 'cifs_srv_bindip',
-      placeholder: T('Bind IP Addresses'),
-      tooltip: T('Select the IP addresses SMB will listen for.'),
+      placeholder: helptext.cifs_srv_bindip_placeholder,
+      tooltip: helptext.cifs_srv_bindip_tooltip,
       options: [],
       multiple: true
     },
     {
       type: 'input',
       name: 'idmap_tdb_range_low',
-      placeholder: T('Range Low'),
-      tooltip: T('The beginning UID/GID for which this system is\
-                  authoritative. Any UID/GID lower than this value is ignored.\
-                  This avoids accidental UID/GID overlaps between local and remotely\
-                  defined IDs.'),
+      placeholder: helptext .idmap_tdb_range_low_placeholder,
+      tooltip: helptext.idmap_tdb_range_low_tooltip,
     },
     {
       type: 'input',
       name: 'idmap_tdb_range_high',
-      placeholder: T('Range High'),
-      tooltip: T('The ending UID/GID for which this system is authoritative.\
-                  Any UID/GID higher than this value is ignored.\
-                  This avoids accidental UID/GID overlaps between local\
-                  and remotely defined IDs.'),
+      placeholder: helptext.idmap_tdb_range_high_placeholder,
+      tooltip: helptext.idmap_tdb_range_high_tooltip,
     }
   ];
 
