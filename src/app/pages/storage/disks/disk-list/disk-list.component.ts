@@ -30,7 +30,20 @@ export class DiskListComponent {
 	public config: any = {
 		paging: true,
 		sorting: { columns: this.columns },
-	};
+		multiSelect: true,
+  };
+  public multiActions: Array < any > = [{
+		id: "medit",
+		label: T("Bulk Edit"),
+		icon: "edit",
+		enable: true,
+		ttpos: "above", // tooltip position
+		onClick: (selected) => {
+			this.router.navigate(new Array('/').concat([
+				"storage", "disks", "edit", selected[0].identifier
+			]));
+		}
+	}]
 
 	protected disk_ready: EventEmitter<boolean> = new EventEmitter();
 	protected unusedDisk_ready: EventEmitter<boolean> = new EventEmitter();
