@@ -9,16 +9,16 @@ export default {
 name_placeholder: T('Plugin Name'),
 
 dhcp_placeholder: T('DHCP'),
-dhcp_tooltip: T('Set for <a\
-href="https://kb.iu.edu/d/adov"\
-target="_blank">DHCP</a> to automatically configure\
+dhcp_tooltip: T('Set for <a \
+href="https://kb.iu.edu/d/adov" \
+target="_blank">DHCP</a> to automatically configure \
 network settings.'),
 
 ip4_interface_placeholder: T('IPv4 interface'),
 ip4_interface_tooltip: T('IPv4 interface for the jail.'),
 
 ip4_addr_placeholder: T('IPv4 Address'),
-ip4_addr_tooltip: T('Enter a unique IPv4 address that is in the local\
+ip4_addr_tooltip: T('Enter a unique IPv4 address that is in the local \
 network and not already in use.'),
 
 ip4_netmask_placeholder: T('IPv4 Netmask'),
@@ -28,7 +28,7 @@ ip6_interface_placeholder: T('IPv6 Interface'),
 ip6_interface_tooltip: T('IPv6 interface for the jail.'),
 
 ip6_addr_placeholder: T('IPv6 Address'),
-ip6_addr_tooltip: T('Enter a unique IPv6 address that is in the local\
+ip6_addr_tooltip: T('Enter a unique IPv6 address that is in the local \
 network and not already in use.'),
 
 ip6_prefix_placeholder: T('IPv6 Prefix'),
