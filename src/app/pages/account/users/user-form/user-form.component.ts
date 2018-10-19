@@ -1,11 +1,9 @@
-import {Placeholder} from '@angular/compiler/src/i18n/i18n_ast';
 import {Component} from '@angular/core';
 import {Router} from '@angular/router';
 import * as _ from 'lodash';
 
 import { T } from '../../../../translate-marker';
 import {
-  NetworkService,
   RestService,
   WebSocketService,
   StorageService
@@ -18,7 +16,6 @@ import {
 import {  DialogService } from '../../../../services/';
 import {Validators} from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
-import validator from 'devextreme/ui/validator';
 
 @Component({
   selector : 'app-user-form',
@@ -77,7 +74,8 @@ export class UserFormComponent {
           inputType : 'password',
           togglePw: true,
           required: true,
-          validation : [ Validators.pattern('^[^?]*$'), Validators.maxLength(9), Validators.required ]
+          validation : [ Validators.pattern('^[^?]*$'), Validators.maxLength(9), Validators.required ],
+          isHidden: false
         },
         {
           type : 'input',
@@ -85,7 +83,28 @@ export class UserFormComponent {
           placeholder : T('Confirm Password'),
           inputType : 'password',
           required: true,
-          validation : [ matchOtherValidator('password'), Validators.pattern('^[^?]*$'), Validators.maxLength(9), Validators.required ]
+          validation : [ matchOtherValidator('password'), Validators.pattern('^[^?]*$'), Validators.maxLength(9), Validators.required ],
+          isHidden: false
+        },
+        {
+          type : 'input',
+          name : 'password_edit',
+          placeholder : T('Password'),
+          tooltip : T('Enter password of nine characters or less\
+                      Required unless <b>Enable password login</b> is\
+                      <i>No</i>. Passwords cannot contain a <b>?</b>.'),
+          inputType : 'password',
+          togglePw: true,
+          validation : [ Validators.pattern('^[^?]*$'), Validators.maxLength(9) ],
+          isHidden: true
+        },
+        {
+          type : 'input',
+          name : 'password_conf_edit',
+          placeholder : T('Confirm Password'),
+          inputType : 'password',
+          validation : [ matchOtherValidator('password_edit'), Validators.pattern('^[^?]*$'), Validators.maxLength(9) ],
+          isHidden: true
         },
       ]
     },
@@ -268,21 +287,48 @@ export class UserFormComponent {
     this.password_disabled = entityForm.formGroup.controls['password_disabled'];
     this.sudo = entityForm.formGroup.controls['sudo'];
     this.locked = entityForm.formGroup.controls['locked'];
-    this.password_disabled.valueChanges.subscribe((password_disabled)=>{
-      if(password_disabled){
-        _.find(this.fieldConfig, {name : "locked"}).isHidden = password_disabled;
-        _.find(this.fieldConfig, {name : "sudo"}).isHidden = password_disabled;
-        entityForm.setDisabled('password', password_disabled);
-        entityForm.setDisabled('password_conf', password_disabled);
-      } else{
-        entityForm.formGroup.controls['sudo'].setValue(false);
-        entityForm.formGroup.controls['locked'].setValue(false);
-        _.find(this.fieldConfig, {name : "locked"}).isHidden = password_disabled;
-        _.find(this.fieldConfig, {name : "sudo"}).isHidden = password_disabled;
-        entityForm.setDisabled('password', password_disabled);
-        entityForm.setDisabled('password_conf', password_disabled);
-      }
-    })
+    if (!entityForm.isNew) {
+      _.find(this.fieldConfig, {name : "password_edit"}).isHidden = false;
+      _.find(this.fieldConfig, {name : "password_conf_edit"}).isHidden = false;
+      _.find(this.fieldConfig, {name : "password"}).isHidden = true;
+      _.find(this.fieldConfig, {name : "password_conf"}).isHidden = true;
+      this.password_disabled.valueChanges.subscribe((password_disabled)=>{
+        if(password_disabled){
+          _.find(this.fieldConfig, {name : "locked"}).isHidden = password_disabled;
+          _.find(this.fieldConfig, {name : "sudo"}).isHidden = password_disabled;
+          entityForm.setDisabled('password_edit', password_disabled);
+          entityForm.setDisabled('password_conf_edit', password_disabled);
+        } else{
+          entityForm.formGroup.controls['sudo'].setValue(false);
+          entityForm.formGroup.controls['locked'].setValue(false);
+          _.find(this.fieldConfig, {name : "locked"}).isHidden = password_disabled;
+          _.find(this.fieldConfig, {name : "sudo"}).isHidden = password_disabled;
+          entityForm.setDisabled('password_edit', password_disabled);
+          entityForm.setDisabled('password_conf_edit', password_disabled);
+        };
+      });
+
+    } else {
+      _.find(this.fieldConfig, {name : "password_edit"}).isHidden = true;
+      _.find(this.fieldConfig, {name : "password_conf_edit"}).isHidden = true;
+      _.find(this.fieldConfig, {name : "password"}).isHidden = false;
+      _.find(this.fieldConfig, {name : "password_conf"}).isHidden = false;
+      this.password_disabled.valueChanges.subscribe((password_disabled)=>{
+        if(password_disabled){
+          _.find(this.fieldConfig, {name : "locked"}).isHidden = password_disabled;
+          _.find(this.fieldConfig, {name : "sudo"}).isHidden = password_disabled;
+          entityForm.setDisabled('password', password_disabled);
+          entityForm.setDisabled('password_conf', password_disabled);
+        } else{
+          entityForm.formGroup.controls['sudo'].setValue(false);
+          entityForm.formGroup.controls['locked'].setValue(false);
+          _.find(this.fieldConfig, {name : "locked"}).isHidden = password_disabled;
+          _.find(this.fieldConfig, {name : "sudo"}).isHidden = password_disabled;
+          entityForm.setDisabled('password', password_disabled);
+          entityForm.setDisabled('password_conf', password_disabled);
+        };
+      });
+    }
 
 
     if (!entityForm.isNew) {
@@ -326,6 +372,12 @@ export class UserFormComponent {
         entityForm.formGroup.controls['groups'].setValue(res[0].groups);
         entityForm.formGroup.controls['home'].setValue(res[0].home);
         entityForm.formGroup.controls['shell'].setValue(res[0].shell);
+        entityForm.setDisabled('password', true);
+        entityForm.setDisabled('password_conf', true);
+        _.find(this.fieldConfig, {name : "password"}).isHidden = true;
+        _.find(this.fieldConfig, {name : "password_conf"}).isHidden = true;
+        _.find(this.fieldConfig, {name : "password_edit"}).isHidden = false;
+        _.find(this.fieldConfig, {name : "password_conf_edit"}).isHidden = false;
         if (res[0].builtin) {
           entityForm.formGroup.controls['uid'].setValue(res[0].uid);
           entityForm.setDisabled('uid', true);
@@ -398,6 +450,12 @@ export class UserFormComponent {
         entityForm.locked = false;
       }
 
+    } else {
+      if (entityForm['password_edit']===entityForm['password_conf_edit'] && entityForm['password_edit'] !== '' && entityForm['password_conf_edit'] !== ''){
+        entityForm['password'] = entityForm['password_edit'];
+        delete entityForm['password_edit'];
+        delete entityForm['password_conf_edit'];
+      }
     }
   }
   submitFunction(this: any, entityForm: any, ){
