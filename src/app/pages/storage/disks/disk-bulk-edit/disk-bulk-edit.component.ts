@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 
 @Component({
   selector: 'app-disk-bulk-edit',
@@ -22,6 +23,14 @@ export class DiskBulkEditComponent {
       name: 'disk_name',
       placeholder: T('Editing the following disks:'),
       tooltip : T('This is the FreeBSD device name for the disk.'),
+      value: ['ada7', 'ada4'],
+      readonly: true
+    },    {
+      type: 'input',
+      name: 'disk_serial',
+      placeholder: T('Serial'),
+      tooltip : T('This is the serial number of the disk.'),
+      value: ['VB90b9bc1a-a8706324', 'VB81bc2c7d-a1399056'],
       readonly: true
     },
     {
@@ -73,12 +82,14 @@ export class DiskBulkEditComponent {
   protected disk_hddstandby: any;
   protected disk_advpowermgmt: any;
   protected disk_acousticlevel: any;
+  protected entityList: any;
 
   constructor(
     private _router: Router,
     protected rest: RestService,
     protected ws: WebSocketService,
-    protected aroute: ActivatedRoute
+    protected aroute: ActivatedRoute,
+    protected loader: AppLoaderService
   ) {
     this.aroute.params.subscribe((params)=> {
       if (params['poolId']) {
@@ -111,6 +122,29 @@ export class DiskBulkEditComponent {
             {label : item[1], value : item[0]});
       });
     });
+  }
+
+  customSubmit(event) {
+    // console.log(event.disk_advpowermgmt)
+    for (let i of event.disk_serial) {
+      // console.log(i)
+      // this.entityList.busy =
+      this.ws.job('core.bulk', ["disk.update", [ 
+        [i, {"hddstandby": event.disk_hddstandby}, 
+                   {"advpowermgmt" : event.disk_advpowermgmt}, 
+                   {"acousticlevel" : event.disk_acousticlevel},
+                   {"togglesmart" : event.disk_togglesmart},
+                   {"smartoptions" : event.disk_smartoptions}]
+                  ]]).subscribe(
+                    (res) => { 
+                      console.log(res)
+                      console.log('done')
+                      this._router.navigate(new Array('/').concat([
+                        "storage", "disks", "bulk-edit"]))
+                    }
+                  )
+    }
+    console.log('here')
   }
 
 }
