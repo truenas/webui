@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { StorageService } from '../../../services/storage.service'
 import { EntityUtils } from '../../common/entity/utils';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogService } from '../../../../app/services';
@@ -15,7 +16,7 @@ import { MatSnackBar } from '@angular/material';
   // template: `<entity-table [title]="title" [conf]="this"></entity-table>`
   templateUrl: './jail-list.component.html',
   styleUrls: ['../../plugins/plugins-available/plugins-available-list.component.css'],
-  providers: [DialogService]
+  providers: [DialogService, StorageService]
 })
 export class JailListComponent implements OnInit {
 
@@ -140,7 +141,7 @@ export class JailListComponent implements OnInit {
 
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, 
     protected loader: AppLoaderService, protected dialogService: DialogService, private translate: TranslateService,
-    protected snackBar: MatSnackBar) {}
+    protected snackBar: MatSnackBar, public sorter: StorageService) {}
 
   public tooltipMsg: any = T("Choose a pool where the iocage jail manager \
                               can create the /iocage dataset. The /iocage \
@@ -354,6 +355,8 @@ export class JailListComponent implements OnInit {
   }
 
   dataHandler(entityList: any) {
+    // Call sort on load to make sure initial sort is by Jail name, asecnding
+    entityList.rows = this.sorter.tableSorter(entityList.rows, 'host_hostuuid', 'asc');
     for (let i = 0; i < entityList.rows.length; i++) {
       if (_.split(entityList.rows[i].ip4_addr, '|').length > 1) {
         entityList.rows[i].ip4_addr = _.split(entityList.rows[i].ip4_addr, '|')[1];

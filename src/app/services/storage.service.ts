@@ -48,8 +48,8 @@ export class StorageService {
     dlink.remove();
   }
 
-  // Handles sorting for entity tables and some other ngx datatables 
-  tableSorter(arr, key, asc) {
+   // Handles sorting for entity tables and some other ngx datatables 
+   tableSorter(arr, key, asc) {
     let tempArr = [],
       sorter,
       myCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
@@ -58,10 +58,15 @@ export class StorageService {
     arr.forEach((item) => {
       tempArr.push(item[key]);
     });
+    // Handle an empty data field or empty column
+    let n = 0;
+    while (!tempArr[n] && n < tempArr.length) {
+      n++;
+    }
     // Select table columns labled with GiB, Mib, etc
     // Regex checks for ' XiB' with a leading space and X === K, M, G or T 
-    if (typeof(tempArr[0]) === 'string' && 
-      (tempArr[0].slice(-2) === ' B' || /\s[KMGT]iB$/.test(tempArr[0].slice(-4) ))) {
+    if (typeof(tempArr[n]) === 'string' && 
+      (tempArr[n].slice(-2) === ' B' || /\s[KMGT]iB$/.test(tempArr[n].slice(-4) ))) {
 
     let bytes = [], kbytes = [], mbytes = [], gbytes = [], tbytes = [];
     for (let i of tempArr) {
@@ -94,9 +99,9 @@ export class StorageService {
     sorter = bytes.concat(kbytes, mbytes, gbytes, tbytes)
 
   // Select disks where last two chars = a digit and the one letter space abbrev  
-  } else if (typeof(tempArr[0]) === 'string' && 
-      tempArr[0][tempArr[0].length-1].match(/[KMGTB]/) &&
-      tempArr[0][tempArr[0].length-2].match(/[0-9]/)) {
+  } else if (typeof(tempArr[n]) === 'string' && 
+      tempArr[n][tempArr[n].length-1].match(/[KMGTB]/) &&
+      tempArr[n][tempArr[n].length-2].match(/[0-9]/)) {
         
       let B = [], K = [], M = [], G = [], T = [];
       for (let i of tempArr) {
@@ -128,8 +133,8 @@ export class StorageService {
       sorter = B.concat(K, M, G, T)
   
     // Select strings that Date.parse can turn into a number (ie, that are a legit date)
-    } else if (typeof(tempArr[0]) === 'string' && 
-      typeof(Date.parse(tempArr[0])) === 'number') {
+    } else if (typeof(tempArr[n]) === 'string' && 
+      !isNaN(Date.parse(tempArr[n]))) {
         let timeArr = [];
         for (let i of tempArr) {
           timeArr.push(Date.parse(i));
