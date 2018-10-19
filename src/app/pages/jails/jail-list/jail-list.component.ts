@@ -320,6 +320,7 @@ export class JailListComponent implements OnInit {
     for (let i in selectedJails) {
       selected.push([selectedJails[i].host_hostuuid]);
     }
+    console.log(selected)
     return selected;
   }
 
