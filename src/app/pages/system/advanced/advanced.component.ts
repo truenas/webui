@@ -138,14 +138,6 @@ export class AdvancedComponent implements OnDestroy {
     required: true,
   }, {
     type: 'checkbox',
-    name: 'powerdaemon',
-    placeholder: T('Enable Power Saving Daemon'),
-    tooltip: T('<a\
-                href="https://www.freebsd.org/cgi/man.cgi?query=powerd&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
-                target="_blank">powerd(8)</a> monitors the system state and sets the\
-                CPU frequency accordingly.')
-  }, {
-    type: 'checkbox',
     name: 'autotune',
     placeholder: T('Enable autotune'),
     tooltip: T('Enables the autotune script which attempts to optimize\
