@@ -13,6 +13,7 @@ import {WebSocketService} from '../../../services';
   units: string;
   labelY:string;
   unitsProvided?:string;
+  removePrefix?: string;
  }
 
 /*
@@ -126,17 +127,18 @@ export class LineChartService {
 
     let dictionary: LineChartMetadata[] = [
       {source :'aggregation-cpu-sum', units:'%', labelY:'% CPU'},
-      {source :'memory', units:'GiB', labelY:'Gigabytes'},
-      {source :'swap', units:'GiB', labelY:'Gigabytes'},
+      {source :'memory', units:'GiB', labelY:'Gigabytes', removePrefix:'memory-'},
+      {source :'swap', units:'GiB', labelY:'Gigabytes', removePrefix:'swap-'},
       {source :'if_errors', units:'', labelY:'Bits/s'},
       {source :'if_octets', units:'', labelY:'Bits/s'},
       {source :'if_packets', units:'', labelY:'Bits/s'},
-      {source :'df-mnt-', units:'GiB', labelY: 'Gigabytes'},
+      {source :'df-mnt-', units:'GiB', labelY: 'Gigabytes', removePrefix:'df_complex-'},
+      {source :'ctl-tpc', units:'GiB', labelY: 'Bytes/s', removePrefix:'disk_'},
       {source :'disk_time', units:'k', labelY: 'Bytes/s'},
       {source :'disk_octets', units:'k', labelY: 'Bytes/s'},
       {source :'disk_io_time', units:'k', labelY: 'Bytes/s'},
       {source :'disk_ops', units:'', labelY: 'Operations/s'},
-      {source :'processes', units:'', labelY: 'Processes'},
+      {source :'processes', units:'', labelY: 'Processes', removePrefix:'ps_state-'},
       {source :'uptime', units:'', labelY: 'Days'},
       {source :'cache_size-arc', units:'G', labelY: 'Bytes'},
       {source :'cache_ratio-arc', units:'%', labelY: 'Hits'},

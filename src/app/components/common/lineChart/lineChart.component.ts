@@ -42,6 +42,7 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
   public chart:any;
   public showLegendValues: boolean = false;
   public legendEvents: BehaviorSubject<any>;
+  public legendLabels: BehaviorSubject<any>;
   data: LineChartData = {
     labels: [],
     series: [],
@@ -55,6 +56,7 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
 
   constructor(private core:CoreService, private _lineChartService: LineChartService) {
     this.legendEvents = new BehaviorSubject(false);
+    this.legendLabels = new BehaviorSubject([]);
   }
 
   handleDataFunc(linechartData: LineChartData) {
@@ -71,7 +73,8 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
         dataSeriesArray.forEach((numberVal) => {
 
           if (numberVal > 0) {
-            newArray.push(numberVal / this.divideBy);
+            //newArray.push(numberVal / this.divideBy);
+            newArray.push((numberVal / this.divideBy).toFixed(2));
           } else {
             newArray.push(numberVal);
           }
@@ -83,6 +86,7 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
     });
 
     const columns: any[][] = [];
+    let legendLabels: string[] = [];
 
     // xColumn
     const xValues: any[] = [];
@@ -95,7 +99,15 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
 
     // For C3.. Put the name of the series as the first element of each series array
     for (let i = 0; i < this.legends.length && this.data.series.length; ++i) {
-      const legend: string = this.legends[i];
+      let legend: string;
+      if(linechartData.meta.removePrefix){
+        legend  = this.legends[i].replace(linechartData.meta.removePrefix, "");
+      } else {
+        legend  = this.legends[i];
+      }
+
+      legendLabels.push(legend);
+
       let series: any[] = this.data.series[i];
       if( typeof(series) !== 'undefined' && series.length > 0 ) {
         series.unshift(legend);
@@ -104,6 +116,7 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
       }
       columns.push(series);
     }
+    this.legendLabels.next(legendLabels);
 
 
     this.chart = c3.generate({
