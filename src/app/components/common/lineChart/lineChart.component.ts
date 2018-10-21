@@ -60,28 +60,35 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
   }
 
   handleDataFunc(linechartData: LineChartData) {
-    //console.log(linechartData)
 
     this.data.labels.splice(0, this.data.labels.length);
     this.data.series.splice(0, this.data.series.length);
 
     linechartData.labels.forEach((label) => {this.data.labels.push(new Date(label))});
     linechartData.series.forEach((dataSeriesArray) => {
-
+    
+    const newArray = []; //new Array();
       if (typeof (this.divideBy) !== 'undefined') {
-        const newArray = new Array();
         dataSeriesArray.forEach((numberVal) => {
-
           if (numberVal > 0) {
-            //newArray.push(numberVal / this.divideBy);
             newArray.push((numberVal / this.divideBy).toFixed(2));
           } else {
             newArray.push(numberVal);
           }
         });
-
+        
+        dataSeriesArray = newArray;
+      } else { 
+        dataSeriesArray.forEach((numberVal) => {
+          if(numberVal > 0){
+            newArray.push(numberVal.toFixed(2));
+          } else {
+            newArray.push(numberVal);
+          }
+        });
         dataSeriesArray = newArray;
       }
+  
       this.data.series.push(dataSeriesArray);
     });
 
