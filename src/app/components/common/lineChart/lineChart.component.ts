@@ -49,8 +49,8 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
     //meta: {}
   };
   colorPattern = ["#2196f3", "#009688", "#ffc107", "#9c27b0", "#607d8b", "#00bcd4", "#8bc34a", "#ffeb3b", "#e91e63", "#3f51b5"];
-
-
+  timeFormat: string = "%H:%M";
+  culling:number = 6;
   controlUid: string;
 
 
@@ -145,10 +145,14 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
         x: {
           type: 'timeseries',
           tick: {
-            format: '%H:%M:%S',
-            fit: true//,
+            //format: '%H:%M:%S',
+            format: this.timeFormat,
+            fit: true,
             //values: ['01:10', '03:10', '06:10']
+            culling: { 
+              max: this.culling
             }
+          }
         },
         y:{
           tick: {
@@ -232,7 +236,13 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
     return obj;
   }
 
-  public fetchData(timeframe:string){
+  public fetchData(timeframe:string, timeformat?: string, culling?:number){
+    if(timeformat){
+      this.timeFormat = timeformat;
+    }
+    if(culling){
+      this.culling = culling;
+    }
     // This is the time portion of the API call. 
     this._lineChartService.getData(this, this.dataList, timeframe);
   }

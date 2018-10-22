@@ -25,6 +25,12 @@ export interface TimeData {
   legend?: string;
 }
 
+interface TimeAxisData {
+  timespan:string;
+  timeformat:string;
+  culling: number;
+}
+
 interface LineChartConfig {
   dataList:any;
   divideBy:number;
@@ -51,12 +57,12 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   public widgetColorCssVar: string = 'var(--primary)';
 
   public timeZoomIndex:number = 4;
-  public zoomLevels: string[] = [
-    '5M',// 6 months
-    '1M',// 1 month
-    '7d',// 1 week
-    '24h',// 24hrs
-    '60m',// 60 minutes
+  public zoomLevels: TimeAxisData[] = [
+    { timespan: '5M', timeformat: "%b '%y", culling: 6},// 6 months
+    { timespan: '1M', timeformat: 'Week %W', culling: 4},// 1 month
+    { timespan: '7d', timeformat: '%d %b', culling: 6},// 1 week
+    { timespan: '24h', timeformat: '%a %H:%M', culling: 4},// 24hrs
+    { timespan: '60m', timeformat: '%H:%M', culling: 6}// 60 minutes
   ]
 
   // Loader
@@ -111,7 +117,8 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     const max = 4; 
     if(this.timeZoomIndex == max){ return;}
     this.timeZoomIndex += 1;
-    this.lineChart.fetchData('now-' + this.zoomLevels[this.timeZoomIndex]);
+    const zoom = this.zoomLevels[this.timeZoomIndex]
+    this.lineChart.fetchData('now-' + zoom.timespan, zoom.timeformat, zoom.culling);
   }
 
   timeZoomOut(){
@@ -119,7 +126,8 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     const min = Number(0);
     if(this.timeZoomIndex == min){ return;}
     this.timeZoomIndex -= 1;
-    this.lineChart.fetchData('now-' + this.zoomLevels[this.timeZoomIndex]);
+    const zoom = this.zoomLevels[this.timeZoomIndex]
+    this.lineChart.fetchData('now-' + zoom.timespan, zoom.timeformat);
   }
 
   setChartData(evt:CoreEvent){
