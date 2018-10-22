@@ -243,7 +243,6 @@ export class CertificateAddComponent {
 
   private country: any;
   private signedby: any;
-  public identifier: any;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
