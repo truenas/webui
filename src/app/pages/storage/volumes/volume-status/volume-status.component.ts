@@ -8,6 +8,7 @@ import * as _ from 'lodash';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { MatSnackBar } from '@angular/material';
 import { Validators } from '@angular/forms';
+import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
 import { T } from '../../../../translate-marker';
 
 interface poolDiskInfo {
@@ -51,6 +52,23 @@ export class VolumeStatusComponent implements OnInit {
     required: true,
     validation: [Validators.required],
   }, {
+    type: 'input',
+    inputType: 'password',
+    name: 'pass',
+    placeholder: T('Passphrase'),
+    required: true,
+    isHidden: true,
+    disabled: true,
+  }, {
+    type: 'input',
+    inputType: 'password',
+    name: 'pass2',
+    placeholder: T('Confirm Passphrase'),
+    validation : [ matchOtherValidator('pass') ],
+    required: true,
+    isHidden: true,
+    disabled: true,
+  }, {
     type: 'checkbox',
     name: 'force',
     placeholder: "Force",
@@ -73,6 +91,13 @@ export class VolumeStatusComponent implements OnInit {
     ]).subscribe(
       (res) => {
         if (res[0]) {
+          // if pool is passphrase protected, abled passphrase field.
+          if (res[0].encrypt === 2) {
+            _.find(this.replaceDiskFormFields, { name: 'pass' }).isHidden = false;
+            _.find(this.replaceDiskFormFields, { name: 'pass' }).disabled = false;
+            _.find(this.replaceDiskFormFields, { name: 'pass2' }).isHidden = false;
+            _.find(this.replaceDiskFormFields, { name: 'pass2' }).disabled = false;
+          }
           this.poolScan = res[0].scan;
           this.dataHandler(res[0]);
         }
