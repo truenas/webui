@@ -127,7 +127,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     if(this.timeZoomIndex == min){ return;}
     this.timeZoomIndex -= 1;
     const zoom = this.zoomLevels[this.timeZoomIndex]
-    this.lineChart.fetchData('now-' + zoom.timespan, zoom.timeformat);
+    this.lineChart.fetchData('now-' + zoom.timespan, zoom.timeformat, zoom.culling);
   }
 
   setChartData(evt:CoreEvent){
