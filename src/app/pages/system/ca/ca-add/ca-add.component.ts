@@ -26,9 +26,7 @@ export class CertificateAuthorityAddComponent {
       placeholder : T('Identifier'),
       tooltip: T('Enter a description of the CA.'),
       required: true,
-      validation : [ Validators.required, Validators.pattern('[A-Za-z0-9_-]+$') ],
-      hasErrors: false,
-      errors: 'Allowed characters: letters, numbers, underscore (_), and dash (-).'
+      validation : [ Validators.required]
     },
     {
       type : 'select',
@@ -314,19 +312,6 @@ export class CertificateAuthorityAddComponent {
         }
       }
     })
-
-    entity.formGroup.controls['name'].valueChanges.subscribe((res) => {
-      this.identifier = res;
-    })
-
-    entity.formGroup.controls['name'].statusChanges.subscribe((res) => {
-      if (this.identifier && res === 'INVALID') {
-        _.find(this.fieldConfig).hasErrors = true;
-      } else {
-        _.find(this.fieldConfig).hasErrors = false;
-      }
-    })
-
   }
 
   hideField(fieldName: any, show: boolean, entity: any) {
