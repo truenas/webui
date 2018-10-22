@@ -1306,6 +1306,7 @@ export class JailEditComponent implements OnInit {
         vnet_ctrl.setValue(vnet_ctrl.value);
       }
       _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = res;
+      this.formGroup.controls['ip6_addr'].markAsTouched();
     });
     this.formGroup.controls['ip4_addr'].valueChanges.subscribe((res) => {
       this.updateInterfaceValidation();
@@ -1326,38 +1327,40 @@ export class JailEditComponent implements OnInit {
         for (let i in res[0]) {
           if (this.formGroup.controls[i]) {
             if (i == 'ip4_addr') {
-              if (res[0][i] == 'none' || res[0][i] == '') {
+              let ip4 = res[0][i];
+              if (ip4 == 'none' || ip4 == '') {
                 this.formGroup.controls['ip4_addr'].setValue('');
               } else {
-                if (res[0][i].indexOf('|') > 0) {
-                  this.formGroup.controls['ip4_interface'].setValue(res[0][i].split('|')[0]);
-                  res[0][i] = res[0][i].split('|')[1];
+                if (ip4.indexOf('|') > 0) {
+                  this.formGroup.controls['ip4_interface'].setValue(ip4.split('|')[0]);
+                  ip4 = ip4.split('|')[1];
                 }
-                if (res[0][i].indexOf('/') > 0) {
-                  this.formGroup.controls['ip4_addr'].setValue(res[0][i].split('/')[0]);
-                  this.formGroup.controls['ip4_netmask'].setValue(res[0][i].split('/')[1]);
+                if (ip4.indexOf('/') > 0) {
+                  this.formGroup.controls['ip4_addr'].setValue(ip4.split('/')[0]);
+                  this.formGroup.controls['ip4_netmask'].setValue(ip4.split('/')[1]);
                 } else {
-                  this.formGroup.controls['ip4_addr'].setValue(res[0][i]);
+                  this.formGroup.controls['ip4_addr'].setValue(ip4);
                 }
               }
               continue;
             }
             if (i == 'ip6_addr') {
-              if (res[0][i] == 'none' || res[0][i] == '') {
+              let ip6 = res[0][i];
+              if (ip6 == 'none' || ip6 == '') {
                 this.formGroup.controls['ip6_addr'].setValue('');
               } else {
-                if (res[0][i] == 'vnet0|accept_rtadv') {
+                if (ip6 == 'vnet0|accept_rtadv') {
                   this.formGroup.controls['auto_configure_ip6'].setValue(true);
                 }
-                if (res[0][i].indexOf('|') > 0) {
-                  this.formGroup.controls['ip6_interface'].setValue(res[0][i].split('|')[0]);
-                  res[0][i] = res[0][i].split('|')[1];
+                if (ip6.indexOf('|') > 0) {
+                  this.formGroup.controls['ip6_interface'].setValue(ip6.split('|')[0]);
+                  ip6 = ip6.split('|')[1];
                 }
-                if (res[0][i].indexOf('/') > 0) {
-                  this.formGroup.controls['ip6_addr'].setValue(res[0][i].split('/')[0]);
-                  this.formGroup.controls['ip6_prefix'].setValue(res[0][i].split('/')[1]);
+                if (ip6.indexOf('/') > 0) {
+                  this.formGroup.controls['ip6_addr'].setValue(ip6.split('/')[0]);
+                  this.formGroup.controls['ip6_prefix'].setValue(ip6.split('/')[1]);
                 } else {
-                  this.formGroup.controls['ip6_addr'].setValue(res[0][i]);
+                  this.formGroup.controls['ip6_addr'].setValue(ip6);
                 }
               }
 
@@ -1464,7 +1467,12 @@ export class JailEditComponent implements OnInit {
     delete value['ip4_interface'];
     delete value['ip4_netmask'];
     if (value['ip6_addr'] == '' || value['ip6_addr'] == undefined) {
-      delete value['ip6_addr'];
+      // auto config ipv6 was enabled before
+      if (this.wsResponse['ip6_addr'] == "vnet0|accept_rtadv") {
+        value['ip6_addr'] = "none";
+      } else {
+        delete value['ip6_addr'];
+      }
     } else {
       value['ip6_addr'] = this.getFullIP(value['ip6_interface'], value['ip6_addr'], value['ip6_prefix']);
     }
