@@ -12,6 +12,7 @@ import { EntityUtils } from '../../../common/entity/utils';
 import { JailService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker'
+import helptext from '../../../../helptext/jails/storage';
 
 interface MountPoint {
   action: string,
@@ -56,7 +57,7 @@ export class StorageFormComponent {
   public fieldConfig: FieldConfig[] = [{
       type: 'select',
       name: 'jail',
-      placeholder: T('Jail'),
+      placeholder: helptext.jail_placeholder,
       options: [],
     },
     {
@@ -64,28 +65,22 @@ export class StorageFormComponent {
       initial: '/mnt',
       explorerType: 'directory',
       name: 'source',
-      placeholder: T('Source'),
-      tooltip: T('Browse to the directory on the system which will\
-                  be accessed by the jail. This directory <b>must</b>\
-                  be separate from the jail pool or dataset.'),
+      placeholder: helptext.source_placeholder,
+      tooltip: helptext.source_tooltip,
     },
     {
       type: 'explorer',
       initial: '/mnt',
       explorerType: 'directory',
       name: 'destination',
-      placeholder: T('Destination'),
-      tooltip: T('Browse to an empty directory within the jail or enter\
-                  a new directory name within the jail directory\
-                  structure. This links to the <b>Source</b> storage\
-                  area.'),
+      placeholder: helptext.destination_placeholder,
+      tooltip: helptext.destination_tooltip,
     },
     {
       type: 'checkbox',
       name: 'readonly',
-      placeholder: T('Read-Only'),
-      tooltip: T('Set to prevent users from modifying the\
-                  <b>Destination</b>.'),
+      placeholder: helptext.readonly_placeholder,
+      tooltip: helptext.readonly_tooltip,
     },
   ];
 
