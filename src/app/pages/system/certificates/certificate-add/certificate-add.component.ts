@@ -53,7 +53,7 @@ export class CertificateAddComponent {
       isHidden: true,
       disabled: true,
       required: true,
-      validation: [Validators.required]
+      validation: [Validators.required ]
     },
     {
       type : 'select',
