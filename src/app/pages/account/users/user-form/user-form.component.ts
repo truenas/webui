@@ -48,7 +48,7 @@ export class UserFormComponent {
                       . A <b>$</b> can only be used as the last\
                       character.'),
           required: true,
-          validation : [ Validators.required, Validators.pattern('[a-z_][a-z0-9_-]*[$]?'),  Validators.maxLength(8) ]
+          validation : [ Validators.required, Validators.pattern('[a-z_A-Z_][a-zA-Z0-9_-]*[$]?'),  Validators.maxLength(8) ]
         },
         {
           type : 'input',
