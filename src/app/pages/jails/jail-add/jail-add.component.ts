@@ -560,6 +560,7 @@ export class JailAddComponent implements OnInit {
       type: 'select',
       name: 'vnet_default_interface',
       placeholder: helptext.vnet_default_interface_placeholder,
+      tooltip: helptext.vnet_default_interface_tooltip,
       options: [
         {
           label: 'none',
