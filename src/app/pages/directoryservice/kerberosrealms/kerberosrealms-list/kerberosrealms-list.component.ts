@@ -25,6 +25,10 @@ export class KerberosRealmsListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    deleteMsg: {
+      title: 'Kerberos Realm',
+      key_props: ['krb_realm']
+    },
   };
 
   constructor(protected rest: RestService, private router: Router){}

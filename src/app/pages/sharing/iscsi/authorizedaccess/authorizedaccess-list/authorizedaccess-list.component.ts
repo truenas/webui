@@ -34,5 +34,9 @@ export class AuthorizedAccessListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    deleteMsg: {
+      title: 'Authorized Access',
+      key_props: ['iscsi_target_auth_tag']
+    },
   };
 }

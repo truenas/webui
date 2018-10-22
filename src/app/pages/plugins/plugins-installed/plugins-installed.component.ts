@@ -39,7 +39,12 @@ export class PluginsInstalledListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
-    multiSelect: true
+    multiSelect: true,
+    deleteMsg: {
+      title: 'Plugin',
+      key_props: ['1'],
+      id_prop: '1',
+    },
   };
   public multiActions: Array < any > = [{
       id: "mstart",
@@ -233,7 +238,7 @@ export class PluginsInstalledListComponent {
         id: "delete",
         label: T("Delete"),
         onClick: (row) => {
-          this.entityList.doDelete(row[1]);
+          this.entityList.doDelete(row);
         }
       }
     ]
