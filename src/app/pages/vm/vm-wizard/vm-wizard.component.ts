@@ -181,6 +181,18 @@ export class VMWizardComponent {
         },
         {
           type: 'select',
+          name: 'hdd_type',
+          placeholder: T('Select desired type of disk'),
+          tooltip: T('Select desired disk type.'),
+          isHidden: false,
+          options : [
+            {label : 'AHCI', value : 'AHCI'},
+            {label : 'VirtIO', value : 'VIRTIO'},
+          ],
+          value: 'AHCI'
+        },
+        {
+          type: 'select',
           name: 'hdd_path',
           placeholder: T('Select an existing disk'),
           tooltip: T('Browse to the desired pool or dataset on the disk.'),
@@ -414,10 +426,12 @@ export class VMWizardComponent {
         _.find(this.wizardConfig[3].fieldConfig, {name : 'volsize'}).isHidden = false;
         _.find(this.wizardConfig[3].fieldConfig, {name : 'datastore'}).isHidden = false;
         _.find(this.wizardConfig[3].fieldConfig, {name : 'hdd_path'}).isHidden = true;
+        _.find(this.wizardConfig[3].fieldConfig, {name : 'hdd_type'}).isHidden = false;
       } else {
         _.find(this.wizardConfig[3].fieldConfig, {name : 'volsize'}).isHidden = true;
         _.find(this.wizardConfig[3].fieldConfig, {name : 'datastore'}).isHidden = true;
         _.find(this.wizardConfig[3].fieldConfig, {name : 'hdd_path'}).isHidden = false;
+        _.find(this.wizardConfig[3].fieldConfig, {name : 'hdd_type'}).isHidden = true;
       }
 
     });
@@ -609,6 +623,7 @@ async customSubmit(value) {
           const zvol_volsize = zvol_payload['zvol_volsize']
 
           device.attributes.path = '/dev/zvol/' + orig_hdd
+          device.attributes.type = value.hdd_type;
           device.attributes.create_zvol = create_zvol
           device.attributes.zvol_name = zvol_name
           device.attributes.zvol_volsize = zvol_volsize
