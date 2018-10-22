@@ -27,7 +27,9 @@ export class CertificateAddComponent {
       placeholder : T('Identifier'),
       tooltip: T('Enter a description of the CA.'),
       required: true,
-      validation : [ Validators.required]
+      validation : [ Validators.required, Validators.pattern('[A-Za-z0-9_-]+$') ],
+      hasErrors: false,
+      errors: 'Allowed characters: letters, numbers, underscore (_), and dash (-).'
     },
     {
       type : 'select',
@@ -343,11 +345,8 @@ export class CertificateAddComponent {
     if (data.passphrase == '') {
       data.passphrase = undefined;
     }
-
-    if (data.passphrase2) {
+      if (data.passphrase2) {
       delete data.passphrase2;
     }
   }
-
-
 }
