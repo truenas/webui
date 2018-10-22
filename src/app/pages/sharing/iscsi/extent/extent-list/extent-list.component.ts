@@ -30,6 +30,10 @@ export class ExtentListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    deleteMsg: {
+      title: 'Extent',
+      key_props: ['iscsi_target_extent_name']
+    },
   };
 
   afterInit(entityList: any) {}

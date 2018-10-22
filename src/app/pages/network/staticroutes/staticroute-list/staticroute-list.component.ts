@@ -26,5 +26,9 @@ export class StaticRouteListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    deleteMsg: {
+      title: 'Static Route',
+      key_props: ['sr_destination']
+    },
   };
 }

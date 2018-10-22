@@ -44,6 +44,11 @@ export class JailListComponent implements OnInit {
     paging: true,
     sorting: { columns: this.columns },
     multiSelect: true,
+    deleteMsg: {
+      title: 'Jail',
+      key_props: ['host_hostuuid'],
+      id_prop: 'host_hostuuid'
+    },
   };
   public multiActions: Array < any > = [{
       id: "mstart",
@@ -304,7 +309,7 @@ export class JailListComponent implements OnInit {
         id: "delete",
         label: T("Delete"),
         onClick: (row) => {
-          this.entityList.doDelete(row.host_hostuuid);
+          this.entityList.doDelete(row);
         }
       }
     ]

@@ -62,13 +62,13 @@ export class ManualUpdateComponent {
                   the update file stored on the system logged into the\
                   web interface to upload and apply. Update file names\
                   end with <i>-manual-update-unsigned.tar</i>'),
-      validation : [ Validators.required],
+      // validation : [ Validators.required],
       fileLocation: '',
       message: this.messageService,
       acceptedFiles: '.tar',
       updater: this.updater,
       parent: this,
-      required: true,
+      // required: true,
       hideButton: true,
     },
   ];
@@ -86,6 +86,7 @@ export class ManualUpdateComponent {
     saveButtonText: T('Save'),
     customSubmit: this.saveCofigSubmit,
   }
+  public save_button_enabled: boolean = false;
 
   constructor(
     protected router: Router,
@@ -155,6 +156,7 @@ export class ManualUpdateComponent {
 updater(file: any, parent: any){
   const fileBrowser = file.fileInput.nativeElement;
   if (fileBrowser.files && fileBrowser.files[0]) {
+    parent.save_button_enabled = true;
     const formData: FormData = new FormData();
     formData.append('data', JSON.stringify({
       "method": "update.file",
@@ -162,6 +164,8 @@ updater(file: any, parent: any){
     }));
     formData.append('file', fileBrowser.files[0]);
     parent.subs = {"apiEndPoint":file.apiEndPoint, "formData": formData}
+  } else {
+    parent.save_button_enabled = false;
   }
 }
 

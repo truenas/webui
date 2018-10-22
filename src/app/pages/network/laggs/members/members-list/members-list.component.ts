@@ -34,6 +34,10 @@ export class LaggMembersListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    deleteMsg: {
+      title: 'Link Aggregation Member',
+      key_props: ['lagg_physnic']
+    },
   };
 
   getActions(row) {
@@ -49,7 +53,7 @@ export class LaggMembersListComponent {
     actions.push({
       label : T("Delete"),
       onClick : (row) => {
-        this.entityList.doDelete(row.id);
+        this.entityList.doDelete(row);
       },
     });
     return actions;

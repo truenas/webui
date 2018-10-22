@@ -19,7 +19,7 @@ export class LaggListComponent {
   protected editIds: any = {};
   protected entityList: any;
   protected confirmDeleteDialog = {
-    message: T("Network connectivity will be interrupted. Delete the selected interface?"),
+    message: T("Network connectivity will be interrupted. "),
   }
 
   constructor(protected rest: RestService, protected router: Router) {}
@@ -31,6 +31,10 @@ export class LaggListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    deleteMsg: {
+      title: 'Interface',
+      key_props: ['lagg_interface']
+    },
   };
 
   getActions(row) {
@@ -54,7 +58,7 @@ export class LaggListComponent {
     actions.push({
       label : T("Delete"),
       onClick : (row) => {
-        this.entityList.doDelete(row.id);
+        this.entityList.doDelete(row);
       },
     });
     return actions;

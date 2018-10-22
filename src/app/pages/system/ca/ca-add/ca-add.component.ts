@@ -194,17 +194,17 @@ export class CertificateAuthorityAddComponent {
     },
     {
       type : 'input',
-      name : 'Passphrase',
+      name : 'passphrase',
       placeholder : T('Passphrase'),
       tooltip : T('Enter the passphrase for the Private Key.'),
       inputType : 'password',
-      validation : [ matchOtherValidator('Passphrase2') ],
+      validation : [ matchOtherValidator('passphrase2') ],
       isHidden: true,
       togglePw : true
     },
     {
       type : 'input',
-      name : 'Passphrase2',
+      name : 'passphrase2',
       inputType : 'password',
       placeholder : T('Confirm Passphrase'),
       isHidden : true
@@ -239,8 +239,8 @@ export class CertificateAuthorityAddComponent {
   private importcaFields: Array<any> = [
     'certificate',
     'privatekey',
-    'Passphrase',
-    'Passphrase2',
+    'passphrase',
+    'passphrase2',
   ];
 
   private country: any;
@@ -341,6 +341,13 @@ export class CertificateAuthorityAddComponent {
     } else {
       data.san = _.split(data.san, ' ');
     }
-  }
 
+    // Addresses non-pristine field being mistaken for a passphrase of ''
+    if (data.passphrase == '') {
+      data.passphrase = undefined;
+    }
+    if (data.passphrase2) {
+      delete data.passphrase2;
+    }
+  }
 }
