@@ -27,7 +27,7 @@ export class CertificateAddComponent {
       placeholder : T('Identifier'),
       tooltip: T('Enter a description of the CA.'),
       required: true,
-      validation : [ Validators.required]
+      validation : [ Validators.required ]
     },
     {
       type : 'select',
@@ -53,7 +53,7 @@ export class CertificateAddComponent {
       isHidden: true,
       disabled: true,
       required: true,
-      validation: [Validators.required ]
+      validation: [Validators.required]
     },
     {
       type : 'select',
