@@ -28,6 +28,7 @@ export class UserFormComponent {
   protected route_success: string[] = ['account', 'users' ];
   protected isEntity  = true;
   protected isNew: boolean;
+  public entityForm: any;
 
   public fieldSetDisplay  = 'default';//default | carousel | stepper
   public fieldConfig: FieldConfig[] = [];
@@ -39,6 +40,17 @@ export class UserFormComponent {
       config:[
         {
           type : 'input',
+          name : 'full_name',
+          placeholder : T('Full Name'),
+          tooltip : T('Spaces are allowed.'),
+          required: true,
+          validation : [ Validators.required ],
+          blurStatus : true,
+          blurEvent: this.blurEvent,
+          parent: this
+        },
+        {
+          type : 'input',
           name : 'username',
           placeholder : T('Username'),
           tooltip : T('Enter an alphanumeric username of eight characters\
@@ -48,15 +60,10 @@ export class UserFormComponent {
                       . A <b>$</b> can only be used as the last\
                       character.'),
           required: true,
-          validation : [ Validators.required, Validators.pattern('[a-z_A-Z_][a-zA-Z0-9_-]*[$]?'),  Validators.maxLength(8) ]
-        },
-        {
-          type : 'input',
-          name : 'full_name',
-          placeholder : T('Full Name'),
-          tooltip : T('Spaces are allowed.'),
-          required: true,
-          validation : [ Validators.required ]
+          validation : [ Validators.required, Validators.pattern('[a-z_A-Z_][a-zA-Z0-9_-]*[$]?') ],
+          blurStatus : true,
+          blurEvent: this.blurEvent2,
+          parent: this
         },
         {
           type : 'input',
@@ -74,7 +81,7 @@ export class UserFormComponent {
           inputType : 'password',
           togglePw: true,
           required: true,
-          validation : [ Validators.pattern('^[^?]*$'), Validators.maxLength(9), Validators.required ],
+          validation : [ Validators.pattern('^[^?]*$'), Validators.required ],
           isHidden: false
         },
         {
@@ -83,7 +90,7 @@ export class UserFormComponent {
           placeholder : T('Confirm Password'),
           inputType : 'password',
           required: true,
-          validation : [ matchOtherValidator('password'), Validators.pattern('^[^?]*$'), Validators.maxLength(9), Validators.required ],
+          validation : [ matchOtherValidator('password'), Validators.pattern('^[^?]*$'), Validators.required ],
           isHidden: false
         },
         {
@@ -95,7 +102,7 @@ export class UserFormComponent {
                       <i>No</i>. Passwords cannot contain a <b>?</b>.'),
           inputType : 'password',
           togglePw: true,
-          validation : [ Validators.pattern('^[^?]*$'), Validators.maxLength(9) ],
+          validation : [ Validators.pattern('^[^?]*$') ],
           isHidden: true
         },
         {
@@ -103,7 +110,7 @@ export class UserFormComponent {
           name : 'password_conf_edit',
           placeholder : T('Confirm Password'),
           inputType : 'password',
-          validation : [ matchOtherValidator('password_edit'), Validators.pattern('^[^?]*$'), Validators.maxLength(9) ],
+          validation : [ matchOtherValidator('password_edit'), Validators.pattern('^[^?]*$') ],
           isHidden: true
         },
       ]
@@ -283,6 +290,7 @@ export class UserFormComponent {
 
 
    afterInit(entityForm: any) {
+    this.entityForm = entityForm;
     this.isNew = entityForm.isNew;
     this.password_disabled = entityForm.formGroup.controls['password_disabled'];
     this.sudo = entityForm.formGroup.controls['sudo'];
@@ -455,6 +463,9 @@ export class UserFormComponent {
         entityForm['password'] = entityForm['password_edit'];
         delete entityForm['password_edit'];
         delete entityForm['password_conf_edit'];
+      } else if(entityForm['password_edit'] === '' && entityForm['password_conf_edit'] === '') {
+        delete entityForm['password_edit'];
+        delete entityForm['password_conf_edit'];
       }
     }
   }
@@ -463,5 +474,32 @@ export class UserFormComponent {
     delete entityForm['group_create']
     delete entityForm['password_conf']
     return this.ws.call('user.update', [this.pk, entityForm]);
+  }
+  blurEvent(parent){
+    if(parent.entityForm) {
+      let username = ''
+      const fullname = parent.entityForm.formGroup.controls.fufacell_name.value.split(/[\s,]+/);
+      if(fullname.length === 1){
+        username = fullname[0];
+      } else {
+        username = fullname[0]+fullname.pop();
+      }
+      if(username.length >= 16){
+        username = username.substring(0, 16);
+      }
+      parent.entityForm.formGroup.controls['username'].setValue(username);
+    };
+  }
+  blurEvent2(parent){
+    if(parent.entityForm) {
+      const username = parent.entityForm.formGroup.controls.username.value;
+      if(username.length > 16 ){
+        _.find(parent.fieldConfig, { 'name': 'username' }).warnings= T('recommended number of characters for username field is less than 16.');
+      } else {
+        _.find(parent.fieldConfig, { 'name': 'username' }).warnings= null;
+
+
+      };
+    };
   }
 }
