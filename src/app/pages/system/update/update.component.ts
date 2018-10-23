@@ -49,6 +49,7 @@ export class UpdateComponent implements OnInit {
   public busy: Subscription;
   public busy2: Subscription;
   public showSpinner: boolean = false;
+  public singleDescription: string;
 
   protected dialogRef: any;
   constructor(protected router: Router, protected route: ActivatedRoute, protected snackBar: MatSnackBar,
@@ -169,6 +170,8 @@ export class UpdateComponent implements OnInit {
       }
     });
     this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
+      console.log(res)
+      this.currentTrainName = res.current;
       this.fullTrainList = res.trains;
       this.train = res.selected;
       this.selectedTrain = res.selected;
@@ -178,7 +181,9 @@ export class UpdateComponent implements OnInit {
         if (this.compareTrains(this.train, i) === 'ALLOWED' || this.train === i) {
           this.trains.push({ name: i, description: res.trains[i].description });
         }
-      }
+        
+      } 
+      this.singleDescription = this.trains[0].description;
 
       // The following is a kluge until we stop overwriting (via middleware?) the description of the currently
       //  running OS along with its tags we want to use for sorting - [release], [prerelease], and [nightly]
