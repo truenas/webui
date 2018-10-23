@@ -478,7 +478,7 @@ export class UserFormComponent {
   blurEvent(parent){
     if(parent.entityForm) {
       let username = ''
-      const fullname = parent.entityForm.formGroup.controls.fufacell_name.value.split(/[\s,]+/);
+      const fullname = parent.entityForm.formGroup.controls.full_name.value.split(/[\s,]+/);
       if(fullname.length === 1){
         username = fullname[0];
       } else {
