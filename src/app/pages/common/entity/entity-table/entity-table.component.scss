@@ -78,3 +78,16 @@
     height: 36px;
 }
 
+.legacy-warning {
+    position: absolute;
+    font-size: .8rem;
+    top: 75px;
+    right: 10px;
+    z-index: 10;
+}
+
+.legacy-warning-link {
+    border-bottom: 1px solid;
+    cursor: pointer;
+}
+
