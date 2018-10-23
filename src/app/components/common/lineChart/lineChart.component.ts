@@ -236,15 +236,22 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
     return obj;
   }
 
-  public fetchData(timeframe:string, timeformat?: string, culling?:number){
+  public fetchData(rrdOptions, timeformat?: string, culling?:number){
     if(timeformat){
       this.timeFormat = timeformat;
     }
     if(culling){
       this.culling = culling;
     }
-    // This is the time portion of the API call. 
-    this._lineChartService.getData(this, this.dataList, timeframe);
+
+    // Convert from milliseconds to seconds for epoch time
+    rrdOptions.start = Math.floor(rrdOptions.start / 1000);
+    if(rrdOptions.end){
+      rrdOptions.end = Math.floor(rrdOptions.end / 1000);
+    }
+
+    // This is the time portion of the API call.  
+    this._lineChartService.getData(this, this.dataList, rrdOptions);
   }
 
   ngOnInit() {
@@ -267,13 +274,6 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
   }
 
   ngAfterViewInit() {
-    if (this.type === 'Pie') {
-      this.setupPiechart();
-    } else {
-      if (this.dataList.length > 0) {
-        this.fetchData('now-10m');
-      }
-    }
   }
 
   ngOnDestroy(){
