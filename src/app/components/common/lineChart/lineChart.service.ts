@@ -66,7 +66,7 @@ export interface ChartConfigData {
 
 
 /**
- * Retunrs back the Series/Data Points for a given chart.
+ * Returns back the Series/Data Points for a given chart.
  */
 export interface HandleDataFunc {
   handleDataFunc(lineChartData: LineChartData);
@@ -92,9 +92,23 @@ export class LineChartService {
 
   constructor(private _ws: WebSocketService) {}
 
-  public getData(dataHandlerInterface: HandleDataFunc, dataList: any[], timeframe?:string) {
-    if(!timeframe){timeframe = 'now-10m';}
-    this._ws.call('stats.get_data', [dataList, {step: '10', start:timeframe}]).subscribe((res) => {
+  public getData(dataHandlerInterface: HandleDataFunc, dataList: any[], rrdOptions?:any /*timeframe?:string*/) {
+    //if(!timeframe){timeframe = 'now-10m';}
+    if(!rrdOptions) {
+      rrdOptions = {step: '10', start:'now-10m'};
+      console.log("Default rrdOptions values applied")
+    }
+    let options:any  = {
+      step: rrdOptions.step,
+      start: rrdOptions.start.toString()
+    }
+
+    if(rrdOptions.end){
+      options.end = rrdOptions.end.toString();
+    }
+
+    //this._ws.call('stats.get_data', [dataList, {step: '10', start:timeframe}]).subscribe((res) => {
+    this._ws.call('stats.get_data', [dataList, options]).subscribe((res) => {
       //console.log(res);
       let meta = this.generateMetaData(res);
       const linechartData: LineChartData = {
