@@ -13,7 +13,7 @@
     <div class="train-card-row" *ngIf="trains.length > 1; else trainName">
       <mat-label id="train-label">{{"Train" | translate}}</mat-label>
       <mat-select class="form-control full-width" id="train-selector" [(ngModel)]="train"  (change)="onTrainChanged($event)">
-        <mat-option *ngFor="let train of trains" [value]="train.name">{{ train.name }}</mat-option>
+        <mat-option *ngFor="let train of trains" [value]="train.name">{{ train.name }} - {{ train.description }}</mat-option>
       </mat-select>
     </div>
     <ng-template #trainName>
