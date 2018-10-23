@@ -482,13 +482,13 @@ export class UserFormComponent {
       if(fullname.length === 1){
         username = fullname[0];
       } else {
-        username = fullname[0]+fullname.pop();
+        username = fullname[0][0]+fullname.pop();
       }
       if(username.length >= 8){
         username = username.substring(0, 8);
       }
       if(username !=='') {
-        parent.entityForm.formGroup.controls['username'].setValue(username);
+        parent.entityForm.formGroup.controls['username'].setValue(username.toLocaleLowerCase());
       }
     };
   }
