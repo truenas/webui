@@ -24,6 +24,8 @@ export class PluginsInstalledListComponent {
   protected wsMultiDelete = 'core.bulk';
   protected entityList: any;
   public toActivatePool: boolean = false;
+  public legacyWarning = T("Note: Legacy plugins created before FreeNAS 11.2 must be managed from the");
+  public legacyWarningLink = T("legacy web interface");
 
   public columns: Array < any > = [
     { name: T('Jail'), prop: '1' },

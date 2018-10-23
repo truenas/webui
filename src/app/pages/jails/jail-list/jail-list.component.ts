@@ -31,6 +31,8 @@ export class JailListComponent implements OnInit {
   protected route_add = ["jails", "add", "wizard"];
   protected route_add_tooltip = "Add Jail";
   public toActivatePool: boolean = false;
+  public legacyWarning = T("Note: Legacy jails created before FreeNAS 11.2 must be managed from the");
+  public legacyWarningLink = T("legacy web interface");
 
   public columns: Array < any > = [
     { name: T('Jail'), prop: 'host_hostuuid', always_display: true },
