@@ -60,7 +60,7 @@ export class UserFormComponent {
                       . A <b>$</b> can only be used as the last\
                       character.'),
           required: true,
-          validation : [ Validators.required, Validators.pattern('[a-z_A-Z_][a-zA-Z0-9_-]*[$]?') ],
+          validation : [ Validators.required, Validators.pattern('[a-z_A-Z_][a-zA-Z0-9_-]*[$]?'), Validators.maxLength(16) ],
           blurStatus : true,
           blurEvent: this.blurEvent2,
           parent: this
@@ -477,24 +477,26 @@ export class UserFormComponent {
   }
   blurEvent(parent){
     if(parent.entityForm) {
-      let username = ''
+      let username: string
       const fullname = parent.entityForm.formGroup.controls.full_name.value.split(/[\s,]+/);
       if(fullname.length === 1){
         username = fullname[0];
       } else {
         username = fullname[0]+fullname.pop();
       }
-      if(username.length >= 16){
-        username = username.substring(0, 16);
+      if(username.length >= 8){
+        username = username.substring(0, 8);
       }
-      parent.entityForm.formGroup.controls['username'].setValue(username);
+      if(username !=='') {
+        parent.entityForm.formGroup.controls['username'].setValue(username);
+      }
     };
   }
   blurEvent2(parent){
     if(parent.entityForm) {
       const username = parent.entityForm.formGroup.controls.username.value;
-      if(username.length > 16 ){
-        _.find(parent.fieldConfig, { 'name': 'username' }).warnings= T('recommended number of characters for username field is less than 16.');
+      if(username.length > 8 ){
+        _.find(parent.fieldConfig, { 'name': 'username' }).warnings= T('Usernames of 8 characters or less are recommended for compatibility with application software, but up to 16 characters are allowed.');
       } else {
         _.find(parent.fieldConfig, { 'name': 'username' }).warnings= null;
 
