@@ -1,4 +1,4 @@
-<ngx-datatable 
+<ngx-datatable *ngIf="!conf.showSpinner"
     #datatable class='material' 
     [style.height.px]="tableHeight"
     [rows]='data' 
