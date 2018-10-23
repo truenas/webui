@@ -21,7 +21,6 @@ export class RebootComponent implements OnInit {
       this.ws = ws;
       this.ws.call('system.is_freenas').subscribe((res)=>{
         this.is_freenas = res;
-        window.localStorage.setItem('is_freenas', res);
       });
   }
 

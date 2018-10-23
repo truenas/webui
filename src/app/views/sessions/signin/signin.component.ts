@@ -37,6 +37,7 @@ export class SigninComponent implements OnInit {
     this.ws.call('system.is_freenas').subscribe((res)=>{
       this.logo_ready = true;
       this.is_freenas = res;
+      window.localStorage.setItem('is_freenas', res);
     });
    }
 
