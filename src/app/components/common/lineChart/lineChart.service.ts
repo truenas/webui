@@ -138,7 +138,6 @@ export class LineChartService {
       {source :'disk_io_time', units:'k', labelY: 'Bytes/s'},
       {source :'disk_ops', units:'', labelY: 'Operations/s'},
       {source :'processes', units:'', labelY: 'Processes'},
-      {source :'uptime', units:'', labelY: 'Days'},
       {source :'cache_size-arc', units:'GiB', labelY: 'Gigabytes', dataUnits: 'bytes', conversion:'bytesToGigabytes'},
       {source :'cache_ratio-arc', units:'%', labelY: 'Hits', dataUnits:'percentage', conversion:'percentFloatToInteger'},
       {source :'cache_result-demand_data-hit', units:'', labelY: 'Requests'},
