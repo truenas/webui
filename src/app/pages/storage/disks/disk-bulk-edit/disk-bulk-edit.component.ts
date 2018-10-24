@@ -6,6 +6,8 @@ import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { DialogService } from '../../../../services/dialog.service';
+
 
 @Component({
   selector: 'app-disk-bulk-edit',
@@ -30,7 +32,7 @@ export class DiskBulkEditComponent {
       name: 'disk_serial',
       placeholder: T('Serial'),
       tooltip : T('This is the serial number of the disk.'),
-      value: ['VB90b9bc1a-a8706324', 'VB81bc2c7d-a1399056'],
+      value: ['{serial}VB90b9bc1a-a8706324', '{serial}VB81bc2c7d-a1399056'],
       readonly: true
     },
     {
@@ -86,6 +88,7 @@ export class DiskBulkEditComponent {
 
   constructor(
     private _router: Router,
+    private dialogService: DialogService,
     protected rest: RestService,
     protected ws: WebSocketService,
     protected aroute: ActivatedRoute,
@@ -125,26 +128,27 @@ export class DiskBulkEditComponent {
   }
 
   customSubmit(event) {
-    // console.log(event.disk_advpowermgmt)
+    console.log(event)
+    this.loader.open();
     for (let i of event.disk_serial) {
-      // console.log(i)
-      // this.entityList.busy =
       this.ws.job('core.bulk', ["disk.update", [ 
         [i, {"hddstandby": event.disk_hddstandby}, 
-                   {"advpowermgmt" : event.disk_advpowermgmt}, 
-                   {"acousticlevel" : event.disk_acousticlevel},
-                   {"togglesmart" : event.disk_togglesmart},
-                   {"smartoptions" : event.disk_smartoptions}]
-                  ]]).subscribe(
-                    (res) => { 
-                      console.log(res)
-                      console.log('done')
-                      this._router.navigate(new Array('/').concat([
-                        "storage", "disks", "bulk-edit"]))
-                    }
-                  )
+            {"advpowermgmt" : event.disk_advpowermgmt}, 
+            {"acousticlevel" : event.disk_acousticlevel},
+            {"togglesmart" : event.disk_togglesmart},
+            {"smartoptions" : event.disk_smartoptions}]
+          ]]).subscribe(
+            (res) => { 
+              this.loader.close();
+              this._router.navigate(new Array('/').concat([
+                "storage", "disks"]));
+            },
+            (err) => {
+              this.loader.close();
+              this.dialogService.errorReport(T("Error updating disks."), err.reason, err.trace.formatted);
+            }
+          )
     }
-    console.log('here')
   }
 
 }
