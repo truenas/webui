@@ -65,12 +65,13 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
 
     linechartData.labels.forEach((label) => {this.data.labels.push(new Date(label))});
     linechartData.series.forEach((dataSeriesArray) => {
-
-      if (typeof (this.divideBy) !== 'undefined') {
+      
+      if (typeof (this.divideBy) !== 'undefined' || linechartData.meta.conversion) {
         const newArray = new Array();
         dataSeriesArray.forEach((numberVal) => {
-
-          if (numberVal > 0) {
+          if(linechartData.meta.conversion){
+            newArray.push(this.convertTo(numberVal, linechartData.meta.conversion));
+          } else if (numberVal > 0) {
             newArray.push(numberVal / this.divideBy);
           } else {
             newArray.push(numberVal);
@@ -215,6 +216,20 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
   public fetchData(timeframe:string){
     // This is the time portion of the API call. 
     this._lineChartService.getData(this, this.dataList, timeframe);
+  }
+
+  public convertTo(value, conversion){
+    let result;
+    switch(conversion){
+    case 'bytesToGigabytes':
+      result = value / 1073741824;
+      break;
+    case 'percentFloatToInteger':
+      result = value * 100;
+      break;
+    }
+
+    return result.toFixed(2);
   }
 
   ngOnInit() {
