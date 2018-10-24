@@ -10,9 +10,10 @@ import {WebSocketService} from '../../../services';
  * */
  export interface LineChartMetadata {
   source: string;
-  units: string;
+  units: string; // Units used as tick labels
   labelY:string;
-  unitsProvided?:string;
+  dataUnits?:string;// What the middleware response provides
+  conversion?:string;// What the chart should convert to.
  }
 
 /*
@@ -138,8 +139,8 @@ export class LineChartService {
       {source :'disk_ops', units:'', labelY: 'Operations/s'},
       {source :'processes', units:'', labelY: 'Processes'},
       {source :'uptime', units:'', labelY: 'Days'},
-      {source :'cache_size-arc', units:'G', labelY: 'Bytes'},
-      {source :'cache_ratio-arc', units:'%', labelY: 'Hits'},
+      {source :'cache_size-arc', units:'GiB', labelY: 'Gigabytes', dataUnits: 'bytes', conversion:'bytesToGigabytes'},
+      {source :'cache_ratio-arc', units:'%', labelY: 'Hits', dataUnits:'percentage', conversion:'percentFloatToInteger'},
       {source :'cache_result-demand_data-hit', units:'', labelY: 'Requests'},
       {source :'cache_result-demand_metadata-hit', units:'k', labelY: 'Requests'},
       {source :'cache_result-prefetch_data-hit', units:'', labelY: 'Requests'},
