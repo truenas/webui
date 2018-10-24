@@ -13,6 +13,7 @@ import {WebSocketService} from '../../../services';
   units: string;
   labelY:string;
   unitsProvided?:string;
+  removePrefix?: string;
  }
 
 /*
@@ -65,7 +66,7 @@ export interface ChartConfigData {
 
 
 /**
- * Retunrs back the Series/Data Points for a given chart.
+ * Returns back the Series/Data Points for a given chart.
  */
 export interface HandleDataFunc {
   handleDataFunc(lineChartData: LineChartData);
@@ -91,9 +92,23 @@ export class LineChartService {
 
   constructor(private _ws: WebSocketService) {}
 
-  public getData(dataHandlerInterface: HandleDataFunc, dataList: any[], timeframe?:string) {
-    if(!timeframe){timeframe = 'now-10m';}
-    this._ws.call('stats.get_data', [dataList, {step: '10', start:timeframe}]).subscribe((res) => {
+  public getData(dataHandlerInterface: HandleDataFunc, dataList: any[], rrdOptions?:any /*timeframe?:string*/) {
+    //if(!timeframe){timeframe = 'now-10m';}
+    if(!rrdOptions) {
+      rrdOptions = {step: '10', start:'now-10m'};
+      console.log("Default rrdOptions values applied")
+    }
+    let options:any  = {
+      step: rrdOptions.step,
+      start: rrdOptions.start.toString()
+    }
+
+    if(rrdOptions.end){
+      options.end = rrdOptions.end.toString();
+    }
+
+    //this._ws.call('stats.get_data', [dataList, {step: '10', start:timeframe}]).subscribe((res) => {
+    this._ws.call('stats.get_data', [dataList, options]).subscribe((res) => {
       //console.log(res);
       let meta = this.generateMetaData(res);
       const linechartData: LineChartData = {
@@ -126,17 +141,18 @@ export class LineChartService {
 
     let dictionary: LineChartMetadata[] = [
       {source :'aggregation-cpu-sum', units:'%', labelY:'% CPU'},
-      {source :'memory', units:'GiB', labelY:'Gigabytes'},
-      {source :'swap', units:'GiB', labelY:'Gigabytes'},
+      {source :'memory', units:'GiB', labelY:'Gigabytes', removePrefix:'memory-'},
+      {source :'swap', units:'GiB', labelY:'Gigabytes', removePrefix:'swap-'},
       {source :'if_errors', units:'', labelY:'Bits/s'},
       {source :'if_octets', units:'', labelY:'Bits/s'},
       {source :'if_packets', units:'', labelY:'Bits/s'},
-      {source :'df-mnt-', units:'GiB', labelY: 'Gigabytes'},
+      {source :'df-mnt-', units:'GiB', labelY: 'Gigabytes', removePrefix:'df_complex-'},
+      {source :'ctl-tpc', units:'GiB', labelY: 'Bytes/s', removePrefix:'disk_'},
       {source :'disk_time', units:'k', labelY: 'Bytes/s'},
       {source :'disk_octets', units:'k', labelY: 'Bytes/s'},
       {source :'disk_io_time', units:'k', labelY: 'Bytes/s'},
       {source :'disk_ops', units:'', labelY: 'Operations/s'},
-      {source :'processes', units:'', labelY: 'Processes'},
+      {source :'processes', units:'', labelY: 'Processes', removePrefix:'ps_state-'},
       {source :'uptime', units:'', labelY: 'Days'},
       {source :'cache_size-arc', units:'G', labelY: 'Bytes'},
       {source :'cache_ratio-arc', units:'%', labelY: 'Hits'},
