@@ -1039,4 +1039,12 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(fill, --accent, $accent);
   }
 
+  input[type=number] {
+    -moz-appearance: textfield !important;
+  }
+  
+   input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  } 
+
 } // end of ix theme
