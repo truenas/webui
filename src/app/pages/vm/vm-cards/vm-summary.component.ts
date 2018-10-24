@@ -32,6 +32,16 @@ export class VmSummaryComponent implements AfterViewInit, OnDestroy {
       this.setPoolData(evt);
     });
 
+    this.core.register({observerClass:this,eventName:"VmStarted"}).subscribe((evt:CoreEvent) => {
+      //console.log(evt);
+      this.core.emit({name:"StatsVmemoryUsageRequest"});
+    });
+
+    this.core.register({observerClass:this,eventName:"VmStopped"}).subscribe((evt:CoreEvent) => {
+      //console.log(evt);
+      this.core.emit({name:"StatsVmemoryUsageRequest"});
+    });
+
     this.core.register({observerClass:this,eventName:"StatsCpuData"}).subscribe((evt:CoreEvent) => {
       //console.log(evt);
       this.setCPUData(evt);
