@@ -40,6 +40,7 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
   @Input() labelY?: string = 'Label Y';
 
   public chart:any;
+  public units: string = '';
   public showLegendValues: boolean = false;
   public legendEvents: BehaviorSubject<any>;
   data: LineChartData = {
@@ -62,6 +63,9 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
 
     this.data.labels.splice(0, this.data.labels.length);
     this.data.series.splice(0, this.data.series.length);
+    if(linechartData.meta){
+      this.units = linechartData.meta.units;
+    }
 
     linechartData.labels.forEach((label) => {this.data.labels.push(new Date(label))});
     linechartData.series.forEach((dataSeriesArray) => {
