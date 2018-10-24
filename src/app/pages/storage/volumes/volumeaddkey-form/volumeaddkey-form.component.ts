@@ -63,7 +63,7 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
     return data;
   };
 
-
+  pk: any;
   constructor(
       protected router: Router,
       protected route: ActivatedRoute,
@@ -79,6 +79,12 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
 
   }
 
+  preInit(entityForm: any) {
+    this.route.params.subscribe(params => {
+      this.pk = params['pk'];
+    });
+  }
+
   afterInit(entityForm: any) {
 
   }
@@ -87,7 +93,7 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
     this.loader.open();
     this.ws.call('auth.check_user', ['root', value.password]).subscribe(res => {
       if (res) {
-        this.rest.post(this.resource_name + "/" + value.name + "/recoverykey/", {}).subscribe((restPostResp) => {
+        this.rest.post(this.resource_name + "/" + this.pk + "/recoverykey/", {}).subscribe((restPostResp) => {
           this.loader.close();
           this.snackBar.open(T("Recovery key added to pool ") + value.name, 'close', { duration: 5000 });
           this.storage.downloadFile('geli_recovery.key', restPostResp.data.content, 'application/octet-stream');

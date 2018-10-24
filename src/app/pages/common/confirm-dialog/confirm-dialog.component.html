@@ -7,6 +7,8 @@
   <span *ngIf="secondaryCheckBox">
       <mat-checkbox id="confirm-dialog__secondary-checkbox" class="confirm-checkbox" *ngIf="secondaryCheckBox" (change)="secondaryCheckBoxEvent($event)">
       <span id="confirm-label">{{ secondaryCheckBoxMsg | translate }}</span> </mat-checkbox>
+      <!-- <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip> -->
+      <tooltip *ngIf="tooltip" [message]="tooltip"></tooltip>
       <br><br>
   </span>
   <div class="message-content">
