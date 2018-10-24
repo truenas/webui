@@ -5,7 +5,7 @@
         <mat-card-title fxFlex="65%"><h3>{{title}}</h3></mat-card-title>
         <!-- Controls/Tools -->
         <div fxFlex="calc(35%)" class="line-chart-tools-wrapper">
-          <div class="line-chart-tools">
+          <div class="line-chart-tools" *ngIf="lineChart.chart"> 
                   <button class="tool-icon" mat-icon-button [disabled]="timeZoomIndex >= (zoomLevels.length - 1)" >
                     <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-magnify-plus" (click)="timeZoomIn()"></mat-icon>
                   </button>
@@ -14,8 +14,8 @@
                     <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-magnify-minus" (click)="timeZoomOut()"></mat-icon>
                   </button>
                 
-                  <button class="tool-icon" mat-icon-button (click)="stepBack()" >
-                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-rewind"></mat-icon>
+                  <button class="tool-icon" mat-icon-button >
+                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-rewind" (click)="stepBack()"></mat-icon>
                   </button>
                 
                   <button class="tool-icon" mat-icon-button (click)="stepForward()" [disabled]="stepForwardDisabled">
@@ -34,7 +34,7 @@
               [dataList]="lineChartConfig.dataList"
               [legends]="lineChartConfig.legends"
               [divideBy]="lineChartConfig.divideBy">
-            </line-chart>
+              </line-chart>
           </div>
 
           <!-- Legend Section -->
