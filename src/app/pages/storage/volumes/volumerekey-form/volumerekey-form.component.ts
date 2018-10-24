@@ -89,7 +89,6 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
     this.loader.open();
 
     return this.rest.post(this.resource_name + "/" + this.pk + "/rekey/", { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
-      console.log("restPostResp", restPostResp);
       this.loader.close();
       this.dialogService.Info(T("Re-keyed Pool"), T("Successfully re-keyed pool ") + value.name);
 
