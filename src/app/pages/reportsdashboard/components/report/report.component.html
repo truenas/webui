@@ -58,7 +58,7 @@
                 <div class="tooltip-wrapper legend-value"> 
                   <div *ngIf="lineChart.legendEvents | async as tooltip">
                     <div  *ngIf="lineChart.showLegendValues" class="tooltip-value" >
-                      {{tooltip[i].value}}
+                      {{tooltip[i].value}} {{lineChart.units}}
                     </div>
                   </div>
                 </div>
