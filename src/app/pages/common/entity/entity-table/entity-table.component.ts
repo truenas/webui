@@ -74,6 +74,8 @@ export interface TableConfig {
 export class EntityTableComponent implements OnInit, AfterViewInit {
 
   @Input() title = '';
+  @Input() legacyWarning = '';
+  @Input() legacyWarningLink = '';
   @Input('conf') conf: InputTableConf;
 
   @ViewChild('filter') filter: ElementRef;
@@ -652,6 +654,14 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   // Used by the select all checkbox to determine whether it should be checked
   checkLength() {
     return this.conf.columns.length === this.allColumns.length;
+  }
+
+  onGoToLegacy() {
+    this.dialogService.confirm(T("Log in to Legacy User Interface?"), "", true, T('Continue')).subscribe((res) => {
+      if (res) {
+        window.location.href = '/legacy/';
+      }
+    });
   }
 
   // End checkbox section -----------------------
