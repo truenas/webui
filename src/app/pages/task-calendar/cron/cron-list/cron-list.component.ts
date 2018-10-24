@@ -38,6 +38,10 @@ export class CronListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    deleteMsg: {
+      title: 'Cron Job',
+      key_props: ['cron_user', 'cron_command', 'cron_description']
+    },
   };
 
   protected month_choice: any;
@@ -76,7 +80,7 @@ export class CronListComponent {
     actions.push({
       label : T("Delete"),
       onClick : (task_delete) => {
-        this.entityList.doDelete(row.id );
+        this.entityList.doDelete(row);
       },
     });
 

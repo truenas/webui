@@ -19,3 +19,8 @@ h1 {
 #confirm-msg {
     padding-top: 20px;
 }
+
+div.message-content {
+    overflow: scroll;
+    max-height: 300px;
+}

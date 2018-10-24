@@ -42,5 +42,9 @@ export class PortalListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    deleteMsg: {
+      title: 'Portal',
+      key_props: ['iscsi_target_portal_tag']
+    },
   };
 }

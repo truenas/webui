@@ -30,6 +30,10 @@ export class TargetListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    deleteMsg: {
+      title: 'Target',
+      key_props: ['iscsi_target_name']
+    },
   };
 
   afterInit(entityList: any) {}
