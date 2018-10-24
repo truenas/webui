@@ -29,6 +29,10 @@ export class InitshutdownListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    deleteMsg: {
+      title: 'Init/Shutdown Script',
+      key_props: ['ini_type', 'ini_command', 'ini_script']
+    },
   };
 
   protected month_choice: any;

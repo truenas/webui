@@ -30,6 +30,10 @@ export class SmartListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    deleteMsg: {
+      title: 'S.M.A.R.T. Test',
+      key_props: ['smarttest_type', 'smarttest_desc']
+    },
   };
 
   protected month_choice: any;
