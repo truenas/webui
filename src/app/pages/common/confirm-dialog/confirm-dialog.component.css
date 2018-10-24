@@ -21,6 +21,5 @@ h1 {
 }
 
 div.message-content {
-    overflow: ellipsis;
     max-height: 300px;
 }
