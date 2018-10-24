@@ -90,7 +90,6 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
   }
 
   customSubmit(value) {
-    console.log(value);
     this.loader.open();
     this.ws.call('auth.check_user', ['root', value.password]).subscribe(res => {
       if (res) {

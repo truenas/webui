@@ -98,7 +98,6 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
     this.loader.open();
 
     return this.rest.post(this.resource_name + "/" + this.pk + "/keypassphrase/", { body: JSON.stringify({passphrase: value.passphrase, passphrase2: value.passphrase2}) }).subscribe((restPostResp) => {
-      console.log("restPostResp", restPostResp);
       this.loader.close();
       this.dialogService.Info(T("Create Pool Passphrase"), T("Passphrase created for pool ") + value.name);
 
