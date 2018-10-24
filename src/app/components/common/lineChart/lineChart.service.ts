@@ -331,7 +331,7 @@ export class LineChartService {
         });
 
         let divideBy: number;
-        let title: string = prop;
+        let title: string = prop == "ctl-tpc" ? "SCSI Target Port (tpc)" : prop; // Put in ugly override. Wasn't really a better place for this one change.
         
         // Things I want convertd from Bytes to gigabytes
         if (prop.startsWith("df-") ||
