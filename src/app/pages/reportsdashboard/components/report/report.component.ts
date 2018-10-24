@@ -59,7 +59,18 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   public currentStartDate: number;// as seconds from Unix Epoch
   public currentEndDate: number;// as seconds from Unix Epoch
   public timeZoomIndex:number = 4;
+
   public stepForwardDisabled: boolean = true;
+
+  private _zoomInDisabled: boolean = false;
+  get zoomInDisabled(){
+    return this.timeZoomIndex >= (this.zoomLevels.length - 1);
+  }
+  public _zoomOutDisabled: boolean = false;
+  get zoomOutDisabled(){
+    return this.timeZoomIndex <= 0;
+  }
+
   public zoomLevels: TimeAxisData[] = [
     { timespan: '5M', timeformat: "%b '%y", culling: 6},// 6 months
     { timespan: '1M', timeformat: 'Week %W', culling: 4},// 1 month
