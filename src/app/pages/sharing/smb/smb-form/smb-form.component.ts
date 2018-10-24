@@ -44,13 +44,18 @@ export class SMBFormComponent implements OnDestroy {
       placeholder: T('Use as home share'),
       tooltip: T('Set to allow this share to hold user home\
                   directories. Only one share can be\
-                  the <i>homes</i> share.\
-                  <b>Note:</b> Samba converts %u to the lowercase\
-                  username, so a directory name with an uppercase\
-                  letter will not match. If an uppercase username\
-                  was used, create a new user with a lowercase\
-                  <b>Username</b> in <b>Accounts --> Users</b>,\
-                  and try creating the home share again.'),
+                  the home share.\
+                  Note: Lower case names for user home\
+                  directories are strongly recommended, as Samba\
+                  maps usernames to all lower case. For example, the\
+                  username John will be mapped to a home directory\
+                  named john. If the <i>Path</i> to the home share\
+                  includes an upper case username, delete the existing user,\
+                  and recreate it in <i>Accounts --> Users</i>\
+                  with an all lower case <i>Username</i>. Return\
+                  to <i>Sharing --> SMB</i> to create the home share,\
+                  and select the </i>Path</i> that contains the new\
+                  lower case user name.'),
     },
     {
       type: 'checkbox',
