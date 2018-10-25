@@ -48,8 +48,8 @@ export class UpdateComponent implements OnInit {
 
   public busy: Subscription;
   public busy2: Subscription;
-  public updatecheck_tooltip = T('Check the update server every morning \
-                                  for any updates on the chosen train. \
+  public updatecheck_tooltip = T('Check the update server daily for \
+                                  any updates on the chosen train. \
                                   Automatically download an update if \
                                   one is available. Click \
                                   <i>APPLY PENDING UPDATE</i> to install \
