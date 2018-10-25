@@ -7,7 +7,7 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import { T } from '../../../../translate-marker';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../../services/dialog.service';
-
+import { StorageService } from '../../../../services/storage.service'
 
 @Component({
   selector: 'app-disk-bulk-edit',
@@ -92,7 +92,8 @@ export class DiskBulkEditComponent {
     protected rest: RestService,
     protected ws: WebSocketService,
     protected aroute: ActivatedRoute,
-    protected loader: AppLoaderService
+    protected loader: AppLoaderService,
+    public idbucket: StorageService
   ) {
     this.aroute.params.subscribe((params)=> {
       if (params['poolId']) {

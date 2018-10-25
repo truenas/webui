@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { WebSocketService } from '../../../../services';
 import { T } from '../../../../translate-marker';
 import * as _ from 'lodash';
+import { StorageService } from '../../../../services/storage.service'
 
 @Component ({
 	selector: 'disk-list',
@@ -31,7 +32,8 @@ export class DiskListComponent {
 		paging: true,
 		sorting: { columns: this.columns },
 		multiSelect: true,
-  };
+	};
+	public diskIds: Array<any> = [];
   public multiActions: Array < any > = [{
 		id: "medit",
 		label: T("Bulk Edit"),
@@ -40,6 +42,10 @@ export class DiskListComponent {
 		ttpos: "above", // tooltip position
 		onClick: (selected) => {
 			if (selected.length > 1) {
+				for(let i of selected) {
+					this.diskIds.push(i.identifier)
+				}
+				this.idbucket.diskIdsBucket(this.diskIds);
 				this.router.navigate(new Array('/').concat([
 					"storage", "disks", "bulk-edit"
 				]));
@@ -56,7 +62,7 @@ export class DiskListComponent {
 	protected unusedDisk_ready: EventEmitter<boolean> = new EventEmitter();
 	protected unused: any;
 	protected disk_pool: Map<string, string> = new Map<string, string>();
-	constructor(protected ws: WebSocketService, protected router: Router) {
+	constructor(protected ws: WebSocketService, protected router: Router,  public idbucket: StorageService) {
 		this.ws.call('boot.get_disks', []).subscribe((boot_res)=>{
 			for (let boot in boot_res) {
 				this.disk_pool.set(boot_res[boot], T('Boot Pool'));
