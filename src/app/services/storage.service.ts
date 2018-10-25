@@ -161,8 +161,9 @@ export class StorageService {
     return arr;
   } 
 
+  public Ids: any;
+
   diskIdsBucket(arr) {
-    let Ids = arr;
-    console.log(Ids)
+    this.Ids = arr;
   }
 }

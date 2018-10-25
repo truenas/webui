@@ -32,7 +32,7 @@ export class DiskBulkEditComponent {
       name: 'disk_serial',
       placeholder: T('Serial'),
       tooltip : T('This is the serial number of the disk.'),
-      value: ['{serial}VB90b9bc1a-a8706324', '{serial}VB81bc2c7d-a1399056'],
+      value: [this.idbucket.Ids],
       readonly: true
     },
     {
