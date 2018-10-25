@@ -272,8 +272,7 @@ export class NFSFormComponent {
     });
   }
   nfs_hosts_event(parent){
-    _.find(parent.fieldConfig, {'name' : 'nfs_hosts'}).hasErrors = false;
-    _.find(parent.fieldConfig, { 'name': 'nfs_hosts' }).errors = ""
+    _.find(parent.fieldConfig, {'name' : 'nfs_hosts'}).warnings = null;
   
       if(parent.entityForm) {
         if(parent.entityForm.formGroup.controls['nfs_hosts'].value !=='') {
@@ -297,13 +296,14 @@ export class NFSFormComponent {
         if (warning_flag) {
           _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_hosts' }).warnings = `Following IP Address/hostname appears to be wrong ${error_msg}`
   
+        } else {
+          _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_hosts' }).warnings = null;
         };
       };
     };
   };
   nfs_network_event(parent){
-    _.find(parent.fieldConfig, {'name' : 'nfs_network'}).hasErrors = false;
-    _.find(parent.fieldConfig, { 'name': 'nfs_network' }).errors = ""
+    _.find(parent.fieldConfig, {'name' : 'nfs_network'}).warnings = false;
     
     if(parent.entityForm) {
       if(parent.entityForm.formGroup.controls['nfs_network'].value !=='') {
@@ -323,8 +323,10 @@ export class NFSFormComponent {
           }
         }
         if (warning_flag) {
-          _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_network' }).warnings = `Following Network appears to be wrong ${error_msg}`
+          _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_network' }).warnings = `Following Network appears to be wrong ${error_msg}`;
   
+        } else { 
+          _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_network' }).warnings = null;
         }
 
       }
