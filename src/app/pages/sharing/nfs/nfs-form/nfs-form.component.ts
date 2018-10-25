@@ -287,7 +287,7 @@ export class NFSFormComponent {
           if (!ValidIpAddressRegex.test(ip)) {
             if (!ValidHostnameRegex.test(ip)) {
               if(!ValidIPV6Address.test(ip)){
-                error_msg = `${ip}`+ error_msg;
+                error_msg = error_msg +`${ip} `;
                 warning_flag= true;
               }
             }
@@ -316,7 +316,7 @@ export class NFSFormComponent {
   
           if (!ValidIpSubnetRegex.test(ip)) {
               if(!ValidIPV6SubnetRegEx.test(ip)){
-                error_msg = `${ip}`+ error_msg;
+                error_msg = error_msg + ` ${ip}`;
                 warning_flag= true;
               }
             
