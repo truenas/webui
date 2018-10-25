@@ -10,10 +10,15 @@ import {WebSocketService} from '../../../services';
  * */
  export interface LineChartMetadata {
   source: string;
-  units: string;
+  units: string; // Units used as tick labels
   labelY:string;
-  unitsProvided?:string;
+//<<<<<<< HEAD
+  dataUnits?:string;// What the middleware response provides
+  conversion?:string;// What the chart should convert to.
+//=======
+  //unitsProvided?:string;
   removePrefix?: string;
+//>>>>>>> master
  }
 
 /*
@@ -133,8 +138,6 @@ export class LineChartService {
     // This should ideally be done server side but putting it in so we can have proper labels 
     // in time for this 11.2 release
 
-    //console.log(res);
-
     const spl = res.meta.legend[0].split('/');
     const prefix = spl[0];
     const dataName = spl[1];
@@ -152,10 +155,9 @@ export class LineChartService {
       {source :'disk_octets', units:'k', labelY: 'Bytes/s'},
       {source :'disk_io_time', units:'k', labelY: 'Bytes/s'},
       {source :'disk_ops', units:'', labelY: 'Operations/s'},
+      {source :'cache_size-arc', units:'GiB', labelY: 'Gigabytes', dataUnits: 'bytes', conversion:'bytesToGigabytes'},
+      {source :'cache_ratio-arc', units:'%', labelY: 'Hits', dataUnits:'percentage', conversion:'percentFloatToInteger'},
       {source :'processes', units:'', labelY: 'Processes', removePrefix:'ps_state-'},
-      {source :'uptime', units:'', labelY: 'Days'},
-      {source :'cache_size-arc', units:'G', labelY: 'Bytes'},
-      {source :'cache_ratio-arc', units:'%', labelY: 'Hits'},
       {source :'cache_result-demand_data-hit', units:'', labelY: 'Requests'},
       {source :'cache_result-demand_metadata-hit', units:'k', labelY: 'Requests'},
       {source :'cache_result-prefetch_data-hit', units:'', labelY: 'Requests'},
@@ -164,7 +166,6 @@ export class LineChartService {
     ]
 
     const result = dictionary.find(item => prefix.includes(item.source) || item.source == dataName); 
-    //console.log(result);
     return result;
   }
 
