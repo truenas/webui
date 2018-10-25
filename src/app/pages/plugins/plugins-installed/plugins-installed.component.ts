@@ -216,7 +216,7 @@ export class PluginsInstalledListComponent {
       },
       {
         id: "restart",
-        label: T("Retart"),
+        label: T("Restart"),
         onClick: (row) => {
           this.loader.open();
           row[3] = 'restarting';
