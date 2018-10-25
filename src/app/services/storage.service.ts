@@ -160,4 +160,9 @@ export class StorageService {
           
     return arr;
   } 
+
+  diskIdsBucket(arr) {
+    let Ids = arr;
+    console.log(Ids)
+  }
 }
