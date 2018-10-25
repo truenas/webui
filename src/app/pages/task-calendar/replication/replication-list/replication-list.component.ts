@@ -32,6 +32,10 @@ export class ReplicationListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    deleteMsg: {
+      title: 'Replication Task',
+      key_props: ['repl_filesystem', 'repl_remote_hostname']
+    },
   };
 
   public custActions: Array<any> = [
@@ -77,7 +81,7 @@ export class ReplicationListComponent {
       id: "delete",
       label: "Delete",
       onClick: (row) => {
-        this.entityList.doDelete(row.id);
+        this.entityList.doDelete(row);
       }
     }
     ]

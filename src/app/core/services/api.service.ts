@@ -3,6 +3,7 @@ import { Subject } from 'rxjs/Subject';
 import { WebSocketService } from '../../services/ws.service';
 import { RestService } from '../../services/rest.service';
 import { CoreService, CoreEvent } from './core.service';
+import {  DialogService } from '../../services';
 
 interface ApiCall {
   namespace: string; // namespace for ws and path for rest
@@ -175,6 +176,21 @@ export class ApiService {
         namespace:"vm.start",
         args:[],
         responseEvent:"VmStarted"
+      },
+      async preProcessor(def:ApiCall, self) {
+        const params = [{"overcommit": false}]
+        return self.dialog.confirm("Power",undefined, true, "Power On",true,'Overcommit Memory?',undefined, params, 
+        "Memory overcommitment allows multiple VMs to \
+        be launched when there is not enough free memory \
+        for configured RAM of all VMs. Use with caution."
+        ).afterClosed().toPromise().then(res=>{
+          if (res) {
+            def.args.push({"overcommit": true});
+            return def;
+          } else {
+            return;
+          }
+        });
       },
       postProcessor(res,callArgs){
         let cloneRes = Object.assign({},res);
@@ -515,7 +531,7 @@ export class ApiService {
     },
   } 
 
-  constructor(protected core: CoreService, protected ws: WebSocketService,protected rest: RestService) {
+  constructor(protected core: CoreService, protected ws: WebSocketService,protected rest: RestService, private dialog:DialogService) {
     this.ws.authStatus.subscribe((evt:any) =>{
       this.core.emit({name:"Authenticated",data:evt,sender:this});
     });
@@ -596,15 +612,22 @@ export class ApiService {
 
   }
 
-  private callWebsocket(evt:CoreEvent,def){
+  async callWebsocket(evt:CoreEvent,def){
     let cloneDef = Object.assign({}, def);
 
     if(evt.data){
       cloneDef.apiCall.args = evt.data;
 
       // PreProcessor: ApiDefinition manipulates call to be sent out.
-      if(def.preProcessor){
-        cloneDef.apiCall = def.preProcessor(def.apiCall);
+      if(def.preProcessor && def.apiCall.namespace === "vm.start") {
+        cloneDef.apiCall =  await def.preProcessor(def.apiCall, this);
+        if (!cloneDef.apiCall) {
+          this.core.emit({name:"VmStopped", data:{id:evt.data[0]}});
+          return;
+        }
+      };
+      if(def.preProcessor && def.apiCall.namespace !== "vm.start"){
+        cloneDef.apiCall =  def.preProcessor(def.apiCall, this);
       }
 
       let call = cloneDef.apiCall;//this.parseEventWs(evt);
