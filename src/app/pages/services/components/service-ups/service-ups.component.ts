@@ -55,14 +55,16 @@ export class ServiceUPSComponent implements OnDestroy {
       name : 'ups_remotehost',
       placeholder : T('Remote Host'),
       required: true,
-      isHidden: true
+      isHidden: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
       name : 'ups_remoteport',
       placeholder : T('Remote Port'),
       required: true,
-      isHidden: true
+      isHidden: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'select',
