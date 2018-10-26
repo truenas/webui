@@ -47,7 +47,10 @@ export class RsyncFormComponent {
         tooltip: helptext.rsync_user_tooltip,
         options: [],
         required: true,
-        validation : helptext.rsync_user_validation
+        validation : helptext.rsync_user_validation,
+        searchOptions: [],
+        parent: this,
+        updater: this.updateUserSearchOptions,
       }, {
         type: 'input',
         name: 'rsync_remotehost',
@@ -191,10 +194,12 @@ export class RsyncFormComponent {
     this.hide_fileds = this.rsync_ssh_field;
 
     this.user_field = _.find(this.fieldSets[0].config, { 'name': 'rsync_user' });
-    this.userService.listUsers().subscribe((res) => {
-      res.data.forEach((item) => {
-        this.user_field.options.push({ label: item.bsdusr_username, value: item.bsdusr_username })
-      });
+    
+    this.userService.listAllUsers().subscribe((res) => {
+      let items = res.data.items;
+      for (let i = 0; i < items.length; i++) {
+         this.user_field.options.push({label: items[i].label, value: items[i].id});
+       }
     });
 
     this.rsync_mode_field = _.find(this.fieldSets[0].config, { 'name': 'rsync_mode' });
@@ -240,5 +245,16 @@ export class RsyncFormComponent {
                           data.rsync_month + " " +
                           data.rsync_dayweek;
     return data;
+  }
+
+  updateUserSearchOptions(value = "", parent) {
+    parent.userService.listAllUsers(value).subscribe(res => {
+      let users = [];
+      let items = res.data.items;
+      for (let i = 0; i < items.length; i++) {
+        users.push({label: items[i].label, value: items[i].id});
+      }
+      parent.user_field.searchOptions = users;
+    });
   }
 }
