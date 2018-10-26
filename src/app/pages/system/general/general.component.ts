@@ -425,7 +425,7 @@ export class GeneralComponent implements OnDestroy {
       entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'] }], fileName])
         .subscribe(
           (res) => {
-            entityDialog.snackBar.open("Download Sucessful", "Success" , {
+            entityDialog.snackBar.open(T("Download Sucessful"), T("Success") , {
               duration: 5000
             });
             window.location.href = res[1];

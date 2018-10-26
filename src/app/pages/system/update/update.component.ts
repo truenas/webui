@@ -324,7 +324,7 @@ export class UpdateComponent implements OnInit {
             this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
               if(ures[0].attributes.preferences.hideWarning) {
                 const ds  = this.dialogService.confirm(
-                  "Download Update", "Continue with download?",true,"",true,"Apply updates and reboot system after downloading.","update.update",[{ train: this.train, reboot: false }]
+                  T("Download Update"), T("Continue with download?"),true,"",true,T("Apply updates and reboot system after downloading."),"update.update",[{ train: this.train, reboot: false }]
                 )
                 ds.afterClosed().subscribe((status)=>{
                   if(status){
@@ -351,7 +351,7 @@ export class UpdateComponent implements OnInit {
               } else {
                 this.dialogService.dialogForm(this.saveConfigFormConf).subscribe(()=>{
                   const ds  = this.dialogService.confirm(
-                    "Download Update", "Continue with download?",true,"",true,"Apply updates and reboot system after downloading.","update.update",[{ train: this.train, reboot: false }]
+                    T("Download Update"), T("Continue with download?"),true,"",true,T("Apply updates and reboot system after downloading."),"update.update",[{ train: this.train, reboot: false }]
                   )
                   ds.afterClosed().subscribe((status)=>{
                     if(status){
@@ -545,14 +545,14 @@ export class UpdateComponent implements OnInit {
       entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'] }], fileName])
         .subscribe(
           (succ) => {
-            entityDialog.snackBar.open("Download Sucessful", "Success" , {
+            entityDialog.snackBar.open(T("Download Sucessful"), T("Success") , {
               duration: 5000
             });
             // window.location.href = succ[1];
             entityDialog.dialogRef.close();
           },
           (err) => {
-            entityDialog.snackBar.open("Check the network connection", "Failed" , {
+            entityDialog.snackBar.open(T("Check the network connection"), T("Failed") , {
               duration: 5000
             });
           }
