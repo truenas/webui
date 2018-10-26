@@ -533,6 +533,7 @@ export class ApiService {
 
   constructor(protected core: CoreService, protected ws: WebSocketService,protected rest: RestService, private dialog:DialogService) {
     this.ws.authStatus.subscribe((evt:any) =>{
+      this.core.emit({ name:"UserDataRequest",data:[[["id", "=", 1]]]});
       this.core.emit({name:"Authenticated",data:evt,sender:this});
     });
     this.registerDefinitions();
