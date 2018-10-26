@@ -176,5 +176,22 @@ export class VmTableComponent implements OnChanges{
       data:[]
     });
   }
+<<<<<<< HEAD
+=======
+
+  vnc(index){
+    this.ws.call('vm.get_vnc_web', [ index ]).subscribe((res) => {
+      for (const item in res){
+        window.open(res[item]);
+      }
+    });
+  }
+
+  serial(index){
+    this.router.navigate(
+      new Array('').concat([ "vm","serial", index])
+    );
+  }
+>>>>>>> master
 
 }

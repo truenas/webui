@@ -39,9 +39,9 @@ export class UpdateComponent implements OnInit {
     "SDK": T("Changing SDK version is not a supported operation. Activate an existing boot environment that uses the desired train and boot into it to switch to that train."),
     "NIGHTLY_UPGRADE": T("Changing to a nightly train is one-way. Changing back to a stable train is not supported!")
   }
-  public release_train: boolean;  
-  public pre_release_train: boolean;  
-  public nightly_train: boolean;  
+  public release_train: boolean;
+  public pre_release_train: boolean;
+  public nightly_train: boolean;
   public updates_available: boolean = false;
   public currentTrainDescription: string;
   public fullTrainList: any[];
@@ -50,10 +50,16 @@ export class UpdateComponent implements OnInit {
   public busy2: Subscription;
   public showSpinner: boolean = false;
   public singleDescription: string;
+  public updatecheck_tooltip = T('Check the update server daily for \
+                                  any updates on the chosen train. \
+                                  Automatically download an update if \
+                                  one is available. Click \
+                                  <i>APPLY PENDING UPDATE</i> to install \
+                                  the downloaded update.');
 
   protected dialogRef: any;
   constructor(protected router: Router, protected route: ActivatedRoute, protected snackBar: MatSnackBar,
-    protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog, 
+    protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog,
     protected loader: AppLoaderService, protected dialogService: DialogService, public translate: TranslateService) {
   }
   parseTrainName(name) {
@@ -170,8 +176,6 @@ export class UpdateComponent implements OnInit {
       }
     });
     this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
-      console.log(res)
-      this.currentTrainName = res.current;
       this.fullTrainList = res.trains;
       this.train = res.selected;
       this.selectedTrain = res.selected;

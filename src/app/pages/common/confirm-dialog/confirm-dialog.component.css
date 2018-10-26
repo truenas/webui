@@ -21,6 +21,9 @@ h1 {
 }
 
 div.message-content {
+<<<<<<< HEAD
     overflow: scroll;
+=======
+>>>>>>> master
     max-height: 300px;
 }

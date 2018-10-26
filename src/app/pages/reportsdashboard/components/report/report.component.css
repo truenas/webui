@@ -535,12 +535,22 @@ p.value{
 }
 
 .legend-group {
+<<<<<<< HEAD
   min-width: 220px !important;
   width: 220px !important;
   max-width: 220px !important;
   margin-right: 20px;
 }
  h3 {
+=======
+  /*min-width: 220px !important;
+  width: 220px !important;
+  max-width: 220px !important;*/
+  margin-right: 20px;
+}
+
+h3 {
+>>>>>>> master
   max-width: 100%;
   white-space: nowrap;
   text-overflow: ellipsis;
