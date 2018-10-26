@@ -43,6 +43,7 @@ $accent: $yellow;
 $warn: $red;
 $tooltip:'inline';//display property
 $toggle_pw_display_prop: inline;
+$hideWarning: inline;
 
 // Logo images
 $logo: url('assets/images/light-logo.svg');
@@ -1031,6 +1032,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(display, --toggle_pw_display_prop, $toggle_pw_display_prop);
   }
 
+  #show_Warning {
+    @include variable(display, --hideWarning, $hideWarning);
+  }
+
   #update-info {
     color: var(--accent);
   }
@@ -1042,7 +1047,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-simple-snackbar-action {
     color: var(--accent);
   }
-  
+
+  .mat-option-text {
+    @include variable(color, --fg2, $fg2 !important);
+  }
+
   input[type=number] {
     -moz-appearance: textfield !important;
   }

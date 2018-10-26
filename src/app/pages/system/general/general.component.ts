@@ -425,10 +425,10 @@ export class GeneralComponent implements OnDestroy {
       entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'] }], fileName])
         .subscribe(
           (res) => {
-            entityDialog.snackBar.open("Opening download window. Make sure pop-ups are enabled in the browser.", "Success" , {
+            entityDialog.snackBar.open(T("Download Sucessful"), T("Success") , {
               duration: 5000
             });
-            window.open(res[1]);
+            window.location.href = res[1];
             entityDialog.dialogRef.close();
           },
           (err) => {

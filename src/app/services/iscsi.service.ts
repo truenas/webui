@@ -53,4 +53,8 @@ export class IscsiService {
   getTargets() {
     return this.rest.get(this.iscsiTargetResource, {});
   }
+
+  getAuth() {
+    return this.ws.call('iscsi.auth.query', []);
+  }
 }
