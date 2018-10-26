@@ -28,7 +28,7 @@ export class UpdateComponent implements OnInit {
   public error: string;
   public autoCheck = false;
   public train: string;
-  public trains: any[];
+  public trains: any[]=[];
   public selectedTrain;
   public general_update_error;
   public update_downloaded=false;
@@ -39,19 +39,27 @@ export class UpdateComponent implements OnInit {
     "SDK": T("Changing SDK version is not a supported operation. Activate an existing boot environment that uses the desired train and boot into it to switch to that train."),
     "NIGHTLY_UPGRADE": T("Changing to a nightly train is one-way. Changing back to a stable train is not supported!")
   }
-  public release_train: boolean;  
-  public pre_release_train: boolean;  
-  public nightly_train: boolean;  
+  public release_train: boolean;
+  public pre_release_train: boolean;
+  public nightly_train: boolean;
   public updates_available: boolean = false;
   public currentTrainDescription: string;
   public fullTrainList: any[];
 
   public busy: Subscription;
   public busy2: Subscription;
+  public showSpinner: boolean = false;
+  public singleDescription: string;
+  public updatecheck_tooltip = T('Check the update server daily for \
+                                  any updates on the chosen train. \
+                                  Automatically download an update if \
+                                  one is available. Click \
+                                  <i>APPLY PENDING UPDATE</i> to install \
+                                  the downloaded update.');
 
   protected dialogRef: any;
   constructor(protected router: Router, protected route: ActivatedRoute, protected snackBar: MatSnackBar,
-    protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog, 
+    protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog,
     protected loader: AppLoaderService, protected dialogService: DialogService, public translate: TranslateService) {
   }
   parseTrainName(name) {
@@ -76,7 +84,6 @@ export class UpdateComponent implements OnInit {
       version.push(sw_version);
       version.push(branch);
     }
-
 
     return version;
   }
@@ -175,8 +182,12 @@ export class UpdateComponent implements OnInit {
 
       this.trains = [];
       for (const i in res.trains) {
-        this.trains.push({ name: i });
-      }
+        if (this.compareTrains(this.train, i) === 'ALLOWED' || this.train === i) {
+          this.trains.push({ name: i, description: res.trains[i].description });
+        }
+        
+      } 
+      this.singleDescription = this.trains[0].description;
 
       // The following is a kluge until we stop overwriting (via middleware?) the description of the currently
       //  running OS along with its tags we want to use for sorting - [release], [prerelease], and [nightly]
@@ -225,6 +236,9 @@ export class UpdateComponent implements OnInit {
       this.rest
       .put('system/update', { body: JSON.stringify({ upd_autocheck: this.autoCheck }) })
       .subscribe((res) => {
+        if(res.data.upd_autocheck === true) {
+          this.check();
+        }
       });
   }
 
@@ -372,6 +386,7 @@ export class UpdateComponent implements OnInit {
 }
 
   check() {
+    this.showSpinner = true;
     this.pendingupdates();
     this.error = null;
     this.ws.call('update.check_available', [{ train: this.train }])
@@ -436,6 +451,7 @@ export class UpdateComponent implements OnInit {
           this.general_update_error =  err.reason.replace('>', '').replace('<','') + T(": Automatic update check failed. Please check system network settings.")
         },
         () => {
+          this.showSpinner = false;
         });
   }
 }

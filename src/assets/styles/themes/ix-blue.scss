@@ -771,7 +771,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   // Fix a layout problem on Sharing/ISCSI page with ink-bar under active link...
-  iscsi .mat-tab-label-active, reportsdashboard .mat-tab-label-active {
+  iscsi .mat-tab-label-active, reportsdashboard .mat-tab-label-active  {
     border-bottom: 2px solid;
     @include variable(border-color, --primary, $primary);
   }
@@ -1037,6 +1037,18 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   .services-table .service-toggle-running {
     @include variable(fill, --accent, $accent);
+  }
+
+  .mat-simple-snackbar-action {
+    color: var(--accent);
+  }
+
+  input[type=number] {
+    -moz-appearance: textfield !important;
+  }
+
+  input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
   }
 
 } // end of ix theme
