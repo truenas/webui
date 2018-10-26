@@ -12,6 +12,7 @@ import { SMBFormComponent } from './smb/smb-form/';
 import { ISCSI } from './iscsi/iscsi.component';
 import { GlobalconfigurationComponent } from './iscsi/globalconfiguration/';
 import { PortalListComponent } from './iscsi/portal/portal-list/';
+import { PortalFormComponent } from './iscsi/portal/portal-form/';
 import { PortalAddComponent } from './iscsi/portal/portal-add/';
 import { PortalEditComponent } from './iscsi/portal/portal-edit/';
 import { InitiatorListComponent } from './iscsi/initiator/initiator-list/';
@@ -121,11 +122,11 @@ export const routes: Routes = [
           data: { title: 'Portals', breadcrumb: 'Portals'},
           children: [{
             path: 'add',
-            component: PortalAddComponent,
+            component: PortalFormComponent,
             data: { title: 'Add', breadcrumb: 'Add' },
           },{
             path: 'edit/:pk',
-            component: PortalEditComponent,
+            component: PortalFormComponent,
             data: { title: 'Edit', breadcrumb: 'Edit' },
           }]
         }, {
