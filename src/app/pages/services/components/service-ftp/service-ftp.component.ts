@@ -157,6 +157,7 @@ export class ServiceFTPComponent implements OnInit {
       name : 'filemask',
       placeholder : T('File Permission'),
       tooltip: T('Sets default permissions for newly created files.'),
+      noexec: true,
     },
     {
       type : 'permissions',
@@ -437,7 +438,38 @@ export class ServiceFTPComponent implements OnInit {
     if (certificate && certificate.id) {
       data['ssltls_certificate'] = certificate.id;
     }
+
+    let fileperm = parseInt(data['filemask'], 8);
+    let filemask = (~fileperm & 0o666).toString(8);
+    while (filemask.length < 3) {
+      filemask = '0' + filemask;
+    }
+    data['filemask'] = filemask;
+
+    let dirperm = parseInt(data['dirmask'], 8);
+    let dirmask = (~dirperm & 0o777).toString(8);
+    while (dirmask.length < 3) {
+      dirmask = '0' +dirmask;
+    }
+    data['dirmask'] = dirmask;
+
     return data;
+  }
+
+  beforeSubmit(data) {
+    let fileperm = parseInt(data['filemask'], 8);
+    let filemask = (~fileperm & 0o666).toString(8);
+    while (filemask.length < 3) {
+      filemask = '0' + filemask;
+    }
+    data['filemask'] = filemask;
+
+    let dirperm = parseInt(data['dirmask'], 8);
+    let dirmask = (~dirperm & 0o777).toString(8);
+    while (dirmask.length < 3) {
+      dirmask = '0' +dirmask;
+    }
+    data['dirmask'] = dirmask;
   }
 
   submitFunction(this: any, body: any){
