@@ -50,12 +50,12 @@ export class SMBFormComponent implements OnDestroy {
                   maps usernames to all lower case. For example, the\
                   username John will be mapped to a home directory\
                   named john. If the <i>Path</i> to the home share\
-                  includes an upper case username, delete the existing user,\
+                  includes an upper case username, delete the existing user\
                   and recreate it in <i>Accounts --> Users</i>\
                   with an all lower case <i>Username</i>. Return\
                   to <i>Sharing --> SMB</i> to create the home share,\
                   and select the </i>Path</i> that contains the new\
-                  lower case user name.'),
+                  lower case username.'),
     },
     {
       type: 'checkbox',
