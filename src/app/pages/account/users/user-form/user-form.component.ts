@@ -53,8 +53,11 @@ export class UserFormComponent {
           type : 'input',
           name : 'username',
           placeholder : T('Username'),
-          tooltip : T('Enter an alphanumeric username of eight characters\
-                      or less. Usernames cannot begin with a hyphen\
+          tooltip : T('Enter an alphanumeric username of eight to\
+                      sixteen characters. Keeping usernames to eight\
+                      characters or less is recommended for\
+                      compatibility with legacy clients.\
+                      Usernames cannot begin with a hyphen\
                       (<b>-</b>) or contain a space, tab, or these\
                       characters: <b>, : + & # %^ ( ) ! @ ~ * ? < > =</b>\
                       . A <b>$</b> can only be used as the last\
