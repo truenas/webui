@@ -6,6 +6,8 @@ import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
 import { TooltipComponent } from '../tooltip/tooltip.component';
 
+import * as _ from 'lodash';
+
 @Component({
   selector: 'form-combobox',
   styleUrls: ['form-combobox.component.scss', '../dynamic-field/dynamic-field.css'],
@@ -20,5 +22,19 @@ export class FormComboboxComponent implements Field {
 
   onChangeOption(value) {
     this.group.controls[this.config.name].setValue(value);
+  }
+
+  updateSearchOptions(value) {
+    if(this.config.updater && this.config.parent) {
+      this.config.updater(value, this.config.parent);
+    } else {
+      let searchOptions = [];
+      for (let i = 0; i < this.config.options.length; i++) {
+        if (_.startsWith(this.config.options[i].label, value)) {
+          searchOptions.push(this.config.options[i]);
+        }
+      }
+      this.config.searchOptions = searchOptions;
+    }
   }
 }
