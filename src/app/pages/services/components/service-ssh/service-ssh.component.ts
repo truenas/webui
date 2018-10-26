@@ -38,7 +38,7 @@ export class ServiceSSHComponent implements OnInit {
     {
       type : 'select',
       name : 'ssh_bindiface',
-      placeholder : T('Bind Interfaces'),
+      placeholder : T('Bind interfaces'),
       tooltip: T('Select interfaces for SSH to listen on. Leave all\
                   options unselected for SSH to listen on all interfaces.'),
       multiple : true,
@@ -47,13 +47,13 @@ export class ServiceSSHComponent implements OnInit {
     {
       type : 'input',
       name : 'ssh_tcpport',
-      placeholder : T('TCP Port'),
+      placeholder : T('TCP port'),
       tooltip: 'Open a port for SSH connection requests.',
     },
     {
       type : 'checkbox',
       name : 'ssh_rootlogin',
-      placeholder : T('Login as Root with Password'),
+      placeholder : T('Log in as root with password'),
       tooltip: T('<b>Root logins are discouraged.</b> Set to allow root\
                   logins. A password must be set for the <i>root</i>\
                   user in <a href="..//docs/account.html#users"\
@@ -62,7 +62,7 @@ export class ServiceSSHComponent implements OnInit {
     {
       type : 'checkbox',
       name : 'ssh_passwordauth',
-      placeholder : T('Allow Password Authentication'),
+      placeholder : T('Allow password authentication'),
       tooltip: T('Unset to require key-based authentication for\
                   all users. This requires <a\
                   href="http://the.earth.li/%7Esgtatham/putty/0.55/htmldoc/Chapter8.html"\
@@ -72,7 +72,7 @@ export class ServiceSSHComponent implements OnInit {
     {
       type : 'checkbox',
       name : 'ssh_kerberosauth',
-      placeholder : T('Allow Kerberos Authentication'),
+      placeholder : T('Allow Kerberos authentication'),
       tooltip: T('Ensure <a\
                   href="..//docs/directoryservice.html#kerberos-realms"\
                   target="_blank">Kerberos Realms</a> and <a\
@@ -84,7 +84,7 @@ export class ServiceSSHComponent implements OnInit {
     {
       type : 'checkbox',
       name : 'ssh_tcpfwd',
-      placeholder : T('Allow TCP Port Forwarding'),
+      placeholder : T('Allow TCP port forwarding'),
       tooltip: T('Set to allow users to bypass firewall restrictions\
                   using the SSH port <a\
                   href="https://www.symantec.com/connect/articles/ssh-port-forwarding"\
@@ -93,13 +93,13 @@ export class ServiceSSHComponent implements OnInit {
     {
       type : 'checkbox',
       name : 'ssh_compression',
-      placeholder : T('Compress Connections'),
+      placeholder : T('Compress connections'),
       tooltip: T('Set to attempt to reduce latency over slow networks.'),
     },
     {
       type : 'select',
       name : 'ssh_sftp_log_level',
-      placeholder : T('SFTP Log Level'),
+      placeholder : T('SFTP log level'),
       tooltip: T('Select the <a\
                   href="https://www.freebsd.org/cgi/man.cgi?query=syslog"\
                   target="_blank">syslog(3)</a> level of the SFTP server.'),
@@ -118,7 +118,7 @@ export class ServiceSSHComponent implements OnInit {
     {
       type : 'select',
       name : 'ssh_sftp_log_facility',
-      placeholder : T('SFTP Log Facility'),
+      placeholder : T('SFTP log facility'),
       tooltip: T('Select the <a\
                   href="https://www.freebsd.org/cgi/man.cgi?query=syslog"\
                   target="_blank">syslog(3)</a> facility of the SFTP\

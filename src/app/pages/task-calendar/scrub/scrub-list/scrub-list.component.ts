@@ -35,6 +35,10 @@ export class ScrubListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    deleteMsg: {
+      title: 'Scrub Task',
+      key_props: ['scrub_volume']
+    },
   };
 
   constructor(protected router: Router,

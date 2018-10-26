@@ -39,11 +39,10 @@ export class UpdateComponent implements OnInit {
     "SDK": T("Changing SDK version is not a supported operation. Activate an existing boot environment that uses the desired train and boot into it to switch to that train."),
     "NIGHTLY_UPGRADE": T("Changing to a nightly train is one-way. Changing back to a stable train is not supported!")
   }
-  public release_train: boolean;  
-  public pre_release_train: boolean;  
-  public nightly_train: boolean;  
+  public release_train: boolean;
+  public pre_release_train: boolean;
+  public nightly_train: boolean;
   public updates_available: boolean = false;
-  public currentTrainName: string;
   public currentTrainDescription: string;
   public fullTrainList: any[];
 
@@ -51,10 +50,16 @@ export class UpdateComponent implements OnInit {
   public busy2: Subscription;
   public showSpinner: boolean = false;
   public singleDescription: string;
+  public updatecheck_tooltip = T('Check the update server daily for \
+                                  any updates on the chosen train. \
+                                  Automatically download an update if \
+                                  one is available. Click \
+                                  <i>APPLY PENDING UPDATE</i> to install \
+                                  the downloaded update.');
 
   protected dialogRef: any;
   constructor(protected router: Router, protected route: ActivatedRoute, protected snackBar: MatSnackBar,
-    protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog, 
+    protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog,
     protected loader: AppLoaderService, protected dialogService: DialogService, public translate: TranslateService) {
   }
   parseTrainName(name) {
@@ -171,8 +176,6 @@ export class UpdateComponent implements OnInit {
       }
     });
     this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
-      console.log(res)
-      this.currentTrainName = res.current;
       this.fullTrainList = res.trains;
       this.train = res.selected;
       this.selectedTrain = res.selected;
@@ -188,14 +191,14 @@ export class UpdateComponent implements OnInit {
 
       // The following is a kluge until we stop overwriting (via middleware?) the description of the currently
       //  running OS along with its tags we want to use for sorting - [release], [prerelease], and [nightly]
-      if (this.currentTrainName.toLowerCase().includes('nightlies')) {
+      if (this.selectedTrain.toLowerCase().includes('nightlies')) {
         this.currentTrainDescription = '[nightly]';
-      } else if (this.currentTrainName.toLowerCase().includes('11-stable')) {
+      } else if (this.selectedTrain.toLowerCase().includes('11-stable')) {
         this.currentTrainDescription = '[release]';
-      } else if (this.currentTrainName.toLowerCase().includes('11.2-stable')) {
+      } else if (this.selectedTrain.toLowerCase().includes('11.2-stable')) {
         this.currentTrainDescription = '[prerelease]';
       } else {
-        this.currentTrainDescription = res.trains[this.currentTrainName].description.toLowerCase();
+        this.currentTrainDescription = res.trains[this.selectedTrain].description.toLowerCase();
       }
     });
   }
@@ -239,7 +242,18 @@ export class UpdateComponent implements OnInit {
       });
   }
 
-  downloadUpdate() {
+  showRunningUpdate(jobId) {
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: true });
+    this.dialogRef.componentInstance.jobId = jobId;
+    this.dialogRef.componentInstance.wsshow();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.router.navigate(['/others/reboot']);
+    });
+    this.dialogRef.componentInstance.failure.subscribe((res) => {
+      this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
+    });
+  }
+  startUpdate() {
     this.error = null;
     this.loader.open();
     this.ws.call('update.check_available', [{ train: this.train }])
@@ -324,6 +338,19 @@ export class UpdateComponent implements OnInit {
         () => {
           this.loader.close();
         });
+  }
+  downloadUpdate() {
+    this.ws.call('core.get_jobs', [[["method", "=", "update.update"], ["state", "=", "RUNNING"]]]).subscribe(
+      (res) => {
+        if (res[0]) {
+          this.showRunningUpdate(res[0].id);
+        } else {
+          this.startUpdate();
+        }
+      },
+      (err) => {
+        this.dialogService.errorReport(T("Error"), err.reason, err.trace.formatted);
+      });
   }
 
   update() {

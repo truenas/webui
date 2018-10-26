@@ -17,7 +17,7 @@ export class DialogService {
 
     constructor(private dialog: MatDialog, private ws: WebSocketService, public snackBar: MatSnackBar,protected loader: AppLoaderService) { }
 
-    public confirm(title: string, message: string, hideCheckBox?: boolean, buttonMsg?: string, secondaryCheckBox?: boolean, secondaryCheckBoxMsg?: string, method?:string, data?:any): any {
+    public confirm(title: string, message: string, hideCheckBox?: boolean, buttonMsg?: string, secondaryCheckBox?: boolean, secondaryCheckBoxMsg?: string, method?:string, data?:any, tooltip?:any): any {
 
         let dialogRef: MatDialogRef<ConfirmDialog>;
 
@@ -32,6 +32,10 @@ export class DialogService {
 
         if(hideCheckBox) {
             dialogRef.componentInstance.hideCheckBox = hideCheckBox;
+        } 
+
+        if(tooltip) {
+            dialogRef.componentInstance.tooltip = tooltip;
         } 
 
         if(secondaryCheckBox) {
@@ -49,6 +53,9 @@ export class DialogService {
                 }
                 if(data[0] && data[0].hasOwnProperty('reboot')){
                     data[0].reboot = !data[0].reboot;
+                }
+                if(data[0] && data[0].hasOwnProperty('overcommit')){
+                    data[0].overcommit = !data[0].overcommit;
                 }
                 return dialogRef;
             }
@@ -71,14 +78,15 @@ export class DialogService {
         return dialogRef.afterClosed();
     }
 
-    public Info(title: string, info: string ): Observable<boolean> {
+    public Info(title: string, info: string, width='500px', icon="report_problem" ): Observable<boolean> {
         
         let dialogRef: MatDialogRef<InfoDialog>;
 
-        dialogRef = this.dialog.open(InfoDialog);
+        dialogRef = this.dialog.open(InfoDialog, {width: width});
 
         dialogRef.componentInstance.title = title;
         dialogRef.componentInstance.info = info;
+        dialogRef.componentInstance.icon = icon;
 
         return dialogRef.afterClosed();
     }

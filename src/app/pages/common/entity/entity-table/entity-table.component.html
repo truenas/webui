@@ -1,6 +1,7 @@
 <div id="entity-table-component" class="material mat-card mat-card-table">
   <div class="mat-toolbar mat-card-toolbar" *ngIf="hideTopActions === false">
     <div class="mat-card-title-text">{{ title | translate }}</div>
+    <div class="legacy-warning">{{ legacyWarning | translate }} <span class="legacy-warning-link" (click)="onGoToLegacy()">{{ legacyWarningLink | translate }}.</span></div>
     <mat-spinner 
       [diameter]='40' 
       id="entity-spinner"

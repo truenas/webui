@@ -70,6 +70,7 @@ export interface Formconfiguration {
   afterSave?;
   blurEvent?;
   customEditCall?;
+  save_button_enabled?;
  
   afterSubmit?;
   beforeSubmit?;
@@ -170,6 +171,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       }
     });
 
+    if (this.conf.save_button_enabled == undefined) {
+      this.conf.save_button_enabled = true;
+    }
     if(this.conf.saveSubmitText) {
       this.saveSubmitText = this.conf.saveSubmitText;
     }
@@ -454,7 +458,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     if (this.conf.beforeSubmit) {
       this.conf.beforeSubmit(value);
     }
-    if (this.conf.customEditCall) {
+    if (this.conf.customEditCall && this.pk) {
       return this.conf.customEditCall(value);
     }
 

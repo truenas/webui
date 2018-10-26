@@ -38,6 +38,10 @@ export class InitiatorListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    deleteMsg: {
+      title: 'Initiator',
+      key_props: ['iscsi_target_initiator_tag']
+    },
   };
 
   afterInit(entityList: any) {}
