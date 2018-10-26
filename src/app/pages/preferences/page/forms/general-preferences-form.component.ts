@@ -10,6 +10,7 @@ import { ThemeService, Theme} from 'app/services/theme/theme.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { Subject } from 'rxjs/Subject';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'general-preferences-form',
@@ -88,7 +89,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
             width: '300px',
             placeholder: 'Hide warning config prompt on upgrade.',
             value:this.prefs.preferences.hideWarning,
-            tooltip: 'This option enables/disables warning config on upgrade.',
+            tooltip: T('This option enables/disables warning config on upgrade.'),
             class:'inline'
           }
         ]
