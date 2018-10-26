@@ -115,6 +115,10 @@ export class PreferencesService {
 
       //Notify Guided Tour & Theme Service
       this.core.emit({name:"UserPreferencesChanged", data:this.preferences});
+    } else {
+      setTimeout(()=> {
+        this.updatePreferences(data);
+      }, 10);
     }
   }
 
