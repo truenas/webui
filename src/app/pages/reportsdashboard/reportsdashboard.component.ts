@@ -163,7 +163,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
         const tab: TabChartsMappingData = map.get("Memory");
         tab.chartConfigData.push(chartConfigDataItem);
 
-      } else if (chartConfigDataItem.title.toLowerCase() === "processes" || chartConfigDataItem.title.toLowerCase() === "uptime") {
+      } else if (chartConfigDataItem.title.toLowerCase() === "processes" /*|| chartConfigDataItem.title.toLowerCase() === "uptime"*/) {
         const tab: TabChartsMappingData = map.get("System");
         tab.chartConfigData.push(chartConfigDataItem);
 

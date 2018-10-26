@@ -501,7 +501,8 @@ export class VmCardsComponent implements OnInit, OnDestroy {
     if (vm.state !== 'running') {
       this.ws.call('vm.query', [[['id', '=', vm.id]]]).subscribe((res)=>{
             eventName = "VmStart";
-            this.cards[index].state = "starting";
+            // removed transient state `starting` as it would cause confusion with new requirements.
+            //this.cards[index].state = "starting";
             this.core.emit({name: eventName, data:[vm.id]});
       });
     }

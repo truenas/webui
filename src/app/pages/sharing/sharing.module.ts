@@ -28,8 +28,7 @@ import { InitiatorFormComponent } from './iscsi/initiator/initiator-form/';
 import { AuthorizedAccessListComponent } from './iscsi/authorizedaccess/authorizedaccess-list/';
 import { AuthorizedAccessFormComponent } from './iscsi/authorizedaccess/authorizedaccess-form/';
 import { TargetListComponent} from './iscsi/target/target-list/';
-import { TargetAddComponent } from './iscsi/target/target-add/';
-import { TargetEditComponent} from './iscsi/target/target-edit/';
+import { TargetFormComponent} from './iscsi/target/target-form/';
 import { ExtentListComponent } from './iscsi/extent/extent-list/';
 import { ExtentFormComponent } from './iscsi/extent/extent-form/';
 import { AssociatedTargetListComponent } from './iscsi/associated-target/associated-target-list/';
@@ -64,8 +63,7 @@ import { AssociatedTargetFormComponent } from './iscsi/associated-target/associa
     AuthorizedAccessListComponent,
     AuthorizedAccessFormComponent,
     TargetListComponent,
-    TargetAddComponent,
-    TargetEditComponent,
+    TargetFormComponent,
     ExtentListComponent,
     ExtentFormComponent,
     AssociatedTargetListComponent,
