@@ -25,15 +25,16 @@ export class DiskBulkEditComponent {
       name: 'disk_name',
       placeholder: T('Editing the following disks:'),
       tooltip : T('This is the FreeBSD device name for the disk.'),
-      value: ['ada7', 'ada4'],
+      value: [this.diskBucket.diskNames],
       readonly: true
     },    {
       type: 'input',
       name: 'disk_serial',
       placeholder: T('Serial'),
       tooltip : T('This is the serial number of the disk.'),
-      value: [this.idbucket.Ids],
-      readonly: true
+      value: [this.diskBucket.ids],
+      readonly: true, 
+      isHidden: true
     },
     {
       type: 'select',
@@ -93,7 +94,7 @@ export class DiskBulkEditComponent {
     protected ws: WebSocketService,
     protected aroute: ActivatedRoute,
     protected loader: AppLoaderService,
-    public idbucket: StorageService
+    public diskBucket: StorageService
   ) {
     this.aroute.params.subscribe((params)=> {
       if (params['poolId']) {
@@ -129,9 +130,9 @@ export class DiskBulkEditComponent {
   }
 
   customSubmit(event) {
-    console.log(event)
     this.loader.open();
     for (let i of event.disk_serial) {
+      this.entityList.busy =
       this.ws.job('core.bulk', ["disk.update", [ 
         [i, {"hddstandby": event.disk_hddstandby}, 
             {"advpowermgmt" : event.disk_advpowermgmt}, 

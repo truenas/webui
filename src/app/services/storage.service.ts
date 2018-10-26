@@ -161,9 +161,14 @@ export class StorageService {
     return arr;
   } 
 
-  public Ids: any;
+  public ids: any;
+  public diskNames: any;
 
   diskIdsBucket(arr) {
-    this.Ids = arr;
+    this.ids = arr;
+  }
+
+  diskNamesBucket(arr) {
+    this.diskNames = arr;
   }
 }

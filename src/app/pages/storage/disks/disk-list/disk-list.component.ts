@@ -34,18 +34,21 @@ export class DiskListComponent {
 		multiSelect: true,
 	};
 	public diskIds: Array<any> = [];
+	public diskNames: Array<any> = [];
   public multiActions: Array < any > = [{
 		id: "medit",
 		label: T("Bulk Edit"),
 		icon: "edit",
 		enable: true,
 		ttpos: "above", // tooltip position
-		onClick: (selected) => {
+		onClick: (selected) => { console.log(selected)
 			if (selected.length > 1) {
 				for(let i of selected) {
-					this.diskIds.push(i.identifier)
+					this.diskIds.push(i.identifier);
+					this.diskNames.push(i.name);
 				}
 				this.idbucket.diskIdsBucket(this.diskIds);
+				this.idbucket.diskNamesBucket(this.diskNames);
 				this.router.navigate(new Array('/').concat([
 					"storage", "disks", "bulk-edit"
 				]));
