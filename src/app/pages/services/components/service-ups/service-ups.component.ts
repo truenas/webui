@@ -1,30 +1,15 @@
 import {ApplicationRef, Component, Injector, OnDestroy} from '@angular/core';
-import {
-  AbstractControl,
-  FormArray,
-  FormGroup,
-  Validators
-} from '@angular/forms';
+import {Validators} from '@angular/forms';
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
 
 
-import {
-  RestService,
-  SystemGeneralService,
-  WebSocketService
-} from '../../../../services/';
-import {
-  FieldConfig
-} from '../../../common/entity/entity-form/models/field-config.interface';
-import {
-  matchOtherValidator
-} from '../../../common/entity/entity-form/validators/password-validation';
+import {RestService,WebSocketService} from '../../../../services/';
+import {FieldConfig} from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
 
 @Component({
-  selector : 'ups-edit',
+  selector : 'app-ups-edit',
   template : `<entity-form [conf]="this"></entity-form>`,
 })
 
@@ -35,8 +20,9 @@ export class ServiceUPSComponent implements OnDestroy {
   protected ups_hostname: any;
   protected ups_driver_subscription: any;
   protected entityForm: any;
+  protected ups_mode_fg: any;
 
-  protected resource_name: string = 'services/ups';
+  protected resource_name  = 'services/ups';
   protected route_success: string[] = [ 'services' ];
 
   public fieldConfig: FieldConfig[] = [
@@ -65,6 +51,22 @@ export class ServiceUPSComponent implements OnDestroy {
     validation : [ Validators.required, Validators.pattern(/^[\w|,|\.|\-|_]+$/) ]
     },
     {
+      type : 'input',
+      name : 'ups_remotehost',
+      placeholder : T('Remote Host'),
+      required: true,
+      isHidden: true,
+      validation : [ Validators.required ]
+    },
+    {
+      type : 'input',
+      name : 'ups_remoteport',
+      placeholder : T('Remote Port'),
+      required: true,
+      isHidden: true,
+      validation : [ Validators.required ]
+    },
+    {
       type : 'select',
       name : 'ups_driver',
       placeholder : T('Driver'),
@@ -74,7 +76,8 @@ export class ServiceUPSComponent implements OnDestroy {
                    list</a> for a list of supported UPS devices.'),
       required: true,
       options: [],
-      validation : [ Validators.required ]
+      validation : [ Validators.required ],
+      isHidden: false
     },
     {
       type : 'select',
@@ -83,7 +86,8 @@ export class ServiceUPSComponent implements OnDestroy {
       options: [],
       tooltip : T('Enter the serial or USB port the UPS is plugged into.'),
       required: true,
-      validation : [ Validators.required ]
+      validation : [ Validators.required ],
+      isHidden: false
     },
     {
       type: 'input',
@@ -99,6 +103,7 @@ export class ServiceUPSComponent implements OnDestroy {
       tooltip : T('Enter any extra options from <a\
                    href="http://networkupstools.org/docs/man/ups.conf.html"\
                    target="_blank">UPS.CONF(5)</a>.'),
+      isHidden: false
     },
     {
       type : 'textarea',
@@ -254,6 +259,29 @@ export class ServiceUPSComponent implements OnDestroy {
   }
 
   afterInit(entityForm: any) {
+    this.entityForm = entityForm;
+    this.ups_mode_fg = entityForm.formGroup.controls['ups_mode'];
+    this.ups_mode_fg.valueChanges.subscribe((value) => {
+      if (value === "slave") {
+        this.entityForm.setDisabled('ups_driver', true);
+        this.entityForm.setDisabled('ups_port', true);
+        _.find(this.fieldConfig, { name: 'ups_driver' }).isHidden = true;
+        _.find(this.fieldConfig, { name: 'ups_port' }).isHidden = true;
+        _.find(this.fieldConfig, { name: 'ups_remotehost' }).isHidden = false;
+        _.find(this.fieldConfig, { name: 'ups_remoteport' }).isHidden = false;
+        _.find(this.fieldConfig, { name: 'ups_options' }).isHidden = true;
+      } else {
+        this.entityForm.setDisabled('ups_driver', false);
+        this.entityForm.setDisabled('ups_port', false);
+        _.find(this.fieldConfig, { name: 'ups_driver' }).isHidden = false;
+        _.find(this.fieldConfig, { name: 'ups_port' }).isHidden = false;
+        _.find(this.fieldConfig, { name: 'ups_remotehost' }).isHidden = true;
+        _.find(this.fieldConfig, { name: 'ups_remoteport' }).isHidden = true;
+        _.find(this.fieldConfig, { name: 'ups_options' }).isHidden = false;
+
+      }
+
+    })
     this.entityForm = entityForm;
     this.ups_driver = _.find(this.fieldConfig, { name: 'ups_driver' });
     this.ups_port = _.find(this.fieldConfig, { name: 'ups_port' });
