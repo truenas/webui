@@ -22,8 +22,6 @@ import { ISCSI } from './iscsi/iscsi.component';
 import { GlobalconfigurationComponent } from './iscsi/globalconfiguration/';
 import { PortalListComponent } from './iscsi/portal/portal-list/';
 import { PortalFormComponent } from './iscsi/portal/portal-form/';
-import { PortalAddComponent } from './iscsi/portal/portal-add/';
-import { PortalEditComponent } from './iscsi/portal/portal-edit/';
 import { InitiatorListComponent } from './iscsi/initiator/initiator-list/';
 import { InitiatorFormComponent } from './iscsi/initiator/initiator-form/';
 import { AuthorizedAccessListComponent } from './iscsi/authorizedaccess/authorizedaccess-list/';
@@ -58,8 +56,6 @@ import { AssociatedTargetFormComponent } from './iscsi/associated-target/associa
     GlobalconfigurationComponent,
     PortalListComponent,
     PortalFormComponent,
-    PortalAddComponent,
-    PortalEditComponent,
     InitiatorListComponent,
     InitiatorFormComponent,
     AuthorizedAccessListComponent,
