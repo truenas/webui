@@ -9,6 +9,8 @@ import { DialogService } from '../../../services/dialog.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../translate-marker';
+import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 
 @Component({
   selector: 'app-update',
@@ -39,10 +41,10 @@ export class UpdateComponent implements OnInit {
     "SDK": T("Changing SDK version is not a supported operation. Activate an existing boot environment that uses the desired train and boot into it to switch to that train."),
     "NIGHTLY_UPGRADE": T("Changing to a nightly train is one-way. Changing back to a stable train is not supported!")
   }
-  public release_train: boolean;
-  public pre_release_train: boolean;
-  public nightly_train: boolean;
-  public updates_available: boolean = false;
+  public release_train: boolean;  
+  public pre_release_train: boolean;  
+  public nightly_train: boolean;  
+  public updates_available = false;
   public currentTrainDescription: string;
   public fullTrainList: any[];
 
@@ -54,6 +56,26 @@ export class UpdateComponent implements OnInit {
                                   one is available. Click \
                                   <i>APPLY PENDING UPDATE</i> to install \
                                   the downloaded update.');
+
+  protected saveConfigFieldConf: FieldConfig[] = [
+    {
+      type: 'checkbox',
+      name: 'secretseed',
+      placeholder: T('Export Password Secret Seed')
+    },
+    {
+      type: 'checkbox',
+      name: 'hideWarning',
+      placeholder: T('Don\'t show this again'),
+    }
+  ];
+  public saveConfigFormConf: DialogFormConfiguration = {
+    title: "Before doing update, would you like to save a copy of the config?",
+    fieldConfig: this.saveConfigFieldConf,
+    method_ws: 'core.download',
+    saveButtonText: T('OK'),
+    customSubmit: this.saveConfigSubmit,
+  }
 
   protected dialogRef: any;
   constructor(protected router: Router, protected route: ActivatedRoute, protected snackBar: MatSnackBar,
@@ -168,6 +190,13 @@ export class UpdateComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
+      if(!ures[0].attributes.preferences.hideWarning) {
+        ures[0].attributes.preferences['hideWarning'] = false;
+        this.ws.call('user.set_attribute', [1, 'preferences', ures[0].attributes.preferences]).subscribe((res)=>{
+        });
+      }
+    });
     this.busy = this.rest.get('system/update', {}).subscribe((res) => {
       this.autoCheck = res.data.upd_autocheck;
       if (this.autoCheck){
@@ -292,33 +321,63 @@ export class UpdateComponent implements OnInit {
             if (res.notes) {
               this.releaseNotes = res.notes.ReleaseNotes;
             }
-            const ds  = this.dialogService.confirm(
-              "Download Update", "Continue with download?",true,"",true,"Apply updates and reboot system after downloading.","update.update",[{ train: this.train, reboot: false }]
-            )
-            ds.afterClosed().subscribe((status)=>{
-              if(status){
-                if (!ds.componentInstance.data[0].reboot){
-                  this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
-                  this.dialogRef.componentInstance.setCall('update.download');
-                  this.dialogRef.componentInstance.submit();
-                  this.dialogRef.componentInstance.success.subscribe((succ) => {
-                    this.dialogRef.close(false);
-                    this.snackBar.open(T("Updates successfully downloaded"),'close', { duration: 5000 });
-                    this.pendingupdates();
-
+            this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
+              if(ures[0].attributes.preferences.hideWarning) {
+                const ds  = this.dialogService.confirm(
+                  T("Download Update"), T("Continue with download?"),true,"",true,T("Apply updates and reboot system after downloading."),"update.update",[{ train: this.train, reboot: false }]
+                )
+                ds.afterClosed().subscribe((status)=>{
+                  if(status){
+                    if (!ds.componentInstance.data[0].reboot){
+                      this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
+                      this.dialogRef.componentInstance.setCall('update.download');
+                      this.dialogRef.componentInstance.submit();
+                      this.dialogRef.componentInstance.success.subscribe((succ) => {
+                        this.dialogRef.close(false);
+                        this.snackBar.open(T("Updates successfully downloaded"),'close', { duration: 5000 });
+                        this.pendingupdates();
+    
+                      });
+                      this.dialogRef.componentInstance.failure.subscribe((failure) => {
+                        this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
+                      });
+                    }
+                    else{
+                      this.update();
+                    }
+                  }
+                });
+                
+              } else {
+                this.dialogService.dialogForm(this.saveConfigFormConf).subscribe(()=>{
+                  const ds  = this.dialogService.confirm(
+                    T("Download Update"), T("Continue with download?"),true,"",true,T("Apply updates and reboot system after downloading."),"update.update",[{ train: this.train, reboot: false }]
+                  )
+                  ds.afterClosed().subscribe((status)=>{
+                    if(status){
+                      if (!ds.componentInstance.data[0].reboot){
+                        this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
+                        this.dialogRef.componentInstance.setCall('update.download');
+                        this.dialogRef.componentInstance.submit();
+                        this.dialogRef.componentInstance.success.subscribe((succ) => {
+                          this.dialogRef.close(false);
+                          this.snackBar.open(T("Updates successfully downloaded"),'close', { duration: 5000 });
+                          this.pendingupdates();
+      
+                        });
+                        this.dialogRef.componentInstance.failure.subscribe((failure) => {
+                          this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
+                        });
+                      }
+                      else{
+                        this.update();
+                      }
+                    }
                   });
-                  this.dialogRef.componentInstance.failure.subscribe((failure) => {
-                    this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
-                  });
+                });
+              };
+            });
 
-                }
-                else{
-                  this.update();
-                }
-
-              }
-
-            })
           } else if (res.status === 'UNAVAILABLE'){
             this.dialogService.Info(T('Check Now'), T('No updates available.'))
           }
@@ -356,15 +415,32 @@ export class UpdateComponent implements OnInit {
       this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
     });
   }
+
   ApplyPendingUpdate() {
-    const apply_pending_update_ds  = this.dialogService.confirm(
-      T("Apply Pending Updates"), T("The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?")
-    ).subscribe((res)=>{
-      if(res){
-       this.update();
+    this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
+      if(ures[0].attributes.preferences.hideWarning) {
+        this.dialogService.confirm(
+          T("Apply Pending Updates"), T("The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?")
+        ).subscribe((res)=>{
+          if(res){
+           this.update();
+          }
+        });
       }
+      else {
+        this.dialogService.dialogForm(this.saveConfigFormConf).subscribe(()=>{
+          this.dialogService.confirm(
+            T("Apply Pending Updates"), T("The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?")
+          ).subscribe((res)=>{
+            if(res){
+             this.update();
+            };
+          });
+        });
+      };
     });
-  }
+  };
+
   ManualUpdate(){
     this.router.navigate([this.router.url +'/manualupdate']);
   }
@@ -443,5 +519,44 @@ export class UpdateComponent implements OnInit {
         },
         () => {
         });
+  }
+
+  async saveConfigSubmit(entityDialog) {
+    if(entityDialog.formValue['hideWarning']) {
+      await entityDialog.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
+        ures[0].attributes.preferences['hideWarning'] = true;
+        entityDialog.ws.call('user.set_attribute', [1, 'preferences', ures[0].attributes.preferences]).subscribe((res)=>{
+        });
+      });
+    };
+    await entityDialog.ws.call('system.info', []).subscribe((res) => {
+      let fileName = "";
+      if (res) {
+        const hostname = res.hostname.split('.')[0];
+        const date = entityDialog.datePipe.transform(new Date(),"yyyyMMddHHmmss");
+        fileName = hostname + '-' + res.version + '-' + date;
+        if (entityDialog.formValue['secretseed']) {
+          fileName += '.tar';
+        } else {
+          fileName += '.db';
+        }
+      }
+
+      entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'] }], fileName])
+        .subscribe(
+          (succ) => {
+            entityDialog.snackBar.open(T("Download Sucessful"), T("Success") , {
+              duration: 5000
+            });
+            // window.location.href = succ[1];
+            entityDialog.dialogRef.close();
+          },
+          (err) => {
+            entityDialog.snackBar.open(T("Check the network connection"), T("Failed") , {
+              duration: 5000
+            });
+          }
+        );
+    });
   }
 }
