@@ -50,6 +50,12 @@ export class UpdateComponent implements OnInit {
 
   public busy: Subscription;
   public busy2: Subscription;
+  public updatecheck_tooltip = T('Check the update server daily for \
+                                  any updates on the chosen train. \
+                                  Automatically download an update if \
+                                  one is available. Click \
+                                  <i>APPLY PENDING UPDATE</i> to install \
+                                  the downloaded update.');
 
   protected saveConfigFieldConf: FieldConfig[] = [
     {
@@ -73,7 +79,7 @@ export class UpdateComponent implements OnInit {
 
   protected dialogRef: any;
   constructor(protected router: Router, protected route: ActivatedRoute, protected snackBar: MatSnackBar,
-    protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog, 
+    protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog,
     protected loader: AppLoaderService, protected dialogService: DialogService, public translate: TranslateService) {
   }
   parseTrainName(name) {
@@ -257,7 +263,18 @@ export class UpdateComponent implements OnInit {
       });
   }
 
-  downloadUpdate() {
+  showRunningUpdate(jobId) {
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: true });
+    this.dialogRef.componentInstance.jobId = jobId;
+    this.dialogRef.componentInstance.wsshow();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.router.navigate(['/others/reboot']);
+    });
+    this.dialogRef.componentInstance.failure.subscribe((res) => {
+      this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
+    });
+  }
+  startUpdate() {
     this.error = null;
     this.loader.open();
     this.ws.call('update.check_available', [{ train: this.train }])
@@ -372,6 +389,19 @@ export class UpdateComponent implements OnInit {
         () => {
           this.loader.close();
         });
+  }
+  downloadUpdate() {
+    this.ws.call('core.get_jobs', [[["method", "=", "update.update"], ["state", "=", "RUNNING"]]]).subscribe(
+      (res) => {
+        if (res[0]) {
+          this.showRunningUpdate(res[0].id);
+        } else {
+          this.startUpdate();
+        }
+      },
+      (err) => {
+        this.dialogService.errorReport(T("Error"), err.reason, err.trace.formatted);
+      });
   }
 
   update() {

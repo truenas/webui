@@ -25,6 +25,10 @@ export class CloudCredentialsListComponent {
     public config: any = {
       paging : true,
       sorting : {columns : this.columns},
+      deleteMsg: {
+        title: 'Cloud Credential',
+        key_props: ['name']
+      },
     };
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,

@@ -24,6 +24,8 @@ export class PluginsInstalledListComponent {
   protected wsMultiDelete = 'core.bulk';
   protected entityList: any;
   public toActivatePool: boolean = false;
+  public legacyWarning = T("Note: Legacy plugins created before FreeNAS 11.2 must be managed from the");
+  public legacyWarningLink = T("legacy web interface");
 
   public columns: Array < any > = [
     { name: T('Jail'), prop: '1' },
@@ -39,7 +41,12 @@ export class PluginsInstalledListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
-    multiSelect: true
+    multiSelect: true,
+    deleteMsg: {
+      title: 'Plugin',
+      key_props: ['1'],
+      id_prop: '1',
+    },
   };
   public multiActions: Array < any > = [{
       id: "mstart",
@@ -160,6 +167,8 @@ export class PluginsInstalledListComponent {
       return false;
     } else if (actionId === 'management' && (row[3] === "down" || row[9] == null)) {
       return false;
+    } else if (actionId === 'restart' && row[3] === "down") {
+      return false;
     }
     return true;
   }
@@ -206,6 +215,31 @@ export class PluginsInstalledListComponent {
         }
       },
       {
+        id: "restart",
+        label: T("Restart"),
+        onClick: (row) => {
+          this.loader.open();
+          row[3] = 'restarting';
+          this.entityList.busy =
+            this.ws.call('jail.stop', [row[1]]).subscribe(
+              (res) => {
+                this.ws.call('jail.start', [row[1]]).subscribe(
+                  (res) => {
+                    this.loader.close();
+                    this.updateRow(row);
+                  },
+                  (res) => {
+                    this.loader.close();
+                    new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
+                  });
+              },
+              (res) => {
+                this.loader.close();
+                new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
+              });
+        }
+      },
+      {
         id: "stop",
         label: T("Stop"),
         onClick: (row) => {
@@ -233,7 +267,7 @@ export class PluginsInstalledListComponent {
         id: "delete",
         label: T("Delete"),
         onClick: (row) => {
-          this.entityList.doDelete(row[1]);
+          this.entityList.doDelete(row);
         }
       }
     ]

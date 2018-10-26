@@ -40,49 +40,66 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
   @Input() labelY?: string = 'Label Y';
 
   public chart:any;
+  public units: string = '';
   public showLegendValues: boolean = false;
   public legendEvents: BehaviorSubject<any>;
+  public legendLabels: BehaviorSubject<any>;
   data: LineChartData = {
     labels: [],
     series: [],
     //meta: {}
   };
   colorPattern = ["#2196f3", "#009688", "#ffc107", "#9c27b0", "#607d8b", "#00bcd4", "#8bc34a", "#ffeb3b", "#e91e63", "#3f51b5"];
-
-
+  timeFormat: string = "%H:%M";
+  culling:number = 6;
   controlUid: string;
 
 
   constructor(private core:CoreService, private _lineChartService: LineChartService) {
     this.legendEvents = new BehaviorSubject(false);
+    this.legendLabels = new BehaviorSubject([]);
   }
 
   handleDataFunc(linechartData: LineChartData) {
-    //console.log(linechartData)
 
     this.data.labels.splice(0, this.data.labels.length);
     this.data.series.splice(0, this.data.series.length);
+    if(linechartData.meta){
+      this.units = linechartData.meta.units;
+    }
 
     linechartData.labels.forEach((label) => {this.data.labels.push(new Date(label))});
     linechartData.series.forEach((dataSeriesArray) => {
-
-      if (typeof (this.divideBy) !== 'undefined') {
-        const newArray = new Array();
+    
+    const newArray = [];
+      if (typeof (this.divideBy) !== 'undefined' || linechartData.meta.conversion) {
         dataSeriesArray.forEach((numberVal) => {
-
-          if (numberVal > 0) {
-            newArray.push(numberVal / this.divideBy);
+          if(linechartData.meta.conversion){
+            newArray.push(this.convertTo(numberVal, linechartData.meta.conversion));
+          } else if (numberVal > 0) {
+            newArray.push((numberVal / this.divideBy).toFixed(2));
           } else {
             newArray.push(numberVal);
           }
         });
-
+        
+        dataSeriesArray = newArray;
+      } else { 
+        dataSeriesArray.forEach((numberVal) => {
+          if(numberVal > 0){
+            newArray.push(numberVal.toFixed(2));
+          } else {
+            newArray.push(numberVal);
+          }
+        });
         dataSeriesArray = newArray;
       }
+  
       this.data.series.push(dataSeriesArray);
     });
 
     const columns: any[][] = [];
+    let legendLabels: string[] = [];
 
     // xColumn
     const xValues: any[] = [];
@@ -95,7 +112,15 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
 
     // For C3.. Put the name of the series as the first element of each series array
     for (let i = 0; i < this.legends.length && this.data.series.length; ++i) {
-      const legend: string = this.legends[i];
+      let legend: string;
+      if(linechartData.meta.removePrefix){
+        legend  = this.legends[i].replace(linechartData.meta.removePrefix, "");
+      } else {
+        legend  = this.legends[i];
+      }
+
+      legendLabels.push(legend);
+
       let series: any[] = this.data.series[i];
       if( typeof(series) !== 'undefined' && series.length > 0 ) {
         series.unshift(legend);
@@ -104,6 +129,7 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
       }
       columns.push(series);
     }
+    this.legendLabels.next(legendLabels);
 
 
     this.chart = c3.generate({
@@ -125,10 +151,14 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
         x: {
           type: 'timeseries',
           tick: {
-            format: '%H:%M:%S',
-            fit: true//,
+            //format: '%H:%M:%S',
+            format: this.timeFormat,
+            fit: true,
             //values: ['01:10', '03:10', '06:10']
+            culling: { 
+              max: this.culling
             }
+          }
         },
         y:{
           tick: {
@@ -212,9 +242,36 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
     return obj;
   }
 
-  public fetchData(timeframe:string){
-    // This is the time portion of the API call. 
-    this._lineChartService.getData(this, this.dataList, timeframe);
+  public fetchData(rrdOptions, timeformat?: string, culling?:number){
+    if(timeformat){
+      this.timeFormat = timeformat;
+    }
+    if(culling){
+      this.culling = culling;
+    }
+
+    // Convert from milliseconds to seconds for epoch time
+    rrdOptions.start = Math.floor(rrdOptions.start / 1000);
+    if(rrdOptions.end){
+      rrdOptions.end = Math.floor(rrdOptions.end / 1000);
+    }
+
+    // This is the time portion of the API call.  
+    this._lineChartService.getData(this, this.dataList, rrdOptions);
+  }
+
+  public convertTo(value, conversion){
+    let result;
+    switch(conversion){
+    case 'bytesToGigabytes':
+      result = value / 1073741824;
+      break;
+    case 'percentFloatToInteger':
+      result = value * 100;
+      break;
+    }
+
+    return result.toFixed(2);
   }
 
   ngOnInit() {
@@ -237,13 +294,6 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
   }
 
   ngAfterViewInit() {
-    if (this.type === 'Pie') {
-      this.setupPiechart();
-    } else {
-      if (this.dataList.length > 0) {
-        this.fetchData('now-10m');
-      }
-    }
   }
 
   ngOnDestroy(){

@@ -1,13 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { FormArray, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Component } from '@angular/core';
+import { Validators } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
-import { IscsiService, RestService } from '../../../../../services/';
+import { IscsiService, WebSocketService } from '../../../../../services/';
 import { EntityUtils } from '../../../../common/entity/utils';
 
-import { DynamicFieldDirective } from '../../../../common/entity/entity-form/components/dynamic-field/dynamic-field.directive';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../../../common/entity/entity-form/services/entity-form.service';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
@@ -15,28 +14,27 @@ import { T } from '../../../../../translate-marker';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-  selector : 'app-iscsi-target-add',
-  templateUrl : './target-add.component.html',
-  styleUrls: ['./target-add.component.css'],
+  selector : 'app-iscsi-target-form',
+  template : `<entity-form [conf]="this"></entity-form>`,
   providers : [ IscsiService, EntityFormService ],
 })
-export class TargetAddComponent implements OnInit {
+export class TargetFormComponent {
 
-  public target_resource_name: string = 'services/iscsi/target';
-  public targetgroup_resource_name: string = 'services/iscsi/targetgroup';
+  protected queryCall= 'iscsi.target.query';
+  protected addCall = 'iscsi.target.create';
+  protected editCall = 'iscsi.target.update';
   public route_success: string[] = [ 'sharing', 'iscsi', 'target' ];
+  protected customFilter: Array<any> = [[["id", "="]]];
+  protected isEntity: boolean = true;
 
-  public iscsi_group_count: number = 1;
-  public formGroup: any;
+  protected initialCount: number = 1;
+  protected initialCount_default: number = 0;
   public arrayControl: any;
-  public arrayModel: any;
-  public error: string;
-  public busy: Subscription;
 
   public fieldConfig: FieldConfig[] = [
     {
       type: 'input',
-      name : 'iscsi_target_name',
+      name : 'name',
       placeholder : T('Target Name'),
       tooltip: T('Required value. Base name is appended\
                   if it does not start with <i>iqn</i>.'),
@@ -45,18 +43,18 @@ export class TargetAddComponent implements OnInit {
     },
     {
       type: 'input',
-      name : 'iscsi_target_alias',
+      name : 'alias',
       placeholder : T('Target Alias'),
       tooltip: T('Optional user-friendly name.'),
     },
     {
       type: 'array',
-      name : "iscsi_target_group",
+      name : "groups",
       initialCount : 1,
       formarray : [
           {
             type: 'select',
-            name : 'iscsi_target_portalgroup',
+            name : 'portal',
             placeholder : T('Portal Group ID'),
             tooltip: T('Leave empty or select number of existing portal\
                         to use.'),
@@ -67,24 +65,24 @@ export class TargetAddComponent implements OnInit {
           },
           {
             type: 'select',
-            name : 'iscsi_target_initiatorgroup',
+            name : 'initiator',
             placeholder : T('Initiator Group ID'),
             tooltip: T('Select which existing initiator group has access\
                         to the target.'),
-            value : '',
+            value : null,
             options: [],
           },
           {
             type: 'select',
-            name : 'iscsi_target_authtype',
+            name : 'authmethod',
             placeholder : T('Auth Method'),
             tooltip: T('Choices are <i>None, Auto, CHAP,</i> or\
                         <i>Mutual CHAP</i>.'),
-            value : 'None',
+            value : 'NONE',
             options : [
               {
                 label : 'None',
-                value : 'None',
+                value : 'NONE',
               },
               {
                 label : 'CHAP',
@@ -92,19 +90,26 @@ export class TargetAddComponent implements OnInit {
               },
               {
                 label : 'Mutual CHAP',
-                value : 'CHAP Mutual',
+                value : 'CHAP_MUTUAL',
               }
             ],
           },
           {
             type: 'select',
-            name : 'iscsi_target_authgroup',
+            name : 'auth',
             placeholder : T('Authentication Group number'),
             tooltip: T('Select <i>None</i> or an integer. This value\
                         represents the number of existing authorized accesses.'),
-            value : '',
+            value : null,
             options: [],
           },
+          {
+            type: 'checkbox',
+            name: 'delete',
+            placeholder: T('Delete'),
+            isHidden: true,
+            disabled: true,
+          }
         ]
     }
   ];
@@ -114,16 +119,16 @@ export class TargetAddComponent implements OnInit {
       id : 'add_extra_iscsi_group',
       name : 'Add Extra ISCSI Group',
       function : () => {
-        this.iscsi_group_count += 1;
-        this.entityFormService.insertFormArrayGroup(this.iscsi_group_count, this.formArray, this.arrayControl.formarray);
+        this.initialCount += 1;
+        this.entityFormService.insertFormArrayGroup(this.initialCount, this.formArray, this.arrayControl.formarray);
       }
     },
     {
       id : 'remove_extra_iscsi_group',
       name : 'Remove Extra ISCSI Group',
       function : () => {
-        this.iscsi_group_count -= 1;
-        this.entityFormService.removeFormArrayGroup(this.iscsi_group_count, this.formArray);
+        this.initialCount -= 1;
+        this.entityFormService.removeFormArrayGroup(this.initialCount, this.formArray);
       }
     },
   ];
@@ -132,17 +137,34 @@ export class TargetAddComponent implements OnInit {
   protected initiators: any;
   protected auths: any;
   protected formArray: any;
+  private pk: any;
+  protected entityForm: any;
   constructor(protected router: Router,
-              protected rest: RestService,
+              protected aroute: ActivatedRoute,
               protected iscsiService: IscsiService,
               protected entityFormService: EntityFormService,
               protected loader: AppLoaderService,
-              public translate: TranslateService) {}
+              public translate: TranslateService,
+              protected ws: WebSocketService) {}
 
-  ngOnInit() {
-    this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
-    this.formArray = this.formGroup.controls['iscsi_target_group'];
-    this.arrayControl = _.find(this.fieldConfig,{'name' : 'iscsi_target_group'});
+  preInit() {
+    this.arrayControl = _.find(this.fieldConfig,{'name' : 'groups'});
+
+    this.aroute.params.subscribe(params => {
+      if (params['pk']) {
+        this.pk = params['pk'];
+        this.customFilter[0][0].push(parseInt(params['pk']));
+        this.initialCount = 0;
+        this.arrayControl.initialCount = 0;
+        this.arrayControl.formarray[4].isHidden = false;
+        this.arrayControl.formarray[4].disabled = false;
+      }
+    });
+  }
+
+  afterInit(entityForm: any) {
+    this.entityForm = entityForm;
+    this.formArray = entityForm.formGroup.controls['groups'];
 
     this.iscsiService.listPortals().subscribe((res) => {
       this.portals = res.data;
@@ -159,14 +181,14 @@ export class TargetAddComponent implements OnInit {
   }
 
   isCustActionVisible(actionId: string) {
-    if (actionId == 'remove_extra_iscsi_group' && this.iscsi_group_count <= 1) {
+    if (actionId == 'remove_extra_iscsi_group' && this.initialCount <= 1) {
       return false;
     }
     return true;
   }
 
   setFormArray(groupModel: any) {
-    if(groupModel.name == 'iscsi_target_portalgroup') {
+    if(groupModel.name == 'portal') {
       groupModel.options.push({label : 'None', value : ''});
       this.portals.forEach((item, i) => {
         var label = item.iscsi_target_portal_tag;
@@ -175,8 +197,8 @@ export class TargetAddComponent implements OnInit {
         }
         groupModel.options.push({label : label, value : i + 1})
       });
-    } else if (groupModel.name == 'iscsi_target_initiatorgroup') {
-      groupModel.options.push({label : 'None', value : ''});
+    } else if (groupModel.name == 'initiator') {
+      groupModel.options.push({label : 'None', value : null});
       this.initiators.forEach((item, i) => {
         var label = item.iscsi_target_initiator_tag;
         if (item.iscsi_target_initiator_comment) {
@@ -184,8 +206,8 @@ export class TargetAddComponent implements OnInit {
         }
         groupModel.options.push({label : label, value : i + 1})
       });
-    } else if (groupModel.name == 'iscsi_target_authgroup') {
-      groupModel.options.push({label : 'None', value : ''});
+    } else if (groupModel.name == 'auth') {
+      groupModel.options.push({label : 'None', value : null});
       this.auths.forEach((item) => {
         groupModel.options.push(
           {
@@ -197,59 +219,36 @@ export class TargetAddComponent implements OnInit {
     }
   }
 
-  goBack() {
-    this.router.navigate(new Array('').concat(this.route_success));
+  getGroups(data: any[]): any[] {
+    var groups = new Array();
+    for (let i in data) {
+      if (!data[i]['delete']) {
+        groups.push(data[i]);
+      }
+    }
+    return groups;
   }
 
-  onSubmit() {
-    this.error = null;
+  beforeSubmit(value: any) {
+    for (let i in value) {
+      if (Array.isArray(value[i])) {
+        value[i] = this.getGroups(value[i]);
+      }
+    }
+  }
 
-    let target_value: any = {};
-    let iscsi_group_value: any;
-    let value = this.formGroup.value;
-
-    iscsi_group_value = this.formGroup.value['iscsi_target_group'];
-    target_value.iscsi_target_name = this.formGroup.value['iscsi_target_name'];
-    target_value.iscsi_target_alias = this.formGroup.value['iscsi_target_alias'];
-
+  customEditCall(value) {
     this.loader.open();
-    this.busy = this.rest
-        .post(this.target_resource_name + '/', {
-          body : JSON.stringify(target_value),
-        })
-        .subscribe(
-          (res) => {
-            let target_id = res.data.id;
+    this.ws.call(this.editCall, [this.pk, value]).subscribe(
+      (res) => {
+        this.loader.close();
+        this.router.navigate(new Array('/').concat(this.route_success));
+      },
+      (res) => {
+        this.loader.close();
+        new EntityUtils().handleWSError(this.entityForm, res);
+      }
+    );
 
-            for (let i in iscsi_group_value) {
-              iscsi_group_value[i].iscsi_target = target_id;
-              this.rest
-                  .post(this.targetgroup_resource_name + '/', {
-                    body : JSON.stringify(iscsi_group_value[i]),
-                  })
-                  .subscribe(
-                    (res) => { },
-                    (res) => {
-                     let data = {};
-                     this.rest
-                         .delete(this.target_resource_name + '/' + target_id, data)
-                         .subscribe(
-                             (res) => {
-                               this.error = 'Create Target failed';
-                             },
-                             (res) => {
-                               new EntityUtils().handleError(this, res);
-                             });
-                     new EntityUtils().handleError(this, res);
-                    });
-            }
-            this.loader.close();
-            this.router.navigate(new Array('').concat(this.route_success));
-          },
-          (res) => {
-            this.loader.close();
-            new EntityUtils().handleError(this, res);
-          }
-        );
   }
 }

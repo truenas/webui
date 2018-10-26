@@ -23,5 +23,9 @@ export class SMBListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    deleteMsg: {
+      title: 'Windows (SMB) Share',
+      key_props: ['cifs_name']
+    },
   };
 }

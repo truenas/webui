@@ -27,6 +27,10 @@ export class GroupListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    deleteMsg: {
+      title: 'Group',
+      key_props: ['bsdgrp_group']
+    },
   };
 
   constructor(private _router: Router, protected dialogService: DialogService, protected loader: AppLoaderService,protected ws: WebSocketService) { }
@@ -60,7 +64,7 @@ export class GroupListComponent {
       actions.push({
         label : T("Delete"),
         onClick : (members_delete) => {
-          this.entityList.doDelete(members_delete.id );
+          this.entityList.doDelete(members_delete);
         },
       });
 
@@ -68,11 +72,11 @@ export class GroupListComponent {
 
     return actions;
   }
-  checkbox_confirm(id: any){
+  checkbox_confirm(id: any, deleteMsg: any){
     const params = [id, {"delete_users": false}]
     const ds = this.dialogService.confirm(
       T("Delete"), 
-      T("Delete this group?"), 
+      deleteMsg,
       false, T("Delete"),
       true,
       T('Delete all users with this primary group?'),

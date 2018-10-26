@@ -8,6 +8,8 @@ import { T } from '../../../translate-marker';
 
 import {WebSocketService} from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { ApiService } from 'app/core/services/api.service';
 
 @Component({
   selector: 'app-signin',
@@ -29,14 +31,21 @@ export class SigninComponent implements OnInit {
   }
   public setPasswordFormGroup: FormGroup;
   public has_root_password: Boolean = true;
+
   constructor(private ws: WebSocketService, private router: Router,
     private snackBar: MatSnackBar, public translate: TranslateService,
     private dialogService: DialogService,
-    private fb: FormBuilder) {
+    private fb: FormBuilder,
+    private core: CoreService,
+    private api:ApiService) {
     this.ws = ws;
     this.ws.call('system.is_freenas').subscribe((res)=>{
       this.logo_ready = true;
       this.is_freenas = res;
+      window.localStorage.setItem('is_freenas', res);
+    });
+    this.core.register({observerClass:this, eventName:"UserData"}).subscribe((evt:CoreEvent) => {
+      this.redirect();
     });
    }
 
@@ -104,18 +113,21 @@ export class SigninComponent implements OnInit {
     }
   }
 
+  redirect() {
+    if (this.ws.token) {
+      if (this.ws.redirectUrl) {
+            this.router.navigateByUrl(this.ws.redirectUrl);
+            this.ws.redirectUrl = '';
+          } else {
+            this.router.navigate([ '/dashboard' ]);
+          }
+    }
+  }
   successLogin() {
     this.snackBar.dismiss();
     this.ws.call('auth.generate_token', [300]).subscribe((result) => {
       if (result) {
         this.ws.token = result;
-
-        if (this.ws.redirectUrl) {
-          this.router.navigateByUrl(this.ws.redirectUrl);
-          this.ws.redirectUrl = '';
-        } else {
-          this.router.navigate([ '/dashboard' ]);
-        }
       }
     });
   }

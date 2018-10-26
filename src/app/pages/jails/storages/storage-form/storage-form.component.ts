@@ -12,6 +12,7 @@ import { EntityUtils } from '../../../common/entity/utils';
 import { JailService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker'
+import helptext from '../../../../helptext/jails/storage';
 
 interface MountPoint {
   action: string,
@@ -25,7 +26,7 @@ interface MountPoint {
 }
 @Component({
   selector: 'app-storage-add',
-  template: `<entity-form [conf]="this"></entity-form>`
+  template: `<entity-form *ngIf="isReady" [conf]="this"></entity-form>`
 })
 export class StorageFormComponent {
 
@@ -56,7 +57,7 @@ export class StorageFormComponent {
   public fieldConfig: FieldConfig[] = [{
       type: 'select',
       name: 'jail',
-      placeholder: T('Jail'),
+      placeholder: helptext.jail_placeholder,
       options: [],
     },
     {
@@ -64,28 +65,22 @@ export class StorageFormComponent {
       initial: '/mnt',
       explorerType: 'directory',
       name: 'source',
-      placeholder: T('Source'),
-      tooltip: T('Browse to the directory on the system which will\
-                  be accessed by the jail. This directory <b>must</b>\
-                  be separate from the jail pool or dataset.'),
+      placeholder: helptext.source_placeholder,
+      tooltip: helptext.source_tooltip,
     },
     {
       type: 'explorer',
-      initial: '/mnt/iocage/jails',
+      initial: '/mnt',
       explorerType: 'directory',
       name: 'destination',
-      placeholder: T('Destination'),
-      tooltip: T('Browse to an empty directory within the jail or enter\
-                  a new directory name within the jail directory\
-                  structure. This links to the <b>Source</b> storage\
-                  area.'),
+      placeholder: helptext.destination_placeholder,
+      tooltip: helptext.destination_tooltip,
     },
     {
       type: 'checkbox',
       name: 'readonly',
-      placeholder: T('Read-Only'),
-      tooltip: T('Set to prevent users from modifying the\
-                  <b>Destination</b>.'),
+      placeholder: helptext.readonly_placeholder,
+      tooltip: helptext.readonly_tooltip,
     },
   ];
 
@@ -95,9 +90,23 @@ export class StorageFormComponent {
   protected error: any;
   protected jailID: any;
 
+  public isReady: boolean = false;
+  protected mountpoint: string;
   constructor(protected router: Router, protected aroute: ActivatedRoute,
     protected jailService: JailService, protected loader: AppLoaderService, protected ws: WebSocketService,
     private dialog: DialogService) {}
+
+  ngOnInit() {
+    this.ws.call('jail.get_activated_pool').subscribe((res)=>{
+          if (res != null) {
+            this.ws.call('zfs.dataset.query', [[["name", "=", res+"/iocage"]]]).subscribe(
+              (res)=> {
+                this.mountpoint = res[0].mountpoint;
+                this.isReady = true;
+              });
+          }
+    });
+  }
 
   preInit(entityForm: any) {
     let destination_field = _.find(this.fieldConfig, { 'name': 'destination' });
@@ -110,7 +119,7 @@ export class StorageFormComponent {
       this.queryCallOption = { "action": "LIST", "source": "", "destination": "", "fstype": "", "fsoptions": "", "dump": "", "pass": "" };
       if (this.jailID) {
         this.jail.value = this.jailID;
-        destination_field.initial += '/' + this.jailID + '/root';
+        destination_field.initial = this.mountpoint + '/jails/' + this.jailID + '/root';
       }
     });
   }
