@@ -35,10 +35,10 @@ export class AssociatedTargetFormComponent {
       name: 'iscsi_lunid',
       placeholder: T('LUN ID'),
       tooltip: T('Select the value or enter a value between\
-                  <i>1</i> and <i>1023</i>. Some initiators\
+                  <i>0</i> and <i>1023</i>. Some initiators\
                   expect a value below <i>256</i>.'),
-      value: 1,
-      validation: [ Validators.min(1), Validators.max(1023), Validators.pattern(/^(0|[1-9]\d*)$/) ],
+      value: 0,
+      validation: [ Validators.min(0), Validators.max(1023), Validators.pattern(/^(0|[1-9]\d*)$/) ],
     },
     {
       type: 'select',

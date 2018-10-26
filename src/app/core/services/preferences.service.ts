@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { CoreService, CoreEvent } from './core.service';
 import { ApiService } from './api.service';
 import { ThemeService, Theme } from 'app/services/theme/theme.service';
@@ -31,7 +31,8 @@ export class PreferencesService {
     "allowPwToggle":true,
     "hideWarning": true
   }
-  constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router) {
+  constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router,
+    private aroute: ActivatedRoute) {
 
     this.core.register({observerClass:this, eventName:"Authenticated",sender:this.api}).subscribe((evt:CoreEvent) => {
       //console.log(evt.data);
@@ -105,11 +106,13 @@ export class PreferencesService {
 
   // Update local cache
   updatePreferences(data:UserPreferences){
-    //console.log("UPDATING LOCAL PREFERENCES");
-    this.preferences = data;
+    if (this.router.url != '/sessions/signin') {
+      //console.log("UPDATING LOCAL PREFERENCES");
+      this.preferences = data;
 
-    //Notify Guided Tour & Theme Service
-    this.core.emit({name:"UserPreferencesChanged", data:this.preferences});
+      //Notify Guided Tour & Theme Service
+      this.core.emit({name:"UserPreferencesChanged", data:this.preferences});
+    }
   }
 
   // Save to middleware

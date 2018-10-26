@@ -159,7 +159,6 @@
 
 .disk-detail-header{
   text-align:left;
-  margin-left:;
 }
 
 span.disk-detail-title,
@@ -533,4 +532,19 @@ p.value{
 
 .xs .title-wrapper .reports-btn{
   display:none;
+}
+
+.legend-group {
+  /*min-width: 220px !important;
+  width: 220px !important;
+  max-width: 220px !important;*/
+  margin-right: 20px;
+}
+
+h3 {
+  max-width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: inline-block;
+  overflow: hidden;
 }

@@ -16,7 +16,7 @@ export class VlanListComponent {
   protected route_add_tooltip: string = "Add VLAN";
   protected route_edit: string[] = [ 'network', 'vlans', 'edit' ];
   protected confirmDeleteDialog = {
-    message: T("Network connectivity will be interrupted. Delete the selected interface?"),
+    message: T("Network connectivity will be interrupted. "),
   }
 
   constructor(_rest: RestService, _router: Router) {}
@@ -30,5 +30,9 @@ export class VlanListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    deleteMsg: {
+      title: 'VLAN',
+      key_props: ['vlan_vint']
+    },
   };
 }
