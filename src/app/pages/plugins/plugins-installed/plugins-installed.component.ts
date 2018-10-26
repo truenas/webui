@@ -221,21 +221,14 @@ export class PluginsInstalledListComponent {
           this.loader.open();
           row[3] = 'restarting';
           this.entityList.busy =
-            this.ws.call('jail.stop', [row[1]]).subscribe(
-              (res) => {
-                this.ws.call('jail.start', [row[1]]).subscribe(
-                  (res) => {
-                    this.loader.close();
-                    this.updateRow(row);
-                  },
-                  (res) => {
-                    this.loader.close();
-                    new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
-                  });
-              },
+            this.ws.call('jail.restart', [row[1]]).subscribe(
               (res) => {
                 this.loader.close();
-                new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
+                this.updateRow(row);
+              },
+              (err) => {
+                this.loader.close();
+                new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
               });
         }
       },

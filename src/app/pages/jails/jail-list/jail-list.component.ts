@@ -263,23 +263,16 @@ export class JailListComponent implements OnInit {
           this.entityList.busy =
             this.loader.open();
             row.state = 'restarting';
-            this.ws.call('jail.stop', [row.host_hostuuid]).subscribe(
+            this.ws.call('jail.restart', [row.host_hostuuid]).subscribe(
               (res) => {
-                this.ws.call('jail.start', [row.host_hostuuid]).subscribe(
-                  (res) => {
-                    row.state = 'up';
-                    this.updateRow(row);
-                    this.updateMultiAction([row]);
-                    this.loader.close();
-                  },
-                  (res) => {
-                    this.loader.close();
-                    new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
-                  });
-              },
-              (res) => {
+                row.state = 'up';
+                this.updateRow(row);
+                this.updateMultiAction([row]);
                 this.loader.close();
-                new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
+              },
+              (err) => {
+                this.loader.close();
+                new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
               });
         }
       },
