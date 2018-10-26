@@ -45,7 +45,9 @@ export class SigninComponent implements OnInit {
       window.localStorage.setItem('is_freenas', res);
     });
     this.core.register({observerClass:this, eventName:"UserData"}).subscribe((evt:CoreEvent) => {
-      this.redirect();
+      if (this.router.url == '/sessions/signin') {
+        this.redirect();
+      }
     });
    }
 
@@ -116,11 +118,11 @@ export class SigninComponent implements OnInit {
   redirect() {
     if (this.ws.token) {
       if (this.ws.redirectUrl) {
-            this.router.navigateByUrl(this.ws.redirectUrl);
-            this.ws.redirectUrl = '';
-          } else {
-            this.router.navigate([ '/dashboard' ]);
-          }
+        this.router.navigateByUrl(this.ws.redirectUrl);
+        this.ws.redirectUrl = '';
+      } else {
+        this.router.navigate([ '/dashboard' ]);
+      }
     }
   }
   successLogin() {
