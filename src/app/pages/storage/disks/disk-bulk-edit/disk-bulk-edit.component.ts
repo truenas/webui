@@ -104,6 +104,11 @@ export class DiskBulkEditComponent {
   }
 
   afterInit(entityEdit: any) {
+    if (!this.diskBucket.ids) {
+      this._router.navigate(new Array('/').concat([
+        "storage", "disks"]));
+    }
+
     this.ws.call('notifier.choices', ['HDDSTANDBY_CHOICES']).subscribe((res) => {
       this.disk_hddstandby = _.find(this.fieldConfig, {name : 'disk_hddstandby'});
       res.forEach((item) => {
@@ -131,26 +136,34 @@ export class DiskBulkEditComponent {
 
   customSubmit(event) {
     this.loader.open();
-    for (let i of event.disk_serial) {
-      this.entityList.busy =
-      this.ws.job('core.bulk', ["disk.update", [ 
-        [i, {"hddstandby": event.disk_hddstandby}, 
-            {"advpowermgmt" : event.disk_advpowermgmt}, 
-            {"acousticlevel" : event.disk_acousticlevel},
-            {"togglesmart" : event.disk_togglesmart},
-            {"smartoptions" : event.disk_smartoptions}]
-          ]]).subscribe(
-            (res) => { 
-              this.loader.close();
-              this._router.navigate(new Array('/').concat([
-                "storage", "disks"]));
-            },
-            (err) => {
-              this.loader.close();
-              this.dialogService.errorReport(T("Error updating disks."), err.reason, err.trace.formatted);
-            }
-          )
+    let req = []
+    let data = {
+      "hddstandby": event.disk_hddstandby, 
+      "advpowermgmt" : event.disk_advpowermgmt, 
+      "acousticlevel" : event.disk_acousticlevel,
+      "togglesmart" : event.disk_togglesmart,
+      "smartoptions" : event.disk_smartoptions
     }
+
+    for (let i of event.disk_serial[0]) {
+      req.push([i, data])
+    }
+
+    this.ws.job('core.bulk', ["disk.update", req])
+      .subscribe(
+        (res) => { 
+          console.log(res)
+          setTimeout(() => { // for testing only - need to make loader and router wait till the response shows finished
+            this.loader.close();
+            this._router.navigate(new Array('/').concat([
+              "storage", "disks"]));
+          }, (event.disk_serial[0].length * 350))
+        },
+        (err) => {
+          this.loader.close();
+          this.dialogService.errorReport(T("Error updating disks."), err.reason, err.trace.formatted);
+        }
+      )
   }
 
 }

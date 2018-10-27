@@ -41,7 +41,7 @@ export class DiskListComponent {
 		icon: "edit",
 		enable: true,
 		ttpos: "above", // tooltip position
-		onClick: (selected) => { console.log(selected)
+		onClick: (selected) => {
 			if (selected.length > 1) {
 				for(let i of selected) {
 					this.diskIds.push(i.identifier);
