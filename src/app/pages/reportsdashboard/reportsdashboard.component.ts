@@ -49,6 +49,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   public tabChartsMappingDataSelected: TabChartsMappingData;
   public showSpinner: boolean = true;
   public activeTab: string;
+  public filteredData: ChartConfigData[] = [];
   @ViewChild('chartWidth') chartWidth: MatButtonToggleGroup; 
   
 
@@ -235,7 +236,37 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
      return test;
   }
 
+  buildDiskReport(device: string | string[], metric: string | string[]){
+    // Convert strings to arrays
+    if(typeof device == "string"){ device = [device];}
+    if(typeof metric == "string"){ metric = [metric];}
+
+    // Find matches
+    const checkDevice = (item) => {
+      if(device[0] == 'all' || device[0] == '*'){
+        return true;
+      } else {
+        return (item.dataList[0].source == 'disk-' + device || item.dataList[0].source == 'disktemp-' + device)
+      }
+    }
+    const checkMetric = (item) => {
+      console.log( typeof metric)
+      if(metric[0] == 'all' || metric[0] == '*'){
+        return true;
+      } else {
+        return item.dataList[0].type == metric;
+      }
+    }
+
+    let tab = this.tabChartsMappingDataArray.find(item => item.keyName == 'Disk');
+    console.log(tab.chartConfigData);
+    let tabData = tab.chartConfigData.filter(item => (checkDevice(item) && checkMetric(item)) ); 
+    this.filteredData = tabData;
+    console.log(tabData);
+  }
+
   updateActiveTab(tabName:string){
+    if(tabName == 'Disk'){ this.buildDiskReport('ada2', '*')}
     // Change the URL without reloading page/component
     // the old fashioned way 
     window.history.replaceState({}, '','/reportsdashboard/' + tabName.toLowerCase());

@@ -72,6 +72,7 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
     linechartData.series.forEach((dataSeriesArray) => {
     
     const newArray = [];
+    if(!linechartData.meta)console.log(linechartData);
       if (typeof (this.divideBy) !== 'undefined' || linechartData.meta.conversion) {
         dataSeriesArray.forEach((numberVal) => {
           if(linechartData.meta.conversion){
@@ -133,6 +134,9 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
 
 
     this.chart = c3.generate({
+      interaction: {
+        enabled:true
+      },
       bindto: '#' + this.controlUid,
       /*color: {
         pattern: this.colorPattern
