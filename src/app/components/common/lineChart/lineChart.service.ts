@@ -155,6 +155,7 @@ export class LineChartService {
       {source :'disk_octets', units:'k', labelY: 'Bytes/s'},
       {source :'disk_io_time', units:'k', labelY: 'Bytes/s'},
       {source :'disk_ops', units:'', labelY: 'Operations/s'},
+      {source :'disktemp-', units:'°', labelY: 'Celsius'},
       {source :'cache_size-arc', units:'GiB', labelY: 'Gigabytes', dataUnits: 'bytes', conversion:'bytesToGigabytes'},
       {source :'cache_ratio-arc', units:'%', labelY: 'Hits', dataUnits:'percentage', conversion:'percentFloatToInteger'},
       {source :'processes', units:'', labelY: 'Processes', removePrefix:'ps_state-'},
