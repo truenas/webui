@@ -53,6 +53,7 @@ export class JailListComponent implements OnInit {
       ttpos: "above", // tooltip position
       onClick: (selected) => {
         let selectedJails = this.getSelectedNames(selected);
+        console.log(selectedJails)
         this.loader.open();
         this.entityList.busy =
           this.ws.job('core.bulk', ["jail.start", selectedJails]).subscribe(
