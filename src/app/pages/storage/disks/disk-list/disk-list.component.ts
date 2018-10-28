@@ -35,9 +35,11 @@ export class DiskListComponent {
 	};
 	public diskIds: Array<any> = [];
 	public diskNames: Array<any> = [];
+	public diskToggle: boolean;
+
   public multiActions: Array < any > = [{
 		id: "medit",
-		label: T("Bulk Edit"),
+		label: T("Edit Disk(s)"),
 		icon: "edit",
 		enable: true,
 		ttpos: "above", // tooltip position
@@ -46,9 +48,14 @@ export class DiskListComponent {
 				for(let i of selected) {
 					this.diskIds.push(i.identifier);
 					this.diskNames.push(i.name);
+					if (i.togglesmart === true) {
+						this.diskToggle = true;
+						break;
+					}
 				}
 				this.idbucket.diskIdsBucket(this.diskIds);
 				this.idbucket.diskNamesBucket(this.diskNames);
+				this.idbucket.diskToggleBucket(this.diskToggle);
 				this.router.navigate(new Array('/').concat([
 					"storage", "disks", "bulk-edit"
 				]));

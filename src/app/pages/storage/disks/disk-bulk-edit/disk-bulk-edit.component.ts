@@ -67,6 +67,7 @@ export class DiskBulkEditComponent {
       type : 'checkbox',
       name : 'disk_togglesmart',
       placeholder : T('Enable S.M.A.R.T.'),
+      value: this.diskBucket.diskToggleStatus,
       tooltip : T('Set by default if the disk supports S.M.A.R.T.\
                    Unset to disable any configured <a\
                    href="..//docs/tasks.html#s-m-a-r-t-tests"\
