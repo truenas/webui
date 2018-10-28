@@ -3,6 +3,11 @@ import { Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRoute
 import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 import * as _ from 'lodash';
 import {LineChartService, ChartConfigData, HandleChartConfigDataFunc} from '../../components/common/lineChart/lineChart.service';
+import { Subject } from 'rxjs/Subject'; 
+import { CoreEvent } from 'app/core/services/core.service';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 
 import {
   RestService,
@@ -40,8 +45,26 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
    setPaginationPageSizeOptions(setPaginationPageSizeOptionsInput: string) {
      this.paginationPageSizeOptions = setPaginationPageSizeOptionsInput.split(',').map(str => +str);
    }
+  
+  // Report Builder Options (entity-form-embedded)
+  public target: Subject<CoreEvent> = new Subject();
+  public values = [];
+  private diskDevices = [];
+  private diskMetrics = [];
+  public saveSubmitText = "Generate Reports";
+  public actionButtonsAlign = "left";
+  public fieldConfig:FieldConfig[] = [];
+  public fieldSets: FieldSet[];
 
-   
+    /*custActions: any[] = [
+      {
+        id: 'create-theme-link',
+        name: 'Create New Theme',
+        eventName:"CreateTheme"
+      }
+    ]*/
+  // End Report Builder Options
+
   public info: any = {};
   public ipAddress: any = [];
   public drawTabs = false;
@@ -52,9 +75,111 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   public filteredData: ChartConfigData[] = [];
   @ViewChild('chartWidth') chartWidth: MatButtonToggleGroup; 
   
+  
 
 
   constructor(private _lineChartService: LineChartService, private erdService: ErdService, public translate: TranslateService, private router:Router) {
+    this.target.subscribe((evt: CoreEvent) => {
+      //console.log(evt);
+      switch(evt.name){
+        case 'FormSubmitted':
+          this.buildDiskReport(evt.data.devices, evt.data.metrics);
+        break;
+      }
+    });
+  }
+
+  diskReportBuilderSetup(){
+    this.generateValues();
+
+    this.fieldSets = [
+      {
+        name:'Report Options',
+        class:'preferences',
+        label:true,
+        width:'600px',
+        config:[
+          {
+            type: 'select',
+            name: 'devices',
+            width:'calc(50% - 16px)',
+            placeholder: 'Choose a Device',
+            options: this.diskDevices, // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
+            value:this.diskDevices[0],
+            multiple: true,
+            tooltip:'Choose a device for your report.',
+            class:'inline'
+          },
+          {
+            type: 'select',
+            name: 'metrics',
+            width:'calc(50% - 16px)',
+            placeholder: 'Choose a metric',
+            options: this.diskMetrics ? this.diskMetrics : [{label:'None available', value:'negative'}], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
+            value:this.diskMetrics[0],
+            multiple: true,
+            tooltip:'Choose a metric to display.',
+            class:'inline'
+          }
+        ]
+      }
+    ]
+
+    this.generateFieldConfig();
+  }
+
+  generateValues(){
+    let tab = this.tabChartsMappingDataArray.find(item => item.keyName == 'Disk');
+    let devices = [];
+    let deviceNames = [];
+    let metrics = [];
+    let metricNames = [];
+    tab.chartConfigData.forEach((item) => {
+      let obj = item.dataList[0];
+      let src;
+      if(obj.source.includes('disk-')){
+        src = obj.source.replace('disk-', ''); 
+      } else if(obj.source.includes('disktemp-')){
+        src = obj.source.replace('disktemp-', '');
+      }
+      let dev = {label:src, value: src};
+      if(!deviceNames.includes(src)){ 
+        deviceNames.push(src);
+        devices.push(dev);
+      };
+
+      let metric;
+      let metricName;
+      if(obj.type == 'temperature'){
+        metricName = obj.type;
+        metric = {label: obj.type, value: obj.type};
+      } else {
+        metricName = obj.type.replace('disk_', '');
+        metric = {label: metricName, value: obj.type};
+      }
+      if(!metricNames.includes(metricName)){ 
+        metricNames.push(metricName);
+        metrics.push(metric);
+      };
+
+      //console.log(metric);
+      //console.warn(metrics)
+      //metrics.push(metric);
+    });
+
+    this.diskDevices = devices;
+    this.diskMetrics = metrics;
+    this.generateFieldConfig();
+
+    //console.log(this.diskDevices)
+  }
+
+  generateFieldConfig(){
+    for(let i in this.fieldSets){
+      for(let ii in this.fieldSets[i].config){
+        this.fieldConfig.push(this.fieldSets[i].config[ii]);
+      }
+    }
   }
 
   private setPaginationInfo(tabChartsMappingDataSelected: TabChartsMappingData) {
@@ -91,6 +216,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
    * Go through the flat list.. And collect the ones I want for each Tab I want to show.
    */
   handleChartConfigDataFunc(chartConfigData: ChartConfigData[]) {
+     
     const map: Map<string, TabChartsMappingData> = new Map<string, TabChartsMappingData>();
 
     // For every one of these map entries.. You see one tab in the UI With the charts collected for that tab
@@ -246,27 +372,26 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
       if(device[0] == 'all' || device[0] == '*'){
         return true;
       } else {
-        return (item.dataList[0].source == 'disk-' + device || item.dataList[0].source == 'disktemp-' + device)
+        //return (item.dataList[0].source == 'disk-' + device || item.dataList[0].source == 'disktemp-' + device)
+        return ( device.includes(item.dataList[0].source.replace('disk-', '')) || device.includes(item.dataList[0].source.replace('disktemp-', '')) );
       }
     }
     const checkMetric = (item) => {
-      console.log( typeof metric)
       if(metric[0] == 'all' || metric[0] == '*'){
         return true;
       } else {
-        return item.dataList[0].type == metric;
+        return metric.includes(item.dataList[0].type)//item.dataList[0].type == metric;
       }
     }
 
     let tab = this.tabChartsMappingDataArray.find(item => item.keyName == 'Disk');
-    console.log(tab.chartConfigData);
     let tabData = tab.chartConfigData.filter(item => (checkDevice(item) && checkMetric(item)) ); 
     this.filteredData = tabData;
-    console.log(tabData);
   }
 
   updateActiveTab(tabName:string){
-    if(tabName == 'Disk'){ this.buildDiskReport('ada2', '*')}
+    if(tabName == 'Disk'){ this.diskReportBuilderSetup() }
+    
     // Change the URL without reloading page/component
     // the old fashioned way 
     window.history.replaceState({}, '','/reportsdashboard/' + tabName.toLowerCase());

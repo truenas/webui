@@ -186,7 +186,7 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
         }
       },
       subchart: {
-        show: true
+        show: false
       },
       legend: {
         show:false
