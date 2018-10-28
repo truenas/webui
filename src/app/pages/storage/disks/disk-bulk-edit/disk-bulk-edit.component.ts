@@ -146,18 +146,19 @@ export class DiskBulkEditComponent {
     }
 
     for (let i of event.disk_serial[0]) {
+      if (!i.togglesmart) {
+        data.smartoptions = '';
+      }
       req.push([i, data])
     }
 
     this.ws.job('core.bulk', ["disk.update", req])
       .subscribe(
         (res) => { 
-          console.log(res)
-          setTimeout(() => { // for testing only - need to make loader and router wait till the response shows finished
+          if(res.state === 'SUCCESS') {
             this.loader.close();
             this._router.navigate(new Array('/').concat([
-              "storage", "disks"]));
-          }, (event.disk_serial[0].length * 350))
+              "storage", "disks"]));          }
         },
         (err) => {
           this.loader.close();

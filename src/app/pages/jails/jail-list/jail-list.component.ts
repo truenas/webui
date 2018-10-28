@@ -53,7 +53,6 @@ export class JailListComponent implements OnInit {
       ttpos: "above", // tooltip position
       onClick: (selected) => {
         let selectedJails = this.getSelectedNames(selected);
-        console.log(selectedJails)
         this.loader.open();
         this.entityList.busy =
           this.ws.job('core.bulk', ["jail.start", selectedJails]).subscribe(
@@ -316,7 +315,6 @@ export class JailListComponent implements OnInit {
     for (let i in selectedJails) {
       selected.push([selectedJails[i].host_hostuuid]);
     }
-    console.log(selected)
     return selected;
   }
 
