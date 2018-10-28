@@ -98,6 +98,9 @@ export class LineChartService {
   constructor(private _ws: WebSocketService) {}
 
   public getData(dataHandlerInterface: HandleDataFunc, dataList: any[], rrdOptions?:any /*timeframe?:string*/) {
+    /*console.log("Service is fetching data...");
+    console.log(dataList);
+    console.log("*****************************")*/
     //if(!timeframe){timeframe = 'now-10m';}
     if(!rrdOptions) {
       rrdOptions = {step: '10', start:'now-10m'};
