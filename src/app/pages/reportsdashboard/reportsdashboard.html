@@ -45,15 +45,15 @@
         <div *ngIf="tabChartsMappingDataSelected && tabChartsMappingDataSelected.keyName === tabChartsMappingDataItem.keyName">
 
           <!-- Cards from Filtered List-->
-          <div fxLayout="row wrap" fxLayoutAlign="space-around center" *ngIf="chartWidth && chartWidth.value && tabChartsMappingDataSelected.keyName == 'Disk' && filteredData.length > 0"> 
-            <div  [fxFlex]="chartWidth.value" *ngFor="let chartConfigData of filteredData">
+          <div fxLayout="row wrap" fxLayoutAlign="space-around center" *ngIf="tabChartsMappingDataSelected.keyName == 'Disk' && filteredData.length > 0"> 
+            <div  [fxFlex]="chartWidth && chartWidth.value ? chartWidth.value : '800px'" *ngFor="let chartConfigData of filteredData">
               <report [title]="chartConfigData.title" [lineChartConfig]="chartConfigData"></report>
             </div>
           </div>
           
           <!-- All Cards unfiltered list -->
-          <div fxLayout="row wrap" fxLayoutAlign="space-around center" *ngIf="chartWidth && chartWidth.value && tabChartsMappingDataSelected.keyName !== 'Disk'">
-            <div  [fxFlex]="chartWidth.value" *ngFor="let chartConfigData of tabChartsMappingDataSelected.paginatedChartConfigData">
+          <div fxLayout="row wrap" fxLayoutAlign="space-around center" *ngIf="tabChartsMappingDataSelected.keyName !== 'Disk'">
+            <div  [fxFlex]="chartWidth && chartWidth.value ? chartWidth.value : '800px'" *ngFor="let chartConfigData of tabChartsMappingDataSelected.paginatedChartConfigData">
               <report [title]="chartConfigData.title" [lineChartConfig]="chartConfigData"></report>
             </div>
           </div>
