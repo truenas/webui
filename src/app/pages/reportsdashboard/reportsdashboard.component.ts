@@ -105,7 +105,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
             width:'calc(50% - 16px)',
             placeholder: 'Choose a Device',
             options: this.diskDevices, // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
-            value:this.diskDevices[0],
+            //value:[this.diskDevices[0]],
             multiple: true,
             tooltip:'Choose a device for your report.',
             class:'inline'
@@ -116,7 +116,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
             width:'calc(50% - 16px)',
             placeholder: 'Choose a metric',
             options: this.diskMetrics ? this.diskMetrics : [{label:'None available', value:'negative'}], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
-            value:this.diskMetrics[0],
+            //value:[this.diskMetrics[0]],
             multiple: true,
             tooltip:'Choose a metric to display.',
             class:'inline'
