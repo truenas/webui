@@ -306,7 +306,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
         const tab: TabChartsMappingData = map.get("Network");
         tab.chartConfigData.push(chartConfigDataItem);
 
-      } else if (chartConfigDataItem.title.startsWith("ctl-tpc")) {
+      } else if (chartConfigDataItem.title.startsWith("SCSI ")) {
         const tab: TabChartsMappingData = map.get("Target");
         tab.chartConfigData.push(chartConfigDataItem);
 

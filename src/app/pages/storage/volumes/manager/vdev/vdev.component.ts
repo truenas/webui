@@ -3,7 +3,6 @@ import {
   ElementRef,
   Input,
   OnInit,
-  QueryList,
   ViewChild
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
@@ -91,11 +90,13 @@ export class VdevComponent implements OnInit {
     this.error = null;
     this.firstdisksize = 0;
     let totalsize = 0;
+    let stripeSize = 0;
     let smallestdisk = 0;
     let estimate = 0;
     const swapsize = 2 * 1024 * 1024 * 1024;
     for (let i = 0; i < this.disks.length; i++) {
       const size = parseInt(this.disks[i].real_capacity, 10) - swapsize;
+      stripeSize += size;
       if (i === 0) {
         smallestdisk = size;
         this.firstdisksize = size;
@@ -117,7 +118,7 @@ export class VdevComponent implements OnInit {
     } else if (this.type === "raidz3") {
       estimate = totalsize - 3 * smallestdisk;
     } else {
-      estimate = totalsize; // stripe
+      estimate = stripeSize; // stripe
     }
 
     this.rawSize =estimate;

@@ -1,13 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
-import { Observer } from 'rxjs/Observer';
-import { Subject } from 'rxjs/Subject';
+import { Router, ActivatedRoute } from '@angular/router';
 import { CoreService, CoreEvent } from './core.service';
 import { ApiService } from './api.service';
 import { ThemeService, Theme } from 'app/services/theme/theme.service';
-import * as moment from 'moment';
-
 export interface UserPreferences {
   platform:string; // FreeNAS || TrueNAS
   timestamp:Date;
@@ -18,6 +13,7 @@ export interface UserPreferences {
   showTooltips:boolean; // Form Tooltips on/off
   metaphor:string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
   allowPwToggle:boolean;
+  hideWarning:boolean;
 }
 
 @Injectable()
@@ -32,9 +28,11 @@ export class PreferencesService {
     "showGuide":true,
     "showTooltips":true,
     "metaphor":"auto",
-    "allowPwToggle":true
+    "allowPwToggle":true,
+    "hideWarning": true
   }
-  constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router) {
+  constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router,
+    private aroute: ActivatedRoute) {
 
     this.core.register({observerClass:this, eventName:"Authenticated",sender:this.api}).subscribe((evt:CoreEvent) => {
       //console.log(evt.data);
@@ -108,11 +106,17 @@ export class PreferencesService {
 
   // Update local cache
   updatePreferences(data:UserPreferences){
-    //console.log("UPDATING LOCAL PREFERENCES");
-    this.preferences = data;
+    if (this.router.url != '/sessions/signin') {
+      //console.log("UPDATING LOCAL PREFERENCES");
+      this.preferences = data;
 
-    //Notify Guided Tour & Theme Service
-    this.core.emit({name:"UserPreferencesChanged", data:this.preferences});
+      //Notify Guided Tour & Theme Service
+      this.core.emit({name:"UserPreferencesChanged", data:this.preferences});
+    } else {
+      setTimeout(()=> {
+        this.updatePreferences(data);
+      }, 10);
+    }
   }
 
   // Save to middleware
