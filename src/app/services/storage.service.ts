@@ -163,6 +163,7 @@ export class StorageService {
 
   public ids: any;
   public diskNames: any;
+  public diskToggleStatus: boolean;
 
   diskIdsBucket(arr) {
     this.ids = arr;
@@ -170,5 +171,9 @@ export class StorageService {
 
   diskNamesBucket(arr) {
     this.diskNames = arr;
+  }
+
+  diskToggleBucket(bool) {
+    this.diskToggleStatus = bool;
   }
 }
