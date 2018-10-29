@@ -163,7 +163,11 @@ export class StorageService {
 
   public ids: any;
   public diskNames: any;
+  public hddStandby: any;
   public diskToggleStatus: boolean;
+  public SMARToptions: any;
+  public advPowerMgt: any;
+  public acousticLevel: any
 
   diskIdsBucket(arr) {
     this.ids = arr;
