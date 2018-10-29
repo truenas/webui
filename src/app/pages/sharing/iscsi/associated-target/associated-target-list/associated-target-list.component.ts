@@ -48,13 +48,13 @@ export class AssociatedTargetListComponent {
 
   dataHandler(entityList: any) {
     this.iscsiService.getTargets().subscribe((res) => {
-      let target_list = res.data;
+      let target_list = res;
       this.iscsiService.getExtents().subscribe((res) => {
-        let extent_list = res.data;
+        let extent_list = res;
 
         for (let i = 0; i < entityList.rows.length; i++) {
-          entityList.rows[i].iscsi_target_name =  _.find(target_list, {id: entityList.rows[i].iscsi_target})['iscsi_target_name'];
-          entityList.rows[i].iscsi_extent_name = _.find(extent_list, {id: entityList.rows[i].iscsi_extent})['iscsi_target_extent_name'];
+          entityList.rows[i].iscsi_target_name =  _.find(target_list, {id: entityList.rows[i].iscsi_target})['name'];
+          entityList.rows[i].iscsi_extent_name = _.find(extent_list, {id: entityList.rows[i].iscsi_extent})['name'];
         }
       });
     });

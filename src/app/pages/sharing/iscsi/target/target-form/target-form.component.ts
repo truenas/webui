@@ -167,15 +167,15 @@ export class TargetFormComponent {
     this.formArray = entityForm.formGroup.controls['groups'];
 
     this.iscsiService.listPortals().subscribe((res) => {
-      this.portals = res.data;
+      this.portals = res;
       this.setFormArray(this.arrayControl.formarray[0]);
     });
     this.iscsiService.listInitiators().subscribe((res) => {
-      this.initiators = res.data;
+      this.initiators = res;
       this.setFormArray(this.arrayControl.formarray[1]);
     });
     this.iscsiService.listAuthCredential().subscribe((res) => {
-      this.auths = res.data;
+      this.auths = res;
       this.setFormArray(this.arrayControl.formarray[3]);
     });
   }
@@ -190,32 +190,32 @@ export class TargetFormComponent {
   setFormArray(groupModel: any) {
     if(groupModel.name == 'portal') {
       groupModel.options.push({label : 'None', value : ''});
-      this.portals.forEach((item, i) => {
-        var label = item.iscsi_target_portal_tag;
-        if (item.iscsi_target_portal_comment) {
-          label = item.iscsi_target_portal_tag + ' (' + item.iscsi_target_portal_comment + ')';
+      for (let i = 0; i < this.portals.length; i++) {
+        var label = this.portals[i].tag;
+        if (this.portals[i].comment) {
+          label += ' (' + this.portals[i].comment + ')';
         }
         groupModel.options.push({label : label, value : i + 1})
-      });
+      }
     } else if (groupModel.name == 'initiator') {
       groupModel.options.push({label : 'None', value : null});
-      this.initiators.forEach((item, i) => {
-        var label = item.iscsi_target_initiator_tag;
-        if (item.iscsi_target_initiator_comment) {
-          label = item.iscsi_target_initiator_tag + ' (' + item.iscsi_target_initiator_comment + ')';
+      for (let i = 0; i < this.initiators.length; i++) {
+        var label = this.initiators[i].tag;
+        if (this.initiators[i].comment) {
+          label += ' (' + this.initiators[i].comment + ')';
         }
-        groupModel.options.push({label : label, value : i + 1})
-      });
+        groupModel.options.push({label : label, value : this.initiators[i].id})
+      }
     } else if (groupModel.name == 'auth') {
       groupModel.options.push({label : 'None', value : null});
-      this.auths.forEach((item) => {
+      for (let i = 0; i < this.auths.length; i++) {
         groupModel.options.push(
           {
-            label : item.iscsi_target_auth_tag,
-            value : item.iscsi_target_auth_tag
+            label : this.auths[i].tag,
+            value : this.auths[i].tag
           }
         )
-      });
+      }
     }
   }
 
