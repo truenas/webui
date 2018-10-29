@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { WebSocketService } from '../../../../services';
 import { T } from '../../../../translate-marker';
 import * as _ from 'lodash';
+import { StorageService } from '../../../../services/storage.service';
 
 @Component ({
 	selector: 'disk-list',
@@ -30,13 +31,73 @@ export class DiskListComponent {
 	public config: any = {
 		paging: true,
 		sorting: { columns: this.columns },
+		multiSelect: true,
 	};
+	public diskIds: Array<any> = [];
+	public diskNames: Array<any> = [];
+	public hddStandby: Array<any> = [];
+	public advPowerMgt: Array<any> = [];
+	public acousticLevel: Array<any> = [];
+	public diskToggle: boolean;
+	public SMARToptions: Array<any> = [];
+
+  public multiActions: Array < any > = [{
+		id: "medit",
+		label: T("Edit Disk(s)"),
+		icon: "edit",
+		enable: true,
+		ttpos: "above",
+		onClick: (selected) => {
+			if (selected.length > 1) {
+				for(let i of selected) {
+					this.diskIds.push(i.identifier);
+					this.diskNames.push(i.name);
+					this.hddStandby.push(i.hddstandby);
+					this.advPowerMgt.push(i.advpowermgmt);
+					this.acousticLevel.push(i.acousticlevel);
+					if (i.togglesmart === true) {
+						this.diskToggle = true;
+						this.SMARToptions.push(i.smartoptions);
+					}
+				}
+				this.diskbucket.diskIdsBucket(this.diskIds);
+				this.diskbucket.diskNamesBucket(this.diskNames);
+				this.diskbucket.diskToggleBucket(this.diskToggle);
+				
+				// If all items match in an array, this fills in the value in the form; otherwise, blank
+				this.hddStandby.every( (val, i, arr) => val === arr[0] ) ?
+					this.diskbucket.hddStandby = this.hddStandby[0] :
+					this.diskbucket.hddStandby = undefined;
+				
+				this.advPowerMgt.every( (val, i, arr) => val === arr[0] ) ?
+					this.diskbucket.advPowerMgt = this.advPowerMgt[0] :
+					this.diskbucket.advPowerMgt = undefined;
+				
+				this.acousticLevel.every( (val, i, arr) => val === arr[0] ) ?
+					this.diskbucket.acousticLevel = this.acousticLevel[0] :
+					this.diskbucket.acousticLevel = undefined;
+				
+				this.SMARToptions.every( (val, i, arr) => val === arr[0] ) ?
+					this.diskbucket.SMARToptions = this.SMARToptions[0] :
+					this.diskbucket.SMARToptions = undefined;
+					
+				this.router.navigate(new Array('/').concat([
+					"storage", "disks", "bulk-edit"
+				]));
+			} else {
+				this.router.navigate(new Array('/').concat([
+					"storage", "disks", "edit", selected[0].identifier
+				]));
+			}
+
+		}
+	}]
 
 	protected disk_ready: EventEmitter<boolean> = new EventEmitter();
 	protected unusedDisk_ready: EventEmitter<boolean> = new EventEmitter();
 	protected unused: any;
 	protected disk_pool: Map<string, string> = new Map<string, string>();
-	constructor(protected ws: WebSocketService, protected router: Router) {
+	constructor(protected ws: WebSocketService, protected router: Router,  public diskbucket: StorageService) {
 		this.ws.call('boot.get_disks', []).subscribe((boot_res)=>{
 			for (let boot in boot_res) {
 				this.disk_pool.set(boot_res[boot], T('Boot Pool'));
