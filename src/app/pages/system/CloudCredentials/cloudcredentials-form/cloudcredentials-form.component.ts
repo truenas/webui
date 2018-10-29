@@ -133,7 +133,6 @@ export class CloudCredentialsFormComponent {
                   configured for website hosting. Leave blank when using \
                   AWS. Enter endpoint URL if using custom S3 API. URL \
                   general format: \
-                  <i>bucket-name.s3-website-region.amazonaws.com</i> or \
                   <i>bucket-name.s3-website.region.amazonaws.com</i>.\
                   Refer to the AWS Documentation for a list of <a\
                   href="https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_website_region_endpoints"\
