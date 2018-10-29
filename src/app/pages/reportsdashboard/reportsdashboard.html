@@ -7,8 +7,22 @@
   </mat-spinner> 
     <div id="dashboardcontainerdiv">
 
-      <div class="reports-dash-global-controls">
-          <mat-button-toggle-group #chartWidth="matButtonToggleGroup">
+      <!-- Tab Navigation -->
+      <nav mat-tab-nav-bar *ngIf="drawTabs && activeTab" (selectChange)="tabSelectChangeHandler($event)">
+        <a mat-tab-link *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray"
+          [active]="isActiveTab(tabChartsMappingDataItem.keyName)"
+          (click)="updateActiveTab(tabChartsMappingDataItem.keyName)">
+            {{ tabChartsMappingDataItem.keyName | translate }} 
+        </a>
+      </nav>
+
+      <!-- Layout and Report Builder -->
+      <div class="reports-dash-global-controls" fxLayout="row wrap" fxLayoutAlign="start stretch" fxLayoutGap="32px">
+        <!-- Layout Switcher -->
+        <div fxFlex="100" fxFlex.gt-xs="116px">
+          <h4 class="fieldset-label">Layout</h4>
+          <mat-button-toggle-group 
+            #chartWidth="matButtonToggleGroup" *ngIf="tabChartsMappingDataSelected">
             <mat-button-toggle checked="true" value="800px">
               <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-view-parallel"></mat-icon>
             </mat-button-toggle>
@@ -18,64 +32,36 @@
           </mat-button-toggle-group>
         </div>
 
-      <!--<mat-tab-group *ngIf="drawTabs" (selectChange)="tabSelectChangeHandler($event)">
-        <mat-tab *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray" label="{{ tabChartsMappingDataItem.keyName | translate }}">
-          <div *ngIf="tabChartsMappingDataSelected.keyName === tabChartsMappingDataItem.keyName">
-                <div fxLayout="row wrap" fxLayoutAlign="space-around center">
-                  <div  [fxFlex]="chartWidth.value" *ngFor="let chartConfigData of tabChartsMappingDataSelected.paginatedChartConfigData">
-                    <report [title]="chartConfigData.title" [lineChartConfig]="chartConfigData"></report>
-                  </div>
-                </div>
-          </div>
-        </mat-tab>
-        </mat-tab-group>-->
+        <!-- Report builder -->
+        <ng-container *ngIf="tabChartsMappingDataSelected && tabChartsMappingDataSelected.keyName == 'Disk'">
+          <entity-form-embedded fxFlex="100" fxFlex.gt-xs="632px" [target]="target" [data]="values" [conf]="this" ></entity-form-embedded>
+        </ng-container>
 
-      <nav mat-tab-nav-bar *ngIf="drawTabs && activeTab" (selectChange)="tabSelectChangeHandler($event)">
-        <a mat-tab-link *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray"
-          [active]="isActiveTab(tabChartsMappingDataItem.keyName)"
-          (click)="updateActiveTab(tabChartsMappingDataItem.keyName)">
-          {{ tabChartsMappingDataItem.keyName | translate }} 
-        </a>
-        <!--<a mat-tab-link *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray"
-          [routerLink]="tabChartsMappingDataItem.keyName.toLowerCase()"
-          routerLinkActive #tab="routerLinkActive"
-                                         [active]="tab.isActive">
-          {{ tabChartsMappingDataItem.keyName | translate }} 
-          </a>-->
-          
-        <!--<a mat-tab-link *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray"
-          (click)="navigateToTab(tabChartsMappingDataItem.path)"
-          routerLinkActive #tab="routerLinkActive"
-          [active]="activeTab">
-          {{ tabChartsMappingDataItem.keyName | translate }}  
-          </a>-->
-      </nav>
+        <!--<div class="report-config-preview" fxFlex="100" fxFlex.gt-xs="calc(100% - 428px)"><img src="assets/logo.png"></div>-->
+      </div>
 
+
+      <!-- Report Cards -->
       <div *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray">
-          <div *ngIf="tabChartsMappingDataSelected.keyName === tabChartsMappingDataItem.keyName">
-                <div fxLayout="row wrap" fxLayoutAlign="space-around center">
-                  <div  [fxFlex]="chartWidth.value" *ngFor="let chartConfigData of tabChartsMappingDataSelected.paginatedChartConfigData">
-                    <report [title]="chartConfigData.title" [lineChartConfig]="chartConfigData"></report>
-                  </div>
-                </div>
-              </div>
+        <div *ngIf="tabChartsMappingDataSelected && tabChartsMappingDataSelected.keyName === tabChartsMappingDataItem.keyName">
+
+          <!-- Cards from Filtered List-->
+          <div fxLayout="row wrap" fxLayoutAlign="space-around center" *ngIf="diskReportConfigReady && tabChartsMappingDataSelected.keyName == 'Disk' && filteredData.length > 0"> 
+            <div  [fxFlex]="chartWidth && chartWidth.value ? chartWidth.value : '800px'" *ngFor="let chartConfigData of filteredData">
+              <report [title]="chartConfigData.title" [lineChartConfig]="chartConfigData"></report>
+            </div>
+          </div>
+          
+          <!-- All Cards unfiltered list -->
+          <div fxLayout="row wrap" fxLayoutAlign="space-around center" *ngIf="tabChartsMappingDataSelected.keyName !== 'Disk'">
+            <div  [fxFlex]="chartWidth && chartWidth.value ? chartWidth.value : '800px'" *ngFor="let chartConfigData of tabChartsMappingDataSelected.paginatedChartConfigData">
+              <report [title]="chartConfigData.title" [lineChartConfig]="chartConfigData"></report>
+            </div>
           </div>
 
-          <!--<router-outlet></router-outlet>-->
+        </div>
+      </div>
 
     </div>
 </div>
-
-            <!--<div *ngIf="paginationLength > paginationPageSize">
-              <mat-paginator [length]="paginationLength" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" (page)="paginationUpdate($event)">
-              </mat-paginator>
-              </div>-->
-
-              <!--<mat-card *ngFor="let chartConfigData of tabChartsMappingDataSelected.paginatedChartConfigData">
-                <mat-card-title>{{ chartConfigData.title  | translate }}</mat-card-title>
-                <mat-card-content>
-                <line-chart [dataList]="chartConfigData.dataList" [legends]="chartConfigData.legends" [type]='"Line"' [divideBy]="chartConfigData.divideBy"></line-chart>
-
-                </mat-card-content>
-                </mat-card>-->
 

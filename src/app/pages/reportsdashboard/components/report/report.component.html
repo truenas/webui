@@ -24,6 +24,7 @@
           </div>
         </div>
       </mat-toolbar-row>
+      <!-- <mat-divider></mat-divider>-->
 
         <mat-card-content fxLayout="row wrap" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between center" fxFlex="100">
 
@@ -38,7 +39,7 @@
           </div>
 
           <!-- Legend Section -->
-          <div fxFlex="100" class="">         
+          <div fxFlex="100" class="legend-wrapper">         
           <!-- Time Stamp -->
           <div class="legend-timestamp">
             <div *ngIf="lineChart.showLegendValues">
@@ -47,6 +48,9 @@
               </span>
             </div>
           </div>
+          </div>
+        </mat-card-content>
+          <mat-card-footer>
           <section class="legend" fxLayout="row wrap" fxLayoutAlign="none"  *ngIf="lineChart.legendLabels | async as legendLabels">
             <div class="legend-group" fxFlex="100px" *ngFor="let legendItem of legendLabels; let i=index">
 
@@ -58,7 +62,7 @@
 
                 <div class="tooltip-wrapper legend-value"> 
                   <div *ngIf="lineChart.legendEvents | async as tooltip">
-                    <div  *ngIf="lineChart.showLegendValues" class="tooltip-value" >
+                    <div  *ngIf="lineChart.showLegendValues && tooltip[i]" class="tooltip-value" >
                       {{tooltip[i].value}} {{lineChart.units}}
                     </div>
                   </div>
@@ -66,10 +70,9 @@
 
               </div>
             </section>
-          </div>
-        </mat-card-content>
-
+          </mat-card-footer>
     </mat-card>
+
     <ng-template *ngIf="configurable">
       <mat-card class="back">
         <mat-card-content fxLayout="column" fxLayoutAlign="start stretch" fxFlex="100">
