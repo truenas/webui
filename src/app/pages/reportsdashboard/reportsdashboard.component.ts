@@ -49,12 +49,14 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   // Report Builder Options (entity-form-embedded)
   public target: Subject<CoreEvent> = new Subject();
   public values = [];
-  private diskDevices = [];
-  private diskMetrics = [];
+  protected isEntity: boolean = true;
+  public diskDevices = [];
+  public diskMetrics = [];
   public saveSubmitText = "Generate Reports";
   public actionButtonsAlign = "left";
   public fieldConfig:FieldConfig[] = [];
   public fieldSets: FieldSet[];
+  public diskReportConfigReady: boolean = false;
 
     /*custActions: any[] = [
       {
@@ -90,6 +92,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   }
 
   diskReportBuilderSetup(){
+
     this.generateValues();
 
     this.fieldSets = [
@@ -106,6 +109,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
             placeholder: 'Choose a Device',
             options: this.diskDevices, // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
             //value:[this.diskDevices[0]],
+            required: true,
             multiple: true,
             tooltip:'Choose a device for your report.',
             class:'inline'
@@ -117,6 +121,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
             placeholder: 'Choose a metric',
             options: this.diskMetrics ? this.diskMetrics : [{label:'None available', value:'negative'}], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
             //value:[this.diskMetrics[0]],
+            required: true,
             multiple: true,
             tooltip:'Choose a metric to display.',
             class:'inline'
@@ -163,15 +168,12 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
       };
 
       //console.log(metric);
-      //console.warn(metrics)
+      //console.warn(this.diskMetrics)
       //metrics.push(metric);
     });
 
     this.diskDevices = devices;
     this.diskMetrics = metrics;
-    this.generateFieldConfig();
-
-    //console.log(this.diskDevices)
   }
 
   generateFieldConfig(){
@@ -180,6 +182,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
         this.fieldConfig.push(this.fieldSets[i].config[ii]);
       }
     }
+    this.diskReportConfigReady = true;
   }
 
   private setPaginationInfo(tabChartsMappingDataSelected: TabChartsMappingData) {
@@ -390,7 +393,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   }
 
   updateActiveTab(tabName:string){
-    if(tabName == 'Disk'){ this.diskReportBuilderSetup() }
     
     // Change the URL without reloading page/component
     // the old fashioned way 
@@ -404,6 +406,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
     }
     this.tabSelectChangeHandler(evt);
     this.activeTab = tabName.toLowerCase(); 
+
+    if(tabName == 'Disk'){ this.diskReportBuilderSetup() }
   }
 
   navigateToTab(tabName){

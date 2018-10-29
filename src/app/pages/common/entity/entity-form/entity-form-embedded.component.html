@@ -8,7 +8,7 @@
 
   <div class="">
     <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" #entityForm="ngForm" class="form-wrap">
-      <div class="fieldset-container fieldset-display-{{ fieldSetDisplay }}">
+      <div *ngIf="fieldSets && fieldSets.length > 0" class="fieldset-container fieldset-display-{{ fieldSetDisplay }}">
         <ng-container *ngFor="let fieldSet of fieldSets; let i = index">
           <div [ngClass]="fieldSet.class" class="fieldset"
                                           fxLayout="row wrap" fxLayoutAlign="start start" fxFlex="100%" fxFlex.gt-xs="calc({{fieldSets[i].width}} - 16px)">
