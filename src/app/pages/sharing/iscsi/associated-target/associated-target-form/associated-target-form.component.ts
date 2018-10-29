@@ -1,12 +1,14 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import * as _ from 'lodash';
 
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
-import { IscsiService } from '../../../../../services/';
+import { IscsiService, WebSocketService } from '../../../../../services/';
 import { T } from '../../../../../translate-marker';
+import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
+import { EntityUtils } from '../../../../common/entity/utils';
 
 @Component({
   selector: 'app-iscsi-associated-target-form',
@@ -15,14 +17,17 @@ import { T } from '../../../../../translate-marker';
 })
 export class AssociatedTargetFormComponent {
 
-  protected resource_name: string = 'services/iscsi/targettoextent';
+  protected addCall: string = 'iscsi.targetextent.create';
+  protected queryCall: string = 'iscsi.targetextent.query';
+  protected editCall = 'iscsi.targetextent.update';
   protected route_success: string[] = [ 'sharing', 'iscsi', 'associatedtarget' ];
   protected isEntity: boolean = true;
+  protected customFilter: Array<any> = [[["id", "="]]];
 
   protected fieldConfig: FieldConfig[] = [
     {
       type: 'select',
-      name: 'iscsi_target',
+      name: 'target',
       placeholder: T('Target'),
       tooltip: T('Select an existing target.'),
       options: [],
@@ -32,7 +37,7 @@ export class AssociatedTargetFormComponent {
     },
     {
       type: 'input',
-      name: 'iscsi_lunid',
+      name: 'lunid',
       placeholder: T('LUN ID'),
       tooltip: T('Select the value or enter a value between\
                   <i>0</i> and <i>1023</i>. Some initiators\
@@ -42,7 +47,7 @@ export class AssociatedTargetFormComponent {
     },
     {
       type: 'select',
-      name: 'iscsi_extent',
+      name: 'extent',
       placeholder: T('Extent'),
       tooltip: T('Select an existing extent.'),
       options: [],
@@ -54,25 +59,52 @@ export class AssociatedTargetFormComponent {
 
   protected target_control: any;
   protected extent_control: any;
-  protected lunid_control: any;
+  protected pk: any;
+  protected entityForm: any;
 
-  constructor(protected router: Router, protected iscsiService: IscsiService) {}
+  constructor(protected router: Router, protected iscsiService: IscsiService, protected aroute: ActivatedRoute,
+              protected loader: AppLoaderService, protected ws: WebSocketService) {}
+
+  preInit() {
+    this.aroute.params.subscribe(params => {
+      if (params['pk']) {
+        this.pk = params['pk'];
+        this.customFilter[0][0].push(parseInt(params['pk']));
+      }
+    });
+  }
 
   afterInit(entityForm: any) {
-    this.target_control = _.find(this.fieldConfig, {'name' : 'iscsi_target'});
+    this.entityForm = entityForm;
+    this.target_control = _.find(this.fieldConfig, {'name' : 'target'});
     this.target_control.options.push({label: '----------', value: ''});
     this.iscsiService.getTargets().subscribe((res) => {
-      res.data.forEach((target) => {
-        this.target_control.options.push({label: target.iscsi_target_name, value: target.id});
-      })
+      for (let i = 0; i < res.length; i++) {
+        this.target_control.options.push({label: res[i].name, value: res[i].id});
+      }
     });
 
-    this.extent_control = _.find(this.fieldConfig, {'name' : 'iscsi_extent'});
+    this.extent_control = _.find(this.fieldConfig, {'name' : 'extent'});
     this.extent_control.options.push({label: '----------', value: ''});
     this.iscsiService.getExtents().subscribe((res) => {
-      res.data.forEach((extent) => {
-        this.extent_control.options.push({label: extent.iscsi_target_extent_name, value: extent.id});
-      })
+      for (let i = 0; i < res.length; i++) {
+        this.extent_control.options.push({label: res[i].name, value: res[i].id});
+      }
     });
+  }
+
+  customEditCall(value) {
+    this.loader.open();
+    this.ws.call(this.editCall, [this.pk, value]).subscribe(
+      (res) => {
+        this.loader.close();
+        this.router.navigate(new Array('/').concat(this.route_success));
+      },
+      (res) => {
+        this.loader.close();
+        new EntityUtils().handleWSError(this.entityForm, res);
+      }
+    );
+
   }
 }
