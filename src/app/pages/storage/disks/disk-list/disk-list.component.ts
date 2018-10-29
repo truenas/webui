@@ -64,18 +64,18 @@ export class DiskListComponent {
 				this.diskbucket.diskNamesBucket(this.diskNames);
 				this.diskbucket.diskToggleBucket(this.diskToggle);
 
-				this.hddStandby.every( (val, i, arr) => val === arr[0] ) ? 
-					this.diskbucket.hddStandby = this.hddStandby[0] :  
-					this.diskbucket.hddStandby = '';
-				this.advPowerMgt.every( (val, i, arr) => val === arr[0] ) ? 
-					this.diskbucket.advPowerMgt = this.advPowerMgt[0] :  
-					this.diskbucket.advPowerMgt = '';
-				this.acousticLevel.every( (val, i, arr) => val === arr[0] ) ? 
-					this.diskbucket.acousticLevel = this.acousticLevel[0] :  
-					this.diskbucket.acousticLevel = '';
-				this.SMARToptions.every( (val, i, arr) => val === arr[0] ) ? 
-					this.diskbucket.SMARToptions = this.SMARToptions[0] : 
-					this.diskbucket.SMARToptions = '';
+				if (this.hddStandby.every( (val, i, arr) => val === arr[0] )) {
+					this.diskbucket.hddStandby = this.hddStandby[0];
+				} 
+				if (this.advPowerMgt.every( (val, i, arr) => val === arr[0] )) {
+					this.diskbucket.advPowerMgt = this.advPowerMgt[0];
+				}
+				if (this.acousticLevel.every( (val, i, arr) => val === arr[0] )) {
+					this.diskbucket.acousticLevel = this.acousticLevel[0];
+				}
+				if (this.SMARToptions.every( (val, i, arr) => val === arr[0] )) {
+					this.diskbucket.SMARToptions = this.SMARToptions[0];
+				}
 					
 				this.router.navigate(new Array('/').concat([
 					"storage", "disks", "bulk-edit"

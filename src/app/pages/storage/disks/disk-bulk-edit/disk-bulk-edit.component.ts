@@ -145,21 +145,19 @@ export class DiskBulkEditComponent {
     let data = {
       "hddstandby": event.disk_hddstandby, 
       "advpowermgmt" : event.disk_advpowermgmt, 
-      "acousticlevel" : event.disk_acousticlevel,
+      // "acousticlevel" : event.disk_acousticlevel,
       "togglesmart" : event.disk_togglesmart,
       "smartoptions" : event.disk_smartoptions
     }
 
     for (let i of event.disk_serial[0]) {
-      if (!i.togglesmart) {
-        data.smartoptions = '';
-      }
       req.push([i, data])
     }
-    
+
     this.ws.job('core.bulk', ["disk.update", req])
       .subscribe(
         (res) => { 
+          console.log(res)
           if(res.state === 'SUCCESS') {
             this.loader.close();
             this._router.navigate(new Array('/').concat([
