@@ -154,12 +154,17 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'account-B2',
-      placeholder: T('Account ID'),
-      tooltip: T('<a\
+      placeholder: T('Account ID or Application Key ID'),
+      tooltip: T('Alphanumeric <a\
                   href="https://www.backblaze.com/b2/cloud-storage.html"\
-                  target="_blank">Backblaze B2</a> account ID. This is\
-                  an alphanumeric string shown after logging into the B2\
-                  account.'),
+                  target="_blank">Backblaze B2</a> ID. Find an Account ID\
+                  or applicationKeyID by logging in to the account,\
+                  clicking <i>Buckets</i>, and clicking\
+                  <i>Show Account ID and Application Key</i>. Enter the\
+                  <i>Account ID</i> to associate the entire account or\
+                  generate a new <i>Application Key</i>. The <i>keyID</i>\
+                  replaces the Account ID and the key string is used in\
+                  place of the <i>Master Application Key</i>.'),
       required: true,
       isHidden: true,
       relation: [
@@ -175,14 +180,16 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'key-B2',
-      placeholder: T('Master Application Key'),
-      tooltip: T('Backblaze B2 Bucket Master Application Key. Log in to\
-                  the B2 account and generate the key on the Buckets\
+      placeholder: T('Master Application Key or Application Key'),
+      tooltip: T('Backblaze B2 Application Key. Log in to\
+                  the B2 account and generate a key on the Buckets\
                   page. <a\
                   href="https://help.backblaze.com/hc/en-us/articles/224991568-Where-can-I-find-my-Account-ID-and-Application-Key-"\
                   target="_blank">Generating a new Master Application Key</a>\
-                  for a bucket will invalidate an existing key and\
-                  require updating this field.'),
+                  will invalidate the existing Master key and require\
+                  updating this field. Using a limited permissions\
+                  Application Key also requires changing the\
+                  <i>Account ID</i> to the new <i>keyID</i>.'),
       required: true,
       isHidden: true,
       relation: [
