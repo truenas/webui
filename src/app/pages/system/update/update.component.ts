@@ -211,7 +211,7 @@ export class UpdateComponent implements OnInit {
 
       this.trains = [];
       for (const i in res.trains) {
-        if (this.compareTrains(this.train, i) === 'ALLOWED' || this.train === i) {
+        if (this.compareTrains(this.train, i) === 'ALLOWED' || this.compareTrains(this.train, i) === 'NIGHTLY_UPGRADE' || this.train === i) {
           this.trains.push({ name: i, description: res.trains[i].description });
         }
         
