@@ -134,7 +134,7 @@ export class DiskBulkEditComponent {
       this.disk_acousticlevel = _.find(this.fieldConfig, {name : 'disk_acousticlevel'});
       res.forEach((item) => {
         this.disk_acousticlevel.options.push(
-            {label : item[1], value : item[0]});
+            {label : item[1], value : item[0].toUpperCase()});
       });
     });
   }
@@ -145,9 +145,13 @@ export class DiskBulkEditComponent {
     let data = {
       "hddstandby": event.disk_hddstandby, 
       "advpowermgmt" : event.disk_advpowermgmt, 
-      // "acousticlevel" : event.disk_acousticlevel,
+      "acousticlevel" : event.disk_acousticlevel.toUpperCase(),
       "togglesmart" : event.disk_togglesmart,
       "smartoptions" : event.disk_smartoptions
+    }
+    
+    if (!data.togglesmart) {
+      data.smartoptions = '';
     }
 
     for (let i of event.disk_serial[0]) {
@@ -157,11 +161,11 @@ export class DiskBulkEditComponent {
     this.ws.job('core.bulk', ["disk.update", req])
       .subscribe(
         (res) => { 
-          console.log(res)
           if(res.state === 'SUCCESS') {
             this.loader.close();
             this._router.navigate(new Array('/').concat([
-              "storage", "disks"]));          }
+              "storage", "disks"]));          
+          }
         },
         (err) => {
           this.loader.close();
