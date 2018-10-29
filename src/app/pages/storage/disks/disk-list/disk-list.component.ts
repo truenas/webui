@@ -63,19 +63,23 @@ export class DiskListComponent {
 				this.diskbucket.diskIdsBucket(this.diskIds);
 				this.diskbucket.diskNamesBucket(this.diskNames);
 				this.diskbucket.diskToggleBucket(this.diskToggle);
-
-				if (this.hddStandby.every( (val, i, arr) => val === arr[0] )) {
-					this.diskbucket.hddStandby = this.hddStandby[0];
-				} 
-				if (this.advPowerMgt.every( (val, i, arr) => val === arr[0] )) {
-					this.diskbucket.advPowerMgt = this.advPowerMgt[0];
-				}
-				if (this.acousticLevel.every( (val, i, arr) => val === arr[0] )) {
-					this.diskbucket.acousticLevel = this.acousticLevel[0];
-				}
-				if (this.SMARToptions.every( (val, i, arr) => val === arr[0] )) {
-					this.diskbucket.SMARToptions = this.SMARToptions[0];
-				}
+				
+				// If all items match in an array, this fills in the value in the form; otherwise, blank
+				this.hddStandby.every( (val, i, arr) => val === arr[0] ) ?
+					this.diskbucket.hddStandby = this.hddStandby[0] :
+					this.diskbucket.hddStandby = undefined;
+				
+				this.advPowerMgt.every( (val, i, arr) => val === arr[0] ) ?
+					this.diskbucket.advPowerMgt = this.advPowerMgt[0] :
+					this.diskbucket.advPowerMgt = undefined;
+				
+				this.acousticLevel.every( (val, i, arr) => val === arr[0] ) ?
+					this.diskbucket.acousticLevel = this.acousticLevel[0] :
+					this.diskbucket.acousticLevel = undefined;
+				
+				this.SMARToptions.every( (val, i, arr) => val === arr[0] ) ?
+					this.diskbucket.SMARToptions = this.SMARToptions[0] :
+					this.diskbucket.SMARToptions = undefined;
 					
 				this.router.navigate(new Array('/').concat([
 					"storage", "disks", "bulk-edit"
