@@ -110,6 +110,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   };
   public showDefaults: boolean = false;
   public showSpinner: boolean = false;
+  public showActions: boolean = true;
 
   protected loaderOpen = false;
   public selected = [];
@@ -533,12 +534,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   }
 
   reorderEvent(event) {
+    this.showActions = false;
     this.paginationPageIndex = 0;
     let sort = event.sorts[0],
       rows = this.currentRows;
     this.sorter.tableSorter(rows, sort.prop, sort.dir);
     this.rows = rows;
     this.setPaginationInfo();
+    setTimeout(() => {
+      this.showActions = true;
+    }, 50)
   }
 
   /**
