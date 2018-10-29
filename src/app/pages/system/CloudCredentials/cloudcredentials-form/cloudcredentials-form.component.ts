@@ -155,11 +155,14 @@ export class CloudCredentialsFormComponent {
       type: 'input',
       name: 'account-B2',
       placeholder: T('Account ID'),
-      tooltip: T('<a\
+      tooltip: T('Alphanumeric <a\
                   href="https://www.backblaze.com/b2/cloud-storage.html"\
-                  target="_blank">Backblaze B2</a> account ID. This is\
-                  an alphanumeric string shown after logging into the B2\
-                  account.'),
+                  target="_blank">Backblaze B2</a> ID. Find the ID by\
+                  logging in to the account, clicking <i>Buckets</i>,\
+                  and clicking\
+                  <i>Show Account ID and Application Key</i>. Enter the\
+                  <i>Account ID</i> to associate the entire account or\
+                  use a specific <i>Application Key</i>.'),
       required: true,
       isHidden: true,
       relation: [
