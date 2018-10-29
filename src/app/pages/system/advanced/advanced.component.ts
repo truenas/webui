@@ -1,26 +1,23 @@
-import { ApplicationRef, Component, Injector, OnDestroy } from '@angular/core';
-import { AbstractControl, FormArray, FormGroup, Validators } from '@angular/forms';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Component, OnDestroy } from '@angular/core';
+import { Validators } from '@angular/forms';
+import { DatePipe } from '@angular/common';
 import * as _ from 'lodash';
 import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
 import { DialogService } from "../../../services/dialog.service";
-import { MatSnackBar, MatDialog } from '@angular/material';
-import { Observable, Subject, Subscription } from 'rxjs/Rx';
+import { MatSnackBar } from '@angular/material';
 import { EntityUtils } from '../../common/entity/utils';
-import { RestService, UserService, WebSocketService } from '../../../services/';
+import { RestService, WebSocketService } from '../../../services/';
 import {AdminLayoutComponent} from '../../../components/common/layouts/admin-layout/admin-layout.component';
 import { matchOtherValidator } from '../../common/entity/entity-form/validators/password-validation';
 import { T } from '../../../translate-marker';
-import {
-  FieldConfig
-} from '../../common/entity/entity-form/models/field-config.interface';
+import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 
 
 @Component({
   selector: 'app-system-advanced',
   templateUrl: 'advanced.component.html',
-  styleUrls: ['advanced.component.css']
+  styleUrls: ['advanced.component.css'],
+  providers: [DatePipe]
 })
 
 export class AdvancedComponent implements OnDestroy {
@@ -39,34 +36,41 @@ export class AdvancedComponent implements OnDestroy {
     id: 'save_debug',
     name: 'Save Debug',
     function: () => {
-      this.dialog.confirm(T("Generate Debug File"), T("This operation might take a long time. Proceed?"), true, T('Proceed')).subscribe((res) => {
-            if (res) {
-              this.load.open();
-              this.ws.job('system.debug').subscribe((system_debug) => {
-                this.load.close();
-                if (system_debug.state === "SUCCESS") {
-                  this.ws.call('core.download', ['filesystem.get', [system_debug.result], 'debug.tgz']).subscribe(
-                    (system_debug_result) => {
-                      this.openSnackBar(T("Opening download window. Make sure pop-ups are enabled in the browser."), T("Success"));
-                      window.open(system_debug_result[1]);
-                    },
-                    (err) => {
-                      this.openSnackBar(T("Check the network connection."), T("Failed"));
-                    }
-                  );
-                }
-              }, () => {
-                this.load.close();
-              }, () => {
-                this.load.close();
-                if (this.job.state === 'SUCCESS') {} else if (this.job.state === 'FAILED') {
-                  this.openSnackBar(T("Check the network connection."), T("Failed"));
-                }
-              });
-            } else {
-              console.log("User canceled");
-            }
-          });
+      this.ws.call('system.info', []).subscribe((res) => {
+        let fileName = "";
+        if (res) {
+          const hostname = res.hostname.split('.')[0];
+          const date = this.datePipe.transform(new Date(),"yyyyMMddHHmmss");
+          fileName = `debug-${hostname}-${date}.tgz`;
+        }
+        this.dialog.confirm(T("Generate Debug File"), T("This operation might take a long time. Proceed?"), true, T('Proceed')).subscribe((ires) => {
+          if (ires) {
+            this.load.open();
+            this.ws.job('system.debug').subscribe((system_debug) => {
+              this.load.close();
+              if (system_debug.state === "SUCCESS") {
+                this.ws.call('core.download', ['filesystem.get', [system_debug.result], fileName]).subscribe(
+                  (system_debug_result) => {
+                    window.location.href = system_debug_result[1];
+                  },
+                  (err) => {
+                    this.openSnackBar(T("Check the network connection."), T("Failed"));
+                  }
+                );
+              }
+            }, () => {
+              this.load.close();
+            }, () => {
+              this.load.close();
+              if (this.job.state === 'SUCCESS') {} else if (this.job.state === 'FAILED') {
+                this.openSnackBar(T("Check the network connection."), T("Failed"));
+              }
+            });
+          } else {
+            console.log("User canceled");
+          }
+        });
+      });
     }
   }
 ];
@@ -252,7 +256,8 @@ export class AdvancedComponent implements OnDestroy {
     private dialog: DialogService,
     private ws: WebSocketService,
     public adminLayout: AdminLayoutComponent,
-    public snackBar: MatSnackBar) {}
+    public snackBar: MatSnackBar,
+    public datePipe: DatePipe) {}
 
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
