@@ -93,7 +93,8 @@ export class NFSFormComponent {
       name: 'nfs_hosts',
       placeholder: T('Authorized Hosts and IP addresses'),
       tooltip: T('Space-delimited list of allowed IP addresses or\
-                  hostnames. Leave empty to allow all.'),
+                  hostnames. Example: <i>1.2.3.0</i>.\
+                  Leave empty to allow all.'),
       blurStatus : true,
       blurEvent: this.nfs_hosts_event,
       parent: this,
