@@ -286,7 +286,9 @@ export class DockerVMWizardComponent {
       });
       ( < FormGroup > entityWizard.formArray.get([4])).get('raw_filename').valueChanges.subscribe((raw_filename) => {
         ( < FormGroup > entityWizard.formArray.get([4])).get('raw_file_directory').valueChanges.subscribe((raw_file_directory)=>{
-          this.summary[T('Raw file location')] = raw_file_directory + "/" +raw_filename+"_"+this.name;
+          if(raw_file_directory !== undefined || raw_file_directory !== ""){
+            this.summary[T('Raw file location')] = raw_file_directory + "/" +raw_filename+"_"+this.name;
+          };
         })
       });
       this.summary[T('Raw file size')] = ( < FormGroup > entityWizard.formArray.get([4])).get('size').value + ' GiB';
@@ -294,6 +296,7 @@ export class DockerVMWizardComponent {
         this.summary[T('Raw file size')] = size + ' GiB';
       });
       ( < FormGroup > entityWizard.formArray.get([4])).get('raw_file_directory').valueChanges.subscribe((raw_file_directory)=>{
+        if(raw_file_directory !== undefined || raw_file_directory !== "") {
         const volsize = ( < FormGroup > entityWizard.formArray.get([4])).controls['size'].value * 1073741824;
         this.ws.call('filesystem.statfs',[raw_file_directory]).subscribe((stat)=> {
          if (stat.free_bytes < volsize && stat.free_bytes <= 21474836480) {
@@ -310,6 +313,7 @@ export class DockerVMWizardComponent {
           _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'}).errors = 'Docker Container needs at least 20 Gibs';
          }
         })
+      }
       });
     
   }
@@ -354,14 +358,16 @@ blurEvent3(parent){
     const size = parent.entityWizard.formArray.controls[4].value.size * 1073741824;
     const raw_file_directory = parent.entityWizard.formArray.controls[4].value.raw_file_directory;
     const vm_name = parent.entityWizard.formGroup.value.formArray[1].name;
-    parent.ws.call('filesystem.statfs',[raw_file_directory]).subscribe((stat)=> {
-      if (stat.free_bytes < size ) {
-        _.find(parent.wizardConfig[4].fieldConfig, {'name' : 'size'}).hasErrors = true;
-        _.find(parent.wizardConfig[4].fieldConfig, {'name' : 'size'}).errors = `Cannot allocate ${size / (1073741824)} Gib to for storage docker machine: ${vm_name}.`;
-        parent.entityWizard.formArray.get([4]).get('size').setValue(0);
-        
-       };
-    });
+    if(raw_file_directory !== undefined && raw_file_directory !== "") {
+      parent.ws.call('filesystem.statfs',[raw_file_directory]).subscribe((stat)=> {
+        if (stat.free_bytes < size ) {
+          _.find(parent.wizardConfig[4].fieldConfig, {'name' : 'size'}).hasErrors = true;
+          _.find(parent.wizardConfig[4].fieldConfig, {'name' : 'size'}).errors = `Cannot allocate ${size / (1073741824)} Gib to for storage docker machine: ${vm_name}.`;
+          parent.entityWizard.formArray.get([4]).get('size').setValue(0);
+          
+         };
+      });
+    };
   };
 };
 
