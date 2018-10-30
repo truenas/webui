@@ -1048,10 +1048,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     color: var(--accent);
   }
 
-  .mat-option-text {
-    @include variable(color, --fg2, $fg2 );
-  }
-
   input[type=number] {
     -moz-appearance: textfield !important;
   }
@@ -1059,10 +1055,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   input[type=number]::-webkit-inner-spin-button {
     -webkit-appearance: none;
   } 
-
-  .mat-option-text {
-    @include variable(color, --fg2, $fg2 !important);
-  }
 
   .mat-autocomplete-panel .mat-option-text {
     @include variable(color, --fg2, $fg2 !important);
