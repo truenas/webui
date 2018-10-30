@@ -91,16 +91,6 @@
       <div *ngIf="viewMode.value == 'cards'" class="vm-bg"></div>
       <div class="side-content section">
 
-        <button mat-fab
-           *ngIf="viewMode.value == 'slim'"
-           class="vm-power-btn"
-           [ngClass]="{'vm-power-btn-off':cards[i].state == 'stopped','vm-power-btn-on':cards[i].state == 'running'}" 
-           (click)="toggleVmState(i)"
-           matTooltip="{{ powerBtnLabel(cards[i].state) }}" matTooltipPosition="above">
-          <mat-icon>power_settings_new</mat-icon>
-        </button>
-
-
         <div class="side-content-header">
           <!--<button class="card-close" (click)="deleteVM(i)"><mat-icon>close</mat-icon></button>-->
           <button class="card-close" [matMenuTriggerFor]="cardMenu"><mat-icon>more_vert</mat-icon></button>
@@ -116,7 +106,6 @@
           </mat-menu>
 
           <button mat-fab 
-                  *ngIf="viewMode.value == 'cards'"
                   class="vm-power-btn"
                   [ngClass]="{'vm-power-btn-off':cards[i].state == 'stopped','vm-power-btn-on':cards[i].state == 'running'}" 
                   (click)="toggleVmState(i)"
