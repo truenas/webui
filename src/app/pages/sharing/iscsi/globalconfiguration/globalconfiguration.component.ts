@@ -65,6 +65,10 @@ export class GlobalconfigurationComponent {
     } else {
      value.isns_servers = _.split(value.isns_servers, ' ');
     }
+
+    if (value.pool_avail_threshold == "") {
+      value.pool_avail_threshold = null;
+    }
   }
 
   afterSubmit(data) {
