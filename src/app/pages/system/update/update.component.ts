@@ -544,7 +544,7 @@ export class UpdateComponent implements OnInit {
       if (res) {
         const hostname = res.hostname.split('.')[0];
         const date = entityDialog.datePipe.transform(new Date(),"yyyyMMddHHmmss");
-        fileName = hostname + '-' + res.version + '-' + date;
+        fileName = hostname + '-' + date;
         if (entityDialog.formValue['secretseed']) {
           fileName += '.tar';
         } else {
@@ -558,7 +558,7 @@ export class UpdateComponent implements OnInit {
             entityDialog.snackBar.open(T("Download Sucessful"), T("Success") , {
               duration: 5000
             });
-            // window.location.href = succ[1];
+            window.location.href = succ[1];
             entityDialog.dialogRef.close();
           },
           (err) => {

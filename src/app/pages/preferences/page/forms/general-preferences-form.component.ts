@@ -139,8 +139,6 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
       this.target.subscribe((evt:CoreEvent) => {
         switch(evt.name){
         case "FormSubmitted":
-          console.log("Form Submitted");
-          //console.log(evt.data);
           this.core.emit({name:"ChangePreferences",data:evt.data});
           break;
         case "CreateTheme":
