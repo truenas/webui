@@ -54,6 +54,9 @@ export class ServiceUPSComponent implements OnDestroy {
       type : 'input',
       name : 'ups_remotehost',
       placeholder : T('Remote Host'),
+      tooltip : T('IP address of the remote system with <i>UPS Mode</i>\
+                   set as <i>Master</i>. Enter a valid IP address in\
+                   the format <i>192.168.0.1</i>.'),
       required: true,
       isHidden: true,
       validation : [ Validators.required ]
@@ -62,6 +65,11 @@ export class ServiceUPSComponent implements OnDestroy {
       type : 'input',
       name : 'ups_remoteport',
       placeholder : T('Remote Port'),
+      tooltip : T('The open network port of the remote system with\
+                   <i>UPS Mode</i> set as <i>Master</i>. Enter a valid\
+                   port number that has been configured for use on the\
+                   Master system. <i>3493</i> is the default port used.'),
+      value : 3493,
       required: true,
       isHidden: true,
       validation : [ Validators.required ]
@@ -305,7 +313,7 @@ export class ServiceUPSComponent implements OnDestroy {
     this.ws.call('ups.port_choices', []).subscribe((res) => {
       for (let i=0; i < res.length; i++) {
         this.ups_port.options.push({label: res[i], value: res[i]});
-      } 
+      }
     });
   }
 
