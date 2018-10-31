@@ -38,6 +38,9 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
   private themeOptions: any[] = [];
   private favoriteFields: any[] = []
   public fieldConfig:FieldConfig[] = [];
+  public showTooltips:boolean = this.prefs.preferences.showTooltips;
+  public allowPwToggle:boolean = this.prefs.preferences.allowPwToggle;;
+  public hideWarning:boolean = this.prefs.preferences.hideWarning;
   public fieldSetDisplay:string = 'no-margins';//default | carousel | stepper
     public fieldSets: FieldSet[] = [
       {
@@ -70,7 +73,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
             name: 'showTooltips',
             width: '300px',
             placeholder: 'Enable Help Text in Forms',
-            value:this.prefs.preferences.showTooltips,
+            value: this.showTooltips,
             tooltip: 'Display help icons in forms.',
             class:'inline'
           },
@@ -79,7 +82,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
             name: 'allowPwToggle', 
             width: '300px',
             placeholder: 'Enable Password Toggle',
-            value:this.prefs.preferences.allowPwToggle,
+            value:this.allowPwToggle,
             tooltip: 'This option enables/disables a password toggle button.',
             class:'inline'
           },
@@ -88,7 +91,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
             name: 'hideWarning', 
             width: '300px',
             placeholder: 'Hide warning config prompt on upgrade.',
-            value:this.prefs.preferences.hideWarning,
+            value:this.hideWarning,
             tooltip: T('This option enables/disables warning config on upgrade.'),
             class:'inline'
           }
@@ -116,6 +119,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
     ) {}
 
     ngOnInit(){
+      // Get current preferences so for form values
       this.init();
     }
 
@@ -178,7 +182,11 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
 
      processSubmission(obj:any){}
 
-     loadValues(themeName?:string){}
+     loadValues(themeName?:string){
+       this.hideWarning = this.prefs.preferences.hideWarning
+       this.allowPwToggle = this.prefs.preferences.allowPwToggle
+       this.showTooltips = this.prefs.preferences.showTooltips
+     }
 
      generateFieldConfig(){
        for(let i in this.fieldSets){
