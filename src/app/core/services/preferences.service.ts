@@ -19,6 +19,7 @@ export interface UserPreferences {
 @Injectable()
 export class PreferencesService {
   //public coreEvents: Subject<CoreEvent>;
+  private debug: boolean = false;
   public preferences: UserPreferences = {
     "platform":"freenas",
     "timestamp":new Date(),
@@ -47,16 +48,23 @@ export class PreferencesService {
 
         const preferencesFromUI = Object.keys(this.preferences);
         const preferencesFromMiddleware = Object.keys(data);
-        const keysMatch = (preferencesFromUI === preferencesFromMiddleware);
+        const keysMatch:boolean = (preferencesFromUI.join() == preferencesFromMiddleware.join());// evaluates as false negative, wth?!
         if(data && keysMatch){
           // If preferences exist and there are no unknown properties
+          if(this.debug)console.log('Preferences exist');
           this.updatePreferences(data);
         } else if(data && !keysMatch){
           // Add missing properties to inbound preferences from middleware
+          if(this.debug){
+            console.log('Preferences exist and there are unknown properties');
+            //console.log(preferencesFromMiddleware)
+            //console.log(preferencesFromUI)
+          }
           const merged = this.mergeProperties(this.preferences, data);
           this.updatePreferences(data);
         } else if(!data){
           // If preferences do not exist
+          if(this.debug)console.log('Preferences not returned');
           this.savePreferences();
           console.warn("No Preferences Found in Middleware");
         }
