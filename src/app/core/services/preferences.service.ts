@@ -109,17 +109,11 @@ export class PreferencesService {
 
   // Update local cache
   updatePreferences(data:UserPreferences){
-    if (this.router.url !== '/sessions/signin') {
       //console.log("UPDATING LOCAL PREFERENCES");
       this.preferences = data;
 
       //Notify Guided Tour & Theme Service
       this.core.emit({name:"UserPreferencesChanged", data:this.preferences});
-    } else {
-      setTimeout(()=> {
-        this.updatePreferences(data);
-      }, 10);
-    }
   }
 
   // Save to middleware

@@ -44,11 +44,12 @@ export class SigninComponent implements OnInit {
       this.is_freenas = res;
       window.localStorage.setItem('is_freenas', res);
     });
-    this.core.register({observerClass:this, eventName:"UserData"}).subscribe((evt:CoreEvent) => {
-      if (this.router.url == '/sessions/signin') {
+
+    this.core.register({observerClass:this, eventName:"ThemeChanged"}).subscribe((evt:CoreEvent) => {
+      if (this.router.url == '/sessions/signin' && evt.sender.userThemeLoaded == true) {
         this.redirect();
       }
-    });
+    })
    }
 
   ngOnInit() {
@@ -123,6 +124,7 @@ export class SigninComponent implements OnInit {
       } else {
         this.router.navigate([ '/dashboard' ]);
       }
+      this.core.unregister({observerClass:this});
     }
   }
   successLogin() {
