@@ -26,7 +26,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   isSidenotOpen: Boolean = false;
   consoleMsg: String = "";
   consoleMSgList: any[] = [];
-  public is_freenas: Boolean = false;
+  public is_freenas: Boolean = window.localStorage['is_freenas'];
   public logoPath: string = 'assets/images/light-logo.svg';
   public logoTextPath: string = 'assets/images/light-logo-text.svg';
   public currentTheme: string = "";

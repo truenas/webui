@@ -211,7 +211,7 @@ export class UpdateComponent implements OnInit {
 
       this.trains = [];
       for (const i in res.trains) {
-        if (this.compareTrains(this.train, i) === 'ALLOWED' || this.train === i) {
+        if (this.compareTrains(this.train, i) === 'ALLOWED' || this.compareTrains(this.train, i) === 'NIGHTLY_UPGRADE' || this.train === i) {
           this.trains.push({ name: i, description: res.trains[i].description });
         }
         
@@ -544,7 +544,7 @@ export class UpdateComponent implements OnInit {
       if (res) {
         const hostname = res.hostname.split('.')[0];
         const date = entityDialog.datePipe.transform(new Date(),"yyyyMMddHHmmss");
-        fileName = hostname + '-' + res.version + '-' + date;
+        fileName = hostname + '-' + date;
         if (entityDialog.formValue['secretseed']) {
           fileName += '.tar';
         } else {
@@ -560,7 +560,7 @@ export class UpdateComponent implements OnInit {
           }
             else {
               window.location.href = succ[1];
-            } 
+            }
             entityDialog.dialogRef.close();
           },
           (err) => {

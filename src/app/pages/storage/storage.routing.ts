@@ -17,6 +17,7 @@ import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-l
 import { ImportDiskComponent } from './import-disk/import-disk.component';
 import { DiskListComponent } from './disks/disk-list/';
 import { DiskFormComponent } from './disks/disk-form/';
+import { DiskBulkEditComponent } from './disks/disk-bulk-edit';
 import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
 import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddkey-form';
 import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form';
@@ -153,6 +154,10 @@ export const routes: Routes = [
           {
             path: 'edit/:pk', component: DiskFormComponent,
             data: { title: 'Edit Disk', breadcrumb: 'Edit Disk' }
+          },
+          {
+            path: 'bulk-edit', component: DiskBulkEditComponent,
+            data: { title: 'Bulk Edit Disks', breadcrumb: 'Bulk Edit Disks' }
           },
           {
             path: 'pool/:poolId/edit/:pk', component: DiskFormComponent,

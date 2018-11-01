@@ -98,6 +98,9 @@ export class LineChartService {
   constructor(private _ws: WebSocketService) {}
 
   public getData(dataHandlerInterface: HandleDataFunc, dataList: any[], rrdOptions?:any /*timeframe?:string*/) {
+    /*console.log("Service is fetching data...");
+    console.log(dataList);
+    console.log("*****************************")*/
     //if(!timeframe){timeframe = 'now-10m';}
     if(!rrdOptions) {
       rrdOptions = {step: '10', start:'now-10m'};
@@ -151,10 +154,12 @@ export class LineChartService {
       {source :'if_packets', units:'', labelY:'Bits/s'},
       {source :'df-mnt-', units:'GiB', labelY: 'Gigabytes', removePrefix:'df_complex-'},
       {source :'ctl-tpc', units:'GiB', labelY: 'Bytes/s', removePrefix:'disk_'},
+      {source :'ctl-iscsi', units:'GiB', labelY: 'Bytes/s', removePrefix:'disk_'},
       {source :'disk_time', units:'k', labelY: 'Bytes/s'},
       {source :'disk_octets', units:'k', labelY: 'Bytes/s'},
       {source :'disk_io_time', units:'k', labelY: 'Bytes/s'},
       {source :'disk_ops', units:'', labelY: 'Operations/s'},
+      {source :'disktemp-', units:'°', labelY: 'Celsius'},
       {source :'cache_size-arc', units:'GiB', labelY: 'Gigabytes', dataUnits: 'bytes', conversion:'bytesToGigabytes'},
       {source :'cache_ratio-arc', units:'%', labelY: 'Hits', dataUnits:'percentage', conversion:'percentFloatToInteger'},
       {source :'processes', units:'', labelY: 'Processes', removePrefix:'ps_state-'},
@@ -217,7 +222,8 @@ export class LineChartService {
 
     } else if (source.startsWith("interface-")) {
       returnVal = "rx";
-    } else if (source === "ctl-tpc") {
+    //} else if (source === "ctl-tpc") {
+    } else if (source.startsWith("ctl-") && source !== "ctl-ioctl") {
       returnVal = "read";
     } else if (source === "zfs_arc") {
       if (dataSetType === "io_octets-L2") {
@@ -348,7 +354,15 @@ export class LineChartService {
         });
 
         let divideBy: number;
-        let title: string = prop == "ctl-tpc" ? "SCSI Target Port (tpc)" : prop; // Put in ugly override. Wasn't really a better place for this one change.
+        //let title: string = prop == "ctl-tpc" ? "SCSI Target Port (tpc)" : prop; 
+
+        // Put in ugly override. Wasn't really a better place for this one change.
+        let title;
+        if(prop == "ctl-iscsi" || prop == "ctl-tpc"){
+          title = "SCSI Target Port (" + prop.replace("ctl-", "") + ")";
+        } else {
+          title = prop;
+        }
         
         // Things I want convertd from Bytes to gigabytes
         if (prop.startsWith("df-") ||
