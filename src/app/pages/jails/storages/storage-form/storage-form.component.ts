@@ -92,11 +92,25 @@ export class StorageFormComponent {
 
   public isReady: boolean = false;
   protected mountpoint: string;
+  protected view_only: boolean;
   constructor(protected router: Router, protected aroute: ActivatedRoute,
     protected jailService: JailService, protected loader: AppLoaderService, protected ws: WebSocketService,
     private dialog: DialogService) {}
 
   ngOnInit() {
+    this.aroute.params.subscribe(params => {
+      this.ws.call('jail.query', [
+        [
+          ["host_hostuuid", "=", params['jail']]
+        ]
+      ]).subscribe((res) => {
+        if (res[0] && res[0].state == 'up') {
+          this.view_only = true;
+        } else {
+          this.view_only = false;
+        }
+      });
+    });
     this.ws.call('jail.get_activated_pool').subscribe((res)=>{
           if (res != null) {
             this.ws.call('zfs.dataset.query', [[["name", "=", res+"/iocage"]]]).subscribe(
@@ -133,6 +147,7 @@ export class StorageFormComponent {
     entityForm.mountPointEdit = this.mountPointEdit;
     entityForm.mountPointAdd = this.mountPointAdd;
     entityForm.mountpointId = this.mountpointId;
+    entityForm.view_only = this.view_only;
 
     this.jailService.listJails().subscribe((res) => {
       res.forEach((item) => {
@@ -146,24 +161,28 @@ export class StorageFormComponent {
   }
 
   dataAttributeHandler(entityList: any) {
-    entityList.formGroup.controls['source'].setValue(entityList.queryResponse[this.mountpointId][0]);
-    entityList.formGroup.controls['destination'].setValue(entityList.queryResponse[this.mountpointId][1]);
+    entityList.formGroup.controls['source'].setValue(entityList.queryResponse[this.mountpointId].entry[0]);
+    entityList.formGroup.controls['destination'].setValue(entityList.queryResponse[this.mountpointId].entry[1]);
 
-    if (entityList.queryResponse[this.mountpointId][3] == 'ro') {
+    if (entityList.queryResponse[this.mountpointId].entry[3] == 'ro') {
       entityList.formGroup.controls['readonly'].setValue(true);
-    } else if (entityList.queryResponse[this.mountpointId][3] == 'rw') {
+    } else if (entityList.queryResponse[this.mountpointId].entry[3] == 'rw') {
       entityList.formGroup.controls['readonly'].setValue(false);
     }
 
-    this.mountPointEdit.source = entityList.queryResponse[this.mountpointId][0];
-    this.mountPointEdit.destination = entityList.queryResponse[this.mountpointId][1];
-    this.mountPointEdit.fstype = entityList.queryResponse[this.mountpointId][2];
-    this.mountPointEdit.fsoptions = entityList.queryResponse[this.mountpointId][3];
-    this.mountPointEdit.dump = entityList.queryResponse[this.mountpointId][4];
-    this.mountPointEdit.pass = entityList.queryResponse[this.mountpointId][5];
+    this.mountPointEdit.source = entityList.queryResponse[this.mountpointId].entry[0];
+    this.mountPointEdit.destination = entityList.queryResponse[this.mountpointId].entry[1];
+    this.mountPointEdit.fstype = entityList.queryResponse[this.mountpointId].entry[2];
+    this.mountPointEdit.fsoptions = entityList.queryResponse[this.mountpointId].entry[3];
+    this.mountPointEdit.dump = entityList.queryResponse[this.mountpointId].entry[4];
+    this.mountPointEdit.pass = entityList.queryResponse[this.mountpointId].entry[5];
   }
 
   onSubmit(event: Event) {
+    if (this.view_only) {
+      this.error = T(this.jailID + " should not be running when editing a mountpoint.");
+      return;
+    }
     event.preventDefault();
     event.stopPropagation();
     this.error = null;
