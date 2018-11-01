@@ -1056,7 +1056,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     -webkit-appearance: none;
   } 
 
-  .mat-option-text {
+  .mat-autocomplete-panel .mat-option-text {
     @include variable(color, --fg2, $fg2 !important);
   }
 

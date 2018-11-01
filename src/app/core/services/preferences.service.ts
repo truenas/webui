@@ -54,6 +54,7 @@ export class PreferencesService {
           console.warn("No Preferences Found in Middleware");
           return;
         }
+
         const preferencesFromMiddleware = Object.keys(data);
         const keysMatch:boolean = (preferencesFromUI.join() == preferencesFromMiddleware.join());// evaluates as false negative, wth?!
         if(data && keysMatch){
@@ -101,9 +102,9 @@ export class PreferencesService {
     });
 
     this.core.register({observerClass:this, eventName:"ReplaceCustomThemePreference"}).subscribe((evt:CoreEvent) => {
-        let oldTheme:Theme;
-        let newTheme = evt.data;
-        let replaced:boolean = this.replaceCustomTheme(oldTheme,newTheme);
+        let oldTheme: Theme;
+        const newTheme = evt.data;
+        const replaced:boolean = this.replaceCustomTheme(oldTheme,newTheme);
         if(replaced){
           this.core.emit({name:"UserDataUpdate", data:this.preferences});
         }
@@ -112,7 +113,7 @@ export class PreferencesService {
     this.core.register({observerClass:this, eventName:"ChangePreferences"}).subscribe((evt:CoreEvent) => {
       //console.log("ChangePreferences");
       //console.log(evt.data);
-      let prefs = this.preferences;
+      const prefs = this.preferences;
       Object.keys(evt.data).forEach(function(key){
         prefs[key] = evt.data[key];
       });
@@ -124,22 +125,15 @@ export class PreferencesService {
 
   // Update local cache
   updatePreferences(data:UserPreferences){
-    if (this.router.url != '/sessions/signin') {
       //console.log("UPDATING LOCAL PREFERENCES");
       this.preferences = data;
 
       //Notify Guided Tour & Theme Service
       this.core.emit({name:"UserPreferencesChanged", data:this.preferences});
-    } else {
-      setTimeout(()=> {
-        this.updatePreferences(data);
-      }, 10);
-    }
   }
 
   // Save to middleware
   savePreferences(data?:UserPreferences){
-    console.log(data);
     if(!data){
       data = this.preferences;
     }
@@ -147,7 +141,7 @@ export class PreferencesService {
   }
 
   replaceCustomTheme(oldTheme:Theme, newTheme:Theme):boolean{
-    let index = this.preferences.customThemes.indexOf(oldTheme);
+    const index = this.preferences.customThemes.indexOf(oldTheme);
     if(index && index >= 0){
       this.preferences.customThemes[index] = newTheme;
       return true;
@@ -168,9 +162,9 @@ export class PreferencesService {
     // fetched after updates. Handy for when update contains new
     // preference options.
     // fui = from UI && fmw = from middleware
-    let merged = Object.assign(fmw, {});
-    let keys = Object.keys(fui);
-    let newProps = keys.filter(x => !fmw[x]);
+    const merged = Object.assign(fmw, {});
+    const keys = Object.keys(fui);
+    const newProps = keys.filter(x => !fmw[x]);
     
     newProps.forEach((item, index) => {
     	merged[item] = fui[item];	

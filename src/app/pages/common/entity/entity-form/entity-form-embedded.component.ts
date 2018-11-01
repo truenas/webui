@@ -60,7 +60,8 @@ export interface FormConfig {
   route_success?;
   route_delete?;
   custom_edit_query?;
-  custom_add_query?
+  custom_add_query?;
+  actionButtonsAlign?: string;
   custActions?: any[];
   customFilter?:any[];
   
@@ -102,6 +103,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   public fieldConfig: FieldConfig[];
   public hasConf = true;
   public saveSubmitText = "Save";
+  public actionButtonsAlign = "center";
 
   get controls() {
     return this.fieldConfig.filter(({type}) => type !== 'button');
@@ -158,6 +160,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
 
     // Setup Fields
     this.fieldConfig = this.conf.fieldConfig;
+    this.actionButtonsAlign = this.conf.actionButtonsAlign;
     this.fieldSetDisplay = this.conf.fieldSetDisplay;
     this.fieldSets = this.conf.fieldSets;
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);

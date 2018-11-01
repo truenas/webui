@@ -165,4 +165,25 @@ export class StorageService {
           
     return arr;
   } 
+
+  // This section passes data from disk-list to disk-bulk-edit form
+  public ids: any;
+  public diskNames: any;
+  public hddStandby: any;
+  public diskToggleStatus: boolean;
+  public SMARToptions: any;
+  public advPowerMgt: any;
+  public acousticLevel: any;
+
+  diskIdsBucket(arr) {
+    this.ids = arr;
+  }
+
+  diskNamesBucket(arr) {
+    this.diskNames = arr;
+  }
+
+  diskToggleBucket(bool) {
+    this.diskToggleStatus = bool;
+  }
 }
