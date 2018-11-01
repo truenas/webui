@@ -19,6 +19,7 @@ export interface UserPreferences {
 @Injectable()
 export class PreferencesService {
   //public coreEvents: Subject<CoreEvent>;
+  private debug: boolean = false;
   public preferences: UserPreferences = {
     "platform":"freenas",
     "timestamp":new Date(),
@@ -42,22 +43,32 @@ export class PreferencesService {
     });
 
     this.core.register({observerClass:this, eventName:"UserData", sender:this.api }).subscribe((evt:CoreEvent) => {
-      let data = evt.data[0].attributes.preferences;
+      if (evt.data[0]) {
+        const data = evt.data[0].attributes.preferences;
 
-      let preferencesFromUI = Object.keys(this.preferences);
-      let preferencesFromMiddleware = Object.keys(data);
-      let keysMatch = (preferencesFromUI == preferencesFromMiddleware);
-      if(data && keysMatch){
-        // If preferences exist and there are no unknown properties
-        this.updatePreferences(data);
-      } else if(data && !keysMatch){
-        // Add missing properties to inbound preferences from middleware
-        let merged = this.mergeProperties(this.preferences, data);
-        this.updatePreferences(data);
-      } else if(!data){
-        // If preferences do not exist
-        this.savePreferences();
-        console.warn("No Preferences Found in Middleware");
+        const preferencesFromUI = Object.keys(this.preferences);
+        const preferencesFromMiddleware = Object.keys(data);
+        const keysMatch:boolean = (preferencesFromUI.join() == preferencesFromMiddleware.join());// evaluates as false negative, wth?!
+        if(data && keysMatch){
+          // If preferences exist and there are no unknown properties
+          if(this.debug)console.log('Preferences exist');
+          this.updatePreferences(data);
+        } else if(data && !keysMatch){
+          // Add missing properties to inbound preferences from middleware
+          if(this.debug){
+            console.log('Preferences exist and there are unknown properties');
+            //console.log(preferencesFromMiddleware)
+            //console.log(preferencesFromUI)
+          }
+          const merged = this.mergeProperties(this.preferences, data);
+          this.updatePreferences(data);
+        } else if(!data){
+          // If preferences do not exist
+          if(this.debug)console.log('Preferences not returned');
+          this.savePreferences();
+          console.warn("No Preferences Found in Middleware");
+        }
+
       }
     });
 
@@ -83,9 +94,9 @@ export class PreferencesService {
     });
 
     this.core.register({observerClass:this, eventName:"ReplaceCustomThemePreference"}).subscribe((evt:CoreEvent) => {
-        let oldTheme:Theme;
-        let newTheme = evt.data;
-        let replaced:boolean = this.replaceCustomTheme(oldTheme,newTheme);
+        let oldTheme: Theme;
+        const newTheme = evt.data;
+        const replaced:boolean = this.replaceCustomTheme(oldTheme,newTheme);
         if(replaced){
           this.core.emit({name:"UserDataUpdate", data:this.preferences});
         }
@@ -94,7 +105,7 @@ export class PreferencesService {
     this.core.register({observerClass:this, eventName:"ChangePreferences"}).subscribe((evt:CoreEvent) => {
       //console.log("ChangePreferences");
       //console.log(evt.data);
-      let prefs = this.preferences;
+      const prefs = this.preferences;
       Object.keys(evt.data).forEach(function(key){
         prefs[key] = evt.data[key];
       });
@@ -106,18 +117,15 @@ export class PreferencesService {
 
   // Update local cache
   updatePreferences(data:UserPreferences){
-    if (this.router.url != '/sessions/signin') {
       //console.log("UPDATING LOCAL PREFERENCES");
       this.preferences = data;
 
       //Notify Guided Tour & Theme Service
       this.core.emit({name:"UserPreferencesChanged", data:this.preferences});
-    }
   }
 
   // Save to middleware
   savePreferences(data?:UserPreferences){
-    console.log(data);
     if(!data){
       data = this.preferences;
     }
@@ -125,7 +133,7 @@ export class PreferencesService {
   }
 
   replaceCustomTheme(oldTheme:Theme, newTheme:Theme):boolean{
-    let index = this.preferences.customThemes.indexOf(oldTheme);
+    const index = this.preferences.customThemes.indexOf(oldTheme);
     if(index && index >= 0){
       this.preferences.customThemes[index] = newTheme;
       return true;
@@ -146,9 +154,9 @@ export class PreferencesService {
     // fetched after updates. Handy for when update contains new
     // preference options.
     // fui = from UI && fmw = from middleware
-    let merged = Object.assign(fmw, {});
-    let keys = Object.keys(fui);
-    let newProps = keys.filter(x => !fmw[x]);
+    const merged = Object.assign(fmw, {});
+    const keys = Object.keys(fui);
+    const newProps = keys.filter(x => !fmw[x]);
     
     newProps.forEach((item, index) => {
     	merged[item] = fui[item];	

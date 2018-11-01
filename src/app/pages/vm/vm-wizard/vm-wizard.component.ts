@@ -365,6 +365,7 @@ export class VMWizardComponent {
       });
 
       ( < FormGroup > entityWizard.formArray.get([3])).get('datastore').valueChanges.subscribe((datastore)=>{
+        if(datastore !== undefined && datastore !== ""){
         const volsize = ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].value * 1073741824;
         this.ws.call('filesystem.statfs',[datastore]).subscribe((stat)=> {
           _.find(this.wizardConfig[3].fieldConfig, {'name' : 'volsize'}).hasErrors = false;
@@ -383,6 +384,7 @@ export class VMWizardComponent {
           ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(10);
          };
         });
+      }
       });
       ( < FormGroup > entityWizard.formArray.get([5]).get('iso_path')).valueChanges.subscribe((iso_path) => {
         this.summary[T('Installation Media')] = iso_path;
@@ -518,6 +520,7 @@ blurEvent3(parent){
     const volsize = parent.entityWizard.formArray.controls[3].value.volsize * 1073741824;
     const datastore = parent.entityWizard.formArray.controls[3].value.datastore;
     const vm_name = parent.entityWizard.formGroup.value.formArray[1].name;
+    if(datastore !== undefined && datastore !== ""){
     parent.ws.call('filesystem.statfs',[datastore]).subscribe((stat)=> {
       if (stat.free_bytes < volsize ) {
         _.find(parent.wizardConfig[3].fieldConfig, {'name' : 'volsize'}).hasErrors = true;
@@ -536,6 +539,7 @@ blurEvent3(parent){
     })
   }
 }
+}
 populate_ds(this) {
   this.ws.call('pool.dataset.query').subscribe((filesystem_res)=>{
     this.datastore = _.find(this.wizardConfig[3].fieldConfig, { name : 'datastore' });
@@ -545,30 +549,34 @@ populate_ds(this) {
           {label : filesystem_res[idx].name, value : filesystem_res[idx].name});
       }
     };
-  this.entityWizard.formArray.get([3]).controls['datastore'].setValue(
-    '/mnt/'+this.datastore.options[0].value
-  )
-  if (this.res) {
-    this.ws.call('filesystem.statfs',['/mnt/'+this.datastore.options[0].value]).subscribe((stat)=> {
-      let storage = 10*1073741824
-      let vm_memory_requested = 10*1048576;
-      const vm_name = this.entityWizard.formGroup.value.formArray[1].name
-      if (this.res === "Windows") {
-        storage = 40*1073741824;
+    if (this.datastore.options.length > 0) {
+      this.entityWizard.formArray.get([3]).controls['datastore'].setValue('/mnt/'+this.datastore.options[0].value);
+      if (this.res) {
+        if (this.datastore.options[0].value !== undefined && this.datastore.options[0].value!==""){
+        this.ws.call('filesystem.statfs',['/mnt/'+this.datastore.options[0].value]).subscribe((stat)=> {
+          let storage = 10*1073741824
+          let vm_memory_requested = 10*1048576;
+          const vm_name = this.entityWizard.formGroup.value.formArray[1].name
+          if (this.res === "Windows") { 
+            storage = 40*1073741824;
+          }
+          if (storage && stat.free_bytes < storage ) {
+            this.entityWizard.formArray.get([3]).controls['volsize'].setValue(Math.floor(stat.free_bytes/(1073741824))); 
+          };
+          if(this.res === "Windows") {
+            vm_memory_requested = 40*1048576;
+          }
+          this.ws.call('vm.get_available_memory').subscribe((vm_memory_available)=>{
+            if( vm_memory_requested *1048576> vm_memory_available){
+              this.entityWizard.formArray.get([2]).get('memory').setValue(Math.floor(vm_memory_requested*1024/10485760));
+            }
+          })
+         });
+        };
       }
-      if (storage && stat.free_bytes < storage ) {
-        this.entityWizard.formArray.get([3]).controls['volsize'].setValue(Math.floor(stat.free_bytes/(1073741824))); 
-      };
-      if(this.res === "Windows") {
-        vm_memory_requested = 40*1048576;
-      }
-      this.ws.call('vm.get_available_memory').subscribe((vm_memory_available)=>{
-        if( vm_memory_requested *1048576> vm_memory_available){
-          this.entityWizard.formArray.get([2]).get('memory').setValue(Math.floor(vm_memory_requested*1024/10485760));
-        }
-      })
-     });
-    };
+    }
+    
+
   });
 };
 

@@ -92,8 +92,9 @@ export class NFSFormComponent {
       type: 'textarea',
       name: 'nfs_hosts',
       placeholder: T('Authorized Hosts and IP addresses'),
-      tooltip: T('Space-delimited list of allowed IP addresses or\
-                  hostnames. Leave empty to allow all.'),
+      tooltip: T('Space-delimited list of allowed IP addresses\
+                  <i>(192.168.1.10)</i> or hostnames\
+                  <i>(www.freenas.com)</i>. Leave empty to allow all.'),
       blurStatus : true,
       blurEvent: this.nfs_hosts_event,
       parent: this,
