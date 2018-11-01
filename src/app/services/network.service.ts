@@ -11,8 +11,10 @@ import {WebSocketService} from './ws.service';
 export class NetworkService {
 
   public ipv4_regex = /^((25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})\.){3}(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})$/;
+  public ipv4_cidr_regex = /^((25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})\.){3}(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(\/(3[0-2]|[1-2][0-9]|[0-9]))$/;
 
   public ipv6_regex = /^([0-9a-f]|:){1,4}(:([0-9a-f]{0,4})*){1,7}$/i;
+  public ipv6_cidr_regex = /^([0-9a-f]|:){1,4}(:([0-9a-f]{0,4})*){1,7}(\/(12[0-8]|1[0-1][0-9]|[1-9][0-9]|[0-9]))$/i;
 
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
