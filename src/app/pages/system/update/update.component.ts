@@ -555,7 +555,7 @@ export class UpdateComponent implements OnInit {
       entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'] }], fileName])
         .subscribe(
           (succ) => {
-            entityDialog.snackBar.open(T("Download Sucessful"), T("Success") , {
+            entityDialog.snackBar.open(T("Download Successful"), T("Success") , {
               duration: 5000
             });
             window.location.href = succ[1];
