@@ -59,6 +59,7 @@ export class StorageFormComponent {
       name: 'jail',
       placeholder: helptext.jail_placeholder,
       options: [],
+      disabled: false,
     },
     {
       type: 'explorer',
@@ -67,6 +68,7 @@ export class StorageFormComponent {
       name: 'source',
       placeholder: helptext.source_placeholder,
       tooltip: helptext.source_tooltip,
+      disabled: false,
     },
     {
       type: 'explorer',
@@ -75,12 +77,14 @@ export class StorageFormComponent {
       name: 'destination',
       placeholder: helptext.destination_placeholder,
       tooltip: helptext.destination_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'readonly',
       placeholder: helptext.readonly_placeholder,
       tooltip: helptext.readonly_tooltip,
+      disabled: false,
     },
   ];
 
@@ -92,7 +96,7 @@ export class StorageFormComponent {
 
   public isReady: boolean = false;
   protected mountpoint: string;
-  protected view_only: boolean;
+  protected save_button_enabled: boolean;
   constructor(protected router: Router, protected aroute: ActivatedRoute,
     protected jailService: JailService, protected loader: AppLoaderService, protected ws: WebSocketService,
     private dialog: DialogService) {}
@@ -105,9 +109,14 @@ export class StorageFormComponent {
         ]
       ]).subscribe((res) => {
         if (res[0] && res[0].state == 'up') {
-          this.view_only = true;
+          this.save_button_enabled = false;
+          this.error = T(params['jail'] + " should not be running when editing a mountpoint.");
+          for (let i = 0; i < this.fieldConfig.length; i++) {
+            this.fieldConfig[i].disabled = true;
+          }
         } else {
-          this.view_only = false;
+          this.save_button_enabled = true;
+          this.error = "";
         }
       });
     });
@@ -147,7 +156,6 @@ export class StorageFormComponent {
     entityForm.mountPointEdit = this.mountPointEdit;
     entityForm.mountPointAdd = this.mountPointAdd;
     entityForm.mountpointId = this.mountpointId;
-    entityForm.view_only = this.view_only;
 
     this.jailService.listJails().subscribe((res) => {
       res.forEach((item) => {
@@ -179,10 +187,6 @@ export class StorageFormComponent {
   }
 
   onSubmit(event: Event) {
-    if (this.view_only) {
-      this.error = T(this.jailID + " should not be running when editing a mountpoint.");
-      return;
-    }
     event.preventDefault();
     event.stopPropagation();
     this.error = null;
