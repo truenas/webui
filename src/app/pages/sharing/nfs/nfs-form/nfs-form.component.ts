@@ -8,7 +8,7 @@ import { UserService } from '../../../../services/user.service';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { RestService, WebSocketService, DialogService } from '../../../../services/';
 import { T } from '../../../../translate-marker';
-
+import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
 @Component({
   selector : 'app-nfs-form',
   template : `<entity-form [conf]="this"></entity-form>`
@@ -16,10 +16,11 @@ import { T } from '../../../../translate-marker';
 export class NFSFormComponent {
 
   protected route_success: string[] = [ 'sharing', 'nfs' ];
-  protected resource_name: string = 'sharing/nfs/';
-  protected isEntity: boolean = true;
+  protected resource_name = 'sharing/nfs/';
+  protected isEntity = true;
   protected formArray: FormArray;
-  protected isBasicMode: boolean = true;
+  protected isBasicMode = true;
+  public entityForm: any;
 
   protected fieldConfig: FieldConfig[] = [
     {
@@ -29,8 +30,9 @@ export class NFSFormComponent {
       formarray: [{
         name: 'path',
         placeholder: T('Path'),
-        tooltip: T('Browse to the pool or dataset to be shared. Click\
-                    <b>Add extra path</b> to select multiple paths.'),
+        tooltip: T('Full path to the pool or dataset to share. Mandatory.\
+                    Click <b>ADD ADDITIONAL PATH</b> to configure\
+                    multiple paths.'),
         type: 'explorer',
         explorerType: 'directory',
         initial: '/mnt',
@@ -80,13 +82,23 @@ export class NFSFormComponent {
                   network/mask CIDR notation.\
                   Example: <i>1.2.3.0/24</i>. Leave empty\
                   to allow all.'),
+      blurStatus : true,
+      blurEvent: this.nfs_network_event,
+      parent: this,
+      value: ''
     },
+    
        {
       type: 'textarea',
       name: 'nfs_hosts',
       placeholder: T('Authorized Hosts and IP addresses'),
-      tooltip: T('Space-delimited list of allowed IP addresses or\
-                  hostnames. Leave empty to allow all.'),
+      tooltip: T('Space-delimited list of allowed IP addresses\
+                  <i>(192.168.1.10)</i> or hostnames\
+                  <i>(www.freenas.com)</i>. Leave empty to allow all.'),
+      blurStatus : true,
+      blurEvent: this.nfs_hosts_event,
+      parent: this,
+      value: ''
     },
     {
       type: 'select',
@@ -94,7 +106,8 @@ export class NFSFormComponent {
       placeholder: T('Maproot User'),
       tooltip: T('When a user is selected, the <i>root</i> user is\
                   limited to the permissions of that user.'),
-      options: []
+      options: [],
+      value: '',
     },
     {
       type: 'select',
@@ -102,7 +115,8 @@ export class NFSFormComponent {
       placeholder: T('Maproot Group'),
       tooltip: T('When a group is selected, the <i>root</i> user is also\
                   limited to the permissions of that group.'),
-      options: []
+      options: [],
+      value: '',
     },
     {
       type: 'select',
@@ -110,7 +124,8 @@ export class NFSFormComponent {
       placeholder: T('Mapall User'),
       tooltip: T('The specified permissions of that user are used\
                   by all clients.'),
-      options: []
+      options: [],
+      value: '',
     },
     {
       type: 'select',
@@ -118,7 +133,8 @@ export class NFSFormComponent {
       placeholder: T('Mapall Group'),
       tooltip: T('The specified permissions of that group are used\
                   by all clients.'),
-      options: []
+      options: [],
+      value: '',
     },
     {
       type: 'select',
@@ -148,8 +164,8 @@ export class NFSFormComponent {
   ];
 
   protected arrayControl: any;
-  protected initialCount: number = 1;
-  protected initialCount_default: number = 1;
+  protected initialCount = 1;
+  protected initialCount_default = 1;
 
   public custActions: Array<any> = [
     {
@@ -225,11 +241,15 @@ export class NFSFormComponent {
   }
 
   afterInit(EntityForm: any) {
+    this.entityForm = EntityForm;
     this.formArray = EntityForm.formGroup.controls['nfs_paths'];
 
     this.userService.listUsers().subscribe(res => {
-      let users = [];
-      for (let user of res.data) {
+      const users = [{
+        label: '---------',
+        value: '',
+      }];
+      for (const user of res.data) {
         users.push({label: user['bsdusr_username'], value: user['bsdusr_username']});
       }
       this.nfs_mapall_user = _.find(this.fieldConfig, {'name' : 'nfs_mapall_user'});
@@ -239,8 +259,11 @@ export class NFSFormComponent {
     });
 
     this.userService.listGroups().subscribe(res => {
-      let groups = [];
-      for (let group of res.data) {
+      const groups = [{
+        label: '---------',
+        value: '',
+      }];
+      for (const group of res.data) {
         groups.push({label: group['bsdgrp_group'], value: group['bsdgrp_group']});
       }
       this.nfs_mapall_group = _.find(this.fieldConfig, {'name' : 'nfs_mapall_group'});
@@ -249,21 +272,84 @@ export class NFSFormComponent {
       this.nfs_maproot_group.options = groups;
     });
   }
+  nfs_hosts_event(parent){
+    _.find(parent.fieldConfig, {'name' : 'nfs_hosts'}).warnings = null;
+  
+      if(parent.entityForm) {
+        if(parent.entityForm.formGroup.controls['nfs_hosts'].value !=='') {
+        const network_string = parent.entityForm.formGroup.controls['nfs_hosts'].value.split(/[\s,]+/);
+        let error_msg = ""
+        let warning_flag = false
+        for (const ip of network_string) {
+          const ValidIpAddressRegex = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;
+          const ValidHostnameRegex = /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/;
+          const ValidIPV6Address = /^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/
+  
+          if (!ValidIpAddressRegex.test(ip)) {
+            if (!ValidHostnameRegex.test(ip)) {
+              if(!ValidIPV6Address.test(ip)){
+                error_msg = error_msg +`${ip} `;
+                warning_flag= true;
+              }
+            }
+          }
+        }
+        if (warning_flag) {
+          _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_hosts' }).warnings = `Following IP Address/hostname appears to be wrong ${error_msg}`
+  
+        } else {
+          _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_hosts' }).warnings = null;
+        };
+      };
+    };
+  };
+  nfs_network_event(parent){
+    _.find(parent.fieldConfig, {'name' : 'nfs_network'}).warnings = false;
+    
+    if(parent.entityForm) {
+      if(parent.entityForm.formGroup.controls['nfs_network'].value !=='') {
+        const network_string = parent.entityForm.formGroup.controls['nfs_network'].value.split(/[\s,]+/);
+        let error_msg = ""
+        let warning_flag = false
+        for (const ip of network_string) {
+          const ValidIpSubnetRegex = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(3[0-2]|[1-2][0-9]|[0-9]))$/;
+          const ValidIPV6SubnetRegEx = /^s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:)))(%.+)?s*(\/([0-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8]))?$/
+  
+          if (!ValidIpSubnetRegex.test(ip)) {
+              if(!ValidIPV6SubnetRegEx.test(ip)){
+                error_msg = error_msg + ` ${ip}`;
+                warning_flag= true;
+              }
+            
+          }
+        }
+        if (warning_flag) {
+          _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_network' }).warnings = `Following Network appears to be wrong ${error_msg}`;
+  
+        } else { 
+          _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_network' }).warnings = null;
+        }
+
+      }
+
+ 
+    }
+  }
 
   isCustActionVisible(actionId: string) {
-    if (actionId == 'advanced_mode' && this.isBasicMode == false) {
+    if (actionId === 'advanced_mode' && this.isBasicMode === false) {
       return false;
-    } else if (actionId == 'basic_mode' && this.isBasicMode == true) {
+    } else if (actionId === 'basic_mode' && this.isBasicMode === true) {
       return false;
     }
-    if (actionId == 'remove_path' && this.initialCount <= this.initialCount_default) {
+    if (actionId === 'remove_path' && this.initialCount <= this.initialCount_default) {
       return false;
     }
     return true;
   }
 
   preHandler(data: any[]): any[] {
-    let paths = [];
+    const paths = [];
     for (let i = 0; i < data.length; i++) {
       paths.push({path:data[i]});
     }
@@ -271,7 +357,7 @@ export class NFSFormComponent {
   }
 
   clean(data) {
-    let paths = [];
+    const paths = [];
     for (let i = 0; i < data.nfs_paths.length; i++) {
       if(!data.nfs_paths[i]['delete']) {
         paths.push(data.nfs_paths[i]['path']);

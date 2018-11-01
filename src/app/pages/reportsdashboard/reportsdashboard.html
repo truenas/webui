@@ -1,35 +1,67 @@
-<mat-spinner 
-  [diameter]='40' 
-  id="reporting-spinner"
-  *ngIf="showSpinner"
->
-</mat-spinner> 
-<div id="dashboardcontainerdiv">
-  <mat-tab-group *ngIf="drawTabs" (selectChange)="tabSelectChangeHandler($event)">
-    <mat-tab *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray" label="{{ tabChartsMappingDataItem.keyName | translate }}">
-      <div *ngIf="tabChartsMappingDataSelected.keyName === tabChartsMappingDataItem.keyName">
+<div> <!-- Is this needed for flex layout? -->
+  <mat-spinner 
+    [diameter]='40' 
+    id="reporting-spinner"
+    *ngIf="showSpinner"
+    >
+  </mat-spinner> 
+    <div id="dashboardcontainerdiv">
 
-        <div *ngIf="paginationLength > paginationPageSize">
-          <mat-paginator [length]="paginationLength" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" (page)="paginationUpdate($event)">
-          </mat-paginator>
+      <!-- Tab Navigation -->
+      <nav mat-tab-nav-bar *ngIf="drawTabs && activeTab" (selectChange)="tabSelectChangeHandler($event)">
+        <a mat-tab-link *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray"
+          [active]="isActiveTab(tabChartsMappingDataItem.keyName)"
+          (click)="updateActiveTab(tabChartsMappingDataItem.keyName)">
+            {{ tabChartsMappingDataItem.keyName | translate }} 
+        </a>
+      </nav>
+
+      <!-- Layout and Report Builder -->
+      <div class="reports-dash-global-controls" fxLayout="row wrap" fxLayoutAlign="start stretch" fxLayoutGap="32px">
+        <!-- Layout Switcher -->
+        <div fxFlex="100" fxFlex.gt-xs="116px">
+          <h4 class="fieldset-label">Layout</h4>
+          <mat-button-toggle-group 
+            #chartWidth="matButtonToggleGroup" *ngIf="tabChartsMappingDataSelected">
+            <mat-button-toggle checked="true" value="800px">
+              <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-view-parallel"></mat-icon>
+            </mat-button-toggle>
+            <mat-button-toggle value="100%">
+              <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-view-sequential"></mat-icon>
+            </mat-button-toggle>
+          </mat-button-toggle-group>
         </div>
 
-        <mat-card *ngFor="let chartConfigData of tabChartsMappingDataSelected.paginatedChartConfigData">
-          <mat-card-title>{{ chartConfigData.title  | translate }}</mat-card-title>
-          <mat-card-content>
-            <line-chart [dataList]="chartConfigData.dataList" [legends]="chartConfigData.legends" [type]='"Line"' [divideBy]="chartConfigData.divideBy"></line-chart>
-          </mat-card-content>
-        </mat-card>
+        <!-- Report builder -->
+        <ng-container *ngIf="tabChartsMappingDataSelected && tabChartsMappingDataSelected.keyName == 'Disk'">
+          <entity-form-embedded fxFlex="100" fxFlex.gt-xs="632px" [target]="target" [data]="values" [conf]="this" ></entity-form-embedded>
+        </ng-container>
 
-        <div class="give_me_space_bottom">
-          <br/>
+        <!--<div class="report-config-preview" fxFlex="100" fxFlex.gt-xs="calc(100% - 428px)"><img src="assets/logo.png"></div>-->
+      </div>
+
+
+      <!-- Report Cards -->
+      <div *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray">
+        <div *ngIf="tabChartsMappingDataSelected && tabChartsMappingDataSelected.keyName === tabChartsMappingDataItem.keyName">
+
+          <!-- Cards from Filtered List-->
+          <div fxLayout="row wrap" fxLayoutAlign="space-around center" *ngIf="diskReportConfigReady && tabChartsMappingDataSelected.keyName == 'Disk' && filteredData.length > 0"> 
+            <div  [fxFlex]="chartWidth && chartWidth.value ? chartWidth.value : '800px'" *ngFor="let chartConfigData of filteredData">
+              <report [title]="chartConfigData.title" [lineChartConfig]="chartConfigData"></report>
+            </div>
+          </div>
+          
+          <!-- All Cards unfiltered list -->
+          <div fxLayout="row wrap" fxLayoutAlign="space-around center" *ngIf="tabChartsMappingDataSelected.keyName !== 'Disk'">
+            <div  [fxFlex]="chartWidth && chartWidth.value ? chartWidth.value : '800px'" *ngFor="let chartConfigData of tabChartsMappingDataSelected.paginatedChartConfigData">
+              <report [title]="chartConfigData.title" [lineChartConfig]="chartConfigData"></report>
+            </div>
+          </div>
+
         </div>
       </div>
-    </mat-tab>
-  </mat-tab-group>
 
-  <!-- Silly but stops the footer from scrunching up into my action. -->
-  <div class="give_me_space_bottom"></div>
-
-
+    </div>
 </div>
+

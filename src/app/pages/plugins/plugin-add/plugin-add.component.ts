@@ -14,6 +14,7 @@ import { DialogService } from '../../../services/dialog.service';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 import { EntityJobComponent } from '../../common/entity/entity-job';
 import { MatSnackBar, MatDialog } from '@angular/material';
+import helptext from '../../../helptext/plugins/plugins';
 
 @Component({
   selector: 'app-plugin-add',
@@ -31,24 +32,21 @@ export class PluginAddComponent implements OnInit {
   public fieldConfig: FieldConfig[] = [{
       type: 'input',
       name: 'name',
-      placeholder: T('Plugin Name'),
+      placeholder: helptext.name_placeholder,
       disabled: true,
     },
     {
       type: 'checkbox',
       name: 'dhcp',
-      placeholder: T('DHCP'),
-      tooltip: T('Set for <a\
-                  href="https://kb.iu.edu/d/adov"\
-                  target="_blank">DHCP</a> to automatically configure\
-                  network settings.'),
+      placeholder: helptext.dhcp_placeholder,
+      tooltip: helptext.dhcp_tooltip,
       value: true,
     },
     {
       type: 'select',
       name: 'ip4_interface',
-      placeholder: T('IPv4 interface'),
-      tooltip: T('IPv4 interface for the jail.'),
+      placeholder: helptext.ip4_interface_placeholder,
+      tooltip: helptext.ip4_interface_tooltip,
       options: [
         {
           label: '---------',
@@ -69,9 +67,8 @@ export class PluginAddComponent implements OnInit {
     {
       type: 'input',
       name: 'ip4_addr',
-      placeholder: T('IPv4 Address'),
-      tooltip: T('Enter a unique IPv4 address that is in the local\
-                  network and not already in use.'),
+      placeholder: helptext.ip4_addr_placeholder,
+      tooltip: helptext.ip4_addr_tooltip,
       validation : [ regexValidator(this.networkService.ipv4_regex) ],
       relation: [{
       action: 'DISABLE',
@@ -87,14 +84,9 @@ export class PluginAddComponent implements OnInit {
     {
       type: 'select',
       name: 'ip4_netmask',
-      placeholder: T('IPv4 Netmask'),
-      tooltip: T('IPv4 netmask for the jail.'),
-      options: [
-        {
-          label: '---------',
-          value: '',
-        }
-      ],
+      placeholder: helptext.ip4_netmask_placeholder,
+      tooltip: helptext.ip4_netmask_tooltip,
+      options: this.networkService.getV4Netmasks(),
       value: '',
       relation: [{
         action: 'DISABLE',
@@ -110,8 +102,8 @@ export class PluginAddComponent implements OnInit {
     {
       type: 'select',
       name: 'ip6_interface',
-      placeholder: T('IPv6 Interface'),
-      tooltip: T('IPv6 interface for the jail.'),
+      placeholder: helptext.ip6_interface_placeholder,
+      tooltip: helptext.ip6_interface_tooltip,
       options: [
         {
           label: '---------',
@@ -132,9 +124,8 @@ export class PluginAddComponent implements OnInit {
     {
       type: 'input',
       name: 'ip6_addr',
-      placeholder: T('IPv6 Address'),
-      tooltip: T('Enter a unique IPv6 address that is in the local\
-                  network and not already in use.'),
+      placeholder: helptext.ip6_addr_placeholder,
+      tooltip: helptext.ip6_addr_tooltip,
       validation : [ regexValidator(this.networkService.ipv6_regex) ],
       relation: [{
         action: "DISABLE",
@@ -150,14 +141,9 @@ export class PluginAddComponent implements OnInit {
     {
       type: 'select',
       name: 'ip6_prefix',
-      placeholder: T('IPv6 Prefix'),
-      tooltip: T('IPv6 prefix for the jail.'),
-      options: [
-        {
-          label: '---------',
-          value: '',
-        }
-      ],
+      placeholder: helptext.ip6_prefix_placeholder,
+      tooltip: helptext.ip6_prefix_tooltip,
+      options: this.networkService.getV6PrefixLength(),
       value: '',
       required: false,
       class: 'inline',
@@ -200,15 +186,6 @@ export class PluginAddComponent implements OnInit {
     this.ip4_netmaskField = _.find(this.fieldConfig, {'name': 'ip4_netmask'});
     this.ip6_interfaceField = _.find(this.fieldConfig, {'name': 'ip6_interface'});
     this.ip6_prefixField = _.find(this.fieldConfig, {'name': 'ip6_prefix'});
-    // get netmask/prefix for ipv4/6
-    let v4netmask = this.networkService.getV4Netmasks();
-    let v6prefix = this.networkService.getV6PrefixLength();
-    for (let i = 0; i < v4netmask.length; i++) {
-      this.ip4_netmaskField.options.push(v4netmask[i]);
-    }
-    for (let i = 0; i < v6prefix.length; i++) {
-      this.ip6_prefixField.options.push(v6prefix[i]);
-    }
     // get interface options
     this.ws.call('interfaces.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
       (res)=>{

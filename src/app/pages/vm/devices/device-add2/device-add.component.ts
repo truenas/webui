@@ -24,6 +24,19 @@ export class DeviceAddComponent implements OnInit {
   public vmname: any;
   public fieldSets: any;
   public isCustActionVisible = false;
+  public selectedType = 'CDROM';
+  public formGroup: any;
+  public activeFormGroup: any;
+  public cdromFormGroup: any;
+  public diskFormGroup: any;
+  public nicFormGroup: any;
+  public rawfileFormGroup: any;
+  public vncFormGroup: any;
+  public rootpwd: any;
+  public vminfo: any;
+  public boot: any;
+
+  public custActions: any[];
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -77,7 +90,7 @@ export class DeviceAddComponent implements OnInit {
   //disk 
   public diskFieldConfig: FieldConfig[] = [
     {
-      name : 'DISK_zvol',
+      name : 'path',
       placeholder : 'Zvol',
       tooltip : 'Browse to an existing <a\
                  href="..//docs/storage.html#adding-zvols"\
@@ -88,7 +101,7 @@ export class DeviceAddComponent implements OnInit {
       options:[]
     },
     {
-      name : 'DISK_mode',
+      name : 'type',
       placeholder : 'Mode',
       tooltip : '<i>AHCI</i> emulates an AHCI hard disk for better\
                  software compatibility. <i>VirtIO</i> uses\
@@ -104,9 +117,15 @@ export class DeviceAddComponent implements OnInit {
     {
       name : 'sectorsize',
       placeholder : 'Disk sector size',
-      tooltip : 'Enter the sector size in bytes. The default <i>0</i>\
+      tooltip : 'Select a sector size in bytes. <i>Default</i> leaves the\
                  leaves the sector size unset.',
-      type: 'input',
+      type: 'select',
+      options: [
+        { label: 'Default', value:0 },
+        { label: '512', value:512 },
+        { label: '4096', value:4096 },
+
+      ],
       value: 0
     },
     {
@@ -121,7 +140,7 @@ export class DeviceAddComponent implements OnInit {
   //nic
   public nicFieldConfig: FieldConfig[] = [
     {
-      name: 'NIC_type',
+      name: 'type',
       placeholder: 'Adapter Type:',
       tooltip: 'Emulating an <i>Intel e82545 (e1000)</i> Ethernet card\
                 provides compatibility with most operating systems. Change to\
@@ -133,7 +152,7 @@ export class DeviceAddComponent implements OnInit {
       required: true
     },
     {
-      name: 'NIC_mac',
+      name: 'mac',
       placeholder: 'MAC Address',
       tooltip: 'By default, the VM receives an auto-generated random\
                 MAC address. Enter a custom address into the field to\
@@ -170,7 +189,7 @@ export class DeviceAddComponent implements OnInit {
     {
       type : 'explorer',
       initial: '/mnt',
-      name : 'RAW_path',
+      name : 'path',
       placeholder : 'Raw File',
       tooltip : 'Browse to a storage location and add the name of the\
                  new raw file on the end of the path.',
@@ -178,15 +197,20 @@ export class DeviceAddComponent implements OnInit {
       validation: [Validators.required]
     },
     {
-      type : 'input',
-      name : 'RAW_sectorsize',
+      type : 'select',
+      name : 'sectorsize',
       placeholder : 'Disk sector size',
-      tooltip : 'Enter a sector size in bytes. <i>0</i> leaves the\
+      tooltip : 'Select a sector size in bytes. <i>Default</i> leaves the\
                  sector size unset.',
-      inputType : 'number',
+      options: [
+        { label: 'Default', value:0 },
+        { label: '512', value:512 },
+        { label: '4096', value:4096 },
+              ],
+      value: 0
     },
     {
-      name : 'RAW_mode',
+      name : 'type',
       placeholder : 'Mode',
       tooltip : '<i>AHCI</i> emulates an AHCI hard disk for best\
                  software compatibility. <i>VirtIO</i> uses\
@@ -207,12 +231,35 @@ export class DeviceAddComponent implements OnInit {
       value: null,
       inputType: 'number'
     },
+    {
+      type : 'input',
+      name : 'size',
+      placeholder : 'Raw filesize',
+      tooltip : 'Define the size of the raw file in GiB.',
+      inputType : 'number',
+    },
+    {
+      type : 'input',
+      name : 'rootpwd',
+      placeholder : 'password',
+      tooltip : 'Enter a password for the <i>rancher</i> user. This\
+                 is used to log in to the VM from the serial shell.',
+      inputType : 'password',
+      isHidden: true
+    },
+    {
+      type : 'checkbox',
+      name : 'boot',
+      placeholder : 'boot',
+      tooltip : '',
+      isHidden: true
+    },
   ];
 
   //vnc
   public vncFieldConfig: FieldConfig[]  = [
     {
-      name : 'VNC_port',
+      name : 'vnc_port',
       placeholder : 'Port',
       tooltip : 'Can be set to <i>0</i>, left empty for FreeNAS to\
                  assign a port when the VM is started, or set to a\
@@ -221,14 +268,14 @@ export class DeviceAddComponent implements OnInit {
       inputType: 'number'
     },
     {
-      name : 'VNC_wait',
+      name : 'wait',
       placeholder : 'Wait to boot',
       tooltip : 'Set for the VNC client to wait until the VM has\
                  booted before attempting the connection.',
       type: 'checkbox'
     },
     {
-      name : 'VNC_resolution',
+      name : 'vnc_resolution',
       placeholder : 'Resolution',
       tooltip : 'Select a screen resolution to use for VNC sessions.',
       type: 'select',
@@ -277,16 +324,7 @@ export class DeviceAddComponent implements OnInit {
   protected ipAddress: any = [];
 
 
-  public selectedType = 'CDROM';
-  public formGroup: any;
-  public activeFormGroup: any;
-  public cdromFormGroup: any;
-  public diskFormGroup: any;
-  public nicFormGroup: any;
-  public rawfileFormGroup: any;
-  public vncFormGroup: any;
 
-  public custActions: any[];
 
   constructor(protected router: Router,
               protected aroute: ActivatedRoute,
@@ -319,7 +357,7 @@ export class DeviceAddComponent implements OnInit {
     });
     this.ws.call('notifier.choices', ['VM_NICTYPES']).subscribe(
       (res) => {
-        this.nicType = _.find(this.nicFieldConfig, { name: "NIC_type" });
+        this.nicType = _.find(this.nicFieldConfig, { name: "type" });
         res.forEach((item) => {
           this.nicType.options.push({ label: item[1], value: item[0] });
         });
@@ -390,14 +428,14 @@ export class DeviceAddComponent implements OnInit {
 
     this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]]]).subscribe((zvols)=>{
       zvols.forEach(zvol => {
-        _.find(this.diskFieldConfig, {name:'DISK_zvol'}).options.push(
+        _.find(this.diskFieldConfig, {name:'path'}).options.push(
           {
             label : zvol.id, value : '/dev/zvol/' + zvol.id
           }
         );   
       });
     });
-    // if bootloader == 'GRUB' or bootloader == "UEFI_CSM" or if VM has existing VNC device, hide VNC option
+    // if bootloader == 'GRUB' or bootloader == "UEFI_CSM" or if VM has existing VNC device, hide VNC option.
     this.ws.call('vm.query', [[['id', '=', parseInt(this.vmid,10)]]]).subscribe((vm)=>{
       if (vm[0].bootloader === 'GRUB' || vm[0].bootloader === "UEFI_CSM" || _.find(vm[0].devices, {dtype:'VNC'})){
         const dtypeField = _.find(this.fieldConfig, {name: "dtype"});
@@ -406,7 +444,23 @@ export class DeviceAddComponent implements OnInit {
             _.pull(dtypeField.options, dtypeField.options[i]);
           }
         }
-      };
+      } 
+      // if type == 'Container Provider' and rawfile boot device exists, hide rootpwd and boot fields.
+      if (_.find(vm[0].devices, {dtype:'RAW'}) && vm[0].type ==="Container Provider") {
+        vm[0].devices.forEach(element => {
+          if(element.dtype === "RAW") {
+            if (element.attributes.boot) {
+              this.rootpwd = _.find(this.rawfileFieldConfig, {'name': 'rootpwd'});
+              this.rootpwd.isHidden = false;
+              this.boot = _.find(this.rawfileFieldConfig, {'name': 'boot'});
+              this.boot.isHidden = false;
+            }
+
+          }
+          
+        });
+
+      }
     });
 
     this.custActions = [
@@ -415,7 +469,7 @@ export class DeviceAddComponent implements OnInit {
         name: 'Generate MAC Address',
         function: () => {
           this.ws.call('vm.random_mac').subscribe((random_mac) => {
-            this.nicFormGroup.controls['NIC_mac'].setValue(random_mac);
+            this.nicFormGroup.controls['mac'].setValue(random_mac);
           })
         }
       }

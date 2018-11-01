@@ -42,8 +42,9 @@ export class VmCardEditComponent implements OnChanges {
           { type: 'input',
             name : 'description',
             width:'100%',
-            placeholder : 'Description',
+            placeholder : 'Description (max. 25 characters)',
             tooltip: 'Describe the VM or its purpose.',
+            validation: Validators.maxLength(25),
           }
         ]
       },
@@ -125,23 +126,22 @@ export class VmCardEditComponent implements OnChanges {
 
   ngOnInit(){
     this.generateFieldConfig();
-    this.target.subscribe((evt) => {
-      if(evt.name == "CloneVM"){
-        this.cloneVM();
-      }
-    });
   }
 
   ngOnChanges(changes){
   }
 
   afterInit(entityForm: any) {
-    entityForm.ws.call('notifier.choices', [ 'VM_BOOTLOADER' ]).subscribe((res) => {
-      this.bootloader =_.find(this.fieldConfig, {name : 'bootloader'});
-      for (let item of res){
-        this.bootloader.options.push({label : item[1], value : item[0]})
-      }
-    });
+    this.bootloader =_.find(this.fieldConfig, {name : 'bootloader'});
+    if( entityForm.data.bootloader === "GRUB") {
+      this.bootloader.options.push({label : 'GRUB', value : 'GRUB'});
+    } else { 
+      entityForm.ws.call('notifier.choices', [ 'VM_BOOTLOADER' ]).subscribe((res) => {
+        for (let item of res){
+          this.bootloader.options.push({label : item[1], value : item[0]})
+        }
+      });
+    }
   }
 
   generateFieldConfig(){
@@ -150,10 +150,6 @@ export class VmCardEditComponent implements OnChanges {
         this.fieldConfig.push(this.fieldSets[i].config[ii]);
       }
     }
-  }
-  cloneVM(){
-    this.core.emit({name:"VmClone",data:[this.machineId]});
-    this.target.next({name:"CloningVM", sender:this});
   }
 
 }

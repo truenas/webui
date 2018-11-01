@@ -40,6 +40,10 @@ export class CloudsyncListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    deleteMsg: {
+      title: 'Cloud Sync Task',
+      key_props: ['description']
+    },
   };
 
   constructor(protected router: Router,
@@ -94,7 +98,7 @@ export class CloudsyncListComponent {
       id: "delete",
       label: T("Delete"),
       onClick: (row) => {
-        this.entityList.doDelete(row.id);
+        this.entityList.doDelete(row);
       },
     }]
   }

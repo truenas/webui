@@ -21,11 +21,19 @@ export class UserService {
 
   listGroups() { return this.rest.get(this.accountGroupResource, {limit: 50}); };
   
-  listAllUsers(offset: number = 0) { 
-    return this.rest.get(this.accountAllUsersResource,
+  listAllUsers(search = "", offset: number = 0) { 
+    let resource = this.accountAllUsersResource;
+    if (search) {
+      resource = resource + '?q=' + search;
+    }
+    return this.rest.get(resource,
             {offset: offset, limit: 50}) };
 
-  listAllGroups(offset: number = 0) { 
-    return this.rest.get(this.accountAllGroupsResource,
+  listAllGroups(search = "", offset: number = 0) { 
+    let resource = this.accountAllGroupsResource;
+    if (search) {
+      resource = resource + '?q=' + search;
+    }
+    return this.rest.get(resource,
             {offset: offset, limit: 50}) };
 }

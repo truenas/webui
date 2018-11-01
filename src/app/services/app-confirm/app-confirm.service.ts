@@ -9,12 +9,13 @@ export class AppConfirmService {
 
   constructor(private dialog: MatDialog) { }
 
-  public confirm(title: string, message: string): Observable<boolean> {
+  public confirm(title: string, message: string, customButton: string): Observable<boolean> {
     let dialogRef: MatDialogRef<AppComfirmComponent>;
     dialogRef = this.dialog.open(AppComfirmComponent, {disableClose: true});
     dialogRef.updateSize('380px');
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.message = message;
+    dialogRef.componentInstance.customButton = customButton;
     return dialogRef.afterClosed();
   }
 }

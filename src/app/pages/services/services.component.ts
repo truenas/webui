@@ -52,6 +52,7 @@ export class Services implements OnInit {
 
   public cache = [];
   public showSpinner: boolean = true;
+  // public viewValue: any;
 
   constructor(protected rest: RestService, protected ws: WebSocketService, protected router: Router,
     private confirmService: AppConfirmService, private dialog: DialogService) {}
@@ -72,8 +73,8 @@ export class Services implements OnInit {
   }
 
   ngOnInit() {
-    this.viewMode.value = "cards";
-
+    // window.localStorage.getItem('viewValue') ? this.viewMode.value = window.localStorage.getItem('viewValue') : this.viewMode.value = 'cards';
+    this.viewMode.value = 'table';   
     this.busy =
       this.ws.call('service.query', [
         [], { "order_by": ["service"] }
@@ -111,14 +112,14 @@ export class Services implements OnInit {
     this.cards = this.cache;
   }
 
-  cardStyles() {
-    let cardStyles = {
-      'width': this.viewMode.value == 'slim' ? '285px' : '380px',
-      'height': '250px',
-      'margin': '25px auto'
-    }
-    return cardStyles;
-  }
+  // cardStyles() {
+  //   let cardStyles = {
+  //     'width': this.viewMode.value == 'slim' ? '285px' : '380px',
+  //     'height': '250px',
+  //     'margin': '25px auto'
+  //   }
+  //   return cardStyles;
+  // }
 
   toggle(service: any) {
     let rpc: string;
@@ -129,7 +130,7 @@ export class Services implements OnInit {
     }
 
     if (rpc === 'service.stop') {
-      let confirm = this.confirmService.confirm('Alert', 'Stop this service?');
+      let confirm = this.confirmService.confirm(T('Alert'), T('Stop this service?'), T('Stop'));
       confirm.subscribe(res => {
         if (res) {
           this.updateService(rpc, service);
@@ -138,6 +139,7 @@ export class Services implements OnInit {
     } else {
       this.updateService(rpc, service);
     }
+
   }
 
   updateService(rpc, service) {

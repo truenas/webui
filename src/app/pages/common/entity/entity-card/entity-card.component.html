@@ -1,4 +1,4 @@
-<div id="entity-card.component" class="flip" style="width:inherit; height:inherit;" [ngClass]="{'raised':conf.isFlipped}">
+<div id="{{id}}" class="flip" style="width:inherit; height:inherit;" [ngClass]="{'raised':conf.isFlipped}">
   <div class="card-container" [ngClass]="{'flipped':conf.isFlipped}">
     <mat-card class="card front face animated slideInUp">
       <ng-template [ngTemplateOutlet]="front" [ngTemplateOutletContext]="{name: 'Child'}"></ng-template>

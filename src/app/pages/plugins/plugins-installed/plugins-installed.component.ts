@@ -4,12 +4,16 @@ import * as _ from 'lodash';
 
 import { RestService, WebSocketService } from '../../../services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { DialogService } from '../../../../app/services';
 import { EntityUtils } from '../../common/entity/utils';
 import { T } from '../../../translate-marker';
 
 @Component({
   selector: 'app-plugins-installed-list',
-  template: `<entity-table [title]="title" [conf]="this"></entity-table>`
+  // template: `<entity-table [title]="title" [conf]="this"></entity-table>`
+  templateUrl: './plugins-installed.component.html',
+  styleUrls: ['../plugins-available/plugins-available-list.component.css'],
+  providers: [ DialogService ]
 })
 export class PluginsInstalledListComponent {
 
@@ -19,6 +23,9 @@ export class PluginsInstalledListComponent {
   protected wsDelete = 'jail.do_delete';
   protected wsMultiDelete = 'core.bulk';
   protected entityList: any;
+  public toActivatePool: boolean = false;
+  public legacyWarning = T("Note: Legacy plugins created before FreeNAS 11.2 must be managed from the");
+  public legacyWarningLink = T("legacy web interface");
 
   public columns: Array < any > = [
     { name: T('Jail'), prop: '1' },
@@ -34,7 +41,12 @@ export class PluginsInstalledListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
-    multiSelect: true
+    multiSelect: true,
+    deleteMsg: {
+      title: 'Plugin',
+      key_props: ['1'],
+      id_prop: '1',
+    },
   };
   public multiActions: Array < any > = [{
       id: "mstart",
@@ -50,12 +62,13 @@ export class PluginsInstalledListComponent {
             (res) => {
               for (let i in selected) {
                 selected[i][3] = 'up';
+                this.updateRow(selected[i]);
               }
               this.updateMultiAction(selected);
               this.loader.close();
             },
             (res) => {
-              new EntityUtils().handleWSError(this, res);
+              new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
               this.loader.close();
             });
             
@@ -75,12 +88,13 @@ export class PluginsInstalledListComponent {
             (res) => {
               for (let i in selected) {
                 selected[i][3] = 'down';
+                this.updateRow(selected[i]);
               }
               this.updateMultiAction(selected);
               this.loader.close();
             },
             (res) => {
-              new EntityUtils().handleWSError(this, res);
+              new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
               this.loader.close();
             });
       }
@@ -96,7 +110,53 @@ export class PluginsInstalledListComponent {
       }
     },
   ];
-  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected loader: AppLoaderService) {}
+
+  public isPoolActivated: boolean;
+  public selectedPool;
+  public activatedPool: any;
+  public availablePools: any;
+
+  constructor(protected router: Router, protected rest: RestService,
+              protected ws: WebSocketService, protected loader: AppLoaderService,
+              protected dialogService: DialogService) {
+    this.getActivatedPool();
+    this.getAvailablePools();
+  }
+
+  getActivatedPool(){
+    this.ws.call('jail.get_activated_pool').subscribe((res)=>{
+      if (res != null) {
+        this.activatedPool = res;
+        this.selectedPool = res;
+        this.isPoolActivated = true;
+      } else {
+        this.isPoolActivated = false;
+      }
+    })
+  }
+
+  getAvailablePools(){
+    this.ws.call('pool.query').subscribe( (res)=> {
+      this.availablePools = res;
+    })
+  }
+
+  activatePool(event: Event){
+    this.loader.open();
+    this.ws.call('jail.activate', [this.selectedPool]).subscribe(
+      (res)=>{
+        this.loader.close();
+        this.isPoolActivated = true;
+        this.activatedPool = this.selectedPool;
+        if (this.toActivatePool) {
+          this.entityList.getData();
+        }
+        this.entityList.snackBar.open("Successfully activate pool " + this.selectedPool , 'close', { duration: 5000 });
+      },
+      (res) => {
+        new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
+      });
+  }
 
   afterInit(entityList: any) { this.entityList = entityList; }
 
@@ -107,8 +167,33 @@ export class PluginsInstalledListComponent {
       return false;
     } else if (actionId === 'management' && (row[3] === "down" || row[9] == null)) {
       return false;
+    } else if (actionId === 'restart' && row[3] === "down") {
+      return false;
     }
     return true;
+  }
+
+  updateRow(row) {
+    this.ws.call('jail.list_resource', ["PLUGIN"]).subscribe(
+      (res) => {
+        for(let i = 0; i < res.length; i++) {
+          if (res[i][1] == row[1]) {
+            for (let j = 0; j < row.length; j++) {
+              if (j == 6) {
+                if (_.split(res[i][j], '|').length > 1) {
+                  row[j] = _.split(res[i][j], '|')[1];
+                } else {
+                  row[j] = res[i][j];
+                }
+              } else {
+                row[j] = res[i][j];
+              }
+            }
+            break;
+          }
+        }
+      }
+    )
   }
 
   getActions(parentRow) {
@@ -121,11 +206,36 @@ export class PluginsInstalledListComponent {
             this.ws.call('jail.start', [row[1]]).subscribe(
               (res) => {
                 this.loader.close();
-                row[3] = 'up';
+                this.updateRow(row);
               },
               (res) => {
                 this.loader.close();
-                new EntityUtils().handleWSError(this, res);
+                new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
+              });
+        }
+      },
+      {
+        id: "restart",
+        label: T("Restart"),
+        onClick: (row) => {
+          this.loader.open();
+          row[3] = 'restarting';
+          this.entityList.busy =
+            this.ws.call('jail.stop', [row[1]]).subscribe(
+              (res) => {
+                this.ws.call('jail.start', [row[1]]).subscribe(
+                  (res) => {
+                    this.loader.close();
+                    this.updateRow(row);
+                  },
+                  (res) => {
+                    this.loader.close();
+                    new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
+                  });
+              },
+              (res) => {
+                this.loader.close();
+                new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
               });
         }
       },
@@ -138,11 +248,11 @@ export class PluginsInstalledListComponent {
             this.ws.call('jail.stop', [row[1]]).subscribe(
               (res) => {
                 this.loader.close();
-                row[3] = 'down';
+                this.updateRow(row);
               },
               (res) => {
                 this.loader.close();
-                new EntityUtils().handleWSError(this, res);
+                new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
               });
         }
       },
@@ -157,7 +267,7 @@ export class PluginsInstalledListComponent {
         id: "delete",
         label: T("Delete"),
         onClick: (row) => {
-          this.entityList.doDelete(row[1]);
+          this.entityList.doDelete(row);
         }
       }
     ]
@@ -172,13 +282,13 @@ export class PluginsInstalledListComponent {
   }
 
   updateMultiAction(selected: any) {
-    if (_.find(selected, ['3', 'up'])) {
+    if (_.find(selected, function(plugin) { return plugin[3] == 'up'; })) {
      _.find(this.multiActions, {'id': 'mstop'})['enable'] = true;
     } else {
       _.find(this.multiActions, {'id': 'mstop'})['enable'] = false;
     }
 
-    if (_.find(selected, ['3', 'down'])) {
+    if (_.find(selected, function(plugin) { return plugin[3] == 'down'; })) {
      _.find(this.multiActions, {'id': 'mstart'})['enable'] = true;
     } else {
       _.find(this.multiActions, {'id': 'mstart'})['enable'] = false;

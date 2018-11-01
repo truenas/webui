@@ -1,8 +1,7 @@
-import { Component, OnInit, AfterViewInit,OnDestroy, Input, ElementRef, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, ElementRef, ViewChild} from '@angular/core';
+import { UUID } from 'angular2-uuid';
 import { Router } from '@angular/router';
-import { MaterialModule } from '../../../appMaterial.module';
 import { MatButtonToggleGroup } from '@angular/material/button-toggle';
-import { EntityModule } from '../../common/entity/entity.module';
 import { WebSocketService, RestService } from '../../../services/';
 import { DialogService } from '../../../services/dialog.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
@@ -13,15 +12,14 @@ import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/observable/fromEvent';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { EntityUtils } from '../../../pages/common/entity/utils';
-import { MatDialog, MatDialogRef, MatSnackBar } from '@angular/material';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { MatDialog } from '@angular/material';
 import { T } from '../../../translate-marker';
 import 'rxjs/add/observable/interval';
 
 interface VmProfile {
   name?:string;
   id?:string;
+  domId?: string;
   description?:string;
   info?:string;
   bootloader?:string;
@@ -37,6 +35,7 @@ interface VmProfile {
   vm_type?: string;
   vm_comport?:string
   isNew?:boolean;
+  transitionalState?:boolean;
 }
 
 @Component({
@@ -44,9 +43,9 @@ interface VmProfile {
   templateUrl: './vm-cards.component.html',
   styleUrls: ['./vm-cards.component.css'],
 })
-export class VmCardsComponent implements OnInit,OnDestroy {
+export class VmCardsComponent implements OnInit, OnDestroy {
 
-  @ViewChild('filter') filter: ElementRef;
+  @ViewChild('filter') filter: ElementRef; 
   @Input() searchTerm = '';
   @Input() cards = []; // Display List
   @Input() cache = []; // Master List:
@@ -68,6 +67,8 @@ export class VmCardsComponent implements OnInit,OnDestroy {
   public spin = true;
   public direction ='down';
   public animationMode = 'fling';
+  public off_text: string;  
+  public off_button_text: string;
 
   public actions: any = [
     {
@@ -89,37 +90,55 @@ export class VmCardsComponent implements OnInit,OnDestroy {
 
   ngOnInit() {
     this.viewMode.value = "cards";
-    Observable.interval(1000).subscribe((val) => { 
+    /* TODO: remove this after middleware part is ready to give back
+    correct state.
+    */
+    Observable.interval(5000).subscribe((val) => {
       this.checkStatus();
-     })
+     });
     /*
      * Communication Downwards:
      * Listen for events from UI controls
      * */
 
     this.controlEvents.subscribe((evt:CoreEvent) => {
-      const index = this.getCardIndex("id",evt.sender.machineId);
+      //if(evt.sender){
+        const index = this.getCardIndex("id",evt.sender.machineId);
+      //}
       switch(evt.name){
         case "FormSubmitted":
           //evt.data.autostart = evt.data.autostart.toString();
+          this.cards[index].state = "Saving"
+          const profile = this.stripUIProperties(evt.data);
           if(evt.sender.isNew){
             const i = this.getCardIndex('isNew',true);
             this.cards[i].name = evt.data.name;
             this.cards[i].state = "Loading...";
-            this.core.emit({name:"VmCreate",data:[evt.data] ,sender:evt.sender.machineId});
+            this.core.emit({name:"VmCreate",data:[profile] ,sender:evt.sender.machineId});
           } else {
             const formValue = this.parseResponse(evt.data,true);
-            this.core.emit({name:"VmProfileUpdate",data:[evt.sender.machineId,formValue] ,sender:evt.sender.machineId});
-            this.toggleForm(false,this.cards[index],'none');
-            //this.refreshVM(index,evt.sender.machineId);
+            this.core.emit({name:"VmProfileUpdate",data:[evt.sender.machineId,this.stripUIProperties(formValue)] ,sender:evt.sender.machineId});
+            this.toggleForm(false,this.cards[index],'none'); 
           }
         break;
         case "FormCancelled":
           this.cancel(index);
         break;
-        case "CloningVM":
+        case "CloneVM":
           this.cards[index].state = "creating clone";
           this.cancel(index);
+          this.core.emit({name:"VmClone", data: this.cards[index].id, sender:this});
+          this.core.register({observerClass:this,eventName:"VmProfilesRequest"}).subscribe((clone_evt:CoreEvent) => {
+           if (clone_evt.data && clone_evt.data.trace) {
+            this.dialog.errorReport(
+              T('VM clone failed.') , clone_evt.data.reason, clone_evt.data.trace.formatted).subscribe((result)=>{
+                this.core.emit({name:"VmProfilesRequest"});
+              })
+           };
+          })
+        break;
+        case "RestartVM":
+          this.restartVM(index);
         break;
       default:
       break;
@@ -141,36 +160,43 @@ export class VmCardsComponent implements OnInit,OnDestroy {
     });
 
     this.core.register({observerClass:this,eventName:"VmStatus"}).subscribe((evt:CoreEvent) => {
-      const cardIndex = this.getCardIndex('id',evt.data.id);
-      this.cards[cardIndex].state = evt.data.state.toLowerCase();
+      evt.data.forEach(vmstatus => {
+        const cardIndex = this.getCardIndex('id',vmstatus.id);
+        if(vmstatus.state && this.cards[cardIndex]){
+          this.cards[cardIndex].state = vmstatus.state.toLowerCase();
+          const cacheIndex = this.getCardIndex('id',vmstatus.id,true);
+          this.cache[cacheIndex].state = vmstatus.state.toLowerCase();
+        };
+      });
 
-      const cacheIndex = this.getCardIndex('id',evt.data.id,true);
-      this.cache[cacheIndex].state = evt.data.state.toLowerCase();
     });
-
     this.core.register({observerClass:this,eventName:"VmStarted"}).subscribe((evt:CoreEvent) => {
-      if(typeof evt.data.id == "string"){
-        const cardIndex = this.getCardIndex('id',evt.data.id);
-        this.cards[cardIndex].state = 'running';
-
-        const cacheIndex = this.getCardIndex('id',evt.data.id,true);
-        this.cache[cacheIndex].state = 'running';
-      } else {
-        this.dialog.errorReport(T('VM failed to start') , evt.data.reason, evt.data.trace.formatted)
-        const cardIndex = this.getCardIndex('id',evt.data.id[0]);
-        this.cards[cardIndex].state = 'stopped';
-
-        const cacheIndex = this.getCardIndex('id',evt.data.id[0],true);
-        this.cache[cacheIndex].state = 'stopped';
-      }
+        if (evt.data.trace) {
+          this.dialog.errorReport(T('VM failed to start') , evt.data.reason, evt.data.trace.formatted)
+          const cardIndex = this.getCardIndex('id',evt.data.id[0]);
+          this.cards[cardIndex].state = 'stopped';
+  
+          const cacheIndex = this.getCardIndex('id',evt.data.id[0],true);
+          this.cache[cacheIndex].state = 'stopped';
+        } else {
+          const cardIndex = this.getCardIndex('id',evt.data.id);
+          this.cards[cardIndex].state = 'running';
+          this.cards[cardIndex].transitionalState = false;
+  
+          const cacheIndex = this.getCardIndex('id',evt.data.id,true);
+          this.cache[cacheIndex].state = 'running';
+          this.cache[cacheIndex].transitionalState =  false;
+        }
     });
 
     this.core.register({observerClass:this,eventName:"VmStopped"}).subscribe((evt:CoreEvent) => {
       const cardIndex = this.getCardIndex('id',evt.data.id);
       this.cards[cardIndex].state = 'stopped';
+      this.cards[cardIndex].transitionalState = false;
 
       const cacheIndex = this.getCardIndex('id',evt.data.id,true);
       this.cache[cacheIndex].state = 'stopped';
+      this.cache[cacheIndex].transitionalState =  false;
     });
 
     this.core.register({observerClass:this,eventName:"VmCreated"}).subscribe((evt:CoreEvent) => {
@@ -220,7 +246,7 @@ export class VmCardsComponent implements OnInit,OnDestroy {
   }
 
   parseResponse(data:any, formatForUpdate?:boolean){
-    const card: VmProfile = {
+    let card: VmProfile = {
       name:data.name,
       description:data.description,
       info:data.info,
@@ -230,7 +256,9 @@ export class VmCardsComponent implements OnInit,OnDestroy {
       memory:data.memory,
       //lazyLoaded: false,
       devices:data.devices,
-      vm_type: data.vm_type
+      vm_type: data.vm_type,
+      domId: "id-" + UUID.UUID(),
+      transitionalState: false
     }
 
     // Leave out properties not used for update requests
@@ -258,7 +286,8 @@ export class VmCardsComponent implements OnInit,OnDestroy {
   }
 
   scrollTo(destination:string){
-    this.core.emit({name:"ScrollTo", data: destination});
+    //console.log(destination)
+    this.core.emit({name:"ScrollTo", data: "#" + destination});
   }
 
   getVmList(){
@@ -275,23 +304,26 @@ export class VmCardsComponent implements OnInit,OnDestroy {
 
     this.cache = [];
     for(let i = 0; i < res.data.length; i++){
-      const card = this.parseResponse(res.data[i]);
-      //this.checkVnc(card);
+      let card = this.parseResponse(res.data[i]);
       this.cache.push(card);
     }
+
     if(init){
       this.displayAll();
     } else {
       this.updateCards();
     }
+
     this.checkStatus();
     if(scroll && this.cards.length == res.data.length){
       setTimeout(()=>{
       let test = (<any>document).querySelector('.vm-card-' + this.cards[this.cards.length-1].id);
-      this.scrollTo(String('.vm-card-' + this.cards[this.cards.length-1].id));
+      this.scrollTo(String(this.cards[this.cards.length-1].domId));
+      
       //this.scrollTo('#animation-target');
       },1000);
     }
+
   }
 
 
@@ -368,6 +400,7 @@ export class VmCardsComponent implements OnInit,OnDestroy {
       memory:"",
       lazyLoaded: false,
       template:'',
+      transitionalState: false,
       isNew:true
     }
     //this.cards.push(card);
@@ -395,6 +428,13 @@ export class VmCardsComponent implements OnInit,OnDestroy {
         this.core.emit({name:"VmDelete", data:[this.cards[index].id], sender:index});
       }
     })
+  }
+
+  restartVM(index:number){ 
+    const vm = this.cards[index];
+    vm.transitionalState = true;
+    vm.state = "restarting"
+    this.core.emit({name:"VmRestart", data: [vm.id]});
   }
 
   removeVM(evt:CoreEvent){
@@ -435,19 +475,6 @@ export class VmCardsComponent implements OnInit,OnDestroy {
     );
   }
 
-  /*cloneVM(index){
-    this.loader.open();
-    this.loaderOpen = true;
-    this.ws.call('vm.clone', [this.cards[index].id]).subscribe((res)=>{
-      this.loader.close();
-      this.getVmList();
-    },
-  (eres)=>{
-    new EntityUtils().handleError(this, eres);
-    this.loader.close();
-    });
-  }*/
-
   toggleForm(flipState, card, template){
     // load #cardBack template with code here
     card.template = template;
@@ -459,75 +486,50 @@ export class VmCardsComponent implements OnInit,OnDestroy {
 
   // toggles VM on/off
   toggleVmState(index, poweroff?:boolean){
+    if (index.force) {
+      poweroff = index.force;
+      index = index.index;
+    };
     const vm = this.cards[index];
+    if(vm.transitionalState){
+      return ;
+    } else {
+      // Use transitionalState to avoid errors from multiple button presses
+      vm.transitionalState = true;
+    }
     let eventName: string;
     if (vm.state !== 'running') {
       this.ws.call('vm.query', [[['id', '=', vm.id]]]).subscribe((res)=>{
-        for (const device of res[0].devices){
-          if(device.dtype === 'RAW' && device.attributes.boot){
-            this.raw_file_path = device.attributes.path;
-            this.raw_file_path_size = String(device.attributes.size);
-          }
-        }
-          if (res[0].vm_type === "Container Provider"){
-            this.dialogRef = this.matdialog.open(EntityJobComponent, { data: {title: 'Fetching RancherOS'}, disableClose: false});
-            // this.dialogRef.componentInstance.progressNumberType = "nopercent";
-            this.dialogRef.componentInstance.setCall('vm.fetch_image', ['RancherOS']);
-            this.dialogRef.componentInstance.submit();
-            this.dialogRef.componentInstance.success.subscribe((sucess_res) => {
-              this.loader.open();
-              this.ws.call('vm.image_path', ['RancherOS']).subscribe((img_path)=>{
-                if(!img_path){
-                  this.dialog.Info('CHECKSUM MISMATCH', 'System checks failed to verify ISO. Please try again.');
-                  this.loader.close();
-                  return;
-                };
-                this.ws.call('vm.decompress_gzip',[img_path, this.raw_file_path]).subscribe((decompress_gzip)=>{
-                  this.ws.call('vm.raw_resize',[this.raw_file_path, this.raw_file_path_size]).subscribe((raw_resize)=>{
-                    // this.ws.call('vm.start',[this.cards[index].id]).subscribe((vm_start)=>{
-                    //     this.loader.close();
-                    //     if(!vm_start){
-                    //       this.dialog.Info('ERROR', 'VM failed to start. Check system log.');
-                    //       return;
-                    //     }
-                    //     this.refreshVM(index, this.cards[index].id);
-
-                    //   });
-                    this.core.emit({name: "VmStart", data:[vm.id]});
-                    this.loader.close();
-                    },
-                    (error_raw_resize)=>{
-                      this.loader.close();
-                      new EntityUtils().handleError(this, error_raw_resize);
-                    })
-                },(decompress_gzip)=>{
-                  this.loader.close();
-                  new EntityUtils().handleError(this, decompress_gzip);
-              });
-              },(error_img_path)=>{
-                this.loader.close();
-                new EntityUtils().handleError(this, error_img_path);
-              });
-              this.dialogRef.close(false);
-              this.dialogRef.componentInstance.setDescription("");
-            });
-            this.dialogRef.componentInstance.failure.subscribe((failed_res) => {});
-          }
-          else {
             eventName = "VmStart";
-            this.cards[index].state = "starting";
+            // removed transient state `starting` as it would cause confusion with new requirements.
+            //this.cards[index].state = "starting";
             this.core.emit({name: eventName, data:[vm.id]});
-          }
       });
     }
      else {
       if(poweroff){
-        eventName = "VmPowerOff";
-      } else {
-        eventName = "VmStop";
+         this.off_text =  `Turn off power to virtual machine "${vm.name}"?`;
+         this.off_button_text = 'Power off';
       }
-      this.cards[index].state = "stopping";
-      this.core.emit({name: eventName, data:[vm.id]});
+      else {
+        this.off_text =  `Stop virtual machine "${vm.name}"?`;
+        this.off_button_text = 'Stop virtual machine';
+      }
+        this.dialog.confirm("Alert",this.off_text, false, this.off_button_text).subscribe((res)=>{
+          if(res) {
+           if(poweroff){
+             eventName = "VmPowerOff";
+             this.cards[index].state = "stopping";
+             this.core.emit({name: eventName, data:[vm.id]});
+           } else {
+             eventName = "VmStop";
+             this.cards[index].state = "stopping";
+             this.core.emit({name: eventName, data:[vm.id]});
+           }
+          } else {
+            vm.transitionalState = false;
+          }
+        })
     }
   }
 
@@ -575,19 +577,17 @@ export class VmCardsComponent implements OnInit,OnDestroy {
     }
   }
 
-  checkStatus(id?:number){
-    if(id){
-      this.core.emit({
-        name:"VmStatusRequest",
-        data:[id]
-      });
-    } else {
-      for(let i = 0; i < this.cache.length; i++){
-        this.core.emit({
-          name:"VmStatusRequest",
-          data:[this.cache[i].id]
-        });
-    }
-    }
+  checkStatus(id?:number){ 
+    this.core.emit({
+      name:"VmStatusRequest",
+      data:[]
+    });
+  }
+  
+  stripUIProperties(profile:VmProfile){
+    let clone = Object.assign({}, profile);
+    delete clone.domId;
+    delete clone.transitionalState;
+    return clone;
   }
 }

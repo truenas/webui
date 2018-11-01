@@ -243,7 +243,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         this.disks.push(res[i]);
       }
 
-     this.disks = this.sorter.mySorter(this.disks, 'devname');
+     this.disks = this.sorter.tableSorter(this.disks, 'devname', 'asc');
 
 
       // assign disks for suggested layout
@@ -317,6 +317,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     let data_vdev_disknum = 0;
     let data_disk_found = false;
+    let any_disk_found = false;
     let data_vdev_type;
     this.disknumError = null;
     this.vdevtypeError = null;
@@ -349,16 +350,21 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
           }
         }
 
-      }
-      if (!this.isNew) {
+      } else {
         if (vdev.disks.length > 0) {
-          this.needs_disk = false;
+          any_disk_found = true;
         }
       }
 
     });
     if (this.isNew) {
       this.needs_disk = !data_disk_found;
+    } else {
+      if (data_disk_found || any_disk_found) {
+        this.needs_disk = false;
+      } else {
+        this.needs_disk = true;
+      }
     }
     this.size = (<any>window).filesize(size_estimate, {standard : "iec"});
   }
@@ -495,7 +501,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
      this.disks.push(disk);
      this.disks = [...this.disks];
      this.temp.push(disk);
-     this.disks = this.sorter.mySorter(this.disks, 'devname');
+     this.disks = this.sorter.tableSorter(this.disks, 'devname', 'asc');
   }
 
   removeDisk(disk: any) {
@@ -565,5 +571,11 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     } else {
       this.poolError = null;
     }
+  }
+
+  reorderEvent(event) {
+    let sort = event.sorts[0],
+      rows = this.disks;
+    this.sorter.tableSorter(rows, sort.prop, sort.dir);
   }
 }

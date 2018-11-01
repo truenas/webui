@@ -3,7 +3,7 @@ import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { Router } from '@angular/router';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { MaterialModule } from 'app/appMaterial.module';
-import { AnimationDirective } from 'app/core/directives/animation.directive';
+
 import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { environment } from 'app/../environments/environment';
@@ -113,7 +113,8 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
     });
 
     this.core.register({observerClass:this, eventName:"PrimaryNicInfo"}).subscribe((evt:CoreEvent) => {
-      let aliases = evt.data.aliases;
+      if(!evt.data){ throw "PrimaryNicInfo event sent without data attached."}
+      let aliases = evt.data.aliases ? evt.data.aliases : "No aliases set";
       for(let i = 0; i < aliases.length; i++){
         if(aliases[i].type == "INET"){
           this.connectionIp = aliases[i].address;

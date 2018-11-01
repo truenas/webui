@@ -5,6 +5,8 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { Subscription } from 'rxjs';
 import { EntityUtils } from '../../../common/entity/utils';
 import { T } from '../../../../translate-marker';
+import { MatSnackBar } from '@angular/material';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-storage-list',
@@ -25,7 +27,9 @@ export class StorageListComponent {
   public busy: Subscription;
   protected loaderOpen: boolean = false;
 
-  constructor(protected router: Router, protected aroute: ActivatedRoute, protected dialog: DialogService, protected loader: AppLoaderService, protected ws: WebSocketService) {
+  constructor(protected router: Router, protected aroute: ActivatedRoute, protected dialog: DialogService,
+              protected loader: AppLoaderService, protected ws: WebSocketService, protected snackBar: MatSnackBar,
+              protected translate: TranslateService) {
     this.aroute.params.subscribe(params => {
       this.jailId = params['jail'];
       this.queryCallOption.push(params['jail']);
@@ -43,6 +47,10 @@ export class StorageListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    deleteMsg: {
+      title: 'Mount Point',
+      key_props: ['source', 'destination']
+    },
   };
 
   afterInit(entityTable) {
@@ -54,17 +62,20 @@ export class StorageListComponent {
 
   dataHandler(entityList: any) {
     entityList.rows = [];
+
     if (this.queryRes[0]) {
       for (let i = 0; i < Object.keys(this.queryRes[0]).length - 1; i++) {
-        let row = [];
-        row['source'] = this.queryRes[0][i][0];
-        row['destination'] = this.queryRes[0][i][1];
-        row['fstype'] = this.queryRes[0][i][2];
-        row['fsoptions'] = this.queryRes[0][i][3];
-        row['dump'] = this.queryRes[0][i][4];
-        row['_pass'] = this.queryRes[0][i][5];
-        row['id'] = i;
-        entityList.rows.push(row);
+        if (this.queryRes[0][i].type != "SYSTEM") {
+          let row = [];
+          row['source'] = this.queryRes[0][i].entry[0];
+          row['destination'] = this.queryRes[0][i].entry[1];
+          row['fstype'] = this.queryRes[0][i].entry[2];
+          row['fsoptions'] = this.queryRes[0][i].entry[3];
+          row['dump'] = this.queryRes[0][i].entry[4];
+          row['_pass'] = this.queryRes[0][i].entry[5];
+          row['id'] = i;
+          entityList.rows.push(row);
+        }
       }
     }
   }
@@ -73,13 +84,17 @@ export class StorageListComponent {
 
   }
 
-  doDelete(id) {
-    this.dialog.confirm(T("Delete"), T("Delete this item?"), false, T('Delete Mount Point')).subscribe((res) => {
+  doDelete(item) {
+    let deleteMsg =  "Delete Mount Point <b>" + item['source'] + '</b>?';
+    this.translate.get(deleteMsg).subscribe((res) => {
+      deleteMsg = res;
+    });
+    this.dialog.confirm(T("Delete"), deleteMsg, false, T('Delete Mount Point')).subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
         let data = {};
-        this.busy = this.ws.call('jail.fstab', [this.jailId, { "action": "REMOVE", "index": id}]).subscribe(
+        this.busy = this.ws.call('jail.fstab', [this.jailId, { "action": "REMOVE", "index": item.id}]).subscribe(
           (res) => { this.getData() },
           (res) => {
             new EntityUtils().handleError(this, res);
@@ -98,5 +113,19 @@ export class StorageListComponent {
         this.router.navigate(new Array('').concat(['jails']));
       }
     }];
+  }
+
+  doAdd() {
+    this.ws.call('jail.query', [
+      [
+        ["host_hostuuid", "=", this.jailId]
+      ]
+    ]).subscribe((res) => {
+      if (res[0] && res[0].state == 'up') {
+        this.snackBar.open(this.jailId + " should not be running when adding a mountpoint.", 'close', { duration: 5000 });
+      } else {
+        this.router.navigate(new Array('/').concat(this.route_add));
+      }
+    })
   }
 }

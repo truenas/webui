@@ -3,6 +3,7 @@ import * as domHelper from '../../helpers/dom.helper';
 import { RestService, WebSocketService } from 'app/services';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { ApiService } from 'app/core/services/api.service';
+import { Router } from '@angular/router';
 
 export interface Theme {
   name: string;
@@ -56,7 +57,7 @@ export class ThemeService {
       logoPath:'assets/images/light-logo.svg',
       logoTextPath:'light-logo-text.svg',
       favorite:false,
-      accentColors:['blue', 'orange','green', 'violet','cyan', 'magenta', 'yellow','red'],
+      accentColors:['green', 'violet', 'orange', 'cyan', 'magenta', 'red', 'yellow', 'blue'],
       primary:"var(--blue)",
       accent:"var(--yellow)",
       bg1:'#dddddd',
@@ -68,7 +69,7 @@ export class ThemeService {
       'alt-fg1':'#181a26',
       'alt-fg2':'#282a36',
       yellow:'#f0cb00',
-      orange:'#eec302',
+      orange:'#ee9302',
       red:'#ff0013',
       magenta:'#d238ff',
       violet:'#c17ecc',
@@ -85,7 +86,7 @@ export class ThemeService {
       logoPath:'assets/images/light-logo.svg',
       logoTextPath:'light-logo-text.svg',
       favorite:false,
-      accentColors:['blue', 'green','violet', 'yellow', 'red', 'cyan', 'magenta', 'orange'],
+      accentColors:['green','violet', 'yellow', 'red', 'cyan', 'magenta', 'orange','blue'],
       primary:"var(--blue)",
       accent:"var(--violet)",
       bg1:'#181a26',
@@ -170,8 +171,9 @@ export class ThemeService {
   public globalPreview: boolean = false;
   public globalPreviewData: any;
 
-  constructor(private rest: RestService, private ws: WebSocketService, private core:CoreService, private api:ApiService) {
-    console.log("*** New Instance of Theme Service ***");
+  public userThemeLoaded: boolean = false;
+  constructor(private rest: RestService, private ws: WebSocketService, private core:CoreService, private api:ApiService,
+              private route: Router) {
 
     // Set default list
     this.allThemes = this.freenasThemes;
@@ -186,6 +188,10 @@ export class ThemeService {
         //console.warn("SETTING DEFAULT THEME");
         this.resetToDefaultTheme();
       }
+    });
+
+    this.core.register({observerClass:this, eventName:"ThemeDataRequest"}).subscribe((evt:CoreEvent) => {
+      this.core.emit({name:"ThemeData", data:this.findTheme(this.activeTheme), sender:this});
     });
 
     this.core.register({observerClass:this,eventName:"GlobalPreviewChanged"}).subscribe((evt:CoreEvent) => {
@@ -213,6 +219,7 @@ export class ThemeService {
       //if(evt.data.userTheme !== this.activeTheme){
         this.activeTheme = evt.data.userTheme;
         this.setCssVars(this.findTheme(this.activeTheme, true));
+        this.userThemeLoaded = true;
         this.core.emit({name:'ThemeChanged', data: this.findTheme(this.activeTheme), sender:this});
       //}
 
@@ -227,6 +234,13 @@ export class ThemeService {
       } else if(!evt.data.allowPwToggle){
         (<any>document).documentElement.style.setProperty("--toggle_pw_display_prop", "none");
       }
+      
+      if(evt.data.hideWarning){
+        (<any>document).documentElement.style.setProperty("--hideWarning","inline");
+      } else if(!evt.data.allowPwToggle){
+        (<any>document).documentElement.style.setProperty("--hideWarning", "none");
+      }
+
     });
   }
 

@@ -1,20 +1,14 @@
-import { ApplicationRef, Component, Injector, OnInit, Inject, NgZone, ViewChild, EventEmitter } from '@angular/core';
-import { AbstractControl, FormArray, FormGroup, Validator } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { Observable, Observer, Subscription, Subject } from 'rxjs';
-import { HttpClient, HttpParams, HttpRequest, HttpEvent, HttpHeaders } from '@angular/common/http';
+import {  Component,  ViewChild, } from '@angular/core';
+import { FormGroup } from '@angular/forms';
+import { Subscription } from 'rxjs/Subscription';
+import { Observer  } from 'rxjs/Observer';
+import { HttpClient, HttpRequest, HttpEventType, HttpResponse } from '@angular/common/http';
 import { TranslateService } from '@ngx-translate/core';
-
 import { FieldConfig } from '../../models/field-config.interface';
-import { Field } from '../../models/field.interface';
-import { RestService, WebSocketService, DialogService } from '../../../../../../services/';
+import { WebSocketService } from '../../../../../../services/';
 import { AppLoaderService } from '../../../../../../services/app-loader/app-loader.service';
-import { EntityJobComponent } from '../../../entity-job/entity-job.component';
-import { TooltipComponent } from '../tooltip/tooltip.component';
-
-import { RequestOptions, Http } from '@angular/http';
-import { Headers } from '@angular/http';
 import { MatSnackBar } from '@angular/material';
+import { DialogService } from '../../../../../../services/';
 
 
 @Component({
@@ -33,10 +27,10 @@ export class FormUploadComponent {
   public jobId: Number;
   public fileBrowser = true;
   public apiEndPoint = '/_upload?auth_token=' + this.ws.token;
-
+  
   constructor(
-    protected ws: WebSocketService, protected http: Http, private loader: AppLoaderService,
-    private dialog:DialogService, public snackBar: MatSnackBar, public translate: TranslateService) {}
+    protected ws: WebSocketService,protected http: HttpClient, private loader: AppLoaderService,
+    public dialog: DialogService, public snackBar: MatSnackBar, public translate: TranslateService) {}
 
   upload(location = "/tmp/") {
     if(this.config.updater && this.config.parent ){
@@ -44,7 +38,7 @@ export class FormUploadComponent {
       return;
     }
   this.loader.open();
-  
+
   const fileBrowser = this.fileInput.nativeElement;
   if (fileBrowser.files && fileBrowser.files[0]) {
     const formData: FormData = new FormData();
@@ -53,26 +47,34 @@ export class FormUploadComponent {
       "params": [location + '/' + fileBrowser.files[0].name, { "mode": "493" }]
     }));
     formData.append('file', fileBrowser.files[0]);
+    const req = new HttpRequest('POST', this.apiEndPoint, formData, {
+      reportProgress: true
+    });
+    this.http.request(req).subscribe(event => {
+      if (event.type === HttpEventType.UploadProgress) {
+        const percentDone = Math.round(100 * event.loaded / event.total);
+        const upload_msg = `${percentDone}% Uploaded`
+        this.loader.dialogRef.componentInstance.title = upload_msg;
 
-    this.http.post(this.apiEndPoint, formData).subscribe(
-      (data) => {
-        this.newMessage(location + '/' + fileBrowser.files[0].name);
-        this.loader.close();
-        this.snackBar.open("your files are uploaded", 'close', { duration: 5000 });
-      },
-      (error) => {
-        this.loader.close();
-        this.dialog.errorReport(error.status, error.statusText, error._body);
-      }
-    );
-  } else{
-    this.loader.close();
-  };
+      } else if (event instanceof HttpResponse) {
+        if(event.statusText==="OK") {
+          this.newMessage(location + '/' + fileBrowser.files[0].name);
+          this.loader.close();
+          this.snackBar.open("File upload complete.", 'close', { duration: 5000 });
+        }
+      };
+    },(error)=> {
+      this.loader.close();
+      this.dialog.errorReport("Error",error.statusText, error.message);
+
+    });
+
+  }
 }
 newMessage(message){
   if(this.config.message){
     this.config.message.newMessage(message);
   }
-  
+
 }
 }

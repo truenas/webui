@@ -31,8 +31,8 @@ export class ManualUpdateConfigSaveComponent {
     this.sub = this.ws.call('core.download', ['config.save', [{ 'secretseed': this.secretseed }], 'freenas.db'])
       .subscribe(
         (res) => {
-          this.openSnackBar("Opening download window. Make sure pop-ups are enabled in the browser.", "Success");
-          window.open(res[1]);
+          this.openSnackBar("Download Sucessful", "Success");
+          window.location.href = res[1];
           this.router.navigate(new Array('').concat(this.route_success));
         },
         (err) => {

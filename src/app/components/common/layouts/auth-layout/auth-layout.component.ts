@@ -47,15 +47,18 @@ export class AuthLayoutComponent implements OnInit {
   }
 
   setCssVars(theme:Theme){
+
     let palette = Object.keys(theme);
     palette.splice(0,6);
 
+    let admin_layout_el = (<any>document).getElementsByTagName('APP-AUTH-LAYOUT')[0];
+
     palette.forEach(function(color){
       let swatch = theme[color];
-      (<any>document).documentElement.style.setProperty("--" + color, theme[color]);
+      admin_layout_el.style.setProperty("--" + color, theme[color]);
     });
-    (<any>document).documentElement.style.setProperty("--primary",theme["primary"]);
-    (<any>document).documentElement.style.setProperty("--accent",theme["accent"]);
+    admin_layout_el.style.setProperty("--primary",theme["primary"]);
+    admin_layout_el.style.setProperty("--accent",theme["accent"]);
   }
 
 }

@@ -181,7 +181,7 @@ export class VolumesListTableConfig implements InputTableConf {
             if (confirmResult === true) {
               this.loader.open();
 
-              this.rest.delete(this.resource_name + "/" + row1.name + "/recoverykey/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+              this.rest.delete(this.resource_name + "/" + row1.id + "/recoverykey/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
                 this.loader.close();
 
                 this.dialogService.Info(T("Deleted Recovery Key"), T("Successfully deleted recovery key for ") + row1.name).subscribe((infoResult) => {
@@ -244,6 +244,22 @@ export class VolumesListTableConfig implements InputTableConf {
         inputType: 'file',
         fileType: 'binary'
       },
+      {
+        type: 'select',
+        name: 'services',
+        placeholder: T('Restart Services'),
+        tooltip: T('List of system services to restart when the pool is\
+                    unlocked.'),
+        multiple: true,
+        value: ['afp','cifs','ftp','iscsitarget','nfs','webdav','jails'],
+        options: [{label: 'AFP', value: 'afp'},
+                 {label: 'SMB', value: 'cifs'},
+                 {label: 'FTP', value: 'ftp'},
+                 {label: 'iSCSI', value: 'iscsitarget'},
+                 {label: 'NFS', value: 'nfs'},
+                 {label: 'WebDAV', value: 'webdav'},
+                 {label: 'Jails/Plugins', value: 'jails'}]
+      }
       ],
 
       saveButtonText: T("Unlock"),
@@ -253,7 +269,8 @@ export class VolumesListTableConfig implements InputTableConf {
         return localRest.post("storage/volume/" + row1.name + "/unlock/",
           { body: JSON.stringify({
              passphrase: value.passphrase,
-             recovery_key: value.recovery_key 
+             recovery_key: value.recovery_key,
+             services: value.services
             }) 
           }).subscribe((restPostResp) => {
           entityDialog.dialogRef.close(true);
@@ -785,7 +802,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
     public sorter: StorageService, protected snackBar: MatSnackBar) {
-    super(rest, router, ws, _eRef, dialogService, loader, erdService, translate, snackBar);
+    super(rest, router, ws, _eRef, dialogService, loader, erdService, translate, snackBar, sorter);
   }
 
   public repaintMe() {
@@ -821,7 +838,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
           this.zfsPoolRows.push(volume);
         });
 
-        this.zfsPoolRows = this.sorter.mySorter(this.zfsPoolRows, 'name');
+        this.zfsPoolRows = this.sorter.tableSorter(this.zfsPoolRows, 'name', 'asc');
 
         if (this.zfsPoolRows.length === 1) {
           this.expanded = true;

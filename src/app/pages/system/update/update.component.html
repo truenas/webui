@@ -1,64 +1,71 @@
-<mat-card>
+
+<mat-card id="train-card">
+  <mat-spinner 
+    [diameter]='40' 
+    id="update-spinner"
+    *ngIf="showSpinner" #updatespinner>
+  </mat-spinner>
   <div>
-    <div class="row">
+    <div class="train-card-row">
       <mat-checkbox [(ngModel)]="autoCheck" id="autocheck" [ngModelOptions]="{standalone: true}"
-        (change)="toggleAutoCheck()">{{"Automatically check for new updates" | translate}}</mat-checkbox>
+        (change)="toggleAutoCheck()">{{"Check for Updates Daily and Download if Available" | translate}}</mat-checkbox>
+      <tooltip class="updatecheckTooltip" [message]=updatecheck_tooltip></tooltip>
     </div>
-    <div class="row">
-      <mat-label>{{"Train" | translate}}</mat-label>
+    <div class="train-card-row" *ngIf="trains.length > 1; else trainName">
+      <mat-label id="train-label">{{"Train" | translate}}</mat-label>
       <mat-select class="form-control full-width" id="train-selector" [(ngModel)]="train"  (change)="onTrainChanged($event)">
-        <mat-option *ngFor="let train of trains" [value]="train.name">{{ train.name }}</mat-option>
+        <mat-option *ngFor="let train of trains" [value]="train.name">{{ train.name }} - {{ train.description }}</mat-option>
       </mat-select>
     </div>
-    <div class="row">
-      <div class="col-md-12">
-        <button mat-button class="btn btn-success update-button" (click)="downloadUpdate()" [disabled]="status == 'REBOOT_REQUIRED'">{{"Download update" | translate}}</button>
-        <button mat-button class="btn btn-success update-button" *ngIf="update_downloaded && status !== 'UNAVAILABLE'" mat-button class="btn btn-success" (click)="ApplyPendingUpdate()" >{{"Apply Pending update" | translate}}</button>
-        <button mat-button class="btn btn-success update-button" (click)="ManualUpdate()" >{{"Manual update" | translate}}</button>
-        
-        <p><font color ="red">{{general_update_error}}</font></p>
+    <ng-template #trainName>
+      <div class=train-card-row >
+        Current Train: {{ train }} - {{ singleDescription }}
       </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-        <div *ngIf="status == 'REBOOT_REQUIRED'">
-          {{"An update is already applied. Please reboot the system." | translate}}
-        </div>
-        <table *ngIf="status == 'AVAILABLE' && !updating" class="table table-striped table-sm">
-          <thead>
-            <tr>
-              <th>{{"Operation" | translate}}</th>
-              <th>{{"Name" | translate}}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let p of packages">
-              <td>{{ p.operation }}</td>
-              <td>{{ p.name }}</td>
-            </tr>
-            <tr *ngIf="packages.length == 0">
-              <td>{{"No update found." | translate}}</td>
-            </tr>
-          </tbody>
-        </table>
-        <div *ngIf="status == 'UNAVAILABLE'">{{"No updates available." | translate}}</div>
-        <div *ngIf="updated">
-          Update is complete, please reboot the system.
-      </div>
-      </div>
-      </div>
-  <div class="row">
+    </ng-template>
+  </div>
+  <div class="train-card-row">
     <div class="col-md-12">
+      <div *ngIf="status == 'REBOOT_REQUIRED'">
+        {{"An update is already applied. Please reboot the system." | translate}}
+      </div>
 
-
-
-        <div *ngIf="error">
-          {{ error }}
-        </div>
+      <div *ngIf="status == 'UNAVAILABLE'">{{"No updates available." | translate}}</div>
+      <div *ngIf="updated">
+        Update is complete, please reboot the system.
       </div>
     </div>
   </div>
+  <div class="train-card-row">
+    <div class="col-md-12">
+      <div *ngIf="error">
+        {{ error }}
+      </div>
+     </div>
+  </div>
 </mat-card>
+
+<mat-card *ngIf="status == 'AVAILABLE' && !updating" id="upgrades-card">
+  <mat-card-content id="upgrades-card-scrollbox">
+  <table  class="table table-striped table-sm">
+    <thead>
+      <tr>
+        <th>{{"Operation" | translate}}</th>
+        <th>{{"Name" | translate}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of packages">
+        <td>{{ p.operation }}</td>
+        <td>{{ p.name }}</td>
+      </tr>
+      <tr *ngIf="packages.length == 0">
+        <td>{{"No update found." | translate}}</td>
+      </tr>
+    </tbody>
+  </table>
+  </mat-card-content>
+</mat-card>
+
 <mat-card class="p-0" *ngIf="releaseNotes">
   <mat-card-title>
     <div class="mat-toolbar mat-card-toolbar">
@@ -69,15 +76,46 @@
     <a mat-button href="{{releaseNotes}}" target="_blank">{{"Check Release Notes" | translate}}</a>
   </mat-card-content>
 </mat-card>
-<mat-card class="p-0" *ngIf="changeLog">
-  <mat-card-title>
-    <div class="mat-toolbar mat-card-toolbar">
-      <div class="mat-card-title-text">{{"Change log" | translate}}</div>
-    </div>
+
+<mat-card class="p-0" id="changelog-card" *ngIf="changeLog && nightly_train">
+  <mat-card-title id="changelog-title">
+    <!-- <div class="mat-toolbar mat-card-toolbar"> -->
+      <div >{{"Change log" | translate}}</div>
+    <!-- </div> -->
   </mat-card-title>
-  <mat-card-content>
-      <markdown>
-          {{changeLog}}
-      </markdown>
+  <mat-card-content id="changelog-scrollbox">
+    <markdown>
+      {{changeLog}}
+    </markdown>
   </mat-card-content>
+</mat-card>
+
+<mat-card *ngIf="updates_available && pre_release_train" id="stable-warning-card">
+  <div class="stable-warning"><i class="material-icons" id="update-info">info</i><strong>This is not a production release, and should only be used for testing.</strong></div>
+  <div class="stable-warning" id="stable_warning_line_2">Before updating, please read the
+    <a href='https://www.ixsystems.com/blog/library/freenas-11-2-rc1' target="new">release notes</a>.
+  </div>
+</mat-card>
+
+<mat-card *ngIf="updates_available && release_train" id="stable-warning-card">
+  <div class="stable-warning"><i class="material-icons" id="update-info">info</i>Before updating, please read the
+    <a href='https://www.ixsystems.com/blog/knowledgebase_category/freenas/?latest=true' target="new">release notes</a>.
+  </div>
+</mat-card>
+
+<mat-card *ngIf="updates_available && nightly_train" id="stable-warning-card">
+  <div class="stable-warning"><i class="material-icons" id="update-info">info</i>
+    <strong>This is not a production release, and should only be used for testing.</strong>
+  </div>
+</mat-card>
+
+<mat-card id="button-card">
+  <div class="row">
+    <div class="col-md-12">
+      <button *ngIf="updates_available" mat-button class="btn btn-success update-button mat-basic" (click)="downloadUpdate()" [disabled]="status == 'REBOOT_REQUIRED'">{{"Fetch and Install Updates" | translate}}</button>
+      <button mat-button class="btn btn-success update-button mat-basic" *ngIf="update_downloaded && status !== 'UNAVAILABLE'" mat-button class="btn btn-success" (click)="ApplyPendingUpdate()" >{{"Apply Pending update" | translate}}</button>
+      <button mat-button class="btn btn-success update-button mat-basic" (click)="ManualUpdate()" >{{"Install Manual Update File" | translate}}</button>
+      <p><font color ="red">{{general_update_error}}</font></p>
+    </div>
+  </div>
 </mat-card>

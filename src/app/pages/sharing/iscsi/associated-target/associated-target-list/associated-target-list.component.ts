@@ -38,6 +38,10 @@ export class AssociatedTargetListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    deleteMsg: {
+      title: 'Target/Extent',
+      key_props: ['iscsi_target_name', 'iscsi_extent_name']
+    },
   };
 
   afterInit(entityList: any) {}

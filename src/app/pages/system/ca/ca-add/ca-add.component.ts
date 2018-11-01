@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Validators } from '@angular/forms';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
 
 import { RestService, SystemGeneralService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -27,7 +26,9 @@ export class CertificateAuthorityAddComponent {
       placeholder : T('Identifier'),
       tooltip: T('Enter a description of the CA.'),
       required: true,
-      validation : [ Validators.required ]
+      validation : [ Validators.required, Validators.pattern('[A-Za-z0-9_-]+$') ],
+      hasErrors: false,
+      errors: 'Allowed characters: letters, numbers, underscore (_), and dash (-).'
     },
     {
       type : 'select',
@@ -193,17 +194,17 @@ export class CertificateAuthorityAddComponent {
     },
     {
       type : 'input',
-      name : 'Passphrase',
+      name : 'passphrase',
       placeholder : T('Passphrase'),
       tooltip : T('Enter the passphrase for the Private Key.'),
       inputType : 'password',
-      validation : [ matchOtherValidator('Passphrase2') ],
+      validation : [ matchOtherValidator('passphrase2') ],
       isHidden: true,
       togglePw : true
     },
     {
       type : 'input',
-      name : 'Passphrase2',
+      name : 'passphrase2',
       inputType : 'password',
       placeholder : T('Confirm Passphrase'),
       isHidden : true
@@ -238,12 +239,13 @@ export class CertificateAuthorityAddComponent {
   private importcaFields: Array<any> = [
     'certificate',
     'privatekey',
-    'Passphrase',
-    'Passphrase2',
+    'passphrase',
+    'passphrase2',
   ];
 
   private country: any;
   private signedby: any;
+  public identifier: any;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
@@ -312,6 +314,19 @@ export class CertificateAuthorityAddComponent {
         }
       }
     })
+
+    entity.formGroup.controls['name'].valueChanges.subscribe((res) => {
+      this.identifier = res;
+    })
+
+    entity.formGroup.controls['name'].statusChanges.subscribe((res) => {
+      if (this.identifier && res === 'INVALID') {
+        _.find(this.fieldConfig).hasErrors = true;
+      } else {
+        _.find(this.fieldConfig).hasErrors = false;
+      }
+    })
+
   }
 
   hideField(fieldName: any, show: boolean, entity: any) {
@@ -325,6 +340,14 @@ export class CertificateAuthorityAddComponent {
       data.san = [];
     } else {
       data.san = _.split(data.san, ' ');
+    }
+
+    // Addresses non-pristine field being mistaken for a passphrase of ''
+    if (data.passphrase == '') {
+      data.passphrase = undefined;
+    }
+    if (data.passphrase2) {
+      delete data.passphrase2;
     }
   }
 }

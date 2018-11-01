@@ -112,7 +112,7 @@ export class CloudCredentialsFormComponent {
       required: true,
       isHidden: true,
       inputType: 'password',
-      
+
       relation: [
         {
           action: 'SHOW',
@@ -130,8 +130,9 @@ export class CloudCredentialsFormComponent {
       placeholder: T('Endpoint URL'),
       tooltip: T('<a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteEndpoints.html"\
                   target="_blank">Endpoint URL</a> for a bucket\
-                  configured for website hosting. URL general format:\
-                  <i>bucket-name.s3-website-region.amazonaws.com</i> or\
+                  configured for website hosting. Leave blank when using \
+                  AWS. Enter endpoint URL if using custom S3 API. URL \
+                  general format: \
                   <i>bucket-name.s3-website.region.amazonaws.com</i>.\
                   Refer to the AWS Documentation for a list of <a\
                   href="https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_website_region_endpoints"\
@@ -152,12 +153,17 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'account-B2',
-      placeholder: T('Account ID'),
-      tooltip: T('<a\
+      placeholder: T('Account ID or Application Key ID'),
+      tooltip: T('Alphanumeric <a\
                   href="https://www.backblaze.com/b2/cloud-storage.html"\
-                  target="_blank">Backblaze B2</a> account ID. This is\
-                  an alphanumeric string shown after logging into the B2\
-                  account.'),
+                  target="_blank">Backblaze B2</a> ID. Find an Account ID\
+                  or applicationKeyID by logging in to the account,\
+                  clicking <i>Buckets</i>, and clicking\
+                  <i>Show Account ID and Application Key</i>. Enter the\
+                  <i>Account ID</i> to associate the entire account or\
+                  generate a new <i>Application Key</i>. The <i>keyID</i>\
+                  replaces the Account ID and the key string is used in\
+                  place of the <i>Master Application Key</i>.'),
       required: true,
       isHidden: true,
       relation: [
@@ -173,13 +179,16 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'key-B2',
-      placeholder: T('Application Key'),
-      tooltip: T('Backblaze B2 Bucket Application Key. Log in to the B2\
-                  account and generate the key on the Buckets page. <a\
+      placeholder: T('Master Application Key or Application Key'),
+      tooltip: T('Backblaze B2 Application Key. Log in to\
+                  the B2 account and generate a key on the Buckets\
+                  page. <a\
                   href="https://help.backblaze.com/hc/en-us/articles/224991568-Where-can-I-find-my-Account-ID-and-Application-Key-"\
-                  target="_blank">Generating a new Application Key</a>\
-                  for a bucket might invalidate an existing key and\
-                  require entering the new Application Key.'),
+                  target="_blank">Generating a new Master Application Key</a>\
+                  will invalidate the existing Master key and require\
+                  updating this field. Using a limited permissions\
+                  Application Key also requires changing the\
+                  <i>Account ID</i> to the new <i>keyID</i>.'),
       required: true,
       isHidden: true,
       relation: [
@@ -358,6 +367,24 @@ export class CloudCredentialsFormComponent {
                   target="_blank">Google Drive</a>. Access Tokens expire\
                   periodically and must be refreshed.'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'GOOGLE_DRIVE',
+           }]
+        }
+      ]
+    },
+    {
+      type: 'input',
+      name: 'team_drive-GOOGLE_DRIVE',
+      placeholder: T('Team Drive ID'),
+      tooltip: T('Only needed when connecting to a Team Drive. The ID of\
+                  the top level folder of the Team Drive.'),
+      required: false,
       isHidden: true,
       relation: [
         {

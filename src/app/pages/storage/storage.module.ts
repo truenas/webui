@@ -30,6 +30,7 @@ import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
 import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list';
 import { DiskListComponent } from './disks/disk-list/';
 import { DiskFormComponent } from './disks/disk-form/';
+import { DiskBulkEditComponent } from './disks/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { DxTreeListModule } from 'devextreme-angular';
@@ -71,7 +72,8 @@ import { MessageService } from '../common/entity/entity-form/services/message.se
     DiskListComponent,
     VolumeStatusComponent,
     DiskFormComponent,
-    DiskWipeComponent
+    DiskWipeComponent,
+    DiskBulkEditComponent
   ],
   providers : [UserService, StorageService, MessageService]
 })

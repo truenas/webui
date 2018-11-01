@@ -15,12 +15,9 @@
     padding-left: 5px;
 }
 
-.IconCell {
-	margin-top: -8px;
-}
-
 .multiActionsButton {
-	height: 40px;
+    position: relative;
+    top: 1px;
 }
 
 #col-select-box {
@@ -55,5 +52,42 @@
   top: 10px; left: 0; bottom: 0; right: 0;
   z-index: 10;
   margin: 0 auto;
+}
+
+.mat-card-title-text {
+    margin: 20px;
+    display: inline-block;
+}
+
+#filter, .mat-toolbar {
+    display: inline-block;
+}
+
+#filter, .tooltiptext {
+    font-size: 14px;
+}
+
+#filter {
+    position: absolute;
+    right: 150px;
+    top: 9px;
+    z-index: 10;
+}
+
+#action-button-wrapper {
+    height: 36px;
+}
+
+.legacy-warning {
+    position: absolute;
+    font-size: .8rem;
+    top: 75px;
+    right: 10px;
+    z-index: 10;
+}
+
+.legacy-warning-link {
+    border-bottom: 1px solid;
+    cursor: pointer;
 }
 

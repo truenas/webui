@@ -1,10 +1,11 @@
 <div class="vdev-wrapper">
-<div class="vdev-actions">
-    <button mat-flat-button name="vdev_add-button" class="vdev-action-btn" (click)="addSelectedDisks()" [disabled]="!manager.selected.length"><mat-icon class="arrow">arrow_forward</mat-icon></button>
-    <button mat-flat-button name="vdev_remove-button" class="vdev-action-btn" (click)="removeSelectedDisks()" [disabled]="!selected.length"><mat-icon class="arrow">arrow_back</mat-icon></button>
+<div class="vdev-actions" id="vdev__action-buttons">
+    <button id="vdev__add-button" mat-flat-button name="vdev_add-button" class="vdev-action-btn" (click)="addSelectedDisks()" [disabled]="!manager.selected.length"><mat-icon class="arrow">arrow_forward</mat-icon></button>
+    <button id="vdev__remove-button" mat-flat-button name="vdev_remove-button" class="vdev-action-btn" (click)="removeSelectedDisks()" [disabled]="!selected.length"><mat-icon class="arrow">arrow_back</mat-icon></button>
 </div>
 <div class="vdev-table">
     <ngx-datatable
+        id="vdev__disk-table"
         #table
         class="material ml-1 mt-1 mb-1 mr-1 mat-box-shadow" 
         [rows]="getDisks()" 
@@ -14,17 +15,19 @@
         [limit]="10"
         [selected] = "selected"
         [selectionType]="'checkbox'"
+        [externalSorting]="true"
+        (sort)='reorderEvent($event)'
         (select)='onSelect($event)'>
-        <ngx-datatable-column [width]="80" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
+        <ngx-datatable-column [width]="85" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
             <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
               <div class="headerCheckBox">
-                <mat-checkbox [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>
+                <mat-checkbox id="vdev__disk-table-checkall" [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>
               </div>
             </ng-template>
     
-            <ng-template ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
+            <ng-template ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-rowIndex="rowIndex" let-onCheckboxChangeFn="onCheckboxChangeFn">
               <div>
-                <mat-checkbox [checked]="isSelected" (change)="onCheckboxChangeFn($event)">&nbsp;</mat-checkbox>
+                <mat-checkbox id="vdev__disks-{{disks[rowIndex].devname}}" [checked]="isSelected" (change)="onCheckboxChangeFn($event)">&nbsp;</mat-checkbox>
               </div>
             </ng-template>
           </ngx-datatable-column>
@@ -50,7 +53,7 @@
     <div class="vdev-wrapper">
         <div class="vdev-type">
         <div *ngIf="group === 'data'" class="datainfo">
-            <mat-select *ngIf="group === 'data'" [(ngModel)]="type" (change)="onTypeChange($event)" class="form-control">
+            <mat-select id="vdev__option-menu" *ngIf="group === 'data'" [(ngModel)]="type" (change)="onTypeChange($event)" class="form-control">
                 <mat-option value="stripe">{{"Stripe" | translate}}</mat-option>
                 <mat-option value="mirror" *ngIf="getDisks().length >= 2">{{"Mirror" | translate}}</mat-option>
                 <mat-option value="raidz" *ngIf="getDisks().length >= 3">{{"Raid-z" | translate}}</mat-option>
@@ -62,7 +65,7 @@
         </div>
         </div>
         <div class="vdev-close">
-            <button mat-flat-button class="vdev-action-btn" *ngIf="removable" (click)="remove()" [disabled]="(group === 'data' && manager.vdevs['data'].length < 2)">X</button>
+            <button id="vdev__close-button" mat-flat-button class="vdev-action-btn" *ngIf="removable" (click)="remove()" [disabled]="(group === 'data' && manager.vdevs['data'].length < 2)">X</button>
         </div>
     </div>
     <div *ngIf="error" [style.color]="'red'" [innerHTML]="error" class="datainfo"></div>
