@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
-
 import { RestService, WebSocketService } from '../../../services/';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { MatDialog, MatSnackBar } from '@angular/material';
@@ -68,15 +67,18 @@ export class UpdateComponent implements OnInit {
   ];
   public saveConfigFormConf: DialogFormConfiguration = {
     title: "Save configuration settings from this machine before updating?",
-    message: "WARNING: This configuration file contains system passwords\
-              and other sensitive data. Keep the system configuration\
-              file stored in a secure location.",
+    message: "<b>WARNING:</b> This configuration file contains system\
+              passwords and other sensitive data.<br>",
     fieldConfig: this.saveConfigFieldConf,
+    warning: "Including the Password Secret Seed allows using this\
+              configuration file with a new boot device. It also\
+              decrypts all passwords used on this system.\
+              <b>Always secure the system configuration file!</b>",
     method_ws: 'core.download',
     saveButtonText: T('SAVE CONFIGURATION'),
     cancelButtonText: T('NO'),
     customSubmit: this.saveConfigSubmit,
-  }
+  };
 
   protected dialogRef: any;
   constructor(protected router: Router, protected route: ActivatedRoute, protected snackBar: MatSnackBar,
