@@ -21,6 +21,7 @@ export class NFSFormComponent {
   protected formArray: FormArray;
   protected isBasicMode = true;
   public entityForm: any;
+  public save_button_enabled = true;
 
   protected fieldConfig: FieldConfig[] = [
     {
@@ -295,16 +296,17 @@ export class NFSFormComponent {
         }
         if (warning_flag) {
           _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_hosts' }).warnings = `Following IP Address/hostname appears to be wrong ${error_msg}`
+          parent.save_button_enabled = false;
   
         } else {
           _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_hosts' }).warnings = null;
+          parent.save_button_enabled = true;
         };
       };
     };
   };
   nfs_network_event(parent){
     _.find(parent.fieldConfig, {'name' : 'nfs_network'}).warnings = false;
-    
     if(parent.entityForm) {
       if(parent.entityForm.formGroup.controls['nfs_network'].value !=='') {
         const network_string = parent.entityForm.formGroup.controls['nfs_network'].value.split(/[\s,]+/);
@@ -324,9 +326,11 @@ export class NFSFormComponent {
         }
         if (warning_flag) {
           _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_network' }).warnings = `Following Network appears to be wrong ${error_msg}`;
+          parent.save_button_enabled = false;
   
         } else { 
           _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_network' }).warnings = null;
+          parent.save_button_enabled = true;
         }
 
       }
