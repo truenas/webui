@@ -304,7 +304,7 @@ export class VolumesListTableConfig implements InputTableConf {
     if (rowData.type === 'zpool') {
 
       actions.push({
-        label: T("Detach"),
+        label: T("Export/Disconnect"),
         onClick: (row1) => {
 
           let encryptedStatus = row1.vol_encryptkey,
@@ -314,22 +314,22 @@ export class VolumesListTableConfig implements InputTableConf {
             localDialogService = this.dialogService
 
           const conf: DialogFormConfiguration = { 
-            title: "Detach pool: '" + row1.name + "'",
+            title: "Export/Disconnect pool: '" + row1.name + "'",
             fieldConfig: [{
               type: 'paragraph',
               name: 'pool_detach_warning',
-              paraText: T("WARNING: Detaching '" + row1.name + "'. \
-                           Detaching a pool makes the data unavailable. \
+              paraText: T("WARNING: Exporting/Disconnecting '" + row1.name + "'. \
+                           Exporting/Disconnecting a pool makes the data unavailable. \
                            The pool data can also be wiped by setting the\
                            related option. Back up any critical data \
-                           before detaching a pool."),
+                           before exporting/disconnecting a pool."),
               isHidden: false
             }, {
               type: 'paragraph',
               name: 'pool_detach_warning',
               paraText: T("'" + row1.name + "' is encrypted! If the passphrase for \
                            this encrypted pool has been lost, the data will be PERMANENTLY UNRECOVERABLE! \
-                           Before detaching encrypted pools, download and safely\
+                           Before exporting/disconnecting encrypted pools, download and safely\
                            store the recovery key."),
               isHidden: encryptedStatus !== '' ? false : true
             }, {
@@ -345,7 +345,7 @@ export class VolumesListTableConfig implements InputTableConf {
             }, {
               type: 'checkbox',
               name: 'confirm',
-              placeholder: T("Confirm detach"),
+              placeholder: T("Confirm export/disconnect"),
               required: true
             }],
             isCustActionVisible(actionId: string) {
@@ -355,7 +355,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 return true;
               }
             },
-            saveButtonText: T('Detach'),
+            saveButtonText: T('Export/Disconnect'),
             custActions: [
               {
                 id: 'download_key',
@@ -373,23 +373,23 @@ export class VolumesListTableConfig implements InputTableConf {
                   }).subscribe((res) => {
                     entityDialog.dialogRef.close(true);
                     localLoader.close();
-                    localDialogService.Info(T("Detach Pool"), T("Successfully detached '") + row1.name + "'");
+                    localDialogService.Info(T("Export/Disconnect Pool"), T("Successfully exported/disconnected '") + row1.name + "'");
                     localParentVol.repaintMe();
                 }, (res) => {
                   localLoader.close();
-                  localDialogService.errorReport(T("Error detaching pool."), res.message, res.stack);
+                  localDialogService.errorReport(T("Error exporting/disconnecting pool."), res.message, res.stack);
                 });
               } else {
                 return localRest.delete("storage/volume/" + row1.name, { body: JSON.stringify({}) 
                   }).subscribe((res) => {
                     entityDialog.dialogRef.close(true);
                     localLoader.close();
-                    localDialogService.Info(T("Detach Pool"), T("Successfully detached '") + row1.name + 
+                    localDialogService.Info(T("Export/Disconnect Pool"), T("Successfully exported/disconnected '") + row1.name +
                       T("'. All data on that pool was destroyed."));
                     localParentVol.repaintMe();
                 }, (res) => {
                   localLoader.close();
-                  localDialogService.errorReport(T("Error detaching pool."), res.message, res.stack);
+                  localDialogService.errorReport(T("Error exporting/disconnecting pool."), res.message, res.stack);
                 });
               }
             }
