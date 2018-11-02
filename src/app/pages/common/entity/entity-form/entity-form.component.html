@@ -41,6 +41,6 @@
             <!-- <div class="btn-group btn-group-justified"> -->
         </form>
         <p *ngIf="success" type="success" id="successfully_updated">{{"Successfully updated." | translate}}</p>
-        <mat-error *ngIf="error" type="danger" id="error_message"><span [innerHTML]="error"></span></mat-error>
+        <mat-error *ngIf="error" type="danger" id="error_message"><div [innerHTML]="error"></div></mat-error>
     </div>
 </mat-card>
