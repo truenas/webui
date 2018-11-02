@@ -10,27 +10,27 @@ username = "root"
 # password for the machine
 password = "abcd1234"
 # new user with create primary group check
-newusername = "userNAS"
+newusername = "usernas"
 # new user full name
-newuserfname = "user NAS"
+newuserfname = "user nas"
 # new user email
 newuseremail = "test@ixsystems.com"
 # userpassword
 newuserpassword = "abcd1234"
 # usergroupname
-newgroupname = "groupNAS"
+newgroupname = "groupnas"
 # new user with create primary group UNcheck
-newusernameuncheck = "userNASuncheck"
+newusernameuncheck = "usernasuncheck"
 # new user full name
-newuserfnameuncheck = "user NASuncheck"
+newuserfnameuncheck = "user nasuncheck"
 # new user with sudo permit
-superusername = "superNAS"
+superusername = "supernas"
 
-superuserfname = "super NAS"
+superuserfname = "super nas"
 
 superuserpassword = "abcd1234"
 
-supergroupname = "supergroupNAS"
+supergroupname = "supergroupnas"
 
 
 #STORAGE

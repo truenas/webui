@@ -98,7 +98,7 @@ for output, arg in myopts:
     if output == "--driver":
         driver_v = arg
 
-driver_v = "NULL"
+#driver_v = "NULL"
 
 try:
     ip
@@ -107,20 +107,17 @@ except NameError:
     print(UsageMSG)
     sys.exit(1)
 
-global runDriver
+#global runDriver
 
-try:
-    driver_v = "NULL"
-except NameError:
+if (driver_v == "U"):
+    from driverU import webDriver
+    print ("Running Ubuntu driver")
+    runDriver = webDriver()
+else:
     from driverG import webDriver
     print("Running Selenium Grid")
     runDriver = webDriver(grid_server_ip)
 
-else:
-    if (driver_v == "U"):
-        from driverU import webDriver
-        print ("Running Ubuntu driver")
-        runDriver = webDriver()
 
 #running tests
 run_login_test(runDriver, ip)
