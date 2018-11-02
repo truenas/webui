@@ -68,8 +68,7 @@ Optional Commands:
 --test-name <test_name>    - name of tests targeted
                             [account, storage, system, guide, service, theme]
 
---driver <d_v>             - version of the driver
-                             [U]
+--driver <G or F>             - version of the driver G = Grid F = Firefox
 
 """ % argument[0]
 
@@ -80,7 +79,7 @@ if len(argument) == 1:
 
 # list of argument that should be use.
 optionlist = ["ip=", "test-name=", "driver="]
-testlist = ["account", "storage", "plugin",  "network", "system", "guide", "service", "theme"]
+testlist = ["account", "storage", "plugin", "network", "system", "guide", "service", "theme"]
 versionlist = ["U"]
 # look if all the argument are there.
 try:
@@ -98,8 +97,6 @@ for output, arg in myopts:
     if output == "--driver":
         driver_v = arg
 
-driver_v = "NULL"
-
 try:
     ip
 except NameError:
@@ -110,19 +107,22 @@ except NameError:
 global runDriver
 
 try:
-    driver_v = "NULL"
+    driver_v
 except NameError:
     from driverG import webDriver
     print("Running Selenium Grid")
     runDriver = webDriver(grid_server_ip)
-
 else:
-    if (driver_v == "U"):
+    if driver_v == "F":
         from driverU import webDriver
-        print ("Running Ubuntu driver")
+        print ("Running webDriver driver")
         runDriver = webDriver()
+    elif driver_v == "G":
+        from driverG import webDriver
+        print("Running Selenium Grid")
+        runDriver = webDriver(grid_server_ip)
 
-#running tests
+# running tests
 run_login_test(runDriver, ip)
 
 try:
@@ -163,7 +163,7 @@ else:
         run_delete_pool_test(runDriver)
 
     elif (test_name == "plugin"):
-#        run_create_pool_test(runDriver)
+      # run_create_pool_test(runDriver)
         run_plugin_test(runDriver)
 
     elif (test_name == "network"):
