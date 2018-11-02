@@ -110,7 +110,7 @@ export class StorageFormComponent {
       ]).subscribe((res) => {
         if (res[0] && res[0].state == 'up') {
           this.save_button_enabled = false;
-          this.error = T(params['jail'] + " should not be running when editing a mountpoint.");
+          this.error = T("Mount points used in jail " + params['jail'] + " cannot be edited while the jail is running.");
           for (let i = 0; i < this.fieldConfig.length; i++) {
             this.fieldConfig[i].disabled = true;
           }
