@@ -115,12 +115,16 @@ except NameError:
 else:
     if driver_v == "F":
         from driverU import webDriver
-        print ("Running webDriver driver")
+        print("Running Firefox driver")
         runDriver = webDriver()
     elif driver_v == "G":
         from driverG import webDriver
         print("Running Selenium Grid")
         runDriver = webDriver(grid_server_ip)
+    else:
+        print("Option '%s' not allowed" % driver_v)
+        print(UsageMSG)
+        sys.exit(1)
 
 # running tests
 run_login_test(runDriver, ip)
