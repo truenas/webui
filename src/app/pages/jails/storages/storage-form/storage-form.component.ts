@@ -59,6 +59,7 @@ export class StorageFormComponent {
       name: 'jail',
       placeholder: helptext.jail_placeholder,
       options: [],
+      disabled: false,
     },
     {
       type: 'explorer',
@@ -67,6 +68,7 @@ export class StorageFormComponent {
       name: 'source',
       placeholder: helptext.source_placeholder,
       tooltip: helptext.source_tooltip,
+      disabled: false,
     },
     {
       type: 'explorer',
@@ -75,12 +77,14 @@ export class StorageFormComponent {
       name: 'destination',
       placeholder: helptext.destination_placeholder,
       tooltip: helptext.destination_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'readonly',
       placeholder: helptext.readonly_placeholder,
       tooltip: helptext.readonly_tooltip,
+      disabled: false,
     },
   ];
 
@@ -92,11 +96,30 @@ export class StorageFormComponent {
 
   public isReady: boolean = false;
   protected mountpoint: string;
+  protected save_button_enabled: boolean;
   constructor(protected router: Router, protected aroute: ActivatedRoute,
     protected jailService: JailService, protected loader: AppLoaderService, protected ws: WebSocketService,
     private dialog: DialogService) {}
 
   ngOnInit() {
+    this.aroute.params.subscribe(params => {
+      this.ws.call('jail.query', [
+        [
+          ["host_hostuuid", "=", params['jail']]
+        ]
+      ]).subscribe((res) => {
+        if (res[0] && res[0].state == 'up') {
+          this.save_button_enabled = false;
+          this.error = T("Mount points used in jail " + params['jail'] + " cannot be edited while the jail is running.");
+          for (let i = 0; i < this.fieldConfig.length; i++) {
+            this.fieldConfig[i].disabled = true;
+          }
+        } else {
+          this.save_button_enabled = true;
+          this.error = "";
+        }
+      });
+    });
     this.ws.call('jail.get_activated_pool').subscribe((res)=>{
           if (res != null) {
             this.ws.call('zfs.dataset.query', [[["name", "=", res+"/iocage"]]]).subscribe(
@@ -146,21 +169,21 @@ export class StorageFormComponent {
   }
 
   dataAttributeHandler(entityList: any) {
-    entityList.formGroup.controls['source'].setValue(entityList.queryResponse[this.mountpointId][0]);
-    entityList.formGroup.controls['destination'].setValue(entityList.queryResponse[this.mountpointId][1]);
+    entityList.formGroup.controls['source'].setValue(entityList.queryResponse[this.mountpointId].entry[0]);
+    entityList.formGroup.controls['destination'].setValue(entityList.queryResponse[this.mountpointId].entry[1]);
 
-    if (entityList.queryResponse[this.mountpointId][3] == 'ro') {
+    if (entityList.queryResponse[this.mountpointId].entry[3] == 'ro') {
       entityList.formGroup.controls['readonly'].setValue(true);
-    } else if (entityList.queryResponse[this.mountpointId][3] == 'rw') {
+    } else if (entityList.queryResponse[this.mountpointId].entry[3] == 'rw') {
       entityList.formGroup.controls['readonly'].setValue(false);
     }
 
-    this.mountPointEdit.source = entityList.queryResponse[this.mountpointId][0];
-    this.mountPointEdit.destination = entityList.queryResponse[this.mountpointId][1];
-    this.mountPointEdit.fstype = entityList.queryResponse[this.mountpointId][2];
-    this.mountPointEdit.fsoptions = entityList.queryResponse[this.mountpointId][3];
-    this.mountPointEdit.dump = entityList.queryResponse[this.mountpointId][4];
-    this.mountPointEdit.pass = entityList.queryResponse[this.mountpointId][5];
+    this.mountPointEdit.source = entityList.queryResponse[this.mountpointId].entry[0];
+    this.mountPointEdit.destination = entityList.queryResponse[this.mountpointId].entry[1];
+    this.mountPointEdit.fstype = entityList.queryResponse[this.mountpointId].entry[2];
+    this.mountPointEdit.fsoptions = entityList.queryResponse[this.mountpointId].entry[3];
+    this.mountPointEdit.dump = entityList.queryResponse[this.mountpointId].entry[4];
+    this.mountPointEdit.pass = entityList.queryResponse[this.mountpointId].entry[5];
   }
 
   onSubmit(event: Event) {
