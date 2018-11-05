@@ -30,6 +30,19 @@
               <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-view-sequential"></mat-icon>
             </mat-button-toggle>
           </mat-button-toggle-group>
+
+          <!-- Pager -->
+          <div *ngIf="paginationLength > 0 && paginationLength > paginationPageSize">
+            <!--<div>-->
+            <h4 style="color:var(--fg1);">{{paginationLength}} / {{filteredData.length}}</h4>
+            <mat-paginator #pager 
+              [length]="tabChartsMappingDataSelected && tabChartsMappingDataSelected.keyName == 'Disk' ? filteredData.length :  paginationLength" 
+              [pageSize]="paginationPageSize" 
+              [pageSizeOptions]="paginationPageSizeOptions" 
+              (page)="paginationUpdate($event)">
+              <!--<mat-paginator [length]="paginationLength" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" (page)="paginationUpdate($event)">-->
+            </mat-paginator>
+          </div>
         </div>
 
         <!-- Report builder -->
@@ -42,12 +55,14 @@
 
 
       <!-- Report Cards -->
-      <div *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray">
+      <div *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray;">
         <div *ngIf="tabChartsMappingDataSelected && tabChartsMappingDataSelected.keyName === tabChartsMappingDataItem.keyName">
 
           <!-- Cards from Filtered List-->
           <div fxLayout="row wrap" fxLayoutAlign="space-around center" *ngIf="diskReportConfigReady && tabChartsMappingDataSelected.keyName == 'Disk' && filteredData.length > 0"> 
-            <div  [fxFlex]="chartWidth && chartWidth.value ? chartWidth.value : '800px'" *ngFor="let chartConfigData of filteredData">
+            <div  [fxFlex]="chartWidth && chartWidth.value ? chartWidth.value : '800px'" *ngFor="let chartConfigData of filteredPaginatedData; let i=index;">
+            <!--<div  [fxFlex]="chartWidth && chartWidth.value ? chartWidth.value : '800px'" *ngFor="let chartConfigData of tabChartsMappingDataSelected.paginatedChartConfigData; let i=index;">-->
+              <div>{{i}}</div>
               <report [title]="chartConfigData.title" [lineChartConfig]="chartConfigData"></report>
             </div>
           </div>
