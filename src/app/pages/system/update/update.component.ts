@@ -42,8 +42,8 @@ export class UpdateComponent implements OnInit {
     "NIGHTLY_UPGRADE": T("Changing to a nightly train is one-way. Changing back to a stable train is not supported!")
   }
   public release_train: boolean;
-  public pre_release_train: boolean;  
-  public nightly_train: boolean;  
+  public pre_release_train: boolean;
+  public nightly_train: boolean;
   public updates_available = false;
   public currentTrainDescription: string;
   public fullTrainList: any[];
@@ -63,21 +63,23 @@ export class UpdateComponent implements OnInit {
     {
       type: 'checkbox',
       name: 'secretseed',
-      placeholder: T('Export Password Secret Seed')
+      placeholder: T('Include Password Secret Seed')
     },
-    {
-      type: 'checkbox',
-      name: 'hideWarning',
-      placeholder: T('Don\'t show this again'),
-    }
   ];
   public saveConfigFormConf: DialogFormConfiguration = {
-    title: "Before doing update, would you like to save a copy of the config?",
+    title: "Save configuration settings from this machine before updating?",
+    message: "<b>WARNING:</b> This configuration file contains system\
+              passwords and other sensitive data.<br>",
     fieldConfig: this.saveConfigFieldConf,
+    warning: "Including the Password Secret Seed allows using this\
+              configuration file with a new boot device. It also\
+              decrypts all passwords used on this system.\
+              <b>Keep the configuration file safe and protect it from unauthorized access!</b>",
     method_ws: 'core.download',
-    saveButtonText: T('OK'),
+    saveButtonText: T('SAVE CONFIGURATION'),
+    cancelButtonText: T('NO'),
     customSubmit: this.saveConfigSubmit,
-  }
+  };
 
   protected dialogRef: any;
   constructor(protected router: Router, protected route: ActivatedRoute, protected snackBar: MatSnackBar,
@@ -192,7 +194,7 @@ export class UpdateComponent implements OnInit {
 
   ngOnInit() {
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
-      if(!ures[0].attributes.preferences.hideWarning) {
+      if(ures[0].attributes.preferences !== undefined && !ures[0].attributes.preferences.hideWarning) {
         ures[0].attributes.preferences['hideWarning'] = false;
         this.ws.call('user.set_attribute', [1, 'preferences', ures[0].attributes.preferences]).subscribe((res)=>{
         });
@@ -214,8 +216,8 @@ export class UpdateComponent implements OnInit {
         if (this.compareTrains(this.train, i) === 'ALLOWED' || this.compareTrains(this.train, i) === 'NIGHTLY_UPGRADE' || this.train === i) {
           this.trains.push({ name: i, description: res.trains[i].description });
         }
-        
-      } 
+
+      }
       this.singleDescription = this.trains[0].description;
 
       // The following is a kluge until we stop overwriting (via middleware?) the description of the currently
@@ -330,7 +332,7 @@ export class UpdateComponent implements OnInit {
               this.releaseNotes = res.notes.ReleaseNotes;
             }
             this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
-              if(ures[0].attributes.preferences.hideWarning) {
+              if(ures[0].attributes.preferences !== undefined && ures[0].attributes.preferences.hideWarning) {
                 const ds  = this.dialogService.confirm(
                   T("Download Update"), T("Continue with download?"),true,"",true,T("Apply updates and reboot system after downloading."),"update.update",[{ train: this.train, reboot: false }]
                 )
@@ -344,7 +346,7 @@ export class UpdateComponent implements OnInit {
                         this.dialogRef.close(false);
                         this.snackBar.open(T("Updates successfully downloaded"),'close', { duration: 5000 });
                         this.pendingupdates();
-    
+
                       });
                       this.dialogRef.componentInstance.failure.subscribe((failure) => {
                         this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
@@ -355,7 +357,7 @@ export class UpdateComponent implements OnInit {
                     }
                   }
                 });
-                
+
               } else {
                 this.dialogService.dialogForm(this.saveConfigFormConf).subscribe(()=>{
                   const ds  = this.dialogService.confirm(
@@ -371,7 +373,7 @@ export class UpdateComponent implements OnInit {
                           this.dialogRef.close(false);
                           this.snackBar.open(T("Updates successfully downloaded"),'close', { duration: 5000 });
                           this.pendingupdates();
-      
+
                         });
                         this.dialogRef.componentInstance.failure.subscribe((failure) => {
                           this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
@@ -426,7 +428,7 @@ export class UpdateComponent implements OnInit {
 
   ApplyPendingUpdate() {
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
-      if(ures[0].attributes.preferences.hideWarning) {
+      if(ures[0].attributes.preferences !== undefined && ures[0].attributes.preferences.hideWarning) {
         this.dialogService.confirm(
           T("Apply Pending Updates"), T("The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?")
         ).subscribe((res)=>{
@@ -555,10 +557,12 @@ export class UpdateComponent implements OnInit {
       entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'] }], fileName])
         .subscribe(
           (succ) => {
-            entityDialog.snackBar.open(T("Download Successful"), T("Success") , {
-              duration: 5000
-            });
-            window.location.href = succ[1];
+            if (window.navigator.userAgent.search("Firefox")>0) {
+              window.open(succ[1]);
+          }
+            else {
+              window.location.href = succ[1];
+            }
             entityDialog.dialogRef.close();
           },
           (err) => {

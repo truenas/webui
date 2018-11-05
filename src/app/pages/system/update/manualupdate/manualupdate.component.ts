@@ -76,7 +76,7 @@ export class ManualUpdateComponent {
     {
       type: 'checkbox',
       name: 'secretseed',
-      placeholder: T('Export Password Secret Seed')
+      placeholder: T('Include Password Secret Seed')
     }
   ];
   public saveConfigFormConf: DialogFormConfiguration = {

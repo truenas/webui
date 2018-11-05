@@ -24,6 +24,7 @@ export class EntityDialogComponent implements OnInit {
   @Input('conf') conf: DialogFormConfiguration;
 
   public title: string;
+  public warning: string;
   public fieldConfig: Array < FieldConfig > ;
   public formGroup: FormGroup;
   public saveButtonText: string;

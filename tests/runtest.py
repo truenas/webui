@@ -104,7 +104,8 @@ except NameError:
     print(UsageMSG)
     sys.exit(1)
 
-global runDriver
+#global runDriver
+
 
 try:
     driver_v
