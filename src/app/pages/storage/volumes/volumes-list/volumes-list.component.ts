@@ -314,7 +314,7 @@ export class VolumesListTableConfig implements InputTableConf {
             localDialogService = this.dialogService
 
           const conf: DialogFormConfiguration = { 
-            title: "Export/Disconnect pool: '" + row1.name + "'",
+            title: "Export/disconnect pool: '" + row1.name + "'",
             fieldConfig: [{
               type: 'paragraph',
               name: 'pool_detach_warning',
