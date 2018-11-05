@@ -39,7 +39,6 @@
         </ng-container>
 
           <!-- Pager -->
-          <!--<div fxFlex="100" fxFlex.gt-xs="420px" *ngIf="paginationLength > 0 && paginationLength > paginationPageSize">-->
           <div fxFlex="100" fxFlex.gt-xs="420px" *ngIf="tabChartsMappingDataSelected && tabChartsMappingDataSelected.keyName == 'Disk'">
             <!--<div>-->
             <h4 class="fieldset-label">Pager</h4>
@@ -48,11 +47,9 @@
               [pageSize]="paginationPageSize" 
               [pageSizeOptions]="paginationPageSizeOptions" 
               (page)="paginationUpdate($event)">
-              <!--<mat-paginator [length]="paginationLength" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" (page)="paginationUpdate($event)">-->
             </mat-paginator>
           </div> <!--End Pager-->
 
-        <!--<div class="report-config-preview" fxFlex="100" fxFlex.gt-xs="calc(100% - 428px)"><img src="assets/logo.png"></div>-->
       </div>
 
 
@@ -63,8 +60,6 @@
           <!-- Cards from Filtered List-->
           <div fxLayout="row wrap" fxLayoutAlign="space-around center" *ngIf="diskReportConfigReady && tabChartsMappingDataSelected.keyName == 'Disk' && filteredData.length > 0"> 
             <div  [fxFlex]="chartWidth && chartWidth.value ? chartWidth.value : '800px'" *ngFor="let chartConfigData of filteredPaginatedData; let i=index;">
-            <!--<div  [fxFlex]="chartWidth && chartWidth.value ? chartWidth.value : '800px'" *ngFor="let chartConfigData of tabChartsMappingDataSelected.paginatedChartConfigData; let i=index;">-->
-              <div>{{i}}</div>
               <report [title]="chartConfigData.title" [lineChartConfig]="chartConfigData"></report>
             </div>
           </div>
