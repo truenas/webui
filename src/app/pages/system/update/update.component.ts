@@ -194,7 +194,7 @@ export class UpdateComponent implements OnInit {
 
   ngOnInit() {
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
-      if(!ures[0].attributes.preferences.hideWarning) {
+      if(ures[0].attributes.preferences !== undefined && !ures[0].attributes.preferences.hideWarning) {
         ures[0].attributes.preferences['hideWarning'] = false;
         this.ws.call('user.set_attribute', [1, 'preferences', ures[0].attributes.preferences]).subscribe((res)=>{
         });
@@ -332,7 +332,7 @@ export class UpdateComponent implements OnInit {
               this.releaseNotes = res.notes.ReleaseNotes;
             }
             this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
-              if(ures[0].attributes.preferences.hideWarning) {
+              if(ures[0].attributes.preferences !== undefined && ures[0].attributes.preferences.hideWarning) {
                 const ds  = this.dialogService.confirm(
                   T("Download Update"), T("Continue with download?"),true,"",true,T("Apply updates and reboot system after downloading."),"update.update",[{ train: this.train, reboot: false }]
                 )
@@ -428,7 +428,7 @@ export class UpdateComponent implements OnInit {
 
   ApplyPendingUpdate() {
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
-      if(ures[0].attributes.preferences.hideWarning) {
+      if(ures[0].attributes.preferences !== undefined && ures[0].attributes.preferences.hideWarning) {
         this.dialogService.confirm(
           T("Apply Pending Updates"), T("The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?")
         ).subscribe((res)=>{
@@ -557,10 +557,12 @@ export class UpdateComponent implements OnInit {
       entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'] }], fileName])
         .subscribe(
           (succ) => {
-            entityDialog.snackBar.open(T("Download Successful"), T("Success") , {
-              duration: 5000
-            });
-            window.location.href = succ[1];
+            if (window.navigator.userAgent.search("Firefox")>0) {
+              window.open(succ[1]);
+          }
+            else {
+              window.location.href = succ[1];
+            }
             entityDialog.dialogRef.close();
           },
           (err) => {
