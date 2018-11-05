@@ -314,12 +314,12 @@ export class VolumesListTableConfig implements InputTableConf {
             localDialogService = this.dialogService
 
           const conf: DialogFormConfiguration = { 
-            title: "Export/Disconnect pool: '" + row1.name + "'",
+            title: "Export/disconnect pool: '" + row1.name + "'",
             fieldConfig: [{
               type: 'paragraph',
               name: 'pool_detach_warning',
-              paraText: T("WARNING: Exporting/Disconnecting '" + row1.name + "'. \
-                           Exporting/Disconnecting a pool makes the data unavailable. \
+              paraText: T("WARNING: Exporting/disconnecting '" + row1.name + "'. \
+                           Exporting/disconnecting a pool makes the data unavailable. \
                            The pool data can also be wiped by setting the\
                            related option. Back up any critical data \
                            before exporting/disconnecting a pool."),
