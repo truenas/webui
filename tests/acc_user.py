@@ -1,7 +1,7 @@
 # Author: Rishabh Chauhan
 # License: BSD
 # Location for tests  of FreeNAS new GUI
-# Test case count: 6
+# Test case count: 7
 
 import function
 from source import *
@@ -290,7 +290,57 @@ class create_user_test(unittest.TestCase):
                 print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
-    def test_06_close_navAccount(self):
+    def test_06_create_newuser_suggestedname(self):
+        try:
+            print (" creating a new user with create new primary group")
+            # cancelling the tour
+            if function.is_element_present(driver, self, By.XPATH, '/html/body/div[6]/div[1]/button'):
+                driver.find_element_by_xpath('/html/body/div[6]/div[1]/button').click()
+            # scroll down to find hover tab
+            driver.find_element_by_tag_name('html').send_keys(Keys.END)
+            time.sleep(2)
+            # Perform hover to show menu
+            hover_element = driver.find_element_by_xpath(xpaths['fabTrigger'])
+            hover = ActionChains(driver).move_to_element(hover_element)
+            hover.perform()
+            time.sleep(1)
+            # Click create new user option
+            driver.find_element_by_xpath(xpaths['fabAction']).click()
+            # Enter User Full name
+            driver.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfname)
+
+            # clear user name and enter new Username
+#            driver.find_element_by_xpath(xpaths['newUser']).clear()
+#            driver.find_element_by_xpath(xpaths['newUser']).send_keys(newusername)
+            # Enter User email id
+
+            driver.find_element_by_xpath(xpaths['newUserEmail']).send_keys(newuseremail)
+            # Enter Password
+            driver.find_element_by_xpath(xpaths['newUserPass']).send_keys(newuserpassword)
+            # Enter Password Conf
+            driver.find_element_by_xpath(xpaths['newUserPassConf']).send_keys(newuserpassword)
+            # Click on create new User button
+            if driver.find_element_by_xpath(xpaths['saveButton']):
+                print ("found the save button")
+                driver.find_element_by_xpath(xpaths['saveButton']).click()
+            else:
+                print ("could not find the save button and clicking")
+
+            # check if there is a generic error when making a duplicate user, and print the error
+            time.sleep(1)
+            #taking screenshot
+            function.screenshot(driver, self)
+            self.error_check()
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            #taking screenshot
+            function.screenshot(driver, self)
+            for i in range(1,len(exc_info_p)):
+                print (exc_info_p[i].rstrip())
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
+
+    def test_07_close_navAccount(self):
         try:
             print (" closing account menu")
             driver.find_element_by_xpath(xpaths['navAccount']).click()
