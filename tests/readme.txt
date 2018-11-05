@@ -14,7 +14,7 @@ sudo pip install unittest-xml-reporting
 #Geckodriver 
 git clone https://github.com/rishabh27892/webui-test-files/
 cd webui-test-files/
-tar -xvzf geckodriver-v0.24.0-linux64.tar.gz
+tar -xvzf geckodriver-v0.23.0-linux64.tar.gz
 chmod +x geckodriver
 sudo cp geckodriver /usr/local/bin/
 cd ~/
