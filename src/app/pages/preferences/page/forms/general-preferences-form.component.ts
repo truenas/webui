@@ -77,22 +77,24 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
             tooltip: 'Display help icons in forms.',
             class:'inline'
           },
-          { 
-            type: 'checkbox', 
-            name: 'allowPwToggle', 
+          {
+            type: 'checkbox',
+            name: 'allowPwToggle',
             width: '300px',
             placeholder: 'Enable Password Toggle',
             value:this.allowPwToggle,
             tooltip: 'This option enables/disables a password toggle button.',
             class:'inline'
           },
-          { 
-            type: 'checkbox', 
-            name: 'hideWarning', 
+          {
+            type: 'checkbox',
+            name: 'hideWarning',
             width: '300px',
-            placeholder: 'Hide warning config prompt on upgrade.',
+            placeholder: 'Hide "Save Configuration" Dialog Before Upgrade',
             value:this.hideWarning,
-            tooltip: T('This option enables/disables warning config on upgrade.'),
+            tooltip: T('Show or hide a dialog to save the system\
+                        configuration file. This dialog appears\
+                        after choosing to upgrade the system.'),
             class:'inline'
           }
         ]
