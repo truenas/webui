@@ -101,10 +101,11 @@ class create_user_test(unittest.TestCase):
             time.sleep(1)
             # Click create new user option
             driver.find_element_by_xpath(xpaths['fabAction']).click()
-            # Enter New Username
-            driver.find_element_by_xpath(xpaths['newUser']).send_keys(newusername)
             # Enter User Full name
             driver.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfname)
+            # clear user name and enter new Username
+            driver.find_element_by_xpath(xpaths['newUser']).clear()
+            driver.find_element_by_xpath(xpaths['newUser']).send_keys(newusername)
             # Enter User email id
             driver.find_element_by_xpath(xpaths['newUserEmail']).send_keys(newuseremail)
             # Enter Password
@@ -152,8 +153,6 @@ class create_user_test(unittest.TestCase):
             time.sleep(1)
             # Click create new user option
             driver.find_element_by_xpath(xpaths['fabAction']).click()
-            # Enter New Username
-            driver.find_element_by_xpath(xpaths['newUser']).send_keys(newusernameuncheck)
 
 #temporary turn off dropdownlist test
             # uncheck create primary group  Checkbox
@@ -168,8 +167,13 @@ class create_user_test(unittest.TestCase):
 #            Select(driver.find_element_by_xpath(xpaths['primaryGroupdropdown'])).select_by_visible_text("userNAS")
 #            print ("made")
 #            driver.find_element_by_xpath('//*[contains(text(), "userNAS")]').click()
+
             # Enter User Full name
             driver.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfnameuncheck)
+            # clear user name and enter new Username
+            driver.find_element_by_xpath(xpaths['newUser']).clear()
+            driver.find_element_by_xpath(xpaths['newUser']).send_keys(newusernameuncheck)
+
             # Enter Password
             driver.find_element_by_xpath(xpaths['newUserPass']).send_keys(newuserpassword)
             # Enter Password Conf
@@ -210,10 +214,13 @@ class create_user_test(unittest.TestCase):
             time.sleep(1)
             # Click create new user option
             driver.find_element_by_xpath(xpaths['fabAction']).click()
-            # Enter New Username
-            driver.find_element_by_xpath(xpaths['newUser']).send_keys(superusername)
+
             # Enter User Full name
             driver.find_element_by_xpath(xpaths['newUserName']).send_keys(superuserfname)
+            # clear user name and enter new Username
+            driver.find_element_by_xpath(xpaths['newUser']).clear()
+            driver.find_element_by_xpath(xpaths['newUser']).send_keys(superusername)
+
             # Enter Password
             driver.find_element_by_xpath(xpaths['newUserPass']).send_keys(superuserpassword)
             # Enter Password Conf
@@ -258,10 +265,13 @@ class create_user_test(unittest.TestCase):
             time.sleep(1)
             # Click create new user option
             driver.find_element_by_xpath(xpaths['fabAction']).click()
-            # Enter New Username
-            driver.find_element_by_xpath(xpaths['newUser']).send_keys(newusername)
+
             # Enter User Full name
             driver.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfname)
+            # clear user name and enter new Username
+            driver.find_element_by_xpath(xpaths['newUser']).clear()
+            driver.find_element_by_xpath(xpaths['newUser']).send_keys(newusername)
+
             # Enter Password
             driver.find_element_by_xpath(xpaths['newUserPass']).send_keys(newuserpassword)
             # Enter Password Conf
