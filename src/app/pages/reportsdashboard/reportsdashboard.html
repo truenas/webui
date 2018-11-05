@@ -18,6 +18,7 @@
 
       <!-- Layout and Report Builder -->
       <div class="reports-dash-global-controls" fxLayout="row wrap" fxLayoutAlign="start stretch" fxLayoutGap="32px">
+
         <!-- Layout Switcher -->
         <div fxFlex="100" fxFlex.gt-xs="116px">
           <h4 class="fieldset-label">Layout</h4>
@@ -30,11 +31,18 @@
               <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-view-sequential"></mat-icon>
             </mat-button-toggle>
           </mat-button-toggle-group>
+        </div><!-- End Layout-Switcher-->
+
+        <!-- Report builder was 632px wide -->
+        <ng-container *ngIf="tabChartsMappingDataSelected && tabChartsMappingDataSelected.keyName == 'Disk'">
+          <entity-form-embedded fxFlex="100" fxFlex.gt-xs="calc(100% - 64px - 536px)" [target]="target" [data]="values" [conf]="this" ></entity-form-embedded>
+        </ng-container>
 
           <!-- Pager -->
-          <div *ngIf="paginationLength > 0 && paginationLength > paginationPageSize">
+          <!--<div fxFlex="100" fxFlex.gt-xs="420px" *ngIf="paginationLength > 0 && paginationLength > paginationPageSize">-->
+          <div fxFlex="100" fxFlex.gt-xs="420px" *ngIf="tabChartsMappingDataSelected && tabChartsMappingDataSelected.keyName == 'Disk'">
             <!--<div>-->
-            <h4 style="color:var(--fg1);">{{paginationLength}} / {{filteredData.length}}</h4>
+            <h4 class="fieldset-label">Pager</h4>
             <mat-paginator #pager 
               [length]="tabChartsMappingDataSelected && tabChartsMappingDataSelected.keyName == 'Disk' ? filteredData.length :  paginationLength" 
               [pageSize]="paginationPageSize" 
@@ -42,13 +50,7 @@
               (page)="paginationUpdate($event)">
               <!--<mat-paginator [length]="paginationLength" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" (page)="paginationUpdate($event)">-->
             </mat-paginator>
-          </div>
-        </div>
-
-        <!-- Report builder -->
-        <ng-container *ngIf="tabChartsMappingDataSelected && tabChartsMappingDataSelected.keyName == 'Disk'">
-          <entity-form-embedded fxFlex="100" fxFlex.gt-xs="632px" [target]="target" [data]="values" [conf]="this" ></entity-form-embedded>
-        </ng-container>
+          </div> <!--End Pager-->
 
         <!--<div class="report-config-preview" fxFlex="100" fxFlex.gt-xs="calc(100% - 428px)"><img src="assets/logo.png"></div>-->
       </div>
