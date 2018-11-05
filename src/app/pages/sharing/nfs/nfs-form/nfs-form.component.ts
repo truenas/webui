@@ -297,7 +297,7 @@ export class NFSFormComponent {
             }
           }
         }
-        if (warning_flag) {
+        if (warning_flag && error_msg !==" ") {
           _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_hosts' }).warnings = `Following IP Address/hostname appears to be wrong ${error_msg}`
           parent.save_button_enabled = false;
   
@@ -326,7 +326,7 @@ export class NFSFormComponent {
             
           }
         }
-        if (warning_flag) {
+        if (warning_flag && error_msg !==" ") {
           _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_network' }).warnings = `Following Network appears to be wrong ${error_msg}`;
           parent.save_button_enabled = false;
   
