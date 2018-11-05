@@ -78,8 +78,7 @@ export class UserFormComponent {
           type : 'input',
           name : 'password',
           placeholder : T('Password'),
-          tooltip : T('Enter password of nine characters or less\
-                      Required unless <b>Enable password login</b> is\
+          tooltip : T('Required unless <b>Enable password login</b> is\
                       <i>No</i>. Passwords cannot contain a <b>?</b>.'),
           inputType : 'password',
           togglePw: true,
@@ -100,8 +99,7 @@ export class UserFormComponent {
           type : 'input',
           name : 'password_edit',
           placeholder : T('Password'),
-          tooltip : T('Enter password of nine characters or less\
-                      Required unless <b>Enable password login</b> is\
+          tooltip : T('Required unless <b>Enable password login</b> is\
                       <i>No</i>. Passwords cannot contain a <b>?</b>.'),
           inputType : 'password',
           togglePw: true,
