@@ -120,13 +120,13 @@ def user_edit(driver, self, type, name):
     # num specifies the column of the 3 dots which is different in user/group
     # delNum speifies the option number where edit is after clicking on the 3 dots
     if (type == "user"):
-        num = 6
-        delNum = 1
+        num = 5
+        edNum = 6
         path = "User"
         #ED = "6"
     elif (type == "group"):
-        num = 5
-        delNum = 2
+        num = 4
+        edNum = 5
         path = "Group"
         #ED = "5"
 
@@ -145,10 +145,10 @@ def user_edit(driver, self, type, name):
             index = x
             break
         ui_element = " "
-    print ("index, delNum, num: " + str(x) + ", " + str(delNum) + "," + str(num))
+    print ("index, delNum, num: " + str(x) + ", " + str(edNum) + "," + str(num))
     time.sleep(1)
     # click on the 3 dots
-    driver.find_element_by_xpath('//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(num) + ']/div/app-entity-table-actions/div/mat-icon').click()
+    driver.find_element_by_xpath('//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(edNum) + ']/div/app-entity-table-actions/div/mat-icon').click()
     time.sleep(1)
     # click on edit option
     driver.find_element_by_xpath('//*[@id="action_button_Edit"]').click()
@@ -160,13 +160,13 @@ def user_delete(driver, self, type, name):
     # num specifies the column of the 3 dots which is different in user/group
     # delNum speifies the option number where del is after clicking on the 3 dots
     if (type == "user"):
-        num = 6
-        delNum = 1
+        num = 5
+        delNum = 6
         path = "User"
         plug = "bsdusr_username"
     elif (type == "group"):
-        num = 5
-        delNum = 2
+        num = 4
+        delNum = 5
         path = "Group"
         plug = "bsdgrp_group"
 
@@ -189,7 +189,7 @@ def user_delete(driver, self, type, name):
         print ("index, delNum, num: " + str(x) + ", " + str(delNum) + "," + str(num))
         time.sleep(1)
         # click on the 3 dots
-        driver.find_element_by_xpath('//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(num) + ']/div/app-entity-table-actions/div/mat-icon').click()
+        driver.find_element_by_xpath('//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(delNum) + ']/div/app-entity-table-actions/div/mat-icon').click()
         time.sleep(1)
         # click on delete option
         driver.find_element_by_xpath('//*[@id="action_button_Delete"]').click()
