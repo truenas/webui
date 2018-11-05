@@ -118,11 +118,6 @@ class create_user_test(unittest.TestCase):
                 driver.find_element_by_xpath(xpaths['saveButton']).click()
             else:
                 print ("could not find the save button and clicking")
-#            if driver.find_element_by_xpath(xpaths['saveButton']):
-#                print ("found the save button second time and clicking")
-#                driver.find_element_by_xpath(xpaths['saveButton']).click()
-#            else:
-#                print ("could not find the save button")
 
             # check if there is a generic error when making a duplicate user, and print the error
             time.sleep(1)
