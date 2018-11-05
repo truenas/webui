@@ -75,7 +75,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   public showSpinner: boolean = true;
   public activeTab: string;
   public filteredData: ChartConfigData[] = [];
+  public filteredPaginatedData: ChartConfigData[] = [];
   @ViewChild('chartWidth') chartWidth: MatButtonToggleGroup; 
+  @ViewChild('pager') pagerElement;
   
   
 
@@ -86,6 +88,12 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
       switch(evt.name){
         case 'FormSubmitted':
           this.buildDiskReport(evt.data.devices, evt.data.metrics);
+          this.setPaginationInfo(this.tabChartsMappingDataSelected, this.filteredData );
+          //console.log(this.pagerElement);
+          //this.pagerElement.getNumberOfPages();
+          /*let list = Object.assign(this.tabChartsMappingDataSelected);
+          list.chartConfigData = this.filteredData;
+          this.setPaginationInfo(list);*/
         break;
       }
     });
@@ -185,9 +193,10 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
     this.diskReportConfigReady = true;
   }
 
-  private setPaginationInfo(tabChartsMappingDataSelected: TabChartsMappingData) {
+  private setPaginationInfo(tabChartsMappingDataSelected: TabChartsMappingData, filteredConfigData?:ChartConfigData[]) {
     let paginationChartData: ChartConfigData[] = new Array();
-    tabChartsMappingDataSelected.chartConfigData.forEach((item)=>{paginationChartData.push(item)});
+    let sourceList = filteredConfigData ? filteredConfigData : tabChartsMappingDataSelected.chartConfigData;
+    sourceList.forEach((item)=>{paginationChartData.push(item)});
 
     const beginIndex = this.paginationPageIndex * this.paginationPageSize;
     const endIndex = beginIndex + this.paginationPageSize ;
@@ -197,7 +206,11 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
       paginationChartData = paginationChartData.slice(beginIndex, endIndex);
     }
 
-    tabChartsMappingDataSelected.paginatedChartConfigData = paginationChartData; 
+    if(filteredConfigData){
+      this.filteredPaginatedData = paginationChartData; 
+    } else {
+      tabChartsMappingDataSelected.paginatedChartConfigData = paginationChartData; 
+    }
 
     this.paginationLength = this.tabChartsMappingDataSelected.chartConfigData.length;
     
@@ -333,7 +346,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
     this.drawTabs = true;
     this.showSpinner = false;
     this.activateTabFromUrl();
-  }
+  }// End handleChartConfigDataFunc Method
 
   activeTabToKeyname(){
     if(this.activeTab){ return "false"}
@@ -390,6 +403,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
     let tab = this.tabChartsMappingDataArray.find(item => item.keyName == 'Disk');
     let tabData = tab.chartConfigData.filter(item => (checkDevice(item) && checkMetric(item)) ); 
     this.filteredData = tabData;
+
+    //TEST
+    //this.paginationLength = this.filteredData.length;
   }
 
   updateActiveTab(tabName:string){
@@ -404,8 +420,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
         textLabel: tabName
       }
     }
-    this.tabSelectChangeHandler(evt);
     this.activeTab = tabName.toLowerCase(); 
+    this.tabSelectChangeHandler(evt);
 
     if(tabName == 'Disk'){ this.diskReportBuilderSetup() }
   }
@@ -420,14 +436,26 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
     this.tabChartsMappingDataSelected = this.getTabChartsMappingDataByName(selectedTabName);
     this.paginationPageIndex = 0;
     this.paginationPageSize = 5;
-    this.setPaginationInfo( this.tabChartsMappingDataSelected );
+ 
+    if(this.activeTab == 'disk'){ 
+      this.setPaginationInfo(this.tabChartsMappingDataSelected, this.filteredData );
+    } else {
+      this.setPaginationInfo(this.tabChartsMappingDataSelected );
+    }
+    
   }
   
   paginationUpdate($pageEvent: PageEvent) {
+   
     this.paginationPageEvent = $pageEvent;
     this.paginationPageIndex = this.paginationPageEvent.pageIndex;
     this.paginationPageSize = this.paginationPageEvent.pageSize;
-    this.setPaginationInfo( this.tabChartsMappingDataSelected );
+    if(this.activeTab == 'disk'){ 
+      this.setPaginationInfo(this.tabChartsMappingDataSelected, this.filteredData );
+    } else {
+      this.setPaginationInfo(this.tabChartsMappingDataSelected );
+    }
+    
   }
 
 
