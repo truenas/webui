@@ -43,7 +43,6 @@ xpaths = {
         'newUserPass': '//*[@id="password"]/mat-input-container/div/div[1]/div/input',
         'newUserPassConf': '//*[@id="password_conf"]/mat-input-container/div/div[1]/div/input',
         'permitSudocheckbox': '//*[@id="sudo"]/mat-checkbox/label/div',
-        'fabTrigger': '//*[@id="myFab"]/div/smd-fab-trigger/button',
         'fabAction': '//*[@id="add_action_button"]',
         'saveButton': '//*[@id="save_button"]'
         }
@@ -94,11 +93,6 @@ class create_user_test(unittest.TestCase):
             # scroll down to find hover tab
             driver.find_element_by_tag_name('html').send_keys(Keys.END)
             time.sleep(2)
-            # Perform hover to show menu
-            hover_element = driver.find_element_by_xpath(xpaths['fabTrigger'])
-            hover = ActionChains(driver).move_to_element(hover_element)
-            hover.perform()
-            time.sleep(1)
             # Click create new user option
             driver.find_element_by_xpath(xpaths['fabAction']).click()
             # Enter User Full name
@@ -141,11 +135,6 @@ class create_user_test(unittest.TestCase):
             # scroll down to find hover tab
             driver.find_element_by_tag_name('html').send_keys(Keys.END)
             time.sleep(2)
-            # Perform hover to show menu
-            hover_element = driver.find_element_by_xpath(xpaths['fabTrigger'])
-            hover = ActionChains(driver).move_to_element(hover_element)
-            hover.perform()
-            time.sleep(1)
             # Click create new user option
             driver.find_element_by_xpath(xpaths['fabAction']).click()
 
@@ -202,11 +191,6 @@ class create_user_test(unittest.TestCase):
             # scroll down to find hover tab
             driver.find_element_by_tag_name('html').send_keys(Keys.END)
             time.sleep(2)
-            # Perform hover to show menu
-            hover_element = driver.find_element_by_xpath(xpaths['fabTrigger'])
-            hover = ActionChains(driver).move_to_element(hover_element)
-            hover.perform()
-            time.sleep(1)
             # Click create new user option
             driver.find_element_by_xpath(xpaths['fabAction']).click()
 
@@ -253,11 +237,6 @@ class create_user_test(unittest.TestCase):
             # scroll down to find hover tab
             driver.find_element_by_tag_name('html').send_keys(Keys.END)
             time.sleep(2)
-            # Perform hover to show menu
-            hover_element = driver.find_element_by_xpath(xpaths['fabTrigger'])
-            hover = ActionChains(driver).move_to_element(hover_element)
-            hover.perform()
-            time.sleep(1)
             # Click create new user option
             driver.find_element_by_xpath(xpaths['fabAction']).click()
 
@@ -299,17 +278,12 @@ class create_user_test(unittest.TestCase):
             # scroll down to find hover tab
             driver.find_element_by_tag_name('html').send_keys(Keys.END)
             time.sleep(2)
-            # Perform hover to show menu
-            hover_element = driver.find_element_by_xpath(xpaths['fabTrigger'])
-            hover = ActionChains(driver).move_to_element(hover_element)
-            hover.perform()
-            time.sleep(1)
             # Click create new user option
             driver.find_element_by_xpath(xpaths['fabAction']).click()
             # Enter User Full name
             driver.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfname)
 
-            # clear user name and enter new Username
+            # not required since UI auto fills suggested username
 #            driver.find_element_by_xpath(xpaths['newUser']).clear()
 #            driver.find_element_by_xpath(xpaths['newUser']).send_keys(newusername)
             # Enter User email id
