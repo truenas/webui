@@ -25,7 +25,7 @@ export class TooltipComponent implements OnInit {
     }
     const running_version = window.localStorage.getItem('running_version');
     if (running_version) {
-      this.message = this.message.replace("%%runningversion%%", '?running=' + running_version);
+      this.message = this.message.replace("%%runningversion%%", running_version);
     }
   }
 
