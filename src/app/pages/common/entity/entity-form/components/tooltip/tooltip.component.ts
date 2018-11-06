@@ -1,13 +1,14 @@
-import { Component, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { TooltipPosition } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
+import urls from '../../../../../../helptext/urls';
 
 @Component({
   selector : 'tooltip',
   templateUrl : 'tooltip.component.html',
   styleUrls : [ 'tooltip.component.css' ],
 })
-export class TooltipComponent {
+export class TooltipComponent implements OnInit {
   @Input('message') message: string;
   @ViewChild('tooltip') private tooltip: ElementRef;
 
@@ -16,6 +17,13 @@ export class TooltipComponent {
   public tooltipSize: any;
 
   constructor(public translate: TranslateService) {}
+
+  ngOnInit() {
+    for (const url in urls) {
+      const replace = "%%" + url + "%%";
+      this.message = this.message.replace(replace, urls[url]);
+    }
+  }
 
   showTooltip($event) {
     this.isShowTooltip = $event;
