@@ -93,6 +93,11 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       this.isSidenavOpen = false;
     }
     this.checkIfConsoleMsgShows();
+    this.ws.call('system.info').subscribe((res) => {
+      if (res.version) {
+        window.localStorage.setItem('running_version', res['version']);
+      }
+    });
   }
 
   ngAfterViewChecked() {

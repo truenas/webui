@@ -1,5 +1,5 @@
 import { T } from '../translate-marker';
 
 export default {
-    docurl: 'www.foo.com'
+    docurl: 'https://doc.freenas.org/11.2/'
 }
