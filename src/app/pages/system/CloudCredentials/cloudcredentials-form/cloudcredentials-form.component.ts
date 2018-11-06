@@ -530,6 +530,55 @@ export class CloudCredentialsFormComponent {
         }
       ]
     },
+    {
+      type: 'select',
+      name: 'drive_type-ONEDRIVE',
+      placeholder: T('Drive Type'),
+      // tooltip: T(''),
+      options: [
+        {
+          label: 'PERSONAL',
+          value: 'PERSONAL',
+        },
+        {
+          label: 'BUSINESS',
+          value: 'BUSINESS',
+        },
+        {
+          label: 'DOCUMENT_LIBRARY',
+          value: 'DOCUMENT_LIBRARY',
+        }
+      ],
+      value: 'PERSONAL',
+      required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'ONEDRIVE',
+           }]
+        }
+      ]
+    },
+    {
+      type: 'input',
+      name: 'drive_id-ONEDRIVE',
+      placeholder: T('Drive ID'),
+      // tooltip: T(''),
+      required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'ONEDRIVE',
+           }]
+        }
+      ]
+    },
     // pcloud
     {
       type: 'input',
