@@ -23,6 +23,11 @@ export class TooltipComponent implements OnInit {
       const replace = "%%" + url + "%%";
       this.message = this.message.replace(replace, urls[url]);
     }
+    const running_version = window.localStorage.getItem('running_version');
+    console.log(running_version);
+    if (running_version) {
+      this.message = this.message.replace("%%runningversion%%", '?running=' + running_version);
+    }
   }
 
   showTooltip($event) {
