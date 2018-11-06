@@ -187,7 +187,7 @@ export class Services implements OnInit {
       this.router.navigate(new Array('').concat(route));
     } else if (service === 'netdata') {
       // launch netdata
-      window.open("http://" + environment.remote + "/netdata/#menu_system_submenu_swap;theme=slate");
+      window.open("http://" + environment.remote + "/netdata/");
     } else if (service === 'cifs') {
       this.router.navigate(new Array('').concat(['services', 'smb']));
     } else {
