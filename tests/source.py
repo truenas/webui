@@ -9,6 +9,7 @@ from os import getcwd
 username = "root"
 # password for the machine
 password = "abcd1234"
+
 # new user with create primary group check
 newusername = "usernas"
 # new user full name
@@ -19,10 +20,13 @@ newuseremail = "test@ixsystems.com"
 newuserpassword = "abcd1234"
 # usergroupname
 newgroupname = "groupnas"
+
 # new user with create primary group UNcheck
 newusernameuncheck = "usernasuncheck"
 # new user full name
 newuserfnameuncheck = "user nasuncheck"
+
+
 # new user with sudo permit
 superusername = "supernas"
 
