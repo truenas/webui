@@ -34,6 +34,7 @@ import { FormSchedulerComponent } from './entity-form/components/form-scheduler/
 
 import { FormExplorerComponent } from './entity-form/components/form-explorer/form-explorer.component';
 import { TooltipComponent } from './entity-form/components/tooltip/tooltip.component';
+import { TooltipDocReplacePipe } from './entity-form/components/tooltip/tooltip-docreplace';
 import { FormSliderComponent } from './entity-form/components/form-slider/form-slider.component';
 import { FormToggleButtonComponent } from './entity-form/components/form-toggle-button/form-toggle-button.component';
 import { FormTaskComponent } from './entity-form/components/form-task/form-task.component';
@@ -92,6 +93,7 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
     FormExplorerComponent,
     FormPermissionsComponent,
     TooltipComponent,
+    TooltipDocReplacePipe,
     FormSliderComponent,
     FormToggleButtonComponent,
     FormTaskComponent,
