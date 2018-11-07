@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, ElementRef, OnInit } from '@angular/core';
+import { Component, Input, ViewChild, ElementRef } from '@angular/core';
 import { TooltipPosition } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 
