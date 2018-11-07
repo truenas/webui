@@ -167,7 +167,7 @@ export class SupportComponent  {
   };
 
   openDialog() {
-    const dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Ticket"}});
+    const dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Ticket","CloseOnClickOutside":true}});
     dialogRef.componentInstance.setCall('support.new_ticket', [this.payload]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.subscribe(res=>{
