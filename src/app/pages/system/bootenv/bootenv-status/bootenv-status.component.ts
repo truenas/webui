@@ -38,7 +38,7 @@ interface PoolDiskInfo {
                 </mat-list>
               </div>
               <div class="padding-16">
-                <dx-tree-list id='pool' [dataSource]="topology" [columnAutoWidth]="true" [expandedRowKeys]="expandRows">
+                <dx-tree-list id='pool' [dataSource]="topology" [columnAutoWidth]="true" [expandedRowKeys]="expandRows" [allowColumnResizing]="true">
                   <dxo-selection mode="single"></dxo-selection>
                   <dxi-column dataField="name" [width]="300"></dxi-column>
                   <dxi-column dataField="read" cellTemplate="readCellTemplate"></dxi-column>
