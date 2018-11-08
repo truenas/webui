@@ -12,6 +12,7 @@ import { NgUploaderModule } from 'ngx-uploader';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { DocsService} from '../../../services/docs.service';
 import { RestService, WebSocketService } from '../../../services/index';
 import { Ng2DropdownModule } from 'ng2-material-dropdown';
 import { TranslateModule } from '@ngx-translate/core';
@@ -154,7 +155,8 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
-    AppLoaderService
+    AppLoaderService,
+    DocsService
   ]
 })
 export class EntityModule {}
