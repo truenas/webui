@@ -124,10 +124,7 @@ export class GeneralComponent implements OnDestroy {
       type: 'select',
       name: 'stg_language',
       placeholder: T('Language'),
-      tooltip: T('Select a localization.\
-                  Localization progress is viewable on <a\
-                  href="https://weblate.trueos.org/projects/freenas/#languages"\
-                  target="_blank">Weblate</a>.'),
+      tooltip: T('Select a language localization.'),
       options: [
         { label: '---', value: null }
       ]
