@@ -51,7 +51,12 @@ export class AdvancedComponent implements OnDestroy {
               if (system_debug.state === "SUCCESS") {
                 this.ws.call('core.download', ['filesystem.get', [system_debug.result], fileName]).subscribe(
                   (system_debug_result) => {
-                    window.location.href = system_debug_result[1];
+                    if (window.navigator.userAgent.search("Firefox")>0) {
+                      window.open(system_debug_result[1]);
+                  }
+                    else {
+                      window.location.href = system_debug_result[1];
+                    }
                   },
                   (err) => {
                     this.openSnackBar(T("Check the network connection."), T("Failed"));
