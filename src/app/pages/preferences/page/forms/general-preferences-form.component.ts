@@ -40,7 +40,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
   public fieldConfig:FieldConfig[] = [];
   public showTooltips:boolean = this.prefs.preferences.showTooltips;
   public allowPwToggle:boolean = this.prefs.preferences.allowPwToggle;;
-  public hideWarning:boolean = this.prefs.preferences.hideWarning;
+  public enableWarning:boolean = this.prefs.preferences.enableWarning;
   public fieldSetDisplay:string = 'no-margins';//default | carousel | stepper
     public fieldSets: FieldSet[] = [
       {
@@ -88,10 +88,10 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
           },
           {
             type: 'checkbox',
-            name: 'hideWarning',
+            name: 'enableWarning',
             width: '300px',
-            placeholder: 'Hide "Save Configuration" Dialog Before Upgrade',
-            value:this.hideWarning,
+            placeholder: 'Enable "Save Configuration" Dialog Before Upgrade',
+            value:this.enableWarning,
             tooltip: T('Show or hide a dialog to save the system\
                         configuration file. This dialog appears\
                         after choosing to upgrade the system.'),
@@ -185,7 +185,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
      processSubmission(obj:any){}
 
      loadValues(themeName?:string){
-       this.hideWarning = this.prefs.preferences.hideWarning
+       this.enableWarning = this.prefs.preferences.enableWarning
        this.allowPwToggle = this.prefs.preferences.allowPwToggle
        this.showTooltips = this.prefs.preferences.showTooltips
      }
