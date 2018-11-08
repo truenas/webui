@@ -28,7 +28,7 @@ devices for the jail. \
 A fully virtualized per-jail network stack will be \
 installed.'),
 
-ip4_interface_placeholder: T('IPv4 interface'),
+ip4_interface_placeholder: T('IPv4 Interface'),
 ip4_interface_tooltip: T('IPv4 interface for the jail.'),
 
 ip4_addr_placeholder: T('IPv4 Address'),
@@ -37,14 +37,14 @@ ip4_addr_tooltip: T('IPv4 address for the jail.'),
 ip4_netmask_placeholder: T('IPv4 Netmask'),
 ip4_netmask_tooltip: T('IPv4 netmask for the jail.'),
 
-defaultrouter_placeholder: T('Default Router For IPv4'),
+defaultrouter_placeholder: T('IPv4 Default Router'),
 defaultrouter_tooltip: T('A valid IPv4 address to use as the default route. \
 <br>Enter <b>none</b> to configure the jail with \
 no IPv4 default route. <br>\
 <b>A jail without a default route will not be \
 able to access any networks.</b>'),
 
-auto_configure_ip6_placeholder: T('Auto configure IPv6'),
+auto_configure_ip6_placeholder: T('Autoconfigure IPv6'),
 auto_configure_ip6_tooltip: T('Set to use SLAAC (Stateless Address Auto \
 Configuration) to autoconfigure IPv6 in the jail.'),
 
@@ -57,10 +57,10 @@ ip6_addr_tooltip: T('IPv6 address for the jail.'),
 ip6_prefix_placeholder: T('IPv6 Prefix'),
 ip6_prefix_tooltip: T('IPv6 prefix for the jail.'),
 
-defaultrouter6_placeholder: T('Default Router For IPv6'),
+defaultrouter6_placeholder: T('IPv6 Default Router'),
 defaultrouter6_tooltip: T('A valid IPv6 address to use as the default route. \
-<br>Enter <b>none</b> to configure the jail with no \
-IPv6 default route. <br>\
+<br>Enter <b>none</b> to configure the jail without \
+an IPv6 default route. <br>\
 <b>A jail without a default route will not be able \
 to access any networks.</b>'),
 
