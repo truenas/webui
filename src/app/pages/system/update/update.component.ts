@@ -451,7 +451,16 @@ export class UpdateComponent implements OnInit {
   };
 
   ManualUpdate(){
-    this.router.navigate([this.router.url +'/manualupdate']);
+    this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
+      if(ures[0].attributes.preferences !== undefined && ures[0].attributes.preferences.hideWarning) {
+        this.router.navigate([this.router.url +'/manualupdate']);
+      }
+      else {
+        this.dialogService.dialogForm(this.saveConfigFormConf).subscribe(()=>{
+          this.router.navigate([this.router.url +'/manualupdate']);
+        });
+      };
+    });
   }
 
   pendingupdates(){
