@@ -141,7 +141,7 @@ export class ExtentFormComponent {
       tooltip: T('Only appears if a <i>File</i> or zvol is selected. When\
                   the specified percentage of free space is reached,\
                   the system issues an alert.\
-                  See <a href="..//docs/vaai.html#vaai"\
+                  See <a href="%%docurl%%/vaai.html#vaai%%webversion%%"\
                   target="_blank">VAAI</a> Threshold Warning.'),
     },
     {

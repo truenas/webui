@@ -112,7 +112,7 @@ export class DatasetFormComponent implements Formconfiguration{
       placeholder: T('Compression level'),
       tooltip: T('For more information about the available compression\
                   algorithms, refer to the <a\
-                  href="..//docs/storage.html#compression"\
+                  href="%%docurl%%/storage.html#compression%%webversion%%"\
                   target="_blank">Compression section</a> of the guide.'),
       options: [
         { label: 'off', value: 'OFF' },

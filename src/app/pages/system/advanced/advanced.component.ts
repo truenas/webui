@@ -149,7 +149,7 @@ export class AdvancedComponent implements OnDestroy {
                 <b>Warning:</b> Autotuning is only used as a temporary\
                 measure and is not a permanent fix for system hardware\
                 issues. See the\
-                <a href="../docs/system.html#autotune"\
+                <a href="%%docurl%%/system.html#autotune%%webversion%%"\
                 target="_blank">Autotune section</a> of the guide for\
                 more information.')
   }, {
@@ -210,12 +210,12 @@ export class AdvancedComponent implements OnDestroy {
   {
     type: 'paragraph',
     name: 'sed_options_message',
-    paraText: T('<b>SED (<a href="../docs/system.html#self-encrypting-drives"\
+    paraText: T('<b>SED (<a href="%%docurl%%/system.html#self-encrypting-drives%%webversion%%"\
                  target="_blank">Self-Encrypting Drives</a>) Options</b>'),
 // This tooltip wraps to the next line when uncommented.
 // Erin said it's more than likely the CSS. Commented out for now and
 // linking to the user guide from the test instead.
-//  tooltip: T('See the <a href="../docs/system.html#self-encrypting-drives"\
+//  tooltip: T('See the <a href="%%docurl%%/system.html#self-encrypting-drives%%webversion%%"\
 //                target="_blank"> Self Encrypting Drives</a> section of\
 //                the user guide for more information.'),
 //
