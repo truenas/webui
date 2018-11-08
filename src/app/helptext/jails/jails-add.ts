@@ -58,8 +58,8 @@ no IPv4 default route. <br>\
 able to access any networks.</b>'),
 
 auto_configure_ip6_placeholder: T('Auto configure IPv6'),
-auto_configure_ip6_tooltip: T('Set this if the network has a DHCPv6 server \
-and IPv6 will be used to access jails.'),
+auto_configure_ip6_tooltip: T('Set to use SLAAC (Stateless Address Auto \
+Configuration) to autoconfigure IPv6 in the jail.'),
 
 ip6_interface_placeholder: T('IPv6 Interface'),
 ip6_interface_tooltip: T('IPv6 interface for the jail.'),
