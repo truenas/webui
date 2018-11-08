@@ -30,7 +30,7 @@ href="https://www.freebsd.org/cgi/man.cgi?query=bpf&manpath=FreeBSD+11.1-RELEASE
 target="_blank">BPF(4)</a>) to data link layers in a \
 protocol independent fashion.'),
 
-ip4_interface_placeholder: T('IPv4 interface'),
+ip4_interface_placeholder: T('IPv4 Interface'),
 ip4_interface_tooltip: T('IPv4 interface for the jail.'),
 
 ip4_addr_placeholder: T('IPv4 Address'),
@@ -50,7 +50,7 @@ Example: <b>192.168.0.10/24,vnet3|192.168.10.50</b>'),
 ip4_netmask_placeholder: T('IPv4 Netmask'),
 ip4_netmask_tooltip: T('IPv4 netmask for the jail.'),
 
-defaultrouter_placeholder: T('Default IPv4 Route'),
+defaultrouter_placeholder: T('IPv4 Default Router'),
 defaultrouter_tooltip: T('A valid IPv4 address to use as the default route. \
 <br>Enter <b>none</b> to configure the jail with \
 no IPv4 default route. <br>\
@@ -58,7 +58,7 @@ no IPv4 default route. <br>\
 able to access the network without additional \
 configuration.</b>'),
 
-auto_configure_ip6_placeholder: T('Auto configure IPv6'),
+auto_configure_ip6_placeholder: T('Autoconfigure IPv6'),
 auto_configure_ip6_tooltip: T('Set to use SLAAC (Stateless Address Auto \
 Configuration) to autoconfigure IPv6 in the jail.'),
 
@@ -82,10 +82,10 @@ re5|2001:db8:85a3::8a2e:370:7334/24</b>'),
 ip6_prefix_placeholder: T('IPv6 Prefix'),
 ip6_prefix_tooltip: T('IPv6 prefix for the jail.'),
 
-defaultrouter6_placeholder: T('Default IPv6 Route'),
+defaultrouter6_placeholder: T('IPv6 Default Route'),
 defaultrouter6_tooltip: T('A valid IPv6 address to use as the default route. \
-<br>Enter <b>none</b> to configure the jail with \
-no IPv4 default route. <br>\
+<br>Enter <b>none</b> to configure the jail without \
+an IPv6 default route. <br>\
 <b>A jail without a default route will not be \
 able to access the network without additional \
 configuration.'),
