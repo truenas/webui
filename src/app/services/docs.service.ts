@@ -1,10 +1,20 @@
 import urls from '../helptext/urls';
+import { WebSocketService } from './ws.service';
 import {Injectable} from '@angular/core';
 
 @Injectable()
 export class DocsService {
 
-  docReplace(message):string {
+    constructor(public ws: WebSocketService) {  }
+
+    docReplace(message):string {
+        if (!window.localStorage.getItem('running_version')) {
+            this.ws.call('system.info').subscribe((res) => {
+                if (res.version) {
+                  window.localStorage.setItem('running_version', res['version']);
+                }
+            });
+        }
         for (const url in urls) {
             const replace = "%%" + url + "%%";
             message = message.replace(replace, urls[url]);
@@ -22,6 +32,6 @@ export class DocsService {
             message = message.replace("%%runningversion%%", running_version);
         }
 
-      return message;
-  }
+        return message;
+    }
 }
