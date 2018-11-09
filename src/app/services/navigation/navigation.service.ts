@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { T } from '../../translate-marker';
+import { DocsService } from '../docs.service';
+
+import * as _ from 'lodash';
 
 interface IMenuItem {
   type: string, // Possible values: link/dropDown/icon/separator/extLink
@@ -19,7 +22,8 @@ interface IChildItem {
 
 @Injectable()
 export class NavigationService {
-  
+
+  protected docUrl: string;
 
   defaultMenu: IMenuItem[] = [{
       name: T('Dashboard'),
@@ -216,10 +220,10 @@ export class NavigationService {
     },
     {
       name: T('Guide'),
-      type: 'link',
+      type: 'extLink',
       tooltip: T('Guide'),
       icon: 'info',
-      state: 'guide',
+      state: '',
     }
   ]
 
@@ -231,7 +235,13 @@ export class NavigationService {
   // navigation component has subscribed this Observable
   menuItems$ = this.menuItems.asObservable();
 
-  constructor() {}
+
+
+  constructor(private docsService: DocsService) {
+    this.docUrl = this.docsService.docReplace("%%docurl%%");
+    const guide = _.find(this.defaultMenu, {name: 'Guide'});
+    guide.state = this.docUrl;
+  }
 
   publishNavigationChange(menuType: string) {
     this.menuItems.next(this.defaultMenu);
