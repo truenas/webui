@@ -47,7 +47,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
                             <b>tw_cli</b>, <br><b>MegaCli</b>,\
                             <b>freenas-debug</b>, <b>tmux</b>,\
                             <b>Dmidecode</b>.<br> Refer to the <a\
-                            href="..//docs/cli.html"\
+                            href="%%docurl%%/cli.html%%webversion%%"\
                             target="_blank">Command Line Utilities</a>\
                             chapter in the guide for usage information\
                             and examples.');

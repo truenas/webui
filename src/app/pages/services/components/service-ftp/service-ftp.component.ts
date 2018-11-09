@@ -236,7 +236,7 @@ export class ServiceFTPComponent implements OnInit {
       placeholder : T('Enable TLS'),
       tooltip: T('Set to enable encrypted connections. Requires a certificate\
                   to be created or imported using\
-                  <a href="..//docs/system.html#certificates"\
+                  <a href="%%docurl%%/system.html#certificates%%webversion%%"\
                   target="_blank">Certificates</a>'),
     },
     {
