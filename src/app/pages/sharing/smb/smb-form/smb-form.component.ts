@@ -107,7 +107,7 @@ export class SMBFormComponent implements OnDestroy {
       name: 'cifs_guestok',
       placeholder: T('Allow Guest Access'),
       tooltip: T('Set to allow access to this share without a password.\
-                  See the <a href="..//docs/services.html#smb"\
+                  See the <a href="%%docurl%%/services.html#smb%%webversion%%"\
                   target="_blank">SMB</a> service documentation for more\
                   information about guest user permissions.')
     },
@@ -140,7 +140,7 @@ export class SMBFormComponent implements OnDestroy {
       name: 'cifs_vfsobjects',
       placeholder: T('VFS Objects'),
       tooltip: T('Adds <a\
-                  href="..//docs/sharing.html#avail-vfs-modules-tab"\
+                  href="%%docurl%%/sharing.html#avail-vfs-modules-tab%%webversion%%"\
                   target="blank">virtual file system modules</a> to\
                   enhance functionality.'),
       options: [],

@@ -44,7 +44,7 @@ export class GlobalconfigurationComponent {
       tooltip: T('Enter the percentage of free space to remain\
                   in the pool. When this percentage is reached,\
                   the system issues an alert, but only if zvols are used.\
-                  See <a href="..//docs/vaai.html#vaai"\
+                  See <a href="%%docurl%%/vaai.html#vaai%%webversion%%"\
                   target="_blank">VAAI Threshold Warning</a> for more\
                   information.'),
       inputType: 'number',
