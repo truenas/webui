@@ -533,7 +533,7 @@ export class CloudCredentialsFormComponent {
     {
       type: 'select',
       name: 'drive_type-ONEDRIVE',
-      placeholder: T('Drive Type'),
+      placeholder: T('Drive Account Type'),
       // tooltip: T(''),
       options: [
         {
