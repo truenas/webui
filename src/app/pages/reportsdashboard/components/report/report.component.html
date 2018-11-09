@@ -6,8 +6,8 @@
         <!-- Controls/Tools -->
         <div fxFlex="calc(35%)" class="line-chart-tools-wrapper">
           <div class="line-chart-tools" *ngIf="lineChart.chart"> 
-                  <button class="tool-icon" mat-icon-button [disabled]="timeZoomIndex >= (zoomLevels.length - 1)" >
-                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-magnify-plus" (click)="timeZoomIn()"></mat-icon>
+            <button class="tool-icon" mat-icon-button [disabled]="timeZoomIndex >= (zoomLevels.length - 1)" (click)="timeZoomIn()">
+                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-magnify-plus" ></mat-icon>
                   </button>
                 
                   <button class="tool-icon" mat-icon-button [disabled]="timeZoomIndex <= 0" (click)="timeZoomOut()">
