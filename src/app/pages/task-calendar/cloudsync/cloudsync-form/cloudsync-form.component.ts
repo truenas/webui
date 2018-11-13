@@ -11,7 +11,7 @@ import { FieldRelationService } from '../../../common/entity/entity-form/service
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/task-calendar/cloudsync/cloudsync-form';
-
+import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
   selector: 'cloudsync-add',
@@ -85,27 +85,42 @@ export class CloudsyncFormComponent implements OnInit {
     name: 'bucket_input',
     placeholder: helptext.bucket_input_placeholder,
     tooltip: helptext.bucket_input_tooltip,
+    value: '',
     isHidden: true,
     disabled: true,
     required: true,
     validation : helptext.bucket_input_validation
   }, {
-    type: 'input',
+    type: 'explorer',
     name: 'folder',
     placeholder: helptext.folder_placeholder,
     tooltip: helptext.folder_tooltip,
+    initial: '/',
+    explorerType: 'directory',
+    customTemplateStringOptions: {
+      displayField: 'Path',
+      isExpandedField: 'expanded',
+      idField: 'uuid',
+      getChildren: this.getChildren.bind(this),
+      nodeHeight: 23,
+      allowDrag: true,
+      useVirtualScroll: false,
+    },
     isHidden: true,
     disabled: true,
     relation: [
       {
         action: 'HIDE',
+        connective: 'AND',
         when: [{
-          name: 'credentials',
-          value: null,
+          name: 'bucket',
+          value: '',
+        }, {
+          name: 'bucket_input',
+          value: '',
         }]
       }
     ],
-    value: "",
   }, {
     type: 'select',
     name: 'encryption',
@@ -256,6 +271,53 @@ export class CloudsyncFormComponent implements OnInit {
     return this.ws.call('cloudsync.list_buckets', [credential.id]);
   }
 
+  getChildren(node) {
+    let credential = this.formGroup.controls['credentials'].value;
+    let bucket = this.formGroup.controls['bucket'].value;
+    if (this.bucket_field.disabled) {
+      bucket = this.formGroup.controls['bucket_input'].value;
+    }
+    return new Promise((resolve, reject) => {
+        resolve(this.getBucketFolders(credential, bucket, node));
+    });
+  }
+
+  getBucketFolders(credential, bucket, node) {
+    const children = [];
+    let data = {
+      "credentials": credential,
+      "encryption": null,
+      "filename_encryption": null,
+      "encryption_password": null,
+      "encryption_salt": null,
+      "attributes": {
+        "bucket": bucket,
+        "folder": node.data.name,
+      },
+      "args": null
+    }
+    return this.ws.call('cloudsync.list_directory', [data]).toPromise().then(
+      (res) => {
+        for (let i = 0; i < res.length; i++) {
+          const child = {};
+          if (res[i].IsDir) {
+            if (data.attributes.folder == '/') {
+              child['name'] = data.attributes.folder + res[i].Path;
+            } else {
+              child['name'] = data.attributes.folder + '/' + res[i].Path;
+            }
+            child['subTitle'] = res[i].Name;
+            child['hasChildren'] = true;
+            children.push(child);
+          }
+        }
+        return children;
+      },
+      (err) => {
+        new EntityUtils().handleWSError(this, err);
+      });
+  }
+
   setRelation(config: FieldConfig) {
     const activations =
         this.fieldRelationService.findActivationRelation(config.relation);
@@ -317,7 +379,6 @@ export class CloudsyncFormComponent implements OnInit {
     }
 
     this.formGroup.controls['credentials'].valueChanges.subscribe((res)=>{
-      console.log(res);
       if (res!=null) {
         this.credentials_list.forEach((item)=>{
           if (item.id == res) {
@@ -341,8 +402,8 @@ export class CloudsyncFormComponent implements OnInit {
                   this.loader.close();
                   this.bucket_field.options = [{label: '----------', value: ''}];
                   if (res) {
-                    res.forEach((item) => {
-                      this.bucket_field.options.push({ label: item.Name, value: item.Path });
+                    res.forEach((subitem) => {
+                      this.bucket_field.options.push({ label: subitem.Name, value: subitem.Path });
                     });
                   }
                   this.setDisabled('bucket', false, false);
