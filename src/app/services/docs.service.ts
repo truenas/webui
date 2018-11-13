@@ -8,13 +8,6 @@ export class DocsService {
     constructor(public ws: WebSocketService) {  }
 
     docReplace(message):string {
-        if (!window.localStorage.getItem('running_version')) {
-            this.ws.call('system.info').subscribe((res) => {
-                if (res.version) {
-                  window.localStorage.setItem('running_version', res['version']);
-                }
-            });
-        }
         for (const url in urls) {
             const replace = new RegExp("%%" + url + "%%", "g");
             message = message.replace(replace, urls[url]);
