@@ -1,0 +1,48 @@
+/*
+ * Variables 
+ * height 36px
+ *
+ * */
+
+/* MENUS */
+.mat-menu-item {
+  line-height:36px !important;
+  height:36px !important;
+}
+
+/* Cards */
+.mat-card{
+  padding:0 !important;
+}
+
+.mat-content,
+.mat-card > *{
+  padding:16px !important;
+  margin:0 !important;
+}
+
+.mat-card > .no-padding{
+  padding:0 !important;
+}
+
+.mat-card-title-text{
+  margin:0 !important;
+}
+
+/* Special Override Classes */
+
+/* FreeNAS Specific */
+.form-card{}
+
+/* This element is part of entity-table.
+ * It currently uses css to do artificially 
+ * put itselt inside the title bar.
+ * This needs to be changed in the markup 
+ * instead of using this type of hack */
+#filter{
+    position: static !important;
+    padding:0 !important;
+    /*right: 150px;
+    top: 9px;
+    z-index: 10;*/
+}
