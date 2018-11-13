@@ -128,8 +128,7 @@ export class DatasetFormComponent implements Formconfiguration{
       type: 'radio',
       name: 'share_type',
       placeholder: T('Share Type'),
-      tooltip: T('Set the type of client that will most often use this dataset.\
-                  accessing the pool/dataset.'),
+      tooltip: T('Set the type of client that will most often use this dataset.'),
       options: [{label:'Unix', value: 'UNIX'},
                 {label:'Windows', value: 'WINDOWS'},
                 {label:'Mac', value: 'MAC'}],
