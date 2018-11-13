@@ -128,7 +128,7 @@ export class DatasetFormComponent implements Formconfiguration{
       type: 'radio',
       name: 'share_type',
       placeholder: T('Share Type'),
-      tooltip: T('Choose the type that matches the type of client\
+      tooltip: T('Set the type of client that will most often use this dataset.\
                   accessing the pool/dataset.'),
       options: [{label:'Unix', value: 'UNIX'},
                 {label:'Windows', value: 'WINDOWS'},
@@ -287,7 +287,7 @@ export class DatasetFormComponent implements Formconfiguration{
       type: 'select',
       name: 'readonly',
       placeholder: T('Read-only'),
-      tooltip: T('Choose if the dataset can be modified.'),
+      tooltip: T('Set to prevent the dataset from being modified.'),
       options: [
         { label: 'On', value: 'ON' },
         { label: 'Off', value: 'OFF' }
@@ -297,7 +297,7 @@ export class DatasetFormComponent implements Formconfiguration{
       type: 'select',
       name: 'exec',
       placeholder: T('Exec'),
-      tooltip: T('Choose <b>On</b> or <b>Off</b>.'),
+      tooltip: T('Set whether processes can be executed from within this dataset.'),
       options: [
         { label: 'On', value: 'ON' },
         { label: 'Off', value: 'OFF' }
@@ -477,8 +477,8 @@ export class DatasetFormComponent implements Formconfiguration{
         const recommended_size_number = parseInt(this.reverseRecordSizeMap[this.recommended_size],0);
         if (res_number < recommended_size_number){
           _.find(this.fieldConfig, {name:'recordsize'}).warnings = `
-          Based on Pool Topology, it's highly recommnded to set Record Size to ${this.recommended_size}. 
-          negative effects could be for sequential I/O performance and space efficiency`
+          Recommended record size based on pool topology: ${this.recommended_size}.
+          Other sizes could reduce sequential I/O performance and space efficiency.`
         } else {
           _.find(this.fieldConfig, {name:'recordsize'}).warnings = null;
         };
