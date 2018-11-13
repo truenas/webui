@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { T } from '../../translate-marker';
-import { DocsService } from '../docs.service';
 
 import * as _ from 'lodash';
 
@@ -22,8 +21,6 @@ interface IChildItem {
 
 @Injectable()
 export class NavigationService {
-
-  protected docUrl: string;
 
   defaultMenu: IMenuItem[] = [{
       name: T('Dashboard'),
@@ -237,11 +234,7 @@ export class NavigationService {
 
 
 
-  constructor(private docsService: DocsService) {
-    this.docUrl = this.docsService.docReplace("%%docurl%%");
-    const guide = _.find(this.defaultMenu, {name: 'Guide'});
-    guide.state = this.docUrl;
-  }
+  constructor() { }
 
   publishNavigationChange(menuType: string) {
     this.menuItems.next(this.defaultMenu);
