@@ -48,9 +48,9 @@ export class GeneralComponent implements OnDestroy {
       tooltip: T('Required for <i>HTTPS</i>. Browse to the location of\
                   the certificate to use for encrypted connections. If\
                   there are no certificates, create a <a\
-                  href="..//docs/system.html#cas"\
+                  href="%%docurl%%/system.html#cas%%webversion%%"\
                   target="_blank">Certificate Authority (CA)</a> then\
-                  the <a href="..//docs/system.html#certificates"\
+                  the <a href="%%docurl%%/system.html#certificates%%webversion%%"\
                   target="_blank">Certificate</a>.'),
       options: [
         { label: '---', value: null }
@@ -124,10 +124,7 @@ export class GeneralComponent implements OnDestroy {
       type: 'select',
       name: 'stg_language',
       placeholder: T('Language'),
-      tooltip: T('Select a localization.\
-                  Localization progress is viewable on <a\
-                  href="https://weblate.trueos.org/projects/freenas/#languages"\
-                  target="_blank">Weblate</a>.'),
+      tooltip: T('Select a language localization.'),
       options: [
         { label: '---', value: null }
       ]

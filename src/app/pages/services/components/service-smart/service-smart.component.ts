@@ -95,7 +95,7 @@ export class ServiceSMARTComponent {
       name : 'smart_email',
       placeholder : T('Email'),
       tooltip: T('Enter an email address to receive <a\
-                  href="..//docs/services.html#s-m-a-r-t"\
+                  href="%%docurl%%/services.html#s-m-a-r-t%%webversion%%"\
                   target="_blank">S.M.A.R.T.</a> alerts; use a space to \
                   separate multiple email addresses.'),
     },

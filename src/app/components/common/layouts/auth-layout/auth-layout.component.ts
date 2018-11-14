@@ -56,9 +56,12 @@ export class AuthLayoutComponent implements OnInit {
     palette.forEach(function(color){
       let swatch = theme[color];
       admin_layout_el.style.setProperty("--" + color, theme[color]);
+      (<any>document).documentElement.style.setProperty("--" + color, theme[color]);
     });
     admin_layout_el.style.setProperty("--primary",theme["primary"]);
     admin_layout_el.style.setProperty("--accent",theme["accent"]);
+    (<any>document).documentElement.style.setProperty("--primary",theme["primary"]);
+    (<any>document).documentElement.style.setProperty("--accent",theme["accent"]);
   }
 
 }

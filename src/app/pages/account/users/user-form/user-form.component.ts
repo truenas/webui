@@ -60,7 +60,7 @@ export class UserFormComponent {
                       Usernames cannot begin with a hyphen\
                       (<b>-</b>) or contain a space, tab, or these\
                       characters: <b>, : + & # %^ ( ) ! @ ~ * ? < > =</b>\
-                      . A <b>$</b> can only be used as the last\
+                      Note that <b>$</b> can only be used as the last\
                       character.'),
           required: true,
           validation : [ Validators.required, Validators.pattern('[a-z_A-Z_][a-zA-Z0-9_-]*[$]?'), Validators.maxLength(16) ],

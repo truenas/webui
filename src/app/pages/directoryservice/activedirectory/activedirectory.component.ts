@@ -424,7 +424,7 @@ export class ActiveDirectoryComponent {
              target="_blank">idmap_autorid(8)</a>\, <a\
              href="https://www.freebsd.org/cgi/man.cgi?query=idmap_ad"\
              target="_blank">ad</a>\, <a\
-             href="..//docs/directoryservice.html#id12"\
+             href="%%docurl%%/directoryservice.html#id12%%webversion%%"\
              target="_blank">fruit</a>\, <a\
              href="https://www.freebsd.org/cgi/man.cgi?query=idmap_ldap"\
              target="_blank">idmap_ldap(8)</a>\, <a\

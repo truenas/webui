@@ -34,15 +34,15 @@ export class ManualUpdateComponent {
   protected dialogRef: any;
   public fileLocation: any;
   public subs: any;
-  public custActions: Array<any> = [
-    {
-      id : 'save_config',
-      name : T('Save Config'),
-      function : () => {
-        this.dialogservice.dialogForm(this.saveConfigFormConf);
-      }
-    }
-  ];
+  // public custActions: Array<any> = [
+  //   {
+  //     id : 'save_config',
+  //     name : T('Save Config'),
+  //     function : () => {
+  //       this.dialogservice.dialogForm(this.saveConfigFormConf);
+  //     }
+  //   }
+  // ];
   public saveSubmitText ="Apply Update";
   protected fieldConfig: FieldConfig[] = [
     {
