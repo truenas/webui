@@ -241,6 +241,7 @@ export class CloudsyncFormComponent implements OnInit {
   protected credentials: any;
   protected bucket_field: any;
   protected bucket_input_field: any;
+  protected folder_field: any;
 
   public credentials_list = [];
 
@@ -377,8 +378,13 @@ export class CloudsyncFormComponent implements OnInit {
         this.setRelation(config);
       }
     }
-
+    this.folder_field = _.find(this.fieldConfig, { "name": "folder"});
     this.formGroup.controls['credentials'].valueChanges.subscribe((res)=>{
+      // reset folder tree view
+      if (!this.folder_field.disabled) {
+        this.folder_field.customTemplateStringOptions.explorer.ngOnInit();
+      }
+
       if (res!=null) {
         this.credentials_list.forEach((item)=>{
           if (item.id == res) {
@@ -408,11 +414,17 @@ export class CloudsyncFormComponent implements OnInit {
                   }
                   this.setDisabled('bucket', false, false);
                   this.setDisabled('bucket_input', true, true);
+                  if (this.formGroup.controls['bucket'].value == '') {
+                    this.setDisabled('folder', true, true);
+                  }
                 },
                 (err) => {
                   this.loader.close();
                   this.setDisabled('bucket', true, true);
                   this.setDisabled('bucket_input', false, false);
+                  if (this.formGroup.controls['bucket_input'].value == '') {
+                    this.setDisabled('folder', true, true);
+                  }
                   this.dialog.confirm(T('Error: ') + err.error, err.reason, true, T('Fix Credential')).subscribe(
                     (res) => {
                       if (res) {
@@ -424,11 +436,30 @@ export class CloudsyncFormComponent implements OnInit {
             } else {
               this.setDisabled('bucket', true, true);
               this.setDisabled('bucket_input', true, true);
+              this.setDisabled('folder', true, true);
             }
           }
         });
       }
     })
+
+    this.formGroup.controls['bucket_input'].valueChanges.subscribe((res)=> {
+      if (!this.bucket_input_field.isHidden && res == '') {
+        this.setDisabled('folder', true, true);
+      } else {
+        this.setDisabled('folder', false, false);
+      }
+      this.folder_field.customTemplateStringOptions.explorer.ngOnInit();
+    });
+
+    this.formGroup.controls['bucket'].valueChanges.subscribe((res)=> {
+      if (!this.bucket_field.isHidden && res == '') {
+        this.setDisabled('folder', true, true);
+      } else {
+        this.setDisabled('folder', false, false);
+      }
+      this.folder_field.customTemplateStringOptions.explorer.ngOnInit();
+    });
 
     // get cloud credentials
     this.ws.call(this.cloudcredential_query, {}).subscribe(res => {
