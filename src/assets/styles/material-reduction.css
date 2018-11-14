@@ -11,12 +11,15 @@
 }
 
 /* Cards */
-.mat-card{
+entity-table .mat-card,
+entity-form .mat-card{
   padding:0 !important;
 }
 
-.mat-content,
-.mat-card > *{
+/*entity-form .mat-content,
+entity-table .mat-content,*/
+entity-form .mat-card > *,
+entity-table .mat-card > *{
   padding:16px !important;
   margin:0 !important;
 }
@@ -30,9 +33,11 @@
 }
 
 /* Special Override Classes */
+/*.widget-loader,
+.widget .mat-card-content,
 .no-padding{
-  padding:0;
-}
+  padding:0px !important;
+}*/
 
 /* FreeNAS Specific */
 
@@ -51,8 +56,8 @@ button.menu-toggle .mat-icon{
  * instead of using this type of hack */
 #filter{
     position: static !important;
-    padding:0 !important;
-    /*right: 150px;
+    /*padding:0 !important;
+    right: 150px;
     top: 9px;
     z-index: 10;*/
 }

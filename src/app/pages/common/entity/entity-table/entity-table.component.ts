@@ -120,8 +120,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     protected erdService: ErdService, protected translate: TranslateService, protected snackBar: MatSnackBar,
     public sorter: StorageService) { }
 
-  ngOnInit() {
-
+  ngOnInit(): void {
     this.setTableHeight(); 
   
     if (this.conf.preInit) {
@@ -152,10 +151,35 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       this.hideTopActions = this.conf.hideTopActions;
     }
 
+
+      // Delay spinner 500ms so it won't show up on a fast-loading page
+      setTimeout(() => { this.setShowSpinner(); }, 500);
+
+      // Next section sets the checked/displayed columns
+      if (this.conf.columns && this.conf.columns.length > 10) {
+        this.conf.columns = [];
+
+        for (let item of this.allColumns) {
+          if (!item.hidden) {
+            this.conf.columns.push(item);
+            this.presetDisplayedCols.push(item);
+          }
+        }
+
+        this.currentPreferredCols = this.conf.columns;
+      }
+        // End of checked/display section ------------                 
+        
+    this.erdService.attachResizeEventToElement("entity-table-component");
+  }
+
+  ngAfterViewInit() {
+
     Observable.fromEvent(this.filter.nativeElement, 'keyup')
       .debounceTime(150)
       .distinctUntilChanged()
-      .subscribe(() => {
+      .subscribe((evt) => {
+        //console.log(evt);
         const filterValue: string = this.filter.nativeElement.value;
         let newData: any[] = [];
 
@@ -183,24 +207,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         this.paginationPageIndex  = 0;
         this.setPaginationInfo();
       });
-
-      // Delay spinner 500ms so it won't show up on a fast-loading page
-      setTimeout(() => { this.setShowSpinner(); }, 500);
-
-      // Next section sets the checked/displayed columns
-      if (this.conf.columns && this.conf.columns.length > 10) {
-        this.conf.columns = [];
-
-        for (let item of this.allColumns) {
-          if (!item.hidden) {
-            this.conf.columns.push(item);
-            this.presetDisplayedCols.push(item);
-          }
-        }
-
-        this.currentPreferredCols = this.conf.columns;
-      }
-        // End of checked/display section ------------                 
   }
 
   setTableHeight() {
@@ -229,12 +235,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
   setShowSpinner() {
     this.showSpinner = true;
-  }
-
-  ngAfterViewInit(): void {
-
-    this.erdService.attachResizeEventToElement("entity-table-component");
-
   }
 
   getData() {
