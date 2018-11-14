@@ -57,7 +57,7 @@
 <!-- End checkbox -->
 
   <mat-divider *ngIf="conf.multiActions; else defaultMultiActions"></mat-divider>
-  <div fxLayout="row wrap" fxLayoutAlign="start center" class="multiActionsButton" *ngIf="conf.multiActions; else defaultMultiActions" fxFlex="100">
+  <div fxLayout="row wrap" fxLayoutAlign="start center" class="multiActionsButton" *ngIf="conf.multiActions; else defaultMultiActions" >
     <div [style.visibility]="selected.length > 0 ? 'visible' : 'hidden'" >
       <!--<div *ngIf="conf.multiActions; else defaultMultiActions" fxFlex="100">-->
       <div>
