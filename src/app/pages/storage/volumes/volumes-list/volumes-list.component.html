@@ -1,6 +1,6 @@
 <div id="volumes-list.component_html" class="material mat-card mat-card-table">
-  <div class="mat-toolbar mat-card-toolbar">
-    <div class="mat-card-title-text">{{ title }}
+  <div class="mat-toolbar mat-card-toolbar" fxLayout="row wrap" fxLayoutAlign="space-between center" fxLayoutAlignGap="16px">
+    <div fxFlex="120px%" class="mat-card-title-text">{{ title }}
       <mat-spinner 
       *ngIf="showSpinner"
       [diameter]='40' 
@@ -8,10 +8,8 @@
       >
      </mat-spinner> 
     </div>
-    <app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
-  </div>
-  <div>
-    <br/>
+  
+      <app-entity-table-add-actions fxFlex="120px" [entity]="this"></app-entity-table-add-actions>
   </div>
   <div *ngIf="zfsPoolRows.length > 0">
     <mat-accordion [multi]="true">

@@ -6,6 +6,7 @@ import { DragulaModule } from 'ng2-dragula';
 import { MaterialModule } from '../../appMaterial.module';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TranslateModule } from '@ngx-translate/core';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { EntityModule } from '../common/entity/entity.module';
 import { UserService } from '../../services/user.service';
@@ -45,7 +46,7 @@ import { MessageService } from '../common/entity/entity-form/services/message.se
   imports : [
     RouterModule, DragulaModule, EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, routing, MaterialModule,
-    NgxDatatableModule, DxTreeListModule, TranslateModule
+    NgxDatatableModule, DxTreeListModule, TranslateModule,FlexLayoutModule
   ],
   declarations : [
     VolumesListComponent,
