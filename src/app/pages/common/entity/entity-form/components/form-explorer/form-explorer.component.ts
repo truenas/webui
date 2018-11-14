@@ -50,11 +50,13 @@ export class FormExplorerComponent implements Field, OnInit {
                public translate: TranslateService){}
 
   ngOnInit() {
+    this.treeVisible = false;
     if (this.config.customTemplateStringOptions) {
       if (!this.config.customTemplateStringOptions.actionMapping) {
         this.config.customTemplateStringOptions.actionMapping = this.actionMapping;
       }
       this.customTemplateStringOptions = this.config.customTemplateStringOptions;
+      this.config.customTemplateStringOptions.explorer = this;
     }
     if(this.config.explorerType === "zvol") {
       this.displayFieldName = 'name';
