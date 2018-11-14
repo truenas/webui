@@ -34,7 +34,7 @@ xpaths = { 'navSystem' : '//*[@id="nav-2"]/div/a[1]',
            'submenuNtpserver' : '//*[@id="2-1"]'
          }
 
-class conf_sysntpserver_test(unittest.TestCase):
+class conf_ntpserver_test(unittest.TestCase):
     @classmethod
     def setUpClass(inst):
         driver.implicitly_wait(30)
@@ -80,8 +80,8 @@ class conf_sysntpserver_test(unittest.TestCase):
     def tearDownClass(inst):
         pass
 
-def run_conf_sysntpserver_test(webdriver):
+def run_conf_ntpserver_test(webdriver):
     global driver
     driver = webdriver
-    suite = unittest.TestLoader().loadTestsFromTestCase(conf_sysntpserver_test)
+    suite = unittest.TestLoader().loadTestsFromTestCase(conf_ntpserver_test)
     xmlrunner.XMLTestRunner(output=results_xml, verbosity=2).run(suite)

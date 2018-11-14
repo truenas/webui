@@ -40,9 +40,13 @@ class conf_sysgeneral_test(unittest.TestCase):
         driver.implicitly_wait(30)
         pass
 
-    # Test navigation Account>Users>Hover>New User and enter username,fullname,password,confirmation and wait till user is  visibile in the list
     def test_01_nav_system_general(self):
         try:
+           # Navigating to System>General page
+            a = driver.find_element_by_xpath(xpaths['navSystem'])
+            a.click()
+            # allowing page to load by giving explicit time(in seconds)
+            time.sleep(1)
             driver.find_element_by_xpath(xpaths['submenuGeneral']).click()
             # cancelling the tour
             if self.is_element_present(By.XPATH,'/html/body/div[6]/div[1]/button'):
