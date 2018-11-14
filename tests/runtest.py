@@ -43,7 +43,7 @@ from sys_tunables import run_conf_tunables_test
 from sys_update import run_check_update_test
 from sys_ca import run_conf_ca_test
 from sys_certificates import run_conf_certificates_test
-from sys_support import run_certificates_support_test
+from sys_support import run_conf_support_test
 
 from serv_ssh import run_conf_ssh_test
 from serv_afp import run_conf_afp_test
