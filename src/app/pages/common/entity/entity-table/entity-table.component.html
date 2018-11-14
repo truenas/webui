@@ -57,8 +57,8 @@
 
 
 
-  <div fxLayout="row wrap" fxLayoutAlign="start center" class="multiActionsButton" *ngIf="conf.multiActions; else defaultMultiActions" >
-    <div [style.visibility]="selected.length > 0 ? 'visible' : 'hidden'" >
+  <div fxLayout="row wrap" fxLayoutAlign="start center" class="multiActionsButton" *ngIf="conf.multiActions; else defaultMultiActions" [style.display]="selected.length > 0 ? 'block' : 'none'" >
+    <div>
       <!--<div *ngIf="conf.multiActions; else defaultMultiActions" fxFlex="100">-->
       <div>
         <span *ngFor="let maction of conf.multiActions">
