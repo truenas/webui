@@ -152,7 +152,7 @@ export class ZvolFormComponent {
       name: 'compression',
       placeholder: T('Compression level'),
       tooltip: T('Automatically compress data written to the zvol.\
-                  Choose a <a href="%%docurl%%/storage.html#compression%%webversion%%"\
+                  Choose a <a href="%%docurl%%/storage.html%%webversion%%#compression"\
                   target="_blank">compression algorithm</a>.'),
       options: [
         {label : 'Off', value : "OFF"},
@@ -172,7 +172,7 @@ export class ZvolFormComponent {
       placeholder: T('ZFS Deduplication'),
       tooltip : T('Activates the process for ZFS to transparently reuse\
                    a single copy of duplicated data to save space. The\
-                   <a href="%%docurl%%/storage.html#deduplication%%webversion%%"\
+                   <a href="%%docurl%%/storage.html%%webversion%%#deduplication"\
                    target="_blank">Deduplication section</a> of the Guide\
                    describes each option.'),
       options: [
