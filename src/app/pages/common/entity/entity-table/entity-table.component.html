@@ -1,15 +1,42 @@
 <div id="entity-table-component" class="material mat-card mat-card-table">
-  <div class="mat-toolbar mat-card-toolbar" *ngIf="hideTopActions === false" fxLayout="row wrap" fxLayoutAlign="space-between">
+  <div class="mat-toolbar mat-card-toolbar" *ngIf="hideTopActions === false" fxLayout="row wrap" fxLayoutGap="16px" fxLayoutAlign="space-between start">
     <div fxFlex="300px" class="mat-card-title-text">{{ title | translate }}</div>
 
-  <div id="filter">
+  <div fxFlex="calc(100% - 540px - 64px)"id="filter">
     <mat-input-container floatPlaceholder="never">
       <input matInput #filter placeholder="{{'Filter' | translate}} {{title | translate}}">
     </mat-input-container>
     <tooltip message="{{'Show only entries that contain this text' | translate}}"></tooltip>
   </div>
 
-    <div fxFlex="calc(100% - 300px])" style="text-align:right;"><app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions></div>
+<!-- START MultiMenu-->
+<button fxFlex="120px" mat-button [matMenuTriggerFor]="menu" color="primary" class="menu-toggle">
+  <span>Columns <mat-icon class="menu-caret">arrow_drop_down</mat-icon> </span>
+</button>
+<mat-menu #menu="matMenu" multiple>
+
+  <!-- SELECT ALL -->
+  <button mat-menu-item (click)="checkAll()">
+    <span>
+      <mat-icon *ngIf="checkLength()">check_circle</mat-icon> 
+      <mat-icon *ngIf="!checkLength()">remove</mat-icon> 
+    </span> 
+    <span>Select All</span>
+  </button>
+
+  <!-- TOGGLE COLUMNS-->
+  <button mat-menu-item *ngFor="let col of allColumns" (click)="toggle(col);">
+    <span>
+      <mat-icon *ngIf="isChecked(col)">check_circle</mat-icon> 
+      <mat-icon *ngIf="!isChecked(col)">remove</mat-icon> 
+    </span> 
+    <span>{{col.name}}</span>
+  </button>
+</mat-menu>
+<!-- END MultiMenu-->
+
+
+    <div fxFlex="120px" style="text-align:right;"><app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions></div>
     <div fxFlex="100%" class="legacy-warning" *ngIf="legacyWarning">{{ legacyWarning | translate }} <span class="legacy-warning-link" (click)="onGoToLegacy()">
         {{ legacyWarningLink | translate }}.
       </span>
@@ -28,15 +55,15 @@
   </div>
 
 <!-- Selected columns checkbox ----------------- -->
-<div id="col-select-box" class="selected-columns" *ngIf="allColumns.length > 10 ? true : false">
+<!--<div id="col-select-box" class="selected-columns" *ngIf="allColumns.length > 10 ? true : false">
   <div id="select-all-checkbox-and-label">
     <mat-checkbox
       type="checkbox"
       [id]="check-all"
       [checked]="checkLength()"
       (change)="checkAll()"
-      labelPosition = 'before'>
-      Toggle
+      labelPosition = 'after'>
+      Select All
      </mat-checkbox> 
   </div>
   <ul>
@@ -53,10 +80,28 @@
       </div>
     </li>
   </ul>
-</div>
+  </div>-->
 <!-- End checkbox -->
+<!-- START MultiSelectMenu -->
+  <!--<button "primary" mat-menu-item *ngFor="let col 0f allColumns">{{col}}</button> -->
+<!--<mat-form-field>
+  <mat-select placeholder="Filter Columns" [formControl]="columns" multiple>
+    <mat-select-trigger>
+      {{columns.value ? columns.value[0] : ''}}
+    </mat-select-trigger>
+    <mat-option *ngFor="let col of allColumns" [value]="column">{{col}}</mat-option>
+  </mat-select>
+  </mat-form-field>-->
 
-  <mat-divider *ngIf="conf.multiActions; else defaultMultiActions"></mat-divider>
+<!--<mat-form-field>
+  <mat-select placeholder="Filter Columns" [formControl]="columns" multiple>
+    <mat-option *ngFor="let col of allColumns" [value]="col">{{col.name}}</mat-option>
+  </mat-select>
+  </mat-form-field>-->
+<!-- END MultiSelectMenu-->
+
+
+
   <div fxLayout="row wrap" fxLayoutAlign="start center" class="multiActionsButton" *ngIf="conf.multiActions; else defaultMultiActions" >
     <div [style.visibility]="selected.length > 0 ? 'visible' : 'hidden'" >
       <!--<div *ngIf="conf.multiActions; else defaultMultiActions" fxFlex="100">-->
