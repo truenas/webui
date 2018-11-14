@@ -79,11 +79,13 @@
 }
 
 .legacy-warning {
-    position: absolute;
-    font-size: .8rem;
-    top: 75px;
-    right: 10px;
-    z-index: 10;
+  font-weight:500;
+  margin:0 24px;
+//    position: absolute;
+//    font-size: .8rem;
+//    top: 75px;
+//    right: 10px;
+//    z-index: 10;
 }
 
 .legacy-warning-link {

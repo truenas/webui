@@ -16,6 +16,10 @@ entity-form .mat-card{
   padding:0 !important;
 }
 
+entity-table .mat-toolbar.mat-card-toolbar{
+  max-height: 40px !important;
+}
+
 /*entity-form .mat-content,
 entity-table .mat-content,*/
 entity-form .mat-card > *,
@@ -56,6 +60,7 @@ button.menu-toggle .mat-icon{
  * instead of using this type of hack */
 #filter{
     position: static !important;
+    margin-top:-10px; /* The form field reserves too much space in mat-toolbar. This wins some of the screen back */
     /*padding:0 !important;
     right: 150px;
     top: 9px;
