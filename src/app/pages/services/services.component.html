@@ -3,9 +3,9 @@
     <div class="filter-field">
       <mat-icon role="img">search</mat-icon>
       <div class="card-filter-field">
-        <mat-input-container floatPlaceholder="Filter Service">
+        <mat-form-field floatPlaceholder="Filter Service">
           <input matInput #filter placeholder="Filter Service" [ngModel]="searchTerm" (ngModelChange)="displayFilter('title',$event)">
-        </mat-input-container>
+        </mat-form-field>
       </div>
     </div>
     <mat-spinner [diameter]='40' id="services-spinner" *ngIf="showSpinner">

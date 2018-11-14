@@ -334,19 +334,19 @@ export class GeneralComponent implements OnDestroy {
 
       this.stg_guiprotocol = entityEdit.formGroup.controls['stg_guiprotocol'];
       if (this.stg_guiprotocol.value === 'http') {
-        this.stg_guicertificate.isHidden = true;
+        this.stg_guicertificate['isHidden'] = true;
       }
       this.stg_guihttpsredirect = _.find(this.fieldConfig,{'name' : 'stg_guihttpsredirect'});
       this.stg_guiprotocol_subscription = this.stg_guiprotocol.valueChanges.subscribe((value) => {
         if (value === 'http') {
-          this.stg_guicertificate.isHidden = true;
-          this.stg_guihttpsredirect.isHidden = true;
+          this.stg_guicertificate['isHidden'] = true;
+          this.stg_guihttpsredirect['isHidden'] = true;
         } else if (value ==='httphttps') {
-          this.stg_guihttpsredirect.isHidden = true;
-          this.stg_guicertificate.isHidden = false;
+          this.stg_guihttpsredirect['isHidden'] = true;
+          this.stg_guicertificate['isHidden'] = false;
         } else {
-          this.stg_guihttpsredirect.isHidden = false;
-          this.stg_guicertificate.isHidden = false;
+          this.stg_guihttpsredirect['isHidden'] = false;
+          this.stg_guicertificate['isHidden'] = false;
         }
       });
   }

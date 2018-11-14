@@ -451,9 +451,9 @@ export class DeviceAddComponent implements OnInit {
           if(element.dtype === "RAW") {
             if (element.attributes.boot) {
               this.rootpwd = _.find(this.rawfileFieldConfig, {'name': 'rootpwd'});
-              this.rootpwd.isHidden = false;
+              this.rootpwd['isHidden'] = false;
               this.boot = _.find(this.rawfileFieldConfig, {'name': 'boot'});
-              this.boot.isHidden = false;
+              this.boot['isHidden'] = false;
             }
 
           }

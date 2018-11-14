@@ -1,6 +1,6 @@
-<div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
+<div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
   <div>
-    <mat-input-container *ngIf="config.inputType != 'file' else elseBlock">
+    <mat-form-field *ngIf="config.inputType != 'file' else elseBlock">
       <input matInput [type]="config.inputType ? config.inputType : 'text'"
         list="options"
 		  	[placeholder]="config.placeholder | translate"
@@ -16,7 +16,7 @@
            <span>{{ option.label }}</span>
          </mat-option>
        </mat-autocomplete>
-    </mat-input-container>
+    </mat-form-field>
     <mat-button mat-icon-button id="{{config.name}}-select" type="button" [matMenuTriggerFor]="options">
       <mat-icon>arrow_drop_down</mat-icon>
     </mat-button>
@@ -29,5 +29,5 @@
     </mat-menu>
     <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
   </div>
-  <mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
+  <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
 </div>

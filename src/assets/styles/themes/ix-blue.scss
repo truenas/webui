@@ -1002,7 +1002,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     max-width: 450px !important;
   }
 
-  .has-pwtoggle > mat-input-container {
+  .has-pwtoggle > mat-form-field {
     width: 70% !important;
   }
 
@@ -1011,7 +1011,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     width: 385px !important;
     background: rgba(0, 0, 0, 0) !important;
 
-    mat-input-container {
+    mat-form-field {
       width: 86.3% !important;
     }
   }

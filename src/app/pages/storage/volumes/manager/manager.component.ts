@@ -566,7 +566,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   checkPoolName() {
-    if(_.find(this.existing_pools, {"name": this.name})) {
+    if(_.find(this.existing_pools, {"name": this.name as any})) {
       this.poolError = T("A pool with this name already exists."); 
     } else {
       this.poolError = null;

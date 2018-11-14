@@ -45,7 +45,7 @@ mat-card.card-filter .view-controls .mat-button-toggle-group {
   margin: 2px 16px;
 }
 
-.card-filter mat-input-container.mat-input-container {
+.card-filter mat-form-field.mat-form-field {
   width: 97%;
   padding-left: 32px;
 }

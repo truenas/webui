@@ -1,7 +1,7 @@
 import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs/Subscription';
+import {Subscription} from 'rxjs';
 import {RestService, SystemGeneralService, WebSocketService} from '../../../services/';
 import {FieldConfig} from '../../common/entity/entity-form/models/field-config.interface';
 import {  DialogService } from '../../../services/';
@@ -454,14 +454,14 @@ export class ActiveDirectoryComponent {
       if(res){
         entityEdit.setDisabled('ad_bindname', true);
         entityEdit.setDisabled('ad_bindpw', true);
-        _.find(this.fieldConfig, {'name' : 'ad_bindname'}).isHidden = true;
-        _.find(this.fieldConfig, {'name' : 'ad_bindpw'}).isHidden = true;
+        _.find(this.fieldConfig, {'name' : 'ad_bindname'})['isHidden'] = true;
+        _.find(this.fieldConfig, {'name' : 'ad_bindpw'})['isHidden'] = true;
 
       } else {
         entityEdit.setDisabled('ad_bindname', false);
         entityEdit.setDisabled('ad_bindpw', false);
-        _.find(this.fieldConfig, {'name' : 'ad_bindname'}).isHidden = false;
-        _.find(this.fieldConfig, {'name' : 'ad_bindpw'}).isHidden = false;
+        _.find(this.fieldConfig, {'name' : 'ad_bindname'})['isHidden'] = false;
+        _.find(this.fieldConfig, {'name' : 'ad_bindpw'})['isHidden'] = false;
       }
 
     })

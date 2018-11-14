@@ -295,11 +295,11 @@ export class AdvancedComponent implements OnDestroy {
     _.find(this.fieldConfig, { 'name': 'serialspeed' });
     this.adv_serialconsole =
     entityEdit.formGroup.controls['serialconsole'];
-    this.adv_serialspeed.isHidden = !this.adv_serialconsole.value;
-    this.adv_serialport.isHidden = !this.adv_serialconsole.value;
+    this.adv_serialspeed['isHidden'] = !this.adv_serialconsole.value;
+    this.adv_serialport['isHidden'] = !this.adv_serialconsole.value;
     this.adv_serialconsole_subscription = this.adv_serialconsole.valueChanges.subscribe((value) => {
-      this.adv_serialspeed.isHidden = !value;
-      this.adv_serialport.isHidden = !value;
+      this.adv_serialspeed['isHidden'] = !value;
+      this.adv_serialport['isHidden'] = !value;
     });
     entityEdit.ws.call('system.advanced.serial_port_choices').subscribe((serial_port_choices)=>{
       for(let i=0; i<serial_port_choices.length; i++){
