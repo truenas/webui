@@ -111,13 +111,9 @@ export class CloudsyncFormComponent implements OnInit {
     relation: [
       {
         action: 'HIDE',
-        connective: 'AND',
         when: [{
-          name: 'bucket',
-          value: '',
-        }, {
-          name: 'bucket_input',
-          value: '',
+          name: 'credentials',
+          value: null,
         }]
       }
     ],
@@ -283,6 +279,20 @@ export class CloudsyncFormComponent implements OnInit {
     });
   }
 
+  setBucketError(error: any) {
+      if (error) {
+        this.bucket_field.hasErrors = true;
+        this.bucket_field.errors = error;
+        this.bucket_input_field.hasErrors = true;
+        this.bucket_input_field.errors = error;
+      } else {
+        this.bucket_field.hasErrors = false;
+        this.bucket_field.errors = null;
+        this.bucket_input_field.hasErrors = false;
+        this.bucket_input_field.errors = null;
+      }
+  }
+
   getBucketFolders(credential, bucket, node) {
     const children = [];
     let data = {
@@ -297,8 +307,13 @@ export class CloudsyncFormComponent implements OnInit {
       },
       "args": null
     }
+    if (bucket == '') {
+      delete data.attributes.bucket;
+    }
     return this.ws.call('cloudsync.list_directory', [data]).toPromise().then(
       (res) => {
+        this.setBucketError(null);
+
         for (let i = 0; i < res.length; i++) {
           const child = {};
           if (res[i].IsDir) {
@@ -315,7 +330,11 @@ export class CloudsyncFormComponent implements OnInit {
         return children;
       },
       (err) => {
-        new EntityUtils().handleWSError(this, err);
+        if (err.extra && err.extra[0][0].split('.').pop() == 'bucket') {
+          this.setBucketError(err.extra[0][1]);
+        } else {
+          new EntityUtils().handleWSError(this, err);
+        }
       });
   }
 
@@ -414,17 +433,11 @@ export class CloudsyncFormComponent implements OnInit {
                   }
                   this.setDisabled('bucket', false, false);
                   this.setDisabled('bucket_input', true, true);
-                  if (this.formGroup.controls['bucket'].value == '') {
-                    this.setDisabled('folder', true, true);
-                  }
                 },
                 (err) => {
                   this.loader.close();
                   this.setDisabled('bucket', true, true);
                   this.setDisabled('bucket_input', false, false);
-                  if (this.formGroup.controls['bucket_input'].value == '') {
-                    this.setDisabled('folder', true, true);
-                  }
                   this.dialog.confirm(T('Error: ') + err.error, err.reason, true, T('Fix Credential')).subscribe(
                     (res) => {
                       if (res) {
@@ -436,7 +449,6 @@ export class CloudsyncFormComponent implements OnInit {
             } else {
               this.setDisabled('bucket', true, true);
               this.setDisabled('bucket_input', true, true);
-              this.setDisabled('folder', true, true);
             }
           }
         });
@@ -444,20 +456,12 @@ export class CloudsyncFormComponent implements OnInit {
     })
 
     this.formGroup.controls['bucket_input'].valueChanges.subscribe((res)=> {
-      if (!this.bucket_input_field.isHidden && res == '') {
-        this.setDisabled('folder', true, true);
-      } else {
-        this.setDisabled('folder', false, false);
-      }
+      this.setBucketError(null);
       this.folder_field.customTemplateStringOptions.explorer.ngOnInit();
     });
 
     this.formGroup.controls['bucket'].valueChanges.subscribe((res)=> {
-      if (!this.bucket_field.isHidden && res == '') {
-        this.setDisabled('folder', true, true);
-      } else {
-        this.setDisabled('folder', false, false);
-      }
+      this.setBucketError(null);
       this.folder_field.customTemplateStringOptions.explorer.ngOnInit();
     });
 
@@ -565,7 +569,8 @@ export class CloudsyncFormComponent implements OnInit {
         this.router.navigate(new Array('/').concat(this.route_success));
       }, (err) => {
         this.loader.close();
-        this.dialog.errorReport('Error', err.reason, err.trace.formatted);
+        // this.dialog.errorReport('Error', err.reason, err.trace.formatted);
+        new EntityUtils().handleWSError(this, err);
       });
     } else {
       this.loader.open();
@@ -576,7 +581,8 @@ export class CloudsyncFormComponent implements OnInit {
         },
         (err)=>{
         this.loader.close();
-        this.dialog.errorReport('Error', err.reason, err.trace.formatted);
+        // this.dialog.errorReport('Error', err.reason, err.trace.formatted);
+        new EntityUtils().handleWSError(this, err);
         }
       );
     }
