@@ -123,7 +123,7 @@
               <span>{{'Shut Down' | translate}}</span>
             </button>
         </mat-menu>
-      <mat-menu #languageMenu="matMenu" [overlapTrigger]="false" xPosition="after">
+      <mat-menu #languageMenu="matMenu" xPosition="after">
         <ng-container *ngFor="let lang of language.availableLangs">
           <button mat-menu-item (click)="setLang(lang.code)">
             <span>{{ lang.name }}</span>

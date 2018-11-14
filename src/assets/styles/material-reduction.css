@@ -16,6 +16,11 @@ entity-form .mat-card{
   padding:0 !important;
 }
 
+.form-card.mat-card {
+  max-width:960px;
+  margin:0 auto;
+}
+
 entity-table .mat-toolbar.mat-card-toolbar{
   max-height: 40px !important;
 }

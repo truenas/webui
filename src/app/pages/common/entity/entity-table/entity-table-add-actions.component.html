@@ -28,7 +28,7 @@
     <!--<button mat-button [matMenuTriggerFor]="menu">-->
     <span>OPTIONS <mat-icon class="menu-caret ">arrow_drop_down</mat-icon></span>
   </button>
-  <mat-menu #menu="matMenu">
+  <mat-menu #menu="matMenu" overlapTrigger="false">
     <button mat-menu-item (click)="this.entity.doAdd()" *ngIf="this.entity.conf.route_add" >
     <mat-icon>add</mat-icon>
     <span>{{this.entity.conf.route_add_tooltip | translate}}</span>
