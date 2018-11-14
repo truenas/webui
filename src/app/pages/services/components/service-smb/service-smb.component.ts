@@ -62,9 +62,9 @@ export class ServiceSMBComponent {
       placeholder: T('Workgroup'),
       tooltip: T('Must match Windows workgroup\
                   name. This setting is ignored if the\
-                  <a href="%%docurl%%/directoryservice.html#active-directory%%webversion%%"\
+                  <a href="%%docurl%%/directoryservice.html%%webversion%%#active-directory"\
                   target="_blank">Active Directory</a> or <a\
-                  href="%%docurl%%/directoryservice.html#ldap%%webversion%%"\
+                  href="%%docurl%%/directoryservice.html%%webversion%%#ldap"\
                   target="_blank">LDAP</a> service is running.'),
       required: true,
       validation : [ Validators.required ]
@@ -213,7 +213,7 @@ export class ServiceSMBComponent {
       tooltip: T('Unselect this option to allow cross-domain\
                   authentication, users and groups to be managed on\
                   another forest, and permissions to be delegated from\
-                  <a href="%%docurl%%/directoryservice.html#active-directory%%webversion%%"\
+                  <a href="%%docurl%%/directoryservice.html%%webversion%%#active-directory"\
                   target="_blank">Active Directory</a>\
                   users and groups to domain admins on another forest.'),
     },
