@@ -23,6 +23,7 @@ from acc_user import run_create_user_test
 from store_pool import run_create_pool_test
 from net_conf import run_conf_network_test
 from plugins import run_plugin_test
+from sys_general import run_conf_sysgeneral_test
 from serv_ssh import run_conf_ssh_test
 from serv_afp import run_conf_afp_test
 from serv_smb import run_conf_smb_test
@@ -140,6 +141,7 @@ except NameError:
     run_conf_network_test(runDriver)
 #    run_check_update_test(runDriver)
     run_conf_email_test(runDriver)
+    run_conf_sysgeneral_test(runDriver)
     run_conf_sysadvance_test(runDriver)
 #    run_conf_afp_test(runDriver)
 # special reason for dns other services turned off until status is figured out
@@ -178,6 +180,7 @@ else:
     elif (test_name == "system"):
         run_check_update_test(runDriver)
         run_conf_email_test(runDriver)
+        run_conf_sysgeneral_test(runDriver)
         run_conf_sysadvance_test(runDriver)
 
     elif (test_name == "service"):
@@ -271,6 +274,9 @@ if path.exists('sys_advanced.pyc'):
 
 if path.exists('sys_email.pyc'):
     call(["rm", "sys_email.pyc"])
+
+if path.exists('sys_general.pyc'):
+    call(["rm", "sys_general.pyc"])
 
 if path.exists('guide.pyc'):
     call(["rm", "guide.pyc"])
