@@ -79,6 +79,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   @Input('conf') conf: InputTableConf;
 
   @ViewChild('filter') filter: ElementRef;
+  @ViewChild('defaultMultiActions') defaultMultiActions: ElementRef;
 
   // MdPaginator Inputs
   public paginationPageSize: number = 8;
