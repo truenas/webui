@@ -175,9 +175,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       //border-left: 2px solid map-get($md-primary, 500);
       @include variable(border-left, --primary, $primary, !important);
   }
-  .sidebar-panel.mat-sidenav {
-      background: url('/assets/images/sidebar-bg.jpg') no-repeat;
-  }
   .breadcrumb-bar {
       //background: #ffffff !important;
       @include variable(background, --bg2, $bg2, !important);
