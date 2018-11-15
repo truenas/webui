@@ -19,7 +19,7 @@
     </div>
   </mat-card-header>
   <mat-card-content>
-    <div *ngIf="viewMode.value == 'table' && cards" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" fxLayoutGap="5%">
+    <div fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" fxLayoutGap="5%">
       <services-table [conf]="this" [data]="cards" fxFlex="100" fxLayout="column"></services-table>
     </div>
   </mat-card-content>
