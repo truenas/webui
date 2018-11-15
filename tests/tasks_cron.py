@@ -42,6 +42,11 @@ class conf_taskscron_test(unittest.TestCase):
 
     def test_01_nav_tasks_cron(self):
         try:
+           # Navigating to System>General page
+            a = driver.find_element_by_xpath(xpaths['navTasks'])
+            a.click()
+            # allowing page to load by giving explicit time(in seconds)
+            time.sleep(1)
             driver.find_element_by_xpath(xpaths['submenuCron']).click()
             # cancelling the tour
             if self.is_element_present(By.XPATH,'/html/body/div[6]/div[1]/button'):
