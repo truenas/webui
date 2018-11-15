@@ -30,21 +30,20 @@ try:
 except ImportError:
     import unittest
 
-xpaths = { 'navService' : '//*[@id="nav-8"]/div/a[1]',
-           'navSystem' : '//*[@id="nav-2"]/div/a[1]',
-           'submenuAdvanced' : '//*[@id="2-3"]'
+xpaths = { 'navSystem' : '//*[@id="nav-2"]/div/a[1]',
+           'submenuSysdataset' : '//*[@id="2-5"]'
          }
 
-class conf_sysadvanced_test(unittest.TestCase):
+class conf_sysdataset_test(unittest.TestCase):
     @classmethod
     def setUpClass(inst):
         driver.implicitly_wait(30)
         pass
 
     # Test navigation Account>Users>Hover>New User and enter username,fullname,password,confirmation and wait till user is  visibile in the list
-    def test_01_nav_system_advanced(self):
+    def test_01_nav_system_dataset(self):
         try:
-            driver.find_element_by_xpath(xpaths['submenuAdvanced']).click()
+            driver.find_element_by_xpath(xpaths['submenuSysdataset']).click()
             # cancelling the tour
             if self.is_element_present(By.XPATH,'/html/body/div[6]/div[1]/button'):
                 driver.find_element_by_xpath('/html/body/div[6]/div[1]/button').click()
@@ -54,7 +53,7 @@ class conf_sysadvanced_test(unittest.TestCase):
             page_data=ui_element.text
             print ("the Page now is: " + page_data)
             # assert response
-            self.assertTrue("Advanced" in page_data)
+            self.assertTrue("System Dataset" in page_data)
             #taking screenshot
             function.screenshot(driver, self)
         except Exception:
@@ -82,8 +81,8 @@ class conf_sysadvanced_test(unittest.TestCase):
     def tearDownClass(inst):
         pass
 
-def run_conf_sysadvanced_test(webdriver):
+def run_conf_sysdataset_test(webdriver):
     global driver
     driver = webdriver
-    suite = unittest.TestLoader().loadTestsFromTestCase(conf_sysadvanced_test)
+    suite = unittest.TestLoader().loadTestsFromTestCase(conf_sysdataset_test)
     xmlrunner.XMLTestRunner(output=results_xml, verbosity=2).run(suite)

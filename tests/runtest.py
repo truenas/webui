@@ -20,9 +20,31 @@ from login import run_login_test
 # from guide import run_guide_test
 from acc_group import run_create_group_test
 from acc_user import run_create_user_test
+from acc_edit import run_edit_test
+from acc_delete import run_delete_test
+
 from store_pool import run_create_pool_test
+from store_delete import run_delete_pool_test
+
 from net_conf import run_conf_network_test
+
 from plugins import run_plugin_test
+
+from sys_general import run_conf_sysgeneral_test
+from sys_ntpserver import run_conf_ntpserver_test
+from sys_bootenv import run_conf_bootenv_test
+from sys_advanced import run_conf_sysadvanced_test
+from sys_email import run_conf_email_test
+from sys_dataset import run_conf_sysdataset_test
+from sys_alertservices import run_conf_alertservices_test
+from sys_alertsettings import run_conf_alertsettings_test
+from sys_cloudcreds import run_conf_cloudcreds_test
+from sys_tunables import run_conf_tunables_test
+from sys_update import run_check_update_test
+from sys_ca import run_conf_ca_test
+from sys_certificates import run_conf_certificates_test
+from sys_support import run_conf_support_test
+
 from serv_ssh import run_conf_ssh_test
 from serv_afp import run_conf_afp_test
 from serv_smb import run_conf_smb_test
@@ -32,13 +54,8 @@ from serv_iscsi import run_conf_iscsi_test
 from serv_lldp import run_conf_lldp_test
 from serv_dc import run_conf_dc_test
 from serv_webdav import run_conf_webdav_test
-from sys_update import run_check_update_test
-from sys_email import run_conf_email_test
-from sys_advanced import run_conf_sysadvance_test
+
 from guide import run_view_guide_test
-from acc_edit import run_edit_test
-from acc_delete import run_delete_test
-from store_delete import run_delete_pool_test
 from theme import run_change_theme_test
 from logout import run_logout_test
 
@@ -138,9 +155,22 @@ except NameError:
     run_create_group_test(runDriver)
     run_create_pool_test(runDriver)
     run_conf_network_test(runDriver)
-#    run_check_update_test(runDriver)
+
+    run_conf_sysgeneral_test(runDriver)
+    run_conf_ntpserver_test(runDriver)
+    run_conf_bootenv_test(runDriver)
+    run_conf_sysadvanced_test(runDriver)
     run_conf_email_test(runDriver)
-    run_conf_sysadvance_test(runDriver)
+    run_conf_sysdataset_test(runDriver)
+    run_conf_alertservices_test(runDriver)
+    run_conf_alertsettings_test(runDriver)
+    run_conf_cloudcreds_test(runDriver)
+    run_conf_tunables_test(runDriver)
+#    run_check_update_test(runDriver)
+    run_conf_ca_test(runDriver)
+    run_conf_certificates_test(runDriver)
+    run_conf_support_test(runDriver)
+
 #    run_conf_afp_test(runDriver)
 # special reason for dns other services turned off until status is figured out
 #    run_conf_dc_test(runDriver)
@@ -176,9 +206,21 @@ else:
         run_conf_network_test(runDriver)
 
     elif (test_name == "system"):
-        run_check_update_test(runDriver)
+        run_conf_sysgeneral_test(runDriver)
+        run_conf_ntpserver_test(runDriver)
+        run_conf_bootenv_test(runDriver)
+        run_conf_sysadvanced_test(runDriver)
         run_conf_email_test(runDriver)
-        run_conf_sysadvance_test(runDriver)
+        run_conf_sysdataset_test(runDriver)
+        run_conf_alertservices_test(runDriver)
+        run_conf_alertsettings_test(runDriver)
+        run_conf_cloudcreds_test(runDriver)
+        run_conf_tunables_test(runDriver)
+#       run_check_update_test(runDriver)
+        run_conf_ca_test(runDriver)
+        run_conf_certificates_test(runDriver)
+        run_conf_support_test(runDriver)
+
 
     elif (test_name == "service"):
         print ("Running: Guide Tests")
@@ -271,6 +313,39 @@ if path.exists('sys_advanced.pyc'):
 
 if path.exists('sys_email.pyc'):
     call(["rm", "sys_email.pyc"])
+
+if path.exists('sys_general.pyc'):
+    call(["rm", "sys_general.pyc"])
+
+if path.exists('sys_ntpserver.pyc'):
+    call(["rm", "sys_ntpserver.pyc"])
+
+if path.exists('sys_bootenv.pyc'):
+    call(["rm", "sys_bootenv.pyc"])
+
+if path.exists('sys_dataset.pyc'):
+    call(["rm", "sys_dataset.pyc"])
+
+if path.exists('sys_alertservices.pyc'):
+    call(["rm", "sys_alertservices.pyc"])
+
+if path.exists('sys_alertsettings.pyc'):
+    call(["rm", "sys_alertsettings.pyc"])
+
+if path.exists('sys_cloudcred.pyc'):
+    call(["rm", "sys_cloudcred.pyc"])
+
+if path.exists('sys_tunables.pyc'):
+    call(["rm", "sys_tunables.pyc"])
+
+if path.exists('sys_ca.pyc'):
+    call(["rm", "sys_ca.pyc"])
+
+if path.exists('sys_certificates.pyc'):
+    call(["rm", "sys_certificates.pyc"])
+
+if path.exists('sys_support.pyc'):
+    call(["rm", "sys_support.pyc"])
 
 if path.exists('guide.pyc'):
     call(["rm", "guide.pyc"])
