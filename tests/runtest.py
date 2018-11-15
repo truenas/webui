@@ -154,7 +154,7 @@ except NameError:
     run_create_user_test(runDriver)
     run_create_group_test(runDriver)
     run_create_pool_test(runDriver)
-    run_conf_network_test(runDriver)
+#    run_conf_network_test(runDriver)
 
     run_conf_sysgeneral_test(runDriver)
     run_conf_ntpserver_test(runDriver)
@@ -332,8 +332,8 @@ if path.exists('sys_alertservices.pyc'):
 if path.exists('sys_alertsettings.pyc'):
     call(["rm", "sys_alertsettings.pyc"])
 
-if path.exists('sys_cloudcred.pyc'):
-    call(["rm", "sys_cloudcred.pyc"])
+if path.exists('sys_cloudcreds.pyc'):
+    call(["rm", "sys_cloudcreds.pyc"])
 
 if path.exists('sys_tunables.pyc'):
     call(["rm", "sys_tunables.pyc"])
