@@ -31,18 +31,18 @@ except ImportError:
     import unittest
 
 xpaths = { 'navTasks' : '//*[@id="nav-3"]/div/a[1]',
-           'submenuInit-shutdown' : '//*[@id="3-1"]'
+           'submenuInit-shutscript' : '//*[@id="3-1"]'
          }
 
-class conf_tasksinitshutdown_test(unittest.TestCase):
+class conf_tasksinitshutscript_test(unittest.TestCase):
     @classmethod
     def setUpClass(inst):
         driver.implicitly_wait(30)
         pass
 
-    def test_01_nav_tasks_initshutdown(self):
+    def test_01_nav_tasks_initshutscript(self):
         try:
-            driver.find_element_by_xpath(xpaths['submenuInit-shutdown']).click()
+            driver.find_element_by_xpath(xpaths['submenuInit-shutscript']).click()
             # cancelling the tour
             if self.is_element_present(By.XPATH,'/html/body/div[6]/div[1]/button'):
                 driver.find_element_by_xpath('/html/body/div[6]/div[1]/button').click()
@@ -80,8 +80,8 @@ class conf_tasksinitshutdown_test(unittest.TestCase):
     def tearDownClass(inst):
         pass
 
-def run_conf_taskinitshutdown_test(webdriver):
+def run_conf_tasksinitshutscript_test(webdriver):
     global driver
     driver = webdriver
-    suite = unittest.TestLoader().loadTestsFromTestCase(conf_taskinitshutdown_test)
+    suite = unittest.TestLoader().loadTestsFromTestCase(conf_tasksinitshutscript_test)
     xmlrunner.XMLTestRunner(output=results_xml, verbosity=2).run(suite)

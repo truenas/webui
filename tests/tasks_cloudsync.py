@@ -63,7 +63,7 @@ class conf_taskscloudsync_test(unittest.TestCase):
                 print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
-   def test_02_close_system_tab(self):
+    def test_02_close_system_tab(self):
         try:
             # Close the System Tab
             driver.find_element_by_xpath(xpaths['navTasks']).click()

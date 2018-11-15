@@ -46,14 +46,14 @@ from sys_certificates import run_conf_certificates_test
 from sys_support import run_conf_support_test
 
 from tasks_cron import run_conf_taskscron_test
-from tasks_init-shutscript import run_conf_tasksinitshutscript_test
+from tasks_initshutscript import run_conf_tasksinitshutscript_test
 from tasks_rsync import run_conf_tasksrsync_test
 from tasks_SMART import run_conf_tasksSMART_test
 from tasks_periodicSS import run_conf_tasksperiodicSS_test
 from tasks_replication import run_conf_tasksreplication_test
 from tasks_resilver import run_conf_tasksresilver_test
 from tasks_scrub import run_conf_tasksscrub_test
-from tasks_cloudsync import eun_conf_taskscloudsync_test
+from tasks_cloudsync import run_conf_taskscloudsync_test
 
 from serv_ssh import run_conf_ssh_test
 from serv_afp import run_conf_afp_test
@@ -380,8 +380,8 @@ if path.exists('sys_support.pyc'):
 if path.exists('tasks_cron.pyc'):
     call(["rm", "tasks_cron.pyc"])
 
-if path.exists('tasks_init-shutscript.pyc'):
-    call(["rm", "tasks_init-shutdcript.pyc"])
+if path.exists('tasks_initshutscript.pyc'):
+    call(["rm", "tasks_initshutscript.pyc"])
 
 if path.exists('tasks_rsync.pyc'):
     call(["rm", "tasks_rsync.pyc"])
