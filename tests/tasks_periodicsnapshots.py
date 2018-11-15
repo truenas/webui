@@ -31,18 +31,18 @@ except ImportError:
     import unittest
 
 xpaths = { 'navTasks' : '//*[@id="nav-3"]/div/a[1]',
-           'submenuSMART' : '//*[@id="3-3"]'
+           'submenuPeriodicSS' : '//*[@id="3-4"]'
          }
 
-class conf_tasksSMART_test(unittest.TestCase):
+class conf_tasksperiodicSS_test(unittest.TestCase):
     @classmethod
     def setUpClass(inst):
         driver.implicitly_wait(30)
         pass
 
-    def test_01_nav_tasks_SMART(self):
+    def test_01_nav_tasks_periodicSS(self):
         try:
-            driver.find_element_by_xpath(xpaths['submenuSMART']).click()
+            driver.find_element_by_xpath(xpaths['submenuPeriodicSS']).click()
             # cancelling the tour
             if self.is_element_present(By.XPATH,'/html/body/div[6]/div[1]/button'):
                 driver.find_element_by_xpath('/html/body/div[6]/div[1]/button').click()
@@ -52,7 +52,7 @@ class conf_tasksSMART_test(unittest.TestCase):
             page_data=ui_element.text
             print ("the Page now is: " + page_data)
             # assert response
-            self.assertTrue("S.M.A.R.T. Tests" in page_data)
+            self.assertTrue("Periodic Snapshot Tasks" in page_data)
             #taking screenshot
             function.screenshot(driver, self)
         except Exception:
@@ -80,8 +80,8 @@ class conf_tasksSMART_test(unittest.TestCase):
     def tearDownClass(inst):
         pass
 
-def run_conf_tasksSMART_test(webdriver):
+def run_conf_tasksperiodicSS_test(webdriver):
     global driver
     driver = webdriver
-    suite = unittest.TestLoader().loadTestsFromTestCase(conf_tasksSMART_test)
+    suite = unittest.TestLoader().loadTestsFromTestCase(conf_tasksperiodicSS_test)
     xmlrunner.XMLTestRunner(output=results_xml, verbosity=2).run(suite)
