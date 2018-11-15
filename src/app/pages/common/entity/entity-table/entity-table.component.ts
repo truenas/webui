@@ -113,7 +113,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   public showDefaults: boolean = false;
   public showSpinner: boolean = false;
   public showActions: boolean = true;
-  public multiActionsIconsOnly: boolean = true;
+  public multiActionsIconsOnly: boolean = false;
 
   protected loaderOpen = false;
   public selected = [];
@@ -673,4 +673,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   }
 
   // End checkbox section -----------------------
+  
+  toggleLabels(){
+    this.multiActionsIconsOnly = !this.multiActionsIconsOnly;
+  }
 }
