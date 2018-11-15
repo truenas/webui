@@ -22,7 +22,7 @@ entity-form .mat-card{
 }
 
 entity-table .mat-toolbar.mat-card-toolbar{
-  max-height: 40px !important;
+  /*max-height: 40px !important;*/
 }
 
 /*entity-form .mat-content,
@@ -39,6 +39,17 @@ entity-table .mat-card > *{
 
 .mat-card-title-text{
   margin:0 !important;
+}
+
+.mat-toolbar .mat-button{
+  height:36px !important;
+  margin: 0 4px;
+}
+
+.fn-toolbar{}
+
+.fn-toolbar.icons-only{
+  padding:8px !important;
 }
 
 /* Special Override Classes */
@@ -66,8 +77,14 @@ button.menu-toggle .mat-icon{
 #filter{
     position: static !important;
     margin-top:-10px; /* The form field reserves too much space in mat-toolbar. This wins some of the screen back */
+    text-align:right;
+    max-height:38px;
     /*padding:0 !important;
     right: 150px;
     top: 9px;
     z-index: 10;*/
+}
+
+entity-table .multiactions-title{
+  margin-bottom: 16px ;
 }

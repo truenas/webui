@@ -36,6 +36,7 @@ export interface InputTableConf {
   isActionVisible?: any;
   custActions?: any[];
   multiActions?:any[];
+  multiActionsIconsOnly?:boolean;
   config?: any;
   confirmDeleteDialog?: Object;
   checkbox_confirm?: any;
@@ -112,6 +113,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   public showDefaults: boolean = false;
   public showSpinner: boolean = false;
   public showActions: boolean = true;
+  public multiActionsIconsOnly: boolean = true;
 
   protected loaderOpen = false;
   public selected = [];
