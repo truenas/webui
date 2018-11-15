@@ -16,6 +16,7 @@ export interface Theme {
   logoPath?:string;
   logoTextPath?:string;
   primary:string;
+  secondary?: string; // NEW
   accent:string;
   bg1:string
   bg2:string
@@ -68,6 +69,36 @@ export class ThemeService {
       'alt-bg2':'#fafaf5',
       'alt-fg1':'#181a26',
       'alt-fg2':'#282a36',
+      yellow:'#f0cb00',
+      orange:'#ee9302',
+      red:'#ff0013',
+      magenta:'#d238ff',
+      violet:'#c17ecc',
+      blue:'#00a2ff',
+      cyan:'#00d0d6',
+      green:'#59d600'
+    },
+    {
+      name:'ix-dark',
+      label: "iX Dark",
+      labelSwatch:"blue",
+      description:'iX System Colors on Dark',
+      hasDarkLogo:false,
+      logoPath:'assets/images/light-logo.svg',
+      logoTextPath:'light-logo-text.svg',
+      favorite:false,
+      accentColors:['green', 'violet', 'orange', 'cyan', 'magenta', 'red', 'yellow', 'blue'],
+      primary:"var(--blue)",
+      //secondary:"var(--bg1)",
+      accent:"var(--bg1)",
+      bg1:'#1A1A1A',
+      bg2:'#484745',
+      fg1:'#ededed',
+      fg2:'#ffffff',
+      'alt-bg1':'#393836',
+      'alt-bg2':'#6F6E6C',
+      'alt-fg1':'#c1c1c1',
+      'alt-fg2':'#e1e1e1',
       yellow:'#f0cb00',
       orange:'#ee9302',
       red:'#ff0013',
