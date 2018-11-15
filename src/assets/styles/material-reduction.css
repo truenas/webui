@@ -10,7 +10,13 @@
   height:36px !important;
 }
 
+/* CSS Vars */
+:root {
+--fn-dropshadow:0 1px 2px rgba(0,0,0,0);
+}
+
 /* Cards */
+
 entity-table .mat-card,
 entity-form .mat-card{
   padding:0 !important;
@@ -19,10 +25,6 @@ entity-form .mat-card{
 .form-card.mat-card {
   max-width:960px;
   margin:0 auto;
-}
-
-entity-table .mat-toolbar.mat-card-toolbar{
-  /*max-height: 40px !important;*/
 }
 
 /*entity-form .mat-content,
@@ -46,7 +48,9 @@ entity-table .mat-card > *{
   margin: 0 4px;
 }
 
-.fn-toolbar{}
+.fn-toolbar{
+  background:var(--alt-bg1);
+}
 
 .fn-toolbar.icons-only{
   padding:8px !important;
@@ -87,4 +91,15 @@ button.menu-toggle .mat-icon{
 
 entity-table .multiactions-title{
   margin-bottom: 16px ;
+}
+
+entity-table .mat-toolbar.mat-card-toolbar{
+  position:relative;
+  z-index:2;
+}
+/* Elements with shadows */
+/*.mat-card,*/
+.datatable-header,
+entity-table .mat-toolbar.mat-card-toolbar{
+  box-shadow:var(--fn-dropshadow);
 }

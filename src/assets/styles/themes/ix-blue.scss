@@ -306,13 +306,30 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .fileupload-drop-zone.dz-file-over, 
   .toolbar-avatar.online > .status-dot, 
   .cal-open-day-events, 
-  .datatable-header,.datatable-footer,
+  //.datatable-header,.datatable-footer,
   .mat-step-header .mat-step-icon,
   div.hopscotch-bubble{
         @include variable(background, --primary, $primary, !important);
         //@include variable(color, #fff, #fff, !important);
         @include variable(color, --primary-txt, $primary-txt, !important);
 
+  }
+
+  .ngx-datatable.material{
+    background:none;
+  }
+  .datatable-header,.datatable-footer{
+    border-top-style:solid;
+    border-top-width:1px;
+    @include variable(border-top-color, --bg1, $bg1, !important);
+  }
+  .datatable-header,.datatable-footer{
+//        @include variable(background, --bg2, $bg2, !important);
+//        @include variable(color, --fg2, $fg2, !important);
+//        @include variable(background, --primary, $primary, !important);
+//        @include variable(color, --primary-txt, $primary-txt, !important);
+    @include variable(background, --bg2, $bg2, !important);
+    background-color:rgba(0,0,0,0.75)
   }
 
   .mat-bg-accent,
@@ -346,7 +363,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     background-color:rgba(0,0,0,0.1);
     @include variable(color, --fg2, $fg2); 
   }
-  .ngx-datatable .datatable-body .datatable-row-wrapper{
+  .ngx-datatable .datatable-body .datatable-row-wrapper:nth-child(odd){
     @include variable(background, --alt-bg1, $alt-bg1);
     @include variable(color, --alt-fg1, $alt-fg1);
   }
@@ -376,6 +393,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-nav-list a{
     @include variable(background, --bg2, $bg2);
     @include variable(color, --fg2, $fg2, !important);
+  }
+
+  .mat-menu-content{
+    @include variable(background, --alt-bg1, $alt-bg1, !important);
+    @include variable(color, --fg1, $fg1, !important);
   }
 
   .mat-form-field-underline{
@@ -448,10 +470,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     // border-color: gray;
   }
 
-  .headerCheckBox .mat-checkbox-frame {
-    @include variable(border-color, --primary-txt, $primary-txt);
-  }
+//  .headerCheckBox .mat-checkbox-frame {
+//    @include variable(border-color, --primary-txt, $primary-txt);
+//  }
 
+  .headerCheckBox .mat-checkbox-frame,
   .ngx-datatable .datatable-body .mat-checkbox-frame {
     @include variable(border-color, --alt-fg1, $alt-fg1, !important);
   }
@@ -680,7 +703,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   // Style the ix logo with the primary theme color
   .ix-logo {
-    @include variable(fill, --blue, $blue);
+    @include variable(fill, --primary, $primary);
   }
 
   // Color the small lock icon with theme colors
@@ -804,7 +827,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   // Fill in space above horz scrollbar on entity tables
   .datatable-body {
-    @include variable(background-color, --alt-bg1, $alt-bg1);
+    //@include variable(background-color, --alt-bg1, $alt-bg1);
 
   }
 
