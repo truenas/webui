@@ -88,41 +88,39 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges{
 
   get minutes(){ return this._minutes}
   set minutes(val){
-    let pattern = new RegExp("^([0-9]|[1-5][0-9]|[*]|[*]\/[0-9]|[*]\/[0-9][0-9])$");
-    if(pattern.test(val)){ 
+    const string = "* " + val + " * * * *";
+    try {
+      parser.parseExpression(string);
       this.validMinutes = true;
       this._minutes = val; 
       this.updateCronTab();
-    } else {
-      console.warn("minutes invalid");
+    } catch(err) {
       this.validMinutes = false;
     }
   }
 
   get hours(){ return this._hours}
   set hours(val){ 
-    let pattern = new RegExp("^([0-9]|1[0-9]|2[0-3]|[*]|[*]\/[0-9]|[*]\/[0-9][0-9])$");
-    if(pattern.test(val)){ 
-    this.validHours = true;
-    this._hours = val; 
-    this.updateCronTab();
-    } else {
-      console.warn("hours invalid");
+    const string = "* * " + val + " * * *";
+    try {
+      parser.parseExpression(string);
+      this.validHours = true;
+      this._hours = val; 
+      this.updateCronTab();
+    } catch(err) {
       this.validHours = false;
     }
   }
 
   get days(){ return this._days}
-  set days(val){ 
-    let pattern = new RegExp("^([1-9]|1[0-9]|2[0-9]|3[0-1]|[*]|[*]\/[1-9]|[*]\/[0-9][0-9])$");
-    console.log("Testing Value: " + val);
-    console.log(pattern.test(val));
-    if(pattern.test(val)){ 
+  set days(val){
+    const string = "* * * " + val + " * *";
+    try {
+      parser.parseExpression(string);
       this.validDays = true;
       this._days = val; 
       this.updateCronTab();
-    } else {
-      console.warn("days invalid");
+    } catch(err) {
       this.validDays = false;
     }
   }
