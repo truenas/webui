@@ -1143,17 +1143,6 @@ export class JailEditComponent implements OnInit {
       ]).subscribe(
       (res) => {
         this.wsResponse = res[0];
-        if (res[0] && res[0].state == 'up') {
-          this.save_button_enabled = false;
-          this.error = T("Jails cannot be changed while running.");
-          for (let i = 0; i < this.formFileds.length; i++) {
-            this.setDisabled(this.formFileds[i].name, true);
-          }
-        } else {
-          this.save_button_enabled = true;
-          this.error = "";
-        }
-
         for (let i in res[0]) {
           if (this.formGroup.controls[i]) {
             if (i == 'ip4_addr') {
@@ -1223,6 +1212,16 @@ export class JailEditComponent implements OnInit {
             }
             this.formGroup.controls[i].setValue(res[0][i]);
           }
+        }
+        if (res[0] && res[0].state == 'up') {
+          this.save_button_enabled = false;
+          this.error = T("Jails cannot be changed while running.");
+          for (let i = 0; i < this.formFileds.length; i++) {
+            this.setDisabled(this.formFileds[i].name, true);
+          }
+        } else {
+          this.save_button_enabled = true;
+          this.error = "";
         }
       },
       (res) => {
