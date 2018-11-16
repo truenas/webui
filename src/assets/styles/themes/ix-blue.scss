@@ -368,9 +368,24 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     background-color:rgba(0,0,0,0.1);
     @include variable(color, --fg2, $fg2); 
   }
+
   .ngx-datatable .datatable-body .datatable-row-wrapper:nth-child(odd){
     @include variable(background, --alt-bg1, $alt-bg1);
     @include variable(color, --alt-fg1, $alt-fg1);
+  }
+
+  .ngx-datatable .datatable-body .datatable-row-wrapper:nth-child(even){
+    //@include variable(background, --alt-bg1, $alt-bg1);
+    background-color:rgba(123,123,123,0.2);
+    @include variable(color, --alt-fg1, $alt-fg1);
+  }
+
+  // System wide hover effects
+  .mat-menu-content button.mat-menu-item:hover, 
+  .mat-menu-content button.mat-menu-item:hover .mat-icon:not([class="theme-picker-swatch-icon"]),
+  .ngx-datatable .datatable-body .datatable-row-wrapper:hover{
+    @include variable(background, --primary, $primary, !important);
+    @include variable(color, --primary-txt, $primary-txt);
   }
 
   .sidebar-panel .mat-nav-list .mat-list-item,
@@ -379,7 +394,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-expansion-panel-header-description, 
 
   .mat-list .mat-list-item,
-  .mat-menu-panel button,
   .mat-paginator-navigation-next, .mat-paginator-navigation-previous,
 
   .mat-nav-list .mat-list-item, 
@@ -387,6 +401,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-selection-list .mat-list-item,.mat-option,
   .mat-select-arrow, .mat-select-value {
     @include variable(color, --fg2, $fg2, !important);
+  }
+
+  .mat-menu-panel button{
+    @include variable(color, --fg2, $fg2);
   }
 
   .mat-form-field .mat-select.mat-select-disabled .mat-select-arrow {
