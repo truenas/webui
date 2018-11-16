@@ -201,6 +201,36 @@ export class ThemeService {
       blue:'#268bd2',
       cyan:'#2aa198',
       green:'#859900'
+    },
+    {
+      name:'legacy',
+      label: "Legacy (high contrast)",
+      labelSwatch:"fg1",
+      description:'High contrast theme based on Legacy UI color scheme',
+      hasDarkLogo:false,
+      logoPath:'assets/images/light-logo.svg',
+      logoTextPath:'light-logo-text.svg',
+      favorite:false,
+      accentColors:['green', 'violet', 'orange', 'cyan', 'magenta', 'red', 'yellow', 'blue'],
+      primary:"var(--fg1)",
+      accent:"var(--yellow)",
+      bg1:'#dddddd',
+      bg2:'#ffffff',
+      fg1:'#222222',
+      fg2:'#333333',
+      //'alt-bg1':'#f8f8f2',
+      'alt-bg1':'rgba(122,152,182,0.05)',
+      'alt-bg2':'#fafaf5',
+      'alt-fg1':'#181a26',
+      'alt-fg2':'#282a36',
+      yellow:'#f0cb00',
+      orange:'#ee9302',
+      red:'#ff0013',
+      magenta:'#d238ff',
+      violet:'#c17ecc',
+      blue:'#00a2ff',
+      cyan:'#00d0d6',
+      green:'#59d600'
     }
   ];
 
