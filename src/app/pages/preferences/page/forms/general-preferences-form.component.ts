@@ -47,7 +47,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
         name:'General Preferences',
         class:'preferences',
         label:true,
-        width:'300px',
+        width:'400px',
         config:[
           {
             type: 'select',
@@ -89,7 +89,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
           {
             type: 'checkbox',
             name: 'hideWarning',
-            width: '300px',
+            width: '400px',
             placeholder: 'Hide "Save Configuration" Dialog Before Upgrade',
             value:this.hideWarning,
             tooltip: T('Show or hide a dialog to save the system\
