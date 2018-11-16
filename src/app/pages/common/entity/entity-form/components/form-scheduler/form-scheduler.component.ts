@@ -88,39 +88,52 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges{
 
   get minutes(){ return this._minutes}
   set minutes(val){
-    const string = "* " + val + " * * * *";
-    try {
-      parser.parseExpression(string);
-      this.validMinutes = true;
-      this._minutes = val; 
-      this.updateCronTab();
-    } catch(err) {
+    if (val !== ""){
+      const string = "* " + val + " * * * *";
+      try {
+        parser.parseExpression(string);
+        this.validMinutes = true;
+        this._minutes = val; 
+        this.updateCronTab();
+      } catch(err) {
+        this.validMinutes = false;
+      }
+    } else {
       this.validMinutes = false;
     }
+
   }
 
   get hours(){ return this._hours}
   set hours(val){ 
-    const string = "* * " + val + " * * *";
-    try {
-      parser.parseExpression(string);
-      this.validHours = true;
-      this._hours = val; 
-      this.updateCronTab();
-    } catch(err) {
+    if (val !== ""){
+      const string = "* * " + val + " * * *";
+      try {
+        parser.parseExpression(string);
+        this.validHours = true;
+        this._hours = val; 
+        this.updateCronTab();
+      } catch(err) {
+        this.validHours = false;
+      }
+    } else {
       this.validHours = false;
     }
   }
 
   get days(){ return this._days}
   set days(val){
-    const string = "* * * " + val + " * *";
-    try {
-      parser.parseExpression(string);
-      this.validDays = true;
-      this._days = val; 
-      this.updateCronTab();
-    } catch(err) {
+    if (val !== ""){
+      const string = "* * * " + val + " * *";
+      try {
+        parser.parseExpression(string);
+        this.validDays = true;
+        this._days = val; 
+        this.updateCronTab();
+      } catch(err) {
+        this.validDays = false;
+      }
+    } else {
       this.validDays = false;
     }
   }
