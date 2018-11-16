@@ -17,6 +17,11 @@
 
 /* Cards */
 
+.mat-card{
+  border:solid 1px rgba(255,255,255,0.025);
+  border-top-size:0px;
+}
+
 entity-table .mat-card,
 entity-form .mat-card{
   padding:0 !important;

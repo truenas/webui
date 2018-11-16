@@ -279,6 +279,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   /////////////////// SpecSelectors: Selectors not originally in ix-blue theme
+
+  .rightside-content-hold{
+    //background:linear-gradient(180deg, rgba(255,255,255,0.1), var(--bg1)) !important;
+  }
+
   .mat-tab-label, .mat-tab-link{
     @include variable(color, --fg1, $fg1);
   }
