@@ -32,6 +32,10 @@ export class DiskListComponent {
 		paging: true,
 		sorting: { columns: this.columns },
 		multiSelect: true,
+		deleteMsg: {
+			title: 'User',
+			key_props: ['name']
+	    },
 	};
 	public diskIds: Array<any> = [];
 	public diskNames: Array<any> = [];
