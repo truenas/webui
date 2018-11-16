@@ -866,6 +866,8 @@ export class JailEditComponent implements OnInit {
   protected ip6_interfaceField: any;
   protected ip6_prefixField: any;
   protected vnet_default_interfaceField:any;
+  public save_button_enabled: boolean;
+  public error: any;
 
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
@@ -1043,6 +1045,14 @@ export class JailEditComponent implements OnInit {
       ]).subscribe(
       (res) => {
         this.wsResponse = res[0];
+        if (res[0] && res[0].state == 'up') {
+          this.save_button_enabled = false;
+          this.error = T("Jails cannot be changed while running.");
+        } else {
+          this.save_button_enabled = true;
+          this.error = "";
+        }
+
         for (let i in res[0]) {
           if (this.formGroup.controls[i]) {
             if (i == 'ip4_addr') {
