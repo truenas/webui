@@ -18,8 +18,8 @@
 /* Cards */
 
 .mat-card{
-  border:solid 1px rgba(255,255,255,0.025);
-  border-top-size:0px;
+  border:solid var(--highlights) rgba(255,255,255,0.025);
+  /*border-top-size:var(--highlights);*/
 }
 
 entity-table .mat-card,

@@ -337,6 +337,14 @@ export class ThemeService {
     (<any>document).documentElement.style.setProperty("--primary",theme["primary"]);
     (<any>document).documentElement.style.setProperty("--accent",theme["accent"]);
 
+    // Set Card Highlights on Dark backgrounds only
+    let contrastColor = this.textContrast(theme['bg2'],theme['bg2']) 
+    if( contrastColor == "#ffffff"){
+      (<any>document).documentElement.style.setProperty("--highlights", '1px');
+    } else {
+      (<any>document).documentElement.style.setProperty("--highlights", '0px');
+    }
+
     // Set Material aux. text styles
     let primaryColor = this.colorFromMeta(theme["primary"]); // eg. blue
     let accentColor = this.colorFromMeta(theme["accent"]); // eg. yellow
