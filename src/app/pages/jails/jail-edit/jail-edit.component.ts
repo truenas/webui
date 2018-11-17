@@ -1263,9 +1263,11 @@ export class JailEditComponent implements OnInit {
   }
 
   relationUpdate(config: FieldConfig, activations: any) {
-    const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
+    if (this.save_button_enabled) {
+      const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
         activations, this.formGroup);
-    this.setDisabled(config.name, tobeDisabled);
+      this.setDisabled(config.name, tobeDisabled);
+    }
   }
 
   goBack() {
