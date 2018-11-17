@@ -391,6 +391,13 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(color, --primary-txt, $primary-txt);
   }
 
+  .dx-treelist-rowsview .dx-selection.dx-row > td, 
+  .dx-treelist-rowsview .dx-selection.dx-row:hover > td{
+    @include variable(background, --primary, $primary, !important);
+    @include variable(color, --primary-txt, $primary-txt);
+    border:rgba(0,0,0,0.1)
+  }
+
   .sidebar-panel .mat-nav-list .mat-list-item,
   .app-user .app-user-name, .text-muted,
   .mat-expansion-panel-header-title,
