@@ -182,7 +182,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       .debounceTime(150)
       .distinctUntilChanged()
       .subscribe((evt) => {
-        //console.log(evt);
         const filterValue: string = this.filter.nativeElement.value;
         let newData: any[] = [];
 

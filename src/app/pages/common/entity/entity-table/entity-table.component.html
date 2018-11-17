@@ -1,4 +1,4 @@
-    <div class="legacy-warning" *ngIf="legacyWarning">
+<div class="legacy-warning" *ngIf="legacyWarning">
       {{ legacyWarning | translate }} 
       <span class="legacy-warning-link" (click)="onGoToLegacy()">
         {{ legacyWarningLink | translate }}.
@@ -12,7 +12,7 @@
             [(ngModel)]="multiActionsIconsOnly"
             labelPosition="right">
               <strong>Icons only in batch operations toolbar</strong> (this is here only during UI development)
-            </mat-checkbox> 
+              </mat-checkbox>
           </span>
     </div>
 
@@ -70,11 +70,16 @@
       </mat-spinner> 
     </div><!-- end of mat-toolbar -->
   
-    <!--<div id="action-button-wrapper" *ngIf="conf && conf.custActions">
+    <div id="action-button-wrapper" *ngIf="conf && conf.custActions">
       <span *ngFor="let custBtn of conf.custActions">
-        <button id="cust_button_{{custBtn.name}}" mat-button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" (click)="custBtn['function']()">{{custBtn.name | translate}}</button>
+        <button id="cust_button_{{custBtn.name}}" mat-button 
+          *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" 
+          type="button" 
+          (click)="custBtn['function']()">
+          {{custBtn.name | translate}}
+        </button>
       </span>
-      </div>-->
+      </div>
   
 
   </div>
@@ -82,13 +87,13 @@
   
   
   
-  <div  fxLayout="row wrap" fxLayoutAlign="start center" class="multiActionsButton fn-toolbar" [ngClass]="{'icons-only': multiActionsIconsOnly}" *ngIf="conf.multiActions && selected.length > 0; else defaultMultiActions" [style.display]="selected.length > 0 ? 'block' : 'none'" >
+  <div  fxLayout="row wrap" fxLayoutAlign="start center" class="multiActionsButton fn-toolbar" [ngClass]="{'icons-only': multiActionsIconsOnly}" *ngIf="conf && selected.length > 0" [style.display]="selected.length > 0 ? 'block' : 'none'" >
       <div>
-        <div class="multiactions-title" *ngIf="!multiActionsIconsOnly">
+        <div class="multiactions-title" *ngIf="conf.multiActions.length > 0 && !multiActionsIconsOnly">
           <strong>Batch Operations</strong>
         </div>
-        <!--<div *ngIf="conf.multiActions; else defaultMultiActions" fxFlex="100">-->
-        <div>
+        <!-- -->
+        <div *ngIf="conf.multiActions && conf.multiActions.length > 0">
           <span *ngFor="let maction of conf.multiActions">
             <!-- DEFAULT -->
             <ng-container *ngIf="!multiActionsIconsOnly">
@@ -96,7 +101,7 @@
                 mat-button 
                 *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
                 <mat-icon>{{ maction?.icon }}</mat-icon><br><span>{{maction?.label | translate}}</span>
-              </button>
+                </button>
             </ng-container>
 
             <!-- ICONS ONLY -->
@@ -105,37 +110,36 @@
                 mat-button matTooltip="{{ maction?.label  | translate }}" [matTooltipPosition]=maction?.ttpos 
                 *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
                 <mat-icon>{{ maction?.icon }}</mat-icon>
-              </button>
+                </button>
             </ng-container>
 
           </span>
         </div>
+
+        <div *ngIf="!conf.multiActions || conf.multiActions.length == 0">
+          <span>
+            <!-- With Labels -->
+            <ng-container>
+              <button mat-button (click)="doMultiDelete(this.selected);">
+                <mat-icon>delete</mat-icon><br><span>DELETE</span>
+              </button>
+            </ng-container>
+            
+            <!-- Without Labels -->
+            <ng-container>
+              <button (click)="doMultiDelete(this.selected);"
+                mat-button matTooltip="{{ 'Delete selections'  | translate }}" 
+                matTooltipPosition="below" >
+                  <mat-icon>delete</mat-icon>
+              </button>
+            </ng-container>
+          </span>
+        </div>
+
       </div>
     </div>
 
-    <!-- When no multiActions provided by config -->
-    <ng-template *ngIf="selected.length > 0 && !multiActionsIconsOnly" #defaultMultiActions>
-      <div>
-        <span>
-          <button mat-button (click)="doMultiDelete(this.selected);">
-            <mat-icon>delete</mat-icon><br><span>DELETE</span>
-          </button>
-        </span>
-      </div>
-    </ng-template>
-
-    <ng-template *ngIf="selected.length > 0 && multiActionsIconsOnly" #defaultMultiActions>
-      <div>
-        <span>
-          <button (click)="doMultiDelete(this.selected);"
-            mat-button matTooltip="{{ 'Delete selections'  | translate }}" 
-            matTooltipPosition="below" >
-            <mat-icon>delete</mat-icon>
-          </button>
-        </span>
-      </div>
-    </ng-template>
-
+  <!-- DATATABLE START -->
   <div class="no-padding">
     <ngx-datatable *ngIf="showDefaults" class='material' 
       [rows]='currentRows' 
