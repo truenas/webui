@@ -22,11 +22,12 @@
 
   <!-- START OF CONTROLS SECTION -->
   <div fxFlex class="entity-table-controls" fxLayout="row wrap" fxLayoutAlignGap="16px" fxLayoutAlign="end center">
-    <div id="filter">
+    <div id="filter" >
+      <mat-icon>search</mat-icon>
       <mat-input-container floatPlaceholder="never">
         <input matInput #filter placeholder="{{'Filter' | translate}} {{title | translate}}">
       </mat-input-container>
-      <tooltip message="{{'Show only entries that contain this text' | translate}}"></tooltip>
+      <!--<tooltip message="{{'Show only entries that contain this text' | translate}}"></tooltip>-->
     </div>
   
   <!-- START MultiMenu-->

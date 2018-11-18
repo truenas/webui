@@ -59,12 +59,25 @@
     display: inline-block;
 }
 
+#filter{
+  margin-right:16px;
+}
+
 #filter, .mat-toolbar {
     display: inline-block;
 }
 
 #filter, .tooltiptext {
     font-size: 14px;
+}
+
+#filter .mat-icon{
+  position:absolute;
+  top:24px;
+}
+
+#filter .mat-input-container{
+  padding-left:32px;
 }
 
 //#filter {
