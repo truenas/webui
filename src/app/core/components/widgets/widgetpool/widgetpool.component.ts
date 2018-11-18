@@ -195,6 +195,12 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
       data: [usedValue]
     };
 
+    if(usedValue == "Locked"){
+      // When Locked, Bail before we try to get details. 
+      // (errors start after this...)
+      return 0;
+    }
+
     let availableValue;
     if (isNaN(this.volumeData.avail)) {
       availableValue = this.volumeData.avail;
