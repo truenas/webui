@@ -203,8 +203,8 @@ export class ThemeService {
       green:'#859900'
     },
     {
-      name:'legacy',
-      label: "Legacy (high contrast)",
+      name:'high-contrast',
+      label: "High Contrast",
       labelSwatch:"fg1",
       description:'High contrast theme based on Legacy UI color scheme',
       hasDarkLogo:false,
