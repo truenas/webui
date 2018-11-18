@@ -381,6 +381,13 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   // System wide hover effects
+  .mat-select-panel .mat-option:focus,
+  .mat-select-panel .mat-option:hover,
+  .mat-select-panel .mat-option.mat-selected:not(.mat-option-multiple){ 
+    @include variable(background, --primary, $primary, !important);
+    @include variable(color, --primary-txt, $primary-txt, !important);
+  }
+
   .mat-menu-content button.mat-menu-item:hover, 
   .mat-menu-content button.mat-menu-item:hover .mat-icon:not([class="theme-picker-swatch-icon"]),
   .ngx-datatable .datatable-body .datatable-row-wrapper:hover,
