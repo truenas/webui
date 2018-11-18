@@ -542,7 +542,6 @@ export class StatsService {
       }
       
       if(removed && removedIndex){ 
-        console.warn(messageList);
         //Now that all tasks are completed, remove the listener
         source.listeners.splice(removedIndex, 1);
       }
