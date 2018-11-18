@@ -380,6 +380,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(color, --alt-fg1, $alt-fg1);
   }
 
+  .mat-card .mat-divider{
+    @include variable(background, --alt-fg1, $alt-fg1);
+    opacity:0.15;
+  }
+
   // System wide hover effects
   .mat-select-panel .mat-option:focus,
   .mat-select-panel .mat-option:hover,
