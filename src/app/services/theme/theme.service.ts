@@ -93,7 +93,7 @@ export class ThemeService {
       //secondary:"var(--bg1)",
       accent:"var(--yellow)",
       bg1:'#171E26',
-      bg2:'#1D262D',
+      bg2:'#232d35',//'#1D262D',
       fg1:'#aaaaaa',
       fg2:'#cccccc',
       'alt-bg1':'rgba(122,122,122,0.25)',
