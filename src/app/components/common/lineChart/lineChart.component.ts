@@ -47,6 +47,7 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
   @Input() minY?: number = 0;
   @Input() maxY?: number = 100;
   @Input() labelY?: string = 'Label Y';
+  @Input() interactive: boolean;
 
   public chart:any;
   public units: string = '';
@@ -148,7 +149,7 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
 
     this.chart = c3.generate({
       interaction: {
-        enabled:false
+        enabled:this.interactive
       },
       bindto: '#' + this.controlUid,
       /*color: {
