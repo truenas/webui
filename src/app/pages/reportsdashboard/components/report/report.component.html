@@ -51,25 +51,39 @@
           </div>
         </mat-card-content>
           <mat-card-footer>
-          <section class="legend" fxLayout="row wrap" fxLayoutAlign="none"  *ngIf="lineChart.legendLabels | async as legendLabels">
-            <div class="legend-group" fxFlex="100px" *ngFor="let legendItem of legendLabels; let i=index">
+          <section class="legend" fxLayout="column" fxLayoutAlign="none"  *ngIf="lineChart.legendLabels | async as legendLabels">
+            <div class="legend-group" fxFlex="38px" fxLayout="row wrap" fxLayoutAlign="space-between start" fxLayoutGap="16px" *ngFor="let legendItem of legendLabels; let i=index">
 
-                <div class="legend-label" >
+                <!--<div fxFlex="180px" class="legend-label" >
                   <div class="swatch" [style.background-color]="lineChart.colorPattern[i]" ></div>
-                  <!--<div class="legend-item">{{legendItem}}</div>-->
+                  
                   <div class="legend-item">{{legendItem}}</div>
-                </div>
+                  </div>-->
 
-                <div class="tooltip-wrapper legend-value"> 
+                <!--<div class="tooltip-wrapper legend-value"> 
                   <div *ngIf="lineChart.legendEvents | async as tooltip">
                     <div  *ngIf="lineChart.showLegendValues && tooltip[i]" class="tooltip-value" >
                       {{tooltip[i].value}} {{lineChart.units}}
                     </div>
                   </div>
+                  </div>-->
+
+                <div fxFlex="120px" class="legend-label" >
+                  <div class="swatch" [style.background-color]="lineChart.colorPattern[i]" ></div>
+                  
+                  <span class="legend-item">{{legendItem}}</span>
                 </div>
+
+                  <div fxFlex="500px" class="report-analytics" *ngIf="lineChart.legendAnalytics | async as analytics" fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="16px">
+                    <span fxFlex="125px"><strong>Min:</strong>  {{analytics[i].min}}</span>
+                    <span fxFlex="125px"><strong>Max:</strong>  {{analytics[i].max}}</span>
+                    <span fxFlex="125px"><strong>Avg:</strong>  {{analytics[i].avg}}</span>
+                    <span fxFlex="125px"><strong>Total:</strong>  {{analytics[i].total}}</span>
+                  </div>
 
               </div>
             </section>
+
           </mat-card-footer>
     </mat-card>
 
