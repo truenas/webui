@@ -548,6 +548,18 @@ export class DatasetFormComponent implements Formconfiguration{
         else {
           this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).subscribe((parent_dataset)=>{
             this.parent_dataset = parent_dataset[0];
+            if (parent_dataset[0].quota.rawvalue === '0') {
+              entityForm.formGroup.controls['quota_unit'].setValue('M');
+            }
+            if (parent_dataset[0].refquota.rawvalue === '0') {
+              entityForm.formGroup.controls['refquota_unit'].setValue('M');
+            }
+            if (parent_dataset[0].reservation.rawvalue === '0') {
+              entityForm.formGroup.controls['reservation_unit'].setValue('M');
+            }
+            if (parent_dataset[0].refreservation.rawvalue === '0') {
+              entityForm.formGroup.controls['refreservation_unit'].setValue('M');
+            }
             const edit_sync = _.find(this.fieldConfig, {name:'sync'});
             const edit_compression = _.find(this.fieldConfig, {name:'compression'});
             const edit_deduplication = _.find(this.fieldConfig, {name:'deduplication'});
