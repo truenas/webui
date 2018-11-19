@@ -137,7 +137,7 @@ export class ManualUpdateComponent {
     this.dialogRef.componentInstance.success.subscribe((succ)=>{
       this.dialogRef.close(false);
       this.translate.get('Restart').subscribe((reboot: string) => {
-        this.translate.get('Update successfull. Please reboot for the update to take effect. Reboot now?').subscribe((reboot_prompt: string) => {
+        this.translate.get('Update successful. Please reboot for the update to take effect. Reboot now?').subscribe((reboot_prompt: string) => {
           this.dialogService.confirm(reboot, reboot_prompt).subscribe((reboot_res) => {
             if (reboot_res) {
               this.router.navigate(['/others/reboot']);
