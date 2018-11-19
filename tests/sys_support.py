@@ -30,21 +30,19 @@ try:
 except ImportError:
     import unittest
 
-xpaths = { 'navService' : '//*[@id="nav-8"]/div/a[1]',
-           'navSystem' : '//*[@id="nav-2"]/div/a[1]',
-           'submenuAdvanced' : '//*[@id="2-3"]'
+xpaths = { 'navSystem' : '//*[@id="nav-2"]/div/a[1]',
+           'submenuSupport' : '//*[@id="2-13"]'
          }
 
-class conf_sysadvanced_test(unittest.TestCase):
+class conf_support_test(unittest.TestCase):
     @classmethod
     def setUpClass(inst):
         driver.implicitly_wait(30)
         pass
 
-    # Test navigation Account>Users>Hover>New User and enter username,fullname,password,confirmation and wait till user is  visibile in the list
-    def test_01_nav_system_advanced(self):
+    def test_01_nav_system_support(self):
         try:
-            driver.find_element_by_xpath(xpaths['submenuAdvanced']).click()
+            driver.find_element_by_xpath(xpaths['submenuSupport']).click()
             # cancelling the tour
             if self.is_element_present(By.XPATH,'/html/body/div[6]/div[1]/button'):
                 driver.find_element_by_xpath('/html/body/div[6]/div[1]/button').click()
@@ -54,7 +52,22 @@ class conf_sysadvanced_test(unittest.TestCase):
             page_data=ui_element.text
             print ("the Page now is: " + page_data)
             # assert response
-            self.assertTrue("Advanced" in page_data)
+            self.assertTrue("Support" in page_data)
+            #taking screenshot
+            function.screenshot(driver, self)
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            #taking screenshot
+            function.screenshot(driver, self)
+            for i in range(1,len(exc_info_p)):
+                print (exc_info_p[i].rstrip())
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
+    def test_02_close_system_tab(self):
+        try:
+            # Close the System Tab
+            driver.find_element_by_xpath(xpaths['navSystem']).click()
+            time.sleep(5)
             #taking screenshot
             function.screenshot(driver, self)
         except Exception:
@@ -82,8 +95,8 @@ class conf_sysadvanced_test(unittest.TestCase):
     def tearDownClass(inst):
         pass
 
-def run_conf_sysadvanced_test(webdriver):
+def run_conf_support_test(webdriver):
     global driver
     driver = webdriver
-    suite = unittest.TestLoader().loadTestsFromTestCase(conf_sysadvanced_test)
+    suite = unittest.TestLoader().loadTestsFromTestCase(conf_support_test)
     xmlrunner.XMLTestRunner(output=results_xml, verbosity=2).run(suite)

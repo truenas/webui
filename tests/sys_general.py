@@ -30,21 +30,24 @@ try:
 except ImportError:
     import unittest
 
-xpaths = { 'navService' : '//*[@id="nav-8"]/div/a[1]',
-           'navSystem' : '//*[@id="nav-2"]/div/a[1]',
-           'submenuAdvanced' : '//*[@id="2-3"]'
+xpaths = { 'navSystem' : '//*[@id="nav-2"]/div/a[1]',
+           'submenuGeneral' : '//*[@id="2-0"]'
          }
 
-class conf_sysadvanced_test(unittest.TestCase):
+class conf_sysgeneral_test(unittest.TestCase):
     @classmethod
     def setUpClass(inst):
         driver.implicitly_wait(30)
         pass
 
-    # Test navigation Account>Users>Hover>New User and enter username,fullname,password,confirmation and wait till user is  visibile in the list
-    def test_01_nav_system_advanced(self):
+    def test_01_nav_system_general(self):
         try:
-            driver.find_element_by_xpath(xpaths['submenuAdvanced']).click()
+           # Navigating to System>General page
+            a = driver.find_element_by_xpath(xpaths['navSystem'])
+            a.click()
+            # allowing page to load by giving explicit time(in seconds)
+            time.sleep(1)
+            driver.find_element_by_xpath(xpaths['submenuGeneral']).click()
             # cancelling the tour
             if self.is_element_present(By.XPATH,'/html/body/div[6]/div[1]/button'):
                 driver.find_element_by_xpath('/html/body/div[6]/div[1]/button').click()
@@ -54,7 +57,7 @@ class conf_sysadvanced_test(unittest.TestCase):
             page_data=ui_element.text
             print ("the Page now is: " + page_data)
             # assert response
-            self.assertTrue("Advanced" in page_data)
+            self.assertTrue("General" in page_data)
             #taking screenshot
             function.screenshot(driver, self)
         except Exception:
@@ -82,8 +85,8 @@ class conf_sysadvanced_test(unittest.TestCase):
     def tearDownClass(inst):
         pass
 
-def run_conf_sysadvanced_test(webdriver):
+def run_conf_sysgeneral_test(webdriver):
     global driver
     driver = webdriver
-    suite = unittest.TestLoader().loadTestsFromTestCase(conf_sysadvanced_test)
+    suite = unittest.TestLoader().loadTestsFromTestCase(conf_sysgeneral_test)
     xmlrunner.XMLTestRunner(output=results_xml, verbosity=2).run(suite)
