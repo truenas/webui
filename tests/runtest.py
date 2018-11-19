@@ -201,7 +201,7 @@ except NameError:
 #    run_conf_smb_test(runDriver)
 #    run_conf_ssh_test(runDriver)
 #    run_conf_webdav_test(runDriver)
-    run_view_guide_test(runDriver)
+#    run_view_guide_test(runDriver)
     run_edit_test(runDriver)
     run_delete_test(runDriver)
     run_delete_pool_test(runDriver)
