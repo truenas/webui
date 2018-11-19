@@ -34,7 +34,7 @@
     <span>{{this.entity.conf.route_add_tooltip | translate}}</span>
   </button>
   <button id="add_action_button_{{action?.label}}" *ngFor="let action of actions" mat-menu-item (click)="action.onClick()">
-    <mat-icon>{{action.icon}}</mat-icon><span>{{action.label | translate}}</span>
+    ?<mat-icon>{{action.icon}}</mat-icon><span>{{action.label | translate}}</span>
   </button>
     <!--<button mat-menu-item>
       <mat-icon>dialpad</mat-icon>

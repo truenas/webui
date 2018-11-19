@@ -69,18 +69,21 @@
         id="entity-spinner"
         *ngIf="!showDefaults && showSpinner" #entityspinner>
       </mat-spinner> 
-    </div><!-- end of mat-toolbar -->
   
-    <div id="action-button-wrapper" *ngIf="conf && conf.custActions">
-      <span *ngFor="let custBtn of conf.custActions">
-        <button id="cust_button_{{custBtn.name}}" mat-button 
-          *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" 
-          type="button" 
-          (click)="custBtn['function']()">
-          {{custBtn.name | translate}}
-        </button>
-      </span>
-      </div>
+      <ng-container *ngIf="conf && conf.custActions">
+        <!--<div id="action-button-wrapper" *ngIf="conf && conf.custActions">-->
+        <span *ngFor="let custBtn of conf.custActions">
+          <button id="cust_button_{{custBtn.name}}" mat-button 
+            *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" 
+            type="button" 
+            color="primary"
+            (click)="custBtn['function']()">
+            {{custBtn.name | translate}}
+          </button>
+        </span>
+        <!--</div>-->
+        </ng-container>
+    </div><!-- end of mat-toolbar -->
   
 
   </div>
