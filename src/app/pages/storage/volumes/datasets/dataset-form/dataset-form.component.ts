@@ -36,6 +36,10 @@ interface DatasetFormData {
   copies: string;
   recordsize: string;
   casesensitivity: string;
+  quota_warning: number;
+  quota_critical: number;
+  refquota_warning: number;
+  refquota_critical: number;
 };
 
 
@@ -163,7 +167,12 @@ export class DatasetFormComponent implements Formconfiguration{
     {
       type: 'select',
       name: 'refquota_unit',
-      options: [ {
+      options: [
+        {
+          label: 'Bytes',
+          value: 'B',
+        },
+      {
         label: 'KiB',
         value: 'K',
       }, {
@@ -173,9 +182,33 @@ export class DatasetFormComponent implements Formconfiguration{
         label: 'GiB',
         value: 'G',
       }],
-      value: 'G',
+      value: 'M',
       class: 'inline',
       width: '30%',
+    },
+    {
+      type: 'input',
+      inputType: 'number',
+      name: 'refquota_warning',
+      placeholder: T('Quota warning alert at, %'),
+      tooltip: T('0=Disabled, blank=inherit'),
+      class: 'inline',
+      width: '70%',
+      value: 0,
+      min: 0,
+      validation: [Validators.min(0)]
+    },
+    {
+      type: 'input',
+      inputType: 'number',
+      name: 'refquota_critical',
+      placeholder: T('Quota critical alert at, %'),
+      tooltip: T('0=Disabled, blank=inherit'),
+      class: 'inline',
+      width: '70%',
+      value: 0,
+      min: 0,
+      validation: [Validators.min(0)]
     },
     {
       type: 'input',
@@ -193,7 +226,12 @@ export class DatasetFormComponent implements Formconfiguration{
     {
       type: 'select',
       name: 'quota_unit',
-      options: [ {
+      options: [
+        {
+          label: 'Bytes',
+          value: 'B',
+        },
+        {
         label: 'KiB',
         value: 'K',
       }, {
@@ -203,9 +241,33 @@ export class DatasetFormComponent implements Formconfiguration{
         label: 'GiB',
         value: 'G',
       }],
-      value: 'G',
+      value: 'M',
       class: 'inline',
       width: '30%',
+    },
+    {
+      type: 'input',
+      inputType: 'number',
+      name: 'quota_warning',
+      placeholder: T('Quota warning alert at, %'),
+      tooltip: T('0=Disabled, blank=inherit'),
+      class: 'inline',
+      width: '70%',
+      value: 0,
+      min: 0,
+      validation: [Validators.min(0)]
+    },
+    {
+      type: 'input',
+      inputType: 'number',
+      name: 'quota_critical',
+      placeholder: T('Quota critical alert at, %'),
+      tooltip: T('0=Disabled, blank=inherit'),
+      class: 'inline',
+      width: '70%',
+      value: 0,
+      min: 0,
+      validation: [Validators.min(0)]
     },
     {
       type: 'input',
@@ -224,7 +286,12 @@ export class DatasetFormComponent implements Formconfiguration{
     {
       type: 'select',
       name: 'refreservation_unit',
-      options: [ {
+      options: [
+        {
+          label: 'Bytes',
+          value: 'B',
+        },
+        {
         label: 'KiB',
         value: 'K',
       }, {
@@ -234,7 +301,7 @@ export class DatasetFormComponent implements Formconfiguration{
         label: 'GiB',
         value: 'G',
       }],
-      value: 'G',
+      value: 'M',
       class: 'inline',
       width: '30%',
     },
@@ -254,7 +321,12 @@ export class DatasetFormComponent implements Formconfiguration{
     {
       type: 'select',
       name: 'reservation_unit',
-      options: [ {
+      options: [
+        {
+          label: 'Bytes',
+          value: 'B',
+        },
+        {
         label: 'KiB',
         value: 'K',
       }, {
@@ -264,7 +336,7 @@ export class DatasetFormComponent implements Formconfiguration{
         label: 'GiB',
         value: 'G',
       }],
-      value: 'G',
+      value: 'M',
       class: 'inline',
       width: '30%',
     },
@@ -378,12 +450,18 @@ export class DatasetFormComponent implements Formconfiguration{
     'copies',
     'recordsize',
     'exec',
+    'quota_warning',
+    'quota_critical',
+    'refquota_warning',
+    'refquota_critical'
+
   ];
 
   protected byteMap: Object= {
     'G': 1073741824,
     'M': 1048576,
     'K': 1024,
+    'B': 1
   };
   protected recordSizeMap: Object= {
     '512': '512',
@@ -548,6 +626,18 @@ export class DatasetFormComponent implements Formconfiguration{
         else {
           this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).subscribe((parent_dataset)=>{
             this.parent_dataset = parent_dataset[0];
+            if (parent_dataset[0].quota.rawvalue === '0') {
+              entityForm.formGroup.controls['quota_unit'].setValue('B');
+            }
+            if (parent_dataset[0].refquota.rawvalue === '0') {
+              entityForm.formGroup.controls['refquota_unit'].setValue('B');
+            }
+            if (parent_dataset[0].reservation.rawvalue === '0') {
+              entityForm.formGroup.controls['reservation_unit'].setValue('B');
+            }
+            if (parent_dataset[0].refreservation.rawvalue === '0') {
+              entityForm.formGroup.controls['refreservation_unit'].setValue('B');
+            }
             const edit_sync = _.find(this.fieldConfig, {name:'sync'});
             const edit_compression = _.find(this.fieldConfig, {name:'compression'});
             const edit_deduplication = _.find(this.fieldConfig, {name:'deduplication'});
@@ -620,6 +710,10 @@ export class DatasetFormComponent implements Formconfiguration{
      const quota = this.getFieldValueOrRaw(wsResponse.quota);
      const refreservation = this.getFieldValueOrRaw(wsResponse.refreservation);
      const reservation = this.getFieldValueOrRaw(wsResponse.reservation);
+     const quota_warning = this.getFieldValueOrRaw(wsResponse.quota_warning);
+     const quota_critical = this.getFieldValueOrRaw(wsResponse.quota_critical);
+     const refquota_warning = this.getFieldValueOrRaw(wsResponse.refquota_warning);
+     const refquota_critical = this.getFieldValueOrRaw(wsResponse.refquota_critical);
 
      const returnValue: DatasetFormData = {
         name: this.getFieldValueOrRaw(wsResponse.name),
@@ -631,6 +725,10 @@ export class DatasetFormComponent implements Formconfiguration{
         copies: this.getFieldValueOrRaw(wsResponse.copies),
         deduplication: this.getFieldValueOrRaw(wsResponse.deduplication),
         quota: quota ? quota.substring(0, quota.length - 1) : 0,
+        quota_warning: quota_warning,
+        quota_critical: quota_critical,
+        refquota_warning: refquota_warning,
+        refquota_critical: refquota_critical,
         quota_unit: quota ? quota.substr(-1, 1) : quota,
         readonly: this.getFieldValueOrRaw(wsResponse.readonly),
         exec: this.getFieldValueOrRaw(wsResponse.exec),
@@ -651,7 +749,7 @@ export class DatasetFormComponent implements Formconfiguration{
     //    returnValue.recordsize = "" + ( 1024 * value ) + "K";
     //  }
 
-     if (quota || refquota || refreservation || reservation) {
+     if (quota || refquota || refreservation || reservation || quota_warning ||quota_critical ||refquota_warning||refquota_critical) {
        this.isBasicMode = false;
      }
 
@@ -666,12 +764,12 @@ export class DatasetFormComponent implements Formconfiguration{
     if (data.refquota === 0) {
       data.refquota = null;
     }
-    if (data.refreservation === 0) {
-      data.refreservation = null;
-    }
-    if (data.reservation === 0) {
-      data.reservation = null;
-    }
+    // if (data.refreservation === 0) {
+    //   data.refreservation = null;
+    // }
+    // if (data.reservation === 0) {
+    //   data.reservation = null;
+    // }
     if (data.recordsize === "1M") {
       data.recordsize = "1024K";
     }
