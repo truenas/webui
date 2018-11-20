@@ -41,6 +41,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
   public showTooltips:boolean = this.prefs.preferences.showTooltips;
   public allowPwToggle:boolean = this.prefs.preferences.allowPwToggle;;
   public hideWarning:boolean = this.prefs.preferences.hideWarning;
+  public preferIconsOnly: boolean = this.prefs.preferences.preferIconsOnly;
   public fieldSetDisplay:string = 'no-margins';//default | carousel | stepper
     public fieldSets: FieldSet[] = [
       {
@@ -84,6 +85,15 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
             placeholder: 'Enable Password Toggle',
             value:this.allowPwToggle,
             tooltip: 'This option enables/disables a password toggle button.',
+            class:'inline'
+          },
+          {
+            type: 'checkbox',
+            name: 'preferIconsOnly',
+            width: '300px',
+            placeholder: 'Prefer buttons with icons only.',
+            value:this.preferIconsOnly,
+            tooltip: 'To save space, prefer buttons with icons and tooltips but no labels if available.',
             class:'inline'
           },
           {
@@ -188,6 +198,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
        this.hideWarning = this.prefs.preferences.hideWarning
        this.allowPwToggle = this.prefs.preferences.allowPwToggle
        this.showTooltips = this.prefs.preferences.showTooltips
+       this.preferIconsOnly = this.prefs.preferences.preferIconsOnly
      }
 
      generateFieldConfig(){

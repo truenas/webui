@@ -14,6 +14,7 @@ export interface UserPreferences {
   metaphor:string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
   allowPwToggle:boolean;
   hideWarning:boolean;
+  preferIconsOnly:boolean;
 }
 
 @Injectable()
@@ -30,7 +31,8 @@ export class PreferencesService {
     "showTooltips":true,
     "metaphor":"auto",
     "allowPwToggle":true,
-    "hideWarning": true
+    "hideWarning": true,
+    "preferIconsOnly": false
   }
   constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router,
     private aroute: ActivatedRoute) {
@@ -42,7 +44,13 @@ export class PreferencesService {
       }
     });
 
+    this.core.register({observerClass:this, eventName:"UserPreferencesRequest"}).subscribe((evt:CoreEvent) => { 
+      this.core.emit({name:"UserPreferencesChanged", data:this.preferences});
+    })
+    
     this.core.register({observerClass:this, eventName:"UserData", sender:this.api }).subscribe((evt:CoreEvent) => {
+      //console.log("UserData Received by PreferencesService");
+      //console.log(evt.data)
       if (evt.data[0]) {
         const data = evt.data[0].attributes.preferences;
 

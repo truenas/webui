@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit} from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RestService } from '../../../../services/';
 import { debug } from 'util';
@@ -24,6 +24,7 @@ import { Validators } from '@angular/forms'
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
 
 
 export interface ZfsPoolData {
@@ -799,11 +800,11 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   public paintMe = true;
 
 
-  constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
+  constructor(protected core: CoreService, protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
     public sorter: StorageService, protected snackBar: MatSnackBar) {
-    super(rest, router, ws, _eRef, dialogService, loader, erdService, translate, snackBar, sorter);
+    super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, snackBar, sorter);
   }
 
   public repaintMe() {
