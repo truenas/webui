@@ -96,7 +96,7 @@ export class DeviceEditComponent implements OnInit {
       name : 'path',
       placeholder : 'Zvol',
       tooltip : 'Browse to an existing <a\
-                 href="%%docurl%%/storage.html#adding-zvols%%webversion%%"\
+                 href="%%docurl%%/storage.html%%webversion%%#adding-zvols"\
                  target="_blank">Zvol</a>.',
       type: 'select',
       required: true,
