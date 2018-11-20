@@ -43,7 +43,7 @@ $accent: $yellow;
 $warn: $red;
 $tooltip:'inline';//display property
 $toggle_pw_display_prop: inline;
-$hideWarning: inline;
+$enableWarning: inline;
 
 // Logo images
 $logo: url('assets/images/light-logo.svg');
@@ -1033,7 +1033,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   #show_Warning {
-    @include variable(display, --hideWarning, $hideWarning);
+    @include variable(display, --enableWarning, $enableWarning);
   }
 
   #update-info {
