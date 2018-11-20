@@ -1,5 +1,5 @@
-import { ApplicationRef, Component, OnInit, ViewContainerRef } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
+import { Component } from '@angular/core';
+import { Validators } from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
@@ -202,18 +202,12 @@ export class ZvolFormComponent {
                   based on the number of the disks in the pool for a\
                   general use case.'),
       options: [
-        { label: '512', value: '512' },
-        { label: '1K', value: '1K' },
-        { label: '2K', value: '2K' },
         { label: '4K', value: '4K' },
         { label: '8K', value: '8K' },
         { label: '16K', value: '16K' },
         { label: '32K', value: '32K' },
         { label: '64K', value: '64K' },
         { label: '128K', value: '128K' },
-        // { label: '256K', value: '256K' },
-        // { label: '512K', value: '512K' },
-        // { label: '1024K', value: '1024K' }
       ],
       isHidden: false
     },
@@ -288,7 +282,9 @@ export class ZvolFormComponent {
         entityForm.formGroup.controls['sync'].setValue('INHERIT');
         entityForm.formGroup.controls['compression'].setValue('INHERIT');
         entityForm.formGroup.controls['deduplication'].setValue('INHERIT');
-        entityForm.formGroup.controls['volblocksize'].setValue('16K');
+        this.ws.call('pool.dataset.recommended_zvol_blocksize',[this.parent]).subscribe(res=>{
+          this.entityForm.formGroup.controls['volblocksize'].setValue(res);
+        })
 
       } else {
         let parent_dataset = pk_dataset[0].name.split('/')

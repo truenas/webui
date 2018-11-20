@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-
-# Author: Eric Turgeon
+# Author: Rishabh Chauhan
 # License: BSD
 # Location for tests  of FreeNAS new GUI
 # Test case count: 1
@@ -32,31 +30,30 @@ try:
 except ImportError:
     import unittest
 
-xpaths = {
-         'rootButton' : "/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/topbar/mat-toolbar/mat-toolbar-row/button[6]/span/mat-icon",
-         'logoutButton' : "//*[contains(text(), 'Log Out')]",
-         'logoutconfirmationCheckbox' : "/html/body/div[3]/div[2]/div[2]/md-dialog-container/confirm-dialog/div[1]/md-checkbox/label/div",
-         'logoutconfirmationButton' : "//*[contains(@name, 'ok_button')]"
+xpaths = { 'navSystem' : '//*[@id="nav-2"]/div/a[1]',
+           'submenuAlertsettings' : '//*[@id="2-7"]'
          }
 
-class logout_test(unittest.TestCase):
+class conf_alertsettings_test(unittest.TestCase):
     @classmethod
     def setUpClass(inst):
         driver.implicitly_wait(30)
         pass
 
-    def test_01_logout(self):
+    # Test navigation Account>Users>Hover>New User and enter username,fullname,password,confirmation and wait till user is  visibile in the list
+    def test_01_nav_system_alertsettings(self):
         try:
-            print (" loging out of the ui, see ya")
-            # Click on root account
-            driver.find_element_by_xpath(xpaths['rootButton']).click()
-            # Click on logout
-            time.sleep(2)
-            driver.find_element_by_xpath(xpaths['logoutButton']).click()
-            time.sleep(2)
-            # Click on OK when re-confirm logout
-#            driver.find_element_by_xpath(xpaths['logoutconfirmationButton']).click()
-#            time.sleep(2)
+            driver.find_element_by_xpath(xpaths['submenuAlertsettings']).click()
+            # cancelling the tour
+            if self.is_element_present(By.XPATH,'/html/body/div[6]/div[1]/button'):
+                driver.find_element_by_xpath('/html/body/div[6]/div[1]/button').click()
+            # get the ui element
+            ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li[2]/a')
+            # get the weather data
+            page_data=ui_element.text
+            print ("the Page now is: " + page_data)
+            # assert response
+            self.assertTrue("Alert Settings" in page_data)
             #taking screenshot
             function.screenshot(driver, self)
         except Exception:
@@ -68,12 +65,24 @@ class logout_test(unittest.TestCase):
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
+    # method to test if an element is present
+    def is_element_present(self, how, what):
+        """
+        Helper method to confirm the presence of an element on page
+        :params how: By locator type
+        :params what: locator value
+        """
+        try: driver.find_element(by=how, value=what)
+        except NoSuchElementException: return False
+        return True
+
+
     @classmethod
     def tearDownClass(inst):
-        driver.close()
+        pass
 
-def run_logout_test(webdriver):
+def run_conf_alertsettings_test(webdriver):
     global driver
     driver = webdriver
-    suite = unittest.TestLoader().loadTestsFromTestCase(logout_test)
+    suite = unittest.TestLoader().loadTestsFromTestCase(conf_alertsettings_test)
     xmlrunner.XMLTestRunner(output=results_xml, verbosity=2).run(suite)

@@ -35,15 +35,20 @@ xpaths = {
         'navStorage': '//*[@id="nav-5"]/div/a[1]',
         'submenuPool': '//*[@id="5-0"]',
         'addAction': '//*[@id="add_action_button"]',
-        'forwardButton': '//*[@id="goforward_button"]',
-        'newpoolName': '/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-manager/mat-card/div[2]/div/div[1]/div/mat-input-container/div/div[1]/div/input',
-        'disk1Checkbox': '/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-manager/mat-card/div[2]/div/div[2]/div[1]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[1]/datatable-body-row/div[2]/datatable-body-cell[1]/div/div/mat-checkbox/label/div',
-        'disk2Checkbox': '/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-manager/mat-card/div[2]/div/div[2]/div[1]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[2]/datatable-body-row/div[2]/datatable-body-cell[1]/div/div/mat-checkbox/label/div',
-        'diskselectedmoveButton': '/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-manager/mat-card/div[2]/div/div[2]/div[2]/div/app-vdev/div/div[1]/button[1]',
-        'createButton': '/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-manager/mat-card/div[2]/div/div[4]/button[1]',
+        'forwardButton': '//*[@id="custom_button"]',
+        'newpoolName': '//*[@id="pool-manager__name-input-field"]',
+        'disk1Checkbox': '//*[@id="pool-manager__disks-da1"]/label/div',
+        'disk2Checkbox': '//*[@id="pool-manager__disks-da2"]/label/div',
+        'disk3Checkbox': '//*[@id="pool-manager__disks-da3"]/label/div',
+        'diskselectedmoveButton': '//*[@id="vdev__add-button"]',
+        'createButton': '//*[@id="pool-manager__create-button"]',
         #very important and useful
-        'confirmCheckbox': '//*[contains(@name, "confirm_checkbox")]',
-        'createpoolButton': '//*[contains(text(), "CREATE POOL")]'
+#        'confirmCheckbox': '//*[contains(@name, "confirm_checkbox")]',
+#       or
+        'confirmCheckbox': '//*[@id="confirm-dialog__confirm-checkbox"]/label/div',
+#        'createpoolButton': '//*[contains(text(), "CREATE POOL")]'
+#       or
+        'createpoolButton': '//*[@id="confirm-dialog__action-button"]/span'
         }
 
 
@@ -132,8 +137,8 @@ class create_pool_test(unittest.TestCase):
             # Enter User Full name
             driver.find_element_by_xpath(xpaths['newpoolName']).send_keys(pool2)
             # Select the 2 disks
-            driver.find_element_by_xpath(xpaths['disk1Checkbox']).click()
             driver.find_element_by_xpath(xpaths['disk2Checkbox']).click()
+            driver.find_element_by_xpath(xpaths['disk3Checkbox']).click()
             # Select the disk
             driver.find_element_by_xpath(xpaths['diskselectedmoveButton']).click()
             # Click on create new Pool button
@@ -142,6 +147,7 @@ class create_pool_test(unittest.TestCase):
             driver.find_element_by_xpath(xpaths['confirmCheckbox']).click()
             # Click Ok Button
             driver.find_element_by_xpath(xpaths['createpoolButton']).click()
+            time.sleep(60)
             #taking screenshot
             function.screenshot(driver, self)
             self.error_check()
