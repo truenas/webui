@@ -193,8 +193,8 @@ export class UpdateComponent implements OnInit {
 
   ngOnInit() {
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
-      if(ures[0].attributes.preferences !== undefined && !ures[0].attributes.preferences.hideWarning) {
-        ures[0].attributes.preferences['hideWarning'] = false;
+      if(ures[0].attributes.preferences !== undefined && ures[0].attributes.preferences.enableWarning) {
+        ures[0].attributes.preferences['enableWarning'] = true;
         this.ws.call('user.set_attribute', [1, 'preferences', ures[0].attributes.preferences]).subscribe((res)=>{
         });
       }
@@ -331,7 +331,7 @@ export class UpdateComponent implements OnInit {
               this.releaseNotes = res.notes.ReleaseNotes;
             }
             this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
-              if(ures[0].attributes.preferences !== undefined && ures[0].attributes.preferences.hideWarning) {
+              if(ures[0].attributes.preferences !== undefined && !ures[0].attributes.preferences.enableWarning) {
                 const ds  = this.dialogService.confirm(
                   T("Download Update"), T("Continue with download?"),true,"",true,T("Apply updates and reboot system after downloading."),"update.update",[{ train: this.train, reboot: false }]
                 )
@@ -427,7 +427,7 @@ export class UpdateComponent implements OnInit {
 
   ApplyPendingUpdate() {
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
-      if(ures[0].attributes.preferences !== undefined && ures[0].attributes.preferences.hideWarning) {
+      if(ures[0].attributes.preferences !== undefined && !ures[0].attributes.preferences.enableWarning) {
         this.dialogService.confirm(
           T("Apply Pending Updates"), T("The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?")
         ).subscribe((res)=>{
@@ -452,7 +452,7 @@ export class UpdateComponent implements OnInit {
 
   ManualUpdate(){
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
-      if(ures[0].attributes.preferences !== undefined && ures[0].attributes.preferences.hideWarning) {
+      if(ures[0].attributes.preferences !== undefined && !ures[0].attributes.preferences.enableWarning) {
         this.router.navigate([this.router.url +'/manualupdate']);
       }
       else {
@@ -542,9 +542,9 @@ export class UpdateComponent implements OnInit {
   }
 
   async saveConfigSubmit(entityDialog) {
-    if(entityDialog.formValue['hideWarning']) {
+    if(entityDialog.formValue['enableWarning']) {
       await entityDialog.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
-        ures[0].attributes.preferences['hideWarning'] = true;
+        ures[0].attributes.preferences['enableWarning'] = true;
         entityDialog.ws.call('user.set_attribute', [1, 'preferences', ures[0].attributes.preferences]).subscribe((res)=>{
         });
       });
