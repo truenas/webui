@@ -99,7 +99,7 @@ export class ServiceDCComponent {
       placeholder : T('Administrator Password'),
       togglePw: true,
       tooltip: T('Enter the password to be used for the\
-                  <a href="%%docurl%%/directoryservice.html#active-directory%%webversion%%"\
+                  <a href="%%docurl%%/directoryservice.html%%webversion%%#active-directory"\
                   target=”_blank”>Active Directory</a> administrator\
                   account.'),
       validation :
