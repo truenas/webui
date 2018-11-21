@@ -468,6 +468,7 @@ export class UserFormComponent {
         delete entityForm['password_edit'];
         delete entityForm['password_conf_edit'];
       }
+      delete entityForm['group_create'];
     }
   }
   submitFunction(this: any, entityForm: any, ){
