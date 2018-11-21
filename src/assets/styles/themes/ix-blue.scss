@@ -961,6 +961,16 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(background, --accent, $accent !important);
   }
 
+  .mat-pseudo-checkbox{
+    display:none ;
+  }
+
+  .mat-option .fn-checked,
+  .mat-option .fn-unchecked{
+    position:relative;
+    top:6px;
+  }
+
   // Bring tooltips to the front in dialogs
   .mat-dialog-container, .mat-dialog-content {
       overflow: visible !important;
