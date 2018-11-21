@@ -286,8 +286,8 @@ export class UserFormComponent {
   private locked: any;
 
   constructor(protected router: Router, protected rest: RestService,
-              protected ws: WebSocketService, protected storageService: StorageService,
-              private dialog:DialogService, private cdRef:ChangeDetectorRef ) {}
+              protected ws: WebSocketService, protected storageService: StorageService
+              ) {}
 
 
    afterInit(entityForm: any) {
@@ -468,11 +468,10 @@ export class UserFormComponent {
         delete entityForm['password_edit'];
         delete entityForm['password_conf_edit'];
       }
+      delete entityForm['group_create'];
     }
   }
   submitFunction(this: any, entityForm: any, ){
-    delete entityForm['uid']
-    delete entityForm['group_create']
     delete entityForm['password_conf']
     return this.ws.call('user.update', [this.pk, entityForm]);
   }
