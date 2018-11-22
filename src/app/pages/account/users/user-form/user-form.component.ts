@@ -370,6 +370,7 @@ export class UserFormComponent {
 
       if (!entityForm.isNew) {
         entityForm.setDisabled('username', true);
+        entityForm.setDisabled('uid', true);
         entityForm.formGroup.controls['username'].setValue(res[0].username);
         entityForm.formGroup.controls['full_name'].setValue(res[0].full_name);
         entityForm.formGroup.controls['email'].setValue(res[0].email);
