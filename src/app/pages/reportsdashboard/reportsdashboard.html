@@ -58,14 +58,14 @@
         <div *ngIf="tabChartsMappingDataSelected && tabChartsMappingDataSelected.keyName === tabChartsMappingDataItem.keyName">
 
           <!-- Cards from Filtered List-->
-          <div fxLayout="row wrap" fxLayoutAlign="space-around center" *ngIf="diskReportConfigReady && tabChartsMappingDataSelected.keyName == 'Disk' && filteredData.length > 0"> 
+          <div fxLayout="row wrap" fxLayoutAlign="space-between start" *ngIf="diskReportConfigReady && tabChartsMappingDataSelected.keyName == 'Disk' && filteredData.length > 0"> 
             <div  [fxFlex]="chartWidth && chartWidth.value ? chartWidth.value : '800px'" *ngFor="let chartConfigData of filteredPaginatedData; let i=index;">
               <report [title]="chartConfigData.title" [lineChartConfig]="chartConfigData"></report>
             </div>
           </div>
           
           <!-- All Cards unfiltered list -->
-          <div fxLayout="row wrap" fxLayoutAlign="space-around center" *ngIf="tabChartsMappingDataSelected.keyName !== 'Disk'">
+          <div fxLayout="row wrap" fxLayoutAlign="space-around start" *ngIf="tabChartsMappingDataSelected.keyName !== 'Disk'">
             <div  [fxFlex]="chartWidth && chartWidth.value ? chartWidth.value : '800px'" *ngFor="let chartConfigData of tabChartsMappingDataSelected.paginatedChartConfigData">
               <report [title]="chartConfigData.title" [lineChartConfig]="chartConfigData"></report>
             </div>

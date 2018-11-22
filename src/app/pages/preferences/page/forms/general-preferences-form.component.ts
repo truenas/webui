@@ -40,14 +40,15 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
   public fieldConfig:FieldConfig[] = [];
   public showTooltips:boolean = this.prefs.preferences.showTooltips;
   public allowPwToggle:boolean = this.prefs.preferences.allowPwToggle;;
-  public enableWarning:boolean = this.prefs.preferences.enableWarning;
+  public hideWarning:boolean = this.prefs.preferences.hideWarning;
+  public preferIconsOnly: boolean = this.prefs.preferences.preferIconsOnly;
   public fieldSetDisplay:string = 'no-margins';//default | carousel | stepper
     public fieldSets: FieldSet[] = [
       {
         name:'General Preferences',
         class:'preferences',
         label:true,
-        width:'300px',
+        width:'400px',
         config:[
           {
             type: 'select',
@@ -88,10 +89,19 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
           },
           {
             type: 'checkbox',
-            name: 'enableWarning',
+            name: 'preferIconsOnly',
             width: '300px',
-            placeholder: 'Enable "Save Configuration" Dialog Before Upgrade',
-            value:this.enableWarning,
+            placeholder: 'Prefer buttons with icons only.',
+            value:this.preferIconsOnly,
+            tooltip: 'To save space, prefer buttons with icons and tooltips but no labels if available.',
+            class:'inline'
+          },
+          {
+            type: 'checkbox',
+            name: 'hideWarning',
+            width: '400px',
+            placeholder: 'Hide "Save Configuration" Dialog Before Upgrade',
+            value:this.hideWarning,
             tooltip: T('Show or hide a dialog to save the system\
                         configuration file. This dialog appears\
                         after choosing to upgrade the system.'),
@@ -185,9 +195,10 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
      processSubmission(obj:any){}
 
      loadValues(themeName?:string){
-       this.enableWarning = this.prefs.preferences.enableWarning
+       this.hideWarning = this.prefs.preferences.hideWarning
        this.allowPwToggle = this.prefs.preferences.allowPwToggle
        this.showTooltips = this.prefs.preferences.showTooltips
+       this.preferIconsOnly = this.prefs.preferences.preferIconsOnly
      }
 
      generateFieldConfig(){

@@ -29,8 +29,8 @@ import { T } from '../../../translate-marker';
 @Component({
   selector : 'app-ipmi',
   template : `
-  <mat-card>
-  <mat-select #selectedChannel name="channel" placeholder="Channel" (change)="switchChannel()" [(ngModel)]="selectedValue">
+  <mat-card style="margin-left:auto; margin-right:auto; max-width:960px;" fxLayout="column">
+  <mat-select fxFlex #selectedChannel name="channel" placeholder="Channel" (change)="switchChannel()" [(ngModel)]="selectedValue">
     <mat-option *ngFor="let channel of channels" [value]="channel.value">
       Channel {{channel.value}}
     </mat-option>

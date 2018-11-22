@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ElementRef, ViewEncapsulation, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit,OnDestroy, Input, ElementRef, ViewEncapsulation, ViewChild, AfterViewInit} from '@angular/core';
 import { Router } from '@angular/router';
 import { DataSource } from '@angular/cdk/collections';
 import { MatPaginator, MatSort, PageEvent, MatSnackBar } from '@angular/material';
@@ -20,6 +20,8 @@ import { DialogService } from '../../../../services';
 import { ErdService } from '../../../../services/erd.service';
 import { StorageService } from '../../../../services/storage.service'
 import { Subscription } from 'rxjs/Subscription';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 
 
 
@@ -36,6 +38,7 @@ export interface InputTableConf {
   isActionVisible?: any;
   custActions?: any[];
   multiActions?:any[];
+  multiActionsIconsOnly?:boolean;
   config?: any;
   confirmDeleteDialog?: Object;
   checkbox_confirm?: any;
@@ -71,7 +74,7 @@ export interface TableConfig {
   styleUrls: ['./entity-table.component.scss'],
   providers: [DialogService, StorageService]
 })
-export class EntityTableComponent implements OnInit, AfterViewInit {
+export class EntityTableComponent /*extends ViewControllerComponent*/ implements OnInit, AfterViewInit, OnDestroy {
 
   @Input() title = '';
   @Input() legacyWarning = '';
@@ -79,6 +82,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   @Input('conf') conf: InputTableConf;
 
   @ViewChild('filter') filter: ElementRef;
+  @ViewChild('defaultMultiActions') defaultMultiActions: ElementRef;
 
   // MdPaginator Inputs
   public paginationPageSize: number = 8;
@@ -111,17 +115,34 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   public showDefaults: boolean = false;
   public showSpinner: boolean = false;
   public showActions: boolean = true;
+  private _multiActionsIconsOnly: boolean = false;
+  get multiActionsIconsOnly(){
+    return this._multiActionsIconsOnly;
+  }
+  set multiActionsIconsOnly(value:boolean){
+    this._multiActionsIconsOnly = value;
+  }
 
   protected loaderOpen = false;
   public selected = [];
 
-  constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
+  constructor(protected core: CoreService, protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService, 
     protected erdService: ErdService, protected translate: TranslateService, protected snackBar: MatSnackBar,
-    public sorter: StorageService) { }
+    public sorter: StorageService) { 
+      //super();
+      this.core.register({observerClass:this, eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
+        this.multiActionsIconsOnly = evt.data.preferIconsOnly;
+        console.log("IT WORKS!!");
+      });
+      this.core.emit({name:"UserPreferencesRequest"});
+    }
 
-  ngOnInit() {
+    ngOnDestroy(){
+      this.core.unregister({observerClass:this});
+    }
 
+  ngOnInit(): void {
     this.setTableHeight(); 
   
     if (this.conf.preInit) {
@@ -152,10 +173,33 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       this.hideTopActions = this.conf.hideTopActions;
     }
 
+
+      // Delay spinner 500ms so it won't show up on a fast-loading page
+      setTimeout(() => { this.setShowSpinner(); }, 500);
+
+      // Next section sets the checked/displayed columns
+      if (this.conf.columns && this.conf.columns.length > 10) {
+        this.conf.columns = [];
+
+        for (let item of this.allColumns) {
+          if (!item.hidden) {
+            this.conf.columns.push(item);
+            this.presetDisplayedCols.push(item);
+          }
+        }
+
+        this.currentPreferredCols = this.conf.columns;
+      }
+        // End of checked/display section ------------                 
+        
+    this.erdService.attachResizeEventToElement("entity-table-component");
+  }
+
+  ngAfterViewInit() {
     Observable.fromEvent(this.filter.nativeElement, 'keyup')
       .debounceTime(150)
       .distinctUntilChanged()
-      .subscribe(() => {
+      .subscribe((evt) => {
         const filterValue: string = this.filter.nativeElement.value;
         let newData: any[] = [];
 
@@ -183,24 +227,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         this.paginationPageIndex  = 0;
         this.setPaginationInfo();
       });
-
-      // Delay spinner 500ms so it won't show up on a fast-loading page
-      setTimeout(() => { this.setShowSpinner(); }, 500);
-
-      // Next section sets the checked/displayed columns
-      if (this.conf.columns && this.conf.columns.length > 10) {
-        this.conf.columns = [];
-
-        for (let item of this.allColumns) {
-          if (!item.hidden) {
-            this.conf.columns.push(item);
-            this.presetDisplayedCols.push(item);
-          }
-        }
-
-        this.currentPreferredCols = this.conf.columns;
-      }
-        // End of checked/display section ------------                 
   }
 
   setTableHeight() {
@@ -229,12 +255,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
   setShowSpinner() {
     this.showSpinner = true;
-  }
-
-  ngAfterViewInit(): void {
-
-    this.erdService.attachResizeEventToElement("entity-table-component");
-
   }
 
   getData() {
@@ -670,4 +690,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   }
 
   // End checkbox section -----------------------
+  
+  toggleLabels(){
+    this.multiActionsIconsOnly = !this.multiActionsIconsOnly;
+  }
 }
