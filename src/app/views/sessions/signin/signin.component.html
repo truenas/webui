@@ -1,13 +1,14 @@
-<div class="page-wrap height-100 mat-bg-primary">
+<div class="page-wrap height-100" style="background-color:var(--bg1);">
   <div class="session-form-hold">
     <mat-progress-bar mode="determinate" class="session-progress"></mat-progress-bar>
     <mat-card>
       <mat-card-content>
         <div *ngIf="connected();else notconnected">
-          <div class="text-center pb-1" *ngIf="logo_ready">
-            <img *ngIf="is_freenas; else isTruenas" src="assets/images/logo-full.svg" alt="FreeNAS logo">
+          <div class="text-center logo-wrapper" *ngIf="logo_ready">
+            <img class="logo-bg" alt="logo image background" src="assets/images/stars-sky.jpg">
+            <img *ngIf="is_freenas; else isTruenas" src="assets/images/light-logo-full.svg" alt="FreeNAS logo">
             <ng-template #isTruenas>
-              <img src="assets/images/truenas-logo.svg" alt="TrueNAS logo">
+              <img src="assets/images/light-truenas-logo.svg" alt="TrueNAS logo">
             </ng-template>
           </div>
           <form #signinForm="ngForm" (ngSubmit)="signin()" *ngIf="has_root_password; else setPassword">
@@ -29,7 +30,7 @@
                 </mat-error>
               </mat-input-container>
             </div>
-            <button name="signin_button" mat-button class="mat-accent full-width mb-1" id="signin_button" [disabled]="username.errors || password.errors">{{"Log in" | translate}}</button>
+            <button name="signin_button" mat-button color="primary" class="full-width mb-1" id="signin_button" [disabled]="username.errors || password.errors">{{"Log in" | translate}}</button>
           </form>
           <ng-template #setPassword>
             <form (ngSubmit)="setpassword()" [formGroup]="setPasswordFormGroup" #setPasswordForm="ngForm">
@@ -55,8 +56,8 @@
               <button name="signin_button2" mat-button class="mat-accent full-width mb-1" type="submit" [disabled]="!setPasswordForm.form.valid">{{"Sign in" | translate}}</button>
             </form>
           </ng-template>
-          <div>
-            <button mat-button color="primary" class="full-width mb-1" (click)="onGoToLegacy()">{{"Legacy Web Interface" | translate}}</button>
+          <div id="legacy-btn-wrapper">
+            <button mat-button color="default" class="mb-1" style="text-transform:capitalize !important;" (click)="onGoToLegacy()">{{"Take me to the Legacy Web Interface" | translate}}</button>
           </div>
           <div>
             <span fxFlex class="copyright-txt">
@@ -67,7 +68,9 @@
           </div>
         </div>
         <ng-template #notconnected>
-          {{"Connecting to NAS... Make sure the NAS system is powered on and connected to the network." | translate}}
+          <div class="disconnected">
+          <div class="fake-icon">?</div>  {{"Connecting to NAS... Make sure the NAS system is powered on and connected to the network." | translate}}
+          </div>
         </ng-template>
       </mat-card-content>
     </mat-card>

@@ -39,7 +39,7 @@ export interface Theme {
 @Injectable()
 export class ThemeService {
   readonly freeThemeDefaultIndex = 0;
-  public activeTheme: string = 'ix-blue';
+  public activeTheme: string = 'ix-dark';
   public activeThemeSwatch: string[];
 
   // Theme lists
@@ -49,36 +49,6 @@ export class ThemeService {
   private _customThemes: Theme[];
 
   public freenasThemes: Theme[] = [
-    {
-      name:'ix-blue',
-      label: "iX Blue",
-      labelSwatch:"blue",
-      description:'iX System Colors',
-      hasDarkLogo:false,
-      logoPath:'assets/images/light-logo.svg',
-      logoTextPath:'light-logo-text.svg',
-      favorite:false,
-      accentColors:['green', 'violet', 'orange', 'cyan', 'magenta', 'red', 'yellow', 'blue'],
-      primary:"var(--blue)",
-      accent:"var(--yellow)",
-      bg1:'#dddddd',
-      bg2:'#ffffff',
-      fg1:'#222222',
-      fg2:'#333333',
-      //'alt-bg1':'#f8f8f2',
-      'alt-bg1':'rgba(122,152,182,0.05)',
-      'alt-bg2':'#fafaf5',
-      'alt-fg1':'#181a26',
-      'alt-fg2':'#282a36',
-      yellow:'#f0cb00',
-      orange:'#ee9302',
-      red:'#ff0013',
-      magenta:'#d238ff',
-      violet:'#c17ecc',
-      blue:'#00a2ff',
-      cyan:'#00d0d6',
-      green:'#59d600'
-    },
     {
       name:'ix-dark',
       label: "iX Dark",
@@ -108,6 +78,36 @@ export class ThemeService {
       blue:'#0D5788',
       cyan:'#00d0d6',
       green:'#1F9642'
+    },
+    {
+      name:'ix-blue',
+      label: "iX Blue",
+      labelSwatch:"blue",
+      description:'iX System Colors',
+      hasDarkLogo:false,
+      logoPath:'assets/images/light-logo.svg',
+      logoTextPath:'light-logo-text.svg',
+      favorite:false,
+      accentColors:['green', 'violet', 'orange', 'cyan', 'magenta', 'red', 'yellow', 'blue'],
+      primary:"var(--blue)",
+      accent:"var(--yellow)",
+      bg1:'#dddddd',
+      bg2:'#ffffff',
+      fg1:'#222222',
+      fg2:'#333333',
+      //'alt-bg1':'#f8f8f2',
+      'alt-bg1':'rgba(122,152,182,0.05)',
+      'alt-bg2':'#fafaf5',
+      'alt-fg1':'#181a26',
+      'alt-fg2':'#282a36',
+      yellow:'#f0cb00',
+      orange:'#ee9302',
+      red:'#ff0013',
+      magenta:'#d238ff',
+      violet:'#c17ecc',
+      blue:'#00a2ff',
+      cyan:'#00d0d6',
+      green:'#59d600'
     },
     {
       name:'dracula',
