@@ -127,10 +127,10 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
 
           }
         
-        if(evt.data.length > 0){
+      }
+        if(this.disks.length > 0){
           this.setSelectedDisk(0);
         }
-      }
     });
 
 
@@ -175,6 +175,11 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
 
     }
     
+    /*console.log(evt.data)
+    if(evt.data.length > 0){
+      this.setSelectedDisk(Number(0));
+    }
+    //console.log(this.selectedDisk)*/
   }
 
   parseVolumeData(){
@@ -189,6 +194,12 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
       legend: 'Used', 
       data: [usedValue]
     };
+
+    if(usedValue == "Locked"){
+      // When Locked, Bail before we try to get details. 
+      // (errors start after this...)
+      return 0;
+    }
 
     let availableValue;
     if (isNaN(this.volumeData.avail)) {
@@ -235,17 +246,15 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
         if(this.diskDetails[i].name == this.disks[index]){
           this.selectedDisk = i;
           this.core.emit({name:"StatsDiskTempRequest", data:[this.diskDetails[i].name, i] });
-        }
+        } 
       }
     } else {
       this.selectedDisk = -1;
     }
-
   }
 
   setCurrentDiskSet(num:number){
     this.currentDiskSet = num;
-    //console.log("Selected Disk Set = " + String(this.currentDiskSet));
   }
 
 }

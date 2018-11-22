@@ -113,7 +113,11 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
     });
 
     this.core.register({observerClass:this, eventName:"PrimaryNicInfo"}).subscribe((evt:CoreEvent) => {
-      if(!evt.data){ throw "PrimaryNicInfo event sent without data attached."}
+      if(!evt.data){ 
+        console.warn("PrimaryNicInfo event sent without data attached.");
+        console.warn(evt);
+        return;
+      }
       let aliases = evt.data.aliases ? evt.data.aliases : "No aliases set";
       for(let i = 0; i < aliases.length; i++){
         if(aliases[i].type == "INET"){
