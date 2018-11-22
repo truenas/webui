@@ -41,14 +41,12 @@ export class FormSelectComponent implements Field, AfterViewInit {
 
   ngAfterViewInit(){
     this.selectStates = this.config.options.map(item => false);
-    let testOptions = this.matSelect.options._results;
+    //let testOptions = this.matSelect.options._results;
   }
 
   onChangeOption($event) {
     if (this.config.onChangeOption !== undefined && this.config.onChangeOption != null) {
       this.config.onChangeOption({ event: $event });
-      console.log("PING")
-      console.log($event);
     }
   }
 
@@ -79,7 +77,7 @@ export class FormSelectComponent implements Field, AfterViewInit {
       this.allSelected = false;
     }
     
-    let testOption = this.matSelect.options._results[0];
+    //let testOption = this.matSelect.options._results[0];
   }
 
   onToggleSelect(option, index){
