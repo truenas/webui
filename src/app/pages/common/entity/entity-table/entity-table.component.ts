@@ -133,7 +133,6 @@ export class EntityTableComponent /*extends ViewControllerComponent*/ implements
       //super();
       this.core.register({observerClass:this, eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
         this.multiActionsIconsOnly = evt.data.preferIconsOnly;
-        console.log("IT WORKS!!");
       });
       this.core.emit({name:"UserPreferencesRequest"});
     }
