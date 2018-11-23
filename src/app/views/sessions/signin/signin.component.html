@@ -14,6 +14,7 @@
           <form #signinForm="ngForm" (ngSubmit)="signin()" *ngIf="has_root_password; else setPassword">
             <div class="">
               <mat-input-container class="full-width">
+                <span matPrefix><mat-icon fontSet="mdi-set" fontIcon="mdi-account" style="color:var(--fg1);position:relative;top:2px;"></mat-icon>&nbsp;&nbsp;</span>
                 <input autofocus matInput name="username" required [(ngModel)]="signinData.username" #username="ngModel" placeholder="{{'Username' | translate}}" value="">
                 <mat-error *ngIf="username.errors && (username.dirty || username.touched) && (username.errors.required)">
                   <span *ngIf="!failed">{{"Please enter your username" | translate}}</span>
@@ -23,6 +24,7 @@
             </div>
             <div class="">
               <mat-input-container class="full-width">
+                <span matPrefix><mat-icon style="color:var(--fg1);position:relative;top:2px;">lock</mat-icon>&nbsp;&nbsp;</span>
                 <input type="password" name="password" required matInput [(ngModel)]="signinData.password" #password="ngModel" placeholder="{{'Password' | translate}}" value="">
                 <mat-error *ngIf="password.errors && (password.dirty || password.touched) && (password.errors.required)">
                     <span *ngIf="!failed">{{"Please enter your password" | translate}}</span>
