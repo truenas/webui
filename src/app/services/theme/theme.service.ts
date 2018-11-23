@@ -313,7 +313,7 @@ export class ThemeService {
   }
 
   resetToDefaultTheme(){
-    this.activeTheme = "ix-blue";
+    this.activeTheme = "ix-dark";
     this.changeTheme(this.activeTheme);
   }
 
