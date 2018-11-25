@@ -54,8 +54,8 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
     return this._primaryNIC;
   }
   set primaryNIC(val){
-    this.registerObservers(val);
     this._primaryNIC = val;
+    this.registerObservers(val);
   }
 
   constructor(public router: Router, public translate: TranslateService){
@@ -106,8 +106,10 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
           this.primaryNicInfo = nicInfo;
           this.primaryNIC = nic;
         }
-        // Now that we have the Primary NIC, register as a listener for the stat.
-        this.core.emit({name:"StatsAddListener", data:{name:"NIC", obj:this, key:this.primaryNIC} });
+        // If we have the Primary NIC, register as a listener for the stat.
+        if(this.primaryNIC){
+          this.core.emit({name:"StatsAddListener", data:{name:"NIC", obj:this, key:this.primaryNIC} });
+        }
       }
 
     });
