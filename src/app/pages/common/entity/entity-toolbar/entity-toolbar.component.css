@@ -1,0 +1,4 @@
+.control-group > *{
+  display:inline-block;
+  max-height:36px;
+}

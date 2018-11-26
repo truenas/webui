@@ -1,0 +1,7 @@
+<div style="color:var(--fg2);" class="control-group">
+  <div *ngFor="let control of conf">
+    <toolbar-button *ngIf="control.type == 'button'" [config]="control" [controller]="controller" ></toolbar-button>
+    <toolbar-menu *ngIf="control.type == 'menu'" [config]="control" [controller]="controller" style="max-height:36px;"></toolbar-menu>
+    <toolbar-multimenu *ngIf="control.type == 'multimenu'" [config]="control" [controller]="controller" style="max-height:36px;"></toolbar-multimenu>
+  </div>
+</div>
