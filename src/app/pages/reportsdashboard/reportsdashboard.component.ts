@@ -87,6 +87,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
 
 
   constructor(private _lineChartService: LineChartService, private erdService: ErdService, public translate: TranslateService, private router:Router) {
+  }
+
+  setupSubscriptions(){
     this.target.subscribe((evt: CoreEvent) => {
       switch(evt.name){
         case 'FormSubmitted':
@@ -100,11 +103,15 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
           this.setPaginationInfo(list);*/
         break;
         case 'ToolbarChanged':
-          this.buildDiskReport(evt.data.devices, evt.data.metrics);
-          this.setPaginationInfo(this.tabChartsMappingDataSelected, this.filteredData );
+          if(evt.data.devices && evt.data.metrics){
+            this.buildDiskReport(evt.data.devices, evt.data.metrics);
+            this.setPaginationInfo(this.tabChartsMappingDataSelected, this.filteredData );
+          }
         break;
       }
     });
+
+    this.target.next({name:"Refresh"});
   }
 
   diskReportBuilderSetup(){
@@ -254,6 +261,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
 
   ngAfterViewInit(): void {
     this.erdService.attachResizeEventToElement("dashboardcontainerdiv"); 
+    this.setupSubscriptions();
   }
 
   /**

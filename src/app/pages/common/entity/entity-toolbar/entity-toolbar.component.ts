@@ -79,6 +79,9 @@ export class EntityToolbarComponent implements OnInit, OnDestroy, AfterViewInit,
 
   ngAfterViewInit() {
     this.init();
+  }
+
+  ngOnInit() {
     this.controller.subscribe((evt:Control) => {
       let clone = Object.assign([], this.values);
       let control = clone[evt.name] = evt.value
@@ -86,9 +89,16 @@ export class EntityToolbarComponent implements OnInit, OnDestroy, AfterViewInit,
       this.values = clone;
       this.target.next({name:"ToolbarChanged", data:this.values});
     })
-  }
 
-  ngOnInit() {
+    this.target.subscribe((evt:CoreEvent) => {
+      switch(evt.name){
+        case "Refresh":
+          // The parent can ping toolbar for latest values
+          // Useful for getting initial values
+          this.target.next({name:"ToolbarChanged", data:this.values});
+        break;
+      }
+    });
   }
 
   init(){
@@ -103,7 +113,6 @@ export class EntityToolbarComponent implements OnInit, OnDestroy, AfterViewInit,
   ngOnChanges(changes) {
     if (changes.conf) {
       // Do Stuff
-      //console.warn(this.conf);
       this.init();
     }
   }
