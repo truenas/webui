@@ -98,7 +98,6 @@ export class EntityToolbarComponent implements OnInit, OnDestroy, AfterViewInit,
       obj[item.name] = item.value;
     });
     this.values = obj;
-    console.log(this.values);
   }
 
   ngOnChanges(changes) {
