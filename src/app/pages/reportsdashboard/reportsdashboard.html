@@ -8,13 +8,13 @@
     <div id="dashboardcontainerdiv">
 
       <!-- Tab Navigation -->
-      <nav mat-tab-nav-bar *ngIf="drawTabs && activeTab" (selectChange)="tabSelectChangeHandler($event)">
+      <nav mat-tab-nav-bar *ngIf="drawTabs && activeTab && tabChartsMappingDataArray.length > 0" (selectChange)="tabSelectChangeHandler($event)">
         <a mat-tab-link *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray"
           [active]="isActiveTab(tabChartsMappingDataItem.keyName)"
           (click)="updateActiveTab(tabChartsMappingDataItem.keyName)">
             {{ tabChartsMappingDataItem.keyName | translate }} 
         </a>
-        </nav>
+      </nav>
 
   <nav style="padding:32px;">
   <!-- START TAB REPLACEMENT-->

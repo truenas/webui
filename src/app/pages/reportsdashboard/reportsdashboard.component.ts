@@ -99,7 +99,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
           this.setPaginationInfo(list);*/
         break;
         case 'ToolbarChanged':
-          console.log(evt);
+          //console.log(evt);
         break;
       }
     });
@@ -108,7 +108,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   diskReportBuilderSetup(){
 
     this.generateValues();
-    console.log(this.diskMetrics)
     // Entity-Toolbar Config
     this.toolbarConfig = [
           {
