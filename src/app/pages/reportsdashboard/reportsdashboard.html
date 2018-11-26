@@ -38,7 +38,7 @@
       <div class="reports-dash-global-controls" fxFlex fxLayout="row wrap" fxLayoutAlign="start stretch" fxLayoutGap="32px">
         
         <!-- Layout Switcher -->
-        <div fxFlex="100" fxFlex.gt-xs="116px">
+        <!--<div fxFlex="100" fxFlex.gt-xs="116px">
           <mat-button-toggle-group 
             #chartWidth="matButtonToggleGroup" *ngIf="tabChartsMappingDataSelected">
             <mat-button-toggle checked="true" value="800px">
@@ -48,11 +48,10 @@
               <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-view-sequential"></mat-icon>
             </mat-button-toggle>
           </mat-button-toggle-group>
-          </div>
+          </div>-->
 
-        <!--
         <div fxFlex="114px">
-        <button mat-button [matMenuTriggerFor]="layoutMenu" color="default" class="menu-toggle" style="color:var(--fg2);">
+        <button mat-button [matMenuTriggerFor]="layoutMenu" color="primary" class="menu-toggle" style="color:var(--fg2);">
           <span>{{ chartLayout ? chartLayout : 'Layout'}} <mat-icon class="menu-caret">arrow_drop_down</mat-icon> </span>
         </button>
       
@@ -67,7 +66,7 @@
           </div>
         </mat-menu>
         </div>
-        -->
+        
         <!-- End Layout-Switcher-->
 
 
