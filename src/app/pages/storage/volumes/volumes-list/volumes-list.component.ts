@@ -14,6 +14,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { MatSnackBar } from '@angular/material';
 import * as moment from 'moment';
+import {TreeNode} from 'primeng/api';
 
 import { Injectable } from '@angular/core';
 import { ErdService } from 'app/services/erd.service';
@@ -90,9 +91,9 @@ export class VolumesListTableConfig implements InputTableConf {
   ) {
 
     if (typeof (this._classId) !== "undefined" && this._classId !== "") {
-      this.resource_name += "/" + this._classId;
+      const resource_name = this.resource_name + "/" + this._classId;
 
-      this.rest.get(this.resource_name, {}).subscribe((res) => {
+      this.rest.get(resource_name, {}).subscribe((res) => {
         this.rowData = [];
 
         this.rowData = this.resourceTransformIncomingRestData(res.data);
@@ -674,7 +675,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
   resourceTransformIncomingRestData(data: any): ZfsPoolData[] {
 
-    data = new EntityUtils().flattenData(data);
+    //data = new EntityUtils().flattenData(data);
     const dataset_data2 = this.datasetData;
     const returnData: ZfsPoolData[] = [];
     const numberIdPathMap: Map<string, number> = new Map<string, number>();
