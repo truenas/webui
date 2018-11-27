@@ -100,7 +100,9 @@ export class VolumesListTableConfig implements InputTableConf {
 
       this.rest.get(resource_name, {}).subscribe((res) => {
         this.tableData = [];
-        this.tableData.push(this.dataHandler(res.data));
+        for (let i = 0; i < res.data.children.length; i++) {
+          this.tableData.push(this.dataHandler(res.data.children[i]));
+        }
       }, (res) => {
         this.dialogService.errorReport(T("Error getting pool or dataset data."), res.message, res.stack);
       });
@@ -678,10 +680,11 @@ export class VolumesListTableConfig implements InputTableConf {
   }
 
   dataHandler(data: any): TreeNode {
-    // console.log(data);
-    
     const node: TreeNode = {};
     node.data = data;
+    this.getMoreDatasetInfo(data);
+    node.data.actions = this.getActions(data);
+
     node.children = [];
 
     if (data.children) {
@@ -691,6 +694,39 @@ export class VolumesListTableConfig implements InputTableConf {
     }
     delete node.data.children;
     return node;
+  }
+
+  getMoreDatasetInfo(dataObj) {
+    const dataset_data2 = this.datasetData;
+    for (const k in dataset_data2) {
+      if (dataset_data2[k].id === dataObj.path) {
+        if (dataset_data2[k].compression) {
+          dataset_data2[k].compression.source !== "INHERITED"
+            ? dataObj.compression = (dataset_data2[k].compression.parsed)
+            : dataObj.compression = ("Inherits (" + dataset_data2[k].compression.parsed + ")");
+        }
+        if (dataset_data2[k].compressratio) {
+          dataset_data2[k].compressratio.source !== "INHERITED"
+            ? dataObj.compressratio = (dataset_data2[k].compressratio.parsed)
+            : dataObj.compressratio = ("Inherits (" + dataset_data2[k].compressratio.parsed + ")");
+        }
+        if (dataset_data2[k].readonly) {
+          dataset_data2[k].readonly.source !== "INHERITED"
+            ? dataObj.readonly = (dataset_data2[k].readonly.parsed)
+            : dataObj.readonly = ("Inherits (" + dataset_data2[k].readonly.parsed + ")");
+        }
+        if (dataset_data2[k].deduplication) {
+          dataset_data2[k].deduplication.source !== "INHERITED"
+            ? dataObj.dedup = (dataset_data2[k].deduplication.parsed)
+            : dataObj.dedup = ("Inherits (" + dataset_data2[k].deduplication.parsed + ")");
+        }
+        if (dataset_data2[k].comments) {
+          dataset_data2[k].comments.source !== "INHERITED"
+            ? dataObj.comments = (dataset_data2[k].comments.parsed)
+            : dataObj.comments = ("");
+        }
+      }
+    }
   }
 
   // resourceTransformIncomingRestData(data: any): ZfsPoolData[] {
