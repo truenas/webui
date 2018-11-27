@@ -43,7 +43,7 @@ $accent: $yellow;
 $warn: $red;
 $tooltip:'inline';//display property
 $toggle_pw_display_prop: inline;
-$hideWarning: inline;
+$enableWarning: inline;
 
 // Logo images
 $logo: url('assets/images/light-logo.svg');
@@ -150,6 +150,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 // include the custom theme object into the angular material theme
 .ix-blue {
   @include angular-material-theme($freenas-theme);
+
 
   .mat-bg-primary,
   .topbar,
@@ -447,6 +448,12 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   .mat-form-field-underline{
     @include variable(background-color, --fg2, $fg2);
+    opacity:0.35;
+  }
+
+  .mat-warn .mat-form-field-underline,
+  .mat-focused .mat-form-field-underline{
+    opacity:0.85;
   }
 
 #test-alert {
@@ -1121,7 +1128,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   #show_Warning {
-    @include variable(display, --hideWarning, $hideWarning);
+    @include variable(display, --enableWarning, $enableWarning);
   }
 
   #update-info {
@@ -1139,11 +1146,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   input[type=number] {
     -moz-appearance: textfield !important;
   }
-
+  
   input[type=number]::-webkit-inner-spin-button {
     -webkit-appearance: none;
-  }
-  
+  } 
+
   .mat-autocomplete-panel .mat-option-text {
     @include variable(color, --fg2, $fg2 !important);
   }

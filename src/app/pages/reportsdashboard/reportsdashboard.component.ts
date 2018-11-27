@@ -49,9 +49,12 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   // Report Builder Options (entity-form-embedded)
   public target: Subject<CoreEvent> = new Subject();
   public values = [];
+  public toolbarConfig: any[] = [];
   protected isEntity: boolean = true;
   public diskDevices = [];
   public diskMetrics = [];
+  public categoryDevices = [];
+  public categoryMetrics = [];
   public saveSubmitText = "Generate Reports";
   public actionButtonsAlign = "left";
   public fieldConfig:FieldConfig[] = [];
@@ -76,7 +79,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   public activeTab: string;
   public filteredData: ChartConfigData[] = [];
   public filteredPaginatedData: ChartConfigData[] = [];
-  @ViewChild('chartWidth') chartWidth: MatButtonToggleGroup; 
+  public chartLayout = 'Grid'; // Defaults to grid layout
+  //@ViewChild('chartWidth') chartWidth: MatButtonToggleGroup; 
   @ViewChild('pager') pagerElement;
   
   
@@ -108,6 +112,94 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
         name:'Report Options',
         class:'preferences',
         label:true,
+        width:'600px',
+        config:[
+          {
+            type: 'select',
+            name: 'devices',
+            width:'calc(50% - 16px)',
+            placeholder: 'Choose a Device',
+            options: this.diskDevices, // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
+            //value:[this.diskDevices[0]],
+            required: true,
+            multiple: true,
+            tooltip:'Choose a device for your report.',
+            class:'inline'
+          },
+          {
+            type: 'select',
+            name: 'metrics',
+            width:'calc(50% - 16px)',
+            placeholder: 'Choose a metric',
+            options: this.diskMetrics ? this.diskMetrics : [{label:'None available', value:'negative'}], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
+            //value:[this.diskMetrics[0]],
+            required: true,
+            multiple: true,
+            tooltip:'Choose a metric to display.',
+            class:'inline'
+          }
+        ]
+      }
+    ]
+
+    this.generateFieldConfig();
+  }
+
+  setupSubscriptions(){
+    this.target.subscribe((evt: CoreEvent) => {
+      switch(evt.name){
+        case 'FormSubmitted':
+          console.log(evt);
+          this.buildDiskReport(evt.data.devices, evt.data.metrics);
+          this.setPaginationInfo(this.tabChartsMappingDataSelected, this.filteredData );
+          //console.log(this.pagerElement);
+          //this.pagerElement.getNumberOfPages();
+          /*let list = Object.assign(this.tabChartsMappingDataSelected);
+          list.chartConfigData = this.filteredData;
+          this.setPaginationInfo(list);*/
+        break;
+        case 'ToolbarChanged':
+          if(evt.data.devices && evt.data.metrics){
+            this.buildDiskReport(evt.data.devices, evt.data.metrics);
+            this.setPaginationInfo(this.tabChartsMappingDataSelected, this.filteredData );
+          }
+        break;
+      }
+    });
+
+    this.target.next({name:"Refresh"});
+  }
+
+  diskReportBuilderSetup(){
+
+    this.generateValues();
+    
+    // Entity-Toolbar Config
+    this.toolbarConfig = [
+          {
+            type: 'multimenu',
+            name: 'devices',
+            label: 'Devices',
+            disabled:false,
+            options: this.diskDevices.map((v) => v.value), // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
+            //tooltip:'Choose a device for your report.',
+          },
+          {
+            type: 'multimenu',
+            name: 'metrics',
+            label: 'Metrics',
+            disabled: false,
+            options: this.diskMetrics ? this.diskMetrics.map((v) => v.value) : ['Not Available'], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
+            //tooltip:'Choose a metric to display.',
+          }
+    ]
+
+    // Entity-Form Config
+    this.fieldSets = [
+      {
+        name:'Report Options',
+        class:'preferences',
+        label:false,
         width:'600px',
         config:[
           {
@@ -225,6 +317,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
 
   ngAfterViewInit(): void {
     this.erdService.attachResizeEventToElement("dashboardcontainerdiv"); 
+    this.setupSubscriptions();
   }
 
   /**
@@ -474,6 +567,10 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
       });
     }
     return foundTabChartsMappingData;
+  }
+
+  setChartLayout(value:string){
+    this.chartLayout = value; 
   }
 
 }

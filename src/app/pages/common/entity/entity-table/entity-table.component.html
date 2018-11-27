@@ -1,9 +1,14 @@
-<div class="legacy-warning" *ngIf="legacyWarning">
-      {{ legacyWarning | translate }} 
-      <span class="legacy-warning-link" (click)="onGoToLegacy()">
-        {{ legacyWarningLink | translate }}.
-      </span>
-    </div>
+<div id="entity-table-component" class="material mat-card mat-card-table">
+  <div class="mat-toolbar mat-card-toolbar" *ngIf="hideTopActions === false">
+    <div class="mat-card-title-text">{{ title | translate }}</div>
+    <div class="legacy-warning" *ngIf="legacyWarning">{{ legacyWarning | translate }} <span class="legacy-warning-link" (click)="onGoToLegacy()">{{ legacyWarningLink | translate }}.</span></div>
+    <mat-spinner 
+      [diameter]='40' 
+      id="entity-spinner"
+      *ngIf="!showDefaults && showSpinner" #entityspinner>
+    </mat-spinner> 
+    <app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
+  </div>
 
 <div id="entity-table-component" class="material mat-card mat-card-table">
   <div class="mat-toolbar mat-card-toolbar" *ngIf="hideTopActions === false" fxLayout="row wrap" fxLayoutAlign="space-between center">

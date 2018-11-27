@@ -48,8 +48,8 @@ export class StorageService {
     dlink.remove();
   }
 
-  // Handles sorting for entity tables and some other ngx datatables 
-  tableSorter(arr, key, asc) {
+   // Handles sorting for entity tables and some other ngx datatables 
+   tableSorter(arr, key, asc) {
     let tempArr = [],
       sorter,
       myCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });

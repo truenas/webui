@@ -55,6 +55,11 @@ import { EntityDialogComponent } from './entity-dialog/entity-dialog.component';
 import { FormPermissionsComponent } from './entity-form/components/form-permissions/form-permissions.component';
 import { EntityJobComponent } from './entity-job/entity-job.component';
 
+import { EntityToolbarComponent } from './entity-toolbar/entity-toolbar.component';
+import { ToolbarButtonComponent } from './entity-toolbar/components/toolbar-button/toolbar-button.component';
+import { ToolbarMenuComponent } from './entity-toolbar/components/toolbar-menu/toolbar-menu.component';
+import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-multimenu/toolbar-multimenu.component';
+
 // CDK
 import { CdkTableModule } from '@angular/cdk/table';
 import { OverlayModule } from '@angular/cdk/overlay';
@@ -109,7 +114,11 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
     EntityTaskComponent,
     FormParagraphComponent,
     EntityDialogComponent,
-    EntityDashboardComponent
+    EntityDashboardComponent,
+    EntityToolbarComponent,
+    ToolbarButtonComponent,
+    ToolbarMenuComponent,
+    ToolbarMultimenuComponent
   ],
   exports: [
     EntityTemplateDirective,
@@ -128,7 +137,8 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
     EntityWizardComponent,
     EntityTaskComponent,
     EntityDialogComponent,
-    EntityDashboardComponent
+    EntityDashboardComponent,
+    EntityToolbarComponent
   ],
   entryComponents: [
     FormButtonComponent,
@@ -151,7 +161,10 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
     FormSliderComponent,
     FormToggleButtonComponent,
     FormTaskComponent,
-    FormParagraphComponent
+    FormParagraphComponent,
+    ToolbarButtonComponent,
+    ToolbarMenuComponent,
+    ToolbarMultimenuComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [

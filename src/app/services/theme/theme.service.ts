@@ -39,7 +39,7 @@ export interface Theme {
 @Injectable()
 export class ThemeService {
   readonly freeThemeDefaultIndex = 0;
-  public activeTheme: string = 'ix-blue';
+  public activeTheme: string = 'ix-dark';
   public activeThemeSwatch: string[];
 
   // Theme lists
@@ -50,16 +50,17 @@ export class ThemeService {
 
   public freenasThemes: Theme[] = [
     {
-      name:'ix-blue',
-      label: "iX Blue",
+      name:'ix-dark',
+      label: "iX Dark",
       labelSwatch:"blue",
-      description:'iX System Colors',
+      description:'iX System Colors on Dark',
       hasDarkLogo:false,
       logoPath:'assets/images/light-logo.svg',
       logoTextPath:'light-logo-text.svg',
       favorite:false,
       accentColors:['green', 'violet', 'orange', 'cyan', 'magenta', 'red', 'yellow', 'blue'],
       primary:"var(--blue)",
+      //secondary:"var(--bg1)",
       accent:"var(--yellow)",
       bg1:'#dddddd',
       bg2:'#ffffff',
@@ -75,9 +76,9 @@ export class ThemeService {
       red:'#ff0013',
       magenta:'#d238ff',
       violet:'#c17ecc',
-      blue:'#00a2ff',
+      blue:'#0D5788',
       cyan:'#00d0d6',
-      green:'#59d600'
+      green:'#1F9642'
     },
     {
       name:'ix-dark',
@@ -303,17 +304,17 @@ export class ThemeService {
         (<any>document).documentElement.style.setProperty("--toggle_pw_display_prop", "none");
       }
       
-      if(evt.data.hideWarning){
-        (<any>document).documentElement.style.setProperty("--hideWarning","inline");
+      if(evt.data.enableWarning){
+        (<any>document).documentElement.style.setProperty("--enableWarning","inline");
       } else if(!evt.data.allowPwToggle){
-        (<any>document).documentElement.style.setProperty("--hideWarning", "none");
+        (<any>document).documentElement.style.setProperty("--enableWarning", "none");
       }
 
     });
   }
 
   resetToDefaultTheme(){
-    this.activeTheme = "ix-blue";
+    this.activeTheme = "ix-dark";
     this.changeTheme(this.activeTheme);
   }
 
