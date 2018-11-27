@@ -103,47 +103,47 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
     });
   }
 
-  diskReportBuilderSetup(){
+  // diskReportBuilderSetup(){
 
-    this.generateValues();
+  //   this.generateValues();
 
-    this.fieldSets = [
-      {
-        name:'Report Options',
-        class:'preferences',
-        label:true,
-        width:'600px',
-        config:[
-          {
-            type: 'select',
-            name: 'devices',
-            width:'calc(50% - 16px)',
-            placeholder: 'Choose a Device',
-            options: this.diskDevices, // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
-            //value:[this.diskDevices[0]],
-            required: true,
-            multiple: true,
-            tooltip:'Choose a device for your report.',
-            class:'inline'
-          },
-          {
-            type: 'select',
-            name: 'metrics',
-            width:'calc(50% - 16px)',
-            placeholder: 'Choose a metric',
-            options: this.diskMetrics ? this.diskMetrics : [{label:'None available', value:'negative'}], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
-            //value:[this.diskMetrics[0]],
-            required: true,
-            multiple: true,
-            tooltip:'Choose a metric to display.',
-            class:'inline'
-          }
-        ]
-      }
-    ]
+  //   this.fieldSets = [
+  //     {
+  //       name:'Report Options',
+  //       class:'preferences',
+  //       label:true,
+  //       width:'600px',
+  //       config:[
+  //         {
+  //           type: 'select',
+  //           name: 'devices',
+  //           width:'calc(50% - 16px)',
+  //           placeholder: 'Choose a Device',
+  //           options: this.diskDevices, // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
+  //           //value:[this.diskDevices[0]],
+  //           required: true,
+  //           multiple: true,
+  //           tooltip:'Choose a device for your report.',
+  //           class:'inline'
+  //         },
+  //         {
+  //           type: 'select',
+  //           name: 'metrics',
+  //           width:'calc(50% - 16px)',
+  //           placeholder: 'Choose a metric',
+  //           options: this.diskMetrics ? this.diskMetrics : [{label:'None available', value:'negative'}], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
+  //           //value:[this.diskMetrics[0]],
+  //           required: true,
+  //           multiple: true,
+  //           tooltip:'Choose a metric to display.',
+  //           class:'inline'
+  //         }
+  //       ]
+  //     }
+  //   ]
 
-    this.generateFieldConfig();
-  }
+  //   this.generateFieldConfig();
+  // }
 
   setupSubscriptions(){
     this.target.subscribe((evt: CoreEvent) => {
