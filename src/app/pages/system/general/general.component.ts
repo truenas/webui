@@ -172,11 +172,19 @@ export class GeneralComponent implements OnDestroy {
     }
   ];
   public saveConfigFormConf: DialogFormConfiguration = {
-    title: "Save Config",
+    title: "Save Configuration",
+    message: '<b>WARNING:</b> This configuration file contains system\
+              passwords and other sensitive data.<br>',
     fieldConfig: this.saveConfigFieldConf,
     method_ws: 'core.download',
     saveButtonText: T('Save'),
     customSubmit: this.saveCofigSubmit,
+    warning: '<p>Including the Password Secret Seed allows using this\
+              configuration file with a new boot device. This also\
+              decrypts all system passwords for reuse when the\
+              configuration file is uploaded.</p>\
+              <b>Keep the configuration file safe and protect it\
+              from unauthorized access!</b>',
   }
 
   protected uploadConfigFieldConf: FieldConfig[] = [

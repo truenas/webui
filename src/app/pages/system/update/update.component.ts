@@ -72,8 +72,9 @@ export class UpdateComponent implements OnInit {
               passwords and other sensitive data.<br>",
     fieldConfig: this.saveConfigFieldConf,
     warning: "Including the Password Secret Seed allows using this\
-              configuration file with a new boot device. It also\
-              decrypts all passwords used on this system.\
+              configuration file with a new boot device. This also\
+              decrypts all system passwords for reuse when the\
+              configuration file is uploaded.\
               <b>Keep the configuration file safe and protect it from unauthorized access!</b>",
     method_ws: 'core.download',
     saveButtonText: T('SAVE CONFIGURATION'),
