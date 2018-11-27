@@ -10,10 +10,17 @@
   width:100%;
   height:100%;
   /*background-size:contain;*/
-  background-size:60%;
   background-position:50%;
   /*background-color:rgba(0,0,0,0.15);*/
   background-repeat:no-repeat;
+}
+
+.card-bg.card-bg-logo{
+  background-size:60%;
+}
+
+.card-bg.card-bg-hw{
+  background-size:contain;
 }
 
 /*.logo-bg{
@@ -41,9 +48,12 @@ background-color: #999;
   width:100%
 }
 
-.xs .card-bg{
-  /*background-size:contain;*/
+.xs .card-bg.card-bg-logo{
   background-size:60%;
+}
+
+.xs .card-bg.card-bg-hw{
+  background-size:contain;
 }
 
 .data-container > div{
