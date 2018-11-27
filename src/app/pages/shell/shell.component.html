@@ -1,7 +1,7 @@
 <mat-card class="p-0">
-  <mat-card-title class="m-0">
+  <mat-card-title class="mat-bg-primary m-0">
   	 <div class="card-title-text">
-  	 	<mat-icon fontSet="mdi-set" fontIcon="mdi-console-line" style="font-size:1.15rem;"></mat-icon>  {{"Shell" | translate}}
+  	 	{{"Shell" | translate}}
   	 </div>
   </mat-card-title>
 	<div id="terminal" [ngStyle]="{'font-size' : font_size+'px'}"  #terminal (window:resize)="onResize($event)"></div>

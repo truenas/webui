@@ -37,11 +37,17 @@
           "../node_modules/devextreme/dist/css/dx.light.css",
           "../node_modules/angular-tree-component/dist/angular-tree-component.css",
           
+          "assets/styles/themes/egret-dark-purple.scss",
+          "assets/styles/themes/egret-dark-pink.scss",
+          "assets/styles/themes/egret-blue.scss",
+          "assets/styles/themes/egret-indigo.scss",
           "assets/styles/themes/ix-blue.scss",
+          "assets/styles/themes/solarized-dark.scss",
+          "assets/styles/themes/freenas-warriors.scss",
+          "assets/styles/themes/freenas-sharks.scss",
           "assets/styles/fn-styles.css",
           "assets/styles/charts.css",
-          "assets/styles/egret_overrides.css",
-          "assets/styles/material-reduction.css"
+          "assets/styles/egret_overrides.css"
         ],
         "scripts": [
 

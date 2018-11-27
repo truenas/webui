@@ -16,7 +16,6 @@ export interface Theme {
   logoPath?:string;
   logoTextPath?:string;
   primary:string;
-  secondary?: string; // NEW
   accent:string;
   bg1:string
   bg2:string
@@ -62,41 +61,11 @@ export class ThemeService {
       primary:"var(--blue)",
       //secondary:"var(--bg1)",
       accent:"var(--yellow)",
-      bg1:'#171E26',
-      bg2:'#232d35',//'#1D262D',
-      fg1:'#aaaaaa',
-      fg2:'#cccccc',
-      'alt-bg1':'rgba(122,122,122,0.25)',
-      'alt-bg2':'#6F6E6C',
-      'alt-fg1':'#c1c1c1',
-      'alt-fg2':'#e1e1e1',
-      yellow:'#f0cb00',
-      orange:'#ee9302',
-      red:'#ff0013',
-      magenta:'#d238ff',
-      violet:'#c17ecc',
-      blue:'#0D5788',
-      cyan:'#00d0d6',
-      green:'#1F9642'
-    },
-    {
-      name:'ix-blue',
-      label: "iX Blue",
-      labelSwatch:"blue",
-      description:'iX System Colors',
-      hasDarkLogo:false,
-      logoPath:'assets/images/light-logo.svg',
-      logoTextPath:'light-logo-text.svg',
-      favorite:false,
-      accentColors:['green', 'violet', 'orange', 'cyan', 'magenta', 'red', 'yellow', 'blue'],
-      primary:"var(--blue)",
-      accent:"var(--yellow)",
       bg1:'#dddddd',
       bg2:'#ffffff',
       fg1:'#222222',
       fg2:'#333333',
-      //'alt-bg1':'#f8f8f2',
-      'alt-bg1':'rgba(122,152,182,0.05)',
+      'alt-bg1':'#f8f8f2',
       'alt-bg2':'#fafaf5',
       'alt-fg1':'#181a26',
       'alt-fg2':'#282a36',
@@ -105,9 +74,9 @@ export class ThemeService {
       red:'#ff0013',
       magenta:'#d238ff',
       violet:'#c17ecc',
-      blue:'#00a2ff',
+      blue:'#0D5788',
       cyan:'#00d0d6',
-      green:'#59d600'
+      green:'#1F9642'
     },
     {
       name:'dracula',
@@ -123,16 +92,12 @@ export class ThemeService {
       accent:"var(--violet)",
       bg1:'#181a26',
       bg2:'#282a36',
-      fg1:'#a8a8a2',
-      fg2:'#cacac5',
-      //'alt-bg1':'#f8f8f2',
-      //'alt-bg2':'#fafaf5',
-      'alt-bg1':'rgba(122,122,122,0.25)',
-      'alt-bg2':'rgba(122,122,122,0.5)',
-      //'alt-fg1':'#181a26',
-      //'alt-fg2':'#282a36',
-      'alt-fg1':'#f8f8f2',
-      'alt-fg2':'#fafaf5',
+      fg1:'#f8f8f2',
+      fg2:'#fafaf5',
+      'alt-bg1':'#f8f8f2',
+      'alt-bg2':'#fafaf5',
+      'alt-fg1':'#181a26',
+      'alt-fg2':'#282a36',
       yellow:'#f1fa8c',
       orange:'#ffb86c',
       red:'#ff5555',
@@ -158,8 +123,7 @@ export class ThemeService {
       bg2:'#073642',
       fg1:'#586e75',
       fg2:'#657b83',
-      //'alt-bg1':'#eee8d5',
-      'alt-bg1':'rgba(122,122,122,0.25)',
+      'alt-bg1':'#eee8d5',
       'alt-bg2':'#fdf6e3',
       'alt-fg1':'#839496',
       'alt-fg2':'#282a36',
@@ -182,14 +146,13 @@ export class ThemeService {
       logoTextPath:'light-logo-text.svg',
       favorite:false,
       accentColors:['orange', 'green', 'cyan', 'yellow', 'violet', 'magenta', 'red', 'blue'],
-      primary:"var(--yellow)",
-      accent:"var(--green)",
+      primary:"var(--alt-bg2)",
+      accent:"var(--yellow)",
       'bg1':'#dfdac8',
       'bg2':'#fdf6e3',
       'fg1':'#839496',
       'fg2':'#282a36',
-      //'alt-bg1':'#002b36',
-      'alt-bg1':'rgba(122,122,122,0.25)',
+      'alt-bg1':'#002b36',
       'alt-bg2':'#073642',
       'alt-fg1':'#586e75',
       'alt-fg2':'#657b83',
@@ -201,36 +164,6 @@ export class ThemeService {
       blue:'#268bd2',
       cyan:'#2aa198',
       green:'#859900'
-    },
-    {
-      name:'high-contrast',
-      label: "High Contrast",
-      labelSwatch:"fg1",
-      description:'High contrast theme based on Legacy UI color scheme',
-      hasDarkLogo:false,
-      logoPath:'assets/images/light-logo.svg',
-      logoTextPath:'light-logo-text.svg',
-      favorite:false,
-      accentColors:['green', 'violet', 'orange', 'cyan', 'magenta', 'red', 'yellow', 'blue'],
-      primary:"var(--fg1)",
-      accent:"var(--yellow)",
-      bg1:'#dddddd',
-      bg2:'#ffffff',
-      fg1:'#222222',
-      fg2:'#333333',
-      //'alt-bg1':'#f8f8f2',
-      'alt-bg1':'rgba(122,152,182,0.05)',
-      'alt-bg2':'#fafaf5',
-      'alt-fg1':'#181a26',
-      'alt-fg2':'#282a36',
-      yellow:'#f0cb00',
-      orange:'#ee9302',
-      red:'#ff0013',
-      magenta:'#d238ff',
-      violet:'#c17ecc',
-      blue:'#00a2ff',
-      cyan:'#00d0d6',
-      green:'#59d600'
     }
   ];
 
@@ -303,10 +236,10 @@ export class ThemeService {
         (<any>document).documentElement.style.setProperty("--toggle_pw_display_prop", "none");
       }
       
-      if(evt.data.hideWarning){
-        (<any>document).documentElement.style.setProperty("--hideWarning","inline");
+      if(evt.data.enableWarning){
+        (<any>document).documentElement.style.setProperty("--enableWarning","inline");
       } else if(!evt.data.allowPwToggle){
-        (<any>document).documentElement.style.setProperty("--hideWarning", "none");
+        (<any>document).documentElement.style.setProperty("--enableWarning", "none");
       }
 
     });
@@ -366,14 +299,6 @@ export class ThemeService {
     // Set Material palette colors
     (<any>document).documentElement.style.setProperty("--primary",theme["primary"]);
     (<any>document).documentElement.style.setProperty("--accent",theme["accent"]);
-
-    // Set Card Highlights on Dark backgrounds only
-    let contrastColor = this.textContrast(theme['bg2'],theme['bg2']) 
-    if( contrastColor == "#ffffff"){
-      (<any>document).documentElement.style.setProperty("--highlights", '1px');
-    } else {
-      (<any>document).documentElement.style.setProperty("--highlights", '0px');
-    }
 
     // Set Material aux. text styles
     let primaryColor = this.colorFromMeta(theme["primary"]); // eg. blue
