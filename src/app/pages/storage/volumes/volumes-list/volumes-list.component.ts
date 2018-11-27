@@ -25,6 +25,10 @@ import { Validators } from '@angular/forms'
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { formatDefaultLocale } from 'd3';
+
 
 export interface ZfsPoolData {
   avail?: number;
@@ -64,7 +68,8 @@ export class VolumesListTableConfig implements InputTableConf {
   public hideTopActions = true;
   public flattenedVolData: any;
   public resource_name = 'storage/volume';
-  public rowData: ZfsPoolData[] = [];
+  // public rowData: ZfsPoolData[] = [];
+  public tableData: TreeNode[] = [];
   protected dialogRef: any;
   public route_add = ["storage", "pools", "import"];
   public route_add_tooltip = T("Create or Import Pool");
@@ -94,9 +99,8 @@ export class VolumesListTableConfig implements InputTableConf {
       const resource_name = this.resource_name + "/" + this._classId;
 
       this.rest.get(resource_name, {}).subscribe((res) => {
-        this.rowData = [];
-
-        this.rowData = this.resourceTransformIncomingRestData(res.data);
+        this.tableData = [];
+        this.tableData.push(this.dataHandler(res.data));
       }, (res) => {
         this.dialogService.errorReport(T("Error getting pool or dataset data."), res.message, res.stack);
       });
@@ -673,98 +677,114 @@ export class VolumesListTableConfig implements InputTableConf {
     return moment(dateTime).format("YYYYMMDD");
   }
 
-  resourceTransformIncomingRestData(data: any): ZfsPoolData[] {
+  dataHandler(data: any): TreeNode {
+    // console.log(data);
+    
+    const node: TreeNode = {};
+    node.data = data;
+    node.children = [];
 
-    //data = new EntityUtils().flattenData(data);
-    const dataset_data2 = this.datasetData;
-    const returnData: ZfsPoolData[] = [];
-    const numberIdPathMap: Map<string, number> = new Map<string, number>();
-
-    for (let i in data) {
-
-      const dataObj = data[i];
-
-      dataObj.nodePath = dataObj.mountpoint;
-
-      if (typeof (dataObj.nodePath) === "undefined" && typeof (dataObj.path) !== "undefined") {
-        dataObj.nodePath = "/mnt/" + dataObj.path;
+    if (data.children) {
+      for (let i = 0; i < data.children.length; i++) {
+        node.children.push(this.dataHandler(data.children[i]));
       }
-
-      dataObj.parentPath = dataObj.nodePath.slice(0, dataObj.nodePath.lastIndexOf("/"));
-
-      if (dataObj.status !== '-') {
-        // THEN THIS A ZFS_POOL DON'T ADD    dataObj.type = 'zpool'
-        continue;
-      } else if (typeof (dataObj.nodePath) === "undefined" || dataObj.nodePath.indexOf("/") === -1) {
-        continue;
-      }
-
-      if ("/mnt" === dataObj.parentPath) {
-        dataObj.parentPath = "0";
-      }
-
-      try {
-        dataObj.availStr = (<any>window).filesize(dataObj.avail, { standard: "iec" });
-      } catch (error) {
-        dataObj.availStr = "" + dataObj.avail;
-      }
-
-      try {
-        dataObj.usedStr = (<any>window).filesize(dataObj.used, { standard: "iec" });
-      } catch (error) {
-        dataObj.usedStr = "" + dataObj.used;
-      }
-
-      dataObj.compression = "";
-      dataObj.readonly = "";
-      dataObj.dedup = "";
-      dataObj.comments = "";
-      dataObj.compressratio = "";
-
-      for (let k in dataset_data2) {
-
-        if (dataset_data2[k].mountpoint === dataObj.nodePath) {
-
-          if (dataset_data2[k].compression) {
-            dataset_data2[k].compression.source !== "INHERITED"
-              ? dataObj.compression = (dataset_data2[k].compression.parsed)
-              : dataObj.compression = ("Inherits (" + dataset_data2[k].compression.parsed + ")");
-          }
-
-          if (dataset_data2[k].compressratio) {
-            dataset_data2[k].compressratio.source !== "INHERITED"
-              ? dataObj.compressratio = (dataset_data2[k].compressratio.parsed)
-              : dataObj.compressratio = ("Inherits (" + dataset_data2[k].compressratio.parsed + ")");
-          }
-
-          if (dataset_data2[k].readonly) {
-            dataset_data2[k].readonly.source !== "INHERITED"
-              ? dataObj.readonly = (dataset_data2[k].readonly.parsed)
-              : dataObj.readonly = ("Inherits (" + dataset_data2[k].readonly.parsed + ")");
-          }
-
-          if (dataset_data2[k].deduplication) {
-            dataset_data2[k].deduplication.source !== "INHERITED"
-              ? dataObj.dedup = (dataset_data2[k].deduplication.parsed)
-              : dataObj.dedup = ("Inherits (" + dataset_data2[k].deduplication.parsed + ")");
-          }
-
-          if (dataset_data2[k].comments) {
-            dataset_data2[k].comments.source !== "INHERITED"
-              ? dataObj.comments = (dataset_data2[k].comments.parsed)
-              : dataObj.comments = ("");
-          }
-        }
-
-      }
-
-      dataObj.actions = this.getActions(dataObj);
-
-      returnData.push(dataObj);
     }
+    delete node.data.children;
+    return node;
+  }
 
-    return returnData;
-  };
+  // resourceTransformIncomingRestData(data: any): ZfsPoolData[] {
+
+  //   //data = new EntityUtils().flattenData(data);
+  //   const dataset_data2 = this.datasetData;
+  //   const returnData: ZfsPoolData[] = [];
+  //   const numberIdPathMap: Map<string, number> = new Map<string, number>();
+
+  //   for (let i in data) {
+
+  //     const dataObj = data[i];
+
+  //     dataObj.nodePath = dataObj.mountpoint;
+
+  //     if (typeof (dataObj.nodePath) === "undefined" && typeof (dataObj.path) !== "undefined") {
+  //       dataObj.nodePath = "/mnt/" + dataObj.path;
+  //     }
+
+  //     dataObj.parentPath = dataObj.nodePath.slice(0, dataObj.nodePath.lastIndexOf("/"));
+
+  //     if (dataObj.status !== '-') {
+  //       // THEN THIS A ZFS_POOL DON'T ADD    dataObj.type = 'zpool'
+  //       continue;
+  //     } else if (typeof (dataObj.nodePath) === "undefined" || dataObj.nodePath.indexOf("/") === -1) {
+  //       continue;
+  //     }
+
+  //     if ("/mnt" === dataObj.parentPath) {
+  //       dataObj.parentPath = "0";
+  //     }
+
+  //     try {
+  //       dataObj.availStr = (<any>window).filesize(dataObj.avail, { standard: "iec" });
+  //     } catch (error) {
+  //       dataObj.availStr = "" + dataObj.avail;
+  //     }
+
+  //     try {
+  //       dataObj.usedStr = (<any>window).filesize(dataObj.used, { standard: "iec" });
+  //     } catch (error) {
+  //       dataObj.usedStr = "" + dataObj.used;
+  //     }
+
+  //     dataObj.compression = "";
+  //     dataObj.readonly = "";
+  //     dataObj.dedup = "";
+  //     dataObj.comments = "";
+  //     dataObj.compressratio = "";
+
+  //     for (let k in dataset_data2) {
+
+  //       if (dataset_data2[k].mountpoint === dataObj.nodePath) {
+
+  //         if (dataset_data2[k].compression) {
+  //           dataset_data2[k].compression.source !== "INHERITED"
+  //             ? dataObj.compression = (dataset_data2[k].compression.parsed)
+  //             : dataObj.compression = ("Inherits (" + dataset_data2[k].compression.parsed + ")");
+  //         }
+
+  //         if (dataset_data2[k].compressratio) {
+  //           dataset_data2[k].compressratio.source !== "INHERITED"
+  //             ? dataObj.compressratio = (dataset_data2[k].compressratio.parsed)
+  //             : dataObj.compressratio = ("Inherits (" + dataset_data2[k].compressratio.parsed + ")");
+  //         }
+
+  //         if (dataset_data2[k].readonly) {
+  //           dataset_data2[k].readonly.source !== "INHERITED"
+  //             ? dataObj.readonly = (dataset_data2[k].readonly.parsed)
+  //             : dataObj.readonly = ("Inherits (" + dataset_data2[k].readonly.parsed + ")");
+  //         }
+
+  //         if (dataset_data2[k].deduplication) {
+  //           dataset_data2[k].deduplication.source !== "INHERITED"
+  //             ? dataObj.dedup = (dataset_data2[k].deduplication.parsed)
+  //             : dataObj.dedup = ("Inherits (" + dataset_data2[k].deduplication.parsed + ")");
+  //         }
+
+  //         if (dataset_data2[k].comments) {
+  //           dataset_data2[k].comments.source !== "INHERITED"
+  //             ? dataObj.comments = (dataset_data2[k].comments.parsed)
+  //             : dataObj.comments = ("");
+  //         }
+  //       }
+
+  //     }
+
+  //     dataObj.actions = this.getActions(dataObj);
+
+  //     returnData.push(dataObj);
+  //   }
+
+  //   return returnData;
+  // };
 
 
 }
