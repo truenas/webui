@@ -1,28 +1,22 @@
 <div id="volumes-list.component_html" class="material mat-card mat-card-table">
   <div class="mat-toolbar mat-card-toolbar">
     <div class="mat-card-title-text">{{ title }}
-      <mat-spinner 
-      *ngIf="showSpinner"
-      [diameter]='40' 
-      id="pools-spinner"
-      >
-     </mat-spinner> 
+      <mat-spinner *ngIf="showSpinner" [diameter]='40' id="pools-spinner">
+      </mat-spinner>
     </div>
     <app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
   </div>
   <div>
-    <br/>
+    <br />
   </div>
   <div *ngIf="zfsPoolRows.length > 0">
     <mat-accordion [multi]="true">
-      <mat-expansion-panel *ngFor="let row of zfsPoolRows" [expanded]="expanded" id="expansionpanel_zfs_{{row.name}}" >
+      <mat-expansion-panel *ngFor="let row of zfsPoolRows" [expanded]="expanded" id="expansionpanel_zfs_{{row.name}}">
         <mat-expansion-panel-header>
           <mat-panel-title>
             <div *ngIf="row.vol_encrypt > 0" class="panel_status_enc" title="Encryption On" id="volume_encrypt_on_{{row.name}}">
-                <mat-icon>lock_outline</mat-icon> 
+              <mat-icon>lock_outline</mat-icon>
             </div>
-             <div *ngIf="row.vol_encrypt < 1" class="panel_status_enc"  title="Encryption Off"  id="volume_encrypt_off_{{row.name}}">
-             </div>
             {{row.name}}
           </mat-panel-title>
           <mat-panel-description>
@@ -30,62 +24,60 @@
           </mat-panel-description>
         </mat-expansion-panel-header>
         <div>
-          <div class="global_volume_based_action_menu" title="Pool Operations"> 
+          <div class="global_volume_based_action_menu" title="Pool Operations">
             <app-entity-table-actions [icon_name]="'settings'" [entity]="actionComponent" [row]="row"></app-entity-table-actions>
           </div>
           <div *ngIf="row.vol_encrypt > 0 && row.is_decrypted" class="global_volume_based_action_menu" title="Encryption Operations">
             <app-entity-table-actions [icon_name]="'lock_outline'" [entity]="actionEncryptedComponent" [row]="row"></app-entity-table-actions>
           </div>
           <div *ngIf="row.vol_encrypt > 0 && !row.is_decrypted" class="encryption_icon" title="Unlock">
-            <a (click)="conf.unlockAction(row)" class="unlock_button"><mat-icon>lock_open</mat-icon></a>
+            <a (click)="conf.unlockAction(row)" class="unlock_button">
+              <mat-icon>lock_open</mat-icon>
+            </a>
           </div>
-          <br/>
-        </div>
-        <div>
-          <br/>
         </div>
         <div>
           <p-treeTable [value]="row.volumesListTableConfig.tableData">
-              <ng-template pTemplate="header">
-                  <tr>
-                      <th>Name</th>
-                      <th>Type</th>
-                      <th>Used</th>
-                      <th>Available</th>
-                      <th>Compression</th>
-                      <th>Compression Ratio</th>
-                      <th>Readonly</th>
-                      <th>Dedup</th>
-                      <th>Comments</th>
-                      <th></th>
-                  </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
-                  <tr>
-                      <td>
-                          <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
-                          {{rowData.name}}
-                      </td>
-                      <td>{{rowData.type}}</td>
-                      <td>{{rowData.used | filesize}}</td>
-                      <td>{{rowData.avail | filesize}}</td>
-                      <td>{{rowData.compression}}</td>
-                      <td>{{rowData.compressratio}}</td>
-                      <td>{{rowData.readonly}}</td>
-                      <td>{{rowData.dedup}}</td>
-                      <td>{{rowData.comments}}</td>
-                      <td>
-                        <mat-icon [matMenuTriggerFor]="appMenu" [style.cursor]="'pointer'">more_vert</mat-icon>
-                        <mat-menu #appMenu="matMenu">
-                          <span *ngFor="let action of rowData.actions" id="buttonAction_{{rowData.name}}">
-                                                <button mat-menu-item  (click)="action.onClick( rowData );">
-                                                    <span>{{ action.label }}</span>
-                          </button>
-                          </span>
-                        </mat-menu>
-                      </td>
-                  </tr>
-              </ng-template>
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Used</th>
+                <th>Available</th>
+                <th>Compression</th>
+                <th>Compression Ratio</th>
+                <th>Readonly</th>
+                <th>Dedup</th>
+                <th>Comments</th>
+                <th></th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+              <tr>
+                <td>
+                  <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+                  {{rowData.name}}
+                </td>
+                <td>{{rowData.type}}</td>
+                <td>{{rowData.used | filesize}}</td>
+                <td>{{rowData.avail | filesize}}</td>
+                <td>{{rowData.compression}}</td>
+                <td>{{rowData.compressratio}}</td>
+                <td>{{rowData.readonly}}</td>
+                <td>{{rowData.dedup}}</td>
+                <td>{{rowData.comments}}</td>
+                <td>
+                  <mat-icon [matMenuTriggerFor]="appMenu" [style.cursor]="'pointer'">more_vert</mat-icon>
+                  <mat-menu #appMenu="matMenu">
+                    <span *ngFor="let action of rowData.actions" id="buttonAction_{{rowData.name}}">
+                      <button mat-menu-item (click)="action.onClick( rowData );">
+                        <span>{{ action.label }}</span>
+                      </button>
+                    </span>
+                  </mat-menu>
+                </td>
+              </tr>
+            </ng-template>
           </p-treeTable>
         </div>
       </mat-expansion-panel>
@@ -97,13 +89,5 @@
         {{"No pools" | translate}}
       </mat-card-content>
     </mat-card>
-    <br/>
-    <br/>
-  </div>
-  <div>
-    <br/>
-  </div>
-  <div>
-    <br/>
   </div>
 </div>
