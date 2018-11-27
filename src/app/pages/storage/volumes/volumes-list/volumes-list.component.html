@@ -45,6 +45,25 @@
           <br/>
         </div>
         <div>
+          <p-treeTable [value]="row.volumesListTableConfig.tableData">
+              <ng-template pTemplate="header">
+                  <tr>
+                      <th>Name</th>
+                      <th>Type</th>
+                      <th>Used</th>
+                  </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+                  <tr>
+                      <td>
+                          <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+                          {{rowData.name}}
+                      </td>
+                      <td>{{rowData.type}}</td>
+                      <td>{{rowData.used}}</td>
+                  </tr>
+              </ng-template>
+          </p-treeTable>
           <!--dx-tree-list keyExpr="nodePath" 
                         parentIdExpr="parentPath"
                         [dataSource]="row.volumesListTableConfig.rowData" 
