@@ -16,8 +16,6 @@ import { DocsService} from '../../../services/docs.service';
 import { RestService, WebSocketService } from '../../../services/index';
 import { Ng2DropdownModule } from 'ng2-material-dropdown';
 import { TranslateModule } from '@ngx-translate/core';
-import { TreeTableModule } from 'primeng/treetable';
-import { FileSizeModule } from 'ngx-filesize';
 
 import { DynamicFieldDirective } from './entity-form/components/dynamic-field/dynamic-field.directive';
 import { FormArrayComponent } from './entity-form/components/form-array/form-array.component';
@@ -47,7 +45,6 @@ import { EntityTableActionsComponent } from './entity-table/entity-table-actions
 import { EntityCardActionsComponent } from './entity-card/entity-card-actions.component';
 import { EntityTableAddActionsComponent } from './entity-table/entity-table-add-actions.component';
 import { EntityTableComponent } from './entity-table/entity-table.component';
-import { EntityTreeTableComponent } from './entity-tree-table/entity-tree-table.component';
 import { EntityCardComponent } from './entity-card/entity-card.component';
 import { EntityTemplateDirective } from './entity-template.directive';
 import { FormReadFileComponent } from './entity-form/components/form-readfile/form-readfile.component'
@@ -57,6 +54,11 @@ import { EntityDialogComponent } from './entity-dialog/entity-dialog.component';
 
 import { FormPermissionsComponent } from './entity-form/components/form-permissions/form-permissions.component';
 import { EntityJobComponent } from './entity-job/entity-job.component';
+
+import { EntityToolbarComponent } from './entity-toolbar/entity-toolbar.component';
+import { ToolbarButtonComponent } from './entity-toolbar/components/toolbar-button/toolbar-button.component';
+import { ToolbarMenuComponent } from './entity-toolbar/components/toolbar-menu/toolbar-menu.component';
+import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-multimenu/toolbar-multimenu.component';
 
 // CDK
 import { CdkTableModule } from '@angular/cdk/table';
@@ -71,11 +73,10 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
     CommonModule, FormsModule, ReactiveFormsModule,
     MaterialModule, ColorPickerModule, NgxDatatableModule, CdkTableModule, TreeModule,
     Ng2DropdownModule, NgUploaderModule, FlexLayoutModule, TranslateModule,
-    OverlayModule, A11yModule, TreeTableModule, FileSizeModule
+    OverlayModule, A11yModule
   ],
   declarations: [
     EntityTableComponent,
-    EntityTreeTableComponent,
     EntityCardComponent,
     EntityCardActionsComponent,
     EntityTableActionsComponent,
@@ -113,14 +114,17 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
     EntityTaskComponent,
     FormParagraphComponent,
     EntityDialogComponent,
-    EntityDashboardComponent
+    EntityDashboardComponent,
+    EntityToolbarComponent,
+    ToolbarButtonComponent,
+    ToolbarMenuComponent,
+    ToolbarMultimenuComponent
   ],
   exports: [
     EntityTemplateDirective,
     EntityFormComponent,
     EntityFormEmbeddedComponent,
     EntityTableComponent,
-    EntityTreeTableComponent,
     EntityCardComponent,
     EntityCardActionsComponent,
     EntityTableAddActionsComponent,
@@ -133,7 +137,8 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
     EntityWizardComponent,
     EntityTaskComponent,
     EntityDialogComponent,
-    EntityDashboardComponent
+    EntityDashboardComponent,
+    EntityToolbarComponent
   ],
   entryComponents: [
     FormButtonComponent,
@@ -156,7 +161,10 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
     FormSliderComponent,
     FormToggleButtonComponent,
     FormTaskComponent,
-    FormParagraphComponent
+    FormParagraphComponent,
+    ToolbarButtonComponent,
+    ToolbarMenuComponent,
+    ToolbarMultimenuComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
