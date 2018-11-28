@@ -25,11 +25,6 @@ import { Validators } from '@angular/forms'
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
-import { FlexLayoutModule } from '@angular/flex-layout';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { formatDefaultLocale } from 'd3';
-
-
 export interface ZfsPoolData {
   avail?: number;
   availStr?: string;
@@ -67,7 +62,6 @@ export class VolumesListTableConfig implements InputTableConf {
   public hideTopActions = true;
   public flattenedVolData: any;
   public resource_name = 'storage/volume';
-  // public rowData: ZfsPoolData[] = [];
   public tableData: TreeNode[] = [];
   public columns: Array < any > = [
     { name: 'Name', prop: 'name', },
