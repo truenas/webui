@@ -7,6 +7,9 @@ import { MaterialModule } from '../../appMaterial.module';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { FileSizeModule } from 'ngx-filesize';
+
 import { EntityModule } from '../common/entity/entity.module';
 import { UserService } from '../../services/user.service';
 import { StorageService } from '../../services/storage.service';
@@ -34,6 +37,7 @@ import { DiskBulkEditComponent } from './disks/disk-bulk-edit/disk-bulk-edit.com
 import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { DxTreeListModule } from 'devextreme-angular';
+import { TreeTableModule } from 'primeng/treetable';
 import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form';
 import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddkey-form';
 import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecreatekey-form/volumecreatekey-form.component';
@@ -44,8 +48,9 @@ import { MessageService } from '../common/entity/entity-form/services/message.se
 @NgModule({
   imports : [
     RouterModule, DragulaModule, EntityModule, CommonModule, FormsModule,
-    ReactiveFormsModule, routing, MaterialModule,
-    NgxDatatableModule, DxTreeListModule, TranslateModule
+    ReactiveFormsModule, routing, MaterialModule, TreeTableModule,
+    NgxDatatableModule, DxTreeListModule, TranslateModule, FlexLayoutModule,
+    FileSizeModule
   ],
   declarations : [
     VolumesListComponent,
