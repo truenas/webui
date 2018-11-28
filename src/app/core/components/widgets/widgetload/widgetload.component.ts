@@ -24,7 +24,7 @@ import { T } from '../../../../translate-marker';
 export class WidgetLoadComponent extends WidgetChartComponent implements AfterViewInit, OnDestroy {
   public title:string = T("Load Average");
   public subtitle:string = T("RRDTool load5");
-  public widgetColorCssVar = "var(--primary)";
+  public widgetColorCssVar = "var(--violet)";
 
   constructor(public router: Router, public translate: TranslateService){
     super(router, translate);

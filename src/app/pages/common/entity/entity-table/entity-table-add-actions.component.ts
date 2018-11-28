@@ -9,8 +9,7 @@ import {EntityTableComponent} from './entity-table.component';
 
 @Component({
   selector : 'app-entity-table-add-actions',
-  templateUrl : 'entity-table-add-actions.component.html'
-  /*template : `
+  template : `
   	<div *ngIf="this.entity.conf.route_add || this.actions.length > 0">
 		<smd-fab-speed-dial id="myFab" #myFab [direction]="direction" [animationMode]="animationMode"
 				(mouseenter)="myFab.open = true" (mouseleave)="myFab.open = false">
@@ -29,22 +28,17 @@ import {EntityTableComponent} from './entity-table.component';
 			</smd-fab-actions>
 		</smd-fab-speed-dial>
 	</div>
-  `*/
+  `
 })
 export class EntityTableAddActionsComponent implements OnInit {
 
   @Input('entity') entity: any;
 
   public actions: any[];
-  public menuTriggerMessage:string = "Click for options";
 
   public spin: boolean = true;
   public direction: string = 'left';
   public animationMode: string = 'fling';
-  get totalActions(){
-    let addAction = this.entity.conf.route_add ? 1 : 0;
-    return this.actions.length + addAction;
-  }
 
   constructor(protected translate: TranslateService) { }
 

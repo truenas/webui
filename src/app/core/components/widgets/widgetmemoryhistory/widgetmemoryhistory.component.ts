@@ -34,7 +34,7 @@ export class WidgetMemoryHistoryComponent extends WidgetChartComponent implement
     this._subtitle = val;
   }
 
-  public widgetColorCssVar = "var(--primary)";
+  public widgetColorCssVar = "var(--yellow)";
   private chartData:CoreEvent;
 
   constructor(public router: Router, public translate: TranslateService){

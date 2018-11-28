@@ -14,15 +14,6 @@ export interface ChartFormatter {
   format (value, ratio, id);
 }
 
-export interface Analytics {
-  label:string;
-  min?:number;
-  max?:number;
-  avg?:number;
-  last?:number;
-  total?:number;
-}
-
 @Component({
   selector: 'line-chart', 
   template: `<div id="{{controlUid}}"></div>`
@@ -47,14 +38,12 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
   @Input() minY?: number = 0;
   @Input() maxY?: number = 100;
   @Input() labelY?: string = 'Label Y';
-  @Input() interactive: boolean;
 
   public chart:any;
   public units: string = '';
   public showLegendValues: boolean = false;
   public legendEvents: BehaviorSubject<any>;
   public legendLabels: BehaviorSubject<any>;
-  public legendAnalytics: BehaviorSubject<any>;
   data: LineChartData = {
     labels: [],
     series: [],
@@ -69,11 +58,9 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
   constructor(private core:CoreService, private _lineChartService: LineChartService) {
     this.legendEvents = new BehaviorSubject(false);
     this.legendLabels = new BehaviorSubject([]);
-    this.legendAnalytics = new BehaviorSubject([]);
   }
 
   handleDataFunc(linechartData: LineChartData) {
-    //console.log(linechartData);
 
     this.data.labels.splice(0, this.data.labels.length);
     this.data.series.splice(0, this.data.series.length);
@@ -145,11 +132,10 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
     }
     this.legendLabels.next(legendLabels);
 
-    this.analyze(columns);
 
     this.chart = c3.generate({
       interaction: {
-        enabled:this.interactive
+        enabled:true
       },
       bindto: '#' + this.controlUid,
       /*color: {
@@ -292,55 +278,6 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
     return result.toFixed(2);
   }
 
-  // Analytics
-  analyze(columns){
-    let allColumns: Analytics[] = [];
-    let cols = Object.assign([], columns);
-    // Remove X axis
-    cols.shift(columns[0]);
-
-    for(let i = 0; i < cols.length; i++){
-      // Middleware provides data as strings
-      // so we store the label (first item) 
-      // and convert the rest to numbers
-      let colStrings = cols[i];
-      let label = colStrings[0];
-      let col = colStrings.map(x => Number(x));
-      col.shift(col[0]);
-  
-      let total = col.reduce((accumulator, currentValue) => Number(accumulator) + Number(currentValue));
-      let avg = Number((total / col.length).toFixed(2));
-      //console.log("Total type: " + typeof col.length)
-      let myResult:Analytics = {
-        label:label,
-        min: this.getMin(col),//.toFixed(2),
-        max: this.getMax(col),//.toFixed(2),
-        avg: avg,
-        last: Number(col[col.length - 1].toFixed(2)),
-        total:Number(total.toFixed(2))
-      }
-      allColumns.push(myResult);
-    }
-    this.legendAnalytics.next(allColumns);
-  }
-
-  getMin(arr:any[]){
-    return Math.min(...arr);
-  }
-
-  getMax(arr:any[]){
-    return Math.max(...arr);
-  }
-
-  getAvg(arr:any[]){
-    return 1;
-  }
-
-  getLast(arr:any[]){
-    return 1
-  }
-
-  // LifeCycle Hooks
   ngOnInit() {
     this.core.register({ observerClass:this, eventName:"ThemeData" }).subscribe((evt:CoreEvent)=>{ 
       this.colorPattern = this.processThemeColors(evt.data);

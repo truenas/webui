@@ -43,7 +43,7 @@ $accent: $yellow;
 $warn: $red;
 $tooltip:'inline';//display property
 $toggle_pw_display_prop: inline;
-$hideWarning: inline;
+$enableWarning: inline;
 
 // Logo images
 $logo: url('assets/images/light-logo.svg');
@@ -279,22 +279,12 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   /////////////////// SpecSelectors: Selectors not originally in ix-blue theme
-
-  .rightside-content-hold{
-    //background:linear-gradient(180deg, rgba(255,255,255,0.1), var(--bg1)) !important;
-  }
-
   .mat-tab-label, .mat-tab-link{
     @include variable(color, --fg1, $fg1);
   }
   .mat-menu-item .mat-icon:not([color]),
   .mat-menu-item-submenu-trigger::after{
-    @include variable(color, --fg1, $fg1);
-  }
-  .mat-menu-item .theme-picker-swatch .mat-icon:not([color]){
-    @include variable(color, --fg1, $fg1);
-    //border:solid 1px #efefef;
-    //text-shadow:0 2px 4px;
+    @include variable(color, --fg1, $fg1, !important);
   }
   .mat-toolbar,
   .mat-raised-button{
@@ -311,30 +301,13 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .fileupload-drop-zone.dz-file-over, 
   .toolbar-avatar.online > .status-dot, 
   .cal-open-day-events, 
-  //.datatable-header,.datatable-footer,
+  .datatable-header,.datatable-footer,
   .mat-step-header .mat-step-icon,
   div.hopscotch-bubble{
         @include variable(background, --primary, $primary, !important);
         //@include variable(color, #fff, #fff, !important);
         @include variable(color, --primary-txt, $primary-txt, !important);
 
-  }
-
-  .ngx-datatable.material{
-    background:none;
-  }
-  .datatable-header,.datatable-footer{
-    border-top-style:solid;
-    border-top-width:1px;
-    @include variable(border-top-color, --bg1, $bg1, !important);
-  }
-  .datatable-header,.datatable-footer{
-//        @include variable(background, --bg2, $bg2, !important);
-//        @include variable(color, --fg2, $fg2, !important);
-//        @include variable(background, --primary, $primary, !important);
-//        @include variable(color, --primary-txt, $primary-txt, !important);
-    @include variable(background, --bg2, $bg2, !important);
-    background-color:rgba(0,0,0,0.75)
   }
 
   .mat-bg-accent,
@@ -368,46 +341,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     background-color:rgba(0,0,0,0.1);
     @include variable(color, --fg2, $fg2); 
   }
-
-  .ngx-datatable .datatable-body .datatable-row-wrapper:nth-child(odd){
+  .ngx-datatable .datatable-body .datatable-row-wrapper{
     @include variable(background, --alt-bg1, $alt-bg1);
     @include variable(color, --alt-fg1, $alt-fg1);
-  }
-
-  .ngx-datatable .datatable-body .datatable-row-wrapper:nth-child(even){
-    //@include variable(background, --alt-bg1, $alt-bg1);
-    background-color:rgba(123,123,123,0.2);
-    @include variable(color, --alt-fg1, $alt-fg1);
-  }
-
-  .mat-card .mat-divider{
-    @include variable(background, --alt-fg1, $alt-fg1);
-    opacity:0.15;
-  }
-
-  // System wide hover effects
-  .mat-select-panel .mat-option:focus,
-  .mat-select-panel .mat-option:hover,
-  .mat-select-panel .mat-option.mat-selected:not(.mat-option-multiple){ 
-    @include variable(background, --primary, $primary, !important);
-    @include variable(color, --primary-txt, $primary-txt, !important);
-  }
-
-  .mat-menu-content button.mat-menu-item:hover, 
-  .mat-menu-content button.mat-menu-item:hover .mat-icon:not([class="theme-picker-swatch-icon"]),
-  .ngx-datatable .datatable-body .datatable-row-wrapper:hover,
-  .mat-menu-content button.mat-menu-item:focus, 
-  .mat-menu-content button.mat-menu-item:focus .mat-icon:not([class="theme-picker-swatch-icon"]),
-  .ngx-datatable .datatable-body .datatable-row-wrapper:focus{
-    @include variable(background, --primary, $primary, !important);
-    @include variable(color, --primary-txt, $primary-txt);
-  }
-
-  .dx-treelist-rowsview .dx-selection.dx-row > td, 
-  .dx-treelist-rowsview .dx-selection.dx-row:hover > td{
-    @include variable(background, --primary, $primary, !important);
-    @include variable(color, --primary-txt, $primary-txt);
-    border:rgba(0,0,0,0.1)
   }
 
   .sidebar-panel .mat-nav-list .mat-list-item,
@@ -416,6 +352,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-expansion-panel-header-description, 
 
   .mat-list .mat-list-item,
+  .mat-menu-panel button,
   .mat-paginator-navigation-next, .mat-paginator-navigation-previous,
 
   .mat-nav-list .mat-list-item, 
@@ -423,10 +360,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-selection-list .mat-list-item,.mat-option,
   .mat-select-arrow, .mat-select-value {
     @include variable(color, --fg2, $fg2, !important);
-  }
-
-  .mat-menu-panel button{
-    @include variable(color, --fg2, $fg2);
   }
 
   .mat-form-field .mat-select.mat-select-disabled .mat-select-arrow {
@@ -438,11 +371,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-nav-list a{
     @include variable(background, --bg2, $bg2);
     @include variable(color, --fg2, $fg2, !important);
-  }
-
-  .mat-menu-content{
-    @include variable(background, --alt-bg1, $alt-bg1, !important);
-    @include variable(color, --fg1, $fg1, !important);
   }
 
   .mat-form-field-underline{
@@ -515,11 +443,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     // border-color: gray;
   }
 
-//  .headerCheckBox .mat-checkbox-frame {
-//    @include variable(border-color, --primary-txt, $primary-txt);
-//  }
+  .headerCheckBox .mat-checkbox-frame {
+    @include variable(border-color, --primary-txt, $primary-txt);
+  }
 
-  .headerCheckBox .mat-checkbox-frame,
   .ngx-datatable .datatable-body .mat-checkbox-frame {
     @include variable(border-color, --alt-fg1, $alt-fg1, !important);
   }
@@ -872,7 +799,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   // Fill in space above horz scrollbar on entity tables
   .datatable-body {
-    //@include variable(background-color, --alt-bg1, $alt-bg1);
+    @include variable(background-color, --alt-bg1, $alt-bg1);
 
   }
 
@@ -899,10 +826,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   // Helper styles for red,blue,green,cyan,orange,magenta,violet,yellow
   // The --color-txt css vars are generated by theme service
-  .fn-theme-primary{
-    @include variable(background-color, --primary, $primary);
-    @include variable(color, --primary-txt, $primary-txt);
-  }
   .fn-theme-red{
     @include variable(background-color, --red, $red);
     @include variable(color, --red-txt, $red-txt);
@@ -961,16 +884,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(background, --accent, $accent !important);
   }
 
-  .mat-pseudo-checkbox{
-    display:none ;
-  }
-
-  .mat-option .fn-checked,
-  .mat-option .fn-unchecked{
-    position:relative;
-    top:6px;
-  }
-
   // Bring tooltips to the front in dialogs
   .mat-dialog-container, .mat-dialog-content {
       overflow: visible !important;
@@ -1007,8 +920,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(color, --primary, $primary !important);  
   }
 
-  .mat-icon-button.mat-accent,
-  .mat-icon.mat-accent{
+  .mat-icon-button.mat-accent {
     @include variable(color, --accent, $accent !important);  
   }
 
@@ -1121,7 +1033,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   #show_Warning {
-    @include variable(display, --hideWarning, $hideWarning);
+    @include variable(display, --enableWarning, $enableWarning);
   }
 
   #update-info {
@@ -1139,11 +1051,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   input[type=number] {
     -moz-appearance: textfield !important;
   }
-
+  
   input[type=number]::-webkit-inner-spin-button {
     -webkit-appearance: none;
-  }
-  
+  } 
+
   .mat-autocomplete-panel .mat-option-text {
     @include variable(color, --fg2, $fg2 !important);
   }

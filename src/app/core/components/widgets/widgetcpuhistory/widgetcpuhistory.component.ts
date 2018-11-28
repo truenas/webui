@@ -27,7 +27,7 @@ export class WidgetCpuHistoryComponent extends WidgetChartComponent implements A
   //@ViewChild('chartCpu') chartCpu: ViewChartLineComponent;
   public title:string = T("CPU Usage");
   public subtitle:string = T("% of all cores");
-  public widgetColorCssVar = "var(--primary)";
+  public widgetColorCssVar = "var(--blue)";
 
   constructor(public router: Router, public translate: TranslateService){
     super(router, translate);
