@@ -9,7 +9,6 @@ import {
   MatCardModule,
   MatCheckboxModule,
   MatSnackBarModule,
-  MatIconModule
  } from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { TranslateModule } from '@ngx-translate/core';
@@ -32,7 +31,6 @@ import { SessionsRoutes } from "./sessions.routing";
     MatCardModule,
     MatCheckboxModule,
     MatSnackBarModule,
-    MatIconModule,
     FlexLayoutModule,
     TranslateModule,
     RouterModule.forChild(SessionsRoutes)
