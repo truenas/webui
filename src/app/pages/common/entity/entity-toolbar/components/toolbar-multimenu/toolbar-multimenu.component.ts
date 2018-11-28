@@ -22,9 +22,7 @@ export class ToolbarMultimenuComponent implements OnInit {
   ngOnInit(){
     this.selectStates.length = this.config.options.length;
     this.selectStates.fill(false);
-    this.values.push(this.config.options[0]);
-    this.selectStates[0] = true;
-    this.updateController();
+    console.log(this.selectStates);
   }
 
   onClick(value, index){

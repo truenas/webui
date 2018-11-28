@@ -41,8 +41,7 @@ export class EntityToolbarComponent implements OnInit, OnDestroy, AfterViewInit,
   @Input('conf') conf: ControlConfig[];
   @Input() target: Subject<CoreEvent>;
   public controller: Subject<Control>;
-  //public values: Control[];
-  public values: any;
+  public values: Control[];
   //public conf: ControlConfig[];
 
   /*public defaultConfig:ControlConfig[] = [
@@ -78,42 +77,31 @@ export class EntityToolbarComponent implements OnInit, OnDestroy, AfterViewInit,
   }
 
   ngAfterViewInit() {
-    this.init();
-  }
-
-  ngOnInit() {
     this.controller.subscribe((evt:Control) => {
       let clone = Object.assign([], this.values);
-      let control = clone[evt.name] = evt.value
-      //control.value = evt.value;
+      let control = clone.find(item => item.name == evt.name)
+      control.value = evt.value;
       this.values = clone;
       this.target.next({name:"ToolbarChanged", data:this.values});
     })
+  }
 
-    this.target.subscribe((evt:CoreEvent) => {
-      switch(evt.name){
-        case "Refresh":
-          // The parent can ping toolbar for latest values
-          // Useful for getting initial values
-          this.target.next({name:"ToolbarChanged", data:this.values});
-        break;
-      }
+  ngOnInit() {
+    // Setup Initial Values
+    this.values = this.conf.map((item) => {
+      return {name:item.name, value: item.value}
     });
+    console.log(this.values);
   }
 
   init(){
-    // Setup Initial Values
-    let obj = {}
-    this.conf.forEach((item) => {
-      obj[item.name] = item.value;
-    });
-    this.values = obj;
   }
 
   ngOnChanges(changes) {
     if (changes.conf) {
       // Do Stuff
-      this.init();
+      console.warn(this.conf);
+      this.ngOnInit();
     }
   }
 
