@@ -63,13 +63,23 @@ export interface ZfsPoolData {
 
 }
 
-
 export class VolumesListTableConfig implements InputTableConf {
   public hideTopActions = true;
   public flattenedVolData: any;
   public resource_name = 'storage/volume';
   // public rowData: ZfsPoolData[] = [];
   public tableData: TreeNode[] = [];
+  public columns: Array < any > = [
+    { name: 'Name', prop: 'name', },
+    { name: 'Type', prop: 'type', },
+    { name: 'Used', prop: 'used', filesizePipe: true},
+    { name: 'Available', prop: 'avail', filesizePipe: true},
+    { name: 'Compression', prop: 'compression', },
+    { name: 'Compression Ratio', prop: 'compressratio', },
+    { name: 'Readonly', prop: 'readonly', },
+    { name: 'Dedup', prop: 'dedup', },
+    { name: 'Comments', prop: 'comments', },
+  ];
   protected dialogRef: any;
   public route_add = ["storage", "pools", "import"];
   public route_add_tooltip = T("Create or Import Pool");
