@@ -37,48 +37,7 @@
           </div>
         </div>
         <div>
-          <p-treeTable [value]="row.volumesListTableConfig.tableData">
-            <ng-template pTemplate="header">
-              <tr>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Used</th>
-                <th>Available</th>
-                <th>Compression</th>
-                <th>Compression Ratio</th>
-                <th>Readonly</th>
-                <th>Dedup</th>
-                <th>Comments</th>
-                <th></th>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
-              <tr>
-                <td>
-                  <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
-                  {{rowData.name}}
-                </td>
-                <td>{{rowData.type}}</td>
-                <td>{{rowData.used | filesize}}</td>
-                <td>{{rowData.avail | filesize}}</td>
-                <td>{{rowData.compression}}</td>
-                <td>{{rowData.compressratio}}</td>
-                <td>{{rowData.readonly}}</td>
-                <td>{{rowData.dedup}}</td>
-                <td>{{rowData.comments}}</td>
-                <td>
-                  <mat-icon [matMenuTriggerFor]="appMenu" [style.cursor]="'pointer'">more_vert</mat-icon>
-                  <mat-menu #appMenu="matMenu">
-                    <span *ngFor="let action of rowData.actions" id="buttonAction_{{rowData.name}}">
-                      <button mat-menu-item (click)="action.onClick( rowData );">
-                        <span>{{ action.label }}</span>
-                      </button>
-                    </span>
-                  </mat-menu>
-                </td>
-              </tr>
-            </ng-template>
-          </p-treeTable>
+          <entity-tree-table [conf]="row.volumesListTableConfig"></entity-tree-table>
         </div>
       </mat-expansion-panel>
     </mat-accordion>
