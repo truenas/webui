@@ -1,6 +1,8 @@
 .copyright-txt {
-    padding-top: 4px;
+    padding-top: 32px;
     text-align: center;
+    opacity:0.5;
+    font-size:85%
 }
 
 .copyright-txt a:link {
@@ -8,7 +10,68 @@
 }
 
 #signin_button {
-    background: var(--accent);
-    color: black !important;
+    background: var(--primary);
+    color: var(--primary0txt);
     font-weight: 700;
+}
+
+.mat-card {
+  background-color:var(--alt-bg1);
+  color:var(--alt-fg2);
+  padding:0 0 32px 0 !important;
+}
+
+.mat-card .mat-card-content > div.disconnected{
+  padding:32px 32px 0;
+}
+
+div.fake-icon{
+  border-radius:50%;
+  background-color:var(--fg2);
+  color:var(--bg2);
+  padding:2px 8px;
+  float:left;
+  margin:6px 12px 12px 0;
+  font-weight:700;
+}
+
+#legacy-btn-wrapper{
+  text-align:center;
+}
+
+#legacy-btn-wrapper button.mat-button{
+  font-weight:normal !important;
+  opacity:0.75;
+}
+
+form{
+  margin:32px 32px 0;
+}
+
+form > div {
+  margin:8px 0;
+}
+
+form button{
+  margin:16px 0 ;
+}
+
+.logo-wrapper {
+  padding:76px 0;
+  background-color:var(--bg2);
+  position:relative;
+  /*background-image:url('/assets/images/board_1920.jpg');
+  background-size: contain;
+  background-attachment: fixed;
+  background-position: 80% 0;*/
+}
+
+.logo-wrapper img.logo-bg{
+  position:absolute;
+  z-index:1;
+  opacity:0.35;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
 }
