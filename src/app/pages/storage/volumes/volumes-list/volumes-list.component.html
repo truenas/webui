@@ -6,9 +6,6 @@
     </div>
     <app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
   </div>
-  <div>
-    <br />
-  </div>
   <div *ngIf="zfsPoolRows.length > 0">
     <mat-accordion [multi]="true">
       <mat-expansion-panel *ngFor="let row of zfsPoolRows" [expanded]="expanded" id="expansionpanel_zfs_{{row.name}}">
