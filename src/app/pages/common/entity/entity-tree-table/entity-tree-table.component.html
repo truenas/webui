@@ -1,0 +1,29 @@
+<p-treeTable [value]="conf.tableData" [columns]="conf.columns">
+	<ng-template pTemplate="header" let-columns>
+		<tr>
+			<th *ngFor="let col of columns" [ttSortableColumn]="col.prop">
+				{{col.name}}
+				<p-treeTableSortIcon [field]="col.prop"></p-treeTableSortIcon>
+			</th>
+			<th *ngIf="showActions"></th>
+		</tr>
+	</ng-template>
+	<ng-template pTemplate="body" let-rowNode let-rowData="rowData" let-columns="columns">
+		<tr>
+			<td *ngFor="let col of columns; let i = index">
+				<p-treeTableToggler [rowNode]="rowNode" *ngIf="i == 0"></p-treeTableToggler>
+				{{rowData[col.prop]}}
+			</td>
+			<td *ngIf="showActions">
+				<mat-icon [matMenuTriggerFor]="appMenu" [style.cursor]="'pointer'">more_vert</mat-icon>
+				<mat-menu #appMenu="matMenu">
+					<span *ngFor="let action of rowData.actions" id="buttonAction_{{rowData.name}}">
+						<button mat-menu-item (click)="action.onClick( rowData );">
+							<span>{{ action.label }}</span>
+						</button>
+					</span>
+				</mat-menu>
+			</td>
+		</tr>
+	</ng-template>
+</p-treeTable>
