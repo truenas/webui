@@ -220,29 +220,8 @@ export class StatsService {
       this.addListener(evt.data);
     });
 
-    this.core.register({observerClass:this,eventName:"StatsKillAll"}).subscribe((evt:CoreEvent) => {
-      if(this.debug){
-        console.warn("SLEDGEHAMMER!!");
-      }
-      this.stopBroadcast();
-      this.removeAllListeners();
-      this.messages = [];
-      this.messagesRealtime = [];
-    })
-
     this.core.register({observerClass:this,eventName:"StatsRemoveListener"}).subscribe((evt:CoreEvent) => {
-      if(this.debug){
-        console.warn("SCALPEL!!");
-      }
       this.removeListener(evt.data.obj);
-      /*if(this.debug){
-        console.warn("StatsRemoveListener Tasks Completed for...")
-        console.log(evt.data.obj);
-        console.log(this.listeners);
-        console.log(this.sources);
-        console.log(this.messages);
-        console.log(this.messagesRealtime);
-      }*/
     });
 
     this.core.register({observerClass:this,eventName:"StatsData"}).subscribe((evt:CoreEvent) => {
@@ -288,6 +267,7 @@ export class StatsService {
       clearInterval(this.broadcastRealtimeId);
       clearInterval(this.broadcastId);
     }
+
   }
 
   broadcast(messages:CoreEvent[],buffer){
@@ -498,17 +478,8 @@ export class StatsService {
 
   // Updates listeners in this.sources with messages
   updateListeners(source:StatSource, removed?){
-    /*if(this.listeners.length == 0){
-      // For when the listening component has been destroyed
-      // before we've had a chance to clean up
-      this.stopBroadcast();
-      this.removeAllListeners();
-    }*/
-    for(let i = source.listeners.length - 1; i >= 0 ; i--){
+    for(let i = 0; i < source.listeners.length; i++){
       let messageList; 
-      let removedIndex: number;
-      let oldJobIndex:number;
-
       if(source.realtime){
         messageList = this.messagesRealtime;
       } else {
@@ -516,12 +487,11 @@ export class StatsService {
       }
 
       if(source.listeners.length > 0){
-        //let oldJobIndex:number;
+        let oldJobIndex:number;
         if(removed){
-          removedIndex = source.listeners.indexOf(removed);
+          let removedIndex = source.listeners.indexOf(removed);
           oldJobIndex = this.findJob(messageList, removed.message);
-          // don't splice until all the other tasks are done
-          //source.listeners.splice(removedIndex, 1);
+          source.listeners.splice(removedIndex, 1);
         } else {
           oldJobIndex = this.findJob(messageList, source.listeners[0].message);
         }
@@ -540,12 +510,6 @@ export class StatsService {
       if(source.bidirectional){
         source.keys = this.keysFromAvailable(source);
       }
-      
-      if(removed && removedIndex){ 
-        //Now that all tasks are completed, remove the listener
-        source.listeners.splice(removedIndex, 1);
-      }
-      
       // Abort if data source not available
       if(reg.key && source.keys.indexOf(reg.key) == -1){
         reg.message = null;
@@ -592,13 +556,6 @@ export class StatsService {
     }    
   }
 
-  removeAllListeners(){
-    // This is called when after the listeners OnDestroy() has been called
-    // but some of them might still be registered in this.sources.
-    this.listeners = [];
-    this.sources.map((item) => {item.listeners = []});
-  }
-  
   removeListener(obj:any){
     if(this.debug){
       console.warn("REMOVING LISTENER")
@@ -606,7 +563,7 @@ export class StatsService {
     }
     let messageList;
      // Remove from sources
-     for(let i = this.sources.length - 1; i >= 0; i--){
+     for(let i = 0; i < this.sources.length; i++){
        for(let index = 0; index < this.sources[i].listeners.length; index++){
          if(this.sources[i].listeners[index].obj == obj){
            if(this.sources[i].realtime){
@@ -615,16 +572,12 @@ export class StatsService {
             messageList = this.messages;
            }
            this.updateListeners(this.sources[i], this.sources[i].listeners[index]);
-         } 
-       } 
+         }
+       }
      }
 
      if(!messageList || messageList.length == 0){
        this.stopBroadcast(messageList);
-     }
-
-     if(this.debug){
-       console.log("Listener removed with " + this.listeners.length + " listeners remaining.")
      }
   }
 

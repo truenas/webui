@@ -1,43 +1,10 @@
 <div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
-  <mat-form-field class="full-width" value="fromFormField" #field>
-    <mat-select 
-      #selectTrigger
-      [value]="formValue"
-      [formControlName]="config.name" 
-      [multiple]="config.multiple" 
-      [required]="config.required" 
-      [placeholder]="config.placeholder | translate" 
-      (change)="onChangeOption($event)">
-
-     
-      <mat-select-trigger *ngIf="config.multiple">
-        {{ formValue }}
-      </mat-select-trigger>
-     
-
-      <!--
-        <div class="mat-option" (click)="onToggleSelectAll()">
-          <span *ngIf="config.multiple">
-            <mat-icon *ngIf="allSelected" class="fn-checked">check_circle</mat-icon>
-            <mat-icon *ngIf="!allSelected" class="fn-unchecked">remove</mat-icon>
-          </span>
-        Select All
-      </div>
-      -->
-
-      <div *ngIf="config">
-        <mat-option *ngFor="let option of config.options; let i=index" [value]="option.value" (click)="onToggleSelect(option, i)">
-            <span *ngIf="config.multiple">
-              <mat-icon *ngIf="selectStates[i]" class="fn-checked">check_circle</mat-icon>
-              <mat-icon *ngIf="!selectStates[i]" class="fn-unchecked">remove</mat-icon>
-            </span>
-            {{ option.label }}
-        </mat-option>
-      </div>
-
+  <mat-form-field class="full-width">
+    <mat-select [formControlName]="config.name" [multiple]="config.multiple" [required]="config.required" [placeholder]="config.placeholder | translate" (change)="onChangeOption($event)">
+      <mat-option *ngFor="let option of config.options" [value]="option.value" [disabled]="option.disable">
+        {{ option.label }}
+      </mat-option>
     </mat-select>
-
-
   </mat-form-field>
   <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
   <mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>

@@ -55,7 +55,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   public altTitle: string = '';
   public altSubtitle: string = '';
   public widgetColorCssVar: string = 'var(--primary)';
-  public isActive:boolean = true;
 
   public currentStartDate: number;// as seconds from Unix Epoch
   public currentEndDate: number;// as seconds from Unix Epoch
@@ -126,10 +125,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   ngOnChanges(changes){
     /*if(changes.lineChartConfig){
     }*/
-  }
-
-  setChartInteractive(value:boolean){
-    this.isActive = value;
   }
 
   timeZoomIn(){

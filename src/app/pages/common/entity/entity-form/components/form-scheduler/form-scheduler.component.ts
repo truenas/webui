@@ -301,6 +301,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges{
   }
 
   backdropClicked(evt){
+    console.log(evt);
     this.togglePopup();
   }
 

@@ -15,7 +15,6 @@ import {RestService,WebSocketService} from '../../services/';
 })
 export class DashboardComponent implements OnInit,OnDestroy {
  
-  private debug = false;
   public large: string = "lg";
   public medium: string = "md";
   public small: string = "sm";
@@ -47,17 +46,11 @@ export class DashboardComponent implements OnInit,OnDestroy {
   }
 
   ngOnDestroy(){
-    if(this.debug){
-      console.log("Destroying the dashboard...");
-    }
-    this.core.emit({name:"StatsKillAll", sender:this});
     this.core.unregister({observerClass:this});
   }
 
   init(){
-    if(this.debug){
-      console.log("******** Dashboard Initializing... ********");
-    }
+    console.log("******** Dashboard Initializing... ********");
 
     this.core.register({observerClass:this,eventName:"PoolData"}).subscribe((evt:CoreEvent) => {
       this.setPoolData(evt);

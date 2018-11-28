@@ -58,7 +58,7 @@
 
 /* MARKER */
 :host ::ng-deep .c3-chart-line .c3-circles circle._expanded_{
-  stroke:var(--primary) !important;
+  stroke:var(--yellow) !important;
 }
 :host ::ng-deep .c3-chart-line circle.c3-circle{
   fill:var(--bg2) !important;
