@@ -147,8 +147,8 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     });
 
     this.core.register({observerClass:this,eventName:"DisksInfo"}).subscribe((evt:CoreEvent) => {
-      this.dataRcvd = true;
       this.setDisksData(evt);
+      this.dataRcvd = true;
     });
 
 
