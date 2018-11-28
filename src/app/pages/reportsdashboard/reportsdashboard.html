@@ -8,7 +8,6 @@
     <div id="dashboardcontainerdiv">
 
       <!-- Tab Navigation -->
-      <!--
       <nav mat-tab-nav-bar *ngIf="drawTabs && activeTab && tabChartsMappingDataArray.length > 0" (selectChange)="tabSelectChangeHandler($event)">
         <a mat-tab-link *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray"
           [active]="isActiveTab(tabChartsMappingDataItem.keyName)"
@@ -16,14 +15,10 @@
             {{ tabChartsMappingDataItem.keyName | translate }} 
         </a>
       </nav>
-      -->
 
-  <nav style="background-color:var(--alt-bg1); padding:0 0 0 32px;" fxLayout="row wrap" fxLayoutAlign="space-between center" fxLayoutGap="32px">
-
-      <!-- Layout and Report Builder -->
-      <div class="reports-dash-global-controls" fxFlex fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="32px">
+  <nav style="padding:32px;">
   <!-- START TAB REPLACEMENT-->
-  <div *ngIf="tabChartsMappingDataArray && tabChartsMappingDataArray.length > 0">
+  <!--<div *ngIf="tabChartsMappingDataArray && tabChartsMappingDataArray.length > 0">
   <button mat-button [matMenuTriggerFor]="categoryMenu" color="default" class="menu-toggle" style="color:var(--fg2);">
     <span>{{ activeTab ? activeTab : 'Category'}} <mat-icon class="menu-caret">arrow_drop_down</mat-icon> </span>
   </button>
@@ -35,21 +30,13 @@
       </button>
     </div>
   </mat-menu>
-  </div>
+  </div>-->
   <!-- END TAB REPLACEMENT -->
 
 
+      <!-- Layout and Report Builder -->
+      <div class="reports-dash-global-controls" fxFlex fxLayout="row wrap" fxLayoutAlign="start stretch" fxLayoutGap="32px">
         
-
-        <!-- Report builder was 632px wide -->
-        <ng-container *ngIf="tabChartsMappingDataSelected && tabChartsMappingDataSelected.keyName == 'Disk'">
-          <!--<entity-form-embedded fxFlex="100" fxFlex.gt-xs="632px" [target]="target" [data]="values" [conf]="this" ></entity-form-embedded>-->
-          <entity-toolbar *ngIf="toolbarConfig.length > 0" fxFlex [target]="target" [conf]="toolbarConfig"></entity-toolbar>
-        </ng-container>
-
-        <!-- SPACER -->
-        <div fxFlex></div>
-      
         <!-- Layout Switcher -->
         <!--<div fxFlex="100" fxFlex.gt-xs="116px">
           <mat-button-toggle-group 
@@ -64,7 +51,7 @@
           </div>-->
 
         <div fxFlex="114px">
-        <button mat-button [matMenuTriggerFor]="layoutMenu" color="default" class="menu-toggle" style="color:var(--fg2);">
+        <button mat-button [matMenuTriggerFor]="layoutMenu" color="primary" class="menu-toggle" style="color:var(--fg2);">
           <span>{{ chartLayout ? chartLayout : 'Layout'}} <mat-icon class="menu-caret">arrow_drop_down</mat-icon> </span>
         </button>
       
@@ -82,6 +69,13 @@
         
         <!-- End Layout-Switcher-->
 
+
+        <!-- Report builder was 632px wide -->
+        <ng-container *ngIf="tabChartsMappingDataSelected && tabChartsMappingDataSelected.keyName == 'Disk'">
+          <entity-form-embedded fxFlex="100" fxFlex.gt-xs="632px" [target]="target" [data]="values" [conf]="this" ></entity-form-embedded>
+          <!--<entity-toolbar *ngIf="toolbarConfig.length > 0" fxFlex [target]="target" [conf]="toolbarConfig"></entity-toolbar>-->
+        </ng-container>
+      
           <!-- Pager -->
           <!--<div fxFlex="100" fxFlex.gt-xs="420px" *ngIf="tabChartsMappingDataSelected && tabChartsMappingDataSelected.keyName == 'Disk'">-->
           <div fxFlex="100" fxFlex.gt-xs="420px" *ngIf="tabChartsMappingDataSelected">
@@ -95,12 +89,6 @@
             </mat-paginator>
           </div> <!--End Pager-->
         </div>
-
-        <!-- Report builder was 632px wide -->
-        <!--<ng-container *ngIf="tabChartsMappingDataSelected && tabChartsMappingDataSelected.keyName == 'Disk'">
-          <entity-form-embedded fxFlex="100" fxFlex.gt-xs="632px" [target]="target" [data]="values" [conf]="this" ></entity-form-embedded>
-          </ng-container>-->
-      
  
     </nav>
 

@@ -87,13 +87,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
 
 
   constructor(private _lineChartService: LineChartService, private erdService: ErdService, public translate: TranslateService, private router:Router) {
-  }
-
-  setupSubscriptions(){
     this.target.subscribe((evt: CoreEvent) => {
       switch(evt.name){
         case 'FormSubmitted':
-          console.log(evt);
           this.buildDiskReport(evt.data.devices, evt.data.metrics);
           this.setPaginationInfo(this.tabChartsMappingDataSelected, this.filteredData );
           //console.log(this.pagerElement);
@@ -103,21 +99,15 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
           this.setPaginationInfo(list);*/
         break;
         case 'ToolbarChanged':
-          if(evt.data.devices && evt.data.metrics){
-            this.buildDiskReport(evt.data.devices, evt.data.metrics);
-            this.setPaginationInfo(this.tabChartsMappingDataSelected, this.filteredData );
-          }
+          //console.log(evt);
         break;
       }
     });
-
-    this.target.next({name:"Refresh"});
   }
 
   diskReportBuilderSetup(){
 
     this.generateValues();
-    
     // Entity-Toolbar Config
     this.toolbarConfig = [
           {
@@ -125,7 +115,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
             name: 'devices',
             label: 'Devices',
             disabled:false,
-            options: this.diskDevices.map((v) => v.value), // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
+            options: this.diskDevices, // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
             //tooltip:'Choose a device for your report.',
           },
           {
@@ -133,7 +123,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
             name: 'metrics',
             label: 'Metrics',
             disabled: false,
-            options: this.diskMetrics ? this.diskMetrics.map((v) => v.value) : ['Not Available'], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
+            options: this.diskMetrics ? this.diskMetrics : [{label:'None available', value:'negative'}], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
             //tooltip:'Choose a metric to display.',
           }
     ]
@@ -261,7 +251,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
 
   ngAfterViewInit(): void {
     this.erdService.attachResizeEventToElement("dashboardcontainerdiv"); 
-    this.setupSubscriptions();
   }
 
   /**
