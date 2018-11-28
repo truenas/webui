@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { EntityTreeTable, EntityTreeTableColumn } from './entity-tree-table.model';
 import { TreeNode } from 'primeng/api';
 
 @Component({
@@ -6,10 +7,10 @@ import { TreeNode } from 'primeng/api';
 	templateUrl: './entity-tree-table.component.html'
 })
 export class EntityTreeTableComponent implements OnInit {
-	@Input('conf') conf: any;
+	@Input('conf') conf: EntityTreeTable;
 
 	showActions = true;
-	columns: any[];
+	columns: Array<EntityTreeTableColumn>;
 
 	constructor() { }
 

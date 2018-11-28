@@ -17,6 +17,7 @@ import { RestService, WebSocketService } from '../../../services/index';
 import { Ng2DropdownModule } from 'ng2-material-dropdown';
 import { TranslateModule } from '@ngx-translate/core';
 import { TreeTableModule } from 'primeng/treetable';
+import { FileSizeModule } from 'ngx-filesize';
 
 import { DynamicFieldDirective } from './entity-form/components/dynamic-field/dynamic-field.directive';
 import { FormArrayComponent } from './entity-form/components/form-array/form-array.component';
@@ -70,7 +71,7 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
     CommonModule, FormsModule, ReactiveFormsModule,
     MaterialModule, ColorPickerModule, NgxDatatableModule, CdkTableModule, TreeModule,
     Ng2DropdownModule, NgUploaderModule, FlexLayoutModule, TranslateModule,
-    OverlayModule, A11yModule, TreeTableModule
+    OverlayModule, A11yModule, TreeTableModule, FileSizeModule
   ],
   declarations: [
     EntityTableComponent,
