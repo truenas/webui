@@ -1,5 +1,3 @@
-
-
 import { CommonModule } from '@angular/common';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -16,6 +14,8 @@ import { DocsService} from '../../../services/docs.service';
 import { RestService, WebSocketService } from '../../../services/index';
 import { Ng2DropdownModule } from 'ng2-material-dropdown';
 import { TranslateModule } from '@ngx-translate/core';
+import { TreeTableModule } from 'primeng/treetable';
+import { FileSizeModule } from 'ngx-filesize';
 
 import { DynamicFieldDirective } from './entity-form/components/dynamic-field/dynamic-field.directive';
 import { FormArrayComponent } from './entity-form/components/form-array/form-array.component';
@@ -45,6 +45,7 @@ import { EntityTableActionsComponent } from './entity-table/entity-table-actions
 import { EntityCardActionsComponent } from './entity-card/entity-card-actions.component';
 import { EntityTableAddActionsComponent } from './entity-table/entity-table-add-actions.component';
 import { EntityTableComponent } from './entity-table/entity-table.component';
+import { EntityTreeTableComponent } from './entity-tree-table/entity-tree-table.component';
 import { EntityCardComponent } from './entity-card/entity-card.component';
 import { EntityTemplateDirective } from './entity-template.directive';
 import { FormReadFileComponent } from './entity-form/components/form-readfile/form-readfile.component'
@@ -55,11 +56,6 @@ import { EntityDialogComponent } from './entity-dialog/entity-dialog.component';
 import { FormPermissionsComponent } from './entity-form/components/form-permissions/form-permissions.component';
 import { EntityJobComponent } from './entity-job/entity-job.component';
 
-import { EntityToolbarComponent } from './entity-toolbar/entity-toolbar.component';
-import { ToolbarButtonComponent } from './entity-toolbar/components/toolbar-button/toolbar-button.component';
-import { ToolbarMenuComponent } from './entity-toolbar/components/toolbar-menu/toolbar-menu.component';
-import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-multimenu/toolbar-multimenu.component';
-
 // CDK
 import { CdkTableModule } from '@angular/cdk/table';
 import { OverlayModule } from '@angular/cdk/overlay';
@@ -68,15 +64,21 @@ import {A11yModule} from '@angular/cdk/a11y';
 import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponent } from './fab-speed-dial/fab-speed-dial';
 import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.component';
 
+import { EntityToolbarComponent } from './entity-toolbar/entity-toolbar.component';
+import { ToolbarButtonComponent } from './entity-toolbar/components/toolbar-button/toolbar-button.component';
+import { ToolbarMenuComponent } from './entity-toolbar/components/toolbar-menu/toolbar-menu.component';
+import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-multimenu/toolbar-multimenu.component';
+
 @NgModule({
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule,
     MaterialModule, ColorPickerModule, NgxDatatableModule, CdkTableModule, TreeModule,
     Ng2DropdownModule, NgUploaderModule, FlexLayoutModule, TranslateModule,
-    OverlayModule, A11yModule
+    OverlayModule, A11yModule, TreeTableModule, FileSizeModule
   ],
   declarations: [
     EntityTableComponent,
+    EntityTreeTableComponent,
     EntityCardComponent,
     EntityCardActionsComponent,
     EntityTableActionsComponent,
@@ -125,6 +127,7 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
     EntityFormComponent,
     EntityFormEmbeddedComponent,
     EntityTableComponent,
+    EntityTreeTableComponent,
     EntityCardComponent,
     EntityCardActionsComponent,
     EntityTableAddActionsComponent,
@@ -138,7 +141,10 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
     EntityTaskComponent,
     EntityDialogComponent,
     EntityDashboardComponent,
-    EntityToolbarComponent
+    EntityToolbarComponent,
+    ToolbarButtonComponent,
+    ToolbarMenuComponent,
+    ToolbarMultimenuComponent
   ],
   entryComponents: [
     FormButtonComponent,
@@ -162,6 +168,7 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
     FormToggleButtonComponent,
     FormTaskComponent,
     FormParagraphComponent,
+    EntityToolbarComponent,
     ToolbarButtonComponent,
     ToolbarMenuComponent,
     ToolbarMultimenuComponent
