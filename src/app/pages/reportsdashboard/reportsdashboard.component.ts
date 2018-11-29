@@ -453,15 +453,16 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
 
     let pseudoRouteEvent = [
       {
-        url: "/reportsdashboard/",
+        url: "/reportsdashboard/" + tabName.toLowerCase(),
         title:"Reporting",
         breadcrumb:"Reporting",
         disabled:true
       },
       {
-        url: "/reportsdashboard/" + tabName.toLowerCase(),
+        url: "", //"/reportsdashboard/" + tabName.toLowerCase(),
         title: tabName,
-        breadcrumb: tabName
+        breadcrumb: tabName,
+        disabled:true
       }
     ]
     
