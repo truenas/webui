@@ -338,6 +338,52 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     background-color:rgba(0,0,0,0.75)
   }
 
+  .datatable-header-inner,
+  div.datatable-row-left,
+  div.datatable-row-center,
+  div.datatable-row-right,
+  .datatable-header-cell{
+    height:50px;
+  }
+
+  .datatable-header-cell .sort-btn{
+    position:absolute;
+    top:16px !important;
+    right:16px;
+    @include variable(color, --fg2, $fg2, !important);
+  }
+
+  .datatable-header-cell-label{
+    position: relative !important;
+    top: 10px !important;
+  }
+
+  .datatable-header-cell{
+    right: 16px;
+    top: 0 !important;
+    padding:0px !important;
+  }
+  .datatable-header-cell:hover{
+    border-right:solid 1px ;
+    @include variable(border-color, --alt-bg1, $alt-bg1, !important);
+  }
+
+  .datatable-header-cell > div{
+    height:inherit;
+  }
+
+  .ngx-datatable .datatable-header .datatable-header-cell.sortable .datatable-header-cell-wrapper{
+    cursor: pointer;
+    /* vertical-align: middle; */
+    width: inherit;
+    height: inherit;
+    position: relative;
+    top: 0;
+    left: 0;
+    display: block;
+    padding: 3px 16px;
+  }
+
   .mat-bg-accent,
   .mat-raised-button.mat-accent, .mat-fab.mat-accent, .mat-mini-fab.mat-accent,
   div.hopscotch-bubble .hopscotch-bubble-number,
