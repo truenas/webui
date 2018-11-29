@@ -510,8 +510,10 @@ blurEvent2(parent){
     if( vm_memory_requested *1048576> vm_memory_available){
       _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'}).hasErrors = true;
       _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'}).errors = `Cannot allocate ${vm_memory_requested} Mib to virtual machine: ${vm_name}.`;
-      parent.entityWizard.formArray.get([2]).get('name').setValue(0);
-
+      parent.entityWizard.formArray.get([2]).get('memory').setValue(0);
+    } else{
+      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'}).hasErrors = false;
+      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'}).errors = '';
     }
   })
 }
@@ -555,22 +557,12 @@ populate_ds(this) {
         if (this.datastore.options[0].value !== undefined && this.datastore.options[0].value!==""){
         this.ws.call('filesystem.statfs',['/mnt/'+this.datastore.options[0].value]).subscribe((stat)=> {
           let storage = 10*1073741824
-          let vm_memory_requested = 10*1048576;
-          const vm_name = this.entityWizard.formGroup.value.formArray[1].name
           if (this.res === "Windows") { 
             storage = 40*1073741824;
           }
           if (storage && stat.free_bytes < storage ) {
             this.entityWizard.formArray.get([3]).controls['volsize'].setValue(Math.floor(stat.free_bytes/(1073741824))); 
           };
-          if(this.res === "Windows") {
-            vm_memory_requested = 40*1048576;
-          }
-          this.ws.call('vm.get_available_memory').subscribe((vm_memory_available)=>{
-            if( vm_memory_requested *1048576> vm_memory_available){
-              this.entityWizard.formArray.get([2]).get('memory').setValue(Math.floor(vm_memory_requested*1024/10485760));
-            }
-          })
          });
         };
       }
