@@ -37,14 +37,16 @@ div.fake-icon{
 
 #legacy-btn-wrapper{
   text-align:center;
+  margin:0px 32px 0;
 }
 
 #legacy-btn-wrapper button.mat-button{
   font-weight:normal !important;
   opacity:0.75;
+  background: rgba(0,0,0,0.4);
 }
 
-form{
+form {
   margin:32px 32px 0;
 }
 
