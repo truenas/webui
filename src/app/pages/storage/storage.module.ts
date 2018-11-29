@@ -36,7 +36,6 @@ import { DiskFormComponent } from './disks/disk-form/';
 import { DiskBulkEditComponent } from './disks/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
 import { BrowserModule } from '@angular/platform-browser';
-import { DxTreeListModule } from 'devextreme-angular';
 import { TreeTableModule } from 'primeng/treetable';
 import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form';
 import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddkey-form';
@@ -49,7 +48,7 @@ import { MessageService } from '../common/entity/entity-form/services/message.se
   imports : [
     RouterModule, DragulaModule, EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, routing, MaterialModule, TreeTableModule,
-    NgxDatatableModule, DxTreeListModule, TranslateModule, FlexLayoutModule,
+    NgxDatatableModule, TranslateModule, FlexLayoutModule,
     FileSizeModule
   ],
   declarations : [
