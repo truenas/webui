@@ -4,7 +4,7 @@ import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 import * as _ from 'lodash';
 import {LineChartService, ChartConfigData, HandleChartConfigDataFunc} from '../../components/common/lineChart/lineChart.service';
 import { Subject } from 'rxjs/Subject'; 
-import { CoreEvent } from 'app/core/services/core.service';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -86,7 +86,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   
 
 
-  constructor(private _lineChartService: LineChartService, private erdService: ErdService, public translate: TranslateService, private router:Router) {
+  constructor(private _lineChartService: LineChartService, private erdService: ErdService, public translate: TranslateService, private router:Router, private core:CoreService) {
   }
 
   setupSubscriptions(){
@@ -451,7 +451,24 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
     // the old fashioned way 
     window.history.replaceState({}, '','/reportsdashboard/' + tabName.toLowerCase());
 
-    // Simulate tab event
+    let pseudoRouteEvent = [
+      {
+        url: "/reportsdashboard/",
+        title:"Reporting",
+        breadcrumb:"Reporting",
+        disabled:true
+      },
+      {
+        url: "/reportsdashboard/" + tabName.toLowerCase(),
+        title: tabName,
+        breadcrumb: tabName
+      }
+    ]
+    
+
+    this.core.emit({name: "PseudoRouteChange", data: pseudoRouteEvent});
+
+    // Simulate tab eventl
     let evt = {
       tab: {
         textLabel: tabName
