@@ -66,7 +66,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
             width:'300px',
             placeholder: 'Prefer buttons with icons only',
             value:this.preferIconsOnly,
-            tooltip: 'To save space, prefer buttons with icons and tooltips instead of labels',
+            tooltip: 'Preserve screen space with icons and tooltips instead of text labels.',
             class:'inline'
           },
           {
