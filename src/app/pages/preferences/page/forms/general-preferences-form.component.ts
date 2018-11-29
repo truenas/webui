@@ -39,15 +39,16 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
   private favoriteFields: any[] = []
   public fieldConfig:FieldConfig[] = [];
   public showTooltips:boolean = this.prefs.preferences.showTooltips;
-  public allowPwToggle:boolean = this.prefs.preferences.allowPwToggle;;
+  public allowPwToggle:boolean = this.prefs.preferences.allowPwToggle;
   public enableWarning:boolean = this.prefs.preferences.enableWarning;
+  public preferIconsOnly: boolean = this.prefs.preferences.preferIconsOnly;
   public fieldSetDisplay:string = 'no-margins';//default | carousel | stepper
     public fieldSets: FieldSet[] = [
       {
         name:'General Preferences',
         class:'preferences',
         label:true,
-        width:'300px',
+        width:'400px',
         config:[
           {
             type: 'select',
@@ -59,15 +60,15 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
             tooltip:'Choose a preferred theme.',
             class:'inline'
           },
-          /*{
-            type: 'radio',
-            name: 'metaphor',
+          {
+            type: 'checkbox',
+            name: 'preferIconsOnly',
             width:'300px',
-            placeholder: 'View Type Preference',
-            options:[{label:'Cards',value:'cards'},{label:'Tables',value:'tables'},{label:'Auto',value:'auto'}],
-            value:'cards',
-            tooltip: 'Choose the preferred view type.',
-          },*/
+            placeholder: 'Prefer buttons with icons only',
+            value:this.preferIconsOnly,
+            tooltip: 'To save space, prefer buttons with icons and tooltips instead of labels',
+            class:'inline'
+          },
           {
             type: 'checkbox',
             name: 'showTooltips',
@@ -89,7 +90,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
           {
             type: 'checkbox',
             name: 'enableWarning',
-            width: '300px',
+            width: '400px',
             placeholder: 'Enable "Save Configuration" Dialog Before Upgrade',
             value:this.enableWarning,
             tooltip: T('Show or hide a dialog to save the system\
