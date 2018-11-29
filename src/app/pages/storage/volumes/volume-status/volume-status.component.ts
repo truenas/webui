@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { WebSocketService, RestService, AppLoaderService, DialogService } from "../../../../services";
-import { ActivatedRoute, Params, Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { TranslateService } from '@ngx-translate/core';
 import { EntityUtils } from '../../../common/entity/utils';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import * as _ from 'lodash';
 import { TreeNode } from 'primeng/api';
-import { EntityTreeTable, EntityTreeTableColumn} from '../../../common/entity/entity-tree-table/entity-tree-table.model';
+import { EntityTreeTable } from '../../../common/entity/entity-tree-table/entity-tree-table.model';
 
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { MatSnackBar } from '@angular/material';
@@ -32,7 +32,6 @@ interface poolDiskInfo {
 export class VolumeStatusComponent implements OnInit {
 
   public poolScan: any;
-  public topology: Array < poolDiskInfo > = [];
   public treeTableConfig: EntityTreeTable = {
     tableData: [],
     columns: [
@@ -279,7 +278,9 @@ export class VolumeStatusComponent implements OnInit {
     if (data.stats) {
       stats = data.stats;
     }
-
+    if (data.type && data.type != 'DISK') {
+      data.name = data.type;
+    }
     // use path as the device name if the device name is null
     if (!data.device || data.device == null) {
       data.device = data.path;
