@@ -370,19 +370,20 @@ export class VMWizardComponent {
         this.ws.call('filesystem.statfs',[datastore]).subscribe((stat)=> {
           _.find(this.wizardConfig[3].fieldConfig, {'name' : 'volsize'}).hasErrors = false;
           _.find(this.wizardConfig[3].fieldConfig, {'name' : 'volsize'}).errors = '';
+          /* case where default formvalue > total available capacity*/
          if (stat.free_bytes < volsize ) {
           ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(Math.floor(stat.free_bytes / (1073741824)));
          } else if (stat.free_bytes > 40*1073741824) {
-          const vm_os = ( < FormGroup > entityWizard.formArray.get([1]).get('os')).value;
-          if (vm_os === "Windows"){
-            ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(40);
-          } else {
-            ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(10);
-          };
+              const vm_os = ( < FormGroup > entityWizard.formArray.get([1]).get('os')).value;
+              if (vm_os === "Windows"){
+                  ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(volsize/1073741824);
+              } else {
+                  ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(volsize/1073741824);
+              };
         } else if (stat.free_bytes > 10*1073741824) {
-          const vm_os = ( < FormGroup > entityWizard.formArray.get([1]).get('os')).value;
-          ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(10);
-         };
+              const vm_os = ( < FormGroup > entityWizard.formArray.get([1]).get('os')).value;
+              ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(volsize/1073741824);
+          };
         });
       }
       });
