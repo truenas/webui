@@ -1,7 +1,7 @@
-<p-treeTable [value]="conf.tableData" [columns]="conf.columns">
+<p-treeTable [value]="conf.tableData" [columns]="conf.columns" [resizableColumns]="true">
 	<ng-template pTemplate="header" let-columns>
 		<tr>
-			<th *ngFor="let col of columns" [ttSortableColumn]="col.prop" id="theader_{{col.prop}}">
+			<th *ngFor="let col of columns" [ttSortableColumn]="col.prop" id="theader_{{col.prop}}" ttResizableColumn>
 				{{col.name}}
 				<p-treeTableSortIcon [field]="col.prop"></p-treeTableSortIcon>
 			</th>
@@ -14,11 +14,11 @@
 				<p-treeTableToggler [rowNode]="rowNode" *ngIf="i == 0"></p-treeTableToggler>
 				{{col.filesizePipe ? (rowData[col.prop] | filesize) : rowData[col.prop]}}
 			</td>
-			<td *ngIf="showActions">
+			<td *ngIf="showActions && rowData.actions">
 				<mat-icon [matMenuTriggerFor]="appMenu" [style.cursor]="'pointer'" id="actions_menu_button__{{rowData.name}}">more_vert</mat-icon>
 				<mat-menu #appMenu="matMenu">
 					<span *ngFor="let action of rowData.actions" id="action_button__{{rowData.name}}_{{action.label}}">
-						<button mat-menu-item (click)="action.onClick(rowData);">
+						<button mat-menu-item *ngIf="!action.isHidden" (click)="action.onClick(rowData);">
 							<span>{{action.label}}</span>
 						</button>
 					</span>
