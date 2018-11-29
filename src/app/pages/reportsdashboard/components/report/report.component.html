@@ -1,8 +1,8 @@
 <div class="report" ngClass.xs="double-height xs">
-  <div class="card-container  front">
+  <div class="card-container  front" (mouseenter)="setChartInteractive(true)" (mouseleave)="setChartInteractive(false)" >
     <mat-card class="front" fxLayout="row wrap" fxlayoutGap="16px" fxLayoutAlign="space-between stretch">
       <mat-toolbar-row fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" fxFlex="100" class="mat-card-toolbar">
-        <mat-card-title fxFlex="65%"><h3>{{title}}</h3></mat-card-title>
+        <mat-card-title fxFlex="65%"><h3>{{title}} <!--<span *ngIf="isActive">(active)</span>--></h3></mat-card-title>
         <!-- Controls/Tools -->
         <div fxFlex="calc(35%)" class="line-chart-tools-wrapper">
           <div class="line-chart-tools" *ngIf="lineChart.chart"> 
@@ -34,7 +34,8 @@
             <line-chart 
               [dataList]="lineChartConfig.dataList"
               [legends]="lineChartConfig.legends"
-              [divideBy]="lineChartConfig.divideBy">
+              [divideBy]="lineChartConfig.divideBy"
+              [interactive]="isActive">
               </line-chart>
           </div>
 
@@ -44,32 +45,53 @@
           <div class="legend-timestamp">
             <div *ngIf="lineChart.showLegendValues">
               <span *ngIf="lineChart.legendEvents | async as timestamp">
-                <h4>Timestamp: {{timestamp[0].x}}</h4>
+                <h4><strong>Time:</strong> <span style="font-weight:normal;">{{timestamp[0].x}}</span></h4>
               </span>
             </div>
           </div>
           </div>
         </mat-card-content>
           <mat-card-footer>
-          <section class="legend" fxLayout="row wrap" fxLayoutAlign="none"  *ngIf="lineChart.legendLabels | async as legendLabels">
-            <div class="legend-group" fxFlex="100px" *ngFor="let legendItem of legendLabels; let i=index">
+          <section class="legend" fxLayout="column" fxLayoutAlign="none"  *ngIf="lineChart.legendLabels | async as legendLabels">
+            <div class="legend-group" fxFlex="38px" fxLayout="row wrap" fxLayoutAlign="space-between start" fxLayoutGap="16px" *ngFor="let legendItem of legendLabels; let i=index">
 
-                <div class="legend-label" >
+                <!--<div fxFlex="180px" class="legend-label" >
                   <div class="swatch" [style.background-color]="lineChart.colorPattern[i]" ></div>
-                  <!--<div class="legend-item">{{legendItem}}</div>-->
+                  
                   <div class="legend-item">{{legendItem}}</div>
-                </div>
+                  </div>-->
 
-                <div class="tooltip-wrapper legend-value"> 
+                <!--<div class="tooltip-wrapper legend-value"> 
                   <div *ngIf="lineChart.legendEvents | async as tooltip">
                     <div  *ngIf="lineChart.showLegendValues && tooltip[i]" class="tooltip-value" >
                       {{tooltip[i].value}} {{lineChart.units}}
                     </div>
                   </div>
+                  </div>-->
+
+                <div fxFlex="150px" class="legend-label" >
+                  <!-- Legend Label -->
+                  <div class="swatch" [style.background-color]="lineChart.colorPattern[i]" ></div>
+                  <span class="legend-item">{{legendItem}}</span> 
+
+                  <span *ngIf="lineChart.legendEvents | async as tooltip">
+                    <span  *ngIf="lineChart.showLegendValues && tooltip[i]" class="tooltip-value" >
+                      : <span style="font-weight:normal;">{{tooltip[i].value}} {{lineChart.units}}</span>
+                    </span>
+                  </span>
                 </div>
+
+                  <!-- Analytics -->
+                  <div fxFlex class="report-analytics" *ngIf="lineChart.legendAnalytics | async as analytics" fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="16px">
+                    <span fxFlex="105px"><strong>Min:</strong>  {{analytics[i].min}}{{lineChart.units}}</span>
+                    <span fxFlex="105px"><strong>Max:</strong>  {{analytics[i].max}}{{lineChart.units}}</span>
+                    <span fxFlex="105px"><strong>Avg:</strong>  {{analytics[i].avg}}{{lineChart.units}}</span>
+                    <span fxFlex=""><strong>Total:</strong>  {{analytics[i].total}}{{lineChart.units}}</span>
+                  </div>
 
               </div>
             </section>
+
           </mat-card-footer>
     </mat-card>
 

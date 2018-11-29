@@ -4,7 +4,7 @@ import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 import * as _ from 'lodash';
 import {LineChartService, ChartConfigData, HandleChartConfigDataFunc} from '../../components/common/lineChart/lineChart.service';
 import { Subject } from 'rxjs/Subject'; 
-import { CoreEvent } from 'app/core/services/core.service';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -49,9 +49,12 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   // Report Builder Options (entity-form-embedded)
   public target: Subject<CoreEvent> = new Subject();
   public values = [];
+  public toolbarConfig: any[] = [];
   protected isEntity: boolean = true;
   public diskDevices = [];
   public diskMetrics = [];
+  public categoryDevices = [];
+  public categoryMetrics = [];
   public saveSubmitText = "Generate Reports";
   public actionButtonsAlign = "left";
   public fieldConfig:FieldConfig[] = [];
@@ -76,17 +79,21 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   public activeTab: string;
   public filteredData: ChartConfigData[] = [];
   public filteredPaginatedData: ChartConfigData[] = [];
-  @ViewChild('chartWidth') chartWidth: MatButtonToggleGroup; 
+  public chartLayout = 'Grid'; // Defaults to grid layout
+  //@ViewChild('chartWidth') chartWidth: MatButtonToggleGroup; 
   @ViewChild('pager') pagerElement;
   
   
 
 
-  constructor(private _lineChartService: LineChartService, private erdService: ErdService, public translate: TranslateService, private router:Router) {
+  constructor(private _lineChartService: LineChartService, private erdService: ErdService, public translate: TranslateService, private router:Router, private core:CoreService) {
+  }
+
+  setupSubscriptions(){
     this.target.subscribe((evt: CoreEvent) => {
-      //console.log(evt);
       switch(evt.name){
         case 'FormSubmitted':
+          console.log(evt);
           this.buildDiskReport(evt.data.devices, evt.data.metrics);
           this.setPaginationInfo(this.tabChartsMappingDataSelected, this.filteredData );
           //console.log(this.pagerElement);
@@ -95,19 +102,48 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
           list.chartConfigData = this.filteredData;
           this.setPaginationInfo(list);*/
         break;
+        case 'ToolbarChanged':
+          if(evt.data.devices && evt.data.metrics){
+            this.buildDiskReport(evt.data.devices, evt.data.metrics);
+            this.setPaginationInfo(this.tabChartsMappingDataSelected, this.filteredData );
+          }
+        break;
       }
     });
+
+    this.target.next({name:"Refresh"});
   }
 
   diskReportBuilderSetup(){
 
     this.generateValues();
+    
+    // Entity-Toolbar Config
+    this.toolbarConfig = [
+          {
+            type: 'multimenu',
+            name: 'devices',
+            label: 'Devices',
+            disabled:false,
+            options: this.diskDevices.map((v) => v.value), // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
+            //tooltip:'Choose a device for your report.',
+          },
+          {
+            type: 'multimenu',
+            name: 'metrics',
+            label: 'Metrics',
+            disabled: false,
+            options: this.diskMetrics ? this.diskMetrics.map((v) => v.value) : ['Not Available'], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
+            //tooltip:'Choose a metric to display.',
+          }
+    ]
 
+    // Entity-Form Config
     this.fieldSets = [
       {
         name:'Report Options',
         class:'preferences',
-        label:true,
+        label:false,
         width:'600px',
         config:[
           {
@@ -225,6 +261,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
 
   ngAfterViewInit(): void {
     this.erdService.attachResizeEventToElement("dashboardcontainerdiv"); 
+    this.setupSubscriptions();
   }
 
   /**
@@ -414,7 +451,25 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
     // the old fashioned way 
     window.history.replaceState({}, '','/reportsdashboard/' + tabName.toLowerCase());
 
-    // Simulate tab event
+    let pseudoRouteEvent = [
+      {
+        url: "/reportsdashboard/" + tabName.toLowerCase(),
+        title:"Reporting",
+        breadcrumb:"Reporting",
+        disabled:true
+      },
+      {
+        url: "", //"/reportsdashboard/" + tabName.toLowerCase(),
+        title: tabName,
+        breadcrumb: tabName,
+        disabled:true
+      }
+    ]
+    
+
+    this.core.emit({name: "PseudoRouteChange", data: pseudoRouteEvent});
+
+    // Simulate tab eventl
     let evt = {
       tab: {
         textLabel: tabName
@@ -474,6 +529,10 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
       });
     }
     return foundTabChartsMappingData;
+  }
+
+  setChartLayout(value:string){
+    this.chartLayout = value; 
   }
 
 }

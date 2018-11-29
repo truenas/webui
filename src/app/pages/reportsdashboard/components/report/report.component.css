@@ -541,7 +541,8 @@ p.value{
   max-width: 220px !important;*/
   margin-right: 20px;
 }
- h3 {
+
+h3 {
   max-width: 100%;
   white-space: nowrap;
   text-overflow: ellipsis;
