@@ -22,6 +22,7 @@
         "testTsconfig": "tsconfig.spec.json",
         "prefix": "app",
         "styles": [
+          "assets/styles/reset.css",
           "../node_modules/xterm/dist/xterm.css",
           "../node_modules/quill/dist/quill.core.css",
           "../node_modules/quill/dist/quill.snow.css",
@@ -34,12 +35,12 @@
           "../node_modules/c3/c3.min.css",
           "../node_modules/angular-tree-component/dist/angular-tree-component.css",
           
+          "../node_modules/primeicons/primeicons.css",
+          "../node_modules/primeng/resources/primeng.min.css",
           "assets/styles/themes/ix-blue.scss",
           "assets/styles/fn-styles.css",
           "assets/styles/charts.css",
           "assets/styles/egret_overrides.css",
-          "../node_modules/primeicons/primeicons.css",
-          "../node_modules/primeng/resources/primeng.min.css",
           "assets/styles/material-reduction.css"
         ],
         "scripts": [

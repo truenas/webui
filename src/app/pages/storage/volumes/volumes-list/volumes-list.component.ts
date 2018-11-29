@@ -15,6 +15,7 @@ import * as _ from 'lodash';
 import { MatSnackBar } from '@angular/material';
 import * as moment from 'moment';
 import {TreeNode} from 'primeng/api';
+import { CoreService } from 'app/core/services/core.service';
 
 import { Injectable } from '@angular/core';
 import { ErdService } from 'app/services/erd.service';
@@ -765,11 +766,11 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   public paintMe = true;
 
 
-  constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
+  constructor(protected core:CoreService, protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
     public sorter: StorageService, protected snackBar: MatSnackBar) {
-    super(rest, router, ws, _eRef, dialogService, loader, erdService, translate, snackBar, sorter);
+    super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, snackBar, sorter);
   }
 
   public repaintMe() {
