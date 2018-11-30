@@ -13,7 +13,7 @@
     "start:dev": "npm run po2json && ng serve --proxy-config proxy.config.json --aot=false --source-map",
     "start:prod": "npm run po2json && ng serve --prod",
     "start:prod:aot": "npm run po2json && ng serve --prod --aot",
-    "build": "npm run po2json && npm run clean:dist && ng build",
+    "build": "npm run po2json && npm run clean:dist && node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng build",
     "build:prod": "node scripts/setup_prod.js && npm run build -- --prod",
     "build:prod:aot": "npm run build:prod -- --aot --base-href /ui/",
     "test": "ng test",
