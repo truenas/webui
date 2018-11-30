@@ -26,13 +26,27 @@
       -->
 
       <div *ngIf="config">
-        <mat-option *ngFor="let option of config.options; let i=index" [value]="option.value" [disabled]="option.disable"  (click)="onToggleSelect(option, i)">
-            <span *ngIf="config.multiple">
-              <mat-icon *ngIf="selectStates[i]" class="fn-checked">check_circle</mat-icon>
-              <mat-icon *ngIf="!selectStates[i]" class="fn-unchecked">remove</mat-icon>
-            </span>
-            {{ option.label }}
-        </mat-option>
+        <ng-container *ngFor="let option of config.options; let i=index">
+          {{option.disabled}}
+          <!-- if disabled -->
+          <mat-option *ngIf="option.disable" [value]="option.value" disabled style="opacity:0.5">
+              <span *ngIf="config.multiple">
+                <mat-icon *ngIf="selectStates[i]" class="fn-checked">check_circle</mat-icon>
+                <mat-icon *ngIf="!selectStates[i]" class="fn-unchecked">remove</mat-icon>
+              </span>
+              {{ option.label }}
+          </mat-option>
+
+          <!-- else -->
+          <mat-option *ngIf="!option?.disable" [value]="option.value" (click)="onToggleSelect(option, i)">
+              <span *ngIf="config.multiple">
+                <mat-icon *ngIf="selectStates[i]" class="fn-checked">check_circle</mat-icon>
+                <mat-icon *ngIf="!selectStates[i]" class="fn-unchecked">remove</mat-icon>
+              </span>
+              {{ option.label }}
+              </mat-option>
+
+        </ng-container>
       </div>
 
     </mat-select>

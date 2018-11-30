@@ -80,6 +80,11 @@ export class FormSelectComponent implements Field, AfterViewInit {
     //let testOption = this.matSelect.options._results[0];
   }
 
+  isDisabled(index){
+    let option = this.config.options[index];
+    return option.disabled ? option.disabled : false;
+  }
+
   onToggleSelect(option, index){
     if(!this.config.multiple){
       this.onSelect(option,index);
