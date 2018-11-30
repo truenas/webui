@@ -56,7 +56,7 @@ export class ServiceSSHComponent implements OnInit {
       placeholder : T('Log in as root with password'),
       tooltip: T('<b>Root logins are discouraged.</b> Set to allow root\
                   logins. A password must be set for the <i>root</i>\
-                  user in <a href="%%docurl%%/account.html#users%%webversion%%"\
+                  user in <a href="%%docurl%%/account.html%%webversion%%#users"\
                   target="_blank">Users</a>.'),
     },
     {
@@ -74,9 +74,9 @@ export class ServiceSSHComponent implements OnInit {
       name : 'ssh_kerberosauth',
       placeholder : T('Allow Kerberos authentication'),
       tooltip: T('Ensure <a\
-                  href="%%docurl%%/directoryservice.html#kerberos-realms%%webversion%%"\
+                  href="%%docurl%%/directoryservice.html%%webversion%%#kerberos-realms"\
                   target="_blank">Kerberos Realms</a> and <a\
-                  href="%%docurl%%/directoryservice.html#kerberos-keytabs%%webversion%%"\
+                  href="%%docurl%%/directoryservice.html%%webversion%%#kerberos-keytabs"\
                   target="_blank">Kerberos Keytabs</a> are configured\
                   and the system can communicate with the Kerberos\
                   Domain Controller before setting.'),

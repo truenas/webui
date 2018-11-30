@@ -48,9 +48,9 @@ export class GeneralComponent implements OnDestroy {
       tooltip: T('Required for <i>HTTPS</i>. Browse to the location of\
                   the certificate to use for encrypted connections. If\
                   there are no certificates, create a <a\
-                  href="%%docurl%%/system.html#cas%%webversion%%"\
+                  href="%%docurl%%/system.html%%webversion%%#cas"\
                   target="_blank">Certificate Authority (CA)</a> then\
-                  the <a href="%%docurl%%/system.html#certificates%%webversion%%"\
+                  the <a href="%%docurl%%/system.html%%webversion%%#certificates"\
                   target="_blank">Certificate</a>.'),
       options: [
         { label: '---', value: null }

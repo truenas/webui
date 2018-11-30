@@ -49,7 +49,7 @@ export class ServiceSNMPComponent {
       name : 'contact',
       placeholder : T('Contact'),
       tooltip: T('Enter an email address to receive messages from the\
-                  <a href="%%docurl%%/services.html#snmp%%webversion%%"\
+                  <a href="%%docurl%%/services.html%%webversion%%#snmp"\
                   target="_blank">SNMP service</a>.'),
       required: true,
       validation: [Validators.required, Validators.email]

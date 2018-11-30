@@ -162,6 +162,7 @@ export class NFSFormComponent {
         }
       ],
       isHidden: false,
+      value: []
     }
   ];
 
