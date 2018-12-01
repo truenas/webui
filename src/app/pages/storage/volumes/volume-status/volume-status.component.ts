@@ -22,6 +22,7 @@ interface poolDiskInfo {
   status: any,
   actions ?: any,
   path ?: any,
+  guid: any,
 }
 
 @Component({
@@ -165,19 +166,17 @@ export class VolumeStatusComponent implements OnInit {
         ).subscribe((res) => {
           if (res) {
             this.loader.open();
-            let value = { label: row.path };
-            this.rest.post('storage/volume/' + this.pk + '/offline/', {
-              body: JSON.stringify(value)
-            }).subscribe(
+            const value = { label: row.guid };
+            this.ws.call('pool.offline', [this.pk, value]).subscribe(
               (res) => {
                 this.getData();
                 this.loader.close();
               },
-              (res) => {
+              (err) => {
                 this.loader.close();
-                this.dialogService.errorReport("Error", res.error.error_message, res.error.traceback);
+                new EntityUtils().handleWSError(this, err, this.dialogService);
               }
-            );
+            )
           }
         })
       },
@@ -191,19 +190,17 @@ export class VolumeStatusComponent implements OnInit {
         ).subscribe((res) => {
           if (res) {
             this.loader.open();
-            let value = { label: row.path };
-            this.rest.post('storage/volume/' + this.pk + '/online/', {
-              body: JSON.stringify(value)
-            }).subscribe(
+            let value = { label: row.guid };
+            this.ws.call('pool.online', [this.pk, value]).subscribe(
               (res) => {
                 this.getData();
                 this.loader.close();
               },
-              (res) => {
+              (err) => {
                 this.loader.close();
-                this.dialogService.errorReport("Error", res.error.error_message, res.error.traceback);
+                new EntityUtils().handleWSError(this, err, this.dialogService);
               }
-            );
+            )
           }
         });
       },
@@ -293,6 +290,7 @@ export class VolumeStatusComponent implements OnInit {
       checksum: stats.checksum_errors ? stats.checksum_errors : 0,
       status: data.status,
       path: data.path,
+      guid: data.guid,
     };
 
     // add actions
