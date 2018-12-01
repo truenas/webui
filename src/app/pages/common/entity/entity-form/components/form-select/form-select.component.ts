@@ -1,4 +1,4 @@
-import { Component, ViewChild, Output, EventEmitter, AfterViewInit} from '@angular/core';
+import { Component, ViewChild, Output, EventEmitter, AfterViewInit, AfterViewChecked } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs/Observable';
@@ -13,20 +13,23 @@ import { MatOptionSelectionChange } from '@angular/material/core';
   styleUrls: ['form-select.component.scss', '../dynamic-field/dynamic-field.css'],
   templateUrl: './form-select.component.html',
 })
-export class FormSelectComponent implements Field, AfterViewInit {
+export class FormSelectComponent implements Field, AfterViewInit, AfterViewChecked {
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
+  control:any;
 
   @ViewChild('selectTrigger') matSelect;
   @ViewChild('field') field;
 
+  public formReady:boolean = false;
   public selected:any;
   public allSelected: boolean;
   public selectedValues: any[] = []; 
   public selectStates: boolean[] = []; // Collection of checkmark states
   public selectAllStateCache: boolean[] = []; // Cache the state when select all was toggled
   public selectAllValueCache: boolean[] = []; // Cache the state when select all was toggled
+  public customTriggerValue:any;
   private _formValue:any;
   get formValue(){
     return this._formValue;
@@ -42,6 +45,23 @@ export class FormSelectComponent implements Field, AfterViewInit {
   ngAfterViewInit(){
     this.selectStates = this.config.options.map(item => false);
     //let testOptions = this.matSelect.options._results;
+    
+    this.control = this.group.controls[this.config.name];
+    this.control.valueChanges.subscribe((evt) => {
+      if(this.config.multiple && evt.length > 0 && !this.formReady){
+        this.selectedValues = evt;
+      }
+    });
+  }
+
+  ngAfterViewChecked(){
+    if(this.config.name == "groups" && !this.formReady  && typeof this.config.options !== "undefined" && this.config.options.length > 0){
+        let keys = Object.keys(this.group.controls);
+        let newStates = this.config.options.map(item => this.selectedValues.indexOf(item.value) !== -1);
+        this.selectStates = newStates;
+        this.updateValues();
+        this.formReady = true;
+    }
   }
 
   onChangeOption($event) {
@@ -100,12 +120,15 @@ export class FormSelectComponent implements Field, AfterViewInit {
 
   updateValues(){
     let newValues = [];
+    let triggerValue = [];
     this.selectStates.forEach((item, index) => {
       if(item){
         newValues.push(this.config.options[index].value);
+        triggerValue.push(this.config.options[index].label);
       }
     });
     this.selectedValues = newValues;
+    this.customTriggerValue = triggerValue;
     this.formValue = '';
   }
 }
