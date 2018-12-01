@@ -61,7 +61,6 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
 
   ngAfterViewChecked(){
     if(!this.formReady  && typeof this.config.options !== "undefined" && this.config.options.length > 0){
-        console.log("AVC")
         let keys = Object.keys(this.group.controls);
         let newStates = this.config.options.map(item => this.selectedValues.indexOf(item.value) !== -1);
         this.selectStates = newStates;
