@@ -23,6 +23,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   @ViewChild('field') field;
 
   public formReady:boolean = false;
+  public initialValue:any;
   public selected:any;
   public allSelected: boolean;
   public selectedValues: any[] = []; 
@@ -47,15 +48,20 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     //let testOptions = this.matSelect.options._results;
     
     this.control = this.group.controls[this.config.name];
+    // if control has a value on init
+    if(this.control.value && this.control.value.length > 0){
+        this.selectedValues = this.control.value;
+    }
     this.control.valueChanges.subscribe((evt) => {
       if(this.config.multiple && evt.length > 0 && !this.formReady){
         this.selectedValues = evt;
-      }
+      } 
     });
   }
 
   ngAfterViewChecked(){
     if(!this.formReady  && typeof this.config.options !== "undefined" && this.config.options.length > 0){
+        console.log("AVC")
         let keys = Object.keys(this.group.controls);
         let newStates = this.config.options.map(item => this.selectedValues.indexOf(item.value) !== -1);
         this.selectStates = newStates;
