@@ -1,4 +1,4 @@
-import { Component, ViewChild, Output, EventEmitter, AfterViewInit, AfterViewChecked } from '@angular/core';
+import { Component, ViewChild, Output, EventEmitter, AfterViewInit, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs/Observable';
@@ -39,7 +39,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     this._formValue = result
   }
 
-  constructor(public translate: TranslateService) {
+  constructor(public translate: TranslateService, public cd: ChangeDetectorRef) {
   }
 
   ngAfterViewInit(){
@@ -61,6 +61,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
         this.selectStates = newStates;
         this.updateValues();
         this.formReady = true;
+        this.cd.detectChanges();
     }
   }
 
