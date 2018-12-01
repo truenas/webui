@@ -128,9 +128,6 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
           }
         
       }
-        if(this.disks.length > 0){
-          this.setSelectedDisk(0);
-        }
     });
 
 
@@ -149,6 +146,10 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     this.core.register({observerClass:this,eventName:"DisksInfo"}).subscribe((evt:CoreEvent) => {
       this.setDisksData(evt);
       this.dataRcvd = true;
+
+      if(this.disks.length > 0){
+        this.setSelectedDisk();
+      }
     });
 
 
@@ -241,6 +242,12 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   }
 
   setSelectedDisk(index?:number){
+    if(!index && this.diskDetails.length > 0){
+      this.selectedDisk = 0;
+      this.core.emit({name:"StatsDiskTempRequest", data:[this.diskDetails[0].name, 0] });
+      return;
+    }
+
     if(index >= 0){
       for(let i = 0; i < this.diskDetails.length; i++){
         if(this.diskDetails[i].name == this.disks[index]){
