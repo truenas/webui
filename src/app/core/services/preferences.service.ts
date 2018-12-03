@@ -24,7 +24,7 @@ export class PreferencesService {
   public preferences: UserPreferences = {
     "platform":"freenas",
     "timestamp":new Date(),
-    "userTheme":"ix-blue", // Theme name
+    "userTheme":"ix-dark", // Theme name
     "customThemes": [], // Theme Objects
     "favoriteThemes": [], // Theme Names
     "showGuide":true,
