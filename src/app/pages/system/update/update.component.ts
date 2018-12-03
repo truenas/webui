@@ -227,7 +227,7 @@ export class UpdateComponent implements OnInit {
       } else if (this.selectedTrain.toLowerCase().includes('11-stable')) {
         this.currentTrainDescription = '[release]';
       } else if (this.selectedTrain.toLowerCase().includes('11.2-stable')) {
-        this.currentTrainDescription = '[prerelease]';
+        this.currentTrainDescription = '[release]';
       } else {
         this.currentTrainDescription = res.trains[this.selectedTrain].description.toLowerCase();
       }
