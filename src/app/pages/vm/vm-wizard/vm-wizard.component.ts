@@ -163,7 +163,8 @@ export class VMWizardComponent {
           blurStatus: true,
           blurEvent: this.blurEvent3,
           parent: this,
-          validation: [Validators.required, Validators.min(1)]
+          validation: [Validators.required, Validators.min(1)],
+          required: true
         },
         {
           type: 'paragraph',
@@ -177,7 +178,9 @@ export class VMWizardComponent {
           options: [],
           isHidden: false,
           initial: '/mnt',
-          explorerType: 'directory'
+          explorerType: 'directory',
+          validation: [Validators.required],
+          required: true
         },
         {
           type: 'select',
@@ -365,7 +368,9 @@ export class VMWizardComponent {
       });
 
       ( < FormGroup > entityWizard.formArray.get([3])).get('datastore').valueChanges.subscribe((datastore)=>{
-        if(datastore !== undefined && datastore !== ""){
+        if(datastore !== undefined && datastore !== "" && datastore !== "/mnt"){
+          _.find(this.wizardConfig[3].fieldConfig, {'name' : 'datastore'}).hasErrors = false;
+          _.find(this.wizardConfig[3].fieldConfig, {'name' : 'datastore'}).errors = null;
         const volsize = ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].value * 1073741824;
         this.ws.call('filesystem.statfs',[datastore]).subscribe((stat)=> {
           _.find(this.wizardConfig[3].fieldConfig, {'name' : 'volsize'}).hasErrors = false;
@@ -385,6 +390,17 @@ export class VMWizardComponent {
               ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(volsize/1073741824);
           };
         });
+      } else {
+        if(datastore === '/mnt'){
+          ( < FormGroup > entityWizard.formArray.get([3])).controls['datastore'].setValue(null);
+          _.find(this.wizardConfig[3].fieldConfig, {'name' : 'datastore'}).hasErrors = true;
+          _.find(this.wizardConfig[3].fieldConfig, {'name' : 'datastore'}).errors = `Virtual Machine storage are not allowed on temporary file storage, ${datastore}`;
+        }
+        if(datastore === ''){
+          ( < FormGroup > entityWizard.formArray.get([3])).controls['datastore'].setValue(null);
+          _.find(this.wizardConfig[3].fieldConfig, {'name' : 'datastore'}).hasErrors = true;
+          _.find(this.wizardConfig[3].fieldConfig, {'name' : 'datastore'}).errors = `Please select a valid path`;
+        }
       }
       });
       ( < FormGroup > entityWizard.formArray.get([5]).get('iso_path')).valueChanges.subscribe((iso_path) => {
@@ -523,7 +539,7 @@ blurEvent3(parent){
     const volsize = parent.entityWizard.formArray.controls[3].value.volsize * 1073741824;
     const datastore = parent.entityWizard.formArray.controls[3].value.datastore;
     const vm_name = parent.entityWizard.formGroup.value.formArray[1].name;
-    if(datastore !== undefined && datastore !== ""){
+    if(datastore !== undefined && datastore !== "" && datastore !== "/mnt"){
     parent.ws.call('filesystem.statfs',[datastore]).subscribe((stat)=> {
       if (stat.free_bytes < volsize ) {
         _.find(parent.wizardConfig[3].fieldConfig, {'name' : 'volsize'}).hasErrors = true;
