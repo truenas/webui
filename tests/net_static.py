@@ -31,21 +31,21 @@ except ImportError:
     import unittest
 
 xpaths = { 'navNetwork' : '//*[@id="nav-4"]/div/a[1]',
-           'submenuInterface' : '//*[@id="4-1"]',
+           'submenuStatic' : '//*[@id="4-3"]',
          }
 
 
-class conf_netinterface_test(unittest.TestCase):
+class conf_netstatic_test(unittest.TestCase):
     @classmethod
     def setUpClass(inst):
         driver.implicitly_wait(30)
         pass
 
     # Test navigation Account>Users>Hover>New User and enter username,fullname,password,confirmation and wait till user is  visibile in the list
-    def test_01_nav_net_interface(self):
+    def test_01_nav_net_static(self):
         try:
-            # Click on the vlan submenu
-            driver.find_element_by_xpath(xpaths['submenuInterface']).click()
+            # Click on the static submenu
+            driver.find_element_by_xpath(xpaths['submenuStatic']).click()
             # cancelling the tour
             if self.is_element_present(By.XPATH,"/html/body/div[6]/div[1]/button"):
                 driver.find_element_by_xpath("/html/body/div[6]/div[1]/button").click()
@@ -55,7 +55,7 @@ class conf_netinterface_test(unittest.TestCase):
             page_data=ui_element.text
             print ("the Page now is: " + page_data)
             # assert response
-            self.assertTrue("Interfaces" in page_data)
+            self.assertTrue("Static Routes" in page_data)
             #taking screenshot
             function.screenshot(driver, self)
         except Exception:
@@ -87,8 +87,8 @@ class conf_netinterface_test(unittest.TestCase):
     def tearDownClass(inst):
         pass
 
-def run_conf_netinterface_test(webdriver):
+def run_conf_netstatic_test(webdriver):
     global driver
     driver = webdriver
-    suite = unittest.TestLoader().loadTestsFromTestCase(conf_netinterface_test)
+    suite = unittest.TestLoader().loadTestsFromTestCase(conf_netstatic_test)
     xmlrunner.XMLTestRunner(output=results_xml, verbosity=2).run(suite)
