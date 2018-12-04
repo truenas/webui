@@ -36,7 +36,7 @@ xpaths = {
           'submenuGroup': '//*[@id="1-0"]',
           'newGroupName': '//*[@id="bsdgrp_group"]/mat-input-container/div/div[1]/div/input',
           'fabTrigger': '//*[@id="myFab"]/div/smd-fab-trigger/button',
-          'fabAction': '//*[@id="add_action_button"]/span/mat-icon',
+          'fabAction': '//*[@id="add_action_button"]',
           'saveButton': '//*[@id="save_button"]',
           'permitsudoCheckbox': '//*[@id="bsdgrp_sudo"]/mat-checkbox/label/div'
         }
