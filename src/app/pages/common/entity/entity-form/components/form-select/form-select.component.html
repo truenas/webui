@@ -1,4 +1,4 @@
-<div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="formReady && !config.isHidden">
+<div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
   <mat-form-field class="full-width" value="fromFormField" #field>
     <mat-select 
       #selectTrigger
@@ -25,16 +25,15 @@
       </div>
       -->
 
-      <div *ngIf="config">
+      <div *ngIf="formReady">
         <ng-container *ngFor="let option of config.options; let i=index">
-          {{option.disabled}}
           <!-- if disabled -->
-          <mat-option *ngIf="option.disable" [value]="option.value" disabled style="opacity:0.5">
+          <mat-option *ngIf="option.disable " [value]="option.value" disabled style="opacity:0.5">
               <span *ngIf="config.multiple">
                 <mat-icon *ngIf="selectStates[i]" class="fn-checked">check_circle</mat-icon>
                 <mat-icon *ngIf="!selectStates[i]" class="fn-unchecked">remove</mat-icon>
               </span>
-              {{ option.label }}
+              {{ option.disabled }}
           </mat-option>
 
           <!-- else -->
@@ -49,6 +48,14 @@
         </ng-container>
       </div>
 
+      <div *ngIf="!formReady || config.options.length == 0">
+        <ng-container>
+          <!-- if disabled -->
+          <mat-option disabled style="opacity:0.5">
+              (No Options)
+          </mat-option>
+        </ng-container>
+      </div>
     </mat-select>
 
 
