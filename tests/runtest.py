@@ -27,6 +27,8 @@ from store_pool import run_create_pool_test
 from store_delete import run_delete_pool_test
 
 from net_glob import run_conf_netglob_test
+from net_vlan import run_conf_netvlan_test
+
 
 from plugins import run_plugin_test
 
@@ -164,7 +166,9 @@ except NameError:
     run_create_user_test(runDriver)
     run_create_group_test(runDriver)
     run_create_pool_test(runDriver)
+
     run_conf_netglob_test(runDriver)
+    run_conf_netvlan_test(runDriver)
 
     run_conf_sysgeneral_test(runDriver)
     run_conf_ntpserver_test(runDriver)
@@ -243,7 +247,7 @@ else:
 
     elif (test_name == "network"):
         run_conf_netglob_test(runDriver)
-
+        run_conf_netvlan_test(runDriver)
     elif (test_name == "storage"):
         run_create_pool_test(runDriver)
         run_delete_pool_test(runDriver)
@@ -310,6 +314,9 @@ if path.exists('serv_afp.pyc'):
 
 if path.exists('net_glob.pyc'):
     call(["rm", "net_glob.pyc"])
+
+if path.exists('net_vlan.pyc'):
+    call(["rm", "net_vlan.pyc"])
 
 if path.exists('serv_smb.pyc'):
     call(["rm", "serv_smb.pyc"])
