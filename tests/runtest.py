@@ -30,6 +30,7 @@ from net_glob import run_conf_netglob_test
 from net_vlan import run_conf_netvlan_test
 from net_interface import run_conf_netinterface_test
 from net_static import run_conf_netstatic_test
+from net_linkagg import run_conf_netlinkagg_test
 
 from plugins import run_plugin_test
 
@@ -169,9 +170,10 @@ except NameError:
     run_create_pool_test(runDriver)
 
     run_conf_netglob_test(runDriver)
-    run_conf_netvlan_test(runDriver)
     run_conf_netinterface_test(runDriver)
+    run_conf_netlinkagg_test(runDriver)
     run_conf_netstatic_test(runDriver)
+    run_conf_netvlan_test(runDriver)
 
     run_conf_sysgeneral_test(runDriver)
     run_conf_ntpserver_test(runDriver)
@@ -250,9 +252,10 @@ else:
 
     elif (test_name == "network"):
         run_conf_netglob_test(runDriver)
-        run_conf_netvlan_test(runDriver)
         run_conf_netinterface_test(runDriver)
+        run_conf_netlinkagg_test(runDriver)
         run_conf_netstatic_test(runDriver)
+        run_conf_netvlan_test(runDriver)
 
     elif (test_name == "storage"):
         run_create_pool_test(runDriver)
@@ -329,6 +332,9 @@ if path.exists('net_interface.pyc'):
 
 if path.exists('net_static.pyc'):
     call(["rm", "net_static.pyc"])
+
+if path.exists('net_linkagg.pyc'):
+    call(["rm", "net_linkagg.pyc"])
 
 if path.exists('serv_smb.pyc'):
     call(["rm", "serv_smb.pyc"])
