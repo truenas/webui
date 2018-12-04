@@ -31,7 +31,7 @@ except ImportError:
     import unittest
 
 xpaths = { 'navNetwork' : '//*[@id="nav-4"]/div/a[1]',
-           'submenuVlan' : '//*[@id="4-1"]',
+           'submenuVlan' : '//*[@id="4-4"]',
          }
 
 
