@@ -23,7 +23,7 @@ fs.readdir( translations, function( err, files ) {
             console.log("Generating " + jsonfile)
             exec(po2json + ' --fallback-to-msgid -p -f mf ' + translations + file + ' ' + translations + jsonfile, (err, stdout, stderr) => {
                 if (err) {
-                    console.error( "Error converting file.", file );
+                    console.error( "Error converting file.", file, err );
                     // node couldn't execute the command
                     return;
                 }
