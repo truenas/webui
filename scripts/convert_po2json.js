@@ -7,6 +7,7 @@ var process = require( "process" );
 var exec = require('child_process').exec;
 
 var translations = "src/assets/i18n/";
+var po2json = "node_modules/po2json/bin/po2json"
 
 // Loop through all the files in the temp directory
 fs.readdir( translations, function( err, files ) {
@@ -20,7 +21,7 @@ fs.readdir( translations, function( err, files ) {
             let jsonfile = file.replace(/\.po$/, '.json');
 
             console.log("Generating " + jsonfile)
-            exec('po2json --fallback-to-msgid -p -f mf ' + translations + file + ' ' + translations + jsonfile, (err, stdout, stderr) => {
+            exec(po2json + ' --fallback-to-msgid -p -f mf ' + translations + file + ' ' + translations + jsonfile, (err, stdout, stderr) => {
                 if (err) {
                     console.error( "Error converting file.", file );
                     // node couldn't execute the command
