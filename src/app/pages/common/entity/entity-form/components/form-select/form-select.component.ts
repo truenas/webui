@@ -5,6 +5,7 @@ import { Observable } from 'rxjs/Observable';
 
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
+import * as _ from 'lodash';
 import { TooltipComponent } from '../tooltip/tooltip.component';
 import { MatOptionSelectionChange } from '@angular/material/core';
 
@@ -57,6 +58,11 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
         this.selectedValues = evt;
       } 
     });
+    if (this.config.options.length === 0){
+      this.config.options.push({
+        label:null, value:-1
+      });
+    }
   }
 
   ngAfterViewChecked(){
@@ -67,6 +73,14 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
         this.updateValues();
         this.formReady = true;
         this.cd.detectChanges();
+        this.config.options.forEach(element => {
+          if(element.value ===-1){
+            _.remove(this.config.options, function (item){
+              return item.value === -1
+            });
+
+          }
+        });
     }
   }
 
