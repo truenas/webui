@@ -7,6 +7,7 @@ import { WebSocketService } from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { AboutModalDialog } from '../dialog/about/about-dialog.component';
+import { TaskManagerComponent } from '../dialog/task-manager/task-manager.component';
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
 import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
 import * as hopscotch from 'hopscotch';
@@ -42,6 +43,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   themesMenu: Theme[] = this.themeService.themesMenu;
   currentTheme:string = "ix-blue";
   public createThemeLabel = "Create Theme";
+  isTaskMangerOpened = false;
 
   constructor(
     public themeService: ThemeService,
@@ -210,5 +212,25 @@ export class TopbarComponent implements OnInit, OnDestroy {
         window.location.href = '/legacy/';
       }
     });
+  }
+
+  onShowTaskManager() {
+    console.log("show task manager");
+    this.isTaskMangerOpened = true;
+    const taskDialogRef = this.dialog.open(TaskManagerComponent, {
+      width: '400px',
+      // height: '500px',
+      hasBackdrop: false,
+      position: {
+        top: '48px',
+        right: '0px'
+      },
+    });
+
+    taskDialogRef.afterClosed().subscribe(
+      (res) => {
+        this.isTaskMangerOpened = false;
+      }
+    );
   }
 }
