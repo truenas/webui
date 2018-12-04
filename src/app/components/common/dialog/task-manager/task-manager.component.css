@@ -1,0 +1,25 @@
+mat-dialog-content.task-manager-dialog-content.mat-dialog-content {
+    padding: 0px;
+}
+
+button.task-manager-action-button {
+    width: 100%;
+}
+
+mat-icon.state-success {
+    color: var(--green);
+}
+mat-icon.state-failed {
+    color: var(--red);
+}
+mat-icon.state-running {
+    color: var(--primary);
+}
+/* mat-row.row-SUCCESS {
+    border-left-color: var(--green);
+    border-left-style: solid;
+}
+mat-row.row-FAILED {
+    border-left-color: var(--red);
+    border-left-style: solid;
+} */

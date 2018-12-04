@@ -1,29 +1,33 @@
 <h1 mat-dialog-title>Tasks</h1>
-<mat-dialog-content class="mat-typography">
-    <table mat-table [dataSource]="jobs" matSort>
-
-        <!-- Position Column -->
-        <ng-container matColumnDef="method">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Method </th>
-          <td mat-cell *matCellDef="let element"> {{element.method}} </td>
-        </ng-container>
-      
-        <!-- Name Column -->
+<mat-dialog-content class="task-manager-dialog-content">
+    <mat-table #table [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="state">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> State </th>
-          <td mat-cell *matCellDef="let element"> {{element.state}} </td>
+            <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="50px"> State </mat-header-cell>
+            <mat-cell *matCellDef="let element" fxFlex="50px">
+                <mat-icon *ngIf="element.state == 'SUCCESS'" class="state-success">check_circle_outline</mat-icon>
+                <mat-icon *ngIf="element.state == 'FAILED'" class="state-failed">highlight_off</mat-icon>
+                <mat-icon *ngIf="element.state == 'RUNNING'" class="state-running">cached</mat-icon>
+            </mat-cell>
         </ng-container>
-      
-        <!-- Weight Column -->
-        <ng-container matColumnDef="progress">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Progress </th>
-          <td mat-cell *matCellDef="let element"> {{element.progress.percent}} </td>
+        <ng-container matColumnDef="method">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Method </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.method}} </mat-cell>
         </ng-container>
+        <ng-container matColumnDef="progress.percent">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Progress </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.progress.percent}} 
+                <mat-progress-bar mode="determinate" [value]="element.progress.percent"></mat-progress-bar>
+            </mat-cell>
+        </ng-container>
+        <!-- <ng-container matColumnDef="{{column.id}}" *ngFor="let column of columnNames">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> {{column.value}} </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element[column.id]}} </mat-cell>
+        </ng-container> -->
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      </table>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-    <button mat-button mat-dialog-close>Close</button>
+    <button mat-button mat-dialog-close class="task-manager-action-button">Close</button>
 </mat-dialog-actions>
