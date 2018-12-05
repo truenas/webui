@@ -44,6 +44,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   currentTheme:string = "ix-blue";
   public createThemeLabel = "Create Theme";
   isTaskMangerOpened = false;
+  taskDialogRef: MatDialogRef<TaskManagerComponent>;
 
   constructor(
     public themeService: ThemeService,
@@ -216,18 +217,22 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   onShowTaskManager() {
     console.log("show task manager");
-    this.isTaskMangerOpened = true;
-    const taskDialogRef = this.dialog.open(TaskManagerComponent, {
-      width: '400px',
-      // height: '500px',
-      hasBackdrop: false,
-      position: {
-        top: '48px',
-        right: '0px'
-      },
-    });
+    if (this.isTaskMangerOpened) {
+      this.taskDialogRef.close(true);
+    } else {
+      this.isTaskMangerOpened = true;
+      this.taskDialogRef = this.dialog.open(TaskManagerComponent, {
+        width: '400px',
+        // height: '500px',
+        hasBackdrop: false,
+        position: {
+          top: '48px',
+          right: '0px'
+        },
+      });
+    }
 
-    taskDialogRef.afterClosed().subscribe(
+    this.taskDialogRef.afterClosed().subscribe(
       (res) => {
         this.isTaskMangerOpened = false;
       }
