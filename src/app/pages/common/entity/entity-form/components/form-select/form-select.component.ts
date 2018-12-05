@@ -53,9 +53,11 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
         this.selectedValues = this.control.value;
     }
     this.control.valueChanges.subscribe((evt) => {
-      if(this.config.multiple && evt.length > 0 && !this.formReady){
-        this.selectedValues = evt;
-      } 
+      if(evt) {
+        if(this.config.multiple && evt.length > 0 && !this.formReady){
+          this.selectedValues = evt;
+        }
+      }
     });
   }
 
