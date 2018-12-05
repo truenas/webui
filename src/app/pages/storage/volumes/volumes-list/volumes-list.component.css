@@ -28,6 +28,8 @@
     float: right; 
     padding-bottom: 20px;
     padding-top: 4px;
+    position:relative;
+    z-index:50;
 }
 
 .unlock_button {
