@@ -4,13 +4,14 @@
         <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
     </span>
 
-    <mat-table #table [dataSource]="dataSource" matSort>
+    <mat-table #taskTable [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="state">
             <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="50px"> State </mat-header-cell>
             <mat-cell *matCellDef="let element" fxFlex="50px">
                 <mat-icon *ngIf="element.state == 'SUCCESS'" class="state-success">check_circle_outline</mat-icon>
                 <mat-icon *ngIf="element.state == 'FAILED'" class="state-failed">highlight_off</mat-icon>
                 <mat-icon *ngIf="element.state == 'RUNNING'" class="state-running">cached</mat-icon>
+                <mat-icon *ngIf="element.state == 'WAITING'" class="state-waiting">schedule</mat-icon>
             </mat-cell>
         </ng-container>
         <ng-container matColumnDef="method">
@@ -20,7 +21,8 @@
         <ng-container matColumnDef="percent">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Progress </mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <mat-progress-bar mode="determinate" [value]="element.percent"></mat-progress-bar>
+                <span *ngIf="element.progress.percent != null"> {{element.progress.percent | number: '1.2-2'}}% </span>
+                <mat-progress-bar [mode]="element.state == 'RUNNING' ? 'buffer' : 'determinate'" [value]="element.progress.percent"></mat-progress-bar>
             </mat-cell>
         </ng-container>
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
