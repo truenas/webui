@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent } from 'angular-calendar';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import {
   startOfDay,

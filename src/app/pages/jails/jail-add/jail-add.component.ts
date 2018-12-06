@@ -1001,21 +1001,21 @@ export class JailAddComponent implements OnInit {
       }
 
       if ((this.formGroup.controls['dhcp'].value || this.formGroup.controls['auto_configure_ip6'].value) && !res) {
-        _.find(this.basicfieldConfig, { 'name': 'vnet' }).hasErrors = true;
-        _.find(this.basicfieldConfig, { 'name': 'vnet' }).errors = 'VNET is required.';
+        _.find(this.basicfieldConfig, { 'name': 'vnet' })['hasErrors'] = true;
+        _.find(this.basicfieldConfig, { 'name': 'vnet' })['errors'] = 'VNET is required.';
       } else {
-        _.find(this.basicfieldConfig, { 'name': 'vnet' }).hasErrors = false;
-        _.find(this.basicfieldConfig, { 'name': 'vnet' }).errors = '';
+        _.find(this.basicfieldConfig, { 'name': 'vnet' })['hasErrors'] = false;
+        _.find(this.basicfieldConfig, { 'name': 'vnet' })['errors'] = '';
       }
       this.updateInterfaceValidation();
     });
     this.formGroup.controls['bpf'].valueChanges.subscribe((res) => {
       if (this.formGroup.controls['dhcp'].value && !res) {
-        _.find(this.basicfieldConfig, { 'name': 'bpf' }).hasErrors = true;
-        _.find(this.basicfieldConfig, { 'name': 'bpf' }).errors = 'BPF is required.';
+        _.find(this.basicfieldConfig, { 'name': 'bpf' })['hasErrors'] = true;
+        _.find(this.basicfieldConfig, { 'name': 'bpf' })['errors'] = 'BPF is required.';
       } else {
-        _.find(this.basicfieldConfig, { 'name': 'bpf' }).hasErrors = false;
-        _.find(this.basicfieldConfig, { 'name': 'bpf' }).errors = '';
+        _.find(this.basicfieldConfig, { 'name': 'bpf' })['hasErrors'] = false;
+        _.find(this.basicfieldConfig, { 'name': 'bpf' })['errors'] = '';
       }
     });
     this.formGroup.controls['auto_configure_ip6'].valueChanges.subscribe((res) => {
@@ -1207,9 +1207,9 @@ export class JailAddComponent implements OnInit {
         const field = res.error[0];
         const error = res.error[1];
         const fc = _.find(this.formFileds, {'name' : field});
-        if (fc && !fc.isHidden) {
-          fc.hasErrors = true;
-          fc.errors = error;
+        if (fc && !fc['isHidden']) {
+          fc['hasErrors'] = true;
+          fc['errors'] = error;
         }
       } else {
         new EntityUtils().handleWSError(this, res, this.dialogService);
@@ -1233,13 +1233,13 @@ export class JailAddComponent implements OnInit {
     const jail_name = parent.formGroup.value.uuid;
     parent.ws.call('jail.query', [[["id","=",jail_name]]]).subscribe((jail_wizard_res)=>{
       if(jail_wizard_res.length > 0){
-        _.find(parent.formFileds, {'name' : 'uuid'}).hasErrors = true;
-        _.find(parent.formFileds, {'name' : 'uuid'}).errors = `Jail ${jail_wizard_res[0].id} already exists.`;
+        _.find(parent.formFileds, {'name' : 'uuid'})['hasErrors'] = true;
+        _.find(parent.formFileds, {'name' : 'uuid'})['errors'] = `Jail ${jail_wizard_res[0].id} already exists.`;
         parent.formGroup.controls.uuid.setValue("");
   
       } else {
-        _.find(parent.formFileds, {'name' : 'uuid'}).hasErrors = false;
-        _.find(parent.formFileds, {'name' : 'uuid'}).errors = '';
+        _.find(parent.formFileds, {'name' : 'uuid'})['hasErrors'] = false;
+        _.find(parent.formFileds, {'name' : 'uuid'})['errors'] = '';
 
       }
     })
