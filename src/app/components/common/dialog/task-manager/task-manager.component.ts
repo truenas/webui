@@ -80,4 +80,11 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
   applyFilter(filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
+
+  getReadableDate(data: any) {
+    if (data != null) {
+      return new Date(data.$date);
+    }
+    return;
+  }
 }

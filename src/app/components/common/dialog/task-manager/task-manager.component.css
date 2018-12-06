@@ -29,6 +29,9 @@ mat-icon.state-waiting {
 mat-cell.mat-column-percent {
     display: inline-grid;
 }
+mat-cell.mat-column-expandedDetail {
+    display: inline-grid;
+}
 
 .element-row:not(.expanded) {
     cursor: pointer;

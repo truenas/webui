@@ -29,10 +29,10 @@
         <!-- expanded row -->
         <ng-container matColumnDef="expandedDetail">
             <mat-cell *matCellDef="let element">
-                <div class="element-detail">
-                    hello
-                    {{element.id}} - {{element.method}}
-                </div>
+                <span>Status: {{element.state}}</span>
+                <span *ngIf="element.error != null">Error: {{element.error}}</span>
+                <span *ngIf="element.logs_path != null">Logs Path: {{element.logs_path}}</span>
+                <span *ngIf="element.time_started != null">Date: {{getReadableDate(element.time_started)}}</span>
             </mat-cell>
         </ng-container>
 
