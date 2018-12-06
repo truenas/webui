@@ -8,7 +8,7 @@ import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embe
 import {RestService, WebSocketService} from '../../../services/';
 import { ThemeService, Theme} from 'app/services/theme/theme.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 
 @Component({
   selector : 'ui-preferences',

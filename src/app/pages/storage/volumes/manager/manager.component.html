@@ -6,9 +6,9 @@
     <div class="manager">
       <div class="fields m-3">
         <div *ngIf="isNew;else extend">
-          <mat-input-container>
+          <mat-form-field>
             <input matInput name="poolname" id="pool-manager__name-input-field" placeholder="{{'Name' | translate}}" [(ngModel)]="name" (input)="checkPoolName()" required>
-          </mat-input-container>
+          </mat-form-field>
           <tooltip class="volumeTooltip" [message]=name_tooltip></tooltip>
           <mat-checkbox
             id="pool-manager__encryption-checkbox"
@@ -26,9 +26,9 @@
           </div>
         </div>
         <ng-template #extend>
-          <mat-input-container>
+          <mat-form-field>
             <input id="pool-manager__extend-name-input-field" matInput placeholder="Name" [value]="name" disabled>
-          </mat-input-container>
+          </mat-form-field>
           <mat-error *ngIf="isEncrypted">{{"Extending an encrypted pool resets the passphrase and recovery key!" | translate }}</mat-error>
         </ng-template>
       </div>
@@ -79,22 +79,22 @@
                   name="Capacity"
                   prop="capacity"></ngx-datatable-column>
               </ngx-datatable>
-              <mat-input-container>
+              <mat-form-field>
                   <input matInput
                     id="pool-manager__nameFilter"
                     type='text'
                     placeholder='Filter disks by name'
                     (keyup)='updateFilter($event)'
                   />
-                </mat-input-container>
-                <mat-input-container>
+                </mat-form-field>
+                <mat-form-field>
                   <input matInput
                     id="pool-manager__capacityFilter"
                     type='text'
                     placeholder='Filter disks by capacity'
                     (keyup)='updateFilter($event)'
                   />
-                </mat-input-container>
+                </mat-form-field>
                 <mat-error *ngIf="re_has_errors">{{"Invalid regex filter" | translate}}</mat-error>
         </div>
         <div class="pool">

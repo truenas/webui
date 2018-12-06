@@ -8,7 +8,7 @@ import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embe
 import {RestService, WebSocketService} from 'app/services/';
 import { ThemeService, Theme } from 'app/services/theme/theme.service';
 import { CoreEvent, CoreService } from 'app/core/services/core.service';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { MatDialog, MatDialogRef, MatSnackBar } from '@angular/material';
 import { DialogService } from 'app/services/dialog.service';
 import { T } from 'app/translate-marker';

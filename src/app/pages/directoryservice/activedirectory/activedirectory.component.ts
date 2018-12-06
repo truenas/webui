@@ -1,7 +1,7 @@
 import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs/Subscription';
+import {Subscription} from 'rxjs';
 import {RestService, SystemGeneralService, WebSocketService} from '../../../services/';
 import {FieldConfig} from '../../common/entity/entity-form/models/field-config.interface';
 import {  DialogService } from '../../../services/';
@@ -424,7 +424,7 @@ export class ActiveDirectoryComponent {
              target="_blank">idmap_autorid(8)</a>\, <a\
              href="https://www.freebsd.org/cgi/man.cgi?query=idmap_ad"\
              target="_blank">ad</a>\, <a\
-             href="%%docurl%%/directoryservice.html#id12%%webversion%%"\
+             href="%%docurl%%/directoryservice.html%%webversion%%#id12"\
              target="_blank">fruit</a>\, <a\
              href="https://www.freebsd.org/cgi/man.cgi?query=idmap_ldap"\
              target="_blank">idmap_ldap(8)</a>\, <a\
@@ -454,14 +454,14 @@ export class ActiveDirectoryComponent {
       if(res){
         entityEdit.setDisabled('ad_bindname', true);
         entityEdit.setDisabled('ad_bindpw', true);
-        _.find(this.fieldConfig, {'name' : 'ad_bindname'}).isHidden = true;
-        _.find(this.fieldConfig, {'name' : 'ad_bindpw'}).isHidden = true;
+        _.find(this.fieldConfig, {'name' : 'ad_bindname'})['isHidden'] = true;
+        _.find(this.fieldConfig, {'name' : 'ad_bindpw'})['isHidden'] = true;
 
       } else {
         entityEdit.setDisabled('ad_bindname', false);
         entityEdit.setDisabled('ad_bindpw', false);
-        _.find(this.fieldConfig, {'name' : 'ad_bindname'}).isHidden = false;
-        _.find(this.fieldConfig, {'name' : 'ad_bindpw'}).isHidden = false;
+        _.find(this.fieldConfig, {'name' : 'ad_bindname'})['isHidden'] = false;
+        _.find(this.fieldConfig, {'name' : 'ad_bindpw'})['isHidden'] = false;
       }
 
     })
