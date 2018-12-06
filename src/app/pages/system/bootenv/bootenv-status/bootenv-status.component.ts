@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from "@angular/router";
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material';
 
 import { RestService } from '../../../../services/rest.service';
@@ -33,7 +33,7 @@ interface PoolDiskInfo {
                 <mat-list *ngIf="poolScan">
                   <mat-list-item><b>{{poolScan.function}}</b></mat-list-item>
                   <mat-list-item>Status: {{poolScan.pause != null ? 'PAUSED' : poolScan.state ? poolScan.state : 'None requested'}}</mat-list-item>
-                  <mat-list-item *ngIf="poolScan.errors != null">Errors: {{poolScan.errors}}</mat-list-item>
+                  <mat-list-item *ngIf="poolScan['errors'] != null">Errors: {{poolScan['errors']}}</mat-list-item>
                   <mat-list-item *ngIf="poolScan.start_time != null">Date: {{getReadableDate(poolScan.start_time)}}</mat-list-item>
                 </mat-list>
               </div>
@@ -69,7 +69,7 @@ interface PoolDiskInfo {
                       <mat-icon [matMenuTriggerFor]="statuMenu" [style.cursor]="'pointer'">more_vert</mat-icon>
                       <mat-menu #statuMenu="matMenu">
                         <span *ngFor="let action of rowData.data.actions" id="buttonAction_{{rowData.data.name}}">
-                          <button mat-menu-item *ngIf="!action.isHidden" (click)="action.onClick(rowData.data);">
+                          <button mat-menu-item *ngIf="!action['isHidden']" (click)="action.onClick(rowData.data);">
                             <span>{{ action.label }}</span>
                           </button>
                         </span>

@@ -1,3 +1,5 @@
+
+import {interval as observableInterval,  Observable ,  Subscription } from 'rxjs';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as domHelper from '../../../helpers/dom.helper';
@@ -13,8 +15,6 @@ import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
 import * as hopscotch from 'hopscotch';
 import { RestService } from "../../../services/rest.service";
 import { LanguageService } from "../../../services/language.service"
-import { Observable } from "rxjs/Observable";
-import { Subscription } from "rxjs/Subscription";
 import { TranslateService } from '@ngx-translate/core';
 import { EntityUtils } from '../../../pages/common/entity/utils';
 import { T } from '../../../translate-marker';
@@ -85,7 +85,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
       });
     });
 
-    this.continuosStreaming = Observable.interval(10000).subscribe(x => {
+    this.continuosStreaming = observableInterval(10000).subscribe(x => {
       this.showReplicationStatus();
     });
 

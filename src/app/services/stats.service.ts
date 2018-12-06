@@ -206,8 +206,8 @@ export class StatsService {
   private started:boolean = false;
   private bufferSize:number = 60000;// milliseconds
   private bufferSizeRealtime:number = 5000;// milliseconds
-  private broadcastId:number;
-  private broadcastRealtimeId:number;
+  private broadcastId:any;
+  private broadcastRealtimeId:any;
 
   constructor(private core:CoreService, private api:ApiService) {
     if(this.debug){

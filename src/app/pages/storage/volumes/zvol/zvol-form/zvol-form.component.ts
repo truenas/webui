@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
 
 import { RestService, WebSocketService } from '../../../../../services/';
@@ -294,9 +294,9 @@ export class ZvolFormComponent {
         this.ws.call('pool.dataset.query', [[["id","=",parent_dataset]]]).subscribe((parent_dataset_res)=>{
           this.custActions = null;
           entityForm.setDisabled('name',true);
-          sparse.isHidden =true;
-          volblocksize.isHidden =true;
-          _.find(this.fieldConfig, {name:'sparse'}).isHidden=true;
+          sparse['isHidden'] =true;
+          volblocksize['isHidden'] =true;
+          _.find(this.fieldConfig, {name:'sparse'})['isHidden']=true;
           this.customFilter = [[["id", "=", this.parent]]]
           this.isNew =false;
           let sync_collection = [{label:pk_dataset[0].sync.value, value: pk_dataset[0].sync.value}];

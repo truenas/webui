@@ -1,3 +1,5 @@
+
+import {interval as observableInterval,  Observable ,  Subject } from 'rxjs';
 import { Component, OnInit, OnDestroy, Input, ElementRef, ViewChild} from '@angular/core';
 import { UUID } from 'angular2-uuid';
 import { Router } from '@angular/router';
@@ -5,16 +7,14 @@ import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { WebSocketService, RestService } from '../../../services/';
 import { DialogService } from '../../../services/dialog.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/distinctUntilChanged';
-import 'rxjs/add/observable/fromEvent';
+
+
+
+
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { MatDialog } from '@angular/material';
 import { T } from '../../../translate-marker';
-import 'rxjs/add/observable/interval';
+
 
 interface VmProfile {
   name?:string;
@@ -93,7 +93,7 @@ export class VmCardsComponent implements OnInit, OnDestroy {
     /* TODO: remove this after middleware part is ready to give back
     correct state.
     */
-    Observable.interval(5000).subscribe((val) => {
+    observableInterval(5000).subscribe((val) => {
       this.checkStatus();
      });
     /*
