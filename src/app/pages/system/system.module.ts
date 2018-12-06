@@ -6,7 +6,7 @@ import { NgUploaderModule } from 'ngx-uploader';
 import { EntityModule } from '../common/entity/entity.module';
 
 import { MaterialModule } from '../../appMaterial.module';
-import { MarkdownModule } from 'angular2-markdown';
+import { MarkdownModule } from 'ngx-markdown';
 import { routing } from './system.routing';
 import { FlexLayoutModule } from '@angular/flex-layout';
 

@@ -104,9 +104,9 @@ export class VolumeStatusComponent implements OnInit {
         if (res[0]) {
           // if pool is passphrase protected, abled passphrase field.
           if (res[0].encrypt === 2) {
-            _.find(this.replaceDiskFormFields, { name: 'pass' }).isHidden = false;
+            _.find(this.replaceDiskFormFields, { name: 'pass' })['isHidden'] = false;
             _.find(this.replaceDiskFormFields, { name: 'pass' }).disabled = false;
-            _.find(this.replaceDiskFormFields, { name: 'pass2' }).isHidden = false;
+            _.find(this.replaceDiskFormFields, { name: 'pass2' })['isHidden'] = false;
             _.find(this.replaceDiskFormFields, { name: 'pass2' }).disabled = false;
           }
           this.poolScan = res[0].scan;

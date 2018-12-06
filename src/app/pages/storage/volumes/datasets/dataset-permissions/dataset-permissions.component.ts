@@ -167,16 +167,16 @@ export class DatasetPermissionsComponent implements OnDestroy {
       this.mp_acl = entityEdit.formGroup.controls['mp_acl'];
       this.mp_acl.setValue(res.acl);
       if (res.acl === 'windows') {
-        this.mp_mode.isHidden = true;
-        this.mp_mode_en.isHidden = true;
+        this.mp_mode['isHidden'] = true;
+        this.mp_mode_en['isHidden'] = true;
       }
       this.mp_acl_subscription = this.mp_acl.valueChanges.subscribe((acl) => {
         if (acl === 'windows') {
-          this.mp_mode.isHidden = true;
-          this.mp_mode_en.isHidden = true;
+          this.mp_mode['isHidden'] = true;
+          this.mp_mode_en['isHidden'] = true;
         } else {
-          this.mp_mode.isHidden = false;
-          this.mp_mode_en.isHidden = false;
+          this.mp_mode['isHidden'] = false;
+          this.mp_mode_en['isHidden'] = false;
         }
       });
     });

@@ -1,8 +1,10 @@
+
+import {fromEvent as observableFromEvent,  Subscription ,  Observable } from 'rxjs';
+
+import {distinctUntilChanged, debounceTime} from 'rxjs/operators';
 import {Component, ElementRef, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
-import { Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material';
-import { Observable } from 'rxjs/Observable';
 
 import {RestService} from '../../../../services/rest.service';
 import { WebSocketService } from '../../../../services/ws.service';
@@ -77,7 +79,7 @@ export class BootEnvironmentListComponent {
   }
 
   changeEvent(){
-    Observable.fromEvent(this.scrubIntervalEvent.nativeElement, 'keyup').debounceTime(150).distinctUntilChanged()
+    observableFromEvent(this.scrubIntervalEvent.nativeElement, 'keyup').pipe(debounceTime(150),distinctUntilChanged(),)
     .subscribe(() => {
       const scrubIntervalValue: number = this.scrubIntervalEvent.nativeElement.value;
       if( scrubIntervalValue > -1){
