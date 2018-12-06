@@ -3,6 +3,7 @@ import { MatDialogRef, MatSort, MatTableDataSource, MatDialogTitle, MatTable } f
 import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subscription } from 'rxjs/Rx';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
 import { WebSocketService } from '../../../../services/';
 
@@ -10,6 +11,13 @@ import { WebSocketService } from '../../../../services/';
   selector: 'task-manager',
   templateUrl: './task-manager.component.html',
   styleUrls: ['./task-manager.component.css'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0', display: 'none'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
 export class TaskManagerComponent implements OnInit, OnDestroy{
 
@@ -18,6 +26,7 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
   @ViewChild(MatSort) sort: MatSort;
   displayedColumns = ['state', 'method', 'percent'];
   private subscrition: Subscription;
+  public expandedElement: any | null;
 
   constructor(
     public dialogRef: MatDialogRef<TaskManagerComponent>,
@@ -50,8 +59,7 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
               this.dataSource.data[targetRow][key] = res[key];
             }
           }
-          // this.taskTable.renderRows();
-          this.dataSource.data = this.dataSource.data.slice();
+          this.taskTable.renderRows();
         }
       )
   }

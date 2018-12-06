@@ -25,3 +25,19 @@ mat-icon.state-running {
 mat-icon.state-waiting {
     color: var(--accent);
 }
+
+mat-cell.mat-column-percent {
+    display: inline-grid;
+}
+
+.element-row:not(.expanded) {
+    cursor: pointer;
+}
+
+.element-row:not(.expanded):hover {
+    background: #f5f5f5;
+}
+
+.element-row.expanded {
+    border-bottom-color: transparent;
+}

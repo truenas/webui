@@ -4,10 +4,10 @@
         <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
     </span>
 
-    <mat-table #taskTable [dataSource]="dataSource" matSort>
+    <mat-table #taskTable [dataSource]="dataSource" multiTemplateDataRows matSort>
         <ng-container matColumnDef="state">
-            <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="50px"> State </mat-header-cell>
-            <mat-cell *matCellDef="let element" fxFlex="50px">
+            <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="74px"> State </mat-header-cell>
+            <mat-cell *matCellDef="let element" fxFlex="74px">
                 <mat-icon *ngIf="element.state == 'SUCCESS'" class="state-success">check_circle_outline</mat-icon>
                 <mat-icon *ngIf="element.state == 'FAILED'" class="state-failed">highlight_off</mat-icon>
                 <mat-icon *ngIf="element.state == 'RUNNING'" class="state-running">cached</mat-icon>
@@ -18,15 +18,28 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header> Method </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.method}} </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="percent">
+        <ng-container matColumnDef="percent" class="task-manager-percent">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Progress </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <span *ngIf="element.progress.percent != null"> {{element.progress.percent | number: '1.2-2'}}% </span>
                 <mat-progress-bar [mode]="element.state == 'RUNNING' ? 'buffer' : 'determinate'" [value]="element.progress.percent"></mat-progress-bar>
             </mat-cell>
         </ng-container>
+
+        <!-- expanded row -->
+        <ng-container matColumnDef="expandedDetail">
+            <mat-cell *matCellDef="let element">
+                <div class="element-detail">
+                    hello
+                    {{element.id}} - {{element.method}}
+                </div>
+            </mat-cell>
+        </ng-container>
+
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row" [class.expanded]="expandedElement == row"
+            (click)="expandedElement = expandedElement === row ? null : row"></mat-row>
+        <mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row" [@detailExpand]="row == expandedElement ? 'expanded' : 'collapsed'"></mat-row>
     </mat-table>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
