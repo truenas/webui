@@ -9,7 +9,7 @@
         </div>
         <form #signupForm="ngForm" (ngSubmit)="signup()">
           <div class="">
-            <mat-input-container class="full-width">
+            <mat-form-field class="full-width">
               <input
                 matInput
                 type="email"
@@ -20,18 +20,18 @@
                 placeholder="Your Email"
                 pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$"
                 value="">
-            </mat-input-container>
+            </mat-form-field>
             <small 
-              *ngIf="email.errors && (email.dirty || email.touched) && (email.errors.required)" 
+              *ngIf="email['errors'] && (email.dirty || email.touched) && (email['errors'].required)" 
               class="form-error-msg"> Email is required </small>
 
               <small 
-                *ngIf="email.errors && (email.dirty || email.touched) && (email.errors.pattern)" 
+                *ngIf="email['errors'] && (email.dirty || email.touched) && (email['errors'].pattern)" 
                 class="form-error-msg"> Invaild email address </small>
           </div>
 
           <div class="">
-            <mat-input-container class="full-width">
+            <mat-form-field class="full-width">
               <input 
                 type="password"
                 name="password"
@@ -43,14 +43,14 @@
                 #password="ngModel"
                 placeholder="Password" 
                 value="">
-            </mat-input-container>
+            </mat-form-field>
             <small 
-              *ngIf="password.errors && (password.dirty || password.touched) && (password.errors.required)" 
+              *ngIf="password['errors'] && (password.dirty || password.touched) && (password['errors'].required)" 
               class="form-error-msg"> Password is required </small>
           </div>
           
           <div class="">
-            <mat-input-container class="full-width">
+            <mat-form-field class="full-width">
               <input
                 type="password"
                 name="confirmPassword"
@@ -61,9 +61,9 @@
                 #confirmPassword="ngModel"
                 placeholder="Confirm Password"
                 value="">
-            </mat-input-container>
+            </mat-form-field>
             <small 
-              *ngIf="confirmPassword.errors && (confirmPassword.dirty || confirmPassword.touched)" 
+              *ngIf="confirmPassword['errors'] && (confirmPassword.dirty || confirmPassword.touched)" 
               class="form-error-msg"> Password mismatch </small>
           </div>
           

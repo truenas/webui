@@ -372,15 +372,15 @@ export class JailListComponent implements OnInit {
 
   updateMultiAction(selected: any) {
     if (_.find(selected, ['state', 'up'])) {
-     _.find(this.multiActions, {'id': 'mstop'})['enable'] = true;
+     _.find(this.multiActions, {'id': 'mstop' as any})['enable'] = true;
     } else {
-      _.find(this.multiActions, {'id': 'mstop'})['enable'] = false;
+      _.find(this.multiActions, {'id': 'mstop' as any})['enable'] = false;
     }
 
     if (_.find(selected, ['state', 'down'])) {
-     _.find(this.multiActions, {'id': 'mstart'})['enable'] = true;
+     _.find(this.multiActions, {'id': 'mstart' as any})['enable'] = true;
     } else {
-      _.find(this.multiActions, {'id': 'mstart'})['enable'] = false;
+      _.find(this.multiActions, {'id': 'mstart' as any})['enable'] = false;
     }
   }
 

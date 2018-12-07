@@ -159,7 +159,7 @@ export class PortalFormComponent {
         this.customFilter[0][0].push(parseInt(params['pk']));
         this.initialCount = 0;
         this.arrayControl.initialCount = 0;
-        this.arrayControl.formarray[2].isHidden = false;
+        this.arrayControl.formarray[2]['isHidden'] = false;
         this.arrayControl.formarray[2].disabled = false;
       }
     });

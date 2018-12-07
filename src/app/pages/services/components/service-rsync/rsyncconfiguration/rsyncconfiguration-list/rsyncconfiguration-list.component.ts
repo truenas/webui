@@ -1,7 +1,7 @@
 import { Component, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material';
 
 import { WebSocketService } from '../../../../../../services/ws.service';

@@ -1,4 +1,4 @@
-import 'rxjs/add/operator/map';
+
 
 import { Injectable } from '@angular/core';
 import { Router, NavigationEnd, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';

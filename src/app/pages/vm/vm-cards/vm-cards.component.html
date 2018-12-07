@@ -12,9 +12,9 @@
     <div class="filter-field">
       <mat-icon id="search-icon" role="img">search</mat-icon>
       <div class="card-filter-field">
-        <mat-input-container floatPlaceholder="Filter VMs">
+        <mat-form-field floatPlaceholder="Filter VMs">
           <input matInput #filter placeholder="Filter VM List" [ngModel]="searchTerm" (ngModelChange)="displayFilter('name',$event)">
-        </mat-input-container>
+        </mat-form-field>
       </div>
     </div>
     <div class="view-controls" >
