@@ -1,15 +1,17 @@
+
+import {fromEvent as observableFromEvent,  Observable ,  BehaviorSubject ,  Subscription } from 'rxjs';
+
+import {distinctUntilChanged, debounceTime} from 'rxjs/operators';
 import { Component, OnInit, Input, ElementRef, ViewEncapsulation, ViewChild, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataSource } from '@angular/cdk/collections';
 import { MatPaginator, MatSort, PageEvent, MatSnackBar } from '@angular/material';
-import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { TranslateService } from '@ngx-translate/core';
 
 import { T } from '../../../../translate-marker';
-import 'rxjs/add/operator/startWith';
-import 'rxjs/add/observable/merge';
-import 'rxjs/add/operator/map';
+
+
+
 
 //local libs
 import { RestService } from '../../../../services/rest.service';
@@ -19,7 +21,6 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { DialogService } from '../../../../services';
 import { ErdService } from '../../../../services/erd.service';
 import { StorageService } from '../../../../services/storage.service'
-import { Subscription } from 'rxjs/Subscription';
 
 
 
@@ -152,9 +153,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       this.hideTopActions = this.conf.hideTopActions;
     }
 
-    Observable.fromEvent(this.filter.nativeElement, 'keyup')
-      .debounceTime(150)
-      .distinctUntilChanged()
+    observableFromEvent(this.filter.nativeElement, 'keyup').pipe(
+      debounceTime(150),
+      distinctUntilChanged(),)
       .subscribe(() => {
         const filterValue: string = this.filter.nativeElement.value;
         let newData: any[] = [];

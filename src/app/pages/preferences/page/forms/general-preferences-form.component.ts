@@ -9,7 +9,7 @@ import {RestService, WebSocketService} from 'app/services/';
 import { ThemeService, Theme} from 'app/services/theme/theme.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { T } from '../../../../translate-marker';
 
 @Component({

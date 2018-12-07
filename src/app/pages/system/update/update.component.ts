@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 import { RestService, WebSocketService } from '../../../services/';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
@@ -227,7 +227,7 @@ export class UpdateComponent implements OnInit {
       } else if (this.selectedTrain.toLowerCase().includes('11-stable')) {
         this.currentTrainDescription = '[release]';
       } else if (this.selectedTrain.toLowerCase().includes('11.2-stable')) {
-        this.currentTrainDescription = '[prerelease]';
+        this.currentTrainDescription = '[release]';
       } else {
         this.currentTrainDescription = res.trains[this.selectedTrain].description.toLowerCase();
       }

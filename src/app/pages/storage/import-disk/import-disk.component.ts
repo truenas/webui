@@ -108,7 +108,7 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
 
     this.fs_type_subscription = this.fs_type.valueChanges.subscribe((value) => {
       if (value === 'msdosfs') {
-        this.msdosfs_locale.isHidden = false;
+        this.msdosfs_locale['isHidden'] = false;
       }
     });
 
