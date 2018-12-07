@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { DragulaModule } from 'ng2-dragula';
 import { MaterialModule } from '../../appMaterial.module';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TranslateModule } from '@ngx-translate/core';
@@ -30,6 +29,7 @@ import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
 import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list';
 import { DiskListComponent } from './disks/disk-list/';
 import { DiskFormComponent } from './disks/disk-form/';
+import { DiskBulkEditComponent } from './disks/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { DxTreeListModule } from 'devextreme-angular';
@@ -42,7 +42,7 @@ import { MessageService } from '../common/entity/entity-form/services/message.se
 
 @NgModule({
   imports : [
-    RouterModule, DragulaModule, EntityModule, CommonModule, FormsModule,
+    RouterModule, EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, routing, MaterialModule,
     NgxDatatableModule, DxTreeListModule, TranslateModule
   ],
@@ -71,7 +71,8 @@ import { MessageService } from '../common/entity/entity-form/services/message.se
     DiskListComponent,
     VolumeStatusComponent,
     DiskFormComponent,
-    DiskWipeComponent
+    DiskWipeComponent,
+    DiskBulkEditComponent
   ],
   providers : [UserService, StorageService, MessageService]
 })

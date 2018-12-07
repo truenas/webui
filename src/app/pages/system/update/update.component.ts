@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 import { RestService, WebSocketService } from '../../../services/';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
@@ -30,7 +30,7 @@ export class UpdateComponent implements OnInit {
   public error: string;
   public autoCheck = false;
   public train: string;
-  public trains: any[];
+  public trains: any[]=[];
   public selectedTrain;
   public general_update_error;
   public update_downloaded=false;
@@ -42,14 +42,16 @@ export class UpdateComponent implements OnInit {
     "NIGHTLY_UPGRADE": T("Changing to a nightly train is one-way. Changing back to a stable train is not supported!")
   }
   public release_train: boolean;
-  public pre_release_train: boolean;  
-  public nightly_train: boolean;  
+  public pre_release_train: boolean;
+  public nightly_train: boolean;
   public updates_available = false;
   public currentTrainDescription: string;
   public fullTrainList: any[];
 
   public busy: Subscription;
   public busy2: Subscription;
+  public showSpinner: boolean = false;
+  public singleDescription: string;
   public updatecheck_tooltip = T('Check the update server daily for \
                                   any updates on the chosen train. \
                                   Automatically download an update if \
@@ -61,21 +63,23 @@ export class UpdateComponent implements OnInit {
     {
       type: 'checkbox',
       name: 'secretseed',
-      placeholder: T('Export Password Secret Seed')
+      placeholder: T('Include Password Secret Seed')
     },
-    {
-      type: 'checkbox',
-      name: 'hideWarning',
-      placeholder: T('Don\'t show this again'),
-    }
   ];
   public saveConfigFormConf: DialogFormConfiguration = {
-    title: "Before doing update, would you like to save a copy of the config?",
+    title: "Save configuration settings from this machine before updating?",
+    message: "<b>WARNING:</b> This configuration file contains system\
+              passwords and other sensitive data.<br>",
     fieldConfig: this.saveConfigFieldConf,
+    warning: "Including the Password Secret Seed allows using this\
+              configuration file with a new boot device. It also\
+              decrypts all passwords used on this system.\
+              <b>Keep the configuration file safe and protect it from unauthorized access!</b>",
     method_ws: 'core.download',
-    saveButtonText: T('OK'),
+    saveButtonText: T('SAVE CONFIGURATION'),
+    cancelButtonText: T('NO'),
     customSubmit: this.saveConfigSubmit,
-  }
+  };
 
   protected dialogRef: any;
   constructor(protected router: Router, protected route: ActivatedRoute, protected snackBar: MatSnackBar,
@@ -104,7 +108,6 @@ export class UpdateComponent implements OnInit {
       version.push(sw_version);
       version.push(branch);
     }
-
 
     return version;
   }
@@ -191,8 +194,8 @@ export class UpdateComponent implements OnInit {
 
   ngOnInit() {
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
-      if(!ures[0].attributes.preferences.hideWarning) {
-        ures[0].attributes.preferences['hideWarning'] = false;
+      if(ures[0].attributes.preferences !== undefined && ures[0].attributes.preferences.enableWarning) {
+        ures[0].attributes.preferences['enableWarning'] = true;
         this.ws.call('user.set_attribute', [1, 'preferences', ures[0].attributes.preferences]).subscribe((res)=>{
         });
       }
@@ -210,8 +213,12 @@ export class UpdateComponent implements OnInit {
 
       this.trains = [];
       for (const i in res.trains) {
-        this.trains.push({ name: i });
+        if (this.compareTrains(this.train, i) === 'ALLOWED' || this.compareTrains(this.train, i) === 'NIGHTLY_UPGRADE' || this.train === i) {
+          this.trains.push({ name: i, description: res.trains[i].description });
+        }
+
       }
+      this.singleDescription = this.trains[0].description;
 
       // The following is a kluge until we stop overwriting (via middleware?) the description of the currently
       //  running OS along with its tags we want to use for sorting - [release], [prerelease], and [nightly]
@@ -220,7 +227,7 @@ export class UpdateComponent implements OnInit {
       } else if (this.selectedTrain.toLowerCase().includes('11-stable')) {
         this.currentTrainDescription = '[release]';
       } else if (this.selectedTrain.toLowerCase().includes('11.2-stable')) {
-        this.currentTrainDescription = '[prerelease]';
+        this.currentTrainDescription = '[release]';
       } else {
         this.currentTrainDescription = res.trains[this.selectedTrain].description.toLowerCase();
       }
@@ -260,6 +267,9 @@ export class UpdateComponent implements OnInit {
       this.rest
       .put('system/update', { body: JSON.stringify({ upd_autocheck: this.autoCheck }) })
       .subscribe((res) => {
+        if(res.data.upd_autocheck === true) {
+          this.check();
+        }
       });
   }
 
@@ -322,7 +332,7 @@ export class UpdateComponent implements OnInit {
               this.releaseNotes = res.notes.ReleaseNotes;
             }
             this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
-              if(ures[0].attributes.preferences.hideWarning) {
+              if(ures[0].attributes.preferences !== undefined && !ures[0].attributes.preferences.enableWarning) {
                 const ds  = this.dialogService.confirm(
                   T("Download Update"), T("Continue with download?"),true,"",true,T("Apply updates and reboot system after downloading."),"update.update",[{ train: this.train, reboot: false }]
                 )
@@ -336,7 +346,7 @@ export class UpdateComponent implements OnInit {
                         this.dialogRef.close(false);
                         this.snackBar.open(T("Updates successfully downloaded"),'close', { duration: 5000 });
                         this.pendingupdates();
-    
+
                       });
                       this.dialogRef.componentInstance.failure.subscribe((failure) => {
                         this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
@@ -347,7 +357,7 @@ export class UpdateComponent implements OnInit {
                     }
                   }
                 });
-                
+
               } else {
                 this.dialogService.dialogForm(this.saveConfigFormConf).subscribe(()=>{
                   const ds  = this.dialogService.confirm(
@@ -363,7 +373,7 @@ export class UpdateComponent implements OnInit {
                           this.dialogRef.close(false);
                           this.snackBar.open(T("Updates successfully downloaded"),'close', { duration: 5000 });
                           this.pendingupdates();
-      
+
                         });
                         this.dialogRef.componentInstance.failure.subscribe((failure) => {
                           this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
@@ -418,7 +428,7 @@ export class UpdateComponent implements OnInit {
 
   ApplyPendingUpdate() {
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
-      if(ures[0].attributes.preferences.hideWarning) {
+      if(ures[0].attributes.preferences !== undefined && !ures[0].attributes.preferences.enableWarning) {
         this.dialogService.confirm(
           T("Apply Pending Updates"), T("The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?")
         ).subscribe((res)=>{
@@ -442,7 +452,16 @@ export class UpdateComponent implements OnInit {
   };
 
   ManualUpdate(){
-    this.router.navigate([this.router.url +'/manualupdate']);
+    this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
+      if(ures[0].attributes.preferences !== undefined && !ures[0].attributes.preferences.enableWarning) {
+        this.router.navigate([this.router.url +'/manualupdate']);
+      }
+      else {
+        this.dialogService.dialogForm(this.saveConfigFormConf).subscribe(()=>{
+          this.router.navigate([this.router.url +'/manualupdate']);
+        });
+      };
+    });
   }
 
   pendingupdates(){
@@ -454,6 +473,7 @@ export class UpdateComponent implements OnInit {
 }
 
   check() {
+    this.showSpinner = true;
     this.pendingupdates();
     this.error = null;
     this.ws.call('update.check_available', [{ train: this.train }])
@@ -518,13 +538,14 @@ export class UpdateComponent implements OnInit {
           this.general_update_error =  err.reason.replace('>', '').replace('<','') + T(": Automatic update check failed. Please check system network settings.")
         },
         () => {
+          this.showSpinner = false;
         });
   }
 
   async saveConfigSubmit(entityDialog) {
-    if(entityDialog.formValue['hideWarning']) {
+    if(entityDialog.formValue['enableWarning']) {
       await entityDialog.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
-        ures[0].attributes.preferences['hideWarning'] = true;
+        ures[0].attributes.preferences['enableWarning'] = true;
         entityDialog.ws.call('user.set_attribute', [1, 'preferences', ures[0].attributes.preferences]).subscribe((res)=>{
         });
       });
@@ -534,7 +555,7 @@ export class UpdateComponent implements OnInit {
       if (res) {
         const hostname = res.hostname.split('.')[0];
         const date = entityDialog.datePipe.transform(new Date(),"yyyyMMddHHmmss");
-        fileName = hostname + '-' + res.version + '-' + date;
+        fileName = hostname + '-' + date;
         if (entityDialog.formValue['secretseed']) {
           fileName += '.tar';
         } else {
@@ -545,10 +566,12 @@ export class UpdateComponent implements OnInit {
       entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'] }], fileName])
         .subscribe(
           (succ) => {
-            entityDialog.snackBar.open(T("Download Sucessful"), T("Success") , {
-              duration: 5000
-            });
-            // window.location.href = succ[1];
+            if (window.navigator.userAgent.search("Firefox")>0) {
+              window.open(succ[1]);
+          }
+            else {
+              window.location.href = succ[1];
+            }
             entityDialog.dialogRef.close();
           },
           (err) => {

@@ -36,7 +36,9 @@ export class AssociatedTargetFormComponent {
       placeholder: T('LUN ID'),
       tooltip: T('Select the value or enter a value between\
                   <i>0</i> and <i>1023</i>. Some initiators\
-                  expect a value below <i>256</i>.'),
+                  expect a value below <i>256</i>. Using\
+                  <i>0</i> statically assigns the next\
+                  available ID.'),
       value: 0,
       validation: [ Validators.min(0), Validators.max(1023), Validators.pattern(/^(0|[1-9]\d*)$/) ],
     },

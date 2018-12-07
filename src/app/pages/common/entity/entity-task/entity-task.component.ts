@@ -78,12 +78,12 @@ export class EntityTaskComponent implements OnInit {
       this.formGroup = this.entityFormService.createFormGroup(this.conf.fieldConfig);
       this.formGroup.controls[this.preTaskName + '_repeat'].valueChanges.subscribe((res) => {
         if (res == 'none') {
-          this.month_field.isHidden = false;
-          this.day_field.isHidden = false;
-          this.daymonth_field.isHidden = false;
-          this.hour_field.isHidden = false;
+          this.month_field['isHidden'] = false;
+          this.day_field['isHidden'] = false;
+          this.daymonth_field['isHidden'] = false;
+          this.hour_field['isHidden'] = false;
           if (this.mintue_field) {
-            this.mintue_field.isHidden = false;
+            this.mintue_field['isHidden'] = false;
           }
 
           if (this.isNew) {
@@ -96,24 +96,24 @@ export class EntityTaskComponent implements OnInit {
             }
           }
         } else if (res == 'hourly') {
-          this.month_field.isHidden = true;
-          this.day_field.isHidden = true;
-          this.daymonth_field.isHidden = true;
-          this.hour_field.isHidden = true;
+          this.month_field['isHidden'] = true;
+          this.day_field['isHidden'] = true;
+          this.daymonth_field['isHidden'] = true;
+          this.hour_field['isHidden'] = true;
           if (this.mintue_field) {
-            this.mintue_field.isHidden = false;
+            this.mintue_field['isHidden'] = false;
           }
 
           if (this.isNew && this.mintue_field) {
             this.formGroup.controls[this.preTaskName + '_minute'].setValue(date.getMinutes().toString());
           }
         } else if (res == 'daily') {
-          this.month_field.isHidden = true;
-          this.day_field.isHidden = true;
-          this.daymonth_field.isHidden = true;
-          this.hour_field.isHidden = false;
+          this.month_field['isHidden'] = true;
+          this.day_field['isHidden'] = true;
+          this.daymonth_field['isHidden'] = true;
+          this.hour_field['isHidden'] = false;
           if (this.mintue_field) {
-            this.mintue_field.isHidden = false;
+            this.mintue_field['isHidden'] = false;
           }
 
           if (this.isNew) {
@@ -123,12 +123,12 @@ export class EntityTaskComponent implements OnInit {
             }
           }
         } else if (res == 'weekly') {
-          this.month_field.isHidden = true;
-          this.day_field.isHidden = false;
-          this.daymonth_field.isHidden = true;
-          this.hour_field.isHidden = false;
+          this.month_field['isHidden'] = true;
+          this.day_field['isHidden'] = false;
+          this.daymonth_field['isHidden'] = true;
+          this.hour_field['isHidden'] = false;
           if (this.mintue_field) {
-            this.mintue_field.isHidden = false;
+            this.mintue_field['isHidden'] = false;
           }
 
           if (this.isNew) {
@@ -139,12 +139,12 @@ export class EntityTaskComponent implements OnInit {
             }
           }
         } else if (res == 'monthly') {
-          this.month_field.isHidden = true;
-          this.day_field.isHidden = true;
-          this.daymonth_field.isHidden = false;
-          this.hour_field.isHidden = false;
+          this.month_field['isHidden'] = true;
+          this.day_field['isHidden'] = true;
+          this.daymonth_field['isHidden'] = false;
+          this.hour_field['isHidden'] = false;
           if (this.mintue_field) {
-            this.mintue_field.isHidden = false;
+            this.mintue_field['isHidden'] = false;
           }
 
           if (this.isNew) {
@@ -188,7 +188,7 @@ export class EntityTaskComponent implements OnInit {
                 if (current_field.name == "scrub_volume") {
                   this.taskService.getVolumeList().subscribe((res) => {
                     let volume = _.find(res.data, { 'vol_name': this.data[i] });
-                    fg.setValue(volume.id);
+                    fg.setValue(volume['id']);
                   });
                 } else {
                   fg.setValue(this.data[i]);

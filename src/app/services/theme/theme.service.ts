@@ -3,6 +3,7 @@ import * as domHelper from '../../helpers/dom.helper';
 import { RestService, WebSocketService } from 'app/services';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { ApiService } from 'app/core/services/api.service';
+import { Router } from '@angular/router';
 
 export interface Theme {
   name: string;
@@ -170,7 +171,9 @@ export class ThemeService {
   public globalPreview: boolean = false;
   public globalPreviewData: any;
 
-  constructor(private rest: RestService, private ws: WebSocketService, private core:CoreService, private api:ApiService) {
+  public userThemeLoaded: boolean = false;
+  constructor(private rest: RestService, private ws: WebSocketService, private core:CoreService, private api:ApiService,
+              private route: Router) {
 
     // Set default list
     this.allThemes = this.freenasThemes;
@@ -216,6 +219,7 @@ export class ThemeService {
       //if(evt.data.userTheme !== this.activeTheme){
         this.activeTheme = evt.data.userTheme;
         this.setCssVars(this.findTheme(this.activeTheme, true));
+        this.userThemeLoaded = true;
         this.core.emit({name:'ThemeChanged', data: this.findTheme(this.activeTheme), sender:this});
       //}
 
@@ -231,10 +235,10 @@ export class ThemeService {
         (<any>document).documentElement.style.setProperty("--toggle_pw_display_prop", "none");
       }
       
-      if(evt.data.hideWarning){
-        (<any>document).documentElement.style.setProperty("--hideWarning","inline");
+      if(evt.data.enableWarning){
+        (<any>document).documentElement.style.setProperty("--enableWarning","inline");
       } else if(!evt.data.allowPwToggle){
-        (<any>document).documentElement.style.setProperty("--hideWarning", "none");
+        (<any>document).documentElement.style.setProperty("--enableWarning", "none");
       }
 
     });

@@ -3,6 +3,11 @@ import { Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRoute
 import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 import * as _ from 'lodash';
 import {LineChartService, ChartConfigData, HandleChartConfigDataFunc} from '../../components/common/lineChart/lineChart.service';
+import { Subject } from 'rxjs'; 
+import { CoreEvent } from 'app/core/services/core.service';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 
 import {
   RestService,
@@ -40,8 +45,28 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
    setPaginationPageSizeOptions(setPaginationPageSizeOptionsInput: string) {
      this.paginationPageSizeOptions = setPaginationPageSizeOptionsInput.split(',').map(str => +str);
    }
+  
+  // Report Builder Options (entity-form-embedded)
+  public target: Subject<CoreEvent> = new Subject();
+  public values = [];
+  protected isEntity: boolean = true;
+  public diskDevices = [];
+  public diskMetrics = [];
+  public saveSubmitText = "Generate Reports";
+  public actionButtonsAlign = "left";
+  public fieldConfig:FieldConfig[] = [];
+  public fieldSets: FieldSet[];
+  public diskReportConfigReady: boolean = false;
 
-   
+    /*custActions: any[] = [
+      {
+        id: 'create-theme-link',
+        name: 'Create New Theme',
+        eventName:"CreateTheme"
+      }
+    ]*/
+  // End Report Builder Options
+
   public info: any = {};
   public ipAddress: any = [];
   public drawTabs = false;
@@ -49,16 +74,129 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   public tabChartsMappingDataSelected: TabChartsMappingData;
   public showSpinner: boolean = true;
   public activeTab: string;
+  public filteredData: ChartConfigData[] = [];
+  public filteredPaginatedData: ChartConfigData[] = [];
   @ViewChild('chartWidth') chartWidth: MatButtonToggleGroup; 
+  @ViewChild('pager') pagerElement;
+  
   
 
 
   constructor(private _lineChartService: LineChartService, private erdService: ErdService, public translate: TranslateService, private router:Router) {
+    this.target.subscribe((evt: CoreEvent) => {
+      //console.log(evt);
+      switch(evt.name){
+        case 'FormSubmitted':
+          this.buildDiskReport(evt.data.devices, evt.data.metrics);
+          this.setPaginationInfo(this.tabChartsMappingDataSelected, this.filteredData );
+          //console.log(this.pagerElement);
+          //this.pagerElement.getNumberOfPages();
+          /*let list = Object.assign(this.tabChartsMappingDataSelected);
+          list.chartConfigData = this.filteredData;
+          this.setPaginationInfo(list);*/
+        break;
+      }
+    });
   }
 
-  private setPaginationInfo(tabChartsMappingDataSelected: TabChartsMappingData) {
+  diskReportBuilderSetup(){
+
+    this.generateValues();
+
+    this.fieldSets = [
+      {
+        name:'Report Options',
+        class:'preferences',
+        label:true,
+        width:'600px',
+        config:[
+          {
+            type: 'select',
+            name: 'devices',
+            width:'calc(50% - 16px)',
+            placeholder: 'Choose a Device',
+            options: this.diskDevices, // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
+            //value:[this.diskDevices[0]],
+            required: true,
+            multiple: true,
+            tooltip:'Choose a device for your report.',
+            class:'inline'
+          },
+          {
+            type: 'select',
+            name: 'metrics',
+            width:'calc(50% - 16px)',
+            placeholder: 'Choose a metric',
+            options: this.diskMetrics ? this.diskMetrics : [{label:'None available', value:'negative'}], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
+            //value:[this.diskMetrics[0]],
+            required: true,
+            multiple: true,
+            tooltip:'Choose a metric to display.',
+            class:'inline'
+          }
+        ]
+      }
+    ]
+
+    this.generateFieldConfig();
+  }
+
+  generateValues(){
+    let tab = this.tabChartsMappingDataArray.find(item => item.keyName == 'Disk');
+    let devices = [];
+    let deviceNames = [];
+    let metrics = [];
+    let metricNames = [];
+    tab.chartConfigData.forEach((item) => {
+      let obj = item.dataList[0];
+      let src;
+      if(obj.source.includes('disk-')){
+        src = obj.source.replace('disk-', ''); 
+      } else if(obj.source.includes('disktemp-')){
+        src = obj.source.replace('disktemp-', '');
+      }
+      let dev = {label:src, value: src};
+      if(!deviceNames.includes(src)){ 
+        deviceNames.push(src);
+        devices.push(dev);
+      };
+
+      let metric;
+      let metricName;
+      if(obj.type == 'temperature'){
+        metricName = obj.type;
+        metric = {label: obj.type, value: obj.type};
+      } else {
+        metricName = obj.type.replace('disk_', '');
+        metric = {label: metricName, value: obj.type};
+      }
+      if(!metricNames.includes(metricName)){ 
+        metricNames.push(metricName);
+        metrics.push(metric);
+      };
+
+      //console.log(metric);
+      //console.warn(this.diskMetrics)
+      //metrics.push(metric);
+    });
+
+    this.diskDevices = devices;
+    this.diskMetrics = metrics;
+  }
+
+  generateFieldConfig(){
+    for(let i in this.fieldSets){
+      for(let ii in this.fieldSets[i].config){
+        this.fieldConfig.push(this.fieldSets[i].config[ii]);
+      }
+    }
+    this.diskReportConfigReady = true;
+  }
+
+  private setPaginationInfo(tabChartsMappingDataSelected: TabChartsMappingData, filteredConfigData?:ChartConfigData[]) {
     let paginationChartData: ChartConfigData[] = new Array();
-    tabChartsMappingDataSelected.chartConfigData.forEach((item)=>{paginationChartData.push(item)});
+    let sourceList = filteredConfigData ? filteredConfigData : tabChartsMappingDataSelected.chartConfigData;
+    sourceList.forEach((item)=>{paginationChartData.push(item)});
 
     const beginIndex = this.paginationPageIndex * this.paginationPageSize;
     const endIndex = beginIndex + this.paginationPageSize ;
@@ -68,7 +206,11 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
       paginationChartData = paginationChartData.slice(beginIndex, endIndex);
     }
 
-    tabChartsMappingDataSelected.paginatedChartConfigData = paginationChartData; 
+    if(filteredConfigData){
+      this.filteredPaginatedData = paginationChartData; 
+    } else {
+      tabChartsMappingDataSelected.paginatedChartConfigData = paginationChartData; 
+    }
 
     this.paginationLength = this.tabChartsMappingDataSelected.chartConfigData.length;
     
@@ -90,6 +232,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
    * Go through the flat list.. And collect the ones I want for each Tab I want to show.
    */
   handleChartConfigDataFunc(chartConfigData: ChartConfigData[]) {
+     
     const map: Map<string, TabChartsMappingData> = new Map<string, TabChartsMappingData>();
 
     // For every one of these map entries.. You see one tab in the UI With the charts collected for that tab
@@ -179,7 +322,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
         const tab: TabChartsMappingData = map.get("Network");
         tab.chartConfigData.push(chartConfigDataItem);
 
-      } else if (chartConfigDataItem.title.startsWith("ctl-tpc")) {
+      } else if (chartConfigDataItem.title.startsWith("SCSI ")) {
         const tab: TabChartsMappingData = map.get("Target");
         tab.chartConfigData.push(chartConfigDataItem);
 
@@ -203,7 +346,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
     this.drawTabs = true;
     this.showSpinner = false;
     this.activateTabFromUrl();
-  }
+  }// End handleChartConfigDataFunc Method
 
   activeTabToKeyname(){
     if(this.activeTab){ return "false"}
@@ -235,7 +378,38 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
      return test;
   }
 
+  buildDiskReport(device: string | string[], metric: string | string[]){
+    // Convert strings to arrays
+    if(typeof device == "string"){ device = [device];}
+    if(typeof metric == "string"){ metric = [metric];}
+
+    // Find matches
+    const checkDevice = (item) => {
+      if(device[0] == 'all' || device[0] == '*'){
+        return true;
+      } else {
+        //return (item.dataList[0].source == 'disk-' + device || item.dataList[0].source == 'disktemp-' + device)
+        return ( device.includes(item.dataList[0].source.replace('disk-', '')) || device.includes(item.dataList[0].source.replace('disktemp-', '')) );
+      }
+    }
+    const checkMetric = (item) => {
+      if(metric[0] == 'all' || metric[0] == '*'){
+        return true;
+      } else {
+        return metric.includes(item.dataList[0].type)//item.dataList[0].type == metric;
+      }
+    }
+
+    let tab = this.tabChartsMappingDataArray.find(item => item.keyName == 'Disk');
+    let tabData = tab.chartConfigData.filter(item => (checkDevice(item) && checkMetric(item)) ); 
+    this.filteredData = tabData;
+
+    //TEST
+    //this.paginationLength = this.filteredData.length;
+  }
+
   updateActiveTab(tabName:string){
+    
     // Change the URL without reloading page/component
     // the old fashioned way 
     window.history.replaceState({}, '','/reportsdashboard/' + tabName.toLowerCase());
@@ -246,8 +420,10 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
         textLabel: tabName
       }
     }
-    this.tabSelectChangeHandler(evt);
     this.activeTab = tabName.toLowerCase(); 
+    this.tabSelectChangeHandler(evt);
+
+    if(tabName == 'Disk'){ this.diskReportBuilderSetup() }
   }
 
   navigateToTab(tabName){
@@ -260,14 +436,26 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
     this.tabChartsMappingDataSelected = this.getTabChartsMappingDataByName(selectedTabName);
     this.paginationPageIndex = 0;
     this.paginationPageSize = 5;
-    this.setPaginationInfo( this.tabChartsMappingDataSelected );
+ 
+    if(this.activeTab == 'disk'){ 
+      this.setPaginationInfo(this.tabChartsMappingDataSelected, this.filteredData );
+    } else {
+      this.setPaginationInfo(this.tabChartsMappingDataSelected );
+    }
+    
   }
   
   paginationUpdate($pageEvent: PageEvent) {
+   
     this.paginationPageEvent = $pageEvent;
     this.paginationPageIndex = this.paginationPageEvent.pageIndex;
     this.paginationPageSize = this.paginationPageEvent.pageSize;
-    this.setPaginationInfo( this.tabChartsMappingDataSelected );
+    if(this.activeTab == 'disk'){ 
+      this.setPaginationInfo(this.tabChartsMappingDataSelected, this.filteredData );
+    } else {
+      this.setPaginationInfo(this.tabChartsMappingDataSelected );
+    }
+    
   }
 
 

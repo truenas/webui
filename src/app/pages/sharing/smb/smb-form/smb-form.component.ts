@@ -44,7 +44,18 @@ export class SMBFormComponent implements OnDestroy {
       placeholder: T('Use as home share'),
       tooltip: T('Set to allow this share to hold user home\
                   directories. Only one share can be\
-                  the <i>homes</i> share.')
+                  the home share.\
+                  Note: Lower case names for user home\
+                  directories are strongly recommended, as Samba\
+                  maps usernames to all lower case. For example, the\
+                  username John will be mapped to a home directory\
+                  named john. If the <i>Path</i> to the home share\
+                  includes an upper case username, delete the existing user\
+                  and recreate it in <i>Accounts --> Users</i>\
+                  with an all lower case <i>Username</i>. Return\
+                  to <i>Sharing --> SMB</i> to create the home share,\
+                  and select the </i>Path</i> that contains the new\
+                  lower case username.'),
     },
     {
       type: 'checkbox',
@@ -96,7 +107,7 @@ export class SMBFormComponent implements OnDestroy {
       name: 'cifs_guestok',
       placeholder: T('Allow Guest Access'),
       tooltip: T('Set to allow access to this share without a password.\
-                  See the <a href="..//docs/services.html#smb"\
+                  See the <a href="%%docurl%%/services.html%%webversion%%#smb"\
                   target="_blank">SMB</a> service documentation for more\
                   information about guest user permissions.')
     },
@@ -129,7 +140,7 @@ export class SMBFormComponent implements OnDestroy {
       name: 'cifs_vfsobjects',
       placeholder: T('VFS Objects'),
       tooltip: T('Adds <a\
-                  href="..//docs/sharing.html#avail-vfs-modules-tab"\
+                  href="%%docurl%%/sharing.html%%webversion%%#avail-vfs-modules-tab"\
                   target="blank">virtual file system modules</a> to\
                   enhance functionality.'),
       options: [],
@@ -197,7 +208,7 @@ export class SMBFormComponent implements OnDestroy {
   afterSave(entityForm) {
     this.ws.call('service.query', [[]]).subscribe((res) => {
       const service = _.find(res, {"service": "cifs"});
-      if (service.enable) {
+      if (service['enable']) {
         this.router.navigate(new Array('/').concat(
           this.route_success));
       } else {
@@ -206,7 +217,7 @@ export class SMBFormComponent implements OnDestroy {
           true, T("Enable Service")).subscribe((dialogRes) => {
             if (dialogRes) {
               entityForm.loader.open();
-              this.ws.call('service.update', [service.id, { enable: true }]).subscribe((updateRes) => {
+              this.ws.call('service.update', [service['id'], { enable: true }]).subscribe((updateRes) => {
                 this.ws.call('service.start', [service.service]).subscribe((startRes) => {
                   entityForm.loader.close();
                   entityForm.snackBar.open(T("Service started"), T("close"));
