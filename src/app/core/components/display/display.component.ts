@@ -1,7 +1,7 @@
 import { Component, ViewChild, OnInit, AfterViewInit, Input, Renderer2, ViewContainerRef,ComponentRef,ComponentFactory, ComponentFactoryResolver } from '@angular/core';
 import { LayoutContainer, LayoutChild } from 'app/core/classes/layouts';
 import { ViewConfig } from 'app/core/components/viewcontroller/viewcontroller.component';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { CoreEvent } from 'app/core/services/core.service';
 
 @Component({

@@ -60,7 +60,7 @@ export class UserFormComponent {
                       Usernames cannot begin with a hyphen\
                       (<b>-</b>) or contain a space, tab, or these\
                       characters: <b>, : + & # %^ ( ) ! @ ~ * ? < > =</b>\
-                      . A <b>$</b> can only be used as the last\
+                      Note that <b>$</b> can only be used as the last\
                       character.'),
           required: true,
           validation : [ Validators.required, Validators.pattern('[a-z_A-Z_][a-zA-Z0-9_-]*[$]?'), Validators.maxLength(16) ],
@@ -286,8 +286,8 @@ export class UserFormComponent {
   private locked: any;
 
   constructor(protected router: Router, protected rest: RestService,
-              protected ws: WebSocketService, protected storageService: StorageService,
-              private dialog:DialogService, private cdRef:ChangeDetectorRef ) {}
+              protected ws: WebSocketService, protected storageService: StorageService
+              ) {}
 
 
    afterInit(entityForm: any) {
@@ -297,42 +297,42 @@ export class UserFormComponent {
     this.sudo = entityForm.formGroup.controls['sudo'];
     this.locked = entityForm.formGroup.controls['locked'];
     if (!entityForm.isNew) {
-      _.find(this.fieldConfig, {name : "password_edit"}).isHidden = false;
-      _.find(this.fieldConfig, {name : "password_conf_edit"}).isHidden = false;
-      _.find(this.fieldConfig, {name : "password"}).isHidden = true;
-      _.find(this.fieldConfig, {name : "password_conf"}).isHidden = true;
+      _.find(this.fieldConfig, {name : "password_edit"})['isHidden'] = false;
+      _.find(this.fieldConfig, {name : "password_conf_edit"})['isHidden'] = false;
+      _.find(this.fieldConfig, {name : "password"})['isHidden'] = true;
+      _.find(this.fieldConfig, {name : "password_conf"})['isHidden'] = true;
       this.password_disabled.valueChanges.subscribe((password_disabled)=>{
         if(password_disabled){
-          _.find(this.fieldConfig, {name : "locked"}).isHidden = password_disabled;
-          _.find(this.fieldConfig, {name : "sudo"}).isHidden = password_disabled;
+          _.find(this.fieldConfig, {name : "locked"})['isHidden'] = password_disabled;
+          _.find(this.fieldConfig, {name : "sudo"})['isHidden'] = password_disabled;
           entityForm.setDisabled('password_edit', password_disabled);
           entityForm.setDisabled('password_conf_edit', password_disabled);
         } else{
           entityForm.formGroup.controls['sudo'].setValue(false);
           entityForm.formGroup.controls['locked'].setValue(false);
-          _.find(this.fieldConfig, {name : "locked"}).isHidden = password_disabled;
-          _.find(this.fieldConfig, {name : "sudo"}).isHidden = password_disabled;
+          _.find(this.fieldConfig, {name : "locked"})['isHidden'] = password_disabled;
+          _.find(this.fieldConfig, {name : "sudo"})['isHidden'] = password_disabled;
           entityForm.setDisabled('password_edit', password_disabled);
           entityForm.setDisabled('password_conf_edit', password_disabled);
         };
       });
 
     } else {
-      _.find(this.fieldConfig, {name : "password_edit"}).isHidden = true;
-      _.find(this.fieldConfig, {name : "password_conf_edit"}).isHidden = true;
-      _.find(this.fieldConfig, {name : "password"}).isHidden = false;
-      _.find(this.fieldConfig, {name : "password_conf"}).isHidden = false;
+      _.find(this.fieldConfig, {name : "password_edit"})['isHidden'] = true;
+      _.find(this.fieldConfig, {name : "password_conf_edit"})['isHidden'] = true;
+      _.find(this.fieldConfig, {name : "password"})['isHidden'] = false;
+      _.find(this.fieldConfig, {name : "password_conf"})['isHidden'] = false;
       this.password_disabled.valueChanges.subscribe((password_disabled)=>{
         if(password_disabled){
-          _.find(this.fieldConfig, {name : "locked"}).isHidden = password_disabled;
-          _.find(this.fieldConfig, {name : "sudo"}).isHidden = password_disabled;
+          _.find(this.fieldConfig, {name : "locked"})['isHidden'] = password_disabled;
+          _.find(this.fieldConfig, {name : "sudo"})['isHidden'] = password_disabled;
           entityForm.setDisabled('password', password_disabled);
           entityForm.setDisabled('password_conf', password_disabled);
         } else{
           entityForm.formGroup.controls['sudo'].setValue(false);
           entityForm.formGroup.controls['locked'].setValue(false);
-          _.find(this.fieldConfig, {name : "locked"}).isHidden = password_disabled;
-          _.find(this.fieldConfig, {name : "sudo"}).isHidden = password_disabled;
+          _.find(this.fieldConfig, {name : "locked"})['isHidden'] = password_disabled;
+          _.find(this.fieldConfig, {name : "sudo"})['isHidden'] = password_disabled;
           entityForm.setDisabled('password', password_disabled);
           entityForm.setDisabled('password_conf', password_disabled);
         };
@@ -341,7 +341,7 @@ export class UserFormComponent {
 
 
     if (!entityForm.isNew) {
-      _.find(this.fieldConfig, {name : "group_create"}).isHidden = true;
+      _.find(this.fieldConfig, {name : "group_create"})['isHidden'] = true;
       entityForm.formGroup.controls['group_create'].setValue(false);
     }
     /* list groups */
@@ -370,6 +370,7 @@ export class UserFormComponent {
 
       if (!entityForm.isNew) {
         entityForm.setDisabled('username', true);
+        entityForm.setDisabled('uid', true);
         entityForm.formGroup.controls['username'].setValue(res[0].username);
         entityForm.formGroup.controls['full_name'].setValue(res[0].full_name);
         entityForm.formGroup.controls['email'].setValue(res[0].email);
@@ -383,10 +384,10 @@ export class UserFormComponent {
         entityForm.formGroup.controls['shell'].setValue(res[0].shell);
         entityForm.setDisabled('password', true);
         entityForm.setDisabled('password_conf', true);
-        _.find(this.fieldConfig, {name : "password"}).isHidden = true;
-        _.find(this.fieldConfig, {name : "password_conf"}).isHidden = true;
-        _.find(this.fieldConfig, {name : "password_edit"}).isHidden = false;
-        _.find(this.fieldConfig, {name : "password_conf_edit"}).isHidden = false;
+        _.find(this.fieldConfig, {name : "password"})['isHidden'] = true;
+        _.find(this.fieldConfig, {name : "password_conf"})['isHidden'] = true;
+        _.find(this.fieldConfig, {name : "password_edit"})['isHidden'] = false;
+        _.find(this.fieldConfig, {name : "password_conf_edit"})['isHidden'] = false;
         if (res[0].builtin) {
           entityForm.formGroup.controls['uid'].setValue(res[0].uid);
           entityForm.setDisabled('uid', true);
@@ -394,7 +395,7 @@ export class UserFormComponent {
           entityForm.setDisabled('group',true);
           entityForm.setDisabled('home',true);
           entityForm.setDisabled('home_mode',true);
-          _.find(this.fieldConfig, {name : "home_mode"}).isHidden = true;
+          _.find(this.fieldConfig, {name : "home_mode"})['isHidden'] = true;
         } else {
           entityForm.formGroup.controls['uid'].setValue(res[0].uid);
           entityForm.setDisabled('group',false);
@@ -468,11 +469,10 @@ export class UserFormComponent {
         delete entityForm['password_edit'];
         delete entityForm['password_conf_edit'];
       }
+      delete entityForm['group_create'];
     }
   }
   submitFunction(this: any, entityForm: any, ){
-    delete entityForm['uid']
-    delete entityForm['group_create']
     delete entityForm['password_conf']
     return this.ws.call('user.update', [this.pk, entityForm]);
   }
@@ -497,9 +497,9 @@ export class UserFormComponent {
     if(parent.entityForm) {
       const username = parent.entityForm.formGroup.controls.username.value;
       if(username.length > 8 ){
-        _.find(parent.fieldConfig, { 'name': 'username' }).warnings= T('Usernames of 8 characters or less are recommended for compatibility with application software, but up to 16 characters are allowed.');
+        _.find(parent.fieldConfig, { 'name': 'username' })['warnings']= T('Usernames of 8 characters or less are recommended for compatibility with application software, but up to 16 characters are allowed.');
       } else {
-        _.find(parent.fieldConfig, { 'name': 'username' }).warnings= null;
+        _.find(parent.fieldConfig, { 'name': 'username' })['warnings']= null;
 
 
       };

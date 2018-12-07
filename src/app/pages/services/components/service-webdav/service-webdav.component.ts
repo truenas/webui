@@ -69,7 +69,7 @@ export class ServiceWebdavComponent implements OnInit, OnDestroy {
       type : 'select',
       name : 'certssl',
       placeholder : T('Webdav SSL Certificate'),
-      tooltip : T('Select the <a href="..//docs/system.html#certificates"\
+      tooltip : T('Select the <a href="%%docurl%%/system.html%%webversion%%#certificates"\
                    target="_blank">SSL certificate</a> to use for\
                    encrypted connections.'),
       options: [
@@ -171,17 +171,17 @@ export class ServiceWebdavComponent implements OnInit, OnDestroy {
 
   handleProtocol(value: any) {
     if (value === 'HTTP') {
-      this.webdav_tcpport.isHidden = false;
-      this.webdav_tcpportssl.isHidden = true;
-      this.webdav_certssl.isHidden = true;
+      this.webdav_tcpport['isHidden'] = false;
+      this.webdav_tcpportssl['isHidden'] = true;
+      this.webdav_certssl['isHidden'] = true;
     } else if (value === 'HTTPS') {
-      this.webdav_tcpport.isHidden = true;
-      this.webdav_tcpportssl.isHidden = false;
-      this.webdav_certssl.isHidden = false;
+      this.webdav_tcpport['isHidden'] = true;
+      this.webdav_tcpportssl['isHidden'] = false;
+      this.webdav_certssl['isHidden'] = false;
     } else if (value === 'HTTPHTTPS') {
-      this.webdav_tcpport.isHidden = false;
-      this.webdav_tcpportssl.isHidden = false;
-      this.webdav_certssl.isHidden = false;
+      this.webdav_tcpport['isHidden'] = false;
+      this.webdav_tcpportssl['isHidden'] = false;
+      this.webdav_certssl['isHidden'] = false;
     }
   }
 

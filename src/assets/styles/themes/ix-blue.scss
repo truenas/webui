@@ -43,7 +43,7 @@ $accent: $yellow;
 $warn: $red;
 $tooltip:'inline';//display property
 $toggle_pw_display_prop: inline;
-$hideWarning: inline;
+$enableWarning: inline;
 
 // Logo images
 $logo: url('assets/images/light-logo.svg');
@@ -128,19 +128,19 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 @mixin mat-ripple-theme($theme) {
   .mat-checkbox .mat-ripple-element, .mat-radio-button .mat-ripple-element {
     @include variable(background, --accent, $accent, !important);
-    opacity: 0.4;
+//    opacity: 0.4;
   }
   .mat-button.mat-primary .mat-ripple-element, 
   .mat-icon-button.mat-primary .mat-ripple-element,
   .mat-tab-label .mat-ripple-element {
     @include variable(background, --primary, $primary, !important);
-    opacity: 0.2;
+//    opacity: 0.2;
   }
   .mat-button.mat-accent .mat-ripple-element,
   .mat-icon-button.mat-accent .mat-ripple-element,
   .mat-slide-toggle .mat-ripple-element {
     @include variable(background, --accent, $accent, !important);
-    opacity: 0.2;
+//    opacity: 0.2;
   }
   .mat-button .mat-ripple-element, .mat-raised-button .mat-ripple-element {
     background: rgba(0, 0, 0, .12);
@@ -174,9 +174,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > .sub-menu {
       //border-left: 2px solid map-get($md-primary, 500);
       @include variable(border-left, --primary, $primary, !important);
-  }
-  .sidebar-panel.mat-sidenav {
-      background: url('/assets/images/sidebar-bg.jpg') no-repeat;
   }
   .breadcrumb-bar {
       //background: #ffffff !important;
@@ -1002,7 +999,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     max-width: 450px !important;
   }
 
-  .has-pwtoggle > mat-input-container {
+  .has-pwtoggle > mat-form-field {
     width: 70% !important;
   }
 
@@ -1011,7 +1008,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     width: 385px !important;
     background: rgba(0, 0, 0, 0) !important;
 
-    mat-input-container {
+    mat-form-field {
       width: 86.3% !important;
     }
   }
@@ -1033,7 +1030,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   #show_Warning {
-    @include variable(display, --hideWarning, $hideWarning);
+    @include variable(display, --enableWarning, $enableWarning);
   }
 
   #update-info {

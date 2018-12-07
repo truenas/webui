@@ -1,7 +1,11 @@
+
+import {throwError as observableThrowError,  Observable } from 'rxjs';
+
+import {catchError, map} from 'rxjs/operators';
 import 'rxjs/Rx';
-import 'rxjs/add/observable/throw';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/toPromise';
+
+
+
 
 import { Injectable } from '@angular/core';
 import {
@@ -12,7 +16,6 @@ import {
   RequestOptions,
   Response
 } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
 
 import { environment } from '../../environments/environment';
 
@@ -62,7 +65,7 @@ export class RestService {
   }
 
   handleError(error: any) {
-    return Observable.throw({
+    return observableThrowError({
       error: error.json(),
       code: error.status,
     });
@@ -85,9 +88,9 @@ export class RestService {
     const requestOptions: Object = Object.assign(
       { method: method, url: requestUrl, headers: headers },
       options);
-    return this.http.request(new Request(new RequestOptions(requestOptions)))
-      .map(this.handleResponse)
-      .catch(this.handleError);
+    return this.http.request(new Request(new RequestOptions(requestOptions))).pipe(
+      map(this.handleResponse),
+      catchError(this.handleError),);
   }
 
   buildOptions(options) {
