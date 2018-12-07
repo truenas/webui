@@ -450,11 +450,11 @@ export class JailWizardComponent {
 
       if ((( < FormGroup > entityWizard.formArray.get([1])).controls['dhcp'].value ||
            ( < FormGroup > entityWizard.formArray.get([1])).controls['auto_configure_ip6'].value) && !res) {
-        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).hasErrors = true;
-        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).errors = 'VNET is required.';
+        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' })['hasErrors'] = true;
+        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' })['errors'] = 'VNET is required.';
       } else {
-        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).hasErrors = false;
-        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).errors = '';
+        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' })['hasErrors'] = false;
+        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' })['errors'] = '';
       }
       this.updateInterfaceValidation(entityWizard);
     });
@@ -521,14 +521,14 @@ export class JailWizardComponent {
     const jail_name = parent.entityWizard.formGroup.value.formArray[0].uuid;
     parent.ws.call('jail.query', [[["id","=",jail_name]]]).subscribe((jail_wizard_res)=>{
       if(jail_wizard_res.length > 0){
-        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'}).hasErrors = true;
-        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'}).errors = `Jail ${jail_wizard_res[0].id} already exists.`;
+        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'})['hasErrors'] = true;
+        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'})['errors'] = `Jail ${jail_wizard_res[0].id} already exists.`;
         parent.entityWizard.formGroup.controls.formArray.controls[0].controls.uuid.setValue("");
 
   
       } else {
-        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'}).hasErrors = false;
-        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'}).errors = '';
+        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'})['hasErrors'] = false;
+        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'})['errors'] = '';
 
       }
     })

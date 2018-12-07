@@ -1,9 +1,9 @@
-<div id="{{config.name}}" class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" [class.has-pwtoggle]="config.togglePw" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
+<div id="{{config.name}}" class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" [class.has-pwtoggle]="config.togglePw" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
 	<!-- need to prevent browser autofill :/ -->
 	<input name = "DummyUsername" type="text" style="display:none;">
 	<input name = "DummyPassword" type="password" style="display:none;">
 	
-	<mat-input-container class="full-width" *ngIf="config.inputType != 'file' else elseBlock">
+	<mat-form-field class="full-width" *ngIf="config.inputType != 'file' else elseBlock">
 		<input matInput [type]="config.inputType ? config.inputType : 'text'"
 			[placeholder]="config.placeholder | translate"
 			[attr.value]="config.value"
@@ -14,7 +14,7 @@
 			[min]="config.min"
 			(blur)="blurEvent()"
 			autocomplete="new-password">
-	</mat-input-container>
+	</mat-form-field>
 	<ng-template #elseBlock>
 		<span>{{config.placeholder | translate}}</span>
 		<input type="file" id="fileInput" (change)="changeListener($event)"/>
@@ -24,6 +24,6 @@
         <i class="material-icons" *ngIf="showPassword">visibility_off</i>
 	</button>
 	<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
-	<mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
+	<mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
 	<mat-error *ngIf="config.warnings">{{config.warnings | translate}}</mat-error>
 </div>

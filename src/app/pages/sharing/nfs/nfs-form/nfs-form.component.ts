@@ -162,6 +162,7 @@ export class NFSFormComponent {
         }
       ],
       isHidden: false,
+      value: []
     }
   ];
 
@@ -235,9 +236,9 @@ export class NFSFormComponent {
 
     this.rest.get('services/nfs', {}).subscribe((res) => {
       if (res.data['nfs_srv_v4']) {
-        _.find(this.fieldConfig, {'name' : 'nfs_security'}).isHidden = false;
+        _.find(this.fieldConfig, {'name' : 'nfs_security'})['isHidden'] = false;
       } else {
-        _.find(this.fieldConfig, {'name' : 'nfs_security'}).isHidden = true;
+        _.find(this.fieldConfig, {'name' : 'nfs_security'})['isHidden'] = true;
       }
     });
 
@@ -276,7 +277,7 @@ export class NFSFormComponent {
     });
   }
   nfs_hosts_event(parent){
-    _.find(parent.fieldConfig, {'name' : 'nfs_hosts'}).warnings = null;
+    _.find(parent.fieldConfig, {'name' : 'nfs_hosts'})['warnings'] = null;
   
       if(parent.entityForm) {
         if(parent.entityForm.formGroup.controls['nfs_hosts'].value !=='') {
@@ -299,18 +300,18 @@ export class NFSFormComponent {
           }
         }
         if (warning_flag && error_msg !==" ") {
-          _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_hosts' }).warnings = `Following IP Address/hostname appears to be wrong ${error_msg}`
+          _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_hosts' })['warnings'] = `Following IP Address/hostname appears to be wrong ${error_msg}`
           parent.save_button_enabled = false;
   
         } else {
-          _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_hosts' }).warnings = null;
+          _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_hosts' })['warnings'] = null;
           parent.save_button_enabled = true;
         };
       };
     };
   };
   nfs_network_event(parent){
-    _.find(parent.fieldConfig, {'name' : 'nfs_network'}).warnings = false;
+    _.find(parent.fieldConfig, {'name' : 'nfs_network'})['warnings'] = false;
     if(parent.entityForm) {
       if(parent.entityForm.formGroup.controls['nfs_network'].value !=='') {
         const network_string = parent.entityForm.formGroup.controls['nfs_network'].value.split(/[\s,]+/);
@@ -328,11 +329,11 @@ export class NFSFormComponent {
           }
         }
         if (warning_flag && error_msg !==" ") {
-          _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_network' }).warnings = `Following Network appears to be wrong ${error_msg}`;
+          _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_network' })['warnings'] = `Following Network appears to be wrong ${error_msg}`;
           parent.save_button_enabled = false;
   
         } else { 
-          _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_network' }).warnings = null;
+          _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_network' })['warnings'] = null;
           parent.save_button_enabled = true;
         }
 
@@ -376,7 +377,7 @@ export class NFSFormComponent {
   afterSave(entityForm) {
     this.ws.call('service.query', [[]]).subscribe((res) => {
       const service = _.find(res, {"service": "nfs"});
-      if (service.enable) {
+      if (service['enable']) {
         this.router.navigate(new Array('/').concat(
           this.route_success));
       } else {
@@ -385,7 +386,7 @@ export class NFSFormComponent {
           true, T("Enable Service")).subscribe((dialogRes) => {
             if (dialogRes) {
               entityForm.loader.open();
-              this.ws.call('service.update', [service.id, { enable: true }]).subscribe((updateRes) => {
+              this.ws.call('service.update', [service['id'], { enable: true }]).subscribe((updateRes) => {
                 this.ws.call('service.start', [service.service]).subscribe((startRes) => {
                   entityForm.loader.close();
                   entityForm.snackBar.open(T("Service started"), T("close"));

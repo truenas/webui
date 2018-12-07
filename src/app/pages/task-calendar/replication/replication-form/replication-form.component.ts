@@ -331,19 +331,19 @@ export class ReplicationFormComponent implements AfterViewInit {
     this.entityForm = entityForm;
     this.subscription = entityForm.formGroup.controls['repl_remote_mode'].valueChanges.subscribe((res) => {
       if (res === 'SEMIAUTOMATIC'){
-        _.find(this.fieldConfig, {'name' : 'repl_remote_port'}).isHidden = true;
-        _.find(this.fieldConfig, {'name' : 'repl_remote_hostkey'}).isHidden = true;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_port'})['isHidden'] = true;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_hostkey'})['isHidden'] = true;
         entityForm.setDisabled('repl_remote_hostkey', true);
-        _.find(this.fieldConfig, {'name' : 'repl_remote_http_port'}).isHidden = false;
-        _.find(this.fieldConfig, {'name' : 'repl_remote_https'}).isHidden = false;
-        _.find(this.fieldConfig, {'name' : 'repl_remote_token'}).isHidden = false;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_http_port'})['isHidden'] = false;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_https'})['isHidden'] = false;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_token'})['isHidden'] = false;
       } else {
-        _.find(this.fieldConfig, {'name' : 'repl_remote_port'}).isHidden = false;
-        _.find(this.fieldConfig, {'name' : 'repl_remote_hostkey'}).isHidden = false;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_port'})['isHidden'] = false;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_hostkey'})['isHidden'] = false;
         entityForm.setDisabled('repl_remote_hostkey', false);
-        _.find(this.fieldConfig, {'name' : 'repl_remote_http_port'}).isHidden = true;
-        _.find(this.fieldConfig, {'name' : 'repl_remote_https'}).isHidden = true;
-        _.find(this.fieldConfig, {'name' : 'repl_remote_token'}).isHidden = true;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_http_port'})['isHidden'] = true;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_https'})['isHidden'] = true;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_token'})['isHidden'] = true;
 
       }
 
@@ -356,12 +356,12 @@ export class ReplicationFormComponent implements AfterViewInit {
       entityForm.formGroup.controls['repl_compression'].setValue('lz4');
     }
     else {
-      _.find(this.fieldConfig, {'name' : 'repl_remote_mode'}).isHidden = true;
+      _.find(this.fieldConfig, {'name' : 'repl_remote_mode'})['isHidden'] = true;
       this.rest.get(this.resource_name, {}).subscribe((res)=>{
         for (const key in entityForm.data){
           if (key === 'repl_remote_port'){
-            _.find(this.fieldConfig, {'name' : 'repl_remote_http_port'}).isHidden = true;
-            _.find(this.fieldConfig, {'name' : 'repl_remote_https'}).isHidden = true;
+            _.find(this.fieldConfig, {'name' : 'repl_remote_http_port'})['isHidden'] = true;
+            _.find(this.fieldConfig, {'name' : 'repl_remote_https'})['isHidden'] = true;
           }
         }
       });

@@ -15,7 +15,7 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import { T } from '../../../../translate-marker';
 import {RestService, WebSocketService} from '../../../../services/';
 import {EntityUtils} from '../../../common/entity/utils';
-import { debounce } from 'rxjs/operator/debounce';
+
 import { debug } from 'util';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 

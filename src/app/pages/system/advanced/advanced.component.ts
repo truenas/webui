@@ -51,7 +51,12 @@ export class AdvancedComponent implements OnDestroy {
               if (system_debug.state === "SUCCESS") {
                 this.ws.call('core.download', ['filesystem.get', [system_debug.result], fileName]).subscribe(
                   (system_debug_result) => {
-                    window.location.href = system_debug_result[1];
+                    if (window.navigator.userAgent.search("Firefox")>0) {
+                      window.open(system_debug_result[1]);
+                  }
+                    else {
+                      window.location.href = system_debug_result[1];
+                    }
                   },
                   (err) => {
                     this.openSnackBar(T("Check the network connection."), T("Failed"));
@@ -149,7 +154,7 @@ export class AdvancedComponent implements OnDestroy {
                 <b>Warning:</b> Autotuning is only used as a temporary\
                 measure and is not a permanent fix for system hardware\
                 issues. See the\
-                <a href="../docs/system.html#autotune"\
+                <a href="%%docurl%%/system.html%%webversion%%#autotune"\
                 target="_blank">Autotune section</a> of the guide for\
                 more information.')
   }, {
@@ -210,12 +215,12 @@ export class AdvancedComponent implements OnDestroy {
   {
     type: 'paragraph',
     name: 'sed_options_message',
-    paraText: T('<b>SED (<a href="../docs/system.html#self-encrypting-drives"\
+    paraText: T('<b>SED (<a href="%%docurl%%/system.html%%webversion%%#self-encrypting-drives"\
                  target="_blank">Self-Encrypting Drives</a>) Options</b>'),
 // This tooltip wraps to the next line when uncommented.
 // Erin said it's more than likely the CSS. Commented out for now and
 // linking to the user guide from the test instead.
-//  tooltip: T('See the <a href="../docs/system.html#self-encrypting-drives"\
+//  tooltip: T('See the <a href="%%docurl%%/system.html%%webversion%%#self-encrypting-drives"\
 //                target="_blank"> Self Encrypting Drives</a> section of\
 //                the user guide for more information.'),
 //
@@ -290,11 +295,11 @@ export class AdvancedComponent implements OnDestroy {
     _.find(this.fieldConfig, { 'name': 'serialspeed' });
     this.adv_serialconsole =
     entityEdit.formGroup.controls['serialconsole'];
-    this.adv_serialspeed.isHidden = !this.adv_serialconsole.value;
-    this.adv_serialport.isHidden = !this.adv_serialconsole.value;
+    this.adv_serialspeed['isHidden'] = !this.adv_serialconsole.value;
+    this.adv_serialport['isHidden'] = !this.adv_serialconsole.value;
     this.adv_serialconsole_subscription = this.adv_serialconsole.valueChanges.subscribe((value) => {
-      this.adv_serialspeed.isHidden = !value;
-      this.adv_serialport.isHidden = !value;
+      this.adv_serialspeed['isHidden'] = !value;
+      this.adv_serialport['isHidden'] = !value;
     });
     entityEdit.ws.call('system.advanced.serial_port_choices').subscribe((serial_port_choices)=>{
       for(let i=0; i<serial_port_choices.length; i++){
