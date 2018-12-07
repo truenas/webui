@@ -967,10 +967,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(background-color, --primary, $primary);
   }
 
-  .mat-progress-bar-buffer {
-    @include variable(background-color, --primary, $primary);
-    opacity: 0.5;
-  }
+  // .mat-progress-bar-buffer {
+  //   @include variable(background-color, --primary, $primary);
+  //   opacity: 0.5;
+  // }
 
   #password, #sed_passwd, #em_pass1, #bsdusr_passwd_currnt,
     #Passphrase, #passphrase, #disk_passwd, #ldap_bindpw, #iscsi_target_auth_secret,
