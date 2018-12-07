@@ -141,7 +141,7 @@ export class ExtentFormComponent {
       tooltip: T('Only appears if a <i>File</i> or zvol is selected. When\
                   the specified percentage of free space is reached,\
                   the system issues an alert.\
-                  See <a href="%%docurl%%/vaai.html#vaai%%webversion%%"\
+                  See <a href="%%docurl%%/vaai.html%%webversion%%#vaai"\
                   target="_blank">VAAI</a> Threshold Warning.'),
     },
     {
@@ -271,7 +271,7 @@ export class ExtentFormComponent {
 
     this.fileFieldGroup.forEach(field => {
       let control: any = _.find(this.fieldConfig, {'name': field});
-      control.isHidden = isDevice;
+      control['isHidden'] = isDevice;
       control.disabled = isDevice;
       if (isDevice) {
         this.entityForm.formGroup.controls[field].disable();
@@ -282,7 +282,7 @@ export class ExtentFormComponent {
 
     this.deviceFieldGroup.forEach(field => {
       let control: any = _.find(this.fieldConfig, {'name': field});
-      control.isHidden = !isDevice;
+      control['isHidden'] = !isDevice;
       control.disabled = !isDevice;
       if (!isDevice) {
         this.entityForm.formGroup.controls[field].disable();

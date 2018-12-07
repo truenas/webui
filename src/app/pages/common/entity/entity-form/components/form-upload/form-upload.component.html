@@ -1,4 +1,4 @@
- <div id="{{config.name}}" class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
+ <div id="{{config.name}}" class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
   <div class="top">
     <label>{{ config.placeholder | translate }}</label>
     <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
@@ -15,6 +15,6 @@
       <mat-card-actions class="buttons">
           <button mat-button type="button" (click)="upload(config.fileLocation)">Upload</button>
       </mat-card-actions>
-      <mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
+      <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
   </ng-template>
 </div>

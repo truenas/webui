@@ -3,19 +3,11 @@ node('FreeNAS-webui-yarn') {
       checkout scm
     }
     stage('yarn Install') {
-      echo 'Patch package.json..'
-      sh 'patch < patch-yarn-package.json'
       echo 'Yarn Install...'
       sh 'yarn install'
     }
     stage('Yarn Build') {
       echo 'yarn run build:prod:aot'
       sh 'yarn run build:prod:aot'
-    }
-    stage('Building UI archive') {
-      sh 'rm -rf ${WORKSPACE}/artifacts'
-      sh 'mkdir -p ${WORKSPACE}/artifacts'
-      sh 'tar cvJf ${WORKSPACE}/artifacts/webui.txz --exclude ./artifacts .'
-      archiveArtifacts artifacts: 'artifacts/**', fingerprint: true
     }
 }

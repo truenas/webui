@@ -86,13 +86,13 @@ export class CertificateEditComponent {
         ]).subscribe((res) => {
           if (res[0]) {
             if (res[0].CSR != null) {
-              this.CSRField.isHidden = false;
+              this.CSRField['isHidden'] = false;
               this.certificateField.readonly = false;
-              this.privatekeyField.isHidden = true;
+              this.privatekeyField['isHidden'] = true;
             } else {
-              this.CSRField.isHidden = true;
-              this.certificateField.isHidden = false;
-              this.privatekeyField.isHidden = false;
+              this.CSRField['isHidden'] = true;
+              this.certificateField['isHidden'] = false;
+              this.privatekeyField['isHidden'] = false;
             }
           }
         });

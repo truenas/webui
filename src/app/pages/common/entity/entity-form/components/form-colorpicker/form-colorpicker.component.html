@@ -1,6 +1,6 @@
-<div id="{{config.name}}" class="dynamic-field form-input colorpicker" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
+<div id="{{config.name}}" class="dynamic-field form-input colorpicker" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
         <div (click)="togglePicker()" class="color-swatch" [style.background-color]="colorProxy"></div>
-	<mat-input-container class="full-width">
+	<mat-form-field class="full-width">
                 <input matInput
 		      [placeholder]="config.placeholder"
                       [(value)]="colorProxy"
@@ -16,7 +16,7 @@
                         [cpAlphaChannel]="disabled"
                         [cpPositionRelativeToArrow]="true"
                         [formControlName]="config.name">
-                </mat-input-container>
+                </mat-form-field>
 	<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
-	<mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
+	<mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
 </div>

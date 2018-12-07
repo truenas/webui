@@ -312,14 +312,14 @@ export class InterfacesFormComponent implements OnDestroy {
     this.int_dhcp = entityForm.formGroup.controls['int_dhcp'];
     this.int_ipv6auto = entityForm.formGroup.controls['int_ipv6auto'];
 
-    this.int_ipv4address.isHidden = this.int_v4netmaskbit.isHidden = this.int_dhcp.value;
-    this.int_ipv6address.isHidden = this.int_v6netmaskbit.isHidden = this.int_ipv6auto.value;
+    this.int_ipv4address['isHidden'] = this.int_v4netmaskbit['isHidden'] = this.int_dhcp.value;
+    this.int_ipv6address['isHidden'] = this.int_v6netmaskbit['isHidden'] = this.int_ipv6auto.value;
 
     this.int_dhcp_subscription = this.int_dhcp.valueChanges.subscribe((value) => {
-      this.int_ipv4address.isHidden = this.int_v4netmaskbit.isHidden = value;
+      this.int_ipv4address['isHidden'] = this.int_v4netmaskbit['isHidden'] = value;
     });
     this.int_ipv6auto_subscription = this.int_ipv6auto.valueChanges.subscribe((value) => {
-      this.int_ipv6address.isHidden = this.int_v6netmaskbit.isHidden = value;
+      this.int_ipv6address['isHidden'] = this.int_v6netmaskbit['isHidden'] = value;
     });
 
     if (!entityForm.isNew) {
