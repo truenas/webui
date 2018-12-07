@@ -237,9 +237,9 @@ export class AFPFormComponent implements OnDestroy {
     }
     this.afp_timemachine_quota = _.find(this.fieldConfig, {'name': 'afp_timemachine_quota'});
     this.afp_timemachine = entityForm.formGroup.controls['afp_timemachine'];
-    this.afp_timemachine_quota.isHidden = !this.afp_timemachine.value;
+    this.afp_timemachine_quota['isHidden'] = !this.afp_timemachine.value;
     this.afp_timemachine_subscription = this.afp_timemachine.valueChanges.subscribe((value) => {
-      this.afp_timemachine_quota.isHidden = !value;
+      this.afp_timemachine_quota['isHidden'] = !value;
     });
   }
 
@@ -250,7 +250,7 @@ export class AFPFormComponent implements OnDestroy {
   afterSave(entityForm) {
     this.ws.call('service.query', [[]]).subscribe((res) => {
       const service = _.find(res, {"service": "afp"});
-      if (service.enable) {
+      if (service['enable']) {
         this.router.navigate(new Array('/').concat(
           this.route_success));
       } else {
@@ -259,7 +259,7 @@ export class AFPFormComponent implements OnDestroy {
           true, T("Enable Service")).subscribe((dialogRes) => {
             if (dialogRes) {
               entityForm.loader.open();
-              this.ws.call('service.update', [service.id, { enable: true }]).subscribe((updateRes) => {
+              this.ws.call('service.update', [service['id'], { enable: true }]).subscribe((updateRes) => {
                 this.ws.call('service.start', [service.service]).subscribe((startRes) => {
                   entityForm.loader.close();
                   entityForm.snackBar.open(T("Service started"), T("close"));

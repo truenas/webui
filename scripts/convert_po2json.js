@@ -7,6 +7,7 @@ var process = require( "process" );
 var exec = require('child_process').exec;
 
 var translations = "src/assets/i18n/";
+var po2json = require('po2json');
 
 // Loop through all the files in the temp directory
 fs.readdir( translations, function( err, files ) {
@@ -19,14 +20,15 @@ fs.readdir( translations, function( err, files ) {
         if (file.match(/\.po$/)) {
             let jsonfile = file.replace(/\.po$/, '.json');
 
-            console.log("Generating " + jsonfile)
-            exec('po2json --fallback-to-msgid -p -f mf ' + translations + file + ' ' + translations + jsonfile, (err, stdout, stderr) => {
-                if (err) {
-                    console.error( "Error converting file.", file );
-                    // node couldn't execute the command
-                    return;
-                }
-            });
+            console.log("Generating " + jsonfile);
+            try {
+                jsondata = po2json.parseFileSync(translations + file, {pretty:true, stringify: true, format: 'mf', fullMF: true, 'fallback-to-msgid': true});
+                stream = fs.createWriteStream(translations + jsonfile, {});
+                stream.write(jsondata);
+                
+            } catch(e) {
+                console.error( "Error converting file.", e);
+            }
         }
     });
 });

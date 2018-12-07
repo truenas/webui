@@ -1,7 +1,7 @@
-import { ApplicationRef, Component, OnInit, ViewContainerRef } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
+import { Component } from '@angular/core';
+import { Validators } from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
 
 import { RestService, WebSocketService } from '../../../../../services/';
@@ -156,7 +156,7 @@ export class ZvolFormComponent {
       name: 'compression',
       placeholder: T('Compression level'),
       tooltip: T('Automatically compress data written to the zvol.\
-                  Choose a <a href="%%docurl%%/storage.html#compression%%webversion%%"\
+                  Choose a <a href="%%docurl%%/storage.html%%webversion%%#compression"\
                   target="_blank">compression algorithm</a>.'),
       options: [
         {label : 'Off', value : "OFF"},
@@ -176,7 +176,7 @@ export class ZvolFormComponent {
       placeholder: T('ZFS Deduplication'),
       tooltip : T('Activates the process for ZFS to transparently reuse\
                    a single copy of duplicated data to save space. The\
-                   <a href="%%docurl%%/storage.html#deduplication%%webversion%%"\
+                   <a href="%%docurl%%/storage.html%%webversion%%#deduplication"\
                    target="_blank">Deduplication section</a> of the Guide\
                    describes each option.'),
       options: [
@@ -206,18 +206,12 @@ export class ZvolFormComponent {
                   based on the number of the disks in the pool for a\
                   general use case.'),
       options: [
-        { label: '512', value: '512' },
-        { label: '1K', value: '1K' },
-        { label: '2K', value: '2K' },
         { label: '4K', value: '4K' },
         { label: '8K', value: '8K' },
         { label: '16K', value: '16K' },
         { label: '32K', value: '32K' },
         { label: '64K', value: '64K' },
         { label: '128K', value: '128K' },
-        // { label: '256K', value: '256K' },
-        // { label: '512K', value: '512K' },
-        // { label: '1024K', value: '1024K' }
       ],
       isHidden: false
     },
@@ -292,7 +286,9 @@ export class ZvolFormComponent {
         entityForm.formGroup.controls['sync'].setValue('INHERIT');
         entityForm.formGroup.controls['compression'].setValue('INHERIT');
         entityForm.formGroup.controls['deduplication'].setValue('INHERIT');
-        entityForm.formGroup.controls['volblocksize'].setValue('16K');
+        this.ws.call('pool.dataset.recommended_zvol_blocksize',[this.parent]).subscribe(res=>{
+          this.entityForm.formGroup.controls['volblocksize'].setValue(res);
+        })
 
       } else {
         let parent_dataset = pk_dataset[0].name.split('/')
@@ -302,9 +298,9 @@ export class ZvolFormComponent {
         this.ws.call('pool.dataset.query', [[["id","=",parent_dataset]]]).subscribe((parent_dataset_res)=>{
           this.custActions = null;
           entityForm.setDisabled('name',true);
-          sparse.isHidden =true;
-          volblocksize.isHidden =true;
-          _.find(this.fieldConfig, {name:'sparse'}).isHidden=true;
+          sparse['isHidden'] =true;
+          volblocksize['isHidden'] =true;
+          _.find(this.fieldConfig, {name:'sparse'})['isHidden']=true;
           this.customFilter = [[["id", "=", this.parent]]]
           this.isNew =false;
           let sync_collection = [{label:pk_dataset[0].sync.value, value: pk_dataset[0].sync.value}];
