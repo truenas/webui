@@ -6,9 +6,9 @@
     <p> Last Scrub Run on: {{scrub_msg}} </p>
   </div>
   <p> Automatic scrub interval (in days)</p>
-  <mat-input-container floatPlaceholder="never">
+  <mat-form-field floatPlaceholder="never">
     <input matInput [value]="scrub_interval" #scrubIntervalEvent>
-  </mat-input-container>
+  </mat-form-field>
   <div>
     <button mat-button type="button" (click)="scrub()" mat-button color="primary">{{"Scrub Boot Pool" | translate}}</button>
     <button mat-button type="button" (click)="goToStatus()" mat-button color="primary">{{"Boot Pool Status" | translate}}</button>

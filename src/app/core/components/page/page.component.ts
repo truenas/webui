@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { CardComponent } from 'app/core/components/card/card.component';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';

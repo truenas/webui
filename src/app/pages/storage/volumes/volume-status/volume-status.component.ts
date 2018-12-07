@@ -93,9 +93,9 @@ export class VolumeStatusComponent implements OnInit {
         if (res[0]) {
           // if pool is passphrase protected, abled passphrase field.
           if (res[0].encrypt === 2) {
-            _.find(this.replaceDiskFormFields, { name: 'pass' }).isHidden = false;
+            _.find(this.replaceDiskFormFields, { name: 'pass' })['isHidden'] = false;
             _.find(this.replaceDiskFormFields, { name: 'pass' }).disabled = false;
-            _.find(this.replaceDiskFormFields, { name: 'pass2' }).isHidden = false;
+            _.find(this.replaceDiskFormFields, { name: 'pass2' })['isHidden'] = false;
             _.find(this.replaceDiskFormFields, { name: 'pass2' }).disabled = false;
           }
           this.poolScan = res[0].scan;
@@ -272,14 +272,14 @@ export class VolumeStatusComponent implements OnInit {
       }];
       if (category) {
         if (category == "data") {
-          _.find(item.actions, { label: "Remove" }).isHidden = true;
+          _.find(item.actions, { label: "Remove" })['isHidden'] = true;
         } else if (category == "spares") {
-          _.find(item.actions, { label: "Online" }).isHidden = true;
-          _.find(item.actions, { label: "Offline" }).isHidden = true;
-          _.find(item.actions, { label: "Replace" }).isHidden = true;
+          _.find(item.actions, { label: "Online" })['isHidden'] = true;
+          _.find(item.actions, { label: "Offline" })['isHidden'] = true;
+          _.find(item.actions, { label: "Replace" })['isHidden'] = true;
         } else if (category == "cache") {
-          _.find(item.actions, { label: "Online" }).isHidden = true;
-          _.find(item.actions, { label: "Offline" }).isHidden = true;
+          _.find(item.actions, { label: "Online" })['isHidden'] = true;
+          _.find(item.actions, { label: "Offline" })['isHidden'] = true;
         }
       }
     }

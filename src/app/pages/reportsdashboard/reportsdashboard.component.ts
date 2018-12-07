@@ -3,7 +3,7 @@ import { Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRoute
 import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 import * as _ from 'lodash';
 import {LineChartService, ChartConfigData, HandleChartConfigDataFunc} from '../../components/common/lineChart/lineChart.service';
-import { Subject } from 'rxjs/Subject'; 
+import { Subject } from 'rxjs'; 
 import { CoreEvent } from 'app/core/services/core.service';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
