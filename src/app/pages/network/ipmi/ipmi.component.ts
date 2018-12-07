@@ -1,7 +1,7 @@
 import {ApplicationRef, Component, Injector, OnInit, Input, ViewChild, ElementRef} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { MaterialModule } from '../../../appMaterial.module';
 import {  DialogService } from '../../../services/';
 
@@ -156,7 +156,7 @@ export class IPMIComponent {
     this.loadData();
 
     entityEdit.formGroup.controls['password'].statusChanges.subscribe((res) => {
-      res === 'INVALID' ? _.find(this.fieldConfig).hasErrors = true : _.find(this.fieldConfig).hasErrors = false;
+      res === 'INVALID' ? _.find(this.fieldConfig)['hasErrors'] = true : _.find(this.fieldConfig)['hasErrors'] = false;
     })
   }
     submitFunction({}){

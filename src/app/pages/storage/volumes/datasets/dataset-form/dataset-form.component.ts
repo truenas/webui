@@ -1,7 +1,7 @@
-import { ApplicationRef, Component, OnInit, ViewContainerRef } from '@angular/core';
+import { Component} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormArray, FormGroup, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 import * as _ from 'lodash';
 import { RestService, WebSocketService } from '../../../../../services/';
@@ -10,7 +10,6 @@ import { FieldConfig } from '../../../../common/entity/entity-form/models/field-
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { Formconfiguration } from '../../../../common/entity/entity-form/entity-form.component';
 import { EntityFormComponent } from '../../../../common/entity/entity-form';
-import { AnimationKeyframesSequenceMetadata } from '@angular/animations';
 import { DialogService } from 'app/services/dialog.service';
 import { T } from '../../../../../translate-marker';
 
@@ -37,6 +36,10 @@ interface DatasetFormData {
   copies: string;
   recordsize: string;
   casesensitivity: string;
+  quota_warning: number;
+  quota_critical: number;
+  refquota_warning: number;
+  refquota_critical: number;
 };
 
 
@@ -57,6 +60,7 @@ export class DatasetFormComponent implements Formconfiguration{
   public isNew = false;
   public parent_dataset: any;
   protected entityForm: any;
+  public recommended_size: any;
 
 
   public parent: string;
@@ -112,7 +116,7 @@ export class DatasetFormComponent implements Formconfiguration{
       placeholder: T('Compression level'),
       tooltip: T('For more information about the available compression\
                   algorithms, refer to the <a\
-                  href="%%docurl%%/storage.html#compression%%webversion%%"\
+                  href="%%docurl%%/storage.html%%webversion%%#compression"\
                   target="_blank">Compression section</a> of the guide.'),
       options: [
         { label: 'off', value: 'OFF' },
@@ -123,6 +127,16 @@ export class DatasetFormComponent implements Formconfiguration{
         { label: 'zle (runs of zeros)', value: 'ZLE' },
         { label: 'lzjb (legacy, not recommended)', value: 'LZJB' }
       ],
+    },
+    {
+      type: 'radio',
+      name: 'share_type',
+      placeholder: T('Share Type'),
+      tooltip: T('Set the type of client that will most often use this dataset.'),
+      options: [{label:'Unix', value: 'UNIX'},
+                {label:'Windows', value: 'WINDOWS'},
+                {label:'Mac', value: 'MAC'}],
+      value: 'UNIX'
     },
     {
       type: 'select',
@@ -136,17 +150,6 @@ export class DatasetFormComponent implements Formconfiguration{
         { label: 'on', value: 'ON' },
         { label: 'off', value: 'OFF' }
       ],
-    },
-    {
-      type: 'radio',
-      name: 'share_type',
-      placeholder: T('Share Type'),
-      tooltip: T('Choose the type that matches the type of client\
-                  accessing the pool/dataset.'),
-      options: [{label:'Unix', value: 'UNIX'},
-                {label:'Windows', value: 'WINDOWS'},
-                {label:'Mac', value: 'MAC'}],
-      value: 'UNIX'
     },
     {
       type: 'input',
@@ -164,7 +167,12 @@ export class DatasetFormComponent implements Formconfiguration{
     {
       type: 'select',
       name: 'refquota_unit',
-      options: [ {
+      options: [
+        {
+          label: 'Bytes',
+          value: 'B',
+        },
+      {
         label: 'KiB',
         value: 'K',
       }, {
@@ -174,9 +182,33 @@ export class DatasetFormComponent implements Formconfiguration{
         label: 'GiB',
         value: 'G',
       }],
-      value: 'G',
+      value: 'M',
       class: 'inline',
       width: '30%',
+    },
+    {
+      type: 'input',
+      inputType: 'number',
+      name: 'refquota_warning',
+      placeholder: T('Quota warning alert at, %'),
+      tooltip: T('0=Disabled, blank=inherit'),
+      class: 'inline',
+      width: '70%',
+      value: 0,
+      min: 0,
+      validation: [Validators.min(0)]
+    },
+    {
+      type: 'input',
+      inputType: 'number',
+      name: 'refquota_critical',
+      placeholder: T('Quota critical alert at, %'),
+      tooltip: T('0=Disabled, blank=inherit'),
+      class: 'inline',
+      width: '70%',
+      value: 0,
+      min: 0,
+      validation: [Validators.min(0)]
     },
     {
       type: 'input',
@@ -194,7 +226,12 @@ export class DatasetFormComponent implements Formconfiguration{
     {
       type: 'select',
       name: 'quota_unit',
-      options: [ {
+      options: [
+        {
+          label: 'Bytes',
+          value: 'B',
+        },
+        {
         label: 'KiB',
         value: 'K',
       }, {
@@ -204,9 +241,33 @@ export class DatasetFormComponent implements Formconfiguration{
         label: 'GiB',
         value: 'G',
       }],
-      value: 'G',
+      value: 'M',
       class: 'inline',
       width: '30%',
+    },
+    {
+      type: 'input',
+      inputType: 'number',
+      name: 'quota_warning',
+      placeholder: T('Quota warning alert at, %'),
+      tooltip: T('0=Disabled, blank=inherit'),
+      class: 'inline',
+      width: '70%',
+      value: 0,
+      min: 0,
+      validation: [Validators.min(0)]
+    },
+    {
+      type: 'input',
+      inputType: 'number',
+      name: 'quota_critical',
+      placeholder: T('Quota critical alert at, %'),
+      tooltip: T('0=Disabled, blank=inherit'),
+      class: 'inline',
+      width: '70%',
+      value: 0,
+      min: 0,
+      validation: [Validators.min(0)]
     },
     {
       type: 'input',
@@ -225,7 +286,12 @@ export class DatasetFormComponent implements Formconfiguration{
     {
       type: 'select',
       name: 'refreservation_unit',
-      options: [ {
+      options: [
+        {
+          label: 'Bytes',
+          value: 'B',
+        },
+        {
         label: 'KiB',
         value: 'K',
       }, {
@@ -235,7 +301,7 @@ export class DatasetFormComponent implements Formconfiguration{
         label: 'GiB',
         value: 'G',
       }],
-      value: 'G',
+      value: 'M',
       class: 'inline',
       width: '30%',
     },
@@ -255,7 +321,12 @@ export class DatasetFormComponent implements Formconfiguration{
     {
       type: 'select',
       name: 'reservation_unit',
-      options: [ {
+      options: [
+        {
+          label: 'Bytes',
+          value: 'B',
+        },
+        {
         label: 'KiB',
         value: 'K',
       }, {
@@ -265,7 +336,7 @@ export class DatasetFormComponent implements Formconfiguration{
         label: 'GiB',
         value: 'G',
       }],
-      value: 'G',
+      value: 'M',
       class: 'inline',
       width: '30%',
     },
@@ -285,9 +356,9 @@ export class DatasetFormComponent implements Formconfiguration{
     },
     {
       type: 'select',
-      name: 'exec',
-      placeholder: T('Exec'),
-      tooltip: T('Choose <b>On</b> or <b>Off</b>.'),
+      name: 'readonly',
+      placeholder: T('Read-only'),
+      tooltip: T('Set to prevent the dataset from being modified.'),
       options: [
         { label: 'On', value: 'ON' },
         { label: 'Off', value: 'OFF' }
@@ -295,9 +366,9 @@ export class DatasetFormComponent implements Formconfiguration{
     },
     {
       type: 'select',
-      name: 'readonly',
-      placeholder: T('Read-only'),
-      tooltip: T('Choose if the dataset can be modified.'),
+      name: 'exec',
+      placeholder: T('Exec'),
+      tooltip: T('Set whether processes can be executed from within this dataset.'),
       options: [
         { label: 'On', value: 'ON' },
         { label: 'Off', value: 'OFF' }
@@ -333,9 +404,9 @@ export class DatasetFormComponent implements Formconfiguration{
       tooltip: T('Matching the fixed size of data, as in a database, may\
                   result in better performance.'),
       options: [
-        { label: '512', value: '512' },
-        { label: '1K', value: '1K' },
-        { label: '2K', value: '2K' },
+        { label: '512', value: '512', disable:true },
+        { label: '1K', value: '1K', disable:true },
+        { label: '2K', value: '2K', disable:true },
         { label: '4K', value: '4K' },
         { label: '8K', value: '8K' },
         { label: '16K', value: '16K' },
@@ -344,7 +415,7 @@ export class DatasetFormComponent implements Formconfiguration{
         { label: '128K', value: '128K' },
         { label: '256K', value: '256K' },
         { label: '512K', value: '512K' },
-        { label: '1024K', value: '1024K' }
+        { label: '1M', value: '1M' }
       ],
     },
     {
@@ -379,12 +450,18 @@ export class DatasetFormComponent implements Formconfiguration{
     'copies',
     'recordsize',
     'exec',
+    'quota_warning',
+    'quota_critical',
+    'refquota_warning',
+    'refquota_critical'
+
   ];
 
   protected byteMap: Object= {
     'G': 1073741824,
     'M': 1048576,
     'K': 1024,
+    'B': 1
   };
   protected recordSizeMap: Object= {
     '512': '512',
@@ -392,12 +469,28 @@ export class DatasetFormComponent implements Formconfiguration{
     '2048': '2K',
     '4096': '4K',
     '8192': '8K',
-    '16384': '32K',
+    '16384': '16K',
+    '32768':'32K',
     '65536': '64K',
     '131072': '128K',
     '262144': '256K',
     '524288': '512K',
     '1048576': '1024K',
+  };
+  protected reverseRecordSizeMap: Object= {
+    '512': '512',
+    '1K' :'1024',
+    '2K' : '2048',
+    '4K': '4096',
+    '8K': '8192',
+    '16K':'16384',
+    '32K': '32768',
+    '64K': '65536',
+    '128K': '131072',
+    '256K': '262144',
+    '512K': '524288',
+    '1024K': '1048576',
+    '1M':'1048576'
   };
 
   public sendAsBasicOrAdvanced(data: DatasetFormData): DatasetFormData {
@@ -455,7 +548,19 @@ export class DatasetFormComponent implements Formconfiguration{
       entityForm.setDisabled('name',true);
       _.find(this.fieldConfig, {name:'name'}).tooltip = "Dataset name (read-only)."
     }
-
+    this.entityForm.formGroup.controls['recordsize'].valueChanges.subscribe((res)=>{
+      const res_number = parseInt(this.reverseRecordSizeMap[res],10);
+      if(this.recommended_size){
+        const recommended_size_number = parseInt(this.reverseRecordSizeMap[this.recommended_size],0);
+        if (res_number < recommended_size_number){
+          _.find(this.fieldConfig, {name:'recordsize'}).warnings = `
+          Recommended record size based on pool topology: ${this.recommended_size}.
+          Other sizes could reduce sequential I/O performance and space efficiency.`
+        } else {
+          _.find(this.fieldConfig, {name:'recordsize'}).warnings = null;
+        };
+      };
+    });
   }
 
   preInit(entityForm: EntityFormComponent) {
@@ -478,6 +583,11 @@ export class DatasetFormComponent implements Formconfiguration{
       this.fieldConfig[0].readonly = false;
     }
     if(this.parent){
+      const root = this.parent.match(/^[a-zA-Z]+/)[0];
+      this.ws.call('pool.dataset.recommended_zvol_blocksize',[root]).subscribe(res=>{
+        this.entityForm.formGroup.controls['recordsize'].setValue(res);
+        this.recommended_size = res;
+      });
       this.ws.call('pool.dataset.query', [[["id", "=", this.pk]]]).subscribe((pk_dataset)=>{
       if(this.isNew){
         const sync = _.find(this.fieldConfig, {name:'sync'});
@@ -516,6 +626,18 @@ export class DatasetFormComponent implements Formconfiguration{
         else {
           this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).subscribe((parent_dataset)=>{
             this.parent_dataset = parent_dataset[0];
+            if (parent_dataset[0].quota.rawvalue === '0') {
+              entityForm.formGroup.controls['quota_unit'].setValue('B');
+            }
+            if (parent_dataset[0].refquota.rawvalue === '0') {
+              entityForm.formGroup.controls['refquota_unit'].setValue('B');
+            }
+            if (parent_dataset[0].reservation.rawvalue === '0') {
+              entityForm.formGroup.controls['reservation_unit'].setValue('B');
+            }
+            if (parent_dataset[0].refreservation.rawvalue === '0') {
+              entityForm.formGroup.controls['refreservation_unit'].setValue('B');
+            }
             const edit_sync = _.find(this.fieldConfig, {name:'sync'});
             const edit_compression = _.find(this.fieldConfig, {name:'compression'});
             const edit_deduplication = _.find(this.fieldConfig, {name:'deduplication'});
@@ -529,69 +651,28 @@ export class DatasetFormComponent implements Formconfiguration{
             let edit_exec_collection = [{label:pk_dataset[0].exec.value, value: pk_dataset[0].exec.value}];
             let edit_readonly_collection = [{label:pk_dataset[0].readonly.value, value: pk_dataset[0].readonly.value}];
             let edit_atime_collection = [{label:pk_dataset[0].readonly.value, value: pk_dataset[0].readonly.value}];
-            let edit_recordsize_collection = [{label:pk_dataset[0].recordsize.value, value: pk_dataset[0].recordsize.value}];
+            let edit_recordsize_collection = [{label: this.parent_dataset.recordsize.value, value:  this.parent_dataset.recordsize.value}];
 
-            if (pk_dataset[0].sync.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
-              edit_sync_collection = [{label:`Inherit (${pk_dataset[0].sync.rawvalue})`, value: pk_dataset[0].sync.value}];
-            }
-            else{
-              edit_sync_collection = [{label:`Inherit (${this.parent_dataset.sync.rawvalue})`, value: 'INHERIT'}];
-
-            }
-
+            edit_sync_collection = [{label:`Inherit (${this.parent_dataset.sync.rawvalue})`, value: this.parent_dataset.sync.value}];
             edit_sync.options = edit_sync_collection.concat(edit_sync.options);
 
-            if (pk_dataset[0].compression.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT" ){
-              edit_compression_collection = [{label:`Inherit (${pk_dataset[0].compression.rawvalue})`, value: pk_dataset[0].compression.value}];
-            }
-            else {
-              edit_compression_collection = [{label:`Inherit (${this.parent_dataset.compression.rawvalue})`, value: 'INHERIT'}];
-            }
-
+            edit_compression_collection = [{label:`Inherit (${this.parent_dataset.compression.rawvalue})`, value: this.parent_dataset.compression.value}];
             edit_compression.options = edit_compression_collection.concat(edit_compression.options);
 
-            if (pk_dataset[0].deduplication.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
-              edit_deduplication_collection = [{label:`Inherit (${pk_dataset[0].deduplication.rawvalue})`, value: pk_dataset[0].deduplication.value}];
-            }
-            else {
-              edit_deduplication_collection = [{label:`Inherit (${this.parent_dataset.deduplication.rawvalue})`, value: 'INHERIT'}];
-            }
+            edit_deduplication_collection = [{label:`Inherit (${this.parent_dataset.deduplication.rawvalue})`, value: this.parent_dataset.deduplication.value}];
             edit_deduplication.options = edit_deduplication_collection.concat(edit_deduplication.options);
 
-            if (pk_dataset[0].exec.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
-              edit_exec_collection = [{label:`Inherit (${pk_dataset[0].exec.rawvalue})`, value: pk_dataset[0].exec.value}];
-
-            }
-            else {
-
-              edit_exec_collection = [{label:`Inherit (${this.parent_dataset.exec.value})`, value: 'INHERIT'}];
-            }
+            edit_exec_collection = [{label:`Inherit (${this.parent_dataset.exec.rawvalue})`, value: this.parent_dataset.exec.value}];
             edit_exec.options = edit_exec_collection.concat(edit_exec.options);
 
-            if (pk_dataset[0].readonly.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
-              edit_readonly_collection = [{label:`Inherit (${pk_dataset[0].readonly.rawvalue})`, value: pk_dataset[0].readonly.value}];
 
-            }
-            else {
-              edit_readonly_collection = [{label:`Inherit (${this.parent_dataset.readonly.rawvalue})`, value: 'INHERIT'}];
-            }
+            edit_readonly_collection = [{label:`Inherit (${this.parent_dataset.readonly.rawvalue})`, value: this.parent_dataset.readonly.value}];
             edit_readonly.options = edit_readonly_collection.concat(edit_readonly.options);
 
-            if (pk_dataset[0].atime.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
-              edit_atime_collection = [{label:`Inherit (${pk_dataset[0].atime.rawvalue})`, value: pk_dataset[0].atime.value}];
-
-            } else {
-              edit_atime_collection = [{label:`Inherit (${this.parent_dataset.atime.rawvalue})`, value: 'INHERIT'}];
-
-            }
+            edit_atime_collection = [{label:`Inherit (${this.parent_dataset.atime.rawvalue})`, value: this.parent_dataset.atime.value}];
             edit_atime.options = edit_atime_collection.concat(edit_atime.options);
 
-            if (pk_dataset[0].recordsize.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
-              edit_recordsize_collection = [{label:`Inherit (${this.recordSizeMap[pk_dataset[0].recordsize.rawvalue]})`, value: pk_dataset[0].recordsize.value}];
-
-            } else {
-              edit_recordsize_collection = [{label:`Inherit (${this.parent_dataset.recordsize.value})`, value: 'INHERIT'}];
-            }
+            edit_recordsize_collection = [{label:`Inherit`, value: this.parent_dataset.recordsize.value}];
             edit_recordsize.options = edit_recordsize_collection.concat(edit_recordsize.options);
             entityForm.formGroup.controls['sync'].setValue(pk_dataset[0].sync.value);
             if (pk_dataset[0].compression.value === 'GZIP') {
@@ -629,6 +710,10 @@ export class DatasetFormComponent implements Formconfiguration{
      const quota = this.getFieldValueOrRaw(wsResponse.quota);
      const refreservation = this.getFieldValueOrRaw(wsResponse.refreservation);
      const reservation = this.getFieldValueOrRaw(wsResponse.reservation);
+     const quota_warning = this.getFieldValueOrRaw(wsResponse.quota_warning);
+     const quota_critical = this.getFieldValueOrRaw(wsResponse.quota_critical);
+     const refquota_warning = this.getFieldValueOrRaw(wsResponse.refquota_warning);
+     const refquota_critical = this.getFieldValueOrRaw(wsResponse.refquota_critical);
 
      const returnValue: DatasetFormData = {
         name: this.getFieldValueOrRaw(wsResponse.name),
@@ -640,6 +725,10 @@ export class DatasetFormComponent implements Formconfiguration{
         copies: this.getFieldValueOrRaw(wsResponse.copies),
         deduplication: this.getFieldValueOrRaw(wsResponse.deduplication),
         quota: quota ? quota.substring(0, quota.length - 1) : 0,
+        quota_warning: quota_warning,
+        quota_critical: quota_critical,
+        refquota_warning: refquota_warning,
+        refquota_critical: refquota_critical,
         quota_unit: quota ? quota.substr(-1, 1) : quota,
         readonly: this.getFieldValueOrRaw(wsResponse.readonly),
         exec: this.getFieldValueOrRaw(wsResponse.exec),
@@ -660,7 +749,7 @@ export class DatasetFormComponent implements Formconfiguration{
     //    returnValue.recordsize = "" + ( 1024 * value ) + "K";
     //  }
 
-     if (quota || refquota || refreservation || reservation) {
+     if (quota || refquota || refreservation || reservation || quota_warning ||quota_critical ||refquota_warning||refquota_critical) {
        this.isBasicMode = false;
      }
 
@@ -675,12 +764,12 @@ export class DatasetFormComponent implements Formconfiguration{
     if (data.refquota === 0) {
       data.refquota = null;
     }
-    if (data.refreservation === 0) {
-      data.refreservation = null;
-    }
-    if (data.reservation === 0) {
-      data.reservation = null;
-    }
+    // if (data.refreservation === 0) {
+    //   data.refreservation = null;
+    // }
+    // if (data.reservation === 0) {
+    //   data.reservation = null;
+    // }
     if (data.recordsize === "1M") {
       data.recordsize = "1024K";
     }

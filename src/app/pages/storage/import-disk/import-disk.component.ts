@@ -43,7 +43,7 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
       placeholder : T('Filesystem type'),
       tooltip: T('Choose the type of filesystem on the disk. Refer to\
                   the guide section on <a\
-                  href="%%docurl%%/storage.html#import-disk%%webversion%%"\
+                  href="%%docurl%%/storage.html%%webversion%%#import-disk"\
                   target="_blank">importing disks</a> for more details.'),
       options: [
                     {value:'ufs', label:'UFS'},
@@ -108,7 +108,7 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
 
     this.fs_type_subscription = this.fs_type.valueChanges.subscribe((value) => {
       if (value === 'msdosfs') {
-        this.msdosfs_locale.isHidden = false;
+        this.msdosfs_locale['isHidden'] = false;
       }
     });
 
