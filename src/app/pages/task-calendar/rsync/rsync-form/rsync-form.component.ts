@@ -4,17 +4,15 @@ import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
 import { EntityFormComponent } from '../../../common/entity/entity-form';
-import { EntityTaskComponent } from '../../../common/entity/entity-task';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { TaskService, UserService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { FormGroup } from '@angular/forms';
-import { T } from '../../../../translate-marker';
-import { Validators } from '@angular/forms';
+import helptext from '../../../../helptext/task-calendar/resync/resync-form';
 
 @Component({
   selector: 'rsync-task-add',
-  template: `<entity-task [conf]="this"></entity-task>`,
+  template: `<entity-form [conf]="this"></entity-form>`,
   providers: [TaskService, UserService, EntityFormService]
 })
 export class RsyncFormComponent {
@@ -25,281 +23,154 @@ export class RsyncFormComponent {
   protected isEntity: boolean = true;
 
   protected preTaskName: string = 'rsync';
-  public fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = []
+  public fieldSets: FieldSet[] = [
+    {
+      name:'Rsync Task',
+      class:'add-rsync',
+      label:true,
+      width:'300px',
+      config: [
       {
         type : 'explorer',
         initial: '/mnt',
         name: 'rsync_path',
         explorerType: 'directory',
-        placeholder: T('Path'),
-        tooltip: T('Browse to the path to be copied. Path lengths cannot\
-                    be greater than 255 characters.'),
+        placeholder: helptext.rsync_path_placeholder,
+        tooltip: helptext.rsync_path_tooltip,
         required: true,
-        validation : [ Validators.required ]
+        validation : helptext.rsync_path_validation
       }, {
-        type: 'select',
+        type: 'combobox',
         name: 'rsync_user',
-        placeholder: T('User'),
-        tooltip: T('The chosen user must have permission to write to the\
-                    specified directory on the remote system.'),
+        placeholder: helptext.rsync_user_placeholder,
+        tooltip: helptext.rsync_user_tooltip,
         options: [],
         required: true,
-        validation : [ Validators.required ],
+        validation : helptext.rsync_user_validation,
+        searchOptions: [],
+        parent: this,
+        updater: this.updateUserSearchOptions,
       }, {
         type: 'input',
         name: 'rsync_remotehost',
-        placeholder: T('Remote Host'),
+        placeholder: helptext.rsync_remotehost_placeholder,
         required: true,
-        validation : [ Validators.required ],
-        tooltip: T('Enter the IP address or hostname of the remote\
-                    system that will store the copy. Use the format\
-                    <i>username@remote_host</i> if the username differs\
-                    on the remote host.'),
+        validation : helptext.rsync_remotehost_validation,
+        tooltip: helptext.rsync_remotehost_tooltip
       }, {
         type: 'input',
         name: 'rsync_remoteport',
         inputType: 'number',
-        placeholder: T('Remote SSH Port'),
+        placeholder: helptext.rsync_remoteport_placeholder,
         value: 22,
-        tooltip: T('Enter the SSH Port of the remote system.'),
+        tooltip: helptext.rsync_remoteport_tooltip
       }, {
         type: 'select',
         name: 'rsync_mode',
-        placeholder: T('Rsync mode'),
-        tooltip: T('Choose <a href="guide" target="_blank">Rsync\
-                    module</a> or <a href="guide" target="_blank">Rsync\
-                    over SSH</a>'),
+        placeholder: helptext.rsync_mode_placeholder,
+        tooltip: helptext.rsync_mode_tooltip,
         options: [],
       }, {
         type: 'input',
         name: 'rsync_remotemodule',
-        placeholder: T('Remote Module Name'),
-        tooltip: T('At least one module must be defined in <a\
-                    href="https://www.samba.org/ftp/rsync/rsyncd.conf.html"\
-                    target="_blank">rsyncd.conf(5)</a> of the rsync\
-                    server or in the <b>Rsync Modules</b> of another\
-                    system.'),
+        placeholder: helptext.rsync_remotemodule_placeholder,
+        tooltip: helptext.rsync_remotemodule_tooltip
       }, {
         type : 'explorer',
         initial: '/mnt',
         name: 'rsync_remotepath',
         explorerType: 'directory',
-        placeholder: T('Remote Path'),
-        tooltip: T('Browse to the existing path on the remote host to\
-                    sync with. Maximum path length is 255 characters'),
+        placeholder: helptext.rsync_remotepath_placeholder,
+        tooltip: helptext.rsync_remotepath_tooltip
       }, {
         type: 'checkbox',
         name: 'rsync_validate_rpath',
-        placeholder: T('Validate Remote Path'),
-        tooltip: T('Set to automatically create the defined <b>Remote\
-                    Path</b> if it does not exist.'),
+        placeholder: helptext.rsync_validate_rpath_placeholder,
+        tooltip: helptext.rsync_validate_rpath_tooltip,
         value: true,
       }, {
         type: 'select',
         name: 'rsync_direction',
-        placeholder: T('Direction'),
-        tooltip: T('Direct the flow of data to the remote host.'),
+        placeholder: helptext.rsync_direction_placeholder,
+        tooltip: helptext.rsync_direction_tooltip,
         options: [],
+        required: true,
+        validation : helptext.rsync_direction_validation
       }, {
         type: 'input',
         name: 'rsync_description',
-        placeholder: T('Short Description'),
-        tooltip: T('Optional. Enter an informative description of the\
-                    new rsync task.'),
+        placeholder: helptext.rsync_description_placeholder,
+        tooltip: helptext.rsync_description_tooltip
       }, {
-        type: 'select',
-        name: 'rsync_repeat',
-        placeholder: T('Quick Schedule'),
-        tooltip: T('Choose how often to run the task. Choose the\
-                    empty value to define a custom schedule.'),
-        options: [
-          { label: '----------', value: 'none' },
-          { label: 'Hourly', value: 'hourly' },
-          { label: 'Daily', value: 'daily' },
-          { label: 'Weekly', value: 'weekly' },
-          { label: 'Monthly', value: 'monthly' },
-        ],
-        value: 'once',
-      }, {
-        type: 'input',
-        name: 'rsync_minute',
-        placeholder: T('Minute'),
-        tooltip: T('Define the minute of the hour to run the task.'),
-        value: '*',
-        isHidden: false,
-      }, {
-        type: 'input',
-        name: 'rsync_hour',
-        placeholder: T('Hour'),
-        tooltip: T('Define the hour to run the task.'),
-        value: '*',
-        isHidden: false,
-      }, {
-        type: 'input',
-        name: 'rsync_daymonth',
-        placeholder: T('Day of month'),
-        tooltip: T('Define the day of the month to run the task.'),
-        value: '*',
-        isHidden: false,
-      }, {
-        type: 'select',
-        name: 'rsync_month',
-        placeholder: T('Month'),
-        tooltip: T('Define which months to run the task.'),
-        multiple: true,
-        options: [{
-          label: 'January',
-          value: '1',
-        }, {
-          label: 'February',
-          value: '2',
-        }, {
-          label: 'March',
-          value: '3',
-        }, {
-          label: 'April',
-          value: '4',
-        }, {
-          label: 'May',
-          value: '5',
-        }, {
-          label: 'June',
-          value: '6',
-        }, {
-          label: 'July',
-          value: '7',
-        }, {
-          label: 'August',
-          value: '8',
-        }, {
-          label: 'September',
-          value: '9',
-        }, {
-          label: 'October',
-          value: '10',
-        }, {
-          label: 'November',
-          value: '11',
-        }, {
-          label: 'December',
-          value: '12',
-        }],
-        value: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
-        isHidden: false,
-      }, {
-        type: 'select',
-        name: 'rsync_dayweek',
-        placeholder: T('Day of week'),
-        tooltip: T('Choose which days of the week to run the task.'),
-        multiple: true,
-        options: [{
-          label: 'Monday',
-          value: '1',
-        }, {
-          label: 'Tuesday',
-          value: '2',
-        }, {
-          label: 'Wednesday',
-          value: '3',
-        }, {
-          label: 'Thursday',
-          value: '4',
-        }, {
-          label: 'Friday',
-          value: '5',
-        }, {
-          label: 'Saturday',
-          value: '6',
-        }, {
-          label: 'Sunday',
-          value: '7',
-        }],
-        value: ['1', '2', '3', '4', '5', '6', '7'],
-        isHidden: false,
+        type: 'scheduler',
+        name: 'rsync_picker',
+        placeholder: helptext.rsync_picker_placeholder,
+        tooltip: helptext.rsync_picker_tooltip,
+        required: true
       }, {
         type: 'checkbox',
         name: 'rsync_recursive',
-        placeholder: T('Recursive'),
-        tooltip: T('Set to include all subdirectories of the specified\
-                    pool during the rsync task.'),
+        placeholder: helptext.rsync_recursive_placeholder,
+        tooltip: helptext.rsync_recursive_tooltip,
         value: true,
       }, {
         type: 'checkbox',
         name: 'rsync_times',
-        placeholder: T('Times'),
-        tooltip: T('Set to preserve modification times of files.'),
+        placeholder: helptext.rsync_times_placeholder,
+        tooltip: helptext.rsync_times_tooltip,
         value: true,
       }, {
         type: 'checkbox',
         name: 'rsync_compress',
-        placeholder: T('Compress'),
-        tooltip: T('Set to reduce the size of data to transmit.\
-                    Recommended for slow connections.'),
+        placeholder: helptext.rsync_compress_placeholder,
+        tooltip: helptext.rsync_compress_tooltip,
         value: true,
       }, {
         type: 'checkbox',
         name: 'rsync_archive',
-        placeholder: T('Archive'),
-        tooltip: T('Equivalent to the <b>-rlptgoD</b> flag. This will\
-                    run the task as recursive, copy symlinks as symlinks,\
-                    preserve permissions, preserve modification times,\
-                    preserve group, preserve owner (root only), preserve\
-                    device files (root only), and preserve special files.'),
+        placeholder: helptext.rsync_archive_placeholder,
+        tooltip: helptext.rsync_archive_tooltip
       }, {
         type: 'checkbox',
         name: 'rsync_delete',
-        placeholder: T('Delete'),
-        tooltip: T('Set to delete files in the destination directory\
-                    that do not exist in the sending directory.'),
+        placeholder: helptext.rsync_delete_placeholder,
+        tooltip: helptext.rsync_delete_tooltip
       }, {
         type: 'checkbox',
         name: 'rsync_quiet',
-        placeholder: T('Quiet'),
-        tooltip: T('Set to suppress informational messages from the\
-                    remote server.'),
+        placeholder: helptext.rsync_quiet_placeholder,
+        tooltip: helptext.rsync_quiet_tooltip
       }, {
         type: 'checkbox',
         name: 'rsync_preserveperm',
-        placeholder: T('Preserve permissions'),
-        tooltip: T('Set to preserve original file permissions. This is\
-                    useful when the user is set to <i>root</i>.'),
+        placeholder: helptext.rsync_preserveperm_placeholder,
+        tooltip: helptext.rsync_preserveperm_tooltip
       }, {
         type: 'checkbox',
         name: 'rsync_preserveattr',
-        placeholder: T('Preserve extended attributes'),
-        tooltip: T('Both systems must support <a\
-                    href="https://en.wikipedia.org/wiki/Extended_file_attributes"\
-                    target="_blank">extended attributes</a> to set.'),
+        placeholder: helptext.rsync_preserveattr_placeholder,
+        tooltip: helptext.rsync_preserveattr_tooltip
       }, {
         type: 'checkbox',
         name: 'rsync_delayupdates',
-        placeholder: T('Delay Updates'),
-        tooltip: T('Set to save the temporary file from each updated\
-                    file to a holding directory until the end of the\
-                    transfer when all transferred files are renamed\
-                    into place.'),
+        placeholder: helptext.rsync_delayupdates_placeholder,
+        tooltip: helptext.rsync_delayupdates_tooltip,
         value: true,
       }, {
         type: 'textarea',
-        name: 'extra',
-        placeholder: T('Extra options'),
-        tooltip: T('Add any other <a\
-                    href="https://rsync.samba.org/ftp/rsync/rsync.html"\
-                    target="_blank">rsync(1)</a> options. The "*"\
-                    character must be escaped with a backslash (\\*.txt)\
-                    or used inside single quotes(\'*.txt\').'),
+        name: 'rsync_extra',
+        placeholder: helptext.rsync_extra_placeholder,
+        tooltip: helptext.rsync_extra_tooltip
       }, {
         type: 'checkbox',
         name: 'rsync_enabled',
-        placeholder: T('Enabled'),
-        tooltip: T('Unset to disable the rsync task without deleting it.\
-                    When the <a href="..//docs/services.html#rsync"\
-                    target="_blank">Rsync service</a> is OFF, the rsync\
-                    task continues to look for the server unless this\
-                    option is unset.'),
+        placeholder: helptext.rsync_enabled_placeholder,
+        tooltip: helptext.rsync_enabled_tooltip,
         value: true,
       }
-    ];
+    ]
+  }];
 
   protected hide_fileds: Array<any>;
   protected rsync_module_field: Array<any> = [
@@ -322,21 +193,23 @@ export class RsyncFormComponent {
   preInit() {
     this.hide_fileds = this.rsync_ssh_field;
 
-    this.user_field = _.find(this.fieldConfig, { 'name': 'rsync_user' });
-    this.userService.listUsers().subscribe((res) => {
-      res.data.forEach((item) => {
-        this.user_field.options.push({ label: item.bsdusr_username, value: item.bsdusr_username })
-      });
+    this.user_field = _.find(this.fieldSets[0].config, { 'name': 'rsync_user' });
+    
+    this.userService.listAllUsers().subscribe((res) => {
+      let items = res.data.items;
+      for (let i = 0; i < items.length; i++) {
+         this.user_field.options.push({label: items[i].label, value: items[i].id});
+       }
     });
 
-    this.rsync_mode_field = _.find(this.fieldConfig, { 'name': 'rsync_mode' });
+    this.rsync_mode_field = _.find(this.fieldSets[0].config, { 'name': 'rsync_mode' });
     this.taskService.getRsyncModeChoices().subscribe((res) => {
       res.forEach((item) => {
         this.rsync_mode_field.options.push({ label: item[1], value: item[0] });
       });
     });
 
-    this.rsync_direction_field = _.find(this.fieldConfig, { 'name': 'rsync_direction' });
+    this.rsync_direction_field = _.find(this.fieldSets[0].config, { 'name': 'rsync_direction' });
     this.taskService.getRsyncDirectionChoices().subscribe((res) => {
       res.forEach((item) => {
         this.rsync_direction_field.options.push({ label: item[1], value: item[0] });
@@ -344,14 +217,44 @@ export class RsyncFormComponent {
     });
   }
 
-  afterInit(entityTask: EntityTaskComponent) {
-    entityTask.formGroup.controls['rsync_mode'].valueChanges.subscribe((res) => {
+  afterInit(entityForm) {
+    entityForm.formGroup.controls['rsync_mode'].valueChanges.subscribe((res) => {
       if( res === "ssh" ){
         this.hide_fileds = this.rsync_module_field;
       }
       else {
         this.hide_fileds = this.rsync_ssh_field;
       }
+    });
+  }
+
+  beforeSubmit(value){
+    let spl = value.rsync_picker.split(" ");
+    delete value.rsync_picker;
+    value['rsync_minute'] = spl[0];
+    value['rsync_hour'] = spl[1];
+    value['rsync_daymonth'] = spl[2];
+    value['rsync_month'] = spl[3];
+    value['rsync_dayweek'] = spl[4];
+  }
+
+  resourceTransformIncomingRestData(data) {
+    data['rsync_picker'] = data.rsync_minute + " " +
+                          data.rsync_hour + " " +
+                          data.rsync_daymonth + " " +
+                          data.rsync_month + " " +
+                          data.rsync_dayweek;
+    return data;
+  }
+
+  updateUserSearchOptions(value = "", parent) {
+    parent.userService.listAllUsers(value).subscribe(res => {
+      let users = [];
+      let items = res.data.items;
+      for (let i = 0; i < items.length; i++) {
+        users.push({label: items[i].label, value: items[i].id});
+      }
+      parent.user_field.searchOptions = users;
     });
   }
 }

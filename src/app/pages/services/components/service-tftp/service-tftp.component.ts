@@ -65,7 +65,10 @@ export class ServiceTFTPComponent {
       placeholder : T('Username'),
       tooltip : T('Select the account to use for TFTP requests. This\
                    account must have permission to the <b>Directory</b>.'),
-      options : []
+      options : [],
+      searchOptions: [],
+      parent: this,
+      updater: this.updateUserSearchOptions,
     },
     {
       type : 'permissions',
@@ -116,4 +119,15 @@ export class ServiceTFTPComponent {
   }
 
   afterInit(entityEdit: any) { }
+
+  updateUserSearchOptions(value = "", parent) {
+    parent.userService.listAllUsers(value).subscribe(res => {
+      let users = [];
+      let items = res.data.items;
+      for (let i = 0; i < items.length; i++) {
+        users.push({label: items[i].label, value: items[i].id});
+      }
+      parent.tftp_username.searchOptions = users;
+    });
+  }
 }

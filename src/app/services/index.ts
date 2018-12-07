@@ -14,3 +14,7 @@ export * from './storage.service';
 export * from './task.service';
 export * from './language.service';
 export * from './app-loader/app-loader.service';
+export * from './cloudcredential.service';
+export * from './job.service';
+export * from './bootenv.service';
+export * from './docs.service';

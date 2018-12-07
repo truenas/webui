@@ -7,66 +7,155 @@ import { FieldConfig } from '../../common/entity/entity-form/models/field-config
 import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
 import { FieldRelationService } from '../../common/entity/entity-form/services/field-relation.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { WebSocketService } from '../../../services/';
+import { WebSocketService, NetworkService } from '../../../services/';
 import { EntityUtils } from '../../common/entity/utils';
 import { T } from '../../../translate-marker';
 import { DialogService } from '../../../services/dialog.service';
+import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
+import { EntityJobComponent } from '../../common/entity/entity-job';
+import { MatSnackBar, MatDialog } from '@angular/material';
+import helptext from '../../../helptext/plugins/plugins';
 
 @Component({
   selector: 'app-plugin-add',
   templateUrl: './plugin-add.component.html',
-  providers: [EntityFormService, FieldRelationService],
+  styleUrls: ['../../common/entity/entity-form/entity-form.component.scss'],
+  providers: [EntityFormService, FieldRelationService, NetworkService],
 })
 export class PluginAddComponent implements OnInit {
 
   protected addCall: string = 'jail.fetch';
-  public route_success: string[] = ['plugins', 'available'];
+  public route_goback: string[] = ['plugins', 'available'];
+  public route_success: string[] = ['plugins', 'installed'];
   protected isEntity: boolean = false;
 
   public fieldConfig: FieldConfig[] = [{
       type: 'input',
       name: 'name',
-      placeholder: T('Plugin Name'),
+      placeholder: helptext.name_placeholder,
       disabled: true,
     },
     {
       type: 'checkbox',
       name: 'dhcp',
-      placeholder: T('DHCP'),
-      tooltip: T('Set for <a\
-                  href="https://kb.iu.edu/d/adov"\
-                  target="_blank">DHCP</a> to automatically configure\
-                  network settings.'),
+      placeholder: helptext.dhcp_placeholder,
+      tooltip: helptext.dhcp_tooltip,
       value: true,
+    },
+    {
+      type: 'select',
+      name: 'ip4_interface',
+      placeholder: helptext.ip4_interface_placeholder,
+      tooltip: helptext.ip4_interface_tooltip,
+      options: [
+        {
+          label: '---------',
+          value: '',
+        }
+      ],
+      value: '',
+      relation: [{
+        action: 'DISABLE',
+        when: [{
+          name: 'dhcp',
+          value: true,
+        }]
+      }],
+      class: 'inline',
+      width: '30%',
     },
     {
       type: 'input',
       name: 'ip4_addr',
-      placeholder: T('IPv4 Address'),
-      tooltip: T('Enter a unique IPv4 address that is in the local\
-                  network and not already in use.'),
+      placeholder: helptext.ip4_addr_placeholder,
+      tooltip: helptext.ip4_addr_tooltip,
+      validation : [ regexValidator(this.networkService.ipv4_regex) ],
+      relation: [{
+      action: 'DISABLE',
+      when: [{
+        name: 'dhcp',
+        value: true,
+       }]
+      }],
+      required: true,
+      class: 'inline',
+      width: '50%',
+    },
+    {
+      type: 'select',
+      name: 'ip4_netmask',
+      placeholder: helptext.ip4_netmask_placeholder,
+      tooltip: helptext.ip4_netmask_tooltip,
+      options: this.networkService.getV4Netmasks(),
+      value: '',
+      relation: [{
+        action: 'DISABLE',
+        when: [{
+          name: 'dhcp',
+          value: true,
+        }]
+      }],
+      required: false,
+      class: 'inline',
+      width: '20%',
+    },
+    {
+      type: 'select',
+      name: 'ip6_interface',
+      placeholder: helptext.ip6_interface_placeholder,
+      tooltip: helptext.ip6_interface_tooltip,
+      options: [
+        {
+          label: '---------',
+          value: '',
+        }
+      ],
+      value: '',
+      class: 'inline',
+      width: '30%',
       relation: [{
         action: "DISABLE",
         when: [{
           name: "dhcp",
           value: true
         }]
-      }]
+      }],
     },
     {
       type: 'input',
       name: 'ip6_addr',
-      placeholder: T('IPv6 Address'),
-      tooltip: T('Enter a unique IPv6 address that is in the local\
-                  network and not already in use.'),
+      placeholder: helptext.ip6_addr_placeholder,
+      tooltip: helptext.ip6_addr_tooltip,
+      validation : [ regexValidator(this.networkService.ipv6_regex) ],
       relation: [{
         action: "DISABLE",
         when: [{
           name: "dhcp",
           value: true
         }]
-      }]
+      }],
+      required: true,
+      class: 'inline',
+      width: '50%',
     },
+    {
+      type: 'select',
+      name: 'ip6_prefix',
+      placeholder: helptext.ip6_prefix_placeholder,
+      tooltip: helptext.ip6_prefix_tooltip,
+      options: this.networkService.getV6PrefixLength(),
+      value: '',
+      required: false,
+      class: 'inline',
+      width: '20%',
+      relation: [{
+        action: "DISABLE",
+        when: [{
+          name: "dhcp",
+          value: true
+        }]
+      }],
+    }
   ];
 
   protected pluginName: any;
@@ -75,36 +164,89 @@ export class PluginAddComponent implements OnInit {
   public error: string;
   public busy: Subscription;
 
+  protected ip4_interfaceField: any;
+  protected ip4_netmaskField: any;
+  protected ip6_interfaceField: any;
+  protected ip6_prefixField: any;
+
+  protected dialogRef: any;
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
     protected entityFormService: EntityFormService,
     protected fieldRelationService: FieldRelationService,
     protected loader: AppLoaderService,
     protected ws: WebSocketService,
-    protected dialogService: DialogService) {}
+    protected dialog: DialogService,
+    protected networkService: NetworkService,
+    protected snackBar: MatSnackBar,
+    protected matdialog: MatDialog) {}
 
   ngOnInit() {
+    this.ip4_interfaceField = _.find(this.fieldConfig, {'name': 'ip4_interface'});
+    this.ip4_netmaskField = _.find(this.fieldConfig, {'name': 'ip4_netmask'});
+    this.ip6_interfaceField = _.find(this.fieldConfig, {'name': 'ip6_interface'});
+    this.ip6_prefixField = _.find(this.fieldConfig, {'name': 'ip6_prefix'});
+    // get interface options
+    this.ws.call('interfaces.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
+      (res)=>{
+        for (let i in res) {
+          this.ip4_interfaceField.options.push({ label: res[i].name, value: res[i].name});
+          this.ip6_interfaceField.options.push({ label: res[i].name, value: res[i].name});
+        }
+      },
+      (res)=>{
+        new EntityUtils().handleError(this, res);
+      }
+    );
+
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
     this.formGroup.controls['ip4_addr'].valueChanges.subscribe((res) => {
       if (res != '' && res != undefined) {
         if (this.formGroup.controls['ip6_addr'].disabled == false) {
+          this.formGroup.controls['ip6_interface'].disable();
           this.formGroup.controls['ip6_addr'].disable();
+          this.formGroup.controls['ip6_prefix'].disable();
         }
       } else {
         if (this.formGroup.controls['ip6_addr'].disabled == true && this.formGroup.controls['dhcp'].value != true) {
+          this.formGroup.controls['ip6_interface'].enable();
           this.formGroup.controls['ip6_addr'].enable();
+          this.formGroup.controls['ip6_prefix'].enable();
         }
       }
     });
     this.formGroup.controls['ip6_addr'].valueChanges.subscribe((res) => {
       if (res != '' && res != undefined) {
         if (this.formGroup.controls['ip4_addr'].disabled == false) {
+          this.formGroup.controls['ip4_interface'].disable();
           this.formGroup.controls['ip4_addr'].disable();
+          this.formGroup.controls['ip4_netmask'].disable();
         }
       } else {
         if (this.formGroup.controls['ip4_addr'].disabled == true && this.formGroup.controls['dhcp'].value != true) {
+          this.formGroup.controls['ip4_interface'].enable();
           this.formGroup.controls['ip4_addr'].enable();
+          this.formGroup.controls['ip4_netmask'].enable();
         }
+      }
+    });
+
+    this.formGroup.controls['ip4_addr'].valueChanges.subscribe((res) => {
+      if (res == undefined || res == 'none' || res == '') {
+        this.ip4_interfaceField.required = false;
+        this.ip4_netmaskField.required = false;
+      } else {
+        this.ip4_interfaceField.required = true;
+        this.ip4_netmaskField.required = true;
+      }
+    });
+    this.formGroup.controls['ip6_addr'].valueChanges.subscribe((res) => {
+      if (res == undefined || res == 'none' || res == '') {
+        this.ip6_interfaceField.required = false;
+        this.ip6_prefixField.required = false;
+      } else {
+        this.ip6_interfaceField.required = true;
+        this.ip6_prefixField.required = true;
       }
     });
 
@@ -123,13 +265,25 @@ export class PluginAddComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(new Array('').concat(this.route_success));
+    this.router.navigate(new Array('').concat(this.route_goback));
   }
 
   onSubmit(event: Event) {
     this.error = null;
     let property: any = [];
     let value = _.cloneDeep(this.formGroup.value);
+
+    if (value['ip4_addr'] != undefined) {
+      value['ip4_addr'] = value['ip4_interface'] + '|' + value['ip4_addr'] + '/' + value['ip4_netmask'];
+      delete value['ip4_interface'];
+      delete value['ip4_netmask'];
+    }
+
+    if (value['ip6_addr'] != undefined) {
+      value['ip6_addr'] = value['ip6_interface'] + '|' + value['ip6_addr'] + '/' + value['ip6_prefix'];
+      delete value['ip6_interface'];
+      delete value['ip6_prefix'];
+    }
 
     for (let i in value) {
       if (value.hasOwnProperty(i)) {
@@ -153,27 +307,27 @@ export class PluginAddComponent implements OnInit {
       value['accept'] = true;
     }
 
-    this.loader.open();
-    this.ws.job(this.addCall, [value]).subscribe(
-      (res) => {
-        this.loader.close();
-        if (res.error) {
-          this.dialogService.errorReport(res.error, '', res.exception);
-          this.ws.call('jail.delete', [this.pluginName]).subscribe(
-            (jailDeleteRes) => {},
-            (jailDeleteRes) => {
-              new EntityUtils().handleError(this, jailDeleteRes);
-            }
-          );
+    this.dialogRef = this.matdialog.open(EntityJobComponent, { data: { "title": T("Install") }, disableClose: true });
+    this.dialogRef.componentInstance.setDescription(T("Installing plugin..."));
+    this.dialogRef.componentInstance.setCall(this.addCall, [value]);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.dialogRef.componentInstance.setTitle(T("Plugin installed successfully"));
+      let install_notes = '<p><b>Install Notes:</b></p>';
+      for (let i in res.result.install_notes) {
+        if (res.result.install_notes[i] == "") {
+          install_notes += '<br>';
         } else {
-          this.router.navigate(new Array('/').concat(this.route_success));
+          install_notes += '<p>' + res.result.install_notes[i] + '</p>';
         }
-      },
-      (res) => {
-        this.loader.close();
-        this.dialogService.errorReport('Error ' + res.error + ':' + res.reason, res.trace.class, res.trace.formatted);
       }
-    );
+      this.dialogRef.componentInstance.setDescription(install_notes);
+      this.dialogRef.componentInstance.showCloseButton = true;
+
+      this.dialogRef.afterClosed().subscribe(result => {
+        this.router.navigate(new Array('/').concat(this.route_success));
+      });
+    });
   }
 
   setDisabled(name: string, disable: boolean) {

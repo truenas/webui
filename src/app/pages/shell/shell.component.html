@@ -5,10 +5,15 @@
   	 </div>
   </mat-card-title>
 	<div id="terminal" [ngStyle]="{'font-size' : font_size+'px'}"  #terminal (window:resize)="onResize($event)"></div>
-	<mat-card-content>
-		<mat-divider class="mb-1"></mat-divider>
+	<mat-card-content *ngIf="shellConnected; else Reconnect">
+		<!-- <mat-divider class="mb-1"></mat-divider> -->
 		{{"Set font size" | translate}}: <mat-slider min="10" max="20" step="1" value="14"  [(ngModel)]="font_size"></mat-slider>
-		<button mat-raised-button (click)="resetDefault()" matTooltip="{{'Reset font size to default value' | translate }}">{{"Restore default" | translate}}</button>
+		<button mat-button class="mat-basic" (click)="resetDefault()" matTooltip="{{'Reset font size to default value' | translate }}">{{"Restore default" | translate}}</button>
 		<tooltip class="shellTooltip" [message]=shell_tooltip></tooltip>
 	</mat-card-content>
+	<ng-template #Reconnect>
+		<mat-card-content>
+			<button mat-button color="primary" (click)="reconnect()">{{"Reconnect" | translate}}</button>
+		</mat-card-content>
+	</ng-template>
 </mat-card>

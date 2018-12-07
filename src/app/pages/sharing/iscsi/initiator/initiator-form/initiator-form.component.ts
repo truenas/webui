@@ -30,9 +30,13 @@ export class InitiatorFormComponent {
     {
       type : 'input',
       name : 'iscsi_target_initiator_auth_network',
-      placeholder : T('Authorized Network'),
-      tooltip: T('Use <i>ALL</i> keyword or a network address with a CIDR\
-                  mask such as <i>192.168.2.0/24</i>.'),
+      placeholder : T('Authorized Networks'),
+      tooltip: T('Network addresses that can use this initiator. Use\
+                  <i>ALL</i> or list network addresses with a\
+                  <a href="https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing"\
+                  target="_blank">CIDR</a> mask. Separate multiple\
+                  addresses with a space:\
+                  <i>192.168.2.0/24 192.168.2.1/12</i>.'),
       value : 'ALL',
       inputType : 'textarea',
       required: true,
@@ -49,4 +53,9 @@ export class InitiatorFormComponent {
   constructor(protected router: Router) {}
 
   afterInit(entityAdd: any) {}
+
+  resourceTransformIncomingRestData(data) {
+    data['iscsi_target_initiator_auth_network'] = data['iscsi_target_initiator_auth_network'].replace(/\n/g, ' ');
+    return data;
+  }
 }

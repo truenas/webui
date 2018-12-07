@@ -1,0 +1,13 @@
+node('FreeNAS-webui-yarn') {
+    stage('Checkout') {
+      checkout scm
+    }
+    stage('yarn Install') {
+      echo 'Yarn Install...'
+      sh 'yarn install'
+    }
+    stage('Yarn Build') {
+      echo 'yarn run build:prod:aot'
+      sh 'yarn run build:prod:aot'
+    }
+}

@@ -5,7 +5,8 @@ import { FieldConfig } from '../../common/entity/entity-form/models/field-config
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
 import {RestService, WebSocketService} from '../../../services/';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
+import { Validators } from '../../../../../node_modules/@angular/forms';
 
 @Component({
   selector : 'vm-card-edit',
@@ -35,12 +36,15 @@ export class VmCardEditComponent implements OnChanges {
             width:'100%',
             placeholder: 'Name',
             tooltip: 'Enter a name for the VM.',
+            required: true,
+            validation:[Validators.required]
           },
           { type: 'input',
             name : 'description',
             width:'100%',
-            placeholder : 'Description',
+            placeholder : 'Description (max. 25 characters)',
             tooltip: 'Describe the VM or its purpose.',
+            validation: Validators.maxLength(25),
           }
         ]
       },
@@ -64,7 +68,9 @@ export class VmCardEditComponent implements OnChanges {
                       <b>UEFI-CSM</b> (Compatibility Support Mode) for\
                       older operating systems that only support BIOS\
                       booting.',
-            options: [] , class:'inline'}
+            options: [] , class:'inline',
+            required: true,
+            validation:[Validators.required]}
         ]
       },
       {
@@ -82,14 +88,19 @@ export class VmCardEditComponent implements OnChanges {
                       also have operational or licensing restrictions on\
                       the number of CPUs.',
 
-            class:'inline'},
+            class:'inline',
+            required: true,
+            validation:[Validators.required, Validators.min(1), Validators.max(16)]},
           {
             type: 'input',
             name: 'memory',
             width:'60%',
             placeholder: 'Memory Size (MiB)',
-            tooltip: 'Allocate a number of mebibytes of RAM to the VM.',
-            class:'inline'}
+            tooltip: 'Allocate a number of megabytes of RAM to the VM.',
+            class:'inline',
+            required: true,
+            validation:[Validators.required]
+          }
         ]
       }
     ];
@@ -115,23 +126,22 @@ export class VmCardEditComponent implements OnChanges {
 
   ngOnInit(){
     this.generateFieldConfig();
-    this.target.subscribe((evt) => {
-      if(evt.name == "CloneVM"){
-        this.cloneVM();
-      }
-    });
   }
 
   ngOnChanges(changes){
   }
 
   afterInit(entityForm: any) {
-    entityForm.ws.call('notifier.choices', [ 'VM_BOOTLOADER' ]).subscribe((res) => {
-      this.bootloader =_.find(this.fieldConfig, {name : 'bootloader'});
-      for (let item of res){
-        this.bootloader.options.push({label : item[1], value : item[0]})
-      }
-    });
+    this.bootloader =_.find(this.fieldConfig, {name : 'bootloader'});
+    if( entityForm.data.bootloader === "GRUB") {
+      this.bootloader.options.push({label : 'GRUB', value : 'GRUB'});
+    } else { 
+      entityForm.ws.call('notifier.choices', [ 'VM_BOOTLOADER' ]).subscribe((res) => {
+        for (let item of res){
+          this.bootloader.options.push({label : item[1], value : item[0]})
+        }
+      });
+    }
   }
 
   generateFieldConfig(){
@@ -140,10 +150,6 @@ export class VmCardEditComponent implements OnChanges {
         this.fieldConfig.push(this.fieldSets[i].config[ii]);
       }
     }
-  }
-  cloneVM(){
-    this.core.emit({name:"VmClone",data:[this.machineId]});
-    this.target.next({name:"CloningVM", sender:this});
   }
 
 }

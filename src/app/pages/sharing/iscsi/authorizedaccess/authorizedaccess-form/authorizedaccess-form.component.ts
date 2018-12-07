@@ -51,9 +51,11 @@ export class AuthorizedAccessFormComponent {
       tooltip: T('Enter a password for <b>User</b>.\
                   Must be between 12 and 16 characters.'),
       inputType : 'password',
+      togglePw: true,
       required: true,
       validation : [
         Validators.minLength(12),
+        Validators.maxLength(16),
         Validators.required,
         matchOtherValidator('iscsi_target_auth_secret_confirm'),
       ],
@@ -62,7 +64,7 @@ export class AuthorizedAccessFormComponent {
       type : 'input',
       name : 'iscsi_target_auth_secret_confirm',
       placeholder : T('Secret (Confirm)'),
-      inputType : 'password',
+      inputType : 'password'
     },
     {
       type : 'input',
@@ -80,6 +82,7 @@ export class AuthorizedAccessFormComponent {
                   <b>must be different than the <i>Secret</i></b>.\
                   Required if <b>Peer User</b> is set.'),
       inputType : 'password',
+      togglePw: true,
       validation : [
         Validators.minLength(12),
         matchOtherValidator('iscsi_target_auth_peersecret_confirm'),
@@ -89,7 +92,7 @@ export class AuthorizedAccessFormComponent {
       type : 'input',
       name : 'iscsi_target_auth_peersecret_confirm',
       placeholder : T('Peer Secret (Confirm)'),
-      inputType : 'password',
+      inputType : 'password'
     },
   ];
 

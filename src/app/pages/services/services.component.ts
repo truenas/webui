@@ -10,6 +10,10 @@ import { MatSlideToggleChange, MatSlideToggle } from "@angular/material";
 import { RestService, WebSocketService } from '../../services/';
 import { DialogService } from '../../services/dialog.service';
 
+import * as _ from 'lodash';
+import { T } from '../../translate-marker';
+
+
 @Component({
   selector: 'services',
   styleUrls: [ './services.component.css'],
@@ -47,6 +51,8 @@ export class Services implements OnInit {
   }
 
   public cache = [];
+  public showSpinner: boolean = true;
+  // public viewValue: any;
 
   constructor(protected rest: RestService, protected ws: WebSocketService, protected router: Router,
     private confirmService: AppConfirmService, private dialog: DialogService) {}
@@ -60,14 +66,15 @@ export class Services implements OnInit {
       state: data.state,
       lazyLoaded: false,
       template: 'none',
-      isNew: false
+      isNew: false,
+      onChanging: false,
     }
     return card;
   }
 
   ngOnInit() {
-    this.viewMode.value = "cards";
-
+    // window.localStorage.getItem('viewValue') ? this.viewMode.value = window.localStorage.getItem('viewValue') : this.viewMode.value = 'cards';
+    this.viewMode.value = 'table';   
     this.busy =
       this.ws.call('service.query', [
         [], { "order_by": ["service"] }
@@ -83,7 +90,10 @@ export class Services implements OnInit {
           const card = this.parseResponse(item);
           this.cards.push(card);
           this.cache.push(card);
-        })
+        });
+        this.cards = _.sortBy(this.cards, [function(i) {return i.label.toLowerCase()}]);
+        this.cache = _.sortBy(this.cache, [function(i) {return i.label.toLowerCase()}]);
+        this.showSpinner = false;
       });
   }
 
@@ -102,14 +112,14 @@ export class Services implements OnInit {
     this.cards = this.cache;
   }
 
-  cardStyles() {
-    let cardStyles = {
-      'width': this.viewMode.value == 'slim' ? '285px' : '380px',
-      'height': '250px',
-      'margin': '25px auto'
-    }
-    return cardStyles;
-  }
+  // cardStyles() {
+  //   let cardStyles = {
+  //     'width': this.viewMode.value == 'slim' ? '285px' : '380px',
+  //     'height': '250px',
+  //     'margin': '25px auto'
+  //   }
+  //   return cardStyles;
+  // }
 
   toggle(service: any) {
     let rpc: string;
@@ -120,7 +130,7 @@ export class Services implements OnInit {
     }
 
     if (rpc === 'service.stop') {
-      let confirm = this.confirmService.confirm('Alert', 'Are you sure you want to stop this service?');
+      let confirm = this.confirmService.confirm(T('Alert'), T('Stop this service?'), T('Stop'));
       confirm.subscribe(res => {
         if (res) {
           this.updateService(rpc, service);
@@ -129,15 +139,34 @@ export class Services implements OnInit {
     } else {
       this.updateService(rpc, service);
     }
+
   }
 
   updateService(rpc, service) {
+    service['onChanging'] = true;
     this.busy = this.ws.call(rpc, [service.title]).subscribe((res) => {
       if (res) {
+        if (service.state === "RUNNING" && rpc === 'service.stop') {
+          this.dialog.Info(T("Service failed to stop"),
+              this.name_MAP[service.title] + " " +  T("service failed to stop."));
+        }
         service.state = 'RUNNING';
+        service['onChanging'] = false;
       } else {
+        if (service.state === 'STOPPED' && rpc === 'service.start') {
+          this.dialog.Info(T("Service failed to start"),
+              this.name_MAP[service.title] + " " +  T("service failed to start."));
+        }
         service.state = 'STOPPED';
+        service['onChanging'] = false;
       }
+    }, (res) => {
+      let message = T("Error starting service ");
+      if (rpc === 'service.stop') {
+        message = T("Error stopping service ");
+      }
+      this.dialog.errorReport(message + this.name_MAP[service.title], res.message, res.stack);
+      service['onChanging'] = false;
     });
   }
 
@@ -157,13 +186,8 @@ export class Services implements OnInit {
       const route = ['sharing', 'iscsi'];
       this.router.navigate(new Array('').concat(route));
     } else if (service === 'netdata') {
-      this.ws.call('service.started', [service]).subscribe((res)=>{
-        if(res){
-          window.open("http://" + environment.remote + "/netdata/#menu_system_submenu_swap;theme=slate");
-        } else {
-          this.dialog.Info('Netdata Information', 'Configurable settings for Netdata are not yet exposed. \n Service has not been started yet. Start the service first.');
-        }
-      })
+      // launch netdata
+      window.open("http://" + environment.remote + "/netdata/");
     } else if (service === 'cifs') {
       this.router.navigate(new Array('').concat(['services', 'smb']));
     } else {

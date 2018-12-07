@@ -1,5 +1,5 @@
 <h1 mat-dialog-title>{{title | translate}}</h1>
-<div mat-dialog-content class="entity-job-dialog">
+<mat-dialog-content class="entity-job-dialog">
 	<div *ngIf="job && job.state == 'RUNNING'">
 	    <mat-progress-bar class="example-margin"
 			color="primary"
@@ -10,12 +10,12 @@
     	{{ progressTotalPercent | number: '.2'}}%
     </div>
     <div>
-		<span *ngIf="description">{{ description | translate }}</span>
+		<span *ngIf="description" [innerHTML]="description | translate"></span>
     </div>
     <div>
 		<span *ngIf="!description">{{ "Starting job..." | translate }}</span>
     </div>
-</div>
+</mat-dialog-content>
 <div mat-dialog-actions *ngIf="showCloseButton || (job && job.state == 'FAILED')">
-    <button mat-raised-button mat-dialog-close="close">{{"Close" | translate}}</button>
+    <button mat-button mat-dialog-close="close">{{"Close" | translate}}</button>
 </div>

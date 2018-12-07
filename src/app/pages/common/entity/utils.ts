@@ -45,8 +45,8 @@ export class EntityUtils {
           }
           let errors = '';
           field.forEach((item, j) => { errors += item + ' '; });
-          fc.hasErrors = true;
-          fc.errors = errors;
+          fc['hasErrors'] = true;
+          fc['errors'] = errors;
         } else {
           if (typeof field === 'string') {
             entity.error = field;
@@ -54,6 +54,53 @@ export class EntityUtils {
             field.forEach((item, j) => { entity.error += item + '<br />'; });
           }
         }
+      }
+    }
+  }
+
+  handleWSError(entity: any, res: any, dialogService?: any) {
+    let dialog;
+    if (dialogService) {
+      dialog = dialogService;
+    } else {
+      if (entity) {
+        dialog = entity.dialog;
+      }
+    }
+
+    if (res.extra && entity.fieldConfig) {
+      let scroll = false;
+      for (let i = 0; i < res.extra.length; i++) {
+        const field = res.extra[i][0].split('.').pop();
+        const error = res.extra[i][1];
+        const fc = _.find(entity.fieldConfig, {'name' : field});
+        if (fc && !fc['isHidden']) {
+          const element = document.getElementById(field);
+          if (element) {
+            if (entity.conf && entity.conf.advanced_field && 
+              _.indexOf(entity.conf.advanced_field, field) > 0 &&
+              entity.conf.isBasicMode) {
+                entity.conf.isBasicMode = false;
+              }
+            if (!scroll) {
+              element.scrollIntoView({behavior: "instant", block: "end", inline: "nearest"});
+              scroll = true;
+            }
+          }
+          fc['hasErrors'] = true;
+          fc['errors'] = error;
+        } else {
+          entity.error = error;
+        }
+      }
+    } else {
+      if (res.trace && res.trace.formatted && dialog) {
+        dialog.errorReport(res.trace.class, res.reason, res.trace.formatted);
+      } else if (res.state && res.error && res.exception && dialog) {
+        dialog.errorReport(res.state, res.error, res.exception);
+      } else {
+        // if it can't print the error at least put it on the console.
+        console.log(res);
       }
     }
   }

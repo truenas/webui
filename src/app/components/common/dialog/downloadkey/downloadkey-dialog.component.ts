@@ -5,6 +5,7 @@ import {
 } from '../../../../services/';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import {environment} from '../../../../../environments/environment';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'downloadkey-dialog',
@@ -17,6 +18,7 @@ export class DownloadKeyModalDialog {
   public isDownloaded: Boolean = false;
 
   constructor(
+    protected translate: TranslateService,
     public dialogRef: MatDialogRef<DownloadKeyModalDialog>,
     private ws: WebSocketService,
     private loader:AppLoaderService) { }

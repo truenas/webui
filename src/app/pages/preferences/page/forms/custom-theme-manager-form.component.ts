@@ -1,4 +1,4 @@
-import { ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, ViewContainerRef, OnChanges } from '@angular/core';
+import { ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, OnDestroy, ViewContainerRef, OnChanges } from '@angular/core';
 import { NgModel }   from '@angular/forms';
 import {Router} from '@angular/router';
 import * as _ from 'lodash';
@@ -8,20 +8,20 @@ import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embe
 import {RestService, WebSocketService} from 'app/services/';
 import { ThemeService, Theme} from 'app/services/theme/theme.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 
 @Component({
   selector : 'custom-theme-manager-form',
-  template:`<entity-form-embedded fxFlex="100" fxFlex.gt-xs="300px" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>`
+  template:`<entity-form-embedded fxFlex="100" fxFlex.gt-xs="350px" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>`
 })
-export class CustomThemeManagerFormComponent implements OnInit, OnChanges {
+export class CustomThemeManagerFormComponent implements OnInit, OnChanges, OnDestroy {
 
   /*
    //Preferences Object Structure
    platform:string; // FreeNAS || TrueNAS
    timestamp:Date;
    userTheme:string; // Theme name
-   customThemes?: Theme[]; 
+   customThemes?: Theme[];
    favoriteThemes?: string[]; // Theme Names
    showTooltips:boolean; // Form Tooltips on/off
    metaphor:string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
@@ -29,13 +29,13 @@ export class CustomThemeManagerFormComponent implements OnInit, OnChanges {
    */
 
   public themesExist:boolean = false;
-  public emptyMessage: string = "No custom themes to manage. Click below to create a new custom theme."
+  public emptyMessage: string = "No custom themes. Click <b>Create New Theme</b> to create a new custom theme."
 
   public target: Subject<CoreEvent> = new Subject();
   public values = [];
   public saveSubmitText = "Delete Selected";
   protected isEntity: boolean = true; // was true
-  private colorOptions: any[] = []; 
+  private colorOptions: any[] = [];
   private customThemeOptions: any[] = [];
   private customThemeFields: any[] = []
   public fieldConfig:FieldConfig[] = [];
@@ -59,10 +59,10 @@ export class CustomThemeManagerFormComponent implements OnInit, OnChanges {
     ]
 
     constructor(
-      protected router: Router, 
+      protected router: Router,
       protected rest: RestService,
       protected ws: WebSocketService,
-      protected _injector: Injector, 
+      protected _injector: Injector,
       protected _appRef: ApplicationRef,
       public themeService:ThemeService,
       protected core:CoreService
@@ -83,6 +83,10 @@ export class CustomThemeManagerFormComponent implements OnInit, OnChanges {
 
     }
 
+    ngOnDestroy(){
+      this.core.unregister({observerClass:this});
+    }
+
     ngOnChanges(changes){
     }
 
@@ -97,7 +101,7 @@ export class CustomThemeManagerFormComponent implements OnInit, OnChanges {
       }
     }
 
-    initSubjects(){ 
+    initSubjects(){
       this.target.subscribe((evt:CoreEvent) => {
         switch(evt.name){
         case "FormSubmitted":
@@ -120,7 +124,7 @@ export class CustomThemeManagerFormComponent implements OnInit, OnChanges {
 
     loadValues(key:string){
       let values = [];
-      
+
       for(let i = 0; i < this.themeService.customThemes.length; i++){
         let theme = this.themeService.customThemes[i];
         switch(key ){
@@ -147,8 +151,8 @@ export class CustomThemeManagerFormComponent implements OnInit, OnChanges {
 
        for(let i = 0; i < this.themeService.customThemes.length; i++){
          let theme = this.themeService.customThemes[i];
-         let field = { 
-           type: 'checkbox', 
+         let field = {
+           type: 'checkbox',
            name: theme.name,
            width: '200px',
            placeholder:theme.label,
@@ -157,10 +161,10 @@ export class CustomThemeManagerFormComponent implements OnInit, OnChanges {
          }
          this.customThemeFields.push(field);
        }
-       
+
      }
 
-     generateFieldConfig(){ 
+     generateFieldConfig(){
        let fc = [];
        for(let i in this.fieldSets){
          for(let ii in this.fieldSets[i].config){

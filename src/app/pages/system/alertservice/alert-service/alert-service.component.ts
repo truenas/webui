@@ -90,6 +90,7 @@ export class AlertServiceComponent implements OnInit {
       type : 'input',
       name : 'region',
       placeholder : 'AWS Region',
+      togglePw: true,
       tooltip: 'Enter the <a\
                 href="https://docs.aws.amazon.com/sns/latest/dg/sms_supported-countries.html"\
                 target="_blank">AWS account region</a>.',
@@ -111,6 +112,8 @@ export class AlertServiceComponent implements OnInit {
       type: 'input',
       name: 'aws_secret_access_key',
       placeholder: 'Secret Key',
+      inputType: 'password',
+      togglePw: true,
       tooltip: 'Enter the Secret Access Key for the linked AWS account.',
     },
   ];
@@ -167,6 +170,8 @@ export class AlertServiceComponent implements OnInit {
       type : 'input',
       name : 'password',
       placeholder: 'Password',
+      inputType: 'password',
+      togglePw: true,
       tooltip: 'Enter password.',
     }, {
       type : 'input',
@@ -206,6 +211,7 @@ export class AlertServiceComponent implements OnInit {
       inputType: 'password',
       name : 'password',
       placeholder: 'Password',
+      togglePw: true,
       tooltip: 'Enter the Mattermost password.',
     }, {
       type : 'input',
@@ -234,9 +240,8 @@ export class AlertServiceComponent implements OnInit {
                 href="https://docs.opsgenie.com/docs"\
                 target="_blank">OpsGenie</a> cluster. Find the Cluster\
                 Name by signing into the OpsGenie web interface and\
-                navigating <b>Integrations/Configured Integrations</b>.\
-                Click the desired integration, <b>Settings</b>, and read\
-                the <b>Name</b> field.',
+                going to Integrations/Configured Integrations. Click the\
+                desired integration, Settings, and read the Name field.',
     },{
       type : 'input',
       name : 'api_key',
@@ -244,10 +249,9 @@ export class AlertServiceComponent implements OnInit {
       tooltip: 'Enter or paste the <a\
                 href="https://docs.opsgenie.com/v1.0/docs/api-integration"\
                 target="_blank">API key</a>. Find the API key by signing\
-                into the OpsGenie web interface and navigating\
-                <b>Integrations/Configured Integrations</b>. Click the\
-                desired integration, <b>Settings</b>, and read the\
-                <b>API Key</b> field.',
+                into the OpsGenie web interface and going to\
+                Integrations/Configured Integrations. Click the desired\
+                integration, Settings, and read the API Key field.',
     }
   ];
   public pagerdutyFieldConfig: FieldConfig[] = [
@@ -446,7 +450,7 @@ export class AlertServiceComponent implements OnInit {
         this.isNew = false;
         this.ws.call(this.queryCall, [
           [
-            ['id', '=', this.pk]
+            ['id', '=', Number(this.pk)]
           ]
         ]).subscribe((res) => {
           if ((<any>Object).keys(res[0].settings).length > 0) {
@@ -518,9 +522,9 @@ export class AlertServiceComponent implements OnInit {
       (res) => {
         this.loader.close();
         if (res) {
-          this.snackBar.open('A test alert send out successfully!', 'close', { duration: 5000 });
+          this.snackBar.open('Test alert sent!', 'close', { duration: 5000 });
         } else {
-          this.snackBar.open('A test alert send out failed!', 'close', { duration: 5000 });
+          this.snackBar.open('Failed sending test alert!', 'close', { duration: 5000 });
         }
       },
       (res) => {

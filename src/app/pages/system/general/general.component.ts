@@ -11,21 +11,22 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
 import { RestService, UserService, WebSocketService, LanguageService, DialogService } from '../../../services/';
-import {AppLoaderService} from '../../../services/app-loader/app-loader.service';
-import {
-  FieldConfig
-} from '../../common/entity/entity-form/models/field-config.interface';
+import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { RequestOptions, Http } from '@angular/http';
 
 @Component({
   selector: 'app-general',
-  templateUrl: './general.component.html'
+  template: `<entity-form [conf]="this"></entity-form>`,
+  styleUrls: ['./general.component.css'],
 })
 export class GeneralComponent implements OnDestroy {
 
   protected resource_name: string = 'system/settings';
 
-  public fieldConfig: FieldConfig[] = [{
+  public fieldConfig: FieldConfig[] = [
+    {
       type: 'select',
       name: 'stg_guiprotocol',
       placeholder: T('Protocol'),
@@ -46,10 +47,10 @@ export class GeneralComponent implements OnDestroy {
       placeholder: T('GUI SSL Certificate'),
       tooltip: T('Required for <i>HTTPS</i>. Browse to the location of\
                   the certificate to use for encrypted connections. If\
-                  there are no certificates, create a\
-                  <a href="http://doc.freenas.org/11/system.html#cas"\
+                  there are no certificates, create a <a\
+                  href="%%docurl%%/system.html%%webversion%%#cas"\
                   target="_blank">Certificate Authority (CA)</a> then\
-                  the <a href="http://doc.freenas.org/11/system.html#certificates"\
+                  the <a href="%%docurl%%/system.html%%webversion%%#certificates"\
                   target="_blank">Certificate</a>.'),
       options: [
         { label: '---', value: null }
@@ -95,7 +96,7 @@ export class GeneralComponent implements OnDestroy {
       name: 'stg_guiport',
       placeholder: T('WebGUI HTTP Port'),
       tooltip: T('Allow configuring a non-standard port to access the GUI\
-                  over <i>HTTP</i>. Changing this setting may require\
+                  over <i>HTTP</i>. Changing this setting might require\
                   changing a <a\
                   href="https://www.redbrick.dcu.ie/~d_fens/articles/Firefox:_This_Address_is_Restricted"\
                   target="_blank">Firefox configuration setting</a>.'),
@@ -123,10 +124,7 @@ export class GeneralComponent implements OnDestroy {
       type: 'select',
       name: 'stg_language',
       placeholder: T('Language'),
-      tooltip: T('Select a localization.\
-                  Localization progress is viewable on <a\
-                  href="https://weblate.trueos.org/projects/freenas/#languages"\
-                  target="_blank">Weblate</a>.'),
+      tooltip: T('Select a language localization.'),
       options: [
         { label: '---', value: null }
       ]
@@ -153,8 +151,8 @@ export class GeneralComponent implements OnDestroy {
       type: 'select',
       name: 'stg_sysloglevel',
       placeholder: T('Syslog level'),
-      tooltip: T('When <b>Syslog server</b> is defined, only logs matching\
-                  this level are sent.'),
+      tooltip: T('When Syslog server is defined, only logs matching this\
+                  level are sent.'),
       options: []
     },
     {
@@ -170,15 +168,39 @@ export class GeneralComponent implements OnDestroy {
     {
       type: 'checkbox',
       name: 'secretseed',
-      placeholder: 'Export Password Secret Seed'
+      placeholder: T('Export Password Secret Seed')
     }
   ];
   public saveConfigFormConf: DialogFormConfiguration = {
     title: "Save Config",
     fieldConfig: this.saveConfigFieldConf,
     method_ws: 'core.download',
-    saveButtonText: 'Ok',
+    saveButtonText: T('Save'),
     customSubmit: this.saveCofigSubmit,
+  }
+
+  protected uploadConfigFieldConf: FieldConfig[] = [
+    {
+      type: 'upload',
+      name: 'upload_config',
+      placeholder : T('Select Configuration File'),
+      tooltip: 'Browse to the locally saved configuration file.',
+      fileLocation: '',
+      updater: this.updater,
+      parent: this,
+      hideButton: true,
+    }
+  ];
+  public uploadConfigFormConf: DialogFormConfiguration = {
+    title: "Upload Config",
+    fieldConfig: this.uploadConfigFieldConf,
+    method_ws: 'config.upload',
+    saveButtonText: T('Upload'),
+    customSubmit: this.uploadConfigSubmit,
+    message: '<p>The system will reboot to perform this operation!</p>\
+              <p><font color="red">All passwords are reset when the \
+              uploaded configuration database file was saved \
+              without the Password Secret Seed. </font></p>',
   }
   public custActions: Array<any> = [
   {
@@ -190,7 +212,9 @@ export class GeneralComponent implements OnDestroy {
   },{
     id : 'upload_config',
     name: T('Upload Config'),
-    function : () => {this.router.navigate(new Array('').concat(['system', 'general', 'config-upload']))}
+    function : () => {
+      this.dialog.dialogForm(this.uploadConfigFormConf);
+    }
   },{
     id : 'reset_config',
     name: T('Reset Config'),
@@ -215,9 +239,10 @@ export class GeneralComponent implements OnDestroy {
   //private hostname: '(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])';
   private entityForm: any;
 
-  constructor(protected rest: RestService, protected router: Router, 
+  constructor(protected rest: RestService, protected router: Router,
     protected language: LanguageService, protected ws: WebSocketService,
-    protected dialog: DialogService, protected loader: AppLoaderService) {}
+    protected dialog: DialogService, protected loader: AppLoaderService,
+    public http: Http) {}
 
   resourceTransformIncomingRestData(value) {
     this.protocol = value['stg_guiprotocol'];
@@ -241,14 +266,14 @@ export class GeneralComponent implements OnDestroy {
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
+    this.stg_guicertificate =
+    _.find(this.fieldConfig, { 'name': 'stg_guicertificate' });
     entityEdit.ws.call('certificate.query', [
         [
           ['CSR', '=', null]
         ]
       ])
       .subscribe((res) => {
-        this.stg_guicertificate =
-          _.find(this.fieldConfig, { 'name': 'stg_guicertificate' });
         res.forEach((item) => {
           this.stg_guicertificate.options.push({ label: item.name, value: item.id });
         });
@@ -309,19 +334,19 @@ export class GeneralComponent implements OnDestroy {
 
       this.stg_guiprotocol = entityEdit.formGroup.controls['stg_guiprotocol'];
       if (this.stg_guiprotocol.value === 'http') {
-        this.stg_guicertificate.isHidden = true;
+        this.stg_guicertificate['isHidden'] = true;
       }
       this.stg_guihttpsredirect = _.find(this.fieldConfig,{'name' : 'stg_guihttpsredirect'});
       this.stg_guiprotocol_subscription = this.stg_guiprotocol.valueChanges.subscribe((value) => {
         if (value === 'http') {
-          this.stg_guicertificate.isHidden = true;
-          this.stg_guihttpsredirect.isHidden = true;
+          this.stg_guicertificate['isHidden'] = true;
+          this.stg_guihttpsredirect['isHidden'] = true;
         } else if (value ==='httphttps') {
-          this.stg_guihttpsredirect.isHidden = true;
-          this.stg_guicertificate.isHidden = false;
+          this.stg_guihttpsredirect['isHidden'] = true;
+          this.stg_guicertificate['isHidden'] = false;
         } else {
-          this.stg_guihttpsredirect.isHidden = false;
-          this.stg_guicertificate.isHidden = false;
+          this.stg_guihttpsredirect['isHidden'] = false;
+          this.stg_guicertificate['isHidden'] = false;
         }
       });
   }
@@ -339,9 +364,9 @@ export class GeneralComponent implements OnDestroy {
         this.http_port !== new_http_port ||
         this.https_port !== new_https_port ||
         this.redirect !== new_redirect) {
-      this.dialog.confirm(T("Restart Web Service"), T("In order for the protocol \
-      changes to take effect the web service will need to be restarted, you will \
-      temporarily lose connection to the UI.  Do you wish to restart the service?"))
+      this.dialog.confirm(T("Restart Web Service"), T("The web service must restart \
+                             for the protocol changes to take effect. The UI will be \
+                             temporarily unavailable. Restart the service?"))
         .subscribe((res)=> {
           if (res) {
             let href = window.location.href;
@@ -397,18 +422,49 @@ export class GeneralComponent implements OnDestroy {
       entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'] }], fileName])
         .subscribe(
           (res) => {
-            entityDialog.snackBar.open("Redirecting to download. Make sure you have pop up enabled in your browser.", "Success" , {
+            entityDialog.snackBar.open(T("Download Sucessful"), T("Success") , {
               duration: 5000
             });
-            window.open(res[1]);
+            window.location.href = res[1];
             entityDialog.dialogRef.close();
           },
           (err) => {
-            entityDialog.snackBar.open("Please check your network connection", "Failed" , {
+            entityDialog.snackBar.open("Check the network connection", "Failed" , {
               duration: 5000
             });
           }
         );
     });
+  }
+
+  updater(file: any, parent: any){
+    const fileBrowser = file.fileInput.nativeElement;
+    if (fileBrowser.files && fileBrowser.files[0]) {
+      parent.subs = {"apiEndPoint":file.apiEndPoint, "file": fileBrowser.files[0]}
+    }
+  }
+
+  uploadConfigSubmit(entityDialog) {
+    const parent = entityDialog.conf.fieldConfig[0].parent;
+    const formData: FormData = new FormData();
+
+    parent.loader.open();
+    formData.append('data', JSON.stringify({
+      "method": "config.upload",
+      "params": []
+    }));
+    formData.append('file', parent.subs.file);
+
+    parent.http.post(parent.subs.apiEndPoint, formData).subscribe(
+      (data) => {
+        parent.loader.close();
+        entityDialog.dialogRef.close();
+        parent.router.navigate(['/others/reboot']);
+      },
+      (err) => {
+        parent.loader.close();
+        this.dialog.errorReport(err.status, err.statusText, err._body);
+      }
+    );
   }
 }

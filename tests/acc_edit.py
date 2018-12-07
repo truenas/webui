@@ -68,24 +68,21 @@ class edit_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
 
     def test_01_01_edit_userNAS_email(self):
         try:
-            print ("Check if the email has been registered ")
+            print ("Change the email to test1@ixsystems.com ")
             time.sleep(2)
             #call edit funtion on the userNAS
-            self.edit("user", newusername)
+            function.user_edit(driver, self, "user", newusername)
             # get the ui element
             ui_email=driver.find_element_by_xpath('//*[@id="email"]/mat-input-container/div/div[1]/div/input')
-            # get the weather data
-            email_data=ui_email.get_attribute('value')
-            print ("the email for user " + newusername + " is " + email_data)
-            # assert response
-            self.assertTrue(newuseremail in email_data)
+            ui_email.clear()
+            ui_email.send_keys("test2@ixsystems.com")
             #taking screenshot
             function.screenshot(driver, self)
         except Exception:
@@ -93,7 +90,7 @@ class edit_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
@@ -103,6 +100,7 @@ class edit_test(unittest.TestCase):
             print ("Changing permission to sudo user ")
             # Changing permission to sudo
             ui_sudo=driver.find_element_by_xpath('//*[@id="sudo"]/mat-checkbox')
+            function.user_edit(driver, self, "user", newusername)
             driver.find_element_by_xpath('//*[@id="save_button"]').click()
             time.sleep(15)
             #taking screenshot
@@ -112,7 +110,7 @@ class edit_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
@@ -137,7 +135,7 @@ class edit_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
@@ -146,7 +144,7 @@ class edit_test(unittest.TestCase):
         try:
             print ("change permission of groupNAS to sudo")
             time.sleep(2)
-            self.edit("group", newgroupname)
+            function.user_edit(driver, self, "group", newgroupname)
             driver.find_element_by_xpath('//*[@id="bsdgrp_sudo"]/mat-checkbox/label/div').click()
             driver.find_element_by_xpath('//*[@id="save_button"]').click()
             time.sleep(20)
@@ -154,9 +152,9 @@ class edit_test(unittest.TestCase):
             function.screenshot(driver, self)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("-e")
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
@@ -181,45 +179,6 @@ class edit_test(unittest.TestCase):
             error_element=ui_element.text
             print (error_element)
             driver.find_element_by_xpath('/html/body/div[3]/div/div[2]/md-dialog-container/error-dialog/div[2]/button').click()
-
-    def edit(self, type, name):
-        # the convention is set in such a way tha a single funtion can cleanup both type:user/group, name:name of the group or user
-        # path plugs in the xpath of user or group , submenu{User/Group}
-        # num specifies the column of the 3 dots which is different in user/group
-        # delNum speifies the option number where edit is after clicking on the 3 dots
-        if (type == "user"):
-            num = 13
-            delNum = 1
-            path = "User"
-           # ED = "EDIT"
-        elif (type == "group"):
-            num = 5
-            delNum = 2
-            path = "Group"
-           # ED = "Edit"
-
-        # Click User submenu
-        driver.find_element_by_xpath(xpaths['submenu' + path]).click()
-        # wait till the list is loaded
-        time.sleep(2)
-        index = 1
-        ui_text = "null"
-        for x in range(1, 10):
-            if self.is_element_present(By.XPATH, '//*[@id="entity-table-component"]/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div'):
-                ui_element=driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div')
-                ui_text = ui_element.text
-                print (ui_text)
-            if (ui_text == name):
-                index = x
-                break
-            ui_element = " "
-        print ("index, delNum, num: " + str(x) + ", " + str(delNum) + "," + str(num))
-        time.sleep(1)
-        # click on the 3 dots
-        driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(num) + ']/div/app-entity-table-actions/div/mat-icon').click()
-        time.sleep(1)
-        # click on edit option
-        driver.find_element_by_xpath('//*[@id="action_button_Edit"]').click()
 
 
     @classmethod

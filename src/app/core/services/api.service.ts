@@ -1,8 +1,9 @@
 import { Injectable, OnInit } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { WebSocketService } from '../../services/ws.service';
 import { RestService } from '../../services/rest.service';
 import { CoreService, CoreEvent } from './core.service';
+import {  DialogService } from '../../services';
 
 interface ApiCall {
   namespace: string; // namespace for ws and path for rest
@@ -19,6 +20,8 @@ interface ApiDefinition {
 
 @Injectable()
 export class ApiService {
+
+  public debug:boolean = false;
 
   private apiDefinitions = {
     UserDataRequest:{
@@ -90,6 +93,15 @@ export class ApiService {
         return cloneRes;
       }
     },
+    PrimaryNicInfoRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        namespace:"interfaces.websocket_interface",
+        args: [],
+        responseEvent: "PrimaryNicInfo"
+      }
+    },
     NetInfoRequest:{
       apiCall:{
         protocol:"websocket",
@@ -145,13 +157,15 @@ export class ApiService {
       apiCall:{
         protocol:"websocket",
         version:"2.0",
-        namespace:"vm.status",
+        namespace:"vm.query",
         args: [],// eg. [["id", "=", "foo"]]
         responseEvent: "VmStatus"
       },
       postProcessor(res,callArgs){
-        let cloneRes = Object.assign({},res);
-        cloneRes = {id:callArgs[0] ,state: res.state}
+        const cloneRes = [];
+        for (const vmstatus of res) {
+          cloneRes.push({id:vmstatus.id ,state: vmstatus.status.state})
+        }
         return cloneRes;
       }
     },
@@ -160,6 +174,35 @@ export class ApiService {
         protocol:"websocket",
         version:"1",
         namespace:"vm.start",
+        args:[],
+        responseEvent:"VmStarted"
+      },
+      async preProcessor(def:ApiCall, self) {
+        const params = [{"overcommit": false}]
+        return self.dialog.confirm("Power",undefined, true, "Power On",true,'Overcommit Memory?',undefined, params, 
+        "Memory overcommitment allows multiple VMs to \
+        be launched when there is not enough free memory \
+        for configured RAM of all VMs. Use with caution."
+        ).afterClosed().toPromise().then(res=>{
+          if (res) {
+            def.args.push({"overcommit": true});
+            return def;
+          } else {
+            return;
+          }
+        });
+      },
+      postProcessor(res,callArgs){
+        let cloneRes = Object.assign({},res);
+        cloneRes = {id:callArgs[0] ,state: res} // res:boolean
+        return cloneRes;
+      }
+    },
+    VmRestart:{
+      apiCall:{
+        protocol:"websocket",
+        version:"1",
+        namespace:"vm.restart",
         args:[],
         responseEvent:"VmStarted"
       },
@@ -199,7 +242,6 @@ export class ApiService {
         return redef;
       },
       postProcessor(res,callArgs){
-        //DEBUG: console.log(res);
         let cloneRes = Object.assign({},res);
         cloneRes = {id:callArgs[0]} // res:boolean
         return cloneRes;
@@ -221,6 +263,11 @@ export class ApiService {
         namespace:"vm.clone",
         args:[],
         responseEvent:"VmProfilesRequest"
+      },
+      preProcessor(def:ApiCall){
+        let redef = Object.assign({}, def);
+        redef.args = [def.args];
+        return redef;
       },
       postProcessor(res,callArgs){
         //console.log(res);
@@ -484,11 +531,11 @@ export class ApiService {
     },
   } 
 
-  constructor(protected core: CoreService, protected ws: WebSocketService,protected     rest: RestService) {
+  constructor(protected core: CoreService, protected ws: WebSocketService,protected rest: RestService, private dialog:DialogService) {
     this.ws.authStatus.subscribe((evt:any) =>{
+      this.core.emit({ name:"UserDataRequest",data:[[["id", "=", 1]]]});
       this.core.emit({name:"Authenticated",data:evt,sender:this});
     });
-    console.log("*** New Instance of API Service ***");
     this.registerDefinitions();
   }
 
@@ -529,8 +576,10 @@ export class ApiService {
       let call = cloneDef.apiCall;//this.parseEventRest(evt);
       call.args = evt.data;
       this.rest[call.operation](baseUrl + call.namespace, evt.data, false).subscribe((res) => {
-        //DEBUG: console.log("*** API Response:");
-        //DEBUG: console.log(res)
+        if(this.debug){
+          console.log("*** API Response:");
+          console.log(res)
+        }
 
         // PostProcess
         if(def.postProcessor){
@@ -548,8 +597,10 @@ export class ApiService {
       let call = cloneDef.apiCall;//this.parseEventRest(evt);
       call.args = evt.data;
       this.rest[call.operation](baseUrl + call.namespace,{}, false).subscribe((res) => {
-        //DEBUG: console.log("*** API Response:");
-        //DEBUG: console.log(call);
+        if(this.debug){
+          console.log("*** API Response:");
+          console.log(call);
+        }
 
         // PostProcess
         if(def.postProcessor){
@@ -562,32 +613,47 @@ export class ApiService {
 
   }
 
-  private callWebsocket(evt:CoreEvent,def){
+  async callWebsocket(evt:CoreEvent,def){
     let cloneDef = Object.assign({}, def);
 
     if(evt.data){
       cloneDef.apiCall.args = evt.data;
 
       // PreProcessor: ApiDefinition manipulates call to be sent out.
-      if(def.preProcessor){
-        cloneDef.apiCall = def.preProcessor(def.apiCall);
+      if(def.preProcessor && def.apiCall.namespace === "vm.start") {
+        cloneDef.apiCall =  await def.preProcessor(def.apiCall, this);
+        if (!cloneDef.apiCall) {
+          this.core.emit({name:"VmStopped", data:{id:evt.data[0]}});
+          return;
+        }
+      };
+      if(def.preProcessor && def.apiCall.namespace !== "vm.start"){
+        cloneDef.apiCall =  def.preProcessor(def.apiCall, this);
       }
 
       let call = cloneDef.apiCall;//this.parseEventWs(evt);
       this.ws.call(call.namespace, call.args).subscribe((res) => {
-        //DEBUG: console.log("*** API Response:");
-        //DEBUG: console.log(call)
+        if(this.debug){
+          console.log("*** API Response:");
+          console.log(call)
+        }
 
         // PostProcess
         if(def.postProcessor){
           res = def.postProcessor(res,evt.data,this.core);
         }
-        //DEBUG: console.log(call.responseEvent);
-        //DEBUG: console.log(res);
+        if(this.debug){
+          console.log(call.responseEvent);
+          console.log(res);
+        }
         //this.core.emit({name:call.responseEvent, data:res, sender: evt.data}); // OLD WAY
         if(call.responseEvent){
           this.core.emit({name:call.responseEvent, data:res, sender: this});
         }
+      },
+      (error)=>{
+          error.id = call.args;
+          this.core.emit({name:call.responseEvent, data:error, sender: this});
       });
     } else {
       // PreProcessor: ApiDefinition manipulates call to be sent out.
@@ -597,8 +663,10 @@ export class ApiService {
 
       let call = cloneDef.apiCall;//this.parseEventWs(evt);
       this.ws.call(call.namespace).subscribe((res) => {
-        //DEBUG: console.log("*** API Response:");
-        //DEBUG: console.log(call);
+        if(this.debug){
+          console.log("*** API Response:");
+          console.log(call);
+        }
 
         // PostProcess
         if(def.postProcessor){
@@ -609,6 +677,13 @@ export class ApiService {
         if(call.responseEvent){
           this.core.emit({name:call.responseEvent, data:res, sender:this });
         }
+      },(error)=>{
+        console.log(error);
+        if(call.responseFailedEvent){
+          error.id = call.args;
+          this.core.emit({name:call.responseFailedEvent, data:error, sender: this});
+        }
+        
       });
     }
   }

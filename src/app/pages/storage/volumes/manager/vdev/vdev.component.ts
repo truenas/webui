@@ -3,7 +3,6 @@ import {
   ElementRef,
   Input,
   OnInit,
-  QueryList,
   ViewChild
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
@@ -30,11 +29,11 @@ export class VdevComponent implements OnInit {
   public rawSize = 0;
   public firstdisksize;
   public error;
-  public diskSizeErrorMsg = T('Mixing disks of different sizes in a vdev is not recommended.');
+  public diskSizeErrorMsg = T('Mixing disks of different sizes in a VDEV is not recommended.');
   public vdev_type_tooltip = T('Choose a <i>Stripe</i>, <i>Mirror</i>,\
                                 or <i>Raid-Z</i> configuration for the\
                                 chosen disk layout. See the <a\
-                                href="..//docs/storage.html#pool-manager"\
+                                href="%%docurl%%/storage.html%%webversion%%#pool-manager"\
                                 target="_blank">Pool Manager</a> section\
                                 of the guide for more details.');
 
@@ -60,7 +59,7 @@ export class VdevComponent implements OnInit {
     this.disks = [...this.disks];
     this.guessVdevType();
     this.estimateSize();
-    this.disks = this.sorter.mySorter(this.disks, 'devname');
+    this.disks = this.sorter.tableSorter(this.disks, 'devname', 'asc');
   }
 
   removeDisk(disk: any) {
@@ -91,11 +90,13 @@ export class VdevComponent implements OnInit {
     this.error = null;
     this.firstdisksize = 0;
     let totalsize = 0;
+    let stripeSize = 0;
     let smallestdisk = 0;
     let estimate = 0;
     const swapsize = 2 * 1024 * 1024 * 1024;
     for (let i = 0; i < this.disks.length; i++) {
       const size = parseInt(this.disks[i].real_capacity, 10) - swapsize;
+      stripeSize += size;
       if (i === 0) {
         smallestdisk = size;
         this.firstdisksize = size;
@@ -117,7 +118,7 @@ export class VdevComponent implements OnInit {
     } else if (this.type === "raidz3") {
       estimate = totalsize - 3 * smallestdisk;
     } else {
-      estimate = totalsize; // stripe
+      estimate = stripeSize; // stripe
     }
 
     this.rawSize =estimate;
@@ -162,5 +163,11 @@ export class VdevComponent implements OnInit {
       this.manager.addDisk(this.disks.pop());
     }
     this.manager.removeVdev(this);
+  }
+
+  reorderEvent(event) {
+    let sort = event.sorts[0],
+      rows = this.disks;
+    this.sorter.tableSorter(rows, sort.prop, sort.dir);
   }
 }

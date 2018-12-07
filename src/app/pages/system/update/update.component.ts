@@ -1,19 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
-import { Subscription } from 'rxjs/Subscription';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 import { RestService, WebSocketService } from '../../../services/';
-import { MarkdownModule } from 'angular2-markdown';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { MatDialog, MatDialogRef, MatSnackBar } from '@angular/material';
+import { MatDialog, MatSnackBar } from '@angular/material';
 import { DialogService } from '../../../services/dialog.service';
-import * as _ from 'lodash';
-import { environment } from '../../../../environments/environment';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../translate-marker';
-import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 
 @Component({
   selector: 'app-update',
@@ -33,73 +30,235 @@ export class UpdateComponent implements OnInit {
   public error: string;
   public autoCheck = false;
   public train: string;
-  public trains: any[];
+  public trains: any[]=[];
   public selectedTrain;
   public general_update_error;
   public update_downloaded=false;
- 
+  public train_msg = {
+    "NIGHTLY_DOWNGRADE": T("Changing away from the nightly train is considered a downgrade and not a supported operation. Activate an existing boot environment that uses the desired train and boot into it to switch to that train."),
+    "MINOR_DOWNGRADE": T("Changing the minor version is considered a downgrade and is not a supported operation. Activate an existing boot environment that uses the desired train and boot into it to switch to that train."),
+    "MAJOR_DOWNGRADE": T("Changing the major version is considered a downgrade and is not a supported operation. Activate an existing boot environment that uses the desired train and boot into it to switch to that train."),
+    "SDK": T("Changing SDK version is not a supported operation. Activate an existing boot environment that uses the desired train and boot into it to switch to that train."),
+    "NIGHTLY_UPGRADE": T("Changing to a nightly train is one-way. Changing back to a stable train is not supported!")
+  }
+  public release_train: boolean;
+  public pre_release_train: boolean;
+  public nightly_train: boolean;
+  public updates_available = false;
+  public currentTrainDescription: string;
+  public fullTrainList: any[];
+
   public busy: Subscription;
   public busy2: Subscription;
+  public showSpinner: boolean = false;
+  public singleDescription: string;
+  public updatecheck_tooltip = T('Check the update server daily for \
+                                  any updates on the chosen train. \
+                                  Automatically download an update if \
+                                  one is available. Click \
+                                  <i>APPLY PENDING UPDATE</i> to install \
+                                  the downloaded update.');
+
+  protected saveConfigFieldConf: FieldConfig[] = [
+    {
+      type: 'checkbox',
+      name: 'secretseed',
+      placeholder: T('Include Password Secret Seed')
+    },
+  ];
+  public saveConfigFormConf: DialogFormConfiguration = {
+    title: "Save configuration settings from this machine before updating?",
+    message: "<b>WARNING:</b> This configuration file contains system\
+              passwords and other sensitive data.<br>",
+    fieldConfig: this.saveConfigFieldConf,
+    warning: "Including the Password Secret Seed allows using this\
+              configuration file with a new boot device. It also\
+              decrypts all passwords used on this system.\
+              <b>Keep the configuration file safe and protect it from unauthorized access!</b>",
+    method_ws: 'core.download',
+    saveButtonText: T('SAVE CONFIGURATION'),
+    cancelButtonText: T('NO'),
+    customSubmit: this.saveConfigSubmit,
+  };
 
   protected dialogRef: any;
   constructor(protected router: Router, protected route: ActivatedRoute, protected snackBar: MatSnackBar,
-    protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog, 
+    protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog,
     protected loader: AppLoaderService, protected dialogService: DialogService, public translate: TranslateService) {
+  }
+  parseTrainName(name) {
+    const version = []
+    let sw_version = "";
+    let branch = "";
+    let split = ""
+    let sdk = ""
+    if (name.match(/-SDK$/)){
+      split = name.split('-');
+      sw_version = split[1];
+      branch = split[2];
+      sdk = split[3];
+      version.push(sw_version);
+      version.push(branch);
+      version.push(sdk);
+    }
+    else {
+      split = name.split('-');
+      sw_version = split[1];
+      branch = split[2];
+      version.push(sw_version);
+      version.push(branch);
+    }
+
+    return version;
+  }
+
+  compareTrains(t1, t2) {
+    const v1 = this.parseTrainName(t1)
+    const v2 = this.parseTrainName(t2);
+
+    try {
+      if(v1[0] !== v2[0] ) {
+
+        const version1 = v1[0].split('.');
+        const version2 = v2[0].split('.');
+        const branch1 = v1[1].toLowerCase();
+        const branch2 = v2[1].toLowerCase();
+
+
+
+        if(branch1 !== branch2) {
+
+          if(branch2 === "nightlies") {
+            return "NIGHTLY_UPGRADE";
+          } else if(branch1 === "nightlies") {
+            return "NIGHTLY_DOWNGRADE";
+          }
+        } else {
+          if(version2[0] ==="HEAD"){
+            return "ALLOWED"
+          }
+        }
+
+        if (version1[0] === version2[0]){
+          // comparing '11' .1 with '11' .2
+          if(version1[1] && version2[1]){
+            //comparing '.1' with '.2'
+            return version1[1] > version2[1] ? "MINOR_UPGRADE":"MINOR_DOWNGRADE";
+          }
+          if(version1[1]){
+            //handling a case where '.1' is compared with 'undefined'
+            return "MINOR_DOWNGRADE"
+          }
+          if(version2[1]){
+            //comparing '.1' with '.2'
+            return "MINOR_UPGRADE"
+          }
+
+        } else {
+          // comparing '9' .10 with '11' .2
+          return version1[0] > version2[0] ? "MAJOR_UPGRADE":"MAJOR_DOWNGRADE";
+        }
+
+
+      } else {
+        if(v1[0] === v2[0]&&v1[1] !== v2[1]){
+          const branch1 = v1[1].toLowerCase();
+          const branch2 = v2[1].toLowerCase();
+          if(branch1 !== branch2) {
+
+            if(branch2 === "nightlies") {
+              return "NIGHTLY_UPGRADE";
+            } else if(branch1 === "nightlies") {
+              return "NIGHTLY_DOWNGRADE";
+            }
+          } else {
+            if(branch2 === "nightlies" && branch1 === "nightlies") {
+
+            }
+
+          }
+
+        }
+        else {
+          if(v2[2]||v1[2]){
+            return "SDK"
+          }
+        }
+
+
+      }
+    } catch (e) {
+      console.error("Failed to compare trains", e);
+    }
   }
 
   ngOnInit() {
+    this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
+      if(ures[0].attributes.preferences !== undefined && ures[0].attributes.preferences.enableWarning) {
+        ures[0].attributes.preferences['enableWarning'] = true;
+        this.ws.call('user.set_attribute', [1, 'preferences', ures[0].attributes.preferences]).subscribe((res)=>{
+        });
+      }
+    });
     this.busy = this.rest.get('system/update', {}).subscribe((res) => {
       this.autoCheck = res.data.upd_autocheck;
-      this.train = res.data.upd_train;
       if (this.autoCheck){
         this.check();
       }
     });
     this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
-      this.trains = [];
-      for (const i in res.trains) {
-        this.trains.push({ name: i });
-      }
+      this.fullTrainList = res.trains;
       this.train = res.selected;
       this.selectedTrain = res.selected;
+
+      this.trains = [];
+      for (const i in res.trains) {
+        if (this.compareTrains(this.train, i) === 'ALLOWED' || this.compareTrains(this.train, i) === 'NIGHTLY_UPGRADE' || this.train === i) {
+          this.trains.push({ name: i, description: res.trains[i].description });
+        }
+
+      }
+      this.singleDescription = this.trains[0].description;
+
+      // The following is a kluge until we stop overwriting (via middleware?) the description of the currently
+      //  running OS along with its tags we want to use for sorting - [release], [prerelease], and [nightly]
+      if (this.selectedTrain.toLowerCase().includes('nightlies')) {
+        this.currentTrainDescription = '[nightly]';
+      } else if (this.selectedTrain.toLowerCase().includes('11-stable')) {
+        this.currentTrainDescription = '[release]';
+      } else if (this.selectedTrain.toLowerCase().includes('11.2-stable')) {
+        this.currentTrainDescription = '[release]';
+      } else {
+        this.currentTrainDescription = res.trains[this.selectedTrain].description.toLowerCase();
+      }
     });
   }
 
-  validUpdate(originalVersion, newVersion) {
-    const oriVer = originalVersion.split('-')[1];
-    const oriTrain = originalVersion.split('-')[2];
-    const newVer = newVersion.split('-')[1];
-    const newTrain = newVersion.split('-')[2];
-    if ((!isNaN(oriVer) && !isNaN(newVer)) && (newVer >= oriVer)) {
-      if (oriTrain === newTrain) {
-        return true;
-      } else if ((oriTrain === 'STABLE') && (newTrain === 'Nightlies')) {
-        return true;
-      } else {
-        return false
-      }
-    } else if((!isNaN(oriVer) && isNaN(newVer)) && (newVer >= oriVer) && (oriTrain === newTrain)){
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   onTrainChanged(event){
-    const isValid = this.validUpdate(this.selectedTrain, event.value);
-    if (isValid) {
-      this.dialogService.confirm("Switch Train", "Do you want to switch trains?").subscribe((res)=>{
-        if (res) {
-          this.check();
-          this.train = event.value;
-        }else {
-          this.train = this.selectedTrain;
-        }
-      });
-    } else {
-      this.dialogService.Info("Confirm", "Changing away from the train is not permitted as it is considered a downgrade. Boot into an existing boot environment using the desired train to upgrade it.").subscribe(res => {
+    const compare = this.compareTrains(this.selectedTrain, event.value);
+    if(compare === "NIGHTLY_DOWNGRADE" || compare === "MINOR_DOWNGRADE" || compare === "MAJOR_DOWNGRADE" || compare ==="SDK") {
+      this.dialogService.Info("Error", this.train_msg[compare]).subscribe((res)=>{
         this.train = this.selectedTrain;
-      });
+      })
+    } else if(compare === "NIGHTLY_UPGRADE"){
+        this.dialogService.confirm(T("Warning"), this.train_msg[compare]).subscribe((res)=>{
+          if (res){
+            this.train = event.value;
+            this.currentTrainDescription = this.fullTrainList[this.train].description.toLowerCase();
+            this.check();
+          } else {
+            this.train = this.selectedTrain;
+            this.currentTrainDescription = this.fullTrainList[this.train].description.toLowerCase();
+          }
+        })
+    } else if (compare === "ALLOWED") {
+      this.dialogService.confirm(T("Switch Train"), T("Switch update trains?")).subscribe((train_res)=>{
+        if(train_res){
+          this.train = event.value;
+          this.currentTrainDescription = this.fullTrainList[this.train].description.toLowerCase();
+          this.check();
+        }
+      })
     }
   }
 
@@ -108,10 +267,24 @@ export class UpdateComponent implements OnInit {
       this.rest
       .put('system/update', { body: JSON.stringify({ upd_autocheck: this.autoCheck }) })
       .subscribe((res) => {
+        if(res.data.upd_autocheck === true) {
+          this.check();
+        }
       });
   }
 
-  downloadUpdate() {
+  showRunningUpdate(jobId) {
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: true });
+    this.dialogRef.componentInstance.jobId = jobId;
+    this.dialogRef.componentInstance.wsshow();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.router.navigate(['/others/reboot']);
+    });
+    this.dialogRef.componentInstance.failure.subscribe((res) => {
+      this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
+    });
+  }
+  startUpdate() {
     this.error = null;
     this.loader.open();
     this.ws.call('update.check_available', [{ train: this.train }])
@@ -158,44 +331,87 @@ export class UpdateComponent implements OnInit {
             if (res.notes) {
               this.releaseNotes = res.notes.ReleaseNotes;
             }
-            const ds  = this.dialogService.confirm(
-              "Download Update", "Do you want to continue?",true,"",true,"Apply updates and reboot system after downloading)","update.update",[{ train: this.train, reboot: false }]
-            )
-            ds.afterClosed().subscribe((status)=>{
-              if(status){
-                if (!ds.componentInstance.data[0].reboot){
-                  this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: false });
-                  this.dialogRef.componentInstance.setCall('update.download');
-                  this.dialogRef.componentInstance.submit();
-                  this.dialogRef.componentInstance.success.subscribe((succ) => {
-                    this.dialogRef.close(false);
-                    this.snackBar.open("Updates successfully downloaded",'close', { duration: 5000 });
-                    this.pendingupdates();
-                    
+            this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
+              if(ures[0].attributes.preferences !== undefined && !ures[0].attributes.preferences.enableWarning) {
+                const ds  = this.dialogService.confirm(
+                  T("Download Update"), T("Continue with download?"),true,"",true,T("Apply updates and reboot system after downloading."),"update.update",[{ train: this.train, reboot: false }]
+                )
+                ds.afterClosed().subscribe((status)=>{
+                  if(status){
+                    if (!ds.componentInstance.data[0].reboot){
+                      this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
+                      this.dialogRef.componentInstance.setCall('update.download');
+                      this.dialogRef.componentInstance.submit();
+                      this.dialogRef.componentInstance.success.subscribe((succ) => {
+                        this.dialogRef.close(false);
+                        this.snackBar.open(T("Updates successfully downloaded"),'close', { duration: 5000 });
+                        this.pendingupdates();
+
+                      });
+                      this.dialogRef.componentInstance.failure.subscribe((failure) => {
+                        this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
+                      });
+                    }
+                    else{
+                      this.update();
+                    }
+                  }
+                });
+
+              } else {
+                this.dialogService.dialogForm(this.saveConfigFormConf).subscribe(()=>{
+                  const ds  = this.dialogService.confirm(
+                    T("Download Update"), T("Continue with download?"),true,"",true,T("Apply updates and reboot system after downloading."),"update.update",[{ train: this.train, reboot: false }]
+                  )
+                  ds.afterClosed().subscribe((status)=>{
+                    if(status){
+                      if (!ds.componentInstance.data[0].reboot){
+                        this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
+                        this.dialogRef.componentInstance.setCall('update.download');
+                        this.dialogRef.componentInstance.submit();
+                        this.dialogRef.componentInstance.success.subscribe((succ) => {
+                          this.dialogRef.close(false);
+                          this.snackBar.open(T("Updates successfully downloaded"),'close', { duration: 5000 });
+                          this.pendingupdates();
+
+                        });
+                        this.dialogRef.componentInstance.failure.subscribe((failure) => {
+                          this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
+                        });
+                      }
+                      else{
+                        this.update();
+                      }
+                    }
                   });
-                  this.dialogRef.componentInstance.failure.subscribe((failure) => {
-                    this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
-                  });
-  
-                }
-                else{
-                  this.update();
-                }
-  
-              }
-              
-            })
+                });
+              };
+            });
+
           } else if (res.status === 'UNAVAILABLE'){
-            this.dialogService.Info('Check Now', 'No updates available')
+            this.dialogService.Info(T('Check Now'), T('No updates available.'))
           }
         },
         (err) => {
           this.loader.close();
-          this.dialogService.errorReport(T("Error checking for updates"), err.reason, err.trace.formatted);
-        }, 
+          this.dialogService.errorReport(T("Error checking for updates."), err.reason, err.trace.formatted);
+        },
         () => {
           this.loader.close();
         });
+  }
+  downloadUpdate() {
+    this.ws.call('core.get_jobs', [[["method", "=", "update.update"], ["state", "=", "RUNNING"]]]).subscribe(
+      (res) => {
+        if (res[0]) {
+          this.showRunningUpdate(res[0].id);
+        } else {
+          this.startUpdate();
+        }
+      },
+      (err) => {
+        this.dialogService.errorReport(T("Error"), err.reason, err.trace.formatted);
+      });
   }
 
   update() {
@@ -209,17 +425,43 @@ export class UpdateComponent implements OnInit {
       this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
     });
   }
+
   ApplyPendingUpdate() {
-    const apply_pending_update_ds  = this.dialogService.confirm(
-      "Apply Pending Updates", "The system will be rebooted after updates are applied. Do you want to continue?"
-    ).subscribe((res)=>{
-      if(res){
-       this.update();
+    this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
+      if(ures[0].attributes.preferences !== undefined && !ures[0].attributes.preferences.enableWarning) {
+        this.dialogService.confirm(
+          T("Apply Pending Updates"), T("The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?")
+        ).subscribe((res)=>{
+          if(res){
+           this.update();
+          }
+        });
       }
+      else {
+        this.dialogService.dialogForm(this.saveConfigFormConf).subscribe(()=>{
+          this.dialogService.confirm(
+            T("Apply Pending Updates"), T("The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?")
+          ).subscribe((res)=>{
+            if(res){
+             this.update();
+            };
+          });
+        });
+      };
     });
-  }
+  };
+
   ManualUpdate(){
-    this.router.navigate([this.router.url +'/manualupdate']);
+    this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
+      if(ures[0].attributes.preferences !== undefined && !ures[0].attributes.preferences.enableWarning) {
+        this.router.navigate([this.router.url +'/manualupdate']);
+      }
+      else {
+        this.dialogService.dialogForm(this.saveConfigFormConf).subscribe(()=>{
+          this.router.navigate([this.router.url +'/manualupdate']);
+        });
+      };
+    });
   }
 
   pendingupdates(){
@@ -231,6 +473,7 @@ export class UpdateComponent implements OnInit {
 }
 
   check() {
+    this.showSpinner = true;
     this.pendingupdates();
     this.error = null;
     this.ws.call('update.check_available', [{ train: this.train }])
@@ -238,6 +481,7 @@ export class UpdateComponent implements OnInit {
         (res) => {
           this.status = res.status;
           if (res.status === 'AVAILABLE') {
+            this.updates_available = true;
             this.packages = [];
             res.changes.forEach((item) => {
               if (item.operation === 'upgrade') {
@@ -276,11 +520,66 @@ export class UpdateComponent implements OnInit {
               this.releaseNotes = res.notes.ReleaseNotes;
             }
           }
+          if (this.currentTrainDescription.includes('[release]')) {
+            this.release_train = true;
+            this.pre_release_train = false;
+            this.nightly_train = false;
+          } else if(this.currentTrainDescription.includes('[prerelease]')) {
+            this.release_train = false;
+            this.pre_release_train = true;
+            this.nightly_train = false;
+          } else {
+            this.release_train = false;
+            this.pre_release_train = false;
+            this.nightly_train = true;
+          }
         },
         (err) => {
-          this.general_update_error =  err.reason.replace('>', '').replace('<','') + ":  Automatic update check failed. Please check system network settings."
-        }, 
+          this.general_update_error =  err.reason.replace('>', '').replace('<','') + T(": Automatic update check failed. Please check system network settings.")
+        },
         () => {
+          this.showSpinner = false;
         });
+  }
+
+  async saveConfigSubmit(entityDialog) {
+    if(entityDialog.formValue['enableWarning']) {
+      await entityDialog.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
+        ures[0].attributes.preferences['enableWarning'] = true;
+        entityDialog.ws.call('user.set_attribute', [1, 'preferences', ures[0].attributes.preferences]).subscribe((res)=>{
+        });
+      });
+    };
+    await entityDialog.ws.call('system.info', []).subscribe((res) => {
+      let fileName = "";
+      if (res) {
+        const hostname = res.hostname.split('.')[0];
+        const date = entityDialog.datePipe.transform(new Date(),"yyyyMMddHHmmss");
+        fileName = hostname + '-' + date;
+        if (entityDialog.formValue['secretseed']) {
+          fileName += '.tar';
+        } else {
+          fileName += '.db';
+        }
+      }
+
+      entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'] }], fileName])
+        .subscribe(
+          (succ) => {
+            if (window.navigator.userAgent.search("Firefox")>0) {
+              window.open(succ[1]);
+          }
+            else {
+              window.location.href = succ[1];
+            }
+            entityDialog.dialogRef.close();
+          },
+          (err) => {
+            entityDialog.snackBar.open(T("Check the network connection"), T("Failed") , {
+              duration: 5000
+            });
+          }
+        );
+    });
   }
 }

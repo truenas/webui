@@ -21,5 +21,9 @@ export class NFSListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    deleteMsg: {
+      title: 'Unix (NFS) Share',
+      key_props: ['nfs_paths']
+    },
   };
 }

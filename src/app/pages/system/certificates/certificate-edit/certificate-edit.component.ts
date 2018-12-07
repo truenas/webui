@@ -3,7 +3,7 @@ import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 
-import { RestService, WebSocketService } from '../../../../services/';
+import { RestService, WebSocketService, DialogService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -34,7 +34,6 @@ export class CertificateEditComponent {
       type: 'textarea',
       name: 'certificate',
       placeholder: T('Certificate'),
-      tooltip: T('Copy and paste the contents of the certificate.'),
       isHidden: false,
       readonly: true,
     },
@@ -42,7 +41,6 @@ export class CertificateEditComponent {
       type: 'textarea',
       name: 'privatekey',
       placeholder: T('Private Key'),
-      tooltip: T('Copy and paste the contents of the private key.'),
       isHidden: false,
       readonly: true,
     },
@@ -50,7 +48,6 @@ export class CertificateEditComponent {
       type: 'textarea',
       name: 'CSR',
       placeholder: T('Signing Request'),
-      tooltip: T('Copy and paste the contents of the CSR.'),
       isHidden: false,
       readonly: true,
     }
@@ -60,10 +57,11 @@ export class CertificateEditComponent {
   protected certificateField: any;
   protected privatekeyField: any;
   protected CSRField: any;
+  protected entityForm: any;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
-    protected loader: AppLoaderService) {}
+    protected loader: AppLoaderService, protected dialog: DialogService) {}
 
   preInit() {
     this.certificateField = _.find(this.fieldConfig, { 'name': 'certificate' });
@@ -77,6 +75,7 @@ export class CertificateEditComponent {
   }
 
   afterInit(entityEdit: any) {
+    this.entityForm = entityEdit;
     this.route.params.subscribe(params => {
       if (params['pk']) {
         this.pk = parseInt(params['pk']);
@@ -87,13 +86,13 @@ export class CertificateEditComponent {
         ]).subscribe((res) => {
           if (res[0]) {
             if (res[0].CSR != null) {
-              this.CSRField.isHidden = false;
-              this.certificateField.isHidden = true;
-              this.privatekeyField.isHidden = true;
+              this.CSRField['isHidden'] = false;
+              this.certificateField.readonly = false;
+              this.privatekeyField['isHidden'] = true;
             } else {
-              this.CSRField.isHidden = true;
-              this.certificateField.isHidden = false;
-              this.privatekeyField.isHidden = false;
+              this.CSRField['isHidden'] = true;
+              this.certificateField['isHidden'] = false;
+              this.privatekeyField['isHidden'] = false;
             }
           }
         });
@@ -104,6 +103,9 @@ export class CertificateEditComponent {
   customSubmit(value) {
     let payload = {};
     payload['name'] = value.name;
+    if (value.CSR != null) {
+      payload['certificate'] = value.certificate;
+    }
 
     this.loader.open();
     this.ws.call(this.editCall, [this.pk, payload]).subscribe(
@@ -113,7 +115,7 @@ export class CertificateEditComponent {
       },
       (res) => {
         this.loader.close();
-        new EntityUtils().handleError(this, res);
+        new EntityUtils().handleWSError(this.entityForm, res);
       }
     );
   }

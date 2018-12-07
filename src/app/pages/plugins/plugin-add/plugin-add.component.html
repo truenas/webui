@@ -1,11 +1,17 @@
 <p *ngIf="error" type="danger"><span [innerHTML]="error"></span></p>
 <mat-card>
   <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup">
-    <ng-container *ngFor="let field of fieldConfig;" dynamicField [config]="field" [group]="formGroup">
-    </ng-container>
+    <div class="form-wrap">
+      <ng-container *ngFor="let field of fieldConfig;">
+        <div [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'" fxFlex="100%" fxFlex.gt-xs="calc({{field.width}} - 16px)">
+          <div id="dynamicField_{{field.name}}" dynamicField [config]="field" [group]="formGroup" [fieldShow]="'show'">
+          </div>
+        </div>
+      </ng-container>
+    </div>
     <mat-card-actions>
-      <button class="btn btn-block btn-warning" type="submit" mat-raised-button color="primary">{{ "Save" | translate }} </button>
-      <button *ngIf="route_success" (click)="goBack()" type="button" mat-raised-button color="accent">{{ "Cancel" | translate }}</button>
+      <button class="btn btn-block btn-warning" type="submit" mat-button color="primary" [disabled]="!formGroup.valid">{{ "Save" | translate }} </button>
+      <button *ngIf="route_success" (click)="goBack()" type="button" mat-button color="accent">{{ "Cancel" | translate }}</button>
     </mat-card-actions>
   </form>
 </mat-card>

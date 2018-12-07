@@ -1,8 +1,10 @@
+
+import {fromEvent as observableFromEvent,  Subscription ,  Observable } from 'rxjs';
+
+import {distinctUntilChanged, debounceTime} from 'rxjs/operators';
 import {Component, ElementRef, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
-import { Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material';
-import { Observable } from 'rxjs/Observable';
 
 import {RestService} from '../../../../services/rest.service';
 import { WebSocketService } from '../../../../services/ws.service';
@@ -11,6 +13,7 @@ import { DialogService } from 'app/services';
 import { EntityUtils } from '../../../common/entity/utils';
 import * as moment from 'moment';
 import { stringify } from '@angular/core/src/util';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'app-bootenv-list',
@@ -36,10 +39,10 @@ export class BootEnvironmentListComponent {
   public percentange: string;
   public header: string;
   public scrub_msg: string;
-  public scrub_interval: number; 
+  public scrub_interval: number;
 
   public columns: Array<any> = [
-    {name: 'Name', prop: 'name'},
+    {name: 'Name', prop: 'name', always_display: true},
     {name: 'Active', prop: 'active'},
     {name: 'Created', prop: 'created'},
     {name: 'Space', prop: 'space'},
@@ -48,6 +51,10 @@ export class BootEnvironmentListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    deleteMsg: {
+      title: 'Boot Environment',
+      key_props: ['name']
+    },
   };
 
   preInit(){
@@ -62,7 +69,7 @@ export class BootEnvironmentListComponent {
         this.size_consumed = wres.properties.allocated.value;
         this.condition = wres.properties.health.value;
         if (this.condition === 'DEGRADED'){
-          this.condition = this.condition + ` Please check Notifications for detailed information.`
+          this.condition = this.condition + ` Check Notifications for more details.`
         }
         this.size_boot =  wres.properties.size.value;
         this.percentange =  wres.properties.capacity.value;
@@ -72,7 +79,7 @@ export class BootEnvironmentListComponent {
   }
 
   changeEvent(){
-    Observable.fromEvent(this.scrubIntervalEvent.nativeElement, 'keyup').debounceTime(150).distinctUntilChanged()
+    observableFromEvent(this.scrubIntervalEvent.nativeElement, 'keyup').pipe(debounceTime(150),distinctUntilChanged(),)
     .subscribe(() => {
       const scrubIntervalValue: number = this.scrubIntervalEvent.nativeElement.value;
       if( scrubIntervalValue > -1){
@@ -91,7 +98,7 @@ export class BootEnvironmentListComponent {
 
   rowValue(row, attr) {
     if (attr === 'created'){
-      return row.created.$date
+      return moment(row.created.$date).format('l LT')
     }
     if (attr === 'active'){
       if (row.active === 'N'){
@@ -129,7 +136,7 @@ export class BootEnvironmentListComponent {
         label : "Delete",
         id: "delete",
         onClick : (row) => {
-          this.entityList.doDelete(row.id);
+          this.entityList.doDelete(row);
         }
       });
     }
@@ -179,13 +186,13 @@ export class BootEnvironmentListComponent {
   }
 
   doActivate(id) {
-    this.dialog.confirm("Activate", "Are you sure you want to activate it?").subscribe((res) => {
+    this.dialog.confirm("Activate", "Activate this Boot Environment?", false, T("Activate")).subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
         let data = {};
         this.busy = this.ws.call(this.wsActivate, [id]).subscribe(
-          (res) => { 
+          (res) => {
             this.entityList.getData();
             this.loader.close(); },
           (res) => {
@@ -198,14 +205,14 @@ export class BootEnvironmentListComponent {
   }
   toggleKeep(id, status) {
     if (!status){
-      this.dialog.confirm("Keep", "Do you want to set keep flag in this boot environment?").subscribe((res) => {
+      this.dialog.confirm("Keep", "Keep this Boot Environment?", false, T("Set Keep Flag")).subscribe((res) => {
         if (res) {
           this.loader.open();
           this.loaderOpen = true;
           let data = {};
           this.busy = this.ws.call(this.wsKeep, [id, { "keep" : true }]).subscribe(
             (res) => { this.entityList.getData();
-              this.loader.close(); 
+              this.loader.close();
             },
             (res) => {
               new EntityUtils().handleError(this, res);
@@ -215,7 +222,7 @@ export class BootEnvironmentListComponent {
         }
       })
     } else {
-      this.dialog.confirm("Unkeep", "Do you want to remove keep flag in this boot environment?").subscribe((res) => {
+      this.dialog.confirm("Unkeep", "No longer keep this Boot Environment?", false, T("Remove Keep Flag")).subscribe((res) => {
         if (res) {
           this.loader.open();
           this.loaderOpen = true;
@@ -242,14 +249,14 @@ export class BootEnvironmentListComponent {
   }
 
   scrub() {
-    this.dialog.confirm("Scrub", "Do you want to start scrub?").subscribe((res) => {
+    this.dialog.confirm("Scrub", "Start the scrub now?", false, T("Start Scrub")).subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
         let data = {};
         this.busy = this.ws.call('boot.scrub').subscribe((res) => {
           this.loader.close();
-          this.snackBar.open('Scrub started',"OK", {duration: 5000});
+          this.snackBar.open('Scrub started',"close", {duration: 5000});
           },
           (res) => {
             this.dialog.errorReport(res.error, res.reason, res);

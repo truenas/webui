@@ -1,20 +1,22 @@
 import {Component, OnInit, Output, EventEmitter} from '@angular/core';
 import { NavigationService } from "../../../services/navigation/navigation.service";
 import { WebSocketService } from "../../../services/";
+import { DocsService } from "../../../services/docs.service";
 import {Router} from "@angular/router";
 import * as _ from 'lodash';
+import * as Ps from 'perfect-scrollbar';
 
 @Component({
   selector: 'navigation',
   templateUrl: './navigation.template.html'
 })
-export class NavigationComponent {
+export class NavigationComponent implements OnInit {
   hasIconTypeMenuItem;
   iconTypeMenuTitle:string;
   menuItems:any[];
   @Output('onStateChange') onStateChange: EventEmitter<any> = new EventEmitter();
 
-  constructor(private navService: NavigationService, private router: Router, private ws: WebSocketService) {}
+  constructor(private navService: NavigationService, private router: Router, private ws: WebSocketService, private docsService: DocsService) {}
 
   ngOnInit() {
     this.iconTypeMenuTitle = this.navService.iconTypeMenuTitle;
@@ -30,6 +32,24 @@ export class NavigationComponent {
       this.menuItems = menuItem;
       //Checks item list has any icon type.
       this.hasIconTypeMenuItem = !!this.menuItems.filter(item => item.type === 'icon').length;
+
+      // set the guide url
+      this.ws.call('system.info').subscribe((res) => {
+        if (res.version) {
+            window.localStorage.setItem('running_version', res['version']);
+            const docUrl = this.docsService.docReplace("%%docurl%%" + "/" + "%%webversion%%");
+            const guide = _.find(menuItem, {name: 'Guide'});
+            guide.state = docUrl;
+        }
+      });
     });
+  }
+
+  // Workaround to keep scrollbar displaying as needed
+  updateScroll() {
+    let navigationHold = document.getElementById('scroll-area');
+    setTimeout(() => {
+      Ps.update(navigationHold);
+    }, 500);
   }
 }

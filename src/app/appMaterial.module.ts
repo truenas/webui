@@ -1,4 +1,6 @@
 import { NgModule } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
+import { HttpClientModule } from "@angular/common/http";
 
 import {
   MatCheckboxModule,
@@ -31,11 +33,13 @@ import {
   MatPaginatorModule,
   MatSortModule,
   MatTableModule,
-  MatNativeDateModule
+  MatNativeDateModule,
+  MatAutocompleteModule,
 } from '@angular/material';
 
 @NgModule({
   imports: [
+    HttpClientModule,
     MatCheckboxModule,
     MatDatepickerModule,
     MatFormFieldModule,
@@ -66,7 +70,8 @@ import {
     MatPaginatorModule,
     MatSortModule,
     MatTableModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatAutocompleteModule,
   ],
   exports: [
     MatCheckboxModule,
@@ -99,7 +104,8 @@ import {
     MatPaginatorModule,
     MatSortModule,
     MatTableModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatAutocompleteModule
   ]
 })
 export class MaterialModule {}

@@ -24,6 +24,8 @@ export class SideNavAccordionDirective implements OnInit {
   @HostListener('click', ['$event'])
   onClick($event) {
     var parentLi = domHelper.findClosest($event.target, 'mat-list-item');
+    domHelper.addClass($event.target.parentElement, 'highlight')
+    setTimeout(() => {domHelper.removeClass($event.target.parentElement, 'highlight')}, 100);
     if (!domHelper.hasClass(parentLi, 'has-submenu')) {
       // PREVENTS CLOSING PARENT ITEM
       return;
@@ -61,5 +63,4 @@ export class SideNavAccordionDirective implements OnInit {
       domHelper.addClass(elem, 'open');
     }
   }
-
 }

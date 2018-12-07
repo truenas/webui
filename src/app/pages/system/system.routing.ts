@@ -4,7 +4,6 @@ import { RouterModule, Routes } from '@angular/router';
 //import {GeneralComponent} from './general/';
 
 import { GeneralComponent } from './general/general.component';
-import { ConfigUploadComponent } from './general/config-upload/config-upload.component';
 import { ConfigResetComponent } from './general/config-reset/config-reset.component';
 import { AdvancedComponent } from './advanced/';
 import { DatasetComponent } from './dataset/';
@@ -28,6 +27,7 @@ import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentia
 import { CloudCredentialsFormComponent } from './CloudCredentials/cloudcredentials-form/';
 import { CertificateAuthorityListComponent } from './ca/ca-list/';
 import { CertificateAuthorityAddComponent } from './ca/ca-add/';
+import { CertificateAuthorityEditComponent } from './ca/ca-edit/';
 import { CertificateAuthoritySignComponent } from './ca/ca-sign/';
 import { CertificateEditComponent } from './certificates/certificate-edit/';
 import { CertificateListComponent } from './certificates/certificate-list';
@@ -55,10 +55,6 @@ export const routes: Routes = [
         component: GeneralComponent,
         data: { title: 'General', breadcrumb: 'General' },
       }, {
-        path: 'config-upload',
-        component: ConfigUploadComponent,
-        data: { title: 'Config Upload', breadcrumb: 'Config Upload' },
-      }, {
         path: 'config-reset',
         component: ConfigResetComponent,
         data: { title: 'Config Reset', breadcrumb: 'Config Reset' },
@@ -70,7 +66,7 @@ export const routes: Routes = [
     },{
       path: 'dataset',
       component: DatasetComponent,
-      data: { title: 'Dataset', breadcrumb: 'Dataset', icon: 'storage' },
+      data: { title: 'System Dataset', breadcrumb: 'System Dataset', icon: 'storage' },
     }, {
       path: 'bootenv',
       data: { title: 'Boot Environments', breadcrumb: 'Boot Environments', icon: 'replay' },
@@ -111,11 +107,11 @@ export const routes: Routes = [
     ]
     }, {
       path: 'tunable',
-      data: { title: 'Tunable', breadcrumb: 'Tunable', icon: 'settings_overscan' },
+      data: { title: 'Tunables', breadcrumb: 'Tunables', icon: 'settings_overscan' },
       children: [{
           path: '',
           component: TunableListComponent,
-          data: { title: 'Tunable', breadcrumb: 'Tunable' },
+          data: { title: 'Tunables', breadcrumb: 'Tunables' },
         }, {
           path: 'add',
           component: TunableFormComponent,
@@ -202,11 +198,11 @@ export const routes: Routes = [
       ]
     },{
       path: 'cloudcredentials',
-      data: { title: 'CloudCredentials', breadcrumb: 'CloudCredentials', icon: 'cloud_circle' },
+      data: { title: 'Cloud Credentials', breadcrumb: 'Cloud Credentials', icon: 'cloud_circle' },
       children: [{
           path: '',
           component: CloudCredentialsListComponent,
-          data: { title: 'CloudCredentials', breadcrumb: 'CloudCredentials' },
+          data: { title: 'Cloud Credentials', breadcrumb: 'Cloud Credentials' },
         },
         {
           path: 'add',
@@ -232,7 +228,13 @@ export const routes: Routes = [
         path: 'add',
         component: CertificateAuthorityAddComponent,
         data: { title: 'Add', breadcrumb: 'Add' },
-      }, {
+      },
+      {
+        path: 'view/:pk',
+        component: CertificateAuthorityEditComponent,
+        data: { title: 'View', breadcrumb: 'View' },
+      },
+      {
         path: 'sign/:pk',
         component: CertificateAuthoritySignComponent,
         data: { title: 'Sign CSR', breadcrumb: 'Sign CSR' },
@@ -249,9 +251,9 @@ export const routes: Routes = [
         component: CertificateAddComponent,
         data: { title: 'Add', breadcrumb: 'Add' },
       }, {
-        path: 'edit/:pk',
+        path: 'view/:pk',
         component: CertificateEditComponent,
-        data: { title: 'Edit', breadcrumb: 'Edit' },
+        data: { title: 'View', breadcrumb: 'View' },
       }]
     }, {
       path: 'support',

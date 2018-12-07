@@ -19,7 +19,7 @@ export class GroupListComponent {
   protected entityList: any;
   protected loaderOpen = false;
   public columns: Array<any> = [
-    {name : 'Group', prop : 'bsdgrp_group'},
+    {name : 'Group', prop : 'bsdgrp_group', always_display: true},
     {name : 'GID', prop : 'bsdgrp_gid'},
     {name : 'Builtin', prop : 'bsdgrp_builtin'},
     {name : 'Permit Sudo', prop : 'bsdgrp_sudo'},
@@ -27,6 +27,10 @@ export class GroupListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    deleteMsg: {
+      title: 'Group',
+      key_props: ['bsdgrp_group']
+    },
   };
 
   constructor(private _router: Router, protected dialogService: DialogService, protected loader: AppLoaderService,protected ws: WebSocketService) { }
@@ -60,7 +64,7 @@ export class GroupListComponent {
       actions.push({
         label : T("Delete"),
         onClick : (members_delete) => {
-          this.entityList.doDelete(members_delete.id );
+          this.entityList.doDelete(members_delete);
         },
       });
 
@@ -68,14 +72,14 @@ export class GroupListComponent {
 
     return actions;
   }
-  checkbox_confirm(id: any){
+  checkbox_confirm(id: any, deleteMsg: any){
     const params = [id, {"delete_users": false}]
     const ds = this.dialogService.confirm(
       T("Delete"), 
-      T("Are you sure you want to delete the selected item?"), 
+      deleteMsg,
       false, T("Delete"),
       true,
-      T('Do you want to delete all users with this primary group?'),
+      T('Delete all users with this primary group?'),
       'group.delete',
       params);
     ds.afterClosed().subscribe((status)=>{

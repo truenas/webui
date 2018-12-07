@@ -11,8 +11,9 @@ export interface FieldConfig {
   min?: number, max?: number, tabs?: any[], tabName?: string, class?: string,
   customEventActionLabel?: string, explorerType?: string, required?: boolean,
   acceptedFiles?: string, fileLocation?: string, fileType?: string,width?:string, 
-  message?: any, updater?:any, parent?:any,hideButton?:boolean, paraText?: any,
-  noexec?: boolean, blurStatus?:boolean,blurEvent?:any,
+  message?: any, updater?:any, parent?:any,togglePw?:boolean, paraText?: any,
+  noexec?: boolean, blurStatus?:boolean,blurEvent?:any,noMinutes?:boolean,
+  warnings?: string, hideButton?:boolean, searchOptions?: any[],
   customEventMethod?(data:any), onChangeOption?(data:any), 
   
 }

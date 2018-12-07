@@ -43,6 +43,10 @@ export class CertificateAuthorityListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    deleteMsg: {
+      title: 'Certificate Authority',
+      key_props: ['name']
+    },
   }
 
   afterInit(entityList: any) {
@@ -59,7 +63,15 @@ export class CertificateAuthorityListComponent {
   }
 
   getActions(row) {
-    return [{
+    return [
+      {
+        id: "View",
+        label: T("View"),
+        onClick: (row) => {
+          this.router.navigate(new Array('').concat(["system", "ca", "view", row.id]))
+        }
+      },
+      {
         id: "sign",
         label: T("Sign CSR"),
         onClick: (row) => {
@@ -74,7 +86,7 @@ export class CertificateAuthorityListComponent {
             if (res[0]) {
               this.ws.call('core.download', ['filesystem.get', [res[0].certificate_path], res[0].name + '.crt']).subscribe(
                 (res) => {
-                  this.snackBar.open(T("Redirecting to download. Make sure pop-ups are enabled in the browser."), T("Success"), {
+                  this.snackBar.open(T("Opening download window. Make sure pop-ups are enabled in the browser."), T("Success"), {
                     duration: 5000
                   });
                   window.open(res[1]);
@@ -95,7 +107,7 @@ export class CertificateAuthorityListComponent {
             if (res[0]) {
               this.ws.call('core.download', ['filesystem.get', [res[0].privatekey_path], res[0].name + '.key']).subscribe(
                 (res) => {
-                  this.snackBar.open(T("Redirecting to download. Make sure pop-ups are enabled in the browser."), T("Success"), {
+                  this.snackBar.open(T("Opening download window. Make sure pop-ups are enabled in the browser."), T("Success"), {
                     duration: 5000
                   });
                   window.open(res[1]);
@@ -112,7 +124,7 @@ export class CertificateAuthorityListComponent {
         id: "delete",
         label: T("Delete"),
         onClick: (row) => {
-          this.entityList.doDelete(row.id);
+          this.entityList.doDelete(row);
         }
       }];
   }

@@ -8,6 +8,8 @@ import * as _ from 'lodash';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { MatSnackBar } from '@angular/material';
 import { Validators } from '@angular/forms';
+import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
+import { T } from '../../../../translate-marker';
 
 interface poolDiskInfo {
   id: number,
@@ -50,6 +52,23 @@ export class VolumeStatusComponent implements OnInit {
     required: true,
     validation: [Validators.required],
   }, {
+    type: 'input',
+    inputType: 'password',
+    name: 'pass',
+    placeholder: T('Passphrase'),
+    required: true,
+    isHidden: true,
+    disabled: true,
+  }, {
+    type: 'input',
+    inputType: 'password',
+    name: 'pass2',
+    placeholder: T('Confirm Passphrase'),
+    validation : [ matchOtherValidator('pass') ],
+    required: true,
+    isHidden: true,
+    disabled: true,
+  }, {
     type: 'checkbox',
     name: 'force',
     placeholder: "Force",
@@ -72,6 +91,13 @@ export class VolumeStatusComponent implements OnInit {
     ]).subscribe(
       (res) => {
         if (res[0]) {
+          // if pool is passphrase protected, abled passphrase field.
+          if (res[0].encrypt === 2) {
+            _.find(this.replaceDiskFormFields, { name: 'pass' })['isHidden'] = false;
+            _.find(this.replaceDiskFormFields, { name: 'pass' }).disabled = false;
+            _.find(this.replaceDiskFormFields, { name: 'pass2' })['isHidden'] = false;
+            _.find(this.replaceDiskFormFields, { name: 'pass2' }).disabled = false;
+          }
           this.poolScan = res[0].scan;
           this.dataHandler(res[0]);
         }
@@ -143,11 +169,16 @@ export class VolumeStatusComponent implements OnInit {
         },
         isHidden: false,
       }, {
-        label: "Offline",
+        label: T("Offline"),
         onClick: (row) => {
+          let name = row.name;
+          // if use path as name, show the full path
+          if (!_.startsWith(name, '/')) {
+            name = _.split(row.name, 'p')[0];
+          }
           this.dialogService.confirm(
             "Offline",
-            "Are your sure you want to offline the disk " + _.split(row.name, 'p')[0],
+            "Offline disk " + name + "?", false, T('Offline')
           ).subscribe((res) => {
             if (res) {
               this.loader.open();
@@ -172,8 +203,8 @@ export class VolumeStatusComponent implements OnInit {
         label: "Online",
         onClick: (row) => {
           this.dialogService.confirm(
-            "Offline",
-            "Are your sure you want to online the disk " + _.split(row.name, 'p')[0],
+            "Online",
+            "Online disk " + _.split(row.name, 'p')[0] + "?", false, T('Online')
           ).subscribe((res) => {
             if (res) {
               this.loader.open();
@@ -207,7 +238,7 @@ export class VolumeStatusComponent implements OnInit {
           this.dialogService.dialogForm(conf).subscribe((res) => {
             if (res) {
               this.getData();
-              this.snackBar.open("Disk replacement has been initiated.", 'close', { duration: 5000 });
+              this.snackBar.open("Disk replacement started.", 'close', { duration: 5000 });
             }
           });
         },
@@ -217,7 +248,7 @@ export class VolumeStatusComponent implements OnInit {
         onClick: (row) => {
           this.dialogService.confirm(
             "Remove",
-            "Are your sure you want to remove the disk " + _.split(row.name, 'p')[0],
+            "Remove disk " + _.split(row.name, 'p')[0] + "?", false, T('Remove')
           ).subscribe((res) => {
             if (res) {
               this.loader.open();
@@ -241,11 +272,14 @@ export class VolumeStatusComponent implements OnInit {
       }];
       if (category) {
         if (category == "data") {
-          _.find(item.actions, { label: "Remove" }).isHidden = true;
+          _.find(item.actions, { label: "Remove" })['isHidden'] = true;
         } else if (category == "spares") {
-          _.find(item.actions, { label: "Online" }).isHidden = true;
-          _.find(item.actions, { label: "Offline" }).isHidden = true;
-          _.find(item.actions, { label: "Replace" }).isHidden = true;
+          _.find(item.actions, { label: "Online" })['isHidden'] = true;
+          _.find(item.actions, { label: "Offline" })['isHidden'] = true;
+          _.find(item.actions, { label: "Replace" })['isHidden'] = true;
+        } else if (category == "cache") {
+          _.find(item.actions, { label: "Online" })['isHidden'] = true;
+          _.find(item.actions, { label: "Offline" })['isHidden'] = true;
         }
       }
     }

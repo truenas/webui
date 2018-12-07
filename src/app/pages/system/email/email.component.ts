@@ -40,8 +40,8 @@ export class EmailComponent implements OnDestroy {
       if (this.rootEmail){
         const value = _.cloneDeep(this.entityEdit.formGroup.value);
         const mailObj = {
-          "subject" : "Test message from FreeNAS",
-          "text" : "This is a test message from FreeNAS",
+          "subject" : "FreeNAS Test Message",
+          "text" : "This is a test message from FreeNAS.",
         };
         const security_table = {
           'plain':'PLAIN',
@@ -56,14 +56,14 @@ export class EmailComponent implements OnDestroy {
           mail_form_payload['security']= security_table[value.em_security]
           mail_form_payload['smtp']= value.em_smtp
           mail_form_payload['user']= value.em_user
-          mail_form_payload['pass']= value.em_pass1
+          mail_form_payload['pass']= value.em_pass1 || this.entityEdit.data.em_pass
           mailObj['subject'] += " hostname: " + res['hostname'];
           this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "EMAIL" }, disableClose: true });
           this.dialogRef.componentInstance.setCall('mail.send', [mailObj, mail_form_payload]);
           this.dialogRef.componentInstance.submit();
           this.dialogRef.componentInstance.success.subscribe((s_res)=>{
             this.dialogRef.close(false);
-            this.dialogservice.Info("email", "Test email sent successfully!")
+            this.dialogservice.Info("email", "Test email sent!")
           });
           this.dialogRef.componentInstance.failure.subscribe((e_res) => {
             this.dialogRef.componentInstance.setDescription(e_res.error);
@@ -71,8 +71,8 @@ export class EmailComponent implements OnDestroy {
         });
       }
       else{
-        this.dialogservice.Info("email", "please setup root user email address");
-      }       
+        this.dialogservice.Info("email", "Configure the root user email address.");
+      }
     }
   }
 ];
@@ -81,7 +81,7 @@ export class EmailComponent implements OnDestroy {
       type : 'input',
       name : 'em_fromemail',
       placeholder : T('From E-mail'),
-      tooltip : T('The envelope <b>From</b> address shown in the email.\
+      tooltip : T('The envelope From address shown in the email.\
                    This is set to assist with filtering mail on the\
                    receiving system.'),
     },
@@ -118,8 +118,7 @@ export class EmailComponent implements OnDestroy {
       tooltip : T('Enable/disable\
                    <a href="https://en.wikipedia.org/wiki/SMTP_Authentication"\
                    target="_blank">SMTP AUTH</a> using PLAIN SASL.\
-                   Enter the required <b>Username</b> and\
-                   <b>Password</b> if checked.'),
+                   Enter the required Username and Password if set.'),
     },
     {
       type : 'input',
@@ -156,13 +155,14 @@ export class EmailComponent implements OnDestroy {
         },
       ],
       required: true,
+      togglePw : true,
       validation : [ matchOtherValidator('em_pass2'), Validators.required ]
     },
     {
       type : 'input',
       name : 'em_pass2',
       placeholder : T('Confirm Password'),
-      tooltip : T('Confirm previous password.'),
+      tooltip : T(''),
       inputType : 'password',
       relation : [
         {
@@ -173,7 +173,7 @@ export class EmailComponent implements OnDestroy {
           } ]
         },
       ],
-      required: true,
+      required : true,
       validation : [ Validators.required ]
     },
   ];
@@ -205,54 +205,17 @@ afterInit(entityEdit: any) {
     this.em_pass2 = _.find(this.fieldConfig, {'name': 'em_pass2'});
 
     this.em_smtp = entityEdit.formGroup.controls['em_smtp'];
-    this.em_user.isHidden = !this.em_smtp.value;
-    this.em_pass1.isHidden = !this.em_smtp.value;
-    this.em_pass2.isHidden = !this.em_smtp.value;
+    this.em_user['isHidden'] = !this.em_smtp.value;
+    this.em_pass1['isHidden'] = !this.em_smtp.value;
+    this.em_pass2['isHidden'] = !this.em_smtp.value;
+    this.em_pass2.hideButton = !this.em_smtp.value;
 
     this.em_smtp_subscription = this.em_smtp.valueChanges.subscribe((value) => {
-      this.em_user.isHidden = !value;
-      this.em_pass1.isHidden = !value;
-      this.em_pass2.isHidden = !value;
+      this.em_user['isHidden'] = !value;
+      this.em_pass1['isHidden'] = !value;
+      this.em_pass2['isHidden'] = !value;
+      this.em_pass1.hideButton = !value;
     });
-   
-  }
-  sendMail(): void {
-    if (this.rootEmail){
-      const value = _.cloneDeep(this.entityEdit.formGroup.value);
-      const mailObj = {
-        "subject" : "Test message from FreeNAS",
-        "text" : "This is a test message from FreeNAS",
-      };
-      const security_table = {
-        'plain':'PLAIN',
-        'ssl': 'SSL',
-        'tls': 'TLS'
-      };
-      this.ws.call('system.info').subscribe((res) => {
-        const mail_form_payload = {}
-        mail_form_payload['fromemail'] = value.em_fromemail
-        mail_form_payload['outgoingserver']= value.em_outgoingserver
-        mail_form_payload['port']= value.em_port
-        mail_form_payload['security']= security_table[value.em_security]
-        mail_form_payload['smtp']= value.em_smtp
-        mail_form_payload['user']= value.em_user
-        mail_form_payload['pass']= value.em_pass1
-        mailObj['subject'] += " hostname: " + res['hostname'];
-        this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "EMAIL" }, disableClose: true });
-        this.dialogRef.componentInstance.setCall('mail.send', [mailObj, mail_form_payload]);
-        this.dialogRef.componentInstance.submit();
-        this.dialogRef.componentInstance.success.subscribe((s_res)=>{
-          this.dialogRef.close(false);
-          this.dialogservice.Info("email", "Test email sent successfully!")
-        });
-        this.dialogRef.componentInstance.failure.subscribe((e_res) => {
-          this.dialogRef.componentInstance.setDescription(e_res.error);
-        });
-      });
-    }
-    else{
-      this.dialogservice.Info("email", "please setup root user email address");
-    }
   }
 
   ngOnDestroy() {

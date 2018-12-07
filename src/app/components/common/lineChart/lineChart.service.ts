@@ -3,12 +3,31 @@ import {Injectable} from '@angular/core';
 import {WebSocketService} from '../../../services';
 
 
+
+/*
+ * For missing chart metadata like units
+ * for axis labels etc
+ * */
+ export interface LineChartMetadata {
+  source: string;
+  units: string; // Units used as tick labels
+  labelY:string;
+//<<<<<<< HEAD
+  dataUnits?:string;// What the middleware response provides
+  conversion?:string;// What the chart should convert to.
+//=======
+  //unitsProvided?:string;
+  removePrefix?: string;
+//>>>>>>> master
+ }
+
 /*
  * Fed to the LineChart ./lineChart.component.ts
  */
 export interface LineChartData {
   labels: Date[];
   series: any[];
+  meta?: LineChartMetadata;
 }
 
 
@@ -52,7 +71,7 @@ export interface ChartConfigData {
 
 
 /**
- * Retunrs back the Series/Data Points for a given chart.
+ * Returns back the Series/Data Points for a given chart.
  */
 export interface HandleDataFunc {
   handleDataFunc(lineChartData: LineChartData);
@@ -78,12 +97,32 @@ export class LineChartService {
 
   constructor(private _ws: WebSocketService) {}
 
-  public getData(dataHandlerInterface: HandleDataFunc, dataList: any[]) {
+  public getData(dataHandlerInterface: HandleDataFunc, dataList: any[], rrdOptions?:any /*timeframe?:string*/) {
+    /*console.log("Service is fetching data...");
+    console.log(dataList);
+    console.log("*****************************")*/
+    //if(!timeframe){timeframe = 'now-10m';}
+    if(!rrdOptions) {
+      rrdOptions = {step: '10', start:'now-10m'};
+      console.log("Default rrdOptions values applied")
+    }
+    let options:any  = {
+      step: rrdOptions.step,
+      start: rrdOptions.start.toString()
+    }
 
-    this._ws.call('stats.get_data', [dataList, {step: '10', start: 'now-10m'}]).subscribe((res) => {
+    if(rrdOptions.end){
+      options.end = rrdOptions.end.toString();
+    }
+
+    //this._ws.call('stats.get_data', [dataList, {step: '10', start:timeframe}]).subscribe((res) => {
+    this._ws.call('stats.get_data', [dataList, options]).subscribe((res) => {
+      //console.log(res);
+      let meta = this.generateMetaData(res);
       const linechartData: LineChartData = {
         labels: new Array<Date>(),
-        series: new Array<any>()
+        series: new Array<any>(),
+        meta: meta
       }
 
       dataList.forEach(() => {linechartData.series.push([]);})
@@ -94,9 +133,45 @@ export class LineChartService {
           linechartData.series[x].push(item[x]);
         }
       });
-
       dataHandlerInterface.handleDataFunc(linechartData);
     });
+  }
+
+  generateMetaData(res){
+    // This should ideally be done server side but putting it in so we can have proper labels 
+    // in time for this 11.2 release
+
+    const spl = res.meta.legend[0].split('/');
+    const prefix = spl[0];
+    const dataName = spl[1];
+
+    let dictionary: LineChartMetadata[] = [
+      {source :'aggregation-cpu-sum', units:'%', labelY:'% CPU'},
+      {source :'memory', units:'GiB', labelY:'Gigabytes', removePrefix:'memory-'},
+      {source :'swap', units:'GiB', labelY:'Gigabytes', removePrefix:'swap-'},
+      {source :'if_errors', units:'', labelY:'Bits/s'},
+      {source :'if_octets', units:'', labelY:'Bits/s'},
+      {source :'if_packets', units:'', labelY:'Bits/s'},
+      {source :'df-mnt-', units:'GiB', labelY: 'Gigabytes', removePrefix:'df_complex-'},
+      {source :'ctl-tpc', units:'GiB', labelY: 'Bytes/s', removePrefix:'disk_'},
+      {source :'ctl-iscsi', units:'GiB', labelY: 'Bytes/s', removePrefix:'disk_'},
+      {source :'disk_time', units:'k', labelY: 'Bytes/s'},
+      {source :'disk_octets', units:'k', labelY: 'Bytes/s'},
+      {source :'disk_io_time', units:'k', labelY: 'Bytes/s'},
+      {source :'disk_ops', units:'', labelY: 'Operations/s'},
+      {source :'disktemp-', units:'°', labelY: 'Celsius'},
+      {source :'cache_size-arc', units:'GiB', labelY: 'Gigabytes', dataUnits: 'bytes', conversion:'bytesToGigabytes'},
+      {source :'cache_ratio-arc', units:'%', labelY: 'Hits', dataUnits:'percentage', conversion:'percentFloatToInteger'},
+      {source :'processes', units:'', labelY: 'Processes', removePrefix:'ps_state-'},
+      {source :'cache_result-demand_data-hit', units:'', labelY: 'Requests'},
+      {source :'cache_result-demand_metadata-hit', units:'k', labelY: 'Requests'},
+      {source :'cache_result-prefetch_data-hit', units:'', labelY: 'Requests'},
+      {source :'cache_result-prefetch_metadata-hit', units:'m', labelY: 'Requests'},
+      {source :'load', units:'m', labelY:'CPU Time'}// Keep this last to avoid false positives like 'download'
+    ]
+
+    const result = dictionary.find(item => prefix.includes(item.source) || item.source == dataName); 
+    return result;
   }
 
 
@@ -147,7 +222,8 @@ export class LineChartService {
 
     } else if (source.startsWith("interface-")) {
       returnVal = "rx";
-    } else if (source === "ctl-tpc") {
+    //} else if (source === "ctl-tpc") {
+    } else if (source.startsWith("ctl-") && source !== "ctl-ioctl") {
       returnVal = "read";
     } else if (source === "zfs_arc") {
       if (dataSetType === "io_octets-L2") {
@@ -278,7 +354,15 @@ export class LineChartService {
         });
 
         let divideBy: number;
-        let title: string = prop;
+        //let title: string = prop == "ctl-tpc" ? "SCSI Target Port (tpc)" : prop; 
+
+        // Put in ugly override. Wasn't really a better place for this one change.
+        let title;
+        if(prop == "ctl-iscsi" || prop == "ctl-tpc"){
+          title = "SCSI Target Port (" + prop.replace("ctl-", "") + ")";
+        } else {
+          title = prop;
+        }
         
         // Things I want convertd from Bytes to gigabytes
         if (prop.startsWith("df-") ||

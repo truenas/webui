@@ -107,7 +107,7 @@ export class DiskWipeComponent implements OnInit {
     event.preventDefault();
     event.stopPropagation();
 
-    this.dialogService.confirm(T("Wipe Disk"), T("Are you sure you want to wipe disk?")).subscribe((res) => {
+    this.dialogService.confirm(T("Wipe Disk"), T("Wipe this disk?")).subscribe((res) => {
       if (res) {
         let formValue = _.cloneDeep(this.formGroup.value);
 
@@ -116,7 +116,6 @@ export class DiskWipeComponent implements OnInit {
         }
 
         this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Wipe") }, disableClose: true });
-        this.dialogRef.componentInstance.progressNumberType = "nopercent";
         this.dialogRef.componentInstance.setDescription(T("Wiping Disk..."));
         this.dialogRef.componentInstance.setCall('disk.wipe', [formValue.disk_name, formValue.wipe_method]);
         this.dialogRef.componentInstance.submit();

@@ -25,22 +25,26 @@ export class UserListComponent implements OnInit {
   protected grp_lst = [] 
 
   public columns: Array < any > = [
-    { name: 'Username', prop: 'bsdusr_username' },
-    { name: 'UID', prop: 'bsdusr_uid' },
-    { name: 'GID', prop: 'bsdusr_group' },
-    { name: 'Home directory', prop: 'bsdusr_home' },
-    { name: 'Shell', prop: 'bsdusr_shell' },
-    { name: 'Builtin', prop: 'bsdusr_builtin' },
-    { name: 'Full Name', prop: 'bsdusr_full_name' },
-    { name: 'Email', prop: 'bsdusr_email' },
-    { name: 'Disable Password Login', prop: 'bsdusr_password_disabled' },
-    { name: 'Lock User', prop: 'bsdusr_locked' },
-    { name: 'Permit Sudo', prop: 'bsdusr_sudo' },
-    { name: 'Microsoft Account', prop: 'bsdusr_microsoft_account' },
+    { name: 'Username', prop: 'bsdusr_username', always_display: true },
+    { name: 'UID', prop: 'bsdusr_uid', hidden: true },
+    { name: 'GID', prop: 'bsdusr_gid', hidden: true },
+    { name: 'Home directory', prop: 'bsdusr_home', hidden: false },
+    { name: 'Shell', prop: 'bsdusr_shell', hidden: false },
+    { name: 'Builtin', prop: 'bsdusr_builtin', hidden: true },
+    { name: 'Full Name', prop: 'bsdusr_full_name', hidden: false },
+    { name: 'Email', prop: 'bsdusr_email', hidden: true },
+    { name: 'Disable Password Login', prop: 'bsdusr_password_disabled', hidden: true },
+    { name: 'Lock User', prop: 'bsdusr_locked', hidden: false },
+    { name: 'Permit Sudo', prop: 'bsdusr_sudo', hidden: true },
+    { name: 'Microsoft Account', prop: 'bsdusr_microsoft_account', hidden: true },
   ];
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    deleteMsg: {
+      title: 'User',
+      key_props: ['bsdusr_username']
+    },
   };
 
   isActionVisible(actionId: string, row: any) {
@@ -83,18 +87,18 @@ export class UserListComponent implements OnInit {
       actions.push({
         label : T("Delete"),
         onClick : (users_edit) => {
-          this.entityList.doDelete(users_edit.id );
+          this.entityList.doDelete(users_edit);
         },
       });
 
     }
     return actions;
   }
-  checkbox_confirm(id: any){
+  checkbox_confirm(id: any, deleteMsg: any){
     const params = [id, {"delete_group": true}]
     const ds = this.dialogService.confirm(
       T("Delete"), 
-      T("Delete the selected item?"), 
+      deleteMsg,
       false, T("Delete"),
       true,
       T('Keep user primary group'),
@@ -122,7 +126,7 @@ export class UserListComponent implements OnInit {
     let user: any
     let group_users: any
     user = _.find(this.usr_lst[0], {id});
-    group_users =_.find(this.grp_lst[0], {id: user.group.id}).users;
+    group_users =_.find(this.grp_lst[0], {id: user.group.id})['users'];
     if(group_users.length === 1){
       return true
     };
@@ -130,4 +134,14 @@ export class UserListComponent implements OnInit {
 
 
   }
+  resourceTransformIncomingRestData(data) {
+    this.ws.call('group.query').subscribe((res)=>{
+      data.forEach(user => {
+        const group = _.find(res, {"id" : user.bsdusr_group});
+        user['bsdusr_gid'] = group['gid'];
+      });
+    })
+    return data;
+  }
+  
 }

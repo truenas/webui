@@ -7,8 +7,12 @@
           {{"Basic Properties" | translate}}
         </mat-panel-title>
       </mat-expansion-panel-header>
-      <div>
-        <ng-container *ngFor="let field of basicfieldConfig;" dynamicField [config]="field" [group]="formGroup" [fieldShow]="'show'">
+      <div class="form-wrap">
+        <ng-container *ngFor="let field of basicfieldConfig;">
+          <div [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'" id="{{j}}" fxFlex="100%" fxFlex.gt-xs="calc({{field.width}} - 16px)">
+            <div id="dynamicField_{{field.name}}" dynamicField [config]="field" [group]="formGroup" [fieldShow]="'show'">
+            </div>
+          </div>
         </ng-container>
       </div>
       <mat-action-row>
@@ -75,8 +79,8 @@
       </mat-action-row>
     </mat-expansion-panel> -->
     <mat-card-actions>
-      <button class="btn btn-block btn-warning" type="submit" mat-raised-button color="primary" [disabled]="!formGroup.valid" >{{ "Save" | translate }}</button>
-      <button *ngIf="route_success" (click)="goBack()" mat-raised-button color="accent" type="button">{{ "Cancel" | translate }}</button>
+      <button class="btn btn-block btn-warning" type="submit" mat-button color="primary" [disabled]="!formGroup.valid" >{{ "Save" | translate }}</button>
+      <button *ngIf="route_success" (click)="goBack()" mat-button color="accent" type="button">{{ "Cancel" | translate }}</button>
     </mat-card-actions>
   </form>
 </mat-card>

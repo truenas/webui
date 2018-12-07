@@ -54,7 +54,7 @@ class conf_ssh_test(unittest.TestCase):
             # scroll down
             driver.find_element_by_tag_name('body').send_keys(Keys.END)
             time.sleep(2)
-            self.status_change("14", "start")
+            function.status_change(driver, self, "14", "start")
             #taking screenshot
             function.screenshot(driver, self)
         except Exception:
@@ -62,14 +62,15 @@ class conf_ssh_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_02_checkif_ssh_on (self):
         try:
             print (" check if ssh turned on")
             time.sleep(2)
-            self.status_check("14")
+            #status check
+            function.status_check(driver, "14")
             #taking screenshot
             function.screenshot(driver, self)
         except Exception:
@@ -77,7 +78,7 @@ class conf_ssh_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
@@ -100,7 +101,7 @@ class conf_ssh_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_04_turnoff_ssh(self):
@@ -113,7 +114,7 @@ class conf_ssh_test(unittest.TestCase):
             # scroll down
             driver.find_element_by_tag_name('html').send_keys(Keys.END)
             time.sleep(2)
-            self.status_change("14", "stop")
+            function.status_change(driver, self, "14", "stop")
             #taking screenshot
             function.screenshot(driver, self)
         except Exception:
@@ -121,7 +122,7 @@ class conf_ssh_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
@@ -129,7 +130,8 @@ class conf_ssh_test(unittest.TestCase):
         try:
             print (" check if ssh turned on")
             time.sleep(2)
-            self.status_check("14")
+            #status check
+            function.status_check(driver, "14")
             time.sleep(10)
             #taking screenshot
             function.screenshot(driver, self)
@@ -138,7 +140,7 @@ class conf_ssh_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
@@ -182,13 +184,6 @@ class conf_ssh_test(unittest.TestCase):
                     driver.find_element_by_xpath(xpaths['turnoffConfirm']).click()
             else:
                 print ("the status is already" + status_data)
-
-
-    def status_check(self, which):
-        ui_element_status=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[' + str(which) + ']/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[1]/mat-chip')
-        # get the status data
-        status_data=ui_element_status.text
-        print ("current status is: " + status_data)
 
 
     @classmethod

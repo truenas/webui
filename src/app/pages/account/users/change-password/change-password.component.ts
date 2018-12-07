@@ -26,14 +26,15 @@ export class ChangePasswordComponent {
       name : 'bsdusr_passwd_currnt',
       placeholder : T('Current Password'),
       inputType : 'password',
+      togglePw: true,
     },
     {
       type : 'input',
       name : 'bsdusr_password',
       placeholder : T('New Password'),
       inputType : 'password',
-      tooltip : T('Passwords cannot contain a <b>?</b>. Passwords are\
-       recommended to be 8 characters or longer and contain a mix of lower and\
+      tooltip : T('Passwords cannot contain a <b>?</b>. Passwords should\
+       be at least eight characters and contain a mix of lower and\
        upper case, numbers, and special characters.')
     },
     {

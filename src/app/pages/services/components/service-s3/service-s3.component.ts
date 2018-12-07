@@ -1,4 +1,4 @@
-import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
+import {ApplicationRef, Component, Injector, OnDestroy} from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -9,6 +9,9 @@ import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
 import {  DialogService } from '../../../../services/';
+import {
+  regexValidator
+} from '../../../common/entity/entity-form/validators/regex-validation';
 
 import {
   RestService,
@@ -29,7 +32,7 @@ import { T } from '../../../../translate-marker';
   providers : [ SystemGeneralService ]
 })
 
-export class ServiceS3Component implements OnInit {
+export class ServiceS3Component implements OnDestroy {
   //protected resource_name: string = 'services/s3';
   protected queryCall: string = 's3.config';
   protected addCall: string = 's3.update';
@@ -44,7 +47,7 @@ export class ServiceS3Component implements OnInit {
       name : 'bindip',
       placeholder : T('IP Address'),
       tooltip: T('Enter the IP address which runs the <a\
-                  href="..//docs/services.html#s3" target="_blank">S3\
+                  href="%%docurl%%/services.html%%webversion%%#s3" target="_blank">S3\
                   service</a>. <i>0.0.0.0</i> tells the server to listen\
                   on all addresses.'),
       options : [
@@ -56,7 +59,9 @@ export class ServiceS3Component implements OnInit {
       name : 'bindport',
       placeholder : T('Port'),
       tooltip: T('Enter the TCP port which provides the S3 service.'),
-      value: '9000'
+      value: '9000',
+      required: true,
+      validation: [Validators.min(1), Validators.max(65535), Validators.required, Validators.pattern(/^[1-9]\d*$/)]
     },
     {
       type : 'input',
@@ -64,17 +69,20 @@ export class ServiceS3Component implements OnInit {
       placeholder : T('Access Key'),
       tooltip: T('Enter the S3 username.'),
       required: true,
-      validation: [Validators.minLength(5), Validators.maxLength(20), Validators.required]
+      validation: [Validators.minLength(5), Validators.maxLength(20), Validators.required,
+                             regexValidator(/^\w+$/)]
     },
     {
       type : 'input',
       name : 'secret_key',
       placeholder : T('Secret Key'),
+      togglePw: true,
       tooltip: T('Enter the password that must be used by connecting S3\
                   systems.'),
       inputType : 'password',
       required : true,
-      validation: [Validators.minLength(8), Validators.maxLength(40), Validators.required]
+      validation: [Validators.minLength(8), Validators.maxLength(40), Validators.required, 
+                            regexValidator(/^\w+$/)]
     },
     {
       type : 'input',
@@ -82,7 +90,8 @@ export class ServiceS3Component implements OnInit {
       placeholder : T('Confirm Secret Key'),
       inputType : 'password',
       required: true,
-      validation : [ matchOtherValidator('secret_key'), Validators.required ],
+      validation : [ matchOtherValidator('secret_key'), Validators.required,
+                               regexValidator(/^\w+$/)],
     },
     {
       type : 'explorer',
@@ -114,21 +123,35 @@ export class ServiceS3Component implements OnInit {
       type : 'select',
       name : 'certificate',
       placeholder : T('Certificate'),
-      tooltip : T('Add an <a href="..//docs/system.html#certificates"\
+      tooltip : T('Add an <a href="%%docurl%%/system.html%%webversion%%#certificates"\
                    target="_blank">SSL certificate</a> to be used for\
                    secure S3 connections.'),
       options : []
     },
   ];
+  protected storage_path: any;
+  protected storage_path_subscription: any;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected systemGeneralService: SystemGeneralService, private dialog:DialogService ) {}
 
-  ngOnInit() {}
+  ngOnDestroy() {
+    this.storage_path_subscription.unsubscribe();
+  }
 
   afterInit(entityForm: any) {
+    this.storage_path = entityForm.formGroup.controls['storage_path'];
+    this.storage_path_subscription = this.storage_path.valueChanges.subscribe((res) => {
+      if(res && res.split('/').length < 4) {
+        this.dialog.confirm(T("Warning"), T("Assigning a directory to Minio changes the permissions \
+                                             of that directory and every directory in it to \
+                                             minio:minio and overrides any previous permissions. \
+                                             Creating a separate dataset for Minio is strongly \
+                                             recommended."), true);
+      }
+    });
     this.systemGeneralService.getCertificates().subscribe((res)=>{
       this.certificate = _.find(this.fieldConfig, {name:'certificate'});
       if (res.length > 0) {
@@ -149,6 +172,8 @@ export class ServiceS3Component implements OnInit {
       entityForm.formGroup.controls['bindip'].setValue(res.bindip);
       entityForm.formGroup.controls['bindport'].setValue(res.bindport);
       entityForm.formGroup.controls['access_key'].setValue(res.access_key);
+      entityForm.formGroup.controls['secret_key'].setValue(res.secret_key);
+      entityForm.formGroup.controls['secret_key2'].setValue(res.secret_key);
       entityForm.formGroup.controls['storage_path'].setValue(res.storage_path);
       entityForm.formGroup.controls['browser'].setValue(res.browser);
       //entityForm.formGroup.controls['mode'].setValue(res.mode);

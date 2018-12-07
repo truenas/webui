@@ -10,7 +10,7 @@ import {
   SimpleChange,
   OnDestroy
 } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 import { WebSocketService, ShellService } from '../../services/';
 import { TranslateService } from '@ngx-translate/core';
@@ -47,12 +47,13 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
                             <b>tw_cli</b>, <br><b>MegaCli</b>,\
                             <b>freenas-debug</b>, <b>tmux</b>,\
                             <b>Dmidecode</b>.<br> Refer to the <a\
-                            href="..//docs/cli.html"\
+                            href="%%docurl%%/cli.html%%webversion%%"\
                             target="_blank">Command Line Utilities</a>\
                             chapter in the guide for usage information\
                             and examples.');
 
   clearLine = "\u001b[2K\r"
+  public shellConnected: boolean = false;
 
   ngOnInit() {
     this.getAuthToken().subscribe((res) => {
@@ -115,7 +116,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
       // 'rows': parseInt(rowNum.toFixed(),10),
       'focus': true
     });
-    this.xterm.open(this.container.nativeElement);
+    this.xterm.open(this.container.nativeElement, true);
     this.xterm.attach(this.ss);
     this.xterm._initialized = true;
   }
@@ -138,10 +139,18 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   initializeWebShell(res: string) {
     this.ss.token = res;
     this.ss.connect();
+
+    this.ss.shellConnected.subscribe((res)=> {
+      this.shellConnected = res;
+    })
   }
 
   getAuthToken() {
     return this.ws.call('auth.generate_token');
+  }
+
+  reconnect() {
+    this.ss.connect();
   }
 
   constructor(private ws: WebSocketService, public ss: ShellService, public translate: TranslateService) {

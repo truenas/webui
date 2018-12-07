@@ -53,7 +53,8 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
       placeholder: T('Passphrase'),
       tooltip: T('Enter the GELI passphrase.'),
       validation: [Validators.required],
-      required: true
+      required: true,
+      togglePw: true
     },{
       type : 'input',
       inputType: 'password',
@@ -69,7 +70,7 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
     return data;
   };
 
-
+  pk: any;
   constructor(
       protected router: Router,
       protected route: ActivatedRoute,
@@ -83,23 +84,28 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
 
   }
 
+  preInit(entityForm: any) {
+    this.route.params.subscribe(params => {
+      this.pk = params['pk'];
+    });
+  }
+
   afterInit(entityForm: any) {
 
   }
 
   customSubmit(value) {
     this.loader.open();
-    console.log("VALUE", value);
-    return this.rest.post(this.resource_name + "/" + value.name + "/keypassphrase/", { body: JSON.stringify({passphrase: value.passphrase, passphrase2: value.passphrase2}) }).subscribe((restPostResp) => {
-      console.log("restPostResp", restPostResp);
+
+    return this.rest.post(this.resource_name + "/" + this.pk + "/keypassphrase/", { body: JSON.stringify({passphrase: value.passphrase, passphrase2: value.passphrase2}) }).subscribe((restPostResp) => {
       this.loader.close();
-      this.dialogService.Info(T("Create Pool Passphrase"), T("Successfully created passphrase for pool ") + value.name);
+      this.dialogService.Info(T("Create Pool Passphrase"), T("Passphrase created for pool ") + value.name);
 
       this.router.navigate(new Array('/').concat(
         this.route_success));
     }, (res) => {
       this.loader.close();
-      this.dialogService.errorReport(T("Error creating passphrase for pool"), res.error.message, res.error.traceback);
+      this.dialogService.errorReport(T("Error creating passphrase for pool ") + value.name, res.error.message, res.error.traceback);
     });
   }
 

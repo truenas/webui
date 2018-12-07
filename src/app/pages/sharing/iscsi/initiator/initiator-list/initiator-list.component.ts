@@ -27,7 +27,7 @@ export class InitiatorListComponent {
       prop : 'iscsi_target_initiator_initiators',
     },
     {
-      name : 'Authorized Network',
+      name : 'Authorized Networks',
       prop : 'iscsi_target_initiator_auth_network',
     },
     {
@@ -38,6 +38,10 @@ export class InitiatorListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    deleteMsg: {
+      title: 'Initiator',
+      key_props: ['iscsi_target_initiator_tag']
+    },
   };
 
   afterInit(entityList: any) {}

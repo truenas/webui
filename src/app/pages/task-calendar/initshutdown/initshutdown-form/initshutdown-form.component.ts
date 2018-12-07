@@ -7,8 +7,7 @@ import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { TaskService, UserService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { FormGroup, Validators } from '@angular/forms';
-import { T } from '../../../../translate-marker';
+import helptext from '../../../../helptext/task-calendar/initshutdown/initshutdown';
 
 @Component({
   selector: 'cron-initshutdown-add',
@@ -25,9 +24,8 @@ export class InitshutdownFormComponent {
   public fieldConfig: FieldConfig[] = [{
     type: 'select',
     name: 'ini_type',
-    placeholder: T('Type'),
-    tooltip: T('Select <i>Command</i> for an executable or\
-                <i>Script</i> for an executable script.'),
+    placeholder: helptext.ini_type_placeholder,
+    tooltip: helptext.ini_type_tooltip,
     options: [{
       label: 'Command',
       value: 'command',
@@ -39,26 +37,24 @@ export class InitshutdownFormComponent {
   }, {
     type: 'input',
     name: 'ini_command',
-    placeholder: T('Command'),
-    tooltip: T('Enter the command and any options.'),
+    placeholder: helptext.ini_command_placeholder,
+    tooltip: helptext.ini_command_tooltip,
     required: true,
-    validation : [ Validators.required ],
+    validation : helptext.ini_command_validation,
   }, {
     type : 'explorer',
     initial: '/mnt',
     name: 'ini_script',
-    placeholder: T('Script'),
+    placeholder: helptext.ini_script_placeholder,
     explorerType: 'file',
-    tooltip: T('Browse to the script location.'),
+    required: true,
+    validation : helptext.ini_script_validation,
+    tooltip: helptext.ini_script_tooltip,
   }, {
     type: 'select',
     name: 'ini_when',
-    placeholder: T('When'),
-    tooltip: T('Select when the command or script runs. <i>Pre Init</i>\
-                is very early in the boot process before mounting\
-                filesystems, <i>Post Init</i> is towards the end of the\
-                boot process before FreeNAS services start, or at\
-                <i>Shutdown</i>.'),
+    placeholder: helptext.ini_when_placeholder,
+    tooltip: helptext.ini_when_tooltip,
     options: [{
       label: '---------',
       value: '',
@@ -74,12 +70,12 @@ export class InitshutdownFormComponent {
     }],
     value: '',
     required: true,
-    validation : [ Validators.required ],
+    validation : helptext.ini_when_validation,
   }, {
     type: 'checkbox',
     name: 'ini_enabled',
-    placeholder: T('Enabled'),
-    tooltip: T('Unset to diable the task without deleting it.'),
+    placeholder: helptext.ini_enabled_placeholder,
+    tooltip: helptext.ini_enabled_tooltip,
     value: true,
   }];
 
@@ -88,6 +84,7 @@ export class InitshutdownFormComponent {
   constructor(protected router: Router, protected taskService: TaskService, protected userService: UserService, protected entityFormService: EntityFormService, ) {}
 
   afterInit(entityForm: any) {
+    this.entityForm = entityForm;
     this.type_control = entityForm.formGroup.controls['ini_type'];
     this.type_control.valueChanges.subscribe((value) => {
       this.formUpdate(value);
@@ -99,10 +96,7 @@ export class InitshutdownFormComponent {
   formUpdate(type) {
     let isCommand = type == 'command' ? true : false;
 
-    let script_control = _.find(this.fieldConfig, { 'name': 'ini_script' });
-    script_control.isHidden = isCommand;
-
-    let command_control = _.find(this.fieldConfig, { 'name': 'ini_command' });
-    command_control.isHidden = !isCommand;
+    this.entityForm.setDisabled('ini_script', isCommand, isCommand);
+    this.entityForm.setDisabled('ini_command', !isCommand, !isCommand);
   }
 }

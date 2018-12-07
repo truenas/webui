@@ -1,10 +1,10 @@
 <mat-card>
-  <mat-card-title>Select which options you would llike to export in the config file.</mat-card-title>
+  <mat-card-title>Choose the export options for the configuration file.</mat-card-title>
   <mat-card-content>
     <mat-checkbox [(ngModel)]="secretseed">Export Password Secret Seed</mat-checkbox>
   </mat-card-content>
   <mat-card-actions>
-    <button mat-raised-button color="primary" (click)="doSubmit()">Save</button>
-    <button mat-raised-button color="accent" (click)="goBack()">Cancel</button>
+    <button mat-button color="primary" (click)="doSubmit()">Save</button>
+    <button mat-button color="accent" (click)="goBack()">Cancel</button>
   </mat-card-actions>
 </mat-card>

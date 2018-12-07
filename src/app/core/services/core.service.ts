@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { Observer } from 'rxjs/Observer';
-import { Subject } from 'rxjs/Subject';
+import { Observable ,  Observer ,  Subject } from 'rxjs';
 
 /*
  * Heavily influenced by Objective C's NSNotificationCenter
@@ -41,11 +39,13 @@ export class CoreService {
   private debug:boolean;
   debug_show_subscription_type:boolean;
   debug_show_dispatch_table:boolean;
+  debug_show_emit_logs:boolean;
   //private debug_show_data:boolean
   constructor() {
     /////////////////////////////
     //Set Debug options here
     this.debug = false;
+    this.debug_show_emit_logs = false;
     this.debug_show_subscription_type = false;
     this.debug_show_dispatch_table = false;
     /////////////////////////////
@@ -68,31 +68,43 @@ export class CoreService {
   public register(reg:Registration){
     reg.observable = new Subject();
     this.dispatchTable.push(reg);
-    //DEBUG: console.log("CORESERVICE: New Registration");
-    //DEBUG: console.log(reg);
     return reg.observable;
   }
 
   public unregister(reg: Registration){
+    if(this.debug){
+      console.log("CoreService: Unregistering the following ObserverClass...")
+      console.log(reg.observerClass);
+    }
+    let clone = [];// New Dispatch Table
     if(!reg.eventName){
       for(var i = 0; i < this.dispatchTable.length; i++){
 	let registration = this.dispatchTable[i];
 	if(registration.observerClass == reg.observerClass){
-	  this.dispatchTable.splice(i,1);
-	}
+	  continue;
+	} else {
+          clone.push(registration)
+        }
       }
     } else {
       for(var i = 0; i < this.dispatchTable.length; i++){
 	let registration = this.dispatchTable[i];
 	if(registration.observerClass == reg.observerClass && registration.eventName == reg.eventName){
-	  this.dispatchTable.splice(i,1);
-	}
+          continue;
+	} else {
+	  clone.push(registration);
+        }
       }
+    }
+    this.dispatchTable = clone;
+    if(this.debug && this.debug_show_dispatch_table){
+      console.log("UNREGISTER: DISPATCH = ");
+      console.log(this.dispatchTable);
     }
   }
 
   public emit(evt: CoreEvent){
-    if(this.debug){ 
+    if(this.debug && this.debug_show_emit_logs){ 
       console.log("*******************************************************");
       console.log("CORESERVICE: Emitting " + evt.name);
       if(this.debug_show_dispatch_table){
@@ -125,7 +137,7 @@ export class CoreService {
       }
 
       if(reg.eventName == evt.name && reg.sender == evt.sender && subscriptionType == "NameSender"){
-        if(this.debug){
+        if(this.debug && this.debug_show_emit_logs){
           console.log(">>>>>>>>");
           console.log("Matched name and sender");
           console.log(reg.observerClass);
@@ -134,7 +146,7 @@ export class CoreService {
         }
 	reg.observable.next(evt);
       } else if(evt.name && reg.eventName == evt.name && subscriptionType == "Name"){
-        if(this.debug){
+        if(this.debug && this.debug_show_emit_logs){
           console.log(">>>>>>>>");
           console.log("Matched name only");
           console.log(reg.observerClass);
@@ -143,7 +155,7 @@ export class CoreService {
         }
 	reg.observable.next(evt);
       } else if(evt.sender && reg.sender == evt.sender && subscriptionType == "Sender"){
-        if(this.debug){
+        if(this.debug && this.debug_show_emit_logs){
           console.log(">>>>>>>>");
           console.log("Matched sender only");
           console.log(reg.observerClass);
@@ -155,7 +167,7 @@ export class CoreService {
         //DEBUG: console.log("No match found");
       }
     }
-    if(this.debug){ 
+    if(this.debug && this.debug_show_emit_logs){ 
       console.log("*******************************************************");
     }
     return this;

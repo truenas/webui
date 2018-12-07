@@ -34,9 +34,9 @@ except ImportError:
 
 xpaths = {
          'rootButton' : "/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/topbar/mat-toolbar/mat-toolbar-row/button[6]/span/mat-icon",
-         'logoutButton' : "//*[contains(text(), 'Log out')]",
+         'logoutButton' : "//*[contains(text(), 'Log Out')]",
          'logoutconfirmationCheckbox' : "/html/body/div[3]/div[2]/div[2]/md-dialog-container/confirm-dialog/div[1]/md-checkbox/label/div",
-         'logoutconfirmationButton' : "//*[contains(text(), 'Ok')]"
+         'logoutconfirmationButton' : "//*[contains(@name, 'ok_button')]"
          }
 
 class logout_test(unittest.TestCase):
@@ -55,8 +55,8 @@ class logout_test(unittest.TestCase):
             driver.find_element_by_xpath(xpaths['logoutButton']).click()
             time.sleep(2)
             # Click on OK when re-confirm logout
-            driver.find_element_by_xpath(xpaths['logoutconfirmationButton']).click()
-            time.sleep(2)
+#            driver.find_element_by_xpath(xpaths['logoutconfirmationButton']).click()
+#            time.sleep(2)
             #taking screenshot
             function.screenshot(driver, self)
         except Exception:
@@ -64,20 +64,8 @@ class logout_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
-
-
-    #method to test if an element is present
-    def is_element_present(self, how, what):
-        """
-        Helper met:hod to confirm the presence of an element on page
-        :params how: By locator type
-        :params what: locator value
-        """
-        try: driver.find_element(by=how, value=what)
-        except NoSuchElementException: return False
-        return True
 
 
     @classmethod

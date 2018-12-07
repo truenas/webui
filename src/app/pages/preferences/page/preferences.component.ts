@@ -1,4 +1,4 @@
-import { ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, ViewContainerRef, OnChanges } from '@angular/core';
+import { ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, ViewContainerRef, OnChanges, OnDestroy } from '@angular/core';
 import { NgModel }   from '@angular/forms';
 import {Router} from '@angular/router';
 import * as _ from 'lodash';
@@ -8,32 +8,36 @@ import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embe
 import {RestService, WebSocketService} from '../../../services/';
 import { ThemeService, Theme} from 'app/services/theme/theme.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 
 @Component({
   selector : 'ui-preferences',
   template:`
-  <mat-card>
-  <mat-toolbar-row style="margin-bottom:16px;">
+  <mat-card class="prefs-card">
+  <!--<mat-toolbar-row style="margin-bottom:16px;">
   <h4>User Preferences</h4>
   </mat-toolbar-row>
+  <mat-divider></mat-divider>-->
+  <mat-card-content>
+    <general-preferences-form  class="prefs-form"></general-preferences-form>
+  </mat-card-content>
   <mat-divider></mat-divider>
-  <mat-card-content fxLayout="row wrap" fxLayoutAlign="space-between start" style="margin-top:32px;">
-    <general-preferences-form fxFlex="100" fxFlex.gt-xs="300px" class="prefs-form"></general-preferences-form>
-    <custom-theme-manager-form fxFlex="100" fxFlex.gt-xs="calc(100% - 300px)" class="prefs-form"></custom-theme-manager-form>
-      <div fxFlex="100" fxFlex.gt-xs="calc(100% - 300px)"></div>
-        </mat-card-content>
-        </mat-card>
-        `
+  <mat-card-content>
+    <custom-theme-manager-form  class="prefs-form"></custom-theme-manager-form>
+  </mat-card-content>
+
+  </mat-card>
+  `,
+  styleUrls: ['./preferences.component.css']
 })
-export class PreferencesPage implements OnInit {
+export class PreferencesPage implements OnInit, OnDestroy {
 
   /*
    //Preferences Object Structure
    platform:string; // FreeNAS || TrueNAS
    timestamp:Date;
    userTheme:string; // Theme name
-   customThemes?: Theme[]; 
+   customThemes?: Theme[];
    favoriteThemes?: string[]; // Theme Names
    showTooltips:boolean; // Form Tooltips on/off
    metaphor:string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
@@ -43,10 +47,10 @@ export class PreferencesPage implements OnInit {
   //public target: Subject<CoreEvent> = new Subject();
 
     constructor(
-      protected router: Router, 
+      protected router: Router,
       protected rest: RestService,
       protected ws: WebSocketService,
-      protected _injector: Injector, 
+      protected _injector: Injector,
       protected _appRef: ApplicationRef,
       public themeService:ThemeService,
       private core:CoreService
@@ -54,6 +58,10 @@ export class PreferencesPage implements OnInit {
 
     ngOnInit(){
       //this.init();
+    }
+
+    ngOnDestroy(){
+      this.core.unregister({observerClass:this});
     }
 
     /*ngOnChanges(changes){
@@ -84,23 +92,23 @@ export class PreferencesPage implements OnInit {
       this.generateFieldConfig();
     }
 
-   
-  
+
+
 
      setFavoriteFields(){
        for(let i = 0; i < this.themeService.freenasThemes.length; i++){
          let theme = this.themeService.freenasThemes[i];
-         let field = { 
-           type: 'checkbox', 
+         let field = {
+           type: 'checkbox',
            name: theme.name,
            width: '200px',
            placeholder:theme.label,
            value: false,
-           tooltip: 'Add ' + theme.label + ' to your favorites',
+           tooltip: 'Add ' + theme.label + ' to favorites',
            class:'inline'
          }
          this.favoriteFields.push(field);
-       }   
+       }
      }
 
      setThemeOptions(){

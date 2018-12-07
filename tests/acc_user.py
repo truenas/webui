@@ -1,7 +1,7 @@
 # Author: Rishabh Chauhan
 # License: BSD
 # Location for tests  of FreeNAS new GUI
-# Test case count: 6
+# Test case count: 7
 
 import function
 from source import *
@@ -43,7 +43,6 @@ xpaths = {
         'newUserPass': '//*[@id="password"]/mat-input-container/div/div[1]/div/input',
         'newUserPassConf': '//*[@id="password_conf"]/mat-input-container/div/div[1]/div/input',
         'permitSudocheckbox': '//*[@id="sudo"]/mat-checkbox/label/div',
-        'fabTrigger': '//*[@id="myFab"]/div/smd-fab-trigger/button',
         'fabAction': '//*[@id="add_action_button"]',
         'saveButton': '//*[@id="save_button"]'
         }
@@ -81,7 +80,7 @@ class create_user_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
@@ -89,22 +88,18 @@ class create_user_test(unittest.TestCase):
         try:
             print (" creating a new user with create new primary group")
             # cancelling the tour
-            if self.is_element_present(By.XPATH, '/html/body/div[6]/div[1]/button'):
+            if function.is_element_present(driver, self, By.XPATH, '/html/body/div[6]/div[1]/button'):
                 driver.find_element_by_xpath('/html/body/div[6]/div[1]/button').click()
             # scroll down to find hover tab
             driver.find_element_by_tag_name('html').send_keys(Keys.END)
             time.sleep(2)
-            # Perform hover to show menu
-            hover_element = driver.find_element_by_xpath(xpaths['fabTrigger'])
-            hover = ActionChains(driver).move_to_element(hover_element)
-            hover.perform()
-            time.sleep(1)
             # Click create new user option
             driver.find_element_by_xpath(xpaths['fabAction']).click()
-            # Enter New Username
-            driver.find_element_by_xpath(xpaths['newUser']).send_keys(newusername)
             # Enter User Full name
             driver.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfname)
+            # clear user name and enter new Username
+            driver.find_element_by_xpath(xpaths['newUser']).clear()
+            driver.find_element_by_xpath(xpaths['newUser']).send_keys(newusername)
             # Enter User email id
             driver.find_element_by_xpath(xpaths['newUserEmail']).send_keys(newuseremail)
             # Enter Password
@@ -117,11 +112,6 @@ class create_user_test(unittest.TestCase):
                 driver.find_element_by_xpath(xpaths['saveButton']).click()
             else:
                 print ("could not find the save button and clicking")
-#            if driver.find_element_by_xpath(xpaths['saveButton']):
-#                print ("found the save button second time and clicking")
-#                driver.find_element_by_xpath(xpaths['saveButton']).click()
-#            else:
-#                print ("could not find the save button")
 
             # check if there is a generic error when making a duplicate user, and print the error
             time.sleep(1)
@@ -133,7 +123,7 @@ class create_user_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_03_create_newuser_primarygroup_uncheck(self):
@@ -145,15 +135,8 @@ class create_user_test(unittest.TestCase):
             # scroll down to find hover tab
             driver.find_element_by_tag_name('html').send_keys(Keys.END)
             time.sleep(2)
-            # Perform hover to show menu
-            hover_element = driver.find_element_by_xpath(xpaths['fabTrigger'])
-            hover = ActionChains(driver).move_to_element(hover_element)
-            hover.perform()
-            time.sleep(1)
             # Click create new user option
             driver.find_element_by_xpath(xpaths['fabAction']).click()
-            # Enter New Username
-            driver.find_element_by_xpath(xpaths['newUser']).send_keys(newusernameuncheck)
 
 #temporary turn off dropdownlist test
             # uncheck create primary group  Checkbox
@@ -168,8 +151,13 @@ class create_user_test(unittest.TestCase):
 #            Select(driver.find_element_by_xpath(xpaths['primaryGroupdropdown'])).select_by_visible_text("userNAS")
 #            print ("made")
 #            driver.find_element_by_xpath('//*[contains(text(), "userNAS")]').click()
+
             # Enter User Full name
             driver.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfnameuncheck)
+            # clear user name and enter new Username
+            driver.find_element_by_xpath(xpaths['newUser']).clear()
+            driver.find_element_by_xpath(xpaths['newUser']).send_keys(newusernameuncheck)
+
             # Enter Password
             driver.find_element_by_xpath(xpaths['newUserPass']).send_keys(newuserpassword)
             # Enter Password Conf
@@ -203,17 +191,15 @@ class create_user_test(unittest.TestCase):
             # scroll down to find hover tab
             driver.find_element_by_tag_name('html').send_keys(Keys.END)
             time.sleep(2)
-            # Perform hover to show menu
-            hover_element = driver.find_element_by_xpath(xpaths['fabTrigger'])
-            hover = ActionChains(driver).move_to_element(hover_element)
-            hover.perform()
-            time.sleep(1)
             # Click create new user option
             driver.find_element_by_xpath(xpaths['fabAction']).click()
-            # Enter New Username
-            driver.find_element_by_xpath(xpaths['newUser']).send_keys(superusername)
+
             # Enter User Full name
             driver.find_element_by_xpath(xpaths['newUserName']).send_keys(superuserfname)
+            # clear user name and enter new Username
+            driver.find_element_by_xpath(xpaths['newUser']).clear()
+            driver.find_element_by_xpath(xpaths['newUser']).send_keys(superusername)
+
             # Enter Password
             driver.find_element_by_xpath(xpaths['newUserPass']).send_keys(superuserpassword)
             # Enter Password Conf
@@ -237,7 +223,7 @@ class create_user_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_05_create_duplicateuser(self):
@@ -246,22 +232,20 @@ class create_user_test(unittest.TestCase):
             # Click User submenu
             driver.find_element_by_xpath(xpaths['submenuUser']).click()
             # cancelling the tour
-            if self.is_element_present(By.XPATH,'/html/body/div[6]/div[1]/button'):
+            if function.is_element_present(driver, self, By.XPATH,'/html/body/div[6]/div[1]/button'):
                 driver.find_element_by_xpath('/html/body/div[6]/div[1]/button').click()
             # scroll down to find hover tab
             driver.find_element_by_tag_name('html').send_keys(Keys.END)
             time.sleep(2)
-            # Perform hover to show menu
-            hover_element = driver.find_element_by_xpath(xpaths['fabTrigger'])
-            hover = ActionChains(driver).move_to_element(hover_element)
-            hover.perform()
-            time.sleep(1)
             # Click create new user option
             driver.find_element_by_xpath(xpaths['fabAction']).click()
-            # Enter New Username
-            driver.find_element_by_xpath(xpaths['newUser']).send_keys(newusername)
+
             # Enter User Full name
             driver.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfname)
+            # clear user name and enter new Username
+            driver.find_element_by_xpath(xpaths['newUser']).clear()
+            driver.find_element_by_xpath(xpaths['newUser']).send_keys(newusername)
+
             # Enter Password
             driver.find_element_by_xpath(xpaths['newUserPass']).send_keys(newuserpassword)
             # Enter Password Conf
@@ -282,47 +266,81 @@ class create_user_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
-    def test_06_close_navAccount(self):
+    def test_06_create_newuser_suggestedname(self):
+        try:
+            print (" creating a new user with create new primary group")
+            # cancelling the tour
+            if function.is_element_present(driver, self, By.XPATH, '/html/body/div[6]/div[1]/button'):
+                driver.find_element_by_xpath('/html/body/div[6]/div[1]/button').click()
+            # scroll down to find hover tab
+            driver.find_element_by_tag_name('html').send_keys(Keys.END)
+            time.sleep(2)
+            # Click create new user option
+            driver.find_element_by_xpath(xpaths['fabAction']).click()
+            # Enter User Full name
+            driver.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfname)
+
+            # not required since UI auto fills suggested username
+#            driver.find_element_by_xpath(xpaths['newUser']).clear()
+#            driver.find_element_by_xpath(xpaths['newUser']).send_keys(newusername)
+            # Enter User email id
+
+            driver.find_element_by_xpath(xpaths['newUserEmail']).send_keys(newuseremail)
+            # Enter Password
+            driver.find_element_by_xpath(xpaths['newUserPass']).send_keys(newuserpassword)
+            # Enter Password Conf
+            driver.find_element_by_xpath(xpaths['newUserPassConf']).send_keys(newuserpassword)
+            # Click on create new User button
+            if driver.find_element_by_xpath(xpaths['saveButton']):
+                print ("found the save button")
+                driver.find_element_by_xpath(xpaths['saveButton']).click()
+            else:
+                print ("could not find the save button and clicking")
+
+            # check if there is a generic error when making a duplicate user, and print the error
+            time.sleep(1)
+            #taking screenshot
+            function.screenshot(driver, self)
+            self.error_check()
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            #taking screenshot
+            function.screenshot(driver, self)
+            for i in range(1,len(exc_info_p)):
+                print (exc_info_p[i].rstrip())
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
+
+    def test_07_close_navAccount(self):
         try:
             print (" closing account menu")
             driver.find_element_by_xpath(xpaths['navAccount']).click()
-            self.screenshot("_")
+            function.screenshot(driver, self)
             time.sleep(20)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("-e")
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
     # Next step-- To check if the new user is present in the list via automation
 
 
-    #method to test if an element is present
-    def is_element_present(self, how, what):
-        """
-        Helper method to confirm the presence of an element on page
-        :params how: By locator type
-        :params what: locator value
-        """
-        try: driver.find_element(by=how, value=what)
-        except NoSuchElementException: return False
-        return True
-
     def error_check(self):
-        if self.is_element_present(By.XPATH, '//*[contains(text(), "Close")]'):
-            if self.is_element_present(By.XPATH,'/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
+        if function.is_element_present(driver, self, By.XPATH, '//*[contains(text(), "Close")]'):
+            if function.is_element_present(driver, self, By.XPATH,'/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
                 ui_element=driver.find_element_by_xpath('/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1')
                 error_element=ui_element.text
                 print (error_element)
             driver.find_element_by_xpath('//*[contains(text(), "Close")]').click()
             print ("Duplicate user cannot be created")
-        if self.is_element_present(By.XPATH, '//*[contains(text(), "Close")]'):
-            if self.is_element_present(By.XPATH,'/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
+        if function.is_element_present(driver, self, By.XPATH, '//*[contains(text(), "Close")]'):
+            if function.is_element_present(driver, self, By.XPATH,'/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
                 ui_element=driver.find_element_by_xpath('/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1')
                 error_element=ui_element.text
                 print (error_element)
@@ -332,7 +350,7 @@ class create_user_test(unittest.TestCase):
 
     def selectlist(self, element):
         for i in range(0,10):
-            if self.is_element_present(By.XPATH, '/html/body/div[4]/div[2]/div/div/md-option[' + str(i) + ']'):
+            if function.is_element_present(driver, self, By.XPATH, '/html/body/div[4]/div[2]/div/div/md-option[' + str(i) + ']'):
                 dropdown_el = driver.find_element_by_xpath('/html/body/div[4]/div[2]/div/div/md-option[' + str(i) + ']')
                 dropdown_text = dropdown_el.text
                 if dropdown_text == element:

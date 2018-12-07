@@ -10,7 +10,6 @@
       <mat-card-content fxLayout="row" fxLayoutWrap fxLayoutAlign="center start" fxFlex="100">
         <viewchartline fxFlex="100" fxFlexAlign="end" #chartLoad [width]="chartSize" [height]="chartSize" [style.display]="isFlipped ? 'none': 'block'"></viewchartline>
       </mat-card-content>
-      <!--<div class="widget-footer"><button md-raised-button color="primary" (click)="toggleConfig()">Flip</button></div>-->
     </mat-card>
     <ng-template *ngIf="configurable">
     <mat-card class="back">
@@ -24,8 +23,8 @@
         </form>
       </mat-card-content>
       <div class="widget-footer">
-        <button mat-raised-button color="accent" (click)="toggleConfig()">{{"Cancel" | translate}}</button>
-        <button mat-raised-button color="primary" type="submit" form="preferences" (click)="toggleConfig()">{{"Save" | translate}}</button>
+        <button mat-button color="accent" (click)="toggleConfig()">{{"Cancel" | translate}}</button>
+        <button mat-button color="primary" type="submit" form="preferences" (click)="toggleConfig()">{{"Save" | translate}}</button>
       </div>
     </mat-card>
     </ng-template>

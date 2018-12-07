@@ -7,25 +7,27 @@ mat-card.card-filter.mat-card {
   padding: 0;
 }
 
-mat-card.card-filter.mat-card .mat-card-content {
+/* mat-card.card-filter.mat-card .mat-card-content {
   padding: 8px 0;
 }
 
 mat-card.card-filter.mat-card .mat-card-header>div {
-  /*display:inline-block;*/
-}
+  display:inline-block;
+} */
 
 
 mat-card.card-filter .filter-field {
-  width: 70%;
-  margin-right: 5%;
+  width: 30%;
   margin-top: 12px;
 }
 
 mat-card.card-filter .filter-field mat-icon {
-  width: 2%;
   position: absolute;
   top: 24px;
+}
+
+div.card-filter-field {
+  width: 100%;
 }
 
 mat-card.card-filter .view-controls {
@@ -43,7 +45,7 @@ mat-card.card-filter .view-controls .mat-button-toggle-group {
   margin: 2px 16px;
 }
 
-.card-filter mat-input-container.mat-input-container {
+.card-filter mat-form-field.mat-form-field {
   width: 97%;
   padding-left: 32px;
 }
@@ -126,6 +128,10 @@ service-cards mat-card.front {
   position: absolute;
 }
 
+div.service-inline-spinner {
+  padding-left: 126.5px;
+}
+
 mat-chip.service-state,
 mat-chip.service-state-on,
 mat-chip.service-state-off {
@@ -180,8 +186,18 @@ mat-chip.service-state-on,
 }
 
 .slim .service-power-btn {
-  top: initial;
-  bottom: 65px;
-  left: 114.5px;
-  position: fixed;
+  top: 130px;
+  left: 116px;
+  position: absolute;
+}
+
+#start-label {
+  position: relative;
+  top: -3px;
+}
+
+#services-spinner {
+  position: relative;
+  top: 25px;
+  margin-left: 20%;
 }

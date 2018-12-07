@@ -32,8 +32,7 @@ except ImportError:
 
 xpaths = { 'navNetwork' : '//*[@id="nav-4"]/div/a[1]',
            'submenuNetworkconfig' : '//*[@id="4-0"]',
-           'nameserver1' : '//*[@id="gc_nameserver1"]/mat-input-container/div/div[1]/div/input',
-           'nameserver2' : '//*[@id="gc_nameserver2"]/mat-input-container/div/div[1]/div/input',
+           'nameserver3' : '//*[@id="gc_nameserver3"]/mat-input-container/div/div[1]/div/input',
            'buttonSave' : '//*[@id="save_button"]'
          }
 
@@ -71,7 +70,7 @@ class conf_network_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
@@ -80,13 +79,10 @@ class conf_network_test(unittest.TestCase):
         try:
             # Fill up the form
             # Enter password newuserpassword
-            driver.find_element_by_xpath(xpaths['nameserver1']).clear()
-            print ("clear the nameserver 1 field")
-            driver.find_element_by_xpath(xpaths['nameserver1']).send_keys("8.8.8.8")
-            driver.find_element_by_xpath(xpaths['nameserver2']).clear()
-            print ("clear the nameserver 2 field")
-            driver.find_element_by_xpath(xpaths['nameserver2']).send_keys("10.231.1.1")
-            driver.find_element_by_xpath(xpaths['buttonSave']).click()
+            driver.find_element_by_xpath(xpaths['nameserver3']).clear()
+            print ("clear the nameserver 3 field")
+#            driver.find_element_by_xpath(xpaths['nameserver3']).send_keys("8.8.8.8")
+#            driver.find_element_by_xpath(xpaths['buttonSave']).click()
             #taking screenshot
             function.screenshot(driver, self)
             time.sleep(10)
@@ -95,7 +91,7 @@ class conf_network_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
@@ -111,7 +107,7 @@ class conf_network_test(unittest.TestCase):
             #taking screenshot
             function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i])
+                print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 

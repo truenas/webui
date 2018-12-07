@@ -12,18 +12,31 @@ import { regexValidator } from '../../../common/entity/entity-form/validators/re
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 
 @Component({
-  selector : 'device-add2',
+  selector : 'app-device-add2',
   templateUrl: './device-add.component.html',
   styleUrls: ['../../../common/entity/entity-form/entity-form.component.scss'],
 })
 export class DeviceAddComponent implements OnInit {
 
-  protected addCall = 'vm.create_device';
+  protected addCall = 'vm.device.create';
   protected route_success: string[];
   public vmid: any;
   public vmname: any;
   public fieldSets: any;
-  public isCustActionVisible: boolean = false;
+  public isCustActionVisible = false;
+  public selectedType = 'CDROM';
+  public formGroup: any;
+  public activeFormGroup: any;
+  public cdromFormGroup: any;
+  public diskFormGroup: any;
+  public nicFormGroup: any;
+  public rawfileFormGroup: any;
+  public vncFormGroup: any;
+  public rootpwd: any;
+  public vminfo: any;
+  public boot: any;
+
+  public custActions: any[];
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -65,23 +78,30 @@ export class DeviceAddComponent implements OnInit {
       validation : [ Validators.required ],
       required: true
     },
+    {
+      name : 'order',
+      placeholder : 'Device Order',
+      tooltip : '',
+      type: 'input',
+      value: null,
+      inputType: 'number'
+    },
   ];
   //disk 
   public diskFieldConfig: FieldConfig[] = [
     {
-      name : 'DISK_zvol',
+      name : 'path',
       placeholder : 'Zvol',
       tooltip : 'Browse to an existing <a\
-                 href="..//docs/storage.html#adding-zvols"\
+                 href="%%docurl%%/storage.html%%webversion%%#adding-zvols"\
                  target="_blank">Zvol</a>.',
-      type: 'explorer',
-      explorerType: "zvol",
-      initial: '/mnt',
+      type: 'select',
       required: true,
-      validation: [Validators.required]
+      validation : [Validators.required],
+      options:[]
     },
     {
-      name : 'DISK_mode',
+      name : 'type',
       placeholder : 'Mode',
       tooltip : '<i>AHCI</i> emulates an AHCI hard disk for better\
                  software compatibility. <i>VirtIO</i> uses\
@@ -97,19 +117,33 @@ export class DeviceAddComponent implements OnInit {
     {
       name : 'sectorsize',
       placeholder : 'Disk sector size',
-      tooltip : 'Enter the sector size in bytes. The default <i>0</i>\
+      tooltip : 'Select a sector size in bytes. <i>Default</i> leaves the\
                  leaves the sector size unset.',
-      type: 'input',
+      type: 'select',
+      options: [
+        { label: 'Default', value:0 },
+        { label: '512', value:512 },
+        { label: '4096', value:4096 },
+
+      ],
       value: 0
+    },
+    {
+      name : 'order',
+      placeholder : 'Device Order',
+      tooltip : '',
+      type: 'input',
+      value: null,
+      inputType: 'number'
     },
   ];
   //nic
   public nicFieldConfig: FieldConfig[] = [
     {
-      name: 'NIC_type',
+      name: 'type',
       placeholder: 'Adapter Type:',
-      tooltip: 'Emulating an <i>Intel e82545 (e1000)</i> ethernet card\
-                has compatibility with most operating systems. Change to\
+      tooltip: 'Emulating an <i>Intel e82545 (e1000)</i> Ethernet card\
+                provides compatibility with most operating systems. Change to\
                 <i>VirtIO</i> to provide better performance on systems\
                 with VirtIO paravirtualized network driver support.',
       type: 'select',
@@ -118,7 +152,7 @@ export class DeviceAddComponent implements OnInit {
       required: true
     },
     {
-      name: 'NIC_mac',
+      name: 'mac',
       placeholder: 'MAC Address',
       tooltip: 'By default, the VM receives an auto-generated random\
                 MAC address. Enter a custom address into the field to\
@@ -137,6 +171,14 @@ export class DeviceAddComponent implements OnInit {
       validation: [Validators.required],
       required: true
     },
+    {
+      name : 'order',
+      placeholder : 'Device Order',
+      tooltip : '',
+      type: 'input',
+      value: null,
+      inputType: 'number'
+    },
   ];
   protected nic_attach: any;
   protected nicType: any;
@@ -147,7 +189,7 @@ export class DeviceAddComponent implements OnInit {
     {
       type : 'explorer',
       initial: '/mnt',
-      name : 'RAW_path',
+      name : 'path',
       placeholder : 'Raw File',
       tooltip : 'Browse to a storage location and add the name of the\
                  new raw file on the end of the path.',
@@ -155,15 +197,20 @@ export class DeviceAddComponent implements OnInit {
       validation: [Validators.required]
     },
     {
-      type : 'input',
-      name : 'RAW_sectorsize',
+      type : 'select',
+      name : 'sectorsize',
       placeholder : 'Disk sector size',
-      tooltip : 'Enter a sector size in bytes. <i>0</i> leaves the\
+      tooltip : 'Select a sector size in bytes. <i>Default</i> leaves the\
                  sector size unset.',
-      inputType : 'number',
+      options: [
+        { label: 'Default', value:0 },
+        { label: '512', value:512 },
+        { label: '4096', value:4096 },
+              ],
+      value: 0
     },
     {
-      name : 'RAW_mode',
+      name : 'type',
       placeholder : 'Mode',
       tooltip : '<i>AHCI</i> emulates an AHCI hard disk for best\
                  software compatibility. <i>VirtIO</i> uses\
@@ -176,12 +223,43 @@ export class DeviceAddComponent implements OnInit {
         {label : 'VirtIO', value : 'VIRTIO'},
       ],
     },
+    {
+      name : 'order',
+      placeholder : 'Device Order',
+      tooltip : '',
+      type: 'input',
+      value: null,
+      inputType: 'number'
+    },
+    {
+      type : 'input',
+      name : 'size',
+      placeholder : 'Raw filesize',
+      tooltip : 'Define the size of the raw file in GiB.',
+      inputType : 'number',
+    },
+    {
+      type : 'input',
+      name : 'rootpwd',
+      placeholder : 'password',
+      tooltip : 'Enter a password for the <i>rancher</i> user. This\
+                 is used to log in to the VM from the serial shell.',
+      inputType : 'password',
+      isHidden: true
+    },
+    {
+      type : 'checkbox',
+      name : 'boot',
+      placeholder : 'boot',
+      tooltip : '',
+      isHidden: true
+    },
   ];
 
   //vnc
   public vncFieldConfig: FieldConfig[]  = [
     {
-      name : 'VNC_port',
+      name : 'vnc_port',
       placeholder : 'Port',
       tooltip : 'Can be set to <i>0</i>, left empty for FreeNAS to\
                  assign a port when the VM is started, or set to a\
@@ -190,14 +268,14 @@ export class DeviceAddComponent implements OnInit {
       inputType: 'number'
     },
     {
-      name : 'VNC_wait',
+      name : 'wait',
       placeholder : 'Wait to boot',
       tooltip : 'Set for the VNC client to wait until the VM has\
                  booted before attempting the connection.',
       type: 'checkbox'
     },
     {
-      name : 'VNC_resolution',
+      name : 'vnc_resolution',
       placeholder : 'Resolution',
       tooltip : 'Select a screen resolution to use for VNC sessions.',
       type: 'select',
@@ -226,6 +304,7 @@ export class DeviceAddComponent implements OnInit {
                  characters.',
       type : 'input',
       inputType : 'password',
+      validation: [Validators.maxLength(8)]
     },
     {
       name : 'vnc_web',
@@ -233,20 +312,19 @@ export class DeviceAddComponent implements OnInit {
       tooltip : 'Set to enable connecting to the VNC web interface.',
       type: 'checkbox'
     },
+    {
+      name : 'order',
+      placeholder : 'Device Order',
+      tooltip : '',
+      type: 'input',
+      value: null,
+      inputType: 'number'
+    },
   ];
   protected ipAddress: any = [];
 
 
-  public selectedType = 'CDROM';
-  public formGroup: any;
-  public activeFormGroup: any;
-  public cdromFormGroup: any;
-  public diskFormGroup: any;
-  public nicFormGroup: any;
-  public rawfileFormGroup: any;
-  public vncFormGroup: any;
 
-  public custActions: any[];
 
   constructor(protected router: Router,
               protected aroute: ActivatedRoute,
@@ -279,7 +357,7 @@ export class DeviceAddComponent implements OnInit {
     });
     this.ws.call('notifier.choices', ['VM_NICTYPES']).subscribe(
       (res) => {
-        this.nicType = _.find(this.nicFieldConfig, { name: "NIC_type" });
+        this.nicType = _.find(this.nicFieldConfig, { name: "type" });
         res.forEach((item) => {
           this.nicType.options.push({ label: item[1], value: item[0] });
         });
@@ -319,19 +397,19 @@ export class DeviceAddComponent implements OnInit {
     this.activeFormGroup = this.cdromFormGroup;
     this.formGroup.controls['dtype'].valueChanges.subscribe((res) => {
       this.selectedType = res;
-      if (res == 'CDROM') {
+      if (res === 'CDROM') {
         this.activeFormGroup = this.cdromFormGroup;
         this.isCustActionVisible = false;
-      } else if (res == 'NIC') {
+      } else if (res === 'NIC') {
         this.activeFormGroup = this.nicFormGroup;
         this.isCustActionVisible = true;
-      } else if (res == 'DISK') {
+      } else if (res === 'DISK') {
         this.activeFormGroup = this.diskFormGroup;
         this.isCustActionVisible = false;
-      } else if (res == 'RAW') {
+      } else if (res === 'RAW') {
         this.activeFormGroup = this.rawfileFormGroup;
         this.isCustActionVisible = false;
-      } else if (res == 'VNC') {
+      } else if (res === 'VNC') {
         this.activeFormGroup = this.vncFormGroup;
         this.isCustActionVisible = false;
       }
@@ -347,17 +425,42 @@ export class DeviceAddComponent implements OnInit {
   }
 
   afterInit() {
-    // if bootloader == 'GRUB', hidde VNC option
-    this.ws.call('vm.query', [[['id', '=', this.vmid]]]).subscribe((vm)=>{
-      if (vm[0].bootloader == 'GRUB'){
-        let dtypeField = _.find(this.fieldConfig, {name: "dtype"});
-        console.log(dtypeField);
-        for (let i in dtypeField.options) {
-          if (dtypeField.options[i].label == 'VNC') {
+
+    this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]]]).subscribe((zvols)=>{
+      zvols.forEach(zvol => {
+        _.find(this.diskFieldConfig, {name:'path'}).options.push(
+          {
+            label : zvol.id, value : '/dev/zvol/' + zvol.id
+          }
+        );   
+      });
+    });
+    // if bootloader == 'GRUB' or bootloader == "UEFI_CSM" or if VM has existing VNC device, hide VNC option.
+    this.ws.call('vm.query', [[['id', '=', parseInt(this.vmid,10)]]]).subscribe((vm)=>{
+      if (vm[0].bootloader === 'GRUB' || vm[0].bootloader === "UEFI_CSM" || _.find(vm[0].devices, {dtype:'VNC'})){
+        const dtypeField = _.find(this.fieldConfig, {name: "dtype"});
+        for (const i in dtypeField.options) {
+          if (dtypeField.options[i].label === 'VNC') {
             _.pull(dtypeField.options, dtypeField.options[i]);
           }
         }
-      };
+      } 
+      // if type == 'Container Provider' and rawfile boot device exists, hide rootpwd and boot fields.
+      if (_.find(vm[0].devices, {dtype:'RAW'}) && vm[0].type ==="Container Provider") {
+        vm[0].devices.forEach(element => {
+          if(element.dtype === "RAW") {
+            if (element.attributes.boot) {
+              this.rootpwd = _.find(this.rawfileFieldConfig, {'name': 'rootpwd'});
+              this.rootpwd['isHidden'] = false;
+              this.boot = _.find(this.rawfileFieldConfig, {'name': 'boot'});
+              this.boot['isHidden'] = false;
+            }
+
+          }
+          
+        });
+
+      }
     });
 
     this.custActions = [
@@ -366,7 +469,7 @@ export class DeviceAddComponent implements OnInit {
         name: 'Generate MAC Address',
         function: () => {
           this.ws.call('vm.random_mac').subscribe((random_mac) => {
-            this.nicFormGroup.controls['NIC_mac'].setValue(random_mac);
+            this.nicFormGroup.controls['mac'].setValue(random_mac);
           })
         }
       }
@@ -378,27 +481,29 @@ export class DeviceAddComponent implements OnInit {
   }
 
   onSubmit(event: Event) {
-    const payload = {
-      'devices': [],
-    };
+    this.aroute.params.subscribe(params => {
+      const device = _.cloneDeep(this.formGroup.value);
+      const deviceValue = _.cloneDeep(this.activeFormGroup.value);
+      const deviceOrder = deviceValue['order'];
+      delete deviceValue.order;
 
-    let device = _.cloneDeep(this.formGroup.value);
-    let deviceValue = _.cloneDeep(this.activeFormGroup.value);
-
-    console.log(device, deviceValue);
-    device['attributes'] = deviceValue;
-    payload['devices'].push(device);
-
-    this.loader.open();
-    this.ws.call(this.addCall, [this.vmid, payload]).subscribe(
-      (res) => {
-        this.loader.close();
-        this.router.navigate(new Array('/').concat(this.route_success));
-      },
-      (res) => {
-        this.loader.close();
-        new EntityUtils().handleError(this, res);
-      }
-    );
+      const payload = {
+        "vm": parseInt(params['pk'],10),
+        "dtype": device.dtype,
+        "attributes":deviceValue,
+        "order": deviceOrder
+      };
+  
+      this.loader.open();
+      this.ws.call(this.addCall, [payload]).subscribe(() => {
+          this.loader.close();
+          this.router.navigate(new Array('/').concat(this.route_success));
+        },
+        (e_res) => {
+          this.loader.close();
+          new EntityUtils().handleError(this, e_res);
+        }
+      );
+    });
   }
 }

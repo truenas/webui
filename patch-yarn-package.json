@@ -1,0 +1,36 @@
+diff --git a/package.json b/package.json
+index 28d1c44ab..5c0ba8f8a 100644
+--- a/package.json
++++ b/package.json
+@@ -8,20 +8,20 @@
+     "ng": "ng",
+     "rimraf": "rimraf",
+     "changelog": "standard-changelog",
+-    "start": "npm run po2json && node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng serve --proxy-config proxy.config.json --aot --source-map",
+-    "start:dev:aot": "npm run po2json && node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng serve --proxy-config proxy.config.json --aot --source-map",
+-    "start:dev": "npm run po2json && ng serve --proxy-config proxy.config.json --aot=false --source-map",
+-    "start:prod": "npm run po2json && ng serve --prod",
+-    "start:prod:aot": "npm run po2json && ng serve --prod --aot",
+-    "build": "npm run po2json && npm run clean:dist && node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng build",
+-    "build:prod": "node scripts/setup_prod.js && npm run build -- --prod",
+-    "build:prod:aot": "npm run build:prod -- --aot --base-href /ui/",
++    "start": "yarn run po2json && node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng serve --proxy-config proxy.config.json --aot --source-map",
++    "start:dev:aot": "yarn run po2json && node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng serve --proxy-config proxy.config.json --aot --source-map",
++    "start:dev": "yarn run po2json && ng serve --proxy-config proxy.config.json --aot=false --source-map",
++    "start:prod": "yarn run po2json && ng serve --prod",
++    "start:prod:aot": "yarn run po2json && ng serve --prod --aot",
++    "build": "yarn run po2json && yarn run clean:dist && node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng build",
++    "build:prod": "node scripts/setup_prod.js && yarn run build -- --prod",
++    "build:prod:aot": "yarn run build:prod -- --aot --base-href /ui/",
+     "test": "ng test",
+     "lint": "ng lint",
+     "e2e": "ng e2e",
+-    "clean:dist": "npm run rimraf -- dist",
+-    "clean:coverage": "npm run rimraf -- coverage",
+-    "reinstall": "npm run rimraf package-lock.json; npm run rimraf node_modules; npm cache clear -f; npm install",
++    "clean:dist": "yarn run rimraf -- dist",
++    "clean:coverage": "yarn run rimraf -- coverage",
++    "reinstall": "yarn run rimraf package-lock.json; yarn run rimraf node_modules; yarn cache clear -f; yarn install",
+     "extract": "node scripts/extract_strings.js",
+     "po2json": "node scripts/convert_po2json.js"
+   },

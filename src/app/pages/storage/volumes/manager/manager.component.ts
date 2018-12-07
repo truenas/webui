@@ -7,8 +7,9 @@ import {
   ViewChildren,
   AfterViewInit,
 } from '@angular/core';
+import * as _ from 'lodash';
 import { Router, ActivatedRoute } from '@angular/router';
-import { DragulaService } from 'ng2-dragula';
+// import { DragulaService } from 'ng2-dragula';
 import { Subscription } from 'rxjs';
 import { RestService, WebSocketService, DialogService } from '../../../../services/';
 import { DiskComponent } from './disk/';
@@ -59,6 +60,8 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public nameFilter: RegExp;
   public capacityFilter: RegExp;
   public dirty = false;
+  protected existing_pools = [];
+  public poolError = null;
 
   public submitTitle = T("Create");
   protected extendedSubmitTitle = T("Extend");
@@ -66,28 +69,27 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   protected current_layout: any;
   protected existing_pool: any;
   protected needs_disk = true;
-  protected needsDiskMessage = T("Please add one or more disks to be used for data");
-  protected extendedNeedsDiskMessage = T("Please add one or more disks to extend your pool");
+  protected needsDiskMessage = T("Add one or more disks to be used for data.");
+  protected extendedNeedsDiskMessage = T("Add one or more disks to extend the pool.");
   public size;
   protected extendedAvailable;
   public sizeMessage = T("Estimated total raw data capacity");
-  protected extendedSizeMessage = T("Estimated data capacity available after extending");
+  protected extendedSizeMessage = T("Estimated data capacity available after extension.");
 
   public disknumError = null;
-  public disknumErrorMessage = T("WARNING: Adding data vdevs with different amounts of \
+  public disknumErrorMessage = T("WARNING: Adding data vdevs with different numbers of \
       disks is not recommended.");
-  public disknumErrorConfirmMessage = T("Creating a pool with vdevs containing different \
-      amounts of disks is not recommended, do you wish to continue?");
-  public disknumExtendConfirmMessage = T("Extending a pool with one or more vdevs containing \
-      different amounts of disks is not recommended, do you wish to continue?");
+  public disknumErrorConfirmMessage = T("It is not recommended to create a pool with vdevs \
+      containing different numbers of disks. Continue?");
+  public disknumExtendConfirmMessage = T("It is not recommended to extend a pool with one or \
+      more vdevs containing different numbers of disks. Continue?");
 
   public vdevtypeError = null;
-  public vdevtypeErrorMessage = T("WARNING: Adding data vdevs of different types is not \
-      supported.");
+  public vdevtypeErrorMessage = T("Adding data vdevs of different types is not supported.");
 
   public diskAddWarning = T("The contents of all added disks will be erased.");
-  public diskExtendWarning = T("The contents of all newly added disks will be erased.  Your pool \
-      will be extended to the new topology with its data left in tact.");
+  public diskExtendWarning = T("The contents of all newly added disks will be erased. The pool \
+      will be extended to the new topology with existing data left intact.");
 
   first_data_vdev_type: string;
   first_data_vdev_disknum: number;
@@ -103,7 +105,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
                                  target="_blank">GELI</a> encryption is\
                                  available for ZFS pools. <b>WARNING:</b>\
                                  Read the <a\
-                                 href="..//docs/storage.html#managing-encrypted-pools"\
+                                 href="%%docurl%%/storage.html%%webversion%%#managing-encrypted-pools"\
                                  target="_blank">Encryption section</a>\
                                  of the guide before activating this\
                                  option.');
@@ -111,15 +113,15 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public suggested_layout_tooltip = T('Create a recommended formation\
                                        of vdevs in a pool.');
 
-  public encryption_message = T("Always back up the key! If the key is\
-                                 lost, the data on the disks is also\
-                                 lost with no hope of recovery.");
+  public encryption_message = T("Always back up the key! Losing the key \
+                                 will also lose all data on the disks with \
+                                 no chance of recovery.");
 
   constructor(
     private rest: RestService,
     private ws: WebSocketService,
     private router: Router,
-    private dragulaService: DragulaService,
+//    private dragulaService: DragulaService,
     private dialog:DialogService,
     public snackBar: MatSnackBar,
     private loader:AppLoaderService,
@@ -128,7 +130,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     public translate: TranslateService,
     public sorter: StorageService ) {
 
-    dragulaService.setOptions('pool-vdev', {
+/*    dragulaService.setOptions('pool-vdev', {
       accepts: (el, target, source, sibling) => { return true; },
     });
     dragulaService.drag.subscribe((value) => { console.log(value); });
@@ -155,7 +157,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
     dragulaService.over.subscribe((value) => { console.log(value); });
-    dragulaService.out.subscribe((value) => { console.log(value); });
+    dragulaService.out.subscribe((value) => { console.log(value); }); */
   }
 
   getDiskNumErrorMsg(disks) {
@@ -224,6 +226,12 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       });
       this.getPoolData();
+    } else {
+      this.ws.call('pool.query', []).subscribe((res) => {
+        if (res) {
+          this.existing_pools = res;
+        }
+      });
     }
     this.nameFilter = new RegExp('');
     this.capacityFilter = new RegExp('');
@@ -235,7 +243,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         this.disks.push(res[i]);
       }
 
-     this.disks = this.sorter.mySorter(this.disks, 'devname');
+     this.disks = this.sorter.tableSorter(this.disks, 'devname', 'asc');
 
 
       // assign disks for suggested layout
@@ -266,8 +274,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
                                              same size and type as those\
                                              already in the pool. This\
                                              operation cannot be reversed.\
-                                             Are you sure you wish to\
-                                             continue?")).subscribe((res) => {
+                                             Continue?"), false, T("Continue")).subscribe((res) => {
           if (!res) {
             this.goBack();
           }
@@ -277,7 +284,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy() {
-    this.dragulaService.destroy("pool-vdev");
+    //this.dragulaService.destroy("pool-vdev");
   }
 
   addVdev(group) {
@@ -310,6 +317,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     let data_vdev_disknum = 0;
     let data_disk_found = false;
+    let any_disk_found = false;
     let data_vdev_type;
     this.disknumError = null;
     this.vdevtypeError = null;
@@ -342,16 +350,21 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
           }
         }
 
-      }
-      if (!this.isNew) {
+      } else {
         if (vdev.disks.length > 0) {
-          this.needs_disk = false;
+          any_disk_found = true;
         }
       }
 
     });
     if (this.isNew) {
       this.needs_disk = !data_disk_found;
+    } else {
+      if (data_disk_found || any_disk_found) {
+        this.needs_disk = false;
+      } else {
+        this.needs_disk = true;
+      }
     }
     this.size = (<any>window).filesize(size_estimate, {standard : "iec"});
   }
@@ -364,6 +377,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       return false;
     }
     if (this.needs_disk) {
+      return false;
+    }
+    if (this.poolError) {
       return false;
     }
     return true;
@@ -393,7 +409,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       diskWarning = this.diskExtendWarning;
     }
 
-    this.dialog.confirm(T("Warning"), diskWarning).subscribe((res) => {
+    this.dialog.confirm(T("Warning"), diskWarning, false, T('Create Pool')).subscribe((res) => {
       if (res) {
         this.error = null;
 
@@ -443,7 +459,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
                     (error) => { this.error += error + '<br />'; });
                 }
               } else {
-                this.dialog.errorReport(res.code, res.error.error_message, res.error.error_message)
+                this.dialog.errorReport(T('Error creating pool'), res.error.error_message, res.error.traceback);
               }
             });
           }
@@ -462,7 +478,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   openDialog() {
     if(this.isEncrypted) {
-      this.dialog.confirm(T("Warning"), this.encryption_message).subscribe((res) => {
+      this.dialog.confirm(T("Warning"), this.encryption_message, false, T('I Understand')).subscribe((res) => {
         if (res) {
           this.isEncrypted = true;
           this.vol_encrypt = 1
@@ -485,7 +501,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
      this.disks.push(disk);
      this.disks = [...this.disks];
      this.temp.push(disk);
-     this.disks = this.sorter.mySorter(this.disks, 'devname');
+     this.disks = this.sorter.tableSorter(this.disks, 'devname', 'asc');
   }
 
   removeDisk(disk: any) {
@@ -547,5 +563,19 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
        this.removeDisk(this.suggestable_disks[0]);
        this.suggestable_disks.shift();
     }
+  }
+
+  checkPoolName() {
+    if(_.find(this.existing_pools, {"name": this.name as any})) {
+      this.poolError = T("A pool with this name already exists."); 
+    } else {
+      this.poolError = null;
+    }
+  }
+
+  reorderEvent(event) {
+    let sort = event.sorts[0],
+      rows = this.disks;
+    this.sorter.tableSorter(rows, sort.prop, sort.dir);
   }
 }

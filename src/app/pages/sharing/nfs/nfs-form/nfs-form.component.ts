@@ -1,4 +1,4 @@
-import { Component, ViewContainerRef } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormArray, Validators } from '@angular/forms';
 import * as _ from 'lodash';
@@ -6,20 +6,23 @@ import * as _ from 'lodash';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { UserService } from '../../../../services/user.service';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { RestService, WebSocketService, DialogService } from '../../../../services/';
+import { RestService, WebSocketService, DialogService, NetworkService } from '../../../../services/';
 import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'app-nfs-form',
-  template : `<entity-form [conf]="this"></entity-form>`
+  template : `<entity-form [conf]="this"></entity-form>`,
+  providers: [NetworkService]
 })
 export class NFSFormComponent {
 
   protected route_success: string[] = [ 'sharing', 'nfs' ];
-  protected resource_name: string = 'sharing/nfs/';
-  protected isEntity: boolean = true;
+  protected resource_name = 'sharing/nfs/';
+  protected isEntity = true;
   protected formArray: FormArray;
-  protected isBasicMode: boolean = true;
+  protected isBasicMode = true;
+  public entityForm: any;
+  public save_button_enabled = true;
 
   protected fieldConfig: FieldConfig[] = [
     {
@@ -29,8 +32,9 @@ export class NFSFormComponent {
       formarray: [{
         name: 'path',
         placeholder: T('Path'),
-        tooltip: T('Browse to the pool or dataset to be shared. Click\
-                    <b>Add extra path</b> to select multiple paths.'),
+        tooltip: T('Full path to the pool or dataset to share. Mandatory.\
+                    Click <b>ADD ADDITIONAL PATH</b> to configure\
+                    multiple paths.'),
         type: 'explorer',
         explorerType: 'directory',
         initial: '/mnt',
@@ -80,13 +84,23 @@ export class NFSFormComponent {
                   network/mask CIDR notation.\
                   Example: <i>1.2.3.0/24</i>. Leave empty\
                   to allow all.'),
+      blurStatus : true,
+      blurEvent: this.nfs_network_event,
+      parent: this,
+      value: ''
     },
+    
        {
       type: 'textarea',
       name: 'nfs_hosts',
       placeholder: T('Authorized Hosts and IP addresses'),
-      tooltip: T('Space-delimited list of allowed IP addresses or\
-                  hostnames. Leave empty to allow all.'),
+      tooltip: T('Space-delimited list of allowed IP addresses\
+                  <i>(192.168.1.10)</i> or hostnames\
+                  <i>(www.freenas.com)</i>. Leave empty to allow all.'),
+      blurStatus : true,
+      blurEvent: this.nfs_hosts_event,
+      parent: this,
+      value: ''
     },
     {
       type: 'select',
@@ -94,7 +108,8 @@ export class NFSFormComponent {
       placeholder: T('Maproot User'),
       tooltip: T('When a user is selected, the <i>root</i> user is\
                   limited to the permissions of that user.'),
-      options: []
+      options: [],
+      value: '',
     },
     {
       type: 'select',
@@ -102,7 +117,8 @@ export class NFSFormComponent {
       placeholder: T('Maproot Group'),
       tooltip: T('When a group is selected, the <i>root</i> user is also\
                   limited to the permissions of that group.'),
-      options: []
+      options: [],
+      value: '',
     },
     {
       type: 'select',
@@ -110,7 +126,8 @@ export class NFSFormComponent {
       placeholder: T('Mapall User'),
       tooltip: T('The specified permissions of that user are used\
                   by all clients.'),
-      options: []
+      options: [],
+      value: '',
     },
     {
       type: 'select',
@@ -118,7 +135,8 @@ export class NFSFormComponent {
       placeholder: T('Mapall Group'),
       tooltip: T('The specified permissions of that group are used\
                   by all clients.'),
-      options: []
+      options: [],
+      value: '',
     },
     {
       type: 'select',
@@ -144,12 +162,13 @@ export class NFSFormComponent {
         }
       ],
       isHidden: false,
+      value: []
     }
   ];
 
   protected arrayControl: any;
-  protected initialCount: number = 1;
-  protected initialCount_default: number = 1;
+  protected initialCount = 1;
+  protected initialCount_default = 1;
 
   public custActions: Array<any> = [
     {
@@ -203,7 +222,8 @@ export class NFSFormComponent {
               protected route: ActivatedRoute,
               protected userService: UserService,
               protected rest: RestService,
-              protected ws: WebSocketService, private dialog:DialogService) {}
+              protected ws: WebSocketService, private dialog:DialogService,
+              public networkService: NetworkService) {}
 
   preInit(EntityForm: any) {
     this.arrayControl =
@@ -216,20 +236,24 @@ export class NFSFormComponent {
 
     this.rest.get('services/nfs', {}).subscribe((res) => {
       if (res.data['nfs_srv_v4']) {
-        _.find(this.fieldConfig, {'name' : 'nfs_security'}).isHidden = false;
+        _.find(this.fieldConfig, {'name' : 'nfs_security'})['isHidden'] = false;
       } else {
-        _.find(this.fieldConfig, {'name' : 'nfs_security'}).isHidden = true;
+        _.find(this.fieldConfig, {'name' : 'nfs_security'})['isHidden'] = true;
       }
     });
 
   }
 
   afterInit(EntityForm: any) {
+    this.entityForm = EntityForm;
     this.formArray = EntityForm.formGroup.controls['nfs_paths'];
 
     this.userService.listUsers().subscribe(res => {
-      let users = [];
-      for (let user of res.data) {
+      const users = [{
+        label: '---------',
+        value: '',
+      }];
+      for (const user of res.data) {
         users.push({label: user['bsdusr_username'], value: user['bsdusr_username']});
       }
       this.nfs_mapall_user = _.find(this.fieldConfig, {'name' : 'nfs_mapall_user'});
@@ -239,31 +263,100 @@ export class NFSFormComponent {
     });
 
     this.userService.listGroups().subscribe(res => {
-      let groups = [];
-      for (let group of res.data) {
+      const groups = [{
+        label: '---------',
+        value: '',
+      }];
+      for (const group of res.data) {
         groups.push({label: group['bsdgrp_group'], value: group['bsdgrp_group']});
       }
       this.nfs_mapall_group = _.find(this.fieldConfig, {'name' : 'nfs_mapall_group'});
       this.nfs_mapall_group.options = groups;
       this.nfs_maproot_group = _.find(this.fieldConfig, {'name' : 'nfs_maproot_group'});
       this.nfs_maproot_group.options = groups;
-    }); 
+    });
+  }
+  nfs_hosts_event(parent){
+    _.find(parent.fieldConfig, {'name' : 'nfs_hosts'})['warnings'] = null;
+  
+      if(parent.entityForm) {
+        if(parent.entityForm.formGroup.controls['nfs_hosts'].value !=='') {
+        const network_string = parent.entityForm.formGroup.controls['nfs_hosts'].value.split(/[\s,]+/);
+        let error_msg = ""
+        let warning_flag = false
+        for (const ip of network_string) {
+          
+          const ValidIpAddressRegex = parent.networkService.ipv4_regex;
+          const ValidHostnameRegex = parent.networkService.hostname_regex;
+          const ValidIPV6Address = parent.networkService.ipv6_regex;
+
+          if (!ValidIpAddressRegex.test(ip)) {
+            if (!ValidHostnameRegex.test(ip)) {
+              if(!ValidIPV6Address.test(ip)){
+                error_msg = error_msg +`${ip} `;
+                warning_flag= true;
+              }
+            }
+          }
+        }
+        if (warning_flag && error_msg !==" ") {
+          _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_hosts' })['warnings'] = `Following IP Address/hostname appears to be wrong ${error_msg}`
+          parent.save_button_enabled = false;
+  
+        } else {
+          _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_hosts' })['warnings'] = null;
+          parent.save_button_enabled = true;
+        };
+      };
+    };
+  };
+  nfs_network_event(parent){
+    _.find(parent.fieldConfig, {'name' : 'nfs_network'})['warnings'] = false;
+    if(parent.entityForm) {
+      if(parent.entityForm.formGroup.controls['nfs_network'].value !=='') {
+        const network_string = parent.entityForm.formGroup.controls['nfs_network'].value.split(/[\s,]+/);
+        let error_msg = ""
+        let warning_flag = false
+        for (const ip of network_string) {
+          const ValidIpSubnetRegex = parent.networkService.ipv4_cidr_regex;
+          const ValidIPV6SubnetRegEx = parent.networkService.ipv6_cidr_regex;
+          if (!ValidIpSubnetRegex.test(ip)) {
+              if(!ValidIPV6SubnetRegEx.test(ip)){
+                error_msg = error_msg + ` ${ip}`;
+                warning_flag= true;
+              }
+            
+          }
+        }
+        if (warning_flag && error_msg !==" ") {
+          _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_network' })['warnings'] = `Following Network appears to be wrong ${error_msg}`;
+          parent.save_button_enabled = false;
+  
+        } else { 
+          _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_network' })['warnings'] = null;
+          parent.save_button_enabled = true;
+        }
+
+      }
+
+ 
+    }
   }
 
   isCustActionVisible(actionId: string) {
-    if (actionId == 'advanced_mode' && this.isBasicMode == false) {
+    if (actionId === 'advanced_mode' && this.isBasicMode === false) {
       return false;
-    } else if (actionId == 'basic_mode' && this.isBasicMode == true) {
+    } else if (actionId === 'basic_mode' && this.isBasicMode === true) {
       return false;
     }
-    if (actionId == 'remove_path' && this.initialCount <= this.initialCount_default) {
+    if (actionId === 'remove_path' && this.initialCount <= this.initialCount_default) {
       return false;
     }
     return true;
   }
 
   preHandler(data: any[]): any[] {
-    let paths = [];
+    const paths = [];
     for (let i = 0; i < data.length; i++) {
       paths.push({path:data[i]});
     }
@@ -271,7 +364,7 @@ export class NFSFormComponent {
   }
 
   clean(data) {
-    let paths = [];
+    const paths = [];
     for (let i = 0; i < data.nfs_paths.length; i++) {
       if(!data.nfs_paths[i]['delete']) {
         paths.push(data.nfs_paths[i]['path']);
@@ -284,16 +377,16 @@ export class NFSFormComponent {
   afterSave(entityForm) {
     this.ws.call('service.query', [[]]).subscribe((res) => {
       const service = _.find(res, {"service": "nfs"});
-      if (service.enable) {
+      if (service['enable']) {
         this.router.navigate(new Array('/').concat(
           this.route_success));
       } else {
-          this.dialog.confirm(T("Enable service"), 
-          T("Would you like to enable this service"), 
+          this.dialog.confirm(T("Enable service"),
+          T("Enable this service?"),
           true, T("Enable Service")).subscribe((dialogRes) => {
             if (dialogRes) {
               entityForm.loader.open();
-              this.ws.call('service.update', [service.id, { enable: true }]).subscribe((updateRes) => {
+              this.ws.call('service.update', [service['id'], { enable: true }]).subscribe((updateRes) => {
                 this.ws.call('service.start', [service.service]).subscribe((startRes) => {
                   entityForm.loader.close();
                   entityForm.snackBar.open(T("Service started"), T("close"));

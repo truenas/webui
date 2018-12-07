@@ -12,13 +12,14 @@ export class ConfirmDialog {
 
   public title: string;
   public message: string;
-  public buttonMsg: string = T("Ok");
+  public buttonMsg: string = T("Continue");
   public hideCheckBox = false;
   public isSubmitEnabled = false;
   public secondaryCheckBox = false;
   public secondaryCheckBoxMsg = '';
   public method: string;
   public data: string;
+  public tooltip: string;
   @Output() switchSelectionEmitter = new EventEmitter<any>();
 
   constructor(public dialogRef: MatDialogRef < ConfirmDialog >, protected translate: TranslateService ) {

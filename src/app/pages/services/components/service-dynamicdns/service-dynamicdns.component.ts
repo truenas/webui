@@ -122,6 +122,7 @@ export class ServiceDDNSComponent {
       tooltip: T('Enter the password used to log in to the provider\
                   and update the record.'),
       inputType : 'password',
+      togglePw: true,
       validation :
           [ Validators.minLength(8), matchOtherValidator('password2'), Validators.required ],
       required: true
@@ -153,7 +154,11 @@ export class ServiceDDNSComponent {
       entityForm.formGroup.controls['checkip_server'].setValue(res.checkip_server);
       entityForm.formGroup.controls['checkip_path'].setValue(res.checkip_path);
       entityForm.formGroup.controls['ssl'].setValue(res.ssl);
-      entityForm.formGroup.controls['domain'].setValue(res.domain);
+      if(!res.domain) {
+        entityForm.formGroup.controls['domain'].setValue([]);
+      } else {
+        entityForm.formGroup.controls['domain'].setValue(res.domain);
+      }
       entityForm.formGroup.controls['username'].setValue(res.username);
       entityForm.formGroup.controls['period'].setValue(res.period);
     })
@@ -166,8 +171,13 @@ export class ServiceDDNSComponent {
     return value;
   }
 
-  submitFunction(this: any, entityForm: any,){
-
+  submitFunction(this: any, entityForm: any,) {
+    if(entityForm.domain.length === 0) {
+      entityForm.domain = [];
+    }
+    if(typeof entityForm.domain === "string") {
+      entityForm.domain = entityForm.domain.split(/[\s,\t|{}()\[\]"']+/);
+    }
     return this.ws.call('dyndns.update', [entityForm]);
 
   }

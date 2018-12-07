@@ -1,37 +1,28 @@
-import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
-import {
-  AbstractControl,
-  FormArray,
-  FormGroup,
-  Validators
-} from '@angular/forms';
+import {ApplicationRef, Component, Injector, OnDestroy} from '@angular/core';
+import {Validators} from '@angular/forms';
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
 
 
-import {
-  RestService,
-  SystemGeneralService,
-  WebSocketService
-} from '../../../../services/';
-import {
-  FieldConfig
-} from '../../../common/entity/entity-form/models/field-config.interface';
-import {
-  matchOtherValidator
-} from '../../../common/entity/entity-form/validators/password-validation';
+import {RestService,WebSocketService} from '../../../../services/';
+import {FieldConfig} from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
 
 @Component({
-  selector : 'ups-edit',
+  selector : 'app-ups-edit',
   template : `<entity-form [conf]="this"></entity-form>`,
 })
 
-export class ServiceUPSComponent {
+export class ServiceUPSComponent implements OnDestroy {
   protected ups_driver: any;
+  protected ups_driver_fg: any;
   protected ups_port: any;
-  protected resource_name: string = 'services/ups';
+  protected ups_hostname: any;
+  protected ups_driver_subscription: any;
+  protected entityForm: any;
+  protected ups_mode_fg: any;
+
+  protected resource_name  = 'services/ups';
   protected route_success: string[] = [ 'services' ];
 
   public fieldConfig: FieldConfig[] = [
@@ -57,6 +48,30 @@ export class ServiceUPSComponent {
       tooltip : T('Describe the UPS device. It can contain alphanumeric,\
                    period, comma, hyphen, and underscore characters.'),
       required: true,
+    validation : [ Validators.required, Validators.pattern(/^[\w|,|\.|\-|_]+$/) ]
+    },
+    {
+      type : 'input',
+      name : 'ups_remotehost',
+      placeholder : T('Remote Host'),
+      tooltip : T('IP address of the remote system with <i>UPS Mode</i>\
+                   set as <i>Master</i>. Enter a valid IP address in\
+                   the format <i>192.168.0.1</i>.'),
+      required: true,
+      isHidden: true,
+      validation : [ Validators.required ]
+    },
+    {
+      type : 'input',
+      name : 'ups_remoteport',
+      placeholder : T('Remote Port'),
+      tooltip : T('The open network port of the remote system with\
+                   <i>UPS Mode</i> set as <i>Master</i>. Enter a valid\
+                   port number that has been configured for use on the\
+                   Master system. <i>3493</i> is the default port used.'),
+      value : 3493,
+      required: true,
+      isHidden: true,
       validation : [ Validators.required ]
     },
     {
@@ -69,16 +84,25 @@ export class ServiceUPSComponent {
                    list</a> for a list of supported UPS devices.'),
       required: true,
       options: [],
-      validation : [ Validators.required ]
+      validation : [ Validators.required ],
+      isHidden: false
     },
     {
-      type : 'input', //fixme - this should be a select but we need api for options
+      type : 'select',
       name : 'ups_port',
       placeholder : T('Port'),
-      //options: [],
+      options: [],
       tooltip : T('Enter the serial or USB port the UPS is plugged into.'),
       required: true,
-      validation : [ Validators.required ]
+      validation : [ Validators.required ],
+      isHidden: false
+    },
+    {
+      type: 'input',
+      name: 'ups_hostname',
+      placeholder: T('Hostname'),
+      tooltip: T('Enter the IP address or hostname for SNMP UPS.'),
+      required: true,
     },
     {
       type : 'textarea',
@@ -87,6 +111,7 @@ export class ServiceUPSComponent {
       tooltip : T('Enter any extra options from <a\
                    href="http://networkupstools.org/docs/man/ups.conf.html"\
                    target="_blank">UPS.CONF(5)</a>.'),
+      isHidden: false
     },
     {
       type : 'textarea',
@@ -155,10 +180,12 @@ export class ServiceUPSComponent {
       type : 'input',
       name : 'ups_monpwd',
       inputType: 'password',
+      togglePw: true,
       placeholder : T('Monitor Password'),
       tooltip : T('Change the default password to improve system\
                    security. The new password cannot contain a\
                    space or <b>#</b> .'),
+      validation: [Validators.pattern(/^((?![\#|\s]).)*$/)]
     },
     {
       type : 'textarea',
@@ -211,12 +238,88 @@ export class ServiceUPSComponent {
               protected _injector: Injector, protected _appRef: ApplicationRef,
               ) {}
 
-  afterInit(entityEdit: any) {
+  resourceTransformIncomingRestData(data) {
+    if (this.isSNMP(data['ups_driver'])) {
+      data['ups_hostname'] = data['ups_port'];
+      delete data['ups_port'];
+    }
+    return data;
+  }
+
+  beforeSubmit(data) {
+    if (this.isSNMP(data['ups_driver'])) {
+      data['ups_port'] = data['ups_hostname'];
+    }
+    delete data['ups_hostname'];
+  }
+
+  isSNMP(value) {
+    if (value && value.indexOf('snmp-ups') !== -1) {
+      return true;
+    }
+    return false;
+  }
+
+  switchSNMP(value) {
+    const is_snmp = this.isSNMP(value);
+    this.entityForm.setDisabled('ups_port', is_snmp, is_snmp);
+    this.entityForm.setDisabled('ups_hostname', !is_snmp, !is_snmp);
+  }
+
+  afterInit(entityForm: any) {
+    this.entityForm = entityForm;
+    this.ups_mode_fg = entityForm.formGroup.controls['ups_mode'];
+    this.ups_mode_fg.valueChanges.subscribe((value) => {
+      if (value === "slave") {
+        this.entityForm.setDisabled('ups_driver', true);
+        this.entityForm.setDisabled('ups_port', true);
+        this.entityForm.setDisabled('ups_remotehost', false);
+        _.find(this.fieldConfig, { name: 'ups_driver' })['isHidden'] = true;
+        _.find(this.fieldConfig, { name: 'ups_port' })['isHidden'] = true;
+        _.find(this.fieldConfig, { name: 'ups_remotehost' })['isHidden'] = false;
+        _.find(this.fieldConfig, { name: 'ups_remoteport' })['isHidden'] = false;
+        _.find(this.fieldConfig, { name: 'ups_options' })['isHidden'] = true;
+      } else {
+        this.entityForm.setDisabled('ups_driver', false);
+        this.entityForm.setDisabled('ups_port', false);
+        this.entityForm.setDisabled('ups_remotehost', true);
+        _.find(this.fieldConfig, { name: 'ups_driver' })['isHidden'] = false;
+        _.find(this.fieldConfig, { name: 'ups_port' })['isHidden'] = false;
+        _.find(this.fieldConfig, { name: 'ups_remotehost' })['isHidden'] = true;
+        _.find(this.fieldConfig, { name: 'ups_remoteport' })['isHidden'] = true;
+        _.find(this.fieldConfig, { name: 'ups_options' })['isHidden'] = false;
+
+      }
+
+    })
+    this.entityForm = entityForm;
     this.ups_driver = _.find(this.fieldConfig, { name: 'ups_driver' });
-    this.ws.call('notifier.choices', ['UPSDRIVER_CHOICES']).subscribe((res) => {
-      for (let item of res) {
-        this.ups_driver.options.push({ label: item[1], value: item[0] });
+    this.ups_port = _.find(this.fieldConfig, { name: 'ups_port' });
+    this.ups_driver_fg = entityForm.formGroup.controls['ups_driver'];
+    this.ups_hostname = _.find(this.fieldConfig, {name: 'ups_hostname'});
+
+   this.switchSNMP(this.ups_driver_fg.value);
+
+    this.ups_driver_subscription = this.ups_driver_fg.valueChanges.subscribe((value) => {
+      if (value) {
+        this.switchSNMP(value);
       }
     });
+
+    this.ws.call('ups.driver_choices', []).subscribe((res) => {
+      for (const item in res) {
+        this.ups_driver.options.push({ label: res[item], value: item });
+      }
+    });
+
+    this.ws.call('ups.port_choices', []).subscribe((res) => {
+      for (let i=0; i < res.length; i++) {
+        this.ups_port.options.push({label: res[i], value: res[i]});
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.ups_driver_subscription.unsubscribe();
   }
 }

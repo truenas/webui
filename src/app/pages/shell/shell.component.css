@@ -2,3 +2,7 @@
   position: absolute !important;
   right: 20px;
 }
+
+#terminal {
+  margin-bottom: 10px;
+}

@@ -103,7 +103,6 @@ export class VolumeImportWizardComponent {
           message: this.messageService,
           updater: this.updater,
           parent: this,
-          hideButton:true,
           isHidden: true,
           relation: [{
             action: 'DISABLE',
@@ -119,6 +118,7 @@ export class VolumeImportWizardComponent {
           placeholder: T('Passphrase'),
           tooltip: T('Enter the decryption passphrase.'),
           inputType: 'password',
+          togglePw: true,
           isHidden: true,
           relation: [{
             action: 'DISABLE',
@@ -191,7 +191,7 @@ export class VolumeImportWizardComponent {
 
   decryptDisks(stepper) {
     if (!this.subs) {
-      this.dialogService.Info(T("Encryption Key Required"), T("You must select a key prior to decrypting your disks"));
+      this.dialogService.Info(T("Encryption Key Required"), T("Select a key before decrypting the disks."));
     }
     const formData: FormData = new FormData();
     let params = [this.devices_fg.value];
@@ -230,7 +230,7 @@ export class VolumeImportWizardComponent {
     const createPoolText = T("Create Pool")
     this.entityWizard = entityWizard;
     this.entityWizard.customNextText = createPoolText
-    this.is_new_subscription = 
+    this.is_new_subscription =
     ( < FormGroup > entityWizard.formArray.get([0]).get('is_new'))
       .valueChanges.subscribe((isNew) => {
       this.isNew = isNew;
@@ -249,9 +249,9 @@ export class VolumeImportWizardComponent {
     this.passphrase = _.find(this.wizardConfig[1].fieldConfig, {'name': 'passphrase'});
     this.passphrase_fg = ( < FormGroup > entityWizard.formArray.get([1]).get('passphrase'));
     this.encrypted_subscription = this.encrypted.valueChanges.subscribe((res) => {
-      this.devices.isHidden = !res;
-      this.key.isHidden = !res;
-      this.passphrase.isHidden = !res;
+      this.devices['isHidden'] = !res;
+      this.key['isHidden'] = !res;
+      this.passphrase['isHidden'] = !res;
     });
 
     this.ws.call('disk.get_encrypted', [{"unused": true}]).subscribe((res)=>{
@@ -266,7 +266,7 @@ export class VolumeImportWizardComponent {
     ( < FormGroup > entityWizard.formArray.get([2]).get('guid'))
     .valueChanges.subscribe((res) => {
       let pool = _.find(this.guid.options, {'value': res});
-      this.summary[T('Pool to import')] = pool.label;
+      this.summary[T('Pool to import')] = pool['label'];
     });
 
     this.message_subscription = this.messageService.messageSourceHasNewMessage$.subscribe((message)=>{

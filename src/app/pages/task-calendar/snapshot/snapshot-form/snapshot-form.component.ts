@@ -7,9 +7,9 @@ import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { TaskService, UserService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { FormGroup, Validators } from '@angular/forms';
 import { EntityUtils } from '../../../common/entity/utils';
-import { T } from '../../../../translate-marker';
+import helptext from '../../../../helptext/task-calendar/snapshot/snapshot-form';
+
 
 @Component({
   selector: 'cron-snapshot-task-add',
@@ -26,34 +26,28 @@ export class SnapshotFormComponent {
   public fieldConfig: FieldConfig[] = [{
     type: 'select',
     name: 'task_filesystem',
-    placeholder: T('Pool/Dataset'),
-    tooltip: T('Select a pool, dataset, or zvol.'),
+    placeholder: helptext.task_filesystem_placeholder,
+    tooltip: helptext.task_filesystem_tooltip,
     options: [],
     required: true,
-    validation : [ Validators.required ]
+    validation : helptext.task_filesystem_validation
   }, {
     type: 'checkbox',
     name: 'task_recursive',
-    placeholder: T('Recursive'),
-    tooltip: T('Set this to take separate snapshots of the\
-                pool/dataset and each of its child datasets. Leave\
-                unset to take a single snapshot of the specified\
-                pool/dataset with <b>no</b> child datasets.'),
+    placeholder: helptext.task_recursive_placeholder,
+    tooltip: helptext.task_recursive_tooltip
   }, {
-    placeholder: T('Snapshot Lifetime'),
-    tooltip: T('Define a length of time to retain the snapshot on this\
-                system. After the time expires, the snapshot is removed.\
-                Snapshots which have been replicated to other systems\
-                are not affected.'),
+    placeholder: helptext.task_ret_count_placeholder,
     type: 'input',
     name: 'task_ret_count',
     inputType: 'number',
     class: 'inline',
     value: 2,
-    validation: [Validators.min(0)]
+    validation: helptext.task_ret_count_validation
   }, {
     type: 'select',
     name: 'task_ret_unit',
+    tooltip: helptext.task_ret_unit_tooltip,
     options: [{
       label: 'Hours',
       value: 'hour',
@@ -75,38 +69,35 @@ export class SnapshotFormComponent {
   }, {
     type: 'select',
     name: 'task_begin',
-    placeholder: T('Begin'),
-    tooltip: T('Choose the hour and minute when the system can begin\
-                taking snapshots.'),
+    placeholder: helptext.task_begin_placeholder,
+    tooltip: helptext.task_begin_tooltip,
     options: [],
     value: '',
     required: true,
-    validation : [ Validators.required ]
+    validation : helptext.task_begin_validation
   }, {
     type: 'select',
     name: 'task_end',
-    placeholder: T('End'),
-    tooltip: T('Choose the hour and minute when the system must stop\
-                taking snapshots.'),
+    placeholder: helptext.task_end_placeholder,
+    tooltip: helptext.task_end_tooltip,
     options: [],
     value: '',
     required: true,
-    validation : [ Validators.required ]
+    validation : helptext.task_end_validation
   }, {
     type: 'select',
     name: 'task_interval',
-    placeholder: T('Interval'),
-    tooltip: T('Define how often the system takes snapshots between the\
-                <b>Begin</b> and <b>End</b> times.'),
+    placeholder: helptext.task_interval_placeholder,
+    tooltip: helptext.task_interval_tooltip,
     options: [],
     value: '',
     required: true,
-    validation : [ Validators.required ]
+    validation : helptext.task_interval_validation
   }, {
     type: 'select',
     name: 'task_byweekday',
-    placeholder: T('Day of week'),
-    tooltip: T('Choose the days of the week to take snapshots.'),
+    placeholder: helptext.task_byweekday_placeholder,
+    tooltip: helptext.task_byweekday_tooltip,
     multiple: true,
     options: [{
       label: 'Monday',
@@ -132,12 +123,12 @@ export class SnapshotFormComponent {
     }],
     value: ['1', '2', '3', '4', '5'],
     required: true,
-    validation : [ Validators.required ]
+    validation : helptext.task_byweekday_validation
   }, {
     type: 'checkbox',
     name: 'task_enabled',
-    placeholder: T('Enabled'),
-    tooltip: T('Unset to disable this task without deleting it.'),
+    placeholder: helptext.task_enabled_placeholder,
+    tooltip: helptext.task_enabled_tooltip,
     value: true,
   }];
 
@@ -156,6 +147,7 @@ export class SnapshotFormComponent {
           this.filesystem_field.options.push({ label: volume_list[i].path, value: volume_list[i].path });
         }
       })
+      this.filesystem_field.options = _.sortBy(this.filesystem_field.options, [function(o) { return o.label; }]);
     });
 
     this.interval_field = _.find(this.fieldConfig, { 'name': 'task_interval' });

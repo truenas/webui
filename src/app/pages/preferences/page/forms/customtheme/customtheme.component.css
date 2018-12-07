@@ -1,6 +1,7 @@
 #theme-preview{
     background-color: var(--bg1);
     padding:32px;
+    z-index: 0;
 }
 #theme-preview.fullscreen{
     position: fixed;

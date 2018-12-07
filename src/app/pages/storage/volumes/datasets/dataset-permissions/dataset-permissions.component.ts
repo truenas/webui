@@ -76,6 +76,9 @@ export class DatasetPermissionsComponent implements OnDestroy {
                   manually created or imported from a directory service\
                   will appear in the drop-down menu.'),
       options: [],
+      searchOptions: [],
+      parent: this,
+      updater: this.updateUserSearchOptions,
     },
     {
       type: 'checkbox',
@@ -92,6 +95,9 @@ export class DatasetPermissionsComponent implements OnDestroy {
                   manually created or imported from a directory service\
                   will appear in the drop-down menu.'),
       options: [],
+      searchOptions: [],
+      parent: this,
+      updater: this.updateGroupSearchOptions,
     },
     {
       type: 'checkbox',
@@ -161,23 +167,23 @@ export class DatasetPermissionsComponent implements OnDestroy {
       this.mp_acl = entityEdit.formGroup.controls['mp_acl'];
       this.mp_acl.setValue(res.acl);
       if (res.acl === 'windows') {
-        this.mp_mode.isHidden = true;
-        this.mp_mode_en.isHidden = true;
+        this.mp_mode['isHidden'] = true;
+        this.mp_mode_en['isHidden'] = true;
       }
       this.mp_acl_subscription = this.mp_acl.valueChanges.subscribe((acl) => {
         if (acl === 'windows') {
-          this.mp_mode.isHidden = true;
-          this.mp_mode_en.isHidden = true;
+          this.mp_mode['isHidden'] = true;
+          this.mp_mode_en['isHidden'] = true;
         } else {
-          this.mp_mode.isHidden = false;
-          this.mp_mode_en.isHidden = false;
+          this.mp_mode['isHidden'] = false;
+          this.mp_mode_en['isHidden'] = false;
         }
       });
     });
     this.mp_recursive = entityEdit.formGroup.controls['mp_recursive'];
     this.mp_recursive_subscription = this.mp_recursive.valueChanges.subscribe((value) => {
       if (value === true) {
-        this.dialog.confirm(T("Warning"), T("Setting permissions recursively will affect this directory and all those below it. This can result in data that is inaccessible."))
+        this.dialog.confirm(T("Warning"), T("Setting permissions recursively will affect this directory and any others below it. This might make data inaccessible."))
         .subscribe((res) => {
           if (!res) {
             this.mp_recursive.setValue(false);
@@ -197,5 +203,27 @@ export class DatasetPermissionsComponent implements OnDestroy {
       delete data['mp_mode'];
       delete data['mp_mode_en'];
     }
+  }
+
+  updateGroupSearchOptions(value = "", parent) {
+    parent.userService.listAllGroups(value).subscribe(res => {
+      let groups = [];
+      let items = res.data.items;
+      for (let i = 0; i < items.length; i++) {
+        groups.push({label: items[i].label, value: items[i].id});
+      }
+        parent.mp_group.searchOptions = groups;
+    });
+  }
+
+  updateUserSearchOptions(value = "", parent) {
+    parent.userService.listAllUsers(value).subscribe(res => {
+      let users = [];
+      let items = res.data.items;
+      for (let i = 0; i < items.length; i++) {
+        users.push({label: items[i].label, value: items[i].id});
+      }
+      parent.mp_user.searchOptions = users;
+    });
   }
 }

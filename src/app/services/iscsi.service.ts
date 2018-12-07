@@ -1,4 +1,4 @@
-import 'rxjs/add/operator/map';
+
 
 import {Injectable} from '@angular/core';
 import {Http} from '@angular/http';
@@ -21,7 +21,7 @@ export class IscsiService {
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
   getIpChoices() {
-    return this.ws.call('notifier.choices', [ 'IPChoices', [ true, false ] ]);
+    return this.ws.call('notifier.choices', [ 'IPChoices', [ true, true ] ]);
   };
 
   listPortals() { return this.rest.get(this.iscsiPortalResource, {}); };
@@ -41,14 +41,10 @@ export class IscsiService {
   getVolumes() {
     return this.rest.get(this.volumeResource, {});
   };
-  getUnusedDisk() {
-    return this.ws.call('disk.get_unused',[]);
-  };
 
-  getZvols(volume) {
-    let rs = this.volumeResource + '/' + volume + '/zvols';
-    return this.rest.get(rs, {});
-  }
+  getExtentDevices() {
+    return this.ws.call('iscsi.extent.disk_choices',[]);
+  };
 
   getExtents() {
     return this.rest.get(this.iscsiExtentResource, {});
@@ -56,5 +52,9 @@ export class IscsiService {
 
   getTargets() {
     return this.rest.get(this.iscsiTargetResource, {});
+  }
+
+  getAuth() {
+    return this.ws.call('iscsi.auth.query', []);
   }
 }

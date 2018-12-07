@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { T } from '../../translate-marker';
 
+import * as _ from 'lodash';
+
 interface IMenuItem {
   type: string, // Possible values: link/dropDown/icon/separator/extLink
   name ? : string, // Used as display text for item and title for separator type
@@ -19,7 +21,6 @@ interface IChildItem {
 
 @Injectable()
 export class NavigationService {
-  
 
   defaultMenu: IMenuItem[] = [{
       name: T('Dashboard'),
@@ -29,9 +30,9 @@ export class NavigationService {
       state: 'dashboard',
     },
     {
-      name: T('Account'),
+      name: T('Accounts'),
       type: 'dropDown',
-      tooltip: T('Account'),
+      tooltip: T('Accounts'),
       icon: 'people',
       state: 'account',
       sub: [
@@ -49,7 +50,7 @@ export class NavigationService {
         //{name: 'Information', state: 'information'},
         { name: T('General'), state: 'general' },
         { name: T('NTP Servers'), state: 'ntpservers' },
-        { name: T('Boot'), state: 'bootenv' },
+        { name: T('Boot Environments'), state: 'bootenv' },
         { name: T('Advanced'), state: 'advanced' },
         { name: T('Email'), state: 'email'},
         { name: T('System Dataset'), state: 'dataset'},
@@ -180,7 +181,7 @@ export class NavigationService {
       state: 'reportsdashboard',
     },
     {
-      name: T('VMs'),
+      name: T('Virtual Machines'),
       type: 'link',
       tooltip: T('Virtualization'),
       icon: 'laptop_windows',
@@ -216,10 +217,10 @@ export class NavigationService {
     },
     {
       name: T('Guide'),
-      type: 'link',
+      type: 'extLink',
       tooltip: T('Guide'),
       icon: 'info',
-      state: 'guide',
+      state: '',
     }
   ]
 
@@ -231,7 +232,9 @@ export class NavigationService {
   // navigation component has subscribed this Observable
   menuItems$ = this.menuItems.asObservable();
 
-  constructor() {}
+
+
+  constructor() { }
 
   publishNavigationChange(menuType: string) {
     this.menuItems.next(this.defaultMenu);

@@ -15,8 +15,9 @@ import { ZvolFormComponent } from './volumes/zvol/zvol-form/';
 import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
 import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list';
 import { ImportDiskComponent } from './import-disk/import-disk.component';
-import { DisksListComponent } from './disks/disks-list/';
+import { DiskListComponent } from './disks/disk-list/';
 import { DiskFormComponent } from './disks/disk-form/';
+import { DiskBulkEditComponent } from './disks/disk-bulk-edit';
 import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
 import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddkey-form';
 import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form';
@@ -147,12 +148,16 @@ export const routes: Routes = [
         data: { title: 'Disks', breadcrumb: 'Disks', icon: 'view_stream' },
         children: [
           {
-            path: '', component: DisksListComponent,
+            path: '', component: DiskListComponent,
             data: { title: 'Disks', breadcrumb: 'Disks' }
           },
           {
             path: 'edit/:pk', component: DiskFormComponent,
             data: { title: 'Edit Disk', breadcrumb: 'Edit Disk' }
+          },
+          {
+            path: 'bulk-edit', component: DiskBulkEditComponent,
+            data: { title: 'Bulk Edit Disks', breadcrumb: 'Bulk Edit Disks' }
           },
           {
             path: 'pool/:poolId/edit/:pk', component: DiskFormComponent,

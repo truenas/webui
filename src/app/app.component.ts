@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { URLSearchParams, } from '@angular/http';
@@ -11,18 +11,21 @@ import * as hopscotch from 'hopscotch';
 import { RestService } from './services/rest.service';
 import { ApiService } from 'app/core/services/api.service';
 import { AnimationService } from 'app/core/services/animation.service';
+import { InteractionManagerService } from 'app/core/services/interaction-manager.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { WebSocketService } from './services/ws.service';
+import { DomSanitizer } from "@angular/platform-browser";
+import { MatIconRegistry } from "@angular/material/icon";
+//import { ChartDataUtilsService } from 'app/core/services/chart-data-utils.service'; // <-- Use this globally so we can run as web worker
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent implements OnInit {
-  appTitle = 'FreeNAS Material UI';
-  pageTitle = '';
+export class AppComponent {
+  appTitle = 'FreeNAS';
   protected accountUserResource: string = 'account/users/1';
   protected user: any;
 
@@ -35,9 +38,19 @@ export class AppComponent implements OnInit {
     private rest: RestService,
     private api: ApiService,
     private animations: AnimationService,
+    private ims: InteractionManagerService,
     private core: CoreService,
     public preferencesService: PreferencesService,
-    public themeservice: ThemeService) {
+    public themeservice: ThemeService,
+    public domSanitizer: DomSanitizer,
+    public matIconRegistry: MatIconRegistry,
+    /*public chartDataUtils: ChartDataUtilsService*/) {
+
+    this.matIconRegistry.addSvgIconSetInNamespace(
+      "mdi",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/iconfont/mdi/mdi.svg")
+    );
+    this.title.setTitle('FreeNAS - ' + window.location.hostname);
 
     if (this.detectBrowser("Safari")) {
       document.body.className += " safari-platform";
@@ -56,25 +69,6 @@ export class AppComponent implements OnInit {
           document.body.className += " embedding-active";
         }
       }
-    });
-  }
-
-  ngOnInit() {
-    this.changePageTitle();
-  }
-
-  changePageTitle() {
-    this.router.events.filter(event => event instanceof NavigationEnd).subscribe((routeChange) => {
-      const routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
-      if (!routeParts.length) {
-        return this.title.setTitle(this.appTitle);
-      }
-      // Extract title from parts;
-      this.pageTitle = routeParts
-        .map((part) => part.title)
-        .reduce((partA, partI) => { return `${partA} > ${partI}` });
-      this.pageTitle += ` | ${this.appTitle}`;
-      this.title.setTitle(this.pageTitle);
     });
   }
 

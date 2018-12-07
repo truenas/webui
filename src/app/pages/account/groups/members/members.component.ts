@@ -1,3 +1,5 @@
+
+import {mergeMap} from 'rxjs/operators';
 import {Component, OnInit} from '@angular/core';
 import {RestService} from "../../../../services/rest.service";
 import {ActivatedRoute, Params, Router} from "@angular/router";
@@ -20,6 +22,7 @@ export class MembersComponent implements OnInit {
   };
   users: any[] = [];
   groupName= ""
+  public showSpinner: boolean = true;
 
 
   constructor(private loading: AppLoaderService,
@@ -45,13 +48,13 @@ export class MembersComponent implements OnInit {
     this.ws.call('group.query', [[myFilter]]).subscribe((groupInfo)=>{
       this.groupName = groupInfo[0].group;
     })
-    group$.flatMap(group => {
+    group$.pipe(mergeMap(group => {
       myFilter = [];
       myFilter.push("id");
       myFilter.push("in");
       myFilter.push(group[0].users);
       return this.ws.call('user.query', [[myFilter]])
-    }).subscribe(users => {
+    })).subscribe(users => {
       this.users = users;
       this.selectedMembers = users;
       this.getMembers();
@@ -67,6 +70,7 @@ export class MembersComponent implements OnInit {
         }
       }
     }, err => console.log(err));
+    this.showSpinner = false;
   }
 
   cancel() {

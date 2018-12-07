@@ -20,7 +20,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import {RestService, WebSocketService} from '../../../../services/';
 import { CoreEvent } from 'app/core/services/core.service';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import {AppLoaderService} from '../../../../services/app-loader/app-loader.service';
 import {EntityTemplateDirective} from '../entity-template.directive';
 import {EntityUtils} from '../utils';
@@ -69,6 +69,8 @@ export interface Formconfiguration {
   confirmSubmitDialog?:Object;
   afterSave?;
   blurEvent?;
+  customEditCall?;
+  save_button_enabled?;
  
   afterSubmit?;
   beforeSubmit?;
@@ -113,6 +115,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   public wsResponseIdx;
   public queryResponse;
   public saveSubmitText = "Save";
+  public showPassword = false;
 
   get controls() {
     return this.fieldConfig.filter(({type}) => type !== 'button');
@@ -168,6 +171,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       }
     });
 
+    if (this.conf.save_button_enabled == undefined) {
+      this.conf.save_button_enabled = true;
+    }
     if(this.conf.saveSubmitText) {
       this.saveSubmitText = this.conf.saveSubmitText;
     }
@@ -344,6 +350,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
     // ...but for entity forms that don't make a data request, this kicks in 
     setTimeout(() => { this.setShowDefaults(); }, 500);
+
   }
 
   setShowDefaults() {
@@ -451,6 +458,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     if (this.conf.beforeSubmit) {
       this.conf.beforeSubmit(value);
     }
+    if (this.conf.customEditCall && this.pk) {
+      return this.conf.customEditCall(value);
+    }
 
     if (this.conf.customSubmit) {
       this.busy = this.conf.customSubmit(value);
@@ -467,7 +477,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                               this.router.navigate(new Array('/').concat(
                                   this.conf.route_success));
                             } else {
-                              this.snackBar.open("All your settings are saved.", 'close', { duration: 5000 })
+                              this.snackBar.open("Settings saved.", 'close', { duration: 5000 })
                               this.success = true;
                             }
 
@@ -481,8 +491,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                           this.loader.close();
                           if (this.conf.errorReport){
                             this.conf.errorReport(res);
-                          } else if (res.hasOwnProperty("reason") && (res.hasOwnProperty("trace") && res.hasOwnProperty("type"))) {
-                            this.dialog.errorReport(res.type, res.reason, res.trace.formatted);
+                          } else if (res.hasOwnProperty("reason") && (res.hasOwnProperty("trace"))) {
+                            new EntityUtils().handleWSError(this, res); 
                           }
                           else {
                             new EntityUtils().handleError(this, res);
@@ -493,8 +503,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
   clearErrors() {
     for (let f = 0; f < this.fieldConfig.length; f++) {
-      this.fieldConfig[f].errors = '';
-      this.fieldConfig[f].hasErrors = false;
+      this.fieldConfig[f]['errors'] = '';
+      this.fieldConfig[f]['hasErrors'] = false;
     }
   }
 
@@ -530,19 +540,27 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     return this.fb.control({disabled, value}, validation);
   }
 
-  setDisabled(name: string, disable: boolean, status?:string) {
+  setDisabled(name: string, disable: boolean, hide: boolean = false, status?:string) {
+    // if field will be hide, disabled it too
+    if (hide) {
+      disable = hide;
+    }
+
+    this.fieldConfig = this.fieldConfig.map((item) => {
+      if (item.name === name) {
+        item.disabled = disable;
+        item['isHidden'] = hide;
+      }
+      return item;
+    });
+
     if (this.formGroup.controls[name]) {
       const method = disable ? 'disable' : 'enable';
       this.formGroup.controls[name][method]();
       return;
     }
 
-    this.fieldConfig = this.fieldConfig.map((item) => {
-      if (item.name === name) {
-        item.disabled = disable;
-      }
-      return item;
-    });
+
   }
 
   setValue(name: string, value: any) {
@@ -586,7 +604,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     if (activations) {
       const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
           activations, this.formGroup);
-      this.setDisabled(config.name, tobeDisabled);
+      const tobeHide = this.fieldRelationService.isFormControlToBeHide(
+          activations, this.formGroup);
+      this.setDisabled(config.name, tobeDisabled, tobeHide);
 
       this.fieldRelationService.getRelatedFormControls(config, this.formGroup)
           .forEach(control => {
@@ -599,7 +619,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   relationUpdate(config: FieldConfig, activations: any) {
     const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
         activations, this.formGroup);
-    this.setDisabled(config.name, tobeDisabled);
+    const tobeHide = this.fieldRelationService.isFormControlToBeHide(
+          activations, this.formGroup);
+    this.setDisabled(config.name, tobeDisabled, tobeHide);
   }
 
   ngOnDestroy() { 

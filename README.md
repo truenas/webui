@@ -4,12 +4,12 @@ FreeNAS 11 WebUI
 [![Build Status](https://builds.ixsystems.com/jenkins/job/FreeNAS%20-%20WebUI%20Pipeline/job/Github%20master%20/badge/icon)](https://builds.ixsystems.com/jenkins/job/FreeNAS%20-%20WebUI%20Pipeline/job/Github%20master%20/)
 
 
-This is the project for the new angular.io (5.x) WebUI for FreeNAS 11. It is meant to coexist with current FreeNAS 11 Django/Dojo WebUI.
+This is the project for the new angular.io WebUI for FreeNAS 11. It is meant to coexist with current FreeNAS 11 Django/Dojo WebUI.
 
 # Development requirements
 
   - npm >= 5
-  - Node.js >= 5
+  - Node.js >= 8.9
   - Running FreeNAS 11 Nightly Machine (VM is fine)
 
 
@@ -44,7 +44,7 @@ Run the environment configuration script
 (if your ip address changes later you may repeat this step)
 
 ```sh
-$ ./setup_env.js -i <ip address>
+$ ./setup_env.js -i <ip address or FQDN of the server where FreeNAS is running>
 ```
 
 To start run
@@ -60,6 +60,21 @@ To test AOT in dev mode run
 To run the production build, run
 
 ```npm run build:prod:aot```
+
+Getting errors about missing packages?
+
+```npm install```
+
+Getting permission errors or Failed messages when trying to run `npm start`?
+
+From the webui repo
+```
+rm -rf node_modules (may need root)
+rm package-lock.json
+npm cache clear --force
+npm install
+```
+This should bring the npm environment back to a useable state.
 
 # Translating Text to Other Languages
 

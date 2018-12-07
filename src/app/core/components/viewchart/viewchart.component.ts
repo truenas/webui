@@ -27,8 +27,10 @@ export const ViewChartMetadata = {
         <div class="legend-html" fxLayout="row wrap" fxLayoutAlign="space-between" fxLayoutGap="16px" >
           <ng-container *ngFor="let item of legend; let i=index ">
             <div fxFlex.xs="calc(33% - 16px)" class="legend-item" *ngIf="chartType != 'gauge'" (click)="focus(legend[i])" [ngClass]="{'legend-item-disabled':!legend[i].visible}">
-              <span class="legend-swatch" [style.background-color]="legend[i].swatch"></span>
-              <span class="legend-name">{{legend[i].name}}: </span>
+              <div>
+                <span class="legend-swatch" [style.background-color]="legend[i].swatch"></span>
+                <span class="legend-name">{{legend[i].name}}: </span>
+              </div>
               <div class="legend-value" [style.color]="legend[i].swatch"><span *ngIf="showLegendValues">{{legend[i].value | number : '1.2-2'}}{{units}}</span></div>
             </div>
           </ng-container>
@@ -51,6 +53,7 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
   public chartColors: string[];
   public maxLabels: number;
   public units: string;
+  public max: number;
   @Input() width: number;
   @Input() height: number;
   /*
@@ -250,13 +253,16 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
     this.render();
   }
 
-  render(){
+  render(conf?:any){
     if(this.data.length == 0){
       //DEBUG: console.log("NO DATA FOUND");
       return -1;
     }
 
-    let conf = this.makeConfig();
+    if(!conf){
+      conf = this.makeConfig();
+    }
+
     let colors = this.colorsFromTheme();
     //DEBUG: console.log(colors);
     if(colors){
@@ -286,6 +292,10 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
       conf.data.onmouseout = (d) => {
         this.showLegendValues = false;
       }
+    }
+
+    if(conf.axis && conf.axis.y && this.max){
+      conf.axis.y.max = this.max;
     }
 
     //DEBUG: console.log("GENERATING DATA FROM ...");

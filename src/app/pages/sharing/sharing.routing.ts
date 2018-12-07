@@ -12,15 +12,13 @@ import { SMBFormComponent } from './smb/smb-form/';
 import { ISCSI } from './iscsi/iscsi.component';
 import { GlobalconfigurationComponent } from './iscsi/globalconfiguration/';
 import { PortalListComponent } from './iscsi/portal/portal-list/';
-import { PortalAddComponent } from './iscsi/portal/portal-add/';
-import { PortalEditComponent } from './iscsi/portal/portal-edit/';
+import { PortalFormComponent } from './iscsi/portal/portal-form/';
 import { InitiatorListComponent } from './iscsi/initiator/initiator-list/';
 import { InitiatorFormComponent } from './iscsi/initiator/initiator-form/';
 import { AuthorizedAccessListComponent } from './iscsi/authorizedaccess/authorizedaccess-list/';
 import { AuthorizedAccessFormComponent } from './iscsi/authorizedaccess/authorizedaccess-form/';
 import { TargetListComponent} from './iscsi/target/target-list/';
-import { TargetAddComponent } from './iscsi/target/target-add/';
-import { TargetEditComponent} from './iscsi/target/target-edit/';
+import { TargetFormComponent} from './iscsi/target/target-form/';
 import { ExtentListComponent } from './iscsi/extent/extent-list/';
 import { ExtentFormComponent } from './iscsi/extent/extent-form/';
 import { AssociatedTargetListComponent } from './iscsi/associated-target/associated-target-list/';
@@ -102,11 +100,11 @@ export const routes: Routes = [
       }]
     }, {
       path: 'iscsi',
-      data: { title: 'ISCSI', breadcrumb: 'ISCSI', icon: 'share'},
+      data: { title: 'iSCSI', breadcrumb: 'iSCSI', icon: 'share'},
       children: [
       {
         path: '',
-        data: { title: 'ISCSI', breadcrumb: 'ISCSI'},
+        data: { title: 'iSCSI', breadcrumb: 'iSCSI'},
         children: [
         {
           path: '',
@@ -122,11 +120,11 @@ export const routes: Routes = [
           data: { title: 'Portals', breadcrumb: 'Portals'},
           children: [{
             path: 'add',
-            component: PortalAddComponent,
+            component: PortalFormComponent,
             data: { title: 'Add', breadcrumb: 'Add' },
           },{
             path: 'edit/:pk',
-            component: PortalEditComponent,
+            component: PortalFormComponent,
             data: { title: 'Edit', breadcrumb: 'Edit' },
           }]
         }, {
@@ -143,7 +141,7 @@ export const routes: Routes = [
           }]
         }, {
           path: 'auth',
-          data: { title: 'Auth', breadcrumb: 'Auth'},
+          data: { title: 'Authorized Access', breadcrumb: 'Authorized Access'},
           children: [{
             path: 'add',
             component: AuthorizedAccessFormComponent,
@@ -156,20 +154,20 @@ export const routes: Routes = [
         },
         {
           path: 'target',
-          data: { title: 'Target', breadcrumb: 'Target'},
+          data: { title: 'Targets', breadcrumb: 'Targets'},
           children: [{
             path: 'add',
-            component: TargetAddComponent,
+            component: TargetFormComponent,
             data: { title: 'Add', breadcrumb: 'Add' },
           },{
             path: 'edit/:pk',
-            component: TargetEditComponent,
+            component: TargetFormComponent,
             data: { title: 'Edit', breadcrumb: 'Edit' },
           }]
         },
         {
           path: 'extent',
-          data: { title: 'Extent', breadcrumb: 'Extent'},
+          data: { title: 'Extents', breadcrumb: 'Extents'},
           children: [{
             path: 'add',
             component: ExtentFormComponent,
@@ -182,7 +180,7 @@ export const routes: Routes = [
         },
         {
           path: 'associatedtarget',
-          data: { title: 'Associate Target', breadcrumb: 'Associate Target'},
+          data: { title: 'Associated Targets', breadcrumb: 'Associated Targets'},
           children: [{
             path: 'add',
             component: AssociatedTargetFormComponent,

@@ -1,29 +1,31 @@
+
+import {fromEvent as observableFromEvent,  Observable ,  BehaviorSubject ,  Subscription } from 'rxjs';
+
+import {distinctUntilChanged, debounceTime} from 'rxjs/operators';
 import { Component, OnInit, Input, ElementRef, ViewEncapsulation, ViewChild, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataSource } from '@angular/cdk/collections';
 import { MatPaginator, MatSort, PageEvent, MatSnackBar } from '@angular/material';
-import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { TranslateService } from '@ngx-translate/core';
 
 import { T } from '../../../../translate-marker';
-import 'rxjs/add/operator/startWith';
-import 'rxjs/add/observable/merge';
-import 'rxjs/add/operator/map';
+
+
+
 
 //local libs
 import { RestService } from '../../../../services/rest.service';
 import { WebSocketService } from '../../../../services/ws.service';
 import { EntityUtils } from '../utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { DialogService } from 'app/services';
-import { ErdService } from 'app/services/erd.service';
-import { Subscription } from 'rxjs/Subscription';
+import { DialogService } from '../../../../services';
+import { ErdService } from '../../../../services/erd.service';
+import { StorageService } from '../../../../services/storage.service'
 
 
 
 export interface InputTableConf {
-  
+
   columns?:any[];
   hideTopActions?: boolean;
   queryCall?: string;
@@ -34,6 +36,7 @@ export interface InputTableConf {
   queryRes?: any [];
   isActionVisible?: any;
   custActions?: any[];
+  multiActions?:any[];
   config?: any;
   confirmDeleteDialog?: Object;
   checkbox_confirm?: any;
@@ -50,7 +53,8 @@ export interface InputTableConf {
   wsDelete?(resp): any;
   wsMultiDelete?(resp): any;
   wsMultiDeleteParams?(selected): any;
-  updateMultiAction?(selected): any; 
+  updateMultiAction?(selected): any;
+  doAdd?();
 }
 
 export interface SortingConfig {
@@ -62,31 +66,41 @@ export interface TableConfig {
   sorting: SortingConfig;
 }
 
-
-
 @Component({
   selector: 'entity-table',
   templateUrl: './entity-table.component.html',
   styleUrls: ['./entity-table.component.scss'],
-  providers: [DialogService]
+  providers: [DialogService, StorageService]
 })
 export class EntityTableComponent implements OnInit, AfterViewInit {
 
   @Input() title = '';
+  @Input() legacyWarning = '';
+  @Input() legacyWarningLink = '';
   @Input('conf') conf: InputTableConf;
-  
+
   @ViewChild('filter') filter: ElementRef;
- 
+
   // MdPaginator Inputs
-  public paginationPageSize = 20;
+  public paginationPageSize: number = 8;
   public paginationPageSizeOptions = [5, 10, 20, 100, 1000];
   public paginationPageIndex = 0;
   public paginationPageEvent: any;
   public hideTopActions = false;
-  
+
   public displayedColumns: string[] = [];
   public busy: Subscription;
   public columns: Array<any> = [];
+  public tableHeight:number = (this.paginationPageSize * 50) + 100;
+  public windowHeight: number;
+
+  public allColumns: Array<any> = []; // Need this for the checkbox headings
+  public filterColumns: Array<any> = []; // Need this for the filter function
+  public alwaysDisplayedCols: Array<any> = []; // For cols the user can't turn off
+  public presetDisplayedCols: Array<any> = []; // to store only the index of preset cols
+  public currentPreferredCols: Array<any> = []; // to store current choice of what cols to view
+  public anythingClicked: boolean = false; // stores a pristine/touched state for checkboxes
+
   public rows: any[] = [];
   public currentRows: any[] = []; // Rows applying filter
   public seenRows: any[] = [];
@@ -96,26 +110,40 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     sorting: { columns: this.columns },
   };
   public showDefaults: boolean = false;
+  public showSpinner: boolean = false;
+  public showActions: boolean = true;
 
   protected loaderOpen = false;
   public selected = [];
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService, 
-    protected erdService: ErdService, protected translate: TranslateService, protected snackBar: MatSnackBar) { }
+    protected erdService: ErdService, protected translate: TranslateService, protected snackBar: MatSnackBar,
+    public sorter: StorageService) { }
 
   ngOnInit() {
-    
+
+    this.setTableHeight(); 
+  
     if (this.conf.preInit) {
       this.conf.preInit(this);
     }
     this.getData();
     if (this.conf.afterInit) {
       this.conf.afterInit(this);
-    }   
+    }
     this.conf.columns.forEach((column) => {
       this.displayedColumns.push(column.prop);
+      if (!column.always_display) {
+        this.allColumns.push(column); // Make array of optionally-displayed cols
+      } else {
+        this.alwaysDisplayedCols.push(column); // Make an array of required cols
+      }
     });
+
+    this.filterColumns = this.conf.columns;
+    this.conf.columns = this.allColumns; // Remove any alwaysDisplayed cols from the official list
+
     this.displayedColumns.push("action");
     if (this.conf.changeEvent) {
       this.conf.changeEvent(this);
@@ -125,22 +153,23 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       this.hideTopActions = this.conf.hideTopActions;
     }
 
-    Observable.fromEvent(this.filter.nativeElement, 'keyup')
-      .debounceTime(150)
-      .distinctUntilChanged()
+    observableFromEvent(this.filter.nativeElement, 'keyup').pipe(
+      debounceTime(150),
+      distinctUntilChanged(),)
       .subscribe(() => {
         const filterValue: string = this.filter.nativeElement.value;
         let newData: any[] = [];
 
         if (filterValue.length > 0) {
           this.rows.forEach((dataElement) => {
-            for (const dataElementProp of this.conf.columns) {
+            for (const dataElementProp of this.filterColumns) {
               let value: any = dataElement[dataElementProp.prop];
-              
+
               if( typeof(value) === "boolean" || typeof(value) === "number") {
-                value = String(value);
+                value = String(value).toLowerCase();
               }
-              if (typeof (value) === "string" && value.length > 0 && (<string>value).indexOf(filterValue) >= 0) {
+              if (typeof (value) === "string" && value.length > 0 &&
+                (<string>value.toLowerCase()).indexOf(filterValue.toLowerCase()) >= 0) {
                 newData.push(dataElement);
                 break;
               }
@@ -156,22 +185,61 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         this.setPaginationInfo();
       });
 
-      setTimeout(() => { this.setShowDefaults(); }, 1000);
-    
+      // Delay spinner 500ms so it won't show up on a fast-loading page
+      setTimeout(() => { this.setShowSpinner(); }, 500);
+
+      // Next section sets the checked/displayed columns
+      if (this.conf.columns && this.conf.columns.length > 10) {
+        this.conf.columns = [];
+
+        for (let item of this.allColumns) {
+          if (!item.hidden) {
+            this.conf.columns.push(item);
+            this.presetDisplayedCols.push(item);
+          }
+        }
+
+        this.currentPreferredCols = this.conf.columns;
+      }
+        // End of checked/display section ------------                 
   }
 
-  setShowDefaults() {
-    this.showDefaults = true;
+  setTableHeight() {
+    let rowNum = 9, n;
+    if (this.title === 'Boot Environments') {
+      n = 5;
+    } else if (this.title === 'Jails' || this.title === 'Available Plugins' || this.title === 'Installed Plugins') {
+      n = 3;
+    } else {
+      n = 0;
+    }
+    if (this.conf.columns.length > 10) {
+        n = n + 2;
+    } 
+    window.onresize = () => {
+      let x = window.innerHeight;
+      if (x <=780) {
+        this.paginationPageSize = rowNum - n;
+      } else {
+        let y = x - 800;
+        this.paginationPageSize = rowNum - n + Math.floor(y/50);
+      }
+      this.setPaginationInfo();
+    }
   }
-  
+
+  setShowSpinner() {
+    this.showSpinner = true;
+  }
 
   ngAfterViewInit(): void {
 
     this.erdService.attachResizeEventToElement("entity-table-component");
-    
+
   }
 
   getData() {
+
     const sort: Array<String> = [];
     let options: Object = new Object();
 
@@ -189,6 +257,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     if (sort.length > 0) {
       options['sort'] = sort.join(',');
     }
+
     if (this.conf.queryCall) {
       if (this.conf.queryCallOption) {
         this.getFunction = this.ws.call(this.conf.queryCall, this.conf.queryCallOption);
@@ -198,11 +267,20 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     } else {
       this.getFunction = this.rest.get(this.conf.resource_name, options);
     }
-    this.busy =
-      this.getFunction.subscribe((res)=>{
-        this.handleData(res);
-      });
 
+    this.getFunction.subscribe(
+      (res) => {
+        this.handleData(res);
+      },
+      (res) => {
+        if (res.hasOwnProperty("reason") && (res.hasOwnProperty("trace") && res.hasOwnProperty("type"))) {
+          this.dialogService.errorReport(res.type, res.reason, res.trace.formatted);
+        }
+        else {
+          new EntityUtils().handleError(this, res);
+        }
+      }
+    );
   }
 
   handleData(res): any {
@@ -238,6 +316,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       this.conf.queryRes = rows;
     }
 
+    if (this.conf.queryRes) {
+      this.conf.queryRes = rows;
+    }
+
     for (let i = 0; i < rows.length; i++) {
       for (const attr in rows[i]) {
         if (rows[i].hasOwnProperty(attr)) {
@@ -255,7 +337,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     if (this.conf.addRows) {
       this.conf.addRows(this);
     }
-    
+
     this.currentRows = this.rows;
     this.paginationPageIndex  = 0;
     this.setPaginationInfo();
@@ -286,7 +368,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       }, {
         id: "delete",
         label: "Delete",
-        onClick: (rowinner) => { this.doDelete(rowinner.id); },
+        onClick: (rowinner) => { this.doDelete(rowinner); },
       },]
     }
   }
@@ -311,8 +393,28 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     return row[attr];
   }
 
+  convertDisplayValue(value) {
+    let val;
+    if (value === true) {
+      this.translate.get('yes').subscribe((yes) => {
+        val = yes;
+      });
+    } else if (value === false) {
+      this.translate.get('no').subscribe((no) => {
+        val = no;
+      });
+    } else {
+      val = value;
+    }
+    return val;
+  }
+
   doAdd() {
-    this.router.navigate(new Array('/').concat(this.conf.route_add));
+    if (this.conf.doAdd) {
+      this.conf.doAdd();
+    } else {
+      this.router.navigate(new Array('/').concat(this.conf.route_add));
+    }
   }
 
   doEdit(id) {
@@ -320,18 +422,48 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       new Array('/').concat(this.conf.route_edit).concat(id));
   }
 
-  doDelete(id) {
+  //generate delete msg
+  getDeleteMessage(item) {
+    let deleteMsg = "Delete the selected item?";
+    if (this.conf.config.deleteMsg) {
+      deleteMsg = "Delete " + this.conf.config.deleteMsg.title;
+      let msg_content = ' <b>' + item[this.conf.config.deleteMsg.key_props[0]];
+      if (this.conf.config.deleteMsg.key_props.length > 1) {
+        for (let i = 1; i < this.conf.config.deleteMsg.key_props.length; i++) {
+          if (item[this.conf.config.deleteMsg.key_props[i]] != '') {
+            msg_content = msg_content + ' - ' + item[this.conf.config.deleteMsg.key_props[i]];
+          }
+        }
+      }
+      msg_content += "</b>?";
+      deleteMsg += msg_content;
+    }
+    this.translate.get(deleteMsg).subscribe((res) => {
+      deleteMsg = res;
+    });
+    return deleteMsg;
+  }
+
+  doDelete(item) {
+    let deleteMsg = this.getDeleteMessage(item);
+    let id;
+    if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.id_prop) {
+      id = item[this.conf.config.deleteMsg.id_prop];
+    } else {
+      id = item.id;
+    }
     let dialog = {};
     if (this.conf.checkbox_confirm && this.conf.checkbox_confirm_show && this.conf.checkbox_confirm_show(id)) {
-      this.conf.checkbox_confirm(id);
+      this.conf.checkbox_confirm(id, deleteMsg);
       return;
     }
     if (this.conf.confirmDeleteDialog) {
       dialog = this.conf.confirmDeleteDialog;
     }
+
     this.dialogService.confirm(
-        dialog.hasOwnProperty("title") ? dialog['title'] : T("Delete"), 
-        dialog.hasOwnProperty("message") ? dialog['message'] : T("Are you sure you want to delete the selected item?"), 
+        dialog.hasOwnProperty("title") ? dialog['title'] : T("Delete"),
+        dialog.hasOwnProperty("message") ? dialog['message'] + deleteMsg : deleteMsg,
         dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : false, 
         dialog.hasOwnProperty("button") ? dialog['button'] : T("Delete")).subscribe((res) => {
       if (res) {
@@ -361,15 +493,13 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     })
   }
 
-
   setPaginationPageSizeOptions(setPaginationPageSizeOptionsInput: string) {
     this.paginationPageSizeOptions = setPaginationPageSizeOptionsInput.split(',').map(str => +str);
   }
 
- 
   paginationUpdate($pageEvent: any) {
-    
-    this.paginationPageEvent = $pageEvent;    
+
+    this.paginationPageEvent = $pageEvent;
     this.paginationPageIndex = (typeof(this.paginationPageEvent.offset) !== "undefined" ) 
     ? this.paginationPageEvent.offset : this.paginationPageEvent.pageIndex;
     this.paginationPageSize = this.paginationPageEvent.pageSize;
@@ -377,11 +507,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   }
 
   protected setPaginationInfo() {
-    
+
     const beginIndex = this.paginationPageIndex * this.paginationPageSize;
     const endIndex = beginIndex + this.paginationPageSize ;
 
-    if( beginIndex < this.currentRows.length && endIndex > this.currentRows.length ) {
+    if( beginIndex < this.currentRows.length && endIndex >= this.currentRows.length) {
       this.seenRows = this.currentRows.slice(beginIndex, this.currentRows.length);
     } else if( endIndex < this.currentRows.length ) {
       this.seenRows = this.currentRows.slice(beginIndex, endIndex);
@@ -389,19 +519,41 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       this.seenRows = this.currentRows;
     }
 
+    // This section controls page height for infinite scrolling
+    if (this.currentRows.length === 0) {
+      this.tableHeight = 153;
+    } else if (this.currentRows.length > 0 && this.currentRows.length < this.paginationPageSize) {
+      this.tableHeight = (this.currentRows.length * 50) + 110;
+    } else {
+      this.tableHeight = (this.paginationPageSize * 50) + 100;
+    } 
+    
+    // Displays an accurate number for some edge cases
+    if (this.paginationPageSize > this.currentRows.length) {
+      this.paginationPageSize = this.currentRows.length;
+    }
   }
 
-  reorderEvent($event) {
+  reorderEvent(event) {
+    this.showActions = false;
     this.paginationPageIndex = 0;
+    let sort = event.sorts[0],
+      rows = this.currentRows;
+    this.sorter.tableSorter(rows, sort.prop, sort.dir);
+    this.rows = rows;
+    this.setPaginationInfo();
+    setTimeout(() => {
+      this.showActions = true;
+    }, 50)
   }
 
   /**
    * some structure... should be the same as the other rows.
-   * which are field maps.  
-   * 
+   * which are field maps.
+   *
    * this method can be called to externally push rows on to the tables.
-   * 
-   * @param param0 
+   *
+   * @param param0
    */
   pushNewRow(row:any) {
     this.rows.push(row);
@@ -409,8 +561,35 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     this.setPaginationInfo();
   }
 
+  getMultiDeleteMessage(items) {
+    let deleteMsg = "Delete the selected items?";
+    if (this.conf.config.deleteMsg) {
+      deleteMsg = "Delete selected " + this.conf.config.deleteMsg.title + "(s)?";
+      let msg_content = "<ul>";
+      for (let j = 0; j < items.length; j++) {
+        let sub_msg_content = '<li>' + items[j][this.conf.config.deleteMsg.key_props[0]];
+        if (this.conf.config.deleteMsg.key_props.length > 1) {
+          for (let i = 1; i < this.conf.config.deleteMsg.key_props.length; i++) {
+            if (items[j][this.conf.config.deleteMsg.key_props[i]] != '') {
+              msg_content = msg_content + ' - ' + items[j][this.conf.config.deleteMsg.key_props[i]];
+            }
+          }
+        }
+        sub_msg_content += "</li>";
+        msg_content += sub_msg_content;
+      }
+      msg_content += "</ul>";
+      deleteMsg += msg_content;
+    }
+    this.translate.get(deleteMsg).subscribe((res) => {
+      deleteMsg = res;
+    });
+    return deleteMsg;
+  }
+
   doMultiDelete(selected) {
-    this.dialogService.confirm("Delete", "Are you sure you want to delete selected item(s)?").subscribe((res) => {
+    let multiDeleteMsg = this.getMultiDeleteMessage(selected);
+    this.dialogService.confirm("Delete", multiDeleteMsg, false, T("Delete")).subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
@@ -422,7 +601,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
               (res1) => {
                   this.getData();
                   this.selected = [];
-                  this.snackBar.open("Selected item(s) successfully deleted", 'close', { duration: 5000 });
+                  this.snackBar.open("Items deleted.", 'close', { duration: 5000 });
                },
               (res1) => {
                 new EntityUtils().handleError(this, res1);
@@ -445,4 +624,51 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       this.conf.updateMultiAction(this.selected);
     }
   }
+
+  // Next section operates the checkboxes to show/hide columns
+  toggle(col) {
+    const isChecked = this.isChecked(col);
+    this.anythingClicked = true;
+
+    if(isChecked) {
+      this.conf.columns = this.conf.columns.filter(c => {
+        return c.name !== col.name;
+      });
+    } else {
+      this.conf.columns = [...this.conf.columns, col];
+    }
+  }
+
+  isChecked(col:any) {
+    return this.conf.columns.find(c => {
+      return c.name === col.name;
+    }) !=undefined;
+  }
+
+  // Toggle between all cols selected and the current stored preference
+  checkAll() {
+    this.anythingClicked = true;
+    if (this.conf.columns.length < this.allColumns.length) {
+
+      this.conf.columns = this.allColumns;
+      return this.conf.columns
+    } else {
+      return this.conf.columns = this.currentPreferredCols;
+    }
+  }
+
+  // Used by the select all checkbox to determine whether it should be checked
+  checkLength() {
+    return this.conf.columns.length === this.allColumns.length;
+  }
+
+  onGoToLegacy() {
+    this.dialogService.confirm(T("Log in to Legacy User Interface?"), "", true, T('Continue')).subscribe((res) => {
+      if (res) {
+        window.location.href = '/legacy/';
+      }
+    });
+  }
+
+  // End checkbox section -----------------------
 }

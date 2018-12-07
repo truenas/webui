@@ -35,70 +35,13 @@ export class ScrubListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    deleteMsg: {
+      title: 'Scrub Task',
+      key_props: ['scrub_volume']
+    },
   };
 
   constructor(protected router: Router,
     protected rest: RestService,
     protected taskService: TaskService) {}
-
-  dataHandler(entityList: any) {
-
-    let timeout = setTimeout(() => {
-      this.initFields(entityList);
-      clearTimeout(timeout);
-    }, 100);
-  }
-
-  initFields(entityList: any) {
-    for (let i = 0; i < entityList.rows.length; i++) {
-      let month_list: Array < string > = [];
-      let months = entityList.rows[i].scrub_month.split(',');
-
-      if (_.isEqual(entityList.rows[i].scrub_month, "*")) {
-        entityList.rows[i].scrub_month = "Every month";
-      } else {
-        this.taskService.getMonthChoices().subscribe((res) => {
-          for (let i = 0; i < months.length; i++) {
-            month_list.push(res[Number(months[i]) - 1][1]);
-          }
-          entityList.rows[i].scrub_month = _.join(month_list, ', ');
-        });
-      }
-
-      let dayweeks_list: Array < string > = [];
-      let dayweeks = entityList.rows[i].scrub_dayweek.split(',');
-
-      if (_.isEqual(entityList.rows[i].scrub_dayweek, "*")) {
-        entityList.rows[i].scrub_dayweek = "Every day";
-      } else {
-        this.taskService.getWeekdayChoices().subscribe((res) => {
-          for (let i = 0; i < dayweeks.length; i++) {
-            dayweeks_list.push(res[Number(dayweeks[i]) - 1][1]);
-          }
-          entityList.rows[i].scrub_dayweek = _.join(dayweeks_list, ', ');
-        });
-      }
-
-      if (_.startsWith(entityList.rows[i].scrub_daymonth, '*/')) {
-        let N = Number(_.trim(entityList.rows[i].scrub_daymonth, '*/'));
-        entityList.rows[i].scrub_daymonth = "Every " + N + " days";
-      } else if (_.isEqual(entityList.rows[i].scrub_daymonth, "*")) {
-        entityList.rows[i].scrub_daymonth = "Every day";
-      }
-
-      if (_.startsWith(entityList.rows[i].scrub_minute, '*/')) {
-        let N = Number(_.trim(entityList.rows[i].scrub_minute, '*/'));
-        entityList.rows[i].scrub_minute = "Every " + N + " minutes";
-      } else if (_.isEqual(entityList.rows[i].scrub_minute, "*")) {
-        entityList.rows[i].scrub_minute = "Every minute";
-      }
-
-      if (_.startsWith(entityList.rows[i].scrub_hour, '*/')) {
-        let N = Number(_.trim(entityList.rows[i].scrub_hour, '*/'));
-        entityList.rows[i].scrub_hour = "Every " + N + " hours";
-      } else if (_.isEqual(entityList.rows[i].scrub_hour, "*")) {
-        entityList.rows[i].scrub_hour = "Every hour";
-      }
-    }
-  }
 }

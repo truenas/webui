@@ -2,7 +2,7 @@ import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormGroup, Validator } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 import { WebSocketService } from '../../../../../services/';
 import { MatSnackBar } from '@angular/material';
@@ -18,7 +18,7 @@ export class ManualUpdateConfigSaveComponent {
   public sub: Subscription;
   public secretseed = false;
   public route_success: string[] = ['system','update','manualupdate'];
-  
+
   constructor(protected ws: WebSocketService, protected router: Router, public snackBar: MatSnackBar) {}
 
   openSnackBar(message: string, action: string) {
@@ -31,12 +31,12 @@ export class ManualUpdateConfigSaveComponent {
     this.sub = this.ws.call('core.download', ['config.save', [{ 'secretseed': this.secretseed }], 'freenas.db'])
       .subscribe(
         (res) => {
-          this.openSnackBar("Redirecting to download. Make sure you have pop up enabled in your browser.", "Success");
-          window.open(res[1]);
+          this.openSnackBar("Download Sucessful", "Success");
+          window.location.href = res[1];
           this.router.navigate(new Array('').concat(this.route_success));
         },
         (err) => {
-          this.openSnackBar("Please check your network connection", "Failed");
+          this.openSnackBar("Check the network connection.", "Failed");
         }
       );
   }

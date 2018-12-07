@@ -1,28 +1,59 @@
-<div id="entity-table-component" class="material mat-card mat-card-table"> 
+<div id="entity-table-component" class="material mat-card mat-card-table">
   <div class="mat-toolbar mat-card-toolbar" *ngIf="hideTopActions === false">
     <div class="mat-card-title-text">{{ title | translate }}</div>
+    <div class="legacy-warning" *ngIf="legacyWarning">{{ legacyWarning | translate }} <span class="legacy-warning-link" (click)="onGoToLegacy()">{{ legacyWarningLink | translate }}.</span></div>
+    <mat-spinner 
+      [diameter]='40' 
+      id="entity-spinner"
+      *ngIf="!showDefaults && showSpinner" #entityspinner>
+    </mat-spinner> 
     <app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
   </div>
-  <div>
-    <br/>
-  </div>
-  <div fxLayout="row wrap" fxLayoutAlign="space-between center" fxlayout.sm="column" fxLayout.xs="column">
-    <div fxFlex="calc(100% - 400px)" class="padding_all">
-      <mat-input-container floatPlaceholder="never">
-        <input matInput #filter placeholder="{{'Filter' | translate}} {{title | translate}}">
-      </mat-input-container>
 
-      <span *ngFor="let custBtn of conf.custActions">
-          <button id="cust_button_{{custBtn.name}}" mat-button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" (click)="custBtn['function']()">{{custBtn.name | translate}}</button>
-      </span>
-    </div>
-
-    <mat-paginator fxFlex="auto" [length]="currentRows.length" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" [pageIndex]="paginationPageIndex" (page)="paginationUpdate($event)">
-    </mat-paginator>
+  <div id="filter">
+    <mat-form-field floatPlaceholder="never">
+      <input matInput #filter placeholder="{{'Filter' | translate}} {{title | translate}}">
+    </mat-form-field>
+    <tooltip message="{{'Show only entries that contain this text' | translate}}"></tooltip>
   </div>
+
+  <div id="action-button-wrapper" *ngIf="conf.custActions">
+    <span *ngFor="let custBtn of conf.custActions">
+      <button id="cust_button_{{custBtn.name}}" mat-button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" (click)="custBtn['function']()">{{custBtn.name | translate}}</button>
+    </span>
+  </div>
+
+<!-- Selected columns checkbox ----------------- -->
+<div id="col-select-box" class="selected-columns" *ngIf="allColumns.length > 10 ? true : false">
+  <div id="select-all-checkbox-and-label">
+    <mat-checkbox
+      type="checkbox"
+      [id]="check-all"
+      [checked]="checkLength()"
+      (change)="checkAll()"
+      labelPosition = 'before'>
+      Toggle
+     </mat-checkbox> 
+  </div>
+  <ul>
+    <li *ngFor="let col of allColumns">
+      <div>
+        <mat-checkbox
+          type="checkbox"
+          class="colselect"
+          [id]="col.name"
+          (change)="toggle(col)"
+          [checked]="isChecked(col)">
+          {{col.name}}
+        </mat-checkbox>
+      </div>
+    </li>
+  </ul>
+</div>
+<!-- End checkbox ------------------------------ -->
 
   <div fxLayout="row wrap" fxLayoutAlign="start center" class="multiActionsButton">
-    <div *ngIf="selected.length > 0 ? true : false" >
+    <div [style.visibility]="selected.length > 0 ? 'visible' : 'hidden'" >
       <div *ngIf="conf.multiActions; else defaultMultiActions" fxFlex="100">
         <span *ngFor="let maction of conf.multiActions">
           <button id="{{ maction?.id }}" 
@@ -41,23 +72,27 @@
 
   <div>
     <ngx-datatable *ngIf="showDefaults" class='material' 
-      [rows]='seenRows' 
+      [rows]='currentRows' 
       [columns]="conf.columns" 
       [columnMode]="'force'" 
       [columnWidth]="'auto'"
       [headerHeight]="'50'" 
-      [footerHeight]="'auto'" 
+      [footerHeight]="'50'" 
       [rowHeight]="50" 
       [reorderable]="true"
       [limit]="paginationPageSize" 
       [externalPaging]="true"
-      [count]="currentRows.length"
+      [count]="currentRows.length || 1"
       [offset]="paginationPageIndex"
       (page)='paginationUpdate($event)'
+      [externalSorting]="true"
       (sort)='reorderEvent($event)'
       [selectionType]="'checkbox'"
       [selected]='selected'
       (select)='onSelect($event)'
+      [style.height.px]="tableHeight"
+      [scrollbarH]='true'
+      [scrollbarV]='true'
       #entityTable>
 
       <ngx-datatable-footer>
@@ -71,7 +106,7 @@
             >
             <div id="footer">
               <div id="footer-text">
-                {{offset * pageSize + 1}} - 
+                {{rowCount > 0 ? offset * pageSize + 1 : 0}} - 
                 {{rowCount < (pageSize * curPage) ? rowCount : (pageSize * curPage)}} 
                 of {{rowCount}} 
                 <span *ngIf="selectedCount > 0"> | {{selectedCount}} selected</span>
@@ -91,7 +126,7 @@
           </ng-template>
         </ngx-datatable-footer>
 
-      <ngx-datatable-column *ngIf="conf.config && conf.config.multiSelect" [width]="80" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
+      <ngx-datatable-column *ngIf="conf.config && conf.config.multiSelect" [width]="85" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
         <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
           <div class="headerCheckBox">
             <mat-checkbox [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>
@@ -106,25 +141,43 @@
       </ngx-datatable-column>
 
       <ngx-datatable-column
+          *ngFor="let col of alwaysDisplayedCols"
+          prop="{{col.prop}}"
+          name="{{col.name | translate}}">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <div id="{{col.prop}}_{{row[col.prop]}}" 
+                 title="{{convertDisplayValue(row[col.prop])}}">
+              {{convertDisplayValue(row[col.prop])}}
+            </div>
+          </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column
                *ngFor="let col of conf.columns"
                prop="{{col.prop}}"
                name="{{col.name | translate}}">
         <ng-template let-row="row" ngx-datatable-cell-template>
           <div id="{{col.prop}}_{{row[col.prop]}}" 
-               title="{{row[col.prop]}}" [ngClass]="col.icon ? 'IconCell' : ''">
+               title="{{convertDisplayValue(row[col.prop])}}" [ngClass]="col.icon ? 'IconCell' : ''">
             <img *ngIf="col.icon" width="20" src="{{row[col.icon]}}"/>
-            {{row[col.prop]}}
+            <button mat-icon-button *ngIf="col.state; else colInfo" (click)="conf.stateButton(row)">
+              <mat-spinner *ngIf="row[col.state] == 'RUNNING'" [diameter]='24'></mat-spinner>
+              <mat-icon *ngIf="row[col.state] == 'SUCCESS'" aria-label="row[col.prop]">done</mat-icon>
+              <mat-icon *ngIf="row[col.state] == 'FAILED'" aria-label="row[col.prop]">close</mat-icon>
+            </button>
+            <ng-template #colInfo>
+              {{convertDisplayValue(row[col.prop])}}
+            </ng-template>
           </div>
         </ng-template>
       </ngx-datatable-column>
 
       <ngx-datatable-column>
         <ng-template let-row="row" ngx-datatable-cell-template>
-          <app-entity-table-actions [entity]="this" [row]="row">
+          <app-entity-table-actions *ngIf="showActions" [entity]="this" [row]="row">
           </app-entity-table-actions>
         </ng-template>
       </ngx-datatable-column>
-
     </ngx-datatable>
   </div>
 

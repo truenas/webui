@@ -31,19 +31,19 @@ export class ConfigurationComponent {
       type : 'input',
       name : 'gc_hostname',
       placeholder : T('Hostname'),
-      tooltip : T('System host name.'),
+      tooltip : T('System hostname.'),
     },
     {
       type : 'input',
       name : 'gc_domain',
       placeholder : T('Domain'),
-      tooltip : T('System domain name.'),
+      tooltip : T('System domain name, like <i>example.com</i>'),
     },
     {
       type : 'textarea',
       name : 'gc_domains',
       placeholder: T('Additional Domains'),
-      tooltip : T('Add other domains to search, separated by spaces.\
+      tooltip : T('Additional space-delimited domains to search.\
                    Adding search domains can cause slow DNS lookups.'),
     },
     {
@@ -64,7 +64,7 @@ export class ConfigurationComponent {
       type : 'input',
       name : 'gc_nameserver1',
       placeholder : T('Nameserver 1'),
-      tooltip : T('The primary DNS server, typically a Windows domain.'),
+      tooltip : T('Primary DNS server.'),
     },
     {
       type : 'input',
@@ -76,7 +76,7 @@ export class ConfigurationComponent {
       type : 'input',
       name : 'gc_nameserver3',
       placeholder : T('Nameserver 3'),
-      tooltip : T('Tertiary DNS server'),
+      tooltip : T('Third DNS server'),
     },
     {
       type : 'input',
@@ -92,27 +92,38 @@ export class ConfigurationComponent {
       placeholder : T('Enable netwait feature'),
       tooltip : T('Set to delay the start of network-reliant services\
                    until ICMP packets to a destination in the <i>netwait\
-                   ip list</i> are flowing.'),
+                   IP list</i> are flowing.'),
     },
     {
       type : 'input',
       name : 'gc_netwait_ip',
       placeholder : T('Netwait IP list'),
       tooltip : T('Enter a space-delimited list of IP addresses to <a\
-                   href="https://www.freebsd.org/cgi/man.cgi?query=ping&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+                   href="https://www.freebsd.org/cgi/man.cgi?query=ping"\
                    target="_blank">ping(8)</a>. Each address is tried\
                    until one is successful or the list is exhausted.\
                    Leave empty to use the default gateway.'),
+      relation : [
+                    {
+                      action : 'HIDE',
+                      when : [ {
+                        name : 'gc_netwait_enabled',
+                        value : false,
+                      } ]
+                    },
+                  ],
     },
     {
       type : 'textarea',
       name : 'gc_hosts',
       placeholder : T('Host name database'),
-      tooltip :
-          T('This is appended to <i>/etc/hosts</i>, which contains\
-             information regarding known hosts on the network. See <a\
-             href="www.freebsd.org/cgi/man.cgi?query=hosts&manpath=FreeBSD+11.1+RELEASE+and+Ports"\
-             target="_blank">hosts(5)</a>.'),
+      tooltip : T('Additional hosts to be appended to <i>/etc/hosts</i>\
+                   can be added here. Each host entry is a single line\
+                   with whitespace-delimited IP address, hostname, and\
+                   any aliases. Hosts defined here are still accessible\
+                   by name even when DNS is not available. See <a\
+                   href="https://www.freebsd.org/cgi/man.cgi?query=hosts"\
+                   target="_blank">hosts(5)</a> for additional information.'),
     },
   ];
   private entityEdit: EntityFormComponent;

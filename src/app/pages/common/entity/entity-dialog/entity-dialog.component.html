@@ -1,7 +1,15 @@
 <h1 mat-dialog-title> {{ title | translate }} </h1>
 
 <div mat-dialog-content>
+  <span [innerHTML]="conf.message"></span>
+  <br>
   <ng-container *ngFor="let field of fieldConfig;" dynamicField [config]="field" [group]="formGroup" [fieldShow]="'show'">
+    <button mat-icon-button type="button" *ngIf="field.hideButton===false" (click)="togglePW()" matTooltip="Show or hide">
+      <mat-icon *ngIf="!showPassword">visibility</mat-icon>
+      <mat-icon *ngIf="showPassword">visibility_off</mat-icon>
+  </button>
+  <span [innerHTML]="conf.warning"></span>
+
   </ng-container>
 </div>
 <div>
@@ -11,11 +19,11 @@
 <div mat-dialog-actions>
   <span fxFlex></span>
   <span *ngFor="let custBtn of conf.custActions">
-    <button id="cust_button_{{custBtn.id}}" mat-raised-button 
-      *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" 
-      (click)="custBtn['function']()">{{custBtn.name | translate}}</button>
+    <button id="cust_button_{{custBtn.id}}" mat-button class="mat-button"
+      *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button"
+      (click)="custBtn['function']()" [name]="custBtn.name + '_button'">{{custBtn.name | translate}}</button>
   </span>
-  <button class="mat-raised-button mat-accent" (click)="cancel()">{{cancelButtonText | translate}}</button>
-  <button class="mat-raised-button mat-primary" (click)="submit()" [disabled]="!formGroup.valid" 
-    *ngIf="saveButtonText">{{saveButtonText | translate}}</button>
+  <button mat-button class="mat-flat-button mat-accent" (click)="cancel()" [name]="cancelButtonText + '_button'">{{cancelButtonText | translate}}</button>
+  <button mat-button class="mat-flat-button mat-primary" (click)="submit()" [disabled]="!formGroup.valid"
+    *ngIf="saveButtonText" [name]="saveButtonText + '_button'">{{saveButtonText | translate}}</button>
 </div>

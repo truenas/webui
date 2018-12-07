@@ -26,6 +26,10 @@ export class SnapshotListComponent {
     paging: true,
     sorting: { columns: this.columns },
     multiSelect: true,
+    deleteMsg: {
+      title: 'Snapshot',
+      key_props: ['fullname']
+    },
   };
 
   protected wsMultiDelete = 'core.bulk';
@@ -56,6 +60,7 @@ export class SnapshotListComponent {
         return row[attr];
     }
   }
+
   afterInit(entityList: any) {
     this.entityList = entityList;
   }
@@ -70,7 +75,7 @@ export class SnapshotListComponent {
     actions.push({
       label: "Delete",
       onClick: (row1) => {
-        this.entityList.doDelete(row1.id);
+        this.entityList.doDelete(row1);
       }
     });
     actions.push({

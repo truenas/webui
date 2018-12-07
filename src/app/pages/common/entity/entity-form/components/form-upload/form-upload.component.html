@@ -1,20 +1,20 @@
- <div id="{{config.name}}" class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
+ <div id="{{config.name}}" class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
   <div class="top">
     <label>{{ config.placeholder | translate }}</label>
     <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
   </div>
   <div *ngIf="config.hideButton;else showButton">
       <mat-card-content>
-          <input type="file" #fileInput accept="{{config.acceptedFiles}}" (change)="upload(config.fileLocation)">
+          <input type="file" #fileInput accept="{{config.acceptedFiles}}" (change)="upload(config.fileLocation)" [formControlName]="config.name">
       </mat-card-content>
   </div>
   <ng-template #showButton>
       <mat-card-content>
-          <input type="file" #fileInput accept="{{config.acceptedFiles}}">
+          <input type="file" #fileInput accept="{{config.acceptedFiles}}" [formControlName]="config.name">
       </mat-card-content>
       <mat-card-actions class="buttons">
-          <button mat-raised-button type="button" (click)="upload(config.fileLocation)">Upload</button>
+          <button mat-button type="button" (click)="upload(config.fileLocation)">Upload</button>
       </mat-card-actions>
-      <mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
+      <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
   </ng-template>
 </div>

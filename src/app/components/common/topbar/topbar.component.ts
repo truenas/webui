@@ -1,3 +1,5 @@
+
+import {interval as observableInterval,  Observable ,  Subscription } from 'rxjs';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as domHelper from '../../../helpers/dom.helper';
@@ -12,10 +14,9 @@ import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
 import * as hopscotch from 'hopscotch';
 import { RestService } from "../../../services/rest.service";
 import { LanguageService } from "../../../services/language.service"
-import { Observable } from "rxjs/Observable";
-import { Subscription } from "rxjs/Subscription";
 import { TranslateService } from '@ngx-translate/core';
 import { EntityUtils } from '../../../pages/common/entity/utils';
+import { T } from '../../../translate-marker';
 
 @Component({
   selector: 'topbar',
@@ -81,7 +82,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
       });
     });
 
-    this.continuosStreaming = Observable.interval(10000).subscribe(x => {
+    this.continuosStreaming = observableInterval(10000).subscribe(x => {
       this.showReplicationStatus();
     });
 
@@ -134,6 +135,11 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
     domHelper.toggleClass(appBody, 'collapsed-menu');
     domHelper.removeClass(document.getElementsByClassName('has-submenu'), 'open');
+
+    // Fix for sidebar
+    if(!domHelper.hasClass(appBody, 'collapsed-menu')) {
+      (<HTMLElement>document.querySelector('mat-sidenav-content')).style.marginLeft = '240px';
+    }
   }
 
   onShowAbout() {
@@ -145,21 +151,13 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   signOut() {
-    this.translate.get('Log out').subscribe((logout: string) => {
-      this.translate.get("Log out of the WebUI?").subscribe((logout_prompt) => {
-        this.dialogService.confirm("Log Out", "Log out of the WebUI?", true).subscribe((res) => {
-          if (res) {
-            this.ws.logout();
-          }
-        });
-      });
-    });
+    this.ws.logout();
   }
 
   onShutdown() {
     this.translate.get('Shut down').subscribe((shutdown: string) => {
-      this.translate.get('Are you sure you wish to shut down the system?').subscribe((shutdown_prompt: string) => {
-        this.dialogService.confirm(shutdown, shutdown_prompt).subscribe((res) => {
+      this.translate.get('Shut down the system?').subscribe((shutdown_prompt: string) => {
+        this.dialogService.confirm(shutdown, shutdown_prompt, false, T('Shut Down')).subscribe((res) => {
           if (res) {
             this.router.navigate(['/others/shutdown']);
           }
@@ -170,8 +168,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   onReboot() {
     this.translate.get('Restart').subscribe((reboot: string) => {
-      this.translate.get('Are you sure you wish to restart the system?').subscribe((reboot_prompt: string) => {
-        this.dialogService.confirm(reboot, reboot_prompt).subscribe((res) => {
+      this.translate.get('Restart the system?').subscribe((reboot_prompt: string) => {
+        this.dialogService.confirm(reboot, reboot_prompt, false, T('Restart')).subscribe((res) => {
           if (res) {
             this.router.navigate(['/others/reboot']);
           }
@@ -207,14 +205,10 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   onGoToLegacy() {
-    this.translate.get('Switch to Legacy UI?').subscribe((gotolegacy: string) => {
-      this.translate.get("Return to the previous graphical user interface.").subscribe((gotolegacy_prompt) => {
-        this.dialogService.confirm("Switch to Legacy UI?", "Return to the previous graphical user interface.", true).subscribe((res) => {
-          if (res) {
-            window.location.href = '/legacy/';
-          }
-        });
-      });
+    this.dialogService.confirm(T("Switch to Legacy User Interface?"), T(""), true, T("Continue")).subscribe((res) => {
+      if (res) {
+        window.location.href = '/legacy/';
+      }
     });
   }
 }

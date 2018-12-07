@@ -1,6 +1,13 @@
 <div id="volumes-list.component_html" class="material mat-card mat-card-table">
   <div class="mat-toolbar mat-card-toolbar">
-    <div class="mat-card-title-text">{{ title }}</div>
+    <div class="mat-card-title-text">{{ title }}
+      <mat-spinner 
+      *ngIf="showSpinner"
+      [diameter]='40' 
+      id="pools-spinner"
+      >
+     </mat-spinner> 
+    </div>
     <app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
   </div>
   <div>
@@ -26,8 +33,11 @@
           <div class="global_volume_based_action_menu" title="Pool Operations"> 
             <app-entity-table-actions [icon_name]="'settings'" [entity]="actionComponent" [row]="row"></app-entity-table-actions>
           </div>
-          <div *ngIf="row.vol_encrypt > 0" class="global_volume_based_action_menu" title="Encryption Operations">
+          <div *ngIf="row.vol_encrypt > 0 && row.is_decrypted" class="global_volume_based_action_menu" title="Encryption Operations">
             <app-entity-table-actions [icon_name]="'lock_outline'" [entity]="actionEncryptedComponent" [row]="row"></app-entity-table-actions>
+          </div>
+          <div *ngIf="row.vol_encrypt > 0 && !row.is_decrypted" class="encryption_icon" title="Unlock">
+            <a (click)="conf.unlockAction(row)" class="unlock_button"><mat-icon>lock_open</mat-icon></a>
           </div>
           <br/>
         </div>

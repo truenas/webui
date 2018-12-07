@@ -1,30 +1,31 @@
 import {Component} from '@angular/core';
-import {FormGroup} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 
-import {RestService, WebSocketService} from '../../../../services/';
+import {RestService, WebSocketService, BootEnvService} from '../../../../services/';
 import { T } from '../../../../translate-marker';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
+import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
 
 @Component({
   selector : 'app-bootenv-rename',
-  template : `<entity-form [conf]="this"></entity-form>`
+  template : `<entity-form [conf]="this"></entity-form>`,
+  providers: [BootEnvService]
 })
 export class BootEnvironmentRenameComponent {
 
   protected route_success: string[] = [ 'system', 'bootenv' ];
-  protected editCall: string = 'bootenv.update';
+  protected editCall = 'bootenv.update';
   protected pk: any;
-  protected isNew: boolean = false;
-  protected isEntity: boolean = true;
+  protected isNew = false;
+  protected isEntity = true;
   protected entityForm: any;
 
   protected fieldConfig: FieldConfig[];
 
   constructor(protected router: Router, protected route: ActivatedRoute,
-              protected rest: RestService, protected ws: WebSocketService) {}
+              protected rest: RestService, protected ws: WebSocketService, protected bootEnvService: BootEnvService) {}
 
   preInit(entityForm: any) {
     this.route.params.subscribe(params => {
@@ -35,6 +36,8 @@ export class BootEnvironmentRenameComponent {
           name: 'name',
           placeholder: T('Name'),
           tooltip: T('Rename the existing boot environment.'),
+          validation : [ regexValidator(this.bootEnvService.bootenv_name_regex)],
+          required: true
         },
       ];
     });

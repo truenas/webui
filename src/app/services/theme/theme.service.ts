@@ -3,6 +3,7 @@ import * as domHelper from '../../helpers/dom.helper';
 import { RestService, WebSocketService } from 'app/services';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { ApiService } from 'app/core/services/api.service';
+import { Router } from '@angular/router';
 
 export interface Theme {
   name: string;
@@ -12,6 +13,8 @@ export interface Theme {
   accentColors: string[];
   favorite:boolean;
   hasDarkLogo: boolean;
+  logoPath?:string;
+  logoTextPath?:string;
   primary:string;
   accent:string;
   bg1:string
@@ -51,8 +54,10 @@ export class ThemeService {
       labelSwatch:"blue",
       description:'iX System Colors',
       hasDarkLogo:false,
+      logoPath:'assets/images/light-logo.svg',
+      logoTextPath:'light-logo-text.svg',
       favorite:false,
-      accentColors:['blue', 'orange','green', 'violet','cyan', 'magenta', 'yellow','red'],
+      accentColors:['green', 'violet', 'orange', 'cyan', 'magenta', 'red', 'yellow', 'blue'],
       primary:"var(--blue)",
       accent:"var(--yellow)",
       bg1:'#dddddd',
@@ -64,7 +69,7 @@ export class ThemeService {
       'alt-fg1':'#181a26',
       'alt-fg2':'#282a36',
       yellow:'#f0cb00',
-      orange:'#eec302',
+      orange:'#ee9302',
       red:'#ff0013',
       magenta:'#d238ff',
       violet:'#c17ecc',
@@ -78,8 +83,10 @@ export class ThemeService {
       labelSwatch:"blue",
       description:'Dracula color theme',
       hasDarkLogo:false,
+      logoPath:'assets/images/light-logo.svg',
+      logoTextPath:'light-logo-text.svg',
       favorite:false,
-      accentColors:['blue', 'green','violet', 'yellow', 'red', 'cyan', 'magenta', 'orange'],
+      accentColors:['green','violet', 'yellow', 'red', 'cyan', 'magenta', 'orange','blue'],
       primary:"var(--blue)",
       accent:"var(--violet)",
       bg1:'#181a26',
@@ -105,6 +112,8 @@ export class ThemeService {
       labelSwatch:"bg2",
       description:'Solarized dark color scheme',
       hasDarkLogo:false,
+      logoPath:'assets/images/light-logo.svg',
+      logoTextPath:'light-logo-text.svg',
       favorite:false,
       accentColors:['red', 'blue', 'magenta', 'cyan', 'violet', 'green', 'orange', 'yellow'],
       primary:"var(--fg1)",
@@ -132,6 +141,8 @@ export class ThemeService {
       labelSwatch:"bg2",
       description:'Based on Solarized light color scheme',
       hasDarkLogo:false,
+      logoPath:'assets/images/light-logo.svg',
+      logoTextPath:'light-logo-text.svg',
       favorite:false,
       accentColors:['orange', 'green', 'cyan', 'yellow', 'violet', 'magenta', 'red', 'blue'],
       primary:"var(--alt-bg2)",
@@ -160,25 +171,31 @@ export class ThemeService {
   public globalPreview: boolean = false;
   public globalPreviewData: any;
 
-  constructor(private rest: RestService, private ws: WebSocketService, private core:CoreService, private api:ApiService) {
-    console.log("*** New Instance of Theme Service ***");
-    
+  public userThemeLoaded: boolean = false;
+  constructor(private rest: RestService, private ws: WebSocketService, private core:CoreService, private api:ApiService,
+              private route: Router) {
+
     // Set default list
     this.allThemes = this.freenasThemes;
     this.themesMenu = this.freenasThemes;
 
     this.core.register({observerClass:this,eventName:"Authenticated", sender:this.api}).subscribe((evt:CoreEvent) => {
+      this.core.emit({name:"ThemeChanged", data:this.findTheme(this.activeTheme), sender:this});
       this.loggedIn = evt.data;
       if(this.loggedIn == true){
         this.core.emit({ name:"UserDataRequest",data:[[["id", "=", 1]]] });
       } else {
         //console.warn("SETTING DEFAULT THEME");
-        this.setDefaultTheme();
+        this.resetToDefaultTheme();
       }
     });
 
+    this.core.register({observerClass:this, eventName:"ThemeDataRequest"}).subscribe((evt:CoreEvent) => {
+      this.core.emit({name:"ThemeData", data:this.findTheme(this.activeTheme), sender:this});
+    });
+
     this.core.register({observerClass:this,eventName:"GlobalPreviewChanged"}).subscribe((evt:CoreEvent) => {
-      
+      console.log("GlobalPreview callback")
       //this.globalPreview = !this.globalPreview;
       if(evt.data){
         this.globalPreview = true;
@@ -196,25 +213,38 @@ export class ThemeService {
 
     this.core.register({observerClass:this,eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
       if(evt.data.customThemes){
-        //console.log("Custom Themes Detected");
         this.customThemes = evt.data.customThemes;
       }
 
-      if(evt.data.userTheme !== this.activeTheme){
+      //if(evt.data.userTheme !== this.activeTheme){
         this.activeTheme = evt.data.userTheme;
-        this.setCssVars(this.findTheme(this.activeTheme));
-        this.core.emit({name:'ThemeChanged'});
-      }
+        this.setCssVars(this.findTheme(this.activeTheme, true));
+        this.userThemeLoaded = true;
+        this.core.emit({name:'ThemeChanged', data: this.findTheme(this.activeTheme), sender:this});
+      //}
 
       if(evt.data.showTooltips){
         (<any>document).documentElement.style.setProperty("--tooltip","inline");
       } else if(!evt.data.showTooltips){
         (<any>document).documentElement.style.setProperty("--tooltip","none");
       }
+
+      if(evt.data.allowPwToggle){
+        (<any>document).documentElement.style.setProperty("--toggle_pw_display_prop","inline");
+      } else if(!evt.data.allowPwToggle){
+        (<any>document).documentElement.style.setProperty("--toggle_pw_display_prop", "none");
+      }
+      
+      if(evt.data.enableWarning){
+        (<any>document).documentElement.style.setProperty("--enableWarning","inline");
+      } else if(!evt.data.allowPwToggle){
+        (<any>document).documentElement.style.setProperty("--enableWarning", "none");
+      }
+
     });
   }
 
-  setDefaultTheme(){
+  resetToDefaultTheme(){
     this.activeTheme = "ix-blue";
     this.changeTheme(this.activeTheme);
   }
@@ -223,10 +253,15 @@ export class ThemeService {
     return this.findTheme(this.activeTheme);
   }
 
-  findTheme(name:string):Theme{
+  findTheme(name:string, reset?:boolean):Theme{
     for(let i in this.allThemes){
       let t = this.allThemes[i];
       if(t.name == name){ return t;}
+    }
+    if(reset){
+      //Optionally reset if not found
+      this.resetToDefaultTheme();
+      return this.freenasThemes[this.freeThemeDefaultIndex];
     }
   }
 
@@ -234,7 +269,7 @@ export class ThemeService {
     //console.log("THEME SERVICE THEMECHANGE: changing to " + theme + " theme");
     this.core.emit({name:"ChangeThemePreference", data:theme, sender:this});
     //this.core.emit({name:'ThemeChanged'});
-  }
+    }
 
   saveCurrentTheme(){
     //console.log("SAVING CURRENT THEME");
@@ -244,14 +279,100 @@ export class ThemeService {
 
   setCssVars(theme:Theme){ 
     let palette = Object.keys(theme);
+
+    // Isolate palette colors
     palette.splice(0,7);
 
-    palette.forEach(function(color){
+    palette.forEach((color) => {
       let swatch = theme[color];
+      
+      // Generate aux. text styles 
+      if(this.freenasThemes[0].accentColors.indexOf(color) !== -1){
+        let txtColor = this.textContrast(theme[color], theme["bg2"]);
+        (<any>document).documentElement.style.setProperty("--" + color + "-txt", txtColor);
+      }
+
       (<any>document).documentElement.style.setProperty("--" + color, theme[color]);
     });
+
+    // Set Material palette colors
     (<any>document).documentElement.style.setProperty("--primary",theme["primary"]);
     (<any>document).documentElement.style.setProperty("--accent",theme["accent"]);
+
+    // Set Material aux. text styles
+    let primaryColor = this.colorFromMeta(theme["primary"]); // eg. blue
+    let accentColor = this.colorFromMeta(theme["accent"]); // eg. yellow
+    let primaryTextColor = this.textContrast(theme[primaryColor], theme["bg2"]);
+    let accentTextColor = this.textContrast(theme[accentColor], theme["bg2"]);
+    (<any>document).documentElement.style.setProperty("--primary-txt", /*'var(--' + primaryColor + '-txt)'*/primaryTextColor);
+    (<any>document).documentElement.style.setProperty("--accent-txt", /*'var(--' + accentColor + '-txt)'*/accentTextColor);
+
+    // Logo light/dark
+    if(theme["hasDarkLogo"]){
+      theme.logoPath = 'assets/images/logo.svg';
+      theme.logoTextPath = 'assets/images/logo-text.svg';
+    } else {
+      theme.logoPath = 'assets/images/light-logo.svg';
+      theme.logoTextPath = 'assets/images/light-logo-text.svg';
+    }
+  }
+
+  public textContrast(cssVar, bgVar){
+    let txtColor = '';
+    // Convert hex value to RGB
+    let props = this.hexToRGB(cssVar); 
+
+    // Find the average value to determine brightness
+    let brightest = (props.rgb[0] + props.rgb[1] + props.rgb[2]) / 3;
+    // Find a good threshold for when to have light text color
+    if(brightest < 144){
+      txtColor = "#ffffff"
+    } else if(brightest > 191) {
+      txtColor = "#333333"
+    } else {
+      // RGB averages between 144-197 are to be 
+      // matched to bg2 css variable.
+      let bgProp = this.hexToRGB(bgVar);
+      let bgAvg = (bgProp.rgb[0] + bgProp.rgb[1] + bgProp.rgb[2]) / 3;
+      if(bgAvg < 127){
+        txtColor = "#333333";
+      } else {
+        txtColor = "#ffffff";
+      }
+    }
+
+
+    return txtColor;
+  }
+
+  hexToRGB(str) {
+    var spl = str.split('#');
+    var hex = spl[1];
+    if(hex.length == 3){
+      hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+    }
+
+    var value = '';
+    var rgb = [];
+    for(let i = 0; i < 6; i++){
+      let mod = i % 2;
+      let even = 0;
+      value += hex[i];
+      if(mod !== even){
+        rgb.push(parseInt(value, 16))
+        value = '';
+      }
+    }
+    return {
+      hex:hex,
+      rgb:rgb
+    }
+  }
+  
+  public colorFromMeta(meta:string){
+    let trimFront = meta.replace('var(--','');
+    let trimmed = trimFront.replace(')','');
+    return trimmed;
   }
 
   get customThemes(){

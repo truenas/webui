@@ -12,6 +12,9 @@ interface StatSource {
   listeners: ListenerRegistration[];
   realtime:boolean;
   messages?:any;
+  keysAsDatasets:boolean;
+  datasetsType?:string; // Use this if keysAsDatasets == true 
+  bidirectional?:string; // Use strings like eg. "rx/tx" or "read/write"
 }
 
 interface ListenerRegistration {
@@ -25,12 +28,25 @@ interface ListenerRegistration {
 export class StatsService {
 
   /*
+   *  This Service serves three purposes:
+   *  1 - Checks for sources before requests are made
+   *  2 - Handles the API request (requests only! Responses are sent directly to the observers)
+   *  3 - Repeats the requests at certain intervals to keep stats somewhat current
+   *
    *  !IMPORTANT
    *  For anybody that might decide to come in and refactor this code later on.
    *  Below is an example of what the call you are trying to build looks like...
    *  
    *  Example message 
    *  this.core.emit({ name:"StatsRequest", data:[ [{source:'aggregation-cpu-sum',type:'cpu-user', 'dataset':'value'}], {step:'10',start:'now-10m'} ] });
+   *  
+   *  ABOUT DATASETS
+   *  Most stats will have their type vary and the dataset equal to 'value'
+   *  However, there are other cases where the type will be the same and the dataset 
+   *  will vary. For example, the 'if_packets' stat has two varieties both with the
+   *  type set to 'if_packets' but the dataset will be either 'tx' or 'rx'.
+   *  For these cases, set the keysAsDatasets to true and set the datasetsType to 
+   *  what the type value should be.
    */
 
   // Master Sources List
@@ -43,7 +59,8 @@ export class StatsService {
       properties:[],
       available:[],
       realtime:false,
-      listeners:[]
+      listeners:[],
+      keysAsDatasets: false
     },
     {
       name:"Cpu",
@@ -52,7 +69,8 @@ export class StatsService {
       properties:[],
       available:[],
       realtime:true,
-      listeners:[]
+      listeners:[],
+      keysAsDatasets: false
     },
     {
       name:"CpuTemp",
@@ -61,7 +79,8 @@ export class StatsService {
       properties:[],
       available:[],
       realtime:true,
-      listeners:[]
+      listeners:[],
+      keysAsDatasets: false
     },
     {
       name:"Devices",
@@ -70,7 +89,8 @@ export class StatsService {
       properties:[],
       available:[],
       realtime:false,
-      listeners:[]
+      listeners:[],
+      keysAsDatasets: false
     },
     {
       name:"Mounts",
@@ -79,7 +99,8 @@ export class StatsService {
       properties:[],
       available:[],
       realtime:false,
-      listeners:[]
+      listeners:[],
+      keysAsDatasets: false
     },
     {
       name:"Disks",
@@ -88,7 +109,8 @@ export class StatsService {
       properties:[],
       available:[],
       realtime:true,
-      listeners:[]
+      listeners:[],
+      keysAsDatasets: false
     },
     {
       name:"DiskTemp",
@@ -97,7 +119,8 @@ export class StatsService {
       properties:[],
       available:[],
       realtime:true,
-      listeners:[]
+      listeners:[],
+      keysAsDatasets: false
     },
     {
       name:"GEOM",
@@ -106,16 +129,8 @@ export class StatsService {
       properties:[],
       available:[],
       realtime:false,
-      listeners:[]
-    },
-    {
-      name:"NIC",
-      prefix: "interface-",
-      keys:["any"],
-      properties:[],
-      available:[],
-      realtime:false,
-      listeners:[]
+      listeners:[],
+      keysAsDatasets: false
     },
     {
       name:"System",
@@ -124,16 +139,30 @@ export class StatsService {
       properties:[],
       available:[],
       realtime:true,
-      listeners:[]
+      listeners:[],
+      keysAsDatasets: false
     },
     {
       name:"Load",
       prefix: "",
-      keys:["load"],
+      keys:["shortterm","midterm","longterm"],
       properties:[],
       available:[],
       realtime:false,
-      listeners:[]
+      listeners:[],
+      keysAsDatasets: true,
+      datasetsType:"load"
+    },
+    {
+      name:"NIC",
+      prefix: "interface-",
+      keys:["any"],
+      properties:[],
+      available:[],
+      realtime:true,
+      listeners:[],
+      keysAsDatasets: false,
+      bidirectional:"rx/tx"
     },
     {
       name:"Processes",
@@ -143,17 +172,19 @@ export class StatsService {
       properties:[],
       available:[],
       realtime:false,
-      listeners:[]
+      listeners:[],
+      keysAsDatasets: false
     },
     {
       name:"Memory",
       prefix: "",
       legendPrefix:"/memory-",
-      keys:["memory"],
+      keys:["memory"],//["inactive","wired","laundry","free","active", "cache"],
       properties:[],
       available:[],
       realtime:false,
-      listeners:[]
+      listeners:[],
+      keysAsDatasets: false
     },
     {
       name:"FileSystem",
@@ -162,12 +193,11 @@ export class StatsService {
       properties:[],
       available:[],
       realtime:false,
-      listeners:[]
+      listeners:[],
+      keysAsDatasets: false
     }
   ];
 
-  //private sourcesRealtime: StatSource[] = [];
-  //private sources: StatSource[] = [];
   private debug:boolean = false;
   private messages: any[] = [];
   private messagesRealtime: any[] = [];
@@ -175,12 +205,14 @@ export class StatsService {
   private queue:any[] = [];
   private started:boolean = false;
   private bufferSize:number = 60000;// milliseconds
-  private bufferSizeRealtime:number = 15000;// milliseconds
-  private broadcastId:number;
-  private broadcastRealtimeId:number;
+  private bufferSizeRealtime:number = 5000;// milliseconds
+  private broadcastId:any;
+  private broadcastRealtimeId:any;
 
   constructor(private core:CoreService, private api:ApiService) {
-    //DEBUG: .log("*** New Instance of Stats Service ***");
+    if(this.debug){
+      console.log("*** New Instance of Stats Service ***");
+    }
 
     this.core.emit({name:"StatsSourcesRequest"});
 
@@ -193,19 +225,18 @@ export class StatsService {
     });
 
     this.core.register({observerClass:this,eventName:"StatsData"}).subscribe((evt:CoreEvent) => {
-      //DEBUG: .log(evt);
+      console.log("**** STATSDATA ****");
+      console.log(evt);
     });
 
     this.core.register({observerClass:this,eventName:"StatsSources"}).subscribe((evt:CoreEvent) => {
-      //this.checkAvailability(evt.data);
       this.updateSources(evt.data);
       if(this.debug){
-        //DEBUG: .log("**** StatsSources ****");
-        //DEBUG: .log(evt.data);
-        //DEBUG: .warn(this.sources);
+        console.log("**** StatsSources ****");
+        console.log(evt.data);
+        console.warn(this.sources);
       }
-      //this.core.emit({ name:"StatsRequest", data:[[{source:'aggregation-cpu-sum',type:'cpu-user', 'dataset':'value'}],{step:'10',start:'now-10m'}] });
-      }); 
+    }); 
 
   }
 
@@ -216,7 +247,7 @@ export class StatsService {
   startBroadcast(){
     this.started = true;
     if(this.debug){
-      //DEBUG: .log("Starting Broadcast...");
+      console.log("Starting Broadcast...");
     }
     
     this.broadcast(this.messages, this.bufferSize); 
@@ -226,13 +257,12 @@ export class StatsService {
   stopBroadcast(messageList?){
     this.started = false;
     if(this.debug){
-      //DEBUG: .log("Stopping Broadcast!");
+      console.log("Stopping Broadcast!");
     }
     if(messageList && messageList == this.messagesRealtime){
       clearInterval(this.broadcastRealtimeId);
     } else if(messageList && messageList == this.messages){
       clearInterval(this.broadcastId);
-      //DEBUG: .log(this.broadcastId);
     } else {
       clearInterval(this.broadcastRealtimeId);
       clearInterval(this.broadcastId);
@@ -242,7 +272,7 @@ export class StatsService {
 
   broadcast(messages:CoreEvent[],buffer){
     if(messages.length == 0){
-      //DEBUG: .warn("Timer only runs when message list is not empty");
+      console.warn("Timer only runs when message list is not empty");
       return ;
     }
 
@@ -328,15 +358,39 @@ export class StatsService {
       if(source.properties[prop] == "cpu-idle" || source.properties[prop] == "ps_state-idle"){
         continue;
       }
-      dataList.push({
-        source:src,//"aggregation-cpu-sum",
-        type:source.properties[prop],
-        dataset:"value"
-      });
+      if(source.keysAsDatasets){
+        dataList.push({
+          source:source.datasetsType,//"load",
+          type:source.datasetsType,
+          dataset:source.properties[prop]
+        });
+        //console.warn(dataList)
+      } else if(source.bidirectional){
+        // This is for rx/tx and read/write stats
+        let direction = source.bidirectional.split("/");
+        dataList.push({
+          source:src,//"aggregation-cpu-sum",
+          type:source.properties[prop],
+          dataset: direction[0]
+        });
+        dataList.push({
+          source:src,//"aggregation-cpu-sum",
+          type:source.properties[prop],
+          dataset:direction[1]
+        });
+      } else {
+        dataList.push({
+          source:src,//"aggregation-cpu-sum",
+          type:source.properties[prop],
+          dataset:"value"
+        });
+      }
     } 
     let messageData;
     if(source.legendPrefix){
       messageData = {responseEvent:eventName, legendPrefix: src + source.legendPrefix, args: [dataList, options ]};
+    } else if(source.bidirectional) {
+      messageData = {responseEvent:eventName, args: [dataList, options]};
     } else {
       messageData = {responseEvent:eventName, args: [dataList, options ]};
     }
@@ -352,17 +406,18 @@ export class StatsService {
 
   jobExec(job){
     if(this.debug){
-      //DEBUG: .log("JOB STARTING...");
+      console.log("JOB STARTING...");
+      console.log(this.messagesRealtime);
     }
     for(let i  = 0; i < job.length; i++){
       let message = job[i];
       if(this.debug){
-        //DEBUG: .log(message);
+        console.log(message);
       }
       this.core.emit(message);
     }
     if(this.debug){
-      //DEBUG: .log("JOB FINISHED")
+      console.log("JOB FINISHED")
     }
   }
 
@@ -378,31 +433,35 @@ export class StatsService {
     this.messagesRealtime = [];
 
     for(let i = 0; i < this.sources.length; i++){
-      //DEBUG: console.log("UpdateSources Loop");
       let source = this.sources[i];
       let available = [];
 
-      source.keys.forEach((item,index) => {
-        // WildCard
-        if(source.keys[0] == "any"){
-          let matches = dataSources.filter((x)=> {
-            return x.startsWith(source.prefix);
-          });
-          //DEBUG: console.warn(matches);
-          let a = matches.forEach((item) => {
-            available.push(item);
-          });
-        } else {
-          if(dataSources.indexOf(source.prefix + item) !== -1){
-            available.push(source.prefix + item);
+      if(source.keysAsDatasets && dataSources.indexOf(source.datasetsType) !== -1){
+        available.push(source.datasetsType);
+        source.properties = source.keys;
+      } 
+     
+        source.keys.forEach((item,index) => {
+          // WildCards
+          if(source.keys[0] == "any"){
+            let matches = dataSources.filter((x)=> {
+              return x.startsWith(source.prefix);
+            });
+            //DEBUG: console.warn(matches);
+            let a = matches.forEach((item) => {
+              available.push(item);
+            });
+          } else {
+            if(dataSources.indexOf(source.prefix + item) !== -1){
+              available.push(source.prefix + item);
+            }
           }
-        }
-      });
+        });
+      
       source.available = available;
 
        // Store properties
-       if(source.available.length > 0){
-         //DEBUG: console.log("UpdateSources Setting Properties");
+       if(source.available.length > 0 && !source.keysAsDatasets){
          source.properties = data[source.available[0]];
        }
 
@@ -448,6 +507,9 @@ export class StatsService {
       
       let reg = source.listeners[i];
 
+      if(source.bidirectional){
+        source.keys = this.keysFromAvailable(source);
+      }
       // Abort if data source not available
       if(reg.key && source.keys.indexOf(reg.key) == -1){
         reg.message = null;
@@ -496,15 +558,14 @@ export class StatsService {
 
   removeListener(obj:any){
     if(this.debug){
-      //DEBUG: .warn("REMOVING LISTENER")
-      //DEBUG: .log(obj);
+      console.warn("REMOVING LISTENER")
+      console.log(obj);
     }
     let messageList;
      // Remove from sources
      for(let i = 0; i < this.sources.length; i++){
        for(let index = 0; index < this.sources[i].listeners.length; index++){
          if(this.sources[i].listeners[index].obj == obj){
-           //this.sources[i].listeners.splice(index,1);
            if(this.sources[i].realtime){
             messageList = this.messagesRealtime;
            } else {
@@ -515,8 +576,7 @@ export class StatsService {
        }
      }
 
-     if(messageList.length == 0){
-       //DEBUG: .log("REMOVE LISTENER METHOD STOPPING BROADCAST");
+     if(!messageList || messageList.length == 0){
        this.stopBroadcast(messageList);
      }
   }
@@ -564,6 +624,16 @@ export class StatsService {
       }
     }
     return -1;
+  }
+
+  keysFromAvailable(source){
+    let clone= Object.assign([], source.available);
+    let keychain = clone.map((x) =>{
+        if(source.prefix){
+          return x.replace(source.prefix,"");
+        }
+      });
+    return keychain;
   }
 
 }

@@ -1,7 +1,7 @@
 import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs/Subscription';
+import {Subscription} from 'rxjs';
 import {  DialogService } from '../../../services/';
 import { Validators } from '@angular/forms';
 
@@ -50,23 +50,23 @@ export class NISComponent {
       name : 'nis_servers',
       placeholder : T('NIS servers'),
       tooltip : T('Enter a comma-delimited list of hostnames or IP\
-                 addresses.')
+                   addresses.')
     },
     {
       type : 'checkbox',
       name : 'nis_secure_mode',
       placeholder : T('Secure mode'),
       tooltip : T('Set to have <a\
-                 href="https://www.freebsd.org/cgi/man.cgi?query=ypbind"\
-                 target="_blank">ypbind(8)</a> refuse to bind to any NIS\
-                 server not running as root on a TCP port over 1024.')
+                   href="https://www.freebsd.org/cgi/man.cgi?query=ypbind"\
+                   target="_blank">ypbind(8)</a> refuse to bind to any NIS\
+                   server not running as root on a TCP port over 1024.')
     },
     {
       type : 'checkbox',
       name : 'nis_manycast',
       placeholder : T('Manycast'),
       tooltip : T('Set for ypbind to bind to the server that responds\
-                 the fastest.')
+                   the fastest.')
     },
     {
       type : 'checkbox',

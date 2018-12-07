@@ -9,6 +9,9 @@ import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
 import { T } from '../../../../translate-marker';
+import {
+  rangeValidator
+} from '../../../common/entity/entity-form/validators/range-validation';
 
 import {
   RestService,
@@ -42,6 +45,8 @@ export class ServiceFTPComponent implements OnInit {
       name : 'port',
       placeholder : T('Port'),
       tooltip: T('Set the port the FTP service listens on.'),
+      required: true,
+      validation: [rangeValidator(1, 65535), Validators.required]
     },
     {
       type : 'input',
@@ -49,7 +54,7 @@ export class ServiceFTPComponent implements OnInit {
       placeholder : T('Clients'),
       tooltip: T('The maximum number of simultaneous clients.'),
       required: true,
-      validation : [ Validators.required ]
+      validation : [rangeValidator(1, 10000), Validators.required]
     },
     {
       type : 'input',
@@ -58,7 +63,7 @@ export class ServiceFTPComponent implements OnInit {
       tooltip: T('Set the maximum number of connections per IP address.\
                   <i>0</i> means unlimited.'),
       required: true,
-      validation : [ Validators.required ]
+      validation : [rangeValidator(0, 1000), Validators.required]
     },
     {
       type : 'input',
@@ -67,7 +72,7 @@ export class ServiceFTPComponent implements OnInit {
       tooltip: T('Enter the maximum number of attempts before client is\
                   disconnected. Increase this if users are prone to typos.'),
       required: true,
-      validation : [ Validators.required ]
+      validation : [rangeValidator(0, 1000), Validators.required]
     },
     {
       type : 'input',
@@ -76,7 +81,7 @@ export class ServiceFTPComponent implements OnInit {
       tooltip: T('Maximum client idle time in seconds before client is\
                   disconnected.'),
       required: true,
-      validation : [ Validators.required ]
+      validation : [rangeValidator(0, 10000), Validators.required]
     },
     {
       type : 'checkbox',
@@ -145,13 +150,14 @@ export class ServiceFTPComponent implements OnInit {
       placeholder : T('Certificate'),
       tooltip: T('The SSL certificate to be used for TLS FTP connections.\
                   To create a certificate, use <b>System --> Certificates</b>.'),
-      options : [],
+      options : [{label:'-', value:null}],
     },
     {
       type : 'permissions',
       name : 'filemask',
       placeholder : T('File Permission'),
       tooltip: T('Sets default permissions for newly created files.'),
+      noexec: true,
     },
     {
       type : 'permissions',
@@ -180,6 +186,8 @@ export class ServiceFTPComponent implements OnInit {
       placeholder : T('Minimum Passive Port'),
       tooltip: T('Used by clients in PASV mode. A default of <i>0</i>\
                   means any port above 1023.'),
+      required: true,
+      validation: [rangeValidator(0, 65535), Validators.required]
     },
     {
       type : 'input',
@@ -187,30 +195,40 @@ export class ServiceFTPComponent implements OnInit {
       placeholder : T('Maximum Passive Port'),
       tooltip: T('Used by clients in PASV mode. A default of <i>0</i>\
                   means any port above 1023.'),
+      required: true,
+      validation: [rangeValidator(0, 65535), Validators.required]
     },
     {
       type : 'input',
       name : 'localuserbw',
       placeholder : T('Local User Upload Bandwidth'),
-      tooltip: T('In KB/s. A default of <i>0</i> means unlimited.'),
+      tooltip: T('In KiB/s. A default of <i>0</i> means unlimited.'),
+      required: true,
+      validation: [rangeValidator(0), Validators.required]
     },
     {
       type : 'input',
       name : 'localuserdlbw',
       placeholder : T('Local User Download Bandwidth'),
-      tooltip: T('In KB/s. A default of <i>0</i> means unlimited.'),
+      tooltip: T('In KiB/s. A default of <i>0</i> means unlimited.'),
+      required: true,
+      validation: [rangeValidator(0), Validators.required]
     },
     {
       type : 'input',
       name : 'anonuserbw',
       placeholder : T('Anonymous User Upload Bandwidth'),
-      tooltip: T('In KB/s. A default of <i>0</i> means unlimited.'),
+      tooltip: T('In KiB/s. A default of <i>0</i> means unlimited.'),
+      required: true,
+      validation: [rangeValidator(0), Validators.required]
     },
     {
       type : 'input',
       name : 'anonuserdlbw',
       placeholder : T('Anonymous User Download Bandwidth'),
-      tooltip: T('In KB/s. A default of <i>0</i> means unlimited.'),
+      tooltip: T('In KiB/s. A default of <i>0</i> means unlimited.'),
+      required: true,
+      validation: [rangeValidator(0), Validators.required]
     },
     {
       type : 'checkbox',
@@ -218,7 +236,7 @@ export class ServiceFTPComponent implements OnInit {
       placeholder : T('Enable TLS'),
       tooltip: T('Set to enable encrypted connections. Requires a certificate\
                   to be created or imported using\
-                  <a href="http://doc.freenas.org/11/system.html#certificates"\
+                  <a href="%%docurl%%/system.html%%webversion%%#certificates"\
                   target="_blank">Certificates</a>'),
     },
     {
@@ -367,14 +385,6 @@ export class ServiceFTPComponent implements OnInit {
     'tls_opt_ip_address_required',
     'options'
   ];
-  isCustActionVisible(actionId: string) {
-    if (actionId == 'advanced_mode' && this.isBasicMode == false) {
-      return false;
-    } else if (actionId == 'basic_mode' && this.isBasicMode == true) {
-      return false;
-    }
-    return true;
-  }
 
   public custActions: Array<any> = [
     {
@@ -389,13 +399,22 @@ export class ServiceFTPComponent implements OnInit {
     }
   ];
 
+  private ssltls_certificate: any;
+
+  isCustActionVisible(actionId: string) {
+    if (actionId == 'advanced_mode' && this.isBasicMode == false) {
+      return false;
+    } else if (actionId == 'basic_mode' && this.isBasicMode == true) {
+      return false;
+    }
+    return true;
+  }
+
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
 
               protected systemGeneralService: SystemGeneralService) {}
-
-  private ssltls_certificate: any;
 
   ngOnInit() {
     this.systemGeneralService.getCertificates().subscribe((res) => {
@@ -419,7 +438,38 @@ export class ServiceFTPComponent implements OnInit {
     if (certificate && certificate.id) {
       data['ssltls_certificate'] = certificate.id;
     }
+
+    let fileperm = parseInt(data['filemask'], 8);
+    let filemask = (~fileperm & 0o666).toString(8);
+    while (filemask.length < 3) {
+      filemask = '0' + filemask;
+    }
+    data['filemask'] = filemask;
+
+    let dirperm = parseInt(data['dirmask'], 8);
+    let dirmask = (~dirperm & 0o777).toString(8);
+    while (dirmask.length < 3) {
+      dirmask = '0' +dirmask;
+    }
+    data['dirmask'] = dirmask;
+
     return data;
+  }
+
+  beforeSubmit(data) {
+    let fileperm = parseInt(data['filemask'], 8);
+    let filemask = (~fileperm & 0o666).toString(8);
+    while (filemask.length < 3) {
+      filemask = '0' + filemask;
+    }
+    data['filemask'] = filemask;
+
+    let dirperm = parseInt(data['dirmask'], 8);
+    let dirmask = (~dirperm & 0o777).toString(8);
+    while (dirmask.length < 3) {
+      dirmask = '0' +dirmask;
+    }
+    data['dirmask'] = dirmask;
   }
 
   submitFunction(this: any, body: any){

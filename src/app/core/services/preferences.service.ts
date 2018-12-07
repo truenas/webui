@@ -1,13 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
-import { Observer } from 'rxjs/Observer';
-import { Subject } from 'rxjs/Subject';
+import { Router, ActivatedRoute } from '@angular/router';
 import { CoreService, CoreEvent } from './core.service';
 import { ApiService } from './api.service';
 import { ThemeService, Theme } from 'app/services/theme/theme.service';
-import * as moment from 'moment';
-
 export interface UserPreferences {
   platform:string; // FreeNAS || TrueNAS
   timestamp:Date;
@@ -17,11 +12,14 @@ export interface UserPreferences {
   showGuide:boolean; // Guided Tour on/off
   showTooltips:boolean; // Form Tooltips on/off
   metaphor:string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
+  allowPwToggle:boolean;
+  enableWarning:boolean;
 }
 
 @Injectable()
 export class PreferencesService {
   //public coreEvents: Subject<CoreEvent>;
+  private debug = false;
   public preferences: UserPreferences = {
     "platform":"freenas",
     "timestamp":new Date(),
@@ -30,10 +28,12 @@ export class PreferencesService {
     "favoriteThemes": [], // Theme Names
     "showGuide":true,
     "showTooltips":true,
-    "metaphor":"auto"
+    "metaphor":"auto",
+    "allowPwToggle":true,
+    "enableWarning": true
   }
-  constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router) {
-    console.log("*** New Instance of Preferences Service ***");
+  constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router,
+    private aroute: ActivatedRoute) {
 
     this.core.register({observerClass:this, eventName:"Authenticated",sender:this.api}).subscribe((evt:CoreEvent) => {
       //console.log(evt.data);
@@ -43,12 +43,39 @@ export class PreferencesService {
     });
 
     this.core.register({observerClass:this, eventName:"UserData", sender:this.api }).subscribe((evt:CoreEvent) => {
-      //console.log(evt);
-      if(evt.data[0].attributes.preferences){
-        this.updatePreferences(evt.data[0].attributes.preferences);
-      } else if(!evt.data[0].attributes.preferences){
-        this.savePreferences();
-        //console.warn("No Preferences Found in Middleware");
+      if (evt.data[0]) {
+        const data = evt.data[0].attributes.preferences;
+
+        const preferencesFromUI = Object.keys(this.preferences);
+        if(!data){
+          // If preferences do not exist return after saving Preferences so that UI can retry.
+          if(this.debug)console.log('Preferences not returned');
+          this.savePreferences();
+          console.warn("No Preferences Found in Middleware");
+          return;
+        }
+        const preferencesFromMiddleware = Object.keys(data);
+        const keysMatch:boolean = (preferencesFromUI.join() == preferencesFromMiddleware.join());// evaluates as false negative, wth?!
+        if(data && keysMatch){
+          // If preferences exist and there are no unknown properties
+          if(this.debug)console.log('Preferences exist');
+          this.updatePreferences(data);
+        } else if(data && !keysMatch){
+          // Add missing properties to inbound preferences from middleware
+          if(this.debug){
+            console.log('Preferences exist and there are unknown properties');
+            //console.log(preferencesFromMiddleware)
+            //console.log(preferencesFromUI)
+          }
+          const merged = this.mergeProperties(this.preferences, data);
+          this.updatePreferences(data);
+        } else if(!data){
+          // If preferences do not exist
+          if(this.debug)console.log('Preferences not returned');
+          this.savePreferences();
+          console.warn("No Preferences Found in Middleware");
+        }
+
       }
     });
 
@@ -74,9 +101,9 @@ export class PreferencesService {
     });
 
     this.core.register({observerClass:this, eventName:"ReplaceCustomThemePreference"}).subscribe((evt:CoreEvent) => {
-        let oldTheme:Theme;
-        let newTheme = evt.data;
-        let replaced:boolean = this.replaceCustomTheme(oldTheme,newTheme);
+        let oldTheme: Theme;
+        const newTheme = evt.data;
+        const replaced:boolean = this.replaceCustomTheme(oldTheme,newTheme);
         if(replaced){
           this.core.emit({name:"UserDataUpdate", data:this.preferences});
         }
@@ -85,7 +112,7 @@ export class PreferencesService {
     this.core.register({observerClass:this, eventName:"ChangePreferences"}).subscribe((evt:CoreEvent) => {
       //console.log("ChangePreferences");
       //console.log(evt.data);
-      let prefs = this.preferences;
+      const prefs = this.preferences;
       Object.keys(evt.data).forEach(function(key){
         prefs[key] = evt.data[key];
       });
@@ -97,16 +124,15 @@ export class PreferencesService {
 
   // Update local cache
   updatePreferences(data:UserPreferences){
-    //console.log("UPDATING LOCAL PREFERENCES");
-    this.preferences = data;
+      //console.log("UPDATING LOCAL PREFERENCES");
+      this.preferences = data;
 
-    //Notify Guided Tour & Theme Service
-    this.core.emit({name:"UserPreferencesChanged", data:this.preferences});
+      //Notify Guided Tour & Theme Service
+      this.core.emit({name:"UserPreferencesChanged", data:this.preferences});
   }
 
   // Save to middleware
   savePreferences(data?:UserPreferences){
-    console.log(data);
     if(!data){
       data = this.preferences;
     }
@@ -114,7 +140,7 @@ export class PreferencesService {
   }
 
   replaceCustomTheme(oldTheme:Theme, newTheme:Theme):boolean{
-    let index = this.preferences.customThemes.indexOf(oldTheme);
+    const index = this.preferences.customThemes.indexOf(oldTheme);
     if(index && index >= 0){
       this.preferences.customThemes[index] = newTheme;
       return true;
@@ -128,6 +154,21 @@ export class PreferencesService {
     } else if(!value) {
       localStorage.setItem(this.router.url,'false')
     }
+  }
+
+  mergeProperties(fui, fmw){
+    // Use this to add newer properties from middleware responses
+    // fetched after updates. Handy for when update contains new
+    // preference options.
+    // fui = from UI && fmw = from middleware
+    const merged = Object.assign(fmw, {});
+    const keys = Object.keys(fui);
+    const newProps = keys.filter(x => !fmw[x]);
+    
+    newProps.forEach((item, index) => {
+    	merged[item] = fui[item];	
+    });
+    return merged;
   }
 
 }

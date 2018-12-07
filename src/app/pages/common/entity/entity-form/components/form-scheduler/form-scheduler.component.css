@@ -4,8 +4,10 @@
 
 .advanced-date-picker.mat-card{
   position:fixed;
-  top:200px;
+  top:10%;
+  left:calc(50% - 310px);
   z-index:2;
+
   width:620px;
   padding:0 0 0 300px;
   box-shadow: 0 5px 5px -3px rgba(0,0,0,.2),0 8px 10px 1px rgba(0,0,0,.14),0 3px 14px 2px rgba(0,0,0,.12);
@@ -39,7 +41,8 @@
 ul.schedule-list{
     margin-top: 16px;
     list-style-type: none;
-    max-height: 242px;
+    max-height: 241px;
+    
     overflow-y: auto;
 }
 
@@ -64,13 +67,17 @@ ul.schedule-list li:nth-child(odd){
   top:0;
   right:0;*/
   background-color:var(--primary);
-  color:var(--alt-bg1);
+  color:var(--primary-txt);
   text-align:center;
   padding:0;
 }
 
+::ng-deep mat-option .mat-option-text em.crontab{
+  opacity:0.5;
+}
+
 ::ng-deep .cron-fields .mat-checkbox-frame{
-  border-color:var(--alt-bg1);
+  border-color:var(--primary-txt);
 }
 
 ::ng-deep .cron-fields .mat-form-field-label,
@@ -78,13 +85,13 @@ ul.schedule-list li:nth-child(odd){
 ::ng-deep .cron-fields label.mat-form-field-placeholder,
 ::ng-deep .cron-fields .mat-input-infix,
 .cron-fields .mat-form-field-should-float.mat-focused label{
-  color:var(--alt-bg1) !important;
+  color:var(--primary-txt) !important;
 }
 
 ::ng-deep .mat-form-field-underline,
 ::ng-deep .mat-focused .mat-form-field-underline,
 ::ng-deep .mat-form-field-underline .mat-form-field-ripple{
-  background-color:var(--alt-bg1);
+  background-color:var(--primary-txt);
 }
 
 .cron-fields section{
@@ -118,6 +125,10 @@ ul.schedule-list li:nth-child(odd){
   margin-top:4px;
 }
 
+.cron-fields .invalid{
+  color:var(--red) !important;
+}
+
 /*Button Toggle Group*/
 .cron-fields mat-button-toggle-group{
   margin:16px 0;
@@ -140,6 +151,16 @@ mat-form-field.cron-presets{
 }
 
 /* Calendar View Settings*/
+.calendar-wrapper{
+  height:300px;
+}
+.mat-calendar-content .controls{
+    display: inline-block;
+    position: absolute;
+    right: 8px;
+    top: 5px;
+}
+
 ::ng-deep .cron-fields .mat-button-toggle-label-content{
   line-height:unset;
   padding:unset;
@@ -155,8 +176,10 @@ mat-form-field.cron-presets{
   color: var(--fg2);
 }
 
-::ng-deep thead.mat-calendar-table-header{
+:host ::ng-deep thead.mat-calendar-table-header{
   /*display:none;*/
+  color: var(--fg2);
+  opacity: 0.5;
 }
 
 ::ng-deep .mat-calendar-table-header tr{
@@ -173,4 +196,9 @@ mat-form-field.cron-presets{
 }
 ::ng-deep .mat-calendar-body-today{
   border-color:var(--green) !important;
+}
+@media screen and (max-height:700px){
+  .advanced-date-picker.mat-card{
+    top:-20px;
+  }
 }

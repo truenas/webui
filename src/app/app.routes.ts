@@ -36,7 +36,7 @@ export const rootRouterConfig: Routes = [{
       {
         path: 'account',
         loadChildren: './pages/account/account.module#AccountModule',
-        data: { title: 'Account', breadcrumb: 'Account'}
+        data: { title: 'Accounts', breadcrumb: 'Accounts'}
       },
       {
         path: 'system',
@@ -111,7 +111,7 @@ export const rootRouterConfig: Routes = [{
       {
         path : 'ui-preferences',
         loadChildren : './pages/preferences/preferences.module#PreferencesModule',
-        data: { title: 'UI Preferences', breadcrumb: 'UI Preferences'}
+        data: { title: 'Web Interface Preferences', breadcrumb: 'Web Interface Preferences'}
       }
     ]
   },

@@ -36,44 +36,65 @@ export class SupportComponent  {
   public category: any;
   public payload = {};
   public entityEdit: any;
-  public route_success: string[] = ['system','support'];
   public saveSubmitText = "Submit";
   public registerUrl = " https://redmine.ixsystems.com/account/register"
-  
+  public password_fc: any;
+  public username_fc: any;
+
 
   public fieldConfig: FieldConfig[] = [
     {
       type: 'paragraph',
       name: 'support_text',
       paraText: this.sanitizer.bypassSecurityTrustHtml(
-        "Before filing a bug report or feature request, search http://bugs.freenas.org to ensure the issue has not already been reported. If it has, add a comment to the existing issue instead of creating a new one. For enterprise-grade storage solutions and support, please visit http://www.ixsystems.com/storage/. <br><br> If you do not have an account, please register at https://redmine.ixsystems.com/account/register")
+        'Search the <a href="https://redmine.ixsystems.com/projects/freenas" \
+         target="_blank" style="text-decoration:underline;">FreeNAS issue tracker</a> \
+         to ensure the issue has not already been reported before \
+         filing a bug report or feature request. If an issue has \
+         already been created, add a comment to the existing issue. \
+         Please visit the <a href="http://www.ixsystems.com/storage/" target="_blank" \
+         style="text-decoration:underline;">iXsystems storage page</a> \
+         for enterprise-grade storage solutions and support.<br><br> \
+         <a href="https://redmine.ixsystems.com/account/register" target="_blank" \
+         style="text-decoration:underline;">Create a Redmine account</a> to file an issue. Use a valid \
+         email address when registering to receive issue status updates.')
     },
-    
+
     {
       type : 'input',
       name : 'username',
       placeholder : T('Username'),
-      tooltip : T(''),
+      tooltip : T('Enter a valid username for the <a\
+                   href="https://redmine.ixsystems.com/projects/freenas/issues"\
+                   target="_blank">FreeNAS bug tracking system</a>'),
       required: true,
       validation : [ Validators.required ],
+      blurStatus : true,
+      blurEvent : this.blurEvent,
+      parent : this,
+      togglePw : true,
+      value: '',
     },
     {
       type : 'input',
       name : 'password',
       inputType : 'password',
       placeholder : T('Password'),
-      tooltip : T('',),
+      tooltip : T('Enter the bug tracker account password.',),
       required: true,
       validation : [ Validators.required ],
-      blurStatus: true,
-      blurEvent: this.blurEvent,
-      parent: this
+      blurStatus : true,
+      blurEvent : this.blurEvent,
+      parent : this,
+      togglePw : true,
+      value: '',
     },
     {
       type : 'select',
       name : 'type',
       placeholder : T('Type'),
-      tooltip : T(''),
+      tooltip : T('Select <i>Bug</i> when reporting an issue or\
+                   <i>Feature</i> when requesting new functionality.'),
       options:[
         {label: 'bug', value: 'BUG'},
         {label: 'feature', value: 'FEATURE'}
@@ -83,7 +104,10 @@ export class SupportComponent  {
       type : 'select',
       name : 'category',
       placeholder : T('Category'),
-      tooltip : T(''),
+      tooltip : T('This field remains empty until a valid\
+                   <b>Username</b> and <b>Password</b> is entered.\
+                   Choose the category that best describes the bug or\
+                   feature being reported.'),
       required: true,
       validation : [ Validators.required ],
       options:[]
@@ -92,13 +116,16 @@ export class SupportComponent  {
       type : 'checkbox',
       name : 'attach_debug',
       placeholder : T('Attach Debug'),
-      tooltip : T(''),
+      tooltip : T('Set to generate and attach to the new issue a report\
+                   containing an overview of the system hardware, build\
+                   string, and configuration. This can take several\
+                   minutes.'),
     },
     {
       type : 'input',
       name : 'title',
       placeholder : T('Subject'),
-      tooltip : T(''),
+      tooltip : T('Enter a descriptive title for the new issue.'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -106,7 +133,9 @@ export class SupportComponent  {
       type : 'textarea',
       name : 'body',
       placeholder : T('Description'),
-      tooltip : T(''),
+      tooltip : T('Enter a one to three paragraph summary of the issue.\
+                   Describe the problem and provide any steps to\
+                   replicate the issue.'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -116,7 +145,7 @@ export class SupportComponent  {
               protected _appRef: ApplicationRef, protected dialog: MatDialog,
               private sanitizer: DomSanitizer, protected dialogService: DialogService)
               {}
-  
+
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
     this.category = _.find(this.fieldConfig, {name: "category"});
@@ -146,31 +175,36 @@ export class SupportComponent  {
     }),
     dialogRef.componentInstance.failure.subscribe((res) => {
       dialogRef.componentInstance.setDescription(res.error);
-      this.router.navigate(new Array('/').concat(this.route_success));
     });
   }
 
-  
+
   blurEvent(parent){
     this.category = _.find(parent.fieldConfig, {name: "category"});
+    this.password_fc = _.find(parent.fieldConfig, { name: 'password' });
+    this.username_fc = _.find(parent.fieldConfig, { name: 'username' });
       if(parent.entityEdit){
         this.username  = parent.entityEdit.formGroup.controls['username'].value;
         this.password  = parent.entityEdit.formGroup.controls['password'].value;
-      }
-      if(this.category.options.length > 0){
-        this.category.options = [];
-      }
-      if(this.category.options.length === 0 ){
-        parent.ws.call('support.fetch_categories',[this.username,this.password]).subscribe((res)=>{
-          for (const property in res) {
-            if (res.hasOwnProperty(property)) {
-              this.category.options.push({label : property, value : res[property]});
-            }
-          }},(error)=>{
-            if(parent.dialogService){
-              parent.dialogService.errorReport(error.error, error.reason,error.trace.formatted);
-            }
-          });
+        this.password_fc['hasErrors'] = false;
+        this.password_fc['errors'] = '';
+        this.username_fc['hasErrors'] = false;
+        this.username_fc['errors'] = '';
+
+        if(this.category.options.length > 0){
+          this.category.options = [];
+        }
+        if(this.category.options.length === 0 && this.username !== '' && this.password !== ''){
+          parent.ws.call('support.fetch_categories',[this.username,this.password]).subscribe((res)=>{
+            for (const property in res) {
+              if (res.hasOwnProperty(property)) {
+                this.category.options.push({label : property, value : res[property]});
+              }
+            }},(error)=>{
+              this.password_fc['hasErrors'] = true;
+              this.password_fc['errors'] = 'Incorrect Username/Password.';
+            });
+        }
       }
   }
 

@@ -1,4 +1,4 @@
-import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
+import { ApplicationRef, Component, Injector } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import * as _ from 'lodash';
@@ -27,7 +27,7 @@ import { Validators } from '@angular/forms';
   providers: [IscsiService, IdmapService],
 })
 
-export class ServiceSMBComponent implements OnInit {
+export class ServiceSMBComponent {
 
   protected resource_name: string = 'services/cifs';
   protected route_success: string[] = ['services'];
@@ -47,13 +47,14 @@ export class ServiceSMBComponent implements OnInit {
                   of the system. This name is limited to 15 characters and\
                   cannot be the <b>Workgroup</b> name.'),
       required: true,
-      validation : [ Validators.required ]
+      validation : [ Validators.required, Validators.maxLength(15) ]
     },
     {
       type: 'input',
       name: 'cifs_srv_netbiosalias',
       placeholder: T('NetBIOS Alias'),
       tooltip: T('Enter an alias. Limited to 15 characters.'),
+      validation: [ Validators.maxLength(15) ]
     },
     {
       type: 'input',
@@ -61,9 +62,9 @@ export class ServiceSMBComponent implements OnInit {
       placeholder: T('Workgroup'),
       tooltip: T('Must match Windows workgroup\
                   name. This setting is ignored if the\
-                  <a href="http://doc.freenas.org/11/directoryservice.html#active-directory"\
+                  <a href="%%docurl%%/directoryservice.html%%webversion%%#active-directory"\
                   target="_blank">Active Directory</a> or <a\
-                  href="http://doc.freenas.org/11/directoryservice.html#ldap"\
+                  href="%%docurl%%/directoryservice.html%%webversion%%#ldap"\
                   target="_blank">LDAP</a> service is running.'),
       required: true,
       validation : [ Validators.required ]
@@ -80,18 +81,7 @@ export class ServiceSMBComponent implements OnInit {
       placeholder: T('DOS Charset'),
       tooltip: T('The character set Samba uses when communicating with\
                   DOS and Windows 9x/ME clients. Default is CP437.'),
-      options: [
-        { label: 'CP437', value: 'CP437' },
-        { label: 'CP850', value: 'CP850' },
-        { label: 'CP852', value: 'CP852' },
-        { label: 'CP866', value: 'CP866' },
-        { label: 'CP932', value: 'CP932' },
-        { label: 'CP949', value: 'CP949' },
-        { label: 'CP950', value: 'CP950' },
-        { label: 'CP1026', value: 'CP1026' },
-        { label: 'CP1251', value: 'CP1251' },
-        { label: 'ASCII', value: 'ASCII' },
-      ],
+      options: [],
     },
     {
       type: 'select',
@@ -99,14 +89,7 @@ export class ServiceSMBComponent implements OnInit {
       placeholder: T('UNIX Charset'),
       tooltip: T('Default is UTF-8 which supports all characters in\
                   all languages.'),
-      options: [
-        { label: 'UTF-8', value: 'UTF-8' },
-        { label: 'iso-8859-1', value: 'ISO-8859-1' },
-        { label: 'iso-8859-15', value: 'ISO-8859-15' },
-        { label: 'gb2312', value: 'GB2312' },
-        { label: 'EUC-JP', value: 'EUC-JP' },
-        { label: 'ASCII', value: 'ASCII' },
-      ],
+      options: [],
     },
     {
       type: 'select',
@@ -190,7 +173,7 @@ export class ServiceSMBComponent implements OnInit {
       name: 'cifs_srv_smb_options',
       placeholder: T('Auxiliary Parameters'),
       tooltip: T('Enter additional <b>smb.conf</b> options. See the <a href="http://www.oreilly.com/openbook/samba/book/appb_02.html"\
-                  target="_blank">Samba Guide </a>\
+                  target="_blank">Samba Guide</a>\
                   for more information on these settings.'),
     },
     {
@@ -230,7 +213,7 @@ export class ServiceSMBComponent implements OnInit {
       tooltip: T('Unselect this option to allow cross-domain\
                   authentication, users and groups to be managed on\
                   another forest, and permissions to be delegated from\
-                  <a href="http://doc.freenas.org/11/directoryservice.html#active-directory"\
+                  <a href="%%docurl%%/directoryservice.html%%webversion%%#active-directory"\
                   target="_blank">Active Directory</a>\
                   users and groups to domain admins on another forest.'),
     },
@@ -238,9 +221,13 @@ export class ServiceSMBComponent implements OnInit {
       type: 'checkbox',
       name: 'cifs_srv_ntlmv1_auth',
       placeholder: T('NTLMv1 Auth'),
-      tooltip: T('Set to allow NTLMv1 authentication.\
-                  Required by Windows XP clients and some clients in later\
-                  versions of Windows.'),
+      tooltip: T('Off by default. When set,\
+                  <a href="https://www.freebsd.org/cgi/man.cgi?query=smbd" target="_blank">smbd(8)</a>\
+                  attempts to authenticate users with the insecure\
+                  and vulnerable NTLMv1 encryption. This setting allows\
+                  backward compatibility with older versions of Windows,\
+                  but is not recommended and should not be used on\
+                  untrusted networks.'),
     },
     {
       type: 'select',
@@ -272,11 +259,28 @@ export class ServiceSMBComponent implements OnInit {
 
   private cifs_srv_bindip: any;
   private cifs_srv_guest: any;
+  private cifs_srv_doscharset: any;
+  private cifs_srv_unixcharset: any;
   protected defaultIdmap: any;
   protected idmap_tdb_range_low: any;
   protected idmap_tdb_range_high: any;
   protected dialogRef: any;
-  ngOnInit() {
+
+  preInit(entityForm: any) {
+    this.cifs_srv_doscharset = _.find(this.fieldConfig, {"name": "cifs_srv_doscharset"});
+    this.cifs_srv_unixcharset = _.find(this.fieldConfig, {"name": "cifs_srv_unixcharset"});
+    this.ws.call("smb.doscharset_choices").subscribe((res) => {
+      const values = Object.values(res);
+      for (let i = 0; i < values.length; i++) {
+        this.cifs_srv_doscharset.options.push({label: values[i], value: values[i]});
+      }
+    });
+    this.ws.call("smb.unixcharset_choices").subscribe((res) => {
+      const values = Object.values(res);
+      for (let i = 0; i < values.length; i++) {
+        this.cifs_srv_unixcharset.options.push({label: values[i], value: values[i]});
+      }
+    });
     this.iscsiService.getIpChoices().subscribe((res) => {
       this.cifs_srv_bindip =
         _.find(this.fieldConfig, { 'name': 'cifs_srv_bindip' });
@@ -301,7 +305,7 @@ export class ServiceSMBComponent implements OnInit {
 
   afterInit(entityEdit: any) {
     this.rest.get('services/cifs', {}).subscribe((res) => {
-      this.idmapID = res.id;
+      this.idmapID = res['id'];
       this.ws.call('datastore.query', ['directoryservice.idmap_tdb', [["idmap_ds_type", "=", "5"], ["idmap_ds_id", "=", res.data['id']]]]).subscribe((idmap_res) => {
         this.defaultIdmap = idmap_res[0];
         entityEdit.formGroup.controls['idmap_tdb_range_high'].setValue(idmap_res[0].idmap_tdb_range_high);
@@ -329,7 +333,7 @@ export class ServiceSMBComponent implements OnInit {
         if (res[0]) {
           this.idmapID = res[0].id;
         if (new_range_low > new_range_high) {
-          this.error = "Range low larger than range high";
+          this.error = "Range low is greater than range high.";
         } else {
           if (this.idmapID) {
             this.ws.call(

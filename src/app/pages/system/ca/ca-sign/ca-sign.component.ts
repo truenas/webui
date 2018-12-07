@@ -31,6 +31,8 @@ export class CertificateAuthoritySignComponent {
       type : 'select',
       name : 'csr_cert_id',
       placeholder : T('CSRs'),
+      tooltip: T('Select the Certificate Signing Request to sign the\
+                  Certificate Authority with.'),
       options : [
         {label: '-------', value: ''},
       ],
@@ -42,6 +44,8 @@ export class CertificateAuthoritySignComponent {
       type : 'input',
       name : 'name',
       placeholder : T('Identifier'),
+      tooltip: T('Internal identifier of the certificate. Only\
+                  alphanumeric, "_" and "-" are allowed.'),
       required: true,
       validation : [ Validators.required ]
     }

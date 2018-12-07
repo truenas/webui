@@ -24,6 +24,18 @@
     width: 30px;
 }
 
-/*.global_volume_based_action_menu {
-    padding-right: 20px;
-}*/
+.encryption_icon {
+    float: right; 
+    padding-bottom: 20px;
+    padding-top: 4px;
+}
+
+.unlock_button {
+    cursor: pointer;
+}
+
+#pools-spinner {
+    position: absolute;
+    left: 47%;
+    top: 12px;
+}

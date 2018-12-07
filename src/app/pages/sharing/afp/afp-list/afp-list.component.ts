@@ -26,5 +26,9 @@ export class AFPListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    deleteMsg: {
+      title: 'Apple (AFP) Share',
+      key_props: ['afp_name']
+    },
   };
 }

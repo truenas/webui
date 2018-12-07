@@ -1,4 +1,4 @@
-// @import "../../../../../assets/styles/themes/ix-blue.scss";
+@import "../../../../../assets/styles/themes/ix-blue.scss";
 
 .padding_all {
     padding: 20px;
@@ -15,14 +15,29 @@
     padding-left: 5px;
 }
 
-.IconCell {
-	margin-top: -8px;
-}
-
 .multiActionsButton {
-	height: 40px;
+    position: relative;
+    top: 1px;
 }
 
+#col-select-box {
+    margin-left: 20px;
+
+    li {
+       list-style: none;
+       display: inline-block;
+       margin: 2px;
+       padding: 0;
+       width: 220px;
+    }   
+}
+
+ #select-all-checkbox-and-label {
+     max-width: 100px;
+     font-weight: 700;
+     margin-left: 4px;
+ }
+ 
 #footer {
     padding: 15px;
 }
@@ -30,3 +45,49 @@
 #footer-text {
     margin-left: 10px;
 }
+
+// Small page-loading spinner for entity tables
+#entity-spinner {
+  position: absolute;
+  top: 10px; left: 0; bottom: 0; right: 0;
+  z-index: 10;
+  margin: 0 auto;
+}
+
+.mat-card-title-text {
+    margin: 20px;
+    display: inline-block;
+}
+
+#filter, .mat-toolbar {
+    display: inline-block;
+}
+
+#filter, .tooltiptext {
+    font-size: 14px;
+}
+
+#filter {
+    position: absolute;
+    right: 150px;
+    top: 9px;
+    z-index: 10;
+}
+
+#action-button-wrapper {
+    height: 36px;
+}
+
+.legacy-warning {
+    position: absolute;
+    font-size: .8rem;
+    top: 75px;
+    right: 10px;
+    z-index: 10;
+}
+
+.legacy-warning-link {
+    border-bottom: 1px solid;
+    cursor: pointer;
+}
+

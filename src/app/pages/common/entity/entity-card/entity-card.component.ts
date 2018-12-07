@@ -2,12 +2,11 @@ import { Component, OnInit, AfterViewInit, Input, Output, EventEmitter, ElementR
 import { Router } from '@angular/router';
 import { DataSource } from '@angular/cdk/collections';
 import { MatPaginator, MatSort } from '@angular/material';
-import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Subscription } from 'rxjs';
-import 'rxjs/add/operator/startWith';
-import 'rxjs/add/observable/merge';
-import 'rxjs/add/operator/map';
+import { Observable ,  BehaviorSubject ,  Subscription } from 'rxjs';
+
+
+
+import {iXObject} from 'app/core/classes/ix-object';
 import { TranslateService } from '@ngx-translate/core';
 
 //local libs
@@ -23,7 +22,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
   styleUrls: ['./entity-card.component.css'],
   providers: [DialogService]
 })
-export class EntityCardComponent implements OnInit {
+export class EntityCardComponent extends iXObject implements OnInit {
 
   @Input('conf') conf: any;
   @Input() width: string;
@@ -53,7 +52,9 @@ export class EntityCardComponent implements OnInit {
 
   constructor(protected rest: RestService, protected ws: WebSocketService,  protected router: Router,
     protected _eRef: ElementRef, private dialog: DialogService, protected loader: AppLoaderService, 
-    translate: TranslateService) {}
+    translate: TranslateService) {
+    super()
+  }
 
   ngOnInit() {
     if (this.conf.preInit) {
@@ -75,7 +76,7 @@ export class EntityCardComponent implements OnInit {
   }
 
   toggle(row: any) {
-    
+
     let rpc: string;
 
     if (row[this.conf.toggleProp] !== this.conf.runnningState) {
@@ -159,7 +160,7 @@ export class EntityCardComponent implements OnInit {
       return [{
         id: "edit",
         label: "Edit",
-	onClick: (row) => { 
+	onClick: (row) => {
 	  this.editCard.emit(true);
 	  this.toggleFlip();
 	  this.lazyLoaded = true;
@@ -198,8 +199,8 @@ export class EntityCardComponent implements OnInit {
   }
 
   doDelete() {
-    
-    this.dialog.confirm("Delete", "Are you sure you want to delete it?").subscribe((res) => {
+
+    this.dialog.confirm("Delete", "Delete this item?").subscribe((res) => {
       if (res) {
 	/*
         this.loader.open();
@@ -221,4 +222,3 @@ export class EntityCardComponent implements OnInit {
   this.conf.isFlipped = !this.conf.isFlipped;
   }
 }
-

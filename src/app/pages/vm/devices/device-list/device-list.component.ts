@@ -1,13 +1,18 @@
 import {Component, ElementRef, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Subscription} from 'rxjs/Subscription';
+import {Subscription} from 'rxjs';
 
 
 import {RestService, WebSocketService} from '../../../../services/';
-import { DialogService } from 'app/services';
+import { DialogService } from '../../../../services/dialog.service';
+
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../common/entity/utils';
 import { ChangeDetectorRef } from '@angular/core';
+import { T } from '../../../../translate-marker';
+import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import * as _ from 'lodash';
 
 @Component({
   selector : 'app-device-list',
@@ -26,17 +31,20 @@ export class DeviceListComponent {
   public sub: Subscription;
   private entityList: any;
   public  wsDelete = 'datastore.delete';
+  public queryCall = 'vm.device.query';
+  protected queryCallOption: Array<any> = [[['vm', '=']]];
   public busy: Subscription;
   protected loaderOpen = false;
   public columns: Array<any> = [
-    {name : 'Type', prop : 'dtype'},
+    {name: 'Device ID', prop:'id'},
+    {name : 'Device', prop : 'dtype'},
+    {name : 'Order', prop : 'order'},
   ];
   public title = "VM ";
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
   };
-
   constructor(protected router: Router, protected aroute: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService, protected loader: AppLoaderService,
               public dialogService: DialogService, private cdRef:ChangeDetectorRef) {}
@@ -50,30 +58,80 @@ export class DeviceListComponent {
   getActions(row) {
     const actions = [];
     actions.push({
-      label : "Edit",
+      label : T("Edit"),
       onClick : (edit_row) => {
         this.router.navigate(new Array('').concat(
             [ "vm", this.pk, "devices", this.vm, "edit", edit_row.id, edit_row.dtype ]));
       }
     });
     actions.push({
-      label : "Delete",
+      label : T("Delete"),
       onClick : (delete_row) => {
         this.deviceDelete(delete_row.id);
       },
     });
+    actions.push({
+      label : T("Change Device Order"),
+      onClick : (row1) => {
+        const localLoader = this.loader,
+        localRest = this.rest,
+        localws = this.ws,
+        localDialogService = this.dialogService
+
+          const conf: DialogFormConfiguration = { 
+            title: `Change Device Order ${row1.dtype}: ${row1.id}`,
+            parent: this,
+            fieldConfig: [{
+              type: 'input',
+              name: 'order',
+            }
+          ],
+            saveButtonText: T('Save'),
+            preInit: function (entityDialog) {
+              _.find(entityDialog.fieldConfig, {'name':'order'})['value'] = row1.order;
+            },
+            customSubmit: function (entityDialog) {
+              const value = entityDialog.formValue;
+              localLoader.open();
+              localws.call('vm.device.update',[row1.id,{'order':value.order}]).subscribe((succ)=>{
+                entityDialog.dialogRef.close(true);
+                localLoader.close();
+                this.parent.entityList.getData();
+              },(err)=>{
+                localLoader.close();
+              },()=>{
+                entityDialog.dialogRef.close(true);
+                localLoader.close();
+                this.parent.entityList.getData();
+              });
+
+            }
+          }
+          this.dialogService.dialogForm(conf);
+        }
+      }),
+      actions.push({
+        label : T("Details"),
+        onClick : (device) => {
+          let details = ``
+          for (const attribute in device.attributes) {
+            details = `${attribute}: ${device.attributes[attribute]} \n` + details;
+          }
+          this.dialogService.Info(`Details`, details,'500px','info');
+        },
+      });
     return actions;
-  }
+    }
   
   deviceDelete(id){
-    this.dialogService.confirm("Delete", "Are you sure you want to delete it?").subscribe((res) => {
+    this.dialogService.confirm(T("Delete"), T("Delete this device?"), true, T('Delete Device')).subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
         const data = {};
         if (this.wsDelete) {
           this.busy = this.ws.call(this.wsDelete, ['vm.device',id]).subscribe(
-            (resinner) => { 
+            (resinner) => {
               this.entityList.getData();
               this.loader.close();
             },
@@ -82,7 +140,7 @@ export class DeviceListComponent {
               this.loader.close();
             }
           );
-        } 
+        }
       }
     })
   }
@@ -98,6 +156,7 @@ export class DeviceListComponent {
       this.resource_name = 'vm/device/?vm__id=' + this.pk;
       this.title = this.title + this.vm + ' devices';
       this.cdRef.detectChanges();
+      this.queryCallOption[0][0].push(parseInt(this.pk,10));
     });
   }
 }

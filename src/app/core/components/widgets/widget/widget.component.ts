@@ -4,11 +4,12 @@ import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { MaterialModule } from 'app/appMaterial.module';
+import { iXObject } from 'app/core/classes/ix-object';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
 import { ViewChartLineComponent } from 'app/core/components/viewchartline/viewchartline.component';
-import { AnimationDirective } from 'app/core/directives/animation.directive';
+
 import filesize from 'filesize';
 
 import { TranslateService } from '@ngx-translate/core';
@@ -19,7 +20,7 @@ import { T } from '../../../../translate-marker';
   selector: 'widget',
   templateUrl:'./widget.component.html'
 })
-export class WidgetComponent implements AfterViewInit {
+export class WidgetComponent extends iXObject implements AfterViewInit {
 
   protected core:CoreService;
   protected themeService: ThemeService;
@@ -33,6 +34,7 @@ export class WidgetComponent implements AfterViewInit {
   public isFlipped: boolean = false;
 
   constructor(public translate: TranslateService){
+    super();
     this.core = CoreServiceInjector.get(CoreService);
     this.themeService = CoreServiceInjector.get(ThemeService);
   }

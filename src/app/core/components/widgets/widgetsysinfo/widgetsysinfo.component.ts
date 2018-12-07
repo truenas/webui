@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, Input, ViewChild, Renderer2, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, Input, ViewChild, Renderer2, ElementRef } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { Router } from '@angular/router';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
@@ -7,7 +7,7 @@ import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
 import { ViewChartLineComponent } from 'app/core/components/viewchartline/viewchartline.component';
-import { AnimationDirective } from 'app/core/directives/animation.directive';
+
 import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { environment } from 'app/../environments/environment';
@@ -21,29 +21,31 @@ import { T } from '../../../../translate-marker';
   templateUrl:'./widgetsysinfo.component.html',
   styleUrls: ['./widgetsysinfo.component.css']
 })
-export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, AfterViewInit {
+export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,OnDestroy, AfterViewInit {
   public title: string = T("System Info");
   public data: any;
   public memory:string;
   public imagePath:string = "assets/images/";
   public cardBg:string = "";
   public updateAvailable:boolean = false;
-  private _updateBtnStatus:string = "primary";
-  public updateBtnLabel:string = T("Check for Updates...")
+  private _updateBtnStatus:string = "default";
+  public updateBtnLabel:string = T("Check for Updates")
   private _themeAccentColors: string[];
   public connectionIp = environment.remote
   public manufacturer:string = '';
   public buildDate:string;
+  public loader:boolean = false;
 
   constructor(public router: Router, public translate: TranslateService){
     super(translate);
     this.configurable = false;
   }
 
-  ngOnInit(){
+  ngAfterViewInit(){
     this.core.register({observerClass:this,eventName:"SysInfo"}).subscribe((evt:CoreEvent) => {
       //DEBUG: console.log("******** SysInfo ********");
       //DEBUG: console.log(evt.data);
+      this.loader = false;
       this.data = evt.data;
 
       let build = new Date(this.data.buildtime[0]['$date']);
@@ -55,7 +57,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, A
       let minutes = build.getUTCMinutes();
       this.buildDate = month + " " +  day + ", " + year + " " + hours + ":" + minutes;
 
-      this.memory = this.formatMemory(this.data.physmem, "GB");
+      this.memory = this.formatMemory(this.data.physmem, "GiB");
       if(this.data.system_manufacturer && this.data.system_manufacturer.toLowerCase() == 'ixsystems'){
         this.manufacturer = "ixsystems";
       } else {
@@ -87,12 +89,12 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, A
     this.core.emit({name:"SysInfoRequest"});
     this.core.emit({name:"UpdateCheck"});
   }
-  
-  ngAfterViewInit(){
-    //console.log(this.el.nativeElement.children);
-    setTimeout(()=>{
-      this.core.emit({name:"AnimateColorLoopStart", data:{element:'#widget-sysinfo-logo-bg', colors:this.themeAccentColors}});
-    }, 3000);
+
+  ngOnInit(){
+  }
+
+  ngOnDestroy(){
+    this.core.unregister({observerClass:this});
   }
 
   getCardBg(){
@@ -110,18 +112,18 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, A
 
   get updateBtnStatus(){
     if(this.updateAvailable){
-      this._updateBtnStatus = "warn";
-      this.updateBtnLabel = T("Updates Available...");
+      this._updateBtnStatus = "default";
+      this.updateBtnLabel = T("Updates Available");
     }
     return this._updateBtnStatus;
   }
 
   formatMemory(physmem:number, units:string){
-    let result:string; 
-    if(units == "MB"){
-      result = Number(physmem / 1024 / 1024).toFixed(0) + ' MB';
-    } else if(units == "GB"){
-      result = Number(physmem / 1024 / 1024 / 1024).toFixed(0) + ' GB';
+    let result:string;
+    if(units == "MiB"){
+      result = Number(physmem / 1024 / 1024).toFixed(0) + ' MiB';
+    } else if(units == "GiB"){
+      result = Number(physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB';
     }
     return result;
   }

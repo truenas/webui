@@ -11,7 +11,7 @@
           </div>
           <form #lockscreenForm="ngForm" (ngSubmit)="unlock()">
             <div class="">
-              <mat-input-container class="full-width">
+              <mat-form-field class="full-width">
                 <input 
                   type="password"
                   name="password"
@@ -20,14 +20,14 @@
                   [(ngModel)]="lockscreenData.password"
                   #password="ngModel"
                   placeholder="Password">
-              </mat-input-container>
+              </mat-form-field>
               <small 
-                *ngIf="password.errors && (password.dirty || password.touched) && (password.errors.required)" 
+                *ngIf="password['errors'] && (password.dirty || password.touched) && (password['errors'].required)" 
                 class="form-error-msg"> Password is required </small>
             </div>
             
-            <button mat-raised-button class="mat-primary full-width mb-05" [disabled]="lockscreenForm.invalid">Unlock</button>
-            <button mat-raised-button [routerLink]="['/sessions/signin']" color="accent" class="mat-primary full-width">It's not me!</button>
+            <button mat-button class="mat-primary full-width mb-05" [disabled]="lockscreenForm.invalid">Unlock</button>
+            <button mat-button [routerLink]="['/sessions/signin']" color="accent" class="mat-primary full-width">It's not me!</button>
           </form>
         </div>
       </mat-card-content>
