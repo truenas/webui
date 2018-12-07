@@ -9,32 +9,35 @@ import { Router } from '@angular/router';
 })
 export class ExtentListComponent {
 
-  protected resource_name: string = 'services/iscsi/extent';
+  protected queryCall = 'iscsi.extent.query';
   protected route_add: string[] = [ 'sharing', 'iscsi', 'extent', 'add' ];
   protected route_add_tooltip: string = "Add Extent";
-  protected route_delete: string[] = [ 'sharing', 'iscsi', 'extent', 'delete' ];
   protected route_edit: string[] = [ 'sharing', 'iscsi', 'extent', 'edit' ];
-
-  constructor(protected router: Router) {}
 
   public columns: Array<any> = [
     {
       name : 'Extent Name',
-      prop : 'iscsi_target_extent_name',
+      prop : 'name',
     },
     {
       name : 'Serial',
-      prop : 'iscsi_target_extent_serial',
+      prop : 'serial',
     },
+    {
+      name: 'NAA',
+      prop: 'naa',
+    }
   ];
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
     deleteMsg: {
       title: 'Extent',
-      key_props: ['iscsi_target_extent_name']
+      key_props: ['name']
     },
   };
+
+  constructor(protected router: Router) {}
 
   afterInit(entityList: any) {}
 }
