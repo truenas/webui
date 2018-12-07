@@ -12,13 +12,13 @@
             Use a valid email address when registering to receive issue status updates.
         </p>
         <br>
-        <mat-input-container class="full-width">
+        <mat-form-field class="full-width">
             <input matInput placeholder="{{'Username' | translate}}" [(ngModel)]="username" name="username" required>
-        </mat-input-container>
+        </mat-form-field>
         <br>
-        <mat-input-container class="full-width">
+        <mat-form-field class="full-width">
             <input matInput placeholder="{{'Password' | translate}}" type="password" (blur)="onBlurMethod()" [(ngModel)]="password" name="password" required>
-        </mat-input-container>
+        </mat-form-field>
         <br>
         <mat-select name="type" placeholder="{{'Type' | translate}}" required class="full-width" [(ngModel)]="type" >
             <mat-option value="BUG">Bug</mat-option>
@@ -35,13 +35,13 @@
             Attach Debug
         </mat-checkbox>
         <br>
-        <mat-input-container class="full-width">
+        <mat-form-field class="full-width">
             <input matInput placeholder="{{'Subject' | translate}}" name="title" [(ngModel)]="title" required>
-        </mat-input-container>
+        </mat-form-field>
         <br>
-        <mat-input-container class="full-width">
+        <mat-form-field class="full-width">
             <textarea matInput matAutosizeMinRows minRows="6" placeholder="Description" name="body" [(ngModel)]="body" required></textarea>
-        </mat-input-container>
+        </mat-form-field>
         <button mat-button class="btn btn-block" (click)="onSubmit()" type="submit" [disabled]="formValidation()">Submit</button>
     </div>
     </form>

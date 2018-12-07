@@ -999,22 +999,22 @@ export class JailEditComponent implements OnInit {
       }
 
       if ((this.formGroup.controls['dhcp'].value || this.formGroup.controls['auto_configure_ip6'].value) && !res) {
-        _.find(this.basicfieldConfig, { 'name': 'vnet' }).hasErrors = true;
-        _.find(this.basicfieldConfig, { 'name': 'vnet' }).errors = 'VNET is required.';
+        _.find(this.basicfieldConfig, { 'name': 'vnet' })['hasErrors'] = true;
+        _.find(this.basicfieldConfig, { 'name': 'vnet' })['errors'] = 'VNET is required.';
       } else {
-        _.find(this.basicfieldConfig, { 'name': 'vnet' }).hasErrors = false;
-        _.find(this.basicfieldConfig, { 'name': 'vnet' }).errors = '';
+        _.find(this.basicfieldConfig, { 'name': 'vnet' })['hasErrors'] = false;
+        _.find(this.basicfieldConfig, { 'name': 'vnet' })['errors'] = '';
       }
 
       this.updateInterfaceValidation();
     });
     this.formGroup.controls['bpf'].valueChanges.subscribe((res) => {
       if (this.formGroup.controls['dhcp'].value && !res) {
-        _.find(this.basicfieldConfig, { 'name': 'bpf' }).hasErrors = true;
-        _.find(this.basicfieldConfig, { 'name': 'bpf' }).errors = 'BPF is required.';
+        _.find(this.basicfieldConfig, { 'name': 'bpf' })['hasErrors'] = true;
+        _.find(this.basicfieldConfig, { 'name': 'bpf' })['errors'] = 'BPF is required.';
       } else {
-        _.find(this.basicfieldConfig, { 'name': 'bpf' }).hasErrors = false;
-        _.find(this.basicfieldConfig, { 'name': 'bpf' }).errors = '';
+        _.find(this.basicfieldConfig, { 'name': 'bpf' })['hasErrors'] = false;
+        _.find(this.basicfieldConfig, { 'name': 'bpf' })['errors'] = '';
       }
     });
     this.formGroup.controls['auto_configure_ip6'].valueChanges.subscribe((res) => {

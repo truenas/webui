@@ -96,7 +96,7 @@ export class DeviceEditComponent implements OnInit {
       name : 'path',
       placeholder : 'Zvol',
       tooltip : 'Browse to an existing <a\
-                 href="%%docurl%%/storage.html#adding-zvols%%webversion%%"\
+                 href="%%docurl%%/storage.html%%webversion%%#adding-zvols"\
                  target="_blank">Zvol</a>.',
       type: 'select',
       required: true,
@@ -435,9 +435,9 @@ export class DeviceEditComponent implements OnInit {
         // special case where RAW file device is used as a BOOT device.
         if (this.vminfo.attributes.boot && this.vminfo.attributes.rootpwd) { 
           this.rootpwd = _.find(this.rawfileFieldConfig, {'name': 'rootpwd'});
-          this.rootpwd.isHidden = false;
+          this.rootpwd['isHidden'] = false;
           this.boot = _.find(this.rawfileFieldConfig, {'name': 'boot'});
-          this.boot.isHidden = false;
+          this.boot['isHidden'] = false;
         }
       } else if (res === 'VNC') {
         this.activeFormGroup = this.vncFormGroup;

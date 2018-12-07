@@ -46,7 +46,7 @@ export class CertificateAuthorityAddComponent {
       name : 'signedby',
       placeholder : T('Signing Certificate Authority'),
       tooltip: T('Select a previously imported or created <a\
-                  href="%%docurl%%/system.html#cas%%webversion%%"\
+                  href="%%docurl%%/system.html%%webversion%%#cas"\
                   target="_blank">CA</a>.'),
       options : [
         {label: '---', value: null}
@@ -321,9 +321,9 @@ export class CertificateAuthorityAddComponent {
 
     entity.formGroup.controls['name'].statusChanges.subscribe((res) => {
       if (this.identifier && res === 'INVALID') {
-        _.find(this.fieldConfig).hasErrors = true;
+        _.find(this.fieldConfig)['hasErrors'] = true;
       } else {
-        _.find(this.fieldConfig).hasErrors = false;
+        _.find(this.fieldConfig)['hasErrors'] = false;
       }
     })
 
@@ -331,7 +331,7 @@ export class CertificateAuthorityAddComponent {
 
   hideField(fieldName: any, show: boolean, entity: any) {
     let target = _.find(this.fieldConfig, {'name' : fieldName});
-    target.isHidden = show;
+    target['isHidden'] = show;
     entity.setDisabled(fieldName, show);
   }
 

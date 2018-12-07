@@ -47,7 +47,7 @@ export class ServiceS3Component implements OnDestroy {
       name : 'bindip',
       placeholder : T('IP Address'),
       tooltip: T('Enter the IP address which runs the <a\
-                  href="%%docurl%%/services.html#s3" target="_blank%%webversion%%">S3\
+                  href="%%docurl%%/services.html%%webversion%%#s3" target="_blank">S3\
                   service</a>. <i>0.0.0.0</i> tells the server to listen\
                   on all addresses.'),
       options : [
@@ -123,7 +123,7 @@ export class ServiceS3Component implements OnDestroy {
       type : 'select',
       name : 'certificate',
       placeholder : T('Certificate'),
-      tooltip : T('Add an <a href="%%docurl%%/system.html#certificates%%webversion%%"\
+      tooltip : T('Add an <a href="%%docurl%%/system.html%%webversion%%#certificates"\
                    target="_blank">SSL certificate</a> to be used for\
                    secure S3 connections.'),
       options : []
