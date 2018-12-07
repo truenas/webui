@@ -69,7 +69,7 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
 @NgModule({
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule,
-    MaterialModule, ColorPickerModule, NgxDatatableModule, CdkTableModule, TreeModule,
+    MaterialModule, ColorPickerModule, NgxDatatableModule, CdkTableModule, TreeModule.forRoot(),
     Ng2DropdownModule, NgUploaderModule, FlexLayoutModule, TranslateModule,
     OverlayModule, A11yModule, TreeTableModule, FileSizeModule
   ],
