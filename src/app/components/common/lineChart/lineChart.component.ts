@@ -307,17 +307,17 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy, Han
       let label = colStrings[0];
       let col = colStrings.map(x => Number(x));
       col.shift(col[0]);
-  
-      let total = col.reduce((accumulator, currentValue) => Number(accumulator) + Number(currentValue));
-      let avg = Number((total / col.length).toFixed(2));
+      
+      let total = col.length > 0 ? col.reduce((accumulator, currentValue) => Number(accumulator) + Number(currentValue)) : "N/A";
+      let avg = total !== "N/A" ? Number((total / col.length).toFixed(2)) : total;
       //console.log("Total type: " + typeof col.length)
       let myResult:Analytics = {
         label:label,
-        min: this.getMin(col),//.toFixed(2),
-        max: this.getMax(col),//.toFixed(2),
+        min: total !== "N/A" ? this.getMin(col) : total ,//.toFixed(2),
+        max: total !== "N/A" ? this.getMax(col) : total,//.toFixed(2),
         avg: avg,
-        last: Number(col[col.length - 1].toFixed(2)),
-        total:Number(total.toFixed(2))
+        last: total !== "N/A" ? Number(col[col.length - 1].toFixed(2)) : total,
+        total: total !== "N/A" ? Number(total.toFixed(2)) : total
       }
       allColumns.push(myResult);
     }
