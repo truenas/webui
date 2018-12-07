@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { DragulaModule } from 'ng2-dragula';
 import { MaterialModule } from '../../appMaterial.module';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TranslateModule } from '@ngx-translate/core';
@@ -43,7 +42,7 @@ import { MessageService } from '../common/entity/entity-form/services/message.se
 
 @NgModule({
   imports : [
-    RouterModule, DragulaModule, EntityModule, CommonModule, FormsModule,
+    RouterModule, EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, routing, MaterialModule,
     NgxDatatableModule, DxTreeListModule, TranslateModule
   ],

@@ -1,5 +1,5 @@
 import { CoreService, CoreEvent } from '../services/core.service';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import {UUID} from 'angular2-uuid';
 import { 
   tween, 

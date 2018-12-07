@@ -1358,7 +1358,7 @@ div.hopscotch-bubble .hopscotch-nav-button.prev:hover {
     text-decoration: none;
 }
 
-.has-tooltip mat-input-container.full-width,
+.has-tooltip mat-form-field.full-width,
 .has-tooltip mat-select.full-width {
     width: calc( 100% - 25px );
 }

@@ -3,5 +3,5 @@
 		<ng-container *ngFor="let field of config.formarray" dynamicField [config]="field" [group]="group.controls[config.name].controls[i]">
 		</ng-container>
 	</fieldset>
-	<mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
+	<mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
 </div>

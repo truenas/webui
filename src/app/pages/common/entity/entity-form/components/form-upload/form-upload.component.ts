@@ -1,7 +1,6 @@
 import {  Component,  ViewChild, } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { Subscription } from 'rxjs/Subscription';
-import { Observer  } from 'rxjs/Observer';
+import { Subscription ,  Observer  } from 'rxjs';
 import { HttpClient, HttpRequest, HttpEventType, HttpResponse } from '@angular/common/http';
 import { TranslateService } from '@ngx-translate/core';
 import { FieldConfig } from '../../models/field-config.interface';
