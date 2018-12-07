@@ -216,14 +216,12 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   onShowTaskManager() {
-    console.log("show task manager");
     if (this.isTaskMangerOpened) {
       this.taskDialogRef.close(true);
     } else {
       this.isTaskMangerOpened = true;
       this.taskDialogRef = this.dialog.open(TaskManagerComponent, {
         width: '400px',
-        // height: '500px',
         hasBackdrop: false,
         position: {
           top: '48px',
