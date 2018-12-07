@@ -126,7 +126,7 @@ export class UserListComponent implements OnInit {
     let user: any
     let group_users: any
     user = _.find(this.usr_lst[0], {id});
-    group_users =_.find(this.grp_lst[0], {id: user.group.id}).users;
+    group_users =_.find(this.grp_lst[0], {id: user.group.id})['users'];
     if(group_users.length === 1){
       return true
     };
@@ -138,7 +138,7 @@ export class UserListComponent implements OnInit {
     this.ws.call('group.query').subscribe((res)=>{
       data.forEach(user => {
         const group = _.find(res, {"id" : user.bsdusr_group});
-        user['bsdusr_gid'] = group.gid;
+        user['bsdusr_gid'] = group['gid'];
       });
     })
     return data;

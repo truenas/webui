@@ -276,12 +276,12 @@ export class DockerVMWizardComponent {
         const vm_memory_requested = 2147483648;
         if (available_memory > vm_memory_requested) {
           ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(2048);
-          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'memory'}).hasErrors = false;
-          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'memory'}).errors = '';
+          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'memory'})['hasErrors'] = false;
+          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'memory'})['errors'] = '';
         } else {
           ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(0);
-          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'memory'}).hasErrors = true;
-          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'memory'}).errors = `Docker Container needs at least 2048 MiBs Memory to operate.`
+          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'memory'})['hasErrors'] = true;
+          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'memory'})['errors'] = `Docker Container needs at least 2048 MiBs Memory to operate.`
         }
       });
       ( < FormGroup > entityWizard.formArray.get([4])).get('raw_filename').valueChanges.subscribe((raw_filename) => {
@@ -301,16 +301,16 @@ export class DockerVMWizardComponent {
         this.ws.call('filesystem.statfs',[raw_file_directory]).subscribe((stat)=> {
          if (stat.free_bytes < volsize && stat.free_bytes <= 21474836480) {
           ( < FormGroup > entityWizard.formArray.get([4])).controls['size'].setValue(Math.floor(stat.free_bytes / (1073741824)));
-          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'}).hasErrors = true;
-          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'}).errors = 'Docker Container needs at least 20 Gibs';
+          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'})['hasErrors'] = true;
+          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'})['errors'] = 'Docker Container needs at least 20 Gibs';
          } else if(stat.free_bytes >= 21474836480) {
           ( < FormGroup > entityWizard.formArray.get([4])).controls['size'].setValue(20);
-          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'}).hasErrors = false;
-          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'}).errors = '';
+          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'})['hasErrors'] = false;
+          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'})['errors'] = '';
          } else {
           ( < FormGroup > entityWizard.formArray.get([4])).controls['size'].setValue(Math.floor(stat.free_bytes / (1073741824)));
-          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'}).hasErrors = true;
-          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'}).errors = 'Docker Container needs at least 20 Gibs';
+          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'})['hasErrors'] = true;
+          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'})['errors'] = 'Docker Container needs at least 20 Gibs';
          }
         })
       }
@@ -325,8 +325,8 @@ blurEvent(parent){
   parent.ws.call('vm.query', [[["name","=",vm_name]]]).subscribe((vm_wizard_res)=>{
     if(vm_wizard_res.length > 0){
 
-      _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'}).hasErrors = true;
-      _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'}).errors = `Docker Container: ${vm_wizard_res[0].name} already exists.`;
+      _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['hasErrors'] = true;
+      _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['errors'] = `Docker Container: ${vm_wizard_res[0].name} already exists.`;
       parent.entityWizard.formArray.get([0]).get('name').setValue("");
       
     }
@@ -337,18 +337,18 @@ blurEvent2(parent){
   const vm_name = parent.entityWizard.formGroup.value.formArray[1].name
   parent.ws.call('vm.get_available_memory').subscribe((vm_memory_available)=>{
     if( vm_memory_requested * 1048576 > vm_memory_available){
-      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'}).hasErrors = true;
-      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'}).errors = `Cannot allocate ${vm_memory_requested} Mib to docker: ${vm_name}.`;
+      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'})['hasErrors'] = true;
+      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'})['errors'] = `Cannot allocate ${vm_memory_requested} Mib to docker: ${vm_name}.`;
       parent.entityWizard.formArray.get([2]).get('memory').setValue(0);
 
     } else if (vm_memory_requested * 1048576 < 2147483648) {
-      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'}).hasErrors = true;
-      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'}).errors = `Docker Container: "${vm_name}" needs at least 2048 MiBs Memory to operate.`;
+      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'})['hasErrors'] = true;
+      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'})['errors'] = `Docker Container: "${vm_name}" needs at least 2048 MiBs Memory to operate.`;
       parent.entityWizard.formArray.get([2]).get('memory').setValue(0);
 
     } else {
-      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'}).hasErrors = false;
-      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'}).errors = '';
+      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'})['hasErrors'] = false;
+      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'})['errors'] = '';
 
     }
   })
@@ -361,8 +361,8 @@ blurEvent3(parent){
     if(raw_file_directory !== undefined && raw_file_directory !== "") {
       parent.ws.call('filesystem.statfs',[raw_file_directory]).subscribe((stat)=> {
         if (stat.free_bytes < size ) {
-          _.find(parent.wizardConfig[4].fieldConfig, {'name' : 'size'}).hasErrors = true;
-          _.find(parent.wizardConfig[4].fieldConfig, {'name' : 'size'}).errors = `Cannot allocate ${size / (1073741824)} Gib to for storage docker machine: ${vm_name}.`;
+          _.find(parent.wizardConfig[4].fieldConfig, {'name' : 'size'})['hasErrors'] = true;
+          _.find(parent.wizardConfig[4].fieldConfig, {'name' : 'size'})['errors'] = `Cannot allocate ${size / (1073741824)} Gib to for storage docker machine: ${vm_name}.`;
           parent.entityWizard.formArray.get([4]).get('size').setValue(0);
           
          };

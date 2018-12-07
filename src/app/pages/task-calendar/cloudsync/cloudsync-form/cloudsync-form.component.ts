@@ -290,7 +290,7 @@ export class CloudsyncFormComponent implements OnInit {
     this.fieldConfig = this.fieldConfig.map((item) => {
       if (item.name === name) {
         item.disabled = disable;
-        item.isHidden = hide;
+        item['isHidden'] = hide;
       }
       return item;
     });
@@ -321,7 +321,7 @@ export class CloudsyncFormComponent implements OnInit {
       if (res!=null) {
         this.credentials_list.forEach((item)=>{
           if (item.id == res) {
-            if (_.find(this.providers, {"name": item.provider}).buckets) {
+            if (_.find(this.providers, {"name": item.provider})['buckets']) {
               this.loader.open();
               // update bucket fields name and tooltips based on provider
               if (item.provider == "AZUREBLOB" || item.provider == "HUBIC" ) {

@@ -274,20 +274,20 @@ export class ServiceUPSComponent implements OnDestroy {
         this.entityForm.setDisabled('ups_driver', true);
         this.entityForm.setDisabled('ups_port', true);
         this.entityForm.setDisabled('ups_remotehost', false);
-        _.find(this.fieldConfig, { name: 'ups_driver' }).isHidden = true;
-        _.find(this.fieldConfig, { name: 'ups_port' }).isHidden = true;
-        _.find(this.fieldConfig, { name: 'ups_remotehost' }).isHidden = false;
-        _.find(this.fieldConfig, { name: 'ups_remoteport' }).isHidden = false;
-        _.find(this.fieldConfig, { name: 'ups_options' }).isHidden = true;
+        _.find(this.fieldConfig, { name: 'ups_driver' })['isHidden'] = true;
+        _.find(this.fieldConfig, { name: 'ups_port' })['isHidden'] = true;
+        _.find(this.fieldConfig, { name: 'ups_remotehost' })['isHidden'] = false;
+        _.find(this.fieldConfig, { name: 'ups_remoteport' })['isHidden'] = false;
+        _.find(this.fieldConfig, { name: 'ups_options' })['isHidden'] = true;
       } else {
         this.entityForm.setDisabled('ups_driver', false);
         this.entityForm.setDisabled('ups_port', false);
         this.entityForm.setDisabled('ups_remotehost', true);
-        _.find(this.fieldConfig, { name: 'ups_driver' }).isHidden = false;
-        _.find(this.fieldConfig, { name: 'ups_port' }).isHidden = false;
-        _.find(this.fieldConfig, { name: 'ups_remotehost' }).isHidden = true;
-        _.find(this.fieldConfig, { name: 'ups_remoteport' }).isHidden = true;
-        _.find(this.fieldConfig, { name: 'ups_options' }).isHidden = false;
+        _.find(this.fieldConfig, { name: 'ups_driver' })['isHidden'] = false;
+        _.find(this.fieldConfig, { name: 'ups_port' })['isHidden'] = false;
+        _.find(this.fieldConfig, { name: 'ups_remotehost' })['isHidden'] = true;
+        _.find(this.fieldConfig, { name: 'ups_remoteport' })['isHidden'] = true;
+        _.find(this.fieldConfig, { name: 'ups_options' })['isHidden'] = false;
 
       }
 

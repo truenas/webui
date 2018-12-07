@@ -45,6 +45,16 @@ from sys_ca import run_conf_ca_test
 from sys_certificates import run_conf_certificates_test
 from sys_support import run_conf_support_test
 
+from tasks_cron import run_conf_taskscron_test
+from tasks_initshutscript import run_conf_tasksinitshutscript_test
+from tasks_rsync import run_conf_tasksrsync_test
+from tasks_SMART import run_conf_tasksSMART_test
+from tasks_periodicSS import run_conf_tasksperiodicSS_test
+from tasks_replication import run_conf_tasksreplication_test
+from tasks_resilver import run_conf_tasksresilver_test
+from tasks_scrub import run_conf_tasksscrub_test
+from tasks_cloudsync import run_conf_taskscloudsync_test
+
 from serv_ssh import run_conf_ssh_test
 from serv_afp import run_conf_afp_test
 from serv_smb import run_conf_smb_test
@@ -83,7 +93,7 @@ Mandatory Commands:
 Optional Commands:
 
 --test-name <test_name>    - name of tests targeted
-                            [account, storage, system, guide, service, theme]
+                            [accounts, system, tasks, network, storage, services, plugin, guide, theme]
 
 --driver <G or F>             - version of the driver G = Grid F = Firefox
 
@@ -96,7 +106,7 @@ if len(argument) == 1:
 
 # list of argument that should be use.
 optionlist = ["ip=", "test-name=", "driver="]
-testlist = ["account", "storage", "plugin", "network", "system", "guide", "service", "theme"]
+testlist = ["accounts", "system", "tasks", "network", "storage", "services", "plugin", "guide", "theme"]
 versionlist = ["U"]
 # look if all the argument are there.
 try:
@@ -154,7 +164,7 @@ except NameError:
     run_create_user_test(runDriver)
     run_create_group_test(runDriver)
     run_create_pool_test(runDriver)
-    run_conf_network_test(runDriver)
+#    run_conf_network_test(runDriver)
 
     run_conf_sysgeneral_test(runDriver)
     run_conf_ntpserver_test(runDriver)
@@ -170,6 +180,16 @@ except NameError:
     run_conf_ca_test(runDriver)
     run_conf_certificates_test(runDriver)
     run_conf_support_test(runDriver)
+
+    run_conf_taskscron_test(runDriver)
+    run_conf_tasksinitshutscript_test(runDriver)
+    run_conf_tasksrsync_test(runDriver)
+    run_conf_tasksSMART_test(runDriver)
+    run_conf_tasksperiodicSS_test(runDriver)
+    run_conf_tasksreplication_test(runDriver)
+    run_conf_tasksresilver_test(runDriver)
+    run_conf_tasksscrub_test(runDriver)
+    run_conf_taskscloudsync_test(runDriver)
 
 #    run_conf_afp_test(runDriver)
 # special reason for dns other services turned off until status is figured out
@@ -187,23 +207,12 @@ except NameError:
     run_delete_pool_test(runDriver)
     run_change_theme_test(runDriver)
 else:
-    if (test_name == "account"):
+    if (test_name == "accounts"):
         print ("Running: Accounts Test")
         run_create_user_test(runDriver)
         run_create_group_test(runDriver)
         run_edit_test(runDriver)
         run_delete_test(runDriver)
-
-    elif (test_name == "storage"):
-        run_create_pool_test(runDriver)
-        run_delete_pool_test(runDriver)
-
-    elif (test_name == "plugin"):
-      # run_create_pool_test(runDriver)
-        run_plugin_test(runDriver)
-
-    elif (test_name == "network"):
-        run_conf_network_test(runDriver)
 
     elif (test_name == "system"):
         run_conf_sysgeneral_test(runDriver)
@@ -221,8 +230,25 @@ else:
         run_conf_certificates_test(runDriver)
         run_conf_support_test(runDriver)
 
+    elif (test_name == "tasks"):
+        run_conf_taskscron_test(runDriver)
+        run_conf_tasksinitshutscript_test(runDriver)
+        run_conf_tasksrsync_test(runDriver)
+        run_conf_tasksSMART_test(runDriver)
+        run_conf_tasksperiodicSS_test(runDriver)
+        run_conf_tasksreplication_test(runDriver)
+        run_conf_tasksresilver_test(runDriver)
+        run_conf_tasksscrub_test(runDriver)
+        run_conf_taskscloudsync_test(runDriver)
 
-    elif (test_name == "service"):
+    elif (test_name == "network"):
+        run_conf_network_test(runDriver)
+
+    elif (test_name == "storage"):
+        run_create_pool_test(runDriver)
+        run_delete_pool_test(runDriver)
+
+    elif (test_name == "services"):
         print ("Running: Guide Tests")
 #        run_conf_afp_test(runDriver)
 #        run_conf_dc_test(runDriver)
@@ -233,6 +259,10 @@ else:
 #        run_conf_smb_test(runDriver)
 #        run_conf_ssh_test(runDriver)
 #        run_conf_webdav_test(runDriver)
+
+    elif (test_name == "plugin"):
+      # run_create_pool_test(runDriver)
+        run_plugin_test(runDriver)
 
     elif (test_name == "guide"):
         print ("Running: Guide Tests")
@@ -332,8 +362,8 @@ if path.exists('sys_alertservices.pyc'):
 if path.exists('sys_alertsettings.pyc'):
     call(["rm", "sys_alertsettings.pyc"])
 
-if path.exists('sys_cloudcred.pyc'):
-    call(["rm", "sys_cloudcred.pyc"])
+if path.exists('sys_cloudcreds.pyc'):
+    call(["rm", "sys_cloudcreds.pyc"])
 
 if path.exists('sys_tunables.pyc'):
     call(["rm", "sys_tunables.pyc"])
@@ -346,6 +376,33 @@ if path.exists('sys_certificates.pyc'):
 
 if path.exists('sys_support.pyc'):
     call(["rm", "sys_support.pyc"])
+
+if path.exists('tasks_cron.pyc'):
+    call(["rm", "tasks_cron.pyc"])
+
+if path.exists('tasks_initshutscript.pyc'):
+    call(["rm", "tasks_initshutscript.pyc"])
+
+if path.exists('tasks_rsync.pyc'):
+    call(["rm", "tasks_rsync.pyc"])
+
+if path.exists('tasks_SMART.pyc'):
+    call(["rm", "tasks_SMART.pyc"])
+
+if path.exists('tasks_periodicSS.pyc'):
+    call(["rm", "tasks_periodicSS.pyc"])
+
+if path.exists('tasks_replication.pyc'):
+    call(["rm", "tasks_replication.pyc"])
+
+if path.exists('tasks_resilver.pyc'):
+    call(["rm", "tasks_resilver.pyc"])
+
+if path.exists('tasks_scrub.pyc'):
+    call(["rm", "tasks_scrub.pyc"])
+
+if path.exists('tasks_cloudsync.pyc'):
+    call(["rm", "tasks_cloudsync.pyc"])
 
 if path.exists('guide.pyc'):
     call(["rm", "guide.pyc"])
