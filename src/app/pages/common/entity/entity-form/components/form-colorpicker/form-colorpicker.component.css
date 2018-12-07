@@ -11,7 +11,7 @@ div.color-swatch{
   box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
-.colorpicker .mat-input-container.full-width{
+.colorpicker .mat-form-field.full-width{
   max-width:80px;
 }
 

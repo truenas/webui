@@ -57,13 +57,13 @@ export class GlobalconfigurationComponent {
   afterSubmit(data) {
     this.ws.call('service.query', [[]]).subscribe((service_res) => {
       const service = _.find(service_res, {"service": "iscsitarget"});
-      if (!service.enable) {
+      if (!service['enable']) {
         this.dialogService.confirm(T("Enable service"),
           T("Enable this service?"),
           true, T("Enable Service")).subscribe((dialogRes) => {
             if (dialogRes) {
               this.loader.open();
-              this.ws.call('service.update', [service.id, { enable: true }]).subscribe((updateRes) => {
+              this.ws.call('service.update', [service['id'], { enable: true }]).subscribe((updateRes) => {
                 this.ws.call('service.start', [service.service]).subscribe((startRes) => {
                   this.loader.close();
                   this.snackBar.open(T("Service started"), T("close"));

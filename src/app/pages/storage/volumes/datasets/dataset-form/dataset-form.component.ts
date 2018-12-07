@@ -1,7 +1,7 @@
 import { Component} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Validators } from '@angular/forms';
-import { Subscription } from 'rxjs/Subscription';
+import { FormArray, FormGroup, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
 import * as _ from 'lodash';
 import { RestService, WebSocketService } from '../../../../../services/';
