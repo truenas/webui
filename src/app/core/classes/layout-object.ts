@@ -1,7 +1,7 @@
 import { DisplayObject } from './display-object';
 import { CoreService, CoreEvent } from '../services/core.service';
-import { timer } from 'rxjs/observable/timer';
-import { debounceTime } from 'rxjs/operators/debounceTime';
+import { timer } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import { 
   tween, 
   styler, 
@@ -279,8 +279,8 @@ import {
        let latestPosition: number = -1;
        let maxIndex = Object.keys(this.collection).length - 1;
 
-       dragTarget.inputStream
-         .debounceTime(15)
+       dragTarget.inputStream.pipe(
+         debounceTime(15))
          .subscribe((evt) => {
          //console.log(evt);
          const pad = this.margin / 2;

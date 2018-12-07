@@ -18,7 +18,7 @@ import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job
 import {RestService, WebSocketService} from '../../../../services/';
 import { T } from '../../../../translate-marker';
 import {EntityUtils} from '../../../common/entity/utils';
-import { debounce } from 'rxjs/operator/debounce';
+
 import { debug } from 'util';
 
 @Component({

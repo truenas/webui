@@ -271,7 +271,7 @@ export class ExtentFormComponent {
 
     this.fileFieldGroup.forEach(field => {
       let control: any = _.find(this.fieldConfig, {'name': field});
-      control.isHidden = isDevice;
+      control['isHidden'] = isDevice;
       control.disabled = isDevice;
       if (isDevice) {
         this.entityForm.formGroup.controls[field].disable();
@@ -282,7 +282,7 @@ export class ExtentFormComponent {
 
     this.deviceFieldGroup.forEach(field => {
       let control: any = _.find(this.fieldConfig, {'name': field});
-      control.isHidden = !isDevice;
+      control['isHidden'] = !isDevice;
       control.disabled = !isDevice;
       if (!isDevice) {
         this.entityForm.formGroup.controls[field].disable();
