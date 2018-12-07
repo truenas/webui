@@ -12,24 +12,24 @@
           </div>
           <form #signinForm="ngForm" (ngSubmit)="signin()" *ngIf="has_root_password; else setPassword">
             <div class="">
-              <mat-input-container class="full-width">
+              <mat-form-field class="full-width">
                 <input autofocus matInput name="username" required [(ngModel)]="signinData.username" #username="ngModel" placeholder="{{'Username' | translate}}" value="">
-                <mat-error *ngIf="username.errors && (username.dirty || username.touched) && (username.errors.required)">
+                <mat-error *ngIf="username['errors'] && (username.dirty || username.touched) && (username['errors'].required)">
                   <span *ngIf="!failed">{{"Please enter your username" | translate}}</span>
                   <span *ngIf="failed">{{"Please enter your username again" | translate}}</span>
                 </mat-error>
-              </mat-input-container>
+              </mat-form-field>
             </div>
             <div class="">
-              <mat-input-container class="full-width">
+              <mat-form-field class="full-width">
                 <input type="password" name="password" required matInput [(ngModel)]="signinData.password" #password="ngModel" placeholder="{{'Password' | translate}}" value="">
-                <mat-error *ngIf="password.errors && (password.dirty || password.touched) && (password.errors.required)">
+                <mat-error *ngIf="password['errors'] && (password.dirty || password.touched) && (password['errors'].required)">
                     <span *ngIf="!failed">{{"Please enter your password" | translate}}</span>
                     <span *ngIf="failed">{{"Please enter your password again" | translate}}</span>
                 </mat-error>
-              </mat-input-container>
+              </mat-form-field>
             </div>
-            <button name="signin_button" mat-button class="mat-accent full-width mb-1" id="signin_button" [disabled]="username.errors || password.errors">{{"Log in" | translate}}</button>
+            <button name="signin_button" mat-button class="mat-accent full-width mb-1" id="signin_button" [disabled]="username['errors'] || password['errors']">{{"Log in" | translate}}</button>
           </form>
           <ng-template #setPassword>
             <form (ngSubmit)="setpassword()" [formGroup]="setPasswordFormGroup" #setPasswordForm="ngForm">
@@ -37,20 +37,20 @@
                 <span>{{"Set new root account password:" | translate}}</span>
               </div>
               <div class="">
-                <mat-input-container class="full-width">
+                <mat-form-field class="full-width">
                   <input matInput type="password" id="password" formControlName="password" required placeholder="{{'Password' | translate}}">
-                  <mat-error *ngIf="password.errors && (password.dirty || password.touched)">
-                    <span *ngIf="password.errors.required">{{"This field is required" | translate}}</span>
+                  <mat-error *ngIf="password['errors'] && (password.dirty || password.touched)">
+                    <span *ngIf="password['errors'].required">{{"This field is required" | translate}}</span>
                   </mat-error>
-                </mat-input-container>
+                </mat-form-field>
               </div>
               <div class="">
-                <mat-input-container class="full-width">
+                <mat-form-field class="full-width">
                   <input matInput type="password" name="password2" formControlName="password2" required placeholder="{{'Confirm Password' | translate}}">
-                  <mat-error *ngIf="password2.errors && (password2.dirty || password2.touched)">
-                    <span *ngIf="password2.errors">{{"Passwords do not match" | translate}}</span>
+                  <mat-error *ngIf="password2['errors'] && (password2.dirty || password2.touched)">
+                    <span *ngIf="password2['errors']">{{"Passwords do not match" | translate}}</span>
                   </mat-error>
-                </mat-input-container>
+                </mat-form-field>
               </div>
               <button name="signin_button2" mat-button class="mat-accent full-width mb-1" type="submit" [disabled]="!setPasswordForm.form.valid">{{"Sign in" | translate}}</button>
             </form>

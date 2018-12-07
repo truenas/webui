@@ -156,7 +156,7 @@ export class TargetFormComponent {
         this.customFilter[0][0].push(parseInt(params['pk']));
         this.initialCount = 0;
         this.arrayControl.initialCount = 0;
-        this.arrayControl.formarray[4].isHidden = false;
+        this.arrayControl.formarray[4]['isHidden'] = false;
         this.arrayControl.formarray[4].disabled = false;
       }
     });

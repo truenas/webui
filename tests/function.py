@@ -51,6 +51,17 @@ xpaths = {
 #        'closeButton' : '/html/body/div[5]/div[2]/div/mat-dialog-container/info-dialog/div[2]/button'
         }
 
+service_dict = {
+        '1' : '//*[@id="slide-toggle__AFP"]',
+        '2' : '//*[@id="slide-toggle__Domain Controller"]',
+        '3' : '//*[@id="slide-toggle__Dynamic DNS"]',
+        '4' : '//*[@id="slide-toggle__FTP"]',
+        '5' : '//*[@id="slide-toggle__iSCSI"]',
+        '6' : '//*[@id="slide-toggle__LLDP"]',
+        '12' : '//*[@id="slide-toggle__SMB"]',
+        '14' : '//*[@id="slide-toggle__SSH"]',
+        '17' : '//*[@id="slide-toggle__WebDAV"]'
+}
 
     #method to test if an element is present
 def is_element_present(driver, self, how, what):
@@ -83,18 +94,22 @@ def screenshot(driver, self):
 
 # status check for services
 def status_check(driver, which):
-    ui_element_status=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[' + str(which) + ']/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[1]/div/mat-chip')
+    toggle_status = driver.find_element_by_xpath(service_dict[which])
+    status_data = toggle_status.get_attribute("class")
+    print (status_data)
+    if (status_data == "mat-slide-toggle mat-accent ng-star-inserted mat-checked"):
+        print ("current status is: RUNNING")
+    else:
+        print ("current status is: STOPPED")
     # get the status data
-    status_data=ui_element_status.text
-    print ("current status is: " + status_data)
+    print ("current status is: " + service_dict[which])
 
 def status_change(driver,self, which, to):
     print ("executing the status change function with input " + str(which) + " + " + str(to))
     # get the ui element
-    ui_element_status=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[' + str(which) + ']/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[1]/div/mat-chip')
+    toggle_status = driver.find_element_by_xpath(service_dict[which])
+
     # get the status data
-    status_data=ui_element_status.text
-    buttonToggle = driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[' + str(which) + ']/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[1]/button')
     if to == "start":
         if status_data == "STOPPED":
             # Click on the toggle button
@@ -120,13 +135,13 @@ def user_edit(driver, self, type, name):
     # num specifies the column of the 3 dots which is different in user/group
     # delNum speifies the option number where edit is after clicking on the 3 dots
     if (type == "user"):
-        num = 6
-        delNum = 1
+        num = 5
+        edNum = 6
         path = "User"
         #ED = "6"
     elif (type == "group"):
-        num = 5
-        delNum = 2
+        num = 4
+        edNum = 5
         path = "Group"
         #ED = "5"
 
@@ -145,10 +160,10 @@ def user_edit(driver, self, type, name):
             index = x
             break
         ui_element = " "
-    print ("index, delNum, num: " + str(x) + ", " + str(delNum) + "," + str(num))
+    print ("index, delNum, num: " + str(x) + ", " + str(edNum) + "," + str(num))
     time.sleep(1)
     # click on the 3 dots
-    driver.find_element_by_xpath('//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(num) + ']/div/app-entity-table-actions/div/mat-icon').click()
+    driver.find_element_by_xpath('//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(edNum) + ']/div/app-entity-table-actions/div/mat-icon').click()
     time.sleep(1)
     # click on edit option
     driver.find_element_by_xpath('//*[@id="action_button_Edit"]').click()
@@ -160,13 +175,13 @@ def user_delete(driver, self, type, name):
     # num specifies the column of the 3 dots which is different in user/group
     # delNum speifies the option number where del is after clicking on the 3 dots
     if (type == "user"):
-        num = 6
-        delNum = 1
+        num = 5
+        delNum = 6
         path = "User"
         plug = "bsdusr_username"
     elif (type == "group"):
-        num = 5
-        delNum = 2
+        num = 4
+        delNum = 5
         path = "Group"
         plug = "bsdgrp_group"
 
@@ -189,7 +204,7 @@ def user_delete(driver, self, type, name):
         print ("index, delNum, num: " + str(x) + ", " + str(delNum) + "," + str(num))
         time.sleep(1)
         # click on the 3 dots
-        driver.find_element_by_xpath('//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(num) + ']/div/app-entity-table-actions/div/mat-icon').click()
+        driver.find_element_by_xpath('//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(delNum) + ']/div/app-entity-table-actions/div/mat-icon').click()
         time.sleep(1)
         # click on delete option
         driver.find_element_by_xpath('//*[@id="action_button_Delete"]').click()

@@ -1,7 +1,7 @@
 import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs/Subscription';
+import {Subscription} from 'rxjs';
 import { Validators } from '@angular/forms';
 
 import {
@@ -148,7 +148,7 @@ export class LdapComponent {
       name : 'ldap_kerberos_realm',
       placeholder : T('Kerberos Realm'),
       tooltip: T('Select the realm created using the instructions in <a\
-                  href="..//docs/directoryservice.html#kerberos-realms"\
+                  href="%%docurl%%/directoryservice.html%%webversion%%#kerberos-realms"\
                   target="_blank">Kerberos Realms</a>.'),
       options : []
     },
@@ -158,7 +158,7 @@ export class LdapComponent {
       placeholder : T('Kerberos Principal'),
       tooltip: T('Select the location of the principal in the keytab\
                   created as described in <a\
-                  href="..//docs/directoryservice.html#kerberos-keytabs"\
+                  href="%%docurl%%/directoryservice.html%%webversion%%#kerberos-keytabs"\
                   target="_blank">Kerberos Keytabs</a>.'),
       options : []
     },

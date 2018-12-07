@@ -45,8 +45,8 @@ export class EntityUtils {
           }
           let errors = '';
           field.forEach((item, j) => { errors += item + ' '; });
-          fc.hasErrors = true;
-          fc.errors = errors;
+          fc['hasErrors'] = true;
+          fc['errors'] = errors;
         } else {
           if (typeof field === 'string') {
             entity.error = field;
@@ -74,7 +74,7 @@ export class EntityUtils {
         const field = res.extra[i][0].split('.').pop();
         const error = res.extra[i][1];
         const fc = _.find(entity.fieldConfig, {'name' : field});
-        if (fc && !fc.isHidden) {
+        if (fc && !fc['isHidden']) {
           const element = document.getElementById(field);
           if (element) {
             if (entity.conf && entity.conf.advanced_field && 
@@ -87,8 +87,8 @@ export class EntityUtils {
               scroll = true;
             }
           }
-          fc.hasErrors = true;
-          fc.errors = error;
+          fc['hasErrors'] = true;
+          fc['errors'] = error;
         } else {
           entity.error = error;
         }
