@@ -569,26 +569,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
       }
 
-      let rowDataset = _.find(this.datasetData, { id: rowData.path });
-      if (rowDataset && rowDataset['origin'] && !!rowDataset['origin'].parsed) {
-        actions.push({
-          label: T("Promote Dataset"),
-          onClick: (row1) => {
-            this.loader.open();
 
-            this.ws.call('pool.dataset.promote', [row1.path]).subscribe((wsResp) => {
-              this.loader.close();
-              // Showing info here because there is no feedback on list parent for this if promoted.
-              this.dialogService.Info(T("Promote Dataset"), T("Successfully Promoted ") + row1.path).subscribe((infoResult) => {
-                this.parentVolumesListComponent.repaintMe();
-              });
-            }, (res) => {
-              this.loader.close();
-              this.dialogService.errorReport(T("Error Promoting dataset ") + row1.path, res.reason, res.stack);
-            });
-          }
-        });
-      }
     }
     if (rowData.type === "zvol") {
       actions.push({
@@ -608,7 +589,6 @@ export class VolumesListTableConfig implements InputTableConf {
               });
             }
           });
-
 
         }
       });
@@ -675,6 +655,27 @@ export class VolumesListTableConfig implements InputTableConf {
           })
         }
       });
+
+      let rowDataset = _.find(this.datasetData, { id: rowData.path });
+      if (rowDataset && rowDataset['origin'] && !!rowDataset['origin'].parsed) {
+        actions.push({
+          label: T("Promote Dataset"),
+          onClick: (row1) => {
+            this.loader.open();
+
+            this.ws.call('pool.dataset.promote', [row1.path]).subscribe((wsResp) => {
+              this.loader.close();
+              // Showing info here because there is no feedback on list parent for this if promoted.
+              this.dialogService.Info(T("Promote Dataset"), T("Successfully Promoted ") + row1.path).subscribe((infoResult) => {
+                this.parentVolumesListComponent.repaintMe();
+              });
+            }, (res) => {
+              this.loader.close();
+              this.dialogService.errorReport(T("Error Promoting dataset ") + row1.path, res.reason, res.stack);
+            });
+          }
+        });
+      }
     }
     return actions;
   }
