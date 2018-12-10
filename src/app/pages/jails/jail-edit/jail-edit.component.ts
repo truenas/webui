@@ -1238,11 +1238,6 @@ export class JailEditComponent implements OnInit {
     }
 
     if (value['host_hostuuid']) {
-      if (this.wsResponse['type'] == 'jail') {
-        value['plugin'] = false;
-      } else {
-        value['plugin'] = true;
-      }
       value['name'] = value['host_hostuuid'];
       delete value['host_hostuuid'];
     }
