@@ -98,8 +98,10 @@ export class DatasetFormComponent implements Formconfiguration{
       type: 'select',
       name: 'sync',
       placeholder: T('Sync'),
-      tooltip: T('Read about <a href="guide" target="_blank">sync</a>\
-                  before making any changes.'),
+      tooltip: T('*Standard* uses the sync settings that have been\
+                  requested by the client software, *Always* waits for\
+                  data writes to complete, and Disabled never waits for\
+                  writes to complete.'),
       options: [
         { label: 'Standard', value: 'STANDARD' },
         { label: 'Always', value: 'ALWAYS' },
@@ -285,9 +287,9 @@ export class DatasetFormComponent implements Formconfiguration{
       name: 'deduplication',
       label: T('ZFS deplication'),
       placeholder: T('ZFS Deduplication'),
-      tooltip: T('Read about <a href="guide"\
-                  target="_blank">Deduplication</a> before making\
-                  changes to this setting.'),
+      tooltip: T('Please read about <a href="%%docurl%%/storage.html%%webversion%%#deduplication"\
+                  target="_blank">deduplication</a> before considering\
+                  changing this setting.'),
       options: [
         { label: 'on', value: 'ON' },
         { label: 'verify', value: 'VERIFY' },
