@@ -29,6 +29,10 @@ export class PluginsAvailabelListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    deleteMsg: {
+      title: 'Plugin',
+      key_props: ['0'],
+    },
   };
 
   public isPoolActivated: boolean;

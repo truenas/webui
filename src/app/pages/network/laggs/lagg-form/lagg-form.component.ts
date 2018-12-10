@@ -35,7 +35,7 @@ export class LaggFormComponent {
       name : 'lagg_protocol',
       placeholder : T('Lagg Protocol'),
       tooltip : T('Select the <a\
-                   href="../docs/network.html#link-aggregations"\
+                   href="%%docurl%%/network.html%%webversion%%#link-aggregations"\
                    target="_blank">Protocol Type</a>.<br>\
                    <i>LACP</i> is the recommended protocol if the network\
                    switch is capable of active LACP.<br>\

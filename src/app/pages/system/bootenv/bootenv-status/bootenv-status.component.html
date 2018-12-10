@@ -1,0 +1,18 @@
+<div class="material mat-card mat-card-table">
+	<div class="mat-toolbar mat-card-toolbar" fxLayoutAlign="space-between center">
+		<div fxFlex="300px" class="mat-card-title-text">
+			{{title | translate}}
+		</div>
+	</div>
+	<div>
+		<mat-list *ngIf="poolScan">
+			<mat-list-item><b>{{poolScan.function}}</b></mat-list-item>
+			<mat-list-item>Status: {{poolScan.pause != null ? 'PAUSED' : poolScan.state ? poolScan.state : 'None requested'}}</mat-list-item>
+			<mat-list-item *ngIf="poolScan.errors != null">Errors: {{poolScan.errors}}</mat-list-item>
+			<mat-list-item *ngIf="poolScan.start_time != null">Date: {{getReadableDate(poolScan.start_time)}}</mat-list-item>
+		</mat-list>
+	</div>
+	<div class="padding-16">
+			<entity-tree-table [conf]="treeTableConfig"></entity-tree-table>
+	</div>
+</div>

@@ -533,8 +533,11 @@ export class CloudCredentialsFormComponent {
     {
       type: 'select',
       name: 'drive_type-ONEDRIVE',
-      placeholder: T('Drive Type'),
-      // tooltip: T(''),
+      placeholder: T('Drive Account Type'),
+      tooltip: T('Choose a <i>Drive Account Type</i>: <i>PERSONAL, BUSINESS,</i>\
+                  or <a\
+                  href="https://products.office.com/en-us/sharepoint/collaboration"\
+                  target="_blank">SharePoint</a> <i>DOCUMENT_LIBRARY</i>.'),
       options: [
         {
           label: 'PERSONAL',
@@ -566,7 +569,13 @@ export class CloudCredentialsFormComponent {
       type: 'input',
       name: 'drive_id-ONEDRIVE',
       placeholder: T('Drive ID'),
-      // tooltip: T(''),
+      tooltip: T('Choose a unique drive identifier. Open the\
+                  <i>Shell</i>, enter <i>rclone config</i>,\
+                  and follow the prompts to find the <i>Drive ID</i>.\
+                  The rclone <a\
+                  href="https://rclone.org/onedrive"\
+                  target="_blank">OneDrive documentation</a> walks through\
+                  the configuration process.'),
       required: true,
       isHidden: true,
       relation: [

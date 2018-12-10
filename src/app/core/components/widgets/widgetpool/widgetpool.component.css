@@ -91,6 +91,7 @@
   width:100%;
   position:absolute;
   font-size:160%;
+  top:0;
 }
 
 .disk-icon,
@@ -254,6 +255,12 @@ span.disk-detail-subtitle {
 
 .zero-state h4 {
   margin:8px 0 0 8px;
+}
+
+.disk-details .zero-state {
+  width: 100%;
+  margin-top: 38%;
+  position: relative;
 }
 
 /* Mobile */

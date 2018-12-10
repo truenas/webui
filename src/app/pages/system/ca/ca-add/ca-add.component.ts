@@ -46,7 +46,7 @@ export class CertificateAuthorityAddComponent {
       name : 'signedby',
       placeholder : T('Signing Certificate Authority'),
       tooltip: T('Select a previously imported or created <a\
-                  href="../docs/system.html#cas"\
+                  href="%%docurl%%/system.html%%webversion%%#cas"\
                   target="_blank">CA</a>.'),
       options : [
         {label: '---', value: null}

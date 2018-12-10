@@ -43,7 +43,7 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
       placeholder : T('Filesystem type'),
       tooltip: T('Choose the type of filesystem on the disk. Refer to\
                   the guide section on <a\
-                  href="..//docs/storage.html#import-disk"\
+                  href="%%docurl%%/storage.html%%webversion%%#import-disk"\
                   target="_blank">importing disks</a> for more details.'),
       options: [
                     {value:'ufs', label:'UFS'},
@@ -138,7 +138,6 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
       fs_options["locale"] = payload.msdosfs_locale;
     }
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Importing Disk") }});
-    this.dialogRef.componentInstance.progressNumberType = "nopercent";
     this.dialogRef.componentInstance.setDescription(T("Importing Disk..."));
     this.dialogRef.componentInstance.setCall('pool.import_disk', [payload.volume, payload.fs_type, fs_options ,payload.dst_path]);
     this.dialogRef.componentInstance.submit();

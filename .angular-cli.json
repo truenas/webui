@@ -22,6 +22,7 @@
         "testTsconfig": "tsconfig.spec.json",
         "prefix": "app",
         "styles": [
+          "assets/styles/reset.css",
           "../node_modules/xterm/dist/xterm.css",
           "../node_modules/quill/dist/quill.core.css",
           "../node_modules/quill/dist/quill.snow.css",
@@ -32,22 +33,15 @@
           "../node_modules/chartist/dist/chartist.min.css",
           "../node_modules/@swimlane/ngx-datatable/assets/icons.css",
           "../node_modules/c3/c3.min.css",
-          "../node_modules/devextreme/dist/css/dx.spa.css",
-          "../node_modules/devextreme/dist/css/dx.common.css",
-          "../node_modules/devextreme/dist/css/dx.light.css",
           "../node_modules/angular-tree-component/dist/angular-tree-component.css",
           
-          "assets/styles/themes/egret-dark-purple.scss",
-          "assets/styles/themes/egret-dark-pink.scss",
-          "assets/styles/themes/egret-blue.scss",
-          "assets/styles/themes/egret-indigo.scss",
+          "../node_modules/primeicons/primeicons.css",
+          "../node_modules/primeng/resources/primeng.min.css",
           "assets/styles/themes/ix-blue.scss",
-          "assets/styles/themes/solarized-dark.scss",
-          "assets/styles/themes/freenas-warriors.scss",
-          "assets/styles/themes/freenas-sharks.scss",
           "assets/styles/fn-styles.css",
           "assets/styles/charts.css",
-          "assets/styles/egret_overrides.css"
+          "assets/styles/egret_overrides.css",
+          "assets/styles/material-reduction.css"
         ],
         "scripts": [
 
@@ -57,7 +51,6 @@
           "vendor/Chart.min.js",
           "../node_modules/quill/dist/quill.min.js",
           "../node_modules/element-resize-detector/dist/element-resize-detector.min.js",
-          "../node_modules/devextreme/dist/js/dx.all.js",
           "../node_modules/filesize/lib/filesize.js",
           "../node_modules/xterm/dist/xterm.js",
           "../node_modules/xterm/dist/addons/attach/attach.js",
