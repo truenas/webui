@@ -43,6 +43,7 @@ export class JailEditComponent implements OnInit {
       placeholder: helptext.host_hostuuid_placeholder,
       tooltip: helptext.host_hostuuid_tooltip,
       required: true,
+      disabled: false,
       validation: [ Validators.required ],
     },
     {
@@ -1044,6 +1045,9 @@ export class JailEditComponent implements OnInit {
       (res) => {
         this.wsResponse = res[0];
         for (let i in res[0]) {
+          if (i == 'type' && res[0][i] == 'pluginv2') {
+            this.setDisabled("host_hostuuid", true);
+          }
           if (this.formGroup.controls[i]) {
             if (i == 'ip4_addr') {
               let ip4 = res[0][i];
