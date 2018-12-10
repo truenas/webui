@@ -19,6 +19,7 @@ import { NavigationService } from "./services/navigation/navigation.service";
 import { AuthService } from './services/auth/auth.service';
 import { ConfirmDialog } from './pages/common/confirm-dialog/confirm-dialog.component';
 import { AboutModalDialog } from './components/common/dialog/about/about-dialog.component';
+import { TaskManagerComponent } from './components/common/dialog/task-manager/task-manager.component';
 import { ConsolePanelModalDialog } from './components/common/dialog/consolepanel/consolepanel-dialog.component';
 import { DownloadKeyModalDialog } from './components/common/dialog/downloadkey/downloadkey-dialog.component';
 import {SelectDialogComponent} from './pages/common/select-dialog/select-dialog.component'
@@ -80,7 +81,7 @@ export function createTranslateLoader(http: HttpClient) {
     EntityModule,
     NgxWebstorageModule.forRoot(),
   ],
-  declarations: [AppComponent, ConfirmDialog, ErrorDialog, InfoDialog, AboutModalDialog, ConsolePanelModalDialog, DownloadKeyModalDialog, SelectDialogComponent ],
+  declarations: [AppComponent, ConfirmDialog, ErrorDialog, InfoDialog, AboutModalDialog, TaskManagerComponent, ConsolePanelModalDialog, DownloadKeyModalDialog, SelectDialogComponent ],
   providers: [
     RoutePartsService,
     NavigationService,
@@ -101,6 +102,7 @@ export function createTranslateLoader(http: HttpClient) {
     ErrorDialog,
     InfoDialog,
     AboutModalDialog,
+    TaskManagerComponent,
     ConsolePanelModalDialog,
     DownloadKeyModalDialog,
     SelectDialogComponent,
