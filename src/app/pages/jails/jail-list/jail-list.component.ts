@@ -179,15 +179,19 @@ export class JailListComponent implements OnInit {
   }
 
   getActivatedPool(){
-    this.ws.call('jail.get_activated_pool').subscribe((res)=>{
-      if (res != null) {
-        this.activatedPool = res;
-        this.selectedPool = res;
-        this.isPoolActivated = true;
-      } else {
-        this.isPoolActivated = false;
-      }
-    })
+    this.ws.call('jail.get_activated_pool').subscribe(
+      (res)=>{
+        if (res != null && res != "") {
+          this.activatedPool = res;
+          this.selectedPool = res;
+          this.isPoolActivated = true;
+        } else {
+          this.isPoolActivated = false;
+        }
+      },
+      (err)=>{
+        new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
+      })
   }
 
   getAvailablePools(){
