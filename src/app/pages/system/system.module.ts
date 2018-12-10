@@ -6,7 +6,7 @@ import { NgUploaderModule } from 'ngx-uploader';
 import { EntityModule } from '../common/entity/entity.module';
 
 import { MaterialModule } from '../../appMaterial.module';
-import { MarkdownModule } from 'angular2-markdown';
+import { MarkdownModule } from 'ngx-markdown';
 import { routing } from './system.routing';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
@@ -44,13 +44,12 @@ import { TranslateModule } from '@ngx-translate/core';
 import { EmailComponent } from './email';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
-import { DxTreeListModule } from 'devextreme-angular';
 
 @NgModule({
   imports: [
     EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, NgUploaderModule, routing,
-    MaterialModule, MarkdownModule.forRoot(), TranslateModule, FlexLayoutModule, DxTreeListModule
+    MaterialModule, MarkdownModule.forRoot(), TranslateModule, FlexLayoutModule
   ],
   declarations: [
     GeneralComponent,

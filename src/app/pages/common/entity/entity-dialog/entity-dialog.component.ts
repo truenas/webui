@@ -24,6 +24,7 @@ export class EntityDialogComponent implements OnInit {
   @Input('conf') conf: DialogFormConfiguration;
 
   public title: string;
+  public warning: string;
   public fieldConfig: Array < FieldConfig > ;
   public formGroup: FormGroup;
   public saveButtonText: string;
@@ -103,8 +104,8 @@ export class EntityDialogComponent implements OnInit {
   clearErrors() {
     this.error = null;
     for (let f = 0; f < this.fieldConfig.length; f++) {
-      this.fieldConfig[f].errors = '';
-      this.fieldConfig[f].hasErrors = false;
+      this.fieldConfig[f]['errors'] = '';
+      this.fieldConfig[f]['hasErrors'] = false;
     }
   }
 

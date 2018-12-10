@@ -1,5 +1,5 @@
 import 'style-loader!./lineChart.scss';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { BehaviorSubject } from 'rxjs';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 
 import {Component, Input, OnInit, AfterViewInit, OnDestroy} from '@angular/core';

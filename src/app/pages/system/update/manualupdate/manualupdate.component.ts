@@ -34,15 +34,15 @@ export class ManualUpdateComponent {
   protected dialogRef: any;
   public fileLocation: any;
   public subs: any;
-  public custActions: Array<any> = [
-    {
-      id : 'save_config',
-      name : T('Save Config'),
-      function : () => {
-        this.dialogservice.dialogForm(this.saveConfigFormConf);
-      }
-    }
-  ];
+  // public custActions: Array<any> = [
+  //   {
+  //     id : 'save_config',
+  //     name : T('Save Config'),
+  //     function : () => {
+  //       this.dialogservice.dialogForm(this.saveConfigFormConf);
+  //     }
+  //   }
+  // ];
   public saveSubmitText ="Apply Update";
   protected fieldConfig: FieldConfig[] = [
     {
@@ -76,7 +76,7 @@ export class ManualUpdateComponent {
     {
       type: 'checkbox',
       name: 'secretseed',
-      placeholder: T('Export Password Secret Seed')
+      placeholder: T('Include Password Secret Seed')
     }
   ];
   public saveConfigFormConf: DialogFormConfiguration = {
@@ -137,7 +137,7 @@ export class ManualUpdateComponent {
     this.dialogRef.componentInstance.success.subscribe((succ)=>{
       this.dialogRef.close(false);
       this.translate.get('Restart').subscribe((reboot: string) => {
-        this.translate.get('Update successfull. Please reboot for the update to take effect. Reboot now?').subscribe((reboot_prompt: string) => {
+        this.translate.get('Update successful. Please reboot for the update to take effect. Reboot now?').subscribe((reboot_prompt: string) => {
           this.dialogService.confirm(reboot, reboot_prompt).subscribe((reboot_res) => {
             if (reboot_res) {
               this.router.navigate(['/others/reboot']);

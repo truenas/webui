@@ -7,6 +7,7 @@ import * as _ from 'lodash';
 import {RestService,WebSocketService} from '../../../../services/';
 import {FieldConfig} from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
+import { number } from 'style-value-types';
 
 @Component({
   selector : 'app-ups-edit',
@@ -231,6 +232,15 @@ export class ServiceUPSComponent implements OnDestroy {
       tooltip : T('Set for the UPS to power off after shutting down the\
                    system.'),
     },
+    {
+      type : 'input',
+      inputType: 'number',
+      name : 'ups_hostsync',
+      placeholder : T('Power Off UPS'),
+      tooltip : T('Upsmon will wait up to this many seconds in master mode for \
+                  the slaves to disconnect during a shutdown situation'),
+      value: 15,
+    },
   ];
 
   constructor(protected router: Router, protected route: ActivatedRoute,
@@ -274,20 +284,20 @@ export class ServiceUPSComponent implements OnDestroy {
         this.entityForm.setDisabled('ups_driver', true);
         this.entityForm.setDisabled('ups_port', true);
         this.entityForm.setDisabled('ups_remotehost', false);
-        _.find(this.fieldConfig, { name: 'ups_driver' }).isHidden = true;
-        _.find(this.fieldConfig, { name: 'ups_port' }).isHidden = true;
-        _.find(this.fieldConfig, { name: 'ups_remotehost' }).isHidden = false;
-        _.find(this.fieldConfig, { name: 'ups_remoteport' }).isHidden = false;
-        _.find(this.fieldConfig, { name: 'ups_options' }).isHidden = true;
+        _.find(this.fieldConfig, { name: 'ups_driver' })['isHidden'] = true;
+        _.find(this.fieldConfig, { name: 'ups_port' })['isHidden'] = true;
+        _.find(this.fieldConfig, { name: 'ups_remotehost' })['isHidden'] = false;
+        _.find(this.fieldConfig, { name: 'ups_remoteport' })['isHidden'] = false;
+        _.find(this.fieldConfig, { name: 'ups_options' })['isHidden'] = true;
       } else {
         this.entityForm.setDisabled('ups_driver', false);
         this.entityForm.setDisabled('ups_port', false);
         this.entityForm.setDisabled('ups_remotehost', true);
-        _.find(this.fieldConfig, { name: 'ups_driver' }).isHidden = false;
-        _.find(this.fieldConfig, { name: 'ups_port' }).isHidden = false;
-        _.find(this.fieldConfig, { name: 'ups_remotehost' }).isHidden = true;
-        _.find(this.fieldConfig, { name: 'ups_remoteport' }).isHidden = true;
-        _.find(this.fieldConfig, { name: 'ups_options' }).isHidden = false;
+        _.find(this.fieldConfig, { name: 'ups_driver' })['isHidden'] = false;
+        _.find(this.fieldConfig, { name: 'ups_port' })['isHidden'] = false;
+        _.find(this.fieldConfig, { name: 'ups_remotehost' })['isHidden'] = true;
+        _.find(this.fieldConfig, { name: 'ups_remoteport' })['isHidden'] = true;
+        _.find(this.fieldConfig, { name: 'ups_options' })['isHidden'] = false;
 
       }
 

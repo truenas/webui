@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { Observer } from 'rxjs/Observer';
-import { Subject } from 'rxjs/Subject';
+import { Observable ,  Observer ,  Subject } from 'rxjs';
 
 /*
  * Heavily influenced by Objective C's NSNotificationCenter

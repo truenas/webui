@@ -2,10 +2,12 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { DragulaModule } from 'ng2-dragula';
 import { MaterialModule } from '../../appMaterial.module';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TranslateModule } from '@ngx-translate/core';
+
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { FileSizeModule } from 'ngx-filesize';
 
 import { EntityModule } from '../common/entity/entity.module';
 import { UserService } from '../../services/user.service';
@@ -33,7 +35,7 @@ import { DiskFormComponent } from './disks/disk-form/';
 import { DiskBulkEditComponent } from './disks/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
 import { BrowserModule } from '@angular/platform-browser';
-import { DxTreeListModule } from 'devextreme-angular';
+import { TreeTableModule } from 'primeng/treetable';
 import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form';
 import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddkey-form';
 import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecreatekey-form/volumecreatekey-form.component';
@@ -43,9 +45,10 @@ import { MessageService } from '../common/entity/entity-form/services/message.se
 
 @NgModule({
   imports : [
-    RouterModule, DragulaModule, EntityModule, CommonModule, FormsModule,
-    ReactiveFormsModule, routing, MaterialModule,
-    NgxDatatableModule, DxTreeListModule, TranslateModule
+    RouterModule, EntityModule, CommonModule, FormsModule,
+    ReactiveFormsModule, routing, MaterialModule, TreeTableModule,
+    NgxDatatableModule, TranslateModule, FlexLayoutModule,
+    FileSizeModule
   ],
   declarations : [
     VolumesListComponent,

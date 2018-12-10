@@ -2,7 +2,7 @@ import { Component, AfterViewInit, Input, ViewChild, OnDestroy, OnChanges} from 
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { MaterialModule } from 'app/appMaterial.module';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { NgForm } from '@angular/forms';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { LineChartComponent } from 'app/components/common/lineChart/lineChart.component';
