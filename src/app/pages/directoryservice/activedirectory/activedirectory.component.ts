@@ -126,10 +126,12 @@ export class ActiveDirectoryComponent {
       placeholder : T('Certificate'),
       tooltip : T('Select the certificate of the Active Directory server\
                  if SSL connections are used. Add a certificate here by\
-                 creating a <a href="guide" target="_blank">CA</a> then\
-                 a certificate on the Active Directory server. Import\
-                 the certificate to this system with the <a\
-                 href="guide" target="_blank">Certificates</a> menu.'),
+                 creating a\
+                 <a href="%%docurl%%/system.html%%webversion%%#cas" target="_blank">CA</a>,\
+                 then creating a certificate on the Active Directory server.\
+                 Import the certificate on this system with the\
+                 <a href="%%docurl%%/system.html%%webversion%%#certificates" target="_blank">Certificates</a>\
+                 menu.'),
       options : []
     },
     {
@@ -218,7 +220,8 @@ export class ActiveDirectoryComponent {
       type : 'select',
       name : 'ad_kerberos_realm',
       placeholder : T('Kerberos Realm'),
-      tooltip : T('Select the realm created in <a href="guide"\
+      tooltip : T('Select the realm created in\
+                   <a href="%%docurl%%/directoryservices.html%%webversion%%#kerberos-realms"\
                    target="_blank">Kerberos Realms</a>.'),
       options : []
     },
@@ -226,7 +229,8 @@ export class ActiveDirectoryComponent {
       type : 'select',
       name : 'ad_kerberos_principal',
       placeholder : T('Kerberos Principal'),
-      tooltip : T('Select the keytab created in <a href="guide"\
+      tooltip : T('Select the keytab created in\
+                   <a href="%%docurl%%/directoryservices.html%%webversion%%#kerberos-keytabs"\
                    target="_blank">Kerberos Keytabs</a>.'),
       options : [
         {label : '---', value : ""},

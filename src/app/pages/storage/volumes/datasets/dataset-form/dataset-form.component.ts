@@ -98,8 +98,10 @@ export class DatasetFormComponent implements Formconfiguration{
       type: 'select',
       name: 'sync',
       placeholder: T('Sync'),
-      tooltip: T('Read about <a href="guide" target="_blank">sync</a>\
-                  before making any changes.'),
+      tooltip: T('<i>Standard</i> uses the sync settings that have been\
+                  requested by the client software, <i>Always</i> waits for\
+                  data writes to complete, and <i>Disabled</i> never waits for\
+                  writes to complete.'),
       options: [
         { label: 'Standard', value: 'STANDARD' },
         { label: 'Always', value: 'ALWAYS' },
@@ -137,9 +139,9 @@ export class DatasetFormComponent implements Formconfiguration{
     {
       type: 'select',
       name: 'atime',
-      placeholder: T('Enable atime'),
+      placeholder: T('Enable Atime'),
       tooltip: T('Choose <i>ON</i> to update the access time for files\
-                  when they are read. Choose <b>Off</b> to prevent\
+                  when they are read. Choose <i>Off</i> to prevent\
                   producing log traffic when reading files. This can\
                   result in significant performance gains.'),
       options: [
@@ -285,9 +287,9 @@ export class DatasetFormComponent implements Formconfiguration{
       name: 'deduplication',
       label: T('ZFS deplication'),
       placeholder: T('ZFS Deduplication'),
-      tooltip: T('Read about <a href="guide"\
-                  target="_blank">Deduplication</a> before making\
-                  changes to this setting.'),
+      tooltip: T('Please read about <a href="%%docurl%%/storage.html%%webversion%%#deduplication"\
+                  target="_blank">deduplication</a> before considering\
+                  changing this setting.'),
       options: [
         { label: 'on', value: 'ON' },
         { label: 'verify', value: 'VERIFY' },
@@ -318,8 +320,8 @@ export class DatasetFormComponent implements Formconfiguration{
       type: 'select',
       name: 'snapdir',
       placeholder: T('Snapshot directory'),
-      tooltip: T('Choose if the .zfs snapshot directory is <b>Visible</b>\
-                  or <b>Invisible</b> on this dataset.'),
+      tooltip: T('Choose if the .zfs snapshot directory is <i>Visible</i>\
+                  or <i>Invisible</i> on this dataset.'),
       options: [
         { label: 'Visible', value: 'VISIBLE' },
         { label: 'Invisible', value: 'HIDDEN' },
@@ -542,7 +544,7 @@ export class DatasetFormComponent implements Formconfiguration{
 
 
         sync.options = sync_inherit.concat(sync.options);
-        compression.options = compression_inherit.concat(compression.options);        
+        compression.options = compression_inherit.concat(compression.options);
         deduplication.options = deduplication_inherit.concat(deduplication.options);
         exec.options = exec_inherit.concat(exec.options);
         readonly.options = readonly_inherit.concat(readonly.options);
