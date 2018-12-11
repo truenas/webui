@@ -272,28 +272,10 @@ export class ExtentFormComponent {
   }
 
   formUpdate (type) {
-    console.log(type);
-    let isDevice = type == 'FILE' ? false : true;
-
-    //resetValue if editing zvol extent
-    if (type == 'DISK') {
-      let disk_path = this.entityForm.data['disk'];
-      let disk_control = this.entityForm.formGroup.controls['disk'];
-      // disk
-      if (!_.startsWith(disk_path, 'zvol')) {
-        this.ws.call('disk.query', [
-            [
-              ["identifier", "=", disk_path]
-            ]
-          ]).subscribe((res) => {
-            disk_path = res[0].name;
-          })
-      }
-      disk_control.setValue(disk_path);
-    }
+    const isDevice = type == 'FILE' ? false : true;
 
     this.fileFieldGroup.forEach(field => {
-      let control: any = _.find(this.fieldConfig, {'name': field});
+      const control: any = _.find(this.fieldConfig, {'name': field});
       control['isHidden'] = isDevice;
       control.disabled = isDevice;
       if (isDevice) {
@@ -304,7 +286,7 @@ export class ExtentFormComponent {
     });
 
     this.deviceFieldGroup.forEach(field => {
-      let control: any = _.find(this.fieldConfig, {'name': field});
+      const control: any = _.find(this.fieldConfig, {'name': field});
       control['isHidden'] = !isDevice;
       control.disabled = !isDevice;
       if (!isDevice) {
@@ -317,7 +299,9 @@ export class ExtentFormComponent {
 
   resourceTransformIncomingRestData(data) {
     if (data.type == 'DISK') {
-      data['disk'] = data['path'];
+      if (_.startsWith(data['path'], 'zvol')) {
+        data['disk'] = data['path'];
+      }
       delete data['path'];
     }
     return data;
