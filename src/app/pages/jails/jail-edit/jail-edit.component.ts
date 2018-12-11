@@ -45,7 +45,6 @@ export class JailEditComponent implements OnInit {
       required: true,
       disabled: false,
       validation: [ Validators.required ],
-      disabled: false,
     },
     {
       type: 'select',
