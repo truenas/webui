@@ -122,7 +122,7 @@ export class DatasetFormComponent implements Formconfiguration{
         { label: 'off', value: 'OFF' },
         { label: 'lz4 (recommended)', value: 'LZ4' ,},
         { label: 'gzip (fastest)', value: 'GZIP-1' },
-        { label: 'gzip (default level, 6)', value: 'GZIP-6' },
+        { label: 'gzip (default level, 6)', value: 'GZIP' },
         { label: 'gzip (maximum, slow)', value: 'GZIP-9' },
         { label: 'zle (runs of zeros)', value: 'ZLE' },
         { label: 'lzjb (legacy, not recommended)', value: 'LZJB' }

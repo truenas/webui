@@ -26,6 +26,10 @@
       <button *ngIf="showReplication" mat-icon-button id="replication" matTooltip="replication" (click)="showReplicationDetails()" class="topbar-button-right">
         <mat-icon class="movement">content_copy</mat-icon>
       </button>
+      <!-- Task Manager -->
+      <button mat-icon-button id="task-manager" matTooltip="Task Manager" (click)="onShowTaskManager()" >
+        <mat-icon>assignment</mat-icon>
+      </button>
       <!-- Theme Switcher -->
       <button mat-icon-button id="schemeToggle" [style.overflow]="'visible'" matTooltip="FreeNAS Themes" [matMenuTriggerFor]="themeMenu" class="topbar-button-right">
         <mat-icon>format_color_fill</mat-icon>

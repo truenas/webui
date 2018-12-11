@@ -138,7 +138,6 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
       fs_options["locale"] = payload.msdosfs_locale;
     }
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Importing Disk") }});
-    this.dialogRef.componentInstance.progressNumberType = "nopercent";
     this.dialogRef.componentInstance.setDescription(T("Importing Disk..."));
     this.dialogRef.componentInstance.setCall('pool.import_disk', [payload.volume, payload.fs_type, fs_options ,payload.dst_path]);
     this.dialogRef.componentInstance.submit();

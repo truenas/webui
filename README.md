@@ -8,7 +8,7 @@ This is the project for the new angular.io WebUI for FreeNAS 11. It is meant to 
 
 # Development requirements
 
-  - npm >= 5
+  - yarn >= 1.12
   - Node.js >= 8.9
   - Running FreeNAS 11 Nightly Machine (VM is fine)
 
@@ -18,13 +18,7 @@ This is the project for the new angular.io WebUI for FreeNAS 11. It is meant to 
 Install the development requirements (FreeBSD 11 or later):
 
 ```sh
-# pkg install npm
-```
-
-On some operating systems it is quickest to install npm > 3 first then install npm:
-
-```sh
-# npm install -g npm5
+# pkg install yarn
 ```
 
 Checkout FreeNAS git repository:
@@ -34,10 +28,10 @@ $ git clone https://github.com/freenas/webui.git
 $ cd webui
 ```
 
-Install npm packages:
+Install yarn packages:
 
 ```sh
-$ npm install
+$ yarn install
 ```
 
 Run the environment configuration script
@@ -48,38 +42,38 @@ $ ./setup_env.js -i <ip address or FQDN of the server where FreeNAS is running>
 ```
 
 To start run
-```npm start```
+```yarn start```
 
 This runs a local webserver with the new WebUI, by default at http://localhost:4200.
 If this webserver is kept running, changes to the project will be rebuilt incrementally.
 
 To test AOT in dev mode run
 
-```npm run start:dev:aot```
+```yarn run start:dev:aot```
 
 To run the production build, run
 
-```npm run build:prod:aot```
+```yarn run build:prod:aot```
 
 Getting errors about missing packages?
 
-```npm install```
+```yarn install```
 
-Getting permission errors or Failed messages when trying to run `npm start`?
+Getting permission errors or Failed messages when trying to run `yarn start`?
 
 From the webui repo
 ```
 rm -rf node_modules (may need root)
 rm package-lock.json
-npm cache clear --force
-npm install
+yarn cache clear --force
+yarn install
 ```
-This should bring the npm environment back to a useable state.
+This should bring the yarn environment back to a useable state.
 
 # Translating Text to Other Languages
 
 To extract all of the strings from the project to be translated run:
-```npm run extract```
+```yarn run extract```
 
 This will update all of the PO files located in the directory src/assets/i18n.
 These can be edited with any PO editor.

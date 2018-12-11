@@ -7,6 +7,7 @@ import * as _ from 'lodash';
 import {RestService,WebSocketService} from '../../../../services/';
 import {FieldConfig} from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
+import { number } from 'style-value-types';
 
 @Component({
   selector : 'app-ups-edit',
@@ -230,6 +231,15 @@ export class ServiceUPSComponent implements OnDestroy {
       placeholder : T('Power Off UPS'),
       tooltip : T('Set for the UPS to power off after shutting down the\
                    system.'),
+    },
+    {
+      type : 'input',
+      inputType: 'number',
+      name : 'ups_hostsync',
+      placeholder : T('Power Off UPS'),
+      tooltip : T('Upsmon will wait up to this many seconds in master mode for \
+                  the slaves to disconnect during a shutdown situation'),
+      value: 15,
     },
   ];
 
