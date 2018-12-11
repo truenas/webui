@@ -45,7 +45,6 @@ export class JailEditComponent implements OnInit {
       required: true,
       disabled: false,
       validation: [ Validators.required ],
-      disabled: false,
     },
     {
       type: 'select',
@@ -458,6 +457,12 @@ export class JailEditComponent implements OnInit {
     },
     {
       type: 'checkbox',
+      name: 'allow_mlock',
+      placeholder: helptext.allow_mlock_placeholder,
+      tooltip: helptext.allow_mlock_tooltip,
+    },
+    {
+      type: 'checkbox',
       name: 'allow_mount',
       placeholder: helptext.allow_mount_placeholder,
       tooltip: helptext.allow_mount_tooltip,
@@ -510,6 +515,13 @@ export class JailEditComponent implements OnInit {
       name: 'allow_socket_af',
       placeholder: helptext.allow_socket_af_placeholder,
       tooltip: helptext.allow_socket_af_tooltip,
+      disabled: false,
+    },
+    {
+      type: 'input',
+      name: 'vnet_interfaces',
+      placeholder: helptext.vnet_interfaces_placeholder,
+      tooltip: helptext.vnet_interfaces_tooltip,
       disabled: false,
     }
   ];
@@ -673,6 +685,12 @@ export class JailEditComponent implements OnInit {
       disabled: false,
     },
     {
+      type: 'checkbox',
+      name: 'hostid_strict_check',
+      placeholder: helptext.hostid_strict_check_placeholder,
+      tooltip: helptext.hostid_strict_check_tooltip,
+    },
+    {
       type: 'input',
       name: 'comment',
       placeholder: helptext.comment_placeholder,
@@ -734,6 +752,12 @@ export class JailEditComponent implements OnInit {
       placeholder: helptext.jail_zfs_mountpoint_placeholder,
       tooltip: helptext.jail_zfs_mountpoint_tooltip,
       disabled: false,
+    },
+    {
+      type: 'checkbox',
+      name: 'allow_tun',
+      placeholder: helptext.allow_tun_placeholder,
+      tooltip: helptext.allow_tun_tooltip,
     },
   ];
   public rctlConfig: FieldConfig[] = [
@@ -913,6 +937,7 @@ export class JailEditComponent implements OnInit {
     'allow_sysvipc',
     'allow_raw_sockets',
     'allow_chflags',
+    'allow_mlock',
     'allow_mount',
     'allow_mount_devfs',
     'allow_mount_nullfs',
@@ -922,7 +947,8 @@ export class JailEditComponent implements OnInit {
     'allow_quotas',
     'allow_socket_af',
     'mount_procfs',
-    'mount_linprocfs'
+    'mount_linprocfs',
+    'allow_tun',
   ];
   // fields only accepted by ws with value on/off
   protected OFfields: any = [
@@ -954,6 +980,7 @@ export class JailEditComponent implements OnInit {
   // fields only accepted by ws with value yes/no
   protected YNfields: any = [
     'bpf',
+    'hostid_strict_check',
     'template',
     'host_time',
   ];
