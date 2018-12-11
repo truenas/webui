@@ -126,7 +126,7 @@ export class ActiveDirectoryComponent {
       placeholder : T('Certificate'),
       tooltip : T('Select the certificate of the Active Directory server\
                  if SSL connections are used. Add a certificate here by\
-                 creating a
+                 creating a\
                  <a href="%%docurl%%/system.html%%webversion%%#cas" target="_blank">CA</a>,\
                  then creating a certificate on the Active Directory server.\
                  Import the certificate on this system with the\
