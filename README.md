@@ -64,8 +64,8 @@ Getting permission errors or Failed messages when trying to run `yarn start`?
 From the webui repo
 ```
 rm -rf node_modules (may need root)
-rm package-lock.json
-yarn cache clear --force
+rm yarn.lock 
+yarn cache clean --force
 yarn install
 ```
 This should bring the yarn environment back to a useable state.
