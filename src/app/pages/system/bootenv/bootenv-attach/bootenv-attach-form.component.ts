@@ -33,6 +33,12 @@ export class BootEnvAttachFormComponent {
   protected pk: any;
   protected isNew: boolean = true;
   protected dialogRef: any;
+  protected byteMap: Object= {
+    'T': 1099511627776,
+    'G': 1073741824,
+    'M': 1048576,
+    'K': 1024,
+  };
 
 
   protected entityForm: any;
@@ -70,11 +76,22 @@ preInit(entityForm: any) {
 }
 
   afterInit(entityForm: any) {
+    let disksize = 0
     this.entityForm = entityForm;
     this.diskChoice = _.find(this.fieldConfig, {'name':'dev'});
     this.ws.call('disk.get_unused').subscribe((res)=>{
       res.forEach((item) => {
-        this.diskChoice.options.push({label : item.name, value : item.name});
+        if (item['size']/(this.byteMap['T']) > 1 ) {
+          disksize = item['size'] /(this.byteMap['T']);
+          item.name = `${item.name}(${disksize} TB)`
+        } else if (item['size']/(this.byteMap['G']) <= 1024 && item['size']/(this.byteMap['M']) === item['size']/(this.byteMap['G']) * 1024) {
+          disksize = item['size'] /(this.byteMap['G']);
+          item.name = `${item.name}(${disksize} GB)`
+        } else if (item['size']/(this.byteMap['M']) <= 1024 && item['size']/(this.byteMap['K']) === item['size']/(this.byteMap['M']) * 1024) {
+          disksize = item['size'] /(this.byteMap['M']);
+          item.name = `${item.name}(${disksize} MB)`
+        };
+        this.diskChoice.options.push({label : item.name, value : item.name});        
       });
     });
 
