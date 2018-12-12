@@ -33,12 +33,6 @@ export class BootEnvAttachFormComponent {
   protected pk: any;
   protected isNew: boolean = true;
   protected dialogRef: any;
-  protected byteMap: Object= {
-    'T': 1099511627776,
-    'G': 1073741824,
-    'M': 1048576,
-    'K': 1024,
-  };
 
 
   protected entityForm: any;
