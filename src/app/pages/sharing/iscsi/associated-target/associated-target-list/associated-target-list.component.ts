@@ -13,26 +13,24 @@ import * as _ from 'lodash';
 })
 export class AssociatedTargetListComponent {
 
-  protected resource_name: string = 'services/iscsi/targettoextent';
+  protected queryCall = 'iscsi.targetextent.query';
+  protected wsDelete = 'iscsi.targetextent.delete';
   protected route_add: string[] = [ 'sharing', 'iscsi', 'associatedtarget', 'add' ];
   protected route_add_tooltip: string = "Add Target/Extent";
-  protected route_delete: string[] = [ 'sharing', 'iscsi', 'associatedtarget', 'delete' ];
   protected route_edit: string[] = [ 'sharing', 'iscsi', 'associatedtarget', 'edit' ];
-
-  constructor(protected router: Router, protected iscsiService: IscsiService) {}
 
   public columns: Array<any> = [
     {
       name : 'Target',
-      prop : 'iscsi_target_name',
+      prop : 'target',
     },
     {
       name : 'LUN ID',
-      prop : 'iscsi_lunid',
+      prop : 'lunid',
     },
     {
       name : 'Extent',
-      prop : 'iscsi_extent_name',
+      prop : 'extent',
     }
   ];
   public config: any = {
@@ -40,21 +38,23 @@ export class AssociatedTargetListComponent {
     sorting : {columns : this.columns},
     deleteMsg: {
       title: 'Target/Extent',
-      key_props: ['iscsi_target_name', 'iscsi_extent_name']
+      key_props: ['target', 'extent']
     },
   };
+
+  constructor(protected router: Router, protected iscsiService: IscsiService) {}
 
   afterInit(entityList: any) {}
 
   dataHandler(entityList: any) {
-    this.iscsiService.getTargets().subscribe((res) => {
-      let target_list = res;
+    this.iscsiService.getTargets().subscribe((targets) => {
+      const target_list = targets;
       this.iscsiService.getExtents().subscribe((res) => {
-        let extent_list = res;
+        const extent_list = res;
 
         for (let i = 0; i < entityList.rows.length; i++) {
-          entityList.rows[i].iscsi_target_name =  _.find(target_list, {id: entityList.rows[i].iscsi_target})['name'];
-          entityList.rows[i].iscsi_extent_name = _.find(extent_list, {id: entityList.rows[i].iscsi_extent})['name'];
+          entityList.rows[i].target =  _.find(target_list, {id: entityList.rows[i].target})['name'];
+          entityList.rows[i].extent = _.find(extent_list, {id: entityList.rows[i].extent})['name'];
         }
       });
     });
