@@ -81,16 +81,8 @@ preInit(entityForm: any) {
     this.diskChoice = _.find(this.fieldConfig, {'name':'dev'});
     this.ws.call('disk.get_unused').subscribe((res)=>{
       res.forEach((item) => {
-        if (item['size']/(this.byteMap['T']) > 1 ) {
-          disksize = item['size'] /(this.byteMap['T']);
-          item.name = `${item.name}(${disksize} TB)`
-        } else if (item['size']/(this.byteMap['G']) <= 1024 && item['size']/(this.byteMap['M']) === item['size']/(this.byteMap['G']) * 1024) {
-          disksize = item['size'] /(this.byteMap['G']);
-          item.name = `${item.name}(${disksize} GB)`
-        } else if (item['size']/(this.byteMap['M']) <= 1024 && item['size']/(this.byteMap['K']) === item['size']/(this.byteMap['M']) * 1024) {
-          disksize = item['size'] /(this.byteMap['M']);
-          item.name = `${item.name}(${disksize} MB)`
-        };
+        disksize = (<any>window).filesize(item['size'], { standard: "iec" });
+        item.name = `${item.name}(${disksize})`;
         this.diskChoice.options.push({label : item.name, value : item.name});        
       });
     });
