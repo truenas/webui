@@ -71,9 +71,14 @@ form button{
 .logo-wrapper img.logo-bg{
   position:absolute;
   z-index:1;
-  opacity:0.35;
+  opacity:0.75;
   top:0;
   left:0;
   width:100%;
   height:100%;
+}
+
+.logo-wrapper img.logo{
+  position:relative;
+  z-index:2;
 }

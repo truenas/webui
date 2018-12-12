@@ -5,10 +5,10 @@
       <mat-card-content>
         <div *ngIf="connected();else notconnected">
           <div class="text-center logo-wrapper" *ngIf="logo_ready">
-            <img class="logo-bg" alt="logo image background" src="assets/images/stars-sky.jpg">
-            <img *ngIf="is_freenas; else isTruenas" src="assets/images/light-logo-full.svg" alt="FreeNAS logo">
+            <img class="logo-bg" alt="Logo image background of stars and sky at night" src="assets/images/stars-sky-1200w.jpg" srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x">
+            <img *ngIf="is_freenas; else isTruenas" class="logo" src="assets/images/light-logo-full.svg" alt="FreeNAS logo">
             <ng-template #isTruenas>
-              <img src="assets/images/light-truenas-logo.svg" alt="TrueNAS logo">
+              <img class="logo" src="assets/images/light-truenas-logo.svg" alt="TrueNAS logo">
             </ng-template>
           </div>
           <form #signinForm="ngForm" (ngSubmit)="signin()" *ngIf="has_root_password; else setPassword">
