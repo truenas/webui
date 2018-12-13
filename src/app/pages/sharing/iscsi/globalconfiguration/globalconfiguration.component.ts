@@ -15,11 +15,12 @@ import { MatSnackBar } from '@angular/material';
 })
 export class GlobalconfigurationComponent {
 
-  protected resource_name: string = 'services/iscsi/globalconfiguration/';
+  protected queryCall: string = 'iscsi.global.config';
+  protected editCall: string = 'iscsi.global.update';
 
   public fieldConfig: FieldConfig[] = [{
       type: 'input',
-      name: 'iscsi_basename',
+      name: 'basename',
       placeholder: T('Base Name'),
       tooltip: T('See the <i>Constructing iSCSI names using the iqn.format</i>\
                   section of <a href="https://tools.ietf.org/html/rfc3721.html"\
@@ -30,7 +31,7 @@ export class GlobalconfigurationComponent {
     },
     {
       type: 'textarea',
-      name: 'iscsi_isns_servers',
+      name: 'isns_servers',
       placeholder: T('ISNS Servers'),
       tooltip: T('Enter the hostnames or IP addresses of the\
                   ISNS servers to be registered with the\
@@ -39,7 +40,7 @@ export class GlobalconfigurationComponent {
     },
     {
       type: 'input',
-      name: 'iscsi_pool_avail_threshold',
+      name: 'pool_avail_threshold',
       placeholder: T('Pool Available Space Threshold (%)'),
       tooltip: T('Enter the percentage of free space to remain\
                   in the pool. When this percentage is reached,\
@@ -53,6 +54,22 @@ export class GlobalconfigurationComponent {
 
   constructor(protected router: Router, protected route: ActivatedRoute, protected dialogService: DialogService,
               protected ws: WebSocketService, protected snackBar: MatSnackBar, protected loader: AppLoaderService) {}
+
+  afterInit(entityForm) {
+    entityForm.submitFunction = entityForm.editCall;
+  }
+
+  beforeSubmit(value) {
+    if (value.isns_servers == "") {
+      value.isns_servers = [];
+    } else {
+     value.isns_servers = _.split(value.isns_servers, ' ');
+    }
+
+    if (value.pool_avail_threshold == "") {
+      value.pool_avail_threshold = null;
+    }
+  }
 
   afterSubmit(data) {
     this.ws.call('service.query', [[]]).subscribe((service_res) => {
