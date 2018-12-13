@@ -70,6 +70,7 @@ export class ZvolFormComponent {
 
 
   protected byteMap: Object= {
+    'T': 1099511627776,
     'G': 1073741824,
     'M': 1048576,
     'K': 1024,
@@ -118,6 +119,9 @@ export class ZvolFormComponent {
       }, {
         label: 'GiB',
         value: 'G',
+      },{
+        label: 'TiB',
+        value: 'T',
       }],
       value: 'G',
       class: 'inline',

@@ -183,6 +183,9 @@ export class DatasetFormComponent implements Formconfiguration{
       }, {
         label: 'GiB',
         value: 'G',
+      },{
+        label: 'TiB',
+        value: 'T',
       }],
       value: 'M',
       class: 'inline',
@@ -242,6 +245,9 @@ export class DatasetFormComponent implements Formconfiguration{
       }, {
         label: 'GiB',
         value: 'G',
+      },{
+        label: 'TiB',
+        value: 'T',
       }],
       value: 'M',
       class: 'inline',
@@ -302,6 +308,9 @@ export class DatasetFormComponent implements Formconfiguration{
       }, {
         label: 'GiB',
         value: 'G',
+      },{
+        label: 'TiB',
+        value: 'T',
       }],
       value: 'M',
       class: 'inline',
@@ -337,6 +346,9 @@ export class DatasetFormComponent implements Formconfiguration{
       }, {
         label: 'GiB',
         value: 'G',
+      },{
+        label: 'TiB',
+        value: 'T'
       }],
       value: 'M',
       class: 'inline',
@@ -460,6 +472,7 @@ export class DatasetFormComponent implements Formconfiguration{
   ];
 
   protected byteMap: Object= {
+    'T': 1099511627776,
     'G': 1073741824,
     'M': 1048576,
     'K': 1024,
