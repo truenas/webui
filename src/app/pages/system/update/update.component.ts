@@ -68,14 +68,14 @@ export class UpdateComponent implements OnInit {
   ];
   public saveConfigFormConf: DialogFormConfiguration = {
     title: "Save configuration settings from this machine before updating?",
-    message: "<b>WARNING:</b> This configuration file contains system\
-              passwords and other sensitive data.<br>",
+    message: T("<b>WARNING:</b> This configuration file contains system\
+              passwords and other sensitive data.<br>"),
     fieldConfig: this.saveConfigFieldConf,
-    warning: "Including the Password Secret Seed allows using this\
+    warning: T("Including the Password Secret Seed allows using this\
               configuration file with a new boot device. This also\
               decrypts all system passwords for reuse when the\
               configuration file is uploaded.\
-              <b>Keep the configuration file safe and protect it from unauthorized access!</b>",
+              <b>Keep the configuration file safe and protect it from unauthorized access!</b>"),
     method_ws: 'core.download',
     saveButtonText: T('SAVE CONFIGURATION'),
     cancelButtonText: T('NO'),
