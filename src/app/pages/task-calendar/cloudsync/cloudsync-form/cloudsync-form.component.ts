@@ -542,10 +542,14 @@ export class CloudsyncFormComponent implements OnInit {
     bwlimit = bwlimit.split(' ');
     for (let i = 0; i < bwlimit.length; i++) {
       const sublimitArr = bwlimit[i].split(',');
+      if (sublimitArr[1] && sublimitArr[1] != 'off') {
+        sublimitArr[1] = this.cloudcredentialService.getByte(sublimitArr[1]);
+      }
       const subLimit = {
         "time": sublimitArr[0],
-        "bandwidth": sublimitArr[1] ? sublimitArr[1] : null,
+        "bandwidth": sublimitArr[1] == 'off' ? null : sublimitArr[1],
       }
+
       bwlimtArr.push(subLimit);
     }
     return bwlimtArr;
