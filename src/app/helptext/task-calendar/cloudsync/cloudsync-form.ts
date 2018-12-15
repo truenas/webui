@@ -82,6 +82,11 @@ export default {
     enabled_tooltip: T('Enable this Cloud Sync Task. Unset to disable this Cloud\
                 Sync Task without deleting it.'),
     
+    bwlimit_placeholder: T('Bandwidth limit'),
+    bwlimit_tooltip: T('Either single bandwidth limit or bandwidth limit schedule in rclone format.<br />\
+                Example: "08:00,512 12:00,10M 13:00,512 18:00,30M 23:00,off".<br />\
+                Default unit is kilobytes.'),
+
     exclude_placeholder: T('Exclude'),
     exclude_tooltip: T('Newline-separated list of files and directories to exclude from sync.<br />\
                 See https://rclone.org/filtering/ for more details on --exclude option.'),
