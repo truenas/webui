@@ -227,6 +227,13 @@ export class CloudsyncFormComponent implements OnInit {
     placeholder: helptext.enabled_placeholder,
     tooltip: helptext.enabled_tooltip,
     value: true,
+  },
+  {
+    type: 'input',
+    name: 'bwlimit',
+    placeholder: helptext.bwlimit_placeholder,
+    tooltip: helptext.bwlimit_tooltip,
+    value: "",
   }];
 
   protected month_field: any;
@@ -530,6 +537,19 @@ export class CloudsyncFormComponent implements OnInit {
     return data;
   }
 
+  handleBwlimit(bwlimit: any): Array<any> {
+    const bwlimtArr = [];
+    bwlimit = bwlimit.split(' ');
+    for (let i = 0; i < bwlimit.length; i++) {
+      const sublimitArr = bwlimit[i].split(',');
+      const subLimit = {
+        "time": sublimitArr[0],
+        "bandwidth": sublimitArr[1] ? sublimitArr[1] : null,
+      }
+      bwlimtArr.push(subLimit);
+    }
+    return bwlimtArr;
+  }
   onSubmit(event: Event) {
     event.preventDefault();
     event.stopPropagation();
@@ -561,6 +581,10 @@ export class CloudsyncFormComponent implements OnInit {
     schedule['dow'] = spl[4];
 
     value['schedule'] = schedule;
+
+    if (value.bwlimit) {
+      value.bwlimit = this.handleBwlimit(value.bwlimit);
+    }
 
     if (!this.pk) {
       this.loader.open();
