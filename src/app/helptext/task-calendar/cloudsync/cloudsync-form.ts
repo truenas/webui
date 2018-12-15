@@ -81,4 +81,8 @@ export default {
     enabled_placeholder: T('Enabled'),
     enabled_tooltip: T('Enable this Cloud Sync Task. Unset to disable this Cloud\
                 Sync Task without deleting it.'),
+    
+    exclude_placeholder: T('Exclude'),
+    exclude_tooltip: T('Newline-separated list of files and directories to exclude from sync.<br />\
+                See https://rclone.org/filtering/ for more details on --exclude option.'),
 }
