@@ -304,15 +304,15 @@ export class CloudsyncFormComponent implements OnInit {
     const children = [];
     let data = {
       "credentials": credential,
-      "encryption": null,
-      "filename_encryption": null,
-      "encryption_password": null,
-      "encryption_salt": null,
+      "encryption": false,
+      "filename_encryption": false,
+      "encryption_password": "",
+      "encryption_salt": "",
       "attributes": {
         "bucket": bucket,
         "folder": node.data.name,
       },
-      "args": null
+      "args": ""
     }
     if (bucket == '') {
       delete data.attributes.bucket;
