@@ -21,13 +21,13 @@ export default {
                              target="_blank">conventions</a>. Choose a\
                              memorable name.'),
     manager_encryption_tooltip : T('<a href="https://www.freebsd.org/cgi/man.cgi?query=geli&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
-                                   target="_blank">GELI</a> encryption is\
-                                   available for ZFS pools. <b>WARNING:</b>\
-                                   Read the <a\
-                                   href="..//docs/storage.html#managing-encrypted-pools"\
-                                   target="_blank">Encryption section</a>\
-                                   of the guide before activating this\
-                                   option.'),
+                            target="_blank">GELI</a> encryption is\
+                            available for ZFS pools. <b>WARNING:</b>\
+                            Read the <a\
+                            href="%%docurl%%/storage.html%%webversion%%#managing-encrypted-pools"\
+                            target="_blank">Encryption section</a>\
+                            of the guide before activating this\
+                            option.'),
     manager_suggested_layout_tooltip : T('Create a recommended formation\
                                          of vdevs in a pool.'),
   
