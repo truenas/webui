@@ -173,6 +173,30 @@ export class DatasetFormComponent implements Formconfiguration{
     {
       type: 'input',
       inputType: 'number',
+      name: 'refquota_warning',
+      placeholder: helptext.dataset_form_refquota_placeholder,
+      tooltip: helptext.dataset_form_refquota_warning_tooltip,
+      class: 'inline',
+      width: '70%',
+      value: 0,
+      min: 0,
+      validation: helptext.dataset_form_refquota_warning_validation
+    },
+    {
+      type: 'input',
+      inputType: 'number',
+      name: 'refquota_critical',
+      placeholder: helptext.dataset_form_refquota_critical_placeholder,
+      tooltip: helptext.dataset_form_refquota_critical_tooltip,
+      class: 'inline',
+      width: '70%',
+      value: 0,
+      min: 0,
+      validation: helptext.dataset_form_refquota_critical_validation
+    },
+    {
+      type: 'input',
+      inputType: 'number',
       name: 'quota',
       placeholder: helptext.dataset_form_quota_placeholder,
       tooltip: helptext.dataset_form_quota_tooltip,
@@ -201,6 +225,30 @@ export class DatasetFormComponent implements Formconfiguration{
       value: 'G',
       class: 'inline',
       width: '30%',
+    },
+    {
+      type: 'input',
+      inputType: 'number',
+      name: 'quota_warning',
+      placeholder: helptext.dataset_form_quota_warning_placeholder,
+      tooltip: helptext.dataset_form_quota_warning_tooltip,
+      class: 'inline',
+      width: '70%',
+      value: 0,
+      min: 0,
+      validation: helptext.dataset_form_quota_warning_validation
+    },
+    {
+      type: 'input',
+      inputType: 'number',
+      name: 'quota_critical',
+      placeholder: helptext.dataset_form_quota_critical_placeholder,
+      tooltip: helptext.dataset_form_quota_critical_tooltip,
+      class: 'inline',
+      width: '70%',
+      value: 0,
+      min: 0,
+      validation: helptext.dataset_form_quota_critical_validation
     },
     {
       type: 'input',
