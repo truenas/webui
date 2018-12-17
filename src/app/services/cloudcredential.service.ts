@@ -7,10 +7,10 @@ import { WebSocketService } from './ws.service';
 export class CloudCredentialService {
   protected credentialProviders: string = 'cloudsync.providers';
   protected byteMap: Object= {
-    'T': 1099511627776,
-    'G': 1073741824,
-    'M': 1048576,
-    'K': 1024,
+    'TB': 1099511627776,
+    'GB': 1073741824,
+    'MB': 1048576,
+    'KB': 1024,
   };
 
   constructor(protected ws: WebSocketService) {};

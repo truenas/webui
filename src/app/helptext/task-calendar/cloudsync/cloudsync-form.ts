@@ -84,7 +84,7 @@ export default {
     
     bwlimit_placeholder: T('Bandwidth limit'),
     bwlimit_tooltip: T('Either single bandwidth limit or bandwidth limit schedule in rclone format.<br />\
-                Example: "08:00,512 12:00,10M 13:00,512 18:00,30M 23:00,off".<br />\
+                Example: "08:00,512 12:00,10MB 13:00,512 18:00,30MB 23:00,off".<br />\
                 Default unit is kilobytes.'),
 
     exclude_placeholder: T('Exclude'),
