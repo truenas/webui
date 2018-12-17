@@ -162,18 +162,6 @@ export class VMWizardComponent {
         {
           type: 'select',
           name: 'hdd_type',
-          placeholder: T('Select desired type of disk'),
-          tooltip: T('Select desired disk type.'),
-          isHidden: false,
-          options : [
-            {label : 'AHCI', value : 'AHCI'},
-            {label : 'VirtIO', value : 'VIRTIO'},
-          ],
-          value: 'AHCI'
-        },
-        {
-          type: 'select',
-          name: 'hdd_type',
           placeholder: helptext.hdd_type_placeholder,
           tooltip: helptext.hdd_type_tooltip,
           isHidden: false,
