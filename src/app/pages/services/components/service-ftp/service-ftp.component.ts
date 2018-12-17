@@ -129,7 +129,8 @@ export class ServiceFTPComponent implements OnInit {
       type : 'permissions',
       name : 'filemask',
       placeholder : helptext.filemask_placeholder,
-      tooltip: helptext.filemask_tooltip
+      tooltip: helptext.filemask_tooltip,
+      noexec: true
     },
     {
       type : 'permissions',

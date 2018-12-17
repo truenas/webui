@@ -23,9 +23,9 @@ export default {
                        a port.'),
 
     certssl_placeholder : T('Webdav SSL Certificate'),
-    certssl_tooltip : T('Select the <a href="..//docs/system.html#certificates"\
-                       target="_blank">SSL certificate</a> to use for\
-                       encrypted connections.'),
+    certssl_tooltip : T('Select the <a href="%%docurl%%/system.html%%webversion%%#certificates"\
+                    target="_blank">SSL certificate</a> to use for\
+                    encrypted connections.'),
     certssl_options: [
             {label: '---', value: null}
           ],

@@ -6,9 +6,9 @@ export default {
                       information is saved in interface descriptions.'),
 
     lldp_country_placeholder : T('Country Code'),
-    lldp_country_tooltip: T('Required for <a href="..//docs/services.html#lldp"\
-                      target="_blank">LLDP</a> location support. Enter a\
-                      two-letter ISO 3166 country code.'),
+    lldp_country_tooltip: T('Required for <a href="%%docurl%%/services.html%%webversion%%#lldp"\
+            target="_blank">LLDP</a> location support. Enter a\
+            two-letter ISO 3166 country code.'),
 
     lldp_location_placeholder : T('Location'),
     lldp_location_tooltip: T('Specify the physical location of the host.')

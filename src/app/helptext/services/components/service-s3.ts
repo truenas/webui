@@ -6,9 +6,9 @@ import { matchOtherValidator } from '../../../pages/common/entity/entity-form/va
 export default {
     bindip_placeholder : T('IP Address'),
     bindip_tooltip: T('Enter the IP address which runs the <a\
-                href="..//docs/services.html#s3" target="_blank">S3\
-                service</a>. <i>0.0.0.0</i> tells the server to listen\
-                on all addresses.'),
+        href="%%docurl%%/services.html%%webversion%%#s3" target="_blank">S3\
+        service</a>. <i>0.0.0.0</i> tells the server to listen\
+        on all addresses.'),
     bindip_options : [
       {label:'0.0.0.0', value: '0.0.0.0'}
     ],
@@ -46,7 +46,7 @@ export default {
     ],
 
     certificate_placeholder : T('Certificate'),
-    certificate_tooltip : T('Add an <a href="..//docs/system.html#certificates"\
-                 target="_blank">SSL certificate</a> to be used for\
-                 secure S3 connections.'),
-}
+    certificate_tooltip : T('Add an <a href="%%docurl%%/system.html%%webversion%%#certificates"\
+      target="_blank">SSL certificate</a> to be used for\
+      secure S3 connections.')
+  }
