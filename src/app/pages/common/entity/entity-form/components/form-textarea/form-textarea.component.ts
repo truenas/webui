@@ -17,4 +17,10 @@ export class FormTextareaComponent implements Field {
   fieldShow: string;
 
   constructor(public translate: TranslateService) {}
+  
+  blurEvent(){
+    if(this.config.blurStatus){
+      this.config.blurEvent(this.config.parent)
+    }
+  }
 }

@@ -11,6 +11,7 @@ import { JailService, NetworkService, DialogService } from '../../../services/';
 import { EntityUtils } from '../../common/entity/utils';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 import { T } from '../../../translate-marker'
+import helptext from '../../../helptext/jails/jail-wizard';
 
 @Component({
   selector: 'jail-wizard',
@@ -40,15 +41,13 @@ export class JailWizardComponent {
   }];
 
   protected wizardConfig: Wizard[] = [{
-      label: T('Name Jail and Choose FreeBSD Release'),
+      label: helptext.step1_label,
       fieldConfig: [{
           type: 'input',
           name: 'uuid',
           required: true,
-          placeholder: T('Jail Name'),
-          tooltip: T('Required. Can only contain alphanumeric characters \
-                      Aa-Zz 0-9), dashes (-), or underscores (_).'),
-          validation: [ regexValidator(/^[a-zA-Z0-9-_]+$/) ],
+          placeholder: helptext.uuid_placeholder,
+          tooltip: helptext.uuid_tooltip,
           blurStatus: true,
           blurEvent: this.blurEvent,
           parent: this
@@ -57,34 +56,25 @@ export class JailWizardComponent {
           type: 'select',
           name: 'release',
           required: true,
-          placeholder: T('Release'),
-          tooltip: T('Choose the FreeBSD release to use as the jail \
-                      operating system. Releases that have already \
-                      been downloaded show <b>(fetched)</b>.'),
+          placeholder: helptext.release_placeholder,
+          tooltip: helptext.release_tooltip,
           options: [],
         },
       ]
     },
     {
-      label: T('Configure Networking'),
+      label: helptext.step2_label,
       fieldConfig: [{
           type: 'checkbox',
           name: 'dhcp',
-          placeholder: T('DHCP Autoconfigure IPv4'),
-          tooltip: T('Set to autoconfigure jail networking with the \
-                      Dynamic Host Configuration Protocol. <b>VNET</b> \
-                      is required.'),
+          placeholder: helptext.dhcp_placeholder,
+          tooltip: helptext.dhcp_tooltip,
       },
         {
           type: 'checkbox',
           name: 'vnet',
-          placeholder: T('VNET'),
-	        tooltip: T('Set to use <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=vnet&sektion=9"\
-                  target="_blank">VNET(9)</a> to emulate network \
-                  devices for the jail. \
-                  A fully virtualized per-jail network stack will be \
-                  installed.'),
+          placeholder: helptext.vnet_placeholder,
+	        tooltip: helptext.vnet_tooltip,
           required: false,
           hasErrors: false,
           errors: '',
@@ -93,8 +83,8 @@ export class JailWizardComponent {
         {
           type: 'select',
           name: 'ip4_interface',
-          placeholder: T('IPv4 interface'),
-          tooltip: T('IPv4 interface for the jail.'),
+          placeholder: helptext.ip4_interface_placeholder,
+          tooltip: helptext.ip4_interface_tooltip,
           options: [{
             label: '------',
             value: '',
@@ -114,8 +104,8 @@ export class JailWizardComponent {
         {
           type: 'input',
           name: 'ip4_addr',
-          placeholder: T('IPv4 Address'),
-          tooltip: T('IPv4 address for the jail.'),
+          placeholder: helptext.ip4_addr_placeholder,
+          tooltip: helptext.ip4_addr_tooltip,
           validation : [ regexValidator(this.networkService.ipv4_regex) ],
           relation: [{
             action: 'DISABLE',
@@ -130,8 +120,8 @@ export class JailWizardComponent {
         {
           type: 'select',
           name: 'ip4_netmask',
-          placeholder: T('IPv4 Netmask'),
-          tooltip: T('IPv4 netmask for the jail.'),
+          placeholder: helptext.ip4_netmask_placeholder,
+          tooltip: helptext.ip4_netmask_tooltip,
           options: this.networkService.getV4Netmasks(),
           value: '',
           relation: [{
@@ -147,12 +137,8 @@ export class JailWizardComponent {
         {
           type: 'input',
           name: 'defaultrouter',
-          placeholder: T('Default Router For IPv4'),
-          tooltip: T('A valid IPv4 address to use as the default route. \
-                      <br>Enter <b>none</b> to configure the jail with \
-                      no IPv4 default route. <br>\
-                      <b>A jail without a default route will not be \
-                      able to access any networks.</b>'),
+          placeholder: helptext.defaultrouter_placeholder,
+          tooltip: helptext.defaultrouter_tooltip,
           relation: [{
             action: 'DISABLE',
             connective: 'OR',
@@ -168,15 +154,14 @@ export class JailWizardComponent {
         {
           type: 'checkbox',
           name: 'auto_configure_ip6',
-          placeholder: T('Auto configure IPv6'),
-          tooltip: T('Set this if the network has a DHCPv6 server \
-                      and IPv6 will be used to access jails.'),
+          placeholder: helptext.auto_configure_ip6_placeholder,
+          tooltip: helptext.auto_configure_ip6_tooltip,
         },
         {
           type: 'select',
           name: 'ip6_interface',
-          placeholder: T('IPv6 Interface'),
-          tooltip: T('IPv6 interface for the jail.'),
+          placeholder: helptext.ip6_interface_placeholder,
+          tooltip: helptext.ip6_interface_tooltip,
           options: [{
             label: '------',
             value: '',
@@ -196,8 +181,8 @@ export class JailWizardComponent {
         {
           type: 'input',
           name: 'ip6_addr',
-          placeholder: T('IPv6 Address'),
-          tooltip: T('IPv6 address for the jail.'),
+          placeholder: helptext.ip6_addr_placeholder,
+          tooltip: helptext.ip6_addr_tooltip,
           validation : [ regexValidator(this.networkService.ipv6_regex) ],
           class: 'inline',
           width: '30%',
@@ -212,8 +197,8 @@ export class JailWizardComponent {
         {
           type: 'select',
           name: 'ip6_prefix',
-          placeholder: T('IPv6 Prefix'),
-          tooltip: T('IPv6 prefix for the jail.'),
+          placeholder: helptext.ip6_prefix_placeholder,
+          tooltip: helptext.ip6_prefix_tooltip,
           options: this.networkService.getV6PrefixLength(),
           class: 'inline',
           width: '20%',
@@ -229,12 +214,8 @@ export class JailWizardComponent {
         {
           type: 'input',
           name: 'defaultrouter6',
-          placeholder: T('Default Router For IPv6'),
-      tooltip: T('A valid IPv6 address to use as the default route. \
-                  <br>Enter <b>none</b> to configure the jail with no \
-                  IPv6 default route. <br>\
-                  <b>A jail without a default route will not be able \
-                  to access any networks.</b>'),
+          placeholder: helptext.defaultrouter6_placeholder,
+          tooltip: helptext.defaultrouter6_tooltip,
         },
       ]
     },
@@ -469,11 +450,11 @@ export class JailWizardComponent {
 
       if ((( < FormGroup > entityWizard.formArray.get([1])).controls['dhcp'].value ||
            ( < FormGroup > entityWizard.formArray.get([1])).controls['auto_configure_ip6'].value) && !res) {
-        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).hasErrors = true;
-        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).errors = 'VNET is required.';
+        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' })['hasErrors'] = true;
+        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' })['errors'] = 'VNET is required.';
       } else {
-        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).hasErrors = false;
-        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).errors = '';
+        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' })['hasErrors'] = false;
+        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' })['errors'] = '';
       }
       this.updateInterfaceValidation(entityWizard);
     });
@@ -540,14 +521,14 @@ export class JailWizardComponent {
     const jail_name = parent.entityWizard.formGroup.value.formArray[0].uuid;
     parent.ws.call('jail.query', [[["id","=",jail_name]]]).subscribe((jail_wizard_res)=>{
       if(jail_wizard_res.length > 0){
-        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'}).hasErrors = true;
-        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'}).errors = `Jail ${jail_wizard_res[0].id} already exists.`;
+        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'})['hasErrors'] = true;
+        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'})['errors'] = `Jail ${jail_wizard_res[0].id} already exists.`;
         parent.entityWizard.formGroup.controls.formArray.controls[0].controls.uuid.setValue("");
 
   
       } else {
-        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'}).hasErrors = false;
-        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'}).errors = '';
+        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'})['hasErrors'] = false;
+        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'})['errors'] = '';
 
       }
     })

@@ -66,8 +66,17 @@ export class ServiceDCComponent {
       inputType : 'password',
       placeholder : helptext.dc_passwd_placeholder,
       togglePw: true,
+<<<<<<< HEAD
       tooltip: helptext.dc_passwd_tooltip,
       validation : helptext.dc_passwd_validation 
+=======
+      tooltip: T('Enter the password to be used for the\
+                  <a href="%%docurl%%/directoryservice.html%%webversion%%#active-directory"\
+                  target=”_blank”>Active Directory</a> administrator\
+                  account.'),
+      validation :
+          [ Validators.minLength(8), matchOtherValidator('dc_passwd2') ]
+>>>>>>> master
     },
     {
       type : 'input',

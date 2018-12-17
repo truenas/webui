@@ -93,7 +93,7 @@ export class DeviceAddComponent implements OnInit {
       name : 'path',
       placeholder : 'Zvol',
       tooltip : 'Browse to an existing <a\
-                 href="..//docs/storage.html#adding-zvols"\
+                 href="%%docurl%%/storage.html%%webversion%%#adding-zvols"\
                  target="_blank">Zvol</a>.',
       type: 'select',
       required: true,
@@ -451,9 +451,9 @@ export class DeviceAddComponent implements OnInit {
           if(element.dtype === "RAW") {
             if (element.attributes.boot) {
               this.rootpwd = _.find(this.rawfileFieldConfig, {'name': 'rootpwd'});
-              this.rootpwd.isHidden = false;
+              this.rootpwd['isHidden'] = false;
               this.boot = _.find(this.rawfileFieldConfig, {'name': 'boot'});
-              this.boot.isHidden = false;
+              this.boot['isHidden'] = false;
             }
 
           }

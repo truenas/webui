@@ -93,4 +93,15 @@ export class ServiceTFTPComponent {
   }
 
   afterInit(entityEdit: any) { }
+
+  updateUserSearchOptions(value = "", parent) {
+    parent.userService.listAllUsers(value).subscribe(res => {
+      let users = [];
+      let items = res.data.items;
+      for (let i = 0; i < items.length; i++) {
+        users.push({label: items[i].label, value: items[i].id});
+      }
+      parent.tftp_username.searchOptions = users;
+    });
+  }
 }

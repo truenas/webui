@@ -1,0 +1,45 @@
+{
+  "_from": "primeicons@1.0.0",
+  "_id": "primeicons@1.0.0",
+  "_inBundle": false,
+  "_integrity": "sha512-p/hzIjUVccW4eJPhuORHI3AUkDpqfvCQVrjxbFEejnTEdWY4C8fomVfjiaA9jCu83fSQnBHuRIGB96iAR8R6uA==",
+  "_location": "/primeicons",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "primeicons@1.0.0",
+    "name": "primeicons",
+    "escapedName": "primeicons",
+    "rawSpec": "1.0.0",
+    "saveSpec": null,
+    "fetchSpec": "1.0.0"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/primeicons/-/primeicons-1.0.0.tgz",
+  "_shasum": "90061f168ef6227f21f0a7db8204ffa85cd27aec",
+  "_spec": "primeicons@1.0.0",
+  "_where": "/home/erin/devel/webui",
+  "author": {
+    "name": "PrimeTek"
+  },
+  "bugs": {
+    "url": "https://github.com/primefaces/primeicons/issues"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "Font Icon Library for Prime UI Libraries",
+  "homepage": "https://github.com/primefaces/primeicons#readme",
+  "keywords": [
+    "Icon"
+  ],
+  "license": "MIT",
+  "name": "primeicons",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/primefaces/primeicons.git"
+  },
+  "version": "1.0.0"
+}

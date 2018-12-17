@@ -78,7 +78,7 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
     return data;
   };
 
-
+  pk: any;
   constructor(
       protected router: Router,
       protected route: ActivatedRoute,
@@ -92,13 +92,19 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
 
   }
 
+  preInit(entityForm: any) {
+    this.route.params.subscribe(params => {
+      this.pk = params['pk'];
+    });
+  }
+
   afterInit(entityForm: any) {
 
   }
 
   customSubmit(value) {
     this.loader.open();
-    return this.rest.put(this.resource_name + "/" + value.name + "/keypassphrase/", { body: JSON.stringify({adminpw: value.adminpw, passphrase: value.passphrase, passphrase2: value.passphrase2}) }).subscribe((restPostResp) => {
+    return this.rest.put(this.resource_name + "/" + this.pk + "/keypassphrase/", { body: JSON.stringify({adminpw: value.adminpw, passphrase: value.passphrase, passphrase2: value.passphrase2}) }).subscribe((restPostResp) => {
       this.loader.close();
       this.dialogService.Info(T("Change Pool Passphrase"), T("Passphrase changed for pool ") + value.name);
 

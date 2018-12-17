@@ -9,28 +9,31 @@ import { Router } from '@angular/router';
 })
 export class TargetListComponent {
 
-  protected resource_name: string = 'services/iscsi/target';
+  protected queryCall = 'iscsi.target.query';
+  protected wsDelete = 'iscsi.target.delete';
   protected route_add: string[] = [ 'sharing', 'iscsi', 'target', 'add' ];
   protected route_add_tooltip: string = "Add Target";
-  protected route_delete: string[] = [ 'sharing', 'iscsi', 'target', 'delete' ];
   protected route_edit: string[] = [ 'sharing', 'iscsi', 'target', 'edit' ];
-
-  constructor(protected router: Router) {}
 
   public columns: Array<any> = [
     {
       name : 'Target Name',
-      prop : 'iscsi_target_name',
+      prop : 'name',
     },
     {
       name : 'Target Alias',
-      prop : 'iscsi_target_alias',
+      prop : 'alias',
     },
   ];
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    deleteMsg: {
+      title: 'Target',
+      key_props: ['name']
+    },
   };
 
-  afterInit(entityList: any) {}
+  constructor(protected router: Router) {}
+
 }

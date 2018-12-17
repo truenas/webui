@@ -105,8 +105,8 @@ export class DashboardNoteEditComponent implements OnInit {
 
   clearErrors() {
     for (let f = 0; f < this.fieldConfig.length; f++) {
-      this.fieldConfig[f].errors = '';
-      this.fieldConfig[f].hasErrors = false;
+      this.fieldConfig[f]['errors'] = '';
+      this.fieldConfig[f]['hasErrors'] = false;
     }
   }
 

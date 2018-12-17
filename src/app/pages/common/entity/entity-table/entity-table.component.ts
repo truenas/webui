@@ -1,15 +1,17 @@
+
+import {fromEvent as observableFromEvent,  Observable ,  BehaviorSubject ,  Subscription } from 'rxjs';
+
+import {distinctUntilChanged, debounceTime} from 'rxjs/operators';
 import { Component, OnInit, Input, ElementRef, ViewEncapsulation, ViewChild, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataSource } from '@angular/cdk/collections';
 import { MatPaginator, MatSort, PageEvent, MatSnackBar } from '@angular/material';
-import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { TranslateService } from '@ngx-translate/core';
 
 import { T } from '../../../../translate-marker';
-import 'rxjs/add/operator/startWith';
-import 'rxjs/add/observable/merge';
-import 'rxjs/add/operator/map';
+
+
+
 
 //local libs
 import { RestService } from '../../../../services/rest.service';
@@ -19,7 +21,6 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { DialogService } from '../../../../services';
 import { ErdService } from '../../../../services/erd.service';
 import { StorageService } from '../../../../services/storage.service'
-import { Subscription } from 'rxjs/Subscription';
 
 
 
@@ -74,6 +75,8 @@ export interface TableConfig {
 export class EntityTableComponent implements OnInit, AfterViewInit {
 
   @Input() title = '';
+  @Input() legacyWarning = '';
+  @Input() legacyWarningLink = '';
   @Input('conf') conf: InputTableConf;
 
   @ViewChild('filter') filter: ElementRef;
@@ -108,6 +111,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   };
   public showDefaults: boolean = false;
   public showSpinner: boolean = false;
+  public showActions: boolean = true;
 
   protected loaderOpen = false;
   public selected = [];
@@ -149,9 +153,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       this.hideTopActions = this.conf.hideTopActions;
     }
 
-    Observable.fromEvent(this.filter.nativeElement, 'keyup')
-      .debounceTime(150)
-      .distinctUntilChanged()
+    observableFromEvent(this.filter.nativeElement, 'keyup').pipe(
+      debounceTime(150),
+      distinctUntilChanged(),)
       .subscribe(() => {
         const filterValue: string = this.filter.nativeElement.value;
         let newData: any[] = [];
@@ -364,7 +368,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       }, {
         id: "delete",
         label: "Delete",
-        onClick: (rowinner) => { this.doDelete(rowinner.id); },
+        onClick: (rowinner) => { this.doDelete(rowinner); },
       },]
     }
   }
@@ -418,18 +422,48 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       new Array('/').concat(this.conf.route_edit).concat(id));
   }
 
-  doDelete(id) {
+  //generate delete msg
+  getDeleteMessage(item) {
+    let deleteMsg = "Delete the selected item?";
+    if (this.conf.config.deleteMsg) {
+      deleteMsg = "Delete " + this.conf.config.deleteMsg.title;
+      let msg_content = ' <b>' + item[this.conf.config.deleteMsg.key_props[0]];
+      if (this.conf.config.deleteMsg.key_props.length > 1) {
+        for (let i = 1; i < this.conf.config.deleteMsg.key_props.length; i++) {
+          if (item[this.conf.config.deleteMsg.key_props[i]] != '') {
+            msg_content = msg_content + ' - ' + item[this.conf.config.deleteMsg.key_props[i]];
+          }
+        }
+      }
+      msg_content += "</b>?";
+      deleteMsg += msg_content;
+    }
+    this.translate.get(deleteMsg).subscribe((res) => {
+      deleteMsg = res;
+    });
+    return deleteMsg;
+  }
+
+  doDelete(item) {
+    let deleteMsg = this.getDeleteMessage(item);
+    let id;
+    if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.id_prop) {
+      id = item[this.conf.config.deleteMsg.id_prop];
+    } else {
+      id = item.id;
+    }
     let dialog = {};
     if (this.conf.checkbox_confirm && this.conf.checkbox_confirm_show && this.conf.checkbox_confirm_show(id)) {
-      this.conf.checkbox_confirm(id);
+      this.conf.checkbox_confirm(id, deleteMsg);
       return;
     }
     if (this.conf.confirmDeleteDialog) {
       dialog = this.conf.confirmDeleteDialog;
     }
+
     this.dialogService.confirm(
         dialog.hasOwnProperty("title") ? dialog['title'] : T("Delete"),
-        dialog.hasOwnProperty("message") ? dialog['message'] : T("Delete the selected item?"), 
+        dialog.hasOwnProperty("message") ? dialog['message'] + deleteMsg : deleteMsg,
         dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : false, 
         dialog.hasOwnProperty("button") ? dialog['button'] : T("Delete")).subscribe((res) => {
       if (res) {
@@ -501,12 +535,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   }
 
   reorderEvent(event) {
+    this.showActions = false;
     this.paginationPageIndex = 0;
     let sort = event.sorts[0],
       rows = this.currentRows;
     this.sorter.tableSorter(rows, sort.prop, sort.dir);
     this.rows = rows;
     this.setPaginationInfo();
+    setTimeout(() => {
+      this.showActions = true;
+    }, 50)
   }
 
   /**
@@ -523,8 +561,35 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     this.setPaginationInfo();
   }
 
+  getMultiDeleteMessage(items) {
+    let deleteMsg = "Delete the selected items?";
+    if (this.conf.config.deleteMsg) {
+      deleteMsg = "Delete selected " + this.conf.config.deleteMsg.title + "(s)?";
+      let msg_content = "<ul>";
+      for (let j = 0; j < items.length; j++) {
+        let sub_msg_content = '<li>' + items[j][this.conf.config.deleteMsg.key_props[0]];
+        if (this.conf.config.deleteMsg.key_props.length > 1) {
+          for (let i = 1; i < this.conf.config.deleteMsg.key_props.length; i++) {
+            if (items[j][this.conf.config.deleteMsg.key_props[i]] != '') {
+              msg_content = msg_content + ' - ' + items[j][this.conf.config.deleteMsg.key_props[i]];
+            }
+          }
+        }
+        sub_msg_content += "</li>";
+        msg_content += sub_msg_content;
+      }
+      msg_content += "</ul>";
+      deleteMsg += msg_content;
+    }
+    this.translate.get(deleteMsg).subscribe((res) => {
+      deleteMsg = res;
+    });
+    return deleteMsg;
+  }
+
   doMultiDelete(selected) {
-    this.dialogService.confirm("Delete", "Delete the selected items?", false, T("Delete")).subscribe((res) => {
+    let multiDeleteMsg = this.getMultiDeleteMessage(selected);
+    this.dialogService.confirm("Delete", multiDeleteMsg, false, T("Delete")).subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
@@ -595,6 +660,14 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   // Used by the select all checkbox to determine whether it should be checked
   checkLength() {
     return this.conf.columns.length === this.allColumns.length;
+  }
+
+  onGoToLegacy() {
+    this.dialogService.confirm(T("Log in to Legacy User Interface?"), "", true, T('Continue')).subscribe((res) => {
+      if (res) {
+        window.location.href = '/legacy/';
+      }
+    });
   }
 
   // End checkbox section -----------------------

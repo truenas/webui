@@ -128,9 +128,15 @@ export class ServiceFTPComponent implements OnInit {
     {
       type : 'permissions',
       name : 'filemask',
+<<<<<<< HEAD
       placeholder : helptext.filemask_placeholder,
       tooltip: helptext.filemask_tooltip,
       noexec: true
+=======
+      placeholder : T('File Permission'),
+      tooltip: T('Sets default permissions for newly created files.'),
+      noexec: true,
+>>>>>>> master
     },
     {
       type : 'permissions',
@@ -201,8 +207,16 @@ export class ServiceFTPComponent implements OnInit {
     {
       type : 'checkbox',
       name : 'tls',
+<<<<<<< HEAD
       placeholder : helptext.tls_placeholder,
       tooltip: helptext.tls_tooltip,
+=======
+      placeholder : T('Enable TLS'),
+      tooltip: T('Set to enable encrypted connections. Requires a certificate\
+                  to be created or imported using\
+                  <a href="%%docurl%%/system.html%%webversion%%#certificates"\
+                  target="_blank">Certificates</a>'),
+>>>>>>> master
     },
     {
       type : 'select',
@@ -370,7 +384,38 @@ export class ServiceFTPComponent implements OnInit {
     if (certificate && certificate.id) {
       data['ssltls_certificate'] = certificate.id;
     }
+
+    let fileperm = parseInt(data['filemask'], 8);
+    let filemask = (~fileperm & 0o666).toString(8);
+    while (filemask.length < 3) {
+      filemask = '0' + filemask;
+    }
+    data['filemask'] = filemask;
+
+    let dirperm = parseInt(data['dirmask'], 8);
+    let dirmask = (~dirperm & 0o777).toString(8);
+    while (dirmask.length < 3) {
+      dirmask = '0' +dirmask;
+    }
+    data['dirmask'] = dirmask;
+
     return data;
+  }
+
+  beforeSubmit(data) {
+    let fileperm = parseInt(data['filemask'], 8);
+    let filemask = (~fileperm & 0o666).toString(8);
+    while (filemask.length < 3) {
+      filemask = '0' + filemask;
+    }
+    data['filemask'] = filemask;
+
+    let dirperm = parseInt(data['dirmask'], 8);
+    let dirmask = (~dirperm & 0o777).toString(8);
+    while (dirmask.length < 3) {
+      dirmask = '0' +dirmask;
+    }
+    data['dirmask'] = dirmask;
   }
 
   submitFunction(this: any, body: any){

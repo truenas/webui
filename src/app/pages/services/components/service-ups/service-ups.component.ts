@@ -56,7 +56,7 @@ export class ServiceUPSComponent implements OnDestroy {
       tooltip : helptext.ups_port_tooltip,
       required: true,
       validation : helptext.ups_port_validation,
-      isHidden: false;
+      isHidden: false
     },
     {
       type: 'input',

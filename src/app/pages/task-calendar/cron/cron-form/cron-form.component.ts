@@ -28,6 +28,7 @@ export class CronFormComponent {
    protected pk: any;
    public isNew: boolean = false;
    protected data: any;
+   protected user_field: any;
 
    public saveSubmitText = "Save Cron Job";
    protected isEntity: boolean = true; // was true
@@ -62,7 +63,10 @@ export class CronFormComponent {
            tooltip: helptext.cron_user_tooltip,
            options: [],
            required: true,
-           validation : helptext.cron_user_validation
+           validation : helptext.cron_user_validation,
+           searchOptions: [],
+          parent: this,
+          updater: this.updateUserSearchOptions,
          },
          {
            type: 'scheduler',
@@ -112,14 +116,26 @@ export class CronFormComponent {
 
    preInit(entityForm){
      // Setup user field options
-     this.userService.listUsers().subscribe((res) => {
-       res.data.forEach((item) => {
-         let user_field = _.find(this.fieldSets[0].config, {'name': 'cron_user'});
-         user_field.options.push({ label: item.bsdusr_username, value: item.bsdusr_username })
-       });
+     this.user_field = _.find(this.fieldSets[0].config, {'name': 'cron_user'});
+     this.userService.listAllUsers().subscribe((res) => {
+      let items = res.data.items;
+      for (let i = 0; i < items.length; i++) {
+         this.user_field.options.push({label: items[i].label, value: items[i].id});
+       }
      });
 
     }
+
+  updateUserSearchOptions(value = "", parent) {
+    parent.userService.listAllUsers(value).subscribe(res => {
+      let users = [];
+      let items = res.data.items;
+      for (let i = 0; i < items.length; i++) {
+        users.push({label: items[i].label, value: items[i].id});
+      }
+      parent.user_field.searchOptions = users;
+    });
+  }
 
 
    resourceTransformIncomingRestData(data) {

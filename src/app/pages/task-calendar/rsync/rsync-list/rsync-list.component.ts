@@ -31,6 +31,10 @@ export class RsyncListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    deleteMsg: {
+      title: 'Rsync Task',
+      key_props: ['rsync_remotehost', 'rsync_remotemodule']
+    },
   };
 
   constructor(protected router: Router, protected rest: RestService, protected taskService: TaskService,
@@ -68,7 +72,7 @@ export class RsyncListComponent {
     actions.push({
       label : T("Delete"),
       onClick : (task_delete) => {
-        this.entityList.doDelete(row.id );
+        this.entityList.doDelete(row);
       },
     });
 

@@ -302,6 +302,7 @@ span.disk-detail-subtitle {
 
 div.line-chart-tools-wrapper{
   text-align:right;
+  margin-top:-8px;
 }
 
 div.line-chart-tools-wrapper button{
@@ -535,9 +536,9 @@ p.value{
 }
 
 .legend-group {
-  min-width: 220px !important;
+  /*min-width: 220px !important;
   width: 220px !important;
-  max-width: 220px !important;
+  max-width: 220px !important;*/
   margin-right: 20px;
 }
 
@@ -548,3 +549,26 @@ h3 {
   display: inline-block;
   overflow: hidden;
 }
+
+/* Children get the padding so dividers fit the full width of card */
+.report .mat-card{
+  padding-left:0;
+  padding-right:0;
+}
+
+.report .mat-card-footer,
+.report .mat-toolbar-row,
+.report .legend-wrapper,
+.report .chart-wrapper{
+  padding-left:32px;
+  padding-right:32px;
+  margin:0;
+}
+
+.report .mat-toolbar-row{
+    margin-bottom: 16px;
+}
+
+/*.report .mat-divider{
+  top:72px;
+}*/

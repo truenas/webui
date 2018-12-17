@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { StorageService } from '../../../services/storage.service'
 import { EntityUtils } from '../../common/entity/utils';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogService } from '../../../../app/services';
@@ -15,7 +16,7 @@ import { MatSnackBar } from '@angular/material';
   // template: `<entity-table [title]="title" [conf]="this"></entity-table>`
   templateUrl: './jail-list.component.html',
   styleUrls: ['../../plugins/plugins-available/plugins-available-list.component.css'],
-  providers: [DialogService]
+  providers: [DialogService, StorageService]
 })
 export class JailListComponent implements OnInit {
 
@@ -31,6 +32,8 @@ export class JailListComponent implements OnInit {
   protected route_add = ["jails", "add", "wizard"];
   protected route_add_tooltip = "Add Jail";
   public toActivatePool: boolean = false;
+  public legacyWarning = T("Note: Legacy jails created before FreeNAS 11.2 must be managed from the");
+  public legacyWarningLink = T("legacy web interface");
 
   public columns: Array < any > = [
     { name: T('Jail'), prop: 'host_hostuuid', always_display: true },
@@ -44,6 +47,11 @@ export class JailListComponent implements OnInit {
     paging: true,
     sorting: { columns: this.columns },
     multiSelect: true,
+    deleteMsg: {
+      title: 'Jail',
+      key_props: ['host_hostuuid'],
+      id_prop: 'host_hostuuid'
+    },
   };
   public multiActions: Array < any > = [{
       id: "mstart",
@@ -140,7 +148,7 @@ export class JailListComponent implements OnInit {
 
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, 
     protected loader: AppLoaderService, protected dialogService: DialogService, private translate: TranslateService,
-    protected snackBar: MatSnackBar) {}
+    protected snackBar: MatSnackBar, public sorter: StorageService) {}
 
   public tooltipMsg: any = T("Choose a pool where the iocage jail manager \
                               can create the /iocage dataset. The /iocage \
@@ -164,20 +172,26 @@ export class JailListComponent implements OnInit {
       return false;
     } else if (actionId === 'shell' && row.state === "down") {
       return false;
+    } if (actionId === 'restart' && row.state === "down") {
+      return false;
     }
     return true;
   }
 
   getActivatedPool(){
-    this.ws.call('jail.get_activated_pool').subscribe((res)=>{
-      if (res != null) {
-        this.activatedPool = res;
-        this.selectedPool = res;
-        this.isPoolActivated = true;
-      } else {
-        this.isPoolActivated = false;
-      }
-    })
+    this.ws.call('jail.get_activated_pool').subscribe(
+      (res)=>{
+        if (res != null && res != "") {
+          this.activatedPool = res;
+          this.selectedPool = res;
+          this.isPoolActivated = true;
+        } else {
+          this.isPoolActivated = false;
+        }
+      },
+      (err)=>{
+        new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
+      })
   }
 
   getAvailablePools(){
@@ -207,15 +221,8 @@ export class JailListComponent implements OnInit {
         id: "edit",
         label: T("Edit"),
         onClick: (row) => {
-          this.ws.call(this.queryCall, [[["host_hostuuid", "=", row.host_hostuuid]]]).subscribe(
-            (res) => {
-              if (res[0].state == 'up') {
-                this.dialogService.Info(T('Warning'), T('Jails cannot be changed while running. Stop the jail to make changes.'));
-              } else {
-                this.router.navigate(
-                  new Array('').concat(["jails", "edit", row.host_hostuuid]));
-              }
-            });
+          this.router.navigate(
+            new Array('').concat(["jails", "edit", row.host_hostuuid]));
         }
       },
       {
@@ -243,6 +250,26 @@ export class JailListComponent implements OnInit {
               (res) => {
                 this.loader.close();
                 new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
+              });
+        }
+      },
+      {
+        id: "restart",
+        label: T("Restart"),
+        onClick: (row) => {
+          this.entityList.busy =
+            this.loader.open();
+            row.state = 'restarting';
+            this.ws.call('jail.restart', [row.host_hostuuid]).subscribe(
+              (res) => {
+                row.state = 'up';
+                this.updateRow(row);
+                this.updateMultiAction([row]);
+                this.loader.close();
+              },
+              (err) => {
+                this.loader.close();
+                new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
               });
         }
       },
@@ -304,7 +331,7 @@ export class JailListComponent implements OnInit {
         id: "delete",
         label: T("Delete"),
         onClick: (row) => {
-          this.entityList.doDelete(row.host_hostuuid);
+          this.entityList.doDelete(row);
         }
       }
     ]
@@ -335,15 +362,15 @@ export class JailListComponent implements OnInit {
 
   updateMultiAction(selected: any) {
     if (_.find(selected, ['state', 'up'])) {
-     _.find(this.multiActions, {'id': 'mstop'})['enable'] = true;
+     _.find(this.multiActions, {'id': 'mstop' as any})['enable'] = true;
     } else {
-      _.find(this.multiActions, {'id': 'mstop'})['enable'] = false;
+      _.find(this.multiActions, {'id': 'mstop' as any})['enable'] = false;
     }
 
     if (_.find(selected, ['state', 'down'])) {
-     _.find(this.multiActions, {'id': 'mstart'})['enable'] = true;
+     _.find(this.multiActions, {'id': 'mstart' as any})['enable'] = true;
     } else {
-      _.find(this.multiActions, {'id': 'mstart'})['enable'] = false;
+      _.find(this.multiActions, {'id': 'mstart' as any})['enable'] = false;
     }
   }
 
@@ -354,6 +381,8 @@ export class JailListComponent implements OnInit {
   }
 
   dataHandler(entityList: any) {
+    // Call sort on load to make sure initial sort is by Jail name, asecnding
+    entityList.rows = this.sorter.tableSorter(entityList.rows, 'host_hostuuid', 'asc');
     for (let i = 0; i < entityList.rows.length; i++) {
       if (_.split(entityList.rows[i].ip4_addr, '|').length > 1) {
         entityList.rows[i].ip4_addr = _.split(entityList.rows[i].ip4_addr, '|')[1];

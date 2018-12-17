@@ -1,6 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {Subscription} from 'rxjs';
-import {environment} from '../../../environments/environment';
+import { Component, OnInit } from '@angular/core';
+import { environment } from '../../../environments/environment';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
@@ -16,6 +15,6 @@ export class GuideComponent implements OnInit{
   constructor(public sanitizer: DomSanitizer) {}
 
   ngOnInit() {
-	this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl("http://" + environment.remote + "//docs/freenas.html");
+	this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl("//" + environment.remote + "//docs/freenas.html");
   }
 }

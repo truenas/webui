@@ -12,6 +12,7 @@ export interface DialogFormConfiguration {
   isCustActionVisible?: any,
   hideButton?: boolean,
   message?: any,
+  warning?: any,
   preInit?: any,
   parent?: any
 }

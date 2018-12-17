@@ -1,9 +1,8 @@
 import { MatDialog, MatDialogRef, MatSnackBar } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
-import { Component, Output, Input, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 import { EntityFormService } from '../entity-form//services/entity-form.service';
-import { FieldRelationService } from '../entity-form/services/field-relation.service';
 import { FieldConfig } from '../entity-form/models/field-config.interface';
 import { FormGroup } from '@angular/forms';
 import { RestService } from '../../../../services/rest.service';
@@ -12,7 +11,6 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { EntityUtils } from '../utils';
 import * as _ from 'lodash';
 import { DialogFormConfiguration } from './dialog-form-configuration.interface';
-import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component'
 import { DatePipe } from '@angular/common';
 
 @Component({
@@ -26,10 +24,11 @@ export class EntityDialogComponent implements OnInit {
   @Input('conf') conf: DialogFormConfiguration;
 
   public title: string;
+  public warning: string;
   public fieldConfig: Array < FieldConfig > ;
   public formGroup: FormGroup;
   public saveButtonText: string;
-  public cancelButtonText: string = "Cancel";
+  public cancelButtonText = "Cancel";
   public detachButtonText: string;
   public getKeyButtonText: string;
   public error: string;
@@ -105,8 +104,8 @@ export class EntityDialogComponent implements OnInit {
   clearErrors() {
     this.error = null;
     for (let f = 0; f < this.fieldConfig.length; f++) {
-      this.fieldConfig[f].errors = '';
-      this.fieldConfig[f].hasErrors = false;
+      this.fieldConfig[f]['errors'] = '';
+      this.fieldConfig[f]['hasErrors'] = false;
     }
   }
 

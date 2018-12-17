@@ -4,23 +4,7 @@ import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { TranslateModule } from '@ngx-translate/core';
-import {
-  MatSidenavModule,
-  MatListModule,
-  MatTooltipModule,
-  MatOptionModule,
-  MatSelectModule,
-  MatMenuModule,
-  MatSnackBarModule,
-  MatGridListModule,
-  MatToolbarModule,
-  MatIconModule,
-  MatButtonModule,
-  MatRadioModule,
-  MatCheckboxModule,
-  MatCardModule,
-  MatDialogModule
-} from '@angular/material';
+import { MaterialModule } from '../../appMaterial.module';
 
 import { ChartistModule } from 'ng-chartist';
 import { TopbarComponent } from './topbar/topbar.component';
@@ -45,21 +29,7 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
     FormsModule,
     RouterModule,
     FlexLayoutModule,
-    MatSidenavModule,
-    MatIconModule,
-    MatListModule,
-    MatTooltipModule,
-    MatOptionModule,
-    MatSelectModule,
-    MatMenuModule,
-    MatSnackBarModule,
-    MatGridListModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatRadioModule,
-    MatCheckboxModule,
-    MatCardModule,
-    MatDialogModule,
+    MaterialModule,
     CommonDirectivesModule,
     TranslateModule,
     ChartistModule,
