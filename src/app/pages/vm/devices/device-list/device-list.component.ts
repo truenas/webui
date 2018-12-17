@@ -1,12 +1,6 @@
-<<<<<<< HEAD
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-=======
-import {Component, ElementRef, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {Subscription} from 'rxjs';
->>>>>>> master
 
 
 import { RestService, WebSocketService } from '../../../../services/';
