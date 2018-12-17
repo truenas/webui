@@ -5,7 +5,7 @@ import { FieldConfig } from '../../common/entity/entity-form/models/field-config
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
 import { RestService, WebSocketService } from '../../../services/';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import helptext from '../../../helptext/vm/vm-cards/vm-cards';
 
 @Component({

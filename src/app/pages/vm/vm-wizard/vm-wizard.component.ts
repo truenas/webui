@@ -140,7 +140,8 @@ export class VMWizardComponent {
           blurStatus: true,
           blurEvent: this.blurEvent3,
           parent: this,
-          validation: helptext.volsize_validation
+          validation: helptext.volsize_validation,
+          required: true
         },
         {
           type: 'paragraph',
