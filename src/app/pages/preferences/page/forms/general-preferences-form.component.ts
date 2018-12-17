@@ -9,7 +9,8 @@ import {RestService, WebSocketService} from 'app/services/';
 import { ThemeService, Theme} from 'app/services/theme/theme.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'general-preferences-form',
@@ -37,6 +38,9 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
   private themeOptions: any[] = [];
   private favoriteFields: any[] = []
   public fieldConfig:FieldConfig[] = [];
+  public showTooltips:boolean = this.prefs.preferences.showTooltips;
+  public allowPwToggle:boolean = this.prefs.preferences.allowPwToggle;;
+  public enableWarning:boolean = this.prefs.preferences.enableWarning;
   public fieldSetDisplay:string = 'no-margins';//default | carousel | stepper
     public fieldSets: FieldSet[] = [
       {
@@ -69,17 +73,28 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
             name: 'showTooltips',
             width: '300px',
             placeholder: 'Enable Help Text in Forms',
-            value:this.prefs.preferences.showTooltips,
+            value: this.showTooltips,
             tooltip: 'Display help icons in forms.',
             class:'inline'
           },
-          { 
-            type: 'checkbox', 
-            name: 'allowPwToggle', 
+          {
+            type: 'checkbox',
+            name: 'allowPwToggle',
             width: '300px',
             placeholder: 'Enable Password Toggle',
-            value:this.prefs.preferences.allowPwToggle,
+            value:this.allowPwToggle,
             tooltip: 'This option enables/disables a password toggle button.',
+            class:'inline'
+          },
+          {
+            type: 'checkbox',
+            name: 'enableWarning',
+            width: '300px',
+            placeholder: 'Enable "Save Configuration" Dialog Before Upgrade',
+            value:this.enableWarning,
+            tooltip: T('Show or hide a dialog to save the system\
+                        configuration file. This dialog appears\
+                        after choosing to upgrade the system.'),
             class:'inline'
           }
         ]
@@ -106,6 +121,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
     ) {}
 
     ngOnInit(){
+      // Get current preferences so for form values
       this.init();
     }
 
@@ -129,8 +145,6 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
       this.target.subscribe((evt:CoreEvent) => {
         switch(evt.name){
         case "FormSubmitted":
-          console.log("Form Submitted");
-          //console.log(evt.data);
           this.core.emit({name:"ChangePreferences",data:evt.data});
           break;
         case "CreateTheme":
@@ -170,7 +184,11 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
 
      processSubmission(obj:any){}
 
-     loadValues(themeName?:string){}
+     loadValues(themeName?:string){
+       this.enableWarning = this.prefs.preferences.enableWarning
+       this.allowPwToggle = this.prefs.preferences.allowPwToggle
+       this.showTooltips = this.prefs.preferences.showTooltips
+     }
 
      generateFieldConfig(){
        for(let i in this.fieldSets){

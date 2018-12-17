@@ -8,7 +8,7 @@ Steps to setup Selenium Grid
 2. Check for Java version- "java - version"
     -sudo apt-get install default-jre
     -sudo apt-get install git 
-3. Launch Selenium grid and assign it the role hub in Machine A "java -jar selenium-server-standalone-2.30.0.jar -role hub"
+3. Launch Selenium grid and assign it the role hub in Machine A "java -jar selenium-server-standalone-3.4.0.jar -role hub"
     -Note: Change the version according to the version you are using, it may be diferent
 4. After the terminal launches selenium grid , check grid console in the browser- "http://localhost:4444/grid/console"
 5. Check by going to the browser in MAchineB- "http://<ip.of.machine.A>:4444/grid/console"

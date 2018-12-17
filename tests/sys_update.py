@@ -45,11 +45,6 @@ class check_update_test(unittest.TestCase):
     # Test navigation Account>Users>Hover>New User and enter username,fullname,password,confirmation and wait till user is  visibile in the list
     def test_01_nav_sys_update(self):
         try:
-            # Navigating to System>Update page
-            a = driver.find_element_by_xpath(xpaths['navSystem'])
-            a.click()
-            # allowing page to load by giving explicit time(in seconds)
-            time.sleep(1)
             # Click on the Update submenu
             driver.find_element_by_xpath(xpaths['submenuUpdate']).click()
             self.error_check_sys()

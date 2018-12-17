@@ -34,15 +34,15 @@ export class ManualUpdateComponent {
   protected dialogRef: any;
   public fileLocation: any;
   public subs: any;
-  public custActions: Array<any> = [
-    {
-      id : 'save_config',
-      name : T('Save Config'),
-      function : () => {
-        this.dialogservice.dialogForm(this.saveConfigFormConf);
-      }
-    }
-  ];
+  // public custActions: Array<any> = [
+  //   {
+  //     id : 'save_config',
+  //     name : T('Save Config'),
+  //     function : () => {
+  //       this.dialogservice.dialogForm(this.saveConfigFormConf);
+  //     }
+  //   }
+  // ];
   public saveSubmitText ="Apply Update";
   protected fieldConfig: FieldConfig[] = [
     {
@@ -62,13 +62,13 @@ export class ManualUpdateComponent {
                   the update file stored on the system logged into the\
                   web interface to upload and apply. Update file names\
                   end with <i>-manual-update-unsigned.tar</i>'),
-      validation : [ Validators.required],
+      // validation : [ Validators.required],
       fileLocation: '',
       message: this.messageService,
       acceptedFiles: '.tar',
       updater: this.updater,
       parent: this,
-      required: true,
+      // required: true,
       hideButton: true,
     },
   ];
@@ -76,7 +76,7 @@ export class ManualUpdateComponent {
     {
       type: 'checkbox',
       name: 'secretseed',
-      placeholder: T('Export Password Secret Seed')
+      placeholder: T('Include Password Secret Seed')
     }
   ];
   public saveConfigFormConf: DialogFormConfiguration = {
@@ -86,6 +86,7 @@ export class ManualUpdateComponent {
     saveButtonText: T('Save'),
     customSubmit: this.saveCofigSubmit,
   }
+  public save_button_enabled: boolean = false;
 
   constructor(
     protected router: Router,
@@ -136,7 +137,7 @@ export class ManualUpdateComponent {
     this.dialogRef.componentInstance.success.subscribe((succ)=>{
       this.dialogRef.close(false);
       this.translate.get('Restart').subscribe((reboot: string) => {
-        this.translate.get('Update successfull. Please reboot for the update to take effect. Reboot now?').subscribe((reboot_prompt: string) => {
+        this.translate.get('Update successful. Please reboot for the update to take effect. Reboot now?').subscribe((reboot_prompt: string) => {
           this.dialogService.confirm(reboot, reboot_prompt).subscribe((reboot_res) => {
             if (reboot_res) {
               this.router.navigate(['/others/reboot']);
@@ -155,6 +156,7 @@ export class ManualUpdateComponent {
 updater(file: any, parent: any){
   const fileBrowser = file.fileInput.nativeElement;
   if (fileBrowser.files && fileBrowser.files[0]) {
+    parent.save_button_enabled = true;
     const formData: FormData = new FormData();
     formData.append('data', JSON.stringify({
       "method": "update.file",
@@ -162,6 +164,8 @@ updater(file: any, parent: any){
     }));
     formData.append('file', fileBrowser.files[0]);
     parent.subs = {"apiEndPoint":file.apiEndPoint, "formData": formData}
+  } else {
+    parent.save_button_enabled = false;
   }
 }
 

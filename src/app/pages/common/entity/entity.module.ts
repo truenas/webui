@@ -12,9 +12,12 @@ import { NgUploaderModule } from 'ngx-uploader';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { DocsService} from '../../../services/docs.service';
 import { RestService, WebSocketService } from '../../../services/index';
 import { Ng2DropdownModule } from 'ng2-material-dropdown';
 import { TranslateModule } from '@ngx-translate/core';
+import { TreeTableModule } from 'primeng/treetable';
+import { FileSizeModule } from 'ngx-filesize';
 
 import { DynamicFieldDirective } from './entity-form/components/dynamic-field/dynamic-field.directive';
 import { FormArrayComponent } from './entity-form/components/form-array/form-array.component';
@@ -34,6 +37,7 @@ import { FormSchedulerComponent } from './entity-form/components/form-scheduler/
 
 import { FormExplorerComponent } from './entity-form/components/form-explorer/form-explorer.component';
 import { TooltipComponent } from './entity-form/components/tooltip/tooltip.component';
+import { TooltipDocReplacePipe } from './entity-form/components/tooltip/tooltip-docreplace';
 import { FormSliderComponent } from './entity-form/components/form-slider/form-slider.component';
 import { FormToggleButtonComponent } from './entity-form/components/form-toggle-button/form-toggle-button.component';
 import { FormTaskComponent } from './entity-form/components/form-task/form-task.component';
@@ -43,6 +47,7 @@ import { EntityTableActionsComponent } from './entity-table/entity-table-actions
 import { EntityCardActionsComponent } from './entity-card/entity-card-actions.component';
 import { EntityTableAddActionsComponent } from './entity-table/entity-table-add-actions.component';
 import { EntityTableComponent } from './entity-table/entity-table.component';
+import { EntityTreeTableComponent } from './entity-tree-table/entity-tree-table.component';
 import { EntityCardComponent } from './entity-card/entity-card.component';
 import { EntityTemplateDirective } from './entity-template.directive';
 import { FormReadFileComponent } from './entity-form/components/form-readfile/form-readfile.component'
@@ -64,12 +69,13 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
 @NgModule({
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule,
-    MaterialModule, ColorPickerModule, NgxDatatableModule, CdkTableModule, TreeModule,
+    MaterialModule, ColorPickerModule, NgxDatatableModule, CdkTableModule, TreeModule.forRoot(),
     Ng2DropdownModule, NgUploaderModule, FlexLayoutModule, TranslateModule,
-    OverlayModule, A11yModule
+    OverlayModule, A11yModule, TreeTableModule, FileSizeModule
   ],
   declarations: [
     EntityTableComponent,
+    EntityTreeTableComponent,
     EntityCardComponent,
     EntityCardActionsComponent,
     EntityTableActionsComponent,
@@ -92,6 +98,7 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
     FormExplorerComponent,
     FormPermissionsComponent,
     TooltipComponent,
+    TooltipDocReplacePipe,
     FormSliderComponent,
     FormToggleButtonComponent,
     FormTaskComponent,
@@ -113,6 +120,7 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
     EntityFormComponent,
     EntityFormEmbeddedComponent,
     EntityTableComponent,
+    EntityTreeTableComponent,
     EntityCardComponent,
     EntityCardActionsComponent,
     EntityTableAddActionsComponent,
@@ -152,7 +160,8 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
-    AppLoaderService
+    AppLoaderService,
+    DocsService
   ]
 })
 export class EntityModule {}

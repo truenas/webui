@@ -1,6 +1,6 @@
 <div class="material mat-card mat-card-table">
-  <div class="mat-toolbar mat-card-toolbar">
-    <div class="mat-card-title-text">
+  <div class="mat-toolbar mat-card-toolbar" fxLayoutAlign="space-between center">
+    <div fxFlex="300px" class="mat-card-title-text">
       {{"Pool Status" | translate}}
     </div>
   </div>
@@ -8,49 +8,11 @@
     <mat-list *ngIf="poolScan">
       <mat-list-item><b>{{poolScan.function}}</b></mat-list-item>
       <mat-list-item>Status: {{poolScan.pause != null ? 'PAUSED' : poolScan.state ? poolScan.state : 'None requested'}}</mat-list-item>
-      <mat-list-item *ngIf="poolScan.errors != null">Errors: {{poolScan.errors}}</mat-list-item>
+      <mat-list-item *ngIf="poolScan['errors'] != null">Errors: {{poolScan['errors']}}</mat-list-item>
       <mat-list-item *ngIf="poolScan.start_time != null">Date: {{getReadableDate(poolScan.start_time)}}</mat-list-item>
     </mat-list>
   </div>
   <div class="padding-16">
-    <dx-tree-list id='pool' [dataSource]="topology" [columnAutoWidth]="true" [expandedRowKeys]="expandRows">
-      <dxo-selection mode="single"></dxo-selection>
-      <dxi-column dataField="name" [width]="300"></dxi-column>
-      <dxi-column dataField="read" cellTemplate="readCellTemplate"></dxi-column>
-      <div *dxTemplate="let rowData of 'readCellTemplate'">
-        <div [ngClass]="rowData.data.read > 0 ? 'CellHighlight' : ''">
-          {{rowData.data.read}}
-        </div>
-      </div>
-
-      <dxi-column dataField="write" cellTemplate="writeCellTemplate"></dxi-column>
-      <div *dxTemplate="let rowData of 'writeCellTemplate'">
-        <div [ngClass]="rowData.data.write > 0 ? 'CellHighlight' : ''">
-          {{rowData.data.write}}
-        </div>
-      </div>
-
-      <dxi-column dataField="checksum" cellTemplate="checksumCellTemplate"></dxi-column>
-      <div *dxTemplate="let rowData of 'checksumCellTemplate'">
-        <div [ngClass]="rowData.data.checksum > 0 ? 'CellHighlight' : ''">
-          {{rowData.data.checksum}}
-        </div>
-      </div>
-
-      <dxi-column dataField="status"></dxi-column>
-      <dxi-column dataField="" cellTemplate="cellTemplate"></dxi-column>
-      <div *dxTemplate="let rowData of 'cellTemplate'">
-        <div id="menu_{{rowData.data.name}}" *ngIf="rowData.data.actions">
-          <mat-icon [matMenuTriggerFor]="statuMenu" [style.cursor]="'pointer'">more_vert</mat-icon>
-          <mat-menu #statuMenu="matMenu">
-            <span *ngFor="let action of rowData.data.actions" id="buttonAction_{{rowData.data.name}}">
-              <button mat-menu-item *ngIf="!action.isHidden" (click)="action.onClick(rowData.data);">
-                <span>{{ action.label }}</span>
-              </button>
-            </span>
-          </mat-menu>
-        </div>
-      </div>
-    </dx-tree-list>
+    <entity-tree-table [conf]="treeTableConfig"></entity-tree-table>
   </div>
 </div>

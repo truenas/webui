@@ -21,6 +21,7 @@ import { FieldRelationService } from '../../common/entity/entity-form/services/f
 import { EntityUtils } from '../../common/entity/utils';
 import { DialogService, NetworkService } from '../../../services';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
+import helptext from '../../../helptext/jails/jails-add';
 
 @Component({
   selector: 'jail-add',
@@ -44,9 +45,8 @@ export class JailAddComponent implements OnInit {
     {
       type: 'input',
       name: 'uuid',
-      placeholder: T('Name'),
-      tooltip: T('Required. Can only contain alphanumeric characters \
-                  (Aa-Zz 0-9), dashes (-), or underscores (\_).'),
+      placeholder: helptext.uuid_placeholder,
+      tooltip: helptext.uuid_tooltip,
       required: true,
       validation: [ regexValidator(/^[a-zA-Z0-9-_]+$/) ],
       blurStatus: true,
@@ -56,47 +56,35 @@ export class JailAddComponent implements OnInit {
     {
       type: 'select',
       name: 'release',
-      placeholder: T('Release'),
-      tooltip: T('Choose the FreeBSD release to use as the jail \
-                  operating system. Releases that have already \
-                  been downloaded show <b>(fetched)</b>.'),
-        options: [],
+      placeholder: helptext.release_placeholder,
+      tooltip: helptext.release_tooltip,
+      options: [],
       required: true,
       validation: [ Validators.required ],
     },
     {
       type: 'checkbox',
       name: 'dhcp',
-      placeholder: T('DHCP Autoconfigure IPv4'),
-      tooltip: T('Set to autoconfigure jail networking with the \
-                  Dynamic Host Configuration Protocol. <b>VNET</b> \
-                  and <b>Berkeley Packet Filter<b> are also required.'),
+      placeholder: helptext.dhcp_placeholder,
+      tooltip: helptext.dhcp_tooltip,
     },
     {
       type: 'checkbox',
       name: 'vnet',
-      placeholder: T('VNET'),
-      tooltip: T('Set to use <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=vnet"\
-                  target="_blank">VNET(9)</a> to emulate network \
-                  devices for the jail. \
-                  A fully virtualized per-jail network stack will be \
-                  installed.'),
+      placeholder: helptext.vnet_placeholder,
+      tooltip: helptext.vnet_tooltip,
     },
     {
       type: 'checkbox',
       name: 'bpf',
-      placeholder: T('Berkeley Packet Filter'),
-      tooltip: T('Set to use the Berkeley Packet Filter (<a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=bpf"\
-                  target="_blank">BPF(4)</a>) to data link layers in a \
-                  protocol independent fashion.'),
+      placeholder: helptext.bpf_placeholder,
+      tooltip: helptext.bpf_tooltip,
     },
     {
       type: 'select',
       name: 'ip4_interface',
-      placeholder: T('IPv4 interface'),
-      tooltip: T('IPv4 interface for the jail.'),
+      placeholder: helptext.ip4_interface_placeholder,
+      tooltip: helptext.ip4_interface_tooltip,
       options: [{
         label: '------',
         value: '',
@@ -116,19 +104,8 @@ export class JailAddComponent implements OnInit {
     {
       type: 'input',
       name: 'ip4_addr',
-      placeholder: T('IPv4 Address'),
-      tooltip: T('Configure IPv4 networking or internet access for the \
-                  jail. Enter the IPv4 address for <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=vnet"\
-                  target="_blank">VNET(9)</a> and shared IP jails. \
-                  <br>Single interface format: <b>[interface|]\
-                  ip-address\
-                  [/netmask]</b>. <br>\
-                  Example: <b>vnet2|192.168.0.15/24</b> <br>\
-                  Multiple interface format: \
-                  <b>[interface|]ip-address[/netmask],[interface|]\
-                  ip-address[/netmask]</b>.<br>\
-                  Example: <b>192.168.0.10/24,vnet3|192.168.10.50</b>'),
+      placeholder: helptext.ip4_addr_placeholder,
+      tooltip: helptext.ip4_addr_tooltip,
       validation : [ regexValidator(this.networkService.ipv4_regex) ],
       relation: [{
       action: 'DISABLE',
@@ -143,8 +120,8 @@ export class JailAddComponent implements OnInit {
     {
       type: 'select',
       name: 'ip4_netmask',
-      placeholder: T('IPv4 Netmask'),
-      tooltip: T('IPv4 netmask for the jail.'),
+      placeholder: helptext.ip4_netmask_placeholder,
+      tooltip: helptext.ip4_netmask_tooltip,
       options: this.networkService.getV4Netmasks(),
       value: '',
       relation: [{
@@ -160,12 +137,8 @@ export class JailAddComponent implements OnInit {
     {
       type: 'input',
       name: 'defaultrouter',
-      placeholder: T('Default IPv4 Route'),
-      tooltip: T('A valid IPv4 address to use as the default route. \
-                  <br>Enter <b>none</b> to configure the jail with \
-                  no IPv4 default route. <br>\
-                  <b>A jail without a default route will not be \
-                  able to access any networks.</b>'),
+      placeholder: helptext.defaultrouter_placeholder,
+      tooltip: helptext.defaultrouter_tooltip,
       relation: [{
         action: 'DISABLE',
         connective: 'OR',
@@ -181,15 +154,14 @@ export class JailAddComponent implements OnInit {
     {
       type: 'checkbox',
       name: 'auto_configure_ip6',
-      placeholder: T('Auto configure IPv6'),
-      tooltip: T('Set this if the network has a DHCPv6 server \
-                  and IPv6 will be used to access jails.'),
+      placeholder: helptext.auto_configure_ip6_placeholder,
+      tooltip: helptext.auto_configure_ip6_tooltip,
     },
     {
       type: 'select',
       name: 'ip6_interface',
-      placeholder: T('IPv6 Interface'),
-      tooltip: T('IPv6 interface for the jail.'),
+      placeholder: helptext.ip6_interface_placeholder,
+      tooltip: helptext.ip6_interface_tooltip,
       options: [{
         label: '------',
         value: '',
@@ -209,18 +181,8 @@ export class JailAddComponent implements OnInit {
     {
       type: 'input',
       name: 'ip6_addr',
-      placeholder: T('IPv6 Address'),
-      tooltip: T('Configure IPv6 networking or internet access for the \
-                  jail. Enter the IPv6 address for <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=vnet"\
-                  target="_blank">VNET(9)</a> and shared IP jails. \
-                  <br>Single interface format: <b>[interface|]\
-                  ip-address[/netmask]</b>. <br>\
-                  Example: <b>re0|fe80::/64</b> <br>\
-                  Multiple interface format: <b>[interface|]ip-address\
-                  [/netmask],[interface|]ip-address[/netmask]</b>.<br>\
-                  Example: <b>re1|2607:f0d0:1002:51:0000:0000:0000:0004,\
-                  re5|2001:db8:85a3::8a2e:370:7334/24</b>'),
+      placeholder: helptext.ip6_addr_placeholder,
+      tooltip: helptext.ip6_addr_tooltip,
       validation : [ regexValidator(this.networkService.ipv6_regex) ],
       class: 'inline',
       width: '50%',
@@ -235,8 +197,8 @@ export class JailAddComponent implements OnInit {
     {
       type: 'select',
       name: 'ip6_prefix',
-      placeholder: T('IPv6 Prefix'),
-      tooltip: T('IPv6 prefix for the jail.'),
+      placeholder: helptext.ip6_prefix_placeholder,
+      tooltip: helptext.ip6_prefix_tooltip,
       options: this.networkService.getV6PrefixLength(),
       value: '',
       class: 'inline',
@@ -252,462 +214,299 @@ export class JailAddComponent implements OnInit {
     {
       type: 'input',
       name: 'defaultrouter6',
-      placeholder: T('Default IPv6 Route'),
-      tooltip: T('A valid IPv6 address to use as the default route. \
-                  <br>Enter <b>none</b> to configure the jail with \
-                  no IPv4 default route. <br>\
-                  <b>A jail without a default route will not be \
-                  able to access any networks.'),
+      placeholder: helptext.defaultrouter6_placeholder,
+      tooltip: helptext.defaultrouter6_tooltip,
     },
     {
       type: 'input',
       name: 'notes',
-      placeholder: T('Notes'),
-      tooltip: T('Enter any notes about the jail here.'),
+      placeholder: helptext.notes_placeholder,
+      tooltip: helptext.notes_tooltip,
     },
     {
       type: 'checkbox',
       name: 'boot',
-      placeholder: T('Auto-start'),
-      tooltip: T('Set to auto-start the jail at system boot time. \
-                  Jails are started and stopped based on iocage \
-                  priority. Set in the <b>priority</b> field under \
-                  <b>Custom Properties</b>.'),
+      placeholder: helptext.boot_placeholder,
+      tooltip: helptext.boot_tooltip,
     }
   ];
   public jailfieldConfig: FieldConfig[] = [
     {
       type: 'input',
       name: 'devfs_ruleset',
-      placeholder: T('devfs_ruleset'),
-      tooltip: T('The number of the <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=devfs\
-                  "target="_blank">devfs(8) ruleset</a> to enforce when\
-                  mounting <b>devfs</b> in the jail. The default value \
-                  of <i>0</i> means no ruleset is enforced. Mounting \
-                  <b>devfs</b> inside a jail is only possible when the \
-                  <b>allow_mount</b> and <b>allow_mount_devfs</b> \
-                  permissions are enabled and <b>enforce_statfs</b> is \
-                  set to a value lower than <i>2</i>.'),
+      placeholder: helptext.devfs_ruleset_placeholder,
+      tooltip: helptext.devfs_ruleset_tooltip,
     },
     {
       type: 'input',
       name: 'exec_start',
-      placeholder: T('exec.start'),
-      tooltip: T('Commands to run in the jail environment when the jail \
-                  is created. Example: <b>sh /etc/rc</b>. The pseudo-\
-                  parameters section of <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=jail"\
-                  target="_blank">JAIL(8)</a> describes \
-                  <b>exec.start</b> usage.'),
+      placeholder: helptext.exec_start_placeholder,
+      tooltip: helptext.exec_start_tooltip,
     },
     {
       type: 'input',
       name: 'exec_stop',
-      placeholder: T('exec.stop'),
-      tooltip: T('Commands to run in the jail environment before the \
-                  jail is removed and after <b>exec.prestop</b> \
-                  commands are complete. Example: \
-                  <i>sh /etc/rc.shutdown</i>.'),
+      placeholder: helptext.exec_stop_placeholder,
+      tooltip: helptext.exec_stop_tooltip,
     },
     {
       type: 'input',
       name: 'exec_prestart',
-      placeholder: T('exec_prestart'),
-      tooltip: T('Commands to run in the system environment\
-                  before a jail is started.'),
+      placeholder: helptext.exec_prestart_placeholder,
+      tooltip: helptext.exec_prestart_tooltip,
     },
     {
       type: 'input',
       name: 'exec_poststart',
-      placeholder: T('exec_poststart'),
-      tooltip: T('Commands to run in the system environment after\
-                  a jail is started and after any <b>exec_start</b> \
-                  commands are finished.'),
+      placeholder: helptext.exec_poststart_placeholder,
+      tooltip: helptext.exec_poststart_tooltip,
     }, {
       type: 'input',
       name: 'exec_prestop',
-      placeholder: T('exec_prestop'),
-      tooltip: T('Commands to run in the system environment\
-                  before a jail is stopped.'),
+      placeholder: helptext.exec_prestop_placeholder,
+      tooltip: helptext.exec_prestop_tooltip,
     }, {
       type: 'input',
       name: 'exec_poststop',
-      placeholder: T('exec_poststop'),
-      tooltip: T('Commands to run in the system environment after\
- a jail is stopped.'),
+      placeholder: helptext.exec_poststop_placeholder,
+      tooltip: helptext.exec_poststop_tooltip,
     }, {
       type: 'checkbox',
       name: 'exec_clean',
-      placeholder: T('exec.clean'),
-      tooltip: T('Run commands in a clean environment. The current\
-                  environment is discarded except for $HOME, $SHELL, \
-                  $TERM, and $USER. <br>\
-                  $HOME and $SHELL are set to the target login. $USER \
-                  is set to the target login. $TERM is imported from \
-                  the current environment. The environment variables \
-                  from the login class capability database for the \
-                  target login are also set.'),
+      placeholder: helptext.exec_clean_placeholder,
+      tooltip: helptext.exec_clean_tooltip,
     },
     {
       type: 'input',
       name: 'exec_timeout',
-      placeholder: T('exec_timeout'),
-      tooltip: T('Maximum amount of time in seconds to wait for \
-                  a command to complete. If a command is still running \
-                  after the allotted time, the jail is terminated.'),
+      placeholder: helptext.exec_timeout_placeholder,
+      tooltip: helptext.exec_timeout_tooltip,
     }, {
       type: 'input',
       name: 'stop_timeout',
-      placeholder: T('stop_timeout'),
-      tooltip: T('Maximum amount of time in seconds to wait for \
-                  jail processes to exit after sending a SIGTERM signal. This \
-                  happens after any <b>exec_stop</b> commands are complete. \
-                  After the specified time, the jail is removed, killing any \
-                  remaining processes. If set to <i>0</i>, no SIGTERM is sent \
-                  and the jail is removed immediately.'),
+      placeholder: helptext.stop_timeout_placeholder,
+      tooltip: helptext.stop_timeout_tooltip,
     }, {
       type: 'input',
       name: 'exec_jail_user',
-      placeholder: T('exec_jail_user'),
-      tooltip: T('Enter either <i>root</i> or another valid <i>username</i>. \
-                  Inside the jail, commands run as this user.'),
+      placeholder: helptext.exec_jail_user_placeholder,
+      tooltip: helptext.exec_jail_user_tooltip,
     }, {
       type: 'input',
       name: 'exec_system_jail_user',
-      placeholder: T('exec.system_jail_user'),
-      tooltip: T('Set this boolean option to <i>True</i> to look for \
-                  the <b>exec.jail_user</b> in the system \
-                  <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=passwd"\
-                  target="_blank">passwd(5)</a> file <i>instead</i> of \
-                  the jail passwd.'),
+      placeholder: helptext.exec_system_jail_user_placeholder,
+      tooltip: helptext.exec_system_jail_user_tooltip,
     },
     {
       type: 'input',
       name: 'exec_system_user',
-      placeholder: T('exec.system_user'),
-      tooltip: T('Run commands in the jail as this user. By default, \
-                  commands are run as the current user.'),
+      placeholder: helptext.exec_system_user_placeholder,
+      tooltip: helptext.exec_system_user_tooltip,
     },
     {
       type: 'checkbox',
       name: 'mount_devfs',
-      placeholder: T('mount.devfs'),
-      tooltip: T('Mount a <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=devfs"\
-                  target="_blank">devfs(5)</a> filesystem on the \
-                  <i>chrooted /dev directory</i> and apply the ruleset \
-                  in the <b>devfs_ruleset</b> parameter to restrict \
-                  the devices visible inside the jail.'),
+      placeholder: helptext.mount_devfs_placeholder,
+      tooltip: helptext.mount_devfs_tooltip,
     },
     {
       type: 'checkbox',
       name: 'mount_fdescfs',
-      placeholder: T('mount.fdescfs'),
-      tooltip: T('Mount an <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=fdescfs"\
-                  target="_blank">fdescfs(5)</a> filesystem in the \
-                  jail <i>/dev/fd</i> directory.'),
+      placeholder: helptext.mount_fdescfs_placeholder,
+      tooltip: helptext.mount_fdescfs_tooltip,
     },
     {
       //"enforce_statfs": ("0", "1", "2"),
       type: 'select',
       name: 'enforce_statfs',
-      placeholder: T('enforce_statfs'),
-      tooltip: T('Determine which information the processes in a jail \
-                  are able to obtain about mount points. The behavior \
-                  of multiple syscalls is affected. <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=statfs"\
-                  target="_blank">statfs(2)</a>, <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=statfs"\
-                  target="_blank">fstatfs(2)</a>, <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=getfsstat"\
-                  target="_blank">getfsstat(2)</a>, <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=fhstatfs"\
-                  target="_blank">fhstatfs(2)</a>, and other similar \
-                  compatibility syscalls. <br> \
-                  Set to <i>0</i>: All mount points are available \
-                  without restriction. <br>\
-                  Set to <i>1</i>: Only mount points below the jail \
-                  chroot directory are available. <br>\
-                  Set to <i>2</i> (default): Only mounts point where \
-                  the jail chroot directory is located are available.'),
-        options: [{
-            label: '0',
-            value: '0',
-        }, {
-            label: '1',
-            value: '1',
-        }, {
-            label: '2 (default)',
-            value: '2',
-        }]
+      placeholder: helptext.enforce_statfs_placeholder,
+      tooltip: helptext.enforce_statfs_tooltip,
+      options: [{
+          label: '0',
+          value: '0',
+      }, {
+          label: '1',
+          value: '1',
+      }, {
+          label: '2 (default)',
+          value: '2',
+      }]
     },
     {
       type: 'input',
       name: 'children_max',
-      placeholder: T('children.max'),
-      tooltip: T('Number of child jails allowed to be created by the \
-                  jail or other jails under this jail. A limit of \
-                  <i>0</i> restricts the jail from creating child \
-                  jails. Hierarchical Jails in the <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=jail"\
-                  target="_blank">JAIL(8)</a> man page explains the \
-                  finer details.'),
+      placeholder: helptext.children_max_placeholder,
+      tooltip: helptext.children_max_tooltip,
     },
     {
       type: 'input',
       name: 'login_flags',
-      placeholder: T('login_flags'),
-      tooltip: T('Flags to pass to <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=login"\
-                  target="_blank">LOGIN(1)</a> when logging in to the \
-                  jail using the <b>console</b> function.'),
+      placeholder: helptext.login_flags_placeholder,
+      tooltip: helptext.login_flags_tooltip,
     },
     {
       type: 'input',
       name: 'securelevel',
-      placeholder: T('securelevel'),
-      tooltip: T('The value of the jail <a \
-                  href="https://www.freebsd.org/doc/faq/security.html#idp60202568"\
-                  target="_blank">securelevel</a> sysctl. A jail never \
-                  has a lower securelevel than the host system. \
-                  Setting this parameter allows a higher securelevel. \
-                  If the host system securelevel is changed, jail \
-                  securelevel will be at least as secure. <br>\
-                  Securelevel options are <i>3</i>, <i>2</i>, \
-                  <i>1</i>, <i>0</i>, and <i>-1</i>.'),
+      placeholder: helptext.securelevel_placeholder,
+      tooltip: helptext.securelevel_tooltip,
     },
     {
       type: 'select',
       name: 'sysvmsg',
-      placeholder: T('sysvmsg'),
-      tooltip: T('Allow or deny access to SYSV IPC message primitives. \
-                  <br> <b>Inherit</b>: All IPC objects on the system \
-                  are visible to the jail. <br>\
-                  <b>New</b>: Only objects the jail creates using the \
-                  private key namespace are visible. The system and \
-                  parent jails have access to the jail objects but \
-                  <i>not</i> private keys. <br>\
-                  <b>Disable</b>: The jail cannot perform any \
-                  <b>sysvmsg</b> related system calls.'),
-        options: [{
-            label: 'Inherit',
-            value: 'inherit',
-        }, {
-            label: 'New',
-            value: 'new',
-        }, {
-            label: 'Disable',
-            value: 'disable',
-        }]
+      placeholder: helptext.sysvmsg_placeholder,
+      tooltip: helptext.sysvmsg_tooltip,
+      options: [{
+          label: 'Inherit',
+          value: 'inherit',
+      }, {
+          label: 'New',
+          value: 'new',
+      }, {
+          label: 'Disable',
+          value: 'disable',
+      }]
     },
     {
       type: 'select',
       name: 'sysvsem',
-      placeholder: T('sysvsem'),
-      tooltip: T('Allow or deny access to SYSV IPC semaphore \
-                  primitives. <br> <b>Inherit</b>: All IPC objects \
-                  on the system are visible to the jail. <br>\
-                  <b>New</b>: Only objects the jail creates using the \
-                  private key namespace are visible. The system and \
-                  parent jails have access to the jail objects but \
-                  <i>not</i> private keys. <br> <b>Disable</b>: The \
-                  jail cannot perform any <b>sysvmem</b> related \
-                  system calls.'),
-        options: [{
-            label: 'Inherit',
-            value: 'inherit',
-        }, {
-            label: 'New',
-            value: 'new',
-        }, {
-            label: 'Disable',
-            value: 'disable',
-        }]
+      placeholder: helptext.sysvsem_placeholder,
+      tooltip: helptext.sysvsem_tooltip,
+      options: [{
+          label: 'Inherit',
+          value: 'inherit',
+      }, {
+          label: 'New',
+          value: 'new',
+      }, {
+          label: 'Disable',
+          value: 'disable',
+      }]
     },
     {
       type: 'select',
       name: 'sysvshm',
-      placeholder: T('sysvshm'),
-      tooltip: T('Allow or deny access to SYSV IPC shared memory \
-                  primitives. <br>\
-                  <b>Inherit</b>: All IPC objects on the system are \
-                  visible to the jail. <br>\
-                  <b>New</b>: Only objects the jail creates using the \
-                  private key namespace are visible. The system and \
-                  parent jails have access to the jail objects but \
-                  <i>not</i> private keys. <br>\
-                  <b>Disable</b>: The jail cannot perform any \
-                  <b>sysvshm</b> related system calls.'),
-        options: [{
-            label: 'Inherit',
-            value: 'inherit',
-        }, {
-            label: 'New',
-            value: 'new',
-        }, {
-            label: 'Disable',
-            value: 'disable',
-        }]
+      placeholder: helptext.sysvshm_placeholder,
+      tooltip: helptext.sysvshm_tooltip,
+      options: [{
+          label: 'Inherit',
+          value: 'inherit',
+      }, {
+          label: 'New',
+          value: 'new',
+      }, {
+          label: 'Disable',
+          value: 'disable',
+      }]
     },
     {
       type: 'checkbox',
       name: 'allow_set_hostname',
-      placeholder: T('allow.set_hostname'),
-      tooltip: T('Allow the jail hostname to be changed with <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=hostname&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
-                  target="_blank">hostname(1)</a> or <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=sethostname&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
-                  target="_blank">sethostname(3)</a>.'),
+      placeholder: helptext.allow_set_hostname_placeholder,
+      tooltip: helptext.allow_set_hostname_tooltip,
     },
     {
       type: 'checkbox',
       name: 'allow_sysvipc',
-      placeholder: T('*allow.sysvipc'),
-      tooltip: T('Choose whether a process in the jail has access to \
-                  System V IPC primitives. Equivalent to setting \
-                  sysvmsg, sysvsem, and sysvshm to <b>Inherit</b>. \
-                  <b>*Deprecated in FreeBSD 11.0 and later!</b><br> \
-                  Use <b>sysvmsg</b>, <b>sysvsem</b>, and \
-                  <b>sysvshm</b> instead.'),
+      placeholder: helptext.allow_sysvipc_placeholder,
+      tooltip: helptext.allow_sysvipc_tooltip,
     },
     {
       type: 'checkbox',
       name: 'allow_raw_sockets',
-      placeholder: T('allow.raw_sockets'),
-      tooltip: T('Set to allow raw sockets. Utilities like <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=ping"\
-                  target="_blank">ping(8)</a> and <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=traceroute"\
-                  target="_blank">traceroute(8)</a> require raw \
-                  sockets. When set, source IP addresses are enforced \
-                  to comply with the IP addresses bound to the jail, \
-                  ignoring the IP_HDRINCL flag on the socket.'),
+      placeholder: helptext.allow_raw_sockets_placeholder,
+      tooltip: helptext.allow_raw_sockets_tooltip,
     },
     {
       type: 'checkbox',
       name: 'allow_chflags',
-      placeholder: T('allow.chflags'),
-      tooltip: T('Set to treat jail users as privileged and allow the \
-                  manipulation of system file flags. \
-                  <b>securelevel</b> constraints are still enforced.'),
+      placeholder: helptext.allow_chflags_placeholder,
+      tooltip: helptext.allow_chflags_tooltip,
+    },
+    {
+      type: 'checkbox',
+      name: 'allow_mlock',
+      placeholder: helptext.allow_mlock_placeholder,
+      tooltip: helptext.allow_mlock_tooltip,
     },
     {
       type: 'checkbox',
       name: 'allow_mount',
-      placeholder: T('allow.mount'),
-      tooltip: T('Set to allow privileged users inside the jail to \
-                  mount and unmount filesystem types marked as \
-                  jail-friendly.'),
+      placeholder: helptext.allow_mount_placeholder,
+      tooltip: helptext.allow_mount_tooltip,
     },
     {
       type: 'checkbox',
       name: 'allow_mount_devfs',
-      placeholder: T('allow.mount.devfs'),
-      tooltip: T('Set to allow privileged users inside the jail to \
-                  mount and unmount the devfs file system. This \
-                  permission is only effective when <b>allow_mount</b> \
-                  is set and <b>enforce_statfs</b> is set to a value \
-                  lower than <i>2</i>.'),
+      placeholder: helptext.allow_mount_devfs_placeholder,
+      tooltip: helptext.allow_mount_devfs_tooltip,
     },
     {
       type: 'checkbox',
       name: 'allow_mount_nullfs',
-      placeholder: T('allow.mount.nullfs'),
-      tooltip: T('Set to allow privileged users inside the jail to \
-                  mount and unmount the nullfs file system. This \
-                  permission is only effective when <b>allow_mount</b> \
-                  is set and and <b>enforce_statfs</b> is set to a \
-                  value lower than <i>2</i>.'),
+      placeholder: helptext.allow_mount_nullfs_placeholder,
+      tooltip: helptext.allow_mount_nullfs_tooltip,
     },
     {
       type: 'checkbox',
       name: 'allow_mount_procfs',
-      placeholder: T('allow.mount.procfs'),
-      tooltip: T('Set to allow privileged users inside the jail to \
-                  mount and unmount the procfs file system. This \
-                  permission is only effective when <b>allow_mount</b> \
-                  is set and <b>enforce_statfs</b> is set to a value \
-                  lower than <i>2</i>.'),
+      placeholder: helptext.allow_mount_procfs_placeholder,
+      tooltip: helptext.allow_mount_procfs_tooltip,
     },
     {
       type: 'checkbox',
       name: 'allow_mount_tmpfs',
-      placeholder: T('allow.mount.tmpfs'),
-      tooltip: T('Set to allow privileged users inside the jail to \
-                  mount and unmount the tmpfs file system. This \
-                  permission is only effective when <b>allow_mount</b> \
-                  is set and <b>enforce_statfs</b> is set to a value \
-                  lower than <i>2</i>.'),
+      placeholder: helptext.allow_mount_tmpfs_placeholder,
+      tooltip: helptext.allow_mount_tmpfs_tooltip,
     },
     {
       type: 'checkbox',
       name: 'allow_mount_zfs',
-      placeholder: T('allow.mount.zfs'),
-      tooltip: T('Set to allow privileged users inside the jail to \
-                  mount and unmount the ZFS file system. This \
-                  permission is only effective when <b>allow_mount</b> \
-                  is set and <b>enforce_statfs</b> is set to a value \
-                  lower than <i>2</i>. The <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=zfs"\
-                  target="_blank">ZFS(8)</a> man page has information \
-                  on how to configure \
-                  the ZFS filesystem to operate from within a jail.'),
+      placeholder: helptext.allow_mount_zfs_placeholder,
+      tooltip: helptext.allow_mount_zfs_tooltip,
     },
     {
       type: 'checkbox',
       name: 'allow_quotas',
-      placeholder: T('allow.quotas'),
-      tooltip: T('Set to allow the jail root to administer quotas on \
-                  jail filesystems. This includes filesystems the \
-                  jail shares with other jails or with non-jailed \
-                  parts of the system.'),
+      placeholder: helptext.allow_quotas_placeholder,
+      tooltip: helptext.allow_quotas_tooltip,
     },
     {
       type: 'checkbox',
       name: 'allow_socket_af',
-      placeholder: T('allow.socket_af'),
-      tooltip: T('Set to allow access to other protocol stacks beyond \
-                  IPv4, IPv6, local (UNIX), and route. <br>\
-                  <b>Warning:</b> jail functionality does not exist \
-                  for all protocal stacks.'),
+      placeholder: helptext.allow_socket_af_placeholder,
+      tooltip: helptext.allow_socket_af_tooltip,
+    },
+    {
+      type: 'input',
+      name: 'vnet_interfaces',
+      placeholder: helptext.vnet_interfaces_placeholder,
+      tooltip: helptext.vnet_interfaces_tooltip,
     }
   ];
   public networkfieldConfig: FieldConfig[] = [
     {
       type: 'input',
       name: 'interfaces',
-      placeholder: T('interfaces'),
-      tooltip: T('Enter up to four interface configurations in the format \
-                  <i>interface:bridge</i>, separated by a comma (,). The \
-                  left value is the virtual VNET interface name and the \
-                  right value is the bridge name where the virtual interface \
-                  should be attached.'),
+      placeholder: helptext.interfaces_placeholder,
+      tooltip: helptext.interfaces_tooltip,
     },
     {
       type: 'input',
       name: 'host_domainname',
-      placeholder: T('host_domainname'),
-      tooltip: T('Enter a <a \
-                  href="https://www.freebsd.org/doc/handbook/network-nis.html"\
-                  target="_blank">NIS Domain name</a> for the jail.'),
+      placeholder: helptext.host_domainname_placeholder,
+      tooltip: helptext.host_domainname_tooltip,
     },
     {
       type: 'input',
       name: 'host_hostname',
-      placeholder: T('host.hostname'),
-      tooltip: T('Set the jail hostname. Defaults to the jail UUID.'),
+      placeholder: helptext.host_hostname_placeholder,
+      tooltip: helptext.host_hostname_tooltip,
     },
     {
       type: 'input',
       name: 'exec_fib',
-      placeholder: T('exec.fib'),
-      tooltip: T('This number selects the routing table (<a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=setfib"\
-                  target="_blank">FIB</a>) \
-                  used when running commands inside the jail.'),
+      placeholder: helptext.exec_fib_placeholder,
+      tooltip: helptext.exec_fib_tooltip,
 //There is SETFIB(1) that is network related, and SETFIB(2) that
 //is system call related. As this tooltip is under the jail
 //networking section, I went with SETFIB(1) the network related
@@ -716,22 +515,14 @@ export class JailAddComponent implements OnInit {
     {
       type: 'checkbox',
       name: 'ip4_saddrsel',
-      placeholder: T('ip4.saddrsel'),
-      tooltip: T('Only available when the jail is not configured to \
-                  use VNET. Disables IPv4 source address selection \
-                  for the jail in favor of the primary IPv4 address of \
-                  the jail.'),
+      placeholder: helptext.ip4_saddrsel_placeholder,
+      tooltip: helptext.ip4_saddrsel_tooltip,
     },
     {
       type: 'select',
       name: 'ip4',
-      placeholder: T('ip4'),
-      tooltip: T('Control the availability of IPv4 addresses. <br>\
-                  <b>Inherit</b>: Allow unrestricted access to all \
-                  system addresses. <br>\
-                  <b>New</b>: Restrict addresses with <b>ip4_addr</b>. \
-                  <br><b>Disable</b>: Stop the jail from using IPv4 \
-                  entirely.'),
+      placeholder: helptext.ip4_placeholder,
+      tooltip: helptext.ip4_tooltip,
       options: [{
         label: 'Inherit',
         value: 'inherit',
@@ -746,22 +537,14 @@ export class JailAddComponent implements OnInit {
     {
       type: 'checkbox',
       name: 'ip6_saddrsel',
-      placeholder: T('ip6_saddrsel'),
-      tooltip: T('Only available when the jail is not configured to \
-                  use VNET. Disables IPv6 source address selection \
-                  for the jail in favor of the primary IPv6 address of \
-                  the jail.'),
+      placeholder: helptext.ip6_saddrsel_placeholder,
+      tooltip: helptext.ip6_saddrsel_tooltip,
     },
     {
       type: 'select',
       name: 'ip6',
-      placeholder: T('ip6'),
-      tooltip: T('Control the availability of IPv6 addresses. <br>\
-                  <b>Inherit</b>: Allow unrestricted access to all \
-                  system addresses. <br>\
-                  <b>New</b>: Restrict addresses with <b>ip6_addr</b>. \
-                  <br><b>Disable</b>: Stop the jail from using IPv4 \
-                  entirely.'),
+      placeholder: helptext.ip6_placeholder,
+      tooltip: helptext.ip6_tooltip,
       options: [{
         label: 'Inherit',
         value: 'inherit',
@@ -776,25 +559,20 @@ export class JailAddComponent implements OnInit {
     {
       type: 'input',
       name: 'resolver',
-      placeholder: T('resolver'),
-      tooltip: T('Add lines to the jail <b>resolv.conf</b>. \
-                  <b>Example:</b> <i>nameserver IP;search domain.\
-                  local</i>. Fields must be delimited with a semicolon \
-                  (;), This is translated as new lines in \
-                  <b>resolv.conf</b>. Enter <i>none</i> to inherit \
-                  <b>resolv.conf</b> from the host.'),
+      placeholder: helptext.resolver_placeholder,
+      tooltip: helptext.resolver_tooltip,
     },
     {
       type: 'input',
       name: 'mac_prefix',
-      placeholder: T('mac_prefix'),
-      tooltip: T('Enter a valid MAC address vendor prefix. \
-                  <b>Example:</b> <i>E4F4C6</i>'),
+      placeholder: helptext.mac_prefix_placeholder,
+      tooltip: helptext.mac_prefix_tooltip,
     },
     {
       type: 'select',
       name: 'vnet_default_interface',
-      placeholder: T('vnet_default_interface'),
+      placeholder: helptext.vnet_default_interface_placeholder,
+      tooltip: helptext.vnet_default_interface_tooltip,
       options: [
         {
           label: 'none',
@@ -805,138 +583,112 @@ export class JailAddComponent implements OnInit {
     {
       type: 'input',
       name: 'vnet0_mac',
-      placeholder: T('vnet0_mac'),
-      tooltip: T('Leave this field empty to generate random MAC \
-                  addresses for the host and jail. To assign fixed MAC \
-                  addresses, enter the MAC address to be assigned to \
-                  the host, a space, then the MAC address to be \
-                  assigned to the jail.'),
+      placeholder: helptext.vnet0_mac_placeholder,
+      tooltip: helptext.vnet0_mac_tooltip,
     },
     {
       type: 'input',
       name: 'vnet1_mac',
-      placeholder: T('vnet1_mac'),
-      tooltip: T('Leave this field empty to generate random MAC \
-                  addresses for the host and jail. To assign fixed MAC \
-                  addresses, enter the MAC address to be assigned to \
-                  the host, a space, then the MAC address to be \
-                  assigned to the jail.'),
+      placeholder: helptext.vnet1_mac_placeholder,
+      tooltip: helptext.vnet1_mac_tooltip,
     },
     {
       type: 'input',
       name: 'vnet2_mac',
-      placeholder: T('vnet2_mac'),
-      tooltip: T('Leave this field empty to generate random MAC \
-                  addresses for the host and jail. To assign fixed MAC \
-                  addresses, enter the MAC address to be assigned to \
-                  the host, a space, then the MAC address to be \
-                  assigned to the jail.'),
+      placeholder: helptext.vnet2_mac_placeholder,
+      tooltip: helptext.vnet2_mac_tooltip,
     },
     {
       type: 'input',
       name: 'vnet3_mac',
-      placeholder: T('vnet3_mac'),
-      tooltip: T('Leave this field empty to generate random MAC \
-                  addresses for the host and jail. To assign fixed MAC \
-                  addresses, enter the MAC address to be assigned to \
-                  the host, a space, then the MAC address to be \
-                  assigned to the jail.'),
+      placeholder: helptext.vnet3_mac_placeholder,
+      tooltip: helptext.vnet3_mac_tooltip,
     },
   ];
   public customConfig: FieldConfig[] = [
     {
       type: 'input',
       name: 'owner',
-      placeholder: T('owner'),
-      tooltip: T('Owner of the jail. Can be any string.'),
+      placeholder: helptext.owner_placeholder,
+      tooltip: helptext.owner_tooltip,
     },
     {
       type: 'input',
       name: 'priority',
-      placeholder: T('priority'),
-      tooltip: T('Numeric start priority for the jail at boot time. \
-                  Valid priorities are between 1 and 99. \
-                  <b>Smaller</b> values are <b>higher</b> priority. \
-                  At system shutdown the priority is reversed. <br> \
-                  <b>Example:</b> <i>99</i>'),
+      placeholder: helptext.priority_placeholder,
+      tooltip: helptext.priority_tooltip,
     },
     {
       type: 'input',
       name: 'hostid',
-      placeholder: T('hostid'),
-      tooltip: T('A new jail hostid, if desired. \
-                  <br><b>Example hostid:</b> \
-                  <i>1a2bc345-678d-90e1-23fa-4b56c78901de</i>.'),
+      placeholder: helptext.hostid_placeholder,
+      tooltip: helptext.hostid_tooltip,
+    },
+    {
+      type: 'checkbox',
+      name: 'hostid_strict_check',
+      placeholder: helptext.hostid_strict_check_placeholder,
+      tooltip: helptext.hostid_strict_check_tooltip,
     },
     {
       type: 'input',
       name: 'comment',
-      placeholder: T('comment'),
-      tooltip: T('Enter comments about the jail.'),
+      placeholder: helptext.comment_placeholder,
+      tooltip: helptext.comment_tooltip,
     },
     {
       type: 'input',
       name: 'depends',
-      placeholder: T('depends'),
-      tooltip: T('Specify any jails this jail depends on. Child \
-                  jails must already exist before the parent jail \
-                  can be created.'),
+      placeholder: helptext.depends_placeholder,
+      tooltip: helptext.depends_tooltip,
     },
     {
       type: 'checkbox',
       name: 'mount_procfs',
-      placeholder: T('mount_procfs'),
-      tooltip: T('Set to mount a <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=procfs"\
-                  target="_blank">procfs(5)</a> filesystems in the \
-                  jail <i>/dev/proc</i> directory.'),
+      placeholder: helptext.mount_procfs_placeholder,
+      tooltip: helptext.mount_procfs_tooltip,
     },
     {
       type: 'checkbox',
       name: 'mount_linprocfs',
-      placeholder: T('mount_linprocfs'),
-      tooltip: T('Set to mount a <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=linprocfs"\
-                  target="_blank">linprocfs(5)</a> filesystem in the \
-                  jail.'),
+      placeholder: helptext.mount_linprocfs_placeholder,
+      tooltip: helptext.mount_linprocfs_tooltip,
     },
     // {
     //   type: 'checkbox',
     //   name: 'template',
-    //   placeholder: T('template'),
-    //   tooltip: T('Set to set this jail as a template.'),
+    //   placeholder: helptext.template_placeholder,
+    //   tooltip: helptext.template_tooltip,
     // },
     {
       type: 'checkbox',
       name: 'host_time',
-      placeholder: T('host_time'),
-      tooltip: T('System host time to synchronize the time between \
-                  jail and host.'),
+      placeholder: helptext.host_time_placeholder,
+      tooltip: helptext.host_time_tooltip,
     },
     {
       type: 'checkbox',
       name: 'jail_zfs',
-      placeholder: T('jail_zfs'),
-      tooltip: T('Set to enable automatic ZFS jailing inside the \
-                  jail. The assigned ZFS dataset is fully controlled \
-                  by the jail.'),
+      placeholder: helptext.jail_zfs_placeholder,
+      tooltip: helptext.jail_zfs_tooltip,
     },
     {
       type: 'input',
       name: 'jail_zfs_dataset',
-      placeholder: T('jail_zfs_dataset'),
-      tooltip: T('Define the dataset to be jailed and fully handed \
-                  over to a jail. Enter a ZFS filesystem name \
-                  <i>without</i> a pool name. <b>jail_zfs</b> must \
-                  be set for this option to work.'),
+      placeholder: helptext.jail_zfs_dataset_placeholder,
+      tooltip: helptext.jail_zfs_dataset_tooltip,
     },
     {
       type: 'input',
       name: 'jail_zfs_mountpoint',
-      placeholder: T('jail_zfs_mountpoint'),
-      tooltip: T('Enter the mountpoint for the \
-                  <b>jail_zfs_dataset</b>. \
-                  <b>Example:</b> <i>/data example-dataset-name</i>'),
+      placeholder: helptext.jail_zfs_mountpoint_placeholder,
+      tooltip: helptext.jail_zfs_mountpoint_tooltip,
+    },
+    {
+      type: 'checkbox',
+      name: 'allow_tun',
+      placeholder: helptext.allow_tun_placeholder,
+      tooltip: helptext.allow_tun_tooltip,
     },
   ];
   public rctlConfig: FieldConfig[] = [
@@ -944,152 +696,134 @@ export class JailAddComponent implements OnInit {
  //    {
  //      type: 'input',
  //      name: 'memoryuse',
- //      placeholder: T('memoryuse'),
- //      tooltip: T('Resident set size in bytes. See <a\
- // href="https://www.freebsd.org/cgi/man.cgi?query=rctl"\
- // target="_blank">RCTL(8)</a> for more details.'),
+ //      placeholder: helptext.memoryuse_placeholder,
+ //      tooltip: helptext.memoryuse_tooltip,
  //    },
  //    {
  //      type: 'input',
  //      name: 'pcpu',
- //      placeholder: T('pcpu'),
- //      tooltip: T('Write a percentage limit of a single CPU core.'),
+ //      placeholder: helptext.pcpu_placeholder,
+ //      tooltip: helptext.pcpu_tooltip,
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'cpuset',
- //      placeholder: T('cpuset'),
- //      tooltip: T('Jail CPU affinity. Options are <i>off</i> or\
- // a combination of <i>1-4</i>, separated by commas (,). <b>Example:</b>\
- // <i>1,2,3,4</i>'),
+ //      placeholder: helptext.cpuset_placeholder,
+ //      tooltip: helptext.cpuset_tooltip,
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'rlimits',
- //      placeholder: T('rlimits'),
- //      tooltip: T('Set resource limitations of the jail using the <a\
- // href="https://www.freebsd.org/cgi/man.cgi?query=setrlimit"\
- // target="_blank">getrlimit(2)</a> utility.'),
+ //      placeholder: helptext.rlimits_placeholder,
+ //      tooltip: helptext.rlimits_tooltip,
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'memorylocked',
- //      placeholder: T('memorylocked'),
- //      tooltip: T('Amount of locked memory in bytes for the jail.'),
+ //      placeholder: helptext.memorylocked_placeholder,
+ //      tooltip: helptext.memorylocked_tooltip,
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'vmemoryuse',
- //      placeholder: T('vmemoryuse'),
- //      tooltip: T('Address space limit in bytes for the jail.'),
+ //      placeholder: helptext.vmemoryuse_placeholder,
+ //      tooltip: helptext.vmemoryuse_tooltip,
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'maxproc',
- //      placeholder: T('maxproc'),
- //      tooltip: T('Maximum number of processes\
- // for the jail.'),
+ //      placeholder: helptext.maxproc_placeholder,
+ //      tooltip: helptext.maxproc_tooltip,
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'cputime',
- //      placeholder: T('cputime'),
- //      tooltip: T('Maximum amount of CPU time a jail process\
- // may consume. The kernel terminates processes exceeding the specified\
- // limit.'),
+ //      placeholder: helptext.cputime_placeholder,
+ //      tooltip: helptext.cputime_tooltip,
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'datasize',
- //      placeholder: T('datasize'),
- //      tooltip: T('Jail data size in bytes.'),
+ //      placeholder: helptext.datasize_placeholder,
+ //      tooltip: helptext.datasize_tooltip,
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'stacksize',
- //      placeholder: T('stacksize'),
- //      tooltip: T('Jail stack size in bytes.'),
+ //      placeholder: helptext.stacksize_placeholder,
+ //      tooltip: helptext.stacksize_tooltip,
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'coredumpsize',
- //      placeholder: T('coredumpsize'),
- //      tooltip: T('Jail core dump size in bytes.'),
+ //      placeholder: helptext.coredumpsize_placeholder,
+ //      tooltip: helptext.coredumpsize_tooltip,
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'openfiles',
- //      placeholder: T('openfiles'),
- //      tooltip: T('Numeric value to set the file descriptor\
- // table size.'),
+ //      placeholder: helptext.openfiles_placeholder,
+ //      tooltip: helptext.openfiles_tooltip,
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'pseudoterminals',
- //      placeholder: T('pseudoterminals'),
- //      tooltip: T('Numeric value for the number of PTYs available\
- // to the jail.'),
+ //      placeholder: helptext.pseudoterminals_placeholder,
+ //      tooltip: helptext.pseudoterminals_tooltip,
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'swapuse',
- //      placeholder: T('swapuse'),
- //      tooltip: T('Maximum swap space to use for\
- // the jail.'),
+ //      placeholder: helptext.swapuse_placeholder,
+ //      tooltip: helptext.swapuse_tooltip,
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'nthr',
- //      placeholder: T('nthr'),
- //      tooltip: T('Enter a numeric value for the number of threads the jail\
- // can use.'),
+ //      placeholder: helptext.nthr_placeholder,
+ //      tooltip: helptext.nthr_tooltip,
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'msgqqueued',
- //      placeholder: T('msgqqueued'),
- //      tooltip: T('Number of queued SysV messages allowed for\
- // the jail.'),
+ //      placeholder: helptext.msgqqueued_placeholder,
+ //      tooltip: helptext.msgqqueued_tooltip,
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'msgqsize',
- //      placeholder: T('msgqsize'),
- //      tooltip: T('Maximum SysV message queue size in bytes for\
- // the jail.'),
+ //      placeholder: helptext.msgqsize_placeholder,
+ //      tooltip: helptext.msgqsize_tooltip,
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'nmsgq',
- //      placeholder: T('nmsgq'),
- //      tooltip: T('Maximum number of SysV message queues.'),
+ //      placeholder: helptext.nmsgq_placeholder,
+ //      tooltip: helptext.nmsgq_tooltip,
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'nsemop',
- //      placeholder: T('nsemop'),
- //      tooltip: T('Number of SysV semaphores modified in a single\
- // <a\
- // href="https://www.freebsd.org/cgi/man.cgi?query=semop"\
- // target="_blank">semop(2)</a> call.'),
+ //      placeholder: helptext.nsemop_placeholder,
+ //      tooltip: helptext.nsemop_tooltip,
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'nshm',
- //      placeholder: T('nshm'),
- //      tooltip: T('Number of SysV shared memory segments.'),
+ //      placeholder: helptext.nshm_placeholder,
+ //      tooltip: helptext.nshm_tooltip,
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'shmsize',
- //      placeholder: T('shmsize'),
- //      tooltip: T('Number of SysV shared memory segments in bytes.'),
+ //      placeholder: helptext.shmsize_placeholder,
+ //      tooltip: helptext.shmsize_tooltip,
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'wallclock',
- //      placeholder: T('wallclock'),
- //      tooltip: T('Wallclock time in seconds.'),
+ //      placeholder: helptext.wallclock_placeholder,
+ //      tooltip: helptext.wallclock_tooltip,
  //    },
   ];
 
@@ -1107,6 +841,7 @@ export class JailAddComponent implements OnInit {
     'allow_sysvipc',
     'allow_raw_sockets',
     'allow_chflags',
+    'allow_mlock',
     'allow_mount',
     'allow_mount_devfs',
     'allow_mount_nullfs',
@@ -1116,7 +851,8 @@ export class JailAddComponent implements OnInit {
     'allow_quotas',
     'allow_socket_af',
     'mount_procfs',
-    'mount_linprocfs'
+    'mount_linprocfs',
+    'allow_tun',
   ];
   // fields only accepted by ws with value on/off
   protected OFfields: any = [
@@ -1148,6 +884,7 @@ export class JailAddComponent implements OnInit {
   // fields only accepted by ws with value yes/no
   protected YNfields: any = [
     'bpf',
+    'hostid_strict_check',
     'template',
     'host_time',
   ];
@@ -1291,21 +1028,21 @@ export class JailAddComponent implements OnInit {
       }
 
       if ((this.formGroup.controls['dhcp'].value || this.formGroup.controls['auto_configure_ip6'].value) && !res) {
-        _.find(this.basicfieldConfig, { 'name': 'vnet' }).hasErrors = true;
-        _.find(this.basicfieldConfig, { 'name': 'vnet' }).errors = 'VNET is required.';
+        _.find(this.basicfieldConfig, { 'name': 'vnet' })['hasErrors'] = true;
+        _.find(this.basicfieldConfig, { 'name': 'vnet' })['errors'] = 'VNET is required.';
       } else {
-        _.find(this.basicfieldConfig, { 'name': 'vnet' }).hasErrors = false;
-        _.find(this.basicfieldConfig, { 'name': 'vnet' }).errors = '';
+        _.find(this.basicfieldConfig, { 'name': 'vnet' })['hasErrors'] = false;
+        _.find(this.basicfieldConfig, { 'name': 'vnet' })['errors'] = '';
       }
       this.updateInterfaceValidation();
     });
     this.formGroup.controls['bpf'].valueChanges.subscribe((res) => {
       if (this.formGroup.controls['dhcp'].value && !res) {
-        _.find(this.basicfieldConfig, { 'name': 'bpf' }).hasErrors = true;
-        _.find(this.basicfieldConfig, { 'name': 'bpf' }).errors = 'BPF is required.';
+        _.find(this.basicfieldConfig, { 'name': 'bpf' })['hasErrors'] = true;
+        _.find(this.basicfieldConfig, { 'name': 'bpf' })['errors'] = 'BPF is required.';
       } else {
-        _.find(this.basicfieldConfig, { 'name': 'bpf' }).hasErrors = false;
-        _.find(this.basicfieldConfig, { 'name': 'bpf' }).errors = '';
+        _.find(this.basicfieldConfig, { 'name': 'bpf' })['hasErrors'] = false;
+        _.find(this.basicfieldConfig, { 'name': 'bpf' })['errors'] = '';
       }
     });
     this.formGroup.controls['auto_configure_ip6'].valueChanges.subscribe((res) => {
@@ -1497,9 +1234,9 @@ export class JailAddComponent implements OnInit {
         const field = res.error[0];
         const error = res.error[1];
         const fc = _.find(this.formFileds, {'name' : field});
-        if (fc && !fc.isHidden) {
-          fc.hasErrors = true;
-          fc.errors = error;
+        if (fc && !fc['isHidden']) {
+          fc['hasErrors'] = true;
+          fc['errors'] = error;
         }
       } else {
         new EntityUtils().handleWSError(this, res, this.dialogService);
@@ -1523,13 +1260,13 @@ export class JailAddComponent implements OnInit {
     const jail_name = parent.formGroup.value.uuid;
     parent.ws.call('jail.query', [[["id","=",jail_name]]]).subscribe((jail_wizard_res)=>{
       if(jail_wizard_res.length > 0){
-        _.find(parent.formFileds, {'name' : 'uuid'}).hasErrors = true;
-        _.find(parent.formFileds, {'name' : 'uuid'}).errors = `Jail ${jail_wizard_res[0].id} already exists.`;
+        _.find(parent.formFileds, {'name' : 'uuid'})['hasErrors'] = true;
+        _.find(parent.formFileds, {'name' : 'uuid'})['errors'] = `Jail ${jail_wizard_res[0].id} already exists.`;
         parent.formGroup.controls.uuid.setValue("");
   
       } else {
-        _.find(parent.formFileds, {'name' : 'uuid'}).hasErrors = false;
-        _.find(parent.formFileds, {'name' : 'uuid'}).errors = '';
+        _.find(parent.formFileds, {'name' : 'uuid'})['hasErrors'] = false;
+        _.find(parent.formFileds, {'name' : 'uuid'})['errors'] = '';
 
       }
     })

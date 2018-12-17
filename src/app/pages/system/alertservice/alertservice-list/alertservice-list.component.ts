@@ -24,6 +24,10 @@ export class AlertServiceListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    deleteMsg: {
+      title: 'Alert Service',
+      key_props: ['name']
+    },
   };
 
   constructor(protected router: Router, protected aroute: ActivatedRoute) { }

@@ -18,7 +18,7 @@ import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job
 import {RestService, WebSocketService} from '../../../../services/';
 import { T } from '../../../../translate-marker';
 import {EntityUtils} from '../../../common/entity/utils';
-import { debounce } from 'rxjs/operator/debounce';
+
 import { debug } from 'util';
 
 @Component({
@@ -70,11 +70,14 @@ preInit(entityForm: any) {
 }
 
   afterInit(entityForm: any) {
+    let disksize = 0
     this.entityForm = entityForm;
     this.diskChoice = _.find(this.fieldConfig, {'name':'dev'});
     this.ws.call('disk.get_unused').subscribe((res)=>{
       res.forEach((item) => {
-        this.diskChoice.options.push({label : item.name, value : item.name});
+        disksize = (<any>window).filesize(item['size'], { standard: "iec" });
+        item.name = `${item.name} (${disksize})`;
+        this.diskChoice.options.push({label : item.name, value : item.name});        
       });
     });
 

@@ -11,7 +11,7 @@
           </div>
           <form #lockscreenForm="ngForm" (ngSubmit)="unlock()">
             <div class="">
-              <mat-input-container class="full-width">
+              <mat-form-field class="full-width">
                 <input 
                   type="password"
                   name="password"
@@ -20,9 +20,9 @@
                   [(ngModel)]="lockscreenData.password"
                   #password="ngModel"
                   placeholder="Password">
-              </mat-input-container>
+              </mat-form-field>
               <small 
-                *ngIf="password.errors && (password.dirty || password.touched) && (password.errors.required)" 
+                *ngIf="password['errors'] && (password.dirty || password.touched) && (password['errors'].required)" 
                 class="form-error-msg"> Password is required </small>
             </div>
             

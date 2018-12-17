@@ -47,7 +47,7 @@ export class CertificateAddComponent {
       name : 'signedby',
       placeholder : T('Signing Certificate Authority'),
       tooltip: T('Select a previously imported or created <a\
-                  href="../docs/system.html#cas"\
+                  href="%%docurl%%/system.html%%webversion%%#cas"\
                   target="_blank">CA</a>.'),
       options : [
         {label: '---', value: null}
@@ -195,17 +195,17 @@ export class CertificateAddComponent {
     },
     {
       type : 'input',
-      name : 'Passphrase',
+      name : 'passphrase',
       placeholder : T('Passphrase'),
       tooltip : T('Enter the passphrase for the Private Key.'),
       inputType : 'password',
-      validation : [ matchOtherValidator('Passphrase2') ],
+      validation : [ matchOtherValidator('passphrase2') ],
       isHidden: true,
       togglePw : true
     },
     {
       type : 'input',
-      name : 'Passphrase2',
+      name : 'passphrase2',
       inputType : 'password',
       placeholder : T('Confirm Passphrase'),
       isHidden : true
@@ -239,8 +239,8 @@ export class CertificateAddComponent {
   private importFields: Array<any> = [
     'certificate',
     'privatekey',
-    'Passphrase',
-    'Passphrase2',
+    'passphrase',
+    'passphrase2',
   ];
 
   private country: any;
@@ -321,16 +321,16 @@ export class CertificateAddComponent {
   
     entity.formGroup.controls['name'].statusChanges.subscribe((res) => {
       if (this.identifier && res === 'INVALID') {
-        _.find(this.fieldConfig).hasErrors = true;
+        _.find(this.fieldConfig)['hasErrors'] = true;
       } else {
-        _.find(this.fieldConfig).hasErrors = false;
+        _.find(this.fieldConfig)['hasErrors'] = false;
       }
     })
   }
 
   hideField(fieldName: any, show: boolean, entity: any) {
     let target = _.find(this.fieldConfig, {'name' : fieldName});
-    target.isHidden = show;
+    target['isHidden'] = show;
     entity.setDisabled(fieldName, show);
   }
 
@@ -339,6 +339,15 @@ export class CertificateAddComponent {
       data.san = [];
     } else {
       data.san = _.split(data.san, ' ');
+    }
+
+    // Addresses non-pristine field being mistaken for a passphrase of ''
+    if (data.passphrase == '') {
+      data.passphrase = undefined;
+    }
+
+    if (data.passphrase2) {
+      delete data.passphrase2;
     }
   }
 

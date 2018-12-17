@@ -1,3 +1,5 @@
+
+import {interval as observableInterval,  Observable ,  Subscription } from 'rxjs';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as domHelper from '../../../helpers/dom.helper';
@@ -7,13 +9,12 @@ import { WebSocketService } from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { AboutModalDialog } from '../dialog/about/about-dialog.component';
+import { TaskManagerComponent } from '../dialog/task-manager/task-manager.component';
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
 import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
 import * as hopscotch from 'hopscotch';
 import { RestService } from "../../../services/rest.service";
 import { LanguageService } from "../../../services/language.service"
-import { Observable } from "rxjs/Observable";
-import { Subscription } from "rxjs/Subscription";
 import { TranslateService } from '@ngx-translate/core';
 import { EntityUtils } from '../../../pages/common/entity/utils';
 import { T } from '../../../translate-marker';
@@ -42,6 +43,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
   themesMenu: Theme[] = this.themeService.themesMenu;
   currentTheme:string = "ix-blue";
   public createThemeLabel = "Create Theme";
+  isTaskMangerOpened = false;
+  taskDialogRef: MatDialogRef<TaskManagerComponent>;
 
   constructor(
     public themeService: ThemeService,
@@ -82,7 +85,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
       });
     });
 
-    this.continuosStreaming = Observable.interval(10000).subscribe(x => {
+    this.continuosStreaming = observableInterval(10000).subscribe(x => {
       this.showReplicationStatus();
     });
 
@@ -210,5 +213,27 @@ export class TopbarComponent implements OnInit, OnDestroy {
         window.location.href = '/legacy/';
       }
     });
+  }
+
+  onShowTaskManager() {
+    if (this.isTaskMangerOpened) {
+      this.taskDialogRef.close(true);
+    } else {
+      this.isTaskMangerOpened = true;
+      this.taskDialogRef = this.dialog.open(TaskManagerComponent, {
+        width: '400px',
+        hasBackdrop: false,
+        position: {
+          top: '48px',
+          right: '0px'
+        },
+      });
+    }
+
+    this.taskDialogRef.afterClosed().subscribe(
+      (res) => {
+        this.isTaskMangerOpened = false;
+      }
+    );
   }
 }

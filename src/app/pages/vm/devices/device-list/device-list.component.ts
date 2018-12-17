@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+=======
+import {Component, ElementRef, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {Subscription} from 'rxjs';
+>>>>>>> master
 
 
 import { RestService, WebSocketService } from '../../../../services/';
@@ -87,7 +93,7 @@ export class DeviceListComponent {
           ],
             saveButtonText: T('Save'),
             preInit: function (entityDialog) {
-              _.find(entityDialog.fieldConfig, {'name':'order'}).value = row1.order;
+              _.find(entityDialog.fieldConfig, {'name':'order'})['value'] = row1.order;
             },
             customSubmit: function (entityDialog) {
               const value = entityDialog.formValue;

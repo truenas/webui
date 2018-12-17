@@ -113,7 +113,8 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
     });
 
     this.core.register({observerClass:this, eventName:"PrimaryNicInfo"}).subscribe((evt:CoreEvent) => {
-      let aliases = evt.data.aliases;
+      if(!evt.data){ throw "PrimaryNicInfo event sent without data attached."}
+      let aliases = evt.data.aliases ? evt.data.aliases : "No aliases set";
       for(let i = 0; i < aliases.length; i++){
         if(aliases[i].type == "INET"){
           this.connectionIp = aliases[i].address;

@@ -5,25 +5,26 @@
         <mat-card-title fxFlex="65%"><h3>{{title}}</h3></mat-card-title>
         <!-- Controls/Tools -->
         <div fxFlex="calc(35%)" class="line-chart-tools-wrapper">
-          <div class="line-chart-tools">
-                  <button class="tool-icon" mat-icon-button [disabled]="timeZoomIndex >= (zoomLevels.length - 1)" >
-                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-magnify-plus" (click)="timeZoomIn()"></mat-icon>
+          <div class="line-chart-tools" *ngIf="lineChart.chart"> 
+            <button class="tool-icon" mat-icon-button [disabled]="timeZoomIndex >= (zoomLevels.length - 1)" (click)="timeZoomIn()">
+                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-magnify-plus" ></mat-icon>
                   </button>
                 
-                  <button class="tool-icon" mat-icon-button [disabled]="timeZoomIndex <= 0">
-                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-magnify-minus" (click)="timeZoomOut()"></mat-icon>
+                  <button class="tool-icon" mat-icon-button [disabled]="timeZoomIndex <= 0" (click)="timeZoomOut()">
+                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-magnify-minus"></mat-icon>
                   </button>
                 
-                  <button class="tool-icon" mat-icon-button>
-                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-rewind"></mat-icon>
+                  <button class="tool-icon" mat-icon-button (click)="stepBack()">
+                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-rewind" ></mat-icon>
                   </button>
                 
-                  <button class="tool-icon" mat-icon-button>
+                  <button class="tool-icon" mat-icon-button (click)="stepForward()" [disabled]="stepForwardDisabled">
                     <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-fast-forward"></mat-icon>
                   </button>
           </div>
         </div>
       </mat-toolbar-row>
+      <!-- <mat-divider></mat-divider>-->
 
         <mat-card-content fxLayout="row wrap" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between center" fxFlex="100">
 
@@ -34,11 +35,11 @@
               [dataList]="lineChartConfig.dataList"
               [legends]="lineChartConfig.legends"
               [divideBy]="lineChartConfig.divideBy">
-            </line-chart>
+              </line-chart>
           </div>
 
           <!-- Legend Section -->
-          <div fxFlex="100" class="">         
+          <div fxFlex="100" class="legend-wrapper">         
           <!-- Time Stamp -->
           <div class="legend-timestamp">
             <div *ngIf="lineChart.showLegendValues">
@@ -47,28 +48,31 @@
               </span>
             </div>
           </div>
-          <section class="legend" fxLayout="row wrap" fxLayoutAlign="none"  *ngIf="lineChartConfig && lineChartConfig.legends">
-              <div class="legend-group" fxFlex="120px" *ngFor="let legendItem of lineChartConfig.legends; let i=index">
+          </div>
+        </mat-card-content>
+          <mat-card-footer>
+          <section class="legend" fxLayout="row wrap" fxLayoutAlign="none"  *ngIf="lineChart.legendLabels | async as legendLabels">
+            <div class="legend-group" fxFlex="100px" *ngFor="let legendItem of legendLabels; let i=index">
 
-                <div class="legend-label">
+                <div class="legend-label" >
                   <div class="swatch" [style.background-color]="lineChart.colorPattern[i]" ></div>
+                  <!--<div class="legend-item">{{legendItem}}</div>-->
                   <div class="legend-item">{{legendItem}}</div>
                 </div>
 
                 <div class="tooltip-wrapper legend-value"> 
                   <div *ngIf="lineChart.legendEvents | async as tooltip">
-                    <div  *ngIf="lineChart.showLegendValues" class="tooltip-value" >
-                      {{tooltip[i].value}}
+                    <div  *ngIf="lineChart.showLegendValues && tooltip[i]" class="tooltip-value" >
+                      {{tooltip[i].value}} {{lineChart.units}}
                     </div>
                   </div>
                 </div>
 
               </div>
             </section>
-          </div>
-        </mat-card-content>
-
+          </mat-card-footer>
     </mat-card>
+
     <ng-template *ngIf="configurable">
       <mat-card class="back">
         <mat-card-content fxLayout="column" fxLayoutAlign="start stretch" fxFlex="100">

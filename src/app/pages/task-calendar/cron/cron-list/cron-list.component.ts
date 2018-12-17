@@ -31,13 +31,17 @@ export class CronListComponent {
     { name: T('Day of Month'), prop: 'cron_daymonth' },
     { name: T('Month'), prop: 'cron_month' },
     { name: T('Day of Week'), prop: 'cron_dayweek' },
-    { name: T('Redirect Stdout'), prop: 'cron_stdout', hidden: true },
-    { name: T('Redirect Stderr'), prop: 'cron_stderr', hidden: true },
+    { name: T('Hide Stdout'), prop: 'cron_stdout', hidden: true },
+    { name: T('Hide Stderr'), prop: 'cron_stderr', hidden: true },
     { name: T('Enabled'), prop: 'cron_enabled' },
   ];
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    deleteMsg: {
+      title: 'Cron Job',
+      key_props: ['cron_user', 'cron_command', 'cron_description']
+    },
   };
 
   protected month_choice: any;
@@ -76,7 +80,7 @@ export class CronListComponent {
     actions.push({
       label : T("Delete"),
       onClick : (task_delete) => {
-        this.entityList.doDelete(row.id );
+        this.entityList.doDelete(row);
       },
     });
 

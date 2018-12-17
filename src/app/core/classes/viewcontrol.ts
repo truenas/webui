@@ -1,5 +1,5 @@
 import { CoreEvent } from 'app/core/services/core.service';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 
 export interface Action {
   coreEvent: CoreEvent;

@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Location } from '@angular/common';
-import { Subscription } from 'rxjs';
-import { Observable } from 'rxjs/Observable';
+import { Subscription ,  Observable } from 'rxjs';
 import { MatSnackBar } from '@angular/material';
 import { RestService, WebSocketService } from '../../../../services/';
 import { Router, ActivatedRoute } from '@angular/router';

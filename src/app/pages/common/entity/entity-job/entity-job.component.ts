@@ -41,6 +41,10 @@ export class EntityJobComponent implements OnInit {
     if (this.dialogRef.disableClose) {
       this.showCloseButton = false;
     }
+    if (this.data.CloseOnClickOutside) {
+      this.showCloseButton = true;
+      this.dialogRef.disableClose = true;
+    }
   }
 
   setCall(method: string, args ?: any[]) {
@@ -178,6 +182,9 @@ export class EntityJobComponent implements OnInit {
 
   wsjobUpdate(job) {
     this.job = job;
+    if (job.fields) {
+      this.job.state = job.fields.state;
+    }
     if (job.progress) {
       this.progress.emit(job.progress);
     }
