@@ -118,16 +118,6 @@ export class DatasetFormComponent implements Formconfiguration{
       ],
     },
     {
-      type: 'select',
-      name: 'atime',
-      placeholder: helptext.dataset_form_atime_placeholder,
-      tooltip: helptext.dataset_form_atime_tooltip,
-      options: [
-        { label: 'on', value: 'ON' },
-        { label: 'off', value: 'OFF' }
-      ],
-    },
-    {
       type: 'radio',
       name: 'share_type',
       placeholder: helptext.dataset_form_share_type_placeholder,
@@ -136,6 +126,16 @@ export class DatasetFormComponent implements Formconfiguration{
                 {label:'Windows', value: 'WINDOWS'},
                 {label:'Mac', value: 'MAC'}],
       value: 'UNIX'
+    },
+    {
+      type: 'select',
+      name: 'atime',
+      placeholder: helptext.dataset_form_atime_placeholder,
+      tooltip: helptext.dataset_form_atime_tooltip,
+      options: [
+        { label: 'on', value: 'ON' },
+        { label: 'off', value: 'OFF' }
+      ],
     },
     {
       type: 'input',
@@ -267,9 +267,9 @@ export class DatasetFormComponent implements Formconfiguration{
     },
     {
       type: 'select',
-      name: 'exec',
-      placeholder: helptext.dataset_form_exec_placeholder,
-      tooltip: helptext.dataset_form_exec_tooltip,
+      name: 'readonly',
+      placeholder: helptext.dataset_form_readonly_placeholder,
+      tooltip: helptext.dataset_form_readonly_tooltip,
       options: [
         { label: 'On', value: 'ON' },
         { label: 'Off', value: 'OFF' }
@@ -277,9 +277,9 @@ export class DatasetFormComponent implements Formconfiguration{
     },
     {
       type: 'select',
-      name: 'readonly',
-      placeholder: helptext.dataset_form_readonly_placeholder,
-      tooltip: helptext.dataset_form_readonly_tooltip,
+      name: 'exec',
+      placeholder: helptext.dataset_form_exec_placeholder,
+      tooltip: helptext.dataset_form_exec_tooltip,
       options: [
         { label: 'On', value: 'ON' },
         { label: 'Off', value: 'OFF' }
