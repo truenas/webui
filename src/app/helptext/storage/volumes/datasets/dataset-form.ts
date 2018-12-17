@@ -11,18 +11,20 @@ export default {
 
 
     dataset_form_sync_placeholder: T('Sync'),
-    dataset_form_sync_tooltip: T('Read about <a href="guide" target="_blank">sync</a>\
-                    before making any changes.'),
+    dataset_form_sync_tooltip: T('<i>Standard</i> uses the sync settings that have been\
+                    requested by the client software, <i>Always</i> waits for\
+                    data writes to complete, and <i>Disabled</i> never waits for\
+                    writes to complete.'),
     
     dataset_form_compression_placeholder: T('Compression level'),
     dataset_form_compression_tooltip: T('For more information about the available compression\
                     algorithms, refer to the <a\
-                    href="..//docs/storage.html#compression"\
+                    href="%%docurl%%/storage.html%%webversion%%#compression"\
                     target="_blank">Compression section</a> of the guide.'),
                     
-    dataset_form_atime_placeholder: T('Enable atime'),
+    dataset_form_atime_placeholder: T('Enable Atime'),
     dataset_form_atime_tooltip: T('Choose <i>ON</i> to update the access time for files\
-                    when they are read. Choose <b>Off</b> to prevent\
+                    when they are read. Choose <i>Off</i> to prevent\
                     producing log traffic when reading files. This can\
                     result in significant performance gains.'),
                     
@@ -51,21 +53,21 @@ export default {
                     both this dataset and any child datasets.'),
     dataset_form_reservation_validation: [Validators.min(0)],
 
-    dataset_form_deduplication_label: T('ZFS deplication'),
+    dataset_form_deduplication_label: T('ZFS deduplication'),
     dataset_form_deduplication_placeholder: T('ZFS Deduplication'),
-    dataset_form_deduplication_tooltip: T('Read about <a href="guide"\
-                    target="_blank">Deduplication</a> before making\
-                    changes to this setting.'),
+    dataset_form_deduplication_tooltip: T('Please read about <a href="%%docurl%%/storage.html%%webversion%%#deduplication"\
+            target="_blank">deduplication</a> before considering\
+            changing this setting.'),
 
     dataset_form_exec_placeholder: T('Exec'),
-    dataset_form_exec_tooltip: T('Choose <b>On</b> or <b>Off</b>.'),
+    dataset_form_exec_tooltip: T('Set whether processes can be executed from within this dataset.'),
 
     dataset_form_readonly_placeholder: T('Read-only'),
-    dataset_form_readonly_tooltip: T('Choose if the dataset can be modified.'),
+    dataset_form_readonly_tooltip: T('Set to prevent the dataset from being modified.'),
 
     dataset_form_snapdir_placeholder: T('Snapshot directory'),
-    dataset_form_snapdir_tooltip: T('Choose if the .zfs snapshot directory is <b>Visible</b>\
-                    or <b>Invisible</b> on this dataset.'),
+    dataset_form_snapdir_tooltip: T('Choose if the .zfs snapshot directory is <i>Visible</i>\
+        or <i>Invisible</i> on this dataset.'),
 
     dataset_form_copies_placeholder: T('Copies'),
     dataset_form_copies_tooltip: T('Set the number of data copies on this dataset.'),

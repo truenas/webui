@@ -30,16 +30,16 @@ export default {
                       
     zvol_compression_placeholder: T('Compression level'),
     zvol_compression_tooltip: T('Automatically compress data written to the zvol.\
-                      Choose a <a href="..//docs/storage.html#compression"\
-                      target="_blank">compression algorithm</a>.'),
+                    Choose a <a href="%%docurl%%/storage.html%%webversion%%#compression"\
+                    target="_blank">compression algorithm</a>.'),
     zvol_compression_validation: [Validators.required],
 
     zvol_deduplication_placeholder: T('ZFS Deduplication'),
     zvol_deduplication_tooltip : T('Activates the process for ZFS to transparently reuse\
-                       a single copy of duplicated data to save space. The\
-                       <a href="..//docs/storage.html#deduplication"\
-                       target="_blank">Deduplication section</a> of the Guide\
-                       describes each option.'),
+                    a single copy of duplicated data to save space. The\
+                    <a href="%%docurl%%/storage.html%%webversion%%#deduplication"\
+                    target="_blank">Deduplication section</a> of the Guide\
+                    describes each option.'),
     zvol_deduplication_validation: [Validators.required],
 
     zvol_sparse_placeholder: T('Sparse'),

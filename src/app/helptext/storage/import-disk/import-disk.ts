@@ -11,7 +11,7 @@ export default {
     import_disk_fs_type_placeholder : T('Filesystem type'),
     import_disk_fs_type_tooltip: T('Choose the type of filesystem on the disk. Refer to\
                     the guide section on <a\
-                    href="..//docs/storage.html#import-disk"\
+                    href="%%docurl%%/storage.html%%webversion%%#import-disk"\
                     target="_blank">importing disks</a> for more details.'),
     import_disk_fs_type_validation : [ Validators.required ],
 
