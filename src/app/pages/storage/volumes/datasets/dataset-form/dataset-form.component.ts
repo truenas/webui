@@ -121,8 +121,8 @@ export class DatasetFormComponent implements Formconfiguration{
     {
       type: 'radio',
       name: 'share_type',
-      placeholder: T('Share Type'),
-      tooltip: T('Set the type of client that will most often use this dataset.'),
+      placeholder: helptext.dataset_form_share_type_placeholder,
+      tooltip: helptext.dataset_form_share_type_tooltip,
       options: [{label:'Unix', value: 'UNIX'},
                 {label:'Windows', value: 'WINDOWS'},
                 {label:'Mac', value: 'MAC'}],
@@ -137,16 +137,6 @@ export class DatasetFormComponent implements Formconfiguration{
         { label: 'on', value: 'ON' },
         { label: 'off', value: 'OFF' }
       ],
-    },
-    {
-      type: 'radio',
-      name: 'share_type',
-      placeholder: helptext.dataset_form_share_type_placeholder,
-      tooltip: helptext.dataset_form_share_type_tooltip,
-      options: [{label:'Unix', value: 'UNIX'},
-                {label:'Windows', value: 'WINDOWS'},
-                {label:'Mac', value: 'MAC'}],
-      value: 'UNIX'
     },
     {
       type: 'input',
@@ -290,9 +280,9 @@ export class DatasetFormComponent implements Formconfiguration{
     },
     {
       type: 'select',
-      name: 'exec',
-      placeholder: helptext.dataset_form_exec_placeholder,
-      tooltip: helptext.dataset_form_exec_tooltip,
+      name: 'readonly',
+      placeholder: helptext.dataset_form_readonly_placeholder,
+      tooltip: helptext.dataset_form_readonly_tooltip,
       options: [
         { label: 'On', value: 'ON' },
         { label: 'Off', value: 'OFF' }
@@ -300,9 +290,9 @@ export class DatasetFormComponent implements Formconfiguration{
     },
     {
       type: 'select',
-      name: 'readonly',
-      placeholder: helptext.dataset_form_readonly_placeholder,
-      tooltip: helptext.dataset_form_readonly_tooltip,
+      name: 'exec',
+      placeholder: helptext.dataset_form_exec_placeholder,
+      tooltip: helptext.dataset_form_exec_tooltip,
       options: [
         { label: 'On', value: 'ON' },
         { label: 'Off', value: 'OFF' }

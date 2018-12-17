@@ -59,11 +59,11 @@ export default {
             target="_blank">deduplication</a> before considering\
             changing this setting.'),
 
-    dataset_form_exec_placeholder: T('Exec'),
-    dataset_form_exec_tooltip: T('Set whether processes can be executed from within this dataset.'),
-
     dataset_form_readonly_placeholder: T('Read-only'),
     dataset_form_readonly_tooltip: T('Set to prevent the dataset from being modified.'),
+    
+    dataset_form_exec_placeholder: T('Exec'),
+    dataset_form_exec_tooltip: T('Set whether processes can be executed from within this dataset.'),
 
     dataset_form_snapdir_placeholder: T('Snapshot directory'),
     dataset_form_snapdir_tooltip: T('Choose if the .zfs snapshot directory is <i>Visible</i>\
