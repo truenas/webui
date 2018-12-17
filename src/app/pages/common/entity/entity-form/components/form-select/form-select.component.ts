@@ -112,6 +112,10 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     let option = this.config.options[index];
     return option.disabled ? option.disabled : false;
   }
+  isHiddenFromDisplay(index){
+    const option = this.config.options[index];
+    return option.hiddenFromDisplay ? option.hiddenFromDisplay : false;
+  }
 
   onToggleSelect(option, index){
     if(!this.config.multiple){
