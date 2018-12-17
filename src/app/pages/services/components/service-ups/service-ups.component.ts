@@ -70,7 +70,8 @@ export class ServiceUPSComponent implements OnDestroy {
       tooltip : helptext.ups_driver_tooltip,
       required: true,
       options: [],
-      validation : helptext.ups_driver_validation
+      validation : helptext.ups_driver_validation,
+      isHidden: false
     },
     {
       type : 'select',
@@ -79,7 +80,8 @@ export class ServiceUPSComponent implements OnDestroy {
       options: [],
       tooltip : helptext.ups_port_tooltip,
       required: true,
-      validation : helptext.ups_port_validation
+      validation : helptext.ups_port_validation,
+      isHidden: false;
     },
     {
       type: 'input',
@@ -93,6 +95,7 @@ export class ServiceUPSComponent implements OnDestroy {
       name : 'ups_options',
       placeholder : helptext.ups_options_placeholder,
       tooltip : helptext.ups_options_tooltip,
+      isHidden: false
     },
     {
       type : 'textarea',

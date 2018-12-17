@@ -16,7 +16,7 @@ export default {
 
     tftp_username_placeholder : T('Username'),
     tftp_username_tooltip : T('Select the account to use for TFTP requests. This\
-                 account must have permission to the <b>Directory</b>.'),
+                account must have permission to the <b>Directory</b>.'),
 
     tftp_umask_placeholder : T('File Permissions'),
     tftp_umask_tooltip : T('Adjust the file permissions using the checkboxes.'),

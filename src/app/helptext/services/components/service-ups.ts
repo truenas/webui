@@ -35,8 +35,8 @@ export default {
 
     ups_options_placeholder : T('Auxiliary Parameters (ups.conf)'),
     ups_options_tooltip : T('Enter any extra options from <a\
-                     href="http://networkupstools.org/docs/man/ups.conf.html"\
-                     target="_blank">UPS.CONF(5)</a>.'),
+                        href="http://networkupstools.org/docs/man/ups.conf.html"\
+                        target="_blank">UPS.CONF(5)</a>.'),
 
     ups_optionsupsd_placeholder : T('Auxiliary Parameters (upsd.conf)'),
     ups_optionsupsd_tooltip : T('Enter any extra options from <a\

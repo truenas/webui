@@ -45,9 +45,9 @@ export default {
 
     dc_passwd_placeholder : T('Administrator Password'),
     dc_passwd_tooltip: T('Enter the password to be used for the\
-                      <a href="..//docs/directoryservice.html#active-directory"\
-                      target=”_blank”>Active Directory</a> administrator\
-                      account.'),
+          <a href="%%docurl%%/directoryservice.html%%webversion%%#active-directory"\
+          target=”_blank”>Active Directory</a> administrator\
+          account.'),
     dc_passwd_validation :
               [ Validators.minLength(8), matchOtherValidator('dc_passwd2') ],
     

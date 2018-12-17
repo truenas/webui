@@ -42,7 +42,10 @@ export class ServiceTFTPComponent {
       name : 'tftp_username',
       placeholder : helptext.tftp_username_placeholder,
       tooltip : helptext.tftp_username_tooltip,
-      options : []
+      options : [],
+      searchOptions: [],
+      parent: this,
+      updater: this.updateUserSearchOptions,
     },
     {
       type : 'permissions',

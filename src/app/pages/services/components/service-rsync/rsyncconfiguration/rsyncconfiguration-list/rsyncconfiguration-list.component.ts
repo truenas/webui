@@ -1,6 +1,6 @@
 import { Component, ElementRef } from '@angular/core';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector : 'app-rsync-module-list',
