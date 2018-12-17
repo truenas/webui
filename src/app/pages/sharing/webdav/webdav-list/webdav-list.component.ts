@@ -34,6 +34,10 @@ export class WebdavListComponent {
     public config: any = {
         paging : true,
         sorting : {columns : this.columns},
+        deleteMsg: {
+            title: 'WebDAV Share',
+            key_props: ['webdav_name']
+        },
     };
 
 }

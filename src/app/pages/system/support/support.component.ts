@@ -167,7 +167,7 @@ export class SupportComponent  {
   };
 
   openDialog() {
-    const dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Ticket"}});
+    const dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Ticket","CloseOnClickOutside":true}});
     dialogRef.componentInstance.setCall('support.new_ticket', [this.payload]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.subscribe(res=>{
@@ -186,10 +186,10 @@ export class SupportComponent  {
       if(parent.entityEdit){
         this.username  = parent.entityEdit.formGroup.controls['username'].value;
         this.password  = parent.entityEdit.formGroup.controls['password'].value;
-        this.password_fc.hasErrors = false;
-        this.password_fc.errors = '';
-        this.username_fc.hasErrors = false;
-        this.username_fc.errors = '';
+        this.password_fc['hasErrors'] = false;
+        this.password_fc['errors'] = '';
+        this.username_fc['hasErrors'] = false;
+        this.username_fc['errors'] = '';
 
         if(this.category.options.length > 0){
           this.category.options = [];
@@ -201,8 +201,8 @@ export class SupportComponent  {
                 this.category.options.push({label : property, value : res[property]});
               }
             }},(error)=>{
-              this.password_fc.hasErrors = true;
-              this.password_fc.errors = 'Incorrect Username/Password.';
+              this.password_fc['hasErrors'] = true;
+              this.password_fc['errors'] = 'Incorrect Username/Password.';
             });
         }
       }

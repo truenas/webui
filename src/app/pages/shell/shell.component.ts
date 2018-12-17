@@ -10,7 +10,7 @@ import {
   SimpleChange,
   OnDestroy
 } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 import { WebSocketService, ShellService } from '../../services/';
 import { TranslateService } from '@ngx-translate/core';
@@ -47,7 +47,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
                             <b>tw_cli</b>, <br><b>MegaCli</b>,\
                             <b>freenas-debug</b>, <b>tmux</b>,\
                             <b>Dmidecode</b>.<br> Refer to the <a\
-                            href="..//docs/cli.html"\
+                            href="%%docurl%%/cli.html%%webversion%%"\
                             target="_blank">Command Line Utilities</a>\
                             chapter in the guide for usage information\
                             and examples.');

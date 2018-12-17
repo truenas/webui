@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import * as _ from 'lodash';
 import { Router, ActivatedRoute } from '@angular/router';
-import { DragulaService } from 'ng2-dragula';
+// import { DragulaService } from 'ng2-dragula';
 import { Subscription } from 'rxjs';
 import { RestService, WebSocketService, DialogService } from '../../../../services/';
 import { DiskComponent } from './disk/';
@@ -96,7 +96,18 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public name_tooltip = helptext.manager_name_tooltip;
 
+<<<<<<< HEAD
   public encryption_tooltip = helptext.manager_encryption_tooltip;
+=======
+  public encryption_tooltip = T('<a href="https://www.freebsd.org/cgi/man.cgi?query=geli&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+                                 target="_blank">GELI</a> encryption is\
+                                 available for ZFS pools. <b>WARNING:</b>\
+                                 Read the <a\
+                                 href="%%docurl%%/storage.html%%webversion%%#managing-encrypted-pools"\
+                                 target="_blank">Encryption section</a>\
+                                 of the guide before activating this\
+                                 option.');
+>>>>>>> master
 
   public suggested_layout_tooltip = helptext.manager_suggested_layout_tooltip;
 
@@ -106,7 +117,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     private rest: RestService,
     private ws: WebSocketService,
     private router: Router,
-    private dragulaService: DragulaService,
+//    private dragulaService: DragulaService,
     private dialog:DialogService,
     public snackBar: MatSnackBar,
     private loader:AppLoaderService,
@@ -115,7 +126,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     public translate: TranslateService,
     public sorter: StorageService ) {
 
-    dragulaService.setOptions('pool-vdev', {
+/*    dragulaService.setOptions('pool-vdev', {
       accepts: (el, target, source, sibling) => { return true; },
     });
     dragulaService.drag.subscribe((value) => { console.log(value); });
@@ -142,7 +153,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
     dragulaService.over.subscribe((value) => { console.log(value); });
-    dragulaService.out.subscribe((value) => { console.log(value); });
+    dragulaService.out.subscribe((value) => { console.log(value); }); */
   }
 
   getDiskNumErrorMsg(disks) {
@@ -263,7 +274,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy() {
-    this.dragulaService.destroy("pool-vdev");
+    //this.dragulaService.destroy("pool-vdev");
   }
 
   addVdev(group) {
@@ -545,7 +556,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   checkPoolName() {
-    if(_.find(this.existing_pools, {"name": this.name})) {
+    if(_.find(this.existing_pools, {"name": this.name as any})) {
       this.poolError = T("A pool with this name already exists."); 
     } else {
       this.poolError = null;

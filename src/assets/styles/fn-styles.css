@@ -767,7 +767,7 @@ div.hopscotch-bubble .hopscotch-nav-button.prev:hover {
     min-width: 240px;
 }
 .notification-list .notific-item .mat-list-item-content {
-    height: 72px !important;
+    padding: 12px 16px !important;
 }
 .notification-list .notific-item a {
     outline: 0;
@@ -1358,7 +1358,7 @@ div.hopscotch-bubble .hopscotch-nav-button.prev:hover {
     text-decoration: none;
 }
 
-.has-tooltip mat-input-container.full-width,
+.has-tooltip mat-form-field.full-width,
 .has-tooltip mat-select.full-width {
     width: calc( 100% - 25px );
 }

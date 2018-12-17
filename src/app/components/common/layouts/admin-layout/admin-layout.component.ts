@@ -2,7 +2,7 @@ import { RestService, WebSocketService } from '../../../../services';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Component, AfterViewChecked, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
-import { Subscription } from "rxjs/Subscription";
+import { Subscription } from "rxjs";
 import { MediaChange, ObservableMedia } from "@angular/flex-layout";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { MatSidenav, MatDialog, MatDialogRef } from '@angular/material';
@@ -26,7 +26,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   isSidenotOpen: Boolean = false;
   consoleMsg: String = "";
   consoleMSgList: any[] = [];
-  public is_freenas: Boolean = false;
+  public is_freenas: Boolean = window.localStorage['is_freenas'];
   public logoPath: string = 'assets/images/light-logo.svg';
   public logoTextPath: string = 'assets/images/light-logo-text.svg';
   public currentTheme: string = "";

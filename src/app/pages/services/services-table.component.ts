@@ -1,13 +1,12 @@
 import { Component, OnChanges, ElementRef, OnInit, AfterViewInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { Observable } from 'rxjs/Observable';
+import { Subscription ,  Observable } from 'rxjs';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { RestService, WebSocketService } from '../../services/';
 import { MaterialModule } from '../../appMaterial.module';
 import { MatButtonToggleGroup } from '@angular/material/button-toggle';
-import { min } from 'rxjs/operator/min';
+
 
 @Component({
   selector: 'services-table',
@@ -57,9 +56,11 @@ export class ServicesTableComponent implements OnChanges, OnInit {
       let newData = Object.assign(this.data,{});
       this.data = newData;
     }
-    this.datatable.limit = this.pageSize; // items per page
-    this.datatable.recalculate();
-    this.setTableHeight(this.datatable);
+    if (this.datatable) {
+      this.datatable.limit = this.pageSize; // items per page
+      this.datatable.recalculate();
+      this.setTableHeight(this.datatable);
+    }
   }
 
   setTableHeight(t){

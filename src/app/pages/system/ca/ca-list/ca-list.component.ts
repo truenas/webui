@@ -43,6 +43,10 @@ export class CertificateAuthorityListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    deleteMsg: {
+      title: 'Certificate Authority',
+      key_props: ['name']
+    },
   }
 
   afterInit(entityList: any) {
@@ -120,7 +124,7 @@ export class CertificateAuthorityListComponent {
         id: "delete",
         label: T("Delete"),
         onClick: (row) => {
-          this.entityList.doDelete(row.id);
+          this.entityList.doDelete(row);
         }
       }];
   }

@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { EntityUtils } from '../../../common/entity/utils';
 import { T } from '../../../../translate-marker';
 import { MatSnackBar } from '@angular/material';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-storage-list',
@@ -27,7 +28,8 @@ export class StorageListComponent {
   protected loaderOpen: boolean = false;
 
   constructor(protected router: Router, protected aroute: ActivatedRoute, protected dialog: DialogService,
-              protected loader: AppLoaderService, protected ws: WebSocketService, protected snackBar: MatSnackBar,) {
+              protected loader: AppLoaderService, protected ws: WebSocketService, protected snackBar: MatSnackBar,
+              protected translate: TranslateService) {
     this.aroute.params.subscribe(params => {
       this.jailId = params['jail'];
       this.queryCallOption.push(params['jail']);
@@ -45,6 +47,10 @@ export class StorageListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    deleteMsg: {
+      title: 'Mount Point',
+      key_props: ['source', 'destination']
+    },
   };
 
   afterInit(entityTable) {
@@ -78,19 +84,33 @@ export class StorageListComponent {
 
   }
 
-  doDelete(id) {
-    this.dialog.confirm(T("Delete"), T("Delete this item?"), false, T('Delete Mount Point')).subscribe((res) => {
-      if (res) {
-        this.loader.open();
-        this.loaderOpen = true;
-        let data = {};
-        this.busy = this.ws.call('jail.fstab', [this.jailId, { "action": "REMOVE", "index": id}]).subscribe(
-          (res) => { this.getData() },
-          (res) => {
-            new EntityUtils().handleError(this, res);
-            this.loader.close();
+  doDelete(item) {
+    this.ws.call('jail.query', [
+      [
+        ["host_hostuuid", "=", this.jailId]
+      ]
+    ]).subscribe((res) => {
+      if (res[0] && res[0].state == 'up') {
+        this.snackBar.open(this.jailId + " should not be running when deleting a mountpoint.", 'close', { duration: 5000 });
+      } else {
+        let deleteMsg =  "Delete Mount Point <b>" + item['source'] + '</b>?';
+        this.translate.get(deleteMsg).subscribe((res) => {
+          deleteMsg = res;
+        });
+        this.dialog.confirm(T("Delete"), deleteMsg, false, T('Delete Mount Point')).subscribe((res) => {
+          if (res) {
+            this.loader.open();
+            this.loaderOpen = true;
+            let data = {};
+            this.busy = this.ws.call('jail.fstab', [this.jailId, { "action": "REMOVE", "index": item.id}]).subscribe(
+              (res) => { this.getData() },
+              (res) => {
+                new EntityUtils().handleWSError(this, res, this.dialog);
+                this.loader.close();
+              }
+            );
           }
-        );
+        })
       }
     })
   }
