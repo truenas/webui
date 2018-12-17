@@ -128,15 +128,9 @@ export class ServiceFTPComponent implements OnInit {
     {
       type : 'permissions',
       name : 'filemask',
-<<<<<<< HEAD
       placeholder : helptext.filemask_placeholder,
       tooltip: helptext.filemask_tooltip,
       noexec: true
-=======
-      placeholder : T('File Permission'),
-      tooltip: T('Sets default permissions for newly created files.'),
-      noexec: true,
->>>>>>> master
     },
     {
       type : 'permissions',
@@ -207,16 +201,8 @@ export class ServiceFTPComponent implements OnInit {
     {
       type : 'checkbox',
       name : 'tls',
-<<<<<<< HEAD
       placeholder : helptext.tls_placeholder,
       tooltip: helptext.tls_tooltip,
-=======
-      placeholder : T('Enable TLS'),
-      tooltip: T('Set to enable encrypted connections. Requires a certificate\
-                  to be created or imported using\
-                  <a href="%%docurl%%/system.html%%webversion%%#certificates"\
-                  target="_blank">Certificates</a>'),
->>>>>>> master
     },
     {
       type : 'select',
