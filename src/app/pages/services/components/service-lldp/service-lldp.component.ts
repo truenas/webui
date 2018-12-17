@@ -25,15 +25,8 @@ export class ServiceLLDPComponent {
     {
       type : 'input',
       name : 'lldp_country',
-<<<<<<< HEAD
       placeholder : helptext.lldp_country_placeholder,
       tooltip: helptext.lldp_country_tooltip,
-=======
-      placeholder : T('Country Code'),
-      tooltip: T('Required for <a href="%%docurl%%/services.html%%webversion%%#lldp"\
-                  target="_blank">LLDP</a> location support. Enter a\
-                  two-letter ISO 3166 country code.'),
->>>>>>> master
     },
     {
       type : 'input',

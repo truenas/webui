@@ -36,7 +36,7 @@ export class ServiceUPSComponent implements OnDestroy {
       placeholder : helptext.ups_identifier_placeholder,
       tooltip : helptext.ups_identifier_tooltip,
       required: true,
-    validation : helptext.ups_identifier_validation
+      validation : helptext.ups_identifier_validation
     },
     {
       type : 'select',

@@ -42,19 +42,9 @@ export class ServiceWebdavComponent implements OnInit, OnDestroy {
     {
       type : 'select',
       name : 'certssl',
-<<<<<<< HEAD
       placeholder : helptext.certssl_placeholder,
       tooltip : helptext.certssl_tooltip,
       options: helptext.certssl_options
-=======
-      placeholder : T('Webdav SSL Certificate'),
-      tooltip : T('Select the <a href="%%docurl%%/system.html%%webversion%%#certificates"\
-                   target="_blank">SSL certificate</a> to use for\
-                   encrypted connections.'),
-      options: [
-        {label: '---', value: null}
-      ]
->>>>>>> master
     },
     {
       type : 'select',

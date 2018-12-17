@@ -108,7 +108,7 @@ export default {
     tls_placeholder : T('Enable TLS'),
     tls_tooltip: T('Set to enable encrypted connections. Requires a certificate\
                     to be created or imported using\
-                    <a href="..//docs/system.html#certificates"\
+                    <a href="%%docurl%%/system.html%%webversion%%#certificates"\
                     target="_blank">Certificates</a>'),
     
     tls_policy_placeholder : T('TLS Policy'),
