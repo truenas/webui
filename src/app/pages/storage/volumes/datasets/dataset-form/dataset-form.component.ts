@@ -183,25 +183,25 @@ export class DatasetFormComponent implements Formconfiguration{
       type: 'input',
       inputType: 'number',
       name: 'refquota_warning',
-      placeholder: T('Quota warning alert at, %'),
-      tooltip: T('0=Disabled, blank=inherit'),
+      placeholder: helptext.dataset_form_refquota_placeholder,
+      tooltip: helptext.dataset_form_refquota_warning_tooltip,
       class: 'inline',
       width: '70%',
       value: 0,
       min: 0,
-      validation: [Validators.min(0)]
+      validation: helptext.dataset_form_refquota_warning_validation
     },
     {
       type: 'input',
       inputType: 'number',
       name: 'refquota_critical',
-      placeholder: T('Quota critical alert at, %'),
-      tooltip: T('0=Disabled, blank=inherit'),
+      placeholder: helptext.dataset_form_refquota_critical_placeholder,
+      tooltip: helptext.dataset_form_refquota_critical_tooltip,
       class: 'inline',
       width: '70%',
       value: 0,
       min: 0,
-      validation: [Validators.min(0)]
+      validation: helptext.dataset_form_refquota_critical_validation
     },
     {
       type: 'input',
@@ -244,25 +244,25 @@ export class DatasetFormComponent implements Formconfiguration{
       type: 'input',
       inputType: 'number',
       name: 'quota_warning',
-      placeholder: T('Quota warning alert at, %'),
-      tooltip: T('0=Disabled, blank=inherit'),
+      placeholder: helptext.dataset_form_quota_warning_placeholder,
+      tooltip: helptext.dataset_form_quota_warning_tooltip,
       class: 'inline',
       width: '70%',
       value: 0,
       min: 0,
-      validation: [Validators.min(0)]
+      validation: helptext.dataset_form_quota_warning_validation
     },
     {
       type: 'input',
       inputType: 'number',
       name: 'quota_critical',
-      placeholder: T('Quota critical alert at, %'),
-      tooltip: T('0=Disabled, blank=inherit'),
+      placeholder: helptext.dataset_form_quota_critical_placeholder,
+      tooltip: helptext.dataset_form_quota_critical_tooltip,
       class: 'inline',
       width: '70%',
       value: 0,
       min: 0,
-      validation: [Validators.min(0)]
+      validation: helptext.dataset_form_quota_critical_validation
     },
     {
       type: 'input',

@@ -37,16 +37,8 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
     {
       type : 'radio',
       name : 'fs_type',
-<<<<<<< HEAD
       placeholder : helptext.import_disk_fs_type_placeholder,
       tooltip: helptext.import_disk_fs_type_tooltip,
-=======
-      placeholder : T('Filesystem type'),
-      tooltip: T('Choose the type of filesystem on the disk. Refer to\
-                  the guide section on <a\
-                  href="%%docurl%%/storage.html%%webversion%%#import-disk"\
-                  target="_blank">importing disks</a> for more details.'),
->>>>>>> master
       options: [
                     {value:'ufs', label:'UFS'},
                     {value:'ntfs', label:'NTFS'},
