@@ -18,7 +18,8 @@ FETCH_DEPENDS=	yarn:www/yarn \
 BUILD_DEPENDS=	rsync>0:net/rsync \
 		yarn:www/yarn \
 		python2>0:lang/python2
-
+    
+USES= gmake
 NO_BUILD=	yes
 WRKSRC=		/usr/webui
 
