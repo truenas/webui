@@ -485,19 +485,19 @@ export class DatasetFormComponent implements Formconfiguration{
       entityForm.setDisabled('name',true);
       _.find(this.fieldConfig, {name:'name'}).tooltip = "Dataset name (read-only)."
     }
-    this.entityForm.formGroup.controls['recordsize'].valueChanges.subscribe((res)=>{
-      const res_number = parseInt(this.reverseRecordSizeMap[res],10);
-      if(this.minimum_recommended_dataset_recordsize){
-        const recommended_size_number = parseInt(this.reverseRecordSizeMap[this.minimum_recommended_dataset_recordsize],0);
-        if (res_number < recommended_size_number){
-          _.find(this.fieldConfig, {name:'recordsize'}).warnings = `
-          Recommended record size based on pool topology: ${this.minimum_recommended_dataset_recordsize}.
-          A smaller record size can reduce sequential I/O performance and space efficiency.`
-        } else {
-          _.find(this.fieldConfig, {name:'recordsize'}).warnings = null;
-        };
-      };
-    });
+    // this.entityForm.formGroup.controls['recordsize'].valueChanges.subscribe((res)=>{
+    //   const res_number = parseInt(this.reverseRecordSizeMap[res],10);
+    //   if(this.minimum_recommended_dataset_recordsize){
+    //     const recommended_size_number = parseInt(this.reverseRecordSizeMap[this.minimum_recommended_dataset_recordsize],0);
+    //     if (res_number < recommended_size_number){
+    //       _.find(this.fieldConfig, {name:'recordsize'}).warnings = `
+    //       Recommended record size based on pool topology: ${this.minimum_recommended_dataset_recordsize}.
+    //       A smaller record size can reduce sequential I/O performance and space efficiency.`
+    //     } else {
+    //       _.find(this.fieldConfig, {name:'recordsize'}).warnings = null;
+    //     };
+    //   };
+    // });
   }
 
   preInit(entityForm: EntityFormComponent) {
