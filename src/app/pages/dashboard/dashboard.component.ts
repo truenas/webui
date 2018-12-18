@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, ViewChild,OnDestroy } from '@angular/
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { StatsService } from 'app/services/stats.service';
 
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component'; // POC
 import { Disk, VolumeData } from 'app/core/components/widgets/widgetpool/widgetpool.component';
 

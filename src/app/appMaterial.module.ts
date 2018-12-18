@@ -33,7 +33,8 @@ import {
   MatPaginatorModule,
   MatSortModule,
   MatTableModule,
-  MatNativeDateModule
+  MatNativeDateModule,
+  MatAutocompleteModule,
 } from '@angular/material';
 
 @NgModule({
@@ -69,7 +70,8 @@ import {
     MatPaginatorModule,
     MatSortModule,
     MatTableModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatAutocompleteModule,
   ],
   exports: [
     MatCheckboxModule,
@@ -102,7 +104,8 @@ import {
     MatPaginatorModule,
     MatSortModule,
     MatTableModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatAutocompleteModule
   ]
 })
 export class MaterialModule {}

@@ -12,6 +12,7 @@ import { EntityUtils } from '../../../common/entity/utils';
 import { JailService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker'
+import helptext from '../../../../helptext/jails/storage';
 
 interface MountPoint {
   action: string,
@@ -25,7 +26,7 @@ interface MountPoint {
 }
 @Component({
   selector: 'app-storage-add',
-  template: `<entity-form [conf]="this"></entity-form>`
+  template: `<entity-form *ngIf="isReady" [conf]="this"></entity-form>`
 })
 export class StorageFormComponent {
 
@@ -56,36 +57,34 @@ export class StorageFormComponent {
   public fieldConfig: FieldConfig[] = [{
       type: 'select',
       name: 'jail',
-      placeholder: T('Jail'),
+      placeholder: helptext.jail_placeholder,
       options: [],
+      disabled: false,
     },
     {
       type: 'explorer',
       initial: '/mnt',
       explorerType: 'directory',
       name: 'source',
-      placeholder: T('Source'),
-      tooltip: T('Browse to the directory on the system which will\
-                  be accessed by the jail. This directory <b>must</b>\
-                  be separate from the jail pool or dataset.'),
+      placeholder: helptext.source_placeholder,
+      tooltip: helptext.source_tooltip,
+      disabled: false,
     },
     {
       type: 'explorer',
-      initial: '/mnt/iocage/jails',
+      initial: '/mnt',
       explorerType: 'directory',
       name: 'destination',
-      placeholder: T('Destination'),
-      tooltip: T('Browse to an empty directory within the jail or enter\
-                  a new directory name within the jail directory\
-                  structure. This links to the <b>Source</b> storage\
-                  area.'),
+      placeholder: helptext.destination_placeholder,
+      tooltip: helptext.destination_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'readonly',
-      placeholder: T('Read-Only'),
-      tooltip: T('Set to prevent users from modifying the\
-                  <b>Destination</b>.'),
+      placeholder: helptext.readonly_placeholder,
+      tooltip: helptext.readonly_tooltip,
+      disabled: false,
     },
   ];
 
@@ -95,9 +94,42 @@ export class StorageFormComponent {
   protected error: any;
   protected jailID: any;
 
+  public isReady: boolean = false;
+  protected mountpoint: string;
+  protected save_button_enabled: boolean;
   constructor(protected router: Router, protected aroute: ActivatedRoute,
     protected jailService: JailService, protected loader: AppLoaderService, protected ws: WebSocketService,
     private dialog: DialogService) {}
+
+  ngOnInit() {
+    this.aroute.params.subscribe(params => {
+      this.ws.call('jail.query', [
+        [
+          ["host_hostuuid", "=", params['jail']]
+        ]
+      ]).subscribe((res) => {
+        if (res[0] && res[0].state == 'up') {
+          this.save_button_enabled = false;
+          this.error = T("Mount points used in jail " + params['jail'] + " cannot be edited while the jail is running.");
+          for (let i = 0; i < this.fieldConfig.length; i++) {
+            this.fieldConfig[i].disabled = true;
+          }
+        } else {
+          this.save_button_enabled = true;
+          this.error = "";
+        }
+      });
+    });
+    this.ws.call('jail.get_activated_pool').subscribe((res)=>{
+          if (res != null) {
+            this.ws.call('zfs.dataset.query', [[["name", "=", res+"/iocage"]]]).subscribe(
+              (res)=> {
+                this.mountpoint = res[0].mountpoint;
+                this.isReady = true;
+              });
+          }
+    });
+  }
 
   preInit(entityForm: any) {
     let destination_field = _.find(this.fieldConfig, { 'name': 'destination' });
@@ -110,7 +142,7 @@ export class StorageFormComponent {
       this.queryCallOption = { "action": "LIST", "source": "", "destination": "", "fstype": "", "fsoptions": "", "dump": "", "pass": "" };
       if (this.jailID) {
         this.jail.value = this.jailID;
-        destination_field.initial += '/' + this.jailID + '/root';
+        destination_field.initial = this.mountpoint + '/jails/' + this.jailID + '/root';
       }
     });
   }
@@ -137,21 +169,21 @@ export class StorageFormComponent {
   }
 
   dataAttributeHandler(entityList: any) {
-    entityList.formGroup.controls['source'].setValue(entityList.queryResponse[this.mountpointId][0]);
-    entityList.formGroup.controls['destination'].setValue(entityList.queryResponse[this.mountpointId][1]);
+    entityList.formGroup.controls['source'].setValue(entityList.queryResponse[this.mountpointId].entry[0]);
+    entityList.formGroup.controls['destination'].setValue(entityList.queryResponse[this.mountpointId].entry[1]);
 
-    if (entityList.queryResponse[this.mountpointId][3] == 'ro') {
+    if (entityList.queryResponse[this.mountpointId].entry[3] == 'ro') {
       entityList.formGroup.controls['readonly'].setValue(true);
-    } else if (entityList.queryResponse[this.mountpointId][3] == 'rw') {
+    } else if (entityList.queryResponse[this.mountpointId].entry[3] == 'rw') {
       entityList.formGroup.controls['readonly'].setValue(false);
     }
 
-    this.mountPointEdit.source = entityList.queryResponse[this.mountpointId][0];
-    this.mountPointEdit.destination = entityList.queryResponse[this.mountpointId][1];
-    this.mountPointEdit.fstype = entityList.queryResponse[this.mountpointId][2];
-    this.mountPointEdit.fsoptions = entityList.queryResponse[this.mountpointId][3];
-    this.mountPointEdit.dump = entityList.queryResponse[this.mountpointId][4];
-    this.mountPointEdit.pass = entityList.queryResponse[this.mountpointId][5];
+    this.mountPointEdit.source = entityList.queryResponse[this.mountpointId].entry[0];
+    this.mountPointEdit.destination = entityList.queryResponse[this.mountpointId].entry[1];
+    this.mountPointEdit.fstype = entityList.queryResponse[this.mountpointId].entry[2];
+    this.mountPointEdit.fsoptions = entityList.queryResponse[this.mountpointId].entry[3];
+    this.mountPointEdit.dump = entityList.queryResponse[this.mountpointId].entry[4];
+    this.mountPointEdit.pass = entityList.queryResponse[this.mountpointId].entry[5];
   }
 
   onSubmit(event: Event) {

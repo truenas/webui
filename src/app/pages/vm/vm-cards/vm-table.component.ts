@@ -1,7 +1,9 @@
+
+import {of as observableOf, interval as observableInterval, Observable,  Subject } from 'rxjs';
+
+import {map} from 'rxjs/operators';
 import {Component, OnChanges, ViewChild, Input, Output, EventEmitter} from '@angular/core';
 import {Router} from '@angular/router';
-import {Observable} from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
 import {RestService, WebSocketService} from '../../../services/';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 
@@ -70,7 +72,7 @@ export class VmTableComponent implements OnChanges{
     /* TODO: remove this after middleware part is ready to give back
     correct state.
     */
-   Observable.interval(5000).subscribe((val) => {
+   observableInterval(5000).subscribe((val) => {
     this.checkStatus();
    });
     if(changes.data){
@@ -118,7 +120,7 @@ export class VmTableComponent implements OnChanges{
   * @returns {any} An observable containing the employee data
   */
   public getResults(page: Page): Observable<PagedData<any>> {
-      return Observable.of(this.data).map(data => this.getPagedData(page));
+      return observableOf(this.data).pipe(map(data => this.getPagedData(page)));
   }
 
   private getPagedData(page: Page): PagedData<any> {
@@ -175,6 +177,20 @@ export class VmTableComponent implements OnChanges{
       name:"VmStatusRequest",
       data:[]
     });
+  }
+
+  vnc(index){
+    this.ws.call('vm.get_vnc_web', [ index ]).subscribe((res) => {
+      for (const item in res){
+        window.open(res[item]);
+      }
+    });
+  }
+
+  serial(index){
+    this.router.navigate(
+      new Array('').concat([ "vm","serial", index])
+    );
   }
 
 }

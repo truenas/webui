@@ -8,13 +8,13 @@ export default {
 
     lagg_protocol_placeholder : T('Lagg Protocol'),
     lagg_protocol_tooltip : T('Select the <a\
-                       href="../docs/network.html#link-aggregations"\
-                       target="_blank">Protocol Type</a>.<br>\
-                       <i>LACP</i> is the recommended protocol if the network\
-                       switch is capable of active LACP.<br>\
-                       <i>Failover</i> is the default protocol choice and\
-                       should only be used if the network switch does not\
-                       support active LACP.'),
+     href="%%docurl%%/network.html%%webversion%%#link-aggregations"\
+     target="_blank">Protocol Type</a>.<br>\
+     <i>LACP</i> is the recommended protocol if the network\
+     switch is capable of active LACP.<br>\
+     <i>Failover</i> is the default protocol choice and\
+     should only be used if the network switch does not\
+     support active LACP.'),
     lagg_protocol_validation : [ Validators.required ],
 
     lagg_interfaces_placeholder : T('Lagg Interfaces'),

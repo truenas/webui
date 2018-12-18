@@ -6,6 +6,9 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { MaterialModule } from '../../appMaterial.module';
+import { EntityModule } from 'app/pages/common/entity/entity.module';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+
 
 import { ReportComponent } from './components/report/report.component';
 
@@ -21,6 +24,7 @@ import {LineChartService} from '../../components/common/lineChart/lineChart.serv
     MaterialModule,
     AppCommonModule,
     TranslateModule,
+    EntityModule,
     FlexLayoutModule
   ],
   declarations : [

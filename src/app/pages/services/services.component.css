@@ -17,14 +17,17 @@ mat-card.card-filter.mat-card .mat-card-header>div {
 
 
 mat-card.card-filter .filter-field {
-  width: 350px;
+  width: 30%;
   margin-top: 12px;
 }
 
 mat-card.card-filter .filter-field mat-icon {
-  width: 2%;
   position: absolute;
   top: 24px;
+}
+
+div.card-filter-field {
+  width: 100%;
 }
 
 mat-card.card-filter .view-controls {
@@ -42,7 +45,7 @@ mat-card.card-filter .view-controls .mat-button-toggle-group {
   margin: 2px 16px;
 }
 
-.card-filter mat-input-container.mat-input-container {
+.card-filter mat-form-field.mat-form-field {
   width: 97%;
   padding-left: 32px;
 }
@@ -196,5 +199,5 @@ mat-chip.service-state-on,
 #services-spinner {
   position: relative;
   top: 25px;
-  left: 47%;
+  margin-left: 20%;
 }

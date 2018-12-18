@@ -249,9 +249,9 @@ export class VolumeImportWizardComponent {
     this.passphrase = _.find(this.wizardConfig[1].fieldConfig, {'name': 'passphrase'});
     this.passphrase_fg = ( < FormGroup > entityWizard.formArray.get([1]).get('passphrase'));
     this.encrypted_subscription = this.encrypted.valueChanges.subscribe((res) => {
-      this.devices.isHidden = !res;
-      this.key.isHidden = !res;
-      this.passphrase.isHidden = !res;
+      this.devices['isHidden'] = !res;
+      this.key['isHidden'] = !res;
+      this.passphrase['isHidden'] = !res;
     });
 
     this.ws.call('disk.get_encrypted', [{"unused": true}]).subscribe((res)=>{
@@ -266,7 +266,7 @@ export class VolumeImportWizardComponent {
     ( < FormGroup > entityWizard.formArray.get([2]).get('guid'))
     .valueChanges.subscribe((res) => {
       let pool = _.find(this.guid.options, {'value': res});
-      this.summary[T('Pool to import')] = pool.label;
+      this.summary[T('Pool to import')] = pool['label'];
     });
 
     this.message_subscription = this.messageService.messageSourceHasNewMessage$.subscribe((message)=>{

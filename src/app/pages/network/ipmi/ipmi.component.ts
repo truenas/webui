@@ -1,7 +1,7 @@
 import { ApplicationRef, Component, Injector, Input, ViewChild, ElementRef} from '@angular/core';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import {  DialogService, RestService, TooltipsService, WebSocketService, NetworkService } from '../../../services/';
 import { FormGroup } from '@angular/forms';
 
@@ -134,7 +134,7 @@ export class IPMIComponent {
     this.loadData();
 
     entityEdit.formGroup.controls['password'].statusChanges.subscribe((res) => {
-      res === 'INVALID' ? _.find(this.fieldConfig).hasErrors = true : _.find(this.fieldConfig).hasErrors = false;
+      res === 'INVALID' ? _.find(this.fieldConfig)['hasErrors'] = true : _.find(this.fieldConfig)['hasErrors'] = false;
     })
   }
     submitFunction({}){

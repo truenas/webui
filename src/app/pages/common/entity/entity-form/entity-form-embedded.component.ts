@@ -28,10 +28,9 @@ import {FieldConfig} from './models/field-config.interface';
 import {FieldSet} from './models/fieldset.interface';
 import {EntityFormService} from './services/entity-form.service';
 import {FieldRelationService} from './services/field-relation.service';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription ,  Subject } from 'rxjs';
 import { Formconfiguration } from './entity-form.component';
 import { CoreEvent } from 'app/core/services/core.service';
-import { Subject } from 'rxjs/Subject';
 
 export interface FormConfig {
   fieldSets?;
@@ -60,7 +59,8 @@ export interface FormConfig {
   route_success?;
   route_delete?;
   custom_edit_query?;
-  custom_add_query?
+  custom_add_query?;
+  actionButtonsAlign?: string;
   custActions?: any[];
   customFilter?:any[];
   
@@ -102,6 +102,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   public fieldConfig: FieldConfig[];
   public hasConf = true;
   public saveSubmitText = "Save";
+  public actionButtonsAlign = "center";
 
   get controls() {
     return this.fieldConfig.filter(({type}) => type !== 'button');
@@ -158,6 +159,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
 
     // Setup Fields
     this.fieldConfig = this.conf.fieldConfig;
+    this.actionButtonsAlign = this.conf.actionButtonsAlign;
     this.fieldSetDisplay = this.conf.fieldSetDisplay;
     this.fieldSets = this.conf.fieldSets;
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
@@ -287,8 +289,8 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
 
   clearErrors() {
     for (let f = 0; f < this.fieldConfig.length; f++) {
-      this.fieldConfig[f].errors = '';
-      this.fieldConfig[f].hasErrors = false;
+      this.fieldConfig[f]['errors'] = '';
+      this.fieldConfig[f]['hasErrors'] = false;
     }
   }
 

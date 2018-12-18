@@ -162,7 +162,7 @@ g.c3-chart:nth-child(1){opacity:0.55;}
   opacity: 1 !important;
 }
 .c3-chart-line .c3-lines path.c3-line{
-  stroke-width:3px;
+  stroke-width:1px;
 }
 
 div.c3.area .c3-chart-line .c3-lines path.c3-line,

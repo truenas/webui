@@ -99,7 +99,7 @@ export class ViewChartLineComponent extends ViewChartComponent implements OnInit
           }
         },
         y:{
-          inner:true,
+          inner:false,
           /*tick:{
             format: d3.format(this.units)
           }*/

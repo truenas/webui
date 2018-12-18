@@ -1,4 +1,4 @@
-<div id="{{config.name}}" class="dynamic-field form-explorer" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
+<div id="{{config.name}}" class="dynamic-field form-explorer" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
     <div class="form-ex-flex-container" id="form-ex-flex-container">
         <div id="box1">
             <!-- <button mat-button (click)="toggleTree()" type="button">{{"Browse" | translate}}</button> -->
@@ -6,10 +6,10 @@
         </div>
 
         <div id="box2">
-            <mat-input-container class="full-width" id="formexinput">
+            <mat-form-field class="full-width" id="formexinput">
                 <tooltip style="float: right;" *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
                 <input matInput [type]="'text'" [placeholder]="config.placeholder | translate" [formControlName]="config.name" [required]="config.required">
-            </mat-input-container>
+            </mat-form-field>
         </div>
 
         <tree-root #tree id="form-ex-input" *ngIf="treeVisible" [nodes]="nodes" [options]="customTemplateStringOptions" [focused]="true" id="box3">
@@ -25,6 +25,6 @@
         </tree-root>
     </div>
     
-    <mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
+    <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
     <mat-error *ngIf="config.warnings">{{config.warnings | translate}}</mat-error>
 </div>

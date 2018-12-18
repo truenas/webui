@@ -62,9 +62,9 @@ export class ServiceSMBComponent {
       placeholder: T('Workgroup'),
       tooltip: T('Must match Windows workgroup\
                   name. This setting is ignored if the\
-                  <a href="..//docs/directoryservice.html#active-directory"\
+                  <a href="%%docurl%%/directoryservice.html%%webversion%%#active-directory"\
                   target="_blank">Active Directory</a> or <a\
-                  href="..//docs/directoryservice.html#ldap"\
+                  href="%%docurl%%/directoryservice.html%%webversion%%#ldap"\
                   target="_blank">LDAP</a> service is running.'),
       required: true,
       validation : [ Validators.required ]
@@ -213,7 +213,7 @@ export class ServiceSMBComponent {
       tooltip: T('Unselect this option to allow cross-domain\
                   authentication, users and groups to be managed on\
                   another forest, and permissions to be delegated from\
-                  <a href="..//docs/directoryservice.html#active-directory"\
+                  <a href="%%docurl%%/directoryservice.html%%webversion%%#active-directory"\
                   target="_blank">Active Directory</a>\
                   users and groups to domain admins on another forest.'),
     },
@@ -305,7 +305,7 @@ export class ServiceSMBComponent {
 
   afterInit(entityEdit: any) {
     this.rest.get('services/cifs', {}).subscribe((res) => {
-      this.idmapID = res.id;
+      this.idmapID = res['id'];
       this.ws.call('datastore.query', ['directoryservice.idmap_tdb', [["idmap_ds_type", "=", "5"], ["idmap_ds_id", "=", res.data['id']]]]).subscribe((idmap_res) => {
         this.defaultIdmap = idmap_res[0];
         entityEdit.formGroup.controls['idmap_tdb_range_high'].setValue(idmap_res[0].idmap_tdb_range_high);

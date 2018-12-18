@@ -5,7 +5,7 @@ import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchar
 import { ViewChartGaugeComponent } from 'app/core/components/viewchartgauge/viewchartgauge.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
 import { ViewChartLineComponent } from 'app/core/components/viewchartline/viewchartline.component';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'vm-summary',
@@ -30,6 +30,16 @@ export class VmSummaryComponent implements AfterViewInit, OnDestroy {
     this.core.register({observerClass:this,eventName:"PoolData"}).subscribe((evt:CoreEvent) => {
       //console.log(evt);
       this.setPoolData(evt);
+    });
+
+    this.core.register({observerClass:this,eventName:"VmStarted"}).subscribe((evt:CoreEvent) => {
+      //console.log(evt);
+      this.core.emit({name:"StatsVmemoryUsageRequest"});
+    });
+
+    this.core.register({observerClass:this,eventName:"VmStopped"}).subscribe((evt:CoreEvent) => {
+      //console.log(evt);
+      this.core.emit({name:"StatsVmemoryUsageRequest"});
     });
 
     this.core.register({observerClass:this,eventName:"StatsCpuData"}).subscribe((evt:CoreEvent) => {
@@ -73,6 +83,7 @@ export class VmSummaryComponent implements AfterViewInit, OnDestroy {
   setMemData(evt:CoreEvent){
     this.memChart.title = "vMemory in Use";
     this.memChart.units="GiB";
+    this.memChart.legendPosition = "right";
 
     // Convert to GiB
     let RNP = (<any>window).filesize(evt.data.RNP, {output: "object", exponent:3});
@@ -80,9 +91,9 @@ export class VmSummaryComponent implements AfterViewInit, OnDestroy {
     let RPRD = (<any>window).filesize(evt.data.RPRD, {output: "object", exponent:3});
 
     let memData = [
-      {legend: 'RNP', data:[RNP.value]},
-      {legend: 'PRD', data:[PRD.value]},
-      {legend: 'RPRD', data:[RPRD.value]}
+      {legend: 'Running (unprovisioned)', data:[RNP.value]},
+      {legend: 'Stopped (provisioned)', data:[PRD.value]},
+      {legend: 'Running (provisioned)', data:[RPRD.value]}
     ];
     this.totalVmem = evt.data.RNP + evt.data.PRD + evt.data.RPRD;
     if(this.physmem){
@@ -109,7 +120,7 @@ export class VmSummaryComponent implements AfterViewInit, OnDestroy {
 
   setPoolData(evt:CoreEvent){
     let usedObj = (<any>window).filesize(evt.data[0].used, {output: "object", exponent:3});
-    let used: ChartData = {
+    /*let used: ChartData = {
       legend: 'Used',
       data: [usedObj.value]
     };
@@ -125,13 +136,13 @@ export class VmSummaryComponent implements AfterViewInit, OnDestroy {
     this.zpoolChart.data = [used,available];
     //console.log(this.zpoolChart.data);
     this.zpoolChart.width = this.chartSize;
-    this.zpoolChart.height = this.chartSize;
+    this.zpoolChart.height = this.chartSize;*/
   }
 
   setCPUData(evt:CoreEvent){
     //console.log("SET CPU DATA");
     //console.log(evt.data);
-    let cpuUserObj = evt.data;
+    /*let cpuUserObj = evt.data;
 
     let parsedData = [];
     let dataTypes = evt.data.meta.legend;
@@ -147,13 +158,13 @@ export class VmSummaryComponent implements AfterViewInit, OnDestroy {
       parsedData.push(chartData);
     }
 
-    this.cpuChart.chartType = 'area-spline';
+    this.cpuChart.chartType = 'line';
     this.cpuChart.units = '%';
     this.cpuChart.timeSeries = true;
     this.cpuChart.timeFormat = '%H:%M';// eg. %m-%d-%Y %H:%M:%S.%L
     this.cpuChart.timeData = evt.data.meta;
     this.cpuChart.data = parsedData;//[cpuUser];
     this.cpuChart.width = this.chartSize;
-    this.cpuChart.height = this.chartSize;
+    this.cpuChart.height = this.chartSize;*/
   }
 }

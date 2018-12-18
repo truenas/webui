@@ -41,6 +41,10 @@ export class UserListComponent implements OnInit {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    deleteMsg: {
+      title: 'User',
+      key_props: ['bsdusr_username']
+    },
   };
 
   isActionVisible(actionId: string, row: any) {
@@ -83,18 +87,18 @@ export class UserListComponent implements OnInit {
       actions.push({
         label : T("Delete"),
         onClick : (users_edit) => {
-          this.entityList.doDelete(users_edit.id );
+          this.entityList.doDelete(users_edit);
         },
       });
 
     }
     return actions;
   }
-  checkbox_confirm(id: any){
+  checkbox_confirm(id: any, deleteMsg: any){
     const params = [id, {"delete_group": true}]
     const ds = this.dialogService.confirm(
       T("Delete"), 
-      T("Delete the user?"), 
+      deleteMsg,
       false, T("Delete"),
       true,
       T('Keep user primary group'),
@@ -122,7 +126,7 @@ export class UserListComponent implements OnInit {
     let user: any
     let group_users: any
     user = _.find(this.usr_lst[0], {id});
-    group_users =_.find(this.grp_lst[0], {id: user.group.id}).users;
+    group_users =_.find(this.grp_lst[0], {id: user.group.id})['users'];
     if(group_users.length === 1){
       return true
     };
@@ -134,7 +138,7 @@ export class UserListComponent implements OnInit {
     this.ws.call('group.query').subscribe((res)=>{
       data.forEach(user => {
         const group = _.find(res, {"id" : user.bsdusr_group});
-        user['bsdusr_gid'] = group.gid;
+        user['bsdusr_gid'] = group['gid'];
       });
     })
     return data;
