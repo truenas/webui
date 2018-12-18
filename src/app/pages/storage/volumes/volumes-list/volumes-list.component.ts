@@ -20,11 +20,7 @@ import { ErdService } from 'app/services/erd.service';
 import { T } from '../../../../translate-marker';
 import { StorageService } from '../../../../services/storage.service';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-<<<<<<< HEAD
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-=======
 import helptext from '../../../../helptext/storage/volumes/volume-list';
->>>>>>> 486692aec... add all the files under volumes
 
 export interface ZfsPoolData {
   avail?: number;
@@ -324,28 +320,13 @@ export class VolumesListTableConfig implements InputTableConf {
             fieldConfig: [{
               type: 'paragraph',
               name: 'pool_detach_warning',
-<<<<<<< HEAD
-              paraText: T("WARNING: Exporting/Disconnecting '" + row1.name + "'. \
-                           Exporting/Disconnecting a pool makes the data unavailable. \
-                           The pool data can also be wiped by setting the\
-                           related option. Back up any critical data \
-                           before exporting/disconnecting a pool."),
-=======
               paraText: helptext.detachDialog_pool_detach_warning_paratext_a + row1.name +
                 helptext.detachDialog_pool_detach_warning_paratext_b,
->>>>>>> 486692aec... add all the files under volumes
               isHidden: false
             }, {
               type: 'paragraph',
               name: 'pool_detach_warning',
-<<<<<<< HEAD
-              paraText: T("'" + row1.name + "' is encrypted! If the passphrase for \
-                           this encrypted pool has been lost, the data will be PERMANENTLY UNRECOVERABLE! \
-                           Before exporting/disconnecting encrypted pools, download and safely\
-                           store the recovery key."),
-=======
               paraText: "'" + row1.name + helptext.detachDialog_pool_detach_warning__encrypted_paratext,
->>>>>>> 486692aec... add all the files under volumes
               isHidden: encryptedStatus !== '' ? false : true
             }, {
               type: 'checkbox',
@@ -360,11 +341,7 @@ export class VolumesListTableConfig implements InputTableConf {
             }, {
               type: 'checkbox',
               name: 'confirm',
-<<<<<<< HEAD
-              placeholder: T("Confirm export/disconnect"),
-=======
               placeholder: helptext.detachDialog_pool_detach_confim_checkbox_placeholder,
->>>>>>> 486692aec... add all the files under volumes
               required: true
             }],
             isCustActionVisible(actionId: string) {
