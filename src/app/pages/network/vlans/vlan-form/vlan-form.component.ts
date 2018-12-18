@@ -1,21 +1,12 @@
-import {Component} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import { Component } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
-import {Validators} from '@angular/forms';
-import {
-  regexValidator
-} from '../../../common/entity/entity-form/validators/regex-validation';
 
-import {
-  NetworkService,
-  RestService,
-  WebSocketService
-} from '../../../../services/';
-import {
-  FieldConfig
-} from '../../../common/entity/entity-form/models/field-config.interface';
+import { NetworkService, RestService, WebSocketService } from '../../../../services/';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
 import { T } from '../../../../translate-marker';
+import helptext from '../../../../helptext/network/vlans/vlans';
 
 @Component({
   selector : 'app-vlan-form',
@@ -37,48 +28,40 @@ export class VlanFormComponent {
     {
       type: 'input',
       name: 'vlan_vint',
-      placeholder : T('Virtual Interface'),
-      tooltip: T('Enter the name of the Virtual Interface. Use the\
-                  format <i>vlanX</i> where <i>X</i> is a number\
-                  representing a non-parent VLAN interface.'),
+      placeholder : helptext.vlan_vint_placeholder,
+      tooltip: helptext.vlan_vint_tooltip,
       required: true,
-      validation: [ Validators.required ]
+      validation: helptext.vlan_vint_validation
     },
     {
       type: 'select',
       name: 'vlan_pint',
-      placeholder: T('Parent Interface'),
-      tooltip: T('Select the VLAN Parent Interface. Usually an Ethernet\
-                  card connected to a configured switch port. Newly\
-                  created link aggregations will not be available until\
-                  the system is rebooted.'),
+      placeholder: helptext.vlan_pint_placeholder,
+      tooltip: helptext.vlan_pint_tooltip,
       options: [],
       required: true,
-      validation: [ Validators.required ]
+      validation: helptext.vlan_pint_validation
     },
     {
       type: 'input',
       name: 'vlan_tag',
-      placeholder: T('Vlan Tag'),
-      tooltip: T('Enter the numeric tag configured in the switched \
-                  network.'),
+      placeholder: helptext.vlan_tag_placeholder,
+      tooltip: helptext.vlan_tag_tooltip,
       required: true,
-      validation: [Validators.min(1), Validators.max(4095), Validators.required, regexValidator(/^\d+$/)]
+      validation: helptext.vlan_tag_validation
     },
     {
       type: 'input',
       name: 'vlan_description',
-      placeholder: T('Description'),
-      tooltip: T('Description of the VLAN.'),
+      placeholder: helptext.vlan_description_placeholder,
+      tooltip: helptext.vlan_description_tooltip,
     },
     {
       type: 'select',
       name: 'vlan_pcp',
-      placeholder: T('Priority Code Point'),
+      placeholder: helptext.vlan_pcp_placeholder,
       options: [],
-      tooltip: T('Select the Class of Service. The available 802.1p\
-                  Class of Service ranges from <i>Best effort (default)</i> \
-                  to <i>Network control (highest)</i>.'),
+      tooltip: helptext.vlan_pcp_tooltip
     }
   ];
 

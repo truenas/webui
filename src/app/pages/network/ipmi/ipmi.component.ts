@@ -1,30 +1,13 @@
-import {ApplicationRef, Component, Injector, OnInit, Input, ViewChild, ElementRef} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import { ApplicationRef, Component, Injector, Input, ViewChild, ElementRef} from '@angular/core';
+import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { MaterialModule } from '../../../appMaterial.module';
-import {  DialogService } from '../../../services/';
+import {  DialogService, RestService, TooltipsService, WebSocketService, NetworkService } from '../../../services/';
+import { FormGroup } from '@angular/forms';
 
-import {
-  RestService,
-  TooltipsService,
-  WebSocketService,
-  NetworkService
-} from '../../../services/';
-import {
-  FormGroup, Validators,
-} from '@angular/forms';
-import {EntityFormComponent} from '../../common/entity/entity-form';
-import {
-  matchOtherValidator
-} from '../../common/entity/entity-form/validators/password-validation';
-import {
-  FieldConfig
-} from '../../common/entity/entity-form/models/field-config.interface';
-import {Tooltip} from '../../common/tooltip';
-import {TOOLTIPS} from '../../common/tooltips';
-import {EntityUtils} from '../../common/entity/utils';
-import { T } from '../../../translate-marker';
+import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+import helptext from '../../../helptext/network/ipmi/ipmi';
+
 
 @Component({
   selector : 'app-ipmi',
@@ -79,54 +62,50 @@ export class IPMIComponent {
       type : 'input',
       inputType: 'password',
       name : 'password',
-      placeholder : T('Password'),
-      validation: Validators.maxLength(20),
+      placeholder : helptext.password_placeholder,
+      validation: helptext.password_validation,
       hasErrors: false,
-      errors: T('20 characters is the maximum length.'),
+      errors: helptext.password_errors,
       togglePw: true,
-      tooltip : T('Enter the password used to connect to the IPMI\
-                   interface from a web browser.'),
+      tooltip : helptext.password_tooltip,
 
     },
     {
       type : 'input',
       name : 'conf_password',
       inputType: 'password',
-      placeholder : T('Confirm Password'),
-      validation : [ matchOtherValidator('password') ]
+      placeholder : helptext.conf_password_placeholder,
+      validation : helptext.conf_password_validation
     },
     {
       type : 'checkbox',
       name : 'dhcp',
-      placeholder : T('DHCP'),
-      tooltip : T('Use DHCP. Unset to manually configure a static IPv4\
-                   connection.'),
+      placeholder : helptext.dhcp_placeholder,
+      tooltip : helptext.dhcp_tooltip,
     },
     {
       type : 'input',
       name : 'ipaddress',
-      placeholder : T('IPv4 Address'),
-      tooltip : T('Static IPv4 address of the IPMI web interface.'),
+      placeholder : helptext.ipaddress_placeholder,
+      tooltip : helptext.ipaddress_tooltip,
     },
     {
       type : 'input',
       name : 'netmask',
-      placeholder : T('IPv4 Netmask'),
-      tooltip : T('Subnet mask of the IPv4 address.'),
+      placeholder : helptext.netmask_placeholder,
+      tooltip : helptext.netmask_tooltip,
     },
     {
       type : 'input',
       name : 'gateway',
-      placeholder : T('IPv4 Default Gateway'),
-      tooltip : T('Enter the default gateway of the IPv4 connection.'),
+      placeholder : helptext.gateway_placeholder,
+      tooltip : helptext.gateway_tooltip,
     },
     {
       type : 'input',
       name : 'vlan',
-      placeholder : T('VLAN ID'),
-      tooltip : T('If the IPMI out-of-band management interface is on a\
-                   different VLAN from the management network, enter the\
-                   IPMI VLAN.'),
+      placeholder : helptext.vlan_placeholder,
+      tooltip : helptext.vlan_tooltip,
       inputType: 'number',
     },
   ];
@@ -137,7 +116,6 @@ export class IPMIComponent {
               protected tooltipsService: TooltipsService,
               protected networkService: NetworkService, protected dialog: DialogService
             ) {}
-
 
 
   preInit(entityEdit: any) {
