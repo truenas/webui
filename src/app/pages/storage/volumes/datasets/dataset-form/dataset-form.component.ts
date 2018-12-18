@@ -56,7 +56,7 @@ export class DatasetFormComponent implements Formconfiguration{
   public isNew = false;
   public parent_dataset: any;
   protected entityForm: any;
-  public recommended_size: any;
+  public minimum_recommended_dataset_recordsize = '128K';
 
 
   public parent: string;
@@ -487,12 +487,12 @@ export class DatasetFormComponent implements Formconfiguration{
     }
     this.entityForm.formGroup.controls['recordsize'].valueChanges.subscribe((res)=>{
       const res_number = parseInt(this.reverseRecordSizeMap[res],10);
-      if(this.recommended_size){
-        const recommended_size_number = parseInt(this.reverseRecordSizeMap[this.recommended_size],0);
+      if(this.minimum_recommended_dataset_recordsize){
+        const recommended_size_number = parseInt(this.reverseRecordSizeMap[this.minimum_recommended_dataset_recordsize],0);
         if (res_number < recommended_size_number){
           _.find(this.fieldConfig, {name:'recordsize'}).warnings = `
-          Recommended record size based on pool topology: ${this.recommended_size}.
-          A smaller record size can reduce sequential I/O performance and space efficiency.`
+          Recommended record size based on pool topology: ${this.minimum_recommended_dataset_recordsize}.
+          Other sizes could reduce sequential I/O performance and space efficiency.`
         } else {
           _.find(this.fieldConfig, {name:'recordsize'}).warnings = null;
         };
@@ -522,8 +522,7 @@ export class DatasetFormComponent implements Formconfiguration{
     if(this.parent){
       const root = this.parent.match(/^[a-zA-Z]+/)[0];
       this.ws.call('pool.dataset.recommended_zvol_blocksize',[root]).subscribe(res=>{
-        this.entityForm.formGroup.controls['recordsize'].setValue(res);
-        this.recommended_size = res;
+        this.minimum_recommended_dataset_recordsize = res;
       });
       this.ws.call('pool.dataset.query', [[["id", "=", this.pk]]]).subscribe((pk_dataset)=>{
       if(this.isNew){
