@@ -233,7 +233,12 @@ export class CloudsyncFormComponent implements OnInit {
     name: 'bwlimit',
     placeholder: helptext.bwlimit_placeholder,
     tooltip: helptext.bwlimit_tooltip,
-    value: "",
+  },
+  {
+    type: 'input',
+    name: 'exclude',
+    placeholder: helptext.exclude_placeholder,
+    tooltip: helptext.exclude_tooltip,
   }];
 
   protected month_field: any;
@@ -472,6 +477,11 @@ export class CloudsyncFormComponent implements OnInit {
       this.folder_field.customTemplateStringOptions.explorer.ngOnInit();
     });
 
+    this.formGroup.controls['bwlimit'].valueChanges.subscribe((res)=> {
+      _.find(this.fieldConfig, {name: 'bwlimit'}).hasErrors = false;
+      _.find(this.fieldConfig, {name: 'bwlimit'}).errors = null;
+      this.formGroup.controls['bwlimit'].errors = null;
+    });
     // get cloud credentials
     this.ws.call(this.cloudcredential_query, {}).subscribe(res => {
       res.forEach((item) => {
@@ -551,16 +561,27 @@ export class CloudsyncFormComponent implements OnInit {
       data.bwlimit = bwlimit_str;
     }
 
+    if (data.exclude) {
+      data.exclude = _.join(data.exclude, ' ');
+    }
+
     return data;
   }
 
   handleBwlimit(bwlimit: any): Array<any> {
     const bwlimtArr = [];
-    bwlimit = bwlimit.split(' ');
+    bwlimit = bwlimit.trim().split(' ');
+
     for (let i = 0; i < bwlimit.length; i++) {
       const sublimitArr = bwlimit[i].split(',');
       if (sublimitArr[1] && sublimitArr[1] != 'off') {
-        sublimitArr[1] = this.cloudcredentialService.getByte(sublimitArr[1]);
+        if (this.cloudcredentialService.getByte(sublimitArr[1]) == -1) {
+          _.find(this.fieldConfig, {name: 'bwlimit'}).hasErrors = true;
+          _.find(this.fieldConfig, {name: 'bwlimit'}).errors = 'Invalid bandwidth ' + sublimitArr[1];
+          this.formGroup.controls['bwlimit'].setErrors('Invalid bandwidth ' + sublimitArr[1]);
+        } else {
+          sublimitArr[1] = this.cloudcredentialService.getByte(sublimitArr[1]);
+        }
       }
       const subLimit = {
         "time": sublimitArr[0],
@@ -607,6 +628,14 @@ export class CloudsyncFormComponent implements OnInit {
       value.bwlimit = this.handleBwlimit(value.bwlimit);
     }
 
+    if (value.exclude) {
+      value.exclude = value.exclude.trim().split(" ");
+    }
+
+    if (!this.formGroup.valid) {
+      return;
+    }
+
     if (!this.pk) {
       this.loader.open();
       this.ws.call(this.addCall, [value]).subscribe((res)=>{
@@ -614,7 +643,6 @@ export class CloudsyncFormComponent implements OnInit {
         this.router.navigate(new Array('/').concat(this.route_success));
       }, (err) => {
         this.loader.close();
-        // this.dialog.errorReport('Error', err.reason, err.trace.formatted);
         new EntityUtils().handleWSError(this, err);
       });
     } else {
@@ -626,7 +654,6 @@ export class CloudsyncFormComponent implements OnInit {
         },
         (err)=>{
         this.loader.close();
-        // this.dialog.errorReport('Error', err.reason, err.trace.formatted);
         new EntityUtils().handleWSError(this, err);
         }
       );
