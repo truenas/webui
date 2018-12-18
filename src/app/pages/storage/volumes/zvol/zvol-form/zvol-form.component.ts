@@ -271,7 +271,8 @@ export class ZvolFormComponent {
         entityForm.formGroup.controls['sync'].setValue('INHERIT');
         entityForm.formGroup.controls['compression'].setValue('INHERIT');
         entityForm.formGroup.controls['deduplication'].setValue('INHERIT');
-        this.ws.call('pool.dataset.recommended_zvol_blocksize',[this.parent]).subscribe(res=>{
+        const root = this.parent.match(/^[a-zA-Z]+/)[0];
+        this.ws.call('pool.dataset.recommended_zvol_blocksize',[root]).subscribe(res=>{
           this.entityForm.formGroup.controls['volblocksize'].setValue(res);
         })
 
