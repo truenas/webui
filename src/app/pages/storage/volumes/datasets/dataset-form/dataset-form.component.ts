@@ -492,7 +492,7 @@ export class DatasetFormComponent implements Formconfiguration{
         if (res_number < recommended_size_number){
           _.find(this.fieldConfig, {name:'recordsize'}).warnings = `
           Recommended record size based on pool topology: ${this.minimum_recommended_dataset_recordsize}.
-          Other sizes could reduce sequential I/O performance and space efficiency.`
+          A smaller record size can reduce sequential I/O performance and space efficiency.`
         } else {
           _.find(this.fieldConfig, {name:'recordsize'}).warnings = null;
         };
