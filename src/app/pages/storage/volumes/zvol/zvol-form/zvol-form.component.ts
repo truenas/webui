@@ -54,7 +54,7 @@ export class ZvolFormComponent {
   public pk_dataset: any[] = [];
   public edit_data: any;
   protected entityForm: any;
-
+  public minimum_recommended_zvol_volblocksize: string;
   public custActions: Array<any> = [
     {
       id: 'basic_mode',
@@ -75,7 +75,21 @@ export class ZvolFormComponent {
     'M': 1048576,
     'K': 1024,
   };
-
+  protected reverseRecordSizeMap: Object= {
+    '512': '512',
+    '1K' :'1024',
+    '2K' : '2048',
+    '4K': '4096',
+    '8K': '8192',
+    '16K':'16384',
+    '32K': '32768',
+    '64K': '65536',
+    '128K': '131072',
+    '256K': '262144',
+    '512K': '524288',
+    '1024K': '1048576',
+    '1M':'1048576'
+  };
   public fieldConfig: FieldConfig[] = [
     {
       type: 'input',
@@ -289,6 +303,7 @@ export class ZvolFormComponent {
         const root = this.parent.match(/^[a-zA-Z]+/)[0];
         this.ws.call('pool.dataset.recommended_zvol_blocksize',[root]).subscribe(res=>{
           this.entityForm.formGroup.controls['volblocksize'].setValue(res);
+          this.minimum_recommended_zvol_volblocksize = res;
         })
 
       } else {
@@ -382,7 +397,19 @@ export class ZvolFormComponent {
     this.entityForm = entityForm;
     if(!entityForm.isNew){
     }
-  }
+    this.entityForm.formGroup.controls['volblocksize'].valueChanges.subscribe((res)=>{
+      const res_number = parseInt(this.reverseRecordSizeMap[res],10);
+      if(this.minimum_recommended_zvol_volblocksize){
+        const recommended_size_number = parseInt(this.reverseRecordSizeMap[this.minimum_recommended_zvol_volblocksize],0);
+        if (res_number < recommended_size_number){
+          _.find(this.fieldConfig, {name:'volblocksize'}).warnings = `
+          Recommended block size based on pool topology: ${this.minimum_recommended_zvol_volblocksize}.
+          A smaller block size can reduce sequential I/O performance and space efficiency.`
+        } else {
+          _.find(this.fieldConfig, {name:'volblocksize'}).warnings = null;
+        };
+      };
+    });  }
 
   addSubmit(body: any) {
     const data: any = this.sendAsBasicOrAdvanced(body);
