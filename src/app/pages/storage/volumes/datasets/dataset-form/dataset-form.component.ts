@@ -617,25 +617,25 @@ export class DatasetFormComponent implements Formconfiguration{
         else {
           this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).subscribe((parent_dataset)=>{      
             this.parent_dataset = parent_dataset[0];
-            const current_datset = _.find(this.parent_dataset.children, {'name':this.pk});
+            const current_dataset = _.find(this.parent_dataset.children, {'name':this.pk});
             const lower_recordsize_map = {
               '512':'512',
               '1K':'1K',
               '2K':'2K',
             }; 
-            if (current_datset.recordsize.value in lower_recordsize_map) {
-              _.find(_.find(this.fieldConfig, {name:'recordsize'}).options, {'label': current_datset.recordsize.value})['hiddenFromDisplay'] = false
+            if (current_dataset.recordsize.value in lower_recordsize_map) {
+              _.find(_.find(this.fieldConfig, {name:'recordsize'}).options, {'label': current_dataset.recordsize.value})['hiddenFromDisplay'] = false
             };
-            if (current_datset.quota.rawvalue === '0') {
+            if (current_dataset.quota.rawvalue === '0') {
               entityForm.formGroup.controls['quota_unit'].setValue('M');
             }
-            if (current_datset.refquota.rawvalue === '0') {
+            if (current_dataset.refquota.rawvalue === '0') {
               entityForm.formGroup.controls['refquota_unit'].setValue('M');
             }
-            if (current_datset.reservation.rawvalue === '0') {
+            if (current_dataset.reservation.rawvalue === '0') {
               entityForm.formGroup.controls['reservation_unit'].setValue('M');
             }
-            if (current_datset.refreservation.rawvalue === '0') {
+            if (current_dataset.refreservation.rawvalue === '0') {
               entityForm.formGroup.controls['refreservation_unit'].setValue('M');
             }
             const edit_sync = _.find(this.fieldConfig, {name:'sync'});
