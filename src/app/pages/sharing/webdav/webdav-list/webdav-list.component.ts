@@ -1,10 +1,8 @@
-import { ApplicationRef, Component, } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, } from '@angular/core';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
 import { T } from '../../../../translate-marker';
-import { RestService } from '../../../../services/rest.service';
 
 @Component({
   selector : 'webdav-list',
