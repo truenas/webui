@@ -158,3 +158,7 @@ p.value{
 .xs .title-wrapper .update-btn{
   display:none;
 }
+
+p.value {
+  margin: 0;
+}

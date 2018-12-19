@@ -325,13 +325,13 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .sidebar-panel.mat-sidenav .navigation-hold#scroll-area,
   .mat-card,.mat-paginator,
   .mat-button-toggle,
-  .mat-select-content, 
+  .mat-select-content, .mat-select-panel,
   .mat-select-panel-done-animating,
   .mat-expansion-panel,
   .mat-dialog-container,
   .mat-stepper-horizontal, .mat-stepper-vertical,
   .dx-treelist-container{
-    @include variable(background, --bg2, $bg2);
+    @include variable(background, --bg2, $bg2, !important);
     @include variable(color, --fg2, $fg2);
   }
   .mat-button-toggle-checked{
@@ -511,6 +511,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   entity-form .form-card.mat-card{
     max-width:960px;
     margin:0 auto;
+  }
+  
+  .mat-card-actions .mat-button {
+    margin-right: 3px !important;
+    margin-left: 1px !important;
   }
 
   .form-card.mat-card{
