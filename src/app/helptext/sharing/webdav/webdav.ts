@@ -18,5 +18,11 @@ export const helptext_sharing_webdav = {
 
     placeholder_perm: T('Change User & Group Ownership'),
     tooltip_perm: T('Select to automatically set the contents of the\
- share to the <i>webdav</i> user and group.')
-}
+ share to the <i>webdav</i> user and group.'),
+
+    column_name: T('Share Name'),
+    column_comment: T('Comment'),
+    column_path: T('Path'),
+    column_ro: T('Read Only'),
+    column_perm: T('Change User & Group Ownership')
+};
