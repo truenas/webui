@@ -75,7 +75,7 @@ export class ZvolFormComponent {
     'M': 1048576,
     'K': 1024,
   };
-  protected reverseZvolSizeMap: Object= {
+  protected reverseZvolBlockSizeMap: Object= {
     '512': '512',
     '1K' :'1024',
     '2K' : '2048',
@@ -398,9 +398,9 @@ export class ZvolFormComponent {
     if(!entityForm.isNew){
     }
     this.entityForm.formGroup.controls['volblocksize'].valueChanges.subscribe((res)=>{
-      const res_number = parseInt(this.reverseZvolSizeMap[res],10);
+      const res_number = parseInt(this.reverseZvolBlockSizeMap[res],10);
       if(this.minimum_recommended_zvol_volblocksize){
-        const recommended_size_number = parseInt(this.reverseZvolSizeMap[this.minimum_recommended_zvol_volblocksize],0);
+        const recommended_size_number = parseInt(this.reverseZvolBlockSizeMap[this.minimum_recommended_zvol_volblocksize],0);
         if (res_number < recommended_size_number){
           _.find(this.fieldConfig, {name:'volblocksize'}).warnings = `
           Recommended block size based on pool topology: ${this.minimum_recommended_zvol_volblocksize}.
