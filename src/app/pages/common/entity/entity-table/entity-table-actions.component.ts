@@ -33,7 +33,12 @@ export class EntityTableActionsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.key_prop = this.entity.conf.config.deleteMsg.key_props[0];
+    if (this.entity.conf.config && this.entity.conf.config.deleteMsg) {
+      this.key_prop = this.entity.conf.config.deleteMsg.key_props[0];
+    } else {
+      this.key_prop = this.entity.conf.columns[0].prop;
+    }
+
     this.actions = this.entity.getActions(this.row);
     const removeIds = [];
     for (let i = 0; i < this.actions.length; i++) {
