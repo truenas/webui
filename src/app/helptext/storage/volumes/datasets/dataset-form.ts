@@ -36,26 +36,10 @@ dataset_form_refquota_tooltip: T('<i>0</i> disables quotas. Specify a maximum al
  space for this dataset.'),
 dataset_form_refquota_validation: [Validators.min(0)],
 
-dataset_form_refquota_warning_placeholder: T('Quota warning alert at, %'),
-dataset_form_refquota_warning_tooltip: T('0=Disabled, blank=inherit'),
-dataset_form_refquota_warning_validation: [Validators.min(0)],
-
-dataset_form_refquota_critical_placeholder: T('Quota critical alert at, %'),
-dataset_form_refquota_critical_tooltip: T('0=Disabled, blank=inherit'),
-dataset_form_refquota_critical_validation: [Validators.min(0)],
-
 dataset_form_quota_placeholder: 'Quota for this dataset and all children',
 dataset_form_quota_tooltip: 'Define a maximum size for both the dataset and any child\
  datasets. Enter <i>0</i> to remove the quota.',
 dataset_form_quota_validation: [Validators.min(0)],
-
-dataset_form_quota_warning_placeholder: T('Quota warning alert at, %'),
-dataset_form_quota_warning_tooltip: T('0=Disabled, blank=inherit'),
-dataset_form_quota_warning_validation: [Validators.min(0)],
-
-dataset_form_quota_critical_placeholder: T('Quota critical alert at, %'),
-dataset_form_quota_critical_tooltip: T('0=Disabled, blank=inherit'),
-dataset_form_quota_critical_validation: [Validators.min(0)],
 
 dataset_form_refreservation_placeholder: T('Reserved space for this dataset'),
 dataset_form_refreservation_tooltip: T('<i>0</i> is unlimited. Reserve additional space for\
