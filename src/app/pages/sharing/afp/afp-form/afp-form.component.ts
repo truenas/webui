@@ -1,11 +1,10 @@
-import { Component, ViewContainerRef, OnDestroy } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Router,ActivatedRoute } from '@angular/router';
-import {Validators} from '@angular/forms';
-import { RestService, WebSocketService, DialogService } from '../../../../services/';
+import { WebSocketService, DialogService } from '../../../../services/';
 import * as _ from 'lodash';
 
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { T } from '../../../../translate-marker';
+import { helptext_sharing_afp } from 'app/helptext/sharing';
 
 @Component({
   selector : 'app-afp-form',
@@ -27,156 +26,119 @@ export class AFPFormComponent implements OnDestroy {
       initial: '/mnt',
       explorerType: 'directory',
       name: 'afp_path',
-      placeholder: T('Path'),
-      tooltip: T('Browse to the pool or dataset to share. Netatalk\
-                  does not fully support nesting additional pools,\
-                  datasets, or symbolic links beneath this path.'),
+      placeholder: helptext_sharing_afp.placeholder_path,
+      tooltip: helptext_sharing_afp.tooltip_path,
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext_sharing_afp.validators_path
     },
     {
       type: 'input',
       name: 'afp_name',
-      placeholder: T('Name'),
-      tooltip: T('The pool name that appears in the\
-                  <b>connect to server</b> dialog of the computer.')
+      placeholder: helptext_sharing_afp.placeholder_name,
+      tooltip: helptext_sharing_afp.tooltip_name
     },
     {
       type: 'input',
       name: 'afp_comment',
-      placeholder: T('Comment'),
-      tooltip: T('Optional comment.')
+      placeholder: helptext_sharing_afp.placeholder_comment,
+      tooltip: helptext_sharing_afp.tooltip_comment
     },
     {
       type: 'input',
       name: 'afp_allow',
-      placeholder: T('Allow list'),
-      tooltip: T('Comma-delimited list of allowed users and/or groups\
-                  where groupname begins with a @.\
-                  Note that adding an entry will deny\
-                  any user or group that is not specified.')
+      placeholder: helptext_sharing_afp.placeholder_allow,
+      tooltip: helptext_sharing_afp.tooltip_allow
     },
     {
       type: 'input',
       name: 'afp_deny',
-      placeholder: T('Deny list'),
-      tooltip: T('Comma-delimited list of allowed users and/or groups\
-                  where groupname begins with a @. Note that adding\
-                  an entry will allow any user or group that\
-                  is not specified.')
+      placeholder: helptext_sharing_afp.placeholder_deny,
+      tooltip: helptext_sharing_afp.tooltip_deny
     },
     {
       type: 'input',
       name: 'afp_ro',
-      placeholder: T('Read Only Access'),
-      tooltip: T('Comma-delimited list of users and/or groups who only\
-                  have read access where groupname begins with a @.')
+      placeholder: helptext_sharing_afp.placeholder_ro,
+      tooltip: helptext_sharing_afp.tooltip_ro
     },
     {
       type: 'input',
       name: 'afp_rw',
-      placeholder: T('Read/Write Access'),
-      tooltip: T('Comma-delimited list of users and/or groups\
-                  who have read and write access where groupname\
-                  begins with a @.')
+      placeholder: helptext_sharing_afp.placeholder_rw,
+      tooltip: helptext_sharing_afp.tooltip_rw
     },
     {
       type: 'checkbox',
       name: 'afp_timemachine',
-      placeholder: T('Time Machine'),
-      tooltip: T('Set to advertise FreeNAS as a Time\
-                  Machine disk so it can be found by Macs.\
-                  Setting multiple shares for <b>Time Machine</b> use\
-                  is not recommended. When multiple Macs share the\
-                  same pool, low disk space issues and intermittently\
-                  failed backups can occur.'),
+      placeholder: helptext_sharing_afp.placeholder_timemachine,
+      tooltip: helptext_sharing_afp.tooltip_timemachine,
     },
     {
       type: 'input',
       name: 'afp_timemachine_quota',
-      placeholder: T('Time Machine Quota'),
+      placeholder: helptext_sharing_afp.placeholder_timemachine_quota,
       inputType: 'number',
-      tooltip: T('Quota for each Time Machine backup on this share (in GiB).\
-                  Note that this change will be applied only after\
-                  share re-mount.')
+      tooltip: helptext_sharing_afp.tooltip_timemachine_quota
     },
     {
       type: 'checkbox',
       name: 'afp_home',
-      placeholder: T('Use as home share'),
-      tooltip: T('Set to allow the share to host user\
-                  home directories. Only one share can be the home\
-                  share.')
+      placeholder: helptext_sharing_afp.placeholder_home,
+      tooltip: helptext_sharing_afp.tooltip_home
     },
     {
       type: 'checkbox',
       name: 'afp_nodev',
-      placeholder: T('Zero Device Numbers'),
-      tooltip: T('Enable when the device number is inconstant across\
-                  a reboot.')
+      placeholder: helptext_sharing_afp.placeholder_nodev,
+      tooltip: helptext_sharing_afp.tooltip_nodev
     },
     {
       type: 'checkbox',
       name: 'afp_nostat',
-      placeholder: T('No Stat'),
-      tooltip: T('If set, AFP does not stat the pool path when\
-                  enumerating the pools list. This is useful for\
-                  automounting or pools created by a preexec script.')
+      placeholder: helptext_sharing_afp.placeholder_nostat,
+      tooltip: helptext_sharing_afp.tooltip_nostat
     },
     {
       type: 'checkbox',
       name: 'afp_upriv',
-      placeholder: T('AFP3 Unix Privs'),
-      tooltip: T('Enable Unix privileges supported by OSX 10.5 and\
-                  higher. Do not enable this if the network contains\
-                  Mac OSX 10.4 clients or lower as they do not\
-                  support this feature.')
+      placeholder: helptext_sharing_afp.placeholder_upriv,
+      tooltip: helptext_sharing_afp.tooltip_upriv
     },
     {
       type: 'permissions',
       name: 'afp_fperm',
-      placeholder: T('Default file permissions'),
-      tooltip: T('Only works with Unix ACLs. New files created on the\
-                  share are set with the selected permissions.')
+      placeholder: helptext_sharing_afp.placeholder_fperm,
+      tooltip: helptext_sharing_afp.tooltip_fperm
     },
     {
       type: 'permissions',
       name: 'afp_dperm',
-      placeholder: T('Default directory permissions'),
-      tooltip: T('Only works with Unix ACLs.\
-                  New directories created on the share are set with\
-                  the selected permissions.')
+      placeholder: helptext_sharing_afp.placeholder_dperm,
+      tooltip: helptext_sharing_afp.tooltip_dperm
     },
     {
       type: 'input',
       name: 'afp_umask',
-      placeholder: T('Default umask'),
-      tooltip: T('Unmask is used for newly created files.\
-                  Default is\ <i>000</i>\
-                 (anyone can read, write, and execute).')
+      placeholder: helptext_sharing_afp.placeholder_umask,
+      tooltip: helptext_sharing_afp.tooltip_umask
     },
     {
       type: 'textarea',
       name: 'afp_hostsallow',
-      placeholder: T('Hosts Allow'),
-      tooltip: T('Comma-, space-, or tab-delimited list of allowed\
-                  hostnames or IP addresses.')
+      placeholder: helptext_sharing_afp.placeholder_hostsallow,
+      tooltip: helptext_sharing_afp.tooltip_hostsallow
     },
     {
       type: 'textarea',
       name: 'afp_hostsdeny',
       placeholder: 'Hosts Deny',
-      tooltip: T('Comma-, space-, tab-delimited list of denied\
-                  hostnames or IP addresses.')
+      tooltip: helptext_sharing_afp.tooltip_hostsdeny
     },
     {
       type: 'textarea',
       name: 'afp_auxparams',
       placeholder: 'Auxiliary Parameters',
-      tooltip: T('Additional\
-                 <a href="http://netatalk.sourceforge.net/3.1/htmldocs/afp.conf.5.html"\
-                 target="_blank">afp.conf</a> parameters not covered\
-                 by other option fields.')
+      tooltip: helptext_sharing_afp.tooltip_auxparams
     },
   ];
 
@@ -200,12 +162,12 @@ export class AFPFormComponent implements OnDestroy {
   public custActions: Array<any> = [
     {
       id : 'basic_mode',
-      name : T('Basic Mode'),
+      name : helptext_sharing_afp.actions_basic_mode,
       function : () => { this.isBasicMode = !this.isBasicMode; }
     },
     {
       'id' : 'advanced_mode',
-      name : T('Advanced Mode'),
+      name : helptext_sharing_afp.actions_advanced_mode,
       function : () => { this.isBasicMode = !this.isBasicMode; }
     }
   ];
@@ -254,15 +216,15 @@ export class AFPFormComponent implements OnDestroy {
         this.router.navigate(new Array('/').concat(
           this.route_success));
       } else {
-          this.dialog.confirm(T("Enable service"),
-          T("Enable this service?"),
-          true, T("Enable Service")).subscribe((dialogRes) => {
+          this.dialog.confirm(helptext_sharing_afp.dialog_title,
+            helptext_sharing_afp.dialog_message,
+          true, helptext_sharing_afp.dialog_button).subscribe((dialogRes) => {
             if (dialogRes) {
               entityForm.loader.open();
               this.ws.call('service.update', [service.id, { enable: true }]).subscribe((updateRes) => {
                 this.ws.call('service.start', [service.service]).subscribe((startRes) => {
                   entityForm.loader.close();
-                  entityForm.snackBar.open(T("Service started"), T("close"));
+                  entityForm.snackBar.open(helptext_sharing_afp.snackbar_message, helptext_sharing_afp.snackbar_close);
                   this.router.navigate(new Array('/').concat(
                    this.route_success));
                 }, (err) => {
