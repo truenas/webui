@@ -1,14 +1,13 @@
 import { Component } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 
 import * as _ from 'lodash';
 
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { IscsiService, WebSocketService } from '../../../../../services/';
-import { T } from '../../../../../translate-marker';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../../common/entity/utils';
+import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 
 @Component({
   selector: 'app-iscsi-associated-target-form',
@@ -28,34 +27,30 @@ export class AssociatedTargetFormComponent {
     {
       type: 'select',
       name: 'target',
-      placeholder: T('Target'),
-      tooltip: T('Select an existing target.'),
+      placeholder: helptext_sharing_iscsi.associated_target_placeholder_target,
+      tooltip: helptext_sharing_iscsi.associated_target_tooltip_target,
       options: [],
       value: '',
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext_sharing_iscsi.associated_target_validators_target
     },
     {
       type: 'input',
       name: 'lunid',
-      placeholder: T('LUN ID'),
-      tooltip: T('Select the value or enter a value between\
-                  <i>0</i> and <i>1023</i>. Some initiators\
-                  expect a value below <i>256</i>. Using\
-                  <i>0</i> statically assigns the next\
-                  available ID.'),
+      placeholder: helptext_sharing_iscsi.associated_target_placeholder_lunid,
+      tooltip: helptext_sharing_iscsi.associated_target_tooltip_lunid,
       value: 0,
-      validation: [ Validators.min(0), Validators.max(1023), Validators.pattern(/^(0|[1-9]\d*)$/) ],
+      validation: helptext_sharing_iscsi.associated_target_validators_lunid,
     },
     {
       type: 'select',
       name: 'extent',
-      placeholder: T('Extent'),
-      tooltip: T('Select an existing extent.'),
+      placeholder: helptext_sharing_iscsi.associated_target_placeholder_extent,
+      tooltip: helptext_sharing_iscsi.associated_target_tooltip_extent,
       options: [],
       value: '',
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext_sharing_iscsi.associated_target_validators_extent
     },
   ];
 
