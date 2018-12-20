@@ -5,12 +5,9 @@ import {
   ElementRef,
   OnChanges,
   Input,
-  Output,
-  EventEmitter,
   SimpleChange,
   OnDestroy
 } from '@angular/core';
-import { Subscription } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core'
 //import { Terminal } from 'vscode-xterm';
@@ -18,7 +15,7 @@ import { TranslateService } from '@ngx-translate/core'
 //import * as attach from 'vscode-xterm/lib/addons/attach';
 
 import { WebSocketService, ShellService } from '../../../../services/';
-import { TooltipComponent } from '../../../common/entity/entity-form/components/tooltip/tooltip.component';
+import helptext from '../../../../helptext/vm/vm-cards/vm-cards';
 
 @Component({
   selector: 'app-vmserial-shell',
@@ -37,16 +34,7 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
   public xterm: any;
   private shellSubscription: any;
 
-  public shell_tooltip = '<b>Ctrl+C</b> kills a foreground process.<br>\
-                          Many utilities are built-in:<br><b>Iperf</b>,\
-                          <b>Netperf</b>, <b>IOzone</b>, <b>arcsat</b>,\
-                          <b>tw_cli</b>, <br><b>MegaCli</b>,\
-                          <b>freenas-debug</b>, <b>tmux</b>,\
-                          <b>Dmidecode</b>.<br> Refer to the <a\
-                          href="%%docurl%%/cli.html%%webversion%%"\
-                          target="_blank">Command Line Utilities</a>\
-                          chapter in the <b>User Guide</b> for usage\
-                          information and examples.';
+  public shell_tooltip = helptext.serial_shell_tooltip;
 
   clearLine = "\u001b[2K\r"
   protected pk: string;

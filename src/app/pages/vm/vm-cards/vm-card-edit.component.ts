@@ -1,12 +1,12 @@
-import { ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, ViewContainerRef, OnChanges } from '@angular/core';
-import {Router} from '@angular/router';
+import { ApplicationRef, Input, Component, Injector, OnChanges } from '@angular/core';
+import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
-import {RestService, WebSocketService} from '../../../services/';
+import { RestService, WebSocketService } from '../../../services/';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
-import { Validators } from '../../../../../node_modules/@angular/forms';
+import helptext from '../../../helptext/vm/vm-cards/vm-cards';
 
 @Component({
   selector : 'vm-card-edit',
@@ -34,17 +34,17 @@ export class VmCardEditComponent implements OnChanges {
             type: 'input',
             name: 'name',
             width:'100%',
-            placeholder: 'Name',
-            tooltip: 'Enter a name for the VM.',
+            placeholder: helptext.config_name_placeholder,
+            tooltip: helptext.config_name_tooltip,
             required: true,
-            validation:[Validators.required]
+            validation:helptext.config_name_validation
           },
           { type: 'input',
             name : 'description',
             width:'100%',
-            placeholder : 'Description (max. 25 characters)',
-            tooltip: 'Describe the VM or its purpose.',
-            validation: Validators.maxLength(25),
+            placeholder : helptext.config_description_placeholder,
+            tooltip: helptext.config_description_tooltip,
+            validation: helptext.config_description_validation,
           }
         ]
       },
@@ -56,21 +56,18 @@ export class VmCardEditComponent implements OnChanges {
             type: 'checkbox',
             name: 'autostart',
             width:'50%',
-            placeholder: 'Start on Boot',
-            tooltip: 'Set to start the VM automatically on boot.',
+            placeholder: helptext.autostart_placeholder,
+            tooltip: helptext.autostart_tooltip,
             class:'inline'},
           {
             type: 'select',
             name: 'bootloader',
             width:'50%',
-            placeholder: 'Boot Loader Type',
-            tooltip: 'Select <b>UEFI</b> for newer operating systems, or\
-                      <b>UEFI-CSM</b> (Compatibility Support Mode) for\
-                      older operating systems that only support BIOS\
-                      booting.',
+            placeholder: helptext.bootloader_placeholder,
+            tooltip: helptext.bootloader_tooltip,
             options: [] , class:'inline',
             required: true,
-            validation:[Validators.required]}
+            validation:helptext.bootloader_validation}
         ]
       },
       {
@@ -81,25 +78,20 @@ export class VmCardEditComponent implements OnChanges {
             type: 'input',
             name: 'vcpus',
             width:'40%',
-            placeholder : 'Virtual CPUs',
-            tooltip: 'Enter a number of virtual CPUs to allocate to the\
-                      VM. The maximum is 16 unless the host CPU also\
-                      limits the maximum. The VM operating system can\
-                      also have operational or licensing restrictions on\
-                      the number of CPUs.',
-
+            placeholder : helptext.vcpus_placeholder,
+            tooltip: helptext.vcpus_tooltip,
             class:'inline',
             required: true,
-            validation:[Validators.required, Validators.min(1), Validators.max(16)]},
+            validation:helptext.vcpus_validation},
           {
             type: 'input',
             name: 'memory',
             width:'60%',
-            placeholder: 'Memory Size (MiB)',
-            tooltip: 'Allocate a number of megabytes of RAM to the VM.',
+            placeholder: helptext.memory_placeholder,
+            tooltip: helptext.memory_tooltip,
             class:'inline',
             required: true,
-            validation:[Validators.required]
+            validation:helptext.memory_validation
           }
         ]
       }
