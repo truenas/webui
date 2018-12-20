@@ -14,6 +14,7 @@ import * as _ from 'lodash';
 import { MatSnackBar } from '@angular/material';
 import * as moment from 'moment';
 import {TreeNode} from 'primeng/api';
+import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 
 import { ErdService } from 'app/services/erd.service';
 import { T } from '../../../../translate-marker';
@@ -309,10 +310,9 @@ export class VolumesListTableConfig implements InputTableConf {
         onClick: (row1) => {
 
           let encryptedStatus = row1.vol_encryptkey,
-            localLoader = this.loader,
-            localRest = this.rest,
             localParentVol = this.parentVolumesListComponent,
-            localDialogService = this.dialogService
+            localDialogService = this.dialogService,
+            localDialog = this.mdDialog
 
           const conf: DialogFormConfiguration = { 
             title: "Export/disconnect pool: '" + row1.name + "'",
@@ -362,31 +362,26 @@ export class VolumesListTableConfig implements InputTableConf {
               }],
             customSubmit: function (entityDialog) {
               const value = entityDialog.formValue;
-              localLoader.open();
-              if (value.destroy === false) { 
-                return localRest.delete("storage/volume/" + row1.name, { body: JSON.stringify({ destroy: value.destroy, cascade: value.cascade }) 
-                  }).subscribe((res) => {
-                    entityDialog.dialogRef.close(true);
-                    localLoader.close();
-                    localDialogService.Info(T("Export/Disconnect Pool"), T("Successfully exported/disconnected '") + row1.name + "'");
-                    localParentVol.repaintMe();
-                }, (res) => {
-                  localLoader.close();
-                  localDialogService.errorReport(T("Error exporting/disconnecting pool."), res.message, res.stack);
-                });
-              } else {
-                return localRest.delete("storage/volume/" + row1.name, { body: JSON.stringify({}) 
-                  }).subscribe((res) => {
-                    entityDialog.dialogRef.close(true);
-                    localLoader.close();
-                    localDialogService.Info(T("Export/Disconnect Pool"), T("Successfully exported/disconnected '") + row1.name +
-                      T("'. All data on that pool was destroyed."));
-                    localParentVol.repaintMe();
-                }, (res) => {
-                  localLoader.close();
-                  localDialogService.errorReport(T("Error exporting/disconnecting pool."), res.message, res.stack);
-                });
-              }
+
+              let dialogRef = localDialog.open(EntityJobComponent, {data: {"title":"Exporting Pool"}, disableClose: true});
+              dialogRef.componentInstance.setDescription(T("Exporting Pool..."));
+              dialogRef.componentInstance.setCall("pool.export", [row1.id, { destroy: value.destroy, cascade: value.cascade }]);
+              dialogRef.componentInstance.submit();
+              dialogRef.componentInstance.success.subscribe(res=>{
+                entityDialog.dialogRef.close(true);
+                if (!value.destroy) {
+                  localDialogService.Info(T("Export/Disconnect Pool"), T("Successfully exported/disconnected '") + row1.name + "'");
+                } else {
+                  localDialogService.Info(T("Export/Disconnect Pool"), T("Successfully exported/disconnected '") + row1.name +
+                  T("'. All data on that pool was destroyed."));
+                }
+                dialogRef.close(true);
+                localParentVol.repaintMe();
+              }),
+              dialogRef.componentInstance.failure.subscribe((res) => {
+                dialogRef.close(false);
+                localDialogService.errorReport(T("Error exporting/disconnecting pool."), res.error, res.exception);
+              });
             }
             
           }
