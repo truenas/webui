@@ -168,9 +168,9 @@ export class SMBFormComponent implements OnDestroy {
         this.router.navigate(new Array('/').concat(
           this.route_success));
       } else {
-          this.dialog.confirm(helptext_sharing_smb.dialog_enable_service,
-            helptext_sharing_smb.dialog_enable_this_service,
-          true, helptext_sharing_smb.dialog_enable_service).subscribe((dialogRes) => {
+          this.dialog.confirm(helptext_sharing_smb.dialog_enable_service_title,
+            helptext_sharing_smb.dialog_enable_service_message,
+          true, helptext_sharing_smb.dialog_enable_service_button).subscribe((dialogRes) => {
             if (dialogRes) {
               entityForm.loader.open();
               this.ws.call('service.update', [service['id'], { enable: true }]).subscribe((updateRes) => {
