@@ -1,7 +1,6 @@
-import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
-import {ActivatedRoute, Router, RouterModule} from '@angular/router';
+import {ApplicationRef, Component, Injector} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs/Subscription';
 import {RestService, SystemGeneralService, WebSocketService} from '../../../services/';
 import {FieldConfig} from '../../common/entity/entity-form/models/field-config.interface';
 import {  DialogService } from '../../../services/';
@@ -85,7 +84,19 @@ export class ActiveDirectoryComponent {
       required: true,
       validation : [ Validators.required ],
       disabled: false,
-      isHidden:true
+      isHidden:false
+    },
+    {
+      type : 'input',
+      name : 'ad_bindpw_noreq',
+      placeholder : T('Domain Account Password'),
+      tooltip : T('Enter the administrator account password.'),
+      inputType : 'password',
+      togglePw: true,
+      required: false,
+      disabled: true,
+      isHidden: true
+      
     },
     {
       type : 'input',
@@ -132,7 +143,9 @@ export class ActiveDirectoryComponent {
                  Import the certificate on this system with the\
                  <a href="%%docurl%%/system.html%%webversion%%#certificates" target="_blank">Certificates</a>\
                  menu.'),
-      options : []
+      options : [
+        {label : '---', value : ""},
+      ]
     },
     {
       type : 'checkbox',
@@ -454,6 +467,18 @@ export class ActiveDirectoryComponent {
       }
     });
 
+      entityEdit.formGroup.controls['ad_enable'].valueChanges.subscribe((res)=>{
+      entityEdit.setDisabled('ad_bindpw', !res, !res);
+      entityEdit.setDisabled('ad_bindpw_noreq', res, res);
+      
+      if(!res){
+        entityEdit.formGroup.controls['ad_bindpw_noreq'].setValue(entityEdit.formGroup.controls['ad_bindpw'].value);
+      }
+      else{
+        entityEdit.formGroup.controls['ad_bindpw'].setValue(entityEdit.formGroup.controls['ad_bindpw_noreq'].value);
+      }
+    })
+
     entityEdit.formGroup.controls['ad_kerberos_principal'].valueChanges.subscribe((res)=>{
       if(res){
         entityEdit.setDisabled('ad_bindname', true);
@@ -476,5 +501,11 @@ export class ActiveDirectoryComponent {
       data.ad_bindname = ""
       data.ad_bindpw = ""
     }
+    if(data["ad_enable"]){
+      data["ad_bindpw_noreq"] = data["ad_bindpw"];
+    } else {
+      data["ad_bindpw"] = data["ad_bindpw_noreq"];
+    }
+    delete(data['ad_bindpw_noreq']);
   }
 }
