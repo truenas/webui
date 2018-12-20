@@ -56,7 +56,7 @@ export class DatasetFormComponent implements Formconfiguration{
   public isNew = false;
   public parent_dataset: any;
   protected entityForm: any;
-  public recommended_size: any;
+  public minimum_recommended_dataset_recordsize = '128K';
 
 
   public parent: string;
@@ -346,9 +346,9 @@ export class DatasetFormComponent implements Formconfiguration{
       tooltip: T('Matching the fixed size of data, as in a database, may\
                   result in better performance.'),
       options: [
-        { label: '512', value: '512', disable:true },
-        { label: '1K', value: '1K', disable:true },
-        { label: '2K', value: '2K', disable:true },
+        { label: '512', value: '512', disable:true, hiddenFromDisplay: true},
+        { label: '1K', value: '1K', disable:true, hiddenFromDisplay: true},
+        { label: '2K', value: '2K', disable:true, hiddenFromDisplay: true},
         { label: '4K', value: '4K' },
         { label: '8K', value: '8K' },
         { label: '16K', value: '16K' },
@@ -485,19 +485,19 @@ export class DatasetFormComponent implements Formconfiguration{
       entityForm.setDisabled('name',true);
       _.find(this.fieldConfig, {name:'name'}).tooltip = "Dataset name (read-only)."
     }
-    this.entityForm.formGroup.controls['recordsize'].valueChanges.subscribe((res)=>{
-      const res_number = parseInt(this.reverseRecordSizeMap[res],10);
-      if(this.recommended_size){
-        const recommended_size_number = parseInt(this.reverseRecordSizeMap[this.recommended_size],0);
-        if (res_number < recommended_size_number){
-          _.find(this.fieldConfig, {name:'recordsize'}).warnings = `
-          Recommended record size based on pool topology: ${this.recommended_size}.
-          Other sizes could reduce sequential I/O performance and space efficiency.`
-        } else {
-          _.find(this.fieldConfig, {name:'recordsize'}).warnings = null;
-        };
-      };
-    });
+    // this.entityForm.formGroup.controls['recordsize'].valueChanges.subscribe((res)=>{
+    //   const res_number = parseInt(this.reverseRecordSizeMap[res],10);
+    //   if(this.minimum_recommended_dataset_recordsize){
+    //     const recommended_size_number = parseInt(this.reverseRecordSizeMap[this.minimum_recommended_dataset_recordsize],0);
+    //     if (res_number < recommended_size_number){
+    //       _.find(this.fieldConfig, {name:'recordsize'}).warnings = `
+    //       Recommended record size based on pool topology: ${this.minimum_recommended_dataset_recordsize}.
+    //       A smaller record size can reduce sequential I/O performance and space efficiency.`
+    //     } else {
+    //       _.find(this.fieldConfig, {name:'recordsize'}).warnings = null;
+    //     };
+    //   };
+    // });
   }
 
   preInit(entityForm: EntityFormComponent) {
@@ -522,8 +522,7 @@ export class DatasetFormComponent implements Formconfiguration{
     if(this.parent){
       const root = this.parent.match(/^[a-zA-Z]+/)[0];
       this.ws.call('pool.dataset.recommended_zvol_blocksize',[root]).subscribe(res=>{
-        this.entityForm.formGroup.controls['recordsize'].setValue(res);
-        this.recommended_size = res;
+        this.minimum_recommended_dataset_recordsize = res;
       });
       this.ws.call('pool.dataset.query', [[["id", "=", this.pk]]]).subscribe((pk_dataset)=>{
       if(this.isNew){
@@ -561,18 +560,27 @@ export class DatasetFormComponent implements Formconfiguration{
         entityForm.formGroup.controls['recordsize'].setValue('INHERIT');
         }
         else {
-          this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).subscribe((parent_dataset)=>{
+          this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).subscribe((parent_dataset)=>{      
             this.parent_dataset = parent_dataset[0];
-            if (parent_dataset[0].quota.rawvalue === '0') {
+            const current_dataset = _.find(this.parent_dataset.children, {'name':this.pk});
+            const lower_recordsize_map = {
+              '512':'512',
+              '1K':'1K',
+              '2K':'2K',
+            }; 
+            if (current_dataset.recordsize.value in lower_recordsize_map) {
+              _.find(_.find(this.fieldConfig, {name:'recordsize'}).options, {'label': current_dataset.recordsize.value})['hiddenFromDisplay'] = false
+            };
+            if (current_dataset.quota.rawvalue === '0') {
               entityForm.formGroup.controls['quota_unit'].setValue('M');
             }
-            if (parent_dataset[0].refquota.rawvalue === '0') {
+            if (current_dataset.refquota.rawvalue === '0') {
               entityForm.formGroup.controls['refquota_unit'].setValue('M');
             }
-            if (parent_dataset[0].reservation.rawvalue === '0') {
+            if (current_dataset.reservation.rawvalue === '0') {
               entityForm.formGroup.controls['reservation_unit'].setValue('M');
             }
-            if (parent_dataset[0].refreservation.rawvalue === '0') {
+            if (current_dataset.refreservation.rawvalue === '0') {
               entityForm.formGroup.controls['refreservation_unit'].setValue('M');
             }
             const edit_sync = _.find(this.fieldConfig, {name:'sync'});
