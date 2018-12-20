@@ -13,7 +13,7 @@ export class TooltipComponent {
 
   public isShowTooltip: Boolean;
   public tooltipMsgStyle: any;
-  public tooltipSize: any;
+  public isLockTooltip: Boolean = false;
 
   constructor(public translate: TranslateService) {}
 
@@ -55,6 +55,13 @@ export class TooltipComponent {
         let diffX = 'calc( -45vw - ' + (posX - screenW/2) + 'px )';
         this.tooltipMsgStyle = {'left' : diffX};
       }    
+    }
+  }
+
+  toggleVis() {
+    this.isLockTooltip = !this.isLockTooltip;
+    if (this.isLockTooltip === false) {
+      this.isShowTooltip = false;
     }
   }
 }
