@@ -27,7 +27,7 @@ import { ViewControllerComponent } from 'app/core/components/viewcontroller/view
 
 export interface InputTableConf {
 
-  columns?:any[];
+  columns:any[];
   hideTopActions?: boolean;
   queryCall?: string;
   queryCallOption?: any;
