@@ -13,6 +13,7 @@ import { RestService, WebSocketService } from '../../../../services/';
 import { T } from '../../../../translate-marker';
 import { DialogService } from 'app/services/dialog.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import helptext from '../../../../helptext/storage/VMware-snapshot/VMware-snapshot';
 
 @Component({
   selector: 'app-vmware-snapshot-form',
@@ -35,29 +36,26 @@ export class VMwareSnapshotFormComponent {
     {
       type: 'input',
       name: 'hostname',
-      placeholder: T('Hostname'),
-      tooltip: T('Enter the IP address or hostname of the VMware host.\
-                  When clustering, this is the vCenter server for the\
-                  cluster.'),
-      validation: [Validators.required],
+      placeholder: helptext.VMware_snapshot_form_hostname_placeholder,
+      tooltip: helptext.VMware_snapshot_form_hostname_tooltip,
+      validation: helptext.VMware_snapshot_form_hostname_validation,
       required: true
     },
     {
       type: 'input',
       name: 'username',
-      placeholder: T('Username'),
-      tooltip: T('Enter the user on the VMware host with permission to\
-                  snapshot virtual machines.'),
-      validation: [Validators.required],
+      placeholder: helptext.VMware_snapshot_form_username_placeholder,
+      tooltip: helptext.VMware_snapshot_form_username_tooltip,
+      validation: helptext.VMware_snapshot_form_username_validation,
       required: true
     },
     {
       type: 'input',
       name: 'password',
-      placeholder: T('Password'),
-      tooltip: T('Enter the password associated with <b>Username</b>.'),
+      placeholder: helptext.VMware_snapshot_form_password_placeholder,
+      tooltip: helptext.VMware_snapshot_form_password_tooltip,
       inputType: 'password',
-      validation: [Validators.required],
+      validation: helptext.VMware_snapshot_form_password_validation,
       required: true,
       blurStatus: true,
       parent: this,
@@ -67,20 +65,18 @@ export class VMwareSnapshotFormComponent {
     {
       type: 'select',
       name: 'filesystem',
-      placeholder: T('ZFS Filesystem'),
-      tooltip: T('Enter the filesystem to snapshot.'),
-      validation: [Validators.required],
+      placeholder: helptext.VMware_snapshot_form_filesystem_placeholder,
+      tooltip: helptext.VMware_snapshot_form_filesystem_tooltip,
+      validation: helptext.VMware_snapshot_form_filesystem_validation,
       required: true,
       options: []
     },
     {
       type: 'select',
       name: 'datastore',
-      placeholder: T('Datastore'),
-      tooltip: T('After entering the <b>Hostname, Username</b>, and\
-                  <b>Password</b>, click <b>Fetch Datastores</b> and\
-                  select the datastore to be synchronized.'),
-      validation: [Validators.required],
+      placeholder: helptext.VMware_snapshot_form_datastore_placeholder,
+      tooltip: helptext.VMware_snapshot_form_datastore_tooltip,
+      validation: helptext.VMware_snapshot_form_datastore_validation,
       required: true,
       options: []
     },

@@ -4,8 +4,8 @@ import * as _ from 'lodash';
 
 import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { T } from '../../../../translate-marker';
-import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
+import helptext from '../../../../helptext/storage/disks/disk-form';
+
 
 @Component({
   selector : 'app-disk-form',
@@ -21,72 +21,61 @@ export class DiskFormComponent {
     {
       type: 'input',
       name: 'disk_name',
-      placeholder: T('Name'),
-      tooltip : T('This is the FreeBSD device name for the disk.'),
+      placeholder: helptext.disk_form_name_placeholder,
+      tooltip : helptext.disk_form_name_tooltip,
       readonly: true
     },
     {
       type: 'input',
       name: 'disk_serial',
-      placeholder: T('Serial'),
-      tooltip : T('This is the serial number of the disk.'),
+      placeholder: helptext.disk_form_serial_placeholder,
+      tooltip : helptext.disk_form_serial_tooltip,
       readonly: true
     },
     {
       type: 'input',
       name: 'disk_description',
-      placeholder: T('Description'),
-      tooltip : T('Enter any notes about this disk.'),
+      placeholder: helptext.disk_form_description_placeholder,
+      tooltip : helptext.disk_form_description_tooltip,
     },
     {
       type: 'select',
       name: 'disk_hddstandby',
-      placeholder: T('HDD Standby'),
-      tooltip : T('Indicates the time of inactivity in minutes before\
-                   the drive enters standby mode. This <a\
-                   href="https://forums.freenas.org/index.php?threads/how-to-find-out-if-a-drive-is-spinning-down-properly.2068/"\
-                   target="_blank">forum post</a> demonstrates how to\
-                   determine if a drive has spun down.'),
+      placeholder: helptext.disk_form_hddstandby_placeholder,
+      tooltip : helptext.disk_form_hddstandby_tooltip,
       options: [],
     },
     {
       type: 'select',
       name: 'disk_advpowermgmt',
-      placeholder: T('Advanced Power Management'),
-      tooltip : T('Select a power management profile from the menu.'),
+      placeholder: helptext.disk_form_advpowermgmt_placeholder,
+      tooltip : helptext.disk_form_advpowermgmt_tooltip,
       options: [],
     },
     {
       type: 'select',
       name: 'disk_acousticlevel',
-      placeholder: T('Acoustic Level'),
-      tooltip : T('Modify for disks that understand <a\
-                   href="https://en.wikipedia.org/wiki/Automatic_acoustic_management"\
-                   target="_blank">AAM</a>.'),
+      placeholder: helptext.disk_form_acousticlevel_placeholder,
+      tooltip : helptext.disk_form_acousticlevel_tooltip,
       options: [],
     },
     {
       type : 'checkbox',
       name : 'disk_togglesmart',
-      placeholder : T('Enable S.M.A.R.T.'),
-      tooltip : T('Set by default if the disk supports S.M.A.R.T.\
-                   Unset to disable any configured <a\
-                   href="%%docurl%%/tasks.html%%webversion%%#s-m-a-r-t-tests"\
-                   target="_blank">S.M.A.R.T. tests</a>.'),
+      placeholder : helptext.disk_form_togglesmart_placeholder,
+      tooltip : helptext.disk_form_togglesmart_tooltip
     },
     {
       type: 'input',
       name: 'disk_smartoptions',
-      placeholder: T('S.M.A.R.T. extra options'),
-      tooltip : T('Additional <a\
-                   href="https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8.in"\
-                   target="_blank">smartctl(8)</a> options.'),
+      placeholder: helptext.disk_form_smartoptions_placeholder,
+      tooltip : helptext.disk_form_smartoptions_tooltip
     },
     {
       type: 'input',
       name: 'disk_passwd',
-      placeholder: T('SED Password'),
-      tooltip: T('Password for SED'),
+      placeholder: helptext.disk_form_passwd_placeholder,
+      tooltip: helptext.disk_form_passwd_tooltip,
       inputType: 'password',
       value: '',
       togglePw: true
@@ -94,18 +83,17 @@ export class DiskFormComponent {
     {
       type: 'input',
       name: 'disk_passwd2',
-      placeholder: T('Confirm SED Password'),
-      tooltip: T(''),
+      placeholder: helptext.disk_form_passwd2_placeholder,
+      tooltip: helptext.disk_form_passwd2_tooltip,
       inputType: 'password',
       value: '',
-      validation : [ matchOtherValidator('disk_passwd') ]
+      validation : helptext.disk_form_passwd2_validation
     },
   ];
 
   protected disk_hddstandby: any;
   protected disk_advpowermgmt: any;
   protected disk_acousticlevel: any;
-
   constructor(
     private _router: Router,
     protected rest: RestService,

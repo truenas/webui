@@ -2,22 +2,18 @@ import {
   ApplicationRef,
   Component,
   Injector,
-  Input,
-  QueryList,
   ViewChildren
 } from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Subscription} from 'rxjs';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
 
 import {RestService, WebSocketService} from '../../../../services/';
-import {EntityUtils} from '../../../common/entity/utils';
 
 import * as _ from 'lodash';
-import { T } from '../../../../translate-marker';
+import helptext from '../../../../helptext/storage/snapshots/snapshots';
+
 
 @Component({
   selector : 'snapshot-clone',
@@ -53,11 +49,11 @@ export class SnapshotCloneComponent {
           {
             type: 'input',
             name: 'name',
-            placeholder: 'Name',
-            tooltip: T('Enter a name for the cloned snapshot.'),
+            placeholder: helptext.snapshot_clone_name_placeholder,
+            tooltip: helptext.snapshot_clone_name_tooltip,
             value: this.setName(this.pk),
             required: true,
-            validation : [ Validators.required ]
+            validation : helptext.snapshot_clone_name_validation
           }
         ];
     });
