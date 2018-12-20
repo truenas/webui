@@ -26,7 +26,7 @@ import { StorageService } from '../../../../services/storage.service'
 
 export interface InputTableConf {
 
-  columns?:any[];
+  columns:any[];
   hideTopActions?: boolean;
   queryCall?: string;
   queryCallOption?: any;
