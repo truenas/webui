@@ -44,4 +44,6 @@
     position: absolute;
     right: -9px;
     cursor: pointer;
+    color: black;
+    background: white;
 }
