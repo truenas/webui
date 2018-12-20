@@ -2,22 +2,16 @@ import {
   ApplicationRef,
   Component,
   Injector,
-  Input,
-  QueryList,
-  ViewChildren,
   AfterViewInit
 } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import * as moment from 'moment';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
 import { RestService, WebSocketService } from '../../../../services/';
 import { EntityUtils } from '../../../common/entity/utils';
 import { Formconfiguration } from '../../../common/entity/entity-form/entity-form.component';
-import { T } from '../../../../translate-marker';
+import helptext from '../../../../helptext/storage/snapshots/snapshots';
 
 @Component({
   selector: 'app-snapshot-add',
@@ -25,7 +19,6 @@ import { T } from '../../../../translate-marker';
 })
 
 export class SnapshotAddComponent implements AfterViewInit, Formconfiguration {
-
 
   public resource_name: string = 'storage/snapshot';
   public route_success: string[] = ['storage', 'snapshots'];
@@ -42,26 +35,26 @@ export class SnapshotAddComponent implements AfterViewInit, Formconfiguration {
       {
         type: 'select',
         name: 'dataset',
-        placeholder: T('Pool/Dataset'),
-        tooltip: T('Select an existing ZFS pool, dataset, or zvol.'),
+        placeholder: helptext.snapshot_add_dataset_placeholder,
+        tooltip: helptext.snapshot_add_dataset_tooltip,
         options: [],
-        validation: [Validators.required],
+        validation: helptext.snapshot_add_dataset_validation,
         required: true
       },
       {
         type: 'input',
         name: 'name',
-        placeholder: 'Name',
-        tooltip: T('Add a name for the new snapshot'),
+        placeholder: helptext.snapshot_add_name_placeholder,
+        tooltip: helptext.snapshot_add_name_tooltip,
         options: [],
-        validation: [Validators.required],
+        validation: helptext.snapshot_add_name_validation,
         required: true
       },
       {
         type: 'checkbox',
         name: 'recursive',
-        placeholder: 'Recursive',
-        tooltip: T('Set to include child datasets of the chosen dataset.'),
+        placeholder: helptext.snapshot_add_recursive_placeholder,
+        tooltip: helptext.snapshot_add_recursive_tooltip,
       }
     ];
 
