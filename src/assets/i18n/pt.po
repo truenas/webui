@@ -1801,25 +1801,25 @@ msgid "Discovery Auth Method"
 msgstr ""
 
 msgid "Disk"
-msgstr ""
+msgstr "Disco"
 
 msgid "Disk successfully imported"
-msgstr ""
+msgstr "Disco importado com sucesso"
 
 msgid "Disk successfully wiped"
-msgstr ""
+msgstr "Disco apagado com sucesso"
 
 msgid "Disk to wipe."
-msgstr ""
+msgstr "Disco a apagar."
 
 msgid "Disks"
-msgstr ""
+msgstr "Discos"
 
 msgid "Display Login"
 msgstr ""
 
 msgid "Display System Processes"
-msgstr ""
+msgstr "Mostrar Processos do Sistema"
 
 msgid ""
 "Display console messages in real time at the bottom of the browser. Click the "
@@ -1835,7 +1835,7 @@ msgid ""
 msgstr ""
 
 msgid "Domain"
-msgstr ""
+msgstr "Domínio"
 
 msgid "Domain Logons"
 msgstr ""
@@ -1844,99 +1844,104 @@ msgid "Domain name"
 msgstr ""
 
 msgid "Download Encrypt Key"
-msgstr ""
+msgstr "Download da Chave de Encriptação"
 
 msgid "Driver"
-msgstr ""
+msgstr "Driver"
 
 msgid "Edit"
-msgstr ""
+msgstr "Editar"
 
 msgid "Edit Interface"
-msgstr ""
+msgstr "Editar Interface"
 
 msgid "Edit Options"
-msgstr ""
+msgstr "Editar Opções"
 
 msgid "Edit Permissions"
-msgstr ""
+msgstr "Editar Permissões"
 
 msgid "Edit Zvol"
-msgstr ""
+msgstr "Editar zvol"
 
 msgid "Email"
-msgstr ""
+msgstr "Email"
 
 msgid "Email Subject"
-msgstr ""
+msgstr "Assunto do Email"
 
 msgid "Email address of administrator."
-msgstr ""
+msgstr "Endereço de email do administrador."
 
 msgid "Email address of person or alias to receive S.M.A.R.T. alerts."
-msgstr ""
+msgstr "Endereço de email para receber alertas S.M.A.R.T."
 
 msgid "Enable"
 msgstr ""
 
 msgid "Enable Browser"
-msgstr ""
+msgstr "Activar Browser"
 
 msgid "Enable Console Menu"
-msgstr ""
+msgstr "Activar Menu da Consola"
 
 msgid "Enable Console Screensaver"
-msgstr ""
+msgstr "Activar Screensaver da Consola"
 
 msgid "Enable Debug Kernel"
-msgstr ""
+msgstr "Activar Kernel de Debug"
 
 msgid "Enable FXP"
-msgstr ""
+msgstr "Activar FXP"
 
 msgid "Enable NFSv4:"
-msgstr ""
+msgstr "Activar NFSv4:"
 
 msgid "Enable Power Saving Daemon"
-msgstr ""
+msgstr "Activar Daemon de Poupança de Energia"
 
 msgid "Enable S.M.A.R.T."
-msgstr ""
+msgstr "Activar S.M.A.R.T."
 
 msgid "Enable Serial Console"
-msgstr ""
+msgstr "Activar Consola de Série"
 
 msgid "Enable TLS"
-msgstr ""
+msgstr "Activar TLS"
 
 msgid "Enable TPC"
-msgstr ""
+msgstr "Activar TPC"
 
 msgid ""
 "Enable Unix privileges supported by OSX 10.5 and higher. Do not enable this if "
 "the network contains Mac OSX 10.4 clients or lower as they do not support this "
 "feature."
 msgstr ""
+"Activar privilégios Unix suportados pelo OS X 10.5 e mais recentes. Não activar "
+"esta opção se a rede contiver clientes OS X 10.4 ou mais antigos, uma vez que não "
+"suportam esta função."
 
 msgid "Enable VNC"
-msgstr ""
+msgstr "Activar VNC"
 
 msgid "Enable atime"
-msgstr ""
+msgstr "Activar atime"
 
 msgid "Enable automatic upload of kernel crash dumps and daily telemetry"
-msgstr ""
+msgstr "Activar upload automático de crash dumps do kernel e telemetria diária"
 
 msgid "Enable autotune"
-msgstr ""
+msgstr "Activar autotune"
 
 msgid "Enable if Mac clients will be connecting to the SMB share."
-msgstr ""
+msgstr "Activar se clientes Mac se ligarem ao share SMB."
 
 msgid ""
 "Enable logging of <a href=\"https://www.freebsd.org/cgi/man.cgi?query=mountd\" "
 "target=\"_blank\">mountd(8)</a>       requests by syslog."
 msgstr ""
+"Activar registo pelo syslog de pedidos <a href=\"https://www.freebsd.org/cgi/man."
+"cgi?query=mountd\" target=\"_blank\">mountd(8)</a>."
 
 msgid ""
 "Enable logging of <a href=\"https://www.freebsd.org/cgi/man.cgi?query=rpc.statd\" "
@@ -1944,21 +1949,25 @@ msgid ""
 "cgi/man.cgi?query=rpc.lockd\" target=\"_blank\">rpc.lockd(8)</a>       requests "
 "by syslog."
 msgstr ""
+"Activar registo pelo syslog de pedidos <a href=\"https://www.freebsd.org/cgi/man."
+"cgi?query=rpc.statd\" target=\"_blank\">rpc.statd(8)</a> e <a href=\"https://www."
+"freebsd.org/cgi/man.cgi?query=rpc.lockd\" target=\"_blank\">rpc.lockd(8)</a>."
 
 msgid "Enable netwait feature"
-msgstr ""
+msgstr "Activar função netwait"
 
 msgid "Enable or disable the console screensaver."
-msgstr ""
+msgstr "Activar ou desactivar o screensaver da consola."
 
 msgid "Enable or disable this replication task without         deleting it."
-msgstr ""
+msgstr "Activar ou desactivar esta tarefa de replicação sem a eliminar."
 
 msgid "Enable the web user interface for the S3 service."
 msgstr ""
 
 msgid "Enable this if network devices need to send files to       the system."
 msgstr ""
+"Activar caso dispositivos na rede necessitem de enviar ficheiros para o sistema."
 
 msgid "Enable when the device number is not constant across a reboot."
 msgstr ""
@@ -1970,16 +1979,19 @@ msgid ""
 msgstr ""
 
 msgid "Enable/disable secure connections"
-msgstr ""
+msgstr "Activar/desactivar liações seguras"
 
 msgid "Enabled"
-msgstr ""
+msgstr "Activado"
 
 msgid ""
 "Enabled by default if the disk supports S.M.A.R.T. Unchecking this box will "
 "diable any configured <a href=\"http://doc.freenas.org/11/tasks.html#s-m-a-r-t-"
 "tests\" target=\"_blank\">S.M.A.R.T. Tests</a> for the disk."
 msgstr ""
+"Activado por defeito se o disco suportar S.M.A.R.T. Desmarcar esta opção "
+"desactivará quaisquer <a href=\"http://doc.freenas.org/11/tasks.html#s-m-a-r-t-"
+"tests\" target=\"_blank\">Testes S.M.A.R.T.</a> para este disco."
 
 msgid ""
 "Enables File eXchange Protocol which is discouraged as       it makes the server "
@@ -3055,7 +3067,7 @@ msgid "Limited to 15 characters."
 msgstr "Limitado a 15 caracteres."
 
 msgid "Link Aggregations"
-msgstr ""
+msgstr "Link Aggregations"
 
 msgid ""
 "List any commands to run in the system environment after a jail is started and "
@@ -3159,28 +3171,35 @@ msgstr ""
 msgid ""
 "Mandatory. Can only contain letters, numbers, dashes, or the underscore character."
 msgstr ""
+"Obrigatório. Apenas pode conter caracteres alfanuméricos, underscore (_) ou traço "
+"(-)."
 
 msgid ""
 "Mandatory. Enter a descriptive name for the CA using       only alphanumeric, "
 "underscore (_), and dash(-) characters."
 msgstr ""
+"Obrigatório. Insira um nome descritivo para a CA. Apenas pode conter caracteres "
+"alfanuméricos, underscore (_) ou traço (-)."
 
 msgid "Mandatory. Enter the serial number for the       certificate."
-msgstr ""
+msgstr "Obrigatório. Insira o número de série do certificado."
 
 msgid "Mandatory. Name of share."
-msgstr ""
+msgstr "Obrigatório. Nome do share."
 
 msgid "Mandatory. Paste in the certificate for the CA."
-msgstr ""
+msgstr "Obrigatório. Cole aqui o certificado da CA."
 
 msgid "Mandatory; enter a unique name for the dataset."
-msgstr ""
+msgstr "Obrigatório. Insira um nome único para este dataset."
 
 msgid ""
 "Many GUI menus provide an <b>Advanced Mode</b> button to access additional "
 "features. Enabling this shows these features by default."
 msgstr ""
+"Vários menos da GUI possuem um botão de <b>Modo Avançado</b> para aceder a "
+"funções adicionais. Activando esta opção, essas funções serão mostradas por "
+"defeito."
 
 msgid "Map ACLs"
 msgstr ""
@@ -3213,7 +3232,7 @@ msgid "Maximum Passive Port"
 msgstr ""
 
 msgid "Maximum client idle time in seconds before client is       disconnected."
-msgstr ""
+msgstr "Tempo máximo de inactividade, em segundos, antes do cliente ser desligado."
 
 msgid ""
 "Maximum length is 16 characters, although using 8 or less is recommended for "
@@ -3221,29 +3240,38 @@ msgid ""
 "or these characters: <b>, : + & # %^ ( ) ! @ ~ * ? < > =</b> . A <b>$</b> can "
 "only be used as the last character."
 msgstr ""
+"O comprimento máximo é 16 caracteres, no entanto recomenda-se 8 ou menos para "
+"interoperabilidade. Os usernames não podem começar com hífen, conter um espaço ou "
+"tab, ou os seguintes caracteres: <b>, : + & # %^ ( ) ! @ ~ * ? < > =</b>. O "
+"caractere <b>$</b> apenas pode ser utilizado como último caractere."
 
 msgid ""
 "Maximum number of attempts before client is       disconnected. Increase this if "
 "users are prone to typos."
 msgstr ""
+"Número máximo de tentativas antes do cliente ser desligado. Aumente este valor se "
+"os utilizadores forem propícios a gralhas."
 
 msgid ""
 "Maximum number of connections per IP address where       <i>0</i> means unlimited."
 msgstr ""
+"Número máximo de ligações por endereço IP, onde <i>0</i> significa ilimitado."
 
 msgid "Maximum number of simultaneous clients."
-msgstr ""
+msgstr "Número máximo de clientes simultâneos."
 
 msgid ""
 "Maximum number of simultaneous connections permitted       via AFP. The default "
 "limit is 50."
 msgstr ""
+"Número máximo de ligações simultâneas permitidas via AFP. O limite por defeito é "
+"50."
 
 msgid "May reduce latency over slow networks."
-msgstr ""
+msgstr "Pode reduzir a latência sobre redes lentas."
 
 msgid "Media Status"
-msgstr ""
+msgstr "Estado do Meio"
 
 msgid "Member Disk"
 msgstr "Disco Membro"
@@ -3320,7 +3348,7 @@ msgid ""
 msgstr ""
 
 msgid "NFSv3 is the default, check this box to switch to NFSv4."
-msgstr ""
+msgstr "NFSv3 é o valor por defeito, seleccione esta opção para utilizar NFSv4."
 
 msgid "NFSv3 ownership model for NFSv4:"
 msgstr ""
@@ -3329,7 +3357,7 @@ msgid "NIC"
 msgstr "NIC"
 
 msgid "NIS"
-msgstr ""
+msgstr "NIS"
 
 msgid "NTLMv1 Auth"
 msgstr "Autenticação NTLMv1"
@@ -3346,12 +3374,15 @@ msgid ""
 msgstr ""
 
 msgid "Name of the VM"
-msgstr ""
+msgstr "Nome da VM"
 
 msgid ""
 "Name of user account to create for CHAP authentication with the user on the "
 "remote system. Many initiators default to using the initiator name as the user."
 msgstr ""
+"Nome da conta de utilizador a criar para autenticação CHAP com o utilizador no "
+"sistema remoto. Muitos initiators utilizam o nome do initiator come nome do "
+"utilizador."
 
 msgid "Nameserver 1"
 msgstr "Nameserver 1"
@@ -3402,7 +3433,7 @@ msgid "No Stat"
 msgstr ""
 
 msgid "No update has been found"
-msgstr ""
+msgstr "Não foi encontrada nenhuma actualização"
 
 msgid "No updates available"
 msgstr "Não existem updates disponíveis"
@@ -3411,6 +3442,8 @@ msgid ""
 "Not recommended. Enter an interval in seconds for the       system to force IP "
 "updates."
 msgstr ""
+"Não recomendado. Inserir um intervalo em segundos para o sistema forçar "
+"actualizações de IP."
 
 msgid "Note"
 msgstr "Nota"
@@ -3419,10 +3452,10 @@ msgid "Number of CPU"
 msgstr "Número de CPUs"
 
 msgid "Number of servers:"
-msgstr ""
+msgstr "Número de Servidores:"
 
 msgid "Obey Pam Restrictions"
-msgstr ""
+msgstr "Obedecer às Restrições PAM"
 
 msgid "Ok"
 msgstr "Ok"
@@ -3472,6 +3505,8 @@ msgid ""
 "Only applies to Unix or Mac permission types. Note that the mode cannot be "
 "changed when Windows is selected."
 msgstr ""
+"Apenas se aplica a permissões do tipo Unix ou Mac. Note-se que o modo não pode "
+"ser alterado quando a opção Windows está escolhida."
 
 msgid ""
 "Only available in <b>Advanced Mode</b>; a specified value applies to both this "
@@ -3809,17 +3844,19 @@ msgid "Preferences"
 msgstr "Preferências"
 
 msgid "Preserve extended attributes"
-msgstr ""
+msgstr "Preservar extended attributes"
 
 msgid "Preserve modification times of files."
-msgstr ""
+msgstr "Preservar hora de modificação dos ficheiros."
 
 msgid "Preserve permissions"
-msgstr ""
+msgstr "Preservar permissões"
 
 msgid ""
 "Preserves original file permissions; useful if user is         set to <i>root</i>."
 msgstr ""
+"Preserva as permissões originais dos ficheiros; útil caso o utilizador seja "
+"<i>root</i>."
 
 msgid "Preview JSON Service Account Key"
 msgstr ""
@@ -3888,6 +3925,8 @@ msgid ""
 "Quota for each Time Machine backup on this share (in GiB).        Please note "
 "that this change will be applied only after share re-mount."
 msgstr ""
+"Quota para cada backup Time Machine neste share (em GiB). Note-se que esta "
+"alteração apenas será aplicada após re-mount do share."
 
 msgid "Quota for this dataset"
 msgstr "Quota para este dataset"
@@ -3917,7 +3956,7 @@ msgid "Range Low"
 msgstr ""
 
 msgid "Re-enter <b>Password</b> to confirm."
-msgstr ""
+msgstr "Re-insira a <b>Password</b> para confirmar."
 
 msgid "Re-enter <b>Privacy Passphrase</b> to confirm."
 msgstr ""
@@ -3926,7 +3965,7 @@ msgid "Re-enter the <i>Passphrase</i> to confirm."
 msgstr ""
 
 msgid "Re-enter the S3 password to confirm."
-msgstr ""
+msgstr "Re-insira a password S3 para confirmar."
 
 msgid "Re-key Pool"
 msgstr ""
@@ -3935,26 +3974,30 @@ msgid "Re-keyed Pool"
 msgstr ""
 
 msgid "Read Only"
-msgstr ""
+msgstr "Apenas Leitura"
 
 msgid "Read Only Access"
-msgstr ""
+msgstr "Acesso Apenas Leitura"
 
 msgid ""
 "Read the section on <a href=\"http://doc.freenas.org/11/storage.html#deduplication"
 "\" target=\"none\">Deduplication</a> before making a change to this setting."
 msgstr ""
+"Leia a secção sobre <a href=\"http://doc.freenas.org/11/storage.html#deduplication"
+"\" target=\"none\">Deduplicação</a> antes de alterar esta opção."
 
 msgid ""
 "Read the section on <a href=\"http://doc.freenas.org/11/storage.html#sync\" "
 "target=\"none\">sync</a> before making a change to this setting."
 msgstr ""
+"Leia a secção sobre <a href=\"http://doc.freenas.org/11/storage.html#sync\" "
+"target=\"none\">sync</a> antes de alterar esta opção."
 
 msgid "Read-Only"
-msgstr ""
+msgstr "Apenas Leitura"
 
 msgid "Read-only"
-msgstr ""
+msgstr "Apenas Leitura"
 
 msgid "Read-only value showing FreeBSD device name for disk."
 msgstr ""
@@ -3963,15 +4006,17 @@ msgid "Read-only value showing the serial numeber of the disk."
 msgstr ""
 
 msgid "Read/Write Access"
-msgstr ""
+msgstr "Acesso Leitura/Escrita"
 
 msgid "Realm"
-msgstr ""
+msgstr "Realm"
 
 msgid ""
 "Recommended on slow connections as it reduces size of         data to be "
 "transmitted."
 msgstr ""
+"Recomendado em ligações lentas, uma vez que reduz a quantidade de dados a "
+"transmitir."
 
 msgid ""
 "Recommended when <i>Max. Poll</i> is greater       than 10; only use on your own "
@@ -3979,13 +4024,13 @@ msgid ""
 msgstr ""
 
 msgid "Record Size"
-msgstr ""
+msgstr "Record Size"
 
 msgid "Recursive"
-msgstr ""
+msgstr "Recursivo"
 
 msgid "Recursively Replicate Child Dataset Snapshots"
-msgstr ""
+msgstr "Replicar Recursivamente Snapshots de Datasets Filhos"
 
 msgid "Redirecr Stderr"
 msgstr "Redireccionar stderr"
@@ -4011,19 +4056,19 @@ msgid "Remote Graphite Server Hostname"
 msgstr ""
 
 msgid "Remote HTTP/HTTPS Port"
-msgstr ""
+msgstr "Porta HTTP/HTTPS Remota"
 
 msgid "Remote HTTPS"
-msgstr ""
+msgstr "HTTPS Remoto"
 
 msgid "Remote Host"
-msgstr ""
+msgstr "Host Remoto"
 
 msgid "Remote Hostkey"
-msgstr ""
+msgstr "Hostkey Remoto"
 
 msgid "Remote Hostname"
-msgstr ""
+msgstr "Hostname Remoto"
 
 msgid "Remote Module Name"
 msgstr ""
@@ -4032,10 +4077,10 @@ msgid "Remote Monitor"
 msgstr ""
 
 msgid "Remote Path"
-msgstr ""
+msgstr "Caminho Remoto"
 
 msgid "Remote Port"
-msgstr ""
+msgstr "Porta Remota"
 
 msgid "Remote SSH Port"
 msgstr "Porta SSH remota"
@@ -4069,16 +4114,16 @@ msgid "Report kernel crash dumps and daily performance measurements to iXsystems
 msgstr "Reportar crash dumps e medições diárias de performance à iXsystems."
 
 msgid "Reporting"
-msgstr ""
+msgstr "Relatórios"
 
 msgid "Reports"
 msgstr "Relatórios"
 
 msgid "Require IDENT Authentication"
-msgstr ""
+msgstr "Requerer Autenticação IDENT"
 
 msgid "Require Kerberos for NFSv4:"
-msgstr ""
+msgstr "Requerer Kerberos para NFSv4:"
 
 msgid ""
 "Required for <i>HTTPS</i>. Browse to the location of the certificate to use for "
@@ -4092,6 +4137,8 @@ msgid ""
 "Required for LLDP location support. Enter a two-letter       ISO 3166 country "
 "code."
 msgstr ""
+"Necessário para suporte de localização LLDP. Insira um código de país ISO 3166 de "
+"duas letras."
 
 msgid "Required if <b>Anonymous Login</b> is disabled."
 msgstr ""
@@ -4100,6 +4147,8 @@ msgid ""
 "Required unless <b>Disable password login</b> is checked. Passwords cannot "
 "contain a <b>?</b>."
 msgstr ""
+"Necessário a não ser que <b>Desactivar Login por Password</b> esteja activo. "
+"Passwords não podem conter <b>?</b>."
 
 msgid ""
 "Required value. Base name will be appended automatically if it does not start "
@@ -4108,16 +4157,16 @@ msgstr ""
 
 msgid ""
 "Required; enter the email address for the person       responsible for the CA."
-msgstr ""
+msgstr "Necessário. Insira o endereço de email da pessoa responsável pela CA."
 
 msgid "Required; enter the location of the organization."
-msgstr ""
+msgstr "Necessário. Insira a localização da organização."
 
 msgid "Required; enter the name of the       company or organization."
-msgstr ""
+msgstr "Necessário. Insira o nome da empresa ou organização."
 
 msgid "Required; enter the state or province of       the organization."
-msgstr ""
+msgstr "Necessário. Insira o estado ou província da organização."
 
 msgid ""
 "Required; select the CA which was previously imported       or created using <a "
@@ -4160,7 +4209,7 @@ msgid "Rsync mode"
 msgstr "Modo Rsync"
 
 msgid "Run As User"
-msgstr ""
+msgstr "Correr Como Utilizador"
 
 msgid ""
 "Run commands in a clean environment. The current environment is discarded except "
@@ -4174,10 +4223,10 @@ msgid "Run this in the background?"
 msgstr ""
 
 msgid "S.M.A.R.T Tests"
-msgstr ""
+msgstr "Testes S.M.A.R.T."
 
 msgid "S.M.A.R.T. extra options"
-msgstr ""
+msgstr "Opções adicionais S.M.A.R.T."
 
 msgid "S3 filesystem directory."
 msgstr ""
@@ -4189,48 +4238,50 @@ msgid "SFTP Log Level"
 msgstr ""
 
 msgid "SMTP Authentication"
-msgstr ""
+msgstr "Autenticação SMTP"
 
 msgid ""
 "SMTP port number. Typically <i>25,465</i>       (secure SMTP), or <i>587</i> "
 "(submission)."
 msgstr ""
+"Número de porta SMTP. Tipicamente <i>25,465</i>       (secure SMTP), ou <i>587</"
+"i> (submission)."
 
 msgid "SNMP v3 Support"
-msgstr ""
+msgstr "Suporte para SNMP v3"
 
 msgid "SSH Port"
-msgstr ""
+msgstr "Porta SSH"
 
 msgid "SSH Public Key"
-msgstr ""
+msgstr "Chave Pública SSH"
 
 msgid "Save"
-msgstr ""
+msgstr "Guardar"
 
 msgid "Script"
-msgstr ""
+msgstr "Script"
 
 msgid "Scrub Status"
-msgstr ""
+msgstr "Estado do Scrub"
 
 msgid "Scrub Tasks"
-msgstr ""
+msgstr "Tarefas de Scrub"
 
 msgid "Secondary DNS server."
-msgstr ""
+msgstr "Servidor DNS secundário."
 
 msgid "Secret"
-msgstr ""
+msgstr "Segredo"
 
 msgid "Secret (Confirm)"
-msgstr ""
+msgstr "Segredo (Confirmar)"
 
 msgid "Secret Key"
-msgstr ""
+msgstr "Chave Secreta"
 
 msgid "Security"
-msgstr ""
+msgstr "Segurança"
 
 msgid ""
 "See the \"Constructing iSCSI names using the iqn.format\" section of <a href="
@@ -4249,18 +4300,21 @@ msgid ""
 msgstr ""
 
 msgid "Select a datastore."
-msgstr ""
+msgstr "Escolha um datastore."
 
 msgid "Select a directory"
-msgstr ""
+msgstr "Escolha um directório"
 
 msgid "Select a keyboard layout."
-msgstr ""
+msgstr "Escolha um layout do teclado."
 
 msgid ""
 "Select a localization. Localization progress is viewable on <a href=\"https://"
 "weblate.trueos.org/projects/freenas/#languages\" target=\"_blank\">Weblate</a>."
 msgstr ""
+"Escolha uma localização. O progresso das localizações pode ser consultado no <a "
+"href=\"https://weblate.trueos.org/projects/freenas/#languages\" target=\"_blank"
+"\">Weblate</a>."
 
 msgid ""
 "Select a time frame for the job. Otherwise, do not select         a time frame to "
@@ -4769,13 +4823,13 @@ msgid "Syslog server"
 msgstr ""
 
 msgid "System"
-msgstr ""
+msgstr "Sistema"
 
 msgid "System Dataset"
-msgstr ""
+msgstr "Dataset do Sistema"
 
 msgid "System Processes"
-msgstr ""
+msgstr "Processos do Sistema"
 
 msgid "System domain name."
 msgstr ""
@@ -4859,7 +4913,7 @@ msgid "Template"
 msgstr ""
 
 msgid "Tertiary DNS server"
-msgstr ""
+msgstr "Servidor DNS Terciário"
 
 msgid ""
 "Tests are not performed if the system enters the       specified power mode; "
@@ -4905,19 +4959,19 @@ msgid ""
 msgstr ""
 
 msgid "The cron job occurs at the specified hours."
-msgstr ""
+msgstr "Esta tarefa cron ocorre às horas especificadas."
 
 msgid "The cron job occurs at the specified minutes."
-msgstr ""
+msgstr "Esta tarefa cron ocorre aos minutos especificados."
 
 msgid "The cron job occurs at the specified months."
-msgstr ""
+msgstr "Esta tarefa cron ocorre nos meses especificados."
 
 msgid "The cron job occurs on the specified days each month."
-msgstr ""
+msgstr "Esta tarefa cron ocorre nos dias especificados, todos os meses."
 
 msgid "The cron job occurs on the specified days."
-msgstr ""
+msgstr "Esta tarefa cron ocorre nos dias especificados."
 
 msgid ""
 "The default emulates an Intel E1000 (82545) Ethernet     card for compatibility "
@@ -4925,6 +4979,10 @@ msgid ""
 "supports VirtIO paravirtualized network     drivers, this can be changed to "
 "<i>VirtIO</i> to provide better     performace."
 msgstr ""
+"Por defeito é emulada uma placa Ethernet Intel E1000 (82545), para "
+"compatibilidade com a maioria dos sistemas operativos. Se o sistema operativo "
+"instalado na VM suportar driver de rede paravirtualizada VirtIO, esta opção pode "
+"ser alterada para <i>VirtIO</i> para melhor performance."
 
 msgid ""
 "The default is <i>davtest</i>. It is recommended to       change the password as "
@@ -4935,16 +4993,22 @@ msgid ""
 "The default is acceptable unless the organization        requires a different "
 "algorithm."
 msgstr ""
+"A escolha padrão é aceitável a não ser que a organização necessite de um "
+"algoritmo diferente."
 
 msgid ""
 "The default is acceptable unless the organization       requires a different "
 "algorithm."
 msgstr ""
+"A escolha padrão é aceitável a não ser que a organização necessite de um "
+"algoritmo diferente."
 
 msgid ""
 "The default is acceptable unless your organization       requires a different "
 "algorithm."
 msgstr ""
+"A escolha padrão é aceitável a não ser que a organização necessite de um "
+"algoritmo diferente."
 
 msgid ""
 "The ending UID/GID for which this system is authoritative.       Any UID/GID "
@@ -4958,31 +5022,31 @@ msgid ""
 msgstr ""
 
 msgid "The existing contents of all the disks you have added will be erased."
-msgstr ""
+msgstr "O conteúdo de todos os discos adicionados será eliminado."
 
 msgid "The filesystem to snapshot."
-msgstr ""
+msgstr "O dataset para o qual gerar o snapshot."
 
 msgid "The job occurs at the specified hours."
-msgstr ""
+msgstr "Esta tarefa ocorre às horas especificadas."
 
 msgid "The job occurs at the specified minutes."
-msgstr ""
+msgstr "Esta tarefa ocorre aos minutos especificados."
 
 msgid "The job occurs at the specified months."
-msgstr ""
+msgstr "Esta tarefa ocorre nos meses especificados."
 
 msgid "The job occurs on the specified days each month."
-msgstr ""
+msgstr "Esta tarefa ocorre nos dias especificados, todos os meses."
 
 msgid "The job occurs on the specified days."
-msgstr ""
+msgstr "Esta tarefa ocorre nos dias especificados."
 
 msgid "The lifetime of the CA is specified in days."
-msgstr ""
+msgstr "O tempo de vida da CA é especificado em dias."
 
 msgid "The lifetime of the certificate is       specified in days."
-msgstr ""
+msgstr "O tempo de vida do certificado é especificado em dias."
 
 msgid ""
 "The mutual secret password which <b>must be different than the <i>Secret</i></b>. "
@@ -5052,25 +5116,25 @@ msgid ""
 msgstr ""
 
 msgid "Threshold days"
-msgstr ""
+msgstr "Limite dias"
 
 msgid "Time Machine"
 msgstr "Time Machine"
 
 msgid "Time Machine Quota"
-msgstr ""
+msgstr "Quota Time Machine"
 
 msgid "Time Server For Domain"
 msgstr ""
 
 msgid "Timeout"
-msgstr ""
+msgstr "Timeout"
 
 msgid "Times"
 msgstr ""
 
 msgid "Timezone"
-msgstr ""
+msgstr "Fuso Horário"
 
 msgid "To Email"
 msgstr ""
@@ -5079,7 +5143,7 @@ msgid "Train"
 msgstr ""
 
 msgid "Transfer Mode"
-msgstr ""
+msgstr "Modo de Transferência"
 
 msgid ""
 "Try checking this box if the client cannot connect and       it is suspected the "
@@ -5087,10 +5151,10 @@ msgid ""
 msgstr ""
 
 msgid "Tunables"
-msgstr ""
+msgstr "Tunables"
 
 msgid "Type"
-msgstr ""
+msgstr "Tipo"
 
 msgid ""
 "Type <i>none</i> or a valid IP address. Setting this property to anything other "
@@ -5098,21 +5162,23 @@ msgid ""
 msgstr ""
 
 msgid "Type a number of GiB to allocate to the new RAW file."
-msgstr ""
+msgstr "Insira o espaço a alocar, em GiB, ao novo ficheiro RAW."
 
 msgid "Type a number of GiB to allocate to the new Zvol."
-msgstr ""
+msgstr "Insira o espaço a alocar, em GiB, ao novo zvol."
 
 msgid "Type an alphanumeric name to identify the VM."
-msgstr ""
+msgstr "Insira um nome alfanumérico para identificar a VM."
 
 msgid "Type any comments about the jail."
-msgstr ""
+msgstr "Insira quaisquer comentários sobre o jail."
 
 msgid ""
 "Type the IP address or DNS name of the remote         computer to receive the "
 "replication data."
 msgstr ""
+"Insira o endereço IP ou nome DNS do computador remoto a receber os dados "
+"replicados."
 
 msgid ""
 "Type the IPv4 address for VNET and shared IP jails. Single interface format: "
@@ -5132,20 +5198,25 @@ msgid ""
 "Type the command to shut down the computer when either       battery power is low "
 "or the shutdown timer ends."
 msgstr ""
+"Insira o comando para desligar o computador quando a bateria estiver baixa ou "
+"acabar o temporizador do encerramento."
 
 msgid ""
 "Type the email addresses to receive status updates.       Separate multiple "
 "addresses with a <b>;</b> ."
 msgstr ""
+"Insira o endereço de email que receberá actualizações de estado. Separe múltiplos "
+"endereços com <b>;</b> ."
 
 msgid "Type the number of megabytes of system RAM to allocate to the VM."
-msgstr ""
+msgstr "Insira a quantidade de memória do sistema, em MiB, a alocar à VM."
 
 msgid "Type the owner of the jail. Can be any string."
 msgstr ""
 
 msgid "Type the password used to connect to the IPMI interface from a web browser."
 msgstr ""
+"Insira a password utilizada para aceder à interface IPMI através de um browser."
 
 msgid ""
 "Type the quantity of virtual CPUs allocated to the VM, up to 16. Although these "
@@ -5153,6 +5224,10 @@ msgid ""
 "the maximum number. The VM operating system may also have operational or "
 "licensing restrictions on the number of CPUs allowed."
 msgstr ""
+"Insira a quantidade de CPUs virtuais a alocar à VM, até um máximo de 16. Embora "
+"sejam virtuais e não estritamente relacionados com os cores do host, o CPU poderá "
+"limitar o número máximo. O sistema operativo na VM poderá também ter limitações "
+"operacionais ou de licenciamento no número de CPUs suportados."
 
 msgid ""
 "Typically the name of the sysctl or driver to load,       as indicated by its man "
@@ -5163,16 +5238,16 @@ msgid "UNIX Charset"
 msgstr "UNIX Charset"
 
 msgid "UNIX Extensions"
-msgstr ""
+msgstr "Extensões UNIX"
 
 msgid "UPS Mode"
-msgstr ""
+msgstr "Modo UPS"
 
 msgid "UUID"
 msgstr "UUID"
 
 msgid "Umask"
-msgstr ""
+msgstr "Umask"
 
 msgid "Un-Lock"
 msgstr ""
@@ -5244,13 +5319,13 @@ msgid "Update and Reboot"
 msgstr ""
 
 msgid "Upgrade Pool"
-msgstr ""
+msgstr "Upgrade do Pool"
 
 msgid "Upgraded"
 msgstr ""
 
 msgid "Upload an ISO?"
-msgstr ""
+msgstr "Fazer Upload de um ISO?"
 
 msgid ""
 "Use <b>Scan SSH Key</b> to retrieve the public host         key of the remote or "
@@ -5300,55 +5375,55 @@ msgid ""
 msgstr ""
 
 msgid "User"
-msgstr ""
+msgstr "Utilizador"
 
 msgid "User Controls"
 msgstr ""
 
 msgid "User ID"
-msgstr ""
+msgstr "ID de Utilizador"
 
 msgid "User name"
-msgstr ""
+msgstr "Username"
 
 msgid "User on VMware host with permission to snapshot virtual machines."
 msgstr ""
 
 msgid "Username"
-msgstr ""
+msgstr "Username"
 
 msgid "Username used to logon to the provider and update the       record."
 msgstr ""
 
 msgid "Users"
-msgstr ""
+msgstr "Utilizadores"
 
 msgid "Users & Groups"
-msgstr ""
+msgstr "Utilizadores e Grupos"
 
 msgid "VFS Objects"
-msgstr ""
+msgstr "Objectos VFS"
 
 msgid "VLAN ID"
-msgstr ""
+msgstr "VLAN ID"
 
 msgid "VLANs"
 msgstr "VLANs"
 
 msgid "VM Name"
-msgstr ""
+msgstr "Nome da VM"
 
 msgid "VM Snapshot"
-msgstr ""
+msgstr "Snapshot de VM"
 
 msgid "VMs"
 msgstr "VMs"
 
 msgid "VMware-Snapshots"
-msgstr ""
+msgstr "VMware-Snapshots"
 
 msgid "Validate Remote Path"
-msgstr ""
+msgstr "Validar Caminho Remoto"
 
 msgid "Value"
 msgstr ""
@@ -5357,16 +5432,16 @@ msgid "Variable"
 msgstr ""
 
 msgid "View Disks"
-msgstr ""
+msgstr "Ver Discos"
 
 msgid "VirtIO Virtual Networking"
-msgstr ""
+msgstr "Rede Virtual VirtIO"
 
 msgid "Virtual CPUs"
-msgstr ""
+msgstr "CPUs Virtuais"
 
 msgid "Virtualization"
-msgstr ""
+msgstr "Virtualização"
 
 msgid "Volume"
 msgstr "Volume"
@@ -5376,7 +5451,7 @@ msgid ""
 msgstr ""
 
 msgid "Volume to be scrubbed."
-msgstr ""
+msgstr "Pool no qual correr o scrub."
 
 msgid "Volume/Dataset"
 msgstr "Volume/Dataset"
@@ -5385,28 +5460,28 @@ msgid "Warning"
 msgstr "Aviso"
 
 msgid "WebDAV Shares"
-msgstr ""
+msgstr "Shares WebDAV"
 
 msgid "WebGUI HTTP -> HTTPS Redirect"
-msgstr ""
+msgstr "Redireccionamento HTTP -> HTTPS da WebGUI"
 
 msgid "WebGUI HTTP Port"
-msgstr ""
+msgstr "Porta HTTP da WebGUI"
 
 msgid "WebGUI HTTPS Port"
-msgstr ""
+msgstr "Porta HTTPS da WebGUI"
 
 msgid "WebGUI IPv4 Address"
-msgstr ""
+msgstr "Endereço IPv4 da WebGUI"
 
 msgid "WebGUI IPv6 Address"
-msgstr ""
+msgstr "Endereço IPv6 da WebGUI"
 
 msgid "Webdav Password"
-msgstr ""
+msgstr "Password Webdav"
 
 msgid "Webdav SSL Certificate"
-msgstr ""
+msgstr "Certificado SSL Webdav"
 
 msgid "When"
 msgstr ""
@@ -5481,31 +5556,31 @@ msgid "Will result in timeouts if <b>identd</b> is not running       on the clie
 msgstr ""
 
 msgid "Windows (SMB) Shares"
-msgstr ""
+msgstr "Shares Windows (SMB)"
 
 msgid "Wipe"
-msgstr ""
+msgstr "Apagar"
 
 msgid "Wipe Disk"
-msgstr ""
+msgstr "Apagar Disco"
 
 msgid "Wiping Disk..."
-msgstr ""
+msgstr "A apagar o Disco..."
 
 msgid "Workgroup"
-msgstr ""
+msgstr "Workgroup"
 
 msgid "Write a message to be shown when a user logs in with SSH."
-msgstr ""
+msgstr "Escreva uma mensagem a exibir quando um utilizador iniciar sessão com SSH."
 
 msgid "Write a percentage limit of a single CPU core."
-msgstr ""
+msgstr "Insira um limite, em percentagem, para um único core do CPU."
 
 msgid "Xen initiator compat mode"
 msgstr ""
 
 msgid "You just closed User Tour!"
-msgstr ""
+msgstr "Fechou a Visita Guiada!"
 
 msgid "ZFS Deduplication"
 msgstr ""
@@ -5514,7 +5589,7 @@ msgid "ZFS Deduplication:"
 msgstr ""
 
 msgid "ZFS Filesystem"
-msgstr ""
+msgstr "Sistema de Ficheiros ZFS"
 
 msgid "ZFS deplication"
 msgstr ""
@@ -5524,6 +5599,9 @@ msgid ""
 "E23824_01/html/821-1448/gbcpt.html\" target=\"_blank\">conventions</a>. Choose a "
 "memorable name that will stick out in the logs."
 msgstr ""
+"Pools ZFS têm de estar de acordo com as <a href=\"https://docs.oracle.com/cd/"
+"E23824_01/html/821-1448/gbcpt.html\" target=\"_blank\">convenções </a> estritas. "
+"Escolha um nome memorável que se destaque nos logs."
 
 msgid "Zero Device Numbers"
 msgstr ""
@@ -5532,70 +5610,70 @@ msgid "Zeroconf share discovery"
 msgstr ""
 
 msgid "allow_chflags"
-msgstr ""
+msgstr "allow_chflags"
 
 msgid "allow_mount"
-msgstr ""
+msgstr "allow_mount"
 
 msgid "allow_mount_devfs"
-msgstr ""
+msgstr "allow_mount_devfs"
 
 msgid "allow_mount_nullfs"
-msgstr ""
+msgstr "allow_mount_nullfs"
 
 msgid "allow_mount_procfs"
-msgstr ""
+msgstr "allow_mount_procfs"
 
 msgid "allow_mount_tmpfs"
-msgstr ""
+msgstr "allow_mount_tmpfs"
 
 msgid "allow_mount_zfs"
-msgstr ""
+msgstr "allow_mount_zfs"
 
 msgid "allow_quotas"
-msgstr ""
+msgstr "allow_quotas"
 
 msgid "allow_raw_sockets"
-msgstr ""
+msgstr "allow_raw_sockets"
 
 msgid "allow_set_hostname"
-msgstr ""
+msgstr "allow_set_hostname"
 
 msgid "allow_socket_af"
-msgstr ""
+msgstr "allow_socket_af"
 
 msgid "allow_sysvipc"
-msgstr ""
+msgstr "allow_sysvipc"
 
 msgid "children_max"
-msgstr ""
+msgstr "children_max"
 
 msgid "cifs_srv_max_protocol"
-msgstr ""
+msgstr "cifs_srv_max_protocol"
 
 msgid "cifs_srv_min_protocol"
-msgstr ""
+msgstr "cifs_srv_min_protocol"
 
 msgid "close"
-msgstr ""
+msgstr "fechar"
 
 msgid "comment"
-msgstr ""
+msgstr "comentário"
 
 msgid "comments:"
-msgstr ""
+msgstr "comentários:"
 
 msgid "coredumpsize"
-msgstr ""
+msgstr "coredumpsize"
 
 msgid "cpuset"
-msgstr ""
+msgstr "cpuset"
 
 msgid "cputime"
-msgstr ""
+msgstr "cputime"
 
 msgid "datasize"
-msgstr ""
+msgstr "datasize"
 
 msgid ""
 "default of 0 disables this check, otherwise will       message with a log level "
@@ -5612,49 +5690,49 @@ msgid "devfs_ruleset"
 msgstr ""
 
 msgid "dhcp"
-msgstr ""
+msgstr "dhcp"
 
 msgid "enforce_statfs"
-msgstr ""
+msgstr "enforce_statfs"
 
 msgid "exec_clean"
-msgstr ""
+msgstr "exec_clean"
 
 msgid "exec_fib"
-msgstr ""
+msgstr "exec_fib"
 
 msgid "exec_jail_user"
-msgstr ""
+msgstr "exec_jail_user"
 
 msgid "exec_poststart"
-msgstr ""
+msgstr "exec_poststart"
 
 msgid "exec_poststop"
-msgstr ""
+msgstr "exec_poststop"
 
 msgid "exec_prestart"
-msgstr ""
+msgstr "exec_prestart"
 
 msgid "exec_prestop"
-msgstr ""
+msgstr "exec_prestop"
 
 msgid "exec_start"
-msgstr ""
+msgstr "exec_start"
 
 msgid "exec_stop"
-msgstr ""
+msgstr "exec_stop"
 
 msgid "exec_system_jail_user"
-msgstr ""
+msgstr "exec_system_jail_user"
 
 msgid "exec_system_user"
-msgstr ""
+msgstr "exec_system_user"
 
 msgid "exec_timeout"
-msgstr ""
+msgstr "exec_timeout"
 
 msgid "filename"
-msgstr ""
+msgstr "filename"
 
 msgid "google cloud service"
 msgstr ""
@@ -5705,70 +5783,70 @@ msgid "list"
 msgstr ""
 
 msgid "login_flags"
-msgstr ""
+msgstr "login_flags"
 
 msgid "mac_prefix"
-msgstr ""
+msgstr "mac_prefix"
 
 msgid "maxproc"
-msgstr ""
+msgstr "maxproc"
 
 msgid "memorylocked"
-msgstr ""
+msgstr "memorylocked"
 
 msgid "memoryuse"
-msgstr ""
+msgstr "memoryuse"
 
 msgid "mount_devfs"
-msgstr ""
+msgstr "mount_devfs"
 
 msgid "mount_fdescfs"
-msgstr ""
+msgstr "mount_fdescfs"
 
 msgid "mount_linprocfs"
-msgstr ""
+msgstr "mount_linprocfs"
 
 msgid "mount_procfs"
-msgstr ""
+msgstr "mount_procfs"
 
 msgid "mountd(8) bind port:"
-msgstr ""
+msgstr "mountd(8) bind port:"
 
 msgid "msgqqueued"
-msgstr ""
+msgstr "msgqqueued"
 
 msgid "msgqsize"
-msgstr ""
+msgstr "msgqsize"
 
 msgid "name"
-msgstr ""
+msgstr "name"
 
 msgid "nmsgq"
-msgstr ""
+msgstr "nmsgq"
 
 msgid "nsemop"
-msgstr ""
+msgstr "nsemop"
 
 msgid "nshm"
-msgstr ""
+msgstr "nshm"
 
 msgid "nthr"
-msgstr ""
+msgstr "nthr"
 
 msgid "openfiles"
-msgstr ""
+msgstr "openfiles"
 
 msgid "owner"
-msgstr ""
+msgstr "owner"
 
 msgid "passphrase"
-msgstr ""
+msgstr "passphrase"
 
 msgid "password"
-msgstr ""
+msgstr "password"
 
 msgid "pcpu"
-msgstr ""
+msgstr "pcpu"
 
 msgid "please select a path for existing directory"
 msgstr ""
@@ -5847,6 +5925,8 @@ msgid ""
 "when checked, allow NTLMv1 authentication,       required by Windows XP clients "
 "and sometimes by clients in later       versions of Windows."
 msgstr ""
+"Quando marcado, permite autenticação NTLMv1, requerida por clientes Windows XP e "
+"ocasionalmente por clientes em versões posteriores do Windows."
 
 msgid "zvol name:"
 msgstr ""
