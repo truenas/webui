@@ -39,6 +39,25 @@ export class ServiceUPSComponent implements OnDestroy {
       validation : helptext.ups_identifier_validation
     },
     {
+      type : 'input',
+      name : 'ups_remotehost',
+      placeholder : helptext.ups_remotehost_placeholder,
+      tooltip : helptext.ups_remotehost_tooltip,
+      required: true,
+      isHidden: true,
+      validation : helptext.ups_remotehost_validation
+    },
+    {
+      type : 'input',
+      name : 'ups_remoteport',
+      placeholder : helptext.ups_remoteport_placeholder,
+      tooltip : helptext.ups_remoteport_tooltip,
+      value : helptext.ups_remoteport_value,
+      required: true,
+      isHidden: true,
+      validation : helptext.ups_remoteport_validation
+    },
+    {
       type : 'select',
       name : 'ups_driver',
       placeholder : helptext.ups_driver_placeholder,
