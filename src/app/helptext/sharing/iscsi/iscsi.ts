@@ -27,7 +27,8 @@ export const helptext_sharing_iscsi = {
 
   target_form_placeholder_authmethod: T("Auth Method"),
   target_form_tooltip_authmethod: T(
-    "Choices are <i>None, Auto, CHAP,</i> or <i>Mutual CHAP</i>."
+    "Choices are <i>None, Auto, CHAP,</i> or\
+   <i>Mutual CHAP</i>."
   ),
 
   target_form_placeholder_auth: T("Authentication Group number"),
@@ -81,6 +82,7 @@ export const helptext_sharing_iscsi = {
   initiator_form_tooltip_initiators: T(
     "Use <i>ALL</i> keyword or a list of initiator hostnames separated by spaces."
   ),
+  initiator_form_validators_initiators: [ Validators.required ],
 
   initiator_form_placeholder_auth_network: T("Authorized Networks"),
   initiator_form_tooltip_auth_network: T(
@@ -91,6 +93,7 @@ export const helptext_sharing_iscsi = {
  addresses with a space:\
  <i>192.168.2.0/24 192.168.2.1/12</i>.'
   ),
+  initiator_form_validators_auth_network: [ Validators.required ],
 
   initiator_form_placeholder_comment: T("Comment"),
   initiator_form_tooltip_comment: T("Optional description."),
