@@ -2,6 +2,9 @@
   <i class="material-icons">help_outline</i>
   <div class="tooltiptext" [class.show]="isShowTooltip" [class.lock]="isLockTooltip" [ngStyle]="tooltipMsgStyle">
     <div [innerHTML]="message | translate | docreplace"></div>
-    <i class="material-icons pin" (click)="toggleVis()" matTooltip="Pin or unpin this tooltip.">add_box</i>
-  </div>
+    <div class="pin" 
+      (click)="toggleVis()" 
+      matTooltip="Pin or unpin this tooltip.">
+      <img class="pin-icon" src="assets/images/add_box.png">
+    </div>
 </div>
