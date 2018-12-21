@@ -81,22 +81,8 @@ export class ActiveDirectoryComponent {
       tooltip : T('Enter the administrator account password.'),
       inputType : 'password',
       togglePw: true,
-      required: true,
-      validation : [ Validators.required ],
       disabled: false,
       isHidden:false
-    },
-    {
-      type : 'input',
-      name : 'ad_bindpw_noreq',
-      placeholder : T('Domain Account Password'),
-      tooltip : T('Enter the administrator account password.'),
-      inputType : 'password',
-      togglePw: true,
-      required: false,
-      disabled: true,
-      isHidden: true
-      
     },
     {
       type : 'input',
@@ -467,18 +453,6 @@ export class ActiveDirectoryComponent {
       }
     });
 
-      entityEdit.formGroup.controls['ad_enable'].valueChanges.subscribe((res)=>{
-      entityEdit.setDisabled('ad_bindpw', !res, !res);
-      entityEdit.setDisabled('ad_bindpw_noreq', res, res);
-      
-      if(!res){
-        entityEdit.formGroup.controls['ad_bindpw_noreq'].setValue(entityEdit.formGroup.controls['ad_bindpw'].value);
-      }
-      else{
-        entityEdit.formGroup.controls['ad_bindpw'].setValue(entityEdit.formGroup.controls['ad_bindpw_noreq'].value);
-      }
-    })
-
     entityEdit.formGroup.controls['ad_kerberos_principal'].valueChanges.subscribe((res)=>{
       if(res){
         entityEdit.setDisabled('ad_bindname', true);
@@ -501,11 +475,5 @@ export class ActiveDirectoryComponent {
       data.ad_bindname = ""
       data.ad_bindpw = ""
     }
-    if(data["ad_enable"]){
-      data["ad_bindpw_noreq"] = data["ad_bindpw"];
-    } else {
-      data["ad_bindpw"] = data["ad_bindpw_noreq"];
-    }
-    delete(data['ad_bindpw_noreq']);
   }
 }
