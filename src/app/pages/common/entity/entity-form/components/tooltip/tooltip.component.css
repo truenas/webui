@@ -46,4 +46,10 @@
     cursor: pointer;
     color: black;
     background: white;
+    height: 16px;
+}
+
+.pin-icon {
+    width: 16px;
+    height: 16px;
 }
