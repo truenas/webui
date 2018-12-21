@@ -19,6 +19,20 @@ ups_identifier_tooltip : T('Describe the UPS device. It can contain alphanumeric
  period, comma, hyphen, and underscore characters.'),
 ups_identifier_validation : [ Validators.required, Validators.pattern(/^[\w|,|\.|\-|_]+$/) ],
 
+ups_remotehost_placeholder : T('Remote Host'),
+ups_remotehost_tooltip : T('IP address of the remote system with <i>UPS Mode</i>\
+ set as <i>Master</i>. Enter a valid IP address in\
+ the format <i>192.168.0.1</i>.'),
+ ups_remotehost_validation : [ Validators.required ],
+
+ups_remoteport_placeholder : T('Remote Port'),
+ups_remoteport_tooltip : T('The open network port of the remote system with\
+ <i>UPS Mode</i> set as <i>Master</i>. Enter a valid\
+ port number that has been configured for use on the\
+ Master system. <i>3493</i> is the default port used.'),
+ups_remoteport_value : 3493,
+ups_remoteport_validation : [ Validators.required ],
+
 ups_driver_placeholder : T('Driver'),
 ups_driver_tooltip : T('See the <a\
  href="http://networkupstools.org/stable-hcl.html"\
