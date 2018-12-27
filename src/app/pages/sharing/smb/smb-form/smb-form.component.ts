@@ -130,10 +130,7 @@ export class SMBFormComponent implements OnDestroy {
       name: 'cifs_hostsdeny',
       placeholder: T('Hosts Deny'),
       tooltip: T('Enter a list of denied hostnames or IP addresses.\
-                  Separate entries with a comma, space, or tab.\
-                  Specify <i>ALL</i> and list any hosts from\
-                  <b>Hosts Allow</b> to have those hosts take\
-                  precedence.')
+                  Separate entries with a comma, space, or tab.')
     },
     {
       type: 'select',
