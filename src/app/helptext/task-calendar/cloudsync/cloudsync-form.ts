@@ -51,6 +51,9 @@ export default {
 
     transfer_mode_validation : [ Validators.required ],
 
+    snapshot_placeholder: T('Take snapshot'),
+    snapshot_tooltip: T('Take dataset snapshot before pushing data.'),
+
     remote_encryption_placeholder: T('Remote encryption'),
     remote_encryption_tooltip: T('Set to encrypt files before transfer and store the\
                 encrypted files on the remote system.\

@@ -153,6 +153,24 @@ export class CloudsyncFormComponent implements OnInit {
   },
   {
     type: 'checkbox',
+    name: 'snapshot',
+    placeholder: helptext.snapshot_placeholder,
+    tooltip: helptext.snapshot_tooltip,
+    value: false,
+    isHidden: false,
+    disabled: false,
+    relation: [
+      {
+        action: 'HIDE',
+        when: [{
+          name: 'direction',
+          value: 'PULL',
+        }]
+      }
+    ],
+  },
+  {
+    type: 'checkbox',
     name: 'encryption',
     placeholder: helptext.remote_encryption_placeholder,
     tooltip: helptext.remote_encryption_tooltip,
@@ -570,6 +588,10 @@ export class CloudsyncFormComponent implements OnInit {
 
     value['schedule'] = schedule;
 
+    if (value['direction'] == 'PULL') {
+      value['snapshot'] = false;
+    }
+  
     if (!this.pk) {
       this.loader.open();
       this.ws.call(this.addCall, [value]).subscribe((res)=>{
