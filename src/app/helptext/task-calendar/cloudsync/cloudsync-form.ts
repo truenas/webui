@@ -54,6 +54,12 @@ export default {
     snapshot_placeholder: T('Take snapshot'),
     snapshot_tooltip: T('Take dataset snapshot before pushing data.'),
 
+    pre_script_placeholder: T('Pre-script'),
+    pre_script_tooltip: T('Script to execute before running sync.'),
+
+    post_script_placeholder: T('Post-script'),
+    post_script_tooltip: T('Script to execute after running sync.'),
+
     remote_encryption_placeholder: T('Remote encryption'),
     remote_encryption_tooltip: T('Set to encrypt files before transfer and store the\
                 encrypted files on the remote system.\

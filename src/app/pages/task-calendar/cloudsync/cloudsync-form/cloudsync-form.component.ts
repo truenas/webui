@@ -170,6 +170,20 @@ export class CloudsyncFormComponent implements OnInit {
     ],
   },
   {
+    type: 'textarea',
+    name: 'pre_script',
+    placeholder: helptext.pre_script_placeholder,
+    tooltip: helptext.pre_script_tooltip,
+    value: '',
+  },
+  {
+    type: 'textarea',
+    name: 'post_script',
+    placeholder: helptext.post_script_placeholder,
+    tooltip: helptext.post_script_tooltip,
+    value: '',
+  },
+  {
     type: 'checkbox',
     name: 'encryption',
     placeholder: helptext.remote_encryption_placeholder,
