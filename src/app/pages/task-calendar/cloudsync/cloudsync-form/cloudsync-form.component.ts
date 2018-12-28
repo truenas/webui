@@ -222,6 +222,14 @@ export class CloudsyncFormComponent implements OnInit {
     required: true
   },
   {
+    type: 'input',
+    inputType: 'number',
+    name: 'transfers',
+    placeholder: helptext.transfers_placeholder,
+    tooltip: helptext.transfers_tooltip,
+    value: null,
+  },
+  {
     type: 'checkbox',
     name: 'enabled',
     placeholder: helptext.enabled_placeholder,

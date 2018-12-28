@@ -78,6 +78,11 @@ export default {
     cloudsync_picker_tooltip: T('Select a schedule preset or choose <i>Custom</i> to open\
                 the advanced scheduler.'),
 
+    transfers_placeholder: T('Transfers'),
+    transfers_tooltip: T(' The number of file transfers to run in parallel. It can \
+sometimes be useful to set this to a smaller number if the remote is giving a lot of \
+timeouts or bigger if you have lots of bandwidth and a fast remote.'),
+
     enabled_placeholder: T('Enabled'),
     enabled_tooltip: T('Enable this Cloud Sync Task. Unset to disable this Cloud\
                 Sync Task without deleting it.'),
