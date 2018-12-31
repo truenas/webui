@@ -198,17 +198,20 @@ export class UpdateComponent implements OnInit {
         });
       }
     });
+
     this.busy = this.rest.get('system/update', {}).subscribe((res) => {
       this.autoCheck = res.data.upd_autocheck;
-      if (this.autoCheck){
-        this.check();
-      }
     });
+
     this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
       this.fullTrainList = res.trains;
       // On page load, make sure we are working with train of the current OS
       this.train = res.current;
       this.selectedTrain = res.current;
+
+      if (this.autoCheck){
+        this.check();
+      }
 
       this.trains = [];
       for (const i in res.trains) {
