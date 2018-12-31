@@ -664,6 +664,8 @@ msgid ""
 "Both systems must support         <a href=\"https://en.wikipedia.org/wiki/"
 "Extended_file_attributes\"         target=\"_blank\"> extended attributes</a>."
 msgstr ""
+"Ambos os sistemas têm de suportar <a href=\"https://en.wikipedia.org/wiki/"
+"Extended_file_attributes\"         target=\"_blank\"> extended attributes</a>."
 
 msgid "Browsable to Network Clients"
 msgstr "Navegável para Clientes na Rede"
@@ -676,6 +678,9 @@ msgid ""
 "require a specific directory name. Refer to the       device documentation for "
 "more details."
 msgstr ""
+"Navegue para um directório <b>existente</b> a utilizar para armazenamento. Alguns "
+"dispositivos necessitam de um nome de directório específico. Consulte a "
+"documentação para mais detalhes."
 
 msgid ""
 "Browse to an existing file and use <i>0</i> as the <b>Extent size</b>, or browse "
@@ -692,16 +697,21 @@ msgid ""
 "Refer to <a       href=\"https://cloud.google.com/storage/docs/\" target=\"_blank"
 "\">       Gcloud documentation</a> for more information."
 msgstr ""
+"Navegue para a localização da chave para o Google Cloud Storage e escolha-a. "
+"Consulte a <a href=\"https://cloud.google.com/storage/docs/\" target=\"_blank"
+"\">documentação Gcloud</a> para mais informações."
 
+#, fuzzy
 msgid ""
 "Browse to the name of an <b>existing</b> volume or          dataset that the user "
 "will be assigned permission to access."
-msgstr ""
+msgstr "Navegue para um dataset que o utilizar será autorizado a aceder."
 
+#, fuzzy
 msgid ""
 "Browse to the name of an <b>existing</b> volume or      dataset that the user "
 "will be assigned permission to access."
-msgstr ""
+msgstr "Navegue para um dataset que o utilizar será autorizado a aceder."
 
 msgid ""
 "Browse to the path to be copied; note that a path         length greater than 255 "
@@ -714,14 +724,18 @@ msgid ""
 "Browse to the volume or dataset to be shared. Click <b>Add extra path</b> to "
 "select multiple paths."
 msgstr ""
+"Navegue para o dataset a partilhar. Clique em <b>Adicionar Caminho Adicional</b> "
+"para escolher múltiplos caminhos."
 
 msgid "Browse to the volume or dataset to share."
-msgstr ""
+msgstr "Navegue para o dataset a partilhar."
 
 msgid ""
 "Browse to the voume or dataset to share. Do not nest addtional volumes, datasets, "
 "or symbolic links beneath this path because Netatalk does not fully support that."
 msgstr ""
+"Navegue para o dataset a partilhar. O caminho não deve conter datasets filhos ou "
+"symbolic links, uma vez que não são completamente suportados pelo Netatalk."
 
 msgid "Bucket"
 msgstr "Bucket"
@@ -1216,7 +1230,7 @@ msgid "Choose when the system must stop taking snapshots."
 msgstr ""
 
 msgid "Choose your language."
-msgstr ""
+msgstr "Escolha a sua língua."
 
 msgid "Click <b>Browse</b> to select a location to store the uploaded ISO."
 msgstr ""
@@ -1444,16 +1458,16 @@ msgid "Custom Properties"
 msgstr ""
 
 msgid "DHCP"
-msgstr ""
+msgstr "DHCP"
 
 msgid "DHCP autoconfigure IPv4"
 msgstr ""
 
 msgid "DNS Forwarder"
-msgstr ""
+msgstr "DNS Forwarder"
 
 msgid "DOS Charset"
-msgstr ""
+msgstr "DOS Charset"
 
 msgid "Dashboard"
 msgstr ""
@@ -4047,7 +4061,7 @@ msgid "Release"
 msgstr ""
 
 msgid "Release Notes"
-msgstr ""
+msgstr "Release Notes"
 
 msgid "Remote Auth Token"
 msgstr ""
@@ -4501,14 +4515,15 @@ msgstr ""
 msgid "Send Email Status Updates"
 msgstr ""
 
+#, fuzzy
 msgid "Serial"
-msgstr ""
+msgstr "Serial"
 
 msgid "Serial Port"
-msgstr ""
+msgstr "Porta Série"
 
 msgid "Serial Speed"
-msgstr ""
+msgstr "Velocidade Porta Série"
 
 msgid "Serve UDP NFS clients:"
 msgstr ""
@@ -4647,19 +4662,19 @@ msgid "Signing Certificate Authority"
 msgstr ""
 
 msgid "Size for this zvol:"
-msgstr ""
+msgstr "Tamanho para este zvol:"
 
 msgid "Snapshot Lifetime"
-msgstr ""
+msgstr "Tempo de vida do snapshot"
 
 msgid "Snapshot directory"
-msgstr ""
+msgstr "Directório de snapshots"
 
 msgid "Snapshots"
 msgstr "Snapshots"
 
 msgid "Source"
-msgstr ""
+msgstr "Fonte"
 
 msgid ""
 "Space delimited list of hostnames or IP addresses of ISNS servers with which to "
@@ -4838,22 +4853,22 @@ msgid "System host name."
 msgstr ""
 
 msgid "System is not yet available, please wait"
-msgstr ""
+msgstr "O sistema ainda não está disponível, por favor aguarde"
 
 msgid "System is rebooting..."
-msgstr ""
+msgstr "O sistema está a reiniciar..."
 
 msgid "System is shutting down..."
-msgstr ""
+msgstr "O sistema está a encerrar..."
 
 msgid "TCP Port"
-msgstr ""
+msgstr "Porta TCP"
 
 msgid "TCP port on which to provide the S3 service (default 9000)."
-msgstr ""
+msgstr "Porta TCP para fornecer o serviço S3 (padrão: 9000)."
 
 msgid "TCP port used to access the iSCSI target. Default is <i>3260</i>."
-msgstr ""
+msgstr "Porta TCP para aceder ao target iSCSI (padrão: 3260)."
 
 msgid "TLS Allow Client Renegotiations"
 msgstr ""
@@ -5265,13 +5280,13 @@ msgid ""
 msgstr ""
 
 msgid "Uncheck to diable the task."
-msgstr ""
+msgstr "Desmarcar para desactivar a tarefa."
 
 msgid "Uncheck to disable the cron job without deleting it."
-msgstr ""
+msgstr "Desmarcar para desactivar o cron job sem o eliminar."
 
 msgid "Uncheck to disable the job without deleting it."
-msgstr ""
+msgstr "Desmarcar para desactivar a tarefa sem a eliminar."
 
 msgid ""
 "Uncheck to disable the rsync task without deleteing it.         Note that when "
@@ -5293,10 +5308,10 @@ msgid "Unique LUN ID. The default is generated from the MAC address of the syste
 msgstr ""
 
 msgid "Unix (NFS) Shares"
-msgstr ""
+msgstr "Shares Unix (NFS)"
 
 msgid "Unix Extensions"
-msgstr ""
+msgstr "Extensões Unix"
 
 msgid "Unlock"
 msgstr ""
@@ -5316,7 +5331,7 @@ msgid "Update Period"
 msgstr ""
 
 msgid "Update and Reboot"
-msgstr ""
+msgstr "Actualizar e reiniciar"
 
 msgid "Upgrade Pool"
 msgstr "Upgrade do Pool"
@@ -5344,16 +5359,16 @@ msgid "Use FQDN for logging"
 msgstr ""
 
 msgid "Use all disk space"
-msgstr ""
+msgstr "Utilizar todo o espaço do disco"
 
 msgid "Use as home share"
-msgstr ""
+msgstr "Utilizar como home share"
 
 msgid "Use existing disk image"
-msgstr ""
+msgstr "UItilizar imagem de disco existente"
 
 msgid "Use syslog only"
-msgstr ""
+msgstr "Utilizar apenas syslog"
 
 msgid ""
 "Use the drop-down menu to select the disk to import. The import will copy the "
@@ -5426,7 +5441,7 @@ msgid "Validate Remote Path"
 msgstr "Validar Caminho Remoto"
 
 msgid "Value"
-msgstr ""
+msgstr "Valor"
 
 msgid "Variable"
 msgstr ""
@@ -5484,7 +5499,7 @@ msgid "Webdav SSL Certificate"
 msgstr "Certificado SSL Webdav"
 
 msgid "When"
-msgstr ""
+msgstr "Quando"
 
 msgid ""
 "When <b>Syslog server</b> is defined, only logs matching this level are sent."
@@ -5583,16 +5598,16 @@ msgid "You just closed User Tour!"
 msgstr "Fechou a Visita Guiada!"
 
 msgid "ZFS Deduplication"
-msgstr ""
+msgstr "ZFS Deduplication"
 
 msgid "ZFS Deduplication:"
-msgstr ""
+msgstr "ZFS Deduplication:"
 
 msgid "ZFS Filesystem"
 msgstr "Sistema de Ficheiros ZFS"
 
 msgid "ZFS deplication"
-msgstr ""
+msgstr "ZFS Deduplication"
 
 msgid ""
 "ZFS pools must conform to strict naming <a href=\"https://docs.oracle.com/cd/"
@@ -5759,28 +5774,28 @@ msgid "interfaces"
 msgstr ""
 
 msgid "ip4"
-msgstr ""
+msgstr "ip4"
 
 msgid "ip4_saddrsel"
-msgstr ""
+msgstr "ip4_saddrsel"
 
 msgid "ip6"
-msgstr ""
+msgstr "ip6"
 
 msgid "ip6_saddrsel"
-msgstr ""
+msgstr "ip6_saddrsel"
 
 msgid "jail_zfs"
-msgstr ""
+msgstr "jail_zfs"
 
 msgid "jail_zfs_dataset"
-msgstr ""
+msgstr "jail_zfs_dataset"
 
 msgid "jail_zfs_mountpoint"
-msgstr ""
+msgstr "jail_zfs_mountpoint"
 
 msgid "list"
-msgstr ""
+msgstr "list"
 
 msgid "login_flags"
 msgstr "login_flags"
