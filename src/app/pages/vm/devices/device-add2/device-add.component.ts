@@ -1,15 +1,14 @@
-import {Component,OnInit} from '@angular/core';
-import {Validators} from '@angular/forms';
-import {Router, ActivatedRoute} from '@angular/router';
-import {FieldConfig} from '../../../common/entity/entity-form/models/field-config.interface';
+import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import * as _ from 'lodash';
-import {EntityFormService} from '../../../../pages/common/entity/entity-form/services/entity-form.service';
+import { EntityFormService } from '../../../../pages/common/entity/entity-form/services/entity-form.service';
 import { TranslateService } from '@ngx-translate/core';
 
-import {RestService, WebSocketService, SystemGeneralService, NetworkService} from '../../../../services/';
-import {EntityUtils} from '../../../common/entity/utils';
-import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
+import { RestService, WebSocketService, SystemGeneralService, NetworkService } from '../../../../services/';
+import { EntityUtils } from '../../../common/entity/utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import helptext from '../../../../helptext/vm/devices/device-add-edit';
 
 @Component({
   selector : 'app-device-add2',
@@ -42,28 +41,11 @@ export class DeviceAddComponent implements OnInit {
     {
       type: 'select',
       name: 'dtype',
-      placeholder: 'Type',
-      options: [
-        {
-          label: 'CD-ROM',
-          value: 'CDROM',
-        }, {
-          label: 'NIC',
-          value: 'NIC',
-        }, {
-          label: 'Disk',
-          value: 'DISK',
-        }, {
-          label: 'Raw File',
-          value: 'RAW',
-        }, {
-          label: 'VNC',
-          value: 'VNC',
-        }
-      ],
-      value: 'CDROM',
+      placeholder: helptext.dtype_placeholder,
+      options: helptext.dtype_options,
+      value: helptext.dtype_value,
       required: true,
-      validation: [Validators.required],
+      validation: helptext.dtype_validation,
     }
   ];
 
@@ -73,15 +55,15 @@ export class DeviceAddComponent implements OnInit {
       type : 'explorer',
       initial: '/mnt',
       name : 'path',
-      placeholder : 'CD-ROM Path',
-      tooltip : 'Browse to a CD-ROM file present on the system storage.',
-      validation : [ Validators.required ],
+      placeholder : helptext.cd_path_placeholder,
+      tooltip : helptext.cd_path_tooltip,
+      validation : helptext.cd_path_validation,
       required: true
     },
     {
       name : 'order',
-      placeholder : 'Device Order',
-      tooltip : '',
+      placeholder : helptext.order_placeholder,
+      tooltip : helptext.order_tooltip,
       type: 'input',
       value: null,
       inputType: 'number'
@@ -91,47 +73,32 @@ export class DeviceAddComponent implements OnInit {
   public diskFieldConfig: FieldConfig[] = [
     {
       name : 'path',
-      placeholder : 'Zvol',
-      tooltip : 'Browse to an existing <a\
-                 href="%%docurl%%/storage.html%%webversion%%#adding-zvols"\
-                 target="_blank">Zvol</a>.',
+      placeholder : helptext.zvol_path_placeholder,
+      tooltip : helptext.zvol_path_tooltip,
       type: 'select',
       required: true,
-      validation : [Validators.required],
+      validation : helptext.zvol_path_validation,
       options:[]
     },
     {
       name : 'type',
-      placeholder : 'Mode',
-      tooltip : '<i>AHCI</i> emulates an AHCI hard disk for better\
-                 software compatibility. <i>VirtIO</i> uses\
-                 paravirtualized drivers and can provide better\
-                 performance, but requires the operating system\
-                 installed in the VM to support VirtIO disk devices.',
+      placeholder : helptext.mode_placeholder,
+      tooltip : helptext.mode_tooltip,
       type: 'select',
-      options : [
-        {label : 'AHCI', value : 'AHCI'},
-        {label : 'VirtIO', value : 'VIRTIO'},
-      ],
+      options : helptext.mode_options
     },
     {
       name : 'sectorsize',
-      placeholder : 'Disk sector size',
-      tooltip : 'Select a sector size in bytes. <i>Default</i> leaves the\
-                 leaves the sector size unset.',
+      placeholder : helptext.sectorsize_placeholder,
+      tooltip : helptext.sectorsize_tooltip,
       type: 'select',
-      options: [
-        { label: 'Default', value:0 },
-        { label: '512', value:512 },
-        { label: '4096', value:4096 },
-
-      ],
+      options: helptext.sectorsize_options,
       value: 0
     },
     {
       name : 'order',
-      placeholder : 'Device Order',
-      tooltip : '',
+      placeholder : helptext.order_placeholder,
+      tooltip : helptext.order_tooltip,
       type: 'input',
       value: null,
       inputType: 'number'
@@ -141,40 +108,34 @@ export class DeviceAddComponent implements OnInit {
   public nicFieldConfig: FieldConfig[] = [
     {
       name: 'type',
-      placeholder: 'Adapter Type:',
-      tooltip: 'Emulating an <i>Intel e82545 (e1000)</i> Ethernet card\
-                provides compatibility with most operating systems. Change to\
-                <i>VirtIO</i> to provide better performance on systems\
-                with VirtIO paravirtualized network driver support.',
+      placeholder: helptext.adapter_type_placeholder,
+      tooltip: helptext.adapter_type_tooltip,
       type: 'select',
       options: [],
-      validation: [Validators.required],
+      validation: helptext.adapter_type_validation,
       required: true
     },
     {
       name: 'mac',
-      placeholder: 'MAC Address',
-      tooltip: 'By default, the VM receives an auto-generated random\
-                MAC address. Enter a custom address into the field to\
-                override the default. Click <b>Generate MAC Address</b>\
-                to add a new randomized address into this field.',
+      placeholder: helptext.mac_placeholder,
+      tooltip: helptext.mac_tooltip,
       type: 'input',
-      value: '00:a0:98:FF:FF:FF',
-      validation: [regexValidator(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i)],
+      value: helptext.mac_value,
+      validation: helptext.mac_validation,
     },
     {
       name: 'nic_attach',
-      placeholder: 'Nic to attach:',
-      tooltip: 'Select a physical interface to associate with the VM.',
+      placeholder: helptext.nic_attach_placeholder,
+      tooltip: helptext.nic_attach_tooltip,
       type: 'select',
       options: [],
-      validation: [Validators.required],
+      validation: helptext.nic_attach_validation,
       required: true
     },
     {
       name : 'order',
-      placeholder : 'Device Order',
-      tooltip : '',
+      placeholder : helptext.order_placeholder,
+      tooltip : helptext.order_tooltip,
       type: 'input',
       value: null,
       inputType: 'number'
@@ -190,43 +151,30 @@ export class DeviceAddComponent implements OnInit {
       type : 'explorer',
       initial: '/mnt',
       name : 'path',
-      placeholder : 'Raw File',
-      tooltip : 'Browse to a storage location and add the name of the\
-                 new raw file on the end of the path.',
+      placeholder : helptext.raw_file_path_placeholder,
+      tooltip : helptext.raw_file_path_placeholder,
       required: true,
-      validation: [Validators.required]
+      validation: helptext.raw_file_path_validation
     },
     {
       type : 'select',
       name : 'sectorsize',
-      placeholder : 'Disk sector size',
-      tooltip : 'Select a sector size in bytes. <i>Default</i> leaves the\
-                 sector size unset.',
-      options: [
-        { label: 'Default', value:0 },
-        { label: '512', value:512 },
-        { label: '4096', value:4096 },
-              ],
+      placeholder : helptext.sectorsize_placeholder,
+      tooltip : helptext.sectorsize_tooltip,
+      options: helptext.sectorsize_options,
       value: 0
     },
     {
       name : 'type',
-      placeholder : 'Mode',
-      tooltip : '<i>AHCI</i> emulates an AHCI hard disk for best\
-                 software compatibility. <i>VirtIO</i> uses\
-                 paravirtualized drivers and can provide better\
-                 performance, but requires the operating system\
-                 installed in the VM to support VirtIO disk devices.',
+      placeholder : helptext.mode_placeholder,
+      tooltip : helptext.mode_tooltip,
       type: 'select',
-      options : [
-        {label : 'AHCI', value : 'AHCI'},
-        {label : 'VirtIO', value : 'VIRTIO'},
-      ],
+      options : helptext.mode_options
     },
     {
       name : 'order',
-      placeholder : 'Device Order',
-      tooltip : '',
+      placeholder : helptext.order_placeholder,
+      tooltip : helptext.order_tooltip,
       type: 'input',
       value: null,
       inputType: 'number'
@@ -234,24 +182,23 @@ export class DeviceAddComponent implements OnInit {
     {
       type : 'input',
       name : 'size',
-      placeholder : 'Raw filesize',
-      tooltip : 'Define the size of the raw file in GiB.',
+      placeholder : helptext.raw_size_placeholder,
+      tooltip : helptext.raw_size_tooltip,
       inputType : 'number',
     },
     {
       type : 'input',
       name : 'rootpwd',
-      placeholder : 'password',
-      tooltip : 'Enter a password for the <i>rancher</i> user. This\
-                 is used to log in to the VM from the serial shell.',
+      placeholder : helptext.rootpwd_placeholder,
+      tooltip : helptext.rootpwd_tooltip,
       inputType : 'password',
       isHidden: true
     },
     {
       type : 'checkbox',
       name : 'boot',
-      placeholder : 'boot',
-      tooltip : '',
+      placeholder : helptext.boot_placeholder,
+      tooltip : helptext.boot_tooltip,
       isHidden: true
     },
   ];
@@ -260,62 +207,49 @@ export class DeviceAddComponent implements OnInit {
   public vncFieldConfig: FieldConfig[]  = [
     {
       name : 'vnc_port',
-      placeholder : 'Port',
-      tooltip : 'Can be set to <i>0</i>, left empty for FreeNAS to\
-                 assign a port when the VM is started, or set to a\
-                 fixed, preferred port number.',
+      placeholder : helptext.vnc_port_placeholder,
+      tooltip : helptext.vnc_port_tooltip,
       type : 'input',
       inputType: 'number'
     },
     {
       name : 'wait',
-      placeholder : 'Wait to boot',
-      tooltip : 'Set for the VNC client to wait until the VM has\
-                 booted before attempting the connection.',
+      placeholder : helptext.wait_placeholder,
+      tooltip : helptext.wait_tooltip,
       type: 'checkbox'
     },
     {
       name : 'vnc_resolution',
-      placeholder : 'Resolution',
-      tooltip : 'Select a screen resolution to use for VNC sessions.',
+      placeholder : helptext.vnc_resolution_placeholder,
+      tooltip : helptext.vnc_resolution_tooltip,
       type: 'select',
-      options : [
-        {label : '1920x1080', value : "1920x1080"},
-        {label : '1400x1050', value : "1400x1050"},
-        {label : '1280x1024', value : "1280x1024"},
-        {label : '1280x960', value : "1280x960"},
-        {label : '1024x768', value : '1024x768'},
-        {label : '800x600', value : '800x600'},
-        {label : '640x480', value : '640x480'},
-      ],
+      options : helptext.vnc_resolution_options
     },
     {
       name : 'vnc_bind',
-      placeholder : 'Bind',
-      tooltip : 'Select an IP address to use for VNC sessions.',
+      placeholder : helptext.vnc_bind_placeholder,
+      tooltip : helptext.vnc_bind_tooltip,
       type: 'select',
       options : [],
     },
     {
       name : 'vnc_password',
-      placeholder : 'Password',
-      tooltip : 'Enter a VNC password to automatically pass to the\
-                 VNC session. Passwords cannot be longer than 8\
-                 characters.',
+      placeholder : helptext.vnc_password_placeholder,
+      tooltip : helptext.vnc_password_tooltip,
       type : 'input',
       inputType : 'password',
-      validation: [Validators.maxLength(8)]
+      validation: helptext.vnc_password_validation
     },
     {
       name : 'vnc_web',
-      placeholder : 'Web Interface',
-      tooltip : 'Set to enable connecting to the VNC web interface.',
+      placeholder : helptext.vnc_web_placeholder,
+      tooltip : helptext.vnc_web_tooltip,
       type: 'checkbox'
     },
     {
       name : 'order',
-      placeholder : 'Device Order',
-      tooltip : '',
+      placeholder : helptext.order_placeholder,
+      tooltip : helptext.order_tooltip,
       type: 'input',
       value: null,
       inputType: 'number'

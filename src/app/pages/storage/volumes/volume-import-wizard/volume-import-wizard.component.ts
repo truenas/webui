@@ -1,21 +1,19 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { RestService, WebSocketService, DialogService } from '../../../../services';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../../common/entity/entity-wizard/entity-wizard.component';
 import * as _ from 'lodash';
 import { MessageService } from '../../../common/entity/entity-form/services/message.service';
-import { RequestOptions, Http } from '@angular/http';
+import { Http } from '@angular/http';
 import { MatSnackBar } from '@angular/material';
 
-import { EntityUtils } from '../../../common/entity/utils';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { MatDialog } from '@angular/material';
-import { validateBasis } from '@angular/flex-layout';
 import { T } from '../../../../translate-marker';
-
+import helptext from '../../../../helptext/storage/volumes/volume-import-wizard';
 
 @Component({
   selector: 'app-volumeimport-wizard',
@@ -37,20 +35,20 @@ export class VolumeImportWizardComponent {
   public entityWizard: any;
 
   protected wizardConfig: Wizard[] = [{
-      label: T('Create or Import pool'),
+      label: helptext.is_new_main_label,
       fieldConfig: [
         {
           type: 'radio',
           name: 'is_new',
-          placeholder: T('Create a pool:'),
+          placeholder: helptext.is_new_placeholder,
           options: [
-            {label: 'Create new pool',
+            {label: helptext.is_new_option1_label,
              name: 'create_new_pool_opt',
-             tooltip: 'Create a new, empty pool.',
+             tooltip: helptext.is_new_option1_tooltip,
              value: true},
-            {label: 'Import an existing pool',
+            {label: helptext.is_new_option2_label,
              name: 'import_pool_opt',
-             tooltip: 'Import a pool that exists but is not connected.',
+             tooltip: helptext.is_new_option2_tooltip,
              value: false},
           ],
           value: true
@@ -58,18 +56,18 @@ export class VolumeImportWizardComponent {
       ]
     },
     {
-      label: T('Decrypt pool'),
+      label: helptext.enctrypted_main_label,
       fieldConfig: [
         {
           type: 'radio',
           name: 'encrypted',
-          placeholder: T('Is the pool encrypted?'),
+          placeholder: helptext.enctypted_placeholder,
           options: [
-            {label: 'No, continue with import',
-             tooltip: 'Unencrypted pools can be imported directly.',
+            {label: helptext.encrypted_option1_label,
+             tooltip: helptext.encrypted_option1_tooltip,
              value: false},
-            {label: 'Yes, decrypt the disks',
-             tooltip: 'Encrypted pool disks must be decrypted prior to import.',
+            {label: helptext.encrypted_option2_label,
+             tooltip: helptext.encrypted_option2_tooltip,
              value: true}
           ],
           value: false
@@ -78,9 +76,9 @@ export class VolumeImportWizardComponent {
           type: 'select',
           multiple: true,
           name: 'devices',
-          placeholder: T('Disks'),
-          validation : [ Validators.required ],
-          tooltip: T('Select the disks to decrypt.'),
+          placeholder: helptext.devices_placeholder,
+          validation : helptext.devices_validation,
+          tooltip: helptext.devices_tooltip,
           required: true,
           isHidden: true,
           options: [],
@@ -95,10 +93,8 @@ export class VolumeImportWizardComponent {
         {
           type: 'upload',
           name: 'key',
-          placeholder: T('Encryption Key'),
-          tooltip: T('Click <b>Browse</b> to select an encryption key to\
-                      upload. This allows the system to decrypt the\
-                      disks.'),
+          placeholder: helptext.key_placeholder,
+          tooltip: helptext.key_tooltip,
           fileLocation: '',
           message: this.messageService,
           updater: this.updater,
@@ -115,8 +111,8 @@ export class VolumeImportWizardComponent {
         {
           type: 'input',
           name: 'passphrase',
-          placeholder: T('Passphrase'),
-          tooltip: T('Enter the decryption passphrase.'),
+          placeholder: helptext.passphrase_placeholder,
+          tooltip: helptext.passphrase_tooltip,
           inputType: 'password',
           togglePw: true,
           isHidden: true,
@@ -131,13 +127,13 @@ export class VolumeImportWizardComponent {
       ]
     },
     {
-      label: T('Select pool to import'),
+      label: helptext.import_label,
       fieldConfig: [
         {
             type: 'select',
             name: 'guid',
-            placeholder: T('Pool'),
-            tooltip: T('Select a pool to import.'),
+            placeholder: helptext.guid_placeholder,
+            tooltip: helptext.guid_tooltip,
             options: [],
             validation : [ Validators.required ],
             required: true,

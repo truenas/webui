@@ -1,21 +1,14 @@
 import {
   ApplicationRef,
   Component,
-  Injector,
-  OnInit,
-  ViewContainerRef
+  Injector
 } from '@angular/core';
-import {
-  AbstractControl,
-  FormArray,
-  FormGroup,
-  Validators
-} from '@angular/forms';
-import {ActivatedRoute, Router, RouterModule} from '@angular/router';
+
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material';
 import * as _ from 'lodash';
 
-import {RestService, WebSocketService, StorageService} from '../../../../services/';
+import { RestService, WebSocketService, StorageService } from '../../../../services/';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -23,6 +16,7 @@ import { DialogService } from 'app/services/dialog.service';
 import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../translate-marker';
+import helptext from '../../../../helptext/storage/volumes/volume-key';
 
 @Component({
   selector : 'app-addkey-form',
@@ -46,15 +40,15 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
       type : 'input',
       name : 'name',
       isHidden: true,
-      validation: [Validators.required],
+      validation: helptext.add_key_name_validation,
       required: true
     },{
       type : 'input',
       inputType: 'password',
       name : 'password',
-      placeholder: T('Root password'),
-      tooltip: T('Enter the root password to authorize this operation.'),
-      validation: [Validators.required],
+      placeholder: helptext.add_key_password_placeholder,
+      tooltip: helptext.add_key_password_tooltip,
+      validation: helptext.add_key_password_validation,
       required: true
     }
   ];

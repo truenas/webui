@@ -1,17 +1,16 @@
 import {ApplicationRef, Component, Injector, OnDestroy} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {Validators} from '@angular/forms';
+import { Router} from '@angular/router';
 import * as _ from 'lodash';
+import helptext from '../../../helptext/storage/import-disk/import-disk';
 
 import {
   RestService,
   WebSocketService
 } from '../../../services/';
-import {EntityFormComponent} from '../../common/entity/entity-form';
 import {
   FieldConfig
 } from '../../common/entity/entity-form/models/field-config.interface';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { DialogService } from 'app/services/dialog.service';
 import { EntityUtils } from '../../common/entity/utils';
@@ -29,22 +28,17 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
     {
       type : 'select',
       name : 'volume',
-      placeholder : T('Disk'),
-      tooltip: T('Select the disk to import. The import will copy the\
-                  data from the chosen disk to an existing ZFS dataset.\
-                  Only one disk can be imported at a time.'),
+      placeholder : helptext.import_disk_volume_placeholder,
+      tooltip: helptext.import_disk_volume_tooltip,
       options: [],
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext.import_disk_volume_validation
     },
     {
       type : 'radio',
       name : 'fs_type',
-      placeholder : T('Filesystem type'),
-      tooltip: T('Choose the type of filesystem on the disk. Refer to\
-                  the guide section on <a\
-                  href="%%docurl%%/storage.html%%webversion%%#import-disk"\
-                  target="_blank">importing disks</a> for more details.'),
+      placeholder : helptext.import_disk_fs_type_placeholder,
+      tooltip: helptext.import_disk_fs_type_tooltip,
       options: [
                     {value:'ufs', label:'UFS'},
                     {value:'ntfs', label:'NTFS'},
@@ -52,27 +46,25 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
                     {value: 'ext2fs', label:'EXT2FS'}
                   ],
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext.import_disk_fs_type_validation
     },
     {
       type: 'select',
       name: 'msdosfs_locale',
-      placeholder: T('MSDOSFS locale'),
-      tooltip: T('Select the locale for the MSDOSFS device to see files\
-                  of that locale properly'),
+      placeholder: helptext.import_disk_msdosfs_locale_placeholder,
+      tooltip: helptext.import_disk_msdosfs_locale_tooltip,
       options: [],
       isHidden: true,
     },
     {
       type : 'explorer',
       name : 'dst_path',
-      placeholder : T('Destination Path'),
-      tooltip: T('Browse to the ZFS dataset that will hold the copied\
-                  data.'),
+      placeholder : helptext.import_disk_dst_path_placeholder,
+      tooltip: helptext.import_disk_dst_path_tooltip,
       explorerType: 'directory',
       initial: '/mnt',
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext.import_disk_dst_path_validation
     },
   ];
   public volume: any;
