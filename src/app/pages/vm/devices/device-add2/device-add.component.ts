@@ -34,8 +34,8 @@ export class DeviceAddComponent implements OnInit {
   public rootpwd: any;
   public vminfo: any;
   public boot: any;
-
   public custActions: any[];
+  public error_reason: string;
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -434,6 +434,7 @@ export class DeviceAddComponent implements OnInit {
           this.router.navigate(new Array('/').concat(this.route_success));
         },
         (e_res) => {
+          this.error_reason = e_res.reason;
           this.loader.close();
           new EntityUtils().handleError(this, e_res);
         }
