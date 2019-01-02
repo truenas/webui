@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { RestService, WebSocketService } from '../../../services/';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { MatDialog, MatSnackBar } from '@angular/material';
@@ -67,14 +67,14 @@ export class UpdateComponent implements OnInit {
     },
   ];
   public saveConfigFormConf: DialogFormConfiguration = {
-    title: "Save configuration settings from this machine before updating?",
-    message: "<b>WARNING:</b> This configuration file contains system\
-              passwords and other sensitive data.<br>",
+    title: T("Save configuration settings from this machine before updating?"),
+    message: T("<b>WARNING:</b> This configuration file contains system\
+              passwords and other sensitive data.<br>"),
     fieldConfig: this.saveConfigFieldConf,
-    warning: "Including the Password Secret Seed allows using this\
+    warning: T("Including the Password Secret Seed allows using this\
               configuration file with a new boot device. It also\
               decrypts all passwords used on this system.\
-              <b>Keep the configuration file safe and protect it from unauthorized access!</b>",
+              <b>Keep the configuration file safe and protect it from unauthorized access!</b>"),
     method_ws: 'core.download',
     saveButtonText: T('SAVE CONFIGURATION'),
     cancelButtonText: T('NO'),
@@ -157,7 +157,6 @@ export class UpdateComponent implements OnInit {
           return version1[0] > version2[0] ? "MAJOR_UPGRADE":"MAJOR_DOWNGRADE";
         }
 
-
       } else {
         if(v1[0] === v2[0]&&v1[1] !== v2[1]){
           const branch1 = v1[1].toLowerCase();
@@ -175,14 +174,12 @@ export class UpdateComponent implements OnInit {
             }
 
           }
-
         }
         else {
           if(v2[2]||v1[2]){
             return "SDK"
           }
         }
-
 
       }
     } catch (e) {
@@ -191,10 +188,10 @@ export class UpdateComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
+    this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures) => {
       if(ures[0].attributes.preferences !== undefined && ures[0].attributes.preferences.enableWarning) {
         ures[0].attributes.preferences['enableWarning'] = true;
-        this.ws.call('user.set_attribute', [1, 'preferences', ures[0].attributes.preferences]).subscribe((res)=>{
+        this.ws.call('user.set_attribute', [1, 'preferences', ures[0].attributes.preferences]).subscribe((res) => {
         });
       }
     });
@@ -242,13 +239,14 @@ export class UpdateComponent implements OnInit {
     });
   }
 
-  onTrainChanged(event){
+  onTrainChanged(event) {
     // For the case when the user switches away, then BACK to the train of the current OS
     if (event.value === this.selectedTrain) {
       this.currentTrainDescription = this.trainDescriptionOnPageLoad;
       this.check();
       return;
     }
+
     const compare = this.compareTrains(this.selectedTrain, event.value);
     if(compare === "NIGHTLY_DOWNGRADE" || compare === "MINOR_DOWNGRADE" || compare === "MAJOR_DOWNGRADE" || compare ==="SDK") {
       this.dialogService.Info("Error", this.train_msg[compare]).subscribe((res)=>{
@@ -298,6 +296,7 @@ export class UpdateComponent implements OnInit {
       this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
     });
   }
+
   startUpdate() {
     this.error = null;
     this.loader.open();
@@ -414,6 +413,7 @@ export class UpdateComponent implements OnInit {
           this.loader.close();
         });
   }
+
   downloadUpdate() {
     this.ws.call('core.get_jobs', [[["method", "=", "update.update"], ["state", "=", "RUNNING"]]]).subscribe(
       (res) => {
@@ -465,7 +465,7 @@ export class UpdateComponent implements OnInit {
     });
   };
 
-  ManualUpdate(){
+  ManualUpdate() {
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
       if(ures[0].attributes.preferences !== undefined && !ures[0].attributes.preferences.enableWarning) {
         this.router.navigate([this.router.url +'/manualupdate']);
@@ -478,13 +478,13 @@ export class UpdateComponent implements OnInit {
     });
   }
 
-  pendingupdates(){
+  pendingupdates() {
     this.ws.call('update.get_pending').subscribe((pending)=>{
       if(pending.length !== 0){
         this.update_downloaded = true;
       }
     });
-}
+  }
 
   check() {
     // Reset the template
