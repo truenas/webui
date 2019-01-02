@@ -39,7 +39,7 @@ interface VmProfile {
 }
 
 @Component({
-  selector: 'vm-cards',
+  selector: 'app-vm-cards',
   templateUrl: './vm-cards.component.html',
   styleUrls: ['./vm-cards.component.css'],
 })
@@ -89,7 +89,7 @@ export class VmCardsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.viewMode.value = "cards";
+    this.viewMode.value = "table";
     /* TODO: remove this after middleware part is ready to give back
     correct state.
     */
@@ -246,7 +246,7 @@ export class VmCardsComponent implements OnInit, OnDestroy {
   }
 
   parseResponse(data:any, formatForUpdate?:boolean){
-    let card: VmProfile = {
+    const card: VmProfile = {
       name:data.name,
       description:data.description,
       info:data.info,
@@ -296,15 +296,15 @@ export class VmCardsComponent implements OnInit, OnDestroy {
 
   setVmList(res:CoreEvent, init?:string) {
     //const cacheLength = this.cache.length
-    let scroll:boolean = false;
-    if(this.cache.length != 0 && this.cache.length < res.data.length){;
+    let scroll = false;
+    if(this.cache.length !== 0 && this.cache.length < res.data.length){;
       // Put window scroll stuff here
       scroll = true;
     }
 
     this.cache = [];
     for(let i = 0; i < res.data.length; i++){
-      let card = this.parseResponse(res.data[i]);
+      const card = this.parseResponse(res.data[i]);
       this.cache.push(card);
     }
 
@@ -315,9 +315,9 @@ export class VmCardsComponent implements OnInit, OnDestroy {
     }
 
     this.checkStatus();
-    if(scroll && this.cards.length == res.data.length){
+    if(scroll && this.cards.length === res.data.length){
       setTimeout(()=>{
-      let test = (<any>document).querySelector('.vm-card-' + this.cards[this.cards.length-1].id);
+      const test = (<any>document).querySelector('.vm-card-' + this.cards[this.cards.length-1].id);
       this.scrollTo(String(this.cards[this.cards.length-1].domId));
       
       //this.scrollTo('#animation-target');
@@ -585,7 +585,7 @@ export class VmCardsComponent implements OnInit, OnDestroy {
   }
   
   stripUIProperties(profile:VmProfile){
-    let clone = Object.assign({}, profile);
+    const clone = Object.assign({}, profile);
     delete clone.domId;
     delete clone.transitionalState;
     return clone;

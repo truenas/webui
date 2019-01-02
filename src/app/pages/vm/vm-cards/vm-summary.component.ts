@@ -56,9 +56,15 @@ export class VmSummaryComponent implements AfterViewInit, OnDestroy {
     });
 
     this.core.register({observerClass:this,eventName:"ThemeChanged"}).subscribe((evt:CoreEvent) => {
-      this.cpuChart.refresh();
-      this.zpoolChart.refresh();
-      this.memChart.refresh();
+      if (this.cpuChart){
+        this.cpuChart.refresh();
+      }
+      if (this.zpoolChart){
+        this.zpoolChart.refresh();
+      }
+      if (this.memChart){
+        this.memChart.refresh();
+      }
     });
 
     // Pool Stats
