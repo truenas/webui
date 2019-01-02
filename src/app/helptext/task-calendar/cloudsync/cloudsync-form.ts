@@ -52,7 +52,7 @@ export default {
     transfer_mode_validation : [ Validators.required ],
 
     snapshot_placeholder: T('Take snapshot'),
-    snapshot_tooltip: T('Take dataset snapshot before pushing data.'),
+    snapshot_tooltip: T('Create a snapshot of the dataset before pushing data'),
 
     pre_script_placeholder: T('Pre-script'),
     pre_script_tooltip: T('Script to execute before running sync.'),
@@ -90,7 +90,7 @@ export default {
     transfers_placeholder: T('Transfers'),
     transfers_tooltip: T(' The number of file transfers to run in parallel. It can \
 sometimes be useful to set this to a smaller number if the remote is giving a lot of \
-timeouts or bigger if you have lots of bandwidth and a fast remote.'),
+timeouts or a larger number if there is high bandwidth and a fast remote.'),
 
     enabled_placeholder: T('Enabled'),
     enabled_tooltip: T('Enable this Cloud Sync Task. Unset to disable this Cloud\
