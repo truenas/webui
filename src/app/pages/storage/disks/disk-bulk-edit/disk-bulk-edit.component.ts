@@ -8,8 +8,6 @@ import { T } from '../../../../translate-marker';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../../services/dialog.service';
 import { StorageService } from '../../../../services/storage.service'
-import {EntityUtils} from '../../../common/entity/utils';
-import { utils } from 'protractor';
 
 @Component({
   selector: 'app-disk-bulk-edit',
