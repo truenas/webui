@@ -36,8 +36,12 @@ export class TargetFormComponent {
       type: 'input',
       name : 'name',
       placeholder : T('Target Name'),
-      tooltip: T('Required value. Base name is appended\
-                  if it does not start with <i>iqn</i>.'),
+      tooltip: T('The base name is automatically prepended if the target name \
+                  does not start with *iqn*.Lowercase alphanumeric characters \
+                  plus dot (.), dash (-), and colon (:) are allowed. See the \
+                  <i>Constructing iSCSI names using the iqn.format</i>\
+                  section of <a href="https://tools.ietf.org/html/rfc3721.html"\
+                  target="_blank">RFC3721</a>.'),
       required: true,
       validation: [Validators.required],
     },
