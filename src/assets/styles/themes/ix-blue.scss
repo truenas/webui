@@ -1062,4 +1062,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(color, --fg2, $fg2 !important);
   }
 
+  .ui-treetable tr {
+    border-bottom: 1px solid;
+    border-bottom-color: var(--fg1);
+  }
+
 } // end of ix theme
