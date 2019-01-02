@@ -118,7 +118,7 @@ export class DiskBulkEditComponent {
       this.disk_hddstandby = _.find(this.fieldConfig, {name : 'disk_hddstandby'});
       res.forEach((item) => {
         this.disk_hddstandby.options.push(
-            {label : item[1], value : item[0]});
+            {label : item[1], value : item[0].toUpperCase()});
       });
     });
 
@@ -126,7 +126,7 @@ export class DiskBulkEditComponent {
       this.disk_advpowermgmt = _.find(this.fieldConfig, {name : 'disk_advpowermgmt'});
       res.forEach((item) => {
         this.disk_advpowermgmt.options.push(
-            {label : item[1], value : item[0]});
+            {label : item[1], value : item[0].toUpperCase()});
       });
     });
 
@@ -145,7 +145,7 @@ export class DiskBulkEditComponent {
     let data = {
       "hddstandby": event.disk_hddstandby, 
       "advpowermgmt" : event.disk_advpowermgmt, 
-      "acousticlevel" : event.disk_acousticlevel.toUpperCase(),
+      "acousticlevel" : event.disk_acousticlevel,
       "togglesmart" : event.disk_togglesmart,
       "smartoptions" : event.disk_smartoptions
     }
