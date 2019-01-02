@@ -1062,4 +1062,16 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(color, --fg2, $fg2 !important);
   }
 
+  .ui-treetable tr:nth-child(even){
+    background-color:rgba(123,123,123,0.2);
+  }
+
+  .ui-treetable-resizable .ui-treetable-tfoot>tr>td, .ui-treetable-resizable .ui-treetable-tbody>tr>td {
+    white-space: nowrap;
+  }
+
+  .ui-treetable-thead {
+    text-align: left;
+  }
+
 } // end of ix theme
