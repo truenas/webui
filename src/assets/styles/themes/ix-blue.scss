@@ -1206,9 +1206,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   .ui-treetable-resizable .ui-treetable-tfoot>tr>td, .ui-treetable-resizable .ui-treetable-tbody>tr>td {
-    overflow: hidden;
     white-space: nowrap;
-    text-overflow: ellipsis;
   }
 
   .ui-treetable-thead {
