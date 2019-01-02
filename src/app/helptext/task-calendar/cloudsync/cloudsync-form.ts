@@ -32,9 +32,8 @@ export default {
     encryption_tooltip: T('Choose <i>AES-256</i> or <i>None</i>.'),
 
     fast_list_placeholder: T('Use --fast-list'),
-    fast_list_tooltip: T('Use fewer transactions in exchange for more RAM. This may also speed \
-    up or slow down your transfer. See [rclone documentation](https://rclone.org/docs/#fast-list) \
-    for more details.'),
+    fast_list_tooltip: T('[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/#fast-list) \
+    This can also speed up or slow down the transfer.'),
 
     path_placeholder: T('Directory/Files'),
     path_tooltip: T('Select the directories or files to be sent to the cloud\
