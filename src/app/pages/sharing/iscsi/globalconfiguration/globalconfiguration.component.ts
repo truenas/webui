@@ -22,10 +22,11 @@ export class GlobalconfigurationComponent {
       type: 'input',
       name: 'basename',
       placeholder: T('Base Name'),
-      tooltip: T('See the <i>Constructing iSCSI names using the iqn.format</i>\
-                  section of <a href="https://tools.ietf.org/html/rfc3721.html"\
-                  target="_blank">RFC3721</a> if unfamiliar with\
-                  this naming format.'),
+      tooltip: T('Lowercase alphanumeric characters plus dot (.), dash (-), \
+                  and colon (:) are allowed. See the \
+                  <i>Constructing iSCSI names using the iqn.format</i> \
+                  section of <a href="https://tools.ietf.org/html/rfc3721.html" \
+                  target="_blank">RFC3721</a>.'),
       required: true,
       validation: [Validators.required]
     },
