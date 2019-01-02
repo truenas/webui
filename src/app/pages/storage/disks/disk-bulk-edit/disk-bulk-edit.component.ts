@@ -8,6 +8,8 @@ import { T } from '../../../../translate-marker';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../../services/dialog.service';
 import { StorageService } from '../../../../services/storage.service'
+import {EntityUtils} from '../../../common/entity/utils';
+import { utils } from 'protractor';
 
 @Component({
   selector: 'app-disk-bulk-edit',
@@ -163,8 +165,17 @@ export class DiskBulkEditComponent {
         (res) => { 
           if(res.state === 'SUCCESS') {
             this.loader.close();
-            this._router.navigate(new Array('/').concat([
-              "storage", "disks"]));          
+            let success_state = true;
+            for (let i = 0; i < res.result.length; i++) {
+              if (res.result[i].error != null) {
+                this.dialogService.errorReport(T("Error updating disks."), res.result[i].error);
+                success_state = false;
+                break;
+              }
+            }
+            if (success_state) {
+              this._router.navigate(new Array('/').concat(["storage", "disks"]));
+            }
           }
         },
         (err) => {
