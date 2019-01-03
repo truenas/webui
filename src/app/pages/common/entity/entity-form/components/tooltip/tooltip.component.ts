@@ -37,7 +37,7 @@ export class TooltipComponent {
         this.tooltipMsgStyle = {'left' : '0px', 'max-width' : dynamicWidth + 'px'};
       }
       else if(posX > 420) {
-        this.tooltipMsgStyle = {'right' : '0px', 'max-width' :  dynamicWidth + 'px'};
+        this.tooltipMsgStyle = {'right' : '8px', 'max-width' :  dynamicWidth + 'px'};
       }
       else {
         let diffX = 'calc( -45vw - ' + (posX - screenW/2) + 'px )';
@@ -49,7 +49,7 @@ export class TooltipComponent {
         this.tooltipMsgStyle = {'left' : '0px'};
       }
       else if(posX > 420) {
-        this.tooltipMsgStyle = {'right' : '0px'};
+        this.tooltipMsgStyle = {'right' : '8px'};
       }
       else {
         let diffX = 'calc( -45vw - ' + (posX - screenW/2) + 'px )';
