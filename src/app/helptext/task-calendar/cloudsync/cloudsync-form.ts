@@ -52,7 +52,7 @@ export default {
     transfer_mode_validation : [ Validators.required ],
 
     snapshot_placeholder: T('Take snapshot'),
-    snapshot_tooltip: T('Create a snapshot of the dataset before pushing data'),
+    snapshot_tooltip: T('Create a snapshot of the dataset before pushing data.'),
 
     pre_script_placeholder: T('Pre-script'),
     pre_script_tooltip: T('Script to execute before running sync.'),
