@@ -106,8 +106,8 @@ vnc_port_tooltip : T('Can be set to <i>0</i>, left empty for FreeNAS to\
  assign a port when the VM is started, or set to a\
  fixed, preferred port number.'),
 
-wait_placeholder : T('Wait to boot'),
-wait_tooltip : T('Enable this setting to restrict VNC connections until\
+wait_placeholder : T('Wait to connect until VM boots'),
+wait_tooltip : T('Set this setting to restrict VNC connections until\
  the VM finishes booting.'),
 
 vnc_resolution_placeholder : T('Resolution'),
