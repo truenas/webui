@@ -152,7 +152,7 @@ export class CloudCredentialsFormComponent {
     {
       type: 'checkbox',
       name: 'skip_region-S3',
-      placeholder: T('Endpoint does not support regions'),
+      placeholder: T('Skip Region Autodetect'),
       // tooltip: T(''),
       isHidden: true,
       relation: [
@@ -168,7 +168,7 @@ export class CloudCredentialsFormComponent {
     {
       type: 'checkbox',
       name: 'signatures_v2-S3',
-      placeholder: T('Use v2 signatures'),
+      placeholder: T('Use V2 Signatures'),
       // tooltip: T(''),
       isHidden: true,
       relation: [
