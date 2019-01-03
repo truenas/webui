@@ -13,7 +13,7 @@ export class TooltipComponent {
 
   public isShowTooltip: Boolean;
   public tooltipMsgStyle: any;
-  public tooltipSize: any;
+  public isLockTooltip: Boolean = false;
 
   constructor(public translate: TranslateService) {}
 
@@ -37,7 +37,7 @@ export class TooltipComponent {
         this.tooltipMsgStyle = {'left' : '0px', 'max-width' : dynamicWidth + 'px'};
       }
       else if(posX > 420) {
-        this.tooltipMsgStyle = {'right' : '0px', 'max-width' :  dynamicWidth + 'px'};
+        this.tooltipMsgStyle = {'right' : '8px', 'max-width' :  dynamicWidth + 'px'};
       }
       else {
         let diffX = 'calc( -45vw - ' + (posX - screenW/2) + 'px )';
@@ -49,12 +49,19 @@ export class TooltipComponent {
         this.tooltipMsgStyle = {'left' : '0px'};
       }
       else if(posX > 420) {
-        this.tooltipMsgStyle = {'right' : '0px'};
+        this.tooltipMsgStyle = {'right' : '8px'};
       }
       else {
         let diffX = 'calc( -45vw - ' + (posX - screenW/2) + 'px )';
         this.tooltipMsgStyle = {'left' : diffX};
       }    
+    }
+  }
+
+  toggleVis() {
+    this.isLockTooltip = !this.isLockTooltip;
+    if (this.isLockTooltip === false) {
+      this.isShowTooltip = false;
     }
   }
 }
