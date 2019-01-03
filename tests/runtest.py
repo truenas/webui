@@ -143,7 +143,7 @@ try:
 except NameError:
     from driverG import webDriver
     print("Running Selenium Grid")
-    runDriver = webDriver(grid_server_ip)
+    runDriver = webDriver(ip)
 else:
     if driver_v == "F":
         from driverU import webDriver
