@@ -223,6 +223,12 @@ export class CloudsyncFormComponent implements OnInit {
   },
   {
     type: 'checkbox',
+    name: 'follow_symlinks',
+    placeholder: helptext.follow_symlinks_placeholder,
+    tooltip: helptext.follow_symlinks_tooltip,
+  },
+  {
+    type: 'checkbox',
     name: 'enabled',
     placeholder: helptext.enabled_placeholder,
     tooltip: helptext.enabled_tooltip,

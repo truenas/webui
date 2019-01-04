@@ -78,6 +78,9 @@ export default {
     cloudsync_picker_tooltip: T('Select a schedule preset or choose <i>Custom</i> to open\
                 the advanced scheduler.'),
 
+    follow_symlinks_placeholder: T('Follow symlinks'),
+    follow_symlinks_tooltip: T('Follow symlinks and copy the pointed to item.'),
+
     enabled_placeholder: T('Enabled'),
     enabled_tooltip: T('Enable this Cloud Sync Task. Unset to disable this Cloud\
                 Sync Task without deleting it.'),
