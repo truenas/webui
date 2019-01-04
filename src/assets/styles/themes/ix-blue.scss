@@ -1201,4 +1201,24 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(color, --fg2, $fg2 !important);
   }
 
+ .ui-treetable tr:nth-child(even){
+    background-color:rgba(123,123,123,0.2);
+  }
+
+  .ui-treetable-thead {
+    text-align: left;
+  }
+
+  app-volumes-list .ui-treetable-resizable .ui-treetable-tfoot>tr>td, .ui-treetable-resizable .ui-treetable-tbody>tr>td {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 300px;
+  }
+
+  app-volumes-list td[id^="tbody__comments_"] {
+    white-space: normal !important;
+    text-overflow: unset;
+    min-width: 200px;
+  }
+
 } // end of ix theme
