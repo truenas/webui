@@ -1,5 +1,4 @@
 import { Component, Input, ViewChild, ElementRef } from '@angular/core';
-import { TooltipPosition } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -24,8 +23,8 @@ export class TooltipComponent {
     let screenH = document.body.clientHeight;
     let posX = this.tooltip.nativeElement.getBoundingClientRect().left;
     let posY = this.tooltip.nativeElement.getBoundingClientRect().bottom;
-    let dynamicWidth = this.message.length * 9.5;
-
+    let dynamicWidth = this.message.length * 8.5;
+    
     if((posY / screenH > .85)) {
       this.tooltip.nativeElement.lastElementChild.id = "raised-tooltip";
     } else {
@@ -33,28 +32,23 @@ export class TooltipComponent {
     }
 
     if(this.message.length <= 40) {
-      if((screenW - posX) > 420) {
+      if((posX/screenW) <= .6) {
         this.tooltipMsgStyle = {'left' : '0px', 'max-width' : dynamicWidth + 'px'};
       }
-      else if(posX > 420) {
+      else {
         this.tooltipMsgStyle = {'right' : '8px', 'max-width' :  dynamicWidth + 'px'};
       }
-      else {
-        let diffX = 'calc( -45vw - ' + (posX - screenW/2) + 'px )';
-        this.tooltipMsgStyle = {'left' : diffX, 'max-width' : dynamicWidth + 'px'};
-      }    
     }
     else {
-      if((screenW - posX) > 420) {
+      if((posX/screenW) <= .52) {
         this.tooltipMsgStyle = {'left' : '0px'};
       }
-      else if(posX > 420) {
-        this.tooltipMsgStyle = {'right' : '8px'};
+      else if((posX/screenW) <= .63) {
+        this.tooltipMsgStyle = {'left' : '0px', 'max-width' : '270px'};
       }
       else {
-        let diffX = 'calc( -45vw - ' + (posX - screenW/2) + 'px )';
-        this.tooltipMsgStyle = {'left' : diffX};
-      }    
+        this.tooltipMsgStyle = {'right' : '8px'};
+      }
     }
   }
 
