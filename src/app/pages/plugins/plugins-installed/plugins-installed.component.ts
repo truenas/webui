@@ -102,6 +102,43 @@ export class PluginsInstalledListComponent {
       }
     },
     {
+      id: "mupgrade",
+      label: T("Upgrade"),
+      icon: "arrow_upward",
+      enable: true,
+      ttpos: "above",
+      onClick: (selected) => {
+        const option = {
+          'plugin': true,
+        }
+        const selectedJails = this.getSelectedNames(selected);
+        for (const i in selectedJails) {
+          selectedJails[i].push(option);
+        }
+
+        this.snackBar.open(T('Upgrade selected jails started.'), 'close', { duration: 5000 });
+        this.entityList.busy =
+          this.ws.job('core.bulk', ["jail.upgrade", selectedJails]).subscribe(
+            (res) => {
+              if (res.result != null) {
+                if (res.result[0] && res.result[0].error != null) {
+                  this.dialogService.errorReport(T('Upgrade selected jails failed.'), res.result[0].error);
+                }
+              } else {
+                for (const i in selected) {
+                  this.updateRow(selected[i]);
+                }
+                this.updateMultiAction(selected);
+                this.snackBar.open(T('Upgrade selected jails successed.'), 'close', { duration: 5000 });
+              }
+            },
+            (res) => {
+              this.snackBar.open(T('Upgrade selected jails failed.'), 'close', { duration: 5000 });
+              new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
+            });
+      }
+    },
+    {
       id: "mdelete",
       label: T("Delete"),
       icon: "delete",
