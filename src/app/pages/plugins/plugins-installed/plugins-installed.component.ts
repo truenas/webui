@@ -1,12 +1,14 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
+import { MatDialog, MatSnackBar } from '@angular/material';
 
 import { RestService, WebSocketService } from '../../../services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../../app/services';
 import { EntityUtils } from '../../common/entity/utils';
 import { T } from '../../../translate-marker';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 
 @Component({
   selector: 'app-plugins-installed-list',
@@ -118,7 +120,8 @@ export class PluginsInstalledListComponent {
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected loader: AppLoaderService,
-              protected dialogService: DialogService) {
+              protected dialogService: DialogService, protected dialog: MatDialog,
+              protected snackBar: MatSnackBar) {
     this.getActivatedPool();
     this.getAvailablePools();
   }
@@ -247,6 +250,22 @@ export class PluginsInstalledListComponent {
                 this.loader.close();
                 new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
               });
+        }
+      },
+      {
+        id: "upgrade",
+        label: T("Upgrade"),
+        onClick: (row) => {
+          const option = {
+            'plugin': true,
+          }
+          const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Upgrading Plguin") }, disableClose: true });
+          dialogRef.componentInstance.setCall('jail.upgrade', [row[1], option]);
+          dialogRef.componentInstance.submit();
+          dialogRef.componentInstance.success.subscribe((res) => {
+            dialogRef.close(true);
+            this.snackBar.open(T("Successfully Upgraded plugin."), T('Close'), { duration: 5000 });
+          });
         }
       },
       {
