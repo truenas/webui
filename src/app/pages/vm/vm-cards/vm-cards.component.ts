@@ -45,9 +45,9 @@ interface VmProfile {
   <vm-summary></vm-summary>
   <entity-table [title]="title" [conf]="this"></entity-table>`
 })
-export class VmCardsComponent {
+export class VmCardsComponent  {
 
-  protected resource_name = 'vm/vm';
+  protected queryCall = 'vm.query';
   protected route_add: string[] = [ 'vm', 'wizard' ];
   protected route_add_tooltip = "Add VM";
   protected route_edit: string[] = [ 'vm', 'edit' ];
@@ -55,18 +55,24 @@ export class VmCardsComponent {
   protected toggleProp = "state";
   protected toggleStart = "vm.start";
   protected toggleStop = "vm.stop";
-  public title = "Virtual Machines"
+  public title = "Virtual Machines";
+  public controlEvents:Subject<CoreEvent> = new Subject();
+  public actions = [];
+  public showSpinner = true;
 
   protected entityTable: EntityTableComponent;
+
   public columns: Array<any> = [
-    {name : 'Name', prop : 'name', card: true},
+    {name : 'Name', prop : 'name'},
+    { name: 'Connect', prop: 'connect', state: 'state'},
     {name : 'Description', prop : 'description'},
-    {name : 'Info', prop : 'info', card: true},
+    {name : 'Info', prop : 'info' },
     {name : 'Virtual CPUs', prop : 'vcpus'},
     {name : 'Memory Size (MiB)', prop : 'memory'},
     {name : 'Boot Loader Type', prop : 'bootloader'},
     {name : 'State', prop : 'state'},
     {name: 'Autostart', prop : 'autostart'},
+    
   ];
   public config: any = {
     paging : true,
@@ -74,13 +80,17 @@ export class VmCardsComponent {
   };
   
 
-  constructor(protected router: Router, protected rest: RestService,
-              protected ws: WebSocketService) {}
+  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService,
+              private core:CoreService,private dialog: DialogService,protected loader: AppLoaderService,
+              protected matdialog: MatDialog
+              ) {}
 
 
 
 
-  afterInit(entityTable: EntityTableComponent) { this.entityTable = entityTable; }
+  afterInit(entityTable: EntityTableComponent) { 
+    this.entityTable = entityTable;
+  }
 
   getActions(row) {
     const actions = [];
@@ -88,13 +98,13 @@ export class VmCardsComponent {
       id : "start",
       label : row.state === "RUNNING" ? "Stop" : "Start",
       onClick : (row) => {
-        let rpc: string;
         if (row.state !== 'RUNNING') {
-          rpc = 'vm.start';
+          const eventName = "VmStart";
+          this.core.emit({name: eventName, data:[row.id]});
         } else {
-          rpc = 'vm.stop';
+          const eventName = "VmPowerOff";
+          this.core.emit({name: eventName, data:[row.id]});
         }
-        this.ws.call(rpc, [ row.id ]).subscribe((res) => {});
       }
     });
     actions.push({
@@ -107,7 +117,7 @@ export class VmCardsComponent {
     actions.push({
       label : "Delete",
       onClick : (row) => {
-        this.entityTable.doDelete(row.id );
+        this.core.emit({name:"VmDelete", data:[row.id,row]});
       },
     });
     actions.push({
@@ -127,45 +137,11 @@ export class VmCardsComponent {
         });
       }
     });
-        actions.push({
+    actions.push({
       label : "wizard",
       onClick : (row) => {
         this.router.navigate(
             new Array('').concat([ "", "wizard" ]));
-      }
-    });
-    return actions;
-  }
-  getCardActions(row) {
-    const actions = [];
-    actions.push({
-      label : "Edit",
-      onClick : (row) => {
-        this.router.navigate(
-            new Array('').concat([ "vm", "edit", row.id ]));
-      }
-    });
-    actions.push({
-      label : "Delete",
-      onClick : (row) => {
-        this.entityTable.doDelete(row.id );
-      },
-    });
-    actions.push({
-      label : "Devices",
-      onClick : (row) => {
-        this.router.navigate(
-            new Array('').concat([ "vm", row.id, "devices", row.name ]));
-      }
-    });
-    actions.push({
-      label : "Web VNC",
-      onClick : (row) => {
-        this.ws.call('vm.get_vnc_web', [ row.id ]).subscribe((res) => {
-          for (const item in res){
-            window.open(res[item])
-          }
-        });
       }
     });
     return actions;
@@ -178,6 +154,9 @@ export class VmCardsComponent {
             new Array('').concat(["vm", "dockerwizard"]));
         }
       }]
+  }
+  stateButton(row) {
+    console.log('here')
   }
 }
 // export class VmCardsComponent implements OnInit, OnDestroy {
