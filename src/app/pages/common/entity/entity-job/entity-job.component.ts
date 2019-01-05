@@ -80,7 +80,7 @@ export class EntityJobComponent implements OnInit {
 
   @HostListener('failure', ['$event'])
   public onFailure(job) {
-    this.description = job.error;
+    this.description = '<b>Error:</b> ' + job.error;
   }
 
   public show() {
