@@ -129,7 +129,7 @@ export class PluginsInstalledListComponent {
                   this.updateRow(selected[i]);
                 }
                 this.updateMultiAction(selected);
-                this.snackBar.open(T('Upgrade selected jails successed.'), 'close', { duration: 5000 });
+                this.snackBar.open(T('Upgrade selected jails succeeded.'), 'close', { duration: 5000 });
               }
             },
             (res) => {
