@@ -14,6 +14,7 @@ export interface UserPreferences {
   metaphor:string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
   allowPwToggle:boolean;
   enableWarning:boolean;
+  preferIconsOnly:boolean;
 }
 
 @Injectable()
@@ -23,14 +24,15 @@ export class PreferencesService {
   public preferences: UserPreferences = {
     "platform":"freenas",
     "timestamp":new Date(),
-    "userTheme":"ix-blue", // Theme name
+    "userTheme":"ix-dark", // Theme name
     "customThemes": [], // Theme Objects
     "favoriteThemes": [], // Theme Names
     "showGuide":true,
     "showTooltips":true,
     "metaphor":"auto",
     "allowPwToggle":true,
-    "enableWarning": true
+    "enableWarning": true,
+    "preferIconsOnly": false
   }
   constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router,
     private aroute: ActivatedRoute) {
@@ -38,7 +40,13 @@ export class PreferencesService {
     this.core.register({observerClass:this, eventName:"Authenticated",sender:this.api}).subscribe((evt:CoreEvent) => {
       //console.log(evt.data);
       if(evt.data){
-        this.core.emit({name:"UserDataRequest", data: [[["id", "=", 1 ]]] });
+        this.core.emit({name:"UserPreferencesChanged", data: this.preferences });
+      }
+    });
+
+    this.core.register({observerClass:this, eventName:"UserPreferencesRequest"}).subscribe((evt:CoreEvent) => {
+      if(evt.data){
+        this.core.emit({name:"UserDataRequest", data: [[[ "id", "=", 1 ]]]});
       }
     });
 
@@ -54,6 +62,7 @@ export class PreferencesService {
           console.warn("No Preferences Found in Middleware");
           return;
         }
+
         const preferencesFromMiddleware = Object.keys(data);
         const keysMatch:boolean = (preferencesFromUI.join() == preferencesFromMiddleware.join());// evaluates as false negative, wth?!
         if(data && keysMatch){

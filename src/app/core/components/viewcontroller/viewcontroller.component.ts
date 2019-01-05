@@ -4,7 +4,7 @@ import { Display } from 'app/core/components/display/display.component';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { ViewController } from 'app/core/classes/viewcontroller';
 import { LayoutContainer, LayoutChild } from 'app/core/classes/layouts';
-import { Subject } from 'rxjs';
+import { Subject } from 'rxjs/Subject';
 
 export const ViewControllerMetadata = {
   template: `
