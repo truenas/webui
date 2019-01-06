@@ -38,15 +38,19 @@ export class PreferencesService {
     private aroute: ActivatedRoute) {
 
     this.core.register({observerClass:this, eventName:"Authenticated",sender:this.api}).subscribe((evt:CoreEvent) => {
-      //console.log(evt.data);
+      // evt.data: boolean = authentication status
       if(evt.data){
-        this.core.emit({name:"UserPreferencesChanged", data: this.preferences });
+        this.core.emit({name:"UserPreferencesRequest"});
       }
     });
 
     this.core.register({observerClass:this, eventName:"UserPreferencesRequest"}).subscribe((evt:CoreEvent) => {
-      if(evt.data){
+      if(!evt.data){
         this.core.emit({name:"UserDataRequest", data: [[[ "id", "=", 1 ]]]});
+      } else {
+        // Uncomment the line below when multi-user support is implemented in middleware
+        //this.core.emit({name:"UserDataRequest", data: [[[ "id", "=", evt.data ]]]});
+        if(this.debug){ console.warn("Multiple users not supported by middleware"); }
       }
     });
 
@@ -121,7 +125,7 @@ export class PreferencesService {
     this.core.register({observerClass:this, eventName:"ChangePreferences"}).subscribe((evt:CoreEvent) => {
       //console.log("ChangePreferences");
       //console.log(evt.data);
-      const prefs = this.preferences;
+      let prefs = this.preferences;
       Object.keys(evt.data).forEach(function(key){
         prefs[key] = evt.data[key];
       });
