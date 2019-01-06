@@ -48,7 +48,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
         name:'General Preferences',
         class:'preferences',
         label:true,
-        width:'300px',
+        width:'400px',
         config:[
           {
             type: 'select',
