@@ -35,7 +35,7 @@
  #select-all-checkbox-and-label {
      max-width: 100px;
      font-weight: 700;
-     margin-left: 4px;
+     margin-left: 2px;
  }
  
 #footer {
@@ -59,6 +59,10 @@
     display: inline-block;
 }
 
+#filter{
+  margin-right:16px;
+}
+
 #filter, .mat-toolbar {
     display: inline-block;
 }
@@ -67,23 +71,35 @@
     font-size: 14px;
 }
 
-#filter {
-    position: absolute;
-    right: 150px;
-    top: 9px;
-    z-index: 10;
+#filter .mat-icon{
+  position:absolute;
+  top:24px;
 }
+
+#filter .mat-input-container{
+  padding-left:32px;
+}
+
+//#filter {
+//    position: absolute;
+//    right: 150px;
+//    top: 9px;
+//    z-index: 10;
+//}
 
 #action-button-wrapper {
     height: 36px;
 }
 
 .legacy-warning {
-    position: absolute;
-    font-size: .8rem;
-    top: 75px;
-    right: 10px;
-    z-index: 10;
+  font-weight:500;
+  margin:0 24px;
+  color:var(--fg2);
+//    position: absolute;
+//    font-size: .8rem;
+//    top: 75px;
+//    right: 10px;
+//    z-index: 10;
 }
 
 .legacy-warning-link {

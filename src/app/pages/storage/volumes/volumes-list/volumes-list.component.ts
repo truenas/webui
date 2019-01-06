@@ -21,6 +21,8 @@ import { StorageService } from '../../../../services/storage.service';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import helptext from '../../../../helptext/storage/volumes/volume-list';
 
+import { CoreService } from 'app/core/services/core.service';
+
 export interface ZfsPoolData {
   avail?: number;
   availStr?: string;
@@ -748,11 +750,11 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   public paintMe = true;
 
 
-  constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
+  constructor(protected core: CoreService ,protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
     public sorter: StorageService, protected snackBar: MatSnackBar) {
-    super(rest, router, ws, _eRef, dialogService, loader, erdService, translate, snackBar, sorter);
+    super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, snackBar, sorter);
   }
 
   public repaintMe() {
