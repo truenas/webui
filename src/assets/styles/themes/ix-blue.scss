@@ -1204,6 +1204,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
  .ui-treetable tr:nth-child(even){
     background-color:rgba(123,123,123,0.2);
   }
+  
+  .ui-treetable tr:hover {
+    @include variable(background, --primary, $primary, !important);
+    @include variable(color, --primary-txt, $primary-txt);
+  }
 
   .ui-treetable-thead {
     text-align: left;
