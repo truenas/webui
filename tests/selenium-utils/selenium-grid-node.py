@@ -9,7 +9,7 @@ UsageMSG = """
 Usage for %s:
 Mandatory Commands:
 
---ip <0.0.0.0>            - IP of the machine targeted
+--ip <0.0.0.0>            - IP of the machine hosting the selenium hub
 
 """ % argument[0]
 # if have no argument stop
