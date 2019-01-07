@@ -296,12 +296,12 @@ export class PluginsInstalledListComponent {
           const option = {
             'plugin': true,
           }
-          const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Upgrading Plguin") }, disableClose: true });
+          const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Upgrading Plugin") }, disableClose: true });
           dialogRef.componentInstance.setCall('jail.upgrade', [row[1], option]);
           dialogRef.componentInstance.submit();
           dialogRef.componentInstance.success.subscribe((res) => {
             dialogRef.close(true);
-            this.snackBar.open(T("Successfully Upgraded plugin."), T('Close'), { duration: 5000 });
+            this.snackBar.open(T("Successfully upgraded plugin."), T('Close'), { duration: 5000 });
           });
         }
       },

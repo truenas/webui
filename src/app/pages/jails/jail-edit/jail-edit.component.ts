@@ -996,7 +996,7 @@ export class JailEditComponent implements OnInit {
   protected vnet_default_interfaceField:any;
   public save_button_enabled: boolean;
   public error: any;
-  protected isPlulgin = false;
+  protected isPlugin = false;
 
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
@@ -1189,7 +1189,7 @@ export class JailEditComponent implements OnInit {
         for (let i in res[0]) {
           if (i == 'type' && res[0][i] == 'pluginv2') {
             this.setDisabled("host_hostuuid", true);
-            this.isPlulgin = true;
+            this.isPlugin = true;
           }
           if (this.formGroup.controls[i]) {
             if (i == 'ip4_addr') {
@@ -1399,7 +1399,7 @@ export class JailEditComponent implements OnInit {
         if (updateRelease) {
           const option = {
             'release': newRelease,
-            'plugin': this.isPlulgin,
+            'plugin': this.isPlugin,
           }
           const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Upgrading Jail") }, disableClose: true });
           dialogRef.componentInstance.setCall(this.upgradeCall, [this.pk, option]);
