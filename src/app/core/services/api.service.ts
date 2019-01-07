@@ -626,7 +626,7 @@ export class ApiService {
 
   async callWebsocket(evt:CoreEvent,def){
     let cloneDef = Object.assign({}, def);
-    const namespace = [
+    const async_calls = [
       "vm.start",
       "vm.delete"
     ]
@@ -634,12 +634,12 @@ export class ApiService {
     if(evt.data){
       cloneDef.apiCall.args = evt.data;
 
-      if(def.preProcessor && !namespace.includes(def.apiCall.namespace)){
+      if(def.preProcessor && !async_calls.includes(def.apiCall.namespace)){
         cloneDef.apiCall =  def.preProcessor(def.apiCall, this);
       }
       
       // PreProcessor: ApiDefinition manipulates call to be sent out.
-      if(def.preProcessor && namespace.includes(def.apiCall.namespace)) {
+      if(def.preProcessor && async_calls.includes(def.apiCall.namespace)) {
         cloneDef.apiCall =  await def.preProcessor(def.apiCall, this);
         if (!cloneDef.apiCall) {
           this.core.emit({name:"VmStopped", data:{id:evt.data[0]}});
@@ -649,8 +649,6 @@ export class ApiService {
 
 
       let call = cloneDef.apiCall;//this.parseEventWs(evt);
-      console.log(call.namespace);
-      console.log(call.args);
       this.ws.call(call.namespace, call.args).subscribe((res) => {
         if(this.debug){
           console.log("*** API Response:");
