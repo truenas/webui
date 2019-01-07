@@ -64,13 +64,13 @@ export class VmCardsComponent  {
 
   public columns: Array<any> = [
     {name : 'Name', prop : 'name'},
-    { name: 'Connect', prop: 'connect', state: 'state'},
+    {name : 'State', prop : 'state'},
+    {name : 'ProcessID', prop : 'pid'},
+    {name : 'Type', prop : 'vm_type'},
     {name : 'Description', prop : 'description'},
-    {name : 'Info', prop : 'info' },
     {name : 'Virtual CPUs', prop : 'vcpus'},
     {name : 'Memory Size (MiB)', prop : 'memory'},
     {name : 'Boot Loader Type', prop : 'bootloader'},
-    {name : 'State', prop : 'state'},
     {name: 'Autostart', prop : 'autostart'},
     
   ];
@@ -86,27 +86,50 @@ export class VmCardsComponent  {
               ) {}
 
 
-
+  resourceTransformIncomingRestData(vms) {
+    for (let vm_index = 0; vm_index<vms.length; vm_index++){
+      vms[vm_index]['state'] = vms[vm_index]['status']['state'];
+      vms[vm_index]['pid'] = vms[vm_index]['status']['pid'];
+    }
+    return vms;
+  }
 
   afterInit(entityTable: EntityTableComponent) { 
     this.entityTable = entityTable;
+    Observable.interval(5000).subscribe((val) => {
+      this.entityTable.getData();
+     });
   }
 
   getActions(row) {
     const actions = [];
-    actions.push({
-      id : "start",
-      label : row.state === "RUNNING" ? "Stop" : "Start",
-      onClick : (row) => {
-        if (row.state !== 'RUNNING') {
-          const eventName = "VmStart";
-          this.core.emit({name: eventName, data:[row.id]});
-        } else {
+    if(row['status']['state'] === "RUNNING"){
+      actions.push({
+        id : "poweroff",
+        label : "Power Off",
+        onClick : (row) => {
           const eventName = "VmPowerOff";
           this.core.emit({name: eventName, data:[row.id]});
         }
-      }
-    });
+      });
+      actions.push({
+        id : "stop",
+        label : "Stop",
+        onClick : (row) => {
+          const eventName = "VmStop";
+          this.core.emit({name: eventName, data:[row.id]});
+        }
+      });
+    } else {
+      actions.push({
+        id : "start",
+        label : "Start",
+        onClick : (row) => {
+          const eventName = "VmStart";
+          this.core.emit({name: eventName, data:[row.id]});
+        }
+      });
+    }
     actions.push({
       label : "Edit",
       onClick : (row) => {
@@ -127,23 +150,30 @@ export class VmCardsComponent  {
             new Array('').concat([ "vm", row.id, "devices", row.name ]));
       }
     });
-    actions.push({
-      label : "Web VNC",
-      onClick : (row) => {
-        this.ws.call('vm.get_vnc_web', [ row.id ]).subscribe((res) => {
-          for (let item in res){
-            window.open(res[item])
+    if(row['status']['state'] === "RUNNING"){
+      if (this.checkVnc(row)) {
+        actions.push({
+        label : "VNC",
+        onClick : (vnc_vm) => {
+          this.ws.call('vm.get_vnc_web', [ vnc_vm.id ]).subscribe((res) => {
+            for (const vnc_port in res){
+              window.open(res[vnc_port])
+              }
+            });
           }
         });
       }
-    });
-    actions.push({
-      label : "wizard",
-      onClick : (row) => {
-        this.router.navigate(
-            new Array('').concat([ "", "wizard" ]));
-      }
-    });
+      actions.push({
+        label : "Serial",
+        onClick : (vm) => {
+          this.router.navigate(
+            new Array('').concat([ "vm","serial", vm.id])
+          );
+        }
+      });
+
+    }
+
     return actions;
   }
   getAddActions() {
@@ -155,8 +185,19 @@ export class VmCardsComponent  {
         }
       }]
   }
-  stateButton(row) {
-    console.log('here')
+  checkVnc(vm){
+    const devices = vm.devices
+    if(!devices || devices.length === 0){
+      return false;
+    };
+    if(vm.bootloader === 'GRUB' || vm.bootloader === "UEFI_CSM" ){
+      return false;
+    };
+    for(let i=0; i < devices.length; i++){
+      if(devices && devices[i].dtype === "VNC") {
+        return true;
+      }
+    }
   }
 }
 // export class VmCardsComponent implements OnInit, OnDestroy {
