@@ -141,9 +141,9 @@ except NameError:
 try:
     driver_v
 except NameError:
-    from driverG import webDriver
-    print("Running Selenium Grid")
-    runDriver = webDriver(ip)
+    from driverU import webDriver
+    print("Running DriverU")
+    runDriver = webDriver()
 else:
     if driver_v == "F":
         from driverU import webDriver
