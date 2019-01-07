@@ -1,6 +1,6 @@
 //import { Component } from '@angular/core';
 import { CoreEvent } from 'app/core/services/core.service';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 
 export abstract class View {
 
