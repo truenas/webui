@@ -51,35 +51,35 @@ export default {
 
     transfer_mode_validation : [ Validators.required ],
 
-    remote_encryption_placeholder: T('Remote encryption'),
+    remote_encryption_placeholder: T('Remote Encryption'),
     remote_encryption_tooltip: T('Set to encrypt files before transfer and store the\
                 encrypted files on the remote system.\
                 <a href="https://rclone.org/crypt/"\
                 target="_blank">rclone Crypt</a> is used.'),
 
-    filename_encryption_placeholder: T('Filename encryption'),
+    filename_encryption_placeholder: T('Filename Encryption'),
     filename_encryption_tooltip: T('Set to encrypt the shared file names.'),
 
-    encryption_password_placeholder: T('Encryption password'),
+    encryption_password_placeholder: T('Encryption Password'),
     encryption_password_tooltip: T('Enter the password to encrypt and decrypt remote data.\
                 <b>Warning</b>: Always save and back up this password.\
                 Losing the encryption password can result in data loss.'),
 
-    encryption_salt_placeholder: T('Encryption salt'),
+    encryption_salt_placeholder: T('Encryption Salt'),
     encryption_salt_tooltip: T('Enter a long string of random characters for use as\
                 <a href="https://searchsecurity.techtarget.com/definition/salt"\
                 target="_blank">salt</a> for the encryption password.\
                 <b>Warning:</b> Save and back up the encryption salt\
                 value. Losing the salt value can result in data loss.'),
 
-    args_placeholder: T('Auxiliary arguments'),
+    args_placeholder: T('Auxiliary Arguments'),
 
     cloudsync_picker_placeholder: T('Schedule the Cloud Sync Task'),
     cloudsync_picker_tooltip: T('Select a schedule preset or choose <i>Custom</i> to open\
                 the advanced scheduler.'),
 
-    follow_symlinks_placeholder: T('Follow symlinks'),
-    follow_symlinks_tooltip: T('Follow symlinks and copy the pointed to item.'),
+    follow_symlinks_placeholder: T('Follow Symlinks'),
+    follow_symlinks_tooltip: T('Follow symlinks and copy the items to which they link.'),
 
     enabled_placeholder: T('Enabled'),
     enabled_tooltip: T('Enable this Cloud Sync Task. Unset to disable this Cloud\
