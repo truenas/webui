@@ -8,6 +8,14 @@ import * as moment from 'moment';
 export class StorageService {
   protected diskResource: string = 'disk.query';
 
+  public ids: any;
+  public diskNames: any;
+  public hddStandby: any;
+  public diskToggleStatus: boolean;
+  public SMARToptions: any;
+  public advPowerMgt: any;
+  public acousticLevel: any;
+
   constructor(protected ws: WebSocketService, protected rest: RestService) {}
 
   filesystemStat(path: string) {
@@ -167,14 +175,6 @@ export class StorageService {
   } 
 
   // This section passes data from disk-list to disk-bulk-edit form
-  public ids: any;
-  public diskNames: any;
-  public hddStandby: any;
-  public diskToggleStatus: boolean;
-  public SMARToptions: any;
-  public advPowerMgt: any;
-  public acousticLevel: any;
-
   diskIdsBucket(arr) {
     this.ids = arr;
   }
