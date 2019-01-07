@@ -6,7 +6,7 @@
         <!-- Summary Section -->
         <div fxFlex="100" fxFlex.gt-xs="40" class="card-bg-wrapper">
           <div class="platform-image">
-              <div class="card-bg" [style.background-image]="cardBg ? 'url(assets/images/' + cardBg + ')' : 'none'"></div>
+              <div class="card-bg" [style.background-image]="cardBg ? 'url(assets/images/' + cardBg + ')' : 'none'" [ngClass]="cardBg == 'logo.svg' ? 'card-bg-logo' : 'card-bg-hw'"></div>
           </div>
           <div class="title-wrapper">
             <p class="platform-logo"><img src="assets/images/light-logo-full.svg"></p>
