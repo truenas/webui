@@ -45,6 +45,12 @@ export class SMBFormComponent implements OnDestroy {
     },
     {
       type: 'checkbox',
+      name: 'cifs_timemachine',
+      placeholder: helptext_sharing_smb.placeholder_timemachine,
+      tooltip: helptext_sharing_smb.tooltip_timemachine,
+    },
+    {
+      type: 'checkbox',
       name: 'cifs_default_permissions',
       placeholder: helptext_sharing_smb.placeholder_default_permissions,
       tooltip: helptext_sharing_smb.tooltip_default_permissions,
