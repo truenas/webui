@@ -91,7 +91,7 @@ ul.schedule-list li:nth-child(odd){
 ::ng-deep .mat-form-field-underline,
 ::ng-deep .mat-focused .mat-form-field-underline,
 ::ng-deep .mat-form-field-underline .mat-form-field-ripple{
-  background-color:var(--primary-txt);
+  background-color:var(--primary-txt) !important;
 }
 
 .cron-fields section{
@@ -127,6 +127,10 @@ ul.schedule-list li:nth-child(odd){
 
 .cron-fields .invalid{
   color:var(--red) !important;
+}
+
+.cron-fields .mat-input-element {
+  caret-color: var(--primary-txt) !important; 
 }
 
 /*Button Toggle Group*/
