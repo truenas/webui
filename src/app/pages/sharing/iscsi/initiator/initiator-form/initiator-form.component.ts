@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Validators } from '@angular/forms';
 
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
-import { T } from '../../../../../translate-marker';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../../common/entity/utils';
 import { WebSocketService } from '../../../../../services/';
+import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 
 @Component({
   selector : 'app-iscsi-initiator-form',
@@ -27,30 +26,24 @@ export class InitiatorFormComponent {
     {
       type : 'input',
       name : 'initiators',
-      placeholder : T('Initiators'),
-      tooltip: T('Use <i>ALL</i> keyword or a list of initiator hostnames\
-                  separated by spaces.'),
+      placeholder : helptext_sharing_iscsi.initiator_form_placeholder_initiators,
+      tooltip: helptext_sharing_iscsi.initiator_form_tooltip_initiators,
       value: '',
       inputType : 'textarea',
     },
     {
       type : 'input',
       name : 'auth_network',
-      placeholder : T('Authorized Networks'),
-      tooltip: T('Network addresses that can use this initiator. Use\
-                  <i>ALL</i> or list network addresses with a\
-                  <a href="https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing"\
-                  target="_blank">CIDR</a> mask. Separate multiple\
-                  addresses with a space:\
-                  <i>192.168.2.0/24 192.168.2.1/12</i>.'),
+      placeholder : helptext_sharing_iscsi.initiator_form_placeholder_auth_network,
+      tooltip: helptext_sharing_iscsi.initiator_form_tooltip_auth_network,
       value: '',
       inputType : 'textarea',
     },
     {
       type : 'input',
       name : 'comment',
-      placeholder : T('Comment'),
-      tooltip: T('Optional description.'),
+      placeholder : helptext_sharing_iscsi.initiator_form_placeholder_comment,
+      tooltip: helptext_sharing_iscsi.initiator_form_tooltip_comment,
     },
   ];
 
