@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material';
 
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -15,6 +16,7 @@ import { T } from '../../../translate-marker';
 import { TranslateService } from '@ngx-translate/core';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 import helptext from '../../../helptext/jails/jails-edit';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 
 @Component({
   selector: 'jail-edit',
@@ -994,6 +996,7 @@ export class JailEditComponent implements OnInit {
   protected vnet_default_interfaceField:any;
   public save_button_enabled: boolean;
   public error: any;
+  protected isPlugin = false;
 
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
@@ -1004,7 +1007,8 @@ export class JailEditComponent implements OnInit {
     protected loader: AppLoaderService,
     public translate: TranslateService,
     protected dialogService: DialogService,
-    protected networkService: NetworkService) {}
+    protected networkService: NetworkService,
+    protected dialog: MatDialog,) {}
 
   isLowerVersion(version: any) {
     if (version < this.currentReleaseVersion) {
@@ -1171,9 +1175,21 @@ export class JailEditComponent implements OnInit {
       ]).subscribe(
       (res) => {
         this.wsResponse = res[0];
+        if (res[0] && res[0].state == 'up') {
+          this.save_button_enabled = false;
+          this.error = T("Jails cannot be changed while running.");
+          for (let i = 0; i < this.formFileds.length; i++) {
+            this.setDisabled(this.formFileds[i].name, true);
+          }
+        } else {
+          this.save_button_enabled = true;
+          this.error = "";
+        }
+
         for (let i in res[0]) {
           if (i == 'type' && res[0][i] == 'pluginv2') {
             this.setDisabled("host_hostuuid", true);
+            this.isPlugin = true;
           }
           if (this.formGroup.controls[i]) {
             if (i == 'ip4_addr') {
@@ -1243,16 +1259,6 @@ export class JailEditComponent implements OnInit {
             }
             this.formGroup.controls[i].setValue(res[0][i]);
           }
-        }
-        if (res[0] && res[0].state == 'up') {
-          this.save_button_enabled = false;
-          this.error = T("Jails cannot be changed while running.");
-          for (let i = 0; i < this.formFileds.length; i++) {
-            this.setDisabled(this.formFileds[i].name, true);
-          }
-        } else {
-          this.save_button_enabled = true;
-          this.error = "";
         }
       },
       (res) => {
@@ -1389,21 +1395,19 @@ export class JailEditComponent implements OnInit {
 
     this.ws.call(this.updateCall, [this.pk, value]).subscribe(
       (res) => {
+        this.loader.close();
         if (updateRelease) {
-          this.ws.job(this.upgradeCall, [this.pk, newRelease]).subscribe(
-            (res_upgrade) => {
-              this.loader.close();
-              if (res_upgrade.error) {
-                new EntityUtils().handleWSError(this, res_upgrade, this.dialogService);
-              } else {
-                this.router.navigate(new Array('/').concat(this.route_success));
-              }
-            },
-            (res_upgrate) => {
-              this.loader.close();
-              new EntityUtils().handleWSError(this, res_upgrate, this.dialogService);
-            }
-          );
+          const option = {
+            'release': newRelease,
+            'plugin': this.isPlugin,
+          }
+          const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Upgrading Jail") }, disableClose: true });
+          dialogRef.componentInstance.setCall(this.upgradeCall, [this.pk, option]);
+          dialogRef.componentInstance.submit();
+          dialogRef.componentInstance.success.subscribe((res) => {
+            dialogRef.close(true);
+            this.router.navigate(new Array('/').concat(this.route_success));
+          });
         } else {
           this.loader.close();
           if (res.error) {

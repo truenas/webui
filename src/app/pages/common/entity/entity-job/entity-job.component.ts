@@ -84,7 +84,7 @@ export class EntityJobComponent implements OnInit {
     job.error = _.replace(job.error, '<', '< ');
     job.error = _.replace(job.error, '>', ' >');
 
-    this.description = job.error;
+    this.description = '<b>Error:</b> ' + job.error;
   }
 
   public show() {
