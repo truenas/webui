@@ -129,6 +129,10 @@ ul.schedule-list li:nth-child(odd){
   color:var(--red) !important;
 }
 
+.cron-fields .mat-input-element {
+  caret-color: var(--primary-txt) !important; 
+}
+
 /*Button Toggle Group*/
 .cron-fields mat-button-toggle-group{
   margin:16px 0;
