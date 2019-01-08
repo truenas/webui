@@ -28,6 +28,9 @@ export const helptext_sharing_smb = {
  and select the </i>Path</i> that contains the new\
  lower case username.'),
 
+   placeholder_timemachine: T('Time Machine'),
+   tooltip_timemachine: T('Enable Time Machine backups on this share.'),
+
     placeholder_default_permissions: T('Default Permissions'),
     tooltip_default_permissions: T('When enabled, the ACLs grant read and write access for\
  owner or group and read-only for others.\
