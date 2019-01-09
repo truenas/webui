@@ -3,9 +3,7 @@
 #Installations
 cd ~/
 sudo apt-get install python-pip
-sudo pip install --upgrade pip
 sudo pip install selenium
-sudo apt-get install python-pytest
 sudo apt-get install git
 sudo pip install unittest-xml-reporting
 
