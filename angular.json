@@ -23,6 +23,7 @@
               "src/assets/images"
             ],
             "styles": [
+              "src/assets/styles/reset.css",
               "node_modules/xterm/dist/xterm.css",
               "node_modules/quill/dist/quill.core.css",
               "node_modules/quill/dist/quill.snow.css",
@@ -46,7 +47,8 @@
               "src/assets/styles/themes/freenas-sharks.scss",
               "src/assets/styles/fn-styles.css",
               "src/assets/styles/charts.css",
-              "src/assets/styles/egret_overrides.css"
+              "src/assets/styles/egret_overrides.css",
+              "src/assets/styles/material-reduction.css"
             ],
             "scripts": [
               "node_modules/perfect-scrollbar/dist/js/perfect-scrollbar.js",
