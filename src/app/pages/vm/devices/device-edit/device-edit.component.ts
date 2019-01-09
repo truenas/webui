@@ -379,8 +379,13 @@ export class DeviceEditComponent implements OnInit {
       }
       this.setgetValues(this.activeFormGroup,deviceInformation);
     });
-
-
+  this.aroute.params.subscribe(params => {
+      this.ws.call('vm.query',[[['id', '=', parseInt(params['vmid'] ,10)]]]).subscribe((res)=>{
+        if(res[0].status.state === "RUNNING") {
+          this.activeFormGroup.setErrors({ 'invalid': true });
+        }
+      })
+    });
 
     this.afterInit();
   }
