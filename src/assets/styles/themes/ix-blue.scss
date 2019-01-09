@@ -1038,7 +1038,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
    }
 
    .mat-progress-bar .mat-progress-bar-background{
-     opacity:0.1;
+     //opacity:0.1;
+     display:none;
    }
 
   #password, #sed_passwd, #em_pass1, #bsdusr_passwd_currnt,
