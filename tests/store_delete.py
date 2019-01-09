@@ -46,7 +46,7 @@ class delete_pool_test(unittest.TestCase):
         pass
 
     # Test navigation Account>Users>Hover>New User and enter username,fullname,password,confirmation and wait till user is  visibile in the list
-    def test_01_nav_store_pool(self):
+    def test_00_nav_store_pool(self):
         try:
             # Click  Storage menu
             print (" navigating to the Pool submenu")
