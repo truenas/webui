@@ -56,6 +56,12 @@ export class ServiceSMBComponent {
       tooltip: helptext.cifs_srv_description_tooltip,
     },
     {
+      type: 'checkbox',
+      name: 'cifs_srv_enable_smb1',
+      placeholder: helptext.cifs_srv_enable_smb1_placeholder,
+      tooltip: helptext.cifs_srv_enable_smb1_tooltip,
+    },
+    {
       type: 'select',
       name: 'cifs_srv_doscharset',
       placeholder: helptext.cifs_srv_doscharset_placeholder,
