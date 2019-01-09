@@ -285,7 +285,7 @@ export class ApiService {
         responseEvent:"VmDeleted"
       },
       async preProcessor(def:ApiCall, self) {
-        return await self.dialog.confirm("Delete", `Delete ${def.args[1].name} ?`).toPromise().then((res)=>{
+        return await self.dialog.confirm("Delete VM", `Delete VM ${def.args[1].name} ?`).toPromise().then((res)=>{
           if (res) {
             def.args = [def.args[0]];
             return def;
