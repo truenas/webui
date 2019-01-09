@@ -350,7 +350,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-dialog-container,
   .mat-stepper-horizontal, .mat-stepper-vertical,
   .dx-treelist-container{
-    @include variable(background, --bg2, $bg2, !important);
+    @include variable(background, --bg2, $bg2);
     @include variable(color, --fg2, $fg2);
   }
   .mat-button-toggle-checked{
@@ -1030,6 +1030,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
    .mat-progress-bar-buffer {
      @include variable(background-color, --primary, $primary);
      opacity: 0.5;
+   }
+
+   .mat-progress-bar .mat-progress-bar-background{
+     opacity:0.1;
    }
 
   #password, #sed_passwd, #em_pass1, #bsdusr_passwd_currnt,
