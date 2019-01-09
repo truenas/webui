@@ -135,8 +135,11 @@ except NameError:
     print(UsageMSG)
     sys.exit(1)
 
-#global runDriver
-
+if (ip == "IP_OVERRIDE"):
+    ip = os.environ['IP_OVERRIDE']
+    print ("ip provided as a jenkins paramter is " + ip)
+else:
+    print ("ip provided as an argument to run locally is " + ip)
 
 try:
     driver_v
