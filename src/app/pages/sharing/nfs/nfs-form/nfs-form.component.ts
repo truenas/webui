@@ -91,36 +91,48 @@ export class NFSFormComponent {
       value: ''
     },
     {
-      type: 'select',
+      type: 'combobox',
       name: 'nfs_maproot_user',
       placeholder: helptext_sharing_nfs.placeholder_maproot_user,
       tooltip: helptext_sharing_nfs.tooltip_maproot_user,
       options: [],
       value: '',
+      searchOptions: [],
+      parent: this,
+      updater: this.updateMapRootUserSearchOptions,
     },
     {
-      type: 'select',
+      type: 'combobox',
       name: 'nfs_maproot_group',
       placeholder: helptext_sharing_nfs.placeholder_maproot_group,
       tooltip: helptext_sharing_nfs.tooltip_maproot_group,
       options: [],
       value: '',
+      searchOptions: [],
+      parent: this,
+      updater: this.updateMapRootGroupSearchOptions,
     },
     {
-      type: 'select',
+      type: 'combobox',
       name: 'nfs_mapall_user',
       placeholder: helptext_sharing_nfs.placeholder_mapall_user,
       tooltip: helptext_sharing_nfs.tooltip_mapall_user,
       options: [],
       value: '',
+      searchOptions: [],
+      parent: this,
+      updater: this.updateMapAllUserSearchOptions,
     },
     {
-      type: 'select',
+      type: 'combobox',
       name: 'nfs_mapall_group',
       placeholder: helptext_sharing_nfs.placeholder_mapall_group,
       tooltip: helptext_sharing_nfs.tooltip_mapall_group,
       options: [],
       value: '',
+      searchOptions: [],
+      parent: this,
+      updater: this.updateMapAllGroupSearchOptions,
     },
     {
       type: 'select',
@@ -232,13 +244,14 @@ export class NFSFormComponent {
     this.entityForm = EntityForm;
     this.formArray = EntityForm.formGroup.controls['nfs_paths'];
 
-    this.userService.listUsers().subscribe(res => {
+    this.userService.listAllUsers().subscribe(res => {
       const users = [{
         label: '---------',
         value: '',
       }];
-      for (const user of res.data) {
-        users.push({label: user['bsdusr_username'], value: user['bsdusr_username']});
+      let items = res.data.items;
+      for (let i = 0; i < items.length; i++) {
+        users.push({label: items[i].label, value: items[i].id});
       }
       this.nfs_mapall_user = _.find(this.fieldConfig, {'name' : 'nfs_mapall_user'});
       this.nfs_mapall_user.options = users;
@@ -246,13 +259,14 @@ export class NFSFormComponent {
       this.nfs_maproot_user.options = users;
     });
 
-    this.userService.listGroups().subscribe(res => {
+    this.userService.listAllGroups().subscribe(res => {
       const groups = [{
         label: '---------',
         value: '',
       }];
-      for (const group of res.data) {
-        groups.push({label: group['bsdgrp_group'], value: group['bsdgrp_group']});
+      let items = res.data.items;
+      for (let i = 0; i < items.length; i++) {
+        groups.push({label: items[i].label, value: items[i].id});
       }
       this.nfs_mapall_group = _.find(this.fieldConfig, {'name' : 'nfs_mapall_group'});
       this.nfs_mapall_group.options = groups;
@@ -395,6 +409,44 @@ export class NFSFormComponent {
         });
       }
 
+    });
+  }
+
+  updateMapAllGroupSearchOptions(value = "", parent) {
+    parent.updateGroupSearchOptions(value, parent, 'nfs_mapall_group');
+  }
+
+  updateMapRootGroupSearchOptions(value = "", parent) {
+    parent.updateGroupSearchOptions(value, parent, 'nfs_maproot_group');
+  }
+
+  updateGroupSearchOptions(value = "", parent, field) {
+    parent.userService.listAllGroups(value).subscribe(res => {
+      const groups = [];
+      let items = res.data.items;
+      for (let i = 0; i < items.length; i++) {
+        groups.push({label: items[i].label, value: items[i].id});
+      }
+        parent[field].searchOptions = groups;
+    });
+  }
+
+  updateMapAllUserSearchOptions(value = "", parent) {
+    parent.updateUserSearchOptions(value, parent, 'nfs_mapall_user');
+  }
+
+  updateMapRootUserSearchOptions(value = "", parent) {
+    parent.updateUserSearchOptions(value, parent, 'nfs_maproot_user');
+  }
+
+  updateUserSearchOptions(value = "", parent, field) {
+    parent.userService.listAllUsers(value).subscribe(res => {
+      const users = [];
+      let items = res.data.items;
+      for (let i = 0; i < items.length; i++) {
+        users.push({label: items[i].label, value: items[i].id});
+      }
+      parent[field].searchOptions = users;
     });
   }
 }
