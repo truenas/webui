@@ -1,17 +1,10 @@
-import {Component} from '@angular/core';
-import {Router} from '@angular/router';
-import {Validators} from '@angular/forms';
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
-import {
-  NetworkService,
-  RestService,
-  WebSocketService
-} from '../../../../services/';
-import {
-  FieldConfig
-} from '../../../common/entity/entity-form/models/field-config.interface';
-import { T } from '../../../../translate-marker';
+import { NetworkService, RestService, WebSocketService } from '../../../../services/';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import helptext from '../../../../helptext/network/laggs/lagg';
 
 @Component({
   selector : 'app-lagg-form',
@@ -27,36 +20,27 @@ export class LaggFormComponent {
     {
       type : 'input',
       name : 'lagg_interface',
-      placeholder : T('Lagg Interface'),
-      tooltip : T('Description of the lagg interface.'),
+      placeholder : helptext.lagg_interface_placeholder,
+      tooltip : helptext.lagg_interface_tooltip,
     },
     {
       type : 'select',
       name : 'lagg_protocol',
-      placeholder : T('Lagg Protocol'),
-      tooltip : T('Select the <a\
-                   href="%%docurl%%/network.html%%webversion%%#link-aggregations"\
-                   target="_blank">Protocol Type</a>.<br>\
-                   <i>LACP</i> is the recommended protocol if the network\
-                   switch is capable of active LACP.<br>\
-                   <i>Failover</i> is the default protocol choice and\
-                   should only be used if the network switch does not\
-                   support active LACP.'),
+      placeholder : helptext.lagg_protocol_placeholder,
+      tooltip : helptext.lagg_protocol_tooltip,
       options : [],
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext.lagg_protocol_validation
     },
     {
       type : 'select',
       name : 'lagg_interfaces',
-      placeholder : T('Lagg Interfaces'),
-      tooltip : T('Select the interfaces to use in the aggregation.<br>\
-                   Warning: Lagg creation fails if any of the selected\
-                   interfaces have been manually configured.'),
+      placeholder : helptext.lagg_interfaces_placeholder,
+      tooltip : helptext.lagg_interfaces_tooltip,
       options : [],
       multiple : true,
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext.lagg_interfaces_validation
     },
   ];
 

@@ -9,30 +9,28 @@ import { Router } from '@angular/router';
 })
 export class InitiatorListComponent {
 
-  protected resource_name: string = 'services/iscsi/authorizedinitiator';
+  protected queryCall = 'iscsi.initiator.query';
   protected route_add: string[] = [ 'sharing', 'iscsi', 'initiators', 'add' ];
   protected route_add_tooltip: string = "Add Initiator";
-  protected route_delete: string[] = [ 'sharing', 'iscsi', 'initiators', 'delete' ];
   protected route_edit: string[] = [ 'sharing', 'iscsi', 'initiators', 'edit' ];
-
-  constructor(protected router: Router) {}
+  protected wsDelete = 'iscsi.initiator.delete';
 
   public columns: Array<any> = [
     {
       name : 'Group ID',
-      prop : 'iscsi_target_initiator_tag',
+      prop : 'tag',
     },
     {
       name : 'Initiators',
-      prop : 'iscsi_target_initiator_initiators',
+      prop : 'initiators',
     },
     {
       name : 'Authorized Networks',
-      prop : 'iscsi_target_initiator_auth_network',
+      prop : 'auth_network',
     },
     {
       name : 'Comment',
-      prop : 'iscsi_target_initiator_comment',
+      prop : 'comment',
     },
   ];
   public config: any = {
@@ -40,9 +38,10 @@ export class InitiatorListComponent {
     sorting : {columns : this.columns},
     deleteMsg: {
       title: 'Initiator',
-      key_props: ['iscsi_target_initiator_tag']
+      key_props: ['tag']
     },
   };
 
-  afterInit(entityList: any) {}
+  constructor(protected router: Router) {}
+
 }

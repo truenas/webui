@@ -1,0 +1,46 @@
+mat-dialog-content.task-manager-dialog-content.mat-dialog-content {
+    padding: 0px;
+    overflow: scroll !important;
+}
+span.task-manager-search {
+    padding: 0 24px;
+}
+span.task-manager-search input{
+    width: 80%;
+    height: 40px;
+}
+button.task-manager-action-button {
+    width: 100%;
+}
+
+mat-icon.state-success {
+    color: var(--green);
+}
+mat-icon.state-failed {
+    color: var(--red);
+}
+mat-icon.state-running {
+    color: var(--primary);
+}
+mat-icon.state-waiting {
+    color: var(--accent);
+}
+
+mat-cell.mat-column-percent {
+    display: inline-grid;
+}
+mat-cell.mat-column-expandedDetail {
+    display: inline-grid;
+}
+
+.element-row:not(.expanded) {
+    cursor: pointer;
+}
+
+.element-row:not(.expanded):hover {
+    background: #f5f5f5;
+}
+
+.element-row.expanded {
+    border-bottom-color: transparent;
+}

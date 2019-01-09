@@ -1,11 +1,8 @@
 import { Component,OnDestroy, AfterViewInit, ViewChild, Input } from '@angular/core';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
-import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
-import { ViewChartGaugeComponent } from 'app/core/components/viewchartgauge/viewchartgauge.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
 import { ViewChartLineComponent } from 'app/core/components/viewchartline/viewchartline.component';
-import { Subject } from 'rxjs';
 
 @Component({
   selector: 'vm-summary',

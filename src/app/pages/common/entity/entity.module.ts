@@ -16,6 +16,8 @@ import { DocsService} from '../../../services/docs.service';
 import { RestService, WebSocketService } from '../../../services/index';
 import { Ng2DropdownModule } from 'ng2-material-dropdown';
 import { TranslateModule } from '@ngx-translate/core';
+import { TreeTableModule } from 'primeng/treetable';
+import { FileSizeModule } from 'ngx-filesize';
 
 import { DynamicFieldDirective } from './entity-form/components/dynamic-field/dynamic-field.directive';
 import { FormArrayComponent } from './entity-form/components/form-array/form-array.component';
@@ -45,6 +47,7 @@ import { EntityTableActionsComponent } from './entity-table/entity-table-actions
 import { EntityCardActionsComponent } from './entity-card/entity-card-actions.component';
 import { EntityTableAddActionsComponent } from './entity-table/entity-table-add-actions.component';
 import { EntityTableComponent } from './entity-table/entity-table.component';
+import { EntityTreeTableComponent } from './entity-tree-table/entity-tree-table.component';
 import { EntityCardComponent } from './entity-card/entity-card.component';
 import { EntityTemplateDirective } from './entity-template.directive';
 import { FormReadFileComponent } from './entity-form/components/form-readfile/form-readfile.component'
@@ -66,12 +69,13 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
 @NgModule({
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule,
-    MaterialModule, ColorPickerModule, NgxDatatableModule, CdkTableModule, TreeModule,
+    MaterialModule, ColorPickerModule, NgxDatatableModule, CdkTableModule, TreeModule.forRoot(),
     Ng2DropdownModule, NgUploaderModule, FlexLayoutModule, TranslateModule,
-    OverlayModule, A11yModule
+    OverlayModule, A11yModule, TreeTableModule, FileSizeModule
   ],
   declarations: [
     EntityTableComponent,
+    EntityTreeTableComponent,
     EntityCardComponent,
     EntityCardActionsComponent,
     EntityTableActionsComponent,
@@ -116,6 +120,7 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
     EntityFormComponent,
     EntityFormEmbeddedComponent,
     EntityTableComponent,
+    EntityTreeTableComponent,
     EntityCardComponent,
     EntityCardActionsComponent,
     EntityTableAddActionsComponent,

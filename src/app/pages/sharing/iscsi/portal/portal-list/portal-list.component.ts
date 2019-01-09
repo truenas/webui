@@ -9,34 +9,32 @@ import { Router } from '@angular/router';
 })
 export class PortalListComponent {
 
-  protected resource_name: string = 'services/iscsi/portal';
+  protected queryCall = 'iscsi.portal.query';
+  protected wsDelete = 'iscsi.portal.delete';
   protected route_add: string[] = [ 'sharing', 'iscsi', 'portals', 'add' ];
   protected route_add_tooltip: string = "Add Portal";
-  protected route_delete: string[] = [ 'sharing', 'iscsi', 'portals', 'delete' ];
   protected route_edit: string[] = [ 'sharing', 'iscsi', 'portals', 'edit' ];
-
-  constructor(protected router: Router) {}
 
   public columns: Array<any> = [
     {
       name : 'Portal Group ID',
-      prop : 'iscsi_target_portal_tag',
+      prop : 'tag',
     },
     {
       name : 'Listen',
-      prop : 'iscsi_target_portal_ips',
+      prop : 'listen',
     },
     {
       name : 'Comment',
-      prop : 'iscsi_target_portal_comment',
+      prop : 'comment',
     },
     {
       name : 'Discovery Auth Method',
-      prop : 'iscsi_target_portal_discoveryauthmethod',
+      prop : 'discovery_authmethod',
     },
     {
       name : 'Discovery Auth Group',
-      prop : 'iscsi_target_portal_discoveryauthgroup',
+      prop : 'discovery_authgroup',
     },
   ];
   public config: any = {
@@ -44,7 +42,17 @@ export class PortalListComponent {
     sorting : {columns : this.columns},
     deleteMsg: {
       title: 'Portal',
-      key_props: ['iscsi_target_portal_tag']
+      key_props: ['tag']
     },
   };
+
+  constructor(protected router: Router) {}
+
+  dataHandler(data) {
+    for (const i in data.rows) {
+      for (const ip in data.rows[i].listen) {
+        data.rows[i].listen[ip] = data.rows[i].listen[ip].ip + ':' + data.rows[i].listen[ip].port;
+      }
+    }
+  }
 }

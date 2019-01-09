@@ -224,3 +224,7 @@ g.c3-brush + g{
   fill-opacity:0.5;
 }
 
+.widget .mat-progress-bar-buffer{
+  background-color: var(--bg1);
+}
+

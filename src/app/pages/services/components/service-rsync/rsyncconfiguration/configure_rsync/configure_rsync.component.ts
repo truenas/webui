@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { EntityFormComponent } from '../../../../../common/entity/entity-form';
 import { FieldConfig } from '../../../../../common/entity/entity-form/models/field-config.interface';
-import {WebSocketService} from "../../../../../../services/ws.service";
-import {RestService} from "../../../../../../services/rest.service";
-import { T } from '../../../../../../translate-marker';
+import { WebSocketService } from "../../../../../../services/ws.service";
+import { RestService } from "../../../../../../services/rest.service";
+import helptext from '../../../../../../helptext/services/components/service-rsync';
 
 @Component({
   selector : 'app-configure-rsync',
@@ -20,17 +19,15 @@ export class CconfigureRYSNCComponent {
     {
       type : 'input',
       name : 'rsyncd_port',
-      placeholder :T( 'TCP Port'),
-      tooltip: T('<b>rsyncd</b> listens on this port.'),
-      value: '873',
+      placeholder : helptext.rsyncd_port_placeholder,
+      tooltip: helptext.rsyncd_port_tooltip,
+      value: helptext.rsyncd_port_value
     },
     {
       type : 'textarea',
       name : 'rsyncd_auxiliary',
-      placeholder : T('Auxiliary parameters'),
-      tooltip: T('Enter any additional parameters from <a\
-                  href="https://www.samba.org/ftp/rsync/rsyncd.conf.html"\
-                  target="_blank">rsyncd.conf(5)</a>.'),
+      placeholder : helptext.rsyncd_auxiliary_placeholder,
+      tooltip: helptext.rsyncd_auxiliary_tooltip
     },
   ]
 

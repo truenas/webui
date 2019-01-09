@@ -6,8 +6,8 @@ import {
   ViewChild
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { T } from '../../../../../translate-marker';
-import { StorageService } from '../../../../../services/storage.service'
+import { StorageService } from '../../../../../services/storage.service';
+import helptext from '../../../../../helptext/storage/volumes/manager/vdev';
 
 @Component({
   selector : 'app-vdev',
@@ -29,13 +29,8 @@ export class VdevComponent implements OnInit {
   public rawSize = 0;
   public firstdisksize;
   public error;
-  public diskSizeErrorMsg = T('Mixing disks of different sizes in a VDEV is not recommended.');
-  public vdev_type_tooltip = T('Choose a <i>Stripe</i>, <i>Mirror</i>,\
-                                or <i>Raid-Z</i> configuration for the\
-                                chosen disk layout. See the <a\
-                                href="%%docurl%%/storage.html%%webversion%%#pool-manager"\
-                                target="_blank">Pool Manager</a> section\
-                                of the guide for more details.');
+  public diskSizeErrorMsg = helptext.vdev_diskSizeErrorMsg;
+  public vdev_type_tooltip = helptext.vdev_type_tooltip;
 
   constructor(public elementRef: ElementRef,
     public translate: TranslateService,

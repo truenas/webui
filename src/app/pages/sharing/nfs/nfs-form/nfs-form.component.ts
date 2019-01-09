@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormArray, Validators } from '@angular/forms';
+import { FormArray } from '@angular/forms';
 import * as _ from 'lodash';
 
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { UserService } from '../../../../services/user.service';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { RestService, WebSocketService, DialogService, NetworkService } from '../../../../services/';
-import { T } from '../../../../translate-marker';
+import { helptext_sharing_nfs } from 'app/helptext/sharing';
 
 @Component({
   selector : 'app-nfs-form',
@@ -31,59 +31,49 @@ export class NFSFormComponent {
       initialCount: 1,
       formarray: [{
         name: 'path',
-        placeholder: T('Path'),
-        tooltip: T('Full path to the pool or dataset to share. Mandatory.\
-                    Click <b>ADD ADDITIONAL PATH</b> to configure\
-                    multiple paths.'),
+        placeholder: helptext_sharing_nfs.placeholder_path,
+        tooltip: helptext_sharing_nfs.tooltip_path,
         type: 'explorer',
         explorerType: 'directory',
         initial: '/mnt',
         required: true,
-        validation : [ Validators.required ]
+        validation : helptext_sharing_nfs.validators_path
       },
       {
         type: 'checkbox',
         name: 'delete',
-        placeholder: T('Delete'),
+        placeholder: helptext_sharing_nfs.placeholder_delete,
       }]
     },
     {
       type: 'input',
       name: 'nfs_comment',
-      placeholder: T('Comment'),
-      tooltip: T('Set the share name. If left empty, share name is the\
-                  list of selected <b>Path</b> entries.')
+      placeholder: helptext_sharing_nfs.placeholder_comment,
+      tooltip: helptext_sharing_nfs.tooltip_comment
     },
     {
       type: 'checkbox',
       name: 'nfs_alldirs',
-      placeholder: T('All dirs'),
-      tooltip: T('Set to allow the client to mount any\
-                  subdirectory within the <b>Path</b>.')
+      placeholder: helptext_sharing_nfs.placeholder_alldirs,
+      tooltip: helptext_sharing_nfs.tooltip_alldirs
     },
     {
       type: 'checkbox',
       name: 'nfs_ro',
-      placeholder: T('Read Only'),
-      tooltip: T('Set to prohibit writing to the share.'),
+      placeholder: helptext_sharing_nfs.placeholder_ro,
+      tooltip: helptext_sharing_nfs.tooltip_ro,
     },
     {
       type: 'checkbox',
       name: 'nfs_quiet',
-      placeholder: T('Quiet'),
-      tooltip: T('Set to inhibit some syslog diagnostics\
-                  to avoid error messages. See\
-                  <a href="https://www.freebsd.org/cgi/man.cgi?query=exports"\
-                  target="_blank">exports(5)</a> for examples.'),
+      placeholder: helptext_sharing_nfs.placeholder_quiet,
+      tooltip: helptext_sharing_nfs.tooltip_quiet,
     },
     {
       type: 'textarea',
       name: 'nfs_network',
-      placeholder: T('Authorized Networks'),
-      tooltip: T('Space-delimited list of allowed networks in\
-                  network/mask CIDR notation.\
-                  Example: <i>1.2.3.0/24</i>. Leave empty\
-                  to allow all.'),
+      placeholder: helptext_sharing_nfs.placeholder_network,
+      tooltip: helptext_sharing_nfs.tooltip_network,
       blurStatus : true,
       blurEvent: this.nfs_network_event,
       parent: this,
@@ -93,56 +83,62 @@ export class NFSFormComponent {
        {
       type: 'textarea',
       name: 'nfs_hosts',
-      placeholder: T('Authorized Hosts and IP addresses'),
-      tooltip: T('Space-delimited list of allowed IP addresses\
-                  <i>(192.168.1.10)</i> or hostnames\
-                  <i>(www.freenas.com)</i>. Leave empty to allow all.'),
+      placeholder: helptext_sharing_nfs.placeholder_hosts,
+      tooltip: helptext_sharing_nfs.tooltip_hosts,
       blurStatus : true,
       blurEvent: this.nfs_hosts_event,
       parent: this,
       value: ''
     },
     {
-      type: 'select',
+      type: 'combobox',
       name: 'nfs_maproot_user',
-      placeholder: T('Maproot User'),
-      tooltip: T('When a user is selected, the <i>root</i> user is\
-                  limited to the permissions of that user.'),
+      placeholder: helptext_sharing_nfs.placeholder_maproot_user,
+      tooltip: helptext_sharing_nfs.tooltip_maproot_user,
       options: [],
       value: '',
+      searchOptions: [],
+      parent: this,
+      updater: this.updateMapRootUserSearchOptions,
     },
     {
-      type: 'select',
+      type: 'combobox',
       name: 'nfs_maproot_group',
-      placeholder: T('Maproot Group'),
-      tooltip: T('When a group is selected, the <i>root</i> user is also\
-                  limited to the permissions of that group.'),
+      placeholder: helptext_sharing_nfs.placeholder_maproot_group,
+      tooltip: helptext_sharing_nfs.tooltip_maproot_group,
       options: [],
       value: '',
+      searchOptions: [],
+      parent: this,
+      updater: this.updateMapRootGroupSearchOptions,
     },
     {
-      type: 'select',
+      type: 'combobox',
       name: 'nfs_mapall_user',
-      placeholder: T('Mapall User'),
-      tooltip: T('The specified permissions of that user are used\
-                  by all clients.'),
+      placeholder: helptext_sharing_nfs.placeholder_mapall_user,
+      tooltip: helptext_sharing_nfs.tooltip_mapall_user,
       options: [],
       value: '',
+      searchOptions: [],
+      parent: this,
+      updater: this.updateMapAllUserSearchOptions,
     },
     {
-      type: 'select',
+      type: 'combobox',
       name: 'nfs_mapall_group',
-      placeholder: T('Mapall Group'),
-      tooltip: T('The specified permissions of that group are used\
-                  by all clients.'),
+      placeholder: helptext_sharing_nfs.placeholder_mapall_group,
+      tooltip: helptext_sharing_nfs.tooltip_mapall_group,
       options: [],
       value: '',
+      searchOptions: [],
+      parent: this,
+      updater: this.updateMapAllGroupSearchOptions,
     },
     {
       type: 'select',
       multiple: true,
       name: 'nfs_security',
-      placeholder: T('Security'),
+      placeholder: helptext_sharing_nfs.placeholder_security,
       options: [
         {
           label: 'sys',
@@ -173,7 +169,7 @@ export class NFSFormComponent {
   public custActions: Array<any> = [
     {
       id : 'add_path',
-      name : T('Add Additional Path'),
+      name : helptext_sharing_nfs.actions_add_path,
       function : () => {
         this.initialCount += 1;
         this.entityFormService.insertFormArrayGroup(
@@ -182,7 +178,7 @@ export class NFSFormComponent {
     },
     {
       id : 'remove_path',
-      name : T('Remove Additional Path'),
+      name : helptext_sharing_nfs.actions_remove_path,
       function : () => {
         this.initialCount -= 1;
         this.entityFormService.removeFormArrayGroup(this.initialCount,
@@ -191,12 +187,12 @@ export class NFSFormComponent {
     },
     {
       id : 'basic_mode',
-      name : T('Basic Mode'),
+      name : helptext_sharing_nfs.actions_basic_mode,
       function : () => { this.isBasicMode = !this.isBasicMode; }
     },
     {
       'id' : 'advanced_mode',
-      name : T('Advanced Mode'),
+      name : helptext_sharing_nfs.actions_advanced_mode,
       function : () => { this.isBasicMode = !this.isBasicMode; }
     }
   ];
@@ -248,13 +244,14 @@ export class NFSFormComponent {
     this.entityForm = EntityForm;
     this.formArray = EntityForm.formGroup.controls['nfs_paths'];
 
-    this.userService.listUsers().subscribe(res => {
+    this.userService.listAllUsers().subscribe(res => {
       const users = [{
         label: '---------',
         value: '',
       }];
-      for (const user of res.data) {
-        users.push({label: user['bsdusr_username'], value: user['bsdusr_username']});
+      let items = res.data.items;
+      for (let i = 0; i < items.length; i++) {
+        users.push({label: items[i].label, value: items[i].id});
       }
       this.nfs_mapall_user = _.find(this.fieldConfig, {'name' : 'nfs_mapall_user'});
       this.nfs_mapall_user.options = users;
@@ -262,13 +259,14 @@ export class NFSFormComponent {
       this.nfs_maproot_user.options = users;
     });
 
-    this.userService.listGroups().subscribe(res => {
+    this.userService.listAllGroups().subscribe(res => {
       const groups = [{
         label: '---------',
         value: '',
       }];
-      for (const group of res.data) {
-        groups.push({label: group['bsdgrp_group'], value: group['bsdgrp_group']});
+      let items = res.data.items;
+      for (let i = 0; i < items.length; i++) {
+        groups.push({label: items[i].label, value: items[i].id});
       }
       this.nfs_mapall_group = _.find(this.fieldConfig, {'name' : 'nfs_mapall_group'});
       this.nfs_mapall_group.options = groups;
@@ -381,15 +379,15 @@ export class NFSFormComponent {
         this.router.navigate(new Array('/').concat(
           this.route_success));
       } else {
-          this.dialog.confirm(T("Enable service"),
-          T("Enable this service?"),
-          true, T("Enable Service")).subscribe((dialogRes) => {
+          this.dialog.confirm(helptext_sharing_nfs.dialog_enable_service_title,
+          helptext_sharing_nfs.dialog_enable_service_message,
+          true, helptext_sharing_nfs.dialog_enable_service_button).subscribe((dialogRes) => {
             if (dialogRes) {
               entityForm.loader.open();
               this.ws.call('service.update', [service['id'], { enable: true }]).subscribe((updateRes) => {
                 this.ws.call('service.start', [service.service]).subscribe((startRes) => {
                   entityForm.loader.close();
-                  entityForm.snackBar.open(T("Service started"), T("close"));
+                  entityForm.snackBar.open(helptext_sharing_nfs.snackbar_service_started, helptext_sharing_nfs.snackbar_close);
                   this.router.navigate(new Array('/').concat(
                    this.route_success));
                 }, (err) => {
@@ -411,6 +409,44 @@ export class NFSFormComponent {
         });
       }
 
+    });
+  }
+
+  updateMapAllGroupSearchOptions(value = "", parent) {
+    parent.updateGroupSearchOptions(value, parent, 'nfs_mapall_group');
+  }
+
+  updateMapRootGroupSearchOptions(value = "", parent) {
+    parent.updateGroupSearchOptions(value, parent, 'nfs_maproot_group');
+  }
+
+  updateGroupSearchOptions(value = "", parent, field) {
+    parent.userService.listAllGroups(value).subscribe(res => {
+      const groups = [];
+      let items = res.data.items;
+      for (let i = 0; i < items.length; i++) {
+        groups.push({label: items[i].label, value: items[i].id});
+      }
+        parent[field].searchOptions = groups;
+    });
+  }
+
+  updateMapAllUserSearchOptions(value = "", parent) {
+    parent.updateUserSearchOptions(value, parent, 'nfs_mapall_user');
+  }
+
+  updateMapRootUserSearchOptions(value = "", parent) {
+    parent.updateUserSearchOptions(value, parent, 'nfs_maproot_user');
+  }
+
+  updateUserSearchOptions(value = "", parent, field) {
+    parent.userService.listAllUsers(value).subscribe(res => {
+      const users = [];
+      let items = res.data.items;
+      for (let i = 0; i < items.length; i++) {
+        users.push({label: items[i].label, value: items[i].id});
+      }
+      parent[field].searchOptions = users;
     });
   }
 }
