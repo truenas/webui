@@ -266,11 +266,10 @@ export class ApiService {
       },
       preProcessor(def:ApiCall){
         let redef = Object.assign({}, def);
-        redef.args = [def.args];
-        return redef;
+        def.args = [redef.args[0]];
+        return def;
       },
       postProcessor(res,callArgs){
-        //console.log(res);
         let cloneRes = Object.assign({},res);
         cloneRes = null; 
         return cloneRes;

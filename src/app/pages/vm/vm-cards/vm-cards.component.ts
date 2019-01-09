@@ -123,6 +123,13 @@ export class VmCardsComponent  {
             new Array('').concat([ "vm", row.id, "devices", row.name ]));
       }
     });
+    actions.push({
+      label : "Clone",
+      onClick : (row) => {
+        const eventName = "VmClone";
+        this.core.emit({name: eventName, data:[row.id]});
+      }
+    });
     if(row['status']['state'] === "RUNNING"){
       if (this.checkVnc(row)) {
         actions.push({
