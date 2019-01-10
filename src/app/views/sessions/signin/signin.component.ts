@@ -10,6 +10,7 @@ import {WebSocketService} from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { ApiService } from 'app/core/services/api.service';
+import { PlatformInfo } from 'app/core/services/preferences.service';
 
 @Component({
   selector: 'app-signin',
@@ -55,7 +56,16 @@ export class SigninComponent implements OnInit {
   ngOnInit() {
     this.ws.call('user.has_root_password').subscribe((res) => {
       this.has_root_password = res;
-    })
+    });
+
+    let storedVersionInfo = window.localStorage.getItem('running_version') 
+    let isUpdate = storedVersionInfo !== PlatformInfo.running_version;
+    console.log(window.localStorage.getItem('running_version'));
+    console.log(isUpdate);
+    if(storedVersionInfo && isUpdate){ 
+      window.localStorage.setItem('running_version', PlatformInfo.running_version);
+      document.location.reload(true) 
+    }
 
     if (window['MIDDLEWARE_TOKEN']) {
       this.ws.login_token(window['MIDDLEWARE_TOKEN'])

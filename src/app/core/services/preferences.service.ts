@@ -5,6 +5,8 @@ import { ApiService } from './api.service';
 import { ThemeService, Theme } from 'app/services/theme/theme.service';
 export interface UserPreferences {
   platform:string; // FreeNAS || TrueNAS
+  version: string; // 11.2
+  train: string; // stable ||nightly
   timestamp:Date;
   userTheme:string; // Theme name
   customThemes?: Theme[]; 
@@ -17,12 +19,21 @@ export interface UserPreferences {
   preferIconsOnly:boolean;
 }
 
+export const PlatformInfo = {
+  "platform":"FreeNAS",
+  "version":"11.2-RELEASE-U1",
+  "train":"stable",
+  "running_version": "FreeNAS-11.2-RELEASE-U1"
+};
+
 @Injectable()
 export class PreferencesService {
   //public coreEvents: Subject<CoreEvent>;
   private debug = false;
   public preferences: UserPreferences = {
-    "platform":"freenas",
+    "platform":"FreeNAS",
+    "version":"11.2-RELEASE",
+    "train":"stable",
     "timestamp":new Date(),
     "userTheme":"ix-dark", // Theme name
     "customThemes": [], // Theme Objects
@@ -36,7 +47,7 @@ export class PreferencesService {
   }
   constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router,
     private aroute: ActivatedRoute) {
-
+    
     this.core.register({observerClass:this, eventName:"Authenticated",sender:this.api}).subscribe((evt:CoreEvent) => {
       //console.log(evt.data);
       if(evt.data){
