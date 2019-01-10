@@ -4,7 +4,6 @@ import { MatProgressBar, MatButton, MatSnackBar } from '@angular/material';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { matchOtherValidator } from '../../../pages/common/entity/entity-form/validators/password-validation';
 import { TranslateService } from '@ngx-translate/core';
-import { LocalStorage } from 'ngx-webstorage';
 
 import { T } from '../../../translate-marker';
 
@@ -33,7 +32,6 @@ export class SigninComponent implements OnInit {
   }
   public setPasswordFormGroup: FormGroup;
   public has_root_password: Boolean = true;
-  @LocalStorage() currentUrl;
 
   constructor(private ws: WebSocketService, private router: Router,
     private snackBar: MatSnackBar, public translate: TranslateService,
@@ -75,8 +73,8 @@ export class SigninComponent implements OnInit {
         this.progressBar.mode = 'indeterminate';
       }
 
-      if (this.currentUrl != undefined) {
-        this.ws.redirectUrl = this.currentUrl;
+      if (sessionStorage.currentUrl != undefined) {
+        this.ws.redirectUrl = sessionStorage.currentUrl;
       }
 
       this.ws.login_token(this.ws.token)
