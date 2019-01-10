@@ -119,13 +119,19 @@ export class CloudsyncFormComponent implements OnInit {
     ],
   }, {
     type: 'select',
-    name: 'encryption',
+    name: 'task_encryption',
     placeholder: helptext.encryption_placeholder,
     tooltip: helptext.encryption_tooltip,
     options: [
       {label: "None", value: ""},
       {label: "AES-256", value: "AES256"},
     ],
+    isHidden: true,
+  }, {
+    type: 'checkbox',
+    name: 'fast_list',
+    placeholder: helptext.fast_list_placeholder,
+    tooltip: helptext.fast_list_tooltip,
     isHidden: true,
   }, {
     type: 'explorer',
@@ -150,6 +156,38 @@ export class CloudsyncFormComponent implements OnInit {
     value: 'SYNC',
     required: true,
     validation : helptext.transfer_mode_validation
+  },
+  {
+    type: 'checkbox',
+    name: 'snapshot',
+    placeholder: helptext.snapshot_placeholder,
+    tooltip: helptext.snapshot_tooltip,
+    value: false,
+    isHidden: false,
+    disabled: false,
+    relation: [
+      {
+        action: 'HIDE',
+        when: [{
+          name: 'direction',
+          value: 'PULL',
+        }]
+      }
+    ],
+  },
+  {
+    type: 'textarea',
+    name: 'pre_script',
+    placeholder: helptext.pre_script_placeholder,
+    tooltip: helptext.pre_script_tooltip,
+    value: '',
+  },
+  {
+    type: 'textarea',
+    name: 'post_script',
+    placeholder: helptext.post_script_placeholder,
+    tooltip: helptext.post_script_tooltip,
+    value: '',
   },
   {
     type: 'checkbox',
@@ -220,6 +258,14 @@ export class CloudsyncFormComponent implements OnInit {
     placeholder: helptext.cloudsync_picker_placeholder,
     tooltip: helptext.cloudsync_picker_tooltip,
     required: true
+  },
+  {
+    type: 'input',
+    inputType: 'number',
+    name: 'transfers',
+    placeholder: helptext.transfers_placeholder,
+    tooltip: helptext.transfers_tooltip,
+    value: null,
   },
   {
     type: 'checkbox',
@@ -456,6 +502,23 @@ export class CloudsyncFormComponent implements OnInit {
               this.setDisabled('bucket', true, true);
               this.setDisabled('bucket_input', true, true);
             }
+            // enable/disable task schema properties
+            if (_.find(this.providers, {"name": item.provider})['task_schema']) {
+              const task_schema = _.find(this.providers, {"name": item.provider})['task_schema'];
+              if (task_schema.length == 0) {
+                this.setDisabled('task_encryption', true, true);
+                this.setDisabled('fast_list', true, true);
+              } else {
+                for (const i in task_schema) {
+                  console.log(task_schema[i]);
+                  if (task_schema[i].property == 'encryption') {
+                    this.setDisabled('task_encryption', false, false);
+                  } else {
+                    this.setDisabled(task_schema[i].property, false, false);
+                  }
+                }
+              }
+            }
           }
         });
       }
@@ -556,6 +619,14 @@ export class CloudsyncFormComponent implements OnInit {
     }
     attributes['folder'] = value.folder;
     delete value.folder;
+    if (value.task_encryption != undefined) {
+      attributes['encryption'] = value.task_encryption;
+      delete value.task_encryption;
+    }
+    if (value.fast_list != undefined) {
+      attributes['fast_list'] = value.fast_list;
+      delete value.fast_list;
+    }
     value['attributes'] = attributes;
 
     let spl = value.cloudsync_picker.split(" ");
@@ -568,6 +639,10 @@ export class CloudsyncFormComponent implements OnInit {
 
     value['schedule'] = schedule;
 
+    if (value['direction'] == 'PULL') {
+      value['snapshot'] = false;
+    }
+  
     if (!this.pk) {
       this.loader.open();
       this.ws.call(this.addCall, [value]).subscribe((res)=>{

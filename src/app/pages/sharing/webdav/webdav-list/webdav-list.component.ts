@@ -1,10 +1,8 @@
-import { ApplicationRef, Component, } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, } from '@angular/core';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
-import { T } from '../../../../translate-marker';
-import { RestService } from '../../../../services/rest.service';
+import { helptext_sharing_webdav } from 'app/helptext/sharing';
 
 @Component({
   selector : 'webdav-list',
@@ -24,11 +22,11 @@ export class WebdavListComponent {
     protected route_delete: string[] = [ 'sharing', 'webdav', 'delete'];
 
     public columns: Array<any> = [
-        {prop: 'webdav_name', name: T('Share Name')},
-        {prop: 'webdav_comment', name: T('Comment')},
-        {prop: 'webdav_path', name: T('Path')},
-        {prop: 'webdav_ro', name: T('Read Only')},
-        {prop: 'webdav_perm', name: T('Change User & Group Ownership')},
+        {prop: 'webdav_name', name: helptext_sharing_webdav.column_name},
+        {prop: 'webdav_comment', name: helptext_sharing_webdav.column_comment},
+        {prop: 'webdav_path', name:  helptext_sharing_webdav.column_path},
+        {prop: 'webdav_ro', name:  helptext_sharing_webdav.column_ro},
+        {prop: 'webdav_perm', name:  helptext_sharing_webdav.column_perm},
     ];
 
     public config: any = {

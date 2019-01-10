@@ -31,6 +31,10 @@ export default {
     encryption_placeholder: T('Server Side Encryption'),
     encryption_tooltip: T('Choose <i>AES-256</i> or <i>None</i>.'),
 
+    fast_list_placeholder: T('Use --fast-list'),
+    fast_list_tooltip: T('[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/#fast-list) \
+    This can also speed up or slow down the transfer.'),
+
     path_placeholder: T('Directory/Files'),
     path_tooltip: T('Select the directories or files to be sent to the cloud\
                 for Push syncs, or the destination to be written for\
@@ -51,7 +55,16 @@ export default {
 
     transfer_mode_validation : [ Validators.required ],
 
-    remote_encryption_placeholder: T('Remote Encryption'),
+    snapshot_placeholder: T('Take snapshot'),
+    snapshot_tooltip: T('Create a snapshot of the dataset before pushing data.'),
+
+    pre_script_placeholder: T('Pre-script'),
+    pre_script_tooltip: T('Script to execute before running sync.'),
+
+    post_script_placeholder: T('Post-script'),
+    post_script_tooltip: T('Script to execute after running sync.'),
+
+    remote_encryption_placeholder: T('Remote encryption'),
     remote_encryption_tooltip: T('Set to encrypt files before transfer and store the\
                 encrypted files on the remote system.\
                 <a href="https://rclone.org/crypt/"\
@@ -80,6 +93,11 @@ export default {
 
     follow_symlinks_placeholder: T('Follow Symlinks'),
     follow_symlinks_tooltip: T('Follow symlinks and copy the items to which they link.'),
+
+    transfers_placeholder: T('Transfers'),
+    transfers_tooltip: T(' The number of file transfers to run in parallel. It can \
+sometimes be useful to set this to a smaller number if the remote is giving a lot of \
+timeouts, or a larger number if there is high bandwidth and a fast remote.'),
 
     enabled_placeholder: T('Enabled'),
     enabled_tooltip: T('Enable this Cloud Sync Task. Unset to disable this Cloud\
