@@ -19,13 +19,6 @@ export interface UserPreferences {
   preferIconsOnly:boolean;
 }
 
-export const PlatformInfo = {
-  "platform":"FreeNAS",
-  "version":"11.2-RELEASE",
-  "train":"stable",
-  "running_version": "FreeNAS-11.2-RELEASE"
-};
-
 @Injectable()
 export class PreferencesService {
   //public coreEvents: Subject<CoreEvent>;
