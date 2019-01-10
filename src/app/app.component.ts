@@ -5,7 +5,6 @@ import { URLSearchParams, } from '@angular/http';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { ThemeService } from 'app/services/theme/theme.service';
-
 import { RoutePartsService } from "./services/route-parts/route-parts.service";
 import { MatSnackBar } from '@angular/material';
 import * as hopscotch from 'hopscotch';
