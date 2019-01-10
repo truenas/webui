@@ -61,7 +61,7 @@ export class SigninComponent implements OnInit {
     let storedVersionInfo = window.localStorage.getItem('running_version') 
     let isUpdate = storedVersionInfo !== PlatformInfo.running_version;
     console.log(window.localStorage.getItem('running_version'));
-    console.log(isUpdate);
+    console.log("isUpdate == " + isUpdate);
     if(storedVersionInfo && isUpdate){ 
       window.localStorage.setItem('running_version', PlatformInfo.running_version);
       document.location.reload(true) 

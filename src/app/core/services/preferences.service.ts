@@ -21,9 +21,9 @@ export interface UserPreferences {
 
 export const PlatformInfo = {
   "platform":"FreeNAS",
-  "version":"11.2-RELEASE-U1",
+  "version":"11.2-RELEASE",
   "train":"stable",
-  "running_version": "FreeNAS-11.2-RELEASE-U1"
+  "running_version": "FreeNAS-11.2-RELEASE"
 };
 
 @Injectable()
