@@ -3,6 +3,8 @@ import { Title } from '@angular/platform-browser';
 import { Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { URLSearchParams, } from '@angular/http';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { LocalStorage } from 'ngx-webstorage';
+
 import { ThemeService } from 'app/services/theme/theme.service';
 
 import { RoutePartsService } from "./services/route-parts/route-parts.service";
@@ -28,6 +30,7 @@ export class AppComponent {
   appTitle = 'FreeNAS';
   protected accountUserResource: string = 'account/users/1';
   protected user: any;
+  @LocalStorage() currentUrl;
 
   constructor(public title: Title,
     private router: Router,
@@ -57,6 +60,13 @@ export class AppComponent {
     }
 
     router.events.subscribe(s => {
+      // save currenturl
+      if (s instanceof NavigationEnd) {
+        if (this.ws.loggedIn && s.url != '/sessions/signin'){
+          this.currentUrl = s.url;
+        }
+      }
+
       if(this.themeservice.globalPreview){
         // Only for globally applied theme preview
         this.globalPreviewControl();

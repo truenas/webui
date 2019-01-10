@@ -19,6 +19,7 @@ export class WebSocketService {
   connected: boolean = false;
   loggedIn: boolean = false;
   @LocalStorage() token;
+  @LocalStorage() currentUrl;
   redirectUrl: string = '';
   shuttingdown = false;
 
@@ -258,6 +259,7 @@ export class WebSocketService {
   clearCredentials() {
     this.loggedIn = false;
     this.token = null;
+    this.currentUrl = null;
   }
 
   prepare_shutdown() {
