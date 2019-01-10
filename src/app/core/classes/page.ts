@@ -1,5 +1,6 @@
 //import { SubComponent } from '../../decorators/subcomponent';
-import { Observer ,  Subject } from 'rxjs';
+import { Observer } from 'rxjs';
+import { Subject } from 'rxjs';
 import { ViewController, ViewControllerOptions } from './viewcontroller';
 import { CoreService, CoreEvent } from '../services/core.service';
 

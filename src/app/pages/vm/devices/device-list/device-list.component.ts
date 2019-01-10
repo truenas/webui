@@ -1,9 +1,9 @@
-import {Component, ElementRef, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {Subscription} from 'rxjs';
+import { Component } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 
-import {RestService, WebSocketService} from '../../../../services/';
+import { RestService, WebSocketService } from '../../../../services/';
 import { DialogService } from '../../../../services/dialog.service';
 
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -11,7 +11,6 @@ import { EntityUtils } from '../../../common/entity/utils';
 import { ChangeDetectorRef } from '@angular/core';
 import { T } from '../../../../translate-marker';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import * as _ from 'lodash';
 
 @Component({

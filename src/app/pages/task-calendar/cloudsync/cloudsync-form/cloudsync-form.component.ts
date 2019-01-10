@@ -119,13 +119,19 @@ export class CloudsyncFormComponent implements OnInit {
     ],
   }, {
     type: 'select',
-    name: 'encryption',
+    name: 'task_encryption',
     placeholder: helptext.encryption_placeholder,
     tooltip: helptext.encryption_tooltip,
     options: [
       {label: "None", value: ""},
       {label: "AES-256", value: "AES256"},
     ],
+    isHidden: true,
+  }, {
+    type: 'checkbox',
+    name: 'fast_list',
+    placeholder: helptext.fast_list_placeholder,
+    tooltip: helptext.fast_list_tooltip,
     isHidden: true,
   }, {
     type: 'explorer',
@@ -462,6 +468,23 @@ export class CloudsyncFormComponent implements OnInit {
               this.setDisabled('bucket', true, true);
               this.setDisabled('bucket_input', true, true);
             }
+            // enable/disable task schema properties
+            if (_.find(this.providers, {"name": item.provider})['task_schema']) {
+              const task_schema = _.find(this.providers, {"name": item.provider})['task_schema'];
+              if (task_schema.length == 0) {
+                this.setDisabled('task_encryption', true, true);
+                this.setDisabled('fast_list', true, true);
+              } else {
+                for (const i in task_schema) {
+                  console.log(task_schema[i]);
+                  if (task_schema[i].property == 'encryption') {
+                    this.setDisabled('task_encryption', false, false);
+                  } else {
+                    this.setDisabled(task_schema[i].property, false, false);
+                  }
+                }
+              }
+            }
           }
         });
       }
@@ -612,6 +635,14 @@ export class CloudsyncFormComponent implements OnInit {
     }
     attributes['folder'] = value.folder;
     delete value.folder;
+    if (value.task_encryption != undefined) {
+      attributes['encryption'] = value.task_encryption;
+      delete value.task_encryption;
+    }
+    if (value.fast_list != undefined) {
+      attributes['fast_list'] = value.fast_list;
+      delete value.fast_list;
+    }
     value['attributes'] = attributes;
 
     let spl = value.cloudsync_picker.split(" ");

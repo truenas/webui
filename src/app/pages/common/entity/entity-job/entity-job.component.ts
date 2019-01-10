@@ -4,6 +4,7 @@ import { DecimalPipe } from '@angular/common';
 import { WebSocketService, RestService } from '../../../../services/';
 import { TranslateService } from '@ngx-translate/core';
 import { Http } from '@angular/http';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'entity-job',
@@ -80,7 +81,10 @@ export class EntityJobComponent implements OnInit {
 
   @HostListener('failure', ['$event'])
   public onFailure(job) {
-    this.description = job.error;
+    job.error = _.replace(job.error, '<', '< ');
+    job.error = _.replace(job.error, '>', ' >');
+
+    this.description = '<b>Error:</b> ' + job.error;
   }
 
   public show() {

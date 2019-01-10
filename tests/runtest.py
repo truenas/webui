@@ -81,7 +81,7 @@ if path.exists("/usr/local/etc/ixautomation.conf"):
     else:
         grid_server_ip = "127.0.0.1"
 else:
-    grid_server_ip = "enter.ip.via.argument"
+    grid_server_ip = "127.0.0.1"
 
 sys.stdout.flush()
 
@@ -141,9 +141,9 @@ except NameError:
 try:
     driver_v
 except NameError:
-    from driverG import webDriver
-    print("Running Selenium Grid")
-    runDriver = webDriver(grid_server_ip)
+    from driverU import webDriver
+    print("Running DriverU")
+    runDriver = webDriver()
 else:
     if driver_v == "F":
         from driverU import webDriver

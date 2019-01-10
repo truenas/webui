@@ -1,6 +1,5 @@
-import { Component} from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormArray, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
 import * as _ from 'lodash';
@@ -12,7 +11,7 @@ import { Formconfiguration } from '../../../../common/entity/entity-form/entity-
 import { EntityFormComponent } from '../../../../common/entity/entity-form';
 import { DialogService } from 'app/services/dialog.service';
 import { T } from '../../../../../translate-marker';
-
+import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-form';
 
 interface DatasetFormData {
   name: string;
@@ -41,7 +40,6 @@ interface DatasetFormData {
   refquota_warning: number;
   refquota_critical: number;
 };
-
 
 @Component({
   selector: 'app-dataset-form',
@@ -86,26 +84,23 @@ export class DatasetFormComponent implements Formconfiguration{
     {
       type: 'input',
       name: 'name',
-      placeholder: T('Name'),
-      tooltip: T('Enter a unique name for the dataset.'),
+      placeholder: helptext.dataset_form_name_placeholder,
+      tooltip: helptext.dataset_form_name_tooltip,
       readonly: true,
       required: true,
-      validation: [Validators.required]
+      validation: helptext.dataset_form_name_validation
     },
     {
       type: 'input',
       name: 'comments',
-      placeholder: T('Comments'),
-      tooltip: T('Enter any notes about this dataset.'),
+      placeholder: helptext.dataset_form_comments_placeholder,
+      tooltip: helptext.dataset_form_comments_tooltip,
     },
     {
       type: 'select',
       name: 'sync',
-      placeholder: T('Sync'),
-      tooltip: T('<i>Standard</i> uses the sync settings that have been\
-                  requested by the client software, <i>Always</i> waits for\
-                  data writes to complete, and <i>Disabled</i> never waits for\
-                  writes to complete.'),
+      placeholder: helptext.dataset_form_sync_placeholder,
+      tooltip: helptext.dataset_form_sync_tooltip,
       options: [
         { label: 'Standard', value: 'STANDARD' },
         { label: 'Always', value: 'ALWAYS' },
@@ -115,11 +110,8 @@ export class DatasetFormComponent implements Formconfiguration{
     {
       type: 'select',
       name: 'compression',
-      placeholder: T('Compression level'),
-      tooltip: T('For more information about the available compression\
-                  algorithms, refer to the <a\
-                  href="%%docurl%%/storage.html%%webversion%%#compression"\
-                  target="_blank">Compression section</a> of the guide.'),
+      placeholder: helptext.dataset_form_compression_placeholder,
+      tooltip: helptext.dataset_form_compression_tooltip,
       options: [
         { label: 'off', value: 'OFF' },
         { label: 'lz4 (recommended)', value: 'LZ4' ,},
@@ -133,8 +125,8 @@ export class DatasetFormComponent implements Formconfiguration{
     {
       type: 'radio',
       name: 'share_type',
-      placeholder: T('Share Type'),
-      tooltip: T('Set the type of client that will most often use this dataset.'),
+      placeholder: helptext.dataset_form_share_type_placeholder,
+      tooltip: helptext.dataset_form_share_type_tooltip,
       options: [{label:'Unix', value: 'UNIX'},
                 {label:'Windows', value: 'WINDOWS'},
                 {label:'Mac', value: 'MAC'}],
@@ -143,11 +135,8 @@ export class DatasetFormComponent implements Formconfiguration{
     {
       type: 'select',
       name: 'atime',
-      placeholder: T('Enable Atime'),
-      tooltip: T('Choose <i>ON</i> to update the access time for files\
-                  when they are read. Choose <i>Off</i> to prevent\
-                  producing log traffic when reading files. This can\
-                  result in significant performance gains.'),
+      placeholder: helptext.dataset_form_atime_placeholder,
+      tooltip: helptext.dataset_form_atime_tooltip,
       options: [
         { label: 'on', value: 'ON' },
         { label: 'off', value: 'OFF' }
@@ -157,14 +146,13 @@ export class DatasetFormComponent implements Formconfiguration{
       type: 'input',
       inputType: 'number',
       name: 'refquota',
-      placeholder: T('Quota for this dataset'),
-      tooltip: T('<i>0</i> disables quotas. Specify a maximum allowed\
-                  space for this dataset.'),
+      placeholder: helptext.dataset_form_refquota_placeholder,
+      tooltip: helptext.dataset_form_refquota_tooltip,
       class: 'inline',
       width: '70%',
       value: 0,
       min: 0,
-      validation: [Validators.min(0)]
+      validation: helptext.dataset_form_refquota_validation
     },
     {
       type: 'select',
@@ -195,38 +183,37 @@ export class DatasetFormComponent implements Formconfiguration{
       type: 'input',
       inputType: 'number',
       name: 'refquota_warning',
-      placeholder: T('Quota warning alert at, %'),
-      tooltip: T('0=Disabled, blank=inherit'),
+      placeholder: helptext.dataset_form_refquota_placeholder,
+      tooltip: helptext.dataset_form_refquota_warning_tooltip,
       class: 'inline',
       width: '70%',
       value: 0,
       min: 0,
-      validation: [Validators.min(0)]
+      validation: helptext.dataset_form_refquota_warning_validation
     },
     {
       type: 'input',
       inputType: 'number',
       name: 'refquota_critical',
-      placeholder: T('Quota critical alert at, %'),
-      tooltip: T('0=Disabled, blank=inherit'),
+      placeholder: helptext.dataset_form_refquota_critical_placeholder,
+      tooltip: helptext.dataset_form_refquota_critical_tooltip,
       class: 'inline',
       width: '70%',
       value: 0,
       min: 0,
-      validation: [Validators.min(0)]
+      validation: helptext.dataset_form_refquota_critical_validation
     },
     {
       type: 'input',
       inputType: 'number',
       name: 'quota',
-      placeholder: 'Quota for this dataset and all children',
-      tooltip: 'Define a maximum size for both the dataset and any child\
-                datasets. Enter <i>0</i> to remove the quota.',
+      placeholder: helptext.dataset_form_quota_placeholder,
+      tooltip: helptext.dataset_form_quota_tooltip,
       class: 'inline',
       width: '70%',
       value: 0,
       min: 0,
-      validation: [Validators.min(0)]
+      validation: helptext.dataset_form_quota_validation
     },
     {
       type: 'select',
@@ -257,39 +244,37 @@ export class DatasetFormComponent implements Formconfiguration{
       type: 'input',
       inputType: 'number',
       name: 'quota_warning',
-      placeholder: T('Quota warning alert at, %'),
-      tooltip: T('0=Disabled, blank=inherit'),
+      placeholder: helptext.dataset_form_quota_warning_placeholder,
+      tooltip: helptext.dataset_form_quota_warning_tooltip,
       class: 'inline',
       width: '70%',
       value: 0,
       min: 0,
-      validation: [Validators.min(0)]
+      validation: helptext.dataset_form_quota_warning_validation
     },
     {
       type: 'input',
       inputType: 'number',
       name: 'quota_critical',
-      placeholder: T('Quota critical alert at, %'),
-      tooltip: T('0=Disabled, blank=inherit'),
+      placeholder: helptext.dataset_form_quota_critical_placeholder,
+      tooltip: helptext.dataset_form_quota_critical_tooltip,
       class: 'inline',
       width: '70%',
       value: 0,
       min: 0,
-      validation: [Validators.min(0)]
+      validation: helptext.dataset_form_quota_critical_validation
     },
     {
       type: 'input',
       inputType: 'number',
       name: 'refreservation',
-      placeholder: T('Reserved space for this dataset'),
-      tooltip: T('<i>0</i> is unlimited. Reserve additional space for\
-                  datasets containing logs which could take up all\
-                  available free space.'),
+      placeholder: helptext.dataset_form_refreservation_placeholder,
+      tooltip: helptext.dataset_form_refreservation_tooltip,
       class: 'inline',
       width: '70%',
       value: 0,
       min: 0,
-      validation: [Validators.min(0)]
+      validation: helptext.dataset_form_refreservation_validation
     },
     {
       type: 'select',
@@ -320,14 +305,13 @@ export class DatasetFormComponent implements Formconfiguration{
       type: 'input',
       inputType: 'number',
       name: 'reservation',
-      placeholder: T('Reserved space for this dataset and all children'),
-      tooltip: T('<i>0</i> is unlimited. A specified value applies to\
-                  both this dataset and any child datasets.'),
+      placeholder: helptext.dataset_form_reservation_placeholder,
+      tooltip: helptext.dataset_form_reservation_tooltip,
       class: 'inline',
       width: '70%',
       value: 0,
       min: 0,
-      validation: [Validators.min(0)]
+      validation: helptext.dataset_form_reservation_validation
     },
     {
       type: 'select',
@@ -357,11 +341,9 @@ export class DatasetFormComponent implements Formconfiguration{
     {
       type: 'select',
       name: 'deduplication',
-      label: T('ZFS deplication'),
-      placeholder: T('ZFS Deduplication'),
-      tooltip: T('Please read about <a href="%%docurl%%/storage.html%%webversion%%#deduplication"\
-                  target="_blank">deduplication</a> before considering\
-                  changing this setting.'),
+      label: helptext.dataset_form_deduplication_label,
+      placeholder: helptext.dataset_form_deduplication_placeholder,
+      tooltip: helptext.dataset_form_deduplication_tooltip,
       options: [
         { label: 'on', value: 'ON' },
         { label: 'verify', value: 'VERIFY' },
@@ -371,8 +353,8 @@ export class DatasetFormComponent implements Formconfiguration{
     {
       type: 'select',
       name: 'readonly',
-      placeholder: T('Read-only'),
-      tooltip: T('Set to prevent the dataset from being modified.'),
+      placeholder: helptext.dataset_form_readonly_placeholder,
+      tooltip: helptext.dataset_form_readonly_tooltip,
       options: [
         { label: 'On', value: 'ON' },
         { label: 'Off', value: 'OFF' }
@@ -381,8 +363,8 @@ export class DatasetFormComponent implements Formconfiguration{
     {
       type: 'select',
       name: 'exec',
-      placeholder: T('Exec'),
-      tooltip: T('Set whether processes can be executed from within this dataset.'),
+      placeholder: helptext.dataset_form_exec_placeholder,
+      tooltip: helptext.dataset_form_exec_tooltip,
       options: [
         { label: 'On', value: 'ON' },
         { label: 'Off', value: 'OFF' }
@@ -391,9 +373,8 @@ export class DatasetFormComponent implements Formconfiguration{
     {
       type: 'select',
       name: 'snapdir',
-      placeholder: T('Snapshot directory'),
-      tooltip: T('Choose if the .zfs snapshot directory is <i>Visible</i>\
-                  or <i>Invisible</i> on this dataset.'),
+      placeholder: helptext.dataset_form_snapdir_placeholder,
+      tooltip: helptext.dataset_form_snapdir_tooltip,
       options: [
         { label: 'Visible', value: 'VISIBLE' },
         { label: 'Invisible', value: 'HIDDEN' },
@@ -402,8 +383,8 @@ export class DatasetFormComponent implements Formconfiguration{
     {
       type: 'select',
       name: 'copies',
-      placeholder: T('Copies'),
-      tooltip: T('Set the number of data copies on this dataset.'),
+      placeholder: helptext.dataset_form_copies_placeholder,
+      tooltip: helptext.dataset_form_copies_tooltip,
       options: [
         { label: '1', value: '1' },
         { label: '2', value: '2' },
@@ -414,9 +395,8 @@ export class DatasetFormComponent implements Formconfiguration{
     {
       type: 'select',
       name: 'recordsize',
-      placeholder: T('Record Size'),
-      tooltip: T('Matching the fixed size of data, as in a database, may\
-                  result in better performance.'),
+      placeholder: helptext.dataset_form_recordsize_placeholder,
+      tooltip: helptext.dataset_form_recordsize_tooltip,
       options: [
         { label: '512', value: '512', disable:true },
         { label: '1K', value: '1K', disable:true },
@@ -435,11 +415,8 @@ export class DatasetFormComponent implements Formconfiguration{
     {
       type: 'select',
       name: 'casesensitivity',
-      placeholder: T('Case Sensitivity'),
-      tooltip: T('<i>Sensitive</i> assumes filenames are case sensitive.\
-                  <i>Insensitive</i> assumes filenames are not case\
-                  sensitive. <i>Mixed</b> understands both types of\
-                  filenames.'),
+      placeholder: helptext.dataset_form_casesensitivity_placeholder,
+      tooltip: helptext.dataset_form_casesensitivity_tooltip,
       options: [
         { label: 'Sensitive', value: 'SENSITIVE' },
         { label: 'Insensitive', value: 'INSENSITIVE' },

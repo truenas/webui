@@ -1,17 +1,15 @@
 import { Component } from '@angular/core';
-import { FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 
 import * as _ from 'lodash';
 
 import { EntityFormComponent } from '../../../../common/entity/entity-form';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { IscsiService, RestService, WebSocketService } from '../../../../../services/';
-import { T } from '../../../../../translate-marker';
-import {Validators} from '@angular/forms';
 import { EntityUtils } from '../../../../common/entity/utils';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
+import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 
 @Component({
   selector: 'app-iscsi-initiator-form',
@@ -35,18 +33,16 @@ export class ExtentFormComponent {
     {
       type : 'input',
       name : 'name',
-      placeholder : T('Extent name'),
-      tooltip: T('Enter the extent name. The name cannot be an existing\
-                  file within the pool or dataset when the\
-                  <b>Extent size</b> is something other than <i>0</i>.'),
+      placeholder : helptext_sharing_iscsi.extent_placeholder_name,
+      tooltip: helptext_sharing_iscsi.extent_tooltip_name,
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext_sharing_iscsi.extent_validators_name
     },
     {
       type: 'select',
       name: 'type',
-      placeholder: T('Extent type'),
-      tooltip: T('Select from <i>File</i> or <i>Device</i>.'),
+      placeholder: helptext_sharing_iscsi.extent_placeholder_type,
+      tooltip: helptext_sharing_iscsi.extent_tooltip_type,
       options: [
         {
           label: 'Device',
@@ -61,58 +57,47 @@ export class ExtentFormComponent {
     {
       type: 'select',
       name: 'disk',
-      placeholder: T('Device'),
-      tooltip: T('Only appears if <i>Device</i> is selected. Select the\
-                  unformatted disk, controller, zvol snapshot,\
-                  or HAST device.'),
+      placeholder: helptext_sharing_iscsi.extent_placeholder_disk,
+      tooltip: helptext_sharing_iscsi.extent_tooltip_disk,
       options: [],
       isHidden: false,
       disabled: false,
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext_sharing_iscsi.extent_validators_disk
     },
     {
       type : 'input',
       name : 'serial',
-      placeholder : T('Serial'),
-      tooltip: T('Unique LUN ID. The default is generated\
-                  from the MAC address of the system.'),
+      placeholder : helptext_sharing_iscsi.extent_placeholder_serial,
+      tooltip: helptext_sharing_iscsi.extent_tooltip_serial,
     },
     {
       type : 'explorer',
       explorerType: 'file',
       initial: '/mnt',
       name: 'path',
-      placeholder: T('Path to the extent'),
-      tooltip: T('Browse to an existing file and use <i>0</i> as the\
-                  <b>Extent size</b>, or browse to the pool or dataset,\
-                  click <b>Close</b>, append the <b>Extent Name</b> to\
-                  the path, and specify a value in <b>Extent Size</b>.\
-                  Extents cannot be created inside the jail\
-                  root directory.'),
+      placeholder: helptext_sharing_iscsi.extent_placeholder_path,
+      tooltip: helptext_sharing_iscsi.extent_tooltip_path,
       isHidden: false,
       disabled: false,
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext_sharing_iscsi.extent_validators_path
     },
     {
       type: 'input',
       name: 'filesize',
-      placeholder: T('Extent size'),
-      tooltip: T('If the size is specified as <i>0</i>, the file must\
-                  already exist and the actual file size will be used.\
-                  Otherwise, specify the size of the file to create.'),
+      placeholder: helptext_sharing_iscsi.extent_placeholder_filesize,
+      tooltip: helptext_sharing_iscsi.extent_tooltip_filesize,
       isHidden: false,
       disabled: false,
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext_sharing_iscsi.extent_validators_filesize
     },
     {
       type: 'select',
       name: 'blocksize',
-      placeholder: T('Logical block size'),
-      tooltip: T('Only override the default if the initiator requires a\
-                  different block size.'),
+      placeholder: helptext_sharing_iscsi.extent_placeholder_blocksize,
+      tooltip: helptext_sharing_iscsi.extent_tooltip_blocksize,
       options: [
         {
           label: '512',
@@ -136,63 +121,48 @@ export class ExtentFormComponent {
     {
       type: 'checkbox',
       name: 'pblocksize',
-      placeholder: T('Disable physical block size reporting'),
-      tooltip: T('Set if the initiator does not support physical block\
-                  size values over 4K (MS SQL).'),
+      placeholder: helptext_sharing_iscsi.extent_placeholder_pblocksize,
+      tooltip: helptext_sharing_iscsi.extent_tooltip_pblocksize,
     },
     {
       type: 'input',
       name: 'avail_threshold',
-      placeholder: T('Available space threshold (%)'),
-      tooltip: T('Only appears if a <i>File</i> or zvol is selected. When\
-                  the specified percentage of free space is reached,\
-                  the system issues an alert.\
-                  See <a href="%%docurl%%/vaai.html%%webversion%%#vaai"\
-                  target="_blank">VAAI</a> Threshold Warning.'),
+      placeholder: helptext_sharing_iscsi.extent_placeholder_avail_threshold,
+      tooltip: helptext_sharing_iscsi.extent_tooltip_avail_threshold,
       isHidden: false,
     },
     {
       type : 'input',
       name : 'comment',
-      placeholder : T('Comment'),
-      tooltip: T('Enter any notes.'),
+      placeholder : helptext_sharing_iscsi.extent_placeholder_comment,
+      tooltip: helptext_sharing_iscsi.extent_tooltip_comment,
     },
     {
       type: 'checkbox',
       name: 'insecure_tpc',
-      placeholder: T('Enable TPC'),
-      tooltip: T('Set to allow an initiator to bypass normal access\
-                  control and access any scannable target. This allows\
-                  <a\
-                  href="https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-R2-and-2012/cc771254(v=ws.11)"\
-                  target="_blank">xcopy</a> operations which are\
-                  otherwise blocked by access control.'),
+      placeholder: helptext_sharing_iscsi.extent_placeholder_insecure_tpc,
+      tooltip: helptext_sharing_iscsi.extent_tooltip_insecure_tpc,
       value: true,
     },
     {
       type: 'checkbox',
       name: 'xen',
-      placeholder: T('Xen initiator compat mode'),
-      tooltip: T('Set when using Xen as the iSCSI initiator.'),
+      placeholder: helptext_sharing_iscsi.extent_placeholder_xen,
+      tooltip: helptext_sharing_iscsi.extent_tooltip_xen,
     },
     {
       type: 'select',
       name: 'rpm',
-      placeholder: T('LUN RPM'),
-      tooltip: T('Do <b>NOT</b> change this setting when using Windows\
-                  as the initiator. Only needs to be changed in large\
-                  environments where the number of systems using a\
-                  specific RPM is needed for accurate reporting\
-                  statistics.'),
+      placeholder: helptext_sharing_iscsi.extent_placeholder_rpm,
+      tooltip: helptext_sharing_iscsi.extent_tooltip_rpm,
       options: [],
       value: 'SSD',
     },
     {
       type: 'checkbox',
       name: 'ro',
-      placeholder: T('Read-only'),
-      tooltip: T('Set to prevent the initiator from initializing this\
-                  LUN.'),
+      placeholder: helptext_sharing_iscsi.extent_placeholder_ro,
+      tooltip: helptext_sharing_iscsi.extent_tooltip_ro,
     },
   ];
 

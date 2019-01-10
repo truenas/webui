@@ -12,7 +12,6 @@ direction_tooltip: T('<i>Push</i> sends data to cloud storage. <i>Pull</i>\
  receives data from cloud storage.'),
 direction_validation : [ Validators.required ],
 
-
 credentials_placeholder: T('Credential'),
 credentials_tooltip: T('Select the cloud storage provider credentials from the\
  list of available Cloud Credentials.'),
@@ -31,6 +30,10 @@ folder_tooltip: T('Enter the name of the destination folder.'),
 
 encryption_placeholder: T('Server Side Encryption'),
 encryption_tooltip: T('Choose <i>AES-256</i> or <i>None</i>.'),
+
+fast_list_placeholder: T('Use --fast-list'),
+fast_list_tooltip: T('[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/#fast-list)\
+ This can also speed up or slow down the transfer.'),
 
 path_placeholder: T('Directory/Files'),
 path_tooltip: T('Select the directories or files to be sent to the cloud\
@@ -91,4 +94,5 @@ bwlimit_tooltip: T('Either single bandwidth limit or bandwidth limit schedule in
 exclude_placeholder: T('Exclude'),
 exclude_tooltip: T('Newline-separated list of files and directories to exclude from sync.<br />\
  See https://rclone.org/filtering/ for more details on --exclude option.'),
+
 }

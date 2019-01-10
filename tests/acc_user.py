@@ -271,7 +271,9 @@ class create_user_test(unittest.TestCase):
 
     def test_06_create_newuser_suggestedname(self):
         try:
-            print (" creating a new user with create new primary group")
+            print (" creating a new user with suggested name")
+            # Click User submenu
+            driver.find_element_by_xpath(xpaths['submenuUser']).click()
             # cancelling the tour
             if function.is_element_present(driver, self, By.XPATH, '/html/body/div[6]/div[1]/button'):
                 driver.find_element_by_xpath('/html/body/div[6]/div[1]/button').click()

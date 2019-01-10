@@ -1,24 +1,10 @@
-import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
-import {
-  AbstractControl,
-  FormArray,
-  FormGroup,
-  Validators
-} from '@angular/forms';
-import {ActivatedRoute, Router, RouterModule} from '@angular/router';
+import { ApplicationRef, Component, Injector } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
 
-import {
-  RestService,
-  UserService,
-  WebSocketService,
-  IscsiService
-} from '../../../../services/';
-import {
-  FieldConfig
-} from '../../../common/entity/entity-form/models/field-config.interface';
-import { T } from '../../../../translate-marker';
+import { RestService, UserService, WebSocketService, IscsiService } from '../../../../services/';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import helptext from '../../../../helptext/services/components/service-afp';
 
 @Component({
   selector : 'afp-edit',
@@ -34,90 +20,57 @@ export class ServiceAFPComponent {
     {
       type : 'select',
       name : 'afp_srv_guest_user',
-      placeholder : T('Guest Account'),
-      tooltip: T('Select an account to use for guest access. This\
-                  account must have permissions to the shared pool or dataset.\
-                  The privileges given to this user are also\
-                  available to any client connecting to the guest service.\
-                  This user must  exist in the password file, but does\
-                  not require a valid login. The root user cannot be\
-                  used as guest account.'),
-      options: [
-        {label : 'nobody', value : 'nobody'}
-      ]
+      placeholder : helptext.afp_srv_guest_user_placeholder,
+      tooltip: helptext.afp_srv_guest_user_tooltip,
+      options: helptext.afp_srv_guest_user_options
     },
     {
       type : 'checkbox',
       name : 'afp_srv_guest',
-      placeholder : T('Guest Access'),
-      tooltip: T('Set to disable the password prompt that appears\
-                  before clients access AFP shares.'),
+      placeholder : helptext.afp_srv_guest_placeholder,
+      tooltip: helptext.afp_srv_guest_tooltip,
     },
     {
       type : 'input',
       name : 'afp_srv_connections_limit',
-      placeholder : T('Max. Connections'),
-      tooltip: T('Maximum number of simultaneous connections permitted\
-                  via AFP. The default limit is 50.'),
+      placeholder : helptext.afp_srv_connections_limit_placeholder,
+      tooltip: helptext.afp_srv_connections_limit_tooltip,
     },
     {
       type : 'explorer',
       initial: '/mnt',
       explorerType: 'directory',
       name : 'afp_srv_dbpath',
-      placeholder : T('Database Path'),
-      tooltip: T('Sets the database information to be stored in the path.\
-                  The path must be writable even if the pool is read only.'),
+      placeholder : helptext.afp_srv_dbpath_placeholder,
+      tooltip: helptext.afp_srv_dbpath_tooltip,
     },
     {
       type : 'select',
       name : 'afp_srv_chmod_request',
-      placeholder : T('Chmod Request'),
-      tooltip: T('Indicates how to handle Access Control Lists.\
-                  <b>Ignore:</b> ignores requests and gives\
-                  the parent directory ACL inheritance full control over\
-                  new items.<b> Preserve:</b> preserves ZFS ACEs for named\
-                  users and groups or the POSIX ACL group mask.\
-                  <b>Simple:</b> is set to chmod() as requested\
-                  without any extra steps.'),
-      options : [
-        {label : 'Ignore', value : 'ignore'},
-        {label : 'Preserve', value : 'preserve'},
-        {label : 'Simple', value : 'simple'},
-      ],
+      placeholder : helptext.afp_srv_chmod_request_placeholder,
+      tooltip: helptext.afp_srv_chmod_request_tooltip,
+      options : helptext.afp_srv_chmod_request_options,
     },
     {
       type : 'select',
       name : 'afp_srv_map_acls',
-      placeholder : T('Map ACLs'),
-      tooltip: T('Select mapping of permissions for\
-                  authenticated users. <b>Rights</b>\
-                  (default, Unix-style permissions), <b>None</b>,\
-                  or <b>Mode</b> (ACLs).'),
-      options : [
-        {label : 'Rights', value : 'rights'},
-        {label : 'None', value : 'none'},
-        {label : 'Mode', value : 'mode'},
-      ],
+      placeholder : helptext.afp_srv_map_acls_placeholder,
+      tooltip: helptext.afp_srv_map_acls_tooltip,
+      options : helptext.afp_srv_map_acls_options,
     },
     {
       type : 'select',
       name : 'afp_srv_bindip',
-      placeholder : T('Bind Interfaces'),
-      tooltip: T('Specify the IP addresses to listen for FTP connections.\
-                  If none are specified, advertise the first IP\
-                  address of the system, but listen for any\
-                  incoming request.'),
+      placeholder : helptext.afp_srv_bindip_placeholder,
+      tooltip: helptext.afp_srv_bindip_tooltip,
       options: [],
       multiple: true
     },
     {
       type : 'textarea',
       name : 'afp_srv_global_aux',
-      placeholder : T('Global auxiliary parameters'),
-      tooltip: T('Additional <a href="http://netatalk.sourceforge.net/3.0/htmldocs/afp.conf.5.html"\
-                  target="_blank">afp.conf(5)</a>\
-                  parameters.'),
+      placeholder : helptext.afp_srv_global_aux_placeholder,
+      tooltip: helptext.afp_srv_global_aux_tooltip,
     }
   ];
   private guest_users: any;
