@@ -303,7 +303,8 @@ manipulation of system file flags. \
 <b>securelevel</b> constraints are still enforced.'),
 
 allow_mlock_placeholder: T('allow.mlock'),
-allow_mlock_tooltip: T(''),
+allow_mlock_tooltip: T('Enables running services that require mlock() \
+in a jail.'),
 
 allow_mount_placeholder: T('allow.mount'),
 allow_mount_tooltip: T('Set to allow privileged users inside the jail to \
@@ -362,7 +363,9 @@ IPv4, IPv6, local (UNIX), and route. <br>\
 for all protocal stacks.'),
 
 vnet_interfaces_placeholder: T('vnet.interfaces'),
-vnet_interfaces_tooltip: T(''),
+vnet_interfaces_tooltip: T('A space delimited list of network \
+interfaces for a VNET-enabled jail after it is created. \
+Interfaces are automatically released when the jail is removed.'),
 
 //network field Config
 interfaces_placeholder: T('interfaces'),
@@ -477,7 +480,8 @@ hostid_tooltip: T('A new jail hostid, if desired. \
 <i>1a2bc345-678d-90e1-23fa-4b56c78901de</i>.'),
 
 hostid_strict_check_placeholder: T('hostid_strict_check'),
-hostid_strict_check_tooltip: T(''),
+hostid_strict_check_tooltip: T('Checks the hostid property of the jail \
+and if they are not the same as the hosts, it does not start the jail'),
 
 comment_placeholder: T('comment'),
 comment_tooltip: T('Enter comments about the jail.'),
@@ -523,7 +527,8 @@ jail_zfs_mountpoint_tooltip: T('Enter the mountpoint for the \
 <b>Example:</b> <i>/data example-dataset-name</i>'),
 
 allow_tun_placeholder: T('allow_tun'),
-allow_tun_tooltip: T(''),
+allow_tun_tooltip: T('Unhides tun devices for the jail with an \
+individual devfsruleset.  Allows the creation of tuns in the jail.'),
 
 // rctl config
 memoryuse_placeholder: T('memoryuse'),
