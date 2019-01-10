@@ -6,7 +6,6 @@ import { matchOtherValidator } from '../../../pages/common/entity/entity-form/va
 import { TranslateService } from '@ngx-translate/core';
 
 import { T } from '../../../translate-marker';
-
 import {WebSocketService} from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
