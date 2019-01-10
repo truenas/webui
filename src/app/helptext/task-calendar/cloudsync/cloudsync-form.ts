@@ -55,6 +55,15 @@ export default {
 
     transfer_mode_validation : [ Validators.required ],
 
+    snapshot_placeholder: T('Take snapshot'),
+    snapshot_tooltip: T('Create a snapshot of the dataset before pushing data.'),
+
+    pre_script_placeholder: T('Pre-script'),
+    pre_script_tooltip: T('Script to execute before running sync.'),
+
+    post_script_placeholder: T('Post-script'),
+    post_script_tooltip: T('Script to execute after running sync.'),
+
     remote_encryption_placeholder: T('Remote encryption'),
     remote_encryption_tooltip: T('Set to encrypt files before transfer and store the\
                 encrypted files on the remote system.\
@@ -81,6 +90,11 @@ export default {
     cloudsync_picker_placeholder: T('Schedule the Cloud Sync Task'),
     cloudsync_picker_tooltip: T('Select a schedule preset or choose <i>Custom</i> to open\
                 the advanced scheduler.'),
+
+    transfers_placeholder: T('Transfers'),
+    transfers_tooltip: T(' The number of file transfers to run in parallel. It can \
+sometimes be useful to set this to a smaller number if the remote is giving a lot of \
+timeouts, or a larger number if there is high bandwidth and a fast remote.'),
 
     enabled_placeholder: T('Enabled'),
     enabled_tooltip: T('Enable this Cloud Sync Task. Unset to disable this Cloud\
