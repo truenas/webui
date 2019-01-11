@@ -1,7 +1,7 @@
-import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
-import {ActivatedRoute, Router, RouterModule} from '@angular/router';
+import {ApplicationRef, Component, Injector} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs/Subscription';
+
 import {RestService, SystemGeneralService, WebSocketService} from '../../../services/';
 import {FieldConfig} from '../../common/entity/entity-form/models/field-config.interface';
 import {  DialogService } from '../../../services/';
@@ -82,10 +82,8 @@ export class ActiveDirectoryComponent {
       tooltip : T('Enter the administrator account password.'),
       inputType : 'password',
       togglePw: true,
-      required: true,
-      validation : [ Validators.required ],
       disabled: false,
-      isHidden:true
+      isHidden:false
     },
     {
       type : 'input',
@@ -126,11 +124,15 @@ export class ActiveDirectoryComponent {
       placeholder : T('Certificate'),
       tooltip : T('Select the certificate of the Active Directory server\
                  if SSL connections are used. Add a certificate here by\
-                 creating a <a href="guide" target="_blank">CA</a> then\
-                 a certificate on the Active Directory server. Import\
-                 the certificate to this system with the <a\
-                 href="guide" target="_blank">Certificates</a> menu.'),
-      options : []
+                 creating a\
+                 <a href="%%docurl%%/system.html%%webversion%%#cas" target="_blank">CA</a>,\
+                 then creating a certificate on the Active Directory server.\
+                 Import the certificate on this system with the\
+                 <a href="%%docurl%%/system.html%%webversion%%#certificates" target="_blank">Certificates</a>\
+                 menu.'),
+      options : [
+        {label : '---', value : ""},
+      ]
     },
     {
       type : 'checkbox',
@@ -218,7 +220,8 @@ export class ActiveDirectoryComponent {
       type : 'select',
       name : 'ad_kerberos_realm',
       placeholder : T('Kerberos Realm'),
-      tooltip : T('Select the realm created in <a href="guide"\
+      tooltip : T('Select the realm created in\
+                   <a href="%%docurl%%/directoryservices.html%%webversion%%#kerberos-realms"\
                    target="_blank">Kerberos Realms</a>.'),
       options : []
     },
@@ -226,7 +229,8 @@ export class ActiveDirectoryComponent {
       type : 'select',
       name : 'ad_kerberos_principal',
       placeholder : T('Kerberos Principal'),
-      tooltip : T('Select the keytab created in <a href="guide"\
+      tooltip : T('Select the keytab created in\
+                   <a href="%%docurl%%/directoryservices.html%%webversion%%#kerberos-keytabs"\
                    target="_blank">Kerberos Keytabs</a>.'),
       options : [
         {label : '---', value : ""},
@@ -454,14 +458,14 @@ export class ActiveDirectoryComponent {
       if(res){
         entityEdit.setDisabled('ad_bindname', true);
         entityEdit.setDisabled('ad_bindpw', true);
-        _.find(this.fieldConfig, {'name' : 'ad_bindname'}).isHidden = true;
-        _.find(this.fieldConfig, {'name' : 'ad_bindpw'}).isHidden = true;
+        _.find(this.fieldConfig, {'name' : 'ad_bindname'})['isHidden'] = true;
+        _.find(this.fieldConfig, {'name' : 'ad_bindpw'})['isHidden'] = true;
 
       } else {
         entityEdit.setDisabled('ad_bindname', false);
         entityEdit.setDisabled('ad_bindpw', false);
-        _.find(this.fieldConfig, {'name' : 'ad_bindname'}).isHidden = false;
-        _.find(this.fieldConfig, {'name' : 'ad_bindpw'}).isHidden = false;
+        _.find(this.fieldConfig, {'name' : 'ad_bindname'})['isHidden'] = false;
+        _.find(this.fieldConfig, {'name' : 'ad_bindpw'})['isHidden'] = false;
       }
 
     })

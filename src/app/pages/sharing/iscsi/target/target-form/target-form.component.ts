@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
-import { Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
 
 import { IscsiService, WebSocketService } from '../../../../../services/';
 import { EntityUtils } from '../../../../common/entity/utils';
@@ -10,8 +8,8 @@ import { EntityUtils } from '../../../../common/entity/utils';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../../../common/entity/entity-form/services/entity-form.service';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
-import { T } from '../../../../../translate-marker';
 import { TranslateService } from '@ngx-translate/core';
+import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 
 @Component({
   selector : 'app-iscsi-target-form',
@@ -35,17 +33,16 @@ export class TargetFormComponent {
     {
       type: 'input',
       name : 'name',
-      placeholder : T('Target Name'),
-      tooltip: T('Required value. Base name is appended\
-                  if it does not start with <i>iqn</i>.'),
+      placeholder : helptext_sharing_iscsi.target_form_placeholder_name,
+      tooltip: helptext_sharing_iscsi.target_form_tooltip_name,
       required: true,
-      validation: [Validators.required],
+      validation: helptext_sharing_iscsi.target_form_validators_name,
     },
     {
       type: 'input',
       name : 'alias',
-      placeholder : T('Target Alias'),
-      tooltip: T('Optional user-friendly name.'),
+      placeholder : helptext_sharing_iscsi.target_form_placeholder_alias,
+      tooltip: helptext_sharing_iscsi.target_form_tooltip_alias,
     },
     {
       type: 'array',
@@ -55,29 +52,26 @@ export class TargetFormComponent {
           {
             type: 'select',
             name : 'portal',
-            placeholder : T('Portal Group ID'),
-            tooltip: T('Leave empty or select number of existing portal\
-                        to use.'),
+            placeholder : helptext_sharing_iscsi.target_form_placeholder_portal,
+            tooltip: helptext_sharing_iscsi.target_form_tooltip_portal,
             value : '',
             options: [],
             required: true,
-            validation: [Validators.required],
+            validation: helptext_sharing_iscsi.target_form_validators_portal,
           },
           {
             type: 'select',
             name : 'initiator',
-            placeholder : T('Initiator Group ID'),
-            tooltip: T('Select which existing initiator group has access\
-                        to the target.'),
+            placeholder : helptext_sharing_iscsi.target_form_placeholder_initiator,
+            tooltip: helptext_sharing_iscsi.target_form_tooltip_initiator,
             value : null,
             options: [],
           },
           {
             type: 'select',
             name : 'authmethod',
-            placeholder : T('Auth Method'),
-            tooltip: T('Choices are <i>None, Auto, CHAP,</i> or\
-                        <i>Mutual CHAP</i>.'),
+            placeholder : helptext_sharing_iscsi.target_form_placeholder_authmethod,
+            tooltip: helptext_sharing_iscsi.target_form_tooltip_authmethod,
             value : 'NONE',
             options : [
               {
@@ -97,16 +91,15 @@ export class TargetFormComponent {
           {
             type: 'select',
             name : 'auth',
-            placeholder : T('Authentication Group number'),
-            tooltip: T('Select <i>None</i> or an integer. This value\
-                        represents the number of existing authorized accesses.'),
+            placeholder : helptext_sharing_iscsi.target_form_placeholder_auth,
+            tooltip: helptext_sharing_iscsi.target_form_tooltip_auth,
             value : null,
             options: [],
           },
           {
             type: 'checkbox',
             name: 'delete',
-            placeholder: T('Delete'),
+            placeholder: helptext_sharing_iscsi.target_form_placeholder_delete,
             isHidden: true,
             disabled: true,
           }
@@ -156,7 +149,7 @@ export class TargetFormComponent {
         this.customFilter[0][0].push(parseInt(params['pk']));
         this.initialCount = 0;
         this.arrayControl.initialCount = 0;
-        this.arrayControl.formarray[4].isHidden = false;
+        this.arrayControl.formarray[4]['isHidden'] = false;
         this.arrayControl.formarray[4].disabled = false;
       }
     });
@@ -167,15 +160,15 @@ export class TargetFormComponent {
     this.formArray = entityForm.formGroup.controls['groups'];
 
     this.iscsiService.listPortals().subscribe((res) => {
-      this.portals = res.data;
+      this.portals = res;
       this.setFormArray(this.arrayControl.formarray[0]);
     });
     this.iscsiService.listInitiators().subscribe((res) => {
-      this.initiators = res.data;
+      this.initiators = res;
       this.setFormArray(this.arrayControl.formarray[1]);
     });
     this.iscsiService.listAuthCredential().subscribe((res) => {
-      this.auths = res.data;
+      this.auths = res;
       this.setFormArray(this.arrayControl.formarray[3]);
     });
   }
@@ -190,32 +183,32 @@ export class TargetFormComponent {
   setFormArray(groupModel: any) {
     if(groupModel.name == 'portal') {
       groupModel.options.push({label : 'None', value : ''});
-      this.portals.forEach((item, i) => {
-        var label = item.iscsi_target_portal_tag;
-        if (item.iscsi_target_portal_comment) {
-          label = item.iscsi_target_portal_tag + ' (' + item.iscsi_target_portal_comment + ')';
+      for (let i = 0; i < this.portals.length; i++) {
+        var label = this.portals[i].tag;
+        if (this.portals[i].comment) {
+          label += ' (' + this.portals[i].comment + ')';
         }
         groupModel.options.push({label : label, value : i + 1})
-      });
+      }
     } else if (groupModel.name == 'initiator') {
       groupModel.options.push({label : 'None', value : null});
-      this.initiators.forEach((item, i) => {
-        var label = item.iscsi_target_initiator_tag;
-        if (item.iscsi_target_initiator_comment) {
-          label = item.iscsi_target_initiator_tag + ' (' + item.iscsi_target_initiator_comment + ')';
+      for (let i = 0; i < this.initiators.length; i++) {
+        var label = this.initiators[i].tag;
+        if (this.initiators[i].comment) {
+          label += ' (' + this.initiators[i].comment + ')';
         }
-        groupModel.options.push({label : label, value : i + 1})
-      });
+        groupModel.options.push({label : label, value : this.initiators[i].id})
+      }
     } else if (groupModel.name == 'auth') {
       groupModel.options.push({label : 'None', value : null});
-      this.auths.forEach((item) => {
+      for (let i = 0; i < this.auths.length; i++) {
         groupModel.options.push(
           {
-            label : item.iscsi_target_auth_tag,
-            value : item.iscsi_target_auth_tag
+            label : this.auths[i].tag,
+            value : this.auths[i].tag
           }
         )
-      });
+      }
     }
   }
 

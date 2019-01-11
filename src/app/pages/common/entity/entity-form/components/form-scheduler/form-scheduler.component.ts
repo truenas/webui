@@ -1,4 +1,4 @@
-import {Component,OnInit,OnChanges, ViewChild, ElementRef, QueryList, Renderer2, ChangeDetectorRef, SimpleChanges, HostListener} from '@angular/core';
+import {Component,OnInit,OnChanges, ViewChild, ElementRef, QueryList, Renderer2, ChangeDetectorRef, SimpleChanges, HostListener, AfterViewInit, AfterViewChecked} from '@angular/core';
 import {FormGroup, FormControl, Validators} from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -6,7 +6,7 @@ import {FieldConfig} from '../../models/field-config.interface';
 import {Field} from '../../models/field.interface';
 import {TooltipComponent} from '../tooltip/tooltip.component';
 
-import {Overlay, OverlayOrigin, OverlayConfig, OverlayRef} from '@angular/cdk/overlay';
+import {Overlay, OverlayConfig, OverlayRef} from '@angular/cdk/overlay';
 import {MatDatepickerModule, MatMonthView} from '@angular/material';
 import * as moment from 'moment';
 import * as parser from 'cron-parser';
@@ -26,7 +26,7 @@ interface CronDate {
   templateUrl : './form-scheduler.component.html',
   styleUrls:['./form-scheduler.component.css'] 
 })
-export class FormSchedulerComponent implements Field, OnInit, OnChanges{
+export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterViewInit, AfterViewChecked{
 
   // Basic form-select props
   public config:FieldConfig;
@@ -43,6 +43,8 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges{
   /*public minutesCtl = new FormControl('', [Validators.required, Validators.pattern]);
   public hoursCtl = new FormControl('', [Validators.required, Validators.pattern]);
   public daysCtl = new FormControl('', [Validators.required, Validators.pattern]);*/
+
+  private control: any;
 
   public isOpen:boolean = false;
   formControl = new FormControl();
@@ -213,8 +215,6 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges{
 
   set textInput(val:string){
     this._textInput = val;
-    console.log("TEXT INPUT CHANGED!!");
-    console.log(val)
   }
 
   get colorProxy(){
@@ -234,7 +234,6 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges{
       this.crontab = "0 0 * * *";
       this.convertPreset("0 0 * * *");
       this._preset = {label:"Custom", value:this.crontab};
-      console.log("Setting crontab to " + this.crontab);
     } else {
       this.crontab = p.value;
       this.convertPreset(p.value);
@@ -267,14 +266,24 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges{
   }
 
   ngOnInit(){
-    this.group.controls[this.config.name].valueChanges.subscribe((evt) => {
+    this.control = this.group.controls[this.config.name];
+    this.control.valueChanges.subscribe((evt) => {
       this.crontab = evt;
     });
+    if (this.control.value) {
+      this.crontab = this.control.value;
+    }
   }
 
   ngAfterViewInit(){
     this.cd.detectChanges();
     if(this.isOpen){ this.generateSchedule();}
+  }
+
+  ngAfterViewChecked() {
+    if (this.isOpen) {
+      this.cd.detectChanges();
+    }
   }
 
   onChangeOption($event) {
@@ -296,12 +305,10 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges{
     this.togglePopup();
     if(this.formControl){
       this.group.controls[this.config.name].setValue(this.crontab);
-      console.log(this.group.controls[this.config.name].value);
     }
   }
 
   backdropClicked(evt){
-    console.log(evt);
     this.togglePopup();
   }
 

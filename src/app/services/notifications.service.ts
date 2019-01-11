@@ -1,16 +1,16 @@
 import { Injectable, OnInit } from '@angular/core';
 import { RestService, WebSocketService } from 'app/services';
-import { Observable } from 'rxjs/Observable';
-import { Observer } from 'rxjs/Observer';
-import { Subject } from 'rxjs/Subject';
+import { Observable ,  Observer ,  Subject } from 'rxjs';
 
 export interface NotificationAlert {
   id: string;
   message: string;
   icon: string;
+  icon_tooltip: string;
   time: string;
   route: string;
   color: string;
+  level: string;
   dismissed: boolean;
 }
 
@@ -137,26 +137,38 @@ export class NotificationsService {
     const level: string = <string>alertObj.level;
     const date: Date = new Date(alertObj.datetime.$date);
     const dateStr = date.toUTCString();
+    const one_shot: boolean = alertObj.one_shot;
+    let icon_tooltip: string = <string>alertObj.level;
     //const dateStr = date.toDateString() + " " + this.getTimeAsString(date.getTime());
     const routeName = "/dashboard"
     let icon = "info";
     let color = "primary";
 
     if (level === "WARNING") {
-      icon = "watch_later";
-      color = "warn";
+      icon = "warning";
+      color = "accent";
     } else if (level === 'ERROR') {
       icon = "error";
       color = "warn";
+    } else if (level === 'CRITICAL') {
+      icon = "error";
+      color = "warn";
+    }
+
+    if (one_shot) {
+      icon = "notifications_active";
+      icon_tooltip = "This is a ONE-SHOT " + level + " alert, it won't be dismissed automatically";
     }
 
     const newNotification: NotificationAlert = {
       id: id,
       message: message,
       icon: icon,
+      icon_tooltip: icon_tooltip,
       time: dateStr,
       route: routeName,
       color: color,
+      level: level,
       dismissed: dismissed
     };
 

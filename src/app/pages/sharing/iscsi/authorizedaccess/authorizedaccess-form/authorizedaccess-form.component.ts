@@ -1,13 +1,12 @@
 import { Component } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
-
-import {
-  matchOtherValidator
-} from '../../../../common/entity/entity-form/validators/password-validation';
-import { T } from '../../../../../translate-marker';
+import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
+import { EntityUtils } from '../../../../common/entity/utils';
+import { WebSocketService } from '../../../../../services/ws.service';
+import * as _ from 'lodash';
+import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 
 @Component({
   selector : 'app-iscsi-authorizedaccess-form',
@@ -15,88 +14,106 @@ import { T } from '../../../../../translate-marker';
 })
 export class AuthorizedAccessFormComponent {
 
-  protected resource_name: string = 'services/iscsi/authcredential';
+  protected addCall: string = 'iscsi.auth.create';
+  protected queryCall: string = 'iscsi.auth.query';
+  protected editCall = 'iscsi.auth.update';
+  // protected resource_name: string = 'services/iscsi/authcredential';
   protected route_success: string[] = [ 'sharing', 'iscsi', 'auth' ];
   protected isEntity: boolean = true;
+  protected customFilter: Array<any> = [[["id", "="]]];
 
   protected fieldConfig: FieldConfig[] = [
     {
       type : 'input',
-      name : 'iscsi_target_auth_tag',
-      placeholder : T('Group ID'),
-      tooltip: T('Allows different groups to be configured\
-                  with different authentication profiles.\
-                  Example: all users with a group ID of\
-                  <i>1</i> will inherit the authentication profile\
-                  associated with Group <i>1</i>.'),
+      name : 'tag',
+      placeholder : helptext_sharing_iscsi.authaccess_placeholder_tag,
+      tooltip: helptext_sharing_iscsi.authaccess_tooltip_tag,
       inputType : 'number',
       min: 0,
       required: true,
-      validation : [ Validators.required, Validators.min(0) ]
+      validation : helptext_sharing_iscsi.authaccess_validators_tag 
     },
     {
       type : 'input',
-      name : 'iscsi_target_auth_user',
-      placeholder : T('User'),
-      tooltip: T('Enter name of user account to use\
-                  for CHAP authentication with the user on the remote\
-                  system. Many initiators\
-                  default to the initiator name as the user.'),
-      validation : [ Validators.required ]
+      name : 'user',
+      placeholder : helptext_sharing_iscsi.authaccess_placeholder_user,
+      tooltip: helptext_sharing_iscsi.authaccess_tooltip_user,
+      validation : helptext_sharing_iscsi.authaccess_validators_user,
+      required: true,
     },
     {
       type : 'input',
-      name : 'iscsi_target_auth_secret',
-      placeholder : T('Secret'),
-      tooltip: T('Enter a password for <b>User</b>.\
-                  Must be between 12 and 16 characters.'),
+      name : 'secret',
+      placeholder : helptext_sharing_iscsi.authaccess_placeholder_secret,
+      tooltip: helptext_sharing_iscsi.authaccess_tooltip_secret,
       inputType : 'password',
       togglePw: true,
       required: true,
-      validation : [
-        Validators.minLength(12),
-        Validators.maxLength(16),
-        Validators.required,
-        matchOtherValidator('iscsi_target_auth_secret_confirm'),
-      ],
+      validation : helptext_sharing_iscsi.authaccess_validators_secret,
     },
     {
       type : 'input',
-      name : 'iscsi_target_auth_secret_confirm',
-      placeholder : T('Secret (Confirm)'),
+      name : 'secret_confirm',
+      placeholder : helptext_sharing_iscsi.authaccess_placeholder_secret_confirm,
       inputType : 'password'
     },
     {
       type : 'input',
-      name : 'iscsi_target_auth_peeruser',
-      placeholder : T('Peer User'),
-      tooltip: T('Only input when configuring mutual CHAP.\
-                  In most cases it will need to be the same value\
-                  as <b>User</b>.'),
+      name : 'peeruser',
+      placeholder : helptext_sharing_iscsi.authaccess_placeholder_peeruser,
+      tooltip: helptext_sharing_iscsi.authaccess_tooltip_peeruser,
     },
     {
       type : 'input',
-      name : 'iscsi_target_auth_peersecret',
-      placeholder : T('Peer Secret'),
-      tooltip: T('Enter the mutual secret password which\
-                  <b>must be different than the <i>Secret</i></b>.\
-                  Required if <b>Peer User</b> is set.'),
+      name : 'peersecret',
+      placeholder : helptext_sharing_iscsi.authaccess_placeholder_peersecret,
+      tooltip: helptext_sharing_iscsi.authaccess_tooltip_peersecret,
       inputType : 'password',
       togglePw: true,
-      validation : [
-        Validators.minLength(12),
-        matchOtherValidator('iscsi_target_auth_peersecret_confirm'),
-      ],
+      validation : helptext_sharing_iscsi.authaccess_validators_peersecret,
     },
     {
       type : 'input',
-      name : 'iscsi_target_auth_peersecret_confirm',
-      placeholder : T('Peer Secret (Confirm)'),
+      name : 'peersecret_confirm',
+      placeholder : helptext_sharing_iscsi.authaccess_placeholder_peersecret_confirm,
       inputType : 'password'
     },
   ];
 
-  constructor(protected router: Router) {}
+  protected pk: any;
+  protected entityForm: any;
+  protected peeruser_field: any;
+  protected peersecret_field: any;
 
-  afterInit(entityAdd: any) {}
+  constructor(protected router: Router, protected aroute: ActivatedRoute, protected loader: AppLoaderService,
+              protected ws: WebSocketService) {}
+
+  preInit() {
+    this.aroute.params.subscribe(params => {
+      if (params['pk']) {
+        this.pk = params['pk'];
+        this.customFilter[0][0].push(parseInt(params['pk']));
+      }
+    });
+  }
+
+  beforeSubmit(value) {
+    delete value['secret_confirm'];
+    delete value['peersecret_confirm'];
+  }
+
+  customEditCall(value) {
+    this.loader.open();
+    this.ws.call(this.editCall, [this.pk, value]).subscribe(
+      (res) => {
+        this.loader.close();
+        this.router.navigate(new Array('/').concat(this.route_success));
+      },
+      (res) => {
+        this.loader.close();
+        new EntityUtils().handleWSError(this.entityForm, res);
+      }
+    );
+
+  }
 }

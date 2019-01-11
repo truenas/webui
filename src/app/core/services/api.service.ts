@@ -1,5 +1,5 @@
 import { Injectable, OnInit } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { WebSocketService } from '../../services/ws.service';
 import { RestService } from '../../services/rest.service';
 import { CoreService, CoreEvent } from './core.service';
@@ -266,11 +266,10 @@ export class ApiService {
       },
       preProcessor(def:ApiCall){
         let redef = Object.assign({}, def);
-        redef.args = [def.args];
-        return redef;
+        def.args = [redef.args[0]];
+        return def;
       },
       postProcessor(res,callArgs){
-        //console.log(res);
         let cloneRes = Object.assign({},res);
         cloneRes = null; 
         return cloneRes;
@@ -283,8 +282,19 @@ export class ApiService {
         namespace:"vm.delete",
         args:[],
         responseEvent:"VmDeleted"
-      }
+      },
+      async preProcessor(def:ApiCall, self) {
+        return await self.dialog.confirm("Delete VM", `Delete VM ${def.args[1].name} ?`).toPromise().then((res)=>{
+          if (res) {
+            def.args = [def.args[0]];
+            return def;
+          } else {
+            return;
+          }
+        });
+      },
     },
+
     SysInfoRequest:{
       apiCall:{
         protocol:"websocket",
@@ -615,21 +625,27 @@ export class ApiService {
 
   async callWebsocket(evt:CoreEvent,def){
     let cloneDef = Object.assign({}, def);
+    const async_calls = [
+      "vm.start",
+      "vm.delete"
+    ]
 
     if(evt.data){
       cloneDef.apiCall.args = evt.data;
 
+      if(def.preProcessor && !async_calls.includes(def.apiCall.namespace)){
+        cloneDef.apiCall =  def.preProcessor(def.apiCall, this);
+      }
+      
       // PreProcessor: ApiDefinition manipulates call to be sent out.
-      if(def.preProcessor && def.apiCall.namespace === "vm.start") {
+      if(def.preProcessor && async_calls.includes(def.apiCall.namespace)) {
         cloneDef.apiCall =  await def.preProcessor(def.apiCall, this);
         if (!cloneDef.apiCall) {
           this.core.emit({name:"VmStopped", data:{id:evt.data[0]}});
           return;
         }
       };
-      if(def.preProcessor && def.apiCall.namespace !== "vm.start"){
-        cloneDef.apiCall =  def.preProcessor(def.apiCall, this);
-      }
+
 
       let call = cloneDef.apiCall;//this.parseEventWs(evt);
       this.ws.call(call.namespace, call.args).subscribe((res) => {

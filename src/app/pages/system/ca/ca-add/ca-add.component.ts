@@ -189,7 +189,8 @@ export class CertificateAuthorityAddComponent {
       name : 'privatekey',
       placeholder : T('Private Key'),
       tooltip : T('Paste the private key associated with the\
-                   Certificate when available.'),
+                   Certificate when available. Please provide\
+                   a key at least 1024 bits long.'),
       isHidden: true,
     },
     {
@@ -321,9 +322,9 @@ export class CertificateAuthorityAddComponent {
 
     entity.formGroup.controls['name'].statusChanges.subscribe((res) => {
       if (this.identifier && res === 'INVALID') {
-        _.find(this.fieldConfig).hasErrors = true;
+        _.find(this.fieldConfig)['hasErrors'] = true;
       } else {
-        _.find(this.fieldConfig).hasErrors = false;
+        _.find(this.fieldConfig)['hasErrors'] = false;
       }
     })
 
@@ -331,7 +332,7 @@ export class CertificateAuthorityAddComponent {
 
   hideField(fieldName: any, show: boolean, entity: any) {
     let target = _.find(this.fieldConfig, {'name' : fieldName});
-    target.isHidden = show;
+    target['isHidden'] = show;
     entity.setDisabled(fieldName, show);
   }
 

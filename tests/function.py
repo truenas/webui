@@ -135,12 +135,12 @@ def user_edit(driver, self, type, name):
     # num specifies the column of the 3 dots which is different in user/group
     # delNum speifies the option number where edit is after clicking on the 3 dots
     if (type == "user"):
-        num = 5
+        num = 2
         edNum = 6
         path = "User"
         #ED = "6"
     elif (type == "group"):
-        num = 4
+        num = 2
         edNum = 5
         path = "Group"
         #ED = "5"
@@ -175,12 +175,12 @@ def user_delete(driver, self, type, name):
     # num specifies the column of the 3 dots which is different in user/group
     # delNum speifies the option number where del is after clicking on the 3 dots
     if (type == "user"):
-        num = 5
+        num = 2
         delNum = 6
         path = "User"
         plug = "bsdusr_username"
     elif (type == "group"):
-        num = 4
+        num = 2
         delNum = 5
         path = "Group"
         plug = "bsdgrp_group"

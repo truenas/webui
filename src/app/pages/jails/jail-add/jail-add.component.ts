@@ -424,6 +424,12 @@ export class JailAddComponent implements OnInit {
     },
     {
       type: 'checkbox',
+      name: 'allow_mlock',
+      placeholder: helptext.allow_mlock_placeholder,
+      tooltip: helptext.allow_mlock_tooltip,
+    },
+    {
+      type: 'checkbox',
       name: 'allow_mount',
       placeholder: helptext.allow_mount_placeholder,
       tooltip: helptext.allow_mount_tooltip,
@@ -469,6 +475,12 @@ export class JailAddComponent implements OnInit {
       name: 'allow_socket_af',
       placeholder: helptext.allow_socket_af_placeholder,
       tooltip: helptext.allow_socket_af_tooltip,
+    },
+    {
+      type: 'input',
+      name: 'vnet_interfaces',
+      placeholder: helptext.vnet_interfaces_placeholder,
+      tooltip: helptext.vnet_interfaces_tooltip,
     }
   ];
   public networkfieldConfig: FieldConfig[] = [
@@ -613,6 +625,12 @@ export class JailAddComponent implements OnInit {
       tooltip: helptext.hostid_tooltip,
     },
     {
+      type: 'checkbox',
+      name: 'hostid_strict_check',
+      placeholder: helptext.hostid_strict_check_placeholder,
+      tooltip: helptext.hostid_strict_check_tooltip,
+    },
+    {
       type: 'input',
       name: 'comment',
       placeholder: helptext.comment_placeholder,
@@ -665,6 +683,12 @@ export class JailAddComponent implements OnInit {
       name: 'jail_zfs_mountpoint',
       placeholder: helptext.jail_zfs_mountpoint_placeholder,
       tooltip: helptext.jail_zfs_mountpoint_tooltip,
+    },
+    {
+      type: 'checkbox',
+      name: 'allow_tun',
+      placeholder: helptext.allow_tun_placeholder,
+      tooltip: helptext.allow_tun_tooltip,
     },
   ];
   public rctlConfig: FieldConfig[] = [
@@ -817,6 +841,7 @@ export class JailAddComponent implements OnInit {
     'allow_sysvipc',
     'allow_raw_sockets',
     'allow_chflags',
+    'allow_mlock',
     'allow_mount',
     'allow_mount_devfs',
     'allow_mount_nullfs',
@@ -826,7 +851,8 @@ export class JailAddComponent implements OnInit {
     'allow_quotas',
     'allow_socket_af',
     'mount_procfs',
-    'mount_linprocfs'
+    'mount_linprocfs',
+    'allow_tun',
   ];
   // fields only accepted by ws with value on/off
   protected OFfields: any = [
@@ -858,6 +884,7 @@ export class JailAddComponent implements OnInit {
   // fields only accepted by ws with value yes/no
   protected YNfields: any = [
     'bpf',
+    'hostid_strict_check',
     'template',
     'host_time',
   ];
@@ -1001,21 +1028,21 @@ export class JailAddComponent implements OnInit {
       }
 
       if ((this.formGroup.controls['dhcp'].value || this.formGroup.controls['auto_configure_ip6'].value) && !res) {
-        _.find(this.basicfieldConfig, { 'name': 'vnet' }).hasErrors = true;
-        _.find(this.basicfieldConfig, { 'name': 'vnet' }).errors = 'VNET is required.';
+        _.find(this.basicfieldConfig, { 'name': 'vnet' })['hasErrors'] = true;
+        _.find(this.basicfieldConfig, { 'name': 'vnet' })['errors'] = 'VNET is required.';
       } else {
-        _.find(this.basicfieldConfig, { 'name': 'vnet' }).hasErrors = false;
-        _.find(this.basicfieldConfig, { 'name': 'vnet' }).errors = '';
+        _.find(this.basicfieldConfig, { 'name': 'vnet' })['hasErrors'] = false;
+        _.find(this.basicfieldConfig, { 'name': 'vnet' })['errors'] = '';
       }
       this.updateInterfaceValidation();
     });
     this.formGroup.controls['bpf'].valueChanges.subscribe((res) => {
       if (this.formGroup.controls['dhcp'].value && !res) {
-        _.find(this.basicfieldConfig, { 'name': 'bpf' }).hasErrors = true;
-        _.find(this.basicfieldConfig, { 'name': 'bpf' }).errors = 'BPF is required.';
+        _.find(this.basicfieldConfig, { 'name': 'bpf' })['hasErrors'] = true;
+        _.find(this.basicfieldConfig, { 'name': 'bpf' })['errors'] = 'BPF is required.';
       } else {
-        _.find(this.basicfieldConfig, { 'name': 'bpf' }).hasErrors = false;
-        _.find(this.basicfieldConfig, { 'name': 'bpf' }).errors = '';
+        _.find(this.basicfieldConfig, { 'name': 'bpf' })['hasErrors'] = false;
+        _.find(this.basicfieldConfig, { 'name': 'bpf' })['errors'] = '';
       }
     });
     this.formGroup.controls['auto_configure_ip6'].valueChanges.subscribe((res) => {
@@ -1207,9 +1234,9 @@ export class JailAddComponent implements OnInit {
         const field = res.error[0];
         const error = res.error[1];
         const fc = _.find(this.formFileds, {'name' : field});
-        if (fc && !fc.isHidden) {
-          fc.hasErrors = true;
-          fc.errors = error;
+        if (fc && !fc['isHidden']) {
+          fc['hasErrors'] = true;
+          fc['errors'] = error;
         }
       } else {
         new EntityUtils().handleWSError(this, res, this.dialogService);
@@ -1233,13 +1260,13 @@ export class JailAddComponent implements OnInit {
     const jail_name = parent.formGroup.value.uuid;
     parent.ws.call('jail.query', [[["id","=",jail_name]]]).subscribe((jail_wizard_res)=>{
       if(jail_wizard_res.length > 0){
-        _.find(parent.formFileds, {'name' : 'uuid'}).hasErrors = true;
-        _.find(parent.formFileds, {'name' : 'uuid'}).errors = `Jail ${jail_wizard_res[0].id} already exists.`;
+        _.find(parent.formFileds, {'name' : 'uuid'})['hasErrors'] = true;
+        _.find(parent.formFileds, {'name' : 'uuid'})['errors'] = `Jail ${jail_wizard_res[0].id} already exists.`;
         parent.formGroup.controls.uuid.setValue("");
   
       } else {
-        _.find(parent.formFileds, {'name' : 'uuid'}).hasErrors = false;
-        _.find(parent.formFileds, {'name' : 'uuid'}).errors = '';
+        _.find(parent.formFileds, {'name' : 'uuid'})['hasErrors'] = false;
+        _.find(parent.formFileds, {'name' : 'uuid'})['errors'] = '';
 
       }
     })

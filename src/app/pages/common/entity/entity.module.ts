@@ -66,10 +66,15 @@ import {A11yModule} from '@angular/cdk/a11y';
 import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponent } from './fab-speed-dial/fab-speed-dial';
 import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.component';
 
+import { EntityToolbarComponent } from './entity-toolbar/entity-toolbar.component';
+import { ToolbarButtonComponent } from './entity-toolbar/components/toolbar-button/toolbar-button.component';
+import { ToolbarMenuComponent } from './entity-toolbar/components/toolbar-menu/toolbar-menu.component';
+import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-multimenu/toolbar-multimenu.component';
+
 @NgModule({
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule,
-    MaterialModule, ColorPickerModule, NgxDatatableModule, CdkTableModule, TreeModule,
+    MaterialModule, ColorPickerModule, NgxDatatableModule, CdkTableModule, TreeModule.forRoot(),
     Ng2DropdownModule, NgUploaderModule, FlexLayoutModule, TranslateModule,
     OverlayModule, A11yModule, TreeTableModule, FileSizeModule
   ],
@@ -113,7 +118,11 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
     EntityTaskComponent,
     FormParagraphComponent,
     EntityDialogComponent,
-    EntityDashboardComponent
+    EntityDashboardComponent,
+    EntityToolbarComponent,
+    ToolbarButtonComponent,
+    ToolbarMenuComponent,
+    ToolbarMultimenuComponent
   ],
   exports: [
     EntityTemplateDirective,
@@ -133,7 +142,11 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
     EntityWizardComponent,
     EntityTaskComponent,
     EntityDialogComponent,
-    EntityDashboardComponent
+    EntityDashboardComponent,
+    EntityToolbarComponent,
+    ToolbarButtonComponent,
+    ToolbarMenuComponent,
+    ToolbarMultimenuComponent
   ],
   entryComponents: [
     FormButtonComponent,
@@ -156,7 +169,8 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
     FormSliderComponent,
     FormToggleButtonComponent,
     FormTaskComponent,
-    FormParagraphComponent
+    FormParagraphComponent,
+    EntityToolbarComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [

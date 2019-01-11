@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, ViewChild,OnDestroy } from '@angular/
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { StatsService } from 'app/services/stats.service';
 
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component'; // POC
 import { Disk, VolumeData } from 'app/core/components/widgets/widgetpool/widgetpool.component';
 
@@ -92,7 +92,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
     let result = [];
     for(let i in evt.data){
       let zvol = {
-        avail: evt.data[i].avail,
+        avail: evt.data[i].children[0].avail,
         id:evt.data[i].id,
         is_decrypted:evt.data[i].is_decrypted,
         is_upgraded:evt.data[i].is_upgraded,

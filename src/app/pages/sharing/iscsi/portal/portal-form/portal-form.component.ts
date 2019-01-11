@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
-import { FormArray, FormGroup, Validators } from '@angular/forms';
+import { FormArray } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import * as _ from 'lodash';
 
 import { IscsiService, WebSocketService } from '../../../../../services/';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../../../common/entity/entity-form/services/entity-form.service';
-import { T } from '../../../../../translate-marker';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../../common/entity/utils';
+import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 
 @Component({
   selector : 'app-iscsi-portal-add',
@@ -35,20 +35,14 @@ export class PortalFormComponent {
     {
       type : 'input',
       name : 'comment',
-      placeholder : T('Comment'),
-      tooltip: T('Optional description. Portals are automatically\
-                  assigned a numeric group ID.'),
+      placeholder : helptext_sharing_iscsi.portal_form_placeholder_comment,
+      tooltip: helptext_sharing_iscsi.portal_form_tooltip_comment,
     },
     {
       type : 'select',
       name : 'discovery_authmethod',
-      placeholder : T('Discovery Auth Method'),
-      tooltip: T('<a href="%%docurl%%/sharing.html%%webversion%%#block-iscsi"\
-                  target="_blank">iSCSI</a> supports multiple\
-                  authentication methods that are used by the target to\
-                  discover valid devices. <i>None</i> allows anonymous\
-                  discovery while <i>CHAP</i> and <i>Mutual CHAP</i>\
-                  require authentication.'),
+      placeholder : helptext_sharing_iscsi.portal_form_placeholder_discovery_authmethod,
+      tooltip: helptext_sharing_iscsi.portal_form_tooltip_discovery_authmethod,
       options : [
         {
           label : 'NONE',
@@ -68,10 +62,8 @@ export class PortalFormComponent {
     {
       type : 'select',
       name : 'discovery_authgroup',
-      placeholder : T('Discovery Auth Group'),
-      tooltip: T('Select a user created in <b>Authorized Access</b> if\
-                  the <b>Discovery Auth Method</b> is set to\
-                  <i>CHAP</i> or <i>Mutual CHAP</i>.'),
+      placeholder : helptext_sharing_iscsi.portal_form_placeholder_discovery_authgroup,
+      tooltip: helptext_sharing_iscsi.portal_form_tooltip_discovery_authgroup,
       options : [],
       value: null,
     },
@@ -83,29 +75,26 @@ export class PortalFormComponent {
         {
           type : 'select',
           name : 'ip',
-          placeholder : T('IP Address'),
-          tooltip: T('Select the IP address associated with an interface\
-                      or the wildcard address of <i>0.0.0.0</i>\
-                      (any interface).'),
+          placeholder : helptext_sharing_iscsi.portal_form_placeholder_ip,
+          tooltip: helptext_sharing_iscsi.portal_form_tooltip_ip,
           value : '0.0.0.0',
           options : [],
           required: true,
-          validation: [ Validators.required ],
+          validation: helptext_sharing_iscsi.portal_form_validators_ip,
         },
         {
           type : 'input',
           name : 'port',
-          placeholder : T('Port'),
-          tooltip: T('TCP port used to access the iSCSI target.\
-                      Default is <i>3260</i>.'),
+          placeholder : helptext_sharing_iscsi.portal_form_placeholder_port,
+          tooltip: helptext_sharing_iscsi.portal_form_tooltip_port,
           value : '3260',
           required: true,
-          validation: [ Validators.required ],
+          validation: helptext_sharing_iscsi.portal_form_validators_port,
         },
         {
           type: 'checkbox',
           name: 'delete',
-          placeholder: T('Delete'),
+          placeholder: helptext_sharing_iscsi.portal_form_placeholder_delete,
           isHidden: true,
           disabled: true,
         }
@@ -159,7 +148,7 @@ export class PortalFormComponent {
         this.customFilter[0][0].push(parseInt(params['pk']));
         this.initialCount = 0;
         this.arrayControl.initialCount = 0;
-        this.arrayControl.formarray[2].isHidden = false;
+        this.arrayControl.formarray[2]['isHidden'] = false;
         this.arrayControl.formarray[2].disabled = false;
       }
     });

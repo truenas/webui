@@ -6,6 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {RestService} from '../../../../services/rest.service';
 
 import {EntityTableComponent} from './entity-table.component';
+import { Observable } from 'rxjs/Observable';
 import * as _ from 'lodash';
 
 @Component({
@@ -21,6 +22,7 @@ export class EntityTableActionsComponent implements OnInit {
 
   public actions: any[];
   public showMenu = true;
+  public key_prop: string;
 
   constructor(protected translate: TranslateService) { }
 
@@ -32,15 +34,24 @@ export class EntityTableActionsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.actions = this.entity.getActions(this.row);
-    const removeIds = [];
-    for (let i = 0; i < this.actions.length; i++) {
-      if (this.entity.conf.isActionVisible) {
-        this.actions[i].visible = this.entity.conf.isActionVisible.bind(
-            this.entity.conf)(this.actions[i].id, this.row);
-      } else {
-        this.actions[i].visible = true;
-      }
+    if (this.entity.conf.config && this.entity.conf.config.deleteMsg) {
+      this.key_prop = this.entity.conf.config.deleteMsg.key_props[0];
+    } else {
+      this.key_prop = this.entity.conf.columns[0].prop;
     }
+    this.actions = this.entity.getActions(this.row);
+    
+    Observable.interval(5000).subscribe((val) => {
+      this.actions = this.entity.getActions(this.row);
+      const removeIds = [];
+      for (let i = 0; i < this.actions.length; i++) {
+        if (this.entity.conf.isActionVisible) {
+          this.actions[i].visible = this.entity.conf.isActionVisible.bind(
+              this.entity.conf)(this.actions[i].id, this.row);
+        } else {
+          this.actions[i].visible = true;
+        }
+      }
+     });
   }
 }

@@ -1,4 +1,4 @@
-import 'rxjs/add/operator/map';
+
 
 import {Injectable} from '@angular/core';
 import {Http} from '@angular/http';
@@ -10,13 +10,7 @@ import {WebSocketService} from './ws.service';
 
 @Injectable()
 export class IscsiService {
-  protected iscsiPortalResource: string = 'services/iscsi/portal';
-  protected iscsiInitiatorResource: string = 'services/iscsi/authorizedinitiator';
-  protected iscsiAuthCredentialResource: string = 'services/iscsi/authcredential';
-  protected iscsiTargetGroupsResource: string = 'services/iscsi/targetgroup';
   protected volumeResource: string = 'storage/volume';
-  protected iscsiExtentResource: string = 'services/iscsi/extent/';
-  protected iscsiTargetResource: string = 'services/iscsi/target/';
 
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
@@ -24,15 +18,21 @@ export class IscsiService {
     return this.ws.call('notifier.choices', [ 'IPChoices', [ true, true ] ]);
   };
 
-  listPortals() { return this.rest.get(this.iscsiPortalResource, {}); };
-
-  listInitiators() { return this.rest.get(this.iscsiInitiatorResource, {}); };
-
-  listAuthCredential() {
-    return this.rest.get(this.iscsiAuthCredentialResource, {});
+  listPortals() {
+    return this.ws.call('iscsi.portal.query', []);
   };
 
-  listTargetGroups() { return this.rest.get(this.iscsiTargetGroupsResource, {}); };
+  listInitiators() {
+    return this.ws.call('iscsi.initiator.query', []);
+  };
+
+  listAuthCredential() {
+    return this.ws.call('iscsi.auth.query', []);
+  };
+
+  listTargetGroups() {
+    return this.ws.call('iscsi.target.query', []);
+  };
 
   getRPMChoices() {
     return this.ws.call('notifier.choices', ['EXTENT_RPM_CHOICES', [true, false]]);
@@ -47,11 +47,11 @@ export class IscsiService {
   };
 
   getExtents() {
-    return this.rest.get(this.iscsiExtentResource, {});
+    return this.ws.call('iscsi.extent.query', []);
   }
 
   getTargets() {
-    return this.rest.get(this.iscsiTargetResource, {});
+    return this.ws.call('iscsi.target.query', []);
   }
 
   getAuth() {

@@ -1,20 +1,19 @@
 import { Component} from '@angular/core';
 import { Router } from '@angular/router';
 import { RestService, WebSocketService, NetworkService } from '../../../services';
-import { FormGroup, Validators } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
 import * as _ from 'lodash';
 
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import {VmService} from '../../../services/vm.service';
-import {regexValidator} from '../../common/entity/entity-form/validators/regex-validation';
+import { VmService } from '../../../services/vm.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { MatDialog } from '@angular/material';
 
 import { T } from '../../../translate-marker';
 import { DialogService } from '../../../services/dialog.service';
-
+import helptext from '../../../helptext/vm/docker-vm-wizard/docker-vm-wizard';
 
 @Component({
   selector: 'app-dockervm-wizard',
@@ -36,32 +35,29 @@ export class DockerVMWizardComponent {
 
   protected wizardConfig: Wizard[] = [
     {
-      label: T('Select VM wizard type'),
+      label: helptext.wizard_type_label,
       fieldConfig: [
 
         {
           type: 'select',
           name: 'wizard_type',
           required: true,
-          placeholder: T('Virtual Machine (VM) Wizard type.'),
-          tooltip: T('Select the Virtual Machine (VM) Wizard type.'),
-          options: [
-            {label: 'Virtual Machine (VM)', value: 'vm'},
-            {label: 'Docker Host', value: 'docker'},
-          ],
-          validation : [ Validators.required ],
-          value: 'docker'
+          placeholder: helptext.wizard_type_placeholder,
+          tooltip: helptext.wizard_type_tooltip,
+          options: helptext.wizard_type_options,
+          validation : helptext.wizard_type_validation,
+          value: helptext.wizard_type_value
         },
       ]
     },
     {
-      label: 'Docker VM details',
+      label: helptext.docker_vm_label,
       fieldConfig: [
       { type: 'input',
         name : 'name',
-        placeholder :  T ('Name'),
-        tooltip : T('Enter a name for this Docker VM.'),
-        validation : [ Validators.required ],
+        placeholder :  helptext.docker_vm_placeholder,
+        tooltip : helptext.docker_vm_tooltip,
+        validation : helptext.docker_vm_validation,
         required: true,
         blurStatus: true,
         blurEvent: this.blurEvent,
@@ -69,39 +65,34 @@ export class DockerVMWizardComponent {
       },
       { type: 'checkbox',
         name : 'autostart',
-        placeholder : T ('Start on Boot'),
-        tooltip : T('Set to start this VM when the system boots.'),
-        value: true
+        placeholder : helptext.autostart_placeholder,
+        tooltip : helptext.autostart_tooltip,
+        value: helptext.autostart_value
       },
       ]
     },
     {
-      label:  T ('CPU and Memory configuration.'),
+      label:  helptext.vcpus_label,
       fieldConfig: [{
           type: 'input',
           name: 'vcpus',
-          placeholder:  T('Virtual CPUs'),
-          tooltip : T('Enter a number of virtual CPUs to allocate to the\
-                      VM. The maximum is 16 unless the host CPU also\
-                      limits the maximum. The VM operating system can\
-                      also have operational or licensing restrictions on\
-                      the number of CPUs.'),
+          placeholder:  helptext.vcpus_placeholder,
+          tooltip : helptext.vcpus_tooltip,
           inputType: 'number',
           min: 1,
-          validation : [ Validators.required, Validators.min(1), Validators.max(16) ],
+          validation : helptext.vcpus_validation,
           value: 1,
           required: true,
         },
         {
           type: 'input',
           name: 'memory',
-          placeholder: T('Memory Size (MiB)'),
-          tooltip: T('Allocate a number of megabytes of RAM to the\
-                      Docker VM.'),
+          placeholder: helptext.memory_placeholder,
+          tooltip: helptext.memory_tooltip,
           value: 2048,
           inputType: 'number',
           min: 2048,
-          validation : [ Validators.required, Validators.min(2048)],
+          validation : helptext.memory_validation,
           required: true,
           blurStatus: true,
           blurEvent: this.blurEvent2,
@@ -110,60 +101,52 @@ export class DockerVMWizardComponent {
       ]
     },
     {
-      label: 'Network Interface',
+      label: helptext.NIC_type_label,
       fieldConfig: [
         {
           name : 'NIC_type',
-          placeholder : T('Adapter Type'),
-          tooltip : T('<i>Intel e82545 (e1000)</i> emulates an\
-                       Intel Ethernet card. This provides compatibility\
-                       with most operating systems. <i>VirtIO</i>\
-                       provides better performance when the operating\
-                       system installed in the VM supports VirtIO\
-                       paravirtualized network drivers.'),
+          placeholder : helptext.NIC_type_placeholder,
+          tooltip : helptext.NIC_type_tooltip,
           type: 'select',
           options : [],
-          validation : [ Validators.required ],
+          validation : helptext.NIC_type_validation,
           required: true,
         },
         {
           name : 'NIC_mac',
-          placeholder : T('MAC Address'),
-          tooltip : T('A randomized MAC address is normally assigned. \
-                       Enter a value here to set a specific MAC address.'),
+          placeholder : helptext.NIC_mac_placeholder,
+          tooltip : helptext.NIC_mac_tooltip,
           type: 'input',
-          value : '00:a0:98:FF:FF:FF',
-          validation : [ regexValidator(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i) ],
+          value : helptext.NIC_mac_value,
+          validation : helptext.NIC_mac_validation,
         },
         {
           name : 'nic_attach',
-          placeholder : T('Attach NIC'),
-          tooltip : T('Select the physical network interface to associate\
-                       with the virtual machine.'),
+          placeholder : helptext.nic_attach_placeholder,
+          tooltip : helptext.nic_attach_tooltip,
           type: 'select',
           options : [],
-          validation : [ Validators.required ],
+          validation : helptext.nic_attach_validation,
           required: true,
         },
       ]
     },
     {
-      label: 'Storage Files',
+      label: helptext.files_label,
       fieldConfig: [
         {
           type: 'input',
           name: 'raw_filename',
-          placeholder : T('Raw filename'),
-          tooltip: T('Name the new raw file.'),
-          validation : [ Validators.required ],
+          placeholder : helptext.raw_filename_placeholder,
+          tooltip: helptext.raw_filename_tooltip,
+          validation : helptext.raw_filename_validation,
           required: true
         },
         {
           type: 'input',
           name: 'size',
-          placeholder : T('Raw file size (GiB)'),
-          tooltip: T('Allocate a number of gigabytes (GiB) to the new\
-                      raw file.'),
+          placeholder : helptext.raw_filesize_placeholder,
+          tooltip: helptext.raw_filesize_tooltip,
           value: 20,
           inputType: 'number',
           min: 20,
@@ -172,30 +155,24 @@ export class DockerVMWizardComponent {
           blurStatus: true,
           blurEvent: this.blurEvent3,
           parent: this,
-          validation: [Validators.required, Validators.min(20)]
+          validation: helptext.raw_filesize_validation
         },
         {
           type: 'explorer',
           name: 'raw_file_directory',
-          placeholder: T('Raw file location'),
-          tooltip: T('Browse to an existing directory to store the new\
-                      raw file.'),
+          placeholder: helptext.raw_file_directory_placeholder,
+          tooltip: helptext.raw_file_directory_tooltip,
           explorerType: "directory",
           initial: '/mnt',
-          validation : [ Validators.required ],
+          validation : helptext.raw_file_directory_validation,
           required: true
         },
         {
           type : 'select',
           name : 'sectorsize',
-          placeholder : 'Disk sector size',
-          tooltip : 'Select a sector size in bytes. <i>Default/i> leaves the\
-                     sector size unset.',
-          options: [
-            { label: 'Default', value:0 },
-            { label: '512', value:512 },
-            { label: '4096', value:4096 },
-                  ],
+          placeholder : helptext.sectorsize_placeholder,
+          tooltip : helptext.sectorsize_tooltip,
+          options: helptext.sectorsize_options,
           value: 0
         },
       ]
@@ -276,12 +253,12 @@ export class DockerVMWizardComponent {
         const vm_memory_requested = 2147483648;
         if (available_memory > vm_memory_requested) {
           ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(2048);
-          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'memory'}).hasErrors = false;
-          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'memory'}).errors = '';
+          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'memory'})['hasErrors'] = false;
+          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'memory'})['errors'] = '';
         } else {
           ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(0);
-          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'memory'}).hasErrors = true;
-          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'memory'}).errors = `Docker Container needs at least 2048 MiBs Memory to operate.`
+          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'memory'})['hasErrors'] = true;
+          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'memory'})['errors'] = `Docker Container needs at least 2048 MiBs Memory to operate.`
         }
       });
       ( < FormGroup > entityWizard.formArray.get([4])).get('raw_filename').valueChanges.subscribe((raw_filename) => {
@@ -301,16 +278,16 @@ export class DockerVMWizardComponent {
         this.ws.call('filesystem.statfs',[raw_file_directory]).subscribe((stat)=> {
          if (stat.free_bytes < volsize && stat.free_bytes <= 21474836480) {
           ( < FormGroup > entityWizard.formArray.get([4])).controls['size'].setValue(Math.floor(stat.free_bytes / (1073741824)));
-          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'}).hasErrors = true;
-          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'}).errors = 'Docker Container needs at least 20 Gibs';
+          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'})['hasErrors'] = true;
+          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'})['errors'] = 'Docker Container needs at least 20 Gibs';
          } else if(stat.free_bytes >= 21474836480) {
           ( < FormGroup > entityWizard.formArray.get([4])).controls['size'].setValue(20);
-          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'}).hasErrors = false;
-          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'}).errors = '';
+          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'})['hasErrors'] = false;
+          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'})['errors'] = '';
          } else {
           ( < FormGroup > entityWizard.formArray.get([4])).controls['size'].setValue(Math.floor(stat.free_bytes / (1073741824)));
-          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'}).hasErrors = true;
-          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'}).errors = 'Docker Container needs at least 20 Gibs';
+          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'})['hasErrors'] = true;
+          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'})['errors'] = 'Docker Container needs at least 20 Gibs';
          }
         })
       }
@@ -325,8 +302,8 @@ blurEvent(parent){
   parent.ws.call('vm.query', [[["name","=",vm_name]]]).subscribe((vm_wizard_res)=>{
     if(vm_wizard_res.length > 0){
 
-      _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'}).hasErrors = true;
-      _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'}).errors = `Docker Container: ${vm_wizard_res[0].name} already exists.`;
+      _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['hasErrors'] = true;
+      _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['errors'] = `Docker Container: ${vm_wizard_res[0].name} already exists.`;
       parent.entityWizard.formArray.get([0]).get('name').setValue("");
       
     }
@@ -337,18 +314,18 @@ blurEvent2(parent){
   const vm_name = parent.entityWizard.formGroup.value.formArray[1].name
   parent.ws.call('vm.get_available_memory').subscribe((vm_memory_available)=>{
     if( vm_memory_requested * 1048576 > vm_memory_available){
-      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'}).hasErrors = true;
-      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'}).errors = `Cannot allocate ${vm_memory_requested} Mib to docker: ${vm_name}.`;
+      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'})['hasErrors'] = true;
+      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'})['errors'] = `Cannot allocate ${vm_memory_requested} Mib to docker: ${vm_name}.`;
       parent.entityWizard.formArray.get([2]).get('memory').setValue(0);
 
     } else if (vm_memory_requested * 1048576 < 2147483648) {
-      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'}).hasErrors = true;
-      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'}).errors = `Docker Container: "${vm_name}" needs at least 2048 MiBs Memory to operate.`;
+      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'})['hasErrors'] = true;
+      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'})['errors'] = `Docker Container: "${vm_name}" needs at least 2048 MiBs Memory to operate.`;
       parent.entityWizard.formArray.get([2]).get('memory').setValue(0);
 
     } else {
-      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'}).hasErrors = false;
-      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'}).errors = '';
+      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'})['hasErrors'] = false;
+      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'})['errors'] = '';
 
     }
   })
@@ -361,8 +338,8 @@ blurEvent3(parent){
     if(raw_file_directory !== undefined && raw_file_directory !== "") {
       parent.ws.call('filesystem.statfs',[raw_file_directory]).subscribe((stat)=> {
         if (stat.free_bytes < size ) {
-          _.find(parent.wizardConfig[4].fieldConfig, {'name' : 'size'}).hasErrors = true;
-          _.find(parent.wizardConfig[4].fieldConfig, {'name' : 'size'}).errors = `Cannot allocate ${size / (1073741824)} Gib to for storage docker machine: ${vm_name}.`;
+          _.find(parent.wizardConfig[4].fieldConfig, {'name' : 'size'})['hasErrors'] = true;
+          _.find(parent.wizardConfig[4].fieldConfig, {'name' : 'size'})['errors'] = `Cannot allocate ${size / (1073741824)} Gib to for storage docker machine: ${vm_name}.`;
           parent.entityWizard.formArray.get([4]).get('size').setValue(0);
           
          };

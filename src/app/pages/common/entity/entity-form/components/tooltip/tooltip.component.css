@@ -33,3 +33,23 @@
 .tooltip .material-icons {
     font-size: 20px;
 }
+
+.tooltip .tooltiptext.lock {
+    visibility: visible !important;
+    opacity: 1;
+    transition-delay: 0s;
+}
+
+.pin {
+    position: absolute;
+    right: -8px;
+    cursor: pointer;
+    color: black;
+    background: white;
+    height: 16px;
+}
+
+.pin-icon {
+    width: 16px;
+    height: 16px;
+}

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material';
 
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -15,6 +16,7 @@ import { T } from '../../../translate-marker';
 import { TranslateService } from '@ngx-translate/core';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 import helptext from '../../../helptext/jails/jails-edit';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 
 @Component({
   selector: 'jail-edit',
@@ -43,6 +45,7 @@ export class JailEditComponent implements OnInit {
       placeholder: helptext.host_hostuuid_placeholder,
       tooltip: helptext.host_hostuuid_tooltip,
       required: true,
+      disabled: false,
       validation: [ Validators.required ],
     },
     {
@@ -53,24 +56,28 @@ export class JailEditComponent implements OnInit {
       options: [],
       required: true,
       validation: [ Validators.required ],
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'dhcp',
       placeholder: helptext.dhcp_placeholder,
       tooltip: helptext.dhcp_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'vnet',
       placeholder: helptext.vnet_placeholder,
       tooltip: helptext.vnet_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'bpf',
       placeholder: helptext.bpf_placeholder,
       tooltip: helptext.bpf_tooltip,
+      disabled: false,
     },
     {
       type: 'select',
@@ -92,6 +99,7 @@ export class JailEditComponent implements OnInit {
       }],
       class: 'inline',
       width: '30%',
+      disabled: false,
     },
     {
       type: 'input',
@@ -108,6 +116,7 @@ export class JailEditComponent implements OnInit {
       }],
       class: 'inline',
       width: '50%',
+      disabled: false,
     },
     {
       type: 'select',
@@ -125,6 +134,7 @@ export class JailEditComponent implements OnInit {
       }],
       class: 'inline',
       width: '20%',
+      disabled: false,
     },
     {
       type: 'input',
@@ -141,13 +151,15 @@ export class JailEditComponent implements OnInit {
           name: 'vnet',
           value: false,
         }]
-      }]
+      }],
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'auto_configure_ip6',
       placeholder: helptext.auto_configure_ip6_placeholder,
       tooltip: helptext.auto_configure_ip6_tooltip,
+      disabled: false,
     },
     {
       type: 'select',
@@ -168,7 +180,8 @@ export class JailEditComponent implements OnInit {
           name: 'auto_configure_ip6',
           value: true,
         }]
-      }]
+      }],
+      disabled: false,
     },
     {
       type: 'input',
@@ -184,7 +197,8 @@ export class JailEditComponent implements OnInit {
           name: 'auto_configure_ip6',
           value: true,
         }]
-      }]
+      }],
+      disabled: false,
     },
     {
       type: 'select',
@@ -201,25 +215,29 @@ export class JailEditComponent implements OnInit {
           name: 'auto_configure_ip6',
           value: true,
         }]
-      }]
+      }],
+      disabled: false,
     },
     {
       type: 'input',
       name: 'defaultrouter6',
       placeholder: helptext.defaultrouter6_placeholder,
       tooltip: helptext.defaultrouter6_tooltip,
+      disabled: false,
     },
     {
       type: 'input',
       name: 'notes',
       placeholder: helptext.notes_placeholder,
       tooltip: helptext.notes_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'boot',
       placeholder: helptext.boot_placeholder,
       tooltip: helptext.boot_tooltip,
+      disabled: false,
     }
   ];
   public jailfieldConfig: FieldConfig[] = [
@@ -228,90 +246,105 @@ export class JailEditComponent implements OnInit {
       name: 'devfs_ruleset',
       placeholder: helptext.devfs_ruleset_placeholder,
       tooltip: helptext.devfs_ruleset_tooltip,
+      disabled: false,
     },
     {
       type: 'input',
       name: 'exec_start',
       placeholder: helptext.exec_start_placeholder,
       tooltip: helptext.exec_start_tooltip,
+      disabled: false,
     },
     {
       type: 'input',
       name: 'exec_stop',
       placeholder: helptext.exec_stop_placeholder,
       tooltip: helptext.exec_stop_tooltip,
+      disabled: false,
     },
     {
       type: 'input',
       name: 'exec_prestart',
       placeholder: helptext.exec_prestart_placeholder,
       tooltip: helptext.exec_prestart_tooltip,
+      disabled: false,
     },
     {
       type: 'input',
       name: 'exec_poststart',
       placeholder: helptext.exec_poststart_placeholder,
       tooltip: helptext.exec_poststart_tooltip,
+      disabled: false,
     },
     {
       type: 'input',
       name: 'exec_prestop',
       placeholder: helptext.exec_prestop_placeholder,
       tooltip: helptext.exec_prestop_tooltip,
+      disabled: false,
     },
     {
       type: 'input',
       name: 'exec_poststop',
       placeholder: helptext.exec_poststop_placeholder,
       tooltip: helptext.exec_poststop_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'exec_clean',
       placeholder: helptext.exec_clean_placeholder,
       tooltip: helptext.exec_clean_tooltip,
+      disabled: false,
     },
     {
       type: 'input',
       name: 'exec_timeout',
       placeholder: helptext.exec_timeout_placeholder,
       tooltip: helptext.exec_timeout_tooltip,
+      disabled: false,
     },
     {
       type: 'input',
       name: 'stop_timeout',
       placeholder: helptext.stop_timeout_placeholder,
       tooltip: helptext.stop_timeout_tooltip,
+      disabled: false,
     },
     {
       type: 'input',
       name: 'exec_jail_user',
       placeholder: helptext.exec_jail_user_placeholder,
       tooltip: helptext.exec_jail_user_tooltip,
+      disabled: false,
     },
     {
       type: 'input',
       name: 'exec_system_jail_user',
       placeholder: helptext.exec_system_jail_user_placeholder,
       tooltip: helptext.exec_system_jail_user_tooltip,
+      disabled: false,
     },
     {
       type: 'input',
       name: 'exec_system_user',
       placeholder: helptext.exec_system_user_placeholder,
       tooltip: helptext.exec_system_user_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'mount_devfs',
       placeholder: helptext.mount_devfs_placeholder,
       tooltip: helptext.mount_devfs_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'mount_fdescfs',
       placeholder: helptext.mount_fdescfs_placeholder,
       tooltip: helptext.mount_fdescfs_tooltip,
+      disabled: false,
     },
     {
       //"enforce_statfs": ("0", "1", "2"),
@@ -328,19 +361,22 @@ export class JailEditComponent implements OnInit {
         }, {
             label: '2 (default)',
             value: '2',
-        }]
+        }],
+      disabled: false,
     },
     {
       type: 'input',
       name: 'children_max',
       placeholder: helptext.children_max_placeholder,
       tooltip: helptext.children_max_tooltip,
+      disabled: false,
     },
     {
       type: 'input',
       name: 'login_flags',
       placeholder: helptext.login_flags_placeholder,
       tooltip: helptext.login_flags_tooltip,
+      disabled: false,
     },
     {
       type: 'select',
@@ -356,7 +392,8 @@ export class JailEditComponent implements OnInit {
       }, {
           label: 'Disable',
           value: 'disable',
-      }]
+      }],
+      disabled: false,
     },
     {
       type: 'select',
@@ -372,7 +409,8 @@ export class JailEditComponent implements OnInit {
       }, {
           label: 'Disable',
           value: 'disable',
-      }]
+      }],
+      disabled: false,
     },
     {
       type: 'select',
@@ -388,79 +426,105 @@ export class JailEditComponent implements OnInit {
       }, {
           label: 'Disable',
           value: 'disable',
-      }]
+      }],
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'allow_set_hostname',
       placeholder: helptext.allow_set_hostname_placeholder,
       tooltip: helptext.allow_set_hostname_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'allow_sysvipc',
       placeholder: helptext.allow_sysvipc_placeholder,
       tooltip: helptext.allow_sysvipc_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'allow_raw_sockets',
       placeholder: helptext.allow_raw_sockets_placeholder,
       tooltip: helptext.allow_raw_sockets_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'allow_chflags',
       placeholder: helptext.allow_chflags_placeholder,
       tooltip: helptext.allow_chflags_tooltip,
+      disabled: false,
+    },
+    {
+      type: 'checkbox',
+      name: 'allow_mlock',
+      placeholder: helptext.allow_mlock_placeholder,
+      tooltip: helptext.allow_mlock_tooltip,
     },
     {
       type: 'checkbox',
       name: 'allow_mount',
       placeholder: helptext.allow_mount_placeholder,
       tooltip: helptext.allow_mount_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'allow_mount_devfs',
       placeholder: helptext.allow_mount_devfs_placeholder,
       tooltip: helptext.allow_mount_devfs_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'allow_mount_nullfs',
       placeholder: helptext.allow_mount_nullfs_placeholder,
       tooltip: helptext.allow_mount_nullfs_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'allow_mount_procfs',
       placeholder: helptext.allow_mount_procfs_placeholder,
       tooltip: helptext.allow_mount_procfs_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'allow_mount_tmpfs',
       placeholder: helptext.allow_mount_tmpfs_placeholder,
       tooltip: helptext.allow_mount_tmpfs_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'allow_mount_zfs',
       placeholder: helptext.allow_mount_zfs_placeholder,
       tooltip: helptext.allow_mount_zfs_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'allow_quotas',
       placeholder: helptext.allow_quotas_placeholder,
       tooltip: helptext.allow_quotas_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'allow_socket_af',
       placeholder: helptext.allow_socket_af_placeholder,
       tooltip: helptext.allow_socket_af_tooltip,
+      disabled: false,
+    },
+    {
+      type: 'input',
+      name: 'vnet_interfaces',
+      placeholder: helptext.vnet_interfaces_placeholder,
+      tooltip: helptext.vnet_interfaces_tooltip,
+      disabled: false,
     }
   ];
   public networkfieldConfig: FieldConfig[] = [
@@ -469,24 +533,28 @@ export class JailEditComponent implements OnInit {
       name: 'interfaces',
       placeholder: helptext.interfaces_placeholder,
       tooltip: helptext.interfaces_tooltip,
+      disabled: false,
     },
     {
       type: 'input',
       name: 'host_domainname',
       placeholder: helptext.host_domainname_placeholder,
       tooltip: helptext.host_domainname_tooltip,
+      disabled: false,
     },
     {
       type: 'input',
       name: 'host_hostname',
       placeholder: helptext.host_hostname_placeholder,
       tooltip: helptext.host_hostname_tooltip,
+      disabled: false,
     },
     {
       type: 'input',
       name: 'exec_fib',
       placeholder: helptext.exec_fib_placeholder,
       tooltip: helptext.exec_fib_tooltip,
+      disabled: false,
 //There is SETFIB(1) that is network related, and SETFIB(2) that
 //is system call related. As this tooltip is under the jail
 //networking section, I went with SETFIB(1) the network related
@@ -497,6 +565,7 @@ export class JailEditComponent implements OnInit {
       name: 'ip4_saddrsel',
       placeholder: helptext.ip4_saddrsel_placeholder,
       tooltip: helptext.ip4_saddrsel_tooltip,
+      disabled: false,
     },
     {
       type: 'select',
@@ -512,13 +581,15 @@ export class JailEditComponent implements OnInit {
       }, {
         label: 'Disable',
         value: 'disable',
-      }]
+      }],
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'ip6_saddrsel',
       placeholder: helptext.ip6_saddrsel_placeholder,
       tooltip: helptext.ip6_saddrsel_tooltip,
+      disabled: false,
     },
     {
       type: 'select',
@@ -534,19 +605,22 @@ export class JailEditComponent implements OnInit {
       }, {
         label: 'Disable',
         value: 'disable',
-      }]
+      }],
+      disabled: false,
     },
     {
       type: 'input',
       name: 'resolver',
       placeholder: helptext.resolver_placeholder,
       tooltip: helptext.resolver_tooltip,
+      disabled: false,
     },
     {
       type: 'input',
       name: 'mac_prefix',
       placeholder: helptext.mac_prefix_placeholder,
       tooltip: helptext.mac_prefix_tooltip,
+      disabled: false,
     },
     {
       type: 'select',
@@ -558,31 +632,36 @@ export class JailEditComponent implements OnInit {
           label: 'none',
           value: 'none',
         }
-      ]
+      ],
+      disabled: false,
     },
     {
       type: 'input',
       name: 'vnet0_mac',
       placeholder: helptext.vnet0_mac_placeholder,
       tooltip: helptext.vnet0_mac_tooltip,
+      disabled: false,
     },
     {
       type: 'input',
       name: 'vnet1_mac',
       placeholder: helptext.vnet1_mac_placeholder,
       tooltip: helptext.vnet1_mac_tooltip,
+      disabled: false,
     },
     {
       type: 'input',
       name: 'vnet2_mac',
       placeholder: helptext.vnet2_mac_placeholder,
       tooltip: helptext.vnet2_mac_tooltip,
+      disabled: false,
     },
     {
       type: 'input',
       name: 'vnet3_mac',
       placeholder: helptext.vnet3_mac_placeholder,
       tooltip: helptext.vnet3_mac_tooltip,
+      disabled: false,
     },
   ];
   public customConfig: FieldConfig[] = [
@@ -591,72 +670,96 @@ export class JailEditComponent implements OnInit {
       name: 'owner',
       placeholder: helptext.owner_placeholder,
       tooltip: helptext.owner_tooltip,
+      disabled: false,
     },
     {
       type: 'input',
       name: 'priority',
       placeholder: helptext.priority_placeholder,
       tooltip: helptext.priority_tooltip,
+      disabled: false,
     },
     {
       type: 'input',
       name: 'hostid',
       placeholder: helptext.hostid_placeholder,
       tooltip: helptext.hostid_tooltip,
+      disabled: false,
+    },
+    {
+      type: 'checkbox',
+      name: 'hostid_strict_check',
+      placeholder: helptext.hostid_strict_check_placeholder,
+      tooltip: helptext.hostid_strict_check_tooltip,
     },
     {
       type: 'input',
       name: 'comment',
       placeholder: helptext.comment_placeholder,
       tooltip: helptext.comment_tooltip,
+      disabled: false,
     },
     {
       type: 'input',
       name: 'depends',
       placeholder: helptext.depends_placeholder,
       tooltip: helptext.depends_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'mount_procfs',
       placeholder: helptext.mount_procfs_placeholder,
       tooltip: helptext.mount_procfs_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'mount_linprocfs',
       placeholder: helptext.mount_linprocfs_placeholder,
       tooltip: helptext.mount_linprocfs_tooltip,
+      disabled: false,
     },
     // {
     //   type: 'checkbox',
     //   name: 'template',
     //   placeholder: helptext.template_placeholder,
     //   tooltip: helptext.template_tooltip,
+    //   disabled: false,
     // },
     {
       type: 'checkbox',
       name: 'host_time',
       placeholder: helptext.host_time_placeholder,
       tooltip: helptext.host_time_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'jail_zfs',
       placeholder: helptext.jail_zfs_placeholder,
       tooltip: helptext.jail_zfs_tooltip,
+      disabled: false,
     },
     {
       type: 'input',
       name: 'jail_zfs_dataset',
       placeholder: helptext.jail_zfs_dataset_placeholder,
       tooltip: helptext.jail_zfs_dataset_tooltip,
+      disabled: false,
     },
     {
       type: 'input',
       name: 'jail_zfs_mountpoint',
       placeholder: helptext.jail_zfs_mountpoint_placeholder,
       tooltip: helptext.jail_zfs_mountpoint_tooltip,
+      disabled: false,
+    },
+    {
+      type: 'checkbox',
+      name: 'allow_tun',
+      placeholder: helptext.allow_tun_placeholder,
+      tooltip: helptext.allow_tun_tooltip,
     },
   ];
   public rctlConfig: FieldConfig[] = [
@@ -670,132 +773,154 @@ export class JailEditComponent implements OnInit {
       name: 'memoryuse',
       placeholder: helptext.memoryuse_placeholder,
       tooltip: helptext.memoryuse_tooltip,
+      disabled: false,
     },
     {
       type: 'input',
       name: 'pcpu',
       placeholder: helptext.pcpu_placeholder,
       tooltip: helptext.pcpu_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'cpuset',
       placeholder: helptext.cpuset_placeholder,
       tooltip: helptext.cpuset_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'rlimits',
       placeholder: helptext.rlimits_placeholder,
       tooltip: helptext.rlimits_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'memorylocked',
       placeholder: helptext.memorylocked_placeholder,
       tooltip: helptext.memorylocked_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'vmemoryuse',
       placeholder: helptext.vmemoryuse_placeholder,
       tooltip: helptext.vmemoryuse_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'maxproc',
       placeholder: helptext.maxproc_placeholder,
       tooltip: helptext.maxproc_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'cputime',
       placeholder: helptext.cputime_placeholder,
       tooltip: helptext.cputime_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'datasize',
       placeholder: helptext.datasize_placeholder,
       tooltip: helptext.datasize_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'stacksize',
       placeholder: helptext.stacksize_placeholder,
       tooltip: helptext.stacksize_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'coredumpsize',
       placeholder: helptext.coredumpsize_placeholder,
       tooltip: helptext.coredumpsize_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'openfiles',
       placeholder: helptext.openfiles_placeholder,
       tooltip: helptext.openfiles_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'pseudoterminals',
       placeholder: helptext.pseudoterminals_placeholder,
       tooltip: helptext.pseudoterminals_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'swapuse',
       placeholder: helptext.swapuse_placeholder,
       tooltip: helptext.swapuse_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'nthr',
       placeholder: helptext.nthr_placeholder,
       tooltip: helptext.nthr_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'msgqqueued',
       placeholder: helptext.msgqqueued_placeholder,
       tooltip: helptext.msgqqueued_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'msgqsize',
       placeholder: helptext.msgqsize_placeholder,
       tooltip: helptext.msgqsize_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'nmsgq',
       placeholder: helptext.nmsgq_placeholder,
       tooltip: helptext.nmsgq_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'nsemop',
       placeholder: helptext.nsemop_placeholder,
       tooltip: helptext.nsemop_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'nshm',
       placeholder: helptext.nshm_placeholder,
       tooltip: helptext.nshm_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'shmsize',
       placeholder: helptext.shmsize_placeholder,
       tooltip: helptext.shmsize_tooltip,
+      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'wallclock',
       placeholder: helptext.wallclock_placeholder,
       tooltip: helptext.wallclock_tooltip,
+      disabled: false,
     }
   ];
   protected props: any;
@@ -814,6 +939,7 @@ export class JailEditComponent implements OnInit {
     'allow_sysvipc',
     'allow_raw_sockets',
     'allow_chflags',
+    'allow_mlock',
     'allow_mount',
     'allow_mount_devfs',
     'allow_mount_nullfs',
@@ -823,7 +949,8 @@ export class JailEditComponent implements OnInit {
     'allow_quotas',
     'allow_socket_af',
     'mount_procfs',
-    'mount_linprocfs'
+    'mount_linprocfs',
+    'allow_tun',
   ];
   // fields only accepted by ws with value on/off
   protected OFfields: any = [
@@ -855,6 +982,7 @@ export class JailEditComponent implements OnInit {
   // fields only accepted by ws with value yes/no
   protected YNfields: any = [
     'bpf',
+    'hostid_strict_check',
     'template',
     'host_time',
   ];
@@ -866,6 +994,9 @@ export class JailEditComponent implements OnInit {
   protected ip6_interfaceField: any;
   protected ip6_prefixField: any;
   protected vnet_default_interfaceField:any;
+  public save_button_enabled: boolean;
+  public error: any;
+  protected isPlugin = false;
 
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
@@ -876,7 +1007,8 @@ export class JailEditComponent implements OnInit {
     protected loader: AppLoaderService,
     public translate: TranslateService,
     protected dialogService: DialogService,
-    protected networkService: NetworkService) {}
+    protected networkService: NetworkService,
+    protected dialog: MatDialog,) {}
 
   isLowerVersion(version: any) {
     if (version < this.currentReleaseVersion) {
@@ -999,22 +1131,22 @@ export class JailEditComponent implements OnInit {
       }
 
       if ((this.formGroup.controls['dhcp'].value || this.formGroup.controls['auto_configure_ip6'].value) && !res) {
-        _.find(this.basicfieldConfig, { 'name': 'vnet' }).hasErrors = true;
-        _.find(this.basicfieldConfig, { 'name': 'vnet' }).errors = 'VNET is required.';
+        _.find(this.basicfieldConfig, { 'name': 'vnet' })['hasErrors'] = true;
+        _.find(this.basicfieldConfig, { 'name': 'vnet' })['errors'] = 'VNET is required.';
       } else {
-        _.find(this.basicfieldConfig, { 'name': 'vnet' }).hasErrors = false;
-        _.find(this.basicfieldConfig, { 'name': 'vnet' }).errors = '';
+        _.find(this.basicfieldConfig, { 'name': 'vnet' })['hasErrors'] = false;
+        _.find(this.basicfieldConfig, { 'name': 'vnet' })['errors'] = '';
       }
 
       this.updateInterfaceValidation();
     });
     this.formGroup.controls['bpf'].valueChanges.subscribe((res) => {
       if (this.formGroup.controls['dhcp'].value && !res) {
-        _.find(this.basicfieldConfig, { 'name': 'bpf' }).hasErrors = true;
-        _.find(this.basicfieldConfig, { 'name': 'bpf' }).errors = 'BPF is required.';
+        _.find(this.basicfieldConfig, { 'name': 'bpf' })['hasErrors'] = true;
+        _.find(this.basicfieldConfig, { 'name': 'bpf' })['errors'] = 'BPF is required.';
       } else {
-        _.find(this.basicfieldConfig, { 'name': 'bpf' }).hasErrors = false;
-        _.find(this.basicfieldConfig, { 'name': 'bpf' }).errors = '';
+        _.find(this.basicfieldConfig, { 'name': 'bpf' })['hasErrors'] = false;
+        _.find(this.basicfieldConfig, { 'name': 'bpf' })['errors'] = '';
       }
     });
     this.formGroup.controls['auto_configure_ip6'].valueChanges.subscribe((res) => {
@@ -1043,7 +1175,22 @@ export class JailEditComponent implements OnInit {
       ]).subscribe(
       (res) => {
         this.wsResponse = res[0];
+        if (res[0] && res[0].state == 'up') {
+          this.save_button_enabled = false;
+          this.error = T("Jails cannot be changed while running.");
+          for (let i = 0; i < this.formFileds.length; i++) {
+            this.setDisabled(this.formFileds[i].name, true);
+          }
+        } else {
+          this.save_button_enabled = true;
+          this.error = "";
+        }
+
         for (let i in res[0]) {
+          if (i == 'type' && res[0][i] == 'pluginv2') {
+            this.setDisabled("host_hostuuid", true);
+            this.isPlugin = true;
+          }
           if (this.formGroup.controls[i]) {
             if (i == 'ip4_addr') {
               let ip4 = res[0][i];
@@ -1153,9 +1300,11 @@ export class JailEditComponent implements OnInit {
   }
 
   relationUpdate(config: FieldConfig, activations: any) {
-    const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
+    if (this.save_button_enabled) {
+      const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
         activations, this.formGroup);
-    this.setDisabled(config.name, tobeDisabled);
+      this.setDisabled(config.name, tobeDisabled);
+    }
   }
 
   goBack() {
@@ -1238,11 +1387,6 @@ export class JailEditComponent implements OnInit {
     }
 
     if (value['host_hostuuid']) {
-      if (this.wsResponse['type'] == 'jail') {
-        value['plugin'] = false;
-      } else {
-        value['plugin'] = true;
-      }
       value['name'] = value['host_hostuuid'];
       delete value['host_hostuuid'];
     }
@@ -1251,21 +1395,19 @@ export class JailEditComponent implements OnInit {
 
     this.ws.call(this.updateCall, [this.pk, value]).subscribe(
       (res) => {
+        this.loader.close();
         if (updateRelease) {
-          this.ws.job(this.upgradeCall, [this.pk, newRelease]).subscribe(
-            (res_upgrade) => {
-              this.loader.close();
-              if (res_upgrade.error) {
-                new EntityUtils().handleWSError(this, res_upgrade, this.dialogService);
-              } else {
-                this.router.navigate(new Array('/').concat(this.route_success));
-              }
-            },
-            (res_upgrate) => {
-              this.loader.close();
-              new EntityUtils().handleWSError(this, res_upgrate, this.dialogService);
-            }
-          );
+          const option = {
+            'release': newRelease,
+            'plugin': this.isPlugin,
+          }
+          const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Upgrading Jail") }, disableClose: true });
+          dialogRef.componentInstance.setCall(this.upgradeCall, [this.pk, option]);
+          dialogRef.componentInstance.submit();
+          dialogRef.componentInstance.success.subscribe((res) => {
+            dialogRef.close(true);
+            this.router.navigate(new Array('/').concat(this.route_success));
+          });
         } else {
           this.loader.close();
           if (res.error) {

@@ -1,20 +1,13 @@
 import {
   ApplicationRef,
   Component,
-  Injector,
-  OnInit,
-  ViewContainerRef
+  Injector
 } from '@angular/core';
-import {
-  AbstractControl,
-  FormArray,
-  FormGroup,
-  Validators
-} from '@angular/forms';
-import {ActivatedRoute, Router, RouterModule} from '@angular/router';
+
+import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 
-import {RestService, WebSocketService} from '../../../../services/';
+import { RestService, WebSocketService } from '../../../../services/';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -22,6 +15,7 @@ import { DialogService } from 'app/services/dialog.service';
 import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../translate-marker';
+import helptext from '../../../../helptext/storage/volumes/volume-key';
 
 @Component({
   selector : 'app-createpassphrase-form',
@@ -51,25 +45,25 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
       inputType: 'password',
       togglePw : true,
       name : 'adminpw',
-      placeholder: T('Root Password'),
-      tooltip: T('Enter the root password.'),
-      validation: [Validators.required],
+      placeholder: helptext.changekey_adminpw_placeholder,
+      tooltip: helptext.changekey_adminpw_tooltip,
+      validation: helptext.changekey_adminpw_validation,
       required: true
     },{
       type : 'input',
       inputType: 'password',
       name : 'passphrase',
-      placeholder: T('Passphrase'),
-      tooltip: T('Enter the GELI passphrase.'),
-      validation: [Validators.required],
+      placeholder: helptext.changekey_passphrase_placeholder,
+      tooltip: helptext.changekey_passphrase_tooltip,
+      validation: helptext.changekey_passphrase_validation,
       required: true,
     },{
       type : 'input',
       inputType: 'password',
       name : 'passphrase2',
-      placeholder: T('Verify passphrase'),
-      tooltip: T('Confirm the GELI passphrase.'),
-      validation: [Validators.required],
+      placeholder: helptext.changekey_passphrase2_placeholder,
+      tooltip: helptext.changekey_passphrase2_tooltip,
+      validation: helptext.changekey_passphrase2_validation,
       required: true
     }
   ];

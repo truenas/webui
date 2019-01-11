@@ -7,9 +7,11 @@ import {
   FormGroup,
   Validators
 } from "@angular/forms";
+import * as _ from 'lodash';
+
 import {WebSocketService} from '../../../../../services/ws.service';
 import {RestService} from '../../../../../services/rest.service';
-import 'rxjs/add/operator/toPromise';
+
 
 import {FieldConfig} from '../models/field-config.interface';
 
@@ -70,6 +72,8 @@ export class EntityFormService {
     const children = [];
 
     return this.ws.call('filesystem.listdir', [node.data.name, [], {"order_by": ["name"]}] ).toPromise().then(res => {
+      res = _.sortBy(res, function(o) { return o.name.toLowerCase(); });
+
       for (let i = 0; i < res.length; i++) {
         const child = {};
         if(!showHiddenFiles){

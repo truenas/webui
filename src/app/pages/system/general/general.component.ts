@@ -172,11 +172,19 @@ export class GeneralComponent implements OnDestroy {
     }
   ];
   public saveConfigFormConf: DialogFormConfiguration = {
-    title: "Save Config",
+    title: "Save Configuration",
+    message: T('<b>WARNING:</b> This configuration file contains system\
+              passwords and other sensitive data.<br>'),
     fieldConfig: this.saveConfigFieldConf,
     method_ws: 'core.download',
     saveButtonText: T('Save'),
     customSubmit: this.saveCofigSubmit,
+    warning: T('<p>Including the Password Secret Seed allows using this\
+              configuration file with a new boot device. This also\
+              decrypts all system passwords for reuse when the\
+              configuration file is uploaded.</p>\
+              <b>Keep the configuration file safe and protect it\
+              from unauthorized access!</b>'),
   }
 
   protected uploadConfigFieldConf: FieldConfig[] = [
@@ -197,10 +205,10 @@ export class GeneralComponent implements OnDestroy {
     method_ws: 'config.upload',
     saveButtonText: T('Upload'),
     customSubmit: this.uploadConfigSubmit,
-    message: '<p>The system will reboot to perform this operation!</p>\
+    message: T('<p>The system will reboot to perform this operation!</p>\
               <p><font color="red">All passwords are reset when the \
               uploaded configuration database file was saved \
-              without the Password Secret Seed. </font></p>',
+              without the Password Secret Seed. </font></p>'),
   }
   public custActions: Array<any> = [
   {
@@ -334,19 +342,19 @@ export class GeneralComponent implements OnDestroy {
 
       this.stg_guiprotocol = entityEdit.formGroup.controls['stg_guiprotocol'];
       if (this.stg_guiprotocol.value === 'http') {
-        this.stg_guicertificate.isHidden = true;
+        this.stg_guicertificate['isHidden'] = true;
       }
       this.stg_guihttpsredirect = _.find(this.fieldConfig,{'name' : 'stg_guihttpsredirect'});
       this.stg_guiprotocol_subscription = this.stg_guiprotocol.valueChanges.subscribe((value) => {
         if (value === 'http') {
-          this.stg_guicertificate.isHidden = true;
-          this.stg_guihttpsredirect.isHidden = true;
+          this.stg_guicertificate['isHidden'] = true;
+          this.stg_guihttpsredirect['isHidden'] = true;
         } else if (value ==='httphttps') {
-          this.stg_guihttpsredirect.isHidden = true;
-          this.stg_guicertificate.isHidden = false;
+          this.stg_guihttpsredirect['isHidden'] = true;
+          this.stg_guicertificate['isHidden'] = false;
         } else {
-          this.stg_guihttpsredirect.isHidden = false;
-          this.stg_guicertificate.isHidden = false;
+          this.stg_guihttpsredirect['isHidden'] = false;
+          this.stg_guicertificate['isHidden'] = false;
         }
       });
   }

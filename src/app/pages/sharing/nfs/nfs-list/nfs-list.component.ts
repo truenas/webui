@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { T } from '../../../../translate-marker';
+import { helptext_sharing_nfs } from 'app/helptext/sharing';
 
 @Component({
   selector : 'app-nfs-list',
@@ -15,8 +15,8 @@ export class NFSListComponent {
   protected route_delete: string[] = [ 'sharing', 'nfs', 'delete' ];
 
   public columns: any[] = [
-    {name: T('Path'), prop: 'nfs_paths'},
-    {name: T('Comment'), prop: 'nfs_comment'},
+    {name: helptext_sharing_nfs.column_path, prop: 'nfs_paths'},
+    {name: helptext_sharing_nfs.column_comment, prop: 'nfs_comment'},
   ];
   public config: any = {
     paging : true,

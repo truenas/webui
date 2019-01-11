@@ -302,6 +302,9 @@ allow_chflags_tooltip: T('Set to treat jail users as privileged and allow the \
 manipulation of system file flags. \
 <b>securelevel</b> constraints are still enforced.'),
 
+allow_mlock_placeholder: T('allow.mlock'),
+allow_mlock_tooltip: T(''),
+
 allow_mount_placeholder: T('allow.mount'),
 allow_mount_tooltip: T('Set to allow privileged users inside the jail to \
 mount and unmount filesystem types marked as \
@@ -357,6 +360,9 @@ allow_socket_af_tooltip: T('Set to allow access to other protocol stacks beyond 
 IPv4, IPv6, local (UNIX), and route. <br>\
 <b>Warning:</b> jail functionality does not exist \
 for all protocal stacks.'),
+
+vnet_interfaces_placeholder: T('vnet.interfaces'),
+vnet_interfaces_tooltip: T(''),
 
 //network field Config
 interfaces_placeholder: T('interfaces'),
@@ -470,6 +476,9 @@ hostid_tooltip: T('A new jail hostid, if desired. \
 <br><b>Example hostid:</b> \
 <i>1a2bc345-678d-90e1-23fa-4b56c78901de</i>.'),
 
+hostid_strict_check_placeholder: T('hostid_strict_check'),
+hostid_strict_check_tooltip: T(''),
+
 comment_placeholder: T('comment'),
 comment_tooltip: T('Enter comments about the jail.'),
 
@@ -512,6 +521,9 @@ jail_zfs_mountpoint_placeholder: T('jail_zfs_mountpoint'),
 jail_zfs_mountpoint_tooltip: T('Enter the mountpoint for the \
 <b>jail_zfs_dataset</b>. \
 <b>Example:</b> <i>/data example-dataset-name</i>'),
+
+allow_tun_placeholder: T('allow_tun'),
+allow_tun_tooltip: T(''),
 
 // rctl config
 memoryuse_placeholder: T('memoryuse'),

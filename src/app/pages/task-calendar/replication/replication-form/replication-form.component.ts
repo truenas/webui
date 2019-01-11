@@ -3,7 +3,7 @@ import {
   Component,
   Injector,
   ElementRef,
-  AfterViewInit
+  OnDestroy
 } from '@angular/core';
 import {
   AbstractControl,
@@ -29,7 +29,7 @@ import helptext from '../../../../helptext/task-calendar/replication-form/replic
   selector : 'app-replication-form',
   templateUrl : './replication-form.component.html'
 })
-export class ReplicationFormComponent implements AfterViewInit {
+export class ReplicationFormComponent implements OnDestroy {
 
   protected resource_name = 'storage/replication';
   protected route_success: string[] = [ 'tasks', 'replication'];
@@ -140,6 +140,7 @@ export class ReplicationFormComponent implements AfterViewInit {
   ];
 
   private repl_remote_dedicateduser: any;
+  private repl_filesystem: any;
   protected fieldConfig: FieldConfig[];
 
   constructor(
@@ -331,19 +332,19 @@ export class ReplicationFormComponent implements AfterViewInit {
     this.entityForm = entityForm;
     this.subscription = entityForm.formGroup.controls['repl_remote_mode'].valueChanges.subscribe((res) => {
       if (res === 'SEMIAUTOMATIC'){
-        _.find(this.fieldConfig, {'name' : 'repl_remote_port'}).isHidden = true;
-        _.find(this.fieldConfig, {'name' : 'repl_remote_hostkey'}).isHidden = true;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_port'})['isHidden'] = true;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_hostkey'})['isHidden'] = true;
         entityForm.setDisabled('repl_remote_hostkey', true);
-        _.find(this.fieldConfig, {'name' : 'repl_remote_http_port'}).isHidden = false;
-        _.find(this.fieldConfig, {'name' : 'repl_remote_https'}).isHidden = false;
-        _.find(this.fieldConfig, {'name' : 'repl_remote_token'}).isHidden = false;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_http_port'})['isHidden'] = false;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_https'})['isHidden'] = false;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_token'})['isHidden'] = false;
       } else {
-        _.find(this.fieldConfig, {'name' : 'repl_remote_port'}).isHidden = false;
-        _.find(this.fieldConfig, {'name' : 'repl_remote_hostkey'}).isHidden = false;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_port'})['isHidden'] = false;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_hostkey'})['isHidden'] = false;
         entityForm.setDisabled('repl_remote_hostkey', false);
-        _.find(this.fieldConfig, {'name' : 'repl_remote_http_port'}).isHidden = true;
-        _.find(this.fieldConfig, {'name' : 'repl_remote_https'}).isHidden = true;
-        _.find(this.fieldConfig, {'name' : 'repl_remote_token'}).isHidden = true;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_http_port'})['isHidden'] = true;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_https'})['isHidden'] = true;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_token'})['isHidden'] = true;
 
       }
 
@@ -356,12 +357,12 @@ export class ReplicationFormComponent implements AfterViewInit {
       entityForm.formGroup.controls['repl_compression'].setValue('lz4');
     }
     else {
-      _.find(this.fieldConfig, {'name' : 'repl_remote_mode'}).isHidden = true;
+      _.find(this.fieldConfig, {'name' : 'repl_remote_mode'})['isHidden'] = true;
       this.rest.get(this.resource_name, {}).subscribe((res)=>{
         for (const key in entityForm.data){
           if (key === 'repl_remote_port'){
-            _.find(this.fieldConfig, {'name' : 'repl_remote_http_port'}).isHidden = true;
-            _.find(this.fieldConfig, {'name' : 'repl_remote_https'}).isHidden = true;
+            _.find(this.fieldConfig, {'name' : 'repl_remote_http_port'})['isHidden'] = true;
+            _.find(this.fieldConfig, {'name' : 'repl_remote_https'})['isHidden'] = true;
           }
         }
       });
@@ -372,20 +373,15 @@ export class ReplicationFormComponent implements AfterViewInit {
         this.repl_remote_dedicateduser.options.push({label : item.username, value : item.username})
       });
     })
-  }
 
-  ngAfterViewInit() {
-
-    // Get snapshots for repl_filesystem this.fieldConfig[0]
-    this.rest.get("storage/task", {}).subscribe((res)=>{
-       res.data.forEach((dataItem)=>{
-          this.fieldConfig[0].options.push({
-              label:  dataItem.task_filesystem,
-              value:  dataItem.task_filesystem
-          });
-        })
-
-        this.initialized = true;
+    this.repl_filesystem = _.find(this.fieldConfig, {'name' : 'repl_filesystem'});
+    this.ws.call('pool.snapshottask.query').subscribe((res) => {
+      for (let i = 0; i < res.length; i++) {
+        this.repl_filesystem.options.push({
+            label:  res[i].filesystem,
+            value:  res[i].filesystem
+        });
+      }
     });
   }
 

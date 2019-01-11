@@ -8,16 +8,19 @@ CATEGORIES=		freenas
 VALID_CATEGORIES+=	freenas
 
 MAINTAINER=	dev@ixsystems.com
-COMMENT=	Angular 4 Web User Interface for FreeNAS
+COMMENT=	Angular Web User Interface for FreeNAS
 
 EXTRACT_ONLY=
 
-FETCH_DEPENDS=	npm:freenas/npm5 \
+FETCH_DEPENDS=	yarn:www/yarn \
 		git>0:devel/git \
-		python2>0:lang/python2
+		python2>0:lang/python2 \
+    gmake:devel/gmake
 BUILD_DEPENDS=	rsync>0:net/rsync \
-		npm:freenas/npm5 \
-		python2>0:lang/python2
+		yarn:www/yarn \
+		python2>0:lang/python2 \
+    gmake:devel/gmake
+RUN_DEPENDS=  gmake:devel/gmake
 
 NO_BUILD=	yes
 WRKSRC=		/usr/webui
@@ -27,7 +30,7 @@ checksum:
 
 fetch:
 	${MKDIR} ${WRKDIR}
-	(cd ${WRKSRC} && ${LOCALBASE}/bin/npm install && ${LOCALBASE}/bin/npm run build:prod:aot)
+	(cd ${WRKSRC} && ${LOCALBASE}/bin/yarn install && ${LOCALBASE}/bin/yarn run build:prod:aot)
 
 extract:
 	:

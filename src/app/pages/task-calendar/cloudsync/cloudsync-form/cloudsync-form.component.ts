@@ -11,7 +11,7 @@ import { FieldRelationService } from '../../../common/entity/entity-form/service
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/task-calendar/cloudsync/cloudsync-form';
-
+import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
   selector: 'cloudsync-add',
@@ -85,15 +85,27 @@ export class CloudsyncFormComponent implements OnInit {
     name: 'bucket_input',
     placeholder: helptext.bucket_input_placeholder,
     tooltip: helptext.bucket_input_tooltip,
+    value: '',
     isHidden: true,
     disabled: true,
     required: true,
     validation : helptext.bucket_input_validation
   }, {
-    type: 'input',
+    type: 'explorer',
     name: 'folder',
     placeholder: helptext.folder_placeholder,
     tooltip: helptext.folder_tooltip,
+    initial: '/',
+    explorerType: 'directory',
+    customTemplateStringOptions: {
+      displayField: 'Path',
+      isExpandedField: 'expanded',
+      idField: 'uuid',
+      getChildren: this.getChildren.bind(this),
+      nodeHeight: 23,
+      allowDrag: true,
+      useVirtualScroll: false,
+    },
     isHidden: true,
     disabled: true,
     relation: [
@@ -105,16 +117,21 @@ export class CloudsyncFormComponent implements OnInit {
         }]
       }
     ],
-    value: "",
   }, {
     type: 'select',
-    name: 'encryption',
+    name: 'task_encryption',
     placeholder: helptext.encryption_placeholder,
     tooltip: helptext.encryption_tooltip,
     options: [
       {label: "None", value: ""},
       {label: "AES-256", value: "AES256"},
     ],
+    isHidden: true,
+  }, {
+    type: 'checkbox',
+    name: 'fast_list',
+    placeholder: helptext.fast_list_placeholder,
+    tooltip: helptext.fast_list_tooltip,
     isHidden: true,
   }, {
     type: 'explorer',
@@ -139,6 +156,38 @@ export class CloudsyncFormComponent implements OnInit {
     value: 'SYNC',
     required: true,
     validation : helptext.transfer_mode_validation
+  },
+  {
+    type: 'checkbox',
+    name: 'snapshot',
+    placeholder: helptext.snapshot_placeholder,
+    tooltip: helptext.snapshot_tooltip,
+    value: false,
+    isHidden: false,
+    disabled: false,
+    relation: [
+      {
+        action: 'HIDE',
+        when: [{
+          name: 'direction',
+          value: 'PULL',
+        }]
+      }
+    ],
+  },
+  {
+    type: 'textarea',
+    name: 'pre_script',
+    placeholder: helptext.pre_script_placeholder,
+    tooltip: helptext.pre_script_tooltip,
+    value: '',
+  },
+  {
+    type: 'textarea',
+    name: 'post_script',
+    placeholder: helptext.post_script_placeholder,
+    tooltip: helptext.post_script_tooltip,
+    value: '',
   },
   {
     type: 'checkbox',
@@ -211,11 +260,37 @@ export class CloudsyncFormComponent implements OnInit {
     required: true
   },
   {
+    type: 'input',
+    inputType: 'number',
+    name: 'transfers',
+    placeholder: helptext.transfers_placeholder,
+    tooltip: helptext.transfers_tooltip,
+    value: null,
+  },
+  {
+    type: 'checkbox',
+    name: 'follow_symlinks',
+    placeholder: helptext.follow_symlinks_placeholder,
+    tooltip: helptext.follow_symlinks_tooltip,
+  },
+  {
     type: 'checkbox',
     name: 'enabled',
     placeholder: helptext.enabled_placeholder,
     tooltip: helptext.enabled_tooltip,
     value: true,
+  },
+  {
+    type: 'input',
+    name: 'bwlimit',
+    placeholder: helptext.bwlimit_placeholder,
+    tooltip: helptext.bwlimit_tooltip,
+  },
+  {
+    type: 'input',
+    name: 'exclude',
+    placeholder: helptext.exclude_placeholder,
+    tooltip: helptext.exclude_tooltip,
   }];
 
   protected month_field: any;
@@ -226,6 +301,7 @@ export class CloudsyncFormComponent implements OnInit {
   protected credentials: any;
   protected bucket_field: any;
   protected bucket_input_field: any;
+  protected folder_field: any;
 
   public credentials_list = [];
 
@@ -254,6 +330,76 @@ export class CloudsyncFormComponent implements OnInit {
 
   getBuckets(credential) {
     return this.ws.call('cloudsync.list_buckets', [credential.id]);
+  }
+
+  getChildren(node) {
+    let credential = this.formGroup.controls['credentials'].value;
+    let bucket = this.formGroup.controls['bucket'].value;
+    if (this.bucket_field.disabled) {
+      bucket = this.formGroup.controls['bucket_input'].value;
+    }
+    return new Promise((resolve, reject) => {
+        resolve(this.getBucketFolders(credential, bucket, node));
+    });
+  }
+
+  setBucketError(error: any) {
+      if (error) {
+        this.bucket_field.hasErrors = true;
+        this.bucket_field.errors = error;
+        this.bucket_input_field.hasErrors = true;
+        this.bucket_input_field.errors = error;
+      } else {
+        this.bucket_field.hasErrors = false;
+        this.bucket_field.errors = null;
+        this.bucket_input_field.hasErrors = false;
+        this.bucket_input_field.errors = null;
+      }
+  }
+
+  getBucketFolders(credential, bucket, node) {
+    const children = [];
+    let data = {
+      "credentials": credential,
+      "encryption": false,
+      "filename_encryption": false,
+      "encryption_password": "",
+      "encryption_salt": "",
+      "attributes": {
+        "bucket": bucket,
+        "folder": node.data.name,
+      },
+      "args": ""
+    }
+    if (bucket == '') {
+      delete data.attributes.bucket;
+    }
+    return this.ws.call('cloudsync.list_directory', [data]).toPromise().then(
+      (res) => {
+        this.setBucketError(null);
+
+        for (let i = 0; i < res.length; i++) {
+          const child = {};
+          if (res[i].IsDir) {
+            if (data.attributes.folder == '/') {
+              child['name'] = data.attributes.folder + res[i].Path;
+            } else {
+              child['name'] = data.attributes.folder + '/' + res[i].Path;
+            }
+            child['subTitle'] = res[i].Name;
+            child['hasChildren'] = true;
+            children.push(child);
+          }
+        }
+        return children;
+      },
+      (err) => {
+        if (err.extra && err.extra[0][0].split('.').pop() == 'bucket') {
+          this.setBucketError(err.extra[0][1]);
+        } else {
+          new EntityUtils().handleWSError(this, err);
+        }
+      });
   }
 
   setRelation(config: FieldConfig) {
@@ -290,7 +436,7 @@ export class CloudsyncFormComponent implements OnInit {
     this.fieldConfig = this.fieldConfig.map((item) => {
       if (item.name === name) {
         item.disabled = disable;
-        item.isHidden = hide;
+        item['isHidden'] = hide;
       }
       return item;
     });
@@ -315,13 +461,17 @@ export class CloudsyncFormComponent implements OnInit {
         this.setRelation(config);
       }
     }
-
+    this.folder_field = _.find(this.fieldConfig, { "name": "folder"});
     this.formGroup.controls['credentials'].valueChanges.subscribe((res)=>{
-      console.log(res);
+      // reset folder tree view
+      if (!this.folder_field.disabled) {
+        this.folder_field.customTemplateStringOptions.explorer.ngOnInit();
+      }
+
       if (res!=null) {
         this.credentials_list.forEach((item)=>{
           if (item.id == res) {
-            if (_.find(this.providers, {"name": item.provider}).buckets) {
+            if (_.find(this.providers, {"name": item.provider})['buckets']) {
               this.loader.open();
               // update bucket fields name and tooltips based on provider
               if (item.provider == "AZUREBLOB" || item.provider == "HUBIC" ) {
@@ -341,8 +491,8 @@ export class CloudsyncFormComponent implements OnInit {
                   this.loader.close();
                   this.bucket_field.options = [{label: '----------', value: ''}];
                   if (res) {
-                    res.forEach((item) => {
-                      this.bucket_field.options.push({ label: item.Name, value: item.Path });
+                    res.forEach((subitem) => {
+                      this.bucket_field.options.push({ label: subitem.Name, value: subitem.Path });
                     });
                   }
                   this.setDisabled('bucket', false, false);
@@ -364,11 +514,43 @@ export class CloudsyncFormComponent implements OnInit {
               this.setDisabled('bucket', true, true);
               this.setDisabled('bucket_input', true, true);
             }
+            // enable/disable task schema properties
+            if (_.find(this.providers, {"name": item.provider})['task_schema']) {
+              const task_schema = _.find(this.providers, {"name": item.provider})['task_schema'];
+              if (task_schema.length == 0) {
+                this.setDisabled('task_encryption', true, true);
+                this.setDisabled('fast_list', true, true);
+              } else {
+                for (const i in task_schema) {
+                  console.log(task_schema[i]);
+                  if (task_schema[i].property == 'encryption') {
+                    this.setDisabled('task_encryption', false, false);
+                  } else {
+                    this.setDisabled(task_schema[i].property, false, false);
+                  }
+                }
+              }
+            }
           }
         });
       }
     })
 
+    this.formGroup.controls['bucket_input'].valueChanges.subscribe((res)=> {
+      this.setBucketError(null);
+      this.folder_field.customTemplateStringOptions.explorer.ngOnInit();
+    });
+
+    this.formGroup.controls['bucket'].valueChanges.subscribe((res)=> {
+      this.setBucketError(null);
+      this.folder_field.customTemplateStringOptions.explorer.ngOnInit();
+    });
+
+    this.formGroup.controls['bwlimit'].valueChanges.subscribe((res)=> {
+      _.find(this.fieldConfig, {name: 'bwlimit'}).hasErrors = false;
+      _.find(this.fieldConfig, {name: 'bwlimit'}).errors = null;
+      this.formGroup.controls['bwlimit'].errors = null;
+    });
     // get cloud credentials
     this.ws.call(this.cloudcredential_query, {}).subscribe(res => {
       res.forEach((item) => {
@@ -431,9 +613,54 @@ export class CloudsyncFormComponent implements OnInit {
                           data.schedule.dom + " " +
                           data.schedule.month + " " +
                           data.schedule.dow;
+
+    if (data.bwlimit) {
+      let bwlimit_str = "";
+      for (let i = 0; i < data.bwlimit.length; i++) {
+        if (data.bwlimit[i].bandwidth != null) {
+          const bw = (<any>window).filesize(data.bwlimit[i].bandwidth, {output: "object"});
+          const sub_bwlimit = data.bwlimit[i].time + "," + bw.value + bw.suffix;
+          if (bwlimit_str != "") {
+            bwlimit_str += " " + sub_bwlimit;
+          } else {
+            bwlimit_str += sub_bwlimit;
+          }
+        }
+      }
+      data.bwlimit = bwlimit_str;
+    }
+
+    if (data.exclude) {
+      data.exclude = _.join(data.exclude, ' ');
+    }
+
     return data;
   }
 
+  handleBwlimit(bwlimit: any): Array<any> {
+    const bwlimtArr = [];
+    bwlimit = bwlimit.trim().split(' ');
+
+    for (let i = 0; i < bwlimit.length; i++) {
+      const sublimitArr = bwlimit[i].split(',');
+      if (sublimitArr[1] && sublimitArr[1] != 'off') {
+        if (this.cloudcredentialService.getByte(sublimitArr[1]) == -1) {
+          _.find(this.fieldConfig, {name: 'bwlimit'}).hasErrors = true;
+          _.find(this.fieldConfig, {name: 'bwlimit'}).errors = 'Invalid bandwidth ' + sublimitArr[1];
+          this.formGroup.controls['bwlimit'].setErrors('Invalid bandwidth ' + sublimitArr[1]);
+        } else {
+          sublimitArr[1] = this.cloudcredentialService.getByte(sublimitArr[1]);
+        }
+      }
+      const subLimit = {
+        "time": sublimitArr[0],
+        "bandwidth": sublimitArr[1] == 'off' ? null : sublimitArr[1],
+      }
+
+      bwlimtArr.push(subLimit);
+    }
+    return bwlimtArr;
+  }
   onSubmit(event: Event) {
     event.preventDefault();
     event.stopPropagation();
@@ -454,6 +681,14 @@ export class CloudsyncFormComponent implements OnInit {
     }
     attributes['folder'] = value.folder;
     delete value.folder;
+    if (value.task_encryption != undefined) {
+      attributes['encryption'] = value.task_encryption;
+      delete value.task_encryption;
+    }
+    if (value.fast_list != undefined) {
+      attributes['fast_list'] = value.fast_list;
+      delete value.fast_list;
+    }
     value['attributes'] = attributes;
 
     let spl = value.cloudsync_picker.split(" ");
@@ -466,6 +701,22 @@ export class CloudsyncFormComponent implements OnInit {
 
     value['schedule'] = schedule;
 
+    if (value.bwlimit) {
+      value.bwlimit = this.handleBwlimit(value.bwlimit);
+    }
+
+    if (value.exclude) {
+      value.exclude = value.exclude.trim().split(" ");
+    }
+
+    if (!this.formGroup.valid) {
+      return;
+    }
+
+    if (value['direction'] == 'PULL') {
+      value['snapshot'] = false;
+    }
+
     if (!this.pk) {
       this.loader.open();
       this.ws.call(this.addCall, [value]).subscribe((res)=>{
@@ -473,7 +724,7 @@ export class CloudsyncFormComponent implements OnInit {
         this.router.navigate(new Array('/').concat(this.route_success));
       }, (err) => {
         this.loader.close();
-        this.dialog.errorReport('Error', err.reason, err.trace.formatted);
+        new EntityUtils().handleWSError(this, err);
       });
     } else {
       this.loader.open();
@@ -484,7 +735,7 @@ export class CloudsyncFormComponent implements OnInit {
         },
         (err)=>{
         this.loader.close();
-        this.dialog.errorReport('Error', err.reason, err.trace.formatted);
+        new EntityUtils().handleWSError(this, err);
         }
       );
     }

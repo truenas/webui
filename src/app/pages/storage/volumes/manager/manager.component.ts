@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import * as _ from 'lodash';
 import { Router, ActivatedRoute } from '@angular/router';
-import { DragulaService } from 'ng2-dragula';
+// import { DragulaService } from 'ng2-dragula';
 import { Subscription } from 'rxjs';
 import { RestService, WebSocketService, DialogService } from '../../../../services/';
 import { DiskComponent } from './disk/';
@@ -22,6 +22,8 @@ import { StorageService } from '../../../../services/storage.service'
 import { EntityUtils } from '../../../common/entity/utils';
 import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { T } from '../../../../translate-marker';
+import helptext from '../../../../helptext/storage/volumes/manager/manager';
+
 
 @Component({
   selector: 'app-manager',
@@ -69,59 +71,42 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   protected current_layout: any;
   protected existing_pool: any;
   protected needs_disk = true;
-  protected needsDiskMessage = T("Add one or more disks to be used for data.");
-  protected extendedNeedsDiskMessage = T("Add one or more disks to extend the pool.");
+  protected needsDiskMessage = helptext.manager_needsDiskMessage;
+  protected extendedNeedsDiskMessage = helptext.manager_extendedNeedsDiskMessage;
   public size;
   protected extendedAvailable;
-  public sizeMessage = T("Estimated total raw data capacity");
-  protected extendedSizeMessage = T("Estimated data capacity available after extension.");
+  public sizeMessage = helptext.manager_sizeMessage;
+  protected extendedSizeMessage = helptext.manager_extendedSizeMessage;
 
   public disknumError = null;
-  public disknumErrorMessage = T("WARNING: Adding data vdevs with different numbers of \
-      disks is not recommended.");
-  public disknumErrorConfirmMessage = T("It is not recommended to create a pool with vdevs \
-      containing different numbers of disks. Continue?");
-  public disknumExtendConfirmMessage = T("It is not recommended to extend a pool with one or \
-      more vdevs containing different numbers of disks. Continue?");
+  public disknumErrorMessage = helptext.manager_disknumErrorMessage;
+  public disknumErrorConfirmMessage = helptext.manager_disknumErrorConfirmMessage;
+  public disknumExtendConfirmMessage = helptext.manager_disknumExtendConfirmMessage;
 
   public vdevtypeError = null;
-  public vdevtypeErrorMessage = T("Adding data vdevs of different types is not supported.");
+  public vdevtypeErrorMessage = helptext.manager_vdevtypeErrorMessage;
 
-  public diskAddWarning = T("The contents of all added disks will be erased.");
-  public diskExtendWarning = T("The contents of all newly added disks will be erased. The pool \
-      will be extended to the new topology with existing data left intact.");
+  public diskAddWarning = helptext.manager_diskAddWarning;
+  public diskExtendWarning = helptext.manager_diskExtendWarning;
 
   first_data_vdev_type: string;
   first_data_vdev_disknum: number;
 
   public busy: Subscription;
 
-  public name_tooltip = T('ZFS pools must conform to strict naming <a\
-                           href="https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html"\
-                           target="_blank">conventions</a>. Choose a\
-                           memorable name.');
+  public name_tooltip = helptext.manager_name_tooltip;
 
-  public encryption_tooltip = T('<a href="https://www.freebsd.org/cgi/man.cgi?query=geli&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
-                                 target="_blank">GELI</a> encryption is\
-                                 available for ZFS pools. <b>WARNING:</b>\
-                                 Read the <a\
-                                 href="%%docurl%%/storage.html%%webversion%%#managing-encrypted-pools"\
-                                 target="_blank">Encryption section</a>\
-                                 of the guide before activating this\
-                                 option.');
+  public encryption_tooltip = helptext.manager_encryption_tooltip;
 
-  public suggested_layout_tooltip = T('Create a recommended formation\
-                                       of vdevs in a pool.');
+  public suggested_layout_tooltip = helptext.manager_suggested_layout_tooltip;
 
-  public encryption_message = T("Always back up the key! Losing the key \
-                                 will also lose all data on the disks with \
-                                 no chance of recovery.");
+  public encryption_message = helptext.manager_encryption_message;
 
   constructor(
     private rest: RestService,
     private ws: WebSocketService,
     private router: Router,
-    private dragulaService: DragulaService,
+//    private dragulaService: DragulaService,
     private dialog:DialogService,
     public snackBar: MatSnackBar,
     private loader:AppLoaderService,
@@ -130,7 +115,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     public translate: TranslateService,
     public sorter: StorageService ) {
 
-    dragulaService.setOptions('pool-vdev', {
+/*    dragulaService.setOptions('pool-vdev', {
       accepts: (el, target, source, sibling) => { return true; },
     });
     dragulaService.drag.subscribe((value) => { console.log(value); });
@@ -157,7 +142,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
     dragulaService.over.subscribe((value) => { console.log(value); });
-    dragulaService.out.subscribe((value) => { console.log(value); });
+    dragulaService.out.subscribe((value) => { console.log(value); }); */
   }
 
   getDiskNumErrorMsg(disks) {
@@ -267,14 +252,8 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit() {
     if (!this.isNew) {
       setTimeout(() => { // goofy workaround for stupid angular error
-        this.dialog.confirm(T("Warning"), T("Extending the pool adds new\
-                                             vdevs in a stripe with the\
-                                             existing vdevs. It is important\
-                                             to only use new vdevs of the\
-                                             same size and type as those\
-                                             already in the pool. This\
-                                             operation cannot be reversed.\
-                                             Continue?"), false, T("Continue")).subscribe((res) => {
+        this.dialog.confirm(T("Warning"), helptext.manager_extend_warning, 
+            false, T("Continue")).subscribe((res) => {
           if (!res) {
             this.goBack();
           }
@@ -284,7 +263,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy() {
-    this.dragulaService.destroy("pool-vdev");
+    //this.dragulaService.destroy("pool-vdev");
   }
 
   addVdev(group) {
@@ -529,9 +508,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
 
     // filter our data
     if (re) {
-      if (event.target.id === "nameFilter") {
+      if (event.target.id === "pool-manager__nameFilter") {
         this.nameFilter = re;
-      } else if (event.target.id === "capacityFilter") {
+      } else if (event.target.id === "pool-manager__capacityFilter") {
         this.capacityFilter = re;
       }
 
@@ -566,7 +545,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   checkPoolName() {
-    if(_.find(this.existing_pools, {"name": this.name})) {
+    if(_.find(this.existing_pools, {"name": this.name as any})) {
       this.poolError = T("A pool with this name already exists."); 
     } else {
       this.poolError = null;

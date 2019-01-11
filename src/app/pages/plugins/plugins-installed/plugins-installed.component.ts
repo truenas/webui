@@ -1,12 +1,14 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
+import { MatDialog, MatSnackBar } from '@angular/material';
 
 import { RestService, WebSocketService } from '../../../services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../../app/services';
 import { EntityUtils } from '../../common/entity/utils';
 import { T } from '../../../translate-marker';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 
 @Component({
   selector: 'app-plugins-installed-list',
@@ -100,6 +102,43 @@ export class PluginsInstalledListComponent {
       }
     },
     {
+      id: "mupgrade",
+      label: T("Upgrade"),
+      icon: "arrow_upward",
+      enable: true,
+      ttpos: "above",
+      onClick: (selected) => {
+        const option = {
+          'plugin': true,
+        }
+        const selectedJails = this.getSelectedNames(selected);
+        for (const i in selectedJails) {
+          selectedJails[i].push(option);
+        }
+
+        this.snackBar.open(T('Upgrade selected jails started.'), 'close', { duration: 5000 });
+        this.entityList.busy =
+          this.ws.job('core.bulk', ["jail.upgrade", selectedJails]).subscribe(
+            (res) => {
+              if (res.result != null) {
+                if (res.result[0] && res.result[0].error != null) {
+                  this.dialogService.errorReport(T('Upgrade selected jails failed.'), res.result[0].error);
+                }
+              } else {
+                for (const i in selected) {
+                  this.updateRow(selected[i]);
+                }
+                this.updateMultiAction(selected);
+                this.snackBar.open(T('Upgrade selected jails succeeded.'), 'close', { duration: 5000 });
+              }
+            },
+            (res) => {
+              this.snackBar.open(T('Upgrade selected jails failed.'), 'close', { duration: 5000 });
+              new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
+            });
+      }
+    },
+    {
       id: "mdelete",
       label: T("Delete"),
       icon: "delete",
@@ -118,7 +157,8 @@ export class PluginsInstalledListComponent {
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected loader: AppLoaderService,
-              protected dialogService: DialogService) {
+              protected dialogService: DialogService, protected dialog: MatDialog,
+              protected snackBar: MatSnackBar) {
     this.getActivatedPool();
     this.getAvailablePools();
   }
@@ -221,21 +261,14 @@ export class PluginsInstalledListComponent {
           this.loader.open();
           row[3] = 'restarting';
           this.entityList.busy =
-            this.ws.call('jail.stop', [row[1]]).subscribe(
-              (res) => {
-                this.ws.call('jail.start', [row[1]]).subscribe(
-                  (res) => {
-                    this.loader.close();
-                    this.updateRow(row);
-                  },
-                  (res) => {
-                    this.loader.close();
-                    new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
-                  });
-              },
+            this.ws.call('jail.restart', [row[1]]).subscribe(
               (res) => {
                 this.loader.close();
-                new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
+                this.updateRow(row);
+              },
+              (err) => {
+                this.loader.close();
+                new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
               });
         }
       },
@@ -254,6 +287,22 @@ export class PluginsInstalledListComponent {
                 this.loader.close();
                 new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
               });
+        }
+      },
+      {
+        id: "upgrade",
+        label: T("Upgrade"),
+        onClick: (row) => {
+          const option = {
+            'plugin': true,
+          }
+          const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Upgrading Plugin") }, disableClose: true });
+          dialogRef.componentInstance.setCall('jail.upgrade', [row[1], option]);
+          dialogRef.componentInstance.submit();
+          dialogRef.componentInstance.success.subscribe((res) => {
+            dialogRef.close(true);
+            this.snackBar.open(T("Successfully upgraded plugin."), T('Close'), { duration: 5000 });
+          });
         }
       },
       {
@@ -283,15 +332,15 @@ export class PluginsInstalledListComponent {
 
   updateMultiAction(selected: any) {
     if (_.find(selected, function(plugin) { return plugin[3] == 'up'; })) {
-     _.find(this.multiActions, {'id': 'mstop'})['enable'] = true;
+     _.find(this.multiActions, {'id': 'mstop' as any})['enable'] = true;
     } else {
-      _.find(this.multiActions, {'id': 'mstop'})['enable'] = false;
+      _.find(this.multiActions, {'id': 'mstop' as any})['enable'] = false;
     }
 
     if (_.find(selected, function(plugin) { return plugin[3] == 'down'; })) {
-     _.find(this.multiActions, {'id': 'mstart'})['enable'] = true;
+     _.find(this.multiActions, {'id': 'mstart' as any})['enable'] = true;
     } else {
-      _.find(this.multiActions, {'id': 'mstart'})['enable'] = false;
+      _.find(this.multiActions, {'id': 'mstart' as any})['enable'] = false;
     }
   }
 

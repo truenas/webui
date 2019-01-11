@@ -1,8 +1,6 @@
 import {
-  ApplicationRef,
   Component,
   OnDestroy,
-  ViewContainerRef
 } from '@angular/core';
 import {
   FormGroup,
@@ -18,6 +16,8 @@ import {
   FieldConfig
 } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../../translate-marker';
+import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-permissions';
+
 
 @Component({
   selector : 'app-dataset-permissions',
@@ -35,6 +35,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
   protected mp_acl_subscription: any;
   protected mp_recursive: any;
   protected mp_recursive_subscription: any;
+  private acl: any;
   public sub: Subscription;
   public formGroup: FormGroup;
   public data: Object = {};
@@ -48,15 +49,14 @@ export class DatasetPermissionsComponent implements OnDestroy {
     {
       type: 'input',
       name : 'mp_path',
-      placeholder : T('Path'),
+      placeholder : helptext.dataset_permissions_mp_path_placeholder,
       readonly: true
     },
     {
       type: 'radio',
       name: 'mp_acl',
-      placeholder: T('ACL Type'),
-      tooltip: T('Select the type that matches the type of client\
-                  accessing the pool/dataset.'),
+      placeholder: helptext.dataset_permissions_mp_acl_placeholder,
+      tooltip: helptext.dataset_permissions_mp_acl_tooltip,
       options: [{label:'Unix', value: 'unix'},
                 {label:'Windows', value: 'windows'},
                 {label:'Mac', value: 'mac'}],
@@ -64,17 +64,15 @@ export class DatasetPermissionsComponent implements OnDestroy {
     {
       type: 'checkbox',
       name: 'mp_user_en',
-      placeholder: T('Apply User'),
-      tooltip: T('Set to apply changes to the user.'),
+      placeholder: helptext.dataset_permissions_mp_user_en_placeholder,
+      tooltip: helptext.dataset_permissions_mp_user_en_tooltip,
       value: true
     },
     {
       type: 'combobox',
       name: 'mp_user',
-      placeholder: T('User'),
-      tooltip: T('Select the user to control the pool/dataset. Users\
-                  manually created or imported from a directory service\
-                  will appear in the drop-down menu.'),
+      placeholder: helptext.dataset_permissions_mp_user_placeholder,
+      tooltip: helptext.dataset_permissions_mp_user_tooltip,
       options: [],
       searchOptions: [],
       parent: this,
@@ -83,17 +81,15 @@ export class DatasetPermissionsComponent implements OnDestroy {
     {
       type: 'checkbox',
       name: 'mp_group_en',
-      placeholder: T('Apply Group'),
-      tooltip: T('Set to apply changes to the group'),
+      placeholder: helptext.dataset_permissions_mp_group_en_placeholder,
+      tooltip: helptext.dataset_permissions_mp_group_en_tooltip,
       value: true
     },
     {
       type: 'combobox',
       name: 'mp_group',
-      placeholder: T('Group'),
-      tooltip: T('Select the group to control the pool/dataset. Groups\
-                  manually created or imported from a directory service\
-                  will appear in the drop-down menu.'),
+      placeholder: helptext.dataset_permissions_mp_group_placeholder,
+      tooltip: helptext.dataset_permissions_mp_group_tooltip,
       options: [],
       searchOptions: [],
       parent: this,
@@ -102,23 +98,22 @@ export class DatasetPermissionsComponent implements OnDestroy {
     {
       type: 'checkbox',
       name: 'mp_mode_en',
-      placeholder: T('Apply Mode'),
-      tooltip: T('Set to apply changes to the mode'),
+      placeholder: helptext.dataset_permissions_mp_mode_en_placeholder,
+      tooltip: helptext.dataset_permissions_mp_mode_en_tooltip,
       value: true
     },
     {
       type: 'permissions',
       name: 'mp_mode',
-      placeholder: T('Mode'),
-      tooltip: T('Only applies to Unix or Mac permission types.'),
+      placeholder: helptext.dataset_permissions_mp_mode_placeholder,
+      tooltip: helptext.dataset_permissions_mp_mode_tooltip,
       isHidden: false
     },
     {
       type: 'checkbox',
       name: 'mp_recursive',
-      placeholder: T('Apply permissions recursively'),
-      tooltip: T('Apply permissions recursively to all directories\
-                  and files within the current dataset'),
+      placeholder: helptext.dataset_permissions_mp_recursive_placeholder,
+      tooltip: helptext.dataset_permissions_mp_recursive_tooltip,
       value: false
     }
   ];
@@ -165,18 +160,30 @@ export class DatasetPermissionsComponent implements OnDestroy {
       entityEdit.formGroup.controls['mp_user'].setValue(res.user);
       entityEdit.formGroup.controls['mp_group'].setValue(res.group);
       this.mp_acl = entityEdit.formGroup.controls['mp_acl'];
+      this.acl = res.acl;
       this.mp_acl.setValue(res.acl);
       if (res.acl === 'windows') {
-        this.mp_mode.isHidden = true;
-        this.mp_mode_en.isHidden = true;
+        this.mp_mode['isHidden'] = true;
+        this.mp_mode_en['isHidden'] = true;
       }
       this.mp_acl_subscription = this.mp_acl.valueChanges.subscribe((acl) => {
+        if (this.acl === 'windows' && acl !== 'windows') {
+          this.dialog.confirm(helptext.dataset_permissions_dialog_warning, helptext.dataset_permissions_dialog_warning_message)
+          .subscribe((confirm) => {
+            if (!confirm) {
+              this.mp_acl.setValue(this.acl);
+              acl = this.acl;
+            } else {
+              this.acl = acl;
+            }
+          });
+        }
         if (acl === 'windows') {
-          this.mp_mode.isHidden = true;
-          this.mp_mode_en.isHidden = true;
+          this.mp_mode['isHidden'] = true;
+          this.mp_mode_en['isHidden'] = true;
         } else {
-          this.mp_mode.isHidden = false;
-          this.mp_mode_en.isHidden = false;
+          this.mp_mode['isHidden'] = false;
+          this.mp_mode_en['isHidden'] = false;
         }
       });
     });
