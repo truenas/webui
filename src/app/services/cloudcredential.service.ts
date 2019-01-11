@@ -11,7 +11,7 @@ export class CloudCredentialService {
     'G': 1024**3,
     'M': 1024**2,
     'K': 1024**1,
-    'B':1024**0,
+    'B': 1024**0,
   };
 
   constructor(protected ws: WebSocketService) {};
