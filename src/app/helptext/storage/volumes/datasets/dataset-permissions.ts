@@ -34,7 +34,7 @@ dataset_permissions_mp_recursive_tooltip: T('Apply permissions recursively to al
  and files within the current dataset'),
 
 dataset_permissions_dialog_warning: T('Warning'),
-dataset_permissions_dialog_warning_message: T('Changing a pool or dataset with Windows permissions\
- back to Unix permissions will overwrite and destroy some of the extended permissions provided\
- by Windows ACLs')
+dataset_permissions_dialog_warning_message: T('Warning: Changing a pool or dataset with Windows\
+ permissions back to Unix or Mac permissions overwrites and destroys some of the extended\
+ permissions provided by Windows ACLs.')
 }
