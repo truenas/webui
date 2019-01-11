@@ -22,7 +22,7 @@ bucket_tooltip: T('Select the pre-defined S3 bucket to use.'),
 bucket_validation : [ Validators.required ],
 
 bucket_input_placeholder: T('Bucket'),
-bucket_input_tooltip: T('Input the pre-defined S3 bucket to use.'),
+bucket_input_tooltip: T('Enter the pre-defined S3 bucket to use.'),
 bucket_input_validation : [ Validators.required ],
 
 folder_placeholder: T('Folder'),
@@ -55,28 +55,28 @@ transfer_mode_tooltip: T('<i>SYNC</i> makes files on the destination system iden
 
 transfer_mode_validation : [ Validators.required ],
 
-remote_encryption_placeholder: T('Remote encryption'),
+remote_encryption_placeholder: T('Remote Encryption'),
 remote_encryption_tooltip: T('Set to encrypt files before transfer and store the\
  encrypted files on the remote system.\
  <a href="https://rclone.org/crypt/"\
  target="_blank">rclone Crypt</a> is used.'),
 
-filename_encryption_placeholder: T('Filename encryption'),
+filename_encryption_placeholder: T('Filename Encryption'),
 filename_encryption_tooltip: T('Set to encrypt the shared file names.'),
 
-encryption_password_placeholder: T('Encryption password'),
+encryption_password_placeholder: T('Encryption Password'),
 encryption_password_tooltip: T('Enter the password to encrypt and decrypt remote data.\
  <b>Warning</b>: Always save and back up this password.\
  Losing the encryption password can result in data loss.'),
 
-encryption_salt_placeholder: T('Encryption salt'),
+encryption_salt_placeholder: T('Encryption Salt'),
 encryption_salt_tooltip: T('Enter a long string of random characters for use as\
  <a href="https://searchsecurity.techtarget.com/definition/salt"\
  target="_blank">salt</a> for the encryption password.\
  <b>Warning:</b> Save and back up the encryption salt\
  value. Losing the salt value can result in data loss.'),
 
-args_placeholder: T('Auxiliary arguments'),
+args_placeholder: T('Auxiliary Arguments'),
 
 cloudsync_picker_placeholder: T('Schedule the Cloud Sync Task'),
 cloudsync_picker_tooltip: T('Select a schedule preset or choose <i>Custom</i> to open\
@@ -86,7 +86,7 @@ enabled_placeholder: T('Enabled'),
 enabled_tooltip: T('Enable this Cloud Sync Task. Unset to disable this Cloud\
  Sync Task without deleting it.'),
 
-bwlimit_placeholder: T('Bandwidth limit'),
+bwlimit_placeholder: T('Bandwidth Limit'),
 bwlimit_tooltip: T('Either single bandwidth limit or bandwidth limit schedule in rclone format.<br />\
  Example: "08:00,512 12:00,10MB 13:00,512 18:00,30MB 23:00,off".<br />\
  Default unit is kilobytes.'),
