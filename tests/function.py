@@ -282,7 +282,7 @@ def pool_detach(driver, self, name):
     driver.find_element_by_xpath(xpaths['poolID'] + name + '"]').click()
     time.sleep(1)
     driver.find_element_by_xpath(xpaths['poolID'] + name + '"]/div/div/div[1]/div/app-entity-table-actions/div/mat-icon').click()
-    driver.find_element_by_xpath(xpaths['poolDetach']).click()
+    driver.find_element_by_xpath('//*[@id="action_button_Export/Disconnect__name_' + name + '\"]').click()
     driver.find_element_by_xpath(xpaths['pooldestroyCheckbox']).click()
     driver.find_element_by_xpath(xpaths['poolconfirmdestroyCheckbox']).click()
     time.sleep(3)
