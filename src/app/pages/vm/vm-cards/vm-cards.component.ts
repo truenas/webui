@@ -40,7 +40,7 @@ export class VmCardsComponent  {
   public columns: Array<any> = [
     {name : 'Name', prop : 'name', always_display: true },
     {name : 'State', prop : 'state', always_display: true },
-    {name : 'PID', prop : 'pid', hidden: true},
+    {name : 'VNC Port', prop : 'port', hidden: true},
     {name : 'Type', prop : 'vm_type', hidden: false},
     {name : 'Description', prop : 'description', hidden: true },
     {name : 'Virtual CPUs', prop : 'vcpus', hidden: false},
@@ -65,6 +65,12 @@ export class VmCardsComponent  {
     for (let vm_index = 0; vm_index<vms.length; vm_index++){
       vms[vm_index]['state'] = vms[vm_index]['status']['state'];
       vms[vm_index]['pid'] = vms[vm_index]['status']['pid'];
+      if (this.checkVnc(vms[vm_index])) {
+        vms[vm_index]['port'] = this.vncPort(vms[vm_index]);
+      } else {
+        vms[vm_index]['port'] = 'N/A';
+
+      };
     }
     return vms;
   }
@@ -178,6 +184,21 @@ export class VmCardsComponent  {
     for(let i=0; i < devices.length; i++){
       if(devices && devices[i].dtype === "VNC") {
         return true;
+      }
+    }
+  }
+
+  vncPort(vm){
+    const devices = vm.devices
+    if(!devices || devices.length === 0){
+      return false;
+    };
+    if(vm.bootloader === 'GRUB' || vm.bootloader === "UEFI_CSM" ){
+      return false;
+    };
+    for(let i=0; i < devices.length; i++){
+      if(devices && devices[i].dtype === "VNC") {
+        return devices[i].attributes.vnc_port;
       }
     }
   }
