@@ -75,9 +75,10 @@ preInit(entityForm: any) {
     this.diskChoice = _.find(this.fieldConfig, {'name':'dev'});
     this.ws.call('disk.get_unused').subscribe((res)=>{
       res.forEach((item) => {
+        const disk_name = item.name
         disksize = (<any>window).filesize(item['size'], { standard: "iec" });
         item.name = `${item.name} (${disksize})`;
-        this.diskChoice.options.push({label : item.name, value : item.name});        
+        this.diskChoice.options.push({label : item.name, value : disk_name});        
       });
     });
 
