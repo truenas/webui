@@ -508,9 +508,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
 
     // filter our data
     if (re) {
-      if (event.target.id === "nameFilter") {
+      if (event.target.id === "pool-manager__nameFilter") {
         this.nameFilter = re;
-      } else if (event.target.id === "capacityFilter") {
+      } else if (event.target.id === "pool-manager__capacityFilter") {
         this.capacityFilter = re;
       }
 

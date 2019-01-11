@@ -4,8 +4,8 @@ import { MatProgressBar, MatButton, MatSnackBar } from '@angular/material';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { matchOtherValidator } from '../../../pages/common/entity/entity-form/validators/password-validation';
 import { TranslateService } from '@ngx-translate/core';
-import { T } from '../../../translate-marker';
 
+import { T } from '../../../translate-marker';
 import {WebSocketService} from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
@@ -64,12 +64,16 @@ export class SigninComponent implements OnInit {
         this.loginCallback(result);
        });
     }
-    if (this.ws.token && this.ws.redirectUrl) {
+    if (this.ws.token && this.ws.redirectUrl != undefined) {
       if (this.submitButton) {
         this.submitButton.disabled = true;
       }
       if (this.progressBar) {
         this.progressBar.mode = 'indeterminate';
+      }
+
+      if (sessionStorage.currentUrl != undefined) {
+        this.ws.redirectUrl = sessionStorage.currentUrl;
       }
 
       this.ws.login_token(this.ws.token)

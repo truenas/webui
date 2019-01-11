@@ -45,6 +45,7 @@ export class UpdateComponent implements OnInit {
   public nightly_train: boolean;
   public updates_available = false;
   public currentTrainDescription: string;
+  public trainDescriptionOnPageLoad: string;
   public fullTrainList: any[];
 
   public busy: Subscription;
@@ -86,6 +87,7 @@ export class UpdateComponent implements OnInit {
     protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog,
     protected loader: AppLoaderService, protected dialogService: DialogService, public translate: TranslateService) {
   }
+
   parseTrainName(name) {
     const version = []
     let sw_version = "";
@@ -108,7 +110,6 @@ export class UpdateComponent implements OnInit {
       version.push(sw_version);
       version.push(branch);
     }
-
     return version;
   }
 
@@ -123,8 +124,6 @@ export class UpdateComponent implements OnInit {
         const version2 = v2[0].split('.');
         const branch1 = v1[1].toLowerCase();
         const branch2 = v2[1].toLowerCase();
-
-
 
         if(branch1 !== branch2) {
 
@@ -200,41 +199,55 @@ export class UpdateComponent implements OnInit {
         });
       }
     });
+
     this.busy = this.rest.get('system/update', {}).subscribe((res) => {
       this.autoCheck = res.data.upd_autocheck;
+    });
+
+    this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
+      this.fullTrainList = res.trains;
+
+      // On page load, make sure we are working with train of the current OS
+      this.train = res.current;
+      this.selectedTrain = res.current;
+
       if (this.autoCheck){
         this.check();
       }
-    });
-    this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
-      this.fullTrainList = res.trains;
-      this.train = res.selected;
-      this.selectedTrain = res.selected;
 
       this.trains = [];
       for (const i in res.trains) {
-        if (this.compareTrains(this.train, i) === 'ALLOWED' || this.compareTrains(this.train, i) === 'NIGHTLY_UPGRADE' || this.train === i) {
+        if (this.compareTrains(this.train, i) === 'ALLOWED' || 
+        this.compareTrains(this.train, i) === 'NIGHTLY_UPGRADE' || 
+        this.compareTrains(this.train, i) === 'MINOR_UPGRADE' || 
+        this.compareTrains(this.train, i) === 'MAJOR_UPGRADE' || 
+        this.train === i) {
           this.trains.push({ name: i, description: res.trains[i].description });
         }
-
       }
       this.singleDescription = this.trains[0].description;
 
-      // The following is a kluge until we stop overwriting (via middleware?) the description of the currently
-      //  running OS along with its tags we want to use for sorting - [release], [prerelease], and [nightly]
-      if (this.selectedTrain.toLowerCase().includes('nightlies')) {
+      if (this.fullTrainList[res.current].description.toLowerCase().includes('[nightly]')) {
         this.currentTrainDescription = '[nightly]';
-      } else if (this.selectedTrain.toLowerCase().includes('11-stable')) {
+      } else if (this.fullTrainList[res.current].description.toLowerCase().includes('[release]')) {
         this.currentTrainDescription = '[release]';
-      } else if (this.selectedTrain.toLowerCase().includes('11.2-stable')) {
-        this.currentTrainDescription = '[release]';
+      } else if (this.fullTrainList[res.current].description.toLowerCase().includes('[prerelease]')) {
+        this.currentTrainDescription = '[prerelease]';
       } else {
         this.currentTrainDescription = res.trains[this.selectedTrain].description.toLowerCase();
       }
+      // To remember train descrip if user switches away and then switches back
+      this.trainDescriptionOnPageLoad = this.currentTrainDescription;
     });
   }
 
   onTrainChanged(event){
+    // For the case when the user switches away, then BACK to the train of the current OS
+    if (event.value === this.selectedTrain) {
+      this.currentTrainDescription = this.trainDescriptionOnPageLoad;
+      this.check();
+      return;
+    }
     const compare = this.compareTrains(this.selectedTrain, event.value);
     if(compare === "NIGHTLY_DOWNGRADE" || compare === "MINOR_DOWNGRADE" || compare === "MAJOR_DOWNGRADE" || compare ==="SDK") {
       this.dialogService.Info("Error", this.train_msg[compare]).subscribe((res)=>{
@@ -251,7 +264,7 @@ export class UpdateComponent implements OnInit {
             this.currentTrainDescription = this.fullTrainList[this.train].description.toLowerCase();
           }
         })
-    } else if (compare === "ALLOWED") {
+    } else if (compare === "ALLOWED" || compare === "MINOR_UPGRADE" || compare === "MAJOR_UPGRADE") {
       this.dialogService.confirm(T("Switch Train"), T("Switch update trains?")).subscribe((train_res)=>{
         if(train_res){
           this.train = event.value;
@@ -473,6 +486,10 @@ export class UpdateComponent implements OnInit {
 }
 
   check() {
+    // Reset the template
+    this.updates_available = false; 
+    this.releaseNotes = '';
+
     this.showSpinner = true;
     this.pendingupdates();
     this.error = null;

@@ -9,7 +9,7 @@ import { RestService, WebSocketService, SystemGeneralService, NetworkService } f
 import { EntityUtils } from '../../../common/entity/utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import helptext from '../../../../helptext/vm/devices/device-add-edit';
-
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
 @Component({
   selector : 'app-device-edit',
   templateUrl : './device-edit.component.html',
@@ -35,6 +35,7 @@ export class DeviceEditComponent implements OnInit {
   public rootpwd: any;
   public vminfo: any;
   public boot: any;
+  public error_reason: string;
 
   public custActions: any[];
 
@@ -60,7 +61,8 @@ export class DeviceEditComponent implements OnInit {
       placeholder : helptext.cd_path_placeholder,
       tooltip : helptext.cd_path_tooltip,
       validation : helptext.cd_path_validation,
-      required: true
+      required: true,
+      disabled: false
     },
     {
       name : 'order',
@@ -80,7 +82,8 @@ export class DeviceEditComponent implements OnInit {
       type: 'select',
       required: true,
       validation : helptext.zvol_path_validation,
-      options:[]
+      options:[],
+      disabled: false
     },
     {
       name : 'type',
@@ -115,7 +118,8 @@ export class DeviceEditComponent implements OnInit {
       type: 'select',
       options: [],
       validation: helptext.adapter_type_validation,
-      required: true
+      required: true,
+      disabled: false
     },
     {
       name: 'mac',
@@ -156,7 +160,8 @@ export class DeviceEditComponent implements OnInit {
       placeholder : helptext.raw_file_path_placeholder,
       tooltip : helptext.raw_file_path_tooltip,
       required: true,
-      validation: helptext.raw_file_path_validation
+      validation: helptext.raw_file_path_validation,
+      disabled: false
     },
     {
       type : 'select',
@@ -212,7 +217,9 @@ export class DeviceEditComponent implements OnInit {
       placeholder : helptext.vnc_port_placeholder,
       tooltip : helptext.vnc_port_tooltip,
       type : 'input',
-      inputType: 'number'
+      inputType: 'number',
+      required: true,
+      disabled: false
     },
     {
       name : 'wait',
@@ -266,7 +273,8 @@ export class DeviceEditComponent implements OnInit {
               public translate: TranslateService,
               protected loader: AppLoaderService,
               protected systemGeneralService: SystemGeneralService,
-              protected networkService: NetworkService) {}
+              protected networkService: NetworkService,
+              private core:CoreService) {}
 
 
   preInit() {
@@ -317,6 +325,8 @@ export class DeviceEditComponent implements OnInit {
       this.vmname = params['name'];
       this.route_success = ['vm', params['vmid'], 'devices', this.vmname];
     });
+
+    this.core.emit({name:"SysInfoRequest"});
 
     this.fieldSets = [
       {
@@ -378,8 +388,13 @@ export class DeviceEditComponent implements OnInit {
       }
       this.setgetValues(this.activeFormGroup,deviceInformation);
     });
-
-
+  this.aroute.params.subscribe(params => {
+      this.ws.call('vm.query',[[['id', '=', parseInt(params['vmid'] ,10)]]]).subscribe((res)=>{
+        if(res[0].status.state === "RUNNING") {
+          this.activeFormGroup.setErrors({ 'invalid': true });
+        }
+      })
+    });
 
     this.afterInit();
   }
@@ -431,6 +446,7 @@ export class DeviceEditComponent implements OnInit {
           this.router.navigate(new Array('/').concat(this.route_success));
         },
         (e_res) => {
+          this.error_reason = e_res.reason;
           this.loader.close();
           new EntityUtils().handleError(this, e_res);
         }
