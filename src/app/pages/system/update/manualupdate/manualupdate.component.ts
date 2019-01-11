@@ -74,9 +74,9 @@ export class ManualUpdateComponent {
     {
       type: 'checkbox',
       name: 'rebootAfterManualUpdate',
-      placeholder: T('Reboot After Updating'),
-      tooltip: T('Automatically reboots the system after the manual\
-                  update is applied.'),
+      placeholder: T('Reboot After Update'),
+      tooltip: T('Automatically reboot the system after the update\
+                  is applied.'),
       value: false
     }
   ];
