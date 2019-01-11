@@ -31,9 +31,9 @@ import helptext from '../../../helptext/jails/jails-add';
 })
 export class PluginAdvancedAddComponent implements OnInit {
 
-	protected addCall: string = 'jail.fetch';
+  protected addCall: string = 'jail.fetch';
   public route_goback: string[] = ['plugins', 'available'];
-	public route_success: string[] = ['plugins', 'installed'];
+  public route_success: string[] = ['plugins', 'installed'];
   protected route_conf: string[] = ['jails', 'configuration'];
 
   public formGroup: any;
@@ -41,7 +41,7 @@ export class PluginAdvancedAddComponent implements OnInit {
   public busy: Subscription;
 
   protected dialogRef: any;
-  protected formFileds: FieldConfig[];
+  protected formFields: FieldConfig[];
   public basicfieldConfig: FieldConfig[] = [
     {
       type: 'input',
@@ -49,29 +49,29 @@ export class PluginAdvancedAddComponent implements OnInit {
       placeholder: helptext.uuid_placeholder,
       tooltip: helptext.uuid_tooltip,
       required: true,
-      validation: [ regexValidator(/^[a-zA-Z0-9-_]+$/) ],
-			disabled: true,
+      validation: [regexValidator(/^[a-zA-Z0-9-_]+$/)],
+      disabled: true,
     },
     {
       type: 'checkbox',
       name: 'dhcp',
       placeholder: helptext.dhcp_placeholder,
-			tooltip: helptext.dhcp_tooltip,
-			value: true,
+      tooltip: helptext.dhcp_tooltip,
+      value: true,
     },
     {
       type: 'checkbox',
       name: 'vnet',
       placeholder: helptext.vnet_placeholder,
-			tooltip: helptext.vnet_tooltip,
-			value: true,
+      tooltip: helptext.vnet_tooltip,
+      value: true,
     },
     {
       type: 'checkbox',
       name: 'bpf',
       placeholder: helptext.bpf_placeholder,
-			tooltip: helptext.bpf_tooltip,
-			value: true,
+      tooltip: helptext.bpf_tooltip,
+      value: true,
     },
     {
       type: 'select',
@@ -99,13 +99,13 @@ export class PluginAdvancedAddComponent implements OnInit {
       name: 'ip4_addr',
       placeholder: helptext.ip4_addr_placeholder,
       tooltip: helptext.ip4_addr_tooltip,
-      validation : [ regexValidator(this.networkService.ipv4_regex) ],
+      validation: [regexValidator(this.networkService.ipv4_regex)],
       relation: [{
-      action: 'DISABLE',
-      when: [{
-        name: 'dhcp',
-        value: true,
-       }]
+        action: 'DISABLE',
+        when: [{
+          name: 'dhcp',
+          value: true,
+        }]
       }],
       class: 'inline',
       width: '50%',
@@ -138,7 +138,7 @@ export class PluginAdvancedAddComponent implements OnInit {
         when: [{
           name: 'dhcp',
           value: true,
-        },  {
+        }, {
           name: 'vnet',
           value: false,
         }]
@@ -176,7 +176,7 @@ export class PluginAdvancedAddComponent implements OnInit {
       name: 'ip6_addr',
       placeholder: helptext.ip6_addr_placeholder,
       tooltip: helptext.ip6_addr_tooltip,
-      validation : [ regexValidator(this.networkService.ipv6_regex) ],
+      validation: [regexValidator(this.networkService.ipv6_regex)],
       class: 'inline',
       width: '50%',
       relation: [{
@@ -315,14 +315,14 @@ export class PluginAdvancedAddComponent implements OnInit {
       placeholder: helptext.enforce_statfs_placeholder,
       tooltip: helptext.enforce_statfs_tooltip,
       options: [{
-          label: '0',
-          value: '0',
+        label: '0',
+        value: '0',
       }, {
-          label: '1',
-          value: '1',
+        label: '1',
+        value: '1',
       }, {
-          label: '2 (default)',
-          value: '2',
+        label: '2 (default)',
+        value: '2',
       }]
     },
     {
@@ -349,14 +349,14 @@ export class PluginAdvancedAddComponent implements OnInit {
       placeholder: helptext.sysvmsg_placeholder,
       tooltip: helptext.sysvmsg_tooltip,
       options: [{
-          label: 'Inherit',
-          value: 'inherit',
+        label: 'Inherit',
+        value: 'inherit',
       }, {
-          label: 'New',
-          value: 'new',
+        label: 'New',
+        value: 'new',
       }, {
-          label: 'Disable',
-          value: 'disable',
+        label: 'Disable',
+        value: 'disable',
       }]
     },
     {
@@ -365,14 +365,14 @@ export class PluginAdvancedAddComponent implements OnInit {
       placeholder: helptext.sysvsem_placeholder,
       tooltip: helptext.sysvsem_tooltip,
       options: [{
-          label: 'Inherit',
-          value: 'inherit',
+        label: 'Inherit',
+        value: 'inherit',
       }, {
-          label: 'New',
-          value: 'new',
+        label: 'New',
+        value: 'new',
       }, {
-          label: 'Disable',
-          value: 'disable',
+        label: 'Disable',
+        value: 'disable',
       }]
     },
     {
@@ -381,14 +381,14 @@ export class PluginAdvancedAddComponent implements OnInit {
       placeholder: helptext.sysvshm_placeholder,
       tooltip: helptext.sysvshm_tooltip,
       options: [{
-          label: 'Inherit',
-          value: 'inherit',
+        label: 'Inherit',
+        value: 'inherit',
       }, {
-          label: 'New',
-          value: 'new',
+        label: 'New',
+        value: 'new',
       }, {
-          label: 'Disable',
-          value: 'disable',
+        label: 'Disable',
+        value: 'disable',
       }]
     },
     {
@@ -500,10 +500,10 @@ export class PluginAdvancedAddComponent implements OnInit {
       name: 'exec_fib',
       placeholder: helptext.exec_fib_placeholder,
       tooltip: helptext.exec_fib_tooltip,
-//There is SETFIB(1) that is network related, and SETFIB(2) that
-//is system call related. As this tooltip is under the jail
-//networking section, I went with SETFIB(1) the network related
-//man page.
+      //There is SETFIB(1) that is network related, and SETFIB(2) that
+      //is system call related. As this tooltip is under the jail
+      //networking section, I went with SETFIB(1) the network related
+      //man page.
     },
     {
       type: 'checkbox',
@@ -686,138 +686,138 @@ export class PluginAdvancedAddComponent implements OnInit {
   ];
   public rctlConfig: FieldConfig[] = [
 
- //    {
- //      type: 'input',
- //      name: 'memoryuse',
- //      placeholder: helptext.memoryuse_placeholder,
- //      tooltip: helptext.memoryuse_tooltip,
- //    },
- //    {
- //      type: 'input',
- //      name: 'pcpu',
- //      placeholder: helptext.pcpu_placeholder,
- //      tooltip: helptext.pcpu_tooltip,
- //    },
- //    {
- //      type: 'checkbox',
- //      name: 'cpuset',
- //      placeholder: helptext.cpuset_placeholder,
- //      tooltip: helptext.cpuset_tooltip,
- //    },
- //    {
- //      type: 'checkbox',
- //      name: 'rlimits',
- //      placeholder: helptext.rlimits_placeholder,
- //      tooltip: helptext.rlimits_tooltip,
- //    },
- //    {
- //      type: 'checkbox',
- //      name: 'memorylocked',
- //      placeholder: helptext.memorylocked_placeholder,
- //      tooltip: helptext.memorylocked_tooltip,
- //    },
- //    {
- //      type: 'checkbox',
- //      name: 'vmemoryuse',
- //      placeholder: helptext.vmemoryuse_placeholder,
- //      tooltip: helptext.vmemoryuse_tooltip,
- //    },
- //    {
- //      type: 'checkbox',
- //      name: 'maxproc',
- //      placeholder: helptext.maxproc_placeholder,
- //      tooltip: helptext.maxproc_tooltip,
- //    },
- //    {
- //      type: 'checkbox',
- //      name: 'cputime',
- //      placeholder: helptext.cputime_placeholder,
- //      tooltip: helptext.cputime_tooltip,
- //    },
- //    {
- //      type: 'checkbox',
- //      name: 'datasize',
- //      placeholder: helptext.datasize_placeholder,
- //      tooltip: helptext.datasize_tooltip,
- //    },
- //    {
- //      type: 'checkbox',
- //      name: 'stacksize',
- //      placeholder: helptext.stacksize_placeholder,
- //      tooltip: helptext.stacksize_tooltip,
- //    },
- //    {
- //      type: 'checkbox',
- //      name: 'coredumpsize',
- //      placeholder: helptext.coredumpsize_placeholder,
- //      tooltip: helptext.coredumpsize_tooltip,
- //    },
- //    {
- //      type: 'checkbox',
- //      name: 'openfiles',
- //      placeholder: helptext.openfiles_placeholder,
- //      tooltip: helptext.openfiles_tooltip,
- //    },
- //    {
- //      type: 'checkbox',
- //      name: 'pseudoterminals',
- //      placeholder: helptext.pseudoterminals_placeholder,
- //      tooltip: helptext.pseudoterminals_tooltip,
- //    },
- //    {
- //      type: 'checkbox',
- //      name: 'swapuse',
- //      placeholder: helptext.swapuse_placeholder,
- //      tooltip: helptext.swapuse_tooltip,
- //    },
- //    {
- //      type: 'checkbox',
- //      name: 'nthr',
- //      placeholder: helptext.nthr_placeholder,
- //      tooltip: helptext.nthr_tooltip,
- //    },
- //    {
- //      type: 'checkbox',
- //      name: 'msgqqueued',
- //      placeholder: helptext.msgqqueued_placeholder,
- //      tooltip: helptext.msgqqueued_tooltip,
- //    },
- //    {
- //      type: 'checkbox',
- //      name: 'msgqsize',
- //      placeholder: helptext.msgqsize_placeholder,
- //      tooltip: helptext.msgqsize_tooltip,
- //    },
- //    {
- //      type: 'checkbox',
- //      name: 'nmsgq',
- //      placeholder: helptext.nmsgq_placeholder,
- //      tooltip: helptext.nmsgq_tooltip,
- //    },
- //    {
- //      type: 'checkbox',
- //      name: 'nsemop',
- //      placeholder: helptext.nsemop_placeholder,
- //      tooltip: helptext.nsemop_tooltip,
- //    },
- //    {
- //      type: 'checkbox',
- //      name: 'nshm',
- //      placeholder: helptext.nshm_placeholder,
- //      tooltip: helptext.nshm_tooltip,
- //    },
- //    {
- //      type: 'checkbox',
- //      name: 'shmsize',
- //      placeholder: helptext.shmsize_placeholder,
- //      tooltip: helptext.shmsize_tooltip,
- //    },
- //    {
- //      type: 'checkbox',
- //      name: 'wallclock',
- //      placeholder: helptext.wallclock_placeholder,
- //      tooltip: helptext.wallclock_tooltip,
- //    },
+    //    {
+    //      type: 'input',
+    //      name: 'memoryuse',
+    //      placeholder: helptext.memoryuse_placeholder,
+    //      tooltip: helptext.memoryuse_tooltip,
+    //    },
+    //    {
+    //      type: 'input',
+    //      name: 'pcpu',
+    //      placeholder: helptext.pcpu_placeholder,
+    //      tooltip: helptext.pcpu_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'cpuset',
+    //      placeholder: helptext.cpuset_placeholder,
+    //      tooltip: helptext.cpuset_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'rlimits',
+    //      placeholder: helptext.rlimits_placeholder,
+    //      tooltip: helptext.rlimits_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'memorylocked',
+    //      placeholder: helptext.memorylocked_placeholder,
+    //      tooltip: helptext.memorylocked_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'vmemoryuse',
+    //      placeholder: helptext.vmemoryuse_placeholder,
+    //      tooltip: helptext.vmemoryuse_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'maxproc',
+    //      placeholder: helptext.maxproc_placeholder,
+    //      tooltip: helptext.maxproc_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'cputime',
+    //      placeholder: helptext.cputime_placeholder,
+    //      tooltip: helptext.cputime_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'datasize',
+    //      placeholder: helptext.datasize_placeholder,
+    //      tooltip: helptext.datasize_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'stacksize',
+    //      placeholder: helptext.stacksize_placeholder,
+    //      tooltip: helptext.stacksize_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'coredumpsize',
+    //      placeholder: helptext.coredumpsize_placeholder,
+    //      tooltip: helptext.coredumpsize_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'openfiles',
+    //      placeholder: helptext.openfiles_placeholder,
+    //      tooltip: helptext.openfiles_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'pseudoterminals',
+    //      placeholder: helptext.pseudoterminals_placeholder,
+    //      tooltip: helptext.pseudoterminals_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'swapuse',
+    //      placeholder: helptext.swapuse_placeholder,
+    //      tooltip: helptext.swapuse_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'nthr',
+    //      placeholder: helptext.nthr_placeholder,
+    //      tooltip: helptext.nthr_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'msgqqueued',
+    //      placeholder: helptext.msgqqueued_placeholder,
+    //      tooltip: helptext.msgqqueued_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'msgqsize',
+    //      placeholder: helptext.msgqsize_placeholder,
+    //      tooltip: helptext.msgqsize_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'nmsgq',
+    //      placeholder: helptext.nmsgq_placeholder,
+    //      tooltip: helptext.nmsgq_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'nsemop',
+    //      placeholder: helptext.nsemop_placeholder,
+    //      tooltip: helptext.nsemop_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'nshm',
+    //      placeholder: helptext.nshm_placeholder,
+    //      tooltip: helptext.nshm_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'shmsize',
+    //      placeholder: helptext.shmsize_placeholder,
+    //      tooltip: helptext.shmsize_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'wallclock',
+    //      placeholder: helptext.wallclock_placeholder,
+    //      tooltip: helptext.wallclock_tooltip,
+    //    },
   ];
 
   public step: any = 0;
@@ -886,8 +886,8 @@ export class PluginAdvancedAddComponent implements OnInit {
   protected ip4_netmaskField: any;
   protected ip6_interfaceField: any;
   protected ip6_prefixField: any;
-  protected vnet_default_interfaceField:any;
-	protected plugin_name: any;
+  protected vnet_default_interfaceField: any;
+  protected plugin_name: any;
 
   constructor(protected router: Router,
     protected jailService: JailService,
@@ -898,8 +898,8 @@ export class PluginAdvancedAddComponent implements OnInit {
     public translate: TranslateService,
     protected dialog: MatDialog,
     protected dialogService: DialogService,
-		protected networkService: NetworkService,
-		protected aroute: ActivatedRoute) {}
+    protected networkService: NetworkService,
+    protected aroute: ActivatedRoute) { }
 
   updateInterfaceValidation() {
     let dhcp_ctrl = this.formGroup.controls['dhcp'];
@@ -929,68 +929,63 @@ export class PluginAdvancedAddComponent implements OnInit {
   }
 
   ngOnInit() {
-		this.aroute.params.subscribe(params => {
-			this.plugin_name = params['pk'];
-			const nameField = _.find(this.basicfieldConfig, {'name': 'uuid'});
-			nameField.value = this.plugin_name;
+    this.aroute.params.subscribe(params => {
+      this.plugin_name = params['pk'];
+      const nameField = _.find(this.basicfieldConfig, { 'name': 'uuid' });
+      nameField.value = this.plugin_name;
     });
-    this.ip4_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip4_interface'});
-    this.ip4_netmaskField = _.find(this.basicfieldConfig, {'name': 'ip4_netmask'});
-    this.ip6_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip6_interface'});
-    this.ip6_prefixField = _.find(this.basicfieldConfig, {'name': 'ip6_prefix'});
-    this.vnet_default_interfaceField = _.find(this.networkfieldConfig, {'name': 'vnet_default_interface'});
+    this.ip4_interfaceField = _.find(this.basicfieldConfig, { 'name': 'ip4_interface' });
+    this.ip4_netmaskField = _.find(this.basicfieldConfig, { 'name': 'ip4_netmask' });
+    this.ip6_interfaceField = _.find(this.basicfieldConfig, { 'name': 'ip6_interface' });
+    this.ip6_prefixField = _.find(this.basicfieldConfig, { 'name': 'ip6_prefix' });
+    this.vnet_default_interfaceField = _.find(this.networkfieldConfig, { 'name': 'vnet_default_interface' });
 
     // get interface options
     this.ws.call('interfaces.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
-      (res)=>{
+      (res) => {
         for (let i in res) {
-          this.ip4_interfaceField.options.push({ label: res[i].name, value: res[i].name});
-          this.ip6_interfaceField.options.push({ label: res[i].name, value: res[i].name});
-          this.vnet_default_interfaceField.options.push({ label: res[i].name, value: res[i].name});
+          this.ip4_interfaceField.options.push({ label: res[i].name, value: res[i].name });
+          this.ip6_interfaceField.options.push({ label: res[i].name, value: res[i].name });
+          this.vnet_default_interfaceField.options.push({ label: res[i].name, value: res[i].name });
         }
       },
-      (res)=>{
+      (res) => {
         new EntityUtils().handleWSError(this, res, this.dialogService);
       }
     );
 
-    this.formFileds = _.concat(this.basicfieldConfig, this.jailfieldConfig, this.networkfieldConfig, this.customConfig, this.rctlConfig);
-    this.formGroup = this.entityFormService.createFormGroup(this.formFileds);
+    this.formFields = _.concat(this.basicfieldConfig, this.jailfieldConfig, this.networkfieldConfig, this.customConfig, this.rctlConfig);
+    this.formGroup = this.entityFormService.createFormGroup(this.formFields);
 
-    for (const i in this.formFileds) {
-      const config = this.formFileds[i];
+    for (const i in this.formFields) {
+      const config = this.formFields[i];
       if (config.relation.length > 0) {
         this.setRelation(config);
       }
     }
 
     this.formGroup.controls['dhcp'].valueChanges.subscribe((res) => {
-			console.log(res);
-			
       if (res) {
         this.formGroup.controls['vnet'].setValue(true);
-        _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = true;
         this.formGroup.controls['bpf'].setValue(true);
-        _.find(this.basicfieldConfig, { 'name': 'bpf' }).required = true;
-      } else {
-        _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = false;
-        _.find(this.basicfieldConfig, { 'name': 'bpf' }).required = false;
       }
+      _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = res;
+      _.find(this.basicfieldConfig, { 'name': 'bpf' }).required = res;
     });
     this.formGroup.controls['vnet'].valueChanges.subscribe((res) => {
       if (res) {
-        if (_.find(this.ip4_interfaceField.options, { 'label': 'vnet0'}) == undefined) {
-          this.ip4_interfaceField.options.push({ label: 'vnet0', value: 'vnet0'});
+        if (_.find(this.ip4_interfaceField.options, { 'label': 'vnet0' }) == undefined) {
+          this.ip4_interfaceField.options.push({ label: 'vnet0', value: 'vnet0' });
         }
-        if (_.find(this.ip6_interfaceField.options, { 'label': 'vnet0'}) == undefined) {
-          this.ip6_interfaceField.options.push({ label: 'vnet0', value: 'vnet0'});
+        if (_.find(this.ip6_interfaceField.options, { 'label': 'vnet0' }) == undefined) {
+          this.ip6_interfaceField.options.push({ label: 'vnet0', value: 'vnet0' });
         }
       } else {
-        if (_.find(this.ip4_interfaceField.options, { 'label': 'vnet0'}) != undefined) {
-          this.ip4_interfaceField.options.pop({ label: 'vnet0', value: 'vnet0'});
+        if (_.find(this.ip4_interfaceField.options, { 'label': 'vnet0' }) != undefined) {
+          this.ip4_interfaceField.options.pop({ label: 'vnet0', value: 'vnet0' });
         }
-        if (_.find(this.ip6_interfaceField.options, { 'label': 'vnet0'}) != undefined) {
-          this.ip6_interfaceField.options.pop({ label: 'vnet0', value: 'vnet0'});
+        if (_.find(this.ip6_interfaceField.options, { 'label': 'vnet0' }) != undefined) {
+          this.ip6_interfaceField.options.pop({ label: 'vnet0', value: 'vnet0' });
         }
       }
 
@@ -1033,58 +1028,58 @@ export class PluginAdvancedAddComponent implements OnInit {
         ["host_hostuuid", "=", "default"]
       ]
     ]).subscribe(
-    (res) => {
-      for (let i in res[0]) {
-        if (this.formGroup.controls[i]) {
-          if ((i == 'ip4_addr' || i == 'ip6_addr') && res[0][i] == 'none') {
-            this.formGroup.controls[i].setValue('');
-            continue;
-          }
-          if (_.indexOf(this.TFfields, i) > -1) {
-            if (res[0][i] == '1') {
-              res[0][i] = true;
-            } else {
-              res[0][i] = false;
+      (res) => {
+        for (let i in res[0]) {
+          if (this.formGroup.controls[i]) {
+            if ((i == 'ip4_addr' || i == 'ip6_addr') && res[0][i] == 'none') {
+              this.formGroup.controls[i].setValue('');
+              continue;
+            }
+            if (_.indexOf(this.TFfields, i) > -1) {
+              if (res[0][i] == '1') {
+                res[0][i] = true;
+              } else {
+                res[0][i] = false;
+              }
+            }
+            if (_.indexOf(this.OFfields, i) > -1) {
+              if (res[0][i] == 'on') {
+                res[0][i] = true;
+              } else {
+                res[0][i] = false;
+              }
+            }
+            if (_.indexOf(this.YNfields, i) > -1) {
+              if (res[0][i] == 'yes') {
+                res[0][i] = true;
+              } else {
+                res[0][i] = false;
+              }
+            }
+            if (i !== 'dhcp' && i !== 'vnet' && i !== 'bpf') {
+              this.formGroup.controls[i].setValue(res[0][i]);
             }
           }
-          if (_.indexOf(this.OFfields, i) > -1) {
-            if (res[0][i] == 'on') {
-              res[0][i] = true;
-            } else {
-              res[0][i] = false;
-            }
-          }
-          if (_.indexOf(this.YNfields, i) > -1) {
-            if (res[0][i] == 'yes') {
-              res[0][i] = true;
-            } else {
-              res[0][i] = false;
-            }
-					}
-					if (i !== 'dhcp' && i !== 'vnet' && i !== 'bpf') {
-						this.formGroup.controls[i].setValue(res[0][i]);
-					}
         }
-      }
-    },
-    (res) => {
-      new EntityUtils().handleError(this, res);
-    });
+      },
+      (res) => {
+        new EntityUtils().handleError(this, res);
+      });
   }
 
   setRelation(config: FieldConfig) {
     const activations =
-        this.fieldRelationService.findActivationRelation(config.relation);
+      this.fieldRelationService.findActivationRelation(config.relation);
     if (activations) {
       const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
-          activations, this.formGroup);
+        activations, this.formGroup);
       this.setDisabled(config.name, tobeDisabled);
 
       this.fieldRelationService.getRelatedFormControls(config, this.formGroup)
-          .forEach(control => {
-            control.valueChanges.subscribe(
-                () => { this.relationUpdate(config, activations); });
-          });
+        .forEach(control => {
+          control.valueChanges.subscribe(
+            () => { this.relationUpdate(config, activations); });
+        });
     }
   }
 
@@ -1095,7 +1090,7 @@ export class PluginAdvancedAddComponent implements OnInit {
       return;
     }
 
-    this.formFileds = this.formFileds.map((item) => {
+    this.formFields = this.formFields.map((item) => {
       if (item.name === name) {
         item.disabled = disable;
       }
@@ -1105,7 +1100,7 @@ export class PluginAdvancedAddComponent implements OnInit {
 
   relationUpdate(config: FieldConfig, activations: any) {
     const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
-        activations, this.formGroup);
+      activations, this.formGroup);
     this.setDisabled(config.name, tobeDisabled);
   }
 
@@ -1164,18 +1159,18 @@ export class PluginAdvancedAddComponent implements OnInit {
             delete value[i];
           } else if (_.indexOf(this.OFfields, i) > -1) {
             if (value[i]) {
-                property.push(i + '=on');
-              } else {
-                property.push(i + '=off');
-              }
-              delete value[i];
+              property.push(i + '=on');
+            } else {
+              property.push(i + '=off');
+            }
+            delete value[i];
           } else if (_.indexOf(this.YNfields, i) > -1) {
             if (value[i]) {
-                property.push(i + '=yes');
-              } else {
-                property.push(i + '=no');
-              }
-              delete value[i];
+              property.push(i + '=yes');
+            } else {
+              property.push(i + '=no');
+            }
+            delete value[i];
           } else {
             if (i != 'uuid' && i != 'release') {
               property.push(i + '=' + value[i]);
@@ -1185,21 +1180,20 @@ export class PluginAdvancedAddComponent implements OnInit {
         }
       }
     }
-		value['props'] = property;
-		value['name'] = this.plugin_name;
-		console.log(value);
+    value['props'] = property;
+    value['name'] = this.plugin_name;
 
-		// only for plugin bru-server
+    // only for plugin bru-server
     if (this.plugin_name == 'bru-server') {
       value['accept'] = true;
     }
-		
-		this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Install") }, disableClose: true });
+
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Install") }, disableClose: true });
     this.dialogRef.componentInstance.setDescription(T("Installing plugin..."));
     this.dialogRef.componentInstance.setCall(this.addCall, [value]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
-      this.dialogRef.componentInstance.setTitle(T("Plugin installed successfully"));
+      this.dialogRef.componentInstance.setTitle(T("Plugin Installed Successfully"));
       let install_notes = '<p><b>Install Notes:</b></p>';
       for (let i in res.result.install_notes) {
         if (res.result.install_notes[i] == "") {
@@ -1228,5 +1222,5 @@ export class PluginAdvancedAddComponent implements OnInit {
   prevStep() {
     this.step--;
   }
-  
+
 }
