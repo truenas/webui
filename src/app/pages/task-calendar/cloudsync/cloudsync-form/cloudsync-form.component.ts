@@ -279,6 +279,18 @@ export class CloudsyncFormComponent implements OnInit {
     placeholder: helptext.enabled_placeholder,
     tooltip: helptext.enabled_tooltip,
     value: true,
+  },
+  {
+    type: 'input',
+    name: 'bwlimit',
+    placeholder: helptext.bwlimit_placeholder,
+    tooltip: helptext.bwlimit_tooltip,
+  },
+  {
+    type: 'input',
+    name: 'exclude',
+    placeholder: helptext.exclude_placeholder,
+    tooltip: helptext.exclude_tooltip,
   }];
 
   protected month_field: any;
@@ -349,15 +361,15 @@ export class CloudsyncFormComponent implements OnInit {
     const children = [];
     let data = {
       "credentials": credential,
-      "encryption": null,
-      "filename_encryption": null,
-      "encryption_password": null,
-      "encryption_salt": null,
+      "encryption": false,
+      "filename_encryption": false,
+      "encryption_password": "",
+      "encryption_salt": "",
       "attributes": {
         "bucket": bucket,
         "folder": node.data.name,
       },
-      "args": null
+      "args": ""
     }
     if (bucket == '') {
       delete data.attributes.bucket;
@@ -534,6 +546,11 @@ export class CloudsyncFormComponent implements OnInit {
       this.folder_field.customTemplateStringOptions.explorer.ngOnInit();
     });
 
+    this.formGroup.controls['bwlimit'].valueChanges.subscribe((res)=> {
+      _.find(this.fieldConfig, {name: 'bwlimit'}).hasErrors = false;
+      _.find(this.fieldConfig, {name: 'bwlimit'}).errors = null;
+      this.formGroup.controls['bwlimit'].errors = null;
+    });
     // get cloud credentials
     this.ws.call(this.cloudcredential_query, {}).subscribe(res => {
       res.forEach((item) => {
@@ -596,9 +613,54 @@ export class CloudsyncFormComponent implements OnInit {
                           data.schedule.dom + " " +
                           data.schedule.month + " " +
                           data.schedule.dow;
+
+    if (data.bwlimit) {
+      let bwlimit_str = "";
+      for (let i = 0; i < data.bwlimit.length; i++) {
+        if (data.bwlimit[i].bandwidth != null) {
+          const bw = (<any>window).filesize(data.bwlimit[i].bandwidth, {output: "object"});
+          const sub_bwlimit = data.bwlimit[i].time + "," + bw.value + bw.suffix;
+          if (bwlimit_str != "") {
+            bwlimit_str += " " + sub_bwlimit;
+          } else {
+            bwlimit_str += sub_bwlimit;
+          }
+        }
+      }
+      data.bwlimit = bwlimit_str;
+    }
+
+    if (data.exclude) {
+      data.exclude = _.join(data.exclude, ' ');
+    }
+
     return data;
   }
 
+  handleBwlimit(bwlimit: any): Array<any> {
+    const bwlimtArr = [];
+    bwlimit = bwlimit.trim().split(' ');
+
+    for (let i = 0; i < bwlimit.length; i++) {
+      const sublimitArr = bwlimit[i].split(',');
+      if (sublimitArr[1] && sublimitArr[1] != 'off') {
+        if (this.cloudcredentialService.getByte(sublimitArr[1]) == -1) {
+          _.find(this.fieldConfig, {name: 'bwlimit'}).hasErrors = true;
+          _.find(this.fieldConfig, {name: 'bwlimit'}).errors = 'Invalid bandwidth ' + sublimitArr[1];
+          this.formGroup.controls['bwlimit'].setErrors('Invalid bandwidth ' + sublimitArr[1]);
+        } else {
+          sublimitArr[1] = this.cloudcredentialService.getByte(sublimitArr[1]);
+        }
+      }
+      const subLimit = {
+        "time": sublimitArr[0],
+        "bandwidth": sublimitArr[1] == 'off' ? null : sublimitArr[1],
+      }
+
+      bwlimtArr.push(subLimit);
+    }
+    return bwlimtArr;
+  }
   onSubmit(event: Event) {
     event.preventDefault();
     event.stopPropagation();
@@ -639,10 +701,22 @@ export class CloudsyncFormComponent implements OnInit {
 
     value['schedule'] = schedule;
 
+    if (value.bwlimit) {
+      value.bwlimit = this.handleBwlimit(value.bwlimit);
+    }
+
+    if (value.exclude) {
+      value.exclude = value.exclude.trim().split(" ");
+    }
+
+    if (!this.formGroup.valid) {
+      return;
+    }
+
     if (value['direction'] == 'PULL') {
       value['snapshot'] = false;
     }
-  
+
     if (!this.pk) {
       this.loader.open();
       this.ws.call(this.addCall, [value]).subscribe((res)=>{
@@ -650,7 +724,6 @@ export class CloudsyncFormComponent implements OnInit {
         this.router.navigate(new Array('/').concat(this.route_success));
       }, (err) => {
         this.loader.close();
-        // this.dialog.errorReport('Error', err.reason, err.trace.formatted);
         new EntityUtils().handleWSError(this, err);
       });
     } else {
@@ -662,7 +735,6 @@ export class CloudsyncFormComponent implements OnInit {
         },
         (err)=>{
         this.loader.close();
-        // this.dialog.errorReport('Error', err.reason, err.trace.formatted);
         new EntityUtils().handleWSError(this, err);
         }
       );
