@@ -190,7 +190,8 @@ export class CertificateAddComponent {
       name : 'privatekey',
       placeholder : T('Private Key'),
       tooltip : T('Paste the private key associated with the\
-                   Certificate when available.'),
+                   Certificate when available. Please provide\
+                   a key with size greater than or equal to 1024 bits'),
       isHidden: true,
     },
     {
