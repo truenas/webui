@@ -33,4 +33,7 @@ dataset_permissions_mp_recursive_placeholder: T('Apply permissions recursively')
 dataset_permissions_mp_recursive_tooltip: T('Apply permissions recursively to all directories\
  and files within the current dataset'),
 
+dataset_permissions_dialog_warning: T('Warning'),
+dataset_permissions_dialog_warning_message: T('Changing dataset permission mode can severely\
+ affect existing permissions, particularly when going from Windows to Unix permissions.')
 }
