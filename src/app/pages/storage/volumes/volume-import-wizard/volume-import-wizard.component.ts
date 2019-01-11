@@ -274,7 +274,6 @@ export class VolumeImportWizardComponent {
     if (value.encrypted) {
       const formData: FormData = new FormData();
       let params = {"guid": value.guid,
-                    "devices": value.devices,
                     "passphrase": value.passphrase ? value.passphrase: null };
       formData.append('data', JSON.stringify({
         "method": "pool.import_pool",
@@ -293,16 +292,18 @@ export class VolumeImportWizardComponent {
         this.errorReport(res);
       });
     } else {
-      this.loader.open();
-      this.ws.call('pool.import_pool', [{'guid':value.guid}]).subscribe((res) => {
-        this.loader.close();
+      let dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Importing Pool") }, disableClose: true});
+      dialogRef.componentInstance.setDescription(T("Importing Pool..."));
+      dialogRef.componentInstance.setCall('pool.import_pool', [{'guid':value.guid}]);
+      dialogRef.componentInstance.submit();
+      dialogRef.componentInstance.success.subscribe((res) => {
+        dialogRef.close(false);
         this.router.navigate(new Array('/').concat(
           this.route_success));
-      }, (res) => {
-        this.loader.close();
+      });
+      dialogRef.componentInstance.failure.subscribe((res) => {
+        dialogRef.close(false);
         this.errorReport(res);
-      }, () => {
-        this.loader.close();
       });
     }
   }

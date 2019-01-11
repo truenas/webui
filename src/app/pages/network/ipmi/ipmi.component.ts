@@ -12,7 +12,7 @@ import helptext from '../../../helptext/network/ipmi/ipmi';
 @Component({
   selector : 'app-ipmi',
   template : `
-  <mat-card>
+  <mat-card class="ipmi-card">
   <mat-select #selectedChannel name="channel" placeholder="Channel" (change)="switchChannel()" [(ngModel)]="selectedValue">
     <mat-option *ngFor="let channel of channels" [value]="channel.value">
       Channel {{channel.value}}
@@ -21,6 +21,7 @@ import helptext from '../../../helptext/network/ipmi/ipmi';
   </mat-card>
   <entity-form [conf]="this"></entity-form>
   `,
+  styleUrls: ['./ipmi.component.css'],
   providers : [ TooltipsService ],
 })
 export class IPMIComponent {

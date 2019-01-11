@@ -55,6 +55,15 @@ transfer_mode_tooltip: T('<i>SYNC</i> makes files on the destination system iden
 
 transfer_mode_validation : [ Validators.required ],
 
+snapshot_placeholder: T('Take Snapshot'),
+snapshot_tooltip: T('Create a snapshot of the dataset before pushing data.'),
+
+pre_script_placeholder: T('Pre-script'),
+pre_script_tooltip: T('Script to execute before running sync.'),
+
+post_script_placeholder: T('Post-script'),
+post_script_tooltip: T('Script to execute after running sync.'),
+
 remote_encryption_placeholder: T('Remote Encryption'),
 remote_encryption_tooltip: T('Set to encrypt files before transfer and store the\
  encrypted files on the remote system.\
@@ -81,6 +90,14 @@ args_placeholder: T('Auxiliary Arguments'),
 cloudsync_picker_placeholder: T('Schedule the Cloud Sync Task'),
 cloudsync_picker_tooltip: T('Select a schedule preset or choose <i>Custom</i> to open\
  the advanced scheduler.'),
+
+follow_symlinks_placeholder: T('Follow Symlinks'),
+follow_symlinks_tooltip: T('Follow symlinks and copy the items to which they link.'),
+
+transfers_placeholder: T('Transfers'),
+transfers_tooltip: T(' The number of file transfers to run in parallel. It can\
+ sometimes be useful to set this to a smaller number if the remote is giving a lot of\
+ timeouts, or a larger number if there is high bandwidth and a fast remote.'),
 
 enabled_placeholder: T('Enabled'),
 enabled_tooltip: T('Enable this Cloud Sync Task. Unset to disable this Cloud\

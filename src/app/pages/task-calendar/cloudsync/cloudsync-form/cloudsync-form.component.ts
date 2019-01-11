@@ -159,6 +159,38 @@ export class CloudsyncFormComponent implements OnInit {
   },
   {
     type: 'checkbox',
+    name: 'snapshot',
+    placeholder: helptext.snapshot_placeholder,
+    tooltip: helptext.snapshot_tooltip,
+    value: false,
+    isHidden: false,
+    disabled: false,
+    relation: [
+      {
+        action: 'HIDE',
+        when: [{
+          name: 'direction',
+          value: 'PULL',
+        }]
+      }
+    ],
+  },
+  {
+    type: 'textarea',
+    name: 'pre_script',
+    placeholder: helptext.pre_script_placeholder,
+    tooltip: helptext.pre_script_tooltip,
+    value: '',
+  },
+  {
+    type: 'textarea',
+    name: 'post_script',
+    placeholder: helptext.post_script_placeholder,
+    tooltip: helptext.post_script_tooltip,
+    value: '',
+  },
+  {
+    type: 'checkbox',
     name: 'encryption',
     placeholder: helptext.remote_encryption_placeholder,
     tooltip: helptext.remote_encryption_tooltip,
@@ -226,6 +258,20 @@ export class CloudsyncFormComponent implements OnInit {
     placeholder: helptext.cloudsync_picker_placeholder,
     tooltip: helptext.cloudsync_picker_tooltip,
     required: true
+  },
+  {
+    type: 'input',
+    inputType: 'number',
+    name: 'transfers',
+    placeholder: helptext.transfers_placeholder,
+    tooltip: helptext.transfers_tooltip,
+    value: null,
+  },
+  {
+    type: 'checkbox',
+    name: 'follow_symlinks',
+    placeholder: helptext.follow_symlinks_placeholder,
+    tooltip: helptext.follow_symlinks_tooltip,
   },
   {
     type: 'checkbox',
@@ -665,6 +711,10 @@ export class CloudsyncFormComponent implements OnInit {
 
     if (!this.formGroup.valid) {
       return;
+    }
+
+    if (value['direction'] == 'PULL') {
+      value['snapshot'] = false;
     }
 
     if (!this.pk) {
