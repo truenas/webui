@@ -1,7 +1,6 @@
-import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
-import {ActivatedRoute, Router, RouterModule} from '@angular/router';
+import {ApplicationRef, Component, Injector} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs/Subscription';
 import {RestService, SystemGeneralService, WebSocketService} from '../../../services/';
 import {FieldConfig} from '../../common/entity/entity-form/models/field-config.interface';
 import {  DialogService } from '../../../services/';
@@ -82,10 +81,8 @@ export class ActiveDirectoryComponent {
       tooltip : T('Enter the administrator account password.'),
       inputType : 'password',
       togglePw: true,
-      required: true,
-      validation : [ Validators.required ],
       disabled: false,
-      isHidden:true
+      isHidden:false
     },
     {
       type : 'input',
@@ -132,7 +129,9 @@ export class ActiveDirectoryComponent {
                  Import the certificate on this system with the\
                  <a href="%%docurl%%/system.html%%webversion%%#certificates" target="_blank">Certificates</a>\
                  menu.'),
-      options : []
+      options : [
+        {label : '---', value : ""},
+      ]
     },
     {
       type : 'checkbox',

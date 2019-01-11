@@ -36,7 +36,7 @@ xpaths = {
           'submenuGroup': '//*[@id="1-0"]',
           'newGroupName': '//*[@id="bsdgrp_group"]/mat-input-container/div/div[1]/div/input',
           'fabTrigger': '//*[@id="myFab"]/div/smd-fab-trigger/button',
-          'fabAction': '//*[@id="add_action_button"]/span/mat-icon',
+          'fabAction': '//*[@id="add_action_button"]',
           'saveButton': '//*[@id="save_button"]',
           'permitsudoCheckbox': '//*[@id="bsdgrp_sudo"]/mat-checkbox/label/div'
         }
@@ -80,11 +80,6 @@ class create_group_test(unittest.TestCase):
             # scroll down to find hover tab
             driver.find_element_by_tag_name('html').send_keys(Keys.END)
             time.sleep(2)
-            # Perform hover to show menu
-            hover_element = driver.find_element_by_xpath(xpaths['fabTrigger'])
-            hover = ActionChains(driver).move_to_element(hover_element)
-            hover.perform()
-            time.sleep(1)
             # Click create new group option
             driver.find_element_by_xpath(xpaths['fabAction']).click()
             # Enter New Groupname
@@ -111,10 +106,6 @@ class create_group_test(unittest.TestCase):
             time.sleep(1)
             # Click Group submenu
             driver.find_element_by_xpath(xpaths['submenuGroup']).click()
-            # Perform hover to show menu
-            hover_element = driver.find_element_by_xpath(xpaths['fabTrigger'])
-            hover = ActionChains(driver).move_to_element(hover_element)
-            hover.perform()
             time.sleep(1)
             # Click create new group option
             driver.find_element_by_xpath(xpaths['fabAction']).click()
@@ -146,11 +137,6 @@ class create_group_test(unittest.TestCase):
             # scroll down to find hover tab
             driver.find_element_by_tag_name('html').send_keys(Keys.END)
             time.sleep(2)
-            # Perform hover to show menu
-            hover_element = driver.find_element_by_xpath(xpaths['fabTrigger'])
-            hover = ActionChains(driver).move_to_element(hover_element)
-            hover.perform()
-            time.sleep(1)
             # Click create new group option
             driver.find_element_by_xpath(xpaths['fabAction']).click()
             # Enter New Groupname

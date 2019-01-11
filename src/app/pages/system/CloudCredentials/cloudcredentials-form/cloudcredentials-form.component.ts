@@ -149,6 +149,38 @@ export class CloudCredentialsFormComponent {
         }
       ]
     },
+    {
+      type: 'checkbox',
+      name: 'skip_region-S3',
+      placeholder: T('Skip Region Autodetect'),
+      // tooltip: T(''),
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'S3',
+           }]
+        }
+      ]
+    },
+    {
+      type: 'checkbox',
+      name: 'signatures_v2-S3',
+      placeholder: T('Use V2 Signatures'),
+      // tooltip: T(''),
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'S3',
+           }]
+        }
+      ]
+    },
     // backblaze b2
     {
       type: 'input',
