@@ -250,17 +250,14 @@ export class VolumeStatusComponent implements OnInit {
         ).subscribe((res) => {
           if (res) {
             this.loader.open();
-            let value = { label: row.path };
-            this.rest.post('storage/volume/' + this.pk + '/remove/', {
-              body: JSON.stringify(value)
-            }).subscribe(
+            this.ws.call('pool.remove', [this.pk, {label: row.guid}]).subscribe(
               (res) => {
                 this.getData();
                 this.loader.close();
               },
-              (res) => {
+              (err) => {
                 this.loader.close();
-                this.dialogService.errorReport("Error", res.error.error_message, res.error.traceback);
+                new EntityUtils().handleWSError(this, err, this.dialogService);
               }
             )
           };
