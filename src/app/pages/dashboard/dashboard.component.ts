@@ -50,7 +50,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
   }
 
   init(){
-    console.log("******** Dashboard Initializing... ********");
+    //console.log("******** Dashboard Initializing... ********");
 
     this.core.register({observerClass:this,eventName:"PoolData"}).subscribe((evt:CoreEvent) => {
       this.setPoolData(evt);
@@ -98,7 +98,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
         is_upgraded:evt.data[i].is_upgraded,
         mountpoint:evt.data[i].mountpoint,
         name:evt.data[i].name,
-        status:evt.data[i].status,
+        status:evt.data[i].status, // RETURNS HEALTHY, LOCKED, UNKNOWN, DEGRADED, FAULTED, OFFLINE, REMOVED
         used:evt.data[i].used,
         used_pct:evt.data[i].used_pct,
         vol_encrypt:evt.data[i].vol_encrypted,
