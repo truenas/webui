@@ -275,8 +275,6 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   }
 
   checkVolumeHealth(){
-    // TESTING
-    //this.volumeData.status = "OFFLINE";
     switch(this.volumeData.status){
       case "HEALTHY":
       case "LOCKED":
