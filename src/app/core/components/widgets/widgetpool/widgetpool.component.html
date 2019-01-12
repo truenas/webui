@@ -15,16 +15,25 @@
         </mat-toolbar-row>-->
       <mat-card-content fxLayout="column" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-around center" fxFlex="100">
         <!-- SUMMARY -->
-        <div class="card-bg-wrapper" fxFlex.gt-xs="45" fxFlex.xs="100">
+        <div fxFlex.gt-xs="45" fxFlex.xs="100" class="card-bg-wrapper {{volumeHealth.selector}}">
 
           <div class="pool-summary">
             <p class="pool-status"><span>{{volumeData.status}}</span>
-              <span *ngIf="!volumeData.is_decrypted;else unlockedPool">
+              <!--<span *ngIf="!volumeData.is_decrypted">-->
+              <span *ngIf="volumeData.status == 'LOCKED' || !volumeData.is_decrypted" class="{{volumeHealth.level}}">
                 <mat-icon>lock</mat-icon>
               </span>
-              <ng-template #unlockedPool>
+              <span *ngIf="volumeData.status == 'HEALTHY'" class="{{volumeHealth.level}}">
                 <mat-icon>check_circle</mat-icon>
-              </ng-template>
+              </span>
+              <span *ngIf="volumeHealth.level == 'error'" class="{{volumeHealth.level}}">
+                <!--<mat-icon>close-circle</mat-icon>-->
+                <mat-icon class="volumeHealth.level" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
+              </span>
+              <span *ngIf="volumeHealth.level == 'warn'" class="{{volumeHealth.level}}">
+                <!--<mat-icon>alert</mat-icon>-->
+                <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+              </span>
             </p>
             <div class="pool-data">
               <div class="inner">
