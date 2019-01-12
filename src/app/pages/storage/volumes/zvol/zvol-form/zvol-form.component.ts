@@ -52,14 +52,11 @@ export class ZvolFormComponent {
   public pk_dataset: any[] = [];
   public edit_data: any;
   protected entityForm: any;
-<<<<<<< HEAD
-=======
   public minimum_recommended_zvol_volblocksize: string;
 
   protected origVolSize;
   protected origVolSizeUnit;
   protected origVolSizeDec;
->>>>>>> bf94ac3ad... Preserve original values so that zvol size remains consistent if the user does not try to change it.
 
   public custActions: Array<any> = [
     {
