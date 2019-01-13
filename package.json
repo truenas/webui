@@ -12,7 +12,7 @@
     "rimraf": "rimraf",
     "changelog": "standard-changelog",
     "start": "yarn run po2json && node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng serve --proxy-config proxy.config.json --aot --source-map",
-    "start:dev:aot": "yarn run po2json && node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng serve --proxy-config proxy.config.json --aot --source-map && yarn run ie-support",
+    "start:dev:aot": "yarn run ie-support && yarn run po2json && node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng serve --proxy-config proxy.config.json --aot --source-map",
     "start:dev": "yarn run po2json && ng serve --proxy-config proxy.config.json --aot=false --source-map",
     "start:prod": "yarn run po2json && ng serve --prod",
     "start:prod:aot": "yarn run po2json && ng serve --prod --aot",
