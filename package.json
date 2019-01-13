@@ -5,11 +5,14 @@
   "description": "FreeNAS Angular 4 WebUI",
   "homepage": "https://github.com/freenas/webui/",
   "scripts": {
+    "build-ie-polyfills": "webpack-cli src/ie-polyfills.js -o src/assets/scripts/ie-support/ie-polyfills.min.js -c webpack-polyfill.config.js",
+    "postbuild": "cp -p src/assets/scripts/ie-support/ie-polyfills.min.js dist/ie-support",
+    "ie-support": "yarn run build-ie-polyfills && yarn run postbuild",
     "ng": "ng",
     "rimraf": "rimraf",
     "changelog": "standard-changelog",
     "start": "yarn run po2json && node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng serve --proxy-config proxy.config.json --aot --source-map",
-    "start:dev:aot": "yarn run po2json && node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng serve --proxy-config proxy.config.json --aot --source-map",
+    "start:dev:aot": "yarn run po2json && node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng serve --proxy-config proxy.config.json --aot --source-map && yarn run ie-support",
     "start:dev": "yarn run po2json && ng serve --proxy-config proxy.config.json --aot=false --source-map",
     "start:prod": "yarn run po2json && ng serve --prod",
     "start:prod:aot": "yarn run po2json && ng serve --prod --aot",
@@ -97,6 +100,7 @@
     "rxjs-compat": "6.3.3",
     "stream": "0.0.2",
     "stylefire": "2.2.0",
+    "webpack-cli": "^3.2.1",
     "xterm": "2.9.2",
     "zone.js": "0.8.26"
   },
