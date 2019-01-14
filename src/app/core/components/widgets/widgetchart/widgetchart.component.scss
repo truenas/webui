@@ -1,5 +1,8 @@
+@import 'cssvars';
+
 .title-wrapper{
-  background-color:var(--primary);
+  //background-color:var(--primary);
+  @include variable(background-color, --primary, $primary);
   color:#fff;
   height:45%;
   text-align: left;
@@ -51,10 +54,12 @@
 
 /* MARKER */
 :host ::ng-deep .c3-chart-line .c3-circles circle._expanded_{
-  stroke:var(--primary) !important;
+  //stroke:var(--primary) !important;
+  @include variable(stroke, --primary, $primary, !important);
 }
 :host ::ng-deep .c3-chart-line circle.c3-circle{
-  fill:var(--bg2) !important;
+  //fill:var(--bg2) !important;
+  @include variable(fill, --bg2, $bg2, !important);
 }
 
 /* NARROW SCREENS */
