@@ -416,9 +416,10 @@ export class LineChartService {
       }, {
         title: "ZFS Arc Size",
         type: LineChartService.lineChart,
-        legends: ['Arc Size'],
+        legends: ['Arc Sizei', 'L2Arc'],
         dataList: [
-          {source: 'zfs_arc', type: 'cache_size-arc', dataset: 'value'}
+          {source: 'zfs_arc', type: 'cache_size-arc', dataset: 'value'},
+          {source: 'zfs_arc', type: 'cache_size-L2', dataset: 'value'}
         ],
       }, {
         title: "ZFS Arc Hit Ratio",
