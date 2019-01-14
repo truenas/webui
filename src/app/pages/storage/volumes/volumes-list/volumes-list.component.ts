@@ -776,15 +776,16 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
           volume.type = 'zpool';
 
           try {
-            volume.availStr = (<any>window).filesize(volume.avail, { standard: "iec" });
+            volume.availStr = (<any>window).filesize(volume.children[0].avail, { standard: "iec" });
           } catch (error) {
-            volume.availStr = "" + volume.avail;
+            volume.availStr = "" + volume.children[0].avail;
           }
 
           try {
-            volume.usedStr = (<any>window).filesize(volume.used, { standard: "iec" }) + " (" + volume.used_pct + ")";
+            let used_pct =  volume.children[0].used / (volume.children[0].used + volume.children[0].avail);
+            volume.usedStr = (<any>window).filesize(volume.children[0].used, { standard: "iec" }) + " (" + Math.round(used_pct * 100) / 100 + "%)";
           } catch (error) {
-            volume.usedStr = "" + volume.used;
+            volume.usedStr = "" + volume.children[0].used;
           }
           this.zfsPoolRows.push(volume);
         });

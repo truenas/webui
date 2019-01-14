@@ -152,12 +152,29 @@ span.disk-detail-subtitle {
   position: absolute;
   right: 16px;
 }
-
-.pool-status mat-icon.mat-icon{
+.pool-status .safe mat-icon.mat-icon{
+  position: relative;
   position: relative;
   bottom: -6px;
+  bottom: -6px;
+  margin:-4px 0 0 4px;
   margin:-4px 0 0 4px;
 }
+
+.pool-status .warn mat-icon.mat-icon{
+  position: relative;
+  bottom: -3px;
+  margin: -4px 0 0 4px;
+  font-size: 24px;
+}
+
+.pool-status .error mat-icon.mat-icon{
+  position: relative;
+  bottom: -3px;
+  margin: -4px 0 0 4px;
+  font-size: 24px;
+}
+
 
 .disk-detail-section {
   display:table;
@@ -249,8 +266,8 @@ span.disk-detail-subtitle {
 
 .card-bg-wrapper{
   height:100%;
-  background-color:var(--green);
-  color:var(--green-txt);
+  /*background-color:var(--green);
+  color:var(--green-txt);*/
 }
 
 .zero-state h4 {

@@ -5,8 +5,12 @@ import { matchOtherValidator } from "app/pages/common/entity/entity-form/validat
 export const helptext_sharing_iscsi = {
   target_form_placeholder_name: T("Target Name"),
   target_form_tooltip_name: T(
-    "Required value. Base name is appended\
- if it does not start with <i>iqn</i>."
+    'The base name is automatically prepended if the target\
+ name does not start with <i>iqn</i>. Lowercase alphanumeric\
+ characters plus dot (.), dash (-), and colon (:) are allowed.\
+ See the <i>Constructing iSCSI names using the iqn.format</i>\
+ section of <a href="https://tools.ietf.org/html/rfc3721.html"\
+ target="_blank">RFC3721</a>.'
   ),
   target_form_validators_name: [Validators.required],
 
@@ -100,10 +104,11 @@ export const helptext_sharing_iscsi = {
 
   globalconf_placeholder_basename: T("Base Name"),
   globalconf_tooltip_basename: T(
-    'See the <i>Constructing iSCSI names using the iqn.format</i>\
+    'Lowercase alphanumeric characters plus dot (.), dash (-),\
+ and colon (:) are allowed. See the\
+ <i>Constructing iSCSI names using the iqn.format</i>\
  section of <a href="https://tools.ietf.org/html/rfc3721.html"\
- target="_blank">RFC3721</a> if unfamiliar with\
- this naming format.'
+ target="_blank">RFC3721</a>.'
   ),
   globalconf_validators_basename: [Validators.required],
 

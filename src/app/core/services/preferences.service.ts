@@ -15,6 +15,7 @@ export interface UserPreferences {
   allowPwToggle:boolean;
   enableWarning:boolean;
   preferIconsOnly:boolean;
+  rebootAfterManualUpdate:boolean;
 }
 
 @Injectable()
@@ -32,7 +33,8 @@ export class PreferencesService {
     "metaphor":"auto",
     "allowPwToggle":true,
     "enableWarning": true,
-    "preferIconsOnly": false
+    "preferIconsOnly": false,
+    "rebootAfterManualUpdate": false,
   }
   constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router,
     private aroute: ActivatedRoute) {
