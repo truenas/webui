@@ -1,9 +1,12 @@
+@import "cssvars";
+
 .card-bg-wrapper{
   width:40%;
   height:100%;
   position:relative;
   text-align:center;
-  background-color:var(--primary);
+  //background-color:var(--primary);
+  @include variable(background, --primary, $primary/*, !important*/);
 }
 
 .card-bg{
