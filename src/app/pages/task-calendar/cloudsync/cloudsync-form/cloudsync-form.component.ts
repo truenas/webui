@@ -119,13 +119,19 @@ export class CloudsyncFormComponent implements OnInit {
     ],
   }, {
     type: 'select',
-    name: 'encryption',
+    name: 'task_encryption',
     placeholder: helptext.encryption_placeholder,
     tooltip: helptext.encryption_tooltip,
     options: [
       {label: "None", value: ""},
       {label: "AES-256", value: "AES256"},
     ],
+    isHidden: true,
+  }, {
+    type: 'checkbox',
+    name: 'fast_list',
+    placeholder: helptext.fast_list_placeholder,
+    tooltip: helptext.fast_list_tooltip,
     isHidden: true,
   }, {
     type: 'explorer',
@@ -150,6 +156,38 @@ export class CloudsyncFormComponent implements OnInit {
     value: 'SYNC',
     required: true,
     validation : helptext.transfer_mode_validation
+  },
+  {
+    type: 'checkbox',
+    name: 'snapshot',
+    placeholder: helptext.snapshot_placeholder,
+    tooltip: helptext.snapshot_tooltip,
+    value: false,
+    isHidden: false,
+    disabled: false,
+    relation: [
+      {
+        action: 'HIDE',
+        when: [{
+          name: 'direction',
+          value: 'PULL',
+        }]
+      }
+    ],
+  },
+  {
+    type: 'textarea',
+    name: 'pre_script',
+    placeholder: helptext.pre_script_placeholder,
+    tooltip: helptext.pre_script_tooltip,
+    value: '',
+  },
+  {
+    type: 'textarea',
+    name: 'post_script',
+    placeholder: helptext.post_script_placeholder,
+    tooltip: helptext.post_script_tooltip,
+    value: '',
   },
   {
     type: 'checkbox',
@@ -222,11 +260,37 @@ export class CloudsyncFormComponent implements OnInit {
     required: true
   },
   {
+    type: 'input',
+    inputType: 'number',
+    name: 'transfers',
+    placeholder: helptext.transfers_placeholder,
+    tooltip: helptext.transfers_tooltip,
+    value: null,
+  },
+  {
+    type: 'checkbox',
+    name: 'follow_symlinks',
+    placeholder: helptext.follow_symlinks_placeholder,
+    tooltip: helptext.follow_symlinks_tooltip,
+  },
+  {
     type: 'checkbox',
     name: 'enabled',
     placeholder: helptext.enabled_placeholder,
     tooltip: helptext.enabled_tooltip,
     value: true,
+  },
+  {
+    type: 'input',
+    name: 'bwlimit',
+    placeholder: helptext.bwlimit_placeholder,
+    tooltip: helptext.bwlimit_tooltip,
+  },
+  {
+    type: 'input',
+    name: 'exclude',
+    placeholder: helptext.exclude_placeholder,
+    tooltip: helptext.exclude_tooltip,
   }];
 
   protected month_field: any;
@@ -297,15 +361,15 @@ export class CloudsyncFormComponent implements OnInit {
     const children = [];
     let data = {
       "credentials": credential,
-      "encryption": null,
-      "filename_encryption": null,
-      "encryption_password": null,
-      "encryption_salt": null,
+      "encryption": false,
+      "filename_encryption": false,
+      "encryption_password": "",
+      "encryption_salt": "",
       "attributes": {
         "bucket": bucket,
         "folder": node.data.name,
       },
-      "args": null
+      "args": ""
     }
     if (bucket == '') {
       delete data.attributes.bucket;
@@ -450,6 +514,23 @@ export class CloudsyncFormComponent implements OnInit {
               this.setDisabled('bucket', true, true);
               this.setDisabled('bucket_input', true, true);
             }
+            // enable/disable task schema properties
+            if (_.find(this.providers, {"name": item.provider})['task_schema']) {
+              const task_schema = _.find(this.providers, {"name": item.provider})['task_schema'];
+              if (task_schema.length == 0) {
+                this.setDisabled('task_encryption', true, true);
+                this.setDisabled('fast_list', true, true);
+              } else {
+                for (const i in task_schema) {
+                  console.log(task_schema[i]);
+                  if (task_schema[i].property == 'encryption') {
+                    this.setDisabled('task_encryption', false, false);
+                  } else {
+                    this.setDisabled(task_schema[i].property, false, false);
+                  }
+                }
+              }
+            }
           }
         });
       }
@@ -465,6 +546,11 @@ export class CloudsyncFormComponent implements OnInit {
       this.folder_field.customTemplateStringOptions.explorer.ngOnInit();
     });
 
+    this.formGroup.controls['bwlimit'].valueChanges.subscribe((res)=> {
+      _.find(this.fieldConfig, {name: 'bwlimit'}).hasErrors = false;
+      _.find(this.fieldConfig, {name: 'bwlimit'}).errors = null;
+      this.formGroup.controls['bwlimit'].errors = null;
+    });
     // get cloud credentials
     this.ws.call(this.cloudcredential_query, {}).subscribe(res => {
       res.forEach((item) => {
@@ -527,9 +613,54 @@ export class CloudsyncFormComponent implements OnInit {
                           data.schedule.dom + " " +
                           data.schedule.month + " " +
                           data.schedule.dow;
+
+    if (data.bwlimit) {
+      let bwlimit_str = "";
+      for (let i = 0; i < data.bwlimit.length; i++) {
+        if (data.bwlimit[i].bandwidth != null) {
+          const bw = (<any>window).filesize(data.bwlimit[i].bandwidth, {output: "object"});
+          const sub_bwlimit = data.bwlimit[i].time + "," + bw.value + bw.suffix;
+          if (bwlimit_str != "") {
+            bwlimit_str += " " + sub_bwlimit;
+          } else {
+            bwlimit_str += sub_bwlimit;
+          }
+        }
+      }
+      data.bwlimit = bwlimit_str;
+    }
+
+    if (data.exclude) {
+      data.exclude = _.join(data.exclude, ' ');
+    }
+
     return data;
   }
 
+  handleBwlimit(bwlimit: any): Array<any> {
+    const bwlimtArr = [];
+    bwlimit = bwlimit.trim().split(' ');
+
+    for (let i = 0; i < bwlimit.length; i++) {
+      const sublimitArr = bwlimit[i].split(',');
+      if (sublimitArr[1] && sublimitArr[1] != 'off') {
+        if (this.cloudcredentialService.getByte(sublimitArr[1]) == -1) {
+          _.find(this.fieldConfig, {name: 'bwlimit'}).hasErrors = true;
+          _.find(this.fieldConfig, {name: 'bwlimit'}).errors = 'Invalid bandwidth ' + sublimitArr[1];
+          this.formGroup.controls['bwlimit'].setErrors('Invalid bandwidth ' + sublimitArr[1]);
+        } else {
+          sublimitArr[1] = this.cloudcredentialService.getByte(sublimitArr[1]);
+        }
+      }
+      const subLimit = {
+        "time": sublimitArr[0],
+        "bandwidth": sublimitArr[1] == 'off' ? null : sublimitArr[1],
+      }
+
+      bwlimtArr.push(subLimit);
+    }
+    return bwlimtArr;
+  }
   onSubmit(event: Event) {
     event.preventDefault();
     event.stopPropagation();
@@ -550,6 +681,14 @@ export class CloudsyncFormComponent implements OnInit {
     }
     attributes['folder'] = value.folder;
     delete value.folder;
+    if (value.task_encryption != undefined) {
+      attributes['encryption'] = value.task_encryption;
+      delete value.task_encryption;
+    }
+    if (value.fast_list != undefined) {
+      attributes['fast_list'] = value.fast_list;
+      delete value.fast_list;
+    }
     value['attributes'] = attributes;
 
     let spl = value.cloudsync_picker.split(" ");
@@ -562,6 +701,22 @@ export class CloudsyncFormComponent implements OnInit {
 
     value['schedule'] = schedule;
 
+    if (value.bwlimit) {
+      value.bwlimit = this.handleBwlimit(value.bwlimit);
+    }
+
+    if (value.exclude) {
+      value.exclude = value.exclude.trim().split(" ");
+    }
+
+    if (!this.formGroup.valid) {
+      return;
+    }
+
+    if (value['direction'] == 'PULL') {
+      value['snapshot'] = false;
+    }
+
     if (!this.pk) {
       this.loader.open();
       this.ws.call(this.addCall, [value]).subscribe((res)=>{
@@ -569,7 +724,6 @@ export class CloudsyncFormComponent implements OnInit {
         this.router.navigate(new Array('/').concat(this.route_success));
       }, (err) => {
         this.loader.close();
-        // this.dialog.errorReport('Error', err.reason, err.trace.formatted);
         new EntityUtils().handleWSError(this, err);
       });
     } else {
@@ -581,7 +735,6 @@ export class CloudsyncFormComponent implements OnInit {
         },
         (err)=>{
         this.loader.close();
-        // this.dialog.errorReport('Error', err.reason, err.trace.formatted);
         new EntityUtils().handleWSError(this, err);
         }
       );

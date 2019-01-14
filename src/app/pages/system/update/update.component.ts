@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-
 import { RestService, WebSocketService } from '../../../services/';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { MatDialog, MatSnackBar } from '@angular/material';
@@ -46,6 +45,7 @@ export class UpdateComponent implements OnInit {
   public nightly_train: boolean;
   public updates_available = false;
   public currentTrainDescription: string;
+  public trainDescriptionOnPageLoad: string;
   public fullTrainList: any[];
 
   public busy: Subscription;
@@ -67,14 +67,13 @@ export class UpdateComponent implements OnInit {
     },
   ];
   public saveConfigFormConf: DialogFormConfiguration = {
-    title: "Save configuration settings from this machine before updating?",
+    title: T("Save configuration settings from this machine before updating?"),
     message: T("<b>WARNING:</b> This configuration file contains system\
               passwords and other sensitive data.<br>"),
     fieldConfig: this.saveConfigFieldConf,
     warning: T("Including the Password Secret Seed allows using this\
-              configuration file with a new boot device. This also\
-              decrypts all system passwords for reuse when the\
-              configuration file is uploaded.\
+              configuration file with a new boot device. It also\
+              decrypts all passwords used on this system.\
               <b>Keep the configuration file safe and protect it from unauthorized access!</b>"),
     method_ws: 'core.download',
     saveButtonText: T('SAVE CONFIGURATION'),
@@ -87,6 +86,7 @@ export class UpdateComponent implements OnInit {
     protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog,
     protected loader: AppLoaderService, protected dialogService: DialogService, public translate: TranslateService) {
   }
+
   parseTrainName(name) {
     const version = []
     let sw_version = "";
@@ -109,7 +109,6 @@ export class UpdateComponent implements OnInit {
       version.push(sw_version);
       version.push(branch);
     }
-
     return version;
   }
 
@@ -124,8 +123,6 @@ export class UpdateComponent implements OnInit {
         const version2 = v2[0].split('.');
         const branch1 = v1[1].toLowerCase();
         const branch2 = v2[1].toLowerCase();
-
-
 
         if(branch1 !== branch2) {
 
@@ -160,7 +157,6 @@ export class UpdateComponent implements OnInit {
           return version1[0] > version2[0] ? "MAJOR_UPGRADE":"MAJOR_DOWNGRADE";
         }
 
-
       } else {
         if(v1[0] === v2[0]&&v1[1] !== v2[1]){
           const branch1 = v1[1].toLowerCase();
@@ -178,14 +174,12 @@ export class UpdateComponent implements OnInit {
             }
 
           }
-
         }
         else {
           if(v2[2]||v1[2]){
             return "SDK"
           }
         }
-
 
       }
     } catch (e) {
@@ -194,48 +188,63 @@ export class UpdateComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
+    this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures) => {
       if(ures[0].attributes.preferences !== undefined && ures[0].attributes.preferences.enableWarning) {
         ures[0].attributes.preferences['enableWarning'] = true;
-        this.ws.call('user.set_attribute', [1, 'preferences', ures[0].attributes.preferences]).subscribe((res)=>{
+        this.ws.call('user.set_attribute', [1, 'preferences', ures[0].attributes.preferences]).subscribe((res) => {
         });
       }
     });
+
     this.busy = this.rest.get('system/update', {}).subscribe((res) => {
       this.autoCheck = res.data.upd_autocheck;
-      if (this.autoCheck){
-        this.check();
-      }
     });
+
     this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
       this.fullTrainList = res.trains;
-      this.train = res.selected;
-      this.selectedTrain = res.selected;
+
+      // On page load, make sure we are working with train of the current OS
+      this.train = res.current;
+      this.selectedTrain = res.current;
+
+      if (this.autoCheck) {
+        this.check();
+      }
 
       this.trains = [];
       for (const i in res.trains) {
-        if (this.compareTrains(this.train, i) === 'ALLOWED' || this.compareTrains(this.train, i) === 'NIGHTLY_UPGRADE' || this.train === i) {
+        if (this.compareTrains(this.train, i) === 'ALLOWED' || 
+        this.compareTrains(this.train, i) === 'NIGHTLY_UPGRADE' || 
+        this.compareTrains(this.train, i) === 'MINOR_UPGRADE' || 
+        this.compareTrains(this.train, i) === 'MAJOR_UPGRADE' || 
+        this.train === i) {
           this.trains.push({ name: i, description: res.trains[i].description });
         }
-
       }
       this.singleDescription = this.trains[0].description;
 
-      // The following is a kluge until we stop overwriting (via middleware?) the description of the currently
-      //  running OS along with its tags we want to use for sorting - [release], [prerelease], and [nightly]
-      if (this.selectedTrain.toLowerCase().includes('nightlies')) {
+      if (this.fullTrainList[res.current].description.toLowerCase().includes('[nightly]')) {
         this.currentTrainDescription = '[nightly]';
-      } else if (this.selectedTrain.toLowerCase().includes('11-stable')) {
+      } else if (this.fullTrainList[res.current].description.toLowerCase().includes('[release]')) {
         this.currentTrainDescription = '[release]';
-      } else if (this.selectedTrain.toLowerCase().includes('11.2-stable')) {
-        this.currentTrainDescription = '[release]';
+      } else if (this.fullTrainList[res.current].description.toLowerCase().includes('[prerelease]')) {
+        this.currentTrainDescription = '[prerelease]';
       } else {
         this.currentTrainDescription = res.trains[this.selectedTrain].description.toLowerCase();
       }
+      // To remember train descrip if user switches away and then switches back
+      this.trainDescriptionOnPageLoad = this.currentTrainDescription;
     });
   }
 
-  onTrainChanged(event){
+  onTrainChanged(event) {
+    // For the case when the user switches away, then BACK to the train of the current OS
+    if (event.value === this.selectedTrain) {
+      this.currentTrainDescription = this.trainDescriptionOnPageLoad;
+      this.check();
+      return;
+    }
+
     const compare = this.compareTrains(this.selectedTrain, event.value);
     if(compare === "NIGHTLY_DOWNGRADE" || compare === "MINOR_DOWNGRADE" || compare === "MAJOR_DOWNGRADE" || compare ==="SDK") {
       this.dialogService.Info("Error", this.train_msg[compare]).subscribe((res)=>{
@@ -252,7 +261,7 @@ export class UpdateComponent implements OnInit {
             this.currentTrainDescription = this.fullTrainList[this.train].description.toLowerCase();
           }
         })
-    } else if (compare === "ALLOWED") {
+    } else if (compare === "ALLOWED" || compare === "MINOR_UPGRADE" || compare === "MAJOR_UPGRADE") {
       this.dialogService.confirm(T("Switch Train"), T("Switch update trains?")).subscribe((train_res)=>{
         if(train_res){
           this.train = event.value;
@@ -285,6 +294,7 @@ export class UpdateComponent implements OnInit {
       this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
     });
   }
+
   startUpdate() {
     this.error = null;
     this.loader.open();
@@ -401,6 +411,7 @@ export class UpdateComponent implements OnInit {
           this.loader.close();
         });
   }
+
   downloadUpdate() {
     this.ws.call('core.get_jobs', [[["method", "=", "update.update"], ["state", "=", "RUNNING"]]]).subscribe(
       (res) => {
@@ -452,7 +463,7 @@ export class UpdateComponent implements OnInit {
     });
   };
 
-  ManualUpdate(){
+  ManualUpdate() {
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
       if(ures[0].attributes.preferences !== undefined && !ures[0].attributes.preferences.enableWarning) {
         this.router.navigate([this.router.url +'/manualupdate']);
@@ -465,15 +476,19 @@ export class UpdateComponent implements OnInit {
     });
   }
 
-  pendingupdates(){
+  pendingupdates() {
     this.ws.call('update.get_pending').subscribe((pending)=>{
       if(pending.length !== 0){
         this.update_downloaded = true;
       }
     });
-}
+  }
 
   check() {
+    // Reset the template
+    this.updates_available = false; 
+    this.releaseNotes = '';
+
     this.showSpinner = true;
     this.pendingupdates();
     this.error = null;
@@ -572,7 +587,7 @@ export class UpdateComponent implements OnInit {
           }
             else {
               window.location.href = succ[1];
-            }
+            } 
             entityDialog.dialogRef.close();
           },
           (err) => {

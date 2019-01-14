@@ -11,16 +11,17 @@ import { WebSocketService } from 'app/services';
 export class SnapshotListComponent {
 
   public title = "Snapshots";
-  protected resource_name = 'storage/snapshot';
+  protected queryCall = 'zfs.snapshot.query';
   protected route_add: string[] = ['storage', 'snapshots', 'add'];
   protected route_add_tooltip = "Add Snapshot";
   protected entityList: any;
   public busy: Subscription;
   public sub: Subscription;
   public columns: Array<any> = [
-    {name : 'Fullname', prop : 'fullname'},
+    {name : 'Name', prop : 'name'},
     {name : 'Used', prop : 'used'},
-    {name : 'Refer', prop : 'refer'}
+    {name : 'Referenced', prop : 'refer'},
+    {name : 'Date Created', prop: 'creation'}
   ];
   public config: any = {
     paging: true,
@@ -50,6 +51,15 @@ export class SnapshotListComponent {
     protected rest: RestService, protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef) { }
 
+  resourceTransformIncomingRestData(rows: any) {
+    for (let i = 0; i < rows.length; i++) {
+      rows[i].used = rows[i].properties.used.rawvalue;
+      rows[i].refer = rows[i].properties.referenced.rawvalue;
+      rows[i].creation = rows[i].properties.creation.value;
+    }
+    return rows;
+  }
+  
   rowValue(row, attr) {
     switch (attr) {
       case 'used':

@@ -52,6 +52,11 @@ export class ZvolFormComponent {
   public pk_dataset: any[] = [];
   public edit_data: any;
   protected entityForm: any;
+  public minimum_recommended_zvol_volblocksize: string;
+
+  protected origVolSize;
+  protected origVolSizeUnit;
+  protected origVolSizeDec;
 
   public custActions: Array<any> = [
     {
@@ -219,7 +224,11 @@ export class ZvolFormComponent {
     if( this.isBasicMode === true ) {
 
     }
-    data.volsize = data.volsize * this.byteMap[data.volsize_unit];
+    if (this.origVolSizeDec !== data.volsize || this.origVolSizeUnit !== data.volsize_unit) {
+      data.volsize = data.volsize * this.byteMap[data.volsize_unit];
+    } else { 
+      data.volsize = this.origVolSize;
+    }
     delete data.volsize_unit;
     return data;
   }
@@ -285,8 +294,14 @@ export class ZvolFormComponent {
 
           let volumesize = pk_dataset[0].volsize.parsed;
           const volumeunit =  pk_dataset[0].volsize.value.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[1];
+
+          // keep track of original volume size data so we can check to see if the user intended to change since
+          // decimal has to be truncated to three decimal places
+          this.origVolSize = volumesize;
           volumesize = volumesize/this.byteMap[volumeunit];
           volumesize = volumesize.toFixed(3)
+          this.origVolSizeDec = volumesize;
+          this.origVolSizeUnit = volumeunit;
 
           entityForm.formGroup.controls['name'].setValue(pk_dataset[0].name);
           if(pk_dataset[0].comments){
