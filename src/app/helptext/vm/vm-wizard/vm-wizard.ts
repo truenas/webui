@@ -54,11 +54,11 @@ memory_validation : [ Validators.required, Validators.min(128)],
 memory_tooltip: T('Allocate a number of megabytes of RAM for the VM.'),
 
 disks_label: T('Hard Disks'),
-disk_radio_tooltip: 'Select <i>Create new disk image</i> to create a new\
+disk_radio_tooltip: T('Select <i>Create new disk image</i> to create a new\
  zvol on an existing dataset. This is used as a\
  virtual hard drive for the VM. Select <i>Use\
  existing disk image</i> to use an existing zvol or\
- file for the VM.',
+ file for the VM.'),
 disk_radio_options:[{label:T("Create new disk image"), value: true},
 {label:T("Use existing disk image"), value: false}],
 
@@ -67,7 +67,7 @@ volsize_tooltip: T('Allocate a number of gigabytes of space for the\
  new zvol.'),
 volsize_validation: [Validators.required, Validators.min(1)],
 
-pool_detach_warning_paraText: T("Select a pool or dataset"),
+pool_detach_warning_paraText: T("Select a zvol"),
 
 datastore_tooltip: T('Choose a pool or dataset for the new zvol.'),
 
@@ -79,8 +79,8 @@ hdd_type_options : [
 ],
 hdd_type_value: 'AHCI',
 
-hdd_path_placeholder: T('Select an existing disk'),
-hdd_path_tooltip: T('Browse to the desired pool or dataset on the disk.'),
+hdd_path_placeholder: T('Select an existing zvol'),
+hdd_path_tooltip: T('Browse to the desired zvol on the disk.'),
 
 NIC_label: T('Network Interface'),
 NIC_type_placeholder : T('Adapter Type'),
