@@ -1,6 +1,8 @@
 <mat-card>
   <form (ngSubmit)="onSubmit()" [formGroup]="formGroup">
-    <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)">
+    <!--<mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)">-->
+    <mat-expansion-panel [expanded]="step === 0 && isReady" (opened)="setStep(0)" #basic>
+    <!--<mat-expansion-panel [expanded]="isReady ? step === 0 : false" (opened)="setStep(0)" #basic>-->
       <mat-expansion-panel-header>
         <mat-panel-title>
           {{ "Basic Properties" | translate }}
@@ -18,7 +20,7 @@
         <button mat-button color="primary" type="button" (click)="nextStep()">{{ "Next" | translate }}</button>
       </mat-action-row>
     </mat-expansion-panel>
-    <mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)">
+    <mat-expansion-panel [expanded]="step === 1 && isReady" (opened)="setStep(1)">
       <mat-expansion-panel-header>
         <mat-panel-title>
           {{ "Jail Properties" | translate }}
@@ -33,7 +35,7 @@
         <button mat-button color="primary" type="button" (click)="nextStep()">{{ "Next" | translate }}</button>
       </mat-action-row>
     </mat-expansion-panel>
-    <mat-expansion-panel [expanded]="step === 2" (opened)="setStep(2)">
+    <mat-expansion-panel [expanded]="step === 2 && isReady" (opened)="setStep(2)">
       <mat-expansion-panel-header>
         <mat-panel-title>
           {{ "Network Properties" | translate }}
@@ -48,7 +50,7 @@
         <button mat-button color="primary" type="button" (click)="nextStep()">{{ "Next" | translate }}</button>
       </mat-action-row>
     </mat-expansion-panel>
-    <mat-expansion-panel [expanded]="step === 3" (opened)="setStep(3)">
+    <mat-expansion-panel [expanded]="step === 3 && isReady" (opened)="setStep(3)">
       <mat-expansion-panel-header>
         <mat-panel-title>
           {{ "Custom Properties" | translate }}
