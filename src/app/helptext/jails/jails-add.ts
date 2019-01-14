@@ -359,7 +359,7 @@ allow_socket_af_placeholder: T('allow.socket_af'),
 allow_socket_af_tooltip: T('Set to allow access to other protocol stacks beyond \
 IPv4, IPv6, local (UNIX), and route. <br>\
 <b>Warning:</b> jail functionality does not exist \
-for all protocal stacks.'),
+for all protocol stacks.'),
 
 vnet_interfaces_placeholder: T('vnet.interfaces'),
 vnet_interfaces_tooltip: T('A space-delimited list of network \
