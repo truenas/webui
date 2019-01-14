@@ -362,7 +362,9 @@ IPv4, IPv6, local (UNIX), and route. <br>\
 for all protocal stacks.'),
 
 vnet_interfaces_placeholder: T('vnet.interfaces'),
-vnet_interfaces_tooltip: T(''),
+vnet_interfaces_tooltip: T('A space-delimited list of network \
+interfaces attached to a VNET-enabled jail after it is created. \
+Interfaces are automatically released when the jail is removed.'),
 
 //network field Config
 interfaces_placeholder: T('interfaces'),
