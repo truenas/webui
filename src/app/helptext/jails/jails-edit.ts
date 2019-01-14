@@ -371,7 +371,7 @@ host_domainname_tooltip: T('Enter a <a \
 href="https://www.freebsd.org/doc/handbook/network-nis.html" \
 target="_blank">NIS Domain name</a> for the jail.'),
 
-host_hostname_placeholder: T('host.hostname'),
+host_hostname_placeholder: T('host_hostname'),
 host_hostname_tooltip: T('Set the jail hostname. Defaults to the jail UUID.'),
 
 exec_fib_placeholder: T('exec.fib'),
