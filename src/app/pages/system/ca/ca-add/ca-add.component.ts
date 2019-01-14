@@ -189,7 +189,8 @@ export class CertificateAuthorityAddComponent {
       name : 'privatekey',
       placeholder : T('Private Key'),
       tooltip : T('Paste the private key associated with the\
-                   Certificate when available.'),
+                   Certificate when available. Please provide\
+                   a key at least 1024 bits long.'),
       isHidden: true,
     },
     {

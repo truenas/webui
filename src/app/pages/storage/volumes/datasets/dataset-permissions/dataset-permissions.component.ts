@@ -35,6 +35,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
   protected mp_acl_subscription: any;
   protected mp_recursive: any;
   protected mp_recursive_subscription: any;
+  private acl: any;
   public sub: Subscription;
   public formGroup: FormGroup;
   public data: Object = {};
@@ -159,12 +160,24 @@ export class DatasetPermissionsComponent implements OnDestroy {
       entityEdit.formGroup.controls['mp_user'].setValue(res.user);
       entityEdit.formGroup.controls['mp_group'].setValue(res.group);
       this.mp_acl = entityEdit.formGroup.controls['mp_acl'];
+      this.acl = res.acl;
       this.mp_acl.setValue(res.acl);
       if (res.acl === 'windows') {
         this.mp_mode.isHidden = true;
         this.mp_mode_en.isHidden = true;
       }
       this.mp_acl_subscription = this.mp_acl.valueChanges.subscribe((acl) => {
+        if (this.acl === 'windows' && acl !== 'windows') {
+          this.dialog.confirm(helptext.dataset_permissions_dialog_warning, helptext.dataset_permissions_dialog_warning_message)
+          .subscribe((confirm) => {
+            if (!confirm) {
+              this.mp_acl.setValue(this.acl);
+              acl = this.acl;
+            } else {
+              this.acl = acl;
+            }
+          });
+        }
         if (acl === 'windows') {
           this.mp_mode.isHidden = true;
           this.mp_mode_en.isHidden = true;
