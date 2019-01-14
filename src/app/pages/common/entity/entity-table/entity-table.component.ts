@@ -144,13 +144,15 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.setTableHeight(); 
   
-    if (this.conf.preInit) {
-      this.conf.preInit(this);
-    }
-    this.getData();
-    if (this.conf.afterInit) {
-      this.conf.afterInit(this);
-    }
+    setTimeout(() => {
+      if (this.conf.preInit) {
+        this.conf.preInit(this);
+      }
+      this.getData();
+      if (this.conf.afterInit) {
+        this.conf.afterInit(this);
+      }
+    })
     this.conf.columns.forEach((column) => {
       this.displayedColumns.push(column.prop);
       if (!column.always_display) {
