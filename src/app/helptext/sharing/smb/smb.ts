@@ -76,10 +76,7 @@ export const helptext_sharing_smb = {
 
     placeholder_hostsdeny: T('Hosts Deny'),
     tooltip_hostsdeny: T('Enter a list of denied hostnames or IP addresses.\
- Separate entries with a comma, space, or tab.\
- Specify <i>ALL</i> and list any hosts from\
- <b>Hosts Allow</b> to have those hosts take\
- precedence.'),
+ Separate entries with a comma, space, or tab.'),
 
     placeholder_vfsobjects: T('VFS Objects'),
     tooltip_vfsobjects: T('Adds <a\
