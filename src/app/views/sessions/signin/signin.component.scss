@@ -1,3 +1,9 @@
+@import "cssvars";
+
+.page-wrap {
+  background-color:$bg1;
+}
+
 .copyright-txt {
     padding-top: 32px;
     text-align: center;
@@ -10,14 +16,14 @@
 }
 
 #signin_button {
-    background: var(--primary);
-    color: var(--primary0txt);
+    background: $primary; //var(--primary);
+    color: $primary-txt; //var(--primary0txt);
     font-weight: 700;
 }
 
 .mat-card {
-  background-color:var(--alt-bg1);
-  color:var(--alt-fg2);
+  background-color: $alt-bg1; //var(--alt-bg1);
+  color: $alt-fg2; //var(--alt-fg2);
   padding:0 0 32px 0 !important;
 }
 
@@ -27,8 +33,8 @@
 
 div.fake-icon{
   border-radius:50%;
-  background-color:var(--fg2);
-  color:var(--bg2);
+  background-color: $fg2; //var(--fg2);
+  color: $bg2; //var(--bg2);
   padding:2px 8px;
   float:left;
   margin:6px 12px 12px 0;
@@ -60,7 +66,7 @@ form button{
 
 .logo-wrapper {
   padding:76px 0;
-  background-color:var(--bg2);
+  background-color: $bg2; //var(--bg2);
   position:relative;
   /*background-image:url('/assets/images/board_1920.jpg');
   background-size: contain;
