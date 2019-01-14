@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
@@ -24,8 +24,10 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
   styleUrls: ['../../common/entity/entity-form/entity-form.component.scss'],
   providers: [JailService, EntityFormService, FieldRelationService, NetworkService]
 })
-export class JailEditComponent implements OnInit {
+export class JailEditComponent implements OnInit, AfterViewInit {
 
+  @ViewChild('basic') basicPanel:any;
+  public isReady: boolean =  false;
   protected updateCall = 'jail.do_update';
   protected upgradeCall = 'jail.upgrade';
   protected queryCall = 'jail.query';
@@ -1042,6 +1044,14 @@ export class JailEditComponent implements OnInit {
       this.formGroup.controls['ip6_interface'].clearValidators();
       this.formGroup.controls['ip6_interface'].updateValueAndValidity();
     }
+  }
+
+  ngAfterViewInit(){
+    setTimeout(() => {
+      //this.basicPanel.open();
+      this.isReady = true;
+      this.setStep(0);
+    }, 100);
   }
 
   ngOnInit() {
