@@ -40,7 +40,7 @@ export class AssociatedTargetFormComponent {
       name: 'lunid',
       placeholder: helptext_sharing_iscsi.associated_target_placeholder_lunid,
       tooltip: helptext_sharing_iscsi.associated_target_tooltip_lunid,
-      value: 0,
+      value: '',
       validation: helptext_sharing_iscsi.associated_target_validators_lunid,
     },
     {
