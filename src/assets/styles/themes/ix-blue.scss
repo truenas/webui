@@ -1226,14 +1226,22 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     min-width: 200px;
   }
 
-  jail-wizard mat-card-actions, jail-wizard .mat-horizontal-stepper-header-container {
+  jail-wizard .mat-horizontal-stepper-header-container,
+  app-volumeimport-wizard .mat-horizontal-stepper-header-container {
     margin-left: 15px !important;
     margin-right: 15px !important;
   }
 
-  jail-wizard .form-wrap {
+  jail-wizard .mat-horizontal-stepper-content {
     padding: 15px 10px 0 15px;
   }
 
+  app-volumeimport-wizard .mat-horizontal-stepper-content {
+    padding: 0 10px 0 15px;
+  }
+
+  app-volumeimport-wizard .mat-horizontal-content-container {
+    padding-bottom: 0 !important;
+  }
 
 } // end of ix theme
