@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { WebSocketService, RestService } from '../../../services/';
 import { DialogService } from '../../../services/dialog.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { Observable } from 'rxjs/Observable';
+import { interval } from 'rxjs';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/debounceTime';
@@ -77,7 +77,7 @@ export class VmCardsComponent  {
 
   afterInit(entityTable: EntityTableComponent) { 
     this.entityTable = entityTable;
-    Observable.interval(5000).subscribe(() => {
+    interval(5000).subscribe(() => {
       this.entityTable.getData();
      });
   }
