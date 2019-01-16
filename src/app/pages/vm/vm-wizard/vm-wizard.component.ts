@@ -132,6 +132,14 @@ export class VMWizardComponent {
           value: true,
         },
         {
+          type: 'select',
+          name: 'hdd_type',
+          placeholder: helptext.hdd_type_placeholder,
+          tooltip: helptext.hdd_type_tooltip,
+          options : helptext.hdd_type_options,
+          value: helptext.hdd_type_value
+        },
+        {
           type: 'input',
           name: 'volsize',
           placeholder : helptext.volsize_placeholder,
@@ -158,15 +166,6 @@ export class VMWizardComponent {
           explorerType: 'directory',
           validation: [Validators.required],
           required: true
-        },
-        {
-          type: 'select',
-          name: 'hdd_type',
-          placeholder: helptext.hdd_type_placeholder,
-          tooltip: helptext.hdd_type_tooltip,
-          isHidden: false,
-          options : helptext.hdd_type_options,
-          value: helptext.hdd_type_value
         },
         {
           type: 'select',
@@ -414,12 +413,10 @@ export class VMWizardComponent {
         _.find(this.wizardConfig[3].fieldConfig, {name : 'volsize'}).isHidden = false;
         _.find(this.wizardConfig[3].fieldConfig, {name : 'datastore'}).isHidden = false;
         _.find(this.wizardConfig[3].fieldConfig, {name : 'hdd_path'}).isHidden = true;
-        _.find(this.wizardConfig[3].fieldConfig, {name : 'hdd_type'}).isHidden = false;
       } else {
         _.find(this.wizardConfig[3].fieldConfig, {name : 'volsize'}).isHidden = true;
         _.find(this.wizardConfig[3].fieldConfig, {name : 'datastore'}).isHidden = true;
         _.find(this.wizardConfig[3].fieldConfig, {name : 'hdd_path'}).isHidden = false;
-        _.find(this.wizardConfig[3].fieldConfig, {name : 'hdd_type'}).isHidden = true;
       }
 
     });
@@ -580,13 +577,13 @@ async customSubmit(value) {
     if ( value.iso_path && value.iso_path !== undefined) {
       vm_payload["devices"] = [
         {"dtype": "NIC", "attributes": {"type": value.NIC_type, "mac": value.NIC_mac, "nic_attach":value.nic_attach}},
-        {"dtype": "DISK", "attributes": {"path": hdd, "type": "AHCI", "sectorsize": 0}},
+        {"dtype": "DISK", "attributes": {"path": hdd, "type": value.hdd_type, "sectorsize": 0}},
         {"dtype": "CDROM", "attributes": {"path": value.iso_path}},
       ]
     } else {
       vm_payload["devices"] = [
         {"dtype": "NIC", "attributes": {"type": value.NIC_type, "mac": value.NIC_mac, "nic_attach":value.nic_attach}},
-        {"dtype": "DISK", "attributes": {"path": hdd, "type": "AHCI", "sectorsize": 0}},
+        {"dtype": "DISK", "attributes": {"path": hdd, "type": value.hdd_type, "sectorsize": 0}},
       ]
     }
 
@@ -623,7 +620,6 @@ async customSubmit(value) {
           device.attributes.zvol_volsize = zvol_volsize
         };
       };
-      console.log(JSON.stringify([vm_payload]));
       this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
         this.loader.close();
         this.router.navigate(['/vm']);
