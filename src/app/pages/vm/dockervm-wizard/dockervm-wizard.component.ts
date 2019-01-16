@@ -1,7 +1,7 @@
 import { Component} from '@angular/core';
 import { Router } from '@angular/router';
 import { RestService, WebSocketService, NetworkService } from '../../../services';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
 import * as _ from 'lodash';
@@ -57,7 +57,7 @@ export class DockerVMWizardComponent {
         name : 'name',
         placeholder :  helptext.docker_vm_placeholder,
         tooltip : helptext.docker_vm_tooltip,
-        validation : helptext.docker_vm_validation,
+        validation : [Validators.required,Validators.pattern('^[a-zA-Z0-9]*$')],
         required: true,
         blurStatus: true,
         blurEvent: this.blurEvent,
