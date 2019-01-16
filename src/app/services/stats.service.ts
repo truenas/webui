@@ -357,7 +357,7 @@ export class StatsService {
   }
 
   buildMessage(key,source):CoreEvent{
-    let options = {step:'10',start:'now-10m'}
+    let options = {step: '10', start:'now-10m', end:'now-20s'}
     let dataList = [];
     let src = source.prefix + key;
     let eventName;
