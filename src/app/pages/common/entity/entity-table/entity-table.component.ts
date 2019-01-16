@@ -248,7 +248,8 @@ export class EntityTableComponent /*extends ViewControllerComponent*/ implements
         this.paginationPageSize = rowNum - n;
       } else {
         let y = x - 800;
-        this.paginationPageSize = rowNum - n + Math.floor(y/50);
+        y >= 0 ? this.paginationPageSize = rowNum - n + Math.floor(y/50) : 
+          this.paginationPageSize = rowNum - n;
       }
       this.setPaginationInfo();
     }
