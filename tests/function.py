@@ -45,7 +45,7 @@ xpaths = {
         'confirmCheckbox': '//*[@id="confirm-dialog__confirm-checkbox"]/label/div',
         'confirmsecondaryCheckbox': '//*[@id="confirm-dialog__secondary-checkbox"]/label/div',
         'deleteButton': '//*[contains(@name, "ok_button")]',
-        'detachButton': '//*[contains(@name, "Detach_button")]',
+        'detachButton': '//*[contains(@name, "Export/Disconnect_button")]',
         'closeButton' : '//*[contains(text(), "Close")]',
         'turnoffConfirm': '//*[contains(text(), "OK")]'
 #        'detachButton': '/html/body/div[5]/div[3]/div/mat-dialog-container/app-entity-dialog/div[3]/button[2]'
