@@ -235,14 +235,13 @@ export class EntityTableComponent /*extends ViewControllerComponent*/ implements
     let rowNum = 10, n;
     if (this.title === 'Boot Environments') {
       n = 5;
-    } else if (this.title === 'Jails' || this.title === 'Available Plugins' || this.title === 'Installed Plugins') {
+    } else if (this.title === 'Jails') {
       n = 3;
+    } else if (this.title === 'Available Plugins' || this.title === 'Installed Plugins') {
+      n = 2;
     } else {
       n = 0;
     }
-    // if (this.conf.columns.length > 10) {
-    //     n = n + 2;
-    // } 
     window.onresize = () => {
       let x = window.innerHeight;
       if (x <=780) {
