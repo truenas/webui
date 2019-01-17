@@ -18,7 +18,7 @@ export class SnapshotListComponent {
   public busy: Subscription;
   public sub: Subscription;
   public columns: Array<any> = [
-    {name : 'Name', prop : 'name'},
+    {name : 'Name', prop : 'name', minWidth: 300},
     {name : 'Used', prop : 'used'},
     {name : 'Referenced', prop : 'refer'},
     {name : 'Date Created', prop: 'creation'}
