@@ -13,7 +13,7 @@ import { ViewChartComponent, ViewChartMetadata } from 'app/core/components/viewc
           <ng-container *ngFor="let item of legend; let i=index ">
             <div fxFlex.xs="calc(33% - 16px)" class="legend-item" *ngIf="legendPosition == 'top'" (click)="focus(legend[i])" [ngClass]="{'legend-item-disabled':!legend[i].visible}">
               <span class="legend-swatch" [style.background-color]="legend[i].swatch"></span>
-              <span class="legend-name" [style.color]="legend[i].swatch"> {{legend[i].name}}: </span>
+              <span class="legend-name"> {{legend[i].name}}: </span>
               <div class="legend-value" [style.color]="legend[i].swatch"> <span *ngIf="showLegendValues">{{legend[i].value | number : '1.2-2'}}{{units}}</span></div>
             </div>
 
