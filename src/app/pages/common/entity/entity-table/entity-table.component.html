@@ -223,13 +223,7 @@
           <div id="{{col.prop}}_{{row[col.prop]}}" 
                title="{{convertDisplayValue(row[col.prop])}}" [ngClass]="col.icon ? 'IconCell' : ''">
             <img *ngIf="col.icon" width="20" src="{{row[col.icon]}}"/>
-<!--            <button mat-icon-button *ngIf="col.state; else colInfo" (click)="conf.stateButton(row)">
-              <mat-spinner *ngIf="row[col.state] == 'RUNNING'" [diameter]='24'></mat-spinner>
-              <mat-icon *ngIf="row[col.state] == 'SUCCESS'" aria-label="row[col.prop]">done</mat-icon>
-              <mat-icon *ngIf="row[col.state] == 'FAILED'" aria-label="row[col.prop]">close</mat-icon>
--->
             <button mat-button *ngIf="col.state; else colInfo" (click)="conf.stateButton(row)">
-              <mat-spinner *ngIf="row[col.state] == 'RUNNING'" [diameter]='24'></mat-spinner>
               {{convertDisplayValue(row[col.prop])}}
             </button>
             <ng-template #colInfo>
