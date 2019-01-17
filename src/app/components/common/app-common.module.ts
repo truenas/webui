@@ -38,6 +38,7 @@ import { LineChartService } from './lineChart/lineChart.service';
 import { LanguageService } from '../../services/language.service';
 import { HttpClientModule } from '@angular/common/http';
 import { AngularSvgIconModule } from 'angular-svg-icon';
+import { CoreComponents } from 'app/core/components/corecomponents.module';
 
 @NgModule({
   imports: [
@@ -64,14 +65,15 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
     TranslateModule,
     ChartistModule,
     HttpClientModule,
-    AngularSvgIconModule
+    AngularSvgIconModule,
+    CoreComponents
   ],
   declarations: [
     AdminLayoutComponent,
     AuthLayoutComponent,
     TopbarComponent,
     NavigationComponent,
-    NotificationsComponent, CustomizerComponent, BreadcrumbComponent, LineChartComponent
+    NotificationsComponent, CustomizerComponent, BreadcrumbComponent, LineChartComponent 
   ],
   providers: [ThemeService, DialogService, LineChartService, LanguageService],
   exports: [LineChartComponent]

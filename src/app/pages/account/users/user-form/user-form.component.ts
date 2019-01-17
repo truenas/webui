@@ -60,7 +60,7 @@ export class UserFormComponent {
                       Usernames cannot begin with a hyphen\
                       (<b>-</b>) or contain a space, tab, or these\
                       characters: <b>, : + & # %^ ( ) ! @ ~ * ? < > =</b>\
-                      . A <b>$</b> can only be used as the last\
+                      Note that <b>$</b> can only be used as the last\
                       character.'),
           required: true,
           validation : [ Validators.required, Validators.pattern('[a-z_A-Z_][a-zA-Z0-9_-]*[$]?'), Validators.maxLength(16) ],
@@ -78,8 +78,7 @@ export class UserFormComponent {
           type : 'input',
           name : 'password',
           placeholder : T('Password'),
-          tooltip : T('Enter password of nine characters or less\
-                      Required unless <b>Enable password login</b> is\
+          tooltip : T('Required unless <b>Enable password login</b> is\
                       <i>No</i>. Passwords cannot contain a <b>?</b>.'),
           inputType : 'password',
           togglePw: true,
@@ -100,8 +99,7 @@ export class UserFormComponent {
           type : 'input',
           name : 'password_edit',
           placeholder : T('Password'),
-          tooltip : T('Enter password of nine characters or less\
-                      Required unless <b>Enable password login</b> is\
+          tooltip : T('Required unless <b>Enable password login</b> is\
                       <i>No</i>. Passwords cannot contain a <b>?</b>.'),
           inputType : 'password',
           togglePw: true,
@@ -288,8 +286,8 @@ export class UserFormComponent {
   private locked: any;
 
   constructor(protected router: Router, protected rest: RestService,
-              protected ws: WebSocketService, protected storageService: StorageService,
-              private dialog:DialogService, private cdRef:ChangeDetectorRef ) {}
+              protected ws: WebSocketService, protected storageService: StorageService
+              ) {}
 
 
    afterInit(entityForm: any) {
@@ -372,6 +370,7 @@ export class UserFormComponent {
 
       if (!entityForm.isNew) {
         entityForm.setDisabled('username', true);
+        entityForm.setDisabled('uid', true);
         entityForm.formGroup.controls['username'].setValue(res[0].username);
         entityForm.formGroup.controls['full_name'].setValue(res[0].full_name);
         entityForm.formGroup.controls['email'].setValue(res[0].email);
@@ -470,11 +469,10 @@ export class UserFormComponent {
         delete entityForm['password_edit'];
         delete entityForm['password_conf_edit'];
       }
+      delete entityForm['group_create'];
     }
   }
   submitFunction(this: any, entityForm: any, ){
-    delete entityForm['uid']
-    delete entityForm['group_create']
     delete entityForm['password_conf']
     return this.ws.call('user.update', [this.pk, entityForm]);
   }

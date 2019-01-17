@@ -1,30 +1,12 @@
-import {ApplicationRef, Component, Injector, OnDestroy} from '@angular/core';
-import {
-  AbstractControl,
-  FormArray,
-  FormGroup,
-  Validators
-} from '@angular/forms';
-import {ActivatedRoute, Router, RouterModule} from '@angular/router';
+import { ApplicationRef, Component, Injector, OnDestroy } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
-import {  DialogService } from '../../../../services/';
-import {
-  regexValidator
-} from '../../../common/entity/entity-form/validators/regex-validation';
 
-import {
-  RestService,
-  SystemGeneralService,
-  WebSocketService
-} from '../../../../services/';
-import {
-  FieldConfig
-} from '../../../common/entity/entity-form/models/field-config.interface';
-import {
-  matchOtherValidator
-} from '../../../common/entity/entity-form/validators/password-validation';
+import {  DialogService } from '../../../../services/';
+import { RestService, SystemGeneralService, WebSocketService } from '../../../../services/';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
+import helptext from '../../../../helptext/services/components/service-s3';
 
 @Component({
   selector : 's3-edit',
@@ -45,87 +27,74 @@ export class ServiceS3Component implements OnDestroy {
     {
       type : 'select',
       name : 'bindip',
-      placeholder : T('IP Address'),
-      tooltip: T('Enter the IP address which runs the <a\
-                  href="..//docs/services.html#s3" target="_blank">S3\
-                  service</a>. <i>0.0.0.0</i> tells the server to listen\
-                  on all addresses.'),
-      options : [
-        {label:'0.0.0.0', value: '0.0.0.0'}
-      ]
+      placeholder : helptext.bindip_placeholder,
+      tooltip: helptext.bindip_tooltip,
+      options : helptext.bindip_options
     },
     {
       type : 'input',
       name : 'bindport',
-      placeholder : T('Port'),
-      tooltip: T('Enter the TCP port which provides the S3 service.'),
+      placeholder : helptext.bindport_placeholder,
+      tooltip: helptext.bindport_tooltip,
       value: '9000',
       required: true,
-      validation: [Validators.min(1), Validators.max(65535), Validators.required, Validators.pattern(/^[1-9]\d*$/)]
+      validation: helptext.bindport_validation
     },
     {
       type : 'input',
       name : 'access_key',
-      placeholder : T('Access Key'),
-      tooltip: T('Enter the S3 username.'),
+      placeholder : helptext.access_key_placeholder,
+      tooltip: helptext.access_key_tooltip,
       required: true,
-      validation: [Validators.minLength(5), Validators.maxLength(20), Validators.required,
-                             regexValidator(/^\w+$/)]
+      validation: helptext.access_key_validation
     },
     {
       type : 'input',
       name : 'secret_key',
-      placeholder : T('Secret Key'),
+      placeholder : helptext.secret_key_placeholder,
       togglePw: true,
-      tooltip: T('Enter the password that must be used by connecting S3\
-                  systems.'),
+      tooltip: helptext.secret_key_tooltip,
       inputType : 'password',
       required : true,
-      validation: [Validators.minLength(8), Validators.maxLength(40), Validators.required, 
-                            regexValidator(/^\w+$/)]
+      validation: helptext.secret_key_validation
     },
     {
       type : 'input',
       name : 'secret_key2',
-      placeholder : T('Confirm Secret Key'),
+      placeholder : helptext.secret_key2_placeholder,
       inputType : 'password',
       required: true,
-      validation : [ matchOtherValidator('secret_key'), Validators.required,
-                               regexValidator(/^\w+$/)],
+      validation : helptext.secret_key2_validation
     },
     {
       type : 'explorer',
       initial: '/mnt',
       explorerType: 'directory',
       name : 'storage_path',
-      placeholder : T('Disk'),
-      tooltip: T('Browse to the directory for the S3 filesystem.'),
+      placeholder : helptext.storage_path_placeholder,
+      tooltip: helptext.storage_path_tooltip,
       required: true,
-      validation: [ Validators.required]
+      validation: helptext.storage_path_validation
     },
     {
       type : 'checkbox',
       name : 'browser',
-      placeholder : T('Enable Browser'),
-      tooltip: T('Set to enable the S3 web user interface.'),
+      placeholder : helptext.browser_placeholder,
+      tooltip: helptext.browser_tooltip,
     },
 /*  This is to be enabled when the mode feature is finished and fully implemented for S3
     {
       type : 'select',
       name : 'mode',
-      placeholder : 'Mode',
-      options : [
-        {label : 'local'}
-      ]
+      placeholder : helptext.mode_placeholder,
+      options : helptext.mode_options
     },
 */
     {
       type : 'select',
       name : 'certificate',
-      placeholder : T('Certificate'),
-      tooltip : T('Add an <a href="..//docs/system.html#certificates"\
-                   target="_blank">SSL certificate</a> to be used for\
-                   secure S3 connections.'),
+      placeholder : helptext.certificate_placeholder,
+      tooltip : helptext.certificate_tooltip,
       options : []
     },
   ];

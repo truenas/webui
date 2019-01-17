@@ -12,6 +12,7 @@ import { EntityFormService } from '../../../../common/entity/entity-form/service
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../../translate-marker';
 import { TranslateService } from '@ngx-translate/core';
+import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 
 @Component({
   selector : 'app-iscsi-target-form',
@@ -35,17 +36,16 @@ export class TargetFormComponent {
     {
       type: 'input',
       name : 'name',
-      placeholder : T('Target Name'),
-      tooltip: T('Required value. Base name is appended\
-                  if it does not start with <i>iqn</i>.'),
+      placeholder : helptext_sharing_iscsi.target_form_placeholder_name,
+      tooltip: helptext_sharing_iscsi.target_form_tooltip_name,
       required: true,
-      validation: [Validators.required],
+      validation: helptext_sharing_iscsi.target_form_validators_name,
     },
     {
       type: 'input',
       name : 'alias',
-      placeholder : T('Target Alias'),
-      tooltip: T('Optional user-friendly name.'),
+      placeholder : helptext_sharing_iscsi.target_form_placeholder_alias,
+      tooltip: helptext_sharing_iscsi.target_form_tooltip_alias,
     },
     {
       type: 'array',
@@ -55,29 +55,26 @@ export class TargetFormComponent {
           {
             type: 'select',
             name : 'portal',
-            placeholder : T('Portal Group ID'),
-            tooltip: T('Leave empty or select number of existing portal\
-                        to use.'),
+            placeholder : helptext_sharing_iscsi.target_form_placeholder_portal,
+            tooltip: helptext_sharing_iscsi.target_form_tooltip_portal,
             value : '',
             options: [],
             required: true,
-            validation: [Validators.required],
+            validation: helptext_sharing_iscsi.target_form_validators_portal,
           },
           {
             type: 'select',
             name : 'initiator',
-            placeholder : T('Initiator Group ID'),
-            tooltip: T('Select which existing initiator group has access\
-                        to the target.'),
+            placeholder : helptext_sharing_iscsi.target_form_placeholder_initiator,
+            tooltip: helptext_sharing_iscsi.target_form_tooltip_initiator,
             value : null,
             options: [],
           },
           {
             type: 'select',
             name : 'authmethod',
-            placeholder : T('Auth Method'),
-            tooltip: T('Choices are <i>None, Auto, CHAP,</i> or\
-                        <i>Mutual CHAP</i>.'),
+            placeholder : helptext_sharing_iscsi.target_form_placeholder_authmethod,
+            tooltip: helptext_sharing_iscsi.target_form_tooltip_authmethod,
             value : 'NONE',
             options : [
               {
@@ -97,16 +94,15 @@ export class TargetFormComponent {
           {
             type: 'select',
             name : 'auth',
-            placeholder : T('Authentication Group number'),
-            tooltip: T('Select <i>None</i> or an integer. This value\
-                        represents the number of existing authorized accesses.'),
+            placeholder : helptext_sharing_iscsi.target_form_placeholder_auth,
+            tooltip: helptext_sharing_iscsi.target_form_tooltip_auth,
             value : null,
             options: [],
           },
           {
             type: 'checkbox',
             name: 'delete',
-            placeholder: T('Delete'),
+            placeholder: helptext_sharing_iscsi.target_form_placeholder_delete,
             isHidden: true,
             disabled: true,
           }

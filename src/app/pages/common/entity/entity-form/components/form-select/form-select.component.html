@@ -1,10 +1,63 @@
 <div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
-  <mat-form-field class="full-width">
-    <mat-select [formControlName]="config.name" [multiple]="config.multiple" [required]="config.required" [placeholder]="config.placeholder | translate" (change)="onChangeOption($event)">
-      <mat-option *ngFor="let option of config.options" [value]="option.value">
-        {{ option.label }}
-      </mat-option>
+  <mat-form-field class="full-width" value="fromFormField" #field>
+    <mat-select 
+      #selectTrigger
+      [value]="formValue"
+      [formControlName]="config.name" 
+      [multiple]="config.multiple" 
+      [required]="config.required" 
+      [placeholder]="config.placeholder | translate" 
+      (change)="onChangeOption($event)">
+
+     
+      <mat-select-trigger *ngIf="config.multiple">
+        {{ customTriggerValue }}
+      </mat-select-trigger>
+     
+
+      <!--
+        <div class="mat-option" (click)="onToggleSelectAll()">
+          <span *ngIf="config.multiple">
+            <mat-icon *ngIf="allSelected" class="fn-checked">check_circle</mat-icon>
+            <mat-icon *ngIf="!allSelected" class="fn-unchecked">remove</mat-icon>
+          </span>
+        Select All
+      </div>
+      -->
+
+      <div *ngIf="formReady">
+        <ng-container *ngFor="let option of config.options; let i=index">
+          <!-- if disabled -->
+          <mat-option *ngIf="option.disable && !option.hiddenFromDisplay" [value]="option.value" disabled style="opacity:0.5">
+              <span *ngIf="config.multiple">
+                <mat-icon *ngIf="selectStates[i]" class="fn-checked">check_circle</mat-icon>
+                <mat-icon *ngIf="!selectStates[i]" class="fn-unchecked">remove</mat-icon>
+              </span>
+              {{ option.label }}
+          </mat-option>
+
+          <!-- else -->
+          <mat-option *ngIf="!option?.disable" [value]="option.value" (click)="onToggleSelect(option, i)">
+              <span *ngIf="config.multiple">
+                <mat-icon *ngIf="selectStates[i]" class="fn-checked">check_circle</mat-icon>
+                <mat-icon *ngIf="!selectStates[i]" class="fn-unchecked">remove</mat-icon>
+              </span>
+              {{ option.label }}
+              </mat-option>
+
+        </ng-container>
+      </div>
+
+      <div *ngIf="!formReady || config.options.length == 0">
+        <!--<ng-container>
+          <mat-option disabled style="opacity:0.5">
+              (No Options)
+          </mat-option>
+        </ng-container>-->
+      </div>
     </mat-select>
+
+
   </mat-form-field>
   <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
   <mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>

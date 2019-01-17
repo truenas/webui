@@ -1,18 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params, Router } from "@angular/router";
-import { FormArray, FormGroup } from '@angular/forms';
+import { ActivatedRoute, Router } from "@angular/router";
+import { FormGroup } from '@angular/forms';
 import { MatDialog, MatSnackBar } from '@angular/material';
 import * as _ from 'lodash';
 
 import { WebSocketService } from "../../../../services/ws.service";
-import { RestService } from "../../../../services/rest.service";
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { DialogService } from '../../../../services/dialog.service';
 import { T } from '../../../../translate-marker';
-
+import helptext from '../../../../helptext/storage/disks/disk-wipe';
 
 @Component({
   selector: 'app-disk-wipe',
@@ -34,19 +33,15 @@ export class DiskWipeComponent implements OnInit {
     {
       type: 'input',
       name: 'disk_name',
-      placeholder: T('Name'),
-      tooltip : T('Disk to wipe.'),
+      placeholder: helptext.dw_disk_name_placeholder,
+      tooltip : helptext.dw_disk_name_tooltip,
       readonly: true
     },
     {
       type: 'select',
       name: 'wipe_method',
-      placeholder: T('Method'),
-      tooltip : T('<i>Quick</i> erases only the partitioning information\
-                   on a disk without clearing other old data. <i>Full\
-                   with zeros</i> overwrites the entire disk with zeros.\
-                   <i>Full with random data</i> overwrites the entire\
-                   disk with random binary data.'),
+      placeholder: helptext.dw_wipe_method_placeholder,
+      tooltip : helptext.dw_wipe_method_tooltip,
       options: [],
     }
   ];

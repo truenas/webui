@@ -14,6 +14,14 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { T } from '../../../../translate-marker';
 
+interface PoolDiagnosis {
+  isHealthy: boolean;
+  warnings: string[];
+  errors: string[];
+  selector: string;
+  level: string;
+}
+
 export interface Disk {
   name: string;
   smart_enabled: boolean;
@@ -68,6 +76,13 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   @Input() volumeData:VolumeData;
   public volumeName:string = "";
   public volumeId:number;
+  public volumeHealth: PoolDiagnosis = {
+    isHealthy: true,
+    warnings: [],
+    errors: [],
+    selector: "fn-theme-green",
+    level: "safe"
+  };
   public diskSets:any[][] = [[]];
   public disks: string[] = [];
   public diskDetails:Disk[] = [];
@@ -127,10 +142,10 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
 
           }
         
-        if(evt.data.length > 0){
+      }
+        if(this.disks.length > 0){
           this.setSelectedDisk(0);
         }
-      }
     });
 
 
@@ -147,8 +162,8 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     });
 
     this.core.register({observerClass:this,eventName:"DisksInfo"}).subscribe((evt:CoreEvent) => {
-      this.dataRcvd = true;
       this.setDisksData(evt);
+      this.dataRcvd = true;
     });
 
 
@@ -175,6 +190,11 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
 
     }
     
+    /*console.log(evt.data)
+    if(evt.data.length > 0){
+      this.setSelectedDisk(Number(0));
+    }
+    //console.log(this.selectedDisk)*/
   }
 
   parseVolumeData(){
@@ -189,6 +209,12 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
       legend: 'Used', 
       data: [usedValue]
     };
+
+    if(usedValue == "Locked"){
+      // When Locked, Bail before we try to get details. 
+      // (errors start after this...)
+      return 0;
+    }
 
     let availableValue;
     if (isNaN(this.volumeData.avail)) {
@@ -218,6 +244,8 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     if (this.diskSize.charAt(this.diskSize.length - 2) === '.' || this.diskSize.charAt(this.diskSize.length - 2) === ',') {
       this.diskSize = this.diskSize.concat('0')
     };
+
+    this.checkVolumeHealth();
   };
 
   setPreferences(form:NgForm){
@@ -235,17 +263,53 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
         if(this.diskDetails[i].name == this.disks[index]){
           this.selectedDisk = i;
           this.core.emit({name:"StatsDiskTempRequest", data:[this.diskDetails[i].name, i] });
-        }
+        } 
       }
     } else {
       this.selectedDisk = -1;
     }
-
   }
 
   setCurrentDiskSet(num:number){
     this.currentDiskSet = num;
-    //console.log("Selected Disk Set = " + String(this.currentDiskSet));
   }
 
+  checkVolumeHealth(){
+    switch(this.volumeData.status){
+      case "HEALTHY":
+      case "LOCKED":
+        break;
+      case "UNKNOWN":
+      case "OFFLINE":
+      case "DEGRADED":
+        this.updateVolumeHealth("Pool status is " + this.volumeData.status); // Warning
+        break
+      case "FAULTED":
+      case "REMOVED":
+        this.updateVolumeHealth("Pool status is " + this.volumeData.status, true); // Error
+        break;
+    }
+  }
+
+  updateVolumeHealth(symptom: string, isCritical?: boolean){
+    if(isCritical){
+      this.volumeHealth.errors.push(symptom);
+    } else {
+      this.volumeHealth.warnings.push(symptom);
+    }
+    if(this.volumeHealth.isHealthy){
+      this.volumeHealth.isHealthy = false;
+    }
+
+    if(this.volumeHealth.errors.length > 0){
+      this.volumeHealth.level = "error"
+      this.volumeHealth.selector = "fn-theme-red"
+    } else if(this.volumeHealth.warnings.length > 0){
+      this.volumeHealth.level = "warn"
+      this.volumeHealth.selector = "fn-theme-yellow"
+    } else {
+      this.volumeHealth.level = "safe"
+      this.volumeHealth.selector = "fn-theme-green"
+    } 
+  }
 }

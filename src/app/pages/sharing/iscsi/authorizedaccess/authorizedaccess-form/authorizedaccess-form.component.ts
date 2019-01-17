@@ -1,13 +1,8 @@
 import { Component } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
-
-import {
-  matchOtherValidator
-} from '../../../../common/entity/entity-form/validators/password-validation';
-import { T } from '../../../../../translate-marker';
+import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 
 @Component({
   selector : 'app-iscsi-authorizedaccess-form',
@@ -23,75 +18,55 @@ export class AuthorizedAccessFormComponent {
     {
       type : 'input',
       name : 'iscsi_target_auth_tag',
-      placeholder : T('Group ID'),
-      tooltip: T('Allows different groups to be configured\
-                  with different authentication profiles.\
-                  Example: all users with a group ID of\
-                  <i>1</i> will inherit the authentication profile\
-                  associated with Group <i>1</i>.'),
+      placeholder : helptext_sharing_iscsi.authaccess_placeholder_tag,
+      tooltip: helptext_sharing_iscsi.authaccess_tooltip_tag,
       inputType : 'number',
       min: 0,
       required: true,
-      validation : [ Validators.required, Validators.min(0) ]
+      validation : helptext_sharing_iscsi.authaccess_validators_tag
     },
     {
       type : 'input',
       name : 'iscsi_target_auth_user',
-      placeholder : T('User'),
-      tooltip: T('Enter name of user account to use\
-                  for CHAP authentication with the user on the remote\
-                  system. Many initiators\
-                  default to the initiator name as the user.'),
-      validation : [ Validators.required ]
+      placeholder : helptext_sharing_iscsi.authaccess_placeholder_user,
+      tooltip: helptext_sharing_iscsi.authaccess_tooltip_user,
+      validation : helptext_sharing_iscsi.authaccess_validators_user
     },
     {
       type : 'input',
       name : 'iscsi_target_auth_secret',
-      placeholder : T('Secret'),
-      tooltip: T('Enter a password for <b>User</b>.\
-                  Must be between 12 and 16 characters.'),
+      placeholder : helptext_sharing_iscsi.authaccess_placeholder_secret,
+      tooltip: helptext_sharing_iscsi.authaccess_tooltip_secret,
       inputType : 'password',
       togglePw: true,
       required: true,
-      validation : [
-        Validators.minLength(12),
-        Validators.maxLength(16),
-        Validators.required,
-        matchOtherValidator('iscsi_target_auth_secret_confirm'),
-      ],
+      validation : helptext_sharing_iscsi.authaccess_validators_secret,
     },
     {
       type : 'input',
       name : 'iscsi_target_auth_secret_confirm',
-      placeholder : T('Secret (Confirm)'),
+      placeholder : helptext_sharing_iscsi.authaccess_placeholder_secret_confirm,
       inputType : 'password'
     },
     {
       type : 'input',
       name : 'iscsi_target_auth_peeruser',
-      placeholder : T('Peer User'),
-      tooltip: T('Only input when configuring mutual CHAP.\
-                  In most cases it will need to be the same value\
-                  as <b>User</b>.'),
+      placeholder : helptext_sharing_iscsi.authaccess_placeholder_peeruser,
+      tooltip: helptext_sharing_iscsi.authaccess_tooltip_peeruser,
     },
     {
       type : 'input',
       name : 'iscsi_target_auth_peersecret',
-      placeholder : T('Peer Secret'),
-      tooltip: T('Enter the mutual secret password which\
-                  <b>must be different than the <i>Secret</i></b>.\
-                  Required if <b>Peer User</b> is set.'),
+      placeholder : helptext_sharing_iscsi.authaccess_placeholder_peersecret,
+      tooltip: helptext_sharing_iscsi.authaccess_tooltip_peersecret,
       inputType : 'password',
       togglePw: true,
-      validation : [
-        Validators.minLength(12),
-        matchOtherValidator('iscsi_target_auth_peersecret_confirm'),
-      ],
+      validation : helptext_sharing_iscsi.authaccess_validators_peersecret,
     },
     {
       type : 'input',
       name : 'iscsi_target_auth_peersecret_confirm',
-      placeholder : T('Peer Secret (Confirm)'),
+      placeholder : helptext_sharing_iscsi.authaccess_placeholder_peersecret_confirm,
       inputType : 'password'
     },
   ];

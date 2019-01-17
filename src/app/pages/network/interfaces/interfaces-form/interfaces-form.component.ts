@@ -1,20 +1,16 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
-import {Validators, FormArray} from '@angular/forms';
-
-import { NetworkService, RestService, DialogService, WebSocketService } from '../../../../services';
-import {
-  FieldConfig
-} from '../../../common/entity/entity-form/models/field-config.interface';
-import {
-  regexValidator
-} from '../../../common/entity/entity-form/validators/regex-validation';
+import { FormArray } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
+import { NetworkService, RestService, DialogService, WebSocketService } from '../../../../services';
+
 import { T } from '../../../../translate-marker';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from '../../../common/entity/utils';
-
+import helptext from '../../../../helptext/network/interfaces/interfaces-form';
 
 @Component({
   selector : 'app-interfaces-form',
@@ -30,33 +26,30 @@ export class InterfacesFormComponent implements OnDestroy {
     {
       type : 'input',
       name : 'int_interface',
-      placeholder : T('NIC'),
-      tooltip : T('Enter the FreeBSD device name of the interface. This\
-                   cannot change after creating the interface.'),
+      placeholder : helptext.int_interface_placeholder,
+      tooltip : helptext.int_interface_tooltip,
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext.int_interface_validation
     },
     {
       type : 'input',
       name : 'int_name',
-      placeholder : T('Interface Name'),
-      tooltip : T('Enter a description of the interface.'),
+      placeholder : helptext.int_name_placeholder,
+      tooltip : helptext.int_name_tooltip,
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext.int_name_validation
     },
     {
       type : 'checkbox',
       name : 'int_dhcp',
-      placeholder : T('DHCP'),
-      tooltip : T('Set to enable DHCP. Leave unset to create a static\
-                   IPv4 or IPv6 configuration. Only one interface can\
-                   be configured for DHCP.'),
+      placeholder : helptext.int_dhcp_placeholder,
+      tooltip : helptext.int_dhcp_tooltip,
     },
     {
       type : 'input',
       name : 'int_ipv4address',
-      placeholder : T('IPv4 Address'),
-      tooltip : T('Enter a static IPv4 address. Example: <i>10.0.0.2</i>.'),
+      placeholder : helptext.int_ipv4address_placeholder,
+      tooltip : helptext.int_ipv4address_tooltip,
       validation : [ regexValidator(this.networkService.ipv4_regex) ],
       relation : [
         {action : "DISABLE", when : [ {name : "int_dhcp", value : true} ]}
@@ -65,8 +58,8 @@ export class InterfacesFormComponent implements OnDestroy {
     {
       type : 'select',
       name : 'int_v4netmaskbit',
-      placeholder : T('IPv4 Netmask'),
-      tooltip : T('Enter a netmask.'),
+      placeholder : helptext.int_v4netmaskbit_placeholder,
+      tooltip : helptext.int_v4netmaskbit_tooltip,
       options : this.networkService.getV4Netmasks(),
       value: '',
       relation : [
@@ -76,18 +69,14 @@ export class InterfacesFormComponent implements OnDestroy {
     {
       type : 'checkbox',
       name : 'int_ipv6auto',
-      placeholder : T('Auto configure IPv6'),
-      tooltip : T('Set to automatically configure the IPv6 address with\
-                   <a href="https://www.freebsd.org/cgi/man.cgi?query=rtsol"\
-                   target="_blank">rtsol(8)</a>. Only one interface can\
-                   be configured this way.')
+      placeholder : helptext.int_ipv6auto_placeholder,
+      tooltip : helptext.int_ipv6auto_tooltip
     },
     {
       type : 'input',
       name : 'int_ipv6address',
-      placeholder : T('IPv6 Address'),
-      tooltip : T('Enter a static IPv6 address. Example:\
-                   <i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>.'),
+      placeholder : helptext.int_ipv6address_placeholder,
+      tooltip : helptext.int_ipv6address_tooltip,
       validation : [ regexValidator(this.networkService.ipv6_regex) ],
       relation : [
         {action : "DISABLE", when : [ {name : "int_ipv6auto", value : true} ]}
@@ -96,8 +85,8 @@ export class InterfacesFormComponent implements OnDestroy {
     {
       type : 'select',
       name : 'int_v6netmaskbit',
-      placeholder : T('IPv6 Prefix Length'),
-      tooltip : T('Select the prefix length used on the network.'),
+      placeholder : helptext.int_v6netmaskbit_placeholder,
+      tooltip : helptext.int_v6netmaskbit_tooltip,
       options : this.networkService.getV6PrefixLength(),
       value: '',
       relation : [
@@ -107,10 +96,8 @@ export class InterfacesFormComponent implements OnDestroy {
     {
       type : 'input',
       name : 'int_options',
-      placeholder : T('Options'),
-      tooltip : T('Enter additional space-delimited parameters from <a\
-                   href="https://www.freebsd.org/cgi/man.cgi?query=ifconfig"\
-                   target="_blank">ifconfig(8)</a>.'),
+      placeholder : helptext.int_options_placeholder,
+      tooltip : helptext.int_options_tooltip,
     },
     {
       type: 'array',
@@ -118,16 +105,15 @@ export class InterfacesFormComponent implements OnDestroy {
       initialCount: 1,
       formarray: [{
         name: 'alias_address',
-        placeholder: T('IPv4 Address'),
-        tooltip: T('Enter a static IPv4 address. Example:\
-                    <i>10.0.0.3</i>.'),
+        placeholder: helptext.alias_address_placeholder,
+        tooltip: helptext.alias_address_tooltip,
         type: 'input',
         validation : [ regexValidator(this.networkService.ipv4_regex) ]
       },
       {
         name: 'alias_netmaskbit',
-        placeholder: T('IPv4 Netmask'),
-        tooltip : T('Enter a netmask.'),
+        placeholder: helptext.alias_netmaskbit_placeholder,
+        tooltip : helptext.alias_netmaskbit_tooltip,
         type: 'select',
         options : this.networkService.getV4Netmasks(),
         value: '',
@@ -135,8 +121,8 @@ export class InterfacesFormComponent implements OnDestroy {
       {
         type: 'checkbox',
         name: 'delete',
-        placeholder: T('Delete'),
-        tooltip: T('Set to delete this alias.'),
+        placeholder: helptext.delete_placeholder,
+        tooltip: helptext.delete_tooltip,
       }]
     },
     {
@@ -145,16 +131,15 @@ export class InterfacesFormComponent implements OnDestroy {
       initialCount: 1,
       formarray: [{
         name: 'alias_address',
-        placeholder: T('IPv6 Address'),
-        tooltip: T('Enter a static IPv6 address if DHCP is unset.\
-                    Example: <i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>'),
+        placeholder: helptext.alias_address6_placeholder,
+        tooltip: helptext.alias_address6_tooltip,
         type: 'input',
         validation : [ regexValidator(this.networkService.ipv6_regex) ]
       },
       {
         name: 'alias_netmaskbit',
-        placeholder: T('IPv6 Prefix Length'),
-        tooltip : T('Select the prefix length used on the network.'),
+        placeholder: helptext.alias_netmaskbit6_placeholder,
+        tooltip : helptext.alias_netmaskbit6_tooltip,
         type: 'select',
         options : this.networkService.getV6PrefixLength(),
         value: '',
@@ -162,8 +147,8 @@ export class InterfacesFormComponent implements OnDestroy {
       {
         type: 'checkbox',
         name: 'delete',
-        placeholder: T('Delete'),
-        tooltip: T('Set to delete this alias.'),
+        placeholder: helptext.delete_placeholder6,
+        tooltip: helptext.delete_tooltip6,
       }]
     },
   ];

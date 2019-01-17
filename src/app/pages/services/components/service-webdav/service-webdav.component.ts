@@ -1,26 +1,10 @@
-import {ApplicationRef, Component, Injector, OnInit, OnDestroy} from '@angular/core';
-import {
-  AbstractControl,
-  FormArray,
-  FormGroup,
-  Validators
-} from '@angular/forms';
-import {ActivatedRoute, Router, RouterModule} from '@angular/router';
+import { ApplicationRef, Component, Injector, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
 
-import {
-  RestService,
-  SystemGeneralService,
-  WebSocketService
-} from '../../../../services/';
-import {
-  FieldConfig
-} from '../../../common/entity/entity-form/models/field-config.interface';
-import {
-  matchOtherValidator
-} from '../../../common/entity/entity-form/validators/password-validation';
-import { T } from '../../../../translate-marker';
+import { RestService, SystemGeneralService, WebSocketService } from '../../../../services/';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import helptext from '../../../../helptext/services/components/service-webdav';
 
 @Component({
   selector : 'webdav-edit',
@@ -39,70 +23,50 @@ export class ServiceWebdavComponent implements OnInit, OnDestroy {
     {
       type : 'select',
       name : 'protocol',
-      placeholder : T('Protocol'),
-      tooltip : T('<i>HTTP</i> will keep the connection unencrypted.\
-                   <i>HTTPS</i> encrypts the connection.\
-                   <i>HTTP+HTTPS</i> allows both types of connections.'),
-      options : [
-        {label : 'HTTP', value : 'HTTP'},
-        {label : 'HTTPS', value : 'HTTPS'},
-        {label : 'HTTP+HTTPS', value : 'HTTPHTTPS'},
-      ]
+      placeholder : helptext.protocol_placeholder,
+      tooltip : helptext.protocol_tooltip,
+      options : helptext.protocol_options
     },
     {
       type : 'input',
       name : 'tcpport',
-      placeholder : T('HTTP Port'),
-      tooltip : T('Specify a port for unencrypted connections. The\
-                   default port <i>8080</i> is recommended. Do not reuse\
-                   a port.'),
+      placeholder : helptext.tcpport_placeholder,
+      tooltip : helptext.tcpport_tooltip,
     },
     {
       type : 'input',
       name : 'tcpportssl',
-      placeholder : T('HTTPS Port'),
-      tooltip : T('Specify a port for encrypted connections. The\
-                   default port <i>8081</i> is recommended. Do not reuse\
-                   a port.'),
+      placeholder : helptext.tcpportssl_placeholder,
+      tooltip : helptext.tcpportssl_tooltip,
     },
     {
       type : 'select',
       name : 'certssl',
-      placeholder : T('Webdav SSL Certificate'),
-      tooltip : T('Select the <a href="..//docs/system.html#certificates"\
-                   target="_blank">SSL certificate</a> to use for\
-                   encrypted connections.'),
-      options: [
-        {label: '---', value: null}
-      ]
+      placeholder : helptext.certssl_placeholder,
+      tooltip : helptext.certssl_tooltip,
+      options: helptext.certssl_options
     },
     {
       type : 'select',
       name : 'htauth',
-      placeholder : T('HTTP Authentication'),
-      tooltip : T('<i>Basic Authentication</i> is unencrypted.\
-                   <i>Digest Authentication</i> is encrypted.'),
-      options : [
-        {label : 'No Authentication', value: 'NONE'},
-        {label : 'Basic Authentication', value : 'BASIC'},
-        {label : 'Digest Authentication', value : 'DIGEST'},
-      ]
+      placeholder : helptext.htauth_placeholder,
+      tooltip : helptext.htauth_tooltip,
+      options : helptext.htauth_options
     },
     {
       type : 'input',
       name : 'password',
-      placeholder : T('Webdav Password'),
+      placeholder : helptext.password_placeholder,
       togglePw: true,
-      tooltip : T('The default of <i>davtest</i> is recommended to\
-                   change. <i>davtest</i> is a known value.'),
+      tooltip : helptext.password_tooltip,
       inputType : 'password',
       value : 'davtest',
-      validation : [ matchOtherValidator('password2') ]
+      validation : helptext.password_validation
     },
     {
       type : 'input',
       name : 'password2',
-      placeholder : T('Confirm Password'),
+      placeholder : helptext.password2_placeholder,
       inputType : 'password'
     },
   ];

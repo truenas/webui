@@ -4,6 +4,7 @@ import { DecimalPipe } from '@angular/common';
 import { WebSocketService, RestService } from '../../../../services/';
 import { TranslateService } from '@ngx-translate/core';
 import { Http } from '@angular/http';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'entity-job',
@@ -41,6 +42,10 @@ export class EntityJobComponent implements OnInit {
     if (this.dialogRef.disableClose) {
       this.showCloseButton = false;
     }
+    if (this.data.CloseOnClickOutside) {
+      this.showCloseButton = true;
+      this.dialogRef.disableClose = true;
+    }
   }
 
   setCall(method: string, args ?: any[]) {
@@ -76,6 +81,9 @@ export class EntityJobComponent implements OnInit {
 
   @HostListener('failure', ['$event'])
   public onFailure(job) {
+    job.error = _.replace(job.error, '<', '< ');
+    job.error = _.replace(job.error, '>', ' >');
+
     this.description = job.error;
   }
 

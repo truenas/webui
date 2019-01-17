@@ -1,11 +1,10 @@
-import { Component, ViewContainerRef, OnDestroy } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import {Validators} from '@angular/forms';
 import * as _ from 'lodash';
 
 import { RestService, WebSocketService, DialogService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { T } from '../../../../translate-marker';
+import { helptext_sharing_smb } from 'app/helptext/sharing';
 
 @Component({
   selector : 'app-smb-form',
@@ -27,122 +26,89 @@ export class SMBFormComponent implements OnDestroy {
       initial: '/mnt',
       explorerType: 'directory',
       name: 'cifs_path',
-      placeholder: T('Path'),
-      tooltip: T('Select pool, dataset, or directory to share.'),
+      placeholder: helptext_sharing_smb.placeholder_path,
+      tooltip: helptext_sharing_smb.tooltip_path,
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext_sharing_smb.validators_path
     },
     {
       type: 'input',
       name: 'cifs_name',
-      placeholder: T('Name'),
-      tooltip: T('Enter a name for the share.')
+      placeholder: helptext_sharing_smb.placeholder_name,
+      tooltip: helptext_sharing_smb.tooltip_name
     },
     {
       type: 'checkbox',
       name: 'cifs_home',
-      placeholder: T('Use as home share'),
-      tooltip: T('Set to allow this share to hold user home\
-                  directories. Only one share can be\
-                  the home share.\
-                  Note: Lower case names for user home\
-                  directories are strongly recommended, as Samba\
-                  maps usernames to all lower case. For example, the\
-                  username John will be mapped to a home directory\
-                  named john. If the <i>Path</i> to the home share\
-                  includes an upper case username, delete the existing user\
-                  and recreate it in <i>Accounts --> Users</i>\
-                  with an all lower case <i>Username</i>. Return\
-                  to <i>Sharing --> SMB</i> to create the home share,\
-                  and select the </i>Path</i> that contains the new\
-                  lower case username.'),
+      placeholder: helptext_sharing_smb.placeholder_home,
+      tooltip: helptext_sharing_smb.tooltip_home,
+    },
+    {
+      type: 'checkbox',
+      name: 'cifs_timemachine',
+      placeholder: helptext_sharing_smb.placeholder_timemachine,
+      tooltip: helptext_sharing_smb.tooltip_timemachine,
     },
     {
       type: 'checkbox',
       name: 'cifs_default_permissions',
-      placeholder: T('Default Permissions'),
-      tooltip: T('When enabled, the ACLs grant read and write access for\
-                  owner or group and read-only for others.\
-                  <b>Only</b> leave unset when creating a share on a\
-                  system that already has custom\
-                  ACLs configured.'),
+      placeholder: helptext_sharing_smb.placeholder_default_permissions,
+      tooltip: helptext_sharing_smb.tooltip_default_permissions,
       value: false
     },
     {
       type: 'checkbox',
       name: 'cifs_ro',
-      placeholder: T('Export Read Only'),
-      tooltip: T('Set to prohibit writes to this share')
+      placeholder: helptext_sharing_smb.placeholder_ro,
+      tooltip: helptext_sharing_smb.tooltip_ro
     },
     {
       type: 'checkbox',
       name: 'cifs_browsable',
-      placeholder: T('Browsable to Network Clients'),
-      tooltip: T('When set, users see the contents of <i>/homes</i>,\
-                  which includes the home directories of other users.\
-                  When unset, users only see their own\
-                  home directory.'),
+      placeholder: helptext_sharing_smb.placeholder_browsable,
+      tooltip: helptext_sharing_smb.tooltip_browsable,
     },
     {
       type: 'checkbox',
       name: 'cifs_recyclebin',
-      placeholder: T('Export Recycle Bin'),
-      tooltip: T('When set, deleted files are moved to a hidden\
-                  <b>.recycle</b> in the root folder of the share.\
-                  The <b>.recycle</b> directory can be\
-                  deleted to reclaim space and is automatically\
-                  recreated when a file is deleted.')
+      placeholder: helptext_sharing_smb.placeholder_recyclebin,
+      tooltip: helptext_sharing_smb.tooltip_recyclebin
     },
     {
       type: 'checkbox',
       name: 'cifs_showhiddenfiles',
-      placeholder: T('Show Hidden Files'),
-      tooltip: T('Set to disable the Windows <i>hidden</i> attribute\
-                  on a new Unix hidden file. Unix hidden filenames start\
-                  with a dot: <b>.foo</b>.\
-                  Existing files are not affected.')
+      placeholder: helptext_sharing_smb.placeholder_showhiddenfiles,
+      tooltip: helptext_sharing_smb.tooltip_showhiddenfiles
     },
     {
       type: 'checkbox',
       name: 'cifs_guestok',
-      placeholder: T('Allow Guest Access'),
-      tooltip: T('Set to allow access to this share without a password.\
-                  See the <a href="..//docs/services.html#smb"\
-                  target="_blank">SMB</a> service documentation for more\
-                  information about guest user permissions.')
+      placeholder: helptext_sharing_smb.placeholer_guestonly,
+      tooltip: helptext_sharing_smb.tooltip_guestonly
     },
     {
       type: 'checkbox',
       name: 'cifs_guestonly',
-      placeholder: T('Only Allow Guest Access'),
-      tooltip: T('Requires <b>Allow guest access</b> to also be set.\
-                  Forces guest access for all connections.')
+      placeholder: helptext_sharing_smb.placeholer_guestonly,
+      tooltip: helptext_sharing_smb.tooltip_guestonly
     },
     {
       type: 'textarea',
       name: 'cifs_hostsallow',
-      placeholder: T('Hosts Allow'),
-      tooltip: T('Enter a list of allowed hostnames or IP addresses.\
-                  Separate entries with a comma, space, or tab.')
+      placeholder: helptext_sharing_smb.placeholder_hostsallow,
+      tooltip: helptext_sharing_smb.tooltip_hostsallow
     },
     {
       type: 'textarea',
       name: 'cifs_hostsdeny',
-      placeholder: T('Hosts Deny'),
-      tooltip: T('Enter a list of denied hostnames or IP addresses.\
-                  Separate entries with a comma, space, or tab.\
-                  Specify <i>ALL</i> and list any hosts from\
-                  <b>Hosts Allow</b> to have those hosts take\
-                  precedence.')
+      placeholder: helptext_sharing_smb.placeholder_hostsdeny,
+      tooltip: helptext_sharing_smb.tooltip_hostsdeny
     },
     {
       type: 'select',
       name: 'cifs_vfsobjects',
-      placeholder: T('VFS Objects'),
-      tooltip: T('Adds <a\
-                  href="..//docs/sharing.html#avail-vfs-modules-tab"\
-                  target="blank">virtual file system modules</a> to\
-                  enhance functionality.'),
+      placeholder: helptext_sharing_smb.placeholder_vfsobjects,
+      tooltip: helptext_sharing_smb.tooltip_vfsobjects,
       options: [],
       multiple: true,
     },
@@ -150,18 +116,14 @@ export class SMBFormComponent implements OnDestroy {
       type: 'select',
       name: 'cifs_storage_task',
       placeholder: 'Periodic Snapshot Task',
-      tooltip: T('Used to configure directory shadow copies on a\
-                  per-share basis. Select the pre-configured periodic\
-                  snapshot task to use for the shadow copies of this\
-                  share. Periodic snapshots must be recursive.'),
+      tooltip: helptext_sharing_smb.tooltip_storage_task,
       options: []
     },
     {
       type: 'textarea',
       name: 'cifs_auxsmbconf',
-      placeholder: T('Auxiliary Parameters'),
-      tooltip: T('Additional <b>smb5.conf</b> parameters not covered by\
-                  other option fields.'),
+      placeholder: helptext_sharing_smb.placeholder_auxsmbconf,
+      tooltip: helptext_sharing_smb.tooltip_auxsmbconf,
     },
   ];
 
@@ -183,12 +145,12 @@ export class SMBFormComponent implements OnDestroy {
   public custActions: Array<any> = [
     {
       id : 'basic_mode',
-      name : T('Basic Mode'),
+      name : helptext_sharing_smb.actions_basic_mode,
       function : () => { this.isBasicMode = !this.isBasicMode; }
     },
     {
       'id' : 'advanced_mode',
-      name : T('Advanced Mode'),
+      name : helptext_sharing_smb.actions_advanced_mode,
       function : () => { this.isBasicMode = !this.isBasicMode; }
     }
   ];
@@ -212,15 +174,15 @@ export class SMBFormComponent implements OnDestroy {
         this.router.navigate(new Array('/').concat(
           this.route_success));
       } else {
-          this.dialog.confirm(T("Enable service"),
-          T("Enable this service?"),
-          true, T("Enable Service")).subscribe((dialogRes) => {
+          this.dialog.confirm(helptext_sharing_smb.dialog_enable_service_title,
+          helptext_sharing_smb.dialog_enable_service_message,
+          true, helptext_sharing_smb.dialog_enable_service_button).subscribe((dialogRes) => {
             if (dialogRes) {
               entityForm.loader.open();
               this.ws.call('service.update', [service.id, { enable: true }]).subscribe((updateRes) => {
                 this.ws.call('service.start', [service.service]).subscribe((startRes) => {
                   entityForm.loader.close();
-                  entityForm.snackBar.open(T("Service started"), T("close"));
+                  entityForm.snackBar.open(helptext_sharing_smb.snackbar_service_started, helptext_sharing_smb.snackbar_close);
                   this.router.navigate(new Array('/').concat(
                    this.route_success));
                 }, (err) => {
@@ -252,7 +214,7 @@ export class SMBFormComponent implements OnDestroy {
     }
     this.cifs_default_permissions_subscription = this.cifs_default_permissions.valueChanges.subscribe((value) => {
       if (value === true) {
-        this.dialog.confirm(T("Warning"), T("Setting default permissions will reset the permissions of this share and any others within its path."))
+        this.dialog.confirm(helptext_sharing_smb.dialog_warning, helptext_sharing_smb.dialog_warning_message)
         .subscribe((res) => {
           if (!res) {
             this.cifs_default_permissions.setValue(false);

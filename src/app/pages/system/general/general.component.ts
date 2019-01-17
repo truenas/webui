@@ -48,9 +48,9 @@ export class GeneralComponent implements OnDestroy {
       tooltip: T('Required for <i>HTTPS</i>. Browse to the location of\
                   the certificate to use for encrypted connections. If\
                   there are no certificates, create a <a\
-                  href="..//docs/system.html#cas"\
+                  href="%%docurl%%/system.html%%webversion%%#cas"\
                   target="_blank">Certificate Authority (CA)</a> then\
-                  the <a href="..//docs/system.html#certificates"\
+                  the <a href="%%docurl%%/system.html%%webversion%%#certificates"\
                   target="_blank">Certificate</a>.'),
       options: [
         { label: '---', value: null }
@@ -124,10 +124,7 @@ export class GeneralComponent implements OnDestroy {
       type: 'select',
       name: 'stg_language',
       placeholder: T('Language'),
-      tooltip: T('Select a localization.\
-                  Localization progress is viewable on <a\
-                  href="https://weblate.trueos.org/projects/freenas/#languages"\
-                  target="_blank">Weblate</a>.'),
+      tooltip: T('Select a language localization.'),
       options: [
         { label: '---', value: null }
       ]
@@ -175,11 +172,19 @@ export class GeneralComponent implements OnDestroy {
     }
   ];
   public saveConfigFormConf: DialogFormConfiguration = {
-    title: "Save Config",
+    title: "Save Configuration",
+    message: T('<b>WARNING:</b> This configuration file contains system\
+              passwords and other sensitive data.<br>'),
     fieldConfig: this.saveConfigFieldConf,
     method_ws: 'core.download',
     saveButtonText: T('Save'),
     customSubmit: this.saveCofigSubmit,
+    warning: T('<p>Including the Password Secret Seed allows using this\
+              configuration file with a new boot device. This also\
+              decrypts all system passwords for reuse when the\
+              configuration file is uploaded.</p>\
+              <b>Keep the configuration file safe and protect it\
+              from unauthorized access!</b>'),
   }
 
   protected uploadConfigFieldConf: FieldConfig[] = [
@@ -200,10 +205,10 @@ export class GeneralComponent implements OnDestroy {
     method_ws: 'config.upload',
     saveButtonText: T('Upload'),
     customSubmit: this.uploadConfigSubmit,
-    message: '<p>The system will reboot to perform this operation!</p>\
+    message: T('<p>The system will reboot to perform this operation!</p>\
               <p><font color="red">All passwords are reset when the \
               uploaded configuration database file was saved \
-              without the Password Secret Seed. </font></p>',
+              without the Password Secret Seed. </font></p>'),
   }
   public custActions: Array<any> = [
   {

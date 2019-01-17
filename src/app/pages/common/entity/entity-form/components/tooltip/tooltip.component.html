@@ -1,7 +1,11 @@
 <div #tooltip class="tooltip" (mouseenter)="showTooltip(true)" (mouseleave)="showTooltip(false)">
   <i class="material-icons">help_outline</i>
-  <div class="tooltiptext" [class.show]="isShowTooltip" [ngStyle]="tooltipMsgStyle"
-    [innerHTML]="message | translate">
+  <div class="tooltiptext" [class.show]="isShowTooltip" [class.lock]="isLockTooltip" [ngStyle]="tooltipMsgStyle">
+    <div [innerHTML]="message | translate | docreplace"></div>
+    <div class="pin" 
+      (click)="toggleVis()" 
+      matTooltip="Pin or unpin this tooltip.">
+      <img class="pin-icon" src="assets/images/add_box.png">
+    </div>
   </div>
 </div>
-<!-- tooltipSize is part of an attempt to dynamically resize tooltips - dkm -->

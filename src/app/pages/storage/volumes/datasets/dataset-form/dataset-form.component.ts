@@ -1,7 +1,6 @@
-import { ApplicationRef, Component, OnInit, ViewContainerRef } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormArray, FormGroup, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 import * as _ from 'lodash';
 import { RestService, WebSocketService } from '../../../../../services/';
@@ -10,10 +9,9 @@ import { FieldConfig } from '../../../../common/entity/entity-form/models/field-
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { Formconfiguration } from '../../../../common/entity/entity-form/entity-form.component';
 import { EntityFormComponent } from '../../../../common/entity/entity-form';
-import { AnimationKeyframesSequenceMetadata } from '@angular/animations';
 import { DialogService } from 'app/services/dialog.service';
 import { T } from '../../../../../translate-marker';
-
+import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-form';
 
 interface DatasetFormData {
   name: string;
@@ -39,7 +37,6 @@ interface DatasetFormData {
   casesensitivity: string;
 };
 
-
 @Component({
   selector: 'app-dataset-form',
   template: '<entity-form [conf]="this"></entity-form>'
@@ -57,6 +54,7 @@ export class DatasetFormComponent implements Formconfiguration{
   public isNew = false;
   public parent_dataset: any;
   protected entityForm: any;
+  public minimum_recommended_dataset_recordsize = '128K';
 
 
   public parent: string;
@@ -82,24 +80,23 @@ export class DatasetFormComponent implements Formconfiguration{
     {
       type: 'input',
       name: 'name',
-      placeholder: T('Name'),
-      tooltip: T('Enter a unique name for the dataset.'),
+      placeholder: helptext.dataset_form_name_placeholder,
+      tooltip: helptext.dataset_form_name_tooltip,
       readonly: true,
       required: true,
-      validation: [Validators.required]
+      validation: helptext.dataset_form_name_validation
     },
     {
       type: 'input',
       name: 'comments',
-      placeholder: T('Comments'),
-      tooltip: T('Enter any notes about this dataset.'),
+      placeholder: helptext.dataset_form_comments_placeholder,
+      tooltip: helptext.dataset_form_comments_tooltip,
     },
     {
       type: 'select',
       name: 'sync',
-      placeholder: T('Sync'),
-      tooltip: T('Read about <a href="guide" target="_blank">sync</a>\
-                  before making any changes.'),
+      placeholder: helptext.dataset_form_sync_placeholder,
+      tooltip: helptext.dataset_form_sync_tooltip,
       options: [
         { label: 'Standard', value: 'STANDARD' },
         { label: 'Always', value: 'ALWAYS' },
@@ -109,11 +106,8 @@ export class DatasetFormComponent implements Formconfiguration{
     {
       type: 'select',
       name: 'compression',
-      placeholder: T('Compression level'),
-      tooltip: T('For more information about the available compression\
-                  algorithms, refer to the <a\
-                  href="..//docs/storage.html#compression"\
-                  target="_blank">Compression section</a> of the guide.'),
+      placeholder: helptext.dataset_form_compression_placeholder,
+      tooltip: helptext.dataset_form_compression_tooltip,
       options: [
         { label: 'off', value: 'OFF' },
         { label: 'lz4 (recommended)', value: 'LZ4' ,},
@@ -125,41 +119,36 @@ export class DatasetFormComponent implements Formconfiguration{
       ],
     },
     {
-      type: 'select',
-      name: 'atime',
-      placeholder: T('Enable atime'),
-      tooltip: T('Choose <i>ON</i> to update the access time for files\
-                  when they are read. Choose <b>Off</b> to prevent\
-                  producing log traffic when reading files. This can\
-                  result in significant performance gains.'),
-      options: [
-        { label: 'on', value: 'ON' },
-        { label: 'off', value: 'OFF' }
-      ],
-    },
-    {
       type: 'radio',
       name: 'share_type',
-      placeholder: T('Share Type'),
-      tooltip: T('Choose the type that matches the type of client\
-                  accessing the pool/dataset.'),
+      placeholder: helptext.dataset_form_share_type_placeholder,
+      tooltip: helptext.dataset_form_share_type_tooltip,
       options: [{label:'Unix', value: 'UNIX'},
                 {label:'Windows', value: 'WINDOWS'},
                 {label:'Mac', value: 'MAC'}],
       value: 'UNIX'
     },
     {
+      type: 'select',
+      name: 'atime',
+      placeholder: helptext.dataset_form_atime_placeholder,
+      tooltip: helptext.dataset_form_atime_tooltip,
+      options: [
+        { label: 'on', value: 'ON' },
+        { label: 'off', value: 'OFF' }
+      ],
+    },
+    {
       type: 'input',
       inputType: 'number',
       name: 'refquota',
-      placeholder: T('Quota for this dataset'),
-      tooltip: T('<i>0</i> disables quotas. Specify a maximum allowed\
-                  space for this dataset.'),
+      placeholder: helptext.dataset_form_refquota_placeholder,
+      tooltip: helptext.dataset_form_refquota_tooltip,
       class: 'inline',
       width: '70%',
       value: 0,
       min: 0,
-      validation: [Validators.min(0)]
+      validation: helptext.dataset_form_refquota_validation
     },
     {
       type: 'select',
@@ -173,6 +162,9 @@ export class DatasetFormComponent implements Formconfiguration{
       }, {
         label: 'GiB',
         value: 'G',
+      },{
+        label: 'TiB',
+        value: 'T',
       }],
       value: 'G',
       class: 'inline',
@@ -182,14 +174,13 @@ export class DatasetFormComponent implements Formconfiguration{
       type: 'input',
       inputType: 'number',
       name: 'quota',
-      placeholder: 'Quota for this dataset and all children',
-      tooltip: 'Define a maximum size for both the dataset and any child\
-                datasets. Enter <i>0</i> to remove the quota.',
+      placeholder: helptext.dataset_form_quota_placeholder,
+      tooltip: helptext.dataset_form_quota_tooltip,
       class: 'inline',
       width: '70%',
       value: 0,
       min: 0,
-      validation: [Validators.min(0)]
+      validation: helptext.dataset_form_quota_validation
     },
     {
       type: 'select',
@@ -203,6 +194,9 @@ export class DatasetFormComponent implements Formconfiguration{
       }, {
         label: 'GiB',
         value: 'G',
+      },{
+        label: 'TiB',
+        value: 'T',
       }],
       value: 'G',
       class: 'inline',
@@ -212,15 +206,13 @@ export class DatasetFormComponent implements Formconfiguration{
       type: 'input',
       inputType: 'number',
       name: 'refreservation',
-      placeholder: T('Reserved space for this dataset'),
-      tooltip: T('<i>0</i> is unlimited. Reserve additional space for\
-                  datasets containing logs which could take up all\
-                  available free space.'),
+      placeholder: helptext.dataset_form_refreservation_placeholder,
+      tooltip: helptext.dataset_form_refreservation_tooltip,
       class: 'inline',
       width: '70%',
       value: 0,
       min: 0,
-      validation: [Validators.min(0)]
+      validation: helptext.dataset_form_refreservation_validation
     },
     {
       type: 'select',
@@ -234,6 +226,9 @@ export class DatasetFormComponent implements Formconfiguration{
       }, {
         label: 'GiB',
         value: 'G',
+      },{
+        label: 'TiB',
+        value: 'T',
       }],
       value: 'G',
       class: 'inline',
@@ -243,14 +238,13 @@ export class DatasetFormComponent implements Formconfiguration{
       type: 'input',
       inputType: 'number',
       name: 'reservation',
-      placeholder: T('Reserved space for this dataset and all children'),
-      tooltip: T('<i>0</i> is unlimited. A specified value applies to\
-                  both this dataset and any child datasets.'),
+      placeholder: helptext.dataset_form_reservation_placeholder,
+      tooltip: helptext.dataset_form_reservation_tooltip,
       class: 'inline',
       width: '70%',
       value: 0,
       min: 0,
-      validation: [Validators.min(0)]
+      validation: helptext.dataset_form_reservation_validation
     },
     {
       type: 'select',
@@ -264,6 +258,9 @@ export class DatasetFormComponent implements Formconfiguration{
       }, {
         label: 'GiB',
         value: 'G',
+      },{
+        label: 'TiB',
+        value: 'T'
       }],
       value: 'G',
       class: 'inline',
@@ -272,11 +269,9 @@ export class DatasetFormComponent implements Formconfiguration{
     {
       type: 'select',
       name: 'deduplication',
-      label: T('ZFS deplication'),
-      placeholder: T('ZFS Deduplication'),
-      tooltip: T('Read about <a href="guide"\
-                  target="_blank">Deduplication</a> before making\
-                  changes to this setting.'),
+      label: helptext.dataset_form_deduplication_label,
+      placeholder: helptext.dataset_form_deduplication_placeholder,
+      tooltip: helptext.dataset_form_deduplication_tooltip,
       options: [
         { label: 'on', value: 'ON' },
         { label: 'verify', value: 'VERIFY' },
@@ -285,9 +280,9 @@ export class DatasetFormComponent implements Formconfiguration{
     },
     {
       type: 'select',
-      name: 'exec',
-      placeholder: T('Exec'),
-      tooltip: T('Choose <b>On</b> or <b>Off</b>.'),
+      name: 'readonly',
+      placeholder: helptext.dataset_form_readonly_placeholder,
+      tooltip: helptext.dataset_form_readonly_tooltip,
       options: [
         { label: 'On', value: 'ON' },
         { label: 'Off', value: 'OFF' }
@@ -295,9 +290,9 @@ export class DatasetFormComponent implements Formconfiguration{
     },
     {
       type: 'select',
-      name: 'readonly',
-      placeholder: T('Read-only'),
-      tooltip: T('Choose if the dataset can be modified.'),
+      name: 'exec',
+      placeholder: helptext.dataset_form_exec_placeholder,
+      tooltip: helptext.dataset_form_exec_tooltip,
       options: [
         { label: 'On', value: 'ON' },
         { label: 'Off', value: 'OFF' }
@@ -306,9 +301,8 @@ export class DatasetFormComponent implements Formconfiguration{
     {
       type: 'select',
       name: 'snapdir',
-      placeholder: T('Snapshot directory'),
-      tooltip: T('Choose if the .zfs snapshot directory is <b>Visible</b>\
-                  or <b>Invisible</b> on this dataset.'),
+      placeholder: helptext.dataset_form_snapdir_placeholder,
+      tooltip: helptext.dataset_form_snapdir_tooltip,
       options: [
         { label: 'Visible', value: 'VISIBLE' },
         { label: 'Invisible', value: 'HIDDEN' },
@@ -317,8 +311,8 @@ export class DatasetFormComponent implements Formconfiguration{
     {
       type: 'select',
       name: 'copies',
-      placeholder: T('Copies'),
-      tooltip: T('Set the number of data copies on this dataset.'),
+      placeholder: helptext.dataset_form_copies_placeholder,
+      tooltip: helptext.dataset_form_copies_tooltip,
       options: [
         { label: '1', value: '1' },
         { label: '2', value: '2' },
@@ -329,13 +323,12 @@ export class DatasetFormComponent implements Formconfiguration{
     {
       type: 'select',
       name: 'recordsize',
-      placeholder: T('Record Size'),
-      tooltip: T('Matching the fixed size of data, as in a database, may\
-                  result in better performance.'),
+      placeholder: helptext.dataset_form_recordsize_placeholder,
+      tooltip: helptext.dataset_form_recordsize_tooltip,
       options: [
-        { label: '512', value: '512' },
-        { label: '1K', value: '1K' },
-        { label: '2K', value: '2K' },
+        { label: '512', value: '512', disable:true, hiddenFromDisplay: true},
+        { label: '1K', value: '1K', disable:true, hiddenFromDisplay: true},
+        { label: '2K', value: '2K', disable:true, hiddenFromDisplay: true},
         { label: '4K', value: '4K' },
         { label: '8K', value: '8K' },
         { label: '16K', value: '16K' },
@@ -344,17 +337,14 @@ export class DatasetFormComponent implements Formconfiguration{
         { label: '128K', value: '128K' },
         { label: '256K', value: '256K' },
         { label: '512K', value: '512K' },
-        { label: '1024K', value: '1024K' }
+        { label: '1M', value: '1M' }
       ],
     },
     {
       type: 'select',
       name: 'casesensitivity',
-      placeholder: T('Case Sensitivity'),
-      tooltip: T('<i>Sensitive</i> assumes filenames are case sensitive.\
-                  <i>Insensitive</i> assumes filenames are not case\
-                  sensitive. <i>Mixed</b> understands both types of\
-                  filenames.'),
+      placeholder: helptext.dataset_form_casesensitivity_placeholder,
+      tooltip: helptext.dataset_form_casesensitivity_tooltip,
       options: [
         { label: 'Sensitive', value: 'SENSITIVE' },
         { label: 'Insensitive', value: 'INSENSITIVE' },
@@ -382,6 +372,7 @@ export class DatasetFormComponent implements Formconfiguration{
   ];
 
   protected byteMap: Object= {
+    'T': 1099511627776,
     'G': 1073741824,
     'M': 1048576,
     'K': 1024,
@@ -392,12 +383,28 @@ export class DatasetFormComponent implements Formconfiguration{
     '2048': '2K',
     '4096': '4K',
     '8192': '8K',
-    '16384': '32K',
+    '16384': '16K',
+    '32768':'32K',
     '65536': '64K',
     '131072': '128K',
     '262144': '256K',
     '524288': '512K',
     '1048576': '1024K',
+  };
+  protected reverseRecordSizeMap: Object= {
+    '512': '512',
+    '1K' :'1024',
+    '2K' : '2048',
+    '4K': '4096',
+    '8K': '8192',
+    '16K':'16384',
+    '32K': '32768',
+    '64K': '65536',
+    '128K': '131072',
+    '256K': '262144',
+    '512K': '524288',
+    '1024K': '1048576',
+    '1M':'1048576'
   };
 
   public sendAsBasicOrAdvanced(data: DatasetFormData): DatasetFormData {
@@ -455,7 +462,19 @@ export class DatasetFormComponent implements Formconfiguration{
       entityForm.setDisabled('name',true);
       _.find(this.fieldConfig, {name:'name'}).tooltip = "Dataset name (read-only)."
     }
-
+    // this.entityForm.formGroup.controls['recordsize'].valueChanges.subscribe((res)=>{
+    //   const res_number = parseInt(this.reverseRecordSizeMap[res],10);
+    //   if(this.minimum_recommended_dataset_recordsize){
+    //     const recommended_size_number = parseInt(this.reverseRecordSizeMap[this.minimum_recommended_dataset_recordsize],0);
+    //     if (res_number < recommended_size_number){
+    //       _.find(this.fieldConfig, {name:'recordsize'}).warnings = `
+    //       Recommended record size based on pool topology: ${this.minimum_recommended_dataset_recordsize}.
+    //       A smaller record size can reduce sequential I/O performance and space efficiency.`
+    //     } else {
+    //       _.find(this.fieldConfig, {name:'recordsize'}).warnings = null;
+    //     };
+    //   };
+    // });
   }
 
   preInit(entityForm: EntityFormComponent) {
@@ -478,6 +497,10 @@ export class DatasetFormComponent implements Formconfiguration{
       this.fieldConfig[0].readonly = false;
     }
     if(this.parent){
+      const root = this.parent.match(/^[a-zA-Z]+/)[0];
+      this.ws.call('pool.dataset.recommended_zvol_blocksize',[root]).subscribe(res=>{
+        this.minimum_recommended_dataset_recordsize = res;
+      });
       this.ws.call('pool.dataset.query', [[["id", "=", this.pk]]]).subscribe((pk_dataset)=>{
       if(this.isNew){
         const sync = _.find(this.fieldConfig, {name:'sync'});
@@ -497,7 +520,7 @@ export class DatasetFormComponent implements Formconfiguration{
 
 
         sync.options = sync_inherit.concat(sync.options);
-        compression.options = compression_inherit.concat(compression.options);        
+        compression.options = compression_inherit.concat(compression.options);
         deduplication.options = deduplication_inherit.concat(deduplication.options);
         exec.options = exec_inherit.concat(exec.options);
         readonly.options = readonly_inherit.concat(readonly.options);
@@ -514,8 +537,29 @@ export class DatasetFormComponent implements Formconfiguration{
         entityForm.formGroup.controls['recordsize'].setValue('INHERIT');
         }
         else {
-          this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).subscribe((parent_dataset)=>{
+          this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).subscribe((parent_dataset)=>{      
             this.parent_dataset = parent_dataset[0];
+            const current_dataset = _.find(this.parent_dataset.children, {'name':this.pk});
+            const lower_recordsize_map = {
+              '512':'512',
+              '1K':'1K',
+              '2K':'2K',
+            }; 
+            if (current_dataset.recordsize.value in lower_recordsize_map) {
+              _.find(_.find(this.fieldConfig, {name:'recordsize'}).options, {'label': current_dataset.recordsize.value})['hiddenFromDisplay'] = false
+            };
+            if (current_dataset.quota.rawvalue === '0') {
+              entityForm.formGroup.controls['quota_unit'].setValue('M');
+            }
+            if (current_dataset.refquota.rawvalue === '0') {
+              entityForm.formGroup.controls['refquota_unit'].setValue('M');
+            }
+            if (current_dataset.reservation.rawvalue === '0') {
+              entityForm.formGroup.controls['reservation_unit'].setValue('M');
+            }
+            if (current_dataset.refreservation.rawvalue === '0') {
+              entityForm.formGroup.controls['refreservation_unit'].setValue('M');
+            }
             const edit_sync = _.find(this.fieldConfig, {name:'sync'});
             const edit_compression = _.find(this.fieldConfig, {name:'compression'});
             const edit_deduplication = _.find(this.fieldConfig, {name:'deduplication'});
@@ -529,69 +573,28 @@ export class DatasetFormComponent implements Formconfiguration{
             let edit_exec_collection = [{label:pk_dataset[0].exec.value, value: pk_dataset[0].exec.value}];
             let edit_readonly_collection = [{label:pk_dataset[0].readonly.value, value: pk_dataset[0].readonly.value}];
             let edit_atime_collection = [{label:pk_dataset[0].readonly.value, value: pk_dataset[0].readonly.value}];
-            let edit_recordsize_collection = [{label:pk_dataset[0].recordsize.value, value: pk_dataset[0].recordsize.value}];
+            let edit_recordsize_collection = [{label: this.parent_dataset.recordsize.value, value:  this.parent_dataset.recordsize.value}];
 
-            if (pk_dataset[0].sync.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
-              edit_sync_collection = [{label:`Inherit (${pk_dataset[0].sync.rawvalue})`, value: pk_dataset[0].sync.value}];
-            }
-            else{
-              edit_sync_collection = [{label:`Inherit (${this.parent_dataset.sync.rawvalue})`, value: 'INHERIT'}];
-
-            }
-
+            edit_sync_collection = [{label:`Inherit (${this.parent_dataset.sync.rawvalue})`, value: this.parent_dataset.sync.value}];
             edit_sync.options = edit_sync_collection.concat(edit_sync.options);
 
-            if (pk_dataset[0].compression.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT" ){
-              edit_compression_collection = [{label:`Inherit (${pk_dataset[0].compression.rawvalue})`, value: pk_dataset[0].compression.value}];
-            }
-            else {
-              edit_compression_collection = [{label:`Inherit (${this.parent_dataset.compression.rawvalue})`, value: 'INHERIT'}];
-            }
-
+            edit_compression_collection = [{label:`Inherit (${this.parent_dataset.compression.rawvalue})`, value: this.parent_dataset.compression.value}];
             edit_compression.options = edit_compression_collection.concat(edit_compression.options);
 
-            if (pk_dataset[0].deduplication.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
-              edit_deduplication_collection = [{label:`Inherit (${pk_dataset[0].deduplication.rawvalue})`, value: pk_dataset[0].deduplication.value}];
-            }
-            else {
-              edit_deduplication_collection = [{label:`Inherit (${this.parent_dataset.deduplication.rawvalue})`, value: 'INHERIT'}];
-            }
+            edit_deduplication_collection = [{label:`Inherit (${this.parent_dataset.deduplication.rawvalue})`, value: this.parent_dataset.deduplication.value}];
             edit_deduplication.options = edit_deduplication_collection.concat(edit_deduplication.options);
 
-            if (pk_dataset[0].exec.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
-              edit_exec_collection = [{label:`Inherit (${pk_dataset[0].exec.rawvalue})`, value: pk_dataset[0].exec.value}];
-
-            }
-            else {
-
-              edit_exec_collection = [{label:`Inherit (${this.parent_dataset.exec.value})`, value: 'INHERIT'}];
-            }
+            edit_exec_collection = [{label:`Inherit (${this.parent_dataset.exec.rawvalue})`, value: this.parent_dataset.exec.value}];
             edit_exec.options = edit_exec_collection.concat(edit_exec.options);
 
-            if (pk_dataset[0].readonly.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
-              edit_readonly_collection = [{label:`Inherit (${pk_dataset[0].readonly.rawvalue})`, value: pk_dataset[0].readonly.value}];
 
-            }
-            else {
-              edit_readonly_collection = [{label:`Inherit (${this.parent_dataset.readonly.rawvalue})`, value: 'INHERIT'}];
-            }
+            edit_readonly_collection = [{label:`Inherit (${this.parent_dataset.readonly.rawvalue})`, value: this.parent_dataset.readonly.value}];
             edit_readonly.options = edit_readonly_collection.concat(edit_readonly.options);
 
-            if (pk_dataset[0].atime.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
-              edit_atime_collection = [{label:`Inherit (${pk_dataset[0].atime.rawvalue})`, value: pk_dataset[0].atime.value}];
-
-            } else {
-              edit_atime_collection = [{label:`Inherit (${this.parent_dataset.atime.rawvalue})`, value: 'INHERIT'}];
-
-            }
+            edit_atime_collection = [{label:`Inherit (${this.parent_dataset.atime.rawvalue})`, value: this.parent_dataset.atime.value}];
             edit_atime.options = edit_atime_collection.concat(edit_atime.options);
 
-            if (pk_dataset[0].recordsize.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
-              edit_recordsize_collection = [{label:`Inherit (${this.recordSizeMap[pk_dataset[0].recordsize.rawvalue]})`, value: pk_dataset[0].recordsize.value}];
-
-            } else {
-              edit_recordsize_collection = [{label:`Inherit (${this.parent_dataset.recordsize.value})`, value: 'INHERIT'}];
-            }
+            edit_recordsize_collection = [{label:`Inherit`, value: this.parent_dataset.recordsize.value}];
             edit_recordsize.options = edit_recordsize_collection.concat(edit_recordsize.options);
             entityForm.formGroup.controls['sync'].setValue(pk_dataset[0].sync.value);
             if (pk_dataset[0].compression.value === 'GZIP') {

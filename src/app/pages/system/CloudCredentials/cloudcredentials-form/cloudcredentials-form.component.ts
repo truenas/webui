@@ -149,6 +149,38 @@ export class CloudCredentialsFormComponent {
         }
       ]
     },
+    {
+      type: 'checkbox',
+      name: 'skip_region-S3',
+      placeholder: T('Skip Region Autodetect'),
+      // tooltip: T(''),
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'S3',
+           }]
+        }
+      ]
+    },
+    {
+      type: 'checkbox',
+      name: 'signatures_v2-S3',
+      placeholder: T('Use V2 Signatures'),
+      // tooltip: T(''),
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'S3',
+           }]
+        }
+      ]
+    },
     // backblaze b2
     {
       type: 'input',
@@ -518,6 +550,64 @@ export class CloudCredentialsFormComponent {
       tooltip: T('Microsoft Onedrive <a\
                   href="https://docs.microsoft.com/en-us/onedrive/developer/rest-api/getting-started/authentication"\
                   target="_blank">Access Token</a>.'),
+      required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'ONEDRIVE',
+           }]
+        }
+      ]
+    },
+    {
+      type: 'select',
+      name: 'drive_type-ONEDRIVE',
+      placeholder: T('Drive Account Type'),
+      tooltip: T('Choose a <i>Drive Account Type</i>: <i>PERSONAL, BUSINESS,</i>\
+                  or <a\
+                  href="https://products.office.com/en-us/sharepoint/collaboration"\
+                  target="_blank">SharePoint</a> <i>DOCUMENT_LIBRARY</i>.'),
+      options: [
+        {
+          label: 'PERSONAL',
+          value: 'PERSONAL',
+        },
+        {
+          label: 'BUSINESS',
+          value: 'BUSINESS',
+        },
+        {
+          label: 'DOCUMENT_LIBRARY',
+          value: 'DOCUMENT_LIBRARY',
+        }
+      ],
+      value: 'PERSONAL',
+      required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'ONEDRIVE',
+           }]
+        }
+      ]
+    },
+    {
+      type: 'input',
+      name: 'drive_id-ONEDRIVE',
+      placeholder: T('Drive ID'),
+      tooltip: T('Choose a unique drive identifier. Open the\
+                  <i>Shell</i>, enter <i>rclone config</i>,\
+                  and follow the prompts to find the <i>Drive ID</i>.\
+                  The rclone <a\
+                  href="https://rclone.org/onedrive"\
+                  target="_blank">OneDrive documentation</a> walks through\
+                  the configuration process.'),
       required: true,
       isHidden: true,
       relation: [

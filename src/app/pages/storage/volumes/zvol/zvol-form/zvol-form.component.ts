@@ -1,5 +1,5 @@
-import { ApplicationRef, Component, OnInit, ViewContainerRef } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
+import { Component } from '@angular/core';
+import { Validators } from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import * as _ from 'lodash';
@@ -12,8 +12,7 @@ import { T } from '../../../../../translate-marker';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormComponent } from '../../../../common/entity/entity-form';
 import { EntityUtils } from '../../../../common/entity/utils';
-
-
+import helptext from '../../../../../helptext/storage/volumes/zvol-form';
 
 interface ZvolFormData {
   name: string;
@@ -28,7 +27,6 @@ interface ZvolFormData {
   volblocksize: string;
   type: string;
 };
-
 
 @Component({
   selector : 'app-zvol-add',
@@ -54,6 +52,11 @@ export class ZvolFormComponent {
   public pk_dataset: any[] = [];
   public edit_data: any;
   protected entityForm: any;
+  public minimum_recommended_zvol_volblocksize: string;
+
+  protected origVolSize;
+  protected origVolSizeUnit;
+  protected origVolSizeDec;
 
   public custActions: Array<any> = [
     {
@@ -68,37 +71,49 @@ export class ZvolFormComponent {
     }
   ];
 
-
   protected byteMap: Object= {
+    'T': 1099511627776,
     'G': 1073741824,
     'M': 1048576,
     'K': 1024,
   };
-
+  protected reverseZvolBlockSizeMap: Object= {
+    '512': '512',
+    '1K' :'1024',
+    '2K' : '2048',
+    '4K': '4096',
+    '8K': '8192',
+    '16K':'16384',
+    '32K': '32768',
+    '64K': '65536',
+    '128K': '131072',
+    '256K': '262144',
+    '512K': '524288',
+    '1024K': '1048576',
+    '1M':'1048576'
+  };
   public fieldConfig: FieldConfig[] = [
     {
       type: 'input',
       name: 'name',
-      placeholder: T('zvol name:'),
-      tooltip: T('Keep the zvol name short. Using a zvol name longer \
-                  than 63 characters can prevent accessing the zvol as \
-                  a device.'),
-      validation: [Validators.required],
+      placeholder: helptext.zvol_name_placeholder,
+      tooltip: helptext.zvol_name_tooltip,
+      validation: helptext.zvol_name_validation,
       required: true,
       isHidden: false
     },
     {
       type: 'input',
       name: 'comments',
-      placeholder: T('Comments'),
-      tooltip: T('Add any notes about this zvol.'),
+      placeholder: helptext.zvol_comments_placeholder,
+      tooltip: helptext.zvol_comments_tooltip,
     },
     {
       type: 'input',
       name: 'volsize',
       inputType: 'number',
-      placeholder: T('Size for this zvol'),
-      tooltip : T('Specify a size and value such as <i>10 GiB</i>.'),
+      placeholder: helptext.zvol_volsize_placeholder,
+      tooltip : helptext.zvol_volsize_tooltip,
       validation: [Validators.required, Validators.min(0)],
       required: true,
       class: 'inline',
@@ -118,6 +133,9 @@ export class ZvolFormComponent {
       }, {
         label: 'GiB',
         value: 'G',
+      },{
+        label: 'TiB',
+        value: 'T',
       }],
       value: 'G',
       class: 'inline',
@@ -126,21 +144,14 @@ export class ZvolFormComponent {
     {
       type: 'checkbox',
       name : 'force_size',
-      placeholder: T('Force size'),
-      tooltip : T('The system restricts creating a zvol that brings the\
-                   pool to over 80% capacity. Set to force creation of\
-                   the zvol (<b>NOT Recommended</b>).'),
+      placeholder: helptext.zvol_forcesize_placeholder,
+      tooltip : helptext.zvol_forcesize_tooltip,
     },
     {
       type: 'select',
       name: 'sync',
-      placeholder: T('Sync'),
-      tooltip: T('Sets the data write synchronization. <i>Inherit</i>\
-                  takes the sync settings from the parent dataset,\
-                  <i>Standard</i> uses the settings that have been\
-                  requested by the client software, <i>Always</i> waits\
-                  for data writes to complete, and <i>Disabled</i> never\
-                  waits for writes to complete.'),
+      placeholder: helptext.zvol_sync_placeholder,
+      tooltip: helptext.zvol_sync_tooltip,
       options: [
         { label: 'Standard', value: 'STANDARD' },
         { label: 'Always', value: 'ALWAYS' },
@@ -150,10 +161,8 @@ export class ZvolFormComponent {
     {
       type: 'select',
       name: 'compression',
-      placeholder: T('Compression level'),
-      tooltip: T('Automatically compress data written to the zvol.\
-                  Choose a <a href="..//docs/storage.html#compression"\
-                  target="_blank">compression algorithm</a>.'),
+      placeholder: helptext.zvol_compression_placeholder,
+      tooltip: helptext.zvol_compression_tooltip,
       options: [
         {label : 'Off', value : "OFF"},
         {label : 'lz4 (recommended)', value : "LZ4"},
@@ -163,57 +172,41 @@ export class ZvolFormComponent {
         {label : 'zle (runs of zeros)', value : "ZLE"},
         {label : 'lzjb (legacy, not recommended)', value : "LZJB"},
       ],
-      validation: [Validators.required],
+      validation: helptext.zvol_compression_validation,
       required: true,
     },
     {
       type: 'select',
       name: 'deduplication',
-      placeholder: T('ZFS Deduplication'),
-      tooltip : T('Activates the process for ZFS to transparently reuse\
-                   a single copy of duplicated data to save space. The\
-                   <a href="..//docs/storage.html#deduplication"\
-                   target="_blank">Deduplication section</a> of the Guide\
-                   describes each option.'),
+      placeholder: helptext.zvol_deduplication_placeholder,
+      tooltip : helptext.zvol_deduplication_tooltip,
       options: [
         {label : 'On', value : "ON"},
         {label : 'Verify', value : "VERIFY"},
         {label : 'Off', value : "OFF"},
       ],
-      validation: [Validators.required],
+      validation: helptext.zvol_deduplication_validation,
       required: true,
     },
     {
       type: 'checkbox',
       name : 'sparse',
-      placeholder: T('Sparse'),
-      tooltip : T('Set to provide <a\
-                   href="https://searchstorage.techtarget.com/definition/thin-provisioning"\
-                   target="_blank">thin provisioning</a>.\
-                   <b>Caution:</b> writes can fail when the pool is low\
-                   on space.'),
+      placeholder: helptext.zvol_sparse_placeholder,
+      tooltip : helptext.zvol_sparse_tooltip,
       isHidden: false
     },
     {
       type: 'select',
       name: 'volblocksize',
-      placeholder: T('Block size'),
-      tooltip: T('The zvol default block size is automatically chosen\
-                  based on the number of the disks in the pool for a\
-                  general use case.'),
+      placeholder: helptext.zvol_volblocksize_placeholder,
+      tooltip: helptext.zvol_volblocksize_tooltip,
       options: [
-        { label: '512', value: '512' },
-        { label: '1K', value: '1K' },
-        { label: '2K', value: '2K' },
         { label: '4K', value: '4K' },
         { label: '8K', value: '8K' },
         { label: '16K', value: '16K' },
         { label: '32K', value: '32K' },
         { label: '64K', value: '64K' },
         { label: '128K', value: '128K' },
-        // { label: '256K', value: '256K' },
-        // { label: '512K', value: '512K' },
-        // { label: '1024K', value: '1024K' }
       ],
       isHidden: false
     },
@@ -245,7 +238,11 @@ export class ZvolFormComponent {
     if( this.isBasicMode === true ) {
 
     }
-    data.volsize = data.volsize * this.byteMap[data.volsize_unit];
+    if (this.origVolSizeDec !== data.volsize || this.origVolSizeUnit !== data.volsize_unit) {
+      data.volsize = data.volsize * this.byteMap[data.volsize_unit];
+    } else { 
+      data.volsize = this.origVolSize;
+    }
     delete data.volsize_unit;
     return data;
   }
@@ -288,7 +285,11 @@ export class ZvolFormComponent {
         entityForm.formGroup.controls['sync'].setValue('INHERIT');
         entityForm.formGroup.controls['compression'].setValue('INHERIT');
         entityForm.formGroup.controls['deduplication'].setValue('INHERIT');
-        entityForm.formGroup.controls['volblocksize'].setValue('16K');
+        const root = this.parent.match(/^[a-zA-Z]+/)[0];
+        this.ws.call('pool.dataset.recommended_zvol_blocksize',[root]).subscribe(res=>{
+          this.entityForm.formGroup.controls['volblocksize'].setValue(res);
+          this.minimum_recommended_zvol_volblocksize = res;
+        })
 
       } else {
         let parent_dataset = pk_dataset[0].name.split('/')
@@ -309,8 +310,14 @@ export class ZvolFormComponent {
 
           let volumesize = pk_dataset[0].volsize.parsed;
           const volumeunit =  pk_dataset[0].volsize.value.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[1];
+
+          // keep track of original volume size data so we can check to see if the user intended to change since
+          // decimal has to be truncated to three decimal places
+          this.origVolSize = volumesize;
           volumesize = volumesize/this.byteMap[volumeunit];
           volumesize = volumesize.toFixed(3)
+          this.origVolSizeDec = volumesize;
+          this.origVolSizeUnit = volumeunit;
 
           entityForm.formGroup.controls['name'].setValue(pk_dataset[0].name);
           if(pk_dataset[0].comments){
@@ -381,7 +388,19 @@ export class ZvolFormComponent {
     this.entityForm = entityForm;
     if(!entityForm.isNew){
     }
-  }
+    this.entityForm.formGroup.controls['volblocksize'].valueChanges.subscribe((res)=>{
+      const res_number = parseInt(this.reverseZvolBlockSizeMap[res],10);
+      if(this.minimum_recommended_zvol_volblocksize){
+        const recommended_size_number = parseInt(this.reverseZvolBlockSizeMap[this.minimum_recommended_zvol_volblocksize],0);
+        if (res_number < recommended_size_number){
+          _.find(this.fieldConfig, {name:'volblocksize'}).warnings = `
+          Recommended block size based on pool topology: ${this.minimum_recommended_zvol_volblocksize}.
+          A smaller block size can reduce sequential I/O performance and space efficiency.`
+        } else {
+          _.find(this.fieldConfig, {name:'volblocksize'}).warnings = null;
+        };
+      };
+    });  }
 
   addSubmit(body: any) {
     const data: any = this.sendAsBasicOrAdvanced(body);

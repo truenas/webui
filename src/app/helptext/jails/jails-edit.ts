@@ -30,7 +30,7 @@ href="https://www.freebsd.org/cgi/man.cgi?query=bpf&manpath=FreeBSD+11.1-RELEASE
 target="_blank">BPF(4)</a>) to data link layers in a \
 protocol independent fashion.'),
 
-ip4_interface_placeholder: T('IPv4 interface'),
+ip4_interface_placeholder: T('IPv4 Interface'),
 ip4_interface_tooltip: T('IPv4 interface for the jail.'),
 
 ip4_addr_placeholder: T('IPv4 Address'),
@@ -50,7 +50,7 @@ Example: <b>192.168.0.10/24,vnet3|192.168.10.50</b>'),
 ip4_netmask_placeholder: T('IPv4 Netmask'),
 ip4_netmask_tooltip: T('IPv4 netmask for the jail.'),
 
-defaultrouter_placeholder: T('Default IPv4 Route'),
+defaultrouter_placeholder: T('IPv4 Default Router'),
 defaultrouter_tooltip: T('A valid IPv4 address to use as the default route. \
 <br>Enter <b>none</b> to configure the jail with \
 no IPv4 default route. <br>\
@@ -58,9 +58,9 @@ no IPv4 default route. <br>\
 able to access the network without additional \
 configuration.</b>'),
 
-auto_configure_ip6_placeholder: T('Auto configure IPv6'),
-auto_configure_ip6_tooltip: T('Set this if the network has a DHCPv6 server \
-and IPv6 will be used to access jails.'),
+auto_configure_ip6_placeholder: T('Autoconfigure IPv6'),
+auto_configure_ip6_tooltip: T('Set to use SLAAC (Stateless Address Auto \
+Configuration) to autoconfigure IPv6 in the jail.'),
 
 
 ip6_interface_placeholder: T('IPv6 Interface'),
@@ -82,10 +82,10 @@ re5|2001:db8:85a3::8a2e:370:7334/24</b>'),
 ip6_prefix_placeholder: T('IPv6 Prefix'),
 ip6_prefix_tooltip: T('IPv6 prefix for the jail.'),
 
-defaultrouter6_placeholder: T('Default IPv6 Route'),
+defaultrouter6_placeholder: T('IPv6 Default Route'),
 defaultrouter6_tooltip: T('A valid IPv6 address to use as the default route. \
-<br>Enter <b>none</b> to configure the jail with \
-no IPv4 default route. <br>\
+<br>Enter <b>none</b> to configure the jail without \
+an IPv6 default route. <br>\
 <b>A jail without a default route will not be \
 able to access the network without additional \
 configuration.'),
@@ -110,7 +110,7 @@ of <i>0</i> means no ruleset is enforced. Mounting \
 permissions are enabled and <b>enforce_statfs</b> is \
 set to a value lower than <i>2</i>.'),
 
-exec_start_placeholder: T('exec.start'),
+exec_start_placeholder: T('exec_start'),
 exec_start_tooltip: T('Commands to run in the jail environment when the jail \
 is created. Example: <b>sh /etc/rc</b>. The pseudo-\
 parameters section of <a \
@@ -118,30 +118,30 @@ href="https://www.freebsd.org/cgi/man.cgi?query=jail&apropos=0&sektion=0&manpath
 target="_blank">JAIL(8)</a> describes \
 <b>exec.start</b> usage.'),
 
-exec_stop_placeholder: T('exec.stop'),
+exec_stop_placeholder: T('exec_stop'),
 exec_stop_tooltip: T('Commands to run in the jail environment before the \
 jail is removed and after <b>exec.prestop</b> \
 commands are complete. Example: \
 <i>sh /etc/rc.shutdown</i>.'),
 
-exec_prestart_placeholder: T('exec.prestart'),
+exec_prestart_placeholder: T('exec_prestart'),
 exec_prestart_tooltip: T('Commands to run in the system environment before a \
 jail is created.'),
 
-exec_poststart_placeholder: T('exec.poststart'),
+exec_poststart_placeholder: T('exec_poststart'),
 exec_poststart_tooltip: T('Commands to run in the system environment after a \
 jail is created and any <b>exec.start</b> commands \
 are finished.'),
 
-exec_prestop_placeholder: T('exec.prestop'),
+exec_prestop_placeholder: T('exec_prestop'),
 exec_prestop_tooltip: T('Commands to run in the system environment before a \
 jail is removed.'),
 
-exec_poststop_placeholder: T('exec.poststop'),
+exec_poststop_placeholder: T('exec_poststop'),
 exec_poststop_tooltip: T('Commands to run in the system environment after a \
 jail is removed.'),
 
-exec_clean_placeholder: T('exec.clean'),
+exec_clean_placeholder: T('exec_clean'),
 exec_clean_tooltip: T('Run commands in a clean environment. The current \
 environment is discarded except for $HOME, $SHELL, \
 $TERM, and $USER. <br>\
@@ -151,13 +151,13 @@ the current environment. The environment variables \
 from the login class capability database for the \
 target login are also set.'),
 
-exec_timeout_placeholder: T('exec.timeout'),
+exec_timeout_placeholder: T('exec_timeout'),
 exec_timeout_tooltip: T('Maximum amount of time in seconds to wait for a \
 command to complete. A jail cannot be created or \
 removed when a command is still running after the \
 allotted time.'),
 
-stop_timeout_placeholder: T('stop.timeout'),
+stop_timeout_placeholder: T('stop_timeout'),
 stop_timeout_tooltip: T('Maximum amount of time in seconds to wait for jail \
 processes to exit after sending a SIGTERM signal. \
 The timeout starts after <b>exec.stop</b> commands \
@@ -167,11 +167,11 @@ killing any remaining processes. When set to \
 immediately removed. The default timeout is 10 \
 seconds.'),
 
-exec_jail_user_placeholder: T('exec.jail_user'),
+exec_jail_user_placeholder: T('exec_jail_user'),
 exec_jail_user_tooltip: T('Run commands in the jail as this user. By default, \
 commands are run as the current user.'),
 
-exec_system_jail_user_placeholder: T('exec.system_jail_user'),
+exec_system_jail_user_placeholder: T('exec_system_jail_user'),
 exec_system_jail_user_tooltip: T('Set this boolean option to <i>True</i> to look for \
 the <b>exec.jail_user</b> in the system \
 <a \
@@ -179,11 +179,11 @@ href="https://www.freebsd.org/cgi/man.cgi?query=passwd&sektion=5&manpath=FreeBSD
 target="_blank">passwd(5)</a> file <i>instead</i> of \
 the jail passwd.'),
 
-exec_system_user_placeholder: T('exec.system_user'),
+exec_system_user_placeholder: T('exec_system_user'),
 exec_system_user_tooltip: T('Run commands in the jail as this user. By default, \
 commands are run as the current user.'),
 
-mount_devfs_placeholder: T('mount.devfs'),
+mount_devfs_placeholder: T('mount_devfs'),
 mount_devfs_tooltip: T('Mount a <a \
 href="https://www.freebsd.org/cgi/man.cgi?query=devfs&sektion=5&manpath=FreeBSD+11.1-RELEASE+and+Ports" \
 target="_blank">devfs(5)</a> filesystem on the \
@@ -191,7 +191,7 @@ target="_blank">devfs(5)</a> filesystem on the \
 in the <b>devfs_ruleset</b> parameter to restrict \
 the devices visible inside the jail.'),
 
-mount_fdescfs_placeholder: T('mount.fdescfs'),
+mount_fdescfs_placeholder: T('mount_fdescfs'),
 mount_fdescfs_tooltip: T('Mount an <a \
 href="https://www.freebsd.org/cgi/man.cgi?query=fdescfs&sektion=5&manpath=FreeBSD+11.1-RELEASE+and+Ports" \
 target="_blank">fdescfs(5)</a> filesystem in the \
@@ -217,7 +217,7 @@ chroot directory are available. <br>\
 Set to <i>2</i> (default): Only mounts point where \
 the jail chroot directory is located are available.'),
 
-children_max_placeholder: T('children.max'),
+children_max_placeholder: T('children_max'),
 children_max_tooltip: T('Number of child jails allowed to be created by the \
 jail or other jails under this jail. A limit of \
 <i>0</i> restricts the jail from creating child \
@@ -266,14 +266,14 @@ parent jails have access to the jail objects but \
 <b>Disable</b>: The jail cannot perform any \
 <b>sysvshm</b> related system calls.'),
 
-allow_set_hostname_placeholder: T('allow.set_hostname'),
+allow_set_hostname_placeholder: T('allow_set_hostname'),
 allow_set_hostname_tooltip: T('Allow the jail hostname to be changed with <a \
 href="https://www.freebsd.org/cgi/man.cgi?query=hostname&manpath=FreeBSD+11.1-RELEASE+and+Ports" \
 target="_blank">hostname(1)</a> or <a \
 href="https://www.freebsd.org/cgi/man.cgi?query=sethostname&manpath=FreeBSD+11.1-RELEASE+and+Ports" \
 target="_blank">sethostname(3)</a>.'),
 
-allow_sysvipc_placeholder: T('*allow.sysvipc'),
+allow_sysvipc_placeholder: T('*allow_sysvipc'),
 allow_sysvipc_tooltip: T('Choose whether a process in the jail has access to \
 System V IPC primitives. Equivalent to setting \
 sysvmsg, sysvsem, and sysvshm to <b>Inherit</b>. \
@@ -281,7 +281,7 @@ sysvmsg, sysvsem, and sysvshm to <b>Inherit</b>. \
 Use <b>sysvmsg</b>, <b>sysvsem</b>, and \
 <b>sysvshm</b> instead.'),
 
-allow_raw_sockets_placeholder: T('allow.raw_sockets'),
+allow_raw_sockets_placeholder: T('allow_raw_sockets'),
 allow_raw_sockets_tooltip: T('Set to allow raw sockets. Utilities like <a \
 href="https://www.freebsd.org/cgi/man.cgi?query=ping&manpath=FreeBSD+11.1-RELEASE+and+Ports" \
 target="_blank">ping(8)</a> and <a \
@@ -291,45 +291,48 @@ sockets. When set, source IP addresses are enforced \
 to comply with the IP addresses bound to the jail, \
 ignoring the IP_HDRINCL flag on the socket.'),
 
-allow_chflags_placeholder: T('allow.chflags'),
+allow_chflags_placeholder: T('allow_chflags'),
 allow_chflags_tooltip: T('Set to treat jail users as privileged and allow the \
 manipulation of system file flags. \
 <b>securelevel</b> constraints are still enforced.'),
 
-allow_mount_placeholder: T('allow.mount'),
+allow_mlock_placeholder: T('allow_mlock'),
+allow_mlock_tooltip: T(''),
+
+allow_mount_placeholder: T('allow_mount'),
 allow_mount_tooltip: T('Set to allow privileged users inside the jail to \
 mount and unmount filesystem types marked as \
 jail-friendly.'),
 
-allow_mount_devfs_placeholder: T('allow.mount.devfs'),
+allow_mount_devfs_placeholder: T('allow_mount_devfs'),
 allow_mount_devfs_tooltip: T('Set to allow privileged users inside the jail to \
 mount and unmount the devfs file system. This \
 permission is only effective when <b>allow_mount</b> \
 is set and <b>enforce_statfs</b> is set to a value \
 lower than <i>2</i>.'),
 
-allow_mount_nullfs_placeholder: T('allow.mount.nullfs'),
+allow_mount_nullfs_placeholder: T('allow_mount_nullfs'),
 allow_mount_nullfs_tooltip: T('Set to allow privileged users inside the jail to \
 mount and unmount the nullfs file system. This \
 permission is only effective when <b>allow_mount</b> \
 is set and and <b>enforce_statfs</b> is set to a \
 value lower than <i>2</i>.'),
 
-allow_mount_procfs_placeholder: T('allow.mount.procfs'),
+allow_mount_procfs_placeholder: T('allow_mount_procfs'),
 allow_mount_procfs_tooltip: T('Set to allow privileged users inside the jail to \
 mount and unmount the procfs file system. This \
 permission is only effective when <b>allow_mount</b> \
 is set and <b>enforce_statfs</b> is set to a value \
 lower than <i>2</i>.'),
 
-allow_mount_tmpfs_placeholder: T('allow.mount.tmpfs'),
+allow_mount_tmpfs_placeholder: T('allow_mount_tmpfs'),
 allow_mount_tmpfs_tooltip: T('Set to allow privileged users inside the jail to \
 mount and unmount the tmpfs file system. This \
 permission is only effective when <b>allow_mount</b> \
 is set and <b>enforce_statfs</b> is set to a value \
 lower than <i>2</i>.'),
 
-allow_mount_zfs_placeholder: T('allow.mount.zfs'),
+allow_mount_zfs_placeholder: T('allow_mount_zfs'),
 allow_mount_zfs_tooltip: T('Set to allow privileged users inside the jail to \
 mount and unmount the ZFS file system. This \
 permission is only effective when <b>allow_mount</b> \
@@ -340,17 +343,20 @@ target="_blank">ZFS(8)</a> man page has information \
 on how to configure \
 the ZFS filesystem to operate from within a jail.'),
 
-allow_quotas_placeholder: T('allow.quotas'),
+allow_quotas_placeholder: T('allow_quotas'),
 allow_quotas_tooltip: T('Set to allow the jail root to administer quotas on \
 jail filesystems. This includes filesystems the \
 jail shares with other jails or with non-jailed \
 parts of the system.'),
 
-allow_socket_af_placeholder: T('allow.socket_af'),
+allow_socket_af_placeholder: T('allow_socket_af'),
 allow_socket_af_tooltip: T('Set to allow access to other protocol stacks beyond \
 IPv4, IPv6, local (UNIX), and route. <br>\
 <b>Warning:</b> jail functionality does not exist \
 for all protocal stacks.'),
+
+vnet_interfaces_placeholder: T('vnet_interfaces'),
+vnet_interfaces_tooltip: T(''),
 
 // network field config
 interfaces_placeholder: T('interfaces'),
@@ -365,17 +371,17 @@ host_domainname_tooltip: T('Enter a <a \
 href="https://www.freebsd.org/doc/handbook/network-nis.html" \
 target="_blank">NIS Domain name</a> for the jail.'),
 
-host_hostname_placeholder: T('host.hostname'),
+host_hostname_placeholder: T('host_hostname'),
 host_hostname_tooltip: T('Set the jail hostname. Defaults to the jail UUID.'),
 
-exec_fib_placeholder: T('exec.fib'),
+exec_fib_placeholder: T('exec_fib'),
 exec_fib_tooltip: T('<a \
 href="https://www.freebsd.org/cgi/man.cgi?query=setfib&sektion=1&apropos=0&manpath=FreeBSD+11.1-RELEASE+and+Ports" \
 target="_blank">FIB </a> \
 (routing table) to set when running commands inside \
 the jail.'),
 
-ip4_saddrsel_placeholder: T('ip4.saddrsel'),
+ip4_saddrsel_placeholder: T('ip4_saddrsel'),
 ip4_saddrsel_tooltip: T('Only available when the jail is not configured to \
 use VNET. Disables IPv4 source address selection \
 for the jail in favor of the primary IPv4 address of \
@@ -452,6 +458,9 @@ hostid_tooltip: T('A new jail hostid, if desired. \
 <br><b>Example hostid:</b> \
 <i>1a2bc345-678d-90e1-23fa-4b56c78901de</i>.'),
 
+hostid_strict_check_placeholder: T('hostid_strict_check'),
+hostid_strict_check_tooltip: T(''),
+
 comment_placeholder: T('comment'),
 comment_tooltip: T('Enter comments about the jail.'),
 
@@ -495,6 +504,9 @@ jail_zfs_mountpoint_placeholder: T('jail_zfs_mountpoint'),
 jail_zfs_mountpoint_tooltip: T('Enter the mountpoint for the \
 <b>jail_zfs_dataset</b>. \
 <b>Example:</b> <i>/data example-dataset-name</i>'),
+
+allow_tun_placeholder: T('allow_tun'),
+allow_tun_tooltip: T(''),
 
 //rctl config
 memoryuse_placeholder: T('memoryuse'),

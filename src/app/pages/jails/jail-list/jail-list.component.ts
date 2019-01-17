@@ -179,15 +179,19 @@ export class JailListComponent implements OnInit {
   }
 
   getActivatedPool(){
-    this.ws.call('jail.get_activated_pool').subscribe((res)=>{
-      if (res != null) {
-        this.activatedPool = res;
-        this.selectedPool = res;
-        this.isPoolActivated = true;
-      } else {
-        this.isPoolActivated = false;
-      }
-    })
+    this.ws.call('jail.get_activated_pool').subscribe(
+      (res)=>{
+        if (res != null && res != "") {
+          this.activatedPool = res;
+          this.selectedPool = res;
+          this.isPoolActivated = true;
+        } else {
+          this.isPoolActivated = false;
+        }
+      },
+      (err)=>{
+        new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
+      })
   }
 
   getAvailablePools(){
@@ -217,15 +221,8 @@ export class JailListComponent implements OnInit {
         id: "edit",
         label: T("Edit"),
         onClick: (row) => {
-          this.ws.call(this.queryCall, [[["host_hostuuid", "=", row.host_hostuuid]]]).subscribe(
-            (res) => {
-              if (res[0].state == 'up') {
-                this.dialogService.Info(T('Warning'), T('Jails cannot be changed while running. Stop the jail to make changes.'));
-              } else {
-                this.router.navigate(
-                  new Array('').concat(["jails", "edit", row.host_hostuuid]));
-              }
-            });
+          this.router.navigate(
+            new Array('').concat(["jails", "edit", row.host_hostuuid]));
         }
       },
       {

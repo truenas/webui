@@ -34,15 +34,15 @@ export class ManualUpdateComponent {
   protected dialogRef: any;
   public fileLocation: any;
   public subs: any;
-  public custActions: Array<any> = [
-    {
-      id : 'save_config',
-      name : T('Save Config'),
-      function : () => {
-        this.dialogservice.dialogForm(this.saveConfigFormConf);
-      }
-    }
-  ];
+  // public custActions: Array<any> = [
+  //   {
+  //     id : 'save_config',
+  //     name : T('Save Config'),
+  //     function : () => {
+  //       this.dialogservice.dialogForm(this.saveConfigFormConf);
+  //     }
+  //   }
+  // ];
   public saveSubmitText ="Apply Update";
   protected fieldConfig: FieldConfig[] = [
     {
@@ -71,12 +71,20 @@ export class ManualUpdateComponent {
       // required: true,
       hideButton: true,
     },
+    {
+      type: 'checkbox',
+      name: 'rebootAfterManualUpdate',
+      placeholder: T('Reboot After Update'),
+      tooltip: T('Automatically reboot the system after the update\
+                  is applied.'),
+      value: false
+    }
   ];
   protected saveConfigFieldConf: FieldConfig[] = [
     {
       type: 'checkbox',
       name: 'secretseed',
-      placeholder: T('Export Password Secret Seed')
+      placeholder: T('Include Password Secret Seed')
     }
   ];
   public saveConfigFormConf: DialogFormConfiguration = {
@@ -86,7 +94,7 @@ export class ManualUpdateComponent {
     saveButtonText: T('Save'),
     customSubmit: this.saveCofigSubmit,
   }
-  public save_button_enabled: boolean = false;
+  public save_button_enabled = false;
 
   constructor(
     protected router: Router,
@@ -119,6 +127,19 @@ export class ManualUpdateComponent {
     })
   }
   afterInit(entityForm: any) {
+    this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
+      if(ures[0].attributes.preferences['rebootAfterManualUpdate'] === undefined){
+        ures[0].attributes.preferences['rebootAfterManualUpdate'] = false
+      }
+      entityForm.formGroup.controls['rebootAfterManualUpdate'].setValue(ures[0].attributes.preferences['rebootAfterManualUpdate']);
+      entityForm.formGroup.controls['rebootAfterManualUpdate'].valueChanges.subscribe((form_res)=>{
+        ures[0].attributes.preferences['rebootAfterManualUpdate'] = form_res;
+        this.ws.call('user.set_attribute', [1, 'preferences', ures[0].attributes.preferences]).subscribe((res)=>{
+        })
+  
+      })
+    })
+
     entityForm.formGroup.controls['filelocation'].valueChanges.subscribe((filelocation)=>{
       if(filelocation === ":temp:"){
         _.find(this.fieldConfig,{name:'filename'}).fileLocation = null;
@@ -132,24 +153,29 @@ export class ManualUpdateComponent {
     entityForm.submitFunction = this.customSubmit;
   }
   customSubmit(entityForm: any) {
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Manual Update" }, disableClose: true });
-    this.dialogRef.componentInstance.wspost(this.subs.apiEndPoint, this.subs.formData);
-    this.dialogRef.componentInstance.success.subscribe((succ)=>{
-      this.dialogRef.close(false);
-      this.translate.get('Restart').subscribe((reboot: string) => {
-        this.translate.get('Update successfull. Please reboot for the update to take effect. Reboot now?').subscribe((reboot_prompt: string) => {
-          this.dialogService.confirm(reboot, reboot_prompt).subscribe((reboot_res) => {
-            if (reboot_res) {
-              this.router.navigate(['/others/reboot']);
-            }
+    this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
+      this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Manual Update" }, disableClose: true });
+      this.dialogRef.componentInstance.wspost(this.subs.apiEndPoint, this.subs.formData);
+      this.dialogRef.componentInstance.success.subscribe((succ)=>{
+        this.dialogRef.close(false);
+        if (ures[0].attributes.preferences['rebootAfterManualUpdate']) {
+          this.router.navigate(['/others/reboot']);
+        } else {
+          this.translate.get('Restart').subscribe((reboot: string) => {
+            this.translate.get('Update successful. Please reboot for the update to take effect. Reboot now?').subscribe((reboot_prompt: string) => {
+              this.dialogService.confirm(reboot, reboot_prompt).subscribe((reboot_res) => {
+              });
+            });
           });
-        });
-      });
+        };
+      })
+      this.dialogRef.componentInstance.failure.subscribe((failure)=>{
+        this.dialogRef.close(false);
+        this.dialogService.errorReport(failure.error,failure.state,failure.exception)
+      })
+
     })
-    this.dialogRef.componentInstance.failure.subscribe((failure)=>{
-      this.dialogRef.close(false);
-      this.dialogService.errorReport(failure.error,failure.state,failure.exception)
-    })
+
 
   }
 

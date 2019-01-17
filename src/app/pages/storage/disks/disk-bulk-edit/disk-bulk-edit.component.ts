@@ -7,7 +7,8 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import { T } from '../../../../translate-marker';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../../services/dialog.service';
-import { StorageService } from '../../../../services/storage.service'
+import { StorageService } from '../../../../services/storage.service';
+import helptext from '../../../../helptext/storage/disks/disk-form';
 
 @Component({
   selector: 'app-disk-bulk-edit',
@@ -23,15 +24,15 @@ export class DiskBulkEditComponent {
     {
       type: 'input',
       name: 'disk_name',
-      placeholder: T('Editing the following disks:'),
-      tooltip : T('This is the FreeBSD device name for the disk.'),
+      placeholder: helptext.disk_form_bulk_edit_names_placeholder,
+      tooltip : helptext.disk_form_bulk_edit_names_tooltip,
       value: [this.diskBucket.diskNames],
       readonly: true
     },    {
       type: 'input',
       name: 'disk_serial',
-      placeholder: T('Serial'),
-      tooltip : T('This is the serial number of the disk.'),
+      placeholder: helptext.disk_form_serial_placeholder,
+      tooltip : helptext.disk_form_bulk_edit_serial_tooltip,
       value: [this.diskBucket.ids],
       readonly: true, 
       isHidden: true
@@ -40,50 +41,39 @@ export class DiskBulkEditComponent {
       type: 'select',
       name: 'disk_hddstandby',
       value: this.diskBucket.hddStandby,
-      placeholder: T('HDD Standby'),
-      tooltip : T('Indicates the time of inactivity in minutes before\
-                   the drive enters standby mode. This <a\
-                   href="https://forums.freenas.org/index.php?threads/how-to-find-out-if-a-drive-is-spinning-down-properly.2068/"\
-                   target="_blank">forum post</a> demonstrates how to\
-                   determine if a drive has spun down.'),
+      placeholder: helptext.disk_form_hddstandby_placeholder,
+      tooltip : helptext.disk_form_bulk_edit_hddstandby_tooltip,
       options: [],
     },
     {
       type: 'select',
       name: 'disk_advpowermgmt',
-      placeholder: T('Advanced Power Management'),
+      placeholder: helptext.disk_form_advpowermgmt_placeholder,
       value: this.diskBucket.advPowerMgt,
-      tooltip : T('Select a power management profile from the menu.'),
+      tooltip : helptext.disk_form_advpowermgmt_tooltip,
       options: [],
     },
     {
       type: 'select',
       name: 'disk_acousticlevel',
-      placeholder: T('Acoustic Level'),
+      placeholder: helptext.disk_form_acousticlevel_placeholder,
       value: this.diskBucket.acousticLevel,
-      tooltip : T('Modify for disks that understand <a\
-                   href="https://en.wikipedia.org/wiki/Automatic_acoustic_management"\
-                   target="_blank">AAM</a>.'),
+      tooltip : helptext.disk_form_acousticlevel_tooltip,
       options: [],
     },
     {
       type : 'checkbox',
       name : 'disk_togglesmart',
-      placeholder : T('Enable S.M.A.R.T.'),
+      placeholder : helptext.disk_form_togglesmart_placeholder,
       value: this.diskBucket.diskToggleStatus,
-      tooltip : T('Set by default if the disk supports S.M.A.R.T.\
-                   Unset to disable any configured <a\
-                   href="..//docs/tasks.html#s-m-a-r-t-tests"\
-                   target="_blank">S.M.A.R.T. tests</a>.'),
+      tooltip : helptext.disk_form_bulk_edit_togglesmart_tooltip,
     },
     {
       type: 'input',
       name: 'disk_smartoptions',
-      placeholder: T('S.M.A.R.T. extra options'),
+      placeholder: helptext.disk_form_smartoptions_placeholder,
       value: this.diskBucket.SMARToptions,
-      tooltip : T('Additional <a\
-                   href="https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8.in"\
-                   target="_blank">smartctl(8)</a> options.'),
+      tooltip : helptext.disk_form_smartoptions_tooltip,
     }
   ];
 
@@ -118,7 +108,7 @@ export class DiskBulkEditComponent {
       this.disk_hddstandby = _.find(this.fieldConfig, {name : 'disk_hddstandby'});
       res.forEach((item) => {
         this.disk_hddstandby.options.push(
-            {label : item[1], value : item[0]});
+            {label : item[1], value : item[0].toUpperCase()});
       });
     });
 
@@ -126,7 +116,7 @@ export class DiskBulkEditComponent {
       this.disk_advpowermgmt = _.find(this.fieldConfig, {name : 'disk_advpowermgmt'});
       res.forEach((item) => {
         this.disk_advpowermgmt.options.push(
-            {label : item[1], value : item[0]});
+            {label : item[1], value : item[0].toUpperCase()});
       });
     });
 
@@ -145,7 +135,7 @@ export class DiskBulkEditComponent {
     let data = {
       "hddstandby": event.disk_hddstandby, 
       "advpowermgmt" : event.disk_advpowermgmt, 
-      "acousticlevel" : event.disk_acousticlevel.toUpperCase(),
+      "acousticlevel" : event.disk_acousticlevel,
       "togglesmart" : event.disk_togglesmart,
       "smartoptions" : event.disk_smartoptions
     }
@@ -163,8 +153,17 @@ export class DiskBulkEditComponent {
         (res) => { 
           if(res.state === 'SUCCESS') {
             this.loader.close();
-            this._router.navigate(new Array('/').concat([
-              "storage", "disks"]));          
+            let success_state = true;
+            for (let i = 0; i < res.result.length; i++) {
+              if (res.result[i].error != null) {
+                this.dialogService.errorReport(T("Error updating disks."), res.result[i].error);
+                success_state = false;
+                break;
+              }
+            }
+            if (success_state) {
+              this._router.navigate(new Array('/').concat(["storage", "disks"]));
+            }
           }
         },
         (err) => {

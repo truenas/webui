@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Validators } from '@angular/forms';
 
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
-import { T } from '../../../../../translate-marker';
+import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 
 @Component({
   selector : 'app-iscsi-initiator-form',
@@ -19,34 +18,28 @@ export class InitiatorFormComponent {
     {
       type : 'input',
       name : 'iscsi_target_initiator_initiators',
-      placeholder : T('Initiators'),
-      tooltip: T('Use <i>ALL</i> keyword or a list of initiator hostnames\
-                  separated by spaces.'),
+      placeholder : helptext_sharing_iscsi.initiator_form_placeholder_initiators,
+      tooltip: helptext_sharing_iscsi.initiator_form_tooltip_initiators,
       value : 'ALL',
       inputType : 'textarea',
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext_sharing_iscsi.initiator_form_validators_initiators
     },
     {
       type : 'input',
       name : 'iscsi_target_initiator_auth_network',
-      placeholder : T('Authorized Networks'),
-      tooltip: T('Network addresses that can use this initiator. Use\
-                  <i>ALL</i> or list network addresses with a\
-                  <a href="https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing"\
-                  target="_blank">CIDR</a> mask. Separate multiple\
-                  addresses with a space:\
-                  <i>192.168.2.0/24 192.168.2.1/12</i>.'),
+      placeholder : helptext_sharing_iscsi.initiator_form_placeholder_auth_network,
+      tooltip: helptext_sharing_iscsi.initiator_form_tooltip_auth_network,
       value : 'ALL',
       inputType : 'textarea',
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext_sharing_iscsi.initiator_form_validators_auth_network
     },
     {
       type : 'input',
       name : 'iscsi_target_initiator_comment',
-      placeholder : T('Comment'),
-      tooltip: T('Optional description.'),
+      placeholder : helptext_sharing_iscsi.initiator_form_placeholder_comment,
+      tooltip: helptext_sharing_iscsi.initiator_form_tooltip_comment,
     },
   ];
 

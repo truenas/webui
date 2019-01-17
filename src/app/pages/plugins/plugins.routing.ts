@@ -5,6 +5,7 @@ import { PluginsAvailabelListComponent } from './plugins-available/plugins-avail
 import { PluginAddComponent } from './plugin-add/plugin-add.component';
 import { PluginsInstalledListComponent } from './plugins-installed/plugins-installed.component';
 import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
+import { PluginAdvancedAddComponent } from './plugin-advanced-add/plugin-advanced-add.component';
 
 export const routes: Routes = [
   {
@@ -23,6 +24,11 @@ export const routes: Routes = [
       path: 'add/:name',
       component: PluginAddComponent,
       data: { title: 'Add', breadcrumb: 'Add' },
+    },
+    {
+      path: 'advanced/:pk',
+      component: PluginAdvancedAddComponent,
+      data: { title: 'Advanced Add', breadcrumb: 'Advanced Add' },
     },
     {
       path: 'installed',

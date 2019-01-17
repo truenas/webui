@@ -13,24 +13,28 @@ export interface UserPreferences {
   showTooltips:boolean; // Form Tooltips on/off
   metaphor:string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
   allowPwToggle:boolean;
-  hideWarning:boolean;
+  enableWarning:boolean;
+  preferIconsOnly:boolean;
+  rebootAfterManualUpdate:boolean;
 }
 
 @Injectable()
 export class PreferencesService {
   //public coreEvents: Subject<CoreEvent>;
-  private debug: boolean = false;
+  private debug = false;
   public preferences: UserPreferences = {
     "platform":"freenas",
     "timestamp":new Date(),
-    "userTheme":"ix-blue", // Theme name
+    "userTheme":"ix-dark", // Theme name
     "customThemes": [], // Theme Objects
     "favoriteThemes": [], // Theme Names
     "showGuide":true,
     "showTooltips":true,
     "metaphor":"auto",
     "allowPwToggle":true,
-    "hideWarning": true
+    "enableWarning": true,
+    "preferIconsOnly": false,
+    "rebootAfterManualUpdate": false,
   }
   constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router,
     private aroute: ActivatedRoute) {
@@ -38,7 +42,13 @@ export class PreferencesService {
     this.core.register({observerClass:this, eventName:"Authenticated",sender:this.api}).subscribe((evt:CoreEvent) => {
       //console.log(evt.data);
       if(evt.data){
-        this.core.emit({name:"UserDataRequest", data: [[["id", "=", 1 ]]] });
+        this.core.emit({name:"UserPreferencesChanged", data: this.preferences });
+      }
+    });
+
+    this.core.register({observerClass:this, eventName:"UserPreferencesRequest"}).subscribe((evt:CoreEvent) => {
+      if(evt.data){
+        this.core.emit({name:"UserDataRequest", data: [[[ "id", "=", 1 ]]]});
       }
     });
 
@@ -47,6 +57,14 @@ export class PreferencesService {
         const data = evt.data[0].attributes.preferences;
 
         const preferencesFromUI = Object.keys(this.preferences);
+        if(!data){
+          // If preferences do not exist return after saving Preferences so that UI can retry.
+          if(this.debug)console.log('Preferences not returned');
+          this.savePreferences();
+          console.warn("No Preferences Found in Middleware");
+          return;
+        }
+
         const preferencesFromMiddleware = Object.keys(data);
         const keysMatch:boolean = (preferencesFromUI.join() == preferencesFromMiddleware.join());// evaluates as false negative, wth?!
         if(data && keysMatch){
