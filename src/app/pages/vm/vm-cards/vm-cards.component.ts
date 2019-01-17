@@ -77,21 +77,25 @@ export class VmCardsComponent  implements OnDestroy {
 
   afterInit(entityTable: EntityTableComponent) { 
     this.entityTable = entityTable;
-    Observable.interval(5000).subscribe(() => {
-      this.entityTable.getData();
-     });
      this.core.register({observerClass:this,eventName:"VmStartFailure"}).subscribe((evt:CoreEvent) => {
+       this.entityTable.getData();
        this.dialog.errorReport("Error",evt.data.reason,evt.data.trace.formatted);
      })
      this.core.register({observerClass:this,eventName:"VmStopFailure"}).subscribe((evt:CoreEvent) => {
+      this.entityTable.getData();
       this.dialog.errorReport("Error",evt.data.reason,evt.data.trace.formatted);
     })
     this.core.register({observerClass:this,eventName:"VmCloneFailure"}).subscribe((evt:CoreEvent) => {
+      this.entityTable.getData();
       this.dialog.errorReport("Error",evt.data.reason,evt.data.trace.formatted);
     })
     this.core.register({observerClass:this,eventName:"VmDeleteFailure"}).subscribe((evt:CoreEvent) => {
+      this.entityTable.getData();
       this.dialog.errorReport("Error",evt.data.reason,evt.data.trace.formatted);
     })
+    this.core.register({observerClass:this,eventName:"VmProfiles"}).subscribe((evt:CoreEvent) => {
+      this.entityTable.getData();
+    });
   }
 
   getActions(row) {

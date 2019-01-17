@@ -176,7 +176,7 @@ export class ApiService {
         version:"1",
         namespace:"vm.start",
         args:[],
-        responseEvent:"VmStarted",
+        responseEvent:"VmProfiles",
         errorResponseEvent: "VmStartFailure"
       },
       async preProcessor(def:ApiCall, self) {
@@ -206,7 +206,7 @@ export class ApiService {
         version:"1",
         namespace:"vm.restart",
         args:[],
-        responseEvent:"VmStarted",
+        responseEvent:"VmProfiles",
         errorResponseEvent: "VmStartFailure"
       },
       postProcessor(res,callArgs){
@@ -221,7 +221,7 @@ export class ApiService {
         version:"1",
         namespace:"vm.stop",
         args:[],
-        responseEvent:"VmStopped",
+        responseEvent:"VmProfiles",
         errorResponseEvent: "VmStopFailure"
       },
       postProcessor(res,callArgs){
@@ -237,7 +237,7 @@ export class ApiService {
         version:"2",
         namespace:"vm.stop",
         args:[],
-        responseEvent:"VmStopped",
+        responseEvent:"VmProfiles",
         errorResponseEvent: "VmStopFailure"
       },
       preProcessor(def:ApiCall){
@@ -258,7 +258,7 @@ export class ApiService {
         version:"1",
         namespace:"vm.create",
         args:[],
-        responseEvent:"VmCreated"
+        responseEvent:"VmProfiles"
       }
     },
     VmClone:{
@@ -267,7 +267,7 @@ export class ApiService {
         version:"2",
         namespace:"vm.clone",
         args:[],
-        responseEvent:"VmProfilesRequest",
+        responseEvent:"VmProfiles",
         errorResponseEvent: "VmCloneFailure"
       },
       preProcessor(def:ApiCall){
@@ -287,8 +287,7 @@ export class ApiService {
         version:"1",
         namespace:"vm.delete",
         args:[],
-        responseEvent:"VmDeleted",
-        errorResponseEvent: "VmDeleteFailure"
+        responseEvent:"VmProfiles",
       },
       async preProcessor(def:ApiCall, self) {
         return await self.dialog.confirm("Delete VM", `Delete VM ${def.args[1].name} ?`).toPromise().then((res)=>{
