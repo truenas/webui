@@ -57,7 +57,7 @@ export class DockerVMWizardComponent {
         name : 'name',
         placeholder :  helptext.docker_vm_placeholder,
         tooltip : helptext.docker_vm_tooltip,
-        validation : [Validators.required,Validators.pattern('^[a-zA-Z0-9]*$')],
+        validation : [Validators.required,Validators.pattern('^[a-zA-Z0-9_]*$')],
         required: true,
         blurStatus: true,
         blurEvent: this.blurEvent,
