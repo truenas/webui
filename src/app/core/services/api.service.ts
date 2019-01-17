@@ -287,6 +287,7 @@ export class ApiService {
         version:"1",
         namespace:"vm.delete",
         args:[],
+        errorResponseEvent: "VmDeleteFailure",
         responseEvent:"VmProfiles",
       },
       async preProcessor(def:ApiCall, self) {
