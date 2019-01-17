@@ -10,6 +10,7 @@ interface ApiCall {
   args?: any;
   operation?: string;
   responseEvent ?: any;// The event name of the response this service will send
+  errorResponseEvent ?: any;// The event name of the response this service will send in case it fails
 }
 
 interface ApiDefinition { 
@@ -175,7 +176,8 @@ export class ApiService {
         version:"1",
         namespace:"vm.start",
         args:[],
-        responseEvent:"VmStarted"
+        responseEvent:"VmStarted",
+        errorResponseEvent: "VmStartFailure"
       },
       async preProcessor(def:ApiCall, self) {
         const params = [{"overcommit": false}]
@@ -204,7 +206,8 @@ export class ApiService {
         version:"1",
         namespace:"vm.restart",
         args:[],
-        responseEvent:"VmStarted"
+        responseEvent:"VmStarted",
+        errorResponseEvent: "VmStartFailure"
       },
       postProcessor(res,callArgs){
         let cloneRes = Object.assign({},res);
@@ -218,7 +221,8 @@ export class ApiService {
         version:"1",
         namespace:"vm.stop",
         args:[],
-        responseEvent:"VmStopped"
+        responseEvent:"VmStopped",
+        errorResponseEvent: "VmStopFailure"
       },
       postProcessor(res,callArgs){
         //DEBUG: console.log(res);
@@ -233,7 +237,8 @@ export class ApiService {
         version:"2",
         namespace:"vm.stop",
         args:[],
-        responseEvent:"VmStopped"
+        responseEvent:"VmStopped",
+        errorResponseEvent: "VmStopFailure"
       },
       preProcessor(def:ApiCall){
         let uid:number = 1;
@@ -262,7 +267,8 @@ export class ApiService {
         version:"2",
         namespace:"vm.clone",
         args:[],
-        responseEvent:"VmProfilesRequest"
+        responseEvent:"VmProfilesRequest",
+        errorResponseEvent: "VmCloneFailure"
       },
       preProcessor(def:ApiCall){
         let redef = Object.assign({}, def);
@@ -281,7 +287,8 @@ export class ApiService {
         version:"1",
         namespace:"vm.delete",
         args:[],
-        responseEvent:"VmDeleted"
+        responseEvent:"VmDeleted",
+        errorResponseEvent: "VmDeleteFailure"
       },
       async preProcessor(def:ApiCall, self) {
         return await self.dialog.confirm("Delete VM", `Delete VM ${def.args[1].name} ?`).toPromise().then((res)=>{
@@ -669,6 +676,9 @@ export class ApiService {
       },
       (error)=>{
           error.id = call.args;
+          if (call.errorResponseEvent){
+            this.core.emit({name:call.errorResponseEvent, data:error, sender: this});
+          }
           this.core.emit({name:call.responseEvent, data:error, sender: this});
       });
     } else {
