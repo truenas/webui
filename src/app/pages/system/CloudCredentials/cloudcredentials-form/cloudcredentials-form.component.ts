@@ -906,20 +906,14 @@ export class CloudCredentialsFormComponent {
     // Allow blank values for pass and key_file fields (but at least one should be non-blank)
     entityForm.formGroup.controls['pass-SFTP'].valueChanges.subscribe((res) => {
       if (res !== undefined) {
-        if (res === '') {
-          this.setFieldRequired('key_file-SFTP', true, entityForm);
-        } else {
-          this.setFieldRequired('key_file-SFTP', false, entityForm);
-        }
+        const required = res === '' ? true : false;
+        this.setFieldRequired('key_file-SFTP', required, entityForm);
       }
     });
     entityForm.formGroup.controls['key_file-SFTP'].valueChanges.subscribe((res) => {
       if (res !== undefined) {
-        if (res === '' ) {
-          this.setFieldRequired('pass-SFTP', true, entityForm);
-        } else {
-          this.setFieldRequired('pass-SFTP', false, entityForm);
-        }
+        const required = res === '' ? true : false;
+        this.setFieldRequired('pass-SFTP', required, entityForm);
       }
     });
   }
