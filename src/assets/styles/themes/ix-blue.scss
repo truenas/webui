@@ -1226,7 +1226,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     min-width: 200px;
   }
 
-  .vm-summary h3 {
+  .vm-summary h3, .vm-summary .legend-name, .vm-summary .legend-value {
     @include variable(color, --fg1, $fg1, !important);
   }
 
