@@ -68,7 +68,7 @@ export class VMWizardComponent {
         name : 'name',
         placeholder : helptext.name_placeholder,
         tooltip : helptext.name_tooltip,
-        validation : [Validators.required,Validators.pattern('^[a-zA-Z0-9]*$')],
+        validation : [Validators.required,Validators.pattern('^[a-zA-Z0-9_]*$')],
         required: true,
         blurStatus: true,
         blurEvent: this.blurEvent,
