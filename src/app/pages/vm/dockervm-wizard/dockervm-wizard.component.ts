@@ -144,6 +144,15 @@ export class DockerVMWizardComponent {
         },
         {
           type: 'input',
+          name: 'raw_filename_password',
+          placeholder : helptext.raw_filename_password_placeholder,
+          tooltip: helptext.raw_filename_password_tooltip,
+          validation : helptext.raw_filename_password_validation,
+          inputType: 'password',
+          value: 'docker'
+        },
+        {
+          type: 'input',
           name: 'size',
           placeholder : helptext.raw_filesize_placeholder,
           tooltip: helptext.raw_filesize_tooltip,
@@ -357,7 +366,7 @@ async customSubmit(value) {
     vm_payload["name"] = value.name;
     vm_payload["vcpus"] = String(value.vcpus);
     vm_payload["autostart"] = value.autostart;
-    vm_payload["root_password"] = "docker"
+    vm_payload["root_password"] = value.raw_filename_password;
     vm_payload["devices"] = [
       {"dtype": "NIC", "attributes": {"type": value.NIC_type, "mac": value.NIC_mac, "nic_attach":value.nic_attach}},
       {"dtype": "RAW", "attributes": {"path": path,exists: false, "type": "AHCI", "size": value.size, sectorsize: 0}},

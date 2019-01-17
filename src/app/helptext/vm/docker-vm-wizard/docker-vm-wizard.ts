@@ -62,6 +62,10 @@ raw_filename_placeholder : T('Raw filename'),
 raw_filename_tooltip: T('Name the new raw file.'),
 raw_filename_validation : [ Validators.required ],
 
+raw_filename_password_placeholder : T('Raw filename password'),
+raw_filename_password_tooltip: T('Raw filename password, default is docker'),
+raw_filename_password_validation : [ Validators.required ],
+
 raw_filesize_placeholder : T('Raw file size (GiB)'),
 raw_filesize_tooltip: T('Allocate a number of gigabytes (GiB) to the new\
  raw file.'),
