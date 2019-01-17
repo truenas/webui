@@ -1,4 +1,4 @@
-import { Component} from '@angular/core';
+import { Component, OnDestroy} from '@angular/core';
 import { Router } from '@angular/router';
 import { WebSocketService, RestService } from '../../../services/';
 import { DialogService } from '../../../services/dialog.service';
@@ -20,7 +20,7 @@ import {EntityTableComponent} from '../../common/entity/entity-table/';
   <vm-summary></vm-summary>
   <entity-table [title]="title" [conf]="this"></entity-table>`
 })
-export class VmCardsComponent  {
+export class VmCardsComponent  implements OnDestroy {
 
   protected queryCall = 'vm.query';
   protected route_add: string[] = [ 'vm', 'wizard' ];
@@ -80,6 +80,18 @@ export class VmCardsComponent  {
     interval(5000).subscribe(() => {
       this.entityTable.getData();
      });
+     this.core.register({observerClass:this,eventName:"VmStartFailure"}).subscribe((evt:CoreEvent) => {
+       this.dialog.errorReport("Error",evt.data.reason,evt.data.trace.formatted);
+     })
+     this.core.register({observerClass:this,eventName:"VmStopFailure"}).subscribe((evt:CoreEvent) => {
+      this.dialog.errorReport("Error",evt.data.reason,evt.data.trace.formatted);
+    })
+    this.core.register({observerClass:this,eventName:"VmCloneFailure"}).subscribe((evt:CoreEvent) => {
+      this.dialog.errorReport("Error",evt.data.reason,evt.data.trace.formatted);
+    })
+    this.core.register({observerClass:this,eventName:"VmDeleteFailure"}).subscribe((evt:CoreEvent) => {
+      this.dialog.errorReport("Error",evt.data.reason,evt.data.trace.formatted);
+    })
   }
 
   getActions(row) {
@@ -88,54 +100,54 @@ export class VmCardsComponent  {
       actions.push({
         id : "poweroff",
         label : "Power Off",
-        onClick : (row) => {
+        onClick : (power_off_row) => {
           const eventName = "VmPowerOff";
-          this.core.emit({name: eventName, data:[row.id]});
+          this.core.emit({name: eventName, data:[power_off_row.id]});
         }
       });
       actions.push({
         id : "stop",
         label : "Stop",
-        onClick : (row) => {
+        onClick : (power_stop_row) => {
           const eventName = "VmStop";
-          this.core.emit({name: eventName, data:[row.id]});
+          this.core.emit({name: eventName, data:[power_stop_row.id]});
         }
       });
     } else {
       actions.push({
         id : "start",
         label : "Start",
-        onClick : (row) => {
+        onClick : (start_row) => {
           const eventName = "VmStart";
-          this.core.emit({name: eventName, data:[row.id]});
+          this.core.emit({name: eventName, data:[start_row.id]});
         }
       });
     }
     actions.push({
       label : "Edit",
-      onClick : (row) => {
+      onClick : (edit_row) => {
         this.router.navigate(
-            new Array('').concat([ "vm", "edit", row.id ]));
+            new Array('').concat([ "vm", "edit", edit_row.id ]));
       }
     });
     actions.push({
       label : "Delete",
-      onClick : (row) => {
-        this.core.emit({name:"VmDelete", data:[row.id,row]});
+      onClick : (delete_row) => {
+        this.core.emit({name:"VmDelete", data:[delete_row.id,delete_row]});
       },
     });
     actions.push({
       label : "Devices",
-      onClick : (row) => {
+      onClick : (devices_row) => {
         this.router.navigate(
-            new Array('').concat([ "vm", row.id, "devices", row.name ]));
+            new Array('').concat([ "vm", devices_row.id, "devices", devices_row.name ]));
       }
     });
     actions.push({
       label : "Clone",
-      onClick : (row) => {
+      onClick : (clone_row) => {
         const eventName = "VmClone";
-        this.core.emit({name: eventName, data:[row.id]});
+        this.core.emit({name: eventName, data:[clone_row.id]});
       }
     });
     if(row['status']['state'] === "RUNNING"){
@@ -201,5 +213,8 @@ export class VmCardsComponent  {
         return devices[i].attributes.vnc_port;
       }
     }
+  }
+  ngOnDestroy(){
+    this.core.unregister({observerClass:this});
   }
 }
