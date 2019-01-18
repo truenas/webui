@@ -115,7 +115,7 @@ export class SnapshotListComponent {
   getSelectedNames(selectedSnapshots) {
     let selected: any = [];
     for (let i in selectedSnapshots) {
-      selected.push([{"dataset": selectedSnapshots[i].dataset, "name": selectedSnapshots[i].name}]);
+      selected.push([{"dataset": selectedSnapshots[i].dataset, "name": selectedSnapshots[i].snapshot_name}]);
     }
     return selected;
   }
@@ -127,19 +127,18 @@ export class SnapshotListComponent {
   }
 
   doDelete(item) {
-      const deleteMsg = T("Delete snapshot ") + item.name  + "?";
-      this.entityList.dialogService.confirm(T("Delete"), deleteMsg, false, T('Delete')).subscribe((res) => {
-        if (res) {
-          this.entityList.loader.open();
-          this.entityList.loaderOpen = true;
-          this.ws.call(this.wsDelete, [{ "dataset": item.dataset, "name": item.name}]).subscribe(
-            (res) => { this.entityList.getData() },
-            (res) => {
-              new EntityUtils().handleWSError(this, res, this.entityList.dialogService);
-              this.entityList.loaderOpen = false;
-              this.entityList.loader.close();
-          }
-        );
+    const deleteMsg = T("Delete snapshot ") + item.name  + "?";
+    this.entityList.dialogService.confirm(T("Delete"), deleteMsg, false, T('Delete')).subscribe((res) => {
+      if (res) {
+        this.entityList.loader.open();
+        this.entityList.loaderOpen = true;
+        this.ws.call(this.wsDelete, [{ "dataset": item.dataset, "name": item.snapshot_name}]).subscribe(
+          (res) => { this.entityList.getData() },
+          (res) => {
+            new EntityUtils().handleWSError(this, res, this.entityList.dialogService);
+            this.entityList.loaderOpen = false;
+            this.entityList.loader.close();
+        });
       }
     });
   }
