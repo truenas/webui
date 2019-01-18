@@ -1,4 +1,4 @@
-import { Component, OnDestroy} from '@angular/core';
+import { Component, OnDestroy, ViewChild} from '@angular/core';
 import { Router } from '@angular/router';
 import { WebSocketService, RestService } from '../../../services/';
 import { DialogService } from '../../../services/dialog.service';
@@ -18,10 +18,11 @@ import {EntityTableComponent} from '../../common/entity/entity-table/';
   selector: 'app-vm-cards',
   template: `
   <vm-summary></vm-summary>
-  <entity-table [title]="title" [conf]="this"></entity-table>`
+  <entity-table #table [title]="title" [conf]="this"></entity-table>`
 })
 export class VmCardsComponent  implements OnDestroy {
 
+  @ViewChild('table') table:EntityTableComponent;
   protected queryCall = 'vm.query';
   protected route_add: string[] = [ 'vm', 'wizard' ];
   protected route_add_tooltip = "Add VM";
@@ -77,6 +78,7 @@ export class VmCardsComponent  implements OnDestroy {
 
   afterInit(entityTable: EntityTableComponent) { 
     this.entityTable = entityTable;
+    this.core.emit({name: "VmProfilesRequest"});
      this.core.register({observerClass:this,eventName:"VmStartFailure"}).subscribe((evt:CoreEvent) => {
        this.entityTable.getData();
        this.dialog.errorReport("Error",evt.data.reason,evt.data.trace.formatted);
@@ -96,6 +98,10 @@ export class VmCardsComponent  implements OnDestroy {
     this.core.register({observerClass:this,eventName:"VmProfiles"}).subscribe((evt:CoreEvent) => {
       this.entityTable.getData();
     });
+
+    this.controlEvents.subscribe((evt:CoreEvent) => {
+      console.log(evt);
+    });
   }
 
   getActions(row) {
@@ -107,6 +113,7 @@ export class VmCardsComponent  implements OnDestroy {
         onClick : (power_off_row) => {
           const eventName = "VmPowerOff";
           this.core.emit({name: eventName, data:[power_off_row.id]});
+          this.setTransitionState("POWERING OFF", power_off_row);
         }
       });
       actions.push({
@@ -115,6 +122,7 @@ export class VmCardsComponent  implements OnDestroy {
         onClick : (power_stop_row) => {
           const eventName = "VmStop";
           this.core.emit({name: eventName, data:[power_stop_row.id]});
+          this.setTransitionState("STOPPING", power_stop_row);
         }
       });
     } else {
@@ -124,6 +132,7 @@ export class VmCardsComponent  implements OnDestroy {
         onClick : (start_row) => {
           const eventName = "VmStart";
           this.core.emit({name: eventName, data:[start_row.id]});
+          this.setTransitionState("STARTING", start_row);
         }
       });
     }
@@ -202,6 +211,11 @@ export class VmCardsComponent  implements OnDestroy {
         return true;
       }
     }
+  }
+
+  setTransitionState(str:string, vm:any){
+    let index = this.table.rows.indexOf(vm);
+    this.table.rows[index].state = str;
   }
 
   vncPort(vm){
