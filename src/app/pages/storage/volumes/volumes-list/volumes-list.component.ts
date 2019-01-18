@@ -119,6 +119,9 @@ export class VolumesListTableConfig implements InputTableConf {
 
   getEncryptedActions(rowData: any) {
     const actions = [];
+    let localLoader = this.loader;
+    let localRest = this.rest;
+    let localDialogService = this.dialogService;
 
     if (rowData.vol_encrypt === 2) {
 
@@ -126,19 +129,49 @@ export class VolumesListTableConfig implements InputTableConf {
         actions.push({
           label: T("Lock"),
           onClick: (row1) => {
-            this.dialogService.confirm(T("Lock Pool"), T("Lock ") + row1.name + "?").subscribe((confirmResult) => {
-              if (confirmResult === true) {
-                this.loader.open();
-                this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-                  this.loader.close();
+            const conf: DialogFormConfiguration = {
+              title: T("Enter your passphrase to lock ") + row1.name + '.',
+              fieldConfig: [
+                {
+                  type: 'input',
+                  inputType: 'password',
+                  name: 'passphrase',
+                  placeholder: 'passphrase',
+                  required: true
+                }
+              ],
+              saveButtonText: T("Lock Pool"),
+              customSubmit: function (entityDialog) {
+                const value = entityDialog.formValue;
+                localLoader.open();
+                console.log(this.resource_name)
+                localRest.post("/" + row1.name + "/lock/", 
+                  { body: JSON.stringify({passphrase: value,}) }).subscribe((restPostResp) => {
+                  localLoader.close();
                   this.parentVolumesListComponent.repaintMe();
-
                 }, (res) => {
-                  this.loader.close();
-                  this.dialogService.errorReport(T("Error locking pool."), res.message, res.stack);
+                  // console.log(res)
+                  localLoader.close();
+                  localDialogService.errorReport(T("Error locking pool."), res.message, res.stack);
                 });
               }
-            });
+            }
+            this.dialogService.dialogForm(conf);
+
+
+            // this.dialogService.confirm(T("Lock Pool"), T("Lock ") + row1.name + "?").subscribe((confirmResult) => {
+            //   if (confirmResult === true) {
+            //     this.loader.open();
+            //     this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({passphrase: 'xxxxx',}) }).subscribe((restPostResp) => {
+            //       this.loader.close();
+            //       this.parentVolumesListComponent.repaintMe();
+
+            //     }, (res) => {
+            //       this.loader.close();
+            //       this.dialogService.errorReport(T("Error locking pool."), res.message, res.stack);
+            //     });
+            //   }
+            // });
           }
         });
 
