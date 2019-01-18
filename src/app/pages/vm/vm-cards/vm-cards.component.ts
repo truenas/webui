@@ -159,12 +159,10 @@ export class VmCardsComponent  implements OnDestroy {
           const eventName = "VmDelete";
           let args = [delete_row.id];
           let deleteDialog = this.dialog.confirm("Delete VM", 'Delete VM ' + delete_row.name + ' ?');
-          console.log(deleteDialog)
           deleteDialog.subscribe((res) => {
             if (res) {
               this.core.emit({name: eventName, data:args});
               this.setTransitionState("DELETING", delete_row);
-              console.log(eventName + " :  " + args );
             } 
           });
       },
