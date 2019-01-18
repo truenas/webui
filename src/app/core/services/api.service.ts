@@ -126,7 +126,7 @@ export class ApiService {
         protocol:"websocket",
         version:"2.0", // Middleware returns device info but no status
         namespace: "vm.query",
-        //args: [],
+        args: [],
         responseEvent: "VmProfiles"
       }
     },

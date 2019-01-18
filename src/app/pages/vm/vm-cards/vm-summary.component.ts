@@ -29,6 +29,11 @@ export class VmSummaryComponent implements AfterViewInit, OnDestroy {
       this.setPoolData(evt);
     });
 
+    this.core.register({observerClass:this,eventName:"VmProfiles"}).subscribe((evt:CoreEvent) => {
+      //console.log(evt);
+      this.core.emit({name:"StatsVmemoryUsageRequest"});
+    });
+
     this.core.register({observerClass:this,eventName:"VmStarted"}).subscribe((evt:CoreEvent) => {
       //console.log(evt);
       this.core.emit({name:"StatsVmemoryUsageRequest"});
@@ -75,7 +80,7 @@ export class VmSummaryComponent implements AfterViewInit, OnDestroy {
     this.core.emit({name:"SysInfoRequest"});
 
     // CPU Stats (dataList eg. {source: "aggregation-cpu-sum", type: "cpu-user", dataset: "value"})
-    this.core.emit({name:"StatsCpuRequest", data:[['user','interrupt','system'/*,'idle','nice'*/],{step:'10', start:'now-10m'}]});
+    //this.core.emit({name:"StatsCpuRequest", data:[['user','interrupt','system'/*,'idle','nice'*/],{step:'10', start:'now-10m'}]});
 
    }
 
@@ -100,7 +105,7 @@ export class VmSummaryComponent implements AfterViewInit, OnDestroy {
     ];
     this.totalVmem = evt.data.RNP + evt.data.PRD + evt.data.RPRD;
     if(this.physmem){
-      console.warn({physmem:this.physmem, totalVmem: this.totalVmem});
+      //console.warn({physmem:this.physmem, totalVmem: this.totalVmem});
       let avail = (<any>window).filesize(this.physmem - this.totalVmem, {output: "object", exponent:3});
       memData.push({legend:"Free", data:[avail.value]});
     }
