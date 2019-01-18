@@ -234,9 +234,7 @@ target="_blank">securelevel</a> sysctl. A jail never \
 has a lower securelevel than the host system. \
 Setting this parameter allows a higher securelevel. \
 If the host system securelevel is changed, jail \
-securelevel will be at least as secure. <br>\
-Securelevel options are <i>3</i>, <i>2</i>, \
-<i>1</i>, <i>0</i>, and <i>-1</i>.'),
+securelevel will be at least as secure.'),
 
 sysvmsg_placeholder: T('sysvmsg'),
 sysvmsg_tooltip: T('Allow or deny access to SYSV IPC message primitives. \
