@@ -179,21 +179,6 @@ export class ApiService {
         responseEvent:"VmProfiles",
         errorResponseEvent: "VmStartFailure"
       },
-      async preProcessor(def:ApiCall, self) {
-        const params = [{"overcommit": false}]
-        return self.dialog.confirm("Power",undefined, true, "Power On",true,'Overcommit Memory?',undefined, params, 
-        "Memory overcommitment allows multiple VMs to \
-        be launched when there is not enough free memory \
-        for configured RAM of all VMs. Use with caution."
-        ).afterClosed().toPromise().then(res=>{
-          if (res) {
-            def.args.push({"overcommit": true});
-            return def;
-          } else {
-            return;
-          }
-        });
-      },
       postProcessor(res,callArgs){
         let cloneRes = Object.assign({},res);
         cloneRes = {id:callArgs[0] ,state: res} // res:boolean
@@ -289,16 +274,6 @@ export class ApiService {
         args:[],
         errorResponseEvent: "VmDeleteFailure",
         responseEvent:"VmProfiles",
-      },
-      async preProcessor(def:ApiCall, self) {
-        return await self.dialog.confirm("Delete VM", `Delete VM ${def.args[1].name} ?`).toPromise().then((res)=>{
-          if (res) {
-            def.args = [def.args[0]];
-            return def;
-          } else {
-            return;
-          }
-        });
       },
     },
 

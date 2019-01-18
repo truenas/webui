@@ -131,8 +131,18 @@ export class VmCardsComponent  implements OnDestroy {
         label : "Start",
         onClick : (start_row) => {
           const eventName = "VmStart";
-          this.core.emit({name: eventName, data:[start_row.id]});
-          this.setTransitionState("STARTING", start_row);
+          let args = [start_row.id];
+          let overcommit = [{'overcommit':false}];
+          const dialogText = "Memory overcommitment allows multiple VMs to be launched when there is not enough free memory for configured RAM of all VMs. Use with caution."
+          let startDialog = this.dialog.confirm("Power", undefined, true, "Power On", true, 'Overcommit Memory?', undefined, overcommit, dialogText)
+          startDialog.afterClosed().subscribe((res) => {
+            if (res) {
+              let checkbox = startDialog.componentInstance.data[0].overcommit;
+              args.push({"overcommit": checkbox});
+              this.core.emit({name: eventName, data:args});
+              this.setTransitionState("STARTING", start_row);
+            } 
+          });
         }
       });
     }
@@ -146,7 +156,17 @@ export class VmCardsComponent  implements OnDestroy {
     actions.push({
       label : "Delete",
       onClick : (delete_row) => {
-        this.core.emit({name:"VmDelete", data:[delete_row.id,delete_row]});
+          const eventName = "VmDelete";
+          let args = [delete_row.id];
+          let deleteDialog = this.dialog.confirm("Delete VM", 'Delete VM ' + delete_row.name + ' ?');
+          console.log(deleteDialog)
+          deleteDialog.subscribe((res) => {
+            if (res) {
+              this.core.emit({name: eventName, data:args});
+              this.setTransitionState("DELETING", delete_row);
+              console.log(eventName + " :  " + args );
+            } 
+          });
       },
     });
     actions.push({
