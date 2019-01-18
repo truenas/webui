@@ -126,7 +126,7 @@ export class ApiService {
         protocol:"websocket",
         version:"2.0", // Middleware returns device info but no status
         namespace: "vm.query",
-        //args: [],
+        args: [],
         responseEvent: "VmProfiles"
       }
     },
@@ -176,23 +176,8 @@ export class ApiService {
         version:"1",
         namespace:"vm.start",
         args:[],
-        responseEvent:"VmStarted",
+        responseEvent:"VmProfiles",
         errorResponseEvent: "VmStartFailure"
-      },
-      async preProcessor(def:ApiCall, self) {
-        const params = [{"overcommit": false}]
-        return self.dialog.confirm("Power",undefined, true, "Power On",true,'Overcommit Memory?',undefined, params, 
-        "Memory overcommitment allows multiple VMs to \
-        be launched when there is not enough free memory \
-        for configured RAM of all VMs. Use with caution."
-        ).afterClosed().toPromise().then(res=>{
-          if (res) {
-            def.args.push({"overcommit": true});
-            return def;
-          } else {
-            return;
-          }
-        });
       },
       postProcessor(res,callArgs){
         let cloneRes = Object.assign({},res);
@@ -206,7 +191,7 @@ export class ApiService {
         version:"1",
         namespace:"vm.restart",
         args:[],
-        responseEvent:"VmStarted",
+        responseEvent:"VmProfiles",
         errorResponseEvent: "VmStartFailure"
       },
       postProcessor(res,callArgs){
@@ -221,7 +206,7 @@ export class ApiService {
         version:"1",
         namespace:"vm.stop",
         args:[],
-        responseEvent:"VmStopped",
+        responseEvent:"VmProfiles",
         errorResponseEvent: "VmStopFailure"
       },
       postProcessor(res,callArgs){
@@ -237,7 +222,7 @@ export class ApiService {
         version:"2",
         namespace:"vm.stop",
         args:[],
-        responseEvent:"VmStopped",
+        responseEvent:"VmProfiles",
         errorResponseEvent: "VmStopFailure"
       },
       preProcessor(def:ApiCall){
@@ -258,7 +243,7 @@ export class ApiService {
         version:"1",
         namespace:"vm.create",
         args:[],
-        responseEvent:"VmCreated"
+        responseEvent:"VmProfiles"
       }
     },
     VmClone:{
@@ -267,7 +252,7 @@ export class ApiService {
         version:"2",
         namespace:"vm.clone",
         args:[],
-        responseEvent:"VmProfilesRequest",
+        responseEvent:"VmProfiles",
         errorResponseEvent: "VmCloneFailure"
       },
       preProcessor(def:ApiCall){
@@ -287,18 +272,8 @@ export class ApiService {
         version:"1",
         namespace:"vm.delete",
         args:[],
-        responseEvent:"VmDeleted",
-        errorResponseEvent: "VmDeleteFailure"
-      },
-      async preProcessor(def:ApiCall, self) {
-        return await self.dialog.confirm("Delete VM", `Delete VM ${def.args[1].name} ?`).toPromise().then((res)=>{
-          if (res) {
-            def.args = [def.args[0]];
-            return def;
-          } else {
-            return;
-          }
-        });
+        errorResponseEvent: "VmDeleteFailure",
+        responseEvent:"VmProfiles",
       },
     },
 
