@@ -118,10 +118,8 @@ export class VolumesListTableConfig implements InputTableConf {
   }
 
   getEncryptedActions(rowData: any) {
-    const actions = [];
-    let localLoader = this.loader;
-    let localRest = this.rest;
-    let localDialogService = this.dialogService;
+    const actions = [], 
+    localLoader = this.loader, localRest = this.rest, localDialogService = this.dialogService, localResourceName = this.resource_name;
 
     if (rowData.vol_encrypt === 2) {
 
@@ -144,13 +142,14 @@ export class VolumesListTableConfig implements InputTableConf {
               customSubmit: function (entityDialog) {
                 const value = entityDialog.formValue;
                 localLoader.open();
-                console.log(this.resource_name)
-                localRest.post("/" + row1.name + "/lock/", 
-                  { body: JSON.stringify({passphrase: value,}) }).subscribe((restPostResp) => {
-                  localLoader.close();
-                  this.parentVolumesListComponent.repaintMe();
+                console.log(localResourceName + "/" + row1.name + "/lock/", { body: JSON.stringify({passphrase : value.passphrase}) })
+                localRest.post(localResourceName + "/" + row1.name + "/lock/", 
+                  { body: JSON.stringify({passphrase : value.passphrase}) }).subscribe((restPostResp) => {
+                    entityDialog.dialogRef.close(true);
+                    localLoader.close();
+                    this.parentVolumesListComponent.repaintMe();
                 }, (res) => {
-                  // console.log(res)
+                  entityDialog.dialogRef.close(true);
                   localLoader.close();
                   localDialogService.errorReport(T("Error locking pool."), res.message, res.stack);
                 });
@@ -158,11 +157,10 @@ export class VolumesListTableConfig implements InputTableConf {
             }
             this.dialogService.dialogForm(conf);
 
-
             // this.dialogService.confirm(T("Lock Pool"), T("Lock ") + row1.name + "?").subscribe((confirmResult) => {
             //   if (confirmResult === true) {
             //     this.loader.open();
-            //     this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({passphrase: 'xxxxx',}) }).subscribe((restPostResp) => {
+            //     this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({passphrase: 'fffff',}) }).subscribe((restPostResp) => {
             //       this.loader.close();
             //       this.parentVolumesListComponent.repaintMe();
 
