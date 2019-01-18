@@ -233,7 +233,7 @@ href="https://www.freebsd.org/doc/faq/security.html#idp60202568" \
 target="_blank">securelevel</a> sysctl. A jail never \
 has a lower securelevel than the host system. \
 Setting this parameter allows a higher securelevel. \
-If the host system securelevel is changed, jail \
+If the host system securelevel is changed, the jail \
 securelevel will be at least as secure.'),
 
 sysvmsg_placeholder: T('sysvmsg'),
