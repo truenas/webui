@@ -224,6 +224,7 @@ else:
         run_delete_test(runDriver)
 
     elif (test_name == "system"):
+        print ("Running: Systems Test")
         run_conf_sysgeneral_test(runDriver)
         run_conf_ntpserver_test(runDriver)
         run_conf_bootenv_test(runDriver)
@@ -240,6 +241,7 @@ else:
         run_conf_support_test(runDriver)
 
     elif (test_name == "tasks"):
+        print ("Running: Tasks Test")
         run_conf_taskscron_test(runDriver)
         run_conf_tasksinitshutscript_test(runDriver)
         run_conf_tasksrsync_test(runDriver)
@@ -251,6 +253,7 @@ else:
         run_conf_taskscloudsync_test(runDriver)
 
     elif (test_name == "network"):
+        print ("Running: Network Test")
         run_conf_netglob_test(runDriver)
         run_conf_netinterface_test(runDriver)
         run_conf_netlinkagg_test(runDriver)
@@ -258,11 +261,12 @@ else:
         run_conf_netvlan_test(runDriver)
 
     elif (test_name == "storage"):
+        print ("Running: Storage Test")
         run_create_pool_test(runDriver)
         run_delete_pool_test(runDriver)
 
     elif (test_name == "services"):
-        print ("Running: Guide Tests")
+        print ("Running: Service Tests")
 #        run_conf_afp_test(runDriver)
 #        run_conf_dc_test(runDriver)
 #        run_conf_dns_test(runDriver)
@@ -274,6 +278,8 @@ else:
 #        run_conf_webdav_test(runDriver)
 
     elif (test_name == "plugin"):
+        print ("Running: Accounts Test")
+
       # run_create_pool_test(runDriver)
         run_plugin_test(runDriver)
 
