@@ -17,7 +17,7 @@
             {{row.name}}
           </mat-panel-title>
           <mat-panel-description>
-            {{row.status}} ({{row.usedStr}} Used / {{row.availStr}} Free)
+            {{row.status}} <span *ngIf="row.usedStr && row.availStr">({{row.usedStr}} Used / {{row.availStr}} Free)</span>
           </mat-panel-description>
         </mat-expansion-panel-header>
         <div>
