@@ -71,7 +71,7 @@ export class CloudsyncListComponent {
                 });
                 this.job.getJobStatus(res).subscribe((task) => {
                   row.state = task.state;
-                  row.job.id = task.id;
+                  row.job = task;
                   row.status = task.state;
                   if (task.error) {
                     row.status += ":" + task.error;
