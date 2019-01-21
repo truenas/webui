@@ -771,18 +771,21 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
           volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, datasetData, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar);
           volume.type = 'zpool';
 
-          try {
-            volume.availStr = (<any>window).filesize(volume.children[0].avail, { standard: "iec" });
-          } catch (error) {
-            volume.availStr = "" + volume.children[0].avail;
+          if (volume.children && volume.children[0]) {
+            try {
+              volume.availStr = (<any>window).filesize(volume.children[0].avail, { standard: "iec" });
+            } catch (error) {
+              volume.availStr = "" + volume.children[0].avail;
+            }
+
+            try {
+              let used_pct =  volume.children[0].used / (volume.children[0].used + volume.children[0].avail);
+              volume.usedStr = (<any>window).filesize(volume.children[0].used, { standard: "iec" }) + " (" + Math.round(used_pct * 100) / 100 + "%)";
+            } catch (error) {
+              volume.usedStr = "" + volume.children[0].used;
+            }
           }
 
-          try {
-            let used_pct =  volume.children[0].used / (volume.children[0].used + volume.children[0].avail);
-            volume.usedStr = (<any>window).filesize(volume.children[0].used, { standard: "iec" }) + " (" + Math.round(used_pct * 100) / 100 + "%)";
-          } catch (error) {
-            volume.usedStr = "" + volume.children[0].used;
-          }
           this.zfsPoolRows.push(volume);
         });
 
