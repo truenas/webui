@@ -6,6 +6,7 @@ import { WebSocketService } from 'app/services';
 import { EntityUtils } from '../../../common/entity/utils';
 
 import { T } from '../../../../translate-marker';
+import { isNgTemplate } from '@angular/compiler';
 @Component({
   selector: 'app-snapshot-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`
@@ -100,15 +101,12 @@ export class SnapshotListComponent {
           ["storage", "snapshots", "clone", row1.id]));
       }
     });
-    if (parentRow.mostrecent) {
-      actions.push({
-        label: "Rollback",
-        onClick: (row1) => {
-          this._router.navigate(new Array('/').concat(
-            ["storage", "snapshots", "rollback", row1.id]));
-        }
-      });
-    }
+    actions.push({
+      label: "Rollback",
+      onClick: (row1) => {
+        this.doRollback(row1);
+      }
+    });
     return actions;
   }
 
@@ -139,6 +137,29 @@ export class SnapshotListComponent {
             this.entityList.loaderOpen = false;
             this.entityList.loader.close();
         });
+      }
+    });
+  }
+
+  doRollback(item) {
+    const warningMsg = T("Rolling back to this snapshot will permanently delete later snapshots of this dataset. Do not roll back until all desired snapshots have been backed up!");
+    this.entityList.dialogService.confirm(T("Warning"), warningMsg, false, T('Rollback')).subscribe(res => {
+      let data = {"force" : true};
+      if (res) {
+        this.entityList.loader.open();
+        this.entityList.loaderOpen = true;
+        this.rest
+        .post('storage/snapshot' + '/' + item.id + '/rollback/', {
+          body : JSON.stringify(data),
+        })
+        .subscribe(
+          (res) => { this.entityList.getData() },
+          (res) => {
+            this.entityList.loaderOpen = false;
+            this.entityList.loader.close();
+            this.entityList.dialogService.errorReport(T("Error rolling back snapshot"), res.error);
+          },
+        );
       }
     });
   }
