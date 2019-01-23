@@ -540,19 +540,6 @@ export class DatasetFormComponent implements Formconfiguration{
       entityForm.setDisabled('name',true);
       _.find(this.fieldConfig, {name:'name'}).tooltip = "Dataset name (read-only)."
     }
-    // this.entityForm.formGroup.controls['recordsize'].valueChanges.subscribe((res)=>{
-    //   const res_number = parseInt(this.reverseRecordSizeMap[res],10);
-    //   if(this.minimum_recommended_dataset_recordsize){
-    //     const recommended_size_number = parseInt(this.reverseRecordSizeMap[this.minimum_recommended_dataset_recordsize],0);
-    //     if (res_number < recommended_size_number){
-    //       _.find(this.fieldConfig, {name:'recordsize'}).warnings = `
-    //       Recommended record size based on pool topology: ${this.minimum_recommended_dataset_recordsize}.
-    //       A smaller record size can reduce sequential I/O performance and space efficiency.`
-    //     } else {
-    //       _.find(this.fieldConfig, {name:'recordsize'}).warnings = null;
-    //     };
-    //   };
-    // });
   }
 
   preInit(entityForm: EntityFormComponent) {
@@ -575,7 +562,7 @@ export class DatasetFormComponent implements Formconfiguration{
       this.fieldConfig[0].readonly = false;
     }
     if(this.parent){
-      const root = this.parent.match(/^[a-zA-Z]+/)[0];
+      const root = this.parent.split("/")[0];
       this.ws.call('pool.dataset.recommended_zvol_blocksize',[root]).subscribe(res=>{
         this.minimum_recommended_dataset_recordsize = res;
       });
@@ -623,21 +610,32 @@ export class DatasetFormComponent implements Formconfiguration{
               '1K':'1K',
               '2K':'2K',
             }; 
-            if (current_dataset.recordsize.value in lower_recordsize_map) {
-              _.find(_.find(this.fieldConfig, {name:'recordsize'}).options, {'label': current_dataset.recordsize.value})['hiddenFromDisplay'] = false
-            };
-            if (current_dataset.quota.rawvalue === '0') {
-              entityForm.formGroup.controls['quota_unit'].setValue('M');
-            }
-            if (current_dataset.refquota.rawvalue === '0') {
-              entityForm.formGroup.controls['refquota_unit'].setValue('M');
-            }
-            if (current_dataset.reservation.rawvalue === '0') {
-              entityForm.formGroup.controls['reservation_unit'].setValue('M');
-            }
-            if (current_dataset.refreservation.rawvalue === '0') {
-              entityForm.formGroup.controls['refreservation_unit'].setValue('M');
-            }
+            if ( current_dataset.hasOwnProperty("recordsize")) {
+              if (current_dataset['recordsize'].value in lower_recordsize_map) {
+                _.find(_.find(this.fieldConfig, {name:'recordsize'}).options, {'label': current_dataset['recordsize'].value})['hiddenFromDisplay'] = false
+              };
+            } 
+            if (current_dataset.hasOwnProperty("quota")) {
+              if (current_dataset['quota'].rawvalue === '0') {
+                entityForm.formGroup.controls['quota_unit'].setValue('M');
+              }
+            } 
+            if (current_dataset.hasOwnProperty("refquota")) {
+              if (current_dataset['refquota'].rawvalue === '0') {
+                entityForm.formGroup.controls['refquota_unit'].setValue('M');
+              }
+
+            } 
+            if (current_dataset.hasOwnProperty("reservation")) {
+              if (current_dataset['reservation'].rawvalue === '0') {
+                entityForm.formGroup.controls['reservation_unit'].setValue('M');
+              }
+            } 
+            if (current_dataset.hasOwnProperty("refreservation")) {
+              if (current_dataset['refreservation'].rawvalue === '0') {
+                entityForm.formGroup.controls['refreservation_unit'].setValue('M');
+              }
+            }  
             const edit_sync = _.find(this.fieldConfig, {name:'sync'});
             const edit_compression = _.find(this.fieldConfig, {name:'compression'});
             const edit_deduplication = _.find(this.fieldConfig, {name:'deduplication'});
