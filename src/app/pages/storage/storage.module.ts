@@ -17,7 +17,6 @@ import { StorageService } from '../../services/storage.service';
 import { SnapshotAddComponent } from './snapshots/snapshot-add/';
 import { SnapshotCloneComponent } from './snapshots/snapshot-clone/';
 import { SnapshotListComponent } from './snapshots/snapshot-list/';
-import { SnapshotRollbackComponent } from './snapshots/snapshot-rollback/';
 import { DatasetFormComponent } from './volumes/datasets/dataset-form/';
 import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissions/'
 import {ImportDiskComponent} from './import-disk/import-disk.component';
@@ -67,7 +66,6 @@ import { MessageService } from '../common/entity/entity-form/services/message.se
     VolumeImportWizardComponent,
     SnapshotListComponent,
     SnapshotCloneComponent,
-    SnapshotRollbackComponent,
     SnapshotAddComponent,
     ImportDiskComponent,
     DatasetPermissionsComponent,
