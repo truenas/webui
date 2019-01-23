@@ -142,7 +142,7 @@ export class SnapshotListComponent {
   }
 
   doRollback(item) {
-    const warningMsg = T("Rolling back to this snapshot will permanently delete later snapshots of this dataset. Do not roll back until all desired snapshots have been backed up!");
+    const warningMsg = T("<b>WARNING:</b> Rolling back to this snapshot will permanently delete later snapshots of this dataset. Do not roll back until all desired snapshots have been backed up!");
     this.entityList.dialogService.confirm(T("Warning"), warningMsg, false, T('Rollback')).subscribe(res => {
       let data = {"force" : true};
       if (res) {
