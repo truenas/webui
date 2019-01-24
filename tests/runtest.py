@@ -13,7 +13,8 @@ from os import path
 # user driverU, because of capabilities
 
 # from driver import webDriver
-from driverU import webDriver
+# from driverU import webDriver
+# from driverF import webDriver
 # Importing test
 
 from login import run_login_test
@@ -99,7 +100,8 @@ Optional Commands:
 --test-name <test_name>    - name of tests targeted
                             [accounts, system, tasks, network, storage, services, plugin, guide, theme]
 
---driver <G or F>             - version of the driver G = Grid F = Firefox
+#--driver <d_v>             - version of the driver
+                            [F, C]
 
 """ % argument[0]
 
@@ -111,7 +113,7 @@ if len(argument) == 1:
 # list of argument that should be use.
 optionlist = ["ip=", "test-name=", "driver="]
 testlist = ["accounts", "system", "tasks", "network", "storage", "services", "plugin", "guide", "theme"]
-versionlist = ["U"]
+versionlist = ["F", "C"]
 # look if all the argument are there.
 try:
     myopts, args = getopt.getopt(argument[1:], 'it', optionlist)
@@ -141,18 +143,18 @@ except NameError:
 try:
     driver_v
 except NameError:
-    from driverU import webDriver
-    print("Running DriverU")
+    from driverF import webDriver
+    print("Running Firefox Driver")
     runDriver = webDriver()
 else:
     if driver_v == "F":
-        from driverU import webDriver
-        print("Running Firefox driver")
+        from driverF import webDriver
+        print("Running Firefox Driver")
         runDriver = webDriver()
-    elif driver_v == "G":
-        from driverG import webDriver
-        print("Running Selenium Grid")
-        runDriver = webDriver(grid_server_ip)
+    elif driver_v == "C":
+        from driverC import webDriver
+        print("Running Chrome Driver")
+        runDriver = webDriver()
     else:
         print("Option '%s' not allowed" % driver_v)
         print(UsageMSG)
@@ -224,6 +226,7 @@ else:
         run_delete_test(runDriver)
 
     elif (test_name == "system"):
+        print ("Running: Systems Test")
         run_conf_sysgeneral_test(runDriver)
         run_conf_ntpserver_test(runDriver)
         run_conf_bootenv_test(runDriver)
@@ -240,6 +243,7 @@ else:
         run_conf_support_test(runDriver)
 
     elif (test_name == "tasks"):
+        print ("Running: Tasks Test")
         run_conf_taskscron_test(runDriver)
         run_conf_tasksinitshutscript_test(runDriver)
         run_conf_tasksrsync_test(runDriver)
@@ -251,6 +255,7 @@ else:
         run_conf_taskscloudsync_test(runDriver)
 
     elif (test_name == "network"):
+        print ("Running: Network Test")
         run_conf_netglob_test(runDriver)
         run_conf_netinterface_test(runDriver)
         run_conf_netlinkagg_test(runDriver)
@@ -258,11 +263,12 @@ else:
         run_conf_netvlan_test(runDriver)
 
     elif (test_name == "storage"):
+        print ("Running: Storage Test")
         run_create_pool_test(runDriver)
         run_delete_pool_test(runDriver)
 
     elif (test_name == "services"):
-        print ("Running: Guide Tests")
+        print ("Running: Service Tests")
 #        run_conf_afp_test(runDriver)
 #        run_conf_dc_test(runDriver)
 #        run_conf_dns_test(runDriver)
@@ -274,6 +280,8 @@ else:
 #        run_conf_webdav_test(runDriver)
 
     elif (test_name == "plugin"):
+        print ("Running: Accounts Test")
+
       # run_create_pool_test(runDriver)
         run_plugin_test(runDriver)
 
