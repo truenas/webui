@@ -3,7 +3,9 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { RestService } from '../../../../services/rest.service';
 import { Subscription } from 'rxjs';
 import { WebSocketService } from 'app/services';
+import { EntityUtils } from '../../../common/entity/utils';
 
+import { T } from '../../../../translate-marker';
 @Component({
   selector: 'app-snapshot-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`
@@ -12,8 +14,11 @@ export class SnapshotListComponent {
 
   public title = "Snapshots";
   protected queryCall = 'zfs.snapshot.query';
+  protected queryCallOption = [[["pool", "!=", "freenas-boot"]]];
   protected route_add: string[] = ['storage', 'snapshots', 'add'];
   protected route_add_tooltip = "Add Snapshot";
+  protected wsDelete = 'zfs.snapshot.remove';
+  protected loaderOpen = false;
   protected entityList: any;
   public busy: Subscription;
   public sub: Subscription;
@@ -29,7 +34,7 @@ export class SnapshotListComponent {
     multiSelect: true,
     deleteMsg: {
       title: 'Snapshot',
-      key_props: ['fullname']
+      key_props: ['name']
     },
   };
 
@@ -85,7 +90,7 @@ export class SnapshotListComponent {
     actions.push({
       label: "Delete",
       onClick: (row1) => {
-        this.entityList.doDelete(row1);
+        this.doDelete(row1);
       }
     });
     actions.push({
@@ -110,7 +115,7 @@ export class SnapshotListComponent {
   getSelectedNames(selectedSnapshots) {
     let selected: any = [];
     for (let i in selectedSnapshots) {
-      selected.push([{"dataset": selectedSnapshots[i].filesystem, "name": selectedSnapshots[i].name}]);
+      selected.push([{"dataset": selectedSnapshots[i].dataset, "name": selectedSnapshots[i].snapshot_name}]);
     }
     return selected;
   }
@@ -120,4 +125,22 @@ export class SnapshotListComponent {
     params.push(this.getSelectedNames(selected));
     return params;
   }
+
+  doDelete(item) {
+    const deleteMsg = T("Delete snapshot ") + item.name  + "?";
+    this.entityList.dialogService.confirm(T("Delete"), deleteMsg, false, T('Delete')).subscribe((res) => {
+      if (res) {
+        this.entityList.loader.open();
+        this.entityList.loaderOpen = true;
+        this.ws.call(this.wsDelete, [{ "dataset": item.dataset, "name": item.snapshot_name}]).subscribe(
+          (res) => { this.entityList.getData() },
+          (res) => {
+            new EntityUtils().handleWSError(this, res, this.entityList.dialogService);
+            this.entityList.loaderOpen = false;
+            this.entityList.loader.close();
+        });
+      }
+    });
+  }
+
 }
