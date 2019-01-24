@@ -82,7 +82,7 @@ export class FormExplorerComponent implements Field, OnInit {
         resolve(this.entityFormService.getDatasetsAndZvolsListChildren(node));
       }
       else if(this.config.explorerType === "directory") {
-        resolve(this.entityFormService.getFilesystemListdirChildren(node, this.config.explorerType));
+        resolve(this.entityFormService.getFilesystemListdirChildren(node, this.config.explorerType, this.config.hideDirs ));
       }
       else if(this.config.explorerType === "file") {
         resolve(this.entityFormService.getFilesystemListdirChildren(node));

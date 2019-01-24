@@ -165,7 +165,8 @@ export class VMWizardComponent {
           initial: '/mnt',
           explorerType: 'directory',
           validation: [Validators.required],
-          required: true
+          required: true,
+          hideDirs: 'iocage'
         },
         {
           type: 'select',
