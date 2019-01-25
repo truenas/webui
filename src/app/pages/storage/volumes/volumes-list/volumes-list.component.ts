@@ -528,7 +528,7 @@ export class VolumesListTableConfig implements InputTableConf {
           onClick: (row1) => {
 
             this.dialogService.confirm(T("Delete"), 
-              T("This action is irreversible and will delete any existing snapshots of this dataset ") + "(" + row1.path + ")."+  T(" Please confirm.")
+              T("Delete the dataset " + "<i>" + row1.path + "</i>"+  T(" and all snapshots of it?")
               , false, T('Delete Dataset')).subscribe((confirmed) => {
                 if (confirmed) {
 
@@ -539,7 +539,7 @@ export class VolumesListTableConfig implements InputTableConf {
     
                   }, (e_res) => {
                     this.loader.close();
-                    this.dialogService.errorReport(T("Error Deleting dataset.") + row1.path, e_res.reason, e_res.stack);
+                    this.dialogService.errorReport(T("Error deleting dataset ") + "<i>" + row1.path + "</i>.", e_res.reason, e_res.stack);
                   });
                 }
               });
@@ -555,7 +555,7 @@ export class VolumesListTableConfig implements InputTableConf {
         label: T("Delete zvol"),
         onClick: (row1) => {
           this.dialogService.confirm(T("Delete "),T(
-            "This action is irreversible and will delete any existing snapshots of this zvol (" + row1.path + ").  Please confirm."
+            "Delete the zvol " + "<i>" + row1.path + "</i>"+ T(" and all snapshots of it?")
             ), false, T('Delete Zvol')).subscribe((confirmed) => {
             if (confirmed === true) {
               this.loader.open();
