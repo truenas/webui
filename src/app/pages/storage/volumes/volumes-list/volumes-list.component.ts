@@ -129,7 +129,7 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T("Lock"),
           onClick: (row1) => {
             const conf: DialogFormConfiguration = {
-              title: T("Enter your passphrase to lock ") + row1.name + '.',
+              title: T("Enter passphrase to lock pool ") + row1.name + '.',
               fieldConfig: [
                 {
                   type: 'input',
