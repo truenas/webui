@@ -528,7 +528,7 @@ export class VolumesListTableConfig implements InputTableConf {
           onClick: (row1) => {
 
             this.dialogService.confirm(T("Delete"), 
-              T("Delete the dataset " + "<i>" + row1.path + "</i>"+  T(" and all snapshots of it?")
+              T("Delete the dataset ") + "<i>" + row1.path + "</i>"+  T(" and all snapshots of it?")
               , false, T('Delete Dataset')).subscribe((confirmed) => {
                 if (confirmed) {
 
