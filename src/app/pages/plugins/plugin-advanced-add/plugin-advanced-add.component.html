@@ -1,9 +1,10 @@
+<p *ngIf="error" type="danger"><span [innerHTML]="error"></span></p>
 <mat-card>
-  <form (ngSubmit)="onSubmit()" [formGroup]="formGroup">
-    <mat-expansion-panel [expanded]="step === 0 && isReady" (opened)="setStep(0)" #basic>
+  <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup">
+    <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          {{ "Basic Properties" | translate }}
+          {{"Basic Properties" | translate}}
         </mat-panel-title>
       </mat-expansion-panel-header>
       <div class="form-wrap">
@@ -18,10 +19,10 @@
         <button mat-button color="primary" type="button" (click)="nextStep()">{{ "Next" | translate }}</button>
       </mat-action-row>
     </mat-expansion-panel>
-    <mat-expansion-panel [expanded]="step === 1 && isReady" (opened)="setStep(1)">
+    <mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          {{ "Jail Properties" | translate }}
+          {{"Jail Properties" | translate}}
         </mat-panel-title>
       </mat-expansion-panel-header>
       <div>
@@ -33,10 +34,10 @@
         <button mat-button color="primary" type="button" (click)="nextStep()">{{ "Next" | translate }}</button>
       </mat-action-row>
     </mat-expansion-panel>
-    <mat-expansion-panel [expanded]="step === 2 && isReady" (opened)="setStep(2)">
+    <mat-expansion-panel [expanded]="step === 2" (opened)="setStep(2)">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          {{ "Network Properties" | translate }}
+          {{"Network Properties" | translate}}
         </mat-panel-title>
       </mat-expansion-panel-header>
       <div>
@@ -48,10 +49,10 @@
         <button mat-button color="primary" type="button" (click)="nextStep()">{{ "Next" | translate }}</button>
       </mat-action-row>
     </mat-expansion-panel>
-    <mat-expansion-panel [expanded]="step === 3 && isReady" (opened)="setStep(3)">
+    <mat-expansion-panel [expanded]="step === 3" (opened)="setStep(3)">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          {{ "Custom Properties" | translate }}
+          {{"Custom Properties" | translate}}
         </mat-panel-title>
       </mat-expansion-panel-header>
       <div>
@@ -63,10 +64,10 @@
         <!-- <button mat-button color="primary" type="button" (click)="nextStep()">{{ "Next" | translate }}</button> -->
       </mat-action-row>
     </mat-expansion-panel>
-    <!-- <mat-expansion-panel [expanded]="step === 4" (opened)="setStep(4)">
+<!--     <mat-expansion-panel [expanded]="step === 4" (opened)="setStep(4)">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          {{ "RCTL Limits" | translate }}
+          {{"RCTL Limits" | translate}}
         </mat-panel-title>
       </mat-expansion-panel-header>
       <div>
@@ -78,9 +79,8 @@
       </mat-action-row>
     </mat-expansion-panel> -->
     <mat-card-actions>
-      <button class="btn btn-block btn-warning" type="submit" mat-button color="primary" [disabled]="!formGroup.valid || !save_button_enabled">{{ "Save" | translate }}</button>
+      <button class="btn btn-block btn-warning" type="submit" mat-button color="primary" [disabled]="!formGroup.valid" >{{ "Save" | translate }}</button>
       <button *ngIf="route_success" (click)="goBack()" mat-button color="accent" type="button">{{ "Cancel" | translate }}</button>
     </mat-card-actions>
   </form>
-  <mat-error *ngIf="error" type="danger" id="error_message"><div [innerHTML]="error"></div></mat-error>
 </mat-card>

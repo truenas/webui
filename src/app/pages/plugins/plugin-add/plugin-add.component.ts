@@ -366,4 +366,10 @@ export class PluginAddComponent implements OnInit {
       activations, this.formGroup);
     this.setDisabled(config.name, tobeDisabled);
   }
+
+  goAdvanced() {
+    this.router.navigate(
+      new Array('').concat(["plugins", "advanced", this.pluginName])
+    );
+  }
 }

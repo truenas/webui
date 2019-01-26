@@ -14,7 +14,7 @@ import { ApiService } from 'app/core/services/api.service';
 @Component({
   selector: 'app-signin',
   templateUrl: './signin.component.html',
-  styleUrls: ['./signin.component.css']
+  styleUrls: ['./signin.component.scss']
 })
 export class SigninComponent implements OnInit {
   @ViewChild(MatProgressBar) progressBar: MatProgressBar;

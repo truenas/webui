@@ -19,7 +19,7 @@ import { T } from '../../../../translate-marker';
 @Component({
   selector: 'widget-sysinfo',
   templateUrl:'./widgetsysinfo.component.html',
-  styleUrls: ['./widgetsysinfo.component.css']
+  styleUrls: ['./widgetsysinfo.component.scss']
 })
 export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,OnDestroy, AfterViewInit {
   public title: string = T("System Info");

@@ -63,3 +63,6 @@ auto_config.py
 # generated screenshot files
 /tests/screenshot/*.png
 .vs/slnx.sqlite
+
+# generated polyfills
+src/assets/scripts/ie-support/ie-polyfills.min.js

@@ -1,85 +1,77 @@
-import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { T } from '../../../translate-marker'
+import { TranslateService } from '@ngx-translate/core'
 import { Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material';
+
+import { MatDialog, MatDialogRef } from '@angular/material';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { JailService, DialogService, NetworkService, WebSocketService, AppLoaderService } from '../../../services/';
+import { JailService } from '../../../services/';
+
+import { WebSocketService } from '../../../services/';
+import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 
 import { EntityFormComponent } from '../../common/entity/entity-form';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
 import { FieldRelationService } from '../../common/entity/entity-form/services/field-relation.service';
 import { EntityUtils } from '../../common/entity/utils';
-import { T } from '../../../translate-marker';
-import { TranslateService } from '@ngx-translate/core';
+import { DialogService, NetworkService } from '../../../services';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
-import helptext from '../../../helptext/jails/jails-edit';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import helptext from '../../../helptext/jails/jails-add';
 
 @Component({
-  selector: 'jail-edit',
-  templateUrl: './jail-edit.component.html',
+  selector: 'app-plugin-advanced-add',
+  templateUrl: './plugin-advanced-add.component.html',
   styleUrls: ['../../common/entity/entity-form/entity-form.component.scss'],
   providers: [JailService, EntityFormService, FieldRelationService, NetworkService]
 })
-export class JailEditComponent implements OnInit, AfterViewInit {
+export class PluginAdvancedAddComponent implements OnInit {
 
-  @ViewChild('basic') basicPanel:any;
-  public isReady: boolean =  false;
-  protected updateCall = 'jail.do_update';
-  protected upgradeCall = 'jail.upgrade';
-  protected queryCall = 'jail.query';
-  public route_success: string[] = ['jails'];
+  protected addCall: string = 'jail.fetch';
+  public route_goback: string[] = ['plugins', 'available'];
+  public route_success: string[] = ['plugins', 'installed'];
   protected route_conf: string[] = ['jails', 'configuration'];
 
   public formGroup: any;
+  public error: string;
   public busy: Subscription;
-  public custActions: any;
-  public pk: any;
 
-  protected formFileds: FieldConfig[];
+  protected dialogRef: any;
+  protected formFields: FieldConfig[];
   public basicfieldConfig: FieldConfig[] = [
     {
       type: 'input',
-      name: 'host_hostuuid',
-      placeholder: helptext.host_hostuuid_placeholder,
-      tooltip: helptext.host_hostuuid_tooltip,
+      name: 'uuid',
+      placeholder: helptext.uuid_placeholder,
+      tooltip: helptext.uuid_tooltip,
       required: true,
-      disabled: false,
-      validation: [ Validators.required ],
-    },
-    {
-      type: 'select',
-      name: 'release',
-      placeholder: helptext.release_placeholder,
-      tooltip: helptext.release_tooltip,
-      options: [],
-      required: true,
-      validation: [ Validators.required ],
-      disabled: false,
+      validation: [regexValidator(/^[a-zA-Z0-9-_]+$/)],
+      disabled: true,
     },
     {
       type: 'checkbox',
       name: 'dhcp',
       placeholder: helptext.dhcp_placeholder,
       tooltip: helptext.dhcp_tooltip,
-      disabled: false,
+      value: true,
     },
     {
       type: 'checkbox',
       name: 'vnet',
       placeholder: helptext.vnet_placeholder,
       tooltip: helptext.vnet_tooltip,
-      disabled: false,
+      value: true,
     },
     {
       type: 'checkbox',
       name: 'bpf',
       placeholder: helptext.bpf_placeholder,
       tooltip: helptext.bpf_tooltip,
-      disabled: false,
+      value: true,
     },
     {
       type: 'select',
@@ -101,24 +93,22 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       }],
       class: 'inline',
       width: '30%',
-      disabled: false,
     },
     {
       type: 'input',
       name: 'ip4_addr',
       placeholder: helptext.ip4_addr_placeholder,
       tooltip: helptext.ip4_addr_tooltip,
-      validation : [ regexValidator(this.networkService.ipv4_regex) ],
+      validation: [regexValidator(this.networkService.ipv4_regex)],
       relation: [{
-      action: 'DISABLE',
-      when: [{
-        name: 'dhcp',
-        value: true,
-       }]
+        action: 'DISABLE',
+        when: [{
+          name: 'dhcp',
+          value: true,
+        }]
       }],
       class: 'inline',
       width: '50%',
-      disabled: false,
     },
     {
       type: 'select',
@@ -136,7 +126,6 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       }],
       class: 'inline',
       width: '20%',
-      disabled: false,
     },
     {
       type: 'input',
@@ -153,15 +142,13 @@ export class JailEditComponent implements OnInit, AfterViewInit {
           name: 'vnet',
           value: false,
         }]
-      }],
-      disabled: false,
+      }]
     },
     {
       type: 'checkbox',
       name: 'auto_configure_ip6',
       placeholder: helptext.auto_configure_ip6_placeholder,
       tooltip: helptext.auto_configure_ip6_tooltip,
-      disabled: false,
     },
     {
       type: 'select',
@@ -182,15 +169,14 @@ export class JailEditComponent implements OnInit, AfterViewInit {
           name: 'auto_configure_ip6',
           value: true,
         }]
-      }],
-      disabled: false,
+      }]
     },
     {
       type: 'input',
       name: 'ip6_addr',
       placeholder: helptext.ip6_addr_placeholder,
       tooltip: helptext.ip6_addr_tooltip,
-      validation : [ regexValidator(this.networkService.ipv6_regex) ],
+      validation: [regexValidator(this.networkService.ipv6_regex)],
       class: 'inline',
       width: '50%',
       relation: [{
@@ -199,8 +185,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
           name: 'auto_configure_ip6',
           value: true,
         }]
-      }],
-      disabled: false,
+      }]
     },
     {
       type: 'select',
@@ -217,29 +202,25 @@ export class JailEditComponent implements OnInit, AfterViewInit {
           name: 'auto_configure_ip6',
           value: true,
         }]
-      }],
-      disabled: false,
+      }]
     },
     {
       type: 'input',
       name: 'defaultrouter6',
       placeholder: helptext.defaultrouter6_placeholder,
       tooltip: helptext.defaultrouter6_tooltip,
-      disabled: false,
     },
     {
       type: 'input',
       name: 'notes',
       placeholder: helptext.notes_placeholder,
       tooltip: helptext.notes_tooltip,
-      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'boot',
       placeholder: helptext.boot_placeholder,
       tooltip: helptext.boot_tooltip,
-      disabled: false,
     }
   ];
   public jailfieldConfig: FieldConfig[] = [
@@ -248,105 +229,84 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       name: 'devfs_ruleset',
       placeholder: helptext.devfs_ruleset_placeholder,
       tooltip: helptext.devfs_ruleset_tooltip,
-      disabled: false,
     },
     {
       type: 'input',
       name: 'exec_start',
       placeholder: helptext.exec_start_placeholder,
       tooltip: helptext.exec_start_tooltip,
-      disabled: false,
     },
     {
       type: 'input',
       name: 'exec_stop',
       placeholder: helptext.exec_stop_placeholder,
       tooltip: helptext.exec_stop_tooltip,
-      disabled: false,
     },
     {
       type: 'input',
       name: 'exec_prestart',
       placeholder: helptext.exec_prestart_placeholder,
       tooltip: helptext.exec_prestart_tooltip,
-      disabled: false,
     },
     {
       type: 'input',
       name: 'exec_poststart',
       placeholder: helptext.exec_poststart_placeholder,
       tooltip: helptext.exec_poststart_tooltip,
-      disabled: false,
-    },
-    {
+    }, {
       type: 'input',
       name: 'exec_prestop',
       placeholder: helptext.exec_prestop_placeholder,
       tooltip: helptext.exec_prestop_tooltip,
-      disabled: false,
-    },
-    {
+    }, {
       type: 'input',
       name: 'exec_poststop',
       placeholder: helptext.exec_poststop_placeholder,
       tooltip: helptext.exec_poststop_tooltip,
-      disabled: false,
-    },
-    {
+    }, {
       type: 'checkbox',
       name: 'exec_clean',
       placeholder: helptext.exec_clean_placeholder,
       tooltip: helptext.exec_clean_tooltip,
-      disabled: false,
     },
     {
       type: 'input',
       name: 'exec_timeout',
       placeholder: helptext.exec_timeout_placeholder,
       tooltip: helptext.exec_timeout_tooltip,
-      disabled: false,
-    },
-    {
+    }, {
       type: 'input',
       name: 'stop_timeout',
       placeholder: helptext.stop_timeout_placeholder,
       tooltip: helptext.stop_timeout_tooltip,
-      disabled: false,
-    },
-    {
+    }, {
       type: 'input',
       name: 'exec_jail_user',
       placeholder: helptext.exec_jail_user_placeholder,
       tooltip: helptext.exec_jail_user_tooltip,
-      disabled: false,
-    },
-    {
+    }, {
       type: 'input',
       name: 'exec_system_jail_user',
       placeholder: helptext.exec_system_jail_user_placeholder,
       tooltip: helptext.exec_system_jail_user_tooltip,
-      disabled: false,
     },
     {
       type: 'input',
       name: 'exec_system_user',
       placeholder: helptext.exec_system_user_placeholder,
       tooltip: helptext.exec_system_user_tooltip,
-      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'mount_devfs',
       placeholder: helptext.mount_devfs_placeholder,
       tooltip: helptext.mount_devfs_tooltip,
-      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'mount_fdescfs',
       placeholder: helptext.mount_fdescfs_placeholder,
       tooltip: helptext.mount_fdescfs_tooltip,
-      disabled: false,
     },
     {
       //"enforce_statfs": ("0", "1", "2"),
@@ -354,31 +314,34 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       name: 'enforce_statfs',
       placeholder: helptext.enforce_statfs_placeholder,
       tooltip: helptext.enforce_statfs_tooltip,
-        options: [{
-            label: '0',
-            value: '0',
-        }, {
-            label: '1',
-            value: '1',
-        }, {
-            label: '2 (default)',
-            value: '2',
-        }],
-      disabled: false,
+      options: [{
+        label: '0',
+        value: '0',
+      }, {
+        label: '1',
+        value: '1',
+      }, {
+        label: '2 (default)',
+        value: '2',
+      }]
     },
     {
       type: 'input',
       name: 'children_max',
       placeholder: helptext.children_max_placeholder,
       tooltip: helptext.children_max_tooltip,
-      disabled: false,
     },
     {
       type: 'input',
       name: 'login_flags',
       placeholder: helptext.login_flags_placeholder,
       tooltip: helptext.login_flags_tooltip,
-      disabled: false,
+    },
+    {
+      type: 'input',
+      name: 'securelevel',
+      placeholder: helptext.securelevel_placeholder,
+      tooltip: helptext.securelevel_tooltip,
     },
     {
       type: 'select',
@@ -386,16 +349,15 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       placeholder: helptext.sysvmsg_placeholder,
       tooltip: helptext.sysvmsg_tooltip,
       options: [{
-          label: 'Inherit',
-          value: 'inherit',
+        label: 'Inherit',
+        value: 'inherit',
       }, {
-          label: 'New',
-          value: 'new',
+        label: 'New',
+        value: 'new',
       }, {
-          label: 'Disable',
-          value: 'disable',
-      }],
-      disabled: false,
+        label: 'Disable',
+        value: 'disable',
+      }]
     },
     {
       type: 'select',
@@ -403,16 +365,15 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       placeholder: helptext.sysvsem_placeholder,
       tooltip: helptext.sysvsem_tooltip,
       options: [{
-          label: 'Inherit',
-          value: 'inherit',
+        label: 'Inherit',
+        value: 'inherit',
       }, {
-          label: 'New',
-          value: 'new',
+        label: 'New',
+        value: 'new',
       }, {
-          label: 'Disable',
-          value: 'disable',
-      }],
-      disabled: false,
+        label: 'Disable',
+        value: 'disable',
+      }]
     },
     {
       type: 'select',
@@ -420,44 +381,39 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       placeholder: helptext.sysvshm_placeholder,
       tooltip: helptext.sysvshm_tooltip,
       options: [{
-          label: 'Inherit',
-          value: 'inherit',
+        label: 'Inherit',
+        value: 'inherit',
       }, {
-          label: 'New',
-          value: 'new',
+        label: 'New',
+        value: 'new',
       }, {
-          label: 'Disable',
-          value: 'disable',
-      }],
-      disabled: false,
+        label: 'Disable',
+        value: 'disable',
+      }]
     },
     {
       type: 'checkbox',
       name: 'allow_set_hostname',
       placeholder: helptext.allow_set_hostname_placeholder,
       tooltip: helptext.allow_set_hostname_tooltip,
-      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'allow_sysvipc',
       placeholder: helptext.allow_sysvipc_placeholder,
       tooltip: helptext.allow_sysvipc_tooltip,
-      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'allow_raw_sockets',
       placeholder: helptext.allow_raw_sockets_placeholder,
       tooltip: helptext.allow_raw_sockets_tooltip,
-      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'allow_chflags',
       placeholder: helptext.allow_chflags_placeholder,
       tooltip: helptext.allow_chflags_tooltip,
-      disabled: false,
     },
     {
       type: 'checkbox',
@@ -470,63 +426,54 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       name: 'allow_mount',
       placeholder: helptext.allow_mount_placeholder,
       tooltip: helptext.allow_mount_tooltip,
-      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'allow_mount_devfs',
       placeholder: helptext.allow_mount_devfs_placeholder,
       tooltip: helptext.allow_mount_devfs_tooltip,
-      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'allow_mount_nullfs',
       placeholder: helptext.allow_mount_nullfs_placeholder,
       tooltip: helptext.allow_mount_nullfs_tooltip,
-      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'allow_mount_procfs',
       placeholder: helptext.allow_mount_procfs_placeholder,
       tooltip: helptext.allow_mount_procfs_tooltip,
-      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'allow_mount_tmpfs',
       placeholder: helptext.allow_mount_tmpfs_placeholder,
       tooltip: helptext.allow_mount_tmpfs_tooltip,
-      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'allow_mount_zfs',
       placeholder: helptext.allow_mount_zfs_placeholder,
       tooltip: helptext.allow_mount_zfs_tooltip,
-      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'allow_quotas',
       placeholder: helptext.allow_quotas_placeholder,
       tooltip: helptext.allow_quotas_tooltip,
-      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'allow_socket_af',
       placeholder: helptext.allow_socket_af_placeholder,
       tooltip: helptext.allow_socket_af_tooltip,
-      disabled: false,
     },
     {
       type: 'input',
       name: 'vnet_interfaces',
       placeholder: helptext.vnet_interfaces_placeholder,
       tooltip: helptext.vnet_interfaces_tooltip,
-      disabled: false,
     }
   ];
   public networkfieldConfig: FieldConfig[] = [
@@ -535,39 +482,34 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       name: 'interfaces',
       placeholder: helptext.interfaces_placeholder,
       tooltip: helptext.interfaces_tooltip,
-      disabled: false,
     },
     {
       type: 'input',
       name: 'host_domainname',
       placeholder: helptext.host_domainname_placeholder,
       tooltip: helptext.host_domainname_tooltip,
-      disabled: false,
     },
     {
       type: 'input',
       name: 'host_hostname',
       placeholder: helptext.host_hostname_placeholder,
       tooltip: helptext.host_hostname_tooltip,
-      disabled: false,
     },
     {
       type: 'input',
       name: 'exec_fib',
       placeholder: helptext.exec_fib_placeholder,
       tooltip: helptext.exec_fib_tooltip,
-      disabled: false,
-//There is SETFIB(1) that is network related, and SETFIB(2) that
-//is system call related. As this tooltip is under the jail
-//networking section, I went with SETFIB(1) the network related
-//man page.
+      //There is SETFIB(1) that is network related, and SETFIB(2) that
+      //is system call related. As this tooltip is under the jail
+      //networking section, I went with SETFIB(1) the network related
+      //man page.
     },
     {
       type: 'checkbox',
       name: 'ip4_saddrsel',
       placeholder: helptext.ip4_saddrsel_placeholder,
       tooltip: helptext.ip4_saddrsel_tooltip,
-      disabled: false,
     },
     {
       type: 'select',
@@ -583,15 +525,13 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       }, {
         label: 'Disable',
         value: 'disable',
-      }],
-      disabled: false,
+      }]
     },
     {
       type: 'checkbox',
       name: 'ip6_saddrsel',
       placeholder: helptext.ip6_saddrsel_placeholder,
       tooltip: helptext.ip6_saddrsel_tooltip,
-      disabled: false,
     },
     {
       type: 'select',
@@ -607,22 +547,19 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       }, {
         label: 'Disable',
         value: 'disable',
-      }],
-      disabled: false,
+      }]
     },
     {
       type: 'input',
       name: 'resolver',
       placeholder: helptext.resolver_placeholder,
       tooltip: helptext.resolver_tooltip,
-      disabled: false,
     },
     {
       type: 'input',
       name: 'mac_prefix',
       placeholder: helptext.mac_prefix_placeholder,
       tooltip: helptext.mac_prefix_tooltip,
-      disabled: false,
     },
     {
       type: 'select',
@@ -634,36 +571,31 @@ export class JailEditComponent implements OnInit, AfterViewInit {
           label: 'none',
           value: 'none',
         }
-      ],
-      disabled: false,
+      ]
     },
     {
       type: 'input',
       name: 'vnet0_mac',
       placeholder: helptext.vnet0_mac_placeholder,
       tooltip: helptext.vnet0_mac_tooltip,
-      disabled: false,
     },
     {
       type: 'input',
       name: 'vnet1_mac',
       placeholder: helptext.vnet1_mac_placeholder,
       tooltip: helptext.vnet1_mac_tooltip,
-      disabled: false,
     },
     {
       type: 'input',
       name: 'vnet2_mac',
       placeholder: helptext.vnet2_mac_placeholder,
       tooltip: helptext.vnet2_mac_tooltip,
-      disabled: false,
     },
     {
       type: 'input',
       name: 'vnet3_mac',
       placeholder: helptext.vnet3_mac_placeholder,
       tooltip: helptext.vnet3_mac_tooltip,
-      disabled: false,
     },
   ];
   public customConfig: FieldConfig[] = [
@@ -672,21 +604,18 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       name: 'owner',
       placeholder: helptext.owner_placeholder,
       tooltip: helptext.owner_tooltip,
-      disabled: false,
     },
     {
       type: 'input',
       name: 'priority',
       placeholder: helptext.priority_placeholder,
       tooltip: helptext.priority_tooltip,
-      disabled: false,
     },
     {
       type: 'input',
       name: 'hostid',
       placeholder: helptext.hostid_placeholder,
       tooltip: helptext.hostid_tooltip,
-      disabled: false,
     },
     {
       type: 'checkbox',
@@ -699,63 +628,54 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       name: 'comment',
       placeholder: helptext.comment_placeholder,
       tooltip: helptext.comment_tooltip,
-      disabled: false,
     },
     {
       type: 'input',
       name: 'depends',
       placeholder: helptext.depends_placeholder,
       tooltip: helptext.depends_tooltip,
-      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'mount_procfs',
       placeholder: helptext.mount_procfs_placeholder,
       tooltip: helptext.mount_procfs_tooltip,
-      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'mount_linprocfs',
       placeholder: helptext.mount_linprocfs_placeholder,
       tooltip: helptext.mount_linprocfs_tooltip,
-      disabled: false,
     },
     // {
     //   type: 'checkbox',
     //   name: 'template',
     //   placeholder: helptext.template_placeholder,
     //   tooltip: helptext.template_tooltip,
-    //   disabled: false,
     // },
     {
       type: 'checkbox',
       name: 'host_time',
       placeholder: helptext.host_time_placeholder,
       tooltip: helptext.host_time_tooltip,
-      disabled: false,
     },
     {
       type: 'checkbox',
       name: 'jail_zfs',
       placeholder: helptext.jail_zfs_placeholder,
       tooltip: helptext.jail_zfs_tooltip,
-      disabled: false,
     },
     {
       type: 'input',
       name: 'jail_zfs_dataset',
       placeholder: helptext.jail_zfs_dataset_placeholder,
       tooltip: helptext.jail_zfs_dataset_tooltip,
-      disabled: false,
     },
     {
       type: 'input',
       name: 'jail_zfs_mountpoint',
       placeholder: helptext.jail_zfs_mountpoint_placeholder,
       tooltip: helptext.jail_zfs_mountpoint_tooltip,
-      disabled: false,
     },
     {
       type: 'checkbox',
@@ -765,170 +685,142 @@ export class JailEditComponent implements OnInit, AfterViewInit {
     },
   ];
   public rctlConfig: FieldConfig[] = [
-// Spoke to Lola. Lines below starting here down to the "wallclock"
-// tooltip are commented out in jail-add.component, and are also
-// commented out of the HTML for the jail-edit page. Adding this comment
-// to clarify why these aren't reviewed currently.
 
-    {
-      type: 'input',
-      name: 'memoryuse',
-      placeholder: helptext.memoryuse_placeholder,
-      tooltip: helptext.memoryuse_tooltip,
-      disabled: false,
-    },
-    {
-      type: 'input',
-      name: 'pcpu',
-      placeholder: helptext.pcpu_placeholder,
-      tooltip: helptext.pcpu_tooltip,
-      disabled: false,
-    },
-    {
-      type: 'checkbox',
-      name: 'cpuset',
-      placeholder: helptext.cpuset_placeholder,
-      tooltip: helptext.cpuset_tooltip,
-      disabled: false,
-    },
-    {
-      type: 'checkbox',
-      name: 'rlimits',
-      placeholder: helptext.rlimits_placeholder,
-      tooltip: helptext.rlimits_tooltip,
-      disabled: false,
-    },
-    {
-      type: 'checkbox',
-      name: 'memorylocked',
-      placeholder: helptext.memorylocked_placeholder,
-      tooltip: helptext.memorylocked_tooltip,
-      disabled: false,
-    },
-    {
-      type: 'checkbox',
-      name: 'vmemoryuse',
-      placeholder: helptext.vmemoryuse_placeholder,
-      tooltip: helptext.vmemoryuse_tooltip,
-      disabled: false,
-    },
-    {
-      type: 'checkbox',
-      name: 'maxproc',
-      placeholder: helptext.maxproc_placeholder,
-      tooltip: helptext.maxproc_tooltip,
-      disabled: false,
-    },
-    {
-      type: 'checkbox',
-      name: 'cputime',
-      placeholder: helptext.cputime_placeholder,
-      tooltip: helptext.cputime_tooltip,
-      disabled: false,
-    },
-    {
-      type: 'checkbox',
-      name: 'datasize',
-      placeholder: helptext.datasize_placeholder,
-      tooltip: helptext.datasize_tooltip,
-      disabled: false,
-    },
-    {
-      type: 'checkbox',
-      name: 'stacksize',
-      placeholder: helptext.stacksize_placeholder,
-      tooltip: helptext.stacksize_tooltip,
-      disabled: false,
-    },
-    {
-      type: 'checkbox',
-      name: 'coredumpsize',
-      placeholder: helptext.coredumpsize_placeholder,
-      tooltip: helptext.coredumpsize_tooltip,
-      disabled: false,
-    },
-    {
-      type: 'checkbox',
-      name: 'openfiles',
-      placeholder: helptext.openfiles_placeholder,
-      tooltip: helptext.openfiles_tooltip,
-      disabled: false,
-    },
-    {
-      type: 'checkbox',
-      name: 'pseudoterminals',
-      placeholder: helptext.pseudoterminals_placeholder,
-      tooltip: helptext.pseudoterminals_tooltip,
-      disabled: false,
-    },
-    {
-      type: 'checkbox',
-      name: 'swapuse',
-      placeholder: helptext.swapuse_placeholder,
-      tooltip: helptext.swapuse_tooltip,
-      disabled: false,
-    },
-    {
-      type: 'checkbox',
-      name: 'nthr',
-      placeholder: helptext.nthr_placeholder,
-      tooltip: helptext.nthr_tooltip,
-      disabled: false,
-    },
-    {
-      type: 'checkbox',
-      name: 'msgqqueued',
-      placeholder: helptext.msgqqueued_placeholder,
-      tooltip: helptext.msgqqueued_tooltip,
-      disabled: false,
-    },
-    {
-      type: 'checkbox',
-      name: 'msgqsize',
-      placeholder: helptext.msgqsize_placeholder,
-      tooltip: helptext.msgqsize_tooltip,
-      disabled: false,
-    },
-    {
-      type: 'checkbox',
-      name: 'nmsgq',
-      placeholder: helptext.nmsgq_placeholder,
-      tooltip: helptext.nmsgq_tooltip,
-      disabled: false,
-    },
-    {
-      type: 'checkbox',
-      name: 'nsemop',
-      placeholder: helptext.nsemop_placeholder,
-      tooltip: helptext.nsemop_tooltip,
-      disabled: false,
-    },
-    {
-      type: 'checkbox',
-      name: 'nshm',
-      placeholder: helptext.nshm_placeholder,
-      tooltip: helptext.nshm_tooltip,
-      disabled: false,
-    },
-    {
-      type: 'checkbox',
-      name: 'shmsize',
-      placeholder: helptext.shmsize_placeholder,
-      tooltip: helptext.shmsize_tooltip,
-      disabled: false,
-    },
-    {
-      type: 'checkbox',
-      name: 'wallclock',
-      placeholder: helptext.wallclock_placeholder,
-      tooltip: helptext.wallclock_tooltip,
-      disabled: false,
-    }
+    //    {
+    //      type: 'input',
+    //      name: 'memoryuse',
+    //      placeholder: helptext.memoryuse_placeholder,
+    //      tooltip: helptext.memoryuse_tooltip,
+    //    },
+    //    {
+    //      type: 'input',
+    //      name: 'pcpu',
+    //      placeholder: helptext.pcpu_placeholder,
+    //      tooltip: helptext.pcpu_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'cpuset',
+    //      placeholder: helptext.cpuset_placeholder,
+    //      tooltip: helptext.cpuset_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'rlimits',
+    //      placeholder: helptext.rlimits_placeholder,
+    //      tooltip: helptext.rlimits_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'memorylocked',
+    //      placeholder: helptext.memorylocked_placeholder,
+    //      tooltip: helptext.memorylocked_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'vmemoryuse',
+    //      placeholder: helptext.vmemoryuse_placeholder,
+    //      tooltip: helptext.vmemoryuse_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'maxproc',
+    //      placeholder: helptext.maxproc_placeholder,
+    //      tooltip: helptext.maxproc_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'cputime',
+    //      placeholder: helptext.cputime_placeholder,
+    //      tooltip: helptext.cputime_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'datasize',
+    //      placeholder: helptext.datasize_placeholder,
+    //      tooltip: helptext.datasize_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'stacksize',
+    //      placeholder: helptext.stacksize_placeholder,
+    //      tooltip: helptext.stacksize_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'coredumpsize',
+    //      placeholder: helptext.coredumpsize_placeholder,
+    //      tooltip: helptext.coredumpsize_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'openfiles',
+    //      placeholder: helptext.openfiles_placeholder,
+    //      tooltip: helptext.openfiles_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'pseudoterminals',
+    //      placeholder: helptext.pseudoterminals_placeholder,
+    //      tooltip: helptext.pseudoterminals_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'swapuse',
+    //      placeholder: helptext.swapuse_placeholder,
+    //      tooltip: helptext.swapuse_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'nthr',
+    //      placeholder: helptext.nthr_placeholder,
+    //      tooltip: helptext.nthr_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'msgqqueued',
+    //      placeholder: helptext.msgqqueued_placeholder,
+    //      tooltip: helptext.msgqqueued_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'msgqsize',
+    //      placeholder: helptext.msgqsize_placeholder,
+    //      tooltip: helptext.msgqsize_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'nmsgq',
+    //      placeholder: helptext.nmsgq_placeholder,
+    //      tooltip: helptext.nmsgq_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'nsemop',
+    //      placeholder: helptext.nsemop_placeholder,
+    //      tooltip: helptext.nsemop_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'nshm',
+    //      placeholder: helptext.nshm_placeholder,
+    //      tooltip: helptext.nshm_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'shmsize',
+    //      placeholder: helptext.shmsize_placeholder,
+    //      tooltip: helptext.shmsize_tooltip,
+    //    },
+    //    {
+    //      type: 'checkbox',
+    //      name: 'wallclock',
+    //      placeholder: helptext.wallclock_placeholder,
+    //      tooltip: helptext.wallclock_tooltip,
+    //    },
   ];
-  protected props: any;
-  protected releaseField: any;
+
   public step: any = 0;
-  protected wsResponse: any;
 
   // fields only accepted by ws with value 0/1
   protected TFfields: any = [
@@ -989,35 +881,25 @@ export class JailEditComponent implements OnInit, AfterViewInit {
     'host_time',
   ];
 
-  protected currentReleaseVersion: any;
   protected currentServerVersion: any;
   protected ip4_interfaceField: any;
   protected ip4_netmaskField: any;
   protected ip6_interfaceField: any;
   protected ip6_prefixField: any;
-  protected vnet_default_interfaceField:any;
-  public save_button_enabled: boolean;
-  public error: any;
-  protected isPlugin = false;
+  protected vnet_default_interfaceField: any;
+  protected plugin_name: any;
 
   constructor(protected router: Router,
-    protected aroute: ActivatedRoute,
     protected jailService: JailService,
     protected ws: WebSocketService,
     protected entityFormService: EntityFormService,
     protected fieldRelationService: FieldRelationService,
     protected loader: AppLoaderService,
     public translate: TranslateService,
+    protected dialog: MatDialog,
     protected dialogService: DialogService,
     protected networkService: NetworkService,
-    protected dialog: MatDialog,) {}
-
-  isLowerVersion(version: any) {
-    if (version < this.currentReleaseVersion) {
-      return true;
-    }
-    return false;
-  }
+    protected aroute: ActivatedRoute) { }
 
   updateInterfaceValidation() {
     let dhcp_ctrl = this.formGroup.controls['dhcp'];
@@ -1046,67 +928,37 @@ export class JailEditComponent implements OnInit, AfterViewInit {
     }
   }
 
-  ngAfterViewInit(){
-    setTimeout(() => {
-      //this.basicPanel.open();
-      this.isReady = true;
-      this.setStep(0);
-    }, 100);
-  }
-
   ngOnInit() {
-    this.releaseField = _.find(this.basicfieldConfig, { 'name': 'release' });
-
-    this.ws.call('system.info').subscribe((res) => {
-      this.currentServerVersion = Number(_.split(res.version, '-')[1]);
-      this.jailService.getLocalReleaseChoices().subscribe((res_local) => {
-        for (let j in res_local) {
-          let rlVersion = Number(_.split(res_local[j], '-')[0]);
-          if (!this.isLowerVersion(rlVersion) && this.currentServerVersion >= Math.floor(rlVersion)) {
-            this.releaseField.options.push({ label: res_local[j] + '(fetched)', value: res_local[j] });
-          }
-        }
-        this.jailService.getRemoteReleaseChoices().subscribe((res_remote) => {
-          for (let i in res_remote) {
-            if (_.indexOf(res_local, res_remote[i]) < 0) {
-              let rsVersion = Number(_.split(res_remote[i], '-')[0]);
-              if (!this.isLowerVersion(rsVersion) && this.currentServerVersion >= Math.floor(rsVersion)) {
-                this.releaseField.options.push({ label: res_remote[i], value: res_remote[i] });
-              }
-            }
-          }
-        });
-      });
-    },
-    (res) => {
-      new EntityUtils().handleWSError(this, res, this.dialogService);
+    this.aroute.params.subscribe(params => {
+      this.plugin_name = params['pk'];
+      const nameField = _.find(this.basicfieldConfig, { 'name': 'uuid' });
+      nameField.value = this.plugin_name;
     });
-
-    this.ip4_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip4_interface'});
-    this.ip4_netmaskField = _.find(this.basicfieldConfig, {'name': 'ip4_netmask'});
-    this.ip6_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip6_interface'});
-    this.ip6_prefixField = _.find(this.basicfieldConfig, {'name': 'ip6_prefix'});
-    this.vnet_default_interfaceField = _.find(this.networkfieldConfig, {'name': 'vnet_default_interface'});
+    this.ip4_interfaceField = _.find(this.basicfieldConfig, { 'name': 'ip4_interface' });
+    this.ip4_netmaskField = _.find(this.basicfieldConfig, { 'name': 'ip4_netmask' });
+    this.ip6_interfaceField = _.find(this.basicfieldConfig, { 'name': 'ip6_interface' });
+    this.ip6_prefixField = _.find(this.basicfieldConfig, { 'name': 'ip6_prefix' });
+    this.vnet_default_interfaceField = _.find(this.networkfieldConfig, { 'name': 'vnet_default_interface' });
 
     // get interface options
     this.ws.call('interfaces.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
-      (res)=>{
+      (res) => {
         for (let i in res) {
-          this.ip4_interfaceField.options.push({ label: res[i].name, value: res[i].name});
-          this.ip6_interfaceField.options.push({ label: res[i].name, value: res[i].name});
-          this.vnet_default_interfaceField.options.push({ label: res[i].name, value: res[i].name});
+          this.ip4_interfaceField.options.push({ label: res[i].name, value: res[i].name });
+          this.ip6_interfaceField.options.push({ label: res[i].name, value: res[i].name });
+          this.vnet_default_interfaceField.options.push({ label: res[i].name, value: res[i].name });
         }
       },
-      (res)=>{
+      (res) => {
         new EntityUtils().handleWSError(this, res, this.dialogService);
       }
     );
 
-    this.formFileds = _.concat(this.basicfieldConfig, this.jailfieldConfig, this.networkfieldConfig, this.customConfig, this.rctlConfig);
-    this.formGroup = this.entityFormService.createFormGroup(this.formFileds);
+    this.formFields = _.concat(this.basicfieldConfig, this.jailfieldConfig, this.networkfieldConfig, this.customConfig, this.rctlConfig);
+    this.formGroup = this.entityFormService.createFormGroup(this.formFields);
 
-    for (const i in this.formFileds) {
-      const config = this.formFileds[i];
+    for (const i in this.formFields) {
+      const config = this.formFields[i];
       if (config.relation.length > 0) {
         this.setRelation(config);
       }
@@ -1115,28 +967,25 @@ export class JailEditComponent implements OnInit, AfterViewInit {
     this.formGroup.controls['dhcp'].valueChanges.subscribe((res) => {
       if (res) {
         this.formGroup.controls['vnet'].setValue(true);
-        _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = true;
         this.formGroup.controls['bpf'].setValue(true);
-        _.find(this.basicfieldConfig, { 'name': 'bpf' }).required = true;
-      } else {
-        _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = false;
-         _.find(this.basicfieldConfig, { 'name': 'bpf' }).required = false;
       }
+      _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = res;
+      _.find(this.basicfieldConfig, { 'name': 'bpf' }).required = res;
     });
     this.formGroup.controls['vnet'].valueChanges.subscribe((res) => {
       if (res) {
-        if (_.find(this.ip4_interfaceField.options, { label: 'vnet0'}) == undefined) {
-          this.ip4_interfaceField.options.push({ label: 'vnet0', value: 'vnet0'});
+        if (_.find(this.ip4_interfaceField.options, { 'label': 'vnet0' }) == undefined) {
+          this.ip4_interfaceField.options.push({ label: 'vnet0', value: 'vnet0' });
         }
-        if (_.find(this.ip6_interfaceField.options, { label: 'vnet0'}) == undefined) {
-          this.ip6_interfaceField.options.push({ label: 'vnet0', value: 'vnet0'});
+        if (_.find(this.ip6_interfaceField.options, { 'label': 'vnet0' }) == undefined) {
+          this.ip6_interfaceField.options.push({ label: 'vnet0', value: 'vnet0' });
         }
       } else {
-        if (_.find(this.ip4_interfaceField.options, { 'label': 'vnet0'}) != undefined) {
-          this.ip4_interfaceField.options.pop({ label: 'vnet0', value: 'vnet0'});
+        if (_.find(this.ip4_interfaceField.options, { 'label': 'vnet0' }) != undefined) {
+          this.ip4_interfaceField.options.pop({ label: 'vnet0', value: 'vnet0' });
         }
-        if (_.find(this.ip6_interfaceField.options, { 'label': 'vnet0'}) != undefined) {
-          this.ip6_interfaceField.options.pop({ label: 'vnet0', value: 'vnet0'});
+        if (_.find(this.ip6_interfaceField.options, { 'label': 'vnet0' }) != undefined) {
+          this.ip6_interfaceField.options.pop({ label: 'vnet0', value: 'vnet0' });
         }
       }
 
@@ -1147,7 +996,6 @@ export class JailEditComponent implements OnInit, AfterViewInit {
         _.find(this.basicfieldConfig, { 'name': 'vnet' })['hasErrors'] = false;
         _.find(this.basicfieldConfig, { 'name': 'vnet' })['errors'] = '';
       }
-
       this.updateInterfaceValidation();
     });
     this.formGroup.controls['bpf'].valueChanges.subscribe((res) => {
@@ -1167,7 +1015,6 @@ export class JailEditComponent implements OnInit, AfterViewInit {
         vnet_ctrl.setValue(vnet_ctrl.value);
       }
       _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = res;
-      this.formGroup.controls['ip6_addr'].markAsTouched();
     });
     this.formGroup.controls['ip4_addr'].valueChanges.subscribe((res) => {
       this.updateInterfaceValidation();
@@ -1176,75 +1023,17 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       this.updateInterfaceValidation();
     });
 
-    this.aroute.params.subscribe(params => {
-      this.pk = params['pk'];
-      this.ws.call(this.queryCall, [
-        [
-          ["host_hostuuid", "=", this.pk]
-        ]
-      ]).subscribe(
+    this.ws.call("jail.query", [
+      [
+        ["host_hostuuid", "=", "default"]
+      ]
+    ]).subscribe(
       (res) => {
-        this.wsResponse = res[0];
-        if (res[0] && res[0].state == 'up') {
-          this.save_button_enabled = false;
-          this.error = T("Jails cannot be changed while running.");
-          for (let i = 0; i < this.formFileds.length; i++) {
-            this.setDisabled(this.formFileds[i].name, true);
-          }
-        } else {
-          this.save_button_enabled = true;
-          this.error = "";
-        }
-
         for (let i in res[0]) {
-          if (i == 'type' && res[0][i] == 'pluginv2') {
-            this.setDisabled("host_hostuuid", true);
-            this.isPlugin = true;
-          }
           if (this.formGroup.controls[i]) {
-            if (i == 'ip4_addr') {
-              let ip4 = res[0][i];
-              if (ip4 == 'none' || ip4 == '') {
-                this.formGroup.controls['ip4_addr'].setValue('');
-              } else {
-                if (ip4.indexOf('|') > 0) {
-                  this.formGroup.controls['ip4_interface'].setValue(ip4.split('|')[0]);
-                  ip4 = ip4.split('|')[1];
-                }
-                if (ip4.indexOf('/') > 0) {
-                  this.formGroup.controls['ip4_addr'].setValue(ip4.split('/')[0]);
-                  this.formGroup.controls['ip4_netmask'].setValue(ip4.split('/')[1]);
-                } else {
-                  this.formGroup.controls['ip4_addr'].setValue(ip4);
-                }
-              }
+            if ((i == 'ip4_addr' || i == 'ip6_addr') && res[0][i] == 'none') {
+              this.formGroup.controls[i].setValue('');
               continue;
-            }
-            if (i == 'ip6_addr') {
-              let ip6 = res[0][i];
-              if (ip6 == 'none' || ip6 == '') {
-                this.formGroup.controls['ip6_addr'].setValue('');
-              } else {
-                if (ip6 == 'vnet0|accept_rtadv') {
-                  this.formGroup.controls['auto_configure_ip6'].setValue(true);
-                }
-                if (ip6.indexOf('|') > 0) {
-                  this.formGroup.controls['ip6_interface'].setValue(ip6.split('|')[0]);
-                  ip6 = ip6.split('|')[1];
-                }
-                if (ip6.indexOf('/') > 0) {
-                  this.formGroup.controls['ip6_addr'].setValue(ip6.split('/')[0]);
-                  this.formGroup.controls['ip6_prefix'].setValue(ip6.split('/')[1]);
-                } else {
-                  this.formGroup.controls['ip6_addr'].setValue(ip6);
-                }
-              }
-
-              continue;
-            }
-            if (i == 'release') {
-              _.find(this.basicfieldConfig, { 'name': 'release' }).options.push({ label: res[0][i], value: res[0][i] });
-              this.currentReleaseVersion = Number(_.split(res[0][i], '-')[0]);
             }
             if (_.indexOf(this.TFfields, i) > -1) {
               if (res[0][i] == '1') {
@@ -1267,30 +1056,30 @@ export class JailEditComponent implements OnInit, AfterViewInit {
                 res[0][i] = false;
               }
             }
-            this.formGroup.controls[i].setValue(res[0][i]);
+            if (i !== 'dhcp' && i !== 'vnet' && i !== 'bpf') {
+              this.formGroup.controls[i].setValue(res[0][i]);
+            }
           }
         }
       },
       (res) => {
-        new EntityUtils().handleWSError(this, res, this.dialogService);
+        new EntityUtils().handleError(this, res);
       });
-    });
-
   }
 
   setRelation(config: FieldConfig) {
     const activations =
-        this.fieldRelationService.findActivationRelation(config.relation);
+      this.fieldRelationService.findActivationRelation(config.relation);
     if (activations) {
       const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
-          activations, this.formGroup);
+        activations, this.formGroup);
       this.setDisabled(config.name, tobeDisabled);
 
       this.fieldRelationService.getRelatedFormControls(config, this.formGroup)
-          .forEach(control => {
-            control.valueChanges.subscribe(
-                () => { this.relationUpdate(config, activations); });
-          });
+        .forEach(control => {
+          control.valueChanges.subscribe(
+            () => { this.relationUpdate(config, activations); });
+        });
     }
   }
 
@@ -1301,7 +1090,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    this.formFileds = this.formFileds.map((item) => {
+    this.formFields = this.formFields.map((item) => {
       if (item.name === name) {
         item.disabled = disable;
       }
@@ -1310,11 +1099,9 @@ export class JailEditComponent implements OnInit, AfterViewInit {
   }
 
   relationUpdate(config: FieldConfig, activations: any) {
-    if (this.save_button_enabled) {
-      const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
-        activations, this.formGroup);
-      this.setDisabled(config.name, tobeDisabled);
-    }
+    const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
+      activations, this.formGroup);
+    this.setDisabled(config.name, tobeDisabled);
   }
 
   goBack() {
@@ -1332,11 +1119,12 @@ export class JailEditComponent implements OnInit, AfterViewInit {
     return full_address;
   }
 
-  onSubmit() {
-    let updateRelease: boolean = false;
-    let newRelease: any;
+  onSubmit(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.error = null;
+    let property: any = [];
     let value = _.cloneDeep(this.formGroup.value);
-
     if (value['ip4_addr'] == '' || value['ip4_addr'] == undefined) {
       delete value['ip4_addr'];
     } else {
@@ -1345,12 +1133,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
     delete value['ip4_interface'];
     delete value['ip4_netmask'];
     if (value['ip6_addr'] == '' || value['ip6_addr'] == undefined) {
-      // auto config ipv6 was enabled before
-      if (this.wsResponse['ip6_addr'] == "vnet0|accept_rtadv") {
-        value['ip6_addr'] = "none";
-      } else {
-        delete value['ip6_addr'];
-      }
+      delete value['ip6_addr'];
     } else {
       value['ip6_addr'] = this.getFullIP(value['ip6_interface'], value['ip6_addr'], value['ip6_prefix']);
     }
@@ -1363,75 +1146,69 @@ export class JailEditComponent implements OnInit, AfterViewInit {
     delete value['auto_configure_ip6'];
 
     for (let i in value) {
-      // do not send value[i] if value[i] no change
-      if (value[i] == this.wsResponse[i]) {
-        delete value[i];
-      }
       if (value.hasOwnProperty(i)) {
-        if (i == 'release') {
-          // upgrade release
-          updateRelease = true;
-          newRelease = value[i];
+        if (value[i] == undefined) {
           delete value[i];
-        }
-        if (_.indexOf(this.TFfields, i) > -1) {
-          if (value[i]) {
-            value[i] = '1';
-          } else {
-            value[i] = '0';
-          }
-        } else if (_.indexOf(this.OFfields, i) > -1) {
-          if (value[i]) {
-            value[i] = 'on';
-          } else {
-            value[i] = 'off';
-          }
-        } else if (_.indexOf(this.YNfields, i) > -1) {
-          if (value[i]) {
-            value[i] = 'yes';
-          } else {
-            value[i] = 'no';
-          }
-        }
-      }
-    }
-
-    if (value['host_hostuuid']) {
-      value['name'] = value['host_hostuuid'];
-      delete value['host_hostuuid'];
-    }
-
-    this.loader.open();
-
-    this.ws.call(this.updateCall, [this.pk, value]).subscribe(
-      (res) => {
-        this.loader.close();
-        if (updateRelease) {
-          const option = {
-            'release': newRelease,
-            'plugin': this.isPlugin,
-          }
-          const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Upgrading Jail") }, disableClose: true });
-          dialogRef.componentInstance.setCall(this.upgradeCall, [this.pk, option]);
-          dialogRef.componentInstance.submit();
-          dialogRef.componentInstance.success.subscribe((res) => {
-            dialogRef.close(true);
-            this.router.navigate(new Array('/').concat(this.route_success));
-          });
         } else {
-          this.loader.close();
-          if (res.error) {
-            new EntityUtils().handleWSError(this, res, this.dialogService);
+          if (_.indexOf(this.TFfields, i) > -1) {
+            if (value[i]) {
+              property.push(i + '=1');
+            } else {
+              property.push(i + '=0');
+            }
+            delete value[i];
+          } else if (_.indexOf(this.OFfields, i) > -1) {
+            if (value[i]) {
+              property.push(i + '=on');
+            } else {
+              property.push(i + '=off');
+            }
+            delete value[i];
+          } else if (_.indexOf(this.YNfields, i) > -1) {
+            if (value[i]) {
+              property.push(i + '=yes');
+            } else {
+              property.push(i + '=no');
+            }
+            delete value[i];
           } else {
-            this.router.navigate(new Array('/').concat(this.route_success));
+            if (i != 'uuid' && i != 'release') {
+              property.push(i + '=' + value[i]);
+              delete value[i];
+            }
           }
         }
-      },
-      (res) => {
-        this.loader.close();
-        new EntityUtils().handleWSError(this, res, this.dialogService);
       }
-    );
+    }
+    value['props'] = property;
+    value['name'] = this.plugin_name;
+
+    // only for plugin bru-server
+    if (this.plugin_name == 'bru-server') {
+      value['accept'] = true;
+    }
+
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Install") }, disableClose: true });
+    this.dialogRef.componentInstance.setDescription(T("Installing plugin..."));
+    this.dialogRef.componentInstance.setCall(this.addCall, [value]);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.dialogRef.componentInstance.setTitle(T("Plugin Installed Successfully"));
+      let install_notes = '<p><b>Install Notes:</b></p>';
+      for (let i in res.result.install_notes) {
+        if (res.result.install_notes[i] == "") {
+          install_notes += '<br>';
+        } else {
+          install_notes += '<p>' + res.result.install_notes[i] + '</p>';
+        }
+      }
+      this.dialogRef.componentInstance.setDescription(install_notes);
+      this.dialogRef.componentInstance.showCloseButton = true;
+
+      this.dialogRef.afterClosed().subscribe(result => {
+        this.router.navigate(new Array('/').concat(this.route_success));
+      });
+    });
   }
 
   setStep(index: number) {

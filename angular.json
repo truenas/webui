@@ -22,6 +22,11 @@
               "src/icons",
               "src/assets/images"
             ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "src/assets/styles/scss-imports"
+              ]
+            },
             "styles": [
               "src/assets/styles/reset.css",
               "node_modules/xterm/dist/xterm.css",

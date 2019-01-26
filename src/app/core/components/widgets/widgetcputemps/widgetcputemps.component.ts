@@ -44,7 +44,7 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
     this._subtitle = val;
   }
 
-  public widgetColorCssVar = "var(--primary)";
+  //public widgetColorCssVar = "var(--primary)";
   private chartData:CoreEvent;
   public invalidData:boolean = false;
 

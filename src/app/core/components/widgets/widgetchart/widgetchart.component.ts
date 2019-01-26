@@ -27,7 +27,7 @@ export interface TimeData {
 @Component({
   selector: 'widget-chart',
   templateUrl:'./widgetchart.component.html',
-  styleUrls: ['./widgetchart.component.css']
+  styleUrls: ['./widgetchart.component.scss']
 })
 export class WidgetChartComponent extends WidgetComponent implements AfterViewInit, OnDestroy {
 
@@ -56,7 +56,7 @@ export class WidgetChartComponent extends WidgetComponent implements AfterViewIn
   public chartId = "chart-" + UUID.UUID();
   public chart: any;
   public maxY: number = 100; // Highest number in data
-    public startTime;
+  public startTime;
   public endTime;
 
   constructor(public router: Router, public translate: TranslateService){
@@ -67,6 +67,8 @@ export class WidgetChartComponent extends WidgetComponent implements AfterViewIn
         this.loader = true;
       }
     }, 5000)
+    let theme = this.themeService.currentTheme();
+    this.widgetColorCssVar = theme[this.themeService.colorFromMeta(theme.primary)];
   }
 
   ngOnDestroy(){
