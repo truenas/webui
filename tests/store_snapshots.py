@@ -45,7 +45,7 @@ class conf_storesnap_test(unittest.TestCase):
     def test_01_nav_store_snapshots(self):
         try:
             # Click on the vlan submenu
-            driver.find_element_by_xpath(xpaths['submenuStorage']).click()
+            driver.find_element_by_xpath(xpaths['submenuSnapshots']).click()
             # cancelling the tour
             if self.is_element_present(By.XPATH,"/html/body/div[6]/div[1]/button"):
                 driver.find_element_by_xpath("/html/body/div[6]/div[1]/button").click()
