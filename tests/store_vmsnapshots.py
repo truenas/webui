@@ -31,7 +31,7 @@ except ImportError:
     import unittest
 
 xpaths = { 'navStorage' : '//*[@id="nav-5"]/div/a[1]',
-           'submenuVmsnapshots' : '//*[@id="5-1"]',
+           'submenuVmsnapshots' : '//*[@id="5-2"]',
          }
 
 
@@ -45,7 +45,7 @@ class conf_storevmsnap_test(unittest.TestCase):
     def test_01_nav_store_vm_snapshots(self):
         try:
             # Click on the vlan submenu
-            driver.find_element_by_xpath(xpaths['submenuVmsnapshot']).click()
+            driver.find_element_by_xpath(xpaths['submenuVmsnapshots']).click()
             # cancelling the tour
             if self.is_element_present(By.XPATH,"/html/body/div[6]/div[1]/button"):
                 driver.find_element_by_xpath("/html/body/div[6]/div[1]/button").click()
