@@ -5,7 +5,6 @@ import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissi
 import { SnapshotAddComponent } from './snapshots/snapshot-add/';
 import { SnapshotCloneComponent } from './snapshots/snapshot-clone/';
 import { SnapshotListComponent } from './snapshots/snapshot-list/';
-import { SnapshotRollbackComponent } from './snapshots/snapshot-rollback/';
 import { DatasetFormComponent } from './volumes/datasets/dataset-form/';
 import { ManagerComponent } from './volumes/manager/';
 // import { VolumesEditComponent } from './volumes-edit/index';
@@ -113,10 +112,6 @@ export const routes: Routes = [
           {
             path: 'clone/:pk', component: SnapshotCloneComponent,
             data: { title: 'Clone', breadcrumb: 'Clone' }
-          },
-          {
-            path: 'rollback/:pk', component: SnapshotRollbackComponent,
-            data: { title: 'Rollback', breadcrumb: 'Rollback' }
           },
           {
             path: 'add', component: SnapshotAddComponent,
