@@ -416,7 +416,7 @@ export class LineChartService {
       }, {
         title: "ZFS Arc Size",
         type: LineChartService.lineChart,
-        legends: ['Arc Sizei', 'L2Arc'],
+        legends: ['Arc Size', 'L2Arc'],
         dataList: [
           {source: 'zfs_arc', type: 'cache_size-arc', dataset: 'value'},
           {source: 'zfs_arc', type: 'cache_size-L2', dataset: 'value'}
