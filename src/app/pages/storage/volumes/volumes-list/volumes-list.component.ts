@@ -409,31 +409,38 @@ export class VolumesListTableConfig implements InputTableConf {
                   this.dialogService.confirm("Scrub Pool", message, false, T("Stop Scrub")).subscribe((res) => {
                     if (res) {
                       this.loader.open();
-                      this.rest.delete("storage/volume/" + row1.id + "/scrub/", { body: JSON.stringify({}) }).subscribe(
+                      this.ws.call('pool.scrub', [row1.id, 'STOP']).subscribe(
                         (res) => {
                           this.loader.close();
-                          this.snackBar.open(res.data, 'close', { duration: 5000 });
+                          this.snackBar.open('Stopping the scrub on ' + row1.name + '.', 'close', { duration: 5000 });
                         },
-                        (res) => {
+                        (err) => {
                           this.loader.close();
-                          new EntityUtils().handleError(this, res);
-                        });
+                          new EntityUtils().handleWSError(this, err, this.dialogService);
+                        }
+                      )
                     }
                   });
                 } else {
                   const message = "Start a scrub on " + row1.name + "?";
                   this.dialogService.confirm("Scrub Pool", message, false, T("Start Scrub")).subscribe((res) => {
                     if (res) {
-                      this.loader.open();
-                      this.rest.post("storage/volume/" + row1.id + "/scrub/", { body: JSON.stringify({}) }).subscribe(
-                        (res) => {
-                          this.loader.close();
-                          this.snackBar.open(res.data, 'close', { duration: 5000 });
-                        },
-                        (res) => {
-                          this.loader.close();
-                          new EntityUtils().handleError(this, res);
-                        });
+                      this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { "title": T('Scrub Pool') }, disableClose: false });
+                      this.dialogRef.componentInstance.setCall('pool.scrub', [row1.id, 'START']);
+                      this.dialogRef.componentInstance.submit();
+                      this.dialogRef.componentInstance.success.subscribe(
+                        (jobres) => {
+                          this.dialogRef.close(false);
+                          if (jobres.progress.percent == 100) {
+                            this.snackBar.open('Successfully Scrubbed Pool ' + row1.name + ".", 'close', { duration: 5000 });
+                          } else {
+                            this.snackBar.open('Successfully Stopped the Scrub on Pool ' + row1.name + ".", 'close', { duration: 5000 });
+                          }
+                        }
+                      );
+                      this.dialogRef.componentInstance.failure.subscribe((err) => {
+                        this.dialogRef.componentInstance.setDescription(err.error);
+                      });
                     }
                   });
                 }
