@@ -610,19 +610,19 @@ export class DatasetFormComponent implements Formconfiguration{
               '1K':'1K',
               '2K':'2K',
             }; 
-            if ( current_dataset.hasOwnProperty("recordsize") && current_dataset['recordsize'].value) {
+            if ( current_dataset.hasOwnProperty("recordsize") && current_dataset['recordsize'].value ) {
                 _.find(_.find(this.fieldConfig, {name:'recordsize'}).options, {'label': current_dataset['recordsize'].value})['hiddenFromDisplay'] = false
             } 
-            if (current_dataset.hasOwnProperty("quota") && current_dataset['quota'].rawvalue === '0') {
+            if ( current_dataset.hasOwnProperty("quota") && current_dataset['quota'].rawvalue === '0' ) {
               entityForm.formGroup.controls['quota_unit'].setValue('M');
             } 
-            if (current_dataset.hasOwnProperty("refquota")&& current_dataset['refquota'].rawvalue === '0') {
+            if ( current_dataset.hasOwnProperty("refquota")&& current_dataset['refquota'].rawvalue === '0' ) {
               entityForm.formGroup.controls['refquota_unit'].setValue('M');
             } 
-            if (current_dataset.hasOwnProperty("reservation") && current_dataset['reservation'].rawvalue === '0') {
+            if ( current_dataset.hasOwnProperty("reservation") && current_dataset['reservation'].rawvalue === '0' ) {
               entityForm.formGroup.controls['reservation_unit'].setValue('M');
             } 
-            if (current_dataset.hasOwnProperty("refreservation") && current_dataset['refreservation'].rawvalue === '0') {
+            if ( current_dataset.hasOwnProperty("refreservation") && current_dataset['refreservation'].rawvalue === '0' ) {
               entityForm.formGroup.controls['refreservation_unit'].setValue('M');
             }  
             const edit_sync = _.find(this.fieldConfig, {name:'sync'});
