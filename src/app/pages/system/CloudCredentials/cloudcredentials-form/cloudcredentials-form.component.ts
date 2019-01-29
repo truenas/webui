@@ -152,8 +152,10 @@ export class CloudCredentialsFormComponent {
     {
       type: 'checkbox',
       name: 'skip_region-S3',
-      placeholder: T('Skip Region Autodetect'),
-      // tooltip: T(''),
+      placeholder: T('Disable Endpoint Region'),
+      tooltip: T('Skip automatic detection of the Endpoint URL\
+                  region. Set this when configuring a custom\
+                  Endpoint URL.'),
       isHidden: true,
       relation: [
         {
@@ -168,8 +170,11 @@ export class CloudCredentialsFormComponent {
     {
       type: 'checkbox',
       name: 'signatures_v2-S3',
-      placeholder: T('Use V2 Signatures'),
-      // tooltip: T(''),
+      placeholder: T('Use Signature Version 2'),
+      tooltip: T('Force using <a href="https://docs.aws.amazon.com/general/latest/gr/signature-version-2.html"\
+                  target="_blank">Signature Version 2</a> to sign API\
+                  requests. Set this when configuring a custom\
+                  Endpoint URL.'),
       isHidden: true,
       relation: [
         {
