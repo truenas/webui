@@ -153,7 +153,7 @@ export class CloudCredentialsFormComponent {
       type: 'checkbox',
       name: 'skip_region-S3',
       placeholder: T('Disable Endpoint Region'),
-      tooltip: T('Skips automatic detection of the Endpoint URL\
+      tooltip: T('Skip automatic detection of the Endpoint URL\
                   region. Set this when configuring a custom\
                   Endpoint URL.'),
       isHidden: true,
