@@ -55,7 +55,13 @@ export class SnapshotListComponent {
 
   constructor(protected _router: Router, protected _route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
-    protected _injector: Injector, protected _appRef: ApplicationRef) { }
+    protected _injector: Injector, protected _appRef: ApplicationRef) {
+      this.ws.call('systemdataset.config').subscribe((res) => {
+        if (res && res.basename && res.basename !== '') {
+          this.queryCallOption[0].push(["name", "!^", res.basename]);
+        }
+      });
+    }
 
   resourceTransformIncomingRestData(rows: any) {
     for (let i = 0; i < rows.length; i++) {
