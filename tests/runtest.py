@@ -24,9 +24,6 @@ from acc_user import run_create_user_test
 from acc_edit import run_edit_test
 from acc_delete import run_delete_test
 
-from store_pool import run_create_pool_test
-from store_delete import run_delete_pool_test
-
 from net_glob import run_conf_netglob_test
 from net_vlan import run_conf_netvlan_test
 from net_interface import run_conf_netinterface_test
@@ -59,6 +56,13 @@ from tasks_replication import run_conf_tasksreplication_test
 from tasks_resilver import run_conf_tasksresilver_test
 from tasks_scrub import run_conf_tasksscrub_test
 from tasks_cloudsync import run_conf_taskscloudsync_test
+
+from store_pool import run_create_pool_test
+from store_snapshots import run_conf_storesnap_test
+from store_vmsnapshots import run_conf_storevmsnap_test
+from store_disk import run_conf_storedisk_test
+from store_importdisk import run_conf_storeimpdisk_test
+from store_delete import run_delete_pool_test
 
 from serv_ssh import run_conf_ssh_test
 from serv_afp import run_conf_afp_test
@@ -169,7 +173,13 @@ except NameError:
     print ("Running: All Tests")
     run_create_user_test(runDriver)
     run_create_group_test(runDriver)
+
     run_create_pool_test(runDriver)
+    run_conf_storesnap_test(runDriver)
+    run_conf_storevmsnap_test(runDriver)
+    run_conf_storedisk_test(runDriver)
+    run_conf_storeimpdisk_test(runDriver)
+    run_delete_pool_test(runDriver)
 
     run_conf_netglob_test(runDriver)
     run_conf_netinterface_test(runDriver)
@@ -265,6 +275,10 @@ else:
     elif (test_name == "storage"):
         print ("Running: Storage Test")
         run_create_pool_test(runDriver)
+        run_conf_storesnap_test(runDriver)
+        run_conf_storevmsnap_test(runDriver)
+        run_conf_storedisk_test(runDriver)
+        run_conf_storeimpdisk_test(runDriver)
         run_delete_pool_test(runDriver)
 
     elif (test_name == "services"):
@@ -322,6 +336,18 @@ if path.exists('acc_group.pyc'):
 
 if path.exists('store_pool.pyc'):
     call(["rm", "store_pool.pyc"])
+
+if path.exists('store_snapshots.pyc'):
+    call(["rm", "store_snapshots.pyc"])
+
+if path.exists('store_vmsnapshots.pyc'):
+    call(["rm", "store_vmsnapshots.pyc"])
+
+if path.exists('store_disk.pyc'):
+    call(["rm", "store_disk.pyc"])
+
+if path.exists('store_importdisk.pyc'):
+    call(["rm", "store_importdisk.pyc"])
 
 if path.exists('plugins.pyc'):
     call(["rm", "plugins.pyc"])
