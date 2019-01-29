@@ -178,7 +178,7 @@ export class GeneralComponent implements OnDestroy {
     fieldConfig: this.saveConfigFieldConf,
     method_ws: 'core.download',
     saveButtonText: T('Save'),
-    customSubmit: this.saveCofigSubmit,
+    customSubmit: this.saveConfigSubmit,
     warning: T('<p>Including the Password Secret Seed allows using this\
               configuration file with a new boot device. This also\
               decrypts all system passwords for reuse when the\
@@ -413,7 +413,7 @@ export class GeneralComponent implements OnDestroy {
     this.language.setLang(value.stg_language);
   }
 
-  saveCofigSubmit(entityDialog) {
+  saveConfigSubmit(entityDialog) {
     entityDialog.ws.call('system.info', []).subscribe((res) => {
       let fileName = "";
       if (res) {
@@ -433,7 +433,12 @@ export class GeneralComponent implements OnDestroy {
             entityDialog.snackBar.open(T("Download Sucessful"), T("Success") , {
               duration: 5000
             });
-            window.location.href = res[1];
+            if (window.navigator.userAgent.search("Firefox")>0) {
+              window.open(res[1]);
+          }
+            else {
+              window.location.href = res[1];
+            }
             entityDialog.dialogRef.close();
           },
           (err) => {
