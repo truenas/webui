@@ -67,7 +67,7 @@ raw_filename_password_tooltip: T('Raw filename password. The default is <i>docke
 raw_filename_password_validation : [ Validators.required ],
 
 raw_filesize_placeholder : T('Raw file size (GiB)'),
-raw_filesize_tooltip: T('Allocate a number of gigabytes (GiB) to the new\
+raw_filesize_tooltip: T('Set the size of the new\
  raw file.'),
 raw_filesize_validation: [Validators.required, Validators.min(20)],
 
