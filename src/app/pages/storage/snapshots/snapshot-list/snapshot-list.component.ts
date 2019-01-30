@@ -77,8 +77,8 @@ export class SnapshotListComponent implements OnInit {
     }
   }
 
-  ngOnInit() {
-    this.ws.call('systemdataset.config').toPromise().then((res) => {
+  async ngOnInit() {
+    await this.ws.call('systemdataset.config').toPromise().then((res) => {
       if (res && res.basename && res.basename !== '') {
         this.queryCallOption[0].push(["name", "!^", res.basename]);
       }
