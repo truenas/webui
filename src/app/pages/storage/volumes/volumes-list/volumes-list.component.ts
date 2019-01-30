@@ -412,7 +412,7 @@ export class VolumesListTableConfig implements InputTableConf {
                       this.ws.call('pool.scrub', [row1.id, 'STOP']).subscribe(
                         (res) => {
                           this.loader.close();
-                          this.snackBar.open('Stopping the scrub on ' + row1.name + '.', 'close', { duration: 5000 });
+                          this.snackBar.open(T('Stopping the scrub on pool ') + row1.name + '.', 'close', { duration: 5000 });
                         },
                         (err) => {
                           this.loader.close();
@@ -422,7 +422,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     }
                   });
                 } else {
-                  const message = "Start a scrub on " + row1.name + "?";
+                  const message = "Start scrub on pool <i>" + row1.name + "</i>?";
                   this.dialogService.confirm("Scrub Pool", message, false, T("Start Scrub")).subscribe((res) => {
                     if (res) {
                       this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { "title": T('Scrub Pool') }, disableClose: false });
