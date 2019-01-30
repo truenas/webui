@@ -980,11 +980,11 @@ export class JailEditComponent implements OnInit, AfterViewInit {
     'boot',
     'jail_zfs',
     'vnet',
+    'hostid_strict_check',
   ];
   // fields only accepted by ws with value yes/no
   protected YNfields: any = [
     'bpf',
-    'hostid_strict_check',
     'template',
     'host_time',
   ];
