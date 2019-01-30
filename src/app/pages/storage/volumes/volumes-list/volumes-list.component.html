@@ -12,7 +12,8 @@
         <mat-expansion-panel-header>
           <mat-panel-title>
             <div *ngIf="row.vol_encrypt > 0" class="panel_status_enc" title="Encryption On" id="volume_encrypt_on_{{row.name}}">
-              <mat-icon>lock_outline</mat-icon>
+              <mat-icon *ngIf="!row.is_decrypted">lock_outline</mat-icon>
+              <mat-icon *ngIf="row.is_decrypted">lock_open</mat-icon>
             </div>
             {{row.name}}
           </mat-panel-title>
