@@ -23,6 +23,7 @@ import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/di
 import helptext from '../../../../helptext/storage/volumes/volume-list';
 
 import { CoreService } from 'app/core/services/core.service';
+import { SnackbarService } from '../../../../services/snackbar.service';
 
 export interface ZfsPoolData {
   avail?: number;
@@ -92,7 +93,8 @@ export class VolumesListTableConfig implements InputTableConf {
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     protected translate: TranslateService,
-    protected snackBar: MatSnackBar
+    protected snackBar: MatSnackBar,
+    protected snackbarService: SnackbarService
   ) {
 
     if (typeof (this._classId) !== "undefined" && this._classId !== "") {
@@ -412,7 +414,7 @@ export class VolumesListTableConfig implements InputTableConf {
                       this.ws.call('pool.scrub', [row1.id, 'STOP']).subscribe(
                         (res) => {
                           this.loader.close();
-                          this.snackBar.open(T('Stopping the scrub on pool ') + row1.name + '.', 'close', { duration: 5000 });
+                          this.snackbarService.open(T('Stopping scrub on pool <i>') + row1.name + '</i>.', T('close'), { duration: 5000 })
                         },
                         (err) => {
                           this.loader.close();
@@ -422,7 +424,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     }
                   });
                 } else {
-                  const message = "Start scrub on pool <i>" + row1.name + "</i>?";
+                  const message = T("Start scrub on pool <i>") + row1.name + "</i>?";
                   this.dialogService.confirm("Scrub Pool", message, false, T("Start Scrub")).subscribe((res) => {
                     if (res) {
                       this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { "title": T('Scrub Pool') }, disableClose: false });
@@ -432,9 +434,9 @@ export class VolumesListTableConfig implements InputTableConf {
                         (jobres) => {
                           this.dialogRef.close(false);
                           if (jobres.progress.percent == 100) {
-                            this.snackBar.open('Successfully Scrubbed Pool ' + row1.name + ".", 'close', { duration: 5000 });
+                            this.snackbarService.open(T('Scrub complete on pool <i>') + row1.name + "</i>.", T('close'), { duration: 5000 });
                           } else {
-                            this.snackBar.open('Successfully Stopped the Scrub on Pool ' + row1.name + ".", 'close', { duration: 5000 });
+                            this.snackbarService.open(T('Stopped the scrub on pool <i>') + row1.name + "</i>.", T('close'), { duration: 5000 });
                           }
                         }
                       );
@@ -726,26 +728,27 @@ export class VolumesListTableConfig implements InputTableConf {
 @Component({
   selector: 'app-volumes-list',
   styleUrls: ['./volumes-list.component.css'],
-  templateUrl: './volumes-list.component.html'
+  templateUrl: './volumes-list.component.html',
+  providers: [SnackbarService]
 })
 export class VolumesListComponent extends EntityTableComponent implements OnInit, AfterViewInit {
 
   title = T("Pools");
   zfsPoolRows: ZfsPoolData[] = [];
-  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar);
+  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar, this.snackbarService);
 
   actionComponent = {
     getActions: (row) => {
       return this.conf.getActions(row);
     },
-    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar)
+    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar, this.snackbarService)
   };
 
   actionEncryptedComponent = {
     getActions: (row) => {
       return (<VolumesListTableConfig>this.conf).getEncryptedActions(row);
     },
-    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar)
+    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar, this.snackbarService)
   };
 
   expanded = false;
@@ -755,7 +758,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   constructor(protected core: CoreService ,protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
-    public sorter: StorageService, protected snackBar: MatSnackBar) {
+    public sorter: StorageService, protected snackBar: MatSnackBar, protected snackbarService: SnackbarService) {
     super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, snackBar, sorter);
   }
 
@@ -775,7 +778,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     this.ws.call('pool.dataset.query', []).subscribe((datasetData) => {
       this.rest.get("storage/volume", {}).subscribe((res) => {
         res.data.forEach((volume: ZfsPoolData) => {
-          volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, datasetData, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar);
+          volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, datasetData, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar, this.snackbarService);
           volume.type = 'zpool';
 
           if (volume.children && volume.children[0]) {
