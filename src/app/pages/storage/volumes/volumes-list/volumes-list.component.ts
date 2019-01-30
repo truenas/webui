@@ -550,9 +550,9 @@ export class VolumesListTableConfig implements InputTableConf {
       actions.push({
         label: T("Delete zvol"),
         onClick: (row1) => {
-          this.dialogService.confirm(T("Delete "),T(
+          this.dialogService.confirm(T("Delete "),
             T("Delete the zvol ") + "<i>" + row1.path + "</i>"+ T(" and all snapshots of it?")
-            ), false, T('Delete Zvol')).subscribe((confirmed) => {
+            , false, T('Delete Zvol')).subscribe((confirmed) => {
             if (confirmed === true) {
               this.loader.open();
 
