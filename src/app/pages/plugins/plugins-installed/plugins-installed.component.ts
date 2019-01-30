@@ -339,7 +339,7 @@ export class PluginsInstalledListComponent {
 
     const input = document.createElement('input');
     input.type = 'text';
-    input.name = 'ipAddress';
+    input.name = 'dsSystemPublicIP';
     input.value = this.publicIp;
 
     const submit = document.createElement('input');
