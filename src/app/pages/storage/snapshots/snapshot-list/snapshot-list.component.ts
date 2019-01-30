@@ -1,4 +1,4 @@
-import { Component, ElementRef, Injector, ApplicationRef } from '@angular/core';
+import { Component, ElementRef, Injector, ApplicationRef, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RestService } from '../../../../services/rest.service';
 import { Subscription } from 'rxjs';
@@ -11,7 +11,7 @@ import { isNgTemplate } from '@angular/compiler';
   selector: 'app-snapshot-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
-export class SnapshotListComponent {
+export class SnapshotListComponent implements OnInit {
 
   public title = "Snapshots";
   protected queryCall = 'zfs.snapshot.query';
@@ -75,6 +75,14 @@ export class SnapshotListComponent {
       default:
         return row[attr];
     }
+  }
+
+  async ngOnInit() {
+    await this.ws.call('systemdataset.config').toPromise().then((res) => {
+      if (res && res.basename && res.basename !== '') {
+        this.queryCallOption[0].push(["name", "!^", res.basename]);
+      }
+    });
   }
 
   afterInit(entityList: any) {
