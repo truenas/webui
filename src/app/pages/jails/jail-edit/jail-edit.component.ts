@@ -763,6 +763,12 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       placeholder: helptext.allow_tun_placeholder,
       tooltip: helptext.allow_tun_tooltip,
     },
+    {
+      type: 'checkbox',
+      name: 'rtsold',
+      placeholder: helptext.rtsold_placeholder,
+      tooltip: helptext.rtsold_tooltip,
+    }
   ];
   public rctlConfig: FieldConfig[] = [
 // Spoke to Lola. Lines below starting here down to the "wallclock"
@@ -980,6 +986,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
     'boot',
     'jail_zfs',
     'vnet',
+    'rtsold',
   ];
   // fields only accepted by ws with value yes/no
   protected YNfields: any = [

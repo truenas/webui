@@ -508,6 +508,9 @@ jail_zfs_mountpoint_tooltip: T('Enter the mountpoint for the \
 allow_tun_placeholder: T('allow_tun'),
 allow_tun_tooltip: T(''),
 
+rtsold_placeholder: T('rtsold'),
+rtsold_tooltip: T(''),
+
 //rctl config
 memoryuse_placeholder: T('memoryuse'),
 memoryuse_tooltip: T('Define the resident set size in bytes. See <a \
