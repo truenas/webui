@@ -125,6 +125,22 @@ export class CloudCredentialsFormComponent {
       togglePw: true
     },
     {
+      type: 'checkbox',
+      name: 'advanced-S3',
+      placeholder: T('Advanced Settings'),
+      isHidden: true,
+      value: false,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'S3',
+           }]
+        }
+      ]
+    },
+    {
       type: 'input',
       name: 'endpoint-S3',
       placeholder: T('Endpoint URL'),
@@ -142,9 +158,13 @@ export class CloudCredentialsFormComponent {
       relation: [
         {
           action: 'SHOW',
+          connective: 'AND',
           when: [{
             name: 'provider',
             value: 'S3',
+           }, {
+            name: 'advanced-S3',
+            value: true,
            }]
         }
       ]
@@ -160,9 +180,13 @@ export class CloudCredentialsFormComponent {
       relation: [
         {
           action: 'SHOW',
+          connective: 'AND',
           when: [{
             name: 'provider',
             value: 'S3',
+           }, {
+            name: 'advanced-S3',
+            value: true,
            }]
         }
       ]
@@ -179,9 +203,13 @@ export class CloudCredentialsFormComponent {
       relation: [
         {
           action: 'SHOW',
+          connective: 'AND',
           when: [{
             name: 'provider',
             value: 'S3',
+           }, {
+            name: 'advanced-S3',
+            value: true,
            }]
         }
       ]
@@ -903,7 +931,7 @@ export class CloudCredentialsFormComponent {
 
     for (let item in value) {
       if (item != 'name' && item != 'provider') {
-        if (item != 'preview-GOOGLE_CLOUD_STORAGE') {
+        if (item != 'preview-GOOGLE_CLOUD_STORAGE' && item != 'advanced-S3') {
           attr_name = item.split("-")[0];
           attributes[attr_name] = value[item];
         }
@@ -920,7 +948,11 @@ export class CloudCredentialsFormComponent {
   }
 
   dataAttributeHandler(entityForm: any) {
-    let provider = entityForm.formGroup.controls['provider'].value;
+    const provider = entityForm.formGroup.controls['provider'].value;
+    if (provider == 'S3' &&
+    (entityForm.wsResponseIdx['endpoint'] || entityForm.wsResponseIdx['skip_region'] || entityForm.wsResponseIdx['signatures_v2'])) {
+      entityForm.formGroup.controls['advanced-S3'].setValue(true);
+    }
     for (let i in entityForm.wsResponseIdx) {
       let field_name = i + '-' + provider;
       entityForm.formGroup.controls[field_name].setValue(entityForm.wsResponseIdx[i]);
