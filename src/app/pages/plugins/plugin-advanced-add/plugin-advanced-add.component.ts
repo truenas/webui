@@ -683,6 +683,12 @@ export class PluginAdvancedAddComponent implements OnInit {
       placeholder: helptext.allow_tun_placeholder,
       tooltip: helptext.allow_tun_tooltip,
     },
+    {
+      type: 'checkbox',
+      name: 'rtsold',
+      placeholder: helptext.rtsold_placeholder,
+      tooltip: helptext.rtsold_tooltip,
+    }
   ];
   public rctlConfig: FieldConfig[] = [
 
@@ -872,6 +878,7 @@ export class PluginAdvancedAddComponent implements OnInit {
     'boot',
     'jail_zfs',
     'vnet',
+    'rtsold',
   ];
   // fields only accepted by ws with value yes/no
   protected YNfields: any = [
