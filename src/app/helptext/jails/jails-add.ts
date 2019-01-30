@@ -531,6 +531,9 @@ allow_tun_tooltip: T('Reveal <i>tun</i> devices for the jail with an \
 individual devfs ruleset. Allow the creation of <i>tun</i> devices in \
 the jail.'),
 
+rtsold_placeholder: T('rtsold'),
+rtsold_tooltip: T(''),
+
 // rctl config
 memoryuse_placeholder: T('memoryuse'),
 memoryuse_tooltip: T('Resident set size in bytes. See <a \
