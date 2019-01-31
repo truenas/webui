@@ -54,6 +54,10 @@ export class VmCardsComponent  implements OnDestroy {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    deleteMsg: {
+      title: 'Name',
+      key_props: ['name']
+    },
   };
   
 
