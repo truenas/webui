@@ -98,7 +98,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public windowHeight: number;
 
   public allColumns: Array<any> = []; // Need this for the checkbox headings
-  public filterColumns: Array<any> = []; // Need this for the filter function
+  public filterColumns: Array<any> = []; // ...for the filter function - becomes THE complete list of all columns, diplayed or not
   public alwaysDisplayedCols: Array<any> = []; // For cols the user can't turn off
   public presetDisplayedCols: Array<any> = []; // to store only the index of preset cols
   public currentPreferredCols: Array<any> = []; // to store current choice of what cols to view
