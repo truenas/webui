@@ -88,7 +88,7 @@ export const helptext_sharing_iscsi = {
 
   initiator_form_placeholder_auth_network: T("Authorized Networks"),
   initiator_form_tooltip_auth_network: T(
-    'Network addresses that can use this initiator. Use\
+    'Network addresses which can use this initiator. Use\
  <i>ALL</i> or list network addresses with a\
  <a href="https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing"\
  target="_blank">CIDR</a> mask. Separate multiple\
@@ -111,7 +111,7 @@ export const helptext_sharing_iscsi = {
 
   globalconf_placeholder_isns_servers: T("ISNS Servers"),
   globalconf_tooltip_isns_servers: T(
-    "Enter the hostnames or IP addresses of the\
+    "Hostnames or IP addresses of the\
  ISNS servers to be registered with the\
  iSCSI targets and portals of the system.\
  Separate each entry with a space."
@@ -138,14 +138,15 @@ export const helptext_sharing_iscsi = {
 
   extent_placeholder_name: T("Extent name"),
   extent_tooltip_name: T(
-    "Enter the extent name. The name cannot be an existing\
- file within the pool or dataset when the\
- <b>Extent size</b> is something other than <i>0</i>."
+    "Name of the extent. If <i>Extent size</i> is non-zero,\
+ this cannot be the name of file that already exists."
   ),
   extent_validators_name: [Validators.required],
 
   extent_placeholder_type: T("Extent type"),
-  extent_tooltip_type: T("Select from <i>File</i> or <i>Device</i>."),
+  extent_tooltip_type: T(
+    "<i>File</i> shares the contents of an individual file.\
+ <i>Device</i> shares an entire device."),
 
   extent_placeholder_disk: T("Device"),
   extent_tooltip_disk: T(
@@ -182,8 +183,8 @@ export const helptext_sharing_iscsi = {
 
   extent_placeholder_blocksize: T("Logical block size"),
   extent_tooltip_blocksize: T(
-    "Only override the default if the initiator\
- requires a different block size."
+    "Do not override the default unless the initiator\
+ requires a specific block size."
   ),
 
   extent_placeholder_pblocksize: T("Disable physical block size reporting"),
@@ -234,7 +235,7 @@ export const helptext_sharing_iscsi = {
 
   authaccess_placeholder_tag: T("Group ID"),
   authaccess_tooltip_tag: T(
-    "Allows different groups to be configured\
+    "Allow different groups to be configured\
  with different authentication profiles.\
  Example: all users with a group ID of\
  <i>1</i> will inherit the authentication profile\
@@ -244,17 +245,14 @@ export const helptext_sharing_iscsi = {
 
   authaccess_placeholder_user: T("User"),
   authaccess_tooltip_user: T(
-    "Enter name of user account to use\
- for CHAP authentication with the user on the remote\
- system. Many initiators\
- default to the initiator name as the user."
+    "Name of user account on remote system for CHAP authentication.\
+ Many initiators use the initiator name as the user name."
   ),
   authaccess_validators_user: [Validators.required],
 
   authaccess_placeholder_secret: T("Secret"),
   authaccess_tooltip_secret: T(
-    "Enter a password for <b>User</b>.\
- Must be between 12 and 16 characters."
+    "Password. Must be at least 12 and no more than 16 characters long."
   ),
   authaccess_validators_secret: [
     Validators.minLength(12),
@@ -267,16 +265,13 @@ export const helptext_sharing_iscsi = {
 
   authaccess_placeholder_peeruser: T("Peer User"),
   authaccess_tooltip_peeruser: T(
-    "Only input when configuring mutual CHAP.\
- In most cases it will need to be the same value\
- as <b>User</b>."
+    "Only entered when configuring mutual CHAP.\
+ Usually this is the same value as <i>User</i>."
   ),
 
   authaccess_placeholder_peersecret: T("Peer Secret"),
   authaccess_tooltip_peersecret: T(
-    "Enter the mutual secret password which\
- <b>must be different than the <i>Secret</i></b>.\
- Required if <b>Peer User</b> is set."
+    "Mutual secret password. Must be different than <i>Secret</i>."
   ),
   authaccess_validators_peersecret: [
     Validators.minLength(12),
