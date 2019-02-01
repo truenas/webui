@@ -419,7 +419,7 @@ export class DatasetFormComponent implements Formconfiguration{
       data.name = this.parent + "/" + data.name;
     }
 
-    if( this.isBasicMode === true ) {
+    if( this.isNew === true && this.isBasicMode === true ) {
       data.refquota = null;
       data.quota = null;
       data.refreservation = null;
@@ -427,9 +427,8 @@ export class DatasetFormComponent implements Formconfiguration{
       data.copies = ( data.copies !== undefined && data.copies !== null && data.name !== undefined) ? "1" : undefined;
 
 
-    } else {
+    }
     // calculate and delete _unit
-
       for (let i =0; i < this.size_fields.length; i++) {
         const field = this.size_fields[i];
         const unit = field + '_unit';
@@ -439,7 +438,6 @@ export class DatasetFormComponent implements Formconfiguration{
           data[field] = this.OrigSize[field];
         }
       }
-    }
 
     delete data.refquota_unit;
     delete data.quota_unit;
