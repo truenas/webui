@@ -754,7 +754,8 @@ export class DatasetFormComponent implements Formconfiguration{
     //    returnValue.recordsize = "" + ( 1024 * value ) + "K";
     //  }
 
-     if (sizeValues['quota'] || sizeValues['refquota'] || sizeValues['refreservation'] || sizeValues['reservation']) {
+     if (sizeValues['quota'] || sizeValues['refquota'] || sizeValues['refreservation'] || sizeValues['reservation'] ||
+      quota_warning ||quota_critical ||refquota_warning||refquota_critical) {
        this.isBasicMode = false;
      }
 
