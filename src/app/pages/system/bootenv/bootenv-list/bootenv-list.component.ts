@@ -81,10 +81,8 @@ export class BootEnvironmentListComponent {
     .subscribe(() => {
       const scrubIntervalValue: number = this.scrubIntervalEvent.nativeElement.value;
       if( scrubIntervalValue > -1){
-        this._rest.put('system/advanced/',{ body: JSON.stringify(
-          {'adv_boot_scrub':scrubIntervalValue})}).subscribe((res)=>{
-
-          })
+        this.ws.call('boot.set_scrub_interval',[scrubIntervalValue]).subscribe((res)=>{
+        })
 
       }
       else {
