@@ -139,7 +139,7 @@ export const helptext_sharing_iscsi = {
   extent_placeholder_name: T("Extent name"),
   extent_tooltip_name: T(
     "Name of the extent. If <i>Extent size</i> is non-zero,\
- this cannot be the name of file that already exists."
+ this cannot be the name of a file that already exists."
   ),
   extent_validators_name: [Validators.required],
 
