@@ -8,53 +8,76 @@ msgid ""
 " Enable to determine if the system advertises itself as a time server to "
 "Windows clients. Disable when the network contains an AD or LDAP server."
 msgstr ""
+"Activer pour déterminer si le système s'annonce comme un serveur de "
+"temps pour les clients Windows. Désactiver lorsque le réseau contient un "
+"serveur AD ou LDAP."
 
 msgid " First vdev has "
-msgstr ""
+msgstr " Premier vdev a"
 
 msgid " First vdev is a "
+msgstr " Premier vdev est un "
+
+msgid ""
+" The number of file transfers to run in parallel. It can sometimes be "
+"useful to set this to a smaller number if the remote is giving a lot of "
+"timeouts, or a larger number if there is high bandwidth and a fast remote."
 msgstr ""
 
 msgid " disks, new vdev has "
-msgstr ""
+msgstr " disques, nouveau vdev a "
 
 msgid "% of all cores"
-msgstr ""
+msgstr "% de tous les cores"
 
 msgid ""
 "' is encrypted! If the passphrase for this encrypted pool has been lost, "
 "the data will be PERMANENTLY UNRECOVERABLE! Before exporting/disconnecting "
 "encrypted pools, download and safely store the recovery key."
 msgstr ""
+"' est chiffré ! Si la phrase secrète de ce volume chiffré a été perdue, "
+"les données resteront irrémédiablement irrécupérables! Avant d'"
+"exporter / de déconnecter des pools chiffrés, téléchargez et stockez la clé "
+"de récupération en toute sécurité."
 
 msgid "'. All data on that pool was destroyed."
-msgstr ""
+msgstr "'. Toutes les données de ce volume ont été détruites."
 
 msgid ""
 "'. Exporting/disconnecting a pool makes the data unavailable. The pool data "
 "can also be wiped by setting the related option. Back up any critical data "
 "before exporting/disconnecting a pool."
 msgstr ""
+"'. L'exportation / déconnexion d'un volume rend les données indisponibles. "
+"Les données du volume peuvent également être effacées en définissant l'option "
+"correspondante. Sauvegardez toutes les données critiques avant "
+"d'exporter / déconnecter un volume."
 
 msgid ""
 ") before configuring other interfaces to avoid losing connection to the "
 "user interface."
 msgstr ""
+") avant de configurer d’autres interfaces pour éviter de perdre la "
+"connexion à l’interface utilisateur."
 
 msgid "*allow.sysvipc"
-msgstr ""
+msgstr "*allow.sysvipc"
 
 msgid ", new vdev is "
-msgstr ""
+msgstr ", nouveau vdev est "
 
 msgid ". All data on that pool was destroyed."
-msgstr ""
+msgstr ". Toutes les données de ce volume ont été détruites."
+
+msgid "0=Disabled, blank=inherit"
+msgstr "0=Disabled, blank=inherit"
 
 msgid "20 characters is the maximum length."
-msgstr ""
+msgstr "20 caractères est la longueur maximale."
 
 msgid ": Automatic update check failed. Please check system network settings."
-msgstr ""
+msgstr ": La vérification de la mise à jour automatique a échoué. Veuillez "
+"vérifier les paramètres réseau du système"
 
 msgid ""
 "<a                  "
@@ -62,6 +85,10 @@ msgid ""
 "        target=\"_blank\">pCloud Access Token</a>. These tokens             "
 "     can expire and require extension."
 msgstr ""
+"<a                  "
+"href=\"https://docs.pcloud.com/methods/intro/authentication.html\"          "
+"        target=\"_blank\">Jeton d'accès à pCloud</a>. Ces jetons peuvent "
+"expirer et nécessiter une extension."
 
 msgid ""
 "<a href=\"%%docurl%%/sharing.html%%webversion%%#block-iscsi\" "
@@ -70,6 +97,11 @@ msgid ""
 "anonymous discovery while <i>CHAP</i> and <i>Mutual CHAP</i> require "
 "authentication."
 msgstr ""
+"<a href=\"%%docurl%%/sharing.html%%webversion%%#block-iscsi\" "
+"target=\"_blank\">iSCSI</a> prend en charge plusieurs méthodes d'authentification "
+"utilisées par la cible pour détecter les périphériques valides. <i>None</i> "
+"autorise la découverte anonyme tandis que <i>CHAP</i> and <i>Mutual CHAP</i> "
+"nécessitent une authentification."
 
 msgid ""
 "<a "
@@ -81,7 +113,7 @@ msgid ""
 "<i>bucket-name.s3-website.region.amazonaws.com</i>.                  Refer "
 "to the AWS Documentation for a list of <a                  "
 "href=\"https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_website_"
-"region_endpoints\"                   target=\"_blank\">Simple Storage "
+"region_endpoints\"                  target=\"_blank\">Simple Storage "
 "Service Website                  Endpoints</a>."
 msgstr ""
 
@@ -135,7 +167,7 @@ msgid ""
 msgstr ""
 
 msgid "<b>Not recommended.</b> Allow multiple groups to share the same group ID."
-msgstr ""
+msgstr "<b>Non recommandé.</b> Autoriser plusieurs groupes à partager le même ID de groupe."
 
 msgid ""
 "<b>Root logins are discouraged.</b> Set to allow root logins. A password "
@@ -143,17 +175,26 @@ msgid ""
 "href=\"%%docurl%%/account.html%%webversion%%#users\" "
 "target=\"_blank\">Users</a>."
 msgstr ""
+"<b>Les connexions avec l'utilisateur root sont déconseillées</b> Défini pour autoriser les "
+"connexions root. Un mot de passe doit être défini pour l'utilisateur <i>root</i> dans "
+"<a href=\"%%docurl%%/account.html%%webversion%%#users\" "
+"target=\"_blank\">Utilisateurs</a>."
 
 msgid ""
 "<b>SED (<a "
 "href=\"%%docurl%%/system.html%%webversion%%#self-encrypting-drives\"        "
 "         target=\"_blank\">Self-Encrypting Drives</a>) Options</b>"
 msgstr ""
+"Options <b>SED (<a "
+"href=\"%%docurl%%/system.html%%webversion%%#self-encrypting-drives\"        "
+"         target=\"_blank\">Self-Encrypting Drives</a>)</b>"
 
 msgid ""
 "<b>WARNING:</b> This configuration file contains system              "
 "passwords and other sensitive data.<br>"
 msgstr ""
+"<b>ATTENTION:</b> Ce fichier de configuration contient des mots de passe système "
+"et d'autres données sensibles.<br>"
 
 msgid "<b>rsyncd</b> listens on this port."
 msgstr ""
@@ -243,8 +284,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"<i>Push</i> sends data to cloud storage. <i>Pull</i>                "
-"receives data from cloud storage."
+"<i>Push</i> sends data to cloud storage. <i>Pull</i> receives data from "
+"cloud storage."
 msgstr ""
 
 msgid ""
@@ -255,14 +296,12 @@ msgid ""
 msgstr ""
 
 msgid ""
-"<i>SYNC</i> makes files on the destination system identical                "
-"to those on the source. Files that have been removed from                "
-"the source are removed from the destination, similar to                "
-"<i>rsync --delete</i>.                <i>COPY</i> copies files from source "
-"to destination,                skipping files that are identical, similar "
-"to <i>rsync</i>.                <i>MOVE</i> copies files from source to "
-"destination,                deleting files from the source after the copy, "
-"similar                to <i>mv</i>."
+"<i>SYNC</i> makes files on the destination system identical to those on the "
+"source. Files that have been removed from the source are removed from the "
+"destination, similar to <i>rsync --delete</i>. <i>COPY</i> copies files "
+"from source to destination, skipping files that are identical, similar to "
+"<i>rsync</i>. <i>MOVE</i> copies files from source to destination, deleting "
+"files from the source after the copy, similar to <i>mv</i>."
 msgstr ""
 
 msgid ""
@@ -363,22 +402,22 @@ msgid ""
 msgstr ""
 
 msgid "ACL Type"
-msgstr ""
+msgstr "Type d'ACL"
 
 msgid "AD Timeout"
 msgstr ""
 
 msgid "AFP3 Unix Privs"
-msgstr ""
+msgstr "AFP3 Unix Privs"
 
 msgid "ATA Security User"
 msgstr ""
 
 msgid "About"
-msgstr ""
+msgstr "À propos"
 
 msgid "Access Key"
-msgstr ""
+msgstr "Clé d'accès"
 
 msgid "Access Key ID"
 msgstr ""
@@ -399,16 +438,16 @@ msgid ""
 msgstr ""
 
 msgid "Account"
-msgstr ""
+msgstr "Compte"
 
 msgid "Account ID or Application Key ID"
 msgstr ""
 
 msgid "Account Key"
-msgstr ""
+msgstr "Clé du compte"
 
 msgid "Account Name"
-msgstr ""
+msgstr "Nom du compte"
 
 msgid ""
 "Account to be used for guest access. Default is nobody. Account is required "
@@ -420,7 +459,7 @@ msgid "Accounts"
 msgstr ""
 
 msgid "Acoustic Level"
-msgstr ""
+msgstr "Niveau d'acoustique"
 
 msgid "Activate"
 msgstr ""
@@ -439,13 +478,13 @@ msgid ""
 msgstr ""
 
 msgid "Active Directory"
-msgstr ""
+msgstr "Active Directory"
 
 msgid "Active Directory IDMAP change!"
 msgstr ""
 
 msgid "Adapter Type"
-msgstr ""
+msgstr "Type d'adapater"
 
 msgid "Adapter Type:"
 msgstr ""
@@ -457,34 +496,34 @@ msgid "Add Additional IPv6 Alias"
 msgstr ""
 
 msgid "Add Additional Path"
-msgstr ""
+msgstr "Ajouter un chemin supplémentaire"
 
 msgid "Add Cache"
-msgstr ""
+msgstr "Ajouter un cache"
 
 msgid "Add Cloud Credential"
 msgstr ""
 
 msgid "Add Data"
-msgstr ""
+msgstr "Ajouter des données"
 
 msgid "Add Dataset"
-msgstr ""
+msgstr "Ajouter un Dataset"
 
 msgid "Add Log"
-msgstr ""
+msgstr "Ajouter un journal"
 
 msgid "Add Recovery Key"
-msgstr ""
+msgstr "Ajouter une clé de récupération"
 
 msgid "Add Spare"
-msgstr ""
+msgstr "Ajouter un disque de rechange"
 
 msgid "Add Zvol"
-msgstr ""
+msgstr "Ajouter un Zvol"
 
 msgid "Add a name for the new snapshot"
-msgstr ""
+msgstr "Ajouter un nom pour le nouvel instantané"
 
 msgid "Add a name for the new snapshot."
 msgstr ""
@@ -503,7 +542,7 @@ msgid ""
 msgstr ""
 
 msgid "Add any notes about this zvol."
-msgstr ""
+msgstr "Ajouter des notes sur ce zvol."
 
 msgid ""
 "Add lines to the jail <b>resolv.conf</b>. <b>Example:</b> <i>nameserver "
@@ -531,6 +570,12 @@ msgid "Adding data vdevs of different types is not supported."
 msgstr ""
 
 msgid ""
+"Additional <a                   "
+"href=\"https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8."
+"in\"                   target=\"_blank\">smartctl(8)</a> options."
+msgstr ""
+
+msgid ""
 "Additional <a                "
 "href=\"https://rsync.samba.org/ftp/rsync/rsync.html\"                "
 "target=\"_blank\">rsync(1)</a> options to include.<br>                Note: "
@@ -550,6 +595,10 @@ msgid ""
 "target=\"_blank\">afp.conf</a> parameters not covered by other option "
 "fields."
 msgstr ""
+"Paramètres <a "
+"href=\"http://netatalk.sourceforge.net/3.1/htmldocs/afp.conf.5.html\" "
+"target=\"_blank\">afp.conf</a> supplémentaires non couverts par d'autres "
+"champs d'options."
 
 msgid ""
 "Additional <a "
@@ -590,7 +639,7 @@ msgid ""
 msgstr ""
 
 msgid "Address"
-msgstr ""
+msgstr "Adresse"
 
 msgid "Address space limit in bytes for the jail."
 msgstr ""
@@ -619,13 +668,13 @@ msgid "Adv. Power Management"
 msgstr ""
 
 msgid "Advanced"
-msgstr ""
+msgstr "Avancé"
 
 msgid "Advanced Mode"
-msgstr ""
+msgstr "Mode avancé"
 
 msgid "Advanced Power Management"
-msgstr ""
+msgstr "Gestion avancée de l'alimentation"
 
 msgid ""
 "After entering the <b>Hostname, Username</b>, and <b>Password</b>, click "
@@ -960,6 +1009,9 @@ msgid ""
 "applied."
 msgstr ""
 
+msgid "Auxiliary Arguments"
+msgstr ""
+
 msgid "Auxiliary Groups"
 msgstr ""
 
@@ -970,9 +1022,6 @@ msgid "Auxiliary Parameters (ups.conf)"
 msgstr ""
 
 msgid "Auxiliary Parameters (upsd.conf)"
-msgstr ""
-
-msgid "Auxiliary arguments"
 msgstr ""
 
 msgid "Auxiliary parameters"
@@ -1011,6 +1060,9 @@ msgstr ""
 msgid ""
 "Backend used to map Windows security identifiers                  (SIDs) to "
 "UNIX UIDs and GIDs. Click Edit to configure                  that backend"
+msgstr ""
+
+msgid "Bandwidth Limit"
 msgstr ""
 
 msgid "Base DN"
@@ -1355,7 +1407,7 @@ msgstr ""
 msgid "Choices are <i>Minimum, Normal, or Debug</i>."
 msgstr ""
 
-msgid "Choices are <i>None, Auto, CHAP,</i> or   <i>Mutual CHAP</i>."
+msgid "Choices are <i>None, Auto, CHAP,</i> or <i>Mutual CHAP</i>."
 msgstr ""
 
 msgid ""
@@ -1923,6 +1975,9 @@ msgstr ""
 msgid "Create a recommended formation of vdevs in a pool."
 msgstr ""
 
+msgid "Create a snapshot of the dataset before pushing data."
+msgstr ""
+
 msgid "Create new Pool"
 msgstr ""
 
@@ -2207,6 +2262,9 @@ msgid ""
 msgstr ""
 
 msgid "Delay Updates"
+msgstr ""
+
+msgid "Delay connection until VM is up"
 msgstr ""
 
 msgid "Delete"
@@ -2518,6 +2576,12 @@ msgstr ""
 msgid "Editing the following disks:"
 msgstr ""
 
+msgid ""
+"Either single bandwidth limit or bandwidth limit schedule in rclone "
+"format.<br /> Example: \"08:00,512 12:00,10MB 13:00,512 18:00,30MB "
+"23:00,off\".<br /> Default unit is kilobytes."
+msgstr ""
+
 msgid "Email"
 msgstr ""
 
@@ -2609,8 +2673,8 @@ msgid "Enable service"
 msgstr ""
 
 msgid ""
-"Enable this Cloud Sync Task. Unset to disable this Cloud                "
-"Sync Task without deleting it."
+"Enable this Cloud Sync Task. Unset to disable this Cloud Sync Task without "
+"deleting it."
 msgstr ""
 
 msgid ""
@@ -2682,13 +2746,13 @@ msgstr ""
 msgid "Encryption Mode"
 msgstr ""
 
+msgid "Encryption Password"
+msgstr ""
+
 msgid "Encryption Rekey"
 msgstr ""
 
-msgid "Encryption password"
-msgstr ""
-
-msgid "Encryption salt"
+msgid "Encryption Salt"
 msgstr ""
 
 msgid ""
@@ -2789,11 +2853,11 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Enter a long string of random characters for use as                <a "
-"href=\"https://searchsecurity.techtarget.com/definition/salt\"              "
-"  target=\"_blank\">salt</a> for the encryption password.                "
-"<b>Warning:</b> Save and back up the encryption salt                value. "
-"Losing the salt value can result in data loss."
+"Enter a long string of random characters for use as <a "
+"href=\"https://searchsecurity.techtarget.com/definition/salt\" "
+"target=\"_blank\">salt</a> for the encryption password. <b>Warning:</b> "
+"Save and back up the encryption salt value. Losing the salt value can "
+"result in data loss."
 msgstr ""
 
 msgid "Enter a name for the VM."
@@ -3335,9 +3399,9 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Enter the password to encrypt and decrypt remote data.                "
-"<b>Warning</b>: Always save and back up this password.                "
-"Losing the encryption password can result in data loss."
+"Enter the password to encrypt and decrypt remote data. <b>Warning</b>: "
+"Always save and back up this password. Losing the encryption password can "
+"result in data loss."
 msgstr ""
 
 msgid "Enter the password used to connect to the IPMI interface from a web browser."
@@ -3359,6 +3423,9 @@ msgid ""
 msgstr ""
 
 msgid "Enter the port used by the SSH server on the remote                 system."
+msgstr ""
+
+msgid "Enter the pre-defined S3 bucket to use."
 msgstr ""
 
 msgid ""
@@ -3512,6 +3579,9 @@ msgstr ""
 msgid "Estimated total raw data capacity"
 msgstr ""
 
+msgid "Exclude"
+msgstr ""
+
 msgid "Exec"
 msgstr ""
 
@@ -3534,6 +3604,9 @@ msgid "Export/Disconnect"
 msgstr ""
 
 msgid "Export/Disconnect Pool"
+msgstr ""
+
+msgid "Exporting Pool..."
 msgstr ""
 
 msgid "Extend"
@@ -3583,7 +3656,7 @@ msgstr ""
 msgid "File Permissions"
 msgstr ""
 
-msgid "Filename encryption"
+msgid "Filename Encryption"
 msgstr ""
 
 msgid "Filesystem type"
@@ -3613,6 +3686,12 @@ msgid "Flip"
 msgstr ""
 
 msgid "Folder"
+msgstr ""
+
+msgid "Follow Symlinks"
+msgstr ""
+
+msgid "Follow symlinks and copy the items to which they link."
 msgstr ""
 
 msgid ""
@@ -3981,6 +4060,12 @@ msgstr ""
 msgid "Importing Disk..."
 msgstr ""
 
+msgid "Importing Pool"
+msgstr ""
+
+msgid "Importing Pool..."
+msgstr ""
+
 msgid "In KiB/s. A default of <i>0</i> means unlimited."
 msgstr ""
 
@@ -3994,10 +4079,9 @@ msgstr ""
 
 msgid ""
 "Including the Password Secret Seed allows using this              "
-"configuration file with a new boot device. This also              decrypts "
-"all system passwords for reuse when the              configuration file is "
-"uploaded.              <b>Keep the configuration file safe and protect it "
-"from unauthorized access!</b>"
+"configuration file with a new boot device. It also              decrypts "
+"all passwords used on this system.              <b>Keep the configuration "
+"file safe and protect it from unauthorized access!</b>"
 msgstr ""
 
 msgid ""
@@ -4009,15 +4093,16 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Indicates the time of inactivity in minutes before the drive enters standby "
-"mode. This <a "
+"Indicates the time of inactivity in minutes before                   the "
+"drive enters standby mode. This <a                   "
 "href=\"https://forums.freenas.org/index.php?threads/how-to-find-out-if-a-"
-"drive-is-spinning-down-properly.2068/\" target=\"_blank\">forum post</a> "
-"demonstrates how to determine if a drive has spun down."
+"drive-is-spinning-down-properly.2068/\"                   "
+"target=\"_blank\">forum post</a> demonstrates how to                   "
+"determine if a drive has spun down."
 msgstr ""
 
 msgid ""
-"Indicates the time of inactivity in minutes before the drives enter standby "
+"Indicates the time of inactivity in minutes before the drive enters standby "
 "mode. This <a "
 "href=\"https://forums.freenas.org/index.php?threads/how-to-find-out-if-a-"
 "drive-is-spinning-down-properly.2068/\" target=\"_blank\">forum post</a> "
@@ -4507,6 +4592,12 @@ msgid "Mode"
 msgstr ""
 
 msgid ""
+"Modify for disks that understand <a                   "
+"href=\"https://en.wikipedia.org/wiki/Automatic_acoustic_management\"        "
+"           target=\"_blank\">AAM</a>."
+msgstr ""
+
+msgid ""
 "Modify for disks that understand <a "
 "href=\"https://en.wikipedia.org/wiki/Automatic_acoustic_management\" "
 "target=\"_blank\">AAM</a>."
@@ -4693,6 +4784,11 @@ msgstr ""
 msgid ""
 "New users are not given <b>su</b> permissions if                      "
 "<i>wheel</i> is their primary group."
+msgstr ""
+
+msgid ""
+"Newline-separated list of files and directories to exclude from sync.<br /> "
+"See https://rclone.org/filtering/ for more details on --exclude option."
 msgstr ""
 
 msgid "Next"
@@ -5152,6 +5248,9 @@ msgstr ""
 msgid "Portal Group ID"
 msgstr ""
 
+msgid "Post-script"
+msgstr ""
+
 msgid "Power Mode"
 msgstr ""
 
@@ -5166,6 +5265,9 @@ msgstr ""
 msgid ""
 "Power of 2 in seconds; cannot be lower than 4 or       higher than <i>Max. "
 "Poll</i>."
+msgstr ""
+
+msgid "Pre-script"
 msgstr ""
 
 msgid "Prefer"
@@ -5244,12 +5346,18 @@ msgstr ""
 msgid "Quiet"
 msgstr ""
 
+msgid "Quota critical alert at, %"
+msgstr ""
+
 msgid ""
 "Quota for each Time Machine backup on this share (in GiB). Note that this "
 "change will be applied only after share re-mount."
 msgstr ""
 
 msgid "Quota for this dataset"
+msgstr ""
+
+msgid "Quota warning alert at, %"
 msgstr ""
 
 msgid "RCTL Limits"
@@ -5369,6 +5477,9 @@ msgstr ""
 msgid "Remote Auth Token"
 msgstr ""
 
+msgid "Remote Encryption"
+msgstr ""
+
 msgid "Remote Graphite Server Hostname"
 msgstr ""
 
@@ -5403,9 +5514,6 @@ msgid "Remote SSH Port"
 msgstr ""
 
 msgid "Remote ZFS Pool/Dataset"
-msgstr ""
-
-msgid "Remote encryption"
 msgstr ""
 
 msgid "Remove"
@@ -5638,6 +5746,9 @@ msgstr ""
 msgid "Save VLAN Interface Changes"
 msgstr ""
 
+msgid "Save configuration settings from this machine before updating?"
+msgstr ""
+
 msgid "Save notes about the jail."
 msgstr ""
 
@@ -5663,6 +5774,12 @@ msgid "Schema mode"
 msgstr ""
 
 msgid "Script"
+msgstr ""
+
+msgid "Script to execute after running sync."
+msgstr ""
+
+msgid "Script to execute before running sync."
 msgstr ""
 
 msgid "Scrub Boot Pool"
@@ -5780,8 +5897,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Select a schedule preset or choose <i>Custom</i> to open                the "
-"advanced scheduler."
+"Select a schedule preset or choose <i>Custom</i> to open the advanced "
+"scheduler."
 msgstr ""
 
 msgid "Select a schema when Samba Schema is set."
@@ -5950,8 +6067,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Select the cloud storage provider credentials from the                list "
-"of available Cloud Credentials."
+"Select the cloud storage provider credentials from the list of available "
+"Cloud Credentials."
 msgstr ""
 
 msgid "Select the country of the organization."
@@ -5964,10 +6081,9 @@ msgid "Select the device to attach."
 msgstr ""
 
 msgid ""
-"Select the directories or files to be sent to the cloud                for "
-"Push syncs, or the destination to be written for                Pull syncs. "
-"Be cautious about the destination of Pull                jobs to avoid "
-"overwriting existing files."
+"Select the directories or files to be sent to the cloud for Push syncs, or "
+"the destination to be written for Pull syncs. Be cautious about the "
+"destination of Pull jobs to avoid overwriting existing files."
 msgstr ""
 
 msgid ""
@@ -6144,13 +6260,14 @@ msgid "Set Keep Flag"
 msgstr ""
 
 msgid ""
-"Set by default if the disk supports S.M.A.R.T. Unset to disable any "
-"configured <a href=\"%%docurl%%/tasks.html%%webversion%%#s-m-a-r-t-tests\" "
-"target=\"_blank\">S.M.A.R.T. tests</a>."
+"Set by default if the disk supports S.M.A.R.T.                   Unset to "
+"disable any configured <a                   "
+"href=\"%%docurl%%/tasks.html%%webversion%%#s-m-a-r-t-tests\"                "
+"   target=\"_blank\">S.M.A.R.T. tests</a>."
 msgstr ""
 
 msgid ""
-"Set by default if the disks support S.M.A.R.T. Unset to disable any "
+"Set by default if the disk supports S.M.A.R.T. Unset to disable any "
 "configured <a href=\"%%docurl%%/tasks.html%%webversion%%#s-m-a-r-t-tests\" "
 "target=\"_blank\">S.M.A.R.T. tests</a>."
 msgstr ""
@@ -6168,17 +6285,15 @@ msgid ""
 "automatically configure network settings."
 msgstr ""
 
+msgid "Set for VNC connections to wait until the VM finishes booting."
+msgstr ""
+
 msgid ""
 "Set for the LDAP server to disable authentication and                  "
 "allow read and write access to any client."
 msgstr ""
 
 msgid "Set for the UPS to power off after shutting down the system."
-msgstr ""
-
-msgid ""
-"Set for the VNC client to wait until the VM has booted before attempting "
-"the connection."
 msgstr ""
 
 msgid ""
@@ -6573,10 +6688,9 @@ msgid "Set to enable the S3 web user interface."
 msgstr ""
 
 msgid ""
-"Set to encrypt files before transfer and store the                encrypted "
-"files on the remote system.                <a "
-"href=\"https://rclone.org/crypt/\"                target=\"_blank\">rclone "
-"Crypt</a> is used."
+"Set to encrypt files before transfer and store the encrypted files on the "
+"remote system. <a href=\"https://rclone.org/crypt/\" "
+"target=\"_blank\">rclone Crypt</a> is used."
 msgstr ""
 
 msgid "Set to encrypt the shared file names."
@@ -7179,6 +7293,9 @@ msgstr ""
 msgid "Successfully updated."
 msgstr ""
 
+msgid "Successfully upgraded plugin."
+msgstr ""
+
 msgid "Suffix for LDAP-based users that need superuser access."
 msgstr ""
 
@@ -7314,6 +7431,9 @@ msgid "TLS No Session Reuse Required"
 msgstr ""
 
 msgid "TLS Policy"
+msgstr ""
+
+msgid "Take Snapshot"
 msgstr ""
 
 msgid "Target"
@@ -7544,12 +7664,6 @@ msgid ""
 "the disks in the pool for a general use case."
 msgstr ""
 
-msgid "These are the FreeBSD device names for each disk."
-msgstr ""
-
-msgid "These are the serial numbers of the disks."
-msgstr ""
-
 msgid "Third DNS server"
 msgstr ""
 
@@ -7637,6 +7751,9 @@ msgid "Train"
 msgstr ""
 
 msgid "Transfer Mode"
+msgstr ""
+
+msgid "Transfers"
 msgstr ""
 
 msgid "Tunables"
@@ -7753,10 +7870,28 @@ msgstr ""
 msgid "Updates successfully downloaded"
 msgstr ""
 
+msgid "Upgrade"
+msgstr ""
+
 msgid "Upgrade Pool"
 msgstr ""
 
+msgid "Upgrade selected jails failed."
+msgstr ""
+
+msgid "Upgrade selected jails started."
+msgstr ""
+
+msgid "Upgrade selected jails succeeded."
+msgstr ""
+
 msgid "Upgraded"
+msgstr ""
+
+msgid "Upgrading Jail"
+msgstr ""
+
+msgid "Upgrading Plugin"
 msgstr ""
 
 msgid "Upload"
@@ -7777,6 +7912,9 @@ msgid ""
 msgstr ""
 
 msgid "Uptime"
+msgstr ""
+
+msgid "Use --fast-list"
 msgstr ""
 
 msgid "Use <i>ALL</i> keyword or a list of initiator hostnames separated by spaces."
@@ -7960,9 +8098,6 @@ msgstr ""
 msgid "WARNING: Exporting/disconnecting '"
 msgstr ""
 
-msgid "Wait to boot"
-msgstr ""
-
 msgid "Wallclock time in seconds."
 msgstr ""
 
@@ -8139,6 +8274,12 @@ msgid "Zero Device Numbers"
 msgstr ""
 
 msgid "Zeroconf share discovery"
+msgstr ""
+
+msgid ""
+"[Use fewer transactions in exchange for more "
+"RAM.](https://rclone.org/docs/#fast-list) This can also speed up or slow "
+"down the transfer."
 msgstr ""
 
 msgid "allow.chflags"
