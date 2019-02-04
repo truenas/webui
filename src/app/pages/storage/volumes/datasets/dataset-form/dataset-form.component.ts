@@ -61,6 +61,10 @@ export class DatasetFormComponent implements Formconfiguration{
   public data: any;
   public parent_data: any;
 
+  protected size_fields = ['quota', 'refquota', 'reservation', 'refreservation'];
+  protected OrigSize = {};
+  protected OrigUnit = {};
+  protected OrigDec = {};
 
   public custActions: Array<any> = [
     {
@@ -415,7 +419,7 @@ export class DatasetFormComponent implements Formconfiguration{
       data.name = this.parent + "/" + data.name;
     }
 
-    if( this.isBasicMode === true ) {
+    if( this.isNew === true && this.isBasicMode === true ) {
       data.refquota = null;
       data.quota = null;
       data.refreservation = null;
@@ -425,10 +429,16 @@ export class DatasetFormComponent implements Formconfiguration{
 
     }
     // calculate and delete _unit
-    data.refquota = data.refquota * this.byteMap[data.refquota_unit];
-    data.quota = data.quota * this.byteMap[data.quota_unit];
-    data.refreservation = data.refreservation * this.byteMap[data.refreservation_unit];
-    data.reservation = data.reservation * this.byteMap[data.reservation_unit];
+      for (let i =0; i < this.size_fields.length; i++) {
+        const field = this.size_fields[i];
+        const unit = field + '_unit';
+        if (this.OrigDec[field] !== data[field] || this.OrigUnit[field] !== data[unit]) {
+          data[field] = Math.round(data[field] * this.byteMap[data[unit]]);
+        } else { 
+          data[field] = this.OrigSize[field];
+        }
+      }
+
     delete data.refquota_unit;
     delete data.quota_unit;
     delete data.refreservation_unit;
@@ -628,10 +638,16 @@ export class DatasetFormComponent implements Formconfiguration{
   }
 
   resourceTransformIncomingRestData(wsResponse): any {
-     const refquota = this.getFieldValueOrRaw(wsResponse.refquota);
-     const quota = this.getFieldValueOrRaw(wsResponse.quota);
-     const refreservation = this.getFieldValueOrRaw(wsResponse.refreservation);
-     const reservation = this.getFieldValueOrRaw(wsResponse.reservation);
+    const sizeValues = {};
+    for (let i = 0; i < this.size_fields.length; i++) {
+      const field = this.size_fields[i];
+      if (wsResponse[field] && wsResponse[field].rawvalue) {
+        this.OrigSize[field] = wsResponse[field].rawvalue;
+      }
+      sizeValues[field] = this.getFieldValueOrRaw(wsResponse[field]);
+      this.OrigDec[field] = sizeValues[field] ? sizeValues[field].substring(0, sizeValues[field].length - 1) : 0;
+      this.OrigUnit[field] = sizeValues[field] ? sizeValues[field].substr(-1, 1) : sizeValues[field];
+    }
 
      const returnValue: DatasetFormData = {
         name: this.getFieldValueOrRaw(wsResponse.name),
@@ -642,17 +658,17 @@ export class DatasetFormComponent implements Formconfiguration{
         compression: this.getFieldValueOrRaw(wsResponse.compression),
         copies: this.getFieldValueOrRaw(wsResponse.copies),
         deduplication: this.getFieldValueOrRaw(wsResponse.deduplication),
-        quota: quota ? quota.substring(0, quota.length - 1) : 0,
-        quota_unit: quota ? quota.substr(-1, 1) : quota,
+        quota: this.OrigDec['quota'],
+        quota_unit: this.OrigUnit['quota'],
         readonly: this.getFieldValueOrRaw(wsResponse.readonly),
         exec: this.getFieldValueOrRaw(wsResponse.exec),
         recordsize: this.getFieldValueOrRaw(wsResponse.recordsize),
-        refquota: refquota ? refquota.substring(0, refquota.length - 1) : 0,
-        refquota_unit: refquota ? refquota.substr(-1, 1) : refquota,
-        refreservation: refreservation ? refreservation.substring(0, refreservation.length - 1) : 0,
-        refreservation_unit: refreservation ? refreservation.substr(-1, 1) : refreservation,
-        reservation: reservation ? reservation.substring(0, reservation.length - 1) : 0,
-        reservation_unit: reservation ? reservation.substr(-1, 1) : reservation,
+        refquota: this.OrigDec['refquota'],
+        refquota_unit: this.OrigUnit['refquota'],
+        refreservation: this.OrigDec['refreservation'],
+        refreservation_unit: this.OrigUnit['refreservation'],
+        reservation: this.OrigDec['reservation'],
+        reservation_unit: this.OrigUnit['reservation'],
         snapdir: this.getFieldValueOrRaw(wsResponse.snapdir),
         sync: this.getFieldValueOrRaw(wsResponse.sync)
      };
@@ -663,7 +679,7 @@ export class DatasetFormComponent implements Formconfiguration{
     //    returnValue.recordsize = "" + ( 1024 * value ) + "K";
     //  }
 
-     if (quota || refquota || refreservation || reservation) {
+     if (sizeValues['quota'] || sizeValues['refquota'] || sizeValues['refreservation'] || sizeValues['reservation']) {
        this.isBasicMode = false;
      }
 
