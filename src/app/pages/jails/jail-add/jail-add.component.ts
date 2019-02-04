@@ -577,6 +577,10 @@ export class JailAddComponent implements OnInit {
         {
           label: 'none',
           value: 'none',
+        },
+        {
+          label: 'auto',
+          value: 'auto',
         }
       ]
     },
