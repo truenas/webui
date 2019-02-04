@@ -532,7 +532,9 @@ individual devfs ruleset. Allow the creation of <i>tun</i> devices in \
 the jail.'),
 
 rtsold_placeholder: T('rtsold'),
-rtsold_tooltip: T(''),
+rtsold_tooltip: T('Use <a href="https://www.freebsd.org/cgi/man.cgi?query=rtsold" \
+target="_blank">rtsold(8)</a> as part of the IPv6 autoconfiguration process. \
+Sends ICMPv6 Router Solicitation messages to the interfaces to discover new routers.'),
 
 // rctl config
 memoryuse_placeholder: T('memoryuse'),

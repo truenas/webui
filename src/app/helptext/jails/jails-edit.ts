@@ -509,7 +509,9 @@ allow_tun_placeholder: T('allow_tun'),
 allow_tun_tooltip: T(''),
 
 rtsold_placeholder: T('rtsold'),
-rtsold_tooltip: T(''),
+rtsold_tooltip: T('Use <a href="https://www.freebsd.org/cgi/man.cgi?query=rtsold" \
+target="_blank">rtsold(8)</a> as part of the IPv6 autoconfiguration process. \
+Sends ICMPv6 Router Solicitation messages to the interfaces to discover new routers.'),
 
 //rctl config
 memoryuse_placeholder: T('memoryuse'),
