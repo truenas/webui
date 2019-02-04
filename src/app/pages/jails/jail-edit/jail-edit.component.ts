@@ -633,6 +633,10 @@ export class JailEditComponent implements OnInit, AfterViewInit {
         {
           label: 'none',
           value: 'none',
+        },
+        {
+          label: 'auto',
+          value: 'auto',
         }
       ],
       disabled: false,

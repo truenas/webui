@@ -570,6 +570,10 @@ export class PluginAdvancedAddComponent implements OnInit {
         {
           label: 'none',
           value: 'none',
+        },
+        {
+          label: 'auto',
+          value: 'auto',
         }
       ]
     },
