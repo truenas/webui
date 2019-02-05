@@ -430,10 +430,10 @@ mac_prefix_tooltip: T('Enter a valid MAC address vendor prefix. \
 <b>Example:</b> <i>E4F4C6</i>'),
 
 vnet_default_interface_placeholder: T('vnet_default_interface'),
-vnet_default_interface_tooltip: T('Default network interface used for the VNET bridge \
-interface in the jail. Only takes effect when \
-<i>VNET</i> is set and bridge interfaces are not \
-active.'),
+vnet_default_interface_tooltip: T('Set to <i>auto</i> by defualt. \
+Default network interface used for the VNET bridge interface in the jail. Only \
+takes effect when <i>VNET</i> is set. When set to auto, the jail uses \
+the network interface with the default route.'),
 
 vnet0_mac_placeholder: T('vnet0_mac'),
 vnet0_mac_tooltip: T('Leave this field empty to generate random MAC \
