@@ -431,7 +431,7 @@ mac_prefix_tooltip: T('Enter a valid MAC address vendor prefix. \
 
 vnet_default_interface_placeholder: T('vnet_default_interface'),
 vnet_default_interface_tooltip: T('Set the default VNET interface. \
-Only takes effect when VNET is set. Choose a specific \
+Only takes effect when <i>VNET</i> is set. Choose a specific \
 interface, or set to <i>auto</i> to use the interface that has the \
 default route. Choose <i>none</i> to not set a default VNET \
 interface.'),
