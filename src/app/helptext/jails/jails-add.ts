@@ -531,10 +531,10 @@ allow_tun_tooltip: T('Reveal <i>tun</i> devices for the jail with an \
 individual devfs ruleset. Allow the creation of <i>tun</i> devices in \
 the jail.'),
 
-rtsold_placeholder: T('Autoconfigure IPv6 With rtsold'),
+rtsold_placeholder: T('Autoconfigure IPv6 with rtsold'),
 rtsold_tooltip: T('Use <a href="https://www.freebsd.org/cgi/man.cgi?query=rtsold" \
-target="_blank">rtsold(8)</a> as part of the IPv6 autoconfiguration process. \
-Sends ICMPv6 Router Solicitation messages to the interfaces to discover new routers.'),
+target="_blank">rtsold(8)</a> as part of IPv6 autoconfiguration. \
+Send ICMPv6 Router Solicitation messages to interfaces to discover new routers.'),
 
 // rctl config
 memoryuse_placeholder: T('memoryuse'),

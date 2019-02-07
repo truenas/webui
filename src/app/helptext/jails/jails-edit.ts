@@ -508,10 +508,10 @@ jail_zfs_mountpoint_tooltip: T('Enter the mountpoint for the \
 allow_tun_placeholder: T('allow_tun'),
 allow_tun_tooltip: T(''),
 
-rtsold_placeholder: T('Autoconfigure IPv6 With rtsold'),
+rtsold_placeholder: T('Autoconfigure IPv6 with rtsold'),
 rtsold_tooltip: T('Use <a href="https://www.freebsd.org/cgi/man.cgi?query=rtsold" \
-target="_blank">rtsold(8)</a> as part of the IPv6 autoconfiguration process. \
-Sends ICMPv6 Router Solicitation messages to the interfaces to discover new routers.'),
+target="_blank">rtsold(8)</a> as part of IPv6 autoconfiguration. \
+Send ICMPv6 Router Solicitation messages to interfaces to discover new routers.'),
 
 //rctl config
 memoryuse_placeholder: T('memoryuse'),
