@@ -8,6 +8,9 @@ uuid_placeholder: T('Jail Name'),
 uuid_tooltip: T('Required. Can only contain alphanumeric characters \
 Aa-Zz 0-9), dashes (-), or underscores (_).'),
 
+jailtype_placeholder: T('Jail Type'),
+jailtype_tooltip: T(''),
+
 release_placeholder: T('Release'),
 release_tooltip: T('Choose the FreeBSD release to use as the jail \
 operating system. Releases that have already \
