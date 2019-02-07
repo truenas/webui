@@ -22,6 +22,7 @@ import { EntityUtils } from '../../common/entity/utils';
 import { DialogService, NetworkService } from '../../../services';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 import helptext from '../../../helptext/jails/jails-add';
+import { utils } from 'protractor';
 
 @Component({
   selector: 'jail-add',
@@ -916,6 +917,7 @@ export class JailAddComponent implements OnInit {
   protected ip6_interfaceField: any;
   protected ip6_prefixField: any;
   protected vnet_default_interfaceField:any;
+  protected template_list: string[];
 
   constructor(protected router: Router,
     protected jailService: JailService,
@@ -957,6 +959,20 @@ export class JailAddComponent implements OnInit {
 
   ngOnInit() {
     this.releaseField = _.find(this.basicfieldConfig, { 'name': 'release' });
+    this.template_list = new Array<string>();
+    // get jail templates as release options
+    this.ws.call('jail.list_resource', ["TEMPLATE"]).subscribe(
+      (res) => {
+        for (const i in res) {
+          this.template_list.push(res[i][1]);
+          this.releaseField.options.push({ label: res[i][1] + '(template)', value: res[i][1] });
+        }
+      },
+      (err) => {
+        new EntityUtils().handleWSError(this, err, this.dialogService);
+      }
+    )
+
     this.ws.call('system.info').subscribe((res) => {
       this.currentServerVersion = Number(_.split(res.version, '-')[1]);
       this.jailService.getLocalReleaseChoices().subscribe(
@@ -1185,8 +1201,8 @@ export class JailAddComponent implements OnInit {
 
     if (value['jailtype'] === 'basejail') {
       value['basejail'] = true;
-      delete value['jailtype'];
     }
+    delete value['jailtype'];
 
     if (value['ip4_addr'] == '' || value['ip4_addr'] == undefined) {
       delete value['ip4_addr'];
@@ -1244,6 +1260,10 @@ export class JailAddComponent implements OnInit {
       }
     }
     value['props'] = property;
+
+    if (_.indexOf(this.template_list, value['release']) > -1) {
+      value['template'] = value['release'];
+    }
 
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Creating Jail") }, disableClose: true });
     this.dialogRef.componentInstance.setDescription(T("Creating Jail..."));
