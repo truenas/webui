@@ -55,6 +55,23 @@ export class JailAddComponent implements OnInit {
     },
     {
       type: 'select',
+      name: 'jailtype',
+      placeholder: helptext.jailtype_placeholder,
+      tooltip: helptext.jailtype_tooltip,
+      options: [
+        {
+          label: 'Default (clone jails)',
+          value: 'default',
+        },
+        {
+          label: 'Basejail',
+          value: 'basejail',
+        }
+      ],
+      value: 'default',
+    },
+    {
+      type: 'select',
       name: 'release',
       placeholder: helptext.release_placeholder,
       tooltip: helptext.release_tooltip,
@@ -658,12 +675,12 @@ export class JailAddComponent implements OnInit {
       placeholder: helptext.mount_linprocfs_placeholder,
       tooltip: helptext.mount_linprocfs_tooltip,
     },
-    // {
-    //   type: 'checkbox',
-    //   name: 'template',
-    //   placeholder: helptext.template_placeholder,
-    //   tooltip: helptext.template_tooltip,
-    // },
+    {
+      type: 'checkbox',
+      name: 'template',
+      placeholder: helptext.template_placeholder,
+      tooltip: helptext.template_tooltip,
+    },
     {
       type: 'checkbox',
       name: 'host_time',
@@ -1163,8 +1180,14 @@ export class JailAddComponent implements OnInit {
     event.preventDefault();
     event.stopPropagation();
     this.error = null;
-    let property: any = [];
-    let value = _.cloneDeep(this.formGroup.value);
+    const property: any = [];
+    const value = _.cloneDeep(this.formGroup.value);
+
+    if (value['jailtype'] === 'basejail') {
+      value['basejail'] = true;
+      delete value['jailtype'];
+    }
+
     if (value['ip4_addr'] == '' || value['ip4_addr'] == undefined) {
       delete value['ip4_addr'];
     } else {
@@ -1212,7 +1235,7 @@ export class JailAddComponent implements OnInit {
               }
               delete value[i];
           } else {
-            if (i != 'uuid' && i != 'release') {
+            if (i != 'uuid' && i != 'release' && i != 'basejail') {
               property.push(i + '=' + value[i]);
               delete value[i];
             }
