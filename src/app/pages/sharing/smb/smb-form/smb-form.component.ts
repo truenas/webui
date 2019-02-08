@@ -83,8 +83,8 @@ export class SMBFormComponent implements OnDestroy {
     {
       type: 'checkbox',
       name: 'cifs_guestok',
-      placeholder: helptext_sharing_smb.placeholer_guestonly,
-      tooltip: helptext_sharing_smb.tooltip_guestonly
+      placeholder: helptext_sharing_smb.placeholder_guestok,
+      tooltip: helptext_sharing_smb.tooltip_guestok
     },
     {
       type: 'checkbox',
