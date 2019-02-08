@@ -226,9 +226,11 @@ export class SMBFormComponent implements OnDestroy {
         .subscribe((res) => {
           this.cifs_vfsobjects =
               _.find(this.fieldConfig, {'name': "cifs_vfsobjects"});
+          const options = [];
           res.forEach((item) => {
-            this.cifs_vfsobjects.options.push({label : item, value : item});
+            options.push({label : item, value : item});
           });
+          this.cifs_vfsobjects.options = _.sortBy(options, ['label']);
         });
     if (entityForm.isNew) {
       entityForm.formGroup.controls['cifs_vfsobjects'].setValue(['zfs_space','zfsacl','streams_xattr']);
