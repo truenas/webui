@@ -207,12 +207,6 @@ export class AdvancedComponent implements OnDestroy {
                 in logs to precisely identify systems with similar\
                 hostnames.')
   }, {
-    type: 'checkbox',
-    name: 'cpu_in_percentage',
-    placeholder: T('Report CPU usage in percentage'),
-    tooltip: T('Set to display CPU usage as percentages in Reporting.')
-  },
-  {
     type: 'paragraph',
     name: 'sed_options_message',
     paraText: T('<b>SED (<a href="%%docurl%%/system.html%%webversion%%#self-encrypting-drives"\
