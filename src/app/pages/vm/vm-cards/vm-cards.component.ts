@@ -46,16 +46,16 @@ export class VmCardsComponent  implements OnDestroy {
     {name : 'Type', prop : 'vm_type', hidden: false},
     {name : 'Description', prop : 'description', hidden: true },
     {name : 'Virtual CPUs', prop : 'vcpus', hidden: false},
-    {name : 'Memory Size (MiB)', prop : 'memory',hidden: false}, 
+    {name : 'Memory Size (MiB)', prop : 'memory',hidden: false},
     {name : 'Boot Loader Type', prop : 'bootloader', hidden: true },
     {name: 'Autostart', prop : 'autostart',hidden: false},
-    
+
   ];
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
   };
-  
+
 
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService,
               private core:CoreService,private dialog: DialogService,protected loader: AppLoaderService,
@@ -77,7 +77,7 @@ export class VmCardsComponent  implements OnDestroy {
     return vms;
   }
 
-  afterInit(entityTable: EntityTableComponent) { 
+  afterInit(entityTable: EntityTableComponent) {
     this.entityTable = entityTable;
     this.core.emit({name: "VmProfilesRequest"});
      this.core.register({observerClass:this,eventName:"VmStartFailure"}).subscribe((evt:CoreEvent) => {
@@ -142,7 +142,7 @@ export class VmCardsComponent  implements OnDestroy {
               args.push({"overcommit": checkbox});
               this.core.emit({name: eventName, data:args});
               this.setTransitionState("STARTING", start_row);
-            } 
+            }
           });
         }
       });
@@ -164,7 +164,7 @@ export class VmCardsComponent  implements OnDestroy {
             if (res) {
               this.core.emit({name: eventName, data:args});
               this.setTransitionState("DELETING", delete_row);
-            } 
+            }
           });
       },
     });
@@ -210,7 +210,7 @@ export class VmCardsComponent  implements OnDestroy {
   }
   getAddActions() {
     return [{
-        label: "Add Docker Container",
+        label: "Add Docker Host",
         onClick: () => {
           this.router.navigate(
             new Array('').concat(["vm", "dockerwizard"]));
