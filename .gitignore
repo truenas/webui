@@ -63,3 +63,4 @@ auto_config.py
 # generated screenshot files
 /tests/screenshot/*.png
 .vs/slnx.sqlite
+github-pr.json
