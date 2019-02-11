@@ -350,7 +350,6 @@ export class EntityTableComponent /*extends ViewControllerComponent*/ implements
     }
 
     this.rows = rows;
-	console.log(rows)
 
     if (this.conf.dataHandler) {
       this.conf.dataHandler(this);
