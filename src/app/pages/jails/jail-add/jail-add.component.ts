@@ -61,7 +61,7 @@ export class JailAddComponent implements OnInit {
       tooltip: helptext.jailtype_tooltip,
       options: [
         {
-          label: 'Default (clone jail)',
+          label: 'Default (Clone Jail)',
           value: 'default',
         },
         {

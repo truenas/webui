@@ -59,7 +59,7 @@ export class JailWizardComponent {
           tooltip: helptext.jailtype_tooltip,
           options: [
             {
-              label: 'Default (clone jail)',
+              label: 'Default (Clone Jail)',
               value: 'default',
             },
             {
