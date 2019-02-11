@@ -71,7 +71,9 @@ export const helptext_sharing_smb = {
  Forces guest access for all connections.'),
 
     placeholder_abe: T('Access Based Share Enumeration'),
-    tooltip_abe: T(''),
+    tooltip_abe: T('Restrict share visibility to users with read or write access\
+ to the share. See <a href="https://www.freebsd.org/cgi/man.cgi?query=smb.conf"\
+ target=_blank>smb.conf(5)</a>.'),
 
     placeholder_hostsallow: T('Hosts Allow'),
     tooltip_hostsallow: T('Enter a list of allowed hostnames or IP addresses.\
