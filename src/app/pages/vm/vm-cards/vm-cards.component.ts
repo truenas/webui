@@ -210,7 +210,7 @@ export class VmCardsComponent  implements OnDestroy {
   }
   getAddActions() {
     return [{
-        label: "Add Docker Host",
+        label: "Add ${dockerhost}",
         onClick: () => {
           this.router.navigate(
             new Array('').concat(["vm", "dockerwizard"]));
