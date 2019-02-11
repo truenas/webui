@@ -367,6 +367,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.rows = rows;
+	console.log(rows)
 
     if (this.conf.dataHandler) {
       this.conf.dataHandler(this);
