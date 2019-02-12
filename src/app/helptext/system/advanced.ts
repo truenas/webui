@@ -1,4 +1,5 @@
 import { Validators } from "@angular/forms";
+import { matchOtherValidator } from "app/pages/common/entity/entity-form/validators/password-validation";
 import { T } from "app/translate-marker";
 
 export const helptext_system_advanced = {
@@ -45,43 +46,54 @@ export const helptext_system_advanced = {
  target="_blank">Autotune section</a> of the guide for\
  more information.'),
 
-  debugkernel_placeholder: ,
-  debugkernel_tooltip: ,
+  debugkernel_placeholder: T('Enable Debug Kernel'),
+  debugkernel_tooltip: T('Set to boot a debug kernel after the next system\
+  reboot.'),
 
-  consolemsg_placeholder: ,
-  consolemsg_tooltip: ,
+  consolemsg_placeholder: T('Show console messages'),
+  consolemsg_tooltip: T('Display console messages in real time\
+ at the bottom of the browser.'),
 
-  motd_placeholder: ,
-  motd_tooltip: ,
+  motd_placeholder: T('MOTD Banner'),
+  motd_tooltip: T('The message to show when a user logs in with SSH.'),
 
-  traceback_placeholder: ,
-  traceback_tooltip: ,
+  traceback_placeholder: T('Show tracebacks in case of fatal error'),
+  traceback_tooltip: T('Provides a pop-up window of diagnostic information if a\
+ fatal error occurs.'),
 
-  advancedmode_placeholder: ,
-  advancedmode_tooltip: ,
+  advancedmode_placeholder: T('Show advanced fields by default'),
+  advancedmode_tooltip: T('Set to always show advanced fields, when available.'),
 
-  periodic_notifyuser_placeholder: ,
-  periodic_notifyuser_tooltip: ,
+  periodic_notifyuser_placeholder: T('Periodic Notification User'),
+  periodic_notifyuser_tooltip: T('Select a user to receive security output emails. This\
+ output runs nightly but only sends an email when the\
+ system reboots or encounters an error.'),
 
-  graphite_placeholder: ,
-  graphite_tooltip: ,
+  graphite_placeholder: T('Remote Graphite Server Hostname'),
+  graphite_tooltip: T('Enter the IP address or hostname of a remote server\
+ running Graphite.'),
 
-  fqdn_placeholder: ,
-  fqdn_tooltip: ,
+  fqdn_placeholder: T('Use FQDN for logging'),
+  fqdn_tooltip: T('Set to include the Fully-Qualified Domain Name (FQDN)\
+ in logs to precisely identify systems with similar\
+ hostnames.'),
 
-  cpu_in_percentage_placeholder: ,
-  cpu_in_percentage_tooltip: ,
+  cpu_in_percentage_placeholder: T('Report CPU usage in percentage'),
+  cpu_in_percentage_tooltip: T('Set to display CPU usage as percentages in Reporting.'),
 
-  sed_options_message_paragraph: ,
+  sed_options_message_paragraph: T('<b>SED (<a href="%%docurl%%/system.html%%webversion%%#self-encrypting-drives"\
+ target="_blank">Self-Encrypting Drives</a>) Options</b>'),
 
-  sed_user_placeholder: ,
-  sed_user_tooltip: ,
+  sed_user_placeholder: T('ATA Security User'),
+  sed_user_tooltip: T('User passed to <i>camcontrol security -u</i> to unlock\
+ SEDs'),
 
-  sed_passwd_placeholder: ,
-  sed_passwd_tooltip: ,
+  sed_passwd_placeholder: T('SED Password'),
+  sed_passwd_tooltip: T('Global password to unlock SEDs.'),
 
-  sed_passwd2_placeholder: ,
-  sed_passwd2_tooltip: ,
+  sed_passwd2_placeholder: T('Confirm SED Password'),
+  sed_passwd2_tooltip: T(''),
+  sed_passwd2_validation: [ matchOtherValidator('sed_passwd') ],
 
   swapondrive_warning: T("A swap size of 0 is STRONGLY DISCOURAGED."),
 };
