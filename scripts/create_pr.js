@@ -54,7 +54,7 @@ async function main() {
     await git("commit -m \'" + title + "\'");
     await git("push --set-upstream origin " + po_branch);
 
-    octokit.authenticate({
+    octokit.auth({
         type: 'token',
         token: config.token
     });
