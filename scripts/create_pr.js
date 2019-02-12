@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
-var exec = require('child_process').exec;
+const exec = require('child_process').exec;
+const path = require('path');
 const octokit = require('@octokit/rest')();
 const CONFIG_FILE = path.join(process.cwd(), './github-pr.json');
 
