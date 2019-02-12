@@ -50,7 +50,8 @@ async function main() {
     var po_branch = "PO-GENERATION-" + date + "-" + curr_branch
     await git("checkout -b " + po_branch);
     let title = "PO File automated PR " + date;
-    await git("commit -a -m " + title);
+    await git("add .")
+    await git("commit -m " + title);
     await git("push --set-upstream origin " + po_branch);
 
     octokit.authenticate({
