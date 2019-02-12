@@ -1,12 +1,9 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { helptext_system_ca } from 'app/helptext/system/ca';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
-
-import { RestService, WebSocketService, SystemGeneralService } from '../../../../services/';
+import { RestService, SystemGeneralService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'system-ca-add',
@@ -24,30 +21,28 @@ export class CertificateAuthoritySignComponent {
     {
       type : 'input',
       name : 'ca_id',
-      placeholder : T('CA ID'),
+      placeholder : helptext_system_ca.sign.ca_id.placeholder,
       isHidden: true,
     },
     {
       type : 'select',
       name : 'csr_cert_id',
-      placeholder : T('CSRs'),
-      tooltip: T('Select the Certificate Signing Request to sign the\
-                  Certificate Authority with.'),
+      placeholder : helptext_system_ca.sign.csr_cert_id.placeholder,
+      tooltip: helptext_system_ca.sign.csr_cert_id.tooltip,
       options : [
         {label: '-------', value: ''},
       ],
       value: '',
       required: true,
-      validation : [ Validators.required ]
+      validation: helptext_system_ca.sign.csr_cert_id.validation 
     },
     {
       type : 'input',
       name : 'name',
-      placeholder : T('Identifier'),
-      tooltip: T('Internal identifier of the certificate. Only\
-                  alphanumeric, "_" and "-" are allowed.'),
+      placeholder : helptext_system_ca.sign.name.placeholder,
+      tooltip: helptext_system_ca.sign.name.tooltip,
       required: true,
-      validation : [ Validators.required ]
+      validation: helptext_system_ca.sign.name.validation 
     }
   ];
 
