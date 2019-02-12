@@ -127,6 +127,7 @@
     "karma-coverage-istanbul-reporter": "1.4.1",
     "karma-jasmine": "~1.1.0",
     "karma-jasmine-html-reporter": "~0.2.2",
+    "octokit": "^1.0.0-hello-world",
     "po2json": "^0.4.5",
     "protractor": "5.4.1",
     "ts-node": "4.1.0",
