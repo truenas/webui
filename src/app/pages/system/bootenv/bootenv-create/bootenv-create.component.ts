@@ -1,11 +1,8 @@
-import {Component} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-
-import {RestService, WebSocketService, BootEnvService} from '../../../../services/';
-import { T } from '../../../../translate-marker';
-import {
-  FieldConfig
-} from '../../../common/entity/entity-form/models/field-config.interface';
+import { Component } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
+import { BootEnvService, RestService, WebSocketService } from '../../../../services/';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
 
 @Component({
@@ -34,8 +31,8 @@ export class BootEnvironmentCreateComponent {
         {
           type: 'input',
           name: 'name',
-          placeholder: T('Name'),
-          tooltip: T('Enter the name of the boot entry.'),
+          placeholder: helptext_system_bootenv.create_name_placeholder,
+          tooltip: helptext_system_bootenv.create_name_tooltip,
           validation : [ regexValidator(this.bootEnvService.bootenv_name_regex)],
           required: true
         },

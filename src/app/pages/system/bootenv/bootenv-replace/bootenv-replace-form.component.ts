@@ -1,23 +1,9 @@
-import {
-  ApplicationRef,
-  Component,
-  Injector,
-  Input,
-  QueryList,
-  ViewChildren
-} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {ActivatedRoute, Router} from '@angular/router';
-import * as moment from 'moment';
+import { ApplicationRef, Component, Injector } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs/Rx';
+import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { T } from '../../../../translate-marker';
-import {RestService, WebSocketService} from '../../../../services/';
-import {EntityUtils} from '../../../common/entity/utils';
-
-import { debug } from 'util';
-import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
 @Component({
    selector : 'bootenv-replace-form',
@@ -38,7 +24,7 @@ export class BootEnvReplaceFormComponent {
     {
       type: 'select', 
       name: 'dev', 
-      placeholder: T('Member Disk'),
+      placeholder: helptext_system_bootenv.replace_name_placeholder,
       options :[]
     },
 

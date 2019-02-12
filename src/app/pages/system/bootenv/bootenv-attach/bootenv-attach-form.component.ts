@@ -1,25 +1,11 @@
-import {
-  ApplicationRef,
-  Component,
-  Injector,
-  Input,
-  QueryList,
-  ViewChildren
-} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {ActivatedRoute, Router} from '@angular/router';
+import { ApplicationRef, Component, Injector } from '@angular/core';
 import { MatDialog, MatSnackBar } from '@angular/material';
-import * as moment from 'moment';
+import { ActivatedRoute, Router } from '@angular/router';
+import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs/Rx';
+import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
-
-import {RestService, WebSocketService} from '../../../../services/';
-import { T } from '../../../../translate-marker';
-import {EntityUtils} from '../../../common/entity/utils';
-
-import { debug } from 'util';
 
 @Component({
    selector : 'bootenv-attach-form',
@@ -41,17 +27,15 @@ export class BootEnvAttachFormComponent {
     {
       type: 'select',
       name: 'dev',
-      placeholder: T('Member Disk'),
-      tooltip : T('Select the device to attach.'),
+      placeholder: helptext_system_bootenv.dev_placeholder,
+      tooltip : helptext_system_bootenv.dev_tooltip,
       options :[]
     },
     {
       type: 'checkbox',
       name: 'expand',
-      placeholder: T('Use all disk space'),
-      tooltip : T('Gives control of how much of the new device is made\
-                   available to ZFS. Set to use the entire capacity of\
-                   the new device.'),
+      placeholder: helptext_system_bootenv.expand_placeholder,
+      tooltip : helptext_system_bootenv.expand_tooltip,
     },
 
   ]
