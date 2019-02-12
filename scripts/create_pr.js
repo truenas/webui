@@ -62,8 +62,8 @@ async function main() {
     let result = await octokit.pullRequests.create({
         owner: config.owner,
         repo: config.repo,
-        head: po_branch,
-        base: curr_branch,
+        head: curr_branch,
+        base: po_branch,
         title
     });
 

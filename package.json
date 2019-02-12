@@ -110,6 +110,7 @@
     "@angular/cli": "1.7.0-beta.3",
     "@angular/compiler-cli": "5.2.2",
     "@biesbjerg/ngx-translate-extract": "2.3.4",
+    "@octokit/rest": "^16.15.0",
     "@types/c3": "0.4.52",
     "@types/chartist": "0.9.38",
     "@types/hopscotch": "0.2.30",
