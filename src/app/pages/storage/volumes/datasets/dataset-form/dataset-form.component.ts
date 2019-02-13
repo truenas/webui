@@ -554,8 +554,6 @@ export class DatasetFormComponent implements Formconfiguration{
       entityForm.setDisabled('name',true);
       _.find(this.fieldConfig, {name:'name'}).tooltip = "Dataset name (read-only)."
     }
-<<<<<<< HEAD
-=======
     this.recordsize_fg = this.entityForm.formGroup.controls['recordsize'];
 
     this.recordsize_field = _.find(this.fieldConfig, {name:'recordsize'});
@@ -573,7 +571,6 @@ export class DatasetFormComponent implements Formconfiguration{
         }
       }
     });
->>>>>>> 27a1fe597... Bring back warning about dataset recordsize > min recommended size
   }
 
   preInit(entityForm: EntityFormComponent) {
