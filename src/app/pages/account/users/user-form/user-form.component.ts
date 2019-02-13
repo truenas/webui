@@ -2,7 +2,6 @@ import {Component} from '@angular/core';
 import {Router} from '@angular/router';
 import * as _ from 'lodash';
 
-import { T } from '../../../../translate-marker';
 import {
   RestService,
   WebSocketService,
@@ -10,12 +9,6 @@ import {
 } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import {
-  matchOtherValidator
-} from '../../../common/entity/entity-form/validators/password-validation';
-import {  DialogService } from '../../../../services/';
-import {Validators} from '@angular/forms';
-import { ChangeDetectorRef } from '@angular/core';
 import helptext from '../../../../helptext/account/user-form';
 
 @Component({
@@ -122,7 +115,7 @@ export class UserFormComponent {
           placeholder : helptext.user_form_uid_placeholder,
           tooltip : helptext.user_form_uid_tooltip,
           required: true,
-          validation : [ Validators.required ]
+          validation : helptext.user_form_uid_validation
         },
         {
           type : 'checkbox',
@@ -170,7 +163,7 @@ export class UserFormComponent {
       config:[
         {
           type : 'explorer',
-          class : 'meExplorer',
+          class : helptext.user_form_dirs_explorer_class,
           initial: '/mnt',
           explorerType: 'directory',
           name: helptext.user_form_dirs_explorer_name,
