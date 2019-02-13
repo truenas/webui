@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import { WebSocketService, CloudCredentialService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 
 @Component({
   selector: 'app-cloudcredentials-form',
@@ -854,7 +855,39 @@ export class CloudCredentialsFormComponent {
 
   protected providers: Array<any>;
   protected providerField: any;
+  protected entityForm: any;
 
+  public custActions: Array<any> = [
+    {
+      id : 'validCredential',
+      name : T('Verify Credential'),
+      function : () => {
+        const attributes = {};
+        const value = _.cloneDeep(this.entityForm.formGroup.value);
+        let attr_name: string;
+        console.log('validate credential', value);
+        for (const item in value) {
+          if (item != 'name' && item != 'provider') {
+            if (item != 'preview-GOOGLE_CLOUD_STORAGE') {
+              attr_name = item.split("-")[0];
+              attributes[attr_name] = value[item];
+            }
+            delete value[item];
+          }
+        }
+        delete value['name'];
+        value['attributes'] = attributes;
+
+        this.ws.call('cloudsync.credentials.verify', [value]).subscribe(
+          (res) => {
+            console.log(res);
+          },
+          (err) => {
+            console.log(this);
+            new EntityUtils().handleWSError(this.entityForm, err);
+          })
+      }
+    }];
   constructor(protected router: Router,
               protected aroute: ActivatedRoute,
               protected ws: WebSocketService,
@@ -885,6 +918,7 @@ export class CloudCredentialsFormComponent {
   }
 
   afterInit(entityForm: any) {
+    this.entityForm = entityForm;
     entityForm.submitFunction = this.submitFunction;
 
     entityForm.formGroup.controls['provider'].valueChanges.subscribe((res) => {
