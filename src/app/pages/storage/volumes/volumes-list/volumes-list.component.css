@@ -44,6 +44,8 @@
 
 .pool-icon {
     margin-left: 15px;
+    position: relative;
+    top: 10px;
 }
 
 .icon-row {
