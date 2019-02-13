@@ -465,7 +465,7 @@ export class UserFormComponent {
     if(parent.entityForm) {
       const username = parent.entityForm.formGroup.controls.username.value;
       if(username.length > 8 ){
-        _.find(parent.fieldConfig, { 'name': 'username' })['warnings']= T('Usernames of 8 characters or less are recommended for compatibility with application software, but up to 16 characters are allowed.');
+        _.find(parent.fieldConfig, { 'name': 'username' })['warnings']= helptext.user_form_blur_event2_warning;
       } else {
         _.find(parent.fieldConfig, { 'name': 'username' })['warnings']= null;
 
