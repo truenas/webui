@@ -1,8 +1,7 @@
-import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
+import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import * as _ from 'lodash';
-import { RestService, WebSocketService } from '../../../../services/';
-import { T } from '../../../../translate-marker';
+import { helptext_system_cloudcredentials } from 'app/helptext/system/cloudcredentials';
+import { WebSocketService } from '../../../../services/';
 
 @Component({
   selector : 'app-cloudcredentials-list',
@@ -14,7 +13,7 @@ export class CloudCredentialsListComponent {
   protected queryCall = 'cloudsync.credentials.query';
   protected route_success: string[] = [ 'system', 'cloudcredentials' ];
   protected route_add: string[] = ['system', 'cloudcredentials', 'add'];
-  protected route_add_tooltip: string = T('Add Cloud Credential');
+  protected route_add_tooltip: string = helptext_system_cloudcredentials.add_tooltip;
   protected route_edit: string[] = ['system', 'cloudcredentials', 'edit'];
   protected wsDelete = 'cloudsync.credentials.delete';
 
