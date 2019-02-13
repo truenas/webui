@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { MatSnackBar } from '@angular/material';
 import * as _ from 'lodash';
-import { WebSocketService, CloudCredentialService } from '../../../../services/';
+import { WebSocketService, CloudCredentialService, DialogService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -865,9 +866,12 @@ export class CloudCredentialsFormComponent {
         const attributes = {};
         const value = _.cloneDeep(this.entityForm.formGroup.value);
         let attr_name: string;
-        console.log('validate credential', value);
+
         for (const item in value) {
           if (item != 'name' && item != 'provider') {
+            if (!this.entityForm.formGroup.controls[item].valid) {
+              this.entityForm.formGroup.controls[item].markAsTouched();
+            }
             if (item != 'preview-GOOGLE_CLOUD_STORAGE') {
               attr_name = item.split("-")[0];
               attributes[attr_name] = value[item];
@@ -880,18 +884,23 @@ export class CloudCredentialsFormComponent {
 
         this.ws.call('cloudsync.credentials.verify', [value]).subscribe(
           (res) => {
-            console.log(res);
+            if (res.valid) {
+              this.snackBar.open(T('The Credential is valid.'), T('Close'), { duration: 5000 });
+            } else {
+              this.dialog.errorReport('Error', res.error);
+            }
           },
           (err) => {
-            console.log(this);
-            new EntityUtils().handleWSError(this.entityForm, err);
+            new EntityUtils().handleWSError(this.entityForm.conf, err);
           })
       }
     }];
   constructor(protected router: Router,
               protected aroute: ActivatedRoute,
               protected ws: WebSocketService,
-              protected cloudcredentialService: CloudCredentialService) {
+              protected cloudcredentialService: CloudCredentialService,
+              protected dialog: DialogService,
+              public snackBar: MatSnackBar) {
     this.providerField = _.find(this.fieldConfig, {'name': 'provider'});
     this.cloudcredentialService.getProviders().subscribe(
       (res) => {
