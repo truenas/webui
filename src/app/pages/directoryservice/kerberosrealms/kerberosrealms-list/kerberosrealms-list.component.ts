@@ -3,7 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { RestService } from '../../../../services/';
 
 import { T } from '../../../../translate-marker';
-import helptext from '../../../../helptext/directoryservice/kerberosrealms-list';
+import helptext from '../../../../helptext/directoryservice/kerberosrealms-form-list';
 
 @Component({
   selector: 'app-user-list',

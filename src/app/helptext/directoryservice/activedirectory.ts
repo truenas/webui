@@ -101,18 +101,17 @@ activedirectory_site_tooltip : T('Enter the relative distinguished name of the\
 
 activedirectory_dcname_name: 'ad_dcname',
 activedirectory_dcname_placeholder : T('Domain Controller'),
-activedirectory_dcname_tooltip : T('This is automatically added to the SRV record for the\
- domain. This system selects the closest responding controller when multiple controllers are specified.\
- Use a short form of the FQDN: <i>exampleserver</i>.'),
+activedirectory_dcname_tooltip : T('The server that manages user authentication and security as part of a\
+ Windows domain. Leave empty to use the DNS SRV records to automatically detect and connect to the domain\
+ controller. If the domain controller must be set manually, enter the server hostname or IP address.'),
 
 activedirectory_gcname_name: 'ad_gcname',
 activedirectory_gcname_placeholder : T('Global Catalog Server'),
-activedirectory_gcname_tooltip : T('This holds a full set of attributes for the domain in\
- which it resides and a subset of attributes for all objects in the Microsoft Active Directory Forest. The\
- primary two functions of a Global Catalog within the Microsoft Active Directory are logon capability and\
- Microsoft Active Directory queries. See <a\
- href="https://www.ibm.com/support/knowledgecenter/en/SSEQTP_9.0.0/com.ibm.websphere.base.doc/ae/csec_was_ad_globcat.html"\
- target="_blank">IBM Knowledge Center</a> for more details.'),
+activedirectory_gcname_tooltip : T('This holds a full set of attributes for the domain in which it resides\
+ and a subset of attributes for all objects in the Microsoft Active Directory Forest. See the\
+ <a href="https://redmine.ixsystems.com/issues/67870?issue_count=20&issue_position=3&next_issue_id=66430&prev_issue_id=72755" target="_blank">IBM\
+ Knowledge Center</a>. Leave empty to use the DNS SRV records to automatically detect and connect to the\
+ server. If the global catalog server must be entered manually, enter the server hostname or IP address.'),
 
 activedirectory_kerberos_realm_name: 'ad_kerberos_realm',
 activedirectory_kerberos_realm_placeholder : T('Kerberos Realm'),
