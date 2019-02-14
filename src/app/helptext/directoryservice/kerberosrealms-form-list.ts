@@ -2,6 +2,8 @@ import { T } from '../../translate-marker';
 import { Validators } from '@angular/forms';
 
 export default {
+
+// For Kerberos Realms form
 krbrealm_form_realm_name: 'krb_realm',
 krbrealm_form_realm_placeholder: T('Realm'),
 krbrealm_form_realm_tooltip: T('Enter the name of the realm.'),
@@ -29,5 +31,9 @@ krbrealm_form_custactions_basic_id: 'basic_mode',
 krbrealm_form_custactions_basic_name: 'Basic Mode',
 
 krbrealm_form_custactions_adv_id: 'advanced_mode',
-krbrealm_form_custactions_adv_name: 'Advanced Mode'
+krbrealm_form_custactions_adv_name: 'Advanced Mode',
+
+// For Kerberos Realms list
+krb_realmlist_deletemessage_title: 'Kerberos Realm',
+krb_realmlist_deletemessage_key_props: ['krb_realm']
 }

@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
-import helptext from '../../../../helptext/directoryservice/kerberoskeytabs';
+import helptext from '../../../../helptext/directoryservice/kerberoskeytabs-form-list';
 
 @Component({
   selector: 'app-kerberos-keytbas-form',
