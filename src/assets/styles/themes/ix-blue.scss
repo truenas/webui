@@ -1,7 +1,119 @@
 @import '~@angular/material/theming';
 @include mat-core();
-@import '../scss-imports/cssvars';
 
+// Use CSS custom properties for palette colors
+// via this mixin.
+@mixin variable($property, $variable, $fallback, $important:null) {
+  #{$property}: $fallback $important;
+  #{$property}: var($variable) $important;
+}
+
+// Solarized Color Palette - don't forget to add accents to theme.service!
+$bg1:    #dddddd; // Canvas like behind the cards
+$bg2:    #ffffff; // Main elements like cards
+$fg1:    #222222; // brighter fonts
+$fg2:    #333333; // normal fonts
+$alt-bg1:     #f8f8f2; // Tables
+$alt-bg2:     #fafaf5; // Menus
+$alt-fg1:     #181a26; // Tables
+$alt-fg2:     #282a36; // Menus
+$yellow:'#f0cb00';
+$orange:'#eec302';
+$red:'#ff0013';
+$magenta:'#d238ff';
+$violet:'#c17ecc';
+$blue:'#00a2ff';
+$cyan:'#00d0d6';
+$green:'#59d600';
+
+// Generated txt colors
+$yellow-txt:'#333';
+$orange-txt:'#eee';
+$red-txt:'#fff';
+$magenta-txt:'#fff';
+$violet-txt:'#fff';
+$blue-txt:'#fff';
+$cyan-txt:'#333';
+$green-txt:'#fff';
+$primary-txt:'#fff';
+$accent-txt:'#333';
+
+$primary: $blue;
+$accent: $yellow;
+$warn: $red;
+$tooltip:'inline';//display property
+$toggle_pw_display_prop: inline;
+$enableWarning: inline;
+
+// Logo images
+$logo: url('assets/images/light-logo.svg');
+$logo-text: url('assets/images/light-logo-text.svg');
+
+$md-primary: (
+    50 : #e0f2fa,
+    100 : #b3dff2,
+    200 : #80caea,
+    300 : #4db5e2,
+    400 : #26a5db,
+    500 : #0095d5,
+    600 : #008dd0,
+    700 : #0082ca,
+    800 : #0078c4,
+    900 : #0067ba,
+    A100 : #e3f1ff,
+    A200 : #b0d7ff,
+    A400 : #7dbdff,
+    A700 : #63b0ff,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
+$md-accent: (
+    50 : #fff8e1,
+    100 : #ffecb5,
+    200 : #ffe083,
+    300 : #ffd451,
+    400 : #ffca2c,
+    500 : #ffc107,
+    600 : #ffbb06,
+    700 : #ffb305,
+    800 : #ffab04,
+    900 : #ff9e02,
+    A100 : #ffffff,
+    A200 : #fffaf2,
+    A400 : #ffe4bf,
+    A700 : #ffd9a6,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #000000,
+        600 : #000000,
+        700 : #000000,
+        800 : #000000,
+        900 : #000000,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
 
 // mandatory stuff for theming
 $freenas-primary: mat-palette($md-primary);
@@ -16,19 +128,19 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 @mixin mat-ripple-theme($theme) {
   .mat-checkbox .mat-ripple-element, .mat-radio-button .mat-ripple-element {
     @include variable(background, --accent, $accent, !important);
-//    opacity: 0.4;
+    opacity: 0.4;
   }
   .mat-button.mat-primary .mat-ripple-element, 
   .mat-icon-button.mat-primary .mat-ripple-element,
   .mat-tab-label .mat-ripple-element {
     @include variable(background, --primary, $primary, !important);
-//    opacity: 0.2;
+    opacity: 0.2;
   }
   .mat-button.mat-accent .mat-ripple-element,
   .mat-icon-button.mat-accent .mat-ripple-element,
   .mat-slide-toggle .mat-ripple-element {
     @include variable(background, --accent, $accent, !important);
-//    opacity: 0.2;
+    opacity: 0.2;
   }
   .mat-button .mat-ripple-element, .mat-raised-button .mat-ripple-element {
     background: rgba(0, 0, 0, .12);
@@ -38,6 +150,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 // include the custom theme object into the angular material theme
 .ix-blue {
   @include angular-material-theme($freenas-theme);
+
 
   .mat-bg-primary,
   .topbar,
@@ -62,6 +175,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > .sub-menu {
       //border-left: 2px solid map-get($md-primary, 500);
       @include variable(border-left, --primary, $primary, !important);
+  }
+  .sidebar-panel.mat-sidenav {
+      background: url('/assets/images/sidebar-bg.jpg') no-repeat;
   }
   .breadcrumb-bar {
       //background: #ffffff !important;
@@ -164,13 +280,22 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   /////////////////// SpecSelectors: Selectors not originally in ix-blue theme
+
+  .rightside-content-hold{
+    //background:linear-gradient(180deg, rgba(255,255,255,0.1), var(--bg1)) !important;
+  }
+
   .mat-tab-label, .mat-tab-link{
     @include variable(color, --fg1, $fg1);
   }
-  .mat-menu-item .mat-icon:not([color]), 
-  .mat-menu-item .theme-picker-swatch .mat-icon:not([color]),
+  .mat-menu-item .mat-icon:not([color]),
   .mat-menu-item-submenu-trigger::after{
     @include variable(color, --fg1, $fg1);
+  }
+  .mat-menu-item .theme-picker-swatch .mat-icon:not([color]){
+    @include variable(color, --fg1, $fg1);
+    //border:solid 1px #efefef;
+    //text-shadow:0 2px 4px;
   }
   .mat-toolbar,
   .mat-raised-button{
@@ -213,6 +338,51 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     background-color:rgba(0,0,0,0.75)
   }
 
+  .datatable-header-inner,
+  div.datatable-row-left,
+  div.datatable-row-center,
+  div.datatable-row-right,
+  .datatable-header-cell{
+    height:50px;
+  }
+
+  .datatable-header-cell .sort-btn{
+    position:absolute;
+    top:16px !important;
+    right:16px;
+    @include variable(color, --fg2, $fg2, !important);
+  }
+
+  .datatable-header-cell-label{
+    position: relative !important;
+    top: 10px !important;
+  }
+
+  .datatable-header-cell{
+    right: 16px;
+    top: 0 !important;
+    padding:0px !important;
+  }
+  .datatable-header-cell:hover{
+    border-right:solid 1px ;
+    @include variable(border-color, --alt-bg1, $alt-bg1, !important);
+  }
+
+  .datatable-header-cell > div{
+    height:inherit;
+  }
+
+  .ngx-datatable .datatable-header .datatable-header-cell.sortable .datatable-header-cell-wrapper{
+    cursor: pointer;
+    /* vertical-align: middle; */
+    width: inherit;
+    height: inherit;
+    position: relative;
+    top: 0;
+    left: 0;
+    display: block;
+    padding: 3px 16px;
+  }
 
   .mat-bg-accent,
   .mat-raised-button.mat-accent, .mat-fab.mat-accent, .mat-mini-fab.mat-accent,
@@ -232,7 +402,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .sidebar-panel.mat-sidenav .navigation-hold#scroll-area,
   .mat-card,.mat-paginator,
   .mat-button-toggle,
-  .mat-select-content, .mat-select-panel,
+  .mat-select-content, 
   .mat-select-panel-done-animating,
   .mat-expansion-panel,
   .mat-dialog-container,
@@ -263,6 +433,29 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     opacity:0.15;
   }
 
+  // System wide hover effects
+  .mat-select-panel .mat-option:focus,
+  .mat-select-panel .mat-option.mat-selected:not(.mat-option-multiple){ 
+    @include variable(background, --primary, $primary, !important);
+    @include variable(color, --primary-txt, $primary-txt, !important);
+  }
+
+  .mat-menu-content button.mat-menu-item:hover, 
+  .mat-menu-content button.mat-menu-item:hover .mat-icon:not([class="theme-picker-swatch-icon"]),
+  .ngx-datatable .datatable-body .datatable-row-wrapper:hover,
+  .mat-menu-content button.mat-menu-item:focus, 
+  .mat-menu-content button.mat-menu-item:focus .mat-icon:not([class="theme-picker-swatch-icon"]),
+  .ngx-datatable .datatable-body .datatable-row-wrapper:focus{
+    @include variable(background, --primary, $primary, !important);
+    @include variable(color, --primary-txt, $primary-txt);
+  }
+
+  .dx-treelist-rowsview .dx-selection.dx-row > td, 
+  .dx-treelist-rowsview .dx-selection.dx-row:hover > td{
+    @include variable(background, --primary, $primary, !important);
+    @include variable(color, --primary-txt, $primary-txt);
+    border:rgba(0,0,0,0.1)
+  }
 
   .sidebar-panel .mat-nav-list .mat-list-item,
   .app-user .app-user-name, .text-muted,
@@ -270,14 +463,17 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-expansion-panel-header-description, 
 
   .mat-list .mat-list-item,
-  .mat-menu-panel button,
   .mat-paginator-navigation-next, .mat-paginator-navigation-previous,
 
   .mat-nav-list .mat-list-item, 
   .mat-form-field-label,
   .mat-selection-list .mat-list-item,.mat-option,
   .mat-select-arrow, .mat-select-value {
-    @include variable(color, --fg2, $fg2, !important);
+    @include variable(color, --fg2, $fg2);
+  }
+
+  .mat-menu-panel button{
+    @include variable(color, --fg2, $fg2);
   }
 
   .mat-form-field .mat-select.mat-select-disabled .mat-select-arrow {
@@ -291,12 +487,13 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(color, --fg2, $fg2, !important);
   }
 
-//  .mat-form-field-underline{
-//    @include variable(background-color, --fg2, $fg2);
-//  }
+  .mat-menu-content{
+    @include variable(background, --alt-bg1, $alt-bg1, !important);
+    @include variable(color, --fg1, $fg1, !important);
+  }
 
   .mat-form-field-underline{
-    @include variable(background-color, --fg2, $fg2, !important);
+    @include variable(background-color, --fg2, $fg2);
     opacity:0.35;
   }
 
@@ -312,7 +509,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 .mat-form-field-ripple{
   @include variable(background-color, --primary, $primary);
 }
-
   .mat-color-primary, 
   .mat-button.mat-primary,
   .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > a > span, 
@@ -320,10 +516,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-form-field.mat-focused.mat-primary
   .mat-focused .mat-form-field-label{
     @include variable(color, --primary, $primary, !important);
-  }
-
-  .mat-form-field-invalid .mat-form-field-label {
-    color: #f44336 !important;
   }
 
   .mat-button.mat-accent {
@@ -376,6 +568,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     // border-color: gray;
   }
 
+//  .headerCheckBox .mat-checkbox-frame {
+//    @include variable(border-color, --primary-txt, $primary-txt);
+//  }
+
   .headerCheckBox .mat-checkbox-frame,
   .ngx-datatable .datatable-body .mat-checkbox-frame {
     @include variable(border-color, --alt-fg1, $alt-fg1, !important);
@@ -401,24 +597,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .dynamic-field tooltip{
     @include variable(display, --tooltip, $tooltip);
   }
-
-  // System wide hover effects
-  .mat-select-panel .mat-option:focus,
-  .mat-select-panel .mat-option.mat-selected:not(.mat-option-multiple){ 
-    @include variable(background, --primary, $primary, !important);
-    @include variable(color, --primary-txt, $primary-txt, !important);
-  }
-
-  .mat-menu-content button.mat-menu-item:hover, 
-  .mat-menu-content button.mat-menu-item:hover .mat-icon:not([class="theme-picker-swatch-icon"]),
-  .ngx-datatable .datatable-body .datatable-row-wrapper:hover,
-  .mat-menu-content button.mat-menu-item:focus, 
-  .mat-menu-content button.mat-menu-item:focus .mat-icon:not([class="theme-picker-swatch-icon"]),
-  .ngx-datatable .datatable-body .datatable-row-wrapper:focus{
-    @include variable(background, --primary, $primary, !important);
-    @include variable(color, --primary-txt, $primary-txt);
-}
-
 
   // Treelists in storage/volumes
   .mat-expansion-panel-header{
@@ -462,11 +640,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   entity-form .form-card.mat-card{
     max-width:960px;
     margin:0 auto;
-  }
-  
-  .mat-card-actions .mat-button {
-    margin-right: 3px !important;
-    margin-left: 1px !important;
   }
 
   .form-card.mat-card{
@@ -750,6 +923,12 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(background, --bg1, $bg1);
   }
 
+  // Fill in space above horz scrollbar on entity tables
+  .datatable-body {
+    //@include variable(background-color, --alt-bg1, $alt-bg1);
+
+  }
+
   // Align buttons on UI Prefs form
   .prefs-form .mat-card-actions {
     text-align: left !important;
@@ -839,6 +1018,12 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     display:none ;
   }
 
+  .mat-option .fn-checked,
+  .mat-option .fn-unchecked{
+    position:relative;
+    top:6px;
+  }
+
   // Bring tooltips to the front in dialogs
   .mat-dialog-container, .mat-dialog-content {
       overflow: visible !important;
@@ -875,7 +1060,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(color, --primary, $primary !important);  
   }
 
-  .mat-icon-button.mat-accent {
+  .mat-icon-button.mat-accent,
+  .mat-icon.mat-accent{
     @include variable(color, --accent, $accent !important);  
   }
 
@@ -925,15 +1111,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(background-color, --primary, $primary);
   }
 
-   .mat-progress-bar-buffer {
-     @include variable(background-color, --primary, $primary);
-     opacity: 0.5;
-   }
-
-   .mat-progress-bar .mat-progress-bar-background{
-     //opacity:0.1;
-     display:none;
-   }
+  .mat-progress-bar-buffer {
+    @include variable(background-color, --primary, $primary);
+    opacity: 0.5;
+  }
 
   #password, #sed_passwd, #em_pass1, #bsdusr_passwd_currnt,
     #Passphrase, #passphrase, #disk_passwd, #ldap_bindpw, #iscsi_target_auth_secret,
@@ -962,7 +1143,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     max-width: 450px !important;
   }
 
-  .has-pwtoggle > mat-form-field {
+  .has-pwtoggle > mat-input-container {
     width: 70% !important;
   }
 
@@ -971,7 +1152,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     width: 385px !important;
     background: rgba(0, 0, 0, 0) !important;
 
-    mat-form-field {
+    mat-input-container {
       width: 86.3% !important;
     }
   }
@@ -1020,7 +1201,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(color, --fg2, $fg2 !important);
   }
 
-  .ui-treetable tr:nth-child(even){
+ .ui-treetable tr:nth-child(even){
     background-color:rgba(123,123,123,0.2);
   }
   
@@ -1031,7 +1212,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   .ui-treetable-thead {
     text-align: left;
-    vertical-align: top;
   }
 
   app-volumes-list .ui-treetable-resizable .ui-treetable-tfoot>tr>td, .ui-treetable-resizable .ui-treetable-tbody>tr>td {
@@ -1047,10 +1227,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   #idmap-err {
-    color: red;
     position: absolute;
     top: 100px;
-    left: 25px;
+    left: 26px;
+    @include variable(color, --red, $red);
   }
 
  } // end of ix theme
