@@ -41,6 +41,7 @@ export class ISCSI implements OnInit {
       path: '/sharing/iscsi/associatedtarget',
     },
   ];
+  protected route_wizard = ["sharing", "iscsi", "wizard"];
   constructor(protected router: Router, protected aroute: ActivatedRoute, ) {}
 
   ngOnInit() {
@@ -49,4 +50,7 @@ export class ISCSI implements OnInit {
     });
   }
 
+  gotoWizard() {
+    this.router.navigate(new Array('/').concat(this.route_wizard));
+  }
 }
