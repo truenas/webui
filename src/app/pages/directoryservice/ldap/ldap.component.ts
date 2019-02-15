@@ -2,7 +2,6 @@ import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs/Subscription';
-import { Validators } from '@angular/forms';
 
 import {
   RestService,
@@ -13,8 +12,6 @@ import {
   FieldConfig
 } from '../../common/entity/entity-form/models/field-config.interface';
 import {  DialogService } from '../../../services/';
-
-import { T } from '../../../translate-marker';
 import helptext from '../../../helptext/directoryservice/ldap';
 
 @Component({
