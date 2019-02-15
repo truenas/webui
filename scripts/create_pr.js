@@ -25,7 +25,7 @@ async function main() {
     }
     var po_branch = "PO-GENERATION-" + date + "-" + curr_branch
     await sh("git checkout -b " + po_branch);
-    let title = "PO File automated PR " + date;
+    let title = "PO File automated PR " + date + " " + curr_branch;
     await sh("git add .")
     await sh("git commit -m \'" + title + "\'");
     await sh("git push --set-upstream origin " + po_branch);
