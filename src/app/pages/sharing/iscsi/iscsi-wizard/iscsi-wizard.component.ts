@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 
 import helptext from '../../../../helptext/sharing/iscsi/iscsi-wizard';
 import { IscsiService, RestService, WebSocketService } from '../../../../services/';
+import { T } from 'app/translate-marker';
 
 @Component({
     selector: 'app-iscsi-wizard',
@@ -12,6 +13,8 @@ import { IscsiService, RestService, WebSocketService } from '../../../../service
     providers: [IscsiService]
 })
 export class IscsiWizardComponent {
+
+    public route_success: string[] = ['sharing', 'iscsi'];
 
     protected wizardConfig: Wizard[] = [{
         label: helptext.step1_label,
@@ -50,7 +53,7 @@ export class IscsiWizardComponent {
                 isHidden: false,
                 disabled: false,
                 required: true,
-                validation: [ Validators.required ],
+                validation: [Validators.required],
             },
             {
                 type: 'input',
@@ -60,7 +63,7 @@ export class IscsiWizardComponent {
                 isHidden: false,
                 disabled: false,
                 required: true,
-                validation: [ Validators.required ],
+                validation: [Validators.required],
             },
             // device options
             {
@@ -70,12 +73,35 @@ export class IscsiWizardComponent {
                 tooltip: helptext.disk_tooltip,
                 options: [{
                     label: 'Create New',
-                    value: ''
+                    value: 'NEW'
                 }],
                 isHidden: false,
                 disabled: false,
                 required: true,
-                validation: [ Validators.required ]
+                validation: [Validators.required]
+            },
+            {
+                type: 'select',
+                name: 'usefor',
+                placeholder: helptext.usefor_placehodler,
+                tooltip: helptext.usefor_tooltip,
+                options: [
+                    {
+                        label: "VMware: Extent block size 512b, TPC enabled, no Xen compat mode, SSD speed",
+                        value: 'vmware',
+                    }, {
+                        label: "Xen: Extent block size 512b, TPC enabled, Xen compat mode enabled, SSD speed",
+                        value: 'xen',
+                    },
+                    {
+                        label: "Legacy OS: Extent block size 512b, TPC enabled, no Xen compat mode, SSD speed",
+                        value: 'legacyos',
+                    },
+                    {
+                        label: "Modern OS: Extent block size 4k, TPC enabled, no Xen compat mode, SSD speed",
+                        value: 'modernos',
+                    }
+                ]
             },
             {
                 type: 'select',
@@ -100,20 +126,78 @@ export class IscsiWizardComponent {
                         value: 4096,
                     },
                 ],
-                value: 512,
+            },
+            {
+                type: 'checkbox',
+                name: 'insecure_tpc',
+                isHidden: false,
+            },
+            {
+                type: 'checkbox',
+                name: 'xen',
+                isHidden: false,
+            },
+            {
+                type: 'input',
+                name: 'rpm',
+                value: 'SSD',
+                isHidden: false,
             },
         ]
     }]
 
     protected deviceFieldGroup: any[] = [
         'disk',
-        'blocksize',
     ];
     protected fileFieldGroup: any[] = [
         'path',
         'filesize',
     ];
+    protected useforFieldGroup: any[] = [
+        'blocksize',
+        'insecure_tpc',
+        'xen',
+        'rpm',
+    ];
 
+    protected defaultUseforSettings: any[] = [
+        {
+            key: 'vmware',
+            values: {
+                'blocksize': 512,
+                'insecure_tpc': true,
+                'xen': false,
+                'rpm': 'SSD',
+            }
+        },
+        {
+            key: 'xen',
+            values: {
+                'blocksize': 512,
+                'insecure_tpc': true,
+                'xen': true,
+                'rpm': 'SSD',
+            }
+        },
+        {
+            key: 'legacyos',
+            values: {
+                'blocksize': 512,
+                'insecure_tpc': true,
+                'xen': false,
+                'rpm': 'SSD',
+            }
+        },
+        {
+            key: 'modernos',
+            values: {
+                'blocksize': 4096,
+                'insecure_tpc': true,
+                'xen': false,
+                'rpm': 'SSD',
+            }
+        }
+    ]
     protected entityWizard: any;
 
     constructor(private iscsiService: IscsiService) {
@@ -124,23 +208,33 @@ export class IscsiWizardComponent {
         console.log(entityWizard);
         this.entityWizard = entityWizard;
 
-        const disk_field = _.find(this.wizardConfig[0].fieldConfig, {'name' : 'disk'});
+        const disk_field = _.find(this.wizardConfig[0].fieldConfig, { 'name': 'disk' });
         //get device options
         this.iscsiService.getExtentDevices().subscribe((res) => {
-          for(const i in res) {
-            disk_field.options.push({label: res[i], value: i});
-          }
+            for (const i in res) {
+                disk_field.options.push({ label: res[i], value: i });
+            }
         })
 
         entityWizard.formArray.controls[0].controls['type'].valueChanges.subscribe((value) => {
-            console.log(value);
-
-            this.formUpdate(value);
+            this.formTypeUpdate(value);
         });
+
+        entityWizard.formArray.controls[0].controls['disk'].valueChanges.subscribe((value) => {
+            if (value == 'NEW') {
+                console.log('create new zvol');
+            }
+        });
+
+        entityWizard.formArray.controls[0].controls['usefor'].valueChanges.subscribe((value) => {
+            this.formUseforValueUpdate(value);
+        });
+
         entityWizard.formArray.controls[0].controls['type'].setValue('DISK');
+        entityWizard.formArray.controls[0].controls['usefor'].setValue('vmware');
     }
 
-    formUpdate(type) {
+    formTypeUpdate(type) {
         const isDevice = type == 'FILE' ? false : true;
 
         this.fileFieldGroup.forEach(field => {
@@ -164,5 +258,13 @@ export class IscsiWizardComponent {
                 this.entityWizard.formArray.controls[0].controls[field].enable();
             }
         });
+    }
+
+    formUseforValueUpdate(selected) {
+        const settings = _.find(this.defaultUseforSettings, { key: selected});
+        for (const i in settings.values) {
+            const controller = this.entityWizard.formArray.controls[0].controls[i];
+            controller.setValue(settings.values[i]);
+        }
     }
 }

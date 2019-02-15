@@ -18,9 +18,11 @@ export default {
     disk_placeholder: T("Device"),
     disk_tooltip: T(""),
 
+    usefor_placehodler: T("What are you using this for"),
+    usefor_tooltip: T(""),
+
     blocksize_placeholder: T("Logical block size"),
     blocksize_tooltip: T(""),
-
 
     step2_label: T(""),
 
