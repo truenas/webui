@@ -10,6 +10,7 @@ import { WebdavFormComponent } from './webdav/webdav-form/';
 import { SMBListComponent } from './smb/smb-list/';
 import { SMBFormComponent } from './smb/smb-form/';
 import { ISCSI } from './iscsi/iscsi.component';
+import { IscsiWizardComponent } from './iscsi/iscsi-wizard/iscsi-wizard.component';
 import { GlobalconfigurationComponent } from './iscsi/globalconfiguration/';
 import { PortalListComponent } from './iscsi/portal/portal-list/';
 import { PortalFormComponent } from './iscsi/portal/portal-form/';
@@ -109,6 +110,11 @@ export const routes: Routes = [
         {
           path: '',
           redirectTo: 'configuration',
+        },
+        {
+          path: 'wizard',
+          data: { title: 'Wizard', breadcrumb: 'Wizard'},
+          component: IscsiWizardComponent,
         },
         {
           path: ':pk',
