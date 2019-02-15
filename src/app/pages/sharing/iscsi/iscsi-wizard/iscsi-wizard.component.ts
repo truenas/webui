@@ -313,7 +313,7 @@ export class IscsiWizardComponent {
         });
 
         entityWizard.formArray.controls[0].controls['disk'].valueChanges.subscribe((value) => {
-            const disableZvolGroup = value == 'NEW' ? false : true;
+            const disableZvolGroup = value == 'NEW' &&  this.entityWizard.formArray.controls[0].controls['type'].value == 'DISK' ? false : true;
             this.disablefieldGroup(this.zvolFieldGroup, disableZvolGroup);
         });
 
