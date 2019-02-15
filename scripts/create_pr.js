@@ -29,7 +29,7 @@ async function main() {
     await sh("git add .")
     await sh("git commit -m \'" + title + "\'");
     await sh("git push --set-upstream origin " + po_branch);
-    await sh("hub pull-request -m " + title + " -b " + curr_branch + " -h " + po_branch);
+    await sh("hub pull-request -m '" + title + "' -b " + curr_branch + " -h " + po_branch);
 
 }
   
