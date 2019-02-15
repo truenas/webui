@@ -18,6 +18,11 @@ msgstr ""
 msgid " disks, new vdev has "
 msgstr ""
 
+msgid ""
+" is the minimum recommended record size. Choosing a smaller size can reduce "
+"system performance."
+msgstr ""
+
 msgid "% of all cores"
 msgstr ""
 
@@ -41,7 +46,7 @@ msgid ""
 "user interface."
 msgstr ""
 
-msgid "*allow.sysvipc"
+msgid "*allow_sysvipc"
 msgstr ""
 
 msgid ", new vdev is "
@@ -148,6 +153,12 @@ msgid ""
 "<b>SED (<a "
 "href=\"%%docurl%%/system.html%%webversion%%#self-encrypting-drives\"        "
 "         target=\"_blank\">Self-Encrypting Drives</a>) Options</b>"
+msgstr ""
+
+msgid ""
+"<b>WARNING:</b> Rolling back to this snapshot will permanently delete later "
+"snapshots of this dataset. Do not roll back until all desired snapshots "
+"have been backed up!"
 msgstr ""
 
 msgid ""
@@ -320,6 +331,12 @@ msgstr ""
 msgid ""
 "A randomized MAC address is normally assigned. Enter a value here to set a "
 "specific MAC address."
+msgstr ""
+
+msgid ""
+"A space-delimited list of network interfaces attached to a VNET-enabled "
+"jail after it is created. Interfaces are automatically released when the "
+"jail is removed."
 msgstr ""
 
 msgid "A swap size of 0 is STRONGLY DISCOURAGED."
@@ -623,6 +640,9 @@ msgstr "Pokročilé"
 
 msgid "Advanced Mode"
 msgstr "Pokročilý režim"
+
+msgid "Advanced Plugin Installation"
+msgstr ""
 
 msgid "Advanced Power Management"
 msgstr "Pokročilá správa napájení"
@@ -1121,7 +1141,7 @@ msgstr ""
 msgid "Browse to the ZFS dataset that will hold the copied data."
 msgstr ""
 
-msgid "Browse to the desired pool or dataset on the disk."
+msgid "Browse to the desired zvol on the disk."
 msgstr ""
 
 msgid "Browse to the directory for the S3 filesystem."
@@ -1309,6 +1329,11 @@ msgid "Check for Updates"
 msgstr ""
 
 msgid "Check for Updates Daily and Download if Available"
+msgstr ""
+
+msgid ""
+"Check the <i>hostid</i> property of the jail. If not the same as the host, "
+"do not start the jail"
 msgstr ""
 
 msgid "Check the network connection"
@@ -2044,12 +2069,6 @@ msgstr "Výchozí souborová přístupová práva"
 msgid "Default is UTF-8 which supports all characters in all languages."
 msgstr ""
 
-msgid ""
-"Default network interface used for the VNET bridge interface in the jail. "
-"Only takes effect when <i>VNET</i> is set and bridge interfaces are not "
-"active."
-msgstr ""
-
 msgid "Default umask"
 msgstr ""
 
@@ -2209,6 +2228,9 @@ msgstr ""
 msgid "Delay Updates"
 msgstr "Odložit aktualizace"
 
+msgid "Delay VM Boot until VNC Connects"
+msgstr ""
+
 msgid "Delete"
 msgstr "Smazat"
 
@@ -2245,6 +2267,9 @@ msgid "Delete recovery key for "
 msgstr ""
 
 msgid "Delete selections"
+msgstr ""
+
+msgid "Delete snapshot "
 msgstr ""
 
 msgid ""
@@ -2376,6 +2401,9 @@ msgid "Directory Services"
 msgstr ""
 
 msgid "Directory/Files"
+msgstr ""
+
+msgid "Disable Endpoint Region"
 msgstr ""
 
 msgid "Disable FreeNAS Cache"
@@ -2605,6 +2633,9 @@ msgid ""
 "User</b> and <b>Permit Sudo</b> options."
 msgstr ""
 
+msgid "Enable running services that require mlock() in a jail."
+msgstr ""
+
 msgid "Enable service"
 msgstr ""
 
@@ -2784,8 +2815,7 @@ msgstr ""
 
 msgid ""
 "Enter a list of denied hostnames or IP addresses. Separate entries with a "
-"comma, space, or tab. Specify <i>ALL</i> and list any hosts from <b>Hosts "
-"Allow</b> to have those hosts take precedence."
+"comma, space, or tab."
 msgstr ""
 
 msgid ""
@@ -3482,6 +3512,9 @@ msgstr ""
 msgid "Error restarting web service"
 msgstr ""
 
+msgid "Error rolling back snapshot"
+msgstr ""
+
 msgid "Error saving ZVOL."
 msgstr ""
 
@@ -3625,6 +3658,14 @@ msgid "Force"
 msgstr "Vynutit"
 
 msgid "Force size"
+msgstr ""
+
+msgid ""
+"Force using <a "
+"href=\"https://docs.aws.amazon.com/general/latest/gr/signature-version-2."
+"html\"                  target=\"_blank\">Signature Version 2</a> to sign "
+"API                  requests. Set this when configuring a custom           "
+"       Endpoint URL."
 msgstr ""
 
 msgid ""
@@ -5113,6 +5154,9 @@ msgstr ""
 msgid "Please wait"
 msgstr "Čekejte"
 
+msgid "Plugin Installed Successfully"
+msgstr ""
+
 msgid "Plugin Name"
 msgstr "Název zásuvného modulu"
 
@@ -5360,6 +5404,9 @@ msgstr ""
 msgid "Redirecting to download. Make sure pop-ups are enabled in the browser."
 msgstr ""
 
+msgid "Register"
+msgstr ""
+
 msgid "Release"
 msgstr "Vydání"
 
@@ -5527,6 +5574,14 @@ msgstr ""
 
 msgid "Restore default"
 msgstr "Obnovit výchozí"
+
+msgid ""
+"Reveal <i>tun</i> devices for the jail with an individual devfs ruleset. "
+"Allow the creation of <i>tun</i> devices in the jail."
+msgstr ""
+
+msgid "Rollback"
+msgstr ""
 
 msgid "Root Password"
 msgstr ""
@@ -5718,6 +5773,12 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Select <i>Create new disk image</i> to create a new zvol on an existing "
+"dataset. This is used as a virtual hard drive for the VM. Select <i>Use "
+"existing disk image</i> to use an existing zvol or file for the VM."
+msgstr ""
+
+msgid ""
 "Select <i>None</i> or an integer. This value represents the number of "
 "existing authorized accesses."
 msgstr ""
@@ -5754,9 +5815,6 @@ msgid "Select a language localization."
 msgstr ""
 
 msgid "Select a physical interface to associate with the VM."
-msgstr ""
-
-msgid "Select a pool or dataset"
 msgstr ""
 
 msgid "Select a pool to import."
@@ -5814,6 +5872,9 @@ msgid ""
 "or encounters an error."
 msgstr ""
 
+msgid "Select a zvol"
+msgstr ""
+
 msgid "Select an IP address to use for VNC sessions."
 msgstr ""
 
@@ -5828,13 +5889,13 @@ msgstr ""
 msgid "Select an existing ZFS pool, dataset, or zvol."
 msgstr ""
 
-msgid "Select an existing disk"
-msgstr "Vyberte stávající disk"
-
 msgid "Select an existing extent."
 msgstr ""
 
 msgid "Select an existing target."
+msgstr ""
+
+msgid "Select an existing zvol"
 msgstr ""
 
 msgid "Select desired disk type."
@@ -6177,11 +6238,6 @@ msgid "Set for the UPS to power off after shutting down the system."
 msgstr ""
 
 msgid ""
-"Set for the VNC client to wait until the VM has booted before attempting "
-"the connection."
-msgstr ""
-
-msgid ""
 "Set for the default configuration to listen on all interfaces using the "
 "known values of user: <i>upsmon</i> and password: <i>fixmepass</i>."
 msgstr ""
@@ -6227,6 +6283,13 @@ msgid ""
 "Set resource limitations of the jail using the <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=setrlimit&manpath=FreeBSD+1"
 "1.1-RELEASE+and+Ports\" target=\"_blank\">getrlimit(2)</a> utility."
+msgstr ""
+
+msgid ""
+"Set the default VNET interface. Only takes effect when <i>VNET</i> is set. "
+"Choose a specific interface, or set to <i>auto</i> to use the interface "
+"that has the default route. Choose <i>none</i> to not set a default VNET "
+"interface."
 msgstr ""
 
 msgid "Set the jail hostname. Defaults to the jail UUID."
@@ -6292,6 +6355,12 @@ msgid ""
 "Set to allow access to other protocol stacks beyond IPv4, IPv6, local "
 "(UNIX), and route. <br><b>Warning:</b> jail functionality does not exist "
 "for all protocal stacks."
+msgstr ""
+
+msgid ""
+"Set to allow access to other protocol stacks beyond IPv4, IPv6, local "
+"(UNIX), and route. <br><b>Warning:</b> jail functionality does not exist "
+"for all protocol stacks."
 msgstr ""
 
 msgid ""
@@ -7014,7 +7083,9 @@ msgstr ""
 msgid "Size for this zvol"
 msgstr ""
 
-msgid "Skip Region Autodetect"
+msgid ""
+"Skip automatic detection of the Endpoint URL                  region. Set "
+"this when configuring a custom                  Endpoint URL."
 msgstr ""
 
 msgid "Snapshot Lifetime"
@@ -7791,7 +7862,7 @@ msgstr ""
 msgid "Use FQDN for logging"
 msgstr ""
 
-msgid "Use V2 Signatures"
+msgid "Use Signature Version 2"
 msgstr ""
 
 msgid "Use all disk space"
@@ -7957,10 +8028,13 @@ msgid ""
 "recommended."
 msgstr ""
 
+msgid "WARNING: Based on the pool topology, "
+msgstr ""
+
 msgid "WARNING: Exporting/disconnecting '"
 msgstr ""
 
-msgid "Wait to boot"
+msgid "Wait to start VM until VNC client connects."
 msgstr ""
 
 msgid "Wallclock time in seconds."
@@ -8141,40 +8215,40 @@ msgstr ""
 msgid "Zeroconf share discovery"
 msgstr ""
 
-msgid "allow.chflags"
+msgid "allow_chflags"
 msgstr ""
 
-msgid "allow.mlock"
+msgid "allow_mlock"
 msgstr ""
 
-msgid "allow.mount"
+msgid "allow_mount"
 msgstr ""
 
-msgid "allow.mount.devfs"
+msgid "allow_mount_devfs"
 msgstr ""
 
-msgid "allow.mount.nullfs"
+msgid "allow_mount_nullfs"
 msgstr ""
 
-msgid "allow.mount.procfs"
+msgid "allow_mount_procfs"
 msgstr ""
 
-msgid "allow.mount.tmpfs"
+msgid "allow_mount_tmpfs"
 msgstr ""
 
-msgid "allow.mount.zfs"
+msgid "allow_mount_zfs"
 msgstr ""
 
-msgid "allow.quotas"
+msgid "allow_quotas"
 msgstr ""
 
-msgid "allow.raw_sockets"
+msgid "allow_raw_sockets"
 msgstr ""
 
-msgid "allow.set_hostname"
+msgid "allow_set_hostname"
 msgstr ""
 
-msgid "allow.socket_af"
+msgid "allow_socket_af"
 msgstr ""
 
 msgid "allow_tun"
@@ -8183,7 +8257,7 @@ msgstr ""
 msgid "boot"
 msgstr ""
 
-msgid "children.max"
+msgid "children_max"
 msgstr ""
 
 msgid "close"
@@ -8216,40 +8290,10 @@ msgstr ""
 msgid "enforce_statfs"
 msgstr ""
 
-msgid "exec.clean"
+msgid "exec_clean"
 msgstr ""
 
-msgid "exec.fib"
-msgstr ""
-
-msgid "exec.jail_user"
-msgstr ""
-
-msgid "exec.poststart"
-msgstr ""
-
-msgid "exec.poststop"
-msgstr ""
-
-msgid "exec.prestart"
-msgstr ""
-
-msgid "exec.prestop"
-msgstr ""
-
-msgid "exec.start"
-msgstr ""
-
-msgid "exec.stop"
-msgstr ""
-
-msgid "exec.system_jail_user"
-msgstr ""
-
-msgid "exec.system_user"
-msgstr ""
-
-msgid "exec.timeout"
+msgid "exec_fib"
 msgstr ""
 
 msgid "exec_jail_user"
@@ -8267,16 +8311,28 @@ msgstr ""
 msgid "exec_prestop"
 msgstr ""
 
+msgid "exec_start"
+msgstr ""
+
+msgid "exec_stop"
+msgstr ""
+
+msgid "exec_system_jail_user"
+msgstr ""
+
+msgid "exec_system_user"
+msgstr ""
+
 msgid "exec_timeout"
 msgstr ""
 
 msgid "group"
 msgstr ""
 
-msgid "host.hostname"
+msgid "host_domainname"
 msgstr ""
 
-msgid "host_domainname"
+msgid "host_hostname"
 msgstr ""
 
 msgid "host_time"
@@ -8294,7 +8350,7 @@ msgstr "rozhraní"
 msgid "ip4"
 msgstr "IPv4"
 
-msgid "ip4.saddrsel"
+msgid "ip4_saddrsel"
 msgstr ""
 
 msgid "ip6"
@@ -8333,10 +8389,10 @@ msgstr ""
 msgid "memoryuse"
 msgstr ""
 
-msgid "mount.devfs"
+msgid "mount_devfs"
 msgstr ""
 
-msgid "mount.fdescfs"
+msgid "mount_fdescfs"
 msgstr ""
 
 msgid "mount_linprocfs"
@@ -8417,9 +8473,6 @@ msgstr ""
 msgid "stacksize"
 msgstr ""
 
-msgid "stop.timeout"
-msgstr ""
-
 msgid "stop_timeout"
 msgstr ""
 
@@ -8441,9 +8494,6 @@ msgstr "šablona"
 msgid "vmemoryuse"
 msgstr ""
 
-msgid "vnet.interfaces"
-msgstr ""
-
 msgid "vnet0_mac"
 msgstr ""
 
@@ -8457,6 +8507,9 @@ msgid "vnet3_mac"
 msgstr ""
 
 msgid "vnet_default_interface"
+msgstr ""
+
+msgid "vnet_interfaces"
 msgstr ""
 
 msgid "wallclock"
