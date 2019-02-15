@@ -1227,10 +1227,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   #idmap-err {
-    color: red;
     position: absolute;
     top: 100px;
-    left: 25px;
+    left: 26px;
+    @include variable(color, --red, $red);
   }
 
  } // end of ix theme
