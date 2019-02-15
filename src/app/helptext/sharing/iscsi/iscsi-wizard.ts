@@ -18,6 +18,21 @@ export default {
     disk_placeholder: T("Device"),
     disk_tooltip: T(""),
 
+    dataset_placeholder: T("Pool/Dataset"),
+    dataset_tooltip: T(""),
+
+    volsize_placeholder: T("Size"),
+    volsize_tooltip: T(""),
+
+    volblocksize_placeholder: T("Block Size"),
+    volblocksize_tooltip: T(""),
+
+    compression_placeholder: T("Compression level"),
+    compression_tooltip: T(""),
+
+    deduplication_placeholder: T("ZFS Deduplication"),
+    deduplication_tooltip: T(""),
+
     usefor_placehodler: T("What are you using this for"),
     usefor_tooltip: T(""),
 

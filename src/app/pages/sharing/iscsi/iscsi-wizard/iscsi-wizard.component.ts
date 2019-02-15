@@ -80,6 +80,90 @@ export class IscsiWizardComponent {
                 required: true,
                 validation: [Validators.required]
             },
+            // zvol creation group
+            {
+                type: 'explorer',
+                explorerType: 'directory',
+                initial: '/mnt',
+                name: 'dataset',
+                placeholder: helptext.dataset_placeholder,
+                tooltip: helptext.dataset_tooltip,
+            },
+            {
+                type: 'input',
+                name: 'volsize',
+                inputType: 'number',
+                placeholder: helptext.volsize_placeholder,
+                tooltip : helptext.volsize_tooltip,
+                validation: [Validators.required, Validators.min(0)],
+                required: true,
+                class: 'inline',
+                width: '70%',
+                value: 0,
+                min: 0,
+              },
+              {
+                type: 'select',
+                name: 'volsize_unit',
+                options: [ {
+                  label: 'KiB',
+                  value: 'K',
+                }, {
+                  label: 'MiB',
+                  value: 'M',
+                }, {
+                  label: 'GiB',
+                  value: 'G',
+                },{
+                  label: 'TiB',
+                  value: 'T',
+                }],
+                value: 'G',
+                class: 'inline',
+                width: '30%',
+              },
+              {
+                type: 'select',
+                name: 'volblocksize',
+                placeholder: helptext.volblocksize_placeholder,
+                tooltip: helptext.volblocksize_tooltip,
+                options: [
+                  { label: '4K', value: '4K' },
+                  { label: '8K', value: '8K' },
+                  { label: '16K', value: '16K' },
+                  { label: '32K', value: '32K' },
+                  { label: '64K', value: '64K' },
+                  { label: '128K', value: '128K' },
+                ],
+                isHidden: false
+              },
+              {
+                type: 'select',
+                name: 'compression',
+                placeholder: helptext.compression_placeholder,
+                tooltip: helptext.compression_tooltip,
+                options: [
+                  {label : 'Off', value : "OFF"},
+                  {label : 'lz4 (recommended)', value : "LZ4"},
+                  {label : 'gzip (default level, 6)', value : "GZIP"},
+                  {label : 'gzip (fastest)', value : "GZIP-1"},
+                  {label : 'gzip (maximum, slow)', value : "GZIP-9"},
+                  {label : 'zle (runs of zeros)', value : "ZLE"},
+                  {label : 'lzjb (legacy, not recommended)', value : "LZJB"},
+                ],
+              },
+              {
+                type: 'select',
+                name: 'deduplication',
+                placeholder: helptext.deduplication_placeholder,
+                tooltip : helptext.deduplication_tooltip,
+                options: [
+                  {label : 'On', value : "ON"},
+                  {label : 'Verify', value : "VERIFY"},
+                  {label : 'Off', value : "OFF"},
+                ],
+              },
+            // use for group
             {
                 type: 'select',
                 name: 'usefor',
@@ -153,6 +237,14 @@ export class IscsiWizardComponent {
         'path',
         'filesize',
     ];
+    protected zvolFieldGroup: any[] = [
+        'dataset',
+        'volsize',
+        'volsize_unit',
+        'volblocksize',
+        'compression',
+        'deduplication',
+    ];
     protected useforFieldGroup: any[] = [
         'blocksize',
         'insecure_tpc',
@@ -221,9 +313,8 @@ export class IscsiWizardComponent {
         });
 
         entityWizard.formArray.controls[0].controls['disk'].valueChanges.subscribe((value) => {
-            if (value == 'NEW') {
-                console.log('create new zvol');
-            }
+            const disableZvolGroup = value == 'NEW' ? false : true;
+            this.disablefieldGroup(this.zvolFieldGroup, disableZvolGroup);
         });
 
         entityWizard.formArray.controls[0].controls['usefor'].valueChanges.subscribe((value) => {
@@ -234,30 +325,20 @@ export class IscsiWizardComponent {
         entityWizard.formArray.controls[0].controls['usefor'].setValue('vmware');
     }
 
+    disablefieldGroup(fieldGroup, disabled) {
+        fieldGroup.forEach(field => {
+            const control: any = _.find(this.wizardConfig[0].fieldConfig, { 'name': field });
+            control['isHidden'] = disabled;
+            control.disabled = disabled;
+            disabled ? this.entityWizard.formArray.controls[0].controls[field].disable() : this.entityWizard.formArray.controls[0].controls[field].enable();
+        });
+    }
+
     formTypeUpdate(type) {
         const isDevice = type == 'FILE' ? false : true;
 
-        this.fileFieldGroup.forEach(field => {
-            const control: any = _.find(this.wizardConfig[0].fieldConfig, { 'name': field });
-            control['isHidden'] = isDevice;
-            control.disabled = isDevice;
-            if (isDevice) {
-                this.entityWizard.formArray.controls[0].controls[field].disable();
-            } else {
-                this.entityWizard.formArray.controls[0].controls[field].enable();
-            }
-        });
-
-        this.deviceFieldGroup.forEach(field => {
-            const control: any = _.find(this.wizardConfig[0].fieldConfig, { 'name': field });
-            control['isHidden'] = !isDevice;
-            control.disabled = !isDevice;
-            if (!isDevice) {
-                this.entityWizard.formArray.controls[0].controls[field].disable();
-            } else {
-                this.entityWizard.formArray.controls[0].controls[field].enable();
-            }
-        });
+        this.disablefieldGroup(this.fileFieldGroup, isDevice);
+        this.disablefieldGroup(this.deviceFieldGroup, !isDevice);
     }
 
     formUseforValueUpdate(selected) {
