@@ -25,7 +25,7 @@
     "reinstall": "yarn run rimraf yarn.lock; yarn run rimraf node_modules; yarn cache clean -f; yarn install",
     "extract": "node scripts/extract_strings.js",
     "po2json": "node scripts/convert_po2json.js",
-    "create_po_pr": "npm run extract && node scripts/create_pr.js"
+    "create_po_pr": "yarn run extract && node scripts/create_pr.js"
   },
   "repository": {
     "type": "git",
