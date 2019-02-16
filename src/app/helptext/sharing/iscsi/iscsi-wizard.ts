@@ -39,6 +39,20 @@ export default {
     blocksize_placeholder: T("Logical block size"),
     blocksize_tooltip: T(""),
 
-    step2_label: T(""),
+    step2_label: T("Portal"),
 
+    portal_placeholder: T("Portal"),
+    portal_tooltip: T(""),
+
+    discovery_authmethod_placeholder: T("Discovery Auth Method"),
+    discovery_authmethod_tooltip: T(""),
+
+    discovery_authgroup_placeholder: T("Discovery Auth Group"),
+    discovery_authgroup_tooltip: T(""),
+
+    ip_placeholder: T("IP"),
+    ip_tooltip: T(""),
+
+    port_placeholder: T("Port"),
+    port_tooltip: T(""),
 }
