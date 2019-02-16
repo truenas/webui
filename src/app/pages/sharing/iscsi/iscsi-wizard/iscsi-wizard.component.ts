@@ -88,6 +88,8 @@ export class IscsiWizardComponent {
                 name: 'dataset',
                 placeholder: helptext.dataset_placeholder,
                 tooltip: helptext.dataset_tooltip,
+                hasErrors: false,
+                errors: 'Pool/Dataset not exist',
                 required: true,
                 validation: [Validators.required],
             },
@@ -129,21 +131,21 @@ export class IscsiWizardComponent {
                 name: 'volblocksize',
                 placeholder: helptext.volblocksize_placeholder,
                 tooltip: helptext.volblocksize_tooltip,
-                isHidden: false,
+                isHidden: true,
             },
             {
                 type: 'input',
                 name: 'compression',
                 placeholder: helptext.compression_placeholder,
                 tooltip: helptext.compression_tooltip,
-                isHidden: false,
+                isHidden: true,
             },
             {
                 type: 'input',
                 name: 'deduplication',
                 placeholder: helptext.deduplication_placeholder,
                 tooltip: helptext.deduplication_tooltip,
-                isHidden: false,
+                isHidden: true,
             },
             // use for group
             {
@@ -196,18 +198,18 @@ export class IscsiWizardComponent {
             {
                 type: 'checkbox',
                 name: 'insecure_tpc',
-                isHidden: false,
+                isHidden: true,
             },
             {
                 type: 'checkbox',
                 name: 'xen',
-                isHidden: false,
+                isHidden: true,
             },
             {
                 type: 'input',
                 name: 'rpm',
                 value: 'SSD',
-                isHidden: false,
+                isHidden: true,
             },
         ]
     }]
@@ -229,6 +231,15 @@ export class IscsiWizardComponent {
     ];
     protected useforFieldGroup: any[] = [
         'blocksize',
+        'insecure_tpc',
+        'xen',
+        'rpm',
+    ];
+    // allways hidden fields
+    protected hiddenFieldGroup: any[] = [
+        'volblocksize',
+        'compression',
+        'deduplication',
         'insecure_tpc',
         'xen',
         'rpm',
@@ -300,8 +311,7 @@ export class IscsiWizardComponent {
         });
 
         entityWizard.formArray.controls[0].controls['dataset'].valueChanges.subscribe((value) => {
-            if (_.startsWith(value, '/mnt/')) {
-                value = value.substring(5);
+            if (value) {
                 this.getDatasetValue(value);
             }
         });
@@ -316,10 +326,12 @@ export class IscsiWizardComponent {
 
     disablefieldGroup(fieldGroup, disabled) {
         fieldGroup.forEach(field => {
-            const control: any = _.find(this.wizardConfig[0].fieldConfig, { 'name': field });
-            control['isHidden'] = disabled;
-            control.disabled = disabled;
-            disabled ? this.entityWizard.formArray.controls[0].controls[field].disable() : this.entityWizard.formArray.controls[0].controls[field].enable();
+            if (_.indexOf(this.hiddenFieldGroup, field) < 0) {
+                const control: any = _.find(this.wizardConfig[0].fieldConfig, { 'name': field });
+                control['isHidden'] = disabled;
+                control.disabled = disabled;
+                disabled ? this.entityWizard.formArray.controls[0].controls[field].disable() : this.entityWizard.formArray.controls[0].controls[field].enable();
+            }
         });
     }
 
@@ -339,14 +351,28 @@ export class IscsiWizardComponent {
     }
 
     getDatasetValue(dataset) {
+        const datasetField = _.find(this.wizardConfig[0].fieldConfig, { 'name': 'dataset' });
+        datasetField.hasErrors = false;
+
+        if (!_.startsWith(dataset, '/mnt/')) {
+            datasetField.hasErrors = true;
+            return;
+        } else {
+            dataset = dataset.substring(5);
+        }
+
         const pool = dataset.split("/")[0];
         this.ws.call('pool.dataset.query', [[["id", "=", dataset]]]).subscribe(
             (res) => {
-                for (const i in this.zvolFieldGroup) {
-                    const fieldName = this.zvolFieldGroup[i];
-                    if (fieldName in res[0]) {
-                        const controller = this.entityWizard.formArray.controls[0].controls[fieldName];
-                        controller.setValue(res[0][fieldName].value);
+                if (res.length == 0) {
+                    datasetField.hasErrors = true;
+                } else {
+                    for (const i in this.zvolFieldGroup) {
+                        const fieldName = this.zvolFieldGroup[i];
+                        if (fieldName in res[0]) {
+                            const controller = this.entityWizard.formArray.controls[0].controls[fieldName];
+                            controller.setValue(res[0][fieldName].value);
+                        }
                     }
                 }
             }
@@ -354,6 +380,9 @@ export class IscsiWizardComponent {
         this.ws.call('pool.dataset.recommended_zvol_blocksize', [pool]).subscribe(
             (res) => {
                 this.entityWizard.formArray.controls[0].controls['volblocksize'].setValue(res);
+            },
+            (err) => {
+                datasetField.hasErrors = true;
             }
         )
     }
