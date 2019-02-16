@@ -5,7 +5,6 @@ import * as _ from 'lodash';
 
 import helptext from '../../../../helptext/sharing/iscsi/iscsi-wizard';
 import { IscsiService, RestService, WebSocketService } from '../../../../services/';
-import { T } from 'app/translate-marker';
 
 @Component({
     selector: 'app-iscsi-wizard',
@@ -15,6 +14,7 @@ import { T } from 'app/translate-marker';
 export class IscsiWizardComponent {
 
     public route_success: string[] = ['sharing', 'iscsi'];
+    isLinear = true;
 
     protected wizardConfig: Wizard[] = [{
         label: helptext.step1_label,
@@ -88,81 +88,63 @@ export class IscsiWizardComponent {
                 name: 'dataset',
                 placeholder: helptext.dataset_placeholder,
                 tooltip: helptext.dataset_tooltip,
+                required: true,
+                validation: [Validators.required],
             },
             {
                 type: 'input',
                 name: 'volsize',
                 inputType: 'number',
                 placeholder: helptext.volsize_placeholder,
-                tooltip : helptext.volsize_tooltip,
+                tooltip: helptext.volsize_tooltip,
                 validation: [Validators.required, Validators.min(0)],
                 required: true,
                 class: 'inline',
                 width: '70%',
                 value: 0,
                 min: 0,
-              },
-              {
+            },
+            {
                 type: 'select',
                 name: 'volsize_unit',
-                options: [ {
-                  label: 'KiB',
-                  value: 'K',
+                options: [{
+                    label: 'KiB',
+                    value: 'K',
                 }, {
-                  label: 'MiB',
-                  value: 'M',
+                    label: 'MiB',
+                    value: 'M',
                 }, {
-                  label: 'GiB',
-                  value: 'G',
-                },{
-                  label: 'TiB',
-                  value: 'T',
+                    label: 'GiB',
+                    value: 'G',
+                }, {
+                    label: 'TiB',
+                    value: 'T',
                 }],
                 value: 'G',
                 class: 'inline',
                 width: '30%',
-              },
-              {
-                type: 'select',
+            },
+            {
+                type: 'input',
                 name: 'volblocksize',
                 placeholder: helptext.volblocksize_placeholder,
                 tooltip: helptext.volblocksize_tooltip,
-                options: [
-                  { label: '4K', value: '4K' },
-                  { label: '8K', value: '8K' },
-                  { label: '16K', value: '16K' },
-                  { label: '32K', value: '32K' },
-                  { label: '64K', value: '64K' },
-                  { label: '128K', value: '128K' },
-                ],
-                isHidden: false
-              },
-              {
-                type: 'select',
+                isHidden: false,
+            },
+            {
+                type: 'input',
                 name: 'compression',
                 placeholder: helptext.compression_placeholder,
                 tooltip: helptext.compression_tooltip,
-                options: [
-                  {label : 'Off', value : "OFF"},
-                  {label : 'lz4 (recommended)', value : "LZ4"},
-                  {label : 'gzip (default level, 6)', value : "GZIP"},
-                  {label : 'gzip (fastest)', value : "GZIP-1"},
-                  {label : 'gzip (maximum, slow)', value : "GZIP-9"},
-                  {label : 'zle (runs of zeros)', value : "ZLE"},
-                  {label : 'lzjb (legacy, not recommended)', value : "LZJB"},
-                ],
-              },
-              {
-                type: 'select',
+                isHidden: false,
+            },
+            {
+                type: 'input',
                 name: 'deduplication',
                 placeholder: helptext.deduplication_placeholder,
-                tooltip : helptext.deduplication_tooltip,
-                options: [
-                  {label : 'On', value : "ON"},
-                  {label : 'Verify', value : "VERIFY"},
-                  {label : 'Off', value : "OFF"},
-                ],
-              },
+                tooltip: helptext.deduplication_tooltip,
+                isHidden: false,
+            },
             // use for group
             {
                 type: 'select',
@@ -292,7 +274,7 @@ export class IscsiWizardComponent {
     ]
     protected entityWizard: any;
 
-    constructor(private iscsiService: IscsiService) {
+    constructor(private iscsiService: IscsiService, private ws: WebSocketService) {
 
     }
 
@@ -313,8 +295,15 @@ export class IscsiWizardComponent {
         });
 
         entityWizard.formArray.controls[0].controls['disk'].valueChanges.subscribe((value) => {
-            const disableZvolGroup = value == 'NEW' &&  this.entityWizard.formArray.controls[0].controls['type'].value == 'DISK' ? false : true;
+            const disableZvolGroup = value == 'NEW' && this.entityWizard.formArray.controls[0].controls['type'].value == 'DISK' ? false : true;
             this.disablefieldGroup(this.zvolFieldGroup, disableZvolGroup);
+        });
+
+        entityWizard.formArray.controls[0].controls['dataset'].valueChanges.subscribe((value) => {
+            if (_.startsWith(value, '/mnt/')) {
+                value = value.substring(5);
+                this.getDatasetValue(value);
+            }
         });
 
         entityWizard.formArray.controls[0].controls['usefor'].valueChanges.subscribe((value) => {
@@ -342,10 +331,30 @@ export class IscsiWizardComponent {
     }
 
     formUseforValueUpdate(selected) {
-        const settings = _.find(this.defaultUseforSettings, { key: selected});
+        const settings = _.find(this.defaultUseforSettings, { key: selected });
         for (const i in settings.values) {
             const controller = this.entityWizard.formArray.controls[0].controls[i];
             controller.setValue(settings.values[i]);
         }
+    }
+
+    getDatasetValue(dataset) {
+        const pool = dataset.split("/")[0];
+        this.ws.call('pool.dataset.query', [[["id", "=", dataset]]]).subscribe(
+            (res) => {
+                for (const i in this.zvolFieldGroup) {
+                    const fieldName = this.zvolFieldGroup[i];
+                    if (fieldName in res[0]) {
+                        const controller = this.entityWizard.formArray.controls[0].controls[fieldName];
+                        controller.setValue(res[0][fieldName].value);
+                    }
+                }
+            }
+        )
+        this.ws.call('pool.dataset.recommended_zvol_blocksize', [pool]).subscribe(
+            (res) => {
+                this.entityWizard.formArray.controls[0].controls['volblocksize'].setValue(res);
+            }
+        )
     }
 }
