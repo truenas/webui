@@ -417,7 +417,7 @@ msgid ""
 msgstr ""
 
 msgid "Accounts"
-msgstr ""
+msgstr "帳戶"
 
 msgid "Acoustic Level"
 msgstr ""
@@ -1306,7 +1306,7 @@ msgid "Check Release Notes"
 msgstr ""
 
 msgid "Check for Updates"
-msgstr ""
+msgstr "檢查更新"
 
 msgid "Check for Updates Daily and Download if Available"
 msgstr ""
@@ -2373,7 +2373,7 @@ msgid "Directory Permission"
 msgstr ""
 
 msgid "Directory Services"
-msgstr ""
+msgstr "目錄服務"
 
 msgid "Directory/Files"
 msgstr ""
@@ -2415,7 +2415,7 @@ msgid "Display Login"
 msgstr ""
 
 msgid "Display System Processes"
-msgstr ""
+msgstr "顯示系統程序"
 
 msgid ""
 "Display console messages in real time                at the bottom of the "
@@ -3722,7 +3722,7 @@ msgid "Guest Operating System"
 msgstr ""
 
 msgid "Guide"
-msgstr ""
+msgstr "使用說明"
 
 msgid "HDD Standby"
 msgstr ""
@@ -4307,7 +4307,7 @@ msgid "Log Level"
 msgstr ""
 
 msgid "Log Out"
-msgstr ""
+msgstr "登出"
 
 msgid "Log VDev"
 msgstr ""
@@ -4662,7 +4662,7 @@ msgid "Netwait IP list"
 msgstr ""
 
 msgid "Network"
-msgstr ""
+msgstr "網路"
 
 msgid "Network Interface"
 msgstr ""
@@ -5120,7 +5120,7 @@ msgid "Plugin installed successfully"
 msgstr ""
 
 msgid "Plugins"
-msgstr ""
+msgstr "外掛"
 
 msgid "Pool"
 msgstr ""
@@ -5172,7 +5172,7 @@ msgid "Prefer"
 msgstr ""
 
 msgid "Preferences"
-msgstr ""
+msgstr "喜好設定"
 
 msgid "Preserve extended attributes"
 msgstr ""
@@ -5436,13 +5436,13 @@ msgid "Report CPU usage in percentage"
 msgstr ""
 
 msgid "Reporting"
-msgstr ""
+msgstr "報表"
 
 msgid "Reporting Database"
 msgstr ""
 
 msgid "Reports"
-msgstr ""
+msgstr "報表"
 
 msgid "Require IDENT Authentication"
 msgstr ""
@@ -5514,7 +5514,7 @@ msgid "Resolution"
 msgstr ""
 
 msgid "Restart"
-msgstr ""
+msgstr "重新啟動"
 
 msgid "Restart Services"
 msgstr ""
@@ -6138,7 +6138,7 @@ msgid "Service started"
 msgstr ""
 
 msgid "Services"
-msgstr ""
+msgstr "服務"
 
 msgid "Set Keep Flag"
 msgstr ""
@@ -6926,13 +6926,13 @@ msgid "Share Type"
 msgstr ""
 
 msgid "Sharing"
-msgstr ""
+msgstr "共用"
 
 msgid "Sharing Controls"
 msgstr ""
 
 msgid "Shell"
-msgstr ""
+msgstr "命令列"
 
 msgid "Short Description"
 msgstr ""
@@ -6976,10 +6976,10 @@ msgid "Show/Hide Passwords"
 msgstr ""
 
 msgid "Shut Down"
-msgstr ""
+msgstr "關機"
 
 msgid "Shut down"
-msgstr ""
+msgstr "關機"
 
 msgid "Shut down the system?"
 msgstr ""
@@ -7129,7 +7129,7 @@ msgid "Stop this service?"
 msgstr ""
 
 msgid "Storage"
-msgstr ""
+msgstr "儲存"
 
 msgid "Storage & Groups"
 msgstr ""
@@ -7230,13 +7230,13 @@ msgid "Syslog"
 msgstr ""
 
 msgid "Syslog level"
-msgstr ""
+msgstr "Syslog 等級"
 
 msgid "Syslog server"
-msgstr ""
+msgstr "Syslog 伺服器"
 
 msgid "System"
-msgstr ""
+msgstr "系統"
 
 msgid "System Dataset"
 msgstr ""
@@ -7245,10 +7245,10 @@ msgid "System Dataset Pool"
 msgstr ""
 
 msgid "System Info"
-msgstr ""
+msgstr "系統資訊"
 
 msgid "System Load"
-msgstr ""
+msgstr "系統負載"
 
 msgid "System Processes"
 msgstr ""
@@ -7326,7 +7326,7 @@ msgid "Target Name"
 msgstr ""
 
 msgid "Tasks"
-msgstr ""
+msgstr "作業"
 
 msgid "Team Drive ID"
 msgstr ""
@@ -7944,7 +7944,7 @@ msgid "Virtual Machine (VM) Wizard type."
 msgstr ""
 
 msgid "Virtual Machines"
-msgstr ""
+msgstr "虛擬機器"
 
 msgid "Virtualization"
 msgstr ""
