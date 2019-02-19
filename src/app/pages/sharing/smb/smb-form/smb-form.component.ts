@@ -93,6 +93,12 @@ export class SMBFormComponent implements OnDestroy {
       tooltip: helptext_sharing_smb.tooltip_guestonly
     },
     {
+      type: 'checkbox',
+      name: 'cifs_abe',
+      placeholder: helptext_sharing_smb.placeholder_abe,
+      tooltip: helptext_sharing_smb.tooltip_abe
+    },
+    {
       type: 'textarea',
       name: 'cifs_hostsallow',
       placeholder: helptext_sharing_smb.placeholder_hostsallow,
@@ -135,6 +141,7 @@ export class SMBFormComponent implements OnDestroy {
     'cifs_hostsdeny',
     'cifs_hostsallow',
     'cifs_guestonly',
+    'cifs_abe',
     'cifs_showhiddenfiles',
     'cifs_recyclebin',
     'cifs_browsable',
