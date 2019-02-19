@@ -41,7 +41,14 @@ ups_driver_tooltip : T('See the <a\
 ups_driver_validation : [ Validators.required ],
 
 ups_port_placeholder : T('Port'),
-ups_port_tooltip : T('Enter the serial or USB port the UPS is plugged into.'),
+ups_port_tooltip : T('Enter the serial or USB port the UPS is \
+ connected to.<br /> <br />\
+ When an <b>snmp</b> driver is selected, <b>Port</b> changes to \
+ <b>Hostname</b>: Enter the IP address or hostname of the SNMP UPS \
+ device.<br /> <br /> \
+ <b>Port</b> becomes <b>Remote Port</b> when the <b>UPS Mode</b> is \
+ set to <i>slave</i>. Enter the open network port number of the UPS \
+ <i>Master</i> system. The defualt port is <i>3493</i>.'),
 ups_port_validation : [ Validators.required ],
 
 ups_hostname_placeholder: T('Hostname'),
