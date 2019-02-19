@@ -168,7 +168,7 @@
             let-offset="offset"
             >
             <div id="footer">
-              <div id="footer-text">
+              <div id="footer-text" *ngIf="currentRows.length > 0">
                 {{rowCount > 0 ? offset * pageSize + 1 : 0}} - 
                 {{rowCount < (pageSize * curPage) ? rowCount : (pageSize * curPage)}} 
                 of {{rowCount}} 
