@@ -2,6 +2,7 @@ import { MatDialog, MatDialogRef} from '@angular/material';
 import { Component } from '@angular/core';
 import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
+import globalHelptext from '../../../../helptext/global-helptext';
 
 import {
   RestService,
@@ -16,7 +17,7 @@ import {
   providers: [SystemGeneralService]
 })
 export class AboutModalDialog {
-
+  public copyrightYear = globalHelptext.copyright_year;
   public info: any = {};
   public ipAddress: any = [];
 
