@@ -6,6 +6,7 @@ import {ActivatedRoute, Params, Router} from "@angular/router";
 import {WebSocketService} from "../../../../services/ws.service";
 import {AppLoaderService} from "../../../../services/app-loader/app-loader.service";
 import { TranslateService } from '@ngx-translate/core'
+import helptext from '../../../../helptext/account/members';
 
 @Component({
   selector: 'app-members',
@@ -80,7 +81,7 @@ export class MembersComponent implements OnInit {
   updateUsers() {
     const users = this.selectedMembers.map(x => x.id);
     const grp = this.ws.call('group.update', [this.group.id, {users}]);
-    this.loading.open('Updating group members');
+    this.loading.open(helptext.update_users_message);
     grp.subscribe(res => {
       this.router.navigate(['/', 'account', 'groups']);
       this.loading.close();

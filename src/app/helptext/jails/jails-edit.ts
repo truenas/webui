@@ -422,10 +422,11 @@ mac_prefix_tooltip: T('Enter a valid MAC address vendor prefix. \
 <b>Example:</b> <i>E4F4C6</i>'),
 
 vnet_default_interface_placeholder: T('vnet_default_interface'),
-vnet_default_interface_tooltip: T('Default network interface used for the VNET bridge \
-interface in the jail. Only takes effect when \
-<i>VNET</i> is set and bridge interfaces are not \
-active.'),
+vnet_default_interface_tooltip: T('Set the default VNET interface. \
+Only takes effect when <i>VNET</i> is set. Choose a specific \
+interface, or set to <i>auto</i> to use the interface that has the \
+default route. Choose <i>none</i> to not set a default VNET \
+interface.'),
 
 vnet0_mac_placeholder: T('vnet0_mac'),
 vnet0_mac_tooltip: T('Enter a valid MAC address for the VNET0 \
@@ -507,6 +508,11 @@ jail_zfs_mountpoint_tooltip: T('Enter the mountpoint for the \
 
 allow_tun_placeholder: T('allow_tun'),
 allow_tun_tooltip: T(''),
+
+rtsold_placeholder: T('Autoconfigure IPv6 with rtsold'),
+rtsold_tooltip: T('Use <a href="https://www.freebsd.org/cgi/man.cgi?query=rtsold" \
+target="_blank">rtsold(8)</a> as part of IPv6 autoconfiguration. \
+Send ICMPv6 Router Solicitation messages to interfaces to discover new routers.'),
 
 //rctl config
 memoryuse_placeholder: T('memoryuse'),

@@ -2,5 +2,5 @@
   <ul class="breadcrumb">
     <li *ngFor="let part of routeParts"><a [routerLink]="[part.url]">{{part.breadcrumb | translate}}</a></li>
   </ul>
-  <span fxFlex class="copyright-txt">FreeNAS® © 2018 - <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.</span>
+  <span fxFlex class="copyright-txt">FreeNAS® © {{copyrightYear}} - <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.</span>
 </div>

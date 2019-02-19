@@ -577,6 +577,10 @@ export class JailAddComponent implements OnInit {
         {
           label: 'none',
           value: 'none',
+        },
+        {
+          label: 'auto',
+          value: 'auto',
         }
       ]
     },
@@ -690,6 +694,12 @@ export class JailAddComponent implements OnInit {
       placeholder: helptext.allow_tun_placeholder,
       tooltip: helptext.allow_tun_tooltip,
     },
+    {
+      type: 'checkbox',
+      name: 'rtsold',
+      placeholder: helptext.rtsold_placeholder,
+      tooltip: helptext.rtsold_tooltip,
+    }
   ];
   public rctlConfig: FieldConfig[] = [
 
@@ -881,6 +891,7 @@ export class JailAddComponent implements OnInit {
     'jail_zfs',
     'vnet',
     'hostid_strict_check',
+    'rtsold',
   ];
   // fields only accepted by ws with value yes/no
   protected YNfields: any = [
