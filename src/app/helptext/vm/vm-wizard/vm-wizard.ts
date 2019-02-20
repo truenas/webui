@@ -105,7 +105,7 @@ nic_attach_tooltip : T('Select the physical interface to associate with\
 nic_attach_validation : [ Validators.required ],
 
 media_label: T('Installation Media'),
-iso_path_placeholder : T('Choose installation media image'),
+iso_path_placeholder : T('Optional: Choose installation media image'),
 iso_path_tooltip: T('Browse to the operating system installer image file.'),
 iso_path_validation : [ Validators.required ],
 
