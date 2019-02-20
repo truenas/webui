@@ -22,7 +22,6 @@ import { EntityUtils } from '../../common/entity/utils';
 import { DialogService, NetworkService } from '../../../services';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 import helptext from '../../../helptext/jails/jails-add';
-import { utils } from 'protractor';
 
 @Component({
   selector: 'jail-add',
