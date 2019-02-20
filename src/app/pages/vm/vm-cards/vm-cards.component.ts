@@ -43,7 +43,7 @@ export class VmCardsComponent  implements OnDestroy {
     {name : 'State', prop : 'state', always_display: true },
     {name : 'VNC Port', prop : 'port', hidden: true},
     {name : 'Com Port', prop : 'com_port', hidden: true},
-    {name : 'Type', prop : 'vm_type', hidden: false},
+    {name : 'Type', prop : 'vm_type',  hidden: false},
     {name : 'Description', prop : 'description', hidden: true },
     {name : 'Virtual CPUs', prop : 'vcpus', hidden: false},
     {name : 'Memory Size (MiB)', prop : 'memory',hidden: false},
@@ -56,12 +56,10 @@ export class VmCardsComponent  implements OnDestroy {
     sorting : {columns : this.columns},
   };
 
-
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService,
               private core:CoreService,private dialog: DialogService,protected loader: AppLoaderService,
               protected matdialog: MatDialog
               ) {}
-
 
   resourceTransformIncomingRestData(vms) {
     for (let vm_index = 0; vm_index<vms.length; vm_index++){
