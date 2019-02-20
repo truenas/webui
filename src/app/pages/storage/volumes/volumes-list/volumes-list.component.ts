@@ -549,23 +549,20 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T("Delete Dataset"),
           onClick: (row1) => {
 
-            this.dialogService.confirm(T("Delete"), T("This action is irreversible and will \
-             delete any existing snapshots of this dataset (" + row1.path + ").  Please confirm."), false, T('Delete Dataset')).subscribe((res) => {
-                if (res) {
+            this.dialogService.confirm(T("Delete"), 
+              T("Delete the dataset ") + "<i>" + row1.path + "</i>"+  T(" and all snapshots of it?")
+              , false, T('Delete Dataset')).subscribe((confirmed) => {
+                if (confirmed) {
 
                   this.loader.open();
-
-                  const url = "storage/dataset/" + row1.path;
-
-
-                  this.rest.delete(url, {}).subscribe((res) => {
+                  this.ws.call('pool.dataset.delete', [row1.path, {"recursive": true}]).subscribe((wsResp) => {
                     this.loader.close();
                     this.parentVolumesListComponent.repaintMe();
-                  }, (error) => {
+    
+                  }, (e_res) => {
                     this.loader.close();
-                    this.dialogService.errorReport(T("Error deleting dataset."), error.message, error.stack);
+                    this.dialogService.errorReport(T("Error deleting dataset ") + "<i>" + row1.path + "</i>.", e_res.reason, e_res.stack);
                   });
-
                 }
               });
           }
@@ -579,11 +576,13 @@ export class VolumesListTableConfig implements InputTableConf {
       actions.push({
         label: T("Delete zvol"),
         onClick: (row1) => {
-          this.dialogService.confirm(T("Delete zvol:" + row1.path), T("Please confirm the deletion of zvol:" + row1.path), false, T('Delete Zvol')).subscribe((confirmed) => {
+          this.dialogService.confirm(T("Delete "),
+            T("Delete the zvol ") + "<i>" + row1.path + "</i>"+ T(" and all snapshots of it?")
+            , false, T('Delete Zvol')).subscribe((confirmed) => {
             if (confirmed === true) {
               this.loader.open();
 
-              this.ws.call('pool.dataset.delete', [row1.path]).subscribe((wsResp) => {
+              this.ws.call('pool.dataset.delete', [row1.path, {"recursive": true}]).subscribe((wsResp) => {
                 this.loader.close();
                 this.parentVolumesListComponent.repaintMe();
 
