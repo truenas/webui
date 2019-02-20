@@ -954,6 +954,20 @@ export class CloudCredentialsFormComponent {
     });
   }
 
+  setFieldRequired(name: string, required: boolean, entityform: any) {
+    const field = _.find(this.fieldConfig, {"name": name});
+    const controller = entityform.formGroup.controls[name];
+    if (field.required !== required) {
+      field.required = required;
+      if (required) {
+        controller.setValidators([Validators.required])
+      } else {
+        controller.clearValidators();
+      }
+      controller.updateValueAndValidity();
+    }
+  }
+
   afterInit(entityForm: any) {
     this.entityForm = entityForm;
     entityForm.submitFunction = this.submitFunction;
@@ -964,6 +978,19 @@ export class CloudCredentialsFormComponent {
     // preview service_account_credentials
     entityForm.formGroup.controls['service_account_credentials-GOOGLE_CLOUD_STORAGE'].valueChanges.subscribe((value)=>{
       entityForm.formGroup.controls['preview-GOOGLE_CLOUD_STORAGE'].setValue(value);
+    });
+    // Allow blank values for pass and key_file fields (but at least one should be non-blank)
+    entityForm.formGroup.controls['pass-SFTP'].valueChanges.subscribe((res) => {
+      if (res !== undefined) {
+        const required = res === '' ? true : false;
+        this.setFieldRequired('key_file-SFTP', required, entityForm);
+      }
+    });
+    entityForm.formGroup.controls['key_file-SFTP'].valueChanges.subscribe((res) => {
+      if (res !== undefined) {
+        const required = res === '' ? true : false;
+        this.setFieldRequired('pass-SFTP', required, entityForm);
+      }
     });
   }
 
