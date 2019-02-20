@@ -15,7 +15,7 @@ import { matchOtherValidator } from "app/pages/common/entity/entity-form/validat
 export class IscsiWizardComponent {
 
     public route_success: string[] = ['sharing', 'iscsi'];
-    isLinear = true;
+    public isLinear = true;
 
     protected wizardConfig: Wizard[] = [
         {
@@ -356,6 +356,33 @@ export class IscsiWizardComponent {
                     disabled: true,
                   },
             ]
+        },
+        {
+            label: helptext.step3_label,
+            fieldConfig: [
+                {
+                    type : 'input',
+                    name : 'initiators',
+                    placeholder : helptext.initiators_placeholder,
+                    tooltip: helptext.initiators_tooltip,
+                    value: '',
+                    inputType : 'textarea',
+                  },
+                  {
+                    type : 'input',
+                    name : 'auth_network',
+                    placeholder : helptext.auth_network_placeholder,
+                    tooltip: helptext.auth_network_tooltip,
+                    value: '',
+                    inputType : 'textarea',
+                  },
+                  {
+                    type : 'input',
+                    name : 'comment',
+                    placeholder : helptext.comment_placeholder,
+                    tooltip: helptext.comment_tooltip,
+                  },
+            ]
         }
     ]
 
@@ -457,6 +484,7 @@ export class IscsiWizardComponent {
 
         this.step0Init();
         this.step1Init();
+        this.step2Init();
     }
 
     step0Init() {
@@ -492,7 +520,6 @@ export class IscsiWizardComponent {
     }
 
     step1Init() {
-
         this.iscsiService.listPortals().subscribe((res) => {
             const field = _.find(this.wizardConfig[1].fieldConfig, { 'name': 'portal' });
             for (const i in res) {
@@ -542,6 +569,10 @@ export class IscsiWizardComponent {
             this.disableAuthGroup = (value === 'NEW' && !this.disableAuth) ? false : true;
             this.disablefieldGroup(this.authAccessFieldGroup, this.disableAuthGroup, 1);
         });
+    }
+
+    step2Init() {
+
     }
 
     disablefieldGroup(fieldGroup: any, disabled: boolean, stepIndex: number) {

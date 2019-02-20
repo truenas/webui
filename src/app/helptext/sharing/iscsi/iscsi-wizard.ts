@@ -71,4 +71,14 @@ export default {
     secret_confirm_placeholder: T("Secret (Confirm)"),
     secret_confirm_tooltip: T(""),
 
+    step3_label: T("Initiator"),
+
+    initiators_placeholder: T("Initiators"),
+    initiators_tooltip: T(""),
+
+    auth_network_placeholder: T("Authorized Networks"),
+    auth_network_tooltip: T(""),
+
+    comment_placeholder: T("Comment"),
+    comment_tooltip: T(""),
 }
