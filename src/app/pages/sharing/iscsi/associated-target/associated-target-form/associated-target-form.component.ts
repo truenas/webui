@@ -32,9 +32,9 @@ export class AssociatedTargetFormComponent {
     {
       type: 'input',
       name: 'iscsi_lunid',
+      required: true,
       placeholder: helptext_sharing_iscsi.associated_target_placeholder_lunid,
       tooltip: helptext_sharing_iscsi.associated_target_tooltip_lunid,
-      value: 0,
       validation: helptext_sharing_iscsi.associated_target_validators_lunid,
     },
     {

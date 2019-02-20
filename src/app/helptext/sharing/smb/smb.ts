@@ -70,16 +70,18 @@ export const helptext_sharing_smb = {
     tooltip_guestonly: T('Requires <b>Allow guest access</b> to also be set.\
  Forces guest access for all connections.'),
 
+    placeholder_abe: T('Access Based Share Enumeration'),
+    tooltip_abe: T('Restrict share visibility to users with read or write access\
+ to the share. See <a href="https://www.freebsd.org/cgi/man.cgi?query=smb.conf"\
+ target=_blank>smb.conf(5)</a>.'),
+
     placeholder_hostsallow: T('Hosts Allow'),
     tooltip_hostsallow: T('Enter a list of allowed hostnames or IP addresses.\
  Separate entries with a comma, space, or tab.'),
 
     placeholder_hostsdeny: T('Hosts Deny'),
     tooltip_hostsdeny: T('Enter a list of denied hostnames or IP addresses.\
- Separate entries with a comma, space, or tab.\
- Specify <i>ALL</i> and list any hosts from\
- <b>Hosts Allow</b> to have those hosts take\
- precedence.'),
+ Separate entries with a comma, space, or tab.'),
 
     placeholder_vfsobjects: T('VFS Objects'),
     tooltip_vfsobjects: T('Adds <a\

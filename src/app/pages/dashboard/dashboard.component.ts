@@ -91,8 +91,12 @@ export class DashboardComponent implements OnInit,OnDestroy {
     //DEBUG: console.log(evt.data);
     let result = [];
     for(let i in evt.data){
+      let avail = null;
+      if (evt.data[i].children && evt.data[i].children[0]) {
+        avail = evt.data[i].children[0].avail;
+      }
       let zvol = {
-        avail: evt.data[i].children[0].avail,
+        avail: avail,
         id:evt.data[i].id,
         is_decrypted:evt.data[i].is_decrypted,
         is_upgraded:evt.data[i].is_upgraded,
