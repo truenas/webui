@@ -43,7 +43,7 @@ export class VmCardsComponent  implements OnDestroy {
     {name : 'State', prop : 'state', always_display: true },
     {name : 'VNC Port', prop : 'port', hidden: true},
     {name : 'Com Port', prop : 'com_port', hidden: true},
-    {name : 'Type', prop : 'vm_type',  hidden: false},
+    {name : 'Type', prop : 'vm_type', hidden: false},
     {name : 'Description', prop : 'description', hidden: true },
     {name : 'Virtual CPUs', prop : 'vcpus', hidden: false},
     {name : 'Memory Size (MiB)', prop : 'memory',hidden: false},
