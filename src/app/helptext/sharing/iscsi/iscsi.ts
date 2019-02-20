@@ -241,25 +241,17 @@ export const helptext_sharing_iscsi = {
  <i>1</i> will inherit the authentication profile\
  associated with Group <i>1</i>."
   ),
-  authaccess_validators_tag: [Validators.required, Validators.min(0)],
 
   authaccess_placeholder_user: T("User"),
   authaccess_tooltip_user: T(
     "Name of user account on remote system for CHAP authentication.\
  Many initiators use the initiator name as the user name."
   ),
-  authaccess_validators_user: [Validators.required],
 
   authaccess_placeholder_secret: T("Secret"),
   authaccess_tooltip_secret: T(
     "Password. Must be at least 12 and no more than 16 characters long."
   ),
-  authaccess_validators_secret: [
-    Validators.minLength(12),
-    Validators.maxLength(16),
-    Validators.required,
-    matchOtherValidator("secret_confirm")
-  ],
 
   authaccess_placeholder_secret_confirm: T("Secret (Confirm)"),
 
@@ -273,10 +265,6 @@ export const helptext_sharing_iscsi = {
   authaccess_tooltip_peersecret: T(
     "Mutual secret password. Must be different than <i>Secret</i>."
   ),
-  authaccess_validators_peersecret: [
-    Validators.minLength(12),
-    matchOtherValidator("peersecret_confirm")
-  ],
 
   authaccess_placeholder_peersecret_confirm: T("Peer Secret (Confirm)"),
 
