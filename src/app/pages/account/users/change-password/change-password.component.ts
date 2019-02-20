@@ -4,8 +4,7 @@ import {RestService} from "../../../../services/rest.service";
 import {AppLoaderService} from "../../../../services/app-loader/app-loader.service";
 import {MatSnackBar} from "@angular/material";
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
-import { T } from '../../../../translate-marker';
+import helptext from '../../../../helptext/account/user-change-pw';
 
 @Component({
   template: `<entity-form [conf]="this"></entity-form>`,
@@ -18,31 +17,29 @@ export class ChangePasswordComponent {
   public fieldConfig: FieldConfig[] = [
     {
       type : 'input',
-      name : 'bsdusr_username',
-      placeholder : T('Username'),
+      name : helptext.pw_username_name,
+      placeholder : helptext.pw_username_placeholder,
     },
     {
       type : 'input',
-      name : 'bsdusr_passwd_currnt',
-      placeholder : T('Current Password'),
+      name : helptext.pw_current_pw_name,
+      placeholder : helptext.pw_current_pw_placeholder,
       inputType : 'password',
       togglePw: true,
     },
     {
       type : 'input',
-      name : 'bsdusr_password',
-      placeholder : T('New Password'),
+      name : helptext.pw_new_pw_name,
+      placeholder : helptext.pw_new_pw_placeholder,
       inputType : 'password',
-      tooltip : T('Passwords cannot contain a <b>?</b>. Passwords should\
-       be at least eight characters and contain a mix of lower and\
-       upper case, numbers, and special characters.')
+      tooltip: helptext.pw_new_pw_tooltip
     },
     {
       type : 'input',
-      name : 'bsdusr_password_conf',
-      placeholder : T('Confirm Password'),
+      name : helptext.pw_confirm_pw_name,
+      placeholder : helptext.pw_confirm_pw_placeholder,
       inputType : 'password',
-      validation : [ matchOtherValidator('bsdusr_password') ]
+      validation : helptext.pw_confirm_pw_validation
     },
   ];
 

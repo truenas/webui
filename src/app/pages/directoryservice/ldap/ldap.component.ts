@@ -1,8 +1,7 @@
 import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
-import { Validators } from '@angular/forms';
+import {Subscription} from 'rxjs/Subscription';
 
 import {
   RestService,
@@ -13,8 +12,7 @@ import {
   FieldConfig
 } from '../../common/entity/entity-form/models/field-config.interface';
 import {  DialogService } from '../../../services/';
-
-import { T } from '../../../translate-marker';
+import helptext from '../../../helptext/directoryservice/ldap';
 
 @Component({
   selector : 'app-ldap',
@@ -35,28 +33,29 @@ export class LdapComponent {
   protected entityForm: any;
   public custActions: Array<any> = [
     {
-      id : 'basic_mode',
-      name : 'Basic Mode',
+      id : helptext.ldap_custactions_basic_id,
+      name : helptext.ldap_custactions_basic_name,
       function : () => { this.isBasicMode = !this.isBasicMode; }
     },
     {
-      id : 'advanced_mode',
-      name : 'Advanced Mode',
+      id : helptext.ldap_custactions_advanced_id,
+      name : helptext.ldap_custactions_advanced_name,
       function : () => { this.isBasicMode = !this.isBasicMode; }
     },
     {
-      id : 'edit_idmap',
-      name : T('Edit Idmap'),
+      id : helptext.ldap_custactions_edit_imap_id,
+      name : helptext.ldap_custactions_edit_imap_name,
       function : () => {
         this.router.navigate(new Array('').concat(['directoryservice','idmap', this.idmapBacked, 'ldap']));
       }
     },
     {
-      'id' : 'ds_clearcache',
-      'name' : T('Rebuild Directory Service Cache'),
+      'id' : helptext.ldap_custactions_clearcache_id,
+      'name' : helptext.ldap_custactions_clearcache_name,
        function : async () => {
          this.ws.call('notifier.ds_clearcache').subscribe((cache_status)=>{
-          this.dialogservice.Info(T("LDAP"), T("The cache is being rebuilt."));
+          this.dialogservice.Info(helptext.ldap_custactions_clearcache_dialog_title,
+            helptext.ldap_custactions_clearcache_dialog_message);
 
         })
       }
@@ -66,211 +65,161 @@ export class LdapComponent {
   public fieldConfig: FieldConfig[] = [
     {
       type : 'input',
-      name : 'ldap_hostname',
-      placeholder : T('Hostname'),
-      tooltip: T('The hostname or IP address of the LDAP server.'),
+      name : helptext.ldap_hostname_name,
+      placeholder : helptext.ldap_hostname_placeholder,
+      tooltip: helptext.ldap_hostname_tooltip,
       required: true,
-      validation: [Validators.required]
+      validation: helptext.ldap_hostname_validation
     },
     {
       type : 'input',
-      name : 'ldap_hostname_noreq',
-      placeholder : T('Hostname'),
-      tooltip: T('The hostname or IP address of the LDAP server.'),
-      
+      name : helptext.ldap_hostname_noreq_name,
+      placeholder : helptext.ldap_hostname_noreq_placeholder,
+      tooltip: helptext.ldap_hostname_noreq_tooltip
     },
     {
       type : 'input',
-      name : 'ldap_basedn',
-      placeholder : T('Base DN'),
-      tooltip: T('Top level of the LDAP directory tree to be used when\
-                  searching for resources. Example:\
-                  <i>dc=test,dc=org</i>.')
+      name : helptext.ldap_basedn_name,
+      placeholder : helptext.ldap_basedn_placeholder,
+      tooltip: helptext.ldap_basedn_tooltip
     },
     {
       type : 'input',
-      name : 'ldap_binddn',
-      placeholder : T('Bind DN'),
-      tooltip: T('Administrative account name on the LDAP server.\
-                  Example: <i>cn=Manager,dc=test,dc=org</i>.')
+      name : helptext.ldap_binddn_name,
+      placeholder : helptext.ldap_binddn_placeholder,
+      tooltip: helptext.ldap_binddn_tooltip
     },
     {
       type : 'input',
-      name : 'ldap_bindpw',
-      placeholder : T('Bind Password'),
-      tooltip: T('Password for the Bind DN.'),
+      name : helptext.ldap_bindpw_name,
+      placeholder : helptext.ldap_bindpw_placeholder,
+      tooltip: helptext.ldap_bindpw_tooltip,
       inputType : 'password',
       togglePw : true
     },
     {
       type : 'checkbox',
-      name : 'ldap_anonbind',
-      placeholder : T('Allow Anonymous Binding'),
-      tooltip: T('Set for the LDAP server to disable authentication and\
-                  allow read and write access to any client.')
+      name : helptext.ldap_anonbind_name,
+      placeholder : helptext.ldap_anonbind_placeholder,
+      tooltip: helptext.ldap_anonbind_tooltip
     },
     {
       type : 'input',
-      name : 'ldap_usersuffix',
-      placeholder : T('User Suffix'),
-      tooltip: T('Suffix to add to a name when the user account is added\
-                  to the LDAP directory.')
+      name : helptext.ldap_usersuffix_name,
+      placeholder : helptext.ldap_usersuffix_placeholder,
+      tooltip: helptext.ldap_usersuffix_tooltip
     },
     {
       type : 'input',
-      name : 'ldap_groupsuffix',
-      placeholder : T('Group Suffix'),
-      tooltip: T('Suffix to add to a name when the group is added to the\
-                  LDAP directory.')
+      name : helptext.ldap_groupsuffix_name,
+      placeholder : helptext.ldap_groupsuffix_placeholder,
+      tooltip: helptext.ldap_groupsuffix_tooltip
     },
     {
       type : 'input',
-      name : 'ldap_passwordsuffix',
-      placeholder : T('Password Suffix'),
-      tooltip: T('Suffix to add to the password when it is added to the\
-                  LDAP directory.')
+      name : helptext.ldap_passwordsuffix_name,
+      placeholder : helptext.ldap_passwordsuffix_placeholder,
+      tooltip: helptext.ldap_passwordsuffix_tooltip
     },
     {
       type : 'input',
-      name : 'ldap_machinesuffix',
-      placeholder : T('Machine Suffix'),
-      tooltip: T('Suffix to add to the system name when it is added to\
-                  the LDAP directory.')
+      name : helptext.ldap_machinesuffix_name,
+      placeholder : helptext.ldap_machinesuffix_placeholder,
+      tooltip: helptext.ldap_machinesuffix_tooltip
     },
     {
       type : 'input',
-      name : 'ldap_sudosuffix',
-      placeholder : T('SUDO Suffix'),
-      tooltip: T('Suffix for LDAP-based users that need superuser access.')
+      name : helptext.ldap_sudosuffix_name,
+      placeholder : helptext.ldap_sudosuffix_placeholder,
+      tooltip: helptext.ldap_sudosuffix_tooltip
     },
     {
       type : 'select',
-      name : 'ldap_kerberos_realm',
-      placeholder : T('Kerberos Realm'),
-      tooltip: T('Select the realm created using the instructions in <a\
-                  href="%%docurl%%/directoryservice.html%%webversion%%#kerberos-realms"\
-                  target="_blank">Kerberos Realms</a>.'),
+      name : helptext.ldap_kerberos_realm_name,
+      placeholder : helptext.ldap_kerberos_realm_placeholder,
+      tooltip: helptext.ldap_kerberos_realm_tooltip,
       options : []
     },
     {
       type : 'select',
-      name : 'ldap_kerberos_principal',
-      placeholder : T('Kerberos Principal'),
-      tooltip: T('Select the location of the principal in the keytab\
-                  created as described in <a\
-                  href="%%docurl%%/directoryservice.html%%webversion%%#kerberos-keytabs"\
-                  target="_blank">Kerberos Keytabs</a>.'),
+      name : helptext.ldap_kerberos_principal_name,
+      placeholder : helptext.ldap_kerberos_principal_placeholder,
+      tooltip: helptext.ldap_kerberos_principal_tooltip,
       options : []
     },
     {
       type : 'select',
-      name : 'ldap_ssl',
-      placeholder : T('Encryption Mode'),
-      tooltip: T('Authentication only functions when a Certificate\
-                  is selected with either the <i>SSL</i> or <i>TLS</i>\
-                  option.'),
+      name : helptext.ldap_ssl_name,
+      placeholder : helptext.ldap_ssl_placeholder,
+      tooltip: helptext.ldap_ssl_tooltip,
       options : []
     },
     {
       type : 'select',
-      name : 'ldap_certificate',
-      placeholder : T('Certificate'),
-      tooltip: T('Select the LDAP CA certificate. The certificate for the\
-                  LDAP server CA must first be imported using the\
-                  System/Certificates menu.'),
+      name : helptext.ldap_certificate_name,
+      placeholder : helptext.ldap_certificate_placeholder,
+      tooltip: helptext.ldap_certificate_tooltip,
       options : []
     },
     {
       type : 'input',
-      name : 'ldap_timeout',
-      placeholder : T('LDAP timeout'),
-      tooltip: T('LDAP timeout in seconds. Increase this value if a\
-                  Kerberos ticket timeout occurs.')
+      name : helptext.ldap_timeout_name,
+      placeholder : helptext.ldap_timeout_placeholder,
+      tooltip: helptext.ldap_timeout_tooltip
     },
     {
       type : 'input',
-      name : 'ldap_dns_timeout',
-      placeholder : T('DNS timeout'),
-      tooltip: T('DNS timeout in seconds. Increase this value if DNS\
-                  queries timeout.')
+      name : helptext.ldap_dns_timeout_name,
+      placeholder : helptext.ldap_dns_timeout_placeholder,
+      tooltip: helptext.ldap_dns_timeout_tooltip
     },
     {
       type : 'select',
-      name : 'ldap_idmap_backend',
-      placeholder : T('Idmap Backend'),
-      tooltip: T('Backend used to map Windows security identifiers\
-                  (SIDs) to UNIX UIDs and GIDs. Click Edit to configure\
-                  that backend'),
+      name : helptext.ldap_idmap_backend_name,
+      placeholder : helptext.ldap_idmap_backend_placeholder,
+      tooltip: helptext.ldap_idmap_backend_tooltip,
       options : []
     },
     {
       type : 'checkbox',
-      name : 'ldap_has_samba_schema',
-      placeholder : 'Samba Schema',
-      tooltip: T('Only set LDAP authentication for\
-                  SMB shares is required and the LDAP server is\
-                  already configured with Samba attributes.')
+      name : helptext.ldap_has_samba_schema_name,
+      placeholder : helptext.ldap_has_samba_schema_placeholder,
+      tooltip: helptext.ldap_has_samba_schema_tooltip
     },
     {
       type : 'textarea',
-      name : 'ldap_auxiliary_parameters',
-      placeholder : T('Auxiliary Parameters'),
-      tooltip: T('Additional options for <a\
-                  href="https://jhrozek.fedorapeople.org/sssd/1.11.6/man/sssd.conf.5.html"\
-                  target="_blank">sssd.conf(5)</a>.')
+      name : helptext.ldap_auxiliary_parameters_name,
+      placeholder : helptext.ldap_auxiliary_parameters_placeholder,
+      tooltip: helptext.ldap_auxiliary_parameters_tooltip
     },
     {
       type : 'select',
-      name : 'ldap_schema',
-      placeholder : T('Schema'),
-      tooltip: T('Select a schema when Samba Schema is set.'),
+      name : helptext.ldap_schema_name,
+      placeholder : helptext.ldap_schema_placeholder,
+      tooltip: helptext.ldap_schema_tooltip,
       options : []
     },
     {
       type : 'checkbox',
-      name : 'ldap_enable',
-      placeholder : T('Enable'),
-      tooltip: T('Activates the configuration. Unset to disable the\
-                  configuration without deleting it.')
+      name : helptext.ldap_enable_name,
+      placeholder : helptext.ldap_enable_placeholder,
+      tooltip: helptext.ldap_enable_tooltip
     },
     {
       type : 'input',
-      name : 'ldap_netbiosname_a',
-      placeholder : T('Netbios Name'),
-      tooltip: T('Netbios Name of this NAS. This name must differ from\
-                  the <i>Workgroup</i> name and be no greater than 15\
-                  characters.')
+      name : helptext.ldap_netbiosname_a_name,
+      placeholder : helptext.ldap_netbiosname_a_placeholder,
+      tooltip: helptext.ldap_netbiosname_a_tooltip
     },
     {
       type : 'input',
-      name : 'ldap_netbiosalias',
-      placeholder : T('NetBIOS alias'),
-      tooltip: T('Alternative names that SMB clients can use when\
-                  connecting to this NAS. Can be no greater than 15\
-                  characters.')
+      name : helptext.ldap_netbiosalias_name,
+      placeholder : helptext.ldap_netbiosalias_placeholder,
+      tooltip: helptext.ldap_netbiosalias_tooltip
     }
   ];
 
-  protected advanced_field: Array<any> = [
-    'ldap_anonbind',
-    'ldap_usersuffix',
-    'ldap_groupsuffix',
-    'ldap_passwordsuffix',
-    'ldap_machinesuffix',
-    'ldap_sudosuffix',
-    'ldap_kerberos_realm',
-    'ldap_kerberos_principal',
-    'ldap_ssl',
-    'ldap_certificate',
-    'ldap_timeout',
-    'ldap_dns_timeout',
-    'ldap_idmap_backend',
-    'ldap_has_samba_schema',
-    'ldap_auxiliary_parameters',
-    'ldap_schema',
-    'ldap_netbiosalias',
-    'ldap_netbiosname_a'
-  ];
+  protected advanced_field: Array<any> = helptext.ldap_advanced_fields;
 
   isCustActionVisible(actionId: string) {
     if (actionId === 'advanced_mode' && this.isBasicMode === false) {

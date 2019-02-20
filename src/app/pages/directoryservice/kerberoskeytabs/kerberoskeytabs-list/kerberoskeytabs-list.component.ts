@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RestService } from '../../../../services/';
+import helptext from '../../../../helptext/directoryservice/kerberoskeytabs-form-list';
 
 @Component({
   selector: 'app-kerberos-keytabs-list',
@@ -22,8 +23,8 @@ export class KerberosKeytabsListComponent {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: 'Kerberos Keytab',
-      key_props: ['keytab_name']
+      title: helptext.kkt_list_delmsg_title,
+      key_props: helptext.kkt_list_delmsgkey_props
     },
   };
 
@@ -35,8 +36,8 @@ export class KerberosKeytabsListComponent {
 
   getActions(parentRow) {
     return [{
-      id: "delete",
-      label: "Delete",
+      id: helptext.kkt_list_actions_delete_id,
+      label: helptext.kkt_list_actions_delete_label,
       onClick: (row) => {
         this.entityList.doDelete(row);
       }

@@ -208,15 +208,6 @@ export class VmCardsComponent  implements OnDestroy {
 
     return actions;
   }
-  getAddActions() {
-    return [{
-        label: "Add ${dockerhost}",
-        onClick: () => {
-          this.router.navigate(
-            new Array('').concat(["vm", "dockerwizard"]));
-        }
-      }]
-  }
   checkVnc(vm){
     const devices = vm.devices
     if(!devices || devices.length === 0){
