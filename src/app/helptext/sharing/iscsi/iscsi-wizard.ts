@@ -55,4 +55,20 @@ export default {
 
     port_placeholder: T("Port"),
     port_tooltip: T(""),
+
+    auth_placeholder: T('Authorized Access'),
+    auth_tooltip: T(""),
+
+    tag_placeholder: T("Group ID"),
+    tag_tooltip: T(""),
+
+    user_placeholder: T("User"),
+    user_tooltip: T(""),
+
+    secret_placeholder: T("Secret"),
+    secret_tooltip: T(""),
+
+    secret_confirm_placeholder: T("Secret (Confirm)"),
+    secret_confirm_tooltip: T(""),
+
 }

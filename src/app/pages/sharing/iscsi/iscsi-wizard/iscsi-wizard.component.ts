@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 
 import helptext from '../../../../helptext/sharing/iscsi/iscsi-wizard';
 import { IscsiService, RestService, WebSocketService } from '../../../../services/';
+import { matchOtherValidator } from "app/pages/common/entity/entity-form/validators/password-validation";
 
 @Component({
     selector: 'app-iscsi-wizard',
@@ -293,6 +294,67 @@ export class IscsiWizardComponent {
                     isHidden: true,
                     disabled: true,
                 },
+                // athorized access
+                {
+                    type: 'select',
+                    name: 'auth',
+                    placeholder: helptext.auth_placeholder,
+                    tooltip: helptext.auth_tooltip,
+                    options: [
+                        {
+                            label: 'Create New',
+                            value: 'NEW'
+                        }
+                    ],
+                    required: true,
+                    isHidden: true,
+                    disabled: true,
+                },
+                {
+                    type : 'input',
+                    name : 'tag',
+                    placeholder : helptext.tag_placeholder,
+                    tooltip: helptext.tag_tooltip,
+                    inputType : 'number',
+                    min: 0,
+                    required: true,
+                    isHidden: true,
+                    disabled: true,
+                  },
+                  {
+                    type : 'input',
+                    name : 'user',
+                    placeholder : helptext.user_placeholder,
+                    tooltip: helptext.user_tooltip,
+                    required: true,
+                    isHidden: true,
+                    disabled: true,
+                  },
+                  {
+                    type : 'input',
+                    name : 'secret',
+                    placeholder : helptext.secret_placeholder,
+                    tooltip: helptext.secret_tooltip,
+                    inputType : 'password',
+                    togglePw: true,
+                    required: true,
+                    isHidden: true,
+                    disabled: true,
+                    validation: [
+                        Validators.minLength(12),
+                        Validators.maxLength(16),
+                        Validators.required,
+                        matchOtherValidator("secret_confirm"),
+                    ]
+                  },
+                  {
+                    type : 'input',
+                    name : 'secret_confirm',
+                    placeholder : helptext.secret_confirm_placeholder,
+                    inputType : 'password',
+                    isHidden: true,
+                    disabled: true,
+                  },
             ]
         }
     ]
@@ -373,8 +435,17 @@ export class IscsiWizardComponent {
         'ip',
         'port',
     ];
+    protected authAccessFieldGroup: any[] = [
+        'tag',
+        'user',
+        'secret',
+        'secret_confirm'
+    ];
 
     protected entityWizard: any;
+    protected disablePortalGroup = true;
+    protected disableAuth = true;
+    protected disableAuthGroup = true;
 
     constructor(private iscsiService: IscsiService, private ws: WebSocketService) {
 
@@ -447,9 +518,29 @@ export class IscsiWizardComponent {
             });
         });
 
+        this.iscsiService.getAuth().subscribe((res) => {
+            const field = _.find(this.wizardConfig[1].fieldConfig, { 'name': 'auth' });
+            for (let i = 0; i < res.length; i++) {
+                const option = { label: res[i].tag, value: res[i].tag};
+                if (field.options.findIndex(item => item.label === option.label) < 0) {
+                    field.options.push(option);
+                }
+            }
+        })
+
         this.entityWizard.formArray.controls[1].controls['portal'].valueChanges.subscribe((value) => {
-            const disablePortalGroup = value == 'NEW' ? false : true;
-            this.disablefieldGroup(this.portalFieldGroup, disablePortalGroup, 1);
+            this.disablePortalGroup = value === 'NEW' ? false : true;
+            this.disablefieldGroup(this.portalFieldGroup, this.disablePortalGroup, 1);
+        });
+
+        this.entityWizard.formArray.controls[1].controls['discovery_authmethod'].valueChanges.subscribe((value) => {
+            this.disableAuth = ((value === 'CHAP' || value === 'CHAP_MUTUAL') && !this.disablePortalGroup) ? false : true;
+            this.disablefieldGroup(['auth'], this.disableAuth, 1);
+        });
+
+        this.entityWizard.formArray.controls[1].controls['auth'].valueChanges.subscribe((value) => {
+            this.disableAuthGroup = (value === 'NEW' && !this.disableAuth) ? false : true;
+            this.disablefieldGroup(this.authAccessFieldGroup, this.disableAuthGroup, 1);
         });
     }
 
