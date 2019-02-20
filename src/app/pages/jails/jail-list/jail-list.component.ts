@@ -146,16 +146,17 @@ export class JailListComponent implements OnInit {
     },
   ];
 
+  public tooltipMsg: any = T("Choose a pool where the iocage jail manager \
+  can create the /iocage dataset. The /iocage \
+  dataset might not be visible until after \
+  the first jail is created. iocage uses \
+  this dataset to store FreeBSD releases \
+  and all other jail data.");
+
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, 
     protected loader: AppLoaderService, protected dialogService: DialogService, private translate: TranslateService,
     protected snackBar: MatSnackBar, public sorter: StorageService) {}
 
-  public tooltipMsg: any = T("Choose a pool where the iocage jail manager \
-                              can create the /iocage dataset. The /iocage \
-                              dataset might not be visible until after \
-                              the first jail is created. iocage uses \
-                              this dataset to store FreeBSD releases \
-                              and all other jail data.");
 
   ngOnInit(){
     this.getActivatedPool();
@@ -349,9 +350,10 @@ export class JailListComponent implements OnInit {
     this.ws.call(this.queryCall, [[["host_hostuuid", "=", row.host_hostuuid]]]).subscribe(
       (res) => {
         if (res[0]) {
+          const prefix = (res[0].state === 'up' && res[0].dhcp === 'on') ? 'DHCP: ' : '';
           for (let i in this.columns) {
             if (this.columns[i].prop == 'ip4_addr' && _.split(res[0].ip4_addr, '|').length > 1) {
-              row.ip4_addr = _.split(res[0].ip4_addr, '|')[1];
+              row.ip4_addr = prefix + _.split(res[0].ip4_addr, '|')[1];
             } else {
               row[this.columns[i].prop] = res[0][this.columns[i].prop];
             }
@@ -384,8 +386,9 @@ export class JailListComponent implements OnInit {
     // Call sort on load to make sure initial sort is by Jail name, asecnding
     entityList.rows = this.sorter.tableSorter(entityList.rows, 'host_hostuuid', 'asc');
     for (let i = 0; i < entityList.rows.length; i++) {
+      const prefix = (entityList.rows[i].state === 'up' && entityList.rows[i].dhcp === 'on') ? 'DHCP: ' : '';
       if (_.split(entityList.rows[i].ip4_addr, '|').length > 1) {
-        entityList.rows[i].ip4_addr = _.split(entityList.rows[i].ip4_addr, '|')[1];
+        entityList.rows[i].ip4_addr = prefix + _.split(entityList.rows[i].ip4_addr, '|')[1];
       }
       if (entityList.rows[i].ip6_addr == 'vnet0|accept_rtadv') {
         entityList.rows[i].ip6_addr = 'Auto';

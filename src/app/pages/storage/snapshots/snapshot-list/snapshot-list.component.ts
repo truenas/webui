@@ -1,19 +1,25 @@
-import { Component, ElementRef, Injector, ApplicationRef } from '@angular/core';
+import { Component, ElementRef, Injector, ApplicationRef, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RestService } from '../../../../services/rest.service';
 import { Subscription } from 'rxjs';
 import { WebSocketService } from 'app/services';
+import { EntityUtils } from '../../../common/entity/utils';
 
+import { T } from '../../../../translate-marker';
+import { isNgTemplate } from '@angular/compiler';
 @Component({
   selector: 'app-snapshot-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
-export class SnapshotListComponent {
+export class SnapshotListComponent implements OnInit {
 
   public title = "Snapshots";
   protected queryCall = 'zfs.snapshot.query';
+  protected queryCallOption = [[["pool", "!=", "freenas-boot"]]];
   protected route_add: string[] = ['storage', 'snapshots', 'add'];
   protected route_add_tooltip = "Add Snapshot";
+  protected wsDelete = 'zfs.snapshot.remove';
+  protected loaderOpen = false;
   protected entityList: any;
   public busy: Subscription;
   public sub: Subscription;
@@ -29,7 +35,7 @@ export class SnapshotListComponent {
     multiSelect: true,
     deleteMsg: {
       title: 'Snapshot',
-      key_props: ['fullname']
+      key_props: ['name']
     },
   };
 
@@ -71,6 +77,14 @@ export class SnapshotListComponent {
     }
   }
 
+  async ngOnInit() {
+    await this.ws.call('systemdataset.config').toPromise().then((res) => {
+      if (res && res.basename && res.basename !== '') {
+        this.queryCallOption[0].push(["name", "!^", res.basename]);
+      }
+    });
+  }
+
   afterInit(entityList: any) {
     this.entityList = entityList;
   }
@@ -85,7 +99,7 @@ export class SnapshotListComponent {
     actions.push({
       label: "Delete",
       onClick: (row1) => {
-        this.entityList.doDelete(row1);
+        this.doDelete(row1);
       }
     });
     actions.push({
@@ -95,22 +109,19 @@ export class SnapshotListComponent {
           ["storage", "snapshots", "clone", row1.id]));
       }
     });
-    if (parentRow.mostrecent) {
-      actions.push({
-        label: "Rollback",
-        onClick: (row1) => {
-          this._router.navigate(new Array('/').concat(
-            ["storage", "snapshots", "rollback", row1.id]));
-        }
-      });
-    }
+    actions.push({
+      label: "Rollback",
+      onClick: (row1) => {
+        this.doRollback(row1);
+      }
+    });
     return actions;
   }
 
   getSelectedNames(selectedSnapshots) {
     let selected: any = [];
     for (let i in selectedSnapshots) {
-      selected.push([{"dataset": selectedSnapshots[i].filesystem, "name": selectedSnapshots[i].name}]);
+      selected.push([{"dataset": selectedSnapshots[i].dataset, "name": selectedSnapshots[i].snapshot_name}]);
     }
     return selected;
   }
@@ -120,4 +131,47 @@ export class SnapshotListComponent {
     params.push(this.getSelectedNames(selected));
     return params;
   }
+
+  doDelete(item) {
+    const deleteMsg = T("Delete snapshot ") + item.name  + "?";
+    this.entityList.dialogService.confirm(T("Delete"), deleteMsg, false, T('Delete')).subscribe((res) => {
+      if (res) {
+        this.entityList.loader.open();
+        this.entityList.loaderOpen = true;
+        this.ws.call(this.wsDelete, [{ "dataset": item.dataset, "name": item.snapshot_name}]).subscribe(
+          (res) => { this.entityList.getData() },
+          (res) => {
+            new EntityUtils().handleWSError(this, res, this.entityList.dialogService);
+            this.entityList.loaderOpen = false;
+            this.entityList.loader.close();
+        });
+      }
+    });
+  }
+
+  doRollback(item) {
+    const warningMsg = T("<b>WARNING:</b> Rolling back to this snapshot will permanently delete later snapshots of this dataset. Do not roll back until all desired snapshots have been backed up!");
+    const msg = T("<br><br>Roll back to snapshot <i>") + item.snapshot_name + '</i> from ' + item.creation + '?';
+
+    this.entityList.dialogService.confirm(T("Warning"), warningMsg + msg, false, T('Rollback')).subscribe(res => {
+      let data = {"force" : true};
+      if (res) {
+        this.entityList.loader.open();
+        this.entityList.loaderOpen = true;
+        this.rest
+        .post('storage/snapshot' + '/' + item.id + '/rollback/', {
+          body : JSON.stringify(data),
+        })
+        .subscribe(
+          (res) => { this.entityList.getData() },
+          (res) => {
+            this.entityList.loaderOpen = false;
+            this.entityList.loader.close();
+            this.entityList.dialogService.errorReport(T("Error rolling back snapshot"), res.error);
+          },
+        );
+      }
+    });
+  }
+
 }
