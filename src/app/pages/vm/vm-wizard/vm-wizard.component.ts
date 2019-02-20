@@ -279,7 +279,7 @@ export class VMWizardComponent {
           {
             label : zvol.id, value : zvol.id
           }
-        );   
+        );
       });
     });
 
@@ -361,7 +361,7 @@ export class VMWizardComponent {
         if(datastore === '/mnt'){
           ( < FormGroup > entityWizard.formArray.get([3])).controls['datastore'].setValue(null);
           _.find(this.wizardConfig[3].fieldConfig, {'name' : 'datastore'}).hasErrors = true;
-          _.find(this.wizardConfig[3].fieldConfig, {'name' : 'datastore'}).errors = `Virtual Machine storage are not allowed on temporary file storage, ${datastore}`;
+          _.find(this.wizardConfig[3].fieldConfig, {'name' : 'datastore'}).errors = `Virtual machines cannot be stored in an unmounted mountpoint: ${datastore}`;
         }
         if(datastore === ''){
           ( < FormGroup > entityWizard.formArray.get([3])).controls['datastore'].setValue(null);
