@@ -890,12 +890,12 @@ export class JailAddComponent implements OnInit {
     'boot',
     'jail_zfs',
     'vnet',
+    'hostid_strict_check',
     'rtsold',
   ];
   // fields only accepted by ws with value yes/no
   protected YNfields: any = [
     'bpf',
-    'hostid_strict_check',
     'template',
     'host_time',
   ];
