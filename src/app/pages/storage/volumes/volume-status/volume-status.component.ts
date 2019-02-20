@@ -94,6 +94,16 @@ export class VolumeStatusComponent implements OnInit {
     protected loader: AppLoaderService,
     protected snackBar: MatSnackBar) {}
 
+  getZfsPoolScan(poolName) {
+    this.ws.subscribe('zfs.pool.scan').subscribe(
+      (res) => {
+        if (res.fields && res.fields.name == poolName) {
+          this.poolScan = res.fields.scan;
+        }
+      }
+    )
+  }
+
   getData() {
     this.ws.call('pool.query', [
       [
@@ -110,6 +120,10 @@ export class VolumeStatusComponent implements OnInit {
             _.find(this.replaceDiskFormFields, { name: 'pass2' }).disabled = false;
           }
           this.poolScan = res[0].scan;
+          // subscribe zfs.pool.scan to get scrub job info
+          if (this.poolScan.state == 'SCANNING') {
+            this.getZfsPoolScan(res[0].name);
+          }
           this.dataHandler(res[0]);
         }
       },

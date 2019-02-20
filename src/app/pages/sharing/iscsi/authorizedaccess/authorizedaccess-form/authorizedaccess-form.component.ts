@@ -7,6 +7,8 @@ import { EntityUtils } from '../../../../common/entity/utils';
 import { WebSocketService } from '../../../../../services/ws.service';
 import * as _ from 'lodash';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
+import { Validators } from "@angular/forms";
+import { matchOtherValidator } from "app/pages/common/entity/entity-form/validators/password-validation";
 
 @Component({
   selector : 'app-iscsi-authorizedaccess-form',
@@ -31,14 +33,14 @@ export class AuthorizedAccessFormComponent {
       inputType : 'number',
       min: 0,
       required: true,
-      validation : helptext_sharing_iscsi.authaccess_validators_tag 
+      validation : [Validators.required, Validators.min(0)]
     },
     {
       type : 'input',
       name : 'user',
       placeholder : helptext_sharing_iscsi.authaccess_placeholder_user,
       tooltip: helptext_sharing_iscsi.authaccess_tooltip_user,
-      validation : helptext_sharing_iscsi.authaccess_validators_user,
+      validation : [Validators.required],
       required: true,
     },
     {
@@ -49,7 +51,12 @@ export class AuthorizedAccessFormComponent {
       inputType : 'password',
       togglePw: true,
       required: true,
-      validation : helptext_sharing_iscsi.authaccess_validators_secret,
+      validation : [
+        Validators.minLength(12),
+        Validators.maxLength(16),
+        Validators.required,
+        matchOtherValidator("secret_confirm")
+      ],
     },
     {
       type : 'input',
@@ -70,7 +77,10 @@ export class AuthorizedAccessFormComponent {
       tooltip: helptext_sharing_iscsi.authaccess_tooltip_peersecret,
       inputType : 'password',
       togglePw: true,
-      validation : helptext_sharing_iscsi.authaccess_validators_peersecret,
+      // validation : [
+      //   Validators.minLength(12),
+      //   matchOtherValidator("peersecret_confirm")
+      // ],
     },
     {
       type : 'input',
@@ -97,6 +107,21 @@ export class AuthorizedAccessFormComponent {
     });
   }
 
+  afterInit(entityForm) {
+    entityForm.formGroup.controls['peeruser'].valueChanges.subscribe((res) => {
+      if (res != '') {
+        entityForm.formGroup.controls['peersecret'].setValidators([
+          Validators.required,
+          Validators.minLength(12),
+          matchOtherValidator("peersecret_confirm")
+        ]);
+      } else {
+        entityForm.formGroup.controls['peersecret'].clearValidators();
+      }
+      entityForm.formGroup.controls['peersecret'].updateValueAndValidity();
+    });
+  }
+
   beforeSubmit(value) {
     delete value['secret_confirm'];
     delete value['peersecret_confirm'];
@@ -111,9 +136,8 @@ export class AuthorizedAccessFormComponent {
       },
       (res) => {
         this.loader.close();
-        new EntityUtils().handleWSError(this.entityForm, res);
+        new EntityUtils().handleWSError(this, res);
       }
     );
-
   }
 }

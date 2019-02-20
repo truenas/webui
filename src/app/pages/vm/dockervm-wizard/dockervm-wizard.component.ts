@@ -1,7 +1,7 @@
 import { Component} from '@angular/core';
 import { Router } from '@angular/router';
 import { RestService, WebSocketService, NetworkService } from '../../../services';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
 import * as _ from 'lodash';
@@ -57,7 +57,7 @@ export class DockerVMWizardComponent {
         name : 'name',
         placeholder :  helptext.docker_vm_placeholder,
         tooltip : helptext.docker_vm_tooltip,
-        validation : helptext.docker_vm_validation,
+        validation : [Validators.required,Validators.pattern('^[a-zA-Z0-9_]*$')],
         required: true,
         blurStatus: true,
         blurEvent: this.blurEvent,
@@ -141,6 +141,15 @@ export class DockerVMWizardComponent {
           tooltip: helptext.raw_filename_tooltip,
           validation : helptext.raw_filename_validation,
           required: true
+        },
+        {
+          type: 'input',
+          name: 'raw_filename_password',
+          placeholder : helptext.raw_filename_password_placeholder,
+          tooltip: helptext.raw_filename_password_tooltip,
+          validation : helptext.raw_filename_password_validation,
+          inputType: 'password',
+          value: 'docker'
         },
         {
           type: 'input',
@@ -357,7 +366,7 @@ async customSubmit(value) {
     vm_payload["name"] = value.name;
     vm_payload["vcpus"] = String(value.vcpus);
     vm_payload["autostart"] = value.autostart;
-    vm_payload["root_password"] = "docker"
+    vm_payload["root_password"] = value.raw_filename_password;
     vm_payload["devices"] = [
       {"dtype": "NIC", "attributes": {"type": value.NIC_type, "mac": value.NIC_mac, "nic_attach":value.nic_attach}},
       {"dtype": "RAW", "attributes": {"path": path,exists: false, "type": "AHCI", "size": value.size, sectorsize: 0}},

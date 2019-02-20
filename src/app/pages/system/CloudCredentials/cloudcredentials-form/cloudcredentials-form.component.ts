@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { MatSnackBar } from '@angular/material';
 import * as _ from 'lodash';
-import { WebSocketService, CloudCredentialService } from '../../../../services/';
+import { WebSocketService, CloudCredentialService, DialogService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 
 @Component({
   selector: 'app-cloudcredentials-form',
@@ -125,6 +127,22 @@ export class CloudCredentialsFormComponent {
       togglePw: true
     },
     {
+      type: 'checkbox',
+      name: 'advanced-S3',
+      placeholder: T('Advanced Settings'),
+      isHidden: true,
+      value: false,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'S3',
+           }]
+        }
+      ]
+    },
+    {
       type: 'input',
       name: 'endpoint-S3',
       placeholder: T('Endpoint URL'),
@@ -142,9 +160,13 @@ export class CloudCredentialsFormComponent {
       relation: [
         {
           action: 'SHOW',
+          connective: 'AND',
           when: [{
             name: 'provider',
             value: 'S3',
+           }, {
+            name: 'advanced-S3',
+            value: true,
            }]
         }
       ]
@@ -160,9 +182,13 @@ export class CloudCredentialsFormComponent {
       relation: [
         {
           action: 'SHOW',
+          connective: 'AND',
           when: [{
             name: 'provider',
             value: 'S3',
+           }, {
+            name: 'advanced-S3',
+            value: true,
            }]
         }
       ]
@@ -179,9 +205,13 @@ export class CloudCredentialsFormComponent {
       relation: [
         {
           action: 'SHOW',
+          connective: 'AND',
           when: [{
             name: 'provider',
             value: 'S3',
+           }, {
+            name: 'advanced-S3',
+            value: true,
            }]
         }
       ]
@@ -854,11 +884,51 @@ export class CloudCredentialsFormComponent {
 
   protected providers: Array<any>;
   protected providerField: any;
+  protected entityForm: any;
 
+  public custActions: Array<any> = [
+    {
+      id : 'validCredential',
+      name : T('Verify Credential'),
+      function : () => {
+        const attributes = {};
+        const value = _.cloneDeep(this.entityForm.formGroup.value);
+        let attr_name: string;
+
+        for (const item in value) {
+          if (item != 'name' && item != 'provider') {
+            if (!this.entityForm.formGroup.controls[item].valid) {
+              this.entityForm.formGroup.controls[item].markAsTouched();
+            }
+            if (item != 'preview-GOOGLE_CLOUD_STORAGE') {
+              attr_name = item.split("-")[0];
+              attributes[attr_name] = value[item];
+            }
+            delete value[item];
+          }
+        }
+        delete value['name'];
+        value['attributes'] = attributes;
+
+        this.ws.call('cloudsync.credentials.verify', [value]).subscribe(
+          (res) => {
+            if (res.valid) {
+              this.snackBar.open(T('The Credential is valid.'), T('Close'), { duration: 5000 });
+            } else {
+              this.dialog.errorReport('Error', res.error);
+            }
+          },
+          (err) => {
+            new EntityUtils().handleWSError(this.entityForm.conf, err);
+          })
+      }
+    }];
   constructor(protected router: Router,
               protected aroute: ActivatedRoute,
               protected ws: WebSocketService,
-              protected cloudcredentialService: CloudCredentialService) {
+              protected cloudcredentialService: CloudCredentialService,
+              protected dialog: DialogService,
+              public snackBar: MatSnackBar) {
     this.providerField = _.find(this.fieldConfig, {'name': 'provider'});
     this.cloudcredentialService.getProviders().subscribe(
       (res) => {
@@ -884,7 +954,22 @@ export class CloudCredentialsFormComponent {
     });
   }
 
+  setFieldRequired(name: string, required: boolean, entityform: any) {
+    const field = _.find(this.fieldConfig, {"name": name});
+    const controller = entityform.formGroup.controls[name];
+    if (field.required !== required) {
+      field.required = required;
+      if (required) {
+        controller.setValidators([Validators.required])
+      } else {
+        controller.clearValidators();
+      }
+      controller.updateValueAndValidity();
+    }
+  }
+
   afterInit(entityForm: any) {
+    this.entityForm = entityForm;
     entityForm.submitFunction = this.submitFunction;
 
     entityForm.formGroup.controls['provider'].valueChanges.subscribe((res) => {
@@ -893,6 +978,19 @@ export class CloudCredentialsFormComponent {
     // preview service_account_credentials
     entityForm.formGroup.controls['service_account_credentials-GOOGLE_CLOUD_STORAGE'].valueChanges.subscribe((value)=>{
       entityForm.formGroup.controls['preview-GOOGLE_CLOUD_STORAGE'].setValue(value);
+    });
+    // Allow blank values for pass and key_file fields (but at least one should be non-blank)
+    entityForm.formGroup.controls['pass-SFTP'].valueChanges.subscribe((res) => {
+      if (res !== undefined) {
+        const required = res === '' ? true : false;
+        this.setFieldRequired('key_file-SFTP', required, entityForm);
+      }
+    });
+    entityForm.formGroup.controls['key_file-SFTP'].valueChanges.subscribe((res) => {
+      if (res !== undefined) {
+        const required = res === '' ? true : false;
+        this.setFieldRequired('pass-SFTP', required, entityForm);
+      }
     });
   }
 
@@ -903,7 +1001,7 @@ export class CloudCredentialsFormComponent {
 
     for (let item in value) {
       if (item != 'name' && item != 'provider') {
-        if (item != 'preview-GOOGLE_CLOUD_STORAGE') {
+        if (item != 'preview-GOOGLE_CLOUD_STORAGE' && item != 'advanced-S3') {
           attr_name = item.split("-")[0];
           attributes[attr_name] = value[item];
         }
@@ -920,7 +1018,11 @@ export class CloudCredentialsFormComponent {
   }
 
   dataAttributeHandler(entityForm: any) {
-    let provider = entityForm.formGroup.controls['provider'].value;
+    const provider = entityForm.formGroup.controls['provider'].value;
+    if (provider == 'S3' &&
+    (entityForm.wsResponseIdx['endpoint'] || entityForm.wsResponseIdx['skip_region'] || entityForm.wsResponseIdx['signatures_v2'])) {
+      entityForm.formGroup.controls['advanced-S3'].setValue(true);
+    }
     for (let i in entityForm.wsResponseIdx) {
       let field_name = i + '-' + provider;
       entityForm.formGroup.controls[field_name].setValue(entityForm.wsResponseIdx[i]);
