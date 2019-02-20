@@ -120,7 +120,9 @@ export class VolumesListTableConfig implements InputTableConf {
   }
 
   getEncryptedActions(rowData: any) {
-    const actions = [];
+    const actions = [], 
+    localLoader = this.loader, localRest = this.rest, localDialogService = this.dialogService, 
+      localResourceName = this.resource_name, localParentVolumesList = this.parentVolumesListComponent;
 
     if (rowData.vol_encrypt === 2) {
 
@@ -128,19 +130,34 @@ export class VolumesListTableConfig implements InputTableConf {
         actions.push({
           label: T("Lock"),
           onClick: (row1) => {
-            this.dialogService.confirm(T("Lock Pool"), T("Lock ") + row1.name + "?").subscribe((confirmResult) => {
-              if (confirmResult === true) {
-                this.loader.open();
-                this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-                  this.loader.close();
-                  this.parentVolumesListComponent.repaintMe();
-
+            const conf: DialogFormConfiguration = {
+              title: T("Enter passphrase to lock pool ") + row1.name + '.',
+              fieldConfig: [
+                {
+                  type: 'input',
+                  inputType: 'password',
+                  name: 'passphrase',
+                  placeholder: 'passphrase',
+                  required: true
+                }
+              ],
+              saveButtonText: T("Lock Pool"),
+              customSubmit: function (entityDialog) {
+                const value = entityDialog.formValue;
+                localLoader.open();
+                localRest.post(localResourceName + "/" + row1.name + "/lock/", 
+                  { body: JSON.stringify({passphrase : value.passphrase}) }).subscribe((restPostResp) => {
+                    entityDialog.dialogRef.close(true);
+                    localLoader.close();
+                    localParentVolumesList.repaintMe();
                 }, (res) => {
-                  this.loader.close();
-                  this.dialogService.errorReport(T("Error locking pool."), res.message, res.stack);
+                  entityDialog.dialogRef.close(true);
+                  localLoader.close();
+                  localDialogService.errorReport(T("Error locking pool."), res.message, res.stack);
                 });
               }
-            });
+            }
+            this.dialogService.dialogForm(conf);
           }
         });
 
