@@ -57,6 +57,7 @@ export interface InputTableConf {
   wsMultiDeleteParams?(selected): any;
   updateMultiAction?(selected): any;
   doAdd?();
+  toggleState?(row): any;
 }
 
 export interface SortingConfig {

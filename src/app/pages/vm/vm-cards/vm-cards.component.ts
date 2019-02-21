@@ -48,7 +48,7 @@ export class VmCardsComponent  implements OnDestroy {
     {name : 'Virtual CPUs', prop : 'vcpus', hidden: false},
     {name : 'Memory Size (MiB)', prop : 'memory',hidden: false}, 
     {name : 'Boot Loader Type', prop : 'bootloader', hidden: true },
-    {name: 'Autostart', prop : 'autostart',hidden: false},
+    {name : 'Autostart', prop : 'autostart',hidden: false, selectable: true},
     
   ];
   public config: any = {
@@ -246,6 +246,17 @@ export class VmCardsComponent  implements OnDestroy {
       }
     }
   }
+
+  toggleState(row) {
+    row.autostart = !row.autostart;
+    this.ws.call('vm.update', [row.id, {'autostart': row.autostart}] )
+    .subscribe((res) => {
+      if (!res) {
+        row.autostart = !row.autostart;
+      }
+    });
+  }
+
   ngOnDestroy(){
     this.core.unregister({observerClass:this});
   }
