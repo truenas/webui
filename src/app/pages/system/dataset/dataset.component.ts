@@ -1,11 +1,9 @@
-import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
-import { AbstractControl, FormArray, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
-import { RestService, UserService, WebSocketService } from '../../../services/';
+import { RestService, WebSocketService } from '../../../services/';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { T } from '../../../translate-marker';
+import { helptext_system_dataset } from 'app/helptext/system/dataset';
 
 @Component({
   selector: 'app-system-dataset',
@@ -20,8 +18,8 @@ export class DatasetComponent implements OnInit{
   public fieldConfig: FieldConfig[] = [{
     type: 'select',
     name: 'pool',
-    placeholder: T('System Dataset Pool'),
-    tooltip: T('Select the pool to contain the system dataset.'),
+    placeholder: helptext_system_dataset.pool.placeholder,
+    tooltip: helptext_system_dataset.pool.tooltip,
     options: [
       {label: '---', value: null},
       { label: 'freenas-boot', value: 'freenas-boot' },
@@ -29,15 +27,13 @@ export class DatasetComponent implements OnInit{
   },{
       type: 'checkbox',
       name: 'syslog',
-      placeholder: T('Syslog'),
-      tooltip : T('Set to store the system log on the system dataset.')
+      placeholder: helptext_system_dataset.syslog.placeholder,
+      tooltip : helptext_system_dataset.syslog.tooltip
     },{
       type: 'checkbox',
       name: 'rrd',
-      placeholder: T('Reporting Database'),
-      tooltip : T('Store reporting information on the system dataset.\
-                   When unset, reporting information is stored to a RAM\
-                   disk to avoid filling /var.'),
+      placeholder: helptext_system_dataset.rrd.placeholder,
+      tooltip : helptext_system_dataset.rrd.tooltip
     }];
 
   private pool: any;
