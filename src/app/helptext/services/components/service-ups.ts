@@ -42,7 +42,7 @@ ups_driver_validation : [ Validators.required ],
 
 ups_port_placeholder : T('Port'),
 ups_port_tooltip : T('The serial or USB port that the UPS is \
- connected to.<br /> <br />\
+ using.<br /> <br />\
  When an <b>snmp</b> driver is selected, <b>Port</b> changes to \
  <b>Hostname</b>: Enter the IP address or hostname of the SNMP UPS \
  device.<br /> <br /> \
