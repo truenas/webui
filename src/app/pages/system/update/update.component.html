@@ -21,8 +21,11 @@
         </button>
       </div>
         <ng-template #trainName>
-        <div class=train-card-row >
-          Current Train: {{ train }} - {{ singleDescription }}
+        <div class="train-card-row train-select-row">
+          <div>Current Train: {{ train }} - {{ singleDescription }}</div>
+          <button mat-mini-fab color="primary" id="refresh-button" matTooltip="Refresh" (click)="check()">
+            <mat-icon>refresh</mat-icon>
+          </button>
         </div>
       </ng-template>
     </div>
