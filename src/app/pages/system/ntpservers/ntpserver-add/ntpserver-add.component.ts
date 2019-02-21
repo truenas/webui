@@ -1,25 +1,8 @@
-import {
-  ApplicationRef,
-  Component,
-  Injector,
-  OnInit,
-  ViewContainerRef
-} from '@angular/core';
-import {
-  AbstractControl,
-  FormArray,
-  FormGroup,
-  Validators
-} from '@angular/forms';
-import {ActivatedRoute, Router, RouterModule} from '@angular/router';
-import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
-import {RestService, WebSocketService} from '../../../../services/';
-import {
-  FieldConfig
-} from '../../../common/entity/entity-form/models/field-config.interface';
-import { T } from '../../../../translate-marker';
-import { greaterThan } from '../../../common/entity/entity-form/validators/compare-validation';
+import { ApplicationRef, Component, Injector } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { helptext_system_ntpservers as helptext } from 'app/helptext/system/ntpservers';
+import { RestService, WebSocketService } from '../../../../services/';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
   selector : 'app-ntpserver-add',
@@ -34,57 +17,48 @@ export class NTPServerAddComponent {
     {
       type : 'input',
       name : 'ntp_address',
-      placeholder : T('Address'),
-      tooltip: T('Enter the hostname or IP address of the <b>NTP</b>\
-       server.'),
+      placeholder : helptext.add.address.placeholder,
+      tooltip: helptext.add.address.tooltip,
     },
     {
       type : 'checkbox',
       name : 'ntp_burst',
-      placeholder : T('Burst'),
-      tooltip: T('Recommended when <i>Max. Poll</i> is greater\
-                  than 10. Only use on personal NTP servers or those\
-                  under direct control. <b>Do not</b> enable when using\
-                  public NTP servers.'),
+      placeholder : helptext.add.burst.placeholder,
+      tooltip: helptext.add.burst.tooltip,
     },
     {
       type : 'checkbox',
       name : 'ntp_iburst',
-      placeholder : T('IBurst'),
-      tooltip: T('Speeds up the initial synchronization\
-      (seconds instead of minutes).'),
+      placeholder : helptext.add.iburst.placeholder,
+      tooltip: helptext.add.iburst.tooltip,
     },
     {
       type : 'checkbox',
       name : 'ntp_prefer',
-      placeholder : T('Prefer'),
-      tooltip: T('Should only be used for highly accurate <b>NTP</b>\
-       servers such as those with time monitoring hardware.'),
+      placeholder : helptext.add.prefer.placeholder,
+      tooltip: helptext.add.prefer.tooltip,
     },
     {
       type : 'input',
       name : 'ntp_minpoll',
-      placeholder : T('Min. Poll'),
-      tooltip: T('Power of 2 in seconds; cannot be lower than 4 or\
-       higher than <i>Max. Poll</i>.'),
+      placeholder : helptext.add.minpoll.placeholder,
+      tooltip: helptext.add.minpoll.tooltip,
       value : 6,
-      validation: [Validators.min(4),Validators.required]
+      validation: helptext.add.minpoll.validation
     },
     {
       type : 'input',
       name : 'ntp_maxpoll',
-      placeholder : T('Max. Poll'),
-      tooltip: T('Power of 2 in seconds; cannot be higher than 17 or\
-       lower than <i>Min. Poll</i>.'),
+      placeholder : helptext.add.maxpoll.placeholder,
+      tooltip: helptext.add.maxpoll.tooltip,
       value : 10,
-      validation: [Validators.max(17), greaterThan('ntp_minpoll'), Validators.required,]
+      validation: helptext.add.maxpoll.validation
     },
     {
       type : 'checkbox',
       name : 'force',
-      placeholder : T('Force'),
-      tooltip: T('Forces the addition of the <b>NTP</b> server,\
-       even if it is currently unreachable.'),
+      placeholder : helptext.add.force.placeholder,
+      tooltip: helptext.add.force.tooltip,
     },
   ];
 
