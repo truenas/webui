@@ -54,6 +54,10 @@ export class VmCardsComponent  implements OnDestroy {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    deleteMsg: {
+      title: 'Name',
+      key_props: ['name']
+    },
   };
   
 
@@ -207,15 +211,6 @@ export class VmCardsComponent  implements OnDestroy {
     }
 
     return actions;
-  }
-  getAddActions() {
-    return [{
-        label: "Add Docker Container",
-        onClick: () => {
-          this.router.navigate(
-            new Array('').concat(["vm", "dockerwizard"]));
-        }
-      }]
   }
   checkVnc(vm){
     const devices = vm.devices

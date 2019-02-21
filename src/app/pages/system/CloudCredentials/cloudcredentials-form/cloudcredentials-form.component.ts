@@ -125,6 +125,22 @@ export class CloudCredentialsFormComponent {
       togglePw: true
     },
     {
+      type: 'checkbox',
+      name: 'advanced-S3',
+      placeholder: T('Advanced Settings'),
+      isHidden: true,
+      value: false,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'S3',
+           }]
+        }
+      ]
+    },
+    {
       type: 'input',
       name: 'endpoint-S3',
       placeholder: T('Endpoint URL'),
@@ -142,9 +158,13 @@ export class CloudCredentialsFormComponent {
       relation: [
         {
           action: 'SHOW',
+          connective: 'AND',
           when: [{
             name: 'provider',
             value: 'S3',
+           }, {
+            name: 'advanced-S3',
+            value: true,
            }]
         }
       ]
@@ -160,9 +180,13 @@ export class CloudCredentialsFormComponent {
       relation: [
         {
           action: 'SHOW',
+          connective: 'AND',
           when: [{
             name: 'provider',
             value: 'S3',
+           }, {
+            name: 'advanced-S3',
+            value: true,
            }]
         }
       ]
@@ -179,9 +203,13 @@ export class CloudCredentialsFormComponent {
       relation: [
         {
           action: 'SHOW',
+          connective: 'AND',
           when: [{
             name: 'provider',
             value: 'S3',
+           }, {
+            name: 'advanced-S3',
+            value: true,
            }]
         }
       ]
@@ -884,6 +912,20 @@ export class CloudCredentialsFormComponent {
     });
   }
 
+  setFieldRequired(name: string, required: boolean, entityform: any) {
+    const field = _.find(this.fieldConfig, {"name": name});
+    const controller = entityform.formGroup.controls[name];
+    if (field.required !== required) {
+      field.required = required;
+      if (required) {
+        controller.setValidators([Validators.required])
+      } else {
+        controller.clearValidators();
+      }
+      controller.updateValueAndValidity();
+    }
+  }
+
   afterInit(entityForm: any) {
     entityForm.submitFunction = this.submitFunction;
 
@@ -894,6 +936,19 @@ export class CloudCredentialsFormComponent {
     entityForm.formGroup.controls['service_account_credentials-GOOGLE_CLOUD_STORAGE'].valueChanges.subscribe((value)=>{
       entityForm.formGroup.controls['preview-GOOGLE_CLOUD_STORAGE'].setValue(value);
     });
+    // Allow blank values for pass and key_file fields (but at least one should be non-blank)
+    entityForm.formGroup.controls['pass-SFTP'].valueChanges.subscribe((res) => {
+      if (res !== undefined) {
+        const required = res === '' ? true : false;
+        this.setFieldRequired('key_file-SFTP', required, entityForm);
+      }
+    });
+    entityForm.formGroup.controls['key_file-SFTP'].valueChanges.subscribe((res) => {
+      if (res !== undefined) {
+        const required = res === '' ? true : false;
+        this.setFieldRequired('pass-SFTP', required, entityForm);
+      }
+    });
   }
 
   submitFunction() {
@@ -903,7 +958,7 @@ export class CloudCredentialsFormComponent {
 
     for (let item in value) {
       if (item != 'name' && item != 'provider') {
-        if (item != 'preview-GOOGLE_CLOUD_STORAGE') {
+        if (item != 'preview-GOOGLE_CLOUD_STORAGE' && item != 'advanced-S3') {
           attr_name = item.split("-")[0];
           attributes[attr_name] = value[item];
         }
@@ -920,7 +975,11 @@ export class CloudCredentialsFormComponent {
   }
 
   dataAttributeHandler(entityForm: any) {
-    let provider = entityForm.formGroup.controls['provider'].value;
+    const provider = entityForm.formGroup.controls['provider'].value;
+    if (provider == 'S3' &&
+    (entityForm.wsResponseIdx['endpoint'] || entityForm.wsResponseIdx['skip_region'] || entityForm.wsResponseIdx['signatures_v2'])) {
+      entityForm.formGroup.controls['advanced-S3'].setValue(true);
+    }
     for (let i in entityForm.wsResponseIdx) {
       let field_name = i + '-' + provider;
       entityForm.formGroup.controls[field_name].setValue(entityForm.wsResponseIdx[i]);
