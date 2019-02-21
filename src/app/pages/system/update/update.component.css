@@ -75,3 +75,24 @@
     margin: 0 auto;
     z-index: 10;
 }
+
+.train-select-row {
+    margin-top: -6px;
+    margin-bottom: 3px;
+}
+
+#refresh-button {
+    margin-left: 20px;
+}
+
+@media screen and (max-width: 1155px) {
+    #train-selector {
+        max-width: 75%;
+    }
+}
+
+@media screen and (max-width: 595px) {
+    #train-selector {
+        max-width: 65%;
+    }
+}
