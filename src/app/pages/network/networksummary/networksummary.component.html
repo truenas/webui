@@ -1,0 +1,26 @@
+<mat-card>
+  <mat-card-title>
+    Network Summary
+  </mat-card-title>
+  <mat-card-content>
+    <mat-list>
+      <h3 mat-subheader>IPs</h3>
+      <mat-list-item *ngFor="let ip of ips | keyvalue">
+        <mat-icon mat-list-icon>folder</mat-icon>
+        {{ip.key}}: {{ip.value}}
+      </mat-list-item>
+      <mat-divider></mat-divider>
+      <h3 mat-subheader>Default Routes</h3>
+      <mat-list-item *ngFor="let route of default_routes">
+          <mat-icon mat-list-icon>list</mat-icon>
+          {{route}}
+      </mat-list-item>
+      <mat-divider></mat-divider>
+      <h3 mat-subheader>Nameservers</h3>
+      <mat-list-item *ngFor="let server of nameservers">
+        <mat-icon mat-list-icon>list</mat-icon>
+        {{server}}
+      </mat-list-item>
+    </mat-list>
+  </mat-card-content>
+</mat-card>
