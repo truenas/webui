@@ -90,6 +90,8 @@ dataset_form_copies_tooltip: T('Set the number of data copies on this dataset.')
 dataset_form_recordsize_placeholder: T('Record Size'),
 dataset_form_recordsize_tooltip: T('Matching the fixed size of data, as in a database, may\
  result in better performance.'),
+dataset_form_warning_1: T('WARNING: Based on the pool topology, '),
+dataset_form_warning_2: T(' is the minimum recommended record size. Choosing a smaller size can reduce system performance.'),
 
 dataset_form_casesensitivity_placeholder: T('Case Sensitivity'),
 dataset_form_casesensitivity_tooltip: T('<i>Sensitive</i> assumes filenames are case sensitive.\

@@ -93,6 +93,12 @@ export class SMBFormComponent implements OnDestroy {
       tooltip: helptext_sharing_smb.tooltip_guestonly
     },
     {
+      type: 'checkbox',
+      name: 'cifs_abe',
+      placeholder: helptext_sharing_smb.placeholder_abe,
+      tooltip: helptext_sharing_smb.tooltip_abe
+    },
+    {
       type: 'textarea',
       name: 'cifs_hostsallow',
       placeholder: helptext_sharing_smb.placeholder_hostsallow,
@@ -135,6 +141,7 @@ export class SMBFormComponent implements OnDestroy {
     'cifs_hostsdeny',
     'cifs_hostsallow',
     'cifs_guestonly',
+    'cifs_abe',
     'cifs_showhiddenfiles',
     'cifs_recyclebin',
     'cifs_browsable',
@@ -226,9 +233,11 @@ export class SMBFormComponent implements OnDestroy {
         .subscribe((res) => {
           this.cifs_vfsobjects =
               _.find(this.fieldConfig, {'name': "cifs_vfsobjects"});
+          const options = [];
           res.forEach((item) => {
-            this.cifs_vfsobjects.options.push({label : item, value : item});
+            options.push({label : item, value : item});
           });
+          this.cifs_vfsobjects.options = _.sortBy(options, ['label']);
         });
     if (entityForm.isNew) {
       entityForm.formGroup.controls['cifs_vfsobjects'].setValue(['zfs_space','zfsacl','streams_xattr']);
