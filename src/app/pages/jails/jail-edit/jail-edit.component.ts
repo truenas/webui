@@ -380,6 +380,29 @@ export class JailEditComponent implements OnInit, AfterViewInit {
     },
     {
       type: 'select',
+      name: 'securelevel',
+      placeholder: helptext.securelevel_placeholder,
+      tooltip: helptext.securelevel_tooltip,
+      options: [{
+        label: '3',
+        value: '3',
+      }, {
+        label: '2 (default)',
+        value: '2',
+      }, {
+        label: '1',
+        value: '1',
+      }, {
+        label: '0',
+        value: '0',
+      }, {
+        label: '-1',
+        value: '-1',
+      }],
+      disabled: false,
+    },
+    {
+      type: 'select',
       name: 'sysvmsg',
       placeholder: helptext.sysvmsg_placeholder,
       tooltip: helptext.sysvmsg_tooltip,
@@ -631,6 +654,10 @@ export class JailEditComponent implements OnInit, AfterViewInit {
         {
           label: 'none',
           value: 'none',
+        },
+        {
+          label: 'auto',
+          value: 'auto',
         }
       ],
       disabled: false,
@@ -1181,6 +1208,17 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       ]).subscribe(
       (res) => {
         this.wsResponse = res[0];
+        if (res[0] && res[0].state == 'up') {
+          this.save_button_enabled = false;
+          this.error = T("Jails cannot be changed while running.");
+          for (let i = 0; i < this.formFileds.length; i++) {
+            this.setDisabled(this.formFileds[i].name, true);
+          }
+        } else {
+          this.save_button_enabled = true;
+          this.error = "";
+        }
+
         for (let i in res[0]) {
           if (i == 'type' && res[0][i] == 'pluginv2') {
             this.setDisabled("host_hostuuid", true);
@@ -1253,16 +1291,6 @@ export class JailEditComponent implements OnInit, AfterViewInit {
             }
             this.formGroup.controls[i].setValue(res[0][i]);
           }
-        }
-        if (res[0] && res[0].state == 'up') {
-          this.save_button_enabled = false;
-          this.error = T("Jails cannot be changed while running.");
-          for (let i = 0; i < this.formFileds.length; i++) {
-            this.setDisabled(this.formFileds[i].name, true);
-          }
-        } else {
-          this.save_button_enabled = true;
-          this.error = "";
         }
       },
       (res) => {

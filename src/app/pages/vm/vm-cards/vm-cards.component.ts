@@ -42,6 +42,7 @@ export class VmCardsComponent  implements OnDestroy {
     {name : 'Name', prop : 'name', always_display: true },
     {name : 'State', prop : 'state', always_display: true },
     {name : 'VNC Port', prop : 'port', hidden: true},
+    {name : 'Com Port', prop : 'com_port', hidden: true},
     {name : 'Type', prop : 'vm_type', hidden: false},
     {name : 'Description', prop : 'description', hidden: true },
     {name : 'Virtual CPUs', prop : 'vcpus', hidden: false},
@@ -53,6 +54,10 @@ export class VmCardsComponent  implements OnDestroy {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    deleteMsg: {
+      title: 'Name',
+      key_props: ['name']
+    },
   };
   
 
@@ -65,7 +70,7 @@ export class VmCardsComponent  implements OnDestroy {
   resourceTransformIncomingRestData(vms) {
     for (let vm_index = 0; vm_index<vms.length; vm_index++){
       vms[vm_index]['state'] = vms[vm_index]['status']['state'];
-      vms[vm_index]['pid'] = vms[vm_index]['status']['pid'];
+      vms[vm_index]['com_port'] = `/dev/nmdm${vm_index}B`;
       if (this.checkVnc(vms[vm_index])) {
         vms[vm_index]['port'] = this.vncPort(vms[vm_index]);
       } else {
@@ -206,15 +211,6 @@ export class VmCardsComponent  implements OnDestroy {
     }
 
     return actions;
-  }
-  getAddActions() {
-    return [{
-        label: "Add Docker Container",
-        onClick: () => {
-          this.router.navigate(
-            new Array('').concat(["vm", "dockerwizard"]));
-        }
-      }]
   }
   checkVnc(vm){
     const devices = vm.devices

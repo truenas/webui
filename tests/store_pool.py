@@ -1,7 +1,7 @@
 # Author: Rishabh Chauhan
 # License: BSD
 # Location for tests  of FreeNAS new GUI
-# Test case count: 6
+# Test case count: 5
 
 import function
 from source import *
@@ -158,21 +158,6 @@ class create_pool_test(unittest.TestCase):
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i].rstrip())
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
-
-    def test_04_close_navStorage(self):
-        try:
-            print (" closing Storage menu")
-            driver.find_element_by_xpath(xpaths['navStorage']).click()
-            function.screenshot(driver, self)
-            time.sleep(20)
-        except Exception:
-            exc_info_p = traceback.format_exception(*sys.exc_info())
-            function.screenshot(driver, self)
-            for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i].rstrip())
-            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
-
-
 
 
     # Next step-- To check if the new user is present in the list via automation

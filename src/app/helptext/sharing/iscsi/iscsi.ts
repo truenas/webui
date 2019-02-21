@@ -243,7 +243,6 @@ export const helptext_sharing_iscsi = {
  <i>1</i> will inherit the authentication profile\
  associated with Group <i>1</i>."
   ),
-  authaccess_validators_tag: [Validators.required, Validators.min(0)],
 
   authaccess_placeholder_user: T("User"),
   authaccess_tooltip_user: T(
@@ -252,19 +251,12 @@ export const helptext_sharing_iscsi = {
  system. Many initiators\
  default to the initiator name as the user."
   ),
-  authaccess_validators_user: [Validators.required],
 
   authaccess_placeholder_secret: T("Secret"),
   authaccess_tooltip_secret: T(
     "Enter a password for <b>User</b>.\
  Must be between 12 and 16 characters."
   ),
-  authaccess_validators_secret: [
-    Validators.minLength(12),
-    Validators.maxLength(16),
-    Validators.required,
-    matchOtherValidator("secret_confirm")
-  ],
 
   authaccess_placeholder_secret_confirm: T("Secret (Confirm)"),
 
@@ -281,10 +273,6 @@ export const helptext_sharing_iscsi = {
  <b>must be different than the <i>Secret</i></b>.\
  Required if <b>Peer User</b> is set."
   ),
-  authaccess_validators_peersecret: [
-    Validators.minLength(12),
-    matchOtherValidator("peersecret_confirm")
-  ],
 
   authaccess_placeholder_peersecret_confirm: T("Peer Secret (Confirm)"),
 
@@ -296,11 +284,10 @@ export const helptext_sharing_iscsi = {
   associated_target_tooltip_lunid: T(
     "Select the value or enter a value between\
  <i>0</i> and <i>1023</i>. Some initiators\
- expect a value below <i>256</i>. Using\
- <i>0</i> statically assigns the next\
- available ID."
+ expect a value below <i>256</i>."
   ),
   associated_target_validators_lunid: [
+    Validators.required,
     Validators.min(0),
     Validators.max(1023),
     Validators.pattern(/^(0|[1-9]\d*)$/)
