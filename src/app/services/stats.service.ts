@@ -68,7 +68,7 @@ export class StatsService {
       keys:["any"],
       properties:[],
       available:[],
-      realtime:true,
+      realtime:false, // was true
       listeners:[],
       keysAsDatasets: false
     },
@@ -78,7 +78,7 @@ export class StatsService {
       keys:["any"],
       properties:[],
       available:[],
-      realtime:true,
+      realtime:false, // was true
       listeners:[],
       keysAsDatasets: false
     },
@@ -108,7 +108,7 @@ export class StatsService {
       keys:["any"],
       properties:[],
       available:[],
-      realtime:true,
+      realtime:false, // was true
       listeners:[],
       keysAsDatasets: false
     },
@@ -118,7 +118,7 @@ export class StatsService {
       keys:["any"],
       properties:[],
       available:[],
-      realtime:true,
+      realtime:false, // was true
       listeners:[],
       keysAsDatasets: false
     },
@@ -138,7 +138,7 @@ export class StatsService {
       keys:["load", "processes", "uptime","swap"],
       properties:[],
       available:[],
-      realtime:true,
+      realtime:false, // was true
       listeners:[],
       keysAsDatasets: false
     },
@@ -159,7 +159,7 @@ export class StatsService {
       keys:["any"],
       properties:[],
       available:[],
-      realtime:true,
+      realtime:false, // was true
       listeners:[],
       keysAsDatasets: false,
       bidirectional:"rx/tx"
@@ -198,14 +198,14 @@ export class StatsService {
     }
   ];
 
-  private debug:boolean = false;
+  private debug:boolean = true;
   private messages: any[] = [];
   private messagesRealtime: any[] = [];
   private listeners: any[] = [];
   private queue:any[] = [];
   private started:boolean = false;
   private bufferSize:number = 60000;// milliseconds
-  private bufferSizeRealtime:number = 5000;// milliseconds
+  private bufferSizeRealtime:number = 60000;// milliseconds
   private broadcastId:number;
   private broadcastRealtimeId:number;
 
@@ -250,6 +250,11 @@ export class StatsService {
       console.log(evt);
     });
 
+    this.core.register({observerClass:this,eventName:"AllStats"}).subscribe((evt:CoreEvent) => {
+      console.log("**** ALLSTATS ****");
+      console.log(evt);
+    });
+
     this.core.register({observerClass:this,eventName:"StatsSources"}).subscribe((evt:CoreEvent) => {
       this.updateSources(evt.data);
       if(this.debug){
@@ -269,10 +274,11 @@ export class StatsService {
     this.started = true;
     if(this.debug){
       console.log("Starting Broadcast...");
+      console.log(this.messages);
     }
-    
+
     this.broadcast(this.messages, this.bufferSize); 
-    this.broadcast(this.messagesRealtime, this.bufferSizeRealtime); 
+    //this.broadcast(this.messagesRealtime, this.bufferSizeRealtime); 
   }
 
   stopBroadcast(messageList?){
@@ -296,14 +302,20 @@ export class StatsService {
       return ;
     }
 
+    let msg = this.mergeMessages(this.messages);
+    this.broadcastId = setInterval(() => {
+      this.core.emit(msg);
+      console.log(msg);
+    }, buffer);
+
     // B4 looping dispatch all messages
-    this.dispatchAllMessages(messages);
+    //this.dispatchAllMessages(messages);
 
     // Recurring loop
     let i = 1;
     let id;
     if(messages == this.messages){
-      this.broadcastId =  setInterval(()=>{
+      /*this.broadcastId =  setInterval(()=>{
         // Reset Counter
         if(i < messages.length){
           i++
@@ -311,6 +323,11 @@ export class StatsService {
           i = 1;
         }
         let index = i-1;
+        let mod = i % 15;
+        if(mod == 1){ 
+          console.log("BITCHES");
+
+        }
         // Avoid error
         let job = messages[index];
         if(index < messages.length){
@@ -323,8 +340,8 @@ export class StatsService {
             this.jobExec(job);
           }
         }
-      },buffer);
-    } else if(messages == this.messagesRealtime) {
+      },buffer);*/
+    /*} else if(messages == this.messagesRealtime) {
       this.broadcastRealtimeId =  setInterval(()=>{
         // Reset Counter
         if(i < messages.length){
@@ -345,15 +362,39 @@ export class StatsService {
             this.jobExec(job);
           }
         }
-      },buffer);
+      },buffer);*/
     }
   }
 
   dispatchAllMessages(messages){
     for(let i = 0; i < messages.length; i++){
-      let job = messages[i];
-      this.jobExec(job);
+      let mod = i % 15;
+      if(mod == 0 && i > 0){
+        console.log("PAUSE!!");
+        setTimeout(()=> {
+          let job = messages[i];
+          this.jobExec(job);
+        }, 1000)
+      } else {
+        console.log(i);
+        let job = messages[i];
+        this.jobExec(job);
+      }
     }
+  }
+
+  mergeMessages(messages):CoreEvent{
+    let options = {step: '10', start:'now-10m', end:'now-20s'}
+    let argsZero = [];
+    for(let i = 0; i < messages.length; i++){
+      let arr = messages[i][0].data.args[0];
+      console.log(arr)
+      argsZero = argsZero.concat(arr);
+    }
+    let args = [argsZero, options]
+    console.log(args);
+
+    return {name: "StatsRequest", data: {args: args, responseEvent: "AllStats"} }
   }
 
   buildMessage(key,source):CoreEvent{

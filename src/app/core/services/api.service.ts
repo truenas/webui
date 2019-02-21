@@ -306,7 +306,9 @@ export class ApiService {
       },
       preProcessor(def:ApiCall){
         let redef = Object.assign({}, def);
-        redef.responseEvent = "Stats" + def.args.responseEvent;
+        if(redef.responseEvent !== "AllStats"){
+          redef.responseEvent = "Stats" + def.args.responseEvent;
+        }
         redef.args = def.args.args; 
         return redef;
       },
