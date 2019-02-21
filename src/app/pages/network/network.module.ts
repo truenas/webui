@@ -4,6 +4,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {NgUploaderModule} from 'ngx-uploader';
 import { MaterialModule } from '../../appMaterial.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { TranslateModule } from '@ngx-translate/core';
 
 import {EntityModule} from '../common/entity/entity.module';
 import {NetworkService} from '../../services';
@@ -27,7 +28,7 @@ import {routing} from './network.routing';
 @NgModule({
   imports : [
     EntityModule, CommonModule, FormsModule,
-    ReactiveFormsModule, NgUploaderModule, routing, MaterialModule, FlexLayoutModule
+    ReactiveFormsModule, NgUploaderModule, routing, MaterialModule, FlexLayoutModule, TranslateModule
   ],
   declarations : [
     VlanFormComponent,
