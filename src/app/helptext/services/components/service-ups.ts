@@ -48,7 +48,7 @@ ups_port_tooltip : T('The serial or USB port that the UPS is \
  device.<br /> <br /> \
  <b>Port</b> becomes <b>Remote Port</b> when the <b>UPS Mode</b> is \
  set to <i>slave</i>. Enter the open network port number of the UPS \
- <i>Master</i> system. The defualt port is <i>3493</i>.'),
+ <i>Master</i> system. The default port is <i>3493</i>.'),
 ups_port_validation : [ Validators.required ],
 
 ups_hostname_placeholder: T('Hostname'),
