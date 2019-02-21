@@ -2,7 +2,6 @@ import { Component, OnInit} from '@angular/core'
 
 import { WebSocketService, DialogService } from '../../../services';
 import { TranslateService } from '@ngx-translate/core';
-import { T } from '../../../translate-marker';
 import { EntityUtils } from '../../common/entity/utils';
 
 @Component({
