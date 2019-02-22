@@ -41,7 +41,8 @@ enable_vnc_tooltip : T('Enable a VNC (Virtual Network Computing) remote\
  connection. Requires <i>UEFI</i> booting.'),
 
 vnc_bind_placeholder: T("Bind"),
-vnc_bind_tooltip: T(""),
+vnc_bind_tooltip: T("VNC network interface. The primary interface is automatically selected,\
+ but secondary interfaces can be chosen from the drop-down menu."),
 
 vcpus_label: T('CPU and Memory'),
 vcpus_placeholder: T('Virtual CPUs'),
