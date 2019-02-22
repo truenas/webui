@@ -1,0 +1,43 @@
+<mat-card>
+  <mat-card-title>
+    {{ "Network Summary" | translate}}
+  </mat-card-title>
+  <mat-card-content>
+    <mat-list>
+      <mat-list>
+        <mat-list-item>
+          <div fxFlex="20">{{ "Name" | translate }}</div>
+          <div fxFlex="40">{{ "IPv4 Address" | translate }}</div>
+          <div fxFlex="40">{{ "IPv6 Address" | translate }}</div>
+          <mat-divider></mat-divider>
+        </mat-list-item>
+        <mat-list-item *ngFor="let ip of ips | keyvalue; let i=index" class="dynamic-height">
+          <div fxFlex="20">{{ip.key}}</div>
+          <div fxFlex="40" *ngIf="ip.value.IPV4">
+            <div *ngFor="let ipv4 of ip.value.IPV4 | keyvalue">
+              {{ipv4.value}}
+            </div>
+          </div>
+          <div fxFlex="40" *ngIf="ip.value.IPV6">
+            <div *ngFor="let ipv6 of ip.value.IPV6 | keyvalue">
+              {{ipv6.value}}
+            </div>
+          </div>
+          <mat-divider *ngIf="i < ipSize - 1"></mat-divider>
+        </mat-list-item>
+      </mat-list>
+      <mat-divider></mat-divider>
+      <h3 mat-subheader>{{ "Default Routes" | translate }}</h3>
+      <mat-list-item *ngFor="let route of default_routes">
+        <mat-icon mat-list-icon>router</mat-icon>
+        {{route}}
+      </mat-list-item>
+      <mat-divider></mat-divider>
+      <h3 mat-subheader>{{ "Nameservers" | translate }}</h3>
+      <mat-list-item *ngFor="let server of nameservers">
+        <mat-icon mat-list-icon>dns</mat-icon>
+        {{server}}
+      </mat-list-item>
+    </mat-list>
+  </mat-card-content>
+</mat-card>

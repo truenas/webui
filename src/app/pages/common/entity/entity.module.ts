@@ -55,7 +55,7 @@ import { EntityDialogComponent } from './entity-dialog/entity-dialog.component';
 
 import { FormPermissionsComponent } from './entity-form/components/form-permissions/form-permissions.component';
 import { EntityJobComponent } from './entity-job/entity-job.component';
-
+import { KeyvaluePipe } from './keyvalue.pipe';
 // CDK
 import { CdkTableModule } from '@angular/cdk/table';
 import { OverlayModule } from '@angular/cdk/overlay';
@@ -109,6 +109,7 @@ import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-m
     FormUploadComponent,
     FormReadFileComponent,
     EntityJobComponent,
+    KeyvaluePipe,
     SmdFabSpeedDialTrigger,
     SmdFabSpeedDialActions,
     SmdFabSpeedDialComponent,
@@ -144,7 +145,8 @@ import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-m
     EntityToolbarComponent,
     ToolbarButtonComponent,
     ToolbarMenuComponent,
-    ToolbarMultimenuComponent
+    ToolbarMultimenuComponent,
+    KeyvaluePipe
   ],
   entryComponents: [
     FormButtonComponent,
