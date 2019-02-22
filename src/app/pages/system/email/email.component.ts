@@ -1,24 +1,11 @@
-import {ApplicationRef, Component, Injector, OnInit, OnDestroy} from '@angular/core';
-import {
-  AbstractControl,
-  FormArray,
-  FormGroup,
-  Validators
-} from '@angular/forms';
-import {ActivatedRoute, Router, RouterModule} from '@angular/router';
-import * as _ from 'lodash';
-
-import {RestService, UserService, WebSocketService} from '../../../services/';
-import {  DialogService } from '../../../services/';
-import {
-  FieldConfig
-} from '../../common/entity/entity-form/models/field-config.interface';
-import {
-  matchOtherValidator
-} from '../../common/entity/entity-form/validators/password-validation';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { ApplicationRef, Component, Injector, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { T } from '../../../translate-marker';
+import { Router } from '@angular/router';
+import { helptext_system_email as helptext } from 'app/helptext/system/email';
+import * as _ from 'lodash';
+import { DialogService, RestService, WebSocketService } from '../../../services/';
+import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 
 @Component({
   selector : 'app-email',
@@ -80,31 +67,26 @@ export class EmailComponent implements OnDestroy {
     {
       type : 'input',
       name : 'em_fromemail',
-      placeholder : T('From E-mail'),
-      tooltip : T('The envelope From address shown in the email.\
-                   This is set to assist with filtering mail on the\
-                   receiving system.'),
+      placeholder : helptext.em_fromemail.placeholder,
+      tooltip : helptext.em_fromemail.tooltip,
     },
     {
       type : 'input',
       name : 'em_outgoingserver',
-      placeholder : T('Outgoing Mail Server'),
-      tooltip : T('Hostname or IP address of SMTP server to use for\
-                   sending this email.'),
+      placeholder : helptext.em_outgoingserver.placeholder,
+      tooltip : helptext.em_outgoingserver.tooltip,
     },
     {
       type : 'input',
       name : 'em_port',
-      placeholder : T('Mail Server Port'),
-      tooltip : T('SMTP port number. Typically <i>25,465</i>\
-                   (secure SMTP), or <i>587</i> (submission).'),
+      placeholder : helptext.em_port.placeholder,
+      tooltip : helptext.em_port.tooltip,
     },
     {
       type : 'select',
       name : 'em_security',
-      placeholder : T('Security'),
-      tooltip : T('Encryption type. Choices are <i>Plain, SSL</i>, or\
-                   <i>TLS</i>.'),
+      placeholder : helptext.em_security.placeholder,
+      tooltip : helptext.em_security.tooltip,
       options : [
         {label : 'Plain', value : 'plain'},
         {label : 'SSL', value : 'ssl'},
@@ -114,18 +96,14 @@ export class EmailComponent implements OnDestroy {
     {
       type : 'checkbox',
       name : 'em_smtp',
-      placeholder : T('SMTP Authentication'),
-      tooltip : T('Enable/disable\
-                   <a href="https://en.wikipedia.org/wiki/SMTP_Authentication"\
-                   target="_blank">SMTP AUTH</a> using PLAIN SASL.\
-                   Enter the required Username and Password if set.'),
+      placeholder : helptext.em_smtp.placeholder,
+      tooltip : helptext.em_smtp.tooltip,
     },
     {
       type : 'input',
       name : 'em_user',
-      placeholder : T('Username'),
-      tooltip : T('Enter the username if the SMTP server requires\
-                   authentication.'),
+      placeholder : helptext.em_user.placeholder,
+      tooltip : helptext.em_user.tooltip,
       relation : [
         {
           action : 'DISABLE',
@@ -136,14 +114,13 @@ export class EmailComponent implements OnDestroy {
         },
       ],
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext.em_user.validation
     },
     {
       type : 'input',
       name : 'em_pass1',
-      placeholder : T('Password'),
-      tooltip : T('Enter the password if the SMTP server requires\
-                   authentication.'),
+      placeholder : helptext.em_pass1.placeholder,
+      tooltip : helptext.em_pass1.tooltip,
       inputType : 'password',
       relation : [
         {
@@ -156,13 +133,13 @@ export class EmailComponent implements OnDestroy {
       ],
       required: true,
       togglePw : true,
-      validation : [ matchOtherValidator('em_pass2'), Validators.required ]
+      validation : helptext.em_pass1.validation
     },
     {
       type : 'input',
       name : 'em_pass2',
-      placeholder : T('Confirm Password'),
-      tooltip : T(''),
+      placeholder : helptext.em_pass2.placeholder,
+      tooltip : helptext.em_pass2.tooltip,
       inputType : 'password',
       relation : [
         {
@@ -174,7 +151,7 @@ export class EmailComponent implements OnDestroy {
         },
       ],
       required : true,
-      validation : [ Validators.required ]
+      validation : helptext.em_pass2.validation
     },
   ];
   protected dialogRef: any;
