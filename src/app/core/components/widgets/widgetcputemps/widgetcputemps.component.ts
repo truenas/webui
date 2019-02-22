@@ -74,22 +74,8 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
   registerObservers(cores){
     for(let i = 0; i < cores; i++){
       this.core.register({observerClass:this,eventName:"StatsCpuTemp"}).subscribe((evt:CoreEvent) => {
-        this.setChartData(evt);
         this.loader = false;
-        /*let valid = true;
-        for(let i = 0; i < evt.data.data.length; i++){
-          if(evt.data.data[i] !== -1 && parseInt(evt.data.data[i]) >= 0){
-            break;
-          } else {
-            valid = false;
-          }
-        }
-        if(!valid){
-          this.invalidData = true;
-          this.loader = false;
-        } else {
-          this.collectData(i, evt.data);
-        }*/
+        this.setChartData(evt);
       });
     }
   }
@@ -222,7 +208,9 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
           data:[]
         }
         for(let i in evt.data.data){
-          chartData.data.push(evt.data.data[i][index]/100);
+          // Convert value from deci-kelvins to celsius
+          let converted = (evt.data.data[i][index] / 10) - 273.15;
+          chartData.data.push(converted);
         }
         parsedData.push(chartData);
       }
