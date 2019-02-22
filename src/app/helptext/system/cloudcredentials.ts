@@ -50,6 +50,10 @@ export const helptext_system_cloudcredentials = {
     )
   },
 
+  advanced_s3: {
+    placeholder: T('Advanced Settings')
+  },
+
   endpoint_s3: {
     placeholder: T("Endpoint URL"),
     tooltip: T(
