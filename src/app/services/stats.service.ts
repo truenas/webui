@@ -200,7 +200,7 @@ export class StatsService {
     }
   ];
 
-  private debug:boolean = false;
+  private debug:boolean = true;
   private messages: any[] = [];
   private messagesRealtime: any[] = [];
   private listeners: any[] = [];
@@ -281,7 +281,6 @@ export class StatsService {
     for(let i = 0; i < this.messages.length; i++){
       this.messages[i] = this.mergeMessages(this.messages[i]);
     }
-    console.log(this.messages);
     this.broadcast(this.messages, this.bufferSize); 
     //this.broadcast(this.messagesRealtime, this.bufferSizeRealtime); 
   }
@@ -395,7 +394,6 @@ export class StatsService {
 
   mergeMessages(messages:CoreEvent[]):CoreEvent[]{
     if(messages.length == 1) return messages;
-    console.log(messages);
     let options = {step: '10', start:'now-10m', end:'now-20s'}
     let argsZero = [];
     let responseEvent = messages[0].data.responseEvent;
@@ -407,7 +405,6 @@ export class StatsService {
     let args = [argsZero, options]
 
     let evt:CoreEvent =  {name: "StatsRequest", data: {args: args, responseEvent: responseEvent} };
-    console.log(evt);
 
     return [evt];
   }
