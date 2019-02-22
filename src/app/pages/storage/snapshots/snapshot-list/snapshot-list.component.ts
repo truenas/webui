@@ -24,7 +24,7 @@ export class SnapshotListComponent implements OnInit {
   public busy: Subscription;
   public sub: Subscription;
   public columns: Array<any> = [
-    {name : 'Name', prop : 'name'},
+    {name : 'Name', prop : 'name', minWidth: 355},
     {name : 'Used', prop : 'used'},
     {name : 'Referenced', prop : 'refer'},
     {name : 'Date Created', prop: 'creation'}
