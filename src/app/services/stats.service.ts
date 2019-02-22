@@ -15,6 +15,7 @@ interface StatSource {
   keysAsDatasets:boolean;
   datasetsType?:string; // Use this if keysAsDatasets == true 
   bidirectional?:string; // Use strings like eg. "rx/tx" or "read/write"
+  merge?:boolean; // Sources like CPU temps by the core will be merged by the name property
 }
 
 interface ListenerRegistration {
@@ -80,7 +81,8 @@ export class StatsService {
       available:[],
       realtime:false, // was true
       listeners:[],
-      keysAsDatasets: false
+      keysAsDatasets: false,
+      merge: true
     },
     {
       name:"Devices",
@@ -198,13 +200,13 @@ export class StatsService {
     }
   ];
 
-  private debug:boolean = true;
+  private debug:boolean = false;
   private messages: any[] = [];
   private messagesRealtime: any[] = [];
   private listeners: any[] = [];
   private queue:any[] = [];
   private started:boolean = false;
-  private bufferSize:number = 60000;// milliseconds
+  private bufferSize:number = 5000;// milliseconds
   private bufferSizeRealtime:number = 60000;// milliseconds
   private broadcastId:number;
   private broadcastRealtimeId:number;
@@ -274,9 +276,12 @@ export class StatsService {
     this.started = true;
     if(this.debug){
       console.log("Starting Broadcast...");
-      console.log(this.messages);
+      //console.log(this.messages);
     }
-
+    for(let i = 0; i < this.messages.length; i++){
+      this.messages[i] = this.mergeMessages(this.messages[i]);
+    }
+    console.log(this.messages);
     this.broadcast(this.messages, this.bufferSize); 
     //this.broadcast(this.messagesRealtime, this.bufferSizeRealtime); 
   }
@@ -302,14 +307,17 @@ export class StatsService {
       return ;
     }
 
-    let msg = this.mergeMessages(this.messages);
+    // B4 looping dispatch all messages
+    this.dispatchAllMessages(messages);
+    //let msg = this.mergeMessages(this.messages);
+    //this.core.emit(msg);// Send first one immediately
+    
     this.broadcastId = setInterval(() => {
-      this.core.emit(msg);
-      console.log(msg);
+      this.dispatchAllMessages(messages);
+      //console.log(msg);
+      //this.core.emit(msg);
     }, buffer);
 
-    // B4 looping dispatch all messages
-    //this.dispatchAllMessages(messages);
 
     // Recurring loop
     let i = 1;
@@ -368,7 +376,9 @@ export class StatsService {
 
   dispatchAllMessages(messages){
     for(let i = 0; i < messages.length; i++){
-      let mod = i % 15;
+      let job = messages[i];
+      this.jobExec(job);
+      /*let mod = i % 15;
       if(mod == 0 && i > 0){
         console.log("PAUSE!!");
         setTimeout(()=> {
@@ -379,22 +389,27 @@ export class StatsService {
         console.log(i);
         let job = messages[i];
         this.jobExec(job);
-      }
+      }*/
     }
   }
 
-  mergeMessages(messages):CoreEvent{
+  mergeMessages(messages:CoreEvent[]):CoreEvent[]{
+    if(messages.length == 1) return messages;
+    console.log(messages);
     let options = {step: '10', start:'now-10m', end:'now-20s'}
     let argsZero = [];
+    let responseEvent = messages[0].data.responseEvent;
     for(let i = 0; i < messages.length; i++){
-      let arr = messages[i][0].data.args[0];
-      console.log(arr)
+      let arr = messages[i].data.args[0];
+      //console.log(arr)
       argsZero = argsZero.concat(arr);
     }
     let args = [argsZero, options]
-    console.log(args);
 
-    return {name: "StatsRequest", data: {args: args, responseEvent: "AllStats"} }
+    let evt:CoreEvent =  {name: "StatsRequest", data: {args: args, responseEvent: responseEvent} };
+    console.log(evt);
+
+    return [evt];
   }
 
   buildMessage(key,source):CoreEvent{
@@ -455,6 +470,11 @@ export class StatsService {
     } else {
       messageData = {responseEvent:eventName, args: [dataList, options ]};
     }
+
+    if(source.merge){
+      messageData.responseEvent = source.name;
+    }
+
     let message =  { name:"StatsRequest", data: messageData};
     return message;
   }

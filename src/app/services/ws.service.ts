@@ -144,7 +144,6 @@ export class WebSocketService {
 
   send(payload) {
     if (this.socket.readyState == WebSocket.OPEN) {
-      if(payload.method=="stats.get_data")console.log(payload);
       this.socket.send(JSON.stringify(payload));
     } else {
       this.pendingMessages.push(payload);

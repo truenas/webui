@@ -72,9 +72,18 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
   }
 
   registerObservers(cores){
-    for(let i = 0; i < cores; i++){
-      this.core.register({observerClass:this,eventName:"StatsCpuTemp" + i}).subscribe((evt:CoreEvent) => {
-        let valid = true;
+    //for(let i = 0; i < cores; i++){
+      //this.core.register({observerClass:this,eventName:"StatsCpuTemp" + i}).subscribe((evt:CoreEvent) => {
+      this.core.register({observerClass:this,eventName:"StatsCpuTemp"}).subscribe((evt:CoreEvent) => {
+        this.setChartData(evt);
+        this.loader = false;
+        /*let clone = Object.assign({}, evt);
+        clone.data.data = clone.data.data.map( value => value/100);
+        this.setChartData(clone);*/
+
+        //let md = this.mergeData(evt.data.data)
+        //this.collectedMeta = evt.data.meta;
+        /*let valid = true;
         for(let i = 0; i < evt.data.data.length; i++){
           if(evt.data.data[i] !== -1 && parseInt(evt.data.data[i]) >= 0){
             break;
@@ -87,9 +96,9 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
           this.loader = false;
         } else {
           this.collectData(i, evt.data);
-        }
+        }*/
       });
-    }
+    //}
   }
 
 
@@ -118,10 +127,15 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
       }
     }
 
-  mergeData(){
+  mergeData(evtData?){
     let mergedData: any[] = [];
     let legend:any[] = Object.keys(this.collectedTemps);
-    let dataPoints = this.collectedTemps[legend[0]];
+    let dataPoints;
+    if (!evtData){
+      dataPoints = this.collectedTemps[legend[0]];
+    } else {
+      dataPoints = evtData;
+    }
 
     for(let index = 0; index < dataPoints.length; index++){
       let dp = [];
@@ -136,6 +150,7 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
       data: mergedData,
       meta: meta
     }
+    console.log(result);
     return result;
   }
 
@@ -220,7 +235,7 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
           data:[]
         }
         for(let i in evt.data.data){
-          chartData.data.push(evt.data.data[i][index]);
+          chartData.data.push(evt.data.data[i][index]/100);
         }
         parsedData.push(chartData);
       }
