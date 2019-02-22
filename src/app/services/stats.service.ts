@@ -15,6 +15,7 @@ interface StatSource {
   keysAsDatasets:boolean;
   datasetsType?:string; // Use this if keysAsDatasets == true 
   bidirectional?:string; // Use strings like eg. "rx/tx" or "read/write"
+  merge?:boolean; // Sources like CPU temps by the core will be merged by the name property
 }
 
 interface ListenerRegistration {
@@ -68,7 +69,7 @@ export class StatsService {
       keys:["any"],
       properties:[],
       available:[],
-      realtime:true,
+      realtime:false, // was true
       listeners:[],
       keysAsDatasets: false
     },
@@ -78,9 +79,10 @@ export class StatsService {
       keys:["any"],
       properties:[],
       available:[],
-      realtime:true,
+      realtime:false, // was true
       listeners:[],
-      keysAsDatasets: false
+      keysAsDatasets: false,
+      merge: true
     },
     {
       name:"Devices",
@@ -108,7 +110,7 @@ export class StatsService {
       keys:["any"],
       properties:[],
       available:[],
-      realtime:true,
+      realtime:false, // was true
       listeners:[],
       keysAsDatasets: false
     },
@@ -118,7 +120,7 @@ export class StatsService {
       keys:["any"],
       properties:[],
       available:[],
-      realtime:true,
+      realtime:false, // was true
       listeners:[],
       keysAsDatasets: false
     },
@@ -138,7 +140,7 @@ export class StatsService {
       keys:["load", "processes", "uptime","swap"],
       properties:[],
       available:[],
-      realtime:true,
+      realtime:false, // was true
       listeners:[],
       keysAsDatasets: false
     },
@@ -159,7 +161,7 @@ export class StatsService {
       keys:["any"],
       properties:[],
       available:[],
-      realtime:true,
+      realtime:false, // was true
       listeners:[],
       keysAsDatasets: false,
       bidirectional:"rx/tx"
@@ -204,10 +206,8 @@ export class StatsService {
   private listeners: any[] = [];
   private queue:any[] = [];
   private started:boolean = false;
-  private bufferSize:number = 60000;// milliseconds
-  private bufferSizeRealtime:number = 5000;// milliseconds
+  private bufferSize:number = 4000;// milliseconds
   private broadcastId:number;
-  private broadcastRealtimeId:number;
 
   constructor(private core:CoreService, private api:ApiService) {
     if(this.debug){
@@ -227,7 +227,6 @@ export class StatsService {
       this.stopBroadcast();
       this.removeAllListeners();
       this.messages = [];
-      this.messagesRealtime = [];
     })
 
     this.core.register({observerClass:this,eventName:"StatsRemoveListener"}).subscribe((evt:CoreEvent) => {
@@ -235,18 +234,22 @@ export class StatsService {
         console.warn("SCALPEL!!");
       }
       this.removeListener(evt.data.obj);
-      /*if(this.debug){
+      if(this.debug){
         console.warn("StatsRemoveListener Tasks Completed for...")
         console.log(evt.data.obj);
         console.log(this.listeners);
         console.log(this.sources);
         console.log(this.messages);
-        console.log(this.messagesRealtime);
-      }*/
+      }
     });
 
     this.core.register({observerClass:this,eventName:"StatsData"}).subscribe((evt:CoreEvent) => {
       console.log("**** STATSDATA ****");
+      console.log(evt);
+    });
+
+    this.core.register({observerClass:this,eventName:"AllStats"}).subscribe((evt:CoreEvent) => {
+      console.log("**** ALLSTATS ****");
       console.log(evt);
     });
 
@@ -270,9 +273,10 @@ export class StatsService {
     if(this.debug){
       console.log("Starting Broadcast...");
     }
-    
+    for(let i = 0; i < this.messages.length; i++){
+      this.messages[i] = this.mergeMessages(this.messages[i]);
+    }
     this.broadcast(this.messages, this.bufferSize); 
-    this.broadcast(this.messagesRealtime, this.bufferSizeRealtime); 
   }
 
   stopBroadcast(messageList?){
@@ -280,12 +284,9 @@ export class StatsService {
     if(this.debug){
       console.log("Stopping Broadcast!");
     }
-    if(messageList && messageList == this.messagesRealtime){
-      clearInterval(this.broadcastRealtimeId);
-    } else if(messageList && messageList == this.messages){
+    if(messageList && messageList == this.messages){
       clearInterval(this.broadcastId);
     } else {
-      clearInterval(this.broadcastRealtimeId);
       clearInterval(this.broadcastId);
     }
   }
@@ -298,54 +299,16 @@ export class StatsService {
 
     // B4 looping dispatch all messages
     this.dispatchAllMessages(messages);
+    
+    this.broadcastId = setInterval(() => {
+      this.dispatchAllMessages(messages);
+    }, buffer);
+
 
     // Recurring loop
     let i = 1;
     let id;
     if(messages == this.messages){
-      this.broadcastId =  setInterval(()=>{
-        // Reset Counter
-        if(i < messages.length){
-          i++
-        } else {
-          i = 1;
-        }
-        let index = i-1;
-        // Avoid error
-        let job = messages[index];
-        if(index < messages.length){
-          //console.log(messages);
-          if(buffer == 15000){
-            //console.warn(job);
-            this.jobExec(job);
-          } else {
-            //console.log(job);
-            this.jobExec(job);
-          }
-        }
-      },buffer);
-    } else if(messages == this.messagesRealtime) {
-      this.broadcastRealtimeId =  setInterval(()=>{
-        // Reset Counter
-        if(i < messages.length){
-          i++
-        } else {
-          i = 1;
-        }
-        let index = i-1;
-        // Avoid error
-        let job = messages[index];
-        if(index < messages.length){
-          //console.log(messages);
-          if(buffer == 15000){
-            //console.warn(job);
-            this.jobExec(job);
-          } else {
-            //console.log(job);
-            this.jobExec(job);
-          }
-        }
-      },buffer);
     }
   }
 
@@ -354,6 +317,22 @@ export class StatsService {
       let job = messages[i];
       this.jobExec(job);
     }
+  }
+
+  mergeMessages(messages:CoreEvent[]):CoreEvent[]{
+    if(messages.length == 1) return messages;
+    let options = {step: '10', start:'now-10m', end:'now-20s'}
+    let argsZero = [];
+    let responseEvent = messages[0].data.responseEvent;
+    for(let i = 0; i < messages.length; i++){
+      let arr = messages[i].data.args[0];
+      argsZero = argsZero.concat(arr);
+    }
+    let args = [argsZero, options]
+
+    let evt:CoreEvent =  {name: "StatsRequest", data: {args: args, responseEvent: responseEvent} };
+
+    return [evt];
   }
 
   buildMessage(key,source):CoreEvent{
@@ -384,7 +363,6 @@ export class StatsService {
           type:source.datasetsType,
           dataset:source.properties[prop]
         });
-        //console.warn(dataList)
       } else if(source.bidirectional){
         // This is for rx/tx and read/write stats
         let direction = source.bidirectional.split("/");
@@ -414,6 +392,11 @@ export class StatsService {
     } else {
       messageData = {responseEvent:eventName, args: [dataList, options ]};
     }
+
+    if(source.merge){
+      messageData.responseEvent = source.name;
+    }
+
     let message =  { name:"StatsRequest", data: messageData};
     return message;
   }
@@ -427,7 +410,6 @@ export class StatsService {
   jobExec(job){
     if(this.debug){
       console.log("JOB STARTING...");
-      console.log(this.messagesRealtime);
     }
     for(let i  = 0; i < job.length; i++){
       let message = job[i];
@@ -450,7 +432,6 @@ export class StatsService {
     this.started = false;
     this.stopBroadcast();
     this.messages = [];
-    this.messagesRealtime = [];
 
     for(let i = 0; i < this.sources.length; i++){
       let source = this.sources[i];
@@ -467,7 +448,6 @@ export class StatsService {
             let matches = dataSources.filter((x)=> {
               return x.startsWith(source.prefix);
             });
-            //DEBUG: console.warn(matches);
             let a = matches.forEach((item) => {
               available.push(item);
             });
@@ -490,7 +470,7 @@ export class StatsService {
     }
 
     //this.startBroadcast();
-    if(this.messages.length > 0 || this.messagesRealtime.length > 0){
+    if(this.messages.length > 0){
       this.startBroadcast();
     }
 
@@ -498,22 +478,12 @@ export class StatsService {
 
   // Updates listeners in this.sources with messages
   updateListeners(source:StatSource, removed?){
-    /*if(this.listeners.length == 0){
-      // For when the listening component has been destroyed
-      // before we've had a chance to clean up
-      this.stopBroadcast();
-      this.removeAllListeners();
-    }*/
     for(let i = source.listeners.length - 1; i >= 0 ; i--){
       let messageList; 
       let removedIndex: number;
       let oldJobIndex:number;
 
-      if(source.realtime){
-        messageList = this.messagesRealtime;
-      } else {
         messageList = this.messages;
-      }
 
       if(source.listeners.length > 0){
         //let oldJobIndex:number;
@@ -609,11 +579,7 @@ export class StatsService {
      for(let i = this.sources.length - 1; i >= 0; i--){
        for(let index = 0; index < this.sources[i].listeners.length; index++){
          if(this.sources[i].listeners[index].obj == obj){
-           if(this.sources[i].realtime){
-            messageList = this.messagesRealtime;
-           } else {
             messageList = this.messages;
-           }
            this.updateListeners(this.sources[i], this.sources[i].listeners[index]);
          } 
        } 

@@ -36,10 +36,11 @@ export class AssociatedTargetFormComponent {
     },
     {
       type: 'input',
+      inputType: 'number',
       name: 'lunid',
       placeholder: helptext_sharing_iscsi.associated_target_placeholder_lunid,
       tooltip: helptext_sharing_iscsi.associated_target_tooltip_lunid,
-      value: 0,
+      value: '',
       validation: helptext_sharing_iscsi.associated_target_validators_lunid,
     },
     {
@@ -88,6 +89,12 @@ export class AssociatedTargetFormComponent {
         this.extent_control.options.push({label: res[i].name, value: res[i].id});
       }
     });
+  }
+
+  beforeSubmit(value) {
+    if (value['lunid'] === "") {
+      delete value['lunid'];
+    }
   }
 
   customEditCall(value) {

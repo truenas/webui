@@ -171,7 +171,8 @@ export class SupportComponent  {
     dialogRef.componentInstance.setCall('support.new_ticket', [this.payload]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.subscribe(res=>{
-      dialogRef.componentInstance.setDescription(res.result.url);
+      const url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
+      dialogRef.componentInstance.setDescription(url);
     }),
     dialogRef.componentInstance.failure.subscribe((res) => {
       dialogRef.componentInstance.setDescription(res.error);

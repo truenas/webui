@@ -47,6 +47,7 @@ export class WebdavFormComponent {
       {
         type : 'checkbox',
         name : 'webdav_perm',
+        value: true,
         placeholder : helptext_sharing_webdav.placeholder_perm,
         tooltip: helptext_sharing_webdav.tooltip_perm
       },

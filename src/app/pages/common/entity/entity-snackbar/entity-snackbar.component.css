@@ -1,0 +1,13 @@
+.entity-snackbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    line-height: 20px;
+    opacity: 1;
+}
+.entity-snackbar-action {
+    flex-shrink: 0;
+    margin: -8px -8px -8px 8px;
+    color: var(--accent);
+}
