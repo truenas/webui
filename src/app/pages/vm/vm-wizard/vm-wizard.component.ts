@@ -68,7 +68,7 @@ export class VMWizardComponent {
         name : 'name',
         placeholder : helptext.name_placeholder,
         tooltip : helptext.name_tooltip,
-        validation : helptext.name_validation,
+        validation : [Validators.required,Validators.pattern('^[a-zA-Z0-9\_]*$')],
         required: true,
         blurStatus: true,
         blurEvent: this.blurEvent,
@@ -132,6 +132,14 @@ export class VMWizardComponent {
           value: true,
         },
         {
+          type: 'select',
+          name: 'hdd_type',
+          placeholder: helptext.hdd_type_placeholder,
+          tooltip: helptext.hdd_type_tooltip,
+          options : helptext.hdd_type_options,
+          value: helptext.hdd_type_value
+        },
+        {
           type: 'input',
           name: 'volsize',
           placeholder : helptext.volsize_placeholder,
@@ -157,16 +165,8 @@ export class VMWizardComponent {
           initial: '/mnt',
           explorerType: 'directory',
           validation: [Validators.required],
-          required: true
-        },
-        {
-          type: 'select',
-          name: 'hdd_type',
-          placeholder: helptext.hdd_type_placeholder,
-          tooltip: helptext.hdd_type_tooltip,
-          isHidden: false,
-          options : helptext.hdd_type_options,
-          value: helptext.hdd_type_value
+          required: true,
+          hideDirs: 'iocage'
         },
         {
           type: 'select',
@@ -218,8 +218,6 @@ export class VMWizardComponent {
           placeholder : helptext.iso_path_placeholder,
           initial: '/mnt',
           tooltip: helptext.iso_path_tooltip,
-          validation : helptext.iso_path_validation,
-          required: true,
         },
         {
           type: 'checkbox',
@@ -236,7 +234,6 @@ export class VMWizardComponent {
           tooltip: helptext.upload_iso_path_tooltip,
           explorerType: 'directory',
           isHidden: true,
-          validation : helptext.upload_iso_path_validation,
         },
         {
           type: 'upload',
@@ -279,7 +276,7 @@ export class VMWizardComponent {
           {
             label : zvol.id, value : zvol.id
           }
-        );   
+        );
       });
     });
 
@@ -360,7 +357,7 @@ export class VMWizardComponent {
         if(datastore === '/mnt'){
           ( < FormGroup > entityWizard.formArray.get([3])).controls['datastore'].setValue(null);
           _.find(this.wizardConfig[3].fieldConfig, {'name' : 'datastore'}).hasErrors = true;
-          _.find(this.wizardConfig[3].fieldConfig, {'name' : 'datastore'}).errors = `Virtual Machine storage are not allowed on temporary file storage, ${datastore}`;
+          _.find(this.wizardConfig[3].fieldConfig, {'name' : 'datastore'}).errors = `Virtual machines cannot be stored in an unmounted mountpoint: ${datastore}`;
         }
         if(datastore === ''){
           ( < FormGroup > entityWizard.formArray.get([3])).controls['datastore'].setValue(null);
@@ -370,7 +367,12 @@ export class VMWizardComponent {
       }
       });
       ( < FormGroup > entityWizard.formArray.get([5]).get('iso_path')).valueChanges.subscribe((iso_path) => {
-        this.summary[T('Installation Media')] = iso_path;
+        if (iso_path && iso_path !== undefined){
+          this.summary[T('Installation Media')] = iso_path;
+        } else {
+          delete this.summary[T('Installation Media')];
+        }
+        
       });
       this.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
         ( < FormGroup > entityWizard.formArray.get([5]).get('iso_path')).setValue(message);
@@ -408,15 +410,13 @@ export class VMWizardComponent {
     });
     ( < FormGroup > entityWizard.formArray.get([3]).get('disk_radio')).valueChanges.subscribe((res) => {
       if (res){
-        _.find(this.wizardConfig[3].fieldConfig, {name : 'volsize'})['isHidden'] = false;
-        _.find(this.wizardConfig[3].fieldConfig, {name : 'datastore'})['isHidden'] = false;
-        _.find(this.wizardConfig[3].fieldConfig, {name : 'hdd_path'})['isHidden'] = true;
-        _.find(this.wizardConfig[3].fieldConfig, {name : 'hdd_type'})['isHidden'] = false;
+        _.find(this.wizardConfig[3].fieldConfig, {name : 'volsize'}).isHidden = false;
+        _.find(this.wizardConfig[3].fieldConfig, {name : 'datastore'}).isHidden = false;
+        _.find(this.wizardConfig[3].fieldConfig, {name : 'hdd_path'}).isHidden = true;
       } else {
-        _.find(this.wizardConfig[3].fieldConfig, {name : 'volsize'})['isHidden'] = true;
-        _.find(this.wizardConfig[3].fieldConfig, {name : 'datastore'})['isHidden'] = true;
-        _.find(this.wizardConfig[3].fieldConfig, {name : 'hdd_path'})['isHidden'] = false;
-        _.find(this.wizardConfig[3].fieldConfig, {name : 'hdd_type'})['isHidden'] = true;
+        _.find(this.wizardConfig[3].fieldConfig, {name : 'volsize'}).isHidden = true;
+        _.find(this.wizardConfig[3].fieldConfig, {name : 'datastore'}).isHidden = true;
+        _.find(this.wizardConfig[3].fieldConfig, {name : 'hdd_path'}).isHidden = false;
       }
 
     });
@@ -574,11 +574,19 @@ async customSubmit(value) {
     vm_payload["bootloader"] = value.bootloader;
     vm_payload["autoloader"] = value.autoloader;
     vm_payload["autostart"] = value.autostart;
-    vm_payload["devices"] = [
-      {"dtype": "NIC", "attributes": {"type": value.NIC_type, "mac": value.NIC_mac, "nic_attach":value.nic_attach}},
-      {"dtype": "DISK", "attributes": {"path": hdd, "type": "AHCI", "sectorsize": 0}},
-      {"dtype": "CDROM", "attributes": {"path": value.iso_path}},
-    ]
+    if ( value.iso_path && value.iso_path !== undefined) {
+      vm_payload["devices"] = [
+        {"dtype": "NIC", "attributes": {"type": value.NIC_type, "mac": value.NIC_mac, "nic_attach":value.nic_attach}},
+        {"dtype": "DISK", "attributes": {"path": hdd, "type": value.hdd_type, "sectorsize": 0}},
+        {"dtype": "CDROM", "attributes": {"path": value.iso_path}},
+      ]
+    } else {
+      vm_payload["devices"] = [
+        {"dtype": "NIC", "attributes": {"type": value.NIC_type, "mac": value.NIC_mac, "nic_attach":value.nic_attach}},
+        {"dtype": "DISK", "attributes": {"path": hdd, "type": value.hdd_type, "sectorsize": 0}},
+      ]
+    }
+
     if(value.enable_vnc &&value.bootloader !== "UEFI_CSM"){
       await this.create_vnc_device(vm_payload);
     };

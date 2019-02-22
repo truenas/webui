@@ -1,0 +1,6 @@
+<div class="entity-snackbar">
+    <span [innerHTML]="translatedMsg"></span>
+    <div class="entity-snackbar-action">
+        <button mat-button *ngIf="action" (click)="snackBarRef.dismiss()">{{ action | translate }}</button>
+    </div>
+</div>

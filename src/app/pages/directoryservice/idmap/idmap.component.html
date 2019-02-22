@@ -1,4 +1,4 @@
-<p *ngIf="error" type="danger"><span [innerHTML]="error"></span></p>
+<p *ngIf="error" type="danger"><span id="idmap-err" [innerHTML]="error"></span></p>
 <mat-card>
   <form (ngSubmit)="onSubmit()" [formGroup]="formGroup">
   	<div *ngIf="idmap_type === 'ad'">
