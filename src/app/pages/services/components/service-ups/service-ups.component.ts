@@ -1,4 +1,4 @@
-import { ApplicationRef, Component, Injector, OnDestroy } from '@angular/core';
+import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 
@@ -11,12 +11,10 @@ import helptext from '../../../../helptext/services/components/service-ups';
   template : `<entity-form [conf]="this"></entity-form>`,
 })
 
-export class ServiceUPSComponent implements OnDestroy {
+export class ServiceUPSComponent {
   protected ups_driver: any;
   protected ups_driver_fg: any;
   protected ups_port: any;
-  protected ups_hostname: any;
-  protected ups_driver_subscription: any;
   protected entityForm: any;
   protected ups_mode_fg: any;
 
@@ -69,7 +67,7 @@ export class ServiceUPSComponent implements OnDestroy {
       isHidden: false
     },
     {
-      type : 'select',
+      type : 'combobox',
       name : 'ups_port',
       placeholder : helptext.ups_port_placeholder,
       options: [],
@@ -77,13 +75,6 @@ export class ServiceUPSComponent implements OnDestroy {
       required: true,
       validation : helptext.ups_port_validation,
       isHidden: false
-    },
-    {
-      type: 'input',
-      name: 'ups_hostname',
-      placeholder: helptext.ups_hostname_placeholder,
-      tooltip: helptext.ups_hostname_tooltip,
-      required: true,
     },
     {
       type : 'textarea',
@@ -194,34 +185,6 @@ export class ServiceUPSComponent implements OnDestroy {
               protected _injector: Injector, protected _appRef: ApplicationRef,
               ) {}
 
-  resourceTransformIncomingRestData(data) {
-    if (this.isSNMP(data['ups_driver'])) {
-      data['ups_hostname'] = data['ups_port'];
-      delete data['ups_port'];
-    }
-    return data;
-  }
-
-  beforeSubmit(data) {
-    if (this.isSNMP(data['ups_driver'])) {
-      data['ups_port'] = data['ups_hostname'];
-    }
-    delete data['ups_hostname'];
-  }
-
-  isSNMP(value) {
-    if (value && value.indexOf('snmp-ups') !== -1) {
-      return true;
-    }
-    return false;
-  }
-
-  switchSNMP(value) {
-    const is_snmp = this.isSNMP(value);
-    this.entityForm.setDisabled('ups_port', is_snmp, is_snmp);
-    this.entityForm.setDisabled('ups_hostname', !is_snmp, !is_snmp);
-  }
-
   afterInit(entityForm: any) {
     this.entityForm = entityForm;
     this.ups_mode_fg = entityForm.formGroup.controls['ups_mode'];
@@ -252,15 +215,6 @@ export class ServiceUPSComponent implements OnDestroy {
     this.ups_driver = _.find(this.fieldConfig, { name: 'ups_driver' });
     this.ups_port = _.find(this.fieldConfig, { name: 'ups_port' });
     this.ups_driver_fg = entityForm.formGroup.controls['ups_driver'];
-    this.ups_hostname = _.find(this.fieldConfig, {name: 'ups_hostname'});
-
-   this.switchSNMP(this.ups_driver_fg.value);
-
-    this.ups_driver_subscription = this.ups_driver_fg.valueChanges.subscribe((value) => {
-      if (value) {
-        this.switchSNMP(value);
-      }
-    });
 
     this.ws.call('ups.driver_choices', []).subscribe((res) => {
       for (const item in res) {
@@ -275,7 +229,4 @@ export class ServiceUPSComponent implements OnDestroy {
     });
   }
 
-  ngOnDestroy() {
-    this.ups_driver_subscription.unsubscribe();
-  }
 }
