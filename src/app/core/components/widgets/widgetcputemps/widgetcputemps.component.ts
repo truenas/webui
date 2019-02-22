@@ -73,8 +73,10 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
 
   registerObservers(cores){
     for(let i = 0; i < cores; i++){
-      this.core.register({observerClass:this,eventName:"StatsCpuTemp" + i}).subscribe((evt:CoreEvent) => {
-        let valid = true;
+      this.core.register({observerClass:this,eventName:"StatsCpuTemp"}).subscribe((evt:CoreEvent) => {
+        this.setChartData(evt);
+        this.loader = false;
+        /*let valid = true;
         for(let i = 0; i < evt.data.data.length; i++){
           if(evt.data.data[i] !== -1 && parseInt(evt.data.data[i]) >= 0){
             break;
@@ -87,7 +89,7 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
           this.loader = false;
         } else {
           this.collectData(i, evt.data);
-        }
+        }*/
       });
     }
   }
@@ -220,7 +222,7 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
           data:[]
         }
         for(let i in evt.data.data){
-          chartData.data.push(evt.data.data[i][index]);
+          chartData.data.push(evt.data.data[i][index]/100);
         }
         parsedData.push(chartData);
       }
