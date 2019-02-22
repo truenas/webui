@@ -1,27 +1,17 @@
-import {
-  ApplicationRef,
-  Component,
-  Injector,
-} from '@angular/core';
-import {
-  FormGroup,
-  Validators
-} from '@angular/forms';
+import { ApplicationRef, Component, Injector } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { MatDialog, MatSnackBar } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { helptext_system_update as helptext } from 'app/helptext/system/update';
 import * as _ from 'lodash';
 import { RestService, WebSocketService } from '../../../../services/';
-import {
-  FieldConfig
-} from '../../../common/entity/entity-form/models/field-config.interface';
-import { T } from '../../../../translate-marker';
-import {MessageService} from '../../../common/entity/entity-form/services/message.service';
-import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
-import { DialogService } from '../../../../services/dialog.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { DialogService } from '../../../../services/dialog.service';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { MessageService } from '../../../common/entity/entity-form/services/message.service';
+import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 
 @Component({
   selector: 'app-manualupdate',
@@ -48,20 +38,17 @@ export class ManualUpdateComponent {
     {
       type: 'select',
       name: 'filelocation',
-      placeholder: T('Update File Temporary Storage Location'),
-      tooltip: T('The update file is temporarily stored here before being applied.'),
+      placeholder: helptext.filelocation.placeholder,
+      tooltip: helptext.filelocation.tooltip,
       options:[{ label : 'Memory device', value : ':temp:'}],
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext.filelocation.validation
     },
     {
       type: 'upload',
       name: 'filename',
-      placeholder: T('Update File'),
-      tooltip: T('The file used to manually update the system. Browse to\
-                  the update file stored on the system logged into the\
-                  web interface to upload and apply. Update file names\
-                  end with <i>-manual-update-unsigned.tar</i>'),
+      placeholder: helptext.filename.placeholder,
+      tooltip: helptext.filename.tooltip,
       // validation : [ Validators.required],
       fileLocation: '',
       message: this.messageService,
@@ -74,9 +61,8 @@ export class ManualUpdateComponent {
     {
       type: 'checkbox',
       name: 'rebootAfterManualUpdate',
-      placeholder: T('Reboot After Update'),
-      tooltip: T('Automatically reboot the system after the update\
-                  is applied.'),
+      placeholder: helptext.rebootAfterManualUpdate.placeholder,
+      tooltip: helptext.rebootAfterManualUpdate.tooltip,
       value: false
     }
   ];
@@ -84,14 +70,14 @@ export class ManualUpdateComponent {
     {
       type: 'checkbox',
       name: 'secretseed',
-      placeholder: T('Include Password Secret Seed')
+      placeholder: helptext.secretseed.placeholder
     }
   ];
   public saveConfigFormConf: DialogFormConfiguration = {
     title: "Save Config",
     fieldConfig: this.saveConfigFieldConf,
     method_ws: 'core.download',
-    saveButtonText: T('Save'),
+    saveButtonText: helptext.save_config_form.button_text,
     customSubmit: this.saveCofigSubmit,
   }
   public save_button_enabled = false;
