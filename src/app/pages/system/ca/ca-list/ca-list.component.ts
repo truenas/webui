@@ -1,17 +1,16 @@
-import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
+import { ApplicationRef, Component, Injector } from '@angular/core';
+import { MatSnackBar } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
+import { helptext_system_ca as helptext } from 'app/helptext/system/ca';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { RestService, WebSocketService } from '../../../../services/';
-import { T } from '../../../../translate-marker';
-import { MatSnackBar } from '@angular/material';
 import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
   selector: 'ca-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
-
 export class CertificateAuthorityListComponent {
 
   public title = "Certificate Authorities";
@@ -19,7 +18,7 @@ export class CertificateAuthorityListComponent {
   protected wsDelete = "certificateauthority.delete";
   // protected route_edit: string[] = ['system', 'ca', 'edit'];
   protected route_add: string[] = ['system', 'ca', 'add'];
-  protected route_add_tooltip: string = T('Create CA');
+  protected route_add_tooltip: string = helptext.list.tooltip_route_add;
   protected route_success: string[] = [ 'system', 'ca' ];
 
   public busy: Subscription;
@@ -32,12 +31,12 @@ export class CertificateAuthorityListComponent {
     public snackBar: MatSnackBar) {}
 
   public columns: Array < any > = [
-    { name: T('Name'), prop: 'name' },
-    { name: T('Internal'), prop: 'internal' },
-    { name: T('Issuer'), prop: 'issuer' },
-    { name: T('Distinguished Name'), prop: 'DN' },
-    { name: T('From'), prop: 'from' },
-    { name: T('Until'), prop: 'until' },
+    { name: helptext.list.column_name, prop: 'name' },
+    { name: helptext.list.column_internal, prop: 'internal' },
+    { name: helptext.list.column_issuer, prop: 'issuer' },
+    { name: helptext.list.column_distinguished_name, prop: 'DN' },
+    { name: helptext.list.column_from, prop: 'from' },
+    { name: helptext.list.column_until, prop: 'until' },
   ];
 
   public config: any = {
@@ -66,27 +65,27 @@ export class CertificateAuthorityListComponent {
     return [
       {
         id: "View",
-        label: T("View"),
+        label: helptext.list.action_view,
         onClick: (row) => {
           this.router.navigate(new Array('').concat(["system", "ca", "view", row.id]))
         }
       },
       {
         id: "sign",
-        label: T("Sign CSR"),
+        label: helptext.list.action_sign,
         onClick: (row) => {
           this.router.navigate(new Array('').concat(["system", "ca", "sign", row.id]))
         }
       },
       {
         id: "export_certificate",
-        label: T("Export Certificate"),
+        label: helptext.list.action_export_certificate,
         onClick: (row) => {
           this.ws.call('certificateauthority.query', [[["id", "=", row.id]]]).subscribe((res) => {
             if (res[0]) {
               this.ws.call('core.download', ['filesystem.get', [res[0].certificate_path], res[0].name + '.crt']).subscribe(
                 (res) => {
-                  this.snackBar.open(T("Opening download window. Make sure pop-ups are enabled in the browser."), T("Success"), {
+                  this.snackBar.open(helptext.list.snackbar_open_window_message, helptext.list.snackbar_open_window_action, {
                     duration: 5000
                   });
                   window.open(res[1]);
@@ -101,13 +100,13 @@ export class CertificateAuthorityListComponent {
       },
       {
         id: "export_private_key",
-        label: T("Export Private Key"),
+        label: helptext.list.action_export_private_key,
         onClick: (row) => {
           this.ws.call('certificateauthority.query', [[["id", "=", row.id]]]).subscribe((res) => {
             if (res[0]) {
               this.ws.call('core.download', ['filesystem.get', [res[0].privatekey_path], res[0].name + '.key']).subscribe(
                 (res) => {
-                  this.snackBar.open(T("Opening download window. Make sure pop-ups are enabled in the browser."), T("Success"), {
+                  this.snackBar.open(helptext.list.snackbar_open_window_message, helptext.list.snackbar_open_window_action, {
                     duration: 5000
                   });
                   window.open(res[1]);
@@ -122,7 +121,7 @@ export class CertificateAuthorityListComponent {
       },
       {
         id: "delete",
-        label: T("Delete"),
+        label: helptext.list.action_delete,
         onClick: (row) => {
           this.entityList.doDelete(row);
         }

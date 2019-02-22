@@ -1,12 +1,9 @@
 import { Component } from '@angular/core';
-import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import * as _ from 'lodash';
-
+import { helptext_system_ca as helptext } from 'app/helptext/system/ca';
 import { RestService, WebSocketService } from '../../../../services/';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { T } from '../../../../translate-marker';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
@@ -24,22 +21,21 @@ export class CertificateAuthorityEditComponent {
   protected fieldConfig: FieldConfig[] = [{
       type: 'input',
       name: 'name',
-      placeholder: T('Identifier'),
-       tooltip: T('Enter an alphanumeric name for the certificate.\
-                   Underscore (_), and dash (-) characters are allowed.'),
+      placeholder: helptext.edit.name.placeholder,
+       tooltip: helptext.edit.name.tooltip,
       required: true,
-      validation: [Validators.required]
+      validation: helptext.edit.name.validation
     },
     {
       type: 'textarea',
       name: 'certificate',
-      placeholder: T('Certificate'),
+      placeholder: helptext.edit.certificate.placeholder,
       readonly: true,
     },
     {
       type: 'textarea',
       name: 'privatekey',
-      placeholder: T('Private Key'),
+      placeholder: helptext.edit.privatekey.placeholder,
       readonly: true,
     },
   ];
