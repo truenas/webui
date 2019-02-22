@@ -335,7 +335,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
     // The non known buckets.. Just get one tab/one chart. (for now).. Will eventually 
     // move towards.. just knowing the ones I want.
     chartConfigData.forEach((chartConfigDataItem: ChartConfigData) => {
-      if (chartConfigDataItem.title === "CPU" || chartConfigDataItem.title === "Load") {
+      if (chartConfigDataItem.title === "CPU" || chartConfigDataItem.title === "Load" || chartConfigDataItem.title.startsWith("cputemp-")) {
         const tab: TabChartsMappingData = map.get("CPU");
         tab.chartConfigData.push(chartConfigDataItem);
 
