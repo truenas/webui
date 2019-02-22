@@ -6,6 +6,7 @@ import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../../services/ws.service';
 import * as _ from 'lodash';
+import helptext from '../../../../helptext/account/user-list';
 
 @Component({
   selector: 'app-user-list',
@@ -25,13 +26,13 @@ export class UserListComponent implements OnInit {
   protected grp_lst = [] 
 
   public columns: Array < any > = [
-    { name: 'Username', prop: 'bsdusr_username', always_display: true },
+    { name: 'Username', prop: 'bsdusr_username', always_display: true, minWidth: 150 },
     { name: 'UID', prop: 'bsdusr_uid', hidden: true },
     { name: 'GID', prop: 'bsdusr_gid', hidden: true },
     { name: 'Home directory', prop: 'bsdusr_home', hidden: false },
-    { name: 'Shell', prop: 'bsdusr_shell', hidden: false },
+    { name: 'Shell', prop: 'bsdusr_shell', hidden: false, minWidth: 150 },
     { name: 'Builtin', prop: 'bsdusr_builtin', hidden: true },
-    { name: 'Full Name', prop: 'bsdusr_full_name', hidden: false },
+    { name: 'Full Name', prop: 'bsdusr_full_name', hidden: false, minWidth: 250, maxWidth: 400 },
     { name: 'Email', prop: 'bsdusr_email', hidden: true },
     { name: 'Disable Password Login', prop: 'bsdusr_password_disabled', hidden: true },
     { name: 'Lock User', prop: 'bsdusr_locked', hidden: false },
@@ -75,8 +76,8 @@ export class UserListComponent implements OnInit {
   getActions(row) {
     const actions = [];
     actions.push({
-      label : T("Edit"),
-      id: "edit",
+      label : helptext.user_list_actions_edit_label,
+      id: helptext.user_list_actions_edit_id,
       onClick : (users_edit) => {
         this.router.navigate(new Array('/').concat(
           [ "account", "users", "edit", users_edit.id ]));
@@ -85,7 +86,7 @@ export class UserListComponent implements OnInit {
     if (row.bsdusr_builtin !== true){
 
       actions.push({
-        label : T("Delete"),
+        label : helptext.user_list_actions_delete_label,
         onClick : (users_edit) => {
           this.entityList.doDelete(users_edit);
         },
@@ -97,11 +98,11 @@ export class UserListComponent implements OnInit {
   checkbox_confirm(id: any, deleteMsg: any){
     const params = [id, {"delete_group": true}]
     const ds = this.dialogService.confirm(
-      T("Delete"), 
+      helptext.user_list_dialog_label, 
       deleteMsg,
-      false, T("Delete"),
+      false, helptext.user_list_dialog_label,
       true,
-      T('Keep user primary group'),
+      helptext.user_list_dialog_message,
       'user.delete',
       params);
     ds.afterClosed().subscribe((status)=>{

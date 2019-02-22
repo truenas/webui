@@ -13,6 +13,7 @@ export class ExtentListComponent {
   protected route_add: string[] = [ 'sharing', 'iscsi', 'extent', 'add' ];
   protected route_add_tooltip: string = "Add Extent";
   protected route_edit: string[] = [ 'sharing', 'iscsi', 'extent', 'edit' ];
+  protected wsDelete = "iscsi.extent.delete";
 
   public columns: Array<any> = [
     {

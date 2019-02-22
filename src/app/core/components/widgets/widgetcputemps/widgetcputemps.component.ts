@@ -72,24 +72,10 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
   }
 
   registerObservers(cores){
-    for(let i = 0; i < cores; i++){
-      this.core.register({observerClass:this,eventName:"StatsCpuTemp" + i}).subscribe((evt:CoreEvent) => {
-        let valid = true;
-        for(let i = 0; i < evt.data.data.length; i++){
-          if(evt.data.data[i] !== -1 && parseInt(evt.data.data[i]) >= 0){
-            break;
-          } else {
-            valid = false;
-          }
-        }
-        if(!valid){
-          this.invalidData = true;
-          this.loader = false;
-        } else {
-          this.collectData(i, evt.data);
-        }
+      this.core.register({observerClass:this,eventName:"StatsCpuTemp"}).subscribe((evt:CoreEvent) => {
+        this.loader = false;
+        this.setChartData(evt);
       });
-    }
   }
 
 
@@ -118,10 +104,15 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
       }
     }
 
-  mergeData(){
+  mergeData(evtData?){
     let mergedData: any[] = [];
     let legend:any[] = Object.keys(this.collectedTemps);
-    let dataPoints = this.collectedTemps[legend[0]];
+    let dataPoints;
+    if (!evtData){
+      dataPoints = this.collectedTemps[legend[0]];
+    } else {
+      dataPoints = evtData;
+    }
 
     for(let index = 0; index < dataPoints.length; index++){
       let dp = [];
@@ -136,6 +127,7 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
       data: mergedData,
       meta: meta
     }
+    console.log(result);
     return result;
   }
 
@@ -220,7 +212,9 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
           data:[]
         }
         for(let i in evt.data.data){
-          chartData.data.push(evt.data.data[i][index]);
+          //Convert from deci-kelvin to celsius
+          let converted = (evt.data.data[i][index] / 10) - 273.15; 
+          chartData.data.push(converted);
         }
         parsedData.push(chartData);
       }

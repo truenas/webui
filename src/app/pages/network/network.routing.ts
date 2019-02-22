@@ -12,7 +12,8 @@ import {InterfacesListComponent} from './interfaces/interfaces-list/';
 import {ConfigurationComponent} from './configuration/';
 import {StaticRouteFormComponent} from './staticroutes/staticroute-form/';
 import {StaticRouteListComponent} from './staticroutes/staticroute-list/';
-import {IPMIComponent} from './ipmi/'
+import {IPMIComponent} from './ipmi/';
+import { NetworkSummaryComponent } from './networksummary/networksummary.component';
 import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 
 export const routes: Routes = [
@@ -80,6 +81,11 @@ export const routes: Routes = [
             ] 
           }
         ]
+      },
+      {
+        path: 'summary',
+        data: { title: 'Network Summay', breadcrumb: 'Network Summay', icon: 'view_headline' },
+        component: NetworkSummaryComponent,
       },
       {
         path : 'staticroutes',

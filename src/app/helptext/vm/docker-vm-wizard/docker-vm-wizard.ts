@@ -1,6 +1,7 @@
 import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
 import { regexValidator } from '../../../pages/common/entity/entity-form/validators/regex-validation';
+import globalHelptext from '../../global-helptext';
 
 export default {
 wizard_type_label: T('Select VM wizard type'),
@@ -8,14 +9,14 @@ wizard_type_placeholder: T('Virtual Machine (VM) Wizard type.'),
 wizard_type_tooltip: T('Select the Virtual Machine (VM) Wizard type.'),
 wizard_type_options: [
     {label: 'Virtual Machine (VM)', value: 'vm'},
-    {label: 'Docker Host', value: 'docker'},
+    {label: globalHelptext.dockerhost, value: 'docker'},
 ],
 wizard_type_validation : [ Validators.required ],
 wizard_type_value: 'docker',
 
-docker_vm_label: 'Docker VM details',
+docker_vm_label: globalHelptext.dockerhost + " Details",
 docker_vm_placeholder :  T ('Name'),
-docker_vm_tooltip : T('Enter a name for this Docker VM.'),
+docker_vm_tooltip : T("Enter a name for this " + globalHelptext.dockerhost + "."),
 docker_vm_validation : [ Validators.required ],
 
 autostart_placeholder : T ('Start on Boot'),
@@ -32,7 +33,7 @@ vcpus_tooltip : T('Enter a number of virtual CPUs to allocate to the\
 vcpus_validation : [ Validators.required, Validators.min(1), Validators.max(16) ],
 
 memory_placeholder: T('Memory Size (MiB)'),
-memory_tooltip: T('Allocate a number of megabytes of RAM to the Docker VM.'),
+memory_tooltip: T("Allocate a number of megabytes of RAM to the " + globalHelptext.dockerhost + "."),
 memory_value: 2048,
 memory_validation : [ Validators.required, Validators.min(2048)],
 
@@ -62,8 +63,12 @@ raw_filename_placeholder : T('Raw filename'),
 raw_filename_tooltip: T('Name the new raw file.'),
 raw_filename_validation : [ Validators.required ],
 
+raw_filename_password_placeholder : T('Raw filename password'),
+raw_filename_password_tooltip: T('Raw filename password. The default is <i>docker</i>.'),
+raw_filename_password_validation : [ Validators.required ],
+
 raw_filesize_placeholder : T('Raw file size (GiB)'),
-raw_filesize_tooltip: T('Allocate a number of gigabytes (GiB) to the new\
+raw_filesize_tooltip: T('Set the size of the new\
  raw file.'),
 raw_filesize_validation: [Validators.required, Validators.min(20)],
 

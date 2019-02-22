@@ -164,6 +164,9 @@ export class ManualUpdateComponent {
           this.translate.get('Restart').subscribe((reboot: string) => {
             this.translate.get('Update successful. Please reboot for the update to take effect. Reboot now?').subscribe((reboot_prompt: string) => {
               this.dialogService.confirm(reboot, reboot_prompt).subscribe((reboot_res) => {
+                if (reboot_res) {
+                  this.router.navigate(['/others/reboot']);
+                }
               });
             });
           });
