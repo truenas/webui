@@ -20,7 +20,7 @@ user_form_username_tooltip : T('Enter an alphanumeric username of eight to\
  characters: <b>, : + & # %^ ( ) ! @ ~ * ? < > =</b>\
  Note that <b>$</b> can only be used as the last\
  character.'),
-user_form_username_validation: [ Validators.required, Validators.pattern('[a-z_A-Z_][a-zA-Z0-9_-]*[$]?'), Validators.maxLength(16) ],
+user_form_username_validation: [ Validators.required, Validators.pattern('[a-zA-Z_][a-zA-Z0-9_\.-]*[$]?'), Validators.maxLength(16) ],
 user_form_email_name:'email',
 user_form_email_placeholder : T('Email'),
 user_form_email_tooltip : T('Enter the email address of the new user.'),
