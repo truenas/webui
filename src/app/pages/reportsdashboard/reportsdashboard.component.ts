@@ -338,6 +338,16 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
       if (chartConfigDataItem.title === "CPU" || chartConfigDataItem.title === "Load" || chartConfigDataItem.title.startsWith("cputemp-")) {
         const tab: TabChartsMappingData = map.get("CPU");
         tab.chartConfigData.push(chartConfigDataItem);
+        // Clean up the title
+        if(chartConfigDataItem.title.startsWith('cputemp-')){
+          let spl = chartConfigDataItem.title.split("cputemp-");
+          chartConfigDataItem.title = "CPU Temperature (cpu" + spl[1] + ")";
+        } 
+
+        if(chartConfigDataItem.title == "Load"){
+          chartConfigDataItem.title = "CPU Load";
+        }
+
 
       } else if (chartConfigDataItem.title.toLowerCase().startsWith("memory") || chartConfigDataItem.title.toLowerCase().startsWith("swap")) {
         const tab: TabChartsMappingData = map.get("Memory");
@@ -354,6 +364,10 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
       } else if (chartConfigDataItem.title.startsWith("disk")) {
         const tab: TabChartsMappingData = map.get("Disk");
         tab.chartConfigData.push(chartConfigDataItem);
+        if(chartConfigDataItem.title.startsWith('disktemp-')){
+          let spl = chartConfigDataItem.title.split("disktemp-");
+          chartConfigDataItem.title = "Disk Temperature " + spl[1];
+        } 
 
       } else if (chartConfigDataItem.title.startsWith("interface-")) {
         const tab: TabChartsMappingData = map.get("Network");
@@ -380,6 +394,11 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
       this.tabChartsMappingDataArray.push(value);
     });
   
+        
+    // Put CPU and Load charts before the temperature charts
+    this.tabChartsMappingDataArray[0].chartConfigData.sort((a,b) => {return a.title > b.title ? 1 : -1;});
+    //console.log(this.tabChartsMappingDataArray.length);
+
     this.drawTabs = true;
     this.showSpinner = false;
     this.activateTabFromUrl();

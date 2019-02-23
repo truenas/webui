@@ -148,7 +148,7 @@ export class LineChartService {
 
     let dictionary: LineChartMetadata[] = [
       {source :'aggregation-cpu-sum', units:'%', labelY:'% CPU'},
-      {source :'temperature', units:'°C', labelY:'CPU °C', conversion:'decikelvinsToCelsius'},
+      {source :'temperature', units:'°C', labelY:'Celsius', conversion:'decikelvinsToCelsius'},
       {source :'memory', units:'GiB', labelY:'Gigabytes', removePrefix:'memory-'},
       {source :'swap', units:'GiB', labelY:'Gigabytes', removePrefix:'swap-'},
       {source :'if_errors', units:'', labelY:'Bits/s'},
@@ -280,9 +280,17 @@ export class LineChartService {
 
      if (prop.startsWith("cputemp-")) {
         configData.push({
-          title: prop + " (temperature)",
+          title: prop,
           type: LineChartService.lineChart,
-          legends: ["temperature"],
+          legends: ["temp"],
+          dataList: [{source: prop, type: 'temperature', dataset: 'value'}]
+        });
+
+     } else if (prop.startsWith("disktemp-")) {
+        configData.push({
+          title: prop,
+          type: LineChartService.lineChart,
+          legends: ["temp"],
           dataList: [{source: prop, type: 'temperature', dataset: 'value'}]
         });
 
