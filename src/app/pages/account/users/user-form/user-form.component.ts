@@ -49,7 +49,7 @@ export class UserFormComponent {
           placeholder : helptext.user_form_username_placeholder,
           tooltip : helptext.user_form_username_tooltip,
           required: true,
-          validation : [ Validators.required, Validators.pattern('[a-z_A-Z_][a-zA-Z0-9_\.-]*[$]?'), Validators.maxLength(16) ],
+          validation : helptext.user_form_username_validation,
           blurStatus : true,
           blurEvent: this.blurEvent2,
           parent: this
