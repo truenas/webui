@@ -59,6 +59,8 @@
 .legend-item{
   padding:4px 0;
   text-align:right;
+  text-transform:capitalize;
+  font-weight:400;
 }
 
 .disk-grid-header{
