@@ -1064,8 +1064,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(color, --red, $red);
   }
 
-  #email_form_password_message {
-    margin-top: 10px;
+  #em_pwmessage {
+    margin: 10px 0;
   }
 
  } // end of ix theme
