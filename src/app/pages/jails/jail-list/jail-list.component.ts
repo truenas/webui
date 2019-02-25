@@ -40,8 +40,8 @@ export class JailListComponent implements OnInit {
     { name: T('IPv4 Address'), prop: 'ip4_addr' },
     { name: T('IPv6 Address'), prop: 'ip6_addr' },
     { name: T('Status'), prop: 'state' },
-    { name: T('Type'), prop: 'type', hidden: true },
-    { name: T('Release'), prop: 'release' },
+    { name: T('Type'), prop: 'type', hidden: true, minWidth: 80, maxWidth: 120 },
+    { name: T('Release'), prop: 'release', minWidth: 225, maxWidth: 325 },
   ];
   public config: any = {
     paging: true,

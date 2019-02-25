@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { RestService, WebSocketService, NetworkService } from '../../../services';
+import { RestService, WebSocketService, NetworkService, SystemGeneralService } from '../../../services';
 import { FormGroup, Validators } from '@angular/forms';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
@@ -68,7 +68,7 @@ export class VMWizardComponent {
         name : 'name',
         placeholder : helptext.name_placeholder,
         tooltip : helptext.name_tooltip,
-        validation : [Validators.required,Validators.pattern('^[a-zA-Z0-9_]*$')],
+        validation : [Validators.required,Validators.pattern('^[a-zA-Z0-9\_]*$')],
         required: true,
         blurStatus: true,
         blurEvent: this.blurEvent,
@@ -92,7 +92,16 @@ export class VMWizardComponent {
       tooltip : helptext.enable_vnc_tooltip,
       value: true,
       isHidden: false
-    }
+      },
+      {
+        type: 'select',
+        name : 'vnc_bind',
+        placeholder : helptext.vnc_bind_placeholder,
+        tooltip : helptext.vnc_bind_tooltip,
+        options: [],
+        required: true,
+        validation: [Validators.required],
+      },
       ]
     },
     {
@@ -261,7 +270,7 @@ export class VMWizardComponent {
     public vmService: VmService, public networkService: NetworkService,
     protected loader: AppLoaderService, protected dialog: MatDialog,
     public messageService: MessageService,private router: Router,
-    private dialogService: DialogService) {
+    private dialogService: DialogService, private systemGeneralService: SystemGeneralService) {
 
   }
 
@@ -269,6 +278,21 @@ export class VMWizardComponent {
     this.entityWizard = entityWizard;
   }
   afterInit(entityWizard: EntityWizardComponent) {
+    this.systemGeneralService.getIPChoices().subscribe((res) => {
+      if (res.length > 0) {
+        const vnc_bind = _.find(this.wizardConfig[1].fieldConfig, {'name' : 'vnc_bind'});
+        for (const item of res){
+          vnc_bind.options.push({label : item[1], value : item[0]});
+        }
+        this.ws.call('interfaces.ip_in_use', [{"ipv4": true}]).subscribe(
+          (ip) => {
+            if (_.find(vnc_bind.options, { value: ip[0].address })){
+              ( < FormGroup > entityWizard.formArray.get([1]).get('vnc_bind')).setValue(ip[0].address);
+            }
+          }
+        )
+      }
+    });
 
     this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]]]).subscribe((zvols)=>{
       zvols.forEach(zvol => {
@@ -294,6 +318,11 @@ export class VMWizardComponent {
       }
 
 
+    });
+
+    ( < FormGroup > entityWizard.formArray.get([1]).get('enable_vnc')).valueChanges.subscribe((res) => {
+      _.find(this.wizardConfig[1].fieldConfig, {name : 'vnc_bind'}).isHidden = !res;
+      res ? ( < FormGroup > entityWizard.formArray.get([1]).get('vnc_bind')).enable() : ( < FormGroup > entityWizard.formArray.get([1]).get('vnc_bind')).disable();
     });
 
 
@@ -589,7 +618,16 @@ async customSubmit(value) {
     }
 
     if(value.enable_vnc &&value.bootloader !== "UEFI_CSM"){
-      await this.create_vnc_device(vm_payload);
+      vm_payload["devices"].push({
+          "dtype": "VNC", "attributes": {
+            "wait": true,
+            "vnc_port": String(this.getRndInteger(5553,6553)),
+            "vnc_resolution": "1024x768",
+            "vnc_bind": value.vnc_bind,
+            "vnc_password": "",
+            "vnc_web": true
+          }
+        });
     };
     this.loader.open();
     if( value.hdd_path ){
@@ -631,20 +669,4 @@ async customSubmit(value) {
     }
 }
 
-  async create_vnc_device(vm_payload: any) {
-    await this.ws.call('interfaces.ip_in_use', [{"ipv4": true}]).toPromise().then( res=>{
-      vm_payload["devices"].push(
-        {
-          "dtype": "VNC", "attributes": {
-            "wait": true,
-            "vnc_port": String(this.getRndInteger(5553,6553)),
-            "vnc_resolution": "1024x768",
-            "vnc_bind": res[0].address,
-            "vnc_password": "",
-            "vnc_web": true
-          }
-        }
-    );
-    });
-  }
 }

@@ -445,9 +445,17 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .ngx-datatable .datatable-body .datatable-row-wrapper:hover,
   .mat-menu-content button.mat-menu-item:focus, 
   .mat-menu-content button.mat-menu-item:focus .mat-icon:not([class="theme-picker-swatch-icon"]),
-  .ngx-datatable .datatable-body .datatable-row-wrapper:focus{
+  .ngx-datatable .datatable-body .datatable-row-wrapper:focus {
     @include variable(background, --primary, $primary, !important);
     @include variable(color, --primary-txt, $primary-txt);
+  }
+
+  .ngx-datatable .datatable-body .datatable-row-wrapper:hover .mat-checkbox .mat-checkbox-frame {
+    @include variable(border-color, --primary-txt, $primary-txt, !important);
+  }
+
+  .ngx-datatable .datatable-body .datatable-row-wrapper:hover .mat-slide-toggle:not(.mat-checked) .mat-slide-toggle-bar {
+    @include variable(background, --bg1, $bg1, !important);
   }
 
   .dx-treelist-rowsview .dx-selection.dx-row > td, 
@@ -1251,6 +1259,17 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     top: 100px;
     left: 26px;
     @include variable(color, --red, $red);
+  }
+  
+  .ngx-datatable .datatable-header .datatable-header-cell .resize-handle {
+    border-right: 1px solid !important;
+    @include variable(border-color, --primary-txt, $primary-txt);
+    visibility: visible !important;
+    opacity: .25;
+  }
+
+  .datatable-header-inner {
+    height: 52px;
   }
 
  } // end of ix theme
