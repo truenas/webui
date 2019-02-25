@@ -77,7 +77,7 @@ export class VmCardsComponent  implements OnDestroy {
       } else {
         vms[vm_index]['port'] = 'N/A';
       if (vms[vm_index]['vm_type'] === "Container Provider")
-        vms[vm_index]['vm_type'] = '${globalhelptext.dockerhost}';
+        vms[vm_index]['vm_type'] = globalHelptext.dockerhost;
       };
     }
     return vms;
