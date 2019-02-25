@@ -750,6 +750,9 @@ export class DatasetFormComponent implements Formconfiguration{
     if (data.deduplication === 'INHERIT') {
       delete(data.deduplication);
     }
+    if (data.recordsize === "1M") {
+      data.recordsize = "1024K";
+    }
     return this.ws.call('pool.dataset.create', [ data ]);
   }
 
