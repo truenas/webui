@@ -15,7 +15,7 @@ export class NTPServerListComponent {
   protected route_success: string[] = [ 'system', 'ntpservers' ];
   
   public columns: Array<any> = [
-    {name : 'Address', prop : 'ntp_address', always_display: true},
+    {name : 'Address', prop : 'ntp_address', always_display: true, minWidth: 200},
     {name : 'Burst', prop : 'ntp_burst'},
     {name : 'IBurst', prop : 'ntp_iburst'},
     {name : 'Prefer', prop : 'ntp_prefer'},
