@@ -57,6 +57,8 @@ export interface InputTableConf {
   wsMultiDeleteParams?(selected): any;
   updateMultiAction?(selected): any;
   doAdd?();
+  onCheckboxChange?(row): any;
+  onSliderChange?(row): any;
 }
 
 export interface SortingConfig {

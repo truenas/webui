@@ -44,6 +44,7 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
   @Input() legends: string[]; 
   @Input() type: string;
   @Input() divideBy: number;
+  @Input() convertToCelsius?: true;
   @Input() chartFormatter: ChartFormatter;
   @Input() minY?: number = 0;
   @Input() maxY?: number = 100;
@@ -92,7 +93,13 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
     
     const newArray = [];
     if(!linechartData.meta)console.log(linechartData);
-      if (typeof (this.divideBy) !== 'undefined' || linechartData.meta.conversion) {
+    if (linechartData.meta.conversion == 'decikelvinsToCelsius') {
+        dataSeriesArray.forEach((numberVal) => {
+            newArray.push(this.convertTo(numberVal, linechartData.meta.conversion));
+        });
+        
+        dataSeriesArray = newArray;
+    } else if (typeof (this.divideBy) !== 'undefined' || linechartData.meta.conversion) {
         dataSeriesArray.forEach((numberVal) => {
           if(linechartData.meta.conversion){
             newArray.push(this.convertTo(numberVal, linechartData.meta.conversion));
@@ -209,7 +216,7 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
         },
         y:{
           tick: {
-            format: (y) => { return y + this.linechartData.meta.units}
+            format: (y) => { return y.toFixed(2) + this.linechartData.meta.units}
           },
           label: {
             text:this.linechartData.meta. labelY,
@@ -317,9 +324,16 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
     case 'percentFloatToInteger':
       result = value * 100;
       break;
+    case 'decikelvinsToCelsius':
+      if(value !== null ){
+        result = this.dataList[0].source.startsWith('cputemp-') ? (value / 10) - 273.15 : value;
+      } else {
+        result = null
+      }
+      break;
     }
 
-    return result.toFixed(2);
+    return result !== null ? result.toFixed(2) : result;
   }
 
   // Analytics
