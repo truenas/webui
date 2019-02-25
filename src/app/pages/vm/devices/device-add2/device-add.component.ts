@@ -358,7 +358,7 @@ export class DeviceAddComponent implements OnInit {
     this.afterInit();
   }
 
-  afterInit() {
+  async afterInit() {
 
     this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]]]).subscribe((zvols)=>{
       zvols.forEach(zvol => {
@@ -370,15 +370,23 @@ export class DeviceAddComponent implements OnInit {
       });
     });
     // if bootloader == 'GRUB' or bootloader == "UEFI_CSM" or if VM has existing VNC device, hide VNC option.
-    this.ws.call('vm.query', [[['id', '=', parseInt(this.vmid,10)]]]).subscribe((vm)=>{
+    await this.ws.call('vm.query', [[['id', '=', parseInt(this.vmid,10)]]]).subscribe((vm)=>{
+      const dtypeField = _.find(this.fieldConfig, {name: "dtype"});
       if (vm[0].bootloader === 'GRUB' || vm[0].bootloader === "UEFI_CSM" || _.find(vm[0].devices, {dtype:'VNC'})){
-        const dtypeField = _.find(this.fieldConfig, {name: "dtype"});
         for (const i in dtypeField.options) {
           if (dtypeField.options[i].label === 'VNC') {
             _.pull(dtypeField.options, dtypeField.options[i]);
           }
         }
       } 
+      else {
+        if (!_.find(dtypeField.options, {label: "VNC"})) {
+          dtypeField.options.push({
+            label: 'VNC',
+            value: 'VNC',
+          });
+        }
+      }
       // if type == 'Container Provider' and rawfile boot device exists, hide rootpwd and boot fields.
       if (_.find(vm[0].devices, {dtype:'RAW'}) && vm[0].type ==="Container Provider") {
         vm[0].devices.forEach(element => {
