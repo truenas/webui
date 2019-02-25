@@ -42,7 +42,24 @@ export class DeviceAddComponent implements OnInit {
       type: 'select',
       name: 'dtype',
       placeholder: helptext.dtype_placeholder,
-      options: helptext.dtype_options,
+      options: [
+        {
+        label: 'CD-ROM',
+        value: 'CDROM',
+        }, {
+        label: 'NIC',
+        value: 'NIC',
+        }, {
+        label: 'Disk',
+        value: 'DISK',
+        }, {
+        label: 'Raw File',
+        value: 'RAW',
+        }, {
+        label: 'VNC',
+        value: 'VNC',
+        }
+      ],
       value: helptext.dtype_value,
       required: true,
       validation: helptext.dtype_validation,
@@ -379,14 +396,6 @@ export class DeviceAddComponent implements OnInit {
           }
         }
       } 
-      else {
-        if (!_.find(dtypeField.options, {label: "VNC"})) {
-          dtypeField.options.push({
-            label: 'VNC',
-            value: 'VNC',
-          });
-        }
-      }
       // if type == 'Container Provider' and rawfile boot device exists, hide rootpwd and boot fields.
       if (_.find(vm[0].devices, {dtype:'RAW'}) && vm[0].type ==="Container Provider") {
         vm[0].devices.forEach(element => {
