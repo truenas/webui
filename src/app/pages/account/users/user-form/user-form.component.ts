@@ -259,8 +259,8 @@ export class UserFormComponent {
               public loader: AppLoaderService
               ) {}
 
-
    afterInit(entityForm: any) {
+    this.loader.callStarted.emit();
     this.entityForm = entityForm;
     this.isNew = entityForm.isNew;
     this.password_disabled = entityForm.formGroup.controls['password_disabled'];
@@ -315,10 +315,9 @@ export class UserFormComponent {
       entityForm.formGroup.controls['group_create'].setValue(false);
     }
     /* list groups */
-    this.loader.open();
 
     this.ws.call('group.query').subscribe((res) => {
-      this.loader.close();
+      this.loader.callDone.emit(status);
       this.group = _.find(this.fieldConfig, {name : "group"});
       this.groups = _.find(this.fieldConfig, {name : "groups"});
       for (let i = 0; i < res.length; i++) {
