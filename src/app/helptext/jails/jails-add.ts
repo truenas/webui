@@ -6,6 +6,14 @@ uuid_placeholder: T('Name'),
 uuid_tooltip: T('Required. Can only contain alphanumeric characters \
 (Aa-Zz 0-9), dashes (-), or underscores (\_).'),
 
+jailtype_placeholder: T('Jail Type'),
+jailtype_tooltip: T('<i>Default (Clone Jail)</i> or <i>Basejail</i>. \
+Clone jails are clones of the specified RELEASE. They are linked to \
+that RELEASE, even if they are upgraded. Basejails mount the \
+specified RELEASE directories as nullfs mounts over the jail \
+directories. Basejails are not linked to the original RELEASE \
+when upgraded.'),
+
 release_placeholder: T('Release'),
 release_tooltip: T('Choose the FreeBSD release to use as the jail \
 operating system. Releases that have already \

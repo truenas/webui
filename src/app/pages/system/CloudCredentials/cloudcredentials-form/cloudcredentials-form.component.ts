@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatSnackBar } from '@angular/material';
-import * as _ from 'lodash';
-import { WebSocketService, CloudCredentialService, DialogService } from '../../../../services/';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { T } from '../../../../translate-marker';
+import { ActivatedRoute, Router } from '@angular/router';
+import { helptext_system_cloudcredentials as helptext } from 'app/helptext/system/cloudcredentials';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import * as _ from 'lodash';
+import { CloudCredentialService, DialogService, WebSocketService } from '../../../../services/';
+import { T } from '../../../../translate-marker';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
   selector: 'app-cloudcredentials-form',
@@ -30,28 +31,26 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'name',
-      placeholder: T('Name'),
-      tooltip: T('Enter a name for the new credential.'),
+      placeholder: helptext.name.placeholder,
+      tooltip: helptext.name.tooltip,
       required: true,
-      validation: [Validators.required],
+      validation: helptext.name.validation,
     },
     {
       type: 'select',
       name: 'provider',
-      placeholder: T('Provider'),
+      placeholder: helptext.provider.placeholder,
       options: [],
       value: 'AMAZON_CLOUD_DRIVE',
       required: true,
-      validation: [Validators.required],
+      validation: helptext.provider.validation,
     },
     // Amazon_cloud_drive
     {
       type: 'input',
       name: 'client_id-AMAZON_CLOUD_DRIVE',
-      placeholder: T('Amazon Application Client ID'),
-      tooltip:T('Client ID for the <a\
-                 href="https://developer.amazon.com/docs/amazon-drive/ad-get-started.html"\
-                 target="_blank">Amazon Drive account</a>.'),
+      placeholder: helptext.client_id_amazon_cloud_drive.placeholder,
+      tooltip: helptext.client_id_amazon_cloud_drive.tooltip,
       required: true,
       isHidden: true,
       relation: [
@@ -67,8 +66,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'client_secret-AMAZON_CLOUD_DRIVE',
-      placeholder: T('Application Client Secret'),
-      tooltip: T('Client secret for the Amazon Drive account.'),
+      placeholder: helptext.client_secret_amazon_cloud_drive.placeholder,
+      tooltip: helptext.client_secret_amazon_cloud_drive.tooltip,
       required: true,
       isHidden: true,
       relation: [
@@ -85,12 +84,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'access_key_id-S3',
-      placeholder: T('Access Key ID'),
-      tooltip: T('Amazon Web Services Key ID. This is found\
-                  on <a href="https://aws.amazon.com/"\
-                  target="_blank">Amazon AWS</a> by going through <i>My\
-                  account -> Security Credentials -> Access Keys\
-                  (Access Key ID and Secret Access Key)</i>.'),
+      placeholder: helptext.access_key_id_s3.placeholder,
+      tooltip: helptext.access_key_id_s3.tooltip,
       required: true,
       isHidden: true,
       relation: [
@@ -106,11 +101,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'secret_access_key-S3',
-      placeholder: T('Secret Access Key'),
-      tooltip: T('Amazon Web Services password. If the Secret Access Key\
-                  cannot be found or remembered, go to <i>My Account >\
-                  Security Credentials > Access Keys</i> and create a\
-                  new key pair.'),
+      placeholder: helptext.secret_access_key_s3.placeholder,
+      tooltip: helptext.secret_access_key_s3.tooltip,
       required: true,
       isHidden: true,
       inputType: 'password',
@@ -145,17 +137,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'endpoint-S3',
-      placeholder: T('Endpoint URL'),
-      tooltip: T('<a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteEndpoints.html"\
-                  target="_blank">Endpoint URL</a> for a bucket\
-                  configured for website hosting. Leave blank when using \
-                  AWS. Enter endpoint URL if using custom S3 API. URL \
-                  general format: \
-                  <i>bucket-name.s3-website.region.amazonaws.com</i>.\
-                  Refer to the AWS Documentation for a list of <a\
-                  href="https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_website_region_endpoints"\
-                  target="_blank">Simple Storage Service Website\
-                  Endpoints</a>.'),
+      placeholder: helptext.endpoint_s3.placeholder,
+      tooltip: helptext.endpoint_s3.tooltip,
       isHidden: true,
       relation: [
         {
@@ -174,10 +157,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'checkbox',
       name: 'skip_region-S3',
-      placeholder: T('Disable Endpoint Region'),
-      tooltip: T('Skip automatic detection of the Endpoint URL\
-                  region. Set this when configuring a custom\
-                  Endpoint URL.'),
+      placeholder: helptext.skip_region_s3.placeholder,
+      tooltip: helptext.skip_region_s3.tooltip,
       isHidden: true,
       relation: [
         {
@@ -196,11 +177,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'checkbox',
       name: 'signatures_v2-S3',
-      placeholder: T('Use Signature Version 2'),
-      tooltip: T('Force using <a href="https://docs.aws.amazon.com/general/latest/gr/signature-version-2.html"\
-                  target="_blank">Signature Version 2</a> to sign API\
-                  requests. Set this when configuring a custom\
-                  Endpoint URL.'),
+      placeholder: helptext.signatures_v2_s3.placeholder,
+      tooltip: helptext.signatures_v2_s3.tooltip,
       isHidden: true,
       relation: [
         {
@@ -220,17 +198,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'account-B2',
-      placeholder: T('Account ID or Application Key ID'),
-      tooltip: T('Alphanumeric <a\
-                  href="https://www.backblaze.com/b2/cloud-storage.html"\
-                  target="_blank">Backblaze B2</a> ID. Find an Account ID\
-                  or applicationKeyID by logging in to the account,\
-                  clicking <i>Buckets</i>, and clicking\
-                  <i>Show Account ID and Application Key</i>. Enter the\
-                  <i>Account ID</i> to associate the entire account or\
-                  generate a new <i>Application Key</i>. The <i>keyID</i>\
-                  replaces the Account ID and the key string is used in\
-                  place of the <i>Master Application Key</i>.'),
+      placeholder: helptext.account_b2.placeholder,
+      tooltip: helptext.account_b2.tooltip,
       required: true,
       isHidden: true,
       relation: [
@@ -246,16 +215,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'key-B2',
-      placeholder: T('Master Application Key or Application Key'),
-      tooltip: T('Backblaze B2 Application Key. Log in to\
-                  the B2 account and generate a key on the Buckets\
-                  page. <a\
-                  href="https://help.backblaze.com/hc/en-us/articles/224991568-Where-can-I-find-my-Account-ID-and-Application-Key-"\
-                  target="_blank">Generating a new Master Application Key</a>\
-                  will invalidate the existing Master key and require\
-                  updating this field. Using a limited permissions\
-                  Application Key also requires changing the\
-                  <i>Account ID</i> to the new <i>keyID</i>.'),
+      placeholder: helptext.key_b2.placeholder,
+      tooltip: helptext.key_b2.tooltip,
       required: true,
       isHidden: true,
       relation: [
@@ -272,14 +233,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'token-BOX',
-      placeholder: T('Access Token'),
-      tooltip: T('A User Access Token for <a\
-                  href="https://developer.box.com/"\
-                  target="_blank">Box</a>. An <a\
-                  href="https://developer.box.com/reference#token"\
-                  target="_blank">access token</a> enables Box to verify\
-                  a request belongs to an authorized session. Example\
-                  token: <i>T9cE5asGnuyYCCqIZFoWjFHvNbvVqHjl</i>.'),
+      placeholder: helptext.token_box.placeholder,
+      tooltip: helptext.token_box.tooltip,
       required: true,
       isHidden: true,
       relation: [
@@ -296,11 +251,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'token-DROPBOX',
-      placeholder: T('Access Token'),
-      tooltip: T('Access Token for a Dropbox account. A <a\
-                  href="https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/"\
-                  target="_blank">token must be generated</a> in the\
-                  account before adding it here.'),
+      placeholder: helptext.token_dropbox.placeholder,
+      tooltip: helptext.token_dropbox.tooltip,
       required: true,
       isHidden: true,
       relation: [
@@ -317,8 +269,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'host-FTP',
-      placeholder: T('Host'),
-      tooltip: T('FTP Host to connect to. Example: <i>ftp.example.com</i>.'),
+      placeholder: helptext.host_ftp.placeholder,
+      tooltip: helptext.host_ftp.tooltip,
       required: true,
       isHidden: true,
       relation: [
@@ -334,9 +286,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'port-FTP',
-      placeholder: T('Port'),
-      tooltip: T('FTP Port number. Leave blank to use a default port\
-                  of <i>21</i>.'),
+      placeholder: helptext.port_ftp.placeholder,
+      tooltip: helptext.port_ftp.tooltip,
       isHidden: true,
       relation: [
         {
@@ -351,9 +302,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'user-FTP',
-      placeholder: T('Username'),
-      tooltip: T('A username on the FTP Host system. This user must\
-                  already exist on the FTP Host.'),
+      placeholder: helptext.user_ftp.placeholder,
+      tooltip: helptext.user_ftp.tooltip,
       required: true,
       isHidden: true,
       relation: [
@@ -369,8 +319,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'pass-FTP',
-      placeholder: T('Password'),
-      tooltip: T('Password for the username.'),
+      placeholder: helptext.pass_ftp.placeholder,
+      tooltip: helptext.pass_ftp.tooltip,
       required: true,
       isHidden: true,
       inputType: 'password',
@@ -389,8 +339,8 @@ export class CloudCredentialsFormComponent {
     {
       type : 'textarea',
       name : 'preview-GOOGLE_CLOUD_STORAGE',
-      placeholder : T('Preview JSON Service Account Key'),
-      tooltip: T('View the contents of the Service Account JSON file.'),
+      placeholder : helptext.preview_google_cloud_storage.placeholder,
+      tooltip: helptext.preview_google_cloud_storage.tooltip,
       readonly: true,
       isHidden: true,
       relation: [
@@ -406,12 +356,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'readfile',
       name: 'service_account_credentials-GOOGLE_CLOUD_STORAGE',
-      placeholder: T('Service Account'),
-      tooltip: T('Upload the Service Account JSON credential file. This <a\
-                  href="https://cloud.google.com/storage/docs/authentication#generating-a-private-key"\
-                  target="_blank">file must be generated</a> with the\
-                  Google Cloud Platform Console and uploaded from the\
-                  local system.'),
+      placeholder: helptext.service_account_credentials_google_cloud_storage.placeholder,
+      tooltip: helptext.service_account_credentials_google_cloud_storage.tooltip,
       required: true,
       isHidden: true,
       relation: [
@@ -428,11 +374,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'token-GOOGLE_DRIVE',
-      placeholder: T('Access Token'),
-      tooltip: T('Token created with <a\
-                  href="https://developers.google.com/drive/api/v3/about-auth"\
-                  target="_blank">Google Drive</a>. Access Tokens expire\
-                  periodically and must be refreshed.'),
+      placeholder: helptext.token_google_drive.placeholder,
+      tooltip: helptext.token_google_drive.tooltip,
       required: true,
       isHidden: true,
       relation: [
@@ -448,9 +391,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'team_drive-GOOGLE_DRIVE',
-      placeholder: T('Team Drive ID'),
-      tooltip: T('Only needed when connecting to a Team Drive. The ID of\
-                  the top level folder of the Team Drive.'),
+      placeholder: helptext.team_drive_google_drive.placeholder,
+      tooltip: helptext.team_drive_google_drive.tooltip,
       required: false,
       isHidden: true,
       relation: [
@@ -467,8 +409,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'url-HTTP',
-      placeholder: T('URL'),
-      tooltip: T('URL of the HTTP host to connect to.'),
+      placeholder: helptext.url_http.placeholder,
+      tooltip: helptext.url_http.tooltip,
       required: true,
       isHidden: true,
       relation: [
@@ -485,10 +427,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'token-HUBIC',
-      placeholder: T('Access Token'),
-      tooltip: T('Access Token <a\
-                  href="https://api.hubic.com/sandbox/"\
-                  target="_blank">generated by a Hubic account</a>.'),
+      placeholder: helptext.token_hubic.placeholder,
+      tooltip: helptext.token_hubic.tooltip,
       required: true,
       isHidden: true,
       relation: [
@@ -505,9 +445,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'user-MEGA',
-      placeholder: T('Username'),
-      tooltip: T('Username for a <a href="https://mega.nz/"\
-                  target="_blank">MEGA</a> account.'),
+      placeholder: helptext.user_mega.placeholder,
+      tooltip: helptext.user_mega.tooltip,
       required: true,
       isHidden: true,
       relation: [
@@ -523,9 +462,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'pass-MEGA',
-      placeholder: T('Password'),
-      tooltip: T('Password for the <a href="https://mega.nz/"\
-                  target="_blank">MEGA</a> account.'),
+      placeholder: helptext.pass_mega.placeholder,
+      tooltip: helptext.pass_mega.tooltip,
       required: true,
       isHidden: true,
       inputType: 'password',
@@ -544,10 +482,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'account-AZUREBLOB',
-      placeholder: T('Account Name'),
-      tooltip: T('Name of a <a\
-                  href="https://docs.microsoft.com/en-us/azure/storage/common/storage-create-storage-account"\
-                  target="_blank">Microsoft Azure</a> account.'),
+      placeholder: helptext.account_azureblob.placeholder,
+      tooltip: helptext.account_azureblob.tooltip,
       required: true,
       isHidden: true,
       relation: [
@@ -563,8 +499,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'key-AZUREBLOB',
-      placeholder: T('Account Key'),
-      tooltip: T('Base64 encoded key for the Azure account.'),
+      placeholder: helptext.key_azureblob.placeholder,
+      tooltip: helptext.key_azureblob.tooltip,
       required: true,
       isHidden: true,
       relation: [
@@ -581,10 +517,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'token-ONEDRIVE',
-      placeholder: T('Access Token'),
-      tooltip: T('Microsoft Onedrive <a\
-                  href="https://docs.microsoft.com/en-us/onedrive/developer/rest-api/getting-started/authentication"\
-                  target="_blank">Access Token</a>.'),
+      placeholder: helptext.token_onedrive.placeholder,
+      tooltip: helptext.token_onedrive.tooltip,
       required: true,
       isHidden: true,
       relation: [
@@ -600,11 +534,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'select',
       name: 'drive_type-ONEDRIVE',
-      placeholder: T('Drive Account Type'),
-      tooltip: T('Choose a <i>Drive Account Type</i>: <i>PERSONAL, BUSINESS,</i>\
-                  or <a\
-                  href="https://products.office.com/en-us/sharepoint/collaboration"\
-                  target="_blank">SharePoint</a> <i>DOCUMENT_LIBRARY</i>.'),
+      placeholder: helptext.drive_type_onedrive.placeholder,
+      tooltip: helptext.drive_type_onedrive.tooltip,
       options: [
         {
           label: 'PERSONAL',
@@ -635,14 +566,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'drive_id-ONEDRIVE',
-      placeholder: T('Drive ID'),
-      tooltip: T('Choose a unique drive identifier. Open the\
-                  <i>Shell</i>, enter <i>rclone config</i>,\
-                  and follow the prompts to find the <i>Drive ID</i>.\
-                  The rclone <a\
-                  href="https://rclone.org/onedrive"\
-                  target="_blank">OneDrive documentation</a> walks through\
-                  the configuration process.'),
+      placeholder: helptext.drive_id_onedrive.placeholder,
+      tooltip: helptext.drive_id_onedrive.tooltip,
       required: true,
       isHidden: true,
       relation: [
@@ -659,11 +584,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'token-PCLOUD',
-      placeholder: T('Access Token'),
-      tooltip: T('<a\
-                  href="https://docs.pcloud.com/methods/intro/authentication.html"\
-                  target="_blank">pCloud Access Token</a>. These tokens\
-                  can expire and require extension.'),
+      placeholder: helptext.token_pcloud.placeholder,
+      tooltip: helptext.token_pcloud.tooltip,
       required: true,
       isHidden: true,
       relation: [
@@ -680,8 +602,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'host-SFTP',
-      placeholder: T('Host'),
-      tooltip: T('SSH Host to connect to.'),
+      placeholder: helptext.host_sftp.placeholder,
+      tooltip: helptext.host_sftp.tooltip,
       required: true,
       isHidden: true,
       relation: [
@@ -697,9 +619,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'port-SFTP',
-      placeholder: T('Port'),
-      tooltip: T('SSH port number. Leave empty to use the default port\
-                  <i>22</i>.'),
+      placeholder: helptext.port_sftp.placeholder,
+      tooltip: helptext.port_sftp.tooltip,
       isHidden: true,
       relation: [
         {
@@ -714,8 +635,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'user-SFTP',
-      placeholder: T('Username'),
-      tooltip: T('SSH Username.'),
+      placeholder: helptext.user_sftp.placeholder,
+      tooltip: helptext.user_sftp.tooltip,
       required: true,
       isHidden: true,
       relation: [
@@ -731,8 +652,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'pass-SFTP',
-      placeholder: T('Password'),
-      tooltip: T('Password for the SSH Username account.'),
+      placeholder: helptext.pass_sftp.placeholder,
+      tooltip: helptext.pass_sftp.tooltip,
       required: true,
       isHidden: true,
       inputType: 'password',
@@ -750,12 +671,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'key_file-SFTP',
-      placeholder: T('PEM-encoded private key file path'),
-      tooltip: T('Path to an unencrypted <a\
-                  href="https://en.wikipedia.org/wiki/Privacy-Enhanced_Mail"\
-                  target="_blank">PEM-encoded</a> private key file.\
-                  Example: <i>/home/$USER/.ssh/id_rsa</i>. Leave blank\
-                  to use <i>ssh-agent</i>.'),
+      placeholder: helptext.key_file_sftp.placeholder,
+      tooltip: helptext.key_file_sftp.tooltip,
       required: true,
       isHidden: true,
       relation: [
@@ -772,8 +689,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'url-WEBDAV',
-      placeholder: T('URL'),
-      tooltip: T('URL of the HTTP host to connect to.'),
+      placeholder: helptext.url_webdav.placeholder,
+      tooltip: helptext.url_webdav.tooltip,
       required: true,
       isHidden: true,
       relation: [
@@ -789,9 +706,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'select',
       name: 'vendor-WEBDAV',
-      placeholder: T('WebDAV service'),
-      tooltip: T('Name of the WebDAV site, service, or software being\
-                  used.'),
+      placeholder: helptext.vendor_webdav.placeholder,
+      tooltip: helptext.vendor_webdav.tooltip,
       options: [
         {
           label: 'NEXTCLOUD',
@@ -826,8 +742,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'user-WEBDAV',
-      placeholder: T('Username'),
-      tooltip: T('WebDAV account username.'),
+      placeholder: helptext.user_webdav.placeholder,
+      tooltip: helptext.user_webdav.tooltip,
       required: true,
       isHidden: true,
       relation: [
@@ -843,8 +759,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'pass-WEBDAV',
-      placeholder: T('Password'),
-      tooltip: T('WebDAV account password.'),
+      placeholder: helptext.pass_webdav.placeholder,
+      tooltip: helptext.pass_webdav.tooltip,
       required: true,
       isHidden: true,
       inputType: 'password',
@@ -863,10 +779,8 @@ export class CloudCredentialsFormComponent {
     {
       type: 'input',
       name: 'token-YANDEX',
-      placeholder: T('Access Token'),
-      tooltip: T('Yandex <a\
-                  href="https://tech.yandex.com/direct/doc/dg-v4/concepts/auth-token-docpage/"\
-                  target="_blank">Access Token</a>.'),
+      placeholder: helptext.token_yandex.placeholder,
+      tooltip: helptext.token_yandex.tooltip,
       required: true,
       isHidden: true,
       relation: [

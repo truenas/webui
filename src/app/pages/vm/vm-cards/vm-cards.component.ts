@@ -40,7 +40,7 @@ export class VmCardsComponent  implements OnDestroy {
 
   public columns: Array<any> = [
     {name : 'Name', prop : 'name', always_display: true },
-    {name : 'State', prop : 'state', always_display: true },
+    {name : 'State', prop : 'state', always_display: true, toggle: true },
     {name : 'VNC Port', prop : 'port', hidden: true},
     {name : 'Com Port', prop : 'com_port', hidden: true},
     {name : 'Type', prop : 'vm_type', hidden: false},
@@ -48,7 +48,7 @@ export class VmCardsComponent  implements OnDestroy {
     {name : 'Virtual CPUs', prop : 'vcpus', hidden: false},
     {name : 'Memory Size (MiB)', prop : 'memory',hidden: false},
     {name : 'Boot Loader Type', prop : 'bootloader', hidden: true },
-    {name: 'Autostart', prop : 'autostart',hidden: false},
+    {name : 'Autostart', prop : 'autostart',hidden: false, selectable: true},
 
   ];
   public config: any = {
@@ -244,6 +244,39 @@ export class VmCardsComponent  implements OnDestroy {
       }
     }
   }
+
+  onCheckboxChange(row) {
+    row.autostart = !row.autostart;
+    this.ws.call('vm.update', [row.id, {'autostart': row.autostart}] )
+    .subscribe((res) => {
+      if (!res) {
+        row.autostart = !row.autostart;
+      }
+    });
+  }
+
+  onSliderChange(row) {
+    if(row['status']['state'] === "RUNNING") {
+      const eventName = "VmStop";
+      this.core.emit({name: eventName, data:[row.id]});
+      this.setTransitionState("STOPPING", row)
+    } else {
+      const eventName = "VmStart";
+      let args = [row.id];
+      let overcommit = [{'overcommit':false}];
+      const dialogText = "Memory overcommitment allows multiple VMs to be launched when there is not enough free memory for configured RAM of all VMs. Use with caution."
+      let startDialog = this.dialog.confirm("Power", undefined, true, "Power On", true, 'Overcommit Memory?', undefined, overcommit, dialogText)
+      startDialog.afterClosed().subscribe((res) => {
+        if (res) {
+          let checkbox = startDialog.componentInstance.data[0].overcommit;
+          args.push({"overcommit": checkbox});
+          this.core.emit({name: eventName, data:args});
+          this.setTransitionState("STARTING", row);
+        } 
+      });
+    }
+  }
+
   ngOnDestroy(){
     this.core.unregister({observerClass:this});
   }
