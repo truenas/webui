@@ -334,9 +334,9 @@ export class DatasetFormComponent implements Formconfiguration{
       placeholder: helptext.dataset_form_recordsize_placeholder,
       tooltip: helptext.dataset_form_recordsize_tooltip,
       options: [
-        { label: '512', value: '512', disable:true, hiddenFromDisplay: true},
-        { label: '1K', value: '1K', disable:true, hiddenFromDisplay: true},
-        { label: '2K', value: '2K', disable:true, hiddenFromDisplay: true},
+        { label: '512', value: '512', disable:true, hiddenFromDisplay: true },
+        { label: '1K', value: '1K', disable:true, hiddenFromDisplay: true },
+        { label: '2K', value: '2K', disable:true, hiddenFromDisplay: true },
         { label: '4K', value: '4K' },
         { label: '8K', value: '8K' },
         { label: '16K', value: '16K' },
@@ -476,6 +476,7 @@ export class DatasetFormComponent implements Formconfiguration{
       entityForm.setDisabled('name',true);
       _.find(this.fieldConfig, {name:'name'}).tooltip = "Dataset name (read-only)."
     }
+
     this.recordsize_fg = this.entityForm.formGroup.controls['recordsize'];
 
     this.recordsize_field = _.find(this.fieldConfig, {name:'recordsize'});
@@ -515,7 +516,7 @@ export class DatasetFormComponent implements Formconfiguration{
       this.fieldConfig[0].readonly = false;
     }
     if(this.parent){
-      const root = this.parent.match(/^[a-zA-Z]+/)[0];
+      const root = this.parent.split("/")[0];
       this.ws.call('pool.dataset.recommended_zvol_blocksize',[root]).subscribe(res=>{
         this.minimum_recommended_dataset_recordsize = res;
         this.recommended_size_number = parseInt(this.reverseRecordSizeMap[this.minimum_recommended_dataset_recordsize],0);
@@ -556,7 +557,7 @@ export class DatasetFormComponent implements Formconfiguration{
         entityForm.formGroup.controls['recordsize'].setValue('INHERIT');
         }
         else {
-          this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).subscribe((parent_dataset)=>{      
+          this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).subscribe((parent_dataset)=>{
             this.parent_dataset = parent_dataset[0];
             const current_dataset = _.find(this.parent_dataset.children, {'name':this.pk});
             const lower_recordsize_map = {
@@ -564,21 +565,21 @@ export class DatasetFormComponent implements Formconfiguration{
               '1K':'1K',
               '2K':'2K',
             }; 
-            if (current_dataset.recordsize.value in lower_recordsize_map) {
-              _.find(_.find(this.fieldConfig, {name:'recordsize'}).options, {'label': current_dataset.recordsize.value})['hiddenFromDisplay'] = false
-            };
-            if (current_dataset.quota.rawvalue === '0') {
+            if ( current_dataset.hasOwnProperty("recordsize") && current_dataset['recordsize'].value) {
+                _.find(_.find(this.fieldConfig, {name:'recordsize'}).options, {'label': current_dataset['recordsize'].value})['hiddenFromDisplay'] = false
+            } 
+            if (current_dataset.hasOwnProperty("quota") && current_dataset['quota'].rawvalue === '0') {
               entityForm.formGroup.controls['quota_unit'].setValue('M');
-            }
-            if (current_dataset.refquota.rawvalue === '0') {
+            } 
+            if (current_dataset.hasOwnProperty("refquota")&& current_dataset['refquota'].rawvalue === '0') {
               entityForm.formGroup.controls['refquota_unit'].setValue('M');
-            }
-            if (current_dataset.reservation.rawvalue === '0') {
+            } 
+            if (current_dataset.hasOwnProperty("reservation") && current_dataset['reservation'].rawvalue === '0') {
               entityForm.formGroup.controls['reservation_unit'].setValue('M');
-            }
-            if (current_dataset.refreservation.rawvalue === '0') {
+            } 
+            if (current_dataset.hasOwnProperty("refreservation") && current_dataset['refreservation'].rawvalue === '0') {
               entityForm.formGroup.controls['refreservation_unit'].setValue('M');
-            }
+            }  
             const edit_sync = _.find(this.fieldConfig, {name:'sync'});
             const edit_compression = _.find(this.fieldConfig, {name:'compression'});
             const edit_deduplication = _.find(this.fieldConfig, {name:'deduplication'});
