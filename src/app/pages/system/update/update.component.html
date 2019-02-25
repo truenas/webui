@@ -11,15 +11,21 @@
         (change)="toggleAutoCheck()">{{"Check for Updates Daily and Download if Available" | translate}}</mat-checkbox>
       <tooltip class="updatecheckTooltip" [message]=updatecheck_tooltip></tooltip>
     </div>
-    <div class="train-card-row" *ngIf="trains.length > 1; else trainName">
+    <div class="train-card-row train-select-row" *ngIf="trains.length > 1; else trainName">
       <mat-label id="train-label">{{"Train" | translate}}</mat-label>
       <mat-select class="form-control full-width" id="train-selector" [(ngModel)]="train"  (change)="onTrainChanged($event)">
         <mat-option *ngFor="let train of trains" [value]="train.name">{{ train.name }} - {{ train.description }}</mat-option>
       </mat-select>
+      <button mat-mini-fab color="primary" id="refresh-button" matTooltip="Refresh" (click)="check()">
+        <mat-icon>refresh</mat-icon>
+      </button>
     </div>
     <ng-template #trainName>
-      <div class=train-card-row >
-        Current Train: {{ train }} - {{ singleDescription }}
+      <div class="train-card-row train-select-row">
+        <div id="single-train-name">Current Train: {{ train }} - {{ singleDescription }}</div>
+        <button mat-mini-fab color="primary" id="single-train-refresh-button" matTooltip="Refresh" (click)="check()">
+          <mat-icon>refresh</mat-icon>
+        </button>
       </div>
     </ng-template>
   </div>

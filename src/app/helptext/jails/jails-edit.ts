@@ -232,6 +232,15 @@ href="https://www.freebsd.org/cgi/man.cgi?query=login&manpath=FreeBSD+11.1-RELEA
 target="_blank">LOGIN(1)</a> when logging in to the \
 jail using the <b>console</b> function.'),
 
+securelevel_placeholder: T('securelevel'),
+securelevel_tooltip: T('The value of the jail <a \
+href="https://www.freebsd.org/doc/faq/security.html#idp60202568" \
+target="_blank">securelevel</a> sysctl. A jail never \
+has a lower securelevel than the host system. \
+Setting this parameter allows a higher securelevel. \
+If the host system securelevel is changed, the jail \
+securelevel will be at least as secure.'),
+
 sysvmsg_placeholder: T('sysvmsg'),
 sysvmsg_tooltip: T('Allow or deny access to SYSV IPC message primitives. \
 <br> <b>Inherit</b>: All IPC objects on the system \

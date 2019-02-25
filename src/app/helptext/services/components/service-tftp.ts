@@ -11,8 +11,11 @@ tftp_newfiles_placeholder : T('Allow New Files'),
 tftp_newfiles_tooltip : T('Set when network devices need to send files to\
  the system.'),
 
+tftp_host_placeholder: T('Host'),
+tftp_host_tooltip: T('The default host to use for TFTP transfers. Enter an IP address. Example: 192.0.2.1'),
+
 tftp_port_placeholder : T('Port'),
-tftp_port_tooltip : T('Enter a UDP prort to listen for TFTP requests.'),
+tftp_port_tooltip : T('The UDP port number that listens for TFTP requests. Example: 8050'),
 
 tftp_username_placeholder : T('Username'),
 tftp_username_tooltip : T('Select the account to use for TFTP requests. This\

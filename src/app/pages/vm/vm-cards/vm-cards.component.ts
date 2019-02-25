@@ -54,6 +54,10 @@ export class VmCardsComponent  implements OnDestroy {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    deleteMsg: {
+      title: 'Name',
+      key_props: ['name']
+    },
   };
 
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService,
