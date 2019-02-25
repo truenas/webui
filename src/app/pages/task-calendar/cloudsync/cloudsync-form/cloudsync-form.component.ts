@@ -12,6 +12,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/task-calendar/cloudsync/cloudsync-form';
 import { EntityUtils } from '../../../common/entity/utils';
+import { Validators } from '@angular/forms';
 
 @Component({
   selector: 'cloudsync-add',
@@ -127,6 +128,16 @@ export class CloudsyncFormComponent implements OnInit {
       {label: "AES-256", value: "AES256"},
     ],
     isHidden: true,
+  }, {
+    type: 'input',
+    inputType: 'number',
+    name: 'b2-chunk-size',
+    placeholder: helptext.b2_chunk_size_placeholder,
+    tooltip: helptext.b2_chunk_size_tooltip,
+    isHidden: true,
+    value: 96,
+    min: 5,
+    validation: [Validators.min(5)],
   }, {
     type: 'checkbox',
     name: 'fast_list',
@@ -520,9 +531,9 @@ export class CloudsyncFormComponent implements OnInit {
               if (task_schema.length == 0) {
                 this.setDisabled('task_encryption', true, true);
                 this.setDisabled('fast_list', true, true);
+                this.setDisabled('b2-chunk-size', true, true);
               } else {
                 for (const i in task_schema) {
-                  console.log(task_schema[i]);
                   if (task_schema[i].property == 'encryption') {
                     this.setDisabled('task_encryption', false, false);
                   } else {
@@ -689,6 +700,11 @@ export class CloudsyncFormComponent implements OnInit {
       attributes['fast_list'] = value.fast_list;
       delete value.fast_list;
     }
+    if (value['b2-chunk-size'] != undefined) {
+      attributes['b2-chunk-size'] = value['b2-chunk-size'];
+      delete value['b2-chunk-size'];
+    }
+
     value['attributes'] = attributes;
 
     let spl = value.cloudsync_picker.split(" ");
