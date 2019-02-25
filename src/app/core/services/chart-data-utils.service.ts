@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Observer } from 'rxjs';
 import { Subject } from 'rxjs';
 import { CoreService, CoreEvent } from './core.service';
+import { Thread } from 'app/core/classes/thread';
 import * as moment from 'moment';
 
 export interface ProcessTask {
@@ -24,31 +25,60 @@ export class ChartDataUtilsService {
 
   protected runAsWebWorker:boolean = false;
   protected worker:Worker;
+  public thread:Worker;
+  protected ready: boolean;
 
   constructor(protected core: CoreService){
-    console.log("ChartDataUtils Constructor")
+    console.log("ChartDataUtils Constructor");
 
-    //console.log(JSON.stringify(this.exportedOperations))
-    //console.log(this.scopeTest);
+    // Operations are what will run on the thread
+    const operations = (e) => {
+      const context:Worker = self as any; // Required so Typescript doesn't complain
+      //context.postMessage({name:"THREAD-INIT", data: [] }); // Initialize the thread
+      
+      var callback = (data) => {
+        context.postMessage({name:"TEST FROM THREAD CALLBACK", data: data});
+      }
 
-    /*console.log(this.scopeTest([
-     [3,1,5,2,3],
-     [2,3,8],
-     [2,8,2,5]
-    ]
-    ));*/
+      context.onmessage = (e:MessageEvent) => {
+        let evt:CoreEvent = e.data;
+        console.warn("Thread received message: " + evt.name);
+        console.warn(evt);
+        callback(evt.data);
+      }
+    }
 
+    // Create the new thread
+    const thread = new Thread(core);
+
+    // Give the thread instructions
+    thread.operations = operations;
+
+    // Calback for when we receive messages from the thread
+    thread.onmessage = (e:MessageEvent) => {
+      let evt:CoreEvent = e.data;
+      console.log("Parent received message:" + evt.name);
+      console.log(evt);
+    }
+
+    // Start up the thread
+    thread.start();
+
+    // Test Message
+    thread.postMessage({name:"TEST FROM SERVICE", data:"Test Data Placeholder"});
+
+    /*thread.messages.subscribe((evt:CoreEvent) => {
+      console.log("ChartDataUtils message rcvd...")
+    })*/
+
+    //thread.messages.next({name:"Test", data:"This is just a test..."});
+    //thread.messages.next({name:"Test", data:"This is just a test..."});
 
   }
 
-  startWorker(){
-    /*const file = new Blob([JSON.stringify(this.exportedOperations)]); // Convert code to string and create Blob (object that File inherits from)
-    const fileUrl = window.URL.createObjectURL(file, {type: 'application/javascript; charset=utf-8'}); // Give it a URL and MIME type
-    this.worker = new Worker(fileUrl);// Create the Worker and give it the Blob via the URL */
-  }
-
-  stopWorker(){
-    this.worker.terminate();
+  test = function () {
+    console.log("This is just a test :) ");
+    
   }
 
   sort =  function (data:any[], compareFunction?:any){ // Just like JS sort but now we can run in a worker
