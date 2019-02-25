@@ -1252,4 +1252,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     height: 52px;
   }
 
+  #email_form_password_message {
+    margin-top: 10px;
+  }
+
  } // end of ix theme
