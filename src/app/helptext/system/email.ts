@@ -55,6 +55,10 @@ export const helptext_system_email = {
     validation: [Validators.required]
   },
 
+  em_pwmessage: {
+    paraText: T('Matching passwords must be entered to submit the form, even when editing settings.')
+  },
+
   em_pass1: {
     placeholder: T("Password"),
     tooltip: T(
