@@ -4,6 +4,7 @@ import { MatProgressBar, MatButton, MatSnackBar } from '@angular/material';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { matchOtherValidator } from '../../../pages/common/entity/entity-form/validators/password-validation';
 import { TranslateService } from '@ngx-translate/core';
+import globalHelptext from '../../../helptext/global-helptext';
 
 import { T } from '../../../translate-marker';
 import {WebSocketService} from '../../../services/ws.service';
@@ -24,6 +25,7 @@ export class SigninComponent implements OnInit {
   public is_freenas: Boolean = false;
   public logo_ready: Boolean = false;
   public showPassword = false;
+  public copyrightYear = globalHelptext.copyright_year;
 
   signinData = {
     username: '',

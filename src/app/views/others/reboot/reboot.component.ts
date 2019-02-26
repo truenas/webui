@@ -5,6 +5,7 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 import { TranslateService } from '@ngx-translate/core';
 import { DialogService } from '../../../services/dialog.service';
 import { MatDialog } from '@angular/material';
+import globalHelptext from '../../../helptext/global-helptext';
 
 @Component({
   selector: 'system-reboot',
@@ -14,6 +15,7 @@ import { MatDialog } from '@angular/material';
 export class RebootComponent implements OnInit {
 
   public is_freenas: Boolean = false;
+  public copyrightYear = globalHelptext.copyright_year;
 
   constructor(protected ws: WebSocketService, protected router: Router, 
     protected loader: AppLoaderService, public translate: TranslateService,

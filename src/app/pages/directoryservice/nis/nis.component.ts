@@ -3,9 +3,7 @@ import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
 import {  DialogService } from '../../../services/';
-import { Validators } from '@angular/forms';
-
-import { T } from '../../../translate-marker';
+import helptext from '../../../helptext/directoryservice/nis';
 
 import {
   RestService,
@@ -22,15 +20,15 @@ import {
 })
 
 export class NISComponent {
-  protected resource_name =  'directoryservice/nis/';
+  protected resource_name =  helptext.nis_resource_name;
   public custActions: Array<any> = [
     {
-      'id' : 'ds_clearcache',
-      'name' : T('Rebuild Directory Service Cache'),
+      'id' : helptext.nis_custactions_clearcache_id,
+      'name' : helptext.nis_custactions_clearcache_name,
        function : async () => {
          this.ws.call('notifier.ds_clearcache').subscribe((cache_status)=>{
-          this.dialogservice.Info("NIS", "The cache is being rebuilt.");
-
+          this.dialogservice.Info(helptext.nis_custactions_clearcache_dialog_title, 
+            helptext.nis_custactions_clearcache_dialog_message);
         })
       }
     }
@@ -39,40 +37,35 @@ export class NISComponent {
   public fieldConfig: FieldConfig[] = [
     {
       type : 'input',
-      name : 'nis_domain',
-      placeholder : T('NIS domain'),
-      tooltip: T('Name of NIS domain.'),
+      name : helptext.nis_domain_name,
+      placeholder : helptext.nis_domain_placeholder,
+      tooltip: helptext.nis_domain_tooltip,
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext.nis_domain_validation
     },
     {
       type : 'input',
-      name : 'nis_servers',
-      placeholder : T('NIS servers'),
-      tooltip : T('Enter a comma-delimited list of hostnames or IP\
-                   addresses.')
+      name : helptext.nis_servers_name,
+      placeholder : helptext.nis_servers_placeholder,
+      tooltip : helptext.nis_servers_tooltip
     },
     {
       type : 'checkbox',
-      name : 'nis_secure_mode',
-      placeholder : T('Secure mode'),
-      tooltip : T('Set to have <a\
-                   href="https://www.freebsd.org/cgi/man.cgi?query=ypbind"\
-                   target="_blank">ypbind(8)</a> refuse to bind to any NIS\
-                   server not running as root on a TCP port over 1024.')
+      name : helptext.nis_secure_mode_name,
+      placeholder : helptext.nis_secure_mode_placeholder,
+      tooltip : helptext.nis_secure_mode_tooltip
     },
     {
       type : 'checkbox',
-      name : 'nis_manycast',
-      placeholder : T('Manycast'),
-      tooltip : T('Set for ypbind to bind to the server that responds\
-                   the fastest.')
+      name : helptext.nis_manycast_name,
+      placeholder : helptext.nis_manycast_placeholder,
+      tooltip : helptext.nis_manycast_tooltip
     },
     {
       type : 'checkbox',
-      name : 'nis_enable',
-      placeholder : T('Enable'),
-      tooltip : T('Unset to disable the configuration without deleting it.')
+      name : helptext.nis_enable_name,
+      placeholder : helptext.nis_enable_placeholder,
+      tooltip : helptext.nis_enable_tooltip
     },
   ];
 

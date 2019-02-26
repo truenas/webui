@@ -151,7 +151,9 @@ export class SnapshotListComponent implements OnInit {
 
   doRollback(item) {
     const warningMsg = T("<b>WARNING:</b> Rolling back to this snapshot will permanently delete later snapshots of this dataset. Do not roll back until all desired snapshots have been backed up!");
-    this.entityList.dialogService.confirm(T("Warning"), warningMsg, false, T('Rollback')).subscribe(res => {
+    const msg = T("<br><br>Roll back to snapshot <i>") + item.snapshot_name + '</i> from ' + item.creation + '?';
+
+    this.entityList.dialogService.confirm(T("Warning"), warningMsg + msg, false, T('Rollback')).subscribe(res => {
       let data = {"force" : true};
       if (res) {
         this.entityList.loader.open();

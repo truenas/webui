@@ -42,7 +42,24 @@ export class DeviceAddComponent implements OnInit {
       type: 'select',
       name: 'dtype',
       placeholder: helptext.dtype_placeholder,
-      options: helptext.dtype_options,
+      options: [
+        {
+        label: 'CD-ROM',
+        value: 'CDROM',
+        }, {
+        label: 'NIC',
+        value: 'NIC',
+        }, {
+        label: 'Disk',
+        value: 'DISK',
+        }, {
+        label: 'Raw File',
+        value: 'RAW',
+        }, {
+        label: 'VNC',
+        value: 'VNC',
+        }
+      ],
       value: helptext.dtype_value,
       required: true,
       validation: helptext.dtype_validation,
@@ -358,7 +375,7 @@ export class DeviceAddComponent implements OnInit {
     this.afterInit();
   }
 
-  afterInit() {
+  async afterInit() {
 
     this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]]]).subscribe((zvols)=>{
       zvols.forEach(zvol => {
@@ -370,9 +387,9 @@ export class DeviceAddComponent implements OnInit {
       });
     });
     // if bootloader == 'GRUB' or bootloader == "UEFI_CSM" or if VM has existing VNC device, hide VNC option.
-    this.ws.call('vm.query', [[['id', '=', parseInt(this.vmid,10)]]]).subscribe((vm)=>{
+    await this.ws.call('vm.query', [[['id', '=', parseInt(this.vmid,10)]]]).subscribe((vm)=>{
+      const dtypeField = _.find(this.fieldConfig, {name: "dtype"});
       if (vm[0].bootloader === 'GRUB' || vm[0].bootloader === "UEFI_CSM" || _.find(vm[0].devices, {dtype:'VNC'})){
-        const dtypeField = _.find(this.fieldConfig, {name: "dtype"});
         for (const i in dtypeField.options) {
           if (dtypeField.options[i].label === 'VNC') {
             _.pull(dtypeField.options, dtypeField.options[i]);

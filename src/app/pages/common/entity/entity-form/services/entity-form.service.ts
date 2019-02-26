@@ -68,7 +68,7 @@ export class EntityFormService {
     formArray.removeAt(index);
   }
 
-  getFilesystemListdirChildren(node: any, explorerType?: string, showHiddenFiles = false) {
+  getFilesystemListdirChildren(node: any, explorerType?: string, hideDirs?:any, showHiddenFiles = false ) {
     const children = [];
 
     return this.ws.call('filesystem.listdir', [node.data.name, [], {"order_by": ["name"]}] ).toPromise().then(res => {
@@ -81,25 +81,30 @@ export class EntityFormService {
             if(explorerType === 'directory' && res[i].type !== 'DIRECTORY') {
               continue;
             }
-            child['name'] = res[i].path;
-            if(res[i].type === 'DIRECTORY') {
-              child['hasChildren'] = true;
+            if(res[i].name !== hideDirs) {
+                child['name'] = res[i].path;
+                if(res[i].type === 'DIRECTORY') {
+                  child['hasChildren'] = true;
+                  }
+                  child['subTitle'] = res[i].name;
+                  children.push(child);
             }
-            child['subTitle'] = res[i].name;
-            children.push(child);
           }
 
-        } else{
+        }
+        else{
           if (res[i].hasOwnProperty('name')) {
             if(explorerType === 'directory' && res[i].type !== 'DIRECTORY') {
               continue;
             }
-            child['name'] = res[i].path;
-            if(res[i].type === 'DIRECTORY') {
-              child['hasChildren'] = true;
-            }
-            child['subTitle'] = res[i].name;
-            children.push(child);
+            if(res[i].name !== hideDirs) {
+              child['name'] = res[i].path;
+              if(res[i].type === 'DIRECTORY') {
+                child['hasChildren'] = true;
+                }
+                child['subTitle'] = res[i].name;
+                children.push(child);
+          }
           }
         }
       }

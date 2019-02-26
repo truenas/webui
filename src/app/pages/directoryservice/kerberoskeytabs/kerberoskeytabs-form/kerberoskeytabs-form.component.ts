@@ -4,9 +4,8 @@ import * as _ from 'lodash';
 
 import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { Validators } from '@angular/forms';
 
-import { T } from '../../../../translate-marker';
+import helptext from '../../../../helptext/directoryservice/kerberoskeytabs-form-list';
 
 @Component({
   selector: 'app-kerberos-keytbas-form',
@@ -20,21 +19,21 @@ export class KerberosKeytabsFormComponent {
 
   protected fieldConfig: FieldConfig[] = [{
       type: 'input',
-      name: 'keytab_name',
-      placeholder: T('Name'),
-      tooltip: T('Enter a name for this Keytab.'),
+      name: helptext.kkt_ktname_name,
+      placeholder: helptext.kkt_ktname_placeholder,
+      tooltip: helptext.kkt_ktname_tooltip,
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext.kkt_ktname_validation
     },
     {
       type: 'input',
       inputType: 'file',
-      name: 'keytab_file',
-      placeholder: T('Kerberos Keytab'),
-      tooltip: T('Browse to the keytab file to upload.'),
+      name: helptext.kkt_ktfile_name,
+      placeholder: helptext.kkt_ktfile_placeholder,
+      tooltip: helptext.kkt_ktfile_tooltip,
       fileType: 'binary',
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext.kkt_ktfile_validation
     },
   ];
 

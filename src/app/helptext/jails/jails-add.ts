@@ -6,6 +6,14 @@ uuid_placeholder: T('Name'),
 uuid_tooltip: T('Required. Can only contain alphanumeric characters \
 (Aa-Zz 0-9), dashes (-), or underscores (\_).'),
 
+jailtype_placeholder: T('Jail Type'),
+jailtype_tooltip: T('<i>Default (Clone Jail)</i> or <i>Basejail</i>. \
+Clone jails are clones of the specified RELEASE. They are linked to \
+that RELEASE, even if they are upgraded. Basejails mount the \
+specified RELEASE directories as nullfs mounts over the jail \
+directories. Basejails are not linked to the original RELEASE \
+when upgraded.'),
+
 release_placeholder: T('Release'),
 release_tooltip: T('Choose the FreeBSD release to use as the jail \
 operating system. Releases that have already \
@@ -233,10 +241,8 @@ href="https://www.freebsd.org/doc/faq/security.html#idp60202568" \
 target="_blank">securelevel</a> sysctl. A jail never \
 has a lower securelevel than the host system. \
 Setting this parameter allows a higher securelevel. \
-If the host system securelevel is changed, jail \
-securelevel will be at least as secure. <br>\
-Securelevel options are <i>3</i>, <i>2</i>, \
-<i>1</i>, <i>0</i>, and <i>-1</i>.'),
+If the host system securelevel is changed, the jail \
+securelevel will be at least as secure.'),
 
 sysvmsg_placeholder: T('sysvmsg'),
 sysvmsg_tooltip: T('Allow or deny access to SYSV IPC message primitives. \
@@ -531,6 +537,11 @@ allow_tun_placeholder: T('allow_tun'),
 allow_tun_tooltip: T('Reveal <i>tun</i> devices for the jail with an \
 individual devfs ruleset. Allow the creation of <i>tun</i> devices in \
 the jail.'),
+
+rtsold_placeholder: T('Autoconfigure IPv6 with rtsold'),
+rtsold_tooltip: T('Use <a href="https://www.freebsd.org/cgi/man.cgi?query=rtsold" \
+target="_blank">rtsold(8)</a> as part of IPv6 autoconfiguration. \
+Send ICMPv6 Router Solicitation messages to interfaces to discover new routers.'),
 
 // rctl config
 memoryuse_placeholder: T('memoryuse'),

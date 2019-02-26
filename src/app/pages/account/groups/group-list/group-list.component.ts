@@ -1,9 +1,9 @@
 import {Component} from '@angular/core';
 import {Router} from '@angular/router';
-import { T } from '../../../../translate-marker';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../../services/ws.service';
+import helptext from '../../../../helptext/account/group-list';
 
 @Component({
   selector : 'app-group-list',
@@ -45,8 +45,8 @@ export class GroupListComponent {
   getActions(row) {
     const actions = [];
     actions.push({
-      label : T("Members"),
-      id: "members",
+      label : helptext.group_list_actions_label_member,
+      id: helptext.group_list_actions_id_member,
       onClick : (members) => {
         this._router.navigate(new Array('/').concat(
           [ "account", "groups", "members", members.id ]));
@@ -54,15 +54,15 @@ export class GroupListComponent {
     });
     if (row.bsdgrp_builtin === !true){
       actions.push({
-        label : T("Edit"),
-        id: "edit",
+        label : helptext.group_list_actions_label_edit,
+        id: helptext.group_list_actions_id_edit,
         onClick : (members_edit) => {
           this._router.navigate(new Array('/').concat(
             [ "account", "groups", "edit", members_edit.id ]));
         }
       })
       actions.push({
-        label : T("Delete"),
+        label : helptext.group_list_actions_label_delete,
         onClick : (members_delete) => {
           this.entityList.doDelete(members_delete);
         },
@@ -75,11 +75,11 @@ export class GroupListComponent {
   checkbox_confirm(id: any, deleteMsg: any){
     const params = [id, {"delete_users": false}]
     const ds = this.dialogService.confirm(
-      T("Delete"), 
+      helptext.group_list_dialog_label, 
       deleteMsg,
-      false, T("Delete"),
+      false, helptext.group_list_dialog_label,
       true,
-      T('Delete all users with this primary group?'),
+      helptext.group_list_dialog_message,
       'group.delete',
       params);
     ds.afterClosed().subscribe((status)=>{

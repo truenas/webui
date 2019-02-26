@@ -40,6 +40,10 @@ enable_vnc_placeholder : T('Enable VNC'),
 enable_vnc_tooltip : T('Enable a VNC (Virtual Network Computing) remote\
  connection. Requires <i>UEFI</i> booting.'),
 
+vnc_bind_placeholder: T("Bind"),
+vnc_bind_tooltip: T("VNC network interface. The primary interface is automatically selected,\
+ but secondary interfaces can be chosen from the drop-down menu."),
+
 vcpus_label: T('CPU and Memory'),
 vcpus_placeholder: T('Virtual CPUs'),
 vcpus_validation : [ Validators.required, Validators.min(1), Validators.max(16) ],
@@ -62,16 +66,16 @@ disk_radio_tooltip: T('Select <i>Create new disk image</i> to create a new\
 disk_radio_options:[{label:T("Create new disk image"), value: true},
 {label:T("Use existing disk image"), value: false}],
 
-volsize_placeholder : T('Define the size (GiB) for the zvol'),
+volsize_placeholder : T('Size (GiB)'),
 volsize_tooltip: T('Allocate a number of gigabytes of space for the\
  new zvol.'),
 volsize_validation: [Validators.required, Validators.min(1)],
 
-pool_detach_warning_paraText: T("Select a zvol"),
+pool_detach_warning_paraText: T("Select zvol"),
 
 datastore_tooltip: T('Choose a pool or dataset for the new zvol.'),
 
-hdd_type_placeholder: T('Select desired type of disk'),
+hdd_type_placeholder: T('Select Disk Type'),
 hdd_type_tooltip: T('Select desired disk type.'),
 hdd_type_options : [
   {label : 'AHCI', value : 'AHCI'},
@@ -79,7 +83,7 @@ hdd_type_options : [
 ],
 hdd_type_value: 'AHCI',
 
-hdd_path_placeholder: T('Select an existing zvol'),
+hdd_path_placeholder: T('Select Existing zvol'),
 hdd_path_tooltip: T('Browse to the desired zvol on the disk.'),
 
 NIC_label: T('Network Interface'),
@@ -105,7 +109,7 @@ nic_attach_tooltip : T('Select the physical interface to associate with\
 nic_attach_validation : [ Validators.required ],
 
 media_label: T('Installation Media'),
-iso_path_placeholder : T('Choose installation media image'),
+iso_path_placeholder : T('Optional: Choose installation media image'),
 iso_path_tooltip: T('Browse to the operating system installer image file.'),
 iso_path_validation : [ Validators.required ],
 

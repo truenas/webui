@@ -54,6 +54,7 @@ import { FormReadFileComponent } from './entity-form/components/form-readfile/fo
 import { EntityWizardComponent } from './entity-wizard/entity-wizard.component';
 import { EntityTaskComponent } from './entity-task/entity-task.component';
 import { EntityDialogComponent } from './entity-dialog/entity-dialog.component';
+import { EntitySnackbarComponent } from './entity-snackbar/entity-snackbar.component';
 
 import { FormPermissionsComponent } from './entity-form/components/form-permissions/form-permissions.component';
 import { EntityJobComponent } from './entity-job/entity-job.component';
@@ -118,6 +119,7 @@ import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-m
     EntityTaskComponent,
     FormParagraphComponent,
     EntityDialogComponent,
+    EntitySnackbarComponent,
     EntityDashboardComponent,
     EntityToolbarComponent,
     ToolbarButtonComponent,
@@ -142,6 +144,7 @@ import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-m
     EntityWizardComponent,
     EntityTaskComponent,
     EntityDialogComponent,
+    EntitySnackbarComponent,
     EntityDashboardComponent,
     EntityToolbarComponent,
     ToolbarButtonComponent,
@@ -170,7 +173,8 @@ import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-m
     FormToggleButtonComponent,
     FormTaskComponent,
     FormParagraphComponent,
-    EntityToolbarComponent
+    EntityToolbarComponent,
+    EntitySnackbarComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [

@@ -3,6 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { RestService } from '../../../../services/';
 
 import { T } from '../../../../translate-marker';
+import helptext from '../../../../helptext/directoryservice/kerberosrealms-form-list';
 
 @Component({
   selector: 'app-user-list',
@@ -26,8 +27,8 @@ export class KerberosRealmsListComponent {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: 'Kerberos Realm',
-      key_props: ['krb_realm']
+      title: helptext.krb_realmlist_deletemessage_title,
+      key_props: helptext.krb_realmlist_deletemessage_key_props
     },
   };
 

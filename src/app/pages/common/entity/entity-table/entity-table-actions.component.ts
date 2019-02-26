@@ -36,8 +36,8 @@ export class EntityTableActionsComponent implements OnInit {
   ngOnInit() {
     if (this.entity.conf.config && this.entity.conf.config.deleteMsg) {
       this.key_prop = this.entity.conf.config.deleteMsg.key_props[0];
-    } else {
-      this.key_prop = this.entity.conf.columns[0].prop;
+    } else if (this.entity.filterColumns) {
+      this.key_prop = this.entity.filterColumns[0].prop;
     }
     this.actions = this.entity.getActions(this.row);
     

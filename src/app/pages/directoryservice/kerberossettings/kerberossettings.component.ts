@@ -2,8 +2,7 @@ import { Component, Injector } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-
-import { T } from '../../../translate-marker';
+import helptext from '../../../helptext/directoryservice/kerberossettings';
 
 @Component({
   selector: 'directoryservice-kerberossettings',
@@ -16,23 +15,15 @@ export class KerberosSettingsComponent {
 
   public fieldConfig: FieldConfig[] = [{
       type: 'textarea',
-      name: 'ks_appdefaults_aux',
-      placeholder: T('Appdefaults Auxiliary Parameters'),
-      tooltip: T('Define any additional settings for use by some Kerberos\
-                applications. The available settings and syntax is\
-                listed in the <a\
-                href="http://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html#appdefaults"\
-                target="_blank">appdefaults section of krb.conf(5).</a>.'),
+      name: helptext.ks_appdefaults_name,
+      placeholder: helptext.ks_appdefaults_placeholder,
+      tooltip: helptext.ks_appdefaults_tooltip
     },
     {
       type: 'textarea',
-      name: 'ks_libdefaults_aux',
-      placeholder: T('Libdefaults Auxiliary Parameters'),
-      tooltip: T('Define any settings used by the Kerberos library. The\
-                available settings and their syntax are listed in the\
-                <a href="http://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html#libdefaults"\
-                target="_blank">libdefaults section of krb.conf(5).</a>.'),
-
+      name: helptext.ks_libdefaults_name,
+      placeholder: helptext.ks_libdefaults_placeholder,
+      tooltip: helptext.ks_libdefaults_tooltip
     }
   ];
 }
