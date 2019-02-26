@@ -1057,6 +1057,17 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     min-width: 200px;
   }
 
+  .ngx-datatable .datatable-header .datatable-header-cell .resize-handle {
+    border-right: 1px solid !important;
+    @include variable(border-color, --primary-txt, $primary-txt);
+    visibility: visible !important;
+    opacity: .25;
+  }
+
+  .datatable-header-inner {
+    height: 52px;
+  }
+
   #idmap-err {
     position: absolute;
     top: 100px;
