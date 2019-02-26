@@ -13,6 +13,7 @@ import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { MatDialog } from '@angular/material';
 import 'rxjs/add/observable/interval';
 import {EntityTableComponent} from '../../common/entity/entity-table/';
+import globalHelptext from '../../../helptext/global-helptext';
 
 @Component({
   selector: 'app-vm-cards',
@@ -40,16 +41,16 @@ export class VmCardsComponent  implements OnDestroy {
 
   public columns: Array<any> = [
     {name : 'Name', prop : 'name', always_display: true },
-    {name : 'State', prop : 'state', always_display: true },
+    {name : 'State', prop : 'state', always_display: true, toggle: true },
     {name : 'VNC Port', prop : 'port', hidden: true},
     {name : 'Com Port', prop : 'com_port', hidden: true},
     {name : 'Type', prop : 'vm_type', hidden: false},
     {name : 'Description', prop : 'description', hidden: true },
     {name : 'Virtual CPUs', prop : 'vcpus', hidden: false},
-    {name : 'Memory Size (MiB)', prop : 'memory',hidden: false}, 
+    {name : 'Memory Size (MiB)', prop : 'memory',hidden: false},
     {name : 'Boot Loader Type', prop : 'bootloader', hidden: true },
-    {name: 'Autostart', prop : 'autostart',hidden: false},
-    
+    {name : 'Autostart', prop : 'autostart',hidden: false, selectable: true},
+
   ];
   public config: any = {
     paging : true,
@@ -59,13 +60,11 @@ export class VmCardsComponent  implements OnDestroy {
       key_props: ['name']
     },
   };
-  
 
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService,
               private core:CoreService,private dialog: DialogService,protected loader: AppLoaderService,
               protected matdialog: MatDialog
               ) {}
-
 
   resourceTransformIncomingRestData(vms) {
     for (let vm_index = 0; vm_index<vms.length; vm_index++){
@@ -75,13 +74,14 @@ export class VmCardsComponent  implements OnDestroy {
         vms[vm_index]['port'] = this.vncPort(vms[vm_index]);
       } else {
         vms[vm_index]['port'] = 'N/A';
-
+      if (vms[vm_index]['vm_type'] === "Container Provider")
+        vms[vm_index]['vm_type'] = globalHelptext.dockerhost;
       };
     }
     return vms;
   }
 
-  afterInit(entityTable: EntityTableComponent) { 
+  afterInit(entityTable: EntityTableComponent) {
     this.entityTable = entityTable;
     this.core.emit({name: "VmProfilesRequest"});
      this.core.register({observerClass:this,eventName:"VmStartFailure"}).subscribe((evt:CoreEvent) => {
@@ -146,7 +146,7 @@ export class VmCardsComponent  implements OnDestroy {
               args.push({"overcommit": checkbox});
               this.core.emit({name: eventName, data:args});
               this.setTransitionState("STARTING", start_row);
-            } 
+            }
           });
         }
       });
@@ -168,7 +168,7 @@ export class VmCardsComponent  implements OnDestroy {
             if (res) {
               this.core.emit({name: eventName, data:args});
               this.setTransitionState("DELETING", delete_row);
-            } 
+            }
           });
       },
     });
@@ -246,6 +246,39 @@ export class VmCardsComponent  implements OnDestroy {
       }
     }
   }
+
+  onCheckboxChange(row) {
+    row.autostart = !row.autostart;
+    this.ws.call('vm.update', [row.id, {'autostart': row.autostart}] )
+    .subscribe((res) => {
+      if (!res) {
+        row.autostart = !row.autostart;
+      }
+    });
+  }
+
+  onSliderChange(row) {
+    if(row['status']['state'] === "RUNNING") {
+      const eventName = "VmStop";
+      this.core.emit({name: eventName, data:[row.id]});
+      this.setTransitionState("STOPPING", row)
+    } else {
+      const eventName = "VmStart";
+      let args = [row.id];
+      let overcommit = [{'overcommit':false}];
+      const dialogText = "Memory overcommitment allows multiple VMs to be launched when there is not enough free memory for configured RAM of all VMs. Use with caution."
+      let startDialog = this.dialog.confirm("Power", undefined, true, "Power On", true, 'Overcommit Memory?', undefined, overcommit, dialogText)
+      startDialog.afterClosed().subscribe((res) => {
+        if (res) {
+          let checkbox = startDialog.componentInstance.data[0].overcommit;
+          args.push({"overcommit": checkbox});
+          this.core.emit({name: eventName, data:args});
+          this.setTransitionState("STARTING", row);
+        } 
+      });
+    }
+  }
+
   ngOnDestroy(){
     this.core.unregister({observerClass:this});
   }

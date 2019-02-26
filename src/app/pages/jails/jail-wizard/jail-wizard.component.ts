@@ -54,6 +54,23 @@ export class JailWizardComponent {
         },
         {
           type: 'select',
+          name: 'jailtype',
+          placeholder: helptext.jailtype_placeholder,
+          tooltip: helptext.jailtype_tooltip,
+          options: [
+            {
+              label: 'Default (Clone Jail)',
+              value: 'default',
+            },
+            {
+              label: 'Basejail',
+              value: 'basejail',
+            }
+          ],
+          value: 'default',
+        },
+        {
+          type: 'select',
           name: 'release',
           required: true,
           placeholder: helptext.release_placeholder,
@@ -231,6 +248,8 @@ export class JailWizardComponent {
 
   public ipv4: any;
   public ipv6: any;
+  protected template_list: string[];
+
   constructor(protected rest: RestService,
               protected ws: WebSocketService,
               protected jailService: JailService,
@@ -243,6 +262,19 @@ export class JailWizardComponent {
 
   preInit() {
     this.releaseField = _.find(this.wizardConfig[0].fieldConfig, { 'name': 'release' });
+    this.template_list = new Array<string>();
+    this.ws.call('jail.list_resource', ["TEMPLATE"]).subscribe(
+      (res) => {
+        for (const i in res) {
+          this.template_list.push(res[i][1]);
+          this.releaseField.options.push({ label: res[i][1] + '(template)', value: res[i][1] });
+        }
+      },
+      (err) => {
+        new EntityUtils().handleWSError(this, err, this.dialogService);
+      }
+    )
+
     this.ws.call('system.info').subscribe((res) => {
         this.currentServerVersion = Number(_.split(res.version, '-')[1]);
         this.jailService.getLocalReleaseChoices().subscribe(
@@ -462,6 +494,12 @@ export class JailWizardComponent {
 
   beforeSubmit(value) {
     let property: any = [];
+
+    if (value['jailtype'] === 'basejail') {
+      value['basejail'] = true;
+    }
+    delete value['jailtype'];
+
     delete value['ip4_interface'];
     delete value['ip4_netmask'];
     value['ip4_addr'] = this.ipv4;
@@ -488,7 +526,7 @@ export class JailWizardComponent {
             }
             delete value[i];
           } else {
-            if (i != 'uuid' && i != 'release') {
+            if (i != 'uuid' && i != 'release' && i != 'basejail') {
               property.push(i + '=' + value[i]);
               delete value[i];
             }
@@ -497,6 +535,10 @@ export class JailWizardComponent {
       }
     }
     value['props'] = property;
+
+    if (_.indexOf(this.template_list, value['release']) > -1) {
+      value['template'] = value['release'];
+    }
 
     return value;
   }

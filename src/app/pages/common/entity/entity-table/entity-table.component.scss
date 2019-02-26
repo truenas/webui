@@ -107,3 +107,11 @@
     cursor: pointer;
 }
 
+.clickable {
+    height: 28px;
+    width: 40px;
+    position: absolute;
+    background: rgba(0,0,0, .0);
+    z-index: 10;
+  }
+

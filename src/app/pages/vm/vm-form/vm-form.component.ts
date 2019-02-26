@@ -39,13 +39,13 @@ export class VmFormComponent {
               ) {}
 
   afterInit(entityForm: any) {
-    this.ws.call('vm.query',[[['id', '=', parseInt(entityForm.pk ,10)]]]).subscribe((res)=>{
-      if(res[0].status.state === "RUNNING") {
-        this.save_button_enabled = false
-      } else {
-        this.save_button_enabled = true;
-      }
-    })
+    // this.ws.call('vm.query',[[['id', '=', parseInt(entityForm.pk ,10)]]]).subscribe((res)=>{
+    //   if(res[0].status.state === "RUNNING") {
+    //     this.save_button_enabled = false
+    //   } else {
+    //     this.save_button_enabled = true;
+    //   }
+    // })
 
     entityForm.ws.call('notifier.choices', [ 'VM_BOOTLOADER' ]).subscribe((res) => {
           this.bootloader =_.find(this.fieldConfig, {name : 'bootloader'});

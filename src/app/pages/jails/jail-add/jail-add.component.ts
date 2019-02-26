@@ -55,6 +55,23 @@ export class JailAddComponent implements OnInit {
     },
     {
       type: 'select',
+      name: 'jailtype',
+      placeholder: helptext.jailtype_placeholder,
+      tooltip: helptext.jailtype_tooltip,
+      options: [
+        {
+          label: 'Default (Clone Jail)',
+          value: 'default',
+        },
+        {
+          label: 'Basejail',
+          value: 'basejail',
+        }
+      ],
+      value: 'default',
+    },
+    {
+      type: 'select',
       name: 'release',
       placeholder: helptext.release_placeholder,
       tooltip: helptext.release_tooltip,
@@ -674,12 +691,12 @@ export class JailAddComponent implements OnInit {
       placeholder: helptext.mount_linprocfs_placeholder,
       tooltip: helptext.mount_linprocfs_tooltip,
     },
-    // {
-    //   type: 'checkbox',
-    //   name: 'template',
-    //   placeholder: helptext.template_placeholder,
-    //   tooltip: helptext.template_tooltip,
-    // },
+    {
+      type: 'checkbox',
+      name: 'template',
+      placeholder: helptext.template_placeholder,
+      tooltip: helptext.template_tooltip,
+    },
     {
       type: 'checkbox',
       name: 'host_time',
@@ -922,6 +939,7 @@ export class JailAddComponent implements OnInit {
   protected ip6_interfaceField: any;
   protected ip6_prefixField: any;
   protected vnet_default_interfaceField:any;
+  protected template_list: string[];
 
   constructor(protected router: Router,
     protected jailService: JailService,
@@ -963,6 +981,20 @@ export class JailAddComponent implements OnInit {
 
   ngOnInit() {
     this.releaseField = _.find(this.basicfieldConfig, { 'name': 'release' });
+    this.template_list = new Array<string>();
+    // get jail templates as release options
+    this.ws.call('jail.list_resource', ["TEMPLATE"]).subscribe(
+      (res) => {
+        for (const i in res) {
+          this.template_list.push(res[i][1]);
+          this.releaseField.options.push({ label: res[i][1] + '(template)', value: res[i][1] });
+        }
+      },
+      (err) => {
+        new EntityUtils().handleWSError(this, err, this.dialogService);
+      }
+    )
+
     this.ws.call('system.info').subscribe((res) => {
       this.currentServerVersion = Number(_.split(res.version, '-')[1]);
       this.jailService.getLocalReleaseChoices().subscribe(
@@ -1186,8 +1218,14 @@ export class JailAddComponent implements OnInit {
     event.preventDefault();
     event.stopPropagation();
     this.error = null;
-    let property: any = [];
-    let value = _.cloneDeep(this.formGroup.value);
+    const property: any = [];
+    const value = _.cloneDeep(this.formGroup.value);
+
+    if (value['jailtype'] === 'basejail') {
+      value['basejail'] = true;
+    }
+    delete value['jailtype'];
+
     if (value['ip4_addr'] == '' || value['ip4_addr'] == undefined) {
       delete value['ip4_addr'];
     } else {
@@ -1235,7 +1273,7 @@ export class JailAddComponent implements OnInit {
               }
               delete value[i];
           } else {
-            if (i != 'uuid' && i != 'release') {
+            if (i != 'uuid' && i != 'release' && i != 'basejail') {
               property.push(i + '=' + value[i]);
               delete value[i];
             }
@@ -1244,6 +1282,10 @@ export class JailAddComponent implements OnInit {
       }
     }
     value['props'] = property;
+
+    if (_.indexOf(this.template_list, value['release']) > -1) {
+      value['template'] = value['release'];
+    }
 
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Creating Jail") }, disableClose: true });
     this.dialogRef.componentInstance.setDescription(T("Creating Jail..."));

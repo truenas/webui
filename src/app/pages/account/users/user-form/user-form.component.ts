@@ -5,7 +5,8 @@ import * as _ from 'lodash';
 import {
   RestService,
   WebSocketService,
-  StorageService
+  StorageService,
+  AppLoaderService
 } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -254,11 +255,12 @@ export class UserFormComponent {
   private locked: any;
 
   constructor(protected router: Router, protected rest: RestService,
-              protected ws: WebSocketService, protected storageService: StorageService
+              protected ws: WebSocketService, protected storageService: StorageService,
+              public loader: AppLoaderService
               ) {}
 
-
    afterInit(entityForm: any) {
+    this.loader.callStarted.emit();
     this.entityForm = entityForm;
     this.isNew = entityForm.isNew;
     this.password_disabled = entityForm.formGroup.controls['password_disabled'];
@@ -313,14 +315,16 @@ export class UserFormComponent {
       entityForm.formGroup.controls['group_create'].setValue(false);
     }
     /* list groups */
+
     this.ws.call('group.query').subscribe((res) => {
+      this.loader.callDone.emit(status);
       this.group = _.find(this.fieldConfig, {name : "group"});
       this.groups = _.find(this.fieldConfig, {name : "groups"});
       for (let i = 0; i < res.length; i++) {
         this.group.options.push({ label : res[i].group, value : res[i].id });
         this.groups.options.push({label : res[i].group, value : res[i].id})
         }
-
+        
     });
     /* list users */
     const filter = [];

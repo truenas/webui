@@ -67,6 +67,7 @@ export interface ChartConfigData {
   dataList: DataListItem[];
   series?: any[][];  
   divideBy?: number;
+  convertToCelsius?: boolean;
 }
 
 
@@ -147,6 +148,7 @@ export class LineChartService {
 
     let dictionary: LineChartMetadata[] = [
       {source :'aggregation-cpu-sum', units:'%', labelY:'% CPU'},
+      {source :'temperature', units:'°C', labelY:'Celsius', conversion:'decikelvinsToCelsius'},
       {source :'memory', units:'GiB', labelY:'Gigabytes', removePrefix:'memory-'},
       {source :'swap', units:'GiB', labelY:'Gigabytes', removePrefix:'swap-'},
       {source :'if_errors', units:'', labelY:'Bits/s'},
@@ -276,8 +278,23 @@ export class LineChartService {
 
     for (const prop of properties) {
 
+     if (prop.startsWith("cputemp-")) {
+        configData.push({
+          title: prop,
+          type: LineChartService.lineChart,
+          legends: ["temp"],
+          dataList: [{source: prop, type: 'temperature', dataset: 'value'}]
+        });
 
-      if (prop.startsWith("disk-")) {
+     } else if (prop.startsWith("disktemp-")) {
+        configData.push({
+          title: prop,
+          type: LineChartService.lineChart,
+          legends: ["temp"],
+          dataList: [{source: prop, type: 'temperature', dataset: 'value'}]
+        });
+
+     } else if (prop.startsWith("disk-")) {
         configData.push({
           title: prop + " (disk_time)",
           type: LineChartService.lineChart,
@@ -354,6 +371,7 @@ export class LineChartService {
         });
 
         let divideBy: number;
+        let convertToCelsius: boolean;
         //let title: string = prop == "ctl-tpc" ? "SCSI Target Port (tpc)" : prop; 
 
         // Put in ugly override. Wasn't really a better place for this one change.
@@ -369,6 +387,12 @@ export class LineChartService {
           prop === "memory" || prop === "swap") {
           divideBy = 1073741824;
           title += " (gigabytes)";
+        }
+        
+        // Things I want convertd from decikelvins to celsius
+        if (prop.startsWith("cputemp-")) {
+          convertToCelsius = true;
+          title += " (celsius)";
         }
         
         
