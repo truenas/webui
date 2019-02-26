@@ -28,8 +28,8 @@
         <ng-template matStepLabel>{{"Confirm Options" | translate}}</ng-template>
         <div *ngIf="conf.summary">
           <div> {{ conf.summary_title }}</div>
-          <div *ngFor="let key of conf.objectKeys(conf.summary)">
-            <div>{{key + ' : ' + conf.summary[key]}}</div>
+          <div *ngFor="let item of conf.summary | keyvalue">
+            <div>{{item.key + ' : ' + item.value}}</div>
           </div>
         </div>
         {{"Confirm these settings." | translate}}
