@@ -13,6 +13,7 @@ import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { MatDialog } from '@angular/material';
 import 'rxjs/add/observable/interval';
 import {EntityTableComponent} from '../../common/entity/entity-table/';
+import globalHelptext from '../../../helptext/global-helptext';
 
 @Component({
   selector: 'app-vm-cards',
@@ -73,7 +74,8 @@ export class VmCardsComponent  implements OnDestroy {
         vms[vm_index]['port'] = this.vncPort(vms[vm_index]);
       } else {
         vms[vm_index]['port'] = 'N/A';
-
+      if (vms[vm_index]['vm_type'] === "Container Provider")
+        vms[vm_index]['vm_type'] = globalHelptext.dockerhost;
       };
     }
     return vms;
