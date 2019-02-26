@@ -137,6 +137,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   public success = false;
   public data: Object = {};
   public showDefaults: boolean = false;
+  public showSpinner: boolean = false;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
@@ -147,7 +148,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               public snackBar: MatSnackBar,
               public adminLayout: AdminLayoutComponent,
               private dialog:DialogService,
-              public translate: TranslateService) {}
+              public translate: TranslateService) {
+                this.loader.callStarted.subscribe(() => this.showSpinner = true);
+                this.loader.callDone.subscribe(() => this.showSpinner = false);
+              }
 
   ngAfterViewInit() {
     this.templates.forEach((item) => {
