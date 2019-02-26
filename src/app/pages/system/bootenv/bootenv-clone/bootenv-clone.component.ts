@@ -1,12 +1,9 @@
-import {Component} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-
-import {RestService, WebSocketService, BootEnvService} from '../../../../services/';
-import { T } from '../../../../translate-marker';
-import {
-  FieldConfig
-} from '../../../common/entity/entity-form/models/field-config.interface';
-import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
+import { Component } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { helptext_system_bootenv as helptext } from 'app/helptext/system/bootenv';
+import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
+import { BootEnvService, RestService, WebSocketService } from '../../../../services/';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
   selector : 'app-bootenv-add',
@@ -33,17 +30,17 @@ export class BootEnvironmentCloneComponent {
         {
           type: 'input',
           name: 'name',
-          placeholder: T('Name'),
-          tooltip: T('Enter a name for the clone of this boot\
-                      environment.'),
+          placeholder: helptext.clone_name_placeholder,
+          tooltip: helptext.clone_name_tooltip,
+          /* Cannot be moved to helptext file unless bootenv_name_regex is converted to static member */
           validation : [ regexValidator(this.bootEnvService.bootenv_name_regex)],
           required: true
         },
         {
           type: 'input',
           name: 'source',
-          placeholder : T('Source'),
-          tooltip: T('This is the boot environment to be cloned.'),
+          placeholder : helptext.clone_source_placeholder,
+          tooltip: helptext.clone_source_tooltip,
           value: this.pk,
           readonly: true
         },

@@ -1,17 +1,15 @@
-import {Component, ElementRef, ViewChild} from '@angular/core';
-import {Router} from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
-import { Observable } from 'rxjs/Observable';
-
-import {RestService} from '../../../../services/rest.service';
-import { WebSocketService } from '../../../../services/ws.service';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { Router } from '@angular/router';
+import { helptext_system_bootenv as helptext } from 'app/helptext/system/bootenv';
 import { DialogService } from 'app/services';
-import { EntityUtils } from '../../../common/entity/utils';
 import * as moment from 'moment';
-import { stringify } from '@angular/core/src/util';
-import { T } from '../../../../translate-marker';
+import { Subscription } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { RestService } from '../../../../services/rest.service';
+import { WebSocketService } from '../../../../services/ws.service';
+import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
   selector : 'app-bootenv-list',
@@ -182,7 +180,7 @@ export class BootEnvironmentListComponent {
   }
 
   doActivate(id) {
-    this.dialog.confirm("Activate", "Activate this Boot Environment?", false, T("Activate")).subscribe((res) => {
+    this.dialog.confirm("Activate", "Activate this Boot Environment?", false, helptext.list_dialog_activate_action).subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
@@ -201,7 +199,7 @@ export class BootEnvironmentListComponent {
   }
   toggleKeep(id, status) {
     if (!status){
-      this.dialog.confirm("Keep", "Keep this Boot Environment?", false, T("Set Keep Flag")).subscribe((res) => {
+      this.dialog.confirm("Keep", "Keep this Boot Environment?", false, helptext.list_dialog_keep_action).subscribe((res) => {
         if (res) {
           this.loader.open();
           this.loaderOpen = true;
@@ -218,7 +216,7 @@ export class BootEnvironmentListComponent {
         }
       })
     } else {
-      this.dialog.confirm("Unkeep", "No longer keep this Boot Environment?", false, T("Remove Keep Flag")).subscribe((res) => {
+      this.dialog.confirm("Unkeep", "No longer keep this Boot Environment?", false, helptext.list_dialog_unkeep_action).subscribe((res) => {
         if (res) {
           this.loader.open();
           this.loaderOpen = true;
@@ -245,7 +243,7 @@ export class BootEnvironmentListComponent {
   }
 
   scrub() {
-    this.dialog.confirm("Scrub", "Start the scrub now?", false, T("Start Scrub")).subscribe((res) => {
+    this.dialog.confirm("Scrub", "Start the scrub now?", false, helptext.list_dialog_scrub_action).subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;

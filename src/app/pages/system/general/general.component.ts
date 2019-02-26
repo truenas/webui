@@ -1,20 +1,12 @@
-import { ApplicationRef, Component, Injector, OnInit, OnDestroy } from '@angular/core';
-import {
-  AbstractControl,
-  FormArray,
-  FormGroup,
-  Validators
-} from '@angular/forms';
-import { T } from '../../../translate-marker';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Component, OnDestroy } from '@angular/core';
+import { Http } from '@angular/http';
+import { Router } from '@angular/router';
+import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
-
-import { RestService, UserService, WebSocketService, LanguageService, DialogService } from '../../../services/';
+import { DialogService, LanguageService, RestService, WebSocketService } from '../../../services/';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { RequestOptions, Http } from '@angular/http';
+import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
   selector: 'app-general',
@@ -29,12 +21,8 @@ export class GeneralComponent implements OnDestroy {
     {
       type: 'select',
       name: 'stg_guiprotocol',
-      placeholder: T('Protocol'),
-      tooltip: T('Define the web protocol to use when connecting to the\
-                  administrative GUI from a browser. To change the\
-                  default <i>HTTP</i> to <i>HTTPS</i> or\
-                  <i>HTTP+HTTPS</i>, a <b>Certificate</b> must also be\
-                  chosen.'),
+      placeholder: helptext.stg_guiprotocol.placeholder,
+      tooltip: helptext.stg_guiprotocol.tooltip,
       options: [
         { label: 'HTTP', value: 'http' },
         { label: 'HTTPS', value: 'https' },
@@ -44,19 +32,13 @@ export class GeneralComponent implements OnDestroy {
     {
       type: 'select',
       name: 'stg_guicertificate',
-      placeholder: T('GUI SSL Certificate'),
-      tooltip: T('Required for <i>HTTPS</i>. Browse to the location of\
-                  the certificate to use for encrypted connections. If\
-                  there are no certificates, create a <a\
-                  href="%%docurl%%/system.html%%webversion%%#cas"\
-                  target="_blank">Certificate Authority (CA)</a> then\
-                  the <a href="%%docurl%%/system.html%%webversion%%#certificates"\
-                  target="_blank">Certificate</a>.'),
+      placeholder: helptext.stg_guicertificate.placeholder,
+      tooltip: helptext.stg_guicertificate.tooltip,
       options: [
         { label: '---', value: null }
       ],
       required: true,
-      validation: [Validators.required],
+      validation: helptext.stg_guicertificate.validation,
       relation : [
         {
           action : 'DISABLE',
@@ -70,12 +52,8 @@ export class GeneralComponent implements OnDestroy {
     {
       type: 'select',
       name: 'stg_guiaddress',
-      placeholder: T('WebGUI IPv4 Address'),
-      tooltip: T('Choose a recent IP address to limit the usage when\
-                  accessing the administrative GUI. The built-in HTTP\
-                  server binds to the wildcard address of <i>0.0.0.0</i>\
-                  (any address) and issues an alert if the specified\
-                  address becomes unavailable.'),
+      placeholder: helptext.stg_guiaddress.placeholder,
+      tooltip: helptext.stg_guiaddress.tooltip,
       options: [
         { label: '---', value: null }
       ]
@@ -83,48 +61,37 @@ export class GeneralComponent implements OnDestroy {
     {
       type: 'select',
       name: 'stg_guiv6address',
-      placeholder: T('WebGUI IPv6 Address'),
-      tooltip: T('Choose a recent IPv6 address to limit the usage when\
-                  accessing the administrative GUI. The built-in HTTP\
-                  server binds to the wildcard address of <i>0.0.0.0</i>\
-                  (any address) and issues an alert if the specified\
-                  address becomes unavailable.'),
+      placeholder: helptext.stg_guiv6address.placeholder,
+      tooltip: helptext.stg_guiv6address.tooltip,
       options: []
     },
     {
       type: 'input',
       name: 'stg_guiport',
-      placeholder: T('WebGUI HTTP Port'),
-      tooltip: T('Allow configuring a non-standard port to access the GUI\
-                  over <i>HTTP</i>. Changing this setting might require\
-                  changing a <a\
-                  href="https://www.redbrick.dcu.ie/~d_fens/articles/Firefox:_This_Address_is_Restricted"\
-                  target="_blank">Firefox configuration setting</a>.'),
+      placeholder: helptext.stg_guiport.placeholder,
+      tooltip: helptext.stg_guiport.tooltip,
       inputType: 'number',
-      validation: [Validators.required]
+      validation: helptext.stg_guiport.validation
     },
     {
       type: 'input',
       name: 'stg_guihttpsport',
-      placeholder: T('WebGUI HTTPS Port'),
-      tooltip: T('Allow configuring a non-standard port to access the GUI\
-                  over <i>HTTPS</i>.'),
+      placeholder: helptext.stg_guihttpsport.placeholder,
+      tooltip: helptext.stg_guihttpsport.tooltip,
       inputType: 'number',
-      validation: [Validators.required]
+      validation: helptext.stg_guihttpsport.validation
     },
     {
       type: 'checkbox',
       name: 'stg_guihttpsredirect',
-      placeholder: T('WebGUI HTTP -> HTTPS Redirect'),
-      tooltip: T('Check this to redirect <i>HTTP</i> connections to\
-                  <i>HTTPS</i>. <i>HTTPS</i> must be selected in\
-                  <b>Protocol</b>.'),
+      placeholder: helptext.stg_guihttpsredirect.placeholder,
+      tooltip: helptext.stg_guihttpsredirect.tooltip,
     },
     {
       type: 'select',
       name: 'stg_language',
-      placeholder: T('Language'),
-      tooltip: T('Select a language localization.'),
+      placeholder: helptext.stg_language.placeholder,
+      tooltip: helptext.stg_language.tooltip,
       options: [
         { label: '---', value: null }
       ]
@@ -132,8 +99,8 @@ export class GeneralComponent implements OnDestroy {
     {
       type: 'select',
       name: 'stg_kbdmap',
-      placeholder: T('Console Keyboard Map'),
-      tooltip: T('Select a keyboard layout.'),
+      placeholder: helptext.stg_kbdmap.placeholder,
+      tooltip: helptext.stg_kbdmap.tooltip,
       options: [
         { label: '---', value: null }
       ]
@@ -141,8 +108,8 @@ export class GeneralComponent implements OnDestroy {
     {
       type: 'select',
       name: 'stg_timezone',
-      placeholder: T('Timezone'),
-      tooltip: T('Select a time zone.'),
+      placeholder: helptext.stg_timezone.placeholder,
+      tooltip: helptext.stg_timezone.tooltip,
       options: [
         { label: '---', value: null }
       ]
@@ -150,48 +117,39 @@ export class GeneralComponent implements OnDestroy {
     {
       type: 'select',
       name: 'stg_sysloglevel',
-      placeholder: T('Syslog level'),
-      tooltip: T('When Syslog server is defined, only logs matching this\
-                  level are sent.'),
+      placeholder: helptext.stg_sysloglevel.placeholder,
+      tooltip: helptext.stg_sysloglevel.tooltip,
       options: []
     },
     {
       type: 'input',
       name: 'stg_syslogserver',
-      placeholder: T('Syslog server'),
-      tooltip: T('Define an <i>IP address or hostname:optional_port_number</i>\
-                  to send logs. When set, log entries write to both the\
-                  console and remote server.'),
+      placeholder: helptext.stg_syslogserver.placeholder,
+      tooltip: helptext.stg_syslogserver.tooltip,
     }
   ];
   protected saveConfigFieldConf: FieldConfig[] = [
     {
       type: 'checkbox',
       name: 'secretseed',
-      placeholder: T('Export Password Secret Seed')
+      placeholder: helptext.secretseed.placeholder
     }
   ];
   public saveConfigFormConf: DialogFormConfiguration = {
     title: "Save Configuration",
-    message: T('<b>WARNING:</b> This configuration file contains system\
-              passwords and other sensitive data.<br>'),
+    message: helptext.save_config_form.message,
     fieldConfig: this.saveConfigFieldConf,
     method_ws: 'core.download',
-    saveButtonText: T('Save'),
+    saveButtonText: helptext.save_config_form.button_text,
     customSubmit: this.saveConfigSubmit,
-    warning: T('<p>Including the Password Secret Seed allows using this\
-              configuration file with a new boot device. This also\
-              decrypts all system passwords for reuse when the\
-              configuration file is uploaded.</p>\
-              <b>Keep the configuration file safe and protect it\
-              from unauthorized access!</b>'),
+    warning: helptext.save_config_form.warning,
   }
 
   protected uploadConfigFieldConf: FieldConfig[] = [
     {
       type: 'upload',
       name: 'upload_config',
-      placeholder : T('Select Configuration File'),
+      placeholder : helptext.upload_config.placeholder,
       tooltip: 'Browse to the locally saved configuration file.',
       fileLocation: '',
       updater: this.updater,
@@ -203,29 +161,26 @@ export class GeneralComponent implements OnDestroy {
     title: "Upload Config",
     fieldConfig: this.uploadConfigFieldConf,
     method_ws: 'config.upload',
-    saveButtonText: T('Upload'),
+    saveButtonText: helptext.upload_config_form.button_text,
     customSubmit: this.uploadConfigSubmit,
-    message: T('<p>The system will reboot to perform this operation!</p>\
-              <p><font color="red">All passwords are reset when the \
-              uploaded configuration database file was saved \
-              without the Password Secret Seed. </font></p>'),
+    message: helptext.upload_config_form.message,
   }
   public custActions: Array<any> = [
   {
     id : 'save_config',
-    name : T('Save Config'),
+    name : helptext.actions.save_config,
     function : () => {
       this.dialog.dialogForm(this.saveConfigFormConf);
     }
   },{
     id : 'upload_config',
-    name: T('Upload Config'),
+    name: helptext.actions.upload_config,
     function : () => {
       this.dialog.dialogForm(this.uploadConfigFormConf);
     }
   },{
     id : 'reset_config',
-    name: T('Reset Config'),
+    name: helptext.actions.reset_config,
     function: () => {this.router.navigate(new Array('').concat(['system', 'general', 'config-reset']))}
   }];
   private stg_guiprotocol: any;
@@ -376,9 +331,7 @@ export class GeneralComponent implements OnDestroy {
         this.https_port !== new_https_port ||
         this.redirect !== new_redirect ||
         this.guicertificate !== new_guicertificate) {
-      this.dialog.confirm(T("Restart Web Service"), T("The web service must restart \
-                             for the protocol changes to take effect. The UI will be \
-                             temporarily unavailable. Restart the service?"))
+      this.dialog.confirm(helptext.dialog_confirm_title, helptext.dialog_confirm_message)
         .subscribe((res)=> {
           if (res) {
             let href = window.location.href;
@@ -404,7 +357,7 @@ export class GeneralComponent implements OnDestroy {
             this.entityForm.ws.call("service.restart", ["http"]).subscribe((res)=> {
             }, (res) => {
               this.loader.close();
-              this.dialog.errorReport(T("Error restarting web service"), res.reason, res.trace.formatted);
+              this.dialog.errorReport(helptext.dialog_error_title, res.reason, res.trace.formatted);
             });
 
             this.entityForm.ws.reconnect(protocol, hostname + ':' + port);
@@ -434,7 +387,7 @@ export class GeneralComponent implements OnDestroy {
       entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'] }], fileName])
         .subscribe(
           (res) => {
-            entityDialog.snackBar.open(T("Download Sucessful"), T("Success") , {
+            entityDialog.snackBar.open(helptext.snackbar_download_success.title, helptext.snackbar_download_success.action, {
               duration: 5000
             });
             if (window.navigator.userAgent.search("Firefox")>0) {

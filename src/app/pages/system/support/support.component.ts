@@ -1,21 +1,13 @@
-import {ApplicationRef, Component, Injector} from '@angular/core';
-import { DomSanitizer} from '@angular/platform-browser';
-
-import {
-
-  Validators
-} from '@angular/forms';
-import {Router} from '@angular/router';
-import * as _ from 'lodash';
-
-import {RestService, WebSocketService} from '../../../services/';
-import {
-  FieldConfig
-} from '../../common/entity/entity-form/models/field-config.interface';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { ApplicationRef, Component, Injector } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { T } from '../../../translate-marker';
+import { DomSanitizer } from '@angular/platform-browser';
+import { Router } from '@angular/router';
+import { helptext_system_support as helptext } from 'app/helptext/system/support';
+import * as _ from 'lodash';
+import { RestService, WebSocketService } from '../../../services/';
 import { DialogService } from '../../../services/dialog.service';
+import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 
 @Component({
   selector : 'app-support',
@@ -23,8 +15,6 @@ import { DialogService } from '../../../services/dialog.service';
   <entity-form [conf]="this"></entity-form>
   `
 })
-
-
 export class SupportComponent  {
   public username: any;
   public password: any;
@@ -63,12 +53,10 @@ export class SupportComponent  {
     {
       type : 'input',
       name : 'username',
-      placeholder : T('Username'),
-      tooltip : T('Enter a valid username for the <a\
-                   href="https://redmine.ixsystems.com/projects/freenas/issues"\
-                   target="_blank">FreeNAS bug tracking system</a>'),
+      placeholder : helptext.username.placeholder,
+      tooltip : helptext.username.tooltip,
       required: true,
-      validation : [ Validators.required ],
+      validation : helptext.username.validation,
       blurStatus : true,
       blurEvent : this.blurEvent,
       parent : this,
@@ -79,10 +67,10 @@ export class SupportComponent  {
       type : 'input',
       name : 'password',
       inputType : 'password',
-      placeholder : T('Password'),
-      tooltip : T('Enter the bug tracker account password.',),
+      placeholder : helptext.password.placeholder,
+      tooltip : helptext.password.tooltip,
       required: true,
-      validation : [ Validators.required ],
+      validation : helptext.password.validation,
       blurStatus : true,
       blurEvent : this.blurEvent,
       parent : this,
@@ -92,9 +80,8 @@ export class SupportComponent  {
     {
       type : 'select',
       name : 'type',
-      placeholder : T('Type'),
-      tooltip : T('Select <i>Bug</i> when reporting an issue or\
-                   <i>Feature</i> when requesting new functionality.'),
+      placeholder : helptext.type.placeholder,
+      tooltip : helptext.type.tooltip,
       options:[
         {label: 'bug', value: 'BUG'},
         {label: 'feature', value: 'FEATURE'}
@@ -103,41 +90,33 @@ export class SupportComponent  {
     {
       type : 'select',
       name : 'category',
-      placeholder : T('Category'),
-      tooltip : T('This field remains empty until a valid\
-                   <b>Username</b> and <b>Password</b> is entered.\
-                   Choose the category that best describes the bug or\
-                   feature being reported.'),
+      placeholder : helptext.category.placeholder,
+      tooltip : helptext.category.tooltip,
       required: true,
-      validation : [ Validators.required ],
+      validation : helptext.category.validation,
       options:[]
     },
     {
       type : 'checkbox',
       name : 'attach_debug',
-      placeholder : T('Attach Debug'),
-      tooltip : T('Set to generate and attach to the new issue a report\
-                   containing an overview of the system hardware, build\
-                   string, and configuration. This can take several\
-                   minutes.'),
+      placeholder : helptext.attach_debug.placeholder,
+      tooltip : helptext.attach_debug.tooltip,
     },
     {
       type : 'input',
       name : 'title',
-      placeholder : T('Subject'),
-      tooltip : T('Enter a descriptive title for the new issue.'),
+      placeholder : helptext.title.placeholder,
+      tooltip : helptext.title.tooltip,
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext.title.validation
     },
     {
       type : 'textarea',
       name : 'body',
-      placeholder : T('Description'),
-      tooltip : T('Enter a one to three paragraph summary of the issue.\
-                   Describe the problem and provide any steps to\
-                   replicate the issue.'),
+      placeholder : helptext.body.placeholder,
+      tooltip : helptext.body.tooltip,
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext.body.validation
     },
   ];
   constructor(protected router: Router, protected rest: RestService,
@@ -149,9 +128,6 @@ export class SupportComponent  {
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
     this.category = _.find(this.fieldConfig, {name: "category"});
-
-
-
   }
 
   customSubmit(entityEdit): void{

@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog, MatSnackBar } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { helptext_system_update as helptext } from 'app/helptext/system/update';
 import { Subscription } from 'rxjs/Subscription';
 import { RestService, WebSocketService } from '../../../services/';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { MatDialog, MatSnackBar } from '@angular/material';
-import { DialogService } from '../../../services/dialog.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { TranslateService } from '@ngx-translate/core';
-import { T } from '../../../translate-marker';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+import { DialogService } from '../../../services/dialog.service';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 
 @Component({
   selector: 'app-update',
@@ -17,7 +17,6 @@ import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialo
   templateUrl: './update.component.html',
 })
 export class UpdateComponent implements OnInit {
-
   public packages: any[] = [];
   public status: string;
   public releaseNotes: any = '';
@@ -34,11 +33,11 @@ export class UpdateComponent implements OnInit {
   public general_update_error;
   public update_downloaded=false;
   public train_msg = {
-    "NIGHTLY_DOWNGRADE": T("Changing away from the nightly train is considered a downgrade and not a supported operation. Activate an existing boot environment that uses the desired train and boot into it to switch to that train."),
-    "MINOR_DOWNGRADE": T("Changing the minor version is considered a downgrade and is not a supported operation. Activate an existing boot environment that uses the desired train and boot into it to switch to that train."),
-    "MAJOR_DOWNGRADE": T("Changing the major version is considered a downgrade and is not a supported operation. Activate an existing boot environment that uses the desired train and boot into it to switch to that train."),
-    "SDK": T("Changing SDK version is not a supported operation. Activate an existing boot environment that uses the desired train and boot into it to switch to that train."),
-    "NIGHTLY_UPGRADE": T("Changing to a nightly train is one-way. Changing back to a stable train is not supported!")
+    "NIGHTLY_DOWNGRADE": helptext.trains.nightly_down,
+    "MINOR_DOWNGRADE": helptext.trains.minor_down,
+    "MAJOR_DOWNGRADE": helptext.trains.major_down,
+    "SDK": helptext.trains.sdk,
+    "NIGHTLY_UPGRADE": helptext.trains.nightly_up
   }
   public release_train: boolean;
   public pre_release_train: boolean;
@@ -52,33 +51,23 @@ export class UpdateComponent implements OnInit {
   public busy2: Subscription;
   public showSpinner: boolean = false;
   public singleDescription: string;
-  public updatecheck_tooltip = T('Check the update server daily for \
-                                  any updates on the chosen train. \
-                                  Automatically download an update if \
-                                  one is available. Click \
-                                  <i>APPLY PENDING UPDATE</i> to install \
-                                  the downloaded update.');
+  public updatecheck_tooltip = helptext.tooltip_update_check;
 
   protected saveConfigFieldConf: FieldConfig[] = [
     {
       type: 'checkbox',
       name: 'secretseed',
-      placeholder: T('Include Password Secret Seed')
+      placeholder: helptext.secretseed.placeholder
     },
   ];
   public saveConfigFormConf: DialogFormConfiguration = {
     title: "Save configuration settings from this machine before updating?",
-    message: T("<b>WARNING:</b> This configuration file contains system\
-              passwords and other sensitive data.<br>"),
+    message: helptext.save_config_form.message,
     fieldConfig: this.saveConfigFieldConf,
-    warning: T("Including the Password Secret Seed allows using this\
-              configuration file with a new boot device. This also\
-              decrypts all system passwords for reuse when the\
-              configuration file is uploaded.\
-              <b>Keep the configuration file safe and protect it from unauthorized access!</b>"),
+    warning: helptext.save_config_form.warning,
     method_ws: 'core.download',
-    saveButtonText: T('SAVE CONFIGURATION'),
-    cancelButtonText: T('NO'),
+    saveButtonText: helptext.save_config_form.button_text_save,
+    cancelButtonText: helptext.save_config_form.button_text_cancel,
     customSubmit: this.saveConfigSubmit,
   };
 
@@ -254,7 +243,7 @@ export class UpdateComponent implements OnInit {
         this.train = this.selectedTrain;
       })
     } else if(compare === "NIGHTLY_UPGRADE"){
-        this.dialogService.confirm(T("Warning"), this.train_msg[compare]).subscribe((res)=>{
+        this.dialogService.confirm(helptext.dialog_nightly_upgrade.title, this.train_msg[compare]).subscribe((res)=>{
           if (res){
             this.train = event.value;
             this.currentTrainDescription = this.fullTrainList[this.train].description.toLowerCase();
@@ -265,7 +254,7 @@ export class UpdateComponent implements OnInit {
           }
         })
     } else if (compare === "ALLOWED" || compare === "MINOR_UPGRADE" || compare === "MAJOR_UPGRADE") {
-      this.dialogService.confirm(T("Switch Train"), T("Switch update trains?")).subscribe((train_res)=>{
+      this.dialogService.confirm(helptext.dialog_switch_train.title, helptext.dialog_switch_train.message).subscribe((train_res)=>{
         if(train_res){
           this.train = event.value;
           this.currentTrainDescription = this.fullTrainList[this.train].description.toLowerCase();
@@ -347,17 +336,17 @@ export class UpdateComponent implements OnInit {
             this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
               if(ures[0].attributes.preferences !== undefined && !ures[0].attributes.preferences.enableWarning) {
                 const ds  = this.dialogService.confirm(
-                  T("Download Update"), T("Continue with download?"),true,"",true,T("Apply updates and reboot system after downloading."),"update.update",[{ train: this.train, reboot: false }]
+                  helptext.dialog_download_update.title, helptext.dialog_download_update.message, true, "", true, helptext.dialog_download_update.button_text, "update.update" , [{ train: this.train, reboot: false }]
                 )
                 ds.afterClosed().subscribe((status)=>{
                   if(status){
                     if (!ds.componentInstance.data[0].reboot){
-                      this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
+                      this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": helptext.dialog_updating.title }, disableClose: false });
                       this.dialogRef.componentInstance.setCall('update.download');
                       this.dialogRef.componentInstance.submit();
                       this.dialogRef.componentInstance.success.subscribe((succ) => {
                         this.dialogRef.close(false);
-                        this.snackBar.open(T("Updates successfully downloaded"),'close', { duration: 5000 });
+                        this.snackBar.open(helptext.snackbar_download_successful.message,'close', { duration: 5000 });
                         this.pendingupdates();
 
                       });
@@ -374,17 +363,17 @@ export class UpdateComponent implements OnInit {
               } else {
                 this.dialogService.dialogForm(this.saveConfigFormConf).subscribe(()=>{
                   const ds  = this.dialogService.confirm(
-                    T("Download Update"), T("Continue with download?"),true,"",true,T("Apply updates and reboot system after downloading."),"update.update",[{ train: this.train, reboot: false }]
+                    helptext.dialog_download_update.title, helptext.dialog_download_update.message, true, "", true, helptext.dialog_download_update.button_text, "update.update", [{ train: this.train, reboot: false }]
                   )
                   ds.afterClosed().subscribe((status)=>{
                     if(status){
                       if (!ds.componentInstance.data[0].reboot){
-                        this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
+                        this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": helptext.dialog_updating.title }, disableClose: false });
                         this.dialogRef.componentInstance.setCall('update.download');
                         this.dialogRef.componentInstance.submit();
                         this.dialogRef.componentInstance.success.subscribe((succ) => {
                           this.dialogRef.close(false);
-                          this.snackBar.open(T("Updates successfully downloaded"),'close', { duration: 5000 });
+                          this.snackBar.open(helptext.snackbar_download_successful.message,'close', { duration: 5000 });
                           this.pendingupdates();
 
                         });
@@ -402,12 +391,12 @@ export class UpdateComponent implements OnInit {
             });
 
           } else if (res.status === 'UNAVAILABLE'){
-            this.dialogService.Info(T('Check Now'), T('No updates available.'))
+            this.dialogService.Info(helptext.dialog_no_updates.title, helptext.dialog_no_updates.message)
           }
         },
         (err) => {
           this.loader.close();
-          this.dialogService.errorReport(T("Error checking for updates."), err.reason, err.trace.formatted);
+          this.dialogService.errorReport(helptext.dialog_update_error.title, err.reason, err.trace.formatted);
         },
         () => {
           this.loader.close();
@@ -423,7 +412,7 @@ export class UpdateComponent implements OnInit {
         }
       },
       (err) => {
-        this.dialogService.errorReport(T("Error"), err.reason, err.trace.formatted);
+        this.dialogService.errorReport(helptext.dialog_error.title, err.reason, err.trace.formatted);
       });
   }
 
@@ -442,9 +431,7 @@ export class UpdateComponent implements OnInit {
   ApplyPendingUpdate() {
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
       if(ures[0].attributes.preferences !== undefined && !ures[0].attributes.preferences.enableWarning) {
-        this.dialogService.confirm(
-          T("Apply Pending Updates"), T("The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?")
-        ).subscribe((res)=>{
+        this.dialogService.confirm(helptext.dialog_apply_updates.title, helptext.dialog_apply_updates.message).subscribe((res)=>{
           if(res){
            this.update();
           }
@@ -452,9 +439,7 @@ export class UpdateComponent implements OnInit {
       }
       else {
         this.dialogService.dialogForm(this.saveConfigFormConf).subscribe(()=>{
-          this.dialogService.confirm(
-            T("Apply Pending Updates"), T("The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?")
-          ).subscribe((res)=>{
+          this.dialogService.confirm(helptext.dialog_apply_updates.title, helptext.dialog_apply_updates.message).subscribe((res)=>{
             if(res){
              this.update();
             };
@@ -552,7 +537,7 @@ export class UpdateComponent implements OnInit {
           }
         },
         (err) => {
-          this.general_update_error =  err.reason.replace('>', '').replace('<','') + T(": Automatic update check failed. Please check system network settings.")
+          this.general_update_error =  err.reason.replace('>', '').replace('<','') + helptext.update_error
         },
         () => {
           this.showSpinner = false;
@@ -592,7 +577,7 @@ export class UpdateComponent implements OnInit {
             entityDialog.dialogRef.close();
           },
           (err) => {
-            entityDialog.snackBar.open(T("Check the network connection"), T("Failed") , {
+            entityDialog.snackBar.open(helptext.snackbar_network_error.message, helptext.snackbar_network_error.action, {
               duration: 5000
             });
           }
