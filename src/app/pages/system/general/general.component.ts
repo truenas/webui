@@ -199,6 +199,7 @@ export class GeneralComponent implements OnDestroy {
   private http_port: any;
   private https_port: any;
   private redirect: any;
+  private guicertificate: any;
   //private hostname: '(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])';
   private entityForm: any;
 
@@ -211,7 +212,8 @@ export class GeneralComponent implements OnDestroy {
     this.protocol = value['stg_guiprotocol'];
     this.http_port = value['stg_guiport'];
     this.https_port = value['stg_guihttpsport'];
-    this.redirect = value['stg_guihttpsredirect']
+    this.redirect = value['stg_guihttpsredirect'];
+    this.guicertificate = value['stg_guicertificate'];
     return value;
   }
 
@@ -323,10 +325,12 @@ export class GeneralComponent implements OnDestroy {
     let new_http_port = value.stg_guiport;
     let new_https_port = value.stg_guihttpsport;
     let new_redirect = value.stg_guihttpsredirect;
+    let new_guicertificate = value.stg_guicertificate;
     if (this.protocol !== newprotocol ||
         this.http_port !== new_http_port ||
         this.https_port !== new_https_port ||
-        this.redirect !== new_redirect) {
+        this.redirect !== new_redirect ||
+        this.guicertificate !== new_guicertificate) {
       this.dialog.confirm(helptext.dialog_confirm_title, helptext.dialog_confirm_title)
         .subscribe((res)=> {
           if (res) {
