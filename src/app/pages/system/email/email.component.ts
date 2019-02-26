@@ -117,6 +117,11 @@ export class EmailComponent implements OnDestroy {
       validation : helptext_system_email.em_user.validation
     },
     {
+      type: 'paragraph',
+      name: 'em_pwmessage',
+      paraText: helptext_system_email.em_pwmessage.paraText,
+    },
+    {
       type : 'input',
       name : 'em_pass1',
       placeholder : helptext_system_email.em_pass1.placeholder,
@@ -159,6 +164,7 @@ export class EmailComponent implements OnDestroy {
   private em_smtp;
   private em_smtp_subscription;
   private em_user;
+  private em_pwmessage;
   private em_pass1;
   private em_pass2;
 
@@ -178,17 +184,20 @@ afterInit(entityEdit: any) {
       this.rootEmail = res[0].email;
     });
     this.em_user = _.find(this.fieldConfig, {'name': 'em_user'});
+    this.em_pwmessage = _.find(this.fieldConfig, {'name': 'em_pwmessage'});
     this.em_pass1 = _.find(this.fieldConfig, {'name': 'em_pass1'});
     this.em_pass2 = _.find(this.fieldConfig, {'name': 'em_pass2'});
 
     this.em_smtp = entityEdit.formGroup.controls['em_smtp'];
     this.em_user['isHidden'] = !this.em_smtp.value;
+    this.em_pwmessage['isHidden'] = !this.em_smtp.value;
     this.em_pass1['isHidden'] = !this.em_smtp.value;
     this.em_pass2['isHidden'] = !this.em_smtp.value;
     this.em_pass2.hideButton = !this.em_smtp.value;
 
     this.em_smtp_subscription = this.em_smtp.valueChanges.subscribe((value) => {
       this.em_user['isHidden'] = !value;
+      this.em_pwmessage['isHidden'] = !value;
       this.em_pass1['isHidden'] = !value;
       this.em_pass2['isHidden'] = !value;
       this.em_pass1.hideButton = !value;
