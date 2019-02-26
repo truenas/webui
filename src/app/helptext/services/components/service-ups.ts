@@ -26,10 +26,9 @@ ups_remotehost_tooltip : T('IP address of the remote system with <i>UPS Mode</i>
  ups_remotehost_validation : [ Validators.required ],
 
 ups_remoteport_placeholder : T('Remote Port'),
-ups_remoteport_tooltip : T('The open network port of the remote system with\
- <i>UPS Mode</i> set as <i>Master</i>. Enter a valid\
- port number that has been configured for use on the\
- Master system. <i>3493</i> is the default port used.'),
+ups_remoteport_tooltip : T(' When the <b>UPS Mode</b> is set to \
+<i>slave</i>. Enter the open network port number of the UPS \
+<i>Master</i> system. The default port is <i>3493</i>.'),
 ups_remoteport_value : 3493,
 ups_remoteport_validation : [ Validators.required ],
 
@@ -40,8 +39,11 @@ ups_driver_tooltip : T('See the <a\
  list</a> for a list of supported UPS devices.'),
 ups_driver_validation : [ Validators.required ],
 
-ups_port_placeholder : T('Port'),
-ups_port_tooltip : T('Enter the serial or USB port the UPS is plugged into.'),
+ups_port_placeholder : T('Port or Hostname'),
+ups_port_tooltip : T('The serial or USB port that the UPS is \
+ using.<br /> <br />\
+ <b>Hostname</b>: Enter the IP address or hostname of the SNMP UPS \
+ device.<br /> <br />'),
 ups_port_validation : [ Validators.required ],
 
 ups_hostname_placeholder: T('Hostname'),

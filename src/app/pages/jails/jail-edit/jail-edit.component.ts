@@ -749,13 +749,13 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       tooltip: helptext.mount_linprocfs_tooltip,
       disabled: false,
     },
-    // {
-    //   type: 'checkbox',
-    //   name: 'template',
-    //   placeholder: helptext.template_placeholder,
-    //   tooltip: helptext.template_tooltip,
-    //   disabled: false,
-    // },
+    {
+      type: 'checkbox',
+      name: 'template',
+      placeholder: helptext.template_placeholder,
+      tooltip: helptext.template_tooltip,
+      disabled: false,
+    },
     {
       type: 'checkbox',
       name: 'host_time',
