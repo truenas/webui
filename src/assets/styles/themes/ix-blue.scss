@@ -754,7 +754,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .headerCheckBox {
     position: relative;
     left: 10px;
-    margin-top: 9px;
+    margin-top: 12px;
   }
 
   // For Detach Pools functions on volumes-list.component.ts
@@ -1232,6 +1232,26 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     white-space: normal !important;
     text-overflow: unset;
     min-width: 200px;
+  }
+
+  // Add extra margin to wizard: For the stepper icons and labels...
+  jail-wizard .mat-horizontal-stepper-header-container,
+  app-volumeimport-wizard .mat-horizontal-stepper-header-container,
+  app-dockervm-wizard .mat-horizontal-stepper-header-container,
+  app-vm-wizard .mat-horizontal-stepper-header-container {
+    margin-left: 15px !important;
+    margin-right: 15px !important;
+  }
+
+  //...for the rest of the content. Jail wiz needs extra top padding
+  jail-wizard .mat-horizontal-stepper-content {
+    padding: 15px 10px 0 15px;
+  }
+
+  app-volumeimport-wizard .mat-horizontal-stepper-content,
+  app-dockervm-wizard .mat-horizontal-stepper-content,
+  app-vm-wizard .mat-horizontal-stepper-content {
+    padding: 0 10px 0 15px;
   }
 
   #idmap-err {
