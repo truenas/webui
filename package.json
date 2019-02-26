@@ -23,7 +23,8 @@
     "clean:coverage": "npm run rimraf -- coverage",
     "reinstall": "npm run rimraf package-lock.json; npm run rimraf node_modules; npm cache clear -f; npm install",
     "extract": "node scripts/extract_strings.js",
-    "po2json": "node scripts/convert_po2json.js"
+    "po2json": "node scripts/convert_po2json.js",
+    "create_po_pr": "npm run extract && node scripts/create_pr.js"
   },
   "repository": {
     "type": "git",
