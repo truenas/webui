@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
-import { Validators } from '@angular/forms';
+import { Validators, FormControl } from '@angular/forms';
 import * as _ from 'lodash';
 
 import helptext from '../../../../helptext/sharing/iscsi/iscsi-wizard';
@@ -16,6 +16,29 @@ export class IscsiWizardComponent {
 
     public route_success: string[] = ['sharing', 'iscsi'];
     public isLinear = true;
+    public summary_title = "ISCSI Summary";
+    public summaryObj = {
+        'name': null,
+        'type': null,
+        'path': null,
+        'filesize': null,
+        'disk': null,
+        'dataset': null,
+        'volsize': null,
+        'volsize_unit': null,
+        'usefor': null,
+        'portal': null,
+        'discovery_authmethod': null,
+        'discovery_authgroup': null,
+        'ip': null,
+        'port': null,
+        'auth': null,
+        'tag': null,
+        'user': null,
+        'initiators': null,
+        'auth_network': null,
+    };
+    public summary: any;
 
     protected wizardConfig: Wizard[] = [
         {
@@ -482,9 +505,9 @@ export class IscsiWizardComponent {
         console.log(entityWizard);
         this.entityWizard = entityWizard;
 
+        this.summaryInit();
         this.step0Init();
         this.step1Init();
-        this.step2Init();
     }
 
     step0Init() {
@@ -571,8 +594,69 @@ export class IscsiWizardComponent {
         });
     }
 
-    step2Init() {
+    summaryInit() {
+        console.log(this.entityWizard.formArray.controls[0].controls);
+        for (let step = 0; step < 3; step++) {
+            Object.entries(this.entityWizard.formArray.controls[step].controls).forEach(([name, control]) => {
+                if (name in this.summaryObj) {
+                    (<FormControl> control).valueChanges.subscribe(((value) => {
+                        if (value == undefined) {
+                            this.summaryObj[name] = null;
+                        }
+                        this.summaryObj[name] = value;
+                        this.summary = this.getSummary();
+                    }));
+                }
+            });
+        }
+    }
+    getSummary() {
+        const summary = {
+            'Name': this.summaryObj.name,
+            'Extent': {
+                'File': this.summaryObj.path + '(' + this.summaryObj.filesize + ')',
+                'Device': this.summaryObj.disk,
+                'New Device':  this.summaryObj.dataset + '/' + this.summaryObj.name +
+                                '(' + this.summaryObj.volsize + ' ' + this.summaryObj.volsize_unit + ')',
+                'Use For': this.summaryObj.usefor,
+            },
+            'Portal': this.summaryObj.portal,
+            'New Portal': {
+                'Discovery Auth Method': this.summaryObj.discovery_authmethod,
+                'Discovery Auth Group': this.summaryObj.discovery_authgroup,
+                'Listen': this.summaryObj.ip + ':' + this.summaryObj.port,
+            },
+            'Authorized Access': this.summaryObj.auth,
+            'New Authorized Access': {
+                'Group ID': this.summaryObj.tag,
+                'User': this.summaryObj.user,
+            },
+            'Initiator': {
+                'Initiators': this.summaryObj.initiators,
+                'Authorized Networks': this.summaryObj.auth_network,
+            }
+        };
+        if (this.summaryObj.type === 'FILE') {
+            delete summary['Extent']['Device'];
+            delete summary['Extent']['New Device'];
+        } else {
+            delete summary['Extent']['File'];
+            this.summaryObj.disk === 'NEW' ? delete summary['Extent']['Device'] : delete summary['Extent']['New Device'];
+        }
 
+        this.summaryObj.portal === 'NEW' ? delete summary['Portal'] : delete summary['New Portal'];
+        this.summaryObj.auth === 'NEW' ? delete summary['Authorized Access'] : delete summary['New Authorized Access'];
+
+        if (!this.summaryObj.initiators && !this.summaryObj.auth_network) {
+            delete summary['Initiator'];
+        } else if (!this.summaryObj.initiators) {
+            delete summary['Initiator']['Initiators'];
+        } else if (!this.summaryObj.auth_network) {
+            delete summary['Initiator']['Authorized Networks'];
+        }
+        console.log(this.summaryObj, summary);
+
+        return summary;
     }
 
     disablefieldGroup(fieldGroup: any, disabled: boolean, stepIndex: number) {
@@ -582,6 +666,9 @@ export class IscsiWizardComponent {
                 control['isHidden'] = disabled;
                 control.disabled = disabled;
                 disabled ? this.entityWizard.formArray.controls[stepIndex].controls[field].disable() : this.entityWizard.formArray.controls[stepIndex].controls[field].enable();
+                if (disabled) {
+                    this.summaryObj[field] = null;
+                }
             }
         });
     }
