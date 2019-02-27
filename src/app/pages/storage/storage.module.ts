@@ -26,6 +26,7 @@ import { DiskComponent, ManagerComponent, VdevComponent } from './volumes/manage
 import { VolumeDeleteComponent } from './volumes/volume-delete/';
 import { VolumesListComponent } from './volumes/volumes-list/';
 import { VolumeStatusComponent } from './volumes/volume-status';
+import { MultipathsComponent } from './multipaths/multipaths.component';
 import { routing } from './storage.routing';
 import { ZvolFormComponent } from './volumes/zvol/zvol-form'
 import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
@@ -73,6 +74,7 @@ import { MessageService } from '../common/entity/entity-form/services/message.se
     VMwareSnapshotListComponent,
     DiskListComponent,
     VolumeStatusComponent,
+    MultipathsComponent,
     DiskFormComponent,
     DiskWipeComponent,
     DiskBulkEditComponent
