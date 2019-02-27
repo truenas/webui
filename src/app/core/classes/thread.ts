@@ -80,9 +80,10 @@ export class Thread extends iXAbstractObject {
   }
 
   createThread(fn) {
-    let blob = new Blob(['self.onmessage = ', fn.toString()], { type: 'text/javascript' });
-    let url = URL.createObjectURL(blob);
-
+    //let blob = new Blob(['self.onmessage = ', fn.toString()], { type: 'text/javascript' });
+    //let blob = new Blob([fn.toString()], { type: 'text/javascript' });
+    //let url = URL.createObjectURL(blob);
+    let url = "assets/scripts/lib/data_utils.js";
     return new Worker(url);
   }
 

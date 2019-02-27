@@ -1,34 +1,7 @@
-import {Injectable} from '@angular/core';
-import {WebSocketService} from '../../../services';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+var debug = false;
 
 
-/*
- * For missing chart metadata like units
- * for axis labels etc
- * */
- export interface LineChartMetadata {
-  source: string;
-  units: string; // Units used as tick labels
-  labelY:string;
-
-  dataUnits?:string;// What the middleware response provides
-  conversion?:string;// What the chart should convert to.
-
-  //unitsProvided?:string;
-  removePrefix?: string;
-
- }
-
-/*
- * Fed to the LineChart ./lineChart.component.ts
- */
-export interface LineChartData {
-  labels: Date[];
-  series: any[];
-  meta?: LineChartMetadata;
-}
-
+// ***************************************************** FROM SERVICE FILE (START) ***************************************************
 
 /**
  * For a given chart.. This is each line on the chart.
@@ -44,62 +17,21 @@ export interface LineChartData {
 
 
  */
-export interface DataListItem {
-  source: string;
-  type: string;
-  dataset: string;
-  jsonResponse?: any;
-}
 
-
-/**
- * One Whole Charts worth of data.
- * Well.. All that's needed to query that data.
- * series allows you to by-pass the whole query..
- * and just set the data directly.  This is being done in the
- * Main Dashboard regarding storage size.
- */
-export interface ChartConfigData {
-  title: string;
-  legends: string[];
-  type: string;
-  dataList: DataListItem[];
-  series?: any[][];  
-  divideBy?: number;
-  convertToCelsius?: boolean;
-}
 
 
 /**
  * Returns back the Series/Data Points for a given chart.
  */
-export interface HandleDataFunc {
-  handleDataFunc(lineChartData: LineChartData);
-
-}
 
 /**
  * Gets all the existing Collectd/Report RRD Sources with a high level list
  * Of children types: string[] Some charts/Metrics require more data..  And
  * Need to have additional ? optional parameters filled out... Via LineChartService.extendChartConfigData
  */
-export interface HandleChartConfigDataFunc {
-  handleChartConfigDataFunc(chartConfigData: ChartConfigData[]);
-}
 
 
-@Injectable()
-export class LineChartService {
-  public static lineChart = "Line";
-  public static pieChart = "Pie";
-
-  private cacheConfigData: ChartConfigData[] = [];
-
-  constructor(private _ws: WebSocketService, protected core: CoreService) {
-    _ws.sub("trueview.stats:10").subscribe((evt) => {console.log(evt)});
-  }
-
-  public getData(id:string, dataList: any[], rrdOptions?:any /*timeframe?:string*/) {
+  /*getData(dataHandlerInterface: HandleDataFunc, dataList: any[], rrdOptions?:any ) {
     if(!rrdOptions) {
       rrdOptions = {step: '10', start:'now-10m'};
       console.log("Default rrdOptions values applied")
@@ -113,11 +45,8 @@ export class LineChartService {
       options.end = rrdOptions.end.toString();
     }
 
-    //this._ws.call('stats.get_data', [dataList, {step: '10', start:timeframe}]).subscribe((res) => {
     this._ws.call('stats.get_data', [dataList, options]).subscribe((res) => {
-
-      //console.log(res);
-      /*let meta = this.generateMetaData(res);
+      let meta = this.generateMetaData(res);
       const linechartData: LineChartData = {
         labels: new Array<Date>(),
         series: new Array<any>(),
@@ -131,21 +60,163 @@ export class LineChartService {
         for (const x in dataList) {
           linechartData.series[x].push(item[x]);
         }
-      });*/
-      this.core.emit({name:"ReportsHandleStats", data:{res: res, dataList: dataList, title: id}})
-      //dataHandlerInterface.handleDataFunc(linechartData);
+      });
+      dataHandlerInterface.handleDataFunc(linechartData);
     });
-  }
+  }*/
 
-  generateMetaData(res){
+  /*const getChartConfigData = (handleChartConfigDataFunc: HandleChartConfigDataFunc) => {
+    // Use this instead of the below.. TO just spoof the data
+    // So you can see what the control looks like with no WS
+
+
+    this._ws.call('stats.get_sources').subscribe((res) => {
+      this.cacheConfigData = this.chartConfigDataFromWsReponse(res);
+      const knownCharts: ChartConfigData[] = this.getKnownChartConfigData();
+      knownCharts.forEach((item) => {this.cacheConfigData.push(item);});
+
+      handleChartConfigDataFunc.handleChartConfigDataFunc(this.cacheConfigData);
+    });
+  }*/
+
+
+  const lineChart = "Line";
+  const pieChart = "Pie";
+
+  let cacheConfigData = [];
+
+/**
+   * The service returns back all sources as a flat list.  What I do in here is
+   * Go through the flat list.. And collect the ones I want for each Tab I want to show.
+   */
+
+ /* handleChartConfigDataFunc(chartConfigData) {
+     
+    const map = new Map();
+
+    // For every one of these map entries.. You see one tab in the UI With the charts collected for that tab
+    map.set("CPU", {
+      keyName: T("CPU"),
+      path:"cpu",
+      chartConfigData: [],
+      paginatedChartConfigData: []
+
+    });
+
+    map.set("Disk", {
+      keyName: T("Disk"),
+      path:"disk",
+      chartConfigData: [],
+      paginatedChartConfigData: []
+    });
+
+    map.set("Memory", {
+      keyName: T("Memory"),
+      path:"memory",
+      chartConfigData: [],
+      paginatedChartConfigData: []
+    });
+
+    map.set("Network", {
+      keyName: T("Network"),
+      path:"network",
+      chartConfigData: [],
+      paginatedChartConfigData: []
+    });
+
+
+    map.set("Partition", {
+      keyName: T("Partition"),
+      path:"partition",
+      chartConfigData: [],
+      paginatedChartConfigData: []
+    });
+
+    map.set("System", {
+      keyName: T("System"),
+      path:"system",
+      chartConfigData: [],
+      paginatedChartConfigData: []
+    });
+
+    map.set("Target", {
+      keyName: T("Target"),
+      path:"target",
+      chartConfigData: [],
+      paginatedChartConfigData: []
+    });
+
+    map.set("ZFS", {
+      keyName: T("ZFS"),
+      path:"zfs",
+      chartConfigData: [],
+      paginatedChartConfigData: []
+    });
+
+    // Go through all the items.. Sticking each source in the appropraite bucket
+    // The non known buckets.. Just get one tab/one chart. (for now).. Will eventually 
+    // move towards.. just knowing the ones I want.
+    chartConfigData.forEach((chartConfigDataItem) => {
+      if (chartConfigDataItem.title === "CPU" || chartConfigDataItem.title === "Load") {
+        const tab: TabChartsMappingData = map.get("CPU");
+        tab.chartConfigData.push(chartConfigDataItem);
+
+      } else if (chartConfigDataItem.title.toLowerCase().startsWith("memory") || chartConfigDataItem.title.toLowerCase().startsWith("swap")) {
+        const tab: TabChartsMappingData = map.get("Memory");
+        tab.chartConfigData.push(chartConfigDataItem);
+
+      } else if (chartConfigDataItem.title.toLowerCase() === "processes" ) {
+        const tab: TabChartsMappingData = map.get("System");
+        tab.chartConfigData.push(chartConfigDataItem);
+
+      } else if (chartConfigDataItem.title.startsWith("df-")) {
+        const tab: TabChartsMappingData = map.get("Partition");
+        tab.chartConfigData.push(chartConfigDataItem);
+
+      } else if (chartConfigDataItem.title.startsWith("disk")) {
+        const tab: TabChartsMappingData = map.get("Disk");
+        tab.chartConfigData.push(chartConfigDataItem);
+
+      } else if (chartConfigDataItem.title.startsWith("interface-")) {
+        const tab: TabChartsMappingData = map.get("Network");
+        tab.chartConfigData.push(chartConfigDataItem);
+
+      } else if (chartConfigDataItem.title.startsWith("SCSI ")) {
+        const tab: TabChartsMappingData = map.get("Target");
+        tab.chartConfigData.push(chartConfigDataItem);
+
+      } else if (chartConfigDataItem.title.startsWith("ZFS ")) {
+        const tab: TabChartsMappingData = map.get("ZFS");
+        tab.chartConfigData.push(chartConfigDataItem);
+
+      } 
+    });
+
+    this.tabChartsMappingDataArray.splice(0, this.tabChartsMappingDataArray.length);
+    map.forEach((value: TabChartsMappingData) => {
+
+      if (this.tabChartsMappingDataSelected === undefined) {
+        this.tabChartsMappingDataSelected = value;
+        this.setPaginationInfo( this.tabChartsMappingDataSelected );
+      }
+      this.tabChartsMappingDataArray.push(value);
+    });
+  
+    //this.drawTabs = true;
+    //this.showSpinner = false;
+    //this.activateTabFromUrl();
+  }// End handleChartConfigDataFunc Method
+*/
+
+  const generateMetaData = (res) => {
     // This should ideally be done server side but putting it in so we can have proper labels 
-    // in time for this 11.2 release
+    // in time for 11.2 release
 
     const spl = res.meta.legend[0].split('/');
     const prefix = spl[0];
     const dataName = spl[1];
 
-    let dictionary: LineChartMetadata[] = [
+    let dictionary = [
       {source :'aggregation-cpu-sum', units:'%', labelY:'% CPU'},
       {source :'temperature', units:'°C', labelY:'Celsius', conversion:'decikelvinsToCelsius'},
       {source :'memory', units:'GiB', labelY:'Gigabytes', removePrefix:'memory-'},
@@ -168,7 +239,7 @@ export class LineChartService {
       {source :'cache_result-demand_metadata-hit', units:'k', labelY: 'Requests'},
       {source :'cache_result-prefetch_data-hit', units:'', labelY: 'Requests'},
       {source :'cache_result-prefetch_metadata-hit', units:'m', labelY: 'Requests'},
-      {source :'load', units:'m', labelY:'CPU Time'}// Keep this last to avoid false positives like 'download'
+      {source :'load', units:'m', labelY:'CPU Time'}// Keep last to avoid false positives like 'download'
     ]
 
     const result = dictionary.find(item => prefix.includes(item.source) || item.source == dataName); 
@@ -176,28 +247,10 @@ export class LineChartService {
   }
 
 
-  public getChartConfigData(/*handleChartConfigDataFunc: HandleChartConfigDataFunc*/) {
-    // Use this instead of the below.. TO just spoof the data
-    // So you can see what the control looks like with no WS
+  const getCacheConfigDataByTitle = (title) => {
+    let chartConfigData = null;
 
-    //this.getChartConfigDataSpoof(handleChartConfigDataFunc);
-
-    this._ws.call('stats.get_sources').subscribe((res) => {
-      /*this.cacheConfigData = this.chartConfigDataFromWsReponse(res);
-      const knownCharts: ChartConfigData[] = this.getKnownChartConfigData();
-      knownCharts.forEach((item) => {this.cacheConfigData.push(item);});
-
-      handleChartConfigDataFunc.handleChartConfigDataFunc(this.cacheConfigData);*/
-      this.core.emit({name:"ReportsHandleSources", data: res});
-
-      
-    });
-  }
-
-  private getCacheConfigDataByTitle(title: string): ChartConfigData {
-    let chartConfigData: ChartConfigData = null;
-
-    for (const cacheConfigDataItem of this.cacheConfigData) {
+    for (const cacheConfigDataItem of cacheConfigData) {
       if (title === cacheConfigDataItem.title) {
         chartConfigData = cacheConfigDataItem;
         break;
@@ -212,7 +265,7 @@ export class LineChartService {
    * This method findsd the ones I use.. Sparing me an expensive call
    * to get_source_info Api.
    */
-  private computeValueColumnName(source: string, dataSetType: string): string {
+  const computeValueColumnName = (source, dataSetType) => {
     let returnVal = "value"; // default
 
     if (source.startsWith("disk-")) {
@@ -241,13 +294,13 @@ export class LineChartService {
 
   /** 
    * Certain nodes like... disk_io have read/write.  WHen I get a source that's like that... Ill auto create
-   * the Write.  Do this for all types I need.  rx/tx etc.... where a given source has datasets that make
+   * the Write.  Do for all types I need.  rx/tx etc.... where a given source has datasets that make
    * sense displayed together.  Most nodes.. This does not happen.  That's why the name "Possible" is in the 
    * funciton.
    */
-  private constructPossibleNodeCopy(dataListItem: DataListItem, dataListItemArray: DataListItem[]): void {
+  const constructPossibleNodeCopy = (dataListItem, dataListItemArray) => {
     if (dataListItem.dataset === "read") {
-      const dataListItemCopied: DataListItem = {
+      const dataListItemCopied = {
         source: dataListItem.source,
         type: dataListItem.type,
         dataset: "write"
@@ -255,7 +308,7 @@ export class LineChartService {
 
       dataListItemArray.push(dataListItemCopied);
     } else if (dataListItem.dataset === "rx") {
-      const dataListItemCopied: DataListItem = {
+      const dataListItemCopied = {
         source: dataListItem.source,
         type: dataListItem.type,
         dataset: "tx"
@@ -269,9 +322,9 @@ export class LineChartService {
    * Take the WebSocket response for get_sources and chruns it 
    * down into a list of javascript objects that drive the charts.
    */
-  private chartConfigDataFromWsReponse(res): ChartConfigData[] {
-    const configData: ChartConfigData[] = [];
-    let properties: string[] = [];
+  const chartConfigDataFromWsReponse = (res) => {
+    const configData = [];
+    let properties = [];
     for (const prop in res) {
       properties.push(prop);
     }
@@ -283,7 +336,7 @@ export class LineChartService {
      if (prop.startsWith("cputemp-")) {
         configData.push({
           title: prop,
-          type: LineChartService.lineChart,
+          type: "line",
           legends: ["temp"],
           dataList: [{source: prop, type: 'temperature', dataset: 'value'}]
         });
@@ -291,7 +344,7 @@ export class LineChartService {
      } else if (prop.startsWith("disktemp-")) {
         configData.push({
           title: prop,
-          type: LineChartService.lineChart,
+          type: "line",
           legends: ["temp"],
           dataList: [{source: prop, type: 'temperature', dataset: 'value'}]
         });
@@ -299,7 +352,7 @@ export class LineChartService {
      } else if (prop.startsWith("disk-")) {
         configData.push({
           title: prop + " (disk_time)",
-          type: LineChartService.lineChart,
+          type: "line",
           legends: ["read", "write"],
           dataList: [{source: prop, type: 'disk_time', dataset: 'read'},
           {source: prop, type: 'disk_time', dataset: 'write'}]
@@ -307,14 +360,14 @@ export class LineChartService {
 
         configData.push({
           title: prop + " (disk_io_time)",
-          type: LineChartService.lineChart,
+          type: "line",
           legends: ["read", "write"],
           dataList: [{source: prop, type: 'disk_io_time', dataset: 'io_time'}]
         });
 
         configData.push({
           title: prop + " (disk_ops)",
-          type: LineChartService.lineChart,
+          type: "line",
           legends: ["read", "write"],
           dataList: [{source: prop, type: 'disk_ops', dataset: 'read'},
           {source: prop, type: 'disk_ops', dataset: 'write'}]
@@ -322,7 +375,7 @@ export class LineChartService {
 
         configData.push({
           title: prop + " (disk_octets)",
-          type: LineChartService.lineChart,
+          type: "line",
           legends: ["read", "write"],
           dataList: [{source: prop, type: 'disk_octets', dataset: 'read'},
           {source: prop, type: 'disk_octets', dataset: 'write'}]
@@ -331,7 +384,7 @@ export class LineChartService {
       } else if (prop.startsWith("interface-")) {
         configData.push({
           title: prop + " (if_errors)",
-          type: LineChartService.lineChart,
+          type: "line",
           legends: ["rx", "tx"],
           dataList: [{source: prop, type: 'if_errors', dataset: 'rx'},
           {source: prop, type: 'if_errors', dataset: 'tx'}]
@@ -339,7 +392,7 @@ export class LineChartService {
 
         configData.push({
           title: prop + " (if_octets)",
-          type: LineChartService.lineChart,
+          type: "line",
           legends: ["rx", "tx"],
           dataList: [{source: prop, type: 'if_octets', dataset: 'rx'},
           {source: prop, type: 'if_octets', dataset: 'tx'}]
@@ -347,36 +400,36 @@ export class LineChartService {
 
         configData.push({
           title: prop + " (if_packets)",
-          type: LineChartService.lineChart,
+          type: "line",
           legends: ["rx", "tx"],
           dataList: [{source: prop, type: 'if_packets', dataset: 'rx'},
           {source: prop, type: 'if_packets', dataset: 'tx'}]
         });
 
       } else {
-        const propObjArray: string[] = res[prop];
-        const dataListItemArray: DataListItem[] = [];
+        const propObjArray = res[prop];
+        const dataListItemArray = [];
 
         propObjArray.forEach((proObjArrayItem) => {
 
 
 
-          const dataListItem: DataListItem = {
+          const dataListItem = {
             source: prop,
             type: proObjArrayItem,
-            dataset: this.computeValueColumnName(prop, proObjArrayItem)
+            dataset: computeValueColumnName(prop, proObjArrayItem)
           };
 
           dataListItemArray.push(dataListItem);
-          this.constructPossibleNodeCopy(dataListItem, dataListItemArray);
+          constructPossibleNodeCopy(dataListItem, dataListItemArray);
 
         });
 
-        let divideBy: number;
-        let convertToCelsius: boolean;
+        let divideBy;
+        let convertToCelsius;
         //let title: string = prop == "ctl-tpc" ? "SCSI Target Port (tpc)" : prop; 
 
-        // Put in ugly override. Wasn't really a better place for this one change.
+        // Put in ugly override. Wasn't really a better place for one change.
         let title;
         if(prop == "ctl-iscsi" || prop == "ctl-tpc"){
           title = "SCSI Target Port (" + prop.replace("ctl-", "") + ")";
@@ -400,7 +453,7 @@ export class LineChartService {
         
         configData.push({
           title: title,
-          type: LineChartService.lineChart,
+          type: "line",
           legends: propObjArray,
           dataList: dataListItemArray,
           divideBy: divideBy
@@ -415,14 +468,14 @@ export class LineChartService {
   /**
    * Certain ones I can hard code.. And interject them into the dynamic ones.
    */
-  private getKnownChartConfigData(): ChartConfigData[] {
+  const getKnownChartConfigData = () => {
 
 
-    const chartConfigData: ChartConfigData[] = [
+    const chartConfigData = [
       {
         title: "CPU",
         legends: ['User', 'Interrupt', 'System', 'Idle', 'Nice'],
-        type: LineChartService.lineChart,
+        type: "line",
         dataList: [
           {'source': 'aggregation-cpu-sum', 'type': 'cpu-user', 'dataset': 'value'},
           {'source': 'aggregation-cpu-sum', 'type': 'cpu-interrupt', 'dataset': 'value'},
@@ -432,7 +485,7 @@ export class LineChartService {
         ],
       }, {
         title: "Load",
-        type: LineChartService.lineChart,
+        type: "line",
         legends: ['Short Term', ' Mid Term', 'Long Term'],
         dataList: [
           {'source': 'load', 'type': 'load', 'dataset': 'shortterm'},
@@ -441,7 +494,7 @@ export class LineChartService {
         ],
       }, {
         title: "ZFS Arc Size",
-        type: LineChartService.lineChart,
+        type: "line",
         legends: ['Arc Size','L2Arc'],
         dataList: [
           {source: 'zfs_arc', type: 'cache_size-arc', dataset: 'value'},
@@ -449,7 +502,7 @@ export class LineChartService {
         ],
       }, {
         title: "ZFS Arc Hit Ratio",
-        type: LineChartService.lineChart,
+        type: "line",
         legends: ['Arc', 'L2'],
         dataList: [
           {source: 'zfs_arc', type: 'cache_ratio-arc', dataset: 'value'},
@@ -457,7 +510,7 @@ export class LineChartService {
         ],
       }, {
         title: "ZFS Demand Data",
-        type: LineChartService.lineChart,
+        type: "line",
         legends: ['Hits', 'Miss',],
         dataList: [
           {source: 'zfs_arc', type: 'cache_result-demand_data-hit', dataset: 'value'},
@@ -465,7 +518,7 @@ export class LineChartService {
         ],
       }, {
         title: "ZFS Demand Metadata",
-        type: LineChartService.lineChart,
+        type: "line",
         legends: ['Hits', 'Miss',],
         dataList: [
           {source: 'zfs_arc', type: 'cache_result-demand_metadata-hit', dataset: 'value'},
@@ -473,7 +526,7 @@ export class LineChartService {
         ],
       }, {
         title: "ZFS Prefetch Data",
-        type: LineChartService.lineChart,
+        type: "line",
         legends: ['Hits', 'Miss',],
         dataList: [
           {source: 'zfs_arc', type: 'cache_result-prefetch_data-hit', dataset: 'value'},
@@ -481,7 +534,7 @@ export class LineChartService {
         ],
       }, {
         title: "ZFS Prefetch Metadata",
-        type: LineChartService.lineChart,
+        type: "line",
         legends: ['Hits', 'Miss',],
         dataList: [
           {source: 'zfs_arc', type: 'cache_result-prefetch_metadata-hit', dataset: 'value'},
@@ -495,4 +548,68 @@ export class LineChartService {
 
   }
 
+
+  const sourcesHandler = (res) => {
+      cacheConfigData = chartConfigDataFromWsReponse(res);
+      const knownCharts = getKnownChartConfigData();
+      knownCharts.forEach((item) => {cacheConfigData.push(item);});
+
+      //handleChartConfigDataFunc.handleChartConfigDataFunc(cacheConfigData);
+      self.postMessage({name:"CacheConfigData", data : cacheConfigData});
+  }
+
+  const statsHandler = (data) => {
+    // dataHandlerInterface, dataList, rrdOptions?
+
+    let res = data.res;
+    let dataList = data.dataList;
+
+    
+      let meta = generateMetaData(res);
+      let linechartData = {
+        labels: [], //new Array(),
+        series: [], //new Array(),
+        meta: meta
+      }
+
+      dataList.forEach(() => {linechartData.series.push([]);})
+      res.data.forEach((item, i) => {
+        linechartData.labels.push(
+          new Date(res.meta.start * 1000 + i * res.meta.step * 1000));
+        for (const x in dataList) {
+          linechartData.series[x].push(item[x]);
+        }
+      });
+      //dataHandlerInterface.handleDataFunc(linechartData);
+      //console.log(linechartData);
+      //console.warn(data);
+      self.postMessage({name:"LineChartData:" + data.title, data : linechartData});
+  }
+  
+
+// ***************************************************** FROM SERVICE FILE (END) ***************************************************
+
+
+// Web Worker Library
+var trace = (data) => {
+  self.postMessage({name:"TEST FROM THREAD CALLBACK", data: data});
 }
+
+self.onmessage = (e) => {
+  let evt= e.data;
+  if(debug){
+    console.warn("Thread received message: " + evt.name);
+    console.warn(evt);
+    trace(evt);
+  }
+
+  switch(evt.name){
+    case "ReportsHandleSources":
+      sourcesHandler(evt.data);
+      break;
+    case "ReportsHandleStats":
+      statsHandler(evt.data);
+      break;
+  }
+}
+

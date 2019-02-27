@@ -23,6 +23,7 @@ interface TimeData { // This is in WidgetChartComponent as well. Widgets eventua
 @Injectable()
 export class ChartDataUtilsService {
 
+  private debug: boolean = false;
   protected runAsWebWorker:boolean = false;
   protected worker:Worker;
   public thread:Worker;
@@ -35,6 +36,7 @@ export class ChartDataUtilsService {
     const operations = (e) => {
       const context:Worker = self as any; // Required so Typescript doesn't complain
       //context.postMessage({name:"THREAD-INIT", data: [] }); // Initialize the thread
+      console.log(context);
       
       var callback = (data) => {
         context.postMessage({name:"TEST FROM THREAD CALLBACK", data: data});
@@ -57,8 +59,12 @@ export class ChartDataUtilsService {
     // Calback for when we receive messages from the thread
     thread.onmessage = (e:MessageEvent) => {
       let evt:CoreEvent = e.data;
-      console.log("Parent received message:" + evt.name);
-      console.log(evt);
+      if(this.debug) {
+        console.log("Parent received message:" + evt.name);
+        console.log(evt);
+      }
+      //console.warn("chart-data-utils")
+      this.core.emit(evt);
     }
 
     // Start up the thread
@@ -67,19 +73,19 @@ export class ChartDataUtilsService {
     // Test Message
     thread.postMessage({name:"TEST FROM SERVICE", data:"Test Data Placeholder"});
 
-    /*thread.messages.subscribe((evt:CoreEvent) => {
-      console.log("ChartDataUtils message rcvd...")
-    })*/
+    core.register({observerClass:this, eventName:"ReportsHandleSources"}).subscribe((evt:CoreEvent) => {
+      thread.postMessage(evt);
+    });
 
-    //thread.messages.next({name:"Test", data:"This is just a test..."});
-    //thread.messages.next({name:"Test", data:"This is just a test..."});
+    core.register({observerClass:this, eventName:"ReportsHandleStats"}).subscribe((evt:CoreEvent) => {
+      thread.postMessage(evt);
+    });
 
   }
 
-  test = function () {
-    console.log("This is just a test :) ");
-    
-  }
+/*********************************************************************************************************************/
+  // NUKE EVERYTHING BELOW THIS
+/*********************************************************************************************************************/
 
   sort =  function (data:any[], compareFunction?:any){ // Just like JS sort but now we can run in a worker
     let result =  compareFunction ? data.sort(compareFunction) : data.sort();

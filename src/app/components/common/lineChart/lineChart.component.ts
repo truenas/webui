@@ -31,6 +31,7 @@ export interface Analytics {
 export class LineChartComponent extends ViewComponent implements OnInit, AfterViewInit, OnDestroy, HandleDataFunc {
 
   @Input() dataList: DataListItem[];
+  @Input() title: string;
 
   /**   First element is Name of the Field a string
    *    Followed by the other elements being a number.
@@ -312,7 +313,7 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
     }
 
     // This is the time portion of the API call.  
-    this._lineChartService.getData(this, this.dataList, rrdOptions);
+    this._lineChartService.getData(this.title, this.dataList, rrdOptions);
   }
 
   public convertTo(value, conversion){
@@ -386,6 +387,11 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
 
   // LifeCycle Hooks
   ngOnInit() {
+    this.core.register({ observerClass:this, eventName:"LineChartData:" + this.title }).subscribe((evt:CoreEvent)=>{ 
+      this.handleDataFunc(evt.data);
+      //console.log("pong");
+    });
+
     this.core.register({ observerClass:this, eventName:"ThemeData" }).subscribe((evt:CoreEvent)=>{ 
       this.colorPattern = this.processThemeColors(evt.data);
       
