@@ -9,13 +9,12 @@ import { EntityTreeTable } from '../../common/entity/entity-tree-table/entity-tr
 export class MultipathsComponent {
 
     public treeTableConfig: EntityTreeTable = {
-        tableData: [],
         columns: [
             { name: 'Name', prop: 'name', },
             { name: 'Status', prop: 'status', },
-            { name: 'LUN ID', prop: 'lunid', },
-        ]
+            { name: 'LUN ID', prop: 'lun_id', },
+        ],
+        queryCall: 'multipath.query',
     }
     constructor() {}
-    
 }
