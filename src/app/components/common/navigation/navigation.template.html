@@ -21,7 +21,7 @@
                 <span>{{item.name | translate}}</span>
             </a>
             <a *ngIf="item.type === 'dropDown'" name="{{item.name.replace(' ', '_')}}-menu">
-                <span class="menu-item-tooltip" [matTooltip]="item.tooltip" matTooltipPosition="below"></span>
+                <span class="menu-item-tooltip" [matTooltip]="item.tooltip" matTooltipPosition="above"></span>
                 <mat-icon>{{item.icon}}</mat-icon>
                 <span>{{item.name | translate}}</span>
                 <span fxFlex></span>
