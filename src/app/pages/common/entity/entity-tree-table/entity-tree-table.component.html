@@ -1,4 +1,4 @@
-<p-treeTable [value]="treeTableData" [columns]="columns" [resizableColumns]="true" [autoLayout]="true">
+<p-treeTable [value]="conf.tableData || treeTableData" [columns]="conf.columns" [resizableColumns]="true" [autoLayout]="true">
 	<ng-template pTemplate="header" let-columns>
 		<tr>
 			<th *ngFor="let col of columns" [ttSortableColumn]="col.prop" id="theader_{{col.prop}}" ttResizableColumn>
