@@ -61,5 +61,5 @@ afp_srv_map_acls_options : [
       {label : 'None', value : 'none'},
       {label : 'Mode', value : 'mode'},
 ],
-ad_monitor_warning : T('')
+ad_monitor_warning : T('Domain Controller cannot be used when Active Directory monitoring is enabled.')
 }
