@@ -31,10 +31,10 @@ folder_tooltip: T('Enter the name of the destination folder.'),
 encryption_placeholder: T('Server Side Encryption'),
 encryption_tooltip: T('Choose <i>AES-256</i> or <i>None</i>.'),
 
-b2_chunk_size_placeholder:  T('Upload Chunk Size (in megabytes)'),
-b2_chunk_size_tooltip: T('Upload chunk size. Must fit in memory. Note that these chunks are buffered in \
- memory and there might be a maximum of «--transfers» chunks in progress at once. Also, your largest file\
- must be split in no more than 10 000 chunks.'),
+b2_chunk_size_placeholder:  T('Upload Chunk Size (MiB)'),
+b2_chunk_size_tooltip: T('Files are split into chunks of this size before upload.\
+ Up to «--transfers» chunks can be in progress at one time. The single largest file\
+ being transferred must fit into no more than 10,000 chunks.'),
 
 fast_list_placeholder: T('Use --fast-list'),
 fast_list_tooltip: T('[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/#fast-list)\
