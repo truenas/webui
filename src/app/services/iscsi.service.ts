@@ -24,22 +24,22 @@ export class IscsiService {
     return this.ws.call('notifier.choices', [ 'IPChoices', [ true, true ] ]);
   };
 
-  listPortals() { return this.rest.get(this.iscsiPortalResource, {}); };
+  listPortals() { return this.rest.get(this.iscsiPortalResource, {limit: 0}); };
 
-  listInitiators() { return this.rest.get(this.iscsiInitiatorResource, {}); };
+  listInitiators() { return this.rest.get(this.iscsiInitiatorResource, {limit: 0}); };
 
   listAuthCredential() {
-    return this.rest.get(this.iscsiAuthCredentialResource, {});
+    return this.rest.get(this.iscsiAuthCredentialResource, {limit: 0});
   };
 
-  listTargetGroups() { return this.rest.get(this.iscsiTargetGroupsResource, {}); };
+  listTargetGroups() { return this.rest.get(this.iscsiTargetGroupsResource, {limit: 0}); };
 
   getRPMChoices() {
     return this.ws.call('notifier.choices', ['EXTENT_RPM_CHOICES', [true, false]]);
   };
 
   getVolumes() {
-    return this.rest.get(this.volumeResource, {});
+    return this.rest.get(this.volumeResource, {limit: 0});
   };
 
   getExtentDevices() {
@@ -47,11 +47,11 @@ export class IscsiService {
   };
 
   getExtents() {
-    return this.rest.get(this.iscsiExtentResource, {});
+    return this.rest.get(this.iscsiExtentResource, {limit: 0});
   }
 
   getTargets() {
-    return this.rest.get(this.iscsiTargetResource, {});
+    return this.rest.get(this.iscsiTargetResource, {limit: 0});
   }
 
   getAuth() {
