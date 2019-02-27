@@ -16,16 +16,12 @@ export class EntityTreeTableComponent implements OnInit {
 
 	showActions = true;
 	treeTableData: Array<TreeNode> = [];
-	columns: Array<EntityTreeTableColumn>;
 
 	constructor(private ws: WebSocketService,
 		private treeTableService: EntityTreeTableService,
 		private dialogService: DialogService) { }
 
 	ngOnInit() {
-		this.treeTableData = this.conf.tableData;
-		this.columns = this.conf.columns;
-
 		if (this.conf.queryCall) {
 			this.getData();
 		}
