@@ -282,6 +282,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   /////////////////// SpecSelectors: Selectors not originally in ix-blue theme
 
   .rightside-content-hold{
+    overflow-y: auto;
     //background:linear-gradient(180deg, rgba(255,255,255,0.1), var(--bg1)) !important;
   }
 
@@ -1270,6 +1271,14 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   .datatable-header-inner {
     height: 52px;
+  }
+
+  app-networksummary .mat-list .mat-subheader {
+    @include variable(color, --fg2, $fg2);
+  }
+
+  .xterm-viewport {
+    overflow-y: auto;
   }
 
  } // end of ix theme
