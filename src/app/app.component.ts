@@ -21,7 +21,7 @@ import { MatIconRegistry } from "@angular/material/icon";
 
 export const PlatformInfo = {
   platform: "FreeNAS",
-  version: "FreeNAS-11.2-RELEASE-U2",
+  version: "11.2",
   train: "stable",
   running_version: "FreeNAS-11.2-RELEASE-U2"
 };
