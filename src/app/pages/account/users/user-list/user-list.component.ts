@@ -26,13 +26,13 @@ export class UserListComponent implements OnInit {
   protected grp_lst = [] 
 
   public columns: Array < any > = [
-    { name: 'Username', prop: 'bsdusr_username', always_display: true },
+    { name: 'Username', prop: 'bsdusr_username', always_display: true, minWidth: 150 },
     { name: 'UID', prop: 'bsdusr_uid', hidden: true },
     { name: 'GID', prop: 'bsdusr_gid', hidden: true },
     { name: 'Home directory', prop: 'bsdusr_home', hidden: false },
-    { name: 'Shell', prop: 'bsdusr_shell', hidden: false },
+    { name: 'Shell', prop: 'bsdusr_shell', hidden: false, minWidth: 150 },
     { name: 'Builtin', prop: 'bsdusr_builtin', hidden: true },
-    { name: 'Full Name', prop: 'bsdusr_full_name', hidden: false },
+    { name: 'Full Name', prop: 'bsdusr_full_name', hidden: false, minWidth: 250, maxWidth: 400 },
     { name: 'Email', prop: 'bsdusr_email', hidden: true },
     { name: 'Disable Password Login', prop: 'bsdusr_password_disabled', hidden: true },
     { name: 'Lock User', prop: 'bsdusr_locked', hidden: false },
