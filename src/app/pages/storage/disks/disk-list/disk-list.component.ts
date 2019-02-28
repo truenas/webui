@@ -16,7 +16,7 @@ export class DiskListComponent {
 
 	public columns: Array<any> = [
 	    { name: T('Name'), prop: 'name', always_display: true },
-	    { name: T('Pool'), prop: "pool" },
+	    // { name: T('Pool'), prop: "pool" },
 	    { name: T('Serial'), prop: 'serial' },
 	    { name: T('Disk Size'), prop: 'readable_size' },
 	    { name: T('Description'), prop: 'description', hidden: true },
@@ -154,7 +154,7 @@ export class DiskListComponent {
 		this.disk_ready.subscribe((res)=>{
 			for (let i = 0; i < entityList.rows.length; i++) {
 	      entityList.rows[i].readable_size = (<any>window).filesize(entityList.rows[i].size, { standard: "iec" });
-	      entityList.rows[i].pool = this.disk_pool.get(entityList.rows[i].name);
+	      // entityList.rows[i].pool = this.disk_pool.get(entityList.rows[i].name);
 	    }
 		})
 
