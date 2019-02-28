@@ -59,7 +59,7 @@ export const helptext_system_email = {
     paraText: T('Enter the password to submit settings changes.')
   },
 
-  em_pass1: {
+  em_pass: {
     placeholder: T("Password"),
     tooltip: T(
       "Enter the password if the SMTP server requires\

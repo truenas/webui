@@ -43,7 +43,7 @@ export class EmailComponent implements OnDestroy {
           mail_form_payload['security']= security_table[value.em_security]
           mail_form_payload['smtp']= value.em_smtp
           mail_form_payload['user']= value.em_user
-          mail_form_payload['pass']= value.em_pass1 || this.entityEdit.data.em_pass
+          mail_form_payload['pass']= value.em_pass || this.entityEdit.data.em_pass
           mailObj['subject'] += " hostname: " + res['hostname'];
           this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "EMAIL" }, disableClose: true });
           this.dialogRef.componentInstance.setCall('mail.send', [mailObj, mail_form_payload]);
@@ -123,9 +123,9 @@ export class EmailComponent implements OnDestroy {
     },
     {
       type : 'input',
-      name : 'em_pass1',
-      placeholder : helptext.em_pass1.placeholder,
-      tooltip : helptext.em_pass1.tooltip,
+      name : 'em_pass',
+      placeholder : helptext.em_pass.placeholder,
+      tooltip : helptext.em_pass.tooltip,
       inputType : 'password',
       relation : [
         {
@@ -138,7 +138,7 @@ export class EmailComponent implements OnDestroy {
       ],
       required: true,
       togglePw : true,
-      validation : helptext.em_pass1.validation
+      validation : helptext.em_pass.validation
     }
   ];
   protected dialogRef: any;
@@ -147,7 +147,7 @@ export class EmailComponent implements OnDestroy {
   private em_smtp_subscription;
   private em_user;
   private em_pwmessage;
-  private em_pass1;
+  private em_pass;
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected _injector: Injector,
@@ -166,18 +166,18 @@ afterInit(entityEdit: any) {
     });
     this.em_user = _.find(this.fieldConfig, {'name': 'em_user'});
     this.em_pwmessage = _.find(this.fieldConfig, {'name': 'em_pwmessage'});
-    this.em_pass1 = _.find(this.fieldConfig, {'name': 'em_pass1'});
+    this.em_pass = _.find(this.fieldConfig, {'name': 'em_pass'});
 
     this.em_smtp = entityEdit.formGroup.controls['em_smtp'];
     this.em_user.isHidden = !this.em_smtp.value;
     this.em_pwmessage.isHidden = !this.em_smtp.value;
-    this.em_pass1.isHidden = !this.em_smtp.value;
+    this.em_pass.isHidden = !this.em_smtp.value;
 
     this.em_smtp_subscription = this.em_smtp.valueChanges.subscribe((value) => {
       this.em_user.isHidden = !value;
       this.em_pwmessage.isHidden = !value;
-      this.em_pass1.isHidden = !value;
-      this.em_pass1.hideButton = !value;
+      this.em_pass.isHidden = !value;
+      this.em_pass.hideButton = !value;
     });
   }
 
