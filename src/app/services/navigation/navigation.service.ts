@@ -111,6 +111,7 @@ export class NavigationService {
         { name: T('VMware-Snapshots'), state: 'vmware-Snapshots' },
         { name: T('Disks'), state: 'disks' },
         { name: T('Import Disk'), state: 'import-disk'},
+        { name: T('Multipaths'), state: 'multipaths', disabled: false},
       ]
     },
     {

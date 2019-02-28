@@ -7,6 +7,7 @@ export class EntityTreeTableColumn {
 }
 
 export class EntityTreeTable {
-    tableData: TreeNode[];
+    tableData?: TreeNode[];
     columns: Array<EntityTreeTableColumn>;
+    queryCall?: string;
 }

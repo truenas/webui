@@ -24,6 +24,7 @@ import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecr
 import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volumechangekey-form';
 import { VolumeImportWizardComponent} from './volumes/volume-import-wizard';
 import { VolumeStatusComponent } from './volumes/volume-status';
+import { MultipathsComponent } from './multipaths/multipaths.component';
 import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 
 export const routes: Routes = [
@@ -163,6 +164,11 @@ export const routes: Routes = [
             data: { title: 'Wipe Disk', breadcrumb: 'Wipe Disk' }
           }
         ]
+      },
+      {
+        path: 'multipaths',
+        data: { title: 'Multipaths', breadcrumb: 'Multipaths', icon: 'view_stream' },
+        component: MultipathsComponent,
       },
       {
         path: 'import-disk', component: ImportDiskComponent,

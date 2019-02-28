@@ -29,6 +29,11 @@ export class NavigationComponent implements OnInit {
             {name : "IPMI"}).disabled = true;
         }
       });
+      this.ws.call('multipath.query').subscribe((res)=>{
+        if (!res || res.length === 0) {
+          _.find(_.find(menuItem, {state : "storage"}).sub, {state : "multipaths"}).disabled = true;
+        }
+      });
       this.menuItems = menuItem;
       //Checks item list has any icon type.
       this.hasIconTypeMenuItem = !!this.menuItems.filter(item => item.type === 'icon').length;
