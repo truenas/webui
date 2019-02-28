@@ -19,6 +19,13 @@ import { DomSanitizer } from "@angular/platform-browser";
 import { MatIconRegistry } from "@angular/material/icon";
 //import { ChartDataUtilsService } from 'app/core/services/chart-data-utils.service'; // <-- Use this globally so we can run as web worker
 
+export const PlatformInfo = {
+  platform: "FreeNAS",
+  version: "FreeNAS-11.2-RELEASE-U2",
+  train: "stable",
+  running_version: "FreeNAS-11.2-RELEASE-U2"
+};
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',

@@ -11,6 +11,7 @@ import {WebSocketService} from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { ApiService } from 'app/core/services/api.service';
+import { PlatformInfo } from 'app/app.component';
 
 @Component({
   selector: 'app-signin',
@@ -58,6 +59,19 @@ export class SigninComponent implements OnInit {
     this.ws.call('user.has_root_password').subscribe((res) => {
       this.has_root_password = res;
     })
+
+    let storedVersionInfo = window.localStorage.getItem('running_version') 
+    let isUpdate = storedVersionInfo !== PlatformInfo.running_version;
+    console.log("localStorage.running_version == " + window.localStorage.getItem('running_version'));
+    if(storedVersionInfo && isUpdate){ 
+      //window.localStorage.setItem('running_version', PlatformInfo.running_version);
+      alert("Pause so you can see the JS console...")
+      console.log("isUpdate == " + isUpdate);
+      window.localStorage.clear();
+      document.location.reload(true) 
+    } else if(storedVersionInfo && !isUpdate){
+      console.log("isUpdate == " + isUpdate);
+    }
 
     if (window['MIDDLEWARE_TOKEN']) {
       this.ws.login_token(window['MIDDLEWARE_TOKEN'])
