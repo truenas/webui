@@ -56,7 +56,7 @@ export const helptext_system_email = {
   },
 
   em_pwmessage: {
-    paraText: T('Matching passwords must be entered to submit the form, even when editing settings.')
+    paraText: T('Enter the password to submit settings changes.')
   },
 
   em_pass1: {
@@ -65,12 +65,6 @@ export const helptext_system_email = {
       "Enter the password if the SMTP server requires\
  authentication."
     ),
-    validation: [matchOtherValidator("em_pass2"), Validators.required]
-  },
-
-  em_pass2: {
-    placeholder: T("Confirm Password"),
-    tooltip: T(""),
     validation: [Validators.required]
   }
 };
