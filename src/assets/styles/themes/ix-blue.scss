@@ -1273,6 +1273,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     height: 52px;
   }
 
+  #em_pwmessage {
+    margin: 10px 0;
+  }
+
   app-networksummary .mat-list .mat-subheader {
     @include variable(color, --fg2, $fg2);
   }
