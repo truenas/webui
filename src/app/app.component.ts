@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
-import { URLSearchParams } from '@angular/http';
+import { URLSearchParams, } from '@angular/http';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { ThemeService } from 'app/services/theme/theme.service';
@@ -44,13 +44,7 @@ export class AppComponent {
     public themeservice: ThemeService,
     public domSanitizer: DomSanitizer,
     public matIconRegistry: MatIconRegistry,
-    private http: Http,
     /*public chartDataUtils: ChartDataUtilsService*/) {
-
-    this.http.get('./assets/buildtime').subscribe(res => {
-      console.log("here is the res:"); // should put the time in localstorage
-      console.log(res);
-    })
 
     this.matIconRegistry.addSvgIconSetInNamespace(
       "mdi",
