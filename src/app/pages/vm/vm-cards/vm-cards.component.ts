@@ -69,7 +69,7 @@ export class VmCardsComponent  implements OnDestroy {
   resourceTransformIncomingRestData(vms) {
     for (let vm_index = 0; vm_index<vms.length; vm_index++){
       vms[vm_index]['state'] = vms[vm_index]['status']['state'];
-      vms[vm_index]['com_port'] = `/dev/nmdm${vm_index}B`;
+      vms[vm_index]['com_port'] = `/dev/nmdm${vms[vm_index]['id']}B`;
       if (this.checkVnc(vms[vm_index])) {
         vms[vm_index]['port'] = this.vncPort(vms[vm_index]);
       } else {
