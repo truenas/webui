@@ -12,7 +12,8 @@
         "assets",
         "favicon.ico",
         "icons",
-        "assets/images"
+        "assets/images",
+        "assets/customicons"
         ],
         "index": "index.html",
         "main": "main.ts",
