@@ -130,6 +130,15 @@ export class VmCardsComponent  implements OnDestroy {
           this.setTransitionState("STOPPING", power_stop_row);
         }
       });
+      actions.push({
+        id: "restart",
+        label: "Restart",
+        onClick: (power_restart_row) => {
+          const eventName = "VmRestart";
+          this.core.emit({name: eventName, data:[power_restart_row.id]});
+          this.setTransitionState("RESTARTING", power_restart_row);
+        }
+      });
     } else {
       actions.push({
         id : "start",
