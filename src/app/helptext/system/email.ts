@@ -33,7 +33,7 @@ export const helptext_system_email = {
     tooltip: T(
       '<a href="https://www.fastmail.com/help/technical/ssltlsstarttls.html"\
  target="_blank">Email encryption</a> type. Choices are\
- <i>Plain (No Encryption), SSL (Implicit TLS)</i>, or\
+ <i>Plain (No Encryption)</i>, <i>SSL (Implicit TLS)</i>, or\
  <i>TLS (STARTTLS)</i>.'
     )
   },
