@@ -491,6 +491,14 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     opacity: 0.38;
   }
 
+  .mat-checkbox-disabled .mat-checkbox-label {
+    opacity: 0.75;
+  }
+
+  .mat-checkbox-disabled .mat-checkbox-frame, .mat-checkbox-disabled .mat-checkbox-inner-container {
+    opacity: 0.75;
+  }
+
   .mat-menu-panel,
   .mat-option.mat-active,
   .mat-nav-list a{
