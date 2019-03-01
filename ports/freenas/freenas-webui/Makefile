@@ -40,7 +40,7 @@ extract:
 do-install:
 	mkdir -p ${STAGEDIR}${PREFIX}/www/webui/
 	rsync -avl --exclude '.git' --exclude 'nas_ports' --exclude 'etc' --exclude 'sbin' ${WRKSRC}/dist/ ${STAGEDIR}${PREFIX}/www/webui/
-	${ECHO} "${MTIMEREV}" > ${STAGEDIR}/${PREFIX}/www/webui/buildtime
+	${ECHO} "${MTIMEREV}" > ${STAGEDIR}/${PREFIX}/www/webui/assets/buildtime
 	(cd ${STAGEDIR}${PREFIX}/www/webui; ${FIND} . -type f \
 		| ${SED} -e 's,^\./,,g' \
 		| ${AWK} '{print length, $$0}' | ${SORT} -rn \
