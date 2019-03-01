@@ -1075,7 +1075,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(color, --red, $red);
   }
 
-  .rightside-content-hold{
+  #em_pwmessage {
+    margin: 10px 0;
+  }
+  
+  .rightside-content-hold {
     overflow-y: auto;
   }
 
