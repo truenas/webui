@@ -165,7 +165,8 @@ export class NavigationService {
       name: T('Jails'),
       type: 'link',
       tooltip: T('Jails'),
-      icon: 'apps',
+      icon: 'jail_icon',
+      //icon: 'apps',
       state: 'jails',
       // sub: [
       //   { name: 'Jails', state: 'jails' },
