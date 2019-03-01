@@ -12,10 +12,6 @@ import {WebSocketService} from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { ApiService } from 'app/core/services/api.service';
-<<<<<<< HEAD
-import { PlatformInfo } from 'app/app.component';
-=======
->>>>>>> 239266c7d... Move update checking logic out of app.component into login page and use buildtime info as source of truth about update
 
 @Component({
   selector: 'app-signin',
@@ -65,14 +61,6 @@ export class SigninComponent implements OnInit {
       this.has_root_password = res;
     })
 
-<<<<<<< HEAD
-    let storedVersionInfo = window.localStorage.getItem('running_version') 
-    let isUpdate = storedVersionInfo !== PlatformInfo.running_version;
-    if(storedVersionInfo && isUpdate){ 
-      window.localStorage.clear();
-      document.location.reload(true) 
-    } 
-=======
     this.http.get('./assets/buildtime').subscribe((res) => {
       const buildtime = res['_body'];
       const previous_buildtime = window.localStorage.getItem('buildtime');
@@ -82,7 +70,6 @@ export class SigninComponent implements OnInit {
         document.location.reload(true);
       }
     });
->>>>>>> 239266c7d... Move update checking logic out of app.component into login page and use buildtime info as source of truth about update
 
     if (window['MIDDLEWARE_TOKEN']) {
       this.ws.login_token(window['MIDDLEWARE_TOKEN'])
