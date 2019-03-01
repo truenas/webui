@@ -234,7 +234,7 @@ export class EntityTableComponent /*extends ViewControllerComponent*/ implements
   }
 
   setTableHeight() {
-    let rowNum = 6, n;
+    let rowNum = 6, n, addRows = 4;
     if (this.title === 'Boot Environments') {
       n = 6;
     } else if (this.title === 'Jails') {
@@ -247,7 +247,7 @@ export class EntityTableComponent /*extends ViewControllerComponent*/ implements
     window.onresize = () => {
       let x = window.innerHeight;
       let y = x - 830;
-      this.paginationPageSize = rowNum - n + Math.floor(y/50) + 4 ;
+      this.paginationPageSize = rowNum - n + Math.floor(y/50) + addRows ;
 
       if (this.paginationPageSize < 2) {
         this.paginationPageSize = 2;
