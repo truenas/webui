@@ -280,8 +280,19 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(color, --fg2, $fg2, !important);
   }
 
-  .mat-form-field .mat-select.mat-select-disabled .mat-select-arrow {
+  .mat-form-field .mat-select.mat-select-disabled .mat-select-arrow,
+  .mat-select-disabled .mat-select-value  {
+    @include variable(color, --fg2, $fg2);
     opacity: 0.38;
+  }
+
+  .mat-checkbox-disabled .mat-checkbox-label {
+    @include variable(color, --fg2, $fg2);
+    opacity: 0.6;
+  }
+
+  .mat-checkbox-disabled .mat-checkbox-frame, .mat-checkbox-disabled .mat-checkbox-inner-container {
+    opacity: 0.75;
   }
 
   .mat-menu-panel,
