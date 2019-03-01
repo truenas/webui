@@ -233,15 +233,14 @@ export class GeneralComponent implements OnDestroy {
     this.entityForm = entityEdit;
     this.stg_guicertificate =
     _.find(this.fieldConfig, { 'name': 'stg_guicertificate' });
-    entityEdit.ws.call('certificate.query', [
-        [
-          ['CSR', '=', null]
-        ]
-      ])
+    entityEdit.ws.call('system.general.ui_certificate_choices')
       .subscribe((res) => {
-        res.forEach((item) => {
-          this.stg_guicertificate.options.push({ label: item.name, value: item.id });
-        });
+        for (const id in res) {
+          if(res.hasOwnProperty(id)) {
+            const value = parseInt(id, 10); //fixme: we shouldn't have to convert this value after we switch to websocket
+            this.stg_guicertificate.options.push({ label: res[id], value: value });
+          }
+        }
       });
 
     entityEdit.ws.call('notifier.choices', ['IPChoices', [true, false]])
