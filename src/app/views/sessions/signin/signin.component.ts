@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatProgressBar, MatButton, MatSnackBar } from '@angular/material';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { Http } from '@angular/http';
 import { matchOtherValidator } from '../../../pages/common/entity/entity-form/validators/password-validation';
 import { TranslateService } from '@ngx-translate/core';
 import globalHelptext from '../../../helptext/global-helptext';
@@ -11,7 +12,10 @@ import {WebSocketService} from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { ApiService } from 'app/core/services/api.service';
+<<<<<<< HEAD
 import { PlatformInfo } from 'app/app.component';
+=======
+>>>>>>> 239266c7d... Move update checking logic out of app.component into login page and use buildtime info as source of truth about update
 
 @Component({
   selector: 'app-signin',
@@ -40,7 +44,8 @@ export class SigninComponent implements OnInit {
     private dialogService: DialogService,
     private fb: FormBuilder,
     private core: CoreService,
-    private api:ApiService) {
+    private api:ApiService,
+    private http:Http) {
     this.ws = ws;
     this.ws.call('system.is_freenas').subscribe((res)=>{
       this.logo_ready = true;
@@ -60,12 +65,24 @@ export class SigninComponent implements OnInit {
       this.has_root_password = res;
     })
 
+<<<<<<< HEAD
     let storedVersionInfo = window.localStorage.getItem('running_version') 
     let isUpdate = storedVersionInfo !== PlatformInfo.running_version;
     if(storedVersionInfo && isUpdate){ 
       window.localStorage.clear();
       document.location.reload(true) 
     } 
+=======
+    this.http.get('./assets/buildtime').subscribe((res) => {
+      const buildtime = res['_body'];
+      const previous_buildtime = window.localStorage.getItem('buildtime');
+      if (buildtime !== previous_buildtime) {
+        window.localStorage.clear();
+        window.localStorage.setItem('buildtime', buildtime);
+        document.location.reload(true);
+      }
+    });
+>>>>>>> 239266c7d... Move update checking logic out of app.component into login page and use buildtime info as source of truth about update
 
     if (window['MIDDLEWARE_TOKEN']) {
       this.ws.login_token(window['MIDDLEWARE_TOKEN'])
