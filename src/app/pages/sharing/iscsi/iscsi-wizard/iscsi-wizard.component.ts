@@ -502,7 +502,6 @@ export class IscsiWizardComponent {
     }
 
     afterInit(entityWizard) {
-        console.log(entityWizard);
         this.entityWizard = entityWizard;
 
         this.summaryInit();
@@ -595,7 +594,6 @@ export class IscsiWizardComponent {
     }
 
     summaryInit() {
-        console.log(this.entityWizard.formArray.controls[0].controls);
         for (let step = 0; step < 3; step++) {
             Object.entries(this.entityWizard.formArray.controls[step].controls).forEach(([name, control]) => {
                 if (name in this.summaryObj) {
@@ -604,6 +602,14 @@ export class IscsiWizardComponent {
                             this.summaryObj[name] = null;
                         }
                         this.summaryObj[name] = value;
+                        // get label value
+                        if (name == 'device' || name == 'usefor' || name == 'portal') {
+                            const field = _.find(this.wizardConfig[step].fieldConfig, {name: name});
+                            if (field) {
+                                this.summaryObj[name] = _.find(field.options, {value: value}).label;
+                            }
+                        }
+
                         this.summary = this.getSummary();
                     }));
                 }
@@ -654,7 +660,6 @@ export class IscsiWizardComponent {
         } else if (!this.summaryObj.auth_network) {
             delete summary['Initiator']['Authorized Networks'];
         }
-        console.log(this.summaryObj, summary);
 
         return summary;
     }
