@@ -20,7 +20,8 @@
               "src/assets",
               "src/favicon.ico",
               "src/icons",
-              "src/assets/images"
+              "src/assets/images",
+              "src/assets/customicons"
             ],
             "stylePreprocessorOptions": {
               "includePaths": [
