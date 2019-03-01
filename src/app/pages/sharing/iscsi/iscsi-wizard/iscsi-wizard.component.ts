@@ -37,6 +37,7 @@ export class IscsiWizardComponent {
         'user': null,
         'initiators': null,
         'auth_network': null,
+        'comment': null,
     };
     public summary: any;
 
@@ -640,6 +641,7 @@ export class IscsiWizardComponent {
             'Initiator': {
                 'Initiators': this.summaryObj.initiators,
                 'Authorized Networks': this.summaryObj.auth_network,
+                'Comment': this.summaryObj.comment,
             }
         };
         if (this.summaryObj.type === 'FILE') {
@@ -653,12 +655,14 @@ export class IscsiWizardComponent {
         this.summaryObj.portal === 'NEW' ? delete summary['Portal'] : delete summary['New Portal'];
         this.summaryObj.auth === 'NEW' ? delete summary['Authorized Access'] : delete summary['New Authorized Access'];
 
-        if (!this.summaryObj.initiators && !this.summaryObj.auth_network) {
+        if (!this.summaryObj.initiators && !this.summaryObj.auth_network && !this.summaryObj.comment) {
             delete summary['Initiator'];
         } else if (!this.summaryObj.initiators) {
             delete summary['Initiator']['Initiators'];
         } else if (!this.summaryObj.auth_network) {
             delete summary['Initiator']['Authorized Networks'];
+        } else if (!this.summaryObj.comment) {
+            delete summary['Initiator']['Comment'];
         }
 
         return summary;
