@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
-import { URLSearchParams, } from '@angular/http';
+import { URLSearchParams } from '@angular/http';
 import { FlexLayoutModule } from '@angular/flex-layout';
-
 import { ThemeService } from 'app/services/theme/theme.service';
+
 import { RoutePartsService } from "./services/route-parts/route-parts.service";
 import { MatSnackBar } from '@angular/material';
 import * as hopscotch from 'hopscotch';
@@ -50,10 +50,6 @@ export class AppComponent {
       "mdi",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/iconfont/mdi/mdi.svg")
     );
-    this.matIconRegistry.addSvgIcon(
-      "jail_icon",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/jail_icon.svg")
-    );
     this.title.setTitle('FreeNAS - ' + window.location.hostname);
 
     if (this.detectBrowser("Safari")) {
@@ -61,13 +57,6 @@ export class AppComponent {
     }
 
     router.events.subscribe(s => {
-      // save currenturl
-      if (s instanceof NavigationEnd) {
-        if (this.ws.loggedIn && s.url != '/sessions/signin'){
-          sessionStorage.currentUrl = s.url;
-        }
-      }
-
       if(this.themeservice.globalPreview){
         // Only for globally applied theme preview
         this.globalPreviewControl();
