@@ -165,7 +165,7 @@ export class NavigationService {
       name: T('Jails'),
       type: 'link',
       tooltip: T('Jails'),
-      icon: 'apps',
+      icon: 'jail_icon',
       state: 'jails',
       // sub: [
       //   { name: 'Jails', state: 'jails' },
@@ -213,7 +213,7 @@ export class NavigationService {
       name: T('Shell'),
       type: 'link',
       tooltip: T('Shell'),
-      icon: 'code',
+      icon: 'console-line',
       state: 'shell'
     },
     {

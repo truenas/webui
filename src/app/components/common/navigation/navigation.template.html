@@ -8,7 +8,9 @@
         </div>
         <!-- Icon menu items -->
         <div class="icon-menu-item" *ngFor="let item of menuItems">
-            <button *ngIf="!item.disabled && item.type === 'icon'" mat-button [matTooltip]="item.tooltip" (click)="transferToState(item.state)" routerLinkActive="mat-bg-primary"><mat-icon>{{item.icon}}</mat-icon></button>
+            <button *ngIf="!item.disabled && item.type === 'icon'" mat-button [matTooltip]="item.tooltip" (click)="transferToState(item.state)" routerLinkActive="mat-bg-primary">
+                <mat-icon>{{item.icon}}</mat-icon>
+            </button>
         </div>
     </div>
     <!-- Regular menu items -->
@@ -17,7 +19,10 @@
         <mat-list-item (click)="updateScroll()" sideNavAccordion class="sidebar-list-item" role="listitem" *ngIf="!item.disabled && item.type !== 'separator' && item.type !== 'icon'" [ngClass]="{'has-submenu': item.type === 'dropDown'}" routerLinkActive="open" id="nav-{{i}}">
             <a [routerLink]="['/', item.state]" *ngIf="item.type === 'link'" name="{{item.name.replace(' ', '_')}}-menu">
                 <span class="menu-item-tooltip" [matTooltip]="item.tooltip" id="{{item.name}}" matTooltipPosition="right"></span>
-                <mat-icon>{{item.icon}}</mat-icon>
+                 <!--<mat-icon>{{item.icon}}</mat-icon>-->
+                <mat-icon *ngIf="item.icon !== 'jail_icon' && item.icon !== 'console-line'">{{item.icon}}</mat-icon>
+                <mat-icon *ngIf="item.icon === 'jail_icon'" svgIcon="{{item.icon}}" style="max-width:28px; margin:0 16px 0 10px;"></mat-icon>
+                <mat-icon *ngIf="item.icon === 'console-line'" role="img" fontSet="mdi-set" fontIcon="mdi-{{item.icon}}" style="font-size:24px;"></mat-icon>
                 <span>{{item.name | translate}}</span>
             </a>
             <a *ngIf="item.type === 'dropDown'" name="{{item.name.replace(' ', '_')}}-menu">
