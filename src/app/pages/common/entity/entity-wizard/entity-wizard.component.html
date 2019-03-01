@@ -29,11 +29,11 @@
         <div *ngIf="conf.summary">
           <div> {{ conf.summary_title }}</div>
           <ul >
-            <li *ngFor="let item of conf.summary | keyvalue">
+            <li *ngFor="let item of conf.summary | keyvalue : originalOrder">
               <div *ngIf="item.value | keyvalue; else inobject">
                 <label>{{item.key + ':'}}</label>
                 <ul class="wizard-ul">
-                  <li *ngFor="let subitem of item.value | keyvalue">
+                  <li *ngFor="let subitem of item.value | keyvalue : originalOrder">
                     <div *ngIf="subitem.value">{{subitem.key + ' : ' + subitem.value}}</div>
                   </li>
                 </ul>
