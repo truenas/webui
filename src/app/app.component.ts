@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
-import { URLSearchParams, Http } from '@angular/http';
+import { URLSearchParams } from '@angular/http';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ThemeService } from 'app/services/theme/theme.service';
 
@@ -18,13 +18,6 @@ import { WebSocketService } from './services/ws.service';
 import { DomSanitizer } from "@angular/platform-browser";
 import { MatIconRegistry } from "@angular/material/icon";
 //import { ChartDataUtilsService } from 'app/core/services/chart-data-utils.service'; // <-- Use this globally so we can run as web worker
-
-export const PlatformInfo = {
-  platform: "FreeNAS",
-  version: "FreeNAS-11.2-RELEASE",
-  train: "stable",
-  running_version: "FreeNAS-11.2-RELEASE"
-};
 
 @Component({
   selector: 'app-root',
@@ -51,13 +44,7 @@ export class AppComponent {
     public themeservice: ThemeService,
     public domSanitizer: DomSanitizer,
     public matIconRegistry: MatIconRegistry,
-    private http: Http,
     /*public chartDataUtils: ChartDataUtilsService*/) {
-
-    this.http.get('./assets/buildtime').subscribe(res => {
-      console.log("here is the res:"); // should put the time in localstorage
-      console.log(res);
-    })
 
     this.matIconRegistry.addSvgIconSetInNamespace(
       "mdi",
