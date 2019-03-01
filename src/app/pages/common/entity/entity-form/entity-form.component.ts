@@ -116,6 +116,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   public queryResponse;
   public saveSubmitText = "Save";
   public showPassword = false;
+  public isFooterOpen: boolean;
 
   get controls() {
     return this.fieldConfig.filter(({type}) => type !== 'button');
@@ -355,6 +356,17 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     // ...but for entity forms that don't make a data request, this kicks in 
     setTimeout(() => { this.setShowDefaults(); }, 500);
 
+    this.checkIfConsoleMsgShows();
+
+  }
+
+  checkIfConsoleMsgShows() {
+    setTimeout(() => {
+      this.rest.get('system/advanced', { limit: 0 }).subscribe((res) => {
+        this.isFooterOpen = res.data['adv_consolemsg'];   
+      });
+    }, 500)
+
   }
 
   setShowDefaults() {
@@ -418,7 +430,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     return this.rest.post(resource, {body}, this.conf.route_usebaseUrl); 
   }
 
-  onSubmit(event: Event) {
+  onSubmit(event: Event) {   
     if (this.conf.confirmSubmit && this.conf.confirmSubmitDialog) {
       this.dialog.confirm(this.conf.confirmSubmitDialog['title'],
                           this.conf.confirmSubmitDialog['message'], 
@@ -438,6 +450,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   doSubmit(event: Event) {  
+    this.checkIfConsoleMsgShows();
     event.preventDefault();
     event.stopPropagation();
     this.error = null;
