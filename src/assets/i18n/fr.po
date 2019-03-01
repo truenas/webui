@@ -639,18 +639,20 @@ msgid ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=tftpd\" "
 "target=\"_blank\">tftpd(8)</a>. Add one option on each line."
 msgstr ""
+"Ajouter d'autres options pour <a href=\"https://www.freebsd.org/cgi/man.cgi?query=tftpd\" target=\"_blank"
+"\">tftpd(8)</a>. Ajoutez une option sur chaque ligne."
 
 msgid "Add one or more disks to be used for data."
-msgstr ""
+msgstr "Ajoutez un ou plusieurs disques pour stocker les données."
 
 msgid "Add one or more disks to extend the pool."
-msgstr ""
+msgstr "Ajoutez un ou plusieurs disques pour étendre le pool."
 
 msgid "Add this user to additional groups."
-msgstr ""
+msgstr "Ajoutez cet utilisateur à des groupes supplémentaires."
 
 msgid "Adding data vdevs of different types is not supported."
-msgstr ""
+msgstr "L'ajout de données vdevs de types différents n'est pas pris en charge."
 
 msgid ""
 "Additional <a                "
@@ -659,12 +661,17 @@ msgid ""
 "The \"*\" character must be escaped with a                backslash "
 "(\\*.txt) or used inside single quotes                ('*.txt')."
 msgstr ""
+"Les options <a ref=\"https://rsync.samba.org/ftp/rsync/rsync.html\" arget=\"_blank\">rsync(1)</a> "
+"supplémentaires à inclure.<br>Remarque: le caractère \"* \" doit être échappé avec un backslash (barre "
+"oblique inversée) ( \\*. txt) ou utilisé à l'intérieur de guillemets simples (' *. txt')."
 
 msgid ""
 "Additional <a "
 "href=\"http://netatalk.sourceforge.net/3.0/htmldocs/afp.conf.5.html\" "
 "target=\"_blank\">afp.conf(5)</a> parameters."
 msgstr ""
+"Autres paramètres pour <a href=\"http://netatalk.sourceforge.net/3.0/htmldocs/afp.conf.5.html\" target="
+"\"_blank\">AFP. conf (5)</a> ."
 
 msgid ""
 "Additional <a "
@@ -672,18 +679,22 @@ msgid ""
 "target=\"_blank\">afp.conf</a> parameters not covered by other option "
 "fields."
 msgstr ""
+"Autres paramètres pour <a href=\"http://netatalk.sourceforge.net/3.1/htmldocs/afp.conf.5.html\" target="
+"\"_blank\">afp.conf</a> non couverts par d'autres champs d'options."
 
 msgid ""
 "Additional <a "
 "href=\"https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8."
 "in\" target=\"_blank\">smartctl(8)</a> options."
 msgstr ""
+"Autres options pour <a href=\"https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8.in\" "
+"target=\"_blank\">smartctl(8)</a> ."
 
 msgid "Additional <b>smb5.conf</b> parameters not covered by other option fields."
-msgstr ""
+msgstr "Autres paramètres <b>smb5. conf</b> non couverts par d'autres champs d'option."
 
 msgid "Additional Domains"
-msgstr ""
+msgstr "Domaines supplémentaires"
 
 msgid ""
 "Additional hosts to be appended to <i>/etc/hosts</i> can be added here. "
@@ -693,135 +704,149 @@ msgid ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=hosts\" "
 "target=\"_blank\">hosts(5)</a> for additional information."
 msgstr ""
+"Des hôtes supplémentaires à ajouter à <i>/etc/hosts</i> peuvent être ajoutés ici. Chaque entrée d'hôte "
+"est une ligne unique avec une adresse IP délimitée par des espaces, un nom d'hôte et tous les alias. Les "
+"hôtes définis ici sont toujours accessibles par nom même lorsque DNS n'est pas disponible. Voir la "
+"section <a href=\"https://www.freebsd.org/cgi/man.cgi?query=hosts\" target=\"_blank\">hosts(5)</a>  pour "
+"plus d'informations."
 
 msgid ""
 "Additional options for <a                  "
 "href=\"https://jhrozek.fedorapeople.org/sssd/1.11.6/man/sssd.conf.5.html\"  "
 "                target=\"_blank\">sssd.conf(5)</a>."
 msgstr ""
+"Options supplémentaires pour <a href=\"https://jhrozek.fedorapeople.org/sssd/1.11.6/man/sssd.conf.5.html"
+"\" target=\"_blank\">sssd.conf(5)</a>."
 
 msgid ""
 "Additional parameters from <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=ifconfig\" "
 "target=\"_blank\">ifconfig(8)</a>."
 msgstr ""
+"Paramètres supplémentaires de <a href=\"https://www.freebsd.org/cgi/man.cgi?query=ifconfig\" target="
+"\"_blank\">ifconfig(8)</a>."
 
 msgid ""
 "Additional space-delimited domains to search. Adding search domains can "
 "cause slow DNS lookups."
-msgstr ""
+"Les domaines de recherche supplémentaires sont délimités par des espaces. L'ajout de domaines de "
+"recherche peut entraîner des recherches DNS lentes."
 
 msgid "Address"
-msgstr ""
+msgstr "Adresse"
 
 msgid "Address space limit in bytes for the jail."
-msgstr ""
+msgstr "Limite d'espace d'adressage en octets pour le jail."
 
 msgid ""
 "Adds <a "
 "href=\"%%docurl%%/sharing.html%%webversion%%#avail-vfs-modules-tab\" "
 "target=\"blank\">virtual file system modules</a> to enhance functionality."
 msgstr ""
+"Ajoute des <a href=\"%%docurl%%/sharing.html%%webversion%%#avail-vfs-modules-tab\" target=\"blank"
+"\">modules de système de fichiers virtuels</a> pour améliorer les fonctionnalités."
 
 msgid "Adjust the file permissions using the checkboxes."
-msgstr ""
+msgstr "Ajustez les permissions des fichiers à l'aide des cases à cocher."
 
 msgid "Admin Server"
-msgstr ""
+msgstr "Serveur d'administration"
 
 msgid ""
 "Administrative account name on the LDAP server.                  Example: "
 "<i>cn=Manager,dc=test,dc=org</i>."
-msgstr ""
+msgstr "Nom du compte administratif sur le serveur LDAP. Exemple: <i>cn=Manager,dc=test,dc=org</i>."
 
 msgid "Administrator Password"
-msgstr ""
+msgstr "Mot de passe administrateur"
 
 msgid "Adv. Power Management"
-msgstr ""
+msgstr "Gestion avancée de l'alimentation"
 
 msgid "Advanced"
-msgstr ""
+msgstr "Avancé"
 
 msgid "Advanced Mode"
-msgstr ""
+msgstr "Mode avancé"
 
 msgid "Advanced Power Management"
-msgstr ""
+msgstr "Gestion avancée de l'alimentation"
 
 msgid ""
 "After entering the <b>Hostname, Username</b>, and <b>Password</b>, click "
 "<b>Fetch Datastores</b> and select the datastore to be synchronized."
 msgstr ""
+"Après avoir entré le <b>nom d'hôte, le nom d'utilisateur</b>et le <b>mot de passe</b>, cliquez sur "
+"<b>Fetch Datastores</b> et sélectionnez le datastore à synchroniser."
 
 msgid "Alert"
-msgstr ""
+msgstr "Alerte"
 
 msgid "Alert Services"
-msgstr ""
+msgstr "Services d'alerte"
 
 msgid "Alert Settings"
-msgstr ""
+msgstr "Paramètres d'alerte"
 
 msgid "Aliases"
-msgstr ""
+msgstr "Alias"
 
 msgid "All dirs"
-msgstr ""
+msgstr "Tous les dossiers"
 
 msgid "Allocate a number of gigabytes (GiB) to the new raw file."
-msgstr ""
+msgstr "Allouez un nombre de gigaoctets (GiB) au nouveau fichier RAW."
 
 msgid "Allocate a number of gigabytes of space for the new zvol."
-msgstr ""
+msgstr "Allouer un nombre de gigaoctets d'espace pour le nouveau zvol."
 
 msgid "Allocate a number of megabytes of RAM for the VM."
-msgstr ""
+msgstr "Allouer un nombre de mégaoctets de RAM pour la machine virtuelle."
 
 msgid "Allocate a number of megabytes of RAM to the Docker VM."
-msgstr ""
+msgstr "Allouez un nombre de mégaoctets de RAM à la machine virtuelle docker."
 
 msgid "Allocate a number of megabytes of RAM to the VM."
-msgstr ""
+msgstr "Allouer un nombre de mégaoctets de RAM à la machine virtuelle."
 
 msgid "Allow Anonymous Binding"
-msgstr ""
+msgstr "Autoriser la liaison anonyme"
 
 msgid "Allow Anonymous Login"
-msgstr ""
+msgstr "Autoriser la connexion anonyme"
 
 msgid "Allow DNS updates"
-msgstr ""
+msgstr "Autoriser les mises à jour DNS"
 
 msgid "Allow Empty Password"
-msgstr ""
+msgstr "Autoriser le mot de passe vide"
 
 msgid "Allow Execute Always"
-msgstr ""
+msgstr "Autoriser toujours exécuter"
 
 msgid "Allow Guest Access"
-msgstr ""
+msgstr "Autoriser l'accès invité"
 
 msgid "Allow Kerberos authentication"
-msgstr ""
+msgstr "Autoriser l'authentification Kerberos"
 
 msgid "Allow Local User Login"
-msgstr ""
+msgstr "Autoriser la connexion de l'utilisateur local"
 
 msgid "Allow New Files"
-msgstr ""
+msgstr "Autoriser les nouveaux fichiers"
 
 msgid "Allow Root Login"
-msgstr ""
+msgstr "Autoriser la connexion Root"
 
 msgid "Allow TCP port forwarding"
-msgstr ""
+msgstr "Autoriser le transfert de port TCP"
 
 msgid "Allow Transfer Resumption"
-msgstr ""
+msgstr "Autoriser la reprise de transfert"
 
 msgid "Allow Trusted Domains"
-msgstr ""
+msgstr "Autoriser les domaines approuvés"
 
 msgid ""
 "Allow configuring a non-standard port to access the GUI                  "
