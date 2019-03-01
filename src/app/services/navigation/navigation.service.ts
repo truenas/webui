@@ -214,7 +214,7 @@ export class NavigationService {
       name: T('Shell'),
       type: 'link',
       tooltip: T('Shell'),
-      icon: 'code',
+      icon: 'console-line',
       state: 'shell'
     },
     {
