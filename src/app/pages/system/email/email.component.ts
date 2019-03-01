@@ -88,9 +88,9 @@ export class EmailComponent implements OnDestroy {
       placeholder : helptext_system_email.em_security.placeholder,
       tooltip : helptext_system_email.em_security.tooltip,
       options : [
-        {label : 'Plain', value : 'plain'},
-        {label : 'SSL', value : 'ssl'},
-        {label : 'TLS', value : 'tls'},
+        {label : 'Plain (No Encryption)', value : 'plain'},
+        {label : 'SSL (Implicit TLS)', value : 'ssl'},
+        {label : 'TLS (STARTTLS)', value : 'tls'},
       ],
     },
     {
