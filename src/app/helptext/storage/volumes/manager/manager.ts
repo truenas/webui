@@ -14,8 +14,8 @@ manager_disknumExtendConfirmMessage : T("It is not recommended to extend a pool 
  more vdevs containing different numbers of disks. Continue?"),
 manager_vdevtypeErrorMessage : T("Adding data vdevs of different types is not supported."),
 manager_diskAddWarning : T("The contents of all added disks will be erased."),
-manager_diskExtendWarning : T("The contents of all newly added disks will be erased. The pool\
- will be extended to the new topology with existing data left intact."),
+manager_diskExtendWarning : T("Added disks are erased, then the pool is extended onto\
+ the new disks with the chosen topology. Existing data on the pool is kept intact."),
 manager_name_tooltip : T('ZFS pools must conform to strict naming <a\
  href="https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html"\
  target="_blank">conventions</a>. Choose a\

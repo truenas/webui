@@ -2,7 +2,7 @@ import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 
-import { RestService, WebSocketService } from '../../../../services/';
+import { RestService, WebSocketService, DialogService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/services/components/service-dc';
@@ -88,7 +88,14 @@ export class ServiceDCComponent {
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
-              ) {}
+              protected dialog: DialogService) {}
 
-  afterInit(entityEdit: any) { }
+  afterInit(entityEdit: any) {
+    this.rest.get('directoryservice/activedirectory', {}).subscribe((res) => {
+      const data = res.data;
+      if (data.ad_enable_monitor) {
+        this.dialog.Info(T("WARNING"), helptext.ad_monitor_warning);
+      }
+    });
+   }
 }
