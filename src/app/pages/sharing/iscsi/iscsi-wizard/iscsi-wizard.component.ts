@@ -6,11 +6,12 @@ import * as _ from 'lodash';
 import helptext from '../../../../helptext/sharing/iscsi/iscsi-wizard';
 import { IscsiService, RestService, WebSocketService } from '../../../../services/';
 import { matchOtherValidator } from "app/pages/common/entity/entity-form/validators/password-validation";
+import { CloudCredentialService } from '../../../../services/cloudcredential.service';
 
 @Component({
     selector: 'app-iscsi-wizard',
     template: '<entity-wizard [conf]="this"></entity-wizard>',
-    providers: [IscsiService]
+    providers: [IscsiService, CloudCredentialService]
 })
 export class IscsiWizardComponent {
 
@@ -159,20 +160,6 @@ export class IscsiWizardComponent {
                     tooltip: helptext.volblocksize_tooltip,
                     isHidden: true,
                 },
-                {
-                    type: 'input',
-                    name: 'compression',
-                    placeholder: helptext.compression_placeholder,
-                    tooltip: helptext.compression_tooltip,
-                    isHidden: true,
-                },
-                {
-                    type: 'input',
-                    name: 'deduplication',
-                    placeholder: helptext.deduplication_placeholder,
-                    tooltip: helptext.deduplication_tooltip,
-                    isHidden: true,
-                },
                 // use for group
                 {
                     type: 'select',
@@ -316,31 +303,31 @@ export class IscsiWizardComponent {
                     disabled: true,
                 },
                 {
-                    type : 'input',
-                    name : 'tag',
-                    placeholder : helptext.tag_placeholder,
+                    type: 'input',
+                    name: 'tag',
+                    placeholder: helptext.tag_placeholder,
                     tooltip: helptext.tag_tooltip,
-                    inputType : 'number',
+                    inputType: 'number',
                     min: 0,
                     required: true,
                     isHidden: true,
                     disabled: true,
-                  },
-                  {
-                    type : 'input',
-                    name : 'user',
-                    placeholder : helptext.user_placeholder,
+                },
+                {
+                    type: 'input',
+                    name: 'user',
+                    placeholder: helptext.user_placeholder,
                     tooltip: helptext.user_tooltip,
                     required: true,
                     isHidden: true,
                     disabled: true,
-                  },
-                  {
-                    type : 'input',
-                    name : 'secret',
-                    placeholder : helptext.secret_placeholder,
+                },
+                {
+                    type: 'input',
+                    name: 'secret',
+                    placeholder: helptext.secret_placeholder,
                     tooltip: helptext.secret_tooltip,
-                    inputType : 'password',
+                    inputType: 'password',
                     togglePw: true,
                     required: true,
                     isHidden: true,
@@ -351,42 +338,42 @@ export class IscsiWizardComponent {
                         Validators.required,
                         matchOtherValidator("secret_confirm"),
                     ]
-                  },
-                  {
-                    type : 'input',
-                    name : 'secret_confirm',
-                    placeholder : helptext.secret_confirm_placeholder,
-                    inputType : 'password',
+                },
+                {
+                    type: 'input',
+                    name: 'secret_confirm',
+                    placeholder: helptext.secret_confirm_placeholder,
+                    inputType: 'password',
                     isHidden: true,
                     disabled: true,
-                  },
+                },
             ]
         },
         {
             label: helptext.step3_label,
             fieldConfig: [
                 {
-                    type : 'input',
-                    name : 'initiators',
-                    placeholder : helptext.initiators_placeholder,
+                    type: 'input',
+                    name: 'initiators',
+                    placeholder: helptext.initiators_placeholder,
                     tooltip: helptext.initiators_tooltip,
                     value: '',
-                    inputType : 'textarea',
-                  },
-                  {
-                    type : 'input',
-                    name : 'auth_network',
-                    placeholder : helptext.auth_network_placeholder,
+                    inputType: 'textarea',
+                },
+                {
+                    type: 'input',
+                    name: 'auth_network',
+                    placeholder: helptext.auth_network_placeholder,
                     tooltip: helptext.auth_network_tooltip,
                     value: '',
-                    inputType : 'textarea',
-                  },
-                  {
-                    type : 'input',
-                    name : 'comment',
-                    placeholder : helptext.comment_placeholder,
+                    inputType: 'textarea',
+                },
+                {
+                    type: 'input',
+                    name: 'comment',
+                    placeholder: helptext.comment_placeholder,
                     tooltip: helptext.comment_tooltip,
-                  },
+                },
             ]
         }
     ]
@@ -403,8 +390,6 @@ export class IscsiWizardComponent {
         'volsize',
         'volsize_unit',
         'volblocksize',
-        'compression',
-        'deduplication',
     ];
     protected useforFieldGroup: any[] = [
         'blocksize',
@@ -415,8 +400,6 @@ export class IscsiWizardComponent {
     // allways hidden fields
     protected hiddenFieldGroup: any[] = [
         'volblocksize',
-        'compression',
-        'deduplication',
         'insecure_tpc',
         'xen',
         'rpm',
@@ -460,7 +443,7 @@ export class IscsiWizardComponent {
             }
         }
     ]
-    
+
     protected portalFieldGroup: any[] = [
         'discovery_authmethod',
         'discovery_authgroup',
@@ -479,7 +462,7 @@ export class IscsiWizardComponent {
     protected disableAuth = true;
     protected disableAuthGroup = true;
 
-    constructor(private iscsiService: IscsiService, private ws: WebSocketService) {
+    constructor(private iscsiService: IscsiService, private ws: WebSocketService, private cloudcredentialService: CloudCredentialService) {
 
     }
 
@@ -552,7 +535,7 @@ export class IscsiWizardComponent {
         this.iscsiService.getAuth().subscribe((res) => {
             const field = _.find(this.wizardConfig[1].fieldConfig, { 'name': 'auth' });
             for (let i = 0; i < res.length; i++) {
-                const option = { label: res[i].tag, value: res[i].tag};
+                const option = { label: res[i].tag, value: res[i].tag };
                 if (field.options.findIndex(item => item.label === option.label) < 0) {
                     field.options.push(option);
                 }
@@ -579,16 +562,16 @@ export class IscsiWizardComponent {
         for (let step = 0; step < 3; step++) {
             Object.entries(this.entityWizard.formArray.controls[step].controls).forEach(([name, control]) => {
                 if (name in this.summaryObj) {
-                    (<FormControl> control).valueChanges.subscribe(((value) => {
+                    (<FormControl>control).valueChanges.subscribe(((value) => {
                         if (value == undefined) {
                             this.summaryObj[name] = null;
                         }
                         this.summaryObj[name] = value;
                         // get label value
                         if (name == 'device' || name == 'usefor' || name == 'portal') {
-                            const field = _.find(this.wizardConfig[step].fieldConfig, {name: name});
+                            const field = _.find(this.wizardConfig[step].fieldConfig, { name: name });
                             if (field) {
-                                this.summaryObj[name] = _.find(field.options, {value: value}).label;
+                                this.summaryObj[name] = _.find(field.options, { value: value }).label;
                             }
                         }
 
@@ -604,8 +587,8 @@ export class IscsiWizardComponent {
             'Extent': {
                 'File': this.summaryObj.path + '(' + this.summaryObj.filesize + ')',
                 'Device': this.summaryObj.disk,
-                'New Device':  this.summaryObj.dataset + '/' + this.summaryObj.name +
-                                '(' + this.summaryObj.volsize + ' ' + this.summaryObj.volsize_unit + ')',
+                'New Device': this.summaryObj.dataset + '/' + this.summaryObj.name +
+                    '(' + this.summaryObj.volsize + ' ' + this.summaryObj.volsize_unit + ')',
                 'Use For': this.summaryObj.usefor,
             },
             'Portal': this.summaryObj.portal,
@@ -715,4 +698,26 @@ export class IscsiWizardComponent {
         )
     }
 
+    customSubmit(value) {
+        console.log(value);
+        // create new zvol
+        if (value['disk'] === 'NEW') {
+            this.addZvol(value);
+        }
+    }
+
+    addZvol(value) {
+        const zvolPayload = {
+            name: value['dataset'].substring(5) + '/' + value['name'],
+            type: 'VOLUME',
+            volblocksize: value['volblocksize'],
+            volsize: this.cloudcredentialService.getByte(value['volsize'] + value['volsize_unit']),
+        };
+        this.ws.call('pool.dataset.create', [zvolPayload]).subscribe(
+            (res) => {
+            },
+            (err) => {    
+            }
+        )
+    }
 }
