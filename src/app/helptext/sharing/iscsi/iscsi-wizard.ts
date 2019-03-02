@@ -36,9 +36,6 @@ export default {
     usefor_placehodler: T("What are you using this for"),
     usefor_tooltip: T(""),
 
-    blocksize_placeholder: T("Logical block size"),
-    blocksize_tooltip: T(""),
-
     step2_label: T("Portal"),
 
     portal_placeholder: T("Portal"),

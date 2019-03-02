@@ -200,26 +200,7 @@ export class IscsiWizardComponent {
                 {
                     type: 'select',
                     name: 'blocksize',
-                    placeholder: helptext.blocksize_placeholder,
-                    tooltip: helptext.blocksize_tooltip,
-                    options: [
-                        {
-                            label: '512',
-                            value: 512,
-                        },
-                        {
-                            label: '1024',
-                            value: 1024,
-                        },
-                        {
-                            label: '2048',
-                            value: 2048,
-                        },
-                        {
-                            label: '4096',
-                            value: 4096,
-                        },
-                    ],
+                    isHidden: true,
                 },
                 {
                     type: 'checkbox',
@@ -733,4 +714,5 @@ export class IscsiWizardComponent {
             }
         )
     }
+
 }
