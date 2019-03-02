@@ -61,20 +61,31 @@ export class SigninComponent implements OnInit {
       this.has_root_password = res;
     })
 
+    let middleware_token;
+    if (window['MIDDLEWARE_TOKEN']) {
+      middleware_token = window['MIDDLEWARE_TOKEN'];
+      window['MIDDLEWARE_TOKEN'] = null;
+    } else if (window.localStorage.getItem('middleware_token')) {
+      middleware_token = window.localStorage.getItem('middleware_token');
+      window.localStorage.removeItem('middleware_token');
+    }
+
     this.http.get('./assets/buildtime').subscribe((res) => {
       const buildtime = res['_body'];
       const previous_buildtime = window.localStorage.getItem('buildtime');
       if (buildtime !== previous_buildtime) {
         window.localStorage.clear();
         window.localStorage.setItem('buildtime', buildtime);
+        if (middleware_token) {
+          window.localStorage.setItem('middleware_token', middleware_token);
+        }
         document.location.reload(true);
       }
     });
 
-    if (window['MIDDLEWARE_TOKEN']) {
-      this.ws.login_token(window['MIDDLEWARE_TOKEN'])
+    if (middleware_token) {
+      this.ws.login_token(middleware_token)
       .subscribe((result) => {
-        window['MIDDLEWARE_TOKEN'] = null;
         this.loginCallback(result);
        });
     }
