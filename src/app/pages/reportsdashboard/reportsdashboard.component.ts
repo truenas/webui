@@ -3,7 +3,7 @@ import { Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRoute
 import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 import * as _ from 'lodash';
 import {LineChartService, ChartConfigData, HandleChartConfigDataFunc} from '../../components/common/lineChart/lineChart.service';
-import { Subject } from 'rxjs/Subject'; 
+import { Subject } from 'rxjs'; 
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
@@ -253,10 +253,16 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   }
 
   ngOnInit() { 
-    this._lineChartService.getChartConfigData(this);
+    this._lineChartService.getChartConfigData(/*this*/);
+
+    this.core.register({observerClass: this, eventName:"CacheConfigData"}).subscribe((evt:CoreEvent) => {
+      this.handleChartConfigDataFunc(evt.data);
+    });
+
   }
 
   ngOnDestroy() {
+    this.core.unregister({observerClass:this});
   }
 
   ngAfterViewInit(): void {
@@ -269,7 +275,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
    * Go through the flat list.. And collect the ones I want for each Tab I want to show.
    */
   handleChartConfigDataFunc(chartConfigData: ChartConfigData[]) {
-     
+  
     const map: Map<string, TabChartsMappingData> = new Map<string, TabChartsMappingData>();
 
     // For every one of these map entries.. You see one tab in the UI With the charts collected for that tab
@@ -353,7 +359,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
         const tab: TabChartsMappingData = map.get("Memory");
         tab.chartConfigData.push(chartConfigDataItem);
 
-      } else if (chartConfigDataItem.title.toLowerCase() === "processes" /*|| chartConfigDataItem.title.toLowerCase() === "uptime"*/) {
+      } else if (chartConfigDataItem.title.toLowerCase() === "processes") {
         const tab: TabChartsMappingData = map.get("System");
         tab.chartConfigData.push(chartConfigDataItem);
 
@@ -403,6 +409,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
     this.showSpinner = false;
     this.activateTabFromUrl();
   }// End handleChartConfigDataFunc Method
+  
 
   activeTabToKeyname(){
     if(this.activeTab){ return "false"}
