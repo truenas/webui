@@ -708,6 +708,9 @@ export class IscsiWizardComponent {
         if (value['portal'] === 'NEW') {
             this.addPortal(value);
         }
+        if (value['auth'] === 'NEW') {
+            this.addAuth(value);
+        }
     }
 
     addZvol(value) {
@@ -726,7 +729,6 @@ export class IscsiWizardComponent {
     }
 
     addPortal(value) {
-        console.log(value);
         const portalPayload = {
             comment: value['name'],
             discovery_authgroup: value['discovery_authgroup'],
@@ -740,6 +742,21 @@ export class IscsiWizardComponent {
             delete portalPayload['discovery_authgroup'];
         }
         this.ws.call('iscsi.portal.create', [portalPayload]).subscribe(
+            (res) => {
+            },
+            (err) => {
+            }
+        )
+    }
+
+    addAuth(value) {
+        const authPayload = {
+            tag: value['tag'],
+            user: value['user'],
+            secret: value['secret'],
+        }
+
+        this.ws.call('iscsi.auth.create', [authPayload]).subscribe(
             (res) => {
             },
             (err) => {
