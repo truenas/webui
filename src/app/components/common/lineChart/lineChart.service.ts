@@ -96,10 +96,10 @@ export class LineChartService {
   private cacheConfigData: ChartConfigData[] = [];
 
   constructor(private _ws: WebSocketService, protected core: CoreService) {
-    _ws.sub("trueview.stats:10").subscribe((evt) => {console.log(evt)});
+    //_ws.sub("trueview.stats:10").subscribe((evt) => {console.log(evt)});
   }
 
-  public getData(id:string, dataList: any[], rrdOptions?:any /*timeframe?:string*/) {
+  public getData(id:string, dataList: any[], legends: string[],  rrdOptions?:any /*timeframe?:string*/) {
     if(!rrdOptions) {
       rrdOptions = {step: '10', start:'now-10m'};
       console.log("Default rrdOptions values applied")
@@ -113,27 +113,8 @@ export class LineChartService {
       options.end = rrdOptions.end.toString();
     }
 
-    //this._ws.call('stats.get_data', [dataList, {step: '10', start:timeframe}]).subscribe((res) => {
     this._ws.call('stats.get_data', [dataList, options]).subscribe((res) => {
-
-      //console.log(res);
-      /*let meta = this.generateMetaData(res);
-      const linechartData: LineChartData = {
-        labels: new Array<Date>(),
-        series: new Array<any>(),
-        meta: meta
-      }
-
-      dataList.forEach(() => {linechartData.series.push([]);})
-      res.data.forEach((item, i) => {
-        linechartData.labels.push(
-          new Date(res.meta.start * 1000 + i * res.meta.step * 1000));
-        for (const x in dataList) {
-          linechartData.series[x].push(item[x]);
-        }
-      });*/
-      this.core.emit({name:"ReportsHandleStats", data:{res: res, dataList: dataList, title: id}})
-      //dataHandlerInterface.handleDataFunc(linechartData);
+      this.core.emit({name:"ReportsHandleStats", data:{res: res, dataList: dataList, title: id, legends:legends}})
     });
   }
 
@@ -176,21 +157,9 @@ export class LineChartService {
   }
 
 
-  public getChartConfigData(/*handleChartConfigDataFunc: HandleChartConfigDataFunc*/) {
-    // Use this instead of the below.. TO just spoof the data
-    // So you can see what the control looks like with no WS
-
-    //this.getChartConfigDataSpoof(handleChartConfigDataFunc);
-
+  public getChartConfigData() {
     this._ws.call('stats.get_sources').subscribe((res) => {
-      /*this.cacheConfigData = this.chartConfigDataFromWsReponse(res);
-      const knownCharts: ChartConfigData[] = this.getKnownChartConfigData();
-      knownCharts.forEach((item) => {this.cacheConfigData.push(item);});
-
-      handleChartConfigDataFunc.handleChartConfigDataFunc(this.cacheConfigData);*/
       this.core.emit({name:"ReportsHandleSources", data: res});
-
-      
     });
   }
 

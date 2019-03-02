@@ -3,210 +3,8 @@ var debug = false;
 
 // ***************************************************** FROM SERVICE FILE (START) ***************************************************
 
-/**
- * For a given chart.. This is each line on the chart.
- * 
- * For Example
- * 
- *  {
-        'source': 'aggregation-cpu-sum',
-        'type': 'cpu-user',
-        'dataset': 'value'
-    }
-
-
-
- */
-
-
-
-/**
- * Returns back the Series/Data Points for a given chart.
- */
-
-/**
- * Gets all the existing Collectd/Report RRD Sources with a high level list
- * Of children types: string[] Some charts/Metrics require more data..  And
- * Need to have additional ? optional parameters filled out... Via LineChartService.extendChartConfigData
- */
-
-
-  /*getData(dataHandlerInterface: HandleDataFunc, dataList: any[], rrdOptions?:any ) {
-    if(!rrdOptions) {
-      rrdOptions = {step: '10', start:'now-10m'};
-      console.log("Default rrdOptions values applied")
-    }
-    let options:any  = {
-      step: rrdOptions.step,
-      start: rrdOptions.start.toString()
-    }
-
-    if(rrdOptions.end){
-      options.end = rrdOptions.end.toString();
-    }
-
-    this._ws.call('stats.get_data', [dataList, options]).subscribe((res) => {
-      let meta = this.generateMetaData(res);
-      const linechartData: LineChartData = {
-        labels: new Array<Date>(),
-        series: new Array<any>(),
-        meta: meta
-      }
-
-      dataList.forEach(() => {linechartData.series.push([]);})
-      res.data.forEach((item, i) => {
-        linechartData.labels.push(
-          new Date(res.meta.start * 1000 + i * res.meta.step * 1000));
-        for (const x in dataList) {
-          linechartData.series[x].push(item[x]);
-        }
-      });
-      dataHandlerInterface.handleDataFunc(linechartData);
-    });
-  }*/
-
-  /*const getChartConfigData = (handleChartConfigDataFunc: HandleChartConfigDataFunc) => {
-    // Use this instead of the below.. TO just spoof the data
-    // So you can see what the control looks like with no WS
-
-
-    this._ws.call('stats.get_sources').subscribe((res) => {
-      this.cacheConfigData = this.chartConfigDataFromWsReponse(res);
-      const knownCharts: ChartConfigData[] = this.getKnownChartConfigData();
-      knownCharts.forEach((item) => {this.cacheConfigData.push(item);});
-
-      handleChartConfigDataFunc.handleChartConfigDataFunc(this.cacheConfigData);
-    });
-  }*/
-
-
   const lineChart = "Line";
   const pieChart = "Pie";
-
-  let cacheConfigData = [];
-
-/**
-   * The service returns back all sources as a flat list.  What I do in here is
-   * Go through the flat list.. And collect the ones I want for each Tab I want to show.
-   */
-
- /* handleChartConfigDataFunc(chartConfigData) {
-     
-    const map = new Map();
-
-    // For every one of these map entries.. You see one tab in the UI With the charts collected for that tab
-    map.set("CPU", {
-      keyName: T("CPU"),
-      path:"cpu",
-      chartConfigData: [],
-      paginatedChartConfigData: []
-
-    });
-
-    map.set("Disk", {
-      keyName: T("Disk"),
-      path:"disk",
-      chartConfigData: [],
-      paginatedChartConfigData: []
-    });
-
-    map.set("Memory", {
-      keyName: T("Memory"),
-      path:"memory",
-      chartConfigData: [],
-      paginatedChartConfigData: []
-    });
-
-    map.set("Network", {
-      keyName: T("Network"),
-      path:"network",
-      chartConfigData: [],
-      paginatedChartConfigData: []
-    });
-
-
-    map.set("Partition", {
-      keyName: T("Partition"),
-      path:"partition",
-      chartConfigData: [],
-      paginatedChartConfigData: []
-    });
-
-    map.set("System", {
-      keyName: T("System"),
-      path:"system",
-      chartConfigData: [],
-      paginatedChartConfigData: []
-    });
-
-    map.set("Target", {
-      keyName: T("Target"),
-      path:"target",
-      chartConfigData: [],
-      paginatedChartConfigData: []
-    });
-
-    map.set("ZFS", {
-      keyName: T("ZFS"),
-      path:"zfs",
-      chartConfigData: [],
-      paginatedChartConfigData: []
-    });
-
-    // Go through all the items.. Sticking each source in the appropraite bucket
-    // The non known buckets.. Just get one tab/one chart. (for now).. Will eventually 
-    // move towards.. just knowing the ones I want.
-    chartConfigData.forEach((chartConfigDataItem) => {
-      if (chartConfigDataItem.title === "CPU" || chartConfigDataItem.title === "Load") {
-        const tab: TabChartsMappingData = map.get("CPU");
-        tab.chartConfigData.push(chartConfigDataItem);
-
-      } else if (chartConfigDataItem.title.toLowerCase().startsWith("memory") || chartConfigDataItem.title.toLowerCase().startsWith("swap")) {
-        const tab: TabChartsMappingData = map.get("Memory");
-        tab.chartConfigData.push(chartConfigDataItem);
-
-      } else if (chartConfigDataItem.title.toLowerCase() === "processes" ) {
-        const tab: TabChartsMappingData = map.get("System");
-        tab.chartConfigData.push(chartConfigDataItem);
-
-      } else if (chartConfigDataItem.title.startsWith("df-")) {
-        const tab: TabChartsMappingData = map.get("Partition");
-        tab.chartConfigData.push(chartConfigDataItem);
-
-      } else if (chartConfigDataItem.title.startsWith("disk")) {
-        const tab: TabChartsMappingData = map.get("Disk");
-        tab.chartConfigData.push(chartConfigDataItem);
-
-      } else if (chartConfigDataItem.title.startsWith("interface-")) {
-        const tab: TabChartsMappingData = map.get("Network");
-        tab.chartConfigData.push(chartConfigDataItem);
-
-      } else if (chartConfigDataItem.title.startsWith("SCSI ")) {
-        const tab: TabChartsMappingData = map.get("Target");
-        tab.chartConfigData.push(chartConfigDataItem);
-
-      } else if (chartConfigDataItem.title.startsWith("ZFS ")) {
-        const tab: TabChartsMappingData = map.get("ZFS");
-        tab.chartConfigData.push(chartConfigDataItem);
-
-      } 
-    });
-
-    this.tabChartsMappingDataArray.splice(0, this.tabChartsMappingDataArray.length);
-    map.forEach((value: TabChartsMappingData) => {
-
-      if (this.tabChartsMappingDataSelected === undefined) {
-        this.tabChartsMappingDataSelected = value;
-        this.setPaginationInfo( this.tabChartsMappingDataSelected );
-      }
-      this.tabChartsMappingDataArray.push(value);
-    });
-  
-    //this.drawTabs = true;
-    //this.showSpinner = false;
-    //this.activateTabFromUrl();
-  }// End handleChartConfigDataFunc Method
-*/
 
   const generateMetaData = (res) => {
     // This should ideally be done server side but putting it in so we can have proper labels 
@@ -548,6 +346,163 @@ var debug = false;
 
   }
 
+  /* ******************** TAKEN FROM LINECHART COMPONENT *********************** */
+
+
+  function convertTo (value, conversion, dataList/* <---- pass this in somehow!! */){
+    let result;
+    switch(conversion){
+    case 'bytesToGigabytes':
+      result = value / 1073741824;
+      break;
+    case 'percentFloatToInteger':
+      result = value * 100;
+      break;
+    case 'decikelvinsToCelsius':
+      if(value !== null ){
+        result = dataList[0].source.startsWith('cputemp-') ? (value / 10) - 273.15 : value;
+      } else {
+        result = null
+      }
+      break;
+    }
+
+    return result !== null ? result.toFixed(2) : result;
+  }
+
+  function getMin(arr){
+    return Math.min(...arr);
+  }
+
+  function getMax(arr){
+    return Math.max(...arr);
+  }
+
+  function getAvg(arr){
+    return 1;
+  }
+
+  function getLast(arr){
+    return 1;
+  }
+
+
+  // Analytics
+  function analyze(columns){
+    let allColumns = [];
+    let cols = Object.assign([], columns);
+    // Remove X axis
+    cols.shift(columns[0]);
+
+    for(let i = 0; i < cols.length; i++){
+      // Middleware provides data as strings
+      // so we store the label (first item) 
+      // and convert the rest to numbers
+      let colStrings = cols[i];
+      let label = colStrings[0];
+      let col = colStrings.map(x => Number(x));
+      col.shift(col[0]);
+      
+      let total = col.length > 0 ? col.reduce((accumulator, currentValue) => Number(accumulator) + Number(currentValue)) : "N/A";
+      let avg = total !== "N/A" ? Number((total / col.length).toFixed(2)) : total;
+      let myResult= {
+        label:label,
+        min: total !== "N/A" ? getMin(col) : total ,
+        max: total !== "N/A" ? getMax(col) : total,
+        avg: avg,
+        last: total !== "N/A" ? Number(col[col.length - 1].toFixed(2)) : total,
+        total: total !== "N/A" ? Number(total.toFixed(2)) : total
+      }
+      allColumns.push(myResult);
+    }
+    return allColumns;
+  }
+
+  function handleDataFunc(linechartData, dataList, legends){
+    data = {
+      labels: [],
+      series: []
+    }
+
+    this.data.labels.splice(0, this.data.labels.length);
+    this.data.series.splice(0, this.data.series.length);
+
+    linechartData.labels.forEach((label) => {data.labels.push(new Date(label))});
+    linechartData.series.forEach((dataSeriesArray) => {
+    
+    const newArray = [];
+    if(!linechartData.meta)console.log(linechartData);
+    if (linechartData.meta.conversion == 'decikelvinsToCelsius') {
+        dataSeriesArray.forEach((numberVal) => {
+            newArray.push(this.convertTo(numberVal, linechartData.meta.conversion, dataList));
+        });
+        
+        dataSeriesArray = newArray;
+    } else if (typeof (this.divideBy) !== 'undefined' || linechartData.meta.conversion) {
+        dataSeriesArray.forEach((numberVal) => {
+          if(linechartData.meta.conversion){
+            newArray.push(this.convertTo(numberVal, linechartData.meta.conversion, dataList));
+          } else if (numberVal > 0) {
+            newArray.push((numberVal / this.divideBy).toFixed(2));
+          } else {
+            newArray.push(numberVal);
+          }
+        });
+        
+        dataSeriesArray = newArray;
+      } else { 
+        dataSeriesArray.forEach((numberVal) => {
+          if(numberVal > 0){
+            newArray.push(numberVal.toFixed(2));
+          } else {
+            newArray.push(numberVal);
+          }
+        });
+        dataSeriesArray = newArray;
+      }
+  
+      data.series.push(dataSeriesArray);
+    });
+
+    const columns = [];
+    let legendLabels = [];
+
+    // xColumn
+    const xValues = [];
+    xValues.push('xValues');
+    this.data.labels.forEach((label) => {
+      xValues.push(label);
+    });
+
+    columns.push(xValues);
+
+    // For C3.. Put the name of the series as the first element of each series array
+    for (let i = 0; i < legends.length && data.series.length; ++i) {
+      let legend;
+      if(linechartData.meta.removePrefix){
+        legend  = legends[i].replace(linechartData.meta.removePrefix, "");
+      } else {
+        legend  = legends[i];
+      }
+
+      legendLabels.push(legend);
+
+      let series = data.series[i];
+      if( typeof(series) !== 'undefined' && series.length > 0 ) {
+        series.unshift(legend);
+      } else {
+        series = [legend];
+      }
+      columns.push(series);
+    }
+
+
+    let legendAnalytics = analyze(columns);
+    return {columns: columns, linechartData:linechartData, legendLabels: legendLabels, legendAnalytics: legendAnalytics, dataObj: data}
+  }
+  
+
+  /********************* HANDLERS ******************************/
 
   const sourcesHandler = (res) => {
       cacheConfigData = chartConfigDataFromWsReponse(res);
@@ -580,10 +535,9 @@ var debug = false;
           linechartData.series[x].push(item[x]);
         }
       });
-      //dataHandlerInterface.handleDataFunc(linechartData);
-      //console.log(linechartData);
-      //console.warn(data);
-      self.postMessage({name:"LineChartData:" + data.title, data : linechartData});
+
+      let handledData = handleDataFunc(linechartData, dataList, data.legends);
+      self.postMessage({name:"LineChartData:" + data.title, data : handledData});
   }
   
 
