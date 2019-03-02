@@ -31,8 +31,10 @@ export const helptext_system_email = {
   em_security: {
     placeholder: T("Security"),
     tooltip: T(
-      "Encryption type. Choices are <i>Plain, SSL</i>, or\
- <i>TLS</i>."
+      '<a href="https://www.fastmail.com/help/technical/ssltlsstarttls.html"\
+ target="_blank">Email encryption</a> type. Choices are\
+ <i>Plain (No Encryption)</i>, <i>SSL (Implicit TLS)</i>, or\
+ <i>TLS (STARTTLS)</i>.'
     )
   },
 
@@ -55,18 +57,16 @@ export const helptext_system_email = {
     validation: [Validators.required]
   },
 
-  em_pass1: {
+  em_pwmessage: {
+    paraText: T('Enter the password to submit settings changes.')
+  },
+
+  em_pass: {
     placeholder: T("Password"),
     tooltip: T(
       "Enter the password if the SMTP server requires\
  authentication."
     ),
-    validation: [matchOtherValidator("em_pass2"), Validators.required]
-  },
-
-  em_pass2: {
-    placeholder: T("Confirm Password"),
-    tooltip: T(""),
     validation: [Validators.required]
   }
 };

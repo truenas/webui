@@ -251,24 +251,23 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   setTableHeight() {
-    let rowNum = 10, n;
+    let rowNum = 6, n, addRows = 4;
     if (this.title === 'Boot Environments') {
-      n = 5;
+      n = 6;
     } else if (this.title === 'Jails') {
-      n = 3;
+      n = 4;
     } else if (this.title === 'Available Plugins' || this.title === 'Installed Plugins') {
-      n = 2;
+      n = 3;
     } else {
       n = 0;
     }
     window.onresize = () => {
       let x = window.innerHeight;
-      if (x <=780) {
-        this.paginationPageSize = rowNum - n;
-      } else {
-        let y = x - 800;
-        y >= 0 ? this.paginationPageSize = rowNum - n + Math.floor(y/50) : 
-          this.paginationPageSize = rowNum - n;
+      let y = x - 830;
+      this.paginationPageSize = rowNum - n + Math.floor(y/50) + addRows ;
+
+      if (this.paginationPageSize < 2) {
+        this.paginationPageSize = 2;
       }
       this.setPaginationInfo();
     }

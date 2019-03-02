@@ -50,6 +50,10 @@ export class AppComponent {
       "mdi",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/iconfont/mdi/mdi.svg")
     );
+    this.matIconRegistry.addSvgIcon(
+      "jail_icon",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/jail_icon.svg")
+    );
     this.title.setTitle('FreeNAS - ' + window.location.hostname);
 
     if (this.detectBrowser("Safari")) {
