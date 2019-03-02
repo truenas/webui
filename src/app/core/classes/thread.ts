@@ -15,7 +15,7 @@ export interface ProcessTask {
 @Injectable()
 export class Thread extends iXAbstractObject {
 
-  private debug: boolean = true
+  private debug: boolean = false
   public thread:Worker;
   protected ready: boolean;
   protected maxThreads: number;

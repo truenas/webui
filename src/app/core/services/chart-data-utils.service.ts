@@ -30,13 +30,10 @@ export class ChartDataUtilsService {
   protected ready: boolean;
 
   constructor(protected core: CoreService){
-    console.log("ChartDataUtils Constructor");
 
     // Operations are what will run on the thread
     const operations = (e) => {
       const context:Worker = self as any; // Required so Typescript doesn't complain
-      //context.postMessage({name:"THREAD-INIT", data: [] }); // Initialize the thread
-      console.log(context);
       
       var callback = (data) => {
         context.postMessage({name:"TEST FROM THREAD CALLBACK", data: data});
