@@ -17,7 +17,7 @@ var debug = false;
     let dictionary = [
       {source :'aggregation-cpu-sum', units:'%', labelY:'% CPU'},
       {source :'temperature', units:'°C', labelY:'Celsius', conversion:'decikelvinsToCelsius'},
-      {source :'memory', units:'GiB', labelY:'Gigabytes', removePrefix:'memory-'},
+      {source :'memory', units:'GiB', labelY:'Gigabytes', removePrefix:'memory-', conversion: 'bytesToGigabytes'},
       {source :'swap', units:'GiB', labelY:'Gigabytes', removePrefix:'swap-'},
       {source :'if_errors', units:'', labelY:'Bits/s'},
       {source :'if_octets', units:'', labelY:'Bits/s'},
@@ -423,9 +423,9 @@ var debug = false;
       labels: [],
       series: []
     }
-
-    this.data.labels.splice(0, this.data.labels.length);
-    this.data.series.splice(0, this.data.series.length);
+    
+    data.labels.splice(0, data.labels.length);
+    data.series.splice(0, data.series.length);
 
     linechartData.labels.forEach((label) => {data.labels.push(new Date(label))});
     linechartData.series.forEach((dataSeriesArray) => {
@@ -434,16 +434,16 @@ var debug = false;
     if(!linechartData.meta)console.log(linechartData);
     if (linechartData.meta.conversion == 'decikelvinsToCelsius') {
         dataSeriesArray.forEach((numberVal) => {
-            newArray.push(this.convertTo(numberVal, linechartData.meta.conversion, dataList));
+            newArray.push(convertTo(numberVal, linechartData.meta.conversion, dataList));
         });
         
         dataSeriesArray = newArray;
-    } else if (typeof (this.divideBy) !== 'undefined' || linechartData.meta.conversion) {
+    } else if (typeof (divideBy) !== 'undefined' || linechartData.meta.conversion) {
         dataSeriesArray.forEach((numberVal) => {
           if(linechartData.meta.conversion){
-            newArray.push(this.convertTo(numberVal, linechartData.meta.conversion, dataList));
+            newArray.push(convertTo(numberVal, linechartData.meta.conversion, dataList));
           } else if (numberVal > 0) {
-            newArray.push((numberVal / this.divideBy).toFixed(2));
+            newArray.push((numberVal / divideBy).toFixed(2));
           } else {
             newArray.push(numberVal);
           }
@@ -470,7 +470,7 @@ var debug = false;
     // xColumn
     const xValues = [];
     xValues.push('xValues');
-    this.data.labels.forEach((label) => {
+    data.labels.forEach((label) => {
       xValues.push(label);
     });
 
