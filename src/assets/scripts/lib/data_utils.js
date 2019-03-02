@@ -1,142 +1,30 @@
-import {Injectable} from '@angular/core';
-import {WebSocketService} from '../../../services';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+var debug = false;
 
 
-/*
- * For missing chart metadata like units
- * for axis labels etc
- * */
- export interface LineChartMetadata {
-  source: string;
-  units: string; // Units used as tick labels
-  labelY:string;
+// ***************************************************** FROM SERVICE FILE (START) ***************************************************
 
-  dataUnits?:string;// What the middleware response provides
-  conversion?:string;// What the chart should convert to.
+  const lineChart = "Line";
+  const pieChart = "Pie";
 
-  //unitsProvided?:string;
-  removePrefix?: string;
-
- }
-
-/*
- * Fed to the LineChart ./lineChart.component.ts
- */
-export interface LineChartData {
-  labels: Date[];
-  series: any[];
-  meta?: LineChartMetadata;
-}
-
-
-/**
- * For a given chart.. This is each line on the chart.
- * 
- * For Example
- * 
- *  {
-        'source': 'aggregation-cpu-sum',
-        'type': 'cpu-user',
-        'dataset': 'value'
-    }
-
-
-
- */
-export interface DataListItem {
-  source: string;
-  type: string;
-  dataset: string;
-  jsonResponse?: any;
-}
-
-
-/**
- * One Whole Charts worth of data.
- * Well.. All that's needed to query that data.
- * series allows you to by-pass the whole query..
- * and just set the data directly.  This is being done in the
- * Main Dashboard regarding storage size.
- */
-export interface ChartConfigData {
-  title: string;
-  legends: string[];
-  type: string;
-  dataList: DataListItem[];
-  series?: any[][];  
-  divideBy?: number;
-  convertToCelsius?: boolean;
-}
-
-
-/**
- * Returns back the Series/Data Points for a given chart.
- */
-export interface HandleDataFunc {
-  handleDataFunc(lineChartData: LineChartData);
-
-}
-
-/**
- * Gets all the existing Collectd/Report RRD Sources with a high level list
- * Of children types: string[] Some charts/Metrics require more data..  And
- * Need to have additional ? optional parameters filled out... Via LineChartService.extendChartConfigData
- */
-export interface HandleChartConfigDataFunc {
-  handleChartConfigDataFunc(chartConfigData: ChartConfigData[]);
-}
-
-
-@Injectable()
-export class LineChartService {
-  public static lineChart = "Line";
-  public static pieChart = "Pie";
-
-  private cacheConfigData: ChartConfigData[] = [];
-
-  constructor(private _ws: WebSocketService, protected core: CoreService) {
-    //_ws.sub("trueview.stats:10").subscribe((evt) => {console.log(evt)});
-  }
-
-  public getData(id:string, dataList: any[], legends: string[],  rrdOptions?:any /*timeframe?:string*/) {
-    if(!rrdOptions) {
-      rrdOptions = {step: '10', start:'now-10m'};
-      console.log("Default rrdOptions values applied")
-    }
-    let options:any  = {
-      step: rrdOptions.step,
-      start: rrdOptions.start.toString()
-    }
-
-    if(rrdOptions.end){
-      options.end = rrdOptions.end.toString();
-    }
-
-    this._ws.call('stats.get_data', [dataList, options]).subscribe((res) => {
-      this.core.emit({name:"ReportsHandleStats", data:{res: res, dataList: dataList, title: id, legends:legends}})
-    });
-  }
-
-  generateMetaData(res){
+  const generateMetaData = (res) => {
     // This should ideally be done server side but putting it in so we can have proper labels 
-    // in time for this 11.2 release
+    // in time for 11.2 release
 
     const spl = res.meta.legend[0].split('/');
     const prefix = spl[0];
     const dataName = spl[1];
 
-    let dictionary: LineChartMetadata[] = [
+    let dictionary = [
       {source :'aggregation-cpu-sum', units:'%', labelY:'% CPU'},
       {source :'temperature', units:'°C', labelY:'Celsius', conversion:'decikelvinsToCelsius'},
-      {source :'memory', units:'GiB', labelY:'Gigabytes', removePrefix:'memory-'},
+      {source :'memory', units:'GiB', labelY:'Gigabytes', removePrefix:'memory-', conversion: 'bytesToGigabytes'},
       {source :'swap', units:'GiB', labelY:'Gigabytes', removePrefix:'swap-'},
       {source :'if_errors', units:'', labelY:'Bits/s'},
       {source :'if_octets', units:'', labelY:'Bits/s'},
       {source :'if_packets', units:'', labelY:'Bits/s'},
       {source :'df-mnt-', units:'GiB', labelY: 'Gigabytes', removePrefix:'df_complex-'},
-      {source :'ctl-tpc', units:'GiB', labelY: 'Bytes/s', removePrefix:'disk_'},
-      {source :'ctl-iscsi', units:'GiB', labelY: 'Bytes/s', removePrefix:'disk_'},
+      {source :'ctl-tpc', units:'GiB', labelY: 'Gigabytes/s', removePrefix:'disk_', conversion: 'bytesToGigabytes'},
+      {source :'ctl-iscsi', units:'GiB', labelY: 'Gigabytes/s', removePrefix:'disk_', conversion: 'bytesToGigabytes'},
       {source :'disk_time', units:'k', labelY: 'Bytes/s'},
       {source :'disk_octets', units:'k', labelY: 'Bytes/s'},
       {source :'disk_io_time', units:'k', labelY: 'Bytes/s'},
@@ -149,7 +37,7 @@ export class LineChartService {
       {source :'cache_result-demand_metadata-hit', units:'k', labelY: 'Requests'},
       {source :'cache_result-prefetch_data-hit', units:'', labelY: 'Requests'},
       {source :'cache_result-prefetch_metadata-hit', units:'m', labelY: 'Requests'},
-      {source :'load', units:'m', labelY:'CPU Time'}// Keep this last to avoid false positives like 'download'
+      {source :'load', units:'m', labelY:'CPU Time'}// Keep last to avoid false positives like 'download'
     ]
 
     const result = dictionary.find(item => prefix.includes(item.source) || item.source == dataName); 
@@ -157,16 +45,10 @@ export class LineChartService {
   }
 
 
-  public getChartConfigData() {
-    this._ws.call('stats.get_sources').subscribe((res) => {
-      this.core.emit({name:"ReportsHandleSources", data: res});
-    });
-  }
+  const getCacheConfigDataByTitle = (title) => {
+    let chartConfigData = null;
 
-  private getCacheConfigDataByTitle(title: string): ChartConfigData {
-    let chartConfigData: ChartConfigData = null;
-
-    for (const cacheConfigDataItem of this.cacheConfigData) {
+    for (const cacheConfigDataItem of cacheConfigData) {
       if (title === cacheConfigDataItem.title) {
         chartConfigData = cacheConfigDataItem;
         break;
@@ -181,7 +63,7 @@ export class LineChartService {
    * This method findsd the ones I use.. Sparing me an expensive call
    * to get_source_info Api.
    */
-  private computeValueColumnName(source: string, dataSetType: string): string {
+  const computeValueColumnName = (source, dataSetType) => {
     let returnVal = "value"; // default
 
     if (source.startsWith("disk-")) {
@@ -210,13 +92,13 @@ export class LineChartService {
 
   /** 
    * Certain nodes like... disk_io have read/write.  WHen I get a source that's like that... Ill auto create
-   * the Write.  Do this for all types I need.  rx/tx etc.... where a given source has datasets that make
+   * the Write.  Do for all types I need.  rx/tx etc.... where a given source has datasets that make
    * sense displayed together.  Most nodes.. This does not happen.  That's why the name "Possible" is in the 
    * funciton.
    */
-  private constructPossibleNodeCopy(dataListItem: DataListItem, dataListItemArray: DataListItem[]): void {
+  const constructPossibleNodeCopy = (dataListItem, dataListItemArray) => {
     if (dataListItem.dataset === "read") {
-      const dataListItemCopied: DataListItem = {
+      const dataListItemCopied = {
         source: dataListItem.source,
         type: dataListItem.type,
         dataset: "write"
@@ -224,7 +106,7 @@ export class LineChartService {
 
       dataListItemArray.push(dataListItemCopied);
     } else if (dataListItem.dataset === "rx") {
-      const dataListItemCopied: DataListItem = {
+      const dataListItemCopied = {
         source: dataListItem.source,
         type: dataListItem.type,
         dataset: "tx"
@@ -238,9 +120,9 @@ export class LineChartService {
    * Take the WebSocket response for get_sources and chruns it 
    * down into a list of javascript objects that drive the charts.
    */
-  private chartConfigDataFromWsReponse(res): ChartConfigData[] {
-    const configData: ChartConfigData[] = [];
-    let properties: string[] = [];
+  const chartConfigDataFromWsReponse = (res) => {
+    const configData = [];
+    let properties = [];
     for (const prop in res) {
       properties.push(prop);
     }
@@ -252,7 +134,7 @@ export class LineChartService {
      if (prop.startsWith("cputemp-")) {
         configData.push({
           title: prop,
-          type: LineChartService.lineChart,
+          type: "line",
           legends: ["temp"],
           dataList: [{source: prop, type: 'temperature', dataset: 'value'}]
         });
@@ -260,7 +142,7 @@ export class LineChartService {
      } else if (prop.startsWith("disktemp-")) {
         configData.push({
           title: prop,
-          type: LineChartService.lineChart,
+          type: "line",
           legends: ["temp"],
           dataList: [{source: prop, type: 'temperature', dataset: 'value'}]
         });
@@ -268,7 +150,7 @@ export class LineChartService {
      } else if (prop.startsWith("disk-")) {
         configData.push({
           title: prop + " (disk_time)",
-          type: LineChartService.lineChart,
+          type: "line",
           legends: ["read", "write"],
           dataList: [{source: prop, type: 'disk_time', dataset: 'read'},
           {source: prop, type: 'disk_time', dataset: 'write'}]
@@ -276,14 +158,14 @@ export class LineChartService {
 
         configData.push({
           title: prop + " (disk_io_time)",
-          type: LineChartService.lineChart,
+          type: "line",
           legends: ["read", "write"],
           dataList: [{source: prop, type: 'disk_io_time', dataset: 'io_time'}]
         });
 
         configData.push({
           title: prop + " (disk_ops)",
-          type: LineChartService.lineChart,
+          type: "line",
           legends: ["read", "write"],
           dataList: [{source: prop, type: 'disk_ops', dataset: 'read'},
           {source: prop, type: 'disk_ops', dataset: 'write'}]
@@ -291,7 +173,7 @@ export class LineChartService {
 
         configData.push({
           title: prop + " (disk_octets)",
-          type: LineChartService.lineChart,
+          type: "line",
           legends: ["read", "write"],
           dataList: [{source: prop, type: 'disk_octets', dataset: 'read'},
           {source: prop, type: 'disk_octets', dataset: 'write'}]
@@ -300,7 +182,7 @@ export class LineChartService {
       } else if (prop.startsWith("interface-")) {
         configData.push({
           title: prop + " (if_errors)",
-          type: LineChartService.lineChart,
+          type: "line",
           legends: ["rx", "tx"],
           dataList: [{source: prop, type: 'if_errors', dataset: 'rx'},
           {source: prop, type: 'if_errors', dataset: 'tx'}]
@@ -308,7 +190,7 @@ export class LineChartService {
 
         configData.push({
           title: prop + " (if_octets)",
-          type: LineChartService.lineChart,
+          type: "line",
           legends: ["rx", "tx"],
           dataList: [{source: prop, type: 'if_octets', dataset: 'rx'},
           {source: prop, type: 'if_octets', dataset: 'tx'}]
@@ -316,36 +198,36 @@ export class LineChartService {
 
         configData.push({
           title: prop + " (if_packets)",
-          type: LineChartService.lineChart,
+          type: "line",
           legends: ["rx", "tx"],
           dataList: [{source: prop, type: 'if_packets', dataset: 'rx'},
           {source: prop, type: 'if_packets', dataset: 'tx'}]
         });
 
       } else {
-        const propObjArray: string[] = res[prop];
-        const dataListItemArray: DataListItem[] = [];
+        const propObjArray = res[prop];
+        const dataListItemArray = [];
 
         propObjArray.forEach((proObjArrayItem) => {
 
 
 
-          const dataListItem: DataListItem = {
+          const dataListItem = {
             source: prop,
             type: proObjArrayItem,
-            dataset: this.computeValueColumnName(prop, proObjArrayItem)
+            dataset: computeValueColumnName(prop, proObjArrayItem)
           };
 
           dataListItemArray.push(dataListItem);
-          this.constructPossibleNodeCopy(dataListItem, dataListItemArray);
+          constructPossibleNodeCopy(dataListItem, dataListItemArray);
 
         });
 
-        let divideBy: number;
-        let convertToCelsius: boolean;
+        let divideBy;
+        let convertToCelsius;
         //let title: string = prop == "ctl-tpc" ? "SCSI Target Port (tpc)" : prop; 
 
-        // Put in ugly override. Wasn't really a better place for this one change.
+        // Put in ugly override. Wasn't really a better place for one change.
         let title;
         if(prop == "ctl-iscsi" || prop == "ctl-tpc"){
           title = "SCSI Target Port (" + prop.replace("ctl-", "") + ")";
@@ -369,7 +251,7 @@ export class LineChartService {
         
         configData.push({
           title: title,
-          type: LineChartService.lineChart,
+          type: "line",
           legends: propObjArray,
           dataList: dataListItemArray,
           divideBy: divideBy
@@ -384,14 +266,14 @@ export class LineChartService {
   /**
    * Certain ones I can hard code.. And interject them into the dynamic ones.
    */
-  private getKnownChartConfigData(): ChartConfigData[] {
+  const getKnownChartConfigData = () => {
 
 
-    const chartConfigData: ChartConfigData[] = [
+    const chartConfigData = [
       {
         title: "CPU",
         legends: ['User', 'Interrupt', 'System', 'Idle', 'Nice'],
-        type: LineChartService.lineChart,
+        type: "line",
         dataList: [
           {'source': 'aggregation-cpu-sum', 'type': 'cpu-user', 'dataset': 'value'},
           {'source': 'aggregation-cpu-sum', 'type': 'cpu-interrupt', 'dataset': 'value'},
@@ -401,7 +283,7 @@ export class LineChartService {
         ],
       }, {
         title: "Load",
-        type: LineChartService.lineChart,
+        type: "line",
         legends: ['Short Term', ' Mid Term', 'Long Term'],
         dataList: [
           {'source': 'load', 'type': 'load', 'dataset': 'shortterm'},
@@ -410,7 +292,7 @@ export class LineChartService {
         ],
       }, {
         title: "ZFS Arc Size",
-        type: LineChartService.lineChart,
+        type: "line",
         legends: ['Arc Size','L2Arc'],
         dataList: [
           {source: 'zfs_arc', type: 'cache_size-arc', dataset: 'value'},
@@ -418,7 +300,7 @@ export class LineChartService {
         ],
       }, {
         title: "ZFS Arc Hit Ratio",
-        type: LineChartService.lineChart,
+        type: "line",
         legends: ['Arc', 'L2'],
         dataList: [
           {source: 'zfs_arc', type: 'cache_ratio-arc', dataset: 'value'},
@@ -426,7 +308,7 @@ export class LineChartService {
         ],
       }, {
         title: "ZFS Demand Data",
-        type: LineChartService.lineChart,
+        type: "line",
         legends: ['Hits', 'Miss',],
         dataList: [
           {source: 'zfs_arc', type: 'cache_result-demand_data-hit', dataset: 'value'},
@@ -434,7 +316,7 @@ export class LineChartService {
         ],
       }, {
         title: "ZFS Demand Metadata",
-        type: LineChartService.lineChart,
+        type: "line",
         legends: ['Hits', 'Miss',],
         dataList: [
           {source: 'zfs_arc', type: 'cache_result-demand_metadata-hit', dataset: 'value'},
@@ -442,7 +324,7 @@ export class LineChartService {
         ],
       }, {
         title: "ZFS Prefetch Data",
-        type: LineChartService.lineChart,
+        type: "line",
         legends: ['Hits', 'Miss',],
         dataList: [
           {source: 'zfs_arc', type: 'cache_result-prefetch_data-hit', dataset: 'value'},
@@ -450,7 +332,7 @@ export class LineChartService {
         ],
       }, {
         title: "ZFS Prefetch Metadata",
-        type: LineChartService.lineChart,
+        type: "line",
         legends: ['Hits', 'Miss',],
         dataList: [
           {source: 'zfs_arc', type: 'cache_result-prefetch_metadata-hit', dataset: 'value'},
@@ -464,4 +346,224 @@ export class LineChartService {
 
   }
 
+  /* ******************** TAKEN FROM LINECHART COMPONENT *********************** */
+
+
+  function convertTo (value, conversion, dataList/* <---- pass this in somehow!! */){
+    let result;
+    switch(conversion){
+    case 'bytesToGigabytes':
+      result = value / 1073741824;
+      break;
+    case 'percentFloatToInteger':
+      result = value * 100;
+      break;
+    case 'decikelvinsToCelsius':
+      if(value !== null ){
+        result = dataList[0].source.startsWith('cputemp-') ? (value / 10) - 273.15 : value;
+      } else {
+        result = null
+      }
+      break;
+    }
+
+    return result !== null ? result.toFixed(2) : result;
+  }
+
+  function getMin(arr){
+    return Math.min(...arr);
+  }
+
+  function getMax(arr){
+    return Math.max(...arr);
+  }
+
+  function getAvg(arr){
+    return 1;
+  }
+
+  function getLast(arr){
+    return 1;
+  }
+
+
+  // Analytics
+  function analyze(columns){
+    let allColumns = [];
+    let cols = Object.assign([], columns);
+    // Remove X axis
+    cols.shift(columns[0]);
+
+    for(let i = 0; i < cols.length; i++){
+      // Middleware provides data as strings
+      // so we store the label (first item) 
+      // and convert the rest to numbers
+      let colStrings = cols[i];
+      let label = colStrings[0];
+      let col = colStrings.map(x => Number(x));
+      col.shift(col[0]);
+      
+      let total = col.length > 0 ? col.reduce((accumulator, currentValue) => Number(accumulator) + Number(currentValue)) : "N/A";
+      let avg = total !== "N/A" ? Number((total / col.length).toFixed(2)) : total;
+      let myResult= {
+        label:label,
+        min: total !== "N/A" ? getMin(col) : total ,
+        max: total !== "N/A" ? getMax(col) : total,
+        avg: avg,
+        last: total !== "N/A" ? Number(col[col.length - 1].toFixed(2)) : total,
+        total: total !== "N/A" ? Number(total.toFixed(2)) : total
+      }
+      allColumns.push(myResult);
+    }
+    return allColumns;
+  }
+
+  function handleDataFunc(linechartData, dataList, legends){
+    data = {
+      labels: [],
+      series: []
+    }
+    
+    data.labels.splice(0, data.labels.length);
+    data.series.splice(0, data.series.length);
+
+    linechartData.labels.forEach((label) => {data.labels.push(new Date(label))});
+    linechartData.series.forEach((dataSeriesArray) => {
+    
+    const newArray = [];
+    if(!linechartData.meta)console.log(linechartData);
+    if (linechartData.meta.conversion == 'decikelvinsToCelsius') {
+        dataSeriesArray.forEach((numberVal) => {
+            newArray.push(convertTo(numberVal, linechartData.meta.conversion, dataList));
+        });
+        
+        dataSeriesArray = newArray;
+    } else if (typeof (divideBy) !== 'undefined' || linechartData.meta.conversion) {
+        dataSeriesArray.forEach((numberVal) => {
+          if(linechartData.meta.conversion){
+            newArray.push(convertTo(numberVal, linechartData.meta.conversion, dataList));
+          } else if (numberVal > 0) {
+            newArray.push((numberVal / divideBy).toFixed(2));
+          } else {
+            newArray.push(numberVal);
+          }
+        });
+        
+        dataSeriesArray = newArray;
+      } else { 
+        dataSeriesArray.forEach((numberVal) => {
+          if(numberVal > 0){
+            newArray.push(numberVal.toFixed(2));
+          } else {
+            newArray.push(numberVal);
+          }
+        });
+        dataSeriesArray = newArray;
+      }
+  
+      data.series.push(dataSeriesArray);
+    });
+
+    const columns = [];
+    let legendLabels = [];
+
+    // xColumn
+    const xValues = [];
+    xValues.push('xValues');
+    data.labels.forEach((label) => {
+      xValues.push(label);
+    });
+
+    columns.push(xValues);
+
+    // For C3.. Put the name of the series as the first element of each series array
+    for (let i = 0; i < legends.length && data.series.length; ++i) {
+      let legend;
+      if(linechartData.meta.removePrefix){
+        legend  = legends[i].replace(linechartData.meta.removePrefix, "");
+      } else {
+        legend  = legends[i];
+      }
+
+      legendLabels.push(legend);
+
+      let series = data.series[i];
+      if( typeof(series) !== 'undefined' && series.length > 0 ) {
+        series.unshift(legend);
+      } else {
+        series = [legend];
+      }
+      columns.push(series);
+    }
+
+
+    let legendAnalytics = analyze(columns);
+    return {columns: columns, linechartData:linechartData, legendLabels: legendLabels, legendAnalytics: legendAnalytics, dataObj: data}
+  }
+  
+
+  /********************* HANDLERS ******************************/
+
+  const sourcesHandler = (res) => {
+      cacheConfigData = chartConfigDataFromWsReponse(res);
+      const knownCharts = getKnownChartConfigData();
+      knownCharts.forEach((item) => {cacheConfigData.push(item);});
+
+      //handleChartConfigDataFunc.handleChartConfigDataFunc(cacheConfigData);
+      self.postMessage({name:"CacheConfigData", data : cacheConfigData});
+  }
+
+  const statsHandler = (data) => {
+    // dataHandlerInterface, dataList, rrdOptions?
+
+    let res = data.res;
+    let dataList = data.dataList;
+
+    
+      let meta = generateMetaData(res);
+      let linechartData = {
+        labels: [], //new Array(),
+        series: [], //new Array(),
+        meta: meta
+      }
+
+      dataList.forEach(() => {linechartData.series.push([]);})
+      res.data.forEach((item, i) => {
+        linechartData.labels.push(
+          new Date(res.meta.start * 1000 + i * res.meta.step * 1000));
+        for (const x in dataList) {
+          linechartData.series[x].push(item[x]);
+        }
+      });
+
+      let handledData = handleDataFunc(linechartData, dataList, data.legends);
+      self.postMessage({name:"LineChartData:" + data.title, data : handledData});
+  }
+  
+
+// ***************************************************** FROM SERVICE FILE (END) ***************************************************
+
+
+// Web Worker Library
+var trace = (data) => {
+  self.postMessage({name:"TEST FROM THREAD CALLBACK", data: data});
 }
+
+self.onmessage = (e) => {
+  let evt= e.data;
+  if(debug){
+    console.warn("Thread received message: " + evt.name);
+    console.warn(evt);
+    trace(evt);
+  }
+
+  switch(evt.name){
+    case "ReportsHandleSources":
+      sourcesHandler(evt.data);
+      break;
+    case "ReportsHandleStats":
+      statsHandler(evt.data);
+      break;
+  }
+}
+
