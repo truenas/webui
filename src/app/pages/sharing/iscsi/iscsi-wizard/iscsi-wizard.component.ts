@@ -565,16 +565,16 @@ export class IscsiWizardComponent {
                     (<FormControl>control).valueChanges.subscribe(((value) => {
                         if (value == undefined) {
                             this.summaryObj[name] = null;
-                        }
-                        this.summaryObj[name] = value;
-                        // get label value
-                        if (name == 'device' || name == 'usefor' || name == 'portal') {
-                            const field = _.find(this.wizardConfig[step].fieldConfig, { name: name });
-                            if (field) {
-                                this.summaryObj[name] = _.find(field.options, { value: value }).label;
+                        } else {
+                            this.summaryObj[name] = value;
+                            // get label value
+                            if (name == 'disk' || name == 'usefor' || name == 'portal') {
+                                const field = _.find(this.wizardConfig[step].fieldConfig, { name: name });
+                                if (field) {
+                                    this.summaryObj[name] = _.find(field.options, { value: value }).label;
+                                }
                             }
                         }
-
                         this.summary = this.getSummary();
                     }));
                 }
@@ -613,10 +613,10 @@ export class IscsiWizardComponent {
             delete summary['Extent']['New Device'];
         } else {
             delete summary['Extent']['File'];
-            this.summaryObj.disk === 'NEW' ? delete summary['Extent']['Device'] : delete summary['Extent']['New Device'];
+            this.summaryObj.disk === 'Create New' ? delete summary['Extent']['Device'] : delete summary['Extent']['New Device'];
         }
 
-        this.summaryObj.portal === 'NEW' ? delete summary['Portal'] : delete summary['New Portal'];
+        this.summaryObj.portal === 'Create New' ? delete summary['Portal'] : delete summary['New Portal'];
         this.summaryObj.auth === 'NEW' ? delete summary['Authorized Access'] : delete summary['New Authorized Access'];
 
         if (!this.summaryObj.initiators && !this.summaryObj.auth_network && !this.summaryObj.comment) {
@@ -628,7 +628,8 @@ export class IscsiWizardComponent {
         } else if (!this.summaryObj.comment) {
             delete summary['Initiator']['Comment'];
         }
-
+        console.log(summary);
+        
         return summary;
     }
 
@@ -704,6 +705,9 @@ export class IscsiWizardComponent {
         if (value['disk'] === 'NEW') {
             this.addZvol(value);
         }
+        if (value['portal'] === 'NEW') {
+            this.addPortal(value);
+        }
     }
 
     addZvol(value) {
@@ -717,6 +721,28 @@ export class IscsiWizardComponent {
             (res) => {
             },
             (err) => {    
+            }
+        )
+    }
+
+    addPortal(value) {
+        console.log(value);
+        const portalPayload = {
+            comment: value['name'],
+            discovery_authgroup: value['discovery_authgroup'],
+            discovery_authmethod: value['discovery_authmethod'],
+            listen: [{
+                ip: value['ip'],
+                port: value['port'],
+            }]
+        }
+        if (portalPayload['discovery_authgroup'] === '') {
+            delete portalPayload['discovery_authgroup'];
+        }
+        this.ws.call('iscsi.portal.create', [portalPayload]).subscribe(
+            (res) => {
+            },
+            (err) => {
             }
         )
     }
