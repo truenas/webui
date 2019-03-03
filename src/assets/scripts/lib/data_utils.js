@@ -18,7 +18,7 @@ var debug = false;
       {source :'aggregation-cpu-sum', units:'%', labelY:'% CPU'},
       {source :'temperature', units:'°C', labelY:'Celsius', conversion:'decikelvinsToCelsius'},
       {source :'memory', units:'GiB', labelY:'Gigabytes', removePrefix:'memory-', conversion: 'bytesToGigabytes'},
-      {source :'swap', units:'GiB', labelY:'Gigabytes', removePrefix:'swap-'},
+      {source :'swap', units:'GiB', labelY:'Gigabytes', removePrefix:'swap-', conversion: 'bytesToGigabytes'},
       {source :'if_errors', units:'', labelY:'Bits/s'},
       {source :'if_octets', units:'', labelY:'Bits/s'},
       {source :'if_packets', units:'', labelY:'Bits/s'},
