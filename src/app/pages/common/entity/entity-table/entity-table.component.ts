@@ -239,6 +239,8 @@ export class EntityTableComponent /*extends ViewControllerComponent*/ implements
       n = 6;
     } else if (this.title === 'Jails') {
       n = 4;
+    } else if (this.title === 'Virtual Machines') {
+      n = 7;
     } else if (this.title === 'Available Plugins' || this.title === 'Installed Plugins') {
       n = 3;
     } else {
