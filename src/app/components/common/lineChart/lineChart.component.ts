@@ -83,7 +83,6 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
   applyHandledData(columns, linechartData, legendLabels){
     this.columns = columns;
     this.linechartData = linechartData;
-
     this.legendLabels.next(legendLabels);
 
     this.render();
