@@ -247,7 +247,11 @@ export class EntityTableComponent /*extends ViewControllerComponent*/ implements
     window.onresize = () => {
       let x = window.innerHeight;
       let y = x - 830;
-      this.paginationPageSize = rowNum - n + Math.floor(y/50) + addRows ;
+      if (this.selected && this.selected.length > 0) {
+        this.paginationPageSize = rowNum - n + Math.floor(y/50) + addRows -3;
+      } else {
+        this.paginationPageSize = rowNum - n + Math.floor(y/50) + addRows;
+      }
 
       if (this.paginationPageSize < 2) {
         this.paginationPageSize = 2;
@@ -639,6 +643,7 @@ export class EntityTableComponent /*extends ViewControllerComponent*/ implements
   }
 
   onSelect({ selected }) {
+    this.setTableHeight();
     this.selected.splice(0, this.selected.length);
     this.selected.push(...selected);
 
