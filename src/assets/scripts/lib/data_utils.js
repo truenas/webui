@@ -19,9 +19,9 @@ var debug = false;
       {source :'temperature', units:'°C', labelY:'Celsius', conversion:'decikelvinsToCelsius', analytics: {min: true, max: true, avg:true, total: true}},
       {source :'memory', units:'GiB', labelY:'Gigabytes', removePrefix:'memory-', conversion: 'bytesToGigabytes', analytics: {min: true, max: true, avg:true, total: false}},
       {source :'swap', units:'GiB', labelY:'Gigabytes', removePrefix:'swap-', conversion: 'bytesToGigabytes', analytics: {min: true, max: true, avg:true, total: true}},
-      {source :'if_errors', units:'', labelY:'Bits/s', analytics: {min: true, max: true, avg:true, total: true}},
-      {source :'if_octets', units:'', labelY:'Bits/s', analytics: {min: true, max: true, avg:true, total: true}},
-      {source :'if_packets', units:'', labelY:'Bits/s', analytics: {min: true, max: true, avg:true, total: true}},
+      {source :'if_errors', units:'', labelY:'Megabyte/s', conversion: 'bytesToMegabytes', analytics: {min: true, max: true, avg:true, total: true}},
+      {source :'if_octets', units:'', labelY:'Megabytes/s', conversion: 'bytesToMegabytes', analytics: {min: true, max: true, avg:true, total: true}},
+      {source :'if_packets', units:'', labelY:'Megabytes/s', conversion: 'bytesToMegabytes', analytics: {min: true, max: true, avg:true, total: true}},
       {source :'df-mnt-', units:'GiB', labelY: 'Gigabytes', removePrefix:'df_complex-', analytics: {min: true, max: true, avg:true, total: true}},
       {source :'ctl-tpc', units:'GiB', labelY: 'Gigabytes/s', removePrefix:'disk_', conversion: 'bytesToGigabytes', analytics: {min: true, max: true, avg:true, total: true}},
       {source :'ctl-iscsi', units:'GiB', labelY: 'Gigabytes/s', removePrefix:'disk_', conversion: 'bytesToGigabytes', analytics: {min: true, max: true, avg:true, total: true}},
@@ -354,6 +354,9 @@ var debug = false;
     switch(conversion){
     case 'bytesToGigabytes':
       result = value / 1073741824;
+      break;
+    case 'bytesToMegabytes':
+      result = value / 1024 / 1024;
       break;
     case 'percentFloatToInteger':
       result = value * 100;
