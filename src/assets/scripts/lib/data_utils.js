@@ -15,29 +15,29 @@ var debug = false;
     const dataName = spl[1];
 
     let dictionary = [
-      {source :'aggregation-cpu-sum', units:'%', labelY:'% CPU'},
-      {source :'temperature', units:'°C', labelY:'Celsius', conversion:'decikelvinsToCelsius'},
-      {source :'memory', units:'GiB', labelY:'Gigabytes', removePrefix:'memory-', conversion: 'bytesToGigabytes'},
-      {source :'swap', units:'GiB', labelY:'Gigabytes', removePrefix:'swap-', conversion: 'bytesToGigabytes'},
-      {source :'if_errors', units:'', labelY:'Bits/s'},
-      {source :'if_octets', units:'', labelY:'Bits/s'},
-      {source :'if_packets', units:'', labelY:'Bits/s'},
-      {source :'df-mnt-', units:'GiB', labelY: 'Gigabytes', removePrefix:'df_complex-'},
-      {source :'ctl-tpc', units:'GiB', labelY: 'Gigabytes/s', removePrefix:'disk_', conversion: 'bytesToGigabytes'},
-      {source :'ctl-iscsi', units:'GiB', labelY: 'Gigabytes/s', removePrefix:'disk_', conversion: 'bytesToGigabytes'},
-      {source :'disk_time', units:'k', labelY: 'Bytes/s'},
-      {source :'disk_octets', units:'k', labelY: 'Bytes/s'},
-      {source :'disk_io_time', units:'k', labelY: 'Bytes/s'},
-      {source :'disk_ops', units:'', labelY: 'Operations/s'},
-      {source :'disktemp-', units:'°', labelY: 'Celsius'},
-      {source :'cache_size-arc', units:'GiB', labelY: 'Gigabytes', dataUnits: 'bytes', conversion:'bytesToGigabytes'},
-      {source :'cache_ratio-arc', units:'%', labelY: 'Hits', dataUnits:'percentage', conversion:'percentFloatToInteger'},
-      {source :'processes', units:'', labelY: 'Processes', removePrefix:'ps_state-'},
-      {source :'cache_result-demand_data-hit', units:'', labelY: 'Requests'},
-      {source :'cache_result-demand_metadata-hit', units:'k', labelY: 'Requests'},
-      {source :'cache_result-prefetch_data-hit', units:'', labelY: 'Requests'},
-      {source :'cache_result-prefetch_metadata-hit', units:'m', labelY: 'Requests'},
-      {source :'load', units:'m', labelY:'CPU Time'}// Keep last to avoid false positives like 'download'
+      {source :'aggregation-cpu-sum', units:'%', labelY:'% CPU', analytics: {min: true, max: true, avg:true, total: true}},
+      {source :'temperature', units:'°C', labelY:'Celsius', conversion:'decikelvinsToCelsius', analytics: {min: true, max: true, avg:true, total: true}},
+      {source :'memory', units:'GiB', labelY:'Gigabytes', removePrefix:'memory-', conversion: 'bytesToGigabytes', analytics: {min: true, max: true, avg:true, total: false}},
+      {source :'swap', units:'GiB', labelY:'Gigabytes', removePrefix:'swap-', conversion: 'bytesToGigabytes', analytics: {min: true, max: true, avg:true, total: true}},
+      {source :'if_errors', units:'', labelY:'Bits/s', analytics: {min: true, max: true, avg:true, total: true}},
+      {source :'if_octets', units:'', labelY:'Bits/s', analytics: {min: true, max: true, avg:true, total: true}},
+      {source :'if_packets', units:'', labelY:'Bits/s', analytics: {min: true, max: true, avg:true, total: true}},
+      {source :'df-mnt-', units:'GiB', labelY: 'Gigabytes', removePrefix:'df_complex-', analytics: {min: true, max: true, avg:true, total: true}},
+      {source :'ctl-tpc', units:'GiB', labelY: 'Gigabytes/s', removePrefix:'disk_', conversion: 'bytesToGigabytes', analytics: {min: true, max: true, avg:true, total: true}},
+      {source :'ctl-iscsi', units:'GiB', labelY: 'Gigabytes/s', removePrefix:'disk_', conversion: 'bytesToGigabytes', analytics: {min: true, max: true, avg:true, total: true}},
+      {source :'disk_time', units:'k', labelY: 'Bytes/s', analytics: {min: true, max: true, avg:true, total: true}},
+      {source :'disk_octets', units:'k', labelY: 'Bytes/s', analytics: {min: true, max: true, avg:true, total: true}},
+      {source :'disk_io_time', units:'k', labelY: 'Bytes/s', analytics: {min: true, max: true, avg:true, total: true}},
+      {source :'disk_ops', units:'', labelY: 'Operations/s', analytics: {min: true, max: true, avg:true, total: true}},
+      {source :'disktemp-', units:'°', labelY: 'Celsius', analytics: {min: true, max: true, avg:true, total: true}},
+      {source :'cache_size-arc', units:'GiB', labelY: 'Gigabytes', dataUnits: 'bytes', conversion:'bytesToGigabytes', analytics: {min: true, max: true, avg:true, total: true}},
+      {source :'cache_ratio-arc', units:'%', labelY: 'Hits', dataUnits:'percentage', conversion:'percentFloatToInteger', analytics: {min: true, max: true, avg:true, total: true}},
+      {source :'processes', units:'', labelY: 'Processes', removePrefix:'ps_state-', analytics: {min: true, max: true, avg:true, total: true}},
+      {source :'cache_result-demand_data-hit', units:'', labelY: 'Requests', analytics: {min: true, max: true, avg:true, total: true}},
+      {source :'cache_result-demand_metadata-hit', units:'k', labelY: 'Requests', analytics: {min: true, max: true, avg:true, total: true}},
+      {source :'cache_result-prefetch_data-hit', units:'', labelY: 'Requests', analytics: {min: true, max: true, avg:true, total: true}},
+      {source :'cache_result-prefetch_metadata-hit', units:'m', labelY: 'Requests', analytics: {min: true, max: true, avg:true, total: true}},
+      {source :'load', units:'m', labelY:'CPU Time', analytics: {min: true, max: true, avg:true, total: true}}// Keep last to avoid false positives like 'download'
     ]
 
     const result = dictionary.find(item => prefix.includes(item.source) || item.source == dataName); 
@@ -388,7 +388,7 @@ var debug = false;
 
 
   // Analytics
-  function analyze(columns){
+  function analyze(columns, analytics){
     let allColumns = [];
     let cols = Object.assign([], columns);
     // Remove X axis
@@ -411,8 +411,12 @@ var debug = false;
         max: total !== "N/A" ? getMax(col) : total,
         avg: avg,
         last: total !== "N/A" ? Number(col[col.length - 1].toFixed(2)) : total,
-        total: total !== "N/A" ? Number(total.toFixed(2)) : total
       }
+
+      if(analytics.total){
+        myResult.total = total !== "N/A" ? Number(total.toFixed(2)) : total
+      }
+
       allColumns.push(myResult);
     }
     return allColumns;
@@ -497,7 +501,7 @@ var debug = false;
     }
 
 
-    let legendAnalytics = analyze(columns);
+    let legendAnalytics = analyze(columns, linechartData.meta.analytics);
     return {columns: columns, linechartData:linechartData, legendLabels: legendLabels, legendAnalytics: legendAnalytics, dataObj: data}
   }
   

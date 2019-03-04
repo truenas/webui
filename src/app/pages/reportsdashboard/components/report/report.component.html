@@ -88,7 +88,7 @@
                     <span fxFlex="105px"><strong>Min:</strong>  {{analytics[i].min}}<span *ngIf="analytics[i].min !== 'N/A'">{{lineChart.units}}</span></span>
                       <span fxFlex="105px"><strong>Max:</strong>  {{analytics[i].max}}<span *ngIf="analytics[i].max !== 'N/A'">{{lineChart.units}}</span></span>
                         <span fxFlex="105px"><strong>Avg:</strong>  {{analytics[i].avg}}<span *ngIf="analytics[i].avg !== 'N/A'">{{lineChart.units}}</span></span>
-                          <span fxFlex=""><strong>Total:</strong>  {{analytics[i].total}}<span *ngIf="analytics[i].total !== 'N/A'">{{lineChart.units}}</span></span>
+                          <span *ngIf="analytics[i].total" fxFlex=""><strong>Total:</strong>  {{analytics[i].total}}<span *ngIf="analytics[i].total !== 'N/A'">{{lineChart.units}}</span></span>
                   </div>
 
               </div>
