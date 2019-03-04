@@ -699,18 +699,52 @@ export class IscsiWizardComponent {
         )
     }
 
-    customSubmit(value) {
+    async customSubmit(value) {
         console.log(value);
         // create new zvol
         if (value['disk'] === 'NEW') {
-            this.addZvol(value);
+            await this.addZvol(value).then(
+                (res)=>{
+                    console.log(res);
+                    value['disk'] = res.id;
+                },
+                (err) => {
+                    console.log(err);
+                }
+            );
+            console.log('create zvol');
         }
         if (value['portal'] === 'NEW') {
-            this.addPortal(value);
+            await this.addPortal(value).then(
+                (res) => {
+                    console.log(res);
+                    value['portal'] = res.id;
+                },
+                (err) => {
+                    console.log(err);
+                }
+            );
+            console.log('portal');
         }
         if (value['auth'] === 'NEW') {
-            this.addAuth(value);
+            await this.addAuth(value).then(
+                (res) => {
+                    console.log(res);
+                    value['auth'] = res.id;
+                },
+                (err) => {
+                    console.log(err);
+                }
+            );
+            console.log('auth');
         }
+        // add extent
+
+        // add initiator
+
+        // add target
+
+        // add associate target
     }
 
     addZvol(value) {
@@ -720,12 +754,7 @@ export class IscsiWizardComponent {
             volblocksize: value['volblocksize'],
             volsize: this.cloudcredentialService.getByte(value['volsize'] + value['volsize_unit']),
         };
-        this.ws.call('pool.dataset.create', [zvolPayload]).subscribe(
-            (res) => {
-            },
-            (err) => {    
-            }
-        )
+        return this.ws.call('pool.dataset.create', [zvolPayload]).toPromise();
     }
 
     addPortal(value) {
@@ -741,12 +770,7 @@ export class IscsiWizardComponent {
         if (portalPayload['discovery_authgroup'] === '') {
             delete portalPayload['discovery_authgroup'];
         }
-        this.ws.call('iscsi.portal.create', [portalPayload]).subscribe(
-            (res) => {
-            },
-            (err) => {
-            }
-        )
+        return this.ws.call('iscsi.portal.create', [portalPayload]).toPromise();
     }
 
     addAuth(value) {
@@ -756,11 +780,6 @@ export class IscsiWizardComponent {
             secret: value['secret'],
         }
 
-        this.ws.call('iscsi.auth.create', [authPayload]).subscribe(
-            (res) => {
-            },
-            (err) => {
-            }
-        )
+        return this.ws.call('iscsi.auth.create', [authPayload]).toPromise();
     }
 }
