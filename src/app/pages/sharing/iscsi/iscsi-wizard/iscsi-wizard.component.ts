@@ -700,50 +700,60 @@ export class IscsiWizardComponent {
     }
 
     async customSubmit(value) {
-        console.log(value);
+        let extent;
         // create new zvol
         if (value['disk'] === 'NEW') {
             await this.addZvol(value).then(
                 (res)=>{
-                    console.log(res);
                     value['disk'] = res.id;
                 },
                 (err) => {
                     console.log(err);
                 }
             );
-            console.log('create zvol');
         }
+        // add extent
+        await this.addExtent(value).then(
+            (res) => {
+                extent = res.id;
+            },
+            (err) => {
+                console.log(err);
+            }
+        );
+
         if (value['portal'] === 'NEW') {
             await this.addPortal(value).then(
                 (res) => {
-                    console.log(res);
                     value['portal'] = res.id;
                 },
                 (err) => {
                     console.log(err);
                 }
             );
-            console.log('portal');
         }
         if (value['auth'] === 'NEW') {
             await this.addAuth(value).then(
                 (res) => {
-                    console.log(res);
                     value['auth'] = res.id;
                 },
                 (err) => {
                     console.log(err);
                 }
             );
-            console.log('auth');
         }
-        // add extent
 
         // add initiator
 
         // add target
-
+        await this.addTarget(value).then(
+            (res) => {
+                console.log(res);
+            },
+            (err) => {
+                console.log(err);
+            }
+        )
         // add associate target
     }
 
@@ -781,5 +791,37 @@ export class IscsiWizardComponent {
         }
 
         return this.ws.call('iscsi.auth.create', [authPayload]).toPromise();
+    }
+
+    addExtent(value) {
+        let extentPayload = {
+            name: value['name'],
+            type: value['type'],
+        }
+        if (extentPayload.type === 'FILE') {
+            this.fileFieldGroup.forEach((item) => {
+                extentPayload[item] = value[item];
+            });
+        } else if (extentPayload.type === 'DISK') {
+            extentPayload['disk'] = value['disk'];
+        }
+        extentPayload = Object.assign(extentPayload, _.find(this.defaultUseforSettings, {key: value['usefor']}).values);
+
+        return this.ws.call('iscsi.extent.create', [extentPayload]).toPromise();
+    }
+
+    addTarget(value) {
+        const targetPayload = {
+            name: value['name'],
+            groups: [
+                {
+                    portal: value['portal'],
+                    initiator: value['initiator'] ? value['initiator'] : null,
+                    authmethod: 'NONE', //default value for now
+                    auth: null, //default value for now
+                }
+            ]
+        }
+        return this.ws.call('iscsi.target.create', [targetPayload]).toPromise();
     }
 }
