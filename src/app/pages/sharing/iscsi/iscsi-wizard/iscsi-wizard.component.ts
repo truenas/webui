@@ -700,7 +700,7 @@ export class IscsiWizardComponent {
     }
 
     async customSubmit(value) {
-        let extent;
+
         // create new zvol
         if (value['disk'] === 'NEW') {
             await this.addZvol(value).then(
@@ -715,7 +715,7 @@ export class IscsiWizardComponent {
         // add extent
         await this.addExtent(value).then(
             (res) => {
-                extent = res.id;
+                value['extent'] = res.id;
             },
             (err) => {
                 console.log(err);
@@ -744,9 +744,26 @@ export class IscsiWizardComponent {
         }
 
         // add initiator
+        await this.addInitiator(value).then(
+            (res) => {
+                value['initiator'] = res.id;
+            },
+            (err) => {
+                console.log(err);
+            }
+        )
 
         // add target
         await this.addTarget(value).then(
+            (res) => {
+                value['target'] = res.id;
+            },
+            (err) => {
+                console.log(err);
+            }
+        )
+        // add associate target
+        await this.addAssociateTarget(value).then(
             (res) => {
                 console.log(res);
             },
@@ -754,7 +771,6 @@ export class IscsiWizardComponent {
                 console.log(err);
             }
         )
-        // add associate target
     }
 
     addZvol(value) {
@@ -810,6 +826,15 @@ export class IscsiWizardComponent {
         return this.ws.call('iscsi.extent.create', [extentPayload]).toPromise();
     }
 
+    addInitiator(value) {
+        const initiatorPayload = {
+            initiators: value['initiators'].split(' '),
+            auth_network: value['auth_network'].split(' '),
+            comment: value['name'],
+        }
+        return this.ws.call('iscsi.initiator.create', [initiatorPayload]).toPromise();
+    }
+
     addTarget(value) {
         const targetPayload = {
             name: value['name'],
@@ -823,5 +848,13 @@ export class IscsiWizardComponent {
             ]
         }
         return this.ws.call('iscsi.target.create', [targetPayload]).toPromise();
+    }
+
+    addAssociateTarget(value) {
+        const associateTargetPayload = {
+            target: value['target'],
+            extent: value['extent'],
+        }
+        return this.ws.call('iscsi.targetextent.create', [associateTargetPayload]).toPromise();
     }
 }
