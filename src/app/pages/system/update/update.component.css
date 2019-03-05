@@ -23,7 +23,7 @@
 
 #upgrades-card-scrollbox {
     height:170px;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 #changelog-card {
