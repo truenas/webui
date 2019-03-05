@@ -39,7 +39,7 @@
 
 #changelog-scrollbox {
     height:140px;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 #stable-warning-card {
