@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
 import { Validators, FormControl } from '@angular/forms';
+import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
 import helptext from '../../../../helptext/sharing/iscsi/iscsi-wizard';
@@ -484,7 +485,8 @@ export class IscsiWizardComponent {
         private ws: WebSocketService,
         private cloudcredentialService: CloudCredentialService,
         private dialogService: DialogService,
-        private loader: AppLoaderService) {
+        private loader: AppLoaderService,
+        private router: Router) {
 
     }
 
@@ -766,7 +768,7 @@ export class IscsiWizardComponent {
 
         this.loader.close();
         if (!toStop) {
-
+            this.router.navigate(new Array('/').concat(this.route_success));
         }
     }
 
