@@ -370,13 +370,7 @@ export class IscsiWizardComponent {
                     tooltip: helptext.auth_network_tooltip,
                     value: '',
                     inputType: 'textarea',
-                },
-                {
-                    type: 'input',
-                    name: 'comment',
-                    placeholder: helptext.comment_placeholder,
-                    tooltip: helptext.comment_tooltip,
-                },
+                }
             ]
         }
     ]

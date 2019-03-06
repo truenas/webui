@@ -69,7 +69,4 @@ export default {
 
     auth_network_placeholder: T("Authorized Networks"),
     auth_network_tooltip: T(""),
-
-    comment_placeholder: T("Comment"),
-    comment_tooltip: T(""),
 }
