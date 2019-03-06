@@ -529,6 +529,8 @@ export class IscsiWizardComponent {
     }
 
     step1Init() {
+        const authGroupField = _.find(this.wizardConfig[1].fieldConfig, { 'name': 'discovery_authgroup' });
+
         this.iscsiService.listPortals().subscribe((res) => {
             const field = _.find(this.wizardConfig[1].fieldConfig, { 'name': 'portal' });
             for (const i in res) {
@@ -541,9 +543,8 @@ export class IscsiWizardComponent {
         });
 
         this.iscsiService.getAuth().subscribe((res) => {
-            const field = _.find(this.wizardConfig[1].fieldConfig, { 'name': 'discovery_authgroup' });
             for (let i = 0; i < res.length; i++) {
-                field.options.push({ label: res[i].id, value: res[i].id });
+                authGroupField.options.push({ label: res[i].id, value: res[i].id });
             }
         });
 
@@ -572,6 +573,14 @@ export class IscsiWizardComponent {
         this.entityWizard.formArray.controls[1].controls['discovery_authmethod'].valueChanges.subscribe((value) => {
             this.disableAuth = ((value === 'CHAP' || value === 'CHAP_MUTUAL') && !this.disablePortalGroup) ? false : true;
             this.disablefieldGroup(['auth'], this.disableAuth, 1);
+
+            authGroupField.required = !this.disableAuth;
+            if (this.disableAuth) {
+                this.entityWizard.formArray.controls[1].controls['discovery_authgroup'].clearValidators();
+            } else {
+                this.entityWizard.formArray.controls[1].controls['discovery_authgroup'].setValidators([Validators.required]);
+            }
+            this.entityWizard.formArray.controls[1].controls['discovery_authgroup'].updateValueAndValidity();
         });
 
         this.entityWizard.formArray.controls[1].controls['auth'].valueChanges.subscribe((value) => {
