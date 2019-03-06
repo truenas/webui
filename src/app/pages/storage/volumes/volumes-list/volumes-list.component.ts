@@ -771,7 +771,6 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     this.ws.call('pool.dataset.query', []).subscribe((datasetData) => {
       this.rest.get("storage/volume", {}).subscribe((res) => {
         res.data.forEach((volume: ZfsPoolData) => {
-          console.log(volume)
           volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, datasetData, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar);
           volume.type = 'zpool';
 
