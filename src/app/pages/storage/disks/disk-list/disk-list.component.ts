@@ -102,7 +102,7 @@ export class DiskListComponent {
 	protected unused: any;
 	protected disk_pool: Map<string, string> = new Map<string, string>();
 	constructor(protected ws: WebSocketService, protected router: Router,  public diskbucket: StorageService) {
-		this.ws.call('boot.get_disks', []).subscribe((boot_res)=>{
+		/*this.ws.call('boot.get_disks', []).subscribe((boot_res)=>{
 			for (let boot in boot_res) {
 				this.disk_pool.set(boot_res[boot], T('Boot Pool'));
 			}
@@ -123,6 +123,9 @@ export class DiskListComponent {
 					}
 				});
 			});
+		});*/
+		this.ws.call('disk.get_unused', []).subscribe((unused_res)=>{
+			this.unused = unused_res;
 		});
 	}
 
@@ -135,7 +138,7 @@ export class DiskListComponent {
         ]));
       }
     }];
-    this.unusedDisk_ready.subscribe((res)=>{
+    //this.unusedDisk_ready.subscribe((res)=>{
 			if (_.find(this.unused, {"name": parentRow.name})) {
 	    	actions.push({
 	    		label: T("Wipe"),
@@ -146,7 +149,7 @@ export class DiskListComponent {
 	        }
 	    	})
 	    }
-		});
+		//});
     return actions;
   }
 
