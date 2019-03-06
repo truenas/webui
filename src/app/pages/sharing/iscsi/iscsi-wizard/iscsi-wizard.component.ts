@@ -93,6 +93,7 @@ export class IscsiWizardComponent {
                     isHidden: false,
                     disabled: false,
                     required: true,
+                    value: 0,
                     validation: [Validators.required],
                 },
                 // device options
@@ -760,6 +761,12 @@ export class IscsiWizardComponent {
         }
     }
 
+    getRoundVolsize(value) {
+        const volsize = this.cloudcredentialService.getByte(value['volsize'] + value['volsize_unit']);
+        const volblocksize = this.cloudcredentialService.getByte(value['volblocksize']);
+        return volsize + (volblocksize - volsize % volblocksize);
+    }
+
     doCreate(value, item) {
         let payload;
         if (item === 'zvol') {
@@ -767,7 +774,7 @@ export class IscsiWizardComponent {
                 name: value['dataset'].substring(5) + '/' + value['name'],
                 type: 'VOLUME',
                 volblocksize: value['volblocksize'],
-                volsize: this.cloudcredentialService.getByte(value['volsize'] + value['volsize_unit']),
+                volsize: this.getRoundVolsize(value),
             };
         }
         if (item === 'portal') {
