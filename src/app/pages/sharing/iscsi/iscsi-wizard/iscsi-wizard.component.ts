@@ -4,9 +4,12 @@ import { Validators, FormControl } from '@angular/forms';
 import * as _ from 'lodash';
 
 import helptext from '../../../../helptext/sharing/iscsi/iscsi-wizard';
-import { IscsiService, RestService, WebSocketService } from '../../../../services/';
+import { IscsiService, WebSocketService } from '../../../../services/';
 import { matchOtherValidator } from "app/pages/common/entity/entity-form/validators/password-validation";
 import { CloudCredentialService } from '../../../../services/cloudcredential.service';
+import { EntityUtils } from '../../../common/entity/utils';
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { DialogService } from '../../../../services/';
 
 @Component({
     selector: 'app-iscsi-wizard',
@@ -462,7 +465,31 @@ export class IscsiWizardComponent {
     protected disableAuth = true;
     protected disableAuthGroup = true;
 
-    constructor(private iscsiService: IscsiService, private ws: WebSocketService, private cloudcredentialService: CloudCredentialService) {
+    protected deleteCalls = {
+        zvol: 'pool.dataset.delete',
+        extent: 'iscsi.extent.delete',
+        portal: 'iscsi.portal.delete',
+        auth: 'iscsi.auth.delete',
+        initiator: 'iscsi.initiator.delete',
+        target: 'iscsi.target.delete',
+        associateTarget: 'iscsi.targetextent.delete',
+    }
+
+    protected createCalls = {
+        zvol: 'pool.dataset.create',
+        extent: 'iscsi.extent.create',
+        portal: 'iscsi.portal.create',
+        auth: 'iscsi.auth.create',
+        initiator: 'iscsi.initiator.create',
+        target: 'iscsi.target.create',
+        associateTarget: 'iscsi.targetextent.create',
+    }
+
+    constructor(private iscsiService: IscsiService,
+        private ws: WebSocketService,
+        private cloudcredentialService: CloudCredentialService,
+        private dialogService: DialogService,
+        private loader: AppLoaderService) {
 
     }
 
@@ -628,8 +655,7 @@ export class IscsiWizardComponent {
         } else if (!this.summaryObj.comment) {
             delete summary['Initiator']['Comment'];
         }
-        console.log(summary);
-        
+
         return summary;
     }
 
@@ -700,161 +726,129 @@ export class IscsiWizardComponent {
     }
 
     async customSubmit(value) {
+        this.loader.open();
+        let toStop = false;
+        const createdItems = {
+            zvol: null,
+            extent: null,
+            portal: null,
+            auth: null,
+            initiator: null,
+            target: null,
+            associateTarget: null,
+        }
 
-        // create new zvol
-        if (value['disk'] === 'NEW') {
-            await this.addZvol(value).then(
-                (res)=>{
-                    value['disk'] = res.id;
-                },
-                (err) => {
-                    console.log(err);
+        for (const item in createdItems) {
+            if (!toStop) {
+                if (!((item === 'zvol' && value['disk'] !== 'NEW') || ((item === 'portal' || item === 'auth') && value[item] !== 'NEW'))) {
+                    await this.doCreate(value, item).then(
+                        (res) => {
+                            if (item === 'zvol') {
+                                value['disk'] = res.id;
+                            } else {
+                                value[item] = res.id;
+                            }
+                            createdItems[item] = res.id;
+                        },
+                        (err) => {
+                            new EntityUtils().handleWSError(this, err, this.dialogService);
+                            toStop = true;
+                            this.rollBack(createdItems);
+                        }
+                    )
                 }
-            );
-        }
-        // add extent
-        await this.addExtent(value).then(
-            (res) => {
-                value['extent'] = res.id;
-            },
-            (err) => {
-                console.log(err);
             }
-        );
-
-        if (value['portal'] === 'NEW') {
-            await this.addPortal(value).then(
-                (res) => {
-                    value['portal'] = res.id;
-                },
-                (err) => {
-                    console.log(err);
-                }
-            );
-        }
-        if (value['auth'] === 'NEW') {
-            await this.addAuth(value).then(
-                (res) => {
-                    value['auth'] = res.id;
-                },
-                (err) => {
-                    console.log(err);
-                }
-            );
         }
 
-        // add initiator
-        await this.addInitiator(value).then(
-            (res) => {
-                value['initiator'] = res.id;
-            },
-            (err) => {
-                console.log(err);
+        this.loader.close();
+        if (!toStop) {
+
+        }
+    }
+
+    doCreate(value, item) {
+        let payload;
+        if (item === 'zvol') {
+            payload = {
+                name: value['dataset'].substring(5) + '/' + value['name'],
+                type: 'VOLUME',
+                volblocksize: value['volblocksize'],
+                volsize: this.cloudcredentialService.getByte(value['volsize'] + value['volsize_unit']),
+            };
+        }
+        if (item === 'portal') {
+            payload = {
+                comment: value['name'],
+                discovery_authgroup: value['discovery_authgroup'],
+                discovery_authmethod: value['discovery_authmethod'],
+                listen: [{
+                    ip: value['ip'],
+                    port: value['port'],
+                }]
             }
-        )
-
-        // add target
-        await this.addTarget(value).then(
-            (res) => {
-                value['target'] = res.id;
-            },
-            (err) => {
-                console.log(err);
+            if (payload['discovery_authgroup'] === '') {
+                delete payload['discovery_authgroup'];
             }
-        )
-        // add associate target
-        await this.addAssociateTarget(value).then(
-            (res) => {
-                console.log(res);
-            },
-            (err) => {
-                console.log(err);
+        }
+        if (item === 'auth') {
+            payload = {
+                tag: value['tag'],
+                user: value['user'],
+                secret: value['secret'],
             }
-        )
+        }
+        if (item === 'extent') {
+            payload = {
+                name: value['name'],
+                type: value['type'],
+            }
+            if (payload.type === 'FILE') {
+                this.fileFieldGroup.forEach((field) => {
+                    payload[field] = value[field];
+                });
+            } else if (payload.type === 'DISK') {
+                payload['disk'] = value['disk'];
+            }
+            payload = Object.assign(payload, _.find(this.defaultUseforSettings, { key: value['usefor'] }).values);
+        }
+        if (item === 'initiator') {
+            payload = {
+                initiators: value['initiators'].split(' '),
+                auth_network: value['auth_network'].split(' '),
+                comment: value['name'],
+            }
+        }
+        if (item === 'target') {
+            payload = {
+                name: value['name'],
+                groups: [
+                    {
+                        portal: value['portal'],
+                        initiator: value['initiator'] ? value['initiator'] : null,
+                        authmethod: 'NONE', //default value for now
+                        auth: null, //default value for now
+                    }
+                ]
+            }
+        }
+        if (item === 'associateTarget') {
+            payload = {
+                target: value['target'],
+                extent: value['extent'],
+            }
+        }
+        return this.ws.call(this.createCalls[item], [payload]).toPromise();
     }
 
-    addZvol(value) {
-        const zvolPayload = {
-            name: value['dataset'].substring(5) + '/' + value['name'],
-            type: 'VOLUME',
-            volblocksize: value['volblocksize'],
-            volsize: this.cloudcredentialService.getByte(value['volsize'] + value['volsize_unit']),
-        };
-        return this.ws.call('pool.dataset.create', [zvolPayload]).toPromise();
-    }
-
-    addPortal(value) {
-        const portalPayload = {
-            comment: value['name'],
-            discovery_authgroup: value['discovery_authgroup'],
-            discovery_authmethod: value['discovery_authmethod'],
-            listen: [{
-                ip: value['ip'],
-                port: value['port'],
-            }]
+    rollBack(items) {
+        for (const item in items) {
+            if (items[item] != null) {
+                this.ws.call(this.deleteCalls[item], [items[item]]).subscribe(
+                    (res) => {
+                        console.log('rollback ' + item, res);
+                    }
+                );
+            }
         }
-        if (portalPayload['discovery_authgroup'] === '') {
-            delete portalPayload['discovery_authgroup'];
-        }
-        return this.ws.call('iscsi.portal.create', [portalPayload]).toPromise();
-    }
-
-    addAuth(value) {
-        const authPayload = {
-            tag: value['tag'],
-            user: value['user'],
-            secret: value['secret'],
-        }
-
-        return this.ws.call('iscsi.auth.create', [authPayload]).toPromise();
-    }
-
-    addExtent(value) {
-        let extentPayload = {
-            name: value['name'],
-            type: value['type'],
-        }
-        if (extentPayload.type === 'FILE') {
-            this.fileFieldGroup.forEach((item) => {
-                extentPayload[item] = value[item];
-            });
-        } else if (extentPayload.type === 'DISK') {
-            extentPayload['disk'] = value['disk'];
-        }
-        extentPayload = Object.assign(extentPayload, _.find(this.defaultUseforSettings, {key: value['usefor']}).values);
-
-        return this.ws.call('iscsi.extent.create', [extentPayload]).toPromise();
-    }
-
-    addInitiator(value) {
-        const initiatorPayload = {
-            initiators: value['initiators'].split(' '),
-            auth_network: value['auth_network'].split(' '),
-            comment: value['name'],
-        }
-        return this.ws.call('iscsi.initiator.create', [initiatorPayload]).toPromise();
-    }
-
-    addTarget(value) {
-        const targetPayload = {
-            name: value['name'],
-            groups: [
-                {
-                    portal: value['portal'],
-                    initiator: value['initiator'] ? value['initiator'] : null,
-                    authmethod: 'NONE', //default value for now
-                    auth: null, //default value for now
-                }
-            ]
-        }
-        return this.ws.call('iscsi.target.create', [targetPayload]).toPromise();
-    }
-
-    addAssociateTarget(value) {
-        const associateTargetPayload = {
-            target: value['target'],
-            extent: value['extent'],
-        }
-        return this.ws.call('iscsi.targetextent.create', [associateTargetPayload]).toPromise();
     }
 }
