@@ -72,14 +72,14 @@ app-breadcrumb{
   height: 45px;
   background-color: #000;
 
-  -webkit-animation-name: silde_to_top;
+  /* -webkit-animation-name: silde_to_top;
   -webkit-animation-duration: 1s;
   -webkit-animation-timing-function: ease;
   -webkit-animation-iteration-count: 1;
   -webkit-animation-direction: normal;
   -webkit-animation-delay: 0;
   -webkit-animation-play-state: running;
-  -webkit-animation-fill-mode: forwards;
+  -webkit-animation-fill-mode: forwards; */
 }
 
 .footer-console-bar .message {
