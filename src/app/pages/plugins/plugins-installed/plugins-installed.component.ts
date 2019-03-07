@@ -84,7 +84,7 @@ export class PluginsInstalledListComponent {
       enable: true,
       ttpos: "above",
       onClick: (selected) => {
-        let selectedJails = this.getSelectedNames(selected);
+        const selectedJails = this.getSelectedNames(selected);
         this.loader.open();
         this.entityList.busy =
           this.ws.job('core.bulk', ["jail.stop", selectedJails]).subscribe(
@@ -103,38 +103,32 @@ export class PluginsInstalledListComponent {
       }
     },
     {
-      id: "mupgrade",
-      label: T("Upgrade"),
-      icon: "arrow_upward",
+      id: "mupupdate",
+      label: T("Update"),
+      icon: "update",
       enable: true,
       ttpos: "above",
       onClick: (selected) => {
-        const option = {
-          'plugin': true,
-        }
         const selectedJails = this.getSelectedNames(selected);
-        for (const i in selectedJails) {
-          selectedJails[i].push(option);
-        }
 
-        this.snackBar.open(T('Upgrade selected jails started.'), 'close', { duration: 5000 });
+        this.snackBar.open(T('Update selected plugins started.'), 'close', { duration: 5000 });
         this.entityList.busy =
-          this.ws.job('core.bulk', ["jail.upgrade", selectedJails]).subscribe(
+          this.ws.job('core.bulk', ["jail.update_to_latest_patch", selectedJails]).subscribe(
             (res) => {
               if (res.result != null) {
                 if (res.result[0] && res.result[0].error != null) {
-                  this.dialogService.errorReport(T('Upgrade selected jails failed.'), res.result[0].error);
+                  this.dialogService.errorReport(T('Update selected plugins failed.'), res.result[0].error);
                 }
               } else {
                 for (const i in selected) {
                   this.updateRow(selected[i]);
                 }
                 this.updateMultiAction(selected);
-                this.snackBar.open(T('Upgrade selected jails succeeded.'), 'close', { duration: 5000 });
+                this.snackBar.open(T('Update selected plugins succeeded.'), 'close', { duration: 5000 });
               }
             },
             (res) => {
-              this.snackBar.open(T('Upgrade selected jails failed.'), 'close', { duration: 5000 });
+              this.snackBar.open(T('Update selected plugins failed.'), 'close', { duration: 5000 });
               new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
             });
       }
@@ -300,18 +294,15 @@ export class PluginsInstalledListComponent {
         }
       },
       {
-        id: "upgrade",
-        label: T("Upgrade"),
+        id: "update",
+        label: T("Update"),
         onClick: (row) => {
-          const option = {
-            'plugin': true,
-          }
-          const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Upgrading Plugin") }, disableClose: true });
-          dialogRef.componentInstance.setCall('jail.upgrade', [row[1], option]);
+          const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Updating Plugin") }, disableClose: true });
+          dialogRef.componentInstance.setCall('jail.update_to_latest_patch', [row[1]]);
           dialogRef.componentInstance.submit();
           dialogRef.componentInstance.success.subscribe((res) => {
             dialogRef.close(true);
-            this.snackBar.open(T("Successfully upgraded plugin."), T('Close'), { duration: 5000 });
+            this.snackBar.open(T("Successfully updated plugin."), T('Close'), { duration: 5000 });
           });
         }
       },
