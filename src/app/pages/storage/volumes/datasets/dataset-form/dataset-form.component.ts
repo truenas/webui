@@ -703,13 +703,8 @@ export class DatasetFormComponent implements Formconfiguration{
             if (pk_dataset[0].compression.source === 'INHERITED') {
               compression_value = 'INHERIT';
             }
-            if (compression_value === 'GZIP') {
-              entityForm.formGroup.controls['compression'].setValue(compression_value+'-6');
-            }
-            else{
-              entityForm.formGroup.controls['compression'].setValue(compression_value);
+            entityForm.formGroup.controls['compression'].setValue(compression_value);
 
-            }
             let deduplication_value = pk_dataset[0].deduplication.value;
             if (pk_dataset[0].deduplication.source === 'DEFAULT') {
               deduplication_value = 'INHERIT';
