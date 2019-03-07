@@ -710,7 +710,7 @@ export class DatasetFormComponent implements Formconfiguration{
               entityForm.formGroup.controls['compression'].setValue(compression_value);
 
             }
-            let deduplication_value = pk_dataset[0].deduplication;
+            let deduplication_value = pk_dataset[0].deduplication.value;
             if (pk_dataset[0].deduplication.source === 'DEFAULT') {
               deduplication_value = 'INHERIT';
             }
@@ -718,7 +718,7 @@ export class DatasetFormComponent implements Formconfiguration{
             if (pk_dataset[0].exec.source === 'DEFAULT') {
               exec_value = 'INHERIT';
             }
-            let readonly_value = pk_dataset[0].deduplication;
+            let readonly_value = pk_dataset[0].readonly.value;
             if (pk_dataset[0].readonly.source === 'DEFAULT') {
               readonly_value = 'INHERIT';
             }
@@ -726,7 +726,7 @@ export class DatasetFormComponent implements Formconfiguration{
             if (pk_dataset[0].atime.source === 'DEFAULT') {
               atime_value = 'INHERIT';
             }
-            let recordsize_value = pk_dataset[0].exec.value;
+            let recordsize_value = pk_dataset[0].recordsize.value;
             if (pk_dataset[0].recordsize.source === 'DEFAULT') {
               recordsize_value = 'INHERIT';
             }
