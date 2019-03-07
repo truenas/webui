@@ -672,41 +672,70 @@ export class DatasetFormComponent implements Formconfiguration{
             let edit_atime_collection = [{label:pk_dataset[0].readonly.value, value: pk_dataset[0].readonly.value}];
             let edit_recordsize_collection = [{label: this.parent_dataset.recordsize.value, value:  this.parent_dataset.recordsize.value}];
 
-            edit_sync_collection = [{label:`Inherit (${this.parent_dataset.sync.rawvalue})`, value: this.parent_dataset.sync.value}];
+            edit_sync_collection = [{label:`Inherit (${this.parent_dataset.sync.rawvalue})`, value: 'INHERIT'}];
             edit_sync.options = edit_sync_collection.concat(edit_sync.options);
 
-            edit_compression_collection = [{label:`Inherit (${this.parent_dataset.compression.rawvalue})`, value: this.parent_dataset.compression.value}];
+            edit_compression_collection = [{label:`Inherit (${this.parent_dataset.compression.rawvalue})`, value: 'INHERIT'}];
             edit_compression.options = edit_compression_collection.concat(edit_compression.options);
 
-            edit_deduplication_collection = [{label:`Inherit (${this.parent_dataset.deduplication.rawvalue})`, value: this.parent_dataset.deduplication.value}];
+            edit_deduplication_collection = [{label:`Inherit (${this.parent_dataset.deduplication.rawvalue})`, value: 'INHERIT'}];
             edit_deduplication.options = edit_deduplication_collection.concat(edit_deduplication.options);
 
-            edit_exec_collection = [{label:`Inherit (${this.parent_dataset.exec.rawvalue})`, value: this.parent_dataset.exec.value}];
+            edit_exec_collection = [{label:`Inherit (${this.parent_dataset.exec.rawvalue})`, value: 'INHERIT'}];
             edit_exec.options = edit_exec_collection.concat(edit_exec.options);
 
 
-            edit_readonly_collection = [{label:`Inherit (${this.parent_dataset.readonly.rawvalue})`, value: this.parent_dataset.readonly.value}];
+            edit_readonly_collection = [{label:`Inherit (${this.parent_dataset.readonly.rawvalue})`, value: 'INHERIT'}];
             edit_readonly.options = edit_readonly_collection.concat(edit_readonly.options);
 
-            edit_atime_collection = [{label:`Inherit (${this.parent_dataset.atime.rawvalue})`, value: this.parent_dataset.atime.value}];
+            edit_atime_collection = [{label:`Inherit (${this.parent_dataset.atime.rawvalue})`, value: 'INHERIT'}];
             edit_atime.options = edit_atime_collection.concat(edit_atime.options);
 
-            edit_recordsize_collection = [{label:`Inherit`, value: this.parent_dataset.recordsize.value}];
+            edit_recordsize_collection = [{label:`Inherit (${this.parent_dataset.recordsize.value})`, value: 'INHERIT'}];
             edit_recordsize.options = edit_recordsize_collection.concat(edit_recordsize.options);
-            entityForm.formGroup.controls['sync'].setValue(pk_dataset[0].sync.value);
-            if (pk_dataset[0].compression.value === 'GZIP') {
-              entityForm.formGroup.controls['compression'].setValue(pk_dataset[0].compression.value+'-6');
+            let sync_value = pk_dataset[0].sync.value;
+            if (pk_dataset[0].sync.source === 'DEFAULT') {
+              sync_value = 'INHERIT';
+            }
+            entityForm.formGroup.controls['sync'].setValue(sync_value);
+
+            let compression_value = pk_dataset[0].compression.value;
+            if (pk_dataset[0].compression.source === 'INHERITED') {
+              compression_value = 'INHERIT';
+            }
+            if (compression_value === 'GZIP') {
+              entityForm.formGroup.controls['compression'].setValue(compression_value+'-6');
             }
             else{
-              entityForm.formGroup.controls['compression'].setValue(pk_dataset[0].compression.value);
+              entityForm.formGroup.controls['compression'].setValue(compression_value);
 
             }
+            let deduplication_value = pk_dataset[0].deduplication;
+            if (pk_dataset[0].deduplication.source === 'DEFAULT') {
+              deduplication_value = 'INHERIT';
+            }
+            let exec_value = pk_dataset[0].exec.value;
+            if (pk_dataset[0].exec.source === 'DEFAULT') {
+              exec_value = 'INHERIT';
+            }
+            let readonly_value = pk_dataset[0].deduplication;
+            if (pk_dataset[0].readonly.source === 'DEFAULT') {
+              readonly_value = 'INHERIT';
+            }
+            let atime_value = pk_dataset[0].exec.value;
+            if (pk_dataset[0].atime.source === 'DEFAULT') {
+              atime_value = 'INHERIT';
+            }
+            let recordsize_value = pk_dataset[0].exec.value;
+            if (pk_dataset[0].recordsize.source === 'DEFAULT') {
+              recordsize_value = 'INHERIT';
+            }
 
-            entityForm.formGroup.controls['deduplication'].setValue(pk_dataset[0].deduplication.value);
-            entityForm.formGroup.controls['exec'].setValue(pk_dataset[0].exec.  value);
-            entityForm.formGroup.controls['readonly'].setValue(pk_dataset[0].readonly.value);
-            entityForm.formGroup.controls['atime'].setValue(pk_dataset[0].atime.value);
-            entityForm.formGroup.controls['recordsize'].setValue(pk_dataset[0].recordsize.value);
+            entityForm.formGroup.controls['deduplication'].setValue(deduplication_value);
+            entityForm.formGroup.controls['exec'].setValue(exec_value);
+            entityForm.formGroup.controls['readonly'].setValue(readonly_value);
+            entityForm.formGroup.controls['atime'].setValue(atime_value);
+            entityForm.formGroup.controls['recordsize'].setValue(recordsize_value);
             this.parent_dataset = parent_dataset[0];
           })
 
