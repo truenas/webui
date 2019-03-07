@@ -115,16 +115,17 @@ export class PluginsInstalledListComponent {
         this.entityList.busy =
           this.ws.job('core.bulk', ["jail.update_to_latest_patch", selectedJails]).subscribe(
             (res) => {
-              if (res.result != null) {
-                if (res.result[0] && res.result[0].error != null) {
-                  this.dialogService.errorReport(T('Update selected plugins failed.'), res.result[0].error);
+              let message = "";
+              for (let i = 0; i < res.result.length; i++) {
+                if (res.result[i].error != null) {
+                  message = message + '<li>' + selectedJails[i] + ': ' + res.result[i].error + '</li>';
                 }
-              } else {
-                for (const i in selected) {
-                  this.updateRow(selected[i]);
-                }
-                this.updateMultiAction(selected);
+              }
+              if (message === "") {
                 this.snackBar.open(T('Update selected plugins succeeded.'), 'close', { duration: 5000 });
+              } else {
+                message = '<ul>' + message + '</ul>';
+                this.dialogService.errorReport(T('Update following selected plugins failed.'), message);
               }
             },
             (res) => {
