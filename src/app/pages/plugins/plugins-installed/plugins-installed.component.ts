@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { MatSnackBar, MatDialog} from '@angular/material';
 import * as _ from 'lodash';
 import * as ip from 'what-is-my-ip-address';
 
@@ -8,6 +9,7 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 import { DialogService } from '../../../../app/services';
 import { EntityUtils } from '../../common/entity/utils';
 import { T } from '../../../translate-marker';
+import { EntityJobComponent } from '../../common/entity/entity-job';
 
 @Component({
   selector: 'app-plugins-installed-list',
@@ -82,7 +84,7 @@ export class PluginsInstalledListComponent {
       enable: true,
       ttpos: "above",
       onClick: (selected) => {
-        let selectedJails = this.getSelectedNames(selected);
+        const selectedJails = this.getSelectedNames(selected);
         this.loader.open();
         this.entityList.busy =
           this.ws.job('core.bulk', ["jail.stop", selectedJails]).subscribe(
@@ -97,6 +99,38 @@ export class PluginsInstalledListComponent {
             (res) => {
               new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
               this.loader.close();
+            });
+      }
+    },
+    {
+      id: "mupupdate",
+      label: T("Update"),
+      icon: "update",
+      enable: true,
+      ttpos: "above",
+      onClick: (selected) => {
+        const selectedJails = this.getSelectedNames(selected);
+
+        this.snackBar.open(T('Update selected plugins started.'), 'close', { duration: 5000 });
+        this.entityList.busy =
+          this.ws.job('core.bulk', ["jail.update_to_latest_patch", selectedJails]).subscribe(
+            (res) => {
+              let message = "";
+              for (let i = 0; i < res.result.length; i++) {
+                if (res.result[i].error != null) {
+                  message = message + '<li>' + selectedJails[i] + ': ' + res.result[i].error + '</li>';
+                }
+              }
+              if (message === "") {
+                this.snackBar.open(T('Update selected plugins succeeded.'), 'close', { duration: 5000 });
+              } else {
+                message = '<ul>' + message + '</ul>';
+                this.dialogService.errorReport(T('Update following selected plugins failed.'), message);
+              }
+            },
+            (res) => {
+              this.snackBar.open(T('Update selected plugins failed.'), 'close', { duration: 5000 });
+              new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
             });
       }
     },
@@ -120,7 +154,8 @@ export class PluginsInstalledListComponent {
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected loader: AppLoaderService,
-              protected dialogService: DialogService) {
+              protected dialogService: DialogService, protected snackBar: MatSnackBar,
+              protected dialog: MatDialog) {
     this.getActivatedPool();
     this.getAvailablePools();
   }
@@ -264,6 +299,19 @@ export class PluginsInstalledListComponent {
                 this.loader.close();
                 new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
               });
+        }
+      },
+      {
+        id: "update",
+        label: T("Update"),
+        onClick: (row) => {
+          const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Updating Plugin") }, disableClose: true });
+          dialogRef.componentInstance.setCall('jail.update_to_latest_patch', [row[1]]);
+          dialogRef.componentInstance.submit();
+          dialogRef.componentInstance.success.subscribe((res) => {
+            dialogRef.close(true);
+            this.snackBar.open(T("Successfully updated plugin."), T('Close'), { duration: 5000 });
+          });
         }
       },
       {
