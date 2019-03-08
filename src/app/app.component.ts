@@ -106,4 +106,9 @@ export class AppComponent {
       snackBarRef.dismiss();
     }
   }
+
+  onEnginnerMode() {
+    const tobeEngineerMode = localStorage.getItem('engineerMode') === 'true' ? 'false' : 'true';
+    localStorage.setItem('engineerMode', tobeEngineerMode);
+  }
 }
