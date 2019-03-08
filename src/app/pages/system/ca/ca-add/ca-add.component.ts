@@ -80,8 +80,17 @@ export class CertificateAuthorityAddComponent {
         {label: 'SECP256K1', value: 'SECP256K1'},
       ],
       value: 'BRAINPOOLP512R1',
-      isHidden: false,
+      isHidden: true,
       disabled: true,
+      relation : [
+        {
+          action : 'DISABLE',
+          when : [ {
+            name : 'key_type',
+            value : 'RSA',
+          } ]
+        },
+      ],
     },
     {
       type : 'select',
@@ -235,7 +244,7 @@ export class CertificateAuthorityAddComponent {
 
   private internalcaFields: Array<any> = [
     'key_type',
-
+    'ec_curve',
     'key_length',
     'digest_algorithm',
     'lifetime',

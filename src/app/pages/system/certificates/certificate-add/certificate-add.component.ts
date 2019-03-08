@@ -79,8 +79,17 @@ export class CertificateAddComponent {
         {label: 'SECP256K1', value: 'SECP256K1'},
       ],
       value: 'BRAINPOOLP512R1',
-      isHidden: false,
+      isHidden: true,
       disabled: true,
+      relation : [
+        {
+          action : 'ENABLE',
+          when : [ {
+            name : 'key_type',
+            value : 'EC',
+          } ]
+        },
+      ]
     },
     {
       type : 'select',
@@ -235,6 +244,7 @@ export class CertificateAddComponent {
   private internalFields: Array<any> = [
     'signedby',
     'key_type',
+    'ec_curve',
     'key_length',
     'digest_algorithm',
     'lifetime',
@@ -250,6 +260,7 @@ export class CertificateAddComponent {
   private csrFields: Array<any> = [
     'key_type',
     'key_length',
+    'ec_curve',
     'digest_algorithm',
     'country',
     'state',
