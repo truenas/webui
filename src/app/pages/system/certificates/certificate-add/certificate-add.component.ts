@@ -54,6 +54,36 @@ export class CertificateAddComponent {
     },
     {
       type : 'select',
+      name : 'key_type',
+      placeholder : helptext_system_certificates.add.key_type.placeholder,
+      tooltip: helptext_system_certificates.add.key_type.tooltip,
+      options : [
+        {label: 'RSA', value: 'RSA'},
+        {label: 'EC', value: 'EC'},
+      ],
+      value: 'RSA',
+      isHidden: false,
+      disabled: true,
+      required: true,
+      validation: helptext_system_certificates.add.key_type.validation
+    },
+    {
+      type : 'select',
+      name : 'ec_curve',
+      placeholder : helptext_system_certificates.add.ec_curve.placeholder,
+      tooltip: helptext_system_certificates.add.ec_curve.tooltip,
+      options : [
+        {label: 'BrainpoolP512R1', value: 'BRAINPOOLP512R1'},
+        {label: 'BrainpoolP384R1', value: 'BRAINPOOLP384R1'},
+        {label: 'BrainpoolP256R1', value: 'BRAINPOOLP256R1'},
+        {label: 'SECP256K1', value: 'SECP256K1'},
+      ],
+      value: 'BRAINPOOLP512R1',
+      isHidden: false,
+      disabled: true,
+    },
+    {
+      type : 'select',
       name : 'key_length',
       placeholder : helptext_system_certificates.add.key_length.placeholder,
       tooltip: helptext_system_certificates.add.key_length.tooltip,
@@ -204,6 +234,7 @@ export class CertificateAddComponent {
 
   private internalFields: Array<any> = [
     'signedby',
+    'key_type',
     'key_length',
     'digest_algorithm',
     'lifetime',
@@ -211,17 +242,20 @@ export class CertificateAddComponent {
     'state',
     'city',
     'organization',
+    'organizational_unit',
     'email',
     'common',
     'san',
   ];
   private csrFields: Array<any> = [
+    'key_type',
     'key_length',
     'digest_algorithm',
     'country',
     'state',
     'city',
     'organization',
+    'organizational_unit',
     'email',
     'common',
     'san',

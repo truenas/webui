@@ -55,6 +55,36 @@ export class CertificateAuthorityAddComponent {
     },
     {
       type : 'select',
+      name : 'key_type',
+      placeholder : helptext_system_ca.add.key_type.placeholder,
+      tooltip: helptext_system_ca.add.key_type.tooltip,
+      options : [
+        {label: 'RSA', value: 'RSA'},
+        {label: 'EC', value: 'EC'},
+      ],
+      value: 'RSA',
+      isHidden: false,
+      disabled: true,
+      required: true,
+      validation: helptext_system_ca.add.key_type.validation
+    },
+    {
+      type : 'select',
+      name : 'ec_curve',
+      placeholder : helptext_system_ca.add.ec_curve.placeholder,
+      tooltip: helptext_system_ca.add.ec_curve.tooltip,
+      options : [
+        {label: 'BrainpoolP512R1', value: 'BRAINPOOLP512R1'},
+        {label: 'BrainpoolP384R1', value: 'BRAINPOOLP384R1'},
+        {label: 'BrainpoolP256R1', value: 'BRAINPOOLP256R1'},
+        {label: 'SECP256K1', value: 'SECP256K1'},
+      ],
+      value: 'BRAINPOOLP512R1',
+      isHidden: false,
+      disabled: true,
+    },
+    {
+      type : 'select',
       name : 'key_length',
       placeholder : helptext_system_ca.add.key_length.placeholder,
       tooltip: helptext_system_ca.add.key_length.tooltip,
@@ -204,6 +234,8 @@ export class CertificateAuthorityAddComponent {
   ];
 
   private internalcaFields: Array<any> = [
+    'key_type',
+
     'key_length',
     'digest_algorithm',
     'lifetime',
@@ -211,12 +243,15 @@ export class CertificateAuthorityAddComponent {
     'state',
     'city',
     'organization',
+    'organizational_unit',
     'email',
     'common',
     'san',
   ];
   private intermediatecaFields: Array<any> = [
     'signedby',
+    'key_type',
+    'ec_curve',
     'key_length',
     'digest_algorithm',
     'lifetime',
@@ -224,6 +259,7 @@ export class CertificateAuthorityAddComponent {
     'state',
     'city',
     'organization',
+    'organizational_unit',
     'email',
     'common',
     'san',
