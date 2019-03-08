@@ -61,6 +61,7 @@ export class CertificateAuthorityAddComponent {
       options : [
         {label: 'RSA', value: 'RSA'},
         {label: 'EC', value: 'EC'},
+        {label: 'ECDSA', value: 'ECDSA'}
       ],
       value: 'RSA',
       isHidden: false,
@@ -74,9 +75,9 @@ export class CertificateAuthorityAddComponent {
       placeholder : helptext_system_ca.add.ec_curve.placeholder,
       tooltip: helptext_system_ca.add.ec_curve.tooltip,
       options : [
-        {label: 'BrainpoolP512R1', value: 'BRAINPOOLP512R1'},
-        {label: 'BrainpoolP384R1', value: 'BRAINPOOLP384R1'},
-        {label: 'BrainpoolP256R1', value: 'BRAINPOOLP256R1'},
+        {label: 'BrainpoolP512R1', value: 'BrainpoolP512R1'},
+        {label: 'BrainpoolP384R1', value: 'BrainpoolP384R1'},
+        {label: 'BrainpoolP256R1', value: 'BrainpoolP256R1'},
         {label: 'SECP256K1', value: 'SECP256K1'},
       ],
       value: 'BRAINPOOLP512R1',
@@ -106,6 +107,15 @@ export class CertificateAuthorityAddComponent {
       required: true,
       validation: helptext_system_ca.add.key_length.validation,
       isHidden: false,
+      relation : [
+        {
+          action : 'ENABLE',
+          when : [ {
+            name : 'key_type',
+            value : 'ECDSA',
+          } ]
+        },
+      ],
     },
     {
       type : 'select',
@@ -308,6 +318,7 @@ export class CertificateAuthorityAddComponent {
   }
 
   afterInit(entity: any) {
+    console.log(entity)
     for (let i in this.intermediatecaFields) {
       this.hideField(this.intermediatecaFields[i], true, entity);
     }
@@ -317,6 +328,7 @@ export class CertificateAuthorityAddComponent {
     for (let i in this.internalcaFields) {
       this.hideField(this.internalcaFields[i], false, entity);
     }
+    this.hideField(this.internalcaFields[1], true, entity)
 
     entity.formGroup.controls['create_type'].valueChanges.subscribe((res) => {
       if (res == 'CA_CREATE_INTERNAL') {

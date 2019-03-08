@@ -73,9 +73,9 @@ export class CertificateAddComponent {
       placeholder : helptext_system_certificates.add.ec_curve.placeholder,
       tooltip: helptext_system_certificates.add.ec_curve.tooltip,
       options : [
-        {label: 'BrainpoolP512R1', value: 'BRAINPOOLP512R1'},
-        {label: 'BrainpoolP384R1', value: 'BRAINPOOLP384R1'},
-        {label: 'BrainpoolP256R1', value: 'BRAINPOOLP256R1'},
+        {label: 'BrainpoolP512R1', value: 'BrainpoolP512R1'},
+        {label: 'BrainpoolP384R1', value: 'BrainpoolP384R1'},
+        {label: 'BrainpoolP256R1', value: 'BrainpoolP256R1'},
         {label: 'SECP256K1', value: 'SECP256K1'},
       ],
       value: 'BRAINPOOLP512R1',
