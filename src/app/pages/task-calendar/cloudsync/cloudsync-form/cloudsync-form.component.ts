@@ -249,6 +249,7 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'textarea',
     name: 'args',
     placeholder: helptext.args_placeholder,
+    tooltip: helptext.args_tooltip,
     value: "",
     isHidden: true,
   },
