@@ -54,6 +54,10 @@ export class CloudsyncListComponent {
               }
 
   preInit(entityList) {
+    if (localStorage.getItem('engineerMode') === 'true') {
+      this.columns.splice(9, 0, { name: T('Auxiliary arguments'), prop: 'args' });
+    }
+
     this.engineerModeService.engineerMode.subscribe((res) => {
       if (res === 'true') {
         this.columns.splice(9, 0, { name: T('Auxiliary arguments'), prop: 'args' });
