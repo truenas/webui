@@ -136,6 +136,14 @@ export class CertificateAddComponent {
     },
     {
       type : 'input',
+      name : 'organizational_unit',
+      placeholder : helptext_system_certificates.add.organizational_unit.placeholder,
+      tooltip: helptext_system_certificates.add.organizational_unit.tooltip,
+      required: false,
+      isHidden: false,
+    },
+    {
+      type : 'input',
       name : 'email',
       placeholder : helptext_system_certificates.add.email.placeholder,
       tooltip: helptext_system_certificates.add.email.tooltip,

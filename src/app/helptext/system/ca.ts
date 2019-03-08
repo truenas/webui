@@ -77,6 +77,11 @@ export const helptext_system_ca = {
       validation: [Validators.required]
     },
 
+    organizational_unit: {
+      placeholder: T("Organizational Unit"),
+      tooltip: T("Enter the name of the organizational unit."),
+    },
+
     email: {
       placeholder: T("Email"),
       tooltip: T(
