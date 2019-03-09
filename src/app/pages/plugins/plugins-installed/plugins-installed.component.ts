@@ -111,7 +111,7 @@ export class PluginsInstalledListComponent {
       onClick: (selected) => {
         const selectedJails = this.getSelectedNames(selected);
 
-        this.snackBar.open(T('Update selected plugins started.'), 'close', { duration: 5000 });
+        this.snackBar.open(T('Updating selected plugins.'), 'close', { duration: 5000 });
         this.entityList.busy =
           this.ws.job('core.bulk', ["jail.update_to_latest_patch", selectedJails]).subscribe(
             (res) => {
@@ -122,14 +122,14 @@ export class PluginsInstalledListComponent {
                 }
               }
               if (message === "") {
-                this.snackBar.open(T('Update selected plugins succeeded.'), 'close', { duration: 5000 });
+                this.snackBar.open(T('Selected plugins updated.'), 'close', { duration: 5000 });
               } else {
                 message = '<ul>' + message + '</ul>';
                 this.dialogService.errorReport(T('Update following selected plugins failed.'), message);
               }
             },
             (res) => {
-              this.snackBar.open(T('Update selected plugins failed.'), 'close', { duration: 5000 });
+              this.snackBar.open(T('Updating selected plugins failed.'), 'close', { duration: 5000 });
               new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
             });
       }
@@ -303,7 +303,7 @@ export class PluginsInstalledListComponent {
           dialogRef.componentInstance.submit();
           dialogRef.componentInstance.success.subscribe((res) => {
             dialogRef.close(true);
-            this.snackBar.open(T("Successfully updated plugin."), T('Close'), { duration: 5000 });
+            this.snackBar.open(T("Plugin ") + row[1] + T(" updated."), T('Close'), { duration: 5000 });
           });
         }
       },
