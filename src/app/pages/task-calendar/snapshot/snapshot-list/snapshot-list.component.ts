@@ -17,7 +17,7 @@ export class SnapshotListComponent {
   protected route_add: string[] = ['tasks', 'snapshot', 'add'];
   protected route_add_tooltip = "Add Periodic Snapshot Task";
   protected route_edit: string[] = ['tasks', 'snapshot', 'edit'];
-  protected dayweek: Array < any > = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  protected dayweek: Array < any > = ['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   protected task_interval: Array < any > = [{
     label: '5 minutes',
     value: 5,
