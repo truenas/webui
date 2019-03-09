@@ -117,7 +117,7 @@ export class JailListComponent implements OnInit {
       ttpos: "above",
       onClick: (selected) => {
         const selectedJails = this.getSelectedNames(selected);
-        this.snackBar.open(T('Update selected plugins started.'), 'close', { duration: 5000 });
+        this.snackBar.open(T('Updating selected plugins.'), 'close', { duration: 5000 });
         this.entityList.busy =
           this.ws.job('core.bulk', ["jail.update_to_latest_patch", selectedJails]).subscribe(
             (res) => {
@@ -128,14 +128,14 @@ export class JailListComponent implements OnInit {
                 }
               }
               if (message === "") {
-                this.snackBar.open(T('Update selected jails succeeded.'), 'close', { duration: 5000 });
+                this.snackBar.open(T('Selected jails updated.'), 'close', { duration: 5000 });
               } else {
                 message = '<ul>' + message + '</ul>';
                 this.dialogService.errorReport(T('Update following selected jails failed.'), message);
               }
             },
             (res) => {
-              this.snackBar.open(T('Update selected jails failed.'), 'close', { duration: 5000 });
+              this.snackBar.open(T('Updating selected jails failed'), 'close', { duration: 5000 });
               new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
             });
       }
@@ -321,7 +321,7 @@ export class JailListComponent implements OnInit {
           dialogRef.componentInstance.submit();
           dialogRef.componentInstance.success.subscribe((res) => {
             dialogRef.close(true);
-            this.snackBar.open(T("Successfully updated jail."), T('Close'), { duration: 5000 });
+            this.snackBar.open(T("Jail ") + row.host_hostuuid + T(" updated."), T('Close'), { duration: 5000 });
           });
         }
       },
