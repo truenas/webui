@@ -131,7 +131,7 @@ export class JailListComponent implements OnInit {
                 this.snackBar.open(T('Selected jails updated.'), 'close', { duration: 5000 });
               } else {
                 message = '<ul>' + message + '</ul>';
-                this.dialogService.errorReport(T('Update following selected jails failed.'), message);
+                this.dialogService.errorReport(T('Update of these jail failed'), message);
               }
             },
             (res) => {
