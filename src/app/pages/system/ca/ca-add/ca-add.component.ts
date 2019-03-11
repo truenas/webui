@@ -80,8 +80,8 @@ export class CertificateAuthorityAddComponent {
         {label: 'BrainpoolP256R1', value: 'BrainpoolP256R1'},
         {label: 'SECP256K1', value: 'SECP256K1'},
       ],
-      value: 'BRAINPOOLP512R1',
-      isHidden: true,
+      value: 'BrainpoolP512R1',
+      isHidden: false,
       disabled: true,
       relation : [
         {
@@ -109,10 +109,10 @@ export class CertificateAuthorityAddComponent {
       isHidden: false,
       relation : [
         {
-          action : 'ENABLE',
+          action : 'DISABLE',
           when : [ {
             name : 'key_type',
-            value : 'ECDSA',
+            value : 'EC',
           } ]
         },
       ],
@@ -318,7 +318,6 @@ export class CertificateAuthorityAddComponent {
   }
 
   afterInit(entity: any) {
-    console.log(entity)
     for (let i in this.intermediatecaFields) {
       this.hideField(this.intermediatecaFields[i], true, entity);
     }
