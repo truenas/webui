@@ -289,7 +289,7 @@ export class DockerVMWizardComponent {
          if (stat.free_bytes < volsize && stat.free_bytes <= 21474836480) {
           ( < FormGroup > entityWizard.formArray.get([4])).controls['size'].setValue(Math.floor(stat.free_bytes / (1073741824)));
           _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'})['hasErrors'] = true;
-          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'})['errors'] = '${globalHelptext.dockerhost} needs at least 20 GiB.';
+          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'})['errors'] = `${globalHelptext.dockerhost} needs at least 20 GiB.`;
          } else if(stat.free_bytes >= 21474836480) {
           ( < FormGroup > entityWizard.formArray.get([4])).controls['size'].setValue(20);
           _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'})['hasErrors'] = false;
@@ -297,7 +297,7 @@ export class DockerVMWizardComponent {
          } else {
           ( < FormGroup > entityWizard.formArray.get([4])).controls['size'].setValue(Math.floor(stat.free_bytes / (1073741824)));
           _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'})['hasErrors'] = true;
-          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'})['errors'] = '${globalHelptext.dockerhost} needs at least 20 GiB.';
+          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'})['errors'] = `${globalHelptext.dockerhost} needs at least 20 GiB.`;
          }
         })
       }
