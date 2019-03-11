@@ -125,7 +125,7 @@ export class PluginsInstalledListComponent {
                 this.snackBar.open(T('Selected plugins updated.'), 'close', { duration: 5000 });
               } else {
                 message = '<ul>' + message + '</ul>';
-                this.dialogService.errorReport(T('Update following selected plugins failed.'), message);
+                this.dialogService.errorReport(T('Update of these plugins failed'), message);
               }
             },
             (res) => {
