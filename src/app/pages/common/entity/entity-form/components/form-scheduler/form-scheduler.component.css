@@ -206,3 +206,17 @@ mat-form-field.cron-presets{
     top:-20px;
   }
 }
+
+@-moz-document url-prefix() {
+  .mat-calendar-body-cell-content {
+    height: 38px;
+    max-height: 38px;
+    width: 38px;
+  }
+  tr {
+    max-height: 42px;
+  }
+  #spacer {
+    visibility: hidden;
+  }
+}

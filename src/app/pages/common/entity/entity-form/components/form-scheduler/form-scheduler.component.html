@@ -36,7 +36,7 @@
           [activeDate]="activeDate">
         </mat-month-view>
       </div>
-      <mat-divider></mat-divider>
+      <mat-divider id="spacer"></mat-divider>
       <ul class="schedule-list" #preview>
         <ng-container *ngFor="let date of generatedSchedule;">
           <li>{{date}}</li>
