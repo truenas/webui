@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { RestService, SystemGeneralService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 
 @Component({
@@ -60,6 +59,7 @@ export class CertificateAddComponent {
       options : [
         {label: 'RSA', value: 'RSA'},
         {label: 'EC', value: 'EC'},
+        {label: 'ECDSA', value: 'ECDSA'}
       ],
       value: 'RSA',
       isHidden: false,
@@ -78,7 +78,7 @@ export class CertificateAddComponent {
         {label: 'BrainpoolP256R1', value: 'BrainpoolP256R1'},
         {label: 'SECP256K1', value: 'SECP256K1'},
       ],
-      value: 'BRAINPOOLP512R1',
+      value: 'BrainpoolP512R1',
       isHidden: true,
       disabled: true,
       relation : [
@@ -105,6 +105,15 @@ export class CertificateAddComponent {
       required: true,
       validation: helptext_system_certificates.add.key_length.validation,
       isHidden: false,
+      relation : [
+        {
+          action : 'ENABLE',
+          when : [ {
+            name : 'key_type',
+            value : 'RSA',
+          } ]
+        },
+      ]
     },
     {
       type : 'select',
@@ -315,6 +324,7 @@ export class CertificateAddComponent {
     for (let i in this.internalFields) {
       this.hideField(this.internalFields[i], false, entity);
     }
+    this.hideField(this.internalFields[2], true, entity)
 
     entity.formGroup.controls['create_type'].valueChanges.subscribe((res) => {
       if (res == 'CERTIFICATE_CREATE_INTERNAL') {
@@ -327,6 +337,17 @@ export class CertificateAddComponent {
         for (let i in this.internalFields) {
           this.hideField(this.internalFields[i], false, entity);
         }
+
+        // This block makes the form reset its 'disabled/hidden' settings on switch of type
+        if (entity.formGroup.controls['key_type'].value === 'RSA') {
+          this.hideField('ec_curve', true, entity);
+        } else if (entity.formGroup.controls['key_type'].value === 'EC') {
+          this.hideField('key_length', true, entity);
+        } else if (entity.formGroup.controls['key_type'].value === 'ECDSA') {
+          this.hideField('ec_curve', true, entity);
+          this.hideField('key_length', true, entity);
+        }
+
       } else if (res == 'CERTIFICATE_CREATE_CSR') {
         for (let i in this.internalFields) {
           this.hideField(this.internalFields[i], true, entity);
@@ -337,6 +358,17 @@ export class CertificateAddComponent {
         for (let i in this.csrFields) {
           this.hideField(this.csrFields[i], false, entity);
         }
+
+        // This block makes the form reset its 'disabled/hidden' settings on switch of type
+        if (entity.formGroup.controls['key_type'].value === 'RSA') {
+          this.hideField('ec_curve', true, entity);
+        } else if (entity.formGroup.controls['key_type'].value === 'EC') {
+          this.hideField('key_length', true, entity);
+        } else if (entity.formGroup.controls['key_type'].value === 'ECDSA') {
+          this.hideField('ec_curve', true, entity);
+          this.hideField('key_length', true, entity);
+        }
+
       } else if (res == 'CERTIFICATE_CREATE_IMPORTED') {
         for (let i in this.internalFields) {
           this.hideField(this.internalFields[i], true, entity);

@@ -5,8 +5,6 @@ import * as _ from 'lodash';
 import { RestService, SystemGeneralService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
-
-
 @Component({
   selector : 'system-ca-add',
   template : `<entity-form [conf]="this"></entity-form>`,
@@ -85,10 +83,10 @@ export class CertificateAuthorityAddComponent {
       disabled: true,
       relation : [
         {
-          action : 'DISABLE',
+          action : 'ENABLE',
           when : [ {
             name : 'key_type',
-            value : 'RSA',
+            value : 'EC',
           } ]
         },
       ],
@@ -109,13 +107,13 @@ export class CertificateAuthorityAddComponent {
       isHidden: false,
       relation : [
         {
-          action : 'DISABLE',
+          action : 'ENABLE',
           when : [ {
             name : 'key_type',
-            value : 'EC',
+            value : 'RSA',
           } ]
         },
-      ],
+      ]
     },
     {
       type : 'select',
@@ -340,6 +338,17 @@ export class CertificateAuthorityAddComponent {
         for (let i in this.internalcaFields) {
           this.hideField(this.internalcaFields[i], false, entity);
         }
+
+        // This block makes the form reset its 'disabled/hidden' settings on switch of type
+        if (entity.formGroup.controls['key_type'].value === 'RSA') {
+          this.hideField('ec_curve', true, entity);
+        } else if (entity.formGroup.controls['key_type'].value === 'EC') {
+          this.hideField('key_length', true, entity);
+        } else if (entity.formGroup.controls['key_type'].value === 'ECDSA') {
+          this.hideField('ec_curve', true, entity);
+          this.hideField('key_length', true, entity);
+        }
+
       } else if (res == 'CA_CREATE_INTERMEDIATE') {
         for (let i in this.internalcaFields) {
           this.hideField(this.internalcaFields[i], true, entity);
@@ -350,6 +359,16 @@ export class CertificateAuthorityAddComponent {
         for (let i in this.intermediatecaFields) {
           this.hideField(this.intermediatecaFields[i], false, entity);
         }
+
+        if (entity.formGroup.controls['key_type'].value === 'RSA') {
+          this.hideField('ec_curve', true, entity);
+        } else if (entity.formGroup.controls['key_type'].value === 'EC') {
+          this.hideField('key_length', true, entity);
+        } else if (entity.formGroup.controls['key_type'].value === 'ECDSA') {
+          this.hideField('ec_curve', true, entity);
+          this.hideField('key_length', true, entity);
+        }
+
       } else if (res == 'CA_CREATE_IMPORTED') {
         for (let i in this.internalcaFields) {
           this.hideField(this.internalcaFields[i], true, entity);
