@@ -58,8 +58,7 @@ export class CertificateAuthorityAddComponent {
       tooltip: helptext_system_ca.add.key_type.tooltip,
       options : [
         {label: 'RSA', value: 'RSA'},
-        {label: 'EC', value: 'EC'},
-        {label: 'ECDSA', value: 'ECDSA'}
+        {label: 'EC', value: 'EC'}
       ],
       value: 'RSA',
       isHidden: false,
@@ -344,9 +343,6 @@ export class CertificateAuthorityAddComponent {
           this.hideField('ec_curve', true, entity);
         } else if (entity.formGroup.controls['key_type'].value === 'EC') {
           this.hideField('key_length', true, entity);
-        } else if (entity.formGroup.controls['key_type'].value === 'ECDSA') {
-          this.hideField('ec_curve', true, entity);
-          this.hideField('key_length', true, entity);
         }
 
       } else if (res == 'CA_CREATE_INTERMEDIATE') {
@@ -363,9 +359,6 @@ export class CertificateAuthorityAddComponent {
         if (entity.formGroup.controls['key_type'].value === 'RSA') {
           this.hideField('ec_curve', true, entity);
         } else if (entity.formGroup.controls['key_type'].value === 'EC') {
-          this.hideField('key_length', true, entity);
-        } else if (entity.formGroup.controls['key_type'].value === 'ECDSA') {
-          this.hideField('ec_curve', true, entity);
           this.hideField('key_length', true, entity);
         }
 
