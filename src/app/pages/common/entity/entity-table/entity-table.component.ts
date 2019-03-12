@@ -57,6 +57,8 @@ export interface InputTableConf {
   wsMultiDeleteParams?(selected): any;
   updateMultiAction?(selected): any;
   doAdd?();
+  onCheckboxChange?(row): any;
+  onSliderChange?(row): any;
 }
 
 export interface SortingConfig {
@@ -98,7 +100,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public windowHeight: number;
 
   public allColumns: Array<any> = []; // Need this for the checkbox headings
-  public filterColumns: Array<any> = []; // Need this for the filter function
+  public filterColumns: Array<any> = []; // ...for the filter function - becomes THE complete list of all columns, diplayed or not
   public alwaysDisplayedCols: Array<any> = []; // For cols the user can't turn off
   public presetDisplayedCols: Array<any> = []; // to store only the index of preset cols
   public currentPreferredCols: Array<any> = []; // to store current choice of what cols to view
@@ -249,24 +251,23 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   setTableHeight() {
-    let rowNum = 9, n;
+    let rowNum = 6, n, addRows = 4;
     if (this.title === 'Boot Environments') {
-      n = 5;
-    } else if (this.title === 'Jails' || this.title === 'Available Plugins' || this.title === 'Installed Plugins') {
+      n = 6;
+    } else if (this.title === 'Jails') {
+      n = 4;
+    } else if (this.title === 'Available Plugins' || this.title === 'Installed Plugins') {
       n = 3;
     } else {
       n = 0;
     }
-    if (this.conf.columns.length > 10) {
-        n = n + 2;
-    } 
     window.onresize = () => {
       let x = window.innerHeight;
-      if (x <=780) {
-        this.paginationPageSize = rowNum - n;
-      } else {
-        let y = x - 800;
-        this.paginationPageSize = rowNum - n + Math.floor(y/50);
+      let y = x - 830;
+      this.paginationPageSize = rowNum - n + Math.floor(y/50) + addRows ;
+
+      if (this.paginationPageSize < 2) {
+        this.paginationPageSize = 2;
       }
       this.setPaginationInfo();
     }

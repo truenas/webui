@@ -24,7 +24,8 @@
     "clean:coverage": "yarn run rimraf coverage",
     "reinstall": "yarn run rimraf yarn.lock; yarn run rimraf node_modules; yarn cache clean -f; yarn install",
     "extract": "node scripts/extract_strings.js",
-    "po2json": "node scripts/convert_po2json.js"
+    "po2json": "node scripts/convert_po2json.js",
+    "create_po_pr": "yarn run extract && node scripts/create_pr.js"
   },
   "repository": {
     "type": "git",
@@ -99,6 +100,7 @@
     "stream": "0.0.2",
     "stylefire": "2.2.0",
     "webpack-cli": "^3.2.1",
+    "what-is-my-ip-address": "1.0.3",
     "xterm": "2.9.2",
     "zone.js": "0.8.26"
   },

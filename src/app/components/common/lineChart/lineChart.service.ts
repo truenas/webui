@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
-
 import {WebSocketService} from '../../../services';
-
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
 
 
 /*
@@ -12,13 +11,13 @@ import {WebSocketService} from '../../../services';
   source: string;
   units: string; // Units used as tick labels
   labelY:string;
-//<<<<<<< HEAD
+
   dataUnits?:string;// What the middleware response provides
   conversion?:string;// What the chart should convert to.
-//=======
+
   //unitsProvided?:string;
   removePrefix?: string;
-//>>>>>>> master
+
  }
 
 /*
@@ -67,6 +66,7 @@ export interface ChartConfigData {
   dataList: DataListItem[];
   series?: any[][];  
   divideBy?: number;
+  convertToCelsius?: boolean;
 }
 
 
@@ -95,13 +95,11 @@ export class LineChartService {
 
   private cacheConfigData: ChartConfigData[] = [];
 
-  constructor(private _ws: WebSocketService) {}
+  constructor(private _ws: WebSocketService, protected core: CoreService) {
+    //_ws.sub("trueview.stats:10").subscribe((evt) => {console.log(evt)});
+  }
 
-  public getData(dataHandlerInterface: HandleDataFunc, dataList: any[], rrdOptions?:any /*timeframe?:string*/) {
-    /*console.log("Service is fetching data...");
-    console.log(dataList);
-    console.log("*****************************")*/
-    //if(!timeframe){timeframe = 'now-10m';}
+  public getData(id:string, dataList: any[], legends: string[],  rrdOptions?:any /*timeframe?:string*/) {
     if(!rrdOptions) {
       rrdOptions = {step: '10', start:'now-10m'};
       console.log("Default rrdOptions values applied")
@@ -115,25 +113,8 @@ export class LineChartService {
       options.end = rrdOptions.end.toString();
     }
 
-    //this._ws.call('stats.get_data', [dataList, {step: '10', start:timeframe}]).subscribe((res) => {
     this._ws.call('stats.get_data', [dataList, options]).subscribe((res) => {
-      //console.log(res);
-      let meta = this.generateMetaData(res);
-      const linechartData: LineChartData = {
-        labels: new Array<Date>(),
-        series: new Array<any>(),
-        meta: meta
-      }
-
-      dataList.forEach(() => {linechartData.series.push([]);})
-      res.data.forEach((item, i) => {
-        linechartData.labels.push(
-          new Date(res.meta.start * 1000 + i * res.meta.step * 1000));
-        for (const x in dataList) {
-          linechartData.series[x].push(item[x]);
-        }
-      });
-      dataHandlerInterface.handleDataFunc(linechartData);
+      this.core.emit({name:"ReportsHandleStats", data:{res: res, dataList: dataList, title: id, legends:legends}})
     });
   }
 
@@ -147,6 +128,7 @@ export class LineChartService {
 
     let dictionary: LineChartMetadata[] = [
       {source :'aggregation-cpu-sum', units:'%', labelY:'% CPU'},
+      {source :'temperature', units:'°C', labelY:'Celsius', conversion:'decikelvinsToCelsius'},
       {source :'memory', units:'GiB', labelY:'Gigabytes', removePrefix:'memory-'},
       {source :'swap', units:'GiB', labelY:'Gigabytes', removePrefix:'swap-'},
       {source :'if_errors', units:'', labelY:'Bits/s'},
@@ -175,18 +157,9 @@ export class LineChartService {
   }
 
 
-  public getChartConfigData(handleChartConfigDataFunc: HandleChartConfigDataFunc) {
-    // Use this instead of the below.. TO just spoof the data
-    // So you can see what the control looks like with no WS
-
-    //this.getChartConfigDataSpoof(handleChartConfigDataFunc);
-
+  public getChartConfigData() {
     this._ws.call('stats.get_sources').subscribe((res) => {
-      this.cacheConfigData = this.chartConfigDataFromWsReponse(res);
-      const knownCharts: ChartConfigData[] = this.getKnownChartConfigData();
-      knownCharts.forEach((item) => {this.cacheConfigData.push(item);});
-
-      handleChartConfigDataFunc.handleChartConfigDataFunc(this.cacheConfigData);
+      this.core.emit({name:"ReportsHandleSources", data: res});
     });
   }
 
@@ -276,8 +249,23 @@ export class LineChartService {
 
     for (const prop of properties) {
 
+     if (prop.startsWith("cputemp-")) {
+        configData.push({
+          title: prop,
+          type: LineChartService.lineChart,
+          legends: ["temp"],
+          dataList: [{source: prop, type: 'temperature', dataset: 'value'}]
+        });
 
-      if (prop.startsWith("disk-")) {
+     } else if (prop.startsWith("disktemp-")) {
+        configData.push({
+          title: prop,
+          type: LineChartService.lineChart,
+          legends: ["temp"],
+          dataList: [{source: prop, type: 'temperature', dataset: 'value'}]
+        });
+
+     } else if (prop.startsWith("disk-")) {
         configData.push({
           title: prop + " (disk_time)",
           type: LineChartService.lineChart,
@@ -354,6 +342,7 @@ export class LineChartService {
         });
 
         let divideBy: number;
+        let convertToCelsius: boolean;
         //let title: string = prop == "ctl-tpc" ? "SCSI Target Port (tpc)" : prop; 
 
         // Put in ugly override. Wasn't really a better place for this one change.
@@ -369,6 +358,12 @@ export class LineChartService {
           prop === "memory" || prop === "swap") {
           divideBy = 1073741824;
           title += " (gigabytes)";
+        }
+        
+        // Things I want convertd from decikelvins to celsius
+        if (prop.startsWith("cputemp-")) {
+          convertToCelsius = true;
+          title += " (celsius)";
         }
         
         

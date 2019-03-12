@@ -4,24 +4,6 @@ import { regexValidator } from '../../../pages/common/entity/entity-form/validat
 
 export default {
 dtype_placeholder: 'Type',
-dtype_options: [
-  {
-  label: 'CD-ROM',
-  value: 'CDROM',
-  }, {
-  label: 'NIC',
-  value: 'NIC',
-  }, {
-  label: 'Disk',
-  value: 'DISK',
-  }, {
-  label: 'Raw File',
-  value: 'RAW',
-  }, {
-  label: 'VNC',
-  value: 'VNC',
-  }
-],
 dtype_value: 'CDROM',
 dtype_validation: [Validators.required],
 

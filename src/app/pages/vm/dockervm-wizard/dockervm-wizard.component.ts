@@ -1,7 +1,7 @@
 import { Component} from '@angular/core';
 import { Router } from '@angular/router';
 import { RestService, WebSocketService, NetworkService } from '../../../services';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
 import * as _ from 'lodash';
@@ -14,6 +14,7 @@ import { MatDialog } from '@angular/material';
 import { T } from '../../../translate-marker';
 import { DialogService } from '../../../services/dialog.service';
 import helptext from '../../../helptext/vm/docker-vm-wizard/docker-vm-wizard';
+import globalHelptext from  '../../../helptext/global-helptext';
 
 @Component({
   selector: 'app-dockervm-wizard',
@@ -29,7 +30,7 @@ export class DockerVMWizardComponent {
   firstFormGroup: FormGroup;
   protected dialogRef: any;
   objectKeys = Object.keys;
-  summary_title = "Docker Summary";
+  summary_title = globalHelptext.dockerhost + " Summary";
   entityWizard: any;
   name: any;
 
@@ -57,7 +58,7 @@ export class DockerVMWizardComponent {
         name : 'name',
         placeholder :  helptext.docker_vm_placeholder,
         tooltip : helptext.docker_vm_tooltip,
-        validation : helptext.docker_vm_validation,
+        validation : [Validators.required,Validators.pattern('^[a-zA-Z0-9_]*$')],
         required: true,
         blurStatus: true,
         blurEvent: this.blurEvent,
@@ -141,6 +142,15 @@ export class DockerVMWizardComponent {
           tooltip: helptext.raw_filename_tooltip,
           validation : helptext.raw_filename_validation,
           required: true
+        },
+        {
+          type: 'input',
+          name: 'raw_filename_password',
+          placeholder : helptext.raw_filename_password_placeholder,
+          tooltip: helptext.raw_filename_password_tooltip,
+          validation : helptext.raw_filename_password_validation,
+          inputType: 'password',
+          value: 'docker'
         },
         {
           type: 'input',
@@ -239,7 +249,7 @@ export class DockerVMWizardComponent {
       this.summary[T('Name')] = name;
       this.summary[T('Number of CPUs')] = ( < FormGroup > entityWizard.formArray.get([2])).get('vcpus').value;
     });
-    
+
       ( < FormGroup > entityWizard.formArray.get([2])).get('vcpus').valueChanges.subscribe((vcpus) => {
         this.summary[T('Number of CPUs')] = vcpus;
       });
@@ -258,7 +268,7 @@ export class DockerVMWizardComponent {
         } else {
           ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(0);
           _.find(this.wizardConfig[2].fieldConfig, {'name' : 'memory'})['hasErrors'] = true;
-          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'memory'})['errors'] = `Docker Container needs at least 2048 MiBs Memory to operate.`
+          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'memory'})['errors'] = `${globalHelptext.dockerhost} needs at least 2048 MiB memory.`
         }
       });
       ( < FormGroup > entityWizard.formArray.get([4])).get('raw_filename').valueChanges.subscribe((raw_filename) => {
@@ -279,7 +289,7 @@ export class DockerVMWizardComponent {
          if (stat.free_bytes < volsize && stat.free_bytes <= 21474836480) {
           ( < FormGroup > entityWizard.formArray.get([4])).controls['size'].setValue(Math.floor(stat.free_bytes / (1073741824)));
           _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'})['hasErrors'] = true;
-          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'})['errors'] = 'Docker Container needs at least 20 Gibs';
+          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'})['errors'] = '${globalHelptext.dockerhost} needs at least 20 GiB.';
          } else if(stat.free_bytes >= 21474836480) {
           ( < FormGroup > entityWizard.formArray.get([4])).controls['size'].setValue(20);
           _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'})['hasErrors'] = false;
@@ -287,12 +297,12 @@ export class DockerVMWizardComponent {
          } else {
           ( < FormGroup > entityWizard.formArray.get([4])).controls['size'].setValue(Math.floor(stat.free_bytes / (1073741824)));
           _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'})['hasErrors'] = true;
-          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'})['errors'] = 'Docker Container needs at least 20 Gibs';
+          _.find(this.wizardConfig[4].fieldConfig, {'name' : 'size'})['errors'] = '${globalHelptext.dockerhost} needs at least 20 GiB.';
          }
         })
       }
       });
-    
+
   }
   getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
@@ -303,9 +313,9 @@ blurEvent(parent){
     if(vm_wizard_res.length > 0){
 
       _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['hasErrors'] = true;
-      _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['errors'] = `Docker Container: ${vm_wizard_res[0].name} already exists.`;
+      _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['errors'] = `${globalHelptext.dockerhost} "${vm_wizard_res[0].name}" already exists.`;
       parent.entityWizard.formArray.get([0]).get('name').setValue("");
-      
+
     }
   })
 }
@@ -315,12 +325,12 @@ blurEvent2(parent){
   parent.ws.call('vm.get_available_memory').subscribe((vm_memory_available)=>{
     if( vm_memory_requested * 1048576 > vm_memory_available){
       _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'})['hasErrors'] = true;
-      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'})['errors'] = `Cannot allocate ${vm_memory_requested} Mib to docker: ${vm_name}.`;
+      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'})['errors'] = `Cannot allocate ${vm_memory_requested} MiB to ${globalHelptext.dockerhost} "${vm_name}".`;
       parent.entityWizard.formArray.get([2]).get('memory').setValue(0);
 
     } else if (vm_memory_requested * 1048576 < 2147483648) {
       _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'})['hasErrors'] = true;
-      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'})['errors'] = `Docker Container: "${vm_name}" needs at least 2048 MiBs Memory to operate.`;
+      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'})['errors'] = `${globalHelptext.dockerhost} "${vm_name}" needs at least 2048 MiB memory.`;
       parent.entityWizard.formArray.get([2]).get('memory').setValue(0);
 
     } else {
@@ -339,9 +349,9 @@ blurEvent3(parent){
       parent.ws.call('filesystem.statfs',[raw_file_directory]).subscribe((stat)=> {
         if (stat.free_bytes < size ) {
           _.find(parent.wizardConfig[4].fieldConfig, {'name' : 'size'})['hasErrors'] = true;
-          _.find(parent.wizardConfig[4].fieldConfig, {'name' : 'size'})['errors'] = `Cannot allocate ${size / (1073741824)} Gib to for storage docker machine: ${vm_name}.`;
+          _.find(parent.wizardConfig[4].fieldConfig, {'name' : 'size'})['errors'] = `Cannot allocate ${size / (1073741824)} GiB for ${globalHelptext.dockerhost} "${vm_name}" storage.`;
           parent.entityWizard.formArray.get([4]).get('size').setValue(0);
-          
+
          };
       });
     };
@@ -357,18 +367,18 @@ async customSubmit(value) {
     vm_payload["name"] = value.name;
     vm_payload["vcpus"] = String(value.vcpus);
     vm_payload["autostart"] = value.autostart;
-    vm_payload["root_password"] = "docker"
+    vm_payload["root_password"] = value.raw_filename_password;
     vm_payload["devices"] = [
       {"dtype": "NIC", "attributes": {"type": value.NIC_type, "mac": value.NIC_mac, "nic_attach":value.nic_attach}},
       {"dtype": "RAW", "attributes": {"path": path,exists: false, "type": "AHCI", "size": value.size, sectorsize: 0}},
     ]
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Docker VM") }, disableClose: true });
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T(globalHelptext.dockerhost) }, disableClose: true });
     this.dialogRef.componentInstance.setCall('vm.create_container', [vm_payload]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
       this.entityWizard.success = true;
       this.dialogRef.close(true);
-      this.entityWizard.snackBar.open(T("Docker VM successfully Created"), T("Success"),{ duration: 5000 });
+      this.entityWizard.snackBar.open(T(globalHelptext.dockerhost + " successfully created"), T("Success"),{ duration: 5000 });
       this.router.navigate(['/vm']);
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {

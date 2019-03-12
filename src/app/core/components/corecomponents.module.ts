@@ -17,6 +17,7 @@ import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchar
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
 import { ViewChartGaugeComponent } from './viewchartgauge/viewchartgauge.component';
 import { ViewChartLineComponent } from './viewchartline/viewchartline.component';
+import { StorageService } from '../../services/storage.service';
 
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { WidgetChartComponent } from 'app/core/components/widgets/widgetchart/widgetchart.component';
@@ -142,6 +143,9 @@ import { TranslateModule } from '@ngx-translate/core';
     WidgetNoteComponent,
     WidgetNotesCollectionComponent,
     WidgetPoolComponent
+  ],
+  providers:[
+    StorageService
   ]
 })
 export class CoreComponents {}

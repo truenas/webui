@@ -17,7 +17,7 @@ import { PreferencesService } from 'app/core/services/preferences.service';
 import { WebSocketService } from './services/ws.service';
 import { DomSanitizer } from "@angular/platform-browser";
 import { MatIconRegistry } from "@angular/material/icon";
-//import { ChartDataUtilsService } from 'app/core/services/chart-data-utils.service'; // <-- Use this globally so we can run as web worker
+import { ChartDataUtilsService } from 'app/core/services/chart-data-utils.service'; // <-- Use this globally so we can run as web worker
 
 @Component({
   selector: 'app-root',
@@ -44,11 +44,15 @@ export class AppComponent {
     public themeservice: ThemeService,
     public domSanitizer: DomSanitizer,
     public matIconRegistry: MatIconRegistry,
-    /*public chartDataUtils: ChartDataUtilsService*/) {
+    public chartDataUtils: ChartDataUtilsService) {
 
     this.matIconRegistry.addSvgIconSetInNamespace(
       "mdi",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/iconfont/mdi/mdi.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "jail_icon",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/jail_icon.svg")
     );
     this.title.setTitle('FreeNAS - ' + window.location.hostname);
 

@@ -280,8 +280,19 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(color, --fg2, $fg2, !important);
   }
 
-  .mat-form-field .mat-select.mat-select-disabled .mat-select-arrow {
+  .mat-form-field .mat-select.mat-select-disabled .mat-select-arrow,
+  .mat-select-disabled .mat-select-value  {
+    @include variable(color, --fg2, $fg2);
     opacity: 0.38;
+  }
+
+  .mat-checkbox-disabled .mat-checkbox-label {
+    @include variable(color, --fg2, $fg2);
+    opacity: 0.6;
+  }
+
+  .mat-checkbox-disabled .mat-checkbox-frame, .mat-checkbox-disabled .mat-checkbox-inner-container {
+    opacity: 0.75;
   }
 
   .mat-menu-panel,
@@ -414,11 +425,18 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .ngx-datatable .datatable-body .datatable-row-wrapper:hover,
   .mat-menu-content button.mat-menu-item:focus, 
   .mat-menu-content button.mat-menu-item:focus .mat-icon:not([class="theme-picker-swatch-icon"]),
-  .ngx-datatable .datatable-body .datatable-row-wrapper:focus{
+  .ngx-datatable .datatable-body .datatable-row-wrapper:focus {
     @include variable(background, --primary, $primary, !important);
     @include variable(color, --primary-txt, $primary-txt);
 }
 
+.ngx-datatable .datatable-body .datatable-row-wrapper:hover .mat-checkbox .mat-checkbox-frame {
+  @include variable(border-color, --primary-txt, $primary-txt, !important);
+}
+
+.ngx-datatable .datatable-body .datatable-row-wrapper:hover .mat-slide-toggle:not(.mat-checked) .mat-slide-toggle-bar {
+  @include variable(background, --bg1, $bg1, !important);
+}
 
   // Treelists in storage/volumes
   .mat-expansion-panel-header{
@@ -646,7 +664,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   // Add rule for entity wizards to make text light on dark themes
-  .mat-step-header .mat-step-label.mat-step-label-active, {
+  .mat-step-header .mat-step-label.mat-step-label-active {
     @include variable(color, --fg2, $fg2);
     opacity: 1;
   }
@@ -853,6 +871,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     overflow-y: hidden !important;
   }
 
+  app-admin-layout .mat-drawer-inner-container {
+    overflow: visible !important;
+  }
+
   // Bring theme colors to rollover effect for standard primary buttons
   .mat-button.mat-primary:hover .mat-button-focus-overlay {
     @include variable(background-color, --primary, $primary);
@@ -1044,6 +1066,40 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     white-space: normal !important;
     text-overflow: unset;
     min-width: 200px;
+  }
+
+  .ngx-datatable .datatable-header .datatable-header-cell .resize-handle {
+    border-right: 1px solid !important;
+    @include variable(border-color, --primary-txt, $primary-txt);
+    visibility: visible !important;
+    opacity: .25;
+  }
+
+  .datatable-header-inner {
+    height: 52px;
+  }
+
+  #idmap-err {
+    position: absolute;
+    top: 100px;
+    left: 26px;
+    @include variable(color, --red, $red);
+  }
+
+  #em_pwmessage {
+    margin: 10px 0;
+  }
+  
+  .rightside-content-hold {
+    overflow-y: auto;
+  }
+
+  app-networksummary .mat-list .mat-subheader {
+    @include variable(color, --fg2, $fg2);
+  }
+
+  .xterm-viewport {
+    overflow-y: auto;
   }
 
  } // end of ix theme

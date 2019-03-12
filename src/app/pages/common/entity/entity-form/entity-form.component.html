@@ -4,6 +4,12 @@
 </p>
 <mat-card class="form-card">
     <div class="mat-content">
+
+        <mat-spinner 
+            [diameter]='40' 
+            id="entity-table-spinner"
+            *ngIf="showSpinner" #entityspinner>
+          </mat-spinner> 
         
         <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" class="form-wrap" #entityForm="ngForm" *ngIf="showDefaults">
            <!-- <ng-container *ngFor="let field of fieldConfig; let i = index">
@@ -44,3 +50,4 @@
         <mat-error *ngIf="error" type="danger" id="error_message"><div [innerHTML]="error"></div></mat-error>
     </div>
 </mat-card>
+<div class="temp" [style.height.px]="50" *ngIf="isFooterOpen" ></div>

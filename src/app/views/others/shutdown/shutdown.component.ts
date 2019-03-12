@@ -4,6 +4,7 @@ import { WebSocketService } from '../../../services/ws.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogService } from '../../../services/dialog.service';
+import globalHelptext from '../../../helptext/global-helptext';
 
 @Component({
   selector: 'system-shutdown',
@@ -13,6 +14,7 @@ import { DialogService } from '../../../services/dialog.service';
 export class ShutdownComponent implements OnInit {    
   
   public is_freenas: Boolean = false;
+  public copyrightYear = globalHelptext.copyright_year;
 
   constructor(protected ws: WebSocketService, protected router: Router, 
     protected loader: AppLoaderService, public translate: TranslateService,

@@ -4,9 +4,8 @@ import * as _ from 'lodash';
 
 import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { Validators } from '@angular/forms';
 
-import { T } from '../../../../translate-marker';
+import helptext from '../../../../helptext/directoryservice/kerberosrealms-form-list';
 
 @Component({
   selector: 'app-group-form',
@@ -21,48 +20,42 @@ export class KerberosRealmsFormComponent {
 
   protected fieldConfig: FieldConfig[] = [{
       type: 'input',
-      name: 'krb_realm',
-      placeholder: T('Realm'),
-      tooltip: T('Enter the name of the realm.'),
+      name: helptext.krbrealm_form_realm_name,
+      placeholder: helptext.krbrealm_form_realm_placeholder,
+      tooltip: helptext.krbrealm_form_realm_tooltip,
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext.krbrealm_form_realm_validation
     },
     {
       type: 'input',
-      name: 'krb_kdc',
-      placeholder: T('KDC'),
-      tooltip: T('Enter the name of the Key Distribution Center.')
+      name: helptext.krbrealm_form_kdc_name,
+      placeholder: helptext.krbrealm_form_kdc_placeholder,
+      tooltip: helptext.krbrealm_form_kdc_tooltip
     },
     {
       type: 'input',
-      name: 'krb_admin_server',
-      placeholder: T('Admin Server'),
-      tooltip: T('Define the server where all changes to the database are\
-                performed.')
+      name: helptext.krbrealm_form_admin_server_name,
+      placeholder: helptext.krbrealm_form_admin_server_placeholder,
+      tooltip: helptext.krbrealm_form_admin_server_tooltip
     },
     {
       type: 'input',
-      name: 'krb_kpasswd_server',
-      placeholder: T('Password Server'),
-      tooltip: T('Define the server where all password changes are\
-                performed.')
+      name: helptext.krbrealm_form_kpasswd_server_name,
+      placeholder: helptext.krbrealm_form_kpasswd_server_placeholder,
+      tooltip: helptext.krbrealm_form_kpasswd_server_tooltip
     },
   ];
 
-  protected advanced_field: Array < any > = [
-    'krb_kdc',
-    'krb_admin_server',
-    'krb_kpasswd_server',
-  ];
+  protected advanced_field: Array < any > = helptext.krbrealm_form_advanced_field_array;
 
   public custActions: Array < any > = [{
-      id: 'basic_mode',
-      name: 'Basic Mode',
+      id: helptext.krbrealm_form_custactions_basic_id,
+      name: helptext.krbrealm_form_custactions_basic_name,
       function: () => { this.isBasicMode = !this.isBasicMode; }
     },
     {
-      'id': 'advanced_mode',
-      name: 'Advanced Mode',
+      'id': helptext.krbrealm_form_custactions_adv_id,
+      name: helptext.krbrealm_form_custactions_adv_name,
       function: () => { this.isBasicMode = !this.isBasicMode; }
     }
   ];

@@ -1,4 +1,4 @@
-import { Component, ElementRef, Injector, ApplicationRef } from '@angular/core';
+import { Component, ElementRef, Injector, ApplicationRef, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RestService } from '../../../../services/rest.service';
 import { Subscription } from 'rxjs';
@@ -11,7 +11,7 @@ import { isNgTemplate } from '@angular/compiler';
   selector: 'app-snapshot-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
-export class SnapshotListComponent {
+export class SnapshotListComponent implements OnInit {
 
   public title = "Snapshots";
   protected queryCall = 'zfs.snapshot.query';
@@ -24,7 +24,7 @@ export class SnapshotListComponent {
   public busy: Subscription;
   public sub: Subscription;
   public columns: Array<any> = [
-    {name : 'Name', prop : 'name'},
+    {name : 'Name', prop : 'name', minWidth: 355},
     {name : 'Used', prop : 'used'},
     {name : 'Referenced', prop : 'refer'},
     {name : 'Date Created', prop: 'creation'}
@@ -75,6 +75,14 @@ export class SnapshotListComponent {
       default:
         return row[attr];
     }
+  }
+
+  async ngOnInit() {
+    await this.ws.call('systemdataset.config').toPromise().then((res) => {
+      if (res && res.basename && res.basename !== '') {
+        this.queryCallOption[0].push(["name", "!^", res.basename]);
+      }
+    });
   }
 
   afterInit(entityList: any) {
@@ -143,7 +151,9 @@ export class SnapshotListComponent {
 
   doRollback(item) {
     const warningMsg = T("<b>WARNING:</b> Rolling back to this snapshot will permanently delete later snapshots of this dataset. Do not roll back until all desired snapshots have been backed up!");
-    this.entityList.dialogService.confirm(T("Warning"), warningMsg, false, T('Rollback')).subscribe(res => {
+    const msg = T("<br><br>Roll back to snapshot <i>") + item.snapshot_name + '</i> from ' + item.creation + '?';
+
+    this.entityList.dialogService.confirm(T("Warning"), warningMsg + msg, false, T('Rollback')).subscribe(res => {
       let data = {"force" : true};
       if (res) {
         this.entityList.loader.open();

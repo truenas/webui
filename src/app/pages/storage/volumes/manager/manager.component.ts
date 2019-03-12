@@ -383,12 +383,14 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   doSubmit() {
+    let confirmButton = T('Create Pool');
     let diskWarning = this.diskAddWarning;
     if (!this.isNew) {
+      confirmButton = T('Extend Pool');
       diskWarning = this.diskExtendWarning;
     }
 
-    this.dialog.confirm(T("Warning"), diskWarning, false, T('Create Pool')).subscribe((res) => {
+    this.dialog.confirm(T("Warning"), diskWarning, false, confirmButton).subscribe((res) => {
       if (res) {
         this.error = null;
 

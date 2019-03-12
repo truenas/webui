@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { RestService, WebSocketService, NetworkService } from '../../../services';
+import { RestService, WebSocketService, NetworkService, SystemGeneralService } from '../../../services';
 import { FormGroup, Validators } from '@angular/forms';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
@@ -68,7 +68,7 @@ export class VMWizardComponent {
         name : 'name',
         placeholder : helptext.name_placeholder,
         tooltip : helptext.name_tooltip,
-        validation : helptext.name_validation,
+        validation : [Validators.required,Validators.pattern('^[a-zA-Z0-9\_]*$')],
         required: true,
         blurStatus: true,
         blurEvent: this.blurEvent,
@@ -92,7 +92,16 @@ export class VMWizardComponent {
       tooltip : helptext.enable_vnc_tooltip,
       value: true,
       isHidden: false
-    }
+      },
+      {
+        type: 'select',
+        name : 'vnc_bind',
+        placeholder : helptext.vnc_bind_placeholder,
+        tooltip : helptext.vnc_bind_tooltip,
+        options: [],
+        required: true,
+        validation: [Validators.required],
+      },
       ]
     },
     {
@@ -132,6 +141,14 @@ export class VMWizardComponent {
           value: true,
         },
         {
+          type: 'select',
+          name: 'hdd_type',
+          placeholder: helptext.hdd_type_placeholder,
+          tooltip: helptext.hdd_type_tooltip,
+          options : helptext.hdd_type_options,
+          value: helptext.hdd_type_value
+        },
+        {
           type: 'input',
           name: 'volsize',
           placeholder : helptext.volsize_placeholder,
@@ -157,16 +174,8 @@ export class VMWizardComponent {
           initial: '/mnt',
           explorerType: 'directory',
           validation: [Validators.required],
-          required: true
-        },
-        {
-          type: 'select',
-          name: 'hdd_type',
-          placeholder: helptext.hdd_type_placeholder,
-          tooltip: helptext.hdd_type_tooltip,
-          isHidden: false,
-          options : helptext.hdd_type_options,
-          value: helptext.hdd_type_value
+          required: true,
+          hideDirs: 'iocage'
         },
         {
           type: 'select',
@@ -218,8 +227,6 @@ export class VMWizardComponent {
           placeholder : helptext.iso_path_placeholder,
           initial: '/mnt',
           tooltip: helptext.iso_path_tooltip,
-          validation : helptext.iso_path_validation,
-          required: true,
         },
         {
           type: 'checkbox',
@@ -236,7 +243,6 @@ export class VMWizardComponent {
           tooltip: helptext.upload_iso_path_tooltip,
           explorerType: 'directory',
           isHidden: true,
-          validation : helptext.upload_iso_path_validation,
         },
         {
           type: 'upload',
@@ -264,7 +270,7 @@ export class VMWizardComponent {
     public vmService: VmService, public networkService: NetworkService,
     protected loader: AppLoaderService, protected dialog: MatDialog,
     public messageService: MessageService,private router: Router,
-    private dialogService: DialogService) {
+    private dialogService: DialogService, private systemGeneralService: SystemGeneralService) {
 
   }
 
@@ -272,6 +278,21 @@ export class VMWizardComponent {
     this.entityWizard = entityWizard;
   }
   afterInit(entityWizard: EntityWizardComponent) {
+    this.systemGeneralService.getIPChoices().subscribe((res) => {
+      if (res.length > 0) {
+        const vnc_bind = _.find(this.wizardConfig[1].fieldConfig, {'name' : 'vnc_bind'});
+        for (const item of res){
+          vnc_bind.options.push({label : item[1], value : item[0]});
+        }
+        this.ws.call('interfaces.ip_in_use', [{"ipv4": true}]).subscribe(
+          (ip) => {
+            if (_.find(vnc_bind.options, { value: ip[0].address })){
+              ( < FormGroup > entityWizard.formArray.get([1]).get('vnc_bind')).setValue(ip[0].address);
+            }
+          }
+        )
+      }
+    });
 
     this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]]]).subscribe((zvols)=>{
       zvols.forEach(zvol => {
@@ -279,7 +300,7 @@ export class VMWizardComponent {
           {
             label : zvol.id, value : zvol.id
           }
-        );   
+        );
       });
     });
 
@@ -297,6 +318,11 @@ export class VMWizardComponent {
       }
 
 
+    });
+
+    ( < FormGroup > entityWizard.formArray.get([1]).get('enable_vnc')).valueChanges.subscribe((res) => {
+      _.find(this.wizardConfig[1].fieldConfig, {name : 'vnc_bind'}).isHidden = !res;
+      res ? ( < FormGroup > entityWizard.formArray.get([1]).get('vnc_bind')).enable() : ( < FormGroup > entityWizard.formArray.get([1]).get('vnc_bind')).disable();
     });
 
 
@@ -360,7 +386,7 @@ export class VMWizardComponent {
         if(datastore === '/mnt'){
           ( < FormGroup > entityWizard.formArray.get([3])).controls['datastore'].setValue(null);
           _.find(this.wizardConfig[3].fieldConfig, {'name' : 'datastore'}).hasErrors = true;
-          _.find(this.wizardConfig[3].fieldConfig, {'name' : 'datastore'}).errors = `Virtual Machine storage are not allowed on temporary file storage, ${datastore}`;
+          _.find(this.wizardConfig[3].fieldConfig, {'name' : 'datastore'}).errors = `Virtual machines cannot be stored in an unmounted mountpoint: ${datastore}`;
         }
         if(datastore === ''){
           ( < FormGroup > entityWizard.formArray.get([3])).controls['datastore'].setValue(null);
@@ -370,7 +396,12 @@ export class VMWizardComponent {
       }
       });
       ( < FormGroup > entityWizard.formArray.get([5]).get('iso_path')).valueChanges.subscribe((iso_path) => {
-        this.summary[T('Installation Media')] = iso_path;
+        if (iso_path && iso_path !== undefined){
+          this.summary[T('Installation Media')] = iso_path;
+        } else {
+          delete this.summary[T('Installation Media')];
+        }
+        
       });
       this.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
         ( < FormGroup > entityWizard.formArray.get([5]).get('iso_path')).setValue(message);
@@ -408,15 +439,13 @@ export class VMWizardComponent {
     });
     ( < FormGroup > entityWizard.formArray.get([3]).get('disk_radio')).valueChanges.subscribe((res) => {
       if (res){
-        _.find(this.wizardConfig[3].fieldConfig, {name : 'volsize'})['isHidden'] = false;
-        _.find(this.wizardConfig[3].fieldConfig, {name : 'datastore'})['isHidden'] = false;
-        _.find(this.wizardConfig[3].fieldConfig, {name : 'hdd_path'})['isHidden'] = true;
-        _.find(this.wizardConfig[3].fieldConfig, {name : 'hdd_type'})['isHidden'] = false;
+        _.find(this.wizardConfig[3].fieldConfig, {name : 'volsize'}).isHidden = false;
+        _.find(this.wizardConfig[3].fieldConfig, {name : 'datastore'}).isHidden = false;
+        _.find(this.wizardConfig[3].fieldConfig, {name : 'hdd_path'}).isHidden = true;
       } else {
-        _.find(this.wizardConfig[3].fieldConfig, {name : 'volsize'})['isHidden'] = true;
-        _.find(this.wizardConfig[3].fieldConfig, {name : 'datastore'})['isHidden'] = true;
-        _.find(this.wizardConfig[3].fieldConfig, {name : 'hdd_path'})['isHidden'] = false;
-        _.find(this.wizardConfig[3].fieldConfig, {name : 'hdd_type'})['isHidden'] = true;
+        _.find(this.wizardConfig[3].fieldConfig, {name : 'volsize'}).isHidden = true;
+        _.find(this.wizardConfig[3].fieldConfig, {name : 'datastore'}).isHidden = true;
+        _.find(this.wizardConfig[3].fieldConfig, {name : 'hdd_path'}).isHidden = false;
       }
 
     });
@@ -574,13 +603,30 @@ async customSubmit(value) {
     vm_payload["bootloader"] = value.bootloader;
     vm_payload["autoloader"] = value.autoloader;
     vm_payload["autostart"] = value.autostart;
-    vm_payload["devices"] = [
-      {"dtype": "NIC", "attributes": {"type": value.NIC_type, "mac": value.NIC_mac, "nic_attach":value.nic_attach}},
-      {"dtype": "DISK", "attributes": {"path": hdd, "type": "AHCI", "sectorsize": 0}},
-      {"dtype": "CDROM", "attributes": {"path": value.iso_path}},
-    ]
+    if ( value.iso_path && value.iso_path !== undefined) {
+      vm_payload["devices"] = [
+        {"dtype": "NIC", "attributes": {"type": value.NIC_type, "mac": value.NIC_mac, "nic_attach":value.nic_attach}},
+        {"dtype": "DISK", "attributes": {"path": hdd, "type": value.hdd_type, "sectorsize": 0}},
+        {"dtype": "CDROM", "attributes": {"path": value.iso_path}},
+      ]
+    } else {
+      vm_payload["devices"] = [
+        {"dtype": "NIC", "attributes": {"type": value.NIC_type, "mac": value.NIC_mac, "nic_attach":value.nic_attach}},
+        {"dtype": "DISK", "attributes": {"path": hdd, "type": value.hdd_type, "sectorsize": 0}},
+      ]
+    }
+
     if(value.enable_vnc &&value.bootloader !== "UEFI_CSM"){
-      await this.create_vnc_device(vm_payload);
+      vm_payload["devices"].push({
+          "dtype": "VNC", "attributes": {
+            "wait": true,
+            "vnc_port": String(this.getRndInteger(5553,6553)),
+            "vnc_resolution": "1024x768",
+            "vnc_bind": value.vnc_bind,
+            "vnc_password": "",
+            "vnc_web": true
+          }
+        });
     };
     this.loader.open();
     if( value.hdd_path ){
@@ -622,20 +668,4 @@ async customSubmit(value) {
     }
 }
 
-  async create_vnc_device(vm_payload: any) {
-    await this.ws.call('interfaces.ip_in_use', [{"ipv4": true}]).toPromise().then( res=>{
-      vm_payload["devices"].push(
-        {
-          "dtype": "VNC", "attributes": {
-            "wait": true,
-            "vnc_port": String(this.getRndInteger(5553,6553)),
-            "vnc_resolution": "1024x768",
-            "vnc_bind": res[0].address,
-            "vnc_password": "",
-            "vnc_web": true
-          }
-        }
-    );
-    });
-  }
 }

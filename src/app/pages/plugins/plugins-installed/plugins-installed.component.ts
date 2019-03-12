@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { MatDialog, MatSnackBar } from '@angular/material';
+import * as ip from 'what-is-my-ip-address';
 
 import { RestService, WebSocketService } from '../../../services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
@@ -154,6 +155,7 @@ export class PluginsInstalledListComponent {
   public selectedPool;
   public activatedPool: any;
   public availablePools: any;
+  protected publicIp = '';
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected loader: AppLoaderService,
@@ -198,7 +200,15 @@ export class PluginsInstalledListComponent {
       });
   }
 
-  afterInit(entityList: any) { this.entityList = entityList; }
+  afterInit(entityList: any) {
+    this.entityList = entityList;
+    ip.v4().then((pubIp) => {
+      this.publicIp = pubIp;
+    }).catch((e) => {
+      console.log("Error getting Public IP: ", e);
+      this.publicIp = '';
+    });
+  }
 
   isActionVisible(actionId: string, row: any) {
     if (actionId === 'start' && row[3] === "up") {
@@ -237,7 +247,7 @@ export class PluginsInstalledListComponent {
   }
 
   getActions(parentRow) {
-    return [{
+    const actions = [{
         id: "start",
         label: T("Start"),
         onClick: (row) => {
@@ -320,6 +330,16 @@ export class PluginsInstalledListComponent {
         }
       }
     ]
+    if (parentRow['1'].startsWith('asigra')) {
+      actions.push({
+        id: "register",
+        label: T('Register'),
+        onClick: (row) => {
+          this.getRegistrationLink();
+        }
+      });
+    }
+    return actions;
   }
 
   getSelectedNames(selectedJails) {
@@ -356,5 +376,31 @@ export class PluginsInstalledListComponent {
         entityList.rows[i][6] = _.split(entityList.rows[i][6], '|')[1];
       }
     }
+  }
+
+  getRegistrationLink() {
+    const url = 'https://licenseportal.asigra.com/licenseportal/user-registration.do';
+    const form = document.createElement('form');
+    form.action = url;
+    form.method = 'POST';
+    form.target = '_blank';
+    form.style.display = 'none';
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.name = 'dsSystemPublicIP';
+    input.value = this.publicIp;
+
+    const submit = document.createElement('input');
+    submit.type = 'submit';
+    submit.id = 'submitProject';
+
+    form.appendChild(input);
+    form.appendChild(submit);
+    document.body.appendChild(form);
+
+    submit.click();
+
+    document.body.removeChild(form);
   }
 }

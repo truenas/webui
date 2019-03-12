@@ -11,7 +11,7 @@ import { EntityFormComponent } from '../../common/entity/entity-form';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
 
-import { T } from '../../../translate-marker';
+import helptext from '../../../helptext/directoryservice/idmap';
 
 @Component({
   selector: 'direcotryservice-idmap',
@@ -33,381 +33,276 @@ export class IdmapComponent implements OnInit {
   public adFieldConfig: FieldConfig[] = [
     {
       type: 'input',
-      name: 'idmap_ad_range_low',
-      placeholder: T('Range Low'),
-      tooltip: T('Beginning UID/GID number for which this system is\
-                  authoritative. UID/GID values below Range Low or\
-                  higher than Range High are ignored.'),
+      name: helptext.idmap_ad_range_low_name,
+      placeholder: helptext.idmap_ad_range_low_placeholder,
+      tooltip: helptext.idmap_ad_range_low_tooltip,
     },
     {
       type: 'input',
-      name: 'idmap_ad_range_high',
-      placeholder: T('Range High'),
-      tooltip: T('Ending UID/GID number for which this system is\
-                  authoritative. UID/GID values below Range Low or\
-                  higher than Range High are ignored.'),
+      name: helptext.idmap_ad_range_high_name,
+      placeholder: helptext.idmap_ad_range_high_placeholder,
+      tooltip: helptext.idmap_ad_range_high_tooltip,
     },
     {
       type: 'select',
-      name: 'idmap_ad_schema_mode',
-      placeholder: T('Schema mode'),
-      tooltip: T('Choose the schema to use with LDAP authentication for\
-                  SMB shares. The LDAP server must be configured with\
-                  Samba attributes to use a Samba Schema.'),
-      options: [{
-        label: 'rfc2307',
-        value: 'rfc2307',
-      }, {
-        label: 'sfu',
-        value: 'sfu',
-      }, {
-        label: 'sfu20',
-        value: 'sfu20',
-      }]
+      name: helptext.idmap_ad_schema_mode_name,
+      placeholder: helptext.idmap_ad_schema_mode_placeholder,
+      tooltip: helptext.idmap_ad_schema_mode_tooltip,
+      options: helptext.idmap_ad_schema_mode_options
     }];
   public autoridFieldConfig: FieldConfig[] = [
     {
       type: 'input',
-      name: 'idmap_autorid_range_low',
-      placeholder: T('Range Low'),
-      tooltip: T('Beginning UID/GID number for which this system is\
-                  authoritative. UID/GID values below Range Low or\
-                  higher than Range High are ignored.'),
+      name: helptext.idmap_autorid_range_low_name,
+      placeholder: helptext.idmap_autorid_range_low_placeholder,
+      tooltip: helptext.idmap_autorid_range_low_tooltip,
     },
     {
       type: 'input',
-      name: 'idmap_autorid_range_high',
-      placeholder: T('Range High'),
-      tooltip: T('Ending UID/GID number for which this system is\
-                  authoritative. UID/GID values below Range Low or\
-                  higher than Range High are ignored.'),
+      name: helptext.idmap_autorid_range_high_name,
+      placeholder: helptext.idmap_autorid_range_high_placeholder,
+      tooltip: helptext.idmap_autorid_range_high_tooltip,
     },
     {
       type: 'input',
-      name: 'idmap_autorid_rangesize',
-      placeholder: T('Range Size'),
-      tooltip: T('Define the number of UIDS/GIDS available per domain\
-                  range. The minimum is <i>2000</i> and the recommended\
-                  default is <i>100000</i>.'),
+      name: helptext.idmap_autorid_rangesize_name,
+      placeholder: helptext.idmap_autorid_rangesize_placeholder,
+      tooltip: helptext.idmap_autorid_rangesize_tooltip,
     },
     {
       type: 'checkbox',
-      name: 'idmap_autorid_readonly',
-      placeholder: T('Read Only'),
-      tooltip: T('Set to make the module <i>read-only</i>. No new ranges\
-                  are allocated or new mappings created in the idmap\
-                  pool.'),
+      name: helptext.idmap_autorid_readonly_name,
+      placeholder: helptext.idmap_autorid_readonly_placeholder,
+      tooltip: helptext.idmap_autorid_readonly_tooltip,
     },
     {
       type: 'checkbox',
-      name: 'idmap_autorid_ignore_builtin',
-      placeholder: T('Ignore Builtin'),
-      tooltip: T('Set to ignore mapping requests for the <i>BUILTIN</i>\
-                  domain.'),
+      name: helptext.idmap_autorid_ignore_builtin_name,
+      placeholder: helptext.idmap_autorid_ignore_builtin_placeholder,
+      tooltip: helptext.idmap_autorid_ignore_builtin_tooltip,
     }];
   public fruitFieldConfig: FieldConfig[] = [
     {
       type: 'input',
-      name: 'idmap_fruit_range_low',
-      placeholder: T('Range Low'),
-      tooltip: T('Beginning UID/GID number for which this system is\
-                  authoritative. UID/GID values below Range Low or\
-                  higher than Range High are ignored.'),
+      name: helptext.idmap_fruit_range_low_name,
+      placeholder: helptext.idmap_fruit_range_low_placeholder,
+      tooltip: helptext.idmap_fruit_range_low_tooltip,
     },
     {
       type: 'input',
-      name: 'idmap_fruit_range_high',
-      placeholder: T('Range High'),
-      tooltip: T('Ending UID/GID number for which this system is\
-                  authoritative. UID/GID values below Range Low or\
-                  higher than Range High are ignored.'),
+      name: helptext.idmap_fruit_range_high_name,
+      placeholder: helptext.idmap_fruit_range_high_placeholder,
+      tooltip: helptext.idmap_fruit_range_high_tooltip,
     }];
   public ldapFieldConfig: FieldConfig[] = [
     {
       type: 'input',
-      name: 'idmap_ldap_range_low',
-      placeholder: T('Range Low'),
-      tooltip: T('Beginning UID/GID number for which this system is\
-                  authoritative. UID/GID values below Range Low or\
-                  higher than Range High are ignored.'),
+      name: helptext.idmap_ldap_range_low_name,
+      placeholder: helptext.idmap_ldap_range_low_placeholder,
+      tooltip: helptext.idmap_ldap_range_low_tooltip,
     },
     {
       type: 'input',
-      name: 'idmap_ldap_range_high',
-      placeholder: T('Range High'),
-      tooltip: T('Ending UID/GID number for which this system is\
-                  authoritative. UID/GID values below Range Low or\
-                  higher than Range High are ignored.'),
+      name: helptext.idmap_ldap_range_high_name,
+      placeholder: helptext.idmap_ldap_range_high_placeholder,
+      tooltip: helptext.idmap_ldap_range_high_tooltip,
     },
     {
       type: 'input',
-      name: 'idmap_ldap_ldap_base_dn',
-      placeholder: T('Base DN'),
-      tooltip: T('The directory base suffix to use for SID/uid/gid\
-                  mapping entries. Example: dc=test,dc=org. When undefined,\
-                  idmap_ldap defaults to using the ldap idmap\
-                  suffix option from <a\
-                  href="https://www.freebsd.org/cgi/man.cgi?query=smb.conf"\
-                  target="_blank">smb.conf</a>.'),
+      name: helptext.idmap_ldap_basedn_name,
+      placeholder: helptext.idmap_ldap_basedn_placeholder,
+      tooltip: helptext.idmap_ldap_basedn_tooltip,
     },
     {
       type: 'input',
-      name: 'idmap_ldap_ldap_user_dn',
-      placeholder: T('User DN'),
-      tooltip: T('User Distinguished Name (DN) to use for authentication.'),
+      name: helptext.idmap_ldap_userdn_name,
+      placeholder: helptext.idmap_ldap_userdn_placeholder,
+      tooltip: helptext.idmap_ldap_userdn_tooltip,
     },
     {
       type: 'input',
-      name: 'idmap_ldap_ldap_url',
-      placeholder: T('URL'),
-      tooltip: T('LDAP server to use for SID/uid/gid map entries. When\
-                  undefined, idmap_ldap uses *ldap://localhost/*.\
-                  Example: <i>ldap://ldap.netscape.com/o=Airius.com</i>.'),
+      name: helptext.idmap_ldap_url_name,
+      placeholder: helptext.idmap_ldap_url_placeholder,
+      tooltip: helptext.idmap_ldap_url_tooltip,
     },
     {
       type: 'select',
-      name: 'idmap_ldap_ssl',
-      placeholder: T('Encryption Mode'),
-      tooltip: T('Choose an encryption mode to use with LDAP.'),
-      options: [{
-        label: 'Off',
-        value: 'off',
-      }, {
-        label: 'SSL',
-        value: 'ssl',
-      }, {
-        label: 'TLS',
-        value: 'tsl',
-      }],
+      name: helptext.idmap_ldap_ssl_name,
+      placeholder: helptext.idmap_ldap_ssl_placeholder,
+      tooltip: helptext.idmap_ldap_ssl_tooltip,
+      options: helptext.idmap_ldap_ssl_options
     },
     {
       type: 'select',
-      name: '',
-      placeholder: T('Certificate'),
-      tooltip: T('Select the certificate of the Active Directory server\
-                  if SSL connections are used. When no certificates are\
-                  available, move to the Active Directory server and\
-                  create a Certificate Authority and Certificate. Import\
-                  the certificate to this system using the\
-                  System/Certificates menu.'),
+      name: helptext.idmap_ldap_cert_name,
+      placeholder: helptext.idmap_ldap_cert_placeholder,
+      tooltip: helptext.idmap_ldap_cert_tooltip,
       options: [],
     }];
   public nssFieldConfig: FieldConfig[] = [
     {
       type: 'input',
-      name: 'idmap_nss_range_low',
-      placeholder: T('Range Low'),
-      tooltip: T('Beginning UID/GID number for which this system is\
-                  authoritative. UID/GID values below Range Low or\
-                  higher than Range High are ignored.'),
+      name: helptext.idmap_nss_range_low_name,
+      placeholder: helptext.idmap_nss_range_low_name,
+      tooltip: helptext.idmap_nss_range_low_tooltip,
     },
     {
       type: 'input',
-      name: 'idmap_nss_range_high',
-      placeholder: T('Range High'),
-      tooltip: T('Ending UID/GID number for which this system is\
-                  authoritative. UID/GID values below Range Low or\
-                  higher than Range High are ignored.'),
+      name: helptext.idmap_nss_range_high_name,
+      placeholder: helptext.idmap_nss_range_high_placeholder,
+      tooltip: helptext.idmap_nss_range_high_tooltip,
     }];
   public rfcFieldConfig: FieldConfig[] = [
     {
       type: 'input',
-      name: 'idmap_rfc2307_range_low',
-      placeholder: T('Range Low'),
-      tooltip: T('Beginning UID/GID number for which this system is\
-                  authoritative. UID/GID values below Range Low or\
-                  higher than Range High are ignored.'),
+      name: helptext.idmap_rfc2307_range_low_name,
+      placeholder: helptext.idmap_rfc2307_range_low_placeholder,
+      tooltip: helptext.idmap_rfc2307_range_low_tooltip,
     },
     {
       type: 'input',
-      name: 'idmap_rfc2307_range_high',
-      placeholder: T('Range High'),
-      tooltip: T('Ending UID/GID number for which this system is\
-                  authoritative. UID/GID values below Range Low or\
-                  higher than Range High are ignored.'),
+      name: helptext.idmap_rfc2307_range_high_name,
+      placeholder: helptext.idmap_rfc2307_range_high_placeholder,
+      tooltip: helptext.idmap_rfc2307_range_high_tooltip,
     },
     {
       type: 'select',
-      name: 'idmap_rfc2307_ldap_server',
-      placeholder: T('LDAP Server'),
-      tooltip: T('Select the type of LDAP server to use. This can be the\
-                  LDAP server provided by the Active Directory server or a\
-                  stand-alone LDAP server.'),
+      name: helptext.idmap_rfc2307_ldap_server_name,
+      placeholder: helptext.idmap_rfc2307_ldap_server_placeholder,
+      tooltip: helptext.idmap_rfc2307_ldap_server_tooltip,
       options: [],
     },
     {
       type: 'input',
-      name: 'idmap_rfc2307_bind_path_user',
-      placeholder: T('User Bind Path'),
-      tooltip: T('The search base where user objects can be found in the\
-                  LDAP server.'),
+      name: helptext.idmap_rfc2307_bpuser_name,
+      placeholder: helptext.idmap_rfc2307_bpuser_placeholder,
+      tooltip: helptext.idmap_rfc2307_bpuser_tooltip,
     },
     {
       type: 'input',
-      name: 'idmap_rfc2307_bind_path_group',
-      placeholder: T('Group Bind Path'),
-      tooltip: T('The search base where group objects can be found in\
-                  the LDAP server.'),
+      name: helptext.idmap_rfc2307_bpgroup_name,
+      placeholder: helptext.idmap_rfc2307_bpgroup_placeholder,
+      tooltip: helptext.idmap_rfc2307_bpgroup_tooltip,
     },
     {
       type: 'checkbox',
-      name: 'idmap_rfc2307_user_cn',
-      placeholder: T('User CN'),
-      tooltip: T('Set to query the cn instead of uid\
-                  attribute for the user name in LDAP.'),
+      name: helptext.idmap_rfc2307_user_cn_name,
+      placeholder: helptext.idmap_rfc2307_user_cn_placeholder,
+      tooltip: helptext.idmap_rfc2307_user_cn_tooltip,
     },
     {
       type: 'checkbox',
-      name: 'idmap_rfc2307_cn_realm',
-      placeholder: T('CN Realm'),
-      tooltip: T('Append <i>@realm</i> to <i>cn</i> in LDAP queries for\
-                  both groups and users when User CN is set).'),
+      name: helptext.idmap_rfc2307_cn_realm_name,
+      placeholder: helptext.idmap_rfc2307_cn_realm_placeholder,
+      tooltip: helptext.idmap_rfc2307_cn_realm_tooltip,
     },
     {
       type: 'input',
-      name: 'idmap_rfc2307_ldap_domain',
-      placeholder: T('LDAP Domain'),
-      tooltip: T('The domain to access the Active Directory server when\
-                  using the LDAP server inside the Active Directory\
-                  server.'),
+      name: helptext.idmap_rfc2307_ldap_domain_name,
+      placeholder: helptext.idmap_rfc2307_ldap_domain_placeholder,
+      tooltip: helptext.idmap_rfc2307_ldap_domain_tooltip,
     },
     {
       type: 'input',
-      name: 'idmap_rfc2307_ldap_url',
-      placeholder: T('LDAP URL'),
-      tooltip: T('The LDAP URL for accessing the LDAP server when using\
-                  a stand-alone LDAP server.'),
+      name: helptext.idmap_rfc2307_ldap_url_name,
+      placeholder: helptext.idmap_rfc2307_ldap_url_placeholder,
+      tooltip: helptext.idmap_rfc2307_ldap_url_tooltip,
     },
     {
       type: 'input',
-      name: 'idmap_rfc2307_ldap_user_dn',
-      placeholder: T('LDAP User DN'),
-      tooltip: T('User Distinguished Name to use for authentication.'),
+      name: helptext.idmap_rfc2307_ldap_user_dn_name,
+      placeholder: helptext.idmap_rfc2307_ldap_user_dn_placeholder,
+      tooltip: helptext.idmap_rfc2307_ldap_user_dn_tooltip,
     },
     {
       type: 'input',
-      name: 'idmap_rfc2307_ldap_user_dn_password',
-      placeholder: T('LDAP User DN Password'),
-      tooltip: T('Password associated with the LDAP User DN.'),
+      name: helptext.idmap_rfc2307_ldap_user_dn_pw_name,
+      placeholder: helptext.idmap_rfc2307_ldap_user_dn_pw_placeholder,
+      tooltip: helptext.idmap_rfc2307_ldap_user_dn_pw_tooltip,
     },
     {
       type: 'input',
-      name: 'idmap_rfc2307_ldap_realm',
-      placeholder: T('LDAP Realm'),
-      tooltip: T('Performs authentication from an LDAP server.'),
+      name: helptext.idmap_rfc2307_ldap_realm_name,
+      placeholder: helptext.idmap_rfc2307_ldap_realm_placeholder,
+      tooltip: helptext.idmap_rfc2307_ldap_realm_tooltip,
     },
     {
       type: 'select',
-      name: 'idmap_rfc2307_ssl',
-      placeholder: T('Encryption Mode'),
-      tooltip: T('Choose an encryption mode.'),
-      options: [{
-        label: 'Off',
-        value: 'off',
-      }, {
-        label: 'SSL',
-        value: 'ssl',
-      }, {
-        label: 'TLS',
-        value: 'tsl',
-      }],
+      name: helptext.idmap_rfc2307_ssl_name,
+      placeholder: helptext.idmap_rfc2307_ssl_placeholder,
+      tooltip: helptext.idmap_rfc2307_ssl_tooltip,
+      options: helptext.idmap_rfc2307_ssl_options
     },
     {
       type: 'select',
-      name: '',
-      placeholder: T('Certificate'),
-      tooltip: T('Select the certificate of the Active Directory server\
-                  if SSL connections are used. When no certificates are\
-                  available, move to the Active Directory server and\
-                  create a Certificate Authority and Certificate. Import\
-                  the certificate to this system using the\
-                  System/Certificates menu.'),
+      name: helptext.idmap_rfc2307_cert_name,
+      placeholder: helptext.idmap_rfc2307_cert_placeholder,
+      tooltip: helptext.idmap_rfc2307_cert_tooltip,
       options: [],
     }];
   public ridFieldConfig: FieldConfig[] = [
     {
       type: 'input',
-      name: 'idmap_rid_range_low',
-      placeholder: T('Range Low'),
-      tooltip: T('Beginning UID/GID number for which this system is\
-                  authoritative. UID/GID values below Range Low or\
-                  higher than Range High are ignored.'),
+      name: helptext.idmap_rid_range_low_name,
+      placeholder: helptext.idmap_rid_range_low_placeholder,
+      tooltip: helptext.idmap_rid_range_low_tooltip,
     },
     {
       type: 'input',
-      name: 'idmap_rid_range_high',
-      placeholder: T('Range High'),
-      tooltip: T('Ending UID/GID number for which this system is\
-                  authoritative. UID/GID values below Range Low or\
-                  higher than Range High are ignored.'),
+      name: helptext.idmap_rid_range_high_name,
+      placeholder: helptext.idmap_rid_range_high_placeholder,
+      tooltip: helptext.idmap_rid_range_high_tooltip,
     }];
   public scriptFieldConfig: FieldConfig[] = [
     {
       type: 'input',
-      name: 'idmap_script_range_low',
-      placeholder: T('Range Low'),
-      tooltip: T('Beginning UID/GID number for which this system is\
-                  authoritative. UID/GID values below Range Low or\
-                  higher than Range High are ignored.'),
+      name: helptext.idmap_script_range_low_name,
+      placeholder: helptext.idmap_script_range_low_placeholder,
+      tooltip: helptext.idmap_script_range_low_tooltip,
     },
     {
       type: 'input',
-      name: 'idmap_script_range_high',
-      placeholder: T('Range High'),
-      tooltip: T('Ending UID/GID number for which this system is\
-                  authoritative. UID/GID values below Range Low or\
-                  higher than Range High are ignored.'),
+      name: helptext.idmap_script_range_high_name,
+      placeholder: helptext.idmap_script_range_high_placeholder,
+      tooltip: helptext.idmap_script_range_high_tooltip,
     },
     {
       type: 'input',
-      name: 'idmap_script_script',
-      placeholder: T('Script'),
-      tooltip: T('Configure an external program to perform ID mapping. See\
-                  <a href="http://samba.org.ru/samba/docs/man/manpages/idmap_script.8.html"\
-                  target="_blank">idmap_script(8)</a> for more details.'),
+      name: helptext.idmap_script_name,
+      placeholder: helptext.idmap_script_placeholder,
+      tooltip: helptext.idmap_script_tooltip,
     }];
   public tdbFieldConfig: FieldConfig[] = [
     {
       type: 'input',
-      name: 'idmap_tdb_range_low',
-      placeholder: T('Range Low'),
-      tooltip: T('Beginning UID/GID number for which this system is\
-                  authoritative. UID/GID values below Range Low or\
-                  higher than Range High are ignored.'),
+      name: helptext.idmap_tdb_range_low_name,
+      placeholder: helptext.idmap_tdb_range_low_placeholder,
+      tooltip: helptext.idmap_tdb_range_low_tooltip,
     },
     {
       type: 'input',
-      name: 'idmap_tdb_range_high',
-      placeholder: T('Range High'),
-      tooltip: T('Ending UID/GID number for which this system is\
-                  authoritative. UID/GID values below Range Low or\
-                  higher than Range High are ignored.'),
+      name: helptext.idmap_tdb_range_high_name,
+      placeholder: helptext.idmap_tdb_range_high_placeholder,
+      tooltip: helptext.idmap_tdb_range_high_tooltip,
     }];
   public tdb2FieldConfig: FieldConfig[] = [
     {
       type: 'input',
-      name: 'idmap_tdb2_range_low',
-      placeholder: T('Range Low'),
-      tooltip: T('Beginning UID/GID number for which this system is\
-                  authoritative. UID/GID values below Range Low or\
-                  higher than Range High are ignored.'),
+      name: helptext.idmap_tdb2_range_low_name,
+      placeholder: helptext.idmap_tdb2_range_low_placeholder,
+      tooltip: helptext.idmap_tdb2_range_low_tooltip,
     },
     {
       type: 'input',
-      name: 'idmap_tdb2_range_high',
-      placeholder: T('Range High'),
-      tooltip: T('Ending UID/GID number for which this system is\
-                  authoritative. UID/GID values below Range Low or\
-                  higher than Range High are ignored.'),
+      name: helptext.idmap_tdb2_range_high_name,
+      placeholder: helptext.idmap_tdb2_range_high_placeholder,
+      tooltip: helptext.idmap_tdb2_range_high_tooltip,
     },
     {
       type: 'input',
-      name: 'idmap_tdb2_script',
-      placeholder: T('Script'),
-      tooltip: T('Configure an external program for ID mapping instead of\
-                  using the <i>tdb</i> counter. Mappings are stored in the\
-                  <a href="http://samba.org.ru/samba/docs/man/manpages/idmap_tdb2.8.html"\
-                  target="_blank">idmap_tdb2</a> database'),
+      name: helptext.idmap_tdb2_script_name,
+      placeholder: helptext.idmap_tdb2_script_placeholder,
+      tooltip: helptext.idmap_tdb2_script_tooltip,
     }];
 
   protected props: any;
@@ -523,7 +418,7 @@ export class IdmapComponent implements OnInit {
     }
 
     if (new_range_low > new_range_high) {
-      this.error = "Range low is greater than range high.";
+      this.error = helptext.idmap_range_comparison_error;
     } else {
       if (new_range_low < this.defaultIdmap['idmap_tdb_range_low'] || new_range_low > this.defaultIdmap['idmap_tdb_range_high']) {
         if (new_range_high < this.defaultIdmap['idmap_tdb_range_low'] || new_range_high > this.defaultIdmap['idmap_tdb_range_high']) {
@@ -555,10 +450,10 @@ export class IdmapComponent implements OnInit {
             );
           }
         } else {
-          this.error = "Range overlapped with the default range: [" + this.defaultIdmap['idmap_tdb_range_low'] + "," + this.defaultIdmap['idmap_tdb_range_high'] + "] !";
+          this.error = helptext.idmap_range_overlap_error + this.defaultIdmap['idmap_tdb_range_low'] + "," + this.defaultIdmap['idmap_tdb_range_high'] + "] !";
         }
       } else {
-        this.error = "Range overlapped with the default range: [" + this.defaultIdmap['idmap_tdb_range_low'] + "," + this.defaultIdmap['idmap_tdb_range_high'] + "] !";
+        this.error = helptext.idmap_range_overlap_error + this.defaultIdmap['idmap_tdb_range_low'] + "," + this.defaultIdmap['idmap_tdb_range_high'] + "] !";
       }
     }
   }
