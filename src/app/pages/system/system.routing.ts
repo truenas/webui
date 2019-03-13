@@ -33,6 +33,8 @@ import { CertificateEditComponent } from './certificates/certificate-edit/';
 import { CertificateListComponent } from './certificates/certificate-list';
 import { CertificateAddComponent } from './certificates/certificate-add';
 import { AcmednsListComponent } from './acmedns/acmedns-list/acmedns-list.component';
+import { AcmednsEditComponent } from './acmedns/acmedns-edit/acmedns-edit.component';
+import { AcmednsAddComponent } from './acmedns/acmedns-add/acmedns-add.component';
 import { SupportComponent } from './support/support.component';
 import {EmailComponent} from './email/';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
@@ -264,15 +266,16 @@ export const routes: Routes = [
         component: AcmednsListComponent,
         data: { title: 'ACME DNS Authenticators', breadcrumb: 'ACME DNS Authenticators' },
       }, 
-      // {
-      //   path: 'add',
-      //   component: CertificateAddComponent,
-      //   data: { title: 'Add', breadcrumb: 'Add' },
-      // }, {
-      //   path: 'view/:pk',
-      //   component: CertificateEditComponent,
-      //   data: { title: 'View', breadcrumb: 'View' },
-      // }
+      {
+        path: 'add',
+        component: AcmednsAddComponent,
+        data: { title: 'Add', breadcrumb: 'Add' },
+      }, 
+      {
+        path: 'edit/:pk',
+        component: AcmednsEditComponent,
+        data: { title: 'Edit', breadcrumb: 'Edit' },
+      }
     ]
     }, {
       path: 'support',

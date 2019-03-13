@@ -45,6 +45,8 @@ import { EmailComponent } from './email';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
 import { AcmednsListComponent } from './acmedns/acmedns-list/acmedns-list.component';
+import { AcmednsEditComponent } from './acmedns/acmedns-edit/acmedns-edit.component';
+import { AcmednsAddComponent } from './acmedns/acmedns-add/acmedns-add.component';
 
 @NgModule({
   imports: [
@@ -87,6 +89,8 @@ import { AcmednsListComponent } from './acmedns/acmedns-list/acmedns-list.compon
     AlertServiceComponent,
     AlertConfigComponent,
     AcmednsListComponent,
+    AcmednsEditComponent,
+    AcmednsAddComponent,
   ],
   providers: []
 })

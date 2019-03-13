@@ -7,16 +7,15 @@ import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'app-acmedns-list',
-  template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
-  styleUrls: ['./acmedns-list.component.css']
+  template: `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class AcmednsListComponent implements OnInit {
   public title = "ACME DNS Authenticators";
   protected queryCall = "acme.dns.authenticator.query";
   protected wsDelete = "acme.dns.authenticator.delete";
-  protected route_add: string[] = ['system', 'certificates', 'add'];
+  protected route_add: string[] = ['system', 'acmedns', 'add'];
   // protected route_add_tooltip: string = helptext_system_certificates.list.tooltip_add;
-  protected route_success: string[] = [ 'system', 'certificates' ];
+  protected route_success: string[] = [ 'system', 'acmedns' ];
 
   protected entityList: any;
 
@@ -36,8 +35,9 @@ export class AcmednsListComponent implements OnInit {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: 'Authenticator',
-      key_props: ['authenticator']
+      title: 'Name',
+      key_props: ['name'],
+      id_prop: 'name'
     },
   }
 
@@ -45,22 +45,13 @@ export class AcmednsListComponent implements OnInit {
     this.entityList = entityList;
   }
 
-  dataHandler(entityList: any) {
-    for (let i = 0; i < entityList.rows.length; i++) {
-      if (_.isObject(entityList.rows[i].issuer)) {
-        entityList.rows[i].issuer = entityList.rows[i].issuer.name;
-      }
-    }
-  }
-
   getActions(row) {
     return [{
       id: "edit",
       label: T("Edit"),
       onClick: (row) => {
-        console.log('edit an authenticator')
-        // this.router.navigate(
-        //   new Array('').concat(["jails", "edit", row.host_hostuuid]));
+        this.router.navigate(
+          new Array('').concat(["system", "acmedns", "edit", row.name]));
       }
     },
     {
