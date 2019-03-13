@@ -51,7 +51,6 @@ export class VolumeStatusComponent implements OnInit {
   protected editDiskRoute: any = ["storage", "disks", "pool"];
   protected replaceDiskRoute: any = ["storage", "disks", "pool"];
 
-  protected availableDisks: Array < any > = [];
   protected replaceDiskFormFields: FieldConfig[] = [{
     type: 'input',
     name: 'label',
@@ -136,21 +135,24 @@ export class VolumeStatusComponent implements OnInit {
     );
   }
 
+  getUnusedDisk() {
+    const availableDisks = [];
+    this.ws.call('disk.get_unused').subscribe((res) => {
+      for (const i in res) {
+        availableDisks.push({
+          label: res[i].name,
+          value: res[i].identifier,
+        })
+      }
+      _.find(this.replaceDiskFormFields, { name: 'disk' }).options = availableDisks;
+    })
+  }
   ngOnInit() {
     this.aroute.params.subscribe(params => {
       this.pk = parseInt(params['pk']);
       this.getData();
     });
-
-    this.ws.call('disk.get_unused').subscribe((res) => {
-      for (let i in res) {
-        this.availableDisks.push({
-          label: res[i].name,
-          value: res[i].identifier,
-        })
-      }
-      _.find(this.replaceDiskFormFields, { name: 'disk' }).options = this.availableDisks;
-    })
+    this.getUnusedDisk();
   }
 
   getAction(data, category): any {
@@ -224,25 +226,29 @@ export class VolumeStatusComponent implements OnInit {
     }, {
       label: "Replace",
       onClick: (row) => {
-        const dialog = this.dialogService;
-        const matDialog = this.matDialog;
+        let name = row.name;
+        if (!_.startsWith(name, '/')) {
+          name = _.split(row.name, 'p')[0];
+        }
         const pk = this.pk;
         _.find(this.replaceDiskFormFields, { name: 'label' }).value = row.guid;
-        const fieldConfig = this.replaceDiskFormFields;
 
         const conf: DialogFormConfiguration = {
-          title: "Replacing disk " + _.split(row.name, 'p')[0],
+          title: "Replacing disk " + name,
           fieldConfig: this.replaceDiskFormFields,
           saveButtonText: "Replace Disk",
+          parent: this,
           customSubmit: function (entityDialog: any) {
-            const dialogRef = matDialog.open(EntityJobComponent, {data: {"title":"Replacing Disk"}, disableClose: true});
+            const dialogRef = entityDialog.parent.matDialog.open(EntityJobComponent, {data: {"title":"Replacing Disk"}, disableClose: true});
             dialogRef.componentInstance.setDescription(T("Replacing disk..."));
             dialogRef.componentInstance.setCall('pool.replace', [pk, entityDialog.formValue]);
             dialogRef.componentInstance.submit();
             dialogRef.componentInstance.success.subscribe(res=>{
-              entityDialog.dialogRef.close(true);
               dialogRef.close(true);
-              this.snackBar.open("Successfully replaced disk.", 'close', { duration: 5000 });
+              entityDialog.dialogRef.close(true);
+              entityDialog.parent.getData();
+              entityDialog.parent.getUnusedDisk();
+              entityDialog.parent.snackBar.open("Successfully replaced disk " + name + ".", 'close', { duration: 5000 });
             }),
             dialogRef.componentInstance.failure.subscribe((res) => {
               if (res.error.startsWith('[EINVAL]')) {
@@ -252,7 +258,7 @@ export class VolumeStatusComponent implements OnInit {
             });
           }
         }
-        dialog.dialogForm(conf);
+        this.dialogService.dialogForm(conf);
       },
       isHidden: false,
     }, {
