@@ -128,6 +128,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
         } else {
           this.disks = evt.data.data;
         }
+        this.storage.diskNameSort(this.disks);
 
           let total = Math.ceil(this.disks.length/32);
           let set = 0;
