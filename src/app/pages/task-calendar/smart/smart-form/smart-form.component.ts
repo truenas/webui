@@ -26,10 +26,10 @@ export class SmartFormComponent {
 
   public fieldSets: FieldSet[] = [
     {
-      name:'S.M.A.R.T. Test',
-      class:'add-cron',
-      label:true,
-      width:'300px',
+      name: 'S.M.A.R.T. Test',
+      class: 'add-cron',
+      label: true,
+      width: '300px',
       config: [
         {
           type: 'checkbox',
@@ -37,70 +37,75 @@ export class SmartFormComponent {
           placeholder: helptext.smarttest_all_disks_placeholder,
           tooltip: helptext.smarttest_all_disks_tooltip,
         },
-      {
-        type: 'select',
-        name: 'disks',
-        placeholder: helptext.smarttest_disks_placeholder,
-        tooltip : helptext.smarttest_disks_tooltip,
-        options: [],
-        multiple: true,
-        required: true,
-        validation : helptext.smarttest_disks_validation,
-        relation: [{
-          action: 'DISABLE',
-          when: [{
-            name: 'all_disks',
-            value: true,
-          }]
-        }],
-      }, {
-        type: 'select',
-        name: 'type',
-        placeholder: helptext.smarttest_type_placeholder,
-        tooltip : helptext.smarttest_type_tooltip,
-        options: [
-          {
-            label: 'LONG',
-            value: 'LONG',
-          },
-          {
-            label: 'SHORT',
-            value: 'SHORT',
-          },
-          {
-            label: 'CONVEYANCE',
-            value: 'CONVEYANCE',
-          },
-          {
-            label: 'OFFLINE',
-            value: 'OFFLINE',
-          }
-        ],
-        required: true,
-        validation : helptext.smarttest_type_validation
-      }, {
-        type: 'input',
-        name: 'desc',
-        placeholder: helptext.smarttest_desc_placeholder,
-        tooltip : helptext.smarttest_desc_tooltip
-      },
-      {
-        type: 'scheduler',
-        name: 'smarttest_picker',
-        placeholder: helptext.smarttest_picker_placeholder,
-        tooltip: helptext.smarttest_picker_tooltip,
-        validation: helptext.smarttest_picker_validation,
-        required: true,
-        value: "0 0 * * *",
-        noMinutes:true
-      }
-    ]}
+        {
+          type: 'select',
+          name: 'disks',
+          placeholder: helptext.smarttest_disks_placeholder,
+          tooltip: helptext.smarttest_disks_tooltip,
+          options: [],
+          multiple: true,
+          required: true,
+          validation: helptext.smarttest_disks_validation,
+          relation: [{
+            action: 'DISABLE',
+            when: [{
+              name: 'all_disks',
+              value: true,
+            }]
+          }],
+        }, {
+          type: 'select',
+          name: 'type',
+          placeholder: helptext.smarttest_type_placeholder,
+          tooltip: helptext.smarttest_type_tooltip,
+          options: [
+            {
+              label: 'LONG',
+              value: 'LONG',
+            },
+            {
+              label: 'SHORT',
+              value: 'SHORT',
+            },
+            {
+              label: 'CONVEYANCE',
+              value: 'CONVEYANCE',
+            },
+            {
+              label: 'OFFLINE',
+              value: 'OFFLINE',
+            }
+          ],
+          required: true,
+          validation: helptext.smarttest_type_validation
+        }, {
+          type: 'input',
+          name: 'desc',
+          placeholder: helptext.smarttest_desc_placeholder,
+          tooltip: helptext.smarttest_desc_tooltip
+        },
+        {
+          type: 'scheduler',
+          name: 'smarttest_picker',
+          placeholder: helptext.smarttest_picker_placeholder,
+          tooltip: helptext.smarttest_picker_tooltip,
+          validation: helptext.smarttest_picker_validation,
+          required: true,
+          value: "0 0 * * *",
+          noMinutes: true
+        }
+      ]
+    }
   ];
 
   protected disk_field: any;
   protected pk: any;
 
-  constructor(protected router: Router, protected taskService: TaskService, protected storageService: StorageService, protected entityFormService: EntityFormService, protected aroute: ActivatedRoute) {
+  constructor(protected router: Router,
+              protected taskService: TaskService,
+              protected storageService: StorageService,
+              protected entityFormService: EntityFormService,
+              protected aroute: ActivatedRoute) {
     this.disk_field = _.find(this.fieldSets[0].config, { 'name': 'disks' });
     this.storageService.listDisks().subscribe((res) => {
       for (const i in res) {
@@ -110,11 +115,11 @@ export class SmartFormComponent {
   }
 
   resourceTransformIncomingRestData(data) {
-    data['smarttest_picker'] = "0" + " " + 
-                          data.schedule.hour + " " +
-                          data.schedule.dom + " " +
-                          data.schedule.month + " " +
-                          data.schedule.dow;
+    data['smarttest_picker'] = "0" + " " +
+      data.schedule.hour + " " +
+      data.schedule.dom + " " +
+      data.schedule.month + " " +
+      data.schedule.dow;
     return data;
   }
 
@@ -127,7 +132,7 @@ export class SmartFormComponent {
     });
   }
 
-  beforeSubmit(value){
+  beforeSubmit(value) {
     const spl = value.smarttest_picker.split(" ");
     delete value.smarttest_picker;
 
