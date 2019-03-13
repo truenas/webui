@@ -10,6 +10,7 @@ export class SmartListComponent {
   protected route_add: string[] = ['tasks', 'smart', 'add'];
   protected route_add_tooltip = "Add S.M.A.R.T. Test";
   protected route_edit: string[] = ['tasks', 'smart', 'edit'];
+  protected wsDelete = "smart.test.delete";
 
   public columns: Array<any> = [
     { name: 'Type', prop: 'type' },
