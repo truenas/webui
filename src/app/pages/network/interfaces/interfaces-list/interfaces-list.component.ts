@@ -12,7 +12,9 @@ import { MatSnackBar } from '@angular/material';
 export class InterfacesListComponent {
 
   public title = "Interfaces";
-  protected resource_name: string = 'network/interface/';
+  //protected resource_name: string = 'network/interface/';
+  protected queryCall = 'interface.query';
+  protected wsDelete = 'interface.delete';
   protected route_add: string[] = [ 'network', 'interfaces', 'add' ];
   protected route_add_tooltip: string = "Add Interface";
   protected route_edit: string[] = [ 'network', 'interfaces', 'edit' ];
@@ -21,14 +23,11 @@ export class InterfacesListComponent {
   }
 
   public columns: Array<any> = [
-    {name : T('Interface'), prop : 'int_interface'},
-    {name : T('Name'), prop : 'int_name'},
-    {name : T('Media Status'), prop : 'int_media_status'},
-    {name : T('DHCP'), prop : 'int_dhcp'},
-    {name : T('IPv6 Auto Configure'), prop: 'int_ipv6auto'},
-    {name : T('IPv4 Addresses'), prop : 'ipv4_addresses'},
-    {name : T('IPv6 Addresses'), prop : 'ipv6_addresses'},
-    {name : T('Options'), prop: 'int_options'}
+    {name : T('Name'), prop : 'name'},
+    {name : T('Link State'), prop : 'link_state'},
+    {name : T('DHCP'), prop : 'ipv4_dhcp'},
+    {name : T('IPv6 Auto Configure'), prop: 'ipv6_auto'},
+    {name : T('IP Addresses'), prop : 'addresses'}
   ];
   public config: any = {
     paging : true,
@@ -42,14 +41,30 @@ export class InterfacesListComponent {
   constructor(_rest: RestService, private router: Router, private networkService: NetworkService,
               private snackBar: MatSnackBar) {}
 
-  rowValue(row, attr) {
+  /*rowValue(row, attr) {
     if (attr == 'ipv4_addresses' || attr == 'ipv6_addresses') {
       return row[attr].join(', ');
     }
     return row[attr];
+  }*/
+
+  dataHandler(res) {
+    const rows = res.rows;
+    console.log(rows);
+    for (let i=0; i<rows.length; i++) {
+      rows[i]['link_state'] = rows[i]['state']['link_state'];
+      const addresses = [];
+      for (let j=0; j<rows[i]['state']['aliases'].length; j++) {
+        const alias = rows[i]['state']['aliases'][j];
+        if (alias.type.startsWith('INET')) {
+          addresses.push(alias.address);
+        }
+      }
+      rows[i]['addresses'] = addresses.join(', ');
+    }
   }
 
-  doAdd() {
+  /*doAdd() {
     this.networkService.getInterfaceNicChoices().subscribe(
       (res)=>{
         if (res.length == 0) {
@@ -59,5 +74,5 @@ export class InterfacesListComponent {
         }
       }
     )
-  }
+  }*/
 }

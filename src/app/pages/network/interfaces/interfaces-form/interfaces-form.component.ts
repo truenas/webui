@@ -18,18 +18,21 @@ import helptext from '../../../../helptext/network/interfaces/interfaces-form';
 })
 export class InterfacesFormComponent implements OnDestroy {
 
-  protected resource_name = 'network/interface/';
+  //protected resource_name = 'network/interface/';
+  protected queryCall = 'interface.query';
+  protected addCall = 'interface.create';
+  protected editCall = 'interface.update';
   protected route_success: string[] = [ 'network', 'interfaces' ];
   protected isEntity = true;
 
   public fieldConfig: FieldConfig[] = [
     {
-      type : 'input',
-      name : 'int_interface',
-      placeholder : helptext.int_interface_placeholder,
-      tooltip : helptext.int_interface_tooltip,
+      type : 'select',
+      name : 'type',
+      placeholder: helptext.int_type_placeholder,
+      tooltip: helptext.int_type_tooltip,
       required: true,
-      validation : helptext.int_interface_validation
+      options: helptext.int_type_options
     },
     {
       type : 'input',
@@ -41,34 +44,13 @@ export class InterfacesFormComponent implements OnDestroy {
     },
     {
       type : 'checkbox',
-      name : 'int_dhcp',
+      name : 'ipv4_dhcp',
       placeholder : helptext.int_dhcp_placeholder,
       tooltip : helptext.int_dhcp_tooltip,
     },
     {
-      type : 'input',
-      name : 'int_ipv4address',
-      placeholder : helptext.int_ipv4address_placeholder,
-      tooltip : helptext.int_ipv4address_tooltip,
-      validation : [ regexValidator(this.networkService.ipv4_regex) ],
-      relation : [
-        {action : "DISABLE", when : [ {name : "int_dhcp", value : true} ]}
-      ]
-    },
-    {
-      type : 'select',
-      name : 'int_v4netmaskbit',
-      placeholder : helptext.int_v4netmaskbit_placeholder,
-      tooltip : helptext.int_v4netmaskbit_tooltip,
-      options : this.networkService.getV4Netmasks(),
-      value: '',
-      relation : [
-        {action : "DISABLE", when : [ {name : "int_dhcp", value : true} ]}
-      ]
-    },
-    {
       type : 'checkbox',
-      name : 'int_ipv6auto',
+      name : 'ipv6_auto',
       placeholder : helptext.int_ipv6auto_placeholder,
       tooltip : helptext.int_ipv6auto_tooltip
     },
@@ -258,7 +240,7 @@ export class InterfacesFormComponent implements OnDestroy {
     this.int_interface_fg = entityForm.formGroup.controls['int_interface'];
 
     if (entityForm.isNew) {
-      this.rest.get(this.resource_name, []).subscribe((res) => {
+      this.ws.call(this.queryCall, []).subscribe((res) => {
         if (res.data.length === 0) {
           this.ws.call('interfaces.websocket_interface', []).subscribe((wsint) => {
             if (wsint && wsint.name) {

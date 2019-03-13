@@ -2,6 +2,14 @@ import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
 
 export default {
+int_type_placeholder: T('Type'),
+int_type_tooltip: T(''),
+int_type_options: [
+    {label: "Bridge", value: "BRIDGE"},
+    {label: "LAGG", value: "LAGG"},
+    {label: "VLAN", value: "VLAN"},
+],
+
 int_interface_placeholder : T('NIC'),
 int_interface_tooltip : T('Enter the FreeBSD device name of the interface. This\
  cannot change after creating the interface.'),
