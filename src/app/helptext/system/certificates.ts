@@ -169,6 +169,8 @@ export const helptext_system_certificates = {
       action_export_certificate: T("Export Certificate"),
       action_export_private_key: T("Export Private Key"),
 
+      action_create_acme_certificate: T("Create ACME Certificate"),
+
       snackbar_open_window_message: T("Opening download window. Make sure pop-ups are enabled in the browser."),
       snackbar_open_window_action: T("Success"),
 

@@ -44,6 +44,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { EmailComponent } from './email';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
+import { AcmednsListComponent } from './acmedns/acmedns-list/acmedns-list.component';
 
 @NgModule({
   imports: [
@@ -85,6 +86,7 @@ import { AlertConfigComponent } from './alert/alert.component';
     EmailComponent,
     AlertServiceComponent,
     AlertConfigComponent,
+    AcmednsListComponent,
   ],
   providers: []
 })
