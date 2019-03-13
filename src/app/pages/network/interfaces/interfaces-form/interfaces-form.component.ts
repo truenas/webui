@@ -56,27 +56,6 @@ export class InterfacesFormComponent implements OnDestroy {
     },
     {
       type : 'input',
-      name : 'int_ipv6address',
-      placeholder : helptext.int_ipv6address_placeholder,
-      tooltip : helptext.int_ipv6address_tooltip,
-      validation : [ regexValidator(this.networkService.ipv6_regex) ],
-      relation : [
-        {action : "DISABLE", when : [ {name : "int_ipv6auto", value : true} ]}
-      ]
-    },
-    {
-      type : 'select',
-      name : 'int_v6netmaskbit',
-      placeholder : helptext.int_v6netmaskbit_placeholder,
-      tooltip : helptext.int_v6netmaskbit_tooltip,
-      options : this.networkService.getV6PrefixLength(),
-      value: '',
-      relation : [
-        {action : "DISABLE", when : [ {name : "int_ipv6auto", value : true} ]}
-      ]
-    },
-    {
-      type : 'input',
       name : 'int_options',
       placeholder : helptext.int_options_placeholder,
       tooltip : helptext.int_options_tooltip,
