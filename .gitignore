@@ -53,6 +53,7 @@ _pycache_
 *.xml
 *.pyc
 .cache
+.pytest_cache
 config.py
 auto_config.py
 

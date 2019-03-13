@@ -4,11 +4,11 @@
 
 from os import getcwd
 
-#ACCOUNTS
+# ACCOUNTS
 # username for the machine
 username = "root"
 # password for the machine
-password = "abcd1234"
+password = "testing"
 
 # new user with create primary group check
 newusername = "usernas"
@@ -37,21 +37,9 @@ superuserpassword = "abcd1234"
 supergroupname = "supergroupnas"
 
 
-#STORAGE
+# STORAGE
 pool1 = "testPool1"
 pool2 = "testPool2"
 
 
 results_xml = getcwd() + '/results/'
-
-# method to test if an element is present-not used in the current script
-def is_element_present_source(self, how, what):
-  """
-  Helper method to confirm the presence of an element on page
-  :params how: By locator type
-  :params what: locator value
-  """
-  try: self.driver.find_element(by=how, value=what)
-  except NoSuchElementException: return False
-  return True
-
