@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { DialogService, RestService, WebSocketService } from '../../../../services/';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from '../../../common/entity/utils'
 import { T } from 'app/translate-marker';
 import { Validators } from '@angular/forms';
@@ -20,40 +21,98 @@ export class AcmednsAddComponent {
   protected isEntity: boolean = true;
   protected queryCallOption: Array<any> = [["id", "="]];
 
-  protected fieldConfig: FieldConfig[] = [{
-      type: 'input',
-      name: 'name',
-      placeholder: T('Name'),
-      tooltip: T('temp'),
-      required: true,
-      validation: Validators.required
-    },
-    {
-      type : 'select',
-      name : 'authenticator',
-      placeholder : T('Authenticator'),
-      options : [
-        {label: 'Route53', value: 'Route53'}
-      ],
-      value: 'Route53',
-    },
-    {
-      type: 'input',
-      name: 'access_key_id',
-      placeholder: T('Access Key ID'),
-      tooltip: T('temp'),
-      required: true,
-      validation: Validators.required
-    },
-    {
-      type: 'input',
-      name: 'secret_access_key',
-      placeholder: T('Secret Access Key'),
-      tooltip: T('temp'),
-      required: true,
-      validation: Validators.required
-    },
-  ];
+  protected fieldConfig: FieldConfig[];
+    public fieldSets: FieldSet[] = [
+      {
+        name: T('Select Authenticator'),
+        width: '50%',
+        config:[
+          {
+            type : 'input',
+            name : 'name',
+            placeholder : T('Name'),
+            tooltip : T('Temp tooltip'),
+            required: true,
+            validation : Validators.required,
+            blurStatus : true,
+            // blurEvent: this.blurEvent,
+            parent: this
+          },
+          {
+            type : 'input',
+            name : 'authenticator',
+            placeholder : T('Authenticator'),
+            tooltip : T('Temp tooltip'),
+            required: true,
+            validation : Validators.required,
+            blurStatus : true,
+            // blurEvent: this.blurEvent2,
+            parent: this
+          }
+        ]
+      },
+      {
+        name: T('Select Authenticator'),
+        width: '50%',
+        config:[
+          {
+            type : 'input',
+            name : 'name',
+            placeholder : T('Name'),
+            tooltip : T('Temp tooltip'),
+            required: true,
+            validation : Validators.required,
+            blurStatus : true,
+            // blurEvent: this.blurEvent,
+            parent: this
+          },
+          {
+            type : 'input',
+            name : 'authenticator',
+            placeholder : T('Authenticator'),
+            tooltip : T('Temp tooltip'),
+            required: true,
+            validation : Validators.required,
+            blurStatus : true,
+            // blurEvent: this.blurEvent2,
+            parent: this
+          }
+        ]
+      }]
+  //     ,
+  //     type: 'input',
+  //     name: 'name',
+  //     placeholder: T('Name'),
+  //     tooltip: T('temp'),
+  //     required: true,
+  //     validation: Validators.required
+  //   },
+  //   {
+  //     type : 'select',
+  //     name : 'authenticator',
+  //     placeholder : T('Authenticator'),
+  //     options : [
+  //       {label: 'Route53', value: 'Route53'}
+  //     ],
+  //     value: 'Route53',
+  //   },
+  //   {
+  //     type: 'input',
+  //     name: 'access_key_id',
+  //     placeholder: T('Access Key ID'),
+  //     tooltip: T('temp'),
+  //     required: true,
+  //     validation: Validators.required
+  //   },
+  //   {
+  //     type: 'input',
+  //     name: 'secret_access_key',
+  //     placeholder: T('Secret Access Key'),
+  //     tooltip: T('temp'),
+  //     required: true,
+  //     validation: Validators.required
+  //   },
+  // ];
 
   private pk: any;
   protected nameField: any;
