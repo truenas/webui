@@ -2,8 +2,6 @@
 # License: BSD
 # Location for tests of FreeNAS new GUI
 
-from os import getcwd
-
 # ACCOUNTS
 # username for the machine
 username = "root"
@@ -36,10 +34,6 @@ superuserpassword = "abcd1234"
 
 supergroupname = "supergroupnas"
 
-
 # STORAGE
 pool1 = "testPool1"
 pool2 = "testPool2"
-
-
-results_xml = getcwd() + '/results/'

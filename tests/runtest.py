@@ -97,11 +97,6 @@ except NameError:
 
 # # running tests
 # run_login_test(runDriver, ip)
-
-# try:
-#     test_name
-# except NameError:
-#     print ("Running: All Tests")
 #     run_create_user_test(runDriver)
 #     run_create_group_test(runDriver)
 #     run_create_pool_test(runDriver)
@@ -152,77 +147,7 @@ except NameError:
 #     run_delete_test(runDriver)
 #     run_delete_pool_test(runDriver)
 #     run_change_theme_test(runDriver)
-# else:
-#     if (test_name == "accounts"):
-#         print ("Running: Accounts Test")
-#         run_create_user_test(runDriver)
-#         run_create_group_test(runDriver)
-#         run_edit_test(runDriver)
-#         run_delete_test(runDriver)
 
-#     elif (test_name == "system"):
-#         run_conf_sysgeneral_test(runDriver)
-#         run_conf_ntpserver_test(runDriver)
-#         run_conf_bootenv_test(runDriver)
-#         run_conf_sysadvanced_test(runDriver)
-#         run_conf_email_test(runDriver)
-#         run_conf_sysdataset_test(runDriver)
-#         run_conf_alertservices_test(runDriver)
-#         run_conf_alertsettings_test(runDriver)
-#         run_conf_cloudcreds_test(runDriver)
-#         run_conf_tunables_test(runDriver)
-#         run_check_update_test(runDriver)
-#         run_conf_ca_test(runDriver)
-#         run_conf_certificates_test(runDriver)
-#         run_conf_support_test(runDriver)
-
-#     elif (test_name == "tasks"):
-#         run_conf_taskscron_test(runDriver)
-#         run_conf_tasksinitshutscript_test(runDriver)
-#         run_conf_tasksrsync_test(runDriver)
-#         run_conf_tasksSMART_test(runDriver)
-#         run_conf_tasksperiodicSS_test(runDriver)
-#         run_conf_tasksreplication_test(runDriver)
-#         run_conf_tasksresilver_test(runDriver)
-#         run_conf_tasksscrub_test(runDriver)
-#         run_conf_taskscloudsync_test(runDriver)
-
-#     elif (test_name == "network"):
-#         run_conf_netglob_test(runDriver)
-#         run_conf_netinterface_test(runDriver)
-#         run_conf_netlinkagg_test(runDriver)
-#         run_conf_netstatic_test(runDriver)
-#         run_conf_netvlan_test(runDriver)
-
-#     elif (test_name == "storage"):
-#         run_create_pool_test(runDriver)
-#         run_delete_pool_test(runDriver)
-
-#     elif (test_name == "services"):
-#         print ("Running: Guide Tests")
-# #        run_conf_afp_test(runDriver)
-# #        run_conf_dc_test(runDriver)
-# #        run_conf_dns_test(runDriver)
-# #        run_conf_ftp_test(runDriver)
-# #        run_conf_iscsi_test(runDriver)
-# #        run_conf_lldp_test(runDriver)
-# #        run_conf_smb_test(runDriver)
-# #        run_conf_ssh_test(runDriver)
-# #        run_conf_webdav_test(runDriver)
-#     elif (test_name == "plugin"):
-#       # run_create_pool_test(runDriver)
-#         run_plugin_test(runDriver)
-#     elif (test_name == "guide"):
-#         print ("Running: Guide Tests")
-#         run_view_guide_test(runDriver)
-#     elif (test_name == "theme"):
-#         print ("Running: Theme Tests")
-#         run_change_theme_test(runDriver)
-
-# run_logout_test(runDriver)
-
-# Example test run
-# run_creat_nameofthetest(runDriver)
 
 try:
     driver_v
