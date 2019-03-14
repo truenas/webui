@@ -3,12 +3,10 @@ import { Router,ActivatedRoute} from '@angular/router';
 import { Validators } from '@angular/forms';
 import * as _ from 'lodash';
 
-import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { TaskService } from '../../../../services/';
 import { EntityUtils } from '../../../common/entity/utils';
 import helptext from '../../../../helptext/task-calendar/snapshot/snapshot-form';
-
 
 @Component({
   selector: 'cron-snapshot-task-add',
@@ -22,7 +20,6 @@ export class SnapshotFormComponent {
   protected editCall = "pool.snapshottask.update";
   protected customFilter: Array<any> = [[["id", "="]]];
   protected route_success: string[] = ['tasks', 'snapshot'];
-  protected entityForm: EntityFormComponent;
   protected isEntity: boolean = true;
   protected pk: any;
 
@@ -38,7 +35,8 @@ export class SnapshotFormComponent {
     type: 'checkbox',
     name: 'recursive',
     placeholder: helptext.recursive_placeholder,
-    tooltip: helptext.recursive_tooltip
+    tooltip: helptext.recursive_tooltip,
+    value: false,
   }, {
     type: 'textarea',
     name: 'exclude',
@@ -94,7 +92,7 @@ export class SnapshotFormComponent {
     placeholder: helptext.begin_placeholder,
     tooltip: helptext.begin_tooltip,
     options: [],
-    value: '09:00:00',
+    value: '09:00',
     required: true,
     validation: [Validators.required],
   }, {
@@ -103,7 +101,7 @@ export class SnapshotFormComponent {
     placeholder: helptext.end_placeholder,
     tooltip: helptext.end_tooltip,
     options: [],
-    value: '18:00:00',
+    value: '18:00',
     required: true,
     validation: [Validators.required],
   }, {
