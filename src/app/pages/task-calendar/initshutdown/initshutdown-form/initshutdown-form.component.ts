@@ -77,6 +77,13 @@ export class InitshutdownFormComponent {
     placeholder: helptext.ini_enabled_placeholder,
     tooltip: helptext.ini_enabled_tooltip,
     value: true,
+  }, {
+    type: 'input',
+    inputType: 'number',
+    name: 'ini_timeout',
+    placeholder: helptext.ini_timeout_placeholder,
+    tooltip: helptext.ini_timeout_tooltip,
+    value: 10,
   }];
 
   protected type_control: any;
