@@ -2,6 +2,9 @@ import {Validators} from '@angular/forms';
 import { T } from '../../../translate-marker';
 
 export default {
+    smarttest_all_disks_placeholder: T('All Disks'),
+    smarttest_all_disks_tooltip: T(''),
+
     smarttest_disks_placeholder: T('Disks'),
     smarttest_disks_tooltip : T('Select the disks to monitor.'),
     smarttest_disks_validation : [ Validators.required ],
