@@ -33,7 +33,7 @@ export class AcmednsEditComponent implements OnInit {
       name : 'authenticator',
       placeholder : T('Authenticator'),
       options : [
-        {label: 'Route53', value: 'Route53'}
+        {label: 'Route53', value: 'route53'}
       ],
       value: 'Route53',
     },
