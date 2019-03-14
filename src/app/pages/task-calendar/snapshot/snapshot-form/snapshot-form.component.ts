@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-
+import { Router,ActivatedRoute} from '@angular/router';
+import { Validators } from '@angular/forms';
 import * as _ from 'lodash';
 
 import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { TaskService, UserService } from '../../../../services/';
-import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
+import { TaskService } from '../../../../services/';
 import { EntityUtils } from '../../../common/entity/utils';
 import helptext from '../../../../helptext/task-calendar/snapshot/snapshot-form';
 
@@ -14,156 +13,162 @@ import helptext from '../../../../helptext/task-calendar/snapshot/snapshot-form'
 @Component({
   selector: 'cron-snapshot-task-add',
   template: `<entity-form [conf]="this"></entity-form>`,
-  providers: [TaskService, UserService, EntityFormService]
+  providers: [TaskService]
 })
 export class SnapshotFormComponent {
 
-  protected resource_name: string = 'storage/task';
+  protected queryCall = "pool.snapshottask.query";
+  protected addCall = "pool.snapshottask.create";
+  protected editCall = "pool.snapshottask.update";
+  protected customFilter: Array<any> = [[["id", "="]]];
   protected route_success: string[] = ['tasks', 'snapshot'];
   protected entityForm: EntityFormComponent;
   protected isEntity: boolean = true;
+  protected pk: any;
 
   public fieldConfig: FieldConfig[] = [{
     type: 'select',
-    name: 'task_filesystem',
-    placeholder: helptext.task_filesystem_placeholder,
-    tooltip: helptext.task_filesystem_tooltip,
+    name: 'dataset',
+    placeholder: helptext.dataset_placeholder,
+    tooltip: helptext.dataset_tooltip,
     options: [],
     required: true,
-    validation : helptext.task_filesystem_validation
+    validation: [Validators.required],
   }, {
     type: 'checkbox',
-    name: 'task_recursive',
-    placeholder: helptext.task_recursive_placeholder,
-    tooltip: helptext.task_recursive_tooltip
+    name: 'recursive',
+    placeholder: helptext.recursive_placeholder,
+    tooltip: helptext.recursive_tooltip
   }, {
-    placeholder: helptext.task_ret_count_placeholder,
+    type: 'textarea',
+    name: 'exclude',
+    placeholder: helptext.exclude_placeholder,
+    tooltip: helptext.exclude_tooltip
+  }, {
+    placeholder: helptext.lifetime_value_placeholder,
     type: 'input',
-    name: 'task_ret_count',
+    name: 'lifetime_value',
     inputType: 'number',
     class: 'inline',
     value: 2,
-    validation: helptext.task_ret_count_validation
+    validation: [Validators.min(0)]
   }, {
     type: 'select',
-    name: 'task_ret_unit',
-    tooltip: helptext.task_ret_unit_tooltip,
+    name: 'lifetime_unit',
+    tooltip: helptext.lifetime_unit_tooltip,
     options: [{
-      label: 'Hours',
-      value: 'hour',
+      label: 'Hour(s)',
+      value: 'HOUR',
     }, {
-      label: 'Days',
-      value: 'day',
+      label: 'Day(s)',
+      value: 'DAY',
     }, {
-      label: 'Weeks',
-      value: 'week',
+      label: 'Week(s)',
+      value: 'WEEK',
     }, {
-      label: 'Months',
-      value: 'month',
+      label: 'Month(s)',
+      value: 'MONTH',
     }, {
-      label: 'Years',
-      value: 'year',
+      label: 'Year(s)',
+      value: 'YEAR',
     }],
-    value: 'week',
+    value: 'WEEK',
     class: 'inline',
   }, {
-    type: 'select',
-    name: 'task_begin',
-    placeholder: helptext.task_begin_placeholder,
-    tooltip: helptext.task_begin_tooltip,
-    options: [],
-    value: '',
+    type: 'input',
+    name: 'naming_schema',
+    placeholder: helptext.naming_schema_placeholer,
+    tooltip: helptext.naming_schema_tooltip,
+    value: 'auto-%Y-%m-%d_%H-%M',
+  }, {
+    type: 'scheduler',
+    name: 'snapshot_picker',
+    placeholder: helptext.snapshot_picker_placeholder,
+    tooltip: helptext.snapshot_picker_tooltip,
+    validation: [Validators.required],
     required: true,
-    validation : helptext.task_begin_validation
+    value: "0 0 * * *"
   }, {
     type: 'select',
-    name: 'task_end',
-    placeholder: helptext.task_end_placeholder,
-    tooltip: helptext.task_end_tooltip,
+    name: 'begin',
+    placeholder: helptext.begin_placeholder,
+    tooltip: helptext.begin_tooltip,
     options: [],
-    value: '',
+    value: '09:00:00',
     required: true,
-    validation : helptext.task_end_validation
+    validation: [Validators.required],
   }, {
     type: 'select',
-    name: 'task_interval',
-    placeholder: helptext.task_interval_placeholder,
-    tooltip: helptext.task_interval_tooltip,
+    name: 'end',
+    placeholder: helptext.end_placeholder,
+    tooltip: helptext.end_tooltip,
     options: [],
-    value: '',
+    value: '18:00:00',
     required: true,
-    validation : helptext.task_interval_validation
-  }, {
-    type: 'select',
-    name: 'task_byweekday',
-    placeholder: helptext.task_byweekday_placeholder,
-    tooltip: helptext.task_byweekday_tooltip,
-    multiple: true,
-    options: [{
-      label: 'Monday',
-      value: '1',
-    }, {
-      label: 'Tuesday',
-      value: '2',
-    }, {
-      label: 'Wednesday',
-      value: '3',
-    }, {
-      label: 'Thursday',
-      value: '4',
-    }, {
-      label: 'Friday',
-      value: '5',
-    }, {
-      label: 'Saturday',
-      value: '6',
-    }, {
-      label: 'Sunday',
-      value: '7',
-    }],
-    value: ['1', '2', '3', '4', '5'],
-    required: true,
-    validation : helptext.task_byweekday_validation
+    validation: [Validators.required],
   }, {
     type: 'checkbox',
-    name: 'task_enabled',
-    placeholder: helptext.task_enabled_placeholder,
-    tooltip: helptext.task_enabled_tooltip,
+    name: 'enabled',
+    placeholder: helptext.enabled_placeholder,
+    tooltip: helptext.enabled_tooltip,
     value: true,
   }];
 
-  protected filesystem_field: any;
-  protected byweekday_field: any;
-  protected interval_field: any;
-  protected begin_field: any;
-  protected end_field: any;
-
-  constructor(protected router: Router, protected taskService: TaskService, protected userService: UserService, protected entityFormService: EntityFormService, ) {
-    this.filesystem_field = _.find(this.fieldConfig, { 'name': 'task_filesystem' });
+  constructor(protected router: Router, protected taskService: TaskService,
+              protected aroute: ActivatedRoute) {
+    const datasetField = _.find(this.fieldConfig, { 'name': 'dataset' });
     this.taskService.getVolumeList().subscribe((res) => {
-      res.data.forEach((item) => {
-        let volume_list = new EntityUtils().flattenData(item.children);
-        for (let i in volume_list) {
-          this.filesystem_field.options.push({ label: volume_list[i].path, value: volume_list[i].path });
+      for (let i = 0; i < res.data.length; i++) {
+        const volume_list = new EntityUtils().flattenData(res.data[i].children);
+        for (const j in volume_list) {
+          datasetField.options.push({ label: volume_list[j].path, value: volume_list[j].path });
         }
-      })
-      this.filesystem_field.options = _.sortBy(this.filesystem_field.options, [function(o) { return o.label; }]);
+      }
+      datasetField.options = _.sortBy(datasetField.options, [function (o) { return o.label; }]);
     });
 
-    this.interval_field = _.find(this.fieldConfig, { 'name': 'task_interval' });
-    this.taskService.getTaskInterval().subscribe((res) => {
-      res.forEach((item) => {
-        this.interval_field.options.push({ label: item[1], value: item[0] });
-      });
-    });
-
-    this.begin_field = _.find(this.fieldConfig, { 'name': 'task_begin' });
-    this.end_field = _.find(this.fieldConfig, { 'name': 'task_end' });
-    let time_options = this.taskService.getTimeOptions();
+    const begin_field = _.find(this.fieldConfig, { 'name': 'begin' });
+    const end_field = _.find(this.fieldConfig, { 'name': 'end' });
+    const time_options = this.taskService.getTimeOptions();
     for (let i = 0; i < time_options.length; i++) {
-      this.begin_field.options.push({ label: time_options[i].label, value: time_options[i].value });
-      this.end_field.options.push({ label: time_options[i].label, value: time_options[i].value });
+      begin_field.options.push({ label: time_options[i].label, value: time_options[i].value });
+      end_field.options.push({ label: time_options[i].label, value: time_options[i].value });
     }
   }
 
+  preInit() {
+    this.aroute.params.subscribe(params => {
+      if (params['pk']) {
+        this.pk = params['pk'];
+        this.customFilter[0][0].push(parseInt(params['pk']));
+      }
+    });
+  }
+
+  resourceTransformIncomingRestData(data) {
+    data['snapshot_picker'] = "0" + " " +
+      data.schedule.hour + " " +
+      data.schedule.dom + " " +
+      data.schedule.month + " " +
+      data.schedule.dow;
+    data['begin'] = data.schedule.begin;
+    data['end'] = data.schedule.end;
+    return data;
+  }
+
+  beforeSubmit(value) {
+    const spl = value.snapshot_picker.split(" ");
+    delete value.snapshot_picker;
+
+    value['schedule'] = {
+      begin: value['begin'],
+      end: value['end'],
+      hour: spl[1],
+      dom: spl[2],
+      month: spl[3],
+      dow: spl[4],
+    };
+    delete value['begin'];
+    delete value['end'];
+  }
 }
