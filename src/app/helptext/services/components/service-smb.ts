@@ -25,10 +25,6 @@ cifs_srv_workgroup_validation : [ Validators.required ],
 cifs_srv_description_placeholder: T('Description'),
 cifs_srv_description_tooltip: T('Optional. Enter a server description.'),
 
-cifs_srv_doscharset_placeholder: T('DOS Charset'),
-cifs_srv_doscharset_tooltip: T('The character set Samba uses when communicating with\
- DOS and Windows 9x/ME clients. Default is CP437.'),
-
 cifs_srv_unixcharset_placeholder: T('UNIX Charset'),
 cifs_srv_unixcharset_tooltip: T('Default is UTF-8 which supports all characters in\
  all languages.'),
