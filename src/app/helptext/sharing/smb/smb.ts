@@ -11,6 +11,7 @@ export const helptext_sharing_smb = {
 
     placeholder_name: T('Name'),
     tooltip_name: T('Enter a name for the share.'),
+    errormsg_name: T("'global' is a reserved section name. Please select another one"),
 
     placeholder_home: T('Use as home share'),
     tooltip_home: T('Set to allow this share to hold user home\

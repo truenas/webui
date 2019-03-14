@@ -20,7 +20,6 @@ export class SMBFormComponent implements OnDestroy {
   public cifs_default_permissions: any;
   public cifs_default_permissions_subscription: any;
   public cifs_storage_task: any;
-  public identifier: any;
 
   protected fieldConfig: FieldConfig[] = [
     {
@@ -40,7 +39,7 @@ export class SMBFormComponent implements OnDestroy {
       tooltip: helptext_sharing_smb.tooltip_name,
       validation: this.forbiddenNameValidator.bind(this),
       hasErrors: false,
-      errors: 'Dang'
+      errors: helptext_sharing_smb.errormsg_name
     },
     {
       type: 'checkbox',
@@ -276,8 +275,6 @@ export class SMBFormComponent implements OnDestroy {
 
   forbiddenNameValidator(control: FormControl): {[key: string]: boolean} {
     if (control.value === 'global') {
-      
-      _.find(this.fieldConfig).hasErrors = true;
       return {'nameIsForbidden': true}
     }
     return null;
