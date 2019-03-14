@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import { RestService, WebSocketService, DialogService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { helptext_sharing_smb } from 'app/helptext/sharing';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector : 'app-smb-form',
@@ -19,6 +20,7 @@ export class SMBFormComponent implements OnDestroy {
   public cifs_default_permissions: any;
   public cifs_default_permissions_subscription: any;
   public cifs_storage_task: any;
+  public identifier: any;
 
   protected fieldConfig: FieldConfig[] = [
     {
@@ -35,7 +37,10 @@ export class SMBFormComponent implements OnDestroy {
       type: 'input',
       name: 'cifs_name',
       placeholder: helptext_sharing_smb.placeholder_name,
-      tooltip: helptext_sharing_smb.tooltip_name
+      tooltip: helptext_sharing_smb.tooltip_name,
+      validation: this.forbiddenNameValidator.bind(this),
+      hasErrors: false,
+      errors: 'Dang'
     },
     {
       type: 'checkbox',
@@ -243,6 +248,11 @@ export class SMBFormComponent implements OnDestroy {
       entityForm.formGroup.controls['cifs_vfsobjects'].setValue(['zfs_space','zfsacl','streams_xattr']);
       entityForm.formGroup.controls['cifs_browsable'].setValue(true);
     }
+
+    entityForm.formGroup.controls['cifs_name'].statusChanges.subscribe((res) => {
+      let target = _.find(this.fieldConfig, {'name' : 'cifs_name'});
+      res === 'INVALID' ? target.hasErrors = true : target.hasErrors = false;
+    })
   }
 
   resourceTransformIncomingRestData(data) {
@@ -262,6 +272,15 @@ export class SMBFormComponent implements OnDestroy {
     });
 
     return data;
+  }
+
+  forbiddenNameValidator(control: FormControl): {[key: string]: boolean} {
+    if (control.value === 'global') {
+      
+      _.find(this.fieldConfig).hasErrors = true;
+      return {'nameIsForbidden': true}
+    }
+    return null;
   }
 
   ngOnDestroy() {
