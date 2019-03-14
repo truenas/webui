@@ -75,6 +75,27 @@ export class DiskFormComponent {
     },
     {
       type: 'input',
+      inputType: 'number',
+      name: 'critical',
+      placeholder: helptext.disk_form_critical_placeholder,
+      tooltip: helptext.disk_form_critical_tooltip,
+    },
+    {
+      type: 'input',
+      inputType: 'number',
+      name: 'difference',
+      placeholder: helptext.disk_form_difference_placeholder,
+      tooltip: helptext.disk_form_difference_tooltip,
+    },
+    {
+      type: 'input',
+      inputType: 'number',
+      name: 'informational',
+      placeholder: helptext.disk_form_informational_placeholder,
+      tooltip: helptext.disk_form_informational_tooltip,
+    },
+    {
+      type: 'input',
       name: 'passwd',
       placeholder: helptext.disk_form_passwd_placeholder,
       tooltip: helptext.disk_form_passwd_tooltip,
@@ -147,5 +168,9 @@ export class DiskFormComponent {
     delete value.name;
     delete value.serial;
     delete value.passwd2;
+
+    value.critical = value.critical === '' ? null : value.critical;
+    value.difference = value.difference === '' ? null : value.difference;
+    value.informational = value.informational === '' ? null : value.informational;
   }
 }

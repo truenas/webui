@@ -36,6 +36,18 @@ disk_form_smartoptions_tooltip : T('Additional <a\
  href="https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8.in"\
  target="_blank">smartctl(8)</a> options.'),
 
+disk_form_critical_placeholder: T('Critical'),
+disk_form_critical_tooltip: T('Report as critical in the system log and send an\
+ email if the temperature is greater or equal than N degrees Celsius. 0 to disable.'),
+
+disk_form_difference_placeholder: T('Difference'),
+disk_form_difference_tooltip: T('Report if the temperature has changed by at least N\
+ degrees Celsius since the last report. 0 to disable.'),
+
+disk_form_informational_placeholder: T('Informational'),
+disk_form_informational_tooltip: T('Report as informational in the system log if the\
+ temperature is greater or equal than N degrees Celsius. 0 to disable.'),
+
 disk_form_passwd_placeholder: T('SED Password'),
 disk_form_passwd_tooltip: T('Password for SED'),
 
