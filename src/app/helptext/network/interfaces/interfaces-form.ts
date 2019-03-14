@@ -1,5 +1,6 @@
 import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
+import { rangeValidator } from '../../../pages/common/entity/entity-form/validators/range-validation';
 
 export default {
 int_type_placeholder: T('Type'),
@@ -68,4 +69,58 @@ alias_netmaskbit6_tooltip : T('Select the prefix length used on the network.'),
 delete_placeholder6: T('Delete'),
 delete_tooltip6: T('Set to delete this alias.'),
 
+bridge_members_placeholder: T('Bridge Members'),
+bridge_members_tooltip: T(''),
+
+failover_critical_placeholder: T('Failover Critical'),
+failover_critical_tooltip: T(''),
+
+failover_group_placeholder: T('Failover Group'),
+failover_group_tooltip: T(''),
+
+failover_vhid_placeholder: T('Failover VHID'),
+failover_vhid_tooltip: T(''),
+
+failover_aliases_placeholder: T('Failover Aliases'),
+failover_aliases_tooltip: T(''),
+
+failover_virtual_aliases_placeholder: T('Failover Virtual Aliases'),
+failover_virtual_aliases_tooltip: T(''),
+
+vlan_pint_placeholder: T('Parent Interface'),
+vlan_pint_tooltip: T('Select the VLAN Parent Interface. Usually an Ethernet\
+ card connected to a configured switch port. Newly\
+ created link aggregations will not be available until\
+ the system is rebooted.'),
+vlan_pint_validation: [Validators.required],
+
+vlan_tag_placeholder: T('Vlan Tag'),
+vlan_tag_tooltip: T('Enter the numeric tag configured in the switched network.'),
+vlan_tag_validation: [rangeValidator(1, 4095), Validators.required],
+
+vlan_pcp_placeholder: T('Priority Code Point'),
+vlan_pcp_tooltip: T('Select the Class of Service. The available 802.1p\
+ Class of Service ranges from <i>Best effort (default)</i> \
+ to <i>Network control (highest)</i>.'),
+
+lagg_protocol_placeholder : T('Lagg Protocol'),
+lagg_protocol_tooltip : T('Select the <a\
+ href="%%docurl%%/network.html%%webversion%%#link-aggregations"\
+ target="_blank">Protocol Type</a>.<br>\
+ <i>LACP</i> is the recommended protocol if the network\
+ switch is capable of active LACP.<br>\
+ <i>Failover</i> is the default protocol choice and\
+ should only be used if the network switch does not\
+ support active LACP.'),
+lagg_protocol_validation : [ Validators.required ],
+
+lagg_interfaces_placeholder : T('Lagg Interfaces'),
+lagg_interfaces_tooltip : T('Select the interfaces to use in the aggregation.<br>\
+ Warning: Lagg creation fails if any of the selected\
+ interfaces have been manually configured.'),
+lagg_interfaces_validation : [ Validators.required ],
+
+mtu_placeholder: T('MTU'),
+mtu_tooltip: T(''),
+mtu_validation: [rangeValidator(68, 9000)]
 }

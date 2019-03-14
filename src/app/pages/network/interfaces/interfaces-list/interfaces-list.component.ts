@@ -34,7 +34,7 @@ export class InterfacesListComponent {
     sorting : {columns : this.columns},
     deleteMsg: {
       title: 'Interface',
-      key_props: ['int_interface']
+      key_props: ['name']
     },
   };
 

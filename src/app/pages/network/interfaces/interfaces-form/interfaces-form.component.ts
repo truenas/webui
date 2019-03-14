@@ -36,7 +36,7 @@ export class InterfacesFormComponent implements OnDestroy {
     },
     {
       type : 'input',
-      name : 'int_name',
+      name : 'name',
       placeholder : helptext.int_name_placeholder,
       tooltip : helptext.int_name_tooltip,
       required: true,
@@ -55,8 +55,94 @@ export class InterfacesFormComponent implements OnDestroy {
       tooltip : helptext.int_ipv6auto_tooltip
     },
     {
+      type: 'select',
+      name: 'bridge_members',
+      placeholder: helptext.bridge_members_placeholder,
+      tooltip: helptext.bridge_members_tooltip,
+      multiple: true,
+      options: [],
+      isHidden: true,
+      disabled: true,
+    },
+    {
+      type : 'select',
+      name : 'lag_protocol',
+      placeholder : helptext.lagg_protocol_placeholder,
+      tooltip : helptext.lagg_protocol_tooltip,
+      options : [],
+      required: true,
+      isHidden: true,
+      disabled: true,
+      validation : helptext.lagg_protocol_validation
+    },
+    {
+      type : 'select',
+      name : 'lag_ports',
+      placeholder : helptext.lagg_interfaces_placeholder,
+      tooltip : helptext.lagg_interfaces_tooltip,
+      options : [],
+      multiple : true,
+      required: true,
+      isHidden: true,
+      disabled: true,
+      validation : helptext.lagg_interfaces_validation,
+    },
+    {
+      type: 'checkbox',
+      name: 'failover_critical',
+      placeholder: helptext.failover_critical_placeholder,
+      tooltip: helptext.failover_critical_tooltip,
+      isHidden: true,
+      disabled: true,
+    },
+    {
+      type: 'input',
+      name: 'failover_group',
+      placeholder: helptext.failover_group_placeholder,
+      tooltip: helptext.failover_group_tooltip,
+      isHidden: true,
+      disabled: true,
+    },
+    {
+      type: 'select',
+      name: 'vlan_pint',
+      placeholder: helptext.vlan_pint_placeholder,
+      tooltip: helptext.vlan_pint_tooltip,
+      options: [],
+      required: true,
+      isHidden: true,
+      disabled: true,
+      validation: helptext.vlan_pint_validation
+    },
+    {
+      type: 'input',
+      name: 'vlan_tag',
+      placeholder: helptext.vlan_tag_placeholder,
+      tooltip: helptext.vlan_tag_tooltip,
+      required: true,
+      isHidden: true,
+      disabled: true,
+      validation: helptext.vlan_tag_validation
+    },
+    {
+      type: 'select',
+      name: 'vlan_pcp',
+      placeholder: helptext.vlan_pcp_placeholder,
+      options: [],
+      tooltip: helptext.vlan_pcp_tooltip,
+      isHidden: true,
+      disabled: true,
+    },
+    {
+      type: 'input',
+      name: 'mtu',
+      placeholder: helptext.mtu_placeholder,
+      tooltip: helptext.mtu_tooltip,
+      validation: helptext.mtu_validation,
+    },
+    {
       type : 'input',
-      name : 'int_options',
+      name : 'options',
       placeholder : helptext.int_options_placeholder,
       tooltip : helptext.int_options_tooltip,
     },
@@ -112,20 +198,36 @@ export class InterfacesFormComponent implements OnDestroy {
         tooltip: helptext.delete_tooltip6,
       }]
     },
+    {
+      type : 'input',
+      name : 'options',
+      placeholder : helptext.int_options_placeholder,
+      tooltip : helptext.int_options_tooltip,
+    },
   ];
 
-  private int_dhcp: any;
+  private vlan_fields;
+  private lagg_fields;
+  private bridge_fields;
+  private physical_fields;
+  /*private int_dhcp: any;
   private int_dhcp_subscription: any;
   private int_ipv6auto: any;
-  private int_ipv6auto_subscription: any;
+  private int_ipv6auto_subscription: any;*/
   private int_v4netmaskbit: any;
   private int_ipv4address: any;
   private int_v6netmaskbit: any;
   private int_ipv6address: any;
-  private int_interface: any;
+  private vlan_pcp:any;
+  private vlan_pint:any;
+  private lag_protocol: any;
+  private lag_ports: any;
+  private type: any;
+  private type_subscription: any;
+  /*private int_interface: any;
   private int_interface_fg: any;
   private int_interface_fg_sub: any;
-  private int_interface_warning: string;
+  private int_interface_warning: string;*/
   private wsint: string;
   private entityForm: any;
   protected ipv4formArray: FormArray;
@@ -179,8 +281,8 @@ export class InterfacesFormComponent implements OnDestroy {
     }
   }];
 
-  int_warning = T("Please configure the Web UI interface (");
-  int_warning_2 = T(") before configuring other interfaces to avoid losing connection to the user interface.");
+  //int_warning = T("Please configure the Web UI interface (");
+  //int_warning_2 = T(") before configuring other interfaces to avoid losing connection to the user interface.");
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected entityFormService: EntityFormService,
@@ -197,14 +299,27 @@ export class InterfacesFormComponent implements OnDestroy {
     return true;
   }
 
+  setType(type: string) {
+    if (type === "PHYSICAL") {
+
+    } else if (type === "VLAN") {
+
+    } else if (type === "LAGG") {
+
+    } else if (type === "BRIDGE") {
+
+    }
+  }
+
   preInit(entityForm: any) {
-    this.int_interface = _.find(this.fieldConfig, {'name' : 'int_interface'});
+    //this.int_interface = _.find(this.fieldConfig, {'name' : 'int_interface'});
     this.ipv4arrayControl = _.find(this.fieldConfig, {'name' : 'ipv4_aliases'});
     this.ipv6arrayControl = _.find(this.fieldConfig, {'name' : 'ipv6_aliases'});
+    this.vlan_pint = _.find(this.fieldConfig, {'name' : 'vlan_pint'})
     this.route.params.subscribe(params => {
       if(!params['pk']) {
-        this.int_interface.type = 'select';
-        this.int_interface.options = [];
+        //this.int_interface.type = 'select';
+        //this.int_interface.options = [];
       } else {
         this.confirmSubmit = true;
         this.ipv4arrayControl.initialCount = this.initialCount['ipv4_aliases']
@@ -216,7 +331,7 @@ export class InterfacesFormComponent implements OnDestroy {
   }
 
   afterInit(entityForm: any) {
-    this.int_interface_fg = entityForm.formGroup.controls['int_interface'];
+    /*this.int_interface_fg = entityForm.formGroup.controls['int_interface'];
 
     if (entityForm.isNew) {
       this.ws.call(this.queryCall, []).subscribe((res) => {
@@ -244,7 +359,36 @@ export class InterfacesFormComponent implements OnDestroy {
           });
         }
       });
+    }*/
+    if (entityForm.isNew) {
+      this.type = entityForm.formGroup.controls['type'];
+      this.type_subscription = this.type.valueChanges.subscribe((type) => {
+        this.setType(type);
+      });
+      this.networkService.getVlanNicChoices().subscribe((res) => {
+        res.forEach((item) => {
+          this.vlan_pint.options.push({label : item[1], value : item[0]});
+        });
+      });
+      this.lag_ports = _.find(this.fieldConfig, {'name' : 'lag_ports'});
+      this.networkService.getLaggNicChoices().subscribe((res) => {
+      res.forEach((item) => {
+        this.lag_ports.options.push({label : item[1], value : item[0]});
+      });
+    });
     }
+    this.networkService.getLaggProtocolTypes().subscribe((res) => {
+      this.lag_protocol = _.find(this.fieldConfig, {'name' : 'lag_protocol'});
+      res.forEach((item) => {
+        this.lag_protocol.options.push({label : item[1], value : item[0]});
+      });
+    });
+    this.ws.call('notifier.choices', ['VLAN_PCP_CHOICES']).subscribe((res) => {
+      this.vlan_pcp = _.find(this.fieldConfig, {'name' : 'vlan_pcp'});
+      res.forEach((item) => {
+        this.vlan_pcp.options.push({label : item[1], value : item[0]});
+      });
+    });
     this.ipv4formArray = entityForm.formGroup.controls['ipv4_aliases'];
     this.ipv6formArray = entityForm.formGroup.controls['ipv6_aliases'];
     this.int_ipv4address = _.find(this.fieldConfig, {'name': 'int_ipv4address'});
@@ -255,8 +399,8 @@ export class InterfacesFormComponent implements OnDestroy {
     this.int_v6netmaskbit =
         _.find(this.fieldConfig, {'name' : 'int_v6netmaskbit'});
 
-    this.int_dhcp = entityForm.formGroup.controls['int_dhcp'];
-    this.int_ipv6auto = entityForm.formGroup.controls['int_ipv6auto'];
+    /*this.int_dhcp = entityForm.formGroup.controls['ipv4_dhcp'];
+    this.int_ipv6auto = entityForm.formGroup.controls['ipv_6auto'];
 
     this.int_ipv4address['isHidden'] = this.int_v4netmaskbit['isHidden'] = this.int_dhcp.value;
     this.int_ipv6address['isHidden'] = this.int_v6netmaskbit['isHidden'] = this.int_ipv6auto.value;
@@ -266,9 +410,9 @@ export class InterfacesFormComponent implements OnDestroy {
     });
     this.int_ipv6auto_subscription = this.int_ipv6auto.valueChanges.subscribe((value) => {
       this.int_ipv6address['isHidden'] = this.int_v6netmaskbit['isHidden'] = value;
-    });
+    });*/
 
-    if (!entityForm.isNew) {
+    /*if (!entityForm.isNew) {
       entityForm.setDisabled('int_interface', true);
     }
     else {
@@ -277,7 +421,7 @@ export class InterfacesFormComponent implements OnDestroy {
           this.int_interface.options.push({label : item[1], value : item[0]});
         });
       });
-    }
+    }*/
   }
 
   clean(data) {
@@ -332,10 +476,10 @@ export class InterfacesFormComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
-    this.int_dhcp_subscription.unsubscribe();
+    /*this.int_dhcp_subscription.unsubscribe();
     this.int_ipv6auto_subscription.unsubscribe();
     if (this.int_interface_fg_sub) {
       this.int_interface_fg_sub.unsubscribe();
-    }
+    }*/
   }
 }
