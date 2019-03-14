@@ -415,7 +415,11 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   editCall(body: any) {
-    return this.ws.call(this.conf.editCall, [this.pk, body]);
+    const payload = [body];
+    if (this.pk) {
+      payload.unshift(this.pk);
+    }
+    return this.ws.call(this.conf.editCall, payload);
   }
 
   addSubmit(body: any) {
