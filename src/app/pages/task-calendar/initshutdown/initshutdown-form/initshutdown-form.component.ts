@@ -1,42 +1,42 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 import * as _ from 'lodash';
 
 import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { TaskService, UserService } from '../../../../services/';
-import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import helptext from '../../../../helptext/task-calendar/initshutdown/initshutdown';
 
 @Component({
   selector: 'cron-initshutdown-add',
   template: `<entity-form [conf]="this"></entity-form>`,
-  providers: [TaskService, UserService, EntityFormService]
 })
 export class InitshutdownFormComponent {
 
-  protected resource_name: string = 'tasks/initshutdown';
+  protected queryCall = 'initshutdownscript.query';
+  protected addCall = 'initshutdownscript.create';
+  protected editCall = 'initshutdownscript.update';
+  protected customFilter: Array<any> = [[["id", "="]]];
   protected route_success: string[] = ['tasks', 'initshutdown'];
   protected entityForm: EntityFormComponent;
   protected isEntity: boolean = true;
 
   public fieldConfig: FieldConfig[] = [{
     type: 'select',
-    name: 'ini_type',
+    name: 'type',
     placeholder: helptext.ini_type_placeholder,
     tooltip: helptext.ini_type_tooltip,
     options: [{
       label: 'Command',
-      value: 'command',
+      value: 'COMMAND',
     }, {
       label: 'Script',
-      value: 'script',
+      value: 'SCRIPT',
     }],
-    value: 'command',
+    value: 'COMMAND',
   }, {
     type: 'input',
-    name: 'ini_command',
+    name: 'command',
     placeholder: helptext.ini_command_placeholder,
     tooltip: helptext.ini_command_tooltip,
     required: true,
@@ -44,7 +44,7 @@ export class InitshutdownFormComponent {
   }, {
     type : 'explorer',
     initial: '/mnt',
-    name: 'ini_script',
+    name: 'script',
     placeholder: helptext.ini_script_placeholder,
     explorerType: 'file',
     required: true,
@@ -52,7 +52,7 @@ export class InitshutdownFormComponent {
     tooltip: helptext.ini_script_tooltip,
   }, {
     type: 'select',
-    name: 'ini_when',
+    name: 'when',
     placeholder: helptext.ini_when_placeholder,
     tooltip: helptext.ini_when_tooltip,
     options: [{
@@ -60,50 +60,59 @@ export class InitshutdownFormComponent {
       value: '',
     }, {
       label: 'Pre Init',
-      value: 'preinit',
+      value: 'PREINIT',
     }, {
       label: 'Post Init',
-      value: 'postinit',
+      value: 'POSTINIT',
     }, {
       label: 'Shutdown',
-      value: 'shutdown',
+      value: 'SHUTDOWN',
     }],
     value: '',
     required: true,
     validation : helptext.ini_when_validation,
   }, {
     type: 'checkbox',
-    name: 'ini_enabled',
+    name: 'enabled',
     placeholder: helptext.ini_enabled_placeholder,
     tooltip: helptext.ini_enabled_tooltip,
     value: true,
   }, {
     type: 'input',
     inputType: 'number',
-    name: 'ini_timeout',
+    name: 'timeout',
     placeholder: helptext.ini_timeout_placeholder,
     tooltip: helptext.ini_timeout_tooltip,
     value: 10,
   }];
 
   protected type_control: any;
+  protected pk: any;
+  constructor(protected aroute: ActivatedRoute) {}
 
-  constructor(protected router: Router, protected taskService: TaskService, protected userService: UserService, protected entityFormService: EntityFormService, ) {}
+  preInit() {
+    this.aroute.params.subscribe(params => {
+      if (params['pk']) {
+        this.pk = params['pk'];
+        this.customFilter[0][0].push(parseInt(params['pk']));
+      }
+    });
+  }
 
   afterInit(entityForm: any) {
     this.entityForm = entityForm;
-    this.type_control = entityForm.formGroup.controls['ini_type'];
+    this.type_control = entityForm.formGroup.controls['type'];
     this.type_control.valueChanges.subscribe((value) => {
       this.formUpdate(value);
     });
 
-    this.type_control.setValue('command');
+    this.type_control.setValue('COMMAND');
   }
 
   formUpdate(type) {
-    let isCommand = type == 'command' ? true : false;
+    let isCommand = type == 'COMMAND' ? true : false;
 
-    this.entityForm.setDisabled('ini_script', isCommand, isCommand);
-    this.entityForm.setDisabled('ini_command', !isCommand, !isCommand);
+    this.entityForm.setDisabled('script', isCommand, isCommand);
+    this.entityForm.setDisabled('command', !isCommand, !isCommand);
   }
 }
