@@ -186,4 +186,22 @@ export class StorageService {
   diskToggleBucket(bool) {
     this.diskToggleStatus = bool;
   }
+
+  diskNameSort(disks) {
+    for (let i = 0; i < disks.length; i++) {
+      for (let j = 0; j < disks.length - i - 1; j++) {
+        const k = j + 1;
+        const disk1name = disks[j].match(/\w+/);
+        const disk1num = parseInt(disks[j].match(/\d+/), 10);
+        const disk2name = disks[k].match(/\w+/);
+        const disk2num = parseInt(disks[k].match(/\d+/), 10);
+
+        if (disk1name > disk2name || disk1num > disk2num) {
+          const temp = disks[j];
+          disks[j] = disks[k];
+          disks[k] = temp;
+        }
+      }
+    }
+  }
 }
