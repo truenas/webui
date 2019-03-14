@@ -198,12 +198,6 @@ export class InterfacesFormComponent implements OnDestroy {
         tooltip: helptext.delete_tooltip6,
       }]
     },
-    {
-      type : 'input',
-      name : 'options',
-      placeholder : helptext.int_options_placeholder,
-      tooltip : helptext.int_options_tooltip,
-    },
   ];
 
   private vlan_fields;
