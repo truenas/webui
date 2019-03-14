@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { DialogService, RestService, WebSocketService } from '../../../../services/';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from '../../../common/entity/utils'
 import { T } from 'app/translate-marker';
 import { Validators } from '@angular/forms';
@@ -12,7 +13,7 @@ import { Validators } from '@angular/forms';
   selector: 'app-acmedns-edit',
   template: `<entity-form [conf]="this"></entity-form>`
 })
-export class AcmednsEditComponent implements OnInit {
+export class AcmednsEditComponent {
 
   protected queryCall: string = 'acme.dns.authenticator.query';
   protected editCall = 'acme.dns.authenticator.update';
@@ -20,40 +21,59 @@ export class AcmednsEditComponent implements OnInit {
   protected isEntity: boolean = true;
   protected queryCallOption: Array<any> = [["id", "="]];
 
-  protected fieldConfig: FieldConfig[] = [{
-      type: 'input',
-      name: 'name',
-      placeholder: T('Name'),
-      tooltip: T('temp'),
-      required: true,
-      validation: Validators.required
-    },
-    {
-      type : 'select',
-      name : 'authenticator',
-      placeholder : T('Authenticator'),
-      options : [
-        {label: 'Route53', value: 'route53'}
-      ],
-      value: 'Route53',
-    },
-    {
-      type: 'input',
-      name: 'access_key_id',
-      placeholder: T('Access Key ID'),
-      tooltip: T('temp'),
-      required: true,
-      validation: Validators.required
-    },
-    {
-      type: 'input',
-      name: 'secret_access_key',
-      placeholder: T('Secret Access Key'),
-      tooltip: T('temp'),
-      required: true,
-      validation: Validators.required
-    },
-  ];
+  protected fieldConfig: FieldConfig[];
+    public fieldSets: FieldSet[] = [
+      {
+        name: T('Select Authenticator'),
+        label: true,
+        width: '45%',
+        config:[
+          {
+            type : 'input',
+            name : 'name',
+            placeholder : T('Name'),
+            tooltip : T('Temp tooltip'),
+            required: true,
+            validation : Validators.required,
+            parent: this
+          },
+          {
+            type : 'select',
+            name : 'authenticator',
+            placeholder : T('Authenticator'),
+            tooltip : T('Temp tooltip'),
+              options : [
+                {label: 'Route53', value: 'route53'}
+              ],
+            parent: this
+          }
+        ]
+      },
+      {
+        name: T('Authenticator Attributes'),
+        width: '45%',
+        label: true,
+        config:[
+          {
+            type : 'input',
+            name : 'access_key_id',
+            placeholder : T('Access ID Key'),
+            tooltip : T('Temp tooltip'),
+            required: true,
+            validation : Validators.required,
+            parent: this
+          },
+          {
+            type : 'input',
+            name : 'secret_access_key',
+            placeholder : T('Secret Access Key'),
+            tooltip : T('Temp tooltip'),
+            required: true,
+            validation : Validators.required,
+            parent: this
+          }
+        ]
+      }]
 
   private pk: any;
   protected nameField: any;
@@ -67,10 +87,6 @@ export class AcmednsEditComponent implements OnInit {
     protected loader: AppLoaderService, protected dialog: DialogService) {}
 
   preInit() {
-    this.nameField = _.find(this.fieldConfig, { 'name': 'name' });
-    this.authenticatorField = _.find(this.fieldConfig, { 'name': 'authenticator' });
-    this.accessKeyField = _.find(this.fieldConfig, { 'name': 'access_key_id' });
-    this.secretAccessKeyField = _.find(this.fieldConfig, { 'name': 'secret_access_key' });
     this.route.params.subscribe(params => {
       if (params['pk']) {
         this.queryCallOption[0].push(parseInt(params['pk']));
@@ -88,18 +104,7 @@ export class AcmednsEditComponent implements OnInit {
             ["id", "=", this.pk]
           ]
         ]).subscribe((res) => {
-          if (res[0]) {
-            console.log(res)
-            // if (res[0].CSR != null) {
-            //   this.CSRField['isHidden'] = false;
-            //   this.certificateField.readonly = false;
-            //   this.privatekeyField['isHidden'] = true;
-            // } else {
-            //   this.CSRField['isHidden'] = true;
-            //   this.certificateField['isHidden'] = false;
-            //   this.privatekeyField['isHidden'] = false;
-            // }
-          }
+          console.log('')
         });
       }
     });
@@ -108,12 +113,16 @@ export class AcmednsEditComponent implements OnInit {
   customSubmit(value) {
     let payload = {};
     payload['name'] = value.name;
-    if (value.CSR != null) {
-      payload['certificate'] = value.certificate;
+    payload['authenticator'] = value.authenticator;
+    payload['attributes'] = {
+      'access_key_id' : value.access_key_id, 
+      'secret_access_key' : value.secret_access_key
     }
+    let payloadArr = [this.pk, payload];
+    console.log(payloadArr)
 
     this.loader.open();
-    this.ws.call(this.editCall, [this.pk, payload]).subscribe(
+    this.ws.call(this.editCall, [payloadArr]).subscribe(
       (res) => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
@@ -125,7 +134,6 @@ export class AcmednsEditComponent implements OnInit {
     );
   }
 
-  ngOnInit() {
-  }
+
 
 }

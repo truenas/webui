@@ -50,8 +50,9 @@ export class AcmednsListComponent implements OnInit {
       id: "edit",
       label: T("Edit"),
       onClick: (row) => {
+        console.log(row)
         this.router.navigate(
-          new Array('').concat(["system", "acmedns", "edit", row.name]));
+          new Array('').concat(["system", "acmedns", "edit", row.id]));
       }
     },
     {
