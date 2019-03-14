@@ -1,5 +1,4 @@
 import { T } from '../../../translate-marker';
-import { matchOtherValidator } from '../../../pages/common/entity/entity-form/validators/password-validation';
 
 export default {
 disk_form_name_placeholder: T('Name'),
@@ -42,6 +41,4 @@ disk_form_passwd_tooltip: T('Password for SED'),
 
 disk_form_passwd2_placeholder: T('Confirm SED Password'),
 disk_form_passwd2_tooltip: T(''),
-disk_form_passwd2_validation : [ matchOtherValidator('disk_passwd') ]
-
 }
