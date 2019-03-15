@@ -28,7 +28,10 @@
           <div *ngIf="row.vol_encrypt > 0 && row.is_decrypted" class="global_volume_based_action_menu pool-icon" title="Encryption Operations">
             <app-entity-table-actions [icon_name]="'lock_outline'" [entity]="actionEncryptedComponent" [row]="row"></app-entity-table-actions>
           </div>
-          <div *ngIf="row.vol_encrypt > 0 && !row.is_decrypted" class="encryption_icon pool-icon" title="Unlock">
+          <div *ngIf="row.vol_encrypt > 0 && !row.is_decrypted" 
+              class="encryption_icon pool-icon" 
+              title="Unlock" 
+              id="volume_lock_unlock_icon__{{row.name}}">
             <a (click)="conf.unlockAction(row)" class="unlock_button">
               <mat-icon>lock_open</mat-icon>
             </a>
