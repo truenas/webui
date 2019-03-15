@@ -35,9 +35,6 @@ Mandatory Commands:
 
 Optional Commands:
 
---test-name <test_name>    - name of tests targeted
-                            [accounts, system, tasks, network, storage, services, plugin, guide, theme]
-
 --driver <G or F>             - version of the driver G = Grid F = Firefox
 
 """ % argument[0]
@@ -49,7 +46,6 @@ if len(argument) == 1:
 
 # list of argument that should be use.
 optionlist = ["ip=", "test-name=", "driver="]
-testlist = ["accounts", "system", "tasks", "network", "storage", "services", "plugin", "guide", "theme"]
 versionlist = ["U"]
 # look if all the argument are there.
 try:
@@ -62,8 +58,6 @@ except getopt.GetoptError as e:
 for output, arg in myopts:
     if output == '--ip':
         ip = arg
-    if output == "--test-name":
-        test_name = arg
     if output == "--driver":
         driver_v = arg
 

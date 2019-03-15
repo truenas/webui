@@ -1,6 +1,8 @@
 # !/usr/bin/env python
 
 import pytest
+import os
+import json
 from config import browser, ip
 from platform import system
 from selenium import webdriver
@@ -8,6 +10,8 @@ from selenium import webdriver
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver import FirefoxProfile
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+
+cwd = str(os.getcwd())
 
 
 def webDriverFirefox():
@@ -67,3 +71,11 @@ def ui_url():
     global url
     url = "http://%s" % ip
     return url
+
+
+@pytest.fixture
+def login_json():
+    json_file = open(f'{cwd}/side/login.side', 'r')
+    data = json.load(json_file)
+    json_file.close()
+    return data

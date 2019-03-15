@@ -226,3 +226,38 @@ console.error: BroadcastService:
     remoteSettingsFunction/remoteSettings.pollChanges@resource://services-settings/remote-settings.js:188:13
 
 1552507523935	Marionette	INFO	Stopped listening on port 56231
+1552508688694	mozrunner::runner	INFO	Running command: "/usr/local/bin/firefox" "-marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofile.TlFs6BIX4FRW"
+1552508689135	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid host permission: resource://pdf.js/
+1552508689136	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid host permission: about:reader*
+1552508690231	Marionette	INFO	Listening on port 16891
+1552508690265	Marionette	WARN	TLS certificate errors will be ignored for this session
+1552508717163	Marionette	INFO	Stopped listening on port 16891
+1552508920739	mozrunner::runner	INFO	Running command: "/usr/local/bin/firefox" "-marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofile.IJBaWleP8FIr"
+1552508921148	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid host permission: resource://pdf.js/
+1552508921148	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid host permission: about:reader*
+1552508922350	Marionette	INFO	Listening on port 57790
+1552508922382	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: BroadcastService: 
+  receivedBroadcastMessage: handler for
+  remote-settings/monitor_changes
+  threw error:
+  Message: Error: Polling for changes failed: NetworkError when attempting to fetch resource..
+  Stack:
+    remoteSettingsFunction/remoteSettings.pollChanges@resource://services-settings/remote-settings.js:188:13
+
+1552509043966	Marionette	INFO	Stopped listening on port 57790
+[Child 56383, Chrome_ChildThread] WARNING: pipe error (3): Socket is not connected: file /wrkdirs/usr/ports/www/firefox/work/firefox-65.0.1/ipc/chromium/src/chrome/common/ipc_channel_posix.cc, line 349
+1552678360591	mozrunner::runner	INFO	Running command: "/usr/local/bin/firefox" "-marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofile.2AQPA445loX9"
+1552678361079	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid host permission: resource://pdf.js/
+1552678361079	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid host permission: about:reader*
+1552678362198	Marionette	INFO	Listening on port 17392
+1552678362241	Marionette	WARN	TLS certificate errors will be ignored for this session
+console.error: BroadcastService: 
+  receivedBroadcastMessage: handler for
+  remote-settings/monitor_changes
+  threw error:
+  Message: Error: Polling for changes failed: NetworkError when attempting to fetch resource..
+  Stack:
+    remoteSettingsFunction/remoteSettings.pollChanges@resource://services-settings/remote-settings.js:188:13
+
+1552678460250	Marionette	INFO	Stopped listening on port 17392
