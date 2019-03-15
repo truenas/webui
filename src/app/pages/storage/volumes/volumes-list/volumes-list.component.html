@@ -35,7 +35,7 @@
           <div *ngIf="row.vol_encrypt > 0 && !row.is_decrypted" 
               class="encryption_icon pool-icon" 
               title="Unlock" 
-              id="volume_lock_icon__{{row.name}}">
+              id="volume_unlock_icon__{{row.name}}">
             <a (click)="conf.unlockAction(row)" class="unlock_button">
               <mat-icon>lock_open</mat-icon>
             </a>
