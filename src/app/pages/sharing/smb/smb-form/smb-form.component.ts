@@ -119,12 +119,19 @@ export class SMBFormComponent implements OnDestroy {
       multiple: true,
     },
     {
-      type: 'select',
+      type: 'checkbox',
       name: 'cifs_storage_task',
       placeholder: helptext_sharing_smb.placeholder_storage_task,
       tooltip: helptext_sharing_smb.tooltip_storage_task,
       options: []
     },
+    // {
+    //   type: 'select',
+    //   name: 'cifs_storage_task',
+    //   placeholder: helptext_sharing_smb.placeholder_storage_task,
+    //   tooltip: helptext_sharing_smb.tooltip_storage_task,
+    //   options: []
+    // },
     {
       type: 'textarea',
       name: 'cifs_auxsmbconf',
