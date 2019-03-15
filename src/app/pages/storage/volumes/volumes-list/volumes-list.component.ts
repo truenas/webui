@@ -70,6 +70,13 @@ export class VolumesListTableConfig implements InputTableConf {
     { name: 'Dedup', prop: 'dedup', },
     { name: 'Comments', prop: 'comments', },
   ];
+
+  public config: any = {
+    deleteMsg: {
+      key_props: ['name']
+    },
+  };
+
   protected dialogRef: any;
   public route_add = ["storage", "pools", "import"];
   public route_add_tooltip = T("Create or Import Pool");
