@@ -22,6 +22,7 @@ export class InterfacesFormComponent implements OnDestroy {
   protected queryCall = 'interface.query';
   protected addCall = 'interface.create';
   protected editCall = 'interface.update';
+  protected queryKey = 'id';
   protected route_success: string[] = [ 'network', 'interfaces' ];
   protected isEntity = true;
 
@@ -69,11 +70,12 @@ export class InterfacesFormComponent implements OnDestroy {
       name : 'lag_protocol',
       placeholder : helptext.lagg_protocol_placeholder,
       tooltip : helptext.lagg_protocol_tooltip,
-      options : [],
+      options : helptext.lagg_protocol_options,
       required: true,
       isHidden: true,
       disabled: true,
-      validation : helptext.lagg_protocol_validation
+      validation : helptext.lagg_protocol_validation,
+      value: "NONE"
     },
     {
       type : 'select',
@@ -200,9 +202,10 @@ export class InterfacesFormComponent implements OnDestroy {
     },
   ];
 
-  private vlan_fields;
-  private lagg_fields;
-  private bridge_fields;
+  private vlan_fields = ['vlan_tag', 'vlan_pcp', 'vlan_pint'];
+  private lagg_fields = ['lag_protocol', 'lag_ports'];
+  private bridge_fields = ['bridge_members'];
+  private failover_fields = ['failover_critical', 'failover_group'];
   private physical_fields;
   /*private int_dhcp: any;
   private int_dhcp_subscription: any;
@@ -217,6 +220,7 @@ export class InterfacesFormComponent implements OnDestroy {
   private lag_protocol: any;
   private lag_ports: any;
   private type: any;
+  private type_fg: any;
   private type_subscription: any;
   /*private int_interface: any;
   private int_interface_fg: any;
@@ -294,26 +298,31 @@ export class InterfacesFormComponent implements OnDestroy {
   }
 
   setType(type: string) {
-    if (type === "PHYSICAL") {
-
-    } else if (type === "VLAN") {
-
-    } else if (type === "LAGG") {
-
-    } else if (type === "BRIDGE") {
-
+    const is_physical = (type === "PHYSICAL");
+    const is_vlan = (type === "VLAN");
+    const is_bridge = (type === "BRIDGE");
+    const is_lagg = (type === "LINK_AGGREGATION");
+    for (let i = 0; i < this.vlan_fields.length; i++) {
+      this.entityForm.setDisabled(this.vlan_fields[i], !is_vlan, !is_vlan);
     }
+    for (let i = 0; i < this.lagg_fields.length; i++) {
+      this.entityForm.setDisabled(this.lagg_fields[i], !is_lagg, !is_lagg);
+    }
+    for (let i = 0; i < this.vlan_fields.length; i++) {
+      this.entityForm.setDisabled(this.bridge_fields[i], !is_bridge, !is_bridge);
+    }
+
   }
 
   preInit(entityForm: any) {
-    //this.int_interface = _.find(this.fieldConfig, {'name' : 'int_interface'});
+    this.entityForm = entityForm;
+    this.type = _.find(this.fieldConfig, {'name' : 'type'});
     this.ipv4arrayControl = _.find(this.fieldConfig, {'name' : 'ipv4_aliases'});
     this.ipv6arrayControl = _.find(this.fieldConfig, {'name' : 'ipv6_aliases'});
     this.vlan_pint = _.find(this.fieldConfig, {'name' : 'vlan_pint'})
     this.route.params.subscribe(params => {
       if(!params['pk']) {
-        //this.int_interface.type = 'select';
-        //this.int_interface.options = [];
+        this.type.type = 'select';
       } else {
         this.confirmSubmit = true;
         this.ipv4arrayControl.initialCount = this.initialCount['ipv4_aliases']
@@ -355,8 +364,8 @@ export class InterfacesFormComponent implements OnDestroy {
       });
     }*/
     if (entityForm.isNew) {
-      this.type = entityForm.formGroup.controls['type'];
-      this.type_subscription = this.type.valueChanges.subscribe((type) => {
+      this.type_fg = entityForm.formGroup.controls['type'];
+      this.type_subscription = this.type_fg.valueChanges.subscribe((type) => {
         this.setType(type);
       });
       this.networkService.getVlanNicChoices().subscribe((res) => {
@@ -366,17 +375,13 @@ export class InterfacesFormComponent implements OnDestroy {
       });
       this.lag_ports = _.find(this.fieldConfig, {'name' : 'lag_ports'});
       this.networkService.getLaggNicChoices().subscribe((res) => {
-      res.forEach((item) => {
-        this.lag_ports.options.push({label : item[1], value : item[0]});
+        res.forEach((item) => {
+          this.lag_ports.options.push({label : item[1], value : item[0]});
+        });
       });
-    });
+    } else {
+      entityForm.setDisabled('type', true);
     }
-    this.networkService.getLaggProtocolTypes().subscribe((res) => {
-      this.lag_protocol = _.find(this.fieldConfig, {'name' : 'lag_protocol'});
-      res.forEach((item) => {
-        this.lag_protocol.options.push({label : item[1], value : item[0]});
-      });
-    });
     this.ws.call('notifier.choices', ['VLAN_PCP_CHOICES']).subscribe((res) => {
       this.vlan_pcp = _.find(this.fieldConfig, {'name' : 'vlan_pcp'});
       res.forEach((item) => {
@@ -438,7 +443,7 @@ export class InterfacesFormComponent implements OnDestroy {
     }
     delete data.ipv4_aliases;
     delete data.ipv6_aliases;
-    data.int_aliases = aliases;
+    data.aliases = aliases;
     return data;
   }
 
@@ -456,7 +461,7 @@ export class InterfacesFormComponent implements OnDestroy {
   resourceTransformIncomingRestData(data) {
     const ipv4_aliases = [];
     const ipv6_aliases = [];
-    const aliases = data['int_aliases'];
+    const aliases = data['aliases'];
     for (let i = 0; i < aliases.length; i++) {
       if (aliases[i].indexOf(':') === -1) {
         ipv4_aliases.push(aliases[i]);

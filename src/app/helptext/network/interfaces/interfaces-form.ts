@@ -7,7 +7,7 @@ int_type_placeholder: T('Type'),
 int_type_tooltip: T(''),
 int_type_options: [
     {label: "Bridge", value: "BRIDGE"},
-    {label: "LAGG", value: "LAGG"},
+    {label: "Link Aggregation", value: "LINK_AGGREGATION"},
     {label: "VLAN", value: "VLAN"},
 ],
 
@@ -113,6 +113,13 @@ lagg_protocol_tooltip : T('Select the <a\
  should only be used if the network switch does not\
  support active LACP.'),
 lagg_protocol_validation : [ Validators.required ],
+lagg_protocol_options: [
+    {label:"None", value:"NONE"},
+    {label:"LACP", value:"LACP"}, 
+    {label:"Failover", value:"FAILOVER"}, 
+    {label:"Load Balance", value:"LOADBALANCE"},
+    {label:"Round Robin", value: "ROUNDROBIN"}
+],
 
 lagg_interfaces_placeholder : T('Lagg Interfaces'),
 lagg_interfaces_tooltip : T('Select the interfaces to use in the aggregation.<br>\
