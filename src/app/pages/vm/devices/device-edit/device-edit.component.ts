@@ -44,7 +44,24 @@ export class DeviceEditComponent implements OnInit {
       type: 'select',
       name: 'dtype',
       placeholder: helptext.dtype_placeholder,
-      options: helptext.dtype_options,
+      options: [
+        {
+        label: 'CD-ROM',
+        value: 'CDROM',
+        }, {
+        label: 'NIC',
+        value: 'NIC',
+        }, {
+        label: 'Disk',
+        value: 'DISK',
+        }, {
+        label: 'Raw File',
+        value: 'RAW',
+        }, {
+        label: 'VNC',
+        value: 'VNC',
+        }
+      ], 
       value: helptext.dtype_value,
       required: true,
       validation: helptext.dtype_validation,

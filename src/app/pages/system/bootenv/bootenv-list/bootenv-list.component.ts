@@ -1,19 +1,16 @@
 
-import {fromEvent as observableFromEvent,  Subscription ,  Observable } from 'rxjs';
-
-import {distinctUntilChanged, debounceTime} from 'rxjs/operators';
-import {Component, ElementRef, ViewChild} from '@angular/core';
-import {Router} from '@angular/router';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
-
-import {RestService} from '../../../../services/rest.service';
-import { WebSocketService } from '../../../../services/ws.service';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { Router } from '@angular/router';
+import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
 import { DialogService } from 'app/services';
-import { EntityUtils } from '../../../common/entity/utils';
 import * as moment from 'moment';
-import { stringify } from '@angular/core/src/util';
-import { T } from '../../../../translate-marker';
+import { fromEvent as observableFromEvent, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { RestService } from '../../../../services/rest.service';
+import { WebSocketService } from '../../../../services/ws.service';
+import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
   selector : 'app-bootenv-list',
@@ -83,10 +80,8 @@ export class BootEnvironmentListComponent {
     .subscribe(() => {
       const scrubIntervalValue: number = this.scrubIntervalEvent.nativeElement.value;
       if( scrubIntervalValue > -1){
-        this._rest.put('system/advanced/',{ body: JSON.stringify(
-          {'adv_boot_scrub':scrubIntervalValue})}).subscribe((res)=>{
-
-          })
+        this.ws.call('boot.set_scrub_interval',[scrubIntervalValue]).subscribe((res)=>{
+        })
 
       }
       else {
@@ -186,7 +181,7 @@ export class BootEnvironmentListComponent {
   }
 
   doActivate(id) {
-    this.dialog.confirm("Activate", "Activate this Boot Environment?", false, T("Activate")).subscribe((res) => {
+    this.dialog.confirm("Activate", "Activate this Boot Environment?", false, helptext_system_bootenv.list_dialog_activate_action).subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
@@ -205,7 +200,7 @@ export class BootEnvironmentListComponent {
   }
   toggleKeep(id, status) {
     if (!status){
-      this.dialog.confirm("Keep", "Keep this Boot Environment?", false, T("Set Keep Flag")).subscribe((res) => {
+      this.dialog.confirm("Keep", "Keep this Boot Environment?", false, helptext_system_bootenv.list_dialog_keep_action).subscribe((res) => {
         if (res) {
           this.loader.open();
           this.loaderOpen = true;
@@ -222,7 +217,7 @@ export class BootEnvironmentListComponent {
         }
       })
     } else {
-      this.dialog.confirm("Unkeep", "No longer keep this Boot Environment?", false, T("Remove Keep Flag")).subscribe((res) => {
+      this.dialog.confirm("Unkeep", "No longer keep this Boot Environment?", false, helptext_system_bootenv.list_dialog_unkeep_action).subscribe((res) => {
         if (res) {
           this.loader.open();
           this.loaderOpen = true;
@@ -249,7 +244,7 @@ export class BootEnvironmentListComponent {
   }
 
   scrub() {
-    this.dialog.confirm("Scrub", "Start the scrub now?", false, T("Start Scrub")).subscribe((res) => {
+    this.dialog.confirm("Scrub", "Start the scrub now?", false, helptext_system_bootenv.list_dialog_scrub_action).subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;

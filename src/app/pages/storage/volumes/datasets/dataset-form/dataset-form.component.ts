@@ -59,6 +59,10 @@ export class DatasetFormComponent implements Formconfiguration{
   public parent_dataset: any;
   protected entityForm: any;
   public minimum_recommended_dataset_recordsize = '128K';
+  protected recordsize_field: any;
+  protected recordsize_fg: any;
+  protected recommended_size_number: any;
+  protected recordsize_warning: any;
 
 
   public parent: string;
@@ -550,6 +554,23 @@ export class DatasetFormComponent implements Formconfiguration{
       entityForm.setDisabled('name',true);
       _.find(this.fieldConfig, {name:'name'}).tooltip = "Dataset name (read-only)."
     }
+    this.recordsize_fg = this.entityForm.formGroup.controls['recordsize'];
+
+    this.recordsize_field = _.find(this.fieldConfig, {name:'recordsize'});
+    this.recordsize_fg.valueChanges.subscribe((record_size)=>{
+      const record_size_number = parseInt(this.reverseRecordSizeMap[record_size],10);
+      if(this.minimum_recommended_dataset_recordsize && this.recommended_size_number){
+        this.recordsize_warning = helptext.dataset_form_warning_1 + 
+          this.minimum_recommended_dataset_recordsize + 
+          helptext.dataset_form_warning_2;
+        if (record_size_number < this.recommended_size_number) {
+          this.recordsize_field.warnings = this.recordsize_warning;
+          this.isBasicMode = false;
+        } else {
+          this.recordsize_field.warnings = null;
+        }
+      }
+    });
   }
 
   preInit(entityForm: EntityFormComponent) {
@@ -575,6 +596,7 @@ export class DatasetFormComponent implements Formconfiguration{
       const root = this.parent.split("/")[0];
       this.ws.call('pool.dataset.recommended_zvol_blocksize',[root]).subscribe(res=>{
         this.minimum_recommended_dataset_recordsize = res;
+        this.recommended_size_number = parseInt(this.reverseRecordSizeMap[this.minimum_recommended_dataset_recordsize],0);
       });
       this.ws.call('pool.dataset.query', [[["id", "=", this.pk]]]).subscribe((pk_dataset)=>{
       if(this.isNew){
@@ -814,6 +836,9 @@ export class DatasetFormComponent implements Formconfiguration{
     }
     if (data.deduplication === 'INHERIT') {
       delete(data.deduplication);
+    }
+    if (data.recordsize === "1M") {
+      data.recordsize = "1024K";
     }
     return this.ws.call('pool.dataset.create', [ data ]);
   }

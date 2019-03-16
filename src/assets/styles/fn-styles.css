@@ -1012,8 +1012,8 @@ div.hopscotch-bubble .hopscotch-nav-button.prev:hover {
     z-index: 9999;
     display: block;
     background: #fff;
-    max-height: 200px !important;
-    overflow-y: scroll;
+    max-height: 600px !important;
+    overflow-y: auto;
     box-shadow: 0 2px 1px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
 }
 .collapsed-menu .sidebar-panel .sidebar-list-item.open .sub-menu .mat-list-item a {

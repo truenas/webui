@@ -11,6 +11,7 @@ import {AdminLayoutComponent} from '../../../components/common/layouts/admin-lay
 import { matchOtherValidator } from '../../common/entity/entity-form/validators/password-validation';
 import { T } from '../../../translate-marker';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+import { helptext_system_advanced } from 'app/helptext/system/advanced';
 
 
 @Component({
@@ -43,7 +44,7 @@ export class AdvancedComponent implements OnDestroy {
           const date = this.datePipe.transform(new Date(),"yyyyMMddHHmmss");
           fileName = `debug-${hostname}-${date}.tgz`;
         }
-        this.dialog.confirm(T("Generate Debug File"), T("This operation might take a long time. Proceed?"), true, T('Proceed')).subscribe((ires) => {
+        this.dialog.confirm(helptext_system_advanced.dialog_generate_debug_title, helptext_system_advanced.dialog_generate_debug_message, true, helptext_system_advanced.dialog_button_ok).subscribe((ires) => {
           if (ires) {
             this.load.open();
             this.ws.job('system.debug').subscribe((system_debug) => {
@@ -59,7 +60,7 @@ export class AdvancedComponent implements OnDestroy {
                     }
                   },
                   (err) => {
-                    this.openSnackBar(T("Check the network connection."), T("Failed"));
+                    this.openSnackBar(helptext_system_advanced.snackbar_generate_debug_message_failure, helptext_system_advanced.snackbar_generate_debug_action);
                   }
                 );
               }
@@ -68,7 +69,7 @@ export class AdvancedComponent implements OnDestroy {
             }, () => {
               this.load.close();
               if (this.job.state === 'SUCCESS') {} else if (this.job.state === 'FAILED') {
-                this.openSnackBar(T("Check the network connection."), T("Failed"));
+                this.openSnackBar(helptext_system_advanced.snackbar_network_error_message, helptext_system_advanced.snackbar_network_error_action);
               }
             });
           } else {
@@ -83,22 +84,21 @@ export class AdvancedComponent implements OnDestroy {
   public fieldConfig: FieldConfig[] = [{
     type: 'checkbox',
     name: 'consolemenu',
-    placeholder: T('Show Text Console without Password Prompt'),
-    tooltip: T('Unset to add a login prompt to the system before\
-                the console menu is shown.')
+    placeholder: helptext_system_advanced.consolemenu_placeholder,
+    tooltip: helptext_system_advanced.consolemenu_tooltip
   }, {
     type: 'checkbox',
     name: 'serialconsole',
-    placeholder: T('Enable Serial Console'),
-    tooltip: T('Do not set this if the Serial Port is disabled.')
+    placeholder: helptext_system_advanced.serialconsole_placeholder,
+    tooltip: helptext_system_advanced.serialconsole_tooltip
   }, {
     type: 'select',
     name: 'serialport',
-    placeholder: T('Serial Port'),
+    placeholder: helptext_system_advanced.serialport_placeholder,
     options: [
       { label: '---', value: null},
     ],
-    tooltip: T('Select the serial port address in hex.'),
+    tooltip: helptext_system_advanced.serialport_tooltip,
     relation: [
     {
       action : 'DISABLE',
@@ -111,7 +111,7 @@ export class AdvancedComponent implements OnDestroy {
   }, {
     type: 'select',
     name: 'serialspeed',
-    placeholder: T('Serial Speed'),
+    placeholder: helptext_system_advanced.serialspeed_placeholder,
     options: [
         { label: '---', value: null},
         { label: '9600', value: "9600" },
@@ -120,7 +120,7 @@ export class AdvancedComponent implements OnDestroy {
         { label: '57600', value: "57600" },
         { label: '115200', value: "115200" },
     ],
-    tooltip: T('Choose the speed in bps used by the serial port.'),
+    tooltip: helptext_system_advanced.serialspeed_tooltip,
     relation: [
       {
         action : 'DISABLE',
@@ -134,83 +134,61 @@ export class AdvancedComponent implements OnDestroy {
   {
     type: 'input',
     name: 'swapondrive',
-    placeholder: T('Swap size in GiB'),
-    tooltip: T('By default, all data disks are created with the amount\
-                of swap specified. Changing the value does not affect\
-                the amount of swap on existing disks, only disks added\
-                after the change. Does not affect log or cache\
-                devices as they are created without swap. Setting to\
-                <i>0</i> disables swap creation completely. <b>STRONGLY\
-                DISCOURAGED</b>'),
+    placeholder: helptext_system_advanced.swapondrive_placeholder,
+    tooltip: helptext_system_advanced.swapondrive_tooltip,
     inputType: 'number',
-    validation : [ Validators.required, Validators.min(0), Validators.max(99) ],
+    validation : helptext_system_advanced.swapondrive_validation,
     required: true,
   }, {
     type: 'checkbox',
     name: 'autotune',
-    placeholder: T('Enable autotune'),
-    tooltip: T('Enables the autotune script which attempts to optimize\
-                the system depending on the installed hardware.\
-                <b>Warning:</b> Autotuning is only used as a temporary\
-                measure and is not a permanent fix for system hardware\
-                issues. See the\
-                <a href="%%docurl%%/system.html%%webversion%%#autotune"\
-                target="_blank">Autotune section</a> of the guide for\
-                more information.')
+    placeholder: helptext_system_advanced.autotune_placeholder,
+    tooltip: helptext_system_advanced.autotune_tooltip
   }, {
     type: 'checkbox',
     name: 'debugkernel',
-    placeholder: T('Enable Debug Kernel'),
-    tooltip: T('Set to boot a debug kernel after the next system\
-                reboot.')
+    placeholder: helptext_system_advanced.debugkernel_placeholder,
+    tooltip: helptext_system_advanced.debugkernel_tooltip
   }, {
     type: 'checkbox',
     name: 'consolemsg',
-    placeholder: T('Show console messages'),
-    tooltip: T('Display console messages in real time\
-                at the bottom of the browser.')
+    placeholder: helptext_system_advanced.consolemsg_placeholder,
+    tooltip: helptext_system_advanced.consolemsg_tooltip
   }, {
     type: 'textarea',
     name: 'motd',
-    placeholder: T('MOTD Banner'),
-    tooltip: T('The message to show when a user logs in with SSH.')
+    placeholder: helptext_system_advanced.motd_placeholder,
+    tooltip: helptext_system_advanced.motd_tooltip
   }, {
     type: 'checkbox',
     name: 'traceback',
-    placeholder: T('Show tracebacks in case of fatal error'),
-    tooltip: T('Provides a pop-up window of diagnostic information if a\
-                fatal error occurs.')
+    placeholder: helptext_system_advanced.traceback_placeholder,
+    tooltip: helptext_system_advanced.traceback_tooltip
   }, {
     type: 'checkbox',
     name: 'advancedmode',
-    placeholder: T('Show advanced fields by default'),
-    tooltip: T('Set to always show advanced fields, when available.')
+    placeholder: helptext_system_advanced.advancedmode_placeholder,
+    tooltip: helptext_system_advanced.advancedmode_tooltip
   }, {
     type: 'select',
     name: 'periodic_notifyuser',
-    placeholder: T('Periodic Notification User'),
+    placeholder: helptext_system_advanced.periodic_notifyuser_placeholder,
     options: [],
-    tooltip: T('Select a user to receive security output emails. This\
-                output runs nightly but only sends an email when the\
-                system reboots or encounters an error.')
+    tooltip: helptext_system_advanced.periodic_notifyuser_tooltip
   }, {
     type: 'input',
     name: 'graphite',
-    placeholder: T('Remote Graphite Server Hostname'),
-    tooltip: T('Enter the IP address or hostname of a remote server\
-                running Graphite.')
+    placeholder: helptext_system_advanced.graphite_placeholder,
+    tooltip: helptext_system_advanced.graphite_tooltip
   }, {
     type: 'checkbox',
     name: 'fqdn_syslog',
-    placeholder: T('Use FQDN for logging'),
-    tooltip: T('Set to include the Fully-Qualified Domain Name (FQDN)\
-                in logs to precisely identify systems with similar\
-                hostnames.')
+    placeholder: helptext_system_advanced.fqdn_placeholder,
+    tooltip: helptext_system_advanced.fqdn_tooltip
   }, {
     type: 'paragraph',
     name: 'sed_options_message',
-    paraText: T('<b>SED (<a href="%%docurl%%/system.html%%webversion%%#self-encrypting-drives"\
-                 target="_blank">Self-Encrypting Drives</a>) Options</b>'),
+    paraText: helptext_system_advanced.sed_options_message_paragraph,
 // This tooltip wraps to the next line when uncommented.
 // Erin said it's more than likely the CSS. Commented out for now and
 // linking to the user guide from the test instead.
@@ -222,9 +200,8 @@ export class AdvancedComponent implements OnDestroy {
   {
     type: 'select',
     name: 'sed_user',
-    placeholder: T('ATA Security User'),
-    tooltip: T('User passed to <i>camcontrol security -u</i> to unlock\
-                SEDs'),
+    placeholder: helptext_system_advanced.sed_user_placeholder,
+    tooltip: helptext_system_advanced.sed_user_tooltip,
     options: [
       {label:'user', value:'USER'},
       {label:'master', value:'MASTER'}
@@ -234,18 +211,18 @@ export class AdvancedComponent implements OnDestroy {
   {
     type: 'input',
     name: 'sed_passwd',
-    placeholder: T('SED Password'),
-    tooltip: T('Global password to unlock SEDs.'),
+    placeholder: helptext_system_advanced.sed_passwd_placeholder,
+    tooltip: helptext_system_advanced.sed_passwd_tooltip,
     inputType: 'password',
     togglePw: true,
   },
   {
     type: 'input',
     name: 'sed_passwd2',
-    placeholder: T('Confirm SED Password'),
-    tooltip: T(''),
+    placeholder: helptext_system_advanced.sed_passwd2_placeholder,
+    tooltip: helptext_system_advanced.sed_passwd2_tooltip,
     inputType: 'password',
-    validation : [ matchOtherValidator('sed_passwd') ],
+    validation : helptext_system_advanced.sed_passwd2_validation,
 
   },
 ];
@@ -274,7 +251,7 @@ export class AdvancedComponent implements OnDestroy {
     this.swapondrive = _.find(this.fieldConfig, { 'name': 'swapondrive' });
     this.swapondrive_subscription = entityEdit.formGroup.controls['swapondrive'].valueChanges.subscribe((value) => {
       if (parseInt(value) === 0) {
-        this.swapondrive.warnings = T("A swap size of 0 is STRONGLY DISCOURAGED.");
+        this.swapondrive.warnings = helptext_system_advanced.swapondrive_warning;
       } else {
         this.swapondrive.warnings = null;
       }

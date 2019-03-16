@@ -6,6 +6,7 @@ import { MaterialModule } from 'app/appMaterial.module';
 import { NgForm } from '@angular/forms';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
+import { StorageService } from '../../../../services/storage.service'
 
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import filesize from 'filesize';
@@ -95,7 +96,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   public diskSizeLabel: string;
   @Input() configurable:boolean;
 
-  constructor(public router: Router, public translate: TranslateService){
+  constructor(public router: Router, public translate: TranslateService, public storage: StorageService){
     super(translate);
     setTimeout(() => {
         if(!this.dataRcvd){
@@ -144,6 +145,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
         
       }
         if(this.disks.length > 0){
+          this.storage.diskNameSort(this.disks);
           this.setSelectedDisk(0);
         }
     });
@@ -187,7 +189,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
       }
     
       this.diskDetails.push(disk);
-
+      this.diskDetails = this.storage.tableSorter(this.diskDetails, 'name', 'asc');
     }
     
     /*console.log(evt.data)

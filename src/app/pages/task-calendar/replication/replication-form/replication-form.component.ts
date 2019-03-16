@@ -377,10 +377,10 @@ export class ReplicationFormComponent implements OnDestroy {
     this.repl_filesystem = _.find(this.fieldConfig, {'name' : 'repl_filesystem'});
     this.ws.call('pool.snapshottask.query').subscribe((res) => {
       for (let i = 0; i < res.length; i++) {
-        this.repl_filesystem.options.push({
-            label:  res[i].filesystem,
-            value:  res[i].filesystem
-        });
+        const option = {label:  res[i].filesystem, value:  res[i].filesystem}
+        if (!_.find(this.repl_filesystem.options, option)) {
+          this.repl_filesystem.options.push(option);
+        }
       }
     });
   }

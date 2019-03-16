@@ -95,7 +95,7 @@ export class NavigationService {
         { name: T('Interfaces'), state: 'interfaces' },
         { name: T('IPMI'), state: 'ipmi', disabled: false },
         { name: T('Link Aggregations'), state: 'laggs' },
-        //        {name: 'Network Summary', state: 'networksummary'},
+        { name: T('Network Summary'), state: 'summary' },
         { name: T('Static Routes'), state: 'staticroutes' },
         { name: T('VLANs'), state: 'vlans' },
       ]
@@ -112,6 +112,7 @@ export class NavigationService {
         { name: T('VMware-Snapshots'), state: 'vmware-Snapshots' },
         { name: T('Disks'), state: 'disks' },
         { name: T('Import Disk'), state: 'import-disk'},
+        { name: T('Multipaths'), state: 'multipaths', disabled: false},
       ]
     },
     {
@@ -165,7 +166,8 @@ export class NavigationService {
       name: T('Jails'),
       type: 'link',
       tooltip: T('Jails'),
-      icon: 'apps',
+      icon: 'jail_icon',
+      //icon: 'apps',
       state: 'jails',
       // sub: [
       //   { name: 'Jails', state: 'jails' },
@@ -213,7 +215,7 @@ export class NavigationService {
       name: T('Shell'),
       type: 'link',
       tooltip: T('Shell'),
-      icon: 'code',
+      icon: 'console-line',
       state: 'shell'
     },
     {

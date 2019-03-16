@@ -2,20 +2,15 @@ import {Component} from '@angular/core';
 import {Router} from '@angular/router';
 import * as _ from 'lodash';
 
-import { T } from '../../../../translate-marker';
 import {
   RestService,
   WebSocketService,
-  StorageService
+  StorageService,
+  AppLoaderService
 } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import {
-  matchOtherValidator
-} from '../../../common/entity/entity-form/validators/password-validation';
-import {  DialogService } from '../../../../services/';
-import {Validators} from '@angular/forms';
-import { ChangeDetectorRef } from '@angular/core';
+import helptext from '../../../../helptext/account/user-form';
 
 @Component({
   selector : 'app-user-form',
@@ -34,84 +29,74 @@ export class UserFormComponent {
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
     {
-      name:'Name & Contact',
-      class:'name-and-contact',
+      name: helptext.user_form_title_name,
+      class: helptext.user_form_title_class,
       label:true,
       config:[
         {
           type : 'input',
-          name : 'full_name',
-          placeholder : T('Full Name'),
-          tooltip : T('Spaces are allowed.'),
+          name : helptext.user_form_full_name_name,
+          placeholder : helptext.user_form_full_name_placeholder,
+          tooltip : helptext.user_form_full_name_tooltip,
           required: true,
-          validation : [ Validators.required ],
+          validation : helptext.user_form_full_name_validation,
           blurStatus : true,
           blurEvent: this.blurEvent,
           parent: this
         },
         {
           type : 'input',
-          name : 'username',
-          placeholder : T('Username'),
-          tooltip : T('Enter an alphanumeric username of eight to\
-                      sixteen characters. Keeping usernames to eight\
-                      characters or less is recommended for\
-                      compatibility with legacy clients.\
-                      Usernames cannot begin with a hyphen\
-                      (<b>-</b>) or contain a space, tab, or these\
-                      characters: <b>, : + & # %^ ( ) ! @ ~ * ? < > =</b>\
-                      Note that <b>$</b> can only be used as the last\
-                      character.'),
+          name : helptext.user_form_username_name,
+          placeholder : helptext.user_form_username_placeholder,
+          tooltip : helptext.user_form_username_tooltip,
           required: true,
-          validation : [ Validators.required, Validators.pattern('[a-z_A-Z_][a-zA-Z0-9_-]*[$]?'), Validators.maxLength(16) ],
+          validation : helptext.user_form_username_validation,
           blurStatus : true,
           blurEvent: this.blurEvent2,
           parent: this
         },
         {
           type : 'input',
-          name : 'email',
-          placeholder : T('Email'),
-          tooltip : T('Enter the email address of the new user.'),
+          name : helptext.user_form_email_name,
+          placeholder : helptext.user_form_email_placeholder,
+          tooltip : helptext.user_form_email_tooltip
         },
         {
           type : 'input',
-          name : 'password',
-          placeholder : T('Password'),
-          tooltip : T('Required unless <b>Enable password login</b> is\
-                      <i>No</i>. Passwords cannot contain a <b>?</b>.'),
+          name : helptext.user_form_password_name,
+          placeholder : helptext.user_form_password_placeholder,
+          tooltip : helptext.user_form_password_tooltip,
           inputType : 'password',
           togglePw: true,
           required: true,
-          validation : [ Validators.pattern('^[^?]*$'), Validators.required ],
+          validation : helptext.user_form_password_validation,
           isHidden: false
         },
         {
           type : 'input',
-          name : 'password_conf',
-          placeholder : T('Confirm Password'),
+          name : helptext.user_form_password_confirm_name,
+          placeholder : helptext.user_form_password_confirm_placeholder,
           inputType : 'password',
           required: true,
-          validation : [ matchOtherValidator('password'), Validators.pattern('^[^?]*$'), Validators.required ],
+          validation : helptext.user_form_password_confirm_validation,
           isHidden: false
         },
         {
           type : 'input',
-          name : 'password_edit',
-          placeholder : T('Password'),
-          tooltip : T('Required unless <b>Enable password login</b> is\
-                      <i>No</i>. Passwords cannot contain a <b>?</b>.'),
+          name : helptext.user_form_password_edit_name,
+          placeholder : helptext.user_form_password_edit_placeholder,
+          tooltip : helptext.user_form_password_edit_tooltip,
           inputType : 'password',
           togglePw: true,
-          validation : [ Validators.pattern('^[^?]*$') ],
+          validation : helptext.user_form_password_edit_validation,
           isHidden: true
         },
         {
           type : 'input',
-          name : 'password_conf_edit',
-          placeholder : T('Confirm Password'),
+          name : helptext.user_form_password_edit_confirm_name,
+          placeholder : helptext.user_form_password_edit_confirm_placeholder,
           inputType : 'password',
-          validation : [ matchOtherValidator('password_edit'), Validators.pattern('^[^?]*$') ],
+          validation : helptext.user_form_password_edit_confirm_validation,
           isHidden: true
         },
       ]
@@ -121,36 +106,31 @@ export class UserFormComponent {
       divider:true
     },
     {
-      name:'ID & Groups',
-      class:'id-and-groups',
+      name:helptext.user_form_ids_groups_title,
+      class: helptext.user_form_ids_groups_title_class,
       label:true,
       config:[
         {
           type : 'input',
-          name : 'uid',
-          placeholder : T('User ID'),
-          tooltip : T('User accounts have an ID greater than 1000 and\
-                      system accounts have an ID equal to the default\
-                      port number used by the service.'),
+          name : helptext.user_form_uid_name,
+          placeholder : helptext.user_form_uid_placeholder,
+          tooltip : helptext.user_form_uid_tooltip,
           required: true,
-          validation : [ Validators.required ]
+          validation : helptext.user_form_uid_validation
         },
         {
           type : 'checkbox',
-          name : 'group_create',
-          placeholder : T('New Primary Group'),
-          tooltip : T('Set to create a new primary group with the same name as\
-                      the user. Unset to select an existing group for\
-                      the user.'),
+          name : helptext.user_form_group_create_name,
+          placeholder : helptext.user_form_group_create_placeholder,
+          tooltip : helptext.user_form_group_create_tooltip,
           value : true,
           isHidden: false
         },
         {
           type : 'select',
-          name : 'group',
-          placeholder : T('Primary Group'),
-          tooltip : T('New users are not given <b>su</b> permissions if\
-                      <i>wheel</i> is their primary group.'),
+          name : helptext.user_form_primary_group_name,
+          placeholder : helptext.user_form_primary_group_placeholder,
+          tooltip : helptext.user_form_primary_group_tooltip,
           options : [],
           relation : [
             {
@@ -164,9 +144,9 @@ export class UserFormComponent {
         },
         {
           type : 'select',
-          name : 'groups',
-          placeholder : T('Auxiliary Groups'),
-          tooltip : T('Add this user to additional groups.'),
+          name : helptext.user_form_aux_groups_name,
+          placeholder : helptext.user_form_aux_groups_placeholder,
+          tooltip : helptext.user_form_aux_groups_tooltip,
           options : [],
           multiple : true
         },
@@ -177,89 +157,78 @@ export class UserFormComponent {
       divider:true
     },
     {
-      name:'Directories & Permissions',
-      class:'directories-and-permissions',
+      name: helptext.user_form_dirs_title_name,
+      class: helptext.user_form_dirs_title_class,
       label:true,
       width:'50%',
       config:[
         {
           type : 'explorer',
-          class : 'meExplorer',
+          class : helptext.user_form_dirs_explorer_class,
           initial: '/mnt',
           explorerType: 'directory',
-          name: 'home',
-          placeholder: T('Home Directory'),
-          value: '/nonexistent',
-          tooltip : T('Define an <b>existing</b> pool or dataset as\
-                      the user home directory and adjust the\
-                      permissions.'),
+          name: helptext.user_form_dirs_explorer_name,
+          placeholder: helptext.user_form_dirs_explorer_placeholder,
+          value: helptext.user_form_dirs_explorer_value,
+          tooltip : helptext.user_form_dirs_explorer_tooltip,
         },
         {
           type : 'permissions',
-          name : 'home_mode',
-          placeholder : T('Home Directory Permissions'),
-          tooltip : T('Sets default Unix permissions of the user home\
-                      directory. This is read-only for built-in users.'),
+          name : helptext.user_form_home_dir_permissions_name,
+          placeholder : helptext.user_form_home_dir_permissions_placeholder,
+          tooltip : helptext.user_form_home_dir_permissions_tooltip,
         },
       ]
     },
     {
-      name:'Authentication',
-      class:'authentication',
+      name: helptext.user_form_auth_title_name,
+      class: helptext.user_form_auth_title_class,
       label:true,
       width:'50%',
       config:[
         {
           type : 'textarea',
-          name : 'sshpubkey',
-          placeholder : T('SSH Public Key'),
-          tooltip : T('Enter or paste the <b>public</b> SSH key of the\
-                      user for any key-based authentication. <b>Do not\
-                      paste the private key.</b>'),
+          name : helptext.user_form_auth_sshkey_name,
+          placeholder : helptext.user_form_auth_sshkey_placeholder,
+          tooltip : helptext.user_form_auth_sshkey_tooltip,
         },
         {
           type : 'select',
-          name : 'password_disabled',
-          placeholder : T('Enable password login'),
-          tooltip : T('Enable password logins and authentication to SMB\
-                      shares. Selecting <b>No</b> removes the <b>Lock\
-                      User</b> and <b>Permit Sudo</b> options.'),
+          name : helptext.user_form_auth_pw_enable_name,
+          placeholder : helptext.user_form_auth_pw_enable_placeholder,
+          tooltip : helptext.user_form_auth_pw_enable_tooltip,
           options : [
-            {label:'Yes', value: false },
-            {label:'No', value: true },
+            {label:helptext.user_form_auth_pw_enable_label_yes, value: false },
+            {label: helptext.user_form_auth_pw_enable_label_no, value: true },
           ],
           value: false
         },
         {
           type : 'select',
-          name : 'shell',
-          placeholder : T('Shell'),
-          tooltip : T('Select the shell to use for local and SSH logins.'),
+          name : helptext.user_form_shell_name,
+          placeholder : helptext.user_form_shell_placeholder,
+          tooltip : helptext.user_form_shell_tooltip,
           options : [],
         },
         {
           type : 'checkbox',
-          name : 'locked',
-          placeholder : T('Lock User'),
-          tooltip : T('Set to disable logging in to this user account.'),
+          name : helptext.user_form_lockuser_name,
+          placeholder : helptext.user_form_lockuser_placeholder,
+          tooltip : helptext.user_form_lockuser_tooltip,
           isHidden: false
         },
         {
           type : 'checkbox',
-          name : 'sudo',
-          placeholder : T('Permit Sudo'),
-          tooltip : T('Give this user permission to use <a\
-                      href="https://www.sudo.ws/"\
-                      target="_blank">sudo</a>.'),
+          name : helptext.user_form_sudo_name,
+          placeholder : helptext.user_form_sudo_placeholder,
+          tooltip : helptext.user_form_sudo_tooltip,
           isHidden: false
         },
         {
           type : 'checkbox',
-          name : 'microsoft_account',
-          placeholder : T('Microsoft Account'),
-          tooltip : T('Set to allow additional username authentication\
-                      methods when the user is connecting from a\
-                      Windows 8 or newer operating system.'),
+          name : helptext.user_form_microsoft_name,
+          placeholder : helptext.user_form_microsoft_placeholder,
+          tooltip : helptext.user_form_microsoft_tooltip,
         },
       ]
     },
@@ -286,11 +255,12 @@ export class UserFormComponent {
   private locked: any;
 
   constructor(protected router: Router, protected rest: RestService,
-              protected ws: WebSocketService, protected storageService: StorageService
+              protected ws: WebSocketService, protected storageService: StorageService,
+              public loader: AppLoaderService
               ) {}
 
-
    afterInit(entityForm: any) {
+    this.loader.callStarted.emit();
     this.entityForm = entityForm;
     this.isNew = entityForm.isNew;
     this.password_disabled = entityForm.formGroup.controls['password_disabled'];
@@ -345,14 +315,16 @@ export class UserFormComponent {
       entityForm.formGroup.controls['group_create'].setValue(false);
     }
     /* list groups */
+
     this.ws.call('group.query').subscribe((res) => {
+      this.loader.callDone.emit(status);
       this.group = _.find(this.fieldConfig, {name : "group"});
       this.groups = _.find(this.fieldConfig, {name : "groups"});
       for (let i = 0; i < res.length; i++) {
         this.group.options.push({ label : res[i].group, value : res[i].id });
         this.groups.options.push({label : res[i].group, value : res[i].id})
         }
-
+        
     });
     /* list users */
     const filter = [];
@@ -497,7 +469,7 @@ export class UserFormComponent {
     if(parent.entityForm) {
       const username = parent.entityForm.formGroup.controls.username.value;
       if(username.length > 8 ){
-        _.find(parent.fieldConfig, { 'name': 'username' })['warnings']= T('Usernames of 8 characters or less are recommended for compatibility with application software, but up to 16 characters are allowed.');
+        _.find(parent.fieldConfig, { 'name': 'username' })['warnings']= helptext.user_form_blur_event2_warning;
       } else {
         _.find(parent.fieldConfig, { 'name': 'username' })['warnings']= null;
 

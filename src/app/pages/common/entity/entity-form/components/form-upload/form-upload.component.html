@@ -13,7 +13,7 @@
           <input type="file" #fileInput accept="{{config.acceptedFiles}}" [formControlName]="config.name">
       </mat-card-content>
       <mat-card-actions class="buttons">
-          <button mat-button type="button" (click)="upload(config.fileLocation)">Upload</button>
+          <button mat-button type="button" color="primary" (click)="upload(config.fileLocation)">Upload</button>
       </mat-card-actions>
       <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
   </ng-template>

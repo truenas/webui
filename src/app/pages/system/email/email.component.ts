@@ -1,24 +1,11 @@
-import {ApplicationRef, Component, Injector, OnInit, OnDestroy} from '@angular/core';
-import {
-  AbstractControl,
-  FormArray,
-  FormGroup,
-  Validators
-} from '@angular/forms';
-import {ActivatedRoute, Router, RouterModule} from '@angular/router';
-import * as _ from 'lodash';
-
-import {RestService, UserService, WebSocketService} from '../../../services/';
-import {  DialogService } from '../../../services/';
-import {
-  FieldConfig
-} from '../../common/entity/entity-form/models/field-config.interface';
-import {
-  matchOtherValidator
-} from '../../common/entity/entity-form/validators/password-validation';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { ApplicationRef, Component, Injector, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { T } from '../../../translate-marker';
+import { Router } from '@angular/router';
+import { helptext_system_email } from 'app/helptext/system/email';
+import * as _ from 'lodash';
+import { DialogService, RestService, WebSocketService } from '../../../services/';
+import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 
 @Component({
   selector : 'app-email',
@@ -56,7 +43,7 @@ export class EmailComponent implements OnDestroy {
           mail_form_payload['security']= security_table[value.em_security]
           mail_form_payload['smtp']= value.em_smtp
           mail_form_payload['user']= value.em_user
-          mail_form_payload['pass']= value.em_pass1 || this.entityEdit.data.em_pass
+          mail_form_payload['pass']= value.em_pass || this.entityEdit.data.em_pass
           mailObj['subject'] += " hostname: " + res['hostname'];
           this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "EMAIL" }, disableClose: true });
           this.dialogRef.componentInstance.setCall('mail.send', [mailObj, mail_form_payload]);
@@ -80,52 +67,43 @@ export class EmailComponent implements OnDestroy {
     {
       type : 'input',
       name : 'em_fromemail',
-      placeholder : T('From E-mail'),
-      tooltip : T('The envelope From address shown in the email.\
-                   This is set to assist with filtering mail on the\
-                   receiving system.'),
+      placeholder : helptext_system_email.em_fromemail.placeholder,
+      tooltip : helptext_system_email.em_fromemail.tooltip,
     },
     {
       type : 'input',
       name : 'em_outgoingserver',
-      placeholder : T('Outgoing Mail Server'),
-      tooltip : T('Hostname or IP address of SMTP server to use for\
-                   sending this email.'),
+      placeholder : helptext_system_email.em_outgoingserver.placeholder,
+      tooltip : helptext_system_email.em_outgoingserver.tooltip,
     },
     {
       type : 'input',
       name : 'em_port',
-      placeholder : T('Mail Server Port'),
-      tooltip : T('SMTP port number. Typically <i>25,465</i>\
-                   (secure SMTP), or <i>587</i> (submission).'),
+      placeholder : helptext_system_email.em_port.placeholder,
+      tooltip : helptext_system_email.em_port.tooltip,
     },
     {
       type : 'select',
       name : 'em_security',
-      placeholder : T('Security'),
-      tooltip : T('Encryption type. Choices are <i>Plain, SSL</i>, or\
-                   <i>TLS</i>.'),
+      placeholder : helptext_system_email.em_security.placeholder,
+      tooltip : helptext_system_email.em_security.tooltip,
       options : [
-        {label : 'Plain', value : 'plain'},
-        {label : 'SSL', value : 'ssl'},
-        {label : 'TLS', value : 'tls'},
+        {label : 'Plain (No Encryption)', value : 'plain'},
+        {label : 'SSL (Implicit TLS)', value : 'ssl'},
+        {label : 'TLS (STARTTLS)', value : 'tls'},
       ],
     },
     {
       type : 'checkbox',
       name : 'em_smtp',
-      placeholder : T('SMTP Authentication'),
-      tooltip : T('Enable/disable\
-                   <a href="https://en.wikipedia.org/wiki/SMTP_Authentication"\
-                   target="_blank">SMTP AUTH</a> using PLAIN SASL.\
-                   Enter the required Username and Password if set.'),
+      placeholder : helptext_system_email.em_smtp.placeholder,
+      tooltip : helptext_system_email.em_smtp.tooltip,
     },
     {
       type : 'input',
       name : 'em_user',
-      placeholder : T('Username'),
-      tooltip : T('Enter the username if the SMTP server requires\
-                   authentication.'),
+      placeholder : helptext_system_email.em_user.placeholder,
+      tooltip : helptext_system_email.em_user.tooltip,
       relation : [
         {
           action : 'DISABLE',
@@ -136,14 +114,18 @@ export class EmailComponent implements OnDestroy {
         },
       ],
       required: true,
-      validation : [ Validators.required ]
+      validation : helptext_system_email.em_user.validation
+    },
+    {
+      type: 'paragraph',
+      name: 'em_pwmessage',
+      paraText: helptext_system_email.em_pwmessage.paraText,
     },
     {
       type : 'input',
-      name : 'em_pass1',
-      placeholder : T('Password'),
-      tooltip : T('Enter the password if the SMTP server requires\
-                   authentication.'),
+      name : 'em_pass',
+      placeholder : helptext_system_email.em_pass.placeholder,
+      tooltip : helptext_system_email.em_pass.tooltip,
       inputType : 'password',
       relation : [
         {
@@ -156,34 +138,16 @@ export class EmailComponent implements OnDestroy {
       ],
       required: true,
       togglePw : true,
-      validation : [ matchOtherValidator('em_pass2'), Validators.required ]
-    },
-    {
-      type : 'input',
-      name : 'em_pass2',
-      placeholder : T('Confirm Password'),
-      tooltip : T(''),
-      inputType : 'password',
-      relation : [
-        {
-          action : 'DISABLE',
-          when : [ {
-            name : 'em_smtp',
-            value : false,
-          } ]
-        },
-      ],
-      required : true,
-      validation : [ Validators.required ]
-    },
+      validation : helptext_system_email.em_pass.validation
+    }
   ];
   protected dialogRef: any;
 
   private em_smtp;
   private em_smtp_subscription;
   private em_user;
-  private em_pass1;
-  private em_pass2;
+  private em_pwmessage;
+  private em_pass;
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected _injector: Injector,
@@ -201,20 +165,19 @@ afterInit(entityEdit: any) {
       this.rootEmail = res[0].email;
     });
     this.em_user = _.find(this.fieldConfig, {'name': 'em_user'});
-    this.em_pass1 = _.find(this.fieldConfig, {'name': 'em_pass1'});
-    this.em_pass2 = _.find(this.fieldConfig, {'name': 'em_pass2'});
+    this.em_pwmessage = _.find(this.fieldConfig, {'name': 'em_pwmessage'});
+    this.em_pass = _.find(this.fieldConfig, {'name': 'em_pass'});
 
     this.em_smtp = entityEdit.formGroup.controls['em_smtp'];
     this.em_user['isHidden'] = !this.em_smtp.value;
-    this.em_pass1['isHidden'] = !this.em_smtp.value;
-    this.em_pass2['isHidden'] = !this.em_smtp.value;
-    this.em_pass2.hideButton = !this.em_smtp.value;
+    this.em_pwmessage['isHidden'] = !this.em_smtp.value;
+    this.em_pass['isHidden'] = !this.em_smtp.value;
 
     this.em_smtp_subscription = this.em_smtp.valueChanges.subscribe((value) => {
       this.em_user['isHidden'] = !value;
-      this.em_pass1['isHidden'] = !value;
-      this.em_pass2['isHidden'] = !value;
-      this.em_pass1.hideButton = !value;
+      this.em_pwmessage['isHidden'] = !value;
+      this.em_pass['isHidden'] = !value;
+      this.em_pass.hideButton = !value;
     });
   }
 

@@ -21,7 +21,7 @@
         <ngx-datatable-column [width]="85" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
             <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
               <div class="headerCheckBox">
-                <mat-checkbox id="vdev__disk-table-checkall" [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>
+                <mat-checkbox id="vdev__disk-table-checkall-{{group}}-{{index}}" [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>
               </div>
             </ng-template>
     

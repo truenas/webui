@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { RoutePartsService } from '../../../services/route-parts/route-parts.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import globalHelptext from '../../../helptext/global-helptext';
 
 @Component({
   selector: 'app-breadcrumb',
@@ -9,6 +10,8 @@ import { CoreService, CoreEvent } from 'app/core/services/core.service';
   styleUrls: ['./breadcrumb.component.css']
 })
 export class BreadcrumbComponent implements OnInit {
+  public copyrightYear = globalHelptext.copyright_year;
+
   routeParts:any[];
   public isEnabled: boolean = true;
   constructor(private router: Router,

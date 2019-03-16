@@ -33,6 +33,12 @@ export class ServiceTFTPComponent {
     },
     {
       type : 'input',
+      name : 'tftp_host',
+      placeholder : helptext.tftp_host_placeholder,
+      tooltip : helptext.tftp_host_tooltip,
+    },
+    {
+      type : 'input',
       name : 'tftp_port',
       placeholder : helptext.tftp_port_placeholder,
       tooltip : helptext.tftp_port_tooltip,
