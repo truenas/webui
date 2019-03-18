@@ -231,6 +231,8 @@ export class ActiveDirectoryComponent {
       name : helptext.activedirectory_netbiosname_alias_name,
       placeholder : helptext.activedirectory_netbiosname_alias_placeholder,
       tooltip : helptext.activedirectory_netbiosname_alias_tooltip,
+      validation : helptext.activedirectory_netbiosname_alias_validation,
+      required : true
     },
     {
       type : 'input',
