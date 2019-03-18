@@ -18,7 +18,6 @@ export class SMBFormComponent implements OnDestroy {
   protected isBasicMode: boolean = true;
   public cifs_default_permissions: any;
   public cifs_default_permissions_subscription: any;
-  public cifs_storage_task: any;
 
   protected fieldConfig: FieldConfig[] = [
     {
@@ -124,13 +123,6 @@ export class SMBFormComponent implements OnDestroy {
       placeholder: helptext_sharing_smb.placeholder_shadowcopy,
       tooltip: helptext_sharing_smb.tooltip_shadowcopy
     },
-    // {
-    //   type: 'select',
-    //   name: 'cifs_storage_task',
-    //   placeholder: helptext_sharing_smb.placeholder_storage_task,
-    //   tooltip: helptext_sharing_smb.tooltip_storage_task,
-    //   options: []
-    // },
     {
       type: 'textarea',
       name: 'cifs_auxsmbconf',
@@ -249,25 +241,6 @@ export class SMBFormComponent implements OnDestroy {
       entityForm.formGroup.controls['cifs_vfsobjects'].setValue(['zfs_space','zfsacl','streams_xattr']);
       entityForm.formGroup.controls['cifs_browsable'].setValue(true);
     }
-  }
-
-  resourceTransformIncomingRestData(data) {
-    this.cifs_storage_task = _.find(this.fieldConfig, {name:"cifs_storage_task"});
-
-    let filters = [];
-    filters.push(data.cifs_path);
-
-    this.ws.call('sharing.smb.get_storage_tasks', filters).subscribe((res) => {
-      if(res) {
-        for (const key in res) {
-          if (res.hasOwnProperty(key)) {
-            this.cifs_storage_task.options.push({label: res[key], value: parseInt(key)});
-          }
-        }
-      }
-    });
-
-    return data;
   }
 
   ngOnDestroy() {

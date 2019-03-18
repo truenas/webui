@@ -89,13 +89,6 @@ export const helptext_sharing_smb = {
  target="blank">virtual file system modules</a> to\
  enhance functionality.'),
 
-   //  placeholder_storage_task: T('Configure Shadow Copies'),
-   //  placeholder_storage_task: T('Periodic Snapshot Task'),
-//     tooltip_storage_task: T('Used to configure directory shadow copies on a\
-//  per-share basis. Select the pre-configured periodic\
-//  snapshot task to use for the shadow copies of this\
-//  share. Periodic snapshots must be recursive.'),
-
     placeholder_shadowcopy: 'Enable Shadow Copies',
     tooltip_shadowcopy: 'Export ZFS snapshots as Shadow Copies for VSS clients.',
 
