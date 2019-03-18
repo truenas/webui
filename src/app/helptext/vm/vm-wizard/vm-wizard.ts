@@ -8,7 +8,6 @@ wizard_type_placeholder: T('Virtual Machine (VM) Wizard type.'),
 wizard_type_tooltip: T('Select the Virtual Machine (VM) Wizard type.'),
 wizard_type_options: [
   {label: 'Virtual Machine (VM)', value: 'vm'},
-  {label: 'Docker Host', value: 'docker'},
 ],
 wizard_type_validation : [ Validators.required ],
 wizard_type_value: 'vm',
