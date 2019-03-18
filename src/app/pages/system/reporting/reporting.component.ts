@@ -10,6 +10,7 @@ import { rangeValidator } from '../../common/entity/entity-form/validators/range
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 import { T } from '../../../translate-marker';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+import { helptext } from 'app/helptext/system/reporting';
 
 
 @Component({
@@ -27,35 +28,34 @@ export class ReportingComponent {
   public fieldConfig: FieldConfig[] = [{
     type: 'checkbox',
     name: 'cpu_in_percentage',
-    placeholder: T('Report CPU usage in percentage'),
-    tooltip: T('Set to display CPU usage as percentages in Reporting.')
+    placeholder: helptext.cpu_in_percentage_placeholder,
+    tooltip: helptext.cpu_in_percentage_tooltip,
   },
   {
     type: 'input',
     name: 'graphite',
-    placeholder: T('Remote Graphite Server Hostname'),
-    tooltip: T('Enter the IP address or hostname of a remote server\
-                running Graphite.')
+    placeholder: helptext.graphite_placeholder,
+    tooltip: helptext.graphite_tooltip
   },
   {
     type: 'input',
     name: 'graph_age',
-    placeholder: T('Graph Age'),
-    tooltip: T(''),
+    placeholder: helptext.graph_age_placeholder,
+    tooltip: helptext.graph_age_tooltip,
 //    validation: rangeValidator(0)
   },
   {
     type: 'input',
     name: 'graph_points',
-    placeholder: T('Graph Points'),
-    tooltip: T(''),
+    placeholder: helptext.graph_points_placeholder,
+    tooltip: helptext.graph_points_tooltip,
 //    validation: rangeValidator(0)
   },
   {
     type: 'checkbox',
     name: 'confirm_rrd_destroy',
-    placeholder: T('Confirm RRD Destroy'),
-    tooltip: T('')
+    placeholder: helptext.confirm_rrd_destroy_placeholder,
+    tooltip: helptext.confirm_rrd_destroy_tooltip
   }
 ];
 
