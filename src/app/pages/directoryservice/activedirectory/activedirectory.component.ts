@@ -227,9 +227,11 @@ export class ActiveDirectoryComponent {
     },
     {
       type : 'input',
-      name : helptext.activedirectory_netbiosname_alias_name,
-      placeholder : helptext.activedirectory_netbiosname_alias_placeholder,
-      tooltip : helptext.activedirectory_netbiosname_alias_tooltip,
+      name : helptext.activedirectory_netbiosname_a_name,
+      placeholder : helptext.activedirectory_netbiosname_a_placeholder,
+      tooltip : helptext.activedirectory_netbiosname_a_tooltip,
+      validation : helptext.activedirectory_netbiosname_a_validation,
+      required : true
     },
     {
       type : 'input',
@@ -260,6 +262,7 @@ export class ActiveDirectoryComponent {
 
   resourceTransformIncomingRestData(data) {
     delete data['ad_bindpw'];
+    console.log(data)
     return data;
   }
 

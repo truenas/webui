@@ -156,17 +156,18 @@ activedirectory_enable_name: 'ad_enable',
 activedirectory_enable_placeholder : T('Enable'),
 activedirectory_enable_tooltip : T('Set to enable the Active Directory service.'),
 
-activedirectory_netbiosname_alias_name: 'ad_netbiosname_a',
-activedirectory_netbiosname_alias_placeholder : T('Netbios Name'),
-activedirectory_netbiosname_alias_tooltip : T('Netbios Name of this NAS. This name must differ from\
+activedirectory_netbiosname_a_name: 'ad_netbiosname_a',
+activedirectory_netbiosname_a_placeholder : T('Netbios Name'),
+activedirectory_netbiosname_a_tooltip : T('Netbios Name of this NAS. This name must differ from\
  the <i>Workgroup</i> name and be no greater than 15 characters.'),
+activedirectory_netbiosname_a_validation : [Validators.required, Validators.maxLength(15)],
 
 activedirectory_netbiosalias_name: 'ad_netbiosalias',
 activedirectory_netbiosalias_placeholder : T('NetBIOS alias'),
 activedirectory_netbiosalias_tooltip : T('Alternative names that SMB clients can use when\
  connecting to this NAS. Can be no greater than 15 characters.'),
 
- activedirectory_advanced_fields: [
+activedirectory_advanced_fields: [
 'ad_ssl',
 'ad_certificate',
 'ad_verbose_logging',
