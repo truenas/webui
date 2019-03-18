@@ -160,7 +160,7 @@ activedirectory_netbiosname_alias_name: 'ad_netbiosname_a',
 activedirectory_netbiosname_alias_placeholder : T('Netbios Name'),
 activedirectory_netbiosname_alias_tooltip : T('Netbios Name of this NAS. This name must differ from\
  the <i>Workgroup</i> name and be no greater than 15 characters.'),
-activedirectory_netbiosname_alias_validation : [Validators.required],
+activedirectory_netbiosname_alias_validation : [Validators.required, Validators.maxLength(15)],
 
 activedirectory_netbiosalias_name: 'ad_netbiosalias',
 activedirectory_netbiosalias_placeholder : T('NetBIOS alias'),
