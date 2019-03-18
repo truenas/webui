@@ -21,6 +21,10 @@ interface IChildItem {
 
 @Injectable()
 export class NavigationService {
+  // all menu for truenas features
+  public turenasFeatures = [
+    { menu: 'system', sub: 'proactivesupport' }
+  ];
 
   defaultMenu: IMenuItem[] = [{
       name: T('Dashboard'),

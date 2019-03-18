@@ -34,6 +34,15 @@ export class NavigationComponent implements OnInit {
           _.find(_.find(menuItem, {state : "storage"}).sub, {state : "multipaths"}).disabled = true;
         }
       });
+
+      // disable all turenas menus if is freenas
+      if (window.localStorage['is_freenas'] === 'true') {
+        for(let i = 0; i < this.navService.turenasFeatures.length; i++) {
+          const targetMenu = this.navService.turenasFeatures[i];
+          _.find(_.find(menuItem, { state: targetMenu.menu }).sub, { state : targetMenu.sub}).disabled = true;
+        }
+      }
+
       this.menuItems = menuItem;
       //Checks item list has any icon type.
       this.hasIconTypeMenuItem = !!this.menuItems.filter(item => item.type === 'icon').length;
