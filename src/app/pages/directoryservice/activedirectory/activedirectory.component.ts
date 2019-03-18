@@ -262,7 +262,6 @@ export class ActiveDirectoryComponent {
 
   resourceTransformIncomingRestData(data) {
     delete data['ad_bindpw'];
-    console.log(data)
     return data;
   }
 
