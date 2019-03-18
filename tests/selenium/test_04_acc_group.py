@@ -21,7 +21,7 @@ script_name = os.path.basename(__file__).partition('.')[0]
 xpaths = {
           'navAccount': "//span[contains(.,'Accounts')]",
           'submenuGroup': '//*[@id="1-0"]',
-          'newGroupName': '//*[@id="bsdgrp_group"]/mat-input-container/div/div[1]/div/input',
+          'newGroupName': "//div[@id='bsdgrp_group']/mat-form-field/div/div/div/input",
           'fabTrigger': '//*[@id="myFab"]/div/smd-fab-trigger/button',
           'fabAction': '//*[@id="add_action_button"]',
           'saveButton': '//*[@id="save_button"]',
@@ -71,7 +71,7 @@ def test_02_create_newgroup(wb_driver):
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
     # check if there is a generic error when making a duplicate group, and print the error
-    error_check()
+    error_check(wb_driver)
 
 
 def test_03_create_supergroup(wb_driver):
@@ -93,7 +93,7 @@ def test_03_create_supergroup(wb_driver):
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
     # check if there is a generic error when making a duplicate group, and print the error
-    error_check()
+    error_check(wb_driver)
 
 
 def test_04_create_duplicategroup(wb_driver):
@@ -114,7 +114,7 @@ def test_04_create_duplicategroup(wb_driver):
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
     # check if there is a generic error when making a duplicate group, and print the error
-    error_check()
+    error_check(wb_driver)
 
 
 def test_05_close_navAccount(wb_driver):
