@@ -7,6 +7,19 @@
 	top: 13px;
 }
 
+.tn-logo {
+	width: 40px;
+}
+
+.tn-logo-txt {
+	width: 111px;
+}
+
+.tn-logo, .tn-logo-txt {
+	position: relative;
+	top: 12px;
+}
+
 /* To get rid of VScroll on entity tables */
 .rightside-content-hold {
 	padding-bottom: 5px;
