@@ -25,6 +25,7 @@ import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
 import { AlertServiceListComponent } from './alertservice/alertservice-list/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
 import { CloudCredentialsFormComponent } from './CloudCredentials/cloudcredentials-form/';
+import { SshConnectionsListComponent } from './ssh-connections/ssh-connections-list/ssh-connections-list.component';
 import { CertificateAuthorityListComponent } from './ca/ca-list/';
 import { CertificateAuthorityAddComponent } from './ca/ca-add/';
 import { CertificateAuthorityEditComponent } from './ca/ca-edit/';
@@ -214,6 +215,17 @@ export const routes: Routes = [
           component: CloudCredentialsFormComponent,
           data: { title: 'Edit', breadcrumb: 'Edit' },
         },
+      ]
+    },
+    {
+      path: 'sshconnections',
+      data: { title: 'SSH Connections', breadcrumb: 'SSH Connections', icon: 'cloud_circle'},
+      children: [
+        {
+          path: '',
+          component: SshConnectionsListComponent,
+          data: { title: 'SSH Connections', breadcrumb: 'SSH Connections', icon: 'cloud_circle'},
+        }
       ]
     },
     {
