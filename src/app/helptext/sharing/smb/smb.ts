@@ -89,8 +89,8 @@ export const helptext_sharing_smb = {
  target="blank">virtual file system modules</a> to\
  enhance functionality.'),
 
-    placeholder_shadowcopy: 'Enable Shadow Copies',
-    tooltip_shadowcopy: 'Export ZFS snapshots as Shadow Copies for VSS clients.',
+    placeholder_shadowcopy: T('Enable Shadow Copies'),
+    tooltip_shadowcopy: T('Export ZFS snapshots as Shadow Copies for VSS clients.'),
 
     placeholder_auxsmbconf: T('Auxiliary Parameters'),
     tooltip_auxsmbconf: T('Additional <b>smb5.conf</b> parameters not covered by\
