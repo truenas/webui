@@ -61,14 +61,6 @@ def is_element_present(driver, how, what):
     return True
 
 
-def error_check(self):
-    if self.is_element_present(By.XPATH,"/html/body/div[3]/div/div[2]/md-dialog-container/error-dialog/div[1]/p"):
-        ui_element = driver.find_element_by_xpath("/html/body/div[3]/div/div[2]/md-dialog-container/error-dialog/div[1]/p")
-        error_element = ui_element.text
-        print(error_element)
-        driver.find_element_by_xpath("/html/body/div[3]/div/div[2]/md-dialog-container/error-dialog/div[2]/button").click()
-
-
 # screenshot function
 def take_screenshot(driver, scriptname, testname):
     time.sleep(1)
@@ -89,7 +81,7 @@ def status_check(driver, which):
     print("current status is: " + service_dict[which])
 
 
-def status_change(driver, self, which, to):
+def status_change(driver, which, to):
     print("executing the status change function with input " + str(which) + " + " + str(to))
     # get the ui element
     toggle_status = driver.find_element_by_xpath(service_dict[which])
@@ -115,7 +107,7 @@ def status_change(driver, self, which, to):
             print("the status is already" + status_data)
 
 
-def user_edit_old(driver, self, type, name):
+def user_edit_old(driver, type, name):
     # the convention is set in such a way tha a single funtion can cleanup both type:user/group, name:name of the group or user
     # path plugs in the xpath of user or group , submenu{User/Group}
     # num specifies the column of the 3 dots which is different in user/group
@@ -155,7 +147,7 @@ def user_edit_old(driver, self, type, name):
     driver.find_element_by_xpath('//*[@id="action_button_Edit"]').click()
 
 
-def user_edit(driver, self, type, name):
+def user_edit(driver, type, name):
     # the convention is set in such a way tha a single funtion can cleanup both type:user/group, name:name of the group or user
     # path plugs in the xpath of user or group , submenu{User/Group}
     if (type == "user"):
@@ -231,7 +223,7 @@ def user_delete_old(driver, self, type, name):
         print("username/groupname- " + name + " exists")
         for x in range(0, 10):
             if self.is_element_present(By.XPATH, '//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div'):
-                ui_element=driver.find_element_by_xpath('//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div')
+                ui_element = driver.find_element_by_xpath('//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div')
                 ui_text = ui_element.text
             if (ui_text == name):
                 index = x
