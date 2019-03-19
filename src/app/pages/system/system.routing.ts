@@ -26,6 +26,7 @@ import { AlertServiceListComponent } from './alertservice/alertservice-list/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
 import { CloudCredentialsFormComponent } from './CloudCredentials/cloudcredentials-form/';
 import { SshConnectionsListComponent } from './ssh-connections/ssh-connections-list/ssh-connections-list.component';
+import { SshConnectionsFormComponent } from './ssh-connections/ssh-connections-form/ssh-connections-form.component';
 import { CertificateAuthorityListComponent } from './ca/ca-list/';
 import { CertificateAuthorityAddComponent } from './ca/ca-add/';
 import { CertificateAuthorityEditComponent } from './ca/ca-edit/';
@@ -225,7 +226,17 @@ export const routes: Routes = [
           path: '',
           component: SshConnectionsListComponent,
           data: { title: 'SSH Connections', breadcrumb: 'SSH Connections', icon: 'cloud_circle'},
-        }
+        },
+        {
+          path: 'add',
+          component: SshConnectionsFormComponent,
+          data: { title: 'Add', breadcrumb: 'Add' },
+        },
+        {
+          path: 'edit/:pk',
+          component: SshConnectionsFormComponent,
+          data: { title: 'Edit', breadcrumb: 'Edit' },
+        },
       ]
     },
     {
