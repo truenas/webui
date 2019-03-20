@@ -13,6 +13,7 @@ import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { MatDialog } from '@angular/material';
 import 'rxjs/add/observable/interval';
 import {EntityTableComponent} from '../../common/entity/entity-table/';
+import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import globalHelptext from '../../../helptext/global-helptext';
 
 @Component({
@@ -111,6 +112,7 @@ export class VmCardsComponent  implements OnDestroy {
 
   getActions(row) {
     const actions = [];
+    let localCore = this.core;
     if(row['status']['state'] === "RUNNING"){
       actions.push({
         id : "poweroff",
@@ -191,10 +193,31 @@ export class VmCardsComponent  implements OnDestroy {
     actions.push({
       label : "Clone",
       onClick : (clone_row) => {
-        const eventName = "VmClone";
-        this.core.emit({name: eventName, data:[clone_row.id]});
+        const conf: DialogFormConfiguration = {
+          title: "Name",
+          fieldConfig: [
+            {
+              type: 'input',
+              inputType: 'text',
+              name: 'clone_name',
+              placeholder: 'Enter a Name (optional)',
+              required: false
+            }
+          ],
+          saveButtonText: "Clone",
+          customSubmit: function(entityDialog) {
+            const value = entityDialog.formValue;
+            const eventName = "VmClone";
+            console.log(value, eventName, clone_row.id);
+            localCore.emit({name: eventName, data:[clone_row.id]});
+          }
+        }
+        this.dialog.dialogForm(conf);
+
+        // let addNameDialog = this.dialog.dialogForm(conf);
       }
     });
+
     if(row['status']['state'] === "RUNNING"){
       if (this.checkVnc(row)) {
         actions.push({
