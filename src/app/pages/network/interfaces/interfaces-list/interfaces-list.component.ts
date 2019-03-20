@@ -50,7 +50,6 @@ export class InterfacesListComponent {
 
   dataHandler(res) {
     const rows = res.rows;
-    console.log(rows);
     for (let i=0; i<rows.length; i++) {
       rows[i]['link_state'] = rows[i]['state']['link_state'];
       const addresses = [];
