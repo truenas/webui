@@ -199,22 +199,19 @@ export class VmCardsComponent  implements OnDestroy {
             {
               type: 'input',
               inputType: 'text',
-              name: 'clone_name',
+              name: 'name',
               placeholder: 'Enter a Name (optional)',
               required: false
             }
           ],
           saveButtonText: "Clone",
           customSubmit: function(entityDialog) {
-            const value = entityDialog.formValue;
             const eventName = "VmClone";
-            console.log(value, eventName, clone_row.id);
-            localCore.emit({name: eventName, data:[clone_row.id]});
+            localCore.emit({name: eventName, data: [clone_row.id, entityDialog.formValue]});
+            entityDialog.dialogRef.close(true);
           }
         }
         this.dialog.dialogForm(conf);
-
-        // let addNameDialog = this.dialog.dialogForm(conf);
       }
     });
 
