@@ -107,7 +107,7 @@ export class InterfacesFormComponent implements OnDestroy {
     },
     {
       type: 'select',
-      name: 'vlan_pint',
+      name: 'vlan_parent_interface',
       placeholder: helptext.vlan_pint_placeholder,
       tooltip: helptext.vlan_pint_tooltip,
       options: [],
@@ -153,14 +153,14 @@ export class InterfacesFormComponent implements OnDestroy {
       name : 'ipv4_aliases',
       initialCount: 1,
       formarray: [{
-        name: 'alias_address',
+        name: 'address',
         placeholder: helptext.alias_address_placeholder,
         tooltip: helptext.alias_address_tooltip,
         type: 'input',
         validation : [ regexValidator(this.networkService.ipv4_regex) ]
       },
       {
-        name: 'alias_netmaskbit',
+        name: 'netmask',
         placeholder: helptext.alias_netmaskbit_placeholder,
         tooltip : helptext.alias_netmaskbit_tooltip,
         type: 'select',
@@ -179,14 +179,14 @@ export class InterfacesFormComponent implements OnDestroy {
       name : 'ipv6_aliases',
       initialCount: 1,
       formarray: [{
-        name: 'alias_address',
+        name: 'address',
         placeholder: helptext.alias_address6_placeholder,
         tooltip: helptext.alias_address6_tooltip,
         type: 'input',
         validation : [ regexValidator(this.networkService.ipv6_regex) ]
       },
       {
-        name: 'alias_netmaskbit',
+        name: 'netmask',
         placeholder: helptext.alias_netmaskbit6_placeholder,
         tooltip : helptext.alias_netmaskbit6_tooltip,
         type: 'select',
@@ -202,7 +202,7 @@ export class InterfacesFormComponent implements OnDestroy {
     },
   ];
 
-  private vlan_fields = ['vlan_tag', 'vlan_pcp', 'vlan_pint'];
+  private vlan_fields = ['vlan_tag', 'vlan_pcp', 'vlan_parent_interface'];
   private lagg_fields = ['lag_protocol', 'lag_ports'];
   private bridge_fields = ['bridge_members'];
   private failover_fields = ['failover_critical', 'failover_group'];
@@ -211,14 +211,11 @@ export class InterfacesFormComponent implements OnDestroy {
   private int_dhcp_subscription: any;
   private int_ipv6auto: any;
   private int_ipv6auto_subscription: any;*/
-  private int_v4netmaskbit: any;
-  private int_ipv4address: any;
-  private int_v6netmaskbit: any;
-  private int_ipv6address: any;
   private vlan_pcp:any;
   private vlan_pint:any;
   private lag_protocol: any;
   private lag_ports: any;
+  private bridge_members: any;
   private type: any;
   private type_fg: any;
   private type_subscription: any;
@@ -319,7 +316,9 @@ export class InterfacesFormComponent implements OnDestroy {
     this.type = _.find(this.fieldConfig, {'name' : 'type'});
     this.ipv4arrayControl = _.find(this.fieldConfig, {'name' : 'ipv4_aliases'});
     this.ipv6arrayControl = _.find(this.fieldConfig, {'name' : 'ipv6_aliases'});
-    this.vlan_pint = _.find(this.fieldConfig, {'name' : 'vlan_pint'})
+    this.vlan_pint = _.find(this.fieldConfig, {'name' : 'vlan_parent_interface'});
+    this.bridge_members = _.find(this.fieldConfig, {'name' : 'bridge_members'});
+    this.lag_ports = _.find(this.fieldConfig, {'name' : 'lag_ports'});
     this.route.params.subscribe(params => {
       if(!params['pk']) {
         this.type.type = 'select';
@@ -368,18 +367,23 @@ export class InterfacesFormComponent implements OnDestroy {
       this.type_subscription = this.type_fg.valueChanges.subscribe((type) => {
         this.setType(type);
       });
-      this.networkService.getVlanNicChoices().subscribe((res) => {
-        res.forEach((item) => {
-          this.vlan_pint.options.push({label : item[1], value : item[0]});
-        });
+      this.networkService.getVlanParentInterfaceChoices().subscribe((res) => {
+        for (const key in res) {
+          this.vlan_pint.options.push({label: key, value: res[key]});
+        }
       });
-      this.lag_ports = _.find(this.fieldConfig, {'name' : 'lag_ports'});
-      this.networkService.getLaggNicChoices().subscribe((res) => {
-        res.forEach((item) => {
-          this.lag_ports.options.push({label : item[1], value : item[0]});
-        });
+      this.networkService.getLaggPortsChoices().subscribe((res) => {
+        for (const key in res) {
+          this.lag_ports.options.push({label: key, value: res[key]});
+        }
+      });
+      this.networkService.getBridgeMembersChoices().subscribe((res) => {
+        for (const key in res) {
+          this.bridge_members.options.push({label: key, value: res[key]});
+        }
       });
     } else {
+      entityForm.setDisabled('name', true);
       entityForm.setDisabled('type', true);
     }
     this.ws.call('notifier.choices', ['VLAN_PCP_CHOICES']).subscribe((res) => {
@@ -390,55 +394,24 @@ export class InterfacesFormComponent implements OnDestroy {
     });
     this.ipv4formArray = entityForm.formGroup.controls['ipv4_aliases'];
     this.ipv6formArray = entityForm.formGroup.controls['ipv6_aliases'];
-    this.int_ipv4address = _.find(this.fieldConfig, {'name': 'int_ipv4address'});
-    this.int_ipv6address = _.find(this.fieldConfig, {'name': 'int_ipv6address'});
-    this.int_v4netmaskbit =
-        _.find(this.fieldConfig, {'name' : 'int_v4netmaskbit'});
-
-    this.int_v6netmaskbit =
-        _.find(this.fieldConfig, {'name' : 'int_v6netmaskbit'});
-
-    /*this.int_dhcp = entityForm.formGroup.controls['ipv4_dhcp'];
-    this.int_ipv6auto = entityForm.formGroup.controls['ipv_6auto'];
-
-    this.int_ipv4address['isHidden'] = this.int_v4netmaskbit['isHidden'] = this.int_dhcp.value;
-    this.int_ipv6address['isHidden'] = this.int_v6netmaskbit['isHidden'] = this.int_ipv6auto.value;
-
-    this.int_dhcp_subscription = this.int_dhcp.valueChanges.subscribe((value) => {
-      this.int_ipv4address['isHidden'] = this.int_v4netmaskbit['isHidden'] = value;
-    });
-    this.int_ipv6auto_subscription = this.int_ipv6auto.valueChanges.subscribe((value) => {
-      this.int_ipv6address['isHidden'] = this.int_v6netmaskbit['isHidden'] = value;
-    });*/
-
-    /*if (!entityForm.isNew) {
-      entityForm.setDisabled('int_interface', true);
-    }
-    else {
-      this.networkService.getInterfaceNicChoices().subscribe((res) => {
-        res.forEach((item) => {
-          this.int_interface.options.push({label : item[1], value : item[0]});
-        });
-      });
-    }*/
   }
 
   clean(data) {
     let aliases = []
     for (let i = 0; i < data.ipv4_aliases.length; i++) {
       if (!data.ipv4_aliases[i]['delete'] &&
-          !!data.ipv4_aliases[i]['alias_address'] &&
-          !!data.ipv4_aliases[i]['alias_netmaskbit']) {
-        aliases.push(data.ipv4_aliases[i]['alias_address'] + '/'
-                     + data.ipv4_aliases[i]['alias_netmaskbit']);
+          !!data.ipv4_aliases[i]['address'] &&
+          !!data.ipv4_aliases[i]['netmask']) {
+        aliases.push({address:data.ipv4_aliases[i]['address'],
+                      netmask:parseInt(data.ipv4_aliases[i]['netmask'],10)});
       }
     }
     for (let i = 0; i < data.ipv6_aliases.length; i++) {
       if (!data.ipv6_aliases[i]['delete'] &&
-          !!data.ipv6_aliases[i]['alias_address'] &&
-          !!data.ipv6_aliases[i]['alias_netmaskbit']) {
-        aliases.push(data.ipv6_aliases[i]['alias_address'] + '/'
-                     + data.ipv6_aliases[i]['alias_netmaskbit']);
+          !!data.ipv6_aliases[i]['address'] &&
+          !!data.ipv6_aliases[i]['netmask']) {
+        aliases.push({address:data.ipv6_aliases[i]['address'],
+                      netmask:parseInt(data.ipv6_aliases[i]['netmaskbit'],10)});
       }
     }
     delete data.ipv4_aliases;
@@ -450,10 +423,8 @@ export class InterfacesFormComponent implements OnDestroy {
   preHandler(data: any[]): any[] {
     let aliases = [];
     for (let i = 0; i < data.length; i++) {
-      let alias = data[i].split('/');
-      if (alias.length === 2) {
-        aliases.push({alias_address:alias[0], alias_netmaskbit:alias[1]});
-      }
+      let alias = data[i];
+      aliases.push({address:alias.address, netmask:alias.netmask.toString()});
     }
     return aliases;
   }
@@ -463,7 +434,7 @@ export class InterfacesFormComponent implements OnDestroy {
     const ipv6_aliases = [];
     const aliases = data['aliases'];
     for (let i = 0; i < aliases.length; i++) {
-      if (aliases[i].indexOf(':') === -1) {
+      if (aliases[i].type === "INET") {
         ipv4_aliases.push(aliases[i]);
       } else {
         ipv6_aliases.push(aliases[i]);
@@ -471,14 +442,32 @@ export class InterfacesFormComponent implements OnDestroy {
     }
     data['ipv4_aliases'] = ipv4_aliases;
     data['ipv6_aliases'] = ipv6_aliases;
+
+    const type = data['type'];
+    const id = data['id'];
+    this.setType(type);
+    if (type === "LINK_AGGREGATION") {
+      this.networkService.getLaggPortsChoices(id).subscribe((res) => {
+        for (const key in res) {
+          this.lag_ports.options.push({label: key, value: res[key]});
+        }
+      });
+    } else if (type === "BRIDGE") {
+      this.networkService.getBridgeMembersChoices(id).subscribe((res) => {
+        for (const key in res) {
+          this.bridge_members.options.push({label: key, value: res[key]});
+        }
+      });
+    } else if (type === "VLAN") {
+      this.entityForm.setDisabled('vlan_parent_interface', true);
+    }
+
     return data;
   }
 
   ngOnDestroy() {
-    /*this.int_dhcp_subscription.unsubscribe();
-    this.int_ipv6auto_subscription.unsubscribe();
-    if (this.int_interface_fg_sub) {
-      this.int_interface_fg_sub.unsubscribe();
-    }*/
+    if (this.type_subscription) {
+      this.type_subscription.unsubscribe();
+    }
   }
 }

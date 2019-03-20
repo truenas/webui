@@ -31,6 +31,10 @@ export class NetworkService {
                         [ 'NICChoices', [ false, true, true, true, false ] ]);
   }
 
+  getVlanParentInterfaceChoices() {
+    return this.ws.call('interface.vlan_parent_interface_choices');
+  }
+
   getInterfaceNicChoices() {
     return this.ws.call('notifier.choices', [ 'NICChoices', [] ]);
   }
@@ -40,8 +44,16 @@ export class NetworkService {
                         [ 'NICChoices', [ true, false, true ] ]);
   }
 
+  getLaggPortsChoices(id = null) {
+    return this.ws.call('interface.lag_ports_choices', [id]);
+  }
+
   getLaggProtocolTypes() {
     return this.ws.call('notifier.choices', [ 'LAGGType' ]);
+  }
+
+  getBridgeMembersChoices(id = null) {
+    return this.ws.call('interface.bridge_members_choices', [id]);
   }
 
   getAllNicChoices() {
