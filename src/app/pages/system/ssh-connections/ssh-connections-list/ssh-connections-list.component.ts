@@ -7,7 +7,7 @@ import { Component } from '@angular/core';
 export class SshConnectionsListComponent {
     public title = "SSH Connections";
     protected queryCall = 'keychaincredential.query';
-    protected queryCallOption = [[["type", "=", "SSH_CREDENTIALS"]]]
+    protected queryCallOption = [[["type", "=", "SSH_CREDENTIALS"]]];
     protected route_add: string[] = ['system', 'sshconnections', 'add'];
     protected route_add_tooltip = "Add SSH Connection";
     protected route_edit: string[] = ['system', 'sshconnections', 'edit'];

@@ -25,6 +25,8 @@ export default {
     cipher_placeholder: T('Cipher'),
     cipher_tooltip: T(''),
 
-    connection_timeout_placeholder: T('Connection Timeout'),
-    connection_timeout_tooltip: T(''),
+    connect_timeout_placeholder: T('Connect Timeout'),
+    connect_timeout_tooltip: T(''),
+
+    discover_remote_host_key_button: T('Discover Remote Host Key')
 }
