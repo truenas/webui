@@ -19,17 +19,13 @@ export class SshConnectionsFormComponent {
     protected queryCall = 'keychaincredential.query';
     protected queryCallOption = [["id", "="]];
     protected addCall = 'keychaincredential.create';
+    protected semiautomaticAddCall = 'keychaincredential.remote_ssh_semiautomatic_setup';
     protected editCall = 'keychaincredential.update';
     protected route_success: string[] = ['system', 'sshconnections'];
     protected isEntity = true;
 
     protected fieldConfig: FieldConfig[] = [
         {
-            type: 'input',
-            name: 'type',
-            value: 'SSH_CREDENTIALS',
-            isHidden: true,
-        }, {
             type: 'input',
             name: 'name',
             placeholder: helptext.name_placeholder,
@@ -51,13 +47,21 @@ export class SshConnectionsFormComponent {
                 }
             ],
             value: 'manual',
+            isHidden: false,
         }, {
             type: 'input',
             name: 'host',
             placeholder: helptext.host_placeholder,
             tooltip: helptext.host_tooltip,
             required: true,
-            validation: [Validators.required]
+            validation: [Validators.required],
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'setup_method',
+                    value: 'manual',
+                }]
+            }],
         }, {
             type: 'input',
             inputType: 'number',
@@ -65,11 +69,49 @@ export class SshConnectionsFormComponent {
             placeholder: helptext.port_placeholder,
             tooltip: helptext.port_tooltip,
             value: 22,
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'setup_method',
+                    value: 'manual',
+                }]
+            }],
+        }, {
+            type: 'input',
+            name: 'url',
+            placeholder: helptext.url_placeholder,
+            tooltip: helptext.url_tooltip,
+            required: true,
+            validation: [Validators.required],
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'setup_method',
+                    value: 'semiautomatic',
+                }]
+            }],
+        }, {
+            type: 'input',
+            name: 'token',
+            placeholder: helptext.token_placeholder,
+            tooltip: helptext.token_tooltip,
+            required: true,
+            validation: [Validators.required],
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'setup_method',
+                    value: 'semiautomatic',
+                }]
+            }],
         }, {
             type: 'input',
             name: 'username',
             placeholder: helptext.username_placeholder,
             tooltip: helptext.username_tooltip,
+            value: 'root',
+            required: true,
+            validation: [Validators.required],
         }, {
             type: 'select',
             name: 'private_key',
@@ -83,13 +125,20 @@ export class SshConnectionsFormComponent {
             ],
             value: '',
             required: true,
-            validation: [Validators.required]
+            validation: [Validators.required],
         }, {
             type: 'textarea',
             name: 'remote_host_key',
             placeholder: helptext.remote_host_key_placeholder,
             tooltip: helptext.remote_host_key_tooltip,
             value: '',
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'setup_method',
+                    value: 'manual',
+                }]
+            }],
         }, {
             type: 'select',
             name: 'cipher',
@@ -106,7 +155,8 @@ export class SshConnectionsFormComponent {
                     label: 'Disabled',
                     value: 'DISABLED',
                 }
-            ]
+            ],
+            value: 'STANDARD',
         }, {
             type: 'input',
             inputType: 'number',
@@ -167,16 +217,29 @@ export class SshConnectionsFormComponent {
         )
     }
 
+    isCustActionVisible(actionId) {
+        if (this.entityForm.formGroup.controls['setup_method'].value === 'manual') {
+            return true;
+        }
+        return false;
+    }
+
     preInit() {
         this.aroute.params.subscribe(params => {
             if (params['pk']) {
                 this.queryCallOption[0].push(params['pk']);
+                _.find(this.fieldConfig, { name: 'setup_method' }).isHidden = true;
             }
         });
     }
 
     afterInit(entityForm) {
         this.entityForm = entityForm;
+        if (this.entityForm.isNew) {
+            this.entityForm.formGroup.controls['setup_method'].valueChanges.subscribe((res) => {
+                this.addCall = res === 'semiautomatic' ? 'keychaincredential.remote_ssh_semiautomatic_setup' : 'keychaincredential.create';
+            });
+        }
     }
 
     resourceTransformIncomingRestData(wsResponse) {
@@ -187,15 +250,17 @@ export class SshConnectionsFormComponent {
     }
 
     beforeSubmit(data) {
-        if (!this.entityForm.isNew) {
-            delete data['type'];
+        if (data['setup_method'] === 'manual') {
+            const attributes = {};
+            for (const item in this.manualMethodFields) {
+                attributes[this.manualMethodFields[item]] = data[this.manualMethodFields[item]];
+                delete data[this.manualMethodFields[item]];
+            }
+            data['attributes'] = attributes;
+            if (this.entityForm.isNew) {
+                data['type'] = 'SSH_CREDENTIALS';
+            }
         }
-        const attributes = {};
-        for (const item in this.manualMethodFields) {
-            attributes[this.manualMethodFields[item]] = data[this.manualMethodFields[item]];
-            delete data[this.manualMethodFields[item]];
-        }
-        data['attributes'] = attributes;
 
         delete data['setup_method'];
     }

@@ -28,5 +28,11 @@ export default {
     connect_timeout_placeholder: T('Connect Timeout'),
     connect_timeout_tooltip: T(''),
 
+    url_placeholder: T('FreeNAS URL'),
+    url_tooltip: T(''),
+
+    token_placeholder: T('Auth Token'),
+    token_tooltip: T(''),
+
     discover_remote_host_key_button: T('Discover Remote Host Key')
 }
