@@ -383,7 +383,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   localDialogService.errorReport(T("Error exporting/disconnecting pool."), res.message, res.stack);
                 });
               } else {
-                return localRest.delete("storage/volume/" + row1.name, { body: JSON.stringify({}) 
+                return localRest.delete("storage/volume/" + row1.name, { body: JSON.stringify({cascade: value.cascade}) 
                   }).subscribe((res) => {
                     entityDialog.dialogRef.close(true);
                     localLoader.close();
