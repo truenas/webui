@@ -18,6 +18,8 @@ export class SshConnectionsFormComponent {
 
     protected queryCall = 'keychaincredential.query';
     protected queryCallOption = [["id", "="]];
+    protected addCall = 'keychaincredential.create';
+    protected editCall = 'keychaincredential.update';
     protected route_success: string[] = ['system', 'sshconnections'];
     protected isEntity = true;
 
@@ -54,6 +56,8 @@ export class SshConnectionsFormComponent {
             name: 'host',
             placeholder: helptext.host_placeholder,
             tooltip: helptext.host_tooltip,
+            required: true,
+            validation: [Validators.required]
         }, {
             type: 'input',
             inputType: 'number',
@@ -139,6 +143,15 @@ export class SshConnectionsFormComponent {
         },
     ];
 
+    protected manualMethodFields = [
+        'host',
+        'port',
+        'username',
+        'private_key',
+        'remote_host_key',
+        'cipher',
+        'connect_timeout',
+    ];
     protected entityForm: any;
 
     constructor(private aroute: ActivatedRoute, private keychainCredentialService: KeychainCredentialService,
@@ -164,5 +177,26 @@ export class SshConnectionsFormComponent {
 
     afterInit(entityForm) {
         this.entityForm = entityForm;
+    }
+
+    resourceTransformIncomingRestData(wsResponse) {
+        for (const item in wsResponse.attributes) {
+            wsResponse[item] = wsResponse.attributes[item];
+        }
+        return wsResponse;
+    }
+
+    beforeSubmit(data) {
+        if (!this.entityForm.isNew) {
+            delete data['type'];
+        }
+        const attributes = {};
+        for (const item in this.manualMethodFields) {
+            attributes[this.manualMethodFields[item]] = data[this.manualMethodFields[item]];
+            delete data[this.manualMethodFields[item]];
+        }
+        data['attributes'] = attributes;
+
+        delete data['setup_method'];
     }
 }
