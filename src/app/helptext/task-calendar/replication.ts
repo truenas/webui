@@ -41,7 +41,7 @@ export default {
     periodic_snapshot_tasks_placeholder: T('Periodic Snapshot Tasks'),
     periodic_snapshot_tasks_tooltip: T(''),
 
-    naming_schema_placeholder: T(''),
+    naming_schema_placeholder: T('Naming Schema'),
     naming_schema_tooltip: T(''),
 
     also_include_naming_schema_placeholder: T('Also Include Naming Schema'),

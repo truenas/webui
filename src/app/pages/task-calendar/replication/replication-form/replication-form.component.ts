@@ -161,6 +161,7 @@ export class ReplicationFormComponent {
             name: 'recursive',
             placeholder: helptext.recursive_placeholder,
             tooltip: helptext.recursive_tooltip,
+            value: false,
         },{
             type: 'select',
             multiple: true,
@@ -187,24 +188,50 @@ export class ReplicationFormComponent {
             options: [],
             relation: [{
                 action: 'HIDE',
+                connective: 'OR',
                 when: [{
+                    name: 'direction',
+                    value: 'PULL',
+                }, {
                     name: 'transport',
                     value: 'LEGACY',
                 }]
             }],
         },
-        // {
-        //     type: 'input',
-        //     name: 'naming_schema',
-        //     placeholder: helptext.naming_schema_placeholder,
-        //     tooltip: helptext.naming_schema_tooltip,
-        // },
-        // {
-        //     type: 'input',
-        //     name: 'also_include_naming_schema',
-        //     placeholder: helptext.also_include_naming_schema_placeholder,
-        //     tooltip: helptext.also_include_naming_schema_tooltip,
-        // },
+        {
+            type: 'input',
+            name: 'naming_schema',
+            placeholder: helptext.naming_schema_placeholder,
+            tooltip: helptext.naming_schema_tooltip,
+            relation: [{
+                action: 'HIDE',
+                connective: 'OR',
+                when: [{
+                    name: 'direction',
+                    value: 'PUSH',
+                }, {
+                    name: 'transport',
+                    value: 'LEGACY',
+                }]
+            }],
+        },
+        {
+            type: 'input',
+            name: 'also_include_naming_schema',
+            placeholder: helptext.also_include_naming_schema_placeholder,
+            tooltip: helptext.also_include_naming_schema_tooltip,
+            relation: [{
+                action: 'HIDE',
+                connective: 'OR',
+                when: [{
+                    name: 'direction',
+                    value: 'PULL',
+                }, {
+                    name: 'transport',
+                    value: 'LEGACY',
+                }]
+            }],
+        },
         {
             type: 'checkbox',
             name: 'auto',
@@ -234,6 +261,7 @@ export class ReplicationFormComponent {
                     value: false,
                 }]
             }],
+            value: false,
         },{
             type: 'scheduler',
             name: 'schedule_picker',
@@ -277,7 +305,11 @@ export class ReplicationFormComponent {
             tooltip: helptext.only_matching_schedule_tooltip,
             relation: [{
                 action: 'HIDE',
+                connective: 'OR',
                 when: [{
+                    name: 'schedule',
+                    value: false,
+                },{
                     name: 'transport',
                     value: 'LEGACY',
                 }]
@@ -510,6 +542,7 @@ export class ReplicationFormComponent {
             name: 'enabled',
             placeholder: helptext.enabled_placeholder,
             tooltip: helptext.enabled_tooltip,
+            value: true,
         },
     ]
 
