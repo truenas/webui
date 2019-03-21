@@ -21,6 +21,7 @@ export class InterfacesListComponent {
   protected confirmDeleteDialog = {
     message: T("Network connectivity will be interrupted. "),
   }
+  protected hasDetails = true;
 
   public columns: Array<any> = [
     {name : T('Name'), prop : 'name'},
@@ -60,7 +61,23 @@ export class InterfacesListComponent {
         }
       }
       rows[i]['addresses'] = addresses.join(', ');
+      console.log(rows[i])
+      rows[i].details = []
+      if (rows[i].type === "PHYSICAL") {
+        rows[i].details.push({label: T("Active Media Type"), value:rows[i]["state"]["active_media_type"]},
+                             {label: T("Active Media Subtype"), value:rows[i]["state"]["active_media_subtype"]})
+      } else if (rows[i].type === "VLAN") {
+        rows[i].details.push({label: T("VLAN Tag"), value:rows[i]["vlan_tag"]},
+                             {label: T("VLAN Parent Interface"), value: rows[i]["state"]["vlan_parent_interface"]})
+      } else if (rows[i].type === "BRIDGE") {
+        rows[i].details.push({label:T("Bridge Members"), value:rows[i]["bridge_members"]});
+      } else if (rows[i].type === "LINK_AGGREGATION") {
+        rows[i].details.push({label:T("Lagg Ports"), value:rows[i]["lag_ports"]},
+                             {label:T("Lagg Protocol"), value:rows[i]["lag_protocol"]});
+      }
+      rows[i].details.push({label:T("IP Addresses"), value:rows[i]['addresses']});
     }
+
   }
 
   /*doAdd() {
