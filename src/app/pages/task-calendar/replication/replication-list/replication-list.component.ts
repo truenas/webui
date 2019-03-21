@@ -9,6 +9,8 @@ export class ReplicationListComponent {
     public title = "Replication Tasks";
     protected queryCall = 'replication.query';
     protected wsDelete = 'replication.delete';
+    protected route_add: string[] = ["tasks", "replication", "add"];
+    protected route_edit: string[] = ['tasks', 'replication', 'edit'];
     protected route_success: string[] = ['tasks', 'replication'];
 
     public columns: Array<any> = [

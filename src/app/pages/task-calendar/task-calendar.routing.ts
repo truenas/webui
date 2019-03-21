@@ -12,6 +12,7 @@ import { RsyncFormComponent } from './rsync/rsync-form/rsync-form.component';
 import { SmartListComponent } from './smart/smart-list/smart-list.component';
 import { SmartFormComponent } from './smart/smart-form/smart-form.component';
 import { ReplicationListComponent } from './replication/replication-list/replication-list.component';
+import { ReplicationFormComponent } from './replication/replication-form/replication-form.component';
 import { ScrubListComponent } from './scrub/scrub-list/scrub-list.component';
 import { ScrubFormComponent } from './scrub/scrub-form/scrub-form.component';
 import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
@@ -105,15 +106,15 @@ export const TaskCalendarRoutes: Routes = [{
         component: ReplicationListComponent,
         data: { title: 'Replication Tasks', breadcrumb: 'Replication Tasks' },
       }, 
-      // {
-      //   path: 'add-replication',
-      //   component: ReplicationFormComponent,
-      //   data: { title: 'Add Replication', breadcrumb: 'Add Replication' },
-      // },{
-      //   path: 'edit-replication/:pk',
-      //   component: ReplicationFormComponent,
-      //   data: { title: 'Edit Replication', breadcrumb: 'Edit Replication' },
-      // }
+      {
+        path: 'add',
+        component: ReplicationFormComponent,
+        data: { title: 'Add', breadcrumb: 'Add' },
+      },{
+        path: 'edit/:pk',
+        component: ReplicationFormComponent,
+        data: { title: 'Edit', breadcrumb: 'Edit' },
+      }
     ]
   }, {
     path: 'rsync',
