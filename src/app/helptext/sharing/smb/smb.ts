@@ -90,7 +90,9 @@ export const helptext_sharing_smb = {
  enhance functionality.'),
 
     placeholder_shadowcopy: T('Enable Shadow Copies'),
-    tooltip_shadowcopy: T('Export ZFS snapshots as Shadow Copies for VSS clients.'),
+    tooltip_shadowcopy: T('Export ZFS snapshots as\
+ <a href="https://docs.microsoft.com/en-us/windows/desktop/vss/shadow-copies-and-shadow-copy-sets"\
+ target=_blank>Shadow Copies</a> for VSS clients.'),
 
     placeholder_auxsmbconf: T('Auxiliary Parameters'),
     tooltip_auxsmbconf: T('Additional <b>smb5.conf</b> parameters not covered by\
