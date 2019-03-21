@@ -4,7 +4,8 @@ import { DatePipe } from '@angular/common';
 import * as _ from 'lodash';
 import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
 import { DialogService } from "../../../services/dialog.service";
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar, MatDialog } from '@angular/material';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../common/entity/utils';
 import { RestService, WebSocketService } from '../../../services/';
 import {AdminLayoutComponent} from '../../../components/common/layouts/admin-layout/admin-layout.component';
@@ -33,6 +34,7 @@ export class AdvancedComponent implements OnDestroy {
   public swapondrive: any;
   public swapondrive_subscription: any;
   public entityForm: any;
+  protected dialogRef: any;
   public custActions: Array < any > = [{
     id: 'save_debug',
     name: 'Save Debug',
@@ -46,7 +48,31 @@ export class AdvancedComponent implements OnDestroy {
         }
         this.dialog.confirm(helptext_system_advanced.dialog_generate_debug_title, helptext_system_advanced.dialog_generate_debug_message, true, helptext_system_advanced.dialog_button_ok).subscribe((ires) => {
           if (ires) {
-            this.load.open();
+            // this.load.open();
+            // this.showProgress();
+            this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Save Debug") }, disableClose: true });
+            this.dialogRef.componentInstance.setCall('system.debug', []);
+            this.dialogRef.componentInstance.submit();
+            this.dialogRef.componentInstance.success.subscribe((system_debug) => {
+              this.dialogRef.close(true);
+              if (system_debug.state === "SUCCESS") {
+                this.ws.call('core.download', ['filesystem.get', [system_debug.result], fileName]).subscribe(
+                  (system_debug_result) => {
+                    if (window.navigator.userAgent.search("Firefox")>0) {
+                      window.open(system_debug_result[1]);
+                  }
+                    else {
+                      window.location.href = system_debug_result[1];
+                    }
+                  },
+                  (err) => {
+                    this.openSnackBar(helptext_system_advanced.snackbar_generate_debug_message_failure, helptext_system_advanced.snackbar_generate_debug_action);
+                  }
+                );
+              }
+
+
+            });
             this.ws.job('system.debug').subscribe((system_debug) => {
               this.load.close();
               if (system_debug.state === "SUCCESS") {
@@ -64,7 +90,8 @@ export class AdvancedComponent implements OnDestroy {
                   }
                 );
               }
-            }, () => {
+            }
+            , () => {
               this.load.close();
             }, () => {
               this.load.close();
@@ -239,6 +266,7 @@ export class AdvancedComponent implements OnDestroy {
     private ws: WebSocketService,
     public adminLayout: AdminLayoutComponent,
     public snackBar: MatSnackBar,
+    protected matDialog: MatDialog,
     public datePipe: DatePipe) {}
 
   openSnackBar(message: string, action: string) {
@@ -298,7 +326,8 @@ export class AdvancedComponent implements OnDestroy {
 
   public customSubmit(body) {
     delete body.sed_passwd2;
-    this.load.open();
+    // this.load.open();
+    this.showProgress();
 
 
     return this.ws.call('system.advanced.update', [body]).subscribe((res) => {
@@ -308,6 +337,16 @@ export class AdvancedComponent implements OnDestroy {
     }, (res) => {
       this.load.close();
       new EntityUtils().handleWSError(this.entityForm, res);
+    });
+  }
+
+  public showProgress() {
+    console.log('showing progress')
+    this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Save Debug") }, disableClose: true });
+    this.dialogRef.componentInstance.setCall('system.debug', []);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.dialogRef.close(true);
     });
   }
 
