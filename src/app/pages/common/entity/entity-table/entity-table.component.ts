@@ -43,6 +43,7 @@ export interface InputTableConf {
   confirmDeleteDialog?: Object;
   checkbox_confirm?: any;
   checkbox_confirm_show?: any;
+  hasDetails?:boolean;
   addRows?(entity: EntityTableComponent);
   changeEvent?(entity: EntityTableComponent);
   preInit?(entity: EntityTableComponent);
@@ -85,6 +86,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('filter') filter: ElementRef;
   @ViewChild('defaultMultiActions') defaultMultiActions: ElementRef;
+  @ViewChild('entityTable') table: any;
 
   // MdPaginator Inputs
   public paginationPageSize: number = 8;
@@ -144,6 +146,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit():void {
 
+    console.log(this.conf);
     this.setTableHeight(); 
   
     setTimeout(() => {
@@ -713,4 +716,13 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   toggleLabels(){
     this.multiActionsIconsOnly = !this.multiActionsIconsOnly;
   }
+
+  toggleExpandRow(row) {
+    //console.log('Toggled Expand Row!', row);
+    this.table.rowDetail.toggleExpandRow(row);
+  }
+
+  onDetailToggle(event) {
+    //console.log('Detail Toggled', event);
+}
 }
