@@ -32,6 +32,7 @@ import {routing} from './services.routing';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { UserService } from '../../services/user.service';
+import { ServiceAsigraComponent } from './components/service-asigra/service-asigra.component';
 
 @NgModule({
   imports : [ CommonModule, FormsModule, EntityModule, routing, MaterialModule, AppConfirmModule, NgxDatatableModule, TranslateModule ],
@@ -41,7 +42,7 @@ import { UserService } from '../../services/user.service';
     ServiceRSYNCComponent, CconfigureRYSNCComponent,RSYNCconfigurationListComponent, RYSNCConfigurationFormComponent,
     ServiceSMARTComponent, ServiceNFSComponent, ServiceTFTPComponent, ServiceUPSComponent, ServiceDDNSComponent,
     ServiceCIFSComponent, ServiceSMBComponent, ServiceSNMPComponent,
-    ServiceWebdavComponent, ServiceS3Component, ServicesTableComponent
+    ServiceWebdavComponent, ServiceS3Component, ServicesTableComponent, ServiceAsigraComponent
   ],
   providers : [UserService]
 })
