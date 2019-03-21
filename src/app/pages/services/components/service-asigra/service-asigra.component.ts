@@ -10,10 +10,10 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
   template : ` <entity-form [conf]="this"></entity-form>`
 })
 export class ServiceAsigraComponent {
+  protected addCall = "asigra.config";
   protected route_success: string[] = [ 'services' ];
   public entityForm: any;
-  public disk: any;
-  public disks: any;
+  public fs: any;
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -39,13 +39,13 @@ export class ServiceAsigraComponent {
   constructor(protected router: Router, protected ws: WebSocketService) {}
 
   afterInit (entityForm: any) {
-    entityForm.ws.call('disk.query', []).subscribe((disk_list) => {
-      this.disk = _.find(this.fieldConfig, {name : "asigra_base_filesystem"});
-      this.disks = disk_list;
-      disk_list.forEach((item) => {
-        this.disk.options.push({label : item.name, value : item.name});
+    entityForm.ws.call('pool.filesystem_choices', []).subscribe((fs_list) => {
+      this.fs = _.find(this.fieldConfig, {name : "asigra_base_filesystem"});
+      fs_list.forEach((item) => {
+        console.log(item)
+        this.fs.options.push({label : item, value : item});
           entityForm.formGroup.controls['asigra_base_filesystem'].setValue(
-          this.disks[0].name);
+          fs_list[0]);
         });
       })
   }
