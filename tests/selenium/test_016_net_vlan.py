@@ -6,7 +6,7 @@
 import sys
 import os
 import time
-from selenium.webwb_driver.common.by import By
+from selenium.webdriver.common.by import By
 cwd = str(os.getcwd())
 sys.path.append(cwd)
 from function import take_screenshot, is_element_present
