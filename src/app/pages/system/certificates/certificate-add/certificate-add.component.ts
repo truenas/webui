@@ -77,7 +77,7 @@ export class CertificateAddComponent {
         {label: 'BrainpoolP256R1', value: 'BrainpoolP256R1'},
         {label: 'SECP256K1', value: 'SECP256K1'},
       ],
-      value: 'BrainpoolP512R1',
+      value: 'BrainpoolP384R1',
       isHidden: true,
       disabled: true,
       relation : [
