@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
+
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/task-calendar/replication';
+import { WebSocketService } from 'app/services';
+import * as _ from 'lodash';
 
 @Component({
     selector: 'app-replication-list',
@@ -16,7 +19,7 @@ export class ReplicationFormComponent {
     protected isEntity = true;
     protected entityForm: any;
 
-     protected fieldConfig: FieldConfig[] = [
+    protected fieldConfig: FieldConfig[] = [
         {
             type: 'select',
             name: 'direction',
@@ -32,7 +35,7 @@ export class ReplicationFormComponent {
                 }
             ],
             value: 'PUSH',
-        },{
+        }, {
             type: 'select',
             name: 'transport',
             placeholder: helptext.transport_placeholder,
@@ -44,7 +47,7 @@ export class ReplicationFormComponent {
                 }, {
                     label: 'SSH+NETCAT',
                     value: 'SSH+NETCAT',
-                },{
+                }, {
                     label: 'LOCAL',
                     value: 'LOCAL',
                 }, {
@@ -53,7 +56,7 @@ export class ReplicationFormComponent {
                 }
             ],
             value: 'SSH',
-        },{
+        }, {
             type: 'select',
             name: 'ssh_credentials',
             placeholder: helptext.ssh_credentials_placeholder,
@@ -72,7 +75,7 @@ export class ReplicationFormComponent {
                     value: 'LOCAL',
                 }]
             }],
-        },{
+        }, {
             type: 'select',
             name: 'netcat_active_side',
             placeholder: helptext.netcat_active_side_placeholder,
@@ -94,7 +97,7 @@ export class ReplicationFormComponent {
                     value: 'SSH+NETCAT',
                 }]
             }],
-        },{
+        }, {
             type: 'input',
             name: 'netcat_active_side_listen_address',
             placeholder: helptext.netcat_active_side_listen_address_placeholder,
@@ -106,7 +109,7 @@ export class ReplicationFormComponent {
                     value: 'SSH+NETCAT',
                 }]
             }],
-        },{
+        }, {
             type: 'input',
             name: 'netcat_active_side_port_min',
             placeholder: helptext.netcat_active_side_port_min_placeholder,
@@ -118,7 +121,7 @@ export class ReplicationFormComponent {
                     value: 'SSH+NETCAT',
                 }]
             }],
-        },{
+        }, {
             type: 'input',
             name: 'netcat_active_side_port_max',
             placeholder: helptext.netcat_active_side_port_max_placeholder,
@@ -130,7 +133,7 @@ export class ReplicationFormComponent {
                     value: 'SSH+NETCAT',
                 }]
             }],
-        },{
+        }, {
             type: 'input',
             name: 'netcat_passive_side_connect_address',
             placeholder: helptext.netcat_passive_side_connect_address_placeholder,
@@ -142,27 +145,27 @@ export class ReplicationFormComponent {
                     value: 'SSH+NETCAT',
                 }]
             }],
-        },{
-            type: 'select',
+        }, {
+            type: 'explorer',
+            initial: '/mnt',
+            explorerType: 'directory',
             multiple: true,
             name: 'source_datasets',
             placeholder: helptext.source_datasets_placeholder,
             tooltip: helptext.source_datasets_tooltip,
             options: [],
-        },{
-            type: 'select',
-            multiple: true,
+        }, {
+            type: 'input',
             name: 'target_dataset',
             placeholder: helptext.target_dataset_placeholder,
             tooltip: helptext.target_dataset_tooltip,
-            options: [],
-        },{
+        }, {
             type: 'checkbox',
             name: 'recursive',
             placeholder: helptext.recursive_placeholder,
             tooltip: helptext.recursive_tooltip,
             value: false,
-        },{
+        }, {
             type: 'select',
             multiple: true,
             name: 'exclude',
@@ -180,8 +183,9 @@ export class ReplicationFormComponent {
                     value: 'LEGACY',
                 }]
             }],
-        },{
+        }, {
             type: 'select',
+            multiple: true,
             name: 'periodic_snapshot_tasks',
             placeholder: helptext.periodic_snapshot_tasks_placeholder,
             tooltip: helptext.periodic_snapshot_tasks_tooltip,
@@ -245,7 +249,7 @@ export class ReplicationFormComponent {
                     value: 'LEGACY',
                 }]
             }],
-        },{
+        }, {
             type: 'checkbox',
             name: 'schedule',
             placeholder: helptext.schedule_placeholder,
@@ -260,9 +264,8 @@ export class ReplicationFormComponent {
                     name: 'auto',
                     value: false,
                 }]
-            }],
-            value: false,
-        },{
+            }]
+        }, {
             type: 'scheduler',
             name: 'schedule_picker',
             tooltip: helptext.schedule_tooltip,
@@ -274,7 +277,7 @@ export class ReplicationFormComponent {
                     value: true,
                 }]
             }],
-        },{
+        }, {
             type: 'checkbox',
             name: 'restrict_schedule',
             placeholder: helptext.restrict_schedule_placeholder,
@@ -286,7 +289,7 @@ export class ReplicationFormComponent {
                     value: 'LEGACY',
                 }]
             }],
-        },{
+        }, {
             type: 'scheduler',
             name: 'restrict_schedule_picker',
             tooltip: helptext.restrict_schedule_tooltip,
@@ -298,7 +301,7 @@ export class ReplicationFormComponent {
                     value: true,
                 }]
             }],
-        },{
+        }, {
             type: 'checkbox',
             name: 'only_matching_schedule',
             placeholder: helptext.only_matching_schedule_placeholder,
@@ -309,12 +312,12 @@ export class ReplicationFormComponent {
                 when: [{
                     name: 'schedule',
                     value: false,
-                },{
+                }, {
                     name: 'transport',
                     value: 'LEGACY',
                 }]
             }],
-        },{
+        }, {
             type: 'checkbox',
             name: 'allow_from_scratch',
             placeholder: helptext.allow_from_scratch_placeholder,
@@ -326,7 +329,7 @@ export class ReplicationFormComponent {
                     value: 'LEGACY',
                 }]
             }],
-        },{
+        }, {
             type: 'checkbox',
             name: 'hold_pending_snapshots',
             placeholder: helptext.hold_pending_snapshots_placeholder,
@@ -338,7 +341,7 @@ export class ReplicationFormComponent {
                     value: 'LEGACY',
                 }]
             }],
-        },{
+        }, {
             type: 'select',
             name: 'retention_policy',
             placeholder: helptext.retention_policy_placeholder,
@@ -347,10 +350,10 @@ export class ReplicationFormComponent {
                 {
                     label: 'Same as Source',
                     value: 'SOURCE',
-                },{
+                }, {
                     label: 'Custom',
                     value: 'CUSTOM',
-                },{
+                }, {
                     label: 'None',
                     value: 'NONE',
                 }
@@ -363,7 +366,7 @@ export class ReplicationFormComponent {
                     value: 'LEGACY',
                 }]
             }],
-        },{
+        }, {
             type: 'input',
             inputType: 'number',
             name: 'lifetime_value',
@@ -377,7 +380,7 @@ export class ReplicationFormComponent {
                 }]
             }],
             width: '50%',
-        },{
+        }, {
             type: 'select',
             name: 'lifetime_unit',
             placeholder: helptext.lifetime_unit_placeholder,
@@ -386,16 +389,16 @@ export class ReplicationFormComponent {
                 {
                     label: 'Hour(s)',
                     value: 'HOUR',
-                },{
+                }, {
                     label: 'Day(s)',
                     value: 'DAY',
-                },{
+                }, {
                     label: 'Week(s)',
                     value: 'WEEK',
-                },{
+                }, {
                     label: 'Month(s)',
                     value: 'MONTH',
-                },{
+                }, {
                     label: 'Year(s)',
                     value: 'YEAR',
                 }
@@ -419,13 +422,13 @@ export class ReplicationFormComponent {
                 {
                     label: 'Disabled',
                     value: 'DISABLED', // should set it to be null before submit
-                },{
+                }, {
                     label: 'lz4 (fastest)',
                     value: 'LZ4',
-                },{
+                }, {
                     label: 'pigz (all rounder)',
                     value: 'PIGZ',
-                },{
+                }, {
                     label: 'plzip (best compression)',
                     value: 'PLZIP',
                 }
@@ -438,7 +441,7 @@ export class ReplicationFormComponent {
                     value: 'SSH',
                 }]
             }],
-        },{
+        }, {
             type: 'input',
             inputType: 'number',
             name: 'speed_limit',
@@ -464,7 +467,7 @@ export class ReplicationFormComponent {
                     value: 'LEGACY',
                 }]
             }],
-        },{
+        }, {
             type: 'checkbox',
             name: 'large_block',
             placeholder: helptext.large_block_placeholder,
@@ -477,7 +480,7 @@ export class ReplicationFormComponent {
                     value: 'LEGACY',
                 }]
             }],
-        },{
+        }, {
             type: 'checkbox',
             name: 'embed',
             placeholder: helptext.embed_placeholder,
@@ -490,7 +493,7 @@ export class ReplicationFormComponent {
                     value: 'LEGACY',
                 }]
             }],
-        },{
+        }, {
             type: 'checkbox',
             name: 'compressed',
             placeholder: helptext.compressed_placeholder,
@@ -503,7 +506,7 @@ export class ReplicationFormComponent {
                     value: 'LEGACY',
                 }]
             }],
-        },{
+        }, {
             type: 'input',
             inputType: 'number',
             name: 'retries',
@@ -517,7 +520,7 @@ export class ReplicationFormComponent {
                     value: 'LEGACY',
                 }]
             }],
-        },{
+        }, {
             type: 'select',
             name: 'logging_level',
             placeholder: helptext.logging_level_placeholder,
@@ -526,18 +529,18 @@ export class ReplicationFormComponent {
                 {
                     label: 'DEBUG',
                     value: 'DEBUG',
-                },{
+                }, {
                     label: 'INFO',
                     value: 'INFO',
-                },{
+                }, {
                     label: 'WARNING',
                     value: 'WARNING',
-                },{
+                }, {
                     label: 'ERROR',
                     value: 'ERROR',
                 }
             ]
-        },{
+        }, {
             type: 'checkbox',
             name: 'enabled',
             placeholder: helptext.enabled_placeholder,
@@ -546,6 +549,41 @@ export class ReplicationFormComponent {
         },
     ]
 
-    constructor() { }
+    constructor(private ws: WebSocketService) {
+        const sshCredentialsField = _.find(this.fieldConfig, { name: 'ssh_credentials' });
+        this.ws.call('keychaincredential.query', [[["type", "=", "SSH_CREDENTIALS"]]]).subscribe(
+            (res) => {
+                for (const i in res) {
+                    sshCredentialsField.options.push({ label: res[i].name, value: res[i].id });
+                }
+            }
+        )
+
+        const periodicSnapshotTasksField = _.find(this.fieldConfig, { name: 'periodic_snapshot_tasks' });
+        this.ws.call('pool.snapshottask.query').subscribe(
+            (res) => {
+                for (const i in res) {
+                    periodicSnapshotTasksField.options.push({ label: res[i].dataset + ' - ' + res[i].naming_schema + ' - ' + res[i].lifetime_value + ' ' + res[i].lifetime_unit + '(S)', value: res[i].id });
+                }
+            }
+        )
+    }
+
+    afterInit(entityForm) {
+
+        entityForm.formGroup.controls['periodic_snapshot_tasks'].valueChanges.subscribe(
+            (res) => {
+                const toDisable = res.length === 0 ? false : true;
+                entityForm.setDisabled('schedule', toDisable, toDisable);
+            }
+        )
+    }
+    beforeSubmit(data) {
+        data['source_datasets'] = data['source_datasets'].split(' ');
+
+        if (data['compression'] === 'DISABLED') {
+            delete data['compression'];
+        }
+    }
 
 }
