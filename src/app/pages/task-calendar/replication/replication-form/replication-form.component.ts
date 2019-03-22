@@ -2,12 +2,13 @@ import { Component } from '@angular/core';
 
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/task-calendar/replication';
-import { WebSocketService } from 'app/services';
+import { WebSocketService, TaskService } from 'app/services';
 import * as _ from 'lodash';
 
 @Component({
     selector: 'app-replication-list',
-    template: `<entity-form [conf]='this'></entity-form>`
+    template: `<entity-form [conf]='this'></entity-form>`,
+    providers: [TaskService]
 })
 export class ReplicationFormComponent {
 
@@ -268,7 +269,7 @@ export class ReplicationFormComponent {
         }, {
             type: 'scheduler',
             name: 'schedule_picker',
-            tooltip: helptext.schedule_tooltip,
+            tooltip: helptext.schedule_picker_tooltip,
             value: "0 0 * * *",
             relation: [{
                 action: 'SHOW',
@@ -277,6 +278,34 @@ export class ReplicationFormComponent {
                     value: true,
                 }]
             }],
+        }, {
+            type: 'select',
+            name: 'schedule_begin',
+            placeholder: helptext.schedule_begin_placeholder,
+            tooltip: helptext.schedule_begin_tooltip,
+            options: [],
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'schedule',
+                    value: true,
+                }]
+            }],
+            value: '00:00',
+        }, {
+            type: 'select',
+            name: 'schedule_end',
+            placeholder: helptext.schedule_end_placeholder,
+            tooltip: helptext.schedule_end_tooltip,
+            options: [],
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'schedule',
+                    value: true,
+                }]
+            }],
+            value: '23:45',
         }, {
             type: 'checkbox',
             name: 'restrict_schedule',
@@ -292,7 +321,7 @@ export class ReplicationFormComponent {
         }, {
             type: 'scheduler',
             name: 'restrict_schedule_picker',
-            tooltip: helptext.restrict_schedule_tooltip,
+            tooltip: helptext.restrict_schedule_picker_tooltip,
             value: "0 0 * * *",
             relation: [{
                 action: 'SHOW',
@@ -301,6 +330,34 @@ export class ReplicationFormComponent {
                     value: true,
                 }]
             }],
+        }, {
+            type: 'select',
+            name: 'restrict_schedule_begin',
+            placeholder: helptext.restrict_schedule_begin_placeholder,
+            tooltip: helptext.restrict_schedule_begin_tooltip,
+            options: [],
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'restrict_schedule',
+                    value: true,
+                }]
+            }],
+            value: '00:00',
+        }, {
+            type: 'select',
+            name: 'restrict_schedule_end',
+            placeholder: helptext.restrict_schedule_end_placeholder,
+            tooltip: helptext.restrict_schedule_end_tooltip,
+            options: [],
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'restrict_schedule',
+                    value: true,
+                }]
+            }],
+            value: '23:45',
         }, {
             type: 'checkbox',
             name: 'only_matching_schedule',
@@ -549,7 +606,7 @@ export class ReplicationFormComponent {
         },
     ]
 
-    constructor(private ws: WebSocketService) {
+    constructor(private ws: WebSocketService, protected taskService: TaskService) {
         const sshCredentialsField = _.find(this.fieldConfig, { name: 'ssh_credentials' });
         this.ws.call('keychaincredential.query', [[["type", "=", "SSH_CREDENTIALS"]]]).subscribe(
             (res) => {
@@ -567,6 +624,21 @@ export class ReplicationFormComponent {
                 }
             }
         )
+
+        const scheduleBeginField = _.find(this.fieldConfig, { 'name': 'schedule_begin' });
+        const restrictScheduleBeginField = _.find(this.fieldConfig, { 'name': 'restrict_schedule_begin' });
+        const scheduleEndField = _.find(this.fieldConfig, { 'name': 'schedule_end' });
+        const restrictScheduleEndField = _.find(this.fieldConfig, { 'name': 'restrict_schedule_end' });
+
+        const time_options = this.taskService.getTimeOptions();
+        for (let i = 0; i < time_options.length; i++) {
+            const option = { label: time_options[i].label, value: time_options[i].value };
+            scheduleBeginField.options.push(option);
+            restrictScheduleBeginField.options.push(option);
+            scheduleEndField.options.push(option);
+            restrictScheduleEndField.options.push(option);
+        }
+
     }
 
     afterInit(entityForm) {
@@ -578,8 +650,34 @@ export class ReplicationFormComponent {
             }
         )
     }
+
+    parsePickerTime(picker, begin, end) {
+        const spl = picker.split(" ");
+        return {
+            minute: spl[0],
+            hour: spl[1],
+            dom: spl[2],
+            month: spl[3],
+            dow: spl[4],
+            begin: begin,
+            end: end,
+        };
+    }
     beforeSubmit(data) {
         data['source_datasets'] = data['source_datasets'].split(' ');
+
+        if (data['schedule']) {
+            data['schedule'] = this.parsePickerTime(data['schedule_picker'], data['schedule_begin'], data['schedule_end']);
+            delete data['schedule_picker'];
+            delete data['schedule_begin'];
+            delete data['schedule_end'];
+        }
+        if (data['restrict_schedule']) {
+            data['restrict_schedule'] = this.parsePickerTime(data['restrict_schedule_picker'], data['restrict_schedule_begin'], data['restrict_schedule_end']);
+            delete data['restrict_schedule_picker'];
+            delete data['restrict_schedule_begin'];
+            delete data['restrict_schedule_end'];
+        }
 
         if (data['compression'] === 'DISABLED') {
             delete data['compression'];

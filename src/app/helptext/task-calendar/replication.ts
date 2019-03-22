@@ -53,8 +53,24 @@ export default {
     schedule_placeholder: T('Schedule'),
     schedule_tooltip: T(''),
 
+    schedule_picker_tooltip: T(''),
+
+    schedule_begin_placeholder: T('Begin'),
+    schedule_begin_tooltip: T(''),
+
+    schedule_end_placeholder: T('End'),
+    schedule_end_tooltip: T(''),
+
     restrict_schedule_placeholder: T('Restrict Schedule'),
     restrict_schedule_tooltip: T(''),
+
+    restrict_schedule_picker_tooltip: T(''),
+
+    restrict_schedule_begin_placeholder: T('Begin'),
+    restrict_schedule_begin_tooltip: T(''),
+
+    restrict_schedule_end_placeholder: T('End'),
+    restrict_schedule_end_tooltip: T(''),
 
     only_matching_schedule_placeholder: T('Only Replicate Snapshots Matching Schedule'),
     only_matching_schedule_tooltip: T(''),
