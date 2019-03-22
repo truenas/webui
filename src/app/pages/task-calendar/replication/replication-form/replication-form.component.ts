@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/task-calendar/replication';
 import { WebSocketService, TaskService } from 'app/services';
 import * as _ from 'lodash';
-
 
 @Component({
     selector: 'app-replication-list',
@@ -15,7 +15,7 @@ import * as _ from 'lodash';
 export class ReplicationFormComponent {
 
     protected queryCall = 'replication.query';
-    protected queryCallOption = [["id", "="]];
+    protected queryCallOption: Array<any> = [["id", "="]];
     protected addCall = 'replication.create';
     protected editCall = 'replication.update';
     protected route_success: string[] = ['tasks', 'replication'];
@@ -592,6 +592,10 @@ export class ReplicationFormComponent {
             tooltip: helptext.logging_level_tooltip,
             options: [
                 {
+                    label: 'DEFAULT',
+                    value: 'DEFAULT',
+                },
+                {
                     label: 'DEBUG',
                     value: 'DEBUG',
                 }, {
@@ -604,7 +608,8 @@ export class ReplicationFormComponent {
                     label: 'ERROR',
                     value: 'ERROR',
                 }
-            ]
+            ],
+            value: 'DEFAULT',
         }, {
             type: 'checkbox',
             name: 'enabled',
@@ -614,7 +619,7 @@ export class ReplicationFormComponent {
         },
     ]
 
-    constructor(private ws: WebSocketService, protected taskService: TaskService) {
+    constructor(private ws: WebSocketService, protected taskService: TaskService, private aroute: ActivatedRoute) {
         const sshCredentialsField = _.find(this.fieldConfig, { name: 'ssh_credentials' });
         this.ws.call('keychaincredential.query', [[["type", "=", "SSH_CREDENTIALS"]]]).subscribe(
             (res) => {
@@ -629,7 +634,7 @@ export class ReplicationFormComponent {
             (res) => {
                 for (const i in res) {
                     const label = res[i].dataset + ' - ' + res[i].naming_schema + ' - ' + res[i].lifetime_value + ' ' + res[i].lifetime_unit + '(S) - ' + (res[i].enabled ? 'Enabled' : 'Disabled');
-                    periodicSnapshotTasksField.options.push({ label: label, value: res[i].id});
+                    periodicSnapshotTasksField.options.push({ label: label, value: res[i].id });
                 }
             }
         )
@@ -650,15 +655,65 @@ export class ReplicationFormComponent {
 
     }
 
-    afterInit(entityForm) {
+    preInit() {
+        this.aroute.params.subscribe(params => {
+            if (params['pk']) {
+                this.queryCallOption[0].push(parseInt(params['pk']));
+            }
+        });
+    }
 
+    afterInit(entityForm) {
         entityForm.formGroup.controls['periodic_snapshot_tasks'].valueChanges.subscribe(
             (res) => {
-                const toDisable = res.length === 0 ? false : true;
-                entityForm.formGroup.controls['schedule'].setValue(!toDisable);
-                entityForm.setDisabled('schedule', toDisable, toDisable);
+                if (entityForm.formGroup.controls['transport'].value !== 'LEGACY') {
+                    const toDisable = (res && res.length === 0) ? false : true;
+                    entityForm.setDisabled('schedule', toDisable, toDisable);
+                    if (entityForm.formGroup.controls['schedule'].value) {
+                        entityForm.setDisabled('schedule_picker', toDisable, toDisable);
+                        entityForm.setDisabled('schedule_begin', toDisable, toDisable);
+                        entityForm.setDisabled('schedule_end', toDisable, toDisable);
+                    }
+                }
             }
         )
+    }
+
+    resourceTransformIncomingRestData(wsResponse) {
+        if (wsResponse['ssh_credentials']) {
+            wsResponse['ssh_credentials'] = wsResponse['ssh_credentials'].id;
+        }
+
+        wsResponse['compression'] = wsResponse['compression'] === null ? 'DISABLED' : wsResponse['compression'];
+        wsResponse['logging_level'] = wsResponse['logging_level'] === null ? 'DEFAULT' : wsResponse['logging_level'];
+        const snapshotTasks = [];
+        for (const item of wsResponse['periodic_snapshot_tasks']) {
+            snapshotTasks.push(item.id);
+        }
+        wsResponse['periodic_snapshot_tasks'] = snapshotTasks;
+
+        if (wsResponse.schedule) {
+            wsResponse['schedule_picker'] = "0" + " " +
+                wsResponse.schedule.hour + " " +
+                wsResponse.schedule.dom + " " +
+                wsResponse.schedule.month + " " +
+                wsResponse.schedule.dow;
+            wsResponse['schedule_begin'] = wsResponse.schedule.begin;
+            wsResponse['schedule_end'] = wsResponse.schedule.end;
+            wsResponse['schedule'] = true;
+        }
+
+        if (wsResponse.restrict_schedule) {
+            wsResponse['restrict_schedule_picker'] = "0" + " " +
+                wsResponse.restrict_schedule.hour + " " +
+                wsResponse.restrict_schedule.dom + " " +
+                wsResponse.restrict_schedule.month + " " +
+                wsResponse.restrict_schedule.dow;
+            wsResponse['restrict_schedule_begin'] = wsResponse.restrict_schedule.begin;
+            wsResponse['restrict_schedule_end'] = wsResponse.restrict_schedule.end;
+            wsResponse['restrict_schedule'] = true;
+        }
+        return wsResponse;
     }
 
     parsePickerTime(picker, begin, end) {
@@ -673,8 +728,9 @@ export class ReplicationFormComponent {
             end: end,
         };
     }
+
     beforeSubmit(data) {
-        data['source_datasets'] = data['source_datasets'].split(' ');
+        data['source_datasets'] = typeof data['source_datasets'] === "string" ? data['source_datasets'].split(' ') : data['source_datasets'];
 
         if (data['schedule']) {
             data['schedule'] = this.parsePickerTime(data['schedule_picker'], data['schedule_begin'], data['schedule_end']);
@@ -691,6 +747,9 @@ export class ReplicationFormComponent {
 
         if (data['compression'] === 'DISABLED') {
             delete data['compression'];
+        }
+        if (data['logging_level'] === 'DEFAULT') {
+            delete data['logging_level'];
         }
     }
 
