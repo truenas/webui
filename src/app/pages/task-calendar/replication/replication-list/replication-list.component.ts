@@ -40,7 +40,7 @@ export class ReplicationListComponent {
     dataHandler(entityList) {
         for (let i = 0; i < entityList.rows.length; i++) {
             entityList.rows[i].task_state = entityList.rows[i].state.state;
-            entityList.rows[i].ssh_connection = entityList.rows[i].ssh_credentials.name;
+            entityList.rows[i].ssh_connection = entityList.rows[i].ssh_credentials ? entityList.rows[i].ssh_credentials.name : '-';
         }
     }
 }
