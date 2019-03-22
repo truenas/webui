@@ -24,7 +24,7 @@ xpaths = {
 }
 
 
-def test_00_setUpClass(wb_driver):
+def test_00_set_implicitly_wait(wb_driver):
     wb_driver.implicitly_wait(1)
 
 

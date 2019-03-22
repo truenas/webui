@@ -22,8 +22,8 @@ xpaths = {
 }
 
 
-def test_00_wait(wb_driver):
-    wb_driver.implicitly_wait(5)
+def test_00_set_implicitly_wait(wb_driver):
+    wb_driver.implicitly_wait(1)
 
 
 def test_01_logout(wb_driver):

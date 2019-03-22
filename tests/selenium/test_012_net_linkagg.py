@@ -5,7 +5,6 @@
 
 import sys
 import os
-import time
 from selenium.webdriver.common.by import By
 cwd = str(os.getcwd())
 sys.path.append(cwd)
@@ -21,9 +20,8 @@ xpaths = {
 }
 
 
-def setUpClass(wb_driver):
-    wb_driver.implicitly_wait(30)
-    pass
+def test_00_set_implicitly_wait(wb_driver):
+    wb_driver.implicitly_wait(1)
 
 
 def test_01_nav_net_linkagg(wb_driver):

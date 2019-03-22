@@ -35,7 +35,7 @@ xpaths = {
 }
 
 
-def test_00_wait_on_browser(wb_driver):
+def test_00_set_implicitly_wait(wb_driver):
     wb_driver.implicitly_wait(1)
 
 
