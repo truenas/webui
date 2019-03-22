@@ -38,7 +38,6 @@ def test_00_set_implicitly_wait(wb_driver):
 # password, confirmation and wait till user is  visible in the list
 def test_01_nav_acc_group(wb_driver):
     # Click  Account menu
-    print(" navigating to the group submenu")
     wb_driver.find_element_by_xpath(xpaths['navAccount']).click()
     time.sleep(1)
     # Click User submenu
@@ -48,7 +47,6 @@ def test_01_nav_acc_group(wb_driver):
     ui_element1 = wb_driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li[2]/a')
     # get the weather data
     page_data = ui_element1.text
-    print("the Page now is: " + page_data)
     # assert response
     assert "Group" in page_data, page_data
     # Taking screenshot
@@ -57,7 +55,6 @@ def test_01_nav_acc_group(wb_driver):
 
 
 def test_02_create_newgroup(wb_driver):
-    print(" creating a new group without root access")
     # scroll down to find hover tab
     wb_driver.find_element_by_tag_name('html').send_keys(Keys.END)
     time.sleep(2)
@@ -76,7 +73,6 @@ def test_02_create_newgroup(wb_driver):
 
 
 def test_03_create_supergroup(wb_driver):
-    print(" creating a new Super group with root access")
     time.sleep(1)
     # Click Group submenu
     wb_driver.find_element_by_xpath(xpaths['submenuGroup']).click()
@@ -98,7 +94,6 @@ def test_03_create_supergroup(wb_driver):
 
 
 def test_04_create_duplicategroup(wb_driver):
-    print(" creating a duplicate group")
     # Click Group submenu
     wb_driver.find_element_by_xpath(xpaths['submenuGroup']).click()
     # scroll down to find hover tab
@@ -119,7 +114,6 @@ def test_04_create_duplicategroup(wb_driver):
 
 
 def test_05_close_navAccount(wb_driver):
-    print(" closing account menu")
     wb_driver.find_element_by_xpath(xpaths['navAccount']).click()
     time.sleep(20)
     # taking screenshot

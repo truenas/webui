@@ -6,7 +6,6 @@
 
 import sys
 import os
-import time
 from selenium.webdriver.common.by import By
 cwd = str(os.getcwd())
 sys.path.append(cwd)
@@ -38,7 +37,6 @@ def test_01_nav_net_interface(wb_driver):
     ui_element = wb_driver.find_element_by_xpath(xpaths["pageTitle"])
     # get the weather data
     page_data = ui_element.text
-    print("the Page now is: " + page_data)
     # assert response
     assert "Interfaces" in page_data, page_data
     # taking screenshot

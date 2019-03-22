@@ -34,7 +34,6 @@ def test_01_nav_net_linkagg(wb_driver):
     ui_element = wb_driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li[2]/a")
     # get the weather data
     page_data = ui_element.text
-    print("the Page now is: " + page_data)
     # assert response
     assert "Link Aggregations" in page_data, page_data
     # taking screenshot

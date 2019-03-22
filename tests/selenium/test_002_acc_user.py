@@ -43,7 +43,6 @@ def test_00_set_implicitly_wait(wb_driver):
 def test_01_nav_acc_user(wb_driver):
     error_check(wb_driver)
     # Click  Account menu
-    print(" navigating to the user submenu")
     wb_driver.find_element_by_xpath(xpaths['navAccount']).click()
     # allowing the button to load
     time.sleep(1)
@@ -53,7 +52,6 @@ def test_01_nav_acc_user(wb_driver):
     ui_element = wb_driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li[2]/a')
     # get the weather data
     page_data = ui_element.text
-    print("the Page now is: " + page_data)
     # assert response
     assert "User" in page_data, page_data
     # taking screenshot
