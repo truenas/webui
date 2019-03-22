@@ -35,6 +35,7 @@ export class CertificateAddComponent {
         {label: 'Internal Certificate', value: 'CERTIFICATE_CREATE_INTERNAL'},
         {label: 'Certificate Signing Request', value: 'CERTIFICATE_CREATE_CSR'},
         {label: 'Import Certificate', value: 'CERTIFICATE_CREATE_IMPORTED'},
+        {label: 'Import Certificate Signing Request', value: 'CERTIFICATE_CREATE_IMPORTED_CSR'},
       ],
       value: 'CERTIFICATE_CREATE_INTERNAL',
     },
@@ -225,6 +226,15 @@ export class CertificateAddComponent {
     },
     {
       type : 'textarea',
+      name : 'CSR',
+      placeholder : helptext_system_certificates.add.cert_csr.placeholder,
+      tooltip : helptext_system_certificates.add.cert_csr.tooltip,
+      required: true,
+      validation : helptext_system_certificates.add.cert_csr.validation,
+      isHidden: true,
+    },
+    {
+      type : 'textarea',
       name : 'privatekey',
       placeholder : helptext_system_certificates.add.privatekey.placeholder,
       tooltip : helptext_system_certificates.add.privatekey.tooltip,
@@ -285,6 +295,10 @@ export class CertificateAddComponent {
     'passphrase',
     'passphrase2',
   ];
+  private importCSRFields: Array<any> = [
+    'CSR',
+    'privatekey',
+  ];
 
   private country: any;
   private signedby: any;
@@ -320,6 +334,9 @@ export class CertificateAddComponent {
     for (let i in this.importFields) {
       this.hideField(this.importFields[i], true, entity);
     }
+    for (let i in this.importCSRFields) {
+      this.hideField(this.importCSRFields[i], true, entity);
+    }
     for (let i in this.internalFields) {
       this.hideField(this.internalFields[i], false, entity);
     }
@@ -332,6 +349,9 @@ export class CertificateAddComponent {
         }
         for (let i in this.importFields) {
           this.hideField(this.importFields[i], true, entity);
+        }
+        for (let i in this.importCSRFields) {
+          this.hideField(this.importCSRFields[i], true, entity);
         }
         for (let i in this.internalFields) {
           this.hideField(this.internalFields[i], false, entity);
@@ -351,6 +371,9 @@ export class CertificateAddComponent {
         for (let i in this.importFields) {
           this.hideField(this.importFields[i], true, entity);
         }
+        for (let i in this.importCSRFields) {
+          this.hideField(this.importCSRFields[i], true, entity);
+        }
         for (let i in this.csrFields) {
           this.hideField(this.csrFields[i], false, entity);
         }
@@ -369,8 +392,24 @@ export class CertificateAddComponent {
         for (let i in this.csrFields) {
           this.hideField(this.csrFields[i], true, entity);
         }
+        for (let i in this.importCSRFields) {
+          this.hideField(this.importCSRFields[i], true, entity);
+        }
         for (let i in this.importFields) {
           this.hideField(this.importFields[i], false, entity);
+        }
+      } else if (res == 'CERTIFICATE_CREATE_IMPORTED_CSR') {
+        for (let i in this.internalFields) {
+          this.hideField(this.internalFields[i], true, entity);
+        }
+        for (let i in this.csrFields) {
+          this.hideField(this.csrFields[i], true, entity);
+        }
+        for (let i in this.importFields) {
+          this.hideField(this.importFields[i], true, entity);
+        }
+        for (let i in this.importCSRFields) {
+          this.hideField(this.importCSRFields[i], false, entity);
         }
       }
     })

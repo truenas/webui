@@ -457,6 +457,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     this.success = false;
     this.clearErrors();
     let value = _.cloneDeep(this.formGroup.value);
+    console.log(value)
     for (const i in value) {
       if (value.hasOwnProperty(i)) {
         if (this.conf['clean_' + i]) {

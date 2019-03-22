@@ -135,6 +135,12 @@ export const helptext_system_certificates = {
       validation: [Validators.required]
     },
 
+    cert_csr: {
+      placeholder: T("Certificate Request"),
+      tooltip: T("Paste the certificate request"),
+      validation: [Validators.required]
+    },
+
     privatekey: {
       placeholder: T("Private Key"),
       tooltip: T(
