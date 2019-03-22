@@ -27,7 +27,8 @@ export const helptext_system_ca = {
     key_type: {
       placeholder: T("Key Type"),
       tooltip: T(
-        'See <a href="https://crypto.stackexchange.com/questions/1190/why-is-elliptic-curve-cryptography-not-widely-used-compared-to-rsa"></a>\
+        'See <a href="https://crypto.stackexchange.com/questions/1190/why-is-elliptic-curve-cryptography-not-widely-used-compared-to-rsa" target="blank">\
+ Why is elliptic curve cryptography not widely used, compared to RSA?</a>\
  for more information about key types.'
       ),
       validation: [Validators.required]
@@ -36,8 +37,9 @@ export const helptext_system_ca = {
     ec_curve: {
       placeholder: T("EC Curve"),
       tooltip: T(
-        'Brainpool* curves can be more secure, while secp* curves can be faster. See\
- <a href="https://tls.mbed.org/kb/cryptography/elliptic-curve-performance-nist-vs-brainpool">\
+        'Brainpool curves can be more secure, while secp curves can be faster. See\
+ <a href="https://tls.mbed.org/kb/cryptography/elliptic-curve-performance-nist-vs-brainpool" target="blank">\
+ Elliptic Curve performance: NIST vs Brainpool\
  </a> for more information.')
     },   
 

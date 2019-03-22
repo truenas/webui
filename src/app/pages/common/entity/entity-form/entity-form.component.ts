@@ -558,7 +558,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   setDisabled(name: string, disable: boolean, hide?: boolean, status?:string) {
-    // if field will be hide, disabled it too
+    // if field is hidden, disable it too
     if (hide) {
       disable = hide;
     } else {
