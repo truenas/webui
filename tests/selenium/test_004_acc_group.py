@@ -12,7 +12,7 @@ from selenium.webdriver.common.by import By
 cwd = str(os.getcwd())
 sys.path.append(cwd)
 from function import take_screenshot, is_element_present
-from source import *
+from source import newgroupname, supergroupname
 
 
 skip_mesages = "Skipping first run"

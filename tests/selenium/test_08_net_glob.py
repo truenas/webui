@@ -1,3 +1,4 @@
+# !/usr/bin/env python
 # Author: Rishabh Chauhan
 # License: BSD
 # Location for tests  of FreeNAS new GUI
@@ -18,7 +19,7 @@ script_name = os.path.basename(__file__).partition('.')[0]
 
 xpaths = {
     'navNetwork': '//*[@id="nav-4"]/div/a[1]',
-    'submenuNetworkconfig' : '//*[@id="4-0"]',
+    'submenuNetworkconfig': '//*[@id="4-0"]',
     'nameserver3': "//div[@id='gc_nameserver3']/mat-form-field/div/div/div/input",
     'buttonSave': '//*[@id="save_button"]'
 }
