@@ -131,11 +131,11 @@ export class JailListComponent implements OnInit {
                 this.snackBar.open(T('Selected jails updated.'), 'close', { duration: 5000 });
               } else {
                 message = '<ul>' + message + '</ul>';
-                this.dialogService.errorReport(T('Update of these jail failed'), message);
+                this.dialogService.errorReport(T('Jail Update Failed'), message);
               }
             },
             (res) => {
-              this.snackBar.open(T('Updating selected jails failed'), 'close', { duration: 5000 });
+              this.snackBar.open(T('Updating selected jails failed.'), 'close', { duration: 5000 });
               new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
             });
       }
