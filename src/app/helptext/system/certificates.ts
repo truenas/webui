@@ -26,20 +26,12 @@ export const helptext_system_certificates = {
 
     key_type: {
       placeholder: T("Key Type"),
-      tooltip: T(
-        'See <a href="https://crypto.stackexchange.com/questions/1190/why-is-elliptic-curve-cryptography-not-widely-used-compared-to-rsa"></a>\
- for more information about key types.'
-      ),
       validation: [Validators.required]
     },
 
     ec_curve: {
-      placeholder: T("EC Curve"),
-      tooltip: T(
-        'Brainpool* curves can be more secure, while secp* curves can be faster. See\
- <a href="https://tls.mbed.org/kb/cryptography/elliptic-curve-performance-nist-vs-brainpool">\
- </a> for more information.')
-    },   
+      placeholder: T("EC Curve")
+    },  
 
     key_length: {
       placeholder: T("Key Length"),

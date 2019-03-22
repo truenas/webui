@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { RestService, SystemGeneralService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
+import { helptext_system_ca } from 'app/helptext/system/ca';
 
 @Component({
   selector : 'system-certificate-add',
@@ -56,7 +57,7 @@ export class CertificateAddComponent {
       type : 'select',
       name : 'key_type',
       placeholder : helptext_system_certificates.add.key_type.placeholder,
-      tooltip: helptext_system_certificates.add.key_type.tooltip,
+      tooltip: helptext_system_ca.add.key_type.tooltip,
       options : [
         {label: 'RSA', value: 'RSA'},
         {label: 'EC', value: 'EC'}
@@ -71,7 +72,7 @@ export class CertificateAddComponent {
       type : 'select',
       name : 'ec_curve',
       placeholder : helptext_system_certificates.add.ec_curve.placeholder,
-      tooltip: helptext_system_certificates.add.ec_curve.tooltip,
+      tooltip: helptext_system_ca.add.ec_curve.tooltip,
       options : [
         {label: 'BrainpoolP512R1', value: 'BrainpoolP512R1'},
         {label: 'BrainpoolP384R1', value: 'BrainpoolP384R1'},
@@ -434,11 +435,14 @@ export class CertificateAddComponent {
   }
 
   beforeSubmit(data: any) {
-    if (data.san == undefined || data.san == '') {
-      data.san = [];
-    } else {
-      data.san = _.split(data.san, /\s/);
-    }
+    if (data.create_type === 'CERTIFICATE_CREATE_INTERNAL' || 
+      data.create_type === 'CERTIFICATE_CREATE_CSR') {
+        if (data.san == undefined || data.san == '') {
+          data.san = [];
+        } else {
+          data.san = _.split(data.san, /\s/);
+        }
+      }
 
     // Addresses non-pristine field being mistaken for a passphrase of ''
     if (data.passphrase == '') {

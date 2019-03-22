@@ -457,7 +457,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     this.success = false;
     this.clearErrors();
     let value = _.cloneDeep(this.formGroup.value);
-    console.log(value)
     for (const i in value) {
       if (value.hasOwnProperty(i)) {
         if (this.conf['clean_' + i]) {
@@ -487,6 +486,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       this.busy = this.submitFunction(value)
                     .subscribe(
                         (res) => {
+                          console.log(value)
+                          console.log('res', res)
                           this.loader.close();
                           if (this.conf.afterSave) {
                             this.conf.afterSave(this);
@@ -559,7 +560,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   setDisabled(name: string, disable: boolean, hide?: boolean, status?:string) {
-    // if field will be hide, disabled it too
+    // if field is hidden, disable it tooo
     if (hide) {
       disable = hide;
     } else {
