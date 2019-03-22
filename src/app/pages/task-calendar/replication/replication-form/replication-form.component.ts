@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
+import { Validators } from '@angular/forms';
 
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/task-calendar/replication';
 import { WebSocketService, TaskService } from 'app/services';
 import * as _ from 'lodash';
+
 
 @Component({
     selector: 'app-replication-list',
@@ -76,6 +78,8 @@ export class ReplicationFormComponent {
                     value: 'LOCAL',
                 }]
             }],
+            required: true,
+            validation: [Validators.required],
         }, {
             type: 'select',
             name: 'netcat_active_side',
@@ -155,11 +159,15 @@ export class ReplicationFormComponent {
             placeholder: helptext.source_datasets_placeholder,
             tooltip: helptext.source_datasets_tooltip,
             options: [],
+            required: true,
+            validation: [Validators.required],
         }, {
             type: 'input',
             name: 'target_dataset',
             placeholder: helptext.target_dataset_placeholder,
             tooltip: helptext.target_dataset_tooltip,
+            required: true,
+            validation: [Validators.required],
         }, {
             type: 'checkbox',
             name: 'recursive',
@@ -620,7 +628,8 @@ export class ReplicationFormComponent {
         this.ws.call('pool.snapshottask.query').subscribe(
             (res) => {
                 for (const i in res) {
-                    periodicSnapshotTasksField.options.push({ label: res[i].dataset + ' - ' + res[i].naming_schema + ' - ' + res[i].lifetime_value + ' ' + res[i].lifetime_unit + '(S)', value: res[i].id });
+                    const label = res[i].dataset + ' - ' + res[i].naming_schema + ' - ' + res[i].lifetime_value + ' ' + res[i].lifetime_unit + '(S) - ' + (res[i].enabled ? 'Enabled' : 'Disabled');
+                    periodicSnapshotTasksField.options.push({ label: label, value: res[i].id});
                 }
             }
         )
@@ -646,6 +655,7 @@ export class ReplicationFormComponent {
         entityForm.formGroup.controls['periodic_snapshot_tasks'].valueChanges.subscribe(
             (res) => {
                 const toDisable = res.length === 0 ? false : true;
+                entityForm.formGroup.controls['schedule'].setValue(!toDisable);
                 entityForm.setDisabled('schedule', toDisable, toDisable);
             }
         )
