@@ -105,6 +105,7 @@ export class CertificateEditComponent {
     }
 
     this.loader.open();
+    console.log(this.editCall, this.pk, payload)
     this.ws.call(this.editCall, [this.pk, payload]).subscribe(
       (res) => {
         this.loader.close();
