@@ -156,16 +156,8 @@ export class InterfacesFormComponent implements OnDestroy {
         name: 'address',
         placeholder: helptext.alias_address_placeholder,
         tooltip: helptext.alias_address_tooltip,
-        type: 'input',
-        validation : [ regexValidator(this.networkService.ipv4_regex) ]
-      },
-      {
-        name: 'netmask',
-        placeholder: helptext.alias_netmaskbit_placeholder,
-        tooltip : helptext.alias_netmaskbit_tooltip,
-        type: 'select',
-        options : this.networkService.getV4Netmasks(),
-        value: '',
+        type: 'ipwithnetmask',
+        validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
       },
       {
         type: 'checkbox',
@@ -182,16 +174,8 @@ export class InterfacesFormComponent implements OnDestroy {
         name: 'address',
         placeholder: helptext.alias_address6_placeholder,
         tooltip: helptext.alias_address6_tooltip,
-        type: 'input',
-        validation : [ regexValidator(this.networkService.ipv6_regex) ]
-      },
-      {
-        name: 'netmask',
-        placeholder: helptext.alias_netmaskbit6_placeholder,
-        tooltip : helptext.alias_netmaskbit6_tooltip,
-        type: 'select',
-        options : this.networkService.getV6PrefixLength(),
-        value: '',
+        type: 'ipwithnetmask',
+        validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
       },
       {
         type: 'checkbox',
@@ -400,10 +384,10 @@ export class InterfacesFormComponent implements OnDestroy {
     let aliases = []
     for (let i = 0; i < data.ipv4_aliases.length; i++) {
       if (!data.ipv4_aliases[i]['delete'] &&
-          !!data.ipv4_aliases[i]['address'] &&
-          !!data.ipv4_aliases[i]['netmask']) {
-        aliases.push({address:data.ipv4_aliases[i]['address'],
-                      netmask:parseInt(data.ipv4_aliases[i]['netmask'],10)});
+          !!data.ipv4_aliases[i]['address']) {
+        let strings = data.ipv4_aliases[i]['address'].split('/');
+        aliases.push({address:strings[0],
+                      netmask:parseInt(strings[1],10)});
       }
     }
     for (let i = 0; i < data.ipv6_aliases.length; i++) {
@@ -424,7 +408,9 @@ export class InterfacesFormComponent implements OnDestroy {
     let aliases = [];
     for (let i = 0; i < data.length; i++) {
       let alias = data[i];
-      aliases.push({address:alias.address, netmask:alias.netmask.toString()});
+      if (alias.netmask) {
+        aliases.push({address:alias.address});
+      }
     }
     return aliases;
   }
@@ -434,6 +420,8 @@ export class InterfacesFormComponent implements OnDestroy {
     const ipv6_aliases = [];
     const aliases = data['aliases'];
     for (let i = 0; i < aliases.length; i++) {
+      aliases[i].address = aliases[i].address + '/' + aliases[i].netmask;
+      console.log(aliases[i]);
       if (aliases[i].type === "INET") {
         ipv4_aliases.push(aliases[i]);
       } else {
