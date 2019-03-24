@@ -1002,6 +1002,9 @@ msgstr ""
 msgid "Automatically reboot the system after the update is applied."
 msgstr ""
 
+msgid "Automatically stop the script or command after the specified seconds."
+msgstr ""
+
 msgid "Auxiliary Arguments"
 msgstr ""
 
