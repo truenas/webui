@@ -5,7 +5,6 @@
 
 import sys
 import os
-import time
 cwd = str(os.getcwd())
 sys.path.append(cwd)
 from function import take_screenshot
@@ -16,7 +15,7 @@ script_name = os.path.basename(__file__).partition('.')[0]
 
 xpaths = {
     'navSystem': '//*[@id="nav-2"]/div/a[1]',
-    'submenuGeneral': '//*[@id="2-0"]',
+    'submenuAlertservices': '//*[@id="2-6"]',
     'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
 }
 
@@ -25,19 +24,15 @@ def test_00_set_implicitly_wait(wb_driver):
     wb_driver.implicitly_wait(1)
 
 
-def test_01_nav_system_general(wb_driver):
-
-    # Navigating to System>General page
-    wb_driver.find_element_by_xpath(xpaths['navSystem']).click()
-    # allowing page to load by giving explicit time(in seconds)
-    time.sleep(1)
-    wb_driver.find_element_by_xpath(xpaths['submenuGeneral']).click()
+def test_01_nav_system_alertservices(wb_driver):
+    wb_driver.find_element_by_xpath(xpaths['submenuAlertservices']).click()
     # get the ui element
     ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
     # get the weather data
     page_data = ui_element.text
+    print("the Page now is: " + page_data)
     # assert response
-    assert "General" in page_data, page_data
+    assert "Alert Services" in page_data, page_data
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
