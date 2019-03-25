@@ -30,7 +30,6 @@ def test_01_nav_system_alertsettings(wb_driver):
     ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
     # get the weather data
     page_data = ui_element.text
-    print("the Page now is: " + page_data)
     # assert response
     assert "Alert Settings" in page_data, page_data
     # taking screenshot

@@ -9,7 +9,6 @@ cwd = str(os.getcwd())
 sys.path.append(cwd)
 from function import take_screenshot
 
-
 skip_mesages = "Skipping first run"
 script_name = os.path.basename(__file__).partition('.')[0]
 
