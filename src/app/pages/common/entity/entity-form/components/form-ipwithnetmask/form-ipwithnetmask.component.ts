@@ -34,7 +34,7 @@ export class FormIpWithNetmaskComponent implements Field, OnInit, OnDestroy {
     this.valueSubscription = this.control.valueChanges.subscribe((res) => {
       this.setAddressAndNetmask(res);
     });
-    if (this.control.value && this.network.ipv4_or_ipv6_cidr.test(this.control.value)) {
+    if (this.control.value) {
       this.setAddressAndNetmask(this.control.value);
     }
   }
@@ -45,17 +45,15 @@ export class FormIpWithNetmaskComponent implements Field, OnInit, OnDestroy {
 
   setAddress($event){
     const address = $event.target.value;
-    if (address.match(this.network.ipv4_or_ipv6_cidr)) {
-      this.setAddressAndNetmask(address);
-    } else {
-      this.address = address;
-    }
+    this.setAddressAndNetmask(address);
+  }
+
+  setNetmaskOptions() {
     if (this.address.indexOf(':') === -1) {
       this.netmaskOptions = this.ipv4netmaskoptions;
     }  else {
       this.netmaskOptions = this.ipv6netmaskoptions;
     }
-    this.setValue();
   }
 
   setNetmask($event){
@@ -69,7 +67,13 @@ export class FormIpWithNetmaskComponent implements Field, OnInit, OnDestroy {
 
   setAddressAndNetmask(value) {
     const strings = value.split('/');
-    this.address = strings[0];
-    this.netmask = strings[1];
+    if (strings.length > 1) {
+      this.address = strings[0];
+      this.netmask = strings[1];
+    } else {
+      this.address = strings[0];
+    }
+    this.setNetmaskOptions();
+    this.setValue();
   }
 }
