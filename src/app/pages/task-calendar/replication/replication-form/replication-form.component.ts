@@ -672,6 +672,7 @@ export class ReplicationFormComponent {
     }
 
     afterInit(entityForm) {
+        this.entityForm = entityForm;
         entityForm.formGroup.controls['periodic_snapshot_tasks'].valueChanges.subscribe(
             (res) => {
                 if (entityForm.formGroup.controls['transport'].value !== 'LEGACY') {
@@ -759,6 +760,23 @@ export class ReplicationFormComponent {
         if (data['logging_level'] === 'DEFAULT') {
             delete data['logging_level'];
         }
+
+        if (this.entityForm.isNew && data["transport"] === "LEGACY") {
+            data["auto"] = true;
+            data["retention_policy"] = "NONE";
+            data["allow_from_scratch"] = true;
+            data["exclude"] = [];
+            data["periodic_snapshot_tasks"] = [];
+            data["naming_schema"] = [];
+            data["also_include_naming_schema"] = [];
+            data["only_matching_schedule"] = false;
+            data["dedup"] = false;
+            data["large_block"] = false;
+            data["embed"] = false;
+            data["compressed"] = false;
+            data["retries"] = 1
+        }
+
     }
 
 }
