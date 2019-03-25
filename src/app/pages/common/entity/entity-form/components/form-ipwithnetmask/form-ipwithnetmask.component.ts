@@ -20,6 +20,7 @@ export class FormIpWithNetmaskComponent implements Field, OnInit, OnDestroy {
   address = '';
   netmask: string;
   netmaskOptions = this.network.getV4Netmasks();
+  value: string;
 
   private ipv6netmaskoptions = this.network.getV6PrefixLength();
   private ipv4netmaskoptions = this.network.getV4Netmasks();
@@ -62,7 +63,11 @@ export class FormIpWithNetmaskComponent implements Field, OnInit, OnDestroy {
   }
 
   setValue() {
-    this.control.setValue(this.address + "/" + this.netmask);
+    const value = this.address + "/" + this.netmask;
+    if (value !== this.value) {
+      this.value = value;
+      this.control.setValue(value);
+    }
   }
 
   setAddressAndNetmask(value) {
