@@ -14,7 +14,8 @@ script_name = os.path.basename(__file__).partition('.')[0]
 
 xpaths = {
     'navTasks': '//*[@id="nav-3"]/div/a[1]',
-    'submenuPeriodicSS': '//*[@id="3-4"]'
+    'submenuPeriodicSS': '//*[@id="3-4"]',
+    'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
 }
 
 
