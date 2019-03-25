@@ -39,7 +39,7 @@ xpaths = {
 def test_00_set_implicitly_wait(wb_driver):
     wb_driver.implicitly_wait(1)
     # Canceling the tour guide if found
-    if is_element_present(xpaths['tourButton']):
+    if is_element_present(wb_driver, xpaths['tourButton']):
         wb_driver.find_element_by_xpath(xpaths['tourButton']).click()
 
 
