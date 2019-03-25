@@ -30,14 +30,14 @@ def test_01_nav_net_vlan(wb_driver):
     # Click on the vlan submenu
     wb_driver.find_element_by_xpath(xpaths['submenuVlan']).click()
     # cancelling the tour
-    if is_element_present(By.XPATH,"/html/body/div[6]/div[1]/button"):
+    if is_element_present(wb_driver, By.XPATH, "/html/body/div[6]/div[1]/button"):
         wb_driver.find_element_by_xpath("/html/body/div[6]/div[1]/button").click()
     # get the ui element
     ui_element = wb_driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li[2]/a")
     # get the weather data
     page_data = ui_element.text
     # assert response
-    assert "VLANs" in page_data, page_data
+    assert "Static Routes" in page_data, page_data
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
