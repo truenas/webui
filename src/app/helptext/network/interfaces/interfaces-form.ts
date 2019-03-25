@@ -25,35 +25,22 @@ int_dhcp_tooltip : T('Set to enable DHCP. Leave unset to create a static\
  IPv4 or IPv6 configuration. Only one interface can\
  be configured for DHCP.'),
 
-int_ipv4address_placeholder : T('IPv4 Address'),
-int_ipv4address_tooltip : T('Enter a static IPv4 address. Example: <i>10.0.0.2</i>.'),
-
-int_v4netmaskbit_placeholder : T('IPv4 Netmask'),
-int_v4netmaskbit_tooltip : T('Enter a netmask.'),
-
 int_ipv6auto_placeholder : T('Auto configure IPv6'),
 int_ipv6auto_tooltip : T('Set to automatically configure the IPv6 address with\
  <a href="https://www.freebsd.org/cgi/man.cgi?query=rtsol"\
  target="_blank">rtsol(8)</a>. Only one interface can\
  be configured this way.'),
 
-int_ipv6address_placeholder : T('IPv6 Address'),
-int_ipv6address_tooltip : T('Enter a static IPv6 address. Example:\
- <i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>.'),
-
-int_v6netmaskbit_placeholder : T('IPv6 Prefix Length'),
-int_v6netmaskbit_tooltip : T('Select the prefix length used on the network.'),
-
 int_options_placeholder : T('Options'),
 int_options_tooltip : T('Enter additional space-delimited parameters from <a\
  href="https://www.freebsd.org/cgi/man.cgi?query=ifconfig"\
  target="_blank">ifconfig(8)</a>.'),
 
-alias_address_placeholder: T('IPv4 Address'),
-alias_address_tooltip: T('Enter a static IPv4 address. Example:\
+alias_address_placeholder: T('IP Address'),
+alias_address_tooltip: T('Enter a static IPv4 or IPv6 address. Example:\
  <i>10.0.0.3</i>.'),
 
-alias_netmaskbit_placeholder: T('IPv4 Netmask'),
+alias_netmaskbit_placeholder: T('Netmask'),
 alias_netmaskbit_tooltip : T('Enter a netmask.'),
 
 delete_placeholder: T('Delete'),

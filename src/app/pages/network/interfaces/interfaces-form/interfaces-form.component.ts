@@ -150,7 +150,7 @@ export class InterfacesFormComponent implements OnDestroy {
     },
     {
       type: 'array',
-      name : 'ipv4_aliases',
+      name : 'aliases',
       initialCount: 1,
       formarray: [{
         name: 'address',
@@ -164,24 +164,6 @@ export class InterfacesFormComponent implements OnDestroy {
         name: 'delete',
         placeholder: helptext.delete_placeholder,
         tooltip: helptext.delete_tooltip,
-      }]
-    },
-    {
-      type: 'array',
-      name : 'ipv6_aliases',
-      initialCount: 1,
-      formarray: [{
-        name: 'address',
-        placeholder: helptext.alias_address6_placeholder,
-        tooltip: helptext.alias_address6_tooltip,
-        type: 'ipwithnetmask',
-        validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
-      },
-      {
-        type: 'checkbox',
-        name: 'delete',
-        placeholder: helptext.delete_placeholder6,
-        tooltip: helptext.delete_tooltip6,
       }]
     },
   ];
@@ -209,12 +191,10 @@ export class InterfacesFormComponent implements OnDestroy {
   private int_interface_warning: string;*/
   private wsint: string;
   private entityForm: any;
-  protected ipv4formArray: FormArray;
-  protected ipv6formArray: FormArray;
-  protected ipv6arrayControl: any;
-  protected ipv4arrayControl: any;
-  protected initialCount = {'ipv4_aliases':1, 'ipv6_aliases': 1};
-  protected initialCount_default = {'ipv4_aliases':1, 'ipv6_aliases': 1};
+  protected ipformArray: FormArray;
+  protected iparrayControl: any;
+  protected initialCount = {'aliases':1};
+  protected initialCount_default = {'aliases':1};
   public confirmSubmit = false;
   public confirmSubmitDialog = {
     title: T("Save Network Interface Changes"),
@@ -224,41 +204,24 @@ export class InterfacesFormComponent implements OnDestroy {
 
   public custActions: Array<any> = [
     {
-      id : 'add_ipv4_alias',
-      name : T('Add Additional IPv4 Alias'),
+      id : 'add_alias',
+      name : T('Add Additional Alias'),
       function : () => {
-        this.initialCount.ipv4_aliases += 1;
+        this.initialCount.aliases += 1;
         this.entityFormService.insertFormArrayGroup(
-            this.initialCount.ipv4_aliases, this.ipv4formArray, this.ipv4arrayControl.formarray);
+            this.initialCount.aliases, this.ipformArray, this.iparrayControl.formarray);
       }
     },
     {
-      id : 'remove_ipv4_alias',
-      name : T('Remove Additional IPv4 Alias'),
+      id : 'remove_alias',
+      name : T('Remove Additional  Alias'),
       function : () => {
-        this.initialCount.ipv4_aliases -= 1;
-        this.entityFormService.removeFormArrayGroup(this.initialCount.ipv4_aliases,
-                                                    this.ipv4formArray);
+        this.initialCount.aliases -= 1;
+        this.entityFormService.removeFormArrayGroup(this.initialCount.aliases,
+                                                    this.ipformArray);
       }
     },
-    {
-      id : 'add_ipv6_alias',
-      name : T('Add Additional IPv6 Alias'),
-      function : () => {
-        this.initialCount.ipv6_aliases += 1;
-        this.entityFormService.insertFormArrayGroup(
-          this.initialCount.ipv6_aliases, this.ipv6formArray, this.ipv6arrayControl.formarray);
-        }
-    },
-    {
-    id : 'remove_ipv6_alias',
-    name : T('Remove Additional IPv6 Alias'),
-    function : () => {
-      this.initialCount.ipv6_aliases -= 1;
-      this.entityFormService.removeFormArrayGroup(this.initialCount.ipv6_aliases,
-                                                  this.ipv6formArray);
-    }
-  }];
+  ];
 
   //int_warning = T("Please configure the Web UI interface (");
   //int_warning_2 = T(") before configuring other interfaces to avoid losing connection to the user interface.");
@@ -269,10 +232,7 @@ export class InterfacesFormComponent implements OnDestroy {
               protected ws: WebSocketService, protected translate: TranslateService) {}
 
   isCustActionVisible(actionId: string) {
-    if (actionId == 'remove_ipv4_alias' && this.initialCount['ipv4_aliases'] <= this.initialCount_default['ipv4_aliases']) {
-      return false;
-    }
-    if (actionId == 'remove_ipv6_alias' && this.initialCount['ipv6_aliases'] <= this.initialCount_default['ipv6_aliases']) {
+    if (actionId == 'remove_alias' && this.initialCount['aliases'] <= this.initialCount_default['aliases']) {
       return false;
     }
     return true;
@@ -298,8 +258,7 @@ export class InterfacesFormComponent implements OnDestroy {
   preInit(entityForm: any) {
     this.entityForm = entityForm;
     this.type = _.find(this.fieldConfig, {'name' : 'type'});
-    this.ipv4arrayControl = _.find(this.fieldConfig, {'name' : 'ipv4_aliases'});
-    this.ipv6arrayControl = _.find(this.fieldConfig, {'name' : 'ipv6_aliases'});
+    this.iparrayControl = _.find(this.fieldConfig, {'name' : 'aliases'});
     this.vlan_pint = _.find(this.fieldConfig, {'name' : 'vlan_parent_interface'});
     this.bridge_members = _.find(this.fieldConfig, {'name' : 'bridge_members'});
     this.lag_ports = _.find(this.fieldConfig, {'name' : 'lag_ports'});
@@ -308,10 +267,8 @@ export class InterfacesFormComponent implements OnDestroy {
         this.type.type = 'select';
       } else {
         this.confirmSubmit = true;
-        this.ipv4arrayControl.initialCount = this.initialCount['ipv4_aliases']
-          = this.initialCount_default['ipv4_aliases'] = 0;
-        this.ipv6arrayControl.initialCount = this.initialCount['ipv6_aliases']
-          = this.initialCount_default['ipv6_aliases'] = 0;
+        this.iparrayControl.initialCount = this.initialCount['ipv4_aliases']
+          = this.initialCount_default['aliases'] = 0;
       }
     });
   }
@@ -376,30 +333,19 @@ export class InterfacesFormComponent implements OnDestroy {
         this.vlan_pcp.options.push({label : item[1], value : item[0]});
       });
     });
-    this.ipv4formArray = entityForm.formGroup.controls['ipv4_aliases'];
-    this.ipv6formArray = entityForm.formGroup.controls['ipv6_aliases'];
+    this.ipformArray = entityForm.formGroup.controls['aliases'];
   }
 
   clean(data) {
     let aliases = []
-    for (let i = 0; i < data.ipv4_aliases.length; i++) {
-      if (!data.ipv4_aliases[i]['delete'] &&
-          !!data.ipv4_aliases[i]['address']) {
-        let strings = data.ipv4_aliases[i]['address'].split('/');
+    for (let i = 0; i < data.aliases.length; i++) {
+      if (!data.aliases[i]['delete'] &&
+          !!data.aliases[i]['address']) {
+        let strings = data.aliases[i]['address'].split('/');
         aliases.push({address:strings[0],
                       netmask:parseInt(strings[1],10)});
       }
     }
-    for (let i = 0; i < data.ipv6_aliases.length; i++) {
-      if (!data.ipv6_aliases[i]['delete'] &&
-          !!data.ipv6_aliases[i]['address'] &&
-          !!data.ipv6_aliases[i]['netmask']) {
-        aliases.push({address:data.ipv6_aliases[i]['address'],
-                      netmask:parseInt(data.ipv6_aliases[i]['netmaskbit'],10)});
-      }
-    }
-    delete data.ipv4_aliases;
-    delete data.ipv6_aliases;
     data.aliases = aliases;
     return data;
   }
@@ -416,20 +362,11 @@ export class InterfacesFormComponent implements OnDestroy {
   }
 
   resourceTransformIncomingRestData(data) {
-    const ipv4_aliases = [];
-    const ipv6_aliases = [];
     const aliases = data['aliases'];
     for (let i = 0; i < aliases.length; i++) {
       aliases[i].address = aliases[i].address + '/' + aliases[i].netmask;
-      console.log(aliases[i]);
-      if (aliases[i].type === "INET") {
-        ipv4_aliases.push(aliases[i]);
-      } else {
-        ipv6_aliases.push(aliases[i]);
-      }
     }
-    data['ipv4_aliases'] = ipv4_aliases;
-    data['ipv6_aliases'] = ipv6_aliases;
+    data['aliases'] = aliases;
 
     const type = data['type'];
     const id = data['id'];
