@@ -24,6 +24,14 @@ export class ReplicationFormComponent {
 
     protected fieldConfig: FieldConfig[] = [
         {
+            type: 'input',
+            name: 'name',
+            placeholder: helptext.name_placeholder,
+            tooltip: helptext.name_tooltip,
+            required: true,
+            validation: [Validators.required]
+        },
+        {
             type: 'select',
             name: 'direction',
             placeholder: helptext.direction_placeholder,

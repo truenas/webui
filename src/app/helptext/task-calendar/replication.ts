@@ -1,6 +1,8 @@
 import { T } from '../../translate-marker';
 
 export default {
+    name_placeholder: T('Name'),
+    name_tooltip: T(''),
 
     direction_placeholder: T('Direction'),
     direction_tooltip: T(''),
