@@ -6,10 +6,9 @@
 import sys
 import os
 import time
-from selenium.webdriver.common.by import By
 cwd = str(os.getcwd())
 sys.path.append(cwd)
-from function import take_screenshot, is_element_present
+from function import take_screenshot
 
 
 skip_mesages = "Skipping first run"
@@ -18,7 +17,8 @@ script_name = os.path.basename(__file__).partition('.')[0]
 xpaths = {
     'navNetwork': '//*[@id="nav-4"]/div/a[1]',
     # this should be the correct ID 'submenuVlan' : '//*[@id="4-4"]'
-    'submenuVlan': '//*[@id="4-5"]'
+    'submenuVlan': '//*[@id="4-5"]',
+    'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
 }
 
 
@@ -27,13 +27,10 @@ def test_00_set_implicitly_wait(wb_driver):
 
 
 def test_01_nav_net_vlan(wb_driver):
-    # Click on the vlan submenu
+    # Click on the vlan sub-menu
     wb_driver.find_element_by_xpath(xpaths['submenuVlan']).click()
-    # cancelling the tour
-    if is_element_present(wb_driver, By.XPATH, "/html/body/div[6]/div[1]/button"):
-        wb_driver.find_element_by_xpath("/html/body/div[6]/div[1]/button").click()
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li[2]/a")
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
     # get the weather data
     page_data = ui_element.text
     # assert response

@@ -8,7 +8,6 @@ import sys
 import os
 import time
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
 cwd = str(os.getcwd())
 sys.path.append(cwd)
 from function import take_screenshot, is_element_present
@@ -19,24 +18,25 @@ skip_mesages = "Skipping first run"
 script_name = os.path.basename(__file__).partition('.')[0]
 
 xpaths = {
-        'navStorage': '//*[@id="nav-5"]/div/a[1]',
-        'submenuPool': '//*[@id="5-0"]',
-        'addAction': '//*[@id="add_action_button"]',
-        'forwardButton': '//*[@id="custom_button"]',
-        'newpoolName': '//*[@id="pool-manager__name-input-field"]',
-        'disk1Checkbox': "//mat-checkbox[@id='pool-manager__disks-ada1']/label/div",
-        'disk2Checkbox': "//mat-checkbox[@id='pool-manager__disks-ada2']/label/div",
-        'disk3Checkbox': "//mat-checkbox[@id='pool-manager__disks-ada3']/label/div",
-        'diskselectedmoveButton': '//*[@id="vdev__add-button"]',
-        'createButton': '//*[@id="pool-manager__create-button"]',
-        # very important and useful
-        # 'confirmCheckbox': '//*[contains(@name, "confirm_checkbox")]',
-        # or
-        'confirmCheckbox': '//*[@id="confirm-dialog__confirm-checkbox"]/label/div',
-        # 'createpoolButton': '//*[contains(text(), "CREATE POOL")]'
-        # or
-        'createpoolButton': '//*[@id="confirm-dialog__action-button"]/span'
-        }
+    'navStorage': '//*[@id="nav-5"]/div/a[1]',
+    'submenuPool': '//*[@id="5-0"]',
+    'addAction': '//*[@id="add_action_button"]',
+    'forwardButton': '//*[@id="custom_button"]',
+    'newpoolName': '//*[@id="pool-manager__name-input-field"]',
+    'disk1Checkbox': "//mat-checkbox[@id='pool-manager__disks-ada1']/label/div",
+    'disk2Checkbox': "//mat-checkbox[@id='pool-manager__disks-ada2']/label/div",
+    'disk3Checkbox': "//mat-checkbox[@id='pool-manager__disks-ada3']/label/div",
+    'diskselectedmoveButton': '//*[@id="vdev__add-button"]',
+    'createButton': '//*[@id="pool-manager__create-button"]',
+    # very important and useful
+    # 'confirmCheckbox': '//*[contains(@name, "confirm_checkbox")]',
+    # or
+    'confirmCheckbox': '//*[@id="confirm-dialog__confirm-checkbox"]/label/div',
+    # 'createpoolButton': '//*[contains(text(), "CREATE POOL")]'
+    # or
+    'createpoolButton': '//*[@id="confirm-dialog__action-button"]/span',
+    'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
+}
 
 
 def test_00_set_implicitly_wait(wb_driver):
@@ -53,7 +53,7 @@ def test_01_nav_store_pool(wb_driver):
     # Click Pool submenu
     wb_driver.find_element_by_xpath(xpaths['submenuPool']).click()
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li[2]/a')
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
     # get the weather data
     page_data = ui_element.text
     # assert response
@@ -64,9 +64,6 @@ def test_01_nav_store_pool(wb_driver):
 
 
 def test_02_create_newpool(wb_driver):
-    # cancelling the tour
-    if is_element_present(wb_driver, By.XPATH, '/html/body/div[6]/div[1]/button'):
-        wb_driver.find_element_by_xpath('/html/body/div[6]/div[1]/button').click()
     time.sleep(1)
     # Click create new pool option
     wb_driver.find_element_by_xpath(xpaths['addAction']).click()
@@ -91,9 +88,6 @@ def test_02_create_newpool(wb_driver):
 
 
 def test_03_create_newpool2(wb_driver):
-    # cancelling the tour
-    if is_element_present(wb_driver, By.XPATH, '/html/body/div[6]/div[1]/button'):
-        wb_driver.find_element_by_xpath('/html/body/div[6]/div[1]/button').click()
     time.sleep(1)
     # Click create new pool option
     wb_driver.find_element_by_xpath(xpaths['addAction']).click()
@@ -129,15 +123,15 @@ def test_04_close_navStorage(wb_driver):
 
 
 def error_check(wb_driver):
-    if is_element_present(wb_driver, By.XPATH, '//*[contains(text(), "Close")]'):
-        if is_element_present(wb_driver, By.XPATH,'/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
+    if is_element_present(wb_driver, '//*[contains(text(), "Close")]'):
+        if is_element_present(wb_driver,'/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
             ui_element = wb_driver.find_element_by_xpath('/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1')
             error_element = ui_element.text
             print(error_element)
         wb_driver.find_element_by_xpath('//*[contains(text(), "Close")]').click()
         print("Duplicate user cannot be created")
-    if is_element_present(wb_driver, By.XPATH, '//*[contains(text(), "Close")]'):
-        if is_element_present(wb_driver, By.XPATH,'/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
+    if is_element_present(wb_driver, '//*[contains(text(), "Close")]'):
+        if is_element_present(wb_driver,'/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
             ui_element = wb_driver.find_element_by_xpath('/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1')
             error_element = ui_element.text
             print(error_element)

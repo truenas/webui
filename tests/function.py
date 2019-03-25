@@ -10,52 +10,47 @@ import time
 cwd = str(os.getcwd())
 
 xpaths = {
-        'navAccount': '//*[@id="nav-1"]/div/a[1]',
-        'submenuUser': '//*[@id="1-1"]',
-        'submenuGroup': '//*[@id="1-0"]',
-        'navPlugins': '//*[@id="nav-9"]/div/a[1]',
-        'submenuAvailable': '//*[@id="9-0"]',
-        'submenuInstalled': '//*[@id="9-1"]',
-        'buttonSave': '//*[contains(text(), "Save")]',
-        'navStorage': '//*[@id="nav-5"]/div/a[1]',
-        'submenuPool': '//*[@id="5-0"]',
-        'poolID': '//*[@id="expansionpanel_zfs_',
-        'submenuDisks': '//*[@id="5-3"]',
-        'poolDetach': '//*[@id="action_button_Detach"]',
-        'pooldestroyCheckbox': '//*[@id="destroy"]/mat-checkbox/label/div',
-        'poolconfirmdestroyCheckbox': '//*[@id="confirm"]/mat-checkbox/label/div',
-        'confirmCheckbox': '//*[@id="confirm-dialog__confirm-checkbox"]/label/div',
-        'confirmsecondaryCheckbox': '//*[@id="confirm-dialog__secondary-checkbox"]/label/div',
-        'deleteButton': '//*[contains(@name, "ok_button")]',
-        'detachButton': '//*[contains(@name, "Detach_button")]',
-        'closeButton': '//*[contains(text(), "Close")]',
-        'turnoffConfirm': '//*[contains(text(), "OK")]'
-        # 'detachButton': '/html/body/div[5]/div[3]/div/mat-dialog-container/app-entity-dialog/div[3]/button[2]'
-        # 'closeButton': '/html/body/div[5]/div[2]/div/mat-dialog-container/info-dialog/div[2]/button'
-        }
+    'navAccount': '//*[@id="nav-1"]/div/a[1]',
+    'submenuUser': '//*[@id="1-1"]',
+    'submenuGroup': '//*[@id="1-0"]',
+    'navPlugins': '//*[@id="nav-9"]/div/a[1]',
+    'submenuAvailable': '//*[@id="9-0"]',
+    'submenuInstalled': '//*[@id="9-1"]',
+    'buttonSave': '//*[contains(text(), "Save")]',
+    'navStorage': '//*[@id="nav-5"]/div/a[1]',
+    'submenuPool': '//*[@id="5-0"]',
+    'poolID': '//*[@id="expansionpanel_zfs_',
+    'submenuDisks': '//*[@id="5-3"]',
+    'poolDetach': '//*[@id="action_button_Detach"]',
+    'pooldestroyCheckbox': '//*[@id="destroy"]/mat-checkbox/label/div',
+    'poolconfirmdestroyCheckbox': '//*[@id="confirm"]/mat-checkbox/label/div',
+    'confirmCheckbox': '//*[@id="confirm-dialog__confirm-checkbox"]/label/div',
+    'confirmsecondaryCheckbox': '//*[@id="confirm-dialog__secondary-checkbox"]/label/div',
+    'deleteButton': '//*[contains(@name, "ok_button")]',
+    'detachButton': '//*[contains(@name, "Detach_button")]',
+    'closeButton': '//*[contains(text(), "Close")]',
+    'turnoffConfirm': '//*[contains(text(), "OK")]'
+    # 'detachButton': '/html/body/div[5]/div[3]/div/mat-dialog-container/app-entity-dialog/div[3]/button[2]'
+    # 'closeButton': '/html/body/div[5]/div[2]/div/mat-dialog-container/info-dialog/div[2]/button'
+}
 
 service_dict = {
-        '1': '//*[@id="slide-toggle__AFP"]',
-        '2': '//*[@id="slide-toggle__Domain Controller"]',
-        '3': '//*[@id="slide-toggle__Dynamic DNS"]',
-        '4': '//*[@id="slide-toggle__FTP"]',
-        '5': '//*[@id="slide-toggle__iSCSI"]',
-        '6': '//*[@id="slide-toggle__LLDP"]',
-        '12': '//*[@id="slide-toggle__SMB"]',
-        '14': '//*[@id="slide-toggle__SSH"]',
-        '17': '//*[@id="slide-toggle__WebDAV"]'
+    '1': '//*[@id="slide-toggle__AFP"]',
+    '2': '//*[@id="slide-toggle__Domain Controller"]',
+    '3': '//*[@id="slide-toggle__Dynamic DNS"]',
+    '4': '//*[@id="slide-toggle__FTP"]',
+    '5': '//*[@id="slide-toggle__iSCSI"]',
+    '6': '//*[@id="slide-toggle__LLDP"]',
+    '12': '//*[@id="slide-toggle__SMB"]',
+    '14': '//*[@id="slide-toggle__SSH"]',
+    '17': '//*[@id="slide-toggle__WebDAV"]'
 }
 
 
 # method to test if an element is present
-def is_element_present(driver, how, what):
-    """
-    Helper method to confirm the presence of an element on page
-    :params how: By locator type
-    :params what: locator value
-    """
+def is_element_present(driver, xpath):
     try:
-        driver.find_element(by=how, value=what)
+        driver.find_element(by=By.XPATH, value=xpath)
     except NoSuchElementException:
         return False
     return True

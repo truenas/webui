@@ -8,7 +8,6 @@ import sys
 import os
 import time
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
 cwd = str(os.getcwd())
 sys.path.append(cwd)
 from function import take_screenshot, is_element_present
@@ -20,14 +19,15 @@ script_name = os.path.basename(__file__).partition('.')[0]
 
 
 xpaths = {
-          'navAccount': "//span[contains(.,'Accounts')]",
-          'submenuGroup': '//*[@id="1-0"]',
-          'newGroupName': "//div[@id='bsdgrp_group']/mat-form-field/div/div/div/input",
-          'fabTrigger': '//*[@id="myFab"]/div/smd-fab-trigger/button',
-          'fabAction': '//*[@id="add_action_button"]',
-          'saveButton': '//*[@id="save_button"]',
-          'permitsudoCheckbox': '//*[@id="bsdgrp_sudo"]/mat-checkbox/label/div'
-        }
+    'navAccount': "//span[contains(.,'Accounts')]",
+    'submenuGroup': '//*[@id="1-0"]',
+    'newGroupName': "//div[@id='bsdgrp_group']/mat-form-field/div/div/div/input",
+    'fabTrigger': '//*[@id="myFab"]/div/smd-fab-trigger/button',
+    'fabAction': '//*[@id="add_action_button"]',
+    'saveButton': '//*[@id="save_button"]',
+    'permitsudoCheckbox': '//*[@id="bsdgrp_sudo"]/mat-checkbox/label/div',
+    'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
+}
 
 
 def test_00_set_implicitly_wait(wb_driver):
@@ -44,7 +44,7 @@ def test_01_nav_acc_group(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['submenuGroup']).click()
     time.sleep(2)
     # get the ui element
-    ui_element1 = wb_driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li[2]/a')
+    ui_element1 = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
     # get the weather data
     page_data = ui_element1.text
     # assert response
@@ -74,7 +74,7 @@ def test_02_create_newgroup(wb_driver):
 
 def test_03_create_supergroup(wb_driver):
     time.sleep(1)
-    # Click Group submenu
+    # Click Group sub-menu
     wb_driver.find_element_by_xpath(xpaths['submenuGroup']).click()
     time.sleep(1)
     # Click create new group option
@@ -82,7 +82,7 @@ def test_03_create_supergroup(wb_driver):
     # Enter New Groupname
     time.sleep(1)
     wb_driver.find_element_by_xpath(xpaths['newGroupName']).send_keys(supergroupname)
-    # Check Permit Sudo  checkbox
+    # Check Permit sudo  checkbox
     wb_driver.find_element_by_xpath(xpaths['permitsudoCheckbox']).click()
     # Click on save new Group button
     wb_driver.find_element_by_xpath(xpaths['saveButton']).click()
@@ -124,15 +124,15 @@ def test_05_close_navAccount(wb_driver):
 
 
 def error_check(wb_driver):
-    if is_element_present(wb_driver, By.XPATH, '//*[contains(text(), "Close")]'):
-        if is_element_present(wb_driver, By.XPATH, '/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
+    if is_element_present(wb_driver, '//*[contains(text(), "Close")]'):
+        if is_element_present(wb_driver, '/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
             ui_element = wb_driver.find_element_by_xpath('/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1')
             error_element = ui_element.text
             print(error_element)
         wb_driver.find_element_by_xpath('//*[contains(text(), "Close")]').click()
         print("Duplicate user cannot be created")
-    if is_element_present(wb_driver, By.XPATH, '//*[contains(text(), "Close")]'):
-        if is_element_present(wb_driver, By.XPATH, '/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
+    if is_element_present(wb_driver, '//*[contains(text(), "Close")]'):
+        if is_element_present(wb_driver, '/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
             ui_element = wb_driver.find_element_by_xpath('/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1')
             error_element = ui_element.text
             print(error_element)
