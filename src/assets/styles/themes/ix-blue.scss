@@ -302,34 +302,33 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(color, --fg2, $fg2, !important);
   }
 
-//  .mat-form-field-underline{
-//    @include variable(background-color, --fg2, $fg2);
-//  }
-
-  .mat-form-field-underline{
+  .mat-form-field-underline {
     @include variable(background-color, --fg2, $fg2, !important);
     opacity:0.35;
   }
 
-  .mat-warn .mat-form-field-underline,
-  .mat-focused .mat-form-field-underline{
+  .mat-warn .mat-form-field-underline {
     opacity:0.85;
   }
 
-#test-alert {
-  @include variable(color, --fg2, $fg2);
-}
+  .mat-form-field.mat-focused .mat-form-field-ripple {
+    @include variable(background-color, --primary, $primary, !important);
+  }
 
-.mat-form-field-ripple{
-  @include variable(background-color, --primary, $primary);
-}
+  #test-alert {
+    @include variable(color, --fg2, $fg2);
+  }
+
+  .mat-form-field-ripple{
+    @include variable(background-color, --primary, $primary);
+  }
 
   .mat-color-primary, 
   .mat-button.mat-primary,
   .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > a > span, 
   .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a,
-  .mat-form-field.mat-focused.mat-primary
-  .mat-focused .mat-form-field-label{
+  .mat-form-field.mat-focused.mat-primary, 
+  .mat-focused .mat-form-field-label {
     @include variable(color, --primary, $primary, !important);
   }
 
@@ -347,6 +346,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   .mat-form-field-ripple{
     @include variable(background-color, --primary, $primary);
+  }
+
+  .mat-input-element {
+    @include variable(caret-color, --primary, $primary, !important);
   }
 
   .mat-input-element:disabled{
