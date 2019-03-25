@@ -15,7 +15,7 @@ skip_mesages = "Skipping first run"
 script_name = os.path.basename(__file__).partition('.')[0]
 
 xpaths = {
-    'outgoingMail': '//*[@id="em_outgoingserver"]/mat-input-container/div/div[1]/div/input',
+    'outgoingMail': "//div[@id='em_outgoingserver']/mat-form-field/div/div/div/input",
     'navSystem': '//*[@id="nav-2"]/div/a[1]',
     'submenuEmail': '//*[@id="2-4"]',
     'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
