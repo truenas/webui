@@ -14,6 +14,7 @@ export class ReplicationListComponent {
     protected route_success: string[] = ['tasks', 'replication'];
 
     public columns: Array<any> = [
+        { name: 'Name', prop: 'name' },
         { name: 'Direction', prop: 'direction' },
         { name: 'Transport', prop: 'transport' },
         { name: 'SSH Connection', prop: 'ssh_connection' },
@@ -24,14 +25,14 @@ export class ReplicationListComponent {
         { name: 'Logging Level', prop: 'logging_level' },
         { name: 'Enabled', prop: 'enabled' },
         { name: 'State', prop: 'task_state' },
-        { name: 'Last Snapshot', prop: 'name' },
+        { name: 'Last Snapshot', prop: 'task_last_snapshot' },
     ];
     public config: any = {
         paging: true,
         sorting: { columns: this.columns },
         deleteMsg: {
-            title: 'SSH Keypairs',
-            key_props: ['source_datasets', 'ssh_connection', 'target_dataset']
+            title: 'Replication Task',
+            key_props: ['name']
         },
     };
 
@@ -40,6 +41,7 @@ export class ReplicationListComponent {
     dataHandler(entityList) {
         for (let i = 0; i < entityList.rows.length; i++) {
             entityList.rows[i].task_state = entityList.rows[i].state.state;
+            entityList.rows[i].task_last_snapshot = entityList.rows[i].state.last_snapshot;
             entityList.rows[i].ssh_connection = entityList.rows[i].ssh_credentials ? entityList.rows[i].ssh_credentials.name : '-';
         }
     }
