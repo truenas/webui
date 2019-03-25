@@ -553,6 +553,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     opacity:0.38;
     @include variable(color, --fg2, $fg2);
   }
+  
+  .mat-input-element {
+    @include variable(caret-color, --primary, $primary);
+  }
 
   .mat-calendar-table,
   .mat-calendar-body-cell-content,
