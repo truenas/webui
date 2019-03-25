@@ -42,26 +42,18 @@ export class InterfacesListComponent {
   constructor(_rest: RestService, private router: Router, private networkService: NetworkService,
               private snackBar: MatSnackBar) {}
 
-  /*rowValue(row, attr) {
-    if (attr == 'ipv4_addresses' || attr == 'ipv6_addresses') {
-      return row[attr].join(', ');
-    }
-    return row[attr];
-  }*/
-
   dataHandler(res) {
     const rows = res.rows;
     for (let i=0; i<rows.length; i++) {
       rows[i]['link_state'] = rows[i]['state']['link_state'];
       const addresses = [];
-      for (let j=0; j<rows[i]['state']['aliases'].length; j++) {
-        const alias = rows[i]['state']['aliases'][j];
+      for (let j=0; j<rows[i]['aliases'].length; j++) {
+        const alias = rows[i]['aliases'][j];
         if (alias.type.startsWith('INET')) {
           addresses.push(alias.address);
         }
       }
       rows[i]['addresses'] = addresses.join(', ');
-      console.log(rows[i])
       rows[i].details = []
       if (rows[i].type === "PHYSICAL") {
         rows[i].details.push({label: T("Active Media Type"), value:rows[i]["state"]["active_media_type"]},
@@ -76,6 +68,7 @@ export class InterfacesListComponent {
                              {label:T("Lagg Protocol"), value:rows[i]["lag_protocol"]});
       }
       rows[i].details.push({label:T("IP Addresses"), value:rows[i]['addresses']});
+      rows[i].details.push({label:T("MAC Address"), value:rows[i]['state']['link_address']});
     }
 
   }
