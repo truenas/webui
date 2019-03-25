@@ -48,8 +48,6 @@ export class AdvancedComponent implements OnDestroy {
         }
         this.dialog.confirm(helptext_system_advanced.dialog_generate_debug_title, helptext_system_advanced.dialog_generate_debug_message, true, helptext_system_advanced.dialog_button_ok).subscribe((ires) => {
           if (ires) {
-            // this.load.open();
-            // this.showProgress();
             this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Save Debug") }, disableClose: true });
             this.dialogRef.componentInstance.setCall('system.debug', []);
             this.dialogRef.componentInstance.submit();
@@ -70,43 +68,24 @@ export class AdvancedComponent implements OnDestroy {
                   }
                 );
               }
-
-
-            });
-            this.ws.job('system.debug').subscribe((system_debug) => {
-              this.load.close();
-              if (system_debug.state === "SUCCESS") {
-                this.ws.call('core.download', ['filesystem.get', [system_debug.result], fileName]).subscribe(
-                  (system_debug_result) => {
-                    if (window.navigator.userAgent.search("Firefox")>0) {
-                      window.open(system_debug_result[1]);
-                  }
-                    else {
-                      window.location.href = system_debug_result[1];
-                    }
-                  },
-                  (err) => {
-                    this.openSnackBar(helptext_system_advanced.snackbar_generate_debug_message_failure, helptext_system_advanced.snackbar_generate_debug_action);
-                  }
-                );
-              }
-            }
-            , () => {
-              this.load.close();
-            }, () => {
-              this.load.close();
+            }),
+            () => {
+              this.dialogRef.close();
+            }, 
+            () => {
+              this.dialogRef.close();
               if (this.job.state === 'SUCCESS') {} else if (this.job.state === 'FAILED') {
                 this.openSnackBar(helptext_system_advanced.snackbar_network_error_message, helptext_system_advanced.snackbar_network_error_action);
+              } else {
+                console.log("User canceled");
               }
-            });
-          } else {
-            console.log("User canceled");
+            }
           }
-        });
-      });
-    }
-  }
-];
+        })
+      })
+    } 
+  }]
+
 
   public fieldConfig: FieldConfig[] = [{
     type: 'checkbox',
