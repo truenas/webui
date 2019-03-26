@@ -80,12 +80,12 @@ def status_change(driver, which, to):
     print("executing the status change function with input " + str(which) + " + " + str(to))
     # get the ui element
     toggle_status = driver.find_element_by_xpath(service_dict[which])
-
+    status_data = toggle_status.get_attribute("class")
     # get the status data
     if to == "start":
         if status_data == "STOPPED":
             # Click on the toggle button
-            buttonToggle.click()
+            toggle_status.click()
             time.sleep(1)
             print("status has now changed to running")
         else:
@@ -93,10 +93,10 @@ def status_change(driver, which, to):
     elif to == "stop":
         if status_data == "RUNNING":
             # Click on the toggle button
-            buttonToggle.click()
+            toggle_status.click()
             time.sleep(1)
             # re-confirming if the turning off the service
-            if self.is_element_present(By.XPATH,xpaths['turnoffConfirm']):
+            if is_element_present(driver, xpaths['turnoffConfirm']):
                 driver.find_element_by_xpath(xpaths['turnoffConfirm']).click()
         else:
             print("the status is already" + status_data)
@@ -239,32 +239,6 @@ def user_delete_old(driver, self, type, name):
             time.sleep(20)
     else:
         print("username/groupname- " + name + " does not exists..skipping")
-
-
-def pool_detach(driver, self, name):
-    # path plugs in the xpath of user or group , submenu{User/Group}
-    # num specifies the column of the 3 dots which is different in user/group
-    # delNum speifies the option number where del is after clicking on the 3 dots
-
-    # Click Pool submenu
-    driver.find_element_by_xpath(xpaths['submenuPool']).click()
-    # wait till the list is loaded
-    driver.find_element_by_xpath(xpaths['poolID'] + name + '"]').click()
-    time.sleep(1)
-    driver.find_element_by_xpath(xpaths['poolID'] + name + '"]/div/div/div[1]/div/app-entity-table-actions/div/mat-icon').click()
-    driver.find_element_by_xpath(xpaths['poolDetach']).click()
-    driver.find_element_by_xpath(xpaths['pooldestroyCheckbox']).click()
-    driver.find_element_by_xpath(xpaths['poolconfirmdestroyCheckbox']).click()
-    time.sleep(3)
-    print("clicking on detach")
-    if driver.find_element_by_xpath(xpaths['detachButton']):
-        print("detach button found")
-        driver.find_element_by_xpath(xpaths['detachButton']).click()
-        print(" clicked on detach")
-    time.sleep(32)
-    print("clicking on close")
-    driver.find_element_by_xpath(xpaths['closeButton']).click()
-    print("already clicked on detach")
 
 
 def plugin_install(driver, self, action, name):

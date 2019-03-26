@@ -3,156 +3,108 @@
 # Location for tests  of FreeNAS new GUI
 # Test case count: 10
 
-import function
-from source import *
-from selenium.webdriver.common.keys import Keys
-from selenium import webdriver
-from selenium.webdriver.support.ui import Select
-from selenium.webdriver.common.by import By
-from selenium.common.exceptions import ElementNotVisibleException
-from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.action_chains import ActionChains
-
-#error handling/screenshotsave
 import sys
-import traceback
 import os
-cwd = str(os.getcwd())
-
 import time
-import unittest
-import xmlrunner
-import random
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
+cwd = str(os.getcwd())
+sys.path.append(cwd)
+from function import take_screenshot, pool1, pool2
+
+skip_mesages = "Skipping first run"
+script_name = os.path.basename(__file__).partition('.')[0]
 
 
 xpaths = {
-        'navStorage' : '//*[@id="nav-5"]/div/a[1]',
-        'submenuPool' : '//*[@id="5-0"]',
-        'submenuDisks' : '//*[@id="5-3"]',
-        'confirmCheckbox': '//*[contains(@name, "confirm_checkbox")]',
-        'deleteButton': '//*[contains(@name, "ok_button")]'
-        }
-
-class delete_pool_test(unittest.TestCase):
-    @classmethod
-    def setUpClass(inst):
-        driver.implicitly_wait(30)
-        pass
-
-    # Test navigation Account>Users>Hover>New User and enter username,fullname,password,confirmation and wait till user is  visibile in the list
-    def test_00_nav_store_pool(self):
-        try:
-            # Click  Storage menu
-            print (" navigating to the Pool submenu")
-            # allowing the button to load
-            time.sleep(1)
-            # Click Storage menu
-            driver.find_element_by_xpath(xpaths['navStorage']).click()
-            # Click Pool submenu
-            driver.find_element_by_xpath(xpaths['submenuPool']).click()
-            # get the ui element
-            ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li[2]/a')
-            # get the weather data
-            page_data=ui_element.text
-            print ("the Page now is: " + page_data)
-            # assert response
-            self.assertTrue("Pools" in page_data)
-            #taking screenshot
-            function.screenshot(driver, self)
-        except Exception:
-            exc_info_p = traceback.format_exception(*sys.exc_info())
-            #taking screenshot
-            function.screenshot(driver, self)
-            for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i].rstrip())
-            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
-
-    def test_01_delete_pool1(self):
-        try:
-            print (" deleting a pool: " + pool1)
-            time.sleep(2)
-            function.pool_detach(driver, self, pool1)
-            #taking screenshot
-            function.screenshot(driver, self)
-        except Exception:
-            exc_info_p = traceback.format_exception(*sys.exc_info())
-            #taking screenshot
-            function.screenshot(driver, self)
-            for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i].rstrip())
-            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
-            #temporary
-            driver.refresh()
-
-    def test_02_delete_pool2(self):
-        try:
-            print (" deleting a pool: " + pool2)
-            time.sleep(2)
-            function.pool_detach(driver, self, pool2)
-            #taking screenshot
-            function.screenshot(driver, self)
-        except Exception:
-            exc_info_p = traceback.format_exception(*sys.exc_info())
-            #taking screenshot
-            function.screenshot(driver, self)
-            for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i].rstrip())
-            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
-            #temporary
-            driver.refresh()
-
-    def test_03_close_navStorage(self):
-        try:
-            print (" closing Storage menu")
-            driver.find_element_by_xpath(xpaths['navStorage']).click()
-            function.screenshot(driver, self)
-            time.sleep(20)
-        except Exception:
-            exc_info_p = traceback.format_exception(*sys.exc_info())
-            function.screenshot(driver, self)
-            for i in range(1,len(exc_info_p)):
-                print (exc_info_p[i].rstrip())
-            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+    'navStorage': '//*[@id="nav-5"]/div/a[1]',
+    'submenuPool': '//*[@id="5-0"]',
+    'submenuDisks': '//*[@id="5-3"]',
+    'confirmCheckbox': '//*[contains(@name, "confirm_checkbox")]',
+    'deleteButton': '//*[contains(@name, "ok_button")]',
+    'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a",
+    'poolID': '//*[@id="expansionpanel_zfs_',
+    'poolDetach': '//*[@id="action_button_Detach"]',
+    'pooldestroyCheckbox': '//*[@id="destroy"]/mat-checkbox/label/div',
+    'poolconfirmCheckbox': '//*[@id="confirm"]/mat-checkbox/label/div',
+    'detachButton': '//*[contains(@name, "Detach_button")]',
+    'closeButton': '//*[contains(text(), "Close")]',
+}
 
 
+def test_00_set_implicitly_wait(wb_driver):
+    wb_driver.implicitly_wait(1)
 
 
-
-    # Next step-- To check if the new user is present in the list via automation
-
-
-    # method to test if an element is present
-    def is_element_present(self, how, what):
-        """
-        Helper method to confirm the presence of an element on page
-        :params how: By locator type
-        :params what: locator value
-        """
-        try: driver.find_element(by=how, value=what)
-        except NoSuchElementException: return False
-        return True
-
-    def error_check(self):
-        if self.is_element_present(By.XPATH,'/html/body/div[3]/div/div[2]/md-dialog-container/error-dialog/div[1]/p'):
-            ui_element=driver.find_element_by_xpath('/html/body/div[3]/div/div[2]/md-dialog-container/error-dialog/div[1]/p')
-            error_element=ui_element.text
-            print (error_element)
-            driver.find_element_by_xpath('/html/body/div[3]/div/div[2]/md-dialog-container/error-dialog/div[2]/button').click()
+def test_01_nav_store_pool(wb_driver):
+    # Click  Storage menu
+    print(" navigating to the Pool submenu")
+    # allowing the button to load
+    time.sleep(1)
+    # Click Storage menu
+    wb_driver.find_element_by_xpath(xpaths['navStorage']).click()
+    # Click Pool submenu
+    wb_driver.find_element_by_xpath(xpaths['submenuPool']).click()
+    # get the ui element
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
+    # get the weather data
+    page_data = ui_element.text
+    print("the Page now is: " + page_data)
+    # assert response
+    assert "Pools" in page_data, page_data
+    # taking screenshot
+    test_name = sys._getframe().f_code.co_name
+    take_screenshot(wb_driver, script_name, test_name)
 
 
+def test_02_delete_pool1(wb_driver):
+    print(" deleting a pool: " + pool1)
+    time.sleep(2)
+    pool_detach(wb_driver, pool1)
+    # taking screenshot
+    test_name = sys._getframe().f_code.co_name
+    take_screenshot(wb_driver, script_name, test_name)
 
-    @classmethod
-    def tearDownClass(inst):
-        pass
 
-def run_delete_pool_test(webdriver):
-    global driver
-    driver = webdriver
-    suite = unittest.TestLoader().loadTestsFromTestCase(delete_pool_test)
-    xmlrunner.XMLTestRunner(output=results_xml, verbosity=2).run(suite)
+def test_03_delete_pool2(wb_driver):
+    print(" deleting a pool: " + pool2)
+    time.sleep(2)
+    pool_detach(wb_driver, pool2)
+    # taking screenshot
+    test_name = sys._getframe().f_code.co_name
+    take_screenshot(wb_driver, script_name, test_name)
+
+
+def test_04_close_navStorage(wb_driver):
+    print(" closing Storage menu")
+    wb_driver.find_element_by_xpath(xpaths['navStorage']).click()
+    test_name = sys._getframe().f_code.co_name
+    take_screenshot(wb_driver, script_name, test_name)
+    time.sleep(20)
+
+
+def pool_detach(wb_driver, name):
+    # path plugs in the xpath of user or group , sub-menu{User/Group}
+    # num specifies the column of the 3 dots which is different in user/group
+    # delNum specifies the option number where delete is after clicking on
+    # the 3 dots
+
+    # Click Pool submenu
+    wb_driver.find_element_by_xpath(xpaths['submenuPool']).click()
+    # wait till the list is loaded
+    wb_driver.find_element_by_xpath(xpaths['poolID'] + name + '"]').click()
+    time.sleep(1)
+    xpath = '"]/div/div/div[1]/div/app-entity-table-actions/div/mat-icon'
+    pool_xpath = xpaths['poolID'] + name + xpath
+    wb_driver.find_element_by_xpath(pool_xpath).click()
+    wb_driver.find_element_by_xpath(xpaths['poolDetach']).click()
+    wb_driver.find_element_by_xpath(xpaths['pooldestroyCheckbox']).click()
+    wb_driver.find_element_by_xpath(xpaths['poolconfirmdCheckbox']).click()
+    time.sleep(3)
+    print("clicking on detach")
+    if wb_driver.find_element_by_xpath(xpaths['detachButton']):
+        print("detach button found")
+        wb_driver.find_element_by_xpath(xpaths['detachButton']).click()
+        print(" clicked on detach")
+    time.sleep(32)
+    print("clicking on close")
+    wb_driver.find_element_by_xpath(xpaths['closeButton']).click()
+    print("already clicked on detach")
