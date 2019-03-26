@@ -780,11 +780,16 @@ export class ReplicationFormComponent {
             data["compressed"] = false;
             data["retries"] = 1
         }
-
-        if (!this.entityForm.isNew && data["transport"] === "LOCAL") {
-            data['ssh_credentials'] = null;
+        // for edit replication task
+        if (!this.entityForm.isNew) {
+            if (data["transport"] === "LOCAL") {
+                data['ssh_credentials'] = null;
+            }
+            // removed schedule if selected period snapshot task
+            if (this.entityForm.formGroup.controls['schedule'].disabled && this.entityForm.wsResponse['schedule']) {
+                data['schedule'] = null;
+            }
         }
-
     }
 
 }
