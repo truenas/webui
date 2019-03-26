@@ -678,14 +678,18 @@ export class ReplicationFormComponent {
                 if (entityForm.formGroup.controls['transport'].value !== 'LEGACY') {
                     const toDisable = (res && res.length === 0) ? false : true;
                     entityForm.setDisabled('schedule', toDisable, toDisable);
-                    if (entityForm.formGroup.controls['schedule'].value) {
-                        entityForm.setDisabled('schedule_picker', toDisable, toDisable);
-                        entityForm.setDisabled('schedule_begin', toDisable, toDisable);
-                        entityForm.setDisabled('schedule_end', toDisable, toDisable);
-                    }
                 }
             }
         )
+
+        entityForm.formGroup.controls['schedule'].statusChanges.subscribe((res) => {
+            const toDisable = res === 'DISABLED' ? true : false;
+            if (entityForm.formGroup.controls['schedule'].value) {
+                entityForm.setDisabled('schedule_picker', toDisable, toDisable);
+                entityForm.setDisabled('schedule_begin', toDisable, toDisable);
+                entityForm.setDisabled('schedule_end', toDisable, toDisable);
+            }
+        })
     }
 
     resourceTransformIncomingRestData(wsResponse) {
@@ -761,7 +765,7 @@ export class ReplicationFormComponent {
             delete data['logging_level'];
         }
 
-        if (this.entityForm.isNew && data["transport"] === "LEGACY") {
+        if (data["transport"] === "LEGACY") {
             data["auto"] = true;
             data["retention_policy"] = "NONE";
             data["allow_from_scratch"] = true;
@@ -775,6 +779,10 @@ export class ReplicationFormComponent {
             data["embed"] = false;
             data["compressed"] = false;
             data["retries"] = 1
+        }
+
+        if (!this.entityForm.isNew && data["transport"] === "LOCAL") {
+            data['ssh_credentials'] = null;
         }
 
     }
