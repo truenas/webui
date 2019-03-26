@@ -68,11 +68,11 @@ failover_group_tooltip: T(''),
 failover_vhid_placeholder: T('Failover VHID'),
 failover_vhid_tooltip: T(''),
 
-failover_aliases_placeholder: T('Failover Aliases'),
-failover_aliases_tooltip: T(''),
+failover_alias_address_placeholder: T('Failover Alias'),
+failover_alias_address_tooltip: T(''),
 
-failover_virtual_aliases_placeholder: T('Failover Virtual Aliases'),
-failover_virtual_aliases_tooltip: T(''),
+failover_virtual_alias_address_placeholder: T('Failover Virtual Alias'),
+failover_virtual_alias_address_tooltip: T(''),
 
 vlan_pint_placeholder: T('Parent Interface'),
 vlan_pint_tooltip: T('Select the VLAN Parent Interface. Usually an Ethernet\
