@@ -277,7 +277,7 @@ export class InterfacesFormComponent implements OnDestroy {
     },
     {
       id : 'add_failover_alias',
-      name : T('Add Additional Alias'),
+      name : T('Add Additional Failover Alias'),
       function : () => {
         this.initialCount.failover_aliases += 1;
         this.entityFormService.insertFormArrayGroup(
