@@ -30,8 +30,6 @@ xpaths = {
     'detachButton': '//*[contains(@name, "Detach_button")]',
     'closeButton': '//*[contains(text(), "Close")]',
     'turnoffConfirm': '//*[contains(text(), "OK")]'
-    # 'detachButton': '/html/body/div[5]/div[3]/div/mat-dialog-container/app-entity-dialog/div[3]/button[2]'
-    # 'closeButton': '/html/body/div[5]/div[2]/div/mat-dialog-container/info-dialog/div[2]/button'
 }
 
 service_dict = {
@@ -77,7 +75,6 @@ def status_check(driver, which):
 
 
 def status_change(driver, which, to):
-    print("executing the status change function with input " + str(which) + " + " + str(to))
     # get the ui element
     toggle_status = driver.find_element_by_xpath(service_dict[which])
     status_data = toggle_status.get_attribute("class")
@@ -103,10 +100,11 @@ def status_change(driver, which, to):
 
 
 def user_edit_old(driver, type, name):
-    # the convention is set in such a way tha a single funtion can cleanup both type:user/group, name:name of the group or user
-    # path plugs in the xpath of user or group , submenu{User/Group}
-    # num specifies the column of the 3 dots which is different in user/group
-    # delNum speifies the option number where edit is after clicking on the 3 dots
+    # the convention is set in such a way that a single function can cleanup
+    # both type:user/group, name:name of the group or user path plugs in the
+    # xpath of user or group , sub-menu{User/Group} num specifies the column of
+    # the 3 dots which is different in user/group delNum specifies the option
+    # number where edit is after clicking on the 3 dots
     if (type == "user"):
         num = 2
         edNum = 6
@@ -118,7 +116,7 @@ def user_edit_old(driver, type, name):
         path = "Group"
         # ED = "5"
 
-    # Click User submenu
+    # Click User sub-menu
     driver.find_element_by_xpath(xpaths['submenu' + path]).click()
     # wait till the list is loaded
     time.sleep(2)
@@ -126,7 +124,7 @@ def user_edit_old(driver, type, name):
     ui_text = "null"
     for x in range(0, 10):
         if self.is_element_present(By.XPATH, '//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div'):
-            ui_element=driver.find_element_by_xpath('//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div')
+            ui_element = driver.find_element_by_xpath('//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div')
             ui_text = ui_element.text
             print(ui_text)
         if (ui_text == name):
