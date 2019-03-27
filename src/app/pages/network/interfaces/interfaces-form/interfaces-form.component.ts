@@ -25,7 +25,7 @@ export class InterfacesFormComponent implements OnDestroy {
   protected queryKey = 'id';
   protected route_success: string[] = [ 'network', 'interfaces' ];
   protected isEntity = true;
-  protected is_freenas = true;
+  protected is_ha = false;
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -288,19 +288,22 @@ export class InterfacesFormComponent implements OnDestroy {
 
   preInit(entityForm: any) {
     if (window.localStorage.getItem('is_freenas') === 'false') {
-      this.is_freenas = false;
+      this.ws.call('failover.licensed').subscribe((is_ha) => {
+        this.is_ha = is_ha;
+        if (this.is_ha) {
+          const failover_virtual_address = _.find(this.iparrayControl.formarray, {"name":"failover_virtual_address"});
+          const failover_address = _.find(this.iparrayControl.formarray, {"name":"failover_address"});
+          failover_virtual_address['disabled'] = false;
+          failover_virtual_address['isHidden'] = false;
+          failover_address['disabled'] = false;
+          failover_address['isHidden'] = false;
+        }
+      });
     }
     this.entityForm = entityForm;
     this.type = _.find(this.fieldConfig, {'name' : 'type'});
     this.iparrayControl = _.find(this.fieldConfig, {'name' : 'aliases'});
-    if (!this.is_freenas) {
-      const failover_virtual_address = _.find(this.iparrayControl.formarray, {"name":"failover_virtual_address"});
-      const failover_address = _.find(this.iparrayControl.formarray, {"name":"failover_address"});
-      failover_virtual_address['disabled'] = false;
-      failover_virtual_address['isHidden'] = false;
-      failover_address['disabled'] = false;
-      failover_address['isHidden'] = false;
-    }
+
     this.vlan_pint = _.find(this.fieldConfig, {'name' : 'vlan_parent_interface'});
     this.bridge_members = _.find(this.fieldConfig, {'name' : 'bridge_members'});
     this.lag_ports = _.find(this.fieldConfig, {'name' : 'lag_ports'});
@@ -345,8 +348,12 @@ export class InterfacesFormComponent implements OnDestroy {
         }
       });
     }*/
-    for (let i = 0; i < this.failover_fields.length; i++) {
-      entityForm.setDisabled(this.failover_fields[i], this.is_freenas, this.is_freenas);
+    if (window.localStorage.getItem('is_freenas') === 'false') {
+      this.ws.call('failover.licensed').subscribe((is_ha) => { //fixme, stupid race condition makes me need to call this again
+        for (let i = 0; i < this.failover_fields.length; i++) {
+          entityForm.setDisabled(this.failover_fields[i], !is_ha, !is_ha);
+        }
+      });
     }
     if (entityForm.isNew) {
       this.type_fg = entityForm.formGroup.controls['type'];
@@ -404,10 +411,10 @@ export class InterfacesFormComponent implements OnDestroy {
     }
   
     data.aliases = aliases;
-    if (data.failover_aliases.length > 0) {
+    if (failover_aliases.length > 0) {
       data.failover_aliases = failover_aliases;
     }
-    if (data.failover_virtual_aliases.length > 0) {
+    if (failover_virtual_aliases.length > 0) {
       data.failover_virtual_aliases = failover_virtual_aliases;
     }
     return data;
