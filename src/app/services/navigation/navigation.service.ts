@@ -93,10 +93,8 @@ export class NavigationService {
         { name: T('Global Configuration'), state: 'configuration' },
         { name: T('Interfaces'), state: 'interfaces' },
         { name: T('IPMI'), state: 'ipmi', disabled: false },
-        { name: T('Link Aggregations'), state: 'laggs' },
         { name: T('Network Summary'), state: 'summary' },
         { name: T('Static Routes'), state: 'staticroutes' },
-        { name: T('VLANs'), state: 'vlans' },
       ]
     },
     {
