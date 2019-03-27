@@ -115,46 +115,6 @@ export class InterfacesFormComponent implements OnDestroy {
       disabled: true,
     },
     {
-      type: 'array',
-      name : 'failover_aliases',
-      initialCount: 1,
-      isHidden: true,
-      disabled: true,
-      formarray: [{
-        name: 'address',
-        placeholder: helptext.failover_alias_address_placeholder,
-        tooltip: helptext.failover_alias_address_tooltip,
-        type: 'ipwithnetmask',
-        validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
-      },
-      {
-        type: 'checkbox',
-        name: 'delete',
-        placeholder: helptext.delete_placeholder,
-        tooltip: helptext.delete_tooltip,
-      }]
-    },
-    {
-      type: 'array',
-      name : 'failover_virtual_aliases',
-      initialCount: 1,
-      isHidden: true,
-      disabled: true,
-      formarray: [{
-        name: 'address',
-        placeholder: helptext.failover_virtual_alias_address_placeholder,
-        tooltip: helptext.failover_virtual_alias_address_tooltip,
-        type: 'ipwithnetmask',
-        validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
-      },
-      {
-        type: 'checkbox',
-        name: 'delete',
-        placeholder: helptext.delete_placeholder,
-        tooltip: helptext.delete_tooltip,
-      }]
-    },
-    {
       type: 'select',
       name: 'vlan_parent_interface',
       placeholder: helptext.vlan_pint_placeholder,
@@ -209,6 +169,24 @@ export class InterfacesFormComponent implements OnDestroy {
         validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
       },
       {
+        name: 'failover_address',
+        placeholder: helptext.failover_alias_address_placeholder,
+        tooltip: helptext.failover_alias_address_tooltip,
+        disabled: true,
+        isHidden: true,
+        type: 'ipwithnetmask',
+        validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
+      },
+      {
+        name: 'failover_virtual_address',
+        placeholder: helptext.failover_virtual_alias_address_placeholder,
+        tooltip: helptext.failover_virtual_alias_address_tooltip,
+        disabled: true,
+        isHidden: true,
+        type: 'ipwithnetmask',
+        validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
+      },
+      {
         type: 'checkbox',
         name: 'delete',
         placeholder: helptext.delete_placeholder,
@@ -220,8 +198,7 @@ export class InterfacesFormComponent implements OnDestroy {
   private vlan_fields = ['vlan_tag', 'vlan_pcp', 'vlan_parent_interface'];
   private lagg_fields = ['lag_protocol', 'lag_ports'];
   private bridge_fields = ['bridge_members'];
-  private failover_fields = ['failover_critical', 'failover_group', 'failover_vhid',
-                             'failover_aliases', 'failover_virtual_aliases'];
+  private failover_fields = ['failover_critical', 'failover_group', 'failover_vhid'];
   private physical_fields;
   /*private int_dhcp: any;
   private int_dhcp_subscription: any;
@@ -247,8 +224,8 @@ export class InterfacesFormComponent implements OnDestroy {
   protected failover_arrayControl: any;
   protected failover_virtual_formArray: FormArray;
   protected failover_virtual_arrayControl:any;
-  protected initialCount = {'aliases':1, 'failover_aliases':1, 'failover_virtual_aliases':1};
-  protected initialCount_default = {'aliases':1, 'failover_aliases':1, 'failover_virtual_aliases':1};
+  protected initialCount = {'aliases':1};
+  protected initialCount_default = {'aliases':1};
   public confirmSubmit = false;
   public confirmSubmitDialog = {
     title: T("Save Network Interface Changes"),
@@ -275,42 +252,6 @@ export class InterfacesFormComponent implements OnDestroy {
                                                     this.ipformArray);
       }
     },
-    {
-      id : 'add_failover_alias',
-      name : T('Add Additional Failover Alias'),
-      function : () => {
-        this.initialCount.failover_aliases += 1;
-        this.entityFormService.insertFormArrayGroup(
-            this.initialCount.failover_aliases, this.failover_formArray, this.failover_arrayControl.formarray);
-      }
-    },
-    {
-      id : 'remove_failover_alias',
-      name : T('Remove Additional Failover Alias'),
-      function : () => {
-        this.initialCount.failover_aliases -= 1;
-        this.entityFormService.removeFormArrayGroup(this.initialCount.failover_aliases,
-                                                    this.failover_formArray);
-      }
-    },
-    {
-      id : 'add_failover_virtual_alias',
-      name : T('Add Additional Failover Virtual Alias'),
-      function : () => {
-        this.initialCount.failover_virtual_aliases += 1;
-        this.entityFormService.insertFormArrayGroup(
-            this.initialCount.failover_virtual_aliases, this.failover_virtual_formArray, this.failover_virtual_arrayControl.formarray);
-      }
-    },
-    {
-      id : 'remove_failover_virtual_alias',
-      name : T('Remove Additional Failover Virtual Alias'),
-      function : () => {
-        this.initialCount.failover_virtual_aliases -= 1;
-        this.entityFormService.removeFormArrayGroup(this.initialCount.failover_virtual_aliases,
-                                                    this.failover_virtual_formArray);
-      }
-    },
   ]
 
   //int_warning = T("Please configure the Web UI interface (");
@@ -323,15 +264,6 @@ export class InterfacesFormComponent implements OnDestroy {
 
   isCustActionVisible(actionId: string) {
     if (actionId == 'remove_alias' && this.initialCount['aliases'] <= this.initialCount_default['aliases']) {
-      return false;
-    }
-    if (actionId.includes('failover') && this.is_freenas) {
-      return false;
-    }
-    if (actionId == 'remove_failover_alias' && this.initialCount['failover_aliases'] <= this.initialCount_default['failover_aliases']) {
-      return false;
-    }
-    if (actionId == 'remove_failover_virtual_alias' && this.initialCount['failover_virtual_aliases'] <= this.initialCount_default['failover_virtual_aliases']) {
       return false;
     }
     return true;
@@ -355,14 +287,20 @@ export class InterfacesFormComponent implements OnDestroy {
   }
 
   preInit(entityForm: any) {
-    if (window.localStorage.getItem('is_freenas') === 'true') {
-      this.is_freenas = true;
+    if (window.localStorage.getItem('is_freenas') === 'false') {
+      this.is_freenas = false;
     }
     this.entityForm = entityForm;
     this.type = _.find(this.fieldConfig, {'name' : 'type'});
     this.iparrayControl = _.find(this.fieldConfig, {'name' : 'aliases'});
-    this.failover_arrayControl = _.find(this.fieldConfig, {'name' : 'failover_aliases'});
-    this.failover_virtual_arrayControl = _.find(this.fieldConfig, {'name' : 'failover_virtual_aliases'});
+    if (!this.is_freenas) {
+      const failover_virtual_address = _.find(this.iparrayControl.formarray, {"name":"failover_virtual_address"});
+      const failover_address = _.find(this.iparrayControl.formarray, {"name":"failover_address"});
+      failover_virtual_address['disabled'] = false;
+      failover_virtual_address['isHidden'] = false;
+      failover_address['disabled'] = false;
+      failover_address['isHidden'] = false;
+    }
     this.vlan_pint = _.find(this.fieldConfig, {'name' : 'vlan_parent_interface'});
     this.bridge_members = _.find(this.fieldConfig, {'name' : 'bridge_members'});
     this.lag_ports = _.find(this.fieldConfig, {'name' : 'lag_ports'});
@@ -373,10 +311,6 @@ export class InterfacesFormComponent implements OnDestroy {
         this.confirmSubmit = true;
         this.iparrayControl.initialCount = this.initialCount['aliases']
           = this.initialCount_default['aliases'] = 0;
-        this.failover_arrayControl.initialCount = this.initialCount['failover_aliases']
-          = this.initialCount_default['failover_aliases'] = 0;
-        this.failover_virtual_arrayControl.initialCount = this.initialCount['failover_virtual_aliases']
-          = this.initialCount_default['failover_virtual_aliases'] = 0;
       }
     });
   }
@@ -448,72 +382,53 @@ export class InterfacesFormComponent implements OnDestroy {
   }
 
   clean(data) {
-    const aliases = []
+    const aliases = [];
+    const failover_aliases = [];
+    const failover_virtual_aliases = [];
     for (let i = 0; i < data.aliases.length; i++) {
       if (!data.aliases[i]['delete'] &&
           !!data.aliases[i]['address']) {
         const strings = data.aliases[i]['address'].split('/');
         aliases.push({address:strings[0],
                       netmask:parseInt(strings[1],10)});
+        if (!!data.aliases[i]['failover_address'] &&
+            !!data.aliases[i]['failover_virtual_address']) {
+          const f_strings = data.aliases[i]['failover_address'].split('/');
+          failover_aliases.push({address:f_strings[0],
+                        netmask:parseInt(f_strings[1],10)});
+          const fv_strings = data.aliases[i]['failover_virtual_address'].split('/');
+          failover_virtual_aliases.push({address:fv_strings[0],
+                        netmask:parseInt(fv_strings[1],10)});
+          }
       }
     }
-    const failover_aliases = []
-    for (let i = 0; i < data.failover_aliases.length; i++) {
-      if (!data.failover_aliases[i]['delete'] &&
-          !!data.failover_aliases[i]['address']) {
-        const f_strings = data.failover_aliases[i]['address'].split('/');
-        failover_aliases.push({address:f_strings[0],
-                      netmask:parseInt(f_strings[1],10)});
-      }
-    }
-    const failover_virtual_aliases = []
-    for (let i = 0; i < data.failover_virtual_aliases.length; i++) {
-      if (!data.failover_virtual_aliases[i]['delete'] &&
-          !!data.failover_virtual_aliases[i]['address']) {
-        const fv_strings = data.failover_virtual_aliases[i]['address'].split('/');
-        failover_virtual_aliases.push({address:fv_strings[0],
-                      netmask:parseInt(fv_strings[1],10)});
-      }
-    }
+  
     data.aliases = aliases;
-    data.failover_aliases = failover_aliases;
-    data.failover_virtual_aliases = failover_virtual_aliases;
-    return data;
-  }
-
-  preHandler(data: any[]): any[] {
-    let aliases = [];
-    for (let i = 0; i < data.length; i++) {
-      let alias = data[i];
-      if (alias.netmask) {
-        aliases.push({address:alias.address});
-      }
+    if (data.failover_aliases.length > 0) {
+      data.failover_aliases = failover_aliases;
     }
-    return aliases;
+    if (data.failover_virtual_aliases.length > 0) {
+      data.failover_virtual_aliases = failover_virtual_aliases;
+    }
+    return data;
   }
 
   resourceTransformIncomingRestData(data) {
     const aliases = data['aliases'];
-    for (let i = 0; i < aliases.length; i++) {
-      aliases[i].address = aliases[i].address + '/' + aliases[i].netmask;
-    }
-    data['aliases'] = aliases;
-
+    const a = [];
     const failover_aliases = data['failover_aliases'];
-    if (failover_aliases) {
-      for (let i = 0; i < failover_aliases.length; i++) {
-        failover_aliases[i].address = failover_aliases[i].address + '/' + failover_aliases[i].netmask;
-      }
-      data['failover_aliases'] = failover_aliases;
-    }
-
     const failover_virtual_aliases = data['failover_virtual_aliases'];
-    if (failover_virtual_aliases) {
-      for (let i = 0; i < failover_virtual_aliases.length; i++) {
-        failover_virtual_aliases[i].address = failover_virtual_aliases[i].address + '/' + failover_virtual_aliases[i].netmask;
+    for (let i = 0; i < aliases.length; i++) {
+      a[i] = {};
+      a[i].address = aliases[i].address + '/' + aliases[i].netmask;
+      if (failover_aliases && failover_aliases[i]) {
+        a[i].failover_address = failover_aliases[i].address + '/' + failover_aliases[i].netmask;
       }
-      data['failover_virtual_aliases'] = failover_virtual_aliases;
+      if (failover_virtual_aliases && failover_virtual_aliases[i]) {
+        a[i].failover_virtual_address = failover_virtual_aliases[i].address + '/' + failover_virtual_aliases[i].netmask
+      }
     }
+    data['aliases'] = a;
 
     const type = data['type'];
     const id = data['id'];
