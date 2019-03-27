@@ -253,11 +253,21 @@ export class CertificateAddComponent {
     },
     {
       type : 'input',
+      name : 'passphrase_optional',
+      placeholder : helptext_system_certificates.add.passphrase_optional.placeholder,
+      tooltip : helptext_system_certificates.add.passphrase_optional.tooltip,
+      inputType : 'password',
+      validation : helptext_system_certificates.add.passphrase.validation,
+      isHidden: true,
+      togglePw : true
+    },
+    {
+      type : 'input',
       name : 'passphrase2',
       inputType : 'password',
       placeholder : helptext_system_certificates.add.passphrase2.placeholder,
       isHidden : true
-    },
+    }
   ];
 
   private internalFields: Array<any> = [
@@ -294,11 +304,13 @@ export class CertificateAddComponent {
     'certificate',
     'privatekey',
     'passphrase',
-    'passphrase2',
+    'passphrase2'
   ];
   private importCSRFields: Array<any> = [
     'CSR',
     'privatekey',
+    'passphrase_optional',
+    'passphrase2'
   ];
 
   private country: any;
