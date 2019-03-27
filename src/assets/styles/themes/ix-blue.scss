@@ -532,9 +532,13 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-button.mat-primary,
   .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > a > span, 
   .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a,
-  .mat-form-field.mat-focused.mat-primary,
+  
   .mat-focused .mat-form-field-label{
     @include variable(color, --primary, $primary, !important);
+  }
+
+  .mat-form-field.mat-focused.mat-primary {
+    @include variable(color, --fg2, $fg2, !important);
   }
 
   .mat-button.mat-accent {
@@ -555,7 +559,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
   
   .mat-input-element {
-    @include variable(caret-color, --primary, $primary);
+    @include variable(caret-color, --fg2, $fg2);
   }
 
   .mat-calendar-table,
