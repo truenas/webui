@@ -254,9 +254,6 @@ export class InterfacesFormComponent implements OnDestroy {
     },
   ]
 
-  //int_warning = T("Please configure the Web UI interface (");
-  //int_warning_2 = T(") before configuring other interfaces to avoid losing connection to the user interface.");
-
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected entityFormService: EntityFormService,
               protected networkService: NetworkService, protected dialog: DialogService,
@@ -319,35 +316,6 @@ export class InterfacesFormComponent implements OnDestroy {
   }
 
   afterInit(entityForm: any) {
-    /*this.int_interface_fg = entityForm.formGroup.controls['int_interface'];
-
-    if (entityForm.isNew) {
-      this.ws.call(this.queryCall, []).subscribe((res) => {
-        if (res.data.length === 0) {
-          this.ws.call('interfaces.websocket_interface', []).subscribe((wsint) => {
-            if (wsint && wsint.name) {
-              this.wsint = wsint.name;
-              this.translate.get(this.int_warning).subscribe((int_warning) => {
-                this.translate.get(this.int_warning_2).subscribe((int_warning_2) => {
-                  this.int_interface_warning = int_warning + wsint.name + int_warning_2;
-                });
-              });
-              this.int_interface_fg_sub = this.int_interface_fg.valueChanges.subscribe((val) => {
-                if (val !== this.wsint) {
-                  this.int_interface.warnings = this.int_interface_warning;
-                } else {
-                  this.int_interface.warnings = null;
-                }
-              });
-              this.int_interface_fg.setValue(wsint.name);
-              entityForm.formGroup.controls['int_name'].setValue(wsint.name);
-            }
-          }, (err) => {
-            new EntityUtils().handleWSError(entityForm, err);
-          });
-        }
-      });
-    }*/
     if (window.localStorage.getItem('is_freenas') === 'false') {
       this.ws.call('failover.licensed').subscribe((is_ha) => { //fixme, stupid race condition makes me need to call this again
         for (let i = 0; i < this.failover_fields.length; i++) {
