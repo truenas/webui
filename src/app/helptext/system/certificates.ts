@@ -150,12 +150,8 @@ export const helptext_system_certificates = {
 
     passphrase2: {
       placeholder: T("Confirm Passphrase")
-    },
-
-    passphrase_optional: {
-      placeholder: T("Passphrase"),
-      tooltip: T("Enter the passphrase for the Private Key, if one has been set.")
     }
+
   },
 
   edit: {

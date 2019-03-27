@@ -961,7 +961,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     #Passphrase, #passphrase, #disk_passwd, #ldap_bindpw, #iscsi_target_auth_secret,
       #iscsi_target_auth_peersecret, #dc_passwd, #secret_key, #ad_bindpw, #v3_password,
       #secret_access_key-S3, #v3_privpassphrase, #secret_access_key-S3, #pass-FTP, 
-      #pass-MEGA, #pass-SFTP, #pass-WEBDAV, #aws_secret_access_key, #passphrase_optional {
+      #pass-MEGA, #pass-SFTP, #pass-WEBDAV, #aws_secret_access_key {
     max-width: 640px;
     min-width: 225px;
   }

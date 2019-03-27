@@ -2,7 +2,10 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { RestService, SystemGeneralService, WebSocketService } from '../../../../services/';
+import { MatDialog } from '@angular/material';
+import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { EntityUtils } from '../../../common/entity/utils';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { helptext_system_ca } from 'app/helptext/system/ca';
 
@@ -17,6 +20,8 @@ export class CertificateAddComponent {
   protected addCall = "certificate.create";
   protected route_success: string[] = [ 'system', 'certificates' ];
   protected isEntity: boolean = true;
+  protected dialogRef: any;
+  private entityForm: any;
   protected fieldConfig: FieldConfig[] = [
     {
       type : 'input',
@@ -253,16 +258,6 @@ export class CertificateAddComponent {
     },
     {
       type : 'input',
-      name : 'passphrase_optional',
-      placeholder : helptext_system_certificates.add.passphrase_optional.placeholder,
-      tooltip : helptext_system_certificates.add.passphrase_optional.tooltip,
-      inputType : 'password',
-      validation : helptext_system_certificates.add.passphrase.validation,
-      isHidden: true,
-      togglePw : true
-    },
-    {
-      type : 'input',
       name : 'passphrase2',
       inputType : 'password',
       placeholder : helptext_system_certificates.add.passphrase2.placeholder,
@@ -309,7 +304,7 @@ export class CertificateAddComponent {
   private importCSRFields: Array<any> = [
     'CSR',
     'privatekey',
-    'passphrase_optional',
+    'passphrase',
     'passphrase2'
   ];
 
@@ -318,7 +313,7 @@ export class CertificateAddComponent {
   public identifier: any;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
-              protected rest: RestService, protected ws: WebSocketService,
+              protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog,
               protected systemGeneralService: SystemGeneralService) {}
 
   preInit() {
@@ -464,6 +459,22 @@ export class CertificateAddComponent {
     if (data.passphrase2) {
       delete data.passphrase2;
     }
+  }
+
+  customSubmit(payload){
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "" }});
+    this.dialogRef.componentInstance.setDescription(("Working..."));
+    this.dialogRef.componentInstance.setCall(this.addCall, [payload]);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.dialog.closeAll();
+      this.router.navigate(new Array('/').concat(this.route_success));
+    });
+    this.dialogRef.componentInstance.failure.subscribe((res) => {
+      this.dialog.closeAll();
+      new EntityUtils().handleWSError(this.entityForm, res);
+    });
+
   }
 
 
