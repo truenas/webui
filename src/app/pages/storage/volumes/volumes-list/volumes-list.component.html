@@ -18,7 +18,12 @@
             {{row.name}}
           </mat-panel-title>
           <mat-panel-description>
-            {{row.status}} <span *ngIf="row.usedStr && row.availStr">({{row.usedStr}} Used / {{row.availStr}} Free)</span>
+              <span [style.margin-right.px]="5">
+                <i class="material-icons" *ngIf="row.status==='HEALTHY'" [style.color]="'green'">check_circle</i>
+                <i class="material-icons" *ngIf="row.status==='DEGRADED'" [style.color]="'orange'">warning</i>
+                <i class="material-icons" *ngIf="row.status!=='HEALTHY' && row.status!=='DEGRADED'" [style.color]="'red'">cancel</i>
+              </span>
+            {{row.status}}<span *ngIf="row.usedStr && row.availStr">{{row.usedStr}} Used / {{row.availStr}} Free</span>
           </mat-panel-description>
         </mat-expansion-panel-header>
         <div fxLayoutAlign="end start" class="icon-row">
