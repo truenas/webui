@@ -207,7 +207,7 @@ activedirectory_idmap_change_dialog_message: T('<font color="red">WARNING</font>
  target="_blank">idmap_autorid(8)</a>\, <a\
  href="https://www.freebsd.org/cgi/man.cgi?query=idmap_ad"\
  target="_blank">ad</a>\, <a\
- href="%%docurl%%/directoryservice.html%%webversion%%#id12"\
+ href="%%docurl%%/directoryservices.html%%webversion%%#id12"\
  target="_blank">fruit</a>\, <a\
  href="https://www.freebsd.org/cgi/man.cgi?query=idmap_ldap"\
  target="_blank">idmap_ldap(8)</a>\, <a\
