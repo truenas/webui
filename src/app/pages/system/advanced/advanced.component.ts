@@ -53,21 +53,19 @@ export class AdvancedComponent implements OnDestroy {
             this.dialogRef.componentInstance.submit();
             this.dialogRef.componentInstance.success.subscribe((system_debug) => {
               this.dialogRef.close(true);
-              if (system_debug.state === "SUCCESS") {
-                this.ws.call('core.download', ['filesystem.get', [system_debug.result], fileName]).subscribe(
-                  (system_debug_result) => {
-                    if (window.navigator.userAgent.search("Firefox")>0) {
-                      window.open(system_debug_result[1]);
+              this.ws.call('core.download', ['filesystem.get', [system_debug.result], fileName]).subscribe(
+                (system_debug_result) => {
+                  if (window.navigator.userAgent.search("Firefox")>0) {
+                    window.open(system_debug_result[1]);
+                }
+                  else {
+                    window.location.href = system_debug_result[1];
                   }
-                    else {
-                      window.location.href = system_debug_result[1];
-                    }
-                  },
-                  (err) => {
-                    this.openSnackBar(helptext_system_advanced.snackbar_generate_debug_message_failure, helptext_system_advanced.snackbar_generate_debug_action);
-                  }
-                );
-              }
+                },
+                (err) => {
+                  this.openSnackBar(helptext_system_advanced.snackbar_generate_debug_message_failure, helptext_system_advanced.snackbar_generate_debug_action);
+                }
+              ); 
             }),
             () => {
               this.dialogRef.close();
