@@ -38,15 +38,15 @@ export class CertificateEditComponent {
     },
     {
       type: 'textarea',
-      name: 'privatekey',
-      placeholder: helptext_system_certificates.edit.privatekey.placeholder,
+      name: 'CSR',
+      placeholder: helptext_system_certificates.edit.csr.placeholder,
       isHidden: false,
       readonly: true,
     },
     {
       type: 'textarea',
-      name: 'CSR',
-      placeholder: helptext_system_certificates.edit.csr.placeholder,
+      name: 'privatekey',
+      placeholder: helptext_system_certificates.edit.privatekey.placeholder,
       isHidden: false,
       readonly: true,
     }
@@ -87,8 +87,8 @@ export class CertificateEditComponent {
           if (res[0]) {
             if (res[0].CSR != null) {
               this.CSRField['isHidden'] = false;
-              this.certificateField.readonly = false;
-              this.privatekeyField['isHidden'] = true;
+              this.certificateField['isHidden'] = true;
+              this.privatekeyField['isHidden'] = false;
             } else {
               this.CSRField['isHidden'] = true;
               this.certificateField['isHidden'] = false;
@@ -101,13 +101,7 @@ export class CertificateEditComponent {
   }
 
   customSubmit(value) {
-    // let payload = {};
-    // payload['name'] = value.name;
-    // if (value.CSR != null) {
-    //   payload['certificate'] = value.certificate;
-    // }
-    // console.log(value)
-    this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": "" }});
+    this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": "Updating Identifier" }});
     this.dialogRef.componentInstance.setCall(this.editCall, [this.pk, {'name':value['name']}]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
