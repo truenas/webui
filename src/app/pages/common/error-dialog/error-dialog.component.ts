@@ -23,13 +23,13 @@ export class ErrorDialog {
     const dialog = document.getElementsByClassName('mat-dialog-container');
     const content = document.getElementsByClassName('mat-dialog-content');
     const btPanel = document.getElementsByClassName('backtrace-panel');
-    const txtarea = document.getElementsByTagName('textarea');
+    const txtarea = document.getElementById('bt-text');
     this.isCloseMoreInfo = !this.isCloseMoreInfo;
     if (!this.isCloseMoreInfo) {
       dialog[0].setAttribute('style','width : 800px; height: 600px');
       content[0].setAttribute('style', 'min-height: 450px')
       btPanel[0].setAttribute('style', 'width: 750px; max-height: 400px');
-      txtarea[0].setAttribute('style', 'height: 400px')
+      txtarea.setAttribute('style', 'min-height: 400px')
     } else {
       dialog[0].removeAttribute('style');
       content[0].removeAttribute('style');
