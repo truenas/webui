@@ -347,33 +347,37 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     height:50px;
   }
 
-  .datatable-header-cell .sort-btn{
+  .datatable-header-cell .sort-btn {
     position:absolute;
     top:16px !important;
     right:16px;
     @include variable(color, --fg2, $fg2, !important);
   }
 
-  .datatable-header-cell-label{
-    position: relative !important;
-    top: 10px !important;
+
+  .datatable-header-cell {
+    padding:0px !important;
+    position: relative;
+    top: 0 !important;
   }
 
-  .datatable-header-cell{
-    right: 16px;
-    top: 0 !important;
-    padding:0px !important;
+  .datatable-header-cell-label {
+    margin-left: 7px;
+    text-align: center;
+    position: relative;
+    top: 10px;
   }
-  .datatable-header-cell:hover{
+
+  .datatable-header-cell:hover {
     border-right:solid 1px ;
     @include variable(border-color, --alt-bg1, $alt-bg1, !important);
   }
 
-  .datatable-header-cell > div{
+  .datatable-header-cell > div {
     height:inherit;
   }
 
-  .ngx-datatable .datatable-header .datatable-header-cell.sortable .datatable-header-cell-wrapper{
+  .ngx-datatable .datatable-header .datatable-header-cell.sortable .datatable-header-cell-wrapper {
     cursor: pointer;
     /* vertical-align: middle; */
     width: inherit;
@@ -772,7 +776,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   // To fix alignment issues w/checkboxes on Create Pool page
   .headerCheckBox {
     position: relative;
-    left: 10px;
+    left: 24px;
     margin-top: 12px;
   }
 
@@ -798,21 +802,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     margin-top: 23px;
   }
   // ---------------
-
-  // Vertically align header-footer items on datatables  
-  .datatable-header-cell {
-    position: relative;
-    top: -5px;
-    left: 14px;
-  }
-
-  // Put header labels directly over cells
-  .datatable-header-cell-label {
-    margin-left: -7px;
-    text-align: center;
-    position: relative;
-    top: 10px;
-  }
 
   // Resizes loader dialog which appears on update, wipe disk, etc.
   .entity-job-dialog {
@@ -1102,8 +1091,13 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     bottom: 7px !important;
   }
 
-  services .datatable-header-cell, app-vm-list .datatable-header-cell {
+  app-vm-list .datatable-header-cell {
     top: 6px;
+  }
+
+  services .datatable-header-cell-label {
+    margin-left: 22px;
+    top: 13px;
   }
 
 
