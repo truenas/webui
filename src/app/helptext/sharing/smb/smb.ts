@@ -8,6 +8,8 @@ export const helptext_sharing_smb = {
     placeholder_path: T('Path'),
     tooltip_path: T('Select pool, dataset, or directory to share.'),
     validators_path: [ Validators.required ],
+    errormsg_name: T("<i>global</i> is a reserved name that cannot be used as a share\
+ name. Please enter a different share name."),
 
     placeholder_name: T('Name'),
     tooltip_name: T('Enter a name for the share.'),
