@@ -48,7 +48,7 @@ export class AdvancedComponent implements OnDestroy {
         }
         this.dialog.confirm(helptext_system_advanced.dialog_generate_debug_title, helptext_system_advanced.dialog_generate_debug_message, true, helptext_system_advanced.dialog_button_ok).subscribe((ires) => {
           if (ires) {
-            this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Save Debug") }, disableClose: true });
+            this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Saving Debug") }, disableClose: true });
             this.dialogRef.componentInstance.setCall('system.debug', []);
             this.dialogRef.componentInstance.submit();
             this.dialogRef.componentInstance.success.subscribe((system_debug) => {
@@ -303,10 +303,7 @@ export class AdvancedComponent implements OnDestroy {
 
   public customSubmit(body) {
     delete body.sed_passwd2;
-    // this.load.open();
-    this.showProgress();
-
-
+    this.load.open();
     return this.ws.call('system.advanced.update', [body]).subscribe((res) => {
       this.load.close();
       this.snackBar.open("Settings saved.", 'close', { duration: 5000 })
@@ -316,16 +313,4 @@ export class AdvancedComponent implements OnDestroy {
       new EntityUtils().handleWSError(this.entityForm, res);
     });
   }
-
-  public showProgress() {
-    console.log('showing progress')
-    this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Save Debug") }, disableClose: true });
-    this.dialogRef.componentInstance.setCall('system.debug', []);
-    this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe((res) => {
-      this.dialogRef.close(true);
-    });
-  }
-
-
 }
