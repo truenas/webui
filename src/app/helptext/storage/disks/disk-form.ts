@@ -46,8 +46,8 @@ disk_form_difference_tooltip: T('Report if the temperature of a drive has change
  this many degrees Celsius since the last report. Entering 0 disables the report.'),
 
 disk_form_informational_placeholder: T('Informational'),
-disk_form_informational_tooltip: T('Report if the temperature of a drive is greater\
- or equal than N degrees Celsius. Entering 0 disables the report.'),
+disk_form_informational_tooltip: T('Report if drive temperature is at or above\
+ this temperature in Celsius. Entering 0 disables the report.'),
 
 disk_form_passwd_placeholder: T('SED Password'),
 disk_form_passwd_tooltip: T('Password for SED'),
