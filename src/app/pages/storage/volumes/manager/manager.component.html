@@ -50,7 +50,7 @@
                 [externalSorting]="true"
                 (sort)='reorderEvent($event)'
                 (select)='onSelect($event)'>
-                <ngx-datatable-column [width]="85" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
+                <ngx-datatable-column [width]="82" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
                   <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
                     <div class="headerCheckBox">
                       <mat-checkbox id="pool-manager__disks-table-checkall" [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>
@@ -63,15 +63,15 @@
                     </div>
                   </ng-template>
                 </ngx-datatable-column>
-                <ngx-datatable-column
+                <!-- <ngx-datatable-column
                   [width]="35"
                   [sortable]="false"
                   [canAutoResize]="false"
                   [draggable]="false"
                   [resizeable]="false">
-                </ngx-datatable-column>
+                </ngx-datatable-column> -->
                 <ngx-datatable-column
-                  [width]="120"
+                  [width]="158"
                   name="Disk"
                   prop="devname"></ngx-datatable-column>
                 <ngx-datatable-column
