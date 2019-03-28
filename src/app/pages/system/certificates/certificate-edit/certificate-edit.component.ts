@@ -4,6 +4,8 @@ import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import * as _ from 'lodash';
 import { DialogService, RestService, WebSocketService } from '../../../../services/';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { MatDialog } from '@angular/material';
+import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../common/entity/utils';
 
@@ -55,9 +57,10 @@ export class CertificateEditComponent {
   protected privatekeyField: any;
   protected CSRField: any;
   protected entityForm: any;
+  protected dialogRef: any
 
   constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
+    protected rest: RestService, protected ws: WebSocketService, protected matDialog: MatDialog,
     protected loader: AppLoaderService, protected dialog: DialogService) {}
 
   preInit() {
@@ -98,22 +101,22 @@ export class CertificateEditComponent {
   }
 
   customSubmit(value) {
-    let payload = {};
-    payload['name'] = value.name;
-    if (value.CSR != null) {
-      payload['certificate'] = value.certificate;
-    }
-
-    this.loader.open();
-    this.ws.call(this.editCall, [this.pk, payload]).subscribe(
-      (res) => {
-        this.loader.close();
-        this.router.navigate(new Array('/').concat(this.route_success));
-      },
-      (res) => {
-        this.loader.close();
-        new EntityUtils().handleWSError(this.entityForm, res);
-      }
-    );
+    // let payload = {};
+    // payload['name'] = value.name;
+    // if (value.CSR != null) {
+    //   payload['certificate'] = value.certificate;
+    // }
+    // console.log(value)
+    this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": "" }});
+    this.dialogRef.componentInstance.setCall(this.editCall, [this.pk, {'name':value['name']}]);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.matDialog.closeAll();
+      this.router.navigate(new Array('/').concat(this.route_success));
+    });
+    this.dialogRef.componentInstance.failure.subscribe((res) => {
+      this.matDialog.closeAll();
+      new EntityUtils().handleWSError(this.entityForm, res);
+    });
   }
 }
