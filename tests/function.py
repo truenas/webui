@@ -99,49 +99,8 @@ def status_change(driver, which, to):
             print("the status is already" + status_data)
 
 
-def user_edit_old(driver, type, name):
-    # the convention is set in such a way that a single function can cleanup
-    # both type:user/group, name:name of the group or user path plugs in the
-    # xpath of user or group , sub-menu{User/Group} num specifies the column of
-    # the 3 dots which is different in user/group delNum specifies the option
-    # number where edit is after clicking on the 3 dots
-    if (type == "user"):
-        num = 2
-        edNum = 6
-        path = "User"
-        # ED = "6"
-    elif (type == "group"):
-        num = 2
-        edNum = 5
-        path = "Group"
-        # ED = "5"
-
-    # Click User sub-menu
-    driver.find_element_by_xpath(xpaths['submenu' + path]).click()
-    # wait till the list is loaded
-    time.sleep(2)
-    index = 1
-    ui_text = "null"
-    for x in range(0, 10):
-        if is_element_present(By.XPATH, '//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div'):
-            ui_element = driver.find_element_by_xpath('//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div')
-            ui_text = ui_element.text
-            print(ui_text)
-        if (ui_text == name):
-            index = x
-            break
-        ui_element = " "
-    print("index, delNum, num: " + str(x) + ", " + str(edNum) + "," + str(num))
-    time.sleep(1)
-    # click on the 3 dots
-    driver.find_element_by_xpath('//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(edNum) + ']/div/app-entity-table-actions/div/mat-icon').click()
-    time.sleep(1)
-    # click on edit option
-    driver.find_element_by_xpath('//*[@id="action_button_Edit"]').click()
-
-
 def user_edit(driver, type, name):
-    # the convention is set in such a way tha a single function can cleanup
+    # the convention is set in such a way that a single function can cleanup
     # both type:user/group, name:name of the group or user
     # path plugs in the xpath of user or group , sub-menu{User/Group}
     if (type == "user"):
@@ -154,10 +113,12 @@ def user_edit(driver, type, name):
     driver.find_element_by_xpath(xpaths['submenu' + path]).click()
     # wait till the list is loaded
     time.sleep(2)
+    xpath1 = '//*[@id="table_actions_menu_button__bsd' + fix + name + '\"]'
+    xpath2 = '//*[@id="action_button_Edit__bsd' + fix + name + '\"]'
 
-    if (is_element_present(By.XPATH, '//*[@id="table_actions_menu_button__bsd' + fix + name + '\"]')):
-        driver.find_element_by_xpath('//*[@id="table_actions_menu_button__bsd' + fix + name + '\"]').click()
-        driver.find_element_by_xpath('//*[@id="action_button_Edit__bsd' + fix + name + '\"]').click()
+    if (is_element_present(driver, xpath1)):
+        driver.find_element_by_xpath(xpath1).click()
+        driver.find_element_by_xpath(xpath2).click()
     else:
         print(name + " " + type + " doesnt exist")
 
@@ -177,13 +138,13 @@ def user_delete(driver, type, name):
     # wait till the list is loaded
     time.sleep(2)
 
-    if (is_element_present(By.XPATH, '//*[@id="table_actions_menu_button__bsd' + fix + name + '\"]')):
+    if (is_element_present(driver, '//*[@id="table_actions_menu_button__bsd' + fix + name + '\"]')):
         driver.find_element_by_xpath('//*[@id="table_actions_menu_button__bsd' + fix + name + '\"]').click()
         driver.find_element_by_xpath('//*[@id="action_button_Delete__bsd' + fix + name + '\"]').click()
     else:
         print(name + " " + type + " doesnt exist")
 
-    if (is_element_present(By.XPATH, xpaths['confirmCheckbox'])):
+    if (is_element_present(driver, xpaths['confirmCheckbox'])):
         driver.find_element_by_xpath(xpaths['confirmsecondaryCheckbox']).click()
         driver.find_element_by_xpath(xpaths['confirmCheckbox']).click()
         time.sleep(1)
@@ -193,10 +154,11 @@ def user_delete(driver, type, name):
 
 
 def user_delete_old(driver, type, name):
-    # the convention is set in such a way tha a single funtion can cleanup both type:user/group, name:name of the group or user
-    # path plugs in the xpath of user or group , submenu{User/Group}
-    # num specifies the column of the 3 dots which is different in user/group
-    # delNum speifies the option number where del is after clicking on the 3 dots
+    # the convention is set in such a way that a single function can cleanup
+    # both type:user/group, name:name of the group or user path plugs in the
+    # xpath of user or group , sub-menu{User/Group} num specifies the column of
+    # the 3 dots which is different in user/group delNum specifies the option
+    # number where del is after clicking on the 3 dots
     if (type == "user"):
         num = 2
         delNum = 6
@@ -214,10 +176,10 @@ def user_delete_old(driver, type, name):
     time.sleep(2)
     index = 1
     ui_text = "null"
-    if (self.is_element_present(By.XPATH, '//*[@id="' + plug + '_' + name  + '\"]' )):
+    if (is_element_present(driver, '//*[@id="' + plug + '_' + name + '\"]' )):
         print("username/groupname- " + name + " exists")
         for x in range(0, 10):
-            if self.is_element_present(By.XPATH, '//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div'):
+            if is_element_present(driver, '//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div'):
                 ui_element = driver.find_element_by_xpath('//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div')
                 ui_text = ui_element.text
             if (ui_text == name):
@@ -242,10 +204,11 @@ def user_delete_old(driver, type, name):
 
 
 def plugin_install(driver, action, name):
-    # the convention is set in such a way tha a single funtion can cleanup both type:user/group, name:name of the group or user
-    # path plugs in the xpath of user or group , submenu{User/Group}
-    # num specifies the column of the 3 dots which is different in user/group
-    # delNum speifies the option number where edit is after clicking on the 3 dots
+    # the convention is set in such a way that a single function can cleanup
+    # both type:user/group, name:name of the group or user path plugs in
+    # the xpath of user or group , sub-menu{User/Group} num specifies the
+    # column of the 3 dots which is different in user/group delNum specifies
+    # the option number where edit is after clicking on the 3 dots
     if (action == "install"):
         num = 5
         delNum = 1
@@ -264,7 +227,7 @@ def plugin_install(driver, action, name):
     index = 1
     ui_text = "null"
     for x in range(0, 33):
-        if self.is_element_present(By.XPATH, '//*[@id="entity-table-component"]/div[' + str(num) + ']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div'):
+        if is_element_present(driver, '//*[@id="entity-table-component"]/div[' + str(num) + ']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div'):
             ui_element= driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[' + str(num) + ']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div')
             ui_text = ui_element.text
             print(ui_text)

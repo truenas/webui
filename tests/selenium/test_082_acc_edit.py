@@ -19,7 +19,7 @@ xpaths = {
     'navAccount': '//*[@id="nav-1"]/div/a[1]',
     'submenuUser': '//*[@id="1-1"]',
     'submenuGroup': '//*[@id="1-0"]',
-    'email': '//*[@id="email"]/mat-input-container/div/div[1]/div/input',
+    'email': "//div[@id='email']/mat-form-field/div/div/div/input",
     'group': '//*[@id="bsdgrp_sudo"]/mat-checkbox/label/div',
     'breadcrumbBar': '//*[@id="breadcrumb-bar"]/ul/li[2]/a'
 }
