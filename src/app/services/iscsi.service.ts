@@ -15,7 +15,7 @@ export class IscsiService {
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
   getIpChoices() {
-    return this.ws.call('notifier.choices', [ 'IPChoices', [ true, true ] ]);
+    return this.ws.call('iscsi.portal.listen_ip_choices');
   };
 
   listPortals() {

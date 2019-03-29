@@ -18,17 +18,31 @@
             {{row.name}}
           </mat-panel-title>
           <mat-panel-description>
-            {{row.status}} <span *ngIf="row.usedStr && row.availStr">({{row.usedStr}} Used / {{row.availStr}} Free)</span>
+              <span [style.margin-right.px]="5">
+                <i class="material-icons" *ngIf="row.status==='HEALTHY'" [style.color]="'green'">check_circle</i>
+                <i class="material-icons" *ngIf="row.status==='DEGRADED'" [style.color]="'orange'">warning</i>
+                <i class="material-icons" *ngIf="row.status!=='HEALTHY' && row.status!=='DEGRADED'" [style.color]="'red'">cancel</i>
+              </span>
+            {{row.status}}<span *ngIf="row.usedStr && row.availStr">{{row.usedStr}} Used / {{row.availStr}} Free</span>
           </mat-panel-description>
         </mat-expansion-panel-header>
         <div fxLayoutAlign="end start" class="icon-row">
           <div class="global_volume_based_action_menu pool-icon" title="Pool Operations" >
             <app-entity-table-actions [icon_name]="'settings'" [entity]="actionComponent" [row]="row"></app-entity-table-actions>
           </div>
-          <div *ngIf="row.vol_encrypt > 0 && row.is_decrypted" class="global_volume_based_action_menu pool-icon" title="Encryption Operations">
+          <div *ngIf="row.vol_encrypt > 0 && row.is_decrypted" 
+            class="global_volume_based_action_menu pool-icon" 
+            title="Encryption Operations"
+            name="lock"
+            id="volume_lock_icon__{{row.name}}"
+            >
             <app-entity-table-actions [icon_name]="'lock_outline'" [entity]="actionEncryptedComponent" [row]="row"></app-entity-table-actions>
           </div>
-          <div *ngIf="row.vol_encrypt > 0 && !row.is_decrypted" class="encryption_icon pool-icon" title="Unlock">
+          <div *ngIf="row.vol_encrypt > 0 && !row.is_decrypted" 
+              class="encryption_icon pool-icon" 
+              title="Unlock" 
+              name="unlock"
+              id="volume_unlock_icon__{{row.name}}">
             <a (click)="conf.unlockAction(row)" class="unlock_button">
               <mat-icon>lock_open</mat-icon>
             </a>

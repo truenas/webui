@@ -4,6 +4,8 @@ import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import * as _ from 'lodash';
 import { DialogService, RestService, WebSocketService } from '../../../../services/';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { MatDialog } from '@angular/material';
+import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../common/entity/utils';
 
@@ -36,15 +38,15 @@ export class CertificateEditComponent {
     },
     {
       type: 'textarea',
-      name: 'privatekey',
-      placeholder: helptext_system_certificates.edit.privatekey.placeholder,
+      name: 'CSR',
+      placeholder: helptext_system_certificates.edit.csr.placeholder,
       isHidden: false,
       readonly: true,
     },
     {
       type: 'textarea',
-      name: 'CSR',
-      placeholder: helptext_system_certificates.edit.csr.placeholder,
+      name: 'privatekey',
+      placeholder: helptext_system_certificates.edit.privatekey.placeholder,
       isHidden: false,
       readonly: true,
     }
@@ -55,9 +57,10 @@ export class CertificateEditComponent {
   protected privatekeyField: any;
   protected CSRField: any;
   protected entityForm: any;
+  protected dialogRef: any
 
   constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
+    protected rest: RestService, protected ws: WebSocketService, protected matDialog: MatDialog,
     protected loader: AppLoaderService, protected dialog: DialogService) {}
 
   preInit() {
@@ -84,8 +87,8 @@ export class CertificateEditComponent {
           if (res[0]) {
             if (res[0].CSR != null) {
               this.CSRField['isHidden'] = false;
-              this.certificateField.readonly = false;
-              this.privatekeyField['isHidden'] = true;
+              this.certificateField['isHidden'] = true;
+              this.privatekeyField['isHidden'] = false;
             } else {
               this.CSRField['isHidden'] = true;
               this.certificateField['isHidden'] = false;
@@ -98,22 +101,16 @@ export class CertificateEditComponent {
   }
 
   customSubmit(value) {
-    let payload = {};
-    payload['name'] = value.name;
-    if (value.CSR != null) {
-      payload['certificate'] = value.certificate;
-    }
-
-    this.loader.open();
-    this.ws.call(this.editCall, [this.pk, payload]).subscribe(
-      (res) => {
-        this.loader.close();
-        this.router.navigate(new Array('/').concat(this.route_success));
-      },
-      (res) => {
-        this.loader.close();
-        new EntityUtils().handleWSError(this.entityForm, res);
-      }
-    );
+    this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": "Updating Identifier" }});
+    this.dialogRef.componentInstance.setCall(this.editCall, [this.pk, {'name':value['name']}]);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.matDialog.closeAll();
+      this.router.navigate(new Array('/').concat(this.route_success));
+    });
+    this.dialogRef.componentInstance.failure.subscribe((res) => {
+      this.matDialog.closeAll();
+      new EntityUtils().handleWSError(this.entityForm, res);
+    });
   }
 }

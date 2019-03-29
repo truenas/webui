@@ -1,1 +1,0 @@
-export { DockerVMWizardComponent } from './dockervm-wizard.component';

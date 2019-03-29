@@ -129,6 +129,11 @@ export const helptext_sharing_iscsi = {
  information.'
   ),
 
+  globalconf_placeholder_alua: T('Enable iSCSI ALUA'),
+  globalconf_tooltip_alua: T('Set for the initiator to discover paths\
+ to both storage controllers on the target and increase storage traffic\
+ efficiency. Requires ALUA-capable, High Availability (HA) hardware.'),
+
   globalconf_dialog_title: T("Enable service"),
   globalconf_dialog_message: T("Enable this service?"),
   globalconf_dialog_button: T("Enable Service"),

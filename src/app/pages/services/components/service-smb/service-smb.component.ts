@@ -63,13 +63,6 @@ export class ServiceSMBComponent {
     },
     {
       type: 'select',
-      name: 'cifs_srv_doscharset',
-      placeholder: helptext.cifs_srv_doscharset_placeholder,
-      tooltip: helptext.cifs_srv_doscharset_tooltip,
-      options: [],
-    },
-    {
-      type: 'select',
       name: 'cifs_srv_unixcharset',
       placeholder: helptext.cifs_srv_unixcharset_placeholder,
       tooltip: helptext.cifs_srv_unixcharset_tooltip,
