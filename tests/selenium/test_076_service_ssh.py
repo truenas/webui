@@ -6,7 +6,6 @@
 import sys
 import os
 import time
-from selenium.webdriver.common.keys import Keys
 cwd = str(os.getcwd())
 sys.path.append(cwd)
 from function import take_screenshot, status_change, status_check

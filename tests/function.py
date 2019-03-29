@@ -123,7 +123,7 @@ def user_edit_old(driver, type, name):
     index = 1
     ui_text = "null"
     for x in range(0, 10):
-        if self.is_element_present(By.XPATH, '//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div'):
+        if is_element_present(By.XPATH, '//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div'):
             ui_element = driver.find_element_by_xpath('//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div')
             ui_text = ui_element.text
             print(ui_text)
@@ -141,8 +141,9 @@ def user_edit_old(driver, type, name):
 
 
 def user_edit(driver, type, name):
-    # the convention is set in such a way tha a single funtion can cleanup both type:user/group, name:name of the group or user
-    # path plugs in the xpath of user or group , submenu{User/Group}
+    # the convention is set in such a way tha a single function can cleanup
+    # both type:user/group, name:name of the group or user
+    # path plugs in the xpath of user or group , sub-menu{User/Group}
     if (type == "user"):
         path = "User"
         fix = 'usr_username_'
@@ -154,16 +155,17 @@ def user_edit(driver, type, name):
     # wait till the list is loaded
     time.sleep(2)
 
-    if (self.is_element_present(By.XPATH, '//*[@id="table_actions_menu_button__bsd' + fix + name + '\"]')):
+    if (is_element_present(By.XPATH, '//*[@id="table_actions_menu_button__bsd' + fix + name + '\"]')):
         driver.find_element_by_xpath('//*[@id="table_actions_menu_button__bsd' + fix + name + '\"]').click()
         driver.find_element_by_xpath('//*[@id="action_button_Edit__bsd' + fix + name + '\"]').click()
     else:
         print(name + " " + type + " doesnt exist")
 
 
-def user_delete(driver, self, type, name):
-    # the convention is set in such a way tha a single funtion can cleanup both type:user/group, name:name of the group or user
-    # path plugs in the xpath of user or group , submenu{User/Group}
+def user_delete(driver, type, name):
+    # the convention is set in such a way that a single function can cleanup
+    # both type:user/group, name:name of the group or user
+    # path plugs in the xpath of user or group , sub-menu{User/Group}
     if (type == "user"):
         path = "User"
         fix = 'usr_username_'
@@ -175,13 +177,13 @@ def user_delete(driver, self, type, name):
     # wait till the list is loaded
     time.sleep(2)
 
-    if (self.is_element_present(By.XPATH, '//*[@id="table_actions_menu_button__bsd' + fix + name + '\"]')):
+    if (is_element_present(By.XPATH, '//*[@id="table_actions_menu_button__bsd' + fix + name + '\"]')):
         driver.find_element_by_xpath('//*[@id="table_actions_menu_button__bsd' + fix + name + '\"]').click()
         driver.find_element_by_xpath('//*[@id="action_button_Delete__bsd' + fix + name + '\"]').click()
     else:
         print(name + " " + type + " doesnt exist")
 
-    if (self.is_element_present(By.XPATH, xpaths['confirmCheckbox'])):
+    if (is_element_present(By.XPATH, xpaths['confirmCheckbox'])):
         driver.find_element_by_xpath(xpaths['confirmsecondaryCheckbox']).click()
         driver.find_element_by_xpath(xpaths['confirmCheckbox']).click()
         time.sleep(1)
@@ -190,7 +192,7 @@ def user_delete(driver, self, type, name):
         time.sleep(20)
 
 
-def user_delete_old(driver, self, type, name):
+def user_delete_old(driver, type, name):
     # the convention is set in such a way tha a single funtion can cleanup both type:user/group, name:name of the group or user
     # path plugs in the xpath of user or group , submenu{User/Group}
     # num specifies the column of the 3 dots which is different in user/group
@@ -239,7 +241,7 @@ def user_delete_old(driver, self, type, name):
         print("username/groupname- " + name + " does not exists..skipping")
 
 
-def plugin_install(driver, self, action, name):
+def plugin_install(driver, action, name):
     # the convention is set in such a way tha a single funtion can cleanup both type:user/group, name:name of the group or user
     # path plugs in the xpath of user or group , submenu{User/Group}
     # num specifies the column of the 3 dots which is different in user/group
