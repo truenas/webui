@@ -46,6 +46,14 @@ export class CertificateAddComponent {
       value: 'CERTIFICATE_CREATE_INTERNAL',
     },
     {
+      type : 'checkbox',
+      name : 'isCSRonSystem',
+      placeholder : helptext_system_certificates.add.isCSRonSystem.placeholder,
+      tooltip: helptext_system_certificates.add.isCSRonSystem.tooltip,
+      isHidden: true,
+      disabled: true,
+    },
+    {
       type : 'select',
       name : 'signedby',
       placeholder : helptext_system_certificates.add.signedby.placeholder,
@@ -56,7 +64,16 @@ export class CertificateAddComponent {
       isHidden: true,
       disabled: true,
       required: true,
-      validation: helptext_system_certificates.add.signedby.validation
+      validation: helptext_system_certificates.add.signedby.validation,
+      relation : [
+        {
+          action : 'ENABLE',
+          when : [ {
+            name : 'isCSRonSystem',
+            value : true,
+          } ]
+        },
+      ]
     },
     {
       type : 'select',
@@ -297,6 +314,8 @@ export class CertificateAddComponent {
   ];
   private importFields: Array<any> = [
     'certificate',
+    'isCSRonSystem',
+    'signedby',
     'privatekey',
     'passphrase',
     'passphrase2'
@@ -406,6 +425,12 @@ export class CertificateAddComponent {
         for (let i in this.importFields) {
           this.hideField(this.importFields[i], false, entity);
         }
+
+        // This block makes the form reset its 'disabled/hidden' settings on switch of type
+        if (entity.formGroup.controls['isCSRonSystem'].value !== true ) {
+          this.hideField('signedby', true, entity);
+        }
+
       } else if (res == 'CERTIFICATE_CREATE_IMPORTED_CSR') {
         for (let i in this.internalFields) {
           this.hideField(this.internalFields[i], true, entity);

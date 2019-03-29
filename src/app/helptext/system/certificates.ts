@@ -14,6 +14,13 @@ export const helptext_system_certificates = {
       placeholder: T("Type")
     },
 
+    isCSRonSystem: {
+      placeholder: T("CSR exists on this system"),
+      tooltip: T(
+        'Check this box if importing a certificate for which a CSR exists on this system'
+      )
+    },
+    
     signedby: {
       placeholder: T("Signing Certificate Authority"),
       tooltip: T(
