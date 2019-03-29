@@ -151,7 +151,6 @@ export class VolumesListTableConfig implements InputTableConf {
               saveButtonText: T("Lock Pool"),
               customSubmit: function (entityDialog) {
                 const value = entityDialog.formValue;
-                console.log(value)
                 localLoader.open();
                 localRest.post(localResourceName + "/" + row1.name + "/lock/", 
                   { body: JSON.stringify({passphrase : value.passphrase}) }).subscribe((restPostResp) => {
