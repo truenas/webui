@@ -262,6 +262,15 @@ export class CertificateAddComponent {
       placeholder : helptext_system_certificates.add.privatekey.placeholder,
       tooltip : helptext_system_certificates.add.privatekey.tooltip,
       isHidden: true,
+      relation : [
+        {
+          action : 'DISABLE',
+          when : [ {
+            name : 'isCSRonSystem',
+            value : true,
+          } ]
+        },
+      ]
     },
     {
       type : 'input',
@@ -271,14 +280,32 @@ export class CertificateAddComponent {
       inputType : 'password',
       validation : helptext_system_certificates.add.passphrase.validation,
       isHidden: true,
-      togglePw : true
+      togglePw : true,
+      relation : [
+        {
+          action : 'DISABLE',
+          when : [ {
+            name : 'isCSRonSystem',
+            value : true,
+          } ]
+        },
+      ]
     },
     {
       type : 'input',
       name : 'passphrase2',
       inputType : 'password',
       placeholder : helptext_system_certificates.add.passphrase2.placeholder,
-      isHidden : true
+      isHidden : true,
+      relation : [
+        {
+          action : 'DISABLE',
+          when : [ {
+            name : 'isCSRonSystem',
+            value : true,
+          } ]
+        },
+      ]
     }
   ];
 
@@ -386,9 +413,9 @@ export class CertificateAddComponent {
 
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
         if (entity.formGroup.controls['key_type'].value === 'RSA') {
-          this.hideField('ec_curve', true, entity);
+          entity.setDisabled('ec_curve', true);
         } else if (entity.formGroup.controls['key_type'].value === 'EC') {
-          this.hideField('key_length', true, entity);
+          entity.setDisabled('key_length', true);
         } 
 
       } else if (res == 'CERTIFICATE_CREATE_CSR') {
@@ -407,9 +434,9 @@ export class CertificateAddComponent {
 
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
         if (entity.formGroup.controls['key_type'].value === 'RSA') {
-          this.hideField('ec_curve', true, entity);
+          entity.setDisabled('ec_curve', true);
         } else if (entity.formGroup.controls['key_type'].value === 'EC') {
-          this.hideField('key_length', true, entity);
+          entity.setDisabled('key_length', true);
         }
 
       } else if (res == 'CERTIFICATE_CREATE_IMPORTED') {
@@ -427,8 +454,12 @@ export class CertificateAddComponent {
         }
 
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
-        if (entity.formGroup.controls['isCSRonSystem'].value !== true ) {
-          this.hideField('signedby', true, entity);
+        if (!entity.formGroup.controls['isCSRonSystem'].value) {
+          entity.setDisabled('signedby', true);
+        } else {
+          entity.setDisabled('privatekey', true);
+          entity.setDisabled('passphrase', true);
+          entity.setDisabled('passphrase2', true);
         }
 
       } else if (res == 'CERTIFICATE_CREATE_IMPORTED_CSR') {
