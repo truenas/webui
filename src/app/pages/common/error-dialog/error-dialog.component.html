@@ -10,7 +10,7 @@
     <span>More info...</span>
   </div>
   <div class="backtrace-panel" [ngClass]="{'open':!isCloseMoreInfo}" *ngIf="backtrace">
-    <textarea readonly matInput>Error: {{backtrace}}</textarea>
+    <textarea id="bt-text"readonly matInput>Error: {{backtrace}}</textarea>
   </div>  
 </div>
 <div mat-dialog-actions>
