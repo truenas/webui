@@ -16,78 +16,97 @@ import helptext from '../../../helptext/network/configuration/configuration';
 })
 export class ConfigurationComponent {
 
-  protected resource_name: string = 'network/globalconfiguration/';
+  //protected resource_name: string = 'network/globalconfiguration/';
+  protected queryCall: string = 'network.configuration.config';
+  protected updateCall: string = 'network.configuration.update';
+  public isEntity = false;
   public fieldConfig: FieldConfig[] = [
     {
       type : 'input',
-      name : 'gc_hostname',
-      placeholder : helptext.gc_hostname_placeholder,
-      tooltip : helptext.gc_hostname_tooltip,
+      name : 'hostname',
+      placeholder : helptext.hostname_placeholder,
+      tooltip : helptext.hostname_tooltip,
     },
     {
       type : 'input',
-      name : 'gc_domain',
-      placeholder : helptext.gc_domain_placeholder,
-      tooltip : helptext.gc_domain_tooltip,
+      name : 'hostname_b',
+      placeholder : helptext.hostname_b_placeholder,
+      tooltip : helptext.hostname_b_tooltip,
+      isHidden: true,
+      disabled: true
+    },
+    {
+      type : 'input',
+      name : 'hostname_virtual',
+      placeholder : helptext.hostname_virtual_placeholder,
+      tooltip : helptext.hostname_virtual_tooltip,
+      isHidden: true,
+      disabled: true
+    },
+    {
+      type : 'input',
+      name : 'domain',
+      placeholder : helptext.domain_placeholder,
+      tooltip : helptext.domain_tooltip,
     },
     {
       type : 'textarea',
-      name : 'gc_domains',
-      placeholder: helptext.gc_domains_placeholder,
-      tooltip : helptext.gc_domains_tooltip,
+      name : 'domains',
+      placeholder: helptext.domains_placeholder,
+      tooltip : helptext.domains_tooltip,
     },
     {
       type : 'input',
-      name : 'gc_ipv4gateway',
-      placeholder : helptext.gc_ipv4gateway_placeholder,
-      tooltip : helptext.gc_ipv4gateway_tooltip,
+      name : 'ipv4gateway',
+      placeholder : helptext.ipv4gateway_placeholder,
+      tooltip : helptext.ipv4gateway_tooltip,
     },
     {
       type : 'input',
-      name : 'gc_ipv6gateway',
-      placeholder : helptext.gc_ipv6gateway_placeholder,
-      tooltip : helptext.gc_ipv6gateway_tooltip,
+      name : 'ipv6gateway',
+      placeholder : helptext.ipv6gateway_placeholder,
+      tooltip : helptext.ipv6gateway_tooltip,
     },
     {
       type : 'input',
-      name : 'gc_nameserver1',
-      placeholder : helptext.gc_nameserver1_placeholder,
-      tooltip : helptext.gc_nameserver1_tooltip,
+      name : 'nameserver1',
+      placeholder : helptext.nameserver1_placeholder,
+      tooltip : helptext.nameserver1_tooltip,
     },
     {
       type : 'input',
-      name : 'gc_nameserver2',
-      placeholder : helptext.gc_nameserver2_placeholder,
-      tooltip : helptext.gc_nameserver2_tooltip,
+      name : 'nameserver2',
+      placeholder : helptext.nameserver2_placeholder,
+      tooltip : helptext.nameserver2_tooltip,
     },
     {
       type : 'input',
-      name : 'gc_nameserver3',
-      placeholder : helptext.gc_nameserver3_placeholder,
-      tooltip : helptext.gc_nameserver3_tooltip,
+      name : 'nameserver3',
+      placeholder : helptext.nameserver3_placeholder,
+      tooltip : helptext.nameserver3_tooltip,
     },
     {
       type : 'input',
-      name : 'gc_httpproxy',
-      placeholder : helptext.gc_httpproxy_placeholder,
-      tooltip : helptext.gc_httpproxy_tooltip,
+      name : 'httpproxy',
+      placeholder : helptext.httpproxy_placeholder,
+      tooltip : helptext.httpproxy_tooltip,
     },
     {
       type : 'checkbox',
-      name : 'gc_netwait_enabled',
-      placeholder : helptext.gc_netwait_enabled_placeholder,
-      tooltip : helptext.gc_netwait_enabled_tooltip,
+      name : 'netwait_enabled',
+      placeholder : helptext.netwait_enabled_placeholder,
+      tooltip : helptext.netwait_enabled_tooltip,
     },
     {
-      type : 'input',
-      name : 'gc_netwait_ip',
-      placeholder : helptext.gc_netwait_ip_placeholder,
-      tooltip : helptext.gc_netwait_ip_tooltip,
+      type : 'textarea',
+      name : 'netwait_ip',
+      placeholder : helptext.netwait_ip_placeholder,
+      tooltip : helptext.netwait_ip_tooltip,
       relation : [
                     {
                       action : 'HIDE',
                       when : [ {
-                        name : 'gc_netwait_enabled',
+                        name : 'netwait_enabled',
                         value : false,
                       } ]
                     },
@@ -95,17 +114,36 @@ export class ConfigurationComponent {
     },
     {
       type : 'textarea',
-      name : 'gc_hosts',
-      placeholder : helptext.gc_hosts_placeholder,
-      tooltip : helptext.gc_hosts_tooltip,
+      name : 'hosts',
+      placeholder : helptext.hosts_placeholder,
+      tooltip : helptext.hosts_tooltip,
     },
   ];
   private entityEdit: EntityFormComponent;
+  private failover_fields = ['hostname_b', 'hostname_virtual'];
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected tooltipsService: TooltipsService) {}
 
-  afterInit(entityEdit: any) { this.entityEdit = entityEdit; }
+  afterInit(entityEdit: any) { 
+    this.entityEdit = entityEdit; 
+    if (window.localStorage.getItem('is_freenas') === 'false') {
+      this.ws.call('failover.licensed').subscribe((is_ha) => { //fixme, stupid race condition makes me need to call this again
+        for (let i = 0; i < this.failover_fields.length; i++) {
+          entityEdit.setDisabled(this.failover_fields[i], !is_ha, !is_ha);
+        }
+      });
+    }
+  }
+
+  resourceTransformIncomingRestData(data) {
+    data['netwait_ip'] = data['netwait_ip'].join(',');
+    data['domains'] = data['domains'].join(',');
+  }
+
+  clean(data) {
+    console.log(data);
+  }
 }
