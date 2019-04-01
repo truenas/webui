@@ -7,7 +7,6 @@
 import sys
 import os
 import time
-from selenium.webdriver.common.keys import Keys
 cwd = str(os.getcwd())
 sys.path.append(cwd)
 from function import take_screenshot, is_element_present
@@ -106,7 +105,7 @@ def test_03_create_newpool2(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['confirmCheckbox']).click()
     # Click Ok Button
     wb_driver.find_element_by_xpath(xpaths['createpoolButton']).click()
-    time.sleep(60)
+    time.sleep(1)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
@@ -117,7 +116,7 @@ def test_04_close_navStorage(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['navStorage']).click()
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
-    time.sleep(20)
+    time.sleep(1)
 
 # Next step-- To check if the new user is present in the list via automation
 

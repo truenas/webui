@@ -29,7 +29,7 @@ def test_00_set_implicitly_wait(wb_driver):
     wb_driver.implicitly_wait(1)
 
 
-def test_01_00_nav_acc_user(wb_driver):
+def test_01_nav_acc_user(wb_driver):
     # Click  Account menu
     # allowing the button to load
     time.sleep(1)
@@ -46,7 +46,7 @@ def test_01_00_nav_acc_user(wb_driver):
     take_screenshot(wb_driver, script_name, test_name)
 
 
-def test_01_01_delete_user(wb_driver):
+def test_02_delete_user(wb_driver):
     time.sleep(2)
     user_delete(wb_driver, "user", newusername)
     # taking screenshot
@@ -54,7 +54,7 @@ def test_01_01_delete_user(wb_driver):
     take_screenshot(wb_driver, script_name, test_name)
 
 
-def test_01_02_delete_user(wb_driver):
+def test_04_delete_user(wb_driver):
     time.sleep(2)
     user_delete(wb_driver, "user", newusernameuncheck)
     # taking screenshot
@@ -62,7 +62,7 @@ def test_01_02_delete_user(wb_driver):
     take_screenshot(wb_driver, script_name, test_name)
 
 
-def test_01_03_delete_user(wb_driver):
+def test_05_delete_user(wb_driver):
     time.sleep(2)
     user_delete(wb_driver, "user", superusername)
     time.sleep(2)
@@ -71,7 +71,7 @@ def test_01_03_delete_user(wb_driver):
     take_screenshot(wb_driver, script_name, test_name)
 
 
-def test_01_04_delete_user(wb_driver):
+def test_06_delete_user(wb_driver):
     time.sleep(2)
     user_delete(wb_driver, "user", "unas")
     # taking screenshot
@@ -79,7 +79,7 @@ def test_01_04_delete_user(wb_driver):
     take_screenshot(wb_driver, script_name, test_name)
 
 
-def test_02_00_nav_acc_group(wb_driver):
+def test_07_nav_acc_group(wb_driver):
     # Click  Account menu
     # Click User submenu
     wb_driver.find_element_by_xpath(xpaths['submenuGroup']).click()
@@ -94,7 +94,7 @@ def test_02_00_nav_acc_group(wb_driver):
     take_screenshot(wb_driver, script_name, test_name)
 
 
-def test_02_01_delete_group(wb_driver):
+def test_08_delete_group(wb_driver):
     time.sleep(2)
     user_delete(wb_driver, "group", newusername)
     # taking screenshot
@@ -102,7 +102,7 @@ def test_02_01_delete_group(wb_driver):
     take_screenshot(wb_driver, script_name, test_name)
 
 
-def test_02_02_delete_group(wb_driver):
+def test_09_delete_group(wb_driver):
     time.sleep(2)
     user_delete(wb_driver, "group", superusername)
     # taking screenshot
@@ -110,7 +110,7 @@ def test_02_02_delete_group(wb_driver):
     take_screenshot(wb_driver, script_name, test_name)
 
 
-def test_02_03_delete_group(wb_driver):
+def test_10_delete_group(wb_driver):
     time.sleep(2)
     user_delete(wb_driver, "group", newgroupname)
     # taking screenshot
@@ -118,7 +118,7 @@ def test_02_03_delete_group(wb_driver):
     take_screenshot(wb_driver, script_name, test_name)
 
 
-def test_02_04_delete_group(wb_driver):
+def test_11_delete_group(wb_driver):
     time.sleep(2)
     user_delete(wb_driver, "group", supergroupname)
     # taking screenshot
@@ -126,7 +126,7 @@ def test_02_04_delete_group(wb_driver):
     take_screenshot(wb_driver, script_name, test_name)
 
 
-def test_03_close_navAccount(wb_driver):
+def test_12_close_navAccount(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['navAccount']).click()
     time.sleep(20)
     # taking screenshot

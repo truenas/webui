@@ -21,12 +21,12 @@ xpaths = {
     'confirmCheckbox': '//*[contains(@name, "confirm_checkbox")]',
     'deleteButton': '//*[contains(@name, "ok_button")]',
     'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a",
-    'poolID': '//*[@id="expansionpanel_zfs_',
-    'poolDetach': '//*[@id="action_button_Detach"]',
+    'poolID': '//mat-expansion-panel-header/span[2]',
+    'poolDetach': "//button[@id='action_button_Export/Disconnect__name_",
     'pooldestroyCheckbox': '//*[@id="destroy"]/mat-checkbox/label/div',
     'poolconfirmCheckbox': '//*[@id="confirm"]/mat-checkbox/label/div',
-    'detachButton': '//*[contains(@name, "Detach_button")]',
-    'closeButton': '//*[contains(text(), "Close")]',
+    'confirmButton': '//div[3]/button[2]/span',
+    'closeButton': '//div[2]/button/span',
 }
 
 
@@ -36,7 +36,6 @@ def test_00_set_implicitly_wait(wb_driver):
 
 def test_01_nav_store_pool(wb_driver):
     # Click  Storage menu
-    print(" navigating to the Pool submenu")
     # allowing the button to load
     time.sleep(1)
     # Click Storage menu
@@ -47,7 +46,6 @@ def test_01_nav_store_pool(wb_driver):
     ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
     # get the weather data
     page_data = ui_element.text
-    print("the Page now is: " + page_data)
     # assert response
     assert "Pools" in page_data, page_data
     # taking screenshot
@@ -56,8 +54,9 @@ def test_01_nav_store_pool(wb_driver):
 
 
 def test_02_delete_pool1(wb_driver):
-    print(" deleting a pool: " + pool1)
-    time.sleep(2)
+    time.sleep(1)
+    wb_driver.find_element_by_xpath(xpaths['poolID']).click()
+    time.sleep(1)
     pool_detach(wb_driver, pool1)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
@@ -65,8 +64,7 @@ def test_02_delete_pool1(wb_driver):
 
 
 def test_03_delete_pool2(wb_driver):
-    print(" deleting a pool: " + pool2)
-    time.sleep(2)
+    time.sleep(1)
     pool_detach(wb_driver, pool2)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
@@ -74,37 +72,26 @@ def test_03_delete_pool2(wb_driver):
 
 
 def test_04_close_navStorage(wb_driver):
-    print(" closing Storage menu")
     wb_driver.find_element_by_xpath(xpaths['navStorage']).click()
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
-    time.sleep(20)
 
 
 def pool_detach(wb_driver, name):
-    # path plugs in the xpath of user or group , sub-menu{User/Group}
-    # num specifies the column of the 3 dots which is different in user/group
-    # delNum specifies the option number where delete is after clicking on
-    # the 3 dots
-
-    # Click Pool submenu
-    wb_driver.find_element_by_xpath(xpaths['submenuPool']).click()
-    # wait till the list is loaded
-    wb_driver.find_element_by_xpath(xpaths['poolID'] + name + '"]').click()
     time.sleep(1)
-    xpath = '"]/div/div/div[1]/div/app-entity-table-actions/div/mat-icon'
-    pool_xpath = xpaths['poolID'] + name + xpath
+    pool_xpath = f"//mat-icon[@id='table_actions_menu_button__name_{name}']"
     wb_driver.find_element_by_xpath(pool_xpath).click()
-    wb_driver.find_element_by_xpath(xpaths['poolDetach']).click()
+    xpath = xpaths['poolDetach'] + name + "']/span"
+    wb_driver.find_element_by_xpath(xpath).click()
     wb_driver.find_element_by_xpath(xpaths['pooldestroyCheckbox']).click()
-    wb_driver.find_element_by_xpath(xpaths['poolconfirmdCheckbox']).click()
-    time.sleep(3)
+    wb_driver.find_element_by_xpath(xpaths['poolconfirmCheckbox']).click()
+    time.sleep(1)
     print("clicking on detach")
-    if wb_driver.find_element_by_xpath(xpaths['detachButton']):
+    if wb_driver.find_element_by_xpath(xpaths['confirmButton']):
         print("detach button found")
-        wb_driver.find_element_by_xpath(xpaths['detachButton']).click()
+        wb_driver.find_element_by_xpath(xpaths['confirmButton']).click()
         print(" clicked on detach")
-    time.sleep(32)
+    time.sleep(5)
     print("clicking on close")
     wb_driver.find_element_by_xpath(xpaths['closeButton']).click()
     print("already clicked on detach")
