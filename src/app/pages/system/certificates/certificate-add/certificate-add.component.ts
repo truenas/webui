@@ -409,6 +409,7 @@ export class CertificateAddComponent {
   }
 
   afterInit(entity: any) {
+    this.entityForm = entity;
     for (let i in this.csrFields) {
       this.hideField(this.csrFields[i], true, entity);
     }
@@ -567,6 +568,7 @@ export class CertificateAddComponent {
       this.router.navigate(new Array('/').concat(this.route_success));
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
+      this.dialogRef.close();
       new EntityUtils().handleWSError(this.entityForm, res);
     });
 
