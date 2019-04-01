@@ -22,6 +22,7 @@ export class CertificateAddComponent {
   protected isEntity: boolean = true;
   protected dialogRef: any;
   private entityForm: any;
+  private CSRList = [];
   protected fieldConfig: FieldConfig[] = [
     {
       type : 'input',
@@ -47,7 +48,7 @@ export class CertificateAddComponent {
     },
     {
       type : 'checkbox',
-      name : 'id',
+      name : 'csronsys',
       placeholder : helptext_system_certificates.add.isCSRonSystem.placeholder,
       tooltip: helptext_system_certificates.add.isCSRonSystem.tooltip,
       isHidden: true,
@@ -55,7 +56,7 @@ export class CertificateAddComponent {
     },
     {
       type : 'select',
-      name : 'signedby',
+      name : 'csrlist',
       placeholder : helptext_system_certificates.add.signedby.placeholder,
       tooltip: helptext_system_certificates.add.signedby.tooltip,
       options : [
@@ -69,11 +70,24 @@ export class CertificateAddComponent {
         {
           action : 'ENABLE',
           when : [ {
-            name : 'id',
+            name : 'csronsys',
             value : true,
           } ]
         },
       ]
+    },
+    {
+      type : 'select',
+      name : 'signedby',
+      placeholder : helptext_system_certificates.add.signedby.placeholder,
+      tooltip: helptext_system_certificates.add.signedby.tooltip,
+      options : [
+        {label: '---', value: null}
+      ],
+      isHidden: true,
+      disabled: true,
+      required: true,
+      validation: helptext_system_certificates.add.signedby.validation,
     },
     {
       type : 'select',
@@ -266,7 +280,7 @@ export class CertificateAddComponent {
         {
           action : 'DISABLE',
           when : [ {
-            name : 'id',
+            name : 'csronsys',
             value : true,
           } ]
         },
@@ -285,7 +299,7 @@ export class CertificateAddComponent {
         {
           action : 'DISABLE',
           when : [ {
-            name : 'id',
+            name : 'csronsys',
             value : true,
           } ]
         },
@@ -301,7 +315,7 @@ export class CertificateAddComponent {
         {
           action : 'DISABLE',
           when : [ {
-            name : 'id',
+            name : 'csronsys',
             value : true,
           } ]
         },
@@ -341,8 +355,8 @@ export class CertificateAddComponent {
   ];
   private importFields: Array<any> = [
     'certificate',
-    'id',
-    'signedby',
+    'csronsys',
+    'csrlist',
     'privatekey',
     'passphrase',
     'passphrase2'
@@ -356,6 +370,7 @@ export class CertificateAddComponent {
 
   private country: any;
   private signedby: any;
+  private csrlist: any;
   public identifier: any;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
@@ -379,6 +394,18 @@ export class CertificateAddComponent {
         );
       });
     });
+
+    this.ws.call('certificate.query').subscribe((res) => {
+      this.csrlist = _.find(this.fieldConfig, {'name' : 'csrlist'});
+      res.forEach((item) => {
+        if (item.CSR !== null) {
+          this.CSRList.push(item);
+          this.csrlist.options.push(
+            {label: item.name, value: item.id}
+          )
+        }
+      })
+    })
   }
 
   afterInit(entity: any) {
@@ -454,8 +481,8 @@ export class CertificateAddComponent {
         }
 
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
-        if (!entity.formGroup.controls['id'].value) {
-          entity.setDisabled('signedby', true);
+        if (!entity.formGroup.controls['csronsys'].value) {
+          entity.setDisabled('csrlist', true);
         } else {
           entity.setDisabled('privatekey', true);
           entity.setDisabled('passphrase', true);
@@ -505,7 +532,20 @@ export class CertificateAddComponent {
         } else {
           data.san = _.split(data.san, /\s/);
         }
-      }
+    }
+
+    if (data.csronsys) {
+      this.CSRList.forEach((item) => {
+        if (item.id === data.csrlist) {
+          data.privatekey = item.privatekey;
+          data.passphrase = item.passphrase;
+          data.passphrase2 = item.passphrase2;
+          return;
+        }
+      })
+    }
+    delete data.csronsys;
+    delete data.csrlist;
 
     // Addresses non-pristine field being mistaken for a passphrase of ''
     if (data.passphrase == '') {
@@ -527,7 +567,6 @@ export class CertificateAddComponent {
       this.router.navigate(new Array('/').concat(this.route_success));
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
-      this.dialog.closeAll();
       new EntityUtils().handleWSError(this.entityForm, res);
     });
 
