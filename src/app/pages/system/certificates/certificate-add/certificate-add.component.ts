@@ -47,7 +47,7 @@ export class CertificateAddComponent {
     },
     {
       type : 'checkbox',
-      name : 'isCSRonSystem',
+      name : 'id',
       placeholder : helptext_system_certificates.add.isCSRonSystem.placeholder,
       tooltip: helptext_system_certificates.add.isCSRonSystem.tooltip,
       isHidden: true,
@@ -69,7 +69,7 @@ export class CertificateAddComponent {
         {
           action : 'ENABLE',
           when : [ {
-            name : 'isCSRonSystem',
+            name : 'id',
             value : true,
           } ]
         },
@@ -266,7 +266,7 @@ export class CertificateAddComponent {
         {
           action : 'DISABLE',
           when : [ {
-            name : 'isCSRonSystem',
+            name : 'id',
             value : true,
           } ]
         },
@@ -285,7 +285,7 @@ export class CertificateAddComponent {
         {
           action : 'DISABLE',
           when : [ {
-            name : 'isCSRonSystem',
+            name : 'id',
             value : true,
           } ]
         },
@@ -301,7 +301,7 @@ export class CertificateAddComponent {
         {
           action : 'DISABLE',
           when : [ {
-            name : 'isCSRonSystem',
+            name : 'id',
             value : true,
           } ]
         },
@@ -341,7 +341,7 @@ export class CertificateAddComponent {
   ];
   private importFields: Array<any> = [
     'certificate',
-    'isCSRonSystem',
+    'id',
     'signedby',
     'privatekey',
     'passphrase',
@@ -454,7 +454,7 @@ export class CertificateAddComponent {
         }
 
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
-        if (!entity.formGroup.controls['isCSRonSystem'].value) {
+        if (!entity.formGroup.controls['id'].value) {
           entity.setDisabled('signedby', true);
         } else {
           entity.setDisabled('privatekey', true);
