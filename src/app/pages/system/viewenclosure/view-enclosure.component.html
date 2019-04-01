@@ -1,0 +1,16 @@
+<nav class="view-nav-bar">
+  <span *ngFor="let button of views; let i=index;">
+    <span *ngIf="button.showInNavbar" class="view-nav-btn">TEST: {{button.name}}</span>
+  </span>
+</nav>
+
+<mat-card class="view-card">
+  <mat-toolbar>
+    <div class="mat-card-title-text">View Enclosure</div>
+  </mat-toolbar>
+  <mat-card-content>
+    <enclosure-details></enclosure-details>
+  </mat-card-content>
+</mat-card>
+
+<!--<img src="assets/images/m50_1080p.png">-->

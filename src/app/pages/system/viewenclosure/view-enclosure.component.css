@@ -1,0 +1,18 @@
+nav.view-nav-bar{
+  background-color:--var(--bg2);
+  background-color: #000;
+  color:--var(--fg1);
+  width:100%;
+  height:64px;
+}
+
+.view-nav-bar .view-nav-btn{
+  /*display:inline-block;*/
+  height:64px;
+}
+
+.view-card{
+  max-width:960px;
+  margin: 0 auto;
+  min-height:480px;
+}
