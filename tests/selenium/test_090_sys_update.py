@@ -3,6 +3,7 @@
 # Location for tests  of FreeNAS new GUI
 # Test case count: 2
 
+import pytest
 import sys
 import os
 import time
@@ -41,6 +42,7 @@ def test_01_nav_sys_update(wb_driver):
     take_screenshot(wb_driver, script_name, test_name)
 
 
+@pytest.mark.skip('Skipping until test is fix')
 def test_02_check_update_now(wb_driver):
     # Click on the checknow button
     wb_driver.find_element_by_xpath(xpaths['buttonChecknow']).click()
