@@ -623,7 +623,7 @@ export class DatasetFormComponent implements Formconfiguration{
             entityForm.formGroup.controls['sync'].setValue(sync_value);
 
             let compression_value = pk_dataset[0].compression.value;
-            if (pk_dataset[0].compression.source === 'INHERITED') {
+            if (pk_dataset[0].compression.source === 'INHERITED' || pk_dataset[0].compression.source === 'DEFAULT') {
               compression_value = 'INHERIT';
             }
             if (compression_value === 'GZIP') {
@@ -634,23 +634,23 @@ export class DatasetFormComponent implements Formconfiguration{
 
             }
             let deduplication_value = pk_dataset[0].deduplication.value;
-            if (pk_dataset[0].deduplication.source === 'DEFAULT') {
+            if (pk_dataset[0].deduplication.source === 'DEFAULT' || pk_dataset[0].deduplication.source === 'INHERITED') {
               deduplication_value = 'INHERIT';
             }
             let exec_value = pk_dataset[0].exec.value;
-            if (pk_dataset[0].exec.source === 'DEFAULT') {
+            if (pk_dataset[0].exec.source === 'DEFAULT' || pk_dataset[0].exec.source === 'INHERITED') {
               exec_value = 'INHERIT';
             }
             let readonly_value = pk_dataset[0].readonly.value;
-            if (pk_dataset[0].readonly.source === 'DEFAULT') {
+            if (pk_dataset[0].readonly.source === 'DEFAULT' || pk_dataset[0].readonly.source === 'INHERITED') {
               readonly_value = 'INHERIT';
             }
             let atime_value = pk_dataset[0].exec.value;
-            if (pk_dataset[0].atime.source === 'DEFAULT') {
+            if (pk_dataset[0].atime.source === 'DEFAULT' || pk_dataset[0].atime.source === 'INHERITED') {
               atime_value = 'INHERIT';
             }
             let recordsize_value = pk_dataset[0].recordsize.value;
-            if (pk_dataset[0].recordsize.source === 'DEFAULT') {
+            if (pk_dataset[0].recordsize.source === 'DEFAULT' || pk_dataset[0].recordsize.source === 'INHERITED') {
               recordsize_value = 'INHERIT';
             }
 
