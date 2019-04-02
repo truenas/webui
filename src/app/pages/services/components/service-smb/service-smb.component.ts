@@ -106,11 +106,12 @@ export class ServiceSMBComponent {
       options: [],
       tooltip: helptext.cifs_srv_guest_tooltip,
     },
-    { type: 'input',
+    { type: 'select',
       name: 'cifs_srv_admin_group',
       placeholder: helptext.cifs_srv_admin_group_placeholder,
       tooltip: helptext.cifs_srv_admin_group_tooltip,
-      validation : helptext.cifs_srv_admin_group_validation
+      options: [],
+      // validation : helptext.cifs_srv_admin_group_validation
     },
     { type: 'input',
       name: 'cifs_srv_filemask',
@@ -197,6 +198,7 @@ export class ServiceSMBComponent {
   private cifs_srv_bindip: any;
   private cifs_srv_guest: any;
   private cifs_srv_unixcharset: any;
+  private cifs_srv_admin_group: any;
   protected defaultIdmap: any;
   protected idmap_tdb_range_low: any;
   protected idmap_tdb_range_high: any;
@@ -221,6 +223,12 @@ export class ServiceSMBComponent {
       this.cifs_srv_guest = _.find(this.fieldConfig, {'name':'cifs_srv_guest'});
       res.forEach((user) => {
         this.cifs_srv_guest.options.push({ label: user.username, value: user.username });
+      });
+    });
+    this.ws.call('group.query').subscribe((res) => {
+      this.cifs_srv_admin_group = _.find(this.fieldConfig, {'name':'cifs_srv_admin_group'});
+      res.forEach((group) => {
+        this.cifs_srv_admin_group.options.push({ label: group.group, value: group.group });
       });
     });
   }
