@@ -16,9 +16,9 @@ user_form_username_tooltip : T('Enter an alphanumeric username of eight to\
  characters or less is recommended for\
  compatibility with legacy clients.\
  Usernames cannot begin with a hyphen\
- (<b>-</b>) or contain a space, tab, or these\
- characters: <b>, : + & # %^ ( ) ! @ ~ * ? < > =</b>\
- Note that <b>$</b> can only be used as the last\
+ (<i>-</i>) or contain a space, tab, or these\
+ characters: <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i>\
+ Note that <i>$</i> can only be used as the last\
  character.'),
 user_form_username_validation: [ Validators.required, Validators.pattern('[a-zA-Z_][a-zA-Z0-9_\.-]*[$]?'), Validators.maxLength(16) ],
 user_form_email_name:'email',

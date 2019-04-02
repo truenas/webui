@@ -40,7 +40,18 @@ export class GlobalconfigurationComponent {
   ];
 
   constructor(protected router: Router, protected route: ActivatedRoute, protected dialogService: DialogService,
-              protected ws: WebSocketService, protected snackBar: MatSnackBar, protected loader: AppLoaderService) {}
+              protected ws: WebSocketService, protected snackBar: MatSnackBar, protected loader: AppLoaderService) {
+    this.ws.call('system.is_freenas').subscribe((res)=>{
+      if (!res) {
+        this.fieldConfig.push({
+          type: 'checkbox',
+          name: 'alua',
+          placeholder: helptext_sharing_iscsi.globalconf_placeholder_alua,
+          tooltip: helptext_sharing_iscsi.globalconf_tooltip_alua,
+        })
+      }
+    });
+  }
 
   afterInit(entityForm) {
     entityForm.submitFunction = entityForm.editCall;

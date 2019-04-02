@@ -88,19 +88,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"<a "
-"href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteEndpoints."
-"html\" target=\"_blank\">Endpoint URL</a> for a bucket configured for "
-"website hosting. Leave blank when using  AWS. Enter endpoint URL if using "
-"custom S3 API. URL  general format:  "
-"<i>bucket-name.s3-website.region.amazonaws.com</i>. Refer to the AWS "
-"Documentation for a list of <a "
-"href=\"https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_website_"
-"region_endpoints\" target=\"_blank\">Simple Storage Service Website "
-"Endpoints</a>."
-msgstr ""
-
-msgid ""
 "<a href=\"https://docs.pcloud.com/methods/intro/authentication.html\" "
 "target=\"_blank\">pCloud Access Token</a>. These tokens can expire and "
 "require extension."
@@ -214,7 +201,7 @@ msgid ""
 "target=\"_blank\">idmap_autorid(8)</a>, <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=idmap_ad\" "
 "target=\"_blank\">ad</a>, <a "
-"href=\"%%docurl%%/directoryservice.html%%webversion%%#id12\" "
+"href=\"%%docurl%%/directoryservices.html%%webversion%%#id12\" "
 "target=\"_blank\">fruit</a>, <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=idmap_ldap\" "
 "target=\"_blank\">idmap_ldap(8)</a>, <a "
@@ -281,13 +268,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"<i>Intel e82545 (e1000)</i> emulates an Intel Ethernet card. This provides "
-"compatibility with most operating systems. <i>VirtIO</i> provides better "
-"performance when the operating system installed in the VM supports VirtIO "
-"paravirtualized network drivers."
-msgstr ""
-
-msgid ""
 "<i>Intel e82545 (e1000)</i> emulates the same Intel Ethernet card. This "
 "provides compatibility with most operating systems. <i>VirtIO</i> provides "
 "better performance when the operating system installed in the VM supports "
@@ -335,6 +315,11 @@ msgid ""
 msgstr ""
 
 msgid ""
+"<i>global</i> is a reserved name that cannot be used as a share name. "
+"Please enter a different share name."
+msgstr ""
+
+msgid ""
 "<p>Including the Password Secret Seed allows using this configuration file "
 "with a new boot device. This also decrypts all system passwords for reuse "
 "when the configuration file is uploaded.</p> <b>Keep the configuration file "
@@ -361,11 +346,6 @@ msgid ""
 msgstr ""
 
 msgid "A pool with this name already exists."
-msgstr ""
-
-msgid ""
-"A randomized MAC address is normally assigned. Enter a value here to set a "
-"specific MAC address."
 msgstr ""
 
 msgid ""
@@ -716,6 +696,9 @@ msgstr ""
 msgid "Aliases"
 msgstr ""
 
+msgid "All Disks"
+msgstr ""
+
 msgid "All dirs"
 msgstr ""
 
@@ -1012,6 +995,9 @@ msgstr ""
 msgid "Automatically reboot the system after the update is applied."
 msgstr ""
 
+msgid "Automatically stop the script or command after the specified seconds."
+msgstr ""
+
 msgid "Auxiliary Arguments"
 msgstr ""
 
@@ -1128,10 +1114,15 @@ msgstr ""
 msgid "Boot Method"
 msgstr ""
 
-msgid "Boot Pool"
+msgid "Boot Pool Status"
 msgstr ""
 
-msgid "Boot Pool Status"
+msgid ""
+"Brainpool curves can be more secure, while secp curves can be faster. See "
+"<a "
+"href=\"https://tls.mbed.org/kb/cryptography/elliptic-curve-performance-nist-"
+"vs-brainpool\" target=\"blank\"> Elliptic Curve performance: NIST vs "
+"Brainpool </a> for more information."
 msgstr ""
 
 msgid "Browsable to Network Clients"
@@ -1158,9 +1149,6 @@ msgid ""
 "Browse to an empty directory within the jail or enter a new directory name "
 "within the jail directory structure. This links to the <b>Source</b> "
 "storage area."
-msgstr ""
-
-msgid "Browse to an existing directory to store the new raw file."
 msgstr ""
 
 msgid ""
@@ -1250,9 +1238,6 @@ msgid "CPU Usage"
 msgstr ""
 
 msgid "CPU and Memory"
-msgstr ""
-
-msgid "CPU and Memory configuration."
 msgstr ""
 
 msgid "CSRs"
@@ -2533,6 +2518,9 @@ msgstr ""
 msgid "Driver"
 msgstr ""
 
+msgid "EC Curve"
+msgstr ""
+
 msgid "Edit"
 msgstr "Editar"
 
@@ -2615,6 +2603,9 @@ msgstr ""
 msgid "Enable Service"
 msgstr ""
 
+msgid "Enable Shadow Copies"
+msgstr ""
+
 msgid "Enable TLS"
 msgstr ""
 
@@ -2639,6 +2630,9 @@ msgid ""
 msgstr ""
 
 msgid "Enable autotune"
+msgstr ""
+
+msgid "Enable iSCSI ALUA"
 msgstr ""
 
 msgid "Enable if Mac clients will be connecting to the SMB share."
@@ -2754,9 +2748,9 @@ msgstr ""
 
 msgid ""
 "Ensure <a "
-"href=\"%%docurl%%/directoryservice.html%%webversion%%#kerberos-realms\" "
+"href=\"%%docurl%%/directoryservices.html%%webversion%%#kerberos-realms\" "
 "target=\"_blank\">Kerberos Realms</a> and <a "
-"href=\"%%docurl%%/directoryservice.html%%webversion%%#kerberos-keytabs\" "
+"href=\"%%docurl%%/directoryservices.html%%webversion%%#kerberos-keytabs\" "
 "target=\"_blank\">Kerberos Keytabs</a> are configured and the system can "
 "communicate with the Kerberos Domain Controller before setting."
 msgstr ""
@@ -3060,9 +3054,9 @@ msgstr ""
 msgid ""
 "Enter an alphanumeric username of eight to sixteen characters. Keeping "
 "usernames to eight characters or less is recommended for compatibility with "
-"legacy clients. Usernames cannot begin with a hyphen (<b>-</b>) or contain "
-"a space, tab, or these characters: <b>, : + & # %^ ( ) ! @ ~ * ? < > =</b> "
-"Note that <b>$</b> can only be used as the last character."
+"legacy clients. Usernames cannot begin with a hyphen (<i>-</i>) or contain "
+"a space, tab, or these characters: <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i> "
+"Note that <i>$</i> can only be used as the last character."
 msgstr ""
 
 msgid ""
@@ -3327,7 +3321,7 @@ msgstr ""
 
 msgid ""
 "Enter the password to be used for the <a "
-"href=\"%%docurl%%/directoryservice.html%%webversion%%#active-directory\" "
+"href=\"%%docurl%%/directoryservices.html%%webversion%%#active-directory\" "
 "target=”_blank”>Active Directory</a> administrator account."
 msgstr ""
 
@@ -3532,6 +3526,12 @@ msgid "Export Read Only"
 msgstr ""
 
 msgid "Export Recycle Bin"
+msgstr ""
+
+msgid ""
+"Export ZFS snapshots as <a "
+"href=\"https://docs.microsoft.com/en-us/windows/desktop/vss/shadow-copies-"
+"and-shadow-copy-sets\" target=_blank>Shadow Copies</a> for VSS clients."
 msgstr ""
 
 msgid "Export/Disconnect"
@@ -4202,6 +4202,9 @@ msgstr ""
 msgid "Key Length"
 msgstr ""
 
+msgid "Key Type"
+msgstr ""
+
 msgid "LDAP"
 msgstr ""
 
@@ -4265,6 +4268,18 @@ msgid "Lagg Protocol"
 msgstr ""
 
 msgid "Language"
+msgstr ""
+
+msgid ""
+"Leave blank when using AWS. The available buckets are fetched  dynamically. "
+"Enter a  <a "
+"href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteEndpoints."
+"html\" target=\"_blank\">Endpoint URL</a> if not using AWS. URL  general "
+"format: <i>bucket-name.s3-website.region.amazonaws.com</i>. Refer to the "
+"AWS Documentation for a list of <a "
+"href=\"https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_website_"
+"region_endpoints\" target=\"_blank\">Simple Storage Service Website "
+"Endpoints</a>."
 msgstr ""
 
 msgid "Leave empty or select number of existing portal to use."
@@ -4605,9 +4620,9 @@ msgstr ""
 
 msgid ""
 "Must match Windows workgroup name. This setting is ignored if the <a "
-"href=\"%%docurl%%/directoryservice.html%%webversion%%#active-directory\" "
+"href=\"%%docurl%%/directoryservices.html%%webversion%%#active-directory\" "
 "target=\"_blank\">Active Directory</a> or <a "
-"href=\"%%docurl%%/directoryservice.html%%webversion%%#ldap\" "
+"href=\"%%docurl%%/directoryservices.html%%webversion%%#ldap\" "
 "target=\"_blank\">LDAP</a> service is running."
 msgstr ""
 
@@ -4673,9 +4688,6 @@ msgstr ""
 msgid ""
 "Name of user account on remote system for CHAP authentication. Many "
 "initiators use the initiator name as the user name."
-msgstr ""
-
-msgid "Name the new raw file."
 msgstr ""
 
 msgid "Nameserver 1"
@@ -5010,6 +5022,12 @@ msgstr ""
 msgid "Organization"
 msgstr ""
 
+msgid "Organizational Unit"
+msgstr ""
+
+msgid "Organizational unit of the entity."
+msgstr ""
+
 msgid "Outgoing Mail Server"
 msgstr ""
 
@@ -5129,9 +5147,6 @@ msgid "Performs authentication from an LDAP server."
 msgstr ""
 
 msgid "Periodic Notification User"
-msgstr ""
-
-msgid "Periodic Snapshot Task"
 msgstr ""
 
 msgid "Periodic Snapshot Tasks"
@@ -5366,24 +5381,6 @@ msgstr ""
 msgid "Raw File"
 msgstr ""
 
-msgid "Raw file location"
-msgstr ""
-
-msgid "Raw file size"
-msgstr ""
-
-msgid "Raw file size (GiB)"
-msgstr ""
-
-msgid "Raw filename"
-msgstr ""
-
-msgid "Raw filename password"
-msgstr ""
-
-msgid "Raw filename password. The default is <i>docker</i>."
-msgstr ""
-
 msgid "Raw filesize"
 msgstr ""
 
@@ -5520,6 +5517,9 @@ msgid "Remove Keep Flag"
 msgstr ""
 
 msgid "Rename the existing boot environment."
+msgstr ""
+
+msgid "Replacing disk..."
 msgstr ""
 
 msgid "Replication Stream Compression"
@@ -5754,6 +5754,9 @@ msgstr ""
 msgid "Save notes about the jail."
 msgstr ""
 
+msgid "Saving Debug"
+msgstr ""
+
 msgid "Schedule a Cron Job"
 msgstr ""
 
@@ -5815,6 +5818,14 @@ msgid "Secure mode"
 msgstr ""
 
 msgid "Security"
+msgstr ""
+
+msgid ""
+"See <a "
+"href=\"https://crypto.stackexchange.com/questions/1190/why-is-elliptic-"
+"curve-cryptography-not-widely-used-compared-to-rsa\" target=\"blank\"> Why "
+"is elliptic curve cryptography not widely used, compared to RSA?</a> for "
+"more information about key types."
 msgstr ""
 
 msgid ""
@@ -6119,14 +6130,12 @@ msgstr ""
 
 msgid ""
 "Select the location of the principal in the keytab created as described in "
-"<a href=\"%%docurl%%/directoryservice.html%%webversion%%#kerberos-keytabs\" "
+"<a "
+"href=\"%%docurl%%/directoryservices.html%%webversion%%#kerberos-keytabs\" "
 "target=\"_blank\">Kerberos Keytabs</a>."
 msgstr ""
 
 msgid "Select the physical interface to associate with the VM."
-msgstr ""
-
-msgid "Select the physical network interface to associatewith the virtual machine."
 msgstr ""
 
 msgid "Select the pool to contain the system dataset."
@@ -6149,7 +6158,7 @@ msgstr ""
 
 msgid ""
 "Select the realm created using the instructions in <a "
-"href=\"%%docurl%%/directoryservice.html%%webversion%%#kerberos-realms\" "
+"href=\"%%docurl%%/directoryservices.html%%webversion%%#kerberos-realms\" "
 "target=\"_blank\">Kerberos Realms</a>."
 msgstr ""
 
@@ -6302,6 +6311,12 @@ msgid ""
 "known values of user: <i>upsmon</i> and password: <i>fixmepass</i>."
 msgstr ""
 
+msgid ""
+"Set for the initiator to discover paths to both storage controllers on the "
+"target and increase storage traffic efficiency. Requires ALUA-capable, High "
+"Availability (HA) hardware."
+msgstr ""
+
 msgid "Set for ypbind to bind to the server that responds the fastest."
 msgstr ""
 
@@ -6370,9 +6385,6 @@ msgstr ""
 msgid ""
 "Set the share name. If left empty, share name is the list of selected "
 "<b>Path</b> entries."
-msgstr ""
-
-msgid "Set the size of the new raw file."
 msgstr ""
 
 msgid ""
@@ -7511,11 +7523,6 @@ msgstr ""
 msgid "The cache is being rebuilt."
 msgstr ""
 
-msgid ""
-"The character set Samba uses when communicating with DOS and Windows 9x/ME "
-"clients. Default is CP437."
-msgstr ""
-
 msgid "The contents of all added disks will be erased."
 msgstr ""
 
@@ -7813,7 +7820,7 @@ msgstr ""
 msgid ""
 "Unselect this option to allow cross-domain authentication, users and groups "
 "to be managed on another forest, and permissions to be delegated from <a "
-"href=\"%%docurl%%/directoryservice.html%%webversion%%#active-directory\" "
+"href=\"%%docurl%%/directoryservices.html%%webversion%%#active-directory\" "
 "target=\"_blank\">Active Directory</a> users and groups to domain admins on "
 "another forest."
 msgstr ""
@@ -7849,9 +7856,6 @@ msgid ""
 msgstr ""
 
 msgid "Until"
-msgstr ""
-
-msgid "Unused"
 msgstr ""
 
 msgid "Update"
@@ -7976,12 +7980,6 @@ msgid ""
 "target=\"_blank\">proftpd(8)</a> parameters."
 msgstr ""
 
-msgid ""
-"Used to configure directory shadow copies on a per-share basis. Select the "
-"pre-configured periodic snapshot task to use for the shadow copies of this "
-"share. Periodic snapshots must be recursive."
-msgstr ""
-
 msgid "User"
 msgstr ""
 
@@ -8055,8 +8053,8 @@ msgid "VMware-Snapshots"
 msgstr ""
 
 msgid ""
-"VNC network interface. The primary interface is automatically selected, but "
-"secondary interfaces can be chosen from the drop-down menu."
+"VNC network interface IP address. The primary interface IP address is the "
+"default. A different interface IP address can be chosen."
 msgstr ""
 
 msgid "VNET"
@@ -8108,9 +8106,6 @@ msgid "Virtualization"
 msgstr ""
 
 msgid "Vlan Tag"
-msgstr ""
-
-msgid "WARNING"
 msgstr ""
 
 msgid ""
