@@ -98,10 +98,10 @@ ups_monpwd_tooltip : T('Change the default password to improve system\
  space or <b>#</b>.'),
 ups_monpwd_validation: [Validators.pattern(/^((?![\#|\s]).)*$/)],
 
-ups_extrausers_placeholder : T('Extra Users(upsd.conf)'),
+ups_extrausers_placeholder : T('Extra Users'),
 ups_extrausers_tooltip : T('Enter accounts that have administrative access.\
  See <a\
- href="http://networkupstools.org/docs/man/upsd.users.html"\
+ href="https://www.freebsd.org/cgi/man.cgi?query=upsd.users"\
  target="_blank">upsd.users(5)</a> for examples.'),
 
 ups_rmonitor_placeholder : T('Remote Monitor'),
