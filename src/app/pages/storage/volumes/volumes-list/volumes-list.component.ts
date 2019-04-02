@@ -398,7 +398,7 @@ export class VolumesListTableConfig implements InputTableConf {
             }
             
           }
-          this.dialogService.dialogForm(conf);
+          this.dialogService.dialogFormWide(conf);
         }
       });
 
