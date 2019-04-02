@@ -14,7 +14,7 @@
       <mat-icon [color]="n.color" class="notific-icon">{{n.icon}}</mat-icon>
       <a title="Click to dismiss"  (click)="turnMeOff(n,$event)">
         <div class="mat-list-text">
-          <h4 class="message" [innerHTML]="n.message">{{n.message}}</h4>
+          <h4 class="message" [innerHTML]="n.message"></h4>
           <small class="time">{{n.time}}</small>
         </div>
       </a>
