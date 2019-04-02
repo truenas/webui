@@ -15,7 +15,15 @@
             <div class="">
               <mat-form-field class="full-width">
                 <span matPrefix><mat-icon fontSet="mdi-set" fontIcon="mdi-account" style="color:var(--fg1);position:relative;top:2px;"></mat-icon>&nbsp;&nbsp;</span>
-                <input autofocus matInput name="username" required [(ngModel)]="signinData.username" #username="ngModel" placeholder="{{'Username' | translate}}" value="">
+                <input autofocus 
+                  matInput name="username" 
+                  required 
+                  [(ngModel)]="signinData.username" 
+                  #username="ngModel" 
+                  placeholder="{{'Username' | translate}}" 
+                  value=""
+                  autocorrect="off" autocapitalize="none" autocomplete="off"
+                >
                 <mat-error *ngIf="username.errors && (username.dirty || username.touched) && (username.errors.required)">
                   <span *ngIf="!failed">{{"Please enter your username" | translate}}</span>
                   <span *ngIf="failed">{{"Please enter your username again" | translate}}</span>
