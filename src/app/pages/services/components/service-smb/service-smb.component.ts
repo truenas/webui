@@ -107,6 +107,12 @@ export class ServiceSMBComponent {
       tooltip: helptext.cifs_srv_guest_tooltip,
     },
     { type: 'input',
+      name: 'cifs_srv_admin_group',
+      placeholder: helptext.cifs_srv_admin_group_placeholder,
+      tooltip: helptext.cifs_srv_admin_group_tooltip,
+      validation : helptext.cifs_srv_admin_group_validation
+    },
+    { type: 'input',
       name: 'cifs_srv_filemask',
       placeholder: helptext.cifs_srv_filemask_placeholder,
       tooltip: helptext.cifs_srv_filemask_tooltip,
@@ -190,7 +196,6 @@ export class ServiceSMBComponent {
 
   private cifs_srv_bindip: any;
   private cifs_srv_guest: any;
-  private cifs_srv_doscharset: any;
   private cifs_srv_unixcharset: any;
   protected defaultIdmap: any;
   protected idmap_tdb_range_low: any;
@@ -198,14 +203,7 @@ export class ServiceSMBComponent {
   protected dialogRef: any;
 
   preInit(entityForm: any) {
-    this.cifs_srv_doscharset = _.find(this.fieldConfig, {"name": "cifs_srv_doscharset"});
     this.cifs_srv_unixcharset = _.find(this.fieldConfig, {"name": "cifs_srv_unixcharset"});
-    this.ws.call("smb.doscharset_choices").subscribe((res) => {
-      const values = Object.values(res);
-      for (let i = 0; i < values.length; i++) {
-        this.cifs_srv_doscharset.options.push({label: values[i], value: values[i]});
-      }
-    });
     this.ws.call("smb.unixcharset_choices").subscribe((res) => {
       const values = Object.values(res);
       for (let i = 0; i < values.length; i++) {
