@@ -2,10 +2,12 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { DialogService, RestService, WebSocketService } from '../../../../services/';
+import { MatDialog } from '@angular/material';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { EntityUtils } from '../../../common/entity/utils'
+import { EntityUtils } from '../../../common/entity/utils';
+import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { T } from 'app/translate-marker';
 import { Validators } from '@angular/forms';
 
@@ -81,9 +83,10 @@ export class AcmednsEditComponent {
   protected accessKeyField: any;
   protected secretAccessKeyField: any;
   protected entityForm: any;
+  protected dialogRef: any;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
+    protected rest: RestService, protected ws: WebSocketService, private matDialog: MatDialog,
     protected loader: AppLoaderService, protected dialog: DialogService) {}
 
   preInit() {
@@ -104,7 +107,8 @@ export class AcmednsEditComponent {
             ["id", "=", this.pk]
           ]
         ]).subscribe((res) => {
-          console.log('')
+          this.entityForm.formGroup.controls['access_key_id'].setValue(res[0].attributes.access_key_id);
+          this.entityForm.formGroup.controls['secret_access_key'].setValue(res[0].attributes.secret_access_key);
         });
       }
     });
@@ -121,19 +125,31 @@ export class AcmednsEditComponent {
     let payloadArr = [this.pk, payload];
     console.log(payloadArr)
 
-    this.loader.open();
-    this.ws.call(this.editCall, [payloadArr]).subscribe(
-      (res) => {
-        this.loader.close();
-        this.router.navigate(new Array('/').concat(this.route_success));
-      },
-      (res) => {
-        this.loader.close();
-        new EntityUtils().handleWSError(this.entityForm, res);
-      }
-    );
+    // this.loader.open();
+    this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Updating ACME Authenticator ") }});
+    // this.dialogRef.componentInstance.setDescription(T("Importing Disk..."));
+    this.dialogRef.componentInstance.setCall(this.editCall, [payloadArr]);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.entityForm.success = true;
+      // this.entityForm.snackBar.open(T("Disk successfully imported"), T("Success"));
+      this.router.navigate(new Array('/').concat(this.route_success));
+    });
+    this.dialogRef.componentInstance.failure.subscribe((res) => {
+      console.log(res)
+      new EntityUtils().handleWSError(this.entityForm, res);
+    });
+
+    // this.ws.call(this.editCall, [payloadArr]).subscribe(
+    //   (res) => {
+    //     this.loader.close();
+    //     this.router.navigate(new Array('/').concat(this.route_success));
+    //   },
+    //   (res) => {
+    //     this.loader.close();
+    //     new EntityUtils().handleWSError(this.entityForm, res);
+    //   }
+    // );
   }
-
-
 
 }
