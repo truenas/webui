@@ -22,7 +22,7 @@ export class ServiceDDNSComponent {
       name : 'provider',
       placeholder : helptext.provider_placeholder,
       tooltip: helptext.provider_tooltip,
-      options : helptext.provider_options
+      options : []
     },
     {
       type : 'checkbox',
@@ -69,14 +69,12 @@ export class ServiceDDNSComponent {
       inputType : 'password',
       togglePw: true,
       validation : helptext.password_validation,
-      required: true
     },
     {
       type : 'input',
       name : 'password2',
       placeholder : helptext.password2_placeholder,
       inputType : 'password',
-      required: true
     },
     {
       type : 'input',
@@ -85,6 +83,8 @@ export class ServiceDDNSComponent {
       tooltip: helptext.period_tooltip,
     },
   ];
+
+  protected provider: any;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
@@ -124,5 +124,14 @@ export class ServiceDDNSComponent {
     }
     return this.ws.call('dyndns.update', [entityForm]);
 
+  }
+
+  preInit(entityForm) {
+    this.provider = _.find(this.fieldConfig, {"name": "provider"});
+    this.ws.call("dyndns.provider_choices").subscribe(res => {
+      for (const key in res) {
+        this.provider.options.push({label: res[key], value:key});
+      }
+    });
   }
 }
