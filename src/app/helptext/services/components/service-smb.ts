@@ -49,15 +49,6 @@ cifs_srv_localmaster_tooltip: T('Set to determine if the system participates in\
  or LDAP server, or when Vista or Windows 7 machines\
  are present.'),
 
-cifs_srv_domain_logons_placeholder: T('Domain Logons'),
-cifs_srv_domain_logons_tooltip: T('Set if it is necessary to provide the netlogin\
- service for older Windows clients.'),
-
-cifs_srv_timeserver_placeholder: T('Time Server For Domain'),
-cifs_srv_timeserver_tooltip: T(' Enable to determine if the system advertises\
- itself as a time server to Windows clients.\
- Disable when the network contains an AD or LDAP server.'),
-
 cifs_srv_guest_placeholder: T('Guest Account'),
 cifs_srv_guest_tooltip: T('Account to be used for guest access. Default is\
  nobody. Account is required to have permissions to\
@@ -71,30 +62,10 @@ cifs_srv_admin_group_tooltip: T('Members of this group are local admins\
  Computer Management MMC snap-in.'),
  cifs_srv_admin_group_validation : [ Validators.maxLength(120) ],
 
-cifs_srv_filemask_placeholder: T('File Mask'),
-cifs_srv_filemask_tooltip: T('Overrides default file creation mask of <i>0666</i> which\
- creates files with read and write access for everybody.'),
-cifs_srv_filemask_validation : [ regexValidator(/^[0-1]?[0-7][0-7][0-7]$/) ],
-
-cifs_srv_dirmask_placeholder: T('Directory Mask'),
-cifs_srv_dirmask_tooltip: T('Overrides default directory creation mask of <i>0777</i>\
- which grants directory read, write and execute access\
- for everybody.'),
-cifs_srv_dirmask_validation : [ regexValidator(/^[0-1]?[0-7][0-7][0-7]$/) ],
-
-cifs_srv_nullpw_placeholder: T('Allow Empty Password'),
-cifs_srv_nullpw_tooltip: T('If set, users can press <b>Enter</b>\
- when prompted for a password. Requires the username\
- and password to be the same as the Windows user account.'),
-
 cifs_srv_smb_options_placeholder: T('Auxiliary Parameters'),
 cifs_srv_smb_options_tooltip: T('Enter additional <b>smb.conf</b> options. See the <a href="http://www.oreilly.com/openbook/samba/book/appb_02.html"\
  target="_blank">Samba Guide</a>\
  for more information on these settings.'),
-
-cifs_srv_unixext_placeholder: T('UNIX Extensions'),
-cifs_srv_unixext_tooltip: T('Set to allow non-Windows SMB clients to access symbolic\
- links and hard links. Has no effect on Windows clients.'),
 
 cifs_srv_zeroconf_placeholder: T('Zeroconf share discovery'),
 cifs_srv_zeroconf_tooltip: T('Enable if Mac clients will be connecting to the SMB share.'),
@@ -104,19 +75,6 @@ cifs_srv_hostlookup_tooltip: T('Set to allow using hostnames rather than IP addr
  the <i>Hosts Allow</b> or </i>Hosts Deny</b> fields\
  of a SMB share. Leave this option\
  unset when IP addresses are used to avoid the delay of a host lookup.'),
-
-cifs_srv_allow_execute_always_placeholder: T('Allow Execute Always'),
-cifs_srv_allow_execute_always_tooltip: T('When selected, Samba allows the user to execute\
- a file, even if that user’s permissions are not set\
- to execute.'),
-
-cifs_srv_obey_pam_restrictions_placeholder: T('Obey Pam Restrictions'),
-cifs_srv_obey_pam_restrictions_tooltip: T('Unselect this option to allow cross-domain\
- authentication, users and groups to be managed on\
- another forest, and permissions to be delegated from\
- <a href="%%docurl%%/directoryservices.html%%webversion%%#active-directory"\
- target="_blank">Active Directory</a>\
- users and groups to domain admins on another forest.'),
 
 cifs_srv_ntlmv1_auth_placeholder: T('NTLMv1 Auth'),
 cifs_srv_ntlmv1_auth_tooltip: T('Off by default. When set,\
