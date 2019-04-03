@@ -1,5 +1,7 @@
 import { Component, OnInit, AfterViewInit, ElementRef, NgZone } from '@angular/core';
 import { Application, Container, Text, DisplayObject, Graphics, Sprite, Texture} from 'pixi.js';
+import { DriveTray } from 'app/core/classes/hardware/drivetray';
+import { M50 } from 'app/core/classes/hardware/m50';
 //declare const PIXI: any;
 
 @Component({
@@ -40,20 +42,37 @@ export class EnclosureDetailsComponent implements AfterViewInit {
     this.el.nativeElement.appendChild(this.app.view);
 
     this.container = new PIXI.Container();
+    this.app.stage.addChild(this.container);
     this.container.width = this.app.stage.width;
     this.container.height = this.app.stage.height;
-    this.app.stage.addChild(this.container);
 
-    if(!this.resources.m50){
-     this.importAsset('m50','assets/images/hardware/m50/m50_960w.png');
+    let m50 = new M50();
+    m50.events.subscribe((evt) => {
+      console.log(evt);
+      console.log(this.app.stage.children);
+      this.container.addChild(m50.container);
+      m50.container.name = 'm50';
+      m50.container.width = m50.container.width / 2;
+      m50.container.height = m50.container.height / 2;
+      m50.container.x = this.app.stage.width / 2 - m50.container.width / 2;
+    });
+    //m50.load(); // Sprites don't exist until load method is called
+
+    /*if(!this.resources.m50){
+      this.importAsset('m50','assets/images/hardware/m50/m50_960w.png');
     } else {
       this.onImport(); 
-    }
+    }*/
 
     //this.simpleImport();
 
     //let square = this.makeTexture();
     //this.container.addChild(square);
+  }
+
+  makeDriveTray():DriveTray{
+    let dt = new DriveTray("m50");
+    return dt;
   }
 
   simpleImport(){
@@ -115,6 +134,9 @@ export class EnclosureDetailsComponent implements AfterViewInit {
      this.container.addChild(sprite);
      console.log(this.app.stage.children);
 
+     let dt = this.makeDriveTray();
+     //dt.handle.tint = 0xCC0000;
+     this.container.addChild(dt.container);
      //this.updatePIXI();
      }
 
