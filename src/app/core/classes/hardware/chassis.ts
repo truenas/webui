@@ -91,7 +91,7 @@ export class Chassis {
   }
 
   generatePosition(displayObject, index): Position{
-    let gapX = 4;
+    let gapX = 12;
     let gapY = 2;
     let mod = index % this.columns;
     let nextPositionX = mod * (displayObject.width + gapX);
