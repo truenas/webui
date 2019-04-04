@@ -14,9 +14,7 @@ export class AcmednsListComponent implements OnInit {
   protected queryCall = "acme.dns.authenticator.query";
   protected wsDelete = "acme.dns.authenticator.delete";
   protected route_add: string[] = ['system', 'acmedns', 'add'];
-  // protected route_add_tooltip: string = helptext_system_certificates.list.tooltip_add;
   protected route_success: string[] = [ 'system', 'acmedns' ];
-
   protected entityList: any;
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,
@@ -37,7 +35,6 @@ export class AcmednsListComponent implements OnInit {
     deleteMsg: {
       title: 'Name',
       key_props: ['name'],
-      id_prop: 'name'
     },
   }
 
@@ -50,7 +47,6 @@ export class AcmednsListComponent implements OnInit {
       id: "edit",
       label: T("Edit"),
       onClick: (row) => {
-        console.log(row)
         this.router.navigate(
           new Array('').concat(["system", "acmedns", "edit", row.id]));
       }

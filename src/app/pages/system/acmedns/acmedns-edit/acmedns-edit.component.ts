@@ -2,12 +2,10 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { DialogService, RestService, WebSocketService } from '../../../../services/';
-import { MatDialog } from '@angular/material';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from '../../../common/entity/utils';
-import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { T } from 'app/translate-marker';
 import { Validators } from '@angular/forms';
 
@@ -86,7 +84,7 @@ export class AcmednsEditComponent {
   protected dialogRef: any;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService, private matDialog: MatDialog,
+    protected rest: RestService, protected ws: WebSocketService,
     protected loader: AppLoaderService, protected dialog: DialogService) {}
 
   preInit() {
@@ -117,39 +115,21 @@ export class AcmednsEditComponent {
   customSubmit(value) {
     let payload = {};
     payload['name'] = value.name;
-    payload['authenticator'] = value.authenticator;
     payload['attributes'] = {
       'access_key_id' : value.access_key_id, 
       'secret_access_key' : value.secret_access_key
     }
-    let payloadArr = [this.pk, payload];
-    console.log(payloadArr)
-
-    // this.loader.open();
-    this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Updating ACME Authenticator ") }});
-    // this.dialogRef.componentInstance.setDescription(T("Importing Disk..."));
-    this.dialogRef.componentInstance.setCall(this.editCall, [payloadArr]);
-    this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe((res) => {
-      this.entityForm.success = true;
-      // this.entityForm.snackBar.open(T("Disk successfully imported"), T("Success"));
-      this.router.navigate(new Array('/').concat(this.route_success));
-    });
-    this.dialogRef.componentInstance.failure.subscribe((res) => {
-      console.log(res)
-      new EntityUtils().handleWSError(this.entityForm, res);
-    });
-
-    // this.ws.call(this.editCall, [payloadArr]).subscribe(
-    //   (res) => {
-    //     this.loader.close();
-    //     this.router.navigate(new Array('/').concat(this.route_success));
-    //   },
-    //   (res) => {
-    //     this.loader.close();
-    //     new EntityUtils().handleWSError(this.entityForm, res);
-    //   }
-    // );
+    this.loader.open();
+    this.ws.call(this.editCall, [this.pk, payload]).subscribe(
+      (res) => {
+        this.loader.close();
+        this.router.navigate(new Array('/').concat(this.route_success));
+      },
+      (res) => {
+        this.loader.close();
+        new EntityUtils().handleWSError(this.entityForm, res);
+      }
+    );
   }
 
 }
