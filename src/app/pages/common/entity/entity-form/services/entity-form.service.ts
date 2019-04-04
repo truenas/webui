@@ -108,6 +108,9 @@ export class EntityFormService {
           }
         }
       }
+      if (children.length === 0) {
+        node.data.hasChildren = false;
+      }
       return children;
     });
   }
