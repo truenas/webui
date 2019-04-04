@@ -12,7 +12,7 @@
             </mat-form-field>
         </div>
 
-        <tree-root #tree id="form-ex-input" *ngIf="treeVisible" [nodes]="nodes" [options]="customTemplateStringOptions" [focused]="true" id="box3">
+        <tree-root #tree id="form-ex-input" *ngIf="treeVisible" [nodes]="nodes" [options]="customTemplateStringOptions" [focused]="true" id="box3" (select)="onClick($event)" (deselect)="onClick($event)">
             <ng-template #treeNodeTemplate let-node *ngIf="(config.explorerType == 'zvol')">
                 <mat-icon>folder</mat-icon>
                 <span title="{{node.data.mountpoint}}">{{ node.data.name }}</span>
