@@ -156,10 +156,11 @@ activedirectory_enable_name: 'ad_enable',
 activedirectory_enable_placeholder : T('Enable'),
 activedirectory_enable_tooltip : T('Set to enable the Active Directory service.'),
 
-activedirectory_netbiosname_alias_name: 'ad_netbiosname_a',
-activedirectory_netbiosname_alias_placeholder : T('Netbios Name'),
-activedirectory_netbiosname_alias_tooltip : T('Netbios Name of this NAS. This name must differ from\
+activedirectory_netbiosname_a_name: 'ad_netbiosname_a',
+activedirectory_netbiosname_a_placeholder : T('Netbios Name'),
+activedirectory_netbiosname_a_tooltip : T('Netbios Name of this NAS. This name must differ from\
  the <i>Workgroup</i> name and be no greater than 15 characters.'),
+activedirectory_netbiosname_a_validation : [Validators.required, Validators.maxLength(15)],
 
 activedirectory_netbiosalias_name: 'ad_netbiosalias',
 activedirectory_netbiosalias_placeholder : T('NetBIOS alias'),
@@ -207,7 +208,7 @@ activedirectory_idmap_change_dialog_message: T('<font color="red">WARNING</font>
  target="_blank">idmap_autorid(8)</a>\, <a\
  href="https://www.freebsd.org/cgi/man.cgi?query=idmap_ad"\
  target="_blank">ad</a>\, <a\
- href="%%docurl%%/directoryservice.html%%webversion%%#id12"\
+ href="%%docurl%%/directoryservices.html%%webversion%%#id12"\
  target="_blank">fruit</a>\, <a\
  href="https://www.freebsd.org/cgi/man.cgi?query=idmap_ldap"\
  target="_blank">idmap_ldap(8)</a>\, <a\

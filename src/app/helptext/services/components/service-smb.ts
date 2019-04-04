@@ -16,18 +16,14 @@ cifs_srv_netbiosalias_validation: [ Validators.maxLength(15) ],
 cifs_srv_workgroup_placeholder: T('Workgroup'),
 cifs_srv_workgroup_tooltip: T('Must match Windows workgroup\
  name. This setting is ignored if the\
- <a href="%%docurl%%/directoryservice.html%%webversion%%#active-directory"\
+ <a href="%%docurl%%/directoryservices.html%%webversion%%#active-directory"\
  target="_blank">Active Directory</a> or <a\
- href="%%docurl%%/directoryservice.html%%webversion%%#ldap"\
+ href="%%docurl%%/directoryservices.html%%webversion%%#ldap"\
  target="_blank">LDAP</a> service is running.'),
 cifs_srv_workgroup_validation : [ Validators.required ],
 
 cifs_srv_description_placeholder: T('Description'),
 cifs_srv_description_tooltip: T('Optional. Enter a server description.'),
-
-cifs_srv_doscharset_placeholder: T('DOS Charset'),
-cifs_srv_doscharset_tooltip: T('The character set Samba uses when communicating with\
- DOS and Windows 9x/ME clients. Default is CP437.'),
 
 cifs_srv_unixcharset_placeholder: T('UNIX Charset'),
 cifs_srv_unixcharset_tooltip: T('Default is UTF-8 which supports all characters in\
@@ -111,7 +107,7 @@ cifs_srv_obey_pam_restrictions_placeholder: T('Obey Pam Restrictions'),
 cifs_srv_obey_pam_restrictions_tooltip: T('Unselect this option to allow cross-domain\
  authentication, users and groups to be managed on\
  another forest, and permissions to be delegated from\
- <a href="%%docurl%%/directoryservice.html%%webversion%%#active-directory"\
+ <a href="%%docurl%%/directoryservices.html%%webversion%%#active-directory"\
  target="_blank">Active Directory</a>\
  users and groups to domain admins on another forest.'),
 

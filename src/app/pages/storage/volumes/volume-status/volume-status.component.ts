@@ -9,10 +9,11 @@ import { TreeNode } from 'primeng/api';
 import { EntityTreeTable } from '../../../common/entity/entity-tree-table/entity-tree-table.model';
 
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar, MatDialog } from '@angular/material';
 import { Validators } from '@angular/forms';
 import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
 import { T } from '../../../../translate-marker';
+import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 
 interface poolDiskInfo {
   name: any,
@@ -22,6 +23,7 @@ interface poolDiskInfo {
   status: any,
   actions ?: any,
   path ?: any,
+  guid: any,
 }
 
 @Component({
@@ -49,7 +51,6 @@ export class VolumeStatusComponent implements OnInit {
   protected editDiskRoute: any = ["storage", "disks", "pool"];
   protected replaceDiskRoute: any = ["storage", "disks", "pool"];
 
-  protected availableDisks: Array < any > = [];
   protected replaceDiskFormFields: FieldConfig[] = [{
     type: 'input',
     name: 'label',
@@ -57,7 +58,7 @@ export class VolumeStatusComponent implements OnInit {
     isHidden: true,
   }, {
     type: 'select',
-    name: 'replace_disk',
+    name: 'disk',
     placeholder: "Member disk",
     options: [],
     required: true,
@@ -92,7 +93,8 @@ export class VolumeStatusComponent implements OnInit {
     protected router: Router,
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
-    protected snackBar: MatSnackBar) {}
+    protected snackBar: MatSnackBar,
+    protected matDialog: MatDialog) {}
 
   getZfsPoolScan(poolName) {
     this.ws.subscribe('zfs.pool.scan').subscribe(
@@ -133,21 +135,24 @@ export class VolumeStatusComponent implements OnInit {
     );
   }
 
+  getUnusedDisk() {
+    const availableDisks = [];
+    this.ws.call('disk.get_unused').subscribe((res) => {
+      for (const i in res) {
+        availableDisks.push({
+          label: res[i].name,
+          value: res[i].identifier,
+        })
+      }
+      _.find(this.replaceDiskFormFields, { name: 'disk' }).options = availableDisks;
+    })
+  }
   ngOnInit() {
     this.aroute.params.subscribe(params => {
       this.pk = parseInt(params['pk']);
       this.getData();
     });
-
-    this.ws.call('disk.get_unused').subscribe((res) => {
-      for (let i in res) {
-        this.availableDisks.push({
-          label: res[i].name,
-          value: res[i].name,
-        })
-      }
-      _.find(this.replaceDiskFormFields, { name: 'replace_disk' }).options = this.availableDisks;
-    })
+    this.getUnusedDisk();
   }
 
   getAction(data, category): any {
@@ -179,19 +184,17 @@ export class VolumeStatusComponent implements OnInit {
         ).subscribe((res) => {
           if (res) {
             this.loader.open();
-            let value = { label: row.path };
-            this.rest.post('storage/volume/' + this.pk + '/offline/', {
-              body: JSON.stringify(value)
-            }).subscribe(
+            const value = { label: row.guid };
+            this.ws.call('pool.offline', [this.pk, value]).subscribe(
               (res) => {
                 this.getData();
                 this.loader.close();
               },
-              (res) => {
+              (err) => {
                 this.loader.close();
-                this.dialogService.errorReport("Error", res.error.error_message, res.error.traceback);
+                new EntityUtils().handleWSError(this, err, this.dialogService);
               }
-            );
+            )
           }
         })
       },
@@ -205,19 +208,17 @@ export class VolumeStatusComponent implements OnInit {
         ).subscribe((res) => {
           if (res) {
             this.loader.open();
-            let value = { label: row.path };
-            this.rest.post('storage/volume/' + this.pk + '/online/', {
-              body: JSON.stringify(value)
-            }).subscribe(
+            let value = { label: row.guid };
+            this.ws.call('pool.online', [this.pk, value]).subscribe(
               (res) => {
                 this.getData();
                 this.loader.close();
               },
-              (res) => {
+              (err) => {
                 this.loader.close();
-                this.dialogService.errorReport("Error", res.error.error_message, res.error.traceback);
+                new EntityUtils().handleWSError(this, err, this.dialogService);
               }
-            );
+            )
           }
         });
       },
@@ -225,19 +226,39 @@ export class VolumeStatusComponent implements OnInit {
     }, {
       label: "Replace",
       onClick: (row) => {
-        _.find(this.replaceDiskFormFields, { name: 'label' }).value = row.path;
-        const conf: DialogFormConfiguration = {
-          title: "Replacing disk " + _.split(row.name, 'p')[0],
-          fieldConfig: this.replaceDiskFormFields,
-          method_rest: "storage/volume/" + this.pk + "/replace",
-          saveButtonText: "Replace Disk",
+        let name = row.name;
+        if (!_.startsWith(name, '/')) {
+          name = _.split(row.name, 'p')[0];
         }
-        this.dialogService.dialogForm(conf).subscribe((res) => {
-          if (res) {
-            this.getData();
-            this.snackBar.open("Disk replacement started.", 'close', { duration: 5000 });
+        const pk = this.pk;
+        _.find(this.replaceDiskFormFields, { name: 'label' }).value = row.guid;
+
+        const conf: DialogFormConfiguration = {
+          title: "Replacing disk " + name,
+          fieldConfig: this.replaceDiskFormFields,
+          saveButtonText: "Replace Disk",
+          parent: this,
+          customSubmit: function (entityDialog: any) {
+            const dialogRef = entityDialog.parent.matDialog.open(EntityJobComponent, {data: {"title":"Replacing Disk"}, disableClose: true});
+            dialogRef.componentInstance.setDescription(T("Replacing disk..."));
+            dialogRef.componentInstance.setCall('pool.replace', [pk, entityDialog.formValue]);
+            dialogRef.componentInstance.submit();
+            dialogRef.componentInstance.success.subscribe(res=>{
+              dialogRef.close(true);
+              entityDialog.dialogRef.close(true);
+              entityDialog.parent.getData();
+              entityDialog.parent.getUnusedDisk();
+              entityDialog.parent.snackBar.open("Successfully replaced disk " + name + ".", 'close', { duration: 5000 });
+            }),
+            dialogRef.componentInstance.failure.subscribe((res) => {
+              if (res.error.startsWith('[EINVAL]')) {
+                dialogRef.close();
+                new EntityUtils().handleWSError(this, res.exc_info);
+              }
+            });
           }
-        });
+        }
+        this.dialogService.dialogForm(conf);
       },
       isHidden: false,
     }, {
@@ -249,17 +270,14 @@ export class VolumeStatusComponent implements OnInit {
         ).subscribe((res) => {
           if (res) {
             this.loader.open();
-            let value = { label: row.path };
-            this.rest.post('storage/volume/' + this.pk + '/remove/', {
-              body: JSON.stringify(value)
-            }).subscribe(
+            this.ws.call('pool.remove', [this.pk, {label: row.guid}]).subscribe(
               (res) => {
                 this.getData();
                 this.loader.close();
               },
-              (res) => {
+              (err) => {
                 this.loader.close();
-                this.dialogService.errorReport("Error", res.error.error_message, res.error.traceback);
+                new EntityUtils().handleWSError(this, err, this.dialogService);
               }
             )
           };
@@ -307,6 +325,7 @@ export class VolumeStatusComponent implements OnInit {
       checksum: stats.checksum_errors ? stats.checksum_errors : 0,
       status: data.status,
       path: data.path,
+      guid: data.guid,
     };
 
     // add actions
