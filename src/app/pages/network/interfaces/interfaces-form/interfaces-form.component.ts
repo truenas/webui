@@ -99,12 +99,13 @@ export class InterfacesFormComponent implements OnDestroy {
       disabled: true,
     },
     {
-      type: 'input',
+      type: 'select',
       name: 'failover_group',
       placeholder: helptext.failover_group_placeholder,
       tooltip: helptext.failover_group_tooltip,
       isHidden: true,
       disabled: true,
+      options: [{label: '---', value: null}]
     },
     {
       type: 'input',
@@ -220,6 +221,7 @@ export class InterfacesFormComponent implements OnDestroy {
   private entityForm: any;
   protected ipformArray: FormArray;
   protected iparrayControl: any;
+  protected failover_group: any;
   protected failover_formArray: FormArray;
   protected failover_arrayControl: any;
   protected failover_virtual_formArray: FormArray;
@@ -300,6 +302,10 @@ export class InterfacesFormComponent implements OnDestroy {
     this.entityForm = entityForm;
     this.type = _.find(this.fieldConfig, {'name' : 'type'});
     this.iparrayControl = _.find(this.fieldConfig, {'name' : 'aliases'});
+    this.failover_group = _.find(this.fieldConfig, {'name': 'failover_group'});
+    for (let i = 1; i <= 32; i++) {
+      this.failover_group.options.push({label:i, value:i});
+    }
 
     this.vlan_pint = _.find(this.fieldConfig, {'name' : 'vlan_parent_interface'});
     this.bridge_members = _.find(this.fieldConfig, {'name' : 'bridge_members'});
