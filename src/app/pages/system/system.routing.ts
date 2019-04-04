@@ -40,6 +40,7 @@ import {EmailComponent} from './email/';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
 import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
+import { CertificateAcmeAddComponent } from './certificates/certificate-acme-add/certificate-acme-add.component';
 
 export const routes: Routes = [
   // {path : '', component : GeneralComponent },
@@ -253,6 +254,10 @@ export const routes: Routes = [
         path: 'add',
         component: CertificateAddComponent,
         data: { title: 'Add', breadcrumb: 'Add' },
+      }, {
+        path: 'addacme/:pk',
+        component: CertificateAcmeAddComponent,
+        data: { title: 'Add ACME Certificate', breadcrumb: 'Add ACME Certificate' },
       }, {
         path: 'view/:pk',
         component: CertificateEditComponent,

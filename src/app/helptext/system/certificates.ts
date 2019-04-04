@@ -189,5 +189,29 @@ export const helptext_system_certificates = {
       snackbar_open_window_action: T("Success"),
 
       action_delete: T("Delete")
+  },
+
+  acme: {
+    identifier: {
+      placeholder: T("identifier"),
+      tooltip: T('Internal identifier of the certificate. Only alphanumeric, "_" and "-" are allowed.')
+    },
+    tos: {
+      placeholder: T("Terms of Service"),
+      tooltip: T("Please accept terms of service for the given ACME Server.")
+    },
+    renew_day: {
+      placeholder: T("Renew certificate day"),
+      tooltip: T("Number of days to renew certificate before expiring"),
+      validation: [Validators.required, Validators.min(0)]
+    },
+    dir_uri: {
+      placeholder: T("ACME Server Directory URI"),
+      tooltip: T("Please specify URI of ACME Server Directory.")
+    },
+    authenticator: {
+      placeholder: T("Authenticator"),
+      tooltip: T("Specify Authenticator to be used")
+    }
   }
 };

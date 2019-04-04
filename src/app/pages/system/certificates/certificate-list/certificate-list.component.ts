@@ -121,8 +121,8 @@ export class CertificateListComponent {
         id: "create_acme_certificate",
         label: helptext_system_certificates.list.action_create_acme_certificate,
         onClick: (row) => {
-          // this.router.navigate(new Array('').concat(["system", "certificates", "view", row.id]))
-          console.log(row)
+          this.router.navigate(new Array('').concat(["system", "certificates", "addacme", row.id]))
+          // console.log(row)
         }
       },
       {

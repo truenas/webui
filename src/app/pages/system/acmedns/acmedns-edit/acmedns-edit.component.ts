@@ -98,6 +98,7 @@ export class AcmednsEditComponent {
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
     this.route.params.subscribe(params => {
+      console.log(params)
       if (params['pk']) {
         this.pk = parseInt(params['pk']);
         this.ws.call(this.queryCall, [
@@ -105,6 +106,7 @@ export class AcmednsEditComponent {
             ["id", "=", this.pk]
           ]
         ]).subscribe((res) => {
+          console.log(res)
           this.entityForm.formGroup.controls['access_key_id'].setValue(res[0].attributes.access_key_id);
           this.entityForm.formGroup.controls['secret_access_key'].setValue(res[0].attributes.secret_access_key);
         });

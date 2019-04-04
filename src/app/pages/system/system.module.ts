@@ -47,6 +47,7 @@ import { AlertConfigComponent } from './alert/alert.component';
 import { AcmednsListComponent } from './acmedns/acmedns-list/acmedns-list.component';
 import { AcmednsEditComponent } from './acmedns/acmedns-edit/acmedns-edit.component';
 import { AcmednsAddComponent } from './acmedns/acmedns-add/acmedns-add.component';
+import { CertificateAcmeAddComponent } from './certificates/certificate-acme-add/certificate-acme-add.component';
 
 @NgModule({
   imports: [
@@ -91,6 +92,7 @@ import { AcmednsAddComponent } from './acmedns/acmedns-add/acmedns-add.component
     AcmednsListComponent,
     AcmednsEditComponent,
     AcmednsAddComponent,
+    CertificateAcmeAddComponent,
   ],
   providers: []
 })
