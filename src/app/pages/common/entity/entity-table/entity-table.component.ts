@@ -146,7 +146,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit():void {
 
-    console.log(this.conf);
     this.setTableHeight(); 
   
     setTimeout(() => {
