@@ -33,7 +33,11 @@ export class FormExplorerComponent implements Field, OnInit {
         TREE_ACTIONS.TOGGLE_EXPANDED(tree, node, $event);
       },
       click: (tree, node, $event) => {
-        this.setPath(node);
+        if (this.config.useCheckbox) {
+          TREE_ACTIONS.TOGGLE_SELECTED(tree, node, $event);
+        } else {
+          this.setPath(node);
+        }
         TREE_ACTIONS.FOCUS(tree, node, $event);
       }
     },
