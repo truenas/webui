@@ -136,14 +136,26 @@ export class ConfigurationComponent {
         }
       });
     }
+    this.entityEdit.submitFunction = this.submitFunction;
   }
 
   resourceTransformIncomingRestData(data) {
-    data['netwait_ip'] = data['netwait_ip'].join(',');
-    data['domains'] = data['domains'].join(',');
+    data['netwait_ip'] = data['netwait_ip'].join(' ');
+    data['domains'] = data['domains'].join(' ');
+
+    return data;
   }
 
   clean(data) {
-    console.log(data);
+    data['domains'] = data['domains'].split(' ');
+    if (data['netwait_ip']) {
+      data['netwait_ip'] = data['netwait_ip'].split(' ');
+    }
+
+    return data;
+  }
+
+  submitFunction(body: any) {
+    return this.ws.call('network.configuration.update', [body]);
   }
 }
