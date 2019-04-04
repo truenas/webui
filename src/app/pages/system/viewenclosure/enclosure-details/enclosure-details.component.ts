@@ -54,7 +54,8 @@ export class EnclosureDetailsComponent implements AfterViewInit {
       m50.container.name = 'm50';
       m50.container.width = m50.container.width / 2;
       m50.container.height = m50.container.height / 2;
-      m50.container.x = this.app.stage.width / 2 - m50.container.width / 2;
+      m50.container.x = this.app._options.width / 2 - m50.container.width / 2;
+      m50.container.y = this.app._options.height / 2 - m50.container.height / 2;
     });
     //m50.load(); // Sprites don't exist until load method is called
 
