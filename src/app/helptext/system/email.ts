@@ -9,7 +9,7 @@ export const helptext_system_email = {
       'The envelope <i>From</i> address shown in the email.\
  This can be set to make filtering mail on the\
  receiving system. The friendly name is set like this:\
- "friendly sender name" <<i>email address</i>>'
+ <i>"Friendly Name" <address@example.com></i>'
     )
   },
 
