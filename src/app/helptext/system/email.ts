@@ -6,7 +6,7 @@ export const helptext_system_email = {
   em_fromemail: {
     placeholder: T("From E-mail"),
     tooltip: T(
-      'The envelope From address shown in the email.\
+      'The envelope <i>From</i> address shown in the email.\
  This is set to assist with filtering mail on the\
  receiving system. A friendly name can be set using this syntax:\
  "friendly sender name" <<i>email address</i>>'
