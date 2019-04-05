@@ -34,6 +34,16 @@ export class NavigationComponent implements OnInit {
           _.find(_.find(menuItem, {state : "storage"}).sub, {state : "multipaths"}).disabled = true;
         }
       });
+      /*if (window.localStorage.getItem('is_freenas') === 'false') {
+        this.ws.call('failover.licensed').subscribe((is_ha) => {
+          if (is_ha) {
+            console.log("is this ha?", is_ha);
+            _.find(_.find(menuItem,
+              {name : "System"}).sub,
+              {name : "Failover"}).disabled = false;
+          }
+        });
+      }*/
       this.menuItems = menuItem;
       //Checks item list has any icon type.
       this.hasIconTypeMenuItem = !!this.menuItems.filter(item => item.type === 'icon').length;
