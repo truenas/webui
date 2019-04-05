@@ -1,6 +1,5 @@
 a.dismiss {
     text-decoration: underline;
-    color: var(--primary);
 }
 
 .notific-item {
@@ -10,4 +9,8 @@ a.dismiss {
 
 a:hover {
     cursor: pointer;
+}
+
+.mat-list-item {
+    height: unset;
 }
