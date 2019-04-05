@@ -3,9 +3,9 @@ import { Validators } from '@angular/forms';
 import * as _ from 'lodash';
 import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
 import { DialogService } from "../../../services/dialog.service";
-import { MatSnackBar, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { EntityUtils } from '../../common/entity/utils';
-import { RestService, WebSocketService } from '../../../services/';
+import { RestService, WebSocketService, SnackbarService } from '../../../services/';
 import { T } from '../../../translate-marker';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { helptext_system_failover } from 'app/helptext/system/failover';
@@ -19,8 +19,8 @@ import { helptext_system_failover } from 'app/helptext/system/failover';
 
 export class FailoverComponent {
   public job: any = {};
-  protected queryCall = 'system.failover.config';
-  protected updateCall = 'system.failover.update';
+  protected queryCall = 'failover.config';
+  protected updateCall = 'failover.update';
   public entityForm: any;
   protected dialogRef: any;
   public custActions: Array < any > = [
@@ -28,7 +28,28 @@ export class FailoverComponent {
       id: 'sync_to_peer',
       name: T('Sync to Peer'),
       function: () => {
-        this.dialog.confirm(helptext_system_failover.dialog_sync_to_peer_title, helptext_system_failover.dialog_sync_to_peer_message, true, helptext_system_failover.dialog_button_ok).subscribe((res) => {
+        const params = [{"reboot": false}]
+        const ds = this.dialog.confirm(
+          helptext_system_failover.dialog_sync_to_peer_title, 
+          helptext_system_failover.dialog_sync_to_peer_message,
+          false, helptext_system_failover.dialog_button_ok,
+          true,
+          helptext_system_failover.dialog_sync_to_peer_checkbox,
+          'failover.sync_to_peer',
+          params);
+        ds.afterClosed().subscribe((status)=>{
+          if(status){
+            this.load.open();
+            this.ws.call(
+              ds.componentInstance.method,ds.componentInstance.data).subscribe((res) => {
+                this.load.close();
+                this.snackBar.open(helptext_system_failover.snackbar_sync_to_peer_message_success,
+                                   helptext_system_failover.snackbar_sync_to_peer_success_action);
+              }, (err) => {
+                this.load.close();
+                new EntityUtils().handleWSError(this.entityForm, err);
+              });
+          }
         });
       }
     },
@@ -36,7 +57,20 @@ export class FailoverComponent {
       id: 'sync_from_peer',
       name: T('Sync from Peer'),
       function: () => {
-        this.dialog.confirm(helptext_system_failover.dialog_sync_to_peer_title, helptext_system_failover.dialog_sync_to_peer_message, true, helptext_system_failover.dialog_button_ok).subscribe((res) => {
+        this.dialog.confirm(helptext_system_failover.dialog_sync_from_peer_title,
+                            helptext_system_failover.dialog_sync_from_peer_message, false,
+                            helptext_system_failover.dialog_button_ok).subscribe((confirm) => {
+          if (confirm) {
+            this.load.open();
+            this.ws.call('failover.sync_from_peer').subscribe((res) => {
+              this.load.close();
+              this.snackBar.open(helptext_system_failover.snackbar_sync_to_peer_message_success,
+                                 helptext_system_failover.snackbar_sync_to_peer_success_action);
+            }, (err) => {
+              this.load.close();
+              new EntityUtils().handleWSError(this.entityForm, err);
+            });
+          }
         });
       }
     } 
@@ -75,7 +109,7 @@ export class FailoverComponent {
     private load: AppLoaderService,
     private dialog: DialogService,
     private ws: WebSocketService,
-    public snackBar: MatSnackBar,
+    public snackBar: SnackbarService,
     protected matDialog: MatDialog) {}
 
   openSnackBar(message: string, action: string) {
