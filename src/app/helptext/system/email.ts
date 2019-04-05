@@ -8,7 +8,7 @@ export const helptext_system_email = {
     tooltip: T(
       'The envelope <i>From</i> address shown in the email.\
  This can be set to make filtering mail on the\
- receiving system. The friendly name is set like this:\
+ receiving system easier. The friendly name is set like this:\
  <i>"Friendly Name" <address@example.com></i>'
     )
   },
