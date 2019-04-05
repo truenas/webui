@@ -1,0 +1,13 @@
+a.dismiss {
+    text-decoration: underline;
+    color: var(--primary);
+}
+
+.notific-item {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+a:hover {
+    cursor: pointer;
+}

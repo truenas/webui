@@ -2,7 +2,7 @@
   <div class="text-center mat-bg-primary pt-1 pb-1">
     <h6 class="m-0">Alerts</h6>
   </div>
-  <mat-nav-list class="notification-list" role="list">
+  <mat-list class="notification-list" role="list">
     <!-- Notification item -->
     <mat-list-item *ngIf="notifications.length === 0" class="notific-item" role="listitem">
       <mat-icon class="notific-icon">info</mat-icon>
@@ -12,26 +12,24 @@
     </mat-list-item>
     <mat-list-item *ngFor="let n of notifications" class="notific-item" role="listitem">
       <mat-icon [color]="n.color" class="notific-icon">{{n.icon}}</mat-icon>
-      <a title="Click to dismiss"  (click)="turnMeOff(n,$event)">
         <div class="mat-list-text">
           <h4 class="message" [innerHTML]="n.message"></h4>
-          <small class="time">{{n.time}}</small>
+          <small class="time" [innerHTML]="n.time"></small>
+          <a (click)="turnMeOff(n,$event)" class="dismiss">Dismiss</a>
         </div>
-      </a>
     </mat-list-item>
     <div class="text-center mt-1" *ngIf="notifications.length">
       <small><a href="#" (click)="closeAll($event)">Clear All Alerts</a></small>
     </div>
     <mat-list-item *ngFor="let n of dismissedNotifications" class="notific-item" role="listitem">
       <span style="font-weight: bolder;">Closed</span>
-      <a title="Click to Re-Open" (click)="turnMeOn(n, $event)">
         <div class="mat-list-text">
           <h4 class="message" [innerHTML]="n.message"></h4>
-          <small class="time">{{n.time}}</small>
+          <small class="time" [innerHTML]="n.time"></small>
+          <a (click)="turnMeOn(n, $event)" class="dismiss">Re-Open</a>
         </div>
-      </a>
     </mat-list-item>
-  </mat-nav-list>
+  </mat-list>
   <div class="text-center mt-1" *ngIf="dismissedNotifications.length">
     <small><a href="#" (click)="reopenAll($event)">Re-Open All Alerts</a></small>
   </div>
