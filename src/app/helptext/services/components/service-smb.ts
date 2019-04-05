@@ -68,6 +68,13 @@ cifs_srv_guest_tooltip: T('Account to be used for guest access. Default is\
  the shared pool or dataset.\
  When the Guest Account user is deleted it resets to nobody.'),
 
+cifs_srv_admin_group_placeholder: T('Administrators Group'),
+cifs_srv_admin_group_tooltip: T('Members of this group are local admins\
+ and automatically have privileges to take ownership of any file in an SMB\
+ share, reset permissions, and administer the SMB server through the\
+ Computer Management MMC snap-in.'),
+cifs_srv_admin_group_validation : [ Validators.maxLength(120) ],
+
 cifs_srv_filemask_placeholder: T('File Mask'),
 cifs_srv_filemask_tooltip: T('Overrides default file creation mask of <i>0666</i> which\
  creates files with read and write access for everybody.'),

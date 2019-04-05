@@ -113,6 +113,16 @@ export class ServiceSMBComponent {
       options: [],
       tooltip: helptext.cifs_srv_guest_tooltip,
     },
+    { 
+      type: 'select',
+      name: 'cifs_srv_admin_group',
+      placeholder: helptext.cifs_srv_admin_group_placeholder,
+      tooltip: helptext.cifs_srv_admin_group_tooltip,
+      options: [{
+        label: '------',
+        value: '',
+      }],
+    },
     { type: 'input',
       name: 'cifs_srv_filemask',
       placeholder: helptext.cifs_srv_filemask_placeholder,
@@ -199,6 +209,7 @@ export class ServiceSMBComponent {
   private cifs_srv_guest: any;
   private cifs_srv_doscharset: any;
   private cifs_srv_unixcharset: any;
+  private cifs_srv_admin_group: any;
   protected defaultIdmap: any;
   protected idmap_tdb_range_low: any;
   protected idmap_tdb_range_high: any;
@@ -248,6 +259,13 @@ export class ServiceSMBComponent {
         this.defaultIdmap = idmap_res[0];
         entityEdit.formGroup.controls['idmap_tdb_range_high'].setValue(idmap_res[0].idmap_tdb_range_high);
         entityEdit.formGroup.controls['idmap_tdb_range_low'].setValue(idmap_res[0].idmap_tdb_range_low);
+      });
+    });
+
+    this.ws.call('group.query').subscribe((res) => {
+      this.cifs_srv_admin_group = _.find(this.fieldConfig, {'name':'cifs_srv_admin_group'});
+      res.forEach((group) => {
+        this.cifs_srv_admin_group.options.push({ label: group.group, value: group.group });
       });
     });
   }
