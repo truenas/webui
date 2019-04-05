@@ -43,6 +43,7 @@ export interface InputTableConf {
   confirmDeleteDialog?: Object;
   checkbox_confirm?: any;
   checkbox_confirm_show?: any;
+  asyncView?: boolean;
   addRows?(entity: EntityTableComponent);
   changeEvent?(entity: EntityTableComponent);
   preInit?(entity: EntityTableComponent);
@@ -114,6 +115,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     paging: true,
     sorting: { columns: this.columns },
   };
+  public asyncView = false; //default table view is not async
   public showDefaults: boolean = false;
   public showSpinner: boolean = false;
   public showActions: boolean = true;
@@ -145,7 +147,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit():void {
 
     this.setTableHeight(); 
-  
+
     setTimeout(() => {
       if (this.conf.preInit) {
         this.conf.preInit(this);
@@ -155,6 +157,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.conf.afterInit(this);
       }
     })
+    this.asyncView = this.conf.asyncView ? this.conf.asyncView : false;
     this.conf.columns.forEach((column) => {
       this.displayedColumns.push(column.prop);
       if (!column.always_display) {
@@ -313,6 +316,17 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.getFunction = this.rest.get(this.conf.resource_name, options);
     }
 
+    if (this.asyncView) {
+      setInterval(() => {
+        this.callGetFunction();
+      }, 5000);
+    } else {
+      this.callGetFunction();
+    }
+
+  }
+
+  callGetFunction() {
     this.getFunction.subscribe(
       (res) => {
         this.handleData(res);
@@ -326,7 +340,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
     );
-  }
+  };
 
   handleData(res): any {
 
