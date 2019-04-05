@@ -61,6 +61,7 @@ export class NavigationService {
         { name: T('Update'), state: 'update' },
         { name: T('CAs'), state: 'ca' },
         { name: T('Certificates'), state: 'certificates' },
+        { name: T('Failover'), state: 'failover' },
         { name: T('Support'), state: 'support' },
       ]
     },
