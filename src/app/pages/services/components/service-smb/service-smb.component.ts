@@ -119,8 +119,8 @@ export class ServiceSMBComponent {
       placeholder: helptext.cifs_srv_admin_group_placeholder,
       tooltip: helptext.cifs_srv_admin_group_tooltip,
       options: [{
-        label: '------',
-        value: '',
+          label: '------',
+          value: '',
       }],
     },
     { type: 'input',
@@ -243,6 +243,12 @@ export class ServiceSMBComponent {
         this.cifs_srv_guest.options.push({ label: user.username, value: user.username });
       });
     });
+    this.ws.call('group.query').subscribe((res) => {
+      this.cifs_srv_admin_group = _.find(this.fieldConfig, {'name':'cifs_srv_admin_group'});
+      res.forEach((group) => {
+        this.cifs_srv_admin_group.options.push({ label: group.group, value: group.group });
+      });
+    });
   }
 
   constructor(protected router: Router, protected route: ActivatedRoute,
@@ -259,13 +265,6 @@ export class ServiceSMBComponent {
         this.defaultIdmap = idmap_res[0];
         entityEdit.formGroup.controls['idmap_tdb_range_high'].setValue(idmap_res[0].idmap_tdb_range_high);
         entityEdit.formGroup.controls['idmap_tdb_range_low'].setValue(idmap_res[0].idmap_tdb_range_low);
-      });
-    });
-
-    this.ws.call('group.query').subscribe((res) => {
-      this.cifs_srv_admin_group = _.find(this.fieldConfig, {'name':'cifs_srv_admin_group'});
-      res.forEach((group) => {
-        this.cifs_srv_admin_group.options.push({ label: group.group, value: group.group });
       });
     });
   }
