@@ -7,11 +7,7 @@ import { Router } from '@angular/router';
 import { DataSource } from '@angular/cdk/collections';
 import { MatPaginator, MatSort, PageEvent, MatSnackBar } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
-
-import { T } from '../../../../translate-marker';
-
-
-
+import * as _ from 'lodash';
 
 //local libs
 import { RestService } from '../../../../services/rest.service';
@@ -22,8 +18,7 @@ import { DialogService } from '../../../../services';
 import { ErdService } from '../../../../services/erd.service';
 import { StorageService } from '../../../../services/storage.service'
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
-
-
+import { T } from '../../../../translate-marker';
 
 export interface InputTableConf {
 
@@ -130,6 +125,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   protected loaderOpen = false;
   public selected = [];
 
+  private interval: any;
+
   constructor(protected core: CoreService, protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService, 
     protected erdService: ErdService, protected translate: TranslateService, protected snackBar: MatSnackBar,
@@ -142,6 +139,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(){
     this.core.unregister({observerClass:this});
+    clearInterval(this.interval);
   }
 
   ngOnInit():void {
@@ -317,9 +315,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     if (this.asyncView) {
-      setInterval(() => {
+      this.interval = setInterval(() => {
         this.callGetFunction();
-      }, 5000);
+      }, 10000);
     } else {
       this.callGetFunction();
     }
@@ -359,24 +357,35 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
 
-    let rows: any[] = [];
+    this.rows = this.generateRows(res);
 
+    if (this.conf.dataHandler) {
+      this.conf.dataHandler(this);
+    }
+
+    if (this.conf.addRows) {
+      this.conf.addRows(this);
+    }
+
+    this.currentRows = this.filter.nativeElement.value === '' ? this.rows : this.currentRows;
+    this.paginationPageIndex  = 0;
+    this.setPaginationInfo();
+    this.showDefaults = true;
+    return res;
+
+  }
+
+  generateRows(res): Array<any> {
+    let rows: any[] = [];
     if (this.loaderOpen) {
       this.loader.close();
       this.loaderOpen = false;
     }
+
     if (res.data) {
       rows = new EntityUtils().flattenData(res.data);
     } else {
       rows = new EntityUtils().flattenData(res);
-    }
-
-    if (this.conf.queryRes) {
-      this.conf.queryRes = rows;
-    }
-
-    if (this.conf.queryRes) {
-      this.conf.queryRes = rows;
     }
 
     for (let i = 0; i < rows.length; i++) {
@@ -387,22 +396,26 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
 
-    this.rows = rows;
+    if (this.rows.length === 0) {
+      if (this.conf.queryRes) {
+        this.conf.queryRes = rows;
+      }
 
-    if (this.conf.dataHandler) {
-      this.conf.dataHandler(this);
+      if (this.conf.queryRes) {
+        this.conf.queryRes = rows;
+      }
+    } else {
+      const newCurrentRows = this.currentRows;
+      for (let i = 0; i < newCurrentRows.length; i++) {
+        const index = _.findIndex(rows, {id: newCurrentRows[i].id});
+        if (index > -1) {
+          newCurrentRows[i] = rows[index];
+        }
+      }
+      this.currentRows = newCurrentRows;
+      return this.rows.map(item => _.find(rows, {id: item.id}));
     }
-
-    if (this.conf.addRows) {
-      this.conf.addRows(this);
-    }
-
-    this.currentRows = this.rows;
-    this.paginationPageIndex  = 0;
-    this.setPaginationInfo();
-    this.showDefaults = true;
-    return res;
-
+    return rows;
   }
 
   trClass(row) {
