@@ -1017,7 +1017,7 @@ msgid "Awesome! Now let's explore FreeNAS's cool features."
 msgstr ""
 
 msgid "Back"
-msgstr "Espalda"
+msgstr "Volver"
 
 msgid ""
 "Backblaze B2 Application Key. Log in to the B2 account and generate a key "
@@ -1623,7 +1623,7 @@ msgid "Clients"
 msgstr ""
 
 msgid "Close"
-msgstr "Cerca"
+msgstr "Cerrar"
 
 msgid "Cloud Credentials"
 msgstr ""
@@ -5605,7 +5605,7 @@ msgid "SASL wrapping"
 msgstr ""
 
 msgid "SAVE CONFIGURATION"
-msgstr ""
+msgstr "GUARDAR CONFIGURACIÓN"
 
 msgid "SED Password"
 msgstr ""
@@ -5649,10 +5649,10 @@ msgid "Samba Schema"
 msgstr ""
 
 msgid "Save"
-msgstr "Salvo"
+msgstr "Guardar"
 
 msgid "Save Config"
-msgstr ""
+msgstr "Guardar Config"
 
 msgid "Save Network Interface Changes"
 msgstr ""
