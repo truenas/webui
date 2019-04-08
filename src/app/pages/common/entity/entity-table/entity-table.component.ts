@@ -314,12 +314,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.getFunction = this.rest.get(this.conf.resource_name, options);
     }
 
+    this.callGetFunction();
     if (this.asyncView) {
       this.interval = setInterval(() => {
         this.callGetFunction();
       }, 10000);
-    } else {
-      this.callGetFunction();
     }
 
   }
@@ -413,7 +412,18 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
       this.currentRows = newCurrentRows;
-      return this.rows.map(item => _.find(rows, {id: item.id}));
+
+      const newRows = [];
+      for (let i = 0; i < this.rows.length; i++) {
+        const index = _.findIndex(rows, {id: this.rows[i].id});
+        if (index < 0) {
+          continue;
+        }
+        const updatedItem = rows[index];
+        rows.splice(index, 1);
+        newRows.push(updatedItem);
+      }
+      return newRows.concat(rows);
     }
     return rows;
   }
