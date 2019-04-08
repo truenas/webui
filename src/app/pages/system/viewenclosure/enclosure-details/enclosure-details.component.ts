@@ -1,5 +1,6 @@
 import { Component, OnInit, AfterViewInit, ElementRef, NgZone } from '@angular/core';
 import { Application, Container, Text, DisplayObject, Graphics, Sprite, Texture} from 'pixi.js';
+import 'pixi-projection';
 import { DriveTray } from 'app/core/classes/hardware/drivetray';
 import { M50 } from 'app/core/classes/hardware/m50';
 //declare const PIXI: any;
