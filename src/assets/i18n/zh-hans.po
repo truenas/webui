@@ -1227,6 +1227,9 @@ msgstr "启动引导器类型"
 msgid "Boot Method"
 msgstr "启动方式"
 
+msgid "Boot Pool"
+msgstr ""
+
 msgid "Boot Pool Status"
 msgstr "启动池状态"
 
@@ -8135,6 +8138,9 @@ msgstr ""
 
 msgid "Until"
 msgstr "直到"
+
+msgid "Unused"
+msgstr ""
 
 msgid "Update"
 msgstr "更新"

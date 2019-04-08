@@ -1124,6 +1124,9 @@ msgstr ""
 msgid "Boot Method"
 msgstr "啟動方式"
 
+msgid "Boot Pool"
+msgstr ""
+
 msgid "Boot Pool Status"
 msgstr ""
 
@@ -7877,6 +7880,9 @@ msgid ""
 msgstr ""
 
 msgid "Until"
+msgstr ""
+
+msgid "Unused"
 msgstr ""
 
 msgid "Update"
