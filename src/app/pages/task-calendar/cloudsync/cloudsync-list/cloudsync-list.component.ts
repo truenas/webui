@@ -1,7 +1,6 @@
-import { WebSocketService, DialogService, JobService } from '../../../../services';
+import { WebSocketService, DialogService, JobService, EngineerModeService} from '../../../../services';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import {Observable, Subject, Subscription} from 'rxjs/Rx';
 
 import * as _ from 'lodash';
 import { T } from '../../../../translate-marker';
@@ -50,7 +49,26 @@ export class CloudsyncListComponent {
               protected ws: WebSocketService,
               protected translateService: TranslateService,
               protected dialog: DialogService,
-              protected job: JobService) {}
+              protected job: JobService,
+              protected engineerModeService: EngineerModeService) {
+              }
+
+  preInit(entityList) {
+    if (localStorage.getItem('engineerMode') === 'true') {
+      this.columns.splice(9, 0, { name: T('Auxiliary arguments'), prop: 'args' });
+    }
+
+    this.engineerModeService.engineerMode.subscribe((res) => {
+      if (res === 'true') {
+        this.columns.splice(9, 0, { name: T('Auxiliary arguments'), prop: 'args' });
+      } else {
+        if (this.columns.length === 12) {
+          this.columns.splice(9, 1);
+        }
+      }
+    });
+
+  }
 
   afterInit(entityList: any) {
     this.entityList = entityList;
