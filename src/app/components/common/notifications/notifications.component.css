@@ -1,0 +1,16 @@
+a.dismiss {
+    text-decoration: underline;
+}
+
+.notific-item {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+a:hover {
+    cursor: pointer;
+}
+
+.mat-list-item {
+    height: unset;
+}
