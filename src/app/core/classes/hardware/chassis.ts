@@ -125,8 +125,8 @@ export class Chassis {
 
    onEnter(){
      const opacity = 0.33;
-     const delay = 750;
-     const duration = 500;
+     const delay = 500;
+     const duration = 250;
     
      setTimeout(() =>{
        const fade = (v) => this.chassis.alpha = v;
@@ -146,11 +146,11 @@ export class Chassis {
         tween({
           from: item.handle.alpha,
           to: 1, 
-          duration: duration,
+          duration: duration + 1000,
           ease: easing.backOut,
           //flip: Infinity
         }).start(updateAlpha);
-      }, 250 + (index * 15));
+      }, delay)
 
       // Staggered tray backgrounds fade in  
       setTimeout(() =>{
