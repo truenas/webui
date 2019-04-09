@@ -11,7 +11,7 @@ user_form_full_name_tooltip : T('Spaces are allowed.'),
 user_form_full_name_validation : [ Validators.required ],
 user_form_username_name: 'username',
 user_form_username_placeholder : T('Username'),
-user_form_username_tooltip : T(' Usernames of eight characters or less\
+user_form_username_tooltip : T('Usernames of eight characters or less\
  are recommended for compatibility with application software, but up\
  to sixteen characters are allowed. Usernames cannot begin with a\
  hyphen (<i>-</i>) or contain a space, tab, or these characters: <i>,\
