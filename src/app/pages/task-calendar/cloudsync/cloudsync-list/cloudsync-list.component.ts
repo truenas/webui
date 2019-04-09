@@ -21,6 +21,7 @@ export class CloudsyncListComponent {
   protected route_edit: string[] = ['tasks', 'cloudsync', 'edit'];
   protected wsDelete = "cloudsync.delete";
   protected entityList: any;
+  protected asyncView = true;
 
   public columns: Array < any > = [
     { name: T('Description'), prop: 'description' },
