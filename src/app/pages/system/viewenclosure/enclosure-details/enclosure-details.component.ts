@@ -1,5 +1,6 @@
 import { Component, OnInit, AfterViewInit, ElementRef, NgZone } from '@angular/core';
 import { Application, Container, Text, DisplayObject, Graphics, Sprite, Texture} from 'pixi.js';
+//import 'pixi-filters';
 import 'pixi-projection';
 import { DriveTray } from 'app/core/classes/hardware/drivetray';
 import { M50 } from 'app/core/classes/hardware/m50';
@@ -21,22 +22,23 @@ export class EnclosureDetailsComponent implements AfterViewInit {
   public texture;
   public hardwareGraphic;
 
-  constructor(public el:ElementRef) { }
+  constructor(public el:ElementRef/*, private ngZone: NgZone*/) { }
 
   ngAfterViewInit() {
     this.pixiInit();
   }
 
   pixiInit(){
-
-    this.app = new PIXI.Application({
-      width:960,
-      height:304,
-      forceCanvas:false,
-      transparent:false,
-      antialias:true,
-      autoStart:true
-    });
+    //this.ngZone.runOutsideAngular(() => {
+      this.app = new PIXI.Application({
+        width:960,
+        height:304,
+        forceCanvas:false,
+        transparent:false,
+        antialias:true,
+        autoStart:true
+      });
+    //});
 
     this.renderer = this.app.renderer;
     this.app.renderer.backgroundColor = 0x000000;

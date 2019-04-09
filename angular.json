@@ -68,6 +68,7 @@
               "node_modules/xterm/dist/addons/attach/attach.js",
               "node_modules/xterm/dist/addons/fit/fit.js",
               "node_modules/pixi.js/dist/pixi.min.js",
+              "node_modules/pixi-filters/dist/pixi-filters.js",
               "node_modules/pixi-projection/dist/pixi-projection.js"
             ]
           },

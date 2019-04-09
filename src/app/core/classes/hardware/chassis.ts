@@ -1,4 +1,6 @@
 import { Container, Texture, Sprite } from 'pixi.js';
+import { OutlineFilter } from '@pixi/filter-outline';
+import { AdvancedBloomFilter } from '@pixi/filter-advanced-bloom';
 import { Subject, Observable } from 'rxjs';
 import { CoreEvent } from 'app/core/services/core.service';
 import { DriveTray } from './drivetray';
@@ -75,6 +77,19 @@ export class Chassis {
 
    onLoaded(){
      //let opacity = 0.5;
+
+     const outlineFilterBlue = new PIXI.filters.OutlineFilter(2, 0x99ff99);
+     const bloomFilter = new PIXI.filters.AdvancedBloomFilter({
+       threshold: 0.9, 
+       bloomScale: 1.5, 
+       brightness: 1.5, 
+       blur: 20, 
+       quality: 10
+     });
+     //(0.1, 1.2, 1.2, 20, 3); // 
+
+     //this.filters.push(outlineFilterBlue);
+
      // Render Chassis
      this.chassis = PIXI.Sprite.from(PIXI.loader.resources[this.model + "_chassis"].texture.baseTexture);
      this.chassis.name = this.model + '_chassis';
@@ -90,6 +105,7 @@ export class Chassis {
        dt.container.y = position.y;
        dt.background.alpha = 0;
        dt.handle.alpha = 0;
+       dt.handle.filters = [bloomFilter];
        this.driveTrays.addChild(dt.container);
        this.driveTrayObjects.push(dt);
      }
@@ -108,9 +124,9 @@ export class Chassis {
    }
 
    onEnter(){
-     const opacity = 0.5;
-     const delay = 1000;
-     const duration = 1000;
+     const opacity = 0.33;
+     const delay = 750;
+     const duration = 500;
     
      setTimeout(() =>{
        const fade = (v) => this.chassis.alpha = v;
@@ -130,7 +146,7 @@ export class Chassis {
         tween({
           from: item.handle.alpha,
           to: 1, 
-          duration: 1000,
+          duration: duration,
           ease: easing.backOut,
           //flip: Infinity
         }).start(updateAlpha);
@@ -139,13 +155,23 @@ export class Chassis {
       // Staggered tray backgrounds fade in  
       setTimeout(() =>{
         const updateAlpha = (v) => item.background.alpha = v;
+        //const updateFilter = (v) => item.handle.filters[0].threshold = v;
+        //console.log(item.handle.filters[0]);
+
         tween({
           from: item.background.alpha,
           to: opacity, 
           duration: duration,
           ease: easing.backOut,
-          //flip: Infinity
         }).start(updateAlpha);
+
+        /*tween({
+          from: item.handle.filters[0].threshold,
+          to: 1.9, 
+          duration: duration + 500,
+          ease: easing.backOut,
+        }).start(updateFilter);*/
+
       },delay);
 
      });
