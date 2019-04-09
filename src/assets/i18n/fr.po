@@ -914,7 +914,7 @@ msgid ""
 msgstr ""
 
 msgid "Allow configuring a non-standard port to access the GUI over <i>HTTPS</i>."
-msgstr ""
+msgstr "Autoriser la configuration d’un port non standard pour accéder à l’interface graphique via <i>https</i>."
 
 msgid ""
 "Allow group members to use <a "
