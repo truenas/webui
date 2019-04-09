@@ -16,6 +16,7 @@ export const helptext_sharing_nfs = {
   validators_path: [Validators.required],
 
   placeholder_delete: T("Delete"),
+  tooltip_delete: T("Set to delete this path."),
 
   placeholder_comment: T("Comment"),
   tooltip_comment: T(
