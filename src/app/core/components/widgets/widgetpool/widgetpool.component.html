@@ -84,7 +84,7 @@
               <div class="diskset-wrapper" [ngStyle]="{width: diskSets.length*100+'%', 'margin-left':currentDiskSet*-100+'%'}">
                 <div *ngFor="let set of diskSets; let s = index;" [ngStyle]="{width: 100/diskSets.length+'%'}" class="diskset">
                   <mat-grid-list  [cols]="gridCols" role="list" [ngClass]="{'high-density': gridCols == 8}">
-                    <mat-grid-tile *ngFor="let disk of diskSets[s]; let i=index" class="disk-tile" (click)="setSelectedDisk(i)" >
+                    <mat-grid-tile *ngFor="let disk of diskSets[s]; let i=index" class="disk-tile" (click)="setSelectedDisk(disk)" >
                       <!--<mat-icon class="disk-icon" role="img">local_laundry_service</mat-icon>-->
                       <!--<mat-icon class="disk-icon" role="img" svgIcon="mdi:harddisk"></mat-icon>-->
                       <mat-icon class="disk-icon" *ngIf="diskSets[s][i]" role="img" fontSet="mdi-set" fontIcon="mdi-harddisk"></mat-icon>

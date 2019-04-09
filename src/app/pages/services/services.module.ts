@@ -9,7 +9,6 @@ import {AppConfirmModule} from "../../services/app-confirm/app-confirm.module";
 
 import {ServiceAFPComponent} from './components/service-afp';
 import {ServiceCIFSComponent} from './components/service-cifs';
-import {ServiceDCComponent} from './components/service-dc';
 import {ServiceDDNSComponent} from './components/service-dynamicdns';
 import {ServiceFTPComponent} from './components/service-ftp';
 import {ServiceLLDPComponent} from './components/service-lldp';
@@ -37,7 +36,7 @@ import { UserService } from '../../services/user.service';
   imports : [ CommonModule, FormsModule, EntityModule, routing, MaterialModule, AppConfirmModule, NgxDatatableModule, TranslateModule ],
   declarations : [
     Services, ServiceSSHComponent, ServiceAFPComponent,
-    ServiceDCComponent, ServiceFTPComponent, ServiceLLDPComponent,
+    ServiceFTPComponent, ServiceLLDPComponent,
     ServiceRSYNCComponent, CconfigureRYSNCComponent,RSYNCconfigurationListComponent, RYSNCConfigurationFormComponent,
     ServiceSMARTComponent, ServiceNFSComponent, ServiceTFTPComponent, ServiceUPSComponent, ServiceDDNSComponent,
     ServiceCIFSComponent, ServiceSMBComponent, ServiceSNMPComponent,

@@ -142,12 +142,11 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
             }
 
           }
-        
+
+          if(this.disks.length > 0){
+            this.storage.diskNameSort(this.disks);
+          } 
       }
-        if(this.disks.length > 0){
-          this.storage.diskNameSort(this.disks);
-          this.setSelectedDisk(0);
-        }
     });
 
 
@@ -189,7 +188,10 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
       }
     
       this.diskDetails.push(disk);
-      this.diskDetails = this.storage.tableSorter(this.diskDetails, 'name', 'asc');
+    }
+
+    if (this.diskDetails.length > 0 && this.disks.length > 0) {
+      this.setSelectedDisk(this.disks[0]);
     }
     
     /*console.log(evt.data)
@@ -259,16 +261,16 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     }
   }
 
-  setSelectedDisk(index?:number){
-    if(index >= 0){
+  setSelectedDisk(disk?: any){
+    if(disk){
       for(let i = 0; i < this.diskDetails.length; i++){
-        if(this.diskDetails[i].name == this.disks[index]){
+        if(this.diskDetails[i].name === disk){
           this.selectedDisk = i;
           this.core.emit({name:"StatsDiskTempRequest", data:[this.diskDetails[i].name, i] });
         } 
       }
     } else {
-      this.selectedDisk = -1;
+      this.selectedDisk = -1; 
     }
   }
 

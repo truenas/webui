@@ -24,5 +24,8 @@ export default {
 
     ini_enabled_placeholder: T('Enabled'),
     ini_enabled_tooltip: T('Enable this task. Unset to disable the task\
-     without deleting it.')
+     without deleting it.'),
+
+    ini_timeout_placeholder: T('Timeout'),
+    ini_timeout_tooltip: T('Automatically stop the script or command after the specified seconds.'),
 }

@@ -701,12 +701,12 @@ export class CloudsyncFormComponent implements OnInit {
 
     value['schedule'] = schedule;
 
-    if (value.bwlimit) {
-      value.bwlimit = this.handleBwlimit(value.bwlimit);
+    if (value.bwlimit !== undefined) {
+      value.bwlimit = value.bwlimit.trim() === '' ? [] : this.handleBwlimit(value.bwlimit);
     }
 
-    if (value.exclude) {
-      value.exclude = value.exclude.trim().split(" ");
+    if (value.exclude !== undefined) {
+      value.exclude = value.exclude.trim() === '' ? [] : value.exclude.trim().split(" ");
     }
 
     if (!this.formGroup.valid) {

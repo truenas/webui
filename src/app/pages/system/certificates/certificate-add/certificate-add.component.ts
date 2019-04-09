@@ -3,8 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { RestService, SystemGeneralService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
+import { helptext_system_ca } from 'app/helptext/system/ca';
 
 @Component({
   selector : 'system-certificate-add',
@@ -54,6 +54,45 @@ export class CertificateAddComponent {
     },
     {
       type : 'select',
+      name : 'key_type',
+      placeholder : helptext_system_certificates.add.key_type.placeholder,
+      tooltip: helptext_system_ca.add.key_type.tooltip,
+      options : [
+        {label: 'RSA', value: 'RSA'},
+        {label: 'EC', value: 'EC'}
+      ],
+      value: 'RSA',
+      isHidden: false,
+      disabled: true,
+      required: true,
+      validation: helptext_system_certificates.add.key_type.validation
+    },
+    {
+      type : 'select',
+      name : 'ec_curve',
+      placeholder : helptext_system_certificates.add.ec_curve.placeholder,
+      tooltip: helptext_system_ca.add.ec_curve.tooltip,
+      options : [
+        {label: 'BrainpoolP512R1', value: 'BrainpoolP512R1'},
+        {label: 'BrainpoolP384R1', value: 'BrainpoolP384R1'},
+        {label: 'BrainpoolP256R1', value: 'BrainpoolP256R1'},
+        {label: 'SECP256K1', value: 'SECP256K1'},
+      ],
+      value: 'BrainpoolP384R1',
+      isHidden: true,
+      disabled: true,
+      relation : [
+        {
+          action : 'ENABLE',
+          when : [ {
+            name : 'key_type',
+            value : 'EC',
+          } ]
+        },
+      ]
+    },
+    {
+      type : 'select',
       name : 'key_length',
       placeholder : helptext_system_certificates.add.key_length.placeholder,
       tooltip: helptext_system_certificates.add.key_length.tooltip,
@@ -66,6 +105,15 @@ export class CertificateAddComponent {
       required: true,
       validation: helptext_system_certificates.add.key_length.validation,
       isHidden: false,
+      relation : [
+        {
+          action : 'ENABLE',
+          when : [ {
+            name : 'key_type',
+            value : 'RSA',
+          } ]
+        },
+      ]
     },
     {
       type : 'select',
@@ -136,6 +184,14 @@ export class CertificateAddComponent {
     },
     {
       type : 'input',
+      name : 'organizational_unit',
+      placeholder : helptext_system_certificates.add.organizational_unit.placeholder,
+      tooltip: helptext_system_certificates.add.organizational_unit.tooltip,
+      required: false,
+      isHidden: false,
+    },
+    {
+      type : 'input',
       name : 'email',
       placeholder : helptext_system_certificates.add.email.placeholder,
       tooltip: helptext_system_certificates.add.email.tooltip,
@@ -196,6 +252,8 @@ export class CertificateAddComponent {
 
   private internalFields: Array<any> = [
     'signedby',
+    'key_type',
+    'ec_curve',
     'key_length',
     'digest_algorithm',
     'lifetime',
@@ -203,17 +261,21 @@ export class CertificateAddComponent {
     'state',
     'city',
     'organization',
+    'organizational_unit',
     'email',
     'common',
     'san',
   ];
   private csrFields: Array<any> = [
+    'key_type',
     'key_length',
+    'ec_curve',
     'digest_algorithm',
     'country',
     'state',
     'city',
     'organization',
+    'organizational_unit',
     'email',
     'common',
     'san',
@@ -262,6 +324,7 @@ export class CertificateAddComponent {
     for (let i in this.internalFields) {
       this.hideField(this.internalFields[i], false, entity);
     }
+    this.hideField(this.internalFields[2], true, entity)
 
     entity.formGroup.controls['create_type'].valueChanges.subscribe((res) => {
       if (res == 'CERTIFICATE_CREATE_INTERNAL') {
@@ -274,6 +337,14 @@ export class CertificateAddComponent {
         for (let i in this.internalFields) {
           this.hideField(this.internalFields[i], false, entity);
         }
+
+        // This block makes the form reset its 'disabled/hidden' settings on switch of type
+        if (entity.formGroup.controls['key_type'].value === 'RSA') {
+          this.hideField('ec_curve', true, entity);
+        } else if (entity.formGroup.controls['key_type'].value === 'EC') {
+          this.hideField('key_length', true, entity);
+        } 
+
       } else if (res == 'CERTIFICATE_CREATE_CSR') {
         for (let i in this.internalFields) {
           this.hideField(this.internalFields[i], true, entity);
@@ -284,6 +355,14 @@ export class CertificateAddComponent {
         for (let i in this.csrFields) {
           this.hideField(this.csrFields[i], false, entity);
         }
+
+        // This block makes the form reset its 'disabled/hidden' settings on switch of type
+        if (entity.formGroup.controls['key_type'].value === 'RSA') {
+          this.hideField('ec_curve', true, entity);
+        } else if (entity.formGroup.controls['key_type'].value === 'EC') {
+          this.hideField('key_length', true, entity);
+        }
+
       } else if (res == 'CERTIFICATE_CREATE_IMPORTED') {
         for (let i in this.internalFields) {
           this.hideField(this.internalFields[i], true, entity);
@@ -313,7 +392,7 @@ export class CertificateAddComponent {
   hideField(fieldName: any, show: boolean, entity: any) {
     let target = _.find(this.fieldConfig, {'name' : fieldName});
     target['isHidden'] = show;
-    entity.setDisabled(fieldName, show);
+    entity.setDisabled(fieldName, show, show);
   }
 
   beforeSubmit(data: any) {

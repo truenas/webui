@@ -118,10 +118,12 @@
 <mat-card id="button-card">
   <div class="row">
     <div class="col-md-12">
-      <button *ngIf="updates_available" mat-button class="btn btn-success update-button mat-basic" (click)="downloadUpdate()" [disabled]="status == 'REBOOT_REQUIRED'">{{"Fetch and Install Updates" | translate}}</button>
-      <button mat-button class="btn btn-success update-button mat-basic" *ngIf="update_downloaded && status !== 'UNAVAILABLE'" mat-button class="btn btn-success" (click)="ApplyPendingUpdate()" >{{"Apply Pending update" | translate}}</button>
+      <button mat-button class="btn btn-success update-button mat-basic" *ngIf="updates_available" (click)="downloadUpdate()" [disabled]="status == 'REBOOT_REQUIRED'">{{"Fetch and Install Updates" | translate}}</button>
+      <button mat-button class="btn btn-success update-button mat-basic" *ngIf="update_downloaded && status !== 'UNAVAILABLE'" (click)="ApplyPendingUpdate()">{{"Apply Pending update" | translate}}</button>
       <button mat-button class="btn btn-success update-button mat-basic" (click)="ManualUpdate()" >{{"Install Manual Update File" | translate}}</button>
       <p><font color ="red">{{general_update_error}}</font></p>
     </div>
   </div>
 </mat-card>
+<div [style.height.px]="50" *ngIf="isFooterConsoleOpen"></div>
+  

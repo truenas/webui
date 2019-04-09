@@ -413,7 +413,7 @@ export class VolumesListTableConfig implements InputTableConf {
             }
             
           }
-          this.dialogService.dialogForm(conf);
+          this.dialogService.dialogFormWide(conf);
         }
       });
 
@@ -813,7 +813,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
             try {
               let used_pct =  volume.children[0].used / (volume.children[0].used + volume.children[0].avail);
-              volume.usedStr = (<any>window).filesize(volume.children[0].used, { standard: "iec" }) + " (" + Math.round(used_pct * 100) + "%)";
+              volume.usedStr = ": " + (<any>window).filesize(volume.children[0].used, { standard: "iec" }) + " (" + Math.round(used_pct * 100) + "%)";
             } catch (error) {
               volume.usedStr = "" + volume.children[0].used;
             }

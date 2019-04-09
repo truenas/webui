@@ -304,12 +304,6 @@ export class VMWizardComponent {
       });
     });
 
-    ( < FormGroup > entityWizard.formArray.get([0]).get('wizard_type')).valueChanges.subscribe((res) => {
-      if (res === 'docker') {
-        this.router.navigate(new Array('/').concat(['vm','dockerwizard']))
-      }
-    });
-
     ( < FormGroup > entityWizard.formArray.get([1]).get('bootloader')).valueChanges.subscribe((bootloader) => {
       if(bootloader === "UEFI_CSM"){
         _.find(this.wizardConfig[1].fieldConfig, {name : 'enable_vnc'})['isHidden'] = true;

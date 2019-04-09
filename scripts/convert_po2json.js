@@ -22,7 +22,7 @@ fs.readdir( translations, function( err, files ) {
 
             console.log("Generating " + jsonfile);
             try {
-                jsondata = po2json.parseFileSync(translations + file, {pretty:true, stringify: true, format: 'mf', fullMF: true, 'fallback-to-msgid': true});
+                jsondata = po2json.parseFileSync(translations + file, {pretty:true, stringify: true, format: 'mf', fullMF: false, 'fallback-to-msgid': true});
                 stream = fs.createWriteStream(translations + jsonfile, {});
                 stream.write(jsondata);
                 
