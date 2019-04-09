@@ -850,7 +850,6 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     this.ws.call('system.advanced.config').subscribe((res)=> {
       if (res) {
         this.isFooterConsoleOpen = res.consolemsg;
-        console.log(this.isFooterConsoleOpen)
       }
     });
 
