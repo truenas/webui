@@ -722,7 +722,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   // Fix icon color in notification area
-  .notific-icon {
+  .info-icon {
     @include variable(color, --primary, $primary !important);
   }
 
@@ -878,7 +878,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     overflow-y: hidden !important;
   }
 
-  app-admin-layout .mat-drawer-inner-container {
+  app-admin-layout .not-alerts .mat-drawer-inner-container {
     overflow: visible !important;
   }
 
