@@ -383,7 +383,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   localDialogService.errorReport(T("Error exporting/disconnecting pool."), res.message, res.stack);
                 });
               } else {
-                return localRest.delete("storage/volume/" + row1.name, { body: JSON.stringify({}) 
+                return localRest.delete("storage/volume/" + row1.name, { body: JSON.stringify({cascade: value.cascade}) 
                   }).subscribe((res) => {
                     entityDialog.dialogRef.close(true);
                     localLoader.close();
@@ -398,7 +398,7 @@ export class VolumesListTableConfig implements InputTableConf {
             }
             
           }
-          this.dialogService.dialogForm(conf);
+          this.dialogService.dialogFormWide(conf);
         }
       });
 
@@ -790,7 +790,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
             try {
               let used_pct =  volume.children[0].used / (volume.children[0].used + volume.children[0].avail);
-              volume.usedStr = (<any>window).filesize(volume.children[0].used, { standard: "iec" }) + " (" + Math.round(used_pct * 100) + "%)";
+              volume.usedStr = ": " + (<any>window).filesize(volume.children[0].used, { standard: "iec" }) + " (" + Math.round(used_pct * 100) + "%)";
             } catch (error) {
               volume.usedStr = "" + volume.children[0].used;
             }

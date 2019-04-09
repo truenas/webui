@@ -239,6 +239,8 @@ export class EntityTableComponent /*extends ViewControllerComponent*/ implements
       n = 6;
     } else if (this.title === 'Jails') {
       n = 4;
+    } else if (this.title === 'Virtual Machines') {
+      n = 7;
     } else if (this.title === 'Available Plugins' || this.title === 'Installed Plugins') {
       n = 3;
     } else {
@@ -247,7 +249,11 @@ export class EntityTableComponent /*extends ViewControllerComponent*/ implements
     window.onresize = () => {
       let x = window.innerHeight;
       let y = x - 830;
-      this.paginationPageSize = rowNum - n + Math.floor(y/50) + addRows ;
+      if (this.selected && this.selected.length > 0) {
+        this.paginationPageSize = rowNum - n + Math.floor(y/50) + addRows -3;
+      } else {
+        this.paginationPageSize = rowNum - n + Math.floor(y/50) + addRows;
+      }
 
       if (this.paginationPageSize < 2) {
         this.paginationPageSize = 2;
@@ -639,6 +645,7 @@ export class EntityTableComponent /*extends ViewControllerComponent*/ implements
   }
 
   onSelect({ selected }) {
+    this.setTableHeight();
     this.selected.splice(0, this.selected.length);
     this.selected.push(...selected);
 

@@ -81,12 +81,15 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   public filteredPaginatedData: ChartConfigData[] = [];
   public chartLayout = 'Grid'; // Defaults to grid layout
   //@ViewChild('chartWidth') chartWidth: MatButtonToggleGroup; 
+  public isFooterConsoleOpen: boolean;
   @ViewChild('pager') pagerElement;
   
   
 
 
-  constructor(private _lineChartService: LineChartService, private erdService: ErdService, public translate: TranslateService, private router:Router, private core:CoreService) {
+  constructor(private _lineChartService: LineChartService, private erdService: ErdService, 
+    public translate: TranslateService, private router:Router, private core:CoreService, 
+    protected ws: WebSocketService) {
   }
 
   setupSubscriptions(){
@@ -257,6 +260,12 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
 
     this.core.register({observerClass: this, eventName:"CacheConfigData"}).subscribe((evt:CoreEvent) => {
       this.handleChartConfigDataFunc(evt.data);
+    });
+
+    this.ws.call('system.advanced.config').subscribe((res)=> {
+      if (res) {
+        this.isFooterConsoleOpen = res.consolemsg;
+      }
     });
 
   }

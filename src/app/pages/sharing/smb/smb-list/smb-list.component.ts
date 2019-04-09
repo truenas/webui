@@ -18,8 +18,8 @@ export class SMBListComponent {
   protected route_delete: string[] = [ 'sharing', 'smb', 'delete' ];
 
   public columns: any[] = [
-    {name: helptext_sharing_smb.column_path, prop: 'cifs_name'},
-    {name: helptext_sharing_smb.column_name, prop: 'cifs_path'},
+    {name: helptext_sharing_smb.column_name, prop: 'cifs_name'},
+    {name: helptext_sharing_smb.column_path, prop: 'cifs_path'},
   ];
   public config: any = {
     paging : true,
