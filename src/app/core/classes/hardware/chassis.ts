@@ -56,8 +56,8 @@ export class Chassis {
    constructor(){
      this.container = new PIXI.Container();
      //this.driveTrays = new PIXI.Container();
-     //this.driveTrays = new PIXI.projection.Container2d();
-     this.driveTrays = new PIXI.projection.Sprite2d(PIXI.Texture.WHITE);
+     this.driveTrays = new PIXI.projection.Container2d();
+     //this.driveTrays = new PIXI.projection.Sprite2d(PIXI.Texture.WHITE);
      this.events = new Subject<CoreEvent>();
 
      // defaults
