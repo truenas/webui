@@ -53,7 +53,7 @@ netwait_ip_tooltip : T('Enter a space-delimited list of IP addresses to <a\
 
 hosts_placeholder : T('Host name database'),
 hosts_tooltip : T('Additional hosts to be appended to <i>/etc/hosts</i>\
- can be added here. Each host entry is a single line\
+ Each host entry is a single line\
  with whitespace-delimited IP address, hostname, and\
  any aliases. Hosts defined here are still accessible\
  by name even when DNS is not available. See <a\
