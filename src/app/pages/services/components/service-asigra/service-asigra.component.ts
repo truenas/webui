@@ -30,8 +30,7 @@ export class ServiceAsigraComponent {
       id : 'launch_ds_operator',
       name : 'Launch DS Operator',
       function : () => {
-        let url = new Array('/').concat(['_plugins', 'asigra', 'DSOP.jnlp']);
-        window.open(url.toString(), '_blank')
+        window.open('_plugins/asigra/DSOP.jnlp', '_blank')
       }
     }
   ];
@@ -42,7 +41,6 @@ export class ServiceAsigraComponent {
     entityForm.ws.call('pool.filesystem_choices', []).subscribe((fs_list) => {
       this.fs = _.find(this.fieldConfig, {name : "asigra_base_filesystem"});
       fs_list.forEach((item) => {
-        console.log(item)
         this.fs.options.push({label : item, value : item});
           entityForm.formGroup.controls['asigra_base_filesystem'].setValue(
           fs_list[0]);
