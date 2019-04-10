@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ElementRef, NgZone } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, NgZone, OnDestroy } from '@angular/core';
 import { Application, Container, Text, DisplayObject, Graphics, Sprite, Texture} from 'pixi.js';
 //import 'pixi-filters';
 import 'pixi-projection';
@@ -12,7 +12,7 @@ import { M50 } from 'app/core/classes/hardware/m50';
   styleUrls: ['./enclosure-details.component.css']
 })
 
-export class EnclosureDetailsComponent implements AfterViewInit {
+export class EnclosureDetailsComponent implements AfterViewInit, OnDestroy {
 
   public app;
   private renderer;
@@ -26,6 +26,14 @@ export class EnclosureDetailsComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     this.pixiInit();
+  }
+
+  ngOnDestroy(){
+    // Clear out assets
+    this.container.destroy(true);
+    PIXI.loader.resources = {};
+    this.app = null;
+    //Object.keys(PIXI.utils.TextureCache).forEach(function(texture) {  PIXI.utils.TextureCache[texture].destroy(true);});
   }
 
   pixiInit(){
@@ -51,8 +59,8 @@ export class EnclosureDetailsComponent implements AfterViewInit {
 
     let m50 = new M50();
     m50.events.subscribe((evt) => {
-      console.log(evt);
-      console.log(this.app.stage.children);
+      // console.log(evt);
+      // console.log(this.app.stage.children);
       this.container.addChild(m50.container);
       m50.container.name = 'm50';
       m50.container.width = m50.container.width / 2;
@@ -62,11 +70,13 @@ export class EnclosureDetailsComponent implements AfterViewInit {
     });
     //m50.load(); // Sprites don't exist until load method is called
 
-    /*if(!this.resources.m50){
+    if(!this.resources.m50){
+      // console.log("resources.m50 does not exist");
       this.importAsset('m50','assets/images/hardware/m50/m50_960w.png');
     } else {
+      // console.log("resources.m50 exists");
       this.onImport(); 
-    }*/
+    }
 
     //this.simpleImport();
 
@@ -84,7 +94,7 @@ export class EnclosureDetailsComponent implements AfterViewInit {
     // Image doesn't show up on stage unless I 
     // navigate away and back again. 
     // Maybe it isn't triggering change detection in Angular?
-    console.log("Simple Import...");
+    // console.log("Simple Import...");
     let texture = PIXI.Texture.fromImage('assets/images/hardware/m50/m50_960w.png');
     let sprite = new PIXI.Sprite(texture);
      sprite.width = 480;
@@ -92,9 +102,9 @@ export class EnclosureDetailsComponent implements AfterViewInit {
      sprite.x = 0;
      sprite.y = 0;
     sprite.name="m50_sprite"
-    console.log(sprite);
+    // console.log(sprite);
     this.container.addChild(sprite);
-    console.log(this.app.stage.children);
+    // console.log(this.app.stage.children);
   }
 
   makeTexture(){
@@ -106,13 +116,13 @@ export class EnclosureDetailsComponent implements AfterViewInit {
     this.texture = this.renderer.generateTexture(gfx);
     let square = new PIXI.Sprite(this.texture);
     square.tint = 0xCC0000;
-    console.log(square);
+    // console.log(square);
 
     return square;
   }
 
   importAsset(alias, path){
-    console.log("Importing Asset...");
+    // console.log("Importing Asset...");
     this.loader
       .add(alias, path) //.add("catImage", "assets/res/cat.png")
       .on("progress", this.loadProgressHandler)
@@ -120,7 +130,7 @@ export class EnclosureDetailsComponent implements AfterViewInit {
   }
 
   onImport(){
-     console.log("Asset loaded. Setting up as Sprite...");
+     // console.log("Asset loaded. Setting up as Sprite...");
      let sprite = PIXI.Sprite.from(this.resources.m50.texture.baseTexture);
      //let sprite = new PIXI.Sprite(this.resources.m50.texture);
      //let texture = PIXI.Texture.fromImage('assets/images/m50_1080p.png');
@@ -133,10 +143,10 @@ export class EnclosureDetailsComponent implements AfterViewInit {
      //sprite.y = (this.container.height / 2) - (sprite.height / 2);
      sprite.name="m50_sprite"
      sprite.alpha = 0.1;
-     console.log(this.resources);
-     console.log(sprite);
+     // console.log(this.resources);
+     // console.log(sprite);
      this.container.addChild(sprite);
-     console.log(this.app.stage.children);
+     // console.log(this.app.stage.children);
 
      let dt = this.makeDriveTray();
      //dt.handle.tint = 0xCC0000;
@@ -147,16 +157,16 @@ export class EnclosureDetailsComponent implements AfterViewInit {
   loadProgressHandler(loader, resource) {
 
     // Display the file `url` currently being loaded
-    console.log("loading: " + resource.url);
+    // console.log("loading: " + resource.url);
 
     // Display the percentage of files currently loaded
 
-    console.log("progress: " + loader.progress + "%");
+    // console.log("progress: " + loader.progress + "%");
 
     // If you gave your files names as the first argument
     // of the `add` method, you can access them like this
 
-    console.log("loading: " + resource.name);
+    // console.log("loading: " + resource.name);
 
   }
 

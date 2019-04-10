@@ -179,7 +179,7 @@ export class Chassis {
    }
 
    loadProgressHandler(){
-     console.log( "PROGRESS: " + PIXI.loader.progress + "%");
+     //console.log( "PROGRESS: " + PIXI.loader.progress + "%");
    }
 
    makeDriveTray(){
