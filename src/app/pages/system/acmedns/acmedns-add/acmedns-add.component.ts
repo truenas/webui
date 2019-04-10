@@ -4,9 +4,9 @@ import { DialogService, WebSocketService } from '../../../../services/';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { EntityUtils } from '../../../common/entity/utils'
-import { T } from 'app/translate-marker';
-import { Validators } from '@angular/forms';
+import { EntityUtils } from '../../../common/entity/utils';
+import { helptext_system_acme as helptext } from 'app/helptext/system/acme';
+
 
 @Component({
   selector: 'app-acmedns-add',
@@ -21,26 +21,26 @@ export class AcmednsAddComponent {
   protected fieldConfig: FieldConfig[];
     public fieldSets: FieldSet[] = [
       {
-        name: T('Select Authenticator'),
+        name: helptext.select_auth_label,
         label: true,
         width: '45%',
         config:[
           {
             type : 'input',
-            name : 'name',
-            placeholder : T('Name'),
-            tooltip : T('Temp tooltip'),
+            name : helptext.authenticator_name_name,
+            placeholder : helptext.authenticator_name_placeholder,
+            tooltip : helptext.authenticator_name_tooltip,
             required: true,
-            validation : Validators.required,
+            validation : helptext.authenticator_name_validation,
             parent: this
           },
           {
             type : 'select',
-            name : 'authenticator',
-            placeholder : T('Authenticator'),
-            tooltip : T('Temp tooltip'),
+            name : helptext.authenticator_provider_name,
+            placeholder : helptext.authenticator_provider_placeholder,
+            tooltip : helptext.authenticator_provider_tooltip,
               options : [
-                {label: 'Route53', value: 'route53'}
+                {label: 'Route53', value: 'route53'},
               ],
               value: 'route53',
             parent: this
@@ -48,28 +48,50 @@ export class AcmednsAddComponent {
         ]
       },
       {
-        name: T('Authenticator Attributes'),
+        name: helptext.auth_attributes_label,
         width: '45%',
         label: true,
         config:[
+          // Route 53
           {
             type : 'input',
-            name : 'access_key_id',
-            placeholder : T('Access ID Key'),
-            tooltip : T('Temp tooltip'),
+            name : helptext.auth_credentials_1_name,
+            placeholder : helptext.auth_credentials_1_placeholder,
+            tooltip : helptext.auth_credentials_1_tooltip,
             required: true,
-            validation : Validators.required,
-            parent: this
+            validation : helptext.auth_credentials_1_validation,
+            parent: this,
+            relation: [
+              {
+                action: 'SHOW',
+                when: [{
+                  name: 'authenticator',
+                  value: 'route53',
+                 }]
+              }
+            ]
           },
           {
             type : 'input',
-            name : 'secret_access_key',
-            placeholder : T('Secret Access Key'),
-            tooltip : T('Temp tooltip'),
+            name : helptext.auth_credentials_2_name,
+            placeholder : helptext.auth_credentials_2_placeholder,
+            tooltip : helptext.auth_credentials_2_tooltip,
             required: true,
-            validation : Validators.required,
-            parent: this
+            validation : helptext.auth_credentials_2_validation,
+            parent: this,
+            relation: [
+              {
+                action: 'SHOW',
+                when: [{
+                  name: 'authenticator',
+                  value: 'route53',
+                 }]
+              }
+            ]
           }
+          // Authentication attributes from other providers should go here. Each one needs a name
+          // that contains whatever the authenticator's API requires, followed by a dash  and then
+          // a unique identifier, probably the name of the service as seen in route53.
         ]
       }]
 
@@ -83,13 +105,20 @@ export class AcmednsAddComponent {
   }
 
   customSubmit(value) {
+    const attributes = {};
+    let attr_name: string;
+
+    for (let item in value) {
+      if (item != 'name' && item != 'authenticator') {
+        attr_name = item.split("-")[0];
+        attributes[attr_name] = value[item];
+      }
+    }
+
     let payload = {};
     payload['name'] = value.name;
     payload['authenticator'] = value.authenticator;
-    payload['attributes'] = {
-      'access_key_id' : value.access_key_id, 
-      'secret_access_key' : value.secret_access_key
-    }
+    payload['attributes'] = attributes;
 
     this.loader.open();
     this.ws.call(this.addCall, [payload]).subscribe(
