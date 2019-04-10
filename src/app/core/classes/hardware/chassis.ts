@@ -99,14 +99,20 @@ export class Chassis {
      // Render DriveTrays
      for(let i = 0; i < this.totalDriveTrays; i++){
        let dt = this.makeDriveTray();
+       dt.id = i.toString();
        //dt.background.tint = 0x666666;
        let position = this.generatePosition(dt.container, i);
        dt.container.x = position.x;
        dt.container.y = position.y;
        dt.background.alpha = 0;
        dt.handle.alpha = 0;
-       dt.color = "#cc0000";
+       dt.color = i == 5 ? "#cc0000" : "#5ed427";
        dt.handle.filters = [bloomFilter];
+
+       dt.container.interactive = true;
+       let clickHandler = (evt) => {this.onTap(evt, dt);}
+       dt.container.on( 'click', clickHandler);
+
        this.driveTrays.addChild(dt.container);
        this.driveTrayObjects.push(dt);
      }
@@ -122,6 +128,20 @@ export class Chassis {
      // Let the parent know class is ready.
      this.events.next({name: "Ready"});
      //this.events.complete();
+   }
+
+   onTap(evt, driveTray){
+    console.log(evt);
+    let startAlpha = driveTray.background.alpha;
+    driveTray.background.alpha = 1;
+    setTimeout(() =>{
+      const glow = (v) => driveTray.background.alpha = v;
+      tween({
+        from: 1,//item.container.scale,
+        to: startAlpha, //{ x: 300, rotate: 180 },
+        duration: 1000,
+      }).start(glow);
+    }, 300);
    }
 
    onEnter(){

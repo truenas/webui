@@ -7,6 +7,7 @@ export class DriveTray {
   public background:Sprite;
   public handle: Sprite;
   public model: string;
+  public id: string;
 
   private _color: string;
   get color(){
