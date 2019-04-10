@@ -198,6 +198,7 @@ def test_05_create_duplicateuser(wb_driver):
     # check if there is a generic error when making a duplicate user, and print the error
     time.sleep(1)
     error_check(wb_driver)
+    time.sleep(2)
 
 
 def test_06_create_newuser_suggestedname(wb_driver):
@@ -235,6 +236,7 @@ def test_06_create_newuser_suggestedname(wb_driver):
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
     error_check(wb_driver)
+    time.sleep(2)
 
 
 def test_07_close_navAccount(wb_driver):
