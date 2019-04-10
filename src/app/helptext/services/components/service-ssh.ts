@@ -11,7 +11,7 @@ ssh_tcpport_tooltip: 'Open a port for SSH connection requests.',
 ssh_rootlogin_placeholder : T('Log in as root with password'),
 ssh_rootlogin_tooltip: T('<b>Root logins are discouraged.</b> Set to allow root\
  logins. A password must be set for the <i>root</i>\
- user in <a href="%%docurl%%/account.html%%webversion%%#users"\
+ user in <a href="%%docurl%%/accounts.html%%webversion%%#users"\
  target="_blank">Users</a>.'),
 
 ssh_passwordauth_placeholder : T('Allow password authentication'),
