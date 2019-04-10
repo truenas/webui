@@ -43,7 +43,7 @@ httpproxy_tooltip : T('Enter network proxy information if a proxy is used. Examp
 netwait_enabled_placeholder : T('Enable netwait feature'),
 netwait_enabled_tooltip : T('Set to delay the start of network services\
  until pings are returned from the IP addresses in the <i>netwait\
- IP list</i> are flowing.'),
+ IP list</i>.'),
 netwait_ip_placeholder : T('Netwait IP list'),
 netwait_ip_tooltip : T('Enter a space-delimited list of IP addresses to <a\
  href="https://www.freebsd.org/cgi/man.cgi?query=ping"\
