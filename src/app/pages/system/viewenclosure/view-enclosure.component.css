@@ -1,11 +1,10 @@
 nav.view-nav-bar{
-  background-color:var(--bg2);
-  background-color: #000;
-  color:var(--fg1);
+  background-color:var(--alt-bg1);
+  color:var(--alt-fg1);
   width:100%;
   height:32px;
   padding-bottom: 4px;
-  margin:-14px 0 32px;
+  margin:-15px 0 32px;
 }
 
 .view-nav-bar .view-nav-btn{
