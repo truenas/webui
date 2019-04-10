@@ -311,7 +311,7 @@ export class CertificateAddComponent {
   hideField(fieldName: any, show: boolean, entity: any) {
     let target = _.find(this.fieldConfig, {'name' : fieldName});
     target.isHidden = show;
-    entity.setDisabled(fieldName, show);
+    entity.setDisabled(fieldName, show, show);
   }
 
   beforeSubmit(data: any) {
