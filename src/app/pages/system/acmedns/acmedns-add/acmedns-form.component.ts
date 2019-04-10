@@ -121,9 +121,9 @@ export class AcmednsFormComponent {
             ["id", "=", this.pk]
           ]
         ]).subscribe((res) => {
-          // TODO: Make this responsive to other vendors
-          this.entityForm.formGroup.controls['access_key_id-route53'].setValue(res[0].attributes.access_key_id);
-          this.entityForm.formGroup.controls['secret_access_key-route53'].setValue(res[0].attributes.secret_access_key);
+          for (let item in res[0].attributes) {
+            this.entityForm.formGroup.controls[item + '-' + res[0].authenticator].setValue(res[0].attributes[item]);
+          }
         });
       }
     });
