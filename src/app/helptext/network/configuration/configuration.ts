@@ -33,7 +33,7 @@ nameserver2_placeholder : T('Nameserver 2'),
 nameserver2_tooltip : T('Secondary DNS server.'),
 
 nameserver3_placeholder : T('Nameserver 3'),
-nameserver3_tooltip : T('Third DNS server'),
+nameserver3_tooltip : T('Third DNS server.'),
 
 httpproxy_placeholder : T('HTTP Proxy'),
 httpproxy_tooltip : T('Enter the proxy information for the network. Example:\
