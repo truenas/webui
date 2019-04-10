@@ -105,6 +105,7 @@ export class Chassis {
        dt.container.y = position.y;
        dt.background.alpha = 0;
        dt.handle.alpha = 0;
+       dt.color = "#cc0000";
        dt.handle.filters = [bloomFilter];
        this.driveTrays.addChild(dt.container);
        this.driveTrayObjects.push(dt);

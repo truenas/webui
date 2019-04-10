@@ -8,6 +8,15 @@ export class DriveTray {
   public handle: Sprite;
   public model: string;
 
+  private _color: string;
+  get color(){
+    return this._color;
+  }
+  set color(value){
+    this._color = value;
+    this.colorize(value);
+  }
+
   constructor(model){
     this.model = model;
     this.container = new PIXI.Container();
@@ -20,7 +29,7 @@ export class DriveTray {
     this.container.addChild(this.background);
 
     this.handle = PIXI.Sprite.from(PIXI.loader.resources[this.model + '_drivetray_handle'].texture.baseTexture);
-    this.colorize(0x5ED427);
+    //this.colorize("#5ED427");
     this.container.addChild(this.handle);
   }
 
@@ -28,15 +37,17 @@ export class DriveTray {
     
   }
 
-  private colorize(color: number){
+  private colorize(cssColor: string ){
     if(!this.handle){
       console.warn("Handle sprite has not been initialized");
       return;
     }
 
+    let color = cssColor.toUpperCase().replace("#", "0x");
+
     /*let outlineFilter = new PIXI.filters.OutlineFilter(2, color);
     let filters = [outlineFilter];*/
-    this.handle.tint = color;
+    this.handle.tint = Number(color);
 
   }
 
