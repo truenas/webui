@@ -41,7 +41,7 @@ httpproxy_tooltip : T('Enter network proxy information if a proxy is used. Examp
  <i>http://user:password@my.proxy.server:3128</i>'),
 
 netwait_enabled_placeholder : T('Enable netwait feature'),
-netwait_enabled_tooltip : T('Set to delay the start of network-reliant services\
+netwait_enabled_tooltip : T('Set to delay the start of network services\
  until ICMP packets to a destination in the <i>netwait\
  IP list</i> are flowing.'),
 netwait_ip_placeholder : T('Netwait IP list'),
