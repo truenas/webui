@@ -58,7 +58,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       options: [],
       required: true,
       validation: [ Validators.required ],
-      disabled: false,
+      disabled: true,
     },
     {
       type: 'checkbox',
@@ -1090,31 +1090,31 @@ export class JailEditComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.releaseField = _.find(this.basicfieldConfig, { 'name': 'release' });
-
-    this.ws.call('system.info').subscribe((res) => {
-      this.currentServerVersion = Number(_.split(res.version, '-')[1]);
-      this.jailService.getLocalReleaseChoices().subscribe((res_local) => {
-        for (let j in res_local) {
-          let rlVersion = Number(_.split(res_local[j], '-')[0]);
-          if (!this.isLowerVersion(rlVersion) && this.currentServerVersion >= Math.floor(rlVersion)) {
-            this.releaseField.options.push({ label: res_local[j] + '(fetched)', value: res_local[j] });
-          }
-        }
-        this.jailService.getRemoteReleaseChoices().subscribe((res_remote) => {
-          for (let i in res_remote) {
-            if (_.indexOf(res_local, res_remote[i]) < 0) {
-              let rsVersion = Number(_.split(res_remote[i], '-')[0]);
-              if (!this.isLowerVersion(rsVersion) && this.currentServerVersion >= Math.floor(rsVersion)) {
-                this.releaseField.options.push({ label: res_remote[i], value: res_remote[i] });
-              }
-            }
-          }
-        });
-      });
-    },
-    (res) => {
-      new EntityUtils().handleWSError(this, res, this.dialogService);
-    });
+    // disabled upgrade for now
+    // this.ws.call('system.info').subscribe((res) => {
+    //   this.currentServerVersion = Number(_.split(res.version, '-')[1]);
+    //   this.jailService.getLocalReleaseChoices().subscribe((res_local) => {
+    //     for (let j in res_local) {
+    //       let rlVersion = Number(_.split(res_local[j], '-')[0]);
+    //       if (!this.isLowerVersion(rlVersion) && this.currentServerVersion >= Math.floor(rlVersion)) {
+    //         this.releaseField.options.push({ label: res_local[j] + '(fetched)', value: res_local[j] });
+    //       }
+    //     }
+    //     this.jailService.getRemoteReleaseChoices().subscribe((res_remote) => {
+    //       for (let i in res_remote) {
+    //         if (_.indexOf(res_local, res_remote[i]) < 0) {
+    //           let rsVersion = Number(_.split(res_remote[i], '-')[0]);
+    //           if (!this.isLowerVersion(rsVersion) && this.currentServerVersion >= Math.floor(rsVersion)) {
+    //             this.releaseField.options.push({ label: res_remote[i], value: res_remote[i] });
+    //           }
+    //         }
+    //       }
+    //     });
+    //   });
+    // },
+    // (res) => {
+    //   new EntityUtils().handleWSError(this, res, this.dialogService);
+    // });
 
     this.ip4_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip4_interface'});
     this.ip4_netmaskField = _.find(this.basicfieldConfig, {'name': 'ip4_netmask'});
