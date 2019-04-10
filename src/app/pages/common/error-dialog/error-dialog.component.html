@@ -3,7 +3,7 @@
   {{ title | translate }}
 </h1>
 <div mat-dialog-content>
-  <p>{{message | translate}}</p>
+  <span [innerHTML]="message"></span>
   <div class="more-info" (click)="toggleOpen($event)" *ngIf="backtrace">
     <mat-icon *ngIf="isCloseMoreInfo">add_circle_outline</mat-icon>
     <mat-icon *ngIf="!isCloseMoreInfo">remove_circle_outline</mat-icon>
