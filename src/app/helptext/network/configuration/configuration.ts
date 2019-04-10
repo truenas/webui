@@ -36,7 +36,7 @@ nameserver3_placeholder : T('Nameserver 3'),
 nameserver3_tooltip : T('Third DNS server.'),
 
 httpproxy_placeholder : T('HTTP Proxy'),
-httpproxy_tooltip : T('Enter the proxy information for the network. Example:\
+httpproxy_tooltip : T('Enter network proxy information if a proxy is used. Example:\
  <i>http://my.proxy.server:3128</i> or\
  <i>http://user:password@my.proxy.server:3128</i>'),
 
