@@ -1,9 +1,9 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog } from '@angular/material';
 
-import { IdmapService, IscsiService, RestService, WebSocketService } from '../../../../services/';
+import { IdmapService, IscsiService, RestService, WebSocketService, UserService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import helptext from '../../../../helptext/services/components/service-smb';
@@ -88,53 +88,27 @@ export class ServiceSMBComponent {
       tooltip: helptext.cifs_srv_localmaster_tooltip,
     },
     {
-      type: 'checkbox',
-      name: 'cifs_srv_domain_logons',
-      placeholder: helptext.cifs_srv_domain_logons_placeholder,
-      tooltip: helptext.cifs_srv_domain_logons_tooltip,
-    },
-    {
-      type: 'checkbox',
-      name: 'cifs_srv_timeserver',
-      placeholder: helptext.cifs_srv_timeserver_placeholder,
-      tooltip: helptext.cifs_srv_timeserver_tooltip,
-    },
-    {
       type: 'select',
       name: 'cifs_srv_guest',
       placeholder: helptext.cifs_srv_guest_placeholder,
       options: [],
       tooltip: helptext.cifs_srv_guest_tooltip,
     },
-    { type: 'input',
-      name: 'cifs_srv_filemask',
-      placeholder: helptext.cifs_srv_filemask_placeholder,
-      tooltip: helptext.cifs_srv_filemask_tooltip,
-      validation : helptext.cifs_srv_filemask_validation
-    },
-    { type: 'input',
-      name: 'cifs_srv_dirmask',
-      placeholder: helptext.cifs_srv_dirmask_placeholder,
-      tooltip: helptext.cifs_srv_dirmask_tooltip,
-      validation : helptext.cifs_srv_dirmask_validation
-    },
-    {
-      type: 'checkbox',
-      name: 'cifs_srv_nullpw',
-      placeholder: helptext.cifs_srv_nullpw_placeholder,
-      tooltip: helptext.cifs_srv_nullpw_tooltip,
+    { 
+      type: 'combobox',
+      name: 'cifs_srv_admin_group',
+      placeholder: helptext.cifs_srv_admin_group_placeholder,
+      tooltip: helptext.cifs_srv_admin_group_tooltip,
+      options: [],
+      searchOptions: [],
+      parent: this,
+      updater: this.updateGroupSearchOptions
     },
     {
       type: 'textarea',
       name: 'cifs_srv_smb_options',
       placeholder: helptext.cifs_srv_smb_options_placeholder,
       tooltip: helptext.cifs_srv_smb_options_tooltip,
-    },
-    {
-      type: 'checkbox',
-      name: 'cifs_srv_unixext',
-      placeholder: helptext.cifs_srv_unixext_placeholder,
-      tooltip: helptext.cifs_srv_unixext_tooltip,
     },
     {
       type: 'checkbox',
@@ -147,18 +121,6 @@ export class ServiceSMBComponent {
       name: 'cifs_srv_hostlookup',
       placeholder: helptext.cifs_srv_hostlookup_placeholder,
       tooltip: helptext.cifs_srv_hostlookup_tooltip,
-    },
-    {
-      type: 'checkbox',
-      name: 'cifs_srv_allow_execute_always',
-      placeholder: helptext.cifs_srv_allow_execute_always_placeholder,
-      tooltip: helptext.cifs_srv_allow_execute_always_tooltip,
-    },
-    {
-      type: 'checkbox',
-      name: 'cifs_srv_obey_pam_restrictions',
-      placeholder: helptext.cifs_srv_obey_pam_restrictions_placeholder,
-      tooltip: helptext.cifs_srv_obey_pam_restrictions_tooltip,
     },
     {
       type: 'checkbox',
@@ -190,22 +152,15 @@ export class ServiceSMBComponent {
 
   private cifs_srv_bindip: any;
   private cifs_srv_guest: any;
-  private cifs_srv_doscharset: any;
   private cifs_srv_unixcharset: any;
+  private cifs_srv_admin_group: any;
   protected defaultIdmap: any;
   protected idmap_tdb_range_low: any;
   protected idmap_tdb_range_high: any;
   protected dialogRef: any;
 
   preInit(entityForm: any) {
-    this.cifs_srv_doscharset = _.find(this.fieldConfig, {"name": "cifs_srv_doscharset"});
     this.cifs_srv_unixcharset = _.find(this.fieldConfig, {"name": "cifs_srv_unixcharset"});
-    this.ws.call("smb.doscharset_choices").subscribe((res) => {
-      const values = Object.values(res);
-      for (let i = 0; i < values.length; i++) {
-        this.cifs_srv_doscharset.options.push({label: values[i], value: values[i]});
-      }
-    });
     this.ws.call("smb.unixcharset_choices").subscribe((res) => {
       const values = Object.values(res);
       for (let i = 0; i < values.length; i++) {
@@ -225,13 +180,24 @@ export class ServiceSMBComponent {
         this.cifs_srv_guest.options.push({ label: user.username, value: user.username });
       });
     });
+    this.userService.listAllGroups().subscribe(res => {
+      let groups = [];
+      let items = res.data.items;
+      items.forEach((item) => {
+        groups.push({label: item.label, value: item.id});
+      });
+      this.cifs_srv_admin_group = _.find(this.fieldConfig, {'name':'cifs_srv_admin_group'});
+      groups.forEach((group) => {
+        this.cifs_srv_admin_group.options.push({ label: group.label, value: group.value });
+      });
+    });
   }
 
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef,
     protected iscsiService: IscsiService,
-    protected idmapService: IdmapService,
+    protected idmapService: IdmapService, protected userService: UserService,
     protected loader: AppLoaderService, protected dialog: MatDialog) {}
 
   afterInit(entityEdit: any) {
@@ -242,6 +208,17 @@ export class ServiceSMBComponent {
         entityEdit.formGroup.controls['idmap_tdb_range_high'].setValue(idmap_res[0].idmap_tdb_range_high);
         entityEdit.formGroup.controls['idmap_tdb_range_low'].setValue(idmap_res[0].idmap_tdb_range_low);
       });
+    });
+  }
+
+  updateGroupSearchOptions(value = "", parent) {
+    parent.userService.listAllGroups(value).subscribe(res => {
+      let groups = [];
+      let items = res.data.items;
+      for (let i = 0; i < items.length; i++) {
+        groups.push({label: items[i].label, value: items[i].id});
+      }
+        parent.cifs_srv_admin_group.searchOptions = groups;
     });
   }
 
