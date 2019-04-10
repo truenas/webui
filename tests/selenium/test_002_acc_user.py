@@ -164,10 +164,10 @@ def test_04_create_superuser(wb_driver):
     # check if there is a generic error when making a duplicate user, and print the error
     time.sleep(1)
     error_check(wb_driver)
+    time.sleep(2)
 
 
 def test_05_create_duplicateuser(wb_driver):
-    print(" creating a duplicate user")
     # Click User submenu
     wb_driver.find_element_by_xpath(xpaths['submenuUser']).click()
     # scroll down to find hover tab

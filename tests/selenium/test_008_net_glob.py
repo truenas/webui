@@ -26,16 +26,17 @@ xpaths = {
 
 def test_00_set_implicitly_wait(wb_driver):
     wb_driver.implicitly_wait(1)
+    time.sleep(1)
 
 
 def test_01_nav_net_conf(wb_driver):
     # Navigating to System>Update page
-    a = wb_driver.find_element_by_xpath(xpaths['navNetwork'])
-    a.click()
+    wb_driver.find_element_by_xpath(xpaths['navNetwork']).click()
     # allowing page to load by giving explicit time(in seconds)
     time.sleep(1)
     # Click on the Update sub-menu
     wb_driver.find_element_by_xpath(xpaths['submenuNetworkconfig']).click()
+    time.sleep(1)
     # get the ui element
     ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
     # get the weather data
