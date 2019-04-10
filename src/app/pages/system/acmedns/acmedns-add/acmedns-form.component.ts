@@ -1,20 +1,21 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { DialogService, WebSocketService } from '../../../../services/';
+import { ActivatedRoute, Router } from '@angular/router';
+import { DialogService, WebSocketService } from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from '../../../common/entity/utils';
 import { helptext_system_acme as helptext } from 'app/helptext/system/acme';
 
-
 @Component({
-  selector: 'app-acmedns-add',
+  selector: 'app-acmedns-form',
   template: `<entity-form [conf]="this"></entity-form>`
 })
-export class AcmednsAddComponent {
+export class AcmednsFormComponent {
 
   protected addCall: string = 'acme.dns.authenticator.create';
+  protected queryCall: string = 'acme.dns.authenticator.query';
+  protected editCall = 'acme.dns.authenticator.update';
   protected route_success: string[] = ['system', 'acmedns'];
   protected isEntity: boolean = true;
 
@@ -96,12 +97,36 @@ export class AcmednsAddComponent {
       }]
 
   protected entityForm: any;
+  private pk: any;
+  protected queryCallOption: Array<any> = [["id", "="]];
 
-  constructor(protected router: Router, protected ws: WebSocketService,
+  constructor(protected router: Router, protected ws: WebSocketService, protected route: ActivatedRoute,
     protected loader: AppLoaderService, protected dialog: DialogService) {}
+
+  preInit() {
+    this.route.params.subscribe(params => {
+      if (params['pk']) {
+        this.queryCallOption[0].push(parseInt(params['pk']));
+      }
+    });
+  }
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
+    this.route.params.subscribe(params => {
+      if (params['pk']) {
+        this.pk = parseInt(params['pk']);
+        this.ws.call(this.queryCall, [
+          [
+            ["id", "=", this.pk]
+          ]
+        ]).subscribe((res) => {
+          // TODO: Make this responsive to other vendors
+          this.entityForm.formGroup.controls['access_key_id-route53'].setValue(res[0].attributes.access_key_id);
+          this.entityForm.formGroup.controls['secret_access_key-route53'].setValue(res[0].attributes.secret_access_key);
+        });
+      }
+    });
   }
 
   customSubmit(value) {
@@ -117,11 +142,20 @@ export class AcmednsAddComponent {
 
     let payload = {};
     payload['name'] = value.name;
-    payload['authenticator'] = value.authenticator;
     payload['attributes'] = attributes;
 
+    let newCall, data;
+    if (this.pk) {
+      newCall = this.editCall;
+      data = [this.pk, payload];
+    } else {
+      payload['authenticator'] = value.authenticator;
+      newCall = this.addCall;
+      data = [payload];
+    }
+
     this.loader.open();
-    this.ws.call(this.addCall, [payload]).subscribe(
+    this.ws.call(newCall, data).subscribe(
       (res) => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));

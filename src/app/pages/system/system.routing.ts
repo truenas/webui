@@ -33,8 +33,7 @@ import { CertificateEditComponent } from './certificates/certificate-edit/';
 import { CertificateListComponent } from './certificates/certificate-list';
 import { CertificateAddComponent } from './certificates/certificate-add';
 import { AcmednsListComponent } from './acmedns/acmedns-list/acmedns-list.component';
-import { AcmednsEditComponent } from './acmedns/acmedns-edit/acmedns-edit.component';
-import { AcmednsAddComponent } from './acmedns/acmedns-add/acmedns-add.component';
+import { AcmednsFormComponent } from './acmedns/acmedns-add/acmedns-form.component';
 import { SupportComponent } from './support/support.component';
 import {EmailComponent} from './email/';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
@@ -273,12 +272,12 @@ export const routes: Routes = [
       }, 
       {
         path: 'add',
-        component: AcmednsAddComponent,
+        component: AcmednsFormComponent,
         data: { title: 'Add', breadcrumb: 'Add' },
       }, 
       {
         path: 'edit/:pk',
-        component: AcmednsEditComponent,
+        component: AcmednsFormComponent,
         data: { title: 'Edit', breadcrumb: 'Edit' },
       }
     ]

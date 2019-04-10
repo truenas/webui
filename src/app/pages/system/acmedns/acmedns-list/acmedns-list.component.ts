@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { WebSocketService } from '../../../../services/';
 import { T } from '../../../../translate-marker';
@@ -17,7 +17,7 @@ export class AcmednsListComponent implements OnInit {
   protected route_success: string[] = [ 'system', 'acmedns' ];
   protected entityList: any;
 
-  constructor(protected router: Router, protected aroute: ActivatedRoute,
+  constructor(protected router: Router,
     protected ws: WebSocketService, public snackBar: MatSnackBar) {
   }
 
