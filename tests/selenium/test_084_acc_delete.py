@@ -128,7 +128,6 @@ def test_11_delete_group(wb_driver):
 
 def test_12_close_navAccount(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['navAccount']).click()
-    time.sleep(10)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)

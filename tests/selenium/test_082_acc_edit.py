@@ -92,7 +92,6 @@ def test_05_edit_groupNAS_sudo(wb_driver):
     user_edit(wb_driver, "group", newgroupname)
     wb_driver.find_element_by_xpath(xpaths['group']).click()
     wb_driver.find_element_by_xpath('//*[@id="save_button"]').click()
-    time.sleep(10)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
