@@ -8,7 +8,7 @@ import os
 import time
 cwd = str(os.getcwd())
 sys.path.append(cwd)
-from function import take_screenshot, user_delete
+from function import take_screenshot, user_delete, wait_on_element
 from source import newusername, newgroupname, superusername, newusernameuncheck
 from source import supergroupname
 
@@ -27,6 +27,7 @@ xpaths = {
 
 def test_00_set_implicitly_wait(wb_driver):
     wb_driver.implicitly_wait(1)
+    wait_on_element(wb_driver, xpaths['submenuUser'])
 
 
 def test_01_nav_acc_user(wb_driver):
