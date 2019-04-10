@@ -1,18 +1,25 @@
 nav.view-nav-bar{
-  background-color:--var(--bg2);
+  background-color:var(--bg2);
   background-color: #000;
-  color:--var(--fg1);
+  color:var(--fg1);
   width:100%;
-  height:64px;
+  height:32px;
+  padding-bottom: 4px;
+  margin:-14px 0 32px;
 }
 
 .view-nav-bar .view-nav-btn{
   /*display:inline-block;*/
-  height:64px;
+  height:40px;
+  text-transform: capitalize !important;
+  /*font-weight:500;
+  padding:0 16px;
+  text-align:center;*/
 }
 
 .view-card{
   max-width:960px;
   margin: 0 auto;
   min-height:480px;
+  padding:0;
 }
