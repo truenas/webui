@@ -52,7 +52,7 @@ netwait_ip_tooltip : T('Enter a space-delimited list of IP addresses to <a\
  Leave empty to use the default gateway.'),
 
 hosts_placeholder : T('Host name database'),
-hosts_tooltip : T('Additional hosts to be appended to <i>/etc/hosts</i>\
+hosts_tooltip : T('Additional hosts to be appended to <i>/etc/hosts</i>.\
  Each host entry is a single line\
  with whitespace-delimited IP address, hostname, and\
  any aliases. Hosts defined here are still accessible\
