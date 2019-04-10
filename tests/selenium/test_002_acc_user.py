@@ -239,7 +239,6 @@ def test_07_close_navAccount(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['navAccount']).click()
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
-    time.sleep(10)
 
 
 # Next step-- To check if the new user is present in the list via automation

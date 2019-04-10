@@ -8,7 +8,7 @@ import os
 import time
 cwd = str(os.getcwd())
 sys.path.append(cwd)
-from function import take_screenshot, pool1, pool2, is_element_present
+from function import take_screenshot, pool1, pool2, wait_on_element
 
 skip_mesages = "Skipping first run"
 script_name = os.path.basename(__file__).partition('.')[0]
@@ -36,8 +36,7 @@ def test_00_set_implicitly_wait(wb_driver):
 
 def test_01_nav_store_pool(wb_driver):
     # Wait for xpath to be available
-    while is_element_present(wb_driver, xpaths['navStorage']) is False:
-        time.sleep(1)
+    wait_on_element(wb_driver, xpaths['navStorage'])
     # Click Storage menu
     wb_driver.find_element_by_xpath(xpaths['navStorage']).click()
     # Click Pool submenu
@@ -55,8 +54,7 @@ def test_01_nav_store_pool(wb_driver):
 
 def test_02_delete_pool1(wb_driver):
     # Wait for xpath to be available
-    while is_element_present(wb_driver, xpaths['poolID']) is False:
-        time.sleep(1)
+    wait_on_element(wb_driver, xpaths['poolID'])
     wb_driver.find_element_by_xpath(xpaths['poolID']).click()
     time.sleep(1)
     pool_detach(wb_driver, pool1)
@@ -83,8 +81,7 @@ def pool_detach(wb_driver, name):
     time.sleep(1)
     pool_xpath = f"//mat-icon[@id='table_actions_menu_button__name_{name}']"
     # Wait for xpath to be available
-    while is_element_present(wb_driver, pool_xpath) is False:
-        time.sleep(1)
+    wait_on_element(wb_driver, pool_xpath)
     wb_driver.find_element_by_xpath(pool_xpath).click()
     xpath = xpaths['poolDetach'] + name + "']/span"
     wb_driver.find_element_by_xpath(xpath).click()
@@ -94,7 +91,6 @@ def pool_detach(wb_driver, name):
     if wb_driver.find_element_by_xpath(xpaths['confirmButton']):
         wb_driver.find_element_by_xpath(xpaths['confirmButton']).click()
     # Wait for xpath to be available
-    while is_element_present(wb_driver, xpaths['closeButton']) is False:
-        time.sleep(1)
+    wait_on_element(wb_driver, xpaths['closeButton'])
     wb_driver.find_element_by_xpath(xpaths['closeButton']).click()
     time.sleep(1)
