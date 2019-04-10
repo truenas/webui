@@ -27,7 +27,6 @@ xpaths = {
 
 def test_00_set_implicitly_wait(wb_driver):
     wb_driver.implicitly_wait(1)
-    wait_on_element(wb_driver, xpaths['submenuUser'])
 
 
 def test_01_nav_acc_user(wb_driver):

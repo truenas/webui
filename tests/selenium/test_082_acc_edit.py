@@ -66,7 +66,7 @@ def test_03_edit_userNAS_sudo(wb_driver):
     # Changing permission to sudo
     user_edit(wb_driver, "user", newusername)
     wb_driver.find_element_by_xpath('//*[@id="save_button"]').click()
-    time.sleep(15)
+    time.sleep(5)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
@@ -92,6 +92,7 @@ def test_05_edit_groupNAS_sudo(wb_driver):
     user_edit(wb_driver, "group", newgroupname)
     wb_driver.find_element_by_xpath(xpaths['group']).click()
     wb_driver.find_element_by_xpath('//*[@id="save_button"]').click()
+    time.sleep(5)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
