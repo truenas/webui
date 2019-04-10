@@ -213,11 +213,6 @@ def test_06_create_newuser_suggestedname(wb_driver):
     # Enter User Full name
     wb_driver.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfname)
 
-    # not required since UI auto fills suggested username
-    # wb_driver.find_element_by_xpath(xpaths['newUser']).clear()
-    # wb_driver.find_element_by_xpath(xpaths['newUser']).send_keys(newusername)
-    # Enter User email id
-
     wb_driver.find_element_by_xpath(xpaths['newUserEmail']).send_keys(newuseremail)
     # Enter Password
     wb_driver.find_element_by_xpath(xpaths['newUserPass']).send_keys(newuserpassword)
@@ -244,7 +239,7 @@ def test_07_close_navAccount(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['navAccount']).click()
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
-    time.sleep(20)
+    time.sleep(10)
 
 
 # Next step-- To check if the new user is present in the list via automation
