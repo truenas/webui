@@ -59,17 +59,18 @@ export class CertificateAcmeAddComponent {
       ],
       value: 'https://acme-staging-v02.api.letsencrypt.org/directory'
     },
-    {
-      type : 'select',
-      name : 'dns_mapping',
-      placeholder : helptext_system_certificates.acme.authenticator.placeholder,
-      tooltip: helptext_system_certificates.acme.authenticator.tooltip,
-      options : [
-        {label: 'Temp option...', value: 'temp_option'}
-      ],
-      value: '',
-      required: true
-    },
+    // {
+    //   type : 'select',
+    //   name : 'dns_mapping',
+    //   placeholder : helptext_system_certificates.acme.authenticator.placeholder,
+    //   tooltip: helptext_system_certificates.acme.authenticator.tooltip,
+    //   options : [
+    //     {label: 'Temp option...', value: 'temp_option'}
+    //   ],
+    //   value: '',
+    //   required: true,
+    //   isHidden: true
+    // },
   ]
 
   private authenticators: any;
@@ -88,6 +89,27 @@ export class CertificateAcmeAddComponent {
     this.route.params.subscribe(params => {
       if (params['pk']) {
         this.queryCallOption[0].push(parseInt(params['pk']));
+        this.ws.call(this.queryCall, [this.queryCallOption]).subscribe((res) => {
+          this.csrOrg = res;
+          let domains = [this.csrOrg[0].common];
+          console.log(this.csrOrg)
+          for (let item of this.csrOrg[0].san) {
+            domains.push(item);
+          }
+          for (let item of domains) {
+            this.fieldConfig.push(
+              {
+                type: "select", 
+                name: "dns_mapping-" + item, 
+                placeholder: "Authenticator for " + item, 
+                tooltip: "Specify Authenticator to be used for " + item, 
+                options: [{label: 'Temp option...', value: 'temp_option'}],
+                required: true
+              }
+            )
+          }
+          console.log(this.fieldConfig)
+        })
       }
     });
     this.ws.call('acme.dns.authenticator.query').subscribe( (res) => {
@@ -102,21 +124,10 @@ export class CertificateAcmeAddComponent {
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
-    this.route.params.subscribe(params => {
-      if (params['pk']) {
-        this.pk = parseInt(params['pk']);
-        this.ws.call(this.queryCall, [
-          [
-            ["id", "=", this.pk]
-          ]
-        ]).subscribe((res) => {
-          this.csrOrg = res;
-        });
-      }
-    });
   }
 
   customSubmit(value) {
+    console.log(value)
     let payload = {};
     let temp = this.csrOrg[0].common;
     payload['tos'] = value.tos;
@@ -126,8 +137,9 @@ export class CertificateAcmeAddComponent {
     payload['renew_days'] = value.renew_days;
     payload['create_type'] = 'CERTIFICATE_CREATE_ACME';
     payload['dns_mapping'] = { // ???
-      temp : '1' 
+      [temp] : '1' 
     }
+    // console.log(payload)
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": ("Creating...") }, disableClose: true});
     this.dialogRef.componentInstance.setCall(this.addCall, [payload]);
     this.dialogRef.componentInstance.submit();
