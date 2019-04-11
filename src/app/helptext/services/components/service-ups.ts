@@ -122,4 +122,8 @@ ups_subject_tooltip : T('Enter the subject for status emails.'),
 
 ups_powerdown_placeholder : T('Power Off UPS'),
 ups_powerdown_tooltip : T('Set for the UPS to power off after shutting down the system.'),
+
+ups_hostsync_placeholder: T('Host Sync'),
+ups_hostsync_tooltip: T('Upsmon will wait up to this many seconds in master mode for\
+ the slaves to disconnect during a shutdown situation.'),
 }
