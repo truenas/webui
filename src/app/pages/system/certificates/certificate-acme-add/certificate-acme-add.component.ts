@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { MatDialog } from '@angular/material';
+import { FormControl } from '@angular/forms';
 import { RestService, WebSocketService } from '../../../../services/';
 import { EntityUtils } from '../../../common/entity/utils';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -73,7 +74,7 @@ export class CertificateAcmeAddComponent {
     // },
   ]
 
-  private authenticators: any;
+  private authenticators = [];
   protected entityForm: any;
   private pk: any;
   protected dialogRef: any;
@@ -92,34 +93,42 @@ export class CertificateAcmeAddComponent {
         this.ws.call(this.queryCall, [this.queryCallOption]).subscribe((res) => {
           this.csrOrg = res;
           let domains = [this.csrOrg[0].common];
-          console.log(this.csrOrg)
           for (let item of this.csrOrg[0].san) {
             domains.push(item);
           }
+          this.ws.call('acme.dns.authenticator.query').subscribe( (res) => {
+            res.forEach((item) => {
+              this.authenticators.push(
+                { label : item.name, value : item.name}
+              );
+            });
+          });
           for (let item of domains) {
-            this.fieldConfig.push(
+            let fc = new FormControl(
               {
-                type: "select", 
+                type: "select",
                 name: "dns_mapping-" + item, 
                 placeholder: "Authenticator for " + item, 
                 tooltip: "Specify Authenticator to be used for " + item, 
-                options: [{label: 'Temp option...', value: 'temp_option'}],
-                required: true
-              }
+                options: this.authenticators,
+                required: true, 
+                class: 'dns_mapping'              
+              });
+            this.fieldConfig.push(fc.value
+              // {
+              //   type: "select", 
+              //   name: "dns_mapping-" + item, 
+              //   placeholder: "Authenticator for " + item, 
+              //   tooltip: "Specify Authenticator to be used for " + item, 
+              //   options: [{label: 'Temp option...', value: 'temp_option'}],
+              //   required: true
+              // }
             )
           }
-          console.log(this.fieldConfig)
         })
       }
     });
-    this.ws.call('acme.dns.authenticator.query').subscribe( (res) => {
-      this.authenticators = _.find(this.fieldConfig, {'name' : 'dns_mapping'});
-      res.forEach((item) => {
-        this.authenticators.options.push(
-          { label : item.name, value : item.name}
-        );
-      });
-    });
+
   }
 
   afterInit(entityEdit: any) {
@@ -127,19 +136,22 @@ export class CertificateAcmeAddComponent {
   }
 
   customSubmit(value) {
-    console.log(value)
+    let dns_map = {};
+    for (let item in value) {
+      if (item.includes('dns_mapping')) {
+        let i = item.split('-');
+        dns_map[i[1]]='1';
+      }
+    }
     let payload = {};
-    let temp = this.csrOrg[0].common;
     payload['tos'] = value.tos;
     payload['csr_id'] = this.csrOrg[0].id;
     payload['acme_directory_uri'] = value.acme_directory_uri;
     payload['name'] = value.identifier;
     payload['renew_days'] = value.renew_days;
     payload['create_type'] = 'CERTIFICATE_CREATE_ACME';
-    payload['dns_mapping'] = { // ???
-      [temp] : '1' 
-    }
-    // console.log(payload)
+    payload['dns_mapping'] = dns_map;
+
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": ("Creating...") }, disableClose: true});
     this.dialogRef.componentInstance.setCall(this.addCall, [payload]);
     this.dialogRef.componentInstance.submit();
