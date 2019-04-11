@@ -64,7 +64,9 @@ export class CertificateAcmeAddComponent {
       name : 'dns_mapping',
       placeholder : helptext_system_certificates.acme.authenticator.placeholder,
       tooltip: helptext_system_certificates.acme.authenticator.tooltip,
-      options : [],
+      options : [
+        {label: 'Temp option...', value: 'temp_option'}
+      ],
       value: '',
       required: true
     },
@@ -109,16 +111,14 @@ export class CertificateAcmeAddComponent {
           ]
         ]).subscribe((res) => {
           this.csrOrg = res;
-          console.log(this.csrOrg)
         });
       }
     });
   }
 
   customSubmit(value) {
-    console.log(value)
     let payload = {};
-    let temp = 'domain_' + this.csrOrg[0].common;
+    let temp = this.csrOrg[0].common;
     payload['tos'] = value.tos;
     payload['csr_id'] = this.csrOrg[0].id;
     payload['acme_directory_uri'] = value.acme_directory_uri;
@@ -128,8 +128,6 @@ export class CertificateAcmeAddComponent {
     payload['dns_mapping'] = { // ???
       temp : '1' 
     }
-    console.log(payload)
-
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": ("Creating...") }, disableClose: true});
     this.dialogRef.componentInstance.setCall(this.addCall, [payload]);
     this.dialogRef.componentInstance.submit();
