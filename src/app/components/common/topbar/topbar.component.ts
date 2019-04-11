@@ -38,6 +38,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   continuosStreaming: Subscription;
   showReplication = false;
   showResilvering = false;
+  pendingNetworkChanges = false;
   replicationDetails;
   resilveringDetails;
   themesMenu: Theme[] = this.themeService.themesMenu;
@@ -87,6 +88,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
     this.continuosStreaming = observableInterval(10000).subscribe(x => {
       this.showReplicationStatus();
+      this.checkNetworkChangesPending();
     });
 
     this.ws.subscribe('zfs.pool.scan').subscribe(res => {
@@ -179,6 +181,23 @@ export class TopbarComponent implements OnInit, OnDestroy {
         });
       });
     });
+  }
+
+  checkNetworkChangesPending() {
+    this.ws.call('interface.has_pending_changes').subscribe(res => {
+      this.pendingNetworkChanges = res;
+    });
+  }
+
+  showNetworkChangesPending() {
+    this.dialogService.confirm(
+      T("Pending Network Changes"),
+      T("You currently have uncommited network interface changes pending, go to the network interfaces section and review now?"),
+      true, T('Continue')).subscribe(res => {
+        if (res) {
+          this.router.navigate(['/network/interfaces']);
+        }
+      });
   }
 
   showReplicationStatus() {

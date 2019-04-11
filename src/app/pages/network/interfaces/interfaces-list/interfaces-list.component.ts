@@ -1,15 +1,18 @@
-import {Component} from '@angular/core';
+import {Component, OnDestroy} from '@angular/core';
 import {Router} from '@angular/router';
+import {interval} from 'rxjs';
 
-import { RestService, NetworkService } from '../../../../services';
+import { WebSocketService, NetworkService } from '../../../../services';
 import { T } from '../../../../translate-marker';
 import { MatSnackBar } from '@angular/material';
+import helptext from '../../../../helptext/network/interfaces/interfaces-list';
+import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
   selector : 'app-interfaces-list',
-  template : `<entity-table [title]="title" [conf]="this"></entity-table>`
+  templateUrl : './interfaces-list.component.html'
 })
-export class InterfacesListComponent {
+export class InterfacesListComponent implements OnDestroy {
 
   public title = "Interfaces";
   //protected resource_name: string = 'network/interface/';
@@ -22,6 +25,11 @@ export class InterfacesListComponent {
     message: T("Network connectivity will be interrupted. "),
   }
   protected hasDetails = true;
+  protected entityList: any;
+  protected checkChangesSubscription: any;
+  public hasPendingChanges = false;
+  pending_changes_text = T('You currently have pending network changes, do you wish to commit now?\
+ Any changes that are not committed will be automatically rolled back.');
 
   public columns: Array<any> = [
     {name : T('Name'), prop : 'name'},
@@ -39,7 +47,7 @@ export class InterfacesListComponent {
     },
   };
 
-  constructor(_rest: RestService, private router: Router, private networkService: NetworkService,
+  constructor(private ws: WebSocketService, private router: Router, private networkService: NetworkService,
               private snackBar: MatSnackBar) {}
 
   dataHandler(res) {
@@ -73,6 +81,65 @@ export class InterfacesListComponent {
 
   }
 
+  preInit(entityList) {
+    this.entityList = entityList;
+
+    this.checkPendingChanges();
+    this.checkChangesSubscription = interval(10000).subscribe(x => {
+      this.checkPendingChanges();
+    });
+  }
+
+  checkPendingChanges() {
+    this.ws.call('interface.has_pending_changes').subscribe(res => {
+      this.hasPendingChanges = res;
+    });
+  }
+
+  commitPendingChanges() {
+    this.entityList.dialogService.confirm(
+      helptext.commit_changes_title,
+      helptext.commit_changes_warning,
+      false, helptext.commit_button).subscribe(confirm => {
+        if (confirm) {
+          this.entityList.loader.open();
+          this.entityList.loaderOpen = true;
+          this.ws.call('interface.commit').subscribe(res => {
+            this.entityList.loader.close();
+            this.entityList.loaderOpen = false;
+            this.hasPendingChanges = false;
+            this.snackBar.open(helptext.changes_saved_successfully, T("Ok"));
+          }, err => {
+            this.entityList.loader.close();
+            this.entityList.loaderOpen = false;
+            new EntityUtils().handleWSError(this.entityList, err);
+          });
+        }
+      });
+  }
+
+  rollbackPendingChanges() {
+    this.entityList.dialogService.confirm(
+      helptext.rollback_changes_title,
+      helptext.rollback_changes_warning,
+      false, helptext.rollback_button).subscribe(confirm => {
+        if (confirm) {
+          this.entityList.loader.open();
+          this.entityList.loaderOpen = true;
+          this.ws.call('interface.rollback').subscribe(res => {
+            this.entityList.loader.close();
+            this.entityList.loaderOpen = false;
+            this.hasPendingChanges = false;
+            this.snackBar.open(helptext.changes_rolled_back, T("Ok"));
+          }, err => {
+            this.entityList.loader.close();
+            this.entityList.loaderOpen = false;
+            new EntityUtils().handleWSError(this.entityList, err);
+          });
+        }
+      });
+  }
+
   /*doAdd() {
     this.networkService.getInterfaceNicChoices().subscribe(
       (res)=>{
@@ -84,4 +151,8 @@ export class InterfacesListComponent {
       }
     )
   }*/
+
+  ngOnDestroy() {
+    this.checkChangesSubscription.unsubscribe();
+  }
 }

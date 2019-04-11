@@ -314,7 +314,6 @@ export class InterfacesFormComponent implements OnDestroy {
       if(!params['pk']) {
         this.type.type = 'select';
       } else {
-        this.confirmSubmit = true;
         this.iparrayControl.initialCount = this.initialCount['aliases']
           = this.initialCount_default['aliases'] = 0;
       }
