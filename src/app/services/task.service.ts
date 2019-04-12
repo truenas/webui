@@ -110,6 +110,7 @@ export class TaskService {
     { label: '23:15:00', value: '23:15:00' },
     { label: '23:30:00', value: '23:30:00' },
     { label: '23:45:00', value: '23:45:00' },
+    { label: '23:59:00', value: '23:59:00' }
   ];
 
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
