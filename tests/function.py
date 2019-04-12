@@ -54,6 +54,12 @@ def is_element_present(driver, xpath):
     return True
 
 
+def wait_on_element(driver, xpath):
+    while is_element_present(driver, xpath) is False:
+        time.sleep(1)
+    return True
+
+
 # screenshot function
 def take_screenshot(driver, scriptname, testname):
     time.sleep(1)

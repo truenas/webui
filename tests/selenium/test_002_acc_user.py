@@ -164,10 +164,10 @@ def test_04_create_superuser(wb_driver):
     # check if there is a generic error when making a duplicate user, and print the error
     time.sleep(1)
     error_check(wb_driver)
+    time.sleep(2)
 
 
 def test_05_create_duplicateuser(wb_driver):
-    print(" creating a duplicate user")
     # Click User submenu
     wb_driver.find_element_by_xpath(xpaths['submenuUser']).click()
     # scroll down to find hover tab
@@ -198,6 +198,7 @@ def test_05_create_duplicateuser(wb_driver):
     # check if there is a generic error when making a duplicate user, and print the error
     time.sleep(1)
     error_check(wb_driver)
+    time.sleep(2)
 
 
 def test_06_create_newuser_suggestedname(wb_driver):
@@ -211,11 +212,6 @@ def test_06_create_newuser_suggestedname(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['fabAction']).click()
     # Enter User Full name
     wb_driver.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfname)
-
-    # not required since UI auto fills suggested username
-    # wb_driver.find_element_by_xpath(xpaths['newUser']).clear()
-    # wb_driver.find_element_by_xpath(xpaths['newUser']).send_keys(newusername)
-    # Enter User email id
 
     wb_driver.find_element_by_xpath(xpaths['newUserEmail']).send_keys(newuseremail)
     # Enter Password
@@ -235,6 +231,7 @@ def test_06_create_newuser_suggestedname(wb_driver):
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
     error_check(wb_driver)
+    time.sleep(2)
 
 
 def test_07_close_navAccount(wb_driver):
@@ -242,7 +239,6 @@ def test_07_close_navAccount(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['navAccount']).click()
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
-    time.sleep(20)
 
 
 # Next step-- To check if the new user is present in the list via automation

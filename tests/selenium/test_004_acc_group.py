@@ -32,6 +32,7 @@ xpaths = {
 
 def test_00_set_implicitly_wait(wb_driver):
     wb_driver.implicitly_wait(1)
+    time.sleep(1)
 
 
 # Test navigation Account>Users>Hover>New User and enter user-name, full-name,
@@ -63,6 +64,7 @@ def test_02_create_newgroup(wb_driver):
     # Enter New Groupname
     time.sleep(1)
     wb_driver.find_element_by_xpath(xpaths['newGroupName']).send_keys(newgroupname)
+    time.sleep(1)
     # Click on save new Group button
     wb_driver.find_element_by_xpath(xpaths['saveButton']).click()
     # taking screenshot
@@ -70,6 +72,7 @@ def test_02_create_newgroup(wb_driver):
     take_screenshot(wb_driver, script_name, test_name)
     # check if there is a generic error when making a duplicate group, and print the error
     error_check(wb_driver)
+    time.sleep(2)
 
 
 def test_03_create_supergroup(wb_driver):
@@ -91,6 +94,7 @@ def test_03_create_supergroup(wb_driver):
     take_screenshot(wb_driver, script_name, test_name)
     # check if there is a generic error when making a duplicate group, and print the error
     error_check(wb_driver)
+    time.sleep(2)
 
 
 def test_04_create_duplicategroup(wb_driver):
@@ -111,11 +115,11 @@ def test_04_create_duplicategroup(wb_driver):
     take_screenshot(wb_driver, script_name, test_name)
     # check if there is a generic error when making a duplicate group, and print the error
     error_check(wb_driver)
+    time.sleep(2)
 
 
 def test_05_close_navAccount(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['navAccount']).click()
-    time.sleep(20)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)

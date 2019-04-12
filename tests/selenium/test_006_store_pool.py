@@ -9,7 +9,7 @@ import os
 import time
 cwd = str(os.getcwd())
 sys.path.append(cwd)
-from function import take_screenshot, is_element_present
+from function import take_screenshot, is_element_present, wait_on_element
 from source import pool1, pool2
 
 
@@ -84,6 +84,7 @@ def test_02_create_newpool(wb_driver):
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
     error_check(wb_driver)
+    time.sleep(2)
 
 
 def test_03_create_newpool2(wb_driver):
@@ -110,9 +111,12 @@ def test_03_create_newpool2(wb_driver):
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
     error_check(wb_driver)
+    time.sleep(2)
 
 
 def test_04_close_navStorage(wb_driver):
+    # Wait for xpath to be available
+    wait_on_element(wb_driver, xpaths['navStorage'])
     wb_driver.find_element_by_xpath(xpaths['navStorage']).click()
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)

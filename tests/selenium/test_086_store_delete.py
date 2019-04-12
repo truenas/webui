@@ -8,7 +8,7 @@ import os
 import time
 cwd = str(os.getcwd())
 sys.path.append(cwd)
-from function import take_screenshot, pool1, pool2
+from function import take_screenshot, pool1, pool2, wait_on_element
 
 skip_mesages = "Skipping first run"
 script_name = os.path.basename(__file__).partition('.')[0]
@@ -35,9 +35,8 @@ def test_00_set_implicitly_wait(wb_driver):
 
 
 def test_01_nav_store_pool(wb_driver):
-    # Click  Storage menu
-    # allowing the button to load
-    time.sleep(1)
+    # Wait for xpath to be available
+    wait_on_element(wb_driver, xpaths['navStorage'])
     # Click Storage menu
     wb_driver.find_element_by_xpath(xpaths['navStorage']).click()
     # Click Pool submenu
@@ -54,7 +53,8 @@ def test_01_nav_store_pool(wb_driver):
 
 
 def test_02_delete_pool1(wb_driver):
-    time.sleep(1)
+    # Wait for xpath to be available
+    wait_on_element(wb_driver, xpaths['poolID'])
     wb_driver.find_element_by_xpath(xpaths['poolID']).click()
     time.sleep(1)
     pool_detach(wb_driver, pool1)
@@ -80,18 +80,17 @@ def test_04_close_navStorage(wb_driver):
 def pool_detach(wb_driver, name):
     time.sleep(1)
     pool_xpath = f"//mat-icon[@id='table_actions_menu_button__name_{name}']"
+    # Wait for xpath to be available
+    wait_on_element(wb_driver, pool_xpath)
     wb_driver.find_element_by_xpath(pool_xpath).click()
     xpath = xpaths['poolDetach'] + name + "']/span"
     wb_driver.find_element_by_xpath(xpath).click()
     wb_driver.find_element_by_xpath(xpaths['pooldestroyCheckbox']).click()
     wb_driver.find_element_by_xpath(xpaths['poolconfirmCheckbox']).click()
     time.sleep(1)
-    print("clicking on detach")
     if wb_driver.find_element_by_xpath(xpaths['confirmButton']):
-        print("detach button found")
         wb_driver.find_element_by_xpath(xpaths['confirmButton']).click()
-        print(" clicked on detach")
-    time.sleep(5)
-    print("clicking on close")
+    # Wait for xpath to be available
+    wait_on_element(wb_driver, xpaths['closeButton'])
     wb_driver.find_element_by_xpath(xpaths['closeButton']).click()
-    print("already clicked on detach")
+    time.sleep(1)
