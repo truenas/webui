@@ -115,14 +115,12 @@ def test_03_create_newpool2(wb_driver):
 
 
 def test_04_close_navStorage(wb_driver):
-    # Wait for xpath to be available
-    wait_on_element(wb_driver, xpaths['navStorage'])
-    wb_driver.find_element_by_xpath(xpaths['navStorage']).click()
     test_name = sys._getframe().f_code.co_name
+    # Wait for xpath to be available
+    wait_on_element(wb_driver, xpaths['navStorage'], script_name, test_name)
+    wb_driver.find_element_by_xpath(xpaths['navStorage']).click()
     take_screenshot(wb_driver, script_name, test_name)
     time.sleep(1)
-
-# Next step-- To check if the new user is present in the list via automation
 
 
 def error_check(wb_driver):

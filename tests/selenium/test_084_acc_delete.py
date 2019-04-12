@@ -8,7 +8,7 @@ import os
 import time
 cwd = str(os.getcwd())
 sys.path.append(cwd)
-from function import take_screenshot, user_delete, wait_on_element
+from function import take_screenshot, user_delete
 from source import newusername, newgroupname, superusername, newusernameuncheck
 from source import supergroupname
 
