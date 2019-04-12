@@ -1,4 +1,4 @@
-import { ApplicationRef, Component, Injector } from '@angular/core';
+import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
@@ -17,7 +17,7 @@ import { helptext_system_support as helptext } from 'app/helptext/system/support
   <entity-form [conf]="this"></entity-form>
   `
 })
-export class SupportComponent  {
+export class SupportComponent implements OnInit  {
   public username: any;
   public password: any;
   public categories: any;
@@ -32,7 +32,15 @@ export class SupportComponent  {
   public password_fc: any;
   public username_fc: any;
   public is_freenas: Boolean = window.localStorage['is_freenas'];
-  public model = 'Test Model';
+
+  // public model = '';
+  // public custname = 'Test Model';
+  // public sysserial = 'Test Model';
+  // public features = 'Test Model';
+  // public contracttype = 'Test Model';
+  // public contractdate = 'Test Model';
+  // public addhardware = 'Test Model';
+
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
     {
@@ -69,37 +77,37 @@ export class SupportComponent  {
         {
           type: 'paragraph',
           name: 'TN_model',
-          paraText: '<h4>Model: </h4>' + this.model
+          paraText: '<h4>Model: </h4>'
         },
         {
           type: 'paragraph',
           name: 'TN_custname',
-          paraText: '<h4>Customer Name: </h4>' + this.model
+          paraText: '<h4>Customer Name: </h4>'
         },
         {
           type: 'paragraph',
           name: 'TN_sysserial',
-          paraText: '<h4>System Serial: </h4>' + this.model
+          paraText: '<h4>System Serial: </h4>'
         },
         {
           type: 'paragraph',
           name: 'TN_features',
-          paraText: '<h4>Features: </h4>' + this.model
+          paraText: '<h4>Features: </h4>'
         },
         {
           type: 'paragraph',
           name: 'TN_contracttype',
-          paraText: '<h4>Contract Type: </h4>' + this.model
+          paraText: '<h4>Contract Type: </h4>'
         },
         {
           type: 'paragraph',
           name: 'TN_contractdate',
-          paraText: '<h4>Contract Date: </h4>' + this.model
+          paraText: '<h4>Contract Date: </h4>'
         },
         {
           type: 'paragraph',
           name: 'TN_addhardware',
-          paraText: '<h4>Additional Hardware: </h4>' + this.model
+          paraText: '<h4>Additional Hardware: </h4>'
         },
       ]
     },
@@ -264,19 +272,38 @@ export class SupportComponent  {
               private sanitizer: DomSanitizer, protected dialogService: DialogService)
               {}
 
+  ngOnInit() {
+    // this.ws.call('system.info').subscribe((res) => {
+    //   console.log(res);
+    //   this.model = res.model;
+    // })
+  }
+
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
     this.category = _.find(this.fieldConfig, {name: "category"});
 
     if (this.is_freenas) {
       for (let i in this.trueNASFields) {
-        console.log(this.trueNASFields[i])
         this.hideField(this.trueNASFields[i], true, entityEdit);
       }
     } else {
       for (let i in this.freeNASFields) {
         this.hideField(this.freeNASFields[i], true, entityEdit);
       }      
+    }
+    if (this.is_freenas) {
+      this.ws.call('system.info').subscribe((res) => {
+        console.log(res)
+        _.find(this.fieldConfig, {name : "TN_model"}).paraText += res.system_product;
+        _.find(this.fieldConfig, {name : "TN_custname"}).paraText += '???';
+        _.find(this.fieldConfig, {name : "TN_sysserial"}).paraText += res.system_serial;
+        _.find(this.fieldConfig, {name : "TN_featrures"}).paraText += '???';
+        _.find(this.fieldConfig, {name : "TN_contracttype"}).paraText += res.contract_type;
+        _.find(this.fieldConfig, {name : "TN_contractdate"}).paraText += res.contract_end.$value || '';
+        _.find(this.fieldConfig, {name : "TN_addhardware"}).paraText += '???';
+  
+      })
     }
   }
 
