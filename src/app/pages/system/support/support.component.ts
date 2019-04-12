@@ -1,4 +1,4 @@
-import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
+import { ApplicationRef, Component, Injector } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
@@ -17,7 +17,7 @@ import { helptext_system_support as helptext } from 'app/helptext/system/support
   <entity-form [conf]="this"></entity-form>
   `
 })
-export class SupportComponent implements OnInit  {
+export class SupportComponent {
   public username: any;
   public password: any;
   public categories: any;
@@ -33,14 +33,6 @@ export class SupportComponent implements OnInit  {
   public username_fc: any;
   public is_freenas: Boolean = window.localStorage['is_freenas'];
 
-  // public model = '';
-  // public custname = 'Test Model';
-  // public sysserial = 'Test Model';
-  // public features = 'Test Model';
-  // public contracttype = 'Test Model';
-  // public contractdate = 'Test Model';
-  // public addhardware = 'Test Model';
-
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
     {
@@ -51,7 +43,7 @@ export class SupportComponent implements OnInit  {
         {
           type: 'paragraph',
           name: 'FN_col1',
-          paraText: 'System Information'
+          paraText: '<img src="../../../assets/images/favicon-32x32.png">System Information'
         },
         {
           type: 'paragraph',
@@ -73,6 +65,26 @@ export class SupportComponent implements OnInit  {
               <a href="https://jira.ixsystems.com/secure/Signup!default.jspa" target="_blank" \
               style="text-decoration:underline;">Create a Jira account</a> to file an issue. Use a valid \
               email address when registering to receive issue status updates.')
+        },
+        {
+          type: 'paragraph',
+          name: 'FN_version',
+          paraText: '<h4>OS Version: </h4>'
+        },
+        {
+          type: 'paragraph',
+          name: 'FN_model',
+          paraText: '<h4>Processor: </h4>'
+        },
+        {
+          type: 'paragraph',
+          name: 'FN_memory',
+          paraText: '<h4>Memory: </h4>'
+        },
+        {
+          type: 'paragraph',
+          name: 'FN_sysserial',
+          paraText: '<h4>Serial Number: </h4>'
         },
         {
           type: 'paragraph',
@@ -109,6 +121,11 @@ export class SupportComponent implements OnInit  {
           name: 'TN_addhardware',
           paraText: '<h4>Additional Hardware: </h4>'
         },
+        {
+          type: 'paragraph',
+          name: 'pic',
+          paraText: '<img src="../../../assets/images/freenas_mini.png" height="400" width="400">'
+        },
       ]
     },
 
@@ -120,7 +137,7 @@ export class SupportComponent implements OnInit  {
         {
           type: 'paragraph',
           name: 'FN_col2',
-          paraText: 'Customer Information'
+          paraText: '<img src="../../../assets/images/favicon-32x32.png">Customer Information'
         },
         {
           type : 'input',
@@ -244,6 +261,10 @@ export class SupportComponent implements OnInit  {
 
   private freeNASFields: Array<any> = [
     'FN_col1',
+    'FN_version',
+    'FN_model',
+    'FN_memory',
+    'FN_sysserial',
     'support_text',
     'username',
     'password',
@@ -272,13 +293,6 @@ export class SupportComponent implements OnInit  {
               private sanitizer: DomSanitizer, protected dialogService: DialogService)
               {}
 
-  ngOnInit() {
-    // this.ws.call('system.info').subscribe((res) => {
-    //   console.log(res);
-    //   this.model = res.model;
-    // })
-  }
-
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
     this.category = _.find(this.fieldConfig, {name: "category"});
@@ -287,14 +301,19 @@ export class SupportComponent implements OnInit  {
       for (let i in this.trueNASFields) {
         this.hideField(this.trueNASFields[i], true, entityEdit);
       }
+      this.ws.call('system.info').subscribe((res) => {
+        _.find(this.fieldConfig, {name : "FN_version"}).paraText += res.version;
+        _.find(this.fieldConfig, {name : "FN_model"}).paraText += res.model;
+        _.find(this.fieldConfig, {name : "FN_memory"}).paraText += Number(res.physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB';
+        _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText ? 
+          _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText += res.system_serial :
+          _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText = '';
+      })
     } else {
       for (let i in this.freeNASFields) {
         this.hideField(this.freeNASFields[i], true, entityEdit);
-      }      
-    }
-    if (this.is_freenas) {
+      }  
       this.ws.call('system.info').subscribe((res) => {
-        console.log(res)
         _.find(this.fieldConfig, {name : "TN_model"}).paraText += res.system_product;
         _.find(this.fieldConfig, {name : "TN_custname"}).paraText += '???';
         _.find(this.fieldConfig, {name : "TN_sysserial"}).paraText += res.system_serial;
@@ -302,12 +321,13 @@ export class SupportComponent implements OnInit  {
         _.find(this.fieldConfig, {name : "TN_contracttype"}).paraText += res.contract_type;
         _.find(this.fieldConfig, {name : "TN_contractdate"}).paraText += res.contract_end.$value || '';
         _.find(this.fieldConfig, {name : "TN_addhardware"}).paraText += '???';
-  
-      })
+      })    
     }
   }
 
   customSubmit(entityEdit): void{
+    // TODO: if freenas or if truenas, break out categories to submit
+    // Waiting on API update to reflect change to Jira
     this.payload['username'] = entityEdit.username;
     this.payload['password'] = entityEdit.password;
     this.payload['category'] = entityEdit.category;
