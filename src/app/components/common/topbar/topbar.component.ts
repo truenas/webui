@@ -192,7 +192,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   showNetworkChangesPending() {
     this.dialogService.confirm(
       T("Pending Network Changes"),
-      T("You currently have uncommited network interface changes pending, go to the network interfaces section and review now?"),
+      T("There are uncommited network interface changes pending.  Review them now?"),
       true, T('Continue')).subscribe(res => {
         if (res) {
           this.router.navigate(['/network/interfaces']);

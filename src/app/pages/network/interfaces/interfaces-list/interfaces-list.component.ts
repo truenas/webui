@@ -10,7 +10,8 @@ import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
   selector : 'app-interfaces-list',
-  templateUrl : './interfaces-list.component.html'
+  templateUrl : './interfaces-list.component.html',
+  styleUrls : [ './interfaces-list.component.css' ],
 })
 export class InterfacesListComponent implements OnDestroy {
 
@@ -28,8 +29,7 @@ export class InterfacesListComponent implements OnDestroy {
   protected entityList: any;
   protected checkChangesSubscription: any;
   public hasPendingChanges = false;
-  pending_changes_text = T('You currently have pending network changes, do you wish to commit now?\
- Any changes that are not committed will be automatically rolled back.');
+  pending_changes_text: string; 
 
   public columns: Array<any> = [
     {name : T('Name'), prop : 'name'},
@@ -82,6 +82,7 @@ export class InterfacesListComponent implements OnDestroy {
   }
 
   preInit(entityList) {
+    this.pending_changes_text = helptext.pending_changes_text;
     this.entityList = entityList;
 
     this.checkPendingChanges();

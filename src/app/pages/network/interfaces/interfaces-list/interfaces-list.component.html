@@ -1,8 +1,8 @@
 <mat-card *ngIf="hasPendingChanges">
     <p> {{pending_changes_text}} </p>
-    <div>
+    <mat-card-actions class="buttons">
       <button mat-button type="button" (click)="commitPendingChanges()" class="btn btn-block btn-warning mat-primary" mat-button color="primary">{{"Commit" | translate}}</button>
-      <button mat-button type="button" (click)="rollbackPendingChanges()" class="btn  btn-block btn-lg mat-accent" mat-button color="accent">{{"Rollback" | translate}}</button>
-    </div>
+      <button mat-button type="button" (click)="rollbackPendingChanges()" class="btn  btn-block btn-lg mat-accent" mat-button color="accent">{{"Discard" | translate}}</button>
+    </mat-card-actions>
 </mat-card>
 <entity-table [title]="title" [conf]="this"></entity-table>
