@@ -875,27 +875,41 @@ export class JailAddComponent implements OnInit {
 
   // fields only accepted by ws with value 0/1
   protected TFfields: any = [
-    'ip4_saddrsel',
-    'ip6_saddrsel',
+    'bpf',
+    'template',
+    'host_time',
+    'dhcp',
+    'vnet',
+    'rtsold',
+    'jail_zfs',
+    'hostid_strict_check',
+    'boot',
     'exec_clean',
-    'mount_devfs',
-    'mount_fdescfs',
-    'allow_set_hostname',
-    'allow_sysvipc',
-    'allow_raw_sockets',
-    'allow_chflags',
-    'allow_mlock',
-    'allow_mount',
-    'allow_mount_devfs',
-    'allow_mount_nullfs',
-    'allow_mount_procfs',
-    'allow_mount_tmpfs',
-    'allow_mount_zfs',
-    'allow_quotas',
-    'allow_socket_af',
-    'mount_procfs',
     'mount_linprocfs',
+    'mount_procfs',
+    // 'allow_vmm', ??
     'allow_tun',
+    'allow_socket_af',
+    'allow_quotas',
+    'allow_mount_zfs',
+    'allow_mount_tmpfs',
+    'allow_mount_procfs',
+    'allow_mount_nullfs',
+    // 'allow_mount_fusefs',??
+    'allow_mount_devfs',
+    'allow_mount',
+    'allow_mlock',
+    'allow_chflags',
+    'allow_raw_sockets',
+    'allow_sysvipc',
+    'allow_set_hostname',
+    'mount_fdescfs',
+    'mount_devfs',
+    'ip6_saddrsel',
+    'ip4_saddrsel',
+    // 'ip_hostname',??
+    // 'assign_localhost',??
+    // 'nat', ??
   ];
   // fields only accepted by ws with value on/off
   protected OFfields: any = [
@@ -919,18 +933,6 @@ export class JailAddComponent implements OnInit {
     'nshm',
     'shmsize',
     'wallclock',
-    'dhcp',
-    'boot',
-    'jail_zfs',
-    'vnet',
-    'hostid_strict_check',
-    'rtsold',
-  ];
-  // fields only accepted by ws with value yes/no
-  protected YNfields: any = [
-    'bpf',
-    'template',
-    'host_time',
   ];
 
   protected currentServerVersion: any;
@@ -1146,13 +1148,6 @@ export class JailAddComponent implements OnInit {
               res[0][i] = false;
             }
           }
-          if (_.indexOf(this.YNfields, i) > -1) {
-            if (res[0][i] == 'yes') {
-              res[0][i] = true;
-            } else {
-              res[0][i] = false;
-            }
-          }
           this.formGroup.controls[i].setValue(res[0][i]);
         }
       }
@@ -1263,13 +1258,6 @@ export class JailAddComponent implements OnInit {
                 property.push(i + '=on');
               } else {
                 property.push(i + '=off');
-              }
-              delete value[i];
-          } else if (_.indexOf(this.YNfields, i) > -1) {
-            if (value[i]) {
-                property.push(i + '=yes');
-              } else {
-                property.push(i + '=no');
               }
               delete value[i];
           } else {
