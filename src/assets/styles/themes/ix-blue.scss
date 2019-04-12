@@ -1120,4 +1120,18 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     opacity: .99;
   }
 
+  app-support {
+    #FN_col1, #FN_col2, #TN_col1 {
+      font-size: large;
+      margin-bottom: 15px;
+    }
+    #support_text {
+      font-size: 110%;
+      margin-right: 30px;
+    }
+    h4 {
+      margin-top: 15px;
+    }
+  }
+
  } // end of ix theme

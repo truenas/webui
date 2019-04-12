@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 import { RestService, WebSocketService } from '../../../services/';
 import { DialogService } from '../../../services/dialog.service';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 
@@ -31,153 +32,207 @@ export class SupportComponent  {
   public password_fc: any;
   public username_fc: any;
   public is_freenas: Boolean = window.localStorage['is_freenas'];
-  public fieldConfig: FieldConfig[] = [
+  public model = 'Test Model';
+  public fieldConfig: FieldConfig[] = []
+  public fieldSets: FieldSet[] = [
     {
-      type: 'paragraph',
-      name: 'FN_col1',
-      paraText: 'System Information'
-    },
-    {
-      type: 'paragraph',
-      name: 'TN_col1',
-      paraText: 'License Information'
-    },
-    {
-      type: 'paragraph',
-      name: 'support_text',
-      paraText: this.sanitizer.bypassSecurityTrustHtml(
-        'Search the <a href="https://jira.ixsystems.com/projects/NAS/issues/" \
-         target="_blank" style="text-decoration:underline;">FreeNAS issue tracker</a> \
-         to ensure the issue has not already been reported before \
-         filing a bug report or feature request. If an issue has \
-         already been created, add a comment to the existing issue. \
-         Please visit the <a href="http://www.ixsystems.com/storage/" target="_blank" \
-         style="text-decoration:underline;">iXsystems storage page</a> \
-         for enterprise-grade storage solutions and support.<br><br> \
-         <a href="https://jira.ixsystems.com/secure/Signup!default.jspa" target="_blank" \
-         style="text-decoration:underline;">Create a Jira account</a> to file an issue. Use a valid \
-         email address when registering to receive issue status updates.')
+      name: 'Column 1',
+      label: false,
+      width: '50%',
+      config:[
+        {
+          type: 'paragraph',
+          name: 'FN_col1',
+          paraText: 'System Information'
+        },
+        {
+          type: 'paragraph',
+          name: 'TN_col1',
+          paraText: 'License Information'
+        },
+        {
+          type: 'paragraph',
+          name: 'support_text',
+          paraText: this.sanitizer.bypassSecurityTrustHtml(
+            'Search the <a href="https://jira.ixsystems.com/projects/NAS/issues/" \
+              target="_blank" style="text-decoration:underline;">FreeNAS issue tracker</a> \
+              to ensure the issue has not already been reported before \
+              filing a bug report or feature request. If an issue has \
+              already been created, add a comment to the existing issue. \
+              Please visit the <a href="http://www.ixsystems.com/storage/" target="_blank" \
+              style="text-decoration:underline;">iXsystems storage page</a> \
+              for enterprise-grade storage solutions and support.<br><br> \
+              <a href="https://jira.ixsystems.com/secure/Signup!default.jspa" target="_blank" \
+              style="text-decoration:underline;">Create a Jira account</a> to file an issue. Use a valid \
+              email address when registering to receive issue status updates.')
+        },
+        {
+          type: 'paragraph',
+          name: 'TN_model',
+          paraText: '<h4>Model: </h4>' + this.model
+        },
+        {
+          type: 'paragraph',
+          name: 'TN_custname',
+          paraText: '<h4>Customer Name: </h4>' + this.model
+        },
+        {
+          type: 'paragraph',
+          name: 'TN_sysserial',
+          paraText: '<h4>System Serial: </h4>' + this.model
+        },
+        {
+          type: 'paragraph',
+          name: 'TN_features',
+          paraText: '<h4>Features: </h4>' + this.model
+        },
+        {
+          type: 'paragraph',
+          name: 'TN_contracttype',
+          paraText: '<h4>Contract Type: </h4>' + this.model
+        },
+        {
+          type: 'paragraph',
+          name: 'TN_contractdate',
+          paraText: '<h4>Contract Date: </h4>' + this.model
+        },
+        {
+          type: 'paragraph',
+          name: 'TN_addhardware',
+          paraText: '<h4>Additional Hardware: </h4>' + this.model
+        },
+      ]
     },
 
     {
-      type : 'input',
-      name : 'username',
-      placeholder : helptext.username.placeholder,
-      tooltip : helptext.username.tooltip,
-      required: true,
-      validation : helptext.username.validation,
-      blurStatus : true,
-      blurEvent : this.blurEvent,
-      parent : this,
-      togglePw : true,
-      value: '',
-    },
-    {
-      type : 'input',
-      name : 'password',
-      inputType : 'password',
-      placeholder : helptext.password.placeholder,
-      tooltip : helptext.password.tooltip,
-      required: true,
-      validation : helptext.password.validation,
-      blurStatus : true,
-      blurEvent : this.blurEvent,
-      parent : this,
-      togglePw : true,
-      value: '',
-    },
-    {
-      type : 'input',
-      name : 'name',
-      placeholder : helptext.name.placeholder,
-      tooltip : helptext.name.tooltip,
-      required: true,
-      validation : helptext.name.validation
-    },
-    {
-      type : 'input',
-      name : 'email',
-      placeholder : helptext.email.placeholder,
-      tooltip : helptext.email.tooltip,
-      required: true,
-      validation : helptext.email.validation
-    },
-    {
-      type : 'input',
-      name : 'phone',
-      placeholder : helptext.phone.placeholder,
-      tooltip : helptext.phone.tooltip,
-      required: true,
-      validation : helptext.phone.validation
-    },
-    {
-      type : 'select',
-      name : 'type',
-      placeholder : helptext.type.placeholder,
-      tooltip : helptext.type.tooltip,
-      options:[
-        {label: 'Bug', value: 'BUG'},
-        {label: 'Feature', value: 'FEATURE'}
+      name: 'Column 2',
+      width: '50%',
+      label: false,
+      config:[
+        {
+          type: 'paragraph',
+          name: 'FN_col2',
+          paraText: 'Customer Information'
+        },
+        {
+          type : 'input',
+          name : 'username',
+          placeholder : helptext.username.placeholder,
+          tooltip : helptext.username.tooltip,
+          required: true,
+          validation : helptext.username.validation,
+          blurStatus : true,
+          blurEvent : this.blurEvent,
+          parent : this,
+          togglePw : true,
+          value: '',
+        },
+        {
+          type : 'input',
+          name : 'password',
+          inputType : 'password',
+          placeholder : helptext.password.placeholder,
+          tooltip : helptext.password.tooltip,
+          required: true,
+          validation : helptext.password.validation,
+          blurStatus : true,
+          blurEvent : this.blurEvent,
+          parent : this,
+          togglePw : true,
+          value: '',
+        },
+        {
+          type : 'input',
+          name : 'name',
+          placeholder : helptext.name.placeholder,
+          tooltip : helptext.name.tooltip,
+          required: true,
+          validation : helptext.name.validation
+        },
+        {
+          type : 'input',
+          name : 'email',
+          placeholder : helptext.email.placeholder,
+          tooltip : helptext.email.tooltip,
+          required: true,
+          validation : helptext.email.validation
+        },
+        {
+          type : 'input',
+          name : 'phone',
+          placeholder : helptext.phone.placeholder,
+          tooltip : helptext.phone.tooltip,
+          required: true,
+          validation : helptext.phone.validation
+        },
+        {
+          type : 'select',
+          name : 'type',
+          placeholder : helptext.type.placeholder,
+          tooltip : helptext.type.tooltip,
+          options:[
+            {label: 'Bug', value: 'BUG'},
+            {label: 'Feature', value: 'FEATURE'}
+          ]
+        },
+        {
+          type : 'select',
+          name : 'environment',
+          placeholder : helptext.environment.placeholder,
+          tooltip : helptext.environment.tooltip,
+          options:[
+            {label: 'Production', value: 'production'},
+            {label: 'Staging', value: 'staging'},
+            {label: 'Testing', value: 'testing'},
+            {label: 'Prototyping', value: 'prototyping'},
+            {label: 'Initial Deployment/Setup', value: 'initial'}
+          ]
+        },
+        {
+          type : 'select',
+          name : 'criticality',
+          placeholder : helptext.criticality.placeholder,
+          tooltip : helptext.criticality.tooltip,
+          options:[
+            {label: 'Inquiry', value: 'inquiry'},
+            {label: 'Loss of Functionality', value: 'loss_functionality'},
+            {label: 'Total Down', value: 'total_down'}
+          ]
+        },
+        {
+          type : 'select',
+          name : 'category',
+          placeholder : helptext.category.placeholder,
+          tooltip : helptext.category.tooltip,
+          required: true,
+          validation : helptext.category.validation,
+          options:[]
+        },
+        {
+          type : 'checkbox',
+          name : 'attach_debug',
+          placeholder : helptext.attach_debug.placeholder,
+          tooltip : helptext.attach_debug.tooltip,
+        },
+        {
+          type : 'input',
+          name : 'title',
+          placeholder : helptext.title.placeholder,
+          tooltip : helptext.title.tooltip,
+          required: true,
+          validation : helptext.title.validation
+        },
+        {
+          type : 'textarea',
+          name : 'body',
+          placeholder : helptext.body.placeholder,
+          tooltip : helptext.body.tooltip,
+          required: true,
+          validation : helptext.body.validation
+        }
       ]
-    },
-    {
-      type : 'select',
-      name : 'environment',
-      placeholder : helptext.environment.placeholder,
-      tooltip : helptext.environment.tooltip,
-      options:[
-        {label: 'Production', value: 'production'},
-        {label: 'Staging', value: 'staging'},
-        {label: 'Testing', value: 'testing'},
-        {label: 'Prototyping', value: 'prototyping'},
-        {label: 'Initial Deployment/Setup', value: 'initial'}
-      ]
-    },
-    {
-      type : 'select',
-      name : 'criticality',
-      placeholder : helptext.criticality.placeholder,
-      tooltip : helptext.criticality.tooltip,
-      options:[
-        {label: 'Inquiry', value: 'inquiry'},
-        {label: 'Loss of Functionality', value: 'loss_functionality'},
-        {label: 'Total Down', value: 'total_down'}
-      ]
-    },
-    {
-      type : 'select',
-      name : 'category',
-      placeholder : helptext.category.placeholder,
-      tooltip : helptext.category.tooltip,
-      required: true,
-      validation : helptext.category.validation,
-      options:[]
-    },
-    {
-      type : 'checkbox',
-      name : 'attach_debug',
-      placeholder : helptext.attach_debug.placeholder,
-      tooltip : helptext.attach_debug.tooltip,
-    },
-    {
-      type : 'input',
-      name : 'title',
-      placeholder : helptext.title.placeholder,
-      tooltip : helptext.title.tooltip,
-      required: true,
-      validation : helptext.title.validation
-    },
-    {
-      type : 'textarea',
-      name : 'body',
-      placeholder : helptext.body.placeholder,
-      tooltip : helptext.body.tooltip,
-      required: true,
-      validation : helptext.body.validation
-    },
-
-
-  ];
+    }
+  ]
 
   private freeNASFields: Array<any> = [
     'FN_col1',
@@ -189,6 +244,13 @@ export class SupportComponent  {
 
   private trueNASFields: Array<any> = [
     'TN_col1',
+    'TN_model',
+    'TN_custname',
+    'TN_sysserial',
+    'TN_features',
+    'TN_contracttype',
+    'TN_contractdate',
+    'TN_addhardware',
     'name',
     'email',
     'phone',
@@ -206,8 +268,9 @@ export class SupportComponent  {
     this.entityEdit = entityEdit;
     this.category = _.find(this.fieldConfig, {name: "category"});
 
-    if (!this.is_freenas) {
+    if (this.is_freenas) {
       for (let i in this.trueNASFields) {
+        console.log(this.trueNASFields[i])
         this.hideField(this.trueNASFields[i], true, entityEdit);
       }
     } else {
