@@ -55,8 +55,13 @@ def is_element_present(driver, xpath):
 
 
 def wait_on_element(driver, xpath):
+    num = 0
     while is_element_present(driver, xpath) is False:
         time.sleep(1)
+        if num == 30:
+            return False
+        else:
+            num += 1
     return True
 
 
