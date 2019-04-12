@@ -3,14 +3,14 @@
   {{ title | translate }}
 </h1>
 <div mat-dialog-content>
-  <p>{{message | translate}}</p>
+  <span [innerHTML]="message"></span>
   <div class="more-info" (click)="toggleOpen($event)" *ngIf="backtrace">
     <mat-icon *ngIf="isCloseMoreInfo">add_circle_outline</mat-icon>
     <mat-icon *ngIf="!isCloseMoreInfo">remove_circle_outline</mat-icon>
     <span>More info...</span>
   </div>
   <div class="backtrace-panel" [ngClass]="{'open':!isCloseMoreInfo}" *ngIf="backtrace">
-    <textarea readonly matInput>Error: {{backtrace}}</textarea>
+    <textarea id="bt-text"readonly matInput>Error: {{backtrace}}</textarea>
   </div>  
 </div>
 <div mat-dialog-actions>

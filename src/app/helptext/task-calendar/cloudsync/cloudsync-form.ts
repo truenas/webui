@@ -86,6 +86,7 @@ encryption_salt_tooltip: T('Enter a long string of random characters for use as\
  value. Losing the salt value can result in data loss.'),
 
 args_placeholder: T('Auxiliary Arguments'),
+args_tooltip: T('These arguments are passed to <a href="https://rclone.org/docs/" target="_blank">rclone</a>.'),
 
 cloudsync_picker_placeholder: T('Schedule the Cloud Sync Task'),
 cloudsync_picker_tooltip: T('Select a schedule preset or choose <i>Custom</i> to open\

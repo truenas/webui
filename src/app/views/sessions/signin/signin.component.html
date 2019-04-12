@@ -8,14 +8,22 @@
             <img class="logo-bg" alt="Logo image background of stars and sky at night" src="assets/images/stars-sky-1200w.jpg" srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x">
             <img *ngIf="is_freenas; else isTruenas" class="logo" src="assets/images/light-logo-full.svg" alt="FreeNAS logo">
             <ng-template #isTruenas>
-              <img class="logo" src="assets/images/light-truenas-logo.svg" alt="TrueNAS logo">
+              <img class="logo" src="assets/images/CMYK_OnDark_TrueNAS_Logo.svg" alt="TrueNAS logo">
             </ng-template>
           </div>
           <form #signinForm="ngForm" (ngSubmit)="signin()" *ngIf="has_root_password; else setPassword">
             <div class="">
               <mat-form-field class="full-width">
                 <span matPrefix><mat-icon fontSet="mdi-set" fontIcon="mdi-account" style="color:var(--fg1);position:relative;top:2px;"></mat-icon>&nbsp;&nbsp;</span>
-                <input autofocus matInput name="username" required [(ngModel)]="signinData.username" #username="ngModel" placeholder="{{'Username' | translate}}" value="">
+                <input autofocus 
+                  matInput name="username" 
+                  required 
+                  [(ngModel)]="signinData.username" 
+                  #username="ngModel" 
+                  placeholder="{{'Username' | translate}}" 
+                  value=""
+                  autocorrect="off" autocapitalize="none" autocomplete="off"
+                >
                 <mat-error *ngIf="username.errors && (username.dirty || username.touched) && (username.errors.required)">
                   <span *ngIf="!failed">{{"Please enter your username" | translate}}</span>
                   <span *ngIf="failed">{{"Please enter your username again" | translate}}</span>

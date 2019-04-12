@@ -498,7 +498,7 @@ body .mat-select-trigger {
     z-index: 999;
 }
 .collapsed-menu .ps__scrollbar-y-rail {
-    z-index: auto;
+    z-index: -5;
 }
 
 .datatable-header-cell-wrapper{

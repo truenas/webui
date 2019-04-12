@@ -302,35 +302,37 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(color, --fg2, $fg2, !important);
   }
 
-//  .mat-form-field-underline{
-//    @include variable(background-color, --fg2, $fg2);
-//  }
-
-  .mat-form-field-underline{
+  .mat-form-field-underline {
     @include variable(background-color, --fg2, $fg2, !important);
     opacity:0.35;
   }
 
-  .mat-warn .mat-form-field-underline,
-  .mat-focused .mat-form-field-underline{
+  .mat-warn .mat-form-field-underline {
     opacity:0.85;
   }
 
-#test-alert {
-  @include variable(color, --fg2, $fg2);
-}
+  .mat-form-field.mat-focused .mat-form-field-ripple {
+    @include variable(background-color, --primary, $primary, !important);
+  }
 
-.mat-form-field-ripple{
-  @include variable(background-color, --primary, $primary);
-}
+  #test-alert {
+    @include variable(color, --fg2, $fg2);
+  }
+
+  .mat-form-field-ripple{
+    @include variable(background-color, --primary, $primary);
+  }
 
   .mat-color-primary, 
   .mat-button.mat-primary,
   .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > a > span, 
-  .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a,
-  .mat-form-field.mat-focused.mat-primary
-  .mat-focused .mat-form-field-label{
+  .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a, 
+  .mat-focused .mat-form-field-label {
     @include variable(color, --primary, $primary, !important);
+  }
+
+  .mat-form-field.mat-focused.mat-primary {
+    @include variable(color, --fg2, $fg2, !important);
   }
 
   .mat-form-field-invalid .mat-form-field-label {
@@ -349,11 +351,16 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(background-color, --primary, $primary);
   }
 
+  .mat-input-element {
+    @include variable(caret-color, --fg2, $fg2, !important);
+  }
+
   .mat-input-element:disabled{
     opacity:0.38;
     @include variable(color, --fg2, $fg2);
   }
 
+  .mat-calendar-table-header,
   .mat-calendar-table,
   .mat-calendar-body-cell-content,
   .mat-calendar-body-label{
@@ -590,8 +597,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   // To fix alignment issues w/checkboxes on Create Pool page
   .headerCheckBox {
     position: relative;
-    left: 2px;
-    margin-top: 9px;
+    left: 16px;
+    margin-top: 7px;
   }
 
   // For Detach Pools functions on volumes-list.component.ts
@@ -620,16 +627,16 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   // Vertically align header-footer items on datatables  
   .datatable-header-cell {
     position: relative;
-    top: -5px;
-    left: 14px;
+    // top: -5px;
+    // left: 14px;
   }
 
   // Put header labels directly over cells
   .datatable-header-cell-label {
-    margin-left: -7px;
+    margin-left: 7px;
     text-align: center;
     position: relative;
-    top: 10px;
+    top: 7px;
   }
 
   // Resizes loader dialog which appears on update, wipe disk, etc.
@@ -715,7 +722,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   // Fix icon color in notification area
-  .notific-icon {
+  .info-icon {
     @include variable(color, --primary, $primary !important);
   }
 
@@ -871,7 +878,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     overflow-y: hidden !important;
   }
 
-  app-admin-layout .mat-drawer-inner-container {
+  app-admin-layout .not-alerts .mat-drawer-inner-container {
     overflow: visible !important;
   }
 
@@ -911,8 +918,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     bottom: 7px !important;
   }
 
-  services .datatable-header-cell, app-vm-list .datatable-header-cell {
-    top: 6px;
+  services .datatable-header-cell-label {
+    margin-left: 15px;
   }
 
 
@@ -1100,6 +1107,17 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   .xterm-viewport {
     overflow-y: auto;
+  }
+
+  .advanced-date-picker .cron-fields .mat-select-value,
+  .advanced-date-picker .cron-fields .mat-select-arrow,
+  .advanced-date-picker .cron-fields .mat-form-field.mat-focused.mat-primary .mat-select-arrow  {
+    color: white !important;
+  }
+
+  .advanced-date-picker .cron-fields .mat-form-field-underline {
+    background-color: white !important;
+    opacity: .99;
   }
 
  } // end of ix theme

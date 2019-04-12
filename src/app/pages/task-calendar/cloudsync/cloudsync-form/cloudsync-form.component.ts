@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 
 import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { WebSocketService, DialogService, CloudCredentialService} from '../../../../services/';
+import { WebSocketService, DialogService, CloudCredentialService, EngineerModeService} from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { FieldRelationService } from '../../../common/entity/entity-form/services/field-relation.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -249,6 +249,7 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'textarea',
     name: 'args',
     placeholder: helptext.args_placeholder,
+    tooltip: helptext.args_tooltip,
     value: "",
     isHidden: true,
   },
@@ -302,7 +303,7 @@ export class CloudsyncFormComponent implements OnInit {
   protected bucket_field: any;
   protected bucket_input_field: any;
   protected folder_field: any;
-
+  protected argsField:any;
   public credentials_list = [];
 
   public formGroup: any;
@@ -322,7 +323,8 @@ export class CloudsyncFormComponent implements OnInit {
     protected loader: AppLoaderService,
     protected dialog: DialogService,
     protected ws: WebSocketService,
-    protected cloudcredentialService: CloudCredentialService) {
+    protected cloudcredentialService: CloudCredentialService,
+    protected engineerModeService: EngineerModeService) {
     this.cloudcredentialService.getProviders().subscribe((res) => {
       this.providers = res;
     });
@@ -449,6 +451,14 @@ export class CloudsyncFormComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.argsField = _.find(this.fieldConfig, { 'name': 'args' });
+    this.argsField.isHidden = localStorage.getItem('engineerMode') === 'true' ? false : true;
+
+    this.engineerModeService.engineerMode.subscribe((res) => {
+      this.argsField.isHidden = res === 'true' ? false : true;
+      this.setDisabled('args', this.argsField.isHidden, this.argsField.isHidden);
+    });
+
     this.credentials = _.find(this.fieldConfig, { 'name': 'credentials' });
     this.bucket_field = _.find(this.fieldConfig, {'name': 'bucket'});
     this.bucket_input_field = _.find(this.fieldConfig, {'name': 'bucket_input'});
@@ -701,12 +711,12 @@ export class CloudsyncFormComponent implements OnInit {
 
     value['schedule'] = schedule;
 
-    if (value.bwlimit) {
-      value.bwlimit = this.handleBwlimit(value.bwlimit);
+    if (value.bwlimit !== undefined) {
+      value.bwlimit = value.bwlimit.trim() === '' ? [] : this.handleBwlimit(value.bwlimit);
     }
 
-    if (value.exclude) {
-      value.exclude = value.exclude.trim().split(" ");
+    if (value.exclude !== undefined) {
+      value.exclude = value.exclude.trim() === '' ? [] : value.exclude.trim().split(" ");
     }
 
     if (!this.formGroup.valid) {

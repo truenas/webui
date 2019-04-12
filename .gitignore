@@ -53,8 +53,11 @@ _pycache_
 *.xml
 *.pyc
 .cache
+.pytest_cache
 config.py
 auto_config.py
+geckodriver.log
+vm_config
 
 # generated json files
 /src/assets/i18n/*.mo

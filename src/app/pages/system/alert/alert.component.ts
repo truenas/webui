@@ -32,6 +32,7 @@ export class AlertConfigComponent implements OnInit {
   public formGroup: any;
   public settingFormGroup: any;
   public isReady: boolean = false;
+  public isFooterConsoleOpen: boolean;
 
   constructor(private rest: RestService, private ws: WebSocketService,
     private entityFormService: EntityFormService,
@@ -75,6 +76,12 @@ export class AlertConfigComponent implements OnInit {
           this.formGroup.controls[k].setValue(res.settings[k]);
         }
       });
+    });
+
+    this.ws.call('system.advanced.config').subscribe((res)=> {
+      if (res) {
+        this.isFooterConsoleOpen = res.consolemsg;
+      }
     });
 
   }
