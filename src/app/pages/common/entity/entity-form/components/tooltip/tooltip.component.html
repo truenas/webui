@@ -5,7 +5,7 @@
     <div class="pin" 
       (click)="toggleVis()" 
       matTooltip="Pin or unpin this tooltip.">
-      <img class="pin-icon" src="assets/images/add_box.png">
-    </div>
+      <img *ngIf="!isLockTooltip" class="pin-icon" src="assets/images/add_box.png">
+      <img *ngIf="isLockTooltip" class="pin-icon" src="assets/images/subtract_box.png">    </div>
   </div>
 </div>
