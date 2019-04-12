@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { MatSnackBar } from '@angular/material';
 
 import * as _ from 'lodash';
-import { RestService, WebSocketService } from '../../../services/';
+import { RestService, WebSocketService, SnackbarService } from '../../../services/';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { helptext_system_dataset } from 'app/helptext/system/dataset';
 import { EntityUtils } from '../../common/entity/utils';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { T } from '../../../translate-marker';
 
 @Component({
   selector: 'app-system-dataset',
@@ -44,7 +44,7 @@ export class DatasetComponent implements OnInit{
   private syslog: any;
   private rrd: any;
   constructor(private rest: RestService, private ws: WebSocketService,
-              private loader: AppLoaderService, private snackBar: MatSnackBar) {}
+              private loader: AppLoaderService, private snackbarService: SnackbarService) {}
 
   ngOnInit() {
     this.rest.get(this.volume_name, {}).subscribe( res => {
@@ -77,7 +77,7 @@ export class DatasetComponent implements OnInit{
           new EntityUtils().handleWSError(this, res);
         }
         if (res.state === 'SUCCESS') {
-          this.snackBar.open("Settings saved.", 'close', { duration: 5000 })
+          this.snackbarService.open(T("Settings saved."), T('Close'), { duration: 5000 })
         }
       },
       (err) => {
