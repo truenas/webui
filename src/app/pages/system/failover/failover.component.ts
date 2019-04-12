@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Validators } from '@angular/forms';
 import * as _ from 'lodash';
 import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
@@ -17,12 +17,20 @@ import { helptext_system_failover } from 'app/helptext/system/failover';
   styleUrls: ['failover.component.css']
 })
 
-export class FailoverComponent {
+export class FailoverComponent implements OnDestroy {
   public job: any = {};
   protected queryCall = 'failover.config';
   protected updateCall = 'failover.update';
   public entityForm: any;
   protected dialogRef: any;
+  public disabled: any;
+  protected failoverDisableSubscription: any;
+  public confirmSubmit = false;
+  public confirmSubmitDialog = {
+    title: T("Disable Failover"),
+    message: T(""),
+    hideCheckbox: false
+  }
   public custActions: Array < any > = [
     {
       id: 'sync_to_peer',
@@ -120,20 +128,24 @@ export class FailoverComponent {
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
-
+    this.failoverDisableSubscription = 
+      this.entityForm.entityForm.formGroup.controls['disabled'].valueChanges.subscribe(res => {
+        this.confirmSubmit = res;
+      });
   }
 
   public customSubmit(body) {
-    /*this.load.open();
-    if (body['disabled']) {
-      // this.dialog.confirm stuff
-    }
+    this.load.open();
     return this.ws.call('system.failover.update', [body]).subscribe((res) => {
       this.load.close();
       this.snackBar.open(T("Settings saved."), T('close'), { duration: 5000 })
     }, (res) => {
       this.load.close();
       new EntityUtils().handleWSError(this.entityForm, res);
-    });*/
+    });
+  }
+
+  ngOnDestroy() {
+    this.failoverDisableSubscription.unsubscribe();
   }
 }
