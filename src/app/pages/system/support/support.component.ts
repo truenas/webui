@@ -30,9 +30,18 @@ export class SupportComponent  {
   public saveSubmitText = "Submit";
   public password_fc: any;
   public username_fc: any;
-
-
+  public is_freenas: Boolean = window.localStorage['is_freenas'];
   public fieldConfig: FieldConfig[] = [
+    {
+      type: 'paragraph',
+      name: 'FN_col1',
+      paraText: 'System Information'
+    },
+    {
+      type: 'paragraph',
+      name: 'TN_col1',
+      paraText: 'License Information'
+    },
     {
       type: 'paragraph',
       name: 'support_text',
@@ -78,13 +87,61 @@ export class SupportComponent  {
       value: '',
     },
     {
+      type : 'input',
+      name : 'name',
+      placeholder : helptext.name.placeholder,
+      tooltip : helptext.name.tooltip,
+      required: true,
+      validation : helptext.name.validation
+    },
+    {
+      type : 'input',
+      name : 'email',
+      placeholder : helptext.email.placeholder,
+      tooltip : helptext.email.tooltip,
+      required: true,
+      validation : helptext.email.validation
+    },
+    {
+      type : 'input',
+      name : 'phone',
+      placeholder : helptext.phone.placeholder,
+      tooltip : helptext.phone.tooltip,
+      required: true,
+      validation : helptext.phone.validation
+    },
+    {
       type : 'select',
       name : 'type',
       placeholder : helptext.type.placeholder,
       tooltip : helptext.type.tooltip,
       options:[
-        {label: 'bug', value: 'BUG'},
-        {label: 'feature', value: 'FEATURE'}
+        {label: 'Bug', value: 'BUG'},
+        {label: 'Feature', value: 'FEATURE'}
+      ]
+    },
+    {
+      type : 'select',
+      name : 'environment',
+      placeholder : helptext.environment.placeholder,
+      tooltip : helptext.environment.tooltip,
+      options:[
+        {label: 'Production', value: 'production'},
+        {label: 'Staging', value: 'staging'},
+        {label: 'Testing', value: 'testing'},
+        {label: 'Prototyping', value: 'prototyping'},
+        {label: 'Initial Deployment/Setup', value: 'initial'}
+      ]
+    },
+    {
+      type : 'select',
+      name : 'criticality',
+      placeholder : helptext.criticality.placeholder,
+      tooltip : helptext.criticality.tooltip,
+      options:[
+        {label: 'Inquiry', value: 'inquiry'},
+        {label: 'Loss of Functionality', value: 'loss_functionality'},
+        {label: 'Total Down', value: 'total_down'}
       ]
     },
     {
@@ -118,7 +175,27 @@ export class SupportComponent  {
       required: true,
       validation : helptext.body.validation
     },
+
+
   ];
+
+  private freeNASFields: Array<any> = [
+    'FN_col1',
+    'support_text',
+    'username',
+    'password',
+    'category'
+  ];
+
+  private trueNASFields: Array<any> = [
+    'TN_col1',
+    'name',
+    'email',
+    'phone',
+    'environment',
+    'criticality'
+  ];
+
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected _injector: Injector,
               protected _appRef: ApplicationRef, protected dialog: MatDialog,
@@ -129,8 +206,15 @@ export class SupportComponent  {
     this.entityEdit = entityEdit;
     this.category = _.find(this.fieldConfig, {name: "category"});
 
-
-
+    if (!this.is_freenas) {
+      for (let i in this.trueNASFields) {
+        this.hideField(this.trueNASFields[i], true, entityEdit);
+      }
+    } else {
+      for (let i in this.freeNASFields) {
+        this.hideField(this.freeNASFields[i], true, entityEdit);
+      }      
+    }
   }
 
   customSubmit(entityEdit): void{
@@ -186,6 +270,12 @@ export class SupportComponent  {
             });
         }
       }
+  }
+
+  hideField(fieldName: any, show: boolean, entity: any) {
+    let target = _.find(this.fieldConfig, {'name' : fieldName});
+    target['isHidden'] = show;
+    entity.setDisabled(fieldName, show, show);
   }
 
 }
