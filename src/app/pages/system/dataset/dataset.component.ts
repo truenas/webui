@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { MatSnackBar } from '@angular/material';
+
 import * as _ from 'lodash';
 import { RestService, WebSocketService } from '../../../services/';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { helptext_system_dataset } from 'app/helptext/system/dataset';
+import { EntityUtils } from '../../common/entity/utils';
+import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 
 @Component({
   selector: 'app-system-dataset',
@@ -39,7 +43,8 @@ export class DatasetComponent implements OnInit{
   private pool: any;
   private syslog: any;
   private rrd: any;
-  constructor(private rest: RestService, private ws: WebSocketService) {}
+  constructor(private rest: RestService, private ws: WebSocketService,
+              private loader: AppLoaderService, private snackBar: MatSnackBar) {}
 
   ngOnInit() {
     this.rest.get(this.volume_name, {}).subscribe( res => {
@@ -58,20 +63,28 @@ export class DatasetComponent implements OnInit{
       entityForm.formGroup.controls['syslog'].setValue(res.syslog);
       entityForm.formGroup.controls['rrd'].setValue(res.rrd);
     });
-
-    entityForm.submitFunction = this.submitFunction;
   }
 
-  submitFunction() {
-    const payload = {};
-    const formvalue = _.cloneDeep(this.formGroup.value);
-    payload['pool'] = formvalue.pool;
-    payload['syslog'] = formvalue.syslog;
-    payload['rrd'] = formvalue.rrd;
-    try {
-      return this.ws.call('systemdataset.update', [payload]);
-    } catch(err) {
-      console.log(err);
-    }
+  customSubmit(value) {
+    this.loader.open();
+    this.ws.job('systemdataset.update', [value]).subscribe(
+      (res) => {
+        this.loader.close();
+        if (res.error) {
+          if (res.exc_info && res.exc_info.extra) {
+            res.extra = res.exc_info.extra;
+          }
+          new EntityUtils().handleWSError(this, res);
+        }
+        if (res.state === 'SUCCESS') {
+          this.snackBar.open("Settings saved.", 'close', { duration: 5000 })
+        }
+      },
+      (err) => {
+        this.loader.close();
+        new EntityUtils().handleWSError(this, err);
+      }
+    );
+
   }
 }
