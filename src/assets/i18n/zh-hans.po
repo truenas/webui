@@ -4127,6 +4127,9 @@ msgstr "主目录权限"
 msgid "Host"
 msgstr "主机"
 
+msgid "Host Sync"
+msgstr ""
+
 msgid "Host name database"
 msgstr "主机名数据库"
 
@@ -7493,6 +7496,9 @@ msgid ""
 "on the client."
 msgstr ""
 
+msgid "Settings saved."
+msgstr ""
+
 msgid "Setup Mode"
 msgstr "配置模式"
 
@@ -8400,6 +8406,11 @@ msgstr ""
 "href=\"https://cloud.google.com/storage/docs/authentication#generating-a-"
 "private-key\" target=\"_blank\">file must be generated</a> with the Google "
 "Cloud Platform Console and uploaded from the local system."
+
+msgid ""
+"Upsmon will wait up to this many seconds in master mode for the slaves to "
+"disconnect during a shutdown situation."
+msgstr ""
 
 msgid "Uptime"
 msgstr "运行时间"
