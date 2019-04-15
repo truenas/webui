@@ -44,12 +44,12 @@ export class SupportComponent {
         {
           type: 'paragraph',
           name: 'FN_col1',
-          paraText: '<img src="../../../assets/images/baseline-info-24px.svg">System Information'
+          paraText: '<i class="material-icons">info</i>System Information'
         },
         {
           type: 'paragraph',
           name: 'TN_col1',
-          paraText: '<img src="../../../assets/images/baseline-info-24px.svg">License Information'
+          paraText: '<i class="material-icons">info</i>License Information'
         },
         {
           type: 'paragraph',
@@ -138,7 +138,7 @@ export class SupportComponent {
         {
           type: 'paragraph',
           name: 'FN_col2',
-          paraText: '<img src="../../../assets/images/baseline-account_circle-24px.svg">Customer Information'
+          paraText: '<i class="material-icons">account_circle</i>Customer Information'
         },
         {
           type : 'input',
@@ -305,7 +305,7 @@ export class SupportComponent {
     this.entityEdit = entityEdit;
     this.category = _.find(this.fieldConfig, {name: "category"});
 
-    if (!this.is_freenas) {
+    if (this.is_freenas) {
       for (let i in this.trueNASFields) {
         this.hideField(this.trueNASFields[i], true, entityEdit);
       }

@@ -1136,14 +1136,12 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       font-size: 180%;
       margin-bottom: 15px;
 
-      & img {
-        height: 36px;
+      & .material-icons {
         margin-right: 10px;
         margin-left: -5px;
         position: relative;
         top: 10px;
-        @include variable(fill, --primary, $primary);
-
+        font-size: 36px;
       }
     }
     #support_text {
