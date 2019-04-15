@@ -44,8 +44,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { EmailComponent } from './email';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
-//import { ViewEnclosureComponent } from './viewenclosure/view-enclosure.component';
-//import { EnclosureDetailsComponent } from './viewenclosure/enclosure-details/enclosure-details.component';
 import { EnclosureModule } from './viewenclosure/enclosure.module';
 
 @NgModule({
@@ -89,8 +87,6 @@ import { EnclosureModule } from './viewenclosure/enclosure.module';
     EmailComponent,
     AlertServiceComponent,
     AlertConfigComponent,
-    //ViewEnclosureComponent,
-    //EnclosureDetailsComponent
   ],
   providers: []
 })
