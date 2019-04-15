@@ -11,12 +11,13 @@ user_form_full_name_tooltip : T('Spaces are allowed.'),
 user_form_full_name_validation : [ Validators.required ],
 user_form_username_name: 'username',
 user_form_username_placeholder : T('Username'),
-user_form_username_tooltip : T('Usernames of eight characters or less\
- are recommended for compatibility with application software, but up\
- to sixteen characters are allowed. Usernames cannot begin with a\
- hyphen (<i>-</i>) or contain a space, tab, or these characters: <i>,\
- : + & # % ^ ( ) ! @ ~ * ? < > =</i>. Note that <i>$</i> can only be\
- used as the last character.'),
+user_form_username_tooltip : T('Usernames can be up to 16 characters long.\
+ When using NIS or other legacy software with limited username lengths,\
+ keep usernames to eight characters or less for compatibility.\
+ Usernames cannot begin with a hyphen (<i>-</i>) or contain a space,\
+ tab, or these characters:\
+ <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i>. <i>$</i> can only be\
+ used as the last character of the username.'),
 user_form_username_validation: [ Validators.required, Validators.pattern('[a-zA-Z_][a-zA-Z0-9_\.-]*[$]?'), Validators.maxLength(16) ],
 user_form_email_name:'email',
 user_form_email_placeholder : T('Email'),
@@ -60,7 +61,7 @@ user_form_aux_groups_tooltip : T('Add this user to additional groups.'),
 
 user_form_dirs_title_name: T('Directories & Permissions'),
 user_form_dirs_title_class:'directories-and-permissions',
-user_form_dirs_explorer_name: 'home', 
+user_form_dirs_explorer_name: 'home',
 user_form_dirs_explorer_class: 'meExplorer',
 user_form_dirs_explorer_placeholder: T('Home Directory'),
 user_form_dirs_explorer_value: '/nonexistent',
@@ -98,6 +99,7 @@ user_form_microsoft_name : 'microsoft_account',
 user_form_microsoft_placeholder : T('Microsoft Account'),
 user_form_microsoft_tooltip : T('Set to allow additional username authentication\
  methods when the user is connecting from a Windows 8 or newer operating system.'),
-user_form_blur_event2_warning: T('Usernames of 8 characters or less are recommended for\
- compatibility with application software, but up to 16 characters are allowed.')
+user_form_blur_event2_warning: T('Usernames can be up to 16 characters long.\
+ When using NIS or other legacy software with limited username lengths,\
+ keep usernames to eight characters or less for compatibility.')
 }
