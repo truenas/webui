@@ -67,7 +67,6 @@ def test_04_checkif_lldp_off(wb_driver):
     time.sleep(2)
     # status check
     status_check(wb_driver, "6")
-    time.sleep(10)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)

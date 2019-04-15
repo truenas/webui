@@ -40,7 +40,6 @@ def test_01_nav_tasks_cloudsync(wb_driver):
 def test_02_close_system_tab(wb_driver):
     # Close the System Tab
     wb_driver.find_element_by_xpath(xpaths['navTasks']).click()
-    time.sleep(5)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)

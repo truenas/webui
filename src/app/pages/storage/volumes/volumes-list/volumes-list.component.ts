@@ -132,42 +132,42 @@ export class VolumesListTableConfig implements InputTableConf {
       localResourceName = this.resource_name, localParentVolumesList = this.parentVolumesListComponent;
 
     if (rowData.vol_encrypt === 2) {
-
       if (rowData.is_decrypted) {
-        actions.push({
-          label: T("Lock"),
-          onClick: (row1) => {
-            const conf: DialogFormConfiguration = {
-              title: T("Enter passphrase to lock pool ") + row1.name + '.',
-              fieldConfig: [
-                {
-                  type: 'input',
-                  inputType: 'password',
-                  name: 'passphrase',
-                  placeholder: 'passphrase',
-                  required: true
-                }
-              ],
-              saveButtonText: T("Lock Pool"),
-              customSubmit: function (entityDialog) {
-                const value = entityDialog.formValue;
-                localLoader.open();
-                localRest.post(localResourceName + "/" + row1.name + "/lock/", 
-                  { body: JSON.stringify({passphrase : value.passphrase}) }).subscribe((restPostResp) => {
+        if (localParentVolumesList.systemdatasetPool != rowData.name) {
+          actions.push({
+            label: T("Lock"),
+            onClick: (row1) => {
+              const conf: DialogFormConfiguration = {
+                title: T("Enter passphrase to lock pool ") + row1.name + '.',
+                fieldConfig: [
+                  {
+                    type: 'input',
+                    inputType: 'password',
+                    name: 'passphrase',
+                    placeholder: 'passphrase',
+                    required: true
+                  }
+                ],
+                saveButtonText: T("Lock Pool"),
+                customSubmit: function (entityDialog) {
+                  const value = entityDialog.formValue;
+                  localLoader.open();
+                  localRest.post(localResourceName + "/" + row1.name + "/lock/",
+                    { body: JSON.stringify({passphrase : value.passphrase}) }).subscribe((restPostResp) => {
+                      entityDialog.dialogRef.close(true);
+                      localLoader.close();
+                      localParentVolumesList.repaintMe();
+                  }, (res) => {
                     entityDialog.dialogRef.close(true);
                     localLoader.close();
-                    localParentVolumesList.repaintMe();
-                }, (res) => {
-                  entityDialog.dialogRef.close(true);
-                  localLoader.close();
-                  localDialogService.errorReport(T("Error locking pool."), res.message, res.stack);
-                });
+                    localDialogService.errorReport(T("Error locking pool."), res.message, res.stack);
+                  });
+                }
               }
+              this.dialogService.dialogForm(conf);
             }
-            this.dialogService.dialogForm(conf);
-          }
-        });
-
+          });
+        }
       } else {
         actions.push({
           label: T("Unlock"),
@@ -187,7 +187,7 @@ export class VolumesListTableConfig implements InputTableConf {
         });
       }
 
-    } else if (rowData.vol_encrypt === 1 && rowData.is_decrypted) {
+    } else if (rowData.vol_encrypt === 1 && rowData.is_decrypted && localParentVolumesList.systemdatasetPool != rowData.name) {
       actions.push({
         label: T("Create Passphrase"),
         onClick: (row1) => {
@@ -413,7 +413,7 @@ export class VolumesListTableConfig implements InputTableConf {
             }
             
           }
-          this.dialogService.dialogForm(conf);
+          this.dialogService.dialogFormWide(conf);
         }
       });
 
@@ -776,7 +776,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   expanded = false;
   public paintMe = true;
-
+  public isFooterConsoleOpen: boolean;
+  public systemdatasetPool: any;
 
   constructor(protected core: CoreService ,protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
@@ -847,6 +848,15 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.dialogService.errorReport(T("Error getting pool data."), res.message, res.stack);
     });
 
+    this.ws.call('system.advanced.config').subscribe((res)=> {
+      if (res) {
+        this.isFooterConsoleOpen = res.consolemsg;
+      }
+    });
+
+    this.ws.call('systemdataset.config').subscribe((res) => {
+      this.systemdatasetPool = res.pool;
+    })
   }
 
   ngAfterViewInit(): void {

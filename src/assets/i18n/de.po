@@ -48,7 +48,7 @@ msgid ""
 msgstr ""
 
 msgid "'. All data on that pool was destroyed."
-msgstr ""
+msgstr "'. Alle Daten in diesem Pool wurden vernichtet."
 
 msgid ""
 "'. Exporting/disconnecting a pool makes the data unavailable. The pool data "
@@ -68,16 +68,16 @@ msgid ", new vdev is "
 msgstr ""
 
 msgid ". All data on that pool was destroyed."
-msgstr ""
+msgstr ". Alle Daten in diesem Pool wurden vernichtet."
 
 msgid "0=Disabled, blank=inherit"
-msgstr ""
+msgstr "0=deaktiviert, leer=erben"
 
 msgid "20 characters is the maximum length."
-msgstr ""
+msgstr "Die maximale Länge beträgt 20 Zeichen."
 
 msgid ": Automatic update check failed. Please check system network settings."
-msgstr ""
+msgstr "Die automatische Update-Überprüfung ist fehlgeschlagen, bitte überprüfen Sie die Netzwerkeinstellungen ihres Systems."
 
 msgid ""
 "<a href=\"%%docurl%%/sharing.html%%webversion%%#block-iscsi\" "
@@ -149,7 +149,7 @@ msgid ""
 msgstr ""
 
 msgid "<b>Not recommended.</b> Allow multiple groups to share the same group ID."
-msgstr ""
+msgstr "<b>Nicht empfohlen.</b> Mehrere Gruppen dürfen dieselbe Gruppen-ID verwenden."
 
 msgid ""
 "<b>Root logins are discouraged.</b> Set to allow root logins. A password "
@@ -179,12 +179,14 @@ msgid ""
 "<b>WARNING:</b> This configuration file contains system passwords and other "
 "sensitive data.<br>"
 msgstr ""
+"<b>ACHTUNG:</b> Die Konfigurationsdatei enthält Systemkennwörter "
+"und andere sensible Daten.<br>"
 
 msgid "<b>rsyncd</b> listens on this port."
 msgstr ""
 
 msgid "<br><br>Roll back to snapshot <i>"
-msgstr ""
+msgstr "<br><br> Zurückkehren zum Snapshot <i>"
 
 msgid ""
 "<font color=\"red\">WARNING</font>: use <i>rid</i> or <i>autorid</i> for "
@@ -218,12 +220,15 @@ msgid ""
 msgstr ""
 
 msgid "<i>0</i> disables quotas. Specify a maximum allowed space for this dataset."
-msgstr ""
+msgstr "<i>0</i> Quotas deaktivieren. Geben Sie einen maximal zulässigen " 
+"Speicherplatz für dieses Dataset an."
 
 msgid ""
 "<i>0</i> is unlimited. A specified value applies to both this dataset and "
 "any child datasets."
 msgstr ""
+"<i>0</i> bedeutet unbegrenzt. Ein angegebener Wert gilt sowohl für diese "
+"Dataset, als auch für alle untergeordnete Datasets."
 
 msgid ""
 "<i>0</i> is unlimited. Reserve additional space for datasets containing "
@@ -1112,6 +1117,9 @@ msgid "Boot Loader Type"
 msgstr ""
 
 msgid "Boot Method"
+msgstr ""
+
+msgid "Boot Pool"
 msgstr ""
 
 msgid "Boot Pool Status"
@@ -7858,6 +7866,9 @@ msgstr ""
 msgid "Until"
 msgstr ""
 
+msgid "Unused"
+msgstr ""
+
 msgid "Update"
 msgstr ""
 
@@ -8250,7 +8261,7 @@ msgid "Wiping Disk..."
 msgstr ""
 
 msgid "Workgroup"
-msgstr ""
+msgstr "Arbeitsgruppe"
 
 msgid "Write a percentage limit of a single CPU core."
 msgstr ""
@@ -8265,10 +8276,10 @@ msgid ""
 msgstr ""
 
 msgid "Yes"
-msgstr ""
+msgstr "Ja"
 
 msgid "Yes, decrypt the disks"
-msgstr ""
+msgstr "Ja, die Festplatten entschlüsseln"
 
 msgid "ZFS"
 msgstr ""
@@ -8277,7 +8288,7 @@ msgid "ZFS Deduplication"
 msgstr ""
 
 msgid "ZFS Filesystem"
-msgstr ""
+msgstr "ZFS Dateisystem"
 
 msgid "ZFS Pool"
 msgstr ""
@@ -8349,10 +8360,10 @@ msgid "children_max"
 msgstr ""
 
 msgid "close"
-msgstr ""
+msgstr "Schließen"
 
 msgid "comment"
-msgstr ""
+msgstr "Kommentar"
 
 msgid "coredumpsize"
 msgstr ""
@@ -8415,7 +8426,7 @@ msgid "exec_timeout"
 msgstr ""
 
 msgid "group"
-msgstr ""
+msgstr "Gruppen"
 
 msgid "host_domainname"
 msgstr ""
@@ -8499,7 +8510,7 @@ msgid "msgqsize"
 msgstr ""
 
 msgid "name"
-msgstr ""
+msgstr "Name"
 
 msgid "nmsgq"
 msgstr ""
@@ -8520,10 +8531,10 @@ msgid "openfiles"
 msgstr ""
 
 msgid "owner"
-msgstr ""
+msgstr "Besitzer"
 
 msgid "password"
-msgstr ""
+msgstr "Passwort"
 
 msgid "pcpu"
 msgstr ""

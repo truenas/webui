@@ -27,6 +27,7 @@ xpaths = {
 
 def test_00_set_implicitly_wait(wb_driver):
     wb_driver.implicitly_wait(1)
+    time.sleep(1)
 
 
 def test_01_nav_acc_user(wb_driver):
@@ -58,14 +59,14 @@ def test_02_edit_userNAS_email(wb_driver):
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
+    time.sleep(2)
 
 
 def test_03_edit_userNAS_sudo(wb_driver):
     # Changing permission to sudo
-    ui_sudo = wb_driver.find_element_by_xpath('//*[@id="sudo"]/mat-checkbox')
     user_edit(wb_driver, "user", newusername)
     wb_driver.find_element_by_xpath('//*[@id="save_button"]').click()
-    time.sleep(15)
+    time.sleep(5)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
@@ -91,7 +92,7 @@ def test_05_edit_groupNAS_sudo(wb_driver):
     user_edit(wb_driver, "group", newgroupname)
     wb_driver.find_element_by_xpath(xpaths['group']).click()
     wb_driver.find_element_by_xpath('//*[@id="save_button"]').click()
-    time.sleep(20)
+    time.sleep(5)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
