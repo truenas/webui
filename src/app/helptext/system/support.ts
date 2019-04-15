@@ -6,7 +6,7 @@ export const helptext_system_support = {
     placeholder: T("Username"),
     tooltip: T(
       'Enter a valid username for the <a\
- href="https://redmine.ixsystems.com/projects/freenas/issues"\
+ href="https://jira.ixsystems.com/projects/NAS/issues/"\
  target="_blank">FreeNAS bug tracking system</a>'
     ),
     validation: [Validators.required]

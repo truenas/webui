@@ -60,7 +60,6 @@ export class SupportComponent  {
       blurStatus : true,
       blurEvent : this.blurEvent,
       parent : this,
-      togglePw : true,
       value: '',
     },
     {
