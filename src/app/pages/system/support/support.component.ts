@@ -32,6 +32,7 @@ export class SupportComponent {
   public password_fc: any;
   public username_fc: any;
   public is_freenas: Boolean = window.localStorage['is_freenas'];
+  public product_image = '';
 
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
@@ -74,7 +75,7 @@ export class SupportComponent {
         {
           type: 'paragraph',
           name: 'FN_model',
-          paraText: '<h4>Processor: </h4>'
+          paraText: '<h4>Model: </h4>'
         },
         {
           type: 'paragraph',
@@ -124,7 +125,7 @@ export class SupportComponent {
         {
           type: 'paragraph',
           name: 'pic',
-          paraText: '<img src="../../../assets/images/freenas_mini.png" height="400" width="400">'
+          paraText: ''
         },
       ]
     },
@@ -149,7 +150,6 @@ export class SupportComponent {
           blurStatus : true,
           blurEvent : this.blurEvent,
           parent : this,
-          togglePw : true,
           value: '',
         },
         {
@@ -231,7 +231,9 @@ export class SupportComponent {
           tooltip : helptext.category.tooltip,
           required: true,
           validation : helptext.category.validation,
-          options:[]
+          options:[
+            {label: 'Temp Option', value: 'temp_option'}
+          ]
         },
         {
           type : 'checkbox',
@@ -254,6 +256,11 @@ export class SupportComponent {
           tooltip : helptext.body.tooltip,
           required: true,
           validation : helptext.body.validation
+        },
+        {
+          type : 'readfile',
+          name: 'screenshot',
+          tooltip : helptext.screenshot.tooltip,
         }
       ]
     }
@@ -301,13 +308,20 @@ export class SupportComponent {
       for (let i in this.trueNASFields) {
         this.hideField(this.trueNASFields[i], true, entityEdit);
       }
+      this.product_image = 'freenas_mini.png';
       this.ws.call('system.info').subscribe((res) => {
+        if (res.system_product === 'VirtualBox') {
+          this.product_image = 'virtualbox_logo.png';
+        } else {
+          this.product_image = 'freenas_mini.png';
+        }
         _.find(this.fieldConfig, {name : "FN_version"}).paraText += res.version;
-        _.find(this.fieldConfig, {name : "FN_model"}).paraText += res.model;
+        _.find(this.fieldConfig, {name : "FN_model"}).paraText += res.system_product;
         _.find(this.fieldConfig, {name : "FN_memory"}).paraText += Number(res.physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB';
         _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText ? 
-          _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText += res.system_serial :
-          _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText = '';
+        _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText += res.system_serial :
+        _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText = '';
+        _.find(this.fieldConfig, {name : "pic"}).paraText = `<img src="../../../assets/images/${this.product_image}" height="400" width="400">`;
       })
     } else {
       for (let i in this.freeNASFields) {
@@ -328,15 +342,29 @@ export class SupportComponent {
   customSubmit(entityEdit): void{
     // TODO: if freenas or if truenas, break out categories to submit
     // Waiting on API update to reflect change to Jira
-    this.payload['username'] = entityEdit.username;
-    this.payload['password'] = entityEdit.password;
-    this.payload['category'] = entityEdit.category;
-    this.payload['attach_debug'] = entityEdit.attach_debug;
-    this.payload['title'] = entityEdit.title;
-    this.payload['body'] = entityEdit.body;
-    this.payload['type'] = entityEdit.type;
+    if (this.is_freenas) {
+      this.payload['username'] = entityEdit.username;
+      this.payload['password'] = entityEdit.password;
+      this.payload['category'] = entityEdit.category;
+      this.payload['attach_debug'] = entityEdit.attach_debug;
+      this.payload['title'] = entityEdit.title;
+      this.payload['body'] = entityEdit.body;
+      this.payload['type'] = entityEdit.type;
+      this.payload['file'] = entityEdit.file;
+    } else {
+      this.payload['name'] = entityEdit.name;
+      this.payload['email'] = entityEdit.email;
+      this.payload['phone'] = entityEdit.phone;
+      this.payload['category'] = entityEdit.category;
+      this.payload['environment'] = entityEdit.environment;
+      this.payload['attach_debug'] = entityEdit.attach_debug;
+      this.payload['title'] = entityEdit.title;
+      this.payload['body'] = entityEdit.body;
+    }
 
-    this.openDialog();
+    console.log(this.payload)
+
+    // this.openDialog();
   };
 
   openDialog() {

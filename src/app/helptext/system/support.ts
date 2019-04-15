@@ -89,5 +89,9 @@ export const helptext_system_support = {
  replicate the issue."
     ),
     validation: [Validators.required]
+  },
+
+  screenshot: {
+  tooltip: T( "Attach a screenshot.")
   }
 };

@@ -995,6 +995,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     width: 70% !important;
   }
 
+  app-support .has-pwtoggle > mat-form-field {
+    width: calc( 100% - 66px ) !important;
+  }
+
   app-entity-dialog .has-pwtoggle  {
     padding: 0 0 10px 0 !important;
     width: 385px !important;
