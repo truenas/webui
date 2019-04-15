@@ -1135,14 +1135,33 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     #FN_col1, #FN_col2, #TN_col1 {
       font-size: 180%;
       margin-bottom: 15px;
+
+      & img {
+        height: 36px;
+        margin-right: 10px;
+        margin-left: -5px;
+        position: relative;
+        top: 10px;
+        @include variable(fill, --primary, $primary);
+
+      }
     }
     #support_text {
       font-size: 110%;
       margin-right: 30px;
     }
     h4 {
-      font-size: 140%;
-      margin-top: 30px;
+      font-size: 130%;
+      margin-top: 15px;
+      margin-bottom: 5px;
+    }
+    #pic {
+      text-align: center;
+      margin-top: 25px;
+      margin-bottom: -25px;
+    }
+    .mat-card-actions {
+      text-align: right;
     }
   }
 

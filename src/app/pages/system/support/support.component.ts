@@ -44,12 +44,12 @@ export class SupportComponent {
         {
           type: 'paragraph',
           name: 'FN_col1',
-          paraText: '<img src="../../../assets/images/favicon-32x32.png">System Information'
+          paraText: '<img src="../../../assets/images/baseline-info-24px.svg">System Information'
         },
         {
           type: 'paragraph',
           name: 'TN_col1',
-          paraText: 'License Information'
+          paraText: '<img src="../../../assets/images/baseline-info-24px.svg">License Information'
         },
         {
           type: 'paragraph',
@@ -71,21 +71,6 @@ export class SupportComponent {
           type: 'paragraph',
           name: 'FN_version',
           paraText: '<h4>OS Version: </h4>'
-        },
-        {
-          type: 'paragraph',
-          name: 'FN_model',
-          paraText: '<h4>Model: </h4>'
-        },
-        {
-          type: 'paragraph',
-          name: 'FN_memory',
-          paraText: '<h4>Memory: </h4>'
-        },
-        {
-          type: 'paragraph',
-          name: 'FN_sysserial',
-          paraText: '<h4>Serial Number: </h4>'
         },
         {
           type: 'paragraph',
@@ -124,6 +109,21 @@ export class SupportComponent {
         },
         {
           type: 'paragraph',
+          name: 'FN_model',
+          paraText: '<h4>Model: </h4>'
+        },
+        {
+          type: 'paragraph',
+          name: 'FN_memory',
+          paraText: '<h4>Memory: </h4>'
+        },
+        {
+          type: 'paragraph',
+          name: 'FN_sysserial',
+          paraText: '<h4>Serial Number: </h4>'
+        },
+        {
+          type: 'paragraph',
           name: 'pic',
           paraText: ''
         },
@@ -138,7 +138,7 @@ export class SupportComponent {
         {
           type: 'paragraph',
           name: 'FN_col2',
-          paraText: '<img src="../../../assets/images/favicon-32x32.png">Customer Information'
+          paraText: '<img src="../../../assets/images/baseline-account_circle-24px.svg">Customer Information'
         },
         {
           type : 'input',
@@ -291,7 +291,8 @@ export class SupportComponent {
     'email',
     'phone',
     'environment',
-    'criticality'
+    'criticality',
+    'screenshot'
   ];
 
   constructor(protected router: Router, protected rest: RestService,
@@ -304,7 +305,7 @@ export class SupportComponent {
     this.entityEdit = entityEdit;
     this.category = _.find(this.fieldConfig, {name: "category"});
 
-    if (this.is_freenas) {
+    if (!this.is_freenas) {
       for (let i in this.trueNASFields) {
         this.hideField(this.trueNASFields[i], true, entityEdit);
       }
@@ -321,17 +322,23 @@ export class SupportComponent {
         _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText ? 
         _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText += res.system_serial :
         _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText = '';
-        _.find(this.fieldConfig, {name : "pic"}).paraText = `<img src="../../../assets/images/${this.product_image}" height="400" width="400">`;
+        _.find(this.fieldConfig, {name : "pic"}).paraText = `<img src="../../../assets/images/${this.product_image}" height="200">`;
       })
     } else {
       for (let i in this.freeNASFields) {
         this.hideField(this.freeNASFields[i], true, entityEdit);
       }  
       this.ws.call('system.info').subscribe((res) => {
+        if (res.system_product === 'VirtualBox') {
+          this.product_image = 'virtualbox_logo.png';
+        } else {
+          this.product_image = 'freenas_mini.png';
+        }
+        _.find(this.fieldConfig, {name : "pic"}).paraText = `<img src="../../../assets/images/${this.product_image}" height="200">`;
         _.find(this.fieldConfig, {name : "TN_model"}).paraText += res.system_product;
         _.find(this.fieldConfig, {name : "TN_custname"}).paraText += '???';
         _.find(this.fieldConfig, {name : "TN_sysserial"}).paraText += res.system_serial;
-        _.find(this.fieldConfig, {name : "TN_featrures"}).paraText += '???';
+        _.find(this.fieldConfig, {name : "TN_features"}).paraText += '???';
         _.find(this.fieldConfig, {name : "TN_contracttype"}).paraText += res.contract_type;
         _.find(this.fieldConfig, {name : "TN_contractdate"}).paraText += res.contract_end.$value || '';
         _.find(this.fieldConfig, {name : "TN_addhardware"}).paraText += '???';
@@ -340,8 +347,6 @@ export class SupportComponent {
   }
 
   customSubmit(entityEdit): void{
-    // TODO: if freenas or if truenas, break out categories to submit
-    // Waiting on API update to reflect change to Jira
     if (this.is_freenas) {
       this.payload['username'] = entityEdit.username;
       this.payload['password'] = entityEdit.password;
@@ -350,7 +355,6 @@ export class SupportComponent {
       this.payload['title'] = entityEdit.title;
       this.payload['body'] = entityEdit.body;
       this.payload['type'] = entityEdit.type;
-      this.payload['file'] = entityEdit.file;
     } else {
       this.payload['name'] = entityEdit.name;
       this.payload['email'] = entityEdit.email;
@@ -360,11 +364,10 @@ export class SupportComponent {
       this.payload['attach_debug'] = entityEdit.attach_debug;
       this.payload['title'] = entityEdit.title;
       this.payload['body'] = entityEdit.body;
+      // this.payload['file'] = entityEdit.file;
     }
 
-    console.log(this.payload)
-
-    // this.openDialog();
+    this.openDialog();
   };
 
   openDialog() {
