@@ -495,6 +495,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     opacity: 0.38;
   }
 
+  .mat-form-field.mat-focused.mat-primary .mat-select-arrow {
+    @include variable(color, --primary, $primary);
+  }
+
   .mat-checkbox-disabled .mat-checkbox-label {
     opacity: 0.75;
   }
