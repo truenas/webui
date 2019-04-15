@@ -2,7 +2,7 @@ import { ApplicationRef, Component, Injector, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { RestService, WebSocketService } from 'app/services/';
 import { MaterialModule } from 'app/appMaterial.module';
-import { EnclosureDetailsComponent} from './enclosure-details/enclosure-details.component';
+import { EnclosureDisksComponent} from './enclosure-disks/enclosure-disks.component';
 
 // import { MatDialog } from '@angular/material';
 // import { helptext_system_email } from 'app/helptext/system/email';
@@ -55,4 +55,4 @@ export class ViewEnclosureComponent implements OnDestroy {
   constructor(){}
 
   ngOnDestroy(){}
-    }
+}

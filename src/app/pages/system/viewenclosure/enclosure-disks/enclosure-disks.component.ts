@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ElementRef, NgZone, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, NgZone, OnDestroy } from '@angular/core';
 import { Application, Container, Text, DisplayObject, Graphics, Sprite, Texture} from 'pixi.js';
 //import 'pixi-filters';
 import 'pixi-projection';
@@ -7,13 +7,14 @@ import { M50 } from 'app/core/classes/hardware/m50';
 //declare const PIXI: any;
 
 @Component({
-  selector: 'enclosure-details',
-  template: ``,
-  styleUrls: ['./enclosure-details.component.css']
+  selector: 'enclosure-disks',
+  templateUrl: './enclosure-disks.component.html',
+  styleUrls: ['./enclosure-disks.component.css']
 })
 
-export class EnclosureDetailsComponent implements AfterViewInit, OnDestroy {
+export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
 
+  @ViewChild('disksvisualizer') visualizer: ElementRef;
   public app;
   private renderer;
   private loader = PIXI.loader;
@@ -50,7 +51,8 @@ export class EnclosureDetailsComponent implements AfterViewInit, OnDestroy {
 
     this.renderer = this.app.renderer;
     this.app.renderer.backgroundColor = 0x000000;
-    this.el.nativeElement.appendChild(this.app.view);
+    //this.el.nativeElement.appendChild(this.app.view);
+    this.visualizer.nativeElement.appendChild(this.app.view);
 
     this.container = new PIXI.Container();
     this.app.stage.addChild(this.container);

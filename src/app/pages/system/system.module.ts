@@ -44,14 +44,16 @@ import { TranslateModule } from '@ngx-translate/core';
 import { EmailComponent } from './email';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
-import { ViewEnclosureComponent } from './viewenclosure/view-enclosure.component';
-import { EnclosureDetailsComponent } from './viewenclosure/enclosure-details/enclosure-details.component';
+//import { ViewEnclosureComponent } from './viewenclosure/view-enclosure.component';
+//import { EnclosureDetailsComponent } from './viewenclosure/enclosure-details/enclosure-details.component';
+import { EnclosureModule } from './viewenclosure/enclosure.module';
 
 @NgModule({
   imports: [
     EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, NgUploaderModule, routing,
-    MaterialModule, MarkdownModule.forRoot(), TranslateModule, FlexLayoutModule
+    MaterialModule, MarkdownModule.forRoot(), TranslateModule, FlexLayoutModule,
+    EnclosureModule
   ],
   declarations: [
     GeneralComponent,
@@ -87,8 +89,8 @@ import { EnclosureDetailsComponent } from './viewenclosure/enclosure-details/enc
     EmailComponent,
     AlertServiceComponent,
     AlertConfigComponent,
-    ViewEnclosureComponent,
-    EnclosureDetailsComponent
+    //ViewEnclosureComponent,
+    //EnclosureDetailsComponent
   ],
   providers: []
 })
