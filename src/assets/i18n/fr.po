@@ -4,14 +4,6 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid ""
-" Enable to determine if the system advertises itself as a time server to "
-"Windows clients. Disable when the network contains an AD or LDAP server."
-msgstr ""
-"Activer pour déterminer si le système s'annonce comme un serveur de temps "
-"pour les clients Windows. Désactiver lorsque le réseau contient un serveur "
-"AD ou LDAP."
-
 msgid " First vdev has "
 msgstr " Premier vdev a"
 
@@ -39,6 +31,9 @@ msgstr " disques, nouveau vdev a "
 msgid ""
 " is the minimum recommended record size. Choosing a smaller size can reduce "
 "system performance."
+msgstr ""
+
+msgid " updated."
 msgstr ""
 
 msgid "% of all cores"
@@ -176,14 +171,9 @@ msgstr ""
 msgid ""
 "<b>Root logins are discouraged.</b> Set to allow root logins. A password "
 "must be set for the <i>root</i> user in <a "
-"href=\"%%docurl%%/account.html%%webversion%%#users\" "
+"href=\"%%docurl%%/accounts.html%%webversion%%#users\" "
 "target=\"_blank\">Users</a>."
 msgstr ""
-"<b>Les connexions avec l'utilisateur root sont déconseillées</b> Défini "
-"pour autoriser les connexions root. Un mot de passe doit être défini pour "
-"l'utilisateur <i>root</i> dans <a "
-"href=\"%%docurl%%/account.html%%webversion%%#users\" "
-"target=\"_blank\">Utilisateurs</a>."
 
 msgid ""
 "<b>SED (<a "
@@ -694,6 +684,9 @@ msgstr ""
 msgid "Administrator Password"
 msgstr ""
 
+msgid "Administrators Group"
+msgstr ""
+
 msgid "Adv. Power Management"
 msgstr ""
 
@@ -1044,6 +1037,9 @@ msgid "Auxiliary Parameters (ups.conf)"
 msgstr ""
 
 msgid "Auxiliary Parameters (upsd.conf)"
+msgstr ""
+
+msgid "Auxiliary arguments"
 msgstr ""
 
 msgid "Auxiliary parameters"
@@ -2515,9 +2511,6 @@ msgstr ""
 msgid "Domain Account Password"
 msgstr ""
 
-msgid "Domain Controller"
-msgstr ""
-
 msgid "Domain Forest Level"
 msgstr ""
 
@@ -2607,9 +2600,6 @@ msgid ""
 msgstr ""
 
 msgid "Enable"
-msgstr ""
-
-msgid "Enable AD Monitoring"
 msgstr ""
 
 msgid "Enable Atime"
@@ -2980,6 +2970,12 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Enter a threshold temperature in Celsius. If the drive temperature is "
+"higher than this value, a LOG_CRIT level log entry is created and an email "
+"is sent. Entering 0 disables this check."
+msgstr ""
+
+msgid ""
 "Enter a threshold temperature in Celsius. SMART will message with a log "
 "level of LOG_CRIT and send an email if the temperature is higher than the "
 "threshold."
@@ -3051,7 +3047,7 @@ msgstr ""
 
 msgid ""
 "Enter accounts that have administrative access. See <a "
-"href=\"http://networkupstools.org/docs/man/upsd.users.html\" "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=upsd.users\" "
 "target=\"_blank\">upsd.users(5)</a> for examples."
 msgstr ""
 
@@ -3085,14 +3081,6 @@ msgid "Enter an alphanumeric name for the group."
 msgstr ""
 
 msgid "Enter an alphanumeric name for the virtual machine."
-msgstr ""
-
-msgid ""
-"Enter an alphanumeric username of eight to sixteen characters. Keeping "
-"usernames to eight characters or less is recommended for compatibility with "
-"legacy clients. Usernames cannot begin with a hyphen (<i>-</i>) or contain "
-"a space, tab, or these characters: <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i> "
-"Note that <i>$</i> can only be used as the last character."
 msgstr ""
 
 msgid ""
@@ -3600,7 +3588,7 @@ msgstr ""
 msgid "Extent type"
 msgstr ""
 
-msgid "Extra Users(upsd.conf)"
+msgid "Extra Users"
 msgstr ""
 
 msgid "Extra options"
@@ -3742,9 +3730,6 @@ msgid ""
 "to use the entire capacity of the new device."
 msgstr ""
 
-msgid "Global Catalog Server"
-msgstr ""
-
 msgid "Global Configuration"
 msgstr ""
 
@@ -3842,6 +3827,9 @@ msgid "Home Directory Permissions"
 msgstr ""
 
 msgid "Host"
+msgstr ""
+
+msgid "Host Sync"
 msgstr ""
 
 msgid "Host name database"
@@ -4011,11 +3999,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"If set, users can press <b>Enter</b> when prompted for a password. Requires "
-"the username and password to be the same as the Windows user account."
-msgstr ""
-
-msgid ""
 "If the IPMI out-of-band management interface is on a different VLAN from "
 "the management network, enter the IPMI VLAN."
 msgstr ""
@@ -4174,6 +4157,9 @@ msgstr ""
 msgid "Jail"
 msgstr ""
 
+msgid "Jail "
+msgstr ""
+
 msgid ""
 "Jail CPU affinity. Options are <i>off</i> or a combination of <i>1-4</i>, "
 "separated by commas (,). <b>Example:</b> <i>1,2,3,4</i>"
@@ -4188,6 +4174,9 @@ msgstr ""
 msgid "Jail Type"
 msgstr ""
 
+msgid "Jail Update Failed"
+msgstr ""
+
 msgid "Jail core dump size in bytes."
 msgstr ""
 
@@ -4195,9 +4184,6 @@ msgid "Jail data size in bytes."
 msgstr ""
 
 msgid "Jail stack size in bytes."
-msgstr ""
-
-msgid "Jail updated successfully."
 msgstr ""
 
 msgid "Jails"
@@ -4551,6 +4537,12 @@ msgid "Members"
 msgstr ""
 
 msgid "Members of"
+msgstr ""
+
+msgid ""
+"Members of this group are local admins and automatically have privileges to "
+"take ownership of any file in an SMB share, reset permissions, and "
+"administer the SMB server through the Computer Management MMC snap-in."
 msgstr ""
 
 msgid "Memory"
@@ -5001,12 +4993,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Only set if the AD server is explicitly configured to  map permissions for "
-"UNIX users. Setting provides persistent UIDs and GUIDs. Leave unset to map "
-"users  and groups to the UID or GUID range configured in Samba."
-msgstr ""
-
-msgid ""
 "Only works with Unix ACLs. New directories created on the share are set "
 "with the selected permissions."
 msgstr ""
@@ -5065,16 +5051,6 @@ msgid "Organizational unit of the entity."
 msgstr ""
 
 msgid "Outgoing Mail Server"
-msgstr ""
-
-msgid ""
-"Overrides default directory creation mask of <i>0777</i> which grants "
-"directory read, write and execute access for everybody."
-msgstr ""
-
-msgid ""
-"Overrides default file creation mask of <i>0666</i> which creates files "
-"with read and write access for everybody."
 msgstr ""
 
 msgid "Owner of the jail. Can be any string."
@@ -5225,10 +5201,16 @@ msgstr ""
 msgid "Please wait"
 msgstr ""
 
+msgid "Plugin "
+msgstr ""
+
 msgid "Plugin Installed Successfully"
 msgstr ""
 
 msgid "Plugin Name"
+msgstr ""
+
+msgid "Plugin Update Failed"
 msgstr ""
 
 msgid "Plugin installed successfully"
@@ -5565,6 +5547,16 @@ msgid "Replication Tasks"
 msgstr ""
 
 msgid "Report CPU usage in percentage"
+msgstr ""
+
+msgid ""
+"Report if drive temperature is at or above this temperature in Celsius. "
+"Entering 0 disables the report."
+msgstr ""
+
+msgid ""
+"Report if the temperature of a drive has changed by this many degrees "
+"Celsius since the last report. Entering 0 disables the report."
 msgstr ""
 
 msgid "Reporting"
@@ -6254,7 +6246,10 @@ msgstr ""
 msgid "Select zvol"
 msgstr ""
 
-msgid "Selected Jail(s) updated successfully."
+msgid "Selected jails updated."
+msgstr ""
+
+msgid "Selected plugins updated."
 msgstr ""
 
 msgid "Send Email Status Updates"
@@ -6357,11 +6352,6 @@ msgid "Set for ypbind to bind to the server that responds the fastest."
 msgstr ""
 
 msgid "Set if NFS clients need to use UDP."
-msgstr ""
-
-msgid ""
-"Set if it is necessary to provide the netlogin service for older Windows "
-"clients."
 msgstr ""
 
 msgid ""
@@ -6496,11 +6486,6 @@ msgstr ""
 msgid ""
 "Set to allow anonymous FTP logins with access to the directory specified in "
 "<b>Path</b>."
-msgstr ""
-
-msgid ""
-"Set to allow non-Windows SMB clients to access symbolic links and hard "
-"links. Has no effect on Windows clients."
 msgstr ""
 
 msgid ""
@@ -6897,9 +6882,6 @@ msgid ""
 "slow connections."
 msgstr ""
 
-msgid "Set to restart Active Directory automatically if the service disconnects."
-msgstr ""
-
 msgid "Set to run resilver tasks between the configured times."
 msgstr ""
 
@@ -7068,6 +7050,9 @@ msgstr ""
 msgid ""
 "Setting this option will result in timeouts if <b>identd</b> is not running "
 "on the client."
+msgstr ""
+
+msgid "Settings saved."
 msgstr ""
 
 msgid "Setup Mode"
@@ -7360,9 +7345,6 @@ msgstr ""
 msgid "Successfully updated."
 msgstr ""
 
-msgid "Successfully upgraded plugin."
-msgstr ""
-
 msgid "Suffix for LDAP-based users that need superuser access."
 msgstr ""
 
@@ -7597,8 +7579,9 @@ msgid ""
 msgstr ""
 
 msgid ""
-"The envelope From address shown in the email. This is set to assist with "
-"filtering mail on the receiving system."
+"The envelope <i>From</i> address shown in the email. This can be set to "
+"make filtering mail on the receiving system easier. The friendly name is "
+"set like this: <i>\"Friendly Name\" <address@example.com></i>"
 msgstr ""
 
 msgid ""
@@ -7678,13 +7661,6 @@ msgid ""
 "device.<br /> <br />"
 msgstr ""
 
-msgid ""
-"The server that manages user authentication and security as part of a "
-"Windows domain. Leave empty to use the DNS SRV records to automatically "
-"detect and connect to the domain controller. If the domain controller must "
-"be set manually, enter the server hostname or IP address."
-msgstr ""
-
 msgid "The specified permissions of that group are used by all clients."
 msgstr ""
 
@@ -7723,6 +7699,11 @@ msgid ""
 "the disks in the pool for a general use case."
 msgstr ""
 
+msgid ""
+"These arguments are passed to <a href=\"https://rclone.org/docs/\" "
+"target=\"_blank\">rclone</a>."
+msgstr ""
+
 msgid "Third DNS server"
 msgstr ""
 
@@ -7733,17 +7714,6 @@ msgid ""
 "This field remains empty until a valid <b>Username</b> and <b>Password</b> "
 "is entered. Choose the category that best describes the bug or feature "
 "being reported."
-msgstr ""
-
-msgid ""
-"This holds a full set of attributes for the domain in which it resides and "
-"a subset of attributes for all objects in the Microsoft Active Directory "
-"Forest. See the <a "
-"href=\"https://www.ibm.com/support/knowledgecenter/en/SSEQTP_9.0.0/com.ibm."
-"websphere.base.doc/ae/csec_was_ad_globcat.html\" target=\"_blank\">IBM "
-"Knowledge Center</a>. Leave empty to use the DNS SRV records to "
-"automatically detect and connect to the server. If the global catalog "
-"server must be entered manually, enter the server hostname or IP address."
 msgstr ""
 
 msgid "This is the FreeBSD device name for the disk."
@@ -7815,12 +7785,6 @@ msgstr ""
 msgid "UNIX Charset"
 msgstr ""
 
-msgid "UNIX Extensions"
-msgstr ""
-
-msgid "UNIX extensions"
-msgstr ""
-
 msgid "UPS Mode"
 msgstr ""
 
@@ -7851,14 +7815,6 @@ msgstr ""
 msgid ""
 "Unmask is used for newly created files. Default is <i>000</i> (anyone can "
 "read, write, and execute)."
-msgstr ""
-
-msgid ""
-"Unselect this option to allow cross-domain authentication, users and groups "
-"to be managed on another forest, and permissions to be delegated from <a "
-"href=\"%%docurl%%/directoryservices.html%%webversion%%#active-directory\" "
-"target=\"_blank\">Active Directory</a> users and groups to domain admins on "
-"another forest."
 msgstr ""
 
 msgid "Unset to add a login prompt to the system before the console menu is shown."
@@ -7918,31 +7874,31 @@ msgstr ""
 msgid "Updates successfully downloaded"
 msgstr ""
 
+msgid "Updating Jail"
+msgstr ""
+
+msgid "Updating Plugin"
+msgstr ""
+
 msgid "Updating group members"
 msgstr ""
 
-msgid "Upgrade"
+msgid "Updating selected jails failed."
+msgstr ""
+
+msgid "Updating selected plugins failed."
+msgstr ""
+
+msgid "Updating selected plugins."
 msgstr ""
 
 msgid "Upgrade Pool"
-msgstr ""
-
-msgid "Upgrade selected jails failed."
-msgstr ""
-
-msgid "Upgrade selected jails started."
-msgstr ""
-
-msgid "Upgrade selected jails succeeded."
 msgstr ""
 
 msgid "Upgraded"
 msgstr ""
 
 msgid "Upgrading Jail"
-msgstr ""
-
-msgid "Upgrading Plugin"
 msgstr ""
 
 msgid "Upload"
@@ -7959,6 +7915,11 @@ msgid ""
 "href=\"https://cloud.google.com/storage/docs/authentication#generating-a-"
 "private-key\" target=\"_blank\">file must be generated</a> with the Google "
 "Cloud Platform Console and uploaded from the local system."
+msgstr ""
+
+msgid ""
+"Upsmon will wait up to this many seconds in master mode for the slaves to "
+"disconnect during a shutdown situation."
 msgstr ""
 
 msgid "Uptime"
@@ -8065,6 +8026,14 @@ msgstr ""
 msgid ""
 "Usernames of 8 characters or less are recommended for compatibility with "
 "application software, but up to 16 characters are allowed."
+msgstr ""
+
+msgid ""
+"Usernames of eight characters or less are recommended for compatibility "
+"with application software, but up to sixteen characters are allowed. "
+"Usernames cannot begin with a hyphen (<i>-</i>) or contain a space, tab, or "
+"these characters: <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i>. Note that "
+"<i>$</i> can only be used as the last character."
 msgstr ""
 
 msgid "Users"
@@ -8223,11 +8192,6 @@ msgid ""
 "When enabled, the ACLs grant read and write access for owner or group and "
 "read-only for others. <b>Only</b> leave unset when creating a share on a "
 "system that already has custom ACLs configured."
-msgstr ""
-
-msgid ""
-"When selected, Samba allows the user to execute a file, even if that user’s "
-"permissions are not set to execute."
 msgstr ""
 
 msgid ""
