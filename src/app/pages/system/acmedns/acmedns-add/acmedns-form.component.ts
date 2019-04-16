@@ -22,10 +22,15 @@ export class AcmednsFormComponent {
   protected fieldConfig: FieldConfig[];
     public fieldSets: FieldSet[] = [
       {
-        name: helptext.select_auth_label,
+        name: 'Add DNS Authenticator',
         label: true,
-        width: '45%',
+        width: '50%',
         config:[
+          {
+            type: 'paragraph',
+            name: 'select_auth',
+            paraText: '<i class="material-icons">looks_one</i>' + helptext.select_auth_label
+          },
           {
             type : 'input',
             name : helptext.authenticator_name_name,
@@ -50,10 +55,15 @@ export class AcmednsFormComponent {
       },
       {
         name: helptext.auth_attributes_label,
-        width: '45%',
-        label: true,
+        width: '50%',
+        label: false,
         config:[
           // Route 53
+          {
+            type: 'paragraph',
+            name: 'auth_attributes',
+            paraText: '<i class="material-icons">looks_two</i>' + helptext.auth_attributes_label
+          },
           {
             type : 'input',
             name : helptext.auth_credentials_1_name,
