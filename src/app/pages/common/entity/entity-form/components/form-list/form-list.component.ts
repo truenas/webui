@@ -16,37 +16,40 @@ export class FormListComponent implements Field, OnInit{
   fieldShow: string;
 
   public listLength = 1;
-  public listFromArray: FormArray;
-  public listControl: AbstractControl;
+  public listsFromArray: FormArray;
+  public formlistControl: AbstractControl;
 
   constructor(private entityFormService: EntityFormService, private formBuilder: FormBuilder,){}
 
   ngOnInit() {
-    console.log(this.config, this.group);
-    this.listFromArray = this.formBuilder.array([]);
-    this.listFromArray.push(this.entityFormService.createFormGroup(this.config.listFields));
-    console.log(this.listFromArray);
-    this.listControl = this.group.controls[this.config.name];
-    console.log(this.listControl);
-    
-    this.listFromArray.valueChanges.subscribe((res)=> {
-        console.log(res);
-        this.listControl.setValue(this.getListControlValue());
+    this.listsFromArray = this.formBuilder.array([]);
+    this.listsFromArray.push(this.entityFormService.createFormGroup(this.config.listFields));
+
+    this.formlistControl = this.group.controls[this.config.name];
+
+    this.listsFromArray.valueChanges.subscribe((res)=> {
+        this.formlistControl.setValue(this.getListControlValue());
     })
   }
 
   getListControlValue() {
-    for (let i = 0; i < this.listFromArray.controls.length; i++) {
-        console.log(this.listFromArray.controls[i]);
-        
+    const listsValue = [];
+    for (let i = 0; i < this.listsFromArray.controls.length; i++) {
+        const listValue = [];
+        const listFormGroup = this.listsFromArray.controls[i] as FormGroup;
+        for (const prop in listFormGroup.controls) {
+          listValue[prop] = listFormGroup.controls[prop].value;
+        }
+        listsValue.push(listValue);
     }
+    return listsValue;
   }
+
   add() {
-    this.listFromArray.push(this.entityFormService.createFormGroup(this.config.listFields));
-    console.log(this.listFromArray);
+    this.listsFromArray.push(this.entityFormService.createFormGroup(this.config.listFields));
   }
 
   delete(id) {
-    this.listFromArray.removeAt(id);
+    this.listsFromArray.removeAt(id);
   }
 }

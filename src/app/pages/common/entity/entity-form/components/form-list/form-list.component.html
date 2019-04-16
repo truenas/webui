@@ -1,10 +1,10 @@
 <div id="{{config.name}}" class="dynamic-field form-list" [formGroup]="group" [ngClass]="fieldShow">
     <ng-container>
-        <div *ngFor="let liControl of listFromArray.controls; let i = index">
+        <div *ngFor="let liControl of listsFromArray.controls; let i = index">
             <div *ngFor="let field of config.listFields; let ii = index" fxFlex="100%"
                 fxFlex.gt-xs="calc({{field.width}} - 16px)"
                 [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'">
-                <div dynamicField [config]="field" [group]="listFromArray.controls[i]"></div>
+                <div dynamicField [config]="field" [group]="listsFromArray.controls[i]"></div>
             </div>
             <button *ngIf="i === 0; else deleteButton" mat-button type="button" (click)="add()">Add</button>
             <ng-template #deleteButton>
