@@ -13,6 +13,7 @@ import { EnclosureDisksComponent} from './enclosure-disks/enclosure-disks.compon
 interface ViewConfig {
   name: string;
   icon: string;
+  id: number;
   showInNavbar: boolean;
 }
 
@@ -23,34 +24,43 @@ interface ViewConfig {
 })
 export class ViewEnclosureComponent implements OnDestroy {
 
-  public currentView: string = 'Global Map';
+  public currentView: string = 'Disks';
   public views: ViewConfig[] = [
     { 
       name: 'Disks',
       icon: "any",
+      id: 0,
       showInNavbar: true
     },
     { 
       name: 'Cooling',
       icon: "any",
+      id: 1,
       showInNavbar: true
     },
     { 
       name: 'Power Supply',
       icon: "any",
+      id: 2,
       showInNavbar: true
     },
     { 
       name: 'Voltage',
       icon: "any",
+      id: 3,
       showInNavbar: true
     },
     { 
-      name: 'Global Map',
+      name: 'Pools',
       icon: "any",
+      id: 4,
       showInNavbar: false
     }
   ]
+
+  changeView(id){
+    this.currentView = this.views[id].name;
+  }
 
   constructor(){}
 

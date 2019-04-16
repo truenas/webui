@@ -1,7 +1,7 @@
 <nav class="view-nav-bar">
   <span *ngFor="let button of views; let i=index;">
-    <span *ngIf="button.showInNavbar" class="view-nav-btn mat-button mat-default">{{button.name}}</span>
+    <span *ngIf="button.showInNavbar" class="view-nav-btn mat-button mat-default" (click)="changeView(button.id)">{{button.name}}</span>
   </span>
 </nav>
 
-<enclosure-disks></enclosure-disks>
+<enclosure-disks *ngIf="currentView == 'Disks' "></enclosure-disks>

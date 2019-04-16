@@ -22,3 +22,50 @@ nav.view-nav-bar{
   min-height:480px;
   padding:0;
 }
+
+.view-card #disks-overview{
+  height:304px;
+}
+
+.view-card #disks-details{
+  height:250px;
+}
+
+.view-card #disks-details-header{
+  font-size: 1.15rem;
+  border-bottom:solid 1px var(--bg1);
+  padding:12px 16px;
+}
+
+.view-card .tiles{
+  text-align: center;
+  /*border:solid 1px red;*/
+}
+
+
+.view-card .details-wrapper{
+  width: 100%;
+  min-height: 400;
+}
+
+.view-card .tiles.active{
+  background-color:rgba(0,0,0,0.1);
+}
+
+.view-card .primary-number{
+  font-size: 3.25rem;
+  font-weight: 100;
+}
+
+.view-card .title{
+  font-size: 1rem;
+}
+
+.view-card .subtitle{
+  font-size: 0.65rem;
+  opacity: 0.85;
+}
+
+.view-card .mat-button{
+  margin: 16px;
+}

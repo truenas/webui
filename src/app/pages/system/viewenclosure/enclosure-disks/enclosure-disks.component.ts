@@ -1,4 +1,6 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, NgZone, OnDestroy } from '@angular/core';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { MaterialModule } from 'app/appMaterial.module';
 import { Application, Container, Text, DisplayObject, Graphics, Sprite, Texture} from 'pixi.js';
 //import 'pixi-filters';
 import 'pixi-projection';
@@ -14,7 +16,8 @@ import { M50 } from 'app/core/classes/hardware/m50';
 
 export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
 
-  @ViewChild('disksvisualizer') visualizer: ElementRef;
+  @ViewChild('disksoverview') overview: ElementRef;
+  @ViewChild('disksdetails') details: ElementRef;
   public app;
   private renderer;
   private loader = PIXI.loader;
@@ -52,7 +55,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
     this.renderer = this.app.renderer;
     this.app.renderer.backgroundColor = 0x000000;
     //this.el.nativeElement.appendChild(this.app.view);
-    this.visualizer.nativeElement.appendChild(this.app.view);
+    this.overview.nativeElement.appendChild(this.app.view);
 
     this.container = new PIXI.Container();
     this.app.stage.addChild(this.container);

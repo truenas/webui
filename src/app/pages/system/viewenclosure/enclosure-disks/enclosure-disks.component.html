@@ -3,6 +3,33 @@
     <div class="mat-card-title-text">Enclosure Disks</div>
   </mat-toolbar>
   <mat-card-content>
-    <div #disksvisualizer></div>
+    <div #disksoverview id="disks-overview"></div>
+    <div id="disks-details-header">Disks Overview </div>
+    <div #disksdetails id="disks-details">
+      <div class="details-wrapper" fxFill fxLayout="row" fxLayoutAlign="space-around stretch">
+
+        <div fxFlex flex="33" class="tiles" fxLayout="column" fxLayoutAlign="center center">
+          <div class="primary-number" >5</div>
+          <div class="title">Pools in Enclosure</div>
+          <div class="subtitle">No other enclosures detected</div>
+          <button mat-button color="primary">SHOW POOLS</button>
+        </div>
+
+        <div fxFlex flex="33" class="tiles active" fxLayout="column" fxLayoutAlign="center center">
+          <div class="primary-number" >0</div>
+          <div class="title">Failed Disks</div>
+          <div class="subtitle">All disks healthy</div>
+          <button mat-button color="primary">SHOW DISKS</button>
+        </div>
+
+        <div fxFlex flex="33" class="tiles" fxLayout="column" fxLayoutAlign="center center">
+          <div class="primary-number" >2</div>
+          <div class="title">SAS Expanders</div>
+          <div class="subtitle">Pool name goes here</div>
+          <button mat-button color="primary">SHOW EXPANDER STATUS</button>
+        </div>
+
+      </div>
+    </div>
   </mat-card-content>
 </mat-card>
