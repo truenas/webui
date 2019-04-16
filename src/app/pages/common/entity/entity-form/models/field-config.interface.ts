@@ -14,7 +14,8 @@ export interface FieldConfig {
   acceptedFiles?: string, fileLocation?: string, fileType?: string,width?:string, 
   message?: any, updater?:any, parent?:any,togglePw?:boolean, paraText?: any,
   noexec?: boolean, blurStatus?:boolean,blurEvent?:any,noMinutes?:boolean,
-  warnings?: string, hideButton?:boolean, searchOptions?: any[], hideDirs?: any
+  warnings?: string, hideButton?:boolean, searchOptions?: any[], hideDirs?: any,
+  listFields?: FieldConfig[],
   customEventMethod?(data:any), onChangeOption?(data:any), 
   
 }

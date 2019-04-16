@@ -32,6 +32,7 @@ import { FormColorpickerComponent } from '../form-colorpicker/form-colorpicker.c
 import { FormComboboxComponent } from '../form-combobox/form-combobox.component';
 import {FormParagraphComponent} from '../form-paragraph/form-paragraph.component';
 import {FormSchedulerComponent} from '../form-scheduler/form-scheduler.component';
+import { FormListComponent } from '../form-list/form-list.component';
 
 const components: {[type: string] : Type<Field>} = {
   button : FormButtonComponent,
@@ -53,7 +54,8 @@ const components: {[type: string] : Type<Field>} = {
   colorpicker: FormColorpickerComponent,
   combobox: FormComboboxComponent,
   paragraph: FormParagraphComponent,
-  scheduler: FormSchedulerComponent
+  scheduler: FormSchedulerComponent,
+  list: FormListComponent,
 };
 
 @Directive({selector : '[dynamicField]'})
