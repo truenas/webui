@@ -1,35 +1,51 @@
 <mat-card class="view-card">
   <mat-toolbar>
-    <div class="mat-card-title-text">Enclosure Disks</div>
+    <div class="mat-card-title-text">Enclosure Disks ({{selectedDisk ? selectedDisk.name : 'none'}})</div>
   </mat-toolbar>
   <mat-card-content>
+    <!-- VISUALIZATION/OVERVIEW -->
     <div #disksoverview id="disks-overview"></div>
-    <div id="disks-details-header">Disks Overview </div>
-    <div #disksdetails id="disks-details">
-      <div class="details-wrapper" fxFill fxLayout="row" fxLayoutAlign="space-around stretch">
 
-        <div fxFlex flex="33" class="tiles" fxLayout="column" fxLayoutAlign="center center">
-          <div class="primary-number" >5</div>
-          <div class="title">Pools in Enclosure</div>
-          <div class="subtitle">No other enclosures detected</div>
-          <button mat-button color="primary">SHOW POOLS</button>
+    <!-- DETAILS/TITLE -->
+    <div id="disks-details-header"> {{selectedDisk ? 'Disk Details for ' + selectedDisk.name : 'Disks Overview'}} </div>
+
+    <!-- DETAILS/OVERVIEW -->
+    <div *ngIf="selectedDisk; then details else overview ;"></div>
+    <ng-template #overview>
+      <div #disksdetails id="disks-details">
+        <div class="details-wrapper" fxFill fxLayout="row" fxLayoutAlign="space-around stretch">
+  
+          <div fxFlex flex="33" class="tiles" fxLayout="column" fxLayoutAlign="center center">
+            <div class="primary-number" >5</div>
+            <div class="title">Pools in Enclosure</div>
+            <div class="subtitle">No other enclosures detected</div>
+            <button mat-button color="primary">SHOW POOLS</button>
+          </div>
+  
+          <div fxFlex flex="33" class="tiles active" fxLayout="column" fxLayoutAlign="center center">
+            <div class="primary-number" >0</div>
+            <div class="title">Failed Disks</div>
+            <div class="subtitle">All disks healthy</div>
+            <button mat-button color="primary">SHOW DISKS</button>
+          </div>
+  
+          <div fxFlex flex="33" class="tiles" fxLayout="column" fxLayoutAlign="center center">
+            <div class="primary-number" >2</div>
+            <div class="title">SAS Expanders</div>
+            <div class="subtitle">Pool name goes here</div>
+            <button mat-button color="primary">SHOW EXPANDER STATUS</button>
+          </div>
+  
         </div>
-
-        <div fxFlex flex="33" class="tiles active" fxLayout="column" fxLayoutAlign="center center">
-          <div class="primary-number" >0</div>
-          <div class="title">Failed Disks</div>
-          <div class="subtitle">All disks healthy</div>
-          <button mat-button color="primary">SHOW DISKS</button>
-        </div>
-
-        <div fxFlex flex="33" class="tiles" fxLayout="column" fxLayoutAlign="center center">
-          <div class="primary-number" >2</div>
-          <div class="title">SAS Expanders</div>
-          <div class="subtitle">Pool name goes here</div>
-          <button mat-button color="primary">SHOW EXPANDER STATUS</button>
-        </div>
-
       </div>
-    </div>
+    </ng-template>
+
+    <!-- DETAILS/DISK -->
+    <ng-template #details>
+      <div  #diskdetails id="disks-details">
+        <disk-ui [data]="selectedDisk"></disk-ui>
+      </div>
+    </ng-template>
+
   </mat-card-content>
 </mat-card>

@@ -6,6 +6,7 @@ import { Application, Container, Text, DisplayObject, Graphics, Sprite, Texture}
 import 'pixi-projection';
 import { DriveTray } from 'app/core/classes/hardware/drivetray';
 import { M50 } from 'app/core/classes/hardware/m50';
+import { DiskComponent } from './disk.component';
 //declare const PIXI: any;
 
 @Component({
@@ -23,8 +24,14 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
   private loader = PIXI.loader;
   private resources = PIXI.loader.resources;
   public container;
-  public texture;
-  public hardwareGraphic;
+  public selectedDisk: any = {
+    name: 'da13',
+    capacity: '1.83 TB',
+    type: 'HDD'
+  }
+
+  /*public texture;
+  public hardwareGraphic;*/
 
   constructor(public el:ElementRef/*, private ngZone: NgZone*/) { }
 
@@ -112,7 +119,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
     // console.log(this.app.stage.children);
   }
 
-  makeTexture(){
+  /*makeTexture(){
     let gfx = new PIXI.Graphics();
     gfx.beginFill(0xFFFFFF);
     gfx.drawRect(120,60,100,10);
@@ -124,7 +131,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
     // console.log(square);
 
     return square;
-  }
+  }*/
 
   importAsset(alias, path){
     // console.log("Importing Asset...");

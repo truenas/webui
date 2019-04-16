@@ -7,6 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { ViewEnclosureComponent } from './view-enclosure.component';
 import { EnclosureDisksComponent } from './enclosure-disks/enclosure-disks.component';
+import { DiskComponent } from './enclosure-disks/disk.component';
 
 @NgModule({
   imports: [
@@ -14,7 +15,8 @@ import { EnclosureDisksComponent } from './enclosure-disks/enclosure-disks.compo
   ],
   declarations: [
     ViewEnclosureComponent,
-    EnclosureDisksComponent
+    EnclosureDisksComponent,
+    DiskComponent
   ],
   providers: []
 })
