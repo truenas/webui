@@ -230,7 +230,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     } else {
       this.dialogService.confirm(
         T("Pending Network Changes"),
-        T("There are uncommited network interface changes pending.  Review them now?"),
+        T("There are unsaved network interface settings.  Review them now?"),
         true, T('Continue')).subscribe(res => {
           if (res) {
             this.router.navigate(['/network/interfaces']);
