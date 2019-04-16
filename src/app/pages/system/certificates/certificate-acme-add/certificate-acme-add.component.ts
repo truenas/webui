@@ -3,8 +3,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { MatDialog } from '@angular/material';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormArray } from '@angular/forms';
 import { RestService, WebSocketService } from '../../../../services/';
+import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from '../../../common/entity/utils';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
@@ -12,7 +13,8 @@ import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job
 
 @Component({
   selector: 'app-certificate-acme-add',
-  template : `<entity-form [conf]="this"></entity-form>`
+  template : `<entity-form [conf]="this"></entity-form>`,
+  providers: [EntityFormService]
 })
 export class CertificateAcmeAddComponent {
 
@@ -60,6 +62,18 @@ export class CertificateAcmeAddComponent {
       ],
       value: 'https://acme-staging-v02.api.letsencrypt.org/directory'
     },
+    {
+      type: 'array',
+      name : 'dns_mapping_fields',
+      initialCount: 1,
+      formarray: [{
+        name: 'dns_mapping2',
+        placeholder: helptext_system_certificates.acme.authenticator.placeholder,
+        tooltip: helptext_system_certificates.acme.authenticator.tooltip,
+        type: 'select',
+        options : []
+      }]
+    }
     // {
     //   type : 'select',
     //   name : 'dns_mapping',
@@ -79,14 +93,20 @@ export class CertificateAcmeAddComponent {
   private pk: any;
   protected dialogRef: any;
   protected queryCallOption: Array<any> = [["id", "="]];
+  protected dnsmapformArray: FormArray;
+  protected dnsmapArrayControl: any;
+  protected dnsmapInitialCount = 1;
 
   constructor(
     protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
-    protected loader: AppLoaderService, private dialog: MatDialog
+    protected loader: AppLoaderService, private dialog: MatDialog,
+    protected entityFormService: EntityFormService
   ) { }
 
   preInit() {
+    this.dnsmapArrayControl = _.find(this.fieldConfig, {'name' : 'dns_mapping_fields'});
+    
     this.route.params.subscribe(params => {
       if (params['pk']) {
         this.queryCallOption[0].push(parseInt(params['pk']));
@@ -114,16 +134,11 @@ export class CertificateAcmeAddComponent {
                 required: true, 
                 class: 'dns_mapping'              
               });
-            this.fieldConfig.push(fc.value
-              // {
-              //   type: "select", 
-              //   name: "dns_mapping-" + item, 
-              //   placeholder: "Authenticator for " + item, 
-              //   tooltip: "Specify Authenticator to be used for " + item, 
-              //   options: [{label: 'Temp option...', value: 'temp_option'}],
-              //   required: true
-              // }
-            )
+            this.fieldConfig.push(fc.value);
+
+            this.dnsmapInitialCount += 1;
+            this.entityFormService.insertFormArrayGroup(
+              this.dnsmapInitialCount, this.dnsmapformArray, this.dnsmapArrayControl.formarray);
           }
         })
       }
@@ -133,14 +148,18 @@ export class CertificateAcmeAddComponent {
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
+    this.dnsmapformArray = this.entityForm.formGroup.controls['dns_mapping_fields'];
+
   }
 
   customSubmit(value) {
+    console.log(value)
     let dns_map = {};
     for (let item in value) {
+      console.log(item)
       if (item.includes('dns_mapping')) {
         let i = item.split('-');
-        dns_map[i[1]]='1';
+        dns_map[i[1]]=value[item];
       }
     }
     let payload = {};
@@ -151,6 +170,8 @@ export class CertificateAcmeAddComponent {
     payload['renew_days'] = value.renew_days;
     payload['create_type'] = 'CERTIFICATE_CREATE_ACME';
     payload['dns_mapping'] = dns_map;
+
+    console.log(payload)
 
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": ("Creating...") }, disableClose: true});
     this.dialogRef.componentInstance.setCall(this.addCall, [payload]);
