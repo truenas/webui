@@ -19,6 +19,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { EntityUtils } from '../../../pages/common/entity/utils';
 import { T } from '../../../translate-marker';
 
+import network_interfaces_helptext from '../../../helptext/network/interfaces/interfaces-list';
+
 @Component({
   selector: 'topbar',
 //  styleUrls: ['./topbar.component.css', '../../../../../node_modules/flag-icon-css/css/flag-icon.css'],
@@ -39,6 +41,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   showReplication = false;
   showResilvering = false;
   pendingNetworkChanges = false;
+  waitingNetworkCheckin = false;
   replicationDetails;
   resilveringDetails;
   themesMenu: Theme[] = this.themeService.themesMenu;
@@ -88,6 +91,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
     this.continuosStreaming = observableInterval(10000).subscribe(x => {
       this.showReplicationStatus();
+      this.checkNetworkCheckinWaiting();
       this.checkNetworkChangesPending();
     });
 
@@ -188,16 +192,51 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.pendingNetworkChanges = res;
     });
   }
+  
+  checkNetworkCheckinWaiting() {
+    this.ws.call('interface.checkin_waiting').subscribe(res => {
+      this.waitingNetworkCheckin = res;
+      if (res) {
+        this.showNetworkCheckinWaiting();
+      }
+    });
+  }
+
+  showNetworkCheckinWaiting() {
+    this.dialogService.confirm(
+      network_interfaces_helptext.checkin_title,
+      network_interfaces_helptext.checkin_message,
+      true, network_interfaces_helptext.checkin_button).subscribe(res => {
+        if (res) {
+          this.loader.open();
+          this.ws.call('interface.checkin').subscribe((success) => {
+            this.loader.close();
+            this.dialogService.Info(
+              network_interfaces_helptext.checkin_complete_title,
+              network_interfaces_helptext.checkin_complete_message);
+            this.waitingNetworkCheckin = false;
+          }, (err) => {
+            this.loader.close();
+            new EntityUtils().handleWSError(null, err, this.dialogService);
+          });
+        }
+      }
+    );
+  }
 
   showNetworkChangesPending() {
-    this.dialogService.confirm(
-      T("Pending Network Changes"),
-      T("There are uncommited network interface changes pending.  Review them now?"),
-      true, T('Continue')).subscribe(res => {
-        if (res) {
-          this.router.navigate(['/network/interfaces']);
-        }
+    if (this.waitingNetworkCheckin) {
+      this.showNetworkCheckinWaiting();
+    } else {
+      this.dialogService.confirm(
+        T("Pending Network Changes"),
+        T("There are uncommited network interface changes pending.  Review them now?"),
+        true, T('Continue')).subscribe(res => {
+          if (res) {
+            this.router.navigate(['/network/interfaces']);
+          }
       });
+    }
   }
 
   showReplicationStatus() {

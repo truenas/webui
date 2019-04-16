@@ -29,7 +29,13 @@ export class InterfacesListComponent implements OnDestroy {
   protected entityList: any;
   protected checkChangesSubscription: any;
   public hasPendingChanges = false;
-  pending_changes_text: string; 
+  public checkinWaiting = false;
+  pending_changes_text: string;
+  pending_checkin_text: string;
+  checkin_text: string = T("Settings will revert ");
+  checkin_text_2: string = T(" seconds after commit if you do not check back in.");
+  public checkin_timeout = 60;
+  public checkin_timeout_pattern = /\d+/;
 
   public columns: Array<any> = [
     {name : T('Name'), prop : 'name'},
@@ -88,12 +94,19 @@ export class InterfacesListComponent implements OnDestroy {
     this.checkPendingChanges();
     this.checkChangesSubscription = interval(10000).subscribe(x => {
       this.checkPendingChanges();
+      this.checkWaitingCheckin();
     });
   }
 
   checkPendingChanges() {
     this.ws.call('interface.has_pending_changes').subscribe(res => {
       this.hasPendingChanges = res;
+    });
+  }
+
+  checkWaitingCheckin() {
+    this.ws.call('interface.checkin_waiting').subscribe(res => {
+      this.checkinWaiting = res;
     });
   }
 
@@ -105,7 +118,7 @@ export class InterfacesListComponent implements OnDestroy {
         if (confirm) {
           this.entityList.loader.open();
           this.entityList.loaderOpen = true;
-          this.ws.call('interface.commit').subscribe(res => {
+          this.ws.call('interface.commit', [{checkin_timeout: this.checkin_timeout}]).subscribe(res => {
             this.entityList.loader.close();
             this.entityList.loaderOpen = false;
             this.hasPendingChanges = false;
@@ -117,6 +130,30 @@ export class InterfacesListComponent implements OnDestroy {
           });
         }
       });
+  }
+
+  checkInNow() {
+    this.entityList.dialogService.confirm(
+      helptext.checkin_title,
+      helptext.checkin_message,
+      true, helptext.checkin_button).subscribe(res => {
+        if (res) {
+          this.entityList.loader.open();
+          this.entityList.loaderOpen = true;
+          this.ws.call('interface.checkin').subscribe((success) => {
+            this.entityList.loader.close();
+            this.entityList.dialogService.Info(
+              helptext.checkin_complete_title,
+              helptext.checkin_complete_message);
+            this.hasPendingChanges = false;
+            this.checkinWaiting = false;
+          }, (err) => {
+            this.entityList.loader.close();
+            new EntityUtils().handleWSError(this.entityList, err);
+          });
+        }
+      }
+    );
   }
 
   rollbackPendingChanges() {
@@ -131,6 +168,7 @@ export class InterfacesListComponent implements OnDestroy {
             this.entityList.loader.close();
             this.entityList.loaderOpen = false;
             this.hasPendingChanges = false;
+            this.checkinWaiting = false;
             this.snackBar.open(helptext.changes_rolled_back, T("Ok"));
           }, err => {
             this.entityList.loader.close();
