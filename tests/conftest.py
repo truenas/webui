@@ -37,9 +37,9 @@ def webDriverFirefox():
     caps['screenResolution'] = '2560x1440'
     # marionette setting is fixed in selenium 3.0 and above by default
     driver = webdriver.Firefox(
-       firefox_profile=profile,
-       capabilities=caps,
-       firefox_binary=binary
+        firefox_profile=profile,
+        capabilities=caps,
+        firefox_binary=binary
     )
     return driver
 

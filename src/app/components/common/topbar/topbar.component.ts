@@ -221,8 +221,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
     } else {
       this.isTaskMangerOpened = true;
       this.taskDialogRef = this.dialog.open(TaskManagerComponent, {
+        disableClose: false,
         width: '400px',
-        hasBackdrop: false,
+        hasBackdrop: true,
         position: {
           top: '48px',
           right: '0px'

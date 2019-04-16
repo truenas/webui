@@ -177,6 +177,14 @@ export class ServiceUPSComponent {
       placeholder : helptext.ups_powerdown_placeholder,
       tooltip : helptext.ups_powerdown_tooltip
     },
+    {
+      type : 'input',
+      inputType: 'number',
+      name : 'ups_hostsync',
+      placeholder : helptext.ups_hostsync_placeholder,
+      tooltip : helptext.ups_hostsync_tooltip,
+      value: 15,
+    },
   ];
 
   constructor(protected router: Router, protected route: ActivatedRoute,

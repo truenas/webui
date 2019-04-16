@@ -28,7 +28,6 @@ export class SupportComponent  {
   public payload = {};
   public entityEdit: any;
   public saveSubmitText = "Submit";
-  public registerUrl = " https://redmine.ixsystems.com/account/register"
   public password_fc: any;
   public username_fc: any;
 
@@ -38,7 +37,7 @@ export class SupportComponent  {
       type: 'paragraph',
       name: 'support_text',
       paraText: this.sanitizer.bypassSecurityTrustHtml(
-        'Search the <a href="https://redmine.ixsystems.com/projects/freenas" \
+        'Search the <a href="https://jira.ixsystems.com/projects/NAS/issues/" \
          target="_blank" style="text-decoration:underline;">FreeNAS issue tracker</a> \
          to ensure the issue has not already been reported before \
          filing a bug report or feature request. If an issue has \
@@ -46,8 +45,8 @@ export class SupportComponent  {
          Please visit the <a href="http://www.ixsystems.com/storage/" target="_blank" \
          style="text-decoration:underline;">iXsystems storage page</a> \
          for enterprise-grade storage solutions and support.<br><br> \
-         <a href="https://redmine.ixsystems.com/account/register" target="_blank" \
-         style="text-decoration:underline;">Create a Redmine account</a> to file an issue. Use a valid \
+         <a href="https://jira.ixsystems.com/secure/Signup!default.jspa" target="_blank" \
+         style="text-decoration:underline;">Create a Jira account</a> to file an issue. Use a valid \
          email address when registering to receive issue status updates.')
     },
 
@@ -61,7 +60,6 @@ export class SupportComponent  {
       blurStatus : true,
       blurEvent : this.blurEvent,
       parent : this,
-      togglePw : true,
       value: '',
     },
     {

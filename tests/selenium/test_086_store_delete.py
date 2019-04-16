@@ -8,7 +8,7 @@ import os
 import time
 cwd = str(os.getcwd())
 sys.path.append(cwd)
-from function import take_screenshot, pool1, pool2
+from function import take_screenshot, pool1, pool2, wait_on_element
 
 skip_mesages = "Skipping first run"
 script_name = os.path.basename(__file__).partition('.')[0]
@@ -35,9 +35,9 @@ def test_00_set_implicitly_wait(wb_driver):
 
 
 def test_01_nav_store_pool(wb_driver):
-    # Click  Storage menu
-    # allowing the button to load
-    time.sleep(1)
+    test_name = sys._getframe().f_code.co_name
+    # Wait for xpath to be available
+    wait_on_element(wb_driver, xpaths['navStorage'], script_name, test_name)
     # Click Storage menu
     wb_driver.find_element_by_xpath(xpaths['navStorage']).click()
     # Click Pool submenu
@@ -49,15 +49,16 @@ def test_01_nav_store_pool(wb_driver):
     # assert response
     assert "Pools" in page_data, page_data
     # taking screenshot
-    test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
 
 
 def test_02_delete_pool1(wb_driver):
-    time.sleep(1)
+    test_name = sys._getframe().f_code.co_name
+    # Wait for xpath to be available
+    wait_on_element(wb_driver, xpaths['poolID'], script_name, test_name)
     wb_driver.find_element_by_xpath(xpaths['poolID']).click()
     time.sleep(1)
-    pool_detach(wb_driver, pool1)
+    pool_detach(wb_driver, pool1, script_name, test_name)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
@@ -65,9 +66,9 @@ def test_02_delete_pool1(wb_driver):
 
 def test_03_delete_pool2(wb_driver):
     time.sleep(1)
-    pool_detach(wb_driver, pool2)
-    # taking screenshot
     test_name = sys._getframe().f_code.co_name
+    pool_detach(wb_driver, pool2, script_name, test_name)
+    # taking screenshot
     take_screenshot(wb_driver, script_name, test_name)
 
 
@@ -77,21 +78,20 @@ def test_04_close_navStorage(wb_driver):
     take_screenshot(wb_driver, script_name, test_name)
 
 
-def pool_detach(wb_driver, name):
+def pool_detach(wb_driver, name, scriptname, testname):
     time.sleep(1)
     pool_xpath = f"//mat-icon[@id='table_actions_menu_button__name_{name}']"
+    # Wait for xpath to be available
+    wait_on_element(wb_driver, pool_xpath, scriptname, testname)
     wb_driver.find_element_by_xpath(pool_xpath).click()
     xpath = xpaths['poolDetach'] + name + "']/span"
     wb_driver.find_element_by_xpath(xpath).click()
     wb_driver.find_element_by_xpath(xpaths['pooldestroyCheckbox']).click()
     wb_driver.find_element_by_xpath(xpaths['poolconfirmCheckbox']).click()
     time.sleep(1)
-    print("clicking on detach")
     if wb_driver.find_element_by_xpath(xpaths['confirmButton']):
-        print("detach button found")
         wb_driver.find_element_by_xpath(xpaths['confirmButton']).click()
-        print(" clicked on detach")
-    time.sleep(5)
-    print("clicking on close")
+    # Wait for xpath to be available
+    wait_on_element(wb_driver, xpaths['closeButton'], scriptname, testname)
     wb_driver.find_element_by_xpath(xpaths['closeButton']).click()
-    print("already clicked on detach")
+    time.sleep(1)
