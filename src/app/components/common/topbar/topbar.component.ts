@@ -196,9 +196,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   checkNetworkCheckinWaiting() {
     this.ws.call('interface.checkin_waiting').subscribe(res => {
       this.waitingNetworkCheckin = res;
-      if (res) {
-        this.showNetworkCheckinWaiting();
-      }
     });
   }
 
