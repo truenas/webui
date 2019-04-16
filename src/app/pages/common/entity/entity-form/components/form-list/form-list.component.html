@@ -6,10 +6,13 @@
                 [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'">
                 <div dynamicField [config]="field" [group]="listsFromArray.controls[i]"></div>
             </div>
-            <button *ngIf="i === 0; else deleteButton" mat-button type="button" (click)="add()">Add</button>
-            <ng-template #deleteButton>
-                <button mat-button type="button" (click)="delete(i)">Delete</button>
-            </ng-template>
+            <div class="list-action">
+                <button *ngIf="i === 0; else deleteButton" mat-button color="primary" class="listBtn" type="button"
+                    (click)="add()">Add</button>
+                <ng-template #deleteButton>
+                    <button mat-button color="accent" class="listBtn" type="button" (click)="delete(i)">Delete</button>
+                </ng-template>
+            </div>
         </div>
     </ng-container>
     <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
