@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormArray, FormBuilder, AbstractControl } from '@angular/forms';
+import { FormGroup, FormArray, FormBuilder } from '@angular/forms';
 
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
 import { EntityFormService } from '../../services/entity-form.service';
-import { listLazyRoutes } from '@angular/compiler/src/aot/lazy_routes';
 
 @Component({
   selector: 'form-list',
@@ -17,32 +16,13 @@ export class FormListComponent implements Field, OnInit {
   fieldShow: string;
 
   public listsFromArray: FormArray;
-  public formlistControl: AbstractControl;
 
   constructor(private entityFormService: EntityFormService, private formBuilder: FormBuilder) { }
 
   ngOnInit() {
     this.listsFromArray = this.formBuilder.array([]);
     this.listsFromArray.push(this.entityFormService.createFormGroup(this.config.listFields));
-
-    this.formlistControl = this.group.controls[this.config.name];
-
-    this.listsFromArray.valueChanges.subscribe((res) => {
-      this.formlistControl.setValue(this.getListControlValue());
-    })
-  }
-
-  getListControlValue() {
-    const listsValue = [];
-    for (let i = 0; i < this.listsFromArray.controls.length; i++) {
-      const listValue = [];
-      const listFormGroup = this.listsFromArray.controls[i] as FormGroup;
-      for (const prop in listFormGroup.controls) {
-        listValue[prop] = listFormGroup.controls[prop].value;
-      }
-      listsValue.push(listValue);
-    }
-    return listsValue;
+    this.group.controls[this.config.name] = this.listsFromArray;
   }
 
   add() {
