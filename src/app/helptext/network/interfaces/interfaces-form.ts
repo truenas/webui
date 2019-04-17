@@ -63,7 +63,7 @@ failover_critical_placeholder: T('Failover Critical'),
 failover_critical_tooltip: T(''),
 
 failover_group_placeholder: T('Failover Group'),
-failover_group_tooltip: T(''),
+failover_group_tooltip: T('Combine multiple critical interfaces into a single failover group. A failover is triggered if all of the interfaces in the group fail.'),
 
 failover_vhid_placeholder: T('Failover VHID'),
 failover_vhid_tooltip: T(''),
