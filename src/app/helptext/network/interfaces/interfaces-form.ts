@@ -4,7 +4,7 @@ import { rangeValidator } from '../../../pages/common/entity/entity-form/validat
 
 export default {
 int_type_placeholder: T('Type'),
-int_type_tooltip: T(''),
+int_type_tooltip: T('Choose the type of interface. <i>Bridge</i> creates a logical link between multiple networks. Link Aggregation combines multiple network connections into a single interface. A virtual LAN (VLAN) partitions and isolates a segment of the connection.'),
 int_type_options: [
     {label: "Bridge", value: "BRIDGE"},
     {label: "Link Aggregation", value: "LINK_AGGREGATION"},
