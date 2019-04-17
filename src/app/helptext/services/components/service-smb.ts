@@ -72,7 +72,7 @@ cifs_srv_admin_group_placeholder: T('Administrators Group'),
 cifs_srv_admin_group_tooltip: T('Members of this group are local admins\
  administrators that can take ownership of any file in an SMB\
  share, reset permissions, and administer the SMB server through the\
- Computer Management MMC snap-in.'),
+ Microsoft Management Console (MMC).'),
 cifs_srv_admin_group_validation : [ Validators.maxLength(120) ],
 
 cifs_srv_filemask_placeholder: T('File Mask'),
