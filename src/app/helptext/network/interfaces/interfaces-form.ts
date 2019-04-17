@@ -25,7 +25,7 @@ int_dhcp_tooltip : T('Set to enable DHCP. Leave unset to create a static\
  IPv4 or IPv6 configuration. Only one interface can\
  be configured for DHCP.'),
 
-int_ipv6auto_placeholder : T('Auto configure IPv6'),
+int_ipv6auto_placeholder : T('Autoconfigure IPv6'),
 int_ipv6auto_tooltip : T('Set to automatically configure the IPv6 address with\
  <a href="https://www.freebsd.org/cgi/man.cgi?query=rtsol"\
  target="_blank">rtsol(8)</a>. Only one interface can\
