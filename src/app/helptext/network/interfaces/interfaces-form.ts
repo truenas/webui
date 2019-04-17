@@ -57,7 +57,7 @@ delete_placeholder6: T('Delete'),
 delete_tooltip6: T('Set to delete this alias.'),
 
 bridge_members_placeholder: T('Bridge Members'),
-bridge_members_tooltip: T(''),
+bridge_members_tooltip: T('Network interfaces to include in the bridge.'),
 
 failover_critical_placeholder: T('Failover Critical'),
 failover_critical_tooltip: T(''),
