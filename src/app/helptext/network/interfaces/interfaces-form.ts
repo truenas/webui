@@ -69,7 +69,7 @@ failover_vhid_placeholder: T('Failover VHID'),
 failover_vhid_tooltip: T(''),
 
 failover_alias_address_placeholder: T('Failover Alias'),
-failover_alias_address_tooltip: T(''),
+failover_alias_address_tooltip: T('IPv4 address to use for the failover interface. Set a manual IP address here if DHCP is not used.'),
 
 failover_virtual_alias_address_placeholder: T('Failover Virtual Alias'),
 failover_virtual_alias_address_tooltip: T(''),
