@@ -70,7 +70,7 @@ cifs_srv_guest_tooltip: T('Account to be used for guest access. Default is\
 
 cifs_srv_admin_group_placeholder: T('Administrators Group'),
 cifs_srv_admin_group_tooltip: T('Members of this group are local admins\
- and automatically have privileges to take ownership of any file in an SMB\
+ administrators that can take ownership of any file in an SMB\
  share, reset permissions, and administer the SMB server through the\
  Computer Management MMC snap-in.'),
 cifs_srv_admin_group_validation : [ Validators.maxLength(120) ],
