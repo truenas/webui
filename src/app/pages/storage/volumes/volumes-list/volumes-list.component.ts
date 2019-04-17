@@ -647,8 +647,8 @@ export class VolumesListTableConfig implements InputTableConf {
             method_rest: "storage/snapshot",
             saveButtonText: T("Create Snapshot"),
           }
-          this.ws.call('vmware.query',[[["filesystem", "=", row.path]]]).subscribe((vmware_res)=>{
-            if(vmware_res.length !== 0){
+          this.ws.call('vmware.dataset_has_vms',[row.path, true]).subscribe((vmware_res)=>{
+            if(vmware_res){
               const vmware_cb = {
                 type: 'checkbox',
                 name: 'vmware_sync',

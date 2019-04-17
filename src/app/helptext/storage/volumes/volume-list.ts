@@ -21,7 +21,7 @@ snapshotDialog_recursive_placeholder: T('Recursive'),
 snapshotDialog_recursive_tooltip: T('Set to include child datasets of the chosen dataset.'),
 
 vmware_sync_placeholder: T('VMWare Sync'),
-vmware_sync_tooltip: T(''),
+vmware_sync_tooltip: T('Need tooltip'),
 
 detachDialog_pool_detach_warning_paratext_a: T("WARNING: Exporting/disconnecting '"),
 detachDialog_pool_detach_warning_paratext_b: T("'.\
