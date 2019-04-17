@@ -14,7 +14,8 @@ import { helptext_system_failover } from 'app/helptext/system/failover';
 @Component({
   selector: 'app-system-failover',
   templateUrl: 'failover.component.html',
-  styleUrls: ['failover.component.css']
+  styleUrls: ['failover.component.css'],
+  providers : [ SnackbarService ],
 })
 
 export class FailoverComponent implements OnDestroy {
@@ -129,14 +130,14 @@ export class FailoverComponent implements OnDestroy {
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
     this.failoverDisableSubscription = 
-      this.entityForm.entityForm.formGroup.controls['disabled'].valueChanges.subscribe(res => {
+      this.entityForm.formGroup.controls['disabled'].valueChanges.subscribe(res => {
         this.confirmSubmit = res;
       });
   }
 
   public customSubmit(body) {
     this.load.open();
-    return this.ws.call('system.failover.update', [body]).subscribe((res) => {
+    return this.ws.call('failover.update', [body]).subscribe((res) => {
       this.load.close();
       this.snackBar.open(T("Settings saved."), T('close'), { duration: 5000 })
     }, (res) => {
