@@ -70,6 +70,7 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
   public volume: any;
   public fs_type: any;
   private fs_type_subscription: any;
+  private fs_type_list: any;
   public msdosfs_locale: any;
   private entityForm: any;
   protected dialogRef: any;
@@ -86,6 +87,7 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
 
   afterInit(entityForm: any) {
     this.volume = _.find(this.fieldConfig, {'name':'volume'});
+    this.fs_type_list = _.find(this.fieldConfig, {'name':'fs_type'});
     this.msdosfs_locale = _.find(this.fieldConfig, {'name':'msdosfs_locale'});
     this.fs_type = entityForm.formGroup.controls['fs_type'];
 
@@ -101,8 +103,20 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
     this.fs_type_subscription = this.fs_type.valueChanges.subscribe((value) => {
       if (value === 'msdosfs') {
         this.msdosfs_locale['isHidden'] = false;
+      } else {
+        this.msdosfs_locale['isHidden'] = true;
       }
     });
+
+    entityForm.formGroup.controls['volume'].valueChanges.subscribe((res) => {
+      this.ws.call('pool.import_disk_autodetect_fs_type', [res]).subscribe((res) => {
+        for ( let option of this.fs_type_list.options) {
+          if (res === option.value) {
+            this.fs_type.setValue('msdosfs');
+          };
+        };
+      })
+    })
 
     this.ws.call("disk.get_unused", [true]).subscribe((data)=>{
 
