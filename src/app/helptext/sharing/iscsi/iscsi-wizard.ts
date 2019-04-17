@@ -31,7 +31,7 @@ export default {
     volblocksize_placeholder: T("Block Size"),
     volblocksize_tooltip: T("Only override the default if the initiator requires a different block size."),
 
-    usefor_placehodler: T("What are you using this for"),
+    usefor_placeholder: T("What are you using this for"),
     usefor_tooltip: T("Choose the platform that will use this share. The associated options are applied to this share."),
 
     step2_label: T("Portal"),

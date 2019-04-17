@@ -169,7 +169,7 @@ export class IscsiWizardComponent {
                 {
                     type: 'select',
                     name: 'usefor',
-                    placeholder: helptext.usefor_placehodler,
+                    placeholder: helptext.usefor_placeholder,
                     tooltip: helptext.usefor_tooltip,
                     options: [
                         {
