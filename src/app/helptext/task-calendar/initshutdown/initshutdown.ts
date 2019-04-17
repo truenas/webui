@@ -12,7 +12,8 @@ export default {
 
     ini_script_placeholder: T('Script'),
     ini_script_validation : [ Validators.required ],
-    ini_script_tooltip: T('Select the script from an existing pool.'),
+    ini_script_tooltip: T('Select the script from an existing pool.\
+     The script is run using <b>sh</b>'),
 
     ini_when_placeholder: T('When'),
     ini_when_tooltip: T('Select when the command or script runs:<br>\
