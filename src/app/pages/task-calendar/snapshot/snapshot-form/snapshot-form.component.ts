@@ -75,7 +75,7 @@ export class SnapshotFormComponent {
   }, {
     type: 'input',
     name: 'naming_schema',
-    placeholder: helptext.naming_schema_placeholer,
+    placeholder: helptext.naming_schema_placeholder,
     tooltip: helptext.naming_schema_tooltip,
     value: 'auto-%Y-%m-%d_%H-%M',
   }, {

@@ -21,7 +21,7 @@ export default {
  system. After the time expires, the snapshot is removed. Snapshots which have\
  been replicated to other systems are not affected.'),
 
-    naming_schema_placeholer: T('Naming Schema'),
+    naming_schema_placeholder: T('Naming Schema'),
     naming_schema_tooltip: T('Snapshot name format string. The default is snap-%Y-%m-%d-%H-%M.\
  Must include the strings %Y, %m, %d, %H, and %M, which are replaced with the four-digit year,\
  month, day of month, hour, and minute as defined in strftime(3). A string showing the snapshot\
