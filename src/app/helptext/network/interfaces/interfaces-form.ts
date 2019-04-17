@@ -60,7 +60,10 @@ bridge_members_placeholder: T('Bridge Members'),
 bridge_members_tooltip: T('Network interfaces to include in the bridge.'),
 
 failover_critical_placeholder: T('Failover Critical'),
-failover_critical_tooltip: T(''),
+failover_critical_tooltip: T('If this interface is considered critical for\
+ failover it will cause a failover event in case it is preempted by the other\
+ controller via VRRP/CARP protocol and there arent other interfaces in that\
+ same failover group.'),
 
 failover_group_placeholder: T('Failover Group'),
 failover_group_tooltip: T('Combine multiple critical interfaces into a single failover group. A failover is triggered if all of the interfaces in the group fail.'),
@@ -68,10 +71,10 @@ failover_group_tooltip: T('Combine multiple critical interfaces into a single fa
 failover_vhid_placeholder: T('Failover VHID'),
 failover_vhid_tooltip: T('Virtual Host ID for the failover interface.'),
 
-failover_alias_address_placeholder: T('Failover Alias'),
+failover_alias_address_placeholder: T('Failover IP Address'),
 failover_alias_address_tooltip: T('IPv4 address to use for the failover interface. Set a manual IP address here if DHCP is not used.'),
 
-failover_virtual_alias_address_placeholder: T('Failover Virtual Alias'),
+failover_virtual_alias_address_placeholder: T('Failover Virtual IP Address'),
 failover_virtual_alias_address_tooltip: T(''),
 
 vlan_pint_placeholder: T('Parent Interface'),
