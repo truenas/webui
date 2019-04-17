@@ -69,7 +69,7 @@ cifs_srv_guest_tooltip: T('Account to be used for guest access. Default is\
  When the Guest Account user is deleted it resets to nobody.'),
 
 cifs_srv_admin_group_placeholder: T('Administrators Group'),
-cifs_srv_admin_group_tooltip: T('Members of this group are local admins\
+cifs_srv_admin_group_tooltip: T('Members of this group are local\
  administrators that can take ownership of any file in an SMB\
  share, reset permissions, and administer the SMB server with the\
  Microsoft Management Console (MMC).'),
