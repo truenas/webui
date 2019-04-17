@@ -1,12 +1,12 @@
 import { T } from "app/translate-marker";
 
 export const helptext = {
-cpu_in_percentage_placeholder: T('Report CPU usage in percentage'),
-cpu_in_percentage_tooltip: T('Set to display CPU usage as percentages in Reporting.'),
+cpu_in_percentage_placeholder: T('Report CPU usage in percent'),
+cpu_in_percentage_tooltip: T('When set, report CPU usage in percent instead of jiffies.'),
 
-graphite_placeholder: T('Remote Graphite Server Hostname'),
-graphite_tooltip: T('Enter the IP address or hostname of a remote server\
- running Graphite.'),
+graphite_placeholder: T('Graphite Server'),
+graphite_tooltip: T('Destination hostname or IP for collectd data sent\
+ by the Graphite plugin.'),
     
 graph_age_placeholder: T('Graph Age'),
 graph_age_tooltip: T(''),
