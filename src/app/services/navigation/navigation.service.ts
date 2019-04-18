@@ -66,7 +66,7 @@ export class NavigationService {
         { name: T('CAs'), state: 'ca' },
         { name: T('Certificates'), state: 'certificates' },
         { name: T('Support'), state: 'support' },
-        { name: T('Proactive Support'), state: 'proactivesupport', disabled: false },
+        { name: T('Proactive Support'), state: 'proactivesupport', disabled: true },
       ]
     },
     {
