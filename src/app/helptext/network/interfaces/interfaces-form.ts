@@ -75,7 +75,7 @@ failover_vhid_tooltip: T('Virtual Host ID for the failover interface.'),
 failover_alias_address_placeholder: T('Failover IP Address'),
 failover_alias_address_tooltip: T('IPv4 address to use for the failover interface. Set a manual IP address here if DHCP is not used.'),
 
-failover_virtual_alias_address_placeholder: T('Failover Virtual IP Address'),
+failover_virtual_alias_address_placeholder: T('Virtual IP Address'),
 failover_virtual_alias_address_tooltip: T(''),
 
 vlan_pint_placeholder: T('Parent Interface'),
