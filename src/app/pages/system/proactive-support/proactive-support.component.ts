@@ -20,19 +20,19 @@ export class ProactiveSupportComponent {
     public fieldConfig: FieldConfig[] = [];
     public fieldSets: FieldSet[] = [
         {
-            name: 'Proactive Support can notify iXsystems by email when TrueNAS hardware conditions require attention.',
+            name: helptext.cardtitle_placeholder,
             label: true,
         },
         {
-            name: 'Primary Contact',
+            name: helptext.primary_contact_placeholder,
             label: true,
             width: '50%',
             config: [
                 {
                     type: 'input',
                     name: 'title',
-                    placeholder: 'Title',
-                    tooltip: '',
+                    placeholder: helptext.title_placeholder,
+                    tooltip: helptext.title_tooltip,
                     relation: [{
                         action: 'DISABLE',
                         when: [{
@@ -44,8 +44,8 @@ export class ProactiveSupportComponent {
                 {
                     type: 'input',
                     name: 'name',
-                    placeholder: 'Name',
-                    tooltip: '',
+                    placeholder: helptext.name_placeholder,
+                    tooltip: helptext.name_tooltip,
                     relation: [{
                         action: 'DISABLE',
                         when: [{
@@ -58,8 +58,8 @@ export class ProactiveSupportComponent {
                     type: 'input',
                     inputType: 'email',
                     name: 'email',
-                    placeholder: 'Email',
-                    tooltip: '',
+                    placeholder: helptext.email_placeholder,
+                    tooltip: helptext.email_tooltip,
                     relation: [{
                         action: 'DISABLE',
                         when: [{
@@ -72,8 +72,8 @@ export class ProactiveSupportComponent {
                     type: 'input',
                     inputType: 'phone',
                     name: 'phone',
-                    placeholder: 'Phone',
-                    tooltip: '',
+                    placeholder: helptext.phone_placeholder,
+                    tooltip: helptext.phone_tooltip,
                     relation: [{
                         action: 'DISABLE',
                         when: [{
@@ -85,15 +85,15 @@ export class ProactiveSupportComponent {
             ]
         },
         {
-            name: 'Secondary Contact (optional)',
+            name: helptext.secondary_contact_placeholder,
             label: true,
             width: '50%',
             config: [
                 {
                     type: 'input',
                     name: 'secondary_title',
-                    placeholder: 'Title',
-                    tooltip: '',
+                    placeholder: helptext.secondary_title_placeholder,
+                    tooltip: helptext.secondary_title_tooltip,
                     relation: [{
                         action: 'DISABLE',
                         when: [{
@@ -105,8 +105,8 @@ export class ProactiveSupportComponent {
                 {
                     type: 'input',
                     name: 'secondary_name',
-                    placeholder: 'Name',
-                    tooltip: '',
+                    placeholder: helptext.secondary_name_placeholder,
+                    tooltip: helptext.secondary_name_tooltip,
                     relation: [{
                         action: 'DISABLE',
                         when: [{
@@ -119,8 +119,8 @@ export class ProactiveSupportComponent {
                     type: 'input',
                     inputType: 'email',
                     name: 'secondary_email',
-                    placeholder: 'Email',
-                    tooltip: '',
+                    placeholder: helptext.secondary_email_placeholder,
+                    tooltip: helptext.secondary_email_tooltip,
                     relation: [{
                         action: 'DISABLE',
                         when: [{
@@ -133,8 +133,8 @@ export class ProactiveSupportComponent {
                     type: 'input',
                     inputType: 'phone',
                     name: 'secondary_phone',
-                    placeholder: 'Phone',
-                    tooltip: '',
+                    placeholder: helptext.secondary_phone_placeholder,
+                    tooltip: helptext.secondary_phone_tooltip,
                     relation: [{
                         action: 'DISABLE',
                         when: [{
@@ -146,14 +146,14 @@ export class ProactiveSupportComponent {
             ]
         },
         {
-            name: 'Secondary Contact (optional)',
+            name: helptext.secondary_contact_placeholder,
             label: false,
             config: [
                 {
                     type: 'checkbox',
                     name: 'enabled',
-                    placeholder: 'Enable automatic support alerts to iXsystems (Silver/Gold support only)',
-                    tooltip: '',
+                    placeholder: helptext.enabled_placeholder,
+                    tooltip: helptext.enabled_tooltip,
                 }
             ]
         }
