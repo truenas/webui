@@ -4,15 +4,6 @@ import { Chassis } from './chassis';
 
 export class M50 extends Chassis {
 
-  /*public container:Container;
-  public model: string;
-  public driveTrays: Container;
-  public chassis:Sprite;
-  public driveTray:DriveTray;
-
-  protected totalDriveTrays
-  protected chassisPath: string;*/
-
   constructor(){
     super();
     this.model = "m50";
@@ -23,31 +14,5 @@ export class M50 extends Chassis {
     this.totalDriveTrays = 24;
     this.load();
   }
-
-  makeDriveTray(){
-    let dt = new DriveTray("m50");
-    dt.setup();
-    return dt;
-  }
-
-  /*load(){
-    // LOAD OUR ASSETS
-    PIXI.loader
-      .add("chassis", chassisPath) //eg. .add("catImage", "assets/res/cat.png")
-      .on("progress", this.loadProgressHandler)
-      .load(this.onLoaded.bind(this));
-  }*/
-
-  /*onLoaded(){
-    // Render Chassis
-    let sprite = PIXI.Sprite.from(PIXI.loader.resources.chassis.texture.baseTexture);
-    sprite.name = this.model + '_chassis';
-    this.container.addChild(sprite);
-
-    // Render DriveTrays
-  }*/
-
-  /*loadProgressHandler(){
-  }*/
 
 }

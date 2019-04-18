@@ -1,6 +1,6 @@
 <mat-card class="view-card">
   <mat-toolbar>
-    <div class="mat-card-title-text">Enclosure Disks ({{selectedDisk ? selectedDisk.name : 'none'}})</div>
+    <div class="mat-card-title-text">Enclosure Disks</div>
   </mat-toolbar>
   <mat-card-content>
     <!-- VISUALIZATION/OVERVIEW -->
@@ -43,7 +43,21 @@
     <!-- DETAILS/DISK -->
     <ng-template #details>
       <div  #diskdetails id="disks-details">
-        <disk-ui [data]="selectedDisk"></disk-ui>
+        <div class="details-wrapper" fxFill fxLayout="row" fxLayoutAlign="space-around stretch">
+  
+          <div fxFlex="25" class="disk-basic-details" fxLayout="column" fxLayoutAlign="center center">
+            <disk-ui [data]="selectedDisk"></disk-ui><!-- disk icon + labels -->
+            <div class="disk-actions">
+              <button mat-button color="primary">FAULT</button>
+              <button mat-button color="primary" (click)="toggle()">BACK TO OVERVIEW</button>
+            </div>
+          </div>
+  
+          <div fxFlex="75" class="tiles disk-advanced-details" fxLayout="column" fxLayoutAlign="center center">
+            <h3 style="opacity:0.75;">Disk Properties Go Here</h3>
+          </div>
+
+        </div>
       </div>
     </ng-template>
 

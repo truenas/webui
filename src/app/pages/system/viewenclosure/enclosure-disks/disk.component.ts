@@ -35,6 +35,7 @@ import { MaterialModule } from 'app/appMaterial.module';
     }
 
     .disk-ui-icon{
+      text-align:left;
       font-size: 59px;
       line-height:59px;
       color:#666;

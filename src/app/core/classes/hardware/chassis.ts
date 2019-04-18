@@ -45,10 +45,10 @@ export class Chassis {
    public driveTrayObjects: DriveTray[] = [];
    public chassis:Sprite;
    public driveTray:DriveTray;
+   public chassisPath: string;
+   public driveTrayBackgroundPath: string;
+   public driveTrayHandlePath: string;
 
-   protected chassisPath: string;
-   protected driveTrayBackgroundPath: string;
-   protected driveTrayHandlePath: string;
    protected totalDriveTrays: number;
    protected rows: number;
    protected columns: number;
@@ -205,7 +205,7 @@ export class Chassis {
 
    makeDriveTray(){
      // EXAMPLE CODE:
-     let dt = new DriveTray("myTnModel");
+     let dt = new DriveTray(this.model);
      dt.setup();
      return dt;
    }

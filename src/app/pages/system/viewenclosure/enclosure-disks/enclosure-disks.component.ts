@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, NgZone, OnDestroy } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MaterialModule } from 'app/appMaterial.module';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Application, Container, Text, DisplayObject, Graphics, Sprite, Texture} from 'pixi.js';
 //import 'pixi-filters';
 import 'pixi-projection';
@@ -24,25 +25,36 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
   private loader = PIXI.loader;
   private resources = PIXI.loader.resources;
   public container;
-  public selectedDisk: any = {
+  protected enclosure: any;
+  public selectedDisk: any;/* = {
     name: 'da13',
     capacity: '1.83 TB',
     type: 'HDD'
-  }
+  }*/
 
   /*public texture;
   public hardwareGraphic;*/
 
-  constructor(public el:ElementRef/*, private ngZone: NgZone*/) { }
+  constructor(public el:ElementRef, private core: CoreService /*, private ngZone: NgZone*/) { 
+    core.emit({name: 'SysInfoRequest', sender: this});
+    core.register({observerClass: this, eventName: 'SysInfo'}).subscribe((evt:CoreEvent) => {
+      console.log(evt.data.system_product);
+      this.pixiInit();
+    });
+  }
+
+  /* TESTING ONLY */
+  toggle(){
+    this.selectedDisk = null;
+  }
 
   ngAfterViewInit() {
-    this.pixiInit();
+    //this.pixiInit();
   }
 
   ngOnDestroy(){
-    // Clear out assets
-    this.container.destroy(true);
-    PIXI.loader.resources = {};
+    this.core.unregister({observerClass: this});
+    this.destroyEnclosure();
     this.app = null;
     //Object.keys(PIXI.utils.TextureCache).forEach(function(texture) {  PIXI.utils.TextureCache[texture].destroy(true);});
   }
@@ -53,7 +65,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
         width:960,
         height:304,
         forceCanvas:false,
-        transparent:false,
+        transparent:true,
         antialias:true,
         autoStart:true
       });
@@ -61,7 +73,6 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
 
     this.renderer = this.app.renderer;
     this.app.renderer.backgroundColor = 0x000000;
-    //this.el.nativeElement.appendChild(this.app.view);
     this.overview.nativeElement.appendChild(this.app.view);
 
     this.container = new PIXI.Container();
@@ -69,39 +80,43 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
     this.container.width = this.app.stage.width;
     this.container.height = this.app.stage.height;
 
-    let m50 = new M50();
-    m50.events.subscribe((evt) => {
-      // console.log(evt);
-      // console.log(this.app.stage.children);
-      this.container.addChild(m50.container);
-      m50.container.name = 'm50';
-      m50.container.width = m50.container.width / 2;
-      m50.container.height = m50.container.height / 2;
-      m50.container.x = this.app._options.width / 2 - m50.container.width / 2;
-      m50.container.y = this.app._options.height / 2 - m50.container.height / 2;
-    });
-    //m50.load(); // Sprites don't exist until load method is called
+    this.createEnclosure();
+  }
 
-    if(!this.resources.m50){
-      // console.log("resources.m50 does not exist");
-      this.importAsset('m50','assets/images/hardware/m50/m50_960w.png');
+  createEnclosure(){
+    this.enclosure = new M50();
+    this.enclosure.events.subscribe((evt) => {
+      this.container.addChild(this.enclosure.container);
+      this.enclosure.container.name = this.enclosure.model;
+      this.enclosure.container.width = this.enclosure.container.width / 2;
+      this.enclosure.container.height = this.enclosure.container.height / 2;
+      this.enclosure.container.x = this.app._options.width / 2 - this.enclosure.container.width / 2;
+      this.enclosure.container.y = this.app._options.height / 2 - this.enclosure.container.height / 2;
+    });
+
+    if(!this.resources[this.enclosure.model]){
+      //this.importAsset('m50','assets/images/hardware/m50/m50_960w.png');
+      this.importAsset(this.enclosure.model,this.enclosure.chassisPath);
     } else {
-      // console.log("resources.m50 exists");
       this.onImport(); 
     }
 
     //this.simpleImport();
+  }
 
-    //let square = this.makeTexture();
-    //this.container.addChild(square);
+  destroyEnclosure(){
+    // Clear out assets
+    this.container.destroy(true);
+    PIXI.loader.resources = {};
   }
 
   makeDriveTray():DriveTray{
-    let dt = new DriveTray("m50");
+    //let dt = new DriveTray("m50");
+    let dt = this.enclosure.makeDriveTray();
     return dt;
   }
 
-  simpleImport(){
+  /*simpleImport(){
     // This method requires more investigation. 
     // Image doesn't show up on stage unless I 
     // navigate away and back again. 
@@ -117,24 +132,10 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
     // console.log(sprite);
     this.container.addChild(sprite);
     // console.log(this.app.stage.children);
-  }
-
-  /*makeTexture(){
-    let gfx = new PIXI.Graphics();
-    gfx.beginFill(0xFFFFFF);
-    gfx.drawRect(120,60,100,10);
-    gfx.endFill();
-
-    this.texture = this.renderer.generateTexture(gfx);
-    let square = new PIXI.Sprite(this.texture);
-    square.tint = 0xCC0000;
-    // console.log(square);
-
-    return square;
   }*/
 
   importAsset(alias, path){
-    // console.log("Importing Asset...");
+    // NOTE: Alias will become the property name in resources
     this.loader
       .add(alias, path) //.add("catImage", "assets/res/cat.png")
       .on("progress", this.loadProgressHandler)
@@ -142,26 +143,17 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
   }
 
   onImport(){
-     // console.log("Asset loaded. Setting up as Sprite...");
      let sprite = PIXI.Sprite.from(this.resources.m50.texture.baseTexture);
-     //let sprite = new PIXI.Sprite(this.resources.m50.texture);
-     //let texture = PIXI.Texture.fromImage('assets/images/m50_1080p.png');
-     //let sprite = new PIXI.Sprite(texture);
      sprite.width = 480;
      sprite.height = sprite.height * (480 / 960);
      sprite.x = 0;
      sprite.y = 0;
-     //sprite.x = (this.container.width / 2) - (sprite.width / 2);
-     //sprite.y = (this.container.height / 2) - (sprite.height / 2);
-     sprite.name="m50_sprite"
+     sprite.name=this.enclosure.model + "_sprite"
      sprite.alpha = 0.1;
-     // console.log(this.resources);
-     // console.log(sprite);
      this.container.addChild(sprite);
-     // console.log(this.app.stage.children);
 
-     let dt = this.makeDriveTray();
-     //dt.handle.tint = 0xCC0000;
+     //let dt = this.makeDriveTray();
+     let dt = this.enclosure.makeDriveTray();
      this.container.addChild(dt.container);
      //this.updatePIXI();
      }
@@ -184,10 +176,10 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
 
 
 
-  updatePIXI(){
+  /*updatePIXI(){
     //this.app.renderer.render(this.app.stage);
     this.renderer.render(this.app.stage);
     requestAnimationFrame(this.updatePIXI.bind(this));
-  }
+  }*/
 
 }
