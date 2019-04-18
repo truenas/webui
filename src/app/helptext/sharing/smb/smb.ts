@@ -63,7 +63,7 @@ export const helptext_sharing_smb = {
 
     placeholder_guestok: T('Allow Guest Access'),
     tooltip_guestok: T('Set to allow access to this share without a password.\
- See the <a href="%%docurl%%/services.html%%webversion%%#smb"\
+ See the <a href="%%docurl%%/services.html#smb"\
  target="_blank">SMB</a> service documentation for more\
  information about guest user permissions.'),
 
@@ -86,7 +86,7 @@ export const helptext_sharing_smb = {
 
     placeholder_vfsobjects: T('VFS Objects'),
     tooltip_vfsobjects: T('Adds <a\
- href="%%docurl%%/sharing.html%%webversion%%#avail-vfs-modules-tab"\
+ href="%%docurl%%/sharing.html#avail-vfs-modules-tab"\
  target="blank">virtual file system modules</a> to\
  enhance functionality.'),
 
