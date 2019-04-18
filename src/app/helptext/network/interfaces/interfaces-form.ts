@@ -80,9 +80,8 @@ failover_virtual_alias_address_tooltip: T(''),
 
 vlan_pint_placeholder: T('Parent Interface'),
 vlan_pint_tooltip: T('Select the VLAN Parent Interface. Usually an Ethernet\
- card connected to a configured switch port. Newly\
- created link aggregations will not be available until\
- the system is rebooted.'),
+ card connected to a switch port configured for the VLAN. New link\
+ aggregations are not available until the system is restarted.'),
 vlan_pint_validation: [Validators.required],
 
 vlan_tag_placeholder: T('Vlan Tag'),
