@@ -639,30 +639,34 @@ export class VolumesListTableConfig implements InputTableConf {
                 value: "manual" + '-' + this.getTimestamp()            },
               {
                 type: 'checkbox',
-                name: 'recursive',
-                placeholder: helptext.snapshotDialog_recursive_placeholder,
-                tooltip: helptext.snapshotDialog_recursive_tooltip,
+                name: 'vmware_sync',
+                placeholder: helptext.vmware_sync_placeholder,
+                tooltip: helptext.vmware_sync_tooltip,
+                isHidden: true
               }
             ],
             method_rest: "storage/snapshot",
             saveButtonText: T("Create Snapshot"),
+            custCheckboxActions: [
+              {
+                id: 'recursive',
+                name: 'recursive',
+                placeholder: helptext.snapshotDialog_recursive_placeholder,
+                tooltip: helptext.snapshotDialog_recursive_tooltip,
+                function: () => {
+                  this.ws.call('vmware.dataset_has_vms',[row.path, true]).subscribe((vmware_res)=>{
+                    if(!vmware_res){
+                    _.find(conf.fieldConfig, {'name' : 'vmware_sync'}).isHidden = false;
+                    }
+                  })
+                }
+              }],
           }
-          this.ws.call('vmware.dataset_has_vms',[row.path, true]).subscribe((vmware_res)=>{
-            if(vmware_res){
-              const vmware_cb = {
-                type: 'checkbox',
-                name: 'vmware_sync',
-                placeholder: helptext.vmware_sync_placeholder,
-                tooltip: helptext.vmware_sync_tooltip,
-              }
-              conf.fieldConfig.push(vmware_cb);
+          this.dialogService.dialogForm(conf).subscribe((res) => {
+            if (res) {
+              this.snackBar.open(T("Snapshot successfully taken."), T('close'), { duration: 5000 });
             }
-            this.dialogService.dialogForm(conf).subscribe((res) => {
-              if (res) {
-                this.snackBar.open(T("Snapshot successfully taken."), T('close'), { duration: 5000 });
-              }
-            });
-          })
+          });
         }
       });
 
