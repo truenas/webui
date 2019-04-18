@@ -3,12 +3,18 @@ import { Component } from '@angular/core';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../helptext/system/proactivesupport';
+import { WebSocketService, SnackbarService } from '../../../services/';
+import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
+import { EntityUtils } from '../../common/entity/utils';
 
 @Component({
     selector: 'app-proative-support',
     template: `<entity-form [conf]="this"></entity-form>`,
+    providers: [SnackbarService]
 })
 export class ProactiveSupportComponent {
+
+    protected queryCall = 'support.config';
 
     public fieldSetDisplay = 'default';//default | carousel | stepper
     public fieldConfig: FieldConfig[] = [];
@@ -27,12 +33,26 @@ export class ProactiveSupportComponent {
                     name: 'title',
                     placeholder: 'Title',
                     tooltip: '',
+                    relation: [{
+                        action: 'DISABLE',
+                        when: [{
+                            name: 'enabled',
+                            value: false,
+                        }]
+                    }]
                 },
                 {
                     type: 'input',
                     name: 'name',
                     placeholder: 'Name',
                     tooltip: '',
+                    relation: [{
+                        action: 'DISABLE',
+                        when: [{
+                            name: 'enabled',
+                            value: false,
+                        }]
+                    }]
                 },
                 {
                     type: 'input',
@@ -40,6 +60,13 @@ export class ProactiveSupportComponent {
                     name: 'email',
                     placeholder: 'Email',
                     tooltip: '',
+                    relation: [{
+                        action: 'DISABLE',
+                        when: [{
+                            name: 'enabled',
+                            value: false,
+                        }]
+                    }]
                 },
                 {
                     type: 'input',
@@ -47,6 +74,13 @@ export class ProactiveSupportComponent {
                     name: 'phone',
                     placeholder: 'Phone',
                     tooltip: '',
+                    relation: [{
+                        action: 'DISABLE',
+                        when: [{
+                            name: 'enabled',
+                            value: false,
+                        }]
+                    }]
                 }
             ]
         },
@@ -57,29 +91,57 @@ export class ProactiveSupportComponent {
             config: [
                 {
                     type: 'input',
-                    name: 'title',
+                    name: 'secondary_title',
                     placeholder: 'Title',
                     tooltip: '',
+                    relation: [{
+                        action: 'DISABLE',
+                        when: [{
+                            name: 'enabled',
+                            value: false,
+                        }]
+                    }]
                 },
                 {
                     type: 'input',
-                    name: 'name',
+                    name: 'secondary_name',
                     placeholder: 'Name',
                     tooltip: '',
+                    relation: [{
+                        action: 'DISABLE',
+                        when: [{
+                            name: 'enabled',
+                            value: false,
+                        }]
+                    }]
                 },
                 {
                     type: 'input',
                     inputType: 'email',
-                    name: 'email',
+                    name: 'secondary_email',
                     placeholder: 'Email',
                     tooltip: '',
+                    relation: [{
+                        action: 'DISABLE',
+                        when: [{
+                            name: 'enabled',
+                            value: false,
+                        }]
+                    }]
                 },
                 {
                     type: 'input',
                     inputType: 'phone',
-                    name: 'phone',
+                    name: 'secondary_phone',
                     placeholder: 'Phone',
                     tooltip: '',
+                    relation: [{
+                        action: 'DISABLE',
+                        when: [{
+                            name: 'enabled',
+                            value: false,
+                        }]
+                    }]
                 }
             ]
         },
@@ -89,7 +151,7 @@ export class ProactiveSupportComponent {
             config: [
                 {
                     type: 'checkbox',
-                    name: 'enable',
+                    name: 'enabled',
                     placeholder: 'Enable automatic support alerts to iXsystems (Silver/Gold support only)',
                     tooltip: '',
                 }
@@ -97,5 +159,20 @@ export class ProactiveSupportComponent {
         }
     ]
 
-    constructor() { }
+    constructor(private ws: WebSocketService, private snackbarService: SnackbarService,
+        private loader: AppLoaderService) { }
+
+    customSubmit(value) {
+        this.loader.open();
+        this.ws.call('support.update', [value]).subscribe(
+            (res) => {
+                this.loader.close();
+                this.snackbarService.open("Settings saved.", 'close', { duration: 5000 })
+            },
+            (err) => {
+                this.loader.close();
+                new EntityUtils().handleWSError(this, err);
+            }
+        );
+    }
 }
