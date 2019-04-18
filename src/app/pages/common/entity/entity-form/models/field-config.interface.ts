@@ -15,7 +15,7 @@ export interface FieldConfig {
   message?: any, updater?:any, parent?:any,togglePw?:boolean, paraText?: any,
   noexec?: boolean, blurStatus?:boolean,blurEvent?:any,noMinutes?:boolean,
   warnings?: string, hideButton?:boolean, searchOptions?: any[], hideDirs?: any,
-  listFields?: FieldConfig[],
+  listFields?: Array<FieldConfig>[], templateListField?: FieldConfig[]
   customEventMethod?(data:any), onChangeOption?(data:any), 
   
 }
