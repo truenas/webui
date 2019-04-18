@@ -13,7 +13,7 @@ int_type_options: [
 
 int_interface_placeholder : T('NIC'),
 int_interface_tooltip : T('Enter the FreeBSD device name of the interface. This\
- cannot change after the interface is created.'),
+ cannot be changed after the interface is created.'),
 int_interface_validation : [ Validators.required ],
 
 int_name_placeholder : T('Description'),
