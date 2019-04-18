@@ -59,11 +59,12 @@ delete_tooltip6: T('Set to delete this alias.'),
 bridge_members_placeholder: T('Bridge Members'),
 bridge_members_tooltip: T('Network interfaces to include in the bridge.'),
 
-failover_critical_placeholder: T('Failover Critical'),
-failover_critical_tooltip: T('If this interface is considered critical for\
- failover it will cause a failover event in case it is preempted by the other\
- controller via VRRP/CARP protocol and there arent other interfaces in that\
- same failover group.'),
+failover_critical_placeholder: T('Critical'),
+failover_critical_tooltip: T('Interfaces marked <i>critical</i> are\
+ considered necessary for normal operation. When the last critical\
+ interface in a failover group is preempted by the other storage\
+ controller through the VRRP or CARP protocols, a failover is\
+ triggered.'),
 
 failover_group_placeholder: T('Failover Group'),
 failover_group_tooltip: T('Multiple critical interfaces are combined into a single failover group. A failover is triggered if all of the interfaces in the group fail.'),
