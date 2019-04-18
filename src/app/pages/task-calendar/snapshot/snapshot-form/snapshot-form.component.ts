@@ -55,19 +55,19 @@ export class SnapshotFormComponent {
     name: 'lifetime_unit',
     tooltip: helptext.lifetime_unit_tooltip,
     options: [{
-      label: 'Hour(s)',
+      label: 'Hours',
       value: 'HOUR',
     }, {
-      label: 'Day(s)',
+      label: 'Days',
       value: 'DAY',
     }, {
-      label: 'Week(s)',
+      label: 'Weeks',
       value: 'WEEK',
     }, {
-      label: 'Month(s)',
+      label: 'Months',
       value: 'MONTH',
     }, {
-      label: 'Year(s)',
+      label: 'Years',
       value: 'YEAR',
     }],
     value: 'WEEK',
