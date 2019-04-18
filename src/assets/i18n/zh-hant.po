@@ -16,12 +16,6 @@ msgid " First vdev is a "
 msgstr ""
 
 msgid ""
-" The number of file transfers to run in parallel. It can sometimes be "
-"useful to set this to a smaller number if the remote is giving a lot of "
-"timeouts, or a larger number if there is high bandwidth and a fast remote."
-msgstr ""
-
-msgid ""
 " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network "
 "port number of the UPS <i>Master</i> system. The default port is "
 "<i>3493</i>."
@@ -36,6 +30,9 @@ msgstr ""
 msgid ""
 " is the minimum recommended record size. Choosing a smaller size can reduce "
 "system performance."
+msgstr ""
+
+msgid " updated."
 msgstr ""
 
 msgid "% of all cores"
@@ -68,9 +65,6 @@ msgid ", new vdev is "
 msgstr ""
 
 msgid ". All data on that pool was destroyed."
-msgstr ""
-
-msgid "0=Disabled, blank=inherit"
 msgstr ""
 
 msgid "20 characters is the maximum length."
@@ -154,7 +148,7 @@ msgstr ""
 msgid ""
 "<b>Root logins are discouraged.</b> Set to allow root logins. A password "
 "must be set for the <i>root</i> user in <a "
-"href=\"%%docurl%%/account.html%%webversion%%#users\" "
+"href=\"%%docurl%%/accounts.html%%webversion%%#users\" "
 "target=\"_blank\">Users</a>."
 msgstr ""
 
@@ -168,11 +162,6 @@ msgid ""
 "<b>WARNING:</b> Rolling back to this snapshot will permanently delete later "
 "snapshots of this dataset. Do not roll back until all desired snapshots "
 "have been backed up!"
-msgstr ""
-
-msgid ""
-"<b>WARNING:</b> This configuration file contains system              "
-"passwords and other sensitive data.<br>"
 msgstr ""
 
 msgid ""
@@ -250,21 +239,15 @@ msgid ""
 msgstr ""
 
 msgid ""
-"<i>Default (Clone Jail)</i> or <i>Basejail</i>. Clone jails are clones of "
-"the specified RELEASE. They are linked to that RELEASE, even if they are "
-"upgraded. Basejails mount the specified RELEASE directories as nullfs "
-"mounts over the jail directories. Basejails are not linked to the original "
-"RELEASE when upgraded."
-msgstr ""
-
-msgid ""
-"<i>File</i> shares the contents of an individual file. <i>Device</i> shares "
-"an entire device."
-msgstr ""
-
-msgid ""
 "<i>HTTP</i> will keep the connection unencrypted. <i>HTTPS</i> encrypts the "
 "connection. <i>HTTP+HTTPS</i> allows both types of connections."
+msgstr ""
+
+msgid ""
+"<i>Intel e82545 (e1000)</i> emulates an Intel Ethernet card. This provides "
+"compatibility with most operating systems. <i>VirtIO</i> provides better "
+"performance when the operating system installed in the VM supports VirtIO "
+"paravirtualized network drivers."
 msgstr ""
 
 msgid ""
@@ -275,8 +258,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"<i>Push</i> sends data to cloud storage. <i>Pull</i> receives data from "
-"cloud storage."
+"<i>Push</i> sends data to cloud storage. <i>Pull</i>                "
+"receives data from cloud storage."
 msgstr ""
 
 msgid ""
@@ -287,12 +270,14 @@ msgid ""
 msgstr ""
 
 msgid ""
-"<i>SYNC</i> makes files on the destination system identical to those on the "
-"source. Files that have been removed from the source are removed from the "
-"destination, similar to <i>rsync --delete</i>. <i>COPY</i> copies files "
-"from source to destination, skipping files that are identical, similar to "
-"<i>rsync</i>. <i>MOVE</i> copies files from source to destination, deleting "
-"files from the source after the copy, similar to <i>mv</i>."
+"<i>SYNC</i> makes files on the destination system identical                "
+"to those on the source. Files that have been removed from                "
+"the source are removed from the destination, similar to                "
+"<i>rsync --delete</i>.                <i>COPY</i> copies files from source "
+"to destination,                skipping files that are identical, similar "
+"to <i>rsync</i>.                <i>MOVE</i> copies files from source to "
+"destination,                deleting files from the source after the copy, "
+"similar                to <i>mv</i>."
 msgstr ""
 
 msgid ""
@@ -346,6 +331,11 @@ msgid ""
 msgstr ""
 
 msgid "A pool with this name already exists."
+msgstr ""
+
+msgid ""
+"A randomized MAC address is normally assigned. Enter a value here to set a "
+"specific MAC address."
 msgstr ""
 
 msgid ""
@@ -571,12 +561,6 @@ msgid "Adding data vdevs of different types is not supported."
 msgstr ""
 
 msgid ""
-"Additional <a                   "
-"href=\"https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8."
-"in\"                   target=\"_blank\">smartctl(8)</a> options."
-msgstr ""
-
-msgid ""
 "Additional <a                "
 "href=\"https://rsync.samba.org/ftp/rsync/rsync.html\"                "
 "target=\"_blank\">rsync(1)</a> options to include.<br>                Note: "
@@ -701,9 +685,6 @@ msgstr "警示設定"
 msgid "Aliases"
 msgstr "別名"
 
-msgid "All Disks"
-msgstr "所有磁碟"
-
 msgid "All dirs"
 msgstr "所有資料夾"
 
@@ -763,12 +744,6 @@ msgid ""
 msgstr ""
 
 msgid "Allow configuring a non-standard port to access the GUI over <i>HTTPS</i>."
-msgstr ""
-
-msgid ""
-"Allow different groups to be configured with different authentication "
-"profiles. Example: all users with a group ID of <i>1</i> will inherit the "
-"authentication profile associated with Group <i>1</i>."
 msgstr ""
 
 msgid ""
@@ -836,6 +811,12 @@ msgid ""
 ".1-RELEASE+and+Ports\"target=\"_blank\">hostname(1)</a> or <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=sethostname&manpath="
 "FreeBSD+11.1-RELEASE+and+Ports\"target=\"_blank\">sethostname(3)</a>."
+msgstr ""
+
+msgid ""
+"Allows different groups to be configured with different authentication "
+"profiles. Example: all users with a group ID of <i>1</i> will inherit the "
+"authentication profile associated with Group <i>1</i>."
 msgstr ""
 
 msgid ""
@@ -988,9 +969,6 @@ msgstr "自動啟動"
 msgid "Autoconfigure IPv6"
 msgstr ""
 
-msgid "Autoconfigure IPv6 with rtsold"
-msgstr ""
-
 msgid ""
 "Automatically compress data written to the zvol. Choose a <a "
 "href=\"%%docurl%%/storage.html%%webversion%%#compression\" "
@@ -1005,12 +983,6 @@ msgstr ""
 msgid "Automatically reboot the system after the update is applied."
 msgstr ""
 
-msgid "Automatically stop the script or command after the specified seconds."
-msgstr ""
-
-msgid "Auxiliary Arguments"
-msgstr ""
-
 msgid "Auxiliary Groups"
 msgstr "附屬群組"
 
@@ -1021,6 +993,9 @@ msgid "Auxiliary Parameters (ups.conf)"
 msgstr ""
 
 msgid "Auxiliary Parameters (upsd.conf)"
+msgstr ""
+
+msgid "Auxiliary arguments"
 msgstr ""
 
 msgid "Auxiliary parameters"
@@ -1057,9 +1032,6 @@ msgstr ""
 msgid ""
 "Backend used to map Windows security identifiers (SIDs) to UNIX UIDs and "
 "GIDs. Click Edit to configure that backend"
-msgstr ""
-
-msgid "Bandwidth Limit"
 msgstr ""
 
 msgid "Base DN"
@@ -1130,14 +1102,6 @@ msgstr "啟動 Pool"
 msgid "Boot Pool Status"
 msgstr "啟動 Pool 狀態"
 
-msgid ""
-"Brainpool curves can be more secure, while secp curves can be faster. See "
-"<a "
-"href=\"https://tls.mbed.org/kb/cryptography/elliptic-curve-performance-nist-"
-"vs-brainpool\" target=\"blank\"> Elliptic Curve performance: NIST vs "
-"Brainpool </a> for more information."
-msgstr ""
-
 msgid "Browsable to Network Clients"
 msgstr "網路客戶端可瀏覽"
 
@@ -1162,6 +1126,9 @@ msgid ""
 "Browse to an empty directory within the jail or enter a new directory name "
 "within the jail directory structure. This links to the <b>Source</b> "
 "storage area."
+msgstr ""
+
+msgid "Browse to an existing directory to store the new raw file."
 msgstr ""
 
 msgid ""
@@ -1252,6 +1219,9 @@ msgstr "CPU 使用率"
 
 msgid "CPU and Memory"
 msgstr "CPU 與記憶體"
+
+msgid "CPU and Memory configuration."
+msgstr ""
 
 msgid "CSRs"
 msgstr ""
@@ -1369,12 +1339,9 @@ msgid "Check the network connection."
 msgstr "檢查網路連線"
 
 msgid ""
-"Check the update server daily for                                   any "
-"updates on the chosen train.                                   "
-"Automatically download an update if                                   one "
-"is available. Click                                   <i>APPLY PENDING "
-"UPDATE</i> to install                                   the downloaded "
-"update."
+"Check the update server daily for  any updates on the chosen train.  "
+"Automatically download an update if  one is available. Click  <i>APPLY "
+"PENDING UPDATE</i> to install  the downloaded update."
 msgstr ""
 
 msgid ""
@@ -1405,8 +1372,8 @@ msgstr ""
 msgid "Choices are <i>Minimum, Normal, or Debug</i>."
 msgstr ""
 
-msgid "Choices are <i>None, Auto, CHAP,</i> or <i>Mutual CHAP</i>."
-msgstr "選項為 <i>None, Auto, CHAP,</i> 或是 <i>雙向式交互驗證 (Mutual CHAP)</i>."
+msgid "Choices are <i>None, Auto, CHAP,</i> or   <i>Mutual CHAP</i>."
+msgstr ""
 
 msgid ""
 "Choose <a                 "
@@ -1861,7 +1828,7 @@ msgid "Confirm detach"
 msgstr "確認中斷連結"
 
 msgid "Confirm export/disconnect"
-msgstr ""確認匯出/斷線
+msgstr ""
 
 msgid "Confirm it is okay to proceed with Detach."
 msgstr ""
@@ -1958,9 +1925,6 @@ msgid "Create a pool:"
 msgstr "建立 Pool："
 
 msgid "Create a recommended formation of vdevs in a pool."
-msgstr ""
-
-msgid "Create a snapshot of the dataset before pushing data."
 msgstr ""
 
 msgid "Create new Pool"
@@ -2360,6 +2324,11 @@ msgid "Details"
 msgstr "細節"
 
 msgid ""
+"Determine whether this share name is included when browsing shares. Home "
+"shares are only visible to the owner regardless of this setting."
+msgstr ""
+
+msgid ""
 "Determine which information the processes in a jail are able to obtain "
 "about mount points. The behavior of multiple syscalls is affected. <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=statfs\" "
@@ -2483,11 +2452,6 @@ msgid ""
 "a specific RPM is needed for accurate reporting statistics."
 msgstr ""
 
-msgid ""
-"Do not override the default unless the initiator requires a specific block "
-"size."
-msgstr ""
-
 msgid "Do not set this if the Serial Port is disabled."
 msgstr ""
 
@@ -2505,6 +2469,11 @@ msgstr "網域帳戶密碼"
 
 msgid "Domain Controller"
 msgstr "網域控制站"
+
+msgid ""
+"Domain Controller cannot be used when Active Directory monitoring is "
+"enabled."
+msgstr ""
 
 msgid "Domain Forest Level"
 msgstr "網域樹系等級"
@@ -2542,9 +2511,6 @@ msgstr ""
 msgid "Driver"
 msgstr ""
 
-msgid "EC Curve"
-msgstr ""
-
 msgid "Edit"
 msgstr "編輯"
 
@@ -2574,12 +2540,6 @@ msgstr "編輯 Zvol"
 
 msgid "Editing the following disks:"
 msgstr "正在編輯這些磁碟："
-
-msgid ""
-"Either single bandwidth limit or bandwidth limit schedule in rclone "
-"format.<br /> Example: \"08:00,512 12:00,10MB 13:00,512 18:00,30MB "
-"23:00,off\".<br /> Default unit is kilobytes."
-msgstr ""
 
 msgid "Email"
 msgstr "郵件"
@@ -2627,9 +2587,6 @@ msgstr "啟用序列主控台"
 msgid "Enable Service"
 msgstr "啟用服務"
 
-msgid "Enable Shadow Copies"
-msgstr "啟用陰影複製"
-
 msgid "Enable TLS"
 msgstr "啟用 TLS"
 
@@ -2656,9 +2613,6 @@ msgstr ""
 msgid "Enable autotune"
 msgstr "啟用自動調校"
 
-msgid "Enable iSCSI ALUA"
-msgstr "啟用 iSCSI ALUA"
-
 msgid "Enable if Mac clients will be connecting to the SMB share."
 msgstr ""
 
@@ -2680,8 +2634,8 @@ msgid "Enable service"
 msgstr "啟用服務"
 
 msgid ""
-"Enable this Cloud Sync Task. Unset to disable this Cloud Sync Task without "
-"deleting it."
+"Enable this Cloud Sync Task. Unset to disable this Cloud                "
+"Sync Task without deleting it."
 msgstr ""
 
 msgid ""
@@ -2747,13 +2701,13 @@ msgstr "需要加密金鑰"
 msgid "Encryption Mode"
 msgstr "加密模式"
 
-msgid "Encryption Password"
-msgstr "加密密碼"
-
 msgid "Encryption Rekey"
 msgstr ""
 
-msgid "Encryption Salt"
+msgid "Encryption password"
+msgstr ""
+
+msgid "Encryption salt"
 msgstr ""
 
 msgid "End"
@@ -2844,11 +2798,11 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Enter a long string of random characters for use as <a "
-"href=\"https://searchsecurity.techtarget.com/definition/salt\" "
-"target=\"_blank\">salt</a> for the encryption password. <b>Warning:</b> "
-"Save and back up the encryption salt value. Losing the salt value can "
-"result in data loss."
+"Enter a long string of random characters for use as                <a "
+"href=\"https://searchsecurity.techtarget.com/definition/salt\"              "
+"  target=\"_blank\">salt</a> for the encryption password.                "
+"<b>Warning:</b> Save and back up the encryption salt                value. "
+"Losing the salt value can result in data loss."
 msgstr ""
 
 msgid "Enter a name for the VM."
@@ -2911,6 +2865,9 @@ msgstr ""
 msgid ""
 "Enter a one to three paragraph summary of the issue. Describe the problem "
 "and provide any steps to replicate the issue."
+msgstr ""
+
+msgid "Enter a password for <b>User</b>. Must be between 12 and 16 characters."
 msgstr ""
 
 msgid ""
@@ -3016,7 +2973,7 @@ msgstr ""
 
 msgid ""
 "Enter a valid username for the <a "
-"href=\"https://redmine.ixsystems.com/projects/freenas/issues\" "
+"href=\"https://jira.ixsystems.com/projects/NAS/issues/\" "
 "target=\"_blank\">FreeNAS bug tracking system</a>"
 msgstr ""
 
@@ -3039,7 +2996,7 @@ msgstr ""
 
 msgid ""
 "Enter accounts that have administrative access. See <a "
-"href=\"http://networkupstools.org/docs/man/upsd.users.html\" "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=upsd.users\" "
 "target=\"_blank\">upsd.users(5)</a> for examples."
 msgstr ""
 
@@ -3073,14 +3030,6 @@ msgid "Enter an alphanumeric name for the group."
 msgstr ""
 
 msgid "Enter an alphanumeric name for the virtual machine."
-msgstr ""
-
-msgid ""
-"Enter an alphanumeric username of eight to sixteen characters. Keeping "
-"usernames to eight characters or less is recommended for compatibility with "
-"legacy clients. Usernames cannot begin with a hyphen (<i>-</i>) or contain "
-"a space, tab, or these characters: <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i> "
-"Note that <i>$</i> can only be used as the last character."
 msgstr ""
 
 msgid ""
@@ -3151,6 +3100,12 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Enter name of user account to use for CHAP authentication with the user on "
+"the remote system. Many initiators default to the initiator name as the "
+"user."
+msgstr ""
+
+msgid ""
 "Enter or paste the <b>public</b> SSH key of the user for any key-based "
 "authentication. <b>Do not paste the private key.</b>"
 msgstr ""
@@ -3158,9 +3113,6 @@ msgstr ""
 msgid ""
 "Enter or paste the temporary token from the system                 with the "
 "<b>Remote ZFS Pool/Dataset</b>."
-msgstr ""
-
-msgid "Enter passphrase to lock pool "
 msgstr ""
 
 msgid ""
@@ -3263,6 +3215,11 @@ msgstr ""
 msgid "Enter the email address of the person responsible for the CA."
 msgstr ""
 
+msgid ""
+"Enter the extent name. The name cannot be an existing file within the pool "
+"or dataset when the <b>Extent size</b> is something other than <i>0</i>."
+msgstr ""
+
 msgid "Enter the filesystem to snapshot."
 msgstr ""
 
@@ -3273,6 +3230,12 @@ msgid "Enter the hostname or IP address of the <b>NTP</b>   server."
 msgstr ""
 
 msgid "Enter the hostname or IP address of the <b>NTP</b> server."
+msgstr ""
+
+msgid ""
+"Enter the hostnames or IP addresses of the ISNS servers to be registered "
+"with the iSCSI targets and portals of the system. Separate each entry with "
+"a space."
 msgstr ""
 
 msgid "Enter the location of the organization. For example, the city."
@@ -3289,6 +3252,11 @@ msgstr ""
 msgid ""
 "Enter the mountpoint for the <b>jail_zfs_dataset</b>. <b>Example:</b> "
 "<i>/data example-dataset-name</i>"
+msgstr ""
+
+msgid ""
+"Enter the mutual secret password which <b>must be different than the "
+"<i>Secret</i></b>. Required if <b>Peer User</b> is set."
 msgstr ""
 
 msgid ""
@@ -3350,9 +3318,9 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Enter the password to encrypt and decrypt remote data. <b>Warning</b>: "
-"Always save and back up this password. Losing the encryption password can "
-"result in data loss."
+"Enter the password to encrypt and decrypt remote data.                "
+"<b>Warning</b>: Always save and back up this password.                "
+"Losing the encryption password can result in data loss."
 msgstr ""
 
 msgid "Enter the password to submit settings changes."
@@ -3377,9 +3345,6 @@ msgid ""
 msgstr ""
 
 msgid "Enter the port used by the SSH server on the remote                 system."
-msgstr ""
-
-msgid "Enter the pre-defined S3 bucket to use."
 msgstr ""
 
 msgid ""
@@ -3531,9 +3496,6 @@ msgstr "估計原始可用容量："
 msgid "Estimated total raw data capacity"
 msgstr "估計總共原始可用容量："
 
-msgid "Exclude"
-msgstr ""
-
 msgid "Exec"
 msgstr ""
 
@@ -3552,47 +3514,38 @@ msgstr "以唯讀權限分享"
 msgid "Export Recycle Bin"
 msgstr "提供資源回收筒"
 
-msgid ""
-"Export ZFS snapshots as <a "
-"href=\"https://docs.microsoft.com/en-us/windows/desktop/vss/shadow-copies-"
-"and-shadow-copy-sets\" target=_blank>Shadow Copies</a> for VSS clients."
-msgstr ""
-
 msgid "Export/Disconnect"
 msgstr "匯出/斷線"
 
 msgid "Export/Disconnect Pool"
 msgstr "匯出/斷線 Pool"
 
-msgid "Exporting Pool..."
-msgstr "正在匯出 Pool...""
-
 msgid "Extend"
-msgstr "延伸"
+msgstr ""
 
 msgid "Extend Pool"
-msgstr "延伸 Pool"
+msgstr ""
 
 msgid "Extending an encrypted pool resets the passphrase and recovery key!"
 msgstr ""
 
 msgid "Extent"
-msgstr "範圍"
+msgstr ""
 
 msgid "Extent name"
-msgstr "範圍名稱"
+msgstr ""
 
 msgid "Extent size"
-msgstr "範圍大小"
+msgstr ""
 
 msgid "Extent type"
-msgstr "範圍類型"
+msgstr ""
 
-msgid "Extra Users(upsd.conf)"
-msgstr "額外使用者 (upsd.conf)"
+msgid "Extra Users"
+msgstr ""
 
 msgid "Extra options"
-msgstr "額外選項"
+msgstr ""
 
 msgid "FTP Host to connect to. Example: <i>ftp.example.com</i>."
 msgstr ""
@@ -3601,31 +3554,31 @@ msgid "FTP Port number. Leave blank to use a default port of <i>21</i>."
 msgstr ""
 
 msgid "Failed"
-msgstr "失敗"
+msgstr ""
 
 msgid "Fetch and Install Updates"
-msgstr "擷取並安裝更新"
+msgstr ""
 
 msgid "File Mask"
-msgstr "檔案遮罩"
+msgstr ""
 
 msgid "File Permission"
-msgstr "檔案權限"
+msgstr ""
 
 msgid "File Permissions"
-msgstr "檔案權限"
+msgstr ""
 
-msgid "Filename Encryption"
-msgstr "加密檔名"
+msgid "Filename encryption"
+msgstr ""
 
 msgid "Filesystem type"
-msgstr "檔案系統類型"
+msgstr ""
 
 msgid "Filter"
-msgstr "篩選"
+msgstr ""
 
 msgid "Fix Credential"
-msgstr "修正認證"
+msgstr ""
 
 msgid ""
 "Flags to pass to <a "
@@ -3646,12 +3599,6 @@ msgstr ""
 
 msgid "Folder"
 msgstr "資料夾"
-
-msgid "Follow Symlinks"
-msgstr "依循符號連結"
-
-msgid "Follow symlinks and copy the items to which they link."
-msgstr ""
 
 msgid ""
 "For more information about the available compression algorithms, refer to "
@@ -3847,11 +3794,6 @@ msgstr ""
 msgid "Hostnames Lookups"
 msgstr "主機名稱反查"
 
-msgid ""
-"Hostnames or IP addresses of the ISNS servers to be registered with the "
-"iSCSI targets and portals of the system. Separate each entry with a space."
-msgstr ""
-
 msgid "Hosts Allow"
 msgstr "允許主機清單"
 
@@ -4035,12 +3977,6 @@ msgstr "正在匯入磁碟"
 msgid "Importing Disk..."
 msgstr "正在匯入磁碟..."
 
-msgid "Importing Pool"
-msgstr ""正在匯入 Pool
-
-msgid "Importing Pool..."
-msgstr "正在匯入 Pool..."
-
 msgid "In KiB/s. A default of <i>0</i> means unlimited."
 msgstr ""
 
@@ -4053,10 +3989,10 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Including the Password Secret Seed allows using this              "
-"configuration file with a new boot device. It also              decrypts "
-"all passwords used on this system.              <b>Keep the configuration "
-"file safe and protect it from unauthorized access!</b>"
+"Including the Password Secret Seed allows using this configuration file "
+"with a new boot device. This also decrypts all system passwords for reuse "
+"when the configuration file is uploaded. <b>Keep the configuration file "
+"safe and protect it from unauthorized access!</b>"
 msgstr ""
 
 msgid ""
@@ -4068,16 +4004,15 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Indicates the time of inactivity in minutes before                   the "
-"drive enters standby mode. This <a                   "
+"Indicates the time of inactivity in minutes before the drive enters standby "
+"mode. This <a "
 "href=\"https://forums.freenas.org/index.php?threads/how-to-find-out-if-a-"
-"drive-is-spinning-down-properly.2068/\"                   "
-"target=\"_blank\">forum post</a> demonstrates how to                   "
-"determine if a drive has spun down."
+"drive-is-spinning-down-properly.2068/\" target=\"_blank\">forum post</a> "
+"demonstrates how to determine if a drive has spun down."
 msgstr ""
 
 msgid ""
-"Indicates the time of inactivity in minutes before the drive enters standby "
+"Indicates the time of inactivity in minutes before the drives enter standby "
 "mode. This <a "
 "href=\"https://forums.freenas.org/index.php?threads/how-to-find-out-if-a-"
 "drive-is-spinning-down-properly.2068/\" target=\"_blank\">forum post</a> "
@@ -4162,6 +4097,9 @@ msgstr ""
 msgid "Jail"
 msgstr ""
 
+msgid "Jail "
+msgstr ""
+
 msgid ""
 "Jail CPU affinity. Options are <i>off</i> or a combination of <i>1-4</i>, "
 "separated by commas (,). <b>Example:</b> <i>1,2,3,4</i>"
@@ -4173,8 +4111,8 @@ msgstr "Jail 名稱"
 msgid "Jail Properties"
 msgstr "Jail 屬性"
 
-msgid "Jail Type"
-msgstr "Jail 類型"
+msgid "Jail Update Failed"
+msgstr ""
 
 msgid "Jail core dump size in bytes."
 msgstr ""
@@ -4183,9 +4121,6 @@ msgid "Jail data size in bytes."
 msgstr ""
 
 msgid "Jail stack size in bytes."
-msgstr ""
-
-msgid "Jail updated successfully."
 msgstr ""
 
 msgid "Jails"
@@ -4224,9 +4159,6 @@ msgid "Kerberos Settings"
 msgstr ""
 
 msgid "Key Length"
-msgstr ""
-
-msgid "Key Type"
 msgstr ""
 
 msgid "LDAP"
@@ -4370,6 +4302,9 @@ msgid "Location"
 msgstr ""
 
 msgid "Lock"
+msgstr ""
+
+msgid "Lock "
 msgstr ""
 
 msgid "Lock Pool"
@@ -4581,12 +4516,6 @@ msgid "Mode"
 msgstr "模式"
 
 msgid ""
-"Modify for disks that understand <a                   "
-"href=\"https://en.wikipedia.org/wiki/Automatic_acoustic_management\"        "
-"           target=\"_blank\">AAM</a>."
-msgstr ""
-
-msgid ""
 "Modify for disks that understand <a "
 "href=\"https://en.wikipedia.org/wiki/Automatic_acoustic_management\" "
 "target=\"_blank\">AAM</a>."
@@ -4650,9 +4579,6 @@ msgid ""
 "target=\"_blank\">LDAP</a> service is running."
 msgstr ""
 
-msgid "Mutual secret password. Must be different than <i>Secret</i>."
-msgstr ""
-
 msgid "N/A"
 msgstr "無"
 
@@ -4704,14 +4630,7 @@ msgstr ""
 msgid "Name of the WebDAV site, service, or software being used."
 msgstr ""
 
-msgid ""
-"Name of the extent. If <i>Extent size</i> is non-zero, this cannot be the "
-"name of a file that already exists."
-msgstr ""
-
-msgid ""
-"Name of user account on remote system for CHAP authentication. Many "
-"initiators use the initiator name as the user name."
+msgid "Name the new raw file."
 msgstr ""
 
 msgid "Nameserver 1"
@@ -4765,7 +4684,7 @@ msgid "Network Summary"
 msgstr "網路摘要"
 
 msgid ""
-"Network addresses which can use this initiator. Use <i>ALL</i> or list "
+"Network addresses that can use this initiator. Use <i>ALL</i> or list "
 "network addresses with a <a "
 "href=\"https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing\" "
 "target=\"_blank\">CIDR</a> mask. Separate multiple addresses with a space: "
@@ -4787,11 +4706,6 @@ msgstr ""
 msgid ""
 "New users are not given <b>su</b> permissions if <i>wheel</i> is their "
 "primary group."
-msgstr ""
-
-msgid ""
-"Newline-separated list of files and directories to exclude from sync.<br /> "
-"See https://rclone.org/filtering/ for more details on --exclude option."
 msgstr ""
 
 msgid "Next"
@@ -4974,13 +4888,16 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Only entered when configuring mutual CHAP. Usually this is the same value "
-"as <i>User</i>."
+"Only input when configuring mutual CHAP. In most cases it will need to be "
+"the same value as <b>User</b>."
 msgstr ""
 
 msgid ""
 "Only needed when connecting to a Team Drive. The ID of the top level folder "
 "of the Team Drive."
+msgstr ""
+
+msgid "Only override the default if the initiator requires a different block size."
 msgstr ""
 
 msgid ""
@@ -5046,12 +4963,6 @@ msgstr ""
 msgid "Organization"
 msgstr "組織"
 
-msgid "Organizational Unit"
-msgstr "組織單位"
-
-msgid "Organizational unit of the entity."
-msgstr ""
-
 msgid "Outgoing Mail Server"
 msgstr ""
 
@@ -5115,9 +5026,6 @@ msgstr ""
 msgid "Password for the username."
 msgstr ""
 
-msgid "Password. Must be at least 12 and no more than 16 characters long."
-msgstr ""
-
 msgid ""
 "Passwords cannot contain a <b>?</b>. Passwords should be at least eight "
 "characters and contain a mix of lower and upper case, numbers, and special "
@@ -5173,6 +5081,9 @@ msgstr ""
 msgid "Periodic Notification User"
 msgstr ""
 
+msgid "Periodic Snapshot Task"
+msgstr ""
+
 msgid "Periodic Snapshot Tasks"
 msgstr "定期快照作業"
 
@@ -5213,11 +5124,17 @@ msgstr ""
 msgid "Please wait"
 msgstr "請稍候"
 
+msgid "Plugin "
+msgstr ""
+
 msgid "Plugin Installed Successfully"
 msgstr "外掛已經安裝成功"
 
 msgid "Plugin Name"
 msgstr "外掛名稱"
+
+msgid "Plugin Update Failed"
+msgstr ""
 
 msgid "Plugin installed successfully"
 msgstr "外掛已經安裝成功"
@@ -5258,9 +5175,6 @@ msgstr ""
 msgid "Portal Group ID"
 msgstr ""
 
-msgid "Post-script"
-msgstr ""
-
 msgid "Power Mode"
 msgstr ""
 
@@ -5285,9 +5199,6 @@ msgstr ""
 msgid ""
 "Power of 2 in seconds; cannot be lower than 4 or higher than <i>Max. "
 "Poll</i>."
-msgstr ""
-
-msgid "Pre-script"
 msgstr ""
 
 msgid "Prefer"
@@ -5364,18 +5275,12 @@ msgstr ""
 msgid "Quiet"
 msgstr ""
 
-msgid "Quota critical alert at, %"
-msgstr ""
-
 msgid ""
 "Quota for each Time Machine backup on this share (in GiB). Note that this "
 "change will be applied only after share re-mount."
 msgstr ""
 
 msgid "Quota for this dataset"
-msgstr ""
-
-msgid "Quota warning alert at, %"
 msgstr ""
 
 msgid "RCTL Limits"
@@ -5403,6 +5308,24 @@ msgid "Range Size"
 msgstr ""
 
 msgid "Raw File"
+msgstr ""
+
+msgid "Raw file location"
+msgstr ""
+
+msgid "Raw file size"
+msgstr ""
+
+msgid "Raw file size (GiB)"
+msgstr ""
+
+msgid "Raw filename"
+msgstr ""
+
+msgid "Raw filename password"
+msgstr ""
+
+msgid "Raw filename password. The default is <i>docker</i>."
 msgstr ""
 
 msgid "Raw filesize"
@@ -5486,9 +5409,6 @@ msgstr "版本說明"
 msgid "Remote Auth Token"
 msgstr ""
 
-msgid "Remote Encryption"
-msgstr ""
-
 msgid "Remote Graphite Server Hostname"
 msgstr ""
 
@@ -5525,6 +5445,9 @@ msgstr ""
 msgid "Remote ZFS Pool/Dataset"
 msgstr "遠端 ZFS Pool/資料集"
 
+msgid "Remote encryption"
+msgstr ""
+
 msgid "Remove"
 msgstr "移除"
 
@@ -5542,9 +5465,6 @@ msgstr ""
 
 msgid "Rename the existing boot environment."
 msgstr ""
-
-msgid "Replacing disk..."
-msgstr "正在替換磁碟..."
 
 msgid "Replication Stream Compression"
 msgstr ""
@@ -5772,13 +5692,7 @@ msgstr "儲存網路介面的修改"
 msgid "Save VLAN Interface Changes"
 msgstr "儲存 VLAN 介面的修改"
 
-msgid "Save configuration settings from this machine before updating?"
-msgstr ""
-
 msgid "Save notes about the jail."
-msgstr ""
-
-msgid "Saving Debug"
 msgstr ""
 
 msgid "Schedule a Cron Job"
@@ -5805,12 +5719,6 @@ msgstr ""
 msgid "Script"
 msgstr "指令碼"
 
-msgid "Script to execute after running sync."
-msgstr ""
-
-msgid "Script to execute before running sync."
-msgstr ""
-
 msgid "Scrub Boot Pool"
 msgstr "Scrub 啟動 Pool"
 
@@ -5819,9 +5727,6 @@ msgstr ""
 
 msgid "Scrub Tasks"
 msgstr "Scrub 作業"
-
-msgid "Scrub complete on pool <i>"
-msgstr ""
 
 msgid "Secondary DNS server."
 msgstr "次要 DNS 伺服器"
@@ -5843,14 +5748,6 @@ msgstr "安全模式"
 
 msgid "Security"
 msgstr "安全性"
-
-msgid ""
-"See <a "
-"href=\"https://crypto.stackexchange.com/questions/1190/why-is-elliptic-"
-"curve-cryptography-not-widely-used-compared-to-rsa\" target=\"blank\"> Why "
-"is elliptic curve cryptography not widely used, compared to RSA?</a> for "
-"more information about key types."
-msgstr ""
 
 msgid ""
 "See the <a href=\"http://networkupstools.org/stable-hcl.html\" "
@@ -5945,8 +5842,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Select a schedule preset or choose <i>Custom</i> to open the advanced "
-"scheduler."
+"Select a schedule preset or choose <i>Custom</i> to open                the "
+"advanced scheduler."
 msgstr ""
 
 msgid "Select a schema when Samba Schema is set."
@@ -5999,6 +5896,9 @@ msgid "Select an existing target."
 msgstr ""
 
 msgid "Select desired disk type."
+msgstr ""
+
+msgid "Select from <i>File</i> or <i>Device</i>."
 msgstr ""
 
 msgid ""
@@ -6101,8 +6001,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Select the cloud storage provider credentials from the list of available "
-"Cloud Credentials."
+"Select the cloud storage provider credentials from the                list "
+"of available Cloud Credentials."
 msgstr ""
 
 msgid "Select the country of the organization."
@@ -6115,9 +6015,10 @@ msgid "Select the device to attach."
 msgstr ""
 
 msgid ""
-"Select the directories or files to be sent to the cloud for Push syncs, or "
-"the destination to be written for Pull syncs. Be cautious about the "
-"destination of Pull jobs to avoid overwriting existing files."
+"Select the directories or files to be sent to the cloud                for "
+"Push syncs, or the destination to be written for                Pull syncs. "
+"Be cautious about the destination of Pull                jobs to avoid "
+"overwriting existing files."
 msgstr ""
 
 msgid ""
@@ -6160,6 +6061,9 @@ msgid ""
 msgstr ""
 
 msgid "Select the physical interface to associate with the VM."
+msgstr ""
+
+msgid "Select the physical network interface to associatewith the virtual machine."
 msgstr ""
 
 msgid "Select the pool to contain the system dataset."
@@ -6219,8 +6123,7 @@ msgstr ""
 
 msgid ""
 "Select the value or enter a value between <i>0</i> and <i>1023</i>. Some "
-"initiators expect a value below <i>256</i>. Leave this field blank to "
-"automatically assign the next available ID."
+"initiators expect a value below <i>256</i>."
 msgstr ""
 
 msgid ""
@@ -6242,7 +6145,10 @@ msgstr ""
 msgid "Select zvol"
 msgstr ""
 
-msgid "Selected Jail(s) updated successfully."
+msgid "Selected jails updated."
+msgstr ""
+
+msgid "Selected plugins updated."
 msgstr ""
 
 msgid "Send Email Status Updates"
@@ -6297,14 +6203,13 @@ msgid "Set Keep Flag"
 msgstr ""
 
 msgid ""
-"Set by default if the disk supports S.M.A.R.T.                   Unset to "
-"disable any configured <a                   "
-"href=\"%%docurl%%/tasks.html%%webversion%%#s-m-a-r-t-tests\"                "
-"   target=\"_blank\">S.M.A.R.T. tests</a>."
+"Set by default if the disk supports S.M.A.R.T. Unset to disable any "
+"configured <a href=\"%%docurl%%/tasks.html%%webversion%%#s-m-a-r-t-tests\" "
+"target=\"_blank\">S.M.A.R.T. tests</a>."
 msgstr ""
 
 msgid ""
-"Set by default if the disk supports S.M.A.R.T. Unset to disable any "
+"Set by default if the disks support S.M.A.R.T. Unset to disable any "
 "configured <a href=\"%%docurl%%/tasks.html%%webversion%%#s-m-a-r-t-tests\" "
 "target=\"_blank\">S.M.A.R.T. tests</a>."
 msgstr ""
@@ -6333,12 +6238,6 @@ msgstr ""
 msgid ""
 "Set for the default configuration to listen on all interfaces using the "
 "known values of user: <i>upsmon</i> and password: <i>fixmepass</i>."
-msgstr ""
-
-msgid ""
-"Set for the initiator to discover paths to both storage controllers on the "
-"target and increase storage traffic efficiency. Requires ALUA-capable, High "
-"Availability (HA) hardware."
 msgstr ""
 
 msgid "Set for ypbind to bind to the server that responds the fastest."
@@ -6409,6 +6308,9 @@ msgstr ""
 msgid ""
 "Set the share name. If left empty, share name is the list of selected "
 "<b>Path</b> entries."
+msgstr ""
+
+msgid "Set the size of the new raw file."
 msgstr ""
 
 msgid ""
@@ -6734,9 +6636,10 @@ msgid "Set to enable the S3 web user interface."
 msgstr ""
 
 msgid ""
-"Set to encrypt files before transfer and store the encrypted files on the "
-"remote system. <a href=\"https://rclone.org/crypt/\" "
-"target=\"_blank\">rclone Crypt</a> is used."
+"Set to encrypt files before transfer and store the                encrypted "
+"files on the remote system.                <a "
+"href=\"https://rclone.org/crypt/\"                target=\"_blank\">rclone "
+"Crypt</a> is used."
 msgstr ""
 
 msgid "Set to encrypt the shared file names."
@@ -7265,9 +7168,6 @@ msgstr "開始 Scrub"
 msgid "Start on Boot"
 msgstr "開機時啟動"
 
-msgid "Start scrub on pool <i>"
-msgstr ""
-
 msgid "Starting job..."
 msgstr "作業正在開始..."
 
@@ -7291,12 +7191,6 @@ msgstr "停止 Scrub"
 
 msgid "Stop this service?"
 msgstr "停止這個服務？"
-
-msgid "Stopped the scrub on pool <i>"
-msgstr ""
-
-msgid "Stopping scrub on pool <i>"
-msgstr ""
 
 msgid "Storage"
 msgstr "儲存"
@@ -7346,9 +7240,6 @@ msgid "Successfully re-keyed pool "
 msgstr ""
 
 msgid "Successfully updated."
-msgstr ""
-
-msgid "Successfully upgraded plugin."
 msgstr ""
 
 msgid "Suffix for LDAP-based users that need superuser access."
@@ -7482,9 +7373,6 @@ msgstr ""
 msgid "TLS Policy"
 msgstr ""
 
-msgid "Take Snapshot"
-msgstr "製作快照"
-
 msgid "Target"
 msgstr "目標"
 
@@ -7504,9 +7392,6 @@ msgid "Temperature"
 msgstr "溫度"
 
 msgid "Tests are not performed when the system enters the selected power mode."
-msgstr ""
-
-msgid "The Credential is valid."
 msgstr ""
 
 msgid ""
@@ -7547,6 +7432,11 @@ msgstr ""
 msgid "The cache is being rebuilt."
 msgstr ""
 
+msgid ""
+"The character set Samba uses when communicating with DOS and Windows 9x/ME "
+"clients. Default is CP437."
+msgstr ""
+
 msgid "The contents of all added disks will be erased."
 msgstr ""
 
@@ -7585,8 +7475,9 @@ msgid ""
 msgstr ""
 
 msgid ""
-"The envelope From address shown in the email. This is set to assist with "
-"filtering mail on the receiving system."
+"The envelope <i>From</i> address shown in the email. This can be set to "
+"make filtering mail on the receiving system easier. The friendly name is "
+"set like this: <i>\"Friendly Name\" &ltaddress@example.com&gt</i>"
 msgstr ""
 
 msgid ""
@@ -7711,6 +7602,12 @@ msgid ""
 "the disks in the pool for a general use case."
 msgstr ""
 
+msgid "These are the FreeBSD device names for each disk."
+msgstr ""
+
+msgid "These are the serial numbers of the disks."
+msgstr ""
+
 msgid "Third DNS server"
 msgstr ""
 
@@ -7789,9 +7686,6 @@ msgid "Train"
 msgstr ""
 
 msgid "Transfer Mode"
-msgstr ""
-
-msgid "Transfers"
 msgstr ""
 
 msgid "Tunables"
@@ -7906,32 +7800,29 @@ msgstr "有可用的更新"
 msgid "Updates successfully downloaded"
 msgstr "已成功下載更新"
 
+msgid "Updating Jail"
+msgstr ""
+
+msgid "Updating Plugin"
+msgstr ""
+
 msgid "Updating group members"
 msgstr "正在更新群組成員"
 
-msgid "Upgrade"
-msgstr "升級"
+msgid "Updating selected jails failed."
+msgstr ""
+
+msgid "Updating selected plugins failed."
+msgstr ""
+
+msgid "Updating selected plugins."
+msgstr ""
 
 msgid "Upgrade Pool"
 msgstr "升級 Pool"
 
-msgid "Upgrade selected jails failed."
-msgstr "所選擇的 Jail 升級失敗"
-
-msgid "Upgrade selected jails started."
-msgstr "所選擇的 Jail 開始升級"
-
-msgid "Upgrade selected jails succeeded."
-msgstr "所選擇的 Jail 開始成功"
-
 msgid "Upgraded"
 msgstr "已升級"
-
-msgid "Upgrading Jail"
-msgstr "正在升級 Jail"
-
-msgid "Upgrading Plugin"
-msgstr "正在升級外掛"
 
 msgid "Upload"
 msgstr "上載"
@@ -7951,15 +7842,6 @@ msgstr ""
 
 msgid "Uptime"
 msgstr "運作時間"
-
-msgid "Use --fast-list"
-msgstr "使用 --fast-list"
-
-msgid ""
-"Use <a href=\"https://www.freebsd.org/cgi/man.cgi?query=rtsold\" "
-"target=\"_blank\">rtsold(8)</a> as part of IPv6 autoconfiguration. Send "
-"ICMPv6 Router Solicitation messages to interfaces to discover new routers."
-msgstr ""
 
 msgid "Use <i>ALL</i> keyword or a list of initiator hostnames separated by spaces."
 msgstr ""
@@ -8007,6 +7889,12 @@ msgid ""
 "target=\"_blank\">proftpd(8)</a> parameters."
 msgstr ""
 
+msgid ""
+"Used to configure directory shadow copies on a per-share basis. Select the "
+"pre-configured periodic snapshot task to use for the shadow copies of this "
+"share. Periodic snapshots must be recursive."
+msgstr ""
+
 msgid "User"
 msgstr ""
 
@@ -8051,8 +7939,18 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Usernames of 8 characters or less are recommended for compatibility with "
-"application software, but up to 16 characters are allowed."
+"Usernames can be up to 16 characters long. When using NIS or other legacy "
+"software with limited username lengths, keep usernames to eight characters "
+"or less for compatibility."
+msgstr ""
+
+msgid ""
+"Usernames can be up to 16 characters long. When using NIS or other legacy "
+"software with limited username lengths, keep usernames to eight characters "
+"or less for compatibility. Usernames cannot begin with a hyphen (<i>-</i>) "
+"or contain a space, tab, or these characters: <i>, : + & # % ^ ( ) ! @ ~ * "
+"? < > =</i>. <i>$</i> can only be used as the last character of the "
+"username."
 msgstr ""
 
 msgid "Users"
@@ -8102,9 +8000,6 @@ msgstr "變數"
 msgid "Verbose logging"
 msgstr ""
 
-msgid "Verify Credential"
-msgstr "驗證認證"
-
 msgid "Verify passphrase"
 msgstr "驗證複雜密碼"
 
@@ -8133,6 +8028,9 @@ msgid "Virtualization"
 msgstr "虛擬化"
 
 msgid "Vlan Tag"
+msgstr ""
+
+msgid "WARNING"
 msgstr ""
 
 msgid ""
@@ -8249,12 +8147,6 @@ msgid ""
 "and there are identical usernames in more than one domain."
 msgstr ""
 
-msgid ""
-"When set, users see the contents of <i>/homes</i>, which includes the home "
-"directories of other users. When unset, users only see their own home "
-"directory."
-msgstr ""
-
 msgid "Widget Base Class"
 msgstr ""
 
@@ -8274,10 +8166,10 @@ msgid "Wipe this disk?"
 msgstr "抹除這個磁碟？"
 
 msgid "Wiping Disk..."
-msgstr "正在抹除磁碟...""
+msgstr ""
 
 msgid "Workgroup"
-msgstr "工作群組"
+msgstr ""
 
 msgid "Write a percentage limit of a single CPU core."
 msgstr ""
@@ -8322,12 +8214,6 @@ msgid "Zero Device Numbers"
 msgstr ""
 
 msgid "Zeroconf share discovery"
-msgstr ""
-
-msgid ""
-"[Use fewer transactions in exchange for more "
-"RAM.](https://rclone.org/docs/#fast-list) This can also speed up or slow "
-"down the transfer."
 msgstr ""
 
 msgid "allow_chflags"
