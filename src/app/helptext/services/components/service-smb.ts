@@ -16,9 +16,9 @@ cifs_srv_netbiosalias_validation: [ Validators.maxLength(15) ],
 cifs_srv_workgroup_placeholder: T('Workgroup'),
 cifs_srv_workgroup_tooltip: T('Must match Windows workgroup\
  name. This setting is ignored if the\
- <a href="%%docurl%%/directoryservices.html%%webversion%%#active-directory"\
+ <a href="%%docurl%%/directoryservices.html#active-directory"\
  target="_blank">Active Directory</a> or <a\
- href="%%docurl%%/directoryservices.html%%webversion%%#ldap"\
+ href="%%docurl%%/directoryservices.html#ldap"\
  target="_blank">LDAP</a> service is running.'),
 cifs_srv_workgroup_validation : [ Validators.required ],
 
