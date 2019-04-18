@@ -35,7 +35,7 @@ export class NavigationComponent implements OnInit {
         }
       });
 
-      // disable all turenas menus if is freenas
+      // enable all turenas menus if is truenas box
       if (window.localStorage['is_freenas'] === 'false') {
         for(let i = 0; i < this.navService.turenasFeatures.length; i++) {
           const targetMenu = this.navService.turenasFeatures[i];
