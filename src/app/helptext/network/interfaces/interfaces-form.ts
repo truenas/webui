@@ -66,7 +66,7 @@ failover_critical_tooltip: T('If this interface is considered critical for\
  same failover group.'),
 
 failover_group_placeholder: T('Failover Group'),
-failover_group_tooltip: T('Combine multiple critical interfaces into a single failover group. A failover is triggered if all of the interfaces in the group fail.'),
+failover_group_tooltip: T('Multiple critical interfaces are combined into a single failover group. A failover is triggered if all of the interfaces in the group fail.'),
 
 failover_vhid_placeholder: T('Failover VHID'),
 failover_vhid_tooltip: T('Virtual Host ID for the failover interface.'),
