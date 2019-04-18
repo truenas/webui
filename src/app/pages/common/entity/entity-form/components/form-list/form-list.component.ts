@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormArray, FormBuilder } from '@angular/forms';
+import * as _ from 'lodash';
 
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
 import { EntityFormService } from '../../services/entity-form.service';
 
 @Component({
-  selector: 'form-list',
+  selector: 'entity-form-list',
   templateUrl: './form-list.component.html',
   styleUrls: ['./form-list.component.css'],
 })
@@ -20,16 +21,20 @@ export class FormListComponent implements Field, OnInit {
   constructor(private entityFormService: EntityFormService, private formBuilder: FormBuilder) { }
 
   ngOnInit() {
-    this.listsFromArray = this.formBuilder.array([]);
-    this.listsFromArray.push(this.entityFormService.createFormGroup(this.config.listFields));
-    this.group.controls[this.config.name] = this.listsFromArray;
+    this.listsFromArray = this.group.controls[this.config.name] as FormArray;
+    const templateListField = _.cloneDeep(this.config.templateListField);
+    this.listsFromArray.push(this.entityFormService.createFormGroup(templateListField));
+    this.config.listFields.push(templateListField);
   }
 
   add() {
-    this.listsFromArray.push(this.entityFormService.createFormGroup(this.config.listFields));
+    const templateListField = _.cloneDeep(this.config.templateListField);
+    this.listsFromArray.push(this.entityFormService.createFormGroup(templateListField));
+    this.config.listFields.push(templateListField);
   }
 
   delete(id) {
     this.listsFromArray.removeAt(id);
+    this.config.listFields.splice(id, 1);
   }
 }
