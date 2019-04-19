@@ -1081,16 +1081,6 @@ export class JailAddComponent implements OnInit, AfterViewInit {
     });
 
     this.formGroup.controls['vnet'].valueChanges.subscribe((res) => {
-      if (res) {
-        if (_.find(this.ip6_interfaceField.options, { 'label': 'vnet0'}) == undefined) {
-          this.ip6_interfaceField.options.push({ label: 'vnet0', value: 'vnet0'});
-        }
-      } else {
-        if (_.find(this.ip6_interfaceField.options, { 'label': 'vnet0'}) != undefined) {
-          this.ip6_interfaceField.options.pop({ label: 'vnet0', value: 'vnet0'});
-        }
-      }
-
       if ((this.formGroup.controls['dhcp'].value || this.formGroup.controls['auto_configure_ip6'].value) && !res) {
         _.find(this.basicfieldConfig, { 'name': 'vnet' })['hasErrors'] = true;
         _.find(this.basicfieldConfig, { 'name': 'vnet' })['errors'] = 'VNET is required.';
