@@ -32,6 +32,9 @@ msgid ""
 "system performance."
 msgstr ""
 
+msgid " updated."
+msgstr ""
+
 msgid "% of all cores"
 msgstr ""
 
@@ -76,19 +79,6 @@ msgid ""
 "are used by the target to discover valid devices. <i>None</i> allows "
 "anonymous discovery while <i>CHAP</i> and <i>Mutual CHAP</i> require "
 "authentication."
-msgstr ""
-
-msgid ""
-"<a "
-"href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteEndpoints."
-"html\" target=\"_blank\">Endpoint URL</a> for a bucket configured for "
-"website hosting. Leave blank when using  AWS. Enter endpoint URL if using "
-"custom S3 API. URL  general format:  "
-"<i>bucket-name.s3-website.region.amazonaws.com</i>. Refer to the AWS "
-"Documentation for a list of <a "
-"href=\"https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_website_"
-"region_endpoints\" target=\"_blank\">Simple Storage Service Website "
-"Endpoints</a>."
 msgstr ""
 
 msgid ""
@@ -158,7 +148,7 @@ msgstr ""
 msgid ""
 "<b>Root logins are discouraged.</b> Set to allow root logins. A password "
 "must be set for the <i>root</i> user in <a "
-"href=\"%%docurl%%/account.html%%webversion%%#users\" "
+"href=\"%%docurl%%/accounts.html%%webversion%%#users\" "
 "target=\"_blank\">Users</a>."
 msgstr ""
 
@@ -1094,6 +1084,9 @@ msgid "Boot Loader Type"
 msgstr ""
 
 msgid "Boot Method"
+msgstr ""
+
+msgid "Boot Pool"
 msgstr ""
 
 msgid "Boot Pool Status"
@@ -2310,6 +2303,11 @@ msgid "Details"
 msgstr ""
 
 msgid ""
+"Determine whether this share name is included when browsing shares. Home "
+"shares are only visible to the owner regardless of this setting."
+msgstr ""
+
+msgid ""
 "Determine which information the processes in a jail are able to obtain "
 "about mount points. The behavior of multiple syscalls is affected. <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=statfs\" "
@@ -2954,7 +2952,7 @@ msgstr ""
 
 msgid ""
 "Enter a valid username for the <a "
-"href=\"https://redmine.ixsystems.com/projects/freenas/issues\" "
+"href=\"https://jira.ixsystems.com/projects/NAS/issues/\" "
 "target=\"_blank\">FreeNAS bug tracking system</a>"
 msgstr ""
 
@@ -2977,7 +2975,7 @@ msgstr ""
 
 msgid ""
 "Enter accounts that have administrative access. See <a "
-"href=\"http://networkupstools.org/docs/man/upsd.users.html\" "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=upsd.users\" "
 "target=\"_blank\">upsd.users(5)</a> for examples."
 msgstr ""
 
@@ -3011,14 +3009,6 @@ msgid "Enter an alphanumeric name for the group."
 msgstr ""
 
 msgid "Enter an alphanumeric name for the virtual machine."
-msgstr ""
-
-msgid ""
-"Enter an alphanumeric username of eight to sixteen characters. Keeping "
-"usernames to eight characters or less is recommended for compatibility with "
-"legacy clients. Usernames cannot begin with a hyphen (<b>-</b>) or contain "
-"a space, tab, or these characters: <b>, : + & # %^ ( ) ! @ ~ * ? < > =</b> "
-"Note that <b>$</b> can only be used as the last character."
 msgstr ""
 
 msgid ""
@@ -3530,7 +3520,7 @@ msgstr ""
 msgid "Extent type"
 msgstr ""
 
-msgid "Extra Users(upsd.conf)"
+msgid "Extra Users"
 msgstr ""
 
 msgid "Extra options"
@@ -4086,6 +4076,9 @@ msgstr ""
 msgid "Jail"
 msgstr ""
 
+msgid "Jail "
+msgstr ""
+
 msgid ""
 "Jail CPU affinity. Options are <i>off</i> or a combination of <i>1-4</i>, "
 "separated by commas (,). <b>Example:</b> <i>1,2,3,4</i>"
@@ -4097,6 +4090,9 @@ msgstr ""
 msgid "Jail Properties"
 msgstr ""
 
+msgid "Jail Update Failed"
+msgstr ""
+
 msgid "Jail core dump size in bytes."
 msgstr ""
 
@@ -4104,9 +4100,6 @@ msgid "Jail data size in bytes."
 msgstr ""
 
 msgid "Jail stack size in bytes."
-msgstr ""
-
-msgid "Jail updated successfully."
 msgstr ""
 
 msgid "Jails"
@@ -4210,6 +4203,18 @@ msgid "Lagg Protocol"
 msgstr ""
 
 msgid "Language"
+msgstr ""
+
+msgid ""
+"Leave blank when using AWS. The available buckets are fetched  dynamically. "
+"Enter a  <a "
+"href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteEndpoints."
+"html\" target=\"_blank\">Endpoint URL</a> if not using AWS. URL  general "
+"format: <i>bucket-name.s3-website.region.amazonaws.com</i>. Refer to the "
+"AWS Documentation for a list of <a "
+"href=\"https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_website_"
+"region_endpoints\" target=\"_blank\">Simple Storage Service Website "
+"Endpoints</a>."
 msgstr ""
 
 msgid "Leave empty or select number of existing portal to use."
@@ -5098,10 +5103,16 @@ msgstr ""
 msgid "Please wait"
 msgstr "Por favor espera"
 
+msgid "Plugin "
+msgstr ""
+
 msgid "Plugin Installed Successfully"
 msgstr ""
 
 msgid "Plugin Name"
+msgstr ""
+
+msgid "Plugin Update Failed"
 msgstr ""
 
 msgid "Plugin installed successfully"
@@ -6113,7 +6124,10 @@ msgstr ""
 msgid "Select zvol"
 msgstr ""
 
-msgid "Selected Jail(s) updated successfully."
+msgid "Selected jails updated."
+msgstr ""
+
+msgid "Selected plugins updated."
 msgstr ""
 
 msgid "Send Email Status Updates"
@@ -7440,8 +7454,9 @@ msgid ""
 msgstr ""
 
 msgid ""
-"The envelope From address shown in the email. This is set to assist with "
-"filtering mail on the receiving system."
+"The envelope <i>From</i> address shown in the email. This can be set to "
+"make filtering mail on the receiving system easier. The friendly name is "
+"set like this: <i>\"Friendly Name\" &ltaddress@example.com&gt</i>"
 msgstr ""
 
 msgid ""
@@ -7740,6 +7755,9 @@ msgstr ""
 msgid "Until"
 msgstr ""
 
+msgid "Unused"
+msgstr ""
+
 msgid "Update"
 msgstr ""
 
@@ -7761,7 +7779,22 @@ msgstr ""
 msgid "Updates successfully downloaded"
 msgstr ""
 
+msgid "Updating Jail"
+msgstr ""
+
+msgid "Updating Plugin"
+msgstr ""
+
 msgid "Updating group members"
+msgstr ""
+
+msgid "Updating selected jails failed."
+msgstr ""
+
+msgid "Updating selected plugins failed."
+msgstr ""
+
+msgid "Updating selected plugins."
 msgstr ""
 
 msgid "Upgrade Pool"
@@ -7885,8 +7918,18 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Usernames of 8 characters or less are recommended for compatibility with "
-"application software, but up to 16 characters are allowed."
+"Usernames can be up to 16 characters long. When using NIS or other legacy "
+"software with limited username lengths, keep usernames to eight characters "
+"or less for compatibility."
+msgstr ""
+
+msgid ""
+"Usernames can be up to 16 characters long. When using NIS or other legacy "
+"software with limited username lengths, keep usernames to eight characters "
+"or less for compatibility. Usernames cannot begin with a hyphen (<i>-</i>) "
+"or contain a space, tab, or these characters: <i>, : + & # % ^ ( ) ! @ ~ * "
+"? < > =</i>. <i>$</i> can only be used as the last character of the "
+"username."
 msgstr ""
 
 msgid "Users"
@@ -8081,12 +8124,6 @@ msgid ""
 "names to be prepended to user names. One possible reason for unsetting this "
 "value is to prevent username collisions when Allow Trusted Domains is set "
 "and there are identical usernames in more than one domain."
-msgstr ""
-
-msgid ""
-"When set, users see the contents of <i>/homes</i>, which includes the home "
-"directories of other users. When unset, users only see their own home "
-"directory."
 msgstr ""
 
 msgid "Widget Base Class"

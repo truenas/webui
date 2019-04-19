@@ -11,7 +11,9 @@
 
      
       <mat-select-trigger *ngIf="config.multiple">
-        {{ customTriggerValue }}
+        <span *ngFor="let value of customTriggerValue ; last as isLast">
+            {{ value }}{{ isLast ? '' : ', ' }}
+        </span>
       </mat-select-trigger>
      
 
