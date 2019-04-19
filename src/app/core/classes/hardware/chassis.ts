@@ -131,9 +131,12 @@ export class Chassis {
    }
 
    onTap(evt, driveTray){
-    console.log(evt);
+    
+    this.events.next({name:"DriveSelected", data: driveTray});
+
     let startAlpha = driveTray.background.alpha;
     driveTray.background.alpha = 1;
+
     setTimeout(() =>{
       const glow = (v) => driveTray.background.alpha = v;
       tween({
@@ -142,6 +145,7 @@ export class Chassis {
         duration: 1000,
       }).start(glow);
     }, 300);
+
    }
 
    onEnter(){

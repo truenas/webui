@@ -7,7 +7,7 @@ import { MaterialModule } from 'app/appMaterial.module';
   template: `
     <div class="disk-ui-wrapper">
       <div class="disk-ui-type">
-        {{data.type}}
+        {{data.type ? data.type : 'HDD'}}
       </div>
       <div class="disk-ui-icon">
         <mat-icon class="disk-icon" role="img" fontSet="mdi-set" fontIcon="mdi-harddisk"></mat-icon>

@@ -8,6 +8,8 @@ import 'pixi-projection';
 import { DriveTray } from 'app/core/classes/hardware/drivetray';
 import { M50 } from 'app/core/classes/hardware/m50';
 import { DiskComponent } from './disk.component';
+import { SystemProfiler } from './system-profiler';
+import { ExampleData } from './example-data';
 //declare const PIXI: any;
 
 @Component({
@@ -25,7 +27,9 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
   private loader = PIXI.loader;
   private resources = PIXI.loader.resources;
   public container;
-  protected enclosure: any;
+  public system: SystemProfiler;
+  protected enclosure: any; // Visualization
+  public selectedEnclosure: any;
   public selectedDisk: any;/* = {
     name: 'da13',
     capacity: '1.83 TB',
@@ -38,13 +42,23 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
   constructor(public el:ElementRef, private core: CoreService /*, private ngZone: NgZone*/) { 
     core.emit({name: 'SysInfoRequest', sender: this});
     core.register({observerClass: this, eventName: 'SysInfo'}).subscribe((evt:CoreEvent) => {
-      console.log(evt.data.system_product);
+
+      // SIMULATED DATA
+      let edata = new ExampleData();
+      edata.addEnclosure(24); //  M50 24 slots
+      edata.addEnclosure(12); // ES12 12 slots
+      let data = edata.generateData();
+      // END SIMULATED DATA
+
+      this.system = new SystemProfiler('M50', data);
+      this.selectedEnclosure = this.system.profile[0];
+
       this.pixiInit();
     });
   }
 
   /* TESTING ONLY */
-  toggle(){
+  clearDisk(){
     this.selectedDisk = null;
   }
 
@@ -86,12 +100,24 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
   createEnclosure(){
     this.enclosure = new M50();
     this.enclosure.events.subscribe((evt) => {
-      this.container.addChild(this.enclosure.container);
-      this.enclosure.container.name = this.enclosure.model;
-      this.enclosure.container.width = this.enclosure.container.width / 2;
-      this.enclosure.container.height = this.enclosure.container.height / 2;
-      this.enclosure.container.x = this.app._options.width / 2 - this.enclosure.container.width / 2;
-      this.enclosure.container.y = this.app._options.height / 2 - this.enclosure.container.height / 2;
+      switch(evt.name){
+        case "Ready":
+          this.container.addChild(this.enclosure.container);
+          this.enclosure.container.name = this.enclosure.model;
+          this.enclosure.container.width = this.enclosure.container.width / 2;
+          this.enclosure.container.height = this.enclosure.container.height / 2;
+          this.enclosure.container.x = this.app._options.width / 2 - this.enclosure.container.width / 2;
+          this.enclosure.container.y = this.app._options.height / 2 - this.enclosure.container.height / 2;
+        break;
+        case "DriveSelected":
+          //console.log(evt);
+          //console.log(this.enclosure);
+          //console.log(this.system.profile);
+          let disk = this.selectedEnclosure.disks[evt.data.id];
+          this.selectedDisk = disk;
+          //console.log(disk);
+        break;
+      }
     });
 
     if(!this.resources[this.enclosure.model]){
