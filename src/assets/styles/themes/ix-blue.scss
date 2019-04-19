@@ -1321,4 +1321,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     opacity: .99;
   }
 
+  app-select-dialog .mat-select-placeholder,
+  app-ipmi .mat-select-placeholder {
+    @include variable(color, --fg2, $fg2);
+  }
+
  } // end of ix theme
