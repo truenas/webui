@@ -10,10 +10,10 @@ msgid ""
 msgstr ""
 
 msgid " First vdev has "
-msgstr ""
+msgstr " El primer vdev tiene "
 
 msgid " First vdev is a "
-msgstr ""
+msgstr " El primer vdev es un "
 
 msgid ""
 " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network "
@@ -22,36 +22,44 @@ msgid ""
 msgstr ""
 
 msgid " and all snapshots of it?"
-msgstr ""
+msgstr " y todas sus snapshots?"
 
 msgid " disks, new vdev has "
-msgstr ""
+msgstr " discos, el nuevo vdev tiene "
 
 msgid ""
 " is the minimum recommended record size. Choosing a smaller size can reduce "
 "system performance."
 msgstr ""
+" es el mínimo espacio de grabación recomendado. Elegir un tamaño mas pequeño"
+" puede reducir el rendimiento del sistema."
 
 msgid " updated."
-msgstr ""
+msgstr " actualizado."
 
 msgid "% of all cores"
-msgstr ""
+msgstr "% de todos los núcleos"
 
 msgid ""
 "' is encrypted! If the passphrase for this encrypted pool has been lost, "
 "the data will be PERMANENTLY UNRECOVERABLE! Before exporting/disconnecting "
 "encrypted pools, download and safely store the recovery key."
 msgstr ""
+"' está encriptado! Si la clave de este pool encriptado se perdiera, ¡los "
+"datos serían IRRECUPERABLES PERMANENTEMENTE! antes de exportar/desconectar"
+" pools encriptados, descarga y guarda la llave de recuperación."
 
 msgid "'. All data on that pool was destroyed."
-msgstr ""
+msgstr "'. Todos los datos de este pool fueron destruidos."
 
 msgid ""
 "'. Exporting/disconnecting a pool makes the data unavailable. The pool data "
 "can also be wiped by setting the related option. Back up any critical data "
 "before exporting/disconnecting a pool."
 msgstr ""
+"'. Exportar/desconectar el pool hace sus datos inaccesibles. Los datos del pool"
+" también pueden ser borrados seleccionado la opción. Haga una copia de seguridad"
+" de los datos críticos antes de exportar/desconectar el pool."
 
 msgid ""
 ") before configuring other interfaces to avoid losing connection to the "
@@ -2393,25 +2401,25 @@ msgid "Discovery Auth Method"
 msgstr ""
 
 msgid "Disk"
-msgstr ""
+msgstr "Disco"
 
 msgid "Disk Size"
-msgstr ""
+msgstr "Tamaño del Disco"
 
 msgid "Disk sector size"
-msgstr ""
+msgstr "Tamaño de los sectores del Disco"
 
 msgid "Disk successfully imported"
-msgstr ""
+msgstr "Disco importado correctamente"
 
 msgid "Disk to wipe."
-msgstr ""
+msgstr "Disco a borrar."
 
 msgid "Disks"
-msgstr ""
+msgstr "Discos"
 
 msgid "Disks in Use"
-msgstr ""
+msgstr "Discos en Uso"
 
 msgid "Display Login"
 msgstr ""
@@ -8136,16 +8144,16 @@ msgid "Windows (SMB) Shares"
 msgstr ""
 
 msgid "Wipe"
-msgstr ""
+msgstr "Borrar"
 
 msgid "Wipe Disk"
-msgstr ""
+msgstr "Borrar Disco"
 
 msgid "Wipe this disk?"
-msgstr ""
+msgstr "¿Borrar este disco?"
 
 msgid "Wiping Disk..."
-msgstr ""
+msgstr "Borrando Disco..."
 
 msgid "Workgroup"
 msgstr ""
