@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { T } from '../../../translate-marker'
 import { TranslateService } from '@ngx-translate/core'
@@ -29,7 +29,7 @@ import helptext from '../../../helptext/jails/jails-add';
   styleUrls: ['../../common/entity/entity-form/entity-form.component.scss'],
   providers: [JailService, EntityFormService, FieldRelationService, NetworkService]
 })
-export class JailAddComponent implements OnInit {
+export class JailAddComponent implements OnInit, AfterViewInit {
 
   protected addCall = 'jail.create';
   public route_success: string[] = ['jails'];
@@ -98,49 +98,9 @@ export class JailAddComponent implements OnInit {
       tooltip: helptext.bpf_tooltip,
     },
     {
-      type: 'select',
-      name: 'ip4_interface',
-      placeholder: helptext.ip4_interface_placeholder,
-      tooltip: helptext.ip4_interface_tooltip,
-      options: [{
-        label: '------',
-        value: '',
-      }],
-      value: '',
-      required: false,
-      relation: [{
-        action: 'DISABLE',
-        when: [{
-          name: 'dhcp',
-          value: true,
-        }]
-      }],
-      class: 'inline',
-      width: '30%',
-    },
-    {
-      type: 'input',
+      type: 'list',
       name: 'ip4_addr',
-      placeholder: helptext.ip4_addr_placeholder,
-      tooltip: helptext.ip4_addr_tooltip,
-      validation : [ regexValidator(this.networkService.ipv4_regex) ],
-      relation: [{
-      action: 'DISABLE',
-      when: [{
-        name: 'dhcp',
-        value: true,
-       }]
-      }],
-      class: 'inline',
-      width: '50%',
-    },
-    {
-      type: 'select',
-      name: 'ip4_netmask',
-      placeholder: helptext.ip4_netmask_placeholder,
-      tooltip: helptext.ip4_netmask_tooltip,
-      options: this.networkService.getV4Netmasks(),
-      value: '',
+      placeholder: 'IPv4 Addresses',
       relation: [{
         action: 'DISABLE',
         when: [{
@@ -148,8 +108,42 @@ export class JailAddComponent implements OnInit {
           value: true,
         }]
       }],
-      class: 'inline',
-      width: '20%',
+      templateListField: [
+        {
+          type: 'select',
+          name: 'ip4_interface',
+          placeholder: helptext.ip4_interface_placeholder,
+          tooltip: helptext.ip4_interface_tooltip,
+          options: [{
+            label: '------',
+            value: '',
+          }],
+          value: '',
+          required: false,
+          class: 'inline',
+          width: '30%',
+        },
+        {
+          type: 'input',
+          name: 'ip4_addr',
+          placeholder: helptext.ip4_addr_placeholder,
+          tooltip: helptext.ip4_addr_tooltip,
+          validation : [ regexValidator(this.networkService.ipv4_regex) ],
+          class: 'inline',
+          width: '50%',
+        },
+        {
+          type: 'select',
+          name: 'ip4_netmask',
+          placeholder: helptext.ip4_netmask_placeholder,
+          tooltip: helptext.ip4_netmask_tooltip,
+          options: this.networkService.getV4Netmasks(),
+          value: '',
+          class: 'inline',
+          width: '20%',
+        }
+      ],
+      listFields: []
     },
     {
       type: 'input',
@@ -954,30 +948,53 @@ export class JailAddComponent implements OnInit {
     protected dialogService: DialogService,
     protected networkService: NetworkService) {}
 
-  updateInterfaceValidation() {
-    let dhcp_ctrl = this.formGroup.controls['dhcp'];
-    let vnet_ctrl = this.formGroup.controls['vnet'];
-    let ip4_addr_ctrl = this.formGroup.controls['ip4_addr'];
-    let ip6_addr_ctrl = this.formGroup.controls['ip6_addr'];
-
-    if (dhcp_ctrl.value != true && vnet_ctrl.value == true && ip4_addr_ctrl.value != undefined && ip4_addr_ctrl.value != '') {
-      this.ip4_interfaceField.required = true;
-      this.formGroup.controls['ip4_interface'].setValidators([Validators.required]);
-      this.formGroup.controls['ip4_interface'].updateValueAndValidity();
-    } else {
-      this.ip4_interfaceField.required = false;
-      this.formGroup.controls['ip4_interface'].clearValidators();
-      this.formGroup.controls['ip4_interface'].updateValueAndValidity();
+  updateInterfaceOptions(interfaceField, addVnet) {
+    if (addVnet != undefined) {
+      const index = _.findIndex(interfaceField.options as any, { 'label': 'vnet0'});
+      if (addVnet && index == -1) {
+        interfaceField.options.push({ label: 'vnet0', value: 'vnet0'});
+      } else if (!addVnet && index > -1){
+        interfaceField.options.splice(index, 1);
+      }
     }
+  }
 
-    if (dhcp_ctrl.value != true && vnet_ctrl.value == true && ip6_addr_ctrl.value != undefined && ip6_addr_ctrl.value != '') {
-      this.ip6_interfaceField.required = true;
-      this.formGroup.controls['ip6_interface'].setValidators([Validators.required]);
-      this.formGroup.controls['ip6_interface'].updateValueAndValidity();
+  updateInterfaceValidaton(subipFormgroup, subipInterfaceField, ipType) {
+    const targetPropName = ipType + '_addr';
+    if (this.formGroup.controls['dhcp'].value != true &&
+      this.formGroup.controls['vnet'].value == true &&
+      subipFormgroup.controls[targetPropName].value != undefined &&
+      subipFormgroup.controls[targetPropName].value != '') {
+      if (subipInterfaceField.required === false) {
+        subipInterfaceField.required = true;
+        subipInterfaceField['hasError'] = true;
+        subipInterfaceField['errors'] = 'Interface is required';
+      }
     } else {
-      this.ip6_interfaceField.required = false;
-      this.formGroup.controls['ip6_interface'].clearValidators();
-      this.formGroup.controls['ip6_interface'].updateValueAndValidity();
+      if (subipInterfaceField.required === true) {
+        subipInterfaceField.required = false;
+        subipInterfaceField['hasError'] = false;
+        subipInterfaceField['errors'] = '';
+      }
+    }
+  }
+
+  updateInterface(addVnet?) {
+    const ipTypes = ['ip4'];
+    for (const ipType of ipTypes) {
+      const targetPropName = ipType + '_addr';
+      for (let i = 0; i < this.formGroup.controls[targetPropName].controls.length; i++) {
+        const subipFormgroup = this.formGroup.controls[targetPropName].controls[i];
+        const subipInterfaceField = _.find(_.find(this.basicfieldConfig, {'name': targetPropName}).listFields[i], {'name': ipType + '_interface'});
+
+        if (addVnet != undefined) {
+          this.updateInterfaceOptions(subipInterfaceField, addVnet);
+        }
+
+        if (subipInterfaceField != undefined) {
+          this.updateInterfaceValidaton(subipFormgroup, subipInterfaceField, ipType);
+        }
+      }
     }
   }
 
@@ -1030,8 +1047,7 @@ export class JailAddComponent implements OnInit {
       new EntityUtils().handleWSError(this, res, this.dialogService);
     });
 
-    this.ip4_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip4_interface'});
-    this.ip4_netmaskField = _.find(this.basicfieldConfig, {'name': 'ip4_netmask'});
+    this.ip4_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip4_addr'}).templateListField[0];
     this.ip6_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip6_interface'});
     this.ip6_prefixField = _.find(this.basicfieldConfig, {'name': 'ip6_prefix'});
     this.vnet_default_interfaceField = _.find(this.networkfieldConfig, {'name': 'vnet_default_interface'});
@@ -1053,6 +1069,7 @@ export class JailAddComponent implements OnInit {
     this.formFileds = _.concat(this.basicfieldConfig, this.jailfieldConfig, this.networkfieldConfig, this.customConfig, this.rctlConfig);
     this.formGroup = this.entityFormService.createFormGroup(this.formFileds);
 
+
     for (const i in this.formFileds) {
       const config = this.formFileds[i];
       if (config.relation.length > 0) {
@@ -1071,18 +1088,13 @@ export class JailAddComponent implements OnInit {
          _.find(this.basicfieldConfig, { 'name': 'bpf' }).required = false;
       }
     });
+
     this.formGroup.controls['vnet'].valueChanges.subscribe((res) => {
       if (res) {
-        if (_.find(this.ip4_interfaceField.options, { 'label': 'vnet0'}) == undefined) {
-          this.ip4_interfaceField.options.push({ label: 'vnet0', value: 'vnet0'});
-        }
         if (_.find(this.ip6_interfaceField.options, { 'label': 'vnet0'}) == undefined) {
           this.ip6_interfaceField.options.push({ label: 'vnet0', value: 'vnet0'});
         }
       } else {
-        if (_.find(this.ip4_interfaceField.options, { 'label': 'vnet0'}) != undefined) {
-          this.ip4_interfaceField.options.pop({ label: 'vnet0', value: 'vnet0'});
-        }
         if (_.find(this.ip6_interfaceField.options, { 'label': 'vnet0'}) != undefined) {
           this.ip6_interfaceField.options.pop({ label: 'vnet0', value: 'vnet0'});
         }
@@ -1095,7 +1107,7 @@ export class JailAddComponent implements OnInit {
         _.find(this.basicfieldConfig, { 'name': 'vnet' })['hasErrors'] = false;
         _.find(this.basicfieldConfig, { 'name': 'vnet' })['errors'] = '';
       }
-      this.updateInterfaceValidation();
+      this.updateInterface(res);
     });
     this.formGroup.controls['bpf'].valueChanges.subscribe((res) => {
       if (this.formGroup.controls['dhcp'].value && !res) {
@@ -1115,11 +1127,12 @@ export class JailAddComponent implements OnInit {
       }
       _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = res;
     });
+
     this.formGroup.controls['ip4_addr'].valueChanges.subscribe((res) => {
-      this.updateInterfaceValidation();
+      this.updateInterface();
     });
     this.formGroup.controls['ip6_addr'].valueChanges.subscribe((res) => {
-      this.updateInterfaceValidation();
+      this.updateInterface();
     });
 
     this.ws.call("jail.query", [
@@ -1131,7 +1144,7 @@ export class JailAddComponent implements OnInit {
       for (let i in res[0]) {
         if (this.formGroup.controls[i]) {
           if ((i == 'ip4_addr' || i == 'ip6_addr') && res[0][i] == 'none') {
-            this.formGroup.controls[i].setValue('');
+            // this.formGroup.controls[i].setValue('');
             continue;
           }
           if (_.indexOf(this.TFfields, i) > -1) {
@@ -1155,6 +1168,14 @@ export class JailAddComponent implements OnInit {
     (res) => {
       new EntityUtils().handleError(this, res);
     });
+  }
+
+  ngAfterViewInit() {
+    for (let i = 0; i < this.formGroup.controls['ip4_addr'].controls.length; i++) {
+      const subIp4 = this.formGroup.controls['ip4_addr'].controls[i];
+      const subip4InterfaceField = _.find(_.find(this.basicfieldConfig, {'name': 'ip4_addr'}).listFields[i], {'name': 'ip4_interface'});
+      subip4InterfaceField.options = this.ip4_interfaceField.options;
+    }
   }
 
   setRelation(config: FieldConfig) {
@@ -1215,6 +1236,7 @@ export class JailAddComponent implements OnInit {
     this.error = null;
     const property: any = [];
     const value = _.cloneDeep(this.formGroup.value);
+console.log(value);
 
     if (value['jailtype'] === 'basejail') {
       value['basejail'] = true;
