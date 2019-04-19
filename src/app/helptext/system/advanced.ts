@@ -42,7 +42,7 @@ export const helptext_system_advanced = {
  <b>Warning:</b> Autotuning is only used as a temporary\
  measure and is not a permanent fix for system hardware\
  issues. See the\
- <a href="%%docurl%%/system.html%%webversion%%#autotune"\
+ <a href="%%docurl%%/system.html#autotune"\
  target="_blank">Autotune section</a> of the guide for\
  more information.'),
 
@@ -81,7 +81,7 @@ export const helptext_system_advanced = {
   cpu_in_percentage_placeholder: T('Report CPU usage in percentage'),
   cpu_in_percentage_tooltip: T('Set to display CPU usage as percentages in Reporting.'),
 
-  sed_options_message_paragraph: T('<b>SED (<a href="%%docurl%%/system.html%%webversion%%#self-encrypting-drives"\
+  sed_options_message_paragraph: T('<b>SED (<a href="%%docurl%%/system.html#self-encrypting-drives"\
  target="_blank">Self-Encrypting Drives</a>) Options</b>'),
 
   sed_user_placeholder: T('ATA Security User'),

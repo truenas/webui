@@ -25,9 +25,9 @@ export default {
 
     rsync_mode_placeholder: T('Rsync mode'),
     rsync_mode_tooltip: T('Choose <a \
-                href="%%docurl%%/tasks.html%%webversion%%#rsync-module-mode"\
+                href="%%docurl%%/tasks.html#rsync-module-mode"\
                 target="_blank">rsync module mode</a> or <a \
-                href="%%docurl%%/tasks.html%%webversion%%#rsync-over-ssh-mode"\
+                href="%%docurl%%/tasks.html#rsync-over-ssh-mode"\
                 target="_blank">rsync over SSH mode</a>'),
 
     rsync_remotemodule_placeholder: T('Remote Module Name'),

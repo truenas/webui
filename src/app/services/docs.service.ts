@@ -1,3 +1,4 @@
+
 import urls from '../helptext/urls';
 import { WebSocketService } from './ws.service';
 import {Injectable} from '@angular/core';
@@ -12,17 +13,16 @@ export class DocsService {
             const replace = new RegExp("%%" + url + "%%", "g");
             message = message.replace(replace, urls[url]);
         }
+
+        // running_version is expected to be in the form FreeNAS-11.2-U4-INTERNAL7
         const running_version = window.localStorage.getItem('running_version');
-        const web_version = "?runningversion=" + running_version;
-        const version = running_version.split('-');
+
+        // split on dashes, rejoin version number and patch level number with dash
+        // result is 11.2-U4
+        const version = running_version.split('-').slice(1,3).join('-');
+
         if (version && version.length > 1) {
-            message = message.replace(/%%version%%/g, version[1]);
-        }
-        if (web_version) {
-            message = message.replace(/%%webversion%%/g, web_version);
-        }
-        if (running_version) {
-            message = message.replace(/%%runningversion%%/g, running_version);
+            message = message.replace(/%%version%%/g, version);
         }
 
         return message;

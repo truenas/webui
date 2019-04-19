@@ -16,9 +16,9 @@ cifs_srv_netbiosalias_validation: [ Validators.maxLength(15) ],
 cifs_srv_workgroup_placeholder: T('Workgroup'),
 cifs_srv_workgroup_tooltip: T('Must match Windows workgroup\
  name. This setting is ignored if the\
- <a href="%%docurl%%/directoryservices.html%%webversion%%#active-directory"\
+ <a href="%%docurl%%/directoryservices.html#active-directory"\
  target="_blank">Active Directory</a> or <a\
- href="%%docurl%%/directoryservices.html%%webversion%%#ldap"\
+ href="%%docurl%%/directoryservices.html#ldap"\
  target="_blank">LDAP</a> service is running.'),
 cifs_srv_workgroup_validation : [ Validators.required ],
 
@@ -111,7 +111,7 @@ cifs_srv_obey_pam_restrictions_placeholder: T('Obey Pam Restrictions'),
 cifs_srv_obey_pam_restrictions_tooltip: T('Unselect this option to allow cross-domain\
  authentication, users and groups to be managed on\
  another forest, and permissions to be delegated from\
- <a href="%%docurl%%/directoryservices.html%%webversion%%#active-directory"\
+ <a href="%%docurl%%/directoryservices.html#active-directory"\
  target="_blank">Active Directory</a>\
  users and groups to domain admins on another forest.'),
 
