@@ -7269,7 +7269,7 @@ msgid "Start scrub on pool <i>"
 msgstr ""
 
 msgid "Starting job..."
-msgstr "作業正在開始...""
+msgstr "作業正在開始..."
 
 msgid "State"
 msgstr "狀態"
