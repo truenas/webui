@@ -39,7 +39,7 @@ msgid ""
 msgstr ""
 
 msgid "% of all cores"
-msgstr ""
+msgstr "% 於所有核心"
 
 msgid ""
 "' is encrypted! If the passphrase for this encrypted pool has been lost, "
@@ -201,7 +201,7 @@ msgid ""
 "target=\"_blank\">idmap_autorid(8)</a>, <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=idmap_ad\" "
 "target=\"_blank\">ad</a>, <a "
-"href=\"%%docurl%%/directoryservice.html%%webversion%%#id12\" "
+"href=\"%%docurl%%/directoryservices.html%%webversion%%#id12\" "
 "target=\"_blank\">fruit</a>, <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=idmap_ldap\" "
 "target=\"_blank\">idmap_ldap(8)</a>, <a "
@@ -268,13 +268,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"<i>Intel e82545 (e1000)</i> emulates an Intel Ethernet card. This provides "
-"compatibility with most operating systems. <i>VirtIO</i> provides better "
-"performance when the operating system installed in the VM supports VirtIO "
-"paravirtualized network drivers."
-msgstr ""
-
-msgid ""
 "<i>Intel e82545 (e1000)</i> emulates the same Intel Ethernet card. This "
 "provides compatibility with most operating systems. <i>VirtIO</i> provides "
 "better performance when the operating system installed in the VM supports "
@@ -322,6 +315,11 @@ msgid ""
 msgstr ""
 
 msgid ""
+"<i>global</i> is a reserved name that cannot be used as a share name. "
+"Please enter a different share name."
+msgstr ""
+
+msgid ""
 "<p>Including the Password Secret Seed allows using this configuration file "
 "with a new boot device. This also decrypts all system passwords for reuse "
 "when the configuration file is uploaded.</p> <b>Keep the configuration file "
@@ -348,11 +346,6 @@ msgid ""
 msgstr ""
 
 msgid "A pool with this name already exists."
-msgstr ""
-
-msgid ""
-"A randomized MAC address is normally assigned. Enter a value here to set a "
-"specific MAC address."
 msgstr ""
 
 msgid ""
@@ -405,13 +398,13 @@ msgid "ACL Type"
 msgstr "ACL 類型"
 
 msgid "AD Timeout"
-msgstr ""
+msgstr "AD 逾時"
 
 msgid "AFP3 Unix Privs"
 msgstr "AFP3 UNIX 權限"
 
 msgid "ATA Security User"
-msgstr ""
+msgstr "ATA 安全使用者"
 
 msgid "About"
 msgstr "關於"
@@ -423,10 +416,10 @@ msgid "Access Key"
 msgstr "存取密鑰"
 
 msgid "Access Key ID"
-msgstr ""
+msgstr "群組金鑰 ID"
 
 msgid "Access Token"
-msgstr ""
+msgstr "存取權仗"
 
 msgid ""
 "Access Token <a href=\"https://api.hubic.com/sandbox/\" "
@@ -487,19 +480,19 @@ msgid "Active Directory IDMAP change!"
 msgstr ""
 
 msgid "Adapter Type"
-msgstr "配接卡類型"
+msgstr "介面卡類型"
 
 msgid "Adapter Type:"
-msgstr ""
+msgstr "介面卡類型："
 
 msgid "Add Additional IPv4 Alias"
-msgstr ""
+msgstr "新增附加 IPv4 別名"
 
 msgid "Add Additional IPv6 Alias"
-msgstr ""
+msgstr "新增附加 IPv6 別名"
 
 msgid "Add Additional Path"
-msgstr "新增額外路徑"
+msgstr "新增其它路徑"
 
 msgid "Add Cache"
 msgstr "新增快取"
@@ -526,10 +519,10 @@ msgid "Add Zvol"
 msgstr "新增 Zvol"
 
 msgid "Add a name for the new snapshot"
-msgstr "新增此新快照名稱"
+msgstr "加入新快照的名稱"
 
 msgid "Add a name for the new snapshot."
-msgstr ""
+msgstr "加入新快照的名稱。"
 
 msgid ""
 "Add an <a href=\"%%docurl%%/system.html%%webversion%%#certificates\" "
@@ -619,7 +612,7 @@ msgid "Additional <b>smb5.conf</b> parameters not covered by other option fields
 msgstr ""
 
 msgid "Additional Domains"
-msgstr ""
+msgstr "附加網域"
 
 msgid ""
 "Additional hosts to be appended to <i>/etc/hosts</i> can be added here. "
@@ -671,10 +664,10 @@ msgid ""
 msgstr ""
 
 msgid "Administrator Password"
-msgstr ""
+msgstr "管理者密碼"
 
 msgid "Adv. Power Management"
-msgstr ""
+msgstr "進階電源管理"
 
 msgid "Advanced"
 msgstr "進階"
@@ -683,13 +676,13 @@ msgid "Advanced Mode"
 msgstr "進階模式"
 
 msgid "Advanced Plugin Installation"
-msgstr ""
+msgstr "進階外掛安裝"
 
 msgid "Advanced Power Management"
 msgstr "進階電源管理"
 
 msgid "Advanced Settings"
-msgstr ""
+msgstr "進階設定"
 
 msgid ""
 "After entering the <b>Hostname, Username</b>, and <b>Password</b>, click "
@@ -697,19 +690,19 @@ msgid ""
 msgstr ""
 
 msgid "Alert"
-msgstr ""
+msgstr "警示"
 
 msgid "Alert Services"
-msgstr "告警服務"
+msgstr "警示服務"
 
 msgid "Alert Settings"
-msgstr ""
+msgstr "警示設定"
 
 msgid "Aliases"
-msgstr ""
+msgstr "別名"
 
 msgid "All Disks"
-msgstr ""
+msgstr "所有磁碟"
 
 msgid "All dirs"
 msgstr "所有資料夾"
@@ -724,7 +717,7 @@ msgid "Allocate a number of megabytes of RAM to the VM."
 msgstr ""
 
 msgid "Allow Anonymous Binding"
-msgstr ""
+msgstr "允許匿名帳戶繫結"
 
 msgid "Allow Anonymous Login"
 msgstr "允許匿名帳戶登入"
@@ -742,7 +735,7 @@ msgid "Allow Guest Access"
 msgstr "允許訪客存取"
 
 msgid "Allow Kerberos authentication"
-msgstr ""
+msgstr "允許 Kerberos 驗證"
 
 msgid "Allow Local User Login"
 msgstr "允許本機帳戶登入"
@@ -754,13 +747,13 @@ msgid "Allow Root Login"
 msgstr "允許 Root 登入"
 
 msgid "Allow TCP port forwarding"
-msgstr ""
+msgstr "允許 TCP 埠轉送"
 
 msgid "Allow Transfer Resumption"
 msgstr "允許重新傳輸"
 
 msgid "Allow Trusted Domains"
-msgstr ""
+msgstr "允許已信任網域"
 
 msgid ""
 "Allow configuring a non-standard port to access the GUI over <i>HTTP</i>. "
@@ -819,7 +812,7 @@ msgid ""
 msgstr ""
 
 msgid "Allow password authentication"
-msgstr ""
+msgstr "允許密碼驗證"
 
 msgid "Allow repeated GIDs"
 msgstr "允許重複 GID"
@@ -905,7 +898,7 @@ msgid ""
 msgstr ""
 
 msgid "Apple (AFP) Shares"
-msgstr "Apple 共享 (AFP)"
+msgstr "Apple 共用 (AFP)"
 
 msgid "Application Client Secret"
 msgstr ""
@@ -1012,6 +1005,9 @@ msgstr ""
 msgid "Automatically reboot the system after the update is applied."
 msgstr ""
 
+msgid "Automatically stop the script or command after the specified seconds."
+msgstr ""
+
 msgid "Auxiliary Arguments"
 msgstr ""
 
@@ -1040,7 +1036,7 @@ msgid "Available space threshold (%)"
 msgstr "可用空間臨界值 (%)"
 
 msgid "Average of all cores"
-msgstr ""
+msgstr "所有核心平均"
 
 msgid "Awesome! Now let's explore FreeNAS's cool features."
 msgstr "非常好! 現在開始探索 FreeNAS 的酷炫新功能."
@@ -1114,24 +1110,32 @@ msgid "Bind interfaces"
 msgstr ""
 
 msgid "Block (iSCSI)"
-msgstr "磁區塊服務 (iSCSI)"
+msgstr "Block (iSCSI)"
 
 msgid "Block size"
-msgstr ""
+msgstr "區塊大小"
 
 msgid "Boot Environments"
-msgstr ""
+msgstr "啟動環境"
 
 msgid "Boot Loader Type"
-msgstr ""
+msgstr "啟動載入器類型"
 
 msgid "Boot Method"
 msgstr "啟動方式"
 
 msgid "Boot Pool"
-msgstr ""
+msgstr "啟動 Pool"
 
 msgid "Boot Pool Status"
+msgstr "啟動 Pool 狀態"
+
+msgid ""
+"Brainpool curves can be more secure, while secp curves can be faster. See "
+"<a "
+"href=\"https://tls.mbed.org/kb/cryptography/elliptic-curve-performance-nist-"
+"vs-brainpool\" target=\"blank\"> Elliptic Curve performance: NIST vs "
+"Brainpool </a> for more information."
 msgstr ""
 
 msgid "Browsable to Network Clients"
@@ -1158,9 +1162,6 @@ msgid ""
 "Browse to an empty directory within the jail or enter a new directory name "
 "within the jail directory structure. This links to the <b>Source</b> "
 "storage area."
-msgstr ""
-
-msgid "Browse to an existing directory to store the new raw file."
 msgstr ""
 
 msgid ""
@@ -1235,7 +1236,7 @@ msgid "CAs"
 msgstr "憑證授權中心 (CA)"
 
 msgid "CD-ROM Path"
-msgstr ""
+msgstr "CD-ROM 路徑"
 
 msgid "CN Realm"
 msgstr ""
@@ -1244,16 +1245,13 @@ msgid "CPU"
 msgstr ""
 
 msgid "CPU Temperatures"
-msgstr ""
+msgstr "CPU 溫度"
 
 msgid "CPU Usage"
-msgstr ""
+msgstr "CPU 使用率"
 
 msgid "CPU and Memory"
 msgstr "CPU 與記憶體"
-
-msgid "CPU and Memory configuration."
-msgstr "CPU 與記憶體配置."
 
 msgid "CSRs"
 msgstr ""
@@ -1282,16 +1280,16 @@ msgid "Certificates"
 msgstr "憑證"
 
 msgid "Change Device Order"
-msgstr ""
+msgstr "變更裝置順序"
 
 msgid "Change Passphrase"
-msgstr ""
+msgstr "變更複雜密碼"
 
 msgid "Change Password"
 msgstr "變更密碼"
 
 msgid "Change Pool Passphrase"
-msgstr ""
+msgstr "變更 Pool 複雜密碼"
 
 msgid "Change User & Group Ownership"
 msgstr "變更帳戶與群組隸屬關係"
@@ -1303,7 +1301,7 @@ msgid ""
 msgstr ""
 
 msgid "Change log"
-msgstr "異動日誌"
+msgstr "異動記錄"
 
 msgid ""
 "Change the default password to improve system security. The new password "
@@ -1357,7 +1355,7 @@ msgid "Check for Updates"
 msgstr "檢查更新"
 
 msgid "Check for Updates Daily and Download if Available"
-msgstr ""
+msgstr "每天檢查是否有可用的更新"
 
 msgid ""
 "Check the <i>hostid</i> property of the jail. If not the same as the host, "
@@ -1365,10 +1363,10 @@ msgid ""
 msgstr ""
 
 msgid "Check the network connection"
-msgstr ""
+msgstr "檢查網路連線"
 
 msgid "Check the network connection."
-msgstr ""
+msgstr "檢查網路連線"
 
 msgid ""
 "Check the update server daily for                                   any "
@@ -1385,13 +1383,13 @@ msgid ""
 msgstr ""
 
 msgid "CheckIP Path"
-msgstr ""
+msgstr "CheckIP 路徑"
 
 msgid "CheckIP Server"
-msgstr ""
+msgstr "CheckIP 伺服器"
 
 msgid "CheckIP Server SSL"
-msgstr ""
+msgstr "CheckIP 伺服器 SSL"
 
 msgid "Chmod Request"
 msgstr "Chmod 請求"
@@ -1774,7 +1772,7 @@ msgid "Compression level"
 msgstr "壓縮層級"
 
 msgid "Config"
-msgstr ""
+msgstr "設定"
 
 msgid ""
 "Configure IPv4 networking or internet access for the jail. Enter the IPv4 "
@@ -1823,7 +1821,7 @@ msgid ""
 msgstr ""
 
 msgid "Configure Networking"
-msgstr ""
+msgstr "設定網路"
 
 msgid ""
 "Configure an external program for ID mapping instead of using the "
@@ -1854,16 +1852,16 @@ msgid "Confirm Privacy Passphrase"
 msgstr "確認私有密鑰"
 
 msgid "Confirm SED Password"
-msgstr ""
+msgstr "確認 SED 密碼"
 
 msgid "Confirm Secret Key"
 msgstr ""
 
 msgid "Confirm detach"
-msgstr ""
+msgstr "確認中斷連結"
 
 msgid "Confirm export/disconnect"
-msgstr ""
+msgstr ""確認匯出/斷線
 
 msgid "Confirm it is okay to proceed with Detach."
 msgstr ""
@@ -1933,10 +1931,10 @@ msgid "Create"
 msgstr "建立"
 
 msgid "Create CA"
-msgstr ""
+msgstr "建立 CA"
 
 msgid "Create Certificate"
-msgstr ""
+msgstr "建立憑證"
 
 msgid "Create Passphrase"
 msgstr ""
@@ -1948,16 +1946,16 @@ msgid "Create Pool Passphrase"
 msgstr ""
 
 msgid "Create Snapshot"
-msgstr ""
+msgstr "建立快照"
 
 msgid "Create a new Pool."
-msgstr "建立新儲存池."
+msgstr "建立新儲存 Pool。"
 
 msgid "Create a new, empty pool."
-msgstr ""
+msgstr "新建空白 Pool。"
 
 msgid "Create a pool:"
-msgstr ""
+msgstr "建立 Pool："
 
 msgid "Create a recommended formation of vdevs in a pool."
 msgstr ""
@@ -1966,25 +1964,25 @@ msgid "Create a snapshot of the dataset before pushing data."
 msgstr ""
 
 msgid "Create new Pool"
-msgstr "建立新儲存池"
+msgstr "建立新儲存 Pool"
 
 msgid "Create new disk image"
 msgstr "建立新磁碟映像"
 
 msgid "Create new pool"
-msgstr ""
+msgstr "建立新 Pool"
 
 msgid "Create or Import Pool"
-msgstr ""
+msgstr "建立或匯入 Pool"
 
 msgid "Create or Import pool"
-msgstr ""
+msgstr "建立或匯入 Pool"
 
 msgid "Creating Jail"
-msgstr ""
+msgstr "正在建立 Jail"
 
 msgid "Creating Jail..."
-msgstr ""
+msgstr "正在建立 Jail..."
 
 msgid ""
 "Creating or editing a <i>sysctl</i> immediately updates the Variable to the "
@@ -2012,7 +2010,7 @@ msgid "DHCP"
 msgstr "DHCP"
 
 msgid "DHCP Autoconfigure IPv4"
-msgstr ""
+msgstr "DHCP 自動配置 IPv4"
 
 msgid "DNS Forwarder"
 msgstr "DNS 轉送"
@@ -2054,7 +2052,7 @@ msgid "Days of the Week"
 msgstr ""
 
 msgid "Decrypt pool"
-msgstr ""
+msgstr "解密 Pool"
 
 msgid "Dedicated User"
 msgstr "專用帳戶"
@@ -2072,7 +2070,7 @@ msgid "Default Router For IPv6"
 msgstr "IPv6 預設閘道"
 
 msgid "Default Routes"
-msgstr ""
+msgstr "預設路由"
 
 msgid "Default directory permissions"
 msgstr "預設資料夾權限"
@@ -2144,7 +2142,7 @@ msgid "Define in bytes the maximum SysV message queue size for the jail."
 msgstr "以 bytes 方式定義該 Jail 最大 SysV 訊息佇列大小."
 
 msgid "Define in bytes the number of SysV shared memory segments."
-msgstr "以 bytes 方式定義 SysV 共享記憶體區段數值."
+msgstr "以 bytes 方式定義 SysV 共用記憶體區段數值."
 
 msgid "Define in seconds the wallclock time."
 msgstr "以秒定義系統時間."
@@ -2242,34 +2240,34 @@ msgid ""
 msgstr ""
 
 msgid "Delay Updates"
-msgstr ""
+msgstr "延後更新"
 
 msgid "Delay VM Boot until VNC Connects"
 msgstr ""
 
 msgid "Delete"
-msgstr ""
+msgstr "刪除"
 
 msgid "Delete "
-msgstr ""
+msgstr "刪除 "
 
 msgid "Delete Dataset"
-msgstr ""
+msgstr "刪除資料集"
 
 msgid "Delete Device"
-msgstr ""
+msgstr "刪除裝置"
 
 msgid "Delete Mount Point"
 msgstr ""
 
 msgid "Delete Recovery Key"
-msgstr ""
+msgstr "刪除復原金鑰"
 
 msgid "Delete Stale Snapshots on Remote System"
 msgstr ""
 
 msgid "Delete Zvol"
-msgstr ""
+msgstr "刪除 Zvol"
 
 msgid "Delete all users with this primary group?"
 msgstr ""
@@ -2289,7 +2287,7 @@ msgid "Delete selections"
 msgstr ""
 
 msgid "Delete snapshot "
-msgstr ""
+msgstr "刪除快照"
 
 msgid ""
 "Delete snapshots from the remote system which are                 also no "
@@ -2297,19 +2295,19 @@ msgid ""
 msgstr ""
 
 msgid "Delete the dataset "
-msgstr ""
+msgstr "刪除這個資料集 "
 
 msgid "Delete the zvol "
-msgstr ""
+msgstr "刪除這個 zvol"
 
 msgid "Delete this device?"
-msgstr ""
+msgstr "刪除這個裝置？"
 
 msgid "Delete zvol"
-msgstr ""
+msgstr "刪除 zvol"
 
 msgid "Deleted Recovery Key"
-msgstr ""
+msgstr "已刪除復原金鑰"
 
 msgid "Deny list"
 msgstr ""
@@ -2329,37 +2327,37 @@ msgid "Describe this service."
 msgstr ""
 
 msgid "Description"
-msgstr ""
+msgstr "說明"
 
 msgid "Description (max. 25 characters)"
-msgstr ""
+msgstr "說明 (最多 25 個字)"
 
 msgid "Description of the VLAN."
 msgstr ""
 
 msgid "Description of the lagg interface."
-msgstr ""
+msgstr "網路聚合介面說明"
 
 msgid "Description:"
-msgstr ""
+msgstr "說明："
 
 msgid "Destination"
-msgstr ""
+msgstr "目的地"
 
 msgid "Destination Path"
-msgstr ""
+msgstr "目的路徑"
 
 msgid "Destroy data on this pool?"
-msgstr ""
+msgstr "銷毀這個 Pool 上的資料？"
 
 msgid "Detach"
-msgstr ""
+msgstr "中斷連結"
 
 msgid "Detach Pool"
-msgstr ""
+msgstr "中斷 Pool 連結"
 
 msgid "Details"
-msgstr ""
+msgstr "細節"
 
 msgid ""
 "Determine which information the processes in a jail are able to obtain "
@@ -2396,46 +2394,46 @@ msgid ""
 msgstr ""
 
 msgid "Device"
-msgstr ""
+msgstr "裝置"
 
 msgid "Device Order"
-msgstr ""
+msgstr "裝置順序"
 
 msgid "Difference"
-msgstr ""
+msgstr "差異"
 
 msgid "Digest Algorithm"
-msgstr ""
+msgstr "摘要演算法"
 
 msgid "Direct the flow of data to the remote host."
 msgstr ""
 
 msgid "Direction"
-msgstr ""
+msgstr "方向"
 
 msgid "Directories & Permissions"
-msgstr ""
+msgstr "目錄與權限"
 
 msgid "Directory"
-msgstr ""
+msgstr "目錄"
 
 msgid "Directory Mask"
-msgstr ""
+msgstr "目錄遮罩"
 
 msgid "Directory Permission"
-msgstr ""
+msgstr "目錄權限"
 
 msgid "Directory Services"
 msgstr "目錄服務"
 
 msgid "Directory/Files"
-msgstr ""
+msgstr "目錄/檔案"
 
 msgid "Disable Endpoint Region"
 msgstr ""
 
 msgid "Disable FreeNAS Cache"
-msgstr ""
+msgstr "取消 FreeNAS 快取"
 
 msgid "Disable physical block size reporting"
 msgstr ""
@@ -2447,28 +2445,28 @@ msgid "Discovery Auth Method"
 msgstr ""
 
 msgid "Disk"
-msgstr ""
+msgstr "磁碟"
 
 msgid "Disk Size"
-msgstr ""
+msgstr "磁碟大小"
 
 msgid "Disk sector size"
-msgstr ""
+msgstr "磁碟磁區大小"
 
 msgid "Disk successfully imported"
-msgstr ""
+msgstr "磁碟已成功匯入"
 
 msgid "Disk to wipe."
-msgstr ""
+msgstr "要抹除的磁碟"
 
 msgid "Disks"
-msgstr ""
+msgstr "磁碟"
 
 msgid "Disks in Use"
-msgstr ""
+msgstr "使用中磁碟"
 
 msgid "Display Login"
-msgstr ""
+msgstr "顯示登入畫面"
 
 msgid "Display System Processes"
 msgstr "顯示系統程序"
@@ -2494,46 +2492,46 @@ msgid "Do not set this if the Serial Port is disabled."
 msgstr ""
 
 msgid "Docker Host"
-msgstr ""
+msgstr "Docker 主機"
 
 msgid "Domain"
-msgstr ""
+msgstr "網域"
 
 msgid "Domain Account Name"
-msgstr ""
+msgstr "網域帳戶名稱"
 
 msgid "Domain Account Password"
-msgstr ""
+msgstr "網域帳戶密碼"
 
 msgid "Domain Controller"
-msgstr ""
+msgstr "網域控制站"
 
 msgid "Domain Forest Level"
-msgstr ""
+msgstr "網域樹系等級"
 
 msgid "Domain Logons"
-msgstr ""
+msgstr "登入網域"
 
 msgid "Domain Name"
-msgstr ""
+msgstr "網域名稱"
 
 msgid "Domain name"
-msgstr ""
+msgstr "網域名稱"
 
 msgid "Done"
-msgstr ""
+msgstr "完成"
 
 msgid "Download Encrypt Key"
-msgstr ""
+msgstr "下載加密金鑰"
 
 msgid "Download Logs"
-msgstr ""
+msgstr "下載記錄"
 
 msgid "Download Sucessful"
-msgstr ""
+msgstr "下載成功"
 
 msgid "Download Update"
-msgstr ""
+msgstr "下載更新"
 
 msgid "Drive Account Type"
 msgstr ""
@@ -2544,35 +2542,38 @@ msgstr ""
 msgid "Driver"
 msgstr ""
 
-msgid "Edit"
+msgid "EC Curve"
 msgstr ""
+
+msgid "Edit"
+msgstr "編輯"
 
 msgid "Edit Disk(s)"
-msgstr ""
+msgstr "編輯磁碟"
 
 msgid "Edit Idmap"
-msgstr ""
+msgstr "編輯 Idmap"
 
 msgid "Edit Interface"
-msgstr ""
+msgstr "編輯介面"
 
 msgid "Edit Members"
-msgstr ""
+msgstr "編輯成員"
 
 msgid "Edit Note"
-msgstr ""
+msgstr "編輯備註"
 
 msgid "Edit Options"
-msgstr ""
+msgstr "編輯選項"
 
 msgid "Edit Permissions"
-msgstr ""
+msgstr "編輯權限"
 
 msgid "Edit Zvol"
-msgstr ""
+msgstr "編輯 Zvol"
 
 msgid "Editing the following disks:"
-msgstr ""
+msgstr "正在編輯這些磁碟："
 
 msgid ""
 "Either single bandwidth limit or bandwidth limit schedule in rclone "
@@ -2581,10 +2582,10 @@ msgid ""
 msgstr ""
 
 msgid "Email"
-msgstr ""
+msgstr "郵件"
 
 msgid "Email Subject"
-msgstr ""
+msgstr "郵件主旨"
 
 msgid ""
 "Emulating an <i>Intel e82545 (e1000)</i> Ethernet card provides "
@@ -2594,46 +2595,49 @@ msgid ""
 msgstr ""
 
 msgid "Enable"
-msgstr ""
+msgstr "啟用"
 
 msgid "Enable AD Monitoring"
-msgstr ""
+msgstr "啟用 AD Monitoring"
 
 msgid "Enable Atime"
-msgstr ""
+msgstr "啟用 Atime"
 
 msgid "Enable Browser"
-msgstr ""
+msgstr "啟用 Browser"
 
 msgid "Enable Debug Kernel"
-msgstr ""
+msgstr "啟用偵錯核心"
 
 msgid "Enable FXP"
-msgstr ""
+msgstr "啟用 FXP"
 
 msgid "Enable NFSv4"
-msgstr ""
+msgstr "啟用 NFSv4"
 
 msgid "Enable S.M.A.R.T."
-msgstr ""
+msgstr "啟用 S.M.A.R.T."
 
 msgid "Enable SMB1 support"
-msgstr ""
+msgstr "啟用 SMB1 支援"
 
 msgid "Enable Serial Console"
-msgstr ""
+msgstr "啟用序列主控台"
 
 msgid "Enable Service"
-msgstr ""
+msgstr "啟用服務"
+
+msgid "Enable Shadow Copies"
+msgstr "啟用陰影複製"
 
 msgid "Enable TLS"
-msgstr ""
+msgstr "啟用 TLS"
 
 msgid "Enable TPC"
-msgstr ""
+msgstr "啟用 TPC"
 
 msgid "Enable Time Machine backups on this share."
-msgstr ""
+msgstr "在這個共用上啟用 Time Machine 備份"
 
 msgid ""
 "Enable Unix privileges supported by OSX 10.5 and higher. Do not enable this "
@@ -2642,7 +2646,7 @@ msgid ""
 msgstr ""
 
 msgid "Enable VNC"
-msgstr ""
+msgstr "啟用 VNC"
 
 msgid ""
 "Enable a VNC (Virtual Network Computing) remote connection. Requires "
@@ -2650,16 +2654,19 @@ msgid ""
 msgstr ""
 
 msgid "Enable autotune"
-msgstr ""
+msgstr "啟用自動調校"
+
+msgid "Enable iSCSI ALUA"
+msgstr "啟用 iSCSI ALUA"
 
 msgid "Enable if Mac clients will be connecting to the SMB share."
 msgstr ""
 
 msgid "Enable netwait feature"
-msgstr ""
+msgstr "啟用 netwait 功能"
 
 msgid "Enable password login"
-msgstr ""
+msgstr "啟用密碼登入"
 
 msgid ""
 "Enable password logins and authentication to SMB shares. Selecting "
@@ -2670,7 +2677,7 @@ msgid "Enable running services that require mlock() in a jail."
 msgstr ""
 
 msgid "Enable service"
-msgstr ""
+msgstr "啟用服務"
 
 msgid ""
 "Enable this Cloud Sync Task. Unset to disable this Cloud Sync Task without "
@@ -2688,7 +2695,7 @@ msgid ""
 msgstr ""
 
 msgid "Enable this service?"
-msgstr ""
+msgstr "啟用這個服務？"
 
 msgid "Enable this task. Unset to disable the task     without deleting it."
 msgstr ""
@@ -2707,7 +2714,7 @@ msgid ""
 msgstr ""
 
 msgid "Enabled"
-msgstr ""
+msgstr "啟用"
 
 msgid ""
 "Enables the autotune script which attempts to optimize the system depending "
@@ -2726,22 +2733,22 @@ msgid "Encrypted pool disks must be decrypted prior to import."
 msgstr ""
 
 msgid "Encryption"
-msgstr ""
+msgstr "加密"
 
 msgid "Encryption Cipher"
-msgstr ""
+msgstr "加密演算法"
 
 msgid "Encryption Key"
-msgstr ""
+msgstr "加密金鑰"
 
 msgid "Encryption Key Required"
-msgstr ""
+msgstr "需要加密金鑰"
 
 msgid "Encryption Mode"
-msgstr ""
+msgstr "加密模式"
 
 msgid "Encryption Password"
-msgstr ""
+msgstr "加密密碼"
 
 msgid "Encryption Rekey"
 msgstr ""
@@ -2765,9 +2772,9 @@ msgstr ""
 
 msgid ""
 "Ensure <a "
-"href=\"%%docurl%%/directoryservice.html%%webversion%%#kerberos-realms\" "
+"href=\"%%docurl%%/directoryservices.html%%webversion%%#kerberos-realms\" "
 "target=\"_blank\">Kerberos Realms</a> and <a "
-"href=\"%%docurl%%/directoryservice.html%%webversion%%#kerberos-keytabs\" "
+"href=\"%%docurl%%/directoryservices.html%%webversion%%#kerberos-keytabs\" "
 "target=\"_blank\">Kerberos Keytabs</a> are configured and the system can "
 "communicate with the Kerberos Domain Controller before setting."
 msgstr ""
@@ -3071,9 +3078,9 @@ msgstr ""
 msgid ""
 "Enter an alphanumeric username of eight to sixteen characters. Keeping "
 "usernames to eight characters or less is recommended for compatibility with "
-"legacy clients. Usernames cannot begin with a hyphen (<b>-</b>) or contain "
-"a space, tab, or these characters: <b>, : + & # %^ ( ) ! @ ~ * ? < > =</b> "
-"Note that <b>$</b> can only be used as the last character."
+"legacy clients. Usernames cannot begin with a hyphen (<i>-</i>) or contain "
+"a space, tab, or these characters: <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i> "
+"Note that <i>$</i> can only be used as the last character."
 msgstr ""
 
 msgid ""
@@ -3338,7 +3345,7 @@ msgstr ""
 
 msgid ""
 "Enter the password to be used for the <a "
-"href=\"%%docurl%%/directoryservice.html%%webversion%%#active-directory\" "
+"href=\"%%docurl%%/directoryservices.html%%webversion%%#active-directory\" "
 "target=”_blank”>Active Directory</a> administrator account."
 msgstr ""
 
@@ -3387,10 +3394,10 @@ msgid ""
 msgstr ""
 
 msgid "Enter the root password to authorize this operation."
-msgstr ""
+msgstr "輸入 root 的密碼以授權這個作業。"
 
 msgid "Enter the root password."
-msgstr ""
+msgstr "輸入 root 的密碼。"
 
 msgid "Enter the state or province of the organization."
 msgstr ""
@@ -3420,7 +3427,7 @@ msgid "Enter valid VMware ESXI/vSphere credentials to fetch datastores."
 msgstr ""
 
 msgid "Error"
-msgstr ""
+msgstr "錯誤"
 
 msgid "Error Deleting Key"
 msgstr ""
@@ -3507,7 +3514,7 @@ msgid "Error updating disks."
 msgstr ""
 
 msgid "Error: "
-msgstr ""
+msgstr "錯誤："
 
 msgid "Error: Displaying local fetched releases failed."
 msgstr ""
@@ -3519,10 +3526,10 @@ msgid "Estimated data capacity available after extension."
 msgstr ""
 
 msgid "Estimated raw capacity:"
-msgstr ""
+msgstr "估計原始可用容量："
 
 msgid "Estimated total raw data capacity"
-msgstr ""
+msgstr "估計總共原始可用容量："
 
 msgid "Exclude"
 msgstr ""
@@ -3531,55 +3538,61 @@ msgid "Exec"
 msgstr ""
 
 msgid "Export Certificate"
-msgstr ""
+msgstr "匯出憑證"
 
 msgid "Export Password Secret Seed"
 msgstr ""
 
 msgid "Export Private Key"
-msgstr ""
+msgstr "匯出私鑰"
 
 msgid "Export Read Only"
-msgstr ""
+msgstr "以唯讀權限分享"
 
 msgid "Export Recycle Bin"
+msgstr "提供資源回收筒"
+
+msgid ""
+"Export ZFS snapshots as <a "
+"href=\"https://docs.microsoft.com/en-us/windows/desktop/vss/shadow-copies-"
+"and-shadow-copy-sets\" target=_blank>Shadow Copies</a> for VSS clients."
 msgstr ""
 
 msgid "Export/Disconnect"
-msgstr ""
+msgstr "匯出/斷線"
 
 msgid "Export/Disconnect Pool"
-msgstr ""
+msgstr "匯出/斷線 Pool"
 
 msgid "Exporting Pool..."
-msgstr ""
+msgstr "正在匯出 Pool...""
 
 msgid "Extend"
-msgstr ""
+msgstr "延伸"
 
 msgid "Extend Pool"
-msgstr ""
+msgstr "延伸 Pool"
 
 msgid "Extending an encrypted pool resets the passphrase and recovery key!"
 msgstr ""
 
 msgid "Extent"
-msgstr ""
+msgstr "範圍"
 
 msgid "Extent name"
-msgstr ""
+msgstr "範圍名稱"
 
 msgid "Extent size"
-msgstr ""
+msgstr "範圍大小"
 
 msgid "Extent type"
-msgstr ""
+msgstr "範圍類型"
 
 msgid "Extra Users(upsd.conf)"
-msgstr ""
+msgstr "額外使用者 (upsd.conf)"
 
 msgid "Extra options"
-msgstr ""
+msgstr "額外選項"
 
 msgid "FTP Host to connect to. Example: <i>ftp.example.com</i>."
 msgstr ""
@@ -3588,31 +3601,31 @@ msgid "FTP Port number. Leave blank to use a default port of <i>21</i>."
 msgstr ""
 
 msgid "Failed"
-msgstr ""
+msgstr "失敗"
 
 msgid "Fetch and Install Updates"
-msgstr ""
+msgstr "擷取並安裝更新"
 
 msgid "File Mask"
-msgstr ""
+msgstr "檔案遮罩"
 
 msgid "File Permission"
-msgstr ""
+msgstr "檔案權限"
 
 msgid "File Permissions"
-msgstr ""
+msgstr "檔案權限"
 
 msgid "Filename Encryption"
-msgstr ""
+msgstr "加密檔名"
 
 msgid "Filesystem type"
-msgstr ""
+msgstr "檔案系統類型"
 
 msgid "Filter"
-msgstr ""
+msgstr "篩選"
 
 msgid "Fix Credential"
-msgstr ""
+msgstr "修正認證"
 
 msgid ""
 "Flags to pass to <a "
@@ -3632,10 +3645,10 @@ msgid "Flip"
 msgstr ""
 
 msgid "Folder"
-msgstr ""
+msgstr "資料夾"
 
 msgid "Follow Symlinks"
-msgstr ""
+msgstr "依循符號連結"
 
 msgid "Follow symlinks and copy the items to which they link."
 msgstr ""
@@ -3647,10 +3660,10 @@ msgid ""
 msgstr ""
 
 msgid "Force"
-msgstr ""
+msgstr "強制"
 
 msgid "Force size"
-msgstr ""
+msgstr "強制大小"
 
 msgid ""
 "Force using <a "
@@ -3679,7 +3692,7 @@ msgid "From E-mail"
 msgstr ""
 
 msgid "Full Name"
-msgstr ""
+msgstr "全名"
 
 msgid ""
 "Full path to the pool or dataset to share. Mandatory. Click <b>ADD "
@@ -3687,25 +3700,25 @@ msgid ""
 msgstr ""
 
 msgid "Full with random data"
-msgstr ""
+msgstr "填入亂數資料"
 
 msgid "Full with zeros"
-msgstr ""
+msgstr "填零"
 
 msgid "GID"
 msgstr ""
 
 msgid "GUI SSL Certificate"
-msgstr ""
+msgstr "GUI SSL 憑證"
 
 msgid "Gateway"
-msgstr ""
+msgstr "閘道"
 
 msgid "General"
-msgstr ""
+msgstr "一般"
 
 msgid "Generate Debug File"
-msgstr ""
+msgstr "產生偵錯檔"
 
 msgid ""
 "Give this user permission to use <a href=\"https://www.sudo.ws/\" "
@@ -3718,10 +3731,10 @@ msgid ""
 msgstr ""
 
 msgid "Global Catalog Server"
-msgstr ""
+msgstr "通用類別伺服器"
 
 msgid "Global Configuration"
-msgstr ""
+msgstr "全域設定"
 
 msgid "Global auxiliary parameters"
 msgstr ""
@@ -3730,73 +3743,73 @@ msgid "Global password to unlock SEDs."
 msgstr ""
 
 msgid "Go Back to Jails"
-msgstr ""
+msgstr "回到 Jails"
 
 msgid "Group"
-msgstr ""
+msgstr "群組"
 
 msgid "Group Bind Path"
 msgstr ""
 
 msgid "Group ID"
-msgstr ""
+msgstr "群組 ID"
 
 msgid "Group Suffix"
-msgstr ""
+msgstr "群組尾碼"
 
 msgid "Groups"
-msgstr ""
+msgstr "群組"
 
 msgid "Guest Access"
-msgstr ""
+msgstr "來賓存取"
 
 msgid "Guest Account"
-msgstr ""
+msgstr "來賓帳號"
 
 msgid "Guest Operating System"
-msgstr ""
+msgstr "Guest 作業系統"
 
 msgid "Guide"
 msgstr "使用說明"
 
 msgid "HDD Standby"
-msgstr ""
+msgstr "硬碟待命"
 
 msgid "HTTP Authentication"
-msgstr ""
+msgstr "HTTP 驗證"
 
 msgid "HTTP Port"
-msgstr ""
+msgstr "HTTP 連接埠"
 
 msgid "HTTP Proxy"
 msgstr ""
 
 msgid "HTTPS Port"
-msgstr ""
+msgstr "HTTPS 連接埠"
 
 msgid "Hard Disk"
-msgstr ""
+msgstr "硬碟"
 
 msgid "Hard Disk Size"
-msgstr ""
+msgstr "硬碟大小"
 
 msgid "Hard Disks"
-msgstr ""
+msgstr "硬碟"
 
 msgid "Hide Config"
-msgstr ""
+msgstr "隱藏設定"
 
 msgid "Hide Standard Error"
-msgstr ""
+msgstr "隱藏標準錯誤"
 
 msgid "Hide Standard Output"
-msgstr ""
+msgstr "隱藏標準輸出"
 
 msgid "Hide Stderr"
-msgstr ""
+msgstr "隱藏 Stderr"
 
 msgid "Hide Stdout"
-msgstr ""
+msgstr "隱藏 Stdout"
 
 msgid ""
 "Hide error output (stderr) from the command.                When unset, any "
@@ -3811,28 +3824,28 @@ msgid ""
 msgstr ""
 
 msgid "Home Directory"
-msgstr ""
+msgstr "主目錄"
 
 msgid "Home Directory Permissions"
-msgstr ""
+msgstr "主目錄權限"
 
 msgid "Host"
-msgstr ""
+msgstr "主機"
 
 msgid "Host name database"
-msgstr ""
+msgstr "主機名稱資料庫"
 
 msgid "HostName"
-msgstr ""
+msgstr "主機名稱"
 
 msgid "Hostname"
-msgstr ""
+msgstr "主機名稱"
 
 msgid "Hostname or IP address of SMTP server to use for sending this email."
 msgstr ""
 
 msgid "Hostnames Lookups"
-msgstr ""
+msgstr "主機名稱反查"
 
 msgid ""
 "Hostnames or IP addresses of the ISNS servers to be registered with the "
@@ -3840,13 +3853,13 @@ msgid ""
 msgstr ""
 
 msgid "Hosts Allow"
-msgstr ""
+msgstr "允許主機清單"
 
 msgid "Hosts Deny"
-msgstr ""
+msgstr "拒絕主機清單"
 
 msgid "Hour"
-msgstr ""
+msgstr "時"
 
 msgid "Hover to expand"
 msgstr ""
@@ -3855,16 +3868,16 @@ msgid "How often the IP is checked in seconds."
 msgstr ""
 
 msgid "I Understand"
-msgstr ""
+msgstr "我了解"
 
 msgid "IBurst"
 msgstr ""
 
 msgid "ID & Groups"
-msgstr ""
+msgstr "ID 與群組"
 
 msgid "IP Address"
-msgstr ""
+msgstr "IP 位址"
 
 msgid ""
 "IP address of the remote system with <i>UPS Mode</i> set as <i>Master</i>. "
@@ -3875,28 +3888,28 @@ msgid "IPMI"
 msgstr ""
 
 msgid "IPv4 Address"
-msgstr ""
+msgstr "IPv4 位址"
 
 msgid "IPv4 Addresses"
-msgstr ""
+msgstr "IPv4 位址"
 
 msgid "IPv4 Default Gateway"
-msgstr ""
+msgstr "IPv4 預設閘道"
 
 msgid "IPv4 Default Router"
-msgstr ""
+msgstr "IPv4 預設路由"
 
 msgid "IPv4 Interface"
-msgstr ""
+msgstr "IPv4 介面"
 
 msgid "IPv4 Netmask"
-msgstr ""
+msgstr "IPv4 網路遮罩"
 
 msgid "IPv4 address for the jail."
 msgstr ""
 
 msgid "IPv4 interface"
-msgstr ""
+msgstr "IPv4 介面"
 
 msgid "IPv4 interface for the jail."
 msgstr ""
@@ -3905,25 +3918,25 @@ msgid "IPv4 netmask for the jail."
 msgstr ""
 
 msgid "IPv6 Address"
-msgstr ""
+msgstr "IPv6 位址"
 
 msgid "IPv6 Addresses"
-msgstr ""
+msgstr "IPv6 位址"
 
 msgid "IPv6 Auto Configure"
-msgstr ""
+msgstr "IPv6 自動配置"
 
 msgid "IPv6 Default Gateway"
-msgstr ""
+msgstr "IPv6 預設閘道"
 
 msgid "IPv6 Default Route"
-msgstr ""
+msgstr "IPv6 預設路由"
 
 msgid "IPv6 Default Router"
-msgstr ""
+msgstr "IPv6 預設路由"
 
 msgid "IPv6 Interface"
-msgstr ""
+msgstr "IPv6 介面"
 
 msgid "IPv6 Prefix"
 msgstr ""
@@ -4005,28 +4018,28 @@ msgid "Ignore Builtin"
 msgstr ""
 
 msgid "Import"
-msgstr ""
+msgstr "匯入"
 
 msgid "Import Disk"
-msgstr ""
+msgstr "匯入磁碟"
 
 msgid "Import a pool that exists but is not connected."
 msgstr ""
 
 msgid "Import an existing pool"
-msgstr ""
+msgstr "匯入現有 Pool"
 
 msgid "Importing Disk"
-msgstr ""
+msgstr "正在匯入磁碟"
 
 msgid "Importing Disk..."
-msgstr ""
+msgstr "正在匯入磁碟..."
 
 msgid "Importing Pool"
-msgstr ""
+msgstr ""正在匯入 Pool
 
 msgid "Importing Pool..."
-msgstr ""
+msgstr "正在匯入 Pool..."
 
 msgid "In KiB/s. A default of <i>0</i> means unlimited."
 msgstr ""
@@ -4075,13 +4088,13 @@ msgid "Informational"
 msgstr ""
 
 msgid "Init/Shutdown Scripts"
-msgstr ""
+msgstr "開機/關機 指令碼"
 
 msgid "Initiator Group ID"
-msgstr ""
+msgstr "啟動器群組 ID"
 
 msgid "Initiators"
-msgstr ""
+msgstr "啟動器"
 
 msgid "Input the pre-defined S3 bucket to use."
 msgstr ""
@@ -4090,31 +4103,31 @@ msgid "Input the pre-defined container to use."
 msgstr ""
 
 msgid "Install"
-msgstr ""
+msgstr "安裝"
 
 msgid "Install Manual Update File"
-msgstr ""
+msgstr "手動上載與安裝更新檔"
 
 msgid "Installation Media"
-msgstr ""
+msgstr "安裝媒體"
 
 msgid "Installing plugin..."
-msgstr ""
+msgstr "正在安裝外掛..."
 
 msgid "Interface"
-msgstr ""
+msgstr "介面"
 
 msgid "Interface Description"
-msgstr ""
+msgstr "介面說明"
 
 msgid "Interface Name"
-msgstr ""
+msgstr "介面名稱"
 
 msgid "Interfaces"
-msgstr ""
+msgstr "介面"
 
 msgid "Internal"
-msgstr ""
+msgstr "內部"
 
 msgid ""
 "Internal identifier of the certificate. Only alphanumeric, \"_\" and \"-\" "
@@ -4125,7 +4138,7 @@ msgid "Interval"
 msgstr ""
 
 msgid "Invalid password"
-msgstr ""
+msgstr "密碼不正確"
 
 msgid "Invalid regex filter"
 msgstr ""
@@ -4155,13 +4168,13 @@ msgid ""
 msgstr ""
 
 msgid "Jail Name"
-msgstr ""
+msgstr "Jail 名稱"
 
 msgid "Jail Properties"
-msgstr ""
+msgstr "Jail 屬性"
 
 msgid "Jail Type"
-msgstr ""
+msgstr "Jail 類型"
 
 msgid "Jail core dump size in bytes."
 msgstr ""
@@ -4179,7 +4192,7 @@ msgid "Jails"
 msgstr ""
 
 msgid "Jails cannot be changed while running."
-msgstr ""
+msgstr "當 Jail 執行中無法進行變更"
 
 msgid "KDC"
 msgstr ""
@@ -4213,6 +4226,9 @@ msgstr ""
 msgid "Key Length"
 msgstr ""
 
+msgid "Key Type"
+msgstr ""
+
 msgid "LDAP"
 msgstr ""
 
@@ -4241,7 +4257,7 @@ msgid ""
 msgstr ""
 
 msgid "LDAP timeout"
-msgstr ""
+msgstr "LDAP 逾時"
 
 msgid ""
 "LDAP timeout in seconds. Increase this value if a Kerberos ticket timeout "
@@ -4249,7 +4265,7 @@ msgid ""
 msgstr ""
 
 msgid "LEGACY WEB INTERFACE"
-msgstr ""
+msgstr "傳統 WEB 介面"
 
 msgid "LUN ID"
 msgstr ""
@@ -4258,16 +4274,16 @@ msgid "LUN RPM"
 msgstr ""
 
 msgid "Lagg Interface"
-msgstr ""
+msgstr "網路聚合介面"
 
 msgid "Lagg Interface Group"
-msgstr ""
+msgstr "網路聚合介面群組"
 
 msgid "Lagg Interfaces"
-msgstr ""
+msgstr "網路聚合介面"
 
 msgid "Lagg Physical NIC"
-msgstr ""
+msgstr "網路聚合實體 NIC"
 
 msgid "Lagg Priority Number"
 msgstr ""
@@ -4276,7 +4292,7 @@ msgid "Lagg Protocol"
 msgstr ""
 
 msgid "Language"
-msgstr ""
+msgstr "語言"
 
 msgid ""
 "Leave blank when using AWS. The available buckets are fetched  dynamically. "
@@ -4300,13 +4316,13 @@ msgid ""
 msgstr ""
 
 msgid "Legacy Web Interface"
-msgstr ""
+msgstr "舊版 Web 介面"
 
 msgid "Libdefaults Auxiliary Parameters"
 msgstr ""
 
 msgid "License"
-msgstr ""
+msgstr "授權"
 
 msgid "Lifetime"
 msgstr ""
@@ -4320,10 +4336,10 @@ msgid ""
 msgstr ""
 
 msgid "Link Aggregation Members"
-msgstr ""
+msgstr "網路聚合成員"
 
 msgid "Link Aggregations"
-msgstr ""
+msgstr "網路聚合"
 
 msgid "List of system services to restart when the pool is unlocked."
 msgstr ""
@@ -4336,7 +4352,7 @@ msgid ""
 msgstr ""
 
 msgid "Load Average"
-msgstr ""
+msgstr "平均負載"
 
 msgid "Local Master"
 msgstr ""
@@ -4357,13 +4373,13 @@ msgid "Lock"
 msgstr ""
 
 msgid "Lock Pool"
-msgstr ""
+msgstr "鎖定 Pool"
 
 msgid "Lock User"
-msgstr ""
+msgstr "鎖定使用者"
 
 msgid "Log Level"
-msgstr ""
+msgstr "記錄層級"
 
 msgid "Log Out"
 msgstr "登出"
@@ -4387,7 +4403,7 @@ msgid "Log rpc.statd(8) and rpc.lockd(8)"
 msgstr ""
 
 msgid "Logical block size"
-msgstr ""
+msgstr "邏輯磁碟大小"
 
 msgid "Login Attempts"
 msgstr ""
@@ -4403,7 +4419,7 @@ msgid ""
 msgstr ""
 
 msgid "MAC Address"
-msgstr ""
+msgstr "MAC 位址"
 
 msgid "MOTD Banner"
 msgstr ""
@@ -4412,7 +4428,7 @@ msgid "MSDOSFS locale"
 msgstr ""
 
 msgid "Mac Address"
-msgstr ""
+msgstr "Mac 位址"
 
 msgid "Machine Suffix"
 msgstr ""
@@ -4430,16 +4446,16 @@ msgid "Map ACLs"
 msgstr ""
 
 msgid "Mapall Group"
-msgstr ""
+msgstr "All 對應群組"
 
 msgid "Mapall User"
-msgstr ""
+msgstr "All 對應使用者"
 
 msgid "Maproot Group"
-msgstr ""
+msgstr "Root 對應群組"
 
 msgid "Maproot User"
-msgstr ""
+msgstr "Root 對應使用者"
 
 msgid "Masquerade Address"
 msgstr ""
@@ -4453,7 +4469,7 @@ msgid ""
 msgstr ""
 
 msgid "Max. Connections"
-msgstr ""
+msgstr "最大連線數"
 
 msgid "Max. Poll"
 msgstr ""
@@ -4514,31 +4530,31 @@ msgid "Maximum swap space to use for the jail."
 msgstr ""
 
 msgid "Media Status"
-msgstr ""
+msgstr "媒體狀態"
 
 msgid "Member Disk"
-msgstr ""
+msgstr "成員磁碟"
 
 msgid "Members"
-msgstr ""
+msgstr "成員"
 
 msgid "Members of"
 msgstr ""
 
 msgid "Memory"
-msgstr ""
+msgstr "記憶體"
 
 msgid "Memory Size (MiB)"
-msgstr ""
+msgstr "記憶體大小 (MiB)"
 
 msgid "Memory Usage"
-msgstr ""
+msgstr "記憶體使用"
 
 msgid "Method"
-msgstr ""
+msgstr "方法"
 
 msgid "Microsoft Account"
-msgstr ""
+msgstr "Microsoft 帳戶"
 
 msgid ""
 "Microsoft Onedrive <a "
@@ -4553,7 +4569,7 @@ msgid "Minimum Passive Port"
 msgstr ""
 
 msgid "Minute"
-msgstr ""
+msgstr "分"
 
 msgid "Mirror"
 msgstr ""
@@ -4562,7 +4578,7 @@ msgid "Mixing disks of different sizes in a VDEV is not recommended."
 msgstr ""
 
 msgid "Mode"
-msgstr ""
+msgstr "模式"
 
 msgid ""
 "Modify for disks that understand <a                   "
@@ -4624,13 +4640,13 @@ msgid ""
 msgstr ""
 
 msgid "Multipaths"
-msgstr ""
+msgstr "多重路徑"
 
 msgid ""
 "Must match Windows workgroup name. This setting is ignored if the <a "
-"href=\"%%docurl%%/directoryservice.html%%webversion%%#active-directory\" "
+"href=\"%%docurl%%/directoryservices.html%%webversion%%#active-directory\" "
 "target=\"_blank\">Active Directory</a> or <a "
-"href=\"%%docurl%%/directoryservice.html%%webversion%%#ldap\" "
+"href=\"%%docurl%%/directoryservices.html%%webversion%%#ldap\" "
 "target=\"_blank\">LDAP</a> service is running."
 msgstr ""
 
@@ -4638,22 +4654,22 @@ msgid "Mutual secret password. Must be different than <i>Secret</i>."
 msgstr ""
 
 msgid "N/A"
-msgstr ""
+msgstr "無"
 
 msgid "NFSv3 ownership model for NFSv4"
 msgstr ""
 
 msgid "NIC"
-msgstr ""
+msgstr "網路介面卡"
 
 msgid "NIS"
 msgstr ""
 
 msgid "NIS domain"
-msgstr ""
+msgstr "NIS 網域"
 
 msgid "NIS servers"
-msgstr ""
+msgstr "NIS 伺服器"
 
 msgid "NO"
 msgstr ""
@@ -4662,22 +4678,22 @@ msgid "NTLMv1 Auth"
 msgstr ""
 
 msgid "NTP Servers"
-msgstr ""
+msgstr "NTP 伺服器"
 
 msgid "Name"
-msgstr ""
+msgstr "名稱"
 
 msgid "Name & Contact"
 msgstr ""
 
 msgid "Name Jail and Choose FreeBSD Release"
-msgstr ""
+msgstr "輸入 Jail 名稱與選擇 FreeBSD 版本"
 
 msgid "Name Servers"
-msgstr ""
+msgstr "名稱伺服器"
 
 msgid "Name of NIS domain."
-msgstr ""
+msgstr "NIS 網域名稱"
 
 msgid ""
 "Name of a <a "
@@ -4698,38 +4714,35 @@ msgid ""
 "initiators use the initiator name as the user name."
 msgstr ""
 
-msgid "Name the new raw file."
-msgstr ""
-
 msgid "Nameserver 1"
-msgstr ""
+msgstr "名稱伺服器 1"
 
 msgid "Nameserver 2"
-msgstr ""
+msgstr "名稱伺服器 2"
 
 msgid "Nameserver 3"
-msgstr ""
+msgstr "名稱伺服器 3"
 
 msgid "Nameservers"
-msgstr ""
+msgstr "名稱伺服器"
 
 msgid "NetBIOS Alias"
-msgstr ""
+msgstr "NetBIOS 別名"
 
 msgid "NetBIOS Alias:"
-msgstr ""
+msgstr "NetBIOS 別名："
 
 msgid "NetBIOS Name"
-msgstr ""
+msgstr "NetBIOS 名稱"
 
 msgid "NetBIOS Name:"
-msgstr ""
+msgstr "NetBIOS 名稱："
 
 msgid "NetBIOS alias"
-msgstr ""
+msgstr "NetBIOS 別名"
 
 msgid "Netbios Name"
-msgstr ""
+msgstr "Netbios 名稱"
 
 msgid ""
 "Netbios Name of this NAS. This name must differ from the <i>Workgroup</i> "
@@ -4743,13 +4756,13 @@ msgid "Network"
 msgstr "網路"
 
 msgid "Network Interface"
-msgstr ""
+msgstr "網路介面"
 
 msgid "Network Properties"
-msgstr ""
+msgstr "網路內容"
 
 msgid "Network Summary"
-msgstr ""
+msgstr "網路摘要"
 
 msgid ""
 "Network addresses which can use this initiator. Use <i>ALL</i> or list "
@@ -4766,7 +4779,7 @@ msgid "Network connectivity will be interrupted. Proceed?"
 msgstr ""
 
 msgid "New Password"
-msgstr ""
+msgstr "新密碼"
 
 msgid "New Primary Group"
 msgstr ""
@@ -4782,7 +4795,7 @@ msgid ""
 msgstr ""
 
 msgid "Next"
-msgstr ""
+msgstr "繼續"
 
 msgid "Nic to attach:"
 msgstr ""
@@ -4797,7 +4810,7 @@ msgid "No Stat"
 msgstr ""
 
 msgid "No pools"
-msgstr ""
+msgstr "沒有 Pool"
 
 msgid ""
 "No pools exist. Jails cannot be created or managed until a pool is present "
@@ -4805,10 +4818,10 @@ msgid ""
 msgstr ""
 
 msgid "No update found."
-msgstr ""
+msgstr "沒有找到更新"
 
 msgid "No updates available."
-msgstr ""
+msgstr "沒有可用更新"
 
 msgid "No, continue with import"
 msgstr ""
@@ -4817,7 +4830,7 @@ msgid "Not run since last boot"
 msgstr ""
 
 msgid "Note"
-msgstr ""
+msgstr "備註"
 
 msgid "Note: Legacy jails created before FreeNAS 11.2 must be managed from the"
 msgstr ""
@@ -4826,10 +4839,10 @@ msgid "Note: Legacy plugins created before FreeNAS 11.2 must be managed from the
 msgstr ""
 
 msgid "Notes"
-msgstr ""
+msgstr "備註"
 
 msgid "Number of CPUs"
-msgstr ""
+msgstr "CPU 數量"
 
 msgid ""
 "Number of SysV semaphores modified in a single <a "
@@ -4874,7 +4887,7 @@ msgid ""
 msgstr ""
 
 msgid "Number of servers"
-msgstr ""
+msgstr "伺服器數量"
 
 msgid ""
 "Number of virtual CPUs to allocate to the virtual machine. The maximum is "
@@ -4898,7 +4911,7 @@ msgid "OK"
 msgstr ""
 
 msgid "OS Version"
-msgstr ""
+msgstr "作業系統版本"
 
 msgid "Obey Pam Restrictions"
 msgstr ""
@@ -4916,7 +4929,7 @@ msgid "Official"
 msgstr ""
 
 msgid "Offline"
-msgstr ""
+msgstr "離線"
 
 msgid "Ok"
 msgstr ""
@@ -4928,7 +4941,7 @@ msgid ""
 msgstr ""
 
 msgid "Online"
-msgstr ""
+msgstr "上線"
 
 msgid "Only Allow Guest Access"
 msgstr ""
@@ -5022,7 +5035,7 @@ msgid "Optional: Choose installation media image"
 msgstr ""
 
 msgid "Options"
-msgstr ""
+msgstr "選項"
 
 msgid ""
 "Order of selected interface within the lagg. Configure a failover to set "
@@ -5031,6 +5044,12 @@ msgid ""
 msgstr ""
 
 msgid "Organization"
+msgstr "組織"
+
+msgid "Organizational Unit"
+msgstr "組織單位"
+
+msgid "Organizational unit of the entity."
 msgstr ""
 
 msgid "Outgoing Mail Server"
@@ -5068,10 +5087,10 @@ msgid "Passphrase created for pool "
 msgstr ""
 
 msgid "Password"
-msgstr ""
+msgstr "密碼"
 
 msgid "Password Server"
-msgstr ""
+msgstr "密碼伺服器"
 
 msgid "Password Suffix"
 msgstr ""
@@ -5080,7 +5099,7 @@ msgid "Password associated with the LDAP User DN."
 msgstr ""
 
 msgid "Password for SED"
-msgstr ""
+msgstr "SED 密碼"
 
 msgid ""
 "Password for the <a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> "
@@ -5124,7 +5143,7 @@ msgid ""
 msgstr ""
 
 msgid "Path"
-msgstr ""
+msgstr "路徑"
 
 msgid ""
 "Path to an unencrypted <a "
@@ -5154,17 +5173,14 @@ msgstr ""
 msgid "Periodic Notification User"
 msgstr ""
 
-msgid "Periodic Snapshot Task"
-msgstr ""
-
 msgid "Periodic Snapshot Tasks"
-msgstr ""
+msgstr "定期快照作業"
 
 msgid "Permit Sudo"
 msgstr ""
 
 msgid "Physical NIC"
-msgstr ""
+msgstr "實體 NIC"
 
 msgid "Physical interface of the selected member."
 msgstr ""
@@ -5176,16 +5192,16 @@ msgid "Please enter the correct password."
 msgstr ""
 
 msgid "Please enter your password"
-msgstr ""
+msgstr "請輸入您的密碼"
 
 msgid "Please enter your password again"
-msgstr ""
+msgstr "請再次輸入您的密碼"
 
 msgid "Please enter your username"
-msgstr ""
+msgstr "請輸入您的使用者名稱"
 
 msgid "Please enter your username again"
-msgstr ""
+msgstr "請再次輸入您的使用者名稱"
 
 msgid ""
 "Please read about <a "
@@ -5195,16 +5211,16 @@ msgid ""
 msgstr ""
 
 msgid "Please wait"
-msgstr ""
+msgstr "請稍候"
 
 msgid "Plugin Installed Successfully"
-msgstr ""
+msgstr "外掛已經安裝成功"
 
 msgid "Plugin Name"
-msgstr ""
+msgstr "外掛名稱"
 
 msgid "Plugin installed successfully"
-msgstr ""
+msgstr "外掛已經安裝成功"
 
 msgid "Plugins"
 msgstr "外掛"
@@ -5216,16 +5232,16 @@ msgid "Pool Available Space Threshold (%)"
 msgstr ""
 
 msgid "Pool Manager"
-msgstr ""
+msgstr "Pool 管理"
 
 msgid "Pool Status"
-msgstr ""
+msgstr "Pool 狀態"
 
 msgid "Pool to import"
-msgstr ""
+msgstr "可匯入的 Pool"
 
 msgid "Pool/Dataset"
-msgstr ""
+msgstr "Pool/資料集"
 
 msgid "Pools"
 msgstr ""
@@ -5293,13 +5309,13 @@ msgid "Previous"
 msgstr ""
 
 msgid "Primary DNS server."
-msgstr ""
+msgstr "主要 DNS 伺服器"
 
 msgid "Primary Group"
-msgstr ""
+msgstr "主要群組"
 
 msgid "Primary NIC"
-msgstr ""
+msgstr "主要 NIC"
 
 msgid "Priority Code Point"
 msgstr ""
@@ -5311,10 +5327,10 @@ msgid "Privacy Protocol"
 msgstr ""
 
 msgid "Private Key"
-msgstr ""
+msgstr "私鑰"
 
 msgid "Proceed"
-msgstr ""
+msgstr "繼續"
 
 msgid ""
 "Proceed with upgrading the pool? WARNING: Upgrading a pool is a one-way "
@@ -5323,13 +5339,13 @@ msgid ""
 msgstr ""
 
 msgid "Processor"
-msgstr ""
+msgstr "處理器"
 
 msgid "Promote Dataset"
-msgstr ""
+msgstr "升級資料集"
 
 msgid "Protocol"
-msgstr ""
+msgstr "協定"
 
 msgid "Provider"
 msgstr ""
@@ -5389,24 +5405,6 @@ msgstr ""
 msgid "Raw File"
 msgstr ""
 
-msgid "Raw file location"
-msgstr ""
-
-msgid "Raw file size"
-msgstr ""
-
-msgid "Raw file size (GiB)"
-msgstr ""
-
-msgid "Raw filename"
-msgstr ""
-
-msgid "Raw filename password"
-msgstr ""
-
-msgid "Raw filename password. The default is <i>docker</i>."
-msgstr ""
-
 msgid "Raw filesize"
 msgstr ""
 
@@ -5417,16 +5415,16 @@ msgid "Re-keyed Pool"
 msgstr ""
 
 msgid "Read Only"
-msgstr ""
+msgstr "唯讀"
 
 msgid "Read Only Access"
 msgstr ""
 
 msgid "Read-Only"
-msgstr ""
+msgstr "唯讀"
 
 msgid "Read-only"
-msgstr ""
+msgstr "唯讀"
 
 msgid "Read/Write Access"
 msgstr ""
@@ -5435,7 +5433,7 @@ msgid "Realm"
 msgstr ""
 
 msgid "Reboot After Update"
-msgstr ""
+msgstr "更新後重新開機"
 
 msgid "Rebuild Directory Service Cache"
 msgstr ""
@@ -5480,10 +5478,10 @@ msgid "Register"
 msgstr ""
 
 msgid "Release"
-msgstr ""
+msgstr "版本"
 
 msgid "Release Notes"
-msgstr ""
+msgstr "版本說明"
 
 msgid "Remote Auth Token"
 msgstr ""
@@ -5525,10 +5523,10 @@ msgid "Remote SSH Port"
 msgstr ""
 
 msgid "Remote ZFS Pool/Dataset"
-msgstr ""
+msgstr "遠端 ZFS Pool/資料集"
 
 msgid "Remove"
-msgstr ""
+msgstr "移除"
 
 msgid "Remove Additional IPv4 Alias"
 msgstr ""
@@ -5537,7 +5535,7 @@ msgid "Remove Additional IPv6 Alias"
 msgstr ""
 
 msgid "Remove Additional Path"
-msgstr ""
+msgstr "移除其它路徑"
 
 msgid "Remove Keep Flag"
 msgstr ""
@@ -5545,11 +5543,14 @@ msgstr ""
 msgid "Rename the existing boot environment."
 msgstr ""
 
+msgid "Replacing disk..."
+msgstr "正在替換磁碟..."
+
 msgid "Replication Stream Compression"
 msgstr ""
 
 msgid "Replication Tasks"
-msgstr ""
+msgstr "複寫作業"
 
 msgid "Report CPU usage in percentage"
 msgstr ""
@@ -5626,7 +5627,7 @@ msgid ""
 msgstr ""
 
 msgid "Resilver Priority"
-msgstr ""
+msgstr "Resilver 優先權"
 
 msgid "Resolution"
 msgstr ""
@@ -5635,16 +5636,16 @@ msgid "Restart"
 msgstr "重新啟動"
 
 msgid "Restart Services"
-msgstr ""
+msgstr "重新啟動服務"
 
 msgid "Restart Web Service"
-msgstr ""
+msgstr "重新啟動 Web 服務"
 
 msgid "Restart the system?"
-msgstr ""
+msgstr "重新啟動系統？"
 
 msgid "Restore default"
-msgstr ""
+msgstr "回復預設值"
 
 msgid ""
 "Restrict share visibility to users with read or write access to the share. "
@@ -5658,25 +5659,25 @@ msgid ""
 msgstr ""
 
 msgid "Rollback"
-msgstr ""
+msgstr "倒回"
 
 msgid "Root Password"
-msgstr ""
+msgstr "Root 密碼"
 
 msgid "Root password"
-msgstr ""
+msgstr "Root 密碼"
 
 msgid "Rsync Tasks"
-msgstr ""
+msgstr "Rsync 作業"
 
 msgid "Rsync mode"
-msgstr ""
+msgstr "Rsync 模式"
 
 msgid "Run As User"
 msgstr ""
 
 msgid "Run Now"
-msgstr ""
+msgstr "立即執行"
 
 msgid ""
 "Run commands in a clean environment. The current environment is discarded "
@@ -5701,13 +5702,13 @@ msgid "Run this rsync now?"
 msgstr ""
 
 msgid "S.M.A.R.T. Enabled"
-msgstr ""
+msgstr "S.M.A.R.T. 已啟用"
 
 msgid "S.M.A.R.T. Options"
 msgstr ""
 
 msgid "S.M.A.R.T. Tests"
-msgstr ""
+msgstr "S.M.A.R.T. 測試"
 
 msgid "S.M.A.R.T. extra options"
 msgstr ""
@@ -5725,10 +5726,10 @@ msgid "SFTP log facility"
 msgstr ""
 
 msgid "SFTP log level"
-msgstr ""
+msgstr "SFTP 記錄層級"
 
 msgid "SMTP Authentication"
-msgstr ""
+msgstr "SMTP 驗證"
 
 msgid ""
 "SMTP port number. Typically <i>25,465</i> (secure SMTP), or <i>587</i> "
@@ -5736,19 +5737,19 @@ msgid ""
 msgstr ""
 
 msgid "SNMP v3 Support"
-msgstr ""
+msgstr "SNMP v3 支援"
 
 msgid "SSH Host to connect to."
 msgstr ""
 
 msgid "SSH Public Key"
-msgstr ""
+msgstr "SSH 公鑰"
 
 msgid "SSH Username."
-msgstr ""
+msgstr "SSH 使用者名稱。"
 
 msgid "SSH port number. Leave empty to use the default port <i>22</i>."
-msgstr ""
+msgstr "SSH 連接埠號，保持空白則為持預設埠號 <i>22</i>。"
 
 msgid "SSL"
 msgstr ""
@@ -5760,16 +5761,16 @@ msgid "Samba Schema"
 msgstr ""
 
 msgid "Save"
-msgstr ""
+msgstr "儲存"
 
 msgid "Save Config"
-msgstr ""
+msgstr "儲存設定"
 
 msgid "Save Network Interface Changes"
-msgstr ""
+msgstr "儲存網路介面的修改"
 
 msgid "Save VLAN Interface Changes"
-msgstr ""
+msgstr "儲存 VLAN 介面的修改"
 
 msgid "Save configuration settings from this machine before updating?"
 msgstr ""
@@ -5777,20 +5778,23 @@ msgstr ""
 msgid "Save notes about the jail."
 msgstr ""
 
-msgid "Schedule a Cron Job"
+msgid "Saving Debug"
 msgstr ""
+
+msgid "Schedule a Cron Job"
+msgstr "排定一件 Cron 作業"
 
 msgid "Schedule the Cloud Sync Task"
-msgstr ""
+msgstr "排程雲端同步作業"
 
 msgid "Schedule the Rsync Task"
-msgstr ""
+msgstr "排程 Rsync 作業"
 
 msgid "Schedule the S.M.A.R.T. Test"
-msgstr ""
+msgstr "排程 S.M.A.R.T 測試"
 
 msgid "Schedule the Scrub Task"
-msgstr ""
+msgstr "排程 Scrub 作業"
 
 msgid "Schema"
 msgstr ""
@@ -5799,7 +5803,7 @@ msgid "Schema mode"
 msgstr ""
 
 msgid "Script"
-msgstr ""
+msgstr "指令碼"
 
 msgid "Script to execute after running sync."
 msgstr ""
@@ -5808,19 +5812,19 @@ msgid "Script to execute before running sync."
 msgstr ""
 
 msgid "Scrub Boot Pool"
-msgstr ""
+msgstr "Scrub 啟動 Pool"
 
 msgid "Scrub Pool"
 msgstr ""
 
 msgid "Scrub Tasks"
-msgstr ""
+msgstr "Scrub 作業"
 
 msgid "Scrub complete on pool <i>"
 msgstr ""
 
 msgid "Secondary DNS server."
-msgstr ""
+msgstr "次要 DNS 伺服器"
 
 msgid "Secret"
 msgstr ""
@@ -5835,9 +5839,17 @@ msgid "Secret Key"
 msgstr ""
 
 msgid "Secure mode"
-msgstr ""
+msgstr "安全模式"
 
 msgid "Security"
+msgstr "安全性"
+
+msgid ""
+"See <a "
+"href=\"https://crypto.stackexchange.com/questions/1190/why-is-elliptic-"
+"curve-cryptography-not-widely-used-compared-to-rsa\" target=\"blank\"> Why "
+"is elliptic curve cryptography not widely used, compared to RSA?</a> for "
+"more information about key types."
 msgstr ""
 
 msgid ""
@@ -5883,7 +5895,7 @@ msgid "Select Configuration File"
 msgstr ""
 
 msgid "Select Disk Type"
-msgstr ""
+msgstr "選擇磁碟類型"
 
 msgid "Select Existing zvol"
 msgstr ""
@@ -6000,7 +6012,7 @@ msgid ""
 msgstr ""
 
 msgid "Select pool to import"
-msgstr ""
+msgstr "選擇要匯入的 Pool"
 
 msgid "Select pool, dataset, or directory to share."
 msgstr ""
@@ -6142,14 +6154,12 @@ msgstr ""
 
 msgid ""
 "Select the location of the principal in the keytab created as described in "
-"<a href=\"%%docurl%%/directoryservice.html%%webversion%%#kerberos-keytabs\" "
+"<a "
+"href=\"%%docurl%%/directoryservices.html%%webversion%%#kerberos-keytabs\" "
 "target=\"_blank\">Kerberos Keytabs</a>."
 msgstr ""
 
 msgid "Select the physical interface to associate with the VM."
-msgstr ""
-
-msgid "Select the physical network interface to associatewith the virtual machine."
 msgstr ""
 
 msgid "Select the pool to contain the system dataset."
@@ -6172,7 +6182,7 @@ msgstr ""
 
 msgid ""
 "Select the realm created using the instructions in <a "
-"href=\"%%docurl%%/directoryservice.html%%webversion%%#kerberos-realms\" "
+"href=\"%%docurl%%/directoryservices.html%%webversion%%#kerberos-realms\" "
 "target=\"_blank\">Kerberos Realms</a>."
 msgstr ""
 
@@ -6242,13 +6252,13 @@ msgid "Send Test Alert"
 msgstr ""
 
 msgid "Serial"
-msgstr ""
+msgstr "序號"
 
 msgid "Serial Number"
-msgstr ""
+msgstr "序號"
 
 msgid "Serial Port"
-msgstr ""
+msgstr "序列埠"
 
 msgid "Serial Speed"
 msgstr ""
@@ -6278,7 +6288,7 @@ msgid "Service failed to stop"
 msgstr ""
 
 msgid "Service started"
-msgstr ""
+msgstr "服務已啟動"
 
 msgid "Services"
 msgstr "服務"
@@ -6323,6 +6333,12 @@ msgstr ""
 msgid ""
 "Set for the default configuration to listen on all interfaces using the "
 "known values of user: <i>upsmon</i> and password: <i>fixmepass</i>."
+msgstr ""
+
+msgid ""
+"Set for the initiator to discover paths to both storage controllers on the "
+"target and increase storage traffic efficiency. Requires ALUA-capable, High "
+"Availability (HA) hardware."
 msgstr ""
 
 msgid "Set for ypbind to bind to the server that responds the fastest."
@@ -6393,9 +6409,6 @@ msgstr ""
 msgid ""
 "Set the share name. If left empty, share name is the list of selected "
 "<b>Path</b> entries."
-msgstr ""
-
-msgid "Set the size of the new raw file."
 msgstr ""
 
 msgid ""
@@ -7058,10 +7071,10 @@ msgid ""
 msgstr ""
 
 msgid "Share Name"
-msgstr ""
+msgstr "共用名稱"
 
 msgid "Share Type"
-msgstr ""
+msgstr "共用類型"
 
 msgid "Sharing"
 msgstr "共用"
@@ -7089,10 +7102,10 @@ msgid ""
 msgstr ""
 
 msgid "Show Hidden Files"
-msgstr ""
+msgstr "顯示隱藏檔案"
 
 msgid "Show Settings"
-msgstr ""
+msgstr "顯示設定"
 
 msgid "Show Text Console without Password Prompt"
 msgstr ""
@@ -7101,7 +7114,7 @@ msgid "Show advanced fields by default"
 msgstr ""
 
 msgid "Show console messages"
-msgstr ""
+msgstr "顯示主控台訊息"
 
 msgid "Show only entries that contain this text"
 msgstr ""
@@ -7116,7 +7129,7 @@ msgid "Show tracebacks in case of fatal error"
 msgstr ""
 
 msgid "Show/Hide Passwords"
-msgstr ""
+msgstr "顯示/隱藏密碼"
 
 msgid "Shut Down"
 msgstr "關機"
@@ -7155,7 +7168,7 @@ msgid "Site Name"
 msgstr ""
 
 msgid "Size (GiB)"
-msgstr ""
+msgstr "大小 (GiB)"
 
 msgid "Size for this zvol"
 msgstr ""
@@ -7166,19 +7179,19 @@ msgid ""
 msgstr ""
 
 msgid "Snapshot Lifetime"
-msgstr ""
+msgstr "快照存留時間"
 
 msgid "Snapshot directory"
-msgstr ""
+msgstr "快照路徑"
 
 msgid "Snapshot successfully taken."
 msgstr ""
 
 msgid "Snapshots"
-msgstr ""
+msgstr "快照"
 
 msgid "Source"
-msgstr ""
+msgstr "來源"
 
 msgid ""
 "Space-delimited list of allowed IP addresses <i>(192.168.1.10)</i> or "
@@ -7244,40 +7257,40 @@ msgid "Speeds up the initial synchronization (seconds instead of minutes)."
 msgstr ""
 
 msgid "Start"
-msgstr ""
+msgstr "開始"
 
 msgid "Start Scrub"
-msgstr ""
+msgstr "開始 Scrub"
 
 msgid "Start on Boot"
-msgstr ""
+msgstr "開機時啟動"
 
 msgid "Start scrub on pool <i>"
 msgstr ""
 
 msgid "Starting job..."
-msgstr ""
+msgstr "作業正在開始..."
 
 msgid "State"
-msgstr ""
+msgstr "狀態"
 
 msgid "Static IPv4 address of the IPMI web interface."
 msgstr ""
 
 msgid "Static Routes"
-msgstr ""
+msgstr "靜態路由"
 
 msgid "Status"
-msgstr ""
+msgstr "狀態"
 
 msgid "Stop"
-msgstr ""
+msgstr "停止"
 
 msgid "Stop Scrub"
-msgstr ""
+msgstr "停止 Scrub"
 
 msgid "Stop this service?"
-msgstr ""
+msgstr "停止這個服務？"
 
 msgid "Stopped the scrub on pool <i>"
 msgstr ""
@@ -7289,7 +7302,7 @@ msgid "Storage"
 msgstr "儲存"
 
 msgid "Storage & Groups"
-msgstr ""
+msgstr "儲存與群組"
 
 msgid ""
 "Store reporting information on the system dataset. When unset, reporting "
@@ -7312,7 +7325,7 @@ msgid "Subnet mask of the IPv4 address."
 msgstr ""
 
 msgid "Success"
-msgstr ""
+msgstr "成功"
 
 msgid "Successfully Promoted "
 msgstr ""
@@ -7356,10 +7369,10 @@ msgid "Suffix to add to the system name when it is added to the LDAP directory."
 msgstr ""
 
 msgid "Suggest Layout"
-msgstr ""
+msgstr "建議配置"
 
 msgid "Support"
-msgstr ""
+msgstr "支援"
 
 msgid "Support >16 groups"
 msgstr ""
@@ -7377,7 +7390,7 @@ msgid "Switch update trains?"
 msgstr ""
 
 msgid "Sync"
-msgstr ""
+msgstr "同步"
 
 msgid "Syslog"
 msgstr ""
@@ -7395,7 +7408,7 @@ msgid "System Dataset"
 msgstr "系統資料集"
 
 msgid "System Dataset Pool"
-msgstr ""
+msgstr "系統資料集 Pool"
 
 msgid "System Info"
 msgstr "系統資訊"
@@ -7404,16 +7417,16 @@ msgid "System Load"
 msgstr "系統負載"
 
 msgid "System Processes"
-msgstr ""
+msgstr "系統程序"
 
 msgid "System domain name, like <i>example.com</i>"
-msgstr ""
+msgstr "系統網域名稱，例如  <i>example.com</i>"
 
 msgid "System host time to synchronize the time between jail and host."
 msgstr ""
 
 msgid "System hostname."
-msgstr ""
+msgstr "系統主機名稱。"
 
 msgid "System is restarting..."
 msgstr ""
@@ -7422,10 +7435,10 @@ msgid "System is shutting down..."
 msgstr ""
 
 msgid "TCP Port"
-msgstr ""
+msgstr "TCP 連接埠"
 
 msgid "TCP port"
-msgstr ""
+msgstr "TCP 連接埠"
 
 msgid "TCP port used to access the iSCSI target. Default is <i>3260</i>."
 msgstr ""
@@ -7470,16 +7483,16 @@ msgid "TLS Policy"
 msgstr ""
 
 msgid "Take Snapshot"
-msgstr ""
+msgstr "製作快照"
 
 msgid "Target"
-msgstr ""
+msgstr "目標"
 
 msgid "Target Alias"
-msgstr ""
+msgstr "目標別名"
 
 msgid "Target Name"
-msgstr ""
+msgstr "目標名稱"
 
 msgid "Tasks"
 msgstr "作業"
@@ -7488,7 +7501,7 @@ msgid "Team Drive ID"
 msgstr ""
 
 msgid "Temperature"
-msgstr ""
+msgstr "溫度"
 
 msgid "Tests are not performed when the system enters the selected power mode."
 msgstr ""
@@ -7532,11 +7545,6 @@ msgid ""
 msgstr ""
 
 msgid "The cache is being rebuilt."
-msgstr ""
-
-msgid ""
-"The character set Samba uses when communicating with DOS and Windows 9x/ME "
-"clients. Default is CP437."
 msgstr ""
 
 msgid "The contents of all added disks will be erased."
@@ -7751,19 +7759,19 @@ msgid "Time Machine"
 msgstr ""
 
 msgid "Time Machine Quota"
-msgstr ""
+msgstr "Time Machine 配額"
 
 msgid "Time Server For Domain"
-msgstr ""
+msgstr "網域時間伺服器"
 
 msgid "Timeout"
-msgstr ""
+msgstr "逾時"
 
 msgid "Times"
-msgstr ""
+msgstr "次數"
 
 msgid "Timezone"
-msgstr ""
+msgstr "時區"
 
 msgid ""
 "Token created with <a "
@@ -7787,10 +7795,10 @@ msgid "Transfers"
 msgstr ""
 
 msgid "Tunables"
-msgstr ""
+msgstr "參數調整"
 
 msgid "Type"
-msgstr ""
+msgstr "類型"
 
 msgid "UNIX Charset"
 msgstr ""
@@ -7802,7 +7810,7 @@ msgid "UNIX extensions"
 msgstr ""
 
 msgid "UPS Mode"
-msgstr ""
+msgstr "UPS 模式"
 
 msgid "URL"
 msgstr ""
@@ -7820,13 +7828,13 @@ msgid "Unique LUN ID. The default is generated from the MAC address of the syste
 msgstr ""
 
 msgid "Unix (NFS) Shares"
-msgstr ""
+msgstr "Unix 共用 (NFS)"
 
 msgid "Unix Extensions"
 msgstr ""
 
 msgid "Unlock"
-msgstr ""
+msgstr "解鎖"
 
 msgid ""
 "Unmask is used for newly created files. Default is <i>000</i> (anyone can "
@@ -7836,7 +7844,7 @@ msgstr ""
 msgid ""
 "Unselect this option to allow cross-domain authentication, users and groups "
 "to be managed on another forest, and permissions to be delegated from <a "
-"href=\"%%docurl%%/directoryservice.html%%webversion%%#active-directory\" "
+"href=\"%%docurl%%/directoryservices.html%%webversion%%#active-directory\" "
 "target=\"_blank\">Active Directory</a> users and groups to domain admins on "
 "another forest."
 msgstr ""
@@ -7872,16 +7880,16 @@ msgid ""
 msgstr ""
 
 msgid "Until"
-msgstr ""
+msgstr "直到"
 
 msgid "Unused"
-msgstr ""
+msgstr "未使用"
 
 msgid "Update"
-msgstr ""
+msgstr "更新"
 
 msgid "Update File"
-msgstr ""
+msgstr "更新檔案"
 
 msgid "Update File Temporary Storage Location"
 msgstr ""
@@ -7893,46 +7901,46 @@ msgid "Update successful. Please reboot for the update to take effect. Reboot no
 msgstr ""
 
 msgid "Updates Available"
-msgstr ""
+msgstr "有可用的更新"
 
 msgid "Updates successfully downloaded"
-msgstr ""
+msgstr "已成功下載更新"
 
 msgid "Updating group members"
-msgstr ""
+msgstr "正在更新群組成員"
 
 msgid "Upgrade"
-msgstr ""
+msgstr "升級"
 
 msgid "Upgrade Pool"
-msgstr ""
+msgstr "升級 Pool"
 
 msgid "Upgrade selected jails failed."
-msgstr ""
+msgstr "所選擇的 Jail 升級失敗"
 
 msgid "Upgrade selected jails started."
-msgstr ""
+msgstr "所選擇的 Jail 開始升級"
 
 msgid "Upgrade selected jails succeeded."
-msgstr ""
+msgstr "所選擇的 Jail 開始成功"
 
 msgid "Upgraded"
-msgstr ""
+msgstr "已升級"
 
 msgid "Upgrading Jail"
-msgstr ""
+msgstr "正在升級 Jail"
 
 msgid "Upgrading Plugin"
-msgstr ""
+msgstr "正在升級外掛"
 
 msgid "Upload"
-msgstr ""
+msgstr "上載"
 
 msgid "Upload Config"
-msgstr ""
+msgstr "上載設定檔"
 
 msgid "Upload an installer image file"
-msgstr ""
+msgstr "上載安裝映像檔"
 
 msgid ""
 "Upload the Service Account JSON credential file. This <a "
@@ -7942,10 +7950,10 @@ msgid ""
 msgstr ""
 
 msgid "Uptime"
-msgstr ""
+msgstr "運作時間"
 
 msgid "Use --fast-list"
-msgstr ""
+msgstr "使用 --fast-list"
 
 msgid ""
 "Use <a href=\"https://www.freebsd.org/cgi/man.cgi?query=rtsold\" "
@@ -7960,7 +7968,7 @@ msgid "Use DHCP. Unset to manually configure a static IPv4 connection."
 msgstr ""
 
 msgid "Use Default Domain"
-msgstr ""
+msgstr "使用預設網域"
 
 msgid "Use FQDN for logging"
 msgstr ""
@@ -7969,7 +7977,7 @@ msgid "Use Signature Version 2"
 msgstr ""
 
 msgid "Use all disk space"
-msgstr ""
+msgstr "使用全部磁碟空間"
 
 msgid "Use as home share"
 msgstr ""
@@ -7997,12 +8005,6 @@ msgstr ""
 msgid ""
 "Used to add additional <a href=\"https://linux.die.net/man/8/proftpd\" "
 "target=\"_blank\">proftpd(8)</a> parameters."
-msgstr ""
-
-msgid ""
-"Used to configure directory shadow copies on a per-share basis. Select the "
-"pre-configured periodic snapshot task to use for the shadow copies of this "
-"share. Periodic snapshots must be recursive."
 msgstr ""
 
 msgid "User"
@@ -8041,7 +8043,7 @@ msgid "User passed to <i>camcontrol security -u</i> to unlock SEDs"
 msgstr ""
 
 msgid "Username"
-msgstr ""
+msgstr "使用者名稱"
 
 msgid ""
 "Username for a <a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> "
@@ -8054,13 +8056,13 @@ msgid ""
 msgstr ""
 
 msgid "Users"
-msgstr ""
+msgstr "使用者"
 
 msgid "Users & Groups"
-msgstr ""
+msgstr "使用者與群組"
 
 msgid "VFS Objects"
-msgstr ""
+msgstr "VFS 物件"
 
 msgid "VLAN ID"
 msgstr ""
@@ -8069,57 +8071,57 @@ msgid "VLANs"
 msgstr ""
 
 msgid "VM Snapshot"
-msgstr ""
+msgstr "VM 快照"
 
 msgid "VMWare Sync"
-msgstr ""
+msgstr "VMWare 同步"
 
 msgid "VMware-Snapshots"
-msgstr ""
+msgstr "VMWare 快照"
 
 msgid ""
-"VNC network interface. The primary interface is automatically selected, but "
-"secondary interfaces can be chosen from the drop-down menu."
+"VNC network interface IP address. The primary interface IP address is the "
+"default. A different interface IP address can be chosen."
 msgstr ""
 
 msgid "VNET"
 msgstr ""
 
 msgid "VNET Virtual Networking"
-msgstr ""
+msgstr "VNET 虛擬網路"
 
 msgid "Validate Remote Path"
-msgstr ""
+msgstr "驗證遠端路徑"
 
 msgid "Value"
-msgstr ""
+msgstr "數值"
 
 msgid "Variable"
-msgstr ""
+msgstr "變數"
 
 msgid "Verbose logging"
 msgstr ""
 
 msgid "Verify Credential"
-msgstr ""
+msgstr "驗證認證"
 
 msgid "Verify passphrase"
-msgstr ""
+msgstr "驗證複雜密碼"
 
 msgid "Version"
-msgstr ""
+msgstr "版本"
 
 msgid "View"
-msgstr ""
+msgstr "檢視"
 
 msgid "View the contents of the Service Account JSON file."
 msgstr ""
 
 msgid "Virtual CPUs"
-msgstr ""
+msgstr "虛擬 CPU"
 
 msgid "Virtual Interface"
-msgstr ""
+msgstr "虛擬介面"
 
 msgid "Virtual Machine (VM) Wizard type."
 msgstr ""
@@ -8128,12 +8130,9 @@ msgid "Virtual Machines"
 msgstr "虛擬機器"
 
 msgid "Virtualization"
-msgstr ""
+msgstr "虛擬化"
 
 msgid "Vlan Tag"
-msgstr ""
-
-msgid "WARNING"
 msgstr ""
 
 msgid ""
@@ -8154,43 +8153,43 @@ msgid "Wallclock time in seconds."
 msgstr ""
 
 msgid "Warning"
-msgstr ""
+msgstr "警告"
 
 msgid "Web Interface"
-msgstr ""
+msgstr "Web 介面"
 
 msgid "WebDAV Shares"
-msgstr ""
+msgstr "WebDAV 共用"
 
 msgid "WebDAV account password."
-msgstr ""
+msgstr "WebDAV 帳戶密碼。"
 
 msgid "WebDAV account username."
-msgstr ""
+msgstr "WebDAV 帳戶名稱。"
 
 msgid "WebDAV service"
-msgstr ""
+msgstr "WebDAV 服務"
 
 msgid "WebGUI HTTP -> HTTPS Redirect"
-msgstr ""
+msgstr "WebGUI HTTP -> HTTPS 轉送"
 
 msgid "WebGUI HTTP Port"
-msgstr ""
+msgstr "WebGUI HTTP 連接埠"
 
 msgid "WebGUI HTTPS Port"
-msgstr ""
+msgstr "WebGUI HTTPS 連接埠"
 
 msgid "WebGUI IPv4 Address"
-msgstr ""
+msgstr "WebGUI IPv4 位址"
 
 msgid "WebGUI IPv6 Address"
-msgstr ""
+msgstr "WebGUI IPv6 位址"
 
 msgid "Webdav Password"
-msgstr ""
+msgstr "Webdav 密碼"
 
 msgid "Webdav SSL Certificate"
-msgstr ""
+msgstr "Webdav SSL 憑證"
 
 msgid "When"
 msgstr ""
@@ -8263,22 +8262,22 @@ msgid "Winbind NSS Info"
 msgstr ""
 
 msgid "Windows (SMB) Shares"
-msgstr ""
+msgstr "Windows 共用 (SMB)"
 
 msgid "Wipe"
-msgstr ""
+msgstr "抹除"
 
 msgid "Wipe Disk"
-msgstr ""
+msgstr "抹除磁碟"
 
 msgid "Wipe this disk?"
-msgstr ""
+msgstr "抹除這個磁碟？"
 
 msgid "Wiping Disk..."
-msgstr ""
+msgstr "正在抹除磁碟...""
 
 msgid "Workgroup"
-msgstr ""
+msgstr "工作群組"
 
 msgid "Write a percentage limit of a single CPU core."
 msgstr ""
@@ -8293,25 +8292,25 @@ msgid ""
 msgstr ""
 
 msgid "Yes"
-msgstr ""
+msgstr "是"
 
 msgid "Yes, decrypt the disks"
-msgstr ""
+msgstr "是的，解密這個磁碟"
 
 msgid "ZFS"
 msgstr ""
 
 msgid "ZFS Deduplication"
-msgstr ""
+msgstr "ZFS 重複資料刪除"
 
 msgid "ZFS Filesystem"
-msgstr ""
+msgstr "ZFS 檔案系統"
 
 msgid "ZFS Pool"
 msgstr ""
 
 msgid "ZFS deduplication"
-msgstr ""
+msgstr "ZFS 重複資料刪除"
 
 msgid ""
 "ZFS pools must conform to strict naming <a "
@@ -8443,7 +8442,7 @@ msgid "exec_timeout"
 msgstr ""
 
 msgid "group"
-msgstr ""
+msgstr "群組"
 
 msgid "host_domainname"
 msgstr ""

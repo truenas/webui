@@ -8,6 +8,8 @@ export const helptext_sharing_smb = {
     placeholder_path: T('Path'),
     tooltip_path: T('Select pool, dataset, or directory to share.'),
     validators_path: [ Validators.required ],
+    errormsg_name: T("<i>global</i> is a reserved name that cannot be used as a share\
+ name. Please enter a different share name."),
 
     placeholder_name: T('Name'),
     tooltip_name: T('Enter a name for the share.'),
@@ -42,10 +44,9 @@ export const helptext_sharing_smb = {
     tooltip_ro: T('Set to prohibit writes to this share'),
 
     placeholder_browsable: T('Browsable to Network Clients'),
-    tooltip_browsable: T('When set, users see the contents of <i>/homes</i>,\
- which includes the home directories of other users.\
- When unset, users only see their own\
- home directory.'),
+    tooltip_browsable: T('Determine whether this share name is included\
+ when browsing shares. Home shares are only visible to the owner\
+ regardless of this setting.'),
 
     placeholder_recyclebin: T('Export Recycle Bin'),
     tooltip_recyclebin: T('When set, deleted files are moved to a hidden\
@@ -89,11 +90,10 @@ export const helptext_sharing_smb = {
  target="blank">virtual file system modules</a> to\
  enhance functionality.'),
 
-    placeholder_storage_task: T('Periodic Snapshot Task'),
-    tooltip_storage_task: T('Used to configure directory shadow copies on a\
- per-share basis. Select the pre-configured periodic\
- snapshot task to use for the shadow copies of this\
- share. Periodic snapshots must be recursive.'),
+    placeholder_shadowcopy: T('Enable Shadow Copies'),
+    tooltip_shadowcopy: T('Export ZFS snapshots as\
+ <a href="https://docs.microsoft.com/en-us/windows/desktop/vss/shadow-copies-and-shadow-copy-sets"\
+ target=_blank>Shadow Copies</a> for VSS clients.'),
 
     placeholder_auxsmbconf: T('Auxiliary Parameters'),
     tooltip_auxsmbconf: T('Additional <b>smb5.conf</b> parameters not covered by\

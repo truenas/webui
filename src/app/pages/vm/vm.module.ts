@@ -26,7 +26,6 @@ import {routing} from './vm.routing';
 import { VmSummaryComponent } from './vm-cards/vm-summary.component';
 import { CoreComponents } from 'app/core/components/corecomponents.module';
 import { VMWizardComponent } from './vm-wizard/';
-import { DockerVMWizardComponent } from './dockervm-wizard/';
 import {VMSerialShellComponent} from './vm-cards/vm-serial-shell';
 import { DeviceAddComponent } from './devices/device-add2';
 
@@ -46,7 +45,6 @@ import { DeviceAddComponent } from './devices/device-add2';
     DeviceEditComponent,
     VmSummaryComponent,
     VMWizardComponent,
-    DockerVMWizardComponent,
     VMSerialShellComponent,
     DeviceAddComponent
   ],

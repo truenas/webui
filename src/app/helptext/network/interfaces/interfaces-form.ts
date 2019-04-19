@@ -7,7 +7,7 @@ int_interface_tooltip : T('Enter the FreeBSD device name of the interface. This\
  cannot change after creating the interface.'),
 int_interface_validation : [ Validators.required ],
 
-int_name_placeholder : T('Interface Name'),
+int_name_placeholder : T('Description'),
 int_name_tooltip : T('Enter a description of the interface.'),
 int_name_validation : [ Validators.required ],
 

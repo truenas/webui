@@ -58,7 +58,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       options: [],
       required: true,
       validation: [ Validators.required ],
-      disabled: false,
+      disabled: true,
     },
     {
       type: 'checkbox',
@@ -965,27 +965,41 @@ export class JailEditComponent implements OnInit, AfterViewInit {
 
   // fields only accepted by ws with value 0/1
   protected TFfields: any = [
-    'ip4_saddrsel',
-    'ip6_saddrsel',
+    'bpf',
+    'template',
+    'host_time',
+    'dhcp',
+    'vnet',
+    'rtsold',
+    'jail_zfs',
+    'hostid_strict_check',
+    'boot',
     'exec_clean',
-    'mount_devfs',
-    'mount_fdescfs',
-    'allow_set_hostname',
-    'allow_sysvipc',
-    'allow_raw_sockets',
-    'allow_chflags',
-    'allow_mlock',
-    'allow_mount',
-    'allow_mount_devfs',
-    'allow_mount_nullfs',
-    'allow_mount_procfs',
-    'allow_mount_tmpfs',
-    'allow_mount_zfs',
-    'allow_quotas',
-    'allow_socket_af',
-    'mount_procfs',
     'mount_linprocfs',
+    'mount_procfs',
+    // 'allow_vmm', ??
     'allow_tun',
+    'allow_socket_af',
+    'allow_quotas',
+    'allow_mount_zfs',
+    'allow_mount_tmpfs',
+    'allow_mount_procfs',
+    'allow_mount_nullfs',
+    // 'allow_mount_fusefs',??
+    'allow_mount_devfs',
+    'allow_mount',
+    'allow_mlock',
+    'allow_chflags',
+    'allow_raw_sockets',
+    'allow_sysvipc',
+    'allow_set_hostname',
+    'mount_fdescfs',
+    'mount_devfs',
+    'ip6_saddrsel',
+    'ip4_saddrsel',
+    // 'ip_hostname',??
+    // 'assign_localhost',??
+    // 'nat', ??
   ];
   // fields only accepted by ws with value on/off
   protected OFfields: any = [
@@ -1009,18 +1023,6 @@ export class JailEditComponent implements OnInit, AfterViewInit {
     'nshm',
     'shmsize',
     'wallclock',
-    'dhcp',
-    'boot',
-    'jail_zfs',
-    'vnet',
-    'hostid_strict_check',
-    'rtsold',
-  ];
-  // fields only accepted by ws with value yes/no
-  protected YNfields: any = [
-    'bpf',
-    'template',
-    'host_time',
   ];
 
   protected currentReleaseVersion: any;
@@ -1090,31 +1092,31 @@ export class JailEditComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.releaseField = _.find(this.basicfieldConfig, { 'name': 'release' });
-
-    this.ws.call('system.info').subscribe((res) => {
-      this.currentServerVersion = Number(_.split(res.version, '-')[1]);
-      this.jailService.getLocalReleaseChoices().subscribe((res_local) => {
-        for (let j in res_local) {
-          let rlVersion = Number(_.split(res_local[j], '-')[0]);
-          if (!this.isLowerVersion(rlVersion) && this.currentServerVersion >= Math.floor(rlVersion)) {
-            this.releaseField.options.push({ label: res_local[j] + '(fetched)', value: res_local[j] });
-          }
-        }
-        this.jailService.getRemoteReleaseChoices().subscribe((res_remote) => {
-          for (let i in res_remote) {
-            if (_.indexOf(res_local, res_remote[i]) < 0) {
-              let rsVersion = Number(_.split(res_remote[i], '-')[0]);
-              if (!this.isLowerVersion(rsVersion) && this.currentServerVersion >= Math.floor(rsVersion)) {
-                this.releaseField.options.push({ label: res_remote[i], value: res_remote[i] });
-              }
-            }
-          }
-        });
-      });
-    },
-    (res) => {
-      new EntityUtils().handleWSError(this, res, this.dialogService);
-    });
+    // disabled upgrade for now
+    // this.ws.call('system.info').subscribe((res) => {
+    //   this.currentServerVersion = Number(_.split(res.version, '-')[1]);
+    //   this.jailService.getLocalReleaseChoices().subscribe((res_local) => {
+    //     for (let j in res_local) {
+    //       let rlVersion = Number(_.split(res_local[j], '-')[0]);
+    //       if (!this.isLowerVersion(rlVersion) && this.currentServerVersion >= Math.floor(rlVersion)) {
+    //         this.releaseField.options.push({ label: res_local[j] + '(fetched)', value: res_local[j] });
+    //       }
+    //     }
+    //     this.jailService.getRemoteReleaseChoices().subscribe((res_remote) => {
+    //       for (let i in res_remote) {
+    //         if (_.indexOf(res_local, res_remote[i]) < 0) {
+    //           let rsVersion = Number(_.split(res_remote[i], '-')[0]);
+    //           if (!this.isLowerVersion(rsVersion) && this.currentServerVersion >= Math.floor(rsVersion)) {
+    //             this.releaseField.options.push({ label: res_remote[i], value: res_remote[i] });
+    //           }
+    //         }
+    //       }
+    //     });
+    //   });
+    // },
+    // (res) => {
+    //   new EntityUtils().handleWSError(this, res, this.dialogService);
+    // });
 
     this.ip4_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip4_interface'});
     this.ip4_netmaskField = _.find(this.basicfieldConfig, {'name': 'ip4_netmask'});
@@ -1294,13 +1296,6 @@ export class JailEditComponent implements OnInit, AfterViewInit {
                 res[0][i] = false;
               }
             }
-            if (_.indexOf(this.YNfields, i) > -1) {
-              if (res[0][i] == 'yes') {
-                res[0][i] = true;
-              } else {
-                res[0][i] = false;
-              }
-            }
             this.formGroup.controls[i].setValue(res[0][i]);
           }
         }
@@ -1419,12 +1414,6 @@ export class JailEditComponent implements OnInit, AfterViewInit {
             value[i] = 'on';
           } else {
             value[i] = 'off';
-          }
-        } else if (_.indexOf(this.YNfields, i) > -1) {
-          if (value[i]) {
-            value[i] = 'yes';
-          } else {
-            value[i] = 'no';
           }
         }
       }

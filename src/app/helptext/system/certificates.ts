@@ -24,6 +24,15 @@ export const helptext_system_certificates = {
       validation: [Validators.required]
     },
 
+    key_type: {
+      placeholder: T("Key Type"),
+      validation: [Validators.required]
+    },
+
+    ec_curve: {
+      placeholder: T("EC Curve")
+    },   
+
     key_length: {
       placeholder: T("Key Length"),
       tooltip: T(
@@ -75,6 +84,11 @@ export const helptext_system_certificates = {
       placeholder: T("Organization"),
       tooltip: T("Enter the name of the company or organization."),
       validation: [Validators.required]
+    },
+
+    organizational_unit: {
+      placeholder: T("Organizational Unit"),
+      tooltip: T("Organizational unit of the entity."),
     },
 
     email: {

@@ -98,10 +98,10 @@ ups_monpwd_tooltip : T('Change the default password to improve system\
  space or <b>#</b>.'),
 ups_monpwd_validation: [Validators.pattern(/^((?![\#|\s]).)*$/)],
 
-ups_extrausers_placeholder : T('Extra Users(upsd.conf)'),
+ups_extrausers_placeholder : T('Extra Users'),
 ups_extrausers_tooltip : T('Enter accounts that have administrative access.\
  See <a\
- href="http://networkupstools.org/docs/man/upsd.users.html"\
+ href="https://www.freebsd.org/cgi/man.cgi?query=upsd.users"\
  target="_blank">upsd.users(5)</a> for examples.'),
 
 ups_rmonitor_placeholder : T('Remote Monitor'),
@@ -122,4 +122,8 @@ ups_subject_tooltip : T('Enter the subject for status emails.'),
 
 ups_powerdown_placeholder : T('Power Off UPS'),
 ups_powerdown_tooltip : T('Set for the UPS to power off after shutting down the system.'),
+
+ups_hostsync_placeholder: T('Host Sync'),
+ups_hostsync_tooltip: T('Upsmon will wait up to this many seconds in master mode for\
+ the slaves to disconnect during a shutdown situation.'),
 }
