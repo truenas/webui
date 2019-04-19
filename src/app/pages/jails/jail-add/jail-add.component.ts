@@ -169,58 +169,52 @@ export class JailAddComponent implements OnInit, AfterViewInit {
       tooltip: helptext.auto_configure_ip6_tooltip,
     },
     {
-      type: 'select',
-      name: 'ip6_interface',
-      placeholder: helptext.ip6_interface_placeholder,
-      tooltip: helptext.ip6_interface_tooltip,
-      options: [{
-        label: '------',
-        value: '',
-      }],
-      value: '',
-      required: false,
-      class: 'inline',
-      width: '30%',
-      relation: [{
-        action: 'DISABLE',
-        when: [{
-          name: 'auto_configure_ip6',
-          value: true,
-        }]
-      }]
-    },
-    {
-      type: 'input',
+      type: 'list',
       name: 'ip6_addr',
-      placeholder: helptext.ip6_addr_placeholder,
-      tooltip: helptext.ip6_addr_tooltip,
-      validation : [ regexValidator(this.networkService.ipv6_regex) ],
-      class: 'inline',
-      width: '50%',
+      placeholder: 'IPv6 Addresses',
       relation: [{
         action: 'DISABLE',
         when: [{
           name: 'auto_configure_ip6',
           value: true,
         }]
-      }]
-    },
-    {
-      type: 'select',
-      name: 'ip6_prefix',
-      placeholder: helptext.ip6_prefix_placeholder,
-      tooltip: helptext.ip6_prefix_tooltip,
-      options: this.networkService.getV6PrefixLength(),
-      value: '',
-      class: 'inline',
-      width: '20%',
-      relation: [{
-        action: 'DISABLE',
-        when: [{
-          name: 'auto_configure_ip6',
-          value: true,
-        }]
-      }]
+      }],
+      templateListField: [
+        {
+          type: 'select',
+          name: 'ip6_interface',
+          placeholder: helptext.ip6_interface_placeholder,
+          tooltip: helptext.ip6_interface_tooltip,
+          options: [{
+            label: '------',
+            value: '',
+          }],
+          value: '',
+          required: false,
+          class: 'inline',
+          width: '30%',
+        },
+        {
+          type: 'input',
+          name: 'ip6_addr',
+          placeholder: helptext.ip6_addr_placeholder,
+          tooltip: helptext.ip6_addr_tooltip,
+          validation : [ regexValidator(this.networkService.ipv6_regex) ],
+          class: 'inline',
+          width: '50%',
+        },
+        {
+          type: 'select',
+          name: 'ip6_prefix',
+          placeholder: helptext.ip6_prefix_placeholder,
+          tooltip: helptext.ip6_prefix_tooltip,
+          options: this.networkService.getV6PrefixLength(),
+          value: '',
+          class: 'inline',
+          width: '20%',
+        },
+      ],
+      listFields: []
     },
     {
       type: 'input',
@@ -980,8 +974,7 @@ export class JailAddComponent implements OnInit, AfterViewInit {
   }
 
   updateInterface(addVnet?) {
-    const ipTypes = ['ip4'];
-    for (const ipType of ipTypes) {
+    for (const ipType of ['ip4', 'ip6']) {
       const targetPropName = ipType + '_addr';
       for (let i = 0; i < this.formGroup.controls[targetPropName].controls.length; i++) {
         const subipFormgroup = this.formGroup.controls[targetPropName].controls[i];
@@ -1048,8 +1041,7 @@ export class JailAddComponent implements OnInit, AfterViewInit {
     });
 
     this.ip4_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip4_addr'}).templateListField[0];
-    this.ip6_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip6_interface'});
-    this.ip6_prefixField = _.find(this.basicfieldConfig, {'name': 'ip6_prefix'});
+    this.ip6_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip6_addr'}).templateListField[0];
     this.vnet_default_interfaceField = _.find(this.networkfieldConfig, {'name': 'vnet_default_interface'});
 
     // get interface options
@@ -1171,10 +1163,12 @@ export class JailAddComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    for (let i = 0; i < this.formGroup.controls['ip4_addr'].controls.length; i++) {
-      const subIp4 = this.formGroup.controls['ip4_addr'].controls[i];
-      const subip4InterfaceField = _.find(_.find(this.basicfieldConfig, {'name': 'ip4_addr'}).listFields[i], {'name': 'ip4_interface'});
-      subip4InterfaceField.options = this.ip4_interfaceField.options;
+    for (const ipType of ['ip4', 'ip6']) {
+      const targetPropName = ipType + '_addr';
+      for (let i = 0; i < this.formGroup.controls[targetPropName].controls.length; i++) {
+        const subipInterfaceField = _.find(_.find(this.basicfieldConfig, {'name': targetPropName}).listFields[i], {'name': ipType + '_interface'});
+        subipInterfaceField.options = ipType === 'ip4' ? this.ip4_interfaceField.options : this.ip6_interfaceField.options;
+      }
     }
   }
 
