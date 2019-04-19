@@ -58,11 +58,13 @@ export const helptext_system_support = {
   environment: {
     placeholder: T("Environment"),
     tooltip: T("Select the appropriate environment DRAFT TOOLTIP"),
+    validation: [Validators.required]
   },
 
   criticality: {
     placeholder: T("Criticality"),
     tooltip: T("Select the appropriate level of criticality DRAFT TOOLTIP"),
+    validation: [Validators.required]
   },
 
   attach_debug: {

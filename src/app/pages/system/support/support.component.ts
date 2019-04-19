@@ -31,7 +31,7 @@ export class SupportComponent {
   public saveSubmitText = "Submit";
   public password_fc: any;
   public username_fc: any;
-  public is_freenas: Boolean = window.localStorage['is_freenas'];
+  public is_freenas: string = window.localStorage['is_freenas'];
   public product_image = '';
 
   public fieldConfig: FieldConfig[] = []
@@ -211,7 +211,8 @@ export class SupportComponent {
             {label: 'Testing', value: 'testing'},
             {label: 'Prototyping', value: 'prototyping'},
             {label: 'Initial Deployment/Setup', value: 'initial'}
-          ]
+          ],
+          validation: helptext.environment.validation
         },
         {
           type : 'select',
@@ -222,7 +223,8 @@ export class SupportComponent {
             {label: 'Inquiry', value: 'inquiry'},
             {label: 'Loss of Functionality', value: 'loss_functionality'},
             {label: 'Total Down', value: 'total_down'}
-          ]
+          ],
+          validation: helptext.criticality.validation
         },
         {
           type : 'select',
@@ -260,6 +262,7 @@ export class SupportComponent {
         {
           type : 'readfile',
           name: 'screenshot',
+          acceptedFiles: 'image/png',
           tooltip : helptext.screenshot.tooltip,
         }
       ]
@@ -304,14 +307,13 @@ export class SupportComponent {
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
     this.category = _.find(this.fieldConfig, {name: "category"});
-
-    if (this.is_freenas) {
+    if (this.is_freenas === 'true') {
       for (let i in this.trueNASFields) {
         this.hideField(this.trueNASFields[i], true, entityEdit);
       }
       this.product_image = 'freenas_mini.png';
       this.ws.call('system.info').subscribe((res) => {
-        if (res.system_product === 'VirtualBox') {
+        if (res.system_product === 'VirtualBox') { // TODO: How many options for the pix?
           this.product_image = 'virtualbox_logo.png';
         } else {
           this.product_image = 'freenas_mini.png';
@@ -329,25 +331,41 @@ export class SupportComponent {
         this.hideField(this.freeNASFields[i], true, entityEdit);
       }  
       this.ws.call('system.info').subscribe((res) => {
-        if (res.system_product === 'VirtualBox') {
+        if (res.system_product === 'VirtualBox') { // TODO: How many options for the pix?
           this.product_image = 'virtualbox_logo.png';
         } else {
           this.product_image = 'freenas_mini.png';
         }
         _.find(this.fieldConfig, {name : "pic"}).paraText = `<img src="../../../assets/images/${this.product_image}" height="200">`;
         _.find(this.fieldConfig, {name : "TN_model"}).paraText += res.system_product;
-        _.find(this.fieldConfig, {name : "TN_custname"}).paraText += '???';
-        _.find(this.fieldConfig, {name : "TN_sysserial"}).paraText += res.system_serial;
-        _.find(this.fieldConfig, {name : "TN_features"}).paraText += '???';
-        _.find(this.fieldConfig, {name : "TN_contracttype"}).paraText += res.contract_type;
-        _.find(this.fieldConfig, {name : "TN_contractdate"}).paraText += res.contract_end.$value || '';
-        _.find(this.fieldConfig, {name : "TN_addhardware"}).paraText += '???';
+        _.find(this.fieldConfig, {name : "TN_custname"}).paraText += '???'; //TODO: Where does this come from?
+
+        res.license.system_serial_ha ?
+          _.find(this.fieldConfig, {name : "TN_sysserial"}).paraText += res.license.system_serial + ' / ' + res.license.system_serial_ha :
+          _.find(this.fieldConfig, {name : "TN_sysserial"}).paraText += res.license.system_serial;          
+        
+        let featureList = res.license.features;
+        if (featureList.length === 0) {
+          _.find(this.fieldConfig, {name : "TN_features"}).paraText += 'NONE';
+        } else {
+          let tempStr = '';
+          for (let i = 0; i < featureList.length; i++) {
+            tempStr += featureList[i];
+            if (i < featureList.length - 1) {
+              tempStr += ', ';
+            }
+          }
+          _.find(this.fieldConfig, {name : "TN_features"}).paraText += tempStr;
+        }
+        _.find(this.fieldConfig, {name : "TN_contracttype"}).paraText += res.license.contract_type;
+        _.find(this.fieldConfig, {name : "TN_contractdate"}).paraText += res.license.contract_end.$value || '';
+        _.find(this.fieldConfig, {name : "TN_addhardware"}).paraText += '???'; //TODO: Where does this come from?
       })    
     }
   }
 
   customSubmit(entityEdit): void{
-    if (this.is_freenas) {
+    if (this.is_freenas === 'true') {
       this.payload['username'] = entityEdit.username;
       this.payload['password'] = entityEdit.password;
       this.payload['category'] = entityEdit.category;
@@ -359,14 +377,14 @@ export class SupportComponent {
       this.payload['name'] = entityEdit.name;
       this.payload['email'] = entityEdit.email;
       this.payload['phone'] = entityEdit.phone;
-      this.payload['category'] = entityEdit.category;
+      this.payload['type'] = entityEdit.type;
       this.payload['environment'] = entityEdit.environment;
+      this.payload['criticality'] = entityEdit.criticality;
       this.payload['attach_debug'] = entityEdit.attach_debug;
       this.payload['title'] = entityEdit.title;
       this.payload['body'] = entityEdit.body;
-      // this.payload['file'] = entityEdit.file;
+      // this.payload['screenshot'] = entityEdit.screenshot; TODO: How to send the screenshot?
     }
-
     this.openDialog();
   };
 
