@@ -18,13 +18,11 @@ export class FormListComponent implements Field, OnInit {
 
   public listsFromArray: FormArray;
 
-  constructor(private entityFormService: EntityFormService, private formBuilder: FormBuilder) { }
+  constructor(private entityFormService: EntityFormService, private formBuilder: FormBuilder) {}
 
   ngOnInit() {
     this.listsFromArray = this.group.controls[this.config.name] as FormArray;
-    const templateListField = _.cloneDeep(this.config.templateListField);
-    this.listsFromArray.push(this.entityFormService.createFormGroup(templateListField));
-    this.config.listFields.push(templateListField);
+    this.add();
   }
 
   add() {
