@@ -1061,7 +1061,6 @@ export class JailAddComponent implements OnInit, AfterViewInit {
     this.formFileds = _.concat(this.basicfieldConfig, this.jailfieldConfig, this.networkfieldConfig, this.customConfig, this.rctlConfig);
     this.formGroup = this.entityFormService.createFormGroup(this.formFileds);
 
-
     for (const i in this.formFileds) {
       const config = this.formFileds[i];
       if (config.relation.length > 0) {
@@ -1224,33 +1223,38 @@ export class JailAddComponent implements OnInit, AfterViewInit {
     return full_address;
   }
 
+  parseIpaddr(value) {
+    for (const ipType of ['ip4', 'ip6']) {
+      const propName = ipType + '_addr';
+      if (value[propName] != undefined) {
+        const multi_ipaddr = [];
+        for (let i = 0; i < value[propName].length; i++) {
+          const subAddr = value[propName][i];
+          if (subAddr[propName] != '' && subAddr[propName] != undefined) {
+            multi_ipaddr.push(this.getFullIP(subAddr[ipType + '_interface'], subAddr[propName], subAddr[ipType + '_netmask']));
+          }
+        }
+        value[propName] = multi_ipaddr.join(',');
+      }
+      if (value[propName] == '' || value[propName] == undefined) {
+        delete value[propName];
+      }
+    }
+  }
+
   onSubmit(event: Event) {
     event.preventDefault();
     event.stopPropagation();
     this.error = null;
     const property: any = [];
     const value = _.cloneDeep(this.formGroup.value);
-console.log(value);
 
     if (value['jailtype'] === 'basejail') {
       value['basejail'] = true;
     }
     delete value['jailtype'];
 
-    if (value['ip4_addr'] == '' || value['ip4_addr'] == undefined) {
-      delete value['ip4_addr'];
-    } else {
-      value['ip4_addr'] = this.getFullIP(value['ip4_interface'], value['ip4_addr'], value['ip4_netmask']);
-    }
-    delete value['ip4_interface'];
-    delete value['ip4_netmask'];
-    if (value['ip6_addr'] == '' || value['ip6_addr'] == undefined) {
-      delete value['ip6_addr'];
-    } else {
-      value['ip6_addr'] = this.getFullIP(value['ip6_interface'], value['ip6_addr'], value['ip6_prefix']);
-    }
-    delete value['ip6_interface'];
-    delete value['ip6_prefix'];
+    this.parseIpaddr(value);
 
     if (value['auto_configure_ip6']) {
       value['ip6_addr'] = "vnet0|accept_rtadv";
