@@ -40,21 +40,65 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
   public hardwareGraphic;*/
 
   constructor(public el:ElementRef, private core: CoreService /*, private ngZone: NgZone*/) { 
-    core.emit({name: 'SysInfoRequest', sender: this});
-    core.register({observerClass: this, eventName: 'SysInfo'}).subscribe((evt:CoreEvent) => {
 
+    core.register({observerClass: this, eventName: 'PoolData'}).subscribe((evt:CoreEvent) => {
+      console.log(evt);
+      this.system.pools = evt.data;
+      //this.pixiInit();
+      console.log(this.system);
+      /*console.log(evt);
+      let pools:any = {};
+
+      evt.data.forEach((pool, index) => {
+
+        // Setup basic structure
+        pools[pool.name] = {
+          id: pool.id,
+          name: pool.name,
+          status: pool.status,
+          disks: [],
+          topology:
+        }
+
+
+        
+        core.register({observerClass: this, eventName: 'PoolDisks' + pool.id}).subscribe((e:CoreEvent) => {
+          let str = e.data.callArgs.join('-');
+          if(str == pool.id){ 
+            pools[pool.name].disks = e.data.data;
+            console.log(pools);
+          }
+        })
+        core.emit({name: 'PoolDisksRequest', data: [pool.id], sender: this});
+      });
+      */
+    });
+
+
+    core.register({observerClass: this, eventName: 'DisksData'}).subscribe((evt:CoreEvent) => {
+      console.log(evt);
       // SIMULATED DATA
-      let edata = new ExampleData();
+      /*let edata = new ExampleData();
       edata.addEnclosure(24); //  M50 24 slots
       edata.addEnclosure(12); // ES12 12 slots
-      let data = edata.generateData();
+      let data = edata.generateData();*/
       // END SIMULATED DATA
 
+      let data = evt.data;
       this.system = new SystemProfiler('M50', data);
       this.selectedEnclosure = this.system.profile[0];
-
+      //console.log(this.system);
+      core.emit({name: 'PoolDataRequest', sender: this});
       this.pixiInit();
     });
+
+    core.register({observerClass: this, eventName: 'SysInfo'}).subscribe((evt:CoreEvent) => {
+
+      core.emit({name: 'DisksRequest', sender: this});
+    });
+
+    core.emit({name: 'SysInfoRequest', sender: this});
+
   }
 
   /* TESTING ONLY */

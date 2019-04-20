@@ -29,6 +29,15 @@
 interface Enclosure {
   model: string;
   disks: any[];
+  diskKeys: any;
+}
+
+interface VDev {
+  pool: string;
+  type: string;
+  disks: any; // {devname: index}
+  poolIndex: number;
+  vdevIndex: number;
 }
 
 export class SystemProfiler {
@@ -36,26 +45,38 @@ export class SystemProfiler {
   public headUnit: string; // Model Unit
   public profile: Enclosure[] = [];
 
-  constructor(model, data) {
-    this.headUnit = model;
-    this.parseData(data);
+  private diskData: any[];
+  private _pools: any;
+  get pools(){
+    return this._pools;
+  }
+  set pools(obj){
+    this._pools = obj;
+    this.parsePoolsData(this._pools);
   }
 
-  parseData(data){
+  constructor(model, data) {
+    this.headUnit = model;
+    this.diskData = data;
+    this.parseDiskData(data);
+  }
+
+  private parseDiskData(data){
     let enclosureID = 0;
-    let enclosure = {model: this.headUnit, disks: []};
+    let enclosure = {model: this.headUnit, disks: [], diskKeys: {} };
     const last = data.length - 1;
     data.forEach((item, index) => {
 
       enclosure.disks.push(item);
+      enclosure.diskKeys[item.devname] = index;
 
       let next = data[index + 1];
 
-      if(/*index == last*/ !next || next.enclosure_num > enclosureID ){ 
+      if( !next || next.enclosure_num > enclosureID ){ 
         enclosure.model = enclosureID > 0 ? "ES" +  enclosure.disks.length : this.headUnit;
         this.profile.push(enclosure);
 
-        enclosure = {model: this.headUnit, disks: []};
+        enclosure = {model: this.headUnit, disks: [], diskKeys: {} };
         enclosureID++ 
 
       }
@@ -64,5 +85,56 @@ export class SystemProfiler {
 
   }
   
+  private parsePoolsData(obj){
 
+    obj.forEach((pool, pIndex) => {     
+
+    console.log(pool);
+      pool.topology.data.forEach((vdev, vIndex) => {
+
+        let v:VDev = {
+          pool: pool.name,
+          type: vdev.type,
+          poolIndex: pIndex,
+          vdevIndex: vIndex,
+          disks: {}
+        }
+
+        vdev.children.forEach((disk, dIndex) => {
+          let name = disk.device.split('p');
+          v.disks[name[0]] = dIndex;
+        });
+        
+        this.storeVdevInfo(v);
+      });
+
+    });
+    console.log(this.profile);
+  }
+
+  getVdev(alias:VDev){
+    return this.pools[alias.poolIndex].topology.data[alias.vdevIndex]
+  }
+
+  storeVdevInfo(vdev:VDev){
+    for(let x in vdev.disks){
+      this.addVDevToDiskInfo(x, vdev);
+    }
+  }
+
+  addVDevToDiskInfo(diskName:string, vdev:VDev):void{
+    let keys = Object.keys(vdev.disks);
+    //this.profile.forEach((enclosure, index) => {
+    for(let enclosure of this.profile){
+      let diskKey = enclosure.diskKeys[diskName];
+
+      if(!diskKey) { 
+        continue; 
+      } else {
+        enclosure.disks[diskKey].vdev = vdev;
+        break;
+      }
+      
+    }
+  }
 }
