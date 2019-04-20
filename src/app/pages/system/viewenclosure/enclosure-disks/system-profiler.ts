@@ -35,14 +35,14 @@ interface Enclosure {
 interface VDev {
   pool: string;
   type: string;
-  disks: any; // {devname: index}
+  disks?: any; // {devname: index} Only for mirrors and RAIDZ
   poolIndex: number;
   vdevIndex: number;
 }
 
 export class SystemProfiler {
 
-  public headUnit: string; // Model Unit
+  public platform: string; // Model Unit
   public profile: Enclosure[] = [];
 
   private diskData: any[];
@@ -56,14 +56,14 @@ export class SystemProfiler {
   }
 
   constructor(model, data) {
-    this.headUnit = model;
+    this.platform = model;
     this.diskData = data;
     this.parseDiskData(data);
   }
 
   private parseDiskData(data){
     let enclosureID = 0;
-    let enclosure = {model: this.headUnit, disks: [], diskKeys: {} };
+    let enclosure = {model: this.platform, disks: [], diskKeys: {} };
     const last = data.length - 1;
     data.forEach((item, index) => {
 
@@ -73,10 +73,10 @@ export class SystemProfiler {
       let next = data[index + 1];
 
       if( !next || next.enclosure_num > enclosureID ){ 
-        enclosure.model = enclosureID > 0 ? "ES" +  enclosure.disks.length : this.headUnit;
+        enclosure.model = enclosureID > 0 ? "ES" +  enclosure.disks.length : this.platform;
         this.profile.push(enclosure);
 
-        enclosure = {model: this.headUnit, disks: [], diskKeys: {} };
+        enclosure = {model: this.platform, disks: [], diskKeys: {} };
         enclosureID++ 
 
       }
@@ -100,10 +100,19 @@ export class SystemProfiler {
           disks: {}
         }
 
-        vdev.children.forEach((disk, dIndex) => {
-          let name = disk.device.split('p');
-          v.disks[name[0]] = dIndex;
-        });
+        if(vdev.children.length == 0){
+            let spl = vdev.device.split('p');
+            let name = spl[0]
+            console.log(name)
+            v.disks[name] = -1; // no children so we use this as placeholder
+        } else if(vdev.children.length > 0) {
+          vdev.children.forEach((disk, dIndex) => {
+            let spl = disk.device.split('p');
+            let name = spl[0]
+            console.log(name)
+            v.disks[name] = dIndex;
+          });
+        }
         
         this.storeVdevInfo(v);
       });
