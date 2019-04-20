@@ -89,7 +89,6 @@ export class SystemProfiler {
 
     obj.forEach((pool, pIndex) => {     
 
-    console.log(pool);
       pool.topology.data.forEach((vdev, vIndex) => {
 
         let v:VDev = {
@@ -103,13 +102,11 @@ export class SystemProfiler {
         if(vdev.children.length == 0){
             let spl = vdev.device.split('p');
             let name = spl[0]
-            console.log(name)
             v.disks[name] = -1; // no children so we use this as placeholder
         } else if(vdev.children.length > 0) {
           vdev.children.forEach((disk, dIndex) => {
             let spl = disk.device.split('p');
             let name = spl[0]
-            console.log(name)
             v.disks[name] = dIndex;
           });
         }
@@ -118,7 +115,7 @@ export class SystemProfiler {
       });
 
     });
-    console.log(this.profile);
+    
   }
 
   getVdev(alias:VDev){
@@ -132,6 +129,7 @@ export class SystemProfiler {
   }
 
   addVDevToDiskInfo(diskName:string, vdev:VDev):void{
+    
     let keys = Object.keys(vdev.disks);
     //this.profile.forEach((enclosure, index) => {
     for(let enclosure of this.profile){
@@ -141,9 +139,30 @@ export class SystemProfiler {
         continue; 
       } else {
         enclosure.disks[diskKey].vdev = vdev;
+        enclosure.disks[diskKey].status = this.getDiskStatus(diskName, enclosure, vdev);
+
         break;
       }
       
     }
   }
+
+  getDiskStatus(diskName, enclosure, vdev?:VDev): string{
+        if(!vdev){
+          let diskIndex = enclosure.diskKeys[diskName];
+          vdev = enclosure.disks[diskIndex].vdev;
+        }
+
+        let poolDisk;
+        if(vdev.disks[diskName] == -1){
+          //enclosure.disks[diskKey].status = this.pools[vdev.poolIndex].topology.data[vdev.vdevIndex].status;
+          poolDisk = this.pools[vdev.poolIndex].topology.data[vdev.vdevIndex];
+        } else {
+          //enclosure.disks[diskKey].status = this.pools[vdev.poolIndex].topology.data[vdev.vdevIndex][vdev.disks[diskName]].status;
+          poolDisk = this.pools[vdev.poolIndex].topology.data[vdev.vdevIndex].children[vdev.disks[diskName]];
+        }
+        
+        return poolDisk.status;
+  }
+    
 }
