@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { T } from '../../../translate-marker'
 import { TranslateService } from '@ngx-translate/core'
@@ -29,7 +29,7 @@ import helptext from '../../../helptext/jails/jails-add';
   styleUrls: ['../../common/entity/entity-form/entity-form.component.scss'],
   providers: [JailService, EntityFormService, FieldRelationService, NetworkService]
 })
-export class PluginAdvancedAddComponent implements OnInit {
+export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
 
   protected addCall: string = 'jail.fetch';
   public route_goback: string[] = ['plugins', 'available'];
@@ -74,32 +74,9 @@ export class PluginAdvancedAddComponent implements OnInit {
       value: true,
     },
     {
-      type: 'select',
-      name: 'ip4_interface',
-      placeholder: helptext.ip4_interface_placeholder,
-      tooltip: helptext.ip4_interface_tooltip,
-      options: [{
-        label: '------',
-        value: '',
-      }],
-      value: '',
-      required: false,
-      relation: [{
-        action: 'DISABLE',
-        when: [{
-          name: 'dhcp',
-          value: true,
-        }]
-      }],
-      class: 'inline',
-      width: '30%',
-    },
-    {
-      type: 'input',
+      type: 'list',
       name: 'ip4_addr',
-      placeholder: helptext.ip4_addr_placeholder,
-      tooltip: helptext.ip4_addr_tooltip,
-      validation: [regexValidator(this.networkService.ipv4_regex)],
+      placeholder: 'IPv4 Addresses',
       relation: [{
         action: 'DISABLE',
         when: [{
@@ -107,25 +84,42 @@ export class PluginAdvancedAddComponent implements OnInit {
           value: true,
         }]
       }],
-      class: 'inline',
-      width: '50%',
-    },
-    {
-      type: 'select',
-      name: 'ip4_netmask',
-      placeholder: helptext.ip4_netmask_placeholder,
-      tooltip: helptext.ip4_netmask_tooltip,
-      options: this.networkService.getV4Netmasks(),
-      value: '',
-      relation: [{
-        action: 'DISABLE',
-        when: [{
-          name: 'dhcp',
-          value: true,
-        }]
-      }],
-      class: 'inline',
-      width: '20%',
+      templateListField: [
+        {
+          type: 'select',
+          name: 'ip4_interface',
+          placeholder: helptext.ip4_interface_placeholder,
+          tooltip: helptext.ip4_interface_tooltip,
+          options: [{
+            label: '------',
+            value: '',
+          }],
+          value: '',
+          required: false,
+          class: 'inline',
+          width: '30%',
+        },
+        {
+          type: 'input',
+          name: 'ip4_addr',
+          placeholder: helptext.ip4_addr_placeholder,
+          tooltip: helptext.ip4_addr_tooltip,
+          validation : [ regexValidator(this.networkService.ipv4_regex) ],
+          class: 'inline',
+          width: '50%',
+        },
+        {
+          type: 'select',
+          name: 'ip4_netmask',
+          placeholder: helptext.ip4_netmask_placeholder,
+          tooltip: helptext.ip4_netmask_tooltip,
+          options: this.networkService.getV4Netmasks(),
+          value: '',
+          class: 'inline',
+          width: '20%',
+        }
+      ],
+      listFields: []
     },
     {
       type: 'input',
@@ -151,58 +145,52 @@ export class PluginAdvancedAddComponent implements OnInit {
       tooltip: helptext.auto_configure_ip6_tooltip,
     },
     {
-      type: 'select',
-      name: 'ip6_interface',
-      placeholder: helptext.ip6_interface_placeholder,
-      tooltip: helptext.ip6_interface_tooltip,
-      options: [{
-        label: '------',
-        value: '',
-      }],
-      value: '',
-      required: false,
-      class: 'inline',
-      width: '30%',
-      relation: [{
-        action: 'DISABLE',
-        when: [{
-          name: 'auto_configure_ip6',
-          value: true,
-        }]
-      }]
-    },
-    {
-      type: 'input',
+      type: 'list',
       name: 'ip6_addr',
-      placeholder: helptext.ip6_addr_placeholder,
-      tooltip: helptext.ip6_addr_tooltip,
-      validation: [regexValidator(this.networkService.ipv6_regex)],
-      class: 'inline',
-      width: '50%',
+      placeholder: 'IPv6 Addresses',
       relation: [{
         action: 'DISABLE',
         when: [{
           name: 'auto_configure_ip6',
           value: true,
         }]
-      }]
-    },
-    {
-      type: 'select',
-      name: 'ip6_prefix',
-      placeholder: helptext.ip6_prefix_placeholder,
-      tooltip: helptext.ip6_prefix_tooltip,
-      options: this.networkService.getV6PrefixLength(),
-      value: '',
-      class: 'inline',
-      width: '20%',
-      relation: [{
-        action: 'DISABLE',
-        when: [{
-          name: 'auto_configure_ip6',
-          value: true,
-        }]
-      }]
+      }],
+      templateListField: [
+        {
+          type: 'select',
+          name: 'ip6_interface',
+          placeholder: helptext.ip6_interface_placeholder,
+          tooltip: helptext.ip6_interface_tooltip,
+          options: [{
+            label: '------',
+            value: '',
+          }],
+          value: '',
+          required: false,
+          class: 'inline',
+          width: '30%',
+        },
+        {
+          type: 'input',
+          name: 'ip6_addr',
+          placeholder: helptext.ip6_addr_placeholder,
+          tooltip: helptext.ip6_addr_tooltip,
+          validation : [ regexValidator(this.networkService.ipv6_regex) ],
+          class: 'inline',
+          width: '50%',
+        },
+        {
+          type: 'select',
+          name: 'ip6_prefix',
+          placeholder: helptext.ip6_prefix_placeholder,
+          tooltip: helptext.ip6_prefix_tooltip,
+          options: this.networkService.getV6PrefixLength(),
+          value: '',
+          class: 'inline',
+          width: '20%',
+        },
+      ],
+      listFields: []
     },
     {
       type: 'input',
@@ -930,30 +918,52 @@ export class PluginAdvancedAddComponent implements OnInit {
     protected networkService: NetworkService,
     protected aroute: ActivatedRoute) { }
 
-  updateInterfaceValidation() {
-    let dhcp_ctrl = this.formGroup.controls['dhcp'];
-    let vnet_ctrl = this.formGroup.controls['vnet'];
-    let ip4_addr_ctrl = this.formGroup.controls['ip4_addr'];
-    let ip6_addr_ctrl = this.formGroup.controls['ip6_addr'];
-
-    if (dhcp_ctrl.value != true && vnet_ctrl.value == true && ip4_addr_ctrl.value != undefined && ip4_addr_ctrl.value != '') {
-      this.ip4_interfaceField.required = true;
-      this.formGroup.controls['ip4_interface'].setValidators([Validators.required]);
-      this.formGroup.controls['ip4_interface'].updateValueAndValidity();
-    } else {
-      this.ip4_interfaceField.required = false;
-      this.formGroup.controls['ip4_interface'].clearValidators();
-      this.formGroup.controls['ip4_interface'].updateValueAndValidity();
+  updateInterfaceOptions(interfaceField, addVnet) {
+    if (addVnet != undefined) {
+      const index = _.findIndex(interfaceField.options as any, { 'label': 'vnet0'});
+      if (addVnet && index == -1) {
+        interfaceField.options.push({ label: 'vnet0', value: 'vnet0'});
+      } else if (!addVnet && index > -1){
+        interfaceField.options.splice(index, 1);
+      }
     }
+  }
 
-    if (dhcp_ctrl.value != true && vnet_ctrl.value == true && ip6_addr_ctrl.value != undefined && ip6_addr_ctrl.value != '') {
-      this.ip6_interfaceField.required = true;
-      this.formGroup.controls['ip6_interface'].setValidators([Validators.required]);
-      this.formGroup.controls['ip6_interface'].updateValueAndValidity();
+  updateInterfaceValidaton(subipFormgroup, subipInterfaceField, ipType) {
+    const targetPropName = ipType + '_addr';
+    if (this.formGroup.controls['dhcp'].value != true &&
+      this.formGroup.controls['vnet'].value == true &&
+      subipFormgroup.controls[targetPropName].value != undefined &&
+      subipFormgroup.controls[targetPropName].value != '') {
+      if (subipInterfaceField.required === false) {
+        subipInterfaceField.required = true;
+        subipInterfaceField['hasError'] = true;
+        subipInterfaceField['errors'] = 'Interface is required';
+      }
     } else {
-      this.ip6_interfaceField.required = false;
-      this.formGroup.controls['ip6_interface'].clearValidators();
-      this.formGroup.controls['ip6_interface'].updateValueAndValidity();
+      if (subipInterfaceField.required === true) {
+        subipInterfaceField.required = false;
+        subipInterfaceField['hasError'] = false;
+        subipInterfaceField['errors'] = '';
+      }
+    }
+  }
+
+  updateInterface(addVnet?) {
+    for (const ipType of ['ip4', 'ip6']) {
+      const targetPropName = ipType + '_addr';
+      for (let i = 0; i < this.formGroup.controls[targetPropName].controls.length; i++) {
+        const subipFormgroup = this.formGroup.controls[targetPropName].controls[i];
+        const subipInterfaceField = _.find(_.find(this.basicfieldConfig, {'name': targetPropName}).listFields[i], {'name': ipType + '_interface'});
+
+        if (addVnet != undefined) {
+          this.updateInterfaceOptions(subipInterfaceField, addVnet);
+        }
+
+        if (subipInterfaceField != undefined) {
+          this.updateInterfaceValidaton(subipFormgroup, subipInterfaceField, ipType);
+        }
+      }
     }
   }
 
@@ -963,10 +973,9 @@ export class PluginAdvancedAddComponent implements OnInit {
       const nameField = _.find(this.basicfieldConfig, { 'name': 'uuid' });
       nameField.value = this.plugin_name;
     });
-    this.ip4_interfaceField = _.find(this.basicfieldConfig, { 'name': 'ip4_interface' });
-    this.ip4_netmaskField = _.find(this.basicfieldConfig, { 'name': 'ip4_netmask' });
-    this.ip6_interfaceField = _.find(this.basicfieldConfig, { 'name': 'ip6_interface' });
-    this.ip6_prefixField = _.find(this.basicfieldConfig, { 'name': 'ip6_prefix' });
+
+    this.ip4_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip4_addr'}).templateListField[0];
+    this.ip6_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip6_addr'}).templateListField[0];
     this.vnet_default_interfaceField = _.find(this.networkfieldConfig, { 'name': 'vnet_default_interface' });
 
     // get interface options
@@ -1002,22 +1011,6 @@ export class PluginAdvancedAddComponent implements OnInit {
       _.find(this.basicfieldConfig, { 'name': 'bpf' }).required = res;
     });
     this.formGroup.controls['vnet'].valueChanges.subscribe((res) => {
-      if (res) {
-        if (_.find(this.ip4_interfaceField.options, { 'label': 'vnet0' }) == undefined) {
-          this.ip4_interfaceField.options.push({ label: 'vnet0', value: 'vnet0' });
-        }
-        if (_.find(this.ip6_interfaceField.options, { 'label': 'vnet0' }) == undefined) {
-          this.ip6_interfaceField.options.push({ label: 'vnet0', value: 'vnet0' });
-        }
-      } else {
-        if (_.find(this.ip4_interfaceField.options, { 'label': 'vnet0' }) != undefined) {
-          this.ip4_interfaceField.options.pop({ label: 'vnet0', value: 'vnet0' });
-        }
-        if (_.find(this.ip6_interfaceField.options, { 'label': 'vnet0' }) != undefined) {
-          this.ip6_interfaceField.options.pop({ label: 'vnet0', value: 'vnet0' });
-        }
-      }
-
       if ((this.formGroup.controls['dhcp'].value || this.formGroup.controls['auto_configure_ip6'].value) && !res) {
         _.find(this.basicfieldConfig, { 'name': 'vnet' })['hasErrors'] = true;
         _.find(this.basicfieldConfig, { 'name': 'vnet' })['errors'] = 'VNET is required.';
@@ -1025,7 +1018,7 @@ export class PluginAdvancedAddComponent implements OnInit {
         _.find(this.basicfieldConfig, { 'name': 'vnet' })['hasErrors'] = false;
         _.find(this.basicfieldConfig, { 'name': 'vnet' })['errors'] = '';
       }
-      this.updateInterfaceValidation();
+      this.updateInterface(res);
     });
     this.formGroup.controls['bpf'].valueChanges.subscribe((res) => {
       if (this.formGroup.controls['dhcp'].value && !res) {
@@ -1046,10 +1039,10 @@ export class PluginAdvancedAddComponent implements OnInit {
       _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = res;
     });
     this.formGroup.controls['ip4_addr'].valueChanges.subscribe((res) => {
-      this.updateInterfaceValidation();
+      this.updateInterface();
     });
     this.formGroup.controls['ip6_addr'].valueChanges.subscribe((res) => {
-      this.updateInterfaceValidation();
+      this.updateInterface();
     });
 
     this.ws.call("jail.query", [
@@ -1061,7 +1054,7 @@ export class PluginAdvancedAddComponent implements OnInit {
         for (let i in res[0]) {
           if (this.formGroup.controls[i]) {
             if ((i == 'ip4_addr' || i == 'ip6_addr') && res[0][i] == 'none') {
-              this.formGroup.controls[i].setValue('');
+              // this.formGroup.controls[i].setValue('');
               continue;
             }
             if (_.indexOf(this.TFfields, i) > -1) {
@@ -1087,6 +1080,17 @@ export class PluginAdvancedAddComponent implements OnInit {
       (res) => {
         new EntityUtils().handleError(this, res);
       });
+  }
+
+  ngAfterViewInit() {
+    for (const ipType of ['ip4', 'ip6']) {
+      const targetPropName = ipType + '_addr';
+      for (let i = 0; i < this.formGroup.controls[targetPropName].controls.length; i++) {
+        const subipInterfaceField = _.find(_.find(this.basicfieldConfig, {'name': targetPropName}).listFields[i], {'name': ipType + '_interface'});
+        subipInterfaceField.options = ipType === 'ip4' ? this.ip4_interfaceField.options : this.ip6_interfaceField.options;
+      }
+    }
+    this.formGroup.controls['dhcp'].setValue(this.formGroup.controls['dhcp'].value);
   }
 
   setRelation(config: FieldConfig) {
@@ -1141,26 +1145,33 @@ export class PluginAdvancedAddComponent implements OnInit {
     return full_address;
   }
 
+  parseIpaddr(value) {
+    for (const ipType of ['ip4', 'ip6']) {
+      const propName = ipType + '_addr';
+      if (value[propName] != undefined) {
+        const multi_ipaddr = [];
+        for (let i = 0; i < value[propName].length; i++) {
+          const subAddr = value[propName][i];
+          if (subAddr[propName] != '' && subAddr[propName] != undefined) {
+            multi_ipaddr.push(this.getFullIP(subAddr[ipType + '_interface'], subAddr[propName], subAddr[ipType + '_netmask']));
+          }
+        }
+        value[propName] = multi_ipaddr.join(',');
+      }
+      if (value[propName] == '' || value[propName] == undefined) {
+        delete value[propName];
+      }
+    }
+  }
+
   onSubmit(event: Event) {
     event.preventDefault();
     event.stopPropagation();
     this.error = null;
     let property: any = [];
     let value = _.cloneDeep(this.formGroup.value);
-    if (value['ip4_addr'] == '' || value['ip4_addr'] == undefined) {
-      delete value['ip4_addr'];
-    } else {
-      value['ip4_addr'] = this.getFullIP(value['ip4_interface'], value['ip4_addr'], value['ip4_netmask']);
-    }
-    delete value['ip4_interface'];
-    delete value['ip4_netmask'];
-    if (value['ip6_addr'] == '' || value['ip6_addr'] == undefined) {
-      delete value['ip6_addr'];
-    } else {
-      value['ip6_addr'] = this.getFullIP(value['ip6_interface'], value['ip6_addr'], value['ip6_prefix']);
-    }
-    delete value['ip6_interface'];
-    delete value['ip6_prefix'];
+
+    this.parseIpaddr(value);
 
     if (value['auto_configure_ip6']) {
       value['ip6_addr'] = "vnet0|accept_rtadv";
