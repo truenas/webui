@@ -9,6 +9,8 @@ export class DriveTray {
   public model: string;
   public id: string;
 
+  public enabled: boolean = false;
+
   private _color: string;
   get color(){
     return this._color;
@@ -44,11 +46,12 @@ export class DriveTray {
       return;
     }
 
-    let color = cssColor.toUpperCase().replace("#", "0x");
+    let color = parseInt("0x" + cssColor.substring(1), 16);
+    console.log(color);
 
     /*let outlineFilter = new PIXI.filters.OutlineFilter(2, color);
     let filters = [outlineFilter];*/
-    this.handle.tint = Number(color);
+    this.handle.tint = color;
 
   }
 

@@ -125,14 +125,19 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
           this.enclosure.container.height = this.enclosure.container.height / 2;
           this.enclosure.container.x = this.app._options.width / 2 - this.enclosure.container.width / 2;
           this.enclosure.container.y = this.app._options.height / 2 - this.enclosure.container.height / 2;
+
+          this.setDisksEnabledState();
         break;
         case "DriveSelected":
           //console.log(evt);
           //console.log(this.enclosure);
           //console.log(this.system.profile);
           let disk = this.selectedEnclosure.disks[evt.data.id];
-          this.selectedDisk = disk;
-          //console.log(disk);
+          if(this.enclosure.driveTrayObjects[evt.data.id].enabled){
+            this.selectedDisk = disk;
+            //this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: evt.data.id, color: '#0000CC'}}); // Just for testing
+            //console.log(disk);
+          }
         break;
       }
     });
@@ -186,20 +191,21 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
   }
 
   onImport(){
-     let sprite = PIXI.Sprite.from(this.resources.m50.texture.baseTexture);
-     sprite.width = 480;
-     sprite.height = sprite.height * (480 / 960);
-     sprite.x = 0;
-     sprite.y = 0;
-     sprite.name=this.enclosure.model + "_sprite"
-     sprite.alpha = 0.1;
-     this.container.addChild(sprite);
+    let sprite = PIXI.Sprite.from(this.resources.m50.texture.baseTexture);
+    sprite.width = 480;
+    sprite.height = sprite.height * (480 / 960);
+    sprite.x = 0;
+    sprite.y = 0;
+    sprite.name=this.enclosure.model + "_sprite"
+    sprite.alpha = 0.1;
+    this.container.addChild(sprite);
 
-     //let dt = this.makeDriveTray();
-     let dt = this.enclosure.makeDriveTray();
-     this.container.addChild(dt.container);
-     //this.updatePIXI();
-     }
+    //let dt = this.makeDriveTray();
+    let dt = this.enclosure.makeDriveTray();
+    this.container.addChild(dt.container);
+    //this.updatePIXI();
+    
+  }
 
   loadProgressHandler(loader, resource) {
 
@@ -224,5 +230,18 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
     this.renderer.render(this.app.stage);
     requestAnimationFrame(this.updatePIXI.bind(this));
   }*/
+
+  setDisksEnabledState(){
+    console.log(this.enclosure);
+    this.enclosure.driveTrayObjects.forEach((dt, index) =>{
+      let disk = this.selectedEnclosure.disks[index];
+      dt.enabled = disk ? true : false;
+      console.log(disk);
+    })
+  }
+
+  setDisksHealthState(){}
+
+  setDisksPoolState(){}
 
 }

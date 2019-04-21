@@ -60,6 +60,14 @@ export class Chassis {
      //this.driveTrays = new PIXI.projection.Sprite2d(PIXI.Texture.WHITE);
      this.events = new Subject<CoreEvent>();
 
+     this.events.subscribe((evt:CoreEvent) => {
+       switch(evt.name){
+       case "ChangeDriveTrayColor":
+         this.colorDriveTray(evt.data.id, evt.data.color);
+         break;
+       }
+     });
+
      // defaults
      this.rows = 6;
      this.columns = 4;
@@ -106,8 +114,8 @@ export class Chassis {
        dt.container.y = position.y;
        dt.background.alpha = 0;
        dt.handle.alpha = 0;
-       dt.color = i == 5 ? "#cc0000" : "#5ed427";
-       dt.handle.filters = [bloomFilter];
+       //dt.color = i == 5 ? "#cc0000" : "#5ed427";
+       //dt.handle.filters = [bloomFilter];
 
        dt.container.interactive = true;
        let clickHandler = (evt) => {this.onTap(evt, dt);}
@@ -167,10 +175,13 @@ export class Chassis {
      this.driveTrayObjects.forEach((item, index) => {
       // Staggered handles fade in  
       setTimeout(() =>{
-        const updateAlpha = (v) => item.handle.alpha = v;
+        const updateAlpha = (v) => {
+          return item.handle.alpha = v;
+        }
+
         tween({
           from: item.handle.alpha,
-          to: 1, 
+          to: item.enabled ? 1 : opacity, 
           duration: duration + 1000,
           ease: easing.backOut,
           //flip: Infinity
@@ -246,5 +257,14 @@ export class Chassis {
     console.log(dts);
     console.log("width: " + dts.width + " height: " + dts.height);
    }
+
+  colorDriveTray(driveIndex, color){
+    let dt = this.driveTrayObjects[driveIndex];
+    console.log(dt);
+    dt.color = color;
+     /*this.driveTrayObjects.forEach((dt, index) => {
+       //dt.colorize();
+     });*/
+  }
 
 }
