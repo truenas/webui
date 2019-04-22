@@ -65,7 +65,7 @@ export const helptext_system_email = {
   em_pass: {
     placeholder: T("Password"),
     tooltip: T(
-      "Enter the password for the SMTP server. Only ASCII valid\
+      "Enter the password for the SMTP server. Only plain ASCII\
  characters are accepted."
     ),
     validation: [Validators.required]
