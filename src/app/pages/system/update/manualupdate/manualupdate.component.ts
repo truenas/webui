@@ -147,11 +147,15 @@ export class ManualUpdateComponent {
           });
         };
       })
+      this.dialogRef.componentInstance.prefailure.subscribe((prefailure)=>{
+        this.dialogRef.close(false);
+        this.dialogService.errorReport(helptext.manual_update_error_dialog.message, 
+          `${prefailure.status.toString()} ${prefailure.statusText}`)
+      })
       this.dialogRef.componentInstance.failure.subscribe((failure)=>{
         this.dialogRef.close(false);
         this.dialogService.errorReport(failure.error,failure.state,failure.exception)
       })
-
     })
 
 

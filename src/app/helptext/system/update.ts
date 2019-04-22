@@ -123,5 +123,9 @@ export const helptext_system_update = {
   snackbar_network_error: {
     message: T("Check the network connection"),
     action: T("Failed")
+  },
+
+  manual_update_error_dialog: {
+    message: T('Error submitting file')
   }
 };
