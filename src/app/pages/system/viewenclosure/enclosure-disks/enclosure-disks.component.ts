@@ -43,6 +43,11 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
       this.theme = evt.data
     });
 
+    core.register({observerClass: this, eventName: 'ThemeChanged'}).subscribe((evt:CoreEvent) => {
+      this.theme = evt.data;
+      this.setCurrentView(this.currentView);
+    });
+
     core.register({observerClass: this, eventName: 'PoolData'}).subscribe((evt:CoreEvent) => {
       this.system.pools = evt.data;
       console.log(this.system);
