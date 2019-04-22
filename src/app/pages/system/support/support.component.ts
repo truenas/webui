@@ -10,7 +10,6 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 
-
 @Component({
   selector : 'app-support',
   template : `
@@ -203,6 +202,19 @@ export class SupportComponent {
         },
         {
           type : 'select',
+          name : 'TNCategory',
+          placeholder : helptext.type.placeholder,
+          tooltip : helptext.type.tooltip,
+          options:[
+            {label: 'Bug', value: 'BUG'},
+            {label: 'Hardware', value: 'HARDWARE'},
+            {label: 'Installation/Setup', value: 'INSTALL'},
+            {label: 'Performance', value: 'PERFORMANCE'}
+          ],
+          value: 'BUG'
+        },
+        {
+          type : 'select',
           name : 'environment',
           placeholder : helptext.environment.placeholder,
           tooltip : helptext.environment.tooltip,
@@ -213,7 +225,8 @@ export class SupportComponent {
             {label: 'Prototyping', value: 'prototyping'},
             {label: 'Initial Deployment/Setup', value: 'initial'}
           ],
-          validation: helptext.environment.validation
+          validation: helptext.environment.validation,
+          value: 'production'
         },
         {
           type : 'select',
@@ -225,11 +238,12 @@ export class SupportComponent {
             {label: 'Loss of Functionality', value: 'loss_functionality'},
             {label: 'Total Down', value: 'total_down'}
           ],
-          validation: helptext.criticality.validation
+          validation: helptext.criticality.validation,
+          value: 'inquiry'
         },
         {
           type : 'select',
-          name : 'category',
+          name : 'FNCategory',
           placeholder : helptext.category.placeholder,
           tooltip : helptext.category.tooltip,
           required: true,
@@ -265,7 +279,6 @@ export class SupportComponent {
           name: 'screenshot',
           placeholder: helptext.screenshot.placeholder,
           tooltip: helptext.screenshot.tooltip,
-          // validation : [ Validators.required],
           fileLocation: '',
           // message: this.messageService,
           acceptedFiles: 'image/*',
@@ -273,8 +286,7 @@ export class SupportComponent {
           parent: this,
           hideButton: true,
           hasErrors: true,
-          // validation: this.fileSizeValidator
-        },
+        }
       ]
     }
   ]
@@ -288,7 +300,8 @@ export class SupportComponent {
     'support_text',
     'username',
     'password',
-    'category'
+    'FNCategory',
+    'type'
   ];
 
   private trueNASFields: Array<any> = [
@@ -303,6 +316,7 @@ export class SupportComponent {
     'name',
     'email',
     'phone',
+    'TNCategory',
     'environment',
     'criticality',
     'screenshot'
@@ -378,7 +392,7 @@ export class SupportComponent {
     if (this.is_freenas === 'true') {
       this.payload['username'] = entityEdit.username;
       this.payload['password'] = entityEdit.password;
-      this.payload['category'] = entityEdit.category;
+      this.payload['category'] = entityEdit.FNCategory;
       this.payload['attach_debug'] = entityEdit.attach_debug;
       this.payload['title'] = entityEdit.title;
       this.payload['body'] = entityEdit.body;
@@ -387,7 +401,7 @@ export class SupportComponent {
       this.payload['name'] = entityEdit.name;
       this.payload['email'] = entityEdit.email;
       this.payload['phone'] = entityEdit.phone;
-      this.payload['type'] = entityEdit.type;
+      this.payload['category'] = entityEdit.TNCategory;
       this.payload['environment'] = entityEdit.environment;
       this.payload['criticality'] = entityEdit.criticality;
       this.payload['attach_debug'] = entityEdit.attach_debug;
@@ -455,7 +469,6 @@ export class SupportComponent {
         parent.subs = {"apiEndPoint":file.apiEndPoint, "file": fileBrowser.files[0]}
       }
     }
-    console.log(parent, parent.subs, fileBrowser, _.find(parent.fieldConfig, { name: 'screenshot' }))
   }
 
   hideField(fieldName: any, show: boolean, entity: any) {
