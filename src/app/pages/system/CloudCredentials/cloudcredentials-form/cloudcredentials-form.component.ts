@@ -823,7 +823,7 @@ export class CloudCredentialsFormComponent {
   public custActions: Array<any> = [
     {
       id: 'authenticate',
-      name: 'Authenticate',
+      name: T('Authenticate'),
       function: () => {
         window.open(this.oauthURL+ "?origin=" + encodeURIComponent(window.location.toString()), "_blank", "width=640,height=480");
         const controls = this.entityForm.formGroup.controls;
@@ -1005,7 +1005,10 @@ export class CloudCredentialsFormComponent {
       entityForm.formGroup.controls['advanced-S3'].setValue(true);
     }
     for (let i in entityForm.wsResponseIdx) {
-      let field_name = i + '-' + provider;
+      let field_name = i;
+      if (field_name != 'client_id' && field_name != 'client_secret') {
+        field_name += '-' + provider;
+      }
       entityForm.formGroup.controls[field_name].setValue(entityForm.wsResponseIdx[i]);
     }
   }
