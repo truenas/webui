@@ -149,7 +149,7 @@ export class ManualUpdateComponent {
       })
       this.dialogRef.componentInstance.failure.subscribe((failure)=>{
         this.dialogRef.close(false);
-        this.dialogService.errorReport(failure.error,failure.state,failure.exception)
+        this.dialogService.errorReport("Error submitting file", `${failure.status.toString()} ${failure.statusText}`)
       })
 
     })

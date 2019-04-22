@@ -162,7 +162,9 @@ export class EntityJobComponent implements OnInit {
             this.wsshow();
           }
         },
-        () => {},
+        (err) => {
+          this.failure.emit(err)
+        },
         () => {
         });
   }
