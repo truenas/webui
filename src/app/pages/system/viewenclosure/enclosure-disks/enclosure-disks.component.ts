@@ -45,7 +45,6 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
     });
 
     core.register({observerClass: this, eventName: 'PoolData'}).subscribe((evt:CoreEvent) => {
-      //console.log(evt);
       this.system.pools = evt.data;
       console.log(this.system);
     });
@@ -138,7 +137,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
           //console.log(this.enclosure);
           //console.log(this.system.profile);
           //this.currentView = 'details';
-          let disk = this.selectedEnclosure.disks[evt.data.id];
+          let disk = this.selectedEnclosure.disks[evt.data.id]; // should match slot number
           if(this.enclosure.driveTrayObjects[evt.data.id].enabled){
             this.selectedDisk = disk;
             this.setCurrentView('details');
@@ -245,7 +244,6 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
   setCurrentView(opt: string){
     // pools || status || expanders || details
     this.currentView = opt;
-    console.log(opt);
     switch(this.currentView){
       case 'pools':
         //this.setDisksDisabled();
@@ -259,9 +257,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
       break
       case 'details':
         this.setDisksDisabled();
-        // In production use enclosure_slot
-        this.setDisksHealthState(this.selectedDisk.number);
-        console.log(this.selectedDisk); 
+        this.setDisksHealthState(this.selectedDisk.enclosure_slot);
       break
     }
   }
@@ -285,7 +281,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
 
   setDisksHealthState(slot?: number){ // Give it a slot number and it will only change that slot
 
-    if(slot){
+    if(slot || typeof slot !== 'undefined'){
       this.setDiskHealthState(slot);
       return;
     }
@@ -320,7 +316,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
   }
 
   setDisksPoolState(){
-    console.log('Pools View!');
+    this.setDisksDisabled();
   }
 
 }

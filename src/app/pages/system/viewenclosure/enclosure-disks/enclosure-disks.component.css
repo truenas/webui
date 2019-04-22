@@ -40,7 +40,7 @@ nav.view-nav-bar{
 
 .view-card .tiles{
   text-align: center;
-  border-left:solid 1px rgba(0,0,0,0.1);
+  border-left:solid 1px var(--bg1);
 }
 
 .view-card .tiles:first-child{
