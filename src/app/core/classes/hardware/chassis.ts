@@ -53,6 +53,8 @@ export class Chassis {
    protected rows: number;
    protected columns: number;
    protected filters: any[] = [];
+   protected disabledOpacity = 0.33;
+   protected initialized: boolean = false;
 
    constructor(){
      this.container = new PIXI.Container();
@@ -158,7 +160,7 @@ export class Chassis {
    }
 
    onEnter(){
-     const opacity = 0.33;
+     const opacity = this.disabledOpacity;
      const delay = 500;
      const duration = 250;
     
@@ -201,6 +203,8 @@ export class Chassis {
           duration: duration,
           ease: easing.backOut,
         }).start(updateAlpha);
+
+        this.initialized = true;
 
         /*tween({
           from: item.handle.filters[0].threshold,
@@ -263,6 +267,10 @@ export class Chassis {
     let dt = this.driveTrayObjects[driveIndex];
     
     dt.color = color.toLowerCase() ;
+    if(this.initialized){
+      dt.handle.alpha = color == 'none' ? this.disabledOpacity : 1;
+    }
+
     //dt.handle.filters = this.filters;
   }
 

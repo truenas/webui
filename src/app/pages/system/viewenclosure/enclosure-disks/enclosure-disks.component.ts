@@ -129,7 +129,9 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
           this.enclosure.container.x = this.app._options.width / 2 - this.enclosure.container.width / 2;
           this.enclosure.container.y = this.app._options.height / 2 - this.enclosure.container.height / 2;
 
-          this.setDisksEnabledState();
+          //this.setDisksEnabledState();
+          //this.setDisksDisabled();
+          this.setCurrentView(this.currentView);
         break;
         case "DriveSelected":
           //console.log(evt);
