@@ -28,6 +28,7 @@ export class EntityJobComponent implements OnInit {
   @Output() progress = new EventEmitter();
   @Output() success = new EventEmitter();
   @Output() failure = new EventEmitter();
+  @Output() prefailure = new EventEmitter();
   constructor(public dialogRef: MatDialogRef < EntityJobComponent > ,
     private ws: WebSocketService, public rest: RestService,
     @Inject(MAT_DIALOG_DATA) public data: any, translate: TranslateService, protected http: Http) {}
@@ -163,7 +164,7 @@ export class EntityJobComponent implements OnInit {
           }
         },
         (err) => {
-          this.failure.emit(err)
+          this.prefailure.emit(err)
         },
         () => {
         });

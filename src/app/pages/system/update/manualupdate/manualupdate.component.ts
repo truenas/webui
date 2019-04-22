@@ -147,11 +147,14 @@ export class ManualUpdateComponent {
           });
         };
       })
+      this.dialogRef.componentInstance.prefailure.subscribe((prefailure)=>{
+        this.dialogRef.close(false);
+        this.dialogService.errorReport("Error submitting file", `${prefailure.status.toString()} ${prefailure.statusText}`)
+      })
       this.dialogRef.componentInstance.failure.subscribe((failure)=>{
         this.dialogRef.close(false);
-        this.dialogService.errorReport("Error submitting file", `${failure.status.toString()} ${failure.statusText}`)
+        this.dialogService.errorReport(failure.error,failure.state,failure.exception)
       })
-
     })
 
 
