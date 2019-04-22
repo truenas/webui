@@ -52,6 +52,7 @@ export class Chassis {
    protected totalDriveTrays: number;
    protected rows: number;
    protected columns: number;
+   protected filters: any[] = [];
 
    constructor(){
      this.container = new PIXI.Container();
@@ -96,7 +97,7 @@ export class Chassis {
      });
      //(0.1, 1.2, 1.2, 20, 3); // 
 
-     //this.filters.push(outlineFilterBlue);
+     this.filters = [ bloomFilter ];
 
      // Render Chassis
      this.chassis = PIXI.Sprite.from(PIXI.loader.resources[this.model + "_chassis"].texture.baseTexture);
@@ -115,7 +116,7 @@ export class Chassis {
        dt.background.alpha = 0;
        dt.handle.alpha = 0;
        //dt.color = i == 5 ? "#cc0000" : "#5ed427";
-       //dt.handle.filters = [bloomFilter];
+       dt.handle.filters = this.filters;
 
        dt.container.interactive = true;
        let clickHandler = (evt) => {this.onTap(evt, dt);}
@@ -260,11 +261,9 @@ export class Chassis {
 
   colorDriveTray(driveIndex, color){
     let dt = this.driveTrayObjects[driveIndex];
-    console.log(dt);
-    dt.color = color;
-     /*this.driveTrayObjects.forEach((dt, index) => {
-       //dt.colorize();
-     });*/
+    
+    dt.color = color.toLowerCase() ;
+    //dt.handle.filters = this.filters;
   }
 
 }

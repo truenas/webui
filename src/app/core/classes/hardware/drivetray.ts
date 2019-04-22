@@ -16,7 +16,7 @@ export class DriveTray {
     return this._color;
   }
   set color(value){
-    this._color = value;
+    //this._color = value;
     this.colorize(value);
   }
 
@@ -46,12 +46,17 @@ export class DriveTray {
       return;
     }
 
-    let color = parseInt("0x" + cssColor.substring(1), 16);
-    console.log(color);
+    if(cssColor == 'none'){
+      this.handle.tint = 0xFFFFFF;
+      this._color = '#ffffff';
+    } else {
+      this._color = cssColor;
+      let color = parseInt("0x" + cssColor.substring(1), 16);
 
-    /*let outlineFilter = new PIXI.filters.OutlineFilter(2, color);
-    let filters = [outlineFilter];*/
-    this.handle.tint = color;
+      /*let outlineFilter = new PIXI.filters.OutlineFilter(2, color);
+      let filters = [outlineFilter];*/
+      this.handle.tint = color;
+    }
 
   }
 

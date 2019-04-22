@@ -30,16 +30,19 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
   public system: SystemProfiler;
   protected enclosure: any; // Visualization
   public selectedEnclosure: any;
-  public selectedDisk: any;/* = {
-    name: 'da13',
-    capacity: '1.83 TB',
-    type: 'HDD'
-  }*/
+  public selectedDisk: any;
 
-  /*public texture;
-  public hardwareGraphic;*/
+  public theme: any;
+  public currentView: string = 'status'; // pools || status || expanders || details
+  
+ 
 
   constructor(public el:ElementRef, private core: CoreService /*, private ngZone: NgZone*/) { 
+
+    core.register({observerClass: this, eventName: 'ThemeData'}).subscribe((evt:CoreEvent) => {
+      console.log(evt);
+      this.theme = evt.data
+    });
 
     core.register({observerClass: this, eventName: 'PoolData'}).subscribe((evt:CoreEvent) => {
       //console.log(evt);
@@ -70,6 +73,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
       core.emit({name: 'DisksRequest', sender: this});
     });
 
+    core.emit({name: 'ThemeDataRequest', sender: this});
     core.emit({name: 'SysInfoRequest', sender: this});
 
   }
@@ -77,6 +81,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
   /* TESTING ONLY */
   clearDisk(){
     this.selectedDisk = null;
+    this.setCurrentView('status');
   }
 
   ngAfterViewInit() {
@@ -132,9 +137,14 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
           //console.log(evt);
           //console.log(this.enclosure);
           //console.log(this.system.profile);
+          //this.currentView = 'details';
           let disk = this.selectedEnclosure.disks[evt.data.id];
           if(this.enclosure.driveTrayObjects[evt.data.id].enabled){
             this.selectedDisk = disk;
+            this.setCurrentView('details');
+            //this.setDisksDisabled();
+            //this.setDisksHealthState();
+            
             //this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: evt.data.id, color: '#0000CC'}}); // Just for testing
             //console.log(disk);
           }
@@ -204,6 +214,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
     let dt = this.enclosure.makeDriveTray();
     this.container.addChild(dt.container);
     //this.updatePIXI();
+    this.setCurrentView('status');
     
   }
 
@@ -231,17 +242,85 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
     requestAnimationFrame(this.updatePIXI.bind(this));
   }*/
 
+  setCurrentView(opt: string){
+    // pools || status || expanders || details
+    this.currentView = opt;
+    console.log(opt);
+    switch(this.currentView){
+      case 'pools':
+        //this.setDisksDisabled();
+        this.setDisksPoolState();
+      break
+      case 'status':
+        this.setDisksDisabled();
+        this.setDisksHealthState();
+      break
+      case 'expanders':
+      break
+      case 'details':
+        this.setDisksDisabled();
+        // In production use enclosure_slot
+        this.setDisksHealthState(this.selectedDisk.number);
+        console.log(this.selectedDisk); 
+      break
+    }
+  }
+
   setDisksEnabledState(){
-    console.log(this.enclosure);
     this.enclosure.driveTrayObjects.forEach((dt, index) =>{
       let disk = this.selectedEnclosure.disks[index];
       dt.enabled = disk ? true : false;
-      console.log(disk);
+      //console.log(dt);
     })
   }
 
-  setDisksHealthState(){}
+  setDisksDisabled(){
+    this.enclosure.driveTrayObjects.forEach((dt, index) =>{
+      let disk = this.selectedEnclosure.disks[index];
+      //dt.enabled = false;
+      //console.log(dt);
+      this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: index, color: 'none'}});
+    });
+  }
 
-  setDisksPoolState(){}
+  setDisksHealthState(slot?: number){ // Give it a slot number and it will only change that slot
+
+    if(slot){
+      this.setDiskHealthState(slot);
+      return;
+    }
+
+    this.enclosure.driveTrayObjects.forEach((dt, index) =>{
+      this.setDiskHealthState(index)
+    });
+
+  }
+
+  setDiskHealthState(index: number){
+
+      let disk = this.selectedEnclosure.disks[index];
+      this.enclosure.driveTrayObjects[index].enabled = disk ? true : false;
+
+      if(disk && disk.status){
+        switch(disk.status){
+          case "ONLINE":
+            //dt.color = this.theme.green;
+            this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: index, color: this.theme.green}});
+          break;
+          case "FAULT":
+            //dt.color = this.theme.red;
+            this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: index, color: this.theme.red}});
+          break;
+          default:
+            this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: index, color: this.theme.yellow}});
+          break
+        }
+
+      }
+  }
+
+  setDisksPoolState(){
+    console.log('Pools View!');
+  }
 
 }
