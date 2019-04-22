@@ -2016,10 +2016,10 @@ msgid "DNS Forwarder"
 msgstr "DNS 轉送"
 
 msgid "DNS Timeout"
-msgstr ""
+msgstr "DNS 逾時"
 
 msgid "DNS timeout"
-msgstr ""
+msgstr "DNS 逾時"
 
 msgid "DNS timeout in seconds. Increase this value if DNS queries timeout."
 msgstr ""
@@ -2037,19 +2037,19 @@ msgid "Database Path"
 msgstr "資料庫路徑"
 
 msgid "Datastore"
-msgstr "Datastore"
+msgstr ""
 
 msgid "Day of Month"
-msgstr ""
+msgstr "每月啟用日"
 
 msgid "Day of Week"
-msgstr ""
+msgstr "每週啟用日"
 
 msgid "Day of week"
-msgstr "每週第幾天"
+msgstr "每週啟用日"
 
 msgid "Days of the Week"
-msgstr ""
+msgstr "每週啟用日"
 
 msgid "Decrypt pool"
 msgstr "解密 Pool"
@@ -2079,7 +2079,7 @@ msgid "Default file permissions"
 msgstr "預設檔案權限"
 
 msgid "Default is UTF-8 which supports all characters in all languages."
-msgstr ""
+msgstr "預設為 UTF-8，支援所有語言編碼。"
 
 msgid "Default umask"
 msgstr "預設 umask"
@@ -2222,7 +2222,6 @@ msgstr ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=rctl&manpath=FreeBSD+11.1-"
 "RELEASE+and+Ports\" target=\"_blank\">RCTL(8)</a>.\n"
 "\n"
-"msgid "
 
 msgid "Define the server where all changes to the database are performed."
 msgstr ""
@@ -2757,10 +2756,10 @@ msgid "Encryption Salt"
 msgstr ""
 
 msgid "End"
-msgstr ""
+msgstr "結束"
 
 msgid "End Time"
-msgstr ""
+msgstr "結束時間"
 
 msgid ""
 "Ending UID/GID number for which this system is authoritative. UID/GID "
@@ -2852,25 +2851,25 @@ msgid ""
 msgstr ""
 
 msgid "Enter a name for the VM."
-msgstr ""
+msgstr "輸入 VM 名稱。"
 
 msgid "Enter a name for the clone of this boot environment."
 msgstr ""
 
 msgid "Enter a name for the cloned snapshot."
-msgstr ""
+msgstr "輸入快照複製名稱。"
 
 msgid "Enter a name for the new credential."
 msgstr ""
 
 msgid "Enter a name for the share."
-msgstr ""
+msgstr "輸入共享名稱。"
 
 msgid "Enter a name for this Keytab."
 msgstr ""
 
 msgid "Enter a netmask."
-msgstr ""
+msgstr "輸入網路遮罩。"
 
 msgid ""
 "Enter a number of degrees in Celsius. SMART reports if the temperature of a "
@@ -4434,13 +4433,13 @@ msgid "Machine Suffix"
 msgstr ""
 
 msgid "Mail Server Port"
-msgstr ""
+msgstr "郵件伺服器埠號"
 
 msgid "Management"
-msgstr ""
+msgstr "管理"
 
 msgid "Manycast"
-msgstr ""
+msgstr "多點廣播"
 
 msgid "Map ACLs"
 msgstr ""
@@ -4599,7 +4598,7 @@ msgid "Monitor User"
 msgstr ""
 
 msgid "Month"
-msgstr ""
+msgstr "月"
 
 msgid ""
 "Mount a <a href=\"https://www.freebsd.org/cgi/man.cgi?query=devfs\" "
@@ -4631,7 +4630,7 @@ msgid ""
 msgstr ""
 
 msgid "Mount points"
-msgstr ""
+msgstr "掛接點"
 
 msgid ""
 "Multi-domain support. Enter additional domains to secure, separated by "
@@ -4782,7 +4781,7 @@ msgid "New Password"
 msgstr "新密碼"
 
 msgid "New Primary Group"
-msgstr ""
+msgstr "新主要群組"
 
 msgid ""
 "New users are not given <b>su</b> permissions if <i>wheel</i> is their "
@@ -4798,7 +4797,7 @@ msgid "Next"
 msgstr "繼續"
 
 msgid "Nic to attach:"
-msgstr ""
+msgstr "要附加的網路介面卡："
 
 msgid "No"
 msgstr ""
@@ -4926,7 +4925,7 @@ msgid ""
 msgstr ""
 
 msgid "Official"
-msgstr ""
+msgstr "官方"
 
 msgid "Offline"
 msgstr "離線"
@@ -5008,7 +5007,7 @@ msgid "Opening download window. Make sure pop-ups are enabled in the browser."
 msgstr ""
 
 msgid "Operating System"
-msgstr ""
+msgstr "作業系統"
 
 msgid "Operation"
 msgstr ""
@@ -5053,7 +5052,7 @@ msgid "Organizational unit of the entity."
 msgstr ""
 
 msgid "Outgoing Mail Server"
-msgstr ""
+msgstr "外寄郵件伺服器"
 
 msgid ""
 "Overrides default directory creation mask of <i>0777</i> which grants "
@@ -5125,7 +5124,7 @@ msgid ""
 msgstr ""
 
 msgid "Passwords do not match"
-msgstr ""
+msgstr "密碼不符"
 
 msgid "Paste the certificate for the CA."
 msgstr ""
@@ -5262,7 +5261,7 @@ msgid "Post-script"
 msgstr ""
 
 msgid "Power Mode"
-msgstr ""
+msgstr "電力模式"
 
 msgid "Power Off UPS"
 msgstr ""
@@ -5359,10 +5358,10 @@ msgid ""
 msgstr ""
 
 msgid "Quick"
-msgstr ""
+msgstr "快速"
 
 msgid "Quiet"
-msgstr ""
+msgstr "安靜"
 
 msgid "Quota critical alert at, %"
 msgstr ""
@@ -5418,7 +5417,7 @@ msgid "Read Only"
 msgstr "唯讀"
 
 msgid "Read Only Access"
-msgstr ""
+msgstr "唯讀存取"
 
 msgid "Read-Only"
 msgstr "唯讀"
@@ -5427,16 +5426,16 @@ msgid "Read-only"
 msgstr "唯讀"
 
 msgid "Read/Write Access"
-msgstr ""
+msgstr "讀/寫存取"
 
 msgid "Realm"
-msgstr ""
+msgstr "領域"
 
 msgid "Reboot After Update"
 msgstr "更新後重新開機"
 
 msgid "Rebuild Directory Service Cache"
-msgstr ""
+msgstr "重建目錄服務快取"
 
 msgid ""
 "Recommended when <i>Max. Poll</i> is greater   than 10. Only use on "
@@ -5451,7 +5450,7 @@ msgid ""
 msgstr ""
 
 msgid "Reconnect"
-msgstr ""
+msgstr "重新連線"
 
 msgid "Record Size"
 msgstr ""
@@ -5466,7 +5465,7 @@ msgid "Recovery key added to pool "
 msgstr ""
 
 msgid "Recursive"
-msgstr ""
+msgstr "遞迴"
 
 msgid "Recursively Replicate Child Dataset Snapshots"
 msgstr ""
@@ -5487,25 +5486,25 @@ msgid "Remote Auth Token"
 msgstr ""
 
 msgid "Remote Encryption"
-msgstr ""
+msgstr "遠端加密"
 
 msgid "Remote Graphite Server Hostname"
 msgstr ""
 
 msgid "Remote HTTP/HTTPS Port"
-msgstr ""
+msgstr "遠端 HTTP/HTTPS 埠號"
 
 msgid "Remote HTTPS"
-msgstr ""
+msgstr "遠端 HTTPS"
 
 msgid "Remote Host"
-msgstr ""
+msgstr "遠端主機"
 
 msgid "Remote Hostkey"
 msgstr ""
 
 msgid "Remote Hostname"
-msgstr ""
+msgstr "遠端主機名稱"
 
 msgid "Remote Module Name"
 msgstr ""
@@ -5514,13 +5513,13 @@ msgid "Remote Monitor"
 msgstr ""
 
 msgid "Remote Path"
-msgstr ""
+msgstr "遠端路徑"
 
 msgid "Remote Port"
-msgstr ""
+msgstr "遠端埠號"
 
 msgid "Remote SSH Port"
-msgstr ""
+msgstr "遠端 SSH 埠號"
 
 msgid "Remote ZFS Pool/Dataset"
 msgstr "遠端 ZFS Pool/資料集"
@@ -5529,10 +5528,10 @@ msgid "Remove"
 msgstr "移除"
 
 msgid "Remove Additional IPv4 Alias"
-msgstr ""
+msgstr "移除附加 IPv4 別名"
 
 msgid "Remove Additional IPv6 Alias"
-msgstr ""
+msgstr "移除附加 IPv6 別名"
 
 msgid "Remove Additional Path"
 msgstr "移除其它路徑"
@@ -5559,7 +5558,7 @@ msgid "Reporting"
 msgstr "報表"
 
 msgid "Reporting Database"
-msgstr ""
+msgstr "報表資料庫"
 
 msgid "Reports"
 msgstr "報表"
@@ -5615,10 +5614,10 @@ msgid "Reserved space for this dataset and all children"
 msgstr ""
 
 msgid "Reset Config"
-msgstr ""
+msgstr "重置設定"
 
 msgid "Reset font size to default value"
-msgstr ""
+msgstr "重置字型大小為預設值"
 
 msgid ""
 "Resident set size in bytes. See <a "
@@ -5961,7 +5960,7 @@ msgid ""
 msgstr ""
 
 msgid "Select a time zone."
-msgstr ""
+msgstr "選擇時區。"
 
 msgid ""
 "Select a user account to run the command. The                user must have "
@@ -6249,7 +6248,7 @@ msgid "Send Email Status Updates"
 msgstr ""
 
 msgid "Send Test Alert"
-msgstr ""
+msgstr "寄送測試警報"
 
 msgid "Serial"
 msgstr "序號"
@@ -6363,7 +6362,7 @@ msgid ""
 msgstr ""
 
 msgid "Set new root account password:"
-msgstr ""
+msgstr "設定新的 root 帳戶密碼："
 
 msgid ""
 "Set only if required by the NFS client. Set to allow serving non-root mount "
@@ -7138,13 +7137,13 @@ msgid "Shut down"
 msgstr "關機"
 
 msgid "Shut down the system?"
-msgstr ""
+msgstr "將系統關機？"
 
 msgid "Shutdown Command"
-msgstr ""
+msgstr "關機指令"
 
 msgid "Shutdown Mode"
-msgstr ""
+msgstr "關機模式"
 
 msgid "Shutdown Timer"
 msgstr ""
@@ -7156,7 +7155,7 @@ msgid "Sign CSR"
 msgstr ""
 
 msgid "Sign in"
-msgstr ""
+msgstr "登入"
 
 msgid "Signing Certificate Authority"
 msgstr ""
@@ -7165,7 +7164,7 @@ msgid "Signing Request"
 msgstr ""
 
 msgid "Site Name"
-msgstr ""
+msgstr "站台名稱"
 
 msgid "Size (GiB)"
 msgstr "大小 (GiB)"
@@ -7313,13 +7312,13 @@ msgid "Stripe"
 msgstr ""
 
 msgid "Subject"
-msgstr ""
+msgstr "主旨"
 
 msgid "Subject Alternate Names"
 msgstr ""
 
 msgid "Submit"
-msgstr ""
+msgstr "送出"
 
 msgid "Subnet mask of the IPv4 address."
 msgstr ""
@@ -7971,7 +7970,7 @@ msgid "Use Default Domain"
 msgstr "使用預設網域"
 
 msgid "Use FQDN for logging"
-msgstr ""
+msgstr "記錄使用 FQDN"
 
 msgid "Use Signature Version 2"
 msgstr ""
@@ -8008,19 +8007,19 @@ msgid ""
 msgstr ""
 
 msgid "User"
-msgstr ""
+msgstr "使用者"
 
 msgid "User Bind Path"
-msgstr ""
+msgstr "使用者繫結路徑"
 
 msgid "User CN"
-msgstr ""
+msgstr "使用者 CN"
 
 msgid "User Controls"
 msgstr ""
 
 msgid "User DN"
-msgstr ""
+msgstr "使用者 DN"
 
 msgid "User Distinguished Name (DN) to use for authentication."
 msgstr ""
@@ -8029,7 +8028,7 @@ msgid "User Distinguished Name to use for authentication."
 msgstr ""
 
 msgid "User ID"
-msgstr ""
+msgstr "使用者 ID"
 
 msgid "User Suffix"
 msgstr ""
@@ -8100,7 +8099,7 @@ msgid "Variable"
 msgstr "變數"
 
 msgid "Verbose logging"
-msgstr ""
+msgstr "詳細資訊記錄"
 
 msgid "Verify Credential"
 msgstr "驗證認證"
@@ -8124,7 +8123,7 @@ msgid "Virtual Interface"
 msgstr "虛擬介面"
 
 msgid "Virtual Machine (VM) Wizard type."
-msgstr ""
+msgstr "虛擬機器 Wizard type."
 
 msgid "Virtual Machines"
 msgstr "虛擬機器"
