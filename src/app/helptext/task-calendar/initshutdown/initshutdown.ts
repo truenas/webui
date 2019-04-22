@@ -12,7 +12,7 @@ export default {
 
     ini_script_placeholder: T('Script'),
     ini_script_validation : [ Validators.required ],
-    ini_script_tooltip: T('Select the script from an existing pool.\
+    ini_script_tooltip: T('Select the script.\
      The script will be run using\
      <a href=https://www.freebsd.org/cgi/man.cgi?query=sh\
      target="_blank">sh(1)</a>'),
