@@ -94,6 +94,7 @@ export const helptext_system_support = {
   },
 
   screenshot: {
+  placeholder: T( "Attach a screenshot."),
   tooltip: T( "Attach a screenshot.")
   }
 };

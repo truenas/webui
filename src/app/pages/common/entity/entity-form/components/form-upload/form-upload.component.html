@@ -7,6 +7,7 @@
       <mat-card-content>
           <input type="file" #fileInput accept="{{config.acceptedFiles}}" (change)="upload(config.fileLocation)" [formControlName]="config.name">
       </mat-card-content>
+      <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
   </div>
   <ng-template #showButton>
       <mat-card-content>

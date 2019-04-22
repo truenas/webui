@@ -33,6 +33,7 @@ export class SupportComponent {
   public username_fc: any;
   public is_freenas: string = window.localStorage['is_freenas'];
   public product_image = '';
+  public scrshot: any;
 
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
@@ -260,11 +261,20 @@ export class SupportComponent {
           validation : helptext.body.validation
         },
         {
-          type : 'readfile',
+          type: 'upload',
           name: 'screenshot',
-          acceptedFiles: 'image/png',
-          tooltip : helptext.screenshot.tooltip,
-        }
+          placeholder: helptext.screenshot.placeholder,
+          tooltip: helptext.screenshot.tooltip,
+          // validation : [ Validators.required],
+          fileLocation: '',
+          // message: this.messageService,
+          acceptedFiles: 'image/*',
+          updater: this.updater,
+          parent: this,
+          hideButton: true,
+          hasErrors: true,
+          // validation: this.fileSizeValidator
+        },
       ]
     }
   ]
@@ -383,7 +393,7 @@ export class SupportComponent {
       this.payload['attach_debug'] = entityEdit.attach_debug;
       this.payload['title'] = entityEdit.title;
       this.payload['body'] = entityEdit.body;
-      // this.payload['screenshot'] = entityEdit.screenshot; TODO: How to send the screenshot?
+      // this.payload['screenshot'] = entityEdit.screenshot; //TODO: How to send the screenshot?
     }
     this.openDialog();
   };
@@ -429,6 +439,23 @@ export class SupportComponent {
             });
         }
       }
+  }
+
+  updater(file: any, parent: any){
+    const fileBrowser = file.fileInput.nativeElement;
+    this.scrshot = _.find(parent.fieldConfig, { name: 'screenshot' })
+    if (fileBrowser.files && fileBrowser.files[0]) {
+      if (fileBrowser.files[0].size >= 870000) {
+        this.scrshot['hasErrors'] = true;
+        this.scrshot['errors'] = 'File size is limited to 50 MiB.';
+        // this.fileSizeValidator = false;
+      } else {
+        this.scrshot['hasErrors'] = false;
+        // this.fileSizeValidator = true;
+        parent.subs = {"apiEndPoint":file.apiEndPoint, "file": fileBrowser.files[0]}
+      }
+    }
+    console.log(parent, parent.subs, fileBrowser, _.find(parent.fieldConfig, { name: 'screenshot' }))
   }
 
   hideField(fieldName: any, show: boolean, entity: any) {
