@@ -126,6 +126,6 @@ export const helptext_system_update = {
   },
 
   manual_update_error_dialog: {
-    message: T('Error submitting file');
+    message: T('Error submitting file')
   }
 };
