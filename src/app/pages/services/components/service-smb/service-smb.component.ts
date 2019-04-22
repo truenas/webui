@@ -3,7 +3,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import * as _ from 'lodash';
 import { MatDialog, MatDialogRef } from '@angular/material';
 
-import { IdmapService, IscsiService, RestService, WebSocketService } from '../../../../services/';
+import { IdmapService, IscsiService, RestService, WebSocketService, UserService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import helptext from '../../../../helptext/services/components/service-smb';
@@ -113,6 +113,16 @@ export class ServiceSMBComponent {
       options: [],
       tooltip: helptext.cifs_srv_guest_tooltip,
     },
+    { 
+      type: 'combobox',
+      name: 'cifs_srv_admin_group',
+      placeholder: helptext.cifs_srv_admin_group_placeholder,
+      tooltip: helptext.cifs_srv_admin_group_tooltip,
+      options: [],
+      searchOptions: [],
+      parent: this,
+      updater: this.updateGroupSearchOptions
+    },
     { type: 'input',
       name: 'cifs_srv_filemask',
       placeholder: helptext.cifs_srv_filemask_placeholder,
@@ -199,6 +209,7 @@ export class ServiceSMBComponent {
   private cifs_srv_guest: any;
   private cifs_srv_doscharset: any;
   private cifs_srv_unixcharset: any;
+  private cifs_srv_admin_group: any;
   protected defaultIdmap: any;
   protected idmap_tdb_range_low: any;
   protected idmap_tdb_range_high: any;
@@ -232,13 +243,25 @@ export class ServiceSMBComponent {
         this.cifs_srv_guest.options.push({ label: user.username, value: user.username });
       });
     });
+
+    this.userService.listAllGroups().subscribe(res => {
+      let groups = [];
+      let items = res.data.items;
+      items.forEach((item) => {
+        groups.push({label: item.label, value: item.id});
+      });
+      this.cifs_srv_admin_group = _.find(this.fieldConfig, {'name':'cifs_srv_admin_group'});
+      groups.forEach((group) => {
+        this.cifs_srv_admin_group.options.push({ label: group.label, value: group.value });
+      });
+    });
   }
 
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef,
     protected iscsiService: IscsiService,
-    protected idmapService: IdmapService,
+    protected idmapService: IdmapService, protected userService: UserService,
     protected loader: AppLoaderService, protected dialog: MatDialog) {}
 
   afterInit(entityEdit: any) {
@@ -249,6 +272,17 @@ export class ServiceSMBComponent {
         entityEdit.formGroup.controls['idmap_tdb_range_high'].setValue(idmap_res[0].idmap_tdb_range_high);
         entityEdit.formGroup.controls['idmap_tdb_range_low'].setValue(idmap_res[0].idmap_tdb_range_low);
       });
+    });
+  }
+
+  updateGroupSearchOptions(value = "", parent) {
+    parent.userService.listAllGroups(value).subscribe(res => {
+      let groups = [];
+      let items = res.data.items;
+      for (let i = 0; i < items.length; i++) {
+        groups.push({label: items[i].label, value: items[i].id});
+      }
+        parent.cifs_srv_admin_group.searchOptions = groups;
     });
   }
 
