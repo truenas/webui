@@ -64,11 +64,6 @@ export const helptext_system_advanced = {
   advancedmode_placeholder: T('Show advanced fields by default'),
   advancedmode_tooltip: T('Set to always show advanced fields, when available.'),
 
-  periodic_notifyuser_placeholder: T('Periodic Notification User'),
-  periodic_notifyuser_tooltip: T('Select a user to receive security output emails. This\
- output runs nightly but only sends an email when the\
- system reboots or encounters an error.'),
-
   graphite_placeholder: T('Remote Graphite Server Hostname'),
   graphite_tooltip: T('Enter the IP address or hostname of a remote server\
  running Graphite.'),
