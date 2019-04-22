@@ -105,8 +105,6 @@ export class SystemProfiler {
     });
     data.splice(sd, 1);
     this.diskData = data;
-    console.log(sd);
-    console.log(data);
     return data;
   }
   
@@ -131,11 +129,9 @@ export class SystemProfiler {
           vdev.children.forEach((disk, dIndex) => {
             let spl = disk.device.split('p');
             let name = spl[0]
-            console.log(" adding " + name + " to vdev");
             v.disks[name] = dIndex;
           });
         } 
-        console.log(v);
         
         this.storeVdevInfo(v);
       });
@@ -160,14 +156,11 @@ export class SystemProfiler {
     for(let enclosure of this.profile){
       let diskKey = enclosure.diskKeys[diskName];
       let test = typeof diskKey;
-      console.log(enclosure.diskKeys);
-      console.log(diskKey);
 
       if(test == "undefined") { 
         continue;
       } else {
         
-        console.log('diskKey (' + diskKey + ') found for ' + diskName);
         enclosure.disks[diskKey].vdev = vdev;
         enclosure.disks[diskKey].status = this.getDiskStatus(diskName, enclosure, vdev);
 
@@ -178,7 +171,6 @@ export class SystemProfiler {
   }
 
   getDiskStatus(diskName, enclosure, vdev?:VDev): string{
-        console.log(diskName);
         if(!vdev){
           let diskIndex = enclosure.diskKeys[diskName];
           vdev = enclosure.disks[diskIndex].vdev;
@@ -186,11 +178,9 @@ export class SystemProfiler {
 
         let poolDisk;
         if(vdev.disks[diskName] == -1){
-        console.log('No Children');
           //enclosure.disks[diskKey].status = this.pools[vdev.poolIndex].topology.data[vdev.vdevIndex].status;
           poolDisk = this.pools[vdev.poolIndex].topology.data[vdev.vdevIndex];
         } else {
-        console.log('Children');
           //enclosure.disks[diskKey].status = this.pools[vdev.poolIndex].topology.data[vdev.vdevIndex][vdev.disks[diskName]].status;
           poolDisk = this.pools[vdev.poolIndex].topology.data[vdev.vdevIndex].children[vdev.disks[diskName]];
         }

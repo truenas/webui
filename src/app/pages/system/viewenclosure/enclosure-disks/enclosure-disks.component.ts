@@ -40,7 +40,6 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
   constructor(public el:ElementRef, private core: CoreService /*, private ngZone: NgZone*/) { 
 
     core.register({observerClass: this, eventName: 'ThemeData'}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
       this.theme = evt.data
     });
 
