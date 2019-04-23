@@ -30,7 +30,6 @@ export class AdvancedComponent implements OnDestroy {
   protected adv_serialconsole_subscription: any;
   public adv_serialport: any;
   public adv_serialspeed: any;
-  public adv_periodic_notifyuser: any;
   public swapondrive: any;
   public swapondrive_subscription: any;
   public entityForm: any;
@@ -174,12 +173,6 @@ export class AdvancedComponent implements OnDestroy {
     placeholder: helptext_system_advanced.advancedmode_placeholder,
     tooltip: helptext_system_advanced.advancedmode_tooltip
   }, {
-    type: 'select',
-    name: 'periodic_notifyuser',
-    placeholder: helptext_system_advanced.periodic_notifyuser_placeholder,
-    options: [],
-    tooltip: helptext_system_advanced.periodic_notifyuser_tooltip
-  }, {
     type: 'input',
     name: 'graphite',
     placeholder: helptext_system_advanced.graphite_placeholder,
@@ -202,7 +195,7 @@ export class AdvancedComponent implements OnDestroy {
 // This tooltip wraps to the next line when uncommented.
 // Erin said it's more than likely the CSS. Commented out for now and
 // linking to the user guide from the test instead.
-//  tooltip: T('See the <a href="%%docurl%%/system.html%%webversion%%#self-encrypting-drives"\
+//  tooltip: T('See the <a href="%%docurl%%/system.html#self-encrypting-drives"\
 //                target="_blank"> Self Encrypting Drives</a> section of\
 //                the user guide for more information.'),
 //
@@ -292,13 +285,6 @@ export class AdvancedComponent implements OnDestroy {
         )}
     });
 
-    this.rest.get('account/users/', { limit: 0 }).subscribe((res) => {
-      const adv_periodic_notifyuser =
-        _.find(this.fieldConfig, { 'name': 'periodic_notifyuser' });
-      res.data.forEach((item) => {
-        adv_periodic_notifyuser.options.push({label: item['bsdusr_username'], value: item['bsdusr_username']});
-      });
-    });
   }
 
   public customSubmit(body) {

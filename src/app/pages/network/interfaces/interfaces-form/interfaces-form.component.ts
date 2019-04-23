@@ -192,6 +192,8 @@ export class InterfacesFormComponent implements OnDestroy {
         name: 'delete',
         placeholder: helptext.delete_placeholder,
         tooltip: helptext.delete_tooltip,
+        isHidden: true,
+        disabled: true,
       }]
     },
   ];
@@ -316,6 +318,9 @@ export class InterfacesFormComponent implements OnDestroy {
       } else {
         this.iparrayControl.initialCount = this.initialCount['aliases']
           = this.initialCount_default['aliases'] = 0;
+
+        this.iparrayControl.formarray[3]['isHidden'] = false;
+        this.iparrayControl.formarray[3].disabled = false;
       }
     });
   }
