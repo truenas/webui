@@ -40,10 +40,11 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
   constructor(public el:ElementRef, private core: CoreService /*, private ngZone: NgZone*/) { 
 
     core.register({observerClass: this, eventName: 'ThemeData'}).subscribe((evt:CoreEvent) => {
-      this.theme = evt.data
+      this.theme = evt.data;
     });
 
     core.register({observerClass: this, eventName: 'ThemeChanged'}).subscribe((evt:CoreEvent) => {
+      console.log(evt);
       this.theme = evt.data;
       this.setCurrentView(this.currentView);
     });
@@ -323,6 +324,11 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
 
   setDisksPoolState(){
     this.setDisksDisabled();
+
+    this.selectedEnclosure.disks.forEach((disk, index) => {
+      let pIndex = disk.vdev.poolIndex;
+      this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: index, color: this.theme[this.theme.accentColors[pIndex]]}});
+    });
   }
 
 }

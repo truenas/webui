@@ -16,9 +16,9 @@
         <div class="details-wrapper" fxFill fxLayout="row" fxLayoutAlign="space-around stretch">
   
           <div fxFlex flex="33" class="tiles" [class.active]="currentView == 'pools' " fxLayout="column" fxLayoutAlign="center center">
-            <div class="primary-number" >5</div>
+            <div class="primary-number" >{{system.pools.length}}</div>
             <div class="title">Pools in Enclosure</div>
-            <div class="subtitle">No other enclosures detected</div>
+            <div class="subtitle">{{system.profile.length > 1 ? system.profile.length - 1 : 'No' }} other enclosures detected</div>
             <button mat-button color="primary" (click)="setCurrentView('pools')">SHOW POOLS</button>
           </div>
   

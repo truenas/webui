@@ -53,7 +53,7 @@ export class Chassis {
    protected rows: number;
    protected columns: number;
    protected filters: any[] = [];
-   protected disabledOpacity = 0.33;
+   protected disabledOpacity = 0.25;
    protected initialized: boolean = false;
 
    constructor(){
