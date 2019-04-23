@@ -86,3 +86,38 @@ nav.view-nav-bar{
 .view-card .disk-basic-details{
   border-right:solid 1px rgba(0,0,0, 0.1);
 }
+
+.view-card .disk-advanced-details .detail{
+  text-align:left;
+  margin:8px 0;
+}
+
+.view-card .disk-advanced-details .detail .label{
+  font-size:100%;
+  font-weight:500;
+}
+
+.view-card .disk-advanced-details .detail .value{
+  text-align:left;
+  font-weight:300;
+  font-size: 120%;
+  line-height: 85%;
+/*
+    text-align: left;
+    font-weight: 300;
+    font-size: 120%;
+    line-height: 85%;
+*/
+}
+
+.view-card #view-selector{
+}
+
+.view-card .disk-advanced-details .detail{
+  padding:8px 16px;
+}
+
+.view-card .disk-basic-details .capacity{
+    font-weight: 500;
+    font-size: 120%;
+}

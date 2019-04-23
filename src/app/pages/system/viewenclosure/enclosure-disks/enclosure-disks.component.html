@@ -13,23 +13,30 @@
     <div *ngIf="selectedDisk; then details else overview ;"></div>
     <ng-template #overview>
       <div #disksdetails id="disks-details">
-        <div class="details-wrapper" fxFill fxLayout="row" fxLayoutAlign="space-around stretch">
+        <div class="details-wrapper" id="view-selector" fxFill fxLayout="row" fxLayoutAlign="space-around stretch">
+
+          <!-- ZeroState -->
+          <ng-template #loading>
+            <div fxFlex class="tiles" [class.active]="currentView == 'pools' " fxLayout="column" fxLayoutAlign="center center">
+              Loading...
+            </div>
+          </ng-template>
   
-          <div fxFlex flex="33" class="tiles" [class.active]="currentView == 'pools' " fxLayout="column" fxLayoutAlign="center center">
-            <div class="primary-number" >{{system.pools.length}}</div>
+          <div *ngIf="system; else loading" fxFlex class="tiles" [class.active]="currentView == 'pools' " fxLayout="column" fxLayoutAlign="center center">
+            <div class="primary-number" >{{ system.pools.length }}</div>
             <div class="title">Pools in Enclosure</div>
             <div class="subtitle">{{system.profile.length > 1 ? system.profile.length - 1 : 'No' }} other enclosures detected</div>
             <button mat-button color="primary" (click)="setCurrentView('pools')">SHOW POOLS</button>
           </div>
   
-          <div fxFlex flex="33" class="tiles" [class.active]="currentView == 'status' " fxLayout="column" fxLayoutAlign="center center">
+          <div *ngIf="system; else loading" fxFlex class="tiles" [class.active]="currentView == 'status' " fxLayout="column" fxLayoutAlign="center center">
             <div class="primary-number" >0</div>
             <div class="title">Failed Disks</div>
             <div class="subtitle">All disks healthy</div>
             <button mat-button color="primary" (click)="setCurrentView('status')">SHOW STATUS</button>
           </div>
   
-          <div fxFlex flex="33" class="tiles" [class.active]="currentView == 'expanders' " fxLayout="column" fxLayoutAlign="center center">
+          <div *ngIf="system; else loading" fxFlex class="tiles" [class.active]="currentView == 'expanders' " fxLayout="column" fxLayoutAlign="center center">
             <div class="primary-number" >2</div>
             <div class="title">SAS Expanders</div>
             <div class="subtitle">Pool name goes here</div>
@@ -47,14 +54,90 @@
   
           <div fxFlex="25" class="disk-basic-details" fxLayout="column" fxLayoutAlign="center center">
             <disk-ui [data]="selectedDisk"></disk-ui><!-- disk icon + labels -->
+            <div class="capacity">{{converter(selectedDisk.size)}}</div>
             <div class="disk-actions">
-              <button mat-button color="primary">FAULT</button>
+              <!--<button mat-button color="primary">FAULT</button>-->
               <button mat-button color="primary" (click)="clearDisk()">BACK TO OVERVIEW</button>
             </div>
           </div>
   
-          <div fxFlex="75" class="tiles disk-advanced-details" fxLayout="column" fxLayoutAlign="center center">
-            <h3 style="opacity:0.75;">Disk Properties Go Here</h3>
+          <!--<div fxFlex="75" class="tiles disk-advanced-details" fxLayoutWrap fxLayout="row" fxLayoutAlign="center center">-->
+          <div fxFlex="75" class="tiles disk-advanced-details" >
+            <!--<h3 style="opacity:0.75;">Disk Properties Go Here</h3>-->
+
+            <div class="details-wrapper" fxLayout="row wrap" fxLayoutGap="16px">
+
+              <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
+                <div>
+                  <div class="label">Pool</div>
+                  <div class="value">{{selectedDisk.vdev.pool}}</div>
+                </div>
+              </div>
+
+              <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
+                <div>
+                  <div class="label">Serial</div>
+                  <div class="value">{{selectedDisk.serial}}</div>
+                </div>
+              </div>
+
+              <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
+                <div>
+                  <div class="label">Status</div>
+                  <div class="value">{{selectedDisk.status}}</div>
+                </div>
+              </div>
+
+              <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
+                <div>
+                  <div class="label">Acoustic Level</div>
+                  <div class="value">{{selectedDisk.acousticlevel}}</div>
+                </div>
+              </div>
+
+              <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
+                <div>
+                  <div class="label">Adv. Power Mgmt.</div>
+                  <div class="value">{{selectedDisk.advpowermgmt}}</div>
+                </div>
+              </div>
+
+              <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
+                <div>
+                  <div class="label">S.M.A.R.T. Enabled</div>
+                  <div class="value">{{selectedDisk.togglesmart ? 'Yes' : 'No'}}</div>
+                </div>
+              </div>
+
+              <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
+                <div>
+                  <div class="label">S.M.A.R.T. Options</div>
+                  <div class="value">{{selectedDisk.smartoptions ? selectedDisk.smartoptions : 'None'}}</div>
+                </div>
+              </div>
+
+              <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
+                <div>
+                  <div class="label">Transfer Mode</div>
+                  <div class="value">{{selectedDisk.transfermode}}</div>
+                </div>
+              </div>
+
+              <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
+                <div>
+                  <div class="label">HDD Standby</div>
+                  <div class="value">{{selectedDisk.hddstandby}}</div>
+                </div>
+              </div>
+
+              <div fxFlex="calc(75% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
+                <div>
+                  <div class="label">Description</div>
+                  <div class="value">{{selectedDisk.description ? selectedDisk.description : 'None'}}</div>
+                </div>
+              </div>
+
+            </div>
           </div>
 
         </div>

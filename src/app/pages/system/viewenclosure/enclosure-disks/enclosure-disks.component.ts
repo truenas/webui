@@ -331,4 +331,14 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
     });
   }
 
+  converter(size: number){
+    let gb = size / 1024 / 1024/ 1024;
+    if(gb > 1000){
+      let tb = gb / 1024;
+      return tb.toFixed(2) + " TB";
+    } else {
+      return gb.toFixed(2) + " GB";
+    }
+  }
+
 }
