@@ -30,7 +30,6 @@ export class AdvancedComponent implements OnDestroy {
   protected adv_serialconsole_subscription: any;
   public adv_serialport: any;
   public adv_serialspeed: any;
-  public adv_periodic_notifyuser: any;
   public swapondrive: any;
   public swapondrive_subscription: any;
   public entityForm: any;
@@ -174,12 +173,6 @@ export class AdvancedComponent implements OnDestroy {
     placeholder: helptext_system_advanced.advancedmode_placeholder,
     tooltip: helptext_system_advanced.advancedmode_tooltip
   }, {
-    type: 'select',
-    name: 'periodic_notifyuser',
-    placeholder: helptext_system_advanced.periodic_notifyuser_placeholder,
-    options: [],
-    tooltip: helptext_system_advanced.periodic_notifyuser_tooltip
-  }, {
     type: 'input',
     name: 'graphite',
     placeholder: helptext_system_advanced.graphite_placeholder,
@@ -292,13 +285,6 @@ export class AdvancedComponent implements OnDestroy {
         )}
     });
 
-    this.rest.get('account/users/', { limit: 0 }).subscribe((res) => {
-      const adv_periodic_notifyuser =
-        _.find(this.fieldConfig, { 'name': 'periodic_notifyuser' });
-      res.data.forEach((item) => {
-        adv_periodic_notifyuser.options.push({label: item['bsdusr_username'], value: item['bsdusr_username']});
-      });
-    });
   }
 
   public customSubmit(body) {
