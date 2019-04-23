@@ -10,7 +10,7 @@ location_validation : [ Validators.required ],
 
 contact_placeholder : T('Contact'),
 contact_tooltip: T('Enter an email address to receive messages from the\
- <a href="%%docurl%%/services.html%%webversion%%#snmp"\
+ <a href="%%docurl%%/services.html#snmp"\
  target="_blank">SNMP service</a>.'),
 contact_validation: [Validators.required, Validators.email],
 
