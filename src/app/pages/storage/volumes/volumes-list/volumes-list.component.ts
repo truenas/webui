@@ -618,6 +618,10 @@ export class VolumesListTableConfig implements InputTableConf {
       actions.push({
         label: T("Create Snapshot"),
         onClick: (row) => {
+          let vmware_res_status, recursiveIsChecked = false;
+          this.ws.call('vmware.dataset_has_vms',[row.path, false]).subscribe((vmware_res)=>{
+            vmware_res_status = vmware_res;
+          })
           const conf: DialogFormConfiguration = {
             title: "One time snapshot of " + row.path,
             fieldConfig: [
@@ -642,7 +646,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 name: 'vmware_sync',
                 placeholder: helptext.vmware_sync_placeholder,
                 tooltip: helptext.vmware_sync_tooltip,
-                isHidden: true
+                isHidden: !vmware_res_status
               }
             ],
             method_rest: "storage/snapshot",
@@ -654,10 +658,11 @@ export class VolumesListTableConfig implements InputTableConf {
                 placeholder: helptext.snapshotDialog_recursive_placeholder,
                 tooltip: helptext.snapshotDialog_recursive_tooltip,
                 function: () => {
-                  this.ws.call('vmware.dataset_has_vms',[row.path, true]).subscribe((vmware_res)=>{
-                    if(!vmware_res){
+                  this.ws.call('vmware.dataset_has_vms',[row.path, !recursiveIsChecked]).subscribe((vmware_res)=>{
+                    if(vmware_res){
                     _.find(conf.fieldConfig, {'name' : 'vmware_sync'}).isHidden = false;
                     }
+                    recursiveIsChecked = !recursiveIsChecked;
                   })
                 }
               }],
