@@ -2,16 +2,6 @@ import { Validators } from "@angular/forms";
 import { T } from "app/translate-marker";
 
 export const helptext_system_general = {
-  stg_guiprotocol: {
-    placeholder: T("Protocol"),
-    tooltip: T(
-      "Define the web protocol to use when connecting to the\
- administrative GUI from a browser. To change the\
- default <i>HTTP</i> to <i>HTTPS</i> or\
- <i>HTTP+HTTPS</i>, a <b>Certificate</b> must also be\
- chosen."
-    )
-  },
 
   stg_guicertificate: {
     placeholder: T("GUI SSL Certificate"),
@@ -113,6 +103,11 @@ export const helptext_system_general = {
 
   secretseed: {
     placeholder: T("Export Password Secret Seed")
+  },
+
+  crash_reporting: {
+    placeholder: T("Crash reporting"),
+    tooltip: T("Enable sending anonymous crash reports to iXsystems")
   },
 
   save_config_form: {
