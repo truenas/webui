@@ -28,9 +28,21 @@
         <ng-template matStepLabel>{{"Confirm Options" | translate}}</ng-template>
         <div *ngIf="conf.summary">
           <div> {{ conf.summary_title }}</div>
-          <div *ngFor="let key of conf.objectKeys(conf.summary)">
-            <div>{{key + ' : ' + conf.summary[key]}}</div>
-          </div>
+          <ul >
+            <li *ngFor="let item of conf.summary | keyvalue : originalOrder">
+              <div *ngIf="item.value | keyvalue; else inobject">
+                <label>{{item.key + ':'}}</label>
+                <ul class="wizard-ul">
+                  <li *ngFor="let subitem of item.value | keyvalue : originalOrder">
+                    <div *ngIf="subitem.value">{{subitem.key + ' : ' + subitem.value}}</div>
+                  </li>
+                </ul>
+              </div>
+              <ng-template #inobject>
+                <div *ngIf="item.value">{{item.key + ' : ' + item.value}}</div>
+              </ng-template>
+            </li>
+          </ul>
         </div>
         {{"Confirm these settings." | translate}}
         <mat-card-actions class="wizard-action">

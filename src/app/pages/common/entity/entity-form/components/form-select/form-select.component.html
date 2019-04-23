@@ -1,4 +1,4 @@
-<div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
+<div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" [hidden]="config.isHidden">
   <mat-form-field class="full-width" value="fromFormField" #field>
     <mat-select 
       #selectTrigger
