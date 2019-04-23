@@ -2,25 +2,26 @@ import { T } from '../../translate-marker';
 
 export default {
     name_placeholder: T('Name'),
-    name_tooltip: T('Replication task name'),
+    name_tooltip: T('Replication task name.'),
 
     direction_placeholder: T('Direction'),
-    direction_tooltip: T('Direct the flow of the ZFS snapshots. Choose between pushing\
- snapshots to a remote host or pulling snapshots from a remote host.'),
+    direction_tooltip: T('Direction of travel. <i>Push</i> sends snapshots to a remote system.\
+ <i>Pull</i> receives snapshots from a remote system.'),
 
     transport_placeholder: T('Transport'),
     transport_tooltip: T('Method for snapshot transfer:<ul>\
  <li><i>SSH</i> is supported by most systems. It requires a previously created\
  <a href="%%docurl%%/system.html%%webversion%%#ssh-connection" target="_blank">SSH connection</a>.</li>\
  <li><i>SSH+NETCAT</i> uses SSH to establish a connection to the remote system, then uses\
- an unencrypted data stream to improve data transfer speeds. This is only an option when\
+ <a href="https://www.freebsd.org/cgi/man.cgi?query=nc" target="_blank">nc(1)</a> to send an unencrypted\
+ data stream for higher transfer speeds. This is only an option when\
  replicating to a FreeBSD system that has <a href="https://github.com/freenas/py-libzfs"\
  target="_blank">py-libzfs</a> installed.</li>\
- <li><i>LOCAL</i> replicates snapshots to another dataset within the system.</li>\
- <li><i>LEGACY</i> uses the replication engine implemented in FreeNAS 11.2 and earlier.</li></ul>'),
+ <li><i>LOCAL</i> replicates snapshots to another dataset on the same system.</li>\
+ <li><i>LEGACY</i> uses the legacy replication engine from FreeNAS 11.2 and earlier.</li></ul>'),
 
     ssh_credentials_placeholder: T('SSH Connection'),
-    ssh_credentials_tooltip: T('Configured SSH connection to use for the replication.\
+    ssh_credentials_tooltip: T('Choose the SSH connection to use for the replication.\
  Choose from a list of connections configured in System > <a href="%%docurl%%/system.html%%webversion%%#ssh-connection"\
  target="_blank">SSH connection</a>.'),
 
@@ -40,11 +41,11 @@ export default {
     netcat_passive_side_connect_address_tooltip: T(''),
 
     source_datasets_placeholder: T('Source Datasets'),
-    source_datasets_tooltip: T('From the source computer with snapshots to replicate, choose an\
- existing ZFS pool or dataset with an active periodic snapshot task. Multiple source datasets can be chosen.'),
+    source_datasets_tooltip: T('Choose one or more datasets on the source system to be replicated.\
+ Each dataset must have an enabled periodic snapshot task.'),
 
     target_dataset_placeholder: T('Target Datasets'),
-    target_dataset_tooltip: T('Enter the ZFS pool/dataset on the remote or destination system which will\
+    target_dataset_tooltip: T('Enter the dataset on the remote or destination system where\
  store snapshots. Example: Poolname/Datasetname, not the mountpoint or filesystem path'),
 
     recursive_placeholder: T('Recursive'),
