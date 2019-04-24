@@ -3,15 +3,16 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { MatDialog } from '@angular/material';
 
-import { IdmapService, IscsiService, RestService, WebSocketService, UserService } from '../../../../services/';
+import { IdmapService, IscsiService, RestService, WebSocketService, UserService, DialogService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { EntityUtils } from '../../../common/entity/utils';
 import helptext from '../../../../helptext/services/components/service-smb';
 
 @Component({
   selector: 'smb-edit',
   template: ` <entity-form [conf]="this"></entity-form>`,
-  providers: [IscsiService, IdmapService],
+  providers: [IscsiService, IdmapService, DialogService],
 })
 
 export class ServiceSMBComponent {
@@ -159,6 +160,7 @@ export class ServiceSMBComponent {
   protected idmap_tdb_range_high: any;
   protected dialogRef: any;
   protected idNumber: any;
+  public entityEdit: any;
 
   preInit(entityForm: any) {
     this.cifs_srv_unixcharset = _.find(this.fieldConfig, {"name": "cifs_srv_unixcharset"});
@@ -197,11 +199,12 @@ export class ServiceSMBComponent {
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef,
-    protected iscsiService: IscsiService,
+    protected iscsiService: IscsiService, protected dialogService: DialogService,
     protected idmapService: IdmapService, protected userService: UserService,
     protected loader: AppLoaderService, protected dialog: MatDialog) {}
 
   afterInit(entityEdit: any) {
+    this.entityEdit = entityEdit;
     this.rest.get('services/cifs', {}).subscribe((res) => {
       this.idmapID = res['id'];
       this.ws.call('idmap.get_or_create_idmap_by_domain', ['DS_TYPE_DEFAULT_DOMAIN']).subscribe((idmap_res) => {
@@ -242,12 +245,13 @@ export class ServiceSMBComponent {
     this.ws.call('idmap.tdb.update', [this.idNumber, {range_low: new_range_low, range_high: new_range_high}])
       .subscribe((res) => {
         console.log(res);
-      }),
-      (err) => {
-        console.log(err);
-      }, 
+      },
+      (err)=>{
+        console.log('here')
+        new EntityUtils().handleWSError(this.entityEdit, err);
+      },
       () => {
         console.log('done');
-      }
+      })
     }
   }
