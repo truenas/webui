@@ -439,6 +439,12 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
     },
     {
       type: 'checkbox',
+      name: 'allow_mount_fusefs',
+      placeholder: helptext.allow_mount_fusefs_placeholder,
+      tooltip: helptext.allow_mount_fusefs_tooltip,
+    },
+    {
+      type: 'checkbox',
       name: 'allow_mount_nullfs',
       placeholder: helptext.allow_mount_nullfs_placeholder,
       tooltip: helptext.allow_mount_nullfs_tooltip,
@@ -460,6 +466,12 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
       name: 'allow_mount_zfs',
       placeholder: helptext.allow_mount_zfs_placeholder,
       tooltip: helptext.allow_mount_zfs_tooltip,
+    },
+    {
+      type: 'checkbox',
+      name: 'allow_vmm',
+      placeholder: helptext.allow_vmm_placeholder,
+      tooltip: helptext.allow_vmm_tooltip,
     },
     {
       type: 'checkbox',
@@ -696,7 +708,25 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
       name: 'rtsold',
       placeholder: helptext.rtsold_placeholder,
       tooltip: helptext.rtsold_tooltip,
-    }
+    },
+    {
+      type: 'checkbox',
+      name: 'ip_hostname',
+      placeholder: helptext.ip_hostname_placeholder,
+      tooltip: helptext.ip_hostname_tooltip,
+    },
+    {
+      type: 'checkbox',
+      name: 'assign_localhost',
+      placeholder: helptext.assign_localhost_placeholder,
+      tooltip: helptext.assign_localhost_tooltip,
+    },
+    {
+      type: 'checkbox',
+      name: 'nat',
+      placeholder: helptext.nat_placeholder,
+      tooltip: helptext.nat_tooltip,
+    },
   ];
   public rctlConfig: FieldConfig[] = [
 
@@ -850,7 +880,7 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
     'exec_clean',
     'mount_linprocfs',
     'mount_procfs',
-    // 'allow_vmm', ??
+    'allow_vmm',
     'allow_tun',
     'allow_socket_af',
     'allow_quotas',
@@ -858,7 +888,7 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
     'allow_mount_tmpfs',
     'allow_mount_procfs',
     'allow_mount_nullfs',
-    // 'allow_mount_fusefs',??
+    'allow_mount_fusefs',
     'allow_mount_devfs',
     'allow_mount',
     'allow_mlock',
@@ -870,9 +900,9 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
     'mount_devfs',
     'ip6_saddrsel',
     'ip4_saddrsel',
-    // 'ip_hostname',??
-    // 'assign_localhost',??
-    // 'nat', ??
+    'ip_hostname',
+    'assign_localhost',
+    'nat',
   ];
   // fields only accepted by ws with value on/off
   protected OFfields: any = [
