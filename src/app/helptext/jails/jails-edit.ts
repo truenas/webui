@@ -320,6 +320,9 @@ permission is only effective when <b>allow_mount</b> \
 is set and <b>enforce_statfs</b> is set to a value \
 lower than <i>2</i>.'),
 
+allow_mount_fusefs_placeholder: T('allow_mount_fusefs'),
+allow_mount_fusefs_tooltip: T(''),
+
 allow_mount_nullfs_placeholder: T('allow_mount_nullfs'),
 allow_mount_nullfs_tooltip: T('Set to allow privileged users inside the jail to \
 mount and unmount the nullfs file system. This \
@@ -351,6 +354,9 @@ href="https://www.freebsd.org/cgi/man.cgi?query=zfs&sektion=8&apropos=0&manpath=
 target="_blank">ZFS(8)</a> man page has information \
 on how to configure \
 the ZFS filesystem to operate from within a jail.'),
+
+allow_vmm_placeholder: T('allow_vmm'),
+allow_vmm_tooltip: T(''),
 
 allow_quotas_placeholder: T('allow_quotas'),
 allow_quotas_tooltip: T('Set to allow the jail root to administer quotas on \
@@ -522,6 +528,15 @@ rtsold_placeholder: T('Autoconfigure IPv6 with rtsold'),
 rtsold_tooltip: T('Use <a href="https://www.freebsd.org/cgi/man.cgi?query=rtsold" \
 target="_blank">rtsold(8)</a> as part of IPv6 autoconfiguration. \
 Send ICMPv6 Router Solicitation messages to interfaces to discover new routers.'),
+
+ip_hostname_placeholder: T('ip_hostname'),
+ip_hostname_tooltip: T(''),
+
+assign_localhost_placeholder: T('assign_localhost'),
+assign_localhost_tooltip: T(''),
+
+nat_placeholder: T('nat'),
+nat_tooltip: T(''),
 
 //rctl config
 memoryuse_placeholder: T('memoryuse'),
