@@ -33,6 +33,7 @@ import { FormComboboxComponent } from '../form-combobox/form-combobox.component'
 import {FormParagraphComponent} from '../form-paragraph/form-paragraph.component';
 import {FormSchedulerComponent} from '../form-scheduler/form-scheduler.component';
 import {FormIpWithNetmaskComponent} from '../form-ipwithnetmask/form-ipwithnetmask.component';
+import { FormListComponent } from '../form-list/form-list.component';
 
 const components: {[type: string] : Type<Field>} = {
   button : FormButtonComponent,
@@ -55,7 +56,8 @@ const components: {[type: string] : Type<Field>} = {
   combobox: FormComboboxComponent,
   paragraph: FormParagraphComponent,
   scheduler: FormSchedulerComponent,
-  ipwithnetmask: FormIpWithNetmaskComponent
+  ipwithnetmask: FormIpWithNetmaskComponent,
+  list: FormListComponent,
 };
 
 @Directive({selector : '[dynamicField]'})
