@@ -360,12 +360,14 @@ export class IdmapComponent implements OnInit {
 
     // get default idmap range
     this.rest.get('services/cifs', {}).subscribe((res) => {
-      this.ws.call('datastore.query', ['directoryservice.idmap_tdb', [["idmap_ds_type", "=", "5"], ["idmap_ds_id", "=", res.data['id']]]]).subscribe((idmap_res) => {
-        this.defaultIdmap = idmap_res[0];
+      this.ws.call('idmap.get_or_create_idmap_by_domain', ['DS_TYPE_DEFAULT_DOMAIN']).subscribe((idmap_res) => {
+        console.log(idmap_res)
+        this.defaultIdmap = idmap_res;
       });
     });
 
     this.ws.call('datastore.query', [this.query_call + this.idmap_type, [["idmap_ds_type", "=", this.targetDS]]]).subscribe((res) => {
+      console.log(res)
       if (res[0]) {
         this.idmapID = res[0]['id'];
         for (let i in res[0]) {
@@ -420,8 +422,8 @@ export class IdmapComponent implements OnInit {
     if (new_range_low > new_range_high) {
       this.error = helptext.idmap_range_comparison_error;
     } else {
-      if (new_range_low < this.defaultIdmap['idmap_tdb_range_low'] || new_range_low > this.defaultIdmap['idmap_tdb_range_high']) {
-        if (new_range_high < this.defaultIdmap['idmap_tdb_range_low'] || new_range_high > this.defaultIdmap['idmap_tdb_range_high']) {
+      if (new_range_low < this.defaultIdmap['range_low'] || new_range_low > this.defaultIdmap['range_high']) {
+        if (new_range_high < this.defaultIdmap['range_low'] || new_range_high > this.defaultIdmap['range_high']) {
           // no overlap, update/insert into datastore
           if (this.idmapID) {
             this.loader.open();
@@ -450,10 +452,10 @@ export class IdmapComponent implements OnInit {
             );
           }
         } else {
-          this.error = helptext.idmap_range_overlap_error + this.defaultIdmap['idmap_tdb_range_low'] + "," + this.defaultIdmap['idmap_tdb_range_high'] + "] !";
+          this.error = helptext.idmap_range_overlap_error + this.defaultIdmap['range_low'] + "," + this.defaultIdmap['range_high'] + "] !";
         }
       } else {
-        this.error = helptext.idmap_range_overlap_error + this.defaultIdmap['idmap_tdb_range_low'] + "," + this.defaultIdmap['idmap_tdb_range_high'] + "] !";
+        this.error = helptext.idmap_range_overlap_error + this.defaultIdmap['range_low'] + "," + this.defaultIdmap['range_high'] + "] !";
       }
     }
   }

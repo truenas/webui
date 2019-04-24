@@ -204,9 +204,7 @@ export class ServiceSMBComponent {
   afterInit(entityEdit: any) {
     this.rest.get('services/cifs', {}).subscribe((res) => {
       this.idmapID = res['id'];
-      console.log('check', res)
       this.ws.call('idmap.get_or_create_idmap_by_domain', ['DS_TYPE_DEFAULT_DOMAIN']).subscribe((idmap_res) => {
-        console.log(idmap_res)
         this.defaultIdmap = idmap_res[0];
         this.idNumber = idmap_res.id;
         entityEdit.formGroup.controls['idmap_tdb_range_high'].setValue(idmap_res.range_high);
@@ -230,7 +228,6 @@ export class ServiceSMBComponent {
     this.error = null;
 
     let value = _.cloneDeep(entityEdit);
-    console.log(value)
     let new_range_low: any;
     let new_range_high: any;
 
@@ -242,9 +239,15 @@ export class ServiceSMBComponent {
         new_range_high = value[i];
       }
     }
-    this.ws.call('idmap.tbd.update', [this.idNumber, [["range_low", "=", new_range_low], ["range_high", "=", new_range_high]]])
+    this.ws.call('idmap.tdb.update', [this.idNumber, {range_low: new_range_low, range_high: new_range_high}])
       .subscribe((res) => {
         console.log(res);
-      });
+      }),
+      (err) => {
+        console.log(err);
+      }, 
+      () => {
+        console.log('done');
+      }
     }
   }
