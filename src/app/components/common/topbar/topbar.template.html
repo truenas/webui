@@ -29,10 +29,15 @@
       <!-- HA Status -->
       <span *ngIf="is_ha">
       <button *ngIf="ha_disabled_reasons.length === 0" mat-icon-button id="ha" [matTooltip]="ha_status_text" (click)="showHAStatus()">
-        <mat-icon>layers</mat-icon>
+        <mat-icon class="mdi-icon" role="img" fontSet="mdi-set" fontIcon="mdi-lan-connect"></mat-icon>
       </button>
       <button *ngIf="ha_disabled_reasons.length > 0" mat-icon-button id="ha" [matTooltip]="ha_status_text" (click)="showHAStatus()">
-        <mat-icon>layers_clear</mat-icon>
+        <span *ngIf="ha_disabled_reasons[0] === 'NO_SYSTEM_READY';else HADisabled">
+          <mat-icon class="mdi-icon" role="img" fontSet="mdi-set" fontIcon="mdi-lan-pending"></mat-icon>
+        </span>
+        <ng-template #HADisabled>
+          <mat-icon class="mdi-icon" role="img" fontSet="mdi-set" fontIcon="mdi-lan-disconnect"></mat-icon>
+        </ng-template>
       </button>
       </span>
       <!-- Task Manager -->

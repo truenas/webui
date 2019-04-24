@@ -49,6 +49,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   ha_status_text: string;
   ha_disabled_reasons = [];
+  ha_pending = false;
   is_ha = false;
 
   constructor(
@@ -265,11 +266,11 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   showHAStatus() {
     let reasons = '<ul>\n';
-    let ha_icon = "layers";
+    let ha_icon = "info";
     let ha_status = "";
     if (this.ha_disabled_reasons.length > 0) {
       ha_status = helptext.ha_status_text_disabled;
-      ha_icon = "layers_clear";
+      ha_icon = "warning";
       for (let i = 0; i < this.ha_disabled_reasons.length; i++) {
         const reason_text = helptext.ha_disabled_reasons[this.ha_disabled_reasons[i]];
         this.translate.get(reason_text).subscribe(reason => {
