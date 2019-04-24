@@ -183,12 +183,6 @@ export class AdvancedComponent implements OnDestroy {
     placeholder: helptext_system_advanced.fqdn_placeholder,
     tooltip: helptext_system_advanced.fqdn_tooltip
   }, {
-    type: 'checkbox',
-    name: 'cpu_in_percentage',
-    placeholder: helptext_system_advanced.cpu_in_percentage_placeholder,
-    tooltip: helptext_system_advanced.cpu_in_percentage_tooltip
-  },
-  {
     type: 'paragraph',
     name: 'sed_options_message',
     paraText: helptext_system_advanced.sed_options_message_paragraph,
