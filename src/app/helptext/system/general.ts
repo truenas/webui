@@ -6,9 +6,8 @@ export const helptext_system_general = {
   stg_guicertificate: {
     placeholder: T("GUI SSL Certificate"),
     tooltip: T(
-      'Required for <i>HTTPS</i>. Browse to the location of\
- the certificate to use for encrypted connections. If\
- there are no certificates, create a <a\
+      'Required for <i>HTTPS</i>. Choose the certificate to use for\
+ encrypted connections. If there are no certificates, create a <a\
  href="%%docurl%%/system.html#cas"\
  target="_blank">Certificate Authority (CA)</a> then\
  the <a href="%%docurl%%/system.html#certificates"\
@@ -64,8 +63,7 @@ export const helptext_system_general = {
     placeholder: T("WebGUI HTTP -> HTTPS Redirect"),
     tooltip: T(
       "Check this to redirect <i>HTTP</i> connections to\
-        <i>HTTPS</i>. <i>HTTPS</i> must be selected in\
-        <b>Protocol</b>."
+ <i>HTTPS</i>. A <b>GUI SSL Certificate</b> must be selected."
     )
   },
 
