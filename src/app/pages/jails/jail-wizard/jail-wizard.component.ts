@@ -81,12 +81,28 @@ export class JailWizardComponent {
     },
     {
       label: helptext.step2_label,
-      fieldConfig: [{
+      fieldConfig: [
+        {
           type: 'checkbox',
           name: 'dhcp',
           placeholder: helptext.dhcp_placeholder,
           tooltip: helptext.dhcp_tooltip,
-      },
+          value: false,
+          relation: [{
+            action: "DISABLE",
+            when: [{
+              name: "nat",
+              value: true
+            }]
+          }],
+        },
+        {
+          type: 'checkbox',
+          name: 'nat',
+          placeholder: helptext.nat_placeholder,
+          tooltip: helptext.nat_tooltip,
+          value: false,
+        },
         {
           type: 'checkbox',
           name: 'vnet',
@@ -107,10 +123,14 @@ export class JailWizardComponent {
             value: '',
           }],
           relation: [{
-            action: 'DISABLE',
+            action: "ENABLE",
+            connective: 'AND',
             when: [{
-              name: 'dhcp',
-              value: true,
+              name: "dhcp",
+              value: false
+            }, {
+              name: 'nat',
+              value: false,
             }]
           }],
           required: false,
@@ -125,10 +145,14 @@ export class JailWizardComponent {
           tooltip: helptext.ip4_addr_tooltip,
           validation : [ regexValidator(this.networkService.ipv4_regex) ],
           relation: [{
-            action: 'DISABLE',
+            action: "ENABLE",
+            connective: 'AND',
             when: [{
-              name: 'dhcp',
-              value: true,
+              name: "dhcp",
+              value: false
+            }, {
+              name: 'nat',
+              value: false,
             }]
           }],
           class: 'inline',
@@ -142,10 +166,14 @@ export class JailWizardComponent {
           options: this.networkService.getV4Netmasks(),
           value: '',
           relation: [{
-            action: 'DISABLE',
+            action: "ENABLE",
+            connective: 'AND',
             when: [{
-              name: 'dhcp',
-              value: true,
+              name: "dhcp",
+              value: false
+            }, {
+              name: 'nat',
+              value: false,
             }]
           }],
           class: 'inline',
@@ -161,6 +189,9 @@ export class JailWizardComponent {
             connective: 'OR',
             when: [{
               name: 'dhcp',
+              value: true,
+            }, {
+              name: 'nat',
               value: true,
             }, {
               name: 'vnet',
@@ -466,6 +497,16 @@ export class JailWizardComponent {
       }
       _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).required = res;
     });
+    ( < FormGroup > entityWizard.formArray.get([1]).get('nat')).valueChanges.subscribe((res) => {
+      this.summary[T('NAT Autoconfigure IPv4')] = res ? T('Yes') : T('No');
+      if ((< FormGroup > entityWizard.formArray.get([1]).get('dhcp')).disabled) {
+        delete this.summary[T('DHCP Autoconfigure IPv4')];
+      }
+      if (res) {
+        ( < FormGroup > entityWizard.formArray.get([1])).controls['vnet'].setValue(true);
+      }
+      _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).required = res;
+    });
     ( < FormGroup > entityWizard.formArray.get([1]).get('vnet')).valueChanges.subscribe((res) => {
       this.summary[T('VNET Virtual Networking')] = res ? T('Yes') : T('No');
       if (res) {
@@ -480,7 +521,8 @@ export class JailWizardComponent {
         this.ip6_interfaceField.options.pop({ label: 'vnet0', value: 'vnet0'});
       }
 
-      if ((( < FormGroup > entityWizard.formArray.get([1])).controls['dhcp'].value ||
+      if (((( < FormGroup > entityWizard.formArray.get([1])).controls['dhcp'].value ||
+           ( < FormGroup > entityWizard.formArray.get([1])).controls['nat'].value) ||
            ( < FormGroup > entityWizard.formArray.get([1])).controls['auto_configure_ip6'].value) && !res) {
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' })['hasErrors'] = true;
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' })['errors'] = 'VNET is required.';

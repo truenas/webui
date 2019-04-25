@@ -28,6 +28,9 @@ dhcp_tooltip: T('Set to autoconfigure jail networking with the \
 Dynamic Host Configuration Protocol. <b>VNET</b> \
 is required.'),
 
+nat_placeholder: T('NAT'),
+nat_tooltip: T(''),
+
 vnet_placeholder: T('VNET'),
 vnet_tooltip: T('Set to use <a \
 href="https://www.freebsd.org/cgi/man.cgi?query=vnet&sektion=9" \
