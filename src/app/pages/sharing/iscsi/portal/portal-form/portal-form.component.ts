@@ -157,7 +157,7 @@ export class PortalFormComponent {
     this.iscsiService.getAuth().subscribe((res) => {
       this.authgroup_field.options.push({label : 'None', value : null});
       for (let i = 0; i < res.length; i++) {
-        this.authgroup_field.options.push({label: res[i].id, value: res[i].id});
+        this.authgroup_field.options.push({label: res[i].tag, value: res[i].tag});
       }
     })
   }
