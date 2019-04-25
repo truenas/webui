@@ -105,7 +105,9 @@ export const helptext_system_general = {
 
   crash_reporting: {
     placeholder: T("Crash reporting"),
-    tooltip: T("Enable sending anonymous crash reports to iXsystems")
+    tooltip: T("Send failed HTTP request data which can include client\
+ and server IP addresses, failed method call tracebacks, and\
+ middleware log file contents to iXsystems.")
   },
 
   save_config_form: {
