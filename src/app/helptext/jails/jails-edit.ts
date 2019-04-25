@@ -16,6 +16,9 @@ dhcp_tooltip: T('Set to start the jail with the Dynamic Host \
 Configuration Protocol enabled. <b>VNET</b> and \
 <b>Berkeley Packet Filter</b> must also be enabled.'),
 
+nat_placeholder: T('NAT'),
+nat_tooltip: T(''),
+
 vnet_placeholder: T('VNET'),
 vnet_tooltip: T('Set to use <a \
 href="https://www.freebsd.org/cgi/man.cgi?query=vnet&sektion=9" \
@@ -534,9 +537,6 @@ ip_hostname_tooltip: T(''),
 
 assign_localhost_placeholder: T('assign_localhost'),
 assign_localhost_tooltip: T(''),
-
-nat_placeholder: T('nat'),
-nat_tooltip: T(''),
 
 //rctl config
 memoryuse_placeholder: T('memoryuse'),
