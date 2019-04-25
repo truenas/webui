@@ -289,9 +289,10 @@ export class PluginAddComponent implements OnInit {
       if (value.hasOwnProperty(i)) {
         if (value[i] != undefined && value[i] != '') {
           if (value[i] == true) {
-            property.push('bpf=yes');
-            property.push('dhcp=on');
-            property.push('vnet=on');
+            property.push('bpf=1');
+            property.push('dhcp=1');
+            property.push('vnet=1');
+            property.push('nat=1');
           } else {
             property.push(i + '=' + value[i]);
           }
