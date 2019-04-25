@@ -40,6 +40,20 @@ export class PluginAddComponent implements OnInit {
       name: 'dhcp',
       placeholder: helptext.dhcp_placeholder,
       tooltip: helptext.dhcp_tooltip,
+      value: false,
+      relation: [{
+        action: "DISABLE",
+        when: [{
+          name: "nat",
+          value: true
+        }]
+      }],
+    },
+    {
+      type: 'checkbox',
+      name: 'nat',
+      placeholder: helptext.nat_placeholder,
+      tooltip: helptext.nat_tooltip,
       value: true,
     },
     {
@@ -55,10 +69,14 @@ export class PluginAddComponent implements OnInit {
       ],
       value: '',
       relation: [{
-        action: 'DISABLE',
+        action: "ENABLE",
+        connective: 'AND',
         when: [{
-          name: 'dhcp',
-          value: true,
+          name: "dhcp",
+          value: false
+        }, {
+          name: 'nat',
+          value: false,
         }]
       }],
       class: 'inline',
@@ -71,11 +89,15 @@ export class PluginAddComponent implements OnInit {
       tooltip: helptext.ip4_addr_tooltip,
       validation : [ regexValidator(this.networkService.ipv4_regex) ],
       relation: [{
-      action: 'DISABLE',
-      when: [{
-        name: 'dhcp',
-        value: true,
-       }]
+        action: "ENABLE",
+        connective: 'AND',
+        when: [{
+          name: "dhcp",
+          value: false
+        }, {
+          name: 'nat',
+          value: false,
+        }]
       }],
       required: true,
       class: 'inline',
@@ -89,10 +111,14 @@ export class PluginAddComponent implements OnInit {
       options: this.networkService.getV4Netmasks(),
       value: '',
       relation: [{
-        action: 'DISABLE',
+        action: "ENABLE",
+        connective: 'AND',
         when: [{
-          name: 'dhcp',
-          value: true,
+          name: "dhcp",
+          value: false
+        }, {
+          name: 'nat',
+          value: false,
         }]
       }],
       required: false,
@@ -114,10 +140,14 @@ export class PluginAddComponent implements OnInit {
       class: 'inline',
       width: '30%',
       relation: [{
-        action: "DISABLE",
+        action: "ENABLE",
+        connective: 'AND',
         when: [{
           name: "dhcp",
-          value: true
+          value: false
+        }, {
+          name: 'nat',
+          value: false,
         }]
       }],
     },
@@ -128,10 +158,14 @@ export class PluginAddComponent implements OnInit {
       tooltip: helptext.ip6_addr_tooltip,
       validation : [ regexValidator(this.networkService.ipv6_regex) ],
       relation: [{
-        action: "DISABLE",
+        action: "ENABLE",
+        connective: 'AND',
         when: [{
           name: "dhcp",
-          value: true
+          value: false
+        }, {
+          name: 'nat',
+          value: false,
         }]
       }],
       required: true,
@@ -149,10 +183,14 @@ export class PluginAddComponent implements OnInit {
       class: 'inline',
       width: '20%',
       relation: [{
-        action: "DISABLE",
+        action: "ENABLE",
+        connective: 'AND',
         when: [{
           name: "dhcp",
-          value: true
+          value: false
+        }, {
+          name: 'nat',
+          value: false,
         }]
       }],
     }
@@ -208,7 +246,7 @@ export class PluginAddComponent implements OnInit {
           this.formGroup.controls['ip6_prefix'].disable();
         }
       } else {
-        if (this.formGroup.controls['ip6_addr'].disabled == true && this.formGroup.controls['dhcp'].value != true) {
+        if (this.formGroup.controls['ip6_addr'].disabled == true && this.formGroup.controls['dhcp'].value == false && this.formGroup.controls['nat'].value == true) {
           this.formGroup.controls['ip6_interface'].enable();
           this.formGroup.controls['ip6_addr'].enable();
           this.formGroup.controls['ip6_prefix'].enable();
@@ -223,7 +261,7 @@ export class PluginAddComponent implements OnInit {
           this.formGroup.controls['ip4_netmask'].disable();
         }
       } else {
-        if (this.formGroup.controls['ip4_addr'].disabled == true && this.formGroup.controls['dhcp'].value != true) {
+        if (this.formGroup.controls['ip4_addr'].disabled == true && this.formGroup.controls['dhcp'].value == false && this.formGroup.controls['nat'].value == false) {
           this.formGroup.controls['ip4_interface'].enable();
           this.formGroup.controls['ip4_addr'].enable();
           this.formGroup.controls['ip4_netmask'].enable();
@@ -289,10 +327,14 @@ export class PluginAddComponent implements OnInit {
       if (value.hasOwnProperty(i)) {
         if (value[i] != undefined && value[i] != '') {
           if (value[i] == true) {
-            property.push('bpf=1');
-            property.push('dhcp=1');
-            property.push('vnet=1');
-            property.push('nat=1');
+            if (i == 'dhcp') {
+              property.push('bpf=1');
+              property.push('dhcp=1');
+              property.push('vnet=1');
+            } else if (i == 'nat') {
+              property.push('nat=1');
+              property.push('vnet=1');
+            }
           } else {
             property.push(i + '=' + value[i]);
           }

@@ -57,6 +57,20 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
       name: 'dhcp',
       placeholder: helptext.dhcp_placeholder,
       tooltip: helptext.dhcp_tooltip,
+      value: false,
+      relation: [{
+        action: "DISABLE",
+        when: [{
+          name: "nat",
+          value: true
+        }]
+      }],
+    },
+    {
+      type: 'checkbox',
+      name: 'nat',
+      placeholder: helptext.nat_placeholder,
+      tooltip: helptext.nat_tooltip,
       value: true,
     },
     {
@@ -71,17 +85,20 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
       name: 'bpf',
       placeholder: helptext.bpf_placeholder,
       tooltip: helptext.bpf_tooltip,
-      value: true,
     },
     {
       type: 'list',
       name: 'ip4_addr',
       placeholder: 'IPv4 Addresses',
       relation: [{
-        action: 'DISABLE',
+        action: "ENABLE",
+        connective: 'AND',
         when: [{
-          name: 'dhcp',
-          value: true,
+          name: "dhcp",
+          value: false
+        }, {
+          name: 'nat',
+          value: false,
         }]
       }],
       templateListField: [
@@ -131,6 +148,9 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
         connective: 'OR',
         when: [{
           name: 'dhcp',
+          value: true,
+        }, {
+          name: 'nat',
           value: true,
         }, {
           name: 'vnet',
@@ -720,14 +740,7 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
       name: 'assign_localhost',
       placeholder: helptext.assign_localhost_placeholder,
       tooltip: helptext.assign_localhost_tooltip,
-    },
-    {
-      type: 'checkbox',
-      name: 'nat',
-      placeholder: helptext.nat_placeholder,
-      tooltip: helptext.nat_tooltip,
-      value: true,
-    },
+    }
   ];
   public rctlConfig: FieldConfig[] = [
 
@@ -1041,8 +1054,14 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
       _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = res;
       _.find(this.basicfieldConfig, { 'name': 'bpf' }).required = res;
     });
+    this.formGroup.controls['nat'].valueChanges.subscribe((res) => {
+      if (res) {
+        this.formGroup.controls['vnet'].setValue(true);
+      }
+      _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = res;
+    });
     this.formGroup.controls['vnet'].valueChanges.subscribe((res) => {
-      if ((this.formGroup.controls['dhcp'].value || this.formGroup.controls['auto_configure_ip6'].value) && !res) {
+      if (((this.formGroup.controls['dhcp'].value || this.formGroup.controls['nat'].value) || this.formGroup.controls['auto_configure_ip6'].value) && !res) {
         _.find(this.basicfieldConfig, { 'name': 'vnet' })['hasErrors'] = true;
         _.find(this.basicfieldConfig, { 'name': 'vnet' })['errors'] = 'VNET is required.';
       } else {
@@ -1102,7 +1121,7 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
                 res[0][i] = false;
               }
             }
-            if (i !== 'dhcp' && i !== 'vnet' && i !== 'bpf') {
+            if (i !== 'dhcp' && i !== 'vnet' && i !== 'bpf' && i != 'nat') {
               this.formGroup.controls[i].setValue(res[0][i]);
             }
           }
@@ -1122,6 +1141,7 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
       }
     }
     this.formGroup.controls['dhcp'].setValue(this.formGroup.controls['dhcp'].value);
+    this.formGroup.controls['nat'].setValue(this.formGroup.controls['nat'].value);
   }
 
   setRelation(config: FieldConfig) {

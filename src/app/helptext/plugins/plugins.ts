@@ -14,6 +14,9 @@ href="https://kb.iu.edu/d/adov" \
 target="_blank">DHCP</a> to automatically configure \
 network settings.'),
 
+nat_placeholder: T('NAT'),
+nat_tooltip: T(''),
+
 ip4_interface_placeholder: T('IPv4 interface'),
 ip4_interface_tooltip: T('IPv4 interface for the jail.'),
 
