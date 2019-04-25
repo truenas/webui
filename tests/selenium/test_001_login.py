@@ -16,7 +16,8 @@ script_name = os.path.basename(__file__).partition('.')[0]
 
 def test_00_open_web_browser(wb_driver, ui_url):
     wb_driver.get(ui_url)
-    time.sleep(1)
+    time.sleep(2)
+    wb_driver.implicitly_wait(1)
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
 
@@ -36,7 +37,7 @@ def test_01_login(wb_driver, login_json):
             wb_driver.find_element_by_xpath(target).clear()
             wb_driver.find_element_by_xpath(target).send_keys(value)
         elif command == 'click' and comment == "verify":
-            time.sleep(1)
+            time.sleep(2)
             ui_element = wb_driver.find_element_by_xpath(target)
             page_data = ui_element.text
             assert "Dashboard" in page_data, page_data

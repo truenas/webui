@@ -11,7 +11,7 @@ ssh_tcpport_tooltip: 'Open a port for SSH connection requests.',
 ssh_rootlogin_placeholder : T('Log in as root with password'),
 ssh_rootlogin_tooltip: T('<b>Root logins are discouraged.</b> Set to allow root\
  logins. A password must be set for the <i>root</i>\
- user in <a href="%%docurl%%/account.html%%webversion%%#users"\
+ user in <a href="%%docurl%%/accounts.html#users"\
  target="_blank">Users</a>.'),
 
 ssh_passwordauth_placeholder : T('Allow password authentication'),
@@ -23,9 +23,9 @@ ssh_passwordauth_tooltip: T('Unset to require key-based authentication for\
 
 ssh_kerberosauth_placeholder : T('Allow Kerberos authentication'),
 ssh_kerberosauth_tooltip: T('Ensure <a\
- href="%%docurl%%/directoryservices.html%%webversion%%#kerberos-realms"\
+ href="%%docurl%%/directoryservices.html#kerberos-realms"\
  target="_blank">Kerberos Realms</a> and <a\
- href="%%docurl%%/directoryservices.html%%webversion%%#kerberos-keytabs"\
+ href="%%docurl%%/directoryservices.html#kerberos-keytabs"\
  target="_blank">Kerberos Keytabs</a> are configured\
  and the system can communicate with the Kerberos\
  Domain Controller before setting.'),

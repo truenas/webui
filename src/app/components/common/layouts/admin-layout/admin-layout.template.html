@@ -1,6 +1,6 @@
 <mat-sidenav-container class="app-side-nav-container" ngClass.xs="xs" ngClass.sm="sm" ngClass.md="md" ngClass.lg="lg" ngClass.xl="xl">
   <!-- Main side navigation -->
-  <mat-sidenav #sidenav [opened]="isSidenavOpen" mode="over" class="sidebar-panel">
+  <mat-sidenav #sidenav [opened]="isSidenavOpen" mode="over" class="sidebar-panel not-alerts">
     <div id="scroll-area" class="navigation-hold" fxLayout="column">
       <div *ngFor="let theme of freenasThemes">
         <div *ngIf="theme.name == currentTheme">

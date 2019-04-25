@@ -45,6 +45,7 @@ import { EmailComponent } from './email';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
 import { FailoverComponent } from './failover/failover.component';
+import { ReportingComponent } from './reporting/reporting.component';
 
 @NgModule({
   imports: [
@@ -87,6 +88,7 @@ import { FailoverComponent } from './failover/failover.component';
     AlertServiceComponent,
     AlertConfigComponent,
     FailoverComponent,
+    ReportingComponent,
   ],
   providers: []
 })

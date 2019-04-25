@@ -242,7 +242,7 @@ export class SMBFormComponent implements OnDestroy {
           this.cifs_vfsobjects.options = _.sortBy(options, ['label']);
         });
     if (entityForm.isNew) {
-      entityForm.formGroup.controls['cifs_vfsobjects'].setValue(['zfs_space','zfsacl','streams_xattr']);
+      entityForm.formGroup.controls['cifs_vfsobjects'].setValue(['ixnas', 'streams_xattr']);
       entityForm.formGroup.controls['cifs_browsable'].setValue(true);
     }
 

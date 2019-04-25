@@ -9,3 +9,20 @@ h3.notific-title.warn {
 h3.notific-title.accent {
     color: var(--accent);
 }
+
+a.dismiss {
+    text-decoration: underline;
+}
+
+.notific-item {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+a:hover {
+    cursor: pointer;
+}
+
+.mat-list-base .mat-list-item {
+    height: unset;
+}
