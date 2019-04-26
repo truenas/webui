@@ -18,11 +18,20 @@ export const helptext_system_certificates = {
       placeholder: T("Signing Certificate Authority"),
       tooltip: T(
         'Select a previously imported or created <a\
- href="%%docurl%%/system.html%%webversion%%#cas"\
+ href="%%docurl%%/system.html#cas"\
  target="_blank">CA</a>.'
       ),
       validation: [Validators.required]
     },
+
+    key_type: {
+      placeholder: T("Key Type"),
+      validation: [Validators.required]
+    },
+
+    ec_curve: {
+      placeholder: T("EC Curve")
+    },   
 
     key_length: {
       placeholder: T("Key Length"),
@@ -75,6 +84,11 @@ export const helptext_system_certificates = {
       placeholder: T("Organization"),
       tooltip: T("Enter the name of the company or organization."),
       validation: [Validators.required]
+    },
+
+    organizational_unit: {
+      placeholder: T("Organizational Unit"),
+      tooltip: T("Organizational unit of the entity."),
     },
 
     email: {

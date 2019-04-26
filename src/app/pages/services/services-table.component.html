@@ -9,7 +9,7 @@
     [scrollbarV]="true">
   <ngx-datatable-column name="Label">
     <ng-template let-column="column" ngx-datatable-header-template>
-      Name
+      <span class="datatable-header-cell-label">Name</span>
     </ng-template>
     <ng-template let-value="value" ngx-datatable-cell-template>
       <div id="row-name__{{value}}">{{value}}</div>
@@ -17,7 +17,7 @@
   </ngx-datatable-column>
   <ngx-datatable-column name="State">
     <ng-template let-column="column" ngx-datatable-header-template>
-      Running
+      <span class="datatable-header-cell-label">Running</span>
     </ng-template>
     <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
       <mat-spinner [diameter]='40' *ngIf="row['onChanging']; else actionButtons"></mat-spinner>
@@ -36,7 +36,7 @@
   </ngx-datatable-column>
   <ngx-datatable-column name="Enable">
     <ng-template let-column="column" ngx-datatable-header-template>
-      Start Automatically
+      <span class="datatable-header-cell-label">Start Automatically</span>
     </ng-template>
     <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
       <mat-checkbox id="checkbox__{{row.label}}" class="checkbox" style="position:absolute;bottom:16px;" [(ngModel)]="row.enable" (change)="this.conf.enableToggle($event, row)"></mat-checkbox>
@@ -44,7 +44,7 @@
   </ngx-datatable-column>
   <ngx-datatable-column name="Actions" [flexGrow]="2">
     <ng-template let-column="column" ngx-datatable-header-template>
-      Actions
+      <span class="datatable-header-cell-label">Actions</span>
     </ng-template>
     <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
       <button mat-icon-button id="action-button__{{row.label}}" (click)="this.conf.editService(row.title)" style="position:absolute;bottom:6px;"  matTooltip="Configure" matTooltipPosition="right" *ngIf="row.title != 'netdata'">

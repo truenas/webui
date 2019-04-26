@@ -57,6 +57,7 @@ export class NavigationService {
         { name: T('Boot Environments'), state: 'bootenv' },
         { name: T('Advanced'), state: 'advanced' },
         { name: T('Email'), state: 'email'},
+        { name: T('Reporting'), state: 'reporting'},
         { name: T('System Dataset'), state: 'dataset'},
         { name: T('Alert Services'), state: 'alertservice' },
         { name: T('Alert Settings'), state: 'alertsettings' },

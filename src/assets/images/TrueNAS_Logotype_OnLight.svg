@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 23.0.2, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="OnLight_TrueNAS_Logo"
+   x="0px"
+   y="0px"
+   viewBox="0 0 218.08 43.48"
+   xml:space="preserve"
+   sodipodi:docname="TrueNAS_Logotype_OnLight.svg"
+   width="218.08"
+   height="43.48"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"><metadata
+   id="metadata31"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata><defs
+   id="defs29" /><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="640"
+   inkscape:window-height="480"
+   id="namedview27"
+   showgrid="false"
+   inkscape:zoom="0.83250415"
+   inkscape:cx="110.23"
+   inkscape:cy="22.49"
+   inkscape:window-x="0"
+   inkscape:window-y="0"
+   inkscape:window-maximized="0"
+   inkscape:current-layer="OnLight_TrueNAS_Logo" />
+<style
+   type="text/css"
+   id="style2">
+	.st0{fill:#333333;}
+</style>
+<g
+   id="g24"
+   transform="translate(-40.52,-51.01)">
+	<g
+   id="g16">
+		<path
+   class="st0"
+   d="m 73.4,66.48 -0.38,0.38 -0.03,-3.91 -3.53,3.52 v 28.02 h 4.18 L 73.62,74.7 c 0,-4.08 3.32,-7.4 7.4,-7.4 h 4.82 v -3.54 h -4.82 c -2.68,0.01 -5.77,0.87 -7.62,2.72 z"
+   id="path4"
+   inkscape:connector-curvature="0"
+   style="fill:#333333" />
+		<polygon
+   class="st0"
+   points="150.27,51.12 150.27,94.49 154.44,94.49 154.44,59.15 173.36,94.49 177.83,94.49 177.83,51.12 173.66,51.12 173.66,86.4 154.81,51.12 "
+   id="polygon6"
+   style="fill:#333333" />
+		<path
+   class="st0"
+   d="M 197.93,51.12 184.3,94.49 h 4.38 l 4.11,-13.28 h 14.69 l 4.11,13.28 h 4.38 L 202.34,51.12 Z m -4.09,26.55 6.3,-20.28 6.23,20.28 z"
+   id="path8"
+   inkscape:connector-curvature="0"
+   style="fill:#333333" />
+		<path
+   class="st0"
+   d="m 237.79,69.13 -8.44,-1.77 c -2.6,-0.53 -4.72,-3.33 -4.72,-6.25 0,-3.5 2.95,-6.45 6.44,-6.45 h 14.18 V 51.12 H 230.5 c -5.51,0 -10,4.48 -10,9.99 0,4.93 3.12,8.89 7.77,9.87 l 8.75,1.83 c 3.7,0.8 6.6,4.69 6.6,8.84 0,5.04 -4.21,9.3 -9.19,9.3 h -12.68 v 3.54 H 235 c 6.99,0 12.68,-5.76 12.68,-12.83 0.01,-6.05 -4.15,-11.32 -9.89,-12.53 z"
+   id="path10"
+   inkscape:connector-curvature="0"
+   style="fill:#333333" />
+		<polygon
+   class="st0"
+   points="250.22,56.54 250.94,56.54 250.94,51.76 252.73,51.76 252.73,51.12 248.43,51.12 248.43,51.76 250.22,51.76 "
+   id="polygon12"
+   style="fill:#333333" />
+		<path
+   class="st0"
+   d="m 257.64,51.12 -1.3,3.77 c -0.13,0.38 -0.23,0.67 -0.29,0.87 -0.06,-0.18 -0.14,-0.44 -0.26,-0.8 l -1.28,-3.83 h -1.08 v 5.42 h 0.69 v -4.61 l 1.57,4.61 h 0.65 l 1.57,-4.53 v 4.53 h 0.69 v -5.42 z"
+   id="path14"
+   inkscape:connector-curvature="0"
+   style="fill:#333333" />
+	</g>
+	<polygon
+   class="st0"
+   points="52.21,94.47 56.5,94.47 56.5,54.67 68.19,54.67 68.19,51.01 40.52,51.01 40.52,54.67 52.21,54.67 "
+   id="polygon18"
+   style="fill:#333333" />
+	<path
+   class="st0"
+   d="m 108.93,63.65 v 23.24 c 0,2.16 -1.76,3.92 -3.92,3.92 h -2.25 -2.59 c -2.16,0 -3.92,-1.76 -3.92,-3.92 V 63.65 h -4.29 v 22.68 c 0,4.57 3.61,8.15 8.21,8.15 h 2.25 0.34 2.25 c 4.6,0 8.21,-3.58 8.21,-8.15 V 63.65 Z"
+   id="path20"
+   inkscape:connector-curvature="0"
+   style="fill:#333333" />
+	<path
+   class="st0"
+   d="m 142.65,71.79 c 0,-4.57 -3.72,-8.15 -8.46,-8.15 h -5.69 c -4.75,0 -8.46,3.58 -8.46,8.15 v 10.86 c 0,6.51 5.27,11.81 11.75,11.81 h 9.6 V 90.8 h -9.6 c -4.11,0 -7.46,-3.37 -7.46,-7.52 v -0.62 l 11.73,-2.85 c 3.76,-0.86 6.59,-4.31 6.59,-8.02 z m -7.56,4.35 -10.76,2.64 v -6.99 c 0,-2.43 1.91,-4.49 4.17,-4.49 h 5.69 c 2.26,0 4.17,2.06 4.17,4.49 0,2.21 -1.28,3.91 -3.27,4.35 z"
+   id="path22"
+   inkscape:connector-curvature="0"
+   style="fill:#333333" />
+</g>
+</svg>
