@@ -15,7 +15,7 @@ export class SnapshotListComponent implements OnInit {
 
   public title = "Snapshots";
   protected queryCall = 'zfs.snapshot.query';
-  protected queryCallOption = [[["pool", "!=", "freenas-boot"]]];
+  protected queryCallOption = [[["pool", "!=", "freenas-boot"], {"select": ["name"], "order_by": ["name"]}]];
   protected route_add: string[] = ['storage', 'snapshots', 'add'];
   protected route_add_tooltip = "Add Snapshot";
   protected wsDelete = 'zfs.snapshot.remove';
