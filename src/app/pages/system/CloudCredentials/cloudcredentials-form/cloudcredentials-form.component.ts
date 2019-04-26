@@ -618,6 +618,7 @@ export class CloudCredentialsFormComponent {
     },
     {
       type: 'input',
+      inputType: 'number',
       name: 'port-SFTP',
       placeholder: helptext.port_sftp.placeholder,
       tooltip: helptext.port_sftp.tooltip,
@@ -669,10 +670,17 @@ export class CloudCredentialsFormComponent {
       ]
     },
     {
-      type: 'input',
-      name: 'key_file-SFTP',
-      placeholder: helptext.key_file_sftp.placeholder,
-      tooltip: helptext.key_file_sftp.tooltip,
+      type: 'select',
+      name: 'private_key-SFTP',
+      placeholder: helptext.private_key_sftp.placeholder,
+      tooltip: helptext.private_key_sftp.tooltip,
+      options: [
+        {
+          label: '---------',
+          value: '',
+        }
+      ],
+      value: '',
       required: true,
       isHidden: true,
       relation: [
@@ -857,6 +865,14 @@ export class CloudCredentialsFormComponent {
         }
       }
     );
+    const privateKeySFTPField = _.find(this.fieldConfig, {'name': 'private_key-SFTP'});
+    this.ws.call('keychaincredential.query', [[["type", "=", "SSH_KEY_PAIR"]]]).subscribe(
+      (res) => {
+        for (let i = 0; i < res.length; i++) {
+          privateKeySFTPField.options.push({ label: res[i].name, value: res[i].id});
+        }
+      }
+    )
   }
 
   preInit() {
@@ -897,10 +913,10 @@ export class CloudCredentialsFormComponent {
     entityForm.formGroup.controls['pass-SFTP'].valueChanges.subscribe((res) => {
       if (res !== undefined) {
         const required = res === '' ? true : false;
-        this.setFieldRequired('key_file-SFTP', required, entityForm);
+        this.setFieldRequired('private_key-SFTP', required, entityForm);
       }
     });
-    entityForm.formGroup.controls['key_file-SFTP'].valueChanges.subscribe((res) => {
+    entityForm.formGroup.controls['private_key-SFTP'].valueChanges.subscribe((res) => {
       if (res !== undefined) {
         const required = res === '' ? true : false;
         this.setFieldRequired('pass-SFTP', required, entityForm);
@@ -915,7 +931,7 @@ export class CloudCredentialsFormComponent {
 
     for (let item in value) {
       if (item != 'name' && item != 'provider') {
-        if (item != 'preview-GOOGLE_CLOUD_STORAGE' && item != 'advanced-S3') {
+        if (item != 'preview-GOOGLE_CLOUD_STORAGE' && item != 'advanced-S3' && value[item] != '') {
           attr_name = item.split("-")[0];
           attributes[attr_name] = value[item];
         }
@@ -937,9 +953,11 @@ export class CloudCredentialsFormComponent {
     (entityForm.wsResponseIdx['endpoint'] || entityForm.wsResponseIdx['skip_region'] || entityForm.wsResponseIdx['signatures_v2'])) {
       entityForm.formGroup.controls['advanced-S3'].setValue(true);
     }
-    for (let i in entityForm.wsResponseIdx) {
-      let field_name = i + '-' + provider;
-      entityForm.formGroup.controls[field_name].setValue(entityForm.wsResponseIdx[i]);
+    for (const i in entityForm.wsResponseIdx) {
+      const field_name = i + '-' + provider;
+      if (entityForm.formGroup.controls[field_name]) {
+        entityForm.formGroup.controls[field_name].setValue(entityForm.wsResponseIdx[i]);
+      }
     }
   }
 }
