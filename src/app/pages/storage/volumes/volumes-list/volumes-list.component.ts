@@ -548,7 +548,17 @@ export class VolumesListTableConfig implements InputTableConf {
               "permissions", row1.path
             ]));
           }
-        });
+        },
+        {
+          label: T("Edit ACL"),
+          onClick: (row1) => {
+            this._router.navigate(new Array('/').concat([
+              "storage", "pools", "id", row1.path.split('/')[0], "dataset",
+              "acl", row1.path
+            ]));
+          }
+        },
+        );
       }
 
       if (rowData.path.indexOf('/') !== -1) {
