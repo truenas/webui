@@ -1,10 +1,11 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, NgZone, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnChanges, SimpleChanges, ViewChild, ElementRef, NgZone, OnDestroy } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MaterialModule } from 'app/appMaterial.module';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { Application, Container, Text, DisplayObject, Graphics, Sprite, Texture} from 'pixi.js';
+import { Application, Container, extras, Text, DisplayObject, Graphics, Sprite, Texture} from 'pixi.js';
 //import 'pixi-filters';
 import 'pixi-projection';
+import { VDevLabels } from 'app/core/classes/hardware/vdev-labels';
 import { DriveTray } from 'app/core/classes/hardware/drivetray';
 import { M50 } from 'app/core/classes/hardware/m50';
 import { DiskComponent } from './disk.component';
@@ -18,10 +19,11 @@ import { ExampleData } from './example-data';
   styleUrls: ['./enclosure-disks.component.css']
 })
 
-export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
+export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   @ViewChild('disksoverview') overview: ElementRef;
   @ViewChild('disksdetails') details: ElementRef;
+  @ViewChild('domLabels') domLabels: ElementRef;
   public app;
   private renderer;
   private loader = PIXI.loader;
@@ -30,10 +32,22 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
   public system: SystemProfiler;
   protected enclosure: any; // Visualization
   public selectedEnclosure: any;
+
+  private _selectedVdev: any;
+  get selectedVdev(){
+    return this._selectedVdev;
+  }
+  set selectedVdev(value) {
+    this._selectedVdev = value;
+    this.selectedVdevDisks = value ? Object.keys(this.selectedVdev.disks) : null;
+  }
+
+  public selectedVdevDisks: string[];
   public selectedDisk: any;
 
   public theme: any;
   public currentView: string = 'status'; // pools || status || expanders || details
+  private labels: VDevLabels;
   
  
 
@@ -92,6 +106,10 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
     //this.pixiInit();
   }
 
+  ngOnChanges(changes:SimpleChanges){
+    console.log(changes);
+  }
+
   ngOnDestroy(){
     this.core.unregister({observerClass: this});
     this.destroyEnclosure();
@@ -101,6 +119,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
 
   pixiInit(){
     //this.ngZone.runOutsideAngular(() => {
+      PIXI.settings.PRECISION_FRAGMENT = 'highp'; //this makes text looks better? Answer = NO
       this.app = new PIXI.Application({
         width:960,
         height:304,
@@ -251,6 +270,12 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
   setCurrentView(opt: string){
     // pools || status || expanders || details
     this.currentView = opt;
+    if(this.labels){
+      // Start exit animation
+      this.labels.exit();
+      //this.labels = null;
+    }
+    
     switch(this.currentView){
       case 'pools':
         //this.setDisksDisabled();
@@ -265,6 +290,30 @@ export class EnclosureDisksComponent implements AfterViewInit, OnDestroy {
       case 'details':
         this.setDisksDisabled();
         this.setDisksHealthState(this.selectedDisk.enclosure_slot);
+        let vdev = this.system.getVdevInfo(this.selectedDisk.devname);
+        this.selectedVdev = vdev;
+
+        this.labels = new VDevLabels(this.enclosure, this.app, this.theme.blue/*, dl*/);
+
+        this.labels.events.next({name:"LabelDrives", data: vdev, sender: this});
+        let dl;
+        //if(!this.domLabels){
+          setTimeout(() => {
+            dl = this.domLabels//.nativeElement
+            this.labels.events.next({name:"OverlayReady", data: {vdev: vdev, overlay:dl}, sender: this});
+          }, 100 );
+        /*} else {
+            dl = this.domLabels.nativeElement
+            this.labels.events.next({name:"OverlayReady", data: {vdev: vdev, overlay:dl}, sender: this});
+        }*/
+
+        this.labels.events.subscribe((evt:CoreEvent) => {
+          // Labels exit animation is complete so we remove the instance
+          if(evt.name == "LabelsDestroyed"){
+            this.labels = null;
+            this.selectedVdev = null;
+          }
+        });
       break
     }
   }

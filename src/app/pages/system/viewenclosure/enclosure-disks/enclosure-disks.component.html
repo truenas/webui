@@ -4,7 +4,38 @@
   </mat-toolbar>
   <mat-card-content>
     <!-- VISUALIZATION/OVERVIEW -->
-    <div #disksoverview id="disks-overview"></div>
+    <div #disksoverview id="disks-overview">
+
+        <!-- POOLS OVERLAY -->
+          <div *ngIf="currentView == 'pools'" fxFlex="25" class="stage-left dom-overlay" fxLayout="column" fxLayoutAlign="center center">
+            <h2>Pools</h2>
+          </div>
+          <div *ngIf="currentView == 'pools'" fxFlex="25" class="stage-right dom-overlay" fxLayout="column" fxLayoutAlign="center center">
+            <div>Pool list goes here...</div>
+          </div>
+
+        <!-- STATUS OVERLAY -->
+          <div *ngIf="currentView == 'status'" fxFlex="25" class="stage-left dom-overlay" fxLayout="column" fxLayoutAlign="center center">
+            <h2>Status</h2>
+          </div>
+          <div *ngIf="currentView == 'status'" fxFlex="25" class="stage-right dom-overlay" fxLayout="column" fxLayoutAlign="center center">
+            <div></div>
+          </div>
+
+        <!-- DETAILS OVERLAY -->
+          <div *ngIf="currentView == 'details'" fxFlex="25" class="stage-left dom-overlay" fxLayout="column" fxLayoutAlign="center center">
+            <h2>{{selectedDisk.name}}</h2>
+          </div>
+          
+          <div #domLabels *ngIf="currentView == 'details'" fxFlex="25" class="stage-right dom-overlay" fxLayout="column" fxLayoutAlign="center center">
+            <h3 class="vdev-type">{{selectedVdev.type | titlecase}}</h3>
+            <div *ngFor="let disk of selectedVdevDisks; let i = index" class="vdev-disk {{disk}}">{{disk}} <span> {{ selectedEnclosure.disks[disk] }}</span></div>
+          </div>
+
+        <!-- CAPTION OVERLAY -->
+        <div class="caption dom-overlay">Choose a Disk</div>
+        
+    </div>
 
     <!-- DETAILS/TITLE -->
     <div id="disks-details-header"> {{selectedDisk ? 'Disk Details for ' + selectedDisk.name : 'Disks Overview'}} </div>

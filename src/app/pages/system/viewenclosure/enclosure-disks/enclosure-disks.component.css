@@ -26,6 +26,8 @@ nav.view-nav-bar{
 .view-card #disks-overview{
   height:304px;
   background-color:rgba(0, 0, 0, 0.85);
+  position: relative;
+  color:#ccc;
 }
 
 .view-card #disks-details{
@@ -119,4 +121,36 @@ nav.view-nav-bar{
 .view-card .disk-basic-details .capacity{
     font-weight: 500;
     font-size: 120%;
+}
+
+.view-card .dom-overlay{
+  width:100%;
+  height: 100%;
+  position:absolute;
+  z-index:3;
+}
+
+.view-card .dom-overlay.stage-left{
+}
+
+.view-card .dom-overlay.stage-right{
+  right: 0;
+}
+
+.view-card .dom-overlay.stage-right .vdev-type{
+  border-bottom:solid 1px #ccc;
+  text-transform:capitalize;
+}
+
+.view-card .caption.dom-overlay{
+  height:auto;
+  bottom:16px;
+  text-align:center;
+  opacity:0.5;
+}
+
+div.vdev-disk {
+  border: solid 1px var(--blue);
+  padding:0 8px;
+  margin:2px 0;
 }

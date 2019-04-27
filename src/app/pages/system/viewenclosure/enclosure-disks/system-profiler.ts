@@ -1,31 +1,3 @@
-/*
- DISKQUERY RESPONSE...
-
-{
-  "identifier": "{serial_lunid}K5H5G09A_5000cca25e4247cc", 
- "name": "da3", 
- "subsystem": "da", 
- "number": 3, 
- "serial": "K5H5G09A", 
- "size": "2000398934016", 
- "multipath_name": "", 
- "multipath_member": "", 
- "description": "", 
- "transfermode": "Auto", 
- "hddstandby": "ALWAYS ON", 
- "advpowermgmt": "DISABLED", 
- "acousticlevel": "DISABLED", 
- "togglesmart": true, 
- "smartoptions": "", 
- "expiretime": null, 
- "enclosure_num": 0,
- "enclosure_slot": 11, 
- "passwd": "", 
- "devname": "da3"
-} 
-
- */
-
 interface Enclosure {
   model: string;
   disks: any[];
@@ -186,6 +158,35 @@ export class SystemProfiler {
         }
         
         return poolDisk.status;
+  }
+
+  getVdevInfo(diskName){
+    // Returns vdev with slot info
+    let enclosure = this.profile[this.getEnclosureNumber(diskName)];
+    let disk = enclosure.disks[enclosure.diskKeys[diskName]];    
+    let slots = Object.assign({}, disk.vdev.disks);
+    
+    let vdev = Object.assign({}, disk.vdev);
+    let keys = Object.keys(slots);
+    keys.forEach((d, index) => {
+      let s = enclosure.disks[enclosure.diskKeys[d]].enclosure_slot;
+      slots[d] = s; //enclosure.disks[enclosure.diskKeys[d]].enclosure_slot;
+    });
+
+    vdev.selectedDisk = diskName;
+    vdev.slots = slots;
+    return vdev;
+  }
+
+  getEnclosureNumber(diskName){
+    // To be deprecated when middleware includes enclosure number with disk info
+    let result;
+    this.profile.forEach((enclosure, index) => {
+      if(typeof enclosure.diskKeys[diskName] !== 'undefined'){
+        result = index;
+      }
+    });
+    return typeof result == 'undefined' ? -1 : result;
   }
     
 }

@@ -21,6 +21,7 @@
               "src/favicon.ico",
               "src/icons",
               "src/assets/images",
+              "src/assets/fonts",
               "src/assets/customicons"
             ],
             "stylePreprocessorOptions": {
