@@ -154,3 +154,15 @@ div.vdev-disk {
   padding:0 8px;
   margin:2px 0;
 }
+
+.view-card .dom-overlay.stage-right.pools{
+  text-align:left;
+}
+
+.view-card .dom-overlay.stage-right.pools .swatch{
+  border-radius:50%;
+  width:10px;
+  height:10px;
+  display: inline-block;
+  margin-right: 4px;
+}

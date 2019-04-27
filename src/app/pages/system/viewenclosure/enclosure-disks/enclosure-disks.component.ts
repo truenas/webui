@@ -42,6 +42,10 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
     this.selectedVdevDisks = value ? Object.keys(this.selectedVdev.disks) : null;
   }
 
+  get enclosurePools(){
+    return Object.keys(this.selectedEnclosure.poolKeys);
+  }
+
   public selectedVdevDisks: string[];
   public selectedDisk: any;
 

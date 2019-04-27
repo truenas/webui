@@ -1,7 +1,8 @@
 interface Enclosure {
   model: string;
-  disks: any[];
-  diskKeys: any;
+  disks?: any[];
+  diskKeys?: any;
+  poolKeys?: any;
 }
 
 interface VDev {
@@ -38,7 +39,7 @@ export class SystemProfiler {
 
     let data = this.filterSystemDisk(disks);
     let enclosureID = 0;
-    let enclosure = {model: this.platform, disks: [], diskKeys: {} };
+    let enclosure = {model: this.platform, disks: [], diskKeys: {}, poolKeys: {} };
     const last = data.length - 1;
     data.forEach((item, index) => {
 
@@ -56,7 +57,7 @@ export class SystemProfiler {
         enclosure.model = enclosureID > 0 ? "ES" +  enclosure.disks.length : this.platform;
         this.profile.push(enclosure);
 
-        enclosure = {model: this.platform, disks: [], diskKeys: {} };
+        enclosure = {model: this.platform, disks: [], diskKeys: {}, poolKeys: {} };
         enclosureID++ 
 
       }
@@ -135,6 +136,9 @@ export class SystemProfiler {
         
         enclosure.disks[diskKey].vdev = vdev;
         enclosure.disks[diskKey].status = this.getDiskStatus(diskName, enclosure, vdev);
+        if(!enclosure.poolKeys[vdev.pool]){
+          enclosure.poolKeys[vdev.pool] = vdev.poolIndex;
+        }
 
         break;
       }

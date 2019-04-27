@@ -10,8 +10,8 @@
           <div *ngIf="currentView == 'pools'" fxFlex="25" class="stage-left dom-overlay" fxLayout="column" fxLayoutAlign="center center">
             <h2>Pools</h2>
           </div>
-          <div *ngIf="currentView == 'pools'" fxFlex="25" class="stage-right dom-overlay" fxLayout="column" fxLayoutAlign="center center">
-            <div>Pool list goes here...</div>
+          <div *ngIf="currentView == 'pools'" fxFlex="18" class="stage-right dom-overlay pools" fxLayout="column" fxLayoutAlign="center start">
+            <div *ngFor="let pool of enclosurePools"><div class="swatch" [style.background]="theme[theme.accentColors[selectedEnclosure.poolKeys[pool]]]"></div>{{pool}}</div>
           </div>
 
         <!-- STATUS OVERLAY -->
