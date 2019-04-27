@@ -28,34 +28,34 @@ export class ViewEnclosureComponent implements OnDestroy {
   public views: ViewConfig[] = [
     { 
       name: 'Disks',
-      icon: "any",
+      icon: "harddisk",
       id: 0,
       showInNavbar: true
     },
     { 
       name: 'Cooling',
-      icon: "any",
+      icon: "fan",
       id: 1,
       showInNavbar: true
     },
     { 
       name: 'Power Supply',
-      icon: "any",
+      icon: "power-socket",
       id: 2,
       showInNavbar: true
     },
     { 
       name: 'Voltage',
-      icon: "any",
+      icon: "flash",
       id: 3,
       showInNavbar: true
-    },
+    }/*,
     { 
       name: 'Pools',
       icon: "any",
       id: 4,
       showInNavbar: false
-    }
+    }*/
   ]
 
   changeView(id){
