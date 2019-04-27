@@ -144,7 +144,7 @@ nav.view-nav-bar{
 
 .view-card .caption.dom-overlay{
   height:auto;
-  bottom:16px;
+  bottom:20px;
   text-align:center;
   opacity:0.5;
 }
@@ -155,11 +155,11 @@ div.vdev-disk {
   margin:2px 0;
 }
 
-.view-card .dom-overlay.stage-right.pools{
+.view-card .dom-overlay.stage-right.list > div{
   text-align:left;
 }
 
-.view-card .dom-overlay.stage-right.pools .swatch{
+.view-card .dom-overlay.stage-right.list .swatch{
   border-radius:50%;
   width:10px;
   height:10px;
