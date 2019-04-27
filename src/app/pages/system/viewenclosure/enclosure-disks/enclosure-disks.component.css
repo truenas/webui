@@ -28,6 +28,8 @@ nav.view-nav-bar{
   background-color:rgba(0, 0, 0, 0.85);
   position: relative;
   color:#ccc;
+  cursor:default;
+  user-select:none;
 }
 
 .view-card #disks-details{
@@ -138,7 +140,7 @@ nav.view-nav-bar{
 }
 
 .view-card .dom-overlay.stage-right .vdev-type{
-  border-bottom:solid 1px #ccc;
+  border-bottom:solid 1px rgba(255,255,255,0.5);
   text-transform:capitalize;
 }
 
@@ -150,7 +152,7 @@ nav.view-nav-bar{
 }
 
 div.vdev-disk {
-  border: solid 1px var(--blue);
+  border-left: solid 2px var(--blue);
   padding:0 8px;
   margin:2px 0;
 }
