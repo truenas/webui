@@ -12,7 +12,7 @@ export class M50 extends Chassis {
     this.driveTrayBackgroundPath = "assets/images/hardware/m50/m50_960w_drivetray_bg.png" 
     this.driveTrayHandlePath = "assets/images/hardware/m50/m50_960w_drivetray_handle.png"
     this.totalDriveTrays = 24;
-    this.load();
+    //this.load();
   }
 
 }

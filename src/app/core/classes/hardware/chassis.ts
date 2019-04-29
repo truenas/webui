@@ -4,6 +4,7 @@ import { AdvancedBloomFilter } from '@pixi/filter-advanced-bloom';
 import { Subject, Observable } from 'rxjs';
 import { CoreEvent } from 'app/core/services/core.service';
 import { DriveTray } from './drivetray';
+
 import {
   tween,
   styler,
@@ -55,6 +56,8 @@ export class Chassis {
    protected filters: any[] = [];
    protected disabledOpacity = 0.25;
    protected initialized: boolean = false;
+   public loader: any;
+   
 
    constructor(){
      this.container = new PIXI.Container();
@@ -76,9 +79,26 @@ export class Chassis {
      this.columns = 4;
    }
 
+   requiredAssets(){
+     // Return a list of assets for the loader to fetch
+     let assets: any[] = [];
+     assets.push({ alias: this.model + "_chassis", path: this.chassisPath})
+     assets.push({ alias: this.model + "_drivetray_bg", path: this.driveTrayBackgroundPath})
+     assets.push({ alias: this.model + "_drivetray_handle", path: this.driveTrayHandlePath})
+     return assets
+   }
+
+   destroy(){
+     // Destroy the loader and assets
+     this.loader.reset();
+   }
+
    load(){
+     console.log("CHASSIS LOAD");
+     // Create a dedicated loader to avoid conflicts with other loaders
+      this.loader = new PIXI.loaders.Loader();
      // LOAD OUR ASSETS
-     PIXI.loader
+     this.loader
        .add(this.model + "_chassis", this.chassisPath) //eg. .add("catImage", "assets/res/cat.png")
        .add(this.model + "_drivetray_bg", this.driveTrayBackgroundPath) //eg. .add("catImage", "assets/res/cat.png")
        .add(this.model + "_drivetray_handle", this.driveTrayHandlePath) //eg. .add("catImage", "assets/res/cat.png")
@@ -102,7 +122,7 @@ export class Chassis {
      this.filters = [ bloomFilter ];
 
      // Render Chassis
-     this.chassis = PIXI.Sprite.from(PIXI.loader.resources[this.model + "_chassis"].texture.baseTexture);
+     this.chassis = PIXI.Sprite.from(this.loader.resources[this.model + "_chassis"].texture.baseTexture);
      this.chassis.name = this.model + '_chassis';
      this.chassis.alpha = 0;
      this.container.addChild(this.chassis);
@@ -225,7 +245,7 @@ export class Chassis {
 
    makeDriveTray(){
      // EXAMPLE CODE:
-     let dt = new DriveTray(this.model);
+     let dt = new DriveTray(this.model, this.loader);
      dt.setup();
      return dt;
    }

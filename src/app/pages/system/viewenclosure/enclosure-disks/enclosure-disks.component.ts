@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, OnChanges, SimpleChanges, ViewChild, 
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MaterialModule } from 'app/appMaterial.module';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { Application, Container, extras, Text, DisplayObject, Graphics, Sprite, Texture} from 'pixi.js';
+import { Application, Container, extras, Text, DisplayObject, Graphics, Sprite, Texture, utils} from 'pixi.js';
 //import 'pixi-filters';
 import 'pixi-projection';
 import { VDevLabels } from 'app/core/classes/hardware/vdev-labels';
@@ -29,6 +29,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
   private loader = PIXI.loader;
   private resources = PIXI.loader.resources;
   public container;
+  public system_product: string = 'unknown';
   public system: SystemProfiler;
   protected enclosure: any; // Visualization
   public selectedEnclosure: any;
@@ -83,7 +84,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
       // END SIMULATED DATA
 
       let data = evt.data;
-      this.system = new SystemProfiler('M50', data);
+      this.system = new SystemProfiler(this.system_product, data);
       this.selectedEnclosure = this.system.profile[0];
       //console.log(this.system);
       core.emit({name: 'PoolDataRequest', sender: this});
@@ -91,7 +92,9 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
     });
 
     core.register({observerClass: this, eventName: 'SysInfo'}).subscribe((evt:CoreEvent) => {
-
+      console.log(evt);
+      //this.system_product = evt.data.system_product;
+      this.system_product = 'M50'; // Just for testing on my FreeNAS box
       core.emit({name: 'DisksRequest', sender: this});
     });
 
@@ -124,6 +127,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
   pixiInit(){
     //this.ngZone.runOutsideAngular(() => {
       PIXI.settings.PRECISION_FRAGMENT = 'highp'; //this makes text looks better? Answer = NO
+      PIXI.utils.skipHello();
       this.app = new PIXI.Application({
         width:960,
         height:304,
@@ -151,6 +155,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
     this.enclosure.events.subscribe((evt) => {
       switch(evt.name){
         case "Ready":
+          //this.onImport(); // TEST
           this.container.addChild(this.enclosure.container);
           this.enclosure.container.name = this.enclosure.model;
           this.enclosure.container.width = this.enclosure.container.width / 2;
@@ -182,9 +187,12 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
     });
 
     if(!this.resources[this.enclosure.model]){
+      console.log("NO RESOURCES");
       //this.importAsset('m50','assets/images/hardware/m50/m50_960w.png');
-      this.importAsset(this.enclosure.model,this.enclosure.chassisPath);
+      //this.importAsset(this.enclosure.model,this.enclosure.chassisPath);
+      this.enclosure.load();
     } else {
+      console.log("RESOURCES");
       this.onImport(); 
     }
 
@@ -193,6 +201,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
 
   destroyEnclosure(){
     // Clear out assets
+    this.enclosure.destroy();
     this.container.destroy(true);
     PIXI.loader.resources = {};
   }
@@ -230,9 +239,13 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
   }
 
   onImport(){
-    let sprite = PIXI.Sprite.from(this.resources.m50.texture.baseTexture);
-    sprite.width = 480;
-    sprite.height = sprite.height * (480 / 960);
+    //this.enclosure.load();
+    console.log(this.enclosure.loader);
+    console.log(this.loader);
+    console.log(PIXI.loaders);
+    let sprite = PIXI.Sprite.from(this.enclosure.loader.resources.m50.texture.baseTexture);
+    //sprite.width = 480;
+    //sprite.height = sprite.height * (480 / 960);
     sprite.x = 0;
     sprite.y = 0;
     sprite.name=this.enclosure.model + "_sprite"

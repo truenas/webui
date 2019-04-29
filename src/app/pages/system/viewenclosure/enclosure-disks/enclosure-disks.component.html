@@ -55,7 +55,7 @@
             </div>
           </ng-template>
   
-          <div *ngIf="system; else loading" fxFlex class="tiles" [class.active]="currentView == 'pools' " fxLayout="column" fxLayoutAlign="center center">
+          <div *ngIf="system && system.pools; else loading" fxFlex class="tiles" [class.active]="currentView == 'pools' " fxLayout="column" fxLayoutAlign="center center">
             <div class="primary-number" >{{ system.pools.length }}</div>
             <div class="title">Pools in Enclosure</div>
             <div class="subtitle">{{system.profile.length > 1 ? system.profile.length - 1 : 'No' }} other enclosures detected</div>

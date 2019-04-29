@@ -192,7 +192,6 @@ export class VDevLabels extends LabelFactory{
         let tray = src.getLocalBounds();
 
         let el = overlay.nativeElement.querySelector('div.vdev-disk.' + disk);
-        console.log(el);
         let startX = tray.x + tray.width;
         let startY = tray.y + tray.height / 2;
         let endX = el.offsetLeft + el.offsetParent.offsetLeft;
