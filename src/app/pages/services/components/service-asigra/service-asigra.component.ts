@@ -10,7 +10,7 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
   template : ` <entity-form [conf]="this"></entity-form>`
 })
 export class ServiceAsigraComponent {
-  protected addCall = "asigra.config";
+  protected addCall = "asigra.update";
   protected route_success: string[] = [ 'services' ];
   public entityForm: any;
   public fs: any;
