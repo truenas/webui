@@ -442,16 +442,16 @@ msgid ""
 msgstr ""
 
 msgid "Account"
-msgstr ""
+msgstr "Konto"
 
 msgid "Account ID or Application Key ID"
-msgstr ""
+msgstr "Konto ID oder Anwendungsschlüssel ID"
 
 msgid "Account Key"
-msgstr ""
+msgstr "Kontoschlüssel"
 
 msgid "Account Name"
-msgstr ""
+msgstr "Kontoname"
 
 msgid ""
 "Account to be used for guest access. Default is nobody. Account is required "
@@ -460,13 +460,13 @@ msgid ""
 msgstr ""
 
 msgid "Accounts"
-msgstr ""
+msgstr "Konten"
 
 msgid "Acoustic Level"
-msgstr ""
+msgstr "Akustikpegel"
 
 msgid "Activate"
-msgstr ""
+msgstr "Aktivieren"
 
 msgid ""
 "Activates the configuration. Unset to disable the configuration without "
@@ -667,28 +667,28 @@ msgid ""
 msgstr ""
 
 msgid "Administrator Password"
-msgstr ""
+msgstr "Administrator Passwort"
 
 msgid "Administrators Group"
-msgstr ""
+msgstr "Administratoren Gruppe"
 
 msgid "Adv. Power Management"
-msgstr ""
+msgstr "Erweitertes Energiemanagement"
 
 msgid "Advanced"
-msgstr ""
+msgstr "Erweitert"
 
 msgid "Advanced Mode"
-msgstr ""
+msgstr "Erweiterter Modus"
 
 msgid "Advanced Plugin Installation"
-msgstr ""
+msgstr "Erweitere Plugin Installation"
 
 msgid "Advanced Power Management"
-msgstr ""
+msgstr "Erweitertes Energiemanagement"
 
 msgid "Advanced Settings"
-msgstr ""
+msgstr "Erweiteter Einstellungen"
 
 msgid ""
 "After entering the <b>Hostname, Username</b>, and <b>Password</b>, click "
@@ -696,13 +696,13 @@ msgid ""
 msgstr ""
 
 msgid "Alert"
-msgstr ""
+msgstr "Benachrichtigung"
 
 msgid "Alert Services"
-msgstr ""
+msgstr "Benachrichtigungs Service"
 
 msgid "Alert Settings"
-msgstr ""
+msgstr "Benachrichtigungs Einstellungen"
 
 msgid "Aliases"
 msgstr ""
@@ -931,7 +931,7 @@ msgid "Apply updates and reboot system after downloading."
 msgstr ""
 
 msgid "Archive"
-msgstr ""
+msgstr "Archiv"
 
 msgid ""
 "Assigning a directory to Minio changes the permissions                      "
@@ -970,10 +970,10 @@ msgid ""
 msgstr ""
 
 msgid "Authorized Hosts and IP addresses"
-msgstr ""
+msgstr "Autorisierte Hosts und IP-Adressen"
 
 msgid "Authorized Networks"
-msgstr ""
+msgstr "Autorisierte Netzwerke"
 
 msgid "Auto configure IPv6"
 msgstr ""
@@ -1046,7 +1046,7 @@ msgid "Awesome! Now let's explore FreeNAS's cool features."
 msgstr ""
 
 msgid "Back"
-msgstr ""
+msgstr "Zurück"
 
 msgid ""
 "Backblaze B2 Application Key. Log in to the B2 account and generate a key "
@@ -1064,7 +1064,7 @@ msgid ""
 msgstr ""
 
 msgid "Bandwidth Limit"
-msgstr ""
+msgstr "Bandbreitenlimit"
 
 msgid "Base DN"
 msgstr ""
@@ -1246,19 +1246,19 @@ msgid "CN Realm"
 msgstr ""
 
 msgid "CPU"
-msgstr ""
+msgstr "CPU"
 
 msgid "CPU Temperatures"
-msgstr ""
+msgstr "CPU Temperatur"
 
 msgid "CPU Usage"
-msgstr ""
+msgstr "CPU Auslastung"
 
 msgid "CPU and Memory"
-msgstr ""
+msgstr "CPU und Speicher"
 
 msgid "CSRs"
-msgstr ""
+msgstr "CSRs"
 
 msgid "Cache VDev"
 msgstr ""
@@ -1269,19 +1269,19 @@ msgid ""
 msgstr ""
 
 msgid "Cancel"
-msgstr ""
+msgstr "Abbrechen"
 
 msgid "Case Sensitivity"
 msgstr ""
 
 msgid "Category"
-msgstr ""
+msgstr "Kategorie"
 
 msgid "Certificate"
-msgstr ""
+msgstr "Zertifikat"
 
 msgid "Certificates"
-msgstr ""
+msgstr "Zertifikate"
 
 msgid "Change Device Order"
 msgstr ""
@@ -1350,16 +1350,16 @@ msgid "Check Interval"
 msgstr ""
 
 msgid "Check Now"
-msgstr ""
+msgstr "Jetzt prüfen"
 
 msgid "Check Release Notes"
 msgstr ""
 
 msgid "Check for Updates"
-msgstr ""
+msgstr "Auf Updates überprüfen"
 
 msgid "Check for Updates Daily and Download if Available"
-msgstr ""
+msgstr "Täglich auf Updates prüfen und bei Verfügbarkeit herunterladen"
 
 msgid ""
 "Check the <i>hostid</i> property of the jail. If not the same as the host, "
@@ -1367,10 +1367,10 @@ msgid ""
 msgstr ""
 
 msgid "Check the network connection"
-msgstr ""
+msgstr "Überprüfen Sie die Netzwerkverbindung"
 
 msgid "Check the network connection."
-msgstr ""
+msgstr "Überprüfen Sie die Netzwerkverbindung"
 
 msgid ""
 "Check the update server daily for                                   any "
@@ -1407,7 +1407,7 @@ msgid ""
 msgstr ""
 
 msgid "Choices are <i>Minimum, Normal, or Debug</i>."
-msgstr ""
+msgstr "Auswahlmöglichkeiten sind <i>Minimal, Normal, oder Debug</i>"
 
 msgid "Choices are <i>None, Auto, CHAP,</i> or <i>Mutual CHAP</i>."
 msgstr ""
@@ -1421,7 +1421,7 @@ msgid ""
 msgstr ""
 
 msgid "Choose <i>AES-256</i> or <i>None</i>."
-msgstr ""
+msgstr "Wähle <i>AES-256</i> oder <i>keines</i>."
 
 msgid ""
 "Choose <i>Master</i> if the UPS is plugged directly into the system serial "
@@ -1451,7 +1451,7 @@ msgid ""
 msgstr ""
 
 msgid "Choose a color scheme."
-msgstr ""
+msgstr "Wähle ein Farbschema"
 
 msgid "Choose a location to store the installer image file."
 msgstr ""
@@ -1497,13 +1497,13 @@ msgid ""
 msgstr ""
 
 msgid "Choose an authentication method."
-msgstr ""
+msgstr "Wählen Sie eine Authentifizierungsmethode."
 
 msgid "Choose an encryption mode to use with LDAP."
-msgstr ""
+msgstr "Wählen Sie einen Verschlüsselungsmodus für die Verwendung mit LDAP."
 
 msgid "Choose an encryption mode."
-msgstr ""
+msgstr "Wählen Sie einen Verschlüsselungsmodus."
 
 msgid ""
 "Choose an existing ZFS Pool to allow the                               "
