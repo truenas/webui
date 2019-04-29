@@ -1204,7 +1204,7 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
         for (let i = 0; i < value[propName].length; i++) {
           const subAddr = value[propName][i];
           if (subAddr[propName] != '' && subAddr[propName] != undefined) {
-            multi_ipaddr.push(this.getFullIP(subAddr[ipType + '_interface'], subAddr[propName], subAddr[ipType + '_netmask']));
+            multi_ipaddr.push(this.getFullIP(subAddr[ipType + '_interface'], subAddr[propName], subAddr[ipType + (ipType == 'ip4' ? '_netmask' : '_prefix')]));
           }
         }
         value[propName] = multi_ipaddr.join(',');

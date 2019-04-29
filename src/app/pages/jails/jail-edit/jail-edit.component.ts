@@ -1310,7 +1310,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       }
       if (value[i].indexOf('/') > 0) {
         this.formGroup.controls[propName].controls[i].controls[propName].setValue(value[i].split('/')[0]);
-        this.formGroup.controls[propName].controls[i].controls[ipType + '_netmask'].setValue(value[i].split('/')[1]);
+        this.formGroup.controls[propName].controls[i].controls[ipType + (ipType == 'ip4' ? '_netmask' : '_prefix')].setValue(value[i].split('/')[1]);
       } else {
         this.formGroup.controls[propName].controls[i].controls[propName].setValue(value[i] == 'none' ? '' : value[i]);
       }
@@ -1381,7 +1381,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
         for (let i = 0; i < value[propName].length; i++) {
           const subAddr = value[propName][i];
           if (subAddr[propName] != '' && subAddr[propName] != undefined) {
-            multi_ipaddr.push(this.getFullIP(subAddr[ipType + '_interface'], subAddr[propName], subAddr[ipType + '_netmask']));
+            multi_ipaddr.push(this.getFullIP(subAddr[ipType + '_interface'], subAddr[propName], subAddr[ipType + (ipType == 'ip4' ? '_netmask' : '_prefix')]));
           }
         }
         value[propName] = multi_ipaddr.join(',');

@@ -681,13 +681,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           if (this.conf.wsMultiDeleteParams) {
             this.busy = this.ws.job(this.conf.wsMultiDelete, this.conf.wsMultiDeleteParams(selected)).subscribe(
               (res1) => {
-                  this.getData();
-                  this.selected = [];
-                  this.snackBar.open("Items deleted.", 'close', { duration: 5000 });
                },
               (res1) => {
                 new EntityUtils().handleError(this, res1);
                 this.loader.close();
+              },
+              () => {
+                this.loader.close();
+                this.getData();
+                this.selected = [];
+                this.snackBar.open("Items deleted.", 'close', { duration: 5000 });
               }
             );
           }
