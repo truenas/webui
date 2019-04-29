@@ -110,9 +110,10 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
 
     entityForm.formGroup.controls['volume'].valueChanges.subscribe((res) => {
       this.ws.call('pool.import_disk_autodetect_fs_type', [res]).subscribe((res) => {
+        // If ws call fails to return type, no type is selected; otherwise, type is autoselected.
         for ( let option of this.fs_type_list.options) {
           if (res === option.value) {
-            this.fs_type.setValue('msdosfs');
+            this.fs_type.setValue(option.value);
           };
         };
       })
