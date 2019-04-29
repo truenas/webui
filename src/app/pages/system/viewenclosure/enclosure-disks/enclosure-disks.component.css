@@ -32,6 +32,11 @@ nav.view-nav-bar{
   user-select:none;
 }
 
+.view-card .expanders .caption,
+.view-card .expanders canvas{
+  opacity:0;
+}
+
 .view-card #disks-details{
   height:250px;
 }

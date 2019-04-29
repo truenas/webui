@@ -4,7 +4,7 @@
   </mat-toolbar>
   <mat-card-content>
     <!-- VISUALIZATION/OVERVIEW -->
-    <div #disksoverview id="disks-overview">
+    <div #disksoverview id="disks-overview" [class]="currentView">
 
         <!-- POOLS OVERLAY -->
           <div *ngIf="currentView == 'pools'" fxFlex="25" class="stage-left dom-overlay" fxLayout="column" fxLayoutAlign="center center">

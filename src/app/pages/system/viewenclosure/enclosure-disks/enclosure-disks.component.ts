@@ -283,15 +283,19 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
     switch(this.currentView){
       case 'pools':
         //this.setDisksDisabled();
+        this.container.alpha = 1;
         this.setDisksPoolState();
       break
       case 'status':
+        this.container.alpha = 1;
         this.setDisksDisabled();
         this.setDisksHealthState();
       break
       case 'expanders':
+        this.container.alpha = 0;
       break
       case 'details':
+        this.container.alpha = 1;
         this.setDisksDisabled();
         this.setDisksHealthState(this.selectedDisk.enclosure_slot);
         let vdev = this.system.getVdevInfo(this.selectedDisk.devname);

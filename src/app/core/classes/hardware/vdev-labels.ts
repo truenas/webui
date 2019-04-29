@@ -119,7 +119,7 @@ export class VDevLabels extends LabelFactory{
 
     // draw a rounded rectangle
     tile.lineStyle(1, this.parseColor(this.color), 1);
-    tile.beginFill(this.parseColor(this.color), 0.25);
+    tile.beginFill(this.parseColor(this.color), 0);
     //tile.drawRoundedRect(0, 0, 100, 100, 16);
     tile.drawRect(x, y, w, h);
     tile.endFill();
@@ -173,6 +173,7 @@ export class VDevLabels extends LabelFactory{
 
         let tile = this.createVdevLabelTile(tray.x, tray.y, src.width * this.chassis.container.scale.x, src.height * this.chassis.container.scale.y);
         tile.name = "tile_" + disk;
+        //tile.renderCanvas()
         this.textAreas.vdev.container.addChild(tile);
 
       }
@@ -189,8 +190,6 @@ export class VDevLabels extends LabelFactory{
         // Create tile if the disk is in the current enclosure
         let src = this.textAreas.vdev.container.getChildByName("tile_" + disk);
         let tray = src.getLocalBounds();
-        console.log(overlay);
-
 
         let el = overlay.nativeElement.querySelector('div.vdev-disk.' + disk);
         console.log(el);
@@ -198,7 +197,6 @@ export class VDevLabels extends LabelFactory{
         let startY = tray.y + tray.height / 2;
         let endX = el.offsetLeft + el.offsetParent.offsetLeft;
         let endY = el.offsetTop + el.offsetParent.offsetTop + (el.offsetHeight / 2);
-        console.log('startX: ' + startX + ' startY: ' + startY + ' endX: ' + endX + ' endY: '  + endY);
         this.createTrace(startX, startY, endX, endY);
       }
     });
@@ -212,6 +210,7 @@ export class VDevLabels extends LabelFactory{
     graphics.moveTo(startX, startY);
     graphics.lineTo(endX, endY);
     graphics.endFill();
+    //graphics.renderCanvas();
 
     this.textAreas.vdev.container.addChild(graphics);
   }
