@@ -112,7 +112,6 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
             value: '',
           }],
           value: '',
-          required: false,
           class: 'inline',
           width: '30%',
         },
@@ -186,7 +185,6 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
             value: '',
           }],
           value: '',
-          required: false,
           class: 'inline',
           width: '30%',
         },
@@ -973,26 +971,6 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
     }
   }
 
-  updateInterfaceValidaton(subipFormgroup, subipInterfaceField, ipType) {
-    const targetPropName = ipType + '_addr';
-    if (this.formGroup.controls['dhcp'].value != true &&
-      this.formGroup.controls['vnet'].value == true &&
-      subipFormgroup.controls[targetPropName].value != undefined &&
-      subipFormgroup.controls[targetPropName].value != '') {
-      if (subipInterfaceField.required === false) {
-        subipInterfaceField.required = true;
-        subipInterfaceField['hasError'] = true;
-        subipInterfaceField['errors'] = 'Interface is required';
-      }
-    } else {
-      if (subipInterfaceField.required === true) {
-        subipInterfaceField.required = false;
-        subipInterfaceField['hasError'] = false;
-        subipInterfaceField['errors'] = '';
-      }
-    }
-  }
-
   updateInterface(addVnet?) {
     for (const ipType of ['ip4', 'ip6']) {
       const targetPropName = ipType + '_addr';
@@ -1002,10 +980,6 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
 
         if (addVnet != undefined) {
           this.updateInterfaceOptions(subipInterfaceField, addVnet);
-        }
-
-        if (subipInterfaceField != undefined) {
-          this.updateInterfaceValidaton(subipFormgroup, subipInterfaceField, ipType);
         }
       }
     }

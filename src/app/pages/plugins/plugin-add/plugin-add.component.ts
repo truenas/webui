@@ -121,7 +121,6 @@ export class PluginAddComponent implements OnInit {
           value: false,
         }]
       }],
-      required: false,
       class: 'inline',
       width: '20%',
     },
@@ -179,7 +178,6 @@ export class PluginAddComponent implements OnInit {
       tooltip: helptext.ip6_prefix_tooltip,
       options: this.networkService.getV6PrefixLength(),
       value: '',
-      required: false,
       class: 'inline',
       width: '20%',
       relation: [{
@@ -268,26 +266,6 @@ export class PluginAddComponent implements OnInit {
         }
       }
     });
-
-    this.formGroup.controls['ip4_addr'].valueChanges.subscribe((res) => {
-      if (res == undefined || res == 'none' || res == '') {
-        this.ip4_interfaceField.required = false;
-        this.ip4_netmaskField.required = false;
-      } else {
-        this.ip4_interfaceField.required = true;
-        this.ip4_netmaskField.required = true;
-      }
-    });
-    this.formGroup.controls['ip6_addr'].valueChanges.subscribe((res) => {
-      if (res == undefined || res == 'none' || res == '') {
-        this.ip6_interfaceField.required = false;
-        this.ip6_prefixField.required = false;
-      } else {
-        this.ip6_interfaceField.required = true;
-        this.ip6_prefixField.required = true;
-      }
-    });
-
 
     for (let i in this.fieldConfig) {
       let config = this.fieldConfig[i];
