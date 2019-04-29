@@ -38,6 +38,7 @@ import {EmailComponent} from './email/';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
 import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
+import { ReportingComponent } from './reporting/reporting.component';
 
 export const routes: Routes = [
   // {path : '', component : GeneralComponent },
@@ -64,11 +65,15 @@ export const routes: Routes = [
       path: 'advanced',
       component: AdvancedComponent,
       data: { title: 'Advanced', breadcrumb: 'Advanced', icon: 'settings' },
-    },{
+    }, {
       path: 'viewenclosure',
       component: ViewEnclosureComponent,
       data: { title: 'View Enclosure', breadcrumb: 'View Enclosure', icon: 'settings' },
-    },{
+    }, {
+      path: 'reporting',
+      component: ReportingComponent,
+      data: { title: 'Reporting', breadcrumb: 'Reporting' },
+    }, {
       path: 'dataset',
       component: DatasetComponent,
       data: { title: 'System Dataset', breadcrumb: 'System Dataset', icon: 'storage' },

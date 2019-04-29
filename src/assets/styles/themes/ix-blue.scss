@@ -286,6 +286,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     opacity: 0.38;
   }
 
+  .mat-form-field.mat-focused.mat-primary .mat-select-arrow {
+    @include variable(color, --primary, $primary, !important);
+  }
+
   .mat-checkbox-disabled .mat-checkbox-label {
     @include variable(color, --fg2, $fg2);
     opacity: 0.6;
@@ -1118,6 +1122,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .advanced-date-picker .cron-fields .mat-form-field-underline {
     background-color: white !important;
     opacity: .99;
+  }
+  
+  app-select-dialog .mat-select-placeholder,
+  app-ipmi .mat-select-placeholder {
+    @include variable(color, --fg2, $fg2);
   }
 
  } // end of ix theme

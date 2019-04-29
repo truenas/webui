@@ -34,6 +34,8 @@ export class EntityFormService {
           const formArray = this.createFormArray(controls[i].formarray,
                                                controls[i].initialCount);
           formGroup[controls[i].name] = formArray;
+        } else if (controls[i].listFields) {
+          formGroup[controls[i].name] = this.formBuilder.array([]);
         } else {
           formGroup[controls[i].name] = new FormControl(
               {value : controls[i].value, disabled : controls[i].disabled},

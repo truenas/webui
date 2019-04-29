@@ -45,6 +45,8 @@ import { EmailComponent } from './email';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
 import { EnclosureModule } from './viewenclosure/enclosure.module';
+import { ReportingComponent } from './reporting/reporting.component';
+
 
 @NgModule({
   imports: [
@@ -87,6 +89,7 @@ import { EnclosureModule } from './viewenclosure/enclosure.module';
     EmailComponent,
     AlertServiceComponent,
     AlertConfigComponent,
+    ReportingComponent,
   ],
   providers: []
 })

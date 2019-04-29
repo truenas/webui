@@ -2619,6 +2619,11 @@ msgid "Details"
 msgstr "详情"
 
 msgid ""
+"Determine whether this share name is included when browsing shares. Home "
+"shares are only visible to the owner regardless of this setting."
+msgstr ""
+
+msgid ""
 "Determine which information the processes in a jail are able to obtain "
 "about mount points. The behavior of multiple syscalls is affected. <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=statfs\" "
@@ -3305,7 +3310,7 @@ msgstr "Enter a valid MAC address vendor prefix. <b>例子：</b> <i>E4F4C6</i>"
 
 msgid ""
 "Enter a valid username for the <a "
-"href=\"https://redmine.ixsystems.com/projects/freenas/issues\" "
+"href=\"https://jira.ixsystems.com/projects/NAS/issues/\" "
 "target=\"_blank\">FreeNAS bug tracking system</a>"
 msgstr ""
 
@@ -4127,6 +4132,9 @@ msgstr "主目录权限"
 msgid "Host"
 msgstr "主机"
 
+msgid "Host Sync"
+msgstr ""
+
 msgid "Host name database"
 msgstr "主机名数据库"
 
@@ -4409,9 +4417,6 @@ msgstr "接口"
 
 msgid "Interface Description"
 msgstr "接口描述"
-
-msgid "Interface Name"
-msgstr "接口名称"
 
 msgid "Interfaces"
 msgstr "接口"
@@ -7493,6 +7498,9 @@ msgid ""
 "on the client."
 msgstr ""
 
+msgid "Settings saved."
+msgstr ""
+
 msgid "Setup Mode"
 msgstr "配置模式"
 
@@ -8042,7 +8050,7 @@ msgstr ""
 msgid ""
 "The envelope <i>From</i> address shown in the email. This can be set to "
 "make filtering mail on the receiving system easier. The friendly name is "
-"set like this: <i>\"Friendly Name\" <address@example.com></i>"
+"set like this: <i>\"Friendly Name\" &ltaddress@example.com&gt</i>"
 msgstr ""
 
 msgid ""
@@ -8401,6 +8409,11 @@ msgstr ""
 "private-key\" target=\"_blank\">file must be generated</a> with the Google "
 "Cloud Platform Console and uploaded from the local system."
 
+msgid ""
+"Upsmon will wait up to this many seconds in master mode for the slaves to "
+"disconnect during a shutdown situation."
+msgstr ""
+
 msgid "Uptime"
 msgstr "运行时间"
 
@@ -8503,16 +8516,18 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Usernames of 8 characters or less are recommended for compatibility with "
-"application software, but up to 16 characters are allowed."
-msgstr "因为软件兼容性原因，推荐小于8个字符。最长允许16个字符。"
+"Usernames can be up to 16 characters long. When using NIS or other legacy "
+"software with limited username lengths, keep usernames to eight characters "
+"or less for compatibility."
+msgstr ""
 
 msgid ""
-"Usernames of eight characters or less are recommended for compatibility "
-"with application software, but up to sixteen characters are allowed. "
-"Usernames cannot begin with a hyphen (<i>-</i>) or contain a space, tab, or "
-"these characters: <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i>. Note that "
-"<i>$</i> can only be used as the last character."
+"Usernames can be up to 16 characters long. When using NIS or other legacy "
+"software with limited username lengths, keep usernames to eight characters "
+"or less for compatibility. Usernames cannot begin with a hyphen (<i>-</i>) "
+"or contain a space, tab, or these characters: <i>, : + & # % ^ ( ) ! @ ~ * "
+"? < > =</i>. <i>$</i> can only be used as the last character of the "
+"username."
 msgstr ""
 
 msgid "Users"
@@ -8702,12 +8717,6 @@ msgid ""
 "names to be prepended to user names. One possible reason for unsetting this "
 "value is to prevent username collisions when Allow Trusted Domains is set "
 "and there are identical usernames in more than one domain."
-msgstr ""
-
-msgid ""
-"When set, users see the contents of <i>/homes</i>, which includes the home "
-"directories of other users. When unset, users only see their own home "
-"directory."
 msgstr ""
 
 msgid "Widget Base Class"
