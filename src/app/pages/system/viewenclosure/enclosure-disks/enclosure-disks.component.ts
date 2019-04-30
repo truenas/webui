@@ -120,7 +120,9 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
   ngOnDestroy(){
     this.core.unregister({observerClass: this});
     this.destroyEnclosure();
-    this.app = null;
+    this.app.stage.destroy(true);
+    this.app.destroy(true, true); 
+
     //Object.keys(PIXI.utils.TextureCache).forEach(function(texture) {  PIXI.utils.TextureCache[texture].destroy(true);});
   }
 
@@ -143,6 +145,8 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
     this.overview.nativeElement.appendChild(this.app.view);
 
     this.container = new PIXI.Container();
+    this.container.name = "top_level_container";
+    this.app.stage.name = "stage_container";
     this.app.stage.addChild(this.container);
     this.container.width = this.app.stage.width;
     this.container.height = this.app.stage.height;
