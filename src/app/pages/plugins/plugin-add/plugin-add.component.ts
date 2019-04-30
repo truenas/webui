@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Validators } from '@angular/forms';
 
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -217,6 +218,37 @@ export class PluginAddComponent implements OnInit {
     protected snackBar: MatSnackBar,
     protected matdialog: MatDialog) {}
 
+  updateIpValidation() {
+    const ip4AddrField = _.find(this.fieldConfig, {'name': 'ip4_addr'});
+    const ip6AddrField = _.find(this.fieldConfig, {'name': 'ip6_addr'});
+    if (this.formGroup.controls['dhcp'].value == false && this.formGroup.controls['nat'].value == false) {
+      if ((this.formGroup.controls['ip4_addr'].value == '' || this.formGroup.controls['ip4_addr'].value == undefined) &&
+      (this.formGroup.controls['ip6_addr'].value == '' || this.formGroup.controls['ip6_addr'].value == undefined)) {
+        if (ip4AddrField.required == false) {
+          ip4AddrField.required = true;
+          this.formGroup.controls['ip4_addr'].setValidators([Validators.required]);
+          this.formGroup.controls['ip4_addr'].updateValueAndValidity();
+        }
+        if (ip6AddrField.required == false) {
+          ip6AddrField.required = true;
+          this.formGroup.controls['ip6_addr'].setValidators([Validators.required]);
+          this.formGroup.controls['ip6_addr'].updateValueAndValidity();
+        }
+      } else {
+        if (ip4AddrField.required == true) {
+          ip4AddrField.required = false;
+          this.formGroup.controls['ip4_addr'].clearValidators();
+          this.formGroup.controls['ip4_addr'].updateValueAndValidity();
+        }
+        if (ip6AddrField.required == true) {
+          ip6AddrField.required = false;
+          this.formGroup.controls['ip6_addr'].clearValidators();
+          this.formGroup.controls['ip6_addr'].updateValueAndValidity();
+        }
+      }
+    }
+  }
+
   ngOnInit() {
     this.ip4_interfaceField = _.find(this.fieldConfig, {'name': 'ip4_interface'});
     this.ip4_netmaskField = _.find(this.fieldConfig, {'name': 'ip4_netmask'});
@@ -237,34 +269,10 @@ export class PluginAddComponent implements OnInit {
 
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
     this.formGroup.controls['ip4_addr'].valueChanges.subscribe((res) => {
-      if (res != '' && res != undefined) {
-        if (this.formGroup.controls['ip6_addr'].disabled == false) {
-          this.formGroup.controls['ip6_interface'].disable();
-          this.formGroup.controls['ip6_addr'].disable();
-          this.formGroup.controls['ip6_prefix'].disable();
-        }
-      } else {
-        if (this.formGroup.controls['ip6_addr'].disabled == true && this.formGroup.controls['dhcp'].value == false && this.formGroup.controls['nat'].value == true) {
-          this.formGroup.controls['ip6_interface'].enable();
-          this.formGroup.controls['ip6_addr'].enable();
-          this.formGroup.controls['ip6_prefix'].enable();
-        }
-      }
+      this.updateIpValidation()
     });
     this.formGroup.controls['ip6_addr'].valueChanges.subscribe((res) => {
-      if (res != '' && res != undefined) {
-        if (this.formGroup.controls['ip4_addr'].disabled == false) {
-          this.formGroup.controls['ip4_interface'].disable();
-          this.formGroup.controls['ip4_addr'].disable();
-          this.formGroup.controls['ip4_netmask'].disable();
-        }
-      } else {
-        if (this.formGroup.controls['ip4_addr'].disabled == true && this.formGroup.controls['dhcp'].value == false && this.formGroup.controls['nat'].value == false) {
-          this.formGroup.controls['ip4_interface'].enable();
-          this.formGroup.controls['ip4_addr'].enable();
-          this.formGroup.controls['ip4_netmask'].enable();
-        }
-      }
+      this.updateIpValidation();
     });
 
     for (let i in this.fieldConfig) {
