@@ -87,6 +87,7 @@ export class VolumesListTableConfig implements InputTableConf {
   public showSpinner:boolean;
   public encryptedStatus: any;
   public custActions: Array<any> = [];
+  private vmware_res_status: boolean;
 
   constructor(
     private parentVolumesListComponent: VolumesListComponent,
@@ -618,6 +619,10 @@ export class VolumesListTableConfig implements InputTableConf {
       actions.push({
         label: T("Create Snapshot"),
         onClick: (row) => {
+          let recursiveIsChecked = false;
+          this.ws.call('vmware.dataset_has_vms',[row.path, false]).subscribe((vmware_res)=>{
+            this.vmware_res_status = vmware_res;
+          })
           const conf: DialogFormConfiguration = {
             title: "One time snapshot of " + row.path,
             fieldConfig: [
@@ -636,7 +641,8 @@ export class VolumesListTableConfig implements InputTableConf {
                 tooltip: helptext.snapshotDialog_name_tooltip,
                 validation: helptext.snapshotDialog_name_validation,
                 required: true,
-                value: "manual" + '-' + this.getTimestamp()            },
+                value: "manual" + '-' + this.getTimestamp()            
+              },
               {
                 type: 'checkbox',
                 name: 'recursive',
@@ -692,8 +698,11 @@ export class VolumesListTableConfig implements InputTableConf {
     return actions;
   }
 
-  updater() {
-    console.log('updater')
+  updater(parent) {
+    console.log('updater', parent)
+    // this.ws.call('vmware.dataset_has_vms',[row.path, false]).subscribe((vmware_res)=>{
+    //   this.vmware_res_status = vmware_res;
+    // })
   }
 
   getTimestamp() {
