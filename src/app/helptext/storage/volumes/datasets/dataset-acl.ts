@@ -1,6 +1,7 @@
 import { T } from '../../../../translate-marker';
 
 export default {
+dataset_acl_title_name: T('ACL Manager'),
 dataset_acl_path_placeholder: T('Path'),
 
 dataset_acl_aces_placeholder: T('Access Control Entries'),

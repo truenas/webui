@@ -15,6 +15,7 @@ import {EntityUtils} from '../../../../common/entity/utils';
 import {
   FieldConfig
 } from '../../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { T } from '../../../../../translate-marker';
 import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-acl';
 
@@ -44,7 +45,13 @@ export class DatasetAclComponent implements OnDestroy {
   protected fs: any = (<any>window).filesize;
   protected route_success: string[] = [ 'storage', 'pools' ];
 
-  public fieldConfig: FieldConfig[] = [
+  public fieldSetDisplay  = 'default';//default | carousel | stepper
+  public fieldConfig: FieldConfig[] = [];
+  public fieldSets: FieldSet[] = [{
+    name: helptext.dataset_acl_title_name,
+    class: "dataset-acl-editor",
+    label: true,
+    config:[
     {
       type: 'input',
       name : 'path',
@@ -158,6 +165,7 @@ export class DatasetAclComponent implements OnDestroy {
       tooltip: helptext.dataset_acl_recursive_tooltip,
       value: false
     }
+  ]}
   ];
 
   constructor(protected router: Router, protected route: ActivatedRoute,
