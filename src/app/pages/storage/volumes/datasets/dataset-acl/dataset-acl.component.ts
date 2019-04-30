@@ -61,6 +61,7 @@ export class DatasetAclComponent implements OnDestroy {
     {
       type: 'list',
       name: 'aces',
+      width: '100%',
       placeholder: helptext.dataset_acl_aces_placeholder,
       templateListField: [
         {
