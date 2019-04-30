@@ -18,4 +18,11 @@ export class FormCheckboxComponent implements Field {
   fieldShow: string;
 
   constructor(public translate: TranslateService) {}
+
+  checkboxUpdate() {
+    if(this.config.updater && this.config.parent ){
+      this.config.updater(this, this.config.parent);
+      return;
+    }
+  }
 }

@@ -14,6 +14,5 @@ export interface DialogFormConfiguration {
   message?: any,
   warning?: any,
   preInit?: any,
-  parent?: any,
-  custCheckboxActions?: any[]
+  parent?: any
 }

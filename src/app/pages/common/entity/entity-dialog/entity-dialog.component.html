@@ -16,10 +16,6 @@
   <p *ngIf="error" type="danger" id="error_message"><span [innerHTML]="error"></span></p>
 </div>
 
-<div *ngFor="let custCheck of conf.custCheckboxActions">
-  <mat-checkbox (change)="custCheck['function']()">{{custCheck.placeholder | translate}}</mat-checkbox>
-</div>
-
 <div mat-dialog-actions>
   <span fxFlex></span>
   <span *ngFor="let custBtn of conf.custActions">
