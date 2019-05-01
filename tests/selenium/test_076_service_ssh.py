@@ -25,10 +25,6 @@ xpaths = {
 }
 
 
-def test_00_set_implicitly_wait(wb_driver):
-    wb_driver.implicitly_wait(1)
-
-
 def test_01_turnon_ssh(wb_driver):
     # click Service Menu
     wb_driver.find_element_by_xpath(xpaths['navService']).click()

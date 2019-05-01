@@ -164,4 +164,6 @@ export class EntityWizardComponent implements OnInit {
       );
     }
   }
+
+  originalOrder = function () {};
 }
