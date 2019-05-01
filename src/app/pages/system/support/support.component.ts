@@ -286,6 +286,7 @@ export class SupportComponent {
           parent: this,
           hideButton: true,
           hasErrors: true,
+          multiple: true
         }
       ]
     }

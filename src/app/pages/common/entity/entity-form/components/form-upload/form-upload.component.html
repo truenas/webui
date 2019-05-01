@@ -5,7 +5,10 @@
   </div>
   <div *ngIf="config.hideButton;else showButton">
       <mat-card-content>
-          <input type="file" #fileInput accept="{{config.acceptedFiles}}" (change)="upload(config.fileLocation)" [formControlName]="config.name">
+          <input type="file" *ngIf="!config.multiple;else multipleFiles" #fileInput accept="{{config.acceptedFiles}}" (change)="upload(config.fileLocation)" [formControlName]="config.name">
+          <ng-template #multipleFiles>
+            <input type="file" #fileInput accept="{{config.acceptedFiles}}" (change)="upload(config.fileLocation)" [formControlName]="config.name" multiple>
+          </ng-template>
       </mat-card-content>
       <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
   </div>
