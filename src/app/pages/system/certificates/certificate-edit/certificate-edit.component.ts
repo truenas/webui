@@ -101,26 +101,6 @@ export class CertificateEditComponent {
   }
 
   customSubmit(value) {
-<<<<<<< HEAD
-    let payload = {};
-    payload['name'] = value.name;
-    if (value.CSR != null) {
-      payload['certificate'] = value.certificate;
-    }
-
-    this.loader.open();
-    console.log(this.editCall, this.pk, payload)
-    this.ws.call(this.editCall, [this.pk, payload]).subscribe(
-      (res) => {
-        this.loader.close();
-        this.router.navigate(new Array('/').concat(this.route_success));
-      },
-      (res) => {
-        this.loader.close();
-        new EntityUtils().handleWSError(this.entityForm, res);
-      }
-    );
-=======
     this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": "Updating Identifier" }});
     this.dialogRef.componentInstance.setCall(this.editCall, [this.pk, {'name':value['name']}]);
     this.dialogRef.componentInstance.submit();
@@ -132,6 +112,5 @@ export class CertificateEditComponent {
       this.matDialog.closeAll();
       new EntityUtils().handleWSError(this.entityForm, res);
     });
->>>>>>> master
   }
 }
