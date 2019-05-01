@@ -8,8 +8,8 @@ import { EntityUtils } from '../../common/entity/utils';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogService } from '../../../../app/services';
 import { T } from '../../../translate-marker';
-import { MatSnackBar } from '@angular/material';
-
+import { MatSnackBar, MatDialog } from '@angular/material';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 
 @Component({
   selector: 'app-jail-list',
@@ -116,20 +116,26 @@ export class JailListComponent implements OnInit {
       enable: true,
       ttpos: "above",
       onClick: (selected) => {
-        let selectedJails = this.getSelectedNames(selected);
-        this.loader.open();
+        const selectedJails = this.getSelectedNames(selected);
+        this.snackBar.open(T('Updating selected plugins.'), 'close', { duration: 5000 });
         this.entityList.busy =
           this.ws.job('core.bulk', ["jail.update_to_latest_patch", selectedJails]).subscribe(
             (res) => {
-              this.loader.close();
-              if (res.state == 'SUCCESS') {
-                this.snackBar.open(T("Selected Jail(s) updated successfully."), T("Close"), { duration: 5000 });
+              let message = "";
+              for (let i = 0; i < res.result.length; i++) {
+                if (res.result[i].error != null) {
+                  message = message + '<li>' + selectedJails[i] + ': ' + res.result[i].error + '</li>';
+                }
+              }
+              if (message === "") {
+                this.snackBar.open(T('Selected jails updated.'), 'close', { duration: 5000 });
               } else {
-                new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
+                message = '<ul>' + message + '</ul>';
+                this.dialogService.errorReport(T('Jail Update Failed'), message);
               }
             },
             (res) => {
-              this.loader.close();
+              this.snackBar.open(T('Updating selected jails failed.'), 'close', { duration: 5000 });
               new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
             });
       }
@@ -155,7 +161,7 @@ export class JailListComponent implements OnInit {
 
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, 
     protected loader: AppLoaderService, protected dialogService: DialogService, private translate: TranslateService,
-    protected snackBar: MatSnackBar, public sorter: StorageService) {}
+    protected snackBar: MatSnackBar, public sorter: StorageService, protected dialog: MatDialog,) {}
 
 
   ngOnInit(){
@@ -303,21 +309,13 @@ export class JailListComponent implements OnInit {
         id: "update",
         label: T("Update"),
         onClick: (row) => {
-          this.loader.open();
-          this.entityList.busy =
-            this.ws.job('jail.update_to_latest_patch', [row.host_hostuuid]).subscribe(
-              (res) => {
-                this.loader.close();
-                if (res.state == 'SUCCESS') {
-                  this.snackBar.open(T("Jail updated successfully."), T("Close"), { duration: 5000 });
-                } else {
-                  new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
-                }
-              },
-              (res) => {
-                this.loader.close();
-                new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
-              });
+          const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Updating Jail") }, disableClose: true });
+          dialogRef.componentInstance.setCall('jail.update_to_latest_patch', [row.host_hostuuid]);
+          dialogRef.componentInstance.submit();
+          dialogRef.componentInstance.success.subscribe((res) => {
+            dialogRef.close(true);
+            this.snackBar.open(T("Jail ") + row.host_hostuuid + T(" updated."), T('Close'), { duration: 5000 });
+          });
         }
       },
       {

@@ -16,7 +16,7 @@ order_tooltip : '',
 
 zvol_path_placeholder : 'Zvol',
 zvol_path_tooltip : 'Browse to an existing <a\
- href="%%docurl%%/storage.html%%webversion%%#adding-zvols"\
+ href="%%docurl%%/storage.html#adding-zvols"\
  target="_blank">Zvol</a>.',
 zvol_path_validation : [Validators.required],
 options:[],

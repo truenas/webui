@@ -20,7 +20,7 @@ export class CloudCredentialService {
   	return this.ws.call(this.credentialProviders, []);
   }
 
-  getByte(data: string): Number {
+  getByte(data: string): any {
       let unit = 'K'; // default unit
       let index = -1;
 

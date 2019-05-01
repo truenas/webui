@@ -116,7 +116,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   public queryResponse;
   public saveSubmitText = "Save";
   public showPassword = false;
-  public isFooterOpen: boolean;
+  public isFooterConsoleOpen: boolean;
 
   get controls() {
     return this.fieldConfig.filter(({type}) => type !== 'button');
@@ -173,6 +173,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             this.conf.isBasicMode = true;
           }
         }
+        this.isFooterConsoleOpen = res.consolemsg;
       }
     });
 
@@ -355,18 +356,16 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
     // ...but for entity forms that don't make a data request, this kicks in 
     setTimeout(() => { this.setShowDefaults(); }, 500);
-
-    this.checkIfConsoleMsgShows();
-
   }
 
   checkIfConsoleMsgShows() {
     setTimeout(() => {
-      this.rest.get('system/advanced', { limit: 0 }).subscribe((res) => {
-        this.isFooterOpen = res.data['adv_consolemsg'];   
+      this.ws.call('system.advanced.config').subscribe((res)=> {
+        if (res) {
+          this.isFooterConsoleOpen = res.consolemsg;
+        }
       });
     }, 500)
-
   }
 
   setShowDefaults() {
@@ -415,10 +414,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   editCall(body: any) {
-    const payload = []
-    const call = this.conf.editCall;
-    payload.push(body);
-    return this.ws.call(call, payload);
+    return this.ws.call(this.conf.editCall, [this.pk, body]);
   }
 
   addSubmit(body: any) {
@@ -558,7 +554,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   setDisabled(name: string, disable: boolean, hide?: boolean, status?:string) {
-    // if field is hidden, disable it tooo
+    // if field is hidden, disable it too
     if (hide) {
       disable = hide;
     } else {

@@ -25,7 +25,7 @@ export const helptext_system_certificates = {
       placeholder: T("Signing Certificate Authority"),
       tooltip: T(
         'Select a previously imported or created <a\
- href="%%docurl%%/system.html%%webversion%%#cas"\
+ href="%%docurl%%/system.html#cas"\
  target="_blank">CA</a>.'
       ),
       validation: [Validators.required]
@@ -38,7 +38,7 @@ export const helptext_system_certificates = {
 
     ec_curve: {
       placeholder: T("EC Curve")
-    },  
+    },   
 
     key_length: {
       placeholder: T("Key Length"),

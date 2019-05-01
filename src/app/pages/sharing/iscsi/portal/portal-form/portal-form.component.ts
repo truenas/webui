@@ -168,10 +168,9 @@ export class PortalFormComponent {
     this.arrayModel = _.find(this.arrayControl.formarray, {'name' : 'ip'});
 
     this.iscsiService.getIpChoices().subscribe((res) => {
-      this.arrayModel.options.push({label : '0.0.0.0', value : '0.0.0.0'});
-      res.forEach((item) => {
-        this.arrayModel.options.push({label : item[1], value : item[0]});
-      });
+      for (const item in res) {
+        this.arrayModel.options.push({label : item, value : res[item]});
+      };
     });
   }
 

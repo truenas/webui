@@ -64,6 +64,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public dirty = false;
   protected existing_pools = [];
   public poolError = null;
+  public isFooterConsoleOpen: boolean;
 
   public submitTitle = T("Create");
   protected extendedSubmitTitle = T("Extend");
@@ -246,6 +247,11 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       this. can_suggest = this.suggestable_disks.length < 11;
 
       this.temp = [...this.disks];
+    });
+    this.ws.call('system.advanced.config').subscribe((res)=> {
+      if (res) {
+        this.isFooterConsoleOpen = res.consolemsg;
+      }
     });
   }
 

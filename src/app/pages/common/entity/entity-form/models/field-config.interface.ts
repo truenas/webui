@@ -10,11 +10,12 @@ export interface FieldConfig {
   initialCount?: number, readonly?: boolean, initial?: string,
   min?: number, max?: number, tabs?: any[], tabName?: string, class?: string,
   customEventActionLabel?: string, explorerType?: string, customTemplateStringOptions?: any,
-  required?: boolean,
+  useCheckbox?: boolean, required?: boolean,
   acceptedFiles?: string, fileLocation?: string, fileType?: string,width?:string, 
   message?: any, updater?:any, parent?:any,togglePw?:boolean, paraText?: any,
   noexec?: boolean, blurStatus?:boolean,blurEvent?:any,noMinutes?:boolean,
-  warnings?: string, hideButton?:boolean, searchOptions?: any[], hideDirs?: any
+  warnings?: string, hideButton?:boolean, searchOptions?: any[], hideDirs?: any,
+  listFields?: Array<FieldConfig>[], templateListField?: FieldConfig[]
   customEventMethod?(data:any), onChangeOption?(data:any), 
   
 }

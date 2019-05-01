@@ -258,6 +258,7 @@ export class WebSocketService {
   clearCredentials() {
     this.loggedIn = false;
     this.token = null;
+    localStorage.removeItem('engineerMode');
   }
 
   prepare_shutdown() {

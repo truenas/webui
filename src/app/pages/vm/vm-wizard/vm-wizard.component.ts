@@ -304,12 +304,6 @@ export class VMWizardComponent {
       });
     });
 
-    ( < FormGroup > entityWizard.formArray.get([0]).get('wizard_type')).valueChanges.subscribe((res) => {
-      if (res === 'docker') {
-        this.router.navigate(new Array('/').concat(['vm','dockerwizard']))
-      }
-    });
-
     ( < FormGroup > entityWizard.formArray.get([1]).get('bootloader')).valueChanges.subscribe((bootloader) => {
       if(bootloader === "UEFI_CSM"){
         _.find(this.wizardConfig[1].fieldConfig, {name : 'enable_vnc'})['isHidden'] = true;
@@ -595,7 +589,6 @@ async customSubmit(value) {
     zvol_payload["zvol_name"] = hdd
     zvol_payload["zvol_volsize"] = value.volsize * 1024 * 1000 * 1000;
 
-    vm_payload["vm_type"]= "Bhyve";
     vm_payload["memory"]= value.memory;
     vm_payload["name"] = value.name;
     vm_payload["vcpus"] = value.vcpus;
