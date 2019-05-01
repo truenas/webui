@@ -77,7 +77,8 @@ def test_02_create_newpool(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['confirmCheckbox']).click()
     # Click Ok Button
     wb_driver.find_element_by_xpath(xpaths['createpoolButton']).click()
-    wait_on_element(wb_driver, xpaths['addAction'], script_name, test_name)
+    wait = wait_on_element(wb_driver, xpaths['addAction'], script_name, test_name)
+    assert wait, 'Creating new pool test timeout'
     # taking screenshot
     take_screenshot(wb_driver, script_name, test_name)
     error_check(wb_driver)
@@ -104,7 +105,8 @@ def test_03_create_newpool2(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['confirmCheckbox']).click()
     # Click OK Button
     wb_driver.find_element_by_xpath(xpaths['createpoolButton']).click()
-    wait_on_element(wb_driver, xpaths['addAction'], script_name, test_name)
+    wait = wait_on_element(wb_driver, xpaths['addAction'], script_name, test_name)
+    assert wait, 'Creating new pool test timeout'
     # taking screenshot
     take_screenshot(wb_driver, script_name, test_name)
     error_check(wb_driver)
