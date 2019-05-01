@@ -16,7 +16,7 @@ script_name = os.path.basename(__file__).partition('.')[0]
 
 xpaths = {
     'navSystem': "//*[@id='nav-2']/div/a[1]",
-    'submenuUpdate': "//*[@id='2-10']",
+    'submenuUpdate': "//a[contains(text(),'Update')]",
     'buttonChecknow': "/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-update/mat-card/div/div[3]/div/button[1]",
     'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
 }
