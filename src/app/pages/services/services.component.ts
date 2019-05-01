@@ -1,13 +1,10 @@
 import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { MatGridListModule } from '@angular/material';
-import { MatButtonToggleGroup } from '@angular/material/button-toggle';
+import { MatButtonToggleGroup, MatSlideToggle } from '@angular/material';
 import { Router } from '@angular/router';
-import { environment } from '../../../environments/environment';
-import { AppConfirmService } from "../../services/app-confirm/app-confirm.service";
-import { MatSlideToggleChange, MatSlideToggle } from "@angular/material";
 
-import { RestService, WebSocketService } from '../../services/';
+import { environment } from '../../../environments/environment';
+import { RestService, WebSocketService, IscsiService} from '../../services/';
 import { DialogService } from '../../services/dialog.service';
 
 import * as _ from 'lodash';
@@ -17,7 +14,8 @@ import { T } from '../../translate-marker';
 @Component({
   selector: 'services',
   styleUrls: [ './services.component.css'],
-  templateUrl: './services.component.html'
+  templateUrl: './services.component.html',
+  providers: [IscsiService]
 })
 export class Services implements OnInit {
 
@@ -54,7 +52,7 @@ export class Services implements OnInit {
   // public viewValue: any;
 
   constructor(protected rest: RestService, protected ws: WebSocketService, protected router: Router,
-    private confirmService: AppConfirmService, private dialog: DialogService) {}
+    private dialog: DialogService, private iscsiService: IscsiService) {}
 
   parseResponse(data) {
     const card = {
@@ -129,12 +127,24 @@ export class Services implements OnInit {
     }
 
     if (rpc === 'service.stop') {
-      let confirm = this.confirmService.confirm(T('Alert'), T('Stop this service?'), T('Stop'));
-      confirm.subscribe(res => {
-        if (res) {
-          this.updateService(rpc, service);
-        }
-      })
+      if (service.title == 'iscsitarget') {
+        this.iscsiService.getGlobalSessions().subscribe(
+          (res) => {
+            const msg = res.length == 0 ? '' : T('<font color="red"> You have ') + res.length + T(' pending active iSCSI connection(s).</font><br>Stop the service?');
+            this.dialog.confirm(T('Alert'),  msg == '' ? T('Stop this service?') : msg, true, T('Stop')).subscribe(dialogRes => {
+              if (dialogRes) {
+                this.updateService(rpc, service);
+              }
+            });
+          }
+        )
+      } else {
+        this.dialog.confirm(T('Alert'), T('Stop this service?'), true, T('Stop')).subscribe(res => {
+          if (res) {
+            this.updateService(rpc, service);
+          }
+        });
+      }
     } else {
       this.updateService(rpc, service);
     }
