@@ -33,9 +33,12 @@ export class DatasetAclComponent implements OnDestroy {
   protected groupOptions: any[];
   protected userSearchOptions: [];
   protected groupSearchOptions: [];
-  protected path_fc: any;
   protected recursive: any;
   protected recursive_subscription: any;
+  private aces: any;
+  private aces_fc: any;
+  private aces_subscription: any;
+  private entityForm: any;
   private acl: any;
   public sub: Subscription;
   public formGroup: FormGroup;
@@ -78,11 +81,10 @@ export class DatasetAclComponent implements OnDestroy {
           placeholder: helptext.dataset_acl_user_placeholder,
           tooltip: helptext.dataset_acl_user_tooltip,
           options: this.userOptions,
-          searchOptions: this.userSearchOptions,
+          searchOptions: [],
           parent: this,
           updater: this.updateUserSearchOptions,
-          disabled: false,
-          isHidden: false,
+          isHidden: true,
           class: 'inline-block',
         },
         {
@@ -91,12 +93,10 @@ export class DatasetAclComponent implements OnDestroy {
           placeholder: helptext.dataset_acl_group_placeholder,
           tooltip: helptext.dataset_acl_group_tooltip,
           options: this.groupOptions,
-          searchOptions: this.groupSearchOptions,
+          searchOptions: [],
           parent: this,
           updater: this.updateGroupSearchOptions,
-          disabled: false,
-          isHidden: false,
-          class: 'inline-block',
+          isHidden: true,
         },
         {
           type: 'select',
@@ -104,7 +104,6 @@ export class DatasetAclComponent implements OnDestroy {
           placeholder: helptext.dataset_acl_type_placeholder,
           tooltip: helptext.dataset_acl_type_tooltip,
           options: helptext.dataset_acl_type_options,
-          class: 'inline-block'
         },
         {
           type: 'select',
@@ -112,7 +111,6 @@ export class DatasetAclComponent implements OnDestroy {
           placeholder: helptext.dataset_acl_perms_type_placeholder,
           tooltip: helptext.dataset_acl_perms_type_placeholder,
           options: helptext.dataset_acl_perms_type_options,
-          class: 'inline-block'
         },
         {
           type: 'select',
@@ -120,24 +118,15 @@ export class DatasetAclComponent implements OnDestroy {
           placeholder: helptext.dataset_acl_perms_placeholder,
           tooltip: helptext.dataset_acl_perms_tooltip,
           options: helptext.dataset_acl_basic_perms_options,
-          class: 'inline-block'
         },
         {
           type: 'select',
           multiple: true,
+          isHidden: true,
           name: 'advanced_perms',
           placeholder: helptext.dataset_acl_perms_placeholder,
           tooltip: helptext.dataset_acl_perms_tooltip,
           options: helptext.dataset_acl_advanced_perms_options,
-          class: 'inline-block'
-        },
-        {
-          type: 'select',
-          name: 'basic_flags',
-          placeholder: helptext.dataset_acl_flags_placeholder,
-          tooltip: helptext.dataset_acl_flags_tooltip,
-          options: helptext.dataset_acl_basic_flags_options,
-          class: 'inline-block'
         },
         {
           type: 'select',
@@ -145,16 +134,22 @@ export class DatasetAclComponent implements OnDestroy {
           placeholder: helptext.dataset_acl_flags_type_placeholder,
           tooltip: helptext.dataset_acl_flags_type_placeholder,
           options: helptext.dataset_acl_flags_type_options,
-          class: 'inline-block'
+        },
+        {
+          type: 'select',
+          name: 'basic_flags',
+          placeholder: helptext.dataset_acl_flags_placeholder,
+          tooltip: helptext.dataset_acl_flags_tooltip,
+          options: helptext.dataset_acl_basic_flags_options,
         },
         {
           type: 'select',
           multiple: true,
+          isHidden: true,
           name: 'advanced_flags',
           placeholder: helptext.dataset_acl_flags_placeholder,
           tooltip: helptext.dataset_acl_flags_tooltip,
           options: helptext.dataset_acl_advanced_flags_options,
-          class: 'inline-block'
         }
       ],
       listFields: []
@@ -177,9 +172,9 @@ export class DatasetAclComponent implements OnDestroy {
   preInit(entityEdit: any) {
     entityEdit.isNew = true; // remove me when we find a way to get the permissions
     this.sub = this.aroute.params.subscribe(params => {
-      this.path_fc = '/mnt/' + params['path'];
-      this.path_fc = _.find(this.fieldConfig, {name:'path'});
-      this.path_fc.value = this.path;
+      this.path = '/mnt/' + params['path'];
+      const path_fc = _.find(this.fieldSets[0].config, {name:'path'});
+      path_fc.value = this.path;
     });
 
     this.userService.listAllUsers().subscribe(res => {
@@ -202,6 +197,7 @@ export class DatasetAclComponent implements OnDestroy {
   }
 
   afterInit(entityEdit: any) {
+    this.entityForm = entityEdit;
     this.recursive = entityEdit.formGroup.controls['recursive'];
     this.recursive_subscription = this.recursive.valueChanges.subscribe((value) => {
       if (value === true) {
@@ -212,6 +208,30 @@ export class DatasetAclComponent implements OnDestroy {
             this.recursive.setValue(false);
           }
         });
+      }
+    });
+    this.aces_fc = _.find(this.fieldConfig, {"name": "aces"});
+    this.aces = this.entityForm.formGroup.controls['aces'];
+    this.aces_subscription = this.aces.valueChanges.subscribe(res => {
+      let controls;
+      let user_fc;
+      let group_fc;
+      if (this.aces_fc['listFields'] && this.aces_fc['listFields'].length > 0) {
+        for (let i = 0; i < res.length; i++) {
+          controls = this.aces_fc.listFields[i];
+          user_fc = _.find(controls, {"name": "user"});
+          group_fc = _.find(controls, {"name": "group"});
+          if (res[i].tag === 'USER') {
+            user_fc.isHidden = false;
+            group_fc.isHidden = true;
+          } else if (res[i].tag === 'GROUP') {
+            user_fc.isHidden = true;
+            group_fc.isHidden = false;
+          } else {
+            user_fc.isHidden = true;
+            group_fc.isHidden = true;
+          }
+        }
       }
     });
   }
