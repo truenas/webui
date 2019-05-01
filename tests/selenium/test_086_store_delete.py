@@ -30,10 +30,6 @@ xpaths = {
 }
 
 
-def test_00_set_implicitly_wait(wb_driver):
-    wb_driver.implicitly_wait(1)
-
-
 def test_01_nav_store_pool(wb_driver):
     test_name = sys._getframe().f_code.co_name
     # Wait for xpath to be available

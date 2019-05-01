@@ -19,10 +19,6 @@ xpaths = {
 }
 
 
-def test_00_set_implicitly_wait(wb_driver):
-    wb_driver.implicitly_wait(1)
-
-
 def test_01_nav_net_static(wb_driver):
     # Click on the static sub-menu
     wb_driver.find_element_by_xpath(xpaths['submenuStatic']).click()

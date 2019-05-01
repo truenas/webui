@@ -30,11 +30,6 @@ xpaths = {
 }
 
 
-def test_00_set_implicitly_wait(wb_driver):
-    wb_driver.implicitly_wait(1)
-    time.sleep(1)
-
-
 # Test navigation Account>Users>Hover>New User and enter user-name, full-name,
 # password, confirmation and wait till user is  visible in the list
 def test_01_nav_acc_group(wb_driver):

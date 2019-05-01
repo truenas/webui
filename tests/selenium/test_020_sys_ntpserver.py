@@ -20,10 +20,6 @@ xpaths = {
 }
 
 
-def test_00_set_implicitly_wait(wb_driver):
-    wb_driver.implicitly_wait(1)
-
-
 def test_01_nav_system_ntpserver(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['submenuNtpserver']).click()
     # get the ui element
