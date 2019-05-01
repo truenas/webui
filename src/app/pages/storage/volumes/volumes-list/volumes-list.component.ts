@@ -656,7 +656,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 name: 'vmware_sync',
                 placeholder: helptext.vmware_sync_placeholder,
                 tooltip: helptext.vmware_sync_tooltip,
-                disabled: !this.vmware_res_status
+                isHidden: !this.vmware_res_status
               }
             ],
             method_rest: "storage/snapshot",
@@ -694,14 +694,14 @@ export class VolumesListTableConfig implements InputTableConf {
     return actions;
   }
 
-  updater(parent) {
+  updater(parent: any) {
     console.log('updater', parent)
-    parent = parent.config.parent;
     parent.recursiveIsChecked = !parent.recursiveIsChecked;
     parent.ws.call('vmware.dataset_has_vms',[parent.title, parent.recursiveIsChecked]).subscribe((vmware_res)=>{
-      parent.vmware_res_status = vmware_res;
+      parent.vmware_res_status = parent.recursiveIsChecked;
+      // parent.vmware_res_status = vmware_res;
       this.vmware_res_status = parent.vmware_res_status
-      console.log(parent.vmware_res_status, parent.recursiveIsChecked)
+      console.log(this.vmware_res_status, parent.recursiveIsChecked)
     })
   }
 

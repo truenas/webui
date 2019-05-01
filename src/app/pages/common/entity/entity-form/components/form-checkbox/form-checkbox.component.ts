@@ -21,7 +21,7 @@ export class FormCheckboxComponent implements Field {
 
   checkboxUpdate() {
     if(this.config.updater && this.config.parent ){
-      this.config.updater(this, this.config.parent);
+      this.config.updater(this.config.parent);
       return;
     }
   }
