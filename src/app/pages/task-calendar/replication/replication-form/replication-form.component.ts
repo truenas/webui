@@ -321,7 +321,7 @@ export class ReplicationFormComponent {
                     value: true,
                 }]
             }],
-            value: '23:45',
+            value: '23:59',
         }, {
             type: 'checkbox',
             name: 'restrict_schedule',
@@ -373,7 +373,7 @@ export class ReplicationFormComponent {
                     value: true,
                 }]
             }],
-            value: '23:45',
+            value: '23:59',
         }, {
             type: 'checkbox',
             name: 'only_matching_schedule',
