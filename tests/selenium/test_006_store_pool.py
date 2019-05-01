@@ -38,10 +38,6 @@ xpaths = {
 }
 
 
-def test_00_set_implicitly_wait(wb_driver):
-    wb_driver.implicitly_wait(1)
-
-
 def test_01_nav_store_pool(wb_driver):
     error_check(wb_driver)
     # Click  Storage menu

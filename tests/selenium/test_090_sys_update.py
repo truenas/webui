@@ -22,10 +22,6 @@ xpaths = {
 }
 
 
-def test_00_set_implicitly_wait(wb_driver):
-    wb_driver.implicitly_wait(1)
-
-
 def test_01_nav_sys_update(wb_driver):
     # Click on the Update submenu
     wb_driver.find_element_by_xpath(xpaths['submenuUpdate']).click()

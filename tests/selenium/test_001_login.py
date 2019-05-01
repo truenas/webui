@@ -16,7 +16,8 @@ script_name = os.path.basename(__file__).partition('.')[0]
 
 def test_00_open_web_browser(wb_driver, ui_url):
     wb_driver.get(ui_url)
-    time.sleep(2)
+    time.sleep(1)
+    # setup implicit wait
     wb_driver.implicitly_wait(1)
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)

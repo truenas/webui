@@ -21,10 +21,6 @@ xpaths = {
 }
 
 
-def test_00_set_implicitly_wait(wb_driver):
-    wb_driver.implicitly_wait(1)
-
-
 def test_01_nav_net_interface(wb_driver):
     # Click on the vlan submenu
     wb_driver.find_element_by_xpath(xpaths['submenuInterface']).click()

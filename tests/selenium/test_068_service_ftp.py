@@ -20,10 +20,6 @@ xpaths = {
 }
 
 
-def test_00_set_implicitly_wait(wb_driver):
-    wb_driver.implicitly_wait(1)
-
-
 def test_01_turnon_ftp(wb_driver):
     # Click Service Menu
     wb_driver.find_element_by_xpath(xpaths['navService']).click()
