@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 
 import { IscsiService } from '../../../../../services/';
 import * as _ from 'lodash';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector : 'app-iscsi-associated-target-list',
@@ -42,7 +43,14 @@ export class AssociatedTargetListComponent {
     },
   };
 
-  constructor(protected router: Router, protected iscsiService: IscsiService) {}
+  protected iscsiSessions: any;
+  constructor(protected router: Router, protected iscsiService: IscsiService) {
+    this.iscsiService.getGlobalSessions().subscribe(
+      (res) => {
+        this.iscsiSessions = res;
+      }
+    )
+  }
 
   afterInit(entityList: any) {}
 
@@ -58,5 +66,15 @@ export class AssociatedTargetListComponent {
         }
       });
     });
+  }
+
+  warningMsg(item) {
+    let warningMsg = '<font color="red">';
+    for (let i = 0; i < this.iscsiSessions.length; i++) {
+      if (this.iscsiSessions[i].target.split(':')[1] == item.target) {
+        warningMsg += T('Warnning: Target in use');
+        return warningMsg + '</font><br>';
+      }
+    }
   }
 }
