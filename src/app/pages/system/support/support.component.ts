@@ -337,11 +337,7 @@ export class SupportComponent {
       }
       this.product_image = 'freenas_mini.png';
       this.ws.call('system.info').subscribe((res) => {
-        if (res.system_product === 'VirtualBox') { // TODO: How many options for the pix?
-          this.product_image = 'virtualbox_logo.png';
-        } else {
-          this.product_image = 'freenas_mini.png';
-        }
+        this.getProductImage(res.system_product)
         _.find(this.fieldConfig, {name : "FN_version"}).paraText += res.version;
         _.find(this.fieldConfig, {name : "FN_model"}).paraText += res.system_product;
         _.find(this.fieldConfig, {name : "FN_memory"}).paraText += Number(res.physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB';
@@ -355,11 +351,7 @@ export class SupportComponent {
         this.hideField(this.freeNASFields[i], true, entityEdit);
       }  
       this.ws.call('system.info').subscribe((res) => {
-        if (res.system_product === 'VirtualBox') { // TODO: How many options for the pix?
-          this.product_image = 'virtualbox_logo.png';
-        } else {
-          this.product_image = 'freenas_mini.png';
-        }
+        this.getProductImage(res.system_product)
         _.find(this.fieldConfig, {name : "pic"}).paraText = `<img src="../../../assets/images/${this.product_image}" height="200">`;
         _.find(this.fieldConfig, {name : "TN_model"}).paraText += res.system_product;
         _.find(this.fieldConfig, {name : "TN_custname"}).paraText += '???'; //TODO: Where does this come from?
@@ -385,6 +377,18 @@ export class SupportComponent {
         _.find(this.fieldConfig, {name : "TN_contractdate"}).paraText += res.license.contract_end.$value || '';
         _.find(this.fieldConfig, {name : "TN_addhardware"}).paraText += '???'; //TODO: Where does this come from?
       })    
+    }
+  }
+
+  getProductImage(sys_product) {
+    if (sys_product === 'VirtualBox') { // TODO: How many options for the pix?
+      this.product_image = 'virtualbox_logo.png';
+    } else if (sys_product.includes('Z20')) {
+      this.product_image = 'tnz20.png';
+    } else if (sys_product.includes('FREENAS-MINI')) {
+      this.product_image = 'freenas_mini.png';
+    } else {
+      this.product_image = 'ix-original.svg';
     }
   }
 
