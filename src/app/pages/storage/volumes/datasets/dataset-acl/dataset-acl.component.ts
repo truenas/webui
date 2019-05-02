@@ -218,8 +218,12 @@ export class DatasetAclComponent implements OnDestroy {
       let controls;
       let user_fc;
       let group_fc;
+      let adv_perms_fc;
+      let basic_perms_fc;
+      let adv_flags_fc;
+      let basic_flags_fc;
       const listFields = this.aces_fc.listFields;
-      if (listFields && listFields.length > 0) {
+      if (listFields && listFields.length > 0 && res.length === listFields.length) {
         for (let i = 0; i < listFields.length; i++) {
           controls = listFields[i];
           user_fc = _.find(controls, {"name": "user"});
@@ -239,6 +243,24 @@ export class DatasetAclComponent implements OnDestroy {
           } else {
             user_fc.isHidden = true;
             group_fc.isHidden = true;
+          }
+          adv_perms_fc = _.find(controls, {"name": "advanced_perms"});
+          basic_perms_fc = _.find(controls, {"name": "basic_perms"});
+          if (res[i].perms_type === "ADVANCED") {
+            adv_perms_fc.isHidden = false;
+            basic_perms_fc.isHidden = true;
+          } else {
+            adv_perms_fc.isHidden = true;
+            basic_perms_fc.isHidden = false;
+          }
+          adv_flags_fc = _.find(controls, {"name": "advanced_flags"});
+          basic_flags_fc = _.find(controls, {"name": "basic_flags"});
+          if (res[i].perms_type === "ADVANCED") {
+            adv_flags_fc.isHidden = true;
+            basic_flags_fc.isHidden = false;
+          } else {
+            adv_flags_fc.isHidden = false;
+            basic_flags_fc.isHidden = true;
           }
         }
       }
