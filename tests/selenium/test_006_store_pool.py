@@ -82,7 +82,6 @@ def test_02_create_a_pool(wb_driver):
     # taking screenshot
     take_screenshot(wb_driver, script_name, test_name)
     error_check(wb_driver)
-    time.sleep(1)
 
 
 def test_03_looking_if_the_new_pool_exist(wb_driver):
@@ -125,7 +124,6 @@ def test_04_create_newpool2(wb_driver):
     # taking screenshot
     take_screenshot(wb_driver, script_name, test_name)
     error_check(wb_driver)
-    time.sleep(1)
 
 
 def test_05_looking_if_the_new_pool_exist(wb_driver):
@@ -150,7 +148,6 @@ def test_06_close_navStorage(wb_driver):
     wait_on_element(wb_driver, xpaths['navStorage'], script_name, test_name)
     wb_driver.find_element_by_xpath(xpaths['navStorage']).click()
     take_screenshot(wb_driver, script_name, test_name)
-    time.sleep(1)
 
 
 def error_check(wb_driver):
