@@ -119,6 +119,8 @@ export class Services implements OnInit {
   // }
 
   toggle(service: any) {
+    console.log(service);
+    
     let rpc: string;
     if (service.state != 'RUNNING') {
       rpc = 'service.start';
@@ -130,8 +132,9 @@ export class Services implements OnInit {
       if (service.title == 'iscsitarget') {
         this.iscsiService.getGlobalSessions().subscribe(
           (res) => {
-            const msg = res.length == 0 ? '' : T('<font color="red"> You have ') + res.length + T(' pending active iSCSI connection(s).</font><br>Stop the service?');
-            this.dialog.confirm(T('Alert'),  msg == '' ? T('Stop this service?') : msg, true, T('Stop')).subscribe(dialogRes => {
+            const msg = res.length == 0 ? '' : T('<font color="red"> There are ') + res.length +
+              T(' active iSCSI connections.</font><br>Stop the ' + service.label + ' service and close these connections?');
+            this.dialog.confirm(T('Alert'),  msg == '' ? T('Stop ') + service.label + '?' : msg, true, T('Stop')).subscribe(dialogRes => {
               if (dialogRes) {
                 this.updateService(rpc, service);
               }
@@ -139,7 +142,7 @@ export class Services implements OnInit {
           }
         )
       } else {
-        this.dialog.confirm(T('Alert'), T('Stop this service?'), true, T('Stop')).subscribe(res => {
+        this.dialog.confirm(T('Alert'), T('Stop ') + service.label + '?', true, T('Stop')).subscribe(res => {
           if (res) {
             this.updateService(rpc, service);
           }

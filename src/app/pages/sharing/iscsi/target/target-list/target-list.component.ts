@@ -28,7 +28,7 @@ export class TargetListComponent {
       name : 'Target Alias',
       prop : 'alias',
     },
-  ];6
+  ];
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
@@ -60,7 +60,7 @@ export class TargetListComponent {
             let warningMsg = '';
             for (let i = 0; i < res.length; i++) {
               if (res[i].target.split(':')[1] == rowinner.name) {
-                warningMsg = '<font color="red">' + T('Warnning: Target in use</font><br>');
+                warningMsg = '<font color="red">' + T('Warning: iSCSI Target is already in use.</font><br>');
               }
             }
             deleteMsg = warningMsg + deleteMsg;

@@ -79,7 +79,7 @@ export class AssociatedTargetListComponent {
             let warningMsg = '';
             for (let i = 0; i < res.length; i++) {
               if (res[i].target.split(':')[1] == rowinner.target) {
-                warningMsg = '<font color="red">' + T('Warnning: Target in use</font><br>');
+                warningMsg = '<font color="red">' + T('Warning: iSCSI Target is already in use.</font><br>');
               }
             }
             deleteMsg = warningMsg + deleteMsg;
