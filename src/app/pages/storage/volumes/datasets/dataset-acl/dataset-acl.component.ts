@@ -256,11 +256,11 @@ export class DatasetAclComponent implements OnDestroy {
           adv_flags_fc = _.find(controls, {"name": "advanced_flags"});
           basic_flags_fc = _.find(controls, {"name": "basic_flags"});
           if (res[i].perms_type === "ADVANCED") {
-            adv_flags_fc.isHidden = true;
-            basic_flags_fc.isHidden = false;
-          } else {
             adv_flags_fc.isHidden = false;
             basic_flags_fc.isHidden = true;
+          } else {
+            adv_flags_fc.isHidden = true;
+            basic_flags_fc.isHidden = false;
           }
         }
       }
