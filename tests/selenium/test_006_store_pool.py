@@ -88,7 +88,7 @@ def test_02_create_a_pool(wb_driver):
     time.sleep(1)
 
 
-def test_03_looking_if_the_new_pool_exist():
+def test_03_looking_if_the_new_pool_exist(wb_driver):
     test_name = sys._getframe().f_code.co_name
     xpath = xpaths['pool1Table']
     wait = wait_on_element(wb_driver, xpath, script_name, test_name)
@@ -126,7 +126,7 @@ def test_04_create_newpool2(wb_driver):
     time.sleep(1)
 
 
-def test_05_looking_if_the_new_pool_exist():
+def test_05_looking_if_the_new_pool_exist(wb_driver):
     test_name = sys._getframe().f_code.co_name
     xpath = xpaths['pool2Table']
     wait = wait_on_element(wb_driver, xpath, script_name, test_name)
