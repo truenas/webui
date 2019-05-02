@@ -58,7 +58,7 @@ export class AssociatedTargetListComponent {
         const extent_list = res;
 
         for (let i = 0; i < entityList.rows.length; i++) {
-          entityList.rows[i].target =  _.find(target_list, {id: entityList.rows[i].target})['name'];
+          entityList.rows[i].target = _.find(target_list, {id: entityList.rows[i].target})['name'];
           entityList.rows[i].extent = _.find(extent_list, {id: entityList.rows[i].extent})['name'];
         }
       });

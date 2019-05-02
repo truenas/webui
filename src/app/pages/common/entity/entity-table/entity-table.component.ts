@@ -545,7 +545,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.dialogService.confirm(
         dialog.hasOwnProperty("title") ? dialog['title'] : T("Delete"),
-        dialog.hasOwnProperty("message") ?  dialog['message'] + deleteMsg : deleteMsg,
+        dialog.hasOwnProperty("message") ? dialog['message'] + deleteMsg : deleteMsg,
         dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : false, 
         dialog.hasOwnProperty("button") ? dialog['button'] : T("Delete")).subscribe((res) => {
       if (res) {

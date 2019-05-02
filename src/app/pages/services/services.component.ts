@@ -99,7 +99,7 @@ export class Services implements OnInit {
       this.displayAll();
     } else {
       this.cards = this.cache.filter((card) => {
-        var result = card[key].toLowerCase().indexOf(query.toLowerCase()) > -1;
+        const result = card[key].toLowerCase().indexOf(query.toLowerCase()) > -1;
         return result;
       });
     }
@@ -119,8 +119,6 @@ export class Services implements OnInit {
   // }
 
   toggle(service: any) {
-    console.log(service);
-    
     let rpc: string;
     if (service.state != 'RUNNING') {
       rpc = 'service.start';
