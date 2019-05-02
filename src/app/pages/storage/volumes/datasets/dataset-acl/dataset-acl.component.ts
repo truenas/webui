@@ -80,7 +80,8 @@ export class DatasetAclComponent implements OnDestroy {
           name: 'user',
           placeholder: helptext.dataset_acl_user_placeholder,
           tooltip: helptext.dataset_acl_user_tooltip,
-          options: this.userOptions,
+          updateLocal: true,
+          options: [],
           searchOptions: [],
           parent: this,
           updater: this.updateUserSearchOptions,
@@ -92,7 +93,8 @@ export class DatasetAclComponent implements OnDestroy {
           name: 'group',
           placeholder: helptext.dataset_acl_group_placeholder,
           tooltip: helptext.dataset_acl_group_tooltip,
-          options: this.groupOptions,
+          updateLocal: true,
+          options: [],
           searchOptions: [],
           parent: this,
           updater: this.updateGroupSearchOptions,
@@ -216,11 +218,18 @@ export class DatasetAclComponent implements OnDestroy {
       let controls;
       let user_fc;
       let group_fc;
-      if (this.aces_fc['listFields'] && this.aces_fc['listFields'].length > 0) {
-        for (let i = 0; i < res.length; i++) {
-          controls = this.aces_fc.listFields[i];
+      const listFields = this.aces_fc.listFields;
+      if (listFields && listFields.length > 0) {
+        for (let i = 0; i < listFields.length; i++) {
+          controls = listFields[i];
           user_fc = _.find(controls, {"name": "user"});
+          if (user_fc.options.length === 0) {
+            user_fc.options = this.userOptions;
+          }
           group_fc = _.find(controls, {"name": "group"});
+          if (group_fc.options.length === 0) {
+            group_fc.options = this.groupOptions;
+          }
           if (res[i].tag === 'USER') {
             user_fc.isHidden = false;
             group_fc.isHidden = true;
@@ -248,25 +257,25 @@ export class DatasetAclComponent implements OnDestroy {
   beforeSubmit(data) {
   }
 
-  updateGroupSearchOptions(value = "", parent) {
+  updateGroupSearchOptions(value = "", parent, config) {
     parent.userService.listAllGroups(value).subscribe(res => {
       const groups = [];
       const items = res.data.items;
       for (let i = 0; i < items.length; i++) {
         groups.push({label: items[i].label, value: items[i].id});
       }
-        parent.groupSearchOptions = groups;
+        config.searchOptions = groups;
     });
   }
 
-  updateUserSearchOptions(value = "", parent) {
+  updateUserSearchOptions(value = "", parent, config) {
     parent.userService.listAllUsers(value).subscribe(res => {
       const users = [];
       const items = res.data.items;
       for (let i = 0; i < items.length; i++) {
         users.push({label: items[i].label, value: items[i].id});
       }
-      parent.userSearchOptions = users;
+      config.searchOptions = users;
     });
   }
 }
