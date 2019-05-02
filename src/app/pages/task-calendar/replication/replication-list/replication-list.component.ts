@@ -19,6 +19,7 @@ export class ReplicationListComponent {
     protected route_edit: string[] = ['tasks', 'replication', 'edit'];
     protected route_success: string[] = ['tasks', 'replication'];
     protected entityList: any;
+    protected asyncView = true;
 
     public columns: Array<any> = [
         { name: 'Name', prop: 'name' },
@@ -52,7 +53,7 @@ export class ReplicationListComponent {
 
     dataHandler(entityList) {
         for (let i = 0; i < entityList.rows.length; i++) {
-            entityList.rows[i].task_state = entityList.rows[i].state.state;
+            entityList.rows[i].task_state = entityList.rows[i].state.state + (entityList.rows[i].state.error ? ': ' + entityList.rows[i].state.error : '');
             entityList.rows[i].task_last_snapshot = entityList.rows[i].state.last_snapshot;
             entityList.rows[i].ssh_connection = entityList.rows[i].ssh_credentials ? entityList.rows[i].ssh_credentials.name : '-';
         }
