@@ -461,29 +461,20 @@ export class SupportComponent {
   }
 
   updater(file: any, parent: any){
-    // console.log(file, parent)
+    parent.subs = []
     const fileBrowser = file.fileInput.nativeElement;
     this.scrshot = _.find(parent.fieldConfig, { name: 'screenshot' });
-    console.log(this.scrshot)
-
     this.scrshot['hasErrors'] = false;
     if (fileBrowser.files && fileBrowser.files[0]) {
-      console.log('here')
       for (let i = 0; i < fileBrowser.files.length; i++) {
-        console.log(fileBrowser.files[i])
         if (fileBrowser.files[i].size >= 52428800) {
           this.scrshot['hasErrors'] = true;
           this.scrshot['errors'] = 'File size is limited to 50 MiB.';
-          // console.log(this.scrshot)
-          // this.fileSizeValidator = false;
         } 
         else {
-          // this.fileSizeValidator = true;
-          parent.subs = {"apiEndPoint":file.apiEndPoint, "file": fileBrowser.files[i]}
-          console.log(parent.subs)
+          parent.subs.push({"apiEndPoint":file.apiEndPoint, "file": fileBrowser.files[i]})
         }       
       }
-      console.log(parent)
     }
   }
 
