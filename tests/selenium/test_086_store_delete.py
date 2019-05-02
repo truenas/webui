@@ -117,7 +117,6 @@ def test_07_close_navStorage(wb_driver):
 
 
 def pool_detach(wb_driver, name, scriptname, testname):
-    time.sleep(1)
     pool_xpath = f"//mat-icon[@id='table_actions_menu_button__name_{name}']"
     # Wait for xpath to be available
     wait_on_element(wb_driver, pool_xpath, scriptname, testname)
@@ -126,10 +125,8 @@ def pool_detach(wb_driver, name, scriptname, testname):
     wb_driver.find_element_by_xpath(xpath).click()
     wb_driver.find_element_by_xpath(xpaths['pooldestroyCheckbox']).click()
     wb_driver.find_element_by_xpath(xpaths['poolconfirmCheckbox']).click()
-    time.sleep(1)
     if wb_driver.find_element_by_xpath(xpaths['confirmButton']):
         wb_driver.find_element_by_xpath(xpaths['confirmButton']).click()
     # Wait for xpath to be available
     wait_on_element(wb_driver, xpaths['closeButton'], scriptname, testname)
     wb_driver.find_element_by_xpath(xpaths['closeButton']).click()
-    time.sleep(1)
