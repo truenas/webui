@@ -34,7 +34,9 @@ xpaths = {
     # 'createpoolButton': '//*[contains(text(), "CREATE POOL")]'
     # or
     'createpoolButton': '//*[@id="confirm-dialog__action-button"]/span',
-    'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
+    'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a",
+    'pool1Table': f"//td[contains(.,'{pool1}')]",
+    'pool2Table': f"//td[contains(.,'{pool2}')]"
 }
 
 
@@ -58,7 +60,7 @@ def test_01_nav_store_pool(wb_driver):
     take_screenshot(wb_driver, script_name, test_name)
 
 
-def test_02_create_newpool(wb_driver):
+def test_02_create_a_pool(wb_driver):
     test_name = sys._getframe().f_code.co_name
     time.sleep(1)
     # Click create new pool option
@@ -77,15 +79,25 @@ def test_02_create_newpool(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['confirmCheckbox']).click()
     # Click Ok Button
     wb_driver.find_element_by_xpath(xpaths['createpoolButton']).click()
-    wait = wait_on_element(wb_driver, xpaths['addAction'], script_name, test_name)
-    assert wait, 'Creating new pool test timeout'
+    xpath = xpaths['addAction']
+    wait = wait_on_element(wb_driver, xpath, script_name, test_name)
+    assert wait, f'Creating the new pool {pool1} timeout'
     # taking screenshot
     take_screenshot(wb_driver, script_name, test_name)
     error_check(wb_driver)
     time.sleep(1)
 
 
-def test_03_create_newpool2(wb_driver):
+def test_03_looking_if_the_new_pool_exist():
+    test_name = sys._getframe().f_code.co_name
+    xpath = xpaths['pool1Table']
+    wait = wait_on_element(wb_driver, xpath, script_name, test_name)
+    assert wait, f'loading the new pool {pool2} timeout'
+    # taking screenshot
+    take_screenshot(wb_driver, script_name, test_name)
+
+
+def test_04_create_newpool2(wb_driver):
     test_name = sys._getframe().f_code.co_name
     time.sleep(1)
     # Click create new pool option
@@ -105,15 +117,25 @@ def test_03_create_newpool2(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['confirmCheckbox']).click()
     # Click OK Button
     wb_driver.find_element_by_xpath(xpaths['createpoolButton']).click()
-    wait = wait_on_element(wb_driver, xpaths['addAction'], script_name, test_name)
-    assert wait, 'Creating new pool test timeout'
+    xpath = xpaths['addAction']
+    wait = wait_on_element(wb_driver, xpath, script_name, test_name)
+    assert wait, f'Creating the new pool {pool2} timeout'
     # taking screenshot
     take_screenshot(wb_driver, script_name, test_name)
     error_check(wb_driver)
     time.sleep(1)
 
 
-def test_04_close_navStorage(wb_driver):
+def test_05_looking_if_the_new_pool_exist():
+    test_name = sys._getframe().f_code.co_name
+    xpath = xpaths['pool2Table']
+    wait = wait_on_element(wb_driver, xpath, script_name, test_name)
+    assert wait, f'loading the new pool {pool2} timeout'
+    # taking screenshot
+    take_screenshot(wb_driver, script_name, test_name)
+
+
+def test_06_close_navStorage(wb_driver):
     test_name = sys._getframe().f_code.co_name
     # Wait for xpath to be available
     wait_on_element(wb_driver, xpaths['navStorage'], script_name, test_name)
@@ -124,16 +146,14 @@ def test_04_close_navStorage(wb_driver):
 
 def error_check(wb_driver):
     if is_element_present(wb_driver, '//*[contains(text(), "Close")]'):
-        if is_element_present(wb_driver,'/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
+        if is_element_present(wb_driver, '/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
             ui_element = wb_driver.find_element_by_xpath('/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1')
-            error_element = ui_element.text
-            print(error_element)
+            assert false, error_element
         wb_driver.find_element_by_xpath('//*[contains(text(), "Close")]').click()
         print("Duplicate user cannot be created")
     if is_element_present(wb_driver, '//*[contains(text(), "Close")]'):
         if is_element_present(wb_driver,'/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
             ui_element = wb_driver.find_element_by_xpath('/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1')
-            error_element = ui_element.text
-            print(error_element)
+            assert false, ui_element.text
         wb_driver.find_element_by_xpath('//*[contains(text(), "Close")]').click()
         print("Duplicate user cannot be created")
