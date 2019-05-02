@@ -690,11 +690,18 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .combo-box-menu.mat-menu-panel {
       max-height: 256px;
   }
+  
+  .mat-checkbox {
+    margin: 4px;
+  }
+
+  .ngx-datatable .mat-checkbox-inner-container {
+    margin-left: 4px;
+  }
 
   .mat-checkbox-inner-container{
     width:16px;
     height:16px;
-    margin:4px;
     overflow: visible;
   }
   .mat-checkbox-ripple{
