@@ -18,7 +18,16 @@
             {{row.name}}
           </mat-panel-title>
           <mat-panel-description>
-            {{row.status}} <span *ngIf="row.usedStr && row.availStr">({{row.usedStr}} Used / {{row.availStr}} Free)</span>
+            <span [style.margin-right.px]="5">
+              <i class="material-icons green-icon" *ngIf="row.status==='HEALTHY'">check_circle</i>
+              <i class="material-icons orange-icon" *ngIf="row.status==='DEGRADED'">warning</i>
+              <i class="material-icons yellow-icon" *ngIf="row.status==='LOCKED'">lock</i>
+              <i class="material-icons blue-icon" *ngIf="row.status==='UNKNOWN'">help</i>
+              <i class="material-icons red-icon" 
+                *ngIf="row.status!=='HEALTHY' && row.status!=='DEGRADED' && row.status!=='LOCKED' && row.status!=='UNKNOWN'" 
+              >cancel</i>
+            </span>
+            {{row.status}}<span *ngIf="row.usedStr && row.availStr">{{row.usedStr}} Used / {{row.availStr}} Free</span>
           </mat-panel-description>
         </mat-expansion-panel-header>
         <div fxLayoutAlign="end start" class="icon-row">
@@ -49,11 +58,13 @@
       </mat-expansion-panel>
     </mat-accordion>
   </div>
+  <div [style.margin-bottom.px]="50" *ngIf="isFooterConsoleOpen"></div>
   <div *ngIf="zfsPoolRows.length < 1 && showDefaults">
     <mat-card>
       <mat-card-content name="no_pools">
         {{"No pools" | translate}}
       </mat-card-content>
     </mat-card>
+    <div [style.height.px]="50" *ngIf="isFooterConsoleOpen"></div>
   </div>
 </div>

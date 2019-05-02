@@ -123,6 +123,8 @@ export class InterfacesFormComponent implements OnDestroy {
         name: 'delete',
         placeholder: helptext.delete_placeholder,
         tooltip: helptext.delete_tooltip,
+        isHidden: true,
+        disabled: true,
       }]
     },
     {
@@ -149,6 +151,8 @@ export class InterfacesFormComponent implements OnDestroy {
         name: 'delete',
         placeholder: helptext.delete_placeholder6,
         tooltip: helptext.delete_tooltip6,
+        isHidden: true,
+        disabled: true,
       }]
     },
   ];
@@ -250,6 +254,11 @@ export class InterfacesFormComponent implements OnDestroy {
           = this.initialCount_default['ipv4_aliases'] = 0;
         this.ipv6arrayControl.initialCount = this.initialCount['ipv6_aliases']
           = this.initialCount_default['ipv6_aliases'] = 0;
+
+        this.ipv4arrayControl.formarray[2]['isHidden'] = false;
+        this.ipv4arrayControl.formarray[2].disabled = false;
+        this.ipv6arrayControl.formarray[2]['isHidden'] = false;
+        this.ipv6arrayControl.formarray[2].disabled = false;
       }
     });
   }

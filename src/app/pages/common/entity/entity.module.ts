@@ -34,6 +34,7 @@ import { FormDatepickerComponent } from './entity-form/components/form-datepicke
 import { FormColorpickerComponent } from './entity-form/components/form-colorpicker/form-colorpicker.component';
 import { FormParagraphComponent } from './entity-form/components/form-paragraph/form-paragraph.component';
 import { FormSchedulerComponent } from './entity-form/components/form-scheduler/form-scheduler.component';
+import { FormListComponent } from './entity-form/components/form-list/form-list.component';
 
 import { FormExplorerComponent } from './entity-form/components/form-explorer/form-explorer.component';
 import { TooltipComponent } from './entity-form/components/tooltip/tooltip.component';
@@ -100,6 +101,7 @@ import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-m
     FormTextareaButtonComponent,
     FormDatepickerComponent,
     FormSchedulerComponent,
+    FormListComponent,
     FormColorpickerComponent,
     FormExplorerComponent,
     FormPermissionsComponent,
@@ -161,6 +163,7 @@ import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-m
     FormTextareaButtonComponent,
     FormDatepickerComponent,
     FormSchedulerComponent,
+    FormListComponent,
     FormColorpickerComponent,
     FormPermissionsComponent,
     FormArrayComponent,

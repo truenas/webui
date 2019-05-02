@@ -5,8 +5,6 @@ import * as _ from 'lodash';
 import { RestService, SystemGeneralService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
-
-
 @Component({
   selector : 'system-ca-add',
   template : `<entity-form [conf]="this"></entity-form>`,
@@ -55,6 +53,45 @@ export class CertificateAuthorityAddComponent {
     },
     {
       type : 'select',
+      name : 'key_type',
+      placeholder : helptext_system_ca.add.key_type.placeholder,
+      tooltip: helptext_system_ca.add.key_type.tooltip,
+      options : [
+        {label: 'RSA', value: 'RSA'},
+        {label: 'EC', value: 'EC'}
+      ],
+      value: 'RSA',
+      isHidden: false,
+      disabled: true,
+      required: true,
+      validation: helptext_system_ca.add.key_type.validation
+    },
+    {
+      type : 'select',
+      name : 'ec_curve',
+      placeholder : helptext_system_ca.add.ec_curve.placeholder,
+      tooltip: helptext_system_ca.add.ec_curve.tooltip,
+      options : [
+        {label: 'BrainpoolP512R1', value: 'BrainpoolP512R1'},
+        {label: 'BrainpoolP384R1', value: 'BrainpoolP384R1'},
+        {label: 'BrainpoolP256R1', value: 'BrainpoolP256R1'},
+        {label: 'SECP256K1', value: 'SECP256K1'},
+      ],
+      value: 'BrainpoolP512R1',
+      isHidden: false,
+      disabled: true,
+      relation : [
+        {
+          action : 'ENABLE',
+          when : [ {
+            name : 'key_type',
+            value : 'EC',
+          } ]
+        },
+      ],
+    },
+    {
+      type : 'select',
       name : 'key_length',
       placeholder : helptext_system_ca.add.key_length.placeholder,
       tooltip: helptext_system_ca.add.key_length.tooltip,
@@ -67,6 +104,15 @@ export class CertificateAuthorityAddComponent {
       required: true,
       validation: helptext_system_ca.add.key_length.validation,
       isHidden: false,
+      relation : [
+        {
+          action : 'ENABLE',
+          when : [ {
+            name : 'key_type',
+            value : 'RSA',
+          } ]
+        },
+      ]
     },
     {
       type : 'select',
@@ -137,6 +183,14 @@ export class CertificateAuthorityAddComponent {
     },
     {
       type : 'input',
+      name : 'organizational_unit',
+      placeholder : helptext_system_ca.add.organizational_unit.placeholder,
+      tooltip: helptext_system_ca.add.organizational_unit.tooltip,
+      required: false,
+      isHidden: false,
+    },
+    {
+      type : 'input',
       name : 'email',
       placeholder : helptext_system_ca.add.email.placeholder,
       tooltip: helptext_system_ca.add.email.tooltip,
@@ -196,6 +250,8 @@ export class CertificateAuthorityAddComponent {
   ];
 
   private internalcaFields: Array<any> = [
+    'key_type',
+    'ec_curve',
     'key_length',
     'digest_algorithm',
     'lifetime',
@@ -203,12 +259,15 @@ export class CertificateAuthorityAddComponent {
     'state',
     'city',
     'organization',
+    'organizational_unit',
     'email',
     'common',
     'san',
   ];
   private intermediatecaFields: Array<any> = [
     'signedby',
+    'key_type',
+    'ec_curve',
     'key_length',
     'digest_algorithm',
     'lifetime',
@@ -216,6 +275,7 @@ export class CertificateAuthorityAddComponent {
     'state',
     'city',
     'organization',
+    'organizational_unit',
     'email',
     'common',
     'san',
@@ -264,6 +324,7 @@ export class CertificateAuthorityAddComponent {
     for (let i in this.internalcaFields) {
       this.hideField(this.internalcaFields[i], false, entity);
     }
+    this.hideField(this.internalcaFields[1], true, entity)
 
     entity.formGroup.controls['create_type'].valueChanges.subscribe((res) => {
       if (res == 'CA_CREATE_INTERNAL') {
@@ -276,6 +337,14 @@ export class CertificateAuthorityAddComponent {
         for (let i in this.internalcaFields) {
           this.hideField(this.internalcaFields[i], false, entity);
         }
+
+        // This block makes the form reset its 'disabled/hidden' settings on switch of type
+        if (entity.formGroup.controls['key_type'].value === 'RSA') {
+          this.hideField('ec_curve', true, entity);
+        } else if (entity.formGroup.controls['key_type'].value === 'EC') {
+          this.hideField('key_length', true, entity);
+        }
+
       } else if (res == 'CA_CREATE_INTERMEDIATE') {
         for (let i in this.internalcaFields) {
           this.hideField(this.internalcaFields[i], true, entity);
@@ -286,6 +355,13 @@ export class CertificateAuthorityAddComponent {
         for (let i in this.intermediatecaFields) {
           this.hideField(this.intermediatecaFields[i], false, entity);
         }
+
+        if (entity.formGroup.controls['key_type'].value === 'RSA') {
+          this.hideField('ec_curve', true, entity);
+        } else if (entity.formGroup.controls['key_type'].value === 'EC') {
+          this.hideField('key_length', true, entity);
+        }
+
       } else if (res == 'CA_CREATE_IMPORTED') {
         for (let i in this.internalcaFields) {
           this.hideField(this.internalcaFields[i], true, entity);
@@ -316,7 +392,7 @@ export class CertificateAuthorityAddComponent {
   hideField(fieldName: any, show: boolean, entity: any) {
     let target = _.find(this.fieldConfig, {'name' : fieldName});
     target['isHidden'] = show;
-    entity.setDisabled(fieldName, show);
+    entity.setDisabled(fieldName, show, show);
   }
 
   beforeSubmit(data: any) {

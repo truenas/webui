@@ -7,11 +7,7 @@ import { Router } from '@angular/router';
 import { DataSource } from '@angular/cdk/collections';
 import { MatPaginator, MatSort, PageEvent, MatSnackBar } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
-
-import { T } from '../../../../translate-marker';
-
-
-
+import * as _ from 'lodash';
 
 //local libs
 import { RestService } from '../../../../services/rest.service';
@@ -22,8 +18,7 @@ import { DialogService } from '../../../../services';
 import { ErdService } from '../../../../services/erd.service';
 import { StorageService } from '../../../../services/storage.service'
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
-
-
+import { T } from '../../../../translate-marker';
 
 export interface InputTableConf {
 
@@ -43,6 +38,7 @@ export interface InputTableConf {
   confirmDeleteDialog?: Object;
   checkbox_confirm?: any;
   checkbox_confirm_show?: any;
+  asyncView?: boolean;
   addRows?(entity: EntityTableComponent);
   changeEvent?(entity: EntityTableComponent);
   preInit?(entity: EntityTableComponent);
@@ -114,6 +110,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     paging: true,
     sorting: { columns: this.columns },
   };
+  public asyncView = false; //default table view is not async
   public showDefaults: boolean = false;
   public showSpinner: boolean = false;
   public showActions: boolean = true;
@@ -128,6 +125,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   protected loaderOpen = false;
   public selected = [];
 
+  private interval: any;
+
   constructor(protected core: CoreService, protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService, 
     protected erdService: ErdService, protected translate: TranslateService, protected snackBar: MatSnackBar,
@@ -140,12 +139,13 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(){
     this.core.unregister({observerClass:this});
+    clearInterval(this.interval);
   }
 
   ngOnInit():void {
 
     this.setTableHeight(); 
-  
+
     setTimeout(() => {
       if (this.conf.preInit) {
         this.conf.preInit(this);
@@ -155,6 +155,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.conf.afterInit(this);
       }
     })
+    this.asyncView = this.conf.asyncView ? this.conf.asyncView : false;
     this.conf.columns.forEach((column) => {
       this.displayedColumns.push(column.prop);
       if (!column.always_display) {
@@ -256,6 +257,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       n = 6;
     } else if (this.title === 'Jails') {
       n = 4;
+    } else if (this.title === 'Virtual Machines') {
+      n = 6;
     } else if (this.title === 'Available Plugins' || this.title === 'Installed Plugins') {
       n = 3;
     } else {
@@ -264,7 +267,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     window.onresize = () => {
       let x = window.innerHeight;
       let y = x - 830;
-      this.paginationPageSize = rowNum - n + Math.floor(y/50) + addRows ;
+      if (this.selected && this.selected.length > 0) {
+        this.paginationPageSize = rowNum - n + Math.floor(y/50) + addRows -3;
+      } else {
+        this.paginationPageSize = rowNum - n + Math.floor(y/50) + addRows;
+      }
 
       if (this.paginationPageSize < 2) {
         this.paginationPageSize = 2;
@@ -307,6 +314,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.getFunction = this.rest.get(this.conf.resource_name, options);
     }
 
+    this.callGetFunction();
+    if (this.asyncView) {
+      this.interval = setInterval(() => {
+        this.callGetFunction();
+      }, 10000);
+    }
+
+  }
+
+  callGetFunction() {
     this.getFunction.subscribe(
       (res) => {
         this.handleData(res);
@@ -320,7 +337,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
     );
-  }
+  };
 
   handleData(res): any {
 
@@ -339,24 +356,35 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
 
-    let rows: any[] = [];
+    this.rows = this.generateRows(res);
 
+    if (this.conf.dataHandler) {
+      this.conf.dataHandler(this);
+    }
+
+    if (this.conf.addRows) {
+      this.conf.addRows(this);
+    }
+
+    this.currentRows = this.filter.nativeElement.value === '' ? this.rows : this.currentRows;
+    this.paginationPageIndex  = 0;
+    this.setPaginationInfo();
+    this.showDefaults = true;
+    return res;
+
+  }
+
+  generateRows(res): Array<any> {
+    let rows: any[] = [];
     if (this.loaderOpen) {
       this.loader.close();
       this.loaderOpen = false;
     }
+
     if (res.data) {
       rows = new EntityUtils().flattenData(res.data);
     } else {
       rows = new EntityUtils().flattenData(res);
-    }
-
-    if (this.conf.queryRes) {
-      this.conf.queryRes = rows;
-    }
-
-    if (this.conf.queryRes) {
-      this.conf.queryRes = rows;
     }
 
     for (let i = 0; i < rows.length; i++) {
@@ -367,22 +395,37 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
 
-    this.rows = rows;
+    if (this.rows.length === 0) {
+      if (this.conf.queryRes) {
+        this.conf.queryRes = rows;
+      }
 
-    if (this.conf.dataHandler) {
-      this.conf.dataHandler(this);
+      if (this.conf.queryRes) {
+        this.conf.queryRes = rows;
+      }
+    } else {
+      const newCurrentRows = this.currentRows;
+      for (let i = 0; i < newCurrentRows.length; i++) {
+        const index = _.findIndex(rows, {id: newCurrentRows[i].id});
+        if (index > -1) {
+          newCurrentRows[i] = rows[index];
+        }
+      }
+      this.currentRows = newCurrentRows;
+
+      const newRows = [];
+      for (let i = 0; i < this.rows.length; i++) {
+        const index = _.findIndex(rows, {id: this.rows[i].id});
+        if (index < 0) {
+          continue;
+        }
+        const updatedItem = rows[index];
+        rows.splice(index, 1);
+        newRows.push(updatedItem);
+      }
+      return newRows.concat(rows);
     }
-
-    if (this.conf.addRows) {
-      this.conf.addRows(this);
-    }
-
-    this.currentRows = this.rows;
-    this.paginationPageIndex  = 0;
-    this.setPaginationInfo();
-    this.showDefaults = true;
-    return res;
-
+    return rows;
   }
 
   trClass(row) {
@@ -638,13 +681,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           if (this.conf.wsMultiDeleteParams) {
             this.busy = this.ws.job(this.conf.wsMultiDelete, this.conf.wsMultiDeleteParams(selected)).subscribe(
               (res1) => {
-                  this.getData();
-                  this.selected = [];
-                  this.snackBar.open("Items deleted.", 'close', { duration: 5000 });
                },
               (res1) => {
                 new EntityUtils().handleError(this, res1);
                 this.loader.close();
+              },
+              () => {
+                this.loader.close();
+                this.getData();
+                this.selected = [];
+                this.snackBar.open("Items deleted.", 'close', { duration: 5000 });
               }
             );
           }
@@ -656,6 +702,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onSelect({ selected }) {
+    this.setTableHeight();
     this.selected.splice(0, this.selected.length);
     this.selected.push(...selected);
 

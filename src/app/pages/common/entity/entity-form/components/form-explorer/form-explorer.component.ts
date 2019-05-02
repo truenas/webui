@@ -1,13 +1,11 @@
 import {Component, ViewContainerRef, OnInit} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {EntityFormService} from '../../services/entity-form.service';
-import {TreeNode, TREE_ACTIONS, KEYS, IActionMapping, ITreeOptions } from 'angular-tree-component';
+import {TREE_ACTIONS, KEYS, IActionMapping } from 'angular-tree-component';
 import { TranslateService } from '@ngx-translate/core';
 
 import {FieldConfig} from '../../models/field-config.interface';
 import {Field} from '../../models/field.interface';
-import {TooltipComponent} from '../tooltip/tooltip.component';
-
 
 @Component({
   selector : 'form-explorer',
@@ -25,6 +23,7 @@ export class FormExplorerComponent implements Field, OnInit {
 
   private treeVisible: boolean = false;
   private displayFieldName: string;
+
   private actionMapping:IActionMapping = {
     mouse: {
       contextMenu: (tree, node, $event) => {
@@ -34,7 +33,11 @@ export class FormExplorerComponent implements Field, OnInit {
         TREE_ACTIONS.TOGGLE_EXPANDED(tree, node, $event);
       },
       click: (tree, node, $event) => {
-        this.setPath(node);
+        if (this.config.useCheckbox) {
+          TREE_ACTIONS.TOGGLE_SELECTED(tree, node, $event);
+        } else {
+          this.setPath(node);
+        }
         TREE_ACTIONS.FOCUS(tree, node, $event);
       }
     },
@@ -46,11 +49,29 @@ export class FormExplorerComponent implements Field, OnInit {
     }
   }
 
+  customTemplateStringOptions = {
+    useCheckbox: false,
+    displayField: this.displayFieldName,
+    isExpandedField: 'expanded',
+    idField: 'uuid',
+    getChildren: this.getChildren.bind(this),
+    actionMapping: this.actionMapping,
+    nodeHeight: 23,
+    allowDrag: true,
+    useVirtualScroll: false,
+  }
+
+
   constructor (private entityFormService: EntityFormService,
                public translate: TranslateService){}
 
   ngOnInit() {
     this.treeVisible = false;
+
+    if (this.config.useCheckbox) {
+      this.customTemplateStringOptions.useCheckbox = this.config.useCheckbox;
+    }
+
     if (this.config.customTemplateStringOptions) {
       if (!this.config.customTemplateStringOptions.actionMapping) {
         this.config.customTemplateStringOptions.actionMapping = this.actionMapping;
@@ -93,16 +114,6 @@ export class FormExplorerComponent implements Field, OnInit {
     });
   }
   
-  customTemplateStringOptions = {
-    displayField: this.displayFieldName,
-    isExpandedField: 'expanded',
-    idField: 'uuid',
-    getChildren: this.getChildren.bind(this),
-    actionMapping: this.actionMapping,
-    nodeHeight: 23,
-    allowDrag: true,
-    useVirtualScroll: false,
-  }
   
   private toggleTree() {
     this.treeVisible = !this.treeVisible;
@@ -119,6 +130,30 @@ export class FormExplorerComponent implements Field, OnInit {
       this.group.controls[this.config.name].setValue(node.data.name);
     }
   }
+
+  onClick(event) {
+    const selectedTreeNodes = Object.entries(event.treeModel.selectedLeafNodeIds)
+     .filter(([key, value]) => {
+            return (value === true);
+      }).map((node) => event.treeModel.getNodeById(node[0]));
+    this.valueHandler(selectedTreeNodes);
+  }
+
+  valueHandler(selectedTreeNodes) {
+    let res = [];
+    for (let i = 0; i < selectedTreeNodes.length; i++) {
+        if (selectedTreeNodes[i].parent.isAllSelected) {
+          let parent = selectedTreeNodes[i].parent;
+          while (parent && parent.parent && !parent.parent.isRoot && parent.parent.isAllSelected) {
+            parent = parent.parent;
+          }
+          if (res.indexOf(parent.data.name) === -1) {
+            res.push(parent.data.name);
+          }
+        } else if (selectedTreeNodes[i].isAllSelected) {
+          res.push(selectedTreeNodes[i].data.name);
+        }
+    }
+    this.group.controls[this.config.name].setValue(res);
+  }
 }
-
-

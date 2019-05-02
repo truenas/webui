@@ -24,6 +24,6 @@
         <i class="material-icons" matTooltip="Show" *ngIf="!showPassword">visibility_off</i>
 	</button>
 	<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
-	<mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
+	<mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
 	<mat-error *ngIf="config.warnings">{{config.warnings | translate}}</mat-error>
 </div>

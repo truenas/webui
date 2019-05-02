@@ -4,7 +4,8 @@ import { DatePipe } from '@angular/common';
 import * as _ from 'lodash';
 import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
 import { DialogService } from "../../../services/dialog.service";
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar, MatDialog } from '@angular/material';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../common/entity/utils';
 import { RestService, WebSocketService } from '../../../services/';
 import {AdminLayoutComponent} from '../../../components/common/layouts/admin-layout/admin-layout.component';
@@ -29,10 +30,10 @@ export class AdvancedComponent implements OnDestroy {
   protected adv_serialconsole_subscription: any;
   public adv_serialport: any;
   public adv_serialspeed: any;
-  public adv_periodic_notifyuser: any;
   public swapondrive: any;
   public swapondrive_subscription: any;
   public entityForm: any;
+  protected dialogRef: any;
   public custActions: Array < any > = [{
     id: 'save_debug',
     name: 'Save Debug',
@@ -46,40 +47,42 @@ export class AdvancedComponent implements OnDestroy {
         }
         this.dialog.confirm(helptext_system_advanced.dialog_generate_debug_title, helptext_system_advanced.dialog_generate_debug_message, true, helptext_system_advanced.dialog_button_ok).subscribe((ires) => {
           if (ires) {
-            this.load.open();
-            this.ws.job('system.debug').subscribe((system_debug) => {
-              this.load.close();
-              if (system_debug.state === "SUCCESS") {
-                this.ws.call('core.download', ['filesystem.get', [system_debug.result], fileName]).subscribe(
-                  (system_debug_result) => {
-                    if (window.navigator.userAgent.search("Firefox")>0) {
-                      window.open(system_debug_result[1]);
+            this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Saving Debug") }, disableClose: true });
+            this.dialogRef.componentInstance.setCall('system.debug', []);
+            this.dialogRef.componentInstance.submit();
+            this.dialogRef.componentInstance.success.subscribe((system_debug) => {
+              this.dialogRef.close(true);
+              this.ws.call('core.download', ['filesystem.get', [system_debug.result], fileName]).subscribe(
+                (system_debug_result) => {
+                  if (window.navigator.userAgent.search("Firefox")>0) {
+                    window.open(system_debug_result[1]);
+                }
+                  else {
+                    window.location.href = system_debug_result[1];
                   }
-                    else {
-                      window.location.href = system_debug_result[1];
-                    }
-                  },
-                  (err) => {
-                    this.openSnackBar(helptext_system_advanced.snackbar_generate_debug_message_failure, helptext_system_advanced.snackbar_generate_debug_action);
-                  }
-                );
-              }
-            }, () => {
-              this.load.close();
-            }, () => {
-              this.load.close();
+                },
+                (err) => {
+                  this.openSnackBar(helptext_system_advanced.snackbar_generate_debug_message_failure, helptext_system_advanced.snackbar_generate_debug_action);
+                }
+              ); 
+            }),
+            () => {
+              this.dialogRef.close();
+            }, 
+            () => {
+              this.dialogRef.close();
               if (this.job.state === 'SUCCESS') {} else if (this.job.state === 'FAILED') {
                 this.openSnackBar(helptext_system_advanced.snackbar_network_error_message, helptext_system_advanced.snackbar_network_error_action);
+              } else {
+                console.log("User canceled");
               }
-            });
-          } else {
-            console.log("User canceled");
+            }
           }
-        });
-      });
-    }
-  }
-];
+        })
+      })
+    } 
+  }]
+
 
   public fieldConfig: FieldConfig[] = [{
     type: 'checkbox',
@@ -170,12 +173,6 @@ export class AdvancedComponent implements OnDestroy {
     placeholder: helptext_system_advanced.advancedmode_placeholder,
     tooltip: helptext_system_advanced.advancedmode_tooltip
   }, {
-    type: 'select',
-    name: 'periodic_notifyuser',
-    placeholder: helptext_system_advanced.periodic_notifyuser_placeholder,
-    options: [],
-    tooltip: helptext_system_advanced.periodic_notifyuser_tooltip
-  }, {
     type: 'input',
     name: 'graphite',
     placeholder: helptext_system_advanced.graphite_placeholder,
@@ -186,19 +183,13 @@ export class AdvancedComponent implements OnDestroy {
     placeholder: helptext_system_advanced.fqdn_placeholder,
     tooltip: helptext_system_advanced.fqdn_tooltip
   }, {
-    type: 'checkbox',
-    name: 'cpu_in_percentage',
-    placeholder: helptext_system_advanced.cpu_in_percentage_placeholder,
-    tooltip: helptext_system_advanced.cpu_in_percentage_tooltip
-  },
-  {
     type: 'paragraph',
     name: 'sed_options_message',
     paraText: helptext_system_advanced.sed_options_message_paragraph,
 // This tooltip wraps to the next line when uncommented.
 // Erin said it's more than likely the CSS. Commented out for now and
 // linking to the user guide from the test instead.
-//  tooltip: T('See the <a href="%%docurl%%/system.html%%webversion%%#self-encrypting-drives"\
+//  tooltip: T('See the <a href="%%docurl%%/system.html#self-encrypting-drives"\
 //                target="_blank"> Self Encrypting Drives</a> section of\
 //                the user guide for more information.'),
 //
@@ -239,6 +230,7 @@ export class AdvancedComponent implements OnDestroy {
     private ws: WebSocketService,
     public adminLayout: AdminLayoutComponent,
     public snackBar: MatSnackBar,
+    protected matDialog: MatDialog,
     public datePipe: DatePipe) {}
 
   openSnackBar(message: string, action: string) {
@@ -287,20 +279,11 @@ export class AdvancedComponent implements OnDestroy {
         )}
     });
 
-    this.rest.get('account/users/', { limit: 0 }).subscribe((res) => {
-      const adv_periodic_notifyuser =
-        _.find(this.fieldConfig, { 'name': 'periodic_notifyuser' });
-      res.data.forEach((item) => {
-        adv_periodic_notifyuser.options.push({label: item['bsdusr_username'], value: item['bsdusr_username']});
-      });
-    });
   }
 
   public customSubmit(body) {
     delete body.sed_passwd2;
     this.load.open();
-
-
     return this.ws.call('system.advanced.update', [body]).subscribe((res) => {
       this.load.close();
       this.snackBar.open("Settings saved.", 'close', { duration: 5000 })
@@ -310,6 +293,4 @@ export class AdvancedComponent implements OnDestroy {
       new EntityUtils().handleWSError(this.entityForm, res);
     });
   }
-
-
 }

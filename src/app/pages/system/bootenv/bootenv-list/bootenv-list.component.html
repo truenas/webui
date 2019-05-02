@@ -9,7 +9,7 @@
   <mat-form-field floatPlaceholder="never">
     <input matInput [value]="scrub_interval" #scrubIntervalEvent>
   </mat-form-field>
-  <div>
+  <div class="mat-card-actions" [style.margin.px]='1'>
     <button mat-button type="button" (click)="scrub()" mat-button color="primary">{{"Scrub Boot Pool" | translate}}</button>
     <button mat-button type="button" (click)="goToStatus()" mat-button color="primary">{{"Boot Pool Status" | translate}}</button>
   </div>
