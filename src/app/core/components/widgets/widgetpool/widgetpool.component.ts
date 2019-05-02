@@ -151,15 +151,18 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
 
 
     this.core.register({observerClass:this,eventName:"StatsDiskTemp"}).subscribe((evt:CoreEvent) => {
-      let data = evt.data.data.data;
-      let temp: number;
-      for(let i = data.length-1; i >= 0; i--){
-        if(data[i][0]){
-          temp = data[i][0];
-          break;
+      let data = [];
+      let temp = 0;
+      if (evt.data && evt.data.data && evt.data.data.data) {
+        data = evt.data.data.data;
+        for(let i = data.length-1; i >= 0; i--){
+          if(data[i][0]){
+            temp = data[i][0];
+            break;
+          }
         }
+        this.diskDetails[evt.data.callArgs[1]].temp = temp;
       }
-      this.diskDetails[evt.data.callArgs[1]].temp = temp;
     });
 
     this.core.register({observerClass:this,eventName:"DisksInfo"}).subscribe((evt:CoreEvent) => {
