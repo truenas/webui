@@ -5,6 +5,8 @@ import { rangeValidator } from '../../../pages/common/entity/entity-form/validat
 export default {
 pending_changes_text : T('There are unapplied network changes. Apply them now?\
  Unapplied changes will be lost.'),
+pending_checkin_text : T('Network changes have been applied. Keep changes permanently?\
+ Changes will be automatically discarded if they are not permanently applied.'),
 commit_changes_title: T("Apply Network Changes"),
 commit_changes_warning: T("Apply network changes? Network connectivity will be interrupted."),
 changes_saved_successfully: T("Network changes applied successfully."),

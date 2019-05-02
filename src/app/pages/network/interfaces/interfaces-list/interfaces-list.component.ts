@@ -89,6 +89,7 @@ export class InterfacesListComponent implements OnDestroy {
 
   preInit(entityList) {
     this.pending_changes_text = helptext.pending_changes_text;
+    this.pending_checkin_text = helptext.pending_checkin_text;
     this.entityList = entityList;
 
     this.checkPendingChanges();
