@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { IscsiService } from '../../../../../services/';
 import * as _ from 'lodash';
 import { T } from 'app/translate-marker';
+import { EntityUtils } from '../../../../common/entity/utils';
 
 @Component({
   selector : 'app-iscsi-associated-target-list',
@@ -43,16 +44,12 @@ export class AssociatedTargetListComponent {
     },
   };
 
-  protected iscsiSessions: any;
-  constructor(protected router: Router, protected iscsiService: IscsiService) {
-    this.iscsiService.getGlobalSessions().subscribe(
-      (res) => {
-        this.iscsiSessions = res;
-      }
-    )
-  }
+  protected entityList: any;
+  constructor(protected router: Router, protected iscsiService: IscsiService) {}
 
-  afterInit(entityList: any) {}
+  afterInit(entityList: any) {
+    this.entityList = entityList;
+  }
 
   dataHandler(entityList: any) {
     this.iscsiService.getTargets().subscribe((targets) => {
@@ -67,14 +64,42 @@ export class AssociatedTargetListComponent {
       });
     });
   }
+  getActions() {
+    return [{
+      id: "edit",
+      label: "Edit",
+      onClick: (rowinner) => { this.entityList.doEdit(rowinner.id); },
+    }, {
+      id: "delete",
+      label: "Delete",
+      onClick: (rowinner) => {
+        let deleteMsg = this.entityList.getDeleteMessage(rowinner);
+        this.iscsiService.getGlobalSessions().subscribe(
+          (res) => {
+            let warningMsg = '';
+            for (let i = 0; i < res.length; i++) {
+              if (res[i].target.split(':')[1] == rowinner.target) {
+                warningMsg = '<font color="red">' + T('Warnning: Target in use</font><br>');
+              }
+            }
+            deleteMsg = warningMsg + deleteMsg;
 
-  warningMsg(item) {
-    let warningMsg = '<font color="red">';
-    for (let i = 0; i < this.iscsiSessions.length; i++) {
-      if (this.iscsiSessions[i].target.split(':')[1] == item.target) {
-        warningMsg += T('Warnning: Target in use');
-        return warningMsg + '</font><br>';
+            this.entityList.dialogService.confirm( T("Delete"), deleteMsg, false, T("Delete")).subscribe((dialres) => {
+              if (dialres) {
+                this.entityList.loader.open();
+                this.entityList.loaderOpen = true;
+                this.entityList.ws.call(this.wsDelete, [rowinner.id]).subscribe(
+                  (resinner) => { this.entityList.getData() },
+                  (resinner) => {
+                    new EntityUtils().handleError(this, resinner);
+                    this.entityList.loader.close();
+                  }
+                );
+              }
+            });
+          }
+        )
       }
-    }
+    }];
   }
 }

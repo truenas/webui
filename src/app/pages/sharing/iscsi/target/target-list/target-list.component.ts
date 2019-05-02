@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 
 import { IscsiService } from '../../../../../services/iscsi.service';
 import { T } from 'app/translate-marker';
+import { EntityUtils } from '../../../../common/entity/utils';
 
 @Component({
   selector : 'app-iscsi-target-list',
@@ -38,22 +38,49 @@ export class TargetListComponent {
     },
   };
 
-  protected iscsiSessions: any;
-  constructor(private iscsiService: IscsiService) {
-    this.iscsiService.getGlobalSessions().subscribe(
-      (res) => {
-        this.iscsiSessions = res;
-      }
-    )
+  protected entityList: any;
+  constructor(private iscsiService: IscsiService) {}
+
+  afterInit(entityList: any) {
+    this.entityList = entityList;
   }
 
-  warningMsg(item) {
-    let warningMsg = '<font color="red">';
-    for (let i = 0; i < this.iscsiSessions.length; i++) {
-      if (this.iscsiSessions[i].target.split(':')[1] == item.name) {
-        warningMsg += T('Warnning: Target in use');
-        return warningMsg + '</font><br>';
+  getActions() {
+    return [{
+      id: "edit",
+      label: "Edit",
+      onClick: (rowinner) => { this.entityList.doEdit(rowinner.id); },
+    }, {
+      id: "delete",
+      label: "Delete",
+      onClick: (rowinner) => {
+        let deleteMsg = this.entityList.getDeleteMessage(rowinner);
+        this.iscsiService.getGlobalSessions().subscribe(
+          (res) => {
+            let warningMsg = '';
+            for (let i = 0; i < res.length; i++) {
+              if (res[i].target.split(':')[1] == rowinner.name) {
+                warningMsg = '<font color="red">' + T('Warnning: Target in use</font><br>');
+              }
+            }
+            deleteMsg = warningMsg + deleteMsg;
+
+            this.entityList.dialogService.confirm( T("Delete"), deleteMsg, false, T("Delete")).subscribe((dialres) => {
+              if (dialres) {
+                this.entityList.loader.open();
+                this.entityList.loaderOpen = true;
+                this.entityList.ws.call(this.wsDelete, [rowinner.id]).subscribe(
+                  (resinner) => { this.entityList.getData() },
+                  (resinner) => {
+                    new EntityUtils().handleError(this, resinner);
+                    this.entityList.loader.close();
+                  }
+                );
+              }
+            });
+          }
+        )
       }
-    }
+    }];
   }
 }

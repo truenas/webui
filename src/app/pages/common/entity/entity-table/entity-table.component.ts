@@ -55,7 +55,6 @@ export interface InputTableConf {
   doAdd?();
   onCheckboxChange?(row): any;
   onSliderChange?(row): any;
-  warningMsg?(item): any;
 }
 
 export interface SortingConfig {
@@ -543,11 +542,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.conf.confirmDeleteDialog) {
       dialog = this.conf.confirmDeleteDialog;
     }
-    let warningMsg = this.conf.warningMsg ? this.conf.warningMsg(item) : '';
 
     this.dialogService.confirm(
         dialog.hasOwnProperty("title") ? dialog['title'] : T("Delete"),
-        dialog.hasOwnProperty("message") ? warningMsg + dialog['message'] + deleteMsg : warningMsg + deleteMsg,
+        dialog.hasOwnProperty("message") ?  dialog['message'] + deleteMsg : deleteMsg,
         dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : false, 
         dialog.hasOwnProperty("button") ? dialog['button'] : T("Delete")).subscribe((res) => {
       if (res) {
