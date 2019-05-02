@@ -89,6 +89,7 @@ export class VolumesListTableConfig implements InputTableConf {
   public custActions: Array<any> = [];
   private vmware_res_status: boolean;
   private recursiveIsChecked: boolean = false;
+  public dialogConf: DialogFormConfiguration;
 
   constructor(
     private parentVolumesListComponent: VolumesListComponent,
@@ -623,7 +624,7 @@ export class VolumesListTableConfig implements InputTableConf {
           this.ws.call('vmware.dataset_has_vms',[row.path, false]).subscribe((vmware_res)=>{
             this.vmware_res_status = vmware_res;
           })
-          const conf: DialogFormConfiguration = {
+          this.dialogConf = {
             title: "One time snapshot of " + row.path,
             fieldConfig: [
               {
@@ -662,7 +663,7 @@ export class VolumesListTableConfig implements InputTableConf {
             method_rest: "storage/snapshot",
             saveButtonText: T("Create Snapshot"),
           }
-          this.dialogService.dialogForm(conf).subscribe((res) => {
+          this.dialogService.dialogForm(this.dialogConf).subscribe((res) => {
             if (res) {
               this.snackBar.open(T("Snapshot successfully taken."), T('close'), { duration: 5000 });
             }
@@ -695,13 +696,10 @@ export class VolumesListTableConfig implements InputTableConf {
   }
 
   updater(parent: any) {
-    console.log('updater', parent)
     parent.recursiveIsChecked = !parent.recursiveIsChecked;
     parent.ws.call('vmware.dataset_has_vms',[parent.title, parent.recursiveIsChecked]).subscribe((vmware_res)=>{
-      parent.vmware_res_status = parent.recursiveIsChecked;
-      // parent.vmware_res_status = vmware_res;
-      this.vmware_res_status = parent.vmware_res_status
-      console.log(this.vmware_res_status, parent.recursiveIsChecked)
+      parent.vmware_res_status = vmware_res;
+      _.find(parent.dialogConf.fieldConfig, {name : "vmware_sync"})['isHidden'] = !parent.vmware_res_status;
     })
   }
 
