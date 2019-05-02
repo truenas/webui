@@ -5,7 +5,7 @@ import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Application, Container, extras, Text, DisplayObject, Graphics, Sprite, Texture, utils} from 'pixi.js';
 //import 'pixi-filters';
 import 'pixi-projection';
-import { VDevLabels } from 'app/core/classes/hardware/vdev-labels';
+import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
 import { DriveTray } from 'app/core/classes/hardware/drivetray';
 import { M50 } from 'app/core/classes/hardware/m50';
 import { DiskComponent } from './disk.component';
@@ -52,7 +52,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
 
   public theme: any;
   public currentView: string = 'status'; // pools || status || expanders || details
-  private labels: VDevLabels;
+  private labels: VDevLabelsSVG;
   
  
 
@@ -131,8 +131,8 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
       PIXI.settings.PRECISION_FRAGMENT = 'highp'; //this makes text looks better? Answer = NO
       PIXI.utils.skipHello();
       this.app = new PIXI.Application({
-        width:960,
-        height:304,
+        width:960 ,
+        height:304 ,
         forceCanvas:false,
         transparent:true,
         antialias:true,
@@ -141,6 +141,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
     //});
 
     this.renderer = this.app.renderer;
+
     this.app.renderer.backgroundColor = 0x000000;
     this.overview.nativeElement.appendChild(this.app.view);
 
@@ -318,7 +319,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
         let vdev = this.system.getVdevInfo(this.selectedDisk.devname);
         this.selectedVdev = vdev;
 
-        this.labels = new VDevLabels(this.enclosure, this.app, this.theme.blue/*, dl*/);
+        this.labels = new VDevLabelsSVG(this.enclosure, this.app, this.theme.blue/*, dl*/);
 
         this.labels.events.next({name:"LabelDrives", data: vdev, sender: this});
         let dl;

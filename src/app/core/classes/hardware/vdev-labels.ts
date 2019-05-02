@@ -264,6 +264,8 @@ export class VDevLabels extends LabelFactory{
     this.mainStage.addChild(selectedDiskLabel);
     this.mainStage.addChild(vDevLabels);
 
+    console.log(this.app);
+
   }
 
   protected setBounds(obj){
