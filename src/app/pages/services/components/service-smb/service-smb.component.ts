@@ -140,14 +140,17 @@ export class ServiceSMBComponent {
     {
       type: 'input',
       name: 'idmap_tdb_range_low',
+      inputType: 'number',
       placeholder: helptext .idmap_tdb_range_low_placeholder,
       tooltip: helptext.idmap_tdb_range_low_tooltip,
     },
     {
       type: 'input',
       name: 'idmap_tdb_range_high',
+      inputType: 'number',
       placeholder: helptext.idmap_tdb_range_high_placeholder,
       tooltip: helptext.idmap_tdb_range_high_tooltip,
+      validation: helptext.idmap_tdb_range_high_validation
     }
   ];
 
@@ -231,6 +234,7 @@ export class ServiceSMBComponent {
     this.error = null;
 
     let value = _.cloneDeep(entityEdit);
+    console.log(value)
     let new_range_low: any;
     let new_range_high: any;
 
