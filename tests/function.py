@@ -77,8 +77,8 @@ def error_check(driver):
         driver.find_element_by_xpath(tearDown_xpath).click()
         traceback = driver.find_element_by_xpath(traceback_xpath)
         driver.find_element_by_xpath(closeButton).click()
-        return {'results': False, 'dialog': dialog, 'traceback': traceback}
-    return {'results': True, 'dialog': '', 'traceback': ''}
+        return {'result': False, 'dialog': dialog.text, 'traceback': traceback.text}
+    return {'result': True, 'dialog': '', 'traceback': ''}
 
 
 # screenshot function

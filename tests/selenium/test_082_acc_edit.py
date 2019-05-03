@@ -55,7 +55,8 @@ def test_02_edit_userNAS_email(wb_driver):
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
     time.sleep(2)
-    error_check(wb_driver)
+    no_error = error_check(wb_driver)
+    assert no_error['result'], no_error['traceback']
 
 
 def test_03_edit_userNAS_sudo(wb_driver):
@@ -66,7 +67,8 @@ def test_03_edit_userNAS_sudo(wb_driver):
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
-    error_check(wb_driver)
+    no_error = error_check(wb_driver)
+    assert no_error['result'], no_error['traceback']
 
 
 def test_04_navigate_to_account_group(wb_driver):
@@ -93,4 +95,5 @@ def test_05_edit_groupNAS_sudo(wb_driver):
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
-    error_check(wb_driver)
+    no_error = error_check(wb_driver)
+    assert no_error['result'], no_error['traceback']

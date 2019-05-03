@@ -62,11 +62,13 @@ def test_02_create_newgroup(wb_driver):
     time.sleep(1)
     # Click on save new Group button
     wb_driver.find_element_by_xpath(xpaths['saveButton']).click()
+    time.sleep(1)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
     # check if there is a generic error when making a duplicate group, and print the error
-    error_check(wb_driver)
+    no_error = error_check(wb_driver)
+    assert no_error['result'], no_error['traceback']
     time.sleep(2)
 
 
@@ -84,11 +86,13 @@ def test_03_create_supergroup(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['permitsudoCheckbox']).click()
     # Click on save new Group button
     wb_driver.find_element_by_xpath(xpaths['saveButton']).click()
+    time.sleep(1)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
     # check if there is a generic error when making a duplicate group, and print the error
-    error_check(wb_driver)
+    no_error = error_check(wb_driver)
+    assert no_error['result'], no_error['traceback']
     time.sleep(2)
 
 
@@ -105,11 +109,13 @@ def test_04_create_duplicategroup(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['newGroupName']).send_keys(newgroupname)
     # Click on save new Group button
     wb_driver.find_element_by_xpath(xpaths['saveButton']).click()
+    time.sleep(1)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
     # check if there is a generic error when making a duplicate group, and print the error
-    error_check(wb_driver)
+    no_error = error_check(wb_driver)
+    assert no_error['result'], no_error['traceback']
     time.sleep(2)
 
 

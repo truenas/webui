@@ -39,7 +39,6 @@ xpaths = {
 
 
 def test_01_nav_store_pool(wb_driver):
-    error_check(wb_driver)
     # Click  Storage menu
     a = wb_driver.find_element_by_xpath(xpaths['navStorage'])
     a.click()
@@ -82,7 +81,8 @@ def test_02_create_a_pool(wb_driver):
     assert wait, f'Creating the new pool {pool1} timeout'
     # taking screenshot
     take_screenshot(wb_driver, script_name, test_name)
-    error_check(wb_driver)
+    no_error = error_check(wb_driver)
+    assert no_error['result'], no_error['traceback']
 
 
 def test_03_looking_if_the_new_pool_exist(wb_driver):
@@ -124,7 +124,8 @@ def test_04_create_newpool2(wb_driver):
     assert wait, f'Creating the new pool {pool2} timeout'
     # taking screenshot
     take_screenshot(wb_driver, script_name, test_name)
-    error_check(wb_driver)
+    no_error = error_check(wb_driver)
+    assert no_error['result'], no_error['traceback']
 
 
 def test_05_looking_if_the_new_pool_exist(wb_driver):
