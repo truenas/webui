@@ -3,12 +3,13 @@ import { Router } from '@angular/router';
 
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../../../common/entity/utils';
-import { WebSocketService, DialogService, JobService } from '../../../../services';
+import { WebSocketService, DialogService, SnackbarService } from '../../../../services';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-replication-list',
-    template: `<entity-table [title]='title' [conf]='this'></entity-table>`
+    template: `<entity-table [title]='title' [conf]='this'></entity-table>`,
+    providers: [SnackbarService]
 })
 export class ReplicationListComponent {
 
@@ -45,7 +46,7 @@ export class ReplicationListComponent {
     };
 
     constructor(private router: Router, private ws: WebSocketService, private dialog: DialogService,
-        private translateService: TranslateService) { }
+        private translateService: TranslateService, private snackbarService: SnackbarService) { }
 
     afterInit(entityList: any) {
         this.entityList = entityList;
@@ -64,12 +65,12 @@ export class ReplicationListComponent {
             id: "run",
             label: T("Run Now"),
             onClick: (row) => {
-                this.dialog.confirm(T("Run Now"), T("Run this replication now?"), true).subscribe((res) => {
+                this.dialog.confirm(T("Run Now"), T("Replicate <i>") + row.name + T("</i> now?"), true).subscribe((res) => {
                     if (res) {
                         row.state = 'RUNNING';
                         this.ws.call('replication.run', [row.id]).subscribe(
                             (res) => {
-                                console.log(res)
+                                this.snackbarService.open(T('Replication <i>') + row.name + T('</i> has started.'), T('close'), { duration: 5000 });
                             },
                             (err) => {
                                 new EntityUtils().handleWSError(this.entityList, err);
