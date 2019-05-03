@@ -7,31 +7,49 @@
     <div #disksoverview id="disks-overview" [class]="currentView">
 
         <!-- POOLS OVERLAY -->
-          <div *ngIf="currentView == 'pools'" fxFlex="25" class="stage-left dom-overlay" fxLayout="column" fxLayoutAlign="center center">
+        <div *ngIf="currentView == 'pools' || exitingView == 'pools'" class="pools stage-left dom-overlay" >
+          <div class="content">
             <h2>Pools</h2>
           </div>
-          <div *ngIf="currentView == 'pools'" fxFlex="18" class="stage-right dom-overlay list" fxLayout="column" fxLayoutAlign="center start">
-            <div *ngFor="let pool of enclosurePools"><div class="swatch" [style.background]="theme[theme.accentColors[selectedEnclosure.poolKeys[pool]]]"></div>{{pool}}</div>
+        </div>
+        <div *ngIf="currentView == 'pools' || exitingView == 'pools'" class="pools stage-right dom-overlay list">
+          <div class="content">
+            <div class="legend">
+              <div *ngFor="let pool of enclosurePools"><div class="swatch" [style.background]="theme[theme.accentColors[selectedEnclosure.poolKeys[pool]]]"></div>{{pool}}</div>
+            </div>
           </div>
+        </div>
 
         <!-- STATUS OVERLAY -->
-          <div *ngIf="currentView == 'status'" fxFlex="25" class="stage-left dom-overlay" fxLayout="column" fxLayoutAlign="center center">
-            <h2>Status</h2>
+          <div *ngIf="currentView == 'status' || exitingView == 'status'" class="status stage-left dom-overlay">
+            <div class="content">
+              <h2>Status</h2>
+            </div>
           </div>
-          <div *ngIf="currentView == 'status'" fxFlex="18" class="stage-right dom-overlay list" fxLayout="column" fxLayoutAlign="center start">
-            <div><div class="swatch" [style.background]="theme.green"></div>ONLINE</div>
-            <div><div class="swatch" [style.background]="theme.yellow"></div>OTHER</div>
-            <div><div class="swatch" [style.background]="theme.red"></div>FAULT</div>
+          <div *ngIf="currentView == 'status' || exitingView == 'status'" class="status stage-right dom-overlay list">
+            <div class="content">
+              <div class="legend">
+                <div><div class="swatch" [style.background]="theme.green"></div>ONLINE</div>
+                <div><div class="swatch" [style.background]="theme.yellow"></div>OTHER</div>
+                <div><div class="swatch" [style.background]="theme.red"></div>FAULT</div>
+              </div>
+            </div>
           </div>
 
         <!-- DETAILS OVERLAY -->
-          <div *ngIf="currentView == 'details'" fxFlex="25" class="stage-left dom-overlay" fxLayout="column" fxLayoutAlign="center center">
-            <h2>{{selectedDisk.name}}</h2>
+          <div *ngIf="currentView == 'details' || exitingView == 'details'" class="details stage-left dom-overlay">
+            <div class="content">
+              <h2 class="disk-name {{selectedDisk.name}}">{{selectedDisk.name}}</h2>
+            </div>
           </div>
           
-          <div #domLabels *ngIf="currentView == 'details'" fxFlex="25" class="stage-right dom-overlay" fxLayout="column" fxLayoutAlign="center center">
-            <h3 class="vdev-type">{{selectedVdev.type | titlecase}}</h3>
-            <div *ngFor="let disk of selectedVdevDisks; let i = index" class="vdev-disk {{disk}}">{{disk}} <span> {{ selectedEnclosure.disks[disk] }}</span></div>
+          <div #domLabels *ngIf="currentView == 'details' || exitingView == 'details'" class="details stage-right dom-overlay">
+            <div class="content">
+              <div class="legend">
+                <h3 class="vdev-type">{{selectedVdev.type | titlecase}}</h3>
+                <div *ngFor="let disk of selectedVdevDisks; let i = index" class="vdev-disk {{disk}}">{{disk}} <span> {{ selectedEnclosure.disks[disk] }}</span></div>
+              </div>
+            </div>
           </div>
 
         <!-- CAPTION OVERLAY -->

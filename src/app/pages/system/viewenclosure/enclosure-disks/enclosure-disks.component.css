@@ -30,6 +30,7 @@ nav.view-nav-bar{
   color:#ccc;
   cursor:default;
   user-select:none;
+  overflow:hidden;
 }
 
 .view-card .expanders .caption,
@@ -137,11 +138,28 @@ nav.view-nav-bar{
   z-index:3;
 }
 
-.view-card .dom-overlay.stage-left{
+.view-card .dom-overlay .content{
+  opacity:0; /* animations will change this */
+  text-align:center;
+  position:absolute;
+}
+
+.view-card .dom-overlay .content .legend{
+  text-align:left;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.view-card .dom-overlay.stage-left,
+.view-card .dom-overlay.stage-right{
+  position:absolute;
+  display:block;
+  width:25%;
 }
 
 .view-card .dom-overlay.stage-right{
-  right: 0;
+  /*right: 0;*/
+  left:calc(75%);
 }
 
 .view-card .dom-overlay.stage-right .vdev-type{

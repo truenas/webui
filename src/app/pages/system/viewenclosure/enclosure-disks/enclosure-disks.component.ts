@@ -10,6 +10,7 @@ import { DriveTray } from 'app/core/classes/hardware/drivetray';
 import { M50 } from 'app/core/classes/hardware/m50';
 import { DiskComponent } from './disk.component';
 import { SystemProfiler } from './system-profiler';
+import { tween, easing, styler } from 'popmotion';
 import { ExampleData } from './example-data';
 //declare const PIXI: any;
 
@@ -51,7 +52,9 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
   public selectedDisk: any;
 
   public theme: any;
-  public currentView: string = 'status'; // pools || status || expanders || details
+  public currentView: string; // pools || status || expanders || details
+  public exitingView: string; // pools || status || expanders || details
+  private defaultView = 'pools';
   private labels: VDevLabelsSVG;
   
  
@@ -105,16 +108,61 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
 
   /* TESTING ONLY */
   clearDisk(){
-    this.selectedDisk = null;
-    this.setCurrentView('status');
+    this.setCurrentView(this.defaultView);
   }
 
   ngAfterViewInit() {
-    //this.pixiInit();
+
+    // Listen for DOM changes to avoid race conditions with animations
+    let callback = (mutationList, observer) => {
+      mutationList.forEach((mutation) => {
+        switch(mutation.type) {
+          case 'childList':
+            /* One or more children have been added to and/or removed
+               from the tree; see mutation.addedNodes and
+               mutation.removedNodes */
+            if(mutation.addedNodes.length == 0 || mutation.addedNodes[0].classList.length == 0){
+              break;
+            }
+            const stageLeft: boolean = mutation.addedNodes[0].classList.contains('stage-left');
+            const stageRight: boolean = mutation.addedNodes[0].classList.contains('stage-right');
+            const vdevLabels: boolean = mutation.addedNodes[0].classList.contains('vdev-disk');
+            const canvasClickpad: boolean = mutation.addedNodes[0].classList.contains('clickpad');
+            if(stageLeft){
+              this.enter('stage-left'); // View has changed so we launch transition animations
+            } else if(stageRight){
+              this.enter('stage-right'); // View has changed so we launch transition animations
+            } 
+            break;
+          case 'attributes':
+            /* An attribute value changed on the element in
+               mutation.target; the attribute name is in
+               mutation.attributeName and its previous value is in
+               mutation.oldValue */
+
+            const diskName: boolean = mutation.target.classList.contains('disk-name');
+        
+            if(diskName && this.currentView == 'details' && this.exitingView == 'details'){
+              this.labels.events.next({name:"OverlayReady", data: {vdev: this.selectedVdev, overlay:this.domLabels}, sender: this});
+            }
+            break;
+        }
+      });
+      
+    }
+
+    const observerOptions = {
+      childList: true,
+      attributes: true,
+      subtree: true //Omit or set to false to observe only changes to the parent node.
+    }
+    
+    const domChanges = new MutationObserver(callback);
+    domChanges.observe(this.overview.nativeElement, observerOptions);
+
   }
 
   ngOnChanges(changes:SimpleChanges){
-    console.log(changes);
   }
 
   ngOnDestroy(){
@@ -122,8 +170,6 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
     this.destroyEnclosure();
     this.app.stage.destroy(true);
     this.app.destroy(true, true); 
-
-    //Object.keys(PIXI.utils.TextureCache).forEach(function(texture) {  PIXI.utils.TextureCache[texture].destroy(true);});
   }
 
   pixiInit(){
@@ -160,7 +206,6 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
     this.enclosure.events.subscribe((evt) => {
       switch(evt.name){
         case "Ready":
-          //this.onImport(); // TEST
           this.container.addChild(this.enclosure.container);
           this.enclosure.container.name = this.enclosure.model;
           this.enclosure.container.width = this.enclosure.container.width / 2;
@@ -168,9 +213,8 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
           this.enclosure.container.x = this.app._options.width / 2 - this.enclosure.container.width / 2;
           this.enclosure.container.y = this.app._options.height / 2 - this.enclosure.container.height / 2;
 
-          //this.setDisksEnabledState();
-          //this.setDisksDisabled();
-          this.setCurrentView(this.currentView);
+          this.setDisksEnabledState();
+          this.setCurrentView(this.defaultView);
         break;
         case "DriveSelected":
           //console.log(evt);
@@ -178,30 +222,20 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
           //console.log(this.system.profile);
           //this.currentView = 'details';
           let disk = this.selectedEnclosure.disks[evt.data.id]; // should match slot number
+          if(disk == this.selectedDisk){break} // Don't trigger any changes if the same disk is selected
           if(this.enclosure.driveTrayObjects[evt.data.id].enabled){
             this.selectedDisk = disk;
             this.setCurrentView('details');
-            //this.setDisksDisabled();
-            //this.setDisksHealthState();
-            
-            //this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: evt.data.id, color: '#0000CC'}}); // Just for testing
-            //console.log(disk);
           }
         break;
       }
     });
 
     if(!this.resources[this.enclosure.model]){
-      console.log("NO RESOURCES");
-      //this.importAsset('m50','assets/images/hardware/m50/m50_960w.png');
-      //this.importAsset(this.enclosure.model,this.enclosure.chassisPath);
       this.enclosure.load();
     } else {
-      console.log("RESOURCES");
       this.onImport(); 
     }
-
-    //this.simpleImport();
   }
 
   destroyEnclosure(){
@@ -212,28 +246,9 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
   }
 
   makeDriveTray():DriveTray{
-    //let dt = new DriveTray("m50");
     let dt = this.enclosure.makeDriveTray();
     return dt;
   }
-
-  /*simpleImport(){
-    // This method requires more investigation. 
-    // Image doesn't show up on stage unless I 
-    // navigate away and back again. 
-    // Maybe it isn't triggering change detection in Angular?
-    // console.log("Simple Import...");
-    let texture = PIXI.Texture.fromImage('assets/images/hardware/m50/m50_960w.png');
-    let sprite = new PIXI.Sprite(texture);
-     sprite.width = 480;
-     sprite.height = sprite.height * (480 / 960);
-     sprite.x = 0;
-     sprite.y = 0;
-    sprite.name="m50_sprite"
-    // console.log(sprite);
-    this.container.addChild(sprite);
-    // console.log(this.app.stage.children);
-  }*/
 
   importAsset(alias, path){
     // NOTE: Alias will become the property name in resources
@@ -244,23 +259,15 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
   }
 
   onImport(){
-    //this.enclosure.load();
-    console.log(this.enclosure.loader);
-    console.log(this.loader);
-    console.log(PIXI.loaders);
     let sprite = PIXI.Sprite.from(this.enclosure.loader.resources.m50.texture.baseTexture);
-    //sprite.width = 480;
-    //sprite.height = sprite.height * (480 / 960);
     sprite.x = 0;
     sprite.y = 0;
     sprite.name=this.enclosure.model + "_sprite"
     sprite.alpha = 0.1;
     this.container.addChild(sprite);
 
-    //let dt = this.makeDriveTray();
     let dt = this.enclosure.makeDriveTray();
     this.container.addChild(dt.container);
-    //this.updatePIXI();
     this.setCurrentView('status');
     
   }
@@ -282,23 +289,16 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
   }
 
 
-
-  /*updatePIXI(){
-    //this.app.renderer.render(this.app.stage);
-    this.renderer.render(this.app.stage);
-    requestAnimationFrame(this.updatePIXI.bind(this));
-  }*/
-
   setCurrentView(opt: string){
+    if(this.currentView){ this.exitingView = this.currentView; }
     // pools || status || expanders || details
-    this.currentView = opt;
+
     if(this.labels){
       // Start exit animation
       this.labels.exit();
-      //this.labels = null;
     }
     
-    switch(this.currentView){
+    switch(opt){
       case 'pools':
         //this.setDisksDisabled();
         this.container.alpha = 1;
@@ -323,25 +323,71 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
 
         this.labels.events.next({name:"LabelDrives", data: vdev, sender: this});
         let dl;
-        //if(!this.domLabels){
-          setTimeout(() => {
-            dl = this.domLabels//.nativeElement
-            this.labels.events.next({name:"OverlayReady", data: {vdev: vdev, overlay:dl}, sender: this});
-          }, 100 );
-        /*} else {
-            dl = this.domLabels.nativeElement
-            this.labels.events.next({name:"OverlayReady", data: {vdev: vdev, overlay:dl}, sender: this});
-        }*/
 
-        this.labels.events.subscribe((evt:CoreEvent) => {
-          // Labels exit animation is complete so we remove the instance
-          if(evt.name == "LabelsDestroyed"){
-            this.labels = null;
-            this.selectedVdev = null;
-          }
-        });
       break
     }
+
+    this.currentView = opt;
+    
+  }
+
+  enter(className:string){ // stage-left or stage-right
+    if(this.exitingView){ this.exit(className); }
+ 
+    let sideStage = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className);
+    let html = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className + ' .content')
+    let el = styler(html);
+
+    let x = (sideStage.offsetWidth * 0.5) - (el.get('width') * 0.5);
+    let y = sideStage.offsetTop + (sideStage.offsetHeight * 0.5) - (el.get('height') * 0.5);
+    html.style.left = x.toString() + 'px';
+    html.style.top = y.toString() + 'px';
+    
+    tween({
+      from:{ scale: 0, opacity: 0},
+      to:{scale: 1, opacity: 1},
+      duration: 360
+    }).start({
+      update: v => { el.set(v); },
+      complete: () => {
+        if(this.currentView == 'details'){
+          this.labels.events.next({name:"OverlayReady", data: {vdev: this.selectedVdev, overlay:this.domLabels}, sender: this});
+        }
+      }
+    });
+  }
+
+  exit(className){ // stage-left or stage-right
+
+    let html = this.overview.nativeElement.querySelector('.' + className + '.' + this.exitingView);
+    let el = styler(html);
+
+    // x is the position relative to it's starting point.
+    const w = el.get('width');
+    const startX = 0;
+    let endX = className == 'stage-left' ? w * -1 : w;
+
+    // Move stage left
+    tween({
+      from:{opacity:1, x:0},
+      to:{
+        opacity:0,
+        x: endX
+      },
+      duration: 280
+    }).start({
+      update: v => { el.set(v) },
+      complete: () => {
+        if(this.exitingView == 'details' && this.currentView !== 'details'){
+          this.selectedDisk = null;
+          this.labels = null;
+          this.selectedVdev = null;
+        }
+        this.exitingView = null;
+        el.set({x: 0})
+      }
+    });
+
   }
 
   setDisksEnabledState(){
@@ -355,8 +401,6 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
   setDisksDisabled(){
     this.enclosure.driveTrayObjects.forEach((dt, index) =>{
       let disk = this.selectedEnclosure.disks[index];
-      //dt.enabled = false;
-      //console.log(dt);
       this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: index, color: 'none'}});
     });
   }
@@ -382,11 +426,9 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
       if(disk && disk.status){
         switch(disk.status){
           case "ONLINE":
-            //dt.color = this.theme.green;
             this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: index, color: this.theme.green}});
           break;
           case "FAULT":
-            //dt.color = this.theme.red;
             this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: index, color: this.theme.red}});
           break;
           default:

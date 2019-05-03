@@ -81,7 +81,6 @@ export class VDevLabelsSVG {
           this.createVdevLabels(evt.data);
           break
         case "OverlayReady":
-          //console.log(evt);
           this.traceElements(evt.data.vdev, evt.data.overlay);
           break
       }
@@ -106,7 +105,6 @@ export class VDevLabelsSVG {
     d3.select('#' + op.id + ' canvas.clickpad').remove();
     this.app.renderer.plugins.interaction.setTargetElement(this.app.renderer.view);
     
-    this.events.next({name:"LabelsDestroyed"});
   }
 
   d3Init(){
@@ -115,13 +113,13 @@ export class VDevLabelsSVG {
     this.svg = d3.select('#' + op.id).append("svg")
       .attr("width", op.offsetWidth)
       .attr("height", op.offsetHeight)
-      .attr("style", "position:absolute;");
+      .attr("style", "position:absolute; top:0; left:0;");
 
     let clickpad = d3.select('#' + op.id).append("canvas") // This element will capture for PIXI
       .attr('class', 'clickpad')
       .attr("width", op.offsetWidth)
       .attr("height", op.offsetHeight)
-      .attr("style", "position:absolute;");
+      .attr("style", "position:absolute; top:0; left:0;");
 
     this.app.renderer.plugins.interaction.setTargetElement(op.querySelector('canvas.clickpad'));
 
@@ -176,6 +174,23 @@ export class VDevLabelsSVG {
 
   }
 
+  calculateParentOffsets(el){
+    // Template uses CSS to center and align text so 
+    // wee need to compensate with absolute positions
+    // of wrapper elements
+
+    // 1 up
+    let legend = el.nativeElement.childNodes[0].childNodes[0];
+    
+    // 2 up
+    let content = el.nativeElement.childNodes[0];
+
+    const xOffset = el.nativeElement.offsetLeft + legend.offsetLeft + content.offsetLeft;
+    const yOffset = el.nativeElement.offsetTop + legend.offsetTop + content.offsetTop;
+
+    return {x: xOffset, y: yOffset}
+  }
+
   traceElements(vdev, overlay){
     let disks = Object.keys(vdev.disks);// NOTE: vdev.slots only has values for current enclosure
     let op = this.getParent();// Parent div
@@ -189,10 +204,11 @@ export class VDevLabelsSVG {
         let tray = this.trays[disk];
         
         let el = overlay.nativeElement.querySelector('div.vdev-disk.' + disk);
+        let parentOffsets = this.calculateParentOffsets(overlay);
         let startX = tray.x + tray.width;
         let startY = tray.y + tray.height / 2;
-        let endX = el.offsetLeft + el.offsetParent.offsetLeft;
-        let endY = el.offsetTop + el.offsetParent.offsetTop + (el.offsetHeight / 2);
+        let endX = el.offsetLeft + parentOffsets.x//el.offsetParent.offsetLeft;
+        let endY = el.offsetTop + parentOffsets.y + (el.offsetHeight / 2);
         this.createTrace(startX, startY, endX, endY);
       }
     });
