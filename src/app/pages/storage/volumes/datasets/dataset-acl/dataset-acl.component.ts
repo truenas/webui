@@ -28,6 +28,8 @@ export class DatasetAclComponent implements OnDestroy {
 
   protected queryCall = 'filesystem.getacl';
   protected updateCall = 'filesystem.setacl';
+  protected isEntity = true;
+  protected pk: string;
   protected path: string;
   protected userOptions: any[];
   protected groupOptions: any[];
@@ -172,11 +174,11 @@ export class DatasetAclComponent implements OnDestroy {
               protected storageService: StorageService, protected dialog: DialogService) {}
 
   preInit(entityEdit: any) {
-    entityEdit.isNew = true; // remove me when we find a way to get the permissions
     this.sub = this.aroute.params.subscribe(params => {
       this.path = '/mnt/' + params['path'];
       const path_fc = _.find(this.fieldSets[0].config, {name:'path'});
       path_fc.value = this.path;
+      this.pk = this.path;
     });
 
     this.userService.listAllUsers().subscribe(res => {
@@ -226,41 +228,43 @@ export class DatasetAclComponent implements OnDestroy {
       if (listFields && listFields.length > 0 && res.length === listFields.length) {
         for (let i = 0; i < listFields.length; i++) {
           controls = listFields[i];
-          user_fc = _.find(controls, {"name": "user"});
-          if (user_fc.options.length === 0) {
-            user_fc.options = this.userOptions;
-          }
-          group_fc = _.find(controls, {"name": "group"});
-          if (group_fc.options.length === 0) {
-            group_fc.options = this.groupOptions;
-          }
-          if (res[i].tag === 'USER') {
-            user_fc.isHidden = false;
-            group_fc.isHidden = true;
-          } else if (res[i].tag === 'GROUP') {
-            user_fc.isHidden = true;
-            group_fc.isHidden = false;
-          } else {
-            user_fc.isHidden = true;
-            group_fc.isHidden = true;
-          }
-          adv_perms_fc = _.find(controls, {"name": "advanced_perms"});
-          basic_perms_fc = _.find(controls, {"name": "basic_perms"});
-          if (res[i].perms_type === "ADVANCED") {
-            adv_perms_fc.isHidden = false;
-            basic_perms_fc.isHidden = true;
-          } else {
-            adv_perms_fc.isHidden = true;
-            basic_perms_fc.isHidden = false;
-          }
-          adv_flags_fc = _.find(controls, {"name": "advanced_flags"});
-          basic_flags_fc = _.find(controls, {"name": "basic_flags"});
-          if (res[i].perms_type === "ADVANCED") {
-            adv_flags_fc.isHidden = false;
-            basic_flags_fc.isHidden = true;
-          } else {
-            adv_flags_fc.isHidden = true;
-            basic_flags_fc.isHidden = false;
+          if (controls) {
+            user_fc = _.find(controls, {"name": "user"});
+            group_fc = _.find(controls, {"name": "group"});
+            if (user_fc.options === undefined || user_fc.options.length === 0) {
+              user_fc.options = this.userOptions;
+            }
+            if (group_fc.options === undefined || group_fc.options.length === 0) {
+              group_fc.options = this.groupOptions;
+            }
+            if (res[i].tag === 'USER') {
+              user_fc.isHidden = false;
+              group_fc.isHidden = true;
+            } else if (res[i].tag === 'GROUP') {
+              user_fc.isHidden = true;
+              group_fc.isHidden = false;
+            } else {
+              user_fc.isHidden = true;
+              group_fc.isHidden = true;
+            }
+            adv_perms_fc = _.find(controls, {"name": "advanced_perms"});
+            basic_perms_fc = _.find(controls, {"name": "basic_perms"});
+            if (res[i].perms_type === "ADVANCED") {
+              adv_perms_fc.isHidden = false;
+              basic_perms_fc.isHidden = true;
+            } else {
+              adv_perms_fc.isHidden = true;
+              basic_perms_fc.isHidden = false;
+            }
+            adv_flags_fc = _.find(controls, {"name": "advanced_flags"});
+            basic_flags_fc = _.find(controls, {"name": "basic_flags"});
+            if (res[i].flags_type === "ADVANCED") {
+              adv_flags_fc.isHidden = false;
+              basic_flags_fc.isHidden = true;
+            } else {
+              adv_flags_fc.isHidden = true;
+              basic_flags_fc.isHidden = false;
+            }
           }
         }
       }
@@ -268,8 +272,62 @@ export class DatasetAclComponent implements OnDestroy {
   }
 
   resourceTransformIncomingRestData(data) {
-    console.log(data);
-    return data;
+    return {"aces": []}; // stupid hacky thing that gets around entityForm's treatment of data
+  }
+
+  dataHandler(entityForm) {
+    let data = entityForm.queryResponse;
+    let acl;
+    if (!data.length) {
+      data = [data];
+    }
+    for (let i = 0; i < data.length; i++) {
+      acl = {};
+      acl.type = data[i].type;
+      acl.tag = data[i].tag;
+      if (acl.tag === "USER") {
+        acl.user = data[i].id;
+      }
+      if (acl.tag === "GROUP") {
+        acl.group = data[i].id;
+      }
+      if (data[i].flags.hasOwnProperty('BASIC')) {
+        acl.flags_type = 'BASIC';
+        acl.basic_flags = data[i].flags['BASIC'];
+      } else {
+        acl.flags_type = 'ADVANCED';
+        acl.advanced_flags = data[i].flags;
+      }
+      if (data[i].perms.hasOwnProperty('BASIC')) {
+        acl.perms_type = 'BASIC';
+        acl.basic_perms = data[i].perms['BASIC'];
+      } else {
+        acl.flags_perms = 'ADVANCED';
+        acl.advanced_perms = data[i].perms;
+      }
+
+      const propName = "aces";
+      const aces_fg = entityForm.formGroup.controls[propName];
+      if (aces_fg.controls[i] === undefined) {
+        // add controls;
+        const templateListField = _.cloneDeep(_.find(this.fieldConfig, {'name': propName}).templateListField);
+        aces_fg.push(entityForm.entityFormService.createFormGroup(templateListField));
+        this.aces_fc.listFields.push(templateListField);
+      }
+
+      for (const prop in acl) {
+        if (acl.hasOwnProperty(prop)) {
+          if (prop === "basic_perms" && acl[prop] === "OTHER") {
+            _.find(
+              _.find(
+                this.aces_fc.listFields[i], {"name": prop}
+                )['options'], {value: "OTHER"}
+              )['hiddenFromDisplay'] = false;
+          }
+          aces_fg.controls[i].controls[prop].setValue(acl[prop]);
+        }
+      }
+    }
   }
 
   ngOnDestroy() {

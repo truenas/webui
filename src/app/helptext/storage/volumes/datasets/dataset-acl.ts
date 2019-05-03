@@ -44,10 +44,10 @@ dataset_acl_perms_tooltip: T(''),
 dataset_acl_basic_perms_options: [
                                   {label:'Read', value: 'READ'},
                                   {label:'Write', value: 'WRITE'},
-                                  {label:'Modify', value: 'MODIFIY'},
+                                  {label:'Modify', value: 'MODIFY'},
                                   {label:'Full Control', value: 'FULL_CONTROL'},
                                   {label:'Other (Too complicated to be displayed)', 
-                                   value: 'OTHER', disable:true, hiddenFromDisplay: true}
+                                   value: 'OTHER', disable: true, hiddenFromDisplay: true}
                                  ],
 dataset_acl_advanced_perms_options: [
                                      {label:'Read Data', value:'READ_DATA'},
