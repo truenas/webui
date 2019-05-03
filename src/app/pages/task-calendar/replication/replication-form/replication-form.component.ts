@@ -743,7 +743,6 @@ export class ReplicationFormComponent {
     }
 
     beforeSubmit(data) {
-        data['source_datasets'] = typeof data['source_datasets'] === "string" ? data['source_datasets'].split(' ') : data['source_datasets'];
         data["exclude"] = typeof data['exclude'] === "string" ? data['exclude'].split(' ') : data['exclude'];
         data["periodic_snapshot_tasks"] = typeof data['periodic_snapshot_tasks'] === "string" ? data['periodic_snapshot_tasks'].split(' ') : data['periodic_snapshot_tasks'];
         data["naming_schema"] = typeof data['naming_schema'] === "string" ? data['naming_schema'].split(' ') : data['naming_schema'];
