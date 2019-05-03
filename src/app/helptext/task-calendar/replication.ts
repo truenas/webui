@@ -46,10 +46,10 @@ export default {
 
     target_dataset_placeholder: T('Target Datasets'),
     target_dataset_tooltip: T('Enter the dataset on the remote or destination system where\
- store snapshots. Example: Poolname/Datasetname, not the mountpoint or filesystem path'),
+snapshots will be stored. Example: Poolname/Datasetname, not the mountpoint or filesystem path'),
 
     recursive_placeholder: T('Recursive'),
-    recursive_tooltip: T('Include all child dataset snapshots in the replication.'),
+    recursive_tooltip: T('Replicate all child dataset snapshots.'),
 
     exclude_placeholder: T('Exclude Child Datasets'),
     exclude_tooltip: T('Child datasets to exclude from the recursive replication. Example:\
@@ -86,7 +86,7 @@ export default {
     restrict_schedule_tooltip: T('Use the scheduler to define which periodic snapshots are replicated. All\
  snapshots are replicated by default. For example, the periodic snapshot task takes a snapshot every hour,\
  but only every other snapshot is needed for replication. The scheduler is set to even hours and only snapshots\
- taken at those times will be replicated.'),
+ taken at those times are replicated.'),
 
     restrict_schedule_picker_tooltip: T('Select a schedule preset or choose Custom to open the advanced scheduler.'),
 
@@ -101,11 +101,12 @@ export default {
     only_matching_schedule_tooltip: T('Set to use the replication task schedule as part of the Snapshot Replication Schedule.'),
 
     allow_from_scratch_placeholder: T('Replicate from scratch if incremental is not possible'),
-    allow_from_scratch_tooltip: T('When source snapshots are out of sync with the destination system. Destroy\
+    allow_from_scratch_tooltip: T('When source snapshots are out of sync with the destination system, destroy\
  destination system snapshots and do a full copy of all configured source system snapshots.'),
 
     hold_pending_snapshots_placeholder: T('Hold Pending Snapshots'),
-    hold_pending_snapshots_tooltip: T('Prevent copied source snapshots from being deleted on the destination system if the replication task fails.'),
+    hold_pending_snapshots_tooltip: T('Prevent copied source snapshots from being deleted on the destination\
+ system if the replication task fails.'),
 
     retention_policy_placeholder: T('Snapshot Retention Policy'),
     retention_policy_tooltip: T('Define when snapshots are deleted from the destination system:<ul>\
