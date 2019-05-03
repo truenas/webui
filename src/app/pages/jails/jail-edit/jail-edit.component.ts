@@ -15,7 +15,7 @@ import { EntityUtils } from '../../common/entity/utils';
 import { T } from '../../../translate-marker';
 import { TranslateService } from '@ngx-translate/core';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
-import helptext from '../../../helptext/jails/jails-edit';
+import helptext from '../../../helptext/jails/jail-configuration';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 
 @Component({
