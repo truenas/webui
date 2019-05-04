@@ -15,9 +15,12 @@ import {EntityUtils} from '../../../../common/entity/utils';
 import {
   FieldConfig
 } from '../../../../common/entity/entity-form/models/field-config.interface';
+import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { T } from '../../../../../translate-marker';
 import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-acl';
+import { MatDialog } from '@angular/material';
+import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-job.component';
 
 
 @Component({
@@ -48,6 +51,7 @@ export class DatasetAclComponent implements OnDestroy {
   public error: string;
   public busy: Subscription;
   protected fs: any = (<any>window).filesize;
+  protected dialogRef: any
   protected route_success: string[] = [ 'storage', 'pools' ];
 
   public fieldSetDisplay  = 'default';//default | carousel | stepper
@@ -171,7 +175,8 @@ export class DatasetAclComponent implements OnDestroy {
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected aroute: ActivatedRoute, protected rest: RestService,
               protected ws: WebSocketService, protected userService: UserService,
-              protected storageService: StorageService, protected dialog: DialogService) {}
+              protected storageService: StorageService, protected dialogService: DialogService,
+              protected loader: AppLoaderService, protected dialog: MatDialog) {}
 
   preInit(entityEdit: any) {
     this.sub = this.aroute.params.subscribe(params => {
@@ -205,7 +210,7 @@ export class DatasetAclComponent implements OnDestroy {
     this.recursive = entityEdit.formGroup.controls['recursive'];
     this.recursive_subscription = this.recursive.valueChanges.subscribe((value) => {
       if (value === true) {
-        this.dialog.confirm(helptext.dataset_acl_recursive_dialog_warning,
+        this.dialogService.confirm(helptext.dataset_acl_recursive_dialog_warning,
          helptext.dataset_acl_recursive_dialog_warning_message)
         .subscribe((res) => {
           if (!res) {
@@ -332,9 +337,59 @@ export class DatasetAclComponent implements OnDestroy {
 
   ngOnDestroy() {
     this.recursive_subscription.unsubscribe();
+    this.aces_subscription.unsubscribe();
   }
 
   beforeSubmit(data) {
+    const dacl = [];
+    for (let i = 0; i < data.aces.length; i++) {
+      const d = {};
+      const acl = data.aces[i];
+      d['tag'] = acl.tag;
+      d['id'] = null;
+      if (acl.tag === "USER") {
+        d['id'] = acl.user;
+      } else if (acl.tag === "GROUP") {
+        d['id'] = acl.group;
+      }
+      d['type'] = acl.type;
+      if (acl.perms_type === "BASIC") {
+        d['perms'] = {'BASIC':acl.basic_perms};
+      } else {
+        const adv_perm_options = helptext.dataset_acl_advanced_perms_options;
+        for (let j = 0; j < adv_perm_options.length; j++) {
+          const perm = adv_perm_options[j].value;
+          d['perms'][perm] = acl.advanced_perms.hasOwnProperty(perm);
+        }
+      }
+      if (acl.flags_type === "BASIC") {
+        d['flags'] = {'BASIC':acl.basic_flags};
+      } else {
+        const adv_flag_options = helptext.dataset_acl_advanced_flags_options;
+        for (let j = 0; j < adv_flag_options.length; j++) {
+          const flag = adv_flag_options[j].value;
+          d['flags'][flag] = acl.advanced_flags.hasOwnProperty(flag);
+        }
+      }
+      dacl.push(d);
+    }
+    data['dacl'] = dacl;
+  }
+
+  customSubmit(body) {
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Saving ACLs") }});
+    this.dialogRef.componentInstance.setDescription(T("Saving ACLs..."));
+    this.dialogRef.componentInstance.setCall(this.updateCall, [body.path, body.dacl, {'recursive': body.recursive}]);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.entityForm.success = true;
+      /*this.dialogRef.componentInstance.close();
+      this.router.navigate(new Array('/').concat(
+        this.route_success));*/
+    });
+    this.dialogRef.componentInstance.failure.subscribe((res) => {
+      new EntityUtils().handleWSError(this.entityForm, res);
+    });
   }
 
   updateGroupSearchOptions(value = "", parent, config) {
