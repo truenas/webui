@@ -31,6 +31,8 @@ export class VMwareSnapshotFormComponent {
 
   protected entityForm: any;
   private datastore: any;
+  private datastoreList: any;
+  private fileSystemList: Array<any> = [];
 
   protected fieldConfig: FieldConfig[] = [
     {
@@ -124,6 +126,7 @@ export class VMwareSnapshotFormComponent {
   }
 
   afterInit(entityForm: any) {
+    this.datastoreList = [];
     this.entityForm = entityForm;
 
     this.ws.call("pool.filesystem_choices").subscribe((filesystem_response)=>{
@@ -139,6 +142,16 @@ export class VMwareSnapshotFormComponent {
       this.datastore = _.find(this.fieldConfig, { 'name': 'datastore' });
       this.datastore.options.length = 0;
     }
+
+    this.entityForm.formGroup.controls['datastore'].valueChanges.subscribe((res) => {
+      this.datastoreList.forEach((e) => {
+       if( res === e.name) {
+         this.entityForm.formGroup.controls['filesystem'].setValue(e.filesystems[0]);
+       }
+      })
+    })
+
+
   }
 
   beforeSubmit(entityForm: any) {
@@ -181,6 +194,11 @@ export class VMwareSnapshotFormComponent {
       if(payload['password'] !== "" && typeof(payload['password'])!== "undefined") {
         parent.loader.open();
         parent.ws.call("vmware.match_datastores_with_datasets", [payload]).subscribe((res) => {
+          res.datastores.forEach((i) => {
+            if(i.filesystems.length > 0) {
+              parent.datastoreList.push(i);
+            }
+          })
           if(this.datastore.options.length > 0){
             this.datastore.options.length = 0;
           }
@@ -198,7 +216,5 @@ export class VMwareSnapshotFormComponent {
         });
       }
     }
-
-    }
-
+ }
 }
