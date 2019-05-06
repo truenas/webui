@@ -140,8 +140,6 @@ def test_05_looking_if_the_new_pool_exist(wb_driver):
     assert pool2 in element_text, element_text
     # taking screenshot
     take_screenshot(wb_driver, script_name, test_name)
-    # taking screenshot
-    take_screenshot(wb_driver, script_name, test_name)
 
 
 def test_06_close_navStorage(wb_driver):
