@@ -21,10 +21,6 @@ xpaths = {
 }
 
 
-def test_00_set_implicitly_wait(wb_driver):
-    wb_driver.implicitly_wait(1)
-
-
 def test_01_nav_services(wb_driver):
     # Click  Service menu
     wb_driver.find_element_by_xpath(xpaths['navService']).click()

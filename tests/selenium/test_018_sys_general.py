@@ -21,10 +21,6 @@ xpaths = {
 }
 
 
-def test_00_set_implicitly_wait(wb_driver):
-    wb_driver.implicitly_wait(1)
-
-
 def test_01_nav_system_general(wb_driver):
 
     # Navigating to System>General page
