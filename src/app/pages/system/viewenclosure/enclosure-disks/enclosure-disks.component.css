@@ -175,8 +175,8 @@ nav.view-nav-bar{
 }
 
 div.vdev-disk {
-  border-left: solid 2px var(--blue);
-  padding:0 8px;
+  /*border-left: solid 2px var(--blue);*/
+  padding:0 8px 0 0;
   margin:2px 0;
 }
 
@@ -189,5 +189,14 @@ div.vdev-disk {
   width:10px;
   height:10px;
   display: inline-block;
-  margin-right: 4px;
+  margin-right: 12px;
 }
+
+.view-card .dom-overlay.stage-right .vdev-disk .swatch{
+  border-radius:50%;
+  width:6px;
+  height:6px;
+  display: inline-block;
+  margin: 0px 8px 2px 0;
+}
+

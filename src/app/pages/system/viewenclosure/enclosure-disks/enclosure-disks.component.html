@@ -47,7 +47,7 @@
             <div class="content">
               <div class="legend">
                 <h3 class="vdev-type">{{selectedVdev.type | titlecase}}</h3>
-                <div *ngFor="let disk of selectedVdevDisks; let i = index" class="vdev-disk {{disk}}">{{disk}} <span> {{ selectedEnclosure.disks[disk] }}</span></div>
+                <div *ngFor="let disk of selectedVdevDisks; let i = index" class="vdev-disk {{disk}}"><div class="swatch" [style.background]="theme.blue"></div>{{disk}} <span> {{ selectedEnclosure.disks[disk] }}</span></div>
               </div>
             </div>
           </div>
