@@ -33,6 +33,7 @@ export class VMwareSnapshotFormComponent {
   protected entityForm: any;
   private datastore: any;
   private datastoreList: any;
+  private dataListComplete: any;
   private fileSystemList: any;
 
   protected fieldConfig: FieldConfig[] = [
@@ -145,19 +146,24 @@ export class VMwareSnapshotFormComponent {
   }
 
   beforeSubmit(entityForm: any) {
+    console.log(entityForm)
     if (entityForm.filesystem !== undefined) {
       entityForm.filesystem = entityForm.filesystem;
     }
-    this.datastoreList.forEach((e) => {
-      if (entityForm.datastore === e.name && entityForm.filesystem !== e.filesystems[0]) {
+
+    const dataStoreMatch = this.datastoreList.find(item => item.name === entityForm.datastore);
+    console.log('datastorematch', dataStoreMatch)
+    if (!dataStoreMatch || (dataStoreMatch.name === entityForm.datastore && dataStoreMatch.filesystems[0] !== entityForm.filesystem)) {
         const firstObj = this.fileSystemList.find(item => item.name === entityForm.filesystem);
-        const secondObj = this.datastoreList.find(item => item.name === entityForm.datastore);
+        console.log('firstObj', firstObj)
+        const secondObj = this.dataListComplete.find(item => item.name === entityForm.datastore);
+        console.log('secondObj', secondObj)
         this.dialogService.confirm('Are you sure?', `The filesystem ${firstObj.name} is ${firstObj.description}
          but datastore ${secondObj.name} is ${secondObj.description}. Is this correct?`, true, 'Yes').subscribe((res) => {
            console.log(res)
          })
       }
-    })
+
   }
 
   customEditCall(body){
@@ -193,6 +199,7 @@ export class VMwareSnapshotFormComponent {
       if(payload['password'] !== "" && typeof(payload['password'])!== "undefined") {
         parent.loader.open();
         parent.ws.call("vmware.match_datastores_with_datasets", [payload]).subscribe((res) => {
+          console.log(res)
           res.filesystems.forEach(filesystem_item => {
             _.find(parent.fieldConfig, {name : 'filesystem'})['options'].push(
               {
@@ -215,6 +222,8 @@ export class VMwareSnapshotFormComponent {
           }
 
           parent.fileSystemList = res.filesystems;
+          parent.dataListComplete = res.datastores;
+          console.log(parent.dataListComplete)
           parent.loader.close();
         }
         ,

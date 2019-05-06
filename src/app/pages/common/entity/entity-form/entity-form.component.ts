@@ -469,7 +469,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
 
     if (this.conf.beforeSubmit) {
-      this.conf.beforeSubmit(value);
+      this.conf.beforeSubmit(value); console.log(value)
     }
     if (this.conf.customEditCall && this.pk) {
       return this.conf.customEditCall(value);
@@ -479,7 +479,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       this.busy = this.conf.customSubmit(value);
     } else {
       this.loader.open();
-      console.log(value)
       this.busy = this.submitFunction(value)
                     .subscribe(
                         (res) => {
