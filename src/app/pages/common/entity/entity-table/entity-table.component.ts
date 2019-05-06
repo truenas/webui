@@ -502,7 +502,7 @@ export class EntityTableComponent /*extends ViewControllerComponent*/ implements
           this.busy = this.ws.call(this.conf.wsDelete, [id]).subscribe(
             (resinner) => { this.getData() },
             (resinner) => {
-              new EntityUtils().handleError(this, resinner);
+              new EntityUtils().handleWSError(this, resinner, this.dialogService);
               this.loader.close();
             }
           );
@@ -621,22 +621,36 @@ export class EntityTableComponent /*extends ViewControllerComponent*/ implements
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
-        const data = {};
         if (this.conf.wsMultiDelete) {
           // ws to do multi-delete
           if (this.conf.wsMultiDeleteParams) {
             this.busy = this.ws.job(this.conf.wsMultiDelete, this.conf.wsMultiDeleteParams(selected)).subscribe(
               (res1) => {
+                if (res1.state === 'SUCCESS') {
+                  this.loader.close();
+                  this.loaderOpen = false;
+                  this.getData();
+                  this.selected = [];
+
+                  const selectedName = this.conf.wsMultiDeleteParams(selected)[1];
+                  let message = "";
+                  for (let i = 0; i < res1.result.length; i++) {
+                    if (res1.result[i].error != null) {
+                      message = message + '<li>' + selectedName[i] + ': ' + res1.result[i].error + '</li>';
+                    }
+                  }
+                  if (message === "") {
+                    this.snackBar.open("Items deleted.", 'close', { duration: 5000 });
+                  } else {
+                    message = '<ul>' + message + '</ul>';
+                    this.dialogService.errorReport(T('Items Delete Failed'), message);
+                  }
+                }
                },
               (res1) => {
-                new EntityUtils().handleError(this, res1);
+                new EntityUtils().handleWSError(this, res1, this.dialogService);
                 this.loader.close();
-              },
-              () => {
-                this.loader.close();
-                this.getData();
-                this.selected = [];
-                this.snackBar.open("Items deleted.", 'close', { duration: 5000 });
+                this.loaderOpen = false;
               }
             );
           }
