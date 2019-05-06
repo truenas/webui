@@ -479,6 +479,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       this.busy = this.conf.customSubmit(value);
     } else {
       this.loader.open();
+      console.log(value)
       this.busy = this.submitFunction(value)
                     .subscribe(
                         (res) => {
