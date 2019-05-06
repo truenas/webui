@@ -136,7 +136,7 @@ export const helptext_system_certificates = {
 
     cert_csr: {
       placeholder: T("Signing Request"),
-      tooltip: T("Paste the contents of your certificate signign request here."),
+      tooltip: T("Paste the contents of your Certificate Signing Request here."),
       validation: [Validators.required]
     },
 
