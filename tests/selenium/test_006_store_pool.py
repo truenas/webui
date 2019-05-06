@@ -6,7 +6,8 @@ import os
 import time
 cwd = str(os.getcwd())
 sys.path.append(cwd)
-from function import take_screenshot, is_element_present, wait_on_element
+from function import take_screenshot, wait_on_element, error_check
+
 from source import pool1, pool2
 
 
@@ -38,7 +39,6 @@ xpaths = {
 
 
 def test_01_nav_store_pool(wb_driver):
-    error_check(wb_driver)
     # Click  Storage menu
     a = wb_driver.find_element_by_xpath(xpaths['navStorage'])
     a.click()
@@ -81,7 +81,8 @@ def test_02_create_a_pool(wb_driver):
     assert wait, f'Creating the new pool {pool1} timeout'
     # taking screenshot
     take_screenshot(wb_driver, script_name, test_name)
-    error_check(wb_driver)
+    no_error = error_check(wb_driver)
+    assert no_error['result'], no_error['traceback']
 
 
 def test_03_looking_if_the_new_pool_exist(wb_driver):
@@ -123,7 +124,8 @@ def test_04_create_newpool2(wb_driver):
     assert wait, f'Creating the new pool {pool2} timeout'
     # taking screenshot
     take_screenshot(wb_driver, script_name, test_name)
-    error_check(wb_driver)
+    no_error = error_check(wb_driver)
+    assert no_error['result'], no_error['traceback']
 
 
 def test_05_looking_if_the_new_pool_exist(wb_driver):
@@ -138,8 +140,6 @@ def test_05_looking_if_the_new_pool_exist(wb_driver):
     assert pool2 in element_text, element_text
     # taking screenshot
     take_screenshot(wb_driver, script_name, test_name)
-    # taking screenshot
-    take_screenshot(wb_driver, script_name, test_name)
 
 
 def test_06_close_navStorage(wb_driver):
@@ -148,12 +148,3 @@ def test_06_close_navStorage(wb_driver):
     wait_on_element(wb_driver, xpaths['navStorage'], script_name, test_name)
     wb_driver.find_element_by_xpath(xpaths['navStorage']).click()
     take_screenshot(wb_driver, script_name, test_name)
-
-
-def error_check(wb_driver):
-    closeButton = '//*[contains(text(), "Close")]'
-    xpath = '/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'
-    if is_element_present(wb_driver, closeButton):
-        ui_element = wb_driver.find_element_by_xpath(xpath)
-        wb_driver.find_element_by_xpath(closeButton).click()
-        assert False, ui_element.text

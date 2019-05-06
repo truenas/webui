@@ -5,7 +5,6 @@
 
 import sys
 import os
-import time
 cwd = str(os.getcwd())
 sys.path.append(cwd)
 from function import take_screenshot
