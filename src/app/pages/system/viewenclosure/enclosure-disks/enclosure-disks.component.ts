@@ -374,7 +374,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
         opacity:0,
         x: endX
       },
-      duration: 280
+      duration: 360//280
     }).start({
       update: v => { el.set(v) },
       complete: () => {
