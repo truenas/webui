@@ -146,24 +146,35 @@ export class VMwareSnapshotFormComponent {
   }
 
   beforeSubmit(entityForm: any) {
-    console.log(entityForm)
     if (entityForm.filesystem !== undefined) {
       entityForm.filesystem = entityForm.filesystem;
     }
+  }
 
+  customSubmit(entityForm: any) {
+    const payload = {
+      "datastore": entityForm.datastore,
+      "filesystem": entityForm.filesystem,
+      "hostname":entityForm.hostname,
+      "username": entityForm.username,
+      "password": entityForm.password
+    };
     const dataStoreMatch = this.datastoreList.find(item => item.name === entityForm.datastore);
-    console.log('datastorematch', dataStoreMatch)
-    if (!dataStoreMatch || (dataStoreMatch.name === entityForm.datastore && dataStoreMatch.filesystems[0] !== entityForm.filesystem)) {
+      if (!dataStoreMatch || (dataStoreMatch.name === entityForm.datastore && dataStoreMatch.filesystems[0] !== entityForm.filesystem)) {
         const firstObj = this.fileSystemList.find(item => item.name === entityForm.filesystem);
-        console.log('firstObj', firstObj)
         const secondObj = this.dataListComplete.find(item => item.name === entityForm.datastore);
-        console.log('secondObj', secondObj)
         this.dialogService.confirm('Are you sure?', `The filesystem ${firstObj.name} is ${firstObj.description}
          but datastore ${secondObj.name} is ${secondObj.description}. Is this correct?`, true, 'Yes').subscribe((res) => {
-           console.log(res)
-         })
-      }
-
+           this.loader.open();
+           this.ws.call(this.addCall, [payload]).subscribe((res) => {
+             this.loader.close();
+             this.router.navigate(new Array('/').concat(this.route_success));
+           },
+           (e_res) => {
+            this.loader.close();
+          })
+         }) 
+        }
   }
 
   customEditCall(body){
@@ -223,7 +234,6 @@ export class VMwareSnapshotFormComponent {
 
           parent.fileSystemList = res.filesystems;
           parent.dataListComplete = res.datastores;
-          console.log(parent.dataListComplete)
           parent.loader.close();
         }
         ,
