@@ -142,24 +142,27 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
             }
 
           }
-        
+
+          if(this.disks.length > 0){
+            this.storage.diskNameSort(this.disks);
+          } 
       }
-        if(this.disks.length > 0){
-          this.setSelectedDisk(0);
-        }
     });
 
 
     this.core.register({observerClass:this,eventName:"StatsDiskTemp"}).subscribe((evt:CoreEvent) => {
-      let data = evt.data.data.data;
-      let temp: number;
-      for(let i = data.length-1; i >= 0; i--){
-        if(data[i][0]){
-          temp = data[i][0];
-          break;
+      let data = [];
+      let temp = 0;
+      if (evt.data && evt.data.data && evt.data.data.data) {
+        data = evt.data.data.data;
+        for(let i = data.length-1; i >= 0; i--){
+          if(data[i][0]){
+            temp = data[i][0];
+            break;
+          }
         }
+        this.diskDetails[evt.data.callArgs[1]].temp = temp;
       }
-      this.diskDetails[evt.data.callArgs[1]].temp = temp;
     });
 
     this.core.register({observerClass:this,eventName:"DisksInfo"}).subscribe((evt:CoreEvent) => {
@@ -188,7 +191,10 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
       }
     
       this.diskDetails.push(disk);
-      this.diskDetails = this.storage.tableSorter(this.diskDetails, 'name', 'asc');
+    }
+
+    if (this.diskDetails.length > 0 && this.disks.length > 0) {
+      this.setSelectedDisk(this.disks[0]);
     }
     
     /*console.log(evt.data)
@@ -258,16 +264,16 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     }
   }
 
-  setSelectedDisk(index?:number){
-    if(index >= 0){
+  setSelectedDisk(disk?: any){
+    if(disk){
       for(let i = 0; i < this.diskDetails.length; i++){
-        if(this.diskDetails[i].name == this.disks[index]){
+        if(this.diskDetails[i].name === disk){
           this.selectedDisk = i;
           this.core.emit({name:"StatsDiskTempRequest", data:[this.diskDetails[i].name, i] });
         } 
       }
     } else {
-      this.selectedDisk = -1;
+      this.selectedDisk = -1; 
     }
   }
 

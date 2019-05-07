@@ -47,6 +47,7 @@ export class UpdateComponent implements OnInit {
   public currentTrainDescription: string;
   public trainDescriptionOnPageLoad: string;
   public fullTrainList: any[];
+  public isFooterConsoleOpen: boolean;
 
   public busy: Subscription;
   public busy2: Subscription;
@@ -234,6 +235,12 @@ export class UpdateComponent implements OnInit {
       }
       // To remember train descrip if user switches away and then switches back
       this.trainDescriptionOnPageLoad = this.currentTrainDescription;
+    });
+
+    this.ws.call('system.advanced.config').subscribe((res)=> {
+      if (res) {
+        this.isFooterConsoleOpen = res.consolemsg;
+      }
     });
   }
 

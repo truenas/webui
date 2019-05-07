@@ -8,3 +8,10 @@
 #goback_button, #noconfirm_button {
   margin-right: 0px;
 }
+
+ul.wizard-ul {
+  list-style-type: none;
+}
+ul.wizard-ul li{
+  padding-inline-start: 20px;
+}

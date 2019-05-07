@@ -12,7 +12,10 @@ export default {
 
     ini_script_placeholder: T('Script'),
     ini_script_validation : [ Validators.required ],
-    ini_script_tooltip: T('Select the script from an existing pool.'),
+    ini_script_tooltip: T('Select the script.\
+     The script will be run using\
+     <a href=https://www.freebsd.org/cgi/man.cgi?query=sh\
+     target="_blank">sh(1)</a>.'),
 
     ini_when_placeholder: T('When'),
     ini_when_tooltip: T('Select when the command or script runs:<br>\
@@ -24,5 +27,8 @@ export default {
 
     ini_enabled_placeholder: T('Enabled'),
     ini_enabled_tooltip: T('Enable this task. Unset to disable the task\
-     without deleting it.')
+     without deleting it.'),
+
+    ini_timeout_placeholder: T('Timeout'),
+    ini_timeout_tooltip: T('Automatically stop the script or command after the specified seconds.'),
 }

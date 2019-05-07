@@ -18,11 +18,30 @@ export const helptext_system_ca = {
       placeholder: T("Signing Certificate Authority"),
       tooltip: T(
         'Select a previously imported or created <a\
- href="%%docurl%%/system.html%%webversion%%#cas"\
+ href="%%docurl%%/system.html#cas"\
  target="_blank">CA</a>.'
       ),
       validation: [Validators.required]
     },
+
+    key_type: {
+      placeholder: T("Key Type"),
+      tooltip: T(
+        'See <a href="https://crypto.stackexchange.com/questions/1190/why-is-elliptic-curve-cryptography-not-widely-used-compared-to-rsa" target="blank">\
+ Why is elliptic curve cryptography not widely used, compared to RSA?</a>\
+ for more information about key types.'
+      ),
+      validation: [Validators.required]
+    },
+
+    ec_curve: {
+      placeholder: T("EC Curve"),
+      tooltip: T(
+        'Brainpool curves can be more secure, while secp curves can be faster. See\
+ <a href="https://tls.mbed.org/kb/cryptography/elliptic-curve-performance-nist-vs-brainpool" target="blank">\
+ Elliptic Curve performance: NIST vs Brainpool\
+ </a> for more information.')
+    },   
 
     key_length: {
       placeholder: T("Key Length"),
@@ -75,6 +94,11 @@ export const helptext_system_ca = {
       placeholder: T("Organization"),
       tooltip: T("Enter the name of the company or organization."),
       validation: [Validators.required]
+    },
+
+    organizational_unit: {
+      placeholder: T("Organizational Unit"),
+      tooltip: T("Organizational unit of the entity."),
     },
 
     email: {

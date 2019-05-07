@@ -5,13 +5,14 @@ import * as _ from 'lodash';
 
 import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { WebSocketService, DialogService, CloudCredentialService} from '../../../../services/';
+import { WebSocketService, DialogService, CloudCredentialService, EngineerModeService} from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { FieldRelationService } from '../../../common/entity/entity-form/services/field-relation.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/task-calendar/cloudsync/cloudsync-form';
 import { EntityUtils } from '../../../common/entity/utils';
+import { Validators } from '@angular/forms';
 
 @Component({
   selector: 'cloudsync-add',
@@ -127,6 +128,16 @@ export class CloudsyncFormComponent implements OnInit {
       {label: "AES-256", value: "AES256"},
     ],
     isHidden: true,
+  }, {
+    type: 'input',
+    inputType: 'number',
+    name: 'b2-chunk-size',
+    placeholder: helptext.b2_chunk_size_placeholder,
+    tooltip: helptext.b2_chunk_size_tooltip,
+    isHidden: true,
+    value: 96,
+    min: 5,
+    validation: [Validators.min(5)],
   }, {
     type: 'checkbox',
     name: 'fast_list',
@@ -249,6 +260,7 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'textarea',
     name: 'args',
     placeholder: helptext.args_placeholder,
+    tooltip: helptext.args_tooltip,
     value: "",
     isHidden: true,
   },
@@ -302,7 +314,7 @@ export class CloudsyncFormComponent implements OnInit {
   protected bucket_field: any;
   protected bucket_input_field: any;
   protected folder_field: any;
-
+  protected argsField:any;
   public credentials_list = [];
 
   public formGroup: any;
@@ -322,7 +334,8 @@ export class CloudsyncFormComponent implements OnInit {
     protected loader: AppLoaderService,
     protected dialog: DialogService,
     protected ws: WebSocketService,
-    protected cloudcredentialService: CloudCredentialService) {
+    protected cloudcredentialService: CloudCredentialService,
+    protected engineerModeService: EngineerModeService) {
     this.cloudcredentialService.getProviders().subscribe((res) => {
       this.providers = res;
     });
@@ -449,6 +462,14 @@ export class CloudsyncFormComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.argsField = _.find(this.fieldConfig, { 'name': 'args' });
+    this.argsField.isHidden = localStorage.getItem('engineerMode') === 'true' ? false : true;
+
+    this.engineerModeService.engineerMode.subscribe((res) => {
+      this.argsField.isHidden = res === 'true' ? false : true;
+      this.setDisabled('args', this.argsField.isHidden, this.argsField.isHidden);
+    });
+
     this.credentials = _.find(this.fieldConfig, { 'name': 'credentials' });
     this.bucket_field = _.find(this.fieldConfig, {'name': 'bucket'});
     this.bucket_input_field = _.find(this.fieldConfig, {'name': 'bucket_input'});
@@ -520,9 +541,9 @@ export class CloudsyncFormComponent implements OnInit {
               if (task_schema.length == 0) {
                 this.setDisabled('task_encryption', true, true);
                 this.setDisabled('fast_list', true, true);
+                this.setDisabled('b2-chunk-size', true, true);
               } else {
                 for (const i in task_schema) {
-                  console.log(task_schema[i]);
                   if (task_schema[i].property == 'encryption') {
                     this.setDisabled('task_encryption', false, false);
                   } else {
@@ -689,6 +710,11 @@ export class CloudsyncFormComponent implements OnInit {
       attributes['fast_list'] = value.fast_list;
       delete value.fast_list;
     }
+    if (value['b2-chunk-size'] != undefined) {
+      attributes['b2-chunk-size'] = value['b2-chunk-size'];
+      delete value['b2-chunk-size'];
+    }
+
     value['attributes'] = attributes;
 
     let spl = value.cloudsync_picker.split(" ");
@@ -701,12 +727,12 @@ export class CloudsyncFormComponent implements OnInit {
 
     value['schedule'] = schedule;
 
-    if (value.bwlimit) {
-      value.bwlimit = this.handleBwlimit(value.bwlimit);
+    if (value.bwlimit !== undefined) {
+      value.bwlimit = value.bwlimit.trim() === '' ? [] : this.handleBwlimit(value.bwlimit);
     }
 
-    if (value.exclude) {
-      value.exclude = value.exclude.trim().split(" ");
+    if (value.exclude !== undefined) {
+      value.exclude = value.exclude.trim() === '' ? [] : value.exclude.trim().split(" ");
     }
 
     if (!this.formGroup.valid) {

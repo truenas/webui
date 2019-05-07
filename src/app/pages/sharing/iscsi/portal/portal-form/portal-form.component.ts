@@ -157,7 +157,7 @@ export class PortalFormComponent {
     this.iscsiService.getAuth().subscribe((res) => {
       this.authgroup_field.options.push({label : 'None', value : null});
       for (let i = 0; i < res.length; i++) {
-        this.authgroup_field.options.push({label: res[i].id, value: res[i].id});
+        this.authgroup_field.options.push({label: res[i].tag, value: res[i].tag});
       }
     })
   }
@@ -168,10 +168,9 @@ export class PortalFormComponent {
     this.arrayModel = _.find(this.arrayControl.formarray, {'name' : 'ip'});
 
     this.iscsiService.getIpChoices().subscribe((res) => {
-      this.arrayModel.options.push({label : '0.0.0.0', value : '0.0.0.0'});
-      res.forEach((item) => {
-        this.arrayModel.options.push({label : item[1], value : item[0]});
-      });
+      for (const item in res) {
+        this.arrayModel.options.push({label : item, value : res[item]});
+      };
     });
   }
 

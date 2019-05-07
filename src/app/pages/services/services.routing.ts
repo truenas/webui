@@ -3,7 +3,6 @@ import {RouterModule, Routes} from '@angular/router';
 
 import {ServiceAFPComponent} from './components/service-afp/';
 import {ServiceCIFSComponent} from './components/service-cifs/';
-import {ServiceDCComponent} from './components/service-dc/';
 import {ServiceDDNSComponent} from './components/service-dynamicdns/';
 import {ServiceFTPComponent} from './components/service-ftp/';
 import {ServiceLLDPComponent} from './components/service-lldp/';
@@ -37,11 +36,6 @@ export const routes: Routes = [
     data: { title: 'AFP', breadcrumb: 'AFP'},
     path : 'afp',
     component : ServiceAFPComponent,
-  },
-  {
-    data: { title: 'Domain Controller', breadcrumb: 'Domain Controller'},
-    path : 'domaincontroller',
-    component : ServiceDCComponent,
   },
   {
     data: { title: 'FTP', breadcrumb: 'FTP'},

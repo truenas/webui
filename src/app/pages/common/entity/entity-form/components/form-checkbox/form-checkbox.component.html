@@ -1,5 +1,8 @@
 <div id="{{config.name}}" class="dynamic-field form-checkbox" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
-		<mat-checkbox [formControlName]="config.name" [required]="config.required">
+		<mat-checkbox *ngIf="!config.updater" [formControlName]="config.name" [required]="config.required">
+			{{ config.placeholder | translate }}
+		</mat-checkbox>
+		<mat-checkbox *ngIf="config.updater" class="updater" [formControlName]="config.name" [required]="config.required" (click)="checkboxUpdate()">
 			{{ config.placeholder | translate }}
 		</mat-checkbox>
 		<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>

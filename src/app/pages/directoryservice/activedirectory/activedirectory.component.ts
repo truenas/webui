@@ -96,12 +96,6 @@ export class ActiveDirectoryComponent {
       tooltip : helptext.activedirectory_recover_retry_tooltip,
     },
     {
-      type : 'checkbox',
-      name : helptext.activedirectory_enable_monitor_name,
-      placeholder : helptext.activedirectory_enable_monitor_placeholder,
-      tooltip : helptext.activedirectory_enable_monitor_tooltip,
-    },
-    {
       type : 'select',
       name : helptext.activedirectory_ssl_name,
       placeholder : helptext.activedirectory_ssl_placeholder,
@@ -122,12 +116,6 @@ export class ActiveDirectoryComponent {
       name : helptext.activedirectory_verbose_logging_name,
       placeholder : helptext.activedirectory_verbose_logging_placeholder,
       tooltip : helptext.activedirectory_verbose_logging_tooltip,
-    },
-    {
-      type : 'checkbox',
-      name : helptext.activedirectory_unix_extensions_name,
-      placeholder : helptext.activedirectory_unix_extensions_placeholder,
-      tooltip : helptext.activedirectory_unix_extensions_tooltip,
     },
     {
       type : 'checkbox',
@@ -158,18 +146,6 @@ export class ActiveDirectoryComponent {
       name : helptext.activedirectory_site_name,
       placeholder : helptext.activedirectory_site_placeholder,
       tooltip : helptext.activedirectory_site_tooltip,
-    },
-    {
-      type : 'input',
-      name : helptext.activedirectory_dcname_name,
-      placeholder : helptext.activedirectory_dcname_placeholder,
-      tooltip : helptext.activedirectory_dcname_tooltip,
-    },
-    {
-      type : 'input',
-      name : helptext.activedirectory_gcname_name,
-      placeholder : helptext.activedirectory_gcname_placeholder,
-      tooltip : helptext.activedirectory_gcname_tooltip,
     },
     {
       type : 'select',
@@ -228,9 +204,11 @@ export class ActiveDirectoryComponent {
     },
     {
       type : 'input',
-      name : helptext.activedirectory_netbiosname_alias_name,
-      placeholder : helptext.activedirectory_netbiosname_alias_placeholder,
-      tooltip : helptext.activedirectory_netbiosname_alias_tooltip,
+      name : helptext.activedirectory_netbiosname_a_name,
+      placeholder : helptext.activedirectory_netbiosname_a_placeholder,
+      tooltip : helptext.activedirectory_netbiosname_a_tooltip,
+      validation : helptext.activedirectory_netbiosname_a_validation,
+      required : true
     },
     {
       type : 'input',

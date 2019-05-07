@@ -31,6 +31,11 @@ folder_tooltip: T('Enter the name of the destination folder.'),
 encryption_placeholder: T('Server Side Encryption'),
 encryption_tooltip: T('Choose <i>AES-256</i> or <i>None</i>.'),
 
+b2_chunk_size_placeholder:  T('Upload Chunk Size (MiB)'),
+b2_chunk_size_tooltip: T('Files are split into chunks of this size before upload.\
+ Up to «--transfers» chunks can be in progress at one time. The single largest file\
+ being transferred must fit into no more than 10,000 chunks.'),
+
 fast_list_placeholder: T('Use --fast-list'),
 fast_list_tooltip: T('[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/#fast-list)\
  This can also speed up or slow down the transfer.'),
@@ -86,6 +91,7 @@ encryption_salt_tooltip: T('Enter a long string of random characters for use as\
  value. Losing the salt value can result in data loss.'),
 
 args_placeholder: T('Auxiliary Arguments'),
+args_tooltip: T('These arguments are passed to <a href="https://rclone.org/docs/" target="_blank">rclone</a>.'),
 
 cloudsync_picker_placeholder: T('Schedule the Cloud Sync Task'),
 cloudsync_picker_tooltip: T('Select a schedule preset or choose <i>Custom</i> to open\

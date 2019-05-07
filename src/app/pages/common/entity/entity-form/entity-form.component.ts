@@ -48,6 +48,7 @@ export interface Formconfiguration {
   editCall?;
   queryCall?;
   queryCallOption?;
+  queryKey?;  // use this to define your id for websocket call
   isNew?;
   pk?;
   custom_get_query?;
@@ -116,7 +117,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   public queryResponse;
   public saveSubmitText = "Save";
   public showPassword = false;
-  public isFooterOpen: boolean;
+  public isFooterConsoleOpen: boolean;
 
   get controls() {
     return this.fieldConfig.filter(({type}) => type !== 'button');
@@ -173,6 +174,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             this.conf.isBasicMode = true;
           }
         }
+        this.isFooterConsoleOpen = res.consolemsg;
       }
     });
 
@@ -257,15 +259,20 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
       if (this.conf.queryCall) {
         if(this.pk) {
+          let pk = this.pk;
           let filter = []
           if (this.conf.pk) {
            filter.push(this.conf.pk);
+           pk = this.conf.pk;
           }
           if (this.conf.queryCallOption) {
             filter.push(this.conf.queryCallOption);
           }
           if (this.conf.customFilter){
             filter = this.conf.customFilter;
+          }
+          if (this.conf.queryKey) {
+            filter = [[[this.conf.queryKey, '=', pk]]];
           }
           this.getFunction = this.ws.call(this.conf.queryCall, filter);
         } else {
@@ -355,18 +362,16 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
     // ...but for entity forms that don't make a data request, this kicks in 
     setTimeout(() => { this.setShowDefaults(); }, 500);
-
-    this.checkIfConsoleMsgShows();
-
   }
 
   checkIfConsoleMsgShows() {
     setTimeout(() => {
-      this.rest.get('system/advanced', { limit: 0 }).subscribe((res) => {
-        this.isFooterOpen = res.data['adv_consolemsg'];   
+      this.ws.call('system.advanced.config').subscribe((res)=> {
+        if (res) {
+          this.isFooterConsoleOpen = res.consolemsg;
+        }
       });
     }, 500)
-
   }
 
   setShowDefaults() {
@@ -558,11 +563,14 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     return this.fb.control({disabled, value}, validation);
   }
 
-  setDisabled(name: string, disable: boolean, hide: boolean = false, status?:string) {
-    // if field will be hide, disabled it too
+  setDisabled(name: string, disable: boolean, hide?: boolean, status?:string) {
+    // if field is hidden, disable it too
     if (hide) {
       disable = hide;
+    } else {
+      hide = false;
     }
+
 
     this.fieldConfig = this.fieldConfig.map((item) => {
       if (item.name === name) {
