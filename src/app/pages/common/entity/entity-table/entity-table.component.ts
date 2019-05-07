@@ -59,6 +59,7 @@ export interface InputTableConf {
   doAdd?();
   onCheckboxChange?(row): any;
   onSliderChange?(row): any;
+  callGetFunction?(entity: EntityTableComponent): any;
 }
 
 export interface SortingConfig {
@@ -296,6 +297,15 @@ export class EntityTableComponent /*extends ViewControllerComponent*/ implements
       this.getFunction = this.rest.get(this.conf.resource_name, options);
     }
 
+    if (this.conf.callGetFunction) {
+      this.conf.callGetFunction(this);
+    } else {
+      this.callGetFunction();
+    }
+
+  }
+
+  callGetFunction() {
     this.getFunction.subscribe(
       (res) => {
         this.handleData(res);
