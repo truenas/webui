@@ -32,6 +32,7 @@ import { FormColorpickerComponent } from '../form-colorpicker/form-colorpicker.c
 import { FormComboboxComponent } from '../form-combobox/form-combobox.component';
 import {FormParagraphComponent} from '../form-paragraph/form-paragraph.component';
 import {FormSchedulerComponent} from '../form-scheduler/form-scheduler.component';
+import {FormIpWithNetmaskComponent} from '../form-ipwithnetmask/form-ipwithnetmask.component';
 import { FormListComponent } from '../form-list/form-list.component';
 
 const components: {[type: string] : Type<Field>} = {
@@ -55,6 +56,7 @@ const components: {[type: string] : Type<Field>} = {
   combobox: FormComboboxComponent,
   paragraph: FormParagraphComponent,
   scheduler: FormSchedulerComponent,
+  ipwithnetmask: FormIpWithNetmaskComponent,
   list: FormListComponent,
 };
 
