@@ -15,7 +15,8 @@ target="_blank">DHCP</a> to automatically configure \
 network settings.'),
 
 nat_placeholder: T('NAT'),
-nat_tooltip: T(''),
+nat_tooltip: T('Network Address Translation (NAT). Transforms local network IP addresses into a single IP address.\
+ Set when the jail will share a single connection to the Internet with other systems on the network.'),
 
 ip4_interface_placeholder: T('IPv4 interface'),
 ip4_interface_tooltip: T('IPv4 interface for the jail.'),
