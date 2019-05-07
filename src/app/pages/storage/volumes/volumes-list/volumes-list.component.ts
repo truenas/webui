@@ -87,6 +87,9 @@ export class VolumesListTableConfig implements InputTableConf {
   public showSpinner:boolean;
   public encryptedStatus: any;
   public custActions: Array<any> = [];
+  private vmware_res_status: boolean;
+  private recursiveIsChecked: boolean = false;
+  public dialogConf: DialogFormConfiguration;
 
   constructor(
     private parentVolumesListComponent: VolumesListComponent,
@@ -618,7 +621,10 @@ export class VolumesListTableConfig implements InputTableConf {
       actions.push({
         label: T("Create Snapshot"),
         onClick: (row) => {
-          const conf: DialogFormConfiguration = {
+          this.ws.call('vmware.dataset_has_vms',[row.path, false]).subscribe((vmware_res)=>{
+            this.vmware_res_status = vmware_res;
+          })
+          this.dialogConf = {
             title: "One time snapshot of " + row.path,
             fieldConfig: [
               {
@@ -636,33 +642,32 @@ export class VolumesListTableConfig implements InputTableConf {
                 tooltip: helptext.snapshotDialog_name_tooltip,
                 validation: helptext.snapshotDialog_name_validation,
                 required: true,
-                value: "manual" + '-' + this.getTimestamp()            },
+                value: "manual" + '-' + this.getTimestamp()            
+              },
               {
                 type: 'checkbox',
                 name: 'recursive',
                 placeholder: helptext.snapshotDialog_recursive_placeholder,
                 tooltip: helptext.snapshotDialog_recursive_tooltip,
+                parent: this,
+                updater: this.updater
+              },
+              {
+                type: 'checkbox',
+                name: 'vmware_sync',
+                placeholder: helptext.vmware_sync_placeholder,
+                tooltip: helptext.vmware_sync_tooltip,
+                isHidden: !this.vmware_res_status
               }
             ],
             method_rest: "storage/snapshot",
             saveButtonText: T("Create Snapshot"),
           }
-          this.ws.call('vmware.query',[[["filesystem", "=", row.path]]]).subscribe((vmware_res)=>{
-            if(vmware_res.length !== 0){
-              const vmware_cb = {
-                type: 'checkbox',
-                name: 'vmware_sync',
-                placeholder: helptext.vmware_sync_placeholder,
-                tooltip: helptext.vmware_sync_tooltip,
-              }
-              conf.fieldConfig.push(vmware_cb);
+          this.dialogService.dialogForm(this.dialogConf).subscribe((res) => {
+            if (res) {
+              this.snackBar.open(T("Snapshot successfully taken."), T('close'), { duration: 5000 });
             }
-            this.dialogService.dialogForm(conf).subscribe((res) => {
-              if (res) {
-                this.snackBar.open(T("Snapshot successfully taken."), T('close'), { duration: 5000 });
-              }
-            });
-          })
+          });
         }
       });
 
@@ -688,6 +693,14 @@ export class VolumesListTableConfig implements InputTableConf {
       }
     }
     return actions;
+  }
+
+  updater(parent: any) {
+    parent.recursiveIsChecked = !parent.recursiveIsChecked;
+    parent.ws.call('vmware.dataset_has_vms',[parent.title, parent.recursiveIsChecked]).subscribe((vmware_res)=>{
+      parent.vmware_res_status = vmware_res;
+      _.find(parent.dialogConf.fieldConfig, {name : "vmware_sync"})['isHidden'] = !parent.vmware_res_status;
+    })
   }
 
   getTimestamp() {
