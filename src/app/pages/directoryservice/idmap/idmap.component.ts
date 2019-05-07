@@ -360,13 +360,13 @@ export class IdmapComponent implements OnInit {
 
     // get default idmap range
     this.rest.get('services/cifs', {}).subscribe((res) => {
-      this.ws.call('idmap.get_or_create_idmap_by_domain', ['DS_TYPE_DEFAULT_DOMAIN']).subscribe((idmap_res) => {
+      this.ws.call('idmap.get_or_create_idmap_by_domain', ['DS_TYPE_ACTIVEDIRECTORY']).subscribe((idmap_res) => {
         console.log(idmap_res)
         this.defaultIdmap = idmap_res;
       });
     });
-
-    this.ws.call('datastore.query', [this.query_call + this.idmap_type, [["idmap_ds_type", "=", this.targetDS]]]).subscribe((res) => {
+                                                          // "directoryservice.idmap_rid"
+    this.ws.call('idmap.get_or_create_idmap_by_domain', ['DS_TYPE_ACTIVEDIRECTORY']).subscribe((res) => {
       console.log(res)
       if (res[0]) {
         this.idmapID = res[0]['id'];

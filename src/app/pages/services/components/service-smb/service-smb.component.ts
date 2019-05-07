@@ -252,7 +252,7 @@ export class ServiceSMBComponent {
       },
       (err)=>{
         console.log('here')
-        new EntityUtils().handleWSError(this.entityEdit, err);
+        new EntityUtils().handleWSError(this.entityEdit, err, this.dialogService.errorReport);
       },
       () => {
         console.log('done');
