@@ -11,7 +11,7 @@ import { isNgTemplate } from '@angular/compiler';
   selector: 'app-snapshot-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
-export class SnapshotListComponent implements OnInit {
+export class SnapshotListComponent {
 
   public title = "Snapshots";
   protected queryCall = 'zfs.snapshot.query';
@@ -77,20 +77,26 @@ export class SnapshotListComponent implements OnInit {
     }
   }
 
-  async ngOnInit() {
-    await this.ws.call('systemdataset.config').toPromise().then((res) => {
-      if (res && res.basename && res.basename !== '') {
-        this.queryCallOption[0][1] = (["name", "!^", res.basename]);
-      }
-    });
-  }
-
   afterInit(entityList: any) {
     this.entityList = entityList;
   }
 
   preInit(entityList: any) {
     this.sub = this._route.params.subscribe(params => { });
+  }
+
+  callGetFunction(entityList) {
+    this.ws.call('systemdataset.config').toPromise().then((res) => {
+      if (res && res.basename && res.basename !== '') {
+        this.queryCallOption[0][1] = (["name", "!^", res.basename]);
+      }
+      this.ws.call(this.queryCall, this.queryCallOption).subscribe((res1) => {
+        entityList.handleData(res1);
+      },
+      (err) => {
+          new EntityUtils().handleWSError(this, res, entityList.dialogService);
+      });
+    });
   }
 
   getActions(parentRow) {
