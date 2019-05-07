@@ -159,21 +159,39 @@ export class VMwareSnapshotFormComponent {
       "username": entityForm.username,
       "password": entityForm.password
     };
+    // Looks for a mismatch and raises a confirm dialog if there is one; otherwise saves w/o the dialog
     const dataStoreMatch = this.datastoreList.find(item => item.name === entityForm.datastore);
       if (!dataStoreMatch || (dataStoreMatch.name === entityForm.datastore && dataStoreMatch.filesystems[0] !== entityForm.filesystem)) {
-        const firstObj = this.fileSystemList.find(item => item.name === entityForm.filesystem);
-        const secondObj = this.dataListComplete.find(item => item.name === entityForm.datastore);
-        this.dialogService.confirm('Are you sure?', `The filesystem ${firstObj.name} is ${firstObj.description}
-         but datastore ${secondObj.name} is ${secondObj.description}. Is this correct?`, true, 'Yes').subscribe((res) => {
-           this.loader.open();
-           this.ws.call(this.addCall, [payload]).subscribe((res) => {
-             this.loader.close();
-             this.router.navigate(new Array('/').concat(this.route_success));
-           },
-           (e_res) => {
-            this.loader.close();
-          })
+        let firstObj = this.fileSystemList.find(item => item.name === entityForm.filesystem);
+        let secondObj = this.dataListComplete.find(item => item.name === entityForm.datastore);
+        if (secondObj.description === '') {
+          secondObj.description = T('(No description)');
+        }
+        this.dialogService.confirm(T('Are you sure?'), T('The filesystem ') + firstObj.name + T(' is ') +
+          firstObj.description + T(' but datastore ') + secondObj.name + T(' is ') + secondObj.description + 
+          T('. Is this correct?'), true).subscribe((res) => {
+            if (res === true) {
+              this.loader.open();
+              this.ws.call(this.addCall, [payload]).subscribe((res) => {
+                this.loader.close();
+                this.router.navigate(new Array('/').concat(this.route_success));
+              },
+              (e_res) => {
+               this.loader.close();
+               this.dialogService.errorReport(T('Error'),e_res);
+             })
+            }
          }) 
+        } else {
+          this.loader.open();
+          this.ws.call(this.addCall, [payload]).subscribe((res) => {
+            this.loader.close();
+            this.router.navigate(new Array('/').concat(this.route_success));
+          },
+          (e_res) => {
+           this.loader.close();
+           this.dialogService.errorReport(T('Error'),e_res);
+         })
         }
   }
 
@@ -210,7 +228,6 @@ export class VMwareSnapshotFormComponent {
       if(payload['password'] !== "" && typeof(payload['password'])!== "undefined") {
         parent.loader.open();
         parent.ws.call("vmware.match_datastores_with_datasets", [payload]).subscribe((res) => {
-          console.log(res)
           res.filesystems.forEach(filesystem_item => {
             _.find(parent.fieldConfig, {name : 'filesystem'})['options'].push(
               {
