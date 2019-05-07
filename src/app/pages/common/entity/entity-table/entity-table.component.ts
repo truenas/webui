@@ -56,6 +56,7 @@ export interface InputTableConf {
   doAdd?();
   onCheckboxChange?(row): any;
   onSliderChange?(row): any;
+  callGetFunction?(entity: EntityTableComponent): any;
 }
 
 export interface SortingConfig {
@@ -316,10 +317,18 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.getFunction = this.rest.get(this.conf.resource_name, options);
     }
 
-    this.callGetFunction();
+    if (this.conf.callGetFunction) {
+      this.conf.callGetFunction(this);
+    } else {
+      this.callGetFunction();
+    }
     if (this.asyncView) {
       this.interval = setInterval(() => {
-        this.callGetFunction();
+        if (this.conf.callGetFunction) {
+          this.conf.callGetFunction(this);
+        } else {
+          this.callGetFunction();
+        }
       }, 10000);
     }
 
