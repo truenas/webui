@@ -1,0 +1,32 @@
+<div id="{{config.name}}" class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" [class.has-pwtoggle]="config.togglePw" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
+	<mat-form-field style="display:none">
+		<input matInput [type]="config.inputType ? config.inputType : 'text'"
+			[placeholder]="config.placeholder"
+			[attr.value]="config.value"
+			[formControlName]="config.name"
+		>
+	</mat-form-field>
+	<mat-form-field style="width: 80%">
+		<input matInput
+			[placeholder]="config.placeholder | translate"
+			[(ngModel)]="address"
+			[ngModelOptions]="{standalone: true}"
+			[readonly]="config.readonly"
+			[required]="config.required"
+			(blur)="setAddress($event)"
+			[pattern]="network.ipv4_or_ipv6_cidr_optional"
+			>
+	</mat-form-field>
+	<mat-select style="width: 15%" 
+		[value]="netmask"
+		[placeholder]="Netmask | translate"
+		(selectionChange)="setNetmask($event)"
+		>
+		<mat-option *ngFor="let option of netmaskOptions" [value]="option.value">
+			{{option.label}}
+		</mat-option>
+	</mat-select>
+	<tooltip style="width: 5%" *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
+	<mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
+	<mat-error *ngIf="config.warnings">{{config.warnings | translate}}</mat-error>
+</div>

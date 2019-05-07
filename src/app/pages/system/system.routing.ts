@@ -38,6 +38,7 @@ import { AlertServiceComponent } from './alertservice/alert-service/alert-servic
 import { AlertConfigComponent } from './alert/alert.component';
 import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 import { FailoverComponent } from './failover/failover.component';
+import { ProactiveSupportComponent } from './proactive-support/proactive-support.component';
 import { ReportingComponent } from './reporting/reporting.component';
 
 export const routes: Routes = [
@@ -269,7 +270,16 @@ export const routes: Routes = [
       path: 'support',
       component: SupportComponent,
       data: { title: 'Support', breadcrumb: 'Support', icon: 'perm_phone_msg' },
-    },]
+    },
+    {
+      path: 'proactivesupport',
+      component: ProactiveSupportComponent,
+      data: {
+          title: 'Proactive Support',
+          breadcrumb: 'Proactive Support',
+          icon: 'perm_phone_msg',
+      }
+    }]
   }
 ];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);

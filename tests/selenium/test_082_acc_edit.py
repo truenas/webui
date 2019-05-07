@@ -8,7 +8,7 @@ import os
 import time
 cwd = str(os.getcwd())
 sys.path.append(cwd)
-from function import take_screenshot, user_edit
+from function import take_screenshot, user_edit, error_check
 from source import newusername, newgroupname
 
 skip_mesages = "Skipping first run"
@@ -25,12 +25,7 @@ xpaths = {
 }
 
 
-def test_00_set_implicitly_wait(wb_driver):
-    wb_driver.implicitly_wait(1)
-    time.sleep(1)
-
-
-def test_01_nav_acc_user(wb_driver):
+def test_01_navigate_to_account_user(wb_driver):
     # Click  Account menu
     wb_driver.find_element_by_xpath(xpaths['navAccount']).click()
     # allowing the button to load
@@ -60,6 +55,8 @@ def test_02_edit_userNAS_email(wb_driver):
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
     time.sleep(2)
+    no_error = error_check(wb_driver)
+    assert no_error['result'], no_error['traceback']
 
 
 def test_03_edit_userNAS_sudo(wb_driver):
@@ -70,9 +67,11 @@ def test_03_edit_userNAS_sudo(wb_driver):
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
+    no_error = error_check(wb_driver)
+    assert no_error['result'], no_error['traceback']
 
 
-def test_04_nav_acc_group(wb_driver):
+def test_04_navigate_to_account_group(wb_driver):
     # Click  Account menu
     # Click User submenu
     wb_driver.find_element_by_xpath(xpaths['submenuGroup']).click()
@@ -96,3 +95,5 @@ def test_05_edit_groupNAS_sudo(wb_driver):
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
+    no_error = error_check(wb_driver)
+    assert no_error['result'], no_error['traceback']

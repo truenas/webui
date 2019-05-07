@@ -25,10 +25,6 @@ xpaths = {
 }
 
 
-def test_00_set_implicitly_wait(wb_driver):
-    wb_driver.implicitly_wait(1)
-
-
 def test_01_nav_acc_user(wb_driver):
     # Click  Account menu
     # allowing the button to load
