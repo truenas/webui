@@ -1,12 +1,10 @@
 import { T } from '../../translate-marker';
-import {Validators} from '@angular/forms';
-import {
-  regexValidator
-} from '../../pages/common/entity/entity-form/validators/regex-validation';
 
 export default {
 
 name_placeholder: T('Plugin Name'),
+
+https_tooltip: T(''),
 
 dhcp_placeholder: T('DHCP'),
 dhcp_tooltip: T('Set for <a \

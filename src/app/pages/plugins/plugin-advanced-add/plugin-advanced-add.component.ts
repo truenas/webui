@@ -39,6 +39,7 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
   public formGroup: any;
   public error: string;
   public busy: Subscription;
+  protected https_placeholder = '';
 
   protected dialogRef: any;
   protected formFields: FieldConfig[];
@@ -51,6 +52,12 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
       required: true,
       validation: [regexValidator(/^[a-zA-Z0-9-_]+$/)],
       disabled: true,
+    },
+    {
+      type: 'checkbox',
+      name: 'https',
+      placeholder: this.https_placeholder,
+      value: true,
     },
     {
       type: 'checkbox',
@@ -970,6 +977,9 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.aroute.params.subscribe(params => {
       this.plugin_name = params['pk'];
+      this.translate.get('Fetch ' + this.plugin_name + ' via HTTPS').subscribe((translated) => {
+        _.find(this.basicfieldConfig, {'name': 'https'}).placeholder = translated;
+      });
       const nameField = _.find(this.basicfieldConfig, { 'name': 'uuid' });
       nameField.value = this.plugin_name;
     });
@@ -1198,7 +1208,7 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
             }
             delete value[i];
           } else {
-            if (i != 'uuid' && i != 'release') {
+            if (i != 'uuid' && i != 'release' && i != 'https') {
               property.push(i + '=' + value[i]);
               delete value[i];
             }

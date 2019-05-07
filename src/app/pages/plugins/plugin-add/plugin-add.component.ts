@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -20,7 +21,7 @@ import helptext from '../../../helptext/plugins/plugins';
   selector: 'app-plugin-add',
   templateUrl: './plugin-add.component.html',
   styleUrls: ['../../common/entity/entity-form/entity-form.component.scss'],
-  providers: [EntityFormService, FieldRelationService, NetworkService],
+  providers: [EntityFormService, FieldRelationService, NetworkService, TranslateService],
 })
 export class PluginAddComponent implements OnInit {
 
@@ -29,11 +30,20 @@ export class PluginAddComponent implements OnInit {
   public route_success: string[] = ['plugins', 'installed'];
   protected isEntity: boolean = false;
 
+  protected https_placeholder = '';
+
   public fieldConfig: FieldConfig[] = [{
       type: 'input',
       name: 'name',
       placeholder: helptext.name_placeholder,
       disabled: true,
+    },
+    {
+      type: 'checkbox',
+      name: 'https',
+      placeholder: this.https_placeholder,
+      tooltip: helptext.https_tooltip,
+      value: true,
     },
     {
       type: 'checkbox',
@@ -179,7 +189,8 @@ export class PluginAddComponent implements OnInit {
     protected dialog: DialogService,
     protected networkService: NetworkService,
     protected snackBar: MatSnackBar,
-    protected matdialog: MatDialog) {}
+    protected matdialog: MatDialog,
+    protected translate: TranslateService) {}
 
   ngOnInit() {
     this.ip4_interfaceField = _.find(this.fieldConfig, {'name': 'ip4_interface'});
@@ -260,6 +271,9 @@ export class PluginAddComponent implements OnInit {
 
     this.aroute.params.subscribe(params => {
       this.pluginName = params['name'];
+      this.translate.get('Fetch ' + this.pluginName + ' via HTTPS').subscribe((translated) => {
+        _.find(this.fieldConfig, {'name': 'https'}).placeholder = translated;
+      });
       this.formGroup.controls['name'].setValue(this.pluginName);
     });
   }
@@ -286,7 +300,7 @@ export class PluginAddComponent implements OnInit {
     }
 
     for (let i in value) {
-      if (value.hasOwnProperty(i)) {
+      if (value.hasOwnProperty(i) && i != 'https') {
         if (value[i] != undefined && value[i] != '') {
           if (value[i] == true) {
             property.push('bpf=yes');
