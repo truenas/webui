@@ -52,28 +52,29 @@ export class CertificateAcmeAddComponent {
       validation: helptext_system_certificates.acme.renew_day.validation
     },
     {
-      type : 'select',
+      type : 'combobox',
       name : 'acme_directory_uri',
       placeholder : helptext_system_certificates.acme.dir_uri.placeholder,
       tooltip: helptext_system_certificates.acme.dir_uri.tooltip,
+      required: true,
       options : [
         {label: 'https://acme-staging-v02.api.letsencrypt.org/directory', value: 'https://acme-staging-v02.api.letsencrypt.org/directory'},
         {label: 'https://acme-v02.api.letsencrypt.org/directory', value: 'https://acme-v02.api.letsencrypt.org/directory'}
       ],
-      value: 'https://acme-staging-v02.api.letsencrypt.org/directory'
+      // value: 'https://acme-staging-v02.api.letsencrypt.org/directory'
     },
-    {
-      type: 'array',
-      name : 'dns_mapping_fields',
-      initialCount: 1,
-      formarray: [{
-        name: 'dns_mapping2',
-        placeholder: helptext_system_certificates.acme.authenticator.placeholder,
-        tooltip: helptext_system_certificates.acme.authenticator.tooltip,
-        type: 'select',
-        options : []
-      }]
-    }
+    // {
+    //   type: 'array',
+    //   name : 'dns_mapping_fields',
+    //   initialCount: 1,
+    //   formarray: [{
+    //     name: 'dns_mapping2',
+    //     placeholder: helptext_system_certificates.acme.authenticator.placeholder,
+    //     tooltip: helptext_system_certificates.acme.authenticator.tooltip,
+    //     type: 'select',
+    //     options : []
+    //   }]
+    // }
     // {
     //   type : 'select',
     //   name : 'dns_mapping',
@@ -93,7 +94,7 @@ export class CertificateAcmeAddComponent {
   private pk: any;
   protected dialogRef: any;
   protected queryCallOption: Array<any> = [["id", "="]];
-  protected dnsmapformArray: FormArray;
+  // protected dnsmapformArray: FormArray;
   protected dnsmapArrayControl: any;
   protected dnsmapInitialCount = 1;
 
@@ -105,50 +106,54 @@ export class CertificateAcmeAddComponent {
   ) { }
 
   preInit() {
-    this.dnsmapArrayControl = _.find(this.fieldConfig, {'name' : 'dns_mapping_fields'});
+    // this.dnsmapArrayControl = _.find(this.fieldConfig, {'name' : 'dns_mapping_fields'});
     
     this.route.params.subscribe(params => {
       if (params['pk']) {
         this.queryCallOption[0].push(parseInt(params['pk']));
-        this.ws.call(this.queryCall, [this.queryCallOption]).subscribe((res) => {
-          this.csrOrg = res;
-          let domains = [this.csrOrg[0].common];
-          for (let item of this.csrOrg[0].san) {
-            domains.push(item);
-          }
-          this.ws.call('acme.dns.authenticator.query').subscribe( (res) => {
-            res.forEach((item) => {
-              this.authenticators.push(
-                { label : item.name, value : item.name}
-              );
-            });
-          });
-          for (let item of domains) {
-            let fc = new FormControl(
-              {
-                type: "select",
-                name: "dns_mapping-" + item, 
-                placeholder: "Authenticator for " + item, 
-                tooltip: "Specify Authenticator to be used for " + item, 
-                options: this.authenticators,
-                required: true, 
-                class: 'dns_mapping'              
-              });
-            this.fieldConfig.push(fc.value);
 
-            this.dnsmapInitialCount += 1;
-            this.entityFormService.insertFormArrayGroup(
-              this.dnsmapInitialCount, this.dnsmapformArray, this.dnsmapArrayControl.formarray);
-          }
-        })
       }
     });
+
 
   }
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
-    this.dnsmapformArray = this.entityForm.formGroup.controls['dns_mapping_fields'];
+    // this.dnsmapformArray = this.entityForm.formGroup.controls['dns_mapping_fields'];
+
+    this.ws.call(this.queryCall, [this.queryCallOption]).subscribe((res) => {
+      this.csrOrg = res;
+      let domains = [this.csrOrg[0].common];
+      for (let item of this.csrOrg[0].san) {
+        domains.push(item);
+      }
+      this.ws.call('acme.dns.authenticator.query').subscribe( (res) => {
+        res.forEach((item) => {
+          this.authenticators.push(
+            { label : item.name, value : item.id}
+          );
+        });
+      });
+      for (let item of domains) {
+        let fc = (
+          {
+            type: "select",
+            name: "dns_mapping-" + item, 
+            placeholder: "Authenticator for " + item, 
+            tooltip: "Specify Authenticator to be used for " + item, 
+            options: this.authenticators,
+            required: true, 
+            class: 'dns_mapping'              
+          });
+          console.log(fc)
+        this.fieldConfig.push(fc);
+
+        this.dnsmapInitialCount += 1;
+        // this.entityFormService.insertFormArrayGroup(
+        //   this.dnsmapInitialCount, this.dnsmapformArray, this.dnsmapArrayControl.formarray);
+      }
+    })
 
   }
 
@@ -157,11 +162,12 @@ export class CertificateAcmeAddComponent {
     let dns_map = {};
     for (let item in value) {
       console.log(item)
-      if (item.includes('dns_mapping')) {
+    if (item.includes('dns_mapping')) {
         let i = item.split('-');
         dns_map[i[1]]=value[item];
       }
     }
+    console.log(dns_map)
     let payload = {};
     payload['tos'] = value.tos;
     payload['csr_id'] = this.csrOrg[0].id;
