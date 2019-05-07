@@ -1,409 +1,804 @@
-import {
-  ApplicationRef,
-  Component,
-  Injector,
-  ElementRef,
-  OnDestroy
-} from '@angular/core';
-import {
-  AbstractControl,
-  FormArray,
-  FormGroup,
-  Validators
-} from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component } from '@angular/core';
+import { Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import helptext from '../../../../helptext/task-calendar/replication';
+import { WebSocketService, TaskService } from 'app/services';
 import * as _ from 'lodash';
 
-import { RestService, WebSocketService } from '../../../../services/';
-import { DialogService } from '../../../../services/';
-import {
-  FieldConfig
-} from '../../../common/entity/entity-form/models/field-config.interface';
-import { ReplicationService } from 'app/pages/task-calendar/replication/replication.service';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import helptext from '../../../../helptext/task-calendar/replication-form/replication-form';
-
 @Component({
-  selector : 'app-replication-form',
-  templateUrl : './replication-form.component.html'
+    selector: 'app-replication-list',
+    template: `<entity-form [conf]='this'></entity-form>`,
+    providers: [TaskService]
 })
-export class ReplicationFormComponent implements OnDestroy {
+export class ReplicationFormComponent {
 
-  protected resource_name = 'storage/replication';
-  protected route_success: string[] = [ 'tasks', 'replication'];
-  protected isNew = false;
-  protected isEntity = true;
-  public initialized = false;
-  protected entityForm: EntityFormComponent;
-  private subscription;
+    protected queryCall = 'replication.query';
+    protected queryCallOption: Array<any> = [["id", "="]];
+    protected addCall = 'replication.create';
+    protected editCall = 'replication.update';
+    protected route_success: string[] = ['tasks', 'replication'];
+    protected isEntity = true;
+    protected entityForm: any;
 
-  private times = [
-    {label : '00:00:00', value : '00:00:00'},
-    {label : '00:15:00', value : '00:15:00'},
-    {label : '00:30:00', value : '00:35:00'},
-    {label : '00:45:00', value : '00:45:00'},
-    {label : '01:00:00', value : '01:00:00'},
-    {label : '01:15:00', value : '01:15:00'},
-    {label : '01:30:00', value : '01:35:00'},
-    {label : '01:45:00', value : '01:45:00'},
-    {label : '02:00:00', value : '02:00:00'},
-    {label : '02:15:00', value : '02:15:00'},
-    {label : '02:30:00', value : '02:35:00'},
-    {label : '02:45:00', value : '02:45:00'},
-    {label : '03:00:00', value : '03:00:00'},
-    {label : '03:15:00', value : '03:15:00'},
-    {label : '03:30:00', value : '03:35:00'},
-    {label : '03:45:00', value : '03:45:00'},
-    {label : '04:00:00', value : '04:00:00'},
-    {label : '04:15:00', value : '04:15:00'},
-    {label : '04:30:00', value : '04:35:00'},
-    {label : '04:45:00', value : '04:45:00'},
-    {label : '05:00:00', value : '05:00:00'},
-    {label : '05:15:00', value : '05:15:00'},
-    {label : '05:30:00', value : '05:35:00'},
-    {label : '05:45:00', value : '05:45:00'},
-    {label : '06:00:00', value : '06:00:00'},
-    {label : '06:15:00', value : '06:15:00'},
-    {label : '06:30:00', value : '06:35:00'},
-    {label : '06:45:00', value : '06:45:00'},
-    {label : '07:00:00', value : '07:00:00'},
-    {label : '07:15:00', value : '07:15:00'},
-    {label : '07:30:00', value : '07:35:00'},
-    {label : '07:45:00', value : '07:45:00'},
-    {label : '08:00:00', value : '08:00:00'},
-    {label : '08:15:00', value : '08:15:00'},
-    {label : '08:30:00', value : '08:35:00'},
-    {label : '08:45:00', value : '08:45:00'},
-    {label : '09:00:00', value : '09:00:00'},
-    {label : '09:15:00', value : '09:15:00'},
-    {label : '09:30:00', value : '09:35:00'},
-    {label : '09:45:00', value : '09:45:00'},
-    {label : '10:00:00', value : '10:00:00'},
-    {label : '10:15:00', value : '10:15:00'},
-    {label : '10:30:00', value : '10:35:00'},
-    {label : '10:45:00', value : '10:45:00'},
-    {label : '11:00:00', value : '11:00:00'},
-    {label : '11:15:00', value : '11:15:00'},
-    {label : '11:30:00', value : '11:35:00'},
-    {label : '11:45:00', value : '11:45:00'},
-    {label : '12:00:00', value : '12:00:00'},
-    {label : '12:15:00', value : '12:15:00'},
-    {label : '12:30:00', value : '12:35:00'},
-    {label : '12:45:00', value : '12:45:00'},
-    {label : '13:00:00', value : '13:00:00'},
-    {label : '13:15:00', value : '13:15:00'},
-    {label : '13:30:00', value : '13:35:00'},
-    {label : '13:45:00', value : '13:45:00'},
-    {label : '14:00:00', value : '14:00:00'},
-    {label : '14:15:00', value : '14:15:00'},
-    {label : '14:30:00', value : '14:35:00'},
-    {label : '14:45:00', value : '14:45:00'},
-    {label : '15:00:00', value : '15:00:00'},
-    {label : '15:15:00', value : '15:15:00'},
-    {label : '15:30:00', value : '15:35:00'},
-    {label : '15:45:00', value : '15:45:00'},
-    {label : '16:00:00', value : '16:00:00'},
-    {label : '16:15:00', value : '16:15:00'},
-    {label : '16:30:00', value : '16:35:00'},
-    {label : '16:45:00', value : '16:45:00'},
-    {label : '17:00:00', value : '17:00:00'},
-    {label : '17:15:00', value : '17:15:00'},
-    {label : '17:30:00', value : '17:35:00'},
-    {label : '17:45:00', value : '17:45:00'},
-    {label : '18:00:00', value : '18:00:00'},
-    {label : '18:15:00', value : '18:15:00'},
-    {label : '18:30:00', value : '18:35:00'},
-    {label : '18:45:00', value : '18:45:00'},
-    {label : '19:00:00', value : '19:00:00'},
-    {label : '19:15:00', value : '19:15:00'},
-    {label : '19:30:00', value : '19:35:00'},
-    {label : '19:45:00', value : '19:45:00'},
-    {label : '20:00:00', value : '20:00:00'},
-    {label : '20:15:00', value : '20:15:00'},
-    {label : '20:30:00', value : '20:35:00'},
-    {label : '20:45:00', value : '20:45:00'},
-    {label : '21:00:00', value : '21:00:00'},
-    {label : '21:15:00', value : '21:15:00'},
-    {label : '21:30:00', value : '21:35:00'},
-    {label : '21:45:00', value : '21:45:00'},
-    {label : '22:00:00', value : '22:00:00'},
-    {label : '22:15:00', value : '22:15:00'},
-    {label : '22:30:00', value : '22:35:00'},
-    {label : '22:45:00', value : '22:45:00'},
-    {label : '23:00:00', value : '23:00:00'},
-    {label : '23:15:00', value : '23:15:00'},
-    {label : '23:30:00', value : '23:35:00'},
-    {label : '23:45:00', value : '23:45:00'},
-    {label : '23:59:00', value : '23:59:00'},
-  ];
-
-  private repl_remote_dedicateduser: any;
-  private repl_filesystem: any;
-  protected fieldConfig: FieldConfig[];
-
-  constructor(
-      protected router: Router,
-      protected route: ActivatedRoute,
-      protected rest: RestService,
-      protected ws: WebSocketService,
-      protected replicationService: ReplicationService,
-      protected _injector: Injector,
-      protected _appRef: ApplicationRef,
-      private dialog:DialogService,
-      protected loader: AppLoaderService,
-  ) {
-
-    const theThis = this;
-
-    this.fieldConfig =
-    [
-      {
-        type : 'select',
-        name : 'repl_filesystem',
-        placeholder : helptext.repl_filesystem_placeholder,
-        tooltip : helptext.repl_filesystem_tooltip,
-        options : [],
-        required: true,
-        validation : helptext.repl_filesystem_validation
-      },
-      {
-        type : 'input',
-        name : 'repl_zfs',
-        placeholder : helptext.repl_zfs_placeholder,
-        tooltip : helptext.repl_zfs_tooltip,
-        required: true,
-        validation : helptext.repl_zfs_validation
-      },
-      {
-        type : 'checkbox',
-        name : 'repl_userepl',
-        placeholder : helptext.repl_userepl_placeholder,
-        tooltip : helptext.repl_userepl_tooltip,
-        value : false
-      },
-      {
-        type : 'checkbox',
-        name : 'repl_followdelete',
-        placeholder : helptext.repl_followdelete_placeholder,
-        tooltip : helptext.repl_followdelete_tooltip,
-        value : false
-      },
-      {
-        type : 'select',
-        name : 'repl_compression',
-        placeholder : helptext.repl_compression_placeholder,
-        tooltip : helptext.repl_compression_tooltip,
-        options : [
-          {label : 'Off', value : 'off'},
-          {label : 'lz4 (fastest)', value : 'lz4'},
-          {label : 'pigz (all rounder)', value : 'pigz'},
-          {label : 'plzip (best compression)', value : 'plzip'}
-        ]
-      },
-      {
-        type : 'input',
-        name : 'repl_limit',
-        placeholder : helptext.repl_limit_placeholder,
-        tooltip :helptext.repl_limit_tooltip,
-        value : 0,
-        validation : helptext.repl_limit_validation
-      },
-      {
-        type : 'select',
-        name : 'repl_begin',
-        placeholder : helptext.repl_begin_placeholder,
-        tooltip : helptext.repl_begin_tooltip,
-        options : this.times
-      },
-      {
-        type : 'select',
-        name : 'repl_end',
-        placeholder : helptext.repl_end_placeholder,
-        tooltip : helptext.repl_end_tooltip,
-        options : this.times
-      },
-      {
-        type : 'checkbox',
-        name : 'repl_enabled',
-        placeholder : helptext.repl_enabled_placeholder,
-        tooltip : helptext.repl_enabled_tooltip,
-        value: true
-      },
-      {
-        type : 'select',
-        name : 'repl_remote_mode',
-        placeholder : helptext.repl_remote_mode_placeholder,
-        tooltip : helptext.repl_remote_mode_tooltip,
-        options : [
-          {label : 'Manual', value : 'MANUAL'},
-          {label : 'Semi-Automatic', value : 'SEMIAUTOMATIC'}
-        ],
-        isHidden: false
-      },
-      {
-        type : 'input',
-        name : 'repl_remote_hostname',
-        placeholder : helptext.repl_remote_hostname_placeholder,
-        tooltip : helptext.repl_remote_hostname_tooltip,
-        required: true,
-        validation: helptext.repl_remote_hostname_validation
-      },
-      {
-        type : 'input',
-        name : 'repl_remote_port',
-        placeholder : helptext.repl_remote_port_placeholder,
-        tooltip : helptext.repl_remote_port_tooltip,
-        inputType : 'number',
-        value : 22,
-        validation : helptext.repl_remote_port_validation,
-        isHidden : false
-      },
-      {
-        type : 'input',
-        name : 'repl_remote_http_port',
-        placeholder : helptext.repl_remote_http_port_placeholder,
-        tooltip : helptext.repl_remote_http_port_tooltip,
-        inputType : 'number',
-        value : 80,
-        validation : helptext.repl_remote_http_port_validation,
-        isHidden : true,
-      },
-      {
-        type : 'checkbox',
-        name : 'repl_remote_https',
-        placeholder :  helptext.repl_remote_https_placeholder,
-        tooltip : helptext.repl_remote_https_tooltip,
-        isHidden : true,
-      },
-      {
-        type : 'input',
-        name : 'repl_remote_token',
-        placeholder : helptext.repl_remote_token_placeholder,
-        tooltip : helptext.repl_remote_token_tooltip,
-        isHidden : true,
-      },
-      {
-        type : 'select',
-        name : 'repl_remote_cipher',
-        placeholder : helptext.repl_remote_cipher_placeholder,
-        tooltip : helptext.repl_remote_cipher_tooltip,
-        options : [
-          {label : 'standard', value : 'standard'},
-          {label : 'fast', value : 'fast'},
-          {label : 'disabled', value : 'disabled'}
-        ]
-      },
-      {
-        type : 'checkbox',
-        name : 'repl_remote_dedicateduser_enabled',
-        placeholder : helptext.repl_remote_dedicateduser_enabled_placeholder,
-        tooltip : helptext.repl_remote_dedicateduser_enabled_tooltip,
-    },
-      {
-        type : 'select',
-        name : 'repl_remote_dedicateduser',
-        placeholder : helptext.repl_remote_dedicateduser_placeholder,
-        tooltip : helptext.repl_remote_dedicateduser_tooltip,
-        options : [],
-        relation : [ {
-          action : "DISABLE",
-          when : [ {name:'repl_remote_dedicateduser_enabled', value: false }]
-        } ]
-      },
-      {
-        type : 'textareabutton',
-        name : 'repl_remote_hostkey',
-        placeholder : helptext.repl_remote_hostkey_placeholder,
-        tooltip : helptext.repl_remote_hostkey_tooltip,
-        customEventActionLabel : 'Scan SSH Key',
-        customEventMethod : function(data) {
-          theThis.customEventMethod(data);
+    protected fieldConfig: FieldConfig[] = [
+        {
+            type: 'input',
+            name: 'name',
+            placeholder: helptext.name_placeholder,
+            tooltip: helptext.name_tooltip,
+            required: true,
+            validation: [Validators.required]
         },
-        isHidden : false,
-        required: true,
-        validation : helptext.repl_remote_hostkey_validation
-      },
-    ];
-  }
+        {
+            type: 'select',
+            name: 'direction',
+            placeholder: helptext.direction_placeholder,
+            tooltip: helptext.direction_tooltip,
+            options: [
+                {
+                    label: 'PUSH',
+                    value: 'PUSH',
+                }, {
+                    label: 'PULL',
+                    value: 'PULL',
+                }
+            ],
+            value: 'PUSH',
+        }, {
+            type: 'select',
+            name: 'transport',
+            placeholder: helptext.transport_placeholder,
+            tooltip: helptext.transport_tooltip,
+            options: [
+                {
+                    label: 'SSH',
+                    value: 'SSH',
+                }, {
+                    label: 'SSH+NETCAT',
+                    value: 'SSH+NETCAT',
+                }, {
+                    label: 'LOCAL',
+                    value: 'LOCAL',
+                }, {
+                    label: 'LEGACY',
+                    value: 'LEGACY',
+                }
+            ],
+            value: 'SSH',
+        }, {
+            type: 'select',
+            name: 'ssh_credentials',
+            placeholder: helptext.ssh_credentials_placeholder,
+            tooltip: helptext.ssh_credentials_tooltip,
+            options: [
+                {
+                    label: '---------',
+                    value: '',
+                }
+            ],
+            value: '',
+            relation: [{
+                action: 'HIDE',
+                when: [{
+                    name: 'transport',
+                    value: 'LOCAL',
+                }]
+            }],
+            required: true,
+            validation: [Validators.required],
+        }, {
+            type: 'select',
+            name: 'netcat_active_side',
+            placeholder: helptext.netcat_active_side_placeholder,
+            tooltip: helptext.netcat_active_side_tooltip,
+            options: [
+                {
+                    label: 'LOCAL',
+                    value: 'LOCAL',
+                }, {
+                    label: 'REMOTE',
+                    value: 'REMOTE',
+                }
+            ],
+            value: 'LOCAL',
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'transport',
+                    value: 'SSH+NETCAT',
+                }]
+            }],
+        }, {
+            type: 'input',
+            name: 'netcat_active_side_listen_address',
+            placeholder: helptext.netcat_active_side_listen_address_placeholder,
+            tooltip: helptext.netcat_active_side_listen_address_tooltip,
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'transport',
+                    value: 'SSH+NETCAT',
+                }]
+            }],
+        }, {
+            type: 'input',
+            name: 'netcat_active_side_port_min',
+            placeholder: helptext.netcat_active_side_port_min_placeholder,
+            tooltip: helptext.netcat_active_side_port_min_tooltip,
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'transport',
+                    value: 'SSH+NETCAT',
+                }]
+            }],
+        }, {
+            type: 'input',
+            name: 'netcat_active_side_port_max',
+            placeholder: helptext.netcat_active_side_port_max_placeholder,
+            tooltip: helptext.netcat_active_side_port_max_tooltip,
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'transport',
+                    value: 'SSH+NETCAT',
+                }]
+            }],
+        }, {
+            type: 'input',
+            name: 'netcat_passive_side_connect_address',
+            placeholder: helptext.netcat_passive_side_connect_address_placeholder,
+            tooltip: helptext.netcat_passive_side_connect_address_tooltip,
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'transport',
+                    value: 'SSH+NETCAT',
+                }]
+            }],
+        }, {
+            type: 'explorer',
+            initial: '/mnt',
+            explorerType: 'directory',
+            multiple: true,
+            name: 'source_datasets',
+            placeholder: helptext.source_datasets_placeholder,
+            tooltip: helptext.source_datasets_tooltip,
+            options: [],
+            required: true,
+            validation: [Validators.required],
+        }, {
+            type: 'input',
+            name: 'target_dataset',
+            placeholder: helptext.target_dataset_placeholder,
+            tooltip: helptext.target_dataset_tooltip,
+            required: true,
+            validation: [Validators.required],
+        }, {
+            type: 'checkbox',
+            name: 'recursive',
+            placeholder: helptext.recursive_placeholder,
+            tooltip: helptext.recursive_tooltip,
+            value: false,
+        }, {
+            type: 'select',
+            multiple: true,
+            name: 'exclude',
+            placeholder: helptext.exclude_placeholder,
+            tooltip: helptext.exclude_tooltip,
+            options: [],
+            relation: [{
+                action: 'HIDE',
+                connective: 'OR',
+                when: [{
+                    name: 'recursive',
+                    value: false,
+                }, {
+                    name: 'transport',
+                    value: 'LEGACY',
+                }]
+            }],
+        }, {
+            type: 'select',
+            multiple: true,
+            name: 'periodic_snapshot_tasks',
+            placeholder: helptext.periodic_snapshot_tasks_placeholder,
+            tooltip: helptext.periodic_snapshot_tasks_tooltip,
+            options: [],
+            relation: [{
+                action: 'HIDE',
+                connective: 'OR',
+                when: [{
+                    name: 'direction',
+                    value: 'PULL',
+                }, {
+                    name: 'transport',
+                    value: 'LEGACY',
+                }]
+            }],
+        },
+        {
+            type: 'input',
+            name: 'naming_schema',
+            placeholder: helptext.naming_schema_placeholder,
+            tooltip: helptext.naming_schema_tooltip,
+            relation: [{
+                action: 'HIDE',
+                connective: 'OR',
+                when: [{
+                    name: 'direction',
+                    value: 'PUSH',
+                }, {
+                    name: 'transport',
+                    value: 'LEGACY',
+                }]
+            }],
+        },
+        {
+            type: 'input',
+            name: 'also_include_naming_schema',
+            placeholder: helptext.also_include_naming_schema_placeholder,
+            tooltip: helptext.also_include_naming_schema_tooltip,
+            relation: [{
+                action: 'HIDE',
+                connective: 'OR',
+                when: [{
+                    name: 'direction',
+                    value: 'PULL',
+                }, {
+                    name: 'transport',
+                    value: 'LEGACY',
+                }]
+            }],
+        },
+        {
+            type: 'checkbox',
+            name: 'auto',
+            placeholder: helptext.auto_placeholder,
+            tooltip: helptext.auto_tooltip,
+            value: true,
+            relation: [{
+                action: 'HIDE',
+                when: [{
+                    name: 'transport',
+                    value: 'LEGACY',
+                }]
+            }],
+        }, {
+            type: 'checkbox',
+            name: 'schedule',
+            placeholder: helptext.schedule_placeholder,
+            tooltip: helptext.schedule_tooltip,
+            relation: [{
+                action: 'HIDE',
+                connective: 'OR',
+                when: [{
+                    name: 'transport',
+                    value: 'LEGACY',
+                }, {
+                    name: 'auto',
+                    value: false,
+                }]
+            }]
+        }, {
+            type: 'scheduler',
+            name: 'schedule_picker',
+            tooltip: helptext.schedule_picker_tooltip,
+            value: "0 0 * * *",
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'schedule',
+                    value: true,
+                }]
+            }],
+        }, {
+            type: 'select',
+            name: 'schedule_begin',
+            placeholder: helptext.schedule_begin_placeholder,
+            tooltip: helptext.schedule_begin_tooltip,
+            options: [],
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'schedule',
+                    value: true,
+                }]
+            }],
+            value: '00:00',
+        }, {
+            type: 'select',
+            name: 'schedule_end',
+            placeholder: helptext.schedule_end_placeholder,
+            tooltip: helptext.schedule_end_tooltip,
+            options: [],
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'schedule',
+                    value: true,
+                }]
+            }],
+            value: '23:59',
+        }, {
+            type: 'checkbox',
+            name: 'restrict_schedule',
+            placeholder: helptext.restrict_schedule_placeholder,
+            tooltip: helptext.restrict_schedule_tooltip,
+            relation: [{
+                action: 'HIDE',
+                when: [{
+                    name: 'transport',
+                    value: 'LEGACY',
+                }]
+            }],
+        }, {
+            type: 'scheduler',
+            name: 'restrict_schedule_picker',
+            tooltip: helptext.restrict_schedule_picker_tooltip,
+            value: "0 0 * * *",
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'restrict_schedule',
+                    value: true,
+                }]
+            }],
+        }, {
+            type: 'select',
+            name: 'restrict_schedule_begin',
+            placeholder: helptext.restrict_schedule_begin_placeholder,
+            tooltip: helptext.restrict_schedule_begin_tooltip,
+            options: [],
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'restrict_schedule',
+                    value: true,
+                }]
+            }],
+            value: '00:00',
+        }, {
+            type: 'select',
+            name: 'restrict_schedule_end',
+            placeholder: helptext.restrict_schedule_end_placeholder,
+            tooltip: helptext.restrict_schedule_end_tooltip,
+            options: [],
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'restrict_schedule',
+                    value: true,
+                }]
+            }],
+            value: '23:59',
+        }, {
+            type: 'checkbox',
+            name: 'only_matching_schedule',
+            placeholder: helptext.only_matching_schedule_placeholder,
+            tooltip: helptext.only_matching_schedule_tooltip,
+            relation: [{
+                action: 'HIDE',
+                connective: 'OR',
+                when: [{
+                    name: 'schedule',
+                    value: false,
+                }, {
+                    name: 'transport',
+                    value: 'LEGACY',
+                }]
+            }],
+        }, {
+            type: 'checkbox',
+            name: 'allow_from_scratch',
+            placeholder: helptext.allow_from_scratch_placeholder,
+            tooltip: helptext.allow_from_scratch_tooltip,
+            relation: [{
+                action: 'HIDE',
+                when: [{
+                    name: 'transport',
+                    value: 'LEGACY',
+                }]
+            }],
+        }, {
+            type: 'checkbox',
+            name: 'hold_pending_snapshots',
+            placeholder: helptext.hold_pending_snapshots_placeholder,
+            tooltip: helptext.hold_pending_snapshots_tooltip,
+            relation: [{
+                action: 'HIDE',
+                when: [{
+                    name: 'transport',
+                    value: 'LEGACY',
+                }]
+            }],
+        }, {
+            type: 'select',
+            name: 'retention_policy',
+            placeholder: helptext.retention_policy_placeholder,
+            tooltip: helptext.retention_policy_tooltip,
+            options: [
+                {
+                    label: 'Same as Source',
+                    value: 'SOURCE',
+                }, {
+                    label: 'Custom',
+                    value: 'CUSTOM',
+                }, {
+                    label: 'None',
+                    value: 'NONE',
+                }
+            ],
+            value: 'NONE',
+            relation: [{
+                action: 'HIDE',
+                when: [{
+                    name: 'transport',
+                    value: 'LEGACY',
+                }]
+            }],
+        }, {
+            type: 'input',
+            inputType: 'number',
+            name: 'lifetime_value',
+            placeholder: helptext.lifetime_value_placeholder,
+            tooltip: helptext.lifetime_value_tooltip,
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'retention_policy',
+                    value: 'CUSTOM',
+                }]
+            }],
+            width: '50%',
+        }, {
+            type: 'select',
+            name: 'lifetime_unit',
+            placeholder: helptext.lifetime_unit_placeholder,
+            tooltip: helptext.lifetime_unit_tooltip,
+            options: [
+                {
+                    label: 'Hour(s)',
+                    value: 'HOUR',
+                }, {
+                    label: 'Day(s)',
+                    value: 'DAY',
+                }, {
+                    label: 'Week(s)',
+                    value: 'WEEK',
+                }, {
+                    label: 'Month(s)',
+                    value: 'MONTH',
+                }, {
+                    label: 'Year(s)',
+                    value: 'YEAR',
+                }
+            ],
+            value: 'WEEK',
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'retention_policy',
+                    value: 'CUSTOM',
+                }]
+            }],
+            width: '50%',
+        },
+        {
+            type: 'select',
+            name: 'compression',
+            placeholder: helptext.compression_placeholder,
+            tooltip: helptext.compression_tooltip,
+            options: [
+                {
+                    label: 'Disabled',
+                    value: 'DISABLED', // should set it to be null before submit
+                }, {
+                    label: 'lz4 (fastest)',
+                    value: 'LZ4',
+                }, {
+                    label: 'pigz (all rounder)',
+                    value: 'PIGZ',
+                }, {
+                    label: 'plzip (best compression)',
+                    value: 'PLZIP',
+                }
+            ],
+            value: 'DISABLED',
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'transport',
+                    value: 'SSH',
+                }]
+            }],
+        }, {
+            type: 'input',
+            inputType: 'number',
+            name: 'speed_limit',
+            placeholder: helptext.speed_limit_placeholder,
+            tooltip: helptext.speed_limit_tooltip,
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'transport',
+                    value: 'SSH',
+                }]
+            }],
+        },
+        {
+            type: 'checkbox',
+            name: 'dedup',
+            placeholder: helptext.dedup_placeholder,
+            tooltip: helptext.dedup_tooltip,
+            relation: [{
+                action: 'HIDE',
+                when: [{
+                    name: 'transport',
+                    value: 'LEGACY',
+                }]
+            }],
+        }, {
+            type: 'checkbox',
+            name: 'large_block',
+            placeholder: helptext.large_block_placeholder,
+            tooltip: helptext.large_block_tooltip,
+            value: true,
+            relation: [{
+                action: 'HIDE',
+                when: [{
+                    name: 'transport',
+                    value: 'LEGACY',
+                }]
+            }],
+        }, {
+            type: 'checkbox',
+            name: 'embed',
+            placeholder: helptext.embed_placeholder,
+            tooltip: helptext.embed_tooltip,
+            value: true,
+            relation: [{
+                action: 'HIDE',
+                when: [{
+                    name: 'transport',
+                    value: 'LEGACY',
+                }]
+            }],
+        }, {
+            type: 'checkbox',
+            name: 'compressed',
+            placeholder: helptext.compressed_placeholder,
+            tooltip: helptext.compressed_tooltip,
+            value: true,
+            relation: [{
+                action: 'HIDE',
+                when: [{
+                    name: 'transport',
+                    value: 'LEGACY',
+                }]
+            }],
+        }, {
+            type: 'input',
+            inputType: 'number',
+            name: 'retries',
+            placeholder: helptext.retries_placeholder,
+            tooltip: helptext.retries_tooltip,
+            value: 5,
+            relation: [{
+                action: 'HIDE',
+                when: [{
+                    name: 'transport',
+                    value: 'LEGACY',
+                }]
+            }],
+        }, {
+            type: 'select',
+            name: 'logging_level',
+            placeholder: helptext.logging_level_placeholder,
+            tooltip: helptext.logging_level_tooltip,
+            options: [
+                {
+                    label: 'DEFAULT',
+                    value: 'DEFAULT',
+                },
+                {
+                    label: 'DEBUG',
+                    value: 'DEBUG',
+                }, {
+                    label: 'INFO',
+                    value: 'INFO',
+                }, {
+                    label: 'WARNING',
+                    value: 'WARNING',
+                }, {
+                    label: 'ERROR',
+                    value: 'ERROR',
+                }
+            ],
+            value: 'DEFAULT',
+        }, {
+            type: 'checkbox',
+            name: 'enabled',
+            placeholder: helptext.enabled_placeholder,
+            tooltip: helptext.enabled_tooltip,
+            value: true,
+        },
+    ]
 
-  afterInit(entityForm: any) {
-    this.entityForm = entityForm;
-    this.subscription = entityForm.formGroup.controls['repl_remote_mode'].valueChanges.subscribe((res) => {
-      if (res === 'SEMIAUTOMATIC'){
-        _.find(this.fieldConfig, {'name' : 'repl_remote_port'})['isHidden'] = true;
-        _.find(this.fieldConfig, {'name' : 'repl_remote_hostkey'})['isHidden'] = true;
-        entityForm.setDisabled('repl_remote_hostkey', true);
-        _.find(this.fieldConfig, {'name' : 'repl_remote_http_port'})['isHidden'] = false;
-        _.find(this.fieldConfig, {'name' : 'repl_remote_https'})['isHidden'] = false;
-        _.find(this.fieldConfig, {'name' : 'repl_remote_token'})['isHidden'] = false;
-      } else {
-        _.find(this.fieldConfig, {'name' : 'repl_remote_port'})['isHidden'] = false;
-        _.find(this.fieldConfig, {'name' : 'repl_remote_hostkey'})['isHidden'] = false;
-        entityForm.setDisabled('repl_remote_hostkey', false);
-        _.find(this.fieldConfig, {'name' : 'repl_remote_http_port'})['isHidden'] = true;
-        _.find(this.fieldConfig, {'name' : 'repl_remote_https'})['isHidden'] = true;
-        _.find(this.fieldConfig, {'name' : 'repl_remote_token'})['isHidden'] = true;
+    constructor(private ws: WebSocketService, protected taskService: TaskService, private aroute: ActivatedRoute) {
+        const sshCredentialsField = _.find(this.fieldConfig, { name: 'ssh_credentials' });
+        this.ws.call('keychaincredential.query', [[["type", "=", "SSH_CREDENTIALS"]]]).subscribe(
+            (res) => {
+                for (const i in res) {
+                    sshCredentialsField.options.push({ label: res[i].name, value: res[i].id });
+                }
+            }
+        )
 
-      }
+        const periodicSnapshotTasksField = _.find(this.fieldConfig, { name: 'periodic_snapshot_tasks' });
+        this.ws.call('pool.snapshottask.query').subscribe(
+            (res) => {
+                for (const i in res) {
+                    const label = res[i].dataset + ' - ' + res[i].naming_schema + ' - ' + res[i].lifetime_value + ' ' + res[i].lifetime_unit + '(S) - ' + (res[i].enabled ? 'Enabled' : 'Disabled');
+                    periodicSnapshotTasksField.options.push({ label: label, value: res[i].id });
+                }
+            }
+        )
 
-    });
-    if (entityForm.isNew){
-      entityForm.formGroup.controls['repl_remote_mode'].setValue('MANUAL');
-      entityForm.formGroup.controls['repl_begin'].setValue('00:00:00');
-      entityForm.formGroup.controls['repl_end'].setValue('23:59:00');
-      entityForm.formGroup.controls['repl_remote_cipher'].setValue('standard');
-      entityForm.formGroup.controls['repl_compression'].setValue('lz4');
-    }
-    else {
-      _.find(this.fieldConfig, {'name' : 'repl_remote_mode'})['isHidden'] = true;
-      this.rest.get(this.resource_name, {}).subscribe((res)=>{
-        for (const key in entityForm.data){
-          if (key === 'repl_remote_port'){
-            _.find(this.fieldConfig, {'name' : 'repl_remote_http_port'})['isHidden'] = true;
-            _.find(this.fieldConfig, {'name' : 'repl_remote_https'})['isHidden'] = true;
-          }
+        const scheduleBeginField = _.find(this.fieldConfig, { 'name': 'schedule_begin' });
+        const restrictScheduleBeginField = _.find(this.fieldConfig, { 'name': 'restrict_schedule_begin' });
+        const scheduleEndField = _.find(this.fieldConfig, { 'name': 'schedule_end' });
+        const restrictScheduleEndField = _.find(this.fieldConfig, { 'name': 'restrict_schedule_end' });
+
+        const time_options = this.taskService.getTimeOptions();
+        for (let i = 0; i < time_options.length; i++) {
+            const option = { label: time_options[i].label, value: time_options[i].value };
+            scheduleBeginField.options.push(option);
+            restrictScheduleBeginField.options.push(option);
+            scheduleEndField.options.push(option);
+            restrictScheduleEndField.options.push(option);
         }
-      });
+
     }
-    this.repl_remote_dedicateduser = _.find(this.fieldConfig, {'name' : 'repl_remote_dedicateduser'});
-    this.ws.call('user.query').subscribe((res)=>{
-      res.forEach((item) => {
-        this.repl_remote_dedicateduser.options.push({label : item.username, value : item.username})
-      });
-    })
 
-    this.repl_filesystem = _.find(this.fieldConfig, {'name' : 'repl_filesystem'});
-    this.ws.call('pool.snapshottask.query').subscribe((res) => {
-      for (let i = 0; i < res.length; i++) {
-        const option = {label:  res[i].filesystem, value:  res[i].filesystem}
-        if (!_.find(this.repl_filesystem.options, option)) {
-          this.repl_filesystem.options.push(option);
+    preInit() {
+        this.aroute.params.subscribe(params => {
+            if (params['pk']) {
+                this.queryCallOption[0].push(parseInt(params['pk']));
+            }
+        });
+    }
+
+    afterInit(entityForm) {
+        this.entityForm = entityForm;
+        entityForm.formGroup.controls['periodic_snapshot_tasks'].valueChanges.subscribe(
+            (res) => {
+                if (entityForm.formGroup.controls['transport'].value !== 'LEGACY') {
+                    const toDisable = (res && res.length === 0) ? false : true;
+                    entityForm.setDisabled('schedule', toDisable, toDisable);
+                }
+            }
+        )
+
+        entityForm.formGroup.controls['schedule'].statusChanges.subscribe((res) => {
+            const toDisable = res === 'DISABLED' ? true : false;
+            if (entityForm.formGroup.controls['schedule'].value) {
+                entityForm.setDisabled('schedule_picker', toDisable, toDisable);
+                entityForm.setDisabled('schedule_begin', toDisable, toDisable);
+                entityForm.setDisabled('schedule_end', toDisable, toDisable);
+            }
+        })
+    }
+
+    resourceTransformIncomingRestData(wsResponse) {
+        if (wsResponse['ssh_credentials']) {
+            wsResponse['ssh_credentials'] = wsResponse['ssh_credentials'].id;
         }
-      }
-    });
-  }
 
-  customEventMethod( data: any ) {
-    const textAreaSSH: ElementRef = (<ElementRef>data.textAreaSSH);
-    const hostName: string = this.entityForm.value.repl_remote_hostname;
-    const port: number = Number(this.entityForm.value.repl_remote_port);
-    this.loader.open();
+        wsResponse['compression'] = wsResponse['compression'] === null ? 'DISABLED' : wsResponse['compression'];
+        wsResponse['logging_level'] = wsResponse['logging_level'] === null ? 'DEFAULT' : wsResponse['logging_level'];
+        const snapshotTasks = [];
+        for (const item of wsResponse['periodic_snapshot_tasks']) {
+            snapshotTasks.push(item.id);
+        }
+        wsResponse['periodic_snapshot_tasks'] = snapshotTasks;
 
-    this.ws.call('replication.public_key').subscribe((res)=> {
-      this.loader.close();
-      textAreaSSH.nativeElement.value = res;
-      this.entityForm.formGroup.controls.repl_remote_hostkey.setValue(res);
+        if (wsResponse.schedule) {
+            wsResponse['schedule_picker'] = "0" + " " +
+                wsResponse.schedule.hour + " " +
+                wsResponse.schedule.dom + " " +
+                wsResponse.schedule.month + " " +
+                wsResponse.schedule.dow;
+            wsResponse['schedule_begin'] = wsResponse.schedule.begin;
+            wsResponse['schedule_end'] = wsResponse.schedule.end;
+            wsResponse['schedule'] = true;
+        }
 
-    }, (error)=>{
-      this.loader.close();
-    });
+        if (wsResponse.restrict_schedule) {
+            wsResponse['restrict_schedule_picker'] = "0" + " " +
+                wsResponse.restrict_schedule.hour + " " +
+                wsResponse.restrict_schedule.dom + " " +
+                wsResponse.restrict_schedule.month + " " +
+                wsResponse.restrict_schedule.dow;
+            wsResponse['restrict_schedule_begin'] = wsResponse.restrict_schedule.begin;
+            wsResponse['restrict_schedule_end'] = wsResponse.restrict_schedule.end;
+            wsResponse['restrict_schedule'] = true;
+        }
+        return wsResponse;
+    }
 
+    parsePickerTime(picker, begin, end) {
+        const spl = picker.split(" ");
+        return {
+            minute: spl[0],
+            hour: spl[1],
+            dom: spl[2],
+            month: spl[3],
+            dow: spl[4],
+            begin: begin,
+            end: end,
+        };
+    }
 
-  }
+    beforeSubmit(data) {
+        for (let i = 0; i < data['source_datasets'].length; i++) {
+            if (_.startsWith(data['source_datasets'][i], '/mnt/')) {
+                data['source_datasets'][i] = data['source_datasets'][i].substring(5);
+            }
+        }
 
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
-  }
+        data["exclude"] = typeof data['exclude'] === "string" ? data['exclude'].split(' ') : data['exclude'];
+        data["periodic_snapshot_tasks"] = typeof data['periodic_snapshot_tasks'] === "string" ? data['periodic_snapshot_tasks'].split(' ') : data['periodic_snapshot_tasks'];
+        data["naming_schema"] = typeof data['naming_schema'] === "string" ? data['naming_schema'].split(' ') : data['naming_schema'];
+        data["also_include_naming_schema"] = typeof data['also_include_naming_schema'] === "string" ? data['also_include_naming_schema'].split(' ') : data['also_include_naming_schema'];
+
+        if (data['schedule']) {
+            data['schedule'] = this.parsePickerTime(data['schedule_picker'], data['schedule_begin'], data['schedule_end']);
+            delete data['schedule_picker'];
+            delete data['schedule_begin'];
+            delete data['schedule_end'];
+        }
+        if (data['restrict_schedule']) {
+            data['restrict_schedule'] = this.parsePickerTime(data['restrict_schedule_picker'], data['restrict_schedule_begin'], data['restrict_schedule_end']);
+            delete data['restrict_schedule_picker'];
+            delete data['restrict_schedule_begin'];
+            delete data['restrict_schedule_end'];
+        }
+
+        if (data['compression'] === 'DISABLED') {
+            delete data['compression'];
+        }
+        if (data['logging_level'] === 'DEFAULT') {
+            delete data['logging_level'];
+        }
+
+        if (data["transport"] === "LEGACY") {
+            data["auto"] = true;
+            data["retention_policy"] = "NONE";
+            data["allow_from_scratch"] = true;
+            data["exclude"] = [];
+            data["periodic_snapshot_tasks"] = [];
+            data["naming_schema"] = [];
+            data["also_include_naming_schema"] = [];
+            data["only_matching_schedule"] = false;
+            data["dedup"] = false;
+            data["large_block"] = false;
+            data["embed"] = false;
+            data["compressed"] = false;
+            data["retries"] = 1
+        }
+        // for edit replication task
+        if (!this.entityForm.isNew) {
+            if (data["transport"] === "LOCAL") {
+                data['ssh_credentials'] = null;
+            }
+            // removed schedule if selected period snapshot task
+            if (this.entityForm.formGroup.controls['schedule'].disabled && this.entityForm.wsResponse['schedule']) {
+                data['schedule'] = null;
+            }
+        }
+    }
+
 }

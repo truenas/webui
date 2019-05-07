@@ -1,101 +1,97 @@
-import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import * as _ from 'lodash';
-import { Subscription ,  Observable } from 'rxjs';
-import { RestService, WebSocketService } from '../../../../services/';
-import {  DialogService } from '../../../../services/';
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
+import { T } from '../../../../translate-marker';
+import { EntityUtils } from '../../../common/entity/utils';
+import { WebSocketService, DialogService, SnackbarService } from '../../../../services';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-  selector: 'app-replication-list',
-  template: `<entity-table [title]="title"  [conf]="this"></entity-table>`
+    selector: 'app-replication-list',
+    template: `<entity-table [title]='title' [conf]='this'></entity-table>`,
+    providers: [SnackbarService]
 })
 export class ReplicationListComponent {
 
-  public title = "Replication Tasks";
-  protected resource_name = 'storage/replication';
-  protected route_add: string[] = ["tasks", "replication", "add-replication"];
-  protected route_success: string[] = ['tasks', 'replication'];
-  protected entityList: any;
+    public title = "Replication Tasks";
+    protected queryCall = 'replication.query';
+    protected wsDelete = 'replication.delete';
+    protected route_add: string[] = ["tasks", "replication", "add"];
+    protected route_edit: string[] = ['tasks', 'replication', 'edit'];
+    protected route_success: string[] = ['tasks', 'replication'];
+    protected entityList: any;
+    protected asyncView = true;
 
-  public busy: Subscription;
-  public sub: Subscription;
-  public columns: Array<any> = [
-    { name: 'Pool/Dataset', prop: 'repl_filesystem' },
-    { name: 'Remote Host', prop: 'repl_remote_hostname'},
-    { name: "Status", prop: 'repl_status'},
-    { name: 'Begin Time', prop:'repl_begin'},
-    { name: 'End Time', prop:'repl_end'},
-    { name: 'Enabled', prop: 'repl_enabled' }  ];
+    public columns: Array<any> = [
+        { name: 'Name', prop: 'name' },
+        { name: 'Direction', prop: 'direction' },
+        { name: 'Transport', prop: 'transport' },
+        { name: 'SSH Connection', prop: 'ssh_connection' },
+        { name: 'Source Dataset', prop: 'source_datasets' },
+        { name: 'Target Dataset', prop: 'target_dataset' },
+        { name: 'Recursive', prop: 'recursive' },
+        { name: 'Auto', prop: 'auto' },
+        { name: 'Logging Level', prop: 'logging_level' },
+        { name: 'Enabled', prop: 'enabled' },
+        { name: 'State', prop: 'task_state' },
+        { name: 'Last Snapshot', prop: 'task_last_snapshot' },
+    ];
+    public config: any = {
+        paging: true,
+        sorting: { columns: this.columns },
+        deleteMsg: {
+            title: 'Replication Task',
+            key_props: ['name']
+        },
+    };
 
-  public config: any = {
-    paging: true,
-    sorting: { columns: this.columns },
-    deleteMsg: {
-      title: 'Replication Task',
-      key_props: ['repl_filesystem', 'repl_remote_hostname']
-    },
-  };
+    constructor(private router: Router, private ws: WebSocketService, private dialog: DialogService,
+        private translateService: TranslateService, private snackbarService: SnackbarService) { }
 
-  public custActions: Array<any> = [
-  {
-    id: "replication_keys",
-    name: "Replication Keys",
-    function: () => {
-      this.getReplicationKeys();
+    afterInit(entityList: any) {
+        this.entityList = entityList;
     }
-  },
-  {
-    id: "replication_token",
-    name: "Replication Token",
-    function: () => {
-      this.getReplicationToken();
+
+    dataHandler(entityList) {
+        for (let i = 0; i < entityList.rows.length; i++) {
+            entityList.rows[i].task_state = entityList.rows[i].state.state + (entityList.rows[i].state.error ? ': ' + entityList.rows[i].state.error : '');
+            entityList.rows[i].task_last_snapshot = entityList.rows[i].state.last_snapshot;
+            entityList.rows[i].ssh_connection = entityList.rows[i].ssh_credentials ? entityList.rows[i].ssh_credentials.name : '-';
+        }
     }
-  }];
 
-  constructor(protected router: Router, protected aroute: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
-    protected _injector: Injector, protected _appRef: ApplicationRef,
-    private dialog: DialogService) { }
-
-
-  afterInit(entityList: any) {
-    this.entityList = entityList;
-  }
-
-  preInit(entityList: any) {
-    this.sub = this.aroute.params.subscribe(params => { });
-  }
-
-  getActions(parentRow) {
-    return [{
-      id: "edit",
-      label: "Edit",
-      onClick: (row) => {
-        const urlNav = new Array<String>('').concat(['tasks', 'replication', 'edit-replication', row.id]);
-        this.router.navigate(urlNav);
-      }
-    },
-    {
-      id: "delete",
-      label: "Delete",
-      onClick: (row) => {
-        this.entityList.doDelete(row);
-      }
+    getActions(parentrow) {
+        return [{
+            id: "run",
+            label: T("Run Now"),
+            onClick: (row) => {
+                this.dialog.confirm(T("Run Now"), T("Replicate <i>") + row.name + T("</i> now?"), true).subscribe((res) => {
+                    if (res) {
+                        row.state = 'RUNNING';
+                        this.ws.call('replication.run', [row.id]).subscribe(
+                            (res) => {
+                                this.snackbarService.open(T('Replication <i>') + row.name + T('</i> has started.'), T('close'), { duration: 5000 });
+                            },
+                            (err) => {
+                                new EntityUtils().handleWSError(this.entityList, err);
+                            })
+                    }
+                });
+            },
+        }, {
+            id: "edit",
+            label: T("Edit"),
+            onClick: (row) => {
+                this.route_edit.push(row.id);
+                this.router.navigate(this.route_edit);
+            },
+        }, {
+            id: "delete",
+            label: T("Delete"),
+            onClick: (row) => {
+                this.entityList.doDelete(row);
+            },
+        }]
     }
-    ]
-  }
-
-  getReplicationKeys(){
-    this.ws.call('replication.public_key').subscribe((res)=> {
-      this.dialog.Info('Replication Keys',res);
-    });
-  }
-
-  getReplicationToken(){
-    this.ws.call('auth.generate_token').subscribe((res)=> {
-      this.dialog.Info('Replication Auth Token',res);
-    });
-  }
 
 }
