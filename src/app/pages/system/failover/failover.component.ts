@@ -14,7 +14,7 @@ import { helptext_system_failover } from 'app/helptext/system/failover';
 @Component({
   selector: 'app-system-failover',
   templateUrl: 'failover.component.html',
-  styleUrls: ['failover.component.css'],
+  styleUrls: [],
   providers : [ SnackbarService ],
 })
 
@@ -120,12 +120,6 @@ export class FailoverComponent implements OnDestroy {
     private ws: WebSocketService,
     public snackBar: SnackbarService,
     protected matDialog: MatDialog) {}
-
-  openSnackBar(message: string, action: string) {
-    this.snackBar.open(message, action, {
-      duration: 5000
-    });
-  }
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
