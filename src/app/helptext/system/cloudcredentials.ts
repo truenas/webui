@@ -309,7 +309,8 @@ export const helptext_system_cloudcredentials = {
 
   private_key_sftp: {
     placeholder: T("Private Key ID"),
-    tooltip: T('')
+    tooltip: T('Import the private key from an existing SSH keypair.\
+ Choose the name of the SSH keypair to use for this connection.')
   },
 
   url_webdav: {
