@@ -15,7 +15,7 @@ export class SnapshotListComponent implements OnInit {
 
   public title = "Snapshots";
   protected queryCall = 'zfs.snapshot.query';
-  protected queryCallOption = [[["pool", "!=", "freenas-boot"], {"select": ["name"], "order_by": ["name"]}]];
+  protected queryCallOption = [[["pool", "!=", "freenas-boot"]], {"select": ["name", "properties"], "order_by": ["name"]}];
   protected route_add: string[] = ['storage', 'snapshots', 'add'];
   protected route_add_tooltip = "Add Snapshot";
   protected wsDelete = 'zfs.snapshot.remove';
@@ -80,7 +80,7 @@ export class SnapshotListComponent implements OnInit {
   async ngOnInit() {
     await this.ws.call('systemdataset.config').toPromise().then((res) => {
       if (res && res.basename && res.basename !== '') {
-        this.queryCallOption[0].push(["name", "!^", res.basename]);
+        this.queryCallOption[0][1] = (["name", "!^", res.basename]);
       }
     });
   }
