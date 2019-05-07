@@ -20,10 +20,6 @@ xpaths = {
 }
 
 
-def test_00_set_implicitly_wait(wb_driver):
-    wb_driver.implicitly_wait(1)
-
-
 def test_01_nav_net_linkagg(wb_driver):
     # Click on the link aggregations submenu
     wb_driver.find_element_by_xpath(xpaths['submenuLink']).click()

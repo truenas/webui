@@ -24,11 +24,6 @@ xpaths = {
 }
 
 
-def test_00_set_implicitly_wait(wb_driver):
-    wb_driver.implicitly_wait(1)
-    time.sleep(1)
-
-
 def test_01_nav_net_conf(wb_driver):
     # Navigating to System>Update page
     wb_driver.find_element_by_xpath(xpaths['navNetwork']).click()

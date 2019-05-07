@@ -546,7 +546,7 @@ export class IscsiWizardComponent {
 
         this.iscsiService.getAuth().subscribe((res) => {
             for (let i = 0; i < res.length; i++) {
-                authGroupField.options.push({ label: res[i].id, value: res[i].id });
+                authGroupField.options.push({ label: res[i].tag, value: res[i].tag });
             }
         });
 

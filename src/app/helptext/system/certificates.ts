@@ -14,6 +14,13 @@ export const helptext_system_certificates = {
       placeholder: T("Type")
     },
 
+    isCSRonSystem: {
+      placeholder: T("CSR exists on this system"),
+      tooltip: T(
+        'Check this box if importing a certificate for which a CSR exists on this system'
+      )
+    },
+    
     signedby: {
       placeholder: T("Signing Certificate Authority"),
       tooltip: T(
@@ -127,6 +134,12 @@ export const helptext_system_certificates = {
       validation: [Validators.required]
     },
 
+    cert_csr: {
+      placeholder: T("Signing Request"),
+      tooltip: T("Paste the contents of your Certificate Signing Request here."),
+      validation: [Validators.required]
+    },
+
     privatekey: {
       placeholder: T("Private Key"),
       tooltip: T(
@@ -145,6 +158,7 @@ export const helptext_system_certificates = {
     passphrase2: {
       placeholder: T("Confirm Passphrase")
     }
+
   },
 
   edit: {
