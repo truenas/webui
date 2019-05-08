@@ -30,15 +30,14 @@ export class ReplicationWizardComponent {
             function: () => {
                 this.loader.open();
                 const payload = {
-                    'host': this.entityWizard.value['host'],
-                    'port': this.entityWizard.value['port'],
-                    'connect_timeout': this.entityWizard.value['connect_timeout'],
+                    'host': this.entityWizard.formArray.controls[0].value['host'],
+                    'port': this.entityWizard.formArray.controls[0].value['port'],
                 };
 
                 this.ws.call('keychaincredential.remote_ssh_host_key_scan', [payload]).subscribe(
                     (res) => {
                         this.loader.close();
-                        this.entityWizard.formGroup.controls['remote_host_key'].setValue(res);
+                        this.entityWizard.formArray.controls[0].controls['remote_host_key'].setValue(res);
                     },
                     (err) => {
                         this.loader.close();
@@ -176,6 +175,7 @@ export class ReplicationWizardComponent {
                     placeholder: sshConnectionsHelptex.remote_host_key_placeholder,
                     tooltip: sshConnectionsHelptex.remote_host_key_tooltip,
                     value: '',
+                    validation: [Validators.required],
                 }, {
                     type: 'select',
                     name: 'cipher',
