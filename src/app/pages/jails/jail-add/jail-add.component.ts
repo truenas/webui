@@ -81,6 +81,14 @@ export class JailAddComponent implements OnInit, AfterViewInit {
     },
     {
       type: 'checkbox',
+      name: 'https',
+      placeholder: helptext.https_placeholder,
+      tooltip: helptext.https_tooltip,
+      value: true,
+      isHidden: true,
+    },
+    {
+      type: 'checkbox',
       name: 'dhcp',
       placeholder: helptext.dhcp_placeholder,
       tooltip: helptext.dhcp_tooltip,
@@ -930,6 +938,7 @@ export class JailAddComponent implements OnInit, AfterViewInit {
   protected ip6_prefixField: any;
   protected vnet_default_interfaceField:any;
   protected template_list: string[];
+  protected unfetchedRelease = [];
 
   constructor(protected router: Router,
     protected jailService: JailService,
@@ -1024,6 +1033,7 @@ export class JailAddComponent implements OnInit, AfterViewInit {
                   let rmVersion = Number(_.split(res_remote[i], '-')[0]);
                   if (this.currentServerVersion >= Math.floor(rmVersion)) {
                     this.releaseField.options.push({ label: res_remote[i], value: res_remote[i] });
+                    this.unfetchedRelease.push(res_remote[i]);
                   }
                 }
               }
@@ -1067,6 +1077,11 @@ export class JailAddComponent implements OnInit, AfterViewInit {
         this.setRelation(config);
       }
     }
+
+    const httpsField =  _.find(this.formFileds, {'name': 'https'});
+    this.formGroup.controls['release'].valueChanges.subscribe((res) => {
+      httpsField.isHidden = _.indexOf(this.unfetchedRelease, res) > -1 ? false : true;
+    });
 
     this.formGroup.controls['dhcp'].valueChanges.subscribe((res) => {
       if (res) {
@@ -1271,7 +1286,7 @@ export class JailAddComponent implements OnInit, AfterViewInit {
               }
               delete value[i];
           } else {
-            if (i != 'uuid' && i != 'release' && i != 'basejail') {
+            if (i != 'uuid' && i != 'release' && i != 'basejail' && i != 'https') {
               property.push(i + '=' + value[i]);
               delete value[i];
             }
