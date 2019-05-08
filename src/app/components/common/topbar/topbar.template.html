@@ -29,14 +29,12 @@
       <!-- HA Status -->
       <span *ngIf="is_ha">
       <button *ngIf="ha_disabled_reasons.length === 0" mat-icon-button id="ha" [matTooltip]="ha_status_text" (click)="showHAStatus()">
-        <mat-icon class="mdi-icon" role="img" fontSet="mdi-set" fontIcon="mdi-lan-connect"></mat-icon>
+        <mat-icon svgIcon="ha_enabled"></mat-icon>
       </button>
       <button *ngIf="ha_disabled_reasons.length > 0" mat-icon-button id="ha" [matTooltip]="ha_status_text" (click)="showHAStatus()">
-        <span *ngIf="ha_disabled_reasons[0] === 'NO_SYSTEM_READY';else HADisabled">
-          <mat-icon class="mdi-icon" role="img" fontSet="mdi-set" fontIcon="mdi-lan-pending"></mat-icon>
-        </span>
+        <mat-icon *ngIf="ha_disabled_reasons[0] === 'NO_SYSTEM_READY';else HADisabled" svgIcon="ha_reconnecting"></mat-icon>
         <ng-template #HADisabled>
-          <mat-icon class="mdi-icon" role="img" fontSet="mdi-set" fontIcon="mdi-lan-disconnect"></mat-icon>
+          <mat-icon svgIcon="ha_disabled"></mat-icon>
         </ng-template>
       </button>
       </span>
