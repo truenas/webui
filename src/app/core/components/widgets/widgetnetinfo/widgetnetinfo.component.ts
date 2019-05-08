@@ -192,17 +192,20 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
   }
 
   collectData(evt:CoreEvent){
-    let data = evt.data.data
+    let data = [];
     let rxIndex:number;
     let txIndex:number;
-    for(let l = 0; l < evt.data.meta.legend.length; l++){
-      let x = evt.data.meta.legend[l];
-      let key = "interface-" + this.primaryNIC + "/if_octets"
-      if(x == key && !rxIndex){
-        rxIndex = l;
-        txIndex = l + 1;
-        break;
-      } 
+    if (evt.data && evt.data.data && evt.data.meta) {
+      data = evt.data.data
+      for(let l = 0; l < evt.data.meta.legend.length; l++){
+        let x = evt.data.meta.legend[l];
+        let key = "interface-" + this.primaryNIC + "/if_octets"
+        if(x == key && !rxIndex){
+          rxIndex = l;
+          txIndex = l + 1;
+          break;
+        } 
+      }
     }
 
     let rx:number[] = [];

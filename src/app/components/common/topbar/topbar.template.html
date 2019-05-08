@@ -20,6 +20,9 @@
       </div -->
       <span fxFlex></span>
       <!--loading icon-->
+      <button *ngIf="pendingNetworkChanges" mat-icon-button id="network" matTooltip="Pending Network Changes" (click)="showNetworkChangesPending()" class="topbar-button-right">
+        <mat-icon class="movement">device_hub</mat-icon>
+      </button>
       <button *ngIf="showResilvering" mat-icon-button id="resilver" matTooltip="resilvering" (click)="showResilveringDetails()" class="topbar-button-right">
         <mat-icon class="fa-spin">autorenew</mat-icon>
       </button>

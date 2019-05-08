@@ -19,10 +19,6 @@ xpaths = {
 }
 
 
-def test_00_set_implicitly_wait(wb_driver):
-    wb_driver.implicitly_wait(1)
-
-
 def test_01_nav_tasks_SMART(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['submenuSMART']).click()
     # get the ui element
