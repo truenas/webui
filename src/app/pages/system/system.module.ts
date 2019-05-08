@@ -31,6 +31,8 @@ import { NTPServerEditComponent } from './ntpservers/ntpserver-edit/';
 import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
 import { CloudCredentialsFormComponent } from './CloudCredentials/cloudcredentials-form/';
+import { SshKeypairsListComponent } from './ssh-keypairs/ssh-keypairs-list/ssh-keypairs-list.component';
+import { SshKeypairsFormComponent } from './ssh-keypairs/ssh-keypairs-form/ssh-keypairs-form.component';
 import { CertificateAuthorityListComponent } from './ca/ca-list/';
 import { CertificateAuthorityAddComponent } from './ca/ca-add/';
 import { CertificateAuthorityEditComponent } from './ca/ca-edit/';
@@ -76,6 +78,8 @@ import { ReportingComponent } from './reporting/reporting.component';
     AlertServiceListComponent,
     CloudCredentialsListComponent,
     CloudCredentialsFormComponent,
+    SshKeypairsListComponent,
+    SshKeypairsFormComponent,
     CertificateAuthorityListComponent,
     CertificateAuthorityAddComponent,
     CertificateAuthorityEditComponent,
