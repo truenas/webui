@@ -17,6 +17,7 @@ export class ServiceAsigraComponent {
   protected route_success: string[] = [ 'services' ];
   public entityForm: any;
   public fs: any;
+  public isRunning: boolean = false;
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -29,15 +30,7 @@ export class ServiceAsigraComponent {
     }
   ]
 
-  public custActions: Array<any> = [
-    {
-      id : 'launch_ds_operator',
-      name : helptext.launchbutton_name,
-      function : () => {
-        window.open('_plugins/asigra/DSOP.jnlp', '_blank')
-      }
-    }
-  ];
+  public custActions: Array<any> = [];
 
   constructor(protected router: Router, protected ws: WebSocketService, protected loader: AppLoaderService,
     protected snackBar: MatSnackBar) {}
@@ -53,7 +46,21 @@ export class ServiceAsigraComponent {
     entityForm.ws.call('asigra.config').subscribe((res) => {
       entityForm.formGroup.controls['filesystem'].setValue(res.filesystem);
     })
-
+    entityForm.ws.call('service.query').subscribe((res) => {
+      const result = res.find( item => item.service === 'asigra' );
+      result.state === 'RUNNING' ? this.isRunning = true : this.isRunning = false;
+      // Button is disabled if service isn't running
+      this.custActions.push(
+        {
+          id : 'launch_ds_operator',
+          name : helptext.launchbutton_name,
+          function : () => {
+            window.open('_plugins/asigra/DSOP.jnlp', '_blank')
+          },
+          disabled : !this.isRunning
+        }
+      )
+    })
   }
 
   customSubmit(value) {
