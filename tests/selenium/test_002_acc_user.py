@@ -9,7 +9,7 @@ import time
 from selenium.webdriver.common.keys import Keys
 cwd = str(os.getcwd())
 sys.path.append(cwd)
-from function import take_screenshot, is_element_present
+from function import take_screenshot, is_element_present, error_check
 from source import *
 
 
@@ -36,15 +36,12 @@ xpaths = {
 }
 
 
-def test_00_set_implicitly_wait(wb_driver):
-    wb_driver.implicitly_wait(1)
-    # Canceling the tour guide if found
+def test_00_disable_tour_guide_if_present(wb_driver):
     if is_element_present(wb_driver, xpaths['tourButton']):
         wb_driver.find_element_by_xpath(xpaths['tourButton']).click()
 
 
 def test_01_nav_acc_user(wb_driver):
-    error_check(wb_driver)
     # Click  Account menu
     wb_driver.find_element_by_xpath(xpaths['navAccount']).click()
     # allowing the button to load
@@ -92,7 +89,8 @@ def test_02_create_newuser(wb_driver):
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
-    error_check(wb_driver)
+    no_error = error_check(wb_driver)
+    assert no_error['result'], no_error['traceback']
 
 
 def test_03_create_newuser_primarygroup_uncheck(wb_driver):
@@ -121,12 +119,14 @@ def test_03_create_newuser_primarygroup_uncheck(wb_driver):
         wb_driver.find_element_by_xpath(xpaths['saveButton']).click()
     else:
         print("could not find the save button and clicking")
+    time.sleep(1)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
     # check if there is a generic error when making a duplicate user, and print the error
     time.sleep(1)
-    error_check(wb_driver)
+    no_error = error_check(wb_driver)
+    assert no_error['result'], no_error['traceback']
 
 
 def test_04_create_superuser(wb_driver):
@@ -158,12 +158,13 @@ def test_04_create_superuser(wb_driver):
         wb_driver.find_element_by_xpath(xpaths['saveButton']).click()
     else:
         print("could not find the save button and clicking")
+    time.sleep(1)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
     # check if there is a generic error when making a duplicate user, and print the error
-    time.sleep(1)
-    error_check(wb_driver)
+    no_error = error_check(wb_driver)
+    assert no_error['result'], no_error['traceback']
     time.sleep(2)
 
 
@@ -197,7 +198,8 @@ def test_05_create_duplicateuser(wb_driver):
     take_screenshot(wb_driver, script_name, test_name)
     # check if there is a generic error when making a duplicate user, and print the error
     time.sleep(1)
-    error_check(wb_driver)
+    no_error = error_check(wb_driver)
+    assert no_error['result'], no_error['traceback']
     time.sleep(2)
 
 
@@ -224,13 +226,12 @@ def test_06_create_newuser_suggestedname(wb_driver):
         wb_driver.find_element_by_xpath(xpaths['saveButton']).click()
     else:
         print("could not find the save button and clicking")
-
-    # check if there is a generic error when making a duplicate user, and print the error
     time.sleep(1)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
-    error_check(wb_driver)
+    no_error = error_check(wb_driver)
+    assert no_error['result'], no_error['traceback']
     time.sleep(2)
 
 
@@ -239,23 +240,3 @@ def test_07_close_navAccount(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['navAccount']).click()
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
-
-
-# Next step-- To check if the new user is present in the list via automation
-
-
-def error_check(wb_driver):
-    if is_element_present(wb_driver, '//*[contains(text(), "Close")]'):
-        if is_element_present(wb_driver, '/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
-            ui_element = wb_driver.find_element_by_xpath('/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1')
-            error_element = ui_element.text
-            print(error_element)
-        wb_driver.find_element_by_xpath('//*[contains(text(), "Close")]').click()
-        print("Duplicate user cannot be created")
-    if is_element_present(wb_driver, '//*[contains(text(), "Close")]'):
-        if is_element_present(wb_driver, '/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
-            ui_element = wb_driver.find_element_by_xpath('/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1')
-            error_element = ui_element.text
-            print(error_element)
-        wb_driver.find_element_by_xpath('//*[contains(text(), "Close")]').click()
-        print("Duplicate user cannot be created")

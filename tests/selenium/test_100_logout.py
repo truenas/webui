@@ -22,10 +22,6 @@ xpaths = {
 }
 
 
-def test_00_set_implicitly_wait(wb_driver):
-    wb_driver.implicitly_wait(1)
-
-
 def test_01_logout(wb_driver):
     # Click on root account
     wb_driver.find_element_by_xpath(xpaths['powerButton']).click()

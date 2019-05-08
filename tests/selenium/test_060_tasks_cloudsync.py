@@ -5,7 +5,6 @@
 
 import sys
 import os
-import time
 cwd = str(os.getcwd())
 sys.path.append(cwd)
 from function import take_screenshot
@@ -18,10 +17,6 @@ xpaths = {
     'submenuCloudsync': '//*[@id="3-8"]',
     'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
 }
-
-
-def test_00_set_implicitly_wait(wb_driver):
-    wb_driver.implicitly_wait(1)
 
 
 def test_01_nav_tasks_cloudsync(wb_driver):

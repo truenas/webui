@@ -25,6 +25,8 @@ import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
 import { AlertServiceListComponent } from './alertservice/alertservice-list/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
 import { CloudCredentialsFormComponent } from './CloudCredentials/cloudcredentials-form/';
+import { SshKeypairsListComponent } from './ssh-keypairs/ssh-keypairs-list/ssh-keypairs-list.component';
+import { SshKeypairsFormComponent } from './ssh-keypairs/ssh-keypairs-form/ssh-keypairs-form.component';
 import { CertificateAuthorityListComponent } from './ca/ca-list/';
 import { CertificateAuthorityAddComponent } from './ca/ca-add/';
 import { CertificateAuthorityEditComponent } from './ca/ca-edit/';
@@ -37,6 +39,7 @@ import {EmailComponent} from './email/';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
 import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
+import { ProactiveSupportComponent } from './proactive-support/proactive-support.component';
 import { ReportingComponent } from './reporting/reporting.component';
 
 export const routes: Routes = [
@@ -222,6 +225,24 @@ export const routes: Routes = [
       ]
     },
     {
+      path: 'sshkeypairs',
+      data: { title: 'SSH Keypairs', breadcrumb: 'SSH Keypairs', icon: 'vpn_key' },
+      children: [{
+          path: '',
+          component: SshKeypairsListComponent,
+          data: { title: 'SSH Keypairs', breadcrumb: 'SSH Keypairs' },
+        }, {
+          path: 'add',
+          component: SshKeypairsFormComponent,
+          data: { title: 'Add', breadcrumb: 'Add' },
+        }, {
+          path: 'edit/:pk',
+          component: SshKeypairsFormComponent,
+          data: { title: 'Edit', breadcrumb: 'Edit' },
+        }
+      ]
+    },
+    {
       path: 'ca',
       data: { title: 'Certificate Authorities', breadcrumb: 'Certificate Authorities', icon: 'card_membership' },
       children: [{
@@ -264,7 +285,16 @@ export const routes: Routes = [
       path: 'support',
       component: SupportComponent,
       data: { title: 'Support', breadcrumb: 'Support', icon: 'perm_phone_msg' },
-    },]
+    },
+    {
+      path: 'proactivesupport',
+      component: ProactiveSupportComponent,
+      data: {
+          title: 'Proactive Support',
+          breadcrumb: 'Proactive Support',
+          icon: 'perm_phone_msg',
+      }
+    }]
   }
 ];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);

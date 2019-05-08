@@ -63,6 +63,7 @@ def test_01_nav_store_pool(wb_driver):
 
 
 def test_02_create_newpool(wb_driver):
+    test_name = sys._getframe().f_code.co_name
     time.sleep(1)
     # Click create new pool option
     wb_driver.find_element_by_xpath(xpaths['addAction']).click()
@@ -80,14 +81,15 @@ def test_02_create_newpool(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['confirmCheckbox']).click()
     # Click Ok Button
     wb_driver.find_element_by_xpath(xpaths['createpoolButton']).click()
+    wait_on_element(wb_driver, xpaths['addAction'], script_name, test_name)
     # taking screenshot
-    test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
     error_check(wb_driver)
-    time.sleep(2)
+    time.sleep(1)
 
 
 def test_03_create_newpool2(wb_driver):
+    test_name = sys._getframe().f_code.co_name
     time.sleep(1)
     # Click create new pool option
     wb_driver.find_element_by_xpath(xpaths['addAction']).click()
@@ -102,16 +104,15 @@ def test_03_create_newpool2(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['diskselectedmoveButton']).click()
     # Click on create new Pool button
     wb_driver.find_element_by_xpath(xpaths['createButton']).click()
-    # checkbox confirmation
+    # check box confirmation
     wb_driver.find_element_by_xpath(xpaths['confirmCheckbox']).click()
-    # Click Ok Button
+    # Click OK Button
     wb_driver.find_element_by_xpath(xpaths['createpoolButton']).click()
-    time.sleep(1)
+    wait_on_element(wb_driver, xpaths['addAction'], script_name, test_name)
     # taking screenshot
-    test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
     error_check(wb_driver)
-    time.sleep(2)
+    time.sleep(1)
 
 
 def test_04_close_navStorage(wb_driver):
