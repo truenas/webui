@@ -41,7 +41,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
   }
   set selectedVdev(value) {
     this._selectedVdev = value;
-    this.selectedVdevDisks = value ? Object.keys(this.selectedVdev.disks) : null;
+    this.selectedVdevDisks = value && value.disks ? Object.keys(this.selectedVdev.disks) : null;
   }
 
   get enclosurePools(){
@@ -213,7 +213,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
           this.enclosure.container.x = this.app._options.width / 2 - this.enclosure.container.width / 2;
           this.enclosure.container.y = this.app._options.height / 2 - this.enclosure.container.height / 2;
 
-          this.setDisksEnabledState();
+          //this.setDisksEnabledState();
           this.setCurrentView(this.defaultView);
         break;
         case "DriveSelected":
@@ -268,7 +268,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
 
     let dt = this.enclosure.makeDriveTray();
     this.container.addChild(dt.container);
-    this.setCurrentView('status');
+    this.setCurrentView(this.defaultView);
     
   }
 
@@ -315,7 +315,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
       case 'details':
         this.container.alpha = 1;
         this.setDisksDisabled();
-        this.setDisksHealthState(this.selectedDisk.enclosure_slot);
+        this.setDisksHealthState(this.selectedDisk.enclosure.slot);
         let vdev = this.system.getVdevInfo(this.selectedDisk.devname);
         this.selectedVdev = vdev;
 
@@ -408,7 +408,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
   setDisksHealthState(slot?: number){ // Give it a slot number and it will only change that slot
 
     if(slot || typeof slot !== 'undefined'){
-      this.setDiskHealthState(slot);
+      this.setDiskHealthState(slot - 1); // Enclosure slot numbers start at 1
       return;
     }
 
@@ -431,6 +431,9 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
           case "FAULT":
             this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: index, color: this.theme.red}});
           break;
+          case "AVAILABLE":
+            this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: index, color: '#999999'}});
+          break;
           default:
             this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: index, color: this.theme.yellow}});
           break
@@ -441,11 +444,15 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
 
   setDisksPoolState(){
     this.setDisksDisabled();
-
-    this.selectedEnclosure.disks.forEach((disk, index) => {
-      let pIndex = disk.vdev.poolIndex;
-      this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: index, color: this.theme[this.theme.accentColors[pIndex]]}});
-    });
+    let keys = Object.keys(this.selectedEnclosure.poolKeys);
+    if(keys.length > 0){
+      this.selectedEnclosure.disks.forEach((disk, index) => {
+        let pIndex = disk.vdev.poolIndex;
+        this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: index, color: this.theme[this.theme.accentColors[pIndex]]}});
+      });
+    } else {
+      return;
+    }
   }
 
   converter(size: number){

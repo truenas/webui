@@ -81,7 +81,9 @@ export class VDevLabelsSVG {
           this.createVdevLabels(evt.data);
           break
         case "OverlayReady":
-          this.traceElements(evt.data.vdev, evt.data.overlay);
+          if(evt.data.vdev.disks){
+            this.traceElements(evt.data.vdev, evt.data.overlay);
+          }
           break
       }
     });
@@ -144,18 +146,14 @@ export class VDevLabelsSVG {
 
 
   createVdevLabels(vdev){
+    // If there is no pool then there
+    // won't be vdev info either
+    if(!vdev.disks){return;}
 
     let disks = Object.keys(vdev.disks);// NOTE: vdev.slots only has values for current enclosure
     let xOffset = this.chassis.container.x + this.chassis.container.width + 16;
     let freeSpace = this.app._options.width - xOffset;
     let gap = 3;
-      
-    
-    // Simulate disks that live on another enclosure
-    /*for(let i = 10; i < 21; i++){
-      disks.push('ada' + i);
-    }*/
-    
 
     disks.forEach((disk, index) => {
       let present = false; // Is the disk in this enclosure?

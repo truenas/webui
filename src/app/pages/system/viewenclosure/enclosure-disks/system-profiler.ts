@@ -15,7 +15,7 @@ interface VDev {
 
 export class SystemProfiler {
 
-  public systemDisk:any;
+  public systemDisks:any[] = [];
   public platform: string; // Model Unit
   public profile: Enclosure[] = [];
 
@@ -36,13 +36,13 @@ export class SystemProfiler {
   }
 
   private parseDiskData(disks){
-
     let data = this.filterSystemDisk(disks);
     let enclosureID = 0;
     let enclosure = {model: this.platform, disks: [], diskKeys: {}, poolKeys: {} };
     const last = data.length - 1;
     data.forEach((item, index) => {
 
+      item.status = 'AVAILABLE'; // Label it as available. If it is assigned to a vdev/pool then this will be overridden later.
       enclosure.disks.push(item);
       enclosure.diskKeys[item.devname] = index;
 
@@ -51,7 +51,7 @@ export class SystemProfiler {
       // SIMLATE ENCLOSURE SLOT WHEN 
       // TESTING ON NON TRUENAS HARDWARE
       // REMOVE THIS FOR PRODUCTION!!!
-      data[index].enclosure_slot = index;
+      //data[index].enclosure.slot = index;
 
       if( !next || next.enclosure_num > enclosureID ){ 
         enclosure.model = enclosureID > 0 ? "ES" +  enclosure.disks.length : this.platform;
@@ -67,22 +67,30 @@ export class SystemProfiler {
   }
 
   filterSystemDisk(disks){
-    let sd;
-    let data = disks.map((item, index) => {
-      if(item.devname == 'ada0'){
-        this.systemDisk = item;
-        sd = index;
-      } else {
-        return item;
-      }
+    let sd = [];
+    let data = disks.filter((item, index) => {
+      if(!item.enclosure){
+        this.systemDisks.push(item);
+        sd.push(index);
+      } 
+      return item.enclosure;
+      
     });
-    data.splice(sd, 1);
+    /*for(let index = data.length; index >= 0; index--){
+      if(sd.indexOf(index) !== -1){ 
+        data.splice(index, 1);
+      }
+    };*/
     this.diskData = data;
     return data;
   }
   
   private parsePoolsData(obj){
     obj.forEach((pool, pIndex) => {     
+      console.log(pool);
+      if(!pool.topology){
+        return;
+      }
 
       pool.topology.data.forEach((vdev, vIndex) => {
 
@@ -168,13 +176,23 @@ export class SystemProfiler {
     // Returns vdev with slot info
     let enclosure = this.profile[this.getEnclosureNumber(diskName)];
     let disk = enclosure.disks[enclosure.diskKeys[diskName]];    
+    
+    if(!disk.vdev){
+      return {
+        pool: 'None',
+        type: 'None',
+        poolIndex: -1,
+        vdevIndex: -1
+      }
+    }
+
     let slots = Object.assign({}, disk.vdev.disks);
     
     let vdev = Object.assign({}, disk.vdev);
     let keys = Object.keys(slots);
     keys.forEach((d, index) => {
-      let s = enclosure.disks[enclosure.diskKeys[d]].enclosure_slot;
-      slots[d] = s; //enclosure.disks[enclosure.diskKeys[d]].enclosure_slot;
+      let s = enclosure.disks[enclosure.diskKeys[d]].enclosure.slot;
+      slots[d] = s; //enclosure.disks[enclosure.diskKeys[d]].enclosure.slot;
     });
 
     vdev.selectedDisk = diskName;

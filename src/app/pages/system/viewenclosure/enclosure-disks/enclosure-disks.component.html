@@ -14,9 +14,17 @@
         </div>
         <div *ngIf="currentView == 'pools' || exitingView == 'pools'" class="pools stage-right dom-overlay list">
           <div class="content">
-            <div class="legend">
+
+            <div *ngIf="enclosurePools.length > 0; else noPools" class="legend">
               <div *ngFor="let pool of enclosurePools"><div class="swatch" [style.background]="theme[theme.accentColors[selectedEnclosure.poolKeys[pool]]]"></div>{{pool}}</div>
             </div>
+
+            <ng-template #noPools>
+              <div class="legend">
+                <div>No pools on this enclosure.</div>
+              </div>
+            </ng-template>
+
           </div>
         </div>
 
@@ -32,6 +40,7 @@
                 <div><div class="swatch" [style.background]="theme.green"></div>ONLINE</div>
                 <div><div class="swatch" [style.background]="theme.yellow"></div>OTHER</div>
                 <div><div class="swatch" [style.background]="theme.red"></div>FAULT</div>
+                <div><div class="swatch" style="background:#999999;"></div>AVAILABLE</div>
               </div>
             </div>
           </div>
@@ -45,10 +54,18 @@
           
           <div #domLabels *ngIf="currentView == 'details' || exitingView == 'details'" class="details stage-right dom-overlay">
             <div class="content">
-              <div class="legend">
+
+              <div *ngIf="selectedVdevDisks; else noVdevDisks;" class="legend">
                 <h3 class="vdev-type">{{selectedVdev.type | titlecase}}</h3>
                 <div *ngFor="let disk of selectedVdevDisks; let i = index" class="vdev-disk {{disk}}"><div class="swatch" [style.background]="theme.blue"></div>{{disk}} <span> {{ selectedEnclosure.disks[disk] }}</span></div>
               </div>
+
+              <ng-template #noVdevDisks>
+                <div class="legend">
+                  <div class="vdev-disk "> No Vdev info for disk.</div>
+                </div>
+              </ng-template>
+
             </div>
           </div>
 
@@ -73,8 +90,8 @@
             </div>
           </ng-template>
   
-          <div *ngIf="system && system.pools; else loading" fxFlex class="tiles" [class.active]="currentView == 'pools' " fxLayout="column" fxLayoutAlign="center center">
-            <div class="primary-number" >{{ system.pools.length }}</div>
+          <div *ngIf="system && system.pools && enclosurePools; else loading" fxFlex class="tiles" [class.active]="currentView == 'pools' " fxLayout="column" fxLayoutAlign="center center">
+            <div class="primary-number" >{{ enclosurePools.length }}</div>
             <div class="title">Pools in Enclosure</div>
             <div class="subtitle">{{system.profile.length > 1 ? system.profile.length - 1 : 'No' }} other enclosures detected</div>
             <button mat-button color="primary" (click)="setCurrentView('pools')">SHOW POOLS</button>
@@ -121,7 +138,7 @@
               <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
                 <div>
                   <div class="label">Pool</div>
-                  <div class="value">{{selectedDisk.vdev.pool}}</div>
+                  <div class="value">{{selectedDisk.vdev ? selectedDisk.vdev.pool : 'No pools on enclosure'}}</div>
                 </div>
               </div>
 
