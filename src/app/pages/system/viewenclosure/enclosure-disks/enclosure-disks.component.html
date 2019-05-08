@@ -71,6 +71,17 @@
 
         <!-- CAPTION OVERLAY -->
         <div class="caption dom-overlay">Choose a Disk</div>
+
+        <!-- EXPANDERS OVERLAY -->
+        <div *ngIf="currentView == 'expanders' || exitingView == 'expanders'" class="expanders full-stage dom-overlay">
+          <div *ngIf="expanders" class="content" >
+            <div *ngFor="let expander of expanders" [style.width]="'calc( 100% / ' + 100 / expanders.length + ')'">
+              <div class="primary-number" >{{ expander.status }}</div>
+              <div class="title">{{expander.descriptor}}</div>
+              <div class="subtitle">Expander Status </div>
+            </div>
+          </div>
+        </div>
         
     </div>
 
@@ -105,9 +116,9 @@
           </div>
   
           <div *ngIf="system; else loading" fxFlex class="tiles" [class.active]="currentView == 'expanders' " fxLayout="column" fxLayoutAlign="center center">
-            <div class="primary-number" >2</div>
+            <div class="primary-number" >{{expanders.length}}</div>
             <div class="title">SAS Expanders</div>
-            <div class="subtitle">Pool name goes here</div>
+            <div class="subtitle">on this enclosure</div>
             <button mat-button color="primary" (click)="setCurrentView('expanders')">SHOW EXPANDER STATUS</button>
           </div>
   

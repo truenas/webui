@@ -86,6 +86,15 @@ export class ApiService {
         responseEvent: "DisksData"
       }
     },
+    EnclosureDataRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        args: [],
+        namespace: "enclosure.query",
+        responseEvent: "EnclosureData"
+      }
+    },
     PoolDataRequest:{
       apiCall:{
         protocol:"websocket",

@@ -20,6 +20,7 @@ export class SystemProfiler {
   public profile: Enclosure[] = [];
 
   private diskData: any[];
+  public enclosures: any;
   private _pools: any;
   get pools(){
     return this._pools;
@@ -208,6 +209,11 @@ export class SystemProfiler {
       }
     });
     return typeof result == 'undefined' ? -1 : result;
+  }
+
+  getEnclosureExpanders(index: number){
+    let raw = this.enclosures[index].elements.filter((item) => {return item.name == "SAS Expander"})
+    return raw[0].elements;
   }
     
 }

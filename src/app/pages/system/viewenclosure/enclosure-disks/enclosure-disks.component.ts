@@ -35,6 +35,16 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
   protected enclosure: any; // Visualization
   public selectedEnclosure: any;
 
+  private _expanders: any[] = [];
+  get expanders () {
+    if(this.system.enclosures){
+      let enclosureNumber =  this.selectedEnclosure.disks[0].enclosure.number;
+      return this.system.getEnclosureExpanders(enclosureNumber);
+    } else {
+      return this._expanders;
+    }
+  }
+
   private _selectedVdev: any;
   get selectedVdev(){
     return this._selectedVdev;
@@ -71,9 +81,14 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
       this.setCurrentView(this.currentView);
     });
 
+    core.register({observerClass: this, eventName: 'EnclosureData'}).subscribe((evt:CoreEvent) => {
+      this.system.enclosures = evt.data;
+      console.log(this.system);
+    });
+
     core.register({observerClass: this, eventName: 'PoolData'}).subscribe((evt:CoreEvent) => {
       this.system.pools = evt.data;
-      console.log(this.system);
+      core.emit({name: 'EnclosureDataRequest', sender: this});
     });
 
 
@@ -123,6 +138,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
             if(mutation.addedNodes.length == 0 || mutation.addedNodes[0].classList.length == 0){
               break;
             }
+            const fullStage: boolean = mutation.addedNodes[0].classList.contains('full-stage');
             const stageLeft: boolean = mutation.addedNodes[0].classList.contains('stage-left');
             const stageRight: boolean = mutation.addedNodes[0].classList.contains('stage-right');
             const vdevLabels: boolean = mutation.addedNodes[0].classList.contains('vdev-disk');
@@ -131,7 +147,9 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
               this.enter('stage-left'); // View has changed so we launch transition animations
             } else if(stageRight){
               this.enter('stage-right'); // View has changed so we launch transition animations
-            } 
+            }  else if(fullStage){
+              this.enter('full-stage'); // View has changed so we launch transition animations
+            }
             break;
           case 'attributes':
             /* An attribute value changed on the element in
@@ -328,8 +346,18 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
     
   }
 
-  enter(className:string){ // stage-left or stage-right
-    if(this.exitingView){ this.exit(className); }
+  enter(className:string){ // stage-left or stage-right or expanders
+    if(this.exitingView){ 
+      if(className == 'full-stage'){
+        this.exit('stage-left'); 
+        this.exit('stage-right'); 
+      } else if(this.exitingView == 'expanders'){
+        this.exit('full-stage'); 
+      } else {
+        this.exit(className);
+      }
+    }
+    
  
     let sideStage = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className);
     let html = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className + ' .content')
@@ -354,15 +382,19 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
     });
   }
 
-  exit(className){ // stage-left or stage-right
-
+  exit(className){ // stage-left or stage-right or full-stage
     let html = this.overview.nativeElement.querySelector('.' + className + '.' + this.exitingView);
     let el = styler(html);
+    let duration = 360;
 
     // x is the position relative to it's starting point.
     const w = el.get('width');
     const startX = 0;
     let endX = className == 'stage-left' ? w * -1 : w;
+    if(className == 'full-stage'){ 
+      endX = startX;
+      duration = 10;
+    }
 
     // Move stage left
     tween({
@@ -371,7 +403,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
         opacity:0,
         x: endX
       },
-      duration: 360//280
+      duration: duration
     }).start({
       update: v => { el.set(v) },
       complete: () => {
