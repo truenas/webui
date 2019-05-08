@@ -41,6 +41,7 @@ import {EmailComponent} from './email/';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
 import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
+import { FailoverComponent } from './failover/failover.component';
 import { ProactiveSupportComponent } from './proactive-support/proactive-support.component';
 import { ReportingComponent } from './reporting/reporting.component';
 
@@ -303,6 +304,10 @@ export const routes: Routes = [
         component: CertificateEditComponent,
         data: { title: 'View', breadcrumb: 'View' },
       }]
+    }, {
+      path: 'failover',
+      component: FailoverComponent,
+      data: { title: 'Failover', breadcrumb: 'Failover', icon: 'device_hub' }
     }, {
       path: 'support',
       component: SupportComponent,
