@@ -28,6 +28,10 @@ dhcp_tooltip: T('Set to autoconfigure jail networking with the \
 Dynamic Host Configuration Protocol. <b>VNET</b> \
 is required.'),
 
+nat_placeholder: T('NAT'),
+nat_tooltip: T('Network Address Translation (NAT). Transforms local network IP addresses into a single IP address.\
+ Set when the jail will share a single connection to the Internet with other systems on the network.'),
+
 vnet_placeholder: T('VNET'),
 vnet_tooltip: T('Set to use <a \
 href="https://www.freebsd.org/cgi/man.cgi?query=vnet&sektion=9" \

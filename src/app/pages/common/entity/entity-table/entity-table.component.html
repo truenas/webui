@@ -134,7 +134,7 @@
 
   <!-- DATATABLE START -->
   <div class="no-padding">
-    <ngx-datatable *ngIf="showDefaults" class='material' 
+    <ngx-datatable *ngIf="showDefaults" class='material expandable' 
       [rows]='currentRows' 
       [columns]="conf.columns" 
       [columnMode]="'force'" 
@@ -157,6 +157,15 @@
       [scrollbarH]='true'
       [scrollbarV]='true'
       #entityTable>
+
+      <!-- Row Detail Template -->
+      <ngx-datatable-row-detail *ngIf="conf.hasDetails" [rowHeight]="100" #myDetailRow (toggle)="onDetailToggle($event)">
+        <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
+          <div *ngFor="let detail of row.details" style="padding-left:35px;">
+            <strong>{{detail.label | translate}}:</strong> {{detail.value}}
+          </div>
+        </ng-template>
+      </ngx-datatable-row-detail>
 
       <ngx-datatable-footer>
           <ng-template 
@@ -202,7 +211,22 @@
           </div>
         </ng-template>
       </ngx-datatable-column>
-
+      <ngx-datatable-column *ngIf="conf.hasDetails"
+        [width]="50"
+        [resizeable]="false"
+        [sortable]="false"
+        [draggable]="false"
+        [canAutoResize]="false">
+        <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+          <a
+            href="javascript:void(0)"
+            [class.datatable-icon-right]="!expanded"
+            [class.datatable-icon-down]="expanded"
+            title="Expand/Collapse Row"
+            (click)="toggleExpandRow(row)">
+          </a>
+        </ng-template>
+      </ngx-datatable-column>
       <ngx-datatable-column
           *ngFor="let col of alwaysDisplayedCols"
           prop="{{col.prop}}"

@@ -66,6 +66,24 @@ def wait_on_element(driver, xpath, scriptname, testname):
     return True
 
 
+def error_check(driver):
+    title_xpath = "//h1[contains(.,'report_problem error')]"
+    dialog_xpath = '//error-dialog/div/span'
+    tearDown_xpath = "//span[contains(.,'More info...')]"
+    traceback_xpath = "//div[2]/textarea"
+    closeButton = '//*[contains(text(), "Close")]'
+    if is_element_present(driver, title_xpath):
+        dialog = driver.find_element_by_xpath(dialog_xpath)
+        dialog_text = dialog.text
+        driver.find_element_by_xpath(tearDown_xpath).click()
+        traceback = driver.find_element_by_xpath(traceback_xpath)
+        traceback_text = traceback.text
+        driver.find_element_by_xpath(closeButton).click()
+
+        return {'result': False, 'dialog': dialog_text, 'traceback': traceback_text}
+    return {'result': True, 'dialog': '', 'traceback': ''}
+
+
 # screenshot function
 def take_screenshot(driver, scriptname, testname):
     time.sleep(1)

@@ -8,7 +8,7 @@
         <div id="box2">
             <mat-form-field class="full-width" id="formexinput">
                 <tooltip style="float: right;" *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
-                <textarea matInput *ngIf="config.useCheckbox; else textInput" [placeholder]="config.placeholder | translate" [formControlName]="config.name" [required]="config.required"></textarea>
+                <textarea matInput *ngIf="config.multiple; else textInput" [placeholder]="config.placeholder | translate" [formControlName]="config.name" [required]="config.required"></textarea>
                 <ng-template #textInput>
                     <input matInput [type]="'text'" [placeholder]="config.placeholder | translate" [formControlName]="config.name" [required]="config.required">
                 </ng-template>

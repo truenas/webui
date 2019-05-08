@@ -38,6 +38,7 @@ export interface InputTableConf {
   confirmDeleteDialog?: Object;
   checkbox_confirm?: any;
   checkbox_confirm_show?: any;
+  hasDetails?:boolean;
   asyncView?: boolean;
   addRows?(entity: EntityTableComponent);
   changeEvent?(entity: EntityTableComponent);
@@ -55,6 +56,7 @@ export interface InputTableConf {
   doAdd?();
   onCheckboxChange?(row): any;
   onSliderChange?(row): any;
+  callGetFunction?(entity: EntityTableComponent): any;
 }
 
 export interface SortingConfig {
@@ -81,6 +83,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('filter') filter: ElementRef;
   @ViewChild('defaultMultiActions') defaultMultiActions: ElementRef;
+  @ViewChild('entityTable') table: any;
 
   // MdPaginator Inputs
   public paginationPageSize: number = 8;
@@ -314,10 +317,18 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.getFunction = this.rest.get(this.conf.resource_name, options);
     }
 
-    this.callGetFunction();
+    if (this.conf.callGetFunction) {
+      this.conf.callGetFunction(this);
+    } else {
+      this.callGetFunction();
+    }
     if (this.asyncView) {
       this.interval = setInterval(() => {
-        this.callGetFunction();
+        if (this.conf.callGetFunction) {
+          this.conf.callGetFunction(this);
+        } else {
+          this.callGetFunction();
+        }
       }, 10000);
     }
 
@@ -556,7 +567,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           this.busy = this.ws.call(this.conf.wsDelete, [id]).subscribe(
             (resinner) => { this.getData() },
             (resinner) => {
-              new EntityUtils().handleError(this, resinner);
+              new EntityUtils().handleWSError(this, resinner, this.dialogService);
               this.loader.close();
             }
           );
@@ -675,22 +686,36 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
-        const data = {};
         if (this.conf.wsMultiDelete) {
           // ws to do multi-delete
           if (this.conf.wsMultiDeleteParams) {
             this.busy = this.ws.job(this.conf.wsMultiDelete, this.conf.wsMultiDeleteParams(selected)).subscribe(
               (res1) => {
+                if (res1.state === 'SUCCESS') {
+                  this.loader.close();
+                  this.loaderOpen = false;
+                  this.getData();
+                  this.selected = [];
+
+                  const selectedName = this.conf.wsMultiDeleteParams(selected)[1];
+                  let message = "";
+                  for (let i = 0; i < res1.result.length; i++) {
+                    if (res1.result[i].error != null) {
+                      message = message + '<li>' + selectedName[i] + ': ' + res1.result[i].error + '</li>';
+                    }
+                  }
+                  if (message === "") {
+                    this.snackBar.open("Items deleted.", 'close', { duration: 5000 });
+                  } else {
+                    message = '<ul>' + message + '</ul>';
+                    this.dialogService.errorReport(T('Items Delete Failed'), message);
+                  }
+                }
                },
               (res1) => {
-                new EntityUtils().handleError(this, res1);
+                new EntityUtils().handleWSError(this, res1, this.dialogService);
                 this.loader.close();
-              },
-              () => {
-                this.loader.close();
-                this.getData();
-                this.selected = [];
-                this.snackBar.open("Items deleted.", 'close', { duration: 5000 });
+                this.loaderOpen = false;
               }
             );
           }
@@ -760,4 +785,13 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   toggleLabels(){
     this.multiActionsIconsOnly = !this.multiActionsIconsOnly;
   }
+
+  toggleExpandRow(row) {
+    //console.log('Toggled Expand Row!', row);
+    this.table.rowDetail.toggleExpandRow(row);
+  }
+
+  onDetailToggle(event) {
+    //console.log('Detail Toggled', event);
+}
 }
