@@ -11,7 +11,7 @@ export default {
         NO_SYSTEM_READY : T('Other storage controller has not finished booting.'),
         NO_PONG : T('Other storage controller cannot be reached.'),
         NO_FAILOVER : T('Failover is administratively disabled.'),
-        NO_LICENSE: T('Other storage controller has no license'),
+        NO_LICENSE: T('Other storage controller has no license.'),
         MISMATCH_DISKS : T('The storage controllers do not have the same quantity of disks.')
     }
 }
