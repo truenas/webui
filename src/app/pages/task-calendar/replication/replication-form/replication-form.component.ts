@@ -3,7 +3,7 @@ import { Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import helptext from '../../../../helptext/task-calendar/replication';
+import helptext from '../../../../helptext/task-calendar/replication/replication';
 import { WebSocketService, TaskService } from 'app/services';
 import * as _ from 'lodash';
 
