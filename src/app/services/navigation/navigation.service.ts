@@ -63,6 +63,7 @@ export class NavigationService {
         { name: T('Alert Settings'), state: 'alertsettings' },
         { name: T('Cloud Credentials'), state: 'cloudcredentials' },
         { name: T('SSH Connections'), state: 'sshconnections'},
+        { name: T('SSH Keypairs'), state: 'sshkeypairs'},
         { name: T('Tunables'), state: 'tunable' },
         { name: T('Update'), state: 'update' },
         { name: T('CAs'), state: 'ca' },

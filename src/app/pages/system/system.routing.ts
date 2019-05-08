@@ -27,6 +27,8 @@ import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentia
 import { CloudCredentialsFormComponent } from './CloudCredentials/cloudcredentials-form/';
 import { SshConnectionsListComponent } from './ssh-connections/ssh-connections-list/ssh-connections-list.component';
 import { SshConnectionsFormComponent } from './ssh-connections/ssh-connections-form/ssh-connections-form.component';
+import { SshKeypairsListComponent } from './ssh-keypairs/ssh-keypairs-list/ssh-keypairs-list.component';
+import { SshKeypairsFormComponent } from './ssh-keypairs/ssh-keypairs-form/ssh-keypairs-form.component';
 import { CertificateAuthorityListComponent } from './ca/ca-list/';
 import { CertificateAuthorityAddComponent } from './ca/ca-add/';
 import { CertificateAuthorityEditComponent } from './ca/ca-edit/';
@@ -242,7 +244,24 @@ export const routes: Routes = [
           path: 'edit/:pk',
           component: SshConnectionsFormComponent,
           data: { title: 'Edit', breadcrumb: 'Edit' },
-        },
+        }]
+      },
+      {
+        path: 'sshkeypairs',
+        data: { title: 'SSH Keypairs', breadcrumb: 'SSH Keypairs', icon: 'vpn_key' },
+        children: [{
+          path: '',
+          component: SshKeypairsListComponent,
+          data: { title: 'SSH Keypairs', breadcrumb: 'SSH Keypairs' },
+        }, {
+          path: 'add',
+          component: SshKeypairsFormComponent,
+          data: { title: 'Add', breadcrumb: 'Add' },
+        }, {
+          path: 'edit/:pk',
+          component: SshKeypairsFormComponent,
+          data: { title: 'Edit', breadcrumb: 'Edit' },
+        }
       ]
     },
     {
