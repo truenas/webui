@@ -6,6 +6,7 @@ import { WebSocketService, AppLoaderService } from '../../../../services';
 import { EntityUtils } from '../../../common/entity/utils';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
+import helptext from '../../../../helptext/services/components/service-asigra'
 
 @Component({
   selector: 'app-service-asigra',
@@ -21,16 +22,17 @@ export class ServiceAsigraComponent {
     {
       type : 'select',
       name : 'filesystem',
-      placeholder : T('Base Filesystem'),
-      tooltip: T('Base Filesystem tooltip?'),
+      placeholder : helptext.filesystem_placeholder,
+      tooltip: helptext.filesystem_tooltip,
       options: [],
+      required: true
     }
   ]
 
   public custActions: Array<any> = [
     {
       id : 'launch_ds_operator',
-      name : T('Launch DS Operator'),
+      name : helptext.launchbutton_name,
       function : () => {
         window.open('_plugins/asigra/DSOP.jnlp', '_blank')
       }
@@ -41,6 +43,7 @@ export class ServiceAsigraComponent {
     protected snackBar: MatSnackBar) {}
 
   afterInit (entityForm: any) {
+    this.entityForm = entityForm;
     entityForm.ws.call('pool.filesystem_choices', []).subscribe((fs_list) => {
       this.fs = _.find(this.fieldConfig, {name : "filesystem"});
       fs_list.forEach((item) => {
@@ -58,7 +61,7 @@ export class ServiceAsigraComponent {
     this.ws.call(this.addCall, [value]).subscribe((res) => {
       this.loader.close();
       this.router.navigate(new Array('/').concat(this.route_success));
-      this.snackBar.open(T('Asigra successfully updated.'), T('close'), { duration: 5000 })
+      this.snackBar.open(helptext.snackbar_message, T('close'), { duration: 5000 })
     },
     (err) => {
       this.loader.close();
