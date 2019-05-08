@@ -94,7 +94,6 @@ export class Chassis {
    }
 
    load(){
-     console.log("CHASSIS LOAD");
      // Create a dedicated loader to avoid conflicts with other loaders
       this.loader = new PIXI.loaders.Loader();
      // LOAD OUR ASSETS
@@ -157,7 +156,7 @@ export class Chassis {
      this.onEnter();
 
      // Let the parent know class is ready.
-     this.events.next({name: "Ready"});
+     //this.events.next({name: "Ready"});
      //this.events.complete();
    }
 
@@ -181,8 +180,8 @@ export class Chassis {
 
    onEnter(){
      const opacity = this.disabledOpacity;
-     const delay = 500;
-     const duration = 250;
+     const delay = 50;
+     const duration = 50;
     
      setTimeout(() =>{
        const fade = (v) => this.chassis.alpha = v;
@@ -205,10 +204,19 @@ export class Chassis {
         tween({
           from: item.handle.alpha,
           to: item.enabled ? 1 : opacity, 
-          duration: duration + 1000,
+          duration: duration /*+ 1000*/,
           ease: easing.backOut,
           //flip: Infinity
-        }).start(updateAlpha);
+        }).start({
+          update: v => { updateAlpha(v) },
+          complete: () => {
+            if(index == this.driveTrayObjects.length - 1){
+              //this.initialized = true;
+              // Let the parent know class is ready.
+              this.events.next({name: "Ready"});
+            } 
+          }
+        });
       }, delay)
 
       // Staggered tray backgrounds fade in  

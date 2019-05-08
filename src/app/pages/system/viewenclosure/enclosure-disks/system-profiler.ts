@@ -87,7 +87,6 @@ export class SystemProfiler {
   
   private parsePoolsData(obj){
     obj.forEach((pool, pIndex) => {     
-      console.log(pool);
       if(!pool.topology){
         return;
       }

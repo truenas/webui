@@ -106,7 +106,6 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
 
   }
 
-  /* TESTING ONLY */
   clearDisk(){
     this.setCurrentView(this.defaultView);
   }
@@ -213,14 +212,12 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
           this.enclosure.container.x = this.app._options.width / 2 - this.enclosure.container.width / 2;
           this.enclosure.container.y = this.app._options.height / 2 - this.enclosure.container.height / 2;
 
-          //this.setDisksEnabledState();
+          this.setDisksEnabledState();
+          //this.setDisksDisabled();
           this.setCurrentView(this.defaultView);
+          
         break;
         case "DriveSelected":
-          //console.log(evt);
-          //console.log(this.enclosure);
-          //console.log(this.system.profile);
-          //this.currentView = 'details';
           let disk = this.selectedEnclosure.disks[evt.data.id]; // should match slot number
           if(disk == this.selectedDisk){break} // Don't trigger any changes if the same disk is selected
           if(this.enclosure.driveTrayObjects[evt.data.id].enabled){
@@ -394,8 +391,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
     this.enclosure.driveTrayObjects.forEach((dt, index) =>{
       let disk = this.selectedEnclosure.disks[index];
       dt.enabled = disk ? true : false;
-      //console.log(dt);
-    })
+    });
   }
 
   setDisksDisabled(){
