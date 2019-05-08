@@ -1,4 +1,4 @@
-import { T } from '../../translate-marker';
+import { T } from '../../../translate-marker';
 
 export default {
     name_placeholder: T('Name'),
