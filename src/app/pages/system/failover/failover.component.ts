@@ -1,11 +1,10 @@
 import { Component, OnDestroy } from '@angular/core';
-import { Validators } from '@angular/forms';
 import * as _ from 'lodash';
 import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
 import { DialogService } from "../../../services/dialog.service";
 import { MatDialog } from '@angular/material';
 import { EntityUtils } from '../../common/entity/utils';
-import { RestService, WebSocketService, SnackbarService } from '../../../services/';
+import { WebSocketService, SnackbarService } from '../../../services/';
 import { T } from '../../../translate-marker';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { helptext_system_failover } from 'app/helptext/system/failover';
@@ -13,18 +12,15 @@ import { helptext_system_failover } from 'app/helptext/system/failover';
 
 @Component({
   selector: 'app-system-failover',
-  templateUrl: 'failover.component.html',
+  template: `<entity-form [conf]="this"></entity-form>`,
   styleUrls: [],
   providers : [ SnackbarService ],
 })
 
 export class FailoverComponent implements OnDestroy {
-  public job: any = {};
   protected queryCall = 'failover.config';
   protected updateCall = 'failover.update';
   public entityForm: any;
-  protected dialogRef: any;
-  public disabled: any;
   protected failoverDisableSubscription: any;
   public confirmSubmit = false;
   public confirmSubmitDialog = {
@@ -114,7 +110,7 @@ export class FailoverComponent implements OnDestroy {
   }
 ];
 
-  constructor(private rest: RestService,
+  constructor(
     private load: AppLoaderService,
     private dialog: DialogService,
     private ws: WebSocketService,
