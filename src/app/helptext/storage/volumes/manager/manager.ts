@@ -24,7 +24,7 @@ manager_encryption_tooltip : T('<a href="https://www.freebsd.org/cgi/man.cgi?que
  target="_blank">GELI</a> encryption is\
  available for ZFS pools. <b>WARNING:</b>\
  Read the <a\
- href="%%docurl%%/storage.html%%webversion%%#managing-encrypted-pools"\
+ href="%%docurl%%/storage.html#managing-encrypted-pools"\
  target="_blank">Encryption section</a>\
  of the guide before activating this option.'),
 manager_suggested_layout_tooltip : T('Create a recommended formation\

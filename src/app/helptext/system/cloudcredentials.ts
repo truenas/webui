@@ -15,6 +15,16 @@ export const helptext_system_cloudcredentials = {
     validation: [Validators.required]
   },
 
+  client_id: {
+    placeholder: T('OAuth Client ID'),
+    tooltip: T(''),
+  },
+
+  client_secret: {
+    placeholder: T('OAuth Client Secret'),
+    tooltip: T(''),
+  },
+
   client_id_amazon_cloud_drive: {
     placeholder: T("Amazon Application Client ID"),
     tooltip: T(

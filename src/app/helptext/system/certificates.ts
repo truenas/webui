@@ -14,15 +14,31 @@ export const helptext_system_certificates = {
       placeholder: T("Type")
     },
 
+    isCSRonSystem: {
+      placeholder: T("CSR exists on this system"),
+      tooltip: T(
+        'Check this box if importing a certificate for which a CSR exists on this system'
+      )
+    },
+    
     signedby: {
       placeholder: T("Signing Certificate Authority"),
       tooltip: T(
         'Select a previously imported or created <a\
- href="%%docurl%%/system.html%%webversion%%#cas"\
+ href="%%docurl%%/system.html#cas"\
  target="_blank">CA</a>.'
       ),
       validation: [Validators.required]
     },
+
+    key_type: {
+      placeholder: T("Key Type"),
+      validation: [Validators.required]
+    },
+
+    ec_curve: {
+      placeholder: T("EC Curve")
+    },   
 
     key_length: {
       placeholder: T("Key Length"),
@@ -77,6 +93,11 @@ export const helptext_system_certificates = {
       validation: [Validators.required]
     },
 
+    organizational_unit: {
+      placeholder: T("Organizational Unit"),
+      tooltip: T("Organizational unit of the entity."),
+    },
+
     email: {
       placeholder: T("Email"),
       tooltip: T(
@@ -113,6 +134,12 @@ export const helptext_system_certificates = {
       validation: [Validators.required]
     },
 
+    cert_csr: {
+      placeholder: T("Signing Request"),
+      tooltip: T("Paste the contents of your Certificate Signing Request here."),
+      validation: [Validators.required]
+    },
+
     privatekey: {
       placeholder: T("Private Key"),
       tooltip: T(
@@ -131,6 +158,7 @@ export const helptext_system_certificates = {
     passphrase2: {
       placeholder: T("Confirm Passphrase")
     }
+
   },
 
   edit: {

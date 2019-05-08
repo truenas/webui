@@ -32,5 +32,10 @@ export const helptext_system_update = {
 
   save_config_form: {
     button_text: T("Save")
+  },
+
+  manual_update_error_dialog: {
+    message: T('Error submitting file')
   }
+
 };

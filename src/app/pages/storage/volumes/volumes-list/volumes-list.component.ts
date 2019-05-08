@@ -87,6 +87,9 @@ export class VolumesListTableConfig implements InputTableConf {
   public showSpinner:boolean;
   public encryptedStatus: any;
   public custActions: Array<any> = [];
+  private vmware_res_status: boolean;
+  private recursiveIsChecked: boolean = false;
+  public dialogConf: DialogFormConfiguration;
 
   constructor(
     private parentVolumesListComponent: VolumesListComponent,
@@ -132,42 +135,42 @@ export class VolumesListTableConfig implements InputTableConf {
       localResourceName = this.resource_name, localParentVolumesList = this.parentVolumesListComponent;
 
     if (rowData.vol_encrypt === 2) {
-
       if (rowData.is_decrypted) {
-        actions.push({
-          label: T("Lock"),
-          onClick: (row1) => {
-            const conf: DialogFormConfiguration = {
-              title: T("Enter passphrase to lock pool ") + row1.name + '.',
-              fieldConfig: [
-                {
-                  type: 'input',
-                  inputType: 'password',
-                  name: 'passphrase',
-                  placeholder: 'passphrase',
-                  required: true
-                }
-              ],
-              saveButtonText: T("Lock Pool"),
-              customSubmit: function (entityDialog) {
-                const value = entityDialog.formValue;
-                localLoader.open();
-                localRest.post(localResourceName + "/" + row1.name + "/lock/", 
-                  { body: JSON.stringify({passphrase : value.passphrase}) }).subscribe((restPostResp) => {
+        if (localParentVolumesList.systemdatasetPool != rowData.name) {
+          actions.push({
+            label: T("Lock"),
+            onClick: (row1) => {
+              const conf: DialogFormConfiguration = {
+                title: T("Enter passphrase to lock pool ") + row1.name + '.',
+                fieldConfig: [
+                  {
+                    type: 'input',
+                    inputType: 'password',
+                    name: 'passphrase',
+                    placeholder: 'passphrase',
+                    required: true
+                  }
+                ],
+                saveButtonText: T("Lock Pool"),
+                customSubmit: function (entityDialog) {
+                  const value = entityDialog.formValue;
+                  localLoader.open();
+                  localRest.post(localResourceName + "/" + row1.name + "/lock/",
+                    { body: JSON.stringify({passphrase : value.passphrase}) }).subscribe((restPostResp) => {
+                      entityDialog.dialogRef.close(true);
+                      localLoader.close();
+                      localParentVolumesList.repaintMe();
+                  }, (res) => {
                     entityDialog.dialogRef.close(true);
                     localLoader.close();
-                    localParentVolumesList.repaintMe();
-                }, (res) => {
-                  entityDialog.dialogRef.close(true);
-                  localLoader.close();
-                  localDialogService.errorReport(T("Error locking pool."), res.message, res.stack);
-                });
+                    localDialogService.errorReport(T("Error locking pool."), res.message, res.stack);
+                  });
+                }
               }
+              this.dialogService.dialogForm(conf);
             }
-            this.dialogService.dialogForm(conf);
-          }
-        });
-
+          });
+        }
       } else {
         actions.push({
           label: T("Unlock"),
@@ -187,7 +190,7 @@ export class VolumesListTableConfig implements InputTableConf {
         });
       }
 
-    } else if (rowData.vol_encrypt === 1 && rowData.is_decrypted) {
+    } else if (rowData.vol_encrypt === 1 && rowData.is_decrypted && localParentVolumesList.systemdatasetPool != rowData.name) {
       actions.push({
         label: T("Create Passphrase"),
         onClick: (row1) => {
@@ -309,7 +312,7 @@ export class VolumesListTableConfig implements InputTableConf {
           localSnackBar.open(row1.name + " has been unlocked.", 'close', { duration: 5000 });
         }, (res) => {
           localLoader.close();
-          localDialogService.errorReport(T("Error Unlocking"), res.error, res.stack);
+          localDialogService.errorReport(T("Error Unlocking"), res.error.error_message, res.error.traceback);
         });
       }
     }
@@ -413,7 +416,7 @@ export class VolumesListTableConfig implements InputTableConf {
             }
             
           }
-          this.dialogService.dialogForm(conf);
+          this.dialogService.dialogFormWide(conf);
         }
       });
 
@@ -618,7 +621,10 @@ export class VolumesListTableConfig implements InputTableConf {
       actions.push({
         label: T("Create Snapshot"),
         onClick: (row) => {
-          const conf: DialogFormConfiguration = {
+          this.ws.call('vmware.dataset_has_vms',[row.path, false]).subscribe((vmware_res)=>{
+            this.vmware_res_status = vmware_res;
+          })
+          this.dialogConf = {
             title: "One time snapshot of " + row.path,
             fieldConfig: [
               {
@@ -636,33 +642,32 @@ export class VolumesListTableConfig implements InputTableConf {
                 tooltip: helptext.snapshotDialog_name_tooltip,
                 validation: helptext.snapshotDialog_name_validation,
                 required: true,
-                value: "manual" + '-' + this.getTimestamp()            },
+                value: "manual" + '-' + this.getTimestamp()            
+              },
               {
                 type: 'checkbox',
                 name: 'recursive',
                 placeholder: helptext.snapshotDialog_recursive_placeholder,
                 tooltip: helptext.snapshotDialog_recursive_tooltip,
+                parent: this,
+                updater: this.updater
+              },
+              {
+                type: 'checkbox',
+                name: 'vmware_sync',
+                placeholder: helptext.vmware_sync_placeholder,
+                tooltip: helptext.vmware_sync_tooltip,
+                isHidden: !this.vmware_res_status
               }
             ],
             method_rest: "storage/snapshot",
             saveButtonText: T("Create Snapshot"),
           }
-          this.ws.call('vmware.query',[[["filesystem", "=", row.path]]]).subscribe((vmware_res)=>{
-            if(vmware_res.length !== 0){
-              const vmware_cb = {
-                type: 'checkbox',
-                name: 'vmware_sync',
-                placeholder: helptext.vmware_sync_placeholder,
-                tooltip: helptext.vmware_sync_tooltip,
-              }
-              conf.fieldConfig.push(vmware_cb);
+          this.dialogService.dialogForm(this.dialogConf).subscribe((res) => {
+            if (res) {
+              this.snackBar.open(T("Snapshot successfully taken."), T('close'), { duration: 5000 });
             }
-            this.dialogService.dialogForm(conf).subscribe((res) => {
-              if (res) {
-                this.snackBar.open(T("Snapshot successfully taken."), T('close'), { duration: 5000 });
-              }
-            });
-          })
+          });
         }
       });
 
@@ -688,6 +693,14 @@ export class VolumesListTableConfig implements InputTableConf {
       }
     }
     return actions;
+  }
+
+  updater(parent: any) {
+    parent.recursiveIsChecked = !parent.recursiveIsChecked;
+    parent.ws.call('vmware.dataset_has_vms',[parent.title, parent.recursiveIsChecked]).subscribe((vmware_res)=>{
+      parent.vmware_res_status = vmware_res;
+      _.find(parent.dialogConf.fieldConfig, {name : "vmware_sync"})['isHidden'] = !parent.vmware_res_status;
+    })
   }
 
   getTimestamp() {
@@ -776,7 +789,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   expanded = false;
   public paintMe = true;
-
+  public isFooterConsoleOpen: boolean;
+  public systemdatasetPool: any;
 
   constructor(protected core: CoreService ,protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
@@ -813,7 +827,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
             try {
               let used_pct =  volume.children[0].used / (volume.children[0].used + volume.children[0].avail);
-              volume.usedStr = (<any>window).filesize(volume.children[0].used, { standard: "iec" }) + " (" + Math.round(used_pct * 100) + "%)";
+              volume.usedStr = ": " + (<any>window).filesize(volume.children[0].used, { standard: "iec" }) + " (" + Math.round(used_pct * 100) + "%)";
             } catch (error) {
               volume.usedStr = "" + volume.children[0].used;
             }
@@ -847,6 +861,15 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.dialogService.errorReport(T("Error getting pool data."), res.message, res.stack);
     });
 
+    this.ws.call('system.advanced.config').subscribe((res)=> {
+      if (res) {
+        this.isFooterConsoleOpen = res.consolemsg;
+      }
+    });
+
+    this.ws.call('systemdataset.config').subscribe((res) => {
+      this.systemdatasetPool = res.pool;
+    })
   }
 
   ngAfterViewInit(): void {

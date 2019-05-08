@@ -21,6 +21,8 @@ export class DashboardComponent implements OnInit,OnDestroy {
   public zPoolFlex:string = "100";
   public noteFlex:string = "23";
 
+  public isFooterConsoleOpen: boolean;
+
   // For widgetpool
   public volumes: VolumeData[] = [];
   public disks:Disk[] = [];
@@ -30,7 +32,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
 
   public showSpinner: boolean = true;
 
-  constructor(protected core:CoreService, stats: StatsService){
+  constructor(protected core:CoreService, stats: StatsService, protected ws: WebSocketService){
     //this.core.emit({name:"StatsAddListener", data:{name:"CpuAggregate", key:"sum", obj:this }});
     //this.core.emit({name:"StatsAddListener", data:{name:"CpuAggregate", key:"average", obj:this }});
     //this.core.emit({name:"StatsAddListener", data:{name:"CpuAggregate", key:"test", obj:this }});
@@ -43,6 +45,11 @@ export class DashboardComponent implements OnInit,OnDestroy {
 
   ngOnInit(){
     this.init();
+    this.ws.call('system.advanced.config').subscribe((res)=> {
+      if (res) {
+        this.isFooterConsoleOpen = res.consolemsg;
+      }
+    });
   }
 
   ngOnDestroy(){
