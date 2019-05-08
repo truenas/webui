@@ -4,13 +4,13 @@ import { ActivatedRoute } from '@angular/router';
 
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/task-calendar/replication/replication';
-import { WebSocketService, TaskService } from 'app/services';
+import { WebSocketService, TaskService, KeychainCredentialService } from 'app/services';
 import * as _ from 'lodash';
 
 @Component({
     selector: 'app-replication-list',
     template: `<entity-form [conf]='this'></entity-form>`,
-    providers: [TaskService]
+    providers: [TaskService, KeychainCredentialService]
 })
 export class ReplicationFormComponent {
 
@@ -627,9 +627,10 @@ export class ReplicationFormComponent {
         },
     ]
 
-    constructor(private ws: WebSocketService, protected taskService: TaskService, private aroute: ActivatedRoute) {
+    constructor(private ws: WebSocketService, protected taskService: TaskService, private aroute: ActivatedRoute,
+        private keychainCredentialService: KeychainCredentialService) {
         const sshCredentialsField = _.find(this.fieldConfig, { name: 'ssh_credentials' });
-        this.ws.call('keychaincredential.query', [[["type", "=", "SSH_CREDENTIALS"]]]).subscribe(
+        this.keychainCredentialService.getSSHConnections().subscribe(
             (res) => {
                 for (const i in res) {
                     sshCredentialsField.options.push({ label: res[i].name, value: res[i].id });
