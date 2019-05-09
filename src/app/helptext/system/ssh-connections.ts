@@ -31,8 +31,8 @@ export default {
     url_placeholder: T('FreeNAS URL'),
     url_tooltip: T(''),
 
-    token_placeholder: T('Auth Token'),
-    token_tooltip: T(''),
+    password_placeholder: T('Password'),
+    password_tooltip: T(''),
 
     discover_remote_host_key_button: T('Discover Remote Host Key')
 }
