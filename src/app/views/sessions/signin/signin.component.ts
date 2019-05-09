@@ -56,7 +56,7 @@ export class SigninComponent implements OnInit {
     private http:Http) {
     this.ws = ws;
     this.ws.call('system.is_freenas').subscribe((res)=>{
-      this.logo_ready = res;
+      this.logo_ready = true;
       this.is_freenas = res;
       this.getHAStatus();
       window.localStorage.setItem('is_freenas', res);
@@ -137,7 +137,6 @@ export class SigninComponent implements OnInit {
             console.log(err);
           });
           this.ws.call('failover.disabled_reasons').subscribe(reason => {
-              this.logo_ready = true;
               this.ha_disabled_reasons = reason;
               if (reason.length === 0) {
                 this.ha_status_text = T('HA is enabled.');
@@ -149,8 +148,6 @@ export class SigninComponent implements OnInit {
           }, err => {
             console.log(err);
           });
-        } else {
-          this.logo_ready = true;
         }
       }, err => {
         console.log(err);
