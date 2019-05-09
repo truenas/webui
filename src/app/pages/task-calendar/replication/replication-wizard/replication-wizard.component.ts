@@ -79,6 +79,18 @@ export class ReplicationWizardComponent {
                     value: 'SSH',
                     required: true,
                 },
+                //netcat
+                {
+                    type: 'input',
+                    name: 'netcat_active_side',
+                    value: 'REMOTE',
+                    isHidden: true,
+                }, {
+                    type: 'input',
+                    name: 'netcat_active_side_listen_address',
+                    value: '', // defaut to hostname
+                    isHidden: true,
+                },
                 // ssh
                 {
                     type: 'select',
@@ -407,22 +419,25 @@ export class ReplicationWizardComponent {
         'ssh_credentials',
     ];
     protected transportSSHnetcatFieldGroup: any[] = [
+        'netcat_active_side',
+        'netcat_active_side_listen_address',
+        // 'netcat_active_side_port_min',
+        // 'netcat_active_side_port_max',
     ];
 
     protected sshFieldGroup: any[] = [
         'name',
         'setup_method',
         'cipher',
+        'username',
     ];
     protected semiSSHFieldGroup: any[] = [
         'url',
-        'username',
         'password',
     ];
     protected manualSSHFieldGroup: any[] = [
         'host',
         'port',
-        'username',
         'private_key',
         'remote_host_key'
     ];
@@ -449,6 +464,8 @@ export class ReplicationWizardComponent {
 
     protected entityWizard: any;
     protected hiddenFieldGroup: any[] = [
+        'netcat_active_side',
+        'netcat_active_side_listen_address',
         'enabled'
     ];
     public summaryObj = {
@@ -525,7 +542,7 @@ export class ReplicationWizardComponent {
             this.disablefieldGroup(this.transportSSHnetcatFieldGroup, ssh, 0);
         });
         this.entityWizard.formArray.controls[0].controls['ssh_credentials'].valueChanges.subscribe((value) => {
-            const newSSH = value == 'NEW' ? true : false;
+            const newSSH = (value == 'NEW' &&  this.entityWizard.formArray.controls[0].controls['transport'].value == 'SSH') ? true : false;
             this.disablefieldGroup([...this.sshFieldGroup, ...this.semiSSHFieldGroup, ...this.manualSSHFieldGroup], !newSSH, 0);
             if (newSSH) {
                 this.entityWizard.formArray.controls[0].controls['setup_method'].setValue(this.entityWizard.formArray.controls[0].controls['setup_method'].value);
