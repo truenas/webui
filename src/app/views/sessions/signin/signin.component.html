@@ -3,7 +3,7 @@
     <mat-progress-bar mode="determinate" value="0" class="session-progress"></mat-progress-bar>
     <mat-card>
       <mat-card-content>
-        <div *ngIf="connected();else notconnected">
+        <div *ngIf="connected() && logo_ready;else notconnected">
           <div class="text-center logo-wrapper" *ngIf="logo_ready">
             <img class="logo-bg" alt="Logo image background of stars and sky at night" src="assets/images/stars-sky-1200w.jpg" srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x">
             <img *ngIf="is_freenas; else isTruenas" class="logo" src="assets/images/light-logo-full.svg" alt="FreeNAS logo">
@@ -74,8 +74,12 @@
           <span *ngIf="!is_freenas && failover_status != 'SINGLE'"><div class="ha-status">
             <div class="ha-status-txt">
               <p>{{ha_status_text}}</p>
-              <p>{{failover_statuses[failover_status]}}</p>
-              <p>Active IP Addresses: {{failover_ips.join(", ")}}</p>
+              <span *ngIf="ha_info_ready">
+                <p>{{failover_statuses[failover_status]}}</p>
+                <span *ngIf="failover_ips.length > 0">
+                  <p>Active IP Addresses: {{failover_ips.join(", ")}}</p>
+                </span>
+              </span>
             </div>
           </div></span>
           <div>
