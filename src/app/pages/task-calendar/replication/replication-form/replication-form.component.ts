@@ -183,12 +183,10 @@ export class ReplicationFormComponent {
             tooltip: helptext.recursive_tooltip,
             value: false,
         }, {
-            type: 'select',
-            multiple: true,
+            type: 'input',
             name: 'exclude',
             placeholder: helptext.exclude_placeholder,
             tooltip: helptext.exclude_tooltip,
-            options: [],
             relation: [{
                 action: 'HIDE',
                 connective: 'OR',
