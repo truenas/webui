@@ -1127,11 +1127,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   app-support {
     .fieldset {
       padding-left: 15px;
-      // border-right: 1px solid rgba(0, 0, 0, .12);
     }
-    // .fieldset:nth-of-type(2) {
-    //   padding-left: 30px;
-    // }
     #FN_col1, #FN_col2, #TN_col1 {
       font-size: 180%;
       margin-bottom: 15px;
@@ -1165,7 +1161,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       margin-bottom: -25px;
     }
     .mat-card-actions {
-      text-align: right;
+      margin-left: 15px;
     }
   }
 

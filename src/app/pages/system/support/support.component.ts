@@ -90,11 +90,6 @@ export class SupportComponent {
         {
           type: 'paragraph',
           name: 'TN_contractdate',
-          paraText: '<h4>Contract Date: </h4>'
-        },
-        {
-          type: 'paragraph',
-          name: 'TN_expiredate',
           paraText: '<h4>Expiration Date: </h4>'
         }
       ]
@@ -346,7 +341,6 @@ export class SupportComponent {
     'TN_features',
     'TN_contracttype',
     'TN_contractdate',
-    'TN_expiredate',
     'TN_addhardware',
     'name',
     'email',
@@ -356,6 +350,22 @@ export class SupportComponent {
     'criticality',
     'screenshot'
   ];
+
+  public custActions: Array<any> = [
+    {
+      id : 'update_license',
+      name : 'Update License',
+      function : () => {
+        // this.dialog.dialogForm(this.saveConfigFormConf);
+        console.log('update license')
+      }
+    },{
+      id : 'userguide',
+      name: 'User Guide (pdf)',
+      function : () => {
+        console.log('user guide');
+      }
+    }];
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected _injector: Injector,
@@ -386,6 +396,9 @@ export class SupportComponent {
         this.hideField(this.freeNASFields[i], true, entityEdit);
       }  
       this.ws.call('system.info').subscribe((res) => {
+        let now = new Date();
+        let then = new Date(res.license.contract_end.$value);
+        let daysLeft = this.daysTillExpiration(now, then);
         this.getProductImage(res.system_product)
         _.find(this.fieldConfig, {name : "pic"}).paraText = `<img src="../../../assets/images/${this.product_image}" height="200">`;
         _.find(this.fieldConfig, {name : "TN_model"}).paraText += res.system_product;
@@ -409,8 +422,7 @@ export class SupportComponent {
           _.find(this.fieldConfig, {name : "TN_features"}).paraText += tempStr;
         }
         _.find(this.fieldConfig, {name : "TN_contracttype"}).paraText += res.license.contract_type;
-        _.find(this.fieldConfig, {name : "TN_contractdate"}).paraText += res.license.contract_end.$value || '';
-        _.find(this.fieldConfig, {name : "TN_expiredate"}).paraText += 'Whatevs' || '';
+        _.find(this.fieldConfig, {name : "TN_contractdate"}).paraText += res.license.contract_end.$value + ` (expires in ${daysLeft} days)` || '';
         _.find(this.fieldConfig, {name : "TN_addhardware"}).paraText += '???'; //TODO: Where does this come from?
       })    
     }
@@ -426,6 +438,11 @@ export class SupportComponent {
     } else {
       this.product_image = 'ix-original.svg';
     }
+  }
+
+  daysTillExpiration(now, then) {
+    let oneDay = 24*60*60*1000; // milliseconds in a day
+    return Math.round(Math.abs((now.getTime() - then.getTime())/(oneDay)));
   }
 
   customSubmit(entityEdit): void{
