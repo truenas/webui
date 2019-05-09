@@ -23,6 +23,8 @@ export class CertificateAcmeAddComponent {
   protected route_success: string[] = [ 'system', 'certificates' ];
   protected isEntity: boolean = true;
   private csrOrg: any;
+  public formArray: FormArray;
+  protected arrayControl: any;
   protected fieldConfig: FieldConfig[] = [
     {
       type : 'input',
@@ -61,32 +63,19 @@ export class CertificateAcmeAddComponent {
         {label: 'https://acme-staging-v02.api.letsencrypt.org/directory', value: 'https://acme-staging-v02.api.letsencrypt.org/directory'},
         {label: 'https://acme-v02.api.letsencrypt.org/directory', value: 'https://acme-v02.api.letsencrypt.org/directory'}
       ],
-      // value: 'https://acme-staging-v02.api.letsencrypt.org/directory'
     },
     // {
     //   type: 'array',
-    //   name : 'dns_mapping_fields',
+    //   name : 'dns_mapping_array',
     //   initialCount: 1,
     //   formarray: [{
-    //     name: 'dns_mapping2',
-    //     placeholder: helptext_system_certificates.acme.authenticator.placeholder,
-    //     tooltip: helptext_system_certificates.acme.authenticator.tooltip,
+    //     name: 'dns_mapping',
+    //     placeholder: 'Authenticator for...',
+    //     tooltip: 'Specify authenticator to be used for...',
     //     type: 'select',
-    //     options : []
+    //     required: true
     //   }]
     // }
-    // {
-    //   type : 'select',
-    //   name : 'dns_mapping',
-    //   placeholder : helptext_system_certificates.acme.authenticator.placeholder,
-    //   tooltip: helptext_system_certificates.acme.authenticator.tooltip,
-    //   options : [
-    //     {label: 'Temp option...', value: 'temp_option'}
-    //   ],
-    //   value: '',
-    //   required: true,
-    //   isHidden: true
-    // },
   ]
 
   private authenticators = [];
@@ -94,9 +83,7 @@ export class CertificateAcmeAddComponent {
   private pk: any;
   protected dialogRef: any;
   protected queryCallOption: Array<any> = [["id", "="]];
-  // protected dnsmapformArray: FormArray;
-  protected dnsmapArrayControl: any;
-  protected dnsmapInitialCount = 1;
+  protected initialCount = 1;
 
   constructor(
     protected router: Router, protected route: ActivatedRoute,
@@ -105,23 +92,13 @@ export class CertificateAcmeAddComponent {
     protected entityFormService: EntityFormService
   ) { }
 
-  preInit() {
-    // this.dnsmapArrayControl = _.find(this.fieldConfig, {'name' : 'dns_mapping_fields'});
-    
+  preInit() { 
+    this.arrayControl = _.find(this.fieldConfig, {'name' : 'dns_mapping_array'});
     this.route.params.subscribe(params => {
       if (params['pk']) {
         this.queryCallOption[0].push(parseInt(params['pk']));
-
       }
     });
-
-
-  }
-
-  afterInit(entityEdit: any) {
-    this.entityForm = entityEdit;
-    // this.dnsmapformArray = this.entityForm.formGroup.controls['dns_mapping_fields'];
-
     this.ws.call(this.queryCall, [this.queryCallOption]).subscribe((res) => {
       this.csrOrg = res;
       let domains = [this.csrOrg[0].common];
@@ -135,6 +112,7 @@ export class CertificateAcmeAddComponent {
           );
         });
       });
+
       for (let item of domains) {
         let fc = (
           {
@@ -146,28 +124,31 @@ export class CertificateAcmeAddComponent {
             required: true, 
             class: 'dns_mapping'              
           });
-          console.log(fc)
         this.fieldConfig.push(fc);
-
-        this.dnsmapInitialCount += 1;
-        // this.entityFormService.insertFormArrayGroup(
-        //   this.dnsmapInitialCount, this.dnsmapformArray, this.dnsmapArrayControl.formarray);
       }
-    })
 
+      // for (let item of domains) {
+      //   console.log(item)
+      //   this.initialCount += 1;
+      //   this.entityFormService.insertFormArrayGroup(
+      //       this.initialCount, this.formArray, this.arrayControl.formarray);
+      // }
+    })
+  }
+
+  afterInit(entityEdit: any) {
+    this.entityForm = entityEdit;
+    this.formArray = entityEdit.formGroup.controls['dns_mapping_array'];
   }
 
   customSubmit(value) {
-    console.log(value)
     let dns_map = {};
     for (let item in value) {
-      console.log(item)
     if (item.includes('dns_mapping')) {
         let i = item.split('-');
         dns_map[i[1]]=value[item];
       }
     }
-    console.log(dns_map)
     let payload = {};
     payload['tos'] = value.tos;
     payload['csr_id'] = this.csrOrg[0].id;
@@ -176,8 +157,6 @@ export class CertificateAcmeAddComponent {
     payload['renew_days'] = value.renew_days;
     payload['create_type'] = 'CERTIFICATE_CREATE_ACME';
     payload['dns_mapping'] = dns_map;
-
-    console.log(payload)
 
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": ("Creating...") }, disableClose: true});
     this.dialogRef.componentInstance.setCall(this.addCall, [payload]);
