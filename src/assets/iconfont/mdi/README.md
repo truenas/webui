@@ -13,6 +13,7 @@ bower install mdi
 
 [NPM @MDI Organization](https://npmjs.com/org/mdi)
 
+- JavaScript/Typescript: [MaterialDesign-JS](https://github.com/Templarian/MaterialDesign-JS)
 - SVG: [MaterialDesign-SVG](https://github.com/Templarian/MaterialDesign-SVG)
 
 ## Learn More
