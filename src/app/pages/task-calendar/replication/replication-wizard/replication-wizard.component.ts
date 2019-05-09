@@ -236,7 +236,7 @@ export class ReplicationWizardComponent {
                 },
                 {
                     type: 'checkbox',
-                    name: 'recursive',
+                    name: 'snapshot_recursive',
                     placeholder: snapshotHelptext.recursive_placeholder,
                     tooltip: snapshotHelptext.recursive_tooltip,
                     value: false,
@@ -316,6 +316,89 @@ export class ReplicationWizardComponent {
                 //     tooltip: helptext.enabled_tooltip,
                 //     value: true,
                 //   }
+                // replication task
+                {
+                    type: 'select',
+                    name: 'direction',
+                    placeholder: replicationHelptext.direction_placeholder,
+                    tooltip: replicationHelptext.direction_tooltip,
+                    options: [
+                        {
+                            label: 'PUSH',
+                            value: 'PUSH',
+                        }, {
+                            label: 'PULL',
+                            value: 'PULL',
+                        }
+                    ],
+                    value: 'PUSH',
+                },
+                {
+                    type: 'explorer',
+                    initial: '/mnt',
+                    explorerType: 'directory',
+                    multiple: true,
+                    name: 'source_datasets',
+                    placeholder: replicationHelptext.source_datasets_placeholder,
+                    tooltip: replicationHelptext.source_datasets_tooltip,
+                    options: [],
+                    required: true,
+                    validation: [Validators.required],
+                }, {
+                    type: 'input',
+                    name: 'target_dataset',
+                    placeholder: replicationHelptext.target_dataset_placeholder,
+                    tooltip: replicationHelptext.target_dataset_tooltip,
+                    required: true,
+                    validation: [Validators.required],
+                }, {
+                    type: 'checkbox',
+                    name: 'recursive',
+                    placeholder: replicationHelptext.recursive_placeholder,
+                    tooltip: replicationHelptext.recursive_tooltip,
+                    value: false,
+                }, {
+                    type: 'select',
+                    multiple: true,
+                    name: 'exclude',
+                    placeholder: replicationHelptext.exclude_placeholder,
+                    tooltip: replicationHelptext.exclude_tooltip,
+                    options: [],
+                },
+                {
+                    type: 'checkbox',
+                    name: 'auto',
+                    placeholder: replicationHelptext.auto_placeholder,
+                    tooltip: replicationHelptext.auto_tooltip,
+                    value: true,
+                },
+                {
+                    type: 'select',
+                    name: 'retention_policy',
+                    placeholder: replicationHelptext.retention_policy_placeholder,
+                    tooltip: replicationHelptext.retention_policy_tooltip,
+                    options: [
+                        {
+                            label: 'Same as Source',
+                            value: 'SOURCE',
+                        }, {
+                            label: 'Custom',
+                            value: 'CUSTOM',
+                        }, {
+                            label: 'None',
+                            value: 'NONE',
+                        }
+                    ],
+                    value: 'NONE',
+                },
+                {
+                    type: 'checkbox',
+                    name: 'enabled',
+                    placeholder: replicationHelptext.enabled_placeholder,
+                    tooltip: replicationHelptext.enabled_tooltip,
+                    value: true,
+                    isHidden: true,
+                },
             ]
         }
     ];
@@ -346,17 +429,27 @@ export class ReplicationWizardComponent {
 
     protected snapshotFieldGroup: any[] = [
         'dataset',
-        'recursive',
+        'snapshot_recursive',
         'lifetime_value',
         'lifetime_unit',
         'snapshot_picker',
         'begin',
         'end',
     ];
+    protected replicationFieldGroup: any[] = [
+        'direction',
+        'source_datasets',
+        'target_dataset',
+        'recursive',
+        'exclude',
+        'auto',
+        'retention_policy',
+        'enabled',
+    ];
 
     protected entityWizard: any;
     protected hiddenFieldGroup: any[] = [
-
+        'enabled'
     ];
     public summaryObj = {
         // 'name': null,
@@ -490,6 +583,7 @@ export class ReplicationWizardComponent {
 
         this.entityWizard.formArray.controls[1].controls['periodic_snapshot_tasks'].setValue('');
     }
+
     disablefieldGroup(fieldGroup: any, disabled: boolean, stepIndex: number) {
         fieldGroup.forEach(field => {
             if (_.indexOf(this.hiddenFieldGroup, field) < 0) {
