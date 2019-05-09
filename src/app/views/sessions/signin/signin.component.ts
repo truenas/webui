@@ -34,6 +34,18 @@ export class SigninComponent implements OnInit {
   }
   public setPasswordFormGroup: FormGroup;
   public has_root_password: Boolean = true;
+  public failover_status = '';
+  public failover_statuses = {
+    'SINGLE': "",
+    'MASTER': T("Active storage controller."),
+    'BACKUP': T("Passive storage controller."),
+    'ELECTING': T("Electing storage controller."),
+    'IMPORTING': T("Importing pools."),
+    'ERROR': T("Failover is in an error state.")
+  }
+  public failover_ips = [];
+  public ha_disabled_reasons =[];
+  public ha_status_text = '';
 
   constructor(private ws: WebSocketService, private router: Router,
     private snackBar: MatSnackBar, public translate: TranslateService,
@@ -44,8 +56,9 @@ export class SigninComponent implements OnInit {
     private http:Http) {
     this.ws = ws;
     this.ws.call('system.is_freenas').subscribe((res)=>{
-      this.logo_ready = true;
+      this.logo_ready = res;
       this.is_freenas = res;
+      this.getHAStatus();
       window.localStorage.setItem('is_freenas', res);
     });
 
@@ -57,6 +70,9 @@ export class SigninComponent implements OnInit {
    }
 
   ngOnInit() {
+    setInterval(() => {
+      this.getHAStatus();
+    }, 5000);
     this.ws.call('user.has_root_password').subscribe((res) => {
       this.has_root_password = res;
     })
@@ -108,6 +124,38 @@ export class SigninComponent implements OnInit {
       password: new FormControl('', [Validators.required]),
       password2: new FormControl('', [Validators.required, matchOtherValidator('password')]),
     })
+  }
+
+  getHAStatus() {
+    if (!this.is_freenas) {
+      this.ws.call('failover.status').subscribe(res => {
+        this.failover_status = res;
+        if (res !== 'SINGLE') {
+          this.ws.call('failover.get_ips').subscribe(ips => {
+            this.failover_ips = ips;
+          }, err => {
+            console.log(err);
+          });
+          this.ws.call('failover.disabled_reasons').subscribe(reason => {
+              this.logo_ready = true;
+              this.ha_disabled_reasons = reason;
+              if (reason.length === 0) {
+                this.ha_status_text = T('HA is enabled.');
+              } else if (reason.length === 1 && reason[0] === 'NO_SYSTEM_READY') {
+                this.ha_status_text = T('HA is reconnecting.');
+              } else {
+                this.ha_status_text = T('HA is disabled.');
+              }
+          }, err => {
+            console.log(err);
+          });
+        } else {
+          this.logo_ready = true;
+        }
+      }, err => {
+        console.log(err);
+      });
+    }
   }
 
   get password() {
