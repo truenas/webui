@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Validators } from '@angular/forms';
+import { Validators, FormControl } from '@angular/forms';
 import * as _ from 'lodash';
 
 import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
@@ -63,6 +63,14 @@ export class ReplicationWizardComponent {
             label: helptext.step1_label,
             fieldConfig: [
                 {
+                    type: 'input',
+                    name: 'name', //for new ssh connection and new snapshot task and replication
+                    placeholder: helptext.name_placeholder,
+                    tooltip: helptext.name_tooltip,
+                    required: true,
+                    validation: [Validators.required]
+                },
+                {
                     type: 'select',
                     name: 'transport',
                     placeholder: replicationHelptext.transport_placeholder,
@@ -76,7 +84,6 @@ export class ReplicationWizardComponent {
                             value: 'SSH+NETCAT',
                         }
                     ],
-                    value: 'SSH',
                     required: true,
                 },
                 //netcat
@@ -105,14 +112,6 @@ export class ReplicationWizardComponent {
                     ],
                     required: true,
                     validation: [Validators.required],
-                },
-                {
-                    type: 'input',
-                    name: 'name',
-                    placeholder: sshConnectionsHelptex.name_placeholder,
-                    tooltip: sshConnectionsHelptex.name_tooltip,
-                    required: true,
-                    validation: [Validators.required]
                 },
                 {
                     type: 'select',
@@ -213,14 +212,6 @@ export class ReplicationWizardComponent {
         {
             label: helptext.step2_label,
             fieldConfig: [
-                {
-                    type: 'input',
-                    name: 'name', //replication and snapshot unless snapshot uses existing
-                    placeholder: sshConnectionsHelptex.name_placeholder,
-                    tooltip: sshConnectionsHelptex.name_tooltip,
-                    required: true,
-                    validation: [Validators.required]
-                },
                 {
                     type: 'select',
                     // multiple: true,
@@ -343,7 +334,6 @@ export class ReplicationWizardComponent {
                             value: 'PULL',
                         }
                     ],
-                    value: 'PUSH',
                 },
                 {
                     type: 'explorer',
@@ -368,21 +358,17 @@ export class ReplicationWizardComponent {
                     name: 'recursive',
                     placeholder: replicationHelptext.recursive_placeholder,
                     tooltip: replicationHelptext.recursive_tooltip,
-                    value: false,
                 }, {
-                    type: 'select',
-                    multiple: true,
+                    type: 'input',
                     name: 'exclude',
                     placeholder: replicationHelptext.exclude_placeholder,
                     tooltip: replicationHelptext.exclude_tooltip,
-                    options: [],
                 },
                 {
                     type: 'checkbox',
                     name: 'auto',
                     placeholder: replicationHelptext.auto_placeholder,
                     tooltip: replicationHelptext.auto_tooltip,
-                    value: true,
                 },
                 {
                     type: 'select',
@@ -401,7 +387,6 @@ export class ReplicationWizardComponent {
                             value: 'NONE',
                         }
                     ],
-                    value: 'NONE',
                 },
                 {
                     type: 'checkbox',
@@ -426,7 +411,6 @@ export class ReplicationWizardComponent {
     ];
 
     protected sshFieldGroup: any[] = [
-        'name',
         'setup_method',
         'cipher',
         'username',
@@ -468,27 +452,35 @@ export class ReplicationWizardComponent {
         'netcat_active_side_listen_address',
         'enabled'
     ];
+
+    public summary: any;
     public summaryObj = {
-        // 'name': null,
-        // 'type': null,
-        // 'path': null,
-        // 'filesize': null,
-        // 'disk': null,
-        // 'dataset': null,
-        // 'volsize': null,
-        // 'volsize_unit': null,
-        // 'usefor': null,
-        // 'portal': null,
-        // 'discovery_authmethod': null,
-        // 'discovery_authgroup': null,
-        // 'ip': null,
-        // 'port': null,
-        // 'auth': null,
-        // 'tag': null,
-        // 'user': null,
-        // 'initiators': null,
-        // 'auth_network': null,
-        // 'comment': null,
+        'name': null,
+        'transport': null,
+        'ssh_credentials': null,
+        'setup_method': null,
+        'cipher': null,
+        'username': null,
+        'url': null,
+        'host': null,
+        'port': null,
+        'private_key': null,
+        'periodic_snapshot_tasks': null,
+        'dataset': null,
+        'snapshot_recursive': null,
+        'lifetime_value': null,
+        'lifetime_unit': null,
+        'snapshot_picker': null,
+        'begin': null,
+        'end': null,
+        'direction': null,
+        'source_datasets': null,
+        'target_dataset': null,
+        'recursive': null,
+        'exclude': null,
+        'auto': null,
+        'retention_policy': null,
+        'enabled': null,
     };
     protected createManualSSHConnection = false;
 
@@ -516,9 +508,6 @@ export class ReplicationWizardComponent {
         this.step1Init();
     }
 
-    summaryInit() {
-    }
-
     step0Init() {
         const ssh_credentialsField = _.find(this.wizardConfig[0].fieldConfig, { 'name': 'ssh_credentials' });
         this.keychainCredentialService.getSSHConnections().subscribe((res) => {
@@ -542,7 +531,7 @@ export class ReplicationWizardComponent {
             this.disablefieldGroup(this.transportSSHnetcatFieldGroup, ssh, 0);
         });
         this.entityWizard.formArray.controls[0].controls['ssh_credentials'].valueChanges.subscribe((value) => {
-            const newSSH = (value == 'NEW' &&  this.entityWizard.formArray.controls[0].controls['transport'].value == 'SSH') ? true : false;
+            const newSSH = (value == 'NEW' && this.entityWizard.formArray.controls[0].controls['transport'].value == 'SSH') ? true : false;
             this.disablefieldGroup([...this.sshFieldGroup, ...this.semiSSHFieldGroup, ...this.manualSSHFieldGroup], !newSSH, 0);
             if (newSSH) {
                 this.entityWizard.formArray.controls[0].controls['setup_method'].setValue(this.entityWizard.formArray.controls[0].controls['setup_method'].value);
@@ -598,7 +587,15 @@ export class ReplicationWizardComponent {
             this.disablefieldGroup(this.snapshotFieldGroup, !newSnapshot, 1);
         });
 
+        this.entityWizard.formArray.controls[1].controls['recursive'].valueChanges.subscribe((value) => {
+            this.disablefieldGroup(['exclude'], !value, 1);
+        });
+
+        this.entityWizard.formArray.controls[1].controls['direction'].setValue('PUSH');
         this.entityWizard.formArray.controls[1].controls['periodic_snapshot_tasks'].setValue('');
+        this.entityWizard.formArray.controls[1].controls['recursive'].setValue(true);
+        this.entityWizard.formArray.controls[1].controls['auto'].setValue(true);
+        this.entityWizard.formArray.controls[1].controls['retention_policy'].setValue('NONE');
     }
 
     disablefieldGroup(fieldGroup: any, disabled: boolean, stepIndex: number) {
@@ -613,5 +610,67 @@ export class ReplicationWizardComponent {
                 }
             }
         });
+    }
+
+    summaryInit() {
+        for (let step = 0; step < 2; step++) {
+            Object.entries(this.entityWizard.formArray.controls[step].controls).forEach(([name, control]) => {
+                if (name in this.summaryObj) {
+                    (<FormControl>control).valueChanges.subscribe(((value) => {
+                        if (value == undefined) {
+                            this.summaryObj[name] = null;
+                        } else {
+                            this.summaryObj[name] = value;
+                            // get label value
+                            if (name == 'ssh_credentials' || name == 'private_key' || name == 'periodic_snapshot_tasks') {
+                                const field = _.find(this.wizardConfig[step].fieldConfig, { name: name });
+                                if (field) {
+                                    this.summaryObj[name] = _.find(field.options, { value: value }) ? _.find(field.options, { value: value }).label : null;
+                                }
+                            }
+                        }
+                        this.summary = this.getSummary();
+                    }));
+                }
+            });
+        }
+    }
+
+    getSummary() {
+        const summary = {
+            'Name': this.summaryObj.name,
+            'Direction': this.summaryObj.direction,
+            'Transport': this.summaryObj.transport,
+            'SSH Connection': this.summaryObj.ssh_credentials,
+            'New SSH Connection': {
+                'Setup Methodh': this.summaryObj.setup_method,
+                'Host': this.summaryObj.host,
+                'Port': this.summaryObj.port,
+                'Username': this.summaryObj.name,
+                'Private Key': this.summaryObj.private_key,
+                'FreeNAS/TrueNAS URL': this.summaryObj.url,
+                'Cipher': this.summaryObj.cipher,
+            },
+            'Source Dataset': this.summaryObj.source_datasets,
+            'Target Dataset': this.summaryObj.target_dataset,
+            'Recurisive': this.summaryObj.recursive,
+            'Exclude Child Datasets': this.summaryObj.exclude,
+            'Periodic Snapshot Tasks': this.summaryObj.periodic_snapshot_tasks,
+            'New Periodic Snapshot Tasks': {
+                'Dataset': this.summaryObj.dataset,
+                'Recursive': this.summaryObj.recursive,
+                'Snapshot Lifetime': this.summaryObj.lifetime_value + ' ' + this.summaryObj.lifetime_unit,
+                'Schedule the Periodic Snapshot Task': this.summaryObj.snapshot_picker,
+                'Begin': this.summaryObj.begin,
+                'End': this.summaryObj.end,
+            },
+            'Run Automatically': this.summaryObj.auto,
+            'Snapshot Retention Policy': this.summaryObj.retention_policy,
+        };
+
+        this.summaryObj.ssh_credentials === 'NEW' ? delete summary['SSH Connection'] : delete summary['New SSH Connection'];
+        this.summaryObj.periodic_snapshot_tasks === 'NEW' ? delete summary['Periodic Snapshot Tasks'] : delete summary['New Periodic Snapshot Tasks'];
+
+        return summary;
     }
 }
