@@ -7,15 +7,16 @@ import { Wizard } from '../../../common/entity/entity-form/models/wizard.interfa
 import helptext from '../../../../helptext/task-calendar/replication/replication-wizard';
 import replicationHelptext from '../../../../helptext/task-calendar/replication/replication';
 import sshConnectionsHelptex from '../../../../helptext/system/ssh-connections';
+import snapshotHelptext from '../../../../helptext/task-calendar/snapshot/snapshot-form';
 
-import { DialogService, KeychainCredentialService, WebSocketService } from '../../../../services';
+import { DialogService, KeychainCredentialService, WebSocketService, ReplicationService, TaskService } from '../../../../services';
 import { EntityUtils } from '../../../common/entity/utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 
 @Component({
     selector: 'app-replication-wizard',
     template: `<entity-wizard [conf]="this"></entity-wizard>`,
-    providers: [KeychainCredentialService]
+    providers: [KeychainCredentialService, ReplicationService, TaskService]
 })
 export class ReplicationWizardComponent {
 
@@ -196,6 +197,126 @@ export class ReplicationWizardComponent {
                     value: 'STANDARD',
                 }
             ]
+        },
+        {
+            label: helptext.step2_label,
+            fieldConfig: [
+                {
+                    type: 'input',
+                    name: 'name', //replication and snapshot unless snapshot uses existing
+                    placeholder: sshConnectionsHelptex.name_placeholder,
+                    tooltip: sshConnectionsHelptex.name_tooltip,
+                    required: true,
+                    validation: [Validators.required]
+                },
+                {
+                    type: 'select',
+                    // multiple: true,
+                    name: 'periodic_snapshot_tasks',
+                    placeholder: replicationHelptext.periodic_snapshot_tasks_placeholder,
+                    tooltip: replicationHelptext.periodic_snapshot_tasks_tooltip,
+                    options: [
+                        {
+                            label: 'Create New',
+                            value: 'NEW'
+                        }
+                    ],
+                    required: true,
+                    validation: [Validators.required],
+                },
+                // snapshot task
+                {
+                    type: 'select',
+                    name: 'dataset',
+                    placeholder: snapshotHelptext.dataset_placeholder,
+                    tooltip: snapshotHelptext.dataset_tooltip,
+                    options: [],
+                    required: true,
+                    validation: [Validators.required],
+                },
+                {
+                    type: 'checkbox',
+                    name: 'recursive',
+                    placeholder: snapshotHelptext.recursive_placeholder,
+                    tooltip: snapshotHelptext.recursive_tooltip,
+                    value: false,
+                },
+                {
+                    placeholder: snapshotHelptext.lifetime_value_placeholder,
+                    type: 'input',
+                    name: 'lifetime_value',
+                    inputType: 'number',
+                    class: 'inline',
+                    value: 2,
+                    validation: [Validators.min(0)]
+                },
+                {
+                    type: 'select',
+                    name: 'lifetime_unit',
+                    tooltip: snapshotHelptext.lifetime_unit_tooltip,
+                    options: [{
+                        label: 'Hours',
+                        value: 'HOUR',
+                    }, {
+                        label: 'Days',
+                        value: 'DAY',
+                    }, {
+                        label: 'Weeks',
+                        value: 'WEEK',
+                    }, {
+                        label: 'Months',
+                        value: 'MONTH',
+                    }, {
+                        label: 'Years',
+                        value: 'YEAR',
+                    }],
+                    value: 'WEEK',
+                    class: 'inline',
+                },
+                //   {
+                //     type: 'input',
+                //     name: 'naming_schema',
+                //     placeholder: helptext.naming_schema_placeholder,
+                //     tooltip: helptext.naming_schema_tooltip,
+                //     value: 'auto-%Y-%m-%d_%H-%M',
+                //   },
+                {
+                    type: 'scheduler',
+                    name: 'snapshot_picker',
+                    placeholder: snapshotHelptext.snapshot_picker_placeholder,
+                    tooltip: snapshotHelptext.snapshot_picker_tooltip,
+                    validation: [Validators.required],
+                    required: true,
+                    value: "0 0 * * *"
+                },
+                {
+                    type: 'select',
+                    name: 'begin',
+                    placeholder: snapshotHelptext.begin_placeholder,
+                    tooltip: snapshotHelptext.begin_tooltip,
+                    options: [],
+                    value: '09:00',
+                    required: true,
+                    validation: [Validators.required],
+                },
+                {
+                    type: 'select',
+                    name: 'end',
+                    placeholder: snapshotHelptext.end_placeholder,
+                    tooltip: snapshotHelptext.end_tooltip,
+                    options: [],
+                    value: '18:00',
+                    required: true,
+                    validation: [Validators.required],
+                },
+                //   {
+                //     type: 'checkbox',
+                //     name: 'enabled',
+                //     placeholder: helptext.enabled_placeholder,
+                //     tooltip: helptext.enabled_tooltip,
+                //     value: true,
+                //   }
+            ]
         }
     ];
 
@@ -223,6 +344,15 @@ export class ReplicationWizardComponent {
         'remote_host_key'
     ];
 
+    protected snapshotFieldGroup: any[] = [
+        'dataset',
+        'recursive',
+        'lifetime_value',
+        'lifetime_unit',
+        'snapshot_picker',
+        'begin',
+        'end',
+    ];
 
     protected entityWizard: any;
     protected hiddenFieldGroup: any[] = [
@@ -254,7 +384,8 @@ export class ReplicationWizardComponent {
 
     constructor(private router: Router, private keychainCredentialService: KeychainCredentialService,
         private loader: AppLoaderService, private dialogService: DialogService,
-        private ws: WebSocketService) { }
+        private ws: WebSocketService, private replicationService: ReplicationService,
+        private taskService: TaskService) { }
 
     isCustActionVisible(id, stepperIndex) {
         if (id == 'advanced_add' && stepperIndex == 0) {
@@ -272,6 +403,7 @@ export class ReplicationWizardComponent {
 
         this.summaryInit();
         this.step0Init();
+        this.step1Init();
     }
 
     summaryInit() {
@@ -321,6 +453,43 @@ export class ReplicationWizardComponent {
         this.entityWizard.formArray.controls[0].controls['transport'].setValue('SSH');
     }
 
+    step1Init() {
+        const periodicSnapshotTasksField = _.find(this.wizardConfig[1].fieldConfig, { name: 'periodic_snapshot_tasks' });
+        this.replicationService.getSnapshotTasks().subscribe(
+            (res) => {
+                for (const i in res) {
+                    const label = res[i].dataset + ' - ' + res[i].naming_schema + ' - ' + res[i].lifetime_value + ' ' + res[i].lifetime_unit + '(S) - ' + (res[i].enabled ? 'Enabled' : 'Disabled');
+                    periodicSnapshotTasksField.options.push({ label: label, value: res[i].id });
+                }
+            }
+        )
+
+        const datasetField = _.find(this.wizardConfig[1].fieldConfig, { 'name': 'dataset' });
+        this.taskService.getVolumeList().subscribe((res) => {
+            for (let i = 0; i < res.data.length; i++) {
+                const volume_list = new EntityUtils().flattenData(res.data[i].children);
+                for (const j in volume_list) {
+                    datasetField.options.push({ label: volume_list[j].path, value: volume_list[j].path });
+                }
+            }
+            datasetField.options = _.sortBy(datasetField.options, [function (o) { return o.label; }]);
+        });
+
+        const begin_field = _.find(this.wizardConfig[1].fieldConfig, { name: 'begin' });
+        const end_field = _.find(this.wizardConfig[1].fieldConfig, { name: 'end' });
+        const time_options = this.taskService.getTimeOptions();
+        for (let i = 0; i < time_options.length; i++) {
+            begin_field.options.push({ label: time_options[i].label, value: time_options[i].value });
+            end_field.options.push({ label: time_options[i].label, value: time_options[i].value });
+        }
+
+        this.entityWizard.formArray.controls[1].controls['periodic_snapshot_tasks'].valueChanges.subscribe((value) => {
+            const newSnapshot = value == 'NEW' ? true : false;
+            this.disablefieldGroup(this.snapshotFieldGroup, !newSnapshot, 1);
+        });
+
+        this.entityWizard.formArray.controls[1].controls['periodic_snapshot_tasks'].setValue('');
+    }
     disablefieldGroup(fieldGroup: any, disabled: boolean, stepIndex: number) {
         fieldGroup.forEach(field => {
             if (_.indexOf(this.hiddenFieldGroup, field) < 0) {
