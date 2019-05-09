@@ -1140,7 +1140,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
         font-size: 36px;
       }
     }
-    #TN_col1 {
+    #TN_col1, #FN_col1, #support_text {
       width: 200%;
     }
     .lowerme {
@@ -1149,6 +1149,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     #support_text {
       font-size: 110%;
       margin-right: 30px;
+      margin-top: 10px;
     }
     h4 {
       font-size: 130%;

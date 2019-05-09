@@ -53,22 +53,6 @@ export class SupportComponent {
         },
         {
           type: 'paragraph',
-          name: 'support_text',
-          paraText: this.sanitizer.bypassSecurityTrustHtml(
-            'Search the <a href="https://jira.ixsystems.com/projects/NAS/issues/" \
-              target="_blank" style="text-decoration:underline;">FreeNAS issue tracker</a> \
-              to ensure the issue has not already been reported before \
-              filing a bug report or feature request. If an issue has \
-              already been created, add a comment to the existing issue. \
-              Please visit the <a href="http://www.ixsystems.com/storage/" target="_blank" \
-              style="text-decoration:underline;">iXsystems storage page</a> \
-              for enterprise-grade storage solutions and support.<br><br> \
-              <a href="https://jira.ixsystems.com/secure/Signup!default.jspa" target="_blank" \
-              style="text-decoration:underline;">Create a Jira account</a> to file an issue. Use a valid \
-              email address when registering to receive issue status updates.')
-        },
-        {
-          type: 'paragraph',
           name: 'TN_custname',
           paraText: '<h4>Customer Name: </h4>'
         },
@@ -91,6 +75,37 @@ export class SupportComponent {
           type: 'paragraph',
           name: 'TN_contractdate',
           paraText: '<h4>Expiration Date: </h4>'
+        },
+        {
+          type: 'paragraph',
+          name: 'FN_model',
+          paraText: '<h4>Model: </h4>'
+        },
+        {
+          type: 'paragraph',
+          name: 'FN_memory',
+          paraText: '<h4>Memory: </h4>'
+        },
+        {
+          type: 'paragraph',
+          name: 'FN_sysserial',
+          paraText: '<h4>Serial Number: </h4>'
+        },
+        {
+          type: 'paragraph',
+          name: 'support_text',
+          paraText: this.sanitizer.bypassSecurityTrustHtml(
+            'Search the <a href="https://jira.ixsystems.com/projects/NAS/issues/" \
+              target="_blank" style="text-decoration:underline;">FreeNAS issue tracker</a> \
+              to ensure the issue has not already been reported before \
+              filing a bug report or feature request. If an issue has \
+              already been created, add a comment to the existing issue. \
+              Please visit the <a href="http://www.ixsystems.com/storage/" target="_blank" \
+              style="text-decoration:underline;">iXsystems storage page</a> \
+              for enterprise-grade storage solutions and support.<br><br> \
+              <a href="https://jira.ixsystems.com/secure/Signup!default.jspa" target="_blank" \
+              style="text-decoration:underline;">Create a Jira account</a> to file an issue. Use a valid \
+              email address when registering to receive issue status updates.')
         }
       ]
     },
@@ -115,21 +130,6 @@ export class SupportComponent {
           type: 'paragraph',
           name: 'TN_addhardware',
           paraText: '<h4>Additional Hardware: </h4>'
-        },
-        {
-          type: 'paragraph',
-          name: 'FN_model',
-          paraText: '<h4>Model: </h4>'
-        },
-        {
-          type: 'paragraph',
-          name: 'FN_memory',
-          paraText: '<h4>Memory: </h4>'
-        },
-        {
-          type: 'paragraph',
-          name: 'FN_sysserial',
-          paraText: '<h4>Serial Number: </h4>'
         }
       ]
     },
@@ -351,21 +351,7 @@ export class SupportComponent {
     'screenshot'
   ];
 
-  public custActions: Array<any> = [
-    {
-      id : 'update_license',
-      name : 'Update License',
-      function : () => {
-        // this.dialog.dialogForm(this.saveConfigFormConf);
-        console.log('update license')
-      }
-    },{
-      id : 'userguide',
-      name: 'User Guide (pdf)',
-      function : () => {
-        console.log('user guide');
-      }
-    }];
+  public custActions: Array<any> = [];
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected _injector: Injector,
@@ -395,6 +381,21 @@ export class SupportComponent {
       for (let i in this.freeNASFields) {
         this.hideField(this.freeNASFields[i], true, entityEdit);
       }  
+      this.custActions = [
+        {
+          id : 'update_license',
+          name : 'Update License',
+          function : () => {
+            console.log('update license') // TODO: Add actions
+          }
+        },{
+          id : 'userguide',
+          name: 'User Guide (pdf)',
+          function : () => {
+            console.log('user guide');
+          }
+        }
+      ]
       this.ws.call('system.info').subscribe((res) => {
         let now = new Date();
         let then = new Date(res.license.contract_end.$value);
