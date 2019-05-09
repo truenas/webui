@@ -12,6 +12,7 @@ export class InfoDialog {
   public title: string;
   public info: string;
   public icon: string;
+  public is_html: boolean;
 
 
   constructor(public dialogRef: MatDialogRef < InfoDialog >, protected translate: TranslateService ) {

@@ -4,7 +4,8 @@
 </h1>
 <div mat-dialog-content>
   <div class="info-panel">
-    <textarea readonly matInput>{{info | translate}}</textarea>
+    <textarea *ngIf="!is_html" readonly matInput>{{info | translate}}</textarea>
+    <span *ngIf="is_html" [innerHtml]="info"></span>
   </div>  
 </div>
 <div mat-dialog-actions>
