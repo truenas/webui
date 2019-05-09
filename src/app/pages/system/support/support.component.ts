@@ -39,7 +39,7 @@ export class SupportComponent {
     {
       name: 'Column 1',
       label: false,
-      width: '50%',
+      width: '25%',
       config:[
         {
           type: 'paragraph',
@@ -69,23 +69,13 @@ export class SupportComponent {
         },
         {
           type: 'paragraph',
-          name: 'FN_version',
-          paraText: '<h4>OS Version: </h4>'
-        },
-        {
-          type: 'paragraph',
-          name: 'TN_model',
-          paraText: '<h4>Model: </h4>'
-        },
-        {
-          type: 'paragraph',
           name: 'TN_custname',
           paraText: '<h4>Customer Name: </h4>'
         },
         {
           type: 'paragraph',
-          name: 'TN_sysserial',
-          paraText: '<h4>System Serial: </h4>'
+          name: 'FN_version',
+          paraText: '<h4>OS Version: </h4>'
         },
         {
           type: 'paragraph',
@@ -101,6 +91,30 @@ export class SupportComponent {
           type: 'paragraph',
           name: 'TN_contractdate',
           paraText: '<h4>Contract Date: </h4>'
+        },
+        {
+          type: 'paragraph',
+          name: 'TN_expiredate',
+          paraText: '<h4>Expiration Date: </h4>'
+        }
+      ]
+    },
+    {
+      name: 'Column 2',
+      label: false,
+      width: '25%',
+      class: 'lowerme',
+      config: [
+        {
+          type: 'paragraph',
+          name: 'TN_model',
+          paraText: '<h4>Model: </h4>'
+        },
+
+        {
+          type: 'paragraph',
+          name: 'TN_sysserial',
+          paraText: '<h4>System Serial: </h4>'
         },
         {
           type: 'paragraph',
@@ -121,7 +135,14 @@ export class SupportComponent {
           type: 'paragraph',
           name: 'FN_sysserial',
           paraText: '<h4>Serial Number: </h4>'
-        },
+        }
+      ]
+    },
+    {
+      name: 'Column 3',
+      label: false,
+      width: '50%',
+      config:[
         {
           type: 'paragraph',
           name: 'pic',
@@ -129,16 +150,19 @@ export class SupportComponent {
         },
       ]
     },
-
     {
-      name: 'Column 2',
+      name: 'divider',
+      divider: true
+    }, 
+    {
+      name: 'Column 4',
       width: '50%',
       label: false,
       config:[
         {
           type: 'paragraph',
           name: 'FN_col2',
-          paraText: '<i class="material-icons">account_circle</i>Customer Information'
+          paraText: '<i class="material-icons">mail</i>Contact Support'
         },
         {
           type : 'input',
@@ -227,7 +251,16 @@ export class SupportComponent {
           ],
           validation: helptext.environment.validation,
           value: 'production'
-        },
+        }
+      ]
+    },
+    {
+    name: 'Column 5',
+    width: '50%',
+    label: false,
+    class: 'lowerme',
+    config: [
+
         {
           type : 'select',
           name : 'criticality',
@@ -313,6 +346,7 @@ export class SupportComponent {
     'TN_features',
     'TN_contracttype',
     'TN_contractdate',
+    'TN_expiredate',
     'TN_addhardware',
     'name',
     'email',
@@ -376,6 +410,7 @@ export class SupportComponent {
         }
         _.find(this.fieldConfig, {name : "TN_contracttype"}).paraText += res.license.contract_type;
         _.find(this.fieldConfig, {name : "TN_contractdate"}).paraText += res.license.contract_end.$value || '';
+        _.find(this.fieldConfig, {name : "TN_expiredate"}).paraText += 'Whatevs' || '';
         _.find(this.fieldConfig, {name : "TN_addhardware"}).paraText += '???'; //TODO: Where does this come from?
       })    
     }
