@@ -63,19 +63,7 @@ export class CertificateAcmeAddComponent {
         {label: 'https://acme-staging-v02.api.letsencrypt.org/directory', value: 'https://acme-staging-v02.api.letsencrypt.org/directory'},
         {label: 'https://acme-v02.api.letsencrypt.org/directory', value: 'https://acme-v02.api.letsencrypt.org/directory'}
       ],
-    },
-    // {
-    //   type: 'array',
-    //   name : 'dns_mapping_array',
-    //   initialCount: 1,
-    //   formarray: [{
-    //     name: 'dns_mapping',
-    //     placeholder: 'Authenticator for...',
-    //     tooltip: 'Specify authenticator to be used for...',
-    //     type: 'select',
-    //     required: true
-    //   }]
-    // }
+    }
   ]
 
   private authenticators = [];
@@ -113,6 +101,9 @@ export class CertificateAcmeAddComponent {
         });
       });
 
+      // TODO: This almost works but throws console errors and doesn't produce fields that the form
+      // recognizes as required. There was a similar function in vol list component, 'Create Snapshot' dialog
+      // that did work; was replaced recently, NAS-101297
       for (let item of domains) {
         let fc = (
           {
@@ -126,13 +117,6 @@ export class CertificateAcmeAddComponent {
           });
         this.fieldConfig.push(fc);
       }
-
-      // for (let item of domains) {
-      //   console.log(item)
-      //   this.initialCount += 1;
-      //   this.entityFormService.insertFormArrayGroup(
-      //       this.initialCount, this.formArray, this.arrayControl.formarray);
-      // }
     })
   }
 
@@ -141,6 +125,8 @@ export class CertificateAcmeAddComponent {
     this.formArray = entityEdit.formGroup.controls['dns_mapping_array'];
   }
 
+  // TODO: Submit seems to be processing the data; not sure about how this handles 
+  // multiple dns_mapping; Lack real credentials to test it for sure.
   customSubmit(value) {
     let dns_map = {};
     for (let item in value) {
