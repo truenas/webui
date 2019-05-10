@@ -679,7 +679,7 @@ export class ReplicationWizardComponent {
         const createdItems = {
             ssh_credentials: null,
             periodic_snapshot_tasks: null,
-            // replication: null,
+            replication: null,
         }
 
         for (const item in createdItems) {
@@ -760,11 +760,23 @@ export class ReplicationWizardComponent {
                     payload[i] = value[i];
                 }
             }
-            
-
         }
         if (item === 'replication') {
-            
+            for (let i = 0; i < value['source_datasets'].length; i++) {
+                if (_.startsWith(value['source_datasets'][i], '/mnt/')) {
+                    value['source_datasets'][i] = value['source_datasets'][i].substring(5);
+                }
+            }
+            value["periodic_snapshot_tasks"] = value['periodic_snapshot_tasks'].toString().split(' ');
+            payload = {
+                name: value['name'],
+                ssh_credentials: value['ssh_credentials'],
+                periodic_snapshot_tasks: value['periodic_snapshot_tasks'],
+                transport: value['transport'],
+            }
+            for (const i of this.replicationFieldGroup) {
+                payload[i] = value[i];
+            }
         }
        
         return this.ws.call(this.createCalls[item], [payload]).toPromise();
