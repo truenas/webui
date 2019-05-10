@@ -94,10 +94,14 @@ dataset_acl_recursive_placeholder: T('Apply permissions recursively'),
 dataset_acl_recursive_tooltip: T('Apply permissions recursively to all directories\
  and files within the current dataset'),
 
+dataset_acl_traverse_placeholder: T('Apply permissions to child datasets'),
+dataset_acl_traverse_tooltip: T('Apply permissions recursively all child datasets\
+ within the current dataset'),
+
 dataset_acl_dialog_warning: T('Warning'),
 dataset_acl_dialog_warning_message: T('Changing dataset permission mode can severely\
  affect existing permissions.'),
 dataset_acl_recursive_dialog_warning: T('Warning'),
 dataset_acl_recursive_dialog_warning_message: T("Setting permissions recursively will \
- affect this directory and any others below it. This might make data inaccessible.")
+ affect this directory and any others below it. This might make data inaccessible."),
 }

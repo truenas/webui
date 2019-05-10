@@ -170,7 +170,23 @@ export class DatasetAclComponent implements OnDestroy {
       placeholder: helptext.dataset_acl_recursive_placeholder,
       tooltip: helptext.dataset_acl_recursive_tooltip,
       value: false
-    }
+    },
+    {
+      type: 'checkbox',
+      name: 'traverse',
+      placeholder: helptext.dataset_acl_traverse_placeholder,
+      tooltip: helptext.dataset_acl_traverse_tooltip,
+      value: false,
+      isHidden: true,
+      disabled: true,
+      relation: [{
+        action: 'HIDE',
+        when: [{
+          name: 'recursive',
+          value: false,
+        }]
+      }],
+    },
   ]}
   ];
 
@@ -389,7 +405,7 @@ export class DatasetAclComponent implements OnDestroy {
   customSubmit(body) {
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Saving ACLs") }});
     this.dialogRef.componentInstance.setDescription(T("Saving ACLs..."));
-    this.dialogRef.componentInstance.setCall(this.updateCall, [body.path, body.dacl, {'recursive': body.recursive}]);
+    this.dialogRef.componentInstance.setCall(this.updateCall, [body.path, body.dacl, {'recursive': body.recursive, 'traverse': body.traverse}]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
       this.entityForm.success = true;
