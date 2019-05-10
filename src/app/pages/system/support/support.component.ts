@@ -383,7 +383,7 @@ export class SupportComponent {
       }
       this.product_image = 'freenas_mini.png';
       this.ws.call('system.info').subscribe((res) => {
-        this.getProductImage(res.system_product)
+        this.getFreeNASImage(res.system_product)
         _.find(this.fieldConfig, {name : "FN_version"}).paraText += res.version;
         _.find(this.fieldConfig, {name : "FN_model"}).paraText += res.system_product;
         _.find(this.fieldConfig, {name : "FN_memory"}).paraText += Number(res.physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB';
@@ -416,7 +416,7 @@ export class SupportComponent {
         let now = new Date();
         let then = new Date(res.license.contract_end.$value);
         let daysLeft = this.daysTillExpiration(now, then);
-        this.getProductImage(res.system_product)
+        this.getTrueNASImage(res.system_product)
         _.find(this.fieldConfig, {name : "pic"}).paraText = `<img src="../../../assets/images/${this.product_image}" height="200">`;
         _.find(this.fieldConfig, {name : "TN_model"}).paraText += res.system_product;
         _.find(this.fieldConfig, {name : "TN_custname"}).paraText += '???'; //TODO: Where does this come from?
@@ -448,17 +448,47 @@ export class SupportComponent {
     }
   }
 
-  getProductImage(sys_product) {
-    if (sys_product === 'VirtualBox') { // TODO: How many options for the pix?
-      this.product_image = 'virtualbox_logo.png';
-    } else if (sys_product.includes('Z20')) {
+  getTrueNASImage(sys_product) {
+    if (sys_product.includes('Z20')) {
       this.product_image = 'tnz20.png';
     } else if (sys_product.includes('FREENAS-MINI')) {
       this.product_image = 'freenas_mini.png';
-    } else {
+    } 
+    //   else if (sys_product.includes('X10')) {
+    //   this.product_image = 'tnx10.png';
+    // } else if (sys_product.includes('X20')) {
+    //   this.product_image = 'tnx20.png';
+    // } else if (sys_product.includes('M40')) {
+    //   this.product_image = 'tnm40.png';
+    // }  else if (sys_product.includes('M50')) {
+    //   this.product_image = 'tnm50.png';
+    // }  else if (sys_product.includes('Z30')) {
+    //   this.product_image = 'tnz30.png';
+    // } else if (sys_product.includes('Z35')) {
+    //   this.product_image = 'tnz35.png';
+    // } else if (sys_product.includes('Z50')) {
+    //   this.product_image = 'tnz50.png';
+    // }
+    else {
       this.product_image = 'ix-original.svg';
     }
   }
+
+  getFreeNASImage(sys_product) {
+    switch(sys_product){
+      case "FREENAS-MINI-2.0":
+        this.product_image = 'freenas_mini.png';
+      break;
+      case "FREENAS-MINI-XL":
+        this.product_image = 'freenas_mini_xl.png';
+      break;
+      default:
+        this.product_image = 'ix-original.svg';
+      break;
+    }
+  }
+
+
 
   daysTillExpiration(now, then) {
     let oneDay = 24*60*60*1000; // milliseconds in a day
