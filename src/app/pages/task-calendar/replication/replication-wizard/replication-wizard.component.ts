@@ -453,6 +453,8 @@ export class ReplicationWizardComponent {
         replication: 'replication.delete',
     }
 
+    protected availSnapshottasks: any;
+
     constructor(private router: Router, private keychainCredentialService: KeychainCredentialService,
         private loader: AppLoaderService, private dialogService: DialogService,
         private ws: WebSocketService, private replicationService: ReplicationService,
@@ -531,6 +533,7 @@ export class ReplicationWizardComponent {
         const periodicSnapshotTasksField = _.find(this.wizardConfig[1].fieldConfig, { name: 'periodic_snapshot_tasks' });
         this.replicationService.getSnapshotTasks().subscribe(
             (res) => {
+                this.availSnapshottasks = res;
                 for (const i in res) {
                     const label = res[i].dataset + ' - ' + res[i].naming_schema + ' - ' + res[i].lifetime_value + ' ' + res[i].lifetime_unit + '(S) - ' + (res[i].enabled ? 'Enabled' : 'Disabled');
                     periodicSnapshotTasksField.options.push({ label: label, value: res[i].id });
@@ -560,6 +563,13 @@ export class ReplicationWizardComponent {
         this.entityWizard.formArray.controls[1].controls['periodic_snapshot_tasks'].valueChanges.subscribe((value) => {
             const newSnapshot = value == 'NEW' ? true : false;
             this.disablefieldGroup(this.snapshotFieldGroup, !newSnapshot, 1);
+
+            if (!newSnapshot) {
+                const snapshottask = _.find(this.availSnapshottasks, {'id': value});
+                if (snapshottask) {
+                    this.entityWizard.formArray.controls[1].controls['source_datasets'].setValue(snapshottask['dataset']);
+                }
+            }
         });
 
         this.entityWizard.formArray.controls[1].controls['recursive'].valueChanges.subscribe((value) => {
