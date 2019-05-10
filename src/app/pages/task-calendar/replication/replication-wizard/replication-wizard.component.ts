@@ -27,28 +27,6 @@ export class ReplicationWizardComponent {
 
     protected custActions: Array<any> = [
         {
-            id: 'discover_remote_host_key',
-            name: sshConnectionsHelptex.discover_remote_host_key_button,
-            function: () => {
-                this.loader.open();
-                const payload = {
-                    'host': this.entityWizard.formArray.controls[0].value['host'],
-                    'port': this.entityWizard.formArray.controls[0].value['port'],
-                };
-
-                this.ws.call('keychaincredential.remote_ssh_host_key_scan', [payload]).subscribe(
-                    (res) => {
-                        this.loader.close();
-                        this.entityWizard.formArray.controls[0].controls['remote_host_key'].setValue(res);
-                    },
-                    (err) => {
-                        this.loader.close();
-                        new EntityUtils().handleWSError(this, err, this.dialogService);
-                    }
-                )
-            }
-        },
-        {
             id: 'advanced_add',
             name: "Advanced Replication Creation",
             function: () => {
@@ -503,13 +481,9 @@ export class ReplicationWizardComponent {
         private taskService: TaskService) { }
 
     isCustActionVisible(id, stepperIndex) {
-        if (id == 'advanced_add' && stepperIndex == 0) {
+        if (stepperIndex == 0) {
             return true;
         }
-        if (id == 'discover_remote_host_key' && stepperIndex == 0 && this.createManualSSHConnection) {
-            return true;
-        }
-
         return false;
     }
 
