@@ -41,6 +41,8 @@ export class DatasetAclComponent implements OnDestroy {
   protected groupSearchOptions: [];
   protected recursive: any;
   protected recursive_subscription: any;
+  protected stripacl: any;
+  protected stripacl_subscription: any;
   private aces: any;
   private aces_fc: any;
   private aces_subscription: any;
@@ -187,6 +189,13 @@ export class DatasetAclComponent implements OnDestroy {
         }]
       }],
     },
+    {
+      type: 'checkbox',
+      name: 'stripacl',
+      placeholder: helptext.dataset_acl_stripacl_placeholder,
+      tooltip: helptext.dataset_acl_stripacl_tooltip,
+      value: false,
+    }
   ]}
   ];
 
@@ -233,6 +242,21 @@ export class DatasetAclComponent implements OnDestroy {
         .subscribe((res) => {
           if (!res) {
             this.recursive.setValue(false);
+          }
+        });
+      }
+    });
+    this.ws.call('filesystem.acl_is_trivial', [this.path]).subscribe(acl_is_trivial => {
+      this.entityForm.setDisabled('stripacl', acl_is_trivial);
+    });
+    this.stripacl = entityEdit.formGroup.controls['stripacl'];
+    this.stripacl_subscription = this.stripacl.valueChanges.subscribe((value) => {
+      if (value === true) {
+        this.dialogService.confirm(helptext.dataset_acl_stripacl_dialog_warning,
+         helptext.dataset_acl_stripacl_dialog_warning_message)
+        .subscribe((res) => {
+          if (!res) {
+            this.stripacl.setValue(false);
           }
         });
       }
@@ -364,6 +388,7 @@ export class DatasetAclComponent implements OnDestroy {
   ngOnDestroy() {
     this.recursive_subscription.unsubscribe();
     this.aces_subscription.unsubscribe();
+    this.stripacl_subscription.unsubscribe();
   }
 
   beforeSubmit(data) {
@@ -405,7 +430,17 @@ export class DatasetAclComponent implements OnDestroy {
   customSubmit(body) {
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Saving ACLs") }});
     this.dialogRef.componentInstance.setDescription(T("Saving ACLs..."));
-    this.dialogRef.componentInstance.setCall(this.updateCall, [body.path, body.dacl, {'recursive': body.recursive, 'traverse': body.traverse}]);
+    let dacl = body.dacl;
+    if (body.stripacl) {
+      dacl = [];
+    }
+    this.dialogRef.componentInstance.setCall(this.updateCall,
+      [body.path, dacl,
+        {'recursive': body.recursive,
+         'traverse': body.traverse,
+         'stripacl': body.stripacl
+        }
+      ]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
       this.entityForm.success = true;

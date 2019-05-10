@@ -543,10 +543,26 @@ export class VolumesListTableConfig implements InputTableConf {
         actions.push({
           label: T("Edit Permissions"),
           onClick: (row1) => {
-            this._router.navigate(new Array('/').concat([
-              "storage", "pools", "id", row1.path.split('/')[0], "dataset",
-              "permissions", row1.path
-            ]));
+            this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + row1.path]).subscribe(acl_is_trivial => {
+              if (acl_is_trivial) {
+                this._router.navigate(new Array('/').concat([
+                  "storage", "pools", "id", row1.path.split('/')[0], "dataset",
+                  "permissions", row1.path
+                ]));
+              } else {
+                this.dialogService.confirm(T("Dataset has complex ACLs"),
+                  T("This dataset has ACLs that are too complex to be edited with \
+                    the permissions editor.  Open in ACL editor instead?"), 
+                  true, T("EDIT ACL")).subscribe(edit_acl => {
+                    if (edit_acl) {
+                        this._router.navigate(new Array('/').concat([
+                          "storage", "pools", "id", row1.path.split('/')[0], "dataset",
+                          "acl", row1.path
+                        ]));
+                      }
+                });
+              }
+            });
           }
         },
         {

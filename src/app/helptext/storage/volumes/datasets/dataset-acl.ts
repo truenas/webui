@@ -102,6 +102,14 @@ dataset_acl_dialog_warning: T('Warning'),
 dataset_acl_dialog_warning_message: T('Changing dataset permission mode can severely\
  affect existing permissions.'),
 dataset_acl_recursive_dialog_warning: T('Warning'),
-dataset_acl_recursive_dialog_warning_message: T("Setting permissions recursively will \
+dataset_acl_recursive_dialog_warning_message: T("Setting permissions recursively will\
  affect this directory and any others below it. This might make data inaccessible."),
+dataset_acl_stripacl_placeholder: T('Strip ACLs'),
+dataset_acl_stripacl_tooltip: T("Setting this will strip ACLs from the current dataset.\
+  ACLs will also be stripped recursively to directories and child datasets if paired with\
+  those options"),
+
+dataset_acl_stripacl_dialog_warning: T('Warning'),
+dataset_acl_stripacl_dialog_warning_message: T('Stripping ACLs will reset the permissions\
+  of this dataset. This may make data inaccessible.')
 }
