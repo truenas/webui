@@ -11,7 +11,6 @@ import {Subscription} from 'rxjs';
 
 import { UserService } from '../../../../../services/user.service';
 import {RestService, WebSocketService, StorageService, DialogService} from '../../../../../services/';
-import {EntityUtils} from '../../../../common/entity/utils';
 import {
   FieldConfig
 } from '../../../../common/entity/entity-form/models/field-config.interface';
@@ -21,7 +20,7 @@ import { T } from '../../../../../translate-marker';
 import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-acl';
 import { MatDialog } from '@angular/material';
 import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-job.component';
-import { Validators } from '@angular/forms';
+import {EntityUtils} from '../../../../common/entity/utils';
 
 
 @Component({
@@ -248,6 +247,8 @@ export class DatasetAclComponent implements OnDestroy {
     });
     this.ws.call('filesystem.acl_is_trivial', [this.path]).subscribe(acl_is_trivial => {
       this.entityForm.setDisabled('stripacl', acl_is_trivial);
+    }, (err) => {
+      new EntityUtils().handleWSError(this.entityForm, err);
     });
     this.stripacl = entityEdit.formGroup.controls['stripacl'];
     this.stripacl_subscription = this.stripacl.valueChanges.subscribe((value) => {
