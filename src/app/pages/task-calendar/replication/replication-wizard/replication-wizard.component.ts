@@ -12,6 +12,7 @@ import snapshotHelptext from '../../../../helptext/task-calendar/snapshot/snapsh
 import { DialogService, KeychainCredentialService, WebSocketService, ReplicationService, TaskService } from '../../../../services';
 import { EntityUtils } from '../../../common/entity/utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { throwError } from 'rxjs';
 
 @Component({
     selector: 'app-replication-wizard',
@@ -20,7 +21,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 })
 export class ReplicationWizardComponent {
 
-    public route_success: string[] = ['task', 'replication'];
+    public route_success: string[] = ['tasks', 'replication'];
     public isLinear = true;
     public summary_title = "Replication Summary";
 
@@ -182,12 +183,9 @@ export class ReplicationWizardComponent {
                     required: true,
                     validation: [Validators.required],
                 }, {
-                    type: 'textarea',
+                    type: 'input',
                     name: 'remote_host_key',
-                    placeholder: sshConnectionsHelptex.remote_host_key_placeholder,
-                    tooltip: sshConnectionsHelptex.remote_host_key_tooltip,
-                    value: '',
-                    validation: [Validators.required],
+                    isHidden: true,
                 }, {
                     type: 'select',
                     name: 'cipher',
@@ -412,6 +410,7 @@ export class ReplicationWizardComponent {
 
     protected sshFieldGroup: any[] = [
         'setup_method',
+        'private_key',
         'cipher',
         'username',
     ];
@@ -422,7 +421,6 @@ export class ReplicationWizardComponent {
     protected manualSSHFieldGroup: any[] = [
         'host',
         'port',
-        'private_key',
         'remote_host_key'
     ];
 
@@ -450,7 +448,8 @@ export class ReplicationWizardComponent {
     protected hiddenFieldGroup: any[] = [
         'netcat_active_side',
         'netcat_active_side_listen_address',
-        'enabled'
+        'enabled',
+        'remote_host_key',
     ];
 
     public summary: any;
@@ -483,6 +482,20 @@ export class ReplicationWizardComponent {
         'enabled': null,
     };
     protected createManualSSHConnection = false;
+
+    protected createCalls = {
+        ssh_credentials_semiautomatic: 'keychaincredential.remote_ssh_semiautomatic_setup',
+        ssh_credentials_manual:'keychaincredential.create',
+        periodic_snapshot_tasks: 'pool.snapshottask.create',
+        replication: 'replication.create',
+    }
+
+    protected deleteCalls = {
+        ssh_credentials_semiautomatic: 'keychaincredential.delete',
+        ssh_credentials_manual: 'keychaincredential.delete',
+        periodic_snapshot_tasks: 'pool.snapshottask.delete',
+        replication: 'replication.delete',
+    }
 
     constructor(private router: Router, private keychainCredentialService: KeychainCredentialService,
         private loader: AppLoaderService, private dialogService: DialogService,
@@ -672,5 +685,110 @@ export class ReplicationWizardComponent {
         this.summaryObj.periodic_snapshot_tasks === 'NEW' ? delete summary['Periodic Snapshot Tasks'] : delete summary['New Periodic Snapshot Tasks'];
 
         return summary;
+    }
+
+    async customSubmit(value) {
+        this.loader.open();
+        let toStop = false;
+        if (value['ssh_credentials'] == 'NEW' && value['setup_method'] == 'manual') {
+            await this.getRemoteHostKey(value).then(
+                (res) => {
+                    value['remote_host_key'] = res;
+                },
+                (err) => {
+                    toStop = true;
+                    new EntityUtils().handleWSError(this, err, this.dialogService);
+                }
+            )
+        }
+ 
+        const createdItems = {
+            ssh_credentials: null,
+            // periodic_snapshot_tasks: null,
+            // replication: null,
+        }
+
+        for (const item in createdItems) {
+            if (!toStop) {
+                if (!((item === 'ssh_credentials' && value['ssh_credentials'] !== 'NEW') || (item === 'periodic_snapshot_tasks' && value['periodic_snapshot_tasks'] !== 'NEW'))) {
+                    await this.doCreate(value, item).then(
+                        (res) => {
+                            value[item] = res.id;
+                            createdItems[item] = res.id;
+                        },
+                        (err) => {
+                            new EntityUtils().handleWSError(this, err, this.dialogService);
+                            toStop = true;
+                            this.rollBack(createdItems);
+                        }
+                    )
+                }
+            }
+        }
+
+        this.loader.close();
+        if (!toStop) {
+            this.router.navigate(new Array('/').concat(this.route_success));
+        }
+    }
+
+    getRemoteHostKey(value) {
+        const payload = {
+            'host': value['host'],
+            'port': value['port'],
+        };
+
+        return this.ws.call('keychaincredential.remote_ssh_host_key_scan', [payload]).toPromise();
+    }
+
+    async doCreate(value, item) {
+        let payload;
+        if (item === 'ssh_credentials') {
+            item += '_' + value['setup_method'];
+            if (value['setup_method'] == 'manual') {
+                payload = {
+                    name: value['name'],
+                    type: 'SSH_CREDENTIALS',
+                    attributes: {
+                        cipher: value['cipher'],
+                        host: value['host'],
+                        port: value['port'],
+                        private_key: value['private_key'],
+                        remote_host_key: value['remote_host_key'],
+                        username: value['username'],
+                    }
+                };
+            } else {
+                payload = {
+                    name: value['name'],
+                    private_key: value['private_key'],
+                    cipher: value['cipher'],
+                };
+                for (const i of this.semiSSHFieldGroup) {
+                    payload[i] = value[i];
+                }
+            }
+        }
+
+        if (item === 'periodic_snapshot_tasks') {
+            
+        }
+        if (item === 'replication') {
+            
+        }
+       
+        return this.ws.call(this.createCalls[item], [payload]).toPromise();
+    }
+
+    rollBack(items) {
+        for (const item in items) {
+            if (items[item] != null) {
+                this.ws.call(this.deleteCalls[item], [items[item]]).subscribe(
+                    (res) => {
+                        console.log('rollback ' + item, res);
+                    }
+                );
+            }
+        }
     }
 }
