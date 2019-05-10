@@ -48,6 +48,9 @@ export class UpdateComponent implements OnInit {
   public trainDescriptionOnPageLoad: string;
   public fullTrainList: any[];
   public isFooterConsoleOpen: boolean;
+  public updateMethod: string = 'update.update';
+  public isHA: boolean;
+  public ds: any;
 
   public busy: Subscription;
   public busy2: Subscription;
@@ -242,6 +245,13 @@ export class UpdateComponent implements OnInit {
         this.isFooterConsoleOpen = res.consolemsg;
       }
     });
+
+    if (window.localStorage.getItem('is_freenas') === 'false') {
+      this.ws.call('failover.licensed').subscribe((is_ha) => {
+        this.updateMethod = 'failover.upgrade';
+        this.isHA = is_ha;
+      })
+    }
   }
 
   onTrainChanged(event) {
@@ -351,12 +361,20 @@ export class UpdateComponent implements OnInit {
             }
             this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
               if(ures[0].attributes.preferences !== undefined && !ures[0].attributes.preferences.enableWarning) {
-                const ds  = this.dialogService.confirm(
-                  T("Download Update"), T("Continue with download?"),true,"",true,T("Apply updates and reboot system after downloading."),"update.update",[{ train: this.train, reboot: false }]
-                )
-                ds.afterClosed().subscribe((status)=>{
+                if (this.isHA === false) {
+                  this.ds  = this.dialogService.confirm(
+                    T("Download Update"), T("Continue with download?"),true,"",true,T("Apply updates and reboot system after downloading."),this.updateMethod,[{ train: this.train, reboot: false }]
+                  )                  
+                } else {
+                  this.ws.call('update.set_train', [this.train]).subscribe(() => {
+                    this.ds  = this.dialogService.confirm(
+                      T("Download Update"), T("Continue with download?"),true,"",true,T("Apply updates and reboot system after downloading."),this.updateMethod
+                    )
+                  })
+                }
+                this.ds.afterClosed().subscribe((status)=>{
                   if(status){
-                    if (!ds.componentInstance.data[0].reboot){
+                    if (!this.ds.componentInstance.data[0].reboot){
                       this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
                       this.dialogRef.componentInstance.setCall('update.download');
                       this.dialogRef.componentInstance.submit();
@@ -378,12 +396,20 @@ export class UpdateComponent implements OnInit {
 
               } else {
                 this.dialogService.dialogForm(this.saveConfigFormConf).subscribe(()=>{
-                  const ds  = this.dialogService.confirm(
-                    T("Download Update"), T("Continue with download?"),true,"",true,T("Apply updates and reboot system after downloading."),"update.update",[{ train: this.train, reboot: false }]
-                  )
-                  ds.afterClosed().subscribe((status)=>{
+                  if (this.isHA === false) {
+                    this.ds  = this.dialogService.confirm(
+                      T("Download Update"), T("Continue with download?"),true,"",true,T("Apply updates and reboot system after downloading."),this.updateMethod,[{ train: this.train, reboot: false }]
+                    )
+                  } else {
+                    this.ws.call('update.set_train', [this.train]).subscribe(() => {
+                      this.ds  = this.dialogService.confirm(
+                        T("Download Update"), T("Continue with download?"),true,"",true,T("Apply updates and reboot system after downloading."),this.updateMethod
+                      )
+                    })
+                  }
+                  this.ds.afterClosed().subscribe((status)=>{
                     if(status){
-                      if (!ds.componentInstance.data[0].reboot){
+                      if (!this.ds.componentInstance.data[0].reboot){
                         this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
                         this.dialogRef.componentInstance.setCall('update.download');
                         this.dialogRef.componentInstance.submit();
@@ -420,7 +446,7 @@ export class UpdateComponent implements OnInit {
   }
 
   downloadUpdate() {
-    this.ws.call('core.get_jobs', [[["method", "=", "update.update"], ["state", "=", "RUNNING"]]]).subscribe(
+    this.ws.call('core.get_jobs', [[["method", "=", this.updateMethod], ["state", "=", "RUNNING"]]]).subscribe(
       (res) => {
         if (res[0]) {
           this.showRunningUpdate(res[0].id);
@@ -435,7 +461,13 @@ export class UpdateComponent implements OnInit {
 
   update() {
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: true });
-    this.dialogRef.componentInstance.setCall('update.update', [{ train: this.train, reboot: false }]);
+    if (this.isHA === false) {
+      this.dialogRef.componentInstance.setCall(this.updateMethod, [{ train: this.train, reboot: false }]);
+    } else {
+      this.ws.call('update.set_train', [this.train]).subscribe(() => { // ???
+        this.dialogRef.componentInstance.setCall(this.updateMethod);
+      })
+    }
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
       this.router.navigate(['/others/reboot']);
