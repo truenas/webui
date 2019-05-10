@@ -45,10 +45,12 @@ dataset_acl_basic_perms_options: [
                                   {label:'Read', value: 'READ'},
                                   {label:'Write', value: 'WRITE'},
                                   {label:'Modify', value: 'MODIFY'},
+                                  {label:'Traverse', value: 'TRAVERSE'},
                                   {label:'Full Control', value: 'FULL_CONTROL'},
                                   {label:'Other (Too complicated to be displayed)', 
                                    value: 'OTHER', disable: true, hiddenFromDisplay: true}
                                  ],
+dataset_acl_basic_perms_other_warning: T('These permissions are too complicated to be displayed and cannot be saved unless changed.'),
 dataset_acl_advanced_perms_options: [
                                      {label:'Read Data', value:'READ_DATA'},
                                      {label:'Write Data', value:'WRITE_DATA'},

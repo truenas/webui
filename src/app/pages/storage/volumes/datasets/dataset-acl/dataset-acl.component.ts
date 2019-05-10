@@ -21,6 +21,7 @@ import { T } from '../../../../../translate-marker';
 import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-acl';
 import { MatDialog } from '@angular/material';
 import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-job.component';
+import { Validators } from '@angular/forms';
 
 
 @Component({
@@ -53,6 +54,7 @@ export class DatasetAclComponent implements OnDestroy {
   protected fs: any = (<any>window).filesize;
   protected dialogRef: any
   protected route_success: string[] = [ 'storage', 'pools' ];
+  public save_button_enabled = true;
 
   public fieldSetDisplay  = 'default';//default | carousel | stepper
   public fieldConfig: FieldConfig[] = [];
@@ -230,6 +232,7 @@ export class DatasetAclComponent implements OnDestroy {
       let adv_flags_fc;
       let basic_flags_fc;
       const listFields = this.aces_fc.listFields;
+      let canSave = true;
       if (listFields && listFields.length > 0 && res.length === listFields.length) {
         for (let i = 0; i < listFields.length; i++) {
           controls = listFields[i];
@@ -260,6 +263,12 @@ export class DatasetAclComponent implements OnDestroy {
             } else {
               adv_perms_fc.isHidden = true;
               basic_perms_fc.isHidden = false;
+              if (res[i].basic_perms === "OTHER") {
+                basic_perms_fc.warnings = helptext.dataset_acl_basic_perms_other_warning;
+                canSave = false;
+              } else { 
+                basic_perms_fc.warnings = null;
+              }
             }
             adv_flags_fc = _.find(controls, {"name": "advanced_flags"});
             basic_flags_fc = _.find(controls, {"name": "basic_flags"});
@@ -273,6 +282,7 @@ export class DatasetAclComponent implements OnDestroy {
           }
         }
       }
+      this.save_button_enabled = canSave;
     });
   }
 
@@ -388,7 +398,6 @@ export class DatasetAclComponent implements OnDestroy {
         this.route_success));*/
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
-      new EntityUtils().handleWSError(this.entityForm, res);
     });
   }
 
