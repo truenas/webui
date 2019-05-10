@@ -14,4 +14,8 @@ export class ReplicationService {
     querySSHConnection(id) {
         return this.ws.call('keychaincredential.query', [[["id", "=", id]]]);
     }
+
+    genSSHKeypair() {
+        return this.ws.call('keychaincredential.generate_ssh_key_pair').toPromise();
+    }
 }

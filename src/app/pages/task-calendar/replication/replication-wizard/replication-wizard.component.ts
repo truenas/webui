@@ -65,7 +65,6 @@ export class ReplicationWizardComponent {
                     ],
                     required: true,
                 },
-                //netcat
                 {
                     type: 'input',
                     name: 'netcat_active_side',
@@ -77,7 +76,6 @@ export class ReplicationWizardComponent {
                     value: '', // defaut to hostname
                     isHidden: true,
                 },
-                // ssh
                 {
                     type: 'select',
                     name: 'ssh_credentials',
@@ -141,8 +139,8 @@ export class ReplicationWizardComponent {
                     type: 'input',
                     inputType: 'password',
                     name: 'password',
-                    placeholder: 'Password', //sshConnectionsHelptex.password_placeholder,
-                    // tooltip: sshConnectionsHelptex.password_tooltip,
+                    placeholder: sshConnectionsHelptex.password_placeholder,
+                    tooltip: sshConnectionsHelptex.password_tooltip,
                     togglePw: true,
                     required: true,
                     validation: [Validators.required],
@@ -153,11 +151,10 @@ export class ReplicationWizardComponent {
                     tooltip: sshConnectionsHelptex.private_key_tooltip,
                     options: [
                         {
-                            label: '---------',
-                            value: '',
+                            label: 'Create New',
+                            value: 'NEW'
                         }
                     ],
-                    value: '',
                     required: true,
                     validation: [Validators.required],
                 }, {
@@ -203,7 +200,6 @@ export class ReplicationWizardComponent {
                     required: true,
                     validation: [Validators.required],
                 },
-                // snapshot task
                 {
                     type: 'select',
                     name: 'dataset',
@@ -252,13 +248,6 @@ export class ReplicationWizardComponent {
                     value: 'WEEK',
                     class: 'inline',
                 },
-                //   {
-                //     type: 'input',
-                //     name: 'naming_schema',
-                //     placeholder: helptext.naming_schema_placeholder,
-                //     tooltip: helptext.naming_schema_tooltip,
-                //     value: 'auto-%Y-%m-%d_%H-%M',
-                //   },
                 {
                     type: 'scheduler',
                     name: 'snapshot_picker',
@@ -288,13 +277,6 @@ export class ReplicationWizardComponent {
                     required: true,
                     validation: [Validators.required],
                 },
-                //   {
-                //     type: 'checkbox',
-                //     name: 'enabled',
-                //     placeholder: helptext.enabled_placeholder,
-                //     tooltip: helptext.enabled_tooltip,
-                //     value: true,
-                //   }
                 // replication task
                 {
                     type: 'select',
@@ -458,6 +440,7 @@ export class ReplicationWizardComponent {
     };
 
     protected createCalls = {
+        private_key: 'keychaincredential.create',
         ssh_credentials_semiautomatic: 'keychaincredential.remote_ssh_semiautomatic_setup',
         ssh_credentials_manual:'keychaincredential.create',
         periodic_snapshot_tasks: 'pool.snapshottask.create',
@@ -465,6 +448,7 @@ export class ReplicationWizardComponent {
     }
 
     protected deleteCalls = {
+        private_key: 'keychaincredential.delete',
         ssh_credentials_semiautomatic: 'keychaincredential.delete',
         ssh_credentials_manual: 'keychaincredential.delete',
         periodic_snapshot_tasks: 'pool.snapshottask.delete',
@@ -670,6 +654,17 @@ export class ReplicationWizardComponent {
     async customSubmit(value) {
         this.loader.open();
         let toStop = false;
+        if (value['ssh_credentials'] == 'NEW' && value['private_key'] == 'NEW') {
+            await this.replicationService.genSSHKeypair().then(
+                (res) => {
+                    value['sshkeypair'] = res;
+                },
+                (err) => {
+                    toStop = true;
+                    new EntityUtils().handleWSError(this, err, this.dialogService);
+                }
+            )
+        }
         if (value['ssh_credentials'] == 'NEW' && value['setup_method'] == 'manual') {
             await this.getRemoteHostKey(value).then(
                 (res) => {
@@ -683,6 +678,7 @@ export class ReplicationWizardComponent {
         }
  
         const createdItems = {
+            private_key: null,
             ssh_credentials: null,
             periodic_snapshot_tasks: null,
             replication: null,
@@ -690,7 +686,7 @@ export class ReplicationWizardComponent {
 
         for (const item in createdItems) {
             if (!toStop) {
-                if (!((item === 'ssh_credentials' && value['ssh_credentials'] !== 'NEW') || (item === 'periodic_snapshot_tasks' && value['periodic_snapshot_tasks'] !== 'NEW'))) {
+                if (!((item === 'private_key' && value['private_key'] !== 'NEW') || (item === 'ssh_credentials' && value['ssh_credentials'] !== 'NEW') || (item === 'periodic_snapshot_tasks' && value['periodic_snapshot_tasks'] !== 'NEW'))) {
                     await this.doCreate(value, item).then(
                         (res) => {
                             value[item] = res.id;
@@ -723,6 +719,13 @@ export class ReplicationWizardComponent {
 
     async doCreate(value, item) {
         let payload;
+        if (item === 'private_key') {
+            payload = {
+                name: value['name'] + '_keypair',
+                type: 'SSH_KEY_PAIR',
+                attributes: value['sshkeypair'],
+            }
+        }
         if (item === 'ssh_credentials') {
             item += '_' + value['setup_method'];
             if (value['setup_method'] == 'manual') {
