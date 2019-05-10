@@ -381,7 +381,7 @@ export class SupportComponent {
       for (let i in this.trueNASFields) {
         this.hideField(this.trueNASFields[i], true, entityEdit);
       }
-      this.product_image = 'freenas_mini.png';
+      this.product_image = 'freenas_mini_cropped.png';
       this.ws.call('system.info').subscribe((res) => {
         this.getFreeNASImage(res.system_product)
         _.find(this.fieldConfig, {name : "FN_version"}).paraText += res.version;
@@ -390,7 +390,7 @@ export class SupportComponent {
         _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText ? 
         _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText += res.system_serial :
         _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText = '';
-        _.find(this.fieldConfig, {name : "pic"}).paraText = `<img src="../../../assets/images/${this.product_image}" height="200">`;
+        _.find(this.fieldConfig, {name : "pic"}).paraText = `<img src="../../../assets/images/${this.product_image}" height="350">`;
       })
     } else {
       for (let i in this.freeNASFields) {
@@ -419,7 +419,7 @@ export class SupportComponent {
         this.getTrueNASImage(res.system_product)
         _.find(this.fieldConfig, {name : "pic"}).paraText = `<img src="../../../assets/images/${this.product_image}">`;
         _.find(this.fieldConfig, {name : "TN_model"}).paraText += res.system_product;
-        _.find(this.fieldConfig, {name : "TN_custname"}).paraText += '???'; //TODO: Where does this come from?
+        _.find(this.fieldConfig, {name : "TN_custname"}).paraText += res.license.customer || '---';
 
         res.license.system_serial_ha ?
           _.find(this.fieldConfig, {name : "TN_sysserial"}).paraText += res.license.system_serial + ' / ' + res.license.system_serial_ha :
@@ -440,7 +440,7 @@ export class SupportComponent {
         }
         _.find(this.fieldConfig, {name : "TN_contracttype"}).paraText += res.license.contract_type;
         _.find(this.fieldConfig, {name : "TN_contractdate"}).paraText += res.license.contract_end.$value + ` (expires in ${daysLeft} days)` || '';
-        _.find(this.fieldConfig, {name : "TN_addhardware"}).paraText += '???'; //TODO: Where does this come from?
+        _.find(this.fieldConfig, {name : "TN_addhardware"}).paraText += res.license.add_hardware || 'NONE'; 
       })
     }
   }
@@ -471,10 +471,10 @@ export class SupportComponent {
   getFreeNASImage(sys_product) {
     switch(sys_product){
       case "FREENAS-MINI-2.0":
-        this.product_image = 'freenas_mini.png';
+        this.product_image = 'freenas_mini_cropped.png';
       break;
       case "FREENAS-MINI-XL":
-        this.product_image = 'freenas_mini_xl.png';
+        this.product_image = 'freenas_mini_xl_cropped.png';
       break;
       default:
         this.product_image = 'ix-original.svg';
