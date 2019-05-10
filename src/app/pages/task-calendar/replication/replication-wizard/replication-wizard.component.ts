@@ -655,8 +655,8 @@ export class ReplicationWizardComponent {
             'Snapshot Retention Policy': this.summaryObj.retention_policy,
         };
 
-        this.summaryObj.ssh_credentials === 'NEW' ? delete summary['SSH Connection'] : delete summary['New SSH Connection'];
-        this.summaryObj.periodic_snapshot_tasks === 'NEW' ? delete summary['Periodic Snapshot Tasks'] : delete summary['New Periodic Snapshot Tasks'];
+        this.summaryObj.ssh_credentials === 'Create New' ? delete summary['SSH Connection'] : delete summary['New SSH Connection'];
+        this.summaryObj.periodic_snapshot_tasks === 'Create New' ? delete summary['Periodic Snapshot Tasks'] : delete summary['New Periodic Snapshot Tasks'];
 
         return summary;
     }
@@ -678,7 +678,7 @@ export class ReplicationWizardComponent {
  
         const createdItems = {
             ssh_credentials: null,
-            // periodic_snapshot_tasks: null,
+            periodic_snapshot_tasks: null,
             // replication: null,
         }
 
@@ -745,7 +745,23 @@ export class ReplicationWizardComponent {
         }
 
         if (item === 'periodic_snapshot_tasks') {
+            payload = {
+                naming_schema: 'auto-%Y-%m-%d_%H-%M',
+            };
+            for (const i of this.snapshotFieldGroup) {
+                if (i == 'snapshot_picker') {
+                    payload['schedule'] = this.parsePickerTime(value['snapshot_picker'], value['begin'], value['end']);
+                    delete value['snapshot_picker'];
+                    delete value['begin'];
+                    delete value['end'];
+                } else if (i == 'snapshot_recursive') {
+                    payload['recursive'] = value[i];
+                } else {
+                    payload[i] = value[i];
+                }
+            }
             
+
         }
         if (item === 'replication') {
             
@@ -764,5 +780,18 @@ export class ReplicationWizardComponent {
                 );
             }
         }
+    }
+
+    parsePickerTime(picker, begin, end) {
+        const spl = picker.split(" ");
+        return {
+            minute: spl[0],
+            hour: spl[1],
+            dom: spl[2],
+            month: spl[3],
+            dow: spl[4],
+            begin: begin,
+            end: end,
+        };
     }
 }
