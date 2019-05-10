@@ -10,4 +10,8 @@ export class ReplicationService {
     getSnapshotTasks() {
         return this.ws.call('pool.snapshottask.query');
     }
+
+    querySSHConnection(id) {
+        return this.ws.call('keychaincredential.query', [[["id", "=", id]]]);
+    }
 }

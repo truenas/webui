@@ -376,9 +376,6 @@ export class ReplicationWizardComponent {
         }
     ];
 
-    protected transportSSHFieldGroup: any[] = [
-        'ssh_credentials',
-    ];
     protected transportSSHnetcatFieldGroup: any[] = [
         'netcat_active_side',
         'netcat_active_side_listen_address',
@@ -459,7 +456,6 @@ export class ReplicationWizardComponent {
         'retention_policy': null,
         'enabled': null,
     };
-    protected createManualSSHConnection = false;
 
     protected createCalls = {
         ssh_credentials_semiautomatic: 'keychaincredential.remote_ssh_semiautomatic_setup',
@@ -485,6 +481,14 @@ export class ReplicationWizardComponent {
             return true;
         }
         return false;
+    }
+
+    getHostname() {
+        this.replicationService.querySSHConnection(this.entityWizard.formArray.controls[0].controls['ssh_credentials'].value).subscribe(
+            (res) => {
+                this.entityWizard.formArray.controls[0].controls['netcat_active_side_listen_address'].setValue(res[0].attributes.host);
+            }
+        );
     }
 
     afterInit(entityWizard) {
@@ -514,8 +518,10 @@ export class ReplicationWizardComponent {
 
         this.entityWizard.formArray.controls[0].controls['transport'].valueChanges.subscribe((value) => {
             const ssh = value == 'SSH' ? true : false;
-            this.disablefieldGroup(this.transportSSHFieldGroup, !ssh, 0);
             this.disablefieldGroup(this.transportSSHnetcatFieldGroup, ssh, 0);
+            if (!ssh) {
+                this.getHostname();
+            }
         });
         this.entityWizard.formArray.controls[0].controls['ssh_credentials'].valueChanges.subscribe((value) => {
             const newSSH = (value == 'NEW' && this.entityWizard.formArray.controls[0].controls['transport'].value == 'SSH') ? true : false;
@@ -524,14 +530,14 @@ export class ReplicationWizardComponent {
                 this.entityWizard.formArray.controls[0].controls['setup_method'].setValue(this.entityWizard.formArray.controls[0].controls['setup_method'].value);
             }
 
-            this.createManualSSHConnection = newSSH ? this.createManualSSHConnection : false;
+            if (this.entityWizard.formArray.controls[0].controls['transport'].value == 'SSH+NETCAT') {
+                this.getHostname();
+            }
         });
         this.entityWizard.formArray.controls[0].controls['setup_method'].valueChanges.subscribe((value) => {
             const manual = value == 'manual' ? true : false;
             this.disablefieldGroup(this.semiSSHFieldGroup, manual, 0);
             this.disablefieldGroup(this.manualSSHFieldGroup, !manual, 0);
-
-            this.createManualSSHConnection = manual;
         });
 
         this.entityWizard.formArray.controls[0].controls['setup_method'].setValue('semiautomatic');
@@ -773,6 +779,11 @@ export class ReplicationWizardComponent {
                 ssh_credentials: value['ssh_credentials'],
                 periodic_snapshot_tasks: value['periodic_snapshot_tasks'],
                 transport: value['transport'],
+            }
+            if (value['transport'] == 'SSH+NETCAT') {
+                for (const i of this.transportSSHnetcatFieldGroup) {
+                    payload[i] = value[i];
+                }
             }
             for (const i of this.replicationFieldGroup) {
                 payload[i] = value[i];
