@@ -12,7 +12,6 @@ import snapshotHelptext from '../../../../helptext/task-calendar/snapshot/snapsh
 import { DialogService, KeychainCredentialService, WebSocketService, ReplicationService, TaskService } from '../../../../services';
 import { EntityUtils } from '../../../common/entity/utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { throwError } from 'rxjs';
 
 @Component({
     selector: 'app-replication-wizard',
@@ -187,6 +186,21 @@ export class ReplicationWizardComponent {
             fieldConfig: [
                 {
                     type: 'select',
+                    name: 'direction',
+                    placeholder: replicationHelptext.direction_placeholder,
+                    tooltip: replicationHelptext.direction_tooltip,
+                    options: [
+                        {
+                            label: 'PUSH',
+                            value: 'PUSH',
+                        }, {
+                            label: 'PULL',
+                            value: 'PULL',
+                        }
+                    ],
+                },
+                {
+                    type: 'select',
                     // multiple: true,
                     name: 'periodic_snapshot_tasks',
                     placeholder: replicationHelptext.periodic_snapshot_tasks_placeholder,
@@ -276,22 +290,6 @@ export class ReplicationWizardComponent {
                     value: '18:00',
                     required: true,
                     validation: [Validators.required],
-                },
-                // replication task
-                {
-                    type: 'select',
-                    name: 'direction',
-                    placeholder: replicationHelptext.direction_placeholder,
-                    tooltip: replicationHelptext.direction_tooltip,
-                    options: [
-                        {
-                            label: 'PUSH',
-                            value: 'PUSH',
-                        }, {
-                            label: 'PULL',
-                            value: 'PULL',
-                        }
-                    ],
                 },
                 {
                     type: 'explorer',
@@ -508,7 +506,7 @@ export class ReplicationWizardComponent {
             }
         });
         this.entityWizard.formArray.controls[0].controls['ssh_credentials'].valueChanges.subscribe((value) => {
-            const newSSH = (value == 'NEW' && this.entityWizard.formArray.controls[0].controls['transport'].value == 'SSH') ? true : false;
+            const newSSH = value == 'NEW' ? true : false;
             this.disablefieldGroup([...this.sshFieldGroup, ...this.semiSSHFieldGroup, ...this.manualSSHFieldGroup], !newSSH, 0);
             if (newSSH) {
                 this.entityWizard.formArray.controls[0].controls['setup_method'].setValue(this.entityWizard.formArray.controls[0].controls['setup_method'].value);
