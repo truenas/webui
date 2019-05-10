@@ -9,6 +9,8 @@ import { FieldConfig } from '../../common/entity/entity-form/models/field-config
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
+import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
+
 
 @Component({
   selector : 'app-support',
@@ -33,6 +35,19 @@ export class SupportComponent {
   public is_freenas: string = window.localStorage['is_freenas'];
   public product_image = '';
   public scrshot: any;
+
+  public licenseForm: DialogFormConfiguration = {
+    title: "Update License",
+    fieldConfig: [
+      {
+        type: 'textarea',
+        name: 'license',
+        placeholder: 'License'
+      }
+    ],
+    // method_rest: William says update method not yet ported from legacy UI  - DM filed a ticket,
+    saveButtonText: "Save License"
+  }
 
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
@@ -386,13 +401,14 @@ export class SupportComponent {
           id : 'update_license',
           name : 'Update License',
           function : () => {
-            console.log('update license') // TODO: Add actions
+            this.dialogService.dialogForm(this.licenseForm);
           }
         },{
           id : 'userguide',
           name: 'User Guide (pdf)',
           function : () => {
-            console.log('user guide');
+            // TODO: Need updated address before release
+            window.open('https://ixsystems.com/documentation/freenas/11.2-U4/FreeNAS-11.2-U4-User-Guide.pdf')
           }
         }
       ]
@@ -425,6 +441,9 @@ export class SupportComponent {
         _.find(this.fieldConfig, {name : "TN_contracttype"}).paraText += res.license.contract_type;
         _.find(this.fieldConfig, {name : "TN_contractdate"}).paraText += res.license.contract_end.$value + ` (expires in ${daysLeft} days)` || '';
         _.find(this.fieldConfig, {name : "TN_addhardware"}).paraText += '???'; //TODO: Where does this come from?
+      })
+      this.ws.call('truenas.get_customer_information').subscribe((res) => {
+        console.log(res)
       })    
     }
   }
