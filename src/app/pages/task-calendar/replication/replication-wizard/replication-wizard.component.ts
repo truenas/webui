@@ -779,6 +779,7 @@ export class ReplicationWizardComponent {
             }
         }
         if (item === 'replication') {
+            value['source_datasets'] = typeof value['source_datasets'] === "string" ? value['source_datasets'].split(' ') : value['source_datasets'];
             for (let i = 0; i < value['source_datasets'].length; i++) {
                 if (_.startsWith(value['source_datasets'][i], '/mnt/')) {
                     value['source_datasets'][i] = value['source_datasets'][i].substring(5);
