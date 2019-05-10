@@ -6,7 +6,7 @@
                 [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'">
                 <div dynamicField [config]="field" [group]="listsFromArray.controls[i]"></div>
             </div>
-            <div class="list-action">
+            <div class="list-action" [style.padding-bottom]="config.width == '100%' ? '10px' : '0'">
                 <button *ngIf="i === 0; else deleteButton" mat-button color="primary" class="listBtn" type="button"
                     (click)="add()" [disabled]="listsFromArray.controls[i].disabled">Add</button>
                 <ng-template #deleteButton>
