@@ -417,7 +417,7 @@ export class SupportComponent {
         let then = new Date(res.license.contract_end.$value);
         let daysLeft = this.daysTillExpiration(now, then);
         this.getTrueNASImage(res.system_product)
-        _.find(this.fieldConfig, {name : "pic"}).paraText = `<img src="../../../assets/images/${this.product_image}" height="200">`;
+        _.find(this.fieldConfig, {name : "pic"}).paraText = `<img src="../../../assets/images/${this.product_image}">`;
         _.find(this.fieldConfig, {name : "TN_model"}).paraText += res.system_product;
         _.find(this.fieldConfig, {name : "TN_custname"}).paraText += '???'; //TODO: Where does this come from?
 
@@ -442,33 +442,27 @@ export class SupportComponent {
         _.find(this.fieldConfig, {name : "TN_contractdate"}).paraText += res.license.contract_end.$value + ` (expires in ${daysLeft} days)` || '';
         _.find(this.fieldConfig, {name : "TN_addhardware"}).paraText += '???'; //TODO: Where does this come from?
       })
-      this.ws.call('truenas.get_customer_information').subscribe((res) => {
-        console.log(res)
-      })    
     }
   }
 
   getTrueNASImage(sys_product) {
-    if (sys_product.includes('Z20')) {
-      this.product_image = 'tnz20.png';
-    } else if (sys_product.includes('FREENAS-MINI')) {
-      this.product_image = 'freenas_mini.png';
-    } 
-    //   else if (sys_product.includes('X10')) {
-    //   this.product_image = 'tnx10.png';
-    // } else if (sys_product.includes('X20')) {
-    //   this.product_image = 'tnx20.png';
-    // } else if (sys_product.includes('M40')) {
-    //   this.product_image = 'tnm40.png';
-    // }  else if (sys_product.includes('M50')) {
-    //   this.product_image = 'tnm50.png';
-    // }  else if (sys_product.includes('Z30')) {
-    //   this.product_image = 'tnz30.png';
-    // } else if (sys_product.includes('Z35')) {
-    //   this.product_image = 'tnz35.png';
-    // } else if (sys_product.includes('Z50')) {
-    //   this.product_image = 'tnz50.png';
-    // }
+    if (sys_product.includes('X10')) {
+      this.product_image = '/servers/X10.png';
+    } else if (sys_product.includes('X20')) {
+      this.product_image = '/servers/X20.png';
+    } else if (sys_product.includes('M40')) {
+      this.product_image = '/servers/M40.png';
+    }  else if (sys_product.includes('M50')) {
+      this.product_image = '/servers/M50.png';
+    } else if (sys_product.includes('Z20')) {
+      this.product_image = '/servers/X10.png';
+    } else if (sys_product.includes('M50')) {
+      this.product_image = '/servers/M50.png';
+    } else if (sys_product.includes('Z35')) {
+      this.product_image = '/servers/Z35.png';
+    } else if (sys_product.includes('Z50')) {
+      this.product_image = '/servers/Z50.png';
+    }
     else {
       this.product_image = 'ix-original.svg';
     }
@@ -487,8 +481,6 @@ export class SupportComponent {
       break;
     }
   }
-
-
 
   daysTillExpiration(now, then) {
     let oneDay = 24*60*60*1000; // milliseconds in a day
