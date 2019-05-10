@@ -444,9 +444,9 @@ export class DatasetAclComponent implements OnDestroy {
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
       this.entityForm.success = true;
-      /*this.dialogRef.componentInstance.close();
+      this.dialogRef.close();
       this.router.navigate(new Array('/').concat(
-        this.route_success));*/
+        this.route_success));
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
     });
