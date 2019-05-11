@@ -231,14 +231,16 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
           this.enclosure.container.y = this.app._options.height / 2 - this.enclosure.container.height / 2;
 
           this.setDisksEnabledState();
-          //this.setDisksDisabled();
           this.setCurrentView(this.defaultView);
           
         break;
         case "DriveSelected":
-          let disk = this.selectedEnclosure.disks[evt.data.id]; // should match slot number
+          let dtSlot = parseInt(evt.data.id ) + 1
+          
+          let disk = this.findDiskBySlotNumber(dtSlot);
           if(disk == this.selectedDisk){break} // Don't trigger any changes if the same disk is selected
           if(this.enclosure.driveTrayObjects[evt.data.id].enabled){
+            console.log("ENABLED");
             this.selectedDisk = disk;
             this.setCurrentView('details');
           }
@@ -330,11 +332,11 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
       case 'details':
         this.container.alpha = 1;
         this.setDisksDisabled();
-        this.setDisksHealthState(this.selectedDisk.enclosure.slot);
+        this.setDisksHealthState(this.selectedDisk);
         let vdev = this.system.getVdevInfo(this.selectedDisk.devname);
         this.selectedVdev = vdev;
 
-        this.labels = new VDevLabelsSVG(this.enclosure, this.app, this.theme.blue/*, dl*/);
+        this.labels = new VDevLabelsSVG(this.enclosure, this.app, this.theme.blue);
 
         this.labels.events.next({name:"LabelDrives", data: vdev, sender: this});
         let dl;
@@ -421,7 +423,8 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
 
   setDisksEnabledState(){
     this.enclosure.driveTrayObjects.forEach((dt, index) =>{
-      let disk = this.selectedEnclosure.disks[index];
+      //let disk = this.selectedEnclosure.disks[index];
+      let disk = this.findDiskBySlotNumber(index + 1);
       dt.enabled = disk ? true : false;
     });
   }
@@ -433,37 +436,36 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
     });
   }
 
-  setDisksHealthState(slot?: number){ // Give it a slot number and it will only change that slot
-
-    if(slot || typeof slot !== 'undefined'){
-      this.setDiskHealthState(slot - 1); // Enclosure slot numbers start at 1
+  setDisksHealthState(disk?: any){ // Give it a disk and it will only change that slot
+    if(disk || typeof disk !== 'undefined'){
+      this.setDiskHealthState(disk); // Enclosure slot numbers start at 1
       return;
     }
 
-    this.enclosure.driveTrayObjects.forEach((dt, index) =>{
-      this.setDiskHealthState(index)
+    this.selectedEnclosure.disks.forEach((disk, index) =>{
+      this.setDiskHealthState(disk)
     });
 
   }
 
-  setDiskHealthState(index: number){
+  setDiskHealthState(disk: any){
 
-      let disk = this.selectedEnclosure.disks[index];
-      this.enclosure.driveTrayObjects[index].enabled = disk ? true : false;
+      let index = disk.enclosure.slot - 1;
+      this.enclosure.driveTrayObjects[index].enabled = disk.enclosure.slot ? true : false;
 
       if(disk && disk.status){
         switch(disk.status){
           case "ONLINE":
-            this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: index, color: this.theme.green}});
+            this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot - 1, color: this.theme.green}});
           break;
           case "FAULT":
-            this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: index, color: this.theme.red}});
+            this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot - 1, color: this.theme.red}});
           break;
           case "AVAILABLE":
-            this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: index, color: '#999999'}});
+            this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot - 1, color: '#999999'}});
           break;
           default:
-            this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: index, color: this.theme.yellow}});
+            this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot - 1, color: this.theme.yellow}});
           break
         }
 
@@ -475,8 +477,9 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
     let keys = Object.keys(this.selectedEnclosure.poolKeys);
     if(keys.length > 0){
       this.selectedEnclosure.disks.forEach((disk, index) => {
+        if(!disk.vdev){return};
         let pIndex = disk.vdev.poolIndex;
-        this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: index, color: this.theme[this.theme.accentColors[pIndex]]}});
+        this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot - 1, color: this.theme[this.theme.accentColors[pIndex]]}});
       });
     } else {
       return;
@@ -491,6 +494,17 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
     } else {
       return gb.toFixed(2) + " GB";
     }
+  }
+
+  findDiskBySlotNumber(slot:number){
+    let disk;
+    for(let i in this.selectedEnclosure.disks){
+      if(this.selectedEnclosure.disks[i].enclosure.slot == slot) {
+        disk = this.selectedEnclosure.disks[i];
+        return disk;
+      }
+    }
+
   }
 
 }
