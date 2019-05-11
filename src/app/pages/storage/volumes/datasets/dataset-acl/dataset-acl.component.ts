@@ -82,7 +82,6 @@ export class DatasetAclComponent implements OnDestroy {
           placeholder: helptext.dataset_acl_tag_placeholder,
           options: helptext.dataset_acl_tag_options,
           tooltip: helptext.dataset_acl_tag_tooltip,
-          class: 'inline-block'
         },
         {
           type: 'combobox',
@@ -95,7 +94,6 @@ export class DatasetAclComponent implements OnDestroy {
           parent: this,
           updater: this.updateUserSearchOptions,
           isHidden: true,
-          class: 'inline-block',
         },
         {
           type: 'combobox',
