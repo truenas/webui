@@ -63,11 +63,13 @@ export class NavigationService {
         { name: T('Alert Services'), state: 'alertservice' },
         { name: T('Alert Settings'), state: 'alertsettings' },
         { name: T('Cloud Credentials'), state: 'cloudcredentials' },
+        { name: T('SSH Connections'), state: 'sshconnections'},
         { name: T('SSH Keypairs'), state: 'sshkeypairs'},
         { name: T('Tunables'), state: 'tunable' },
         { name: T('Update'), state: 'update' },
         { name: T('CAs'), state: 'ca' },
         { name: T('Certificates'), state: 'certificates' },
+        { name: T('Failover'), state: 'failover', disabled: true },
         { name: T('Support'), state: 'support' },
         { name: T('Proactive Support'), state: 'proactivesupport', disabled: true },
       ]

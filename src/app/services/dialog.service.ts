@@ -78,7 +78,7 @@ export class DialogService {
         return dialogRef.afterClosed();
     }
 
-    public Info(title: string, info: string, width='500px', icon="report_problem" ): Observable<boolean> {
+    public Info(title: string, info: string, width='500px', icon="report_problem", is_html=false ): Observable<boolean> {
         
         let dialogRef: MatDialogRef<InfoDialog>;
 
@@ -87,6 +87,7 @@ export class DialogService {
         dialogRef.componentInstance.title = title;
         dialogRef.componentInstance.info = info;
         dialogRef.componentInstance.icon = icon;
+        dialogRef.componentInstance.is_html = is_html;
 
         return dialogRef.afterClosed();
     }

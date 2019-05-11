@@ -287,11 +287,11 @@ export class ApiService {
         responseEvent:"VmProfiles",
         errorResponseEvent: "VmCloneFailure"
       },
-      preProcessor(def:ApiCall){
-        let redef = Object.assign({}, def);
-        def.args = [redef.args[0]];
-        return def;
-      },
+      // preProcessor(def:ApiCall){
+      //   let redef = Object.assign({}, def);
+      //   def.args = [redef.args[0]];
+      //   return def;
+      // },
       postProcessor(res,callArgs){
         let cloneRes = Object.assign({},res);
         cloneRes = null; 

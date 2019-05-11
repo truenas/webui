@@ -26,6 +26,8 @@ import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
 import { AlertServiceListComponent } from './alertservice/alertservice-list/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
 import { CloudCredentialsFormComponent } from './CloudCredentials/cloudcredentials-form/';
+import { SshConnectionsListComponent } from './ssh-connections/ssh-connections-list/ssh-connections-list.component';
+import { SshConnectionsFormComponent } from './ssh-connections/ssh-connections-form/ssh-connections-form.component';
 import { SshKeypairsListComponent } from './ssh-keypairs/ssh-keypairs-list/ssh-keypairs-list.component';
 import { SshKeypairsFormComponent } from './ssh-keypairs/ssh-keypairs-form/ssh-keypairs-form.component';
 import { CertificateAuthorityListComponent } from './ca/ca-list/';
@@ -40,6 +42,7 @@ import {EmailComponent} from './email/';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
 import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
+import { FailoverComponent } from './failover/failover.component';
 import { ProactiveSupportComponent } from './proactive-support/proactive-support.component';
 import { ReportingComponent } from './reporting/reporting.component';
 
@@ -230,9 +233,29 @@ export const routes: Routes = [
       ]
     },
     {
-      path: 'sshkeypairs',
-      data: { title: 'SSH Keypairs', breadcrumb: 'SSH Keypairs', icon: 'vpn_key' },
-      children: [{
+      path: 'sshconnections',
+      data: { title: 'SSH Connections', breadcrumb: 'SSH Connections', icon: 'cloud_circle'},
+      children: [
+        {
+          path: '',
+          component: SshConnectionsListComponent,
+          data: { title: 'SSH Connections', breadcrumb: 'SSH Connections', icon: 'cloud_circle'},
+        },
+        {
+          path: 'add',
+          component: SshConnectionsFormComponent,
+          data: { title: 'Add', breadcrumb: 'Add' },
+        },
+        {
+          path: 'edit/:pk',
+          component: SshConnectionsFormComponent,
+          data: { title: 'Edit', breadcrumb: 'Edit' },
+        }]
+      },
+      {
+        path: 'sshkeypairs',
+        data: { title: 'SSH Keypairs', breadcrumb: 'SSH Keypairs', icon: 'vpn_key' },
+        children: [{
           path: '',
           component: SshKeypairsListComponent,
           data: { title: 'SSH Keypairs', breadcrumb: 'SSH Keypairs' },
@@ -286,6 +309,10 @@ export const routes: Routes = [
         component: CertificateEditComponent,
         data: { title: 'View', breadcrumb: 'View' },
       }]
+    }, {
+      path: 'failover',
+      component: FailoverComponent,
+      data: { title: 'Failover', breadcrumb: 'Failover', icon: 'device_hub' }
     }, {
       path: 'support',
       component: SupportComponent,

@@ -160,6 +160,8 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
             const diskName: boolean = mutation.target.classList.contains('disk-name');
         
             if(diskName && this.currentView == 'details' && this.exitingView == 'details'){
+              this.update('stage-right'); // View has changed so we launch transition animations
+              this.update('stage-left'); // View has changed so we launch transition animations
               this.labels.events.next({name:"OverlayReady", data: {vdev: this.selectedVdev, overlay:this.domLabels}, sender: this});
             }
             break;
@@ -348,7 +350,31 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
     
   }
 
+  update(className:string){ // stage-left or stage-right or expanders
+    /*if(this.exitingView){ 
+      if(className == 'full-stage'){
+        this.exit('stage-left'); 
+        this.exit('stage-right'); 
+      } else if(this.exitingView == 'expanders'){
+        this.exit('full-stage'); 
+      } else {
+        this.exit(className);
+      }
+    }
+    */
+ 
+    let sideStage = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className);
+    let html = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className + ' .content')
+    let el = styler(html);
+
+    let x = (sideStage.offsetWidth * 0.5) - (el.get('width') * 0.5);
+    let y = sideStage.offsetTop + (sideStage.offsetHeight * 0.5) - (el.get('height') * 0.5);
+    html.style.left = x.toString() + 'px';
+    html.style.top = y.toString() + 'px';
+  }
+
   enter(className:string){ // stage-left or stage-right or expanders
+    console.log("PING");
     if(this.exitingView){ 
       if(className == 'full-stage'){
         this.exit('stage-left'); 

@@ -17,7 +17,8 @@ import { SnapshotAddComponent } from './snapshots/snapshot-add/';
 import { SnapshotCloneComponent } from './snapshots/snapshot-clone/';
 import { SnapshotListComponent } from './snapshots/snapshot-list/';
 import { DatasetFormComponent } from './volumes/datasets/dataset-form/';
-import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissions/'
+import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissions/';
+import { DatasetAclComponent } from './volumes/datasets/dataset-acl/';
 import {ImportDiskComponent} from './import-disk/import-disk.component';
 
 import { DiskComponent, ManagerComponent, VdevComponent } from './volumes/manager/';
@@ -69,6 +70,7 @@ import { MessageService } from '../common/entity/entity-form/services/message.se
     SnapshotAddComponent,
     ImportDiskComponent,
     DatasetPermissionsComponent,
+    DatasetAclComponent,
     VMwareSnapshotFormComponent,
     VMwareSnapshotListComponent,
     DiskListComponent,

@@ -3,7 +3,7 @@
     <mat-progress-bar mode="determinate" value="0" class="session-progress"></mat-progress-bar>
     <mat-card>
       <mat-card-content>
-        <div *ngIf="connected();else notconnected">
+        <div *ngIf="connected() && logo_ready;else notconnected">
           <div class="text-center logo-wrapper" *ngIf="logo_ready">
             <img class="logo-bg" alt="Logo image background of stars and sky at night" src="assets/images/stars-sky-1200w.jpg" srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x">
             <img *ngIf="is_freenas; else isTruenas" class="logo" src="assets/images/light-logo-full.svg" alt="FreeNAS logo">
@@ -11,64 +11,77 @@
               <img class="logo" src="assets/images/CMYK_OnDark_TrueNAS_Logo.svg" alt="TrueNAS logo">
             </ng-template>
           </div>
-          <form #signinForm="ngForm" (ngSubmit)="signin()" *ngIf="has_root_password; else setPassword">
-            <div class="">
-              <mat-form-field class="full-width">
-                <span matPrefix><mat-icon fontSet="mdi-set" fontIcon="mdi-account" style="color:var(--fg1);position:relative;top:2px;"></mat-icon>&nbsp;&nbsp;</span>
-                <input autofocus 
-                  matInput name="username" 
-                  required 
-                  [(ngModel)]="signinData.username" 
-                  #username="ngModel" 
-                  placeholder="{{'Username' | translate}}" 
-                  value=""
-                  autocorrect="off" autocapitalize="none" autocomplete="off"
-                >
-                <mat-error *ngIf="username.errors && (username.dirty || username.touched) && (username.errors.required)">
-                  <span *ngIf="!failed">{{"Please enter your username" | translate}}</span>
-                  <span *ngIf="failed">{{"Please enter your username again" | translate}}</span>
-                </mat-error>
-              </mat-form-field>
-            </div>
-            <div class="">
-              <mat-form-field class="full-width">
-                <span matPrefix><mat-icon style="color:var(--fg1);position:relative;top:2px;">lock</mat-icon>&nbsp;&nbsp;</span>
-                <input type="password" name="password" required matInput [(ngModel)]="signinData.password" #password="ngModel" placeholder="{{'Password' | translate}}" value="">
-                <mat-error *ngIf="password.errors && (password.dirty || password.touched) && (password.errors.required)">
-                    <span *ngIf="!failed">{{"Please enter your password" | translate}}</span>
-                    <span *ngIf="failed">{{"Please enter your password again" | translate}}</span>
-                </mat-error>
-              </mat-form-field>
-            </div>
-            <button name="signin_button" mat-button color="primary" class="full-width mb-1" id="signin_button" [disabled]="username.errors || password.errors">{{"Log in" | translate}}</button>
-          </form>
-          <ng-template #setPassword>
-            <form (ngSubmit)="setpassword()" [formGroup]="setPasswordFormGroup" #setPasswordForm="ngForm">
-              <div>
-                <span>{{"Set new root account password:" | translate}}</span>
-              </div>
+          <span *ngIf="failover_status === 'SINGLE' || failover_status === 'MASTER' || is_freenas">
+            <form #signinForm="ngForm" (ngSubmit)="signin()" *ngIf="has_root_password; else setPassword">
               <div class="">
                 <mat-form-field class="full-width">
-                  <input matInput type="password" id="password" formControlName="password" required placeholder="{{'Password' | translate}}">
-                  <mat-error *ngIf="password.errors && (password.dirty || password.touched)">
-                    <span *ngIf="password.errors.required">{{"This field is required" | translate}}</span>
+                  <span matPrefix><mat-icon fontSet="mdi-set" fontIcon="mdi-account" style="color:var(--fg1);position:relative;top:2px;"></mat-icon>&nbsp;&nbsp;</span>
+                  <input autofocus 
+                    matInput name="username" 
+                    required 
+                    [(ngModel)]="signinData.username" 
+                    #username="ngModel" 
+                    placeholder="{{'Username' | translate}}" 
+                    value=""
+                    autocorrect="off" autocapitalize="none" autocomplete="off"
+                  >
+                  <mat-error *ngIf="username.errors && (username.dirty || username.touched) && (username.errors.required)">
+                    <span *ngIf="!failed">{{"Please enter your username" | translate}}</span>
+                    <span *ngIf="failed">{{"Please enter your username again" | translate}}</span>
                   </mat-error>
                 </mat-form-field>
               </div>
               <div class="">
                 <mat-form-field class="full-width">
-                  <input matInput type="password" name="password2" formControlName="password2" required placeholder="{{'Confirm Password' | translate}}">
-                  <mat-error *ngIf="password2.errors && (password2.dirty || password2.touched)">
-                    <span *ngIf="password2.errors">{{"Passwords do not match" | translate}}</span>
+                  <span matPrefix><mat-icon style="color:var(--fg1);position:relative;top:2px;">lock</mat-icon>&nbsp;&nbsp;</span>
+                  <input type="password" name="password" required matInput [(ngModel)]="signinData.password" #password="ngModel" placeholder="{{'Password' | translate}}" value="">
+                  <mat-error *ngIf="password.errors && (password.dirty || password.touched) && (password.errors.required)">
+                      <span *ngIf="!failed">{{"Please enter your password" | translate}}</span>
+                      <span *ngIf="failed">{{"Please enter your password again" | translate}}</span>
                   </mat-error>
                 </mat-form-field>
               </div>
-              <button name="signin_button2" mat-button class="mat-accent full-width mb-1" type="submit" [disabled]="!setPasswordForm.form.valid">{{"Sign in" | translate}}</button>
+              <button name="signin_button" mat-button color="primary" class="full-width mb-1" id="signin_button" [disabled]="username.errors || password.errors">{{"Log in" | translate}}</button>
             </form>
-          </ng-template>
-          <div id="legacy-btn-wrapper">
-            <button mat-button color="default" class="mb-1 full-width" style="text-transform:capitalize !important;" (click)="onGoToLegacy()">{{"LEGACY WEB INTERFACE" | translate}}</button>
-          </div>
+            <ng-template #setPassword>
+              <form (ngSubmit)="setpassword()" [formGroup]="setPasswordFormGroup" #setPasswordForm="ngForm">
+                <div>
+                  <span>{{"Set new root account password:" | translate}}</span>
+                </div>
+                <div class="">
+                  <mat-form-field class="full-width">
+                    <input matInput type="password" id="password" formControlName="password" required placeholder="{{'Password' | translate}}">
+                    <mat-error *ngIf="password.errors && (password.dirty || password.touched)">
+                      <span *ngIf="password.errors.required">{{"This field is required" | translate}}</span>
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="">
+                  <mat-form-field class="full-width">
+                    <input matInput type="password" name="password2" formControlName="password2" required placeholder="{{'Confirm Password' | translate}}">
+                    <mat-error *ngIf="password2.errors && (password2.dirty || password2.touched)">
+                      <span *ngIf="password2.errors">{{"Passwords do not match" | translate}}</span>
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                <button name="signin_button2" mat-button class="mat-accent full-width mb-1" type="submit" [disabled]="!setPasswordForm.form.valid">{{"Sign in" | translate}}</button>
+              </form>
+            </ng-template>
+            <div id="legacy-btn-wrapper">
+              <button mat-button color="default" class="mb-1 full-width" style="text-transform:capitalize !important;" (click)="onGoToLegacy()">{{"LEGACY WEB INTERFACE" | translate}}</button>
+            </div>
+          </span>
+          <span *ngIf="!is_freenas && failover_status != 'SINGLE'"><div class="ha-status">
+            <div class="ha-status-txt">
+              <p>{{ha_status_text}}</p>
+              <span *ngIf="ha_info_ready">
+                <p>{{failover_statuses[failover_status]}}</p>
+                <span *ngIf="failover_ips.length > 0">
+                  <p>Active IP Addresses: {{failover_ips.join(", ")}}</p>
+                </span>
+              </span>
+            </div>
+          </div></span>
           <div>
             <span fxFlex class="copyright-txt">
               <span *ngIf="is_freenas">FreeNAS</span>

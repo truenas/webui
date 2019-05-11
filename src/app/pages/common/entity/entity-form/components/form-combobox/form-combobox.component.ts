@@ -26,7 +26,11 @@ export class FormComboboxComponent implements Field {
 
   updateSearchOptions(value) {
     if(this.config.updater && this.config.parent) {
-      this.config.updater(value, this.config.parent);
+      if (this.config.updateLocal) {
+        this.config.updater(value, this.config.parent, this.config);
+      } else {
+        this.config.updater(value, this.config.parent);
+      }
     } else {
       let searchOptions = [];
       for (let i = 0; i < this.config.options.length; i++) {

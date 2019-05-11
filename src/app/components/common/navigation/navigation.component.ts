@@ -34,8 +34,15 @@ export class NavigationComponent implements OnInit {
           _.find(_.find(menuItem, {state : "storage"}).sub, {state : "multipaths"}).disabled = true;
         }
       });
+      if (window.localStorage.getItem('is_freenas') === 'false') {
+        this.ws.call('failover.licensed').subscribe((is_ha) => {
+          if (is_ha) {
+            _.find(_.find(menuItem,
+              {name : "System"}).sub,
+              {name : "Failover"}).disabled = false;
+          }
+        });
 
-      if (window.localStorage['is_freenas'] === 'false') {
         for(let i = 0; i < this.navService.turenasFeatures.length; i++) {
           const targetMenu = this.navService.turenasFeatures[i];
           _.find(_.find(menuItem, { state: targetMenu.menu }).sub, { state : targetMenu.sub}).disabled = false;
