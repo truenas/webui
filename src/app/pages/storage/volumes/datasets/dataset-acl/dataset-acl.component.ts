@@ -331,7 +331,7 @@ export class DatasetAclComponent implements OnDestroy {
     return {"aces": []}; // stupid hacky thing that gets around entityForm's treatment of data
   }
 
-  dataHandler(entityForm) {
+  async dataHandler(entityForm) {
     let data = entityForm.queryResponse;
     let acl;
     if (!data.length) {
@@ -341,11 +341,22 @@ export class DatasetAclComponent implements OnDestroy {
       acl = {};
       acl.type = data[i].type;
       acl.tag = data[i].tag;
-      if (acl.tag === "USER") {
-        acl.user = data[i].id;
-      }
-      if (acl.tag === "GROUP") {
-        acl.group = data[i].id;
+      if (acl.tag === 'USER') {
+        await this.ws.call('notifier.get_user_object', [data[i].id]).toPromise().then(userObj => {
+          if (userObj && userObj.length > 2) {
+            acl.user = userObj[0];
+          }
+        }, err => {
+          console.error(err);
+        });
+      } else if (acl.tag === 'GROUP') {
+        await this.ws.call('notifier.get_group_object', [data[i].id]).toPromise().then(groupObj => {
+          if (groupObj && groupObj.length > 2) {
+            acl.group = groupObj[0];
+          }
+        }, err => {
+          console.error(err);
+        });
       }
       if (data[i].flags.hasOwnProperty('BASIC')) {
         acl.flags_type = 'BASIC';
@@ -428,12 +439,32 @@ export class DatasetAclComponent implements OnDestroy {
     data['dacl'] = dacl;
   }
 
-  customSubmit(body) {
+  async customSubmit(body) {
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Saving ACLs") }});
     this.dialogRef.componentInstance.setDescription(T("Saving ACLs..."));
     let dacl = body.dacl;
     if (body.stripacl) {
       dacl = [];
+    }
+    for (let i = 0; i < dacl.length; i++) {
+      if (dacl[i].tag === 'USER') {
+        await this.ws.call('notifier.get_user_object', [dacl[i].id]).toPromise().then(userObj => {
+          if (userObj && userObj.length > 2) {
+            dacl[i]['id'] = userObj[2];
+          }
+        }, err => {
+          console.error(err);
+        });
+
+      } else if (dacl[i].tag === 'GROUP') {
+        await this.ws.call('notifier.get_group_object', [dacl[i].id]).toPromise().then(groupObj => {
+          if (groupObj && groupObj.length > 2) {
+            dacl[i]['id'] = groupObj[2];
+          }
+        }, err => {
+          console.error(err);
+        });
+      }
     }
     this.dialogRef.componentInstance.setCall(this.updateCall,
       [body.path, dacl,
