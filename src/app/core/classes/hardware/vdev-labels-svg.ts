@@ -146,7 +146,6 @@ export class VDevLabelsSVG {
 
 
   createVdevLabels(vdev){
-    console.log(vdev);
     // If there is no pool then there
     // won't be vdev info either
     if(!vdev.disks){return;}
