@@ -242,7 +242,6 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
           let disk = this.findDiskBySlotNumber(dtSlot);
           if(disk == this.selectedDisk){break} // Don't trigger any changes if the same disk is selected
           if(this.enclosure.driveTrayObjects[evt.data.id].enabled){
-            console.log("ENABLED");
             this.selectedDisk = disk;
             this.setCurrentView('details');
           }
@@ -374,7 +373,6 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
   }
 
   enter(className:string){ // stage-left or stage-right or expanders
-    console.log("PING");
     if(this.exitingView){ 
       if(className == 'full-stage'){
         this.exit('stage-left'); 
