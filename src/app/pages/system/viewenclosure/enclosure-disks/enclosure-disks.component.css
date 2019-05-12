@@ -110,7 +110,6 @@ nav.view-nav-bar{
   top:8px;
   left:12px;
   padding:4px;
-  border: solid 1px var(--bg1);
   background: var(--primary);
 }
 
@@ -195,8 +194,11 @@ nav.view-nav-bar{
 
 .view-card .model.dom-overlay{
   height:auto;
-  top:12px;
+  /*top:12px;*/
   text-align:center;
+  position: absolute;
+  left: 0;
+  z-index: 3;
 }
 
 .view-card .model.dom-overlay img.logo.mark {

@@ -98,7 +98,7 @@
     <!-- DETAILS/TITLE -->
     <div id="disks-details-header" [class]="currentView"> 
       <!--<button mat-icon-button color="primary" (click)="clearDisk()" color="default" *ngIf="currentView == 'details'"><mat-icon role="img">chevron_left</mat-icon></button>-->
-      <a class="back" (click)="clearDisk()" *ngIf="currentView == 'details'"><mat-icon role="img">chevron_left</mat-icon></a>
+      <a class="back fn-theme-primary" (click)="clearDisk()" *ngIf="currentView == 'details'"><mat-icon role="img">chevron_left</mat-icon></a>
       {{selectedDisk ? 'Disk Details for ' + selectedDisk.name : 'Disks Overview'}} 
     </div>
 
