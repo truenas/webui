@@ -333,7 +333,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
       case 'details':
         this.container.alpha = 1;
         this.setDisksDisabled();
-        this.setDisksHealthState(this.selectedDisk);
+        this.setDisksHealthState();
         let vdev = this.system.getVdevInfo(this.selectedDisk.devname);
         this.selectedVdev = vdev;
 
