@@ -1,6 +1,16 @@
 <mat-card class="view-card">
   <mat-toolbar>
-    <div class="mat-card-title-text">Enclosure Disks</div>
+    <div class="mat-card-title-text">Disks on {{selectedEnclosure ? selectedEnclosure.model : '...'}}</div>
+
+    <!-- ENCLOSURE MODEL -->
+    <div class="model dom-overlay" style="opacity:0.75;">
+      <div class="model-inner">
+        <img src="assets/images/TrueNAS_Logomark_OnDark.svg" alt="TrueNAS Logo" class="logo mark">  
+        <img src="assets/images/TrueNAS_Logotype_OnDark.svg" alt="TrueNAS Logo Text" class="logo type">  
+        <!--<span class="text">:   {{selectedEnclosure.model}}</span>-->
+      </div>
+    </div>
+
   </mat-toolbar>
   <mat-card-content>
     <!-- VISUALIZATION/OVERVIEW -->
@@ -69,13 +79,6 @@
             </div>
           </div>
 
-        <!-- ENCLOSURE MODEL -->
-        <div class="model dom-overlay">
-          <img src="assets/images/TrueNAS_Logomark_OnDark.svg" alt="TrueNAS Logo" class="logo mark">  
-          <img src="assets/images/TrueNAS_Logotype_OnDark.svg" alt="TrueNAS Logo Text" class="logo type">  
-          <span class="text">:   {{selectedEnclosure.model}}</span>
-        </div>
-
         <!-- CAPTION OVERLAY -->
         <div class="caption dom-overlay">Choose a Disk</div>
 
@@ -93,7 +96,11 @@
     </div>
 
     <!-- DETAILS/TITLE -->
-    <div id="disks-details-header"> {{selectedDisk ? 'Disk Details for ' + selectedDisk.name : 'Disks Overview'}} </div>
+    <div id="disks-details-header" [class]="currentView"> 
+      <!--<button mat-icon-button color="primary" (click)="clearDisk()" color="default" *ngIf="currentView == 'details'"><mat-icon role="img">chevron_left</mat-icon></button>-->
+      <a class="back" (click)="clearDisk()" *ngIf="currentView == 'details'"><mat-icon role="img">chevron_left</mat-icon></a>
+      {{selectedDisk ? 'Disk Details for ' + selectedDisk.name : 'Disks Overview'}} 
+    </div>
 
     <!-- DETAILS/OVERVIEW -->
     <div *ngIf="selectedDisk; then details else overview ;"></div>
@@ -142,8 +149,7 @@
             <disk-ui [data]="selectedDisk"></disk-ui><!-- disk icon + labels -->
             <div class="capacity">{{converter(selectedDisk.size)}}</div>
             <div class="disk-actions">
-              <!--<button mat-button color="primary">FAULT</button>-->
-              <button mat-button color="primary" (click)="clearDisk()">BACK TO OVERVIEW</button>
+              <button mat-button color="primary" (click)="alert('Triggering fault on disk...')">Identify Drive</button>
             </div>
           </div>
   

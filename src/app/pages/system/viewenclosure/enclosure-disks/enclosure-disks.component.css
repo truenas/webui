@@ -93,7 +93,25 @@ nav.view-nav-bar{
   margin:4px 16px;
 }
 
-.view-card .disk-basic-details{
+.view-card #disks-details-header {
+  position:relative;
+}
+
+.view-card #disks-details-header.details {
+  padding-left:56px;
+}
+
+.view-card #disks-details-header .back{
+  cursor:pointer;
+  position:absolute;
+  border-radius: 50%;
+  width:24px;
+  height:24px;
+  top:8px;
+  left:12px;
+  padding:4px;
+  border: solid 1px var(--bg1);
+  background: var(--primary);
 }
 
 .view-card .disk-advanced-details .detail{
@@ -177,7 +195,7 @@ nav.view-nav-bar{
 
 .view-card .model.dom-overlay{
   height:auto;
-  top:8px;
+  top:12px;
   text-align:center;
 }
 
