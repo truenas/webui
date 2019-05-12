@@ -53,15 +53,18 @@ export class VDevLabelsSVG {
   //public container: Container;
   //protected domLabels: any;
   public color: string;
+  public selectedDiskColor: string;
+  public selectedDisk: any;
   public ClickByProxy;
   
   private textAreas: any;
   private trays: any = {};
 
-  constructor(chassis, app, color){
-    //super(chassis, stage)
+  constructor(chassis, app, theme, disk){
+    this.selectedDisk = disk;
+    this.color = theme.blue;
+    this.selectedDiskColor = theme.cyan;
 
-    this.color = color;
     this.onInit(chassis, app);
   }
 
@@ -131,43 +134,39 @@ export class VDevLabelsSVG {
     return this.app.renderer.view.offsetParent
   }
 
-  createVdevLabelTile(x,y,w,h, className){
-    
+  createVdevLabelTile(x,y,w,h, className, diskName){
+    let color = diskName == this.selectedDisk.devname ? this.selectedDiskColor : this.color;
     this.svg.append("rect")
       .attr('class', className)
       .attr("y", y)
       .attr("x", x)
       .attr("width", w)
       .attr("height", h)
-      .attr("fill", this.color)
-      .attr("stroke",this.color)
+      .attr("fill", color)
+      .attr("stroke",color)
       .attr("style", "fill-opacity:0.25; stroke-width:1");
   }
 
 
   createVdevLabels(vdev){
-    // If there is no pool then there
-    // won't be vdev info either
-    if(!vdev.disks){return;}
-
-    let disks = Object.keys(vdev.disks);// NOTE: vdev.slots only has values for current enclosure
+    let disks = vdev.disks ? Object.keys(vdev.disks) : [this.selectedDisk.devname]; // NOTE: vdev.slots only has values for current enclosure
     let xOffset = this.chassis.container.x + this.chassis.container.width + 16;
     let freeSpace = this.app._options.width - xOffset;
     let gap = 3;
 
     disks.forEach((disk, index) => {
       let present = false; // Is the disk in this enclosure?
-      if(typeof vdev.slots[disk] !== 'undefined'){
+      let slot = typeof vdev.slots !== 'undefined' ? vdev.slots[disk] : this.selectedDisk.enclosure.slot;
 
         present = true;
         // Create tile if the disk is in the current enclosure
-        let src = this.chassis.driveTrayObjects[vdev.slots[disk] - 1].container;
+        let src = this.chassis.driveTrayObjects[slot - 1].container;
         let tray = src.getGlobalPosition();
 
         let tileClass = "tile tile_" + disk;
-        this.createVdevLabelTile(tray.x, tray.y, src.width * this.chassis.container.scale.x, src.height * this.chassis.container.scale.y, tileClass);
+        this.createVdevLabelTile(tray.x, tray.y, src.width * this.chassis.container.scale.x, src.height * this.chassis.container.scale.y, tileClass, disk);
         this.trays[ disk ] = {x: tray.x, y: tray.y, width: src.width * this.chassis.container.scale.x, height: src.height * this.chassis.container.scale.y};
-      }
+      
     });
 
   }
@@ -207,18 +206,19 @@ export class VDevLabelsSVG {
         let startY = tray.y + tray.height / 2;
         let endX = el.offsetLeft + parentOffsets.x//el.offsetParent.offsetLeft;
         let endY = el.offsetTop + parentOffsets.y + (el.offsetHeight / 2);
-        this.createTrace(startX, startY, endX, endY);
+        this.createTrace(startX, startY, endX, endY, disk);
       }
     });
   }
 
-  createTrace(startX,startY, endX, endY){
+  createTrace(startX,startY, endX, endY, diskName){
+    let color = diskName == this.selectedDisk.devname ? this.selectedDiskColor : this.color;
   
     let svgPath = "M" + startX + " " + startY + " L" + endX + " " + endY + " Z"
 
     this.svg.append("path")
       .attr('d', svgPath)
-      .attr('stroke', this.color)
+      .attr('stroke', color)
 
   }
 
