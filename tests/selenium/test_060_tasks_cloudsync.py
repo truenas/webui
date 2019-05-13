@@ -13,7 +13,7 @@ skip_mesages = "Skipping first run"
 script_name = os.path.basename(__file__).partition('.')[0]
 
 xpaths = {
-    'navTasks': '//*[@id="nav-3"]/div/a[1]',
+    'navTasks': "//span[contains(.,'Tasks')]",
     'submenuCloudsync': '//*[@id="3-8"]',
     'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
 }

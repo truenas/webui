@@ -19,8 +19,8 @@ script_name = os.path.basename(__file__).partition('.')[0]
 xpaths = {
     # 'navAccount': '//*[@id="nav-1"]/div/a[1]',
     'navAccount': "//span[contains(.,'Accounts')]",
-    'submenuUser': '//*[@id="1-1"]',
-    'submenuGroup': '//*[@id="1-0"]',
+    'submenuUser': "//a[contains(.,'Users')]",
+    'submenuGroup': "//a[contains(.,'Groups')]",
     'primaryGroupcheckbox': '//*[@id="group_create"]/mat-checkbox/label/div',
     'primaryGroupdropdown': '//*[@id="group"]',
     'newUserName': "//div[@id='full_name']/mat-form-field/div/div/div/input",
@@ -236,7 +236,7 @@ def test_06_create_newuser_suggestedname(wb_driver):
 
 
 def test_07_close_navAccount(wb_driver):
-    print(" closing account menu")
     wb_driver.find_element_by_xpath(xpaths['navAccount']).click()
+    time.sleep(1)
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)

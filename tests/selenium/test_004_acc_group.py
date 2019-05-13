@@ -20,7 +20,7 @@ script_name = os.path.basename(__file__).partition('.')[0]
 
 xpaths = {
     'navAccount': "//span[contains(.,'Accounts')]",
-    'submenuGroup': '//*[@id="1-0"]',
+    'submenuGroup': "//a[contains(.,'Groups')]",
     'newGroupName': "//div[@id='bsdgrp_group']/mat-form-field/div/div/div/input",
     'fabTrigger': '//*[@id="myFab"]/div/smd-fab-trigger/button',
     'fabAction': '//*[@id="add_action_button"]',
@@ -32,7 +32,7 @@ xpaths = {
 
 # Test navigation Account>Users>Hover>New User and enter user-name, full-name,
 # password, confirmation and wait till user is  visible in the list
-def test_01_nav_acc_group(wb_driver):
+def test_01_navigate_to_account_groups(wb_driver):
     # Click  Account menu
     wb_driver.find_element_by_xpath(xpaths['navAccount']).click()
     time.sleep(1)
