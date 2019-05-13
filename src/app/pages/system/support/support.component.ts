@@ -35,6 +35,7 @@ export class SupportComponent {
   public is_freenas: string = window.localStorage['is_freenas'];
   public product_image = '';
   public scrshot: any;
+  public subs: any;
 
   public licenseForm: DialogFormConfiguration = {
     title: "Update License",
@@ -329,7 +330,7 @@ export class SupportComponent {
           parent: this,
           hideButton: true,
           hasErrors: true,
-          multiple: true
+          // multiple: true
         }
       ]
     }
@@ -506,13 +507,16 @@ export class SupportComponent {
       this.payload['attach_debug'] = entityEdit.attach_debug;
       this.payload['title'] = entityEdit.title;
       this.payload['body'] = entityEdit.body;
-      // this.payload['screenshot'] = entityEdit.screenshot; //TODO: How to send the screenshot?
     }
     this.openDialog();
   };
 
   openDialog() {
     const dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Ticket","CloseOnClickOutside":true}});
+    // this.subs.forEach((sub) => {
+    //   dialogRef.componentInstance.wspost(sub.apiEndPoint, sub.formData)
+    // });
+    dialogRef.componentInstance.wspost(this.subs.apiEndPoint, this.subs.formData);
     dialogRef.componentInstance.setCall('support.new_ticket', [this.payload]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.subscribe(res=>{
@@ -555,18 +559,21 @@ export class SupportComponent {
   }
 
   updater(file: any, parent: any){
-    parent.subs = []
     const fileBrowser = file.fileInput.nativeElement;
     this.scrshot = _.find(parent.fieldConfig, { name: 'screenshot' });
     this.scrshot['hasErrors'] = false;
     if (fileBrowser.files && fileBrowser.files[0]) {
+      const formData: FormData = new FormData();
       for (let i = 0; i < fileBrowser.files.length; i++) {
         if (fileBrowser.files[i].size >= 52428800) {
           this.scrshot['hasErrors'] = true;
           this.scrshot['errors'] = 'File size is limited to 50 MiB.';
         } 
         else {
-          parent.subs.push({"apiEndPoint":file.apiEndPoint, "file": fileBrowser.files[i]})
+          formData.append('file', fileBrowser.files[i]);
+          // parent.subs.push({"apiEndPoint":file.apiEndPoint, "file": fileBrowser.files[i]});
+          parent.subs = {"apiEndPoint":file.apiEndPoint, "formData": formData}
+          console.log(parent.subs)
         }       
       }
     }
