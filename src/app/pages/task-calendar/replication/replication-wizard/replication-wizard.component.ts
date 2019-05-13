@@ -195,6 +195,14 @@ export class ReplicationWizardComponent {
                     ],
                 },
                 {
+                    type: 'input',
+                    name: 'naming_schema',
+                    placeholder: replicationHelptext.naming_schema_placeholder,
+                    tooltip: replicationHelptext.naming_schema_tooltip,
+                    required: true,
+                    validation: [Validators.required],
+                },
+                {
                     type: 'select',
                     // multiple: true,
                     name: 'periodic_snapshot_tasks',
@@ -268,7 +276,7 @@ export class ReplicationWizardComponent {
                 },
                 {
                     type: 'select',
-                    name: 'begin',
+                    name: 'snapshot_begin',
                     placeholder: snapshotHelptext.begin_placeholder,
                     tooltip: snapshotHelptext.begin_tooltip,
                     options: [],
@@ -278,7 +286,7 @@ export class ReplicationWizardComponent {
                 },
                 {
                     type: 'select',
-                    name: 'end',
+                    name: 'snapshot_end',
                     placeholder: snapshotHelptext.end_placeholder,
                     tooltip: snapshotHelptext.end_tooltip,
                     options: [],
@@ -322,6 +330,34 @@ export class ReplicationWizardComponent {
                     tooltip: replicationHelptext.auto_tooltip,
                 },
                 {
+                    type: 'scheduler',
+                    name: 'schedule_picker',
+                    tooltip: replicationHelptext.schedule_picker_tooltip,
+                    validation: [Validators.required],
+                    required: true,
+                    value: "0 0 * * *"
+                },
+                {
+                    type: 'select',
+                    name: 'begin',
+                    placeholder: replicationHelptext.schedule_begin_placeholder,
+                    tooltip: replicationHelptext.schedule_begin_tooltip,
+                    options: [],
+                    value: '09:00',
+                    required: true,
+                    validation: [Validators.required],
+                },
+                {
+                    type: 'select',
+                    name: 'end',
+                    placeholder: replicationHelptext.schedule_end_placeholder,
+                    tooltip: replicationHelptext.schedule_end_tooltip,
+                    options: [],
+                    value: '18:00',
+                    required: true,
+                    validation: [Validators.required],
+                },
+                {
                     type: 'select',
                     name: 'retention_policy',
                     placeholder: replicationHelptext.retention_policy_placeholder,
@@ -349,6 +385,12 @@ export class ReplicationWizardComponent {
                 },
             ]
         }
+    ];
+
+    protected scheduleFieldGroup: any[] = [
+        'schedule_picker',
+        'begin',
+        'end',
     ];
 
     protected transportSSHnetcatFieldGroup: any[] = [
@@ -380,8 +422,8 @@ export class ReplicationWizardComponent {
         'lifetime_value',
         'lifetime_unit',
         'snapshot_picker',
-        'begin',
-        'end',
+        'snapshot_begin',
+        'snapshot_end',
     ];
     protected replicationFieldGroup: any[] = [
         'direction',
@@ -420,8 +462,8 @@ export class ReplicationWizardComponent {
         'lifetime_value': null,
         'lifetime_unit': null,
         'snapshot_picker': null,
-        'begin': null,
-        'end': null,
+        'snapshot_begin': null,
+        'snapshot_end': null,
         'direction': null,
         'source_datasets': null,
         'target_dataset': null,
@@ -430,6 +472,10 @@ export class ReplicationWizardComponent {
         'auto': null,
         'retention_policy': null,
         'enabled': null,
+        'naming_schema': null,
+        'schedule_picker': null,
+        'begin': null,
+        'end': null,
     };
 
     protected createCalls = {
@@ -532,16 +578,27 @@ export class ReplicationWizardComponent {
             datasetField.options = _.sortBy(datasetField.options, [function (o) { return o.label; }]);
         });
 
+        const snapshot_begin_field = _.find(this.wizardConfig[1].fieldConfig, { name: 'snapshot_begin' });
+        const snapshot_end_field = _.find(this.wizardConfig[1].fieldConfig, { name: 'snapshot_end' });
         const begin_field = _.find(this.wizardConfig[1].fieldConfig, { name: 'begin' });
         const end_field = _.find(this.wizardConfig[1].fieldConfig, { name: 'end' });
         const time_options = this.taskService.getTimeOptions();
         for (let i = 0; i < time_options.length; i++) {
+            snapshot_begin_field.options.push({ label: time_options[i].label, value: time_options[i].value });
+            snapshot_end_field.options.push({ label: time_options[i].label, value: time_options[i].value });
             begin_field.options.push({ label: time_options[i].label, value: time_options[i].value });
             end_field.options.push({ label: time_options[i].label, value: time_options[i].value });
         }
 
+        this.entityWizard.formArray.controls[1].controls['direction'].valueChanges.subscribe((value) => {
+            const disablePull = value == 'PUSH' ? true : false;
+            this.disablefieldGroup(['naming_schema'], disablePull, 1);
+            this.disablefieldGroup(this.scheduleFieldGroup, disablePull || this.entityWizard.formArray.controls[1].controls['auto'].value == false, 1);
+            this.disablefieldGroup(['periodic_snapshot_tasks'], !disablePull, 1);
+        });
+
         this.entityWizard.formArray.controls[1].controls['periodic_snapshot_tasks'].valueChanges.subscribe((value) => {
-            const newSnapshot = value == 'NEW' ? true : false;
+            const newSnapshot = (value == 'NEW' && this.entityWizard.formArray.controls[1].controls['direction'].value == 'PUSH') ? true : false;
             this.disablefieldGroup(this.snapshotFieldGroup, !newSnapshot, 1);
 
             if (!newSnapshot) {
@@ -554,6 +611,9 @@ export class ReplicationWizardComponent {
 
         this.entityWizard.formArray.controls[1].controls['recursive'].valueChanges.subscribe((value) => {
             this.disablefieldGroup(['exclude'], !value, 1);
+        });
+        this.entityWizard.formArray.controls[1].controls['auto'].valueChanges.subscribe((value) => {
+            this.disablefieldGroup(this.scheduleFieldGroup, value == false || this.entityWizard.formArray.controls[1].controls['direction'].value == 'PUSH', 1);
         });
 
         this.entityWizard.formArray.controls[1].controls['direction'].setValue('PUSH');
@@ -626,15 +686,34 @@ export class ReplicationWizardComponent {
                 'Recursive': this.summaryObj.recursive,
                 'Snapshot Lifetime': this.summaryObj.lifetime_value + ' ' + this.summaryObj.lifetime_unit,
                 'Schedule the Periodic Snapshot Task': this.summaryObj.snapshot_picker,
-                'Begin': this.summaryObj.begin,
-                'End': this.summaryObj.end,
+                'Begin': this.summaryObj.snapshot_begin,
+                'End': this.summaryObj.snapshot_end,
             },
+            'Naming Schema': this.summaryObj.naming_schema,
             'Run Automatically': this.summaryObj.auto,
+            'Schedule the Replication Task': this.summaryObj.schedule_picker,
+            'Begin': this.summaryObj.begin,
+            'End': this.summaryObj.end,
             'Snapshot Retention Policy': this.summaryObj.retention_policy,
         };
 
         this.summaryObj.ssh_credentials === 'Create New' ? delete summary['SSH Connection'] : delete summary['New SSH Connection'];
         this.summaryObj.periodic_snapshot_tasks === 'Create New' ? delete summary['Periodic Snapshot Tasks'] : delete summary['New Periodic Snapshot Tasks'];
+
+        if (this.summaryObj.direction === 'PUSH') {
+            delete summary['Naming Schema'];
+            delete summary['Schedule the Replication Task'];
+            delete summary['Begin'];
+            delete summary['End'];
+        } else if (this.summaryObj.direction === 'PULL') {
+            delete summary['Periodic Snapshot Task'];
+            delete summary['New Periodic Snapshot Tasks'];
+            if (this.summaryObj.auto == false) {
+                delete summary['Schedule the Replication Task'];
+                delete summary['Begin'];
+                delete summary['End'];
+            }
+        }
 
         return summary;
     }
@@ -747,10 +826,10 @@ export class ReplicationWizardComponent {
             };
             for (const i of this.snapshotFieldGroup) {
                 if (i == 'snapshot_picker') {
-                    payload['schedule'] = this.parsePickerTime(value['snapshot_picker'], value['begin'], value['end']);
+                    payload['schedule'] = this.parsePickerTime(value['snapshot_picker'], value['snapshot_begin'], value['snapshot_end']);
                     delete value['snapshot_picker'];
-                    delete value['begin'];
-                    delete value['end'];
+                    delete value['snapshot_begin'];
+                    delete value['snapshot_end'];
                 } else if (i == 'snapshot_recursive') {
                     payload['recursive'] = value[i];
                 } else {
@@ -759,18 +838,25 @@ export class ReplicationWizardComponent {
             }
         }
         if (item === 'replication') {
+            payload = {
+                name: value['name'],
+                ssh_credentials: value['ssh_credentials'],
+                transport: value['transport'],
+            }
+
             value['source_datasets'] = typeof value['source_datasets'] === "string" ? value['source_datasets'].split(' ') : value['source_datasets'];
             for (let i = 0; i < value['source_datasets'].length; i++) {
                 if (_.startsWith(value['source_datasets'][i], '/mnt/')) {
                     value['source_datasets'][i] = value['source_datasets'][i].substring(5);
                 }
             }
-            value["periodic_snapshot_tasks"] = value['periodic_snapshot_tasks'].toString().split(' ');
-            payload = {
-                name: value['name'],
-                ssh_credentials: value['ssh_credentials'],
-                periodic_snapshot_tasks: value['periodic_snapshot_tasks'],
-                transport: value['transport'],
+            if (value['direction'] == 'PUSH') {
+                payload["periodic_snapshot_tasks"] = value['periodic_snapshot_tasks'].toString().split(' ');
+            } else {
+                payload['naming_schema'] = value['naming_schema'].split(' ');
+                if (value['schedule_picker']) {
+                    payload['schedule'] = this.parsePickerTime(value['schedule_picker'], value['begin'], value['end']);
+                }
             }
             if (value['transport'] == 'SSH+NETCAT') {
                 for (const i of this.transportSSHnetcatFieldGroup) {
