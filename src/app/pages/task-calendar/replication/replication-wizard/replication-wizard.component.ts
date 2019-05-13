@@ -69,11 +69,6 @@ export class ReplicationWizardComponent {
                     name: 'netcat_active_side',
                     value: 'REMOTE',
                     isHidden: true,
-                }, {
-                    type: 'input',
-                    name: 'netcat_active_side_listen_address',
-                    value: '', // defaut to hostname
-                    isHidden: true,
                 },
                 {
                     type: 'select',
@@ -358,7 +353,7 @@ export class ReplicationWizardComponent {
 
     protected transportSSHnetcatFieldGroup: any[] = [
         'netcat_active_side',
-        'netcat_active_side_listen_address',
+        // 'netcat_active_side_listen_address',
         // 'netcat_active_side_port_min',
         // 'netcat_active_side_port_max',
     ];
@@ -467,14 +462,6 @@ export class ReplicationWizardComponent {
         return false;
     }
 
-    getHostname() {
-        this.replicationService.querySSHConnection(this.entityWizard.formArray.controls[0].controls['ssh_credentials'].value).subscribe(
-            (res) => {
-                this.entityWizard.formArray.controls[0].controls['netcat_active_side_listen_address'].setValue(res[0].attributes.host);
-            }
-        );
-    }
-
     afterInit(entityWizard) {
         this.entityWizard = entityWizard;
 
@@ -503,19 +490,12 @@ export class ReplicationWizardComponent {
         this.entityWizard.formArray.controls[0].controls['transport'].valueChanges.subscribe((value) => {
             const ssh = value == 'SSH' ? true : false;
             this.disablefieldGroup(this.transportSSHnetcatFieldGroup, ssh, 0);
-            if (!ssh) {
-                this.getHostname();
-            }
         });
         this.entityWizard.formArray.controls[0].controls['ssh_credentials'].valueChanges.subscribe((value) => {
             const newSSH = value == 'NEW' ? true : false;
             this.disablefieldGroup([...this.sshFieldGroup, ...this.semiSSHFieldGroup, ...this.manualSSHFieldGroup], !newSSH, 0);
             if (newSSH) {
                 this.entityWizard.formArray.controls[0].controls['setup_method'].setValue(this.entityWizard.formArray.controls[0].controls['setup_method'].value);
-            }
-
-            if (this.entityWizard.formArray.controls[0].controls['transport'].value == 'SSH+NETCAT') {
-                this.getHostname();
             }
         });
         this.entityWizard.formArray.controls[0].controls['setup_method'].valueChanges.subscribe((value) => {
