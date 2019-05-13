@@ -11,7 +11,7 @@
             </div>
             <ng-template #isTruenasDark>
               <div class="branding mat-bg-primary">
-                <a routerLink="/dashboard"><img src="assets/images/TrueNAS_Logomark_OnLight.svg" alt="TrueNAS logo" class="tn-logo app-logo"></a>
+                <a routerLink="/dashboard"><img src="assets/images/TrueNAS_Logomark_Black.svg" alt="TrueNAS logo" class="tn-logo app-logo"></a>
                 <a routerLink="/dashboard"><img src="assets/images/TrueNAS_Logotype_OnLight.svg" alt="TrueNAS logo" class="tn-logo-txt app-logo-text" app></a>              </div>
             </ng-template>
           </div>
@@ -22,7 +22,7 @@
             </div>
             <ng-template #isTruenasLight>
               <div class="branding mat-bg-primary">
-                <a routerLink="/dashboard"><img src="assets/images/TrueNAS_Logomark_OnDark.svg" alt="TrueNAS logo" class="tn-logo app-logo"></a>
+                <a routerLink="/dashboard"><img src="assets/images/TrueNAS_Logomark_White.svg" alt="TrueNAS logo" class="tn-logo app-logo"></a>
                 <a routerLink="/dashboard"><img src="assets/images/TrueNAS_Logotype_OnDark.svg" alt="TrueNAS logo" class="tn-logo-txt app-logo-text" app></a>
               </div>
             </ng-template>
@@ -31,7 +31,8 @@
       </div>
       <div class="app-user">
         <div class="app-user-photo">
-          <svg-icon class="ix-logo" src="assets/images/ix.svg" [svgStyle]="{'width.px':64,'height.px':64}" ></svg-icon>
+          <svg-icon *ngIf="is_freenas" class="ix-logo" src="assets/images/ix.svg" [svgStyle]="{'width.px':64,'height.px':64}" ></svg-icon>
+          <svg-icon *ngIf="!is_freenas" class="ix-logo" src="assets/images/iX_Logomark.svg" [svgStyle]="{'width.px':64,'height.px':64}" ></svg-icon>
         </div>
         <span class="app-user-name">
           <mat-icon class="icon-xs text-muted">lock</mat-icon>
@@ -47,7 +48,7 @@
     <!-- Listens language change event -->
     <topbar [sidenav]="sidenav" [notificPanel]="notificationPanel" (onLangChange)="language.setMiddlewareLanguage($event)"></topbar>
     <!-- App content -->
-    <app-breadcrumb></app-breadcrumb>
+    <app-breadcrumb [is_freenas]="is_freenas"></app-breadcrumb>
     <div class="rightside-content-hold" [ngClass]="{'has-footer':isShowFooterConsole}">
       <router-outlet></router-outlet>
     </div>
