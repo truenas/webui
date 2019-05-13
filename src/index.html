@@ -37,14 +37,16 @@
         <!-- Put a loader in here at some point -->
       </div>
     </div>
+    <script>
+      let x=document.getElementById('brandLogo')
+      let is_freenas = window.localStorage['is_freenas']; 
+      if (is_freenas === 'true') {
+      document.getElementById("title").innerHTML = "FreeNAS - " + window.location.hostname;
+    } else {
+      document.getElementById("title").innerHTML = "TrueNAS - " + window.location.hostname;
+      document.getElementById('brandLogo').src = 'assets/images/TrueNAS_Logomark_OnDark.svg';
+    }
+    </script>
   </app-root>
 </body>
-<script>
-    let is_freenas = window.localStorage['is_freenas'];
-    if (is_freenas === 'true') {
-      document.getElementById("title").innerHTML = "FreeNAS";
-    } else {
-      document.getElementById("title").innerHTML = "TrueNAS";
-    }
-  </script>
 </html>

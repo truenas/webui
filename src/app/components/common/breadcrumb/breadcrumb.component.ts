@@ -22,7 +22,6 @@ export class BreadcrumbComponent implements OnInit {
   private core: CoreService) { }
 
   ngOnInit() {
-    console.log(this.is_freenas)
     this.is_freenas === true ? this.systemName = 'FreeNAS' : this.systemName = 'TrueNAS';
   // must be running once to get breadcrumbs
     this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);

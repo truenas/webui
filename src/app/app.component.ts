@@ -69,7 +69,7 @@ export class AppComponent {
       "ha_reconnecting",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/ha_reconnecting.svg")
     );
-    this.title.setTitle('FreeNAS - ' + window.location.hostname);
+    // this.title.setTitle('FreeNAS - ' + window.location.hostname);
 
     if (this.detectBrowser("Safari")) {
       document.body.className += " safari-platform";
