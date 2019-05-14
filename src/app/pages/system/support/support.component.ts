@@ -513,12 +513,13 @@ export class SupportComponent {
 
   openDialog() {
     const dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Ticket","CloseOnClickOutside":true}});
-    // this.subs.forEach((sub) => {
-    //   dialogRef.componentInstance.wspost(sub.apiEndPoint, sub.formData)
-    // });
-    dialogRef.componentInstance.wspost(this.subs.apiEndPoint, this.subs.formData);
-    dialogRef.componentInstance.setCall('support.new_ticket', [this.payload]);
-    dialogRef.componentInstance.submit();
+    const formData: FormData = new FormData();
+    formData.append('data', JSON.stringify({
+      "method": "support.new_ticket",
+      "params": [this.payload]
+    }));
+    formData.append('file', this.subs.file);
+    dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
     dialogRef.componentInstance.success.subscribe(res=>{
       const url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
       dialogRef.componentInstance.setDescription(url);
@@ -527,7 +528,6 @@ export class SupportComponent {
       dialogRef.componentInstance.setDescription(res.error);
     });
   }
-
 
   blurEvent(parent){
     this.category = _.find(parent.fieldConfig, {name: "category"});
@@ -563,17 +563,13 @@ export class SupportComponent {
     this.scrshot = _.find(parent.fieldConfig, { name: 'screenshot' });
     this.scrshot['hasErrors'] = false;
     if (fileBrowser.files && fileBrowser.files[0]) {
-      const formData: FormData = new FormData();
       for (let i = 0; i < fileBrowser.files.length; i++) {
         if (fileBrowser.files[i].size >= 52428800) {
           this.scrshot['hasErrors'] = true;
           this.scrshot['errors'] = 'File size is limited to 50 MiB.';
         } 
         else {
-          formData.append('file', fileBrowser.files[i]);
-          // parent.subs.push({"apiEndPoint":file.apiEndPoint, "file": fileBrowser.files[i]});
-          parent.subs = {"apiEndPoint":file.apiEndPoint, "formData": formData}
-          console.log(parent.subs)
+          parent.subs = {"apiEndPoint":file.apiEndPoint, "file": fileBrowser.files[0]}
         }       
       }
     }
