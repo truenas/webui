@@ -5,7 +5,7 @@
   <!--<meta http-equiv="X-UA-Compatible" content="IE=edge" />-->
   <!--<script  src="generated/ie-polyfills.min.js"></script>-->
   <script nomodule="" src="assets/scripts/ie-support/ie-polyfills.min.js"></script>
-  <title id="title"></title>
+  <title id="main-page-title"></title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="apple-touch-icon" sizes="57x57" href="assets/images/apple-icon-57x57.png">
@@ -20,7 +20,7 @@
   <link rel="icon" type="image/png" sizes="192x192"  href="assets/images/android-icon-192x192.png">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="96x96" href="assets/images/favicon-96x96.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png">
+  <link id='fav16' rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png">
   <link rel="manifest" href="assets/manifest.json">
   <meta name="msapplication-TileColor" content="#ffffff">
   <meta name="msapplication-TileImage" content="assets/images/ms-icon-144x144.png">
@@ -29,7 +29,7 @@
   <link href="assets/iconfont/mdi/css/materialdesignicons.min.css" rel="stylesheet" />
   <link href="assets/iconfont/primeicons/primeicons.css" rel="stylesheet" />
 </head>
-<body class="ix-blue"> 
+<body class="ix-blue">
   <app-root>
     <div class="app-loadr" style="background-color:var(--bg2);height:100vh; --bg1:#171E26;--bg2:#232d35;--fg1:#aaaaaa;--fg2:#cccccc;">
       <div style="position:relative;z-index:2;width:180px;height:180px;top:calc(50% - 90px);left:calc(50% - 90px);">
@@ -38,13 +38,14 @@
       </div>
     </div>
     <script>
-      let x=document.getElementById('brandLogo')
-      let is_freenas = window.localStorage['is_freenas']; 
+      let is_freenas = window.localStorage['is_freenas'];
       if (is_freenas === 'true') {
-      document.getElementById("title").innerHTML = "FreeNAS - " + window.location.hostname;
+      document.getElementById("main-page-title").innerHTML = "FreeNAS - " + window.location.hostname;
     } else {
-      document.getElementById("title").innerHTML = "TrueNAS - " + window.location.hostname;
-      document.getElementById('brandLogo').src = 'assets/images/TrueNAS_Logomark_OnDark.svg';
+      document.getElementById("main-page-title").innerHTML = "TrueNAS - " + window.location.hostname;
+      document.getElementById('brandLogo').src = 'assets/images/TrueNAS_Logomark_White.svg';
+      let fav=document.getElementById('fav16');
+      fav.href="assets/images/TrueNAS_Logomark_Black.svg"; // Sets only the smallest favicon;
     }
     </script>
   </app-root>
