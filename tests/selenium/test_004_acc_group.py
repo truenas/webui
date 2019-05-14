@@ -33,9 +33,6 @@ xpaths = {
 # Test navigation Account>Users>Hover>New User and enter user-name, full-name,
 # password, confirmation and wait till user is  visible in the list
 def test_01_navigate_to_account_groups(wb_driver):
-    # Click  Account menu
-    wb_driver.find_element_by_xpath(xpaths['navAccount']).click()
-    time.sleep(1)
     # Click User submenu
     wb_driver.find_element_by_xpath(xpaths['submenuGroup']).click()
     time.sleep(2)
@@ -51,8 +48,6 @@ def test_01_navigate_to_account_groups(wb_driver):
 
 
 def test_02_create_newgroup(wb_driver):
-    # scroll down to find hover tab
-    wb_driver.find_element_by_tag_name('html').send_keys(Keys.END)
     time.sleep(2)
     # Click create new group option
     wb_driver.find_element_by_xpath(xpaths['fabAction']).click()
@@ -94,8 +89,6 @@ def test_03_create_supergroup(wb_driver):
 
 
 def test_04_create_duplicategroup(wb_driver):
-    # scroll down to find hover tab
-    wb_driver.find_element_by_tag_name('html').send_keys(Keys.END)
     time.sleep(2)
     # Click create new group option
     wb_driver.find_element_by_xpath(xpaths['fabAction']).click()

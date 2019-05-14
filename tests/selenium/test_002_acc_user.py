@@ -216,8 +216,8 @@ def test_06_create_newuser_suggestedname(wb_driver):
     time.sleep(2)
 
 
-def test_07_close_navAccount(wb_driver):
-    wb_driver.find_element_by_xpath(xpaths['navAccount']).click()
-    time.sleep(1)
-    test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+# def test_07_close_navAccount(wb_driver):
+#     wb_driver.find_element_by_xpath(xpaths['navAccount']).click()
+#     time.sleep(1)
+#     test_name = sys._getframe().f_code.co_name
+#     take_screenshot(wb_driver, script_name, test_name)
