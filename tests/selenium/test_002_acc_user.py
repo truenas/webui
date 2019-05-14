@@ -44,10 +44,10 @@ def test_00_disable_tour_guide_if_present(wb_driver):
 
 
 def test_01_nav_acc_user(wb_driver):
+    test_name = sys._getframe().f_code.co_name
     # Click  Account menu
     wb_driver.find_element_by_xpath(xpaths['navAccount']).click()
     # allowing the button to load
-    time.sleep(1)
     # Click User submenu
     wb_driver.find_element_by_xpath(xpaths['submenuUser']).click()
     # get the ui element
@@ -57,13 +57,11 @@ def test_01_nav_acc_user(wb_driver):
     # assert response
     assert "User" in page_data, page_data
     # taking screenshot
-    test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
 
 
 def test_02_create_newuser(wb_driver):
-    print(" creating a new user with create new primary group")
-    time.sleep(2)
+    test_name = sys._getframe().f_code.co_name
     # Click create new user option
     wb_driver.find_element_by_xpath(xpaths['fabAction']).click()
     # Enter User Full name
@@ -83,18 +81,18 @@ def test_02_create_newuser(wb_driver):
         wb_driver.find_element_by_xpath(xpaths['saveButton']).click()
     else:
         print("could not find the save button and clicking")
-
-    # check if there is a generic error when making a duplicate user, and print the error
-    time.sleep(1)
+    # wait on the fabAction
+    xpath = xpaths['fabAction']
+    wait = wait_on_element(wb_driver, xpath, script_name, test_name)
+    assert wait, f'Loading Users page timeout'
     # taking screenshot
-    test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
     no_error = error_check(wb_driver)
     assert no_error['result'], no_error['traceback']
 
 
 def test_03_create_newuser_primarygroup_uncheck(wb_driver):
-    time.sleep(2)
+    test_name = sys._getframe().f_code.co_name
     # Click create new user option
     wb_driver.find_element_by_xpath(xpaths['fabAction']).click()
     # Enter User Full name
@@ -113,23 +111,22 @@ def test_03_create_newuser_primarygroup_uncheck(wb_driver):
         wb_driver.find_element_by_xpath(xpaths['saveButton']).click()
     else:
         print("could not find the save button and clicking")
-    time.sleep(1)
+    # wait on the fabAction
+    xpath = xpaths['fabAction']
+    wait = wait_on_element(wb_driver, xpath, script_name, test_name)
+    assert wait, f'Loading Users page timeout'
     # taking screenshot
-    test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
     # check if there is a generic error when making a duplicate user, and print the error
-    time.sleep(1)
     no_error = error_check(wb_driver)
     assert no_error['result'], no_error['traceback']
 
 
 def test_04_create_superuser(wb_driver):
-    time.sleep(2)
+    test_name = sys._getframe().f_code.co_name
     wb_driver.find_element_by_tag_name('html').send_keys(Keys.END)
-    time.sleep(2)
     # Click create new user option
     wb_driver.find_element_by_xpath(xpaths['fabAction']).click()
-
     # Enter User Full name
     wb_driver.find_element_by_xpath(xpaths['newUserName']).send_keys(superuserfname)
     # clear user name and enter new Username
@@ -148,21 +145,21 @@ def test_04_create_superuser(wb_driver):
         wb_driver.find_element_by_xpath(xpaths['saveButton']).click()
     else:
         print("could not find the save button and clicking")
-    time.sleep(1)
+    # wait on the fabAction
+    xpath = xpaths['fabAction']
+    wait = wait_on_element(wb_driver, xpath, script_name, test_name)
+    assert wait, f'Loading Users page timeout'
     # taking screenshot
-    test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
     # check if there is a generic error when making a duplicate user, and print the error
     no_error = error_check(wb_driver)
     assert no_error['result'], no_error['traceback']
-    time.sleep(2)
 
 
 def test_05_create_duplicateuser(wb_driver):
-    time.sleep(2)
+    test_name = sys._getframe().f_code.co_name
     # Click create new user option
     wb_driver.find_element_by_xpath(xpaths['fabAction']).click()
-
     # Enter User Full name
     wb_driver.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfname)
     # clear user name and enter new Username
@@ -180,19 +177,18 @@ def test_05_create_duplicateuser(wb_driver):
     else:
         print("could not find the save button and clicking")
     wb_driver.find_element_by_xpath(xpaths['cancelButton']).click()
+    # wait on the fabAction
+    xpath = xpaths['fabAction']
+    wait = wait_on_element(wb_driver, xpath, script_name, test_name)
+    assert wait, f'Loading Users page timeout'
     # taking screenshot
-    test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
-    # check if there is a generic error when making a duplicate user, and print the error
-    time.sleep(1)
     no_error = error_check(wb_driver)
     assert no_error['result'], no_error['traceback']
-    time.sleep(2)
 
 
 def test_06_create_newuser_suggestedname(wb_driver):
     test_name = sys._getframe().f_code.co_name
-    time.sleep(2)
     # Click create new user option
     wb_driver.find_element_by_xpath(xpaths['fabAction']).click()
     # Enter User Full name
@@ -209,6 +205,7 @@ def test_06_create_newuser_suggestedname(wb_driver):
         wb_driver.find_element_by_xpath(xpaths['saveButton']).click()
     else:
         print("could not find the save button and clicking")
+    # wait on the fabAction
     xpath = xpaths['fabAction']
     wait = wait_on_element(wb_driver, xpath, script_name, test_name)
     assert wait, f'Loading Users page timeout'
@@ -216,11 +213,3 @@ def test_06_create_newuser_suggestedname(wb_driver):
     take_screenshot(wb_driver, script_name, test_name)
     no_error = error_check(wb_driver)
     assert no_error['result'], no_error['traceback']
-    time.sleep(1)
-
-
-# def test_07_close_navAccount(wb_driver):
-#     wb_driver.find_element_by_xpath(xpaths['navAccount']).click()
-#     time.sleep(1)
-#     test_name = sys._getframe().f_code.co_name
-#     take_screenshot(wb_driver, script_name, test_name)

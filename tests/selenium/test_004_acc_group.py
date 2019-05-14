@@ -9,7 +9,7 @@ import os
 import time
 cwd = str(os.getcwd())
 sys.path.append(cwd)
-from function import take_screenshot, error_check
+from function import take_screenshot, error_check, wait_on_element
 from source import newgroupname, supergroupname
 
 
@@ -34,7 +34,6 @@ xpaths = {
 def test_01_navigate_to_account_groups(wb_driver):
     # Click User submenu
     wb_driver.find_element_by_xpath(xpaths['submenuGroup']).click()
-    time.sleep(2)
     # get the ui element
     ui_element1 = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
     # get the weather data
@@ -47,63 +46,59 @@ def test_01_navigate_to_account_groups(wb_driver):
 
 
 def test_02_create_newgroup(wb_driver):
-    time.sleep(2)
+    test_name = sys._getframe().f_code.co_name
     # Click create new group option
     wb_driver.find_element_by_xpath(xpaths['fabAction']).click()
     # Enter New Groupname
-    time.sleep(1)
     wb_driver.find_element_by_xpath(xpaths['newGroupName']).send_keys(newgroupname)
-    time.sleep(1)
     # Click on save new Group button
     wb_driver.find_element_by_xpath(xpaths['saveButton']).click()
-    time.sleep(1)
+    # wait on the fabAction
+    xpath = xpaths['fabAction']
+    wait = wait_on_element(wb_driver, xpath, script_name, test_name)
+    assert wait, f'Loading Users page timeout'
     # taking screenshot
-    test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
-    # check if there is a generic error when making a duplicate group, and print the error
     no_error = error_check(wb_driver)
     assert no_error['result'], no_error['traceback']
-    time.sleep(2)
 
 
 def test_03_create_supergroup(wb_driver):
-    time.sleep(1)
+    test_name = sys._getframe().f_code.co_name
     # Click create new group option
     wb_driver.find_element_by_xpath(xpaths['fabAction']).click()
     # Enter New Groupname
-    time.sleep(1)
     wb_driver.find_element_by_xpath(xpaths['newGroupName']).send_keys(supergroupname)
     # Check Permit sudo  checkbox
     wb_driver.find_element_by_xpath(xpaths['permitsudoCheckbox']).click()
     # Click on save new Group button
     wb_driver.find_element_by_xpath(xpaths['saveButton']).click()
-    time.sleep(1)
+    # wait on the fabAction
+    xpath = xpaths['fabAction']
+    wait = wait_on_element(wb_driver, xpath, script_name, test_name)
+    assert wait, f'Loading Users page timeout'
     # taking screenshot
-    test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
-    # check if there is a generic error when making a duplicate group, and print the error
     no_error = error_check(wb_driver)
     assert no_error['result'], no_error['traceback']
-    time.sleep(2)
 
 
 def test_04_create_duplicategroup(wb_driver):
-    time.sleep(2)
+    test_name = sys._getframe().f_code.co_name
     # Click create new group option
     wb_driver.find_element_by_xpath(xpaths['fabAction']).click()
     # Enter New Groupname
-    time.sleep(1)
     wb_driver.find_element_by_xpath(xpaths['newGroupName']).send_keys(newgroupname)
     # Click on save new Group button
     wb_driver.find_element_by_xpath(xpaths['saveButton']).click()
-    time.sleep(1)
+    # wait on the fabAction
+    xpath = xpaths['fabAction']
+    wait = wait_on_element(wb_driver, xpath, script_name, test_name)
+    assert wait, f'Loading Users page timeout'
     # taking screenshot
-    test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
-    # check if there is a generic error when making a duplicate group, and print the error
     no_error = error_check(wb_driver)
     assert no_error['result'], no_error['traceback']
-    time.sleep(2)
 
 
 def test_05_close_navAccount(wb_driver):
