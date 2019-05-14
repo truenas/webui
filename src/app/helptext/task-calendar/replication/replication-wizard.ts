@@ -6,5 +6,8 @@ export default {
     name_placeholder: T('Name'),
     name_tooltip: T(''),
 
+    cipher_placeholder: T('Replication Performance'),
+    cipher_tooltip: T(''),
+
     step2_label: T('Replication'),
 }

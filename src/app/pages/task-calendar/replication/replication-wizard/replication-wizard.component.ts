@@ -158,17 +158,17 @@ export class ReplicationWizardComponent {
                 }, {
                     type: 'select',
                     name: 'cipher',
-                    placeholder: sshConnectionsHelptex.cipher_placeholder,
-                    tooltip: sshConnectionsHelptex.cipher_tooltip,
+                    placeholder: helptext.cipher_placeholder,
+                    tooltip: helptext.cipher_tooltip,
                     options: [
                         {
-                            label: 'Standard',
+                            label: 'Standard (Secure)',
                             value: 'STANDARD',
                         }, {
-                            label: 'Fast',
+                            label: 'Fast (Less secure)',
                             value: 'FAST',
                         }, {
-                            label: 'Disabled',
+                            label: 'Disabled (Not encrypted)',
                             value: 'DISABLED',
                         }
                     ],
