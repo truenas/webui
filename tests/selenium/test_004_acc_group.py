@@ -24,6 +24,7 @@ xpaths = {
     'fabTrigger': '//*[@id="myFab"]/div/smd-fab-trigger/button',
     'fabAction': '//*[@id="add_action_button"]',
     'saveButton': '//*[@id="save_button"]',
+    'cancelButton': "//button[@id='goback_button']/span",
     'permitsudoCheckbox': '//*[@id="bsdgrp_sudo"]/mat-checkbox/label/div',
     'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
 }
@@ -90,7 +91,12 @@ def test_04_create_duplicategroup(wb_driver):
     # Enter New Groupname
     wb_driver.find_element_by_xpath(xpaths['newGroupName']).send_keys(newgroupname)
     # Click on save new Group button
-    wb_driver.find_element_by_xpath(xpaths['saveButton']).click()
+    if wb_driver.find_element_by_xpath(xpaths['saveButton']):
+        print("found the save button")
+        wb_driver.find_element_by_xpath(xpaths['saveButton']).click()
+    else:
+        print("could not find the save button and clicking")
+    wb_driver.find_element_by_xpath(xpaths['cancelButton']).click()
     # wait on the fabAction
     xpath = xpaths['fabAction']
     wait = wait_on_element(wb_driver, xpath, script_name, test_name)
