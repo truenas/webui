@@ -337,7 +337,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
         let vdev = this.system.getVdevInfo(this.selectedDisk.devname);
         this.selectedVdev = vdev;
 
-        this.labels = new VDevLabelsSVG(this.enclosure, this.app, this.theme.blue);
+        this.labels = new VDevLabelsSVG(this.enclosure, this.app, this.theme, this.selectedDisk);
 
         this.labels.events.next({name:"LabelDrives", data: vdev, sender: this});
         let dl;
