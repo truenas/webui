@@ -74,9 +74,6 @@ def test_02_create_newgroup(wb_driver):
 
 def test_03_create_supergroup(wb_driver):
     time.sleep(1)
-    # Click Group sub-menu
-    wb_driver.find_element_by_xpath(xpaths['submenuGroup']).click()
-    time.sleep(1)
     # Click create new group option
     wb_driver.find_element_by_xpath(xpaths['fabAction']).click()
     # Enter New Groupname
@@ -97,8 +94,6 @@ def test_03_create_supergroup(wb_driver):
 
 
 def test_04_create_duplicategroup(wb_driver):
-    # Click Group submenu
-    wb_driver.find_element_by_xpath(xpaths['submenuGroup']).click()
     # scroll down to find hover tab
     wb_driver.find_element_by_tag_name('html').send_keys(Keys.END)
     time.sleep(2)

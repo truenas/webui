@@ -31,6 +31,7 @@ xpaths = {
     'permitSudocheckbox': '//*[@id="sudo"]/mat-checkbox/label/div',
     'fabAction': "//button[@id='add_action_button']",
     'saveButton': '//*[@id="save_button"]',
+    'cancelButton': "//button[@id='goback_button']/span",
     'tourButton': '/html/body/div[6]/div[1]/button',
     'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
 }
@@ -61,8 +62,6 @@ def test_01_nav_acc_user(wb_driver):
 
 def test_02_create_newuser(wb_driver):
     print(" creating a new user with create new primary group")
-    # scroll down to find hover tab
-    wb_driver.find_element_by_tag_name('html').send_keys(Keys.END)
     time.sleep(2)
     # Click create new user option
     wb_driver.find_element_by_xpath(xpaths['fabAction']).click()
@@ -94,12 +93,6 @@ def test_02_create_newuser(wb_driver):
 
 
 def test_03_create_newuser_primarygroup_uncheck(wb_driver):
-
-    time.sleep(2)
-    # Click User sub-menu
-    wb_driver.find_element_by_xpath(xpaths['submenuUser']).click()
-    # scroll down to find hover tab
-    wb_driver.find_element_by_tag_name('html').send_keys(Keys.END)
     time.sleep(2)
     # Click create new user option
     wb_driver.find_element_by_xpath(xpaths['fabAction']).click()
@@ -130,11 +123,7 @@ def test_03_create_newuser_primarygroup_uncheck(wb_driver):
 
 
 def test_04_create_superuser(wb_driver):
-    print(" creating a super user with root access")
     time.sleep(2)
-    # Click User sub menu
-    wb_driver.find_element_by_xpath(xpaths['submenuUser']).click()
-    # scroll down to find hover tab
     wb_driver.find_element_by_tag_name('html').send_keys(Keys.END)
     time.sleep(2)
     # Click create new user option
@@ -169,10 +158,6 @@ def test_04_create_superuser(wb_driver):
 
 
 def test_05_create_duplicateuser(wb_driver):
-    # Click User submenu
-    wb_driver.find_element_by_xpath(xpaths['submenuUser']).click()
-    # scroll down to find hover tab
-    wb_driver.find_element_by_tag_name('html').send_keys(Keys.END)
     time.sleep(2)
     # Click create new user option
     wb_driver.find_element_by_xpath(xpaths['fabAction']).click()
@@ -193,6 +178,7 @@ def test_05_create_duplicateuser(wb_driver):
         wb_driver.find_element_by_xpath(xpaths['saveButton']).click()
     else:
         print("could not find the save button and clicking")
+    wb_driver.find_element_by_xpath(xpaths['cancelButton']).click()
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
@@ -204,11 +190,6 @@ def test_05_create_duplicateuser(wb_driver):
 
 
 def test_06_create_newuser_suggestedname(wb_driver):
-    print(" creating a new user with suggested name")
-    # Click User sub-menu
-    wb_driver.find_element_by_xpath(xpaths['submenuUser']).click()
-    # scroll down to find hover tab
-    wb_driver.find_element_by_tag_name('html').send_keys(Keys.END)
     time.sleep(2)
     # Click create new user option
     wb_driver.find_element_by_xpath(xpaths['fabAction']).click()

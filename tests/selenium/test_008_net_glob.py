@@ -16,9 +16,9 @@ script_name = os.path.basename(__file__).partition('.')[0]
 
 
 xpaths = {
-    'navNetwork': '//*[@id="nav-4"]/div/a[1]',
-    'submenuNetworkconfig': '//*[@id="4-0"]',
-    'nameserver3': "//div[@id='gc_nameserver3']/mat-form-field/div/div/div",
+    'navNetwork': "//span[contains(.,'Network')]",
+    'submenuNetworkconfig': "//a[contains(.,'Global Configuration')]",
+    'nameserver3': "//div[@id='nameserver3']/mat-form-field/div/div/div/input",
     'buttonSave': '//*[@id="save_button"]',
     'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
 }
