@@ -488,8 +488,7 @@ export class ReplicationWizardComponent {
 
     protected deleteCalls = {
         private_key: 'keychaincredential.delete',
-        ssh_credentials_semiautomatic: 'keychaincredential.delete',
-        ssh_credentials_manual: 'keychaincredential.delete',
+        ssh_credentials: 'keychaincredential.delete',
         periodic_snapshot_tasks: 'pool.snapshottask.delete',
         replication: 'replication.delete',
     }
@@ -871,12 +870,13 @@ export class ReplicationWizardComponent {
         return this.ws.call(this.createCalls[item], [payload]).toPromise();
     }
 
-    rollBack(items) {
-        for (const item in items) {
-            if (items[item] != null) {
-                this.ws.call(this.deleteCalls[item], [items[item]]).subscribe(
+    async rollBack(items) {
+        const keys = Object.keys(items).reverse();
+        for (let i = 0; i < keys.length; i++) {
+            if (items[keys[i]] != null) {
+                await this.ws.call(this.deleteCalls[keys[i]], [items[keys[i]]]).toPromise().then(
                     (res) => {
-                        console.log('rollback ' + item, res);
+                        console.log('rollback ' + keys[i], res);
                     }
                 );
             }
