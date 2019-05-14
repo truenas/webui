@@ -513,16 +513,21 @@ export class SupportComponent {
 
   openDialog() {
     const dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Ticket","CloseOnClickOutside":true}});
-    const formData: FormData = new FormData();
-    formData.append('data', JSON.stringify({
-      "method": "support.new_ticket",
-      "params": [this.payload]
-    }));
-    formData.append('file', this.subs.file);
-    dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
+    dialogRef.componentInstance.setCall('support.new_ticket', [this.payload]);
+    dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.subscribe(res=>{
       const url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
+
       dialogRef.componentInstance.setDescription(url);
+      if (this.subs.file) {
+        const formData: FormData = new FormData();
+        formData.append('data', JSON.stringify({
+          "method": "support.attach_ticket",
+          "params": [{'ticket': (res.result.ticket).toString(), 'filename': this.subs.file.name}]
+        }));
+        formData.append('file', this.subs.file);
+        dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
+      }
     }),
     dialogRef.componentInstance.failure.subscribe((res) => {
       dialogRef.componentInstance.setDescription(res.error);
@@ -569,7 +574,8 @@ export class SupportComponent {
           this.scrshot['errors'] = 'File size is limited to 50 MiB.';
         } 
         else {
-          parent.subs = {"apiEndPoint":file.apiEndPoint, "file": fileBrowser.files[0]}
+          parent.subs = {"apiEndPoint":file.apiEndPoint, "file": fileBrowser.files[0]};
+          console.log(fileBrowser.files)
         }       
       }
     }
