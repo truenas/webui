@@ -325,12 +325,12 @@ export class SupportComponent {
           tooltip: helptext.screenshot.tooltip,
           fileLocation: '',
           // message: this.messageService,
-          acceptedFiles: 'image/*',
+          // acceptedFiles: 'image/*',
           updater: this.updater,
           parent: this,
           hideButton: true,
           hasErrors: true,
-          // multiple: true
+          multiple: true
         }
       ]
     }
@@ -516,17 +516,24 @@ export class SupportComponent {
     dialogRef.componentInstance.setCall('support.new_ticket', [this.payload]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.subscribe(res=>{
-      const url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
-
-      dialogRef.componentInstance.setDescription(url);
-      if (this.subs.file) {
-        const formData: FormData = new FormData();
-        formData.append('data', JSON.stringify({
-          "method": "support.attach_ticket",
-          "params": [{'ticket': (res.result.ticket).toString(), 'filename': this.subs.file.name}]
-        }));
-        formData.append('file', this.subs.file);
-        dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
+      // const url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
+      // dialogRef.componentInstance.setDescription(url);
+      if (this.subs.length > 0) {
+        this.subs.forEach((item) => {
+          const formData: FormData = new FormData();
+          formData.append('data', JSON.stringify({
+            "method": "support.attach_ticket",
+            "params": [{'ticket': (res.result.ticket).toString(), 'filename': item.file.name}]
+          }));
+          formData.append('file', item.file);
+          dialogRef.componentInstance.wspost(item.apiEndPoint, formData);
+          dialogRef.componentInstance.success.subscribe(res=>{
+            // console.info(res);
+          }),
+          dialogRef.componentInstance.failure.subscribe((res) => {
+            dialogRef.componentInstance.setDescription(res.error);
+          });
+        });
       }
     }),
     dialogRef.componentInstance.failure.subscribe((res) => {
@@ -564,6 +571,7 @@ export class SupportComponent {
   }
 
   updater(file: any, parent: any){
+    parent.subs = [];
     const fileBrowser = file.fileInput.nativeElement;
     this.scrshot = _.find(parent.fieldConfig, { name: 'screenshot' });
     this.scrshot['hasErrors'] = false;
@@ -574,9 +582,8 @@ export class SupportComponent {
           this.scrshot['errors'] = 'File size is limited to 50 MiB.';
         } 
         else {
-          parent.subs = {"apiEndPoint":file.apiEndPoint, "file": fileBrowser.files[0]};
-          console.log(fileBrowser.files)
-        }       
+          parent.subs.push({"apiEndPoint":file.apiEndPoint, "file": fileBrowser.files[i]});
+        }
       }
     }
   }
