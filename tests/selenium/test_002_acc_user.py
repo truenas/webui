@@ -10,6 +10,7 @@ from selenium.webdriver.common.keys import Keys
 cwd = str(os.getcwd())
 sys.path.append(cwd)
 from function import take_screenshot, is_element_present, error_check
+from function import wait_on_element
 from source import *
 
 
@@ -190,6 +191,7 @@ def test_05_create_duplicateuser(wb_driver):
 
 
 def test_06_create_newuser_suggestedname(wb_driver):
+    test_name = sys._getframe().f_code.co_name
     time.sleep(2)
     # Click create new user option
     wb_driver.find_element_by_xpath(xpaths['fabAction']).click()
@@ -207,13 +209,14 @@ def test_06_create_newuser_suggestedname(wb_driver):
         wb_driver.find_element_by_xpath(xpaths['saveButton']).click()
     else:
         print("could not find the save button and clicking")
-    time.sleep(1)
+    xpath = xpaths['fabAction']
+    wait = wait_on_element(wb_driver, xpath, script_name, test_name)
+    assert wait, f'Loading Users page timeout'
     # taking screenshot
-    test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
     no_error = error_check(wb_driver)
     assert no_error['result'], no_error['traceback']
-    time.sleep(2)
+    time.sleep(1)
 
 
 # def test_07_close_navAccount(wb_driver):
