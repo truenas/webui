@@ -101,9 +101,9 @@ export class CertificateAcmeAddComponent {
         });
       });
 
-      // TODO: This almost works but throws console errors and doesn't produce fields that the form
-      // recognizes as required. There was a similar function in vol list component, 'Create Snapshot' dialog
-      // that did work; was replaced recently, NAS-101297
+      // TODO: This works, submits data to payload but throws console errors and doesn't add new fields to the FormGroup.
+      // So Angular doesn;t recognize them as required. Need to work on dynamically adding these fields, although the user is warned by dialog
+      // if these selections are left blank.
       for (let item of domains) {
         let fc = (
           {
@@ -125,8 +125,6 @@ export class CertificateAcmeAddComponent {
     this.formArray = entityEdit.formGroup.controls['dns_mapping_array'];
   }
 
-  // TODO: Submit seems to be processing the data; not sure about how this handles 
-  // multiple dns_mapping; Lack real credentials to test it for sure.
   customSubmit(value) {
     let dns_map = {};
     for (let item in value) {
