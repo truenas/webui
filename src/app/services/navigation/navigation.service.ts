@@ -68,11 +68,8 @@ export class NavigationService {
         { name: T('Update'), state: 'update' },
         { name: T('CAs'), state: 'ca' },
         { name: T('Certificates'), state: 'certificates' },
-<<<<<<< HEAD
         { name: T('ACME DNS'), state: 'acmedns' },
-=======
         { name: T('Failover'), state: 'failover', disabled: true },
->>>>>>> master
         { name: T('Support'), state: 'support' },
         { name: T('Proactive Support'), state: 'proactivesupport', disabled: true },
       ]
