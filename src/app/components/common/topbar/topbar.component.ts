@@ -55,6 +55,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   ha_disabled_reasons = [];
   ha_pending = false;
   is_ha = false;
+  sysName: string = 'FreeNAS';
 
   constructor(
     public themeService: ThemeService,
@@ -78,6 +79,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.is_ha = is_ha;
         this.getHAStatus();
       });
+      this.sysName = 'TrueNAS';
     }
     let theme = this.themeService.currentTheme();
     this.currentTheme = theme.name;

@@ -8,7 +8,7 @@
             <img class="logo-bg" alt="Logo image background of stars and sky at night" src="assets/images/stars-sky-1200w.jpg" srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x">
             <img *ngIf="is_freenas; else isTruenas" class="logo" src="assets/images/light-logo-full.svg" alt="FreeNAS logo">
             <ng-template #isTruenas>
-              <img class="logo" src="assets/images/CMYK_OnDark_TrueNAS_Logo.svg" alt="TrueNAS logo">
+              <img class="logo" src="assets/images/TrueNAS_Logo_Full_White.svg" alt="TrueNAS logo">
             </ng-template>
           </div>
           <span *ngIf="failover_status === 'SINGLE' || failover_status === 'MASTER' || is_freenas">

@@ -9,7 +9,8 @@
               <div class="card-bg" [style.background-image]="cardBg ? 'url(assets/images/' + cardBg + ')' : 'none'" [ngClass]="cardBg == 'logo.svg' ? 'card-bg-logo' : 'card-bg-hw'"></div>
           </div>
           <div class="title-wrapper">
-            <p class="platform-logo"><img src="assets/images/light-logo-full.svg"></p>
+            <p *ngIf="isFN" class="platform-logo"><img src="assets/images/light-logo-full.svg"></p>
+            <p *ngIf="!isFN" class="platform-logo"><img src="assets/images/TrueNAS_Logo_Full_White.svg"></p>
             <p class="subtitle">System Information</p>
             <button class="update-btn" mat-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])">{{updateBtnLabel | translate}}</button>
           </div>
