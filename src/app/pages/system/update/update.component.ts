@@ -361,7 +361,7 @@ export class UpdateComponent implements OnInit {
             }
             this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
               if(ures[0].attributes.preferences !== undefined && !ures[0].attributes.preferences.enableWarning) {
-                if (this.isHA === false) {
+                if (!this.isHA) {
                   this.ds  = this.dialogService.confirm(
                     T("Download Update"), T("Continue with download?"),true,"",true,T("Apply updates and reboot system after downloading."),this.updateMethod,[{ train: this.train, reboot: false }]
                   )                  
@@ -396,7 +396,7 @@ export class UpdateComponent implements OnInit {
 
               } else {
                 this.dialogService.dialogForm(this.saveConfigFormConf).subscribe(()=>{
-                  if (this.isHA === false) {
+                  if (!this.isHA) {
                     this.ds  = this.dialogService.confirm(
                       T("Download Update"), T("Continue with download?"),true,"",true,T("Apply updates and reboot system after downloading."),this.updateMethod,[{ train: this.train, reboot: false }]
                     )
@@ -461,7 +461,7 @@ export class UpdateComponent implements OnInit {
 
   update() {
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: true });
-    if (this.isHA === false) {
+    if (!this.isHA) {
       this.dialogRef.componentInstance.setCall(this.updateMethod, [{ train: this.train, reboot: false }]);
     } else {
       this.ws.call('update.set_train', [this.train]).subscribe(() => { // ???
