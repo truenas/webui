@@ -56,6 +56,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   ha_pending = false;
   is_ha = false;
   sysName: string = 'FreeNAS';
+  private user_check_in_prompted = false;
 
   constructor(
     public themeService: ThemeService,
@@ -102,6 +103,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
         }
       });
     });
+    this.checkNetworkChangesPending();
+    this.checkNetworkCheckinWaiting();
 
     this.continuosStreaming = observableInterval(10000).subscribe(x => {
       this.showReplicationStatus();
@@ -207,6 +210,12 @@ export class TopbarComponent implements OnInit, OnDestroy {
   checkNetworkChangesPending() {
     this.ws.call('interface.has_pending_changes').subscribe(res => {
       this.pendingNetworkChanges = res;
+      if (res && !this.user_check_in_prompted) {
+        this.user_check_in_prompted = true;
+        this.showNetworkCheckinWaiting();
+      } else {
+        this.user_check_in_prompted = false;
+      }
     });
   }
   
@@ -219,7 +228,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   showNetworkCheckinWaiting() {
     this.dialogService.confirm(
       network_interfaces_helptext.checkin_title,
-      network_interfaces_helptext.checkin_message,
+      network_interfaces_helptext.pending_checkin_text,
       true, network_interfaces_helptext.checkin_button).subscribe(res => {
         if (res) {
           this.loader.open();
@@ -243,8 +252,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.showNetworkCheckinWaiting();
     } else {
       this.dialogService.confirm(
-        T("Pending Network Changes"),
-        T("There are unsaved network interface settings.  Review them now?"),
+        network_interfaces_helptext.pending_changes_title,
+        network_interfaces_helptext.pending_changes_message,
         true, T('Continue')).subscribe(res => {
           if (res) {
             this.router.navigate(['/network/interfaces']);

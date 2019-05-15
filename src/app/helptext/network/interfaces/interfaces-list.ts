@@ -21,4 +21,7 @@ checkin_message: T("Keep changed network settings permanently?"),
 checkin_complete_title: T("Network Changes Made Permanent"),
 checkin_complete_message: T("Network changes have been made permanent."),
 checkin_button: T('KEEP NETWORK CHANGES PERMANENTLY'),
+
+pending_changes_title: T("Pending Network Changes"),
+pending_changes_message: T("There are unsaved network interface settings.  Review them now?")
 }
