@@ -1,4 +1,4 @@
-import { T } from '../../translate-marker';
+import { T } from '../../../translate-marker';
 
 export default {
     name_placeholder: T('Name'),
@@ -44,7 +44,7 @@ export default {
     source_datasets_tooltip: T('Choose one or more datasets on the source system to be replicated.\
  Each dataset must have an enabled periodic snapshot task.'),
 
-    target_dataset_placeholder: T('Target Datasets'),
+    target_dataset_placeholder: T('Target Dataset'),
     target_dataset_tooltip: T('Enter the dataset on the remote or destination system where\
 snapshots will be stored. Example: Poolname/Datasetname, not the mountpoint or filesystem path'),
 
