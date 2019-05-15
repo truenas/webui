@@ -252,6 +252,11 @@ export class AlertServiceComponent implements OnInit {
                 into the OpsGenie web interface and going to\
                 Integrations/Configured Integrations. Click the desired\
                 integration, Settings, and read the API Key field.',
+    },{
+      type : 'input',
+      name : 'api_url',
+      placeholder: 'API URL',
+      tooltip: '',
     }
   ];
   public pagerdutyFieldConfig: FieldConfig[] = [
