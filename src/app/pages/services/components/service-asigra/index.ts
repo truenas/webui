@@ -1,0 +1,1 @@
+export { ServiceAsigraComponent } from './service-asigra.component';
