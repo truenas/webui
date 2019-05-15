@@ -1,4 +1,4 @@
-# !/usr/bin/env python
+#!/usr/bin/env python3.6
 # Author: Rishabh Chauhan
 # License: BSD
 # Location for tests  of FreeNAS new GUI

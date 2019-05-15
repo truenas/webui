@@ -29,10 +29,6 @@ theme_name = [
 ]
 
 
-def test_00_set_implicitly_wait(wb_driver):
-    wb_driver.implicitly_wait(1)
-
-
 @pytest.mark.parametrize("theme", theme_name)
 def test_01_change_theme_to_(wb_driver, theme):
     theme_change(wb_driver, theme)

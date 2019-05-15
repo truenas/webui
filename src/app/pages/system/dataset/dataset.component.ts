@@ -11,7 +11,8 @@ import { T } from '../../../translate-marker';
 
 @Component({
   selector: 'app-system-dataset',
-  template : `<entity-form [conf]="this"></entity-form>`
+  template : `<entity-form [conf]="this"></entity-form>`,
+  providers: [SnackbarService]
 })
 export class DatasetComponent implements OnInit{
 

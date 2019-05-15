@@ -1,0 +1,46 @@
+/* COPIED FROM entity-form MODULE */
+.form-wrap {
+  display: flex;
+  flex-flow: row wrap;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  box-sizing: border-box;
+}
+
+.form-line {
+  flex: 1 1 100%;
+  box-sizing: border-box;
+  -webkit-box-flex: 1;
+  max-width: 100%;
+}
+
+.full-width {
+  width: 100%;
+}
+
+input[type="checkbox"] {
+  display: block;
+  font-family: inherit;
+  font-size: 14px;
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  outline: none;
+  padding: 10px 15px;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+input[type="checkbox"]:focus {
+   border: 1px solid rgba(0, 0, 0, 0.4);
+   box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+}
+
+mat-select {
+  padding-bottom: 1.29688em;
+  padding: .4375em 0;
+  border-top: .84375em solid transparent;
+}
+
+.advancedTooltip {
+  position: absolute !important;
+  right: 20px;
+}

@@ -191,7 +191,7 @@ export class DatasetFormComponent implements Formconfiguration{
       type: 'input',
       inputType: 'number',
       name: 'refquota_warning',
-      placeholder: helptext.dataset_form_refquota_placeholder,
+      placeholder: helptext.dataset_form_refquota_warning_placeholder,
       tooltip: helptext.dataset_form_refquota_warning_tooltip,
       class: 'inline',
       width: '70%',

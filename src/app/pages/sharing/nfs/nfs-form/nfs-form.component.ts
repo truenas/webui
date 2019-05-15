@@ -43,6 +43,9 @@ export class NFSFormComponent {
         type: 'checkbox',
         name: 'delete',
         placeholder: helptext_sharing_nfs.placeholder_delete,
+        tooltip: helptext_sharing_nfs.tooltip_delete,
+        isHidden: true,
+        disabled: true,
       }]
     },
     {
@@ -227,6 +230,8 @@ export class NFSFormComponent {
     this.route.params.subscribe(params => {
       if(params['pk']) {
          this.arrayControl.initialCount = this.initialCount = this.initialCount_default = 0;
+         this.arrayControl.formarray[1]['isHidden'] = false;
+         this.arrayControl.formarray[1].disabled = false;
       }
     });
 

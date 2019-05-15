@@ -4,11 +4,6 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid ""
-" Enable to determine if the system advertises itself as a time server to "
-"Windows clients. Disable when the network contains an AD or LDAP server."
-msgstr ""
-
 msgid " First vdev has "
 msgstr ""
 
@@ -36,6 +31,9 @@ msgstr ""
 msgid ""
 " is the minimum recommended record size. Choosing a smaller size can reduce "
 "system performance."
+msgstr ""
+
+msgid " updated."
 msgstr ""
 
 msgid "% of all cores"
@@ -80,11 +78,10 @@ msgid ": Automatic update check failed. Please check system network settings."
 msgstr ""
 
 msgid ""
-"<a href=\"%%docurl%%/sharing.html%%webversion%%#block-iscsi\" "
-"target=\"_blank\">iSCSI</a> supports multiple authentication methods that "
-"are used by the target to discover valid devices. <i>None</i> allows "
-"anonymous discovery while <i>CHAP</i> and <i>Mutual CHAP</i> require "
-"authentication."
+"<a href=\"%%docurl%%/sharing.html#block-iscsi\" target=\"_blank\">iSCSI</a> "
+"supports multiple authentication methods that are used by the target to "
+"discover valid devices. <i>None</i> allows anonymous discovery while "
+"<i>CHAP</i> and <i>Mutual CHAP</i> require authentication."
 msgstr ""
 
 msgid ""
@@ -110,7 +107,7 @@ msgid ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=geli&manpath=FreeBSD+11.1-"
 "RELEASE+and+Ports\" target=\"_blank\">GELI</a> encryption is available for "
 "ZFS pools. <b>WARNING:</b> Read the <a "
-"href=\"%%docurl%%/storage.html%%webversion%%#managing-encrypted-pools\" "
+"href=\"%%docurl%%/storage.html#managing-encrypted-pools\" "
 "target=\"_blank\">Encryption section</a> of the guide before activating "
 "this option."
 msgstr ""
@@ -123,13 +120,20 @@ msgid ""
 msgstr ""
 
 msgid ""
+"<a href='%%docurl%%/sharing.html%%webversion%%#block-iscsi' "
+"target='_blank'>iSCSI</a> supports multiple authentication methods that are "
+"used by the target to discover valid devices. None allows anonymous "
+"discovery while CHAP and Mutual CHAP require authentication."
+msgstr ""
+
+msgid ""
 "<b>Ctrl+C</b> kills a foreground process.<br>                            "
 "Many utilities are built-in:<br> <b>Iperf</b>,                            "
 "<b>Netperf</b>, <b>IOzone</b>, <b>arcsat</b>,                            "
 "<b>tw_cli</b>, <br><b>MegaCli</b>,                            "
 "<b>freenas-debug</b>, <b>tmux</b>,                            "
 "<b>Dmidecode</b>.<br> Refer to the <a                            "
-"href=\"%%docurl%%/cli.html%%webversion%%\"                            "
+"href=\"%%docurl%%/cli.html\"                            "
 "target=\"_blank\">Command Line Utilities</a>                            "
 "chapter in the guide for usage information                            and "
 "examples."
@@ -142,7 +146,7 @@ msgid ""
 "<b>tw_cli</b>, <br><b>MegaCli</b>,                            "
 "<b>freenas-debug</b>, <b>tmux</b>,                            "
 "<b>Dmidecode</b>.<br> Refer to the <a                            "
-"href=\"%%docurl%%/cli.html%%webversion%%\"                            "
+"href=\"%%docurl%%/cli.html\"                            "
 "target=\"_blank\">Command Line Utilities</a>                            "
 "chapter in the guide for usage information                            and "
 "examples."
@@ -154,13 +158,11 @@ msgstr ""
 msgid ""
 "<b>Root logins are discouraged.</b> Set to allow root logins. A password "
 "must be set for the <i>root</i> user in <a "
-"href=\"%%docurl%%/account.html%%webversion%%#users\" "
-"target=\"_blank\">Users</a>."
+"href=\"%%docurl%%/accounts.html#users\" target=\"_blank\">Users</a>."
 msgstr ""
 
 msgid ""
-"<b>SED (<a "
-"href=\"%%docurl%%/system.html%%webversion%%#self-encrypting-drives\" "
+"<b>SED (<a href=\"%%docurl%%/system.html#self-encrypting-drives\" "
 "target=\"_blank\">Self-Encrypting Drives</a>) Options</b>"
 msgstr ""
 
@@ -201,7 +203,7 @@ msgid ""
 "target=\"_blank\">idmap_autorid(8)</a>, <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=idmap_ad\" "
 "target=\"_blank\">ad</a>, <a "
-"href=\"%%docurl%%/directoryservices.html%%webversion%%#id12\" "
+"href=\"%%docurl%%/directoryservices.html#id12\" "
 "target=\"_blank\">fruit</a>, <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=idmap_ldap\" "
 "target=\"_blank\">idmap_ldap(8)</a>, <a "
@@ -255,6 +257,12 @@ msgid ""
 "upgraded. Basejails mount the specified RELEASE directories as nullfs "
 "mounts over the jail directories. Basejails are not linked to the original "
 "RELEASE when upgraded."
+msgstr ""
+
+msgid ""
+"<i>Device</i> provide virtual storage access to zvols, zvol snapshots, or "
+"physical devices. <i>File</i> provides virtual storage access to an "
+"individual file."
 msgstr ""
 
 msgid ""
@@ -468,7 +476,7 @@ msgstr ""
 msgid ""
 "Activates the process for ZFS to transparently reuse a single copy of "
 "duplicated data to save space. The <a "
-"href=\"%%docurl%%/storage.html%%webversion%%#deduplication\" "
+"href=\"%%docurl%%/storage.html#deduplication\" "
 "target=\"_blank\">Deduplication section</a> of the Guide describes each "
 "option."
 msgstr ""
@@ -525,7 +533,7 @@ msgid "Add a name for the new snapshot."
 msgstr ""
 
 msgid ""
-"Add an <a href=\"%%docurl%%/system.html%%webversion%%#certificates\" "
+"Add an <a href=\"%%docurl%%/system.html#certificates\" "
 "target=\"_blank\">SSL certificate</a> to be used for secure S3 connections."
 msgstr ""
 
@@ -642,8 +650,7 @@ msgid "Address space limit in bytes for the jail."
 msgstr ""
 
 msgid ""
-"Adds <a "
-"href=\"%%docurl%%/sharing.html%%webversion%%#avail-vfs-modules-tab\" "
+"Adds <a href=\"%%docurl%%/sharing.html#avail-vfs-modules-tab\" "
 "target=\"blank\">virtual file system modules</a> to enhance functionality."
 msgstr ""
 
@@ -659,6 +666,9 @@ msgid ""
 msgstr ""
 
 msgid "Administrator Password"
+msgstr ""
+
+msgid "Administrators Group"
 msgstr ""
 
 msgid "Adv. Power Management"
@@ -829,6 +839,12 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Allows different groups to be configured with different authentication "
+"profiles. Example: all users with a group ID of 1 will inherit the "
+"authentication profile associated with Group 1."
+msgstr ""
+
+msgid ""
 "Alphanumeric <a href=\"https://www.backblaze.com/b2/cloud-storage.html\" "
 "target=\"_blank\">Backblaze B2</a> ID. Find an Account ID or "
 "applicationKeyID by logging in to the account, clicking <i>Buckets</i>, and "
@@ -958,6 +974,9 @@ msgid ""
 "the <i>SSL</i> or <i>TLS</i> option."
 msgstr ""
 
+msgid "Authorized Access"
+msgstr ""
+
 msgid "Authorized Hosts and IP addresses"
 msgstr "Hosts Autorizados e Endereços IP"
 
@@ -983,8 +1002,8 @@ msgstr ""
 
 msgid ""
 "Automatically compress data written to the zvol. Choose a <a "
-"href=\"%%docurl%%/storage.html%%webversion%%#compression\" "
-"target=\"_blank\">compression algorithm</a>."
+"href=\"%%docurl%%/storage.html#compression\" target=\"_blank\">compression "
+"algorithm</a>."
 msgstr ""
 
 msgid ""
@@ -1011,6 +1030,9 @@ msgid "Auxiliary Parameters (ups.conf)"
 msgstr ""
 
 msgid "Auxiliary Parameters (upsd.conf)"
+msgstr ""
+
+msgid "Auxiliary arguments"
 msgstr ""
 
 msgid "Auxiliary parameters"
@@ -1102,6 +1124,9 @@ msgstr ""
 msgid "Block (iSCSI)"
 msgstr "Block (iSCSI)"
 
+msgid "Block Size"
+msgstr ""
+
 msgid "Block size"
 msgstr ""
 
@@ -1159,6 +1184,14 @@ msgid ""
 "browse to the pool or dataset, click <b>Close</b>, append the <b>Extent "
 "Name</b> to the path, and specify a value in <b>Extent Size</b>. Extents "
 "cannot be created inside the jail root directory."
+msgstr ""
+
+msgid ""
+"Browse to an existing file. Create a new file by browsing to a dataset and "
+"appending /<i>{filename.ext}</i> to the path."
+msgstr ""
+
+msgid "Browse to an existing pool or dataset to store the new zvol."
 msgstr ""
 
 msgid "Browse to the ZFS dataset that will hold the copied data."
@@ -1399,11 +1432,10 @@ msgid "Choices are <i>None, Auto, CHAP,</i> or <i>Mutual CHAP</i>."
 msgstr ""
 
 msgid ""
-"Choose <a                 "
-"href=\"%%docurl%%/tasks.html%%webversion%%#rsync-module-mode\"              "
-"  target=\"_blank\">rsync module mode</a> or <a                 "
-"href=\"%%docurl%%/tasks.html%%webversion%%#rsync-over-ssh-mode\"            "
-"    target=\"_blank\">rsync over SSH mode</a>"
+"Choose <a                 href=\"%%docurl%%/tasks.html#rsync-module-mode\"  "
+"              target=\"_blank\">rsync module mode</a> or <a                 "
+"href=\"%%docurl%%/tasks.html#rsync-over-ssh-mode\"                "
+"target=\"_blank\">rsync over SSH mode</a>"
 msgstr ""
 
 msgid "Choose <i>AES-256</i> or <i>None</i>."
@@ -1432,8 +1464,8 @@ msgstr ""
 msgid ""
 "Choose a <i>Stripe</i>, <i>Mirror</i>, or <i>Raid-Z</i> configuration for "
 "the chosen disk layout. See the <a "
-"href=\"%%docurl%%/storage.html%%webversion%%#pool-manager\" "
-"target=\"_blank\">Pool Manager</a> section of the guide for more details."
+"href=\"%%docurl%%/storage.html#pool-manager\" target=\"_blank\">Pool "
+"Manager</a> section of the guide for more details."
 msgstr ""
 
 msgid "Choose a color scheme."
@@ -1581,6 +1613,11 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Choose the platform that will use this share. The associated options are "
+"applied to this share."
+msgstr ""
+
+msgid ""
 "Choose the schema to use when querying AD for user/group info. "
 "<i>rfc2307</i> uses the schema support included in Windows 2003 R2, "
 "<i>sfu</i> is for Service For Unix 3.0 or 3.5, and <i>sfu20</i> is for "
@@ -1606,8 +1643,8 @@ msgstr ""
 
 msgid ""
 "Choose the type of filesystem on the disk. Refer to the guide section on <a "
-"href=\"%%docurl%%/storage.html%%webversion%%#import-disk\" "
-"target=\"_blank\">importing disks</a> for more details."
+"href=\"%%docurl%%/storage.html#import-disk\" target=\"_blank\">importing "
+"disks</a> for more details."
 msgstr ""
 
 msgid "Choose the type that matches the type of client accessing the pool/dataset."
@@ -1841,6 +1878,9 @@ msgstr "Confirmar Password"
 msgid "Confirm Privacy Passphrase"
 msgstr ""
 
+msgid "Confirm RRD Destroy"
+msgstr ""
+
 msgid "Confirm SED Password"
 msgstr ""
 
@@ -1917,6 +1957,9 @@ msgstr "País"
 msgid "Country Code"
 msgstr "Código de País"
 
+msgid "Crash reporting"
+msgstr ""
+
 msgid "Create"
 msgstr "Criar"
 
@@ -1960,6 +2003,9 @@ msgid "Create new disk image"
 msgstr ""
 
 msgid "Create new pool"
+msgstr ""
+
+msgid "Create or Choose Block Device"
 msgstr ""
 
 msgid "Create or Import Pool"
@@ -2212,12 +2258,6 @@ msgstr ""
 msgid "Define the size of the raw file in GiB."
 msgstr ""
 
-msgid ""
-"Define the web protocol to use when connecting to the administrative GUI "
-"from a browser. To change the default <i>HTTP</i> to <i>HTTPS</i> or "
-"<i>HTTP+HTTPS</i>, a <b>Certificate</b> must also be chosen."
-msgstr ""
-
 msgid "Delay Updates"
 msgstr ""
 
@@ -2237,6 +2277,9 @@ msgid "Delete Device"
 msgstr ""
 
 msgid "Delete Mount Point"
+msgstr ""
+
+msgid "Delete Path"
 msgstr ""
 
 msgid "Delete Recovery Key"
@@ -2280,6 +2323,9 @@ msgid "Delete the zvol "
 msgstr ""
 
 msgid "Delete this device?"
+msgstr ""
+
+msgid "Delete this path."
 msgstr ""
 
 msgid "Delete zvol"
@@ -2326,7 +2372,17 @@ msgstr ""
 msgid "Destination Path"
 msgstr ""
 
+msgid ""
+"Destination hostname or IP address for collectd data sent by the Graphite "
+"plugin."
+msgstr ""
+
 msgid "Destroy data on this pool?"
+msgstr ""
+
+msgid ""
+"Destroy the reporting database. Required for changes to <i>Graph Age</i> "
+"and <i>Graph Points</i> to take effect."
 msgstr ""
 
 msgid "Detach"
@@ -2336,6 +2392,11 @@ msgid "Detach Pool"
 msgstr ""
 
 msgid "Details"
+msgstr ""
+
+msgid ""
+"Determine whether this share name is included when browsing shares. Home "
+"shares are only visible to the owner regardless of this setting."
 msgstr ""
 
 msgid ""
@@ -2482,9 +2543,6 @@ msgstr ""
 msgid "Domain Account Password"
 msgstr ""
 
-msgid "Domain Controller"
-msgstr ""
-
 msgid "Domain Forest Level"
 msgstr ""
 
@@ -2576,9 +2634,6 @@ msgstr ""
 msgid "Enable"
 msgstr ""
 
-msgid "Enable AD Monitoring"
-msgstr ""
-
 msgid "Enable Atime"
 msgstr ""
 
@@ -2658,6 +2713,9 @@ msgstr ""
 msgid "Enable running services that require mlock() in a jail."
 msgstr ""
 
+msgid "Enable sending anonymous crash reports to iXsystems"
+msgstr ""
+
 msgid "Enable service"
 msgstr ""
 
@@ -2702,7 +2760,7 @@ msgid ""
 "Enables the autotune script which attempts to optimize the system depending "
 "on the installed hardware. <b>Warning:</b> Autotuning is only used as a "
 "temporary measure and is not a permanent fix for system hardware issues. "
-"See the <a href=\"%%docurl%%/system.html%%webversion%%#autotune\" "
+"See the <a href=\"%%docurl%%/system.html#autotune\" "
 "target=\"_blank\">Autotune section</a> of the guide for more information."
 msgstr ""
 
@@ -2753,12 +2811,14 @@ msgid "Endpoint URL"
 msgstr ""
 
 msgid ""
-"Ensure <a "
-"href=\"%%docurl%%/directoryservices.html%%webversion%%#kerberos-realms\" "
+"Ensure <a href=\"%%docurl%%/directoryservices.html#kerberos-realms\" "
 "target=\"_blank\">Kerberos Realms</a> and <a "
-"href=\"%%docurl%%/directoryservices.html%%webversion%%#kerberos-keytabs\" "
+"href=\"%%docurl%%/directoryservices.html#kerberos-keytabs\" "
 "target=\"_blank\">Kerberos Keytabs</a> are configured and the system can "
 "communicate with the Kerberos Domain Controller before setting."
+msgstr ""
+
+msgid "Enter <i>ALL</i> or a list of initiator hostnames separated by spaces."
 msgstr ""
 
 msgid ""
@@ -2904,6 +2964,9 @@ msgid ""
 "VM from the serial shell."
 msgstr ""
 
+msgid "Enter a password for the User. Must be between 12 and 16 characters."
+msgstr ""
+
 msgid "Enter a password of at least eight characters."
 msgstr ""
 
@@ -2951,6 +3014,12 @@ msgstr ""
 msgid ""
 "Enter a static IPv6 address. Example: "
 "<i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>."
+msgstr ""
+
+msgid ""
+"Enter a threshold temperature in Celsius. If the drive temperature is "
+"higher than this value, a LOG_CRIT level log entry is created and an email "
+"is sent. Entering 0 disables this check."
 msgstr ""
 
 msgid ""
@@ -3002,7 +3071,7 @@ msgstr ""
 
 msgid ""
 "Enter a valid username for the <a "
-"href=\"https://redmine.ixsystems.com/projects/freenas/issues\" "
+"href=\"https://jira.ixsystems.com/projects/NAS/issues/\" "
 "target=\"_blank\">FreeNAS bug tracking system</a>"
 msgstr ""
 
@@ -3025,7 +3094,7 @@ msgstr ""
 
 msgid ""
 "Enter accounts that have administrative access. See <a "
-"href=\"http://networkupstools.org/docs/man/upsd.users.html\" "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=upsd.users\" "
 "target=\"_blank\">upsd.users(5)</a> for examples."
 msgstr ""
 
@@ -3062,24 +3131,15 @@ msgid "Enter an alphanumeric name for the virtual machine."
 msgstr ""
 
 msgid ""
-"Enter an alphanumeric username of eight to sixteen characters. Keeping "
-"usernames to eight characters or less is recommended for compatibility with "
-"legacy clients. Usernames cannot begin with a hyphen (<i>-</i>) or contain "
-"a space, tab, or these characters: <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i> "
-"Note that <i>$</i> can only be used as the last character."
-msgstr ""
-
-msgid ""
 "Enter an email address to receive <a "
-"href=\"%%docurl%%/services.html%%webversion%%#s-m-a-r-t\" "
+"href=\"%%docurl%%/services.html#s-m-a-r-t\" "
 "target=\"_blank\">S.M.A.R.T.</a> alerts; use a space to  separate multiple "
 "email addresses."
 msgstr ""
 
 msgid ""
 "Enter an email address to receive messages from the <a "
-"href=\"%%docurl%%/services.html%%webversion%%#snmp\" target=\"_blank\">SNMP "
-"service</a>."
+"href=\"%%docurl%%/services.html#snmp\" target=\"_blank\">SNMP service</a>."
 msgstr ""
 
 msgid ""
@@ -3134,6 +3194,12 @@ msgstr ""
 msgid ""
 "Enter how often in seconds for the system to verify Active Directory "
 "services are functioning."
+msgstr ""
+
+msgid ""
+"Enter name of user account to use for CHAP authentication with the user on "
+"the remote system. Many initiators default to the initiator name as the "
+"user."
 msgstr ""
 
 msgid ""
@@ -3203,9 +3269,9 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Enter the IP address which runs the <a "
-"href=\"%%docurl%%/services.html%%webversion%%#s3\" target=\"_blank\">S3 "
-"service</a>. <i>0.0.0.0</i> tells the server to listen on all addresses."
+"Enter the IP address which runs the <a href=\"%%docurl%%/services.html#s3\" "
+"target=\"_blank\">S3 service</a>. <i>0.0.0.0</i> tells the server to listen "
+"on all addresses."
 msgstr ""
 
 msgid "Enter the S3 username."
@@ -3323,7 +3389,9 @@ msgstr ""
 msgid "Enter the password associated with <b>Username</b>."
 msgstr ""
 
-msgid "Enter the password if the SMTP server requires authentication."
+msgid ""
+"Enter the password for the SMTP server. Only plain ASCII characters are "
+"accepted."
 msgstr ""
 
 msgid "Enter the password that must be used by connecting S3 systems."
@@ -3331,7 +3399,7 @@ msgstr ""
 
 msgid ""
 "Enter the password to be used for the <a "
-"href=\"%%docurl%%/directoryservices.html%%webversion%%#active-directory\" "
+"href=\"%%docurl%%/directoryservices.html#active-directory\" "
 "target=”_blank”>Active Directory</a> administrator account."
 msgstr ""
 
@@ -3358,8 +3426,8 @@ msgstr ""
 msgid ""
 "Enter the percentage of free space to remain in the pool. When this "
 "percentage is reached, the system issues an alert, but only if zvols are "
-"used. See <a href=\"%%docurl%%/vaai.html%%webversion%%#vaai\" "
-"target=\"_blank\">VAAI Threshold Warning</a> for more information."
+"used. See <a href=\"%%docurl%%/vaai.html#vaai\" target=\"_blank\">VAAI "
+"Threshold Warning</a> for more information."
 msgstr ""
 
 msgid "Enter the port used by the SSH server on the remote                 system."
@@ -3496,6 +3564,9 @@ msgstr ""
 msgid "Error stopping service "
 msgstr ""
 
+msgid "Error submitting file"
+msgstr ""
+
 msgid "Error updating disks."
 msgstr ""
 
@@ -3574,8 +3645,8 @@ msgstr "Tamanho do Extent"
 msgid "Extent type"
 msgstr "Tipo do Extent"
 
-msgid "Extra Users(upsd.conf)"
-msgstr "Utilizadores Adicionais (upsd.conf)"
+msgid "Extra Users"
+msgstr ""
 
 msgid "Extra options"
 msgstr "Opções Adicionais"
@@ -3592,6 +3663,9 @@ msgstr "Failed"
 msgid "Fetch and Install Updates"
 msgstr ""
 
+msgid "File"
+msgstr ""
+
 msgid "File Mask"
 msgstr "Máscara de Ficheiro"
 
@@ -3602,6 +3676,9 @@ msgid "File Permissions"
 msgstr ""
 
 msgid "Filename Encryption"
+msgstr ""
+
+msgid "Filesize"
 msgstr ""
 
 msgid "Filesystem type"
@@ -3641,7 +3718,7 @@ msgstr ""
 
 msgid ""
 "For more information about the available compression algorithms, refer to "
-"the <a href=\"%%docurl%%/storage.html%%webversion%%#compression\" "
+"the <a href=\"%%docurl%%/storage.html#compression\" "
 "target=\"_blank\">Compression section</a> of the guide."
 msgstr ""
 
@@ -3716,9 +3793,6 @@ msgid ""
 "to use the entire capacity of the new device."
 msgstr ""
 
-msgid "Global Catalog Server"
-msgstr ""
-
 msgid "Global Configuration"
 msgstr "Configuração Global"
 
@@ -3729,6 +3803,15 @@ msgid "Global password to unlock SEDs."
 msgstr ""
 
 msgid "Go Back to Jails"
+msgstr ""
+
+msgid "Graph Age"
+msgstr ""
+
+msgid "Graph Points"
+msgstr ""
+
+msgid "Graphite Server"
 msgstr ""
 
 msgid "Group"
@@ -3818,6 +3901,9 @@ msgstr ""
 msgid "Host"
 msgstr ""
 
+msgid "Host Sync"
+msgstr ""
+
 msgid "Host name database"
 msgstr ""
 
@@ -3860,6 +3946,9 @@ msgid "IBurst"
 msgstr ""
 
 msgid "ID & Groups"
+msgstr ""
+
+msgid "IP"
 msgstr ""
 
 msgid "IP Address"
@@ -3985,11 +4074,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"If set, users can press <b>Enter</b> when prompted for a password. Requires "
-"the username and password to be the same as the Windows user account."
-msgstr ""
-
-msgid ""
 "If the IPMI out-of-band management interface is on a different VLAN from "
 "the management network, enter the IPMI VLAN."
 msgstr ""
@@ -4076,6 +4160,9 @@ msgstr ""
 msgid "Init/Shutdown Scripts"
 msgstr ""
 
+msgid "Initiator"
+msgstr ""
+
 msgid "Initiator Group ID"
 msgstr ""
 
@@ -4105,9 +4192,6 @@ msgstr "Interface"
 
 msgid "Interface Description"
 msgstr "Descrição da Interface"
-
-msgid "Interface Name"
-msgstr "Nome da Interface"
 
 msgid "Interfaces"
 msgstr "Interfaces"
@@ -4148,6 +4232,9 @@ msgstr ""
 msgid "Jail"
 msgstr "Jail"
 
+msgid "Jail "
+msgstr ""
+
 msgid ""
 "Jail CPU affinity. Options are <i>off</i> or a combination of <i>1-4</i>, "
 "separated by commas (,). <b>Example:</b> <i>1,2,3,4</i>"
@@ -4162,6 +4249,9 @@ msgstr "Propriedades do Jail"
 msgid "Jail Type"
 msgstr ""
 
+msgid "Jail Update Failed"
+msgstr ""
+
 msgid "Jail core dump size in bytes."
 msgstr ""
 
@@ -4171,9 +4261,6 @@ msgstr ""
 msgid "Jail stack size in bytes."
 msgstr ""
 
-msgid "Jail updated successfully."
-msgstr ""
-
 msgid "Jails"
 msgstr "Jails"
 
@@ -4181,6 +4268,11 @@ msgid "Jails cannot be changed while running."
 msgstr ""
 
 msgid "KDC"
+msgstr ""
+
+msgid ""
+"Keep the name short. Using a name longer than 63 characters can prevent "
+"accessing the block device."
 msgstr ""
 
 msgid ""
@@ -4466,6 +4558,9 @@ msgstr ""
 msgid "Maximum SysV message queue size in bytes for the jail."
 msgstr ""
 
+msgid "Maximum age of graph stored, in months."
+msgstr ""
+
 msgid ""
 "Maximum amount of CPU time a jail process may consume. The kernel "
 "terminates processes exceeding the specified limit."
@@ -4525,6 +4620,12 @@ msgid "Members"
 msgstr "Membros"
 
 msgid "Members of"
+msgstr ""
+
+msgid ""
+"Members of this group are local admins and automatically have privileges to "
+"take ownership of any file in an SMB share, reset permissions, and "
+"administer the SMB server through the Computer Management MMC snap-in."
 msgstr ""
 
 msgid "Memory"
@@ -4630,10 +4731,10 @@ msgstr ""
 
 msgid ""
 "Must match Windows workgroup name. This setting is ignored if the <a "
-"href=\"%%docurl%%/directoryservices.html%%webversion%%#active-directory\" "
+"href=\"%%docurl%%/directoryservices.html#active-directory\" "
 "target=\"_blank\">Active Directory</a> or <a "
-"href=\"%%docurl%%/directoryservices.html%%webversion%%#ldap\" "
-"target=\"_blank\">LDAP</a> service is running."
+"href=\"%%docurl%%/directoryservices.html#ldap\" target=\"_blank\">LDAP</a> "
+"service is running."
 msgstr ""
 
 msgid "Mutual secret password. Must be different than <i>Secret</i>."
@@ -4751,6 +4852,12 @@ msgid "Network Summary"
 msgstr ""
 
 msgid ""
+"Network addresses that can use this initiator. Enter <i>ALL</i> or list "
+"network addresses with a CIDR mask. Separate multiple addresses with a "
+"space: <i>192.168.2.0/24 192.168.2.1/12</i>."
+msgstr ""
+
+msgid ""
 "Network addresses which can use this initiator. Use <i>ALL</i> or list "
 "network addresses with a <a "
 "href=\"https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing\" "
@@ -4859,6 +4966,11 @@ msgid ""
 "page explains the finer details."
 msgstr ""
 
+msgid ""
+"Number of points for each hourly, daily, weekly, monthly, or yearly graph. "
+"Set this to no less than the width of the graphs in pixels."
+msgstr ""
+
 msgid "Number of queued SysV messages allowed for the jail."
 msgstr ""
 
@@ -4940,8 +5052,8 @@ msgstr ""
 msgid ""
 "Only appears if a <i>File</i> or zvol is selected. When the specified "
 "percentage of free space is reached, the system issues an alert. See <a "
-"href=\"%%docurl%%/vaai.html%%webversion%%#vaai\" target=\"_blank\">VAAI</a> "
-"Threshold Warning."
+"href=\"%%docurl%%/vaai.html#vaai\" target=\"_blank\">VAAI</a> Threshold "
+"Warning."
 msgstr ""
 
 msgid "Only applies to Unix or Mac permission types."
@@ -4969,15 +5081,12 @@ msgid ""
 "of the Team Drive."
 msgstr ""
 
-msgid ""
-"Only set LDAP authentication for SMB shares is required and the LDAP server "
-"is already configured with Samba attributes."
+msgid "Only override the default if the initiator requires a different block size."
 msgstr ""
 
 msgid ""
-"Only set if the AD server is explicitly configured to  map permissions for "
-"UNIX users. Setting provides persistent UIDs and GUIDs. Leave unset to map "
-"users  and groups to the UID or GUID range configured in Samba."
+"Only set LDAP authentication for SMB shares is required and the LDAP server "
+"is already configured with Samba attributes."
 msgstr ""
 
 msgid ""
@@ -5040,16 +5149,6 @@ msgstr ""
 
 msgid "Outgoing Mail Server"
 msgstr "Servidor de email de saída"
-
-msgid ""
-"Overrides default directory creation mask of <i>0777</i> which grants "
-"directory read, write and execute access for everybody."
-msgstr ""
-
-msgid ""
-"Overrides default file creation mask of <i>0666</i> which creates files "
-"with read and write access for everybody."
-msgstr ""
 
 msgid "Owner of the jail. Can be any string."
 msgstr ""
@@ -5156,9 +5255,6 @@ msgstr ""
 msgid "Performs authentication from an LDAP server."
 msgstr ""
 
-msgid "Periodic Notification User"
-msgstr ""
-
 msgid "Periodic Snapshot Tasks"
 msgstr "Tarefas de Snapshots Periódicos"
 
@@ -5190,8 +5286,7 @@ msgid "Please enter your username again"
 msgstr "Por favor insira o seu username novamente"
 
 msgid ""
-"Please read about <a "
-"href=\"%%docurl%%/storage.html%%webversion%%#deduplication\" "
+"Please read about <a href=\"%%docurl%%/storage.html#deduplication\" "
 "target=\"_blank\">deduplication</a> before considering changing this "
 "setting."
 msgstr ""
@@ -5199,11 +5294,17 @@ msgstr ""
 msgid "Please wait"
 msgstr "Por favor aguarde"
 
+msgid "Plugin "
+msgstr ""
+
 msgid "Plugin Installed Successfully"
 msgstr ""
 
 msgid "Plugin Name"
 msgstr "Nome do Plugin"
+
+msgid "Plugin Update Failed"
+msgstr ""
 
 msgid "Plugin installed successfully"
 msgstr ""
@@ -5239,6 +5340,9 @@ msgid "Port"
 msgstr "Porta"
 
 msgid "Port or Hostname"
+msgstr ""
+
+msgid "Portal"
 msgstr ""
 
 msgid "Portal Group ID"
@@ -5540,8 +5644,21 @@ msgstr "Compressão do Stream de Replicação"
 msgid "Replication Tasks"
 msgstr "Tarefas de Replicação"
 
+msgid "Report CPU usage in percent"
+msgstr ""
+
 msgid "Report CPU usage in percentage"
 msgstr "Reportar uso do CPU em percentagem"
+
+msgid ""
+"Report if drive temperature is at or above this temperature in Celsius. "
+"Entering 0 disables the report."
+msgstr ""
+
+msgid ""
+"Report if the temperature of a drive has changed by this many degrees "
+"Celsius since the last report. Entering 0 disables the report."
+msgstr ""
 
 msgid "Reporting"
 msgstr "Relatórios"
@@ -5559,7 +5676,7 @@ msgid "Require Kerberos for NFSv4"
 msgstr ""
 
 msgid ""
-"Required for <a href=\"%%docurl%%/services.html%%webversion%%#lldp\" "
+"Required for <a href=\"%%docurl%%/services.html#lldp\" "
 "target=\"_blank\">LLDP</a> location support. Enter a two-letter ISO 3166 "
 "country code."
 msgstr ""
@@ -5567,9 +5684,8 @@ msgstr ""
 msgid ""
 "Required for <i>HTTPS</i>. Browse to the location of the certificate to use "
 "for encrypted connections. If there are no certificates, create a <a "
-"href=\"%%docurl%%/system.html%%webversion%%#cas\" "
-"target=\"_blank\">Certificate Authority (CA)</a> then the <a "
-"href=\"%%docurl%%/system.html%%webversion%%#certificates\" "
+"href=\"%%docurl%%/system.html#cas\" target=\"_blank\">Certificate Authority "
+"(CA)</a> then the <a href=\"%%docurl%%/system.html#certificates\" "
 "target=\"_blank\">Certificate</a>."
 msgstr ""
 
@@ -5639,6 +5755,9 @@ msgid ""
 "Restrict share visibility to users with read or write access to the share. "
 "See <a href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
 "target=_blank>smb.conf(5)</a>."
+msgstr ""
+
+msgid "Retype the <i>Secret</i>."
 msgstr ""
 
 msgid ""
@@ -5924,7 +6043,7 @@ msgstr ""
 
 msgid ""
 "Select a previously imported or created <a "
-"href=\"%%docurl%%/system.html%%webversion%%#cas\" target=\"_blank\">CA</a>."
+"href=\"%%docurl%%/system.html#cas\" target=\"_blank\">CA</a>."
 msgstr ""
 
 msgid ""
@@ -5962,8 +6081,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Select a user to receive security output emails. This output runs nightly "
-"but only sends an email when the system reboots or encounters an error."
+"Select a user created in Authorized Access if the Discovery Auth Method is "
+"set to CHAP or Mutual CHAP."
 msgstr ""
 
 msgid "Select an IP address to use for VNC sessions."
@@ -5983,7 +6102,17 @@ msgstr ""
 msgid "Select an existing extent."
 msgstr ""
 
+msgid ""
+"Select an existing portal or choose <i>Create New</i> to configure a new "
+"portal."
+msgstr ""
+
 msgid "Select an existing target."
+msgstr ""
+
+msgid ""
+"Select an existing user configuration or <i>Create New</i> to view options "
+"for a new user configuration."
 msgstr ""
 
 msgid "Select desired disk type."
@@ -6006,8 +6135,7 @@ msgid "Select pool, dataset, or directory to share."
 msgstr ""
 
 msgid ""
-"Select the <a "
-"href=\"%%docurl%%/network.html%%webversion%%#link-aggregations\" "
+"Select the <a href=\"%%docurl%%/network.html#link-aggregations\" "
 "target=\"_blank\">Protocol Type</a>.<br> <i>LACP</i> is the recommended "
 "protocol if the network switch is capable of active LACP.<br> "
 "<i>Failover</i> is the default protocol choice and should only be used if "
@@ -6015,7 +6143,7 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Select the <a href=\"%%docurl%%/system.html%%webversion%%#certificates\" "
+"Select the <a href=\"%%docurl%%/system.html#certificates\" "
 "target=\"_blank\">SSL certificate</a> to use for encrypted connections."
 msgstr ""
 
@@ -6042,6 +6170,11 @@ msgstr ""
 msgid ""
 "Select the FreeBSD release to use as the jail operating system. "
 "<br>Releases already downloaded display <b>(fetched)</b>."
+msgstr ""
+
+msgid ""
+"Select the IP address associated with an interface or the wildcard address "
+"of 0.0.0.0 (any interface)."
 msgstr ""
 
 msgid ""
@@ -6074,10 +6207,9 @@ msgstr ""
 msgid ""
 "Select the certificate of the Active Directory server if SSL connections "
 "are used. Add a certificate here by creating a <a "
-"href=\"%%docurl%%/system.html%%webversion%%#cas\" target=\"_blank\">CA</a>, "
-"then creating a certificate on the Active Directory server. Import the "
-"certificate on this system with the <a "
-"href=\"%%docurl%%/system.html%%webversion%%#certificates\" "
+"href=\"%%docurl%%/system.html#cas\" target=\"_blank\">CA</a>, then creating "
+"a certificate on the Active Directory server. Import the certificate on "
+"this system with the <a href=\"%%docurl%%/system.html#certificates\" "
 "target=\"_blank\">Certificates</a> menu."
 msgstr ""
 
@@ -6131,7 +6263,7 @@ msgstr ""
 
 msgid ""
 "Select the keytab created in <a "
-"href=\"%%docurl%%/directoryservices.html%%webversion%%#kerberos-keytabs\" "
+"href=\"%%docurl%%/directoryservices.html#kerberos-keytabs\" "
 "target=\"_blank\">Kerberos Keytabs</a>."
 msgstr ""
 
@@ -6142,8 +6274,7 @@ msgstr ""
 
 msgid ""
 "Select the location of the principal in the keytab created as described in "
-"<a "
-"href=\"%%docurl%%/directoryservices.html%%webversion%%#kerberos-keytabs\" "
+"<a href=\"%%docurl%%/directoryservices.html#kerberos-keytabs\" "
 "target=\"_blank\">Kerberos Keytabs</a>."
 msgstr ""
 
@@ -6164,17 +6295,20 @@ msgstr ""
 
 msgid ""
 "Select the realm created in <a "
-"href=\"%%docurl%%/directoryservices.html%%webversion%%#kerberos-realms\" "
+"href=\"%%docurl%%/directoryservices.html#kerberos-realms\" "
 "target=\"_blank\">Kerberos Realms</a>."
 msgstr ""
 
 msgid ""
 "Select the realm created using the instructions in <a "
-"href=\"%%docurl%%/directoryservices.html%%webversion%%#kerberos-realms\" "
+"href=\"%%docurl%%/directoryservices.html#kerberos-realms\" "
 "target=\"_blank\">Kerberos Realms</a>."
 msgstr ""
 
-msgid "Select the script from an existing pool."
+msgid ""
+"Select the script.     The script will be run using     <a "
+"href=https://www.freebsd.org/cgi/man.cgi?query=sh     "
+"target=\"_blank\">sh(1)</a>."
 msgstr ""
 
 msgid "Select the serial port address in hex."
@@ -6189,6 +6323,11 @@ msgid ""
 msgstr ""
 
 msgid "Select the type that matches the type of client accessing the pool/dataset."
+msgstr ""
+
+msgid ""
+"Select the unformatted disk, controller, zvol, zvol snapshot, or HAST "
+"device. Select <i>Create New</i> for options to create a new zvol."
 msgstr ""
 
 msgid "Select the user account to use for replication."
@@ -6230,7 +6369,10 @@ msgstr ""
 msgid "Select zvol"
 msgstr ""
 
-msgid "Selected Jail(s) updated successfully."
+msgid "Selected jails updated."
+msgstr ""
+
+msgid "Selected plugins updated."
 msgstr ""
 
 msgid "Send Email Status Updates"
@@ -6287,13 +6429,13 @@ msgstr ""
 msgid ""
 "Set by default if the disk supports S.M.A.R.T.                   Unset to "
 "disable any configured <a                   "
-"href=\"%%docurl%%/tasks.html%%webversion%%#s-m-a-r-t-tests\"                "
-"   target=\"_blank\">S.M.A.R.T. tests</a>."
+"href=\"%%docurl%%/tasks.html#s-m-a-r-t-tests\"                   "
+"target=\"_blank\">S.M.A.R.T. tests</a>."
 msgstr ""
 
 msgid ""
 "Set by default if the disk supports S.M.A.R.T. Unset to disable any "
-"configured <a href=\"%%docurl%%/tasks.html%%webversion%%#s-m-a-r-t-tests\" "
+"configured <a href=\"%%docurl%%/tasks.html#s-m-a-r-t-tests\" "
 "target=\"_blank\">S.M.A.R.T. tests</a>."
 msgstr ""
 
@@ -6333,11 +6475,6 @@ msgid "Set for ypbind to bind to the server that responds the fastest."
 msgstr ""
 
 msgid "Set if NFS clients need to use UDP."
-msgstr ""
-
-msgid ""
-"Set if it is necessary to provide the netlogin service for older Windows "
-"clients."
 msgstr ""
 
 msgid ""
@@ -6450,9 +6587,8 @@ msgstr ""
 
 msgid ""
 "Set to allow access to this share without a password. See the <a "
-"href=\"%%docurl%%/services.html%%webversion%%#smb\" "
-"target=\"_blank\">SMB</a> service documentation for more information about "
-"guest user permissions."
+"href=\"%%docurl%%/services.html#smb\" target=\"_blank\">SMB</a> service "
+"documentation for more information about guest user permissions."
 msgstr ""
 
 msgid ""
@@ -6472,11 +6608,6 @@ msgstr ""
 msgid ""
 "Set to allow anonymous FTP logins with access to the directory specified in "
 "<b>Path</b>."
-msgstr ""
-
-msgid ""
-"Set to allow non-Windows SMB clients to access symbolic links and hard "
-"links. Has no effect on Windows clients."
 msgstr ""
 
 msgid ""
@@ -6705,8 +6836,7 @@ msgstr ""
 
 msgid ""
 "Set to enable encrypted connections. Requires a certificate to be created "
-"or imported using <a "
-"href=\"%%docurl%%/system.html%%webversion%%#certificates\" "
+"or imported using <a href=\"%%docurl%%/system.html#certificates\" "
 "target=\"_blank\">Certificates</a>"
 msgstr ""
 
@@ -6871,9 +7001,6 @@ msgstr ""
 msgid ""
 "Set to reduce the size of data to transmit.                Recommended for "
 "slow connections."
-msgstr ""
-
-msgid "Set to restart Active Directory automatically if the service disconnects."
 msgstr ""
 
 msgid "Set to run resilver tasks between the configured times."
@@ -7046,6 +7173,9 @@ msgid ""
 "on the client."
 msgstr ""
 
+msgid "Settings saved."
+msgstr ""
+
 msgid "Setup Mode"
 msgstr ""
 
@@ -7155,6 +7285,9 @@ msgstr ""
 msgid "Site Name"
 msgstr ""
 
+msgid "Size"
+msgstr ""
+
 msgid "Size (GiB)"
 msgstr ""
 
@@ -7236,6 +7369,9 @@ msgid ""
 msgstr ""
 
 msgid "Specify the physical location of the host."
+msgstr ""
+
+msgid "Specify the size of the new zvol."
 msgstr ""
 
 msgid "Speeds up the initial synchronization   (seconds instead of minutes)."
@@ -7336,9 +7472,6 @@ msgstr ""
 msgid "Successfully updated."
 msgstr ""
 
-msgid "Successfully upgraded plugin."
-msgstr ""
-
 msgid "Suffix for LDAP-based users that need superuser access."
 msgstr ""
 
@@ -7426,6 +7559,9 @@ msgid "TCP Port"
 msgstr "Porta TCP"
 
 msgid "TCP port"
+msgstr ""
+
+msgid "TCP port used to access the iSCSI target. Default is 3260."
 msgstr ""
 
 msgid "TCP port used to access the iSCSI target. Default is <i>3260</i>."
@@ -7573,8 +7709,9 @@ msgid ""
 msgstr ""
 
 msgid ""
-"The envelope From address shown in the email. This is set to assist with "
-"filtering mail on the receiving system."
+"The envelope <i>From</i> address shown in the email. This can be set to "
+"make filtering mail on the receiving system easier. The friendly name is "
+"set like this: <i>\"Friendly Name\" &ltaddress@example.com&gt</i>"
 msgstr ""
 
 msgid ""
@@ -7654,13 +7791,6 @@ msgid ""
 "device.<br /> <br />"
 msgstr ""
 
-msgid ""
-"The server that manages user authentication and security as part of a "
-"Windows domain. Leave empty to use the DNS SRV records to automatically "
-"detect and connect to the domain controller. If the domain controller must "
-"be set manually, enter the server hostname or IP address."
-msgstr ""
-
 msgid "The specified permissions of that group are used by all clients."
 msgstr ""
 
@@ -7699,6 +7829,11 @@ msgid ""
 "the disks in the pool for a general use case."
 msgstr ""
 
+msgid ""
+"These arguments are passed to <a href=\"https://rclone.org/docs/\" "
+"target=\"_blank\">rclone</a>."
+msgstr ""
+
 msgid "Third DNS server"
 msgstr ""
 
@@ -7709,17 +7844,6 @@ msgid ""
 "This field remains empty until a valid <b>Username</b> and <b>Password</b> "
 "is entered. Choose the category that best describes the bug or feature "
 "being reported."
-msgstr ""
-
-msgid ""
-"This holds a full set of attributes for the domain in which it resides and "
-"a subset of attributes for all objects in the Microsoft Active Directory "
-"Forest. See the <a "
-"href=\"https://www.ibm.com/support/knowledgecenter/en/SSEQTP_9.0.0/com.ibm."
-"websphere.base.doc/ae/csec_was_ad_globcat.html\" target=\"_blank\">IBM "
-"Knowledge Center</a>. Leave empty to use the DNS SRV records to "
-"automatically detect and connect to the server. If the global catalog "
-"server must be entered manually, enter the server hostname or IP address."
 msgstr ""
 
 msgid "This is the FreeBSD device name for the disk."
@@ -7791,12 +7915,6 @@ msgstr "Tipo"
 msgid "UNIX Charset"
 msgstr "UNIX Charset"
 
-msgid "UNIX Extensions"
-msgstr "Extensões UNIX"
-
-msgid "UNIX extensions"
-msgstr ""
-
 msgid "UPS Mode"
 msgstr "Modo UPS"
 
@@ -7827,14 +7945,6 @@ msgstr ""
 msgid ""
 "Unmask is used for newly created files. Default is <i>000</i> (anyone can "
 "read, write, and execute)."
-msgstr ""
-
-msgid ""
-"Unselect this option to allow cross-domain authentication, users and groups "
-"to be managed on another forest, and permissions to be delegated from <a "
-"href=\"%%docurl%%/directoryservices.html%%webversion%%#active-directory\" "
-"target=\"_blank\">Active Directory</a> users and groups to domain admins on "
-"another forest."
 msgstr ""
 
 msgid "Unset to add a login prompt to the system before the console menu is shown."
@@ -7894,31 +8004,31 @@ msgstr ""
 msgid "Updates successfully downloaded"
 msgstr ""
 
+msgid "Updating Jail"
+msgstr ""
+
+msgid "Updating Plugin"
+msgstr ""
+
 msgid "Updating group members"
 msgstr ""
 
-msgid "Upgrade"
+msgid "Updating selected jails failed."
+msgstr ""
+
+msgid "Updating selected plugins failed."
+msgstr ""
+
+msgid "Updating selected plugins."
 msgstr ""
 
 msgid "Upgrade Pool"
 msgstr "Upgrade do Pool"
 
-msgid "Upgrade selected jails failed."
-msgstr ""
-
-msgid "Upgrade selected jails started."
-msgstr ""
-
-msgid "Upgrade selected jails succeeded."
-msgstr ""
-
 msgid "Upgraded"
 msgstr ""
 
 msgid "Upgrading Jail"
-msgstr ""
-
-msgid "Upgrading Plugin"
 msgstr ""
 
 msgid "Upload"
@@ -7935,6 +8045,11 @@ msgid ""
 "href=\"https://cloud.google.com/storage/docs/authentication#generating-a-"
 "private-key\" target=\"_blank\">file must be generated</a> with the Google "
 "Cloud Platform Console and uploaded from the local system."
+msgstr ""
+
+msgid ""
+"Upsmon will wait up to this many seconds in master mode for the slaves to "
+"disconnect during a shutdown situation."
 msgstr ""
 
 msgid "Uptime"
@@ -8039,8 +8154,18 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Usernames of 8 characters or less are recommended for compatibility with "
-"application software, but up to 16 characters are allowed."
+"Usernames can be up to 16 characters long. When using NIS or other legacy "
+"software with limited username lengths, keep usernames to eight characters "
+"or less for compatibility."
+msgstr ""
+
+msgid ""
+"Usernames can be up to 16 characters long. When using NIS or other legacy "
+"software with limited username lengths, keep usernames to eight characters "
+"or less for compatibility. Usernames cannot begin with a hyphen (<i>-</i>) "
+"or contain a space, tab, or these characters: <i>, : + & # % ^ ( ) ! @ ~ * "
+"? < > =</i>. <i>$</i> can only be used as the last character of the "
+"username."
 msgstr ""
 
 msgid "Users"
@@ -8179,6 +8304,9 @@ msgstr "Password Webdav"
 msgid "Webdav SSL Certificate"
 msgstr "Certificado SSL Webdav"
 
+msgid "What are you using this for"
+msgstr ""
+
 msgid "When"
 msgstr "Quando"
 
@@ -8202,11 +8330,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"When selected, Samba allows the user to execute a file, even if that user’s "
-"permissions are not set to execute."
-msgstr ""
-
-msgid ""
 "When set, a local user is only allowed access to their home directory if "
 "they are a member of the <i>wheel</i> group."
 msgstr ""
@@ -8215,6 +8338,9 @@ msgid ""
 "When set, deleted files are moved to a hidden <b>.recycle</b> in the root "
 "folder of the share. The <b>.recycle</b> directory can be deleted to "
 "reclaim space and is automatically recreated when a file is deleted."
+msgstr ""
+
+msgid "When set, report CPU usage in percent instead of jiffies."
 msgstr ""
 
 msgid ""
@@ -8238,9 +8364,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"When set, users see the contents of <i>/homes</i>, which includes the home "
-"directories of other users. When unset, users only see their own home "
-"directory."
+"When the file already exists, enter a size of 0 to use the actual file "
+"size. For new files, enter the size of the file to create."
 msgstr ""
 
 msgid "Widget Base Class"

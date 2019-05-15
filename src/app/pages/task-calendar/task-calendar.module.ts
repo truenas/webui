@@ -21,9 +21,8 @@ import { RsyncListComponent } from './rsync/rsync-list/rsync-list.component';
 import { RsyncFormComponent } from './rsync/rsync-form/rsync-form.component';
 import { SmartListComponent } from './smart/smart-list/smart-list.component';
 import { SmartFormComponent } from './smart/smart-form/smart-form.component';
-import { ReplicationListComponent } from 'app/pages/task-calendar/replication/replication-list';
-import { ReplicationFormComponent } from 'app/pages/task-calendar/replication/replication-form';
-import { ReplicationService } from 'app/pages/task-calendar/replication/replication.service';
+import { ReplicationListComponent } from './replication/replication-list/replication-list.component';
+import { ReplicationFormComponent } from './replication/replication-form/replication-form.component';
 import { ScrubListComponent } from './scrub/scrub-list/scrub-list.component';
 import { ScrubFormComponent } from './scrub/scrub-form/scrub-form.component';
 import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
@@ -64,7 +63,6 @@ import { ResilverComponent } from './resilver/resilver.component';
     CloudsyncListComponent,
     CloudsyncFormComponent,
     ResilverComponent
-  ],
-  providers: [ ReplicationService ]
+  ]
 })
 export class TaskCalendarModule {}

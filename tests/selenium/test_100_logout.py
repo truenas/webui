@@ -22,10 +22,6 @@ xpaths = {
 }
 
 
-def test_00_set_implicitly_wait(wb_driver):
-    wb_driver.implicitly_wait(1)
-
-
 def test_01_logout(wb_driver):
     # Click on root account
     wb_driver.find_element_by_xpath(xpaths['powerButton']).click()
@@ -35,9 +31,6 @@ def test_01_logout(wb_driver):
     time.sleep(2)
     # Click on OK when re-confirm logout
     # wb_driver.find_element_by_xpath(xpaths['logoutconfirmationButton']).click()
-    # time.sleep(2)
-    # taking screenshot
-    # get the ui element
     ui_element = wb_driver.find_element_by_xpath(xpaths['startImage'])
     page_data = ui_element.text
     # assert response

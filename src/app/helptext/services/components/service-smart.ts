@@ -40,7 +40,7 @@ smart_critical_validation : [ Validators.required ],
 
 smart_email_placeholder : T('Email'),
 smart_email_tooltip: T('Enter an email address to receive <a\
- href="%%docurl%%/services.html%%webversion%%#s-m-a-r-t"\
+ href="%%docurl%%/services.html#s-m-a-r-t"\
  target="_blank">S.M.A.R.T.</a> alerts; use a space to \
  separate multiple email addresses.')
 }

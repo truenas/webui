@@ -1,7 +1,8 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissions/'
+import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissions/';
+import { DatasetAclComponent } from './volumes/datasets/dataset-acl/';
 import { SnapshotAddComponent } from './snapshots/snapshot-add/';
 import { SnapshotCloneComponent } from './snapshots/snapshot-clone/';
 import { SnapshotListComponent } from './snapshots/snapshot-list/';
@@ -63,6 +64,10 @@ export const routes: Routes = [
           {
             path: 'id/:pk/dataset/permissions/:path', component: DatasetPermissionsComponent,
             data: { title: 'Edit Permissions', breadcrumb: 'Edit Permissions' }
+          },
+          {
+            path: 'id/:pk/dataset/acl/:path', component: DatasetAclComponent,
+            data: { title: 'Edit ACL', breadcrumb: 'Edit ACL' }
           },
           {
             path: 'manager', component: ManagerComponent,

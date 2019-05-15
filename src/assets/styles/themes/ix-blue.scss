@@ -286,6 +286,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     opacity: 0.38;
   }
 
+  .mat-form-field.mat-focused.mat-primary .mat-select-arrow {
+    @include variable(color, --primary, $primary, !important);
+  }
+
   .mat-checkbox-disabled .mat-checkbox-label {
     @include variable(color, --fg2, $fg2);
     opacity: 0.6;
@@ -337,6 +341,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   .mat-form-field-invalid .mat-form-field-label {
     color: #f44336 !important;
+  }
+
+  .mat-form-field-disabled .mat-form-field-label {
+    opacity: .38;
   }
 
   .mat-button.mat-accent {
@@ -507,10 +515,17 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       max-height: 256px;
   }
 
+  .mat-checkbox {
+    margin: 4px;
+  }
+
+  .ngx-datatable .mat-checkbox-inner-container {
+    margin-left: 4px;
+  }
+
   .mat-checkbox-inner-container{
     width:16px;
     height:16px;
-    margin:4px;
     overflow: visible;
   }
   .mat-checkbox-ripple{
@@ -1122,6 +1137,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .advanced-date-picker .cron-fields .mat-form-field-underline {
     background-color: white !important;
     opacity: .99;
+  }
+  
+  app-select-dialog .mat-select-placeholder,
+  app-ipmi .mat-select-placeholder {
+    @include variable(color, --fg2, $fg2);
   }
 
   app-support {

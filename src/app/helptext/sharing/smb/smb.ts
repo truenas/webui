@@ -44,10 +44,9 @@ export const helptext_sharing_smb = {
     tooltip_ro: T('Set to prohibit writes to this share'),
 
     placeholder_browsable: T('Browsable to Network Clients'),
-    tooltip_browsable: T('When set, users see the contents of <i>/homes</i>,\
- which includes the home directories of other users.\
- When unset, users only see their own\
- home directory.'),
+    tooltip_browsable: T('Determine whether this share name is included\
+ when browsing shares. Home shares are only visible to the owner\
+ regardless of this setting.'),
 
     placeholder_recyclebin: T('Export Recycle Bin'),
     tooltip_recyclebin: T('When set, deleted files are moved to a hidden\
@@ -64,7 +63,7 @@ export const helptext_sharing_smb = {
 
     placeholder_guestok: T('Allow Guest Access'),
     tooltip_guestok: T('Set to allow access to this share without a password.\
- See the <a href="%%docurl%%/services.html%%webversion%%#smb"\
+ See the <a href="%%docurl%%/services.html#smb"\
  target="_blank">SMB</a> service documentation for more\
  information about guest user permissions.'),
 
@@ -87,7 +86,7 @@ export const helptext_sharing_smb = {
 
     placeholder_vfsobjects: T('VFS Objects'),
     tooltip_vfsobjects: T('Adds <a\
- href="%%docurl%%/sharing.html%%webversion%%#avail-vfs-modules-tab"\
+ href="%%docurl%%/sharing.html#avail-vfs-modules-tab"\
  target="blank">virtual file system modules</a> to\
  enhance functionality.'),
 

@@ -20,10 +20,6 @@ xpaths = {
 }
 
 
-def test_00_set_implicitly_wait(wb_driver):
-    wb_driver.implicitly_wait(1)
-
-
 def test_01_turnon_iscsi(wb_driver):
     # Click Service Menu
     wb_driver.find_element_by_xpath(xpaths['navService']).click()
@@ -61,6 +57,5 @@ def test_04_checkif_iscsi_off(wb_driver):
     time.sleep(2)
     # status check
     status_check(wb_driver, "5")
-    time.sleep(10)
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)

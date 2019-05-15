@@ -19,4 +19,5 @@ export * from './job.service';
 export * from './bootenv.service';
 export * from './docs.service';
 export * from './snackbar.service';
+export * from './keychaincredential.services';
 export * from './engineerMode.service';
