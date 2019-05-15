@@ -213,7 +213,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
       if (res && !this.user_check_in_prompted) {
         this.user_check_in_prompted = true;
         this.showNetworkCheckinWaiting();
-      } else {
+      }
+      if (!res) {
         this.user_check_in_prompted = false;
       }
     });
@@ -231,6 +232,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
       network_interfaces_helptext.pending_checkin_text,
       true, network_interfaces_helptext.checkin_button).subscribe(res => {
         if (res) {
+          this.user_check_in_prompted = false;
           this.loader.open();
           this.ws.call('interface.checkin').subscribe((success) => {
             this.loader.close();
