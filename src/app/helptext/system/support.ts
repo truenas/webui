@@ -26,6 +26,24 @@ export const helptext_system_support = {
     )
   },
 
+  name: {
+    placeholder: T("Name"),
+    tooltip: T("Enter the name of the contact person."), //DRAFT TOOLTIP
+    validation: [Validators.required]
+  },
+
+  email: {
+    placeholder: T("Email"),
+    tooltip: T("Enter the email of the contact person."), //DRAFT TOOLTIP
+    validation: [Validators.required, Validators.email]
+  },
+
+  phone: {
+    placeholder: T("Phone"),
+    tooltip: T("Enter the phone number of the contact person."), //DRAFT TOOLTIP
+    validation: [Validators.required]
+  },
+
   category: {
     placeholder: T("Category"),
     tooltip: T(
@@ -34,6 +52,18 @@ export const helptext_system_support = {
  Choose the category that best describes the bug or\
  feature being reported."
     ),
+    validation: [Validators.required]
+  },
+
+  environment: {
+    placeholder: T("Environment"),
+    tooltip: T("Select the appropriate environment."), //DRAFT TOOLTIP
+    validation: [Validators.required]
+  },
+
+  criticality: {
+    placeholder: T("Criticality"),
+    tooltip: T("Select the appropriate level of criticality."), //DRAFT TOOLTIP
     validation: [Validators.required]
   },
 
@@ -61,5 +91,10 @@ export const helptext_system_support = {
  replicate the issue."
     ),
     validation: [Validators.required]
+  },
+
+  screenshot: {
+  placeholder: T( "Attach screenshot(s)."),
+  tooltip: T( "Select one or more screenshots that illustrate the problem.")
   }
 };
