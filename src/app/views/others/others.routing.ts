@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { AppBlankComponent } from './app-blank/app-blank.component';
+import { FailoverComponent } from './failover/failover.component';
 import { RebootComponent } from './reboot/reboot.component';
 import { ShutdownComponent } from './shutdown/shutdown.component';
 
@@ -14,6 +15,10 @@ export const OthersRoutes: Routes = [
       path: 'shutdown',
       component: ShutdownComponent,
       data: { title: 'Shutdown', breadcrumb: 'Shutdown' }
+    }, {
+      path: 'failover',
+      component: FailoverComponent,
+      data: { title: 'Failover', breadcrumb: 'Failover' }
     }]
   }
 ];
