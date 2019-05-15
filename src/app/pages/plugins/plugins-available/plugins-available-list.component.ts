@@ -129,6 +129,7 @@ export class PluginsAvailabelListComponent {
   }
 
   switchBranch() {
-    console.log('swithswitchBranch', this.selectedBranch);
+    this.queryCallOption = ["PLUGIN", true, true, this.selectedBranch];
+    this.entityList.getData();
   }
 }
