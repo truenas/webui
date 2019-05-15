@@ -1,4 +1,4 @@
-import { RestService, WebSocketService } from '../../../services';
+import { RestService, WebSocketService, EngineerModeService, JailService } from '../../../services';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -10,6 +10,7 @@ import { EntityUtils } from '../../common/entity/utils';
   selector: 'app-plugins-available-list',
   templateUrl: './plugins-available-list.component.html',
   styleUrls: ['./plugins-available-list.component.css'],
+  providers: [JailService]
   // template: `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class PluginsAvailabelListComponent {
@@ -39,6 +40,9 @@ export class PluginsAvailabelListComponent {
   public selectedPool;
   public activatedPool: any;
   public availablePools: any;
+  public engineerMode: boolean;
+  public availableBranches = [];
+  public selectedBranch: any;
 
   public tooltipMsg: any = T("Choose an existing ZFS Pool to allow the \
                               iocage jail manager to create a /iocage \
@@ -50,9 +54,27 @@ export class PluginsAvailabelListComponent {
                               navigate Storage/Volumes and click 'Create \
                               ZFS Pool'.");
 
-  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected loader: AppLoaderService) {
+  constructor(protected router: Router, protected rest: RestService,
+              protected ws: WebSocketService, protected loader: AppLoaderService,
+              protected engineerModeService: EngineerModeService, protected jailService: JailService) {
     this.getActivatedPool();
     this.getAvailablePools();
+
+    this.engineerMode = localStorage.getItem('engineerMode') === 'true' ? true : false;
+    this.engineerModeService.engineerMode.subscribe((res) => {
+      this.engineerMode = res === 'true' ? true : false;
+    });
+    this.jailService.getBranches().subscribe(
+      (res) => {
+        for (const i in res) {
+          const branchIndexObj = {name: i, branches: []};
+          for (let j = 0; j < res[i].length; j++) {
+            branchIndexObj.branches.push({label: res[i][j], value: res[i][j]});
+          }
+          this.availableBranches.push(branchIndexObj);
+        }
+      }
+    )
   }
 
   afterInit(entityList: any) {
@@ -104,5 +126,9 @@ export class PluginsAvailabelListComponent {
       (res) => {
         new EntityUtils().handleWSError(this.entityList, res);
       });
+  }
+
+  switchBranch() {
+    console.log('swithswitchBranch', this.selectedBranch);
   }
 }
