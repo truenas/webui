@@ -81,7 +81,7 @@ export class WebSocketService {
   ping() {
     if (this.connected) {
       this.socket.send(JSON.stringify({"msg" : "ping", "id" : UUID.UUID()}));
-      if (typeof(this.token) !== 'undefined') {
+      if (this.token && typeof(this.token) !== 'undefined') {
         // check to see if the token is still valid (keepalive)
         this.call('auth.token', [ this.token ]).subscribe((result) => {
           if (!result && !this.shuttingdown) {
@@ -249,9 +249,11 @@ export class WebSocketService {
 
   login_token(token): Observable<any> {
     return Observable.create((observer) => {
-      this.call('auth.token', [ token ]).subscribe((result) => {
-        this.loginCallback(result, observer);
-      });
+      if(token) {
+        this.call('auth.token', [ token ]).subscribe((result) => {
+          this.loginCallback(result, observer);
+        });
+      }
     });
   }
 

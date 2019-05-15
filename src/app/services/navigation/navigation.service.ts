@@ -21,6 +21,10 @@ interface IChildItem {
 
 @Injectable()
 export class NavigationService {
+  // all menu for truenas features
+  public turenasFeatures = [
+    { menu: 'system', sub: 'proactivesupport' }
+  ];
 
   defaultMenu: IMenuItem[] = [{
       name: T('Dashboard'),
@@ -58,12 +62,19 @@ export class NavigationService {
         { name: T('Alert Services'), state: 'alertservice' },
         { name: T('Alert Settings'), state: 'alertsettings' },
         { name: T('Cloud Credentials'), state: 'cloudcredentials' },
+        { name: T('SSH Connections'), state: 'sshconnections'},
+        { name: T('SSH Keypairs'), state: 'sshkeypairs'},
         { name: T('Tunables'), state: 'tunable' },
         { name: T('Update'), state: 'update' },
         { name: T('CAs'), state: 'ca' },
         { name: T('Certificates'), state: 'certificates' },
+<<<<<<< HEAD
         { name: T('ACME DNS'), state: 'acmedns' },
+=======
+        { name: T('Failover'), state: 'failover', disabled: true },
+>>>>>>> master
         { name: T('Support'), state: 'support' },
+        { name: T('Proactive Support'), state: 'proactivesupport', disabled: true },
       ]
     },
     {
@@ -95,10 +106,8 @@ export class NavigationService {
         { name: T('Global Configuration'), state: 'configuration' },
         { name: T('Interfaces'), state: 'interfaces' },
         { name: T('IPMI'), state: 'ipmi', disabled: false },
-        { name: T('Link Aggregations'), state: 'laggs' },
         { name: T('Network Summary'), state: 'summary' },
         { name: T('Static Routes'), state: 'staticroutes' },
-        { name: T('VLANs'), state: 'vlans' },
       ]
     },
     {

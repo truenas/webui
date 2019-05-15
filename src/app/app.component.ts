@@ -57,7 +57,19 @@ export class AppComponent {
       "jail_icon",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/jail_icon.svg")
     );
-    this.title.setTitle('FreeNAS - ' + window.location.hostname);
+    this.matIconRegistry.addSvgIcon(
+      "ha_disabled",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/ha_disabled.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "ha_enabled",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/ha_enabled.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "ha_reconnecting",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/ha_reconnecting.svg")
+    );
+    // this.title.setTitle('FreeNAS - ' + window.location.hostname);
 
     if (this.detectBrowser("Safari")) {
       document.body.className += " safari-platform";

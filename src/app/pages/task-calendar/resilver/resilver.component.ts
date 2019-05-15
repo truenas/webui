@@ -14,7 +14,8 @@ import helptext from '../../../helptext/task-calendar/resilver/resilver';
 })
 export class ResilverComponent {
 
-  protected resource_name: string = 'storage/resilver';
+  protected queryCall = 'pool.resilver.config';
+  protected editCall = 'pool.resilver.update';
 
   public fieldConfig: FieldConfig[] = [{
     type: 'checkbox',
@@ -44,42 +45,42 @@ export class ResilverComponent {
     multiple: true,
     options: [{
       label: 'Monday',
-      value: '1',
+      value: 1,
     }, {
       label: 'Tuesday',
-      value: '2',
+      value: 2,
     }, {
       label: 'Wednesday',
-      value: '3',
+      value: 3,
     }, {
       label: 'Thursday',
-      value: '4',
+      value: 4,
     }, {
       label: 'Friday',
-      value: '5',
+      value: 5,
     }, {
       label: 'Saturday',
-      value: '6',
+      value: 6,
     }, {
       label: 'Sunday',
-      value: '7',
+      value: 7,
     }],
-    value: ['1', '2', '3', '4', '5', '6', '7'],
+    value: [1, 2, 3, 4, 5, 6, 7],
     required: true,
     validation : helptext.weekday_validation
   }];
 
-  protected begin_field: any;
-  protected end_field: any;
-
   constructor(protected router: Router, protected taskService: TaskService) {
-    this.begin_field = _.find(this.fieldConfig, { 'name': 'begin' });
-    this.end_field = _.find(this.fieldConfig, { 'name': 'end' });
-    let time_options = this.taskService.getTimeOptions();
+    const begin_field = _.find(this.fieldConfig, { 'name': 'begin' });
+    const end_field = _.find(this.fieldConfig, { 'name': 'end' });
+    const time_options = this.taskService.getTimeOptions();
     for (let i = 0; i < time_options.length; i++) {
-      this.begin_field.options.push({ label: time_options[i].label, value: time_options[i].value });
-      this.end_field.options.push({ label: time_options[i].label, value: time_options[i].value });
+      begin_field.options.push({ label: time_options[i].label, value: time_options[i].value });
+      end_field.options.push({ label: time_options[i].label, value: time_options[i].value });
     }
   }
 
+  afterInit(entityForm) {
+    entityForm.submitFunction = entityForm.editCall;
+  }
 }

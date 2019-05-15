@@ -48,6 +48,7 @@ export interface Formconfiguration {
   editCall?;
   queryCall?;
   queryCallOption?;
+  queryKey?;  // use this to define your id for websocket call
   isNew?;
   pk?;
   custom_get_query?;
@@ -258,15 +259,20 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
       if (this.conf.queryCall) {
         if(this.pk) {
+          let pk = this.pk;
           let filter = []
           if (this.conf.pk) {
            filter.push(this.conf.pk);
+           pk = this.conf.pk;
           }
           if (this.conf.queryCallOption) {
             filter.push(this.conf.queryCallOption);
           }
           if (this.conf.customFilter){
             filter = this.conf.customFilter;
+          }
+          if (this.conf.queryKey) {
+            filter = [[[this.conf.queryKey, '=', pk]]];
           }
           this.getFunction = this.ws.call(this.conf.queryCall, filter);
         } else {
@@ -414,7 +420,11 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   editCall(body: any) {
-    return this.ws.call(this.conf.editCall, [this.pk, body]);
+    const payload = [body];
+    if (this.pk) {
+      payload.unshift(this.pk);
+    }
+    return this.ws.call(this.conf.editCall, payload);
   }
 
   addSubmit(body: any) {
