@@ -7,4 +7,6 @@
   </span>
 </nav>
 
-<enclosure-disks *ngIf="currentView == 'Disks' "></enclosure-disks>
+
+<enclosure-disks *ngIf="selectedEnclosure && currentView == 'Disks'" [system-profiler]="system" [selected-enclosure]="selectedEnclosure"></enclosure-disks>
+

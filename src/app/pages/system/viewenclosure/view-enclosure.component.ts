@@ -4,6 +4,9 @@ import { RestService, WebSocketService } from 'app/services/';
 import { MaterialModule } from 'app/appMaterial.module';
 import { EnclosureDisksComponent} from './enclosure-disks/enclosure-disks.component';
 
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { SystemProfiler } from './enclosure-disks/system-profiler';
+
 // import { MatDialog } from '@angular/material';
 // import { helptext_system_email } from 'app/helptext/system/email';
 // import * as _ from 'lodash';
@@ -25,6 +28,9 @@ interface ViewConfig {
 export class ViewEnclosureComponent implements OnDestroy {
 
   public currentView: string = 'Disks';
+  public system: SystemProfiler;
+  public system_product;
+  public selectedEnclosure: any;
   public views: ViewConfig[] = [
     { 
       name: 'Disks',
@@ -62,7 +68,40 @@ export class ViewEnclosureComponent implements OnDestroy {
     this.currentView = this.views[id].name;
   }
 
-  constructor(){}
+  constructor(private core: CoreService){
+    core.register({observerClass: this, eventName: 'EnclosureData'}).subscribe((evt:CoreEvent) => {
+      this.system.enclosures = evt.data;
+      this.selectedEnclosure = this.system.profile[0];
+      //console.log(this.system);
+    });
 
-  ngOnDestroy(){}
+    core.register({observerClass: this, eventName: 'PoolData'}).subscribe((evt:CoreEvent) => {
+      this.system.pools = evt.data;
+      core.emit({name: 'EnclosureDataRequest', sender: this});
+    });
+
+
+    core.register({observerClass: this, eventName: 'DisksData'}).subscribe((evt:CoreEvent) => {
+
+      let data = evt.data;
+      this.system = new SystemProfiler(this.system_product, data);
+      //this.selectedEnclosure = this.system.profile[0];
+      //console.log(this.system);
+      core.emit({name: 'PoolDataRequest', sender: this});
+      //this.pixiInit();
+    });
+
+    core.register({observerClass: this, eventName: 'SysInfo'}).subscribe((evt:CoreEvent) => {
+      console.log(evt);
+      //this.system_product = evt.data.system_product;
+      this.system_product = 'M50'; // Just for testing on my FreeNAS box
+      core.emit({name: 'DisksRequest', sender: this});
+    });
+
+    core.emit({name: 'SysInfoRequest', sender: this});
+  }
+
+  ngOnDestroy(){
+    this.core.unregister({observerClass:this})
+  }
 }

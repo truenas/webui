@@ -1,9 +1,8 @@
-import { Component, OnInit, AfterViewInit, OnChanges, SimpleChanges, ViewChild, ElementRef, NgZone, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, AfterContentInit, OnChanges, SimpleChanges, ViewChild, ElementRef, NgZone, OnDestroy } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MaterialModule } from 'app/appMaterial.module';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Application, Container, extras, Text, DisplayObject, Graphics, Sprite, Texture, utils} from 'pixi.js';
-//import 'pixi-filters';
 import 'pixi-projection';
 import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
 import { DriveTray } from 'app/core/classes/hardware/drivetray';
@@ -12,7 +11,6 @@ import { DiskComponent } from './disk.component';
 import { SystemProfiler } from './system-profiler';
 import { tween, easing, styler } from 'popmotion';
 import { ExampleData } from './example-data';
-//declare const PIXI: any;
 
 @Component({
   selector: 'enclosure-disks',
@@ -20,20 +18,21 @@ import { ExampleData } from './example-data';
   styleUrls: ['./enclosure-disks.component.css']
 })
 
-export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDestroy {
+export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnDestroy {
 
   @ViewChild('disksoverview') overview: ElementRef;
   @ViewChild('disksdetails') details: ElementRef;
   @ViewChild('domLabels') domLabels: ElementRef;
+  @Input('system-profiler') system: SystemProfiler;
+  @Input('selected-enclosure') selectedEnclosure: any;
   public app;
   private renderer;
   private loader = PIXI.loader;
   private resources = PIXI.loader.resources;
   public container;
   public system_product: string = 'unknown';
-  public system: SystemProfiler;
+
   protected enclosure: any; // Visualization
-  public selectedEnclosure: any;
 
   private _expanders: any[] = [];
   get expanders () {
@@ -81,43 +80,7 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
       this.setCurrentView(this.currentView);
     });
 
-    core.register({observerClass: this, eventName: 'EnclosureData'}).subscribe((evt:CoreEvent) => {
-      this.system.enclosures = evt.data;
-      console.log(this.system);
-    });
-
-    core.register({observerClass: this, eventName: 'PoolData'}).subscribe((evt:CoreEvent) => {
-      this.system.pools = evt.data;
-      core.emit({name: 'EnclosureDataRequest', sender: this});
-    });
-
-
-    core.register({observerClass: this, eventName: 'DisksData'}).subscribe((evt:CoreEvent) => {
-      //console.log(evt);
-      // SIMULATED DATA
-      /*let edata = new ExampleData();
-      edata.addEnclosure(24); //  M50 24 slots
-      edata.addEnclosure(12); // ES12 12 slots
-      let data = edata.generateData();*/
-      // END SIMULATED DATA
-
-      let data = evt.data;
-      this.system = new SystemProfiler(this.system_product, data);
-      this.selectedEnclosure = this.system.profile[0];
-      //console.log(this.system);
-      core.emit({name: 'PoolDataRequest', sender: this});
-      this.pixiInit();
-    });
-
-    core.register({observerClass: this, eventName: 'SysInfo'}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
-      //this.system_product = evt.data.system_product;
-      this.system_product = 'M50'; // Just for testing on my FreeNAS box
-      core.emit({name: 'DisksRequest', sender: this});
-    });
-
     core.emit({name: 'ThemeDataRequest', sender: this});
-    core.emit({name: 'SysInfoRequest', sender: this});
 
   }
 
@@ -125,7 +88,9 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
     this.setCurrentView(this.defaultView);
   }
 
-  ngAfterViewInit() {
+  ngAfterContentInit() {
+
+    this.pixiInit();
 
     // Listen for DOM changes to avoid race conditions with animations
     let callback = (mutationList, observer) => {
@@ -350,17 +315,6 @@ export class EnclosureDisksComponent implements AfterViewInit, OnChanges, OnDest
   }
 
   update(className:string){ // stage-left or stage-right or expanders
-    /*if(this.exitingView){ 
-      if(className == 'full-stage'){
-        this.exit('stage-left'); 
-        this.exit('stage-right'); 
-      } else if(this.exitingView == 'expanders'){
-        this.exit('full-stage'); 
-      } else {
-        this.exit(className);
-      }
-    }
-    */
  
     let sideStage = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className);
     let html = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className + ' .content')
