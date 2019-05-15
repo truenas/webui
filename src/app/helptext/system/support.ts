@@ -28,19 +28,19 @@ export const helptext_system_support = {
 
   name: {
     placeholder: T("Name"),
-    tooltip: T("Enter the name of the contact person DRAFT TOOLTIP"),
+    tooltip: T("Enter the name of the contact person."), //DRAFT TOOLTIP
     validation: [Validators.required]
   },
 
   email: {
     placeholder: T("Email"),
-    tooltip: T("Enter the email of the contact person DRAFT TOOLTIP"),
+    tooltip: T("Enter the email of the contact person."), //DRAFT TOOLTIP
     validation: [Validators.required, Validators.email]
   },
 
   phone: {
     placeholder: T("Phone"),
-    tooltip: T("Enter the phone number of the contact person DRAFT TOOLTIP"),
+    tooltip: T("Enter the phone number of the contact person."), //DRAFT TOOLTIP
     validation: [Validators.required]
   },
 
@@ -57,13 +57,13 @@ export const helptext_system_support = {
 
   environment: {
     placeholder: T("Environment"),
-    tooltip: T("Select the appropriate environment DRAFT TOOLTIP"),
+    tooltip: T("Select the appropriate environment."), //DRAFT TOOLTIP
     validation: [Validators.required]
   },
 
   criticality: {
     placeholder: T("Criticality"),
-    tooltip: T("Select the appropriate level of criticality DRAFT TOOLTIP"),
+    tooltip: T("Select the appropriate level of criticality."), //DRAFT TOOLTIP
     validation: [Validators.required]
   },
 

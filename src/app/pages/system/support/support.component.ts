@@ -287,14 +287,12 @@ export class SupportComponent {
         },
         {
           type : 'select',
-          name : 'FNCategory',
+          name : 'category',
           placeholder : helptext.category.placeholder,
           tooltip : helptext.category.tooltip,
           required: true,
           validation : helptext.category.validation,
-          options:[
-            {label: 'Temp Option', value: 'temp_option'}
-          ]
+          options:[]
         },
         {
           type : 'checkbox',
@@ -345,7 +343,7 @@ export class SupportComponent {
     'support_text',
     'username',
     'password',
-    'FNCategory',
+    'category',
     'type'
   ];
 
@@ -492,7 +490,7 @@ export class SupportComponent {
     if (this.is_freenas === 'true') {
       this.payload['username'] = entityEdit.username;
       this.payload['password'] = entityEdit.password;
-      this.payload['category'] = entityEdit.FNCategory;
+      this.payload['category'] = entityEdit.category;
       this.payload['attach_debug'] = entityEdit.attach_debug;
       this.payload['title'] = entityEdit.title;
       this.payload['body'] = entityEdit.body;
@@ -516,24 +514,30 @@ export class SupportComponent {
     dialogRef.componentInstance.setCall('support.new_ticket', [this.payload]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.subscribe(res=>{
-      // const url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
-      // dialogRef.componentInstance.setDescription(url);
-      if (this.subs.length > 0) {
-        this.subs.forEach((item) => {
-          const formData: FormData = new FormData();
-          formData.append('data', JSON.stringify({
-            "method": "support.attach_ticket",
-            "params": [{'ticket': (res.result.ticket).toString(), 'filename': item.file.name}]
-          }));
-          formData.append('file', item.file);
-          dialogRef.componentInstance.wspost(item.apiEndPoint, formData);
-          dialogRef.componentInstance.success.subscribe(res=>{
-            // console.info(res);
-          }),
-          dialogRef.componentInstance.failure.subscribe((res) => {
-            dialogRef.componentInstance.setDescription(res.error);
+      const url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
+      if (this.is_freenas === 'true') {
+        dialogRef.componentInstance.setDescription(url);
+      } else {
+        if (this.subs.length > 0) {
+          this.subs.forEach((item) => {
+            const formData: FormData = new FormData();
+            formData.append('data', JSON.stringify({
+              "method": "support.attach_ticket",
+              "params": [{'ticket': (res.result.ticket).toString(), 'filename': item.file.name}]
+            }));
+            formData.append('file', item.file);
+            dialogRef.componentInstance.wspost(item.apiEndPoint, formData);
+            dialogRef.componentInstance.success.subscribe(res=>{
+              // console.info(res);
+            }),
+            dialogRef.componentInstance.failure.subscribe((res) => {
+              dialogRef.componentInstance.setDescription(res.error);
+            });
           });
-        });
+          dialogRef.componentInstance.setDescription(url);
+        } else {
+          dialogRef.componentInstance.setDescription(url);
+        }
       }
     }),
     dialogRef.componentInstance.failure.subscribe((res) => {
