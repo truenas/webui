@@ -208,11 +208,14 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         break;
         case "DriveSelected":
           let dtSlot = parseInt(evt.data.id ) + 1
-          
+          if(this.identifyBtnRef){
+            this.toggleSlotStatus(true);
+            this.radiate(true);
+          }
+
           let disk = this.findDiskBySlotNumber(dtSlot);
           if(disk == this.selectedDisk){break} // Don't trigger any changes if the same disk is selected
           if(this.enclosure.driveTrayObjects[evt.data.id].enabled){
-            this.toggleSlotStatus(true);
             this.selectedDisk = disk;
             this.setCurrentView('details');
           }
@@ -499,7 +502,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     console.log(args);
     // Arguments are Str("enclosure_id"), Int("slot"), Str("status", enum=["CLEAR", "FAULT", "IDENTIFY"])
     this.core.emit({name: 'SetEnclosureSlotStatus',data: args, sender: this}); 
-    if(status == "IDENTIFY"){ this.radiate(); }
+    
+    this.radiate();
   }
   
   radiate(kill?:boolean){ 
