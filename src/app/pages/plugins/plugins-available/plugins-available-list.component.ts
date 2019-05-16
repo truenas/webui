@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { T } from '../../../translate-marker';
 import { EntityUtils } from '../../common/entity/utils';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-plugins-available-list',
@@ -66,12 +67,13 @@ export class PluginsAvailabelListComponent {
     });
     this.jailService.getBranches().subscribe(
       (res) => {
-        for (const i in res) {
-          const branchIndexObj = {name: i, branches: []};
-          for (let j = 0; j < res[i].length; j++) {
-            branchIndexObj.branches.push({label: res[i][j], value: res[i][j]});
+        for (let i = 0; i < res.length; i++) {
+          const branchIndexObj = _.find(this.availableBranches, {name: res[i].repo});
+          if (branchIndexObj == undefined) {
+            this.availableBranches.push({name: res[i].repo, branches: [{label: res[i].name, value: res[i].name}]})
+          } else {
+            branchIndexObj.branches.push({label: res[i].name, value: res[i].name});
           }
-          this.availableBranches.push(branchIndexObj);
         }
       }
     )
