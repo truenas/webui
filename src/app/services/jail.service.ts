@@ -93,4 +93,8 @@ export class JailService {
   getBranches() {
     return this.ws.call('jail.list_resource', ["BRANCHES"]);
   }
+
+  getVersion() {
+    return this.ws.call('jail.get_version');
+  }
 }

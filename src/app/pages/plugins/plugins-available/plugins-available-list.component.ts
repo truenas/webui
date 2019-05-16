@@ -75,6 +75,11 @@ export class PluginsAvailabelListComponent {
         }
       }
     )
+    this.jailService.getVersion().subscribe(
+      (res) => {
+        this.selectedBranch = res;
+      }
+    )
   }
 
   afterInit(entityList: any) {
