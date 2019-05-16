@@ -20,6 +20,7 @@ import {ServiceTFTPComponent} from './components/service-tftp/';
 import {ServiceUPSComponent} from './components/service-ups/';
 import {ServiceWebdavComponent} from './components/service-webdav/';
 import {Services} from './services.component';
+import { ServiceAsigraComponent } from './components/service-asigra';
 
 export const routes: Routes = [
   {
@@ -36,6 +37,11 @@ export const routes: Routes = [
     data: { title: 'AFP', breadcrumb: 'AFP'},
     path : 'afp',
     component : ServiceAFPComponent,
+  },
+  {
+    data: { title: 'Asigra', breadcrumb: 'Asigra'},
+    path : 'asigra',
+    component : ServiceAsigraComponent,
   },
   {
     data: { title: 'FTP', breadcrumb: 'FTP'},

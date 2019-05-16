@@ -35,6 +35,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   public manufacturer:string = '';
   public buildDate:string;
   public loader:boolean = false;
+  public is_freenas: string = window.localStorage['is_freenas'];
+  public systemLogo: any;
+  public isFN: boolean;
 
   constructor(public router: Router, public translate: TranslateService){
     super(translate);
@@ -63,6 +66,13 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
       } else {
         this.manufacturer = "other";
       }
+      if (this.is_freenas === 'true') {
+        this.systemLogo = 'logo.svg';
+        this.isFN = true;
+      } else {
+        this.systemLogo = 'TrueNAS_Logomark_Black.svg';
+        this.isFN = false;
+      }    
 
       // Hardware detection
       switch(evt.data.system_product){
@@ -75,7 +85,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
           //this.cardBg = 'logo.svg';
         break;
         default:
-          this.cardBg = 'logo.svg';
+          this.cardBg = this.systemLogo;
         break;
       }
     });

@@ -92,9 +92,19 @@ export class SshConnectionsFormComponent {
             }],
         }, {
             type: 'input',
-            name: 'token',
-            placeholder: helptext.token_placeholder,
-            tooltip: helptext.token_tooltip,
+            name: 'username',
+            placeholder: helptext.username_placeholder,
+            tooltip: helptext.username_tooltip,
+            value: 'root',
+            required: true,
+            validation: [Validators.required],
+        },  {
+            type: 'input',
+            inputType: 'password',
+            name: 'password',
+            placeholder: helptext.password_placeholder,
+            tooltip: helptext.password_tooltip,
+            togglePw: true,
             required: true,
             validation: [Validators.required],
             relation: [{
@@ -104,14 +114,6 @@ export class SshConnectionsFormComponent {
                     value: 'semiautomatic',
                 }]
             }],
-        }, {
-            type: 'input',
-            name: 'username',
-            placeholder: helptext.username_placeholder,
-            tooltip: helptext.username_tooltip,
-            value: 'root',
-            required: true,
-            validation: [Validators.required],
         }, {
             type: 'select',
             name: 'private_key',
@@ -237,7 +239,7 @@ export class SshConnectionsFormComponent {
         this.entityForm = entityForm;
         if (this.entityForm.isNew) {
             this.entityForm.formGroup.controls['setup_method'].valueChanges.subscribe((res) => {
-                this.addCall = res === 'semiautomatic' ? 'keychaincredential.remote_ssh_semiautomatic_setup' : 'keychaincredential.create';
+                this.addCall = res === 'semiautomatic' ? this.semiautomaticAddCall : this.addCall;
             });
         }
     }

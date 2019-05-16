@@ -18,6 +18,7 @@ import { LanguageService } from "../../../services/language.service"
 import { TranslateService } from '@ngx-translate/core';
 import { EntityUtils } from '../../../pages/common/entity/utils';
 import { T } from '../../../translate-marker';
+import helptext from '../../../helptext/topbar';
 
 import network_interfaces_helptext from '../../../helptext/network/interfaces/interfaces-list';
 
@@ -50,6 +51,12 @@ export class TopbarComponent implements OnInit, OnDestroy {
   isTaskMangerOpened = false;
   taskDialogRef: MatDialogRef<TaskManagerComponent>;
 
+  ha_status_text: string;
+  ha_disabled_reasons = [];
+  ha_pending = false;
+  is_ha = false;
+  sysName: string = 'FreeNAS';
+
   constructor(
     public themeService: ThemeService,
     public core: CoreService,
@@ -67,6 +74,13 @@ export class TopbarComponent implements OnInit, OnDestroy {
     protected loader: AppLoaderService, ) {}
 
   ngOnInit() {
+    if (window.localStorage.getItem('is_freenas') === 'false') {
+      this.ws.call('failover.licensed').subscribe((is_ha) => {
+        this.is_ha = is_ha;
+        this.getHAStatus();
+      });
+      this.sysName = 'TrueNAS';
+    }
     let theme = this.themeService.currentTheme();
     this.currentTheme = theme.name;
     this.core.register({observerClass:this,eventName:"ThemeListsChanged"}).subscribe((evt:CoreEvent) => {
@@ -91,6 +105,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
     this.continuosStreaming = observableInterval(10000).subscribe(x => {
       this.showReplicationStatus();
+      if (this.is_ha) {
+        this.getHAStatus();
+      }
       this.checkNetworkCheckinWaiting();
       this.checkNetworkChangesPending();
     });
@@ -291,5 +308,40 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.isTaskMangerOpened = false;
       }
     );
+  }
+
+  getHAStatus() {
+    this.ws.call('failover.disabled_reasons').subscribe(res => {
+      this.ha_disabled_reasons = res;
+      if (res.length > 0) {
+        this.ha_status_text = helptext.ha_status_text_disabled;
+      } else {
+        this.ha_status_text = helptext.ha_status_text_enabled;
+      }
+    });
+  }
+
+  showHAStatus() {
+    let reasons = '<ul>\n';
+    let ha_icon = "info";
+    let ha_status = "";
+    if (this.ha_disabled_reasons.length > 0) {
+      ha_status = helptext.ha_status_text_disabled;
+      ha_icon = "warning";
+      for (let i = 0; i < this.ha_disabled_reasons.length; i++) {
+        const reason_text = helptext.ha_disabled_reasons[this.ha_disabled_reasons[i]];
+        this.translate.get(reason_text).subscribe(reason => {
+          reasons = reasons + '<li>' + reason_text + '</li>\n';
+        });
+      } 
+    } else {
+      ha_status = helptext.ha_status_text_enabled;
+      this.translate.get(helptext.ha_is_enabled).subscribe(ha_is_enabled => {
+        reasons = reasons + '<li>' + ha_is_enabled + '</li>\n';
+      });
+    }
+    reasons = reasons + '</ul>';
+
+    this.dialogService.Info(ha_status, reasons, '500px', ha_icon, true);
   }
 }

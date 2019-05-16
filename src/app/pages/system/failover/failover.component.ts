@@ -3,11 +3,13 @@ import * as _ from 'lodash';
 import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
 import { DialogService } from "../../../services/dialog.service";
 import { MatDialog } from '@angular/material';
+import { Router } from '@angular/router';
 import { EntityUtils } from '../../common/entity/utils';
 import { WebSocketService, SnackbarService } from '../../../services/';
 import { T } from '../../../translate-marker';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { helptext_system_failover } from 'app/helptext/system/failover';
+import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 
 
 @Component({
@@ -78,6 +80,43 @@ export class FailoverComponent implements OnDestroy {
           }
         });
       }
+    },
+    {
+      id: 'initiate_failover',
+      name: T('Initiate Failover'),
+      function: () => {
+            const self = this;
+            const conf: DialogFormConfiguration = { 
+            title: helptext_system_failover.dialog_initiate_failover_title,
+            fieldConfig: [{
+              type: 'paragraph',
+              name: 'failover_warning',
+              paraText: helptext_system_failover.dialog_initiate_failover_message,
+              isHidden: false
+            }, {
+              type: 'checkbox',
+              name: 'reboot',
+              value: false,
+              placeholder: helptext_system_failover.dialog_initiate_failover_checkbox,
+            }, {
+              type: 'checkbox',
+              name: 'confirm',
+              placeholder: T("Confirm"),
+              required: true
+            }],
+            saveButtonText: T('Failover'),
+            customSubmit: function (entityDialog) {
+              const value = entityDialog.formValue;
+              let route = '/others/failover';
+              if (value.reboot) {
+                route = '/others/reboot';
+              }
+              self.router.navigate([route]);
+            }
+            
+          }
+          this.dialog.dialogForm(conf);
+      }
     } 
   ];
 
@@ -115,7 +154,8 @@ export class FailoverComponent implements OnDestroy {
     private dialog: DialogService,
     private ws: WebSocketService,
     public snackBar: SnackbarService,
-    protected matDialog: MatDialog) {}
+    protected matDialog: MatDialog,
+    private router: Router) {}
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;

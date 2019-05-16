@@ -29,13 +29,25 @@
       <button *ngIf="showReplication" mat-icon-button id="replication" matTooltip="replication" (click)="showReplicationDetails()" class="topbar-button-right">
         <mat-icon class="movement">content_copy</mat-icon>
       </button>
+      <!-- HA Status -->
+      <span *ngIf="is_ha && ha_status_text">
+      <button *ngIf="ha_disabled_reasons.length === 0" mat-icon-button id="ha" [matTooltip]="ha_status_text" (click)="showHAStatus()">
+        <mat-icon svgIcon="ha_enabled"></mat-icon>
+      </button>
+      <button *ngIf="ha_disabled_reasons.length > 0" mat-icon-button id="ha" [matTooltip]="ha_status_text" (click)="showHAStatus()">
+        <mat-icon *ngIf="ha_disabled_reasons[0] === 'NO_SYSTEM_READY';else HADisabled" svgIcon="ha_reconnecting"></mat-icon>
+        <ng-template #HADisabled>
+          <mat-icon svgIcon="ha_disabled"></mat-icon>
+        </ng-template>
+      </button>
+      </span>
       <!-- Task Manager -->
       <button mat-icon-button id="task-manager" matTooltip="Task Manager" (click)="onShowTaskManager()" >
         <mat-icon>assignment</mat-icon>
       </button>
       <!-- Theme Switcher -->
       <!-- Theme Switcher -->
-      <button mat-icon-button id="schemeToggle" [style.overflow]="'visible'" matTooltip="FreeNAS Themes" [matMenuTriggerFor]="themeMenu" class="topbar-button-right">
+      <button mat-icon-button id="schemeToggle" [style.overflow]="'visible'" matTooltip="{{sysName}} Themes" [matMenuTriggerFor]="themeMenu" class="topbar-button-right">
         <mat-icon>format_color_fill</mat-icon>
       </button>
 
