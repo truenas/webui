@@ -210,19 +210,20 @@ export class TopbarComponent implements OnInit, OnDestroy {
   checkNetworkChangesPending() {
     this.ws.call('interface.has_pending_changes').subscribe(res => {
       this.pendingNetworkChanges = res;
-      if (res && !this.user_check_in_prompted) {
-        this.user_check_in_prompted = true;
-        this.showNetworkCheckinWaiting();
-      }
-      if (!res) {
-        this.user_check_in_prompted = false;
-      }
     });
   }
   
   checkNetworkCheckinWaiting() {
     this.ws.call('interface.checkin_waiting').subscribe(res => {
-      this.waitingNetworkCheckin = res;
+      if (res != null) {
+        this.waitingNetworkCheckin = true;
+        if (!this.user_check_in_prompted) {
+          this.user_check_in_prompted = true;
+          this.showNetworkCheckinWaiting();
+        }
+      } else {
+        this.waitingNetworkCheckin = false;
+      }
     });
   }
 
@@ -239,7 +240,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
             this.dialogService.Info(
               network_interfaces_helptext.checkin_complete_title,
               network_interfaces_helptext.checkin_complete_message);
-            this.waitingNetworkCheckin = false;
+            this.waitingNetworkCheckin = false; 
           }, (err) => {
             this.loader.close();
             new EntityUtils().handleWSError(null, err, this.dialogService);
