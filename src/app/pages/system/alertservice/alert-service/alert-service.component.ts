@@ -256,7 +256,7 @@ export class AlertServiceComponent implements OnInit {
       type : 'input',
       name : 'api_url',
       placeholder: 'API URL',
-      tooltip: '',
+      tooltip: 'Leave empty for default (<a href="https://api.opsgenie.com" target="_blank">OpsGenie API</a>)',
     }
   ];
   public pagerdutyFieldConfig: FieldConfig[] = [
