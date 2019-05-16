@@ -52,6 +52,7 @@ export class UpdateComponent implements OnInit {
   public isHA: boolean;
   public ds: any;
   public failover_upgrade_pending = false;
+  public user_notified_of_pending_upgrade = false;
 
   public busy: Subscription;
   public busy2: Subscription;
@@ -263,6 +264,9 @@ export class UpdateComponent implements OnInit {
   checkUpgradePending() {
     this.ws.call('failover.upgrade_pending').subscribe((res) => {
       this.failover_upgrade_pending = res;
+      if (!this.failover_upgrade_pending && !this.user_notified_of_pending_upgrade) {
+        this.applyFailoverUpgrade();
+      }
     })
   }
 
@@ -273,18 +277,31 @@ export class UpdateComponent implements OnInit {
     })
   }
 
-  ApplyFailoverUpgrade() {
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
-    this.dialogRef.componentInstance.setCall('failover.upgrade_finish');
-    this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe((succ) => {
-      this.failover_upgrade_pending = false;
-      this.dialogRef.close(false);
-    });
-    this.dialogRef.componentInstance.failure.subscribe((failure) => {
-      this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
-    });
+  applyFailoverUpgrade() {
+    this.user_notified_of_pending_upgrade = true;
+    this.resetUserUpgradeStatus();
+    this.dialogService.confirm(T("Finish Upgrade?"), T(""), true, T("Continue")).subscribe((res) => {
+      if (res) {
+        this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
+        // this.dialogRef.componentInstance.setCall('failover.upgrade_finish');
+        // this.dialogRef.componentInstance.submit();
+        // this.dialogRef.componentInstance.success.subscribe((succ) => {
+        //   this.failover_upgrade_pending = false;
+        //   this.dialogRef.close(false);
+        // });
+        // this.dialogRef.componentInstance.failure.subscribe((failure) => {
+        //   this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
+        // });
+      }
+    })
   }
+
+    // Allows the dialog to come back ten minutes later if dismissed
+    resetUserUpgradeStatus() {
+      setTimeout(() => {
+        this.user_notified_of_pending_upgrade = false;
+      }, 600000)
+    }
 
   onTrainChanged(event) {
     // For the case when the user switches away, then BACK to the train of the current OS

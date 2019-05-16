@@ -19,6 +19,10 @@
       </form>
       </div -->
       <span fxFlex></span>
+      <!-- finish update -->
+      <button *ngIf="upgradeWaitingToFinish" mat-icon-button id="finish-update" matTooltip="Update waiting to finish" (click)="showUpgradePending()" class="topbar-button-right">
+        <mat-icon class="movement">update</mat-icon>
+      </button>
       <!--loading icon-->
       <button *ngIf="pendingNetworkChanges" mat-icon-button id="network" matTooltip="Pending Network Changes" (click)="showNetworkChangesPending()" class="topbar-button-right">
         <mat-icon class="movement">device_hub</mat-icon>

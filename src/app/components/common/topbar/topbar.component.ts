@@ -12,11 +12,10 @@ import { AboutModalDialog } from '../dialog/about/about-dialog.component';
 import { TaskManagerComponent } from '../dialog/task-manager/task-manager.component';
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
 import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
-import * as hopscotch from 'hopscotch';
+import { EntityJobComponent } from '../../../pages/common/entity/entity-job/entity-job.component';
 import { RestService } from "../../../services/rest.service";
 import { LanguageService } from "../../../services/language.service"
 import { TranslateService } from '@ngx-translate/core';
-import { EntityJobComponent } from '../../../pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../../pages/common/entity/utils';
 import { T } from '../../../translate-marker';
 import helptext from '../../../helptext/topbar';
@@ -46,6 +45,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
   waitingNetworkCheckin = false;
   replicationDetails;
   resilveringDetails;
+  upgradeWaitingToFinish = false;
+  // user_notified_of_pending_upgrade = false;
   themesMenu: Theme[] = this.themeService.themesMenu;
   currentTheme:string = "ix-blue";
   public createThemeLabel = "Create Theme";
@@ -58,7 +59,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   is_ha = false;
   sysName: string = 'FreeNAS';
 
-  private user_pending_upgrade_prompted = false;
   protected dialogRef: any;
 
   constructor(
@@ -354,29 +354,25 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   checkUpgradePending() {
     this.ws.call('failover.upgrade_pending').subscribe((res) => {
-      console.log(res, this.user_pending_upgrade_prompted)
-      if (res && !this.user_pending_upgrade_prompted) {
-        this.user_pending_upgrade_prompted = true;
-        this.showUpgradePending();
-      }
+      this.upgradeWaitingToFinish = res;
     })
   }
 
   showUpgradePending() {
+    // this.user_notified_of_pending_upgrade = true;
     this.dialogService.confirm(
       T("Pending Upgrade"),
       T("There is an upgrade waiting."),
       true, T('Continue')).subscribe(res => {
         if (res) {
-          console.log('do the upgrade')
-          this.user_pending_upgrade_prompted = false;
+          // this.user_notified_of_pending_upgrade = false;
+          this.upgradeWaitingToFinish = false;
           this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
           this.dialogRef.componentInstance.setCall('failover.upgrade_finish');
           this.dialogRef.componentInstance.submit();
           this.dialogRef.componentInstance.success.subscribe((succ) => {
             this.dialogRef.close(false);
             console.log('success');
-
           });
           this.dialogRef.componentInstance.failure.subscribe((failure) => {
             this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
@@ -384,12 +380,4 @@ export class TopbarComponent implements OnInit, OnDestroy {
         }
     });
   }
-
-  // Allows the dialog to come back ten minutes later if dismissed - temp solution
-  resetUserUpgradeStatus() {
-    setTimeout(() => {
-      this.user_pending_upgrade_prompted = false;
-    }, 600000)
-  }
-  
 }
