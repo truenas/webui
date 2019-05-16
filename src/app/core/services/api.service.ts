@@ -95,6 +95,15 @@ export class ApiService {
         responseEvent: "EnclosureData"
       }
     },
+    SetEnclosureSlotStatus:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        args: [],
+        namespace: "enclosure.set_slot_status",
+        responseEvent: "EnclosureSlotStatusChanged"
+      }
+    },
     PoolDataRequest:{
       apiCall:{
         protocol:"websocket",

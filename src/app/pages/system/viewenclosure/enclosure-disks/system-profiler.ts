@@ -3,6 +3,7 @@ interface Enclosure {
   disks?: any[];
   diskKeys?: any;
   poolKeys?: any;
+  enclosureKey?: number;
 }
 
 interface VDev {
@@ -20,7 +21,16 @@ export class SystemProfiler {
   public profile: Enclosure[] = [];
 
   private diskData: any[];
-  public enclosures: any;
+
+  private _enclosures: any;
+  get enclosures(){
+    return this._enclosures;
+  }
+  set enclosures(obj){
+    this._enclosures = obj;
+    this.parseEnclosures(this._enclosures);
+  }
+
   private _pools: any;
   get pools(){
     return this._pools;
@@ -84,6 +94,13 @@ export class SystemProfiler {
     };*/
     this.diskData = data;
     return data;
+  }
+  
+  private parseEnclosures(obj){
+    // Provide a shortcut to the enclosures object
+    this.profile.forEach((profileItem, index) => {
+      profileItem.enclosureKey = index;
+    });
   }
   
   private parsePoolsData(obj){

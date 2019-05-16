@@ -149,7 +149,7 @@
             <disk-ui [data]="selectedDisk"></disk-ui><!-- disk icon + labels -->
             <div class="capacity">{{converter(selectedDisk.size)}}</div>
             <div class="disk-actions">
-              <button mat-button color="primary" (click)="alert('Triggering fault on disk...')">Identify Drive</button>
+              <button id="identify-btn" mat-button color="primary" (click)="toggleSlotStatus()">Identify Drive</button>
             </div>
           </div>
   
@@ -162,7 +162,7 @@
               <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
                 <div>
                   <div class="label">Pool</div>
-                  <div class="value">{{selectedDisk.vdev ? selectedDisk.vdev.pool : 'No pools on enclosure'}}</div>
+                  <div class="value">{{selectedDisk.vdev ? selectedDisk.vdev.pool : 'Disk not attached to any pools.'}}</div>
                 </div>
               </div>
 

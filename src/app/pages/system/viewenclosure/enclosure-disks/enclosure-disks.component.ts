@@ -9,7 +9,7 @@ import { DriveTray } from 'app/core/classes/hardware/drivetray';
 import { M50 } from 'app/core/classes/hardware/m50';
 import { DiskComponent } from './disk.component';
 import { SystemProfiler } from './system-profiler';
-import { tween, easing, styler } from 'popmotion';
+import { tween, easing, styler, value, keyframes } from 'popmotion';
 import { ExampleData } from './example-data';
 
 @Component({
@@ -21,7 +21,7 @@ import { ExampleData } from './example-data';
 export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnDestroy {
 
   @ViewChild('disksoverview') overview: ElementRef;
-  @ViewChild('disksdetails') details: ElementRef;
+  @ViewChild('diskdetails') details: ElementRef;
   @ViewChild('domLabels') domLabels: ElementRef;
   @Input('system-profiler') system: SystemProfiler;
   @Input('selected-enclosure') selectedEnclosure: any;
@@ -65,10 +65,15 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   public exitingView: string; // pools || status || expanders || details
   private defaultView = 'pools';
   private labels: VDevLabelsSVG;
+  private identifyBtnRef: any;
   
  
 
   constructor(public el:ElementRef, private core: CoreService /*, private ngZone: NgZone*/) { 
+
+    core.register({observerClass: this, eventName: 'EnclosureSlotStatusChanged'}).subscribe((evt:CoreEvent) => {
+      console.log(evt);
+    });
 
     core.register({observerClass: this, eventName: 'ThemeData'}).subscribe((evt:CoreEvent) => {
       this.theme = evt.data;
@@ -207,6 +212,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
           let disk = this.findDiskBySlotNumber(dtSlot);
           if(disk == this.selectedDisk){break} // Don't trigger any changes if the same disk is selected
           if(this.enclosure.driveTrayObjects[evt.data.id].enabled){
+            this.radiate(true);
             this.selectedDisk = disk;
             this.setCurrentView('details');
           }
@@ -483,6 +489,78 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       }
     }
 
+  }
+
+  toggleSlotStatus(){
+    let enclosure_id = this.system.enclosures[this.selectedEnclosure.enclosureKey].id;
+    let slot = this.selectedDisk.enclosure.slot;
+    let status = "IDENTIFY";
+    let args = [enclosure_id, slot, status];
+    console.log(args);
+    // Arguments are Str("enclosure_id"), Int("slot"), Str("status", enum=["CLEAR", "FAULT", "IDENTIFY"])
+    //this.core.emit({name: 'SetEnclosureSlotStatus',data:[], sender: this}); 
+    this.radiate();
+    }
+  
+  radiate(kill?:boolean){ 
+    // Animation
+    if(this.identifyBtnRef){
+
+      // kill the animation
+      this.identifyBtnRef.animation.seek(0);
+      this.identifyBtnRef.animation.stop(this.identifyBtnRef.styler);
+      this.identifyBtnRef = null;
+      return ;
+
+    } else if(!this.identifyBtnRef && !kill) {
+
+      let btn = styler(this.details.nativeElement.querySelector('#identify-btn'));
+      let startShadow = btn.get('box-shadow');
+
+      const elementBorder = value({borderColor: '', borderWidth: 0 }, ({ borderColor, borderWidth }) => btn.set({
+        boxShadow: `0 0 0 ${borderWidth}px ${borderColor}` 
+        //border: `solid ${borderWidth} ${borderColor}px`
+      }));
+
+      // Convert color to rgb value
+      let cc = this.hexToRGB(this.theme.cyan);
+      console.log(cc);
+      const animation = keyframes({
+        values: [
+          { borderWidth: 0, borderColor: 'rgb(' + cc.rgb[0] +', ' + cc.rgb[1] +', ' + cc.rgb[2] +')' },
+          { borderWidth: 30, borderColor: 'rgb(' + cc.rgb[0] +', ' + cc.rgb[1] + ', ' + cc.rgb[2] + ', 0)' } 
+        ],
+        duration:1000,
+        loop: Infinity
+      }).start(elementBorder);
+
+      this.identifyBtnRef = { animation: animation, originalState: startShadow, styler: elementBorder};
+
+    }
+  }
+
+  hexToRGB(str) {
+    var spl = str.split('#');
+    var hex = spl[1];
+    if(hex.length == 3){
+      hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+    }
+
+    var value = '';
+    var rgb = [];
+    for(let i = 0; i < 6; i++){
+      let mod = i % 2;
+      let even = 0;
+      value += hex[i];
+      if(mod !== even){
+        rgb.push(parseInt(value, 16))
+        value = '';
+      }
+    }
+    return {
+      hex:hex,
+      rgb:rgb
+    }
   }
 
 }
