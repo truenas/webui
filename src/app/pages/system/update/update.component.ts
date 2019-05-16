@@ -250,9 +250,9 @@ export class UpdateComponent implements OnInit {
 
     if (window.localStorage.getItem('is_freenas') === 'false') {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
-        this.updateMethod = 'failover.upgrade';
-        this.isHA = is_ha;
-        if (this.isHA) {
+        if (is_ha) {
+          this.updateMethod = 'failover.upgrade';
+          this.isHA = true;
           this.checkUpgradePending();
           this.keepChecking();
         }
@@ -263,7 +263,6 @@ export class UpdateComponent implements OnInit {
   checkUpgradePending() {
     this.ws.call('failover.upgrade_pending').subscribe((res) => {
       this.failover_upgrade_pending = res;
-      console.log(this.failover_upgrade_pending);
     })
   }
 
@@ -275,15 +274,12 @@ export class UpdateComponent implements OnInit {
   }
 
   ApplyFailoverUpgrade() {
-    console.log('apply fo upgrade')
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
     this.dialogRef.componentInstance.setCall('failover.upgrade_finish');
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((succ) => {
       this.failover_upgrade_pending = false;
       this.dialogRef.close(false);
-      console.log('success');
-
     });
     this.dialogRef.componentInstance.failure.subscribe((failure) => {
       this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);

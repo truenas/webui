@@ -24,6 +24,8 @@ export class ManualUpdateComponent {
   protected dialogRef: any;
   public fileLocation: any;
   public subs: any;
+  public updateMethod = 'update.file';
+  public isHA = false;
   // public custActions: Array<any> = [
   //   {
   //     id : 'save_config',
@@ -99,6 +101,15 @@ export class ManualUpdateComponent {
   ) {}
 
   preInit(entityForm: any) {
+    if (window.localStorage.getItem('is_freenas') === 'false') {
+      this.ws.call('failover.licensed').subscribe((is_ha) => {
+        if (is_ha) {
+          this.isHA = true;
+          this.updateMethod = 'failover.upgrade';
+        }
+      })
+    }
+
     this.ws.call('pool.query').subscribe((pools)=>{
       if(pools){
         pools.forEach(pool => {
@@ -138,6 +149,8 @@ export class ManualUpdateComponent {
     });
     entityForm.submitFunction = this.customSubmit;
   }
+
+
   customSubmit(entityForm: any) {
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
       this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Manual Update" }, disableClose: true });
@@ -167,7 +180,6 @@ export class ManualUpdateComponent {
         this.dialogRef.close(false);
         this.dialogService.errorReport(failure.error,failure.state,failure.exception)
       })
-
     })
 
 
@@ -179,7 +191,7 @@ updater(file: any, parent: any){
     parent.save_button_enabled = true;
     const formData: FormData = new FormData();
     formData.append('data', JSON.stringify({
-      "method": "update.file",
+      "method": parent.updateMethod,
       "params": [{"destination":this.fileLocation}]
     }));
     formData.append('file', fileBrowser.files[0]);
