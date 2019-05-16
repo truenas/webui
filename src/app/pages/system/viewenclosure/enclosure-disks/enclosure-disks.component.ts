@@ -212,7 +212,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
           let disk = this.findDiskBySlotNumber(dtSlot);
           if(disk == this.selectedDisk){break} // Don't trigger any changes if the same disk is selected
           if(this.enclosure.driveTrayObjects[evt.data.id].enabled){
-            this.radiate(true);
+            this.toggleSlotStatus(true);
             this.selectedDisk = disk;
             this.setCurrentView('details');
           }
@@ -491,16 +491,16 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   }
 
-  toggleSlotStatus(){
+  toggleSlotStatus(kill?: boolean){
     let enclosure_id = this.system.enclosures[this.selectedEnclosure.enclosureKey].id;
     let slot = this.selectedDisk.enclosure.slot;
-    let status = "IDENTIFY";
+    let status = !this.identifyBtnRef && !kill ? "IDENTIFY" : "CLEAR";
     let args = [enclosure_id, slot, status];
     console.log(args);
     // Arguments are Str("enclosure_id"), Int("slot"), Str("status", enum=["CLEAR", "FAULT", "IDENTIFY"])
-    //this.core.emit({name: 'SetEnclosureSlotStatus',data:[], sender: this}); 
-    this.radiate();
-    }
+    this.core.emit({name: 'SetEnclosureSlotStatus',data: args, sender: this}); 
+    if(status == "IDENTIFY"){ this.radiate(); }
+  }
   
   radiate(kill?:boolean){ 
     // Animation
@@ -524,7 +524,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
       // Convert color to rgb value
       let cc = this.hexToRGB(this.theme.cyan);
-      console.log(cc);
       const animation = keyframes({
         values: [
           { borderWidth: 0, borderColor: 'rgb(' + cc.rgb[0] +', ' + cc.rgb[1] +', ' + cc.rgb[2] +')' },
