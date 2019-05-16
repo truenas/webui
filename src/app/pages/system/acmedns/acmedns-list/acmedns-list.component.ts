@@ -33,7 +33,7 @@ export class AcmednsListComponent implements OnInit {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: 'Name',
+      title: 'ACME DNS Authenticator',
       key_props: ['name'],
     },
   }
