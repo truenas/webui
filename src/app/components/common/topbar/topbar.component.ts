@@ -16,6 +16,7 @@ import * as hopscotch from 'hopscotch';
 import { RestService } from "../../../services/rest.service";
 import { LanguageService } from "../../../services/language.service"
 import { TranslateService } from '@ngx-translate/core';
+import { EntityJobComponent } from '../../../pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../../pages/common/entity/utils';
 import { T } from '../../../translate-marker';
 import helptext from '../../../helptext/topbar';
@@ -56,6 +57,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
   ha_pending = false;
   is_ha = false;
   sysName: string = 'FreeNAS';
+
+  private user_pending_upgrade_prompted = false;
+  protected dialogRef: any;
 
   constructor(
     public themeService: ThemeService,
@@ -103,10 +107,13 @@ export class TopbarComponent implements OnInit, OnDestroy {
       });
     });
 
+    this.checkUpgradePending();
+
     this.continuosStreaming = observableInterval(10000).subscribe(x => {
       this.showReplicationStatus();
       if (this.is_ha) {
         this.getHAStatus();
+        this.checkUpgradePending();
       }
       this.checkNetworkCheckinWaiting();
       this.checkNetworkChangesPending();
@@ -344,4 +351,45 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
     this.dialogService.Info(ha_status, reasons, '500px', ha_icon, true);
   }
+
+  checkUpgradePending() {
+    this.ws.call('failover.upgrade_pending').subscribe((res) => {
+      console.log(res, this.user_pending_upgrade_prompted)
+      if (res && !this.user_pending_upgrade_prompted) {
+        this.user_pending_upgrade_prompted = true;
+        this.showUpgradePending();
+      }
+    })
+  }
+
+  showUpgradePending() {
+    this.dialogService.confirm(
+      T("Pending Upgrade"),
+      T("There is an upgrade waiting."),
+      true, T('Continue')).subscribe(res => {
+        if (res) {
+          console.log('do the upgrade')
+          this.user_pending_upgrade_prompted = false;
+          this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
+          this.dialogRef.componentInstance.setCall('failover.upgrade_finish');
+          this.dialogRef.componentInstance.submit();
+          this.dialogRef.componentInstance.success.subscribe((succ) => {
+            this.dialogRef.close(false);
+            console.log('success');
+
+          });
+          this.dialogRef.componentInstance.failure.subscribe((failure) => {
+            this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
+          });
+        }
+    });
+  }
+
+  // Allows the dialog to come back ten minutes later if dismissed - temp solution
+  resetUserUpgradeStatus() {
+    setTimeout(() => {
+      this.user_pending_upgrade_prompted = false;
+    }, 600000)
+  }
+  
 }

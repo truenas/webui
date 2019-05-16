@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { interval as observableInterval, Subscription } from 'rxjs';
 import { RestService, WebSocketService } from '../../../services/';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { MatDialog, MatSnackBar } from '@angular/material';
@@ -51,9 +51,11 @@ export class UpdateComponent implements OnInit {
   public updateMethod: string = 'update.update';
   public isHA: boolean;
   public ds: any;
+  public failover_upgrade_pending = false;
 
   public busy: Subscription;
   public busy2: Subscription;
+  continuousStreaming: Subscription;
   public showSpinner: boolean = false;
   public singleDescription: string;
   public updatecheck_tooltip = T('Check the update server daily for \
@@ -250,8 +252,42 @@ export class UpdateComponent implements OnInit {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         this.updateMethod = 'failover.upgrade';
         this.isHA = is_ha;
+        if (this.isHA) {
+          this.checkUpgradePending();
+          this.keepChecking();
+        }
       })
     }
+  }
+
+  checkUpgradePending() {
+    this.ws.call('failover.upgrade_pending').subscribe((res) => {
+      this.failover_upgrade_pending = res;
+      console.log(this.failover_upgrade_pending);
+    })
+  }
+
+  // or use event emitter in topbar, listen here
+  keepChecking() {
+    this.continuousStreaming = observableInterval(10000).subscribe(x => {
+      this.checkUpgradePending();
+    })
+  }
+
+  ApplyFailoverUpgrade() {
+    console.log('apply fo upgrade')
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
+    this.dialogRef.componentInstance.setCall('failover.upgrade_finish');
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe((succ) => {
+      this.failover_upgrade_pending = false;
+      this.dialogRef.close(false);
+      console.log('success');
+
+    });
+    this.dialogRef.componentInstance.failure.subscribe((failure) => {
+      this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
+    });
   }
 
   onTrainChanged(event) {
