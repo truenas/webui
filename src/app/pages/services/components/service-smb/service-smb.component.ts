@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { MatDialog } from '@angular/material';
 
-import { IdmapService, IscsiService, RestService, WebSocketService, UserService, DialogService } from '../../../../services/';
+import { IdmapService, IscsiService, RestService, WebSocketService, UserService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../common/entity/utils';
@@ -12,7 +12,7 @@ import helptext from '../../../../helptext/services/components/service-smb';
 @Component({
   selector: 'smb-edit',
   template: ` <entity-form [conf]="this"></entity-form>`,
-  providers: [IscsiService, IdmapService, DialogService],
+  providers: [IscsiService, IdmapService],
 })
 
 export class ServiceSMBComponent {
@@ -176,9 +176,14 @@ export class ServiceSMBComponent {
     this.iscsiService.getIpChoices().subscribe((res) => {
       this.cifs_srv_bindip =
         _.find(this.fieldConfig, { 'name': 'cifs_srv_bindip' });
-      res.forEach((item) => {
-        this.cifs_srv_bindip.options.push({ label: item[0], value: item[0] });
-      })
+        for (let key in res) {
+          if (res.hasOwnProperty(key)) {
+              this.cifs_srv_bindip.options.push({ label: res[key], value: res[key] });
+          }
+      }
+      // res.forEach((item) => {
+      //   this.cifs_srv_bindip.options.push({ label: item[0], value: item[0] });
+      // })
     });
     this.ws.call('user.query').subscribe((res) => {
       this.cifs_srv_guest = _.find(this.fieldConfig, {'name':'cifs_srv_guest'});
@@ -202,7 +207,7 @@ export class ServiceSMBComponent {
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef,
-    protected iscsiService: IscsiService, protected dialogService: DialogService,
+    protected iscsiService: IscsiService,
     protected idmapService: IdmapService, protected userService: UserService,
     protected loader: AppLoaderService, protected dialog: MatDialog) {}
 
@@ -211,10 +216,12 @@ export class ServiceSMBComponent {
     this.rest.get('services/cifs', {}).subscribe((res) => {
       this.idmapID = res['id'];
       this.ws.call('idmap.get_or_create_idmap_by_domain', ['DS_TYPE_DEFAULT_DOMAIN']).subscribe((idmap_res) => {
-        this.defaultIdmap = idmap_res[0];
+        this.defaultIdmap = idmap_res[0]; // never used and undefined anyway
         this.idNumber = idmap_res.id;
         entityEdit.formGroup.controls['idmap_tdb_range_high'].setValue(idmap_res.range_high);
         entityEdit.formGroup.controls['idmap_tdb_range_low'].setValue(idmap_res.range_low);
+
+
       });
     });
   }
@@ -234,7 +241,6 @@ export class ServiceSMBComponent {
     this.error = null;
 
     let value = _.cloneDeep(entityEdit);
-    console.log(value)
     let new_range_low: any;
     let new_range_high: any;
 
@@ -246,16 +252,14 @@ export class ServiceSMBComponent {
         new_range_high = value[i];
       }
     }
+
+    // Puts validation errors on screen but doesn't stop form from submitting
+    //beforeSubmit doesn't block submit from happening even with an error
     this.ws.call('idmap.tdb.update', [this.idNumber, {range_low: new_range_low, range_high: new_range_high}])
-      .subscribe((res) => {
-        console.log(res);
-      },
+      .subscribe(() => {},
       (err)=>{
-        console.log('here')
-        new EntityUtils().handleWSError(this.entityEdit, err, this.dialogService.errorReport);
+        new EntityUtils().handleWSError(this.entityEdit, err);
       },
-      () => {
-        console.log('done');
-      })
+      () => {})
     }
   }
