@@ -72,7 +72,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   constructor(public el:ElementRef, private core: CoreService /*, private ngZone: NgZone*/) { 
 
     core.register({observerClass: this, eventName: 'EnclosureSlotStatusChanged'}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
+      //console.log(evt);
     });
 
     core.register({observerClass: this, eventName: 'ThemeData'}).subscribe((evt:CoreEvent) => {
@@ -504,7 +504,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     let slot = this.selectedDisk.enclosure.slot;
     let status = !this.identifyBtnRef && !kill ? "IDENTIFY" : "CLEAR";
     let args = [enclosure_id, slot, status];
-    console.log(args);
+
     // Arguments are Str("enclosure_id"), Int("slot"), Str("status", enum=["CLEAR", "FAULT", "IDENTIFY"])
     this.core.emit({name: 'SetEnclosureSlotStatus',data: args, sender: this}); 
     
