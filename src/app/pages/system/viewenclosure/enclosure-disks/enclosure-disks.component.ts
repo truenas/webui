@@ -289,6 +289,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       // Start exit animation
       this.labels.exit();
     }
+
+    if(this.exitingView && this.exitingView == 'details' && this.identifyBtnRef){
+      this.toggleSlotStatus(true);
+      this.radiate(true);
+    }
     
     switch(opt){
       case 'pools':
