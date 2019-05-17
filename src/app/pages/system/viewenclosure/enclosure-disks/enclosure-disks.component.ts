@@ -50,7 +50,16 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
   set selectedVdev(value) {
     this._selectedVdev = value;
-    this.selectedVdevDisks = value && value.disks ? Object.keys(this.selectedVdev.disks) : null;
+    let disks = value && value.disks ? Object.keys(this.selectedVdev.disks) : null;
+
+    // Sort the disks by slot number
+    if(disks && disks.length > 1) {
+      disks.sort((a,b) => {
+        return value.slots[a] - value.slots[b];
+      })
+    } 
+    this.selectedVdevDisks = disks;
+    
   }
 
   get enclosurePools(){
