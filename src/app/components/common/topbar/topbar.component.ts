@@ -46,7 +46,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   replicationDetails;
   resilveringDetails;
   upgradeWaitingToFinish = false;
-  // user_notified_of_pending_upgrade = false;
+  user_notified_of_pending_upgrade = false;
   themesMenu: Theme[] = this.themeService.themesMenu;
   currentTheme:string = "ix-blue";
   public createThemeLabel = "Create Theme";
@@ -82,6 +82,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         this.is_ha = is_ha;
         this.getHAStatus();
+        if (this.is_ha) {
+          this.checkUpgradePending();
+        }
       });
       this.sysName = 'TrueNAS';
     }
@@ -106,8 +109,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
         }
       });
     });
-
-    this.checkUpgradePending();
 
     this.continuosStreaming = observableInterval(10000).subscribe(x => {
       this.showReplicationStatus();
@@ -355,17 +356,20 @@ export class TopbarComponent implements OnInit, OnDestroy {
   checkUpgradePending() {
     this.ws.call('failover.upgrade_pending').subscribe((res) => {
       this.upgradeWaitingToFinish = res;
+      if (res && !this.user_notified_of_pending_upgrade) {
+        this.showUpgradePending();
+      }
     })
   }
 
   showUpgradePending() {
-    // this.user_notified_of_pending_upgrade = true;
+    this.user_notified_of_pending_upgrade = true;
     this.dialogService.confirm(
       T("Pending Upgrade"),
-      T("There is an upgrade waiting."),
+      T("There is an upgrade waiting to finish."),
       true, T('Continue')).subscribe(res => {
         if (res) {
-          // this.user_notified_of_pending_upgrade = false;
+          this.user_notified_of_pending_upgrade = false;
           this.upgradeWaitingToFinish = false;
           this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
           this.dialogRef.componentInstance.setCall('failover.upgrade_finish');

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { interval as observableInterval, Subscription } from 'rxjs';
 import { RestService, WebSocketService } from '../../../services/';
@@ -16,7 +16,7 @@ import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialo
   styleUrls: ['update.component.css'],
   templateUrl: './update.component.html',
 })
-export class UpdateComponent implements OnInit {
+export class UpdateComponent implements OnInit, OnDestroy {
 
   public packages: any[] = [];
   public status: string;
@@ -52,11 +52,10 @@ export class UpdateComponent implements OnInit {
   public isHA: boolean;
   public ds: any;
   public failover_upgrade_pending = false;
-  public user_notified_of_pending_upgrade = false;
 
   public busy: Subscription;
   public busy2: Subscription;
-  continuousStreaming: Subscription;
+  private checkChangesSubscription: Subscription;
   public showSpinner: boolean = false;
   public singleDescription: string;
   public updatecheck_tooltip = T('Check the update server daily for \
@@ -264,44 +263,31 @@ export class UpdateComponent implements OnInit {
   checkUpgradePending() {
     this.ws.call('failover.upgrade_pending').subscribe((res) => {
       this.failover_upgrade_pending = res;
-      if (!this.failover_upgrade_pending && !this.user_notified_of_pending_upgrade) {
-        this.applyFailoverUpgrade();
-      }
     })
   }
 
-  // or use event emitter in topbar, listen here
   keepChecking() {
-    this.continuousStreaming = observableInterval(10000).subscribe(x => {
+    this.checkChangesSubscription = observableInterval(10000).subscribe(x => {
       this.checkUpgradePending();
     })
   }
 
   applyFailoverUpgrade() {
-    this.user_notified_of_pending_upgrade = true;
-    this.resetUserUpgradeStatus();
     this.dialogService.confirm(T("Finish Upgrade?"), T(""), true, T("Continue")).subscribe((res) => {
       if (res) {
         this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
-        // this.dialogRef.componentInstance.setCall('failover.upgrade_finish');
-        // this.dialogRef.componentInstance.submit();
-        // this.dialogRef.componentInstance.success.subscribe((succ) => {
-        //   this.failover_upgrade_pending = false;
-        //   this.dialogRef.close(false);
-        // });
-        // this.dialogRef.componentInstance.failure.subscribe((failure) => {
-        //   this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
-        // });
+        this.dialogRef.componentInstance.setCall('failover.upgrade_finish');
+        this.dialogRef.componentInstance.submit();
+        this.dialogRef.componentInstance.success.subscribe((succ) => {
+          this.failover_upgrade_pending = false;
+          this.dialogRef.close(false);
+        });
+        this.dialogRef.componentInstance.failure.subscribe((failure) => {
+          this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
+        });
       }
     })
   }
-
-    // Allows the dialog to come back ten minutes later if dismissed
-    resetUserUpgradeStatus() {
-      setTimeout(() => {
-        this.user_notified_of_pending_upgrade = false;
-      }, 600000)
-    }
 
   onTrainChanged(event) {
     // For the case when the user switches away, then BACK to the train of the current OS
@@ -513,7 +499,7 @@ export class UpdateComponent implements OnInit {
     if (!this.isHA) {
       this.dialogRef.componentInstance.setCall(this.updateMethod, [{ train: this.train, reboot: false }]);
     } else {
-      this.ws.call('update.set_train', [this.train]).subscribe(() => { // ???
+      this.ws.call('update.set_train', [this.train]).subscribe(() => {
         this.dialogRef.componentInstance.setCall(this.updateMethod);
       })
     }
@@ -685,5 +671,9 @@ export class UpdateComponent implements OnInit {
           }
         );
     });
+  }
+
+  ngOnDestroy() {
+    this.checkChangesSubscription.unsubscribe();
   }
 }
