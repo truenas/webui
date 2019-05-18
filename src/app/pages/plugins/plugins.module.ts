@@ -13,7 +13,7 @@ import { PluginsAvailabelListComponent } from './plugins-available/plugins-avail
 import { PluginAddComponent } from './plugin-add/plugin-add.component';
 import { PluginsInstalledListComponent } from './plugins-installed/plugins-installed.component';
 import { PluginAdvancedAddComponent } from './plugin-advanced-add/plugin-advanced-add.component';
-
+import { PluginsComponent } from './plugins.component';
 @NgModule({
   imports : [
     EntityModule, CommonModule, FormsModule,
@@ -25,6 +25,7 @@ import { PluginAdvancedAddComponent } from './plugin-advanced-add/plugin-advance
   	PluginAddComponent,
     PluginsInstalledListComponent,
     PluginAdvancedAddComponent,
+    PluginsComponent,
   ]
 })
 export class PluginsModule {

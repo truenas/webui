@@ -6,6 +6,7 @@ import { PluginAddComponent } from './plugin-add/plugin-add.component';
 import { PluginsInstalledListComponent } from './plugins-installed/plugins-installed.component';
 import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 import { PluginAdvancedAddComponent } from './plugin-advanced-add/plugin-advanced-add.component';
+import { PluginsComponent } from './plugins.component';
 
 export const routes: Routes = [
   {
@@ -15,6 +16,10 @@ export const routes: Routes = [
     {
       path: '',
       component: EntityDashboardComponent,
+    }, {
+      path: 'list',
+      component: PluginsComponent,
+      data: { title: 'Plugins', breadcrumb: 'Plugins', icon: 'developer_board'}
     }, {
       path: 'available',
       component: PluginsAvailabelListComponent,
