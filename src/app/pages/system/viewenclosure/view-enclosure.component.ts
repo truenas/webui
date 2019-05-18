@@ -109,4 +109,8 @@ export class ViewEnclosureComponent implements OnDestroy {
   ngOnDestroy(){
     this.core.unregister({observerClass:this})
   }
+
+  selectEnclosure(value){
+    this.selectedEnclosure = this.system.profile[value];
+  }
 }

@@ -10,3 +10,6 @@
 
 <enclosure-disks *ngIf="system && system.pools && selectedEnclosure && currentView == 'Disks'" [system-profiler]="system" [selected-enclosure]="selectedEnclosure"></enclosure-disks>
 
+<div *ngIf="system && system.enclosures && system.enclosures.length > 1" class="enclosure-selector">
+  <div *ngFor="let enclosure of system.enclosures; let i = index" (click)="selectEnclosure(i)" class="enclosure {{system.headIndex == i ? 'active' : '' }} ">{{enclosure.model}} ({{i}})</div>
+</div>
