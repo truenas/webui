@@ -70,21 +70,25 @@ export class ViewEnclosureComponent implements OnDestroy {
 
   constructor(private core: CoreService){
     core.register({observerClass: this, eventName: 'EnclosureData'}).subscribe((evt:CoreEvent) => {
-      this.system.enclosures = evt.data;
-      this.selectedEnclosure = this.system.profile[0];
+      this.system = new SystemProfiler(this.system_product, evt.data);
+      //this.system.enclosures = evt.data;
+      this.selectedEnclosure = this.system.profile[this.system.headIndex];
+      core.emit({name: 'DisksRequest', sender: this});
+      //console.log(evt);
       //console.log(this.system);
     });
 
     core.register({observerClass: this, eventName: 'PoolData'}).subscribe((evt:CoreEvent) => {
       this.system.pools = evt.data;
-      core.emit({name: 'EnclosureDataRequest', sender: this});
+      //core.emit({name: 'EnclosureDataRequest', sender: this});
     });
 
 
     core.register({observerClass: this, eventName: 'DisksData'}).subscribe((evt:CoreEvent) => {
-
-      let data = evt.data;
-      this.system = new SystemProfiler(this.system_product, data);
+      //console.log(evt);
+      this.system.diskData = evt.data;
+      //let data = evt.data;
+      //this.system = new SystemProfiler(this.system_product, data);
       //this.selectedEnclosure = this.system.profile[0];
       //console.log(this.system);
       core.emit({name: 'PoolDataRequest', sender: this});
@@ -95,7 +99,8 @@ export class ViewEnclosureComponent implements OnDestroy {
       console.log(evt);
       //this.system_product = evt.data.system_product;
       this.system_product = 'M50'; // Just for testing on my FreeNAS box
-      core.emit({name: 'DisksRequest', sender: this});
+      //core.emit({name: 'DisksRequest', sender: this});
+      core.emit({name: 'EnclosureDataRequest', sender: this});
     });
 
     core.emit({name: 'SysInfoRequest', sender: this});

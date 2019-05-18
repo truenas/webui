@@ -79,7 +79,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
  
 
   constructor(public el:ElementRef, private core: CoreService /*, private ngZone: NgZone*/) { 
-
     core.register({observerClass: this, eventName: 'EnclosureSlotStatusChanged'}).subscribe((evt:CoreEvent) => {
       //console.log(evt);
     });
@@ -104,6 +103,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   ngAfterContentInit() {
 
+    console.log(this.system);
     this.pixiInit();
 
     // Listen for DOM changes to avoid race conditions with animations

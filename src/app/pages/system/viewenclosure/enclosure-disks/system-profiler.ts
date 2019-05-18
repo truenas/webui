@@ -19,8 +19,19 @@ export class SystemProfiler {
   public systemDisks:any[] = [];
   public platform: string; // Model Unit
   public profile: Enclosure[] = [];
+  public headIndex: number;
 
-  private diskData: any[];
+  private _diskData: any[];
+  get diskData(){
+    return this._diskData;
+  }
+  set diskData(obj){
+    this._diskData = this.filterSystemDisk(obj);
+    //this._diskData = obj;
+    this.parseDiskData(this._diskData);
+    this.parseEnclosures(this._enclosures);
+  }
+
 
   private _enclosures: any;
   get enclosures(){
@@ -28,7 +39,7 @@ export class SystemProfiler {
   }
   set enclosures(obj){
     this._enclosures = obj;
-    this.parseEnclosures(this._enclosures);
+    //this.parseEnclosures(this._enclosures);
   }
 
   private _pools: any;
@@ -42,36 +53,83 @@ export class SystemProfiler {
 
   constructor(model, data) {
     this.platform = model;
+    this.enclosures = data;
+    this.createProfile();
     //this.diskData = data;
-    this.parseDiskData(data);
+    //this.parseDiskData(data);
+  }
+
+  createProfile(){
+    // with the enclosure info we set up basic data structure
+    for(let i = 0; i < this.enclosures.length; i++){
+      let enclosure = {model: this.platform, disks: [], diskKeys: {}, poolKeys: {} };
+      this.profile.push(enclosure);
+      let model = this.identifyProduct(this.enclosures[i]);
+      this.enclosures[i].model = model;
+      enclosure.model = model;
+      switch(model){
+        case 'M Series':
+        case 'X Series':
+          this.headIndex = i;
+          break;
+      }
+    }
+    if(!this.headIndex){
+      console.error("No Head Unit Detected!");
+    } else {
+    }
+  }
+
+  identifyProduct(enclosure){
+    const definitions = [
+      {model: 'M Series' , regex: /4024S/},
+      {model: 'X Series' , regex: /P3217/},
+      {model: 'E60' , regex: /^QUANTA /},
+      {model: 'E24' , regex: /^Storage /},
+      {model: 'E16' , regex: /^ECStream 3U16 /},
+      {model: 'ES60' , regex: /^CELESTIC R0904/},
+      {model: 'ES24' , regex: /4024J/},
+      {model: 'ES12' , regex: /^CELESTIC X2012/},
+    ]
+    let product;
+    definitions.forEach((def) => {
+      if(enclosure.name.match(def.regex)){
+        product = def.model
+      }
+    });
+    return product;
   }
 
   private parseDiskData(disks){
-    let data = this.filterSystemDisk(disks);
-    let enclosureID = 0;
-    let enclosure = {model: this.platform, disks: [], diskKeys: {}, poolKeys: {} };
-    const last = data.length - 1;
+    //let data = this.filterSystemDisk(disks);
+    let data = disks; // DEBUG
+    //let enclosureID = 0;
+    //let enclosure = {model: this.platform, disks: [], diskKeys: {}, poolKeys: {} };
+    //const last = data.length - 1;
     data.forEach((item, index) => {
-
+      if(!item.enclosure){return};
+      let enclosure = this.profile[item.enclosure.number];
       item.status = 'AVAILABLE'; // Label it as available. If it is assigned to a vdev/pool then this will be overridden later.
+      enclosure.diskKeys[item.devname] = enclosure.disks.length; // index to enclosure.disks
       enclosure.disks.push(item);
-      enclosure.diskKeys[item.devname] = index;
+      //enclosure.diskKeys[item.devname] = index; // index to _diskData
+      //enclosure.model = enclosureID > 0 ? "ES" +  enclosure.disks.length : this.platform;
 
-      let next = data[index + 1];
+      //let next = data[index + 1];
 
       // SIMLATE ENCLOSURE SLOT WHEN 
       // TESTING ON NON TRUENAS HARDWARE
       // REMOVE THIS FOR PRODUCTION!!!
       //data[index].enclosure.slot = index;
 
-      if( !next || next.enclosure_num > enclosureID ){ 
-        enclosure.model = enclosureID > 0 ? "ES" +  enclosure.disks.length : this.platform;
-        this.profile.push(enclosure);
+      //if( !next || next.enclosure_num > enclosureID ){ 
+        //enclosure.model = enclosureID > 0 ? "ES" +  enclosure.disks.length : this.platform;
+        //this.profile.push(enclosure);
 
-        enclosure = {model: this.platform, disks: [], diskKeys: {}, poolKeys: {} };
-        enclosureID++ 
+        //enclosure = {model: this.platform, disks: [], diskKeys: {}, poolKeys: {} };
+        //enclosureID++ 
 
-      }
+      //}
 
     });
 
@@ -79,6 +137,7 @@ export class SystemProfiler {
 
   filterSystemDisk(disks){
     let sd = [];
+    
     let data = disks.filter((item, index) => {
       if(!item.enclosure){
         this.systemDisks.push(item);
@@ -92,7 +151,7 @@ export class SystemProfiler {
         data.splice(index, 1);
       }
     };*/
-    this.diskData = data;
+    //this._diskData = data;
     return data;
   }
   
@@ -151,11 +210,21 @@ export class SystemProfiler {
   addVDevToDiskInfo(diskName:string, vdev:VDev):void{
     let keys = Object.keys(vdev.disks);
 
-    for(let enclosure of this.profile){
+    let enclosureIndex = this.getEnclosureNumber(diskName);
+    let enclosure = this.profile[enclosureIndex];
+    let diskKey = enclosure.diskKeys[diskName];
+    //console.log("Checking disk" + diskName + " on enclosure number " + enclosureIndex + " && diskKey = " + diskKey);
+    enclosure.disks[diskKey].vdev = vdev;
+    enclosure.disks[diskKey].status = this.getDiskStatus(diskName, enclosure, vdev);
+    if(!enclosure.poolKeys[vdev.pool]){
+      enclosure.poolKeys[vdev.pool] = vdev.poolIndex;
+    }
+
+    /*for(let enclosure of this.profile){
       let diskKey = enclosure.diskKeys[diskName];
       let test = typeof diskKey;
 
-      if(test == "undefined") { 
+      if(test == "undefined" || typeof enclosure.disks[diskKey] == "undefined") { 
         continue;
       } else {
         
@@ -168,7 +237,7 @@ export class SystemProfiler {
         break;
       }
       
-    }
+    }*/
   }
 
   getDiskStatus(diskName, enclosure, vdev?:VDev): string{
