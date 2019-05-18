@@ -1,8 +1,13 @@
 <mat-card>
-    Hello list!
-    <mat-button-toggle-group class="plugin-buttons">
+    <mat-card-header>
+        <mat-card-title>Plugins</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        {{pluginsGroup.value}}
+    </mat-card-content>
+    <mat-button-toggle-group class="plugin-buttons" #pluginsGroup="matButtonToggleGroup">
         <ng-container *ngFor="let plugin of plugins">
-            <mat-button-toggle [value]='plugin[0]'>
+            <mat-button-toggle [value]='plugin'>
                 <figure>
                     <img class="plugin-img" height="40" [src]="plugin[5]" alt="{{plugin[0]}} icon"/>
                     <figcaption>{{plugin[0]}}</figcaption>
