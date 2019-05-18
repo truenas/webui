@@ -1,0 +1,7 @@
+mat-button-toggle-group.plugin-buttons {
+    width: 100%;
+    overflow-x: auto;
+}
+img.plugin-img {
+    padding-top: 10px;
+}
