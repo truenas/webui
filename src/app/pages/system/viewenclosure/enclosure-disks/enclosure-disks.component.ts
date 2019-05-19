@@ -279,13 +279,13 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     return dt;
   }
 
-  importAsset(alias, path){
+  /*importAsset(alias, path){
     // NOTE: Alias will become the property name in resources
     this.loader
       .add(alias, path) //.add("catImage", "assets/res/cat.png")
       .on("progress", this.loadProgressHandler)
       .load(this.onImport.bind(this));
-  }
+  }*/
 
   onImport(){
     let sprite = PIXI.Sprite.from(this.enclosure.loader.resources.m50.texture.baseTexture);
