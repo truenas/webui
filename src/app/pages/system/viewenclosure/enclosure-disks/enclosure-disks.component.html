@@ -1,6 +1,6 @@
 <mat-card class="view-card">
   <mat-toolbar>
-    <div class="mat-card-title-text">Disks on {{selectedEnclosure ? selectedEnclosure.model : '...'}}</div>
+    <div class="mat-card-title-text">Disks on {{selectedEnclosure ? selectedEnclosure.model + ' (' + selectedEnclosure.enclosureKey + ')' : '...'}}</div>
 
     <!-- ENCLOSURE MODEL -->
     <div class="model dom-overlay" style="opacity:0.75;">

@@ -26,7 +26,7 @@ import {
   //clamp
   } from 'popmotion';
 
-interface Position {
+export interface Position {
   x: number;
   y: number;
 }
@@ -147,8 +147,10 @@ export class Chassis {
        this.driveTrayObjects.push(dt);
      }
 
-     this.driveTrays.x = 43;
-     this.driveTrays.y = 78;
+     //this.driveTrays.x = 43;
+     //this.driveTrays.y = 78;
+     
+     this.generatePerspectiveOffset();
      this.driveTrays.name = this.model + "_drivetrays";
      this.container.addChild(this.driveTrays);
      //this.generatePerspective();
@@ -158,6 +160,11 @@ export class Chassis {
      // Let the parent know class is ready.
      //this.events.next({name: "Ready"});
      //this.events.complete();
+   }
+
+   generatePerspectiveOffset(){
+     this.driveTrays.x = 43;
+     this.driveTrays.y = 78;
    }
 
    onTap(evt, driveTray){

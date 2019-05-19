@@ -7,6 +7,8 @@ import 'pixi-projection';
 import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
 import { DriveTray } from 'app/core/classes/hardware/drivetray';
 import { M50 } from 'app/core/classes/hardware/m50';
+import { ES24 } from 'app/core/classes/hardware/es24';
+import { ES60 } from 'app/core/classes/hardware/es60';
 import { DiskComponent } from './disk.component';
 import { SystemProfiler } from './system-profiler';
 import { tween, easing, styler, value, keyframes } from 'popmotion';
@@ -161,11 +163,17 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   ngOnChanges(changes:SimpleChanges){
+    if(changes.selectedEnclosure){
+      this.destroyEnclosure();
+      this.createEnclosure();
+      console.log(changes.selectedEnclosure);
+      //this.setCurrentView(this.defaultView);
+    }
   }
 
   ngOnDestroy(){
     this.core.unregister({observerClass: this});
-    this.destroyEnclosure();
+    this.destroyAllEnclosures();
     this.app.stage.destroy(true);
     this.app.destroy(true, true); 
   }
@@ -200,7 +208,21 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   createEnclosure(){
-    this.enclosure = new M50();
+    switch(this.selectedEnclosure.model){
+      case "M Series":
+        this.enclosure = new M50();
+        break;
+      case "ES24":
+        this.enclosure = new ES24();
+        break;
+      case "ES60":
+        this.enclosure = new ES60();
+        break;
+      default:
+        this.enclosure = new M50();
+    }
+    //this.enclosure = new ES24();
+    
     this.enclosure.events.subscribe((evt) => {
       switch(evt.name){
         case "Ready":
@@ -240,6 +262,12 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   destroyEnclosure(){
+    this.enclosure.events.unsubscribe();
+    this.container.removeChild(this.enclosure.container);
+    this.enclosure.destroy();
+  }
+
+  destroyAllEnclosures(){
     // Clear out assets
     this.enclosure.destroy();
     this.container.destroy(true);
