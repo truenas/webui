@@ -433,6 +433,12 @@ msgstr ""
 msgid "ACL Type"
 msgstr ""
 
+msgid "ACME DNS"
+msgstr ""
+
+msgid "ACME Server Directory URI"
+msgstr ""
+
 msgid "AD Timeout"
 msgstr ""
 
@@ -452,6 +458,9 @@ msgid "Access Based Share Enumeration"
 msgstr ""
 
 msgid "Access Control Entries"
+msgstr ""
+
+msgid "Access ID Key"
 msgstr ""
 
 msgid "Access Key"
@@ -1018,6 +1027,9 @@ msgstr ""
 msgid "Are you sure?"
 msgstr ""
 
+msgid "Asigra successfully updated."
+msgstr ""
+
 msgid ""
 "Assigning a directory to Minio changes the permissions                      "
 "                        of that directory and every directory in it to      "
@@ -1040,6 +1052,9 @@ msgstr ""
 msgid "Attach NIC"
 msgstr ""
 
+msgid "Attach screenshot(s)."
+msgstr ""
+
 msgid "Auth Method"
 msgstr ""
 
@@ -1055,6 +1070,12 @@ msgstr ""
 msgid ""
 "Authentication only functions when a Certificate is selected with either "
 "the <i>SSL</i> or <i>TLS</i> option."
+msgstr ""
+
+msgid "Authenticator"
+msgstr ""
+
+msgid "Authenticator Attributes"
 msgstr ""
 
 msgid "Authorized Access"
@@ -1161,6 +1182,9 @@ msgid "Bandwidth Limit"
 msgstr "Bandbreitenlimit"
 
 msgid "Base DN"
+msgstr ""
+
+msgid "Base Filesystem"
 msgstr ""
 
 msgid "Base Name"
@@ -2102,6 +2126,9 @@ msgstr ""
 msgid "Create"
 msgstr ""
 
+msgid "Create ACME Certificate"
+msgstr ""
+
 msgid "Create CA"
 msgstr ""
 
@@ -2170,6 +2197,9 @@ msgid "Credential"
 msgstr ""
 
 msgid "Critical"
+msgstr ""
+
+msgid "Criticality"
 msgstr ""
 
 msgid "Cron Jobs"
@@ -3494,6 +3524,9 @@ msgstr ""
 msgid "Enter the email address of the person responsible for the CA."
 msgstr ""
 
+msgid "Enter the email of the contact person."
+msgstr ""
+
 msgid "Enter the filesystem to snapshot."
 msgstr ""
 
@@ -3539,6 +3572,9 @@ msgid "Enter the name of the boot entry."
 msgstr ""
 
 msgid "Enter the name of the company or organization."
+msgstr ""
+
+msgid "Enter the name of the contact person."
 msgstr ""
 
 msgid "Enter the name of the destination folder."
@@ -3609,6 +3645,9 @@ msgid ""
 "Threshold Warning</a> for more information."
 msgstr ""
 
+msgid "Enter the phone number of the contact person."
+msgstr ""
+
 msgid "Enter the pre-defined S3 bucket to use."
 msgstr ""
 
@@ -3648,6 +3687,9 @@ msgid ""
 msgstr ""
 
 msgid "Enter valid VMware ESXI/vSphere credentials to fetch datastores."
+msgstr ""
+
+msgid "Environment"
 msgstr ""
 
 msgid "Error"
@@ -4435,6 +4477,14 @@ msgstr ""
 msgid "Init/Shutdown Scripts"
 msgstr ""
 
+msgid "Initiate Failover"
+msgstr ""
+
+msgid ""
+"Initiating failover will temporarily disable services while failing over.  "
+"Failover now?"
+msgstr ""
+
 msgid "Initiator"
 msgstr ""
 
@@ -4663,6 +4713,9 @@ msgstr ""
 msgid "Language"
 msgstr ""
 
+msgid "Launch DS Operator"
+msgstr ""
+
 msgid ""
 "Leave blank when using AWS. The available buckets are fetched  dynamically. "
 "Enter a  <a "
@@ -4705,6 +4758,9 @@ msgid ""
 msgstr ""
 
 msgid "Link State"
+msgstr ""
+
+msgid "List Available Plugins from Branch:"
 msgstr ""
 
 msgid "List of system services to restart when the pool is unlocked."
@@ -5353,6 +5409,9 @@ msgid ""
 "page explains the finer details."
 msgstr ""
 
+msgid "Number of days to renew certificate before expiring"
+msgstr ""
+
 msgid ""
 "Number of points for each hourly, daily, weekly, monthly, or yearly graph. "
 "Set this to no less than the width of the graphs in pixels."
@@ -5670,6 +5729,9 @@ msgstr ""
 msgid "Physical interface of the selected member."
 msgstr ""
 
+msgid "Please accept terms of service for the given ACME Server."
+msgstr ""
+
 msgid "Please enter the correct password."
 msgstr ""
 
@@ -5689,6 +5751,9 @@ msgid ""
 "Please read about <a href=\"%%docurl%%/storage.html#deduplication\" "
 "target=\"_blank\">deduplication</a> before considering changing this "
 "setting."
+msgstr ""
+
+msgid "Please specify URI of ACME Server Directory."
 msgstr ""
 
 msgid "Please wait"
@@ -5959,6 +6024,9 @@ msgstr ""
 msgid "Reboot Standby Storage Controller"
 msgstr ""
 
+msgid "Reboot current storage controller?"
+msgstr ""
+
 msgid "Rebuild Directory Service Cache"
 msgstr ""
 
@@ -6046,6 +6114,9 @@ msgstr ""
 msgid "Rename the existing boot environment."
 msgstr ""
 
+msgid "Renew certificate day"
+msgstr ""
+
 msgid "Replacing disk..."
 msgstr ""
 
@@ -6058,7 +6129,13 @@ msgstr ""
 msgid "Replicate from scratch if incremental is not possible"
 msgstr ""
 
+msgid "Replication"
+msgstr ""
+
 msgid "Replication <i>"
+msgstr ""
+
+msgid "Replication Performance"
 msgstr ""
 
 msgid "Replication Tasks"
@@ -6281,6 +6358,9 @@ msgstr ""
 msgid "SSH Host to connect to."
 msgstr ""
 
+msgid "SSH Keypair/Connection"
+msgstr ""
+
 msgid "SSH Keypairs"
 msgstr ""
 
@@ -6451,6 +6531,9 @@ msgid ""
 "BIOS booting."
 msgstr ""
 
+msgid "Select Authenticator"
+msgstr ""
+
 msgid "Select Configuration File"
 msgstr ""
 
@@ -6584,6 +6667,9 @@ msgid ""
 "(default, Unix-style permissions), <b>None</b>, or <b>Mode</b> (ACLs)."
 msgstr ""
 
+msgid "Select one or more screenshots that illustrate the problem."
+msgstr ""
+
 msgid "Select pool to import"
 msgstr ""
 
@@ -6673,6 +6759,15 @@ msgstr ""
 msgid ""
 "Select the account to use for TFTP requests. This account must have "
 "permission to the <b>Directory</b>."
+msgstr ""
+
+msgid "Select the appropriate environment."
+msgstr ""
+
+msgid "Select the appropriate level of criticality."
+msgstr ""
+
+msgid "Select the base filesystem."
 msgstr ""
 
 msgid ""
@@ -7730,9 +7825,6 @@ msgstr ""
 msgid "Show Hidden Files"
 msgstr ""
 
-msgid "Show Settings"
-msgstr ""
-
 msgid "Show Text Console without Password Prompt"
 msgstr ""
 
@@ -7868,6 +7960,9 @@ msgid "Spare VDev"
 msgstr ""
 
 msgid "Sparse"
+msgstr ""
+
+msgid "Specify Authenticator to be used"
 msgstr ""
 
 msgid ""
@@ -8114,6 +8209,9 @@ msgstr ""
 msgid "System hostname."
 msgstr ""
 
+msgid "System is failing over..."
+msgstr ""
+
 msgid "System is restarting..."
 msgstr ""
 
@@ -8186,7 +8284,7 @@ msgstr ""
 msgid "Target Alias"
 msgstr ""
 
-msgid "Target Datasets"
+msgid "Target Dataset"
 msgstr ""
 
 msgid "Target Name"
@@ -8198,7 +8296,13 @@ msgstr ""
 msgid "Team Drive ID"
 msgstr ""
 
+msgid "Temp tooltip"
+msgstr ""
+
 msgid "Temperature"
+msgstr ""
+
+msgid "Terms of Service"
 msgstr ""
 
 msgid "Tests are not performed when the system enters the selected power mode."
@@ -8472,6 +8576,9 @@ msgid "Time Machine Quota"
 msgstr ""
 
 msgid "Time Server For Domain"
+msgstr ""
+
+msgid "Time remaining until changes reverted:"
 msgstr ""
 
 msgid "Timeout"
@@ -9234,6 +9341,9 @@ msgid "hostid"
 msgstr ""
 
 msgid "hostid_strict_check"
+msgstr ""
+
+msgid "identifier"
 msgstr ""
 
 msgid "interfaces"
