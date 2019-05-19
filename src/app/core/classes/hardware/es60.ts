@@ -23,12 +23,9 @@ export class ES60 extends Chassis {
      let gapY = 6;
      let mod = index % this.rows;
 
-     //let nextPositionX = mod * (displayObject.width + gapX);
-     //let nextPositionY = Math.floor(index / this.columns) * (displayObject.height + gapY);
      let nextPositionX = Math.floor(index / this.rows) * (displayObject.width + gapX);
      let nextPositionY = mod * (displayObject.height + gapY);
      
-     console.log(this.driveTrays);
      return {x: nextPositionX, y: nextPositionY }
    }
 
