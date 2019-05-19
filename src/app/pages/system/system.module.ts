@@ -48,10 +48,13 @@ import { TranslateModule } from '@ngx-translate/core';
 import { EmailComponent } from './email';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
-import { EnclosureModule } from './viewenclosure/enclosure.module'
+import { AcmednsListComponent } from './acmedns/acmedns-list/acmedns-list.component';
+import { AcmednsFormComponent } from './acmedns/acmedns-add/acmedns-form.component';
+import { CertificateAcmeAddComponent } from './certificates/certificate-acme-add/certificate-acme-add.component';
 import { FailoverComponent } from './failover/failover.component';
 import { ProactiveSupportComponent } from './proactive-support/proactive-support.component';
 import { ReportingComponent } from './reporting/reporting.component';
+import { EnclosureModule } from './viewenclosure/enclosure.module'
 
 
 @NgModule({
@@ -99,6 +102,9 @@ import { ReportingComponent } from './reporting/reporting.component';
     EmailComponent,
     AlertServiceComponent,
     AlertConfigComponent,
+    AcmednsListComponent,
+    AcmednsFormComponent,
+    CertificateAcmeAddComponent,
     FailoverComponent,
     ProactiveSupportComponent,
     ReportingComponent,

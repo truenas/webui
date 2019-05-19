@@ -1010,6 +1010,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     width: 70% !important;
   }
 
+  app-support .has-pwtoggle > mat-form-field {
+    width: calc( 100% - 66px ) !important;
+  }
+
   app-entity-dialog .has-pwtoggle  {
     padding: 0 0 10px 0 !important;
     width: 385px !important;
@@ -1138,6 +1142,81 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   app-select-dialog .mat-select-placeholder,
   app-ipmi .mat-select-placeholder {
     @include variable(color, --fg2, $fg2);
+  }
+
+  app-acmedns-form {
+    h4 {
+      font-size: 20px;
+    }
+    .fieldset:first-of-type {
+      padding-left: 5px;
+    }
+    .fieldset:nth-of-type(2) {
+      padding-left: 30px;
+      padding-top: 38px;
+    }
+    & p .material-icons {
+      font-size: 36px;
+      margin-right: 10px;
+      margin-left: -4px;
+      position: relative;
+      top: 10px;
+    }
+    & #select_auth, #auth_attributes {
+      font-size: 140%;
+    }
+  }
+
+  #acme_directory_uri mat-form-field {
+    width: 50%;
+  }
+
+  app-support {
+    .fieldset {
+      padding-left: 15px;
+    }
+    #FN_col1, #FN_col2, #TN_col1 {
+      font-size: 180%;
+      margin-bottom: 15px;
+
+      & .material-icons {
+        margin-right: 10px;
+        margin-left: -5px;
+        position: relative;
+        top: 10px;
+        font-size: 36px;
+      }
+    }
+    #TN_col1, #FN_col1, #support_text {
+      width: 200%;
+    }
+    .lowerme {
+      margin-top: 60px !important;
+    }
+    #support_text {
+      font-size: 110%;
+      margin-right: 30px;
+      margin-top: 10px;
+    }
+    h4 {
+      font-size: 130%;
+      margin-top: 15px;
+      margin-bottom: 5px;
+    }
+    #pic {
+      text-align: center;
+      margin-top: 25px;
+      margin-bottom: -25px;
+      position: relative;
+      right: 40px;
+
+      & img {
+        max-width: 480px;
+      }
+    }
+    .mat-card-actions {
+      margin-left: 15px;
+    }
   }
 
  } // end of ix theme

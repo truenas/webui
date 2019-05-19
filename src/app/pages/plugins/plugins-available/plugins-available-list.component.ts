@@ -1,15 +1,17 @@
-import { RestService, WebSocketService } from '../../../services';
+import { RestService, WebSocketService, EngineerModeService, JailService } from '../../../services';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { T } from '../../../translate-marker';
 import { EntityUtils } from '../../common/entity/utils';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-plugins-available-list',
   templateUrl: './plugins-available-list.component.html',
   styleUrls: ['./plugins-available-list.component.css'],
+  providers: [JailService]
   // template: `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class PluginsAvailabelListComponent {
@@ -39,6 +41,9 @@ export class PluginsAvailabelListComponent {
   public selectedPool;
   public activatedPool: any;
   public availablePools: any;
+  public engineerMode: boolean;
+  public availableBranches = [];
+  public selectedBranch: any;
 
   public tooltipMsg: any = T("Choose an existing ZFS Pool to allow the \
                               iocage jail manager to create a /iocage \
@@ -50,9 +55,33 @@ export class PluginsAvailabelListComponent {
                               navigate Storage/Volumes and click 'Create \
                               ZFS Pool'.");
 
-  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected loader: AppLoaderService) {
+  constructor(protected router: Router, protected rest: RestService,
+              protected ws: WebSocketService, protected loader: AppLoaderService,
+              protected engineerModeService: EngineerModeService, protected jailService: JailService) {
     this.getActivatedPool();
     this.getAvailablePools();
+
+    this.engineerMode = localStorage.getItem('engineerMode') === 'true' ? true : false;
+    this.engineerModeService.engineerMode.subscribe((res) => {
+      this.engineerMode = res === 'true' ? true : false;
+    });
+    this.jailService.getBranches().subscribe(
+      (res) => {
+        for (let i = 0; i < res.length; i++) {
+          const branchIndexObj = _.find(this.availableBranches, {name: res[i].repo});
+          if (branchIndexObj == undefined) {
+            this.availableBranches.push({name: res[i].repo, branches: [{label: res[i].name, value: res[i].name}]})
+          } else {
+            branchIndexObj.branches.push({label: res[i].name, value: res[i].name});
+          }
+        }
+      }
+    )
+    this.jailService.getVersion().subscribe(
+      (res) => {
+        this.selectedBranch = res;
+      }
+    )
   }
 
   afterInit(entityList: any) {
@@ -104,5 +133,10 @@ export class PluginsAvailabelListComponent {
       (res) => {
         new EntityUtils().handleWSError(this.entityList, res);
       });
+  }
+
+  switchBranch() {
+    this.queryCallOption = ["PLUGIN", true, true, this.selectedBranch];
+    this.entityList.getData();
   }
 }

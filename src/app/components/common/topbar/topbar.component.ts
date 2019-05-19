@@ -55,6 +55,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
   ha_disabled_reasons = [];
   ha_pending = false;
   is_ha = false;
+  sysName: string = 'FreeNAS';
+  private user_check_in_prompted = false;
 
   constructor(
     public themeService: ThemeService,
@@ -78,6 +80,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.is_ha = is_ha;
         this.getHAStatus();
       });
+      this.sysName = 'TrueNAS';
     }
     let theme = this.themeService.currentTheme();
     this.currentTheme = theme.name;
@@ -100,6 +103,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
         }
       });
     });
+    this.checkNetworkChangesPending();
+    this.checkNetworkCheckinWaiting();
 
     this.continuosStreaming = observableInterval(10000).subscribe(x => {
       this.showReplicationStatus();
@@ -210,23 +215,32 @@ export class TopbarComponent implements OnInit, OnDestroy {
   
   checkNetworkCheckinWaiting() {
     this.ws.call('interface.checkin_waiting').subscribe(res => {
-      this.waitingNetworkCheckin = res;
+      if (res != null) {
+        this.waitingNetworkCheckin = true;
+        if (!this.user_check_in_prompted) {
+          this.user_check_in_prompted = true;
+          this.showNetworkCheckinWaiting();
+        }
+      } else {
+        this.waitingNetworkCheckin = false;
+      }
     });
   }
 
   showNetworkCheckinWaiting() {
     this.dialogService.confirm(
       network_interfaces_helptext.checkin_title,
-      network_interfaces_helptext.checkin_message,
+      network_interfaces_helptext.pending_checkin_text,
       true, network_interfaces_helptext.checkin_button).subscribe(res => {
         if (res) {
+          this.user_check_in_prompted = false;
           this.loader.open();
           this.ws.call('interface.checkin').subscribe((success) => {
             this.loader.close();
             this.dialogService.Info(
               network_interfaces_helptext.checkin_complete_title,
               network_interfaces_helptext.checkin_complete_message);
-            this.waitingNetworkCheckin = false;
+            this.waitingNetworkCheckin = false; 
           }, (err) => {
             this.loader.close();
             new EntityUtils().handleWSError(null, err, this.dialogService);
@@ -241,8 +255,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.showNetworkCheckinWaiting();
     } else {
       this.dialogService.confirm(
-        T("Pending Network Changes"),
-        T("There are unsaved network interface settings.  Review them now?"),
+        network_interfaces_helptext.pending_changes_title,
+        network_interfaces_helptext.pending_changes_message,
         true, T('Continue')).subscribe(res => {
           if (res) {
             this.router.navigate(['/network/interfaces']);

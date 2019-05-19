@@ -36,6 +36,8 @@ export class InterfacesListComponent implements OnDestroy {
   checkin_text_2: string = T(" seconds unless kept permanently.");
   public checkin_timeout = 60;
   public checkin_timeout_pattern = /\d+/;
+  public checkin_remaining = null;
+  checkin_interval;
 
   public columns: Array<any> = [
     {name : T('Name'), prop : 'name'},
@@ -89,7 +91,7 @@ export class InterfacesListComponent implements OnDestroy {
 
   preInit(entityList) {
     this.pending_changes_text = helptext.pending_changes_text;
-    this.pending_checkin_text = helptext.pending_checkin_text;
+    this.pending_checkin_text = helptext.pending_checkin_text + " " + helptext.pending_checkin_text_2;
     this.entityList = entityList;
 
     this.checkPendingChanges();
@@ -107,7 +109,28 @@ export class InterfacesListComponent implements OnDestroy {
 
   checkWaitingCheckin() {
     this.ws.call('interface.checkin_waiting').subscribe(res => {
-      this.checkinWaiting = res;
+      if (res != null) {
+        const seconds = res.toFixed(0);
+        if (seconds > 0 && this.checkin_remaining == null) {
+          this.checkin_remaining = seconds;
+          this.checkin_interval = setInterval(() => {
+            if (this.checkin_remaining > 0) {
+              this.checkin_remaining -= 1;
+            } else {
+              this.checkin_remaining = null;
+              this.checkinWaiting = false;
+              clearInterval(this.checkin_interval);
+            }
+          }, 1000);
+        }
+        this.checkinWaiting = true;
+      } else {
+        this.checkinWaiting = false;
+        this.checkin_remaining = null;
+        if (this.checkin_interval) {
+          clearInterval(this.checkin_interval);
+        }
+      }
     });
   }
 
@@ -148,6 +171,8 @@ export class InterfacesListComponent implements OnDestroy {
               helptext.checkin_complete_message);
             this.hasPendingChanges = false;
             this.checkinWaiting = false;
+            clearInterval(this.checkin_interval);
+            this.checkin_remaining = null;
           }, (err) => {
             this.entityList.loader.close();
             new EntityUtils().handleWSError(this.entityList, err);
