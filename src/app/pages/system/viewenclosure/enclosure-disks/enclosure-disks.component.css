@@ -246,3 +246,17 @@ div.vdev-disk {
   margin: 0px 8px 2px 0;
 }
 
+/*.view-card .mat-toolbar#Disks-toolbar,*/
+.view-card .mat-card-content#Disks-content{
+  opacity:0;
+  position:relative;
+  right: 100%;
+}
+
+/*.view-card#Disks .mat-toolbar#Disks-toolbar,*/
+.view-card#Disks .mat-card-content#Disks-content{
+  opacity:1;
+  position:static;
+}
+
+

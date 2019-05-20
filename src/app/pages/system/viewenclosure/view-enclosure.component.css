@@ -30,7 +30,7 @@ nav.view-nav-bar{
   min-height: calc(100% - 124px);
   position: fixed;
   right: 0;
-  top: 124px;
+  top: 126px;
   overflow:auto;
   z-index:10;
 }
@@ -39,6 +39,8 @@ nav.view-nav-bar{
   text-align:center;
   min-height: 100px;
   border-bottom: solid 1px #333;
+  border-left: solid 3px rgba(0,0,0,0);
+  padding:12px 0 24px;
 }
 
 .enclosure-selector .enclosure.active{
@@ -46,5 +48,9 @@ nav.view-nav-bar{
 }
 
 .enclosure-selector .enclosure:hover{
-  background-color:rgba(255,255,255,0.25);
+  background-color:rgba(255,255,255,0.1);
+}
+
+.enclosure canvas{
+  width:80% !important;
 }

@@ -12,6 +12,7 @@ import { ES60 } from 'app/core/classes/hardware/es60';
 import { DiskComponent } from './disk.component';
 import { SystemProfiler } from './system-profiler';
 import { tween, easing, styler, value, keyframes } from 'popmotion';
+import { Subject } from 'rxjs';
 import { ExampleData } from './example-data';
 
 @Component({
@@ -27,6 +28,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   @ViewChild('domLabels') domLabels: ElementRef;
   @Input('system-profiler') system: SystemProfiler;
   @Input('selected-enclosure') selectedEnclosure: any;
+  @Input('current-tab') currentTab: string;
+  @Input('controller-events') controllerEvents:Subject<CoreEvent>;
   public app;
   private renderer;
   private loader = PIXI.loader;
@@ -81,6 +84,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
  
 
   constructor(public el:ElementRef, private core: CoreService /*, private ngZone: NgZone*/) { 
+
     core.register({observerClass: this, eventName: 'EnclosureSlotStatusChanged'}).subscribe((evt:CoreEvent) => {
       //console.log(evt);
     });
@@ -90,7 +94,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     });
 
     core.register({observerClass: this, eventName: 'ThemeChanged'}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
       this.theme = evt.data;
       this.setCurrentView(this.currentView);
     });
@@ -104,6 +107,14 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   ngAfterContentInit() {
+
+    this.controllerEvents.subscribe((evt:CoreEvent) => {
+      switch(evt.name){
+        case "CanvasExtract":
+          this.createExtractedEnclosure(evt.data);
+          break;
+      }
+    });
 
     console.log(this.system);
     this.pixiInit();
@@ -166,7 +177,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     if(changes.selectedEnclosure){
       this.destroyEnclosure();
       this.createEnclosure();
-      console.log(changes.selectedEnclosure);
       //this.setCurrentView(this.defaultView);
     }
   }
@@ -205,6 +215,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     this.container.height = this.app.stage.height;
 
     this.createEnclosure();
+    this.controllerEvents.next({name:"VisualizerReady", sender:this});
   }
 
   createEnclosure(){
@@ -259,6 +270,61 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     } else {
       this.onImport(); 
     }
+  }
+
+  createExtractedEnclosure(profile){
+    let enclosure;
+    switch(profile.model){
+      case "M Series":
+        enclosure = new M50();
+        break;
+      case "ES24":
+        enclosure = new ES24();
+        break;
+      case "ES60":
+        enclosure = new ES60();
+        break;
+      default:
+        enclosure = new M50();
+    }
+    //enclosure = new ES24();
+    console.log(enclosure)
+    enclosure.events.subscribe((evt) => {
+      switch(evt.name){
+        case "Ready":
+          this.container.addChild(enclosure.container);
+          enclosure.container.name = enclosure.model + "_for_extraction";
+          enclosure.container.width = enclosure.container.width / 2;
+          enclosure.container.height = enclosure.container.height / 2;
+          enclosure.container.x = 0; //this.app._options.width / 2 - enclosure.container.width / 2;
+          enclosure.container.y = 0; //this.app._options.height / 2 - enclosure.container.height / 2;
+          enclosure.chassis.alpha = 0.35;
+
+          //this.setDisksEnabledState(enclosure);
+          //this.setCurrentView(this.defaultView);
+          profile.disks.forEach((disk, index) =>{
+            this.setDiskHealthState(disk, enclosure);
+          });
+          this.extractEnclosure(enclosure, profile);
+          
+        break;
+      }
+    });
+
+    enclosure.load();
+    /*if(!this.resources[this.enclosure.model]){
+      this.enclosure.load();
+    } else {
+      this.onImport(); 
+    }*/
+  }
+
+  extractEnclosure(enclosure, profile){
+    //let extractor = new PIXI.extract.CanvasExtract(this.renderer);
+    let canvas = this.app.renderer.plugins.extract.canvas(enclosure.container)
+    this.controllerEvents.next({name:"EnclosureCanvas", data:{canvas:canvas, profile: profile}, sender:this});
+    this.container.removeChild(enclosure.container)
+    //delete enclosure;
   }
 
   destroyEnclosure(){
@@ -450,8 +516,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   }
 
-  setDisksEnabledState(){
-    this.enclosure.driveTrayObjects.forEach((dt, index) =>{
+  setDisksEnabledState(enclosure?){
+    if(!enclosure){enclosure = this.enclosure}
+    enclosure.driveTrayObjects.forEach((dt, index) =>{
       //let disk = this.selectedEnclosure.disks[index];
       let disk = this.findDiskBySlotNumber(index + 1);
       dt.enabled = disk ? true : false;
@@ -477,24 +544,24 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   }
 
-  setDiskHealthState(disk: any){
-
+  setDiskHealthState(disk: any, enclosure?: any){
+      if(!enclosure){enclosure = this.enclosure}
       let index = disk.enclosure.slot - 1;
-      this.enclosure.driveTrayObjects[index].enabled = disk.enclosure.slot ? true : false;
+      enclosure.driveTrayObjects[index].enabled = disk.enclosure.slot ? true : false;
 
       if(disk && disk.status){
         switch(disk.status){
           case "ONLINE":
-            this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot - 1, color: this.theme.green}});
+            enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot - 1, color: this.theme.green}});
           break;
           case "FAULT":
-            this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot - 1, color: this.theme.red}});
+            enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot - 1, color: this.theme.red}});
           break;
           case "AVAILABLE":
-            this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot - 1, color: '#999999'}});
+            enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot - 1, color: '#999999'}});
           break;
           default:
-            this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot - 1, color: this.theme.yellow}});
+            enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot - 1, color: this.theme.yellow}});
           break
         }
 

@@ -7,9 +7,12 @@
   </span>
 </nav>
 
+<!-- Persistent Visualizer -->
+<enclosure-disks *ngIf="events && system && system.pools && selectedEnclosure" [controller-events]="events" [current-tab]="currentView" [system-profiler]="system" [selected-enclosure]="selectedEnclosure"></enclosure-disks>
+<!--<enclosure-disks *ngIf="system && system.pools && selectedEnclosure && currentView == 'Disks'" [system-profiler]="system" [selected-enclosure]="selectedEnclosure"></enclosure-disks>-->
 
-<enclosure-disks *ngIf="system && system.pools && selectedEnclosure && currentView == 'Disks'" [system-profiler]="system" [selected-enclosure]="selectedEnclosure"></enclosure-disks>
-
-<div *ngIf="system && system.enclosures && system.enclosures.length > 1" class="enclosure-selector">
-  <div *ngFor="let enclosure of system.enclosures; let i = index" (click)="selectEnclosure(i)" class="enclosure {{system.headIndex == i ? 'active' : '' }} ">{{enclosure.model}} ({{i}})</div>
+<div #navigation  *ngIf="system && system.enclosures && system.enclosures.length > 1" class="enclosure-selector">
+  <div *ngFor="let enclosure of system.enclosures; let i = index" (click)="selectEnclosure(i)" class="enclosure enclosure-{{i}} {{selectedEnclosure.enclosureKey == i ? 'active' : '' }} ">
+    <div>{{enclosure.model}} ({{i}})</div>
+  </div>
 </div>

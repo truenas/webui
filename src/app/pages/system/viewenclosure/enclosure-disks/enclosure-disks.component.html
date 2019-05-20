@@ -1,6 +1,6 @@
-<mat-card class="view-card">
-  <mat-toolbar>
-    <div class="mat-card-title-text">Disks on {{selectedEnclosure ? selectedEnclosure.model + ' (' + selectedEnclosure.enclosureKey + ')' : '...'}}</div>
+<mat-card class="view-card" id="{{currentTab}}">
+  <mat-toolbar id="Disks-toolbar">
+    <div class="mat-card-title-text">{{currentTab}} on {{selectedEnclosure ? selectedEnclosure.model + ' (' + selectedEnclosure.enclosureKey + ')' : '...'}}</div>
 
     <!-- ENCLOSURE MODEL -->
     <div class="model dom-overlay" style="opacity:0.75;">
@@ -12,7 +12,7 @@
     </div>
 
   </mat-toolbar>
-  <mat-card-content>
+  <mat-card-content id="Disks-content">
     <!-- VISUALIZATION/OVERVIEW -->
     <div #disksoverview id="disks-overview" [class]="currentView">
 

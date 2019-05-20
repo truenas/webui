@@ -1,10 +1,11 @@
-import { ApplicationRef, Component, Injector, OnDestroy } from '@angular/core';
+import { ApplicationRef, Component, Injector, AfterContentInit, OnChanges, SimpleChanges, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { RestService, WebSocketService } from 'app/services/';
 import { MaterialModule } from 'app/appMaterial.module';
 import { EnclosureDisksComponent} from './enclosure-disks/enclosure-disks.component';
 
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { Subject } from 'rxjs';
 import { SystemProfiler } from './enclosure-disks/system-profiler';
 
 // import { MatDialog } from '@angular/material';
@@ -25,7 +26,10 @@ interface ViewConfig {
   templateUrl :'./view-enclosure.component.html',
   styleUrls:['./view-enclosure.component.css']
 })
-export class ViewEnclosureComponent implements OnDestroy {
+export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDestroy {
+
+  public events:Subject<CoreEvent> ;
+  @ViewChild('navigation') nav: ElementRef
 
   public currentView: string = 'Disks';
   public system: SystemProfiler;
@@ -69,6 +73,25 @@ export class ViewEnclosureComponent implements OnDestroy {
   }
 
   constructor(private core: CoreService){
+
+    this.events = new Subject<CoreEvent>();
+    this.events.subscribe((evt:CoreEvent) => {
+      switch(evt.name){
+        case "VisualizerReady":
+          //this.events.next({name:"CanvasExtract", data: this.system.profile[0], sender:this});
+          this.extractVisualizations();
+          break;
+        case "EnclosureCanvas":
+          console.log(evt);
+          //let id =  this.system.enclosures[evt.data.profile.enclosureKey].id;
+          //console.log(this.nav);
+          let el = this.nav.nativeElement.querySelector(".enclosure-" + evt.data.profile.enclosureKey);
+          evt.data.canvas.setAttribute('style', 'width: 80% ;');
+          el.appendChild(evt.data.canvas);
+          break;
+      }
+    })
+
     core.register({observerClass: this, eventName: 'EnclosureData'}).subscribe((evt:CoreEvent) => {
       this.system = new SystemProfiler(this.system_product, evt.data);
       //this.system.enclosures = evt.data;
@@ -81,6 +104,8 @@ export class ViewEnclosureComponent implements OnDestroy {
     core.register({observerClass: this, eventName: 'PoolData'}).subscribe((evt:CoreEvent) => {
       this.system.pools = evt.data;
       //core.emit({name: 'EnclosureDataRequest', sender: this});
+      //let el = this.gfx.extractEnclosure(0);
+      //console.log(el);
     });
 
 
@@ -106,11 +131,24 @@ export class ViewEnclosureComponent implements OnDestroy {
     core.emit({name: 'SysInfoRequest', sender: this});
   }
 
+  ngAfterContentInit(){
+  }
+
+  ngOnChanges(changes:SimpleChanges){
+    console.log(changes);
+  }
+
   ngOnDestroy(){
     this.core.unregister({observerClass:this})
   }
 
   selectEnclosure(value){
     this.selectedEnclosure = this.system.profile[value];
+  }
+
+  extractVisualizations(){
+    this.system.profile.forEach((item, index) => {
+      this.events.next({name:"CanvasExtract", data: this.system.profile[index], sender:this});
+    })
   }
 }
