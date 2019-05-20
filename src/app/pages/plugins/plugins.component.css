@@ -5,3 +5,10 @@ mat-button-toggle-group.plugin-buttons {
 img.plugin-img {
     padding-top: 10px;
 }
+
+p.plugin-description {
+    height: 100px;
+}
+div.plugin-vinfo {
+    margin-bottom: 20px;
+}

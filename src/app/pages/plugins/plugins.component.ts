@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { MatButtonToggleModule} from '@angular/material';
 
 import { WebSocketService } from '../../services';
 
@@ -11,7 +10,7 @@ import { WebSocketService } from '../../services';
 export class PluginsComponent implements OnInit {
     public title = "Available Plugins";
     public plugins: any;
-
+    public selectedPlugin: any;
     constructor(private ws: WebSocketService) {}
 
     ngOnInit() {
@@ -19,6 +18,7 @@ export class PluginsComponent implements OnInit {
             (res) => {
                 console.log(res);
                 this.plugins = res;
+                this.selectedPlugin = res[0];
             },
             (err) => {
 
