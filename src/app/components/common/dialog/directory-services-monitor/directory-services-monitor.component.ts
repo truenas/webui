@@ -19,24 +19,26 @@ import { WebSocketService } from '../../../../services/';
 })
 export class DirectoryServicesMonitorComponent implements OnInit {
   displayedColumns: string[] = ['icon', 'name', 'state'];
-  public dataSource: MatTableDataSource<any>;
+  dataSource = [];
   @ViewChild('dirServiceTable') dirServiceTable: MatTable<any>;
 
-  constructor(private ws: WebSocketService, ) {this.dataSource = new MatTableDataSource<any>([]);}
+  constructor(private ws: WebSocketService, ) {}
 
   ngOnInit() {
+    const tempArr = [];
     this.ws.call('activedirectory.get_state').subscribe((res) => {
-      let icon = this.getIcon(res);
-      this.dataSource.data.push({icon: icon, name: 'Active Directory', state: res});
+      const icon = this.getIcon(res);
+      tempArr.push({icon: icon, name: 'Active Directory', state: res});
 
       this.ws.call('ldap.get_state').subscribe((res) => {
-        let icon = this.getIcon(res);
-        this.dataSource.data.push({icon: icon, name: 'LDAP', state: res});
+        const icon = this.getIcon(res);
+        tempArr.push({icon: icon, name: 'LDAP', state: res});
 
         this.ws.call('nis.get_state').subscribe((res) => {
-          let icon = this.getIcon(res);
-          this.dataSource.data.push({icon: icon, name: 'NIS', state: res});
-          console.log(this.dataSource.data)
+          const icon = this.getIcon(res);
+          tempArr.push({icon: icon, name: 'NIS', state: res});
+          console.log(tempArr);
+          this.dataSource = tempArr;
         });
       });
     });

@@ -1,15 +1,8 @@
-<!-- <mat-dialog-content>
-  <p *ngIf="adState">
-    <mat-icon>{{adIcon}}</mat-icon>
-    Active Directory: {{adState}}
-  </p>
-  <p *ngIf="ldapState">
-    LDAP: {{ldapState}}
-  </p>
-  <p *ngIf="nisState">
-    NIS: {{nisState}}
-  </p>
-</mat-dialog-content> -->
+<mat-dialog-content class="dir-service-monitor-dialog">
+  <div class="header">
+    <h4>Directory Services Monitor</h4>
+  </div>
+
 
 <mat-table #dirServiceTable [dataSource]="dataSource" class="mat-elevation-z8">
   <!-- Icon Column -->
@@ -32,3 +25,4 @@
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
 </mat-table>
+</mat-dialog-content>
