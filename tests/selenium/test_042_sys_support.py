@@ -14,7 +14,7 @@ skip_mesages = "Skipping first run"
 script_name = os.path.basename(__file__).partition('.')[0]
 
 xpaths = {
-    'navSystem': '//*[@id="nav-2"]/div/a[1]',
+    'navSystem': "//span[contains(.,'System')]",
     'submenuSupport': "//a[contains(text(),'Support')]",
     'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
 }
@@ -31,12 +31,13 @@ def test_01_nav_system_support(wb_driver):
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
-
-
-def test_02_close_system_tab(wb_driver):
-    # Close the System Tab
-    wb_driver.find_element_by_xpath(xpaths['navSystem']).click()
     time.sleep(1)
-    # taking screenshot
-    test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+
+
+# def test_02_close_system_tab(wb_driver):
+#     # Close the System Tab
+#     wb_driver.find_element_by_xpath(xpaths['navSystem']).click()
+#     time.sleep(1)
+#     # taking screenshot
+#     test_name = sys._getframe().f_code.co_name
+#     take_screenshot(wb_driver, script_name, test_name)
