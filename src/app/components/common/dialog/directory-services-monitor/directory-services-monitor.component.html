@@ -1,0 +1,11 @@
+<mat-dialog-content>
+  <p *ngIf="adState">
+    Active Directory: {{adState}}
+  </p>
+  <p *ngIf="ldapState">
+    LDAP: {{ldapState}}
+  </p>
+  <p *ngIf="nisState">
+    NIS: {{nisState}}
+  </p>
+</mat-dialog-content>

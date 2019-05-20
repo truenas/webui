@@ -10,6 +10,7 @@ import { DialogService } from '../../../services/dialog.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { AboutModalDialog } from '../dialog/about/about-dialog.component';
 import { TaskManagerComponent } from '../dialog/task-manager/task-manager.component';
+import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
 import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
 import * as hopscotch from 'hopscotch';
@@ -49,7 +50,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
   currentTheme:string = "ix-blue";
   public createThemeLabel = "Create Theme";
   isTaskMangerOpened = false;
+  isDirServicesMonitorOpened = false;
   taskDialogRef: MatDialogRef<TaskManagerComponent>;
+  dirServicesMonitor: MatDialogRef<DirectoryServicesMonitorComponent>;
 
   ha_status_text: string;
   ha_disabled_reasons = [];
@@ -318,6 +321,29 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.taskDialogRef.afterClosed().subscribe(
       (res) => {
         this.isTaskMangerOpened = false;
+      }
+    );
+  }
+
+  onShowDirServicesMonitor() {
+    if (this.isDirServicesMonitorOpened) {
+      this.dirServicesMonitor.close(true);
+    } else {
+      this.isDirServicesMonitorOpened = true;
+      this.dirServicesMonitor = this.dialog.open(DirectoryServicesMonitorComponent, {
+        disableClose: false,
+        width: '400px',
+        hasBackdrop: true,
+        position: {
+          top: '48px',
+          right: '0px'
+        },
+      });
+    }
+
+    this.dirServicesMonitor.afterClosed().subscribe(
+      (res) => {
+        this.isDirServicesMonitorOpened = false;
       }
     );
   }
