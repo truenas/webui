@@ -199,42 +199,42 @@ export class UpdateComponent implements OnInit {
 
     this.busy = this.rest.get('system/update', {}).subscribe((res) => {
       this.autoCheck = res.data.upd_autocheck;
-    });
 
-    this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
-      this.fullTrainList = res.trains;
-
-      // On page load, make sure we are working with train of the current OS
-      this.train = res.current;
-      this.selectedTrain = res.current;
-
-      if (this.autoCheck) {
-        this.check();
-      }
-
-      this.trains = [];
-      for (const i in res.trains) {
-        if (this.compareTrains(this.train, i) === 'ALLOWED' || 
-        this.compareTrains(this.train, i) === 'NIGHTLY_UPGRADE' || 
-        this.compareTrains(this.train, i) === 'MINOR_UPGRADE' || 
-        this.compareTrains(this.train, i) === 'MAJOR_UPGRADE' || 
-        this.train === i) {
-          this.trains.push({ name: i, description: res.trains[i].description });
+      this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
+        this.fullTrainList = res.trains;
+  
+        // On page load, make sure we are working with train of the current OS
+        this.train = res.current;
+        this.selectedTrain = res.current;
+  
+        if (this.autoCheck) {
+          this.check();
         }
-      }
-      this.singleDescription = this.trains[0].description;
-
-      if (this.fullTrainList[res.current].description.toLowerCase().includes('[nightly]')) {
-        this.currentTrainDescription = '[nightly]';
-      } else if (this.fullTrainList[res.current].description.toLowerCase().includes('[release]')) {
-        this.currentTrainDescription = '[release]';
-      } else if (this.fullTrainList[res.current].description.toLowerCase().includes('[prerelease]')) {
-        this.currentTrainDescription = '[prerelease]';
-      } else {
-        this.currentTrainDescription = res.trains[this.selectedTrain].description.toLowerCase();
-      }
-      // To remember train descrip if user switches away and then switches back
-      this.trainDescriptionOnPageLoad = this.currentTrainDescription;
+  
+        this.trains = [];
+        for (const i in res.trains) {
+          if (this.compareTrains(this.train, i) === 'ALLOWED' || 
+          this.compareTrains(this.train, i) === 'NIGHTLY_UPGRADE' || 
+          this.compareTrains(this.train, i) === 'MINOR_UPGRADE' || 
+          this.compareTrains(this.train, i) === 'MAJOR_UPGRADE' || 
+          this.train === i) {
+            this.trains.push({ name: i, description: res.trains[i].description });
+          }
+        }
+        this.singleDescription = this.trains[0].description;
+  
+        if (this.fullTrainList[res.current].description.toLowerCase().includes('[nightly]')) {
+          this.currentTrainDescription = '[nightly]';
+        } else if (this.fullTrainList[res.current].description.toLowerCase().includes('[release]')) {
+          this.currentTrainDescription = '[release]';
+        } else if (this.fullTrainList[res.current].description.toLowerCase().includes('[prerelease]')) {
+          this.currentTrainDescription = '[prerelease]';
+        } else {
+          this.currentTrainDescription = res.trains[this.selectedTrain].description.toLowerCase();
+        }
+        // To remember train descrip if user switches away and then switches back
+        this.trainDescriptionOnPageLoad = this.currentTrainDescription;
+      });
     });
 
     this.ws.call('system.advanced.config').subscribe((res)=> {
