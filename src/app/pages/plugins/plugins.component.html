@@ -11,21 +11,21 @@
                 </mat-option>
             </mat-optgroup>
         </mat-select>
-        <div fxLayout="row wrap" fxLayoutAlign="space-around center" *ngIf="selectedPlugin">
-            <div fxFlex fxFlex.xs="100">
+        <div fxLayout="row" fxLayoutAlign="space-around center" *ngIf="selectedPlugin">
+            <div fxFlex>
                 <div>
                     <img class="plugin-img" height="150" [src]="selectedPlugin[5]" alt="{{selectedPlugin[0]}}" />
                 </div>
             </div>
-            <div fxFlex="40" fxFlex.xs="100" fxFlexOffset="3">
+            <div fxFlex="40" fxFlexOffset="3">
                 <p class="plugin-description">{{selectedPlugin[1]}}</p>
             </div>
-            <div fxFlex="25" fxFlex.xs="100" fxFlexOffset="3">
+            <div fxFlex="25" fxFlexOffset="3">
                 <div class="plugin-vinfo">
                     <p>Version: {{selectedPlugin[6]}}</p>
                     <p>Installed Instances: 2</p>
                 </div>
-                <button mat-flat-button color="primary" (click)="add(selectedPlugin[2]);">
+                <button mat-flat-button color="primary" (click)="install(selectedPlugin[2]);">
                     {{ "INSTALL" | translate }}
                 </button>
             </div>
