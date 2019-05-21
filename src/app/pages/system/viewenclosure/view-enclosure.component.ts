@@ -66,7 +66,11 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     this.currentView = this.views[id].name;
   }
 
-  constructor(private core: CoreService){
+  constructor(private core: CoreService, protected router: Router){
+
+    if (window.localStorage.getItem('is_freenas') === 'true') {
+      this.router.navigate(['']);
+    }
 
     this.events = new Subject<CoreEvent>();
     this.events.subscribe((evt:CoreEvent) => {
