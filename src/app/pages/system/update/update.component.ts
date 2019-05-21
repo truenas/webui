@@ -52,7 +52,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   public isHA: boolean;
   public ds: any;
   public failover_upgrade_pending = false;
-
+  isfreenas: boolean;
   public busy: Subscription;
   public busy2: Subscription;
   private checkChangesSubscription: Subscription;
@@ -194,6 +194,8 @@ export class UpdateComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    window.localStorage.getItem('is_freenas') === 'true' ? this.isfreenas = true : this.isfreenas = false;
+
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures) => {
       if(ures[0].attributes.preferences !== undefined && ures[0].attributes.preferences.enableWarning) {
         ures[0].attributes.preferences['enableWarning'] = true;
@@ -248,7 +250,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
       }
     });
 
-    if (window.localStorage.getItem('is_freenas') === 'false') {
+    if (!this.isfreenas) {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         if (is_ha) {
           this.updateMethod = 'failover.upgrade';
@@ -397,13 +399,19 @@ export class UpdateComponent implements OnInit, OnDestroy {
             this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
               if(ures[0].attributes.preferences !== undefined && !ures[0].attributes.preferences.enableWarning) {
                 if (!this.isHA) {
+                  //this.updateMethod is upgrade.upgrade
                   this.ds  = this.dialogService.confirm(
-                    T("Download Update"), T("Continue with download?"),true,"",true,T("Apply updates and reboot system after downloading."),this.updateMethod,[{ train: this.train, reboot: false }]
+                    T("Download Update"), T("Continue with download?"),true,"",true,
+                      T("Apply updates and reboot system after downloading."),
+                      this.updateMethod,[{ train: this.train, reboot: false }]
                   )                  
                 } else {
+                  // this.updateMethod is failover.upgrade
+                  // update.set_train seems to be unknown in MW. And does it take a train object as an arg?
                   this.ws.call('update.set_train', [this.train]).subscribe(() => {
                     this.ds  = this.dialogService.confirm(
-                      T("Download Update"), T("Continue with download?"),true,"",true,T("Apply updates and reboot system after downloading."),this.updateMethod
+                      T("Download Update"), T("Continue with download?"),true,"",true,
+                      T("Apply updates and reboot system after downloading."),this.updateMethod
                     )
                   })
                 }
@@ -432,13 +440,18 @@ export class UpdateComponent implements OnInit, OnDestroy {
               } else {
                 this.dialogService.dialogForm(this.saveConfigFormConf).subscribe(()=>{
                   if (!this.isHA) {
+                    //this.updateMethod is upgrade.upgrade
                     this.ds  = this.dialogService.confirm(
-                      T("Download Update"), T("Continue with download?"),true,"",true,T("Apply updates and reboot system after downloading."),this.updateMethod,[{ train: this.train, reboot: false }]
+                      T("Download Update"), T("Continue with download?"),true,"",true,
+                        T("Apply updates and reboot system after downloading."),
+                        this.updateMethod,[{ train: this.train, reboot: false }]
                     )
                   } else {
+                    //this.updateMethod is failover.upgrade
                     this.ws.call('update.set_train', [this.train]).subscribe(() => {
                       this.ds  = this.dialogService.confirm(
-                        T("Download Update"), T("Continue with download?"),true,"",true,T("Apply updates and reboot system after downloading."),this.updateMethod
+                        T("Download Update"), T("Continue with download?"),true,"",true,
+                        T("Apply updates and reboot system after downloading."),this.updateMethod
                       )
                     })
                   }

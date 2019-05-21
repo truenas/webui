@@ -190,10 +190,16 @@ updater(file: any, parent: any){
   if (fileBrowser.files && fileBrowser.files[0]) {
     parent.save_button_enabled = true;
     const formData: FormData = new FormData();
-    formData.append('data', JSON.stringify({
-      "method": parent.updateMethod,
-      "params": [{"destination":this.fileLocation}]
-    }));
+    if (parent.isHA) {
+      formData.append('data', JSON.stringify({
+        "method": parent.updateMethod //failover.update
+      }));
+    } else {
+      formData.append('data', JSON.stringify({
+        "method": parent.updateMethod, //update.update
+        "params": [{"destination":this.fileLocation}]
+      }));
+    }
     formData.append('file', fileBrowser.files[0]);
     parent.subs = {"apiEndPoint":file.apiEndPoint, "formData": formData}
   } else {
