@@ -369,12 +369,12 @@ export class TopbarComponent implements OnInit, OnDestroy {
       T("There is an upgrade waiting to finish."),
       true, T('Continue')).subscribe(res => {
         if (res) {
-          this.user_notified_of_pending_upgrade = false;
           this.upgradeWaitingToFinish = false;
           this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
           this.dialogRef.componentInstance.setCall('failover.upgrade_finish');
           this.dialogRef.componentInstance.submit();
           this.dialogRef.componentInstance.success.subscribe((succ) => {
+            this.user_notified_of_pending_upgrade = false;
             this.dialogRef.close(false);
             console.log('success');
           });
