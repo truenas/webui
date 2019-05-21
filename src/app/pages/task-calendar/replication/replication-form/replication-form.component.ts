@@ -391,7 +391,7 @@ export class ReplicationFormComponent implements OnDestroy {
     const port: number = Number(this.entityForm.value.repl_remote_port);
     this.loader.open();
 
-    this.ws.call('replication.public_key').subscribe((res)=> {
+    this.ws.call('replication.ssh_keyscan', [hostName, port]).subscribe((res)=> {
       this.loader.close();
       textAreaSSH.nativeElement.value = res;
       this.entityForm.formGroup.controls.repl_remote_hostkey.setValue(res);
