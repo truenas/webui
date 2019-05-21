@@ -82,7 +82,6 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
           this.extractVisualizations();
           break;
         case "EnclosureCanvas":
-          console.log(evt);
           //let id =  this.system.enclosures[evt.data.profile.enclosureKey].id;
           //console.log(this.nav);
           let el = this.nav.nativeElement.querySelector(".enclosure-" + evt.data.profile.enclosureKey);

@@ -90,6 +90,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     });
 
     core.register({observerClass: this, eventName: 'ThemeData'}).subscribe((evt:CoreEvent) => {
+      console.log(evt);
       this.theme = evt.data;
     });
 
@@ -288,7 +289,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         enclosure = new M50();
     }
     //enclosure = new ES24();
-    console.log(enclosure)
     enclosure.events.subscribe((evt) => {
       switch(evt.name){
         case "Ready":
