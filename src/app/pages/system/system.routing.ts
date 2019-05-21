@@ -6,6 +6,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { GeneralComponent } from './general/general.component';
 import { ConfigResetComponent } from './general/config-reset/config-reset.component';
 import { AdvancedComponent } from './advanced/';
+import { ViewEnclosureComponent } from './viewenclosure/';
 import { DatasetComponent } from './dataset/';
 import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/';
 import { BootEnvironmentRenameComponent } from './bootenv/bootenv-rename/';
@@ -73,6 +74,10 @@ export const routes: Routes = [
       path: 'advanced',
       component: AdvancedComponent,
       data: { title: 'Advanced', breadcrumb: 'Advanced', icon: 'settings' },
+    }, {
+      path: 'viewenclosure',
+      component: ViewEnclosureComponent,
+      data: { title: 'View Enclosure', breadcrumb: 'View Enclosure', icon: 'settings' },
     }, {
       path: 'reporting',
       component: ReportingComponent,

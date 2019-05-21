@@ -1,0 +1,63 @@
+nav.view-nav-bar{
+  background-color:var(--alt-bg1);
+  color:var(--alt-fg1);
+  width:100%;
+  height:32px;
+  padding-bottom: 4px;
+  margin:-15px 0 32px;
+}
+
+.view-nav-bar .view-nav-btn{
+  /*display:inline-block;*/
+  height:40px;
+  text-transform: capitalize !important;
+  /*font-weight:500;
+  padding:0 16px;
+  text-align:center;*/
+}
+
+.view-card{
+  max-width:960px;
+  margin: 0 auto;
+  min-height:480px;
+  padding:0;
+}
+
+.enclosure-selector{
+  color: #efefef;
+  background-color: #000;
+  width: 15rem;
+  min-height: 100%;
+  /*min-height: calc(100% - 124px);
+  position: fixed;*/
+  position:relative;
+  right: 0;
+  /*top: 126px;*/
+  top:-31px;
+  overflow:auto;
+  z-index:10;
+}
+
+.enclosure-selector .enclosure{
+  text-align:center;
+  min-height: 164px;
+  border-bottom: solid 1px #333;
+  border-left: solid 3px rgba(0,0,0,0);
+  padding:12px 0 24px;
+}
+
+.enclosure-selector .enclosure.active{
+  border-left: solid 3px var(--primary);
+}
+
+.enclosure-selector .enclosure:hover{
+  background-color:rgba(255,255,255,0.1);
+}
+
+.enclosure-selector .enclosure > div{
+  margin-bottom:16px;
+}
+
+.enclosure canvas{
+  width:80% !important;
+}

@@ -23,7 +23,8 @@ interface IChildItem {
 export class NavigationService {
   // all menu for truenas features
   public turenasFeatures = [
-    { menu: 'system', sub: 'proactivesupport' }
+    { menu: 'system', sub: 'proactivesupport' },
+    { menu: 'system', sub: 'viewenclosure' }
   ];
 
   defaultMenu: IMenuItem[] = [{
@@ -56,6 +57,7 @@ export class NavigationService {
         { name: T('NTP Servers'), state: 'ntpservers' },
         { name: T('Boot Environments'), state: 'bootenv' },
         { name: T('Advanced'), state: 'advanced' },
+        { name: T('View Enclosure'), state: 'viewenclosure', disabled: true},
         { name: T('Email'), state: 'email'},
         { name: T('Reporting'), state: 'reporting'},
         { name: T('System Dataset'), state: 'dataset'},
