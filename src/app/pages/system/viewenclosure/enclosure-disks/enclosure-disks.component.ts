@@ -176,8 +176,26 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     if(changes.selectedEnclosure){
       this.destroyEnclosure();
 
-      // It's not your job to initialize
-      if(this.enclosure){ this.createEnclosure(); }
+      if(this.enclosure){ 
+
+        this.exitingView = this.currentView;
+        this.currentView = this.defaultView;
+        if(this.exitingView == 'details'){
+          this.labels.exit();
+          this.exit('stage-left');
+          this.exit('stage-right');
+          /*this.update('stage-left');
+          this.update('stage-right');*/
+        } else if (this.exitingView == 'expanders'){
+          this.exit('full-stage');
+        } /*else {
+          this.exit('stage-left');
+          this.exit('stage-right');
+        }*/
+
+        // It's not your job to initialize
+        this.createEnclosure(); 
+      }
       //this.setCurrentView(this.defaultView);
     }
   }
