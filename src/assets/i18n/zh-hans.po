@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2019-05-21 15:54+0000\n"
+"PO-Revision-Date: 2019-05-22 16:29+0000\n"
 "Last-Translator: Weblate Admin <yifeiding@protonmail.com>\n"
 "Language-Team: Chinese (Simplified) <http://limbo.gq/projects/freenas-webui/"
 "webui/zh_Hans/>\n"
@@ -37,7 +37,6 @@ msgstr ""
 msgid " and all snapshots of it?"
 msgstr " 和所有它的快照？"
 
-#, fuzzy
 msgid " but datastore "
 msgstr " 但数据存储 "
 
@@ -80,7 +79,7 @@ msgid "(No description)"
 msgstr "(没有描述)"
 
 msgid "*allow_sysvipc"
-msgstr ""
+msgstr "*allow_sysvipc"
 
 msgid ", new vdev is "
 msgstr "，新的vdev是 "
@@ -167,6 +166,7 @@ msgid ""
 "discovery while CHAP and Mutual CHAP require authentication."
 msgstr ""
 
+#, fuzzy
 msgid ""
 "<b>Ctrl+C</b> kills a foreground process.<br>                            "
 "Many utilities are built-in:<br> <b>Iperf</b>,                            "
@@ -179,6 +179,14 @@ msgid ""
 "chapter in the guide for usage information                            and "
 "examples."
 msgstr ""
+"<b>Ctrl+C</b>杀死一个前台进程<br>                            很多工具是内置的：<br> "
+"<b>Iperf</b>，                            "
+"<b>Netperf</b>，<b>IOzone</b>，<b>arcsat</b>，                          "
+"<b>tw_cli</b>，<br><b>MegaCli</b>，                           <b>freenas-"
+"debug</b>，<b>tmux</b>，                           <b>Dmidecode</b>。<br>参考<"
+"a                            href=\"%%docurl%%/cli.html\""
+"                            target=\"_blank\">命令行工具</a>章节 in the guide for "
+"usage information                            and examples."
 
 msgid ""
 "<b>Ctrl+C</b> kills a foreground process.<br>                            "
@@ -390,6 +398,8 @@ msgid ""
 "when the configuration file is uploaded.</p> <b>Keep the configuration file "
 "safe and protect it from unauthorized access!</b>"
 msgstr ""
+"<p>包括Password Secret Seed允许将此配置文件与新的引导设备一起使用。当配置文件被上传后这将同时解密所有系统密码用于重用。</p><b"
+">保持配置文件安全并避免未经许可的访问！</b>"
 
 msgid ""
 "<p>The system will reboot to perform this operation!</p> <p><font "
@@ -490,7 +500,7 @@ msgid "ACL Type"
 msgstr "ACL类型"
 
 msgid "ACME DNS"
-msgstr ""
+msgstr "ACME DNS"
 
 msgid "ACME Server Directory URI"
 msgstr "ACME服务器目录URI"
@@ -646,6 +656,8 @@ msgid ""
 "Add an <a href=\"%%docurl%%/system.html#certificates\" "
 "target=\"_blank\">SSL certificate</a> to be used for secure S3 connections."
 msgstr ""
+"添加一个要用于安全S3连接的<a href=\"%%docurl%%/system.html#certificates\" target=\""
+"_blank\">SSL证书</a> 。"
 
 msgid ""
 "Add any more <a "
@@ -694,7 +706,7 @@ msgid ""
 msgstr "添加的磁盘被擦除，然后存储池将被扩展到新磁盘使用选择的拓扑。在存储池上的现有数据依旧被保留。"
 
 msgid "Adding data vdevs of different types is not supported."
-msgstr ""
+msgstr "不支持添加不同类型的数据vdev。"
 
 msgid ""
 "Additional <a                   "
@@ -764,12 +776,17 @@ msgid ""
 "href=\"https://jhrozek.fedorapeople.org/sssd/1.11.6/man/sssd.conf.5.html\" "
 "target=\"_blank\">sssd.conf(5)</a>."
 msgstr ""
+"用于<a href=\"https://jhrozek.fedorapeople.org/sssd/1.11.6/man/sssd.conf.5."
+"html\" target=\"_blank\">sssd.conf(5)</a>的额外选项。"
 
+#, fuzzy
 msgid ""
 "Additional parameters from <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=ifconfig\" "
 "target=\"_blank\">ifconfig(8)</a>."
 msgstr ""
+"来自<a href=\"https://www.freebsd.org/cgi/man.cgi?query=ifconfig\" target=\""
+"_blank\">ifconfig（8）的</a>其他参数。"
 
 msgid ""
 "Additional space-delimited domains to search. Adding search domains can "
@@ -780,12 +797,14 @@ msgid "Address"
 msgstr "地址"
 
 msgid "Address space limit in bytes for the jail."
-msgstr ""
+msgstr "jail的地址空间限制（以字节为单位）。"
 
 msgid ""
 "Adds <a href=\"%%docurl%%/sharing.html#avail-vfs-modules-tab\" "
 "target=\"blank\">virtual file system modules</a> to enhance functionality."
 msgstr ""
+"添加<a href=\"%%docurl%%/sharing.html#avail-vfs-modules-tab\" target=\"blank\""
+">虚拟文件系统模块</a>以增强功能。"
 
 msgid "Adjust the file permissions using the checkboxes."
 msgstr "使用Checkboxes来修改文件权限。"
@@ -804,7 +823,7 @@ msgid "Administrator Password"
 msgstr "管理员密码"
 
 msgid "Administrators Group"
-msgstr ""
+msgstr "管理员组"
 
 msgid "Adv. Power Management"
 msgstr "高级电源管理"
@@ -842,7 +861,7 @@ msgid "Aliases"
 msgstr "别名"
 
 msgid "All Disks"
-msgstr ""
+msgstr "所有磁盘"
 
 msgid "All dirs"
 msgstr "所有文件夹"
@@ -863,10 +882,10 @@ msgid "Allow Anonymous Login"
 msgstr "允许匿名登录"
 
 msgid "Allow Blocks Larger than 128KB"
-msgstr ""
+msgstr "允许块大于128KB"
 
 msgid "Allow Compressed WRITE Records"
-msgstr ""
+msgstr "允许压缩的WRITE记录"
 
 msgid "Allow DNS updates"
 msgstr "允许DNS更新"
@@ -902,7 +921,7 @@ msgid "Allow Trusted Domains"
 msgstr "允许可信域名"
 
 msgid "Allow WRITE_EMBEDDED Records"
-msgstr ""
+msgstr "允许WRITE_EMBEDDED记录"
 
 msgid ""
 "Allow configuring a non-standard port to access the GUI over <i>HTTP</i>. "
@@ -1007,6 +1026,9 @@ msgid ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=vmm\" "
 "target=\"_blank\">vmm(4)</a> kernel module loaded."
 msgstr ""
+"允许jail访问bhyve虚拟机监视器（VMM）。Jail必须是FreeBSD 12.0或更新并且有载入<a href=\""
+"https://www.freebsd.org/cgi/man.cgi?query=vmm\" target=\"_blank\""
+">vmm(4)</a>核心模块。"
 
 msgid ""
 "Allows different groups to be configured with different authentication "
@@ -1025,7 +1047,7 @@ msgid ""
 msgstr ""
 
 msgid "Also Include Naming Schema"
-msgstr ""
+msgstr "还包括命名架构"
 
 msgid ""
 "Alternative names that SMB clients can use when connecting to this NAS. Can "
@@ -1041,7 +1063,7 @@ msgid ""
 msgstr "总是备份密钥！失去密钥会使在磁盘内的全部数据丢失并且不可恢复。"
 
 msgid "Amazon Application Client ID"
-msgstr ""
+msgstr "亚马逊应用客户端ID"
 
 msgid ""
 "Amazon Web Services Key ID. This is found on <a "
@@ -1060,7 +1082,7 @@ msgstr ""
 "and create a new key pair."
 
 msgid "Amount of locked memory in bytes for the jail."
-msgstr ""
+msgstr "jail的锁定内存量（以字节为单位）。"
 
 msgid "An update is already applied. Please reboot the system."
 msgstr "一个更新已经被应用。请重启系统。"
@@ -1072,7 +1094,7 @@ msgid "Anonymous User Upload Bandwidth"
 msgstr "匿名用户上传速度"
 
 msgid "Appdefaults Auxiliary Parameters"
-msgstr ""
+msgstr "Appdefaults辅助参数"
 
 msgid ""
 "Append <i>@realm</i> to <i>cn</i> in LDAP queries for both groups and users "
@@ -1083,7 +1105,7 @@ msgid "Apple (AFP) Shares"
 msgstr "苹果(AFP)共享"
 
 msgid "Application Client Secret"
-msgstr ""
+msgstr "应用客户端秘密"
 
 msgid "Apply Group"
 msgstr "应用群组"
@@ -1092,7 +1114,7 @@ msgid "Apply Mode"
 msgstr "应用模式"
 
 msgid "Apply Network Changes"
-msgstr ""
+msgstr "应用网络更改"
 
 msgid "Apply Pending Updates"
 msgstr "应用待决更新"
@@ -1104,13 +1126,13 @@ msgid "Apply User"
 msgstr "应用用户"
 
 msgid "Apply network changes? Network connectivity will be interrupted."
-msgstr ""
+msgstr "应用网络更改？网络连接将中断。"
 
 msgid "Apply permissions recursively"
 msgstr "递归的应用权限"
 
 msgid "Apply permissions recursively all child datasets within the current dataset"
-msgstr ""
+msgstr "以递归方式应用权限到当前数据集中的所有子数据集"
 
 msgid ""
 "Apply permissions recursively to all directories and files within the "
@@ -1118,7 +1140,7 @@ msgid ""
 msgstr "递归的应用权限到所有当前数据集内的文件夹和文件"
 
 msgid "Apply permissions to child datasets"
-msgstr ""
+msgstr "应用权限到子数据集"
 
 msgid "Apply updates and reboot system after downloading."
 msgstr "在下载后应用更新并重启。"
@@ -1126,17 +1148,18 @@ msgstr "在下载后应用更新并重启。"
 msgid "Archive"
 msgstr "存档"
 
+#, fuzzy
 msgid "Are you sure you want to sync from peer?"
-msgstr ""
+msgstr "你确定要从Peer同步吗？"
 
 msgid "Are you sure you want to sync to peer?"
-msgstr ""
+msgstr "您确定要同步到peer吗？"
 
 msgid "Are you sure?"
-msgstr ""
+msgstr "是否确定？"
 
 msgid "Asigra successfully updated."
-msgstr ""
+msgstr "Asigra成功更新。"
 
 msgid ""
 "Assigning a directory to Minio changes the permissions                      "
@@ -1155,19 +1178,19 @@ msgid ""
 msgstr ""
 
 msgid "Attach Debug"
-msgstr ""
+msgstr "附加调试"
 
 msgid "Attach NIC"
 msgstr "连接网卡"
 
 msgid "Attach screenshot(s)."
-msgstr ""
+msgstr "附上截图。"
 
 msgid "Auth Method"
 msgstr "捡到方式"
 
 msgid "Authenticate"
-msgstr ""
+msgstr "认证"
 
 msgid "Authentication Group number"
 msgstr "认证组编号"
@@ -1178,16 +1201,17 @@ msgstr "验证类型"
 msgid ""
 "Authentication only functions when a Certificate is selected with either "
 "the <i>SSL</i> or <i>TLS</i> option."
-msgstr ""
+msgstr "仅当使用<i>SSL</i>或<i>TLS</i>选项并选择证书时，身份验证才起作用。"
 
+#, fuzzy
 msgid "Authenticator"
-msgstr ""
+msgstr "认证器"
 
 msgid "Authenticator Attributes"
-msgstr ""
+msgstr "验证器属性"
 
 msgid "Authorized Access"
-msgstr ""
+msgstr "授权访问"
 
 msgid "Authorized Hosts and IP addresses"
 msgstr "可靠的IP地址和域名"
@@ -1201,7 +1225,7 @@ msgstr "自动配置IPv6"
 msgid ""
 "Auto-populates with information from the <b>Realm</b> when the settings in "
 "this screen are saved."
-msgstr ""
+msgstr "保存此屏幕中的设置时，自动填充来自<b>Realm的</b>信息。"
 
 msgid "Auto-start"
 msgstr "自启动"
@@ -1227,10 +1251,10 @@ msgid "Automatically reboot the system after the update is applied."
 msgstr "在更新被应用后自动重启系统。"
 
 msgid "Automatically stop the script or command after the specified seconds."
-msgstr ""
+msgstr "在指定的秒数后自动停止脚本或命令。"
 
 msgid "Autostart"
-msgstr ""
+msgstr "自启动"
 
 msgid "Auxiliary Arguments"
 msgstr "附加参数"
@@ -1248,7 +1272,7 @@ msgid "Auxiliary Parameters (upsd.conf)"
 msgstr "附加参数 （upsd.conf）"
 
 msgid "Auxiliary arguments"
-msgstr ""
+msgstr "附加参数"
 
 msgid "Auxiliary parameters"
 msgstr "附加参数"
@@ -1302,13 +1326,13 @@ msgid "Base DN"
 msgstr "基础 DN"
 
 msgid "Base Filesystem"
-msgstr ""
+msgstr "基本文件系统"
 
 msgid "Base Name"
 msgstr "基本名称"
 
 msgid "Base64 encoded key for the Azure account."
-msgstr ""
+msgstr "Azure帐户的Base64编码密钥。"
 
 msgid "Basic Mode"
 msgstr "基本模式"
@@ -1328,10 +1352,10 @@ msgid ""
 msgstr ""
 
 msgid "Berkeley Packet Filter"
-msgstr ""
+msgstr "伯克利包过滤器"
 
 msgid "Bind"
-msgstr ""
+msgstr "绑定"
 
 msgid "Bind DN"
 msgstr "绑定 DN"
@@ -1352,7 +1376,7 @@ msgid "Block (iSCSI)"
 msgstr "块级存储(iSCSI)"
 
 msgid "Block Size"
-msgstr ""
+msgstr "块大小"
 
 msgid "Block size"
 msgstr "块大小"
@@ -1381,7 +1405,7 @@ msgid ""
 msgstr ""
 
 msgid "Bridge Members"
-msgstr ""
+msgstr "桥接成员"
 
 msgid "Browsable to Network Clients"
 msgstr "允许网络客户端浏览"
@@ -1425,16 +1449,16 @@ msgid ""
 msgstr ""
 
 msgid "Browse to an existing pool or dataset to store the new zvol."
-msgstr ""
+msgstr "浏览到现有存储池或数据集以存储新的zvol。"
 
 msgid "Browse to the ZFS dataset that will hold the copied data."
-msgstr ""
+msgstr "浏览到将保存复制数据的ZFS数据集。"
 
 msgid "Browse to the desired zvol on the disk."
-msgstr ""
+msgstr "浏览到磁盘上所需的zvol。"
 
 msgid "Browse to the directory for the S3 filesystem."
-msgstr ""
+msgstr "浏览到S3文件系统的目录。"
 
 msgid ""
 "Browse to the directory on the system which will be accessed by the jail. "
@@ -1449,7 +1473,7 @@ msgstr ""
 "极限路径长度是255个字符"
 
 msgid "Browse to the keytab file to upload."
-msgstr ""
+msgstr "浏览到要上载的keytab文件。"
 
 msgid "Browse to the operating system installer image file."
 msgstr "浏览操作系统的安装镜像文件。"
@@ -1605,18 +1629,12 @@ msgid ""
 "operation. Activate an existing boot environment that uses the desired "
 "train and boot into it to switch to that train."
 msgstr ""
-"Changing the major version is considered a downgrade and is not a supported "
-"operation. Activate an existing boot environment that uses the desired "
-"train and boot into it to switch to that train."
 
 msgid ""
 "Changing the minor version is considered a downgrade and is not a supported "
 "operation. Activate an existing boot environment that uses the desired "
 "train and boot into it to switch to that train."
 msgstr ""
-"Changing the minor version is considered a downgrade and is not a supported "
-"operation. Activate an existing boot environment that uses the desired "
-"train and boot into it to switch to that train."
 
 msgid ""
 "Changing to a nightly train is one-way. Changing back to a stable train is "
@@ -2982,7 +3000,7 @@ msgid "Docker Host"
 msgstr "Docker主机"
 
 msgid "Domain"
-msgstr "Domain"
+msgstr "域名"
 
 msgid "Domain Account Name"
 msgstr "域账户名"
@@ -4131,7 +4149,7 @@ msgid "Extending an encrypted pool resets the passphrase and recovery key!"
 msgstr ""
 
 msgid "Extent"
-msgstr "Extent"
+msgstr ""
 
 msgid "Extent name"
 msgstr ""
@@ -6303,13 +6321,13 @@ msgid "Raid-z3"
 msgstr ""
 
 msgid "Range High"
-msgstr "Range High"
+msgstr ""
 
 msgid "Range Low"
-msgstr "Range Low"
+msgstr ""
 
 msgid "Range Size"
-msgstr "Range Size"
+msgstr "范围大小"
 
 msgid "Raw File"
 msgstr "原始文件"
@@ -6375,7 +6393,7 @@ msgid "Recovery Attempts"
 msgstr "回复尝试"
 
 msgid "Recovery Key"
-msgstr "Recovery Key"
+msgstr "恢复密钥"
 
 msgid "Recovery key added to pool "
 msgstr "恢复密钥已被加入到存储池 "
