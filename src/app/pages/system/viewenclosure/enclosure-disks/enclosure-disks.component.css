@@ -167,6 +167,10 @@ nav.view-nav-bar{
   margin: 0 auto;
 }
 
+.view-card .dom-overlay.expanders .content{
+  width:100%;
+}
+
 .view-card .dom-overlay.stage-left,
 .view-card .dom-overlay.stage-right{
   position:absolute;

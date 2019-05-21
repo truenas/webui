@@ -674,5 +674,4 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       rgb:rgb
     }
   }
-
 }
