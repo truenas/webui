@@ -8,12 +8,6 @@ import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
 import { SystemProfiler } from './enclosure-disks/system-profiler';
 
-// import { MatDialog } from '@angular/material';
-// import { helptext_system_email } from 'app/helptext/system/email';
-// import * as _ from 'lodash';
-// import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-// import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-
 interface ViewConfig {
   name: string;
   icon: string;
@@ -78,12 +72,9 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     this.events.subscribe((evt:CoreEvent) => {
       switch(evt.name){
         case "VisualizerReady":
-          //this.events.next({name:"CanvasExtract", data: this.system.profile[0], sender:this});
           this.extractVisualizations();
           break;
         case "EnclosureCanvas":
-          //let id =  this.system.enclosures[evt.data.profile.enclosureKey].id;
-          //console.log(this.nav);
           let el = this.nav.nativeElement.querySelector(".enclosure-" + evt.data.profile.enclosureKey);
           evt.data.canvas.setAttribute('style', 'width: 80% ;');
           el.appendChild(evt.data.canvas);
@@ -93,37 +84,22 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
 
     core.register({observerClass: this, eventName: 'EnclosureData'}).subscribe((evt:CoreEvent) => {
       this.system = new SystemProfiler(this.system_product, evt.data);
-      //this.system.enclosures = evt.data;
       this.selectedEnclosure = this.system.profile[this.system.headIndex];
       core.emit({name: 'DisksRequest', sender: this});
-      //console.log(evt);
-      //console.log(this.system);
     });
 
     core.register({observerClass: this, eventName: 'PoolData'}).subscribe((evt:CoreEvent) => {
       this.system.pools = evt.data;
-      //core.emit({name: 'EnclosureDataRequest', sender: this});
-      //let el = this.gfx.extractEnclosure(0);
-      //console.log(el);
     });
 
 
     core.register({observerClass: this, eventName: 'DisksData'}).subscribe((evt:CoreEvent) => {
-      //console.log(evt);
       this.system.diskData = evt.data;
-      //let data = evt.data;
-      //this.system = new SystemProfiler(this.system_product, data);
-      //this.selectedEnclosure = this.system.profile[0];
-      //console.log(this.system);
       core.emit({name: 'PoolDataRequest', sender: this});
-      //this.pixiInit();
     });
 
     core.register({observerClass: this, eventName: 'SysInfo'}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
-      //this.system_product = evt.data.system_product;
       this.system_product = 'M50'; // Just for testing on my FreeNAS box
-      //core.emit({name: 'DisksRequest', sender: this});
       core.emit({name: 'EnclosureDataRequest', sender: this});
     });
 
@@ -134,7 +110,6 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
   }
 
   ngOnChanges(changes:SimpleChanges){
-    console.log(changes);
   }
 
   ngOnDestroy(){

@@ -86,11 +86,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   constructor(public el:ElementRef, private core: CoreService /*, private ngZone: NgZone*/) { 
 
     core.register({observerClass: this, eventName: 'EnclosureSlotStatusChanged'}).subscribe((evt:CoreEvent) => {
-      //console.log(evt);
     });
 
     core.register({observerClass: this, eventName: 'ThemeData'}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
       this.theme = evt.data;
     });
 
@@ -117,7 +115,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       }
     });
 
-    console.log(this.system);
+    //console.log(this.system);
     this.pixiInit();
 
     // Listen for DOM changes to avoid race conditions with animations
@@ -177,7 +175,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   ngOnChanges(changes:SimpleChanges){
     if(changes.selectedEnclosure){
       this.destroyEnclosure();
-      this.createEnclosure();
+
+      // It's not your job to initialize
+      if(this.enclosure){ this.createEnclosure(); }
       //this.setCurrentView(this.defaultView);
     }
   }
@@ -244,9 +244,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
           this.enclosure.container.height = this.enclosure.container.height / 2;
           this.enclosure.container.x = this.app._options.width / 2 - this.enclosure.container.width / 2;
           this.enclosure.container.y = this.app._options.height / 2 - this.enclosure.container.height / 2;
-
+          
           this.setDisksEnabledState();
           this.setCurrentView(this.defaultView);
+          
           
         break;
         case "DriveSelected":
@@ -323,19 +324,22 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     //let extractor = new PIXI.extract.CanvasExtract(this.renderer);
     let canvas = this.app.renderer.plugins.extract.canvas(enclosure.container)
     this.controllerEvents.next({name:"EnclosureCanvas", data:{canvas:canvas, profile: profile}, sender:this});
-    this.container.removeChild(enclosure.container)
+    this.container.removeChild(enclosure.container);
     //delete enclosure;
   }
 
   destroyEnclosure(){
-    this.enclosure.events.unsubscribe();
+    if(!this.enclosure){return; }
+    this.enclosure.events.unsubscribe()
     this.container.removeChild(this.enclosure.container);
     this.enclosure.destroy();
   }
 
   destroyAllEnclosures(){
-    // Clear out assets
-    this.enclosure.destroy();
+    if(this.enclosure){
+      // Clear out assets
+      this.enclosure.destroy();
+    }
     this.container.destroy(true);
     PIXI.loader.resources = {};
   }
