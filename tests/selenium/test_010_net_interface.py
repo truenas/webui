@@ -15,8 +15,8 @@ skip_mesages = "Skipping first run"
 script_name = os.path.basename(__file__).partition('.')[0]
 
 xpaths = {
-    'navNetwork': '//*[@id="nav-4"]/div/a[1]',
-    'submenuInterface': '//*[@id="4-1"]',
+    'navNetwork': "//span[contains(.,'Network')]",
+    'submenuInterface': "//a[contains(.,'Interfaces')]",
     'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
 }
 

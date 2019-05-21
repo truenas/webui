@@ -14,9 +14,8 @@ skip_mesages = "Skipping first run"
 script_name = os.path.basename(__file__).partition('.')[0]
 
 xpaths = {
-    'navNetwork': '//*[@id="nav-4"]/div/a[1]',
-    # this should be the correct ID 'submenuVlan' : '//*[@id="4-4"]'
-    'submenuVlan': '//*[@id="4-5"]',
+    'navNetwork': "//span[contains(.,'Network')]",
+    'submenuVlan': "//a[contains(.,'Network Summary')]",
     'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
 }
 
@@ -29,7 +28,7 @@ def test_01_nav_net_vlan(wb_driver):
     # get the weather data
     page_data = ui_element.text
     # assert response
-    assert "Static Routes" in page_data, page_data
+    assert "Network Summary" in page_data, page_data
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
