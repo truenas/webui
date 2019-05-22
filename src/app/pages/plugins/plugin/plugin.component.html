@@ -1,0 +1,25 @@
+<div class="plugin-expaned-pannel">
+    <section class="info">
+        <div fxLayout="row" fxLayoutAlign="space-around center">
+            <div fxFlex>
+                <div>VERSION:</div>
+                <div>{{config[10]}}</div>
+            </div>
+            <div fxFlex>
+                COLLECTION: XXXX
+            </div>
+            <div fxFlex>
+                INSTALL DATE: XXXX
+            </div>
+            <div fxFlex>
+                AUTOSTART: {{config[2]}}
+            </div>
+        </div>
+    </section>
+    <mat-divider></mat-divider>
+    <section class="action-buttons" fxLayout="row">
+        <button *ngFor="let action of getActions(config)" mat-menu-item (click)="action.onClick()" fxFlex>
+            <mat-icon>{{action.icon}}</mat-icon><span>{{action.label | translate}}</span>
+        </button>
+    </section>
+</div>

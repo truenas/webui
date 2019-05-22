@@ -14,6 +14,8 @@ import { PluginAddComponent } from './plugin-add/plugin-add.component';
 import { PluginsInstalledListComponent } from './plugins-installed/plugins-installed.component';
 import { PluginAdvancedAddComponent } from './plugin-advanced-add/plugin-advanced-add.component';
 import { PluginsComponent } from './plugins.component';
+import { PluginComponent } from './plugin/plugin.component';
+
 @NgModule({
   imports : [
     EntityModule, CommonModule, FormsModule,
@@ -26,6 +28,7 @@ import { PluginsComponent } from './plugins.component';
     PluginsInstalledListComponent,
     PluginAdvancedAddComponent,
     PluginsComponent,
+    PluginComponent,
   ]
 })
 export class PluginsModule {
