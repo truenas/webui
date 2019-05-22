@@ -78,8 +78,10 @@
   </div>
   <!-- END OF CONTROLS SECTION -->
   
-  
-  
+  <!-- INSERT DYNAMIC CARDHEADER HERE -->
+  <ng-template dynamicComponent *ngIf="conf.cardHeaderComponent" [component]="conf.cardHeaderComponent" [config]="" [parent]="this"></ng-template>
+
+  <!-- TABLE START -->
   <div  fxLayout="row wrap" fxLayoutAlign="start center" class="multiActionsButton fn-toolbar" [ngClass]="{'icons-only': multiActionsIconsOnly}" *ngIf="conf && selected.length > 0" [style.display]="selected.length > 0 ? 'block' : 'none'" >
       <div>
         <div class="multiactions-title" *ngIf="conf.multiActions.length > 0 && !multiActionsIconsOnly">
@@ -161,9 +163,12 @@
       <!-- Row Detail Template -->
       <ngx-datatable-row-detail *ngIf="conf.hasDetails" [rowHeight]="100" #myDetailRow (toggle)="onDetailToggle($event)">
         <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
+          <!-- default -->
           <div *ngFor="let detail of row.details" style="padding-left:35px;">
             <strong>{{detail.label | translate}}:</strong> {{detail.value}}
           </div>
+          <!-- customized -->
+          <div *ngIf="conf.rowDetailComponent" dynamicComponent [component]="conf.rowDetailComponent" [config]="row" [parent]="this"></div>
         </ng-template>
       </ngx-datatable-row-detail>
 
@@ -211,7 +216,7 @@
           </div>
         </ng-template>
       </ngx-datatable-column>
-      <ngx-datatable-column *ngIf="conf.hasDetails"
+      <ngx-datatable-column *ngIf="conf.hasDetails && showActions"
         [width]="50"
         [resizeable]="false"
         [sortable]="false"
@@ -287,6 +292,23 @@
         <ng-template let-row="row" ngx-datatable-cell-template>
           <app-entity-table-actions *ngIf="showActions" [entity]="this" [row]="row">
           </app-entity-table-actions>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column *ngIf="conf.hasDetails && !showActions"
+        [width]="50"
+        [resizeable]="false"
+        [sortable]="false"
+        [draggable]="false"
+        [canAutoResize]="false">
+        <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+          <a
+            href="javascript:void(0)"
+            [class.datatable-icon-right]="!expanded"
+            [class.datatable-icon-down]="expanded"
+            title="Expand/Collapse Row"
+            (click)="toggleExpandRow(row)">
+          </a>
         </ng-template>
       </ngx-datatable-column>
     </ngx-datatable>

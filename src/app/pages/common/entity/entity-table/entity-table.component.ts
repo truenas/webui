@@ -30,6 +30,7 @@ export interface InputTableConf {
   route_edit?: string;
   route_add?: string[];
   queryRes?: any [];
+  showActions?: boolean;
   isActionVisible?: any;
   custActions?: any[];
   multiActions?:any[];
@@ -39,6 +40,8 @@ export interface InputTableConf {
   checkbox_confirm?: any;
   checkbox_confirm_show?: any;
   hasDetails?:boolean;
+  rowDetailComponent?: any;
+  cardHeaderComponent?: any;
   asyncView?: boolean;
   addRows?(entity: EntityTableComponent);
   changeEvent?(entity: EntityTableComponent);
