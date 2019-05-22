@@ -1,0 +1,18 @@
+<nav class="view-nav-bar">
+  <span *ngFor="let button of views; let i=index;">
+    <span *ngIf="button.showInNavbar" class="view-nav-btn mat-button mat-default" (click)="changeView(button.id)">
+      <mat-icon class="view-nav-btn-icon" role="img" fontSet="mdi-set" fontIcon="mdi-{{button.icon}}" style=""></mat-icon>
+      {{button.name}}
+    </span>
+  </span>
+</nav>
+
+<!-- Persistent Visualizer -->
+<enclosure-disks style="float:left;" [style.width]="system.enclosures.length > 1 ? 'calc(100% - 15rem)' : '100%' " *ngIf="events && system && system.pools && selectedEnclosure" [controller-events]="events" [current-tab]="currentView" [system-profiler]="system" [selected-enclosure]="selectedEnclosure"></enclosure-disks>
+<!--<enclosure-disks *ngIf="system && system.pools && selectedEnclosure && currentView == 'Disks'" [system-profiler]="system" [selected-enclosure]="selectedEnclosure"></enclosure-disks>-->
+
+<div #navigation  *ngIf="events && system && system.pools && system.enclosures && system.enclosures.length > 1" class="enclosure-selector">
+  <div *ngFor="let enclosure of system.enclosures; let i = index" (click)="selectEnclosure(i)" class="enclosure enclosure-{{i}} {{selectedEnclosure.enclosureKey == i ? 'active' : '' }} ">
+    <div>{{enclosure.model}} ({{i}})</div>
+  </div>
+</div>

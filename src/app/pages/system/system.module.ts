@@ -54,12 +54,15 @@ import { CertificateAcmeAddComponent } from './certificates/certificate-acme-add
 import { FailoverComponent } from './failover/failover.component';
 import { ProactiveSupportComponent } from './proactive-support/proactive-support.component';
 import { ReportingComponent } from './reporting/reporting.component';
+import { EnclosureModule } from './viewenclosure/enclosure.module'
+
 
 @NgModule({
   imports: [
     EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, NgUploaderModule, routing,
-    MaterialModule, MarkdownModule.forRoot(), TranslateModule, FlexLayoutModule
+    MaterialModule, MarkdownModule.forRoot(), TranslateModule, FlexLayoutModule,
+    EnclosureModule
   ],
   declarations: [
     GeneralComponent,

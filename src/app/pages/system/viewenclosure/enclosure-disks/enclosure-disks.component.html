@@ -1,0 +1,243 @@
+<mat-card class="view-card" id="{{currentTab}}">
+  <mat-toolbar id="Disks-toolbar">
+    <div class="mat-card-title-text">{{currentTab}} on {{selectedEnclosure ? selectedEnclosure.model + ' (' + selectedEnclosure.enclosureKey + ')' : '...'}}</div>
+
+    <!-- ENCLOSURE MODEL -->
+    <div class="model dom-overlay" style="opacity:0.75;">
+      <div class="model-inner">
+        <!--<img src="assets/images/TrueNAS_Logomark_OnDark.svg" alt="TrueNAS Logo" class="logo mark">  -->
+        <!--<mat-icon svgIcon="truenas_logomark"></mat-icon>
+          <mat-icon svgIcon="truenas_logotype"></mat-icon>-->
+        <mat-icon svgIcon="truenas_logo_full" style="width:140px; height:auto; margin-top:12px;"></mat-icon>
+        <!--<img src="assets/images/TrueNAS_Logotype_OnDark.svg" alt="TrueNAS Logo Text" class="logo type">  -->
+        <!--<span class="text">:   {{selectedEnclosure.model}}</span>-->
+      </div>
+    </div>
+
+  </mat-toolbar>
+  <mat-card-content id="Disks-content">
+    <!-- VISUALIZATION/OVERVIEW -->
+    <div #disksoverview id="disks-overview" [class]="currentView">
+
+        <!-- POOLS OVERLAY -->
+        <div *ngIf="currentView == 'pools' || exitingView == 'pools'" class="pools stage-left dom-overlay" >
+          <div class="content">
+            <h2>Pools</h2>
+          </div>
+        </div>
+        <div *ngIf="currentView == 'pools' || exitingView == 'pools'" class="pools stage-right dom-overlay list">
+          <div class="content">
+
+            <div *ngIf="enclosurePools.length > 0; else noPools" class="legend">
+              <div *ngFor="let pool of enclosurePools"><div class="swatch" [style.background]="theme[theme.accentColors[selectedEnclosure.poolKeys[pool]]]"></div>{{pool}}</div>
+            </div>
+
+            <ng-template #noPools>
+              <div class="legend">
+                <div>No pools on this enclosure.</div>
+              </div>
+            </ng-template>
+
+          </div>
+        </div>
+
+        <!-- STATUS OVERLAY -->
+          <div *ngIf="currentView == 'status' || exitingView == 'status'" class="status stage-left dom-overlay">
+            <div class="content">
+              <h2>Status</h2>
+            </div>
+          </div>
+          <div *ngIf="currentView == 'status' || exitingView == 'status'" class="status stage-right dom-overlay list">
+            <div class="content">
+              <div class="legend">
+                <div><div class="swatch" [style.background]="theme.green"></div>ONLINE</div>
+                <div><div class="swatch" [style.background]="theme.yellow"></div>OTHER</div>
+                <div><div class="swatch" [style.background]="theme.red"></div>FAULT</div>
+                <div><div class="swatch" style="background:#999999;"></div>AVAILABLE</div>
+              </div>
+            </div>
+          </div>
+
+        <!-- DETAILS OVERLAY -->
+          <div *ngIf="currentView == 'details' || exitingView == 'details'" class="details stage-left dom-overlay">
+            <div class="content">
+              <h2 class="disk-name {{selectedDisk.name}}">{{selectedDisk.name}}</h2>
+              <div class="title">Type: {{selectedVdev.type == 'None' ? 'UNASSIGNED' : selectedVdev.type}}</div>
+            </div>
+          </div>
+          
+          <div #domLabels *ngIf="currentView == 'details' || exitingView == 'details'" class="details stage-right dom-overlay">
+            <div class="content">
+
+              <div *ngIf="selectedVdevDisks; else noVdevDisks;" class="legend">
+                <div *ngFor="let disk of selectedVdevDisks; let i = index" class="vdev-disk {{disk}}"><div class="swatch" [style.background]="selectedDisk.devname == disk ? theme.cyan : theme.blue"></div>{{disk}} <span> {{ selectedEnclosure.disks[disk] }}</span></div>
+              </div>
+
+              <ng-template #noVdevDisks>
+                <div class="legend">
+                  <div class="vdev-disk "> No Vdev info for disk.</div>
+                </div>
+              </ng-template>
+
+            </div>
+          </div>
+
+        <!-- CAPTION OVERLAY -->
+        <div class="caption dom-overlay">Choose a Disk</div>
+
+        <!-- EXPANDERS OVERLAY -->
+        <div *ngIf="currentView == 'expanders' || exitingView == 'expanders'" class="expanders full-stage dom-overlay">
+          <div *ngIf="expanders" class="content" >
+            <div *ngFor="let expander of expanders" [style.width]="(100 / expanders.length).toString() + '%' " style="display:inline-block;">
+              <div class="primary-number" >{{ expander.status }}</div>
+              <div class="title">{{expander.descriptor}}</div>
+              <div class="subtitle">Expander Status </div>
+            </div>
+          </div>
+        </div>
+        
+    </div>
+
+    <!-- DETAILS/TITLE -->
+    <div id="disks-details-header" [class]="currentView"> 
+      <!--<button mat-icon-button color="primary" (click)="clearDisk()" color="default" *ngIf="currentView == 'details'"><mat-icon role="img">chevron_left</mat-icon></button>-->
+      <a class="back fn-theme-primary" (click)="clearDisk()" *ngIf="currentView == 'details'"><mat-icon role="img">chevron_left</mat-icon></a>
+      {{selectedDisk ? 'Disk Details for ' + selectedDisk.name : 'Disks Overview'}} 
+    </div>
+
+    <!-- DETAILS/OVERVIEW -->
+    <div *ngIf="selectedDisk; then details else overview ;"></div>
+    <ng-template #overview>
+      <div #disksdetails id="disks-details">
+        <div class="details-wrapper" id="view-selector" fxFill fxLayout="row" fxLayoutAlign="space-around stretch">
+
+          <!-- ZeroState -->
+          <ng-template #loading>
+            <div fxFlex class="tiles" [class.active]="currentView == 'pools' " fxLayout="column" fxLayoutAlign="center center">
+              Loading...
+            </div>
+          </ng-template>
+  
+          <div *ngIf="system && system.pools && enclosurePools; else loading" fxFlex class="tiles" [class.active]="currentView == 'pools' " fxLayout="column" fxLayoutAlign="center center">
+            <div class="primary-number" >{{ enclosurePools.length }}</div>
+            <div class="title">Pools in Enclosure</div>
+            <div class="subtitle">{{system.profile.length > 1 ? system.profile.length - 1 : 'No' }} other enclosures detected</div>
+            <button mat-button color="primary" (click)="setCurrentView('pools')">SHOW POOLS</button>
+          </div>
+  
+          <div *ngIf="system; else loading" fxFlex class="tiles" [class.active]="currentView == 'status' " fxLayout="column" fxLayoutAlign="center center">
+            <div class="primary-number" >0</div>
+            <div class="title">Failed Disks</div>
+            <div class="subtitle">All disks healthy</div>
+            <button mat-button color="primary" (click)="setCurrentView('status')">SHOW STATUS</button>
+          </div>
+  
+          <div *ngIf="system; else loading" fxFlex class="tiles" [class.active]="currentView == 'expanders' " fxLayout="column" fxLayoutAlign="center center">
+            <div class="primary-number" >{{expanders.length}}</div>
+            <div class="title">SAS Expanders</div>
+            <div class="subtitle">on this enclosure</div>
+            <button mat-button color="primary" (click)="setCurrentView('expanders')">SHOW EXPANDER STATUS</button>
+          </div>
+  
+        </div>
+      </div>
+    </ng-template>
+
+    <!-- DETAILS/DISK -->
+    <ng-template #details>
+      <div  #diskdetails id="disks-details">
+        <div class="details-wrapper" fxFill fxLayout="row" fxLayoutAlign="space-around stretch">
+  
+          <div fxFlex="25" class="disk-basic-details" fxLayout="column" fxLayoutAlign="center center">
+            <disk-ui [data]="selectedDisk"></disk-ui><!-- disk icon + labels -->
+            <div class="capacity">{{converter(selectedDisk.size)}}</div>
+            <div class="disk-actions">
+              <button id="identify-btn" mat-button color="primary" (click)="toggleSlotStatus()">Identify Drive</button>
+            </div>
+          </div>
+  
+          <!--<div fxFlex="75" class="tiles disk-advanced-details" fxLayoutWrap fxLayout="row" fxLayoutAlign="center center">-->
+          <div fxFlex="75" class="tiles disk-advanced-details" >
+            <!--<h3 style="opacity:0.75;">Disk Properties Go Here</h3>-->
+
+            <div class="details-wrapper" fxLayout="row wrap" fxLayoutGap="16px">
+
+              <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
+                <div>
+                  <div class="label">Pool</div>
+                  <div class="value">{{selectedDisk.vdev ? selectedDisk.vdev.pool : 'Disk not attached to any pools.'}}</div>
+                </div>
+              </div>
+
+              <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
+                <div>
+                  <div class="label">Serial</div>
+                  <div class="value">{{selectedDisk.serial}}</div>
+                </div>
+              </div>
+
+              <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
+                <div>
+                  <div class="label">Status</div>
+                  <div class="value">{{selectedDisk.status}}</div>
+                </div>
+              </div>
+
+              <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
+                <div>
+                  <div class="label">Acoustic Level</div>
+                  <div class="value">{{selectedDisk.acousticlevel}}</div>
+                </div>
+              </div>
+
+              <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
+                <div>
+                  <div class="label">Adv. Power Mgmt.</div>
+                  <div class="value">{{selectedDisk.advpowermgmt}}</div>
+                </div>
+              </div>
+
+              <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
+                <div>
+                  <div class="label">S.M.A.R.T. Enabled</div>
+                  <div class="value">{{selectedDisk.togglesmart ? 'Yes' : 'No'}}</div>
+                </div>
+              </div>
+
+              <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
+                <div>
+                  <div class="label">S.M.A.R.T. Options</div>
+                  <div class="value">{{selectedDisk.smartoptions ? selectedDisk.smartoptions : 'None'}}</div>
+                </div>
+              </div>
+
+              <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
+                <div>
+                  <div class="label">Transfer Mode</div>
+                  <div class="value">{{selectedDisk.transfermode}}</div>
+                </div>
+              </div>
+
+              <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
+                <div>
+                  <div class="label">HDD Standby</div>
+                  <div class="value">{{selectedDisk.hddstandby}}</div>
+                </div>
+              </div>
+
+              <div fxFlex="calc(75% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
+                <div>
+                  <div class="label">Description</div>
+                  <div class="value">{{selectedDisk.description ? selectedDisk.description : 'None'}}</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </ng-template>
+
+  </mat-card-content>
+</mat-card>

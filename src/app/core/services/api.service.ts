@@ -68,12 +68,48 @@ export class ApiService {
         return cloneRes;
       }
     },
-    PoolDataRequest:{
+    VolumeDataRequest:{
       apiCall:{
         protocol:"rest",
         version:"1.0",
         operation: "get",
         namespace: "storage/volume/",
+        responseEvent: "VolumeData"
+      }
+    },
+    DisksRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        args: [],
+        namespace: "disk.query",
+        responseEvent: "DisksData"
+      }
+    },
+    EnclosureDataRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        args: [],
+        namespace: "enclosure.query",
+        responseEvent: "EnclosureData"
+      }
+    },
+    SetEnclosureSlotStatus:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        args: [],
+        namespace: "enclosure.set_slot_status",
+        responseEvent: "EnclosureSlotStatusChanged"
+      }
+    },
+    PoolDataRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        args: [],
+        namespace: "pool.query",
         responseEvent: "PoolData"
       }
     },
@@ -84,6 +120,11 @@ export class ApiService {
         namespace:"pool.get_disks",
         args: [],
         responseEvent: "PoolDisks"
+      },
+      preProcessor(def:ApiCall){
+        let redef = Object.assign({}, def);
+        redef.responseEvent = def.args.length > 0 ? def.responseEvent + def.args.join() : def.responseEvent ;
+        return redef;
       },
       postProcessor(res,callArgs){
         //DEBUG: console.warn("POOLDISKS POSTPROCESSOR");
