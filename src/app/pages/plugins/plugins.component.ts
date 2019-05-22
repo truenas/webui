@@ -1,73 +1,45 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component } from '@angular/core'
 
-import { WebSocketService, EngineerModeService, JailService } from '../../services';
-import * as _ from 'lodash';
+import { AvailablePluginsComponent } from './available-plugins/available-plugins.component';
+import { PluginComponent } from './plugin/plugin.component';
+
+import { T } from '../../translate-marker';
 
 @Component({
-    selector: 'app-plugins-list',
-    templateUrl: './plugins.component.html',
-    styleUrls: ['./plugins.component.css'],
-    providers: [JailService]
+  selector: 'app-plugins-ui',
+  template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
 })
-export class PluginsComponent implements OnInit {
-    public title = "Available Plugins";
-    protected queryCall = 'jail.list_resource';
-    protected queryCallOption = ["PLUGIN", true];
+export class PluginsComponent {
+  public title = "Plugins";
+  protected queryCall = 'jail.list_resource';
+  protected queryCallOption = ["PLUGIN"];
+  protected wsDelete = 'jail.do_delete';
+  protected wsMultiDelete = 'core.bulk';
 
-    public plugins: any;
-    public selectedPlugin: any;
-    public engineerMode: boolean;
-    public availableBranches = [];
-    public selectedBranch: any;
-    constructor(private ws: WebSocketService, protected engineerModeService: EngineerModeService, protected jailService: JailService,
-                private router: Router) {
-        this.engineerMode = localStorage.getItem('engineerMode') === 'true' ? true : false;
-        this.engineerModeService.engineerMode.subscribe((res) => {
-            this.engineerMode = res === 'true' ? true : false;
-        });
-        this.jailService.getBranches().subscribe(
-            (res) => {
-                for (let i = 0; i < res.length; i++) {
-                    const branchIndexObj = _.find(this.availableBranches, { name: res[i].repo });
-                    if (branchIndexObj == undefined) {
-                        this.availableBranches.push({ name: res[i].repo, branches: [{ label: res[i].name, value: res[i].name }] })
-                    } else {
-                        branchIndexObj.branches.push({ label: res[i].name, value: res[i].name });
-                    }
-                }
-            }
-        )
-        this.jailService.getVersion().subscribe(
-            (res) => {
-                this.selectedBranch = res;
-            }
-        )
-    }
-
-    ngOnInit() {
-        this.getPlugin();
-    }
-
-    getPlugin() {
-        this.ws.call(this.queryCall, this.queryCallOption).subscribe(
-            (res) => {
-                console.log(res);
-                this.plugins = res;
-                this.selectedPlugin = res[0];
-            },
-            (err) => {
-
-            });
-    }
-
-    switchBranch() {
-        this.queryCallOption = ["PLUGIN", true, true, this.selectedBranch];
-        this.getPlugin();
-    }
-
-    install(plugin) {
-        this.router.navigate(new Array('').concat(["plugins", "add", plugin]));
-    }
+  public columns: Array<any> = [
+    { name: T('Jail'), prop: '1' },
+    { name: T('Status'), prop: '3' },
+    { name: T('IPv4 Address'), prop: '6' },
+    { name: T('IPv6 Address'), prop: '7' },
+    // { name: T('Version'), prop: '10' },
+    // { name: T('Boot'), prop: '2' },
+    // { name: 'Type', prop: '4' },
+    // { name: T('Release'), prop: '5' },
+    // { name: T('Template'), prop: '8' }
+  ];
+  public config: any = {
+    paging: true,
+    sorting: { columns: this.columns },
+    // multiSelect: true,
+    deleteMsg: {
+      title: 'Plugin',
+      key_props: ['1'],
+      id_prop: '1',
+    },
+  };
+  protected cardHeaderComponent = AvailablePluginsComponent;
+  protected showActions = false;
+  protected hasDetails = true;
+  protected rowDetailComponent = PluginComponent;
 
 }

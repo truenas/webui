@@ -15,6 +15,7 @@ import { PluginsInstalledListComponent } from './plugins-installed/plugins-insta
 import { PluginAdvancedAddComponent } from './plugin-advanced-add/plugin-advanced-add.component';
 import { PluginsComponent } from './plugins.component';
 import { PluginComponent } from './plugin/plugin.component';
+import { AvailablePluginsComponent } from './available-plugins/available-plugins.component';
 
 @NgModule({
   imports : [
@@ -29,7 +30,9 @@ import { PluginComponent } from './plugin/plugin.component';
     PluginAdvancedAddComponent,
     PluginsComponent,
     PluginComponent,
-  ]
+    AvailablePluginsComponent,
+  ],
+  entryComponents: [AvailablePluginsComponent, PluginComponent]
 })
 export class PluginsModule {
 }
