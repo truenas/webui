@@ -15,26 +15,34 @@ export class ErrorDialog {
   public backtrace: string;
   public isCloseMoreInfo: Boolean = true;
 
-  constructor(public dialogRef: MatDialogRef < ErrorDialog >, public translate: TranslateService ) {
-    
-  }
+  constructor(public dialogRef: MatDialogRef < ErrorDialog >, public translate: TranslateService ) {}
 
   public toggleOpen (data) {
-    const dialogWrapper = document.getElementById('errordialog-wrapper');
+    const messageWrapper = document.getElementById('err-message-wrapper');
     const dialog = document.getElementsByClassName('mat-dialog-container');
-    const content = document.getElementById('md-content');
-    const btPanel = document.getElementById('bt-panel');
-    const txtarea = document.getElementById('bt-text');
+    const content = document.getElementById('err-md-content');
+    const btPanel = document.getElementById('err-bt-panel');
+    const txtarea = document.getElementById('err-bt-text');
+    
     this.isCloseMoreInfo = !this.isCloseMoreInfo;
     if (!this.isCloseMoreInfo) {
       dialog[dialog.length-1].setAttribute('style','width : 800px; height: 600px');
-      content.setAttribute('style', 'min-height: 450px')
+      let titleHeight = (document.getElementById('err-message-wrapper').offsetHeight)-21;
+      if (titleHeight > 63) {
+        titleHeight = 63;
+      };
+      const tracebackHeight = (400-titleHeight).toString() + 'px';
+      content.setAttribute('style', 'height: 450px');
+      messageWrapper.setAttribute('style', 'max-height: 63px; overflow: auto');
       btPanel.setAttribute('style', 'width: 750px; max-height: 400px');
-      txtarea.setAttribute('style', 'height: 400px')
+      btPanel.style.height = tracebackHeight;
+      txtarea.style.height = tracebackHeight;
     } else {
       dialog[dialog.length-1].removeAttribute('style');
       content.removeAttribute('style');
       btPanel.removeAttribute('style');
+      messageWrapper.removeAttribute('style');
+      txtarea.removeAttribute('style');
     }
   }
 
