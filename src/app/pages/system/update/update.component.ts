@@ -206,42 +206,42 @@ export class UpdateComponent implements OnInit, OnDestroy {
 
     this.busy = this.rest.get('system/update', {}).subscribe((res) => {
       this.autoCheck = res.data.upd_autocheck;
-    });
+    
+      this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
+        this.fullTrainList = res.trains;
 
-    this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
-      this.fullTrainList = res.trains;
+        // On page load, make sure we are working with train of the current OS
+        this.train = res.current;
+        this.selectedTrain = res.current;
 
-      // On page load, make sure we are working with train of the current OS
-      this.train = res.current;
-      this.selectedTrain = res.current;
-
-      if (this.autoCheck) {
-        this.check();
-      }
-
-      this.trains = [];
-      for (const i in res.trains) {
-        if (this.compareTrains(this.train, i) === 'ALLOWED' || 
-        this.compareTrains(this.train, i) === 'NIGHTLY_UPGRADE' || 
-        this.compareTrains(this.train, i) === 'MINOR_UPGRADE' || 
-        this.compareTrains(this.train, i) === 'MAJOR_UPGRADE' || 
-        this.train === i) {
-          this.trains.push({ name: i, description: res.trains[i].description });
+        if (this.autoCheck) {
+          this.check();
         }
-      }
-      this.singleDescription = this.trains[0].description;
 
-      if (this.fullTrainList[res.current].description.toLowerCase().includes('[nightly]')) {
-        this.currentTrainDescription = '[nightly]';
-      } else if (this.fullTrainList[res.current].description.toLowerCase().includes('[release]')) {
-        this.currentTrainDescription = '[release]';
-      } else if (this.fullTrainList[res.current].description.toLowerCase().includes('[prerelease]')) {
-        this.currentTrainDescription = '[prerelease]';
-      } else {
-        this.currentTrainDescription = res.trains[this.selectedTrain].description.toLowerCase();
-      }
-      // To remember train descrip if user switches away and then switches back
-      this.trainDescriptionOnPageLoad = this.currentTrainDescription;
+        this.trains = [];
+        for (const i in res.trains) {
+          if (this.compareTrains(this.train, i) === 'ALLOWED' || 
+          this.compareTrains(this.train, i) === 'NIGHTLY_UPGRADE' || 
+          this.compareTrains(this.train, i) === 'MINOR_UPGRADE' || 
+          this.compareTrains(this.train, i) === 'MAJOR_UPGRADE' || 
+          this.train === i) {
+            this.trains.push({ name: i, description: res.trains[i].description });
+          }
+        }
+        this.singleDescription = this.trains[0].description;
+
+        if (this.fullTrainList[res.current].description.toLowerCase().includes('[nightly]')) {
+          this.currentTrainDescription = '[nightly]';
+        } else if (this.fullTrainList[res.current].description.toLowerCase().includes('[release]')) {
+          this.currentTrainDescription = '[release]';
+        } else if (this.fullTrainList[res.current].description.toLowerCase().includes('[prerelease]')) {
+          this.currentTrainDescription = '[prerelease]';
+        } else {
+          this.currentTrainDescription = res.trains[this.selectedTrain].description.toLowerCase();
+        }
+        // To remember train descrip if user switches away and then switches back
+        this.trainDescriptionOnPageLoad = this.currentTrainDescription;
+      });
     });
 
     this.ws.call('system.advanced.config').subscribe((res)=> {
@@ -406,14 +406,12 @@ export class UpdateComponent implements OnInit, OnDestroy {
                       this.updateMethod,[{ train: this.train, reboot: false }]
                   )                  
                 } else {
-                  // this.updateMethod is failover.upgrade
-                  // update.set_train seems to be unknown in MW. And does it take a train object as an arg?
-                  this.ws.call('update.set_train', [this.train]).subscribe(() => {
+                  // this.ws.call('update.set_train', [this.train]).subscribe(() => {
                     this.ds  = this.dialogService.confirm(
                       T("Download Update"), T("Continue with download?"),true,"",true,
-                      T("Apply updates and reboot system after downloading."),this.updateMethod
+                      T("Apply updates and reboot system after downloading."),this.updateMethod, {}
                     )
-                  })
+                  // })
                 }
                 this.ds.afterClosed().subscribe((status)=>{
                   if(status){
@@ -440,24 +438,22 @@ export class UpdateComponent implements OnInit, OnDestroy {
               } else {
                 this.dialogService.dialogForm(this.saveConfigFormConf).subscribe(()=>{
                   if (!this.isHA) {
-                    //this.updateMethod is upgrade.upgrade
                     this.ds  = this.dialogService.confirm(
                       T("Download Update"), T("Continue with download?"),true,"",true,
                         T("Apply updates and reboot system after downloading."),
                         this.updateMethod,[{ train: this.train, reboot: false }]
                     )
                   } else {
-                    //this.updateMethod is failover.upgrade
-                    this.ws.call('update.set_train', [this.train]).subscribe(() => {
+                    // this.ws.call('update.set_train', [this.train]).subscribe(() => {
                       this.ds  = this.dialogService.confirm(
                         T("Download Update"), T("Continue with download?"),true,"",true,
-                        T("Apply updates and reboot system after downloading."),this.updateMethod
+                        T("Apply updates and reboot system after downloading."),this.updateMethod,{}
                       )
-                    })
+                    // })
                   }
                   this.ds.afterClosed().subscribe((status)=>{
                     if(status){
-                      if (!this.ds.componentInstance.data[0].reboot){
+                      if (!this.isHA && !this.ds.componentInstance.data[0].reboot){
                         this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
                         this.dialogRef.componentInstance.setCall('update.download');
                         this.dialogRef.componentInstance.submit();
@@ -512,13 +508,15 @@ export class UpdateComponent implements OnInit, OnDestroy {
     if (!this.isHA) {
       this.dialogRef.componentInstance.setCall(this.updateMethod, [{ train: this.train, reboot: false }]);
     } else {
-      this.ws.call('update.set_train', [this.train]).subscribe(() => {
+      // this.ws.call('update.set_train', [this.train]).subscribe(() => {
         this.dialogRef.componentInstance.setCall(this.updateMethod);
-      })
+      // })
     }
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
-      this.router.navigate(['/others/reboot']);
+      // if (!this.isHA) { 
+        this.router.navigate(['/others/reboot']); 
+      // }
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
       this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
