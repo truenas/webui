@@ -35,7 +35,7 @@ nav.view-nav-bar{
   /*top: 126px;*/
   top:-31px;
   overflow:auto;
-  z-index:10;
+  z-index:2;
 }
 
 .enclosure-selector .enclosure{
