@@ -28,6 +28,12 @@ def test_01_nav_system_general(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['navSystem']).click()
     # allowing page to load by giving explicit time(in seconds)
     time.sleep(1)
+    # get the ui element
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    # get the weather data
+    page_data = ui_element.text
+    # assert response
+    assert "System" in page_data, page_data
     wb_driver.find_element_by_xpath(xpaths['submenuGeneral']).click()
     # get the ui element
     ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])

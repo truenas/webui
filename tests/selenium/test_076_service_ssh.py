@@ -20,7 +20,6 @@ xpaths = {
     'configButton': "//button[@id='action-button__SSH']",
     'rootCheckbox': '//*[@id="ssh_rootlogin"]/mat-checkbox/label/div',
     'breadcrumbBar1': "//div[@id='breadcrumb-bar']/ul/li/a",
-    'breadcrumbBar2': "//*[@id='breadcrumb-bar']/ul/li[2]/a",
     'saveButton': '//*[@id="save_button"]',
     'theEnd': "//a[contains(text(),'2')]"
 }
@@ -31,6 +30,12 @@ def test_01_turnon_ssh(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['navService']).click()
     # allowing the button to load
     time.sleep(1)
+    # get the ui element
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    # get the weather data
+    page_data = ui_element.text
+    # assert response
+    assert "Services" in page_data, page_data
     # scroll down
     wb_driver.find_element_by_xpath(xpaths['theEnd']).click()
     time.sleep(2)

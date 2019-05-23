@@ -38,6 +38,12 @@ def test_01_navigate_to_account_groups(wb_driver):
     # Click User submenu
     wb_driver.find_element_by_xpath(xpaths['submenuGroup']).click()
     # get the ui element
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    # get the weather data
+    page_data = ui_element.text
+    # assert response
+    assert "Account" in page_data, page_data
+    # get the ui element
     ui_element1 = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     page_data = ui_element1.text

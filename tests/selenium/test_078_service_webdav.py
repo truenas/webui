@@ -33,7 +33,7 @@ def test_01_turnon_webdav(wb_driver):
     # check if the Services page is open
     time.sleep(1)
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
     # get the weather data
     page_data = ui_element.text
     # assert response

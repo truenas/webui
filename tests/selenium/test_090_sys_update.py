@@ -31,6 +31,12 @@ def test_01_nav_sys_update(wb_driver):
     # cancelling the tour
     # get the ui element
     ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
+    # get the ui element
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    # get the weather data
+    page_data = ui_element.text
+    # assert response
+    assert "System" in page_data, page_data
     # get the weather data
     page_data = ui_element.text
     # assert response

@@ -24,6 +24,12 @@ xpaths = {
 def test_01_nav_system_dataset(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['submenuSysdataset']).click()
     # get the ui element
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    # get the weather data
+    page_data = ui_element.text
+    # assert response
+    assert "System" in page_data, page_data
+    # get the ui element
     ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     page_data = ui_element.text

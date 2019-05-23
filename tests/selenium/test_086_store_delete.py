@@ -42,6 +42,12 @@ def test_01_nav_store_pool(wb_driver):
     # Click Pool submenu
     wb_driver.find_element_by_xpath(xpaths['submenuPool']).click()
     # get the ui element
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    # get the weather data
+    page_data = ui_element.text
+    # assert response
+    assert "Account" in page_data, page_data
+    # get the ui element
     ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     element_text = ui_element.text
