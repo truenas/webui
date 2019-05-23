@@ -1,138 +1,135 @@
 <div class="legacy-warning" *ngIf="legacyWarning">
-      {{ legacyWarning | translate }} 
-      <span class="legacy-warning-link" (click)="onGoToLegacy()">
-        {{ legacyWarningLink | translate }}.
-      </span>
-    </div>
+  {{ legacyWarning | translate }}
+  <span class="legacy-warning-link" (click)="onGoToLegacy()">
+    {{ legacyWarningLink | translate }}.
+  </span>
+</div>
 
 <div id="entity-table-component" class="material mat-card mat-card-table">
-  <div class="mat-toolbar mat-card-toolbar" *ngIf="hideTopActions === false" fxLayout="row wrap" fxLayoutAlign="space-between center">
+  <div class="mat-toolbar mat-card-toolbar" *ngIf="hideTopActions === false" fxLayout="row wrap"
+    fxLayoutAlign="space-between center">
     <div fxFlex="300px" class="mat-card-title-text">{{ title | translate }}</div>
 
-  <!-- START OF CONTROLS SECTION -->
-  <div fxFlex class="entity-table-controls" fxLayout="row wrap" fxLayoutAlignGap="16px" fxLayoutAlign="end center">
-    <div id="filter" >
-      <mat-icon>search</mat-icon>
-      <mat-form-field floatPlaceholder="never">
-        <input matInput #filter placeholder="{{'Filter' | translate}} {{title | translate}}">
-      </mat-form-field>
-      <!--<tooltip message="{{'Show only entries that contain this text' | translate}}"></tooltip>-->
-    </div>
-  
-  <!-- START MultiMenu-->
-  <div *ngIf="allColumns && allColumns.length > 0">
-  <button mat-button [matMenuTriggerFor]="menu" color="primary" class="menu-toggle">
-    <span>Columns <mat-icon class="menu-caret">arrow_drop_down</mat-icon> </span>
-  </button>
-  <mat-menu #menu="matMenu" multiple overlapTrigger="false">
-  
-    <!-- SELECT ALL -->
-    <div (click)="$event.stopPropagation()">
-      <button mat-menu-item (click)="checkAll()" id="check-all">
-        <span>
-          <mat-icon *ngIf="checkLength()">check_circle</mat-icon> 
-          <mat-icon *ngIf="!checkLength()">remove</mat-icon> 
-        </span> 
-        <span>Select All</span>
-      </button>
-    </div>
-  
-    <!-- INDIVIDUAL COLUMNS-->
-    <div (click)="$event.stopPropagation()">
-      <button mat-menu-item *ngFor="let col of allColumns" (click)="toggle(col);" [id]="col.name">
-        <span>
-          <mat-icon *ngIf="isChecked(col)">check_circle</mat-icon> 
-          <mat-icon *ngIf="!isChecked(col)">remove</mat-icon> 
-        </span> 
-        <span>{{col.name}}</span>
-      </button>
-    </div>
-  </mat-menu>
-  </div>
-  <!-- END MultiMenu-->
-  
-  
-      <div style="text-align:right;"><app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions></div>
-      <mat-spinner 
-        [diameter]='40' 
-        id="entity-spinner"
-        *ngIf="!showDefaults && showSpinner" #entityspinner>
-      </mat-spinner> 
-  
+    <!-- START OF CONTROLS SECTION -->
+    <div fxFlex class="entity-table-controls" fxLayout="row wrap" fxLayoutAlignGap="16px" fxLayoutAlign="end center">
+      <div id="filter">
+        <mat-icon>search</mat-icon>
+        <mat-form-field floatPlaceholder="never">
+          <input matInput #filter placeholder="{{'Filter' | translate}} {{title | translate}}">
+        </mat-form-field>
+        <!--<tooltip message="{{'Show only entries that contain this text' | translate}}"></tooltip>-->
+      </div>
+
+      <!-- START MultiMenu-->
+      <div *ngIf="columnFilter && allColumns && allColumns.length > 0">
+        <button mat-button [matMenuTriggerFor]="menu" color="primary" class="menu-toggle">
+          <span>Columns <mat-icon class="menu-caret">arrow_drop_down</mat-icon> </span>
+        </button>
+        <mat-menu #menu="matMenu" multiple overlapTrigger="false">
+
+          <!-- SELECT ALL -->
+          <div (click)="$event.stopPropagation()">
+            <button mat-menu-item (click)="checkAll()" id="check-all">
+              <span>
+                <mat-icon *ngIf="checkLength()">check_circle</mat-icon>
+                <mat-icon *ngIf="!checkLength()">remove</mat-icon>
+              </span>
+              <span>Select All</span>
+            </button>
+          </div>
+
+          <!-- INDIVIDUAL COLUMNS-->
+          <div (click)="$event.stopPropagation()">
+            <button mat-menu-item *ngFor="let col of allColumns" (click)="toggle(col);" [id]="col.name">
+              <span>
+                <mat-icon *ngIf="isChecked(col)">check_circle</mat-icon>
+                <mat-icon *ngIf="!isChecked(col)">remove</mat-icon>
+              </span>
+              <span>{{col.name}}</span>
+            </button>
+          </div>
+        </mat-menu>
+      </div>
+      <!-- END MultiMenu-->
+
+
+      <div style="text-align:right;">
+        <app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
+      </div>
+      <mat-spinner [diameter]='40' id="entity-spinner" *ngIf="!showDefaults && showSpinner" #entityspinner>
+      </mat-spinner>
+
       <ng-container *ngIf="conf && conf.custActions">
         <!--<div id="action-button-wrapper" *ngIf="conf && conf.custActions">-->
         <span *ngFor="let custBtn of conf.custActions">
-          <button id="cust_button_{{custBtn.name}}" mat-button 
-            *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" 
-            type="button" 
-            color="primary"
+          <button id="cust_button_{{custBtn.name}}" mat-button
+            *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" color="primary"
             (click)="custBtn['function']()">
             {{custBtn.name | translate}}
           </button>
         </span>
         <!--</div>-->
-        </ng-container>
+      </ng-container>
     </div><!-- end of mat-toolbar -->
-  
+
 
   </div>
   <!-- END OF CONTROLS SECTION -->
-  
+
   <!-- INSERT DYNAMIC CARDHEADER HERE -->
-  <ng-template dynamicComponent *ngIf="conf.cardHeaderComponent" [component]="conf.cardHeaderComponent" [config]="" [parent]="this"></ng-template>
+  <ng-template dynamicComponent *ngIf="conf.cardHeaderComponent" [component]="conf.cardHeaderComponent" [config]=""
+    [parent]="this"></ng-template>
 
   <!-- TABLE START -->
-  <div  fxLayout="row wrap" fxLayoutAlign="start center" class="multiActionsButton fn-toolbar" [ngClass]="{'icons-only': multiActionsIconsOnly}" *ngIf="conf && selected.length > 0" [style.display]="selected.length > 0 ? 'block' : 'none'" >
-      <div>
-        <div class="multiactions-title" *ngIf="conf.multiActions.length > 0 && !multiActionsIconsOnly">
-          <strong>Batch Operations</strong> 
-        </div>
-        <!-- -->
-        <div *ngIf="conf.multiActions && conf.multiActions.length > 0">
-          <span *ngFor="let maction of conf.multiActions">
-            <!-- DEFAULT -->
-            <ng-container *ngIf="!multiActionsIconsOnly">
-              <button id="{{ maction?.id }}" 
-                mat-button 
-                *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
-                <mat-icon>{{ maction?.icon }}</mat-icon><br><span>{{maction?.label | translate}}</span>
-                </button>
-            </ng-container>
-
-            <!-- ICONS ONLY -->
-            <ng-container *ngIf="multiActionsIconsOnly">
-              <button id="{{ maction?.id }}" 
-                mat-button matTooltip="{{ maction?.label  | translate }}" [matTooltipPosition]=maction?.ttpos 
-                *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
-                <mat-icon>{{ maction?.icon }}</mat-icon>
-                </button>
-            </ng-container>
-
-          </span>
-        </div>
-
-        <div *ngIf="!conf.multiActions || conf.multiActions.length == 0">
-          <span>
-            <!-- With Labels -->
-            <ng-container>
-              <button mat-button (click)="doMultiDelete(this.selected);">
-                <mat-icon>delete</mat-icon><br><span>DELETE</span>
-              </button>
-            </ng-container>
-            
-            <!-- Without Labels -->
-            <ng-container>
-              <button (click)="doMultiDelete(this.selected);"
-                mat-button matTooltip="{{ 'Delete selections'  | translate }}" 
-                matTooltipPosition="below" >
-                  <mat-icon>delete</mat-icon>
-              </button>
-            </ng-container>
-          </span>
-        </div>
-
+  <div fxLayout="row wrap" fxLayoutAlign="start center" class="multiActionsButton fn-toolbar"
+    [ngClass]="{'icons-only': multiActionsIconsOnly}" *ngIf="conf && selected.length > 0"
+    [style.display]="selected.length > 0 ? 'block' : 'none'">
+    <div>
+      <div class="multiactions-title" *ngIf="conf.multiActions.length > 0 && !multiActionsIconsOnly">
+        <strong>Batch Operations</strong>
       </div>
+      <!-- -->
+      <div *ngIf="conf.multiActions && conf.multiActions.length > 0">
+        <span *ngFor="let maction of conf.multiActions">
+          <!-- DEFAULT -->
+          <ng-container *ngIf="!multiActionsIconsOnly">
+            <button id="{{ maction?.id }}" mat-button *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
+              <mat-icon>{{ maction?.icon }}</mat-icon><br><span>{{maction?.label | translate}}</span>
+            </button>
+          </ng-container>
+
+          <!-- ICONS ONLY -->
+          <ng-container *ngIf="multiActionsIconsOnly">
+            <button id="{{ maction?.id }}" mat-button matTooltip="{{ maction?.label  | translate }}"
+              [matTooltipPosition]=maction?.ttpos *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
+              <mat-icon>{{ maction?.icon }}</mat-icon>
+            </button>
+          </ng-container>
+
+        </span>
+      </div>
+
+      <div *ngIf="!conf.multiActions || conf.multiActions.length == 0">
+        <span>
+          <!-- With Labels -->
+          <ng-container>
+            <button mat-button (click)="doMultiDelete(this.selected);">
+              <mat-icon>delete</mat-icon><br><span>DELETE</span>
+            </button>
+          </ng-container>
+
+          <!-- Without Labels -->
+          <ng-container>
+            <button (click)="doMultiDelete(this.selected);" mat-button
+              matTooltip="{{ 'Delete selections'  | translate }}" matTooltipPosition="below">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </ng-container>
+        </span>
+      </div>
+
     </div>
+  </div>
 
   <!-- DATATABLE START -->
   <div class="no-padding">

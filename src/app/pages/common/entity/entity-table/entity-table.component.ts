@@ -23,6 +23,7 @@ import { T } from '../../../../translate-marker';
 export interface InputTableConf {
 
   columns:any[];
+  columnFilter?: boolean;
   hideTopActions?: boolean;
   queryCall?: string;
   queryCallOption?: any;
@@ -102,6 +103,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public windowHeight: number;
 
   public allColumns: Array<any> = []; // Need this for the checkbox headings
+  public columnFilter = true; // show the column filters by default
   public filterColumns: Array<any> = []; // ...for the filter function - becomes THE complete list of all columns, diplayed or not
   public alwaysDisplayedCols: Array<any> = []; // For cols the user can't turn off
   public presetDisplayedCols: Array<any> = []; // to store only the index of preset cols
@@ -170,6 +172,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.alwaysDisplayedCols.push(column); // Make an array of required cols
       }
     });
+    this.columnFilter = this.conf.columnFilter === undefined ? true : this.conf.columnFilter;
     this.showActions = this.conf.showActions === undefined ? true : this.conf.showActions ;
     this.filterColumns = this.conf.columns;
     this.conf.columns = this.allColumns; // Remove any alwaysDisplayed cols from the official list
