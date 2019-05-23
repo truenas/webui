@@ -16,7 +16,8 @@ script_name = os.path.basename(__file__).partition('.')[0]
 xpaths = {
     'navNetwork': "//span[contains(.,'Network')]",
     'submenuVlan': "//a[contains(.,'Network Summary')]",
-    'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
+    'breadcrumbBar1': "//div[@id='breadcrumb-bar']/ul/li/a",
+    'breadcrumbBar2': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
 }
 
 
@@ -24,7 +25,7 @@ def test_01_nav_net_vlan(wb_driver):
     # Click on the vlan sub-menu
     wb_driver.find_element_by_xpath(xpaths['submenuVlan']).click()
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     page_data = ui_element.text
     # assert response

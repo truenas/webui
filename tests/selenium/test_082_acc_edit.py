@@ -21,7 +21,8 @@ xpaths = {
     'submenuGroup': '//*[@id="1-0"]',
     'email': "//div[@id='email']/mat-form-field/div/div/div/input",
     'group': '//*[@id="bsdgrp_sudo"]/mat-checkbox/label/div',
-    'breadcrumbBar': '//*[@id="breadcrumb-bar"]/ul/li[2]/a'
+    'breadcrumbBar1': "//div[@id='breadcrumb-bar']/ul/li/a",
+    'breadcrumbBar2': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
 }
 
 
@@ -33,7 +34,7 @@ def test_01_navigate_to_account_user(wb_driver):
     # Click User submenu
     wb_driver.find_element_by_xpath(xpaths['submenuUser']).click()
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     page_data = ui_element.text
     # assert response
@@ -76,7 +77,7 @@ def test_04_navigate_to_account_group(wb_driver):
     # Click User submenu
     wb_driver.find_element_by_xpath(xpaths['submenuGroup']).click()
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     page_data = ui_element.text
     # assert response

@@ -18,7 +18,8 @@ xpaths = {
     'outgoingMail': "//div[@id='em_outgoingserver']/mat-form-field/div/div/div/input",
     'navSystem': '//*[@id="nav-2"]/div/a[1]',
     'submenuEmail': '//*[@id="2-4"]',
-    'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
+    'breadcrumbBar1': "//div[@id='breadcrumb-bar']/ul/li/a",
+    'breadcrumbBar2': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
 }
 
 
@@ -27,7 +28,7 @@ def test_01_nav_system_email(wb_driver):
     time.sleep(1)
     wb_driver.find_element_by_xpath(xpaths['submenuEmail']).click()
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     page_data = ui_element.text
     # assert response

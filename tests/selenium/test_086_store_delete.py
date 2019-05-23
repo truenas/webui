@@ -18,7 +18,8 @@ xpaths = {
     'submenuDisks': '//*[@id="5-3"]',
     'confirmCheckbox': '//*[contains(@name, "confirm_checkbox")]',
     'deleteButton': '//*[contains(@name, "ok_button")]',
-    'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a",
+    'breadcrumbBar1': "//div[@id='breadcrumb-bar']/ul/li/a",
+    'breadcrumbBar2': "//*[@id='breadcrumb-bar']/ul/li[2]/a",
     'poolID': '//mat-expansion-panel-header/span[2]',
     'poolDetach': "//button[@id='action_button_Export/Disconnect__name_",
     'pooldestroyCheckbox': '//*[@id="destroy"]/mat-checkbox/label/div',
@@ -40,7 +41,7 @@ def test_01_nav_store_pool(wb_driver):
     # Click Pool submenu
     wb_driver.find_element_by_xpath(xpaths['submenuPool']).click()
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     element_text = ui_element.text
     # assert response

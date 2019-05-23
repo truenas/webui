@@ -17,14 +17,15 @@ xpaths = {
     'navService': '//*[@id="nav-8"]/div/a[1]',
     'navSystem': '//*[@id="nav-2"]/div/a[1]',
     'submenuAdvanced': '//*[@id="2-3"]',
-    'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
+    'breadcrumbBar1': "//div[@id='breadcrumb-bar']/ul/li/a",
+    'breadcrumbBar2': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
 }
 
 
 def test_01_nav_system_advanced(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['submenuAdvanced']).click()
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     page_data = ui_element.text
     # assert response

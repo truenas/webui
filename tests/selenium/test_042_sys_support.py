@@ -16,14 +16,15 @@ script_name = os.path.basename(__file__).partition('.')[0]
 xpaths = {
     'navSystem': "//span[contains(.,'System')]",
     'submenuSupport': "//a[contains(text(),'Support')]",
-    'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
+    'breadcrumbBar1': "//div[@id='breadcrumb-bar']/ul/li/a",
+    'breadcrumbBar2': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
 }
 
 
 def test_01_nav_system_support(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['submenuSupport']).click()
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     page_data = ui_element.text
     # assert response

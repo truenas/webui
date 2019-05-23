@@ -19,7 +19,8 @@ xpaths = {
     'turnoffConfirm': '//*[contains(text(), "OK")]',
     'configButton': "//button[@id='action-button__SSH']",
     'rootCheckbox': '//*[@id="ssh_rootlogin"]/mat-checkbox/label/div',
-    'breadcrumbBar': "//div[@id='breadcrumb-bar']/ul/li/a",
+    'breadcrumbBar1': "//div[@id='breadcrumb-bar']/ul/li/a",
+    'breadcrumbBar2': "//*[@id='breadcrumb-bar']/ul/li[2]/a",
     'saveButton': '//*[@id="save_button"]',
     'theEnd': "//a[contains(text(),'2')]"
 }
