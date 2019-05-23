@@ -1064,8 +1064,16 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     -webkit-appearance: none;
   }
   
+  .mat-autocomplete-panel {
+    background: var(--bg2) !important;
+  }
+
+  .mat-autocomplete-panel .mat-option:hover {
+    background-color: var(--primary) !important;
+  }
+
   .mat-autocomplete-panel .mat-option-text {
-    @include variable(color, --fg2, $fg2 !important);
+    color: var(--fg2) !important;
   }
 
   .ui-treetable tr:nth-child(even){

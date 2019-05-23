@@ -211,6 +211,7 @@ export class DatasetAclComponent implements OnDestroy {
     });
 
     this.userService.listAllUsers().subscribe(res => {
+      console.log(res)
       const users = [];
       const items = res.data.items;
       for (let i = 0; i < items.length; i++) {
@@ -220,6 +221,7 @@ export class DatasetAclComponent implements OnDestroy {
     });
 
     this.userService.listAllGroups().subscribe(res => {
+      console.log(res)
       const groups = [];
       const items = res.data.items;
       for (let i = 0; i < items.length; i++) {
@@ -263,6 +265,7 @@ export class DatasetAclComponent implements OnDestroy {
     this.aces_fc = _.find(this.fieldConfig, {"name": "aces"});
     this.aces = this.entityForm.formGroup.controls['aces'];
     this.aces_subscription = this.aces.valueChanges.subscribe(res => {
+      console.log(res)
       let controls;
       let user_fc;
       let group_fc;
