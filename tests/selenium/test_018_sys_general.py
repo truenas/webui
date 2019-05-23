@@ -15,14 +15,13 @@ skip_mesages = "Skipping first run"
 script_name = os.path.basename(__file__).partition('.')[0]
 
 xpaths = {
-    'navSystem': '//*[@id="nav-2"]/div/a[1]',
-    'submenuGeneral': '//*[@id="2-0"]',
+    'navSystem': "//span[contains(.,'System')]",
+    'submenuGeneral': "//a[contains(text(),'General')]",
     'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
 }
 
 
 def test_01_nav_system_general(wb_driver):
-
     # Navigating to System>General page
     wb_driver.find_element_by_xpath(xpaths['navSystem']).click()
     # allowing page to load by giving explicit time(in seconds)

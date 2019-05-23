@@ -16,8 +16,8 @@ script_name = os.path.basename(__file__).partition('.')[0]
 
 xpaths = {
     'outgoingMail': "//div[@id='em_outgoingserver']/mat-form-field/div/div/div/input",
-    'navSystem': '//*[@id="nav-2"]/div/a[1]',
-    'submenuEmail': '//*[@id="2-4"]',
+    'navSystem': "//span[contains(.,'System')]",
+    'submenuEmail': "//a[contains(.,'Email')]",
     'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
 }
 
