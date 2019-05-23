@@ -21,7 +21,9 @@ xpaths = {
     'wbdvPassword': "//div[@id='password']/mat-form-field/div/div/div/input",
     'wbdvPassword2': "//div[@id='password2']/mat-form-field/div/div/div/input",
     'breadcrumbBar': "//div[@id='breadcrumb-bar']/ul/li/a",
-    'theEnd': "//a[contains(text(),'2')]"
+    'theEnd': "//a[contains(text(),'2')]",
+    'toDashboard': "//span[contains(.,'Dashboard')]",
+    'breadcrumbBar1': '//li/a'
 }
 
 
@@ -90,6 +92,21 @@ def test_05_checkif_wedbdav_off(wb_driver):
     time.sleep(2)
     # status check
     status_check(wb_driver, "17")
+    # taking screenshot
+    test_name = sys._getframe().f_code.co_name
+    take_screenshot(wb_driver, script_name, test_name)
+
+
+def test_06_return_to_dashboard(wb_driver):
+    # Close the System Tab
+    wb_driver.find_element_by_xpath(xpaths['toDashboard']).click()
+    time.sleep(1)
+    # get the ui element
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    # get the weather data
+    page_data = ui_element.text
+    # assert response
+    assert page_data == "Dashboard", page_data
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)

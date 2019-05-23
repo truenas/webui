@@ -34,7 +34,9 @@ xpaths = {
     'createpoolButton': '//*[@id="confirm-dialog__action-button"]/span',
     'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a",
     'pool1Table': f"//mat-panel-title[contains(.,'{pool1}')]",
-    'pool2Table': f"//mat-panel-title[contains(.,'{pool2}')]"
+    'pool2Table': f"//mat-panel-title[contains(.,'{pool2}')]",
+    'toDashboard': "//span[contains(.,'Dashboard')]",
+    'breadcrumbBar1': '//li/a'
 }
 
 
@@ -142,9 +144,16 @@ def test_05_looking_if_the_new_pool_exist(wb_driver):
     take_screenshot(wb_driver, script_name, test_name)
 
 
-def test_06_close_navStorage(wb_driver):
+def test_06_return_to_dashboard(wb_driver):
+    # Close the System Tab
+    wb_driver.find_element_by_xpath(xpaths['toDashboard']).click()
+    time.sleep(1)
+    # get the ui element
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    # get the weather data
+    page_data = ui_element.text
+    # assert response
+    assert page_data == "Dashboard", page_data
+    # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    # Wait for xpath to be available
-    wait_on_element(wb_driver, xpaths['navStorage'], script_name, test_name)
-    wb_driver.find_element_by_xpath(xpaths['navStorage']).click()
     take_screenshot(wb_driver, script_name, test_name)

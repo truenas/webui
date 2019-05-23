@@ -27,7 +27,9 @@ xpaths = {
     'closeButton': '//div[2]/button/span',
     'foldPoolTable': "//mat-panel-title",
     'topPoolTable': '//td',
-    'noPool': '//mat-card-content'
+    'noPool': '//mat-card-content',
+    'toDashboard': "//span[contains(.,'Dashboard')]",
+    'breadcrumbBar1': '//li/a'
 }
 
 
@@ -112,6 +114,21 @@ def test_06_looking_for_pool2(wb_driver):
 
 def test_07_close_navStorage(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['navStorage']).click()
+    test_name = sys._getframe().f_code.co_name
+    take_screenshot(wb_driver, script_name, test_name)
+
+
+def test_08_return_to_dashboard(wb_driver):
+    # Close the System Tab
+    wb_driver.find_element_by_xpath(xpaths['toDashboard']).click()
+    time.sleep(1)
+    # get the ui element
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    # get the weather data
+    page_data = ui_element.text
+    # assert response
+    assert page_data == "Dashboard", page_data
+    # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
 
