@@ -115,7 +115,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       }
     });
 
-    //console.log(this.system);
+    console.log(this.system);
     this.pixiInit();
 
     // Listen for DOM changes to avoid race conditions with animations

@@ -12,6 +12,7 @@ interface ViewConfig {
   name: string;
   icon: string;
   id: number;
+  elementIndex: number;
   showInNavbar: boolean;
 }
 
@@ -29,8 +30,8 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
   public system: SystemProfiler;
   public system_product;
   public selectedEnclosure: any;
-  public views: ViewConfig[] = [
-    { 
+  public views: ViewConfig[] = [];
+    /*{ 
       name: 'Disks',
       icon: "harddisk",
       id: 0,
@@ -53,14 +54,8 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
       icon: "flash",
       id: 3,
       showInNavbar: true
-    }/*,
-    { 
-      name: 'Pools',
-      icon: "any",
-      id: 4,
-      showInNavbar: false
     }*/
-  ]
+  
 
   changeView(id){
     this.currentView = this.views[id].name;
@@ -94,6 +89,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
 
     core.register({observerClass: this, eventName: 'PoolData'}).subscribe((evt:CoreEvent) => {
       this.system.pools = evt.data;
+      this.addViews();
     });
 
 
@@ -122,6 +118,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
 
   selectEnclosure(value){
     this.selectedEnclosure = this.system.profile[value];
+    this.addViews();
   }
 
   extractVisualizations(){
@@ -129,4 +126,63 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
       this.events.next({name:"CanvasExtract", data: this.system.profile[index], sender:this});
     })
   }
+
+  addViews(){
+    let views = [];
+    let disks =  { 
+        name: 'Disks',
+        icon: "harddisk",
+        id: 0,
+        showInNavbar: true
+    }
+    
+    views.unshift(disks);
+  
+    this.system.enclosures[this.selectedEnclosure.enclosureKey].elements.forEach((element, index) => {
+      let view = { 
+        name: '',
+        icon: "",
+        id: views.length,
+        elementIndex: index,
+        showInNavbar: true
+      }
+
+      switch(element.name){
+        case "Cooling" :
+          view.name = element.name;
+          view.icon = "fan";
+          views.push(view);
+        break;
+        case "Temperature Sensor" :
+          view.name = "Temperature";
+          view.icon = "fan";
+          views.push(view);
+        break;
+        case "Voltage Sensor" :
+          view.name = "Voltage";
+          view.icon = "flash";
+          views.push(view);
+        break;
+        case "Power Supply" :
+          view.name = element.name;
+          view.icon = "flash";
+          views.push(view);
+        break;
+        case "SAS Connector" :
+          view.name = "SAS";
+          view.icon = "flash";
+          views.push(view);
+        break;
+        case "Enclosure Services Controller Electronics":
+          view.name = "Services";
+          view.icon = "flash";
+          views.push(view);
+        break;
+      }
+
+    });
+
+    this.views = views;
+  }
+
 }

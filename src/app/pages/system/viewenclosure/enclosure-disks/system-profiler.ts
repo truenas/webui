@@ -158,7 +158,7 @@ export class SystemProfiler {
   private parseEnclosures(obj){
     // Provide a shortcut to the enclosures object
     this.profile.forEach((profileItem, index) => {
-      profileItem.enclosureKey = index;
+      profileItem.enclosureKey = Number(index); // Make sure index 0 is not treated as boolean
     });
   }
   
