@@ -15,7 +15,8 @@ script_name = os.path.basename(__file__).partition('.')[0]
 xpaths = {
     'navNetwork': "//span[contains(.,'Network')]",
     'submenuStatic': "//a[contains(.,'Static Routes')]",
-    'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
+    'breadcrumbBar1': "//div[@id='breadcrumb-bar']/ul/li/a",
+    'breadcrumbBar2': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
 }
 
 
@@ -23,7 +24,13 @@ def test_01_nav_net_static(wb_driver):
     # Click on the static sub-menu
     wb_driver.find_element_by_xpath(xpaths['submenuStatic']).click()
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    # get the weather data
+    page_data = ui_element.text
+    # assert response
+    assert "Network" in page_data, page_data
+    # get the ui element
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     page_data = ui_element.text
     # assert response

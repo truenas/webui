@@ -21,9 +21,9 @@ xpaths = {
     'submenuGroup': '//*[@id="1-0"]',
     'confirmCheckbox': '//*[contains(@name, "confirm_checkbox")]',
     'deleteButton': '//*[contains(@name, "ok_button")]',
-    'breadcrumbBar': '//*[@id="breadcrumb-bar"]/ul/li[2]/a',
+    'breadcrumbBar1': "//div[@id='breadcrumb-bar']/ul/li/a",
+    'breadcrumbBar2': "//*[@id='breadcrumb-bar']/ul/li[2]/a",
     'toDashboard': "//span[contains(.,'Dashboard')]",
-    'breadcrumbBar1': '//li/a'
 }
 
 
@@ -33,8 +33,14 @@ def test_01_nav_acc_user(wb_driver):
     time.sleep(1)
     # Click User sub-menu
     wb_driver.find_element_by_xpath(xpaths['submenuUser']).click()
+     # get the ui element
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    # get the weather data
+    page_data = ui_element.text
+    # assert response
+    assert "Account" in page_data, page_data
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     page_data = ui_element.text
     # assert response
@@ -82,7 +88,7 @@ def test_07_nav_acc_group(wb_driver):
     # Click User submenu
     wb_driver.find_element_by_xpath(xpaths['submenuGroup']).click()
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     page_data = ui_element.text
     # assert response
