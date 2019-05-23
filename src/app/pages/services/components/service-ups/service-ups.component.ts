@@ -56,7 +56,7 @@ export class ServiceUPSComponent {
       validation : helptext.ups_remoteport_validation
     },
     {
-      type : 'select',
+      type : 'combobox',
       name : 'ups_driver',
       placeholder : helptext.ups_driver_placeholder,
       tooltip : helptext.ups_driver_tooltip,

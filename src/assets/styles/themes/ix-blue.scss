@@ -1219,4 +1219,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     }
   }
 
+  entity-form form-combobox mat-form-field {
+    width: 50%;
+    min-width: 180px;
+  }
+
  } // end of ix theme
