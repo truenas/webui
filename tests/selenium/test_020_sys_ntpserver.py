@@ -15,7 +15,7 @@ script_name = os.path.basename(__file__).partition('.')[0]
 
 xpaths = {
     'navSystem': "//span[contains(.,'System')]",
-    'submenuNtpserver' : '//*[@id="2-1"]',
+    'submenuNtpserver': "//a[contains(.,'NTP Servers')]",
     'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
 }
 
