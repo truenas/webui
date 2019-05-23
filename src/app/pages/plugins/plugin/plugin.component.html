@@ -1,25 +1,31 @@
 <div class="plugin-expaned-pannel">
     <section class="info">
-        <div fxLayout="row" fxLayoutAlign="space-around center">
-            <div fxFlex>
-                <div>VERSION:</div>
-                <div>{{config[10]}}</div>
+        <div fxLayout="row">
+            <div>
+                <section>VERSION</section>
+                <label>{{config[10]}}</label>
             </div>
-            <div fxFlex>
-                COLLECTION: XXXX
+            <div fxFlexOffset="3">
+                <section>COLLECTION</section>
+                <label>XXX</label>
             </div>
-            <div fxFlex>
-                INSTALL DATE: XXXX
+            <div fxFlexOffset="3">
+                <section>INSTALL DATE</section>
+                <label>XXX</label>
             </div>
-            <div fxFlex>
-                AUTOSTART: {{config[2]}}
+            <div fxFlexOffset="3">
+                <section>AUTOSTART</section>
+                <label>{{config[2]}}</label>
             </div>
         </div>
     </section>
     <mat-divider></mat-divider>
     <section class="action-buttons" fxLayout="row">
-        <button *ngFor="let action of getActions(config)" mat-menu-item (click)="action.onClick()" fxFlex>
-            <mat-icon>{{action.icon}}</mat-icon><span>{{action.label | translate}}</span>
-        </button>
+        <div *ngFor="let action of actions">
+            <button *ngIf="action.visible" mat-menu-item (click)="action.onClick()" fxFlex>
+                <mat-icon>{{action.icon}}</mat-icon>
+                <span>{{action.label | translate}}</span>
+            </button>
+        </div>
     </section>
 </div>

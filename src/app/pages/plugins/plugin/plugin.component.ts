@@ -1,118 +1,166 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 import { T } from '../../../translate-marker';
+import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { WebSocketService } from '../../../services';
+import * as _ from 'lodash';
+import { EntityUtils } from '../../common/entity/utils';
+import { DialogService } from '../../../../app/services';
 
-@Component ({
-    selector: 'app-single-plugin',
-    templateUrl: './plugin.component.html',
+@Component({
+  selector: 'app-single-plugin',
+  templateUrl: './plugin.component.html',
+  styleUrls: ['./plugin.component.css'],
 })
 export class PluginComponent implements OnInit {
-    @Input() config: any;
-    @Input() parent: any;
+  @Input() config: any;
+  @Input() parent: any;
 
-    constructor(){}
-    
-    ngOnInit() {
-        console.log('hello', this.config, this.parent);
-        
+  public actions: any[];
+
+  constructor(
+    protected loader: AppLoaderService,
+    protected ws: WebSocketService,
+    protected dialogService: DialogService) { }
+
+  ngOnInit() {
+    console.log('hello', this.config, this.parent);
+    this.actions = this.getActions(this.config);
+  }
+
+  getActions(row) {
+    const actions = [{
+      id: "start",
+      label: T("START"),
+      icon: 'play_arrow',
+      visible: this.isActionVisible('start'),
+      onClick: () => {
+        this.loader.open();
+        row[3] = 'STARTING...';
+        this.ws.job('jail.start', [row[1]]).subscribe(
+          (res) => {
+            this.updateRow(row).then(() => this.loader.close());
+          },
+          (res) => {
+            this.loader.close();
+            new EntityUtils().handleWSError(this.parent, res, this.dialogService);
+          });
+      }
+    },
+    {
+      id: "restart",
+      label: T("RESTART"),
+      icon: 'replay',
+      visible: this.isActionVisible('restart'),
+      onClick: () => {
+        this.loader.open();
+        row[3] = 'RESTARTING...';
+        this.ws.job('jail.restart', [row[1]]).subscribe(
+          (res) => {
+            this.updateRow(row).then(() => this.loader.close());
+          },
+          (err) => {
+            this.loader.close();
+            new EntityUtils().handleWSError(this.parent, err, this.dialogService);
+          });
+      }
+    },
+    {
+      id: "stop",
+      label: T("STOP"),
+      icon: 'stop',
+      visible: this.isActionVisible('stop'),
+      onClick: () => {
+        this.loader.open();
+        row[3] = 'STOPPING...';
+        this.ws.job('jail.stop', [row[1]]).subscribe(
+          (res) => {
+            this.updateRow(row).then(() => this.loader.close());
+          },
+          (res) => {
+            this.loader.close();
+            new EntityUtils().handleWSError(this.parent, res, this.dialogService);
+          });
+      }
+    },
+    {
+      id: "update",
+      label: T("UPDATE"),
+      icon: 'update',
+      visible: this.isActionVisible('update'),
+      onClick: (row) => {
+        //   const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Updating Plugin") }, disableClose: true });
+        //   dialogRef.componentInstance.setCall('jail.update_to_latest_patch', [row[1]]);
+        //   dialogRef.componentInstance.submit();
+        //   dialogRef.componentInstance.success.subscribe((res) => {
+        //     dialogRef.close(true);
+        //     this.snackBar.open(T("Plugin ") + row[1] + T(" updated."), T('Close'), { duration: 5000 });
+        //   });
+      }
+    },
+    {
+      id: "management",
+      label: T("MANAGE"),
+      icon: 'settings',
+      visible: this.isActionVisible('management'),
+      onClick: (row) => {
+        //   window.open(row[9]);
+      }
+    },
+    {
+      id: "delete",
+      label: T("UNINSTALL"),
+      icon: 'delete',
+      visible: this.isActionVisible('delete'),
+      onClick: (row) => {
+        //   this.entityList.doDelete(row);
+      }
     }
+    ]
+    // if (parentRow['1'].startsWith('asigra')) {
+    //   actions.push({
+    //     id: "register",
+    //     label: T('Register'),
+    //     onClick: (row) => {
+    //     //   this.getRegistrationLink();
+    //     }
+    //   });
+    // }
+    return actions;
+  }
 
-    getActions(parentRow) {
-        const actions = [{
-            id: "start",
-            label: T("Start"),
-            icon: 'play_arrow',
-            onClick: (row) => {
-            //   this.loader.open();
-            //   this.entityList.busy =
-            //     this.ws.call('jail.start', [row[1]]).subscribe(
-            //       (res) => {
-            //         this.loader.close();
-            //         this.updateRow(row);
-            //       },
-            //       (res) => {
-            //         this.loader.close();
-            //         new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
-            //       });
-            }
-          },
-          {
-            id: "restart",
-            label: T("Restart"),
-            icon: 'replay',
-            onClick: (row) => {
-            //   this.loader.open();
-            //   row[3] = 'restarting';
-            //   this.entityList.busy =
-            //     this.ws.call('jail.restart', [row[1]]).subscribe(
-            //       (res) => {
-            //         this.loader.close();
-            //         this.updateRow(row);
-            //       },
-            //       (err) => {
-            //         this.loader.close();
-            //         new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
-            //       });
-            }
-          },
-          {
-            id: "stop",
-            label: T("Stop"),
-            icon: 'stop',
-            onClick: (row) => {
-            //   this.loader.open();
-            //   this.entityList.busy =
-            //     this.ws.call('jail.stop', [row[1]]).subscribe(
-            //       (res) => {
-            //         this.loader.close();
-            //         this.updateRow(row);
-            //       },
-            //       (res) => {
-            //         this.loader.close();
-            //         new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
-            //       });
-            }
-          },
-          {
-            id: "update",
-            label: T("Update"),
-            icon: 'update',
-            onClick: (row) => {
-            //   const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Updating Plugin") }, disableClose: true });
-            //   dialogRef.componentInstance.setCall('jail.update_to_latest_patch', [row[1]]);
-            //   dialogRef.componentInstance.submit();
-            //   dialogRef.componentInstance.success.subscribe((res) => {
-            //     dialogRef.close(true);
-            //     this.snackBar.open(T("Plugin ") + row[1] + T(" updated."), T('Close'), { duration: 5000 });
-            //   });
-            }
-          },
-          {
-            id: "management",
-            label: T("Management"),
-            icon: 'settings',
-            onClick: (row) => {
-            //   window.open(row[9]);
-            }
-          },
-          {
-            id: "delete",
-            label: T("Delete"),
-            icon: 'delete',
-            onClick: (row) => {
-            //   this.entityList.doDelete(row);
+  isActionVisible(actionId: string) {
+    if (actionId === 'start' && this.config[3] === "up") {
+      return false;
+    } else if (actionId === 'stop' && this.config[3] === "down") {
+      return false;
+    } else if (actionId === 'management' && (this.config[3] === "down" || this.config[9] == null)) {
+      return false;
+    } else if (actionId === 'restart' && this.config[3] === "down") {
+      return false;
+    }
+    return true;
+  }
+
+  updateRow(row): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.ws.call('jail.list_resource', ["PLUGIN"]).subscribe(
+        (res) => {
+          for (let i = 0; i < res.length; i++) {
+            if (res[i][1] == row[1]) {
+              for (const j in row) {
+                row[j] = (j === '6' && _.split(res[i][j], '|').length > 1) ? _.split(res[i][j], '|')[1] : res[i][j];
+              }
+              this.actions = this.getActions(this.config);
+              resolve(true);
             }
           }
-        ]
-        // if (parentRow['1'].startsWith('asigra')) {
-        //   actions.push({
-        //     id: "register",
-        //     label: T('Register'),
-        //     onClick: (row) => {
-        //     //   this.getRegistrationLink();
-        //     }
-        //   });
-        // }
-        return actions;
-      }
+          reject(false);
+        },
+        (err) => {
+          reject(err);
+        }
+      )
+    });
+  }
 }
