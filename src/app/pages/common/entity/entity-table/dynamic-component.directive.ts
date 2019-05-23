@@ -17,8 +17,6 @@ import { config } from 'rxjs';
                 private container: ViewContainerRef) {}
   
     ngOnInit() {
-        console.log(this.component);
-        
         const tempComponent = this.resolver.resolveComponentFactory(this.component);
         this.component = this.container.createComponent(tempComponent);
         this.component.instance.config = this.config;
