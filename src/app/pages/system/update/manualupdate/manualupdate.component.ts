@@ -24,7 +24,6 @@ export class ManualUpdateComponent {
   protected dialogRef: any;
   public fileLocation: any;
   public subs: any;
-  public updateMethod = 'update.file';
   public isHA = false;
   // public custActions: Array<any> = [
   //   {
@@ -105,7 +104,6 @@ export class ManualUpdateComponent {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         if (is_ha) {
           this.isHA = true;
-          this.updateMethod = 'failover.upgrade';
         }
       })
     }
@@ -192,11 +190,11 @@ updater(file: any, parent: any){
     const formData: FormData = new FormData();
     if (parent.isHA) {
       formData.append('data', JSON.stringify({
-        "method": parent.updateMethod //failover.update
+        "method": 'failover.update'
       }));
     } else {
       formData.append('data', JSON.stringify({
-        "method": parent.updateMethod, //update.update
+        "method": 'update.file',
         "params": [{"destination":this.fileLocation}]
       }));
     }

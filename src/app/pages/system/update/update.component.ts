@@ -406,12 +406,11 @@ export class UpdateComponent implements OnInit, OnDestroy {
                       this.updateMethod,[{ train: this.train, reboot: false }]
                   )                  
                 } else {
-                  // this.ws.call('update.set_train', [this.train]).subscribe(() => {
+                  this.ws.call('update.set_train', [this.train]).subscribe(() => { // Waiting for update.set_train in MW
                     this.ds  = this.dialogService.confirm(
-                      T("Download Update"), T("Continue with download?"),true,"",true,
-                      T("Apply updates and reboot system after downloading."),this.updateMethod, {}
+                      T("Download Update"), T("Continue with download?"),true,"",false, "", this.updateMethod, {}
                     )
-                  // })
+                  })
                 }
                 this.ds.afterClosed().subscribe((status)=>{
                   if(status){
@@ -443,35 +442,42 @@ export class UpdateComponent implements OnInit, OnDestroy {
                         T("Apply updates and reboot system after downloading."),
                         this.updateMethod,[{ train: this.train, reboot: false }]
                     )
-                  } else {
-                    // this.ws.call('update.set_train', [this.train]).subscribe(() => {
+                   
+                    this.ds.afterClosed().subscribe((status)=>{
+                      if(status){
+                        if (!this.isHA && !this.ds.componentInstance.data[0].reboot){
+                          this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
+                          this.dialogRef.componentInstance.setCall('update.download');
+                          this.dialogRef.componentInstance.submit();
+                          this.dialogRef.componentInstance.success.subscribe((succ) => {
+                            this.dialogRef.close(false);
+                            this.snackBar.open(T("Updates successfully downloaded"),'close', { duration: 5000 });
+                            this.pendingupdates();
+
+                          });
+                          this.dialogRef.componentInstance.failure.subscribe((failure) => {
+                            this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
+                          });
+                        }
+                        else{
+                          this.update();
+                        }
+                      }
+                    });
+                   } else {
+                    // this.ws.call('update.set_train', [this.train]).subscribe(() => { // Waiting for update.set_train in MW
                       this.ds  = this.dialogService.confirm(
-                        T("Download Update"), T("Continue with download?"),true,"",true,
-                        T("Apply updates and reboot system after downloading."),this.updateMethod,{}
-                      )
+                        T("Download Update"), T("Upgrades both controllers. Files will be downloaded in the Active Controller\
+                         and then transferred to the Standby Controller. Upgrade process will start concurrently on both nodes.\
+                         Continue with download?"),true,"",false, "", this.updateMethod, {}
+                      ).subscribe((res) =>  {
+                        if (res) {
+                          this.update()
+                        }
+                      })
                     // })
                   }
-                  this.ds.afterClosed().subscribe((status)=>{
-                    if(status){
-                      if (!this.isHA && !this.ds.componentInstance.data[0].reboot){
-                        this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
-                        this.dialogRef.componentInstance.setCall('update.download');
-                        this.dialogRef.componentInstance.submit();
-                        this.dialogRef.componentInstance.success.subscribe((succ) => {
-                          this.dialogRef.close(false);
-                          this.snackBar.open(T("Updates successfully downloaded"),'close', { duration: 5000 });
-                          this.pendingupdates();
 
-                        });
-                        this.dialogRef.componentInstance.failure.subscribe((failure) => {
-                          this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
-                        });
-                      }
-                      else{
-                        this.update();
-                      }
-                    }
-                  });
                 });
               };
             });
@@ -508,15 +514,15 @@ export class UpdateComponent implements OnInit, OnDestroy {
     if (!this.isHA) {
       this.dialogRef.componentInstance.setCall(this.updateMethod, [{ train: this.train, reboot: false }]);
     } else {
-      // this.ws.call('update.set_train', [this.train]).subscribe(() => {
+      this.ws.call('update.set_train', [this.train]).subscribe(() => { // Waiting for update.set_train in MW
         this.dialogRef.componentInstance.setCall(this.updateMethod);
-      // })
+      })
     }
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
-      // if (!this.isHA) { 
+      if (!this.isHA) { 
         this.router.navigate(['/others/reboot']); 
-      // }
+      }
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
       this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
