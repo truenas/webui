@@ -1,7 +1,7 @@
 <mat-card-content class="plugin-info">
     <section *ngIf="engineerMode">
         <mat-label>{{ "Browse a Collection" | translate}}</mat-label>
-        <mat-select [(ngModel)]="selectedBranch" (selectionChange)="switchBranch()">
+        <mat-select [(ngModel)]="selectedBranch" (selectionChange)="switchBranch($event)">
             <mat-optgroup *ngFor="let branchIndex of availableBranches" [label]="branchIndex.name">
                 <mat-option *ngFor="let branch of branchIndex.branches" [value]="branch.value">
                     {{branch.label}}
@@ -20,6 +20,7 @@
         </div>
         <div fxFlex="25" fxFlexOffset="3">
             <div class="plugin-vinfo">
+                <p *ngIf="isSelectedOffical">Official Plugin <mat-icon class="official-plugin">verified_user</mat-icon></p>
                 <p>Version: {{selectedPlugin[6]}}</p>
                 <p>Installed Instances: {{installedPlugins[selectedPlugin[2]] || 0}}</p>
             </div>

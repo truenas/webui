@@ -19,6 +19,7 @@ export class AvailablePluginsComponent implements OnInit {
 
     public plugins: any;
     public selectedPlugin: any;
+    public isSelectedOffical = true;
     public engineerMode: boolean;
     public availableBranches = [];
     public selectedBranch: any;
@@ -34,7 +35,7 @@ export class AvailablePluginsComponent implements OnInit {
             (res) => {
                 for (let i = 0; i < res.length; i++) {
                     const branchIndexObj = _.find(this.availableBranches, { name: res[i].repo });
-                    if (branchIndexObj == undefined) {
+                    if (branchIndexObj === undefined) {
                         this.availableBranches.push({ name: res[i].repo, branches: [{ label: res[i].name, value: res[i].name }] })
                     } else {
                         branchIndexObj.branches.push({ label: res[i].name, value: res[i].name });
@@ -79,7 +80,8 @@ export class AvailablePluginsComponent implements OnInit {
             });
     }
 
-    switchBranch() {
+    switchBranch(event) {
+        this.isSelectedOffical = event.source.selected.group.label === 'official';
         this.queryCallOption = ["PLUGIN", true, true, this.selectedBranch];
         this.getPlugin();
     }

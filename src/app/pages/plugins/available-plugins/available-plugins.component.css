@@ -16,3 +16,6 @@ p.plugin-description {
 div.plugin-vinfo {
     margin-bottom: 20px;
 }
+mat-icon.official-plugin {
+    vertical-align: middle;
+}
