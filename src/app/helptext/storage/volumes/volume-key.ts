@@ -22,6 +22,9 @@ changekey_passphrase2_placeholder: T('Verify passphrase'),
 changekey_passphrase2_tooltip: T('Confirm the GELI passphrase.'),
 changekey_passphrase2_validation: [Validators.required],
 
+changekey_remove_passphrase_placeholder: T('Remove passphrase'),
+changekey_remove_passphrase_tooltip: T('Select to remove the passphrase from this pool.'),
+
 // Create key form
 createkey_passphrase_placeholder: T('Passphrase'),
 createkey_passphrase_tooltip: T('Enter the GELI passphrase.'),
