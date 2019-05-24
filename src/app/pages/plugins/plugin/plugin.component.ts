@@ -1,10 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
+import * as myIP from 'what-is-my-ip-address';
+import * as _ from 'lodash';
 
 import { T } from '../../../translate-marker';
-import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { WebSocketService } from '../../../services';
-import * as _ from 'lodash';
+import { AppLoaderService, WebSocketService } from '../../../services';
 import { EntityUtils } from '../../common/entity/utils';
 import { DialogService } from '../../../../app/services';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
@@ -19,6 +19,7 @@ export class PluginComponent implements OnInit {
   @Input() parent: any;
 
   public actions: any[];
+  protected publicIp = '';
 
   constructor(
     protected loader: AppLoaderService,
@@ -29,6 +30,13 @@ export class PluginComponent implements OnInit {
   ngOnInit() {
     console.log('hello', this.config, this.parent);
     this.actions = this.getActions(this.config);
+
+    myIP.v4().then((pubIp) => {
+      this.publicIp = pubIp;
+    }).catch((e) => {
+      console.log("Error getting Public IP: ", e);
+      this.publicIp = '';
+    });
   }
 
   getActions(row) {
@@ -92,13 +100,13 @@ export class PluginComponent implements OnInit {
       icon: 'update',
       visible: this.isActionVisible('update'),
       onClick: () => {
-          const dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Updating Plugin") }, disableClose: true });
-          dialogRef.componentInstance.setCall('jail.update_to_latest_patch', [row[1]]);
-          dialogRef.componentInstance.submit();
-          dialogRef.componentInstance.success.subscribe((res) => {
-            dialogRef.close(true);
-            this.parent.snackBar.open(T("Plugin ") + row[1] + T(" updated."), T('Close'), { duration: 5000 });
-          });
+        const dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Updating Plugin") }, disableClose: true });
+        dialogRef.componentInstance.setCall('jail.update_to_latest_patch', [row[1]]);
+        dialogRef.componentInstance.submit();
+        dialogRef.componentInstance.success.subscribe((res) => {
+          dialogRef.close(true);
+          this.parent.snackBar.open(T("Plugin ") + row[1] + T(" updated."), T('Close'), { duration: 5000 });
+        });
       }
     },
     {
@@ -107,9 +115,7 @@ export class PluginComponent implements OnInit {
       icon: 'settings',
       visible: this.isActionVisible('management'),
       onClick: () => {
-        console.log(row[9]);
-        
-          window.open(row[9]);
+        window.open(row[9]);
       }
     },
     {
@@ -118,19 +124,21 @@ export class PluginComponent implements OnInit {
       icon: 'delete',
       visible: this.isActionVisible('delete'),
       onClick: () => {
-          this.parent.doDelete(row);
+        this.parent.doDelete(row);
       }
+    }];
+
+    if (row['1'].startsWith('asigra')) {
+      actions.push({
+        id: "register",
+        label: T('REGISTER'),
+        icon: 'assignment',
+        visible: this.isActionVisible('register'),
+        onClick: () => {
+          this.getRegistrationLink();
+        }
+      });
     }
-    ]
-    // if (parentRow['1'].startsWith('asigra')) {
-    //   actions.push({
-    //     id: "register",
-    //     label: T('Register'),
-    //     onClick: (row) => {
-    //     //   this.getRegistrationLink();
-    //     }
-    //   });
-    // }
     return actions;
   }
 
@@ -152,7 +160,7 @@ export class PluginComponent implements OnInit {
       this.ws.call('jail.list_resource', ["PLUGIN"]).subscribe(
         (res) => {
           for (let i = 0; i < res.length; i++) {
-            if (res[i][1] == row[1]) {
+            if (res[i][1] === row[1]) {
               for (const j in row) {
                 row[j] = (j === '6' && _.split(res[i][j], '|').length > 1) ? _.split(res[i][j], '|')[1] : res[i][j];
               }
@@ -167,5 +175,31 @@ export class PluginComponent implements OnInit {
         }
       )
     });
+  }
+
+  getRegistrationLink() {
+    const url = 'https://licenseportal.asigra.com/licenseportal/user-registration.do';
+    const form = document.createElement('form');
+    form.action = url;
+    form.method = 'POST';
+    form.target = '_blank';
+    form.style.display = 'none';
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.name = 'dsSystemPublicIP';
+    input.value = this.publicIp;
+
+    const submit = document.createElement('input');
+    submit.type = 'submit';
+    submit.id = 'submitProject';
+
+    form.appendChild(input);
+    form.appendChild(submit);
+    document.body.appendChild(form);
+
+    submit.click();
+
+    document.body.removeChild(form);
   }
 }
