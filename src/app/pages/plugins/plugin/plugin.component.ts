@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material';
 
 import { T } from '../../../translate-marker';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
@@ -6,6 +7,7 @@ import { WebSocketService } from '../../../services';
 import * as _ from 'lodash';
 import { EntityUtils } from '../../common/entity/utils';
 import { DialogService } from '../../../../app/services';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 
 @Component({
   selector: 'app-single-plugin',
@@ -21,7 +23,8 @@ export class PluginComponent implements OnInit {
   constructor(
     protected loader: AppLoaderService,
     protected ws: WebSocketService,
-    protected dialogService: DialogService) { }
+    protected dialogService: DialogService,
+    protected matDialog: MatDialog) { }
 
   ngOnInit() {
     console.log('hello', this.config, this.parent);
@@ -88,14 +91,14 @@ export class PluginComponent implements OnInit {
       label: T("UPDATE"),
       icon: 'update',
       visible: this.isActionVisible('update'),
-      onClick: (row) => {
-        //   const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Updating Plugin") }, disableClose: true });
-        //   dialogRef.componentInstance.setCall('jail.update_to_latest_patch', [row[1]]);
-        //   dialogRef.componentInstance.submit();
-        //   dialogRef.componentInstance.success.subscribe((res) => {
-        //     dialogRef.close(true);
-        //     this.snackBar.open(T("Plugin ") + row[1] + T(" updated."), T('Close'), { duration: 5000 });
-        //   });
+      onClick: () => {
+          const dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Updating Plugin") }, disableClose: true });
+          dialogRef.componentInstance.setCall('jail.update_to_latest_patch', [row[1]]);
+          dialogRef.componentInstance.submit();
+          dialogRef.componentInstance.success.subscribe((res) => {
+            dialogRef.close(true);
+            this.parent.snackBar.open(T("Plugin ") + row[1] + T(" updated."), T('Close'), { duration: 5000 });
+          });
       }
     },
     {
@@ -103,8 +106,10 @@ export class PluginComponent implements OnInit {
       label: T("MANAGE"),
       icon: 'settings',
       visible: this.isActionVisible('management'),
-      onClick: (row) => {
-        //   window.open(row[9]);
+      onClick: () => {
+        console.log(row[9]);
+        
+          window.open(row[9]);
       }
     },
     {
@@ -112,8 +117,8 @@ export class PluginComponent implements OnInit {
       label: T("UNINSTALL"),
       icon: 'delete',
       visible: this.isActionVisible('delete'),
-      onClick: (row) => {
-        //   this.entityList.doDelete(row);
+      onClick: () => {
+          this.parent.doDelete(row);
       }
     }
     ]

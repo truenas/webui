@@ -4,6 +4,7 @@ import { AvailablePluginsComponent } from './available-plugins/available-plugins
 import { PluginComponent } from './plugin/plugin.component';
 
 import { T } from '../../translate-marker';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-plugins-ui',
@@ -37,9 +38,17 @@ export class PluginsComponent {
       id_prop: '1',
     },
   };
+  protected columnFilter = false;
   protected cardHeaderComponent = AvailablePluginsComponent;
   protected showActions = false;
   protected hasDetails = true;
   protected rowDetailComponent = PluginComponent;
 
+  dataHandler(entityList: any) {
+    for (let i = 0; i < entityList.rows.length; i++) {
+      if (_.split(entityList.rows[i][6], '|').length > 1) {
+        entityList.rows[i][6] = _.split(entityList.rows[i][6], '|')[1];
+      }
+    }
+  }
 }
