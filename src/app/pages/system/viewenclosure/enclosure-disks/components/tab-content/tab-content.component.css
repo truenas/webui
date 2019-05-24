@@ -1,0 +1,10 @@
+table#tab-data{
+  width: 100%;
+}
+
+table#tab-data,
+table#tab-data .mat-cell,
+table#tab-data .mat-header-cell {
+  background-color:var(--bg2);
+  color: var(--fg2);
+}

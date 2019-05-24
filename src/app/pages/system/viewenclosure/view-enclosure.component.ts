@@ -10,9 +10,10 @@ import { SystemProfiler } from './enclosure-disks/system-profiler';
 
 interface ViewConfig {
   name: string;
+  alias: string; // Used for tab label
   icon: string;
   id: number;
-  elementIndex: number;
+  elementIndex?: number;
   showInNavbar: boolean;
 }
 
@@ -26,39 +27,22 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
   public events:Subject<CoreEvent> ;
   @ViewChild('navigation') nav: ElementRef
 
-  public currentView: string = 'Disks';
+  //public currentView: ViewConfig
+  public currentView: ViewConfig =  { 
+      name: 'Disks',
+      alias: 'Disks',
+      icon: "harddisk",
+      id: 0,
+      showInNavbar: true
+  }
+    
   public system: SystemProfiler;
   public system_product;
   public selectedEnclosure: any;
   public views: ViewConfig[] = [];
-    /*{ 
-      name: 'Disks',
-      icon: "harddisk",
-      id: 0,
-      showInNavbar: true
-    },
-    { 
-      name: 'Cooling',
-      icon: "fan",
-      id: 1,
-      showInNavbar: true
-    },
-    { 
-      name: 'Power Supply',
-      icon: "power-socket",
-      id: 2,
-      showInNavbar: true
-    },
-    { 
-      name: 'Voltage',
-      icon: "flash",
-      id: 3,
-      showInNavbar: true
-    }*/
-  
 
   changeView(id){
-    this.currentView = this.views[id].name;
+    this.currentView = this.views[id];
   }
 
   constructor(private core: CoreService, protected router: Router){
@@ -131,6 +115,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     let views = [];
     let disks =  { 
         name: 'Disks',
+        alias: 'Disks',
         icon: "harddisk",
         id: 0,
         showInNavbar: true
@@ -140,7 +125,8 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
   
     this.system.enclosures[this.selectedEnclosure.enclosureKey].elements.forEach((element, index) => {
       let view = { 
-        name: '',
+        name: element.name,
+        alias: '',
         icon: "",
         id: views.length,
         elementIndex: index,
@@ -149,32 +135,32 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
 
       switch(element.name){
         case "Cooling" :
-          view.name = element.name;
+          view.alias = element.name;
           view.icon = "fan";
           views.push(view);
         break;
         case "Temperature Sensor" :
-          view.name = "Temperature";
+          view.alias = "Temperature";
           view.icon = "fan";
           views.push(view);
         break;
         case "Voltage Sensor" :
-          view.name = "Voltage";
+          view.alias = "Voltage";
           view.icon = "flash";
           views.push(view);
         break;
         case "Power Supply" :
-          view.name = element.name;
+          view.alias = element.name;
           view.icon = "flash";
           views.push(view);
         break;
         case "SAS Connector" :
-          view.name = "SAS";
+          view.alias = "SAS";
           view.icon = "flash";
           views.push(view);
         break;
         case "Enclosure Services Controller Electronics":
-          view.name = "Services";
+          view.alias = "Services";
           view.icon = "flash";
           views.push(view);
         break;
