@@ -61,7 +61,6 @@ export class PluginsComponent {
         this.entityList.busy =
           this.ws.job('core.bulk', ["jail.start", selectedJails]).subscribe(
             (res) => {
-              console.log('bulk job', res);
               this.updateRows(selected).then(
                 () => {
                   this.updateMultiAction(selected);

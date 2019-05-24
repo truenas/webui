@@ -4,9 +4,7 @@ import * as myIP from 'what-is-my-ip-address';
 import * as _ from 'lodash';
 
 import { T } from '../../../translate-marker';
-import { AppLoaderService, WebSocketService } from '../../../services';
 import { EntityUtils } from '../../common/entity/utils';
-import { DialogService } from '../../../../app/services';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 
 @Component({
@@ -21,14 +19,9 @@ export class PluginComponent implements OnInit {
   public actions: any[];
   protected publicIp = '';
 
-  constructor(
-    protected loader: AppLoaderService,
-    protected ws: WebSocketService,
-    protected dialogService: DialogService,
-    protected matDialog: MatDialog) { }
+  constructor(protected matDialog: MatDialog) { }
 
   ngOnInit() {
-    console.log('hello', this.config, this.parent);
     this.actions = this.getActions(this.config);
 
     myIP.v4().then((pubIp) => {
@@ -46,15 +39,18 @@ export class PluginComponent implements OnInit {
       icon: 'play_arrow',
       visible: this.isActionVisible('start'),
       onClick: () => {
-        this.loader.open();
+        this.parent.loader.open();
         row[3] = 'STARTING...';
-        this.ws.job('jail.start', [row[1]]).subscribe(
+        this.parent.ws.job('jail.start', [row[1]]).subscribe(
           (res) => {
-            this.updateRow(row).then(() => this.loader.close());
+            this.parent.conf.updateRows([row]).then(() => {
+              this.actions = this.getActions(this.config);
+              this.parent.loader.close();
+            });
           },
           (res) => {
-            this.loader.close();
-            new EntityUtils().handleWSError(this.parent, res, this.dialogService);
+            this.parent.loader.close();
+            new EntityUtils().handleWSError(this.parent, res, this.parent.dialogService);
           });
       }
     },
@@ -64,15 +60,18 @@ export class PluginComponent implements OnInit {
       icon: 'replay',
       visible: this.isActionVisible('restart'),
       onClick: () => {
-        this.loader.open();
+        this.parent.loader.open();
         row[3] = 'RESTARTING...';
-        this.ws.job('jail.restart', [row[1]]).subscribe(
+        this.parent.ws.job('jail.restart', [row[1]]).subscribe(
           (res) => {
-            this.updateRow(row).then(() => this.loader.close());
+            this.parent.conf.updateRows([row]).then(() => {
+              this.actions = this.getActions(this.config);
+              this.parent.loader.close();
+            });
           },
           (err) => {
-            this.loader.close();
-            new EntityUtils().handleWSError(this.parent, err, this.dialogService);
+            this.parent.loader.close();
+            new EntityUtils().handleWSError(this.parent, err, this.parent.dialogService);
           });
       }
     },
@@ -82,15 +81,18 @@ export class PluginComponent implements OnInit {
       icon: 'stop',
       visible: this.isActionVisible('stop'),
       onClick: () => {
-        this.loader.open();
+        this.parent.loader.open();
         row[3] = 'STOPPING...';
-        this.ws.job('jail.stop', [row[1]]).subscribe(
+        this.parent.ws.job('jail.stop', [row[1]]).subscribe(
           (res) => {
-            this.updateRow(row).then(() => this.loader.close());
+            this.parent.conf.updateRows([row]).then(() => {
+              this.actions = this.getActions(this.config);
+              this.parent.loader.close()
+            });
           },
           (res) => {
-            this.loader.close();
-            new EntityUtils().handleWSError(this.parent, res, this.dialogService);
+            this.parent.loader.close();
+            new EntityUtils().handleWSError(this.parent, res, this.parent.dialogService);
           });
       }
     },
@@ -153,28 +155,6 @@ export class PluginComponent implements OnInit {
       return false;
     }
     return true;
-  }
-
-  updateRow(row): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      this.ws.call('jail.list_resource', ["PLUGIN"]).subscribe(
-        (res) => {
-          for (let i = 0; i < res.length; i++) {
-            if (res[i][1] === row[1]) {
-              for (const j in row) {
-                row[j] = (j === '6' && _.split(res[i][j], '|').length > 1) ? _.split(res[i][j], '|')[1] : res[i][j];
-              }
-              this.actions = this.getActions(this.config);
-              resolve(true);
-            }
-          }
-          reject(false);
-        },
-        (err) => {
-          reject(err);
-        }
-      )
-    });
   }
 
   getRegistrationLink() {
