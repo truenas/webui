@@ -50,7 +50,7 @@ export class WidgetLoadComponent extends WidgetChartComponent implements AfterVi
      this.chart = c3.generate({
        bindto: '#' + this.chartId,
        size: {
-         height:176
+         height:225
        },
        data: {
          x: "x",
