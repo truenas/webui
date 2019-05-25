@@ -63,6 +63,7 @@ export class PluginsComponent {
             (res) => {
               this.updateRows(selected).then(
                 () => {
+                  this.entityList.table.rowDetail.collapseAllRows();
                   this.updateMultiAction(selected);
                   this.loader.close();
                 }
@@ -89,6 +90,7 @@ export class PluginsComponent {
             (res) => {
               this.updateRows(selected).then(
                 () => {
+                  this.entityList.table.rowDetail.collapseAllRows();
                   this.updateMultiAction(selected);
                   this.loader.close();
                 }
@@ -120,6 +122,7 @@ export class PluginsComponent {
                 }
               }
               if (message === "") {
+                this.entityList.table.rowDetail.collapseAllRows();
                 this.snackBar.open(T('Selected plugins updated.'), 'close', { duration: 5000 });
               } else {
                 message = '<ul>' + message + '</ul>';
@@ -204,4 +207,10 @@ export class PluginsComponent {
       _.find(this.multiActions, { 'id': 'mstart' as any })['enable'] = false;
     }
   };
+
+  wsMultiDeleteParams(selected: any) {
+    const params: Array<any> = ['jail.do_delete'];
+    params.push(this.getSelectedNames(selected));
+    return params;
+  }
 }
