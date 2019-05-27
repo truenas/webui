@@ -122,7 +122,8 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     }
     
     views.unshift(disks);
-  
+    let matchIndex; 
+
     this.system.enclosures[this.selectedEnclosure.enclosureKey].elements.forEach((element, index) => {
       let view = { 
         name: element.name,
@@ -166,9 +167,16 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
         break;
       }
 
+      if(view.alias == this.currentView.alias){ matchIndex = view.id;}
     });
 
     this.views = views;
+
+    if(matchIndex && matchIndex > 0){
+      this.currentView = views[matchIndex];
+    } else {
+      this.currentView = disks;
+    }
   }
 
 }
