@@ -78,7 +78,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   public theme: any;
   public currentView: string; // pools || status || expanders || details
   public exitingView: string; // pools || status || expanders || details
-  private defaultView = 'pools';
+  private defaultView = 'status';
   private labels: VDevLabelsSVG;
   private identifyBtnRef: any;
   
