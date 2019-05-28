@@ -3369,6 +3369,11 @@ msgstr "给这个共享取个名字。"
 msgid "Enter a name for this Keytab."
 msgstr ""
 
+msgid ""
+"Enter a name to use for the the interface. Use the format laggX, vlanX, or "
+"bridgeX where X is a number representing a non-parent interface."
+msgstr ""
+
 msgid "Enter a netmask."
 msgstr "输入一个子网掩码。"
 
@@ -5936,9 +5941,6 @@ msgstr ""
 msgid "Passphrase"
 msgstr "密码短语"
 
-msgid "Passphrase changed for pool "
-msgstr "修改存储池密码短语完成 "
-
 msgid "Passphrase created for pool "
 msgstr "创建存储池密码短语完成 "
 
@@ -6421,6 +6423,9 @@ msgstr "移除额外路径"
 
 msgid "Remove Keep Flag"
 msgstr "移除保持标志"
+
+msgid "Remove passphrase"
+msgstr ""
 
 msgid "Rename the existing boot environment."
 msgstr "重命名现有启动环境"
@@ -7259,6 +7264,9 @@ msgstr ""
 msgid ""
 "Select to automatically set the contents of the share to the <i>webdav</i> "
 "user and group."
+msgstr ""
+
+msgid "Select to remove the passphrase from this pool."
 msgstr ""
 
 msgid ""
@@ -9402,6 +9410,9 @@ msgstr "版本"
 
 msgid "View"
 msgstr "查看"
+
+msgid "View Enclosure"
+msgstr ""
 
 msgid "View the contents of the Service Account JSON file."
 msgstr ""
