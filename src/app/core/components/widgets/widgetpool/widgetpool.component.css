@@ -215,9 +215,14 @@ span.disk-detail-subtitle {
 }
 
 .disk-detail-temp-label span.value{
-  font-size: 2.75em;
+  font-size: 2.65em;
   line-height: 1em;
   /*margin-left: 12px;*/
+}
+@-moz-document url-prefix() {
+  .disk-detail-temp-label span.value {
+    font-size: 2.4em !important;
+  }
 }
 .disk-detail-temp-label.hot span.value{
   color:#c00;
@@ -225,11 +230,10 @@ span.disk-detail-subtitle {
 .disk-detail-temp-label.hot .mat-progress-bar-element{
   border:solid 7px #c00;
 }
-
 .disk-detail-temp-label span.temp-units{
   font-weight:500;
+  margin-left: -5px
 }
-
 .temps-bar-label{
   font-size:75%;
 }
