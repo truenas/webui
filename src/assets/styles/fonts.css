@@ -106,3 +106,7 @@
       local('Roboto-Black'), 
       url('/assets/fonts/Roboto/Roboto-Black.ttf') format('truetype');
   }
+  @font-face {
+    font-family: 'Droid Sans Mono';
+    src: url('/assets/fonts/Droid-Sans-Mono/DroidSansMono.ttf') forman('truetype');
+  }
