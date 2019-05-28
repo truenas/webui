@@ -23,6 +23,7 @@ export class ActiveDirectoryComponent {
   protected ad_idmap_backend: any;
   protected ad_nss_info: any;
   protected ad_ldap_sasl_wrapping: any;
+  private failover_fields = ['ad_netbiosname_b'];
 
   public custActions: Array<any> = [
     {
@@ -212,6 +213,16 @@ export class ActiveDirectoryComponent {
     },
     {
       type : 'input',
+      name : helptext.activedirectory_netbiosname_b_name,
+      placeholder : helptext.activedirectory_netbiosname_b_placeholder,
+      tooltip : helptext.activedirectory_netbiosname_b_tooltip,
+      validation : helptext.activedirectory_netbiosname_b_validation,
+      required : true,
+      isHidden: true,
+      disabled: true
+    },
+    {
+      type : 'input',
       name : helptext.activedirectory_netbiosalias_name,
       placeholder : helptext.activedirectory_netbiosalias_placeholder,
       tooltip : helptext.activedirectory_netbiosalias_tooltip,
@@ -243,6 +254,14 @@ export class ActiveDirectoryComponent {
   }
 
   afterInit(entityEdit: any) {
+    if (window.localStorage.getItem('is_freenas') === 'false') {
+      this.ws.call('failover.licensed').subscribe((is_ha) => { //fixme, stupid race condition makes me need to call this again
+        for (let i = 0; i < this.failover_fields.length; i++) {
+          entityEdit.setDisabled(this.failover_fields[i], !is_ha, !is_ha);
+        }
+      });
+    }
+    
     this.rest.get("directoryservice/kerberosrealm", {}).subscribe((res) => {
       this.ad_kerberos_realm = _.find(this.fieldConfig, {name : 'ad_kerberos_realm'});
       res.data.forEach((item) => {

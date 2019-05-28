@@ -131,11 +131,17 @@ activedirectory_enable_name: 'ad_enable',
 activedirectory_enable_placeholder : T('Enable'),
 activedirectory_enable_tooltip : T('Set to enable the Active Directory service.'),
 
-activedirectory_netbiosname_a_name: 'ad_netbiosname_a',
+activedirectory_netbiosname_a_name: 'ad_netbiosname',
 activedirectory_netbiosname_a_placeholder : T('Netbios Name'),
 activedirectory_netbiosname_a_tooltip : T('Netbios Name of this NAS. This name must differ from\
  the <i>Workgroup</i> name and be no greater than 15 characters.'),
 activedirectory_netbiosname_a_validation : [Validators.required, Validators.maxLength(15)],
+
+activedirectory_netbiosname_b_name: 'ad_netbiosname_b',
+activedirectory_netbiosname_b_placeholder : T('Netbios Name (Storage Controller 2)'),
+activedirectory_netbiosname_b_tooltip : T('Netbios Name of this NAS. This name must differ from\
+ the <i>Workgroup</i> name and be no greater than 15 characters.'),
+activedirectory_netbiosname_b_validation : [Validators.required, Validators.maxLength(15)],
 
 activedirectory_netbiosalias_name: 'ad_netbiosalias',
 activedirectory_netbiosalias_placeholder : T('NetBIOS alias'),
