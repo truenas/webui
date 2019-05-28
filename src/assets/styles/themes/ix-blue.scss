@@ -361,6 +361,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   .mat-input-element {
     @include variable(caret-color, --fg2, $fg2, !important);
+    height: 15px !important;
   }
 
   .mat-input-element:disabled{
