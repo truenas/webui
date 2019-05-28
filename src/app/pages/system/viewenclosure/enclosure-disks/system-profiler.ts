@@ -75,7 +75,8 @@ export class SystemProfiler {
       }
     }
     if(!this.headIndex){
-      console.error("No Head Unit Detected!");
+      console.warn("No Head Unit Detected!");
+      this.headIndex = 0;
     } else {
     }
   }
@@ -84,9 +85,10 @@ export class SystemProfiler {
     const definitions = [
       {model: 'M Series' , regex: /4024S/},
       {model: 'X Series' , regex: /P3217/},
+      {model: 'Z Series' , regex: /d1f8/},
       {model: 'E60' , regex: /^QUANTA /},
-      {model: 'E24' , regex: /^Storage /},
-      {model: 'E16' , regex: /^ECStream 3U16 /},
+      {model: 'E24' , regex: /Storage 1729/},
+      {model: 'E16' , regex: /d10c/},
       {model: 'ES60' , regex: /^CELESTIC R0904/},
       {model: 'ES24' , regex: /4024J/},
       {model: 'ES12' , regex: /^CELESTIC X2012/},
@@ -158,7 +160,7 @@ export class SystemProfiler {
   private parseEnclosures(obj){
     // Provide a shortcut to the enclosures object
     this.profile.forEach((profileItem, index) => {
-      profileItem.enclosureKey = index;
+      profileItem.enclosureKey = Number(index); // Make sure index 0 is not treated as boolean
     });
   }
   
