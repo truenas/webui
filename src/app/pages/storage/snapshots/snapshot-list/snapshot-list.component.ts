@@ -112,7 +112,7 @@ export class SnapshotListComponent {
       label: "Clone",
       onClick: (row1) => {
         this._router.navigate(new Array('/').concat(
-          ["storage", "snapshots", "clone", row1.id]));
+          ["storage", "snapshots", "clone", row1.name]));
       }
     });
     actions.push({
@@ -127,7 +127,8 @@ export class SnapshotListComponent {
   getSelectedNames(selectedSnapshots) {
     let selected: any = [];
     for (let i in selectedSnapshots) {
-      selected.push([{"dataset": selectedSnapshots[i].dataset, "name": selectedSnapshots[i].snapshot_name}]);
+      let snapshot = selectedSnapshots[i].name.split('@');
+      selected.push([{"dataset": snapshot[0], "name": snapshot[1]}]);
     }
     return selected;
   }
@@ -144,7 +145,8 @@ export class SnapshotListComponent {
       if (res) {
         this.entityList.loader.open();
         this.entityList.loaderOpen = true;
-        this.ws.call(this.wsDelete, [{ "dataset": item.dataset, "name": item.snapshot_name}]).subscribe(
+        let snapshot = item.name.split('@');
+        this.ws.call(this.wsDelete, [{ "dataset": snapshot[0], "name": snapshot[1]}]).subscribe(
           (res) => { this.entityList.getData() },
           (res) => {
             new EntityUtils().handleWSError(this, res, this.entityList.dialogService);
@@ -157,7 +159,7 @@ export class SnapshotListComponent {
 
   doRollback(item) {
     const warningMsg = T("<b>WARNING:</b> Rolling back to this snapshot will permanently delete later snapshots of this dataset. Do not roll back until all desired snapshots have been backed up!");
-    const msg = T("<br><br>Roll back to snapshot <i>") + item.snapshot_name + '</i> from ' + item.creation + '?';
+    const msg = T("<br><br>Roll back to snapshot <i>") + item.name + '</i> from ' + item.creation + '?';
 
     this.entityList.dialogService.confirm(T("Warning"), warningMsg + msg, false, T('Rollback')).subscribe(res => {
       let data = {"force" : true};
@@ -165,7 +167,7 @@ export class SnapshotListComponent {
         this.entityList.loader.open();
         this.entityList.loaderOpen = true;
         this.rest
-        .post('storage/snapshot' + '/' + item.id + '/rollback/', {
+        .post('storage/snapshot' + '/' + item.name + '/rollback/', {
           body : JSON.stringify(data),
         })
         .subscribe(
