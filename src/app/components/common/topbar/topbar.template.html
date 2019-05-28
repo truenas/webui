@@ -41,6 +41,10 @@
         </ng-template>
       </button>
       </span>
+      <!-- Directory Services Monitor -->
+      <button mat-icon-button *ngIf="showDirServicesIcon" id="dirservices-manager" matTooltip="Directory Services Monitor" (click)="onShowDirServicesMonitor()" >
+        <mat-icon>info</mat-icon>
+      </button>
       <!-- Task Manager -->
       <button mat-icon-button id="task-manager" matTooltip="Task Manager" (click)="onShowTaskManager()" >
         <mat-icon>assignment</mat-icon>
