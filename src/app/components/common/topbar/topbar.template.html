@@ -42,7 +42,7 @@
       </button>
       </span>
       <!-- Directory Services Monitor -->
-      <button mat-icon-button id="dirservices-manager" matTooltip="Directory Services Monitor" (click)="onShowDirServicesMonitor()" >
+      <button mat-icon-button *ngIf="showDirServicesIcon" id="dirservices-manager" matTooltip="Directory Services Monitor" (click)="onShowDirServicesMonitor()" >
         <mat-icon>info</mat-icon>
       </button>
       <!-- Task Manager -->

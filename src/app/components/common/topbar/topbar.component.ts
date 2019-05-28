@@ -53,6 +53,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
   isDirServicesMonitorOpened = false;
   taskDialogRef: MatDialogRef<TaskManagerComponent>;
   dirServicesMonitor: MatDialogRef<DirectoryServicesMonitorComponent>;
+  dirServicesStatus = [];
+  showDirServicesIcon = false;
 
   ha_status_text: string;
   ha_disabled_reasons = [];
@@ -108,6 +110,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     });
     this.checkNetworkChangesPending();
     this.checkNetworkCheckinWaiting();
+    this.getDirServicesStatus();
 
     this.continuosStreaming = observableInterval(10000).subscribe(x => {
       this.showReplicationStatus();
@@ -116,6 +119,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
       }
       this.checkNetworkCheckinWaiting();
       this.checkNetworkChangesPending();
+      this.getDirServicesStatus();
     });
 
     this.ws.subscribe('zfs.pool.scan').subscribe(res => {
@@ -381,5 +385,26 @@ export class TopbarComponent implements OnInit, OnDestroy {
     reasons = reasons + '</ul>';
 
     this.dialogService.Info(ha_status, reasons, '500px', ha_icon, true);
+  }
+
+  getDirServicesStatus() {
+    let counter = 0;
+    this.ws.call('activedirectory.get_state').subscribe((res) => {
+      this.dirServicesStatus.push({name: 'Active Directory', state: res});
+
+      this.ws.call('ldap.get_state').subscribe((res) => {
+        this.dirServicesStatus.push({name: 'LDAP', state: res});
+
+        this.ws.call('nis.get_state').subscribe((res) => {
+          this.dirServicesStatus.push({name: 'NIS', state: res});
+          this.dirServicesStatus.forEach((item) => {
+            if (item.state !== 'DISABLED') {
+              counter ++;
+            } 
+          });
+          counter > 0 ? this.showDirServicesIcon = true : this.showDirServicesIcon = false;
+        });
+      });
+    });
   }
 }
