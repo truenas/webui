@@ -13,7 +13,8 @@ import helptext from '../../../../helptext/services/components/service-ups';
 
 export class ServiceUPSComponent {
   protected ups_driver: any;
-  protected ups_driver_fg: any;
+  private ups_drivers_list: any;
+  private ups_driver_key: any;
   protected ups_port: any;
   protected entityForm: any;
 
@@ -196,11 +197,11 @@ export class ServiceUPSComponent {
     this.entityForm = entityForm;
     this.ups_driver = _.find(this.fieldConfig, { name: 'ups_driver' });
     this.ups_port = _.find(this.fieldConfig, { name: 'ups_port' });
-    this.ups_driver_fg = entityForm.formGroup.controls['ups_driver'];
 
     this.ws.call('ups.driver_choices', []).subscribe((res) => {
+      this.ups_drivers_list = res;
       for (const item in res) {
-        this.ups_driver.options.push({ label: res[item], value: item });
+        this.ups_driver.options.push({ label: res[item], value: res[item] });
       }
     });
 
@@ -209,6 +210,18 @@ export class ServiceUPSComponent {
         this.ups_port.options.push({label: res[i], value: res[i]});
       } 
     });
+
+    entityForm.formGroup.controls['ups_driver'].valueChanges.subscribe((res) => {
+      this.ups_driver_key = this.getKeyByValue(this.ups_drivers_list, res)
+    })
+  }
+
+  getKeyByValue(object, value) {
+    return Object.keys(object).find(key => object[key] === value);
+  }
+
+  beforeSubmit(data: any) {
+    data.ups_driver = this.ups_driver_key;
   }
 
 }
