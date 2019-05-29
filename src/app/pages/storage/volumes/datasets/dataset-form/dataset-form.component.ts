@@ -645,7 +645,7 @@ export class DatasetFormComponent implements Formconfiguration{
             if (pk_dataset[0].readonly.source === 'DEFAULT' || pk_dataset[0].readonly.source === 'INHERITED') {
               readonly_value = 'INHERIT';
             }
-            let atime_value = pk_dataset[0].exec.value;
+            let atime_value = pk_dataset[0].atime.value;
             if (pk_dataset[0].atime.source === 'DEFAULT' || pk_dataset[0].atime.source === 'INHERITED') {
               atime_value = 'INHERIT';
             }
