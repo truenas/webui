@@ -33,7 +33,7 @@ msgid ""
 msgstr ""
 
 msgid " updated."
-msgstr ""
+msgstr " aktualisiert."
 
 msgid "% of all cores"
 msgstr ""
@@ -45,7 +45,7 @@ msgid ""
 msgstr ""
 
 msgid "'. All data on that pool was destroyed."
-msgstr ""
+msgstr "'. Alle Daten in diesem Pool wurden zerstört."
 
 msgid ""
 "'. Exporting/disconnecting a pool makes the data unavailable. The pool data "
@@ -62,16 +62,16 @@ msgid "*allow_sysvipc"
 msgstr ""
 
 msgid ", new vdev is "
-msgstr ""
+msgstr ", neuer vdev ist"
 
 msgid ". All data on that pool was destroyed."
-msgstr ""
+msgstr ". Alle Daten in diesem Pool wurden zerstört."
 
 msgid "20 characters is the maximum length."
-msgstr ""
+msgstr "Die maximale Länge beträgt 20 Zeichen."
 
 msgid ": Automatic update check failed. Please check system network settings."
-msgstr ""
+msgstr "Das automatische Update ist Fehlgeschlagen. Bitte überprüfen Sie die Netzwerkeinstellungen des Systems."
 
 msgid ""
 "<a href=\"%%docurl%%/sharing.html%%webversion%%#block-iscsi\" "
@@ -143,7 +143,7 @@ msgid ""
 msgstr ""
 
 msgid "<b>Not recommended.</b> Allow multiple groups to share the same group ID."
-msgstr ""
+msgstr "<b>Nicht empfohlen.</b> Erlaubt, dass mehrere Gruppen dieselbe Gruppen-ID verwenden."
 
 msgid ""
 "<b>Root logins are discouraged.</b> Set to allow root logins. A password "
@@ -167,13 +167,14 @@ msgstr ""
 msgid ""
 "<b>WARNING:</b> This configuration file contains system passwords and other "
 "sensitive data.<br>"
-msgstr ""
+msgstr ""<b>Achtung:</b> Diese Konfigurationsdatei enthält Systemkennwörter und andere "
+"sensible Daten.<br>"
 
 msgid "<b>rsyncd</b> listens on this port."
-msgstr ""
+msgstr "<b>rsyncd</b> lauscht auf diesen Port."
 
 msgid "<br><br>Roll back to snapshot <i>"
-msgstr ""
+msgstr "<br><br> Rollback zum Schnappschuss <i>"
 
 msgid ""
 "<font color=\"red\">WARNING</font>: use <i>rid</i> or <i>autorid</i> for "
@@ -207,17 +208,20 @@ msgid ""
 msgstr ""
 
 msgid "<i>0</i> disables quotas. Specify a maximum allowed space for this dataset."
-msgstr ""
+msgstr "<i>0</i> deaktiviert Quotas. Geben Sie einen maximal zulässigen Speicherplatz "
+"für dieses Dataset an."
 
 msgid ""
 "<i>0</i> is unlimited. A specified value applies to both this dataset and "
 "any child datasets."
-msgstr ""
+msgstr "<i>0</i> bedeutet unbegrenzt. Ein angegebener Wert gilt sowohl für diesen Datensatz als auch für "
+"alle untergeordneten Datensätze "
 
 msgid ""
 "<i>0</i> is unlimited. Reserve additional space for datasets containing "
 "logs which could take up all available free space."
-msgstr ""
+msgstr "<i>0</i> bedeutet unbegrenzt. Reservieren Sie zusätzlichen Speicherplatz für Datensätze mit "
+"Protokollen, die den gesamten verfügbaren freien Speicherplatz belegen könnten. "
 
 msgid ""
 "<i>AHCI</i> emulates an AHCI hard disk for best software compatibility. "
@@ -331,12 +335,13 @@ msgid ""
 msgstr ""
 
 msgid "A pool with this name already exists."
-msgstr ""
+msgstr "Ein Pool mit diesem Namen existiert bereits."
 
 msgid ""
 "A randomized MAC address is normally assigned. Enter a value here to set a "
 "specific MAC address."
-msgstr ""
+msgstr "Normalerweise wird eine zufällige MAC-Adresse zugewiesen. Geben Sie hier einen Wert ein, um ein "
+"spezifische MAC-Adresse zu setzen."
 
 msgid ""
 "A space-delimited list of network interfaces attached to a VNET-enabled "
@@ -345,12 +350,12 @@ msgid ""
 msgstr ""
 
 msgid "A swap size of 0 is STRONGLY DISCOURAGED."
-msgstr ""
+msgstr "Eine Swap-Größe von 0 wird NICHT EMPFOHLEN!"
 
 msgid ""
 "A username on the FTP Host system. This user must already exist on the FTP "
 "Host."
-msgstr ""
+msgstr "Ein Benutzername auf dem FTP-Host System. Dieser Benutzer muss bereits auf dem FTP-Server vorhanden sein."
 
 msgid ""
 "A valid IPv4 address to use as the default route. <br>Enter <b>none</b> to "
@@ -385,7 +390,7 @@ msgid ""
 msgstr ""
 
 msgid "ACL Type"
-msgstr ""
+msgstr "ACL Typ"
 
 msgid "AD Timeout"
 msgstr ""
@@ -397,19 +402,19 @@ msgid "ATA Security User"
 msgstr ""
 
 msgid "About"
-msgstr ""
+msgstr "Über"
 
 msgid "Access Based Share Enumeration"
 msgstr ""
 
 msgid "Access Key"
-msgstr ""
+msgstr "Zugangsschlüssel"
 
 msgid "Access Key ID"
-msgstr ""
+msgstr "Zugangsschlüssel ID"
 
 msgid "Access Token"
-msgstr ""
+msgstr "Zugangstoken"
 
 msgid ""
 "Access Token <a href=\"https://api.hubic.com/sandbox/\" "
@@ -424,16 +429,16 @@ msgid ""
 msgstr ""
 
 msgid "Account"
-msgstr ""
+msgstr "Konto"
 
 msgid "Account ID or Application Key ID"
-msgstr ""
+msgstr "Konto ID oder Anwendungsschlüssel ID"
 
 msgid "Account Key"
-msgstr ""
+msgstr "Kontoschlüssel"
 
 msgid "Account Name"
-msgstr ""
+msgstr "Kontoname"
 
 msgid ""
 "Account to be used for guest access. Default is nobody. Account is required "
@@ -442,18 +447,19 @@ msgid ""
 msgstr ""
 
 msgid "Accounts"
-msgstr ""
+msgstr "Konten"
 
 msgid "Acoustic Level"
-msgstr ""
+msgstr "Akustikpegel"
 
 msgid "Activate"
-msgstr ""
+msgstr "Aktivieren"
 
 msgid ""
 "Activates the configuration. Unset to disable the configuration without "
 "deleting it."
-msgstr ""
+msgstr "Aktiviert die Konfiguration. Nicht setzen, um die Konfiguration zu deaktivieren"
+"ohne sie zu löschen."
 
 msgid ""
 "Activates the process for ZFS to transparently reuse a single copy of "
@@ -464,16 +470,16 @@ msgid ""
 msgstr ""
 
 msgid "Active Directory"
-msgstr ""
+msgstr "Active Directory"
 
 msgid "Active Directory IDMAP change!"
 msgstr ""
 
 msgid "Adapter Type"
-msgstr ""
+msgstr "Adapter Typ:"
 
 msgid "Adapter Type:"
-msgstr ""
+msgstr "Adapter Typ:"
 
 msgid "Add Additional IPv4 Alias"
 msgstr ""
@@ -482,37 +488,37 @@ msgid "Add Additional IPv6 Alias"
 msgstr ""
 
 msgid "Add Additional Path"
-msgstr ""
+msgstr "Extra Pfad hinzufügen"
 
 msgid "Add Cache"
-msgstr ""
+msgstr "Cache hinzufügen"
 
 msgid "Add Cloud Credential"
-msgstr ""
+msgstr "Cloud Credentials hinzufügen"
 
 msgid "Add Data"
-msgstr ""
+msgstr "Daten hinzufügen"
 
 msgid "Add Dataset"
-msgstr ""
+msgstr "Datenset hinzufügen"
 
 msgid "Add Log"
-msgstr ""
+msgstr "Log hinzufügen"
 
 msgid "Add Recovery Key"
-msgstr ""
+msgstr "Wiederherstellungsschlüssel hinzufügen"
 
 msgid "Add Spare"
-msgstr ""
+msgstr "Spare hinzufügen"
 
 msgid "Add Zvol"
-msgstr ""
+msgstr "Zvol hinzufügen"
 
 msgid "Add a name for the new snapshot"
-msgstr ""
+msgstr "Fügen Sie einen Namen für den neuen Schnappschuss hinzu"
 
 msgid "Add a name for the new snapshot."
-msgstr ""
+msgstr "Fügen Sie einen Namen für den neuen Schnappschuss hinzu"
 
 msgid ""
 "Add an <a href=\"%%docurl%%/system.html%%webversion%%#certificates\" "
@@ -591,7 +597,7 @@ msgid "Additional <b>smb5.conf</b> parameters not covered by other option fields
 msgstr ""
 
 msgid "Additional Domains"
-msgstr ""
+msgstr "Zusätzliche Domains"
 
 msgid ""
 "Additional hosts to be appended to <i>/etc/hosts</i> can be added here. "
@@ -620,7 +626,7 @@ msgid ""
 msgstr ""
 
 msgid "Address"
-msgstr ""
+msgstr "Adresse"
 
 msgid "Address space limit in bytes for the jail."
 msgstr ""
@@ -632,10 +638,10 @@ msgid ""
 msgstr ""
 
 msgid "Adjust the file permissions using the checkboxes."
-msgstr ""
+msgstr "Passen Sie die Dateiberechtigungen mithilfe der Kontrollkästchen an."
 
 msgid "Admin Server"
-msgstr ""
+msgstr "Administrator Server"
 
 msgid ""
 "Administrative account name on the LDAP server. Example: "
@@ -643,25 +649,25 @@ msgid ""
 msgstr ""
 
 msgid "Administrator Password"
-msgstr ""
+msgstr "Administrator Passwort"
 
 msgid "Adv. Power Management"
-msgstr ""
+msgstr "Erweitertes Energiemanagement"
 
 msgid "Advanced"
-msgstr ""
+msgstr "Erweitert"
 
 msgid "Advanced Mode"
-msgstr ""
+msgstr "Erweitertet Modus"
 
 msgid "Advanced Plugin Installation"
-msgstr ""
+msgstr "Erweitere Plugin Installation"
 
 msgid "Advanced Power Management"
-msgstr ""
+msgstr "Erweitertes Energiemanagement"
 
 msgid "Advanced Settings"
-msgstr ""
+msgstr "Erweiterte Einstellungen"
 
 msgid ""
 "After entering the <b>Hostname, Username</b>, and <b>Password</b>, click "
@@ -669,16 +675,16 @@ msgid ""
 msgstr ""
 
 msgid "Alert"
-msgstr ""
+msgstr "Alarm"
 
 msgid "Alert Services"
-msgstr ""
+msgstr "Alarm Service"
 
 msgid "Alert Settings"
-msgstr ""
+msgstr "Alarm Einstellungen"
 
 msgid "Aliases"
-msgstr ""
+msgstr "Aliase"
 
 msgid "All dirs"
 msgstr ""
@@ -699,10 +705,10 @@ msgid "Allow Anonymous Login"
 msgstr ""
 
 msgid "Allow DNS updates"
-msgstr ""
+msgstr "Erlaube DNS Updates"
 
 msgid "Allow Empty Password"
-msgstr ""
+msgstr "Leere Passwörter erlauben"
 
 msgid "Allow Execute Always"
 msgstr ""
@@ -782,7 +788,7 @@ msgid ""
 msgstr ""
 
 msgid "Allow password authentication"
-msgstr ""
+msgstr "Kennwortauthentifizierung zulassen"
 
 msgid "Allow repeated GIDs"
 msgstr ""
@@ -901,7 +907,7 @@ msgid "Apply updates and reboot system after downloading."
 msgstr ""
 
 msgid "Archive"
-msgstr ""
+msgstr "Archiv"
 
 msgid ""
 "Assigning a directory to Minio changes the permissions                      "
@@ -926,13 +932,13 @@ msgid "Attach NIC"
 msgstr ""
 
 msgid "Auth Method"
-msgstr ""
+msgstr "Authenzifizierungsmethode"
 
 msgid "Authentication Group number"
 msgstr ""
 
 msgid "Authentication Type"
-msgstr ""
+msgstr "Authentifizierungstyp"
 
 msgid ""
 "Authentication only functions when a Certificate is selected with either "
@@ -940,10 +946,10 @@ msgid ""
 msgstr ""
 
 msgid "Authorized Hosts and IP addresses"
-msgstr ""
+msgstr "Autorisierte Hosts und IP-Adressen"
 
 msgid "Authorized Networks"
-msgstr ""
+msgstr "Autorisierte Netzwerke"
 
 msgid "Auto configure IPv6"
 msgstr ""
@@ -954,7 +960,7 @@ msgid ""
 msgstr ""
 
 msgid "Auto-start"
-msgstr ""
+msgstr "Autostart"
 
 msgid "Autoconfigure IPv6"
 msgstr ""
@@ -1007,7 +1013,7 @@ msgid "Awesome! Now let's explore FreeNAS's cool features."
 msgstr ""
 
 msgid "Back"
-msgstr ""
+msgstr "Zurück"
 
 msgid ""
 "Backblaze B2 Application Key. Log in to the B2 account and generate a key "
@@ -1199,16 +1205,16 @@ msgid "CN Realm"
 msgstr ""
 
 msgid "CPU"
-msgstr ""
+msgstr "SPU"
 
 msgid "CPU Temperatures"
-msgstr ""
+msgstr "CPU Temperatur"
 
 msgid "CPU Usage"
-msgstr ""
+msgstr "CPU Auslastung"
 
 msgid "CPU and Memory"
-msgstr ""
+msgstr "CPU und Speicher"
 
 msgid "CPU and Memory configuration."
 msgstr ""
@@ -1225,7 +1231,7 @@ msgid ""
 msgstr ""
 
 msgid "Cancel"
-msgstr ""
+msgstr "Abbrechen"
 
 msgid "Case Sensitivity"
 msgstr ""
@@ -1234,10 +1240,10 @@ msgid "Category"
 msgstr ""
 
 msgid "Certificate"
-msgstr ""
+msgstr "Zertifikat"
 
 msgid "Certificates"
-msgstr ""
+msgstr "Zertifikate"
 
 msgid "Change Device Order"
 msgstr ""
@@ -1303,19 +1309,19 @@ msgid ""
 msgstr ""
 
 msgid "Check Interval"
-msgstr ""
+msgstr "Interval prüfen"
 
 msgid "Check Now"
-msgstr ""
+msgstr "Jetzt prüfen"
 
 msgid "Check Release Notes"
 msgstr ""
 
 msgid "Check for Updates"
-msgstr ""
+msgstr "Auf Updates prüfen"
 
 msgid "Check for Updates Daily and Download if Available"
-msgstr ""
+msgstr "Täglich nach Updates suchen und herunterladen, falls verfügbar"
 
 msgid ""
 "Check the <i>hostid</i> property of the jail. If not the same as the host, "
@@ -1323,10 +1329,10 @@ msgid ""
 msgstr ""
 
 msgid "Check the network connection"
-msgstr ""
+msgstr "Überprüfen Sie die Netzwerkverbindung"
 
 msgid "Check the network connection."
-msgstr ""
+msgstr "Überprüfen Sie die Netzwerkverbindung"
 
 msgid ""
 "Check the update server daily for  any updates on the chosen train.  "
