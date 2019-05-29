@@ -70,14 +70,19 @@
         </span>
         <!--</div>-->
       </ng-container>
-    </div><!-- end of mat-toolbar -->
 
+      <div id='config' *ngIf="conf.globalConfig">
+        <button mat-icon-button>
+          <mat-icon>settings</mat-icon>
+        </button>
+      </div>
+    </div><!-- end of mat-toolbar -->
 
   </div>
   <!-- END OF CONTROLS SECTION -->
 
   <!-- INSERT DYNAMIC CARDHEADER HERE -->
-  <ng-template dynamicComponent *ngIf="conf.cardHeaderComponent" [component]="conf.cardHeaderComponent" [config]=""
+  <ng-template dynamicComponent *ngIf="conf.cardHeaderComponent && showDefaults" [component]="conf.cardHeaderComponent" [config]=""
     [parent]="this"></ng-template>
 
   <!-- TABLE START -->
