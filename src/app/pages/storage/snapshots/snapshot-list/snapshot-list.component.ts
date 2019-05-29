@@ -11,11 +11,11 @@ import { isNgTemplate } from '@angular/compiler';
   selector: 'app-snapshot-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
-export class SnapshotListComponent implements OnInit {
+export class SnapshotListComponent {
 
   public title = "Snapshots";
   protected queryCall = 'zfs.snapshot.query';
-  protected queryCallOption = [[["pool", "!=", "freenas-boot"], {"select": ["name"], "order_by": ["name"]}]];
+  protected queryCallOption = [[["pool", "!=", "freenas-boot"]], {"select": ["name", "properties"], "order_by": ["name"]}];
   protected route_add: string[] = ['storage', 'snapshots', 'add'];
   protected route_add_tooltip = "Add Snapshot";
   protected wsDelete = 'zfs.snapshot.remove';
@@ -77,20 +77,26 @@ export class SnapshotListComponent implements OnInit {
     }
   }
 
-  async ngOnInit() {
-    await this.ws.call('systemdataset.config').toPromise().then((res) => {
-      if (res && res.basename && res.basename !== '') {
-        this.queryCallOption[0].push(["name", "!^", res.basename]);
-      }
-    });
-  }
-
   afterInit(entityList: any) {
     this.entityList = entityList;
   }
 
   preInit(entityList: any) {
     this.sub = this._route.params.subscribe(params => { });
+  }
+
+  callGetFunction(entityList) {
+    this.ws.call('systemdataset.config').toPromise().then((res) => {
+      if (res && res.basename && res.basename !== '') {
+        this.queryCallOption[0][1] = (["name", "!^", res.basename]);
+      }
+      this.ws.call(this.queryCall, this.queryCallOption).subscribe((res1) => {
+        entityList.handleData(res1);
+      },
+      (err) => {
+          new EntityUtils().handleWSError(this, res, entityList.dialogService);
+      });
+    });
   }
 
   getActions(parentRow) {
@@ -106,7 +112,7 @@ export class SnapshotListComponent implements OnInit {
       label: "Clone",
       onClick: (row1) => {
         this._router.navigate(new Array('/').concat(
-          ["storage", "snapshots", "clone", row1.id]));
+          ["storage", "snapshots", "clone", row1.name]));
       }
     });
     actions.push({
@@ -121,7 +127,8 @@ export class SnapshotListComponent implements OnInit {
   getSelectedNames(selectedSnapshots) {
     let selected: any = [];
     for (let i in selectedSnapshots) {
-      selected.push([{"dataset": selectedSnapshots[i].dataset, "name": selectedSnapshots[i].snapshot_name}]);
+      let snapshot = selectedSnapshots[i].name.split('@');
+      selected.push([{"dataset": snapshot[0], "name": snapshot[1]}]);
     }
     return selected;
   }
@@ -138,7 +145,8 @@ export class SnapshotListComponent implements OnInit {
       if (res) {
         this.entityList.loader.open();
         this.entityList.loaderOpen = true;
-        this.ws.call(this.wsDelete, [{ "dataset": item.dataset, "name": item.snapshot_name}]).subscribe(
+        let snapshot = item.name.split('@');
+        this.ws.call(this.wsDelete, [{ "dataset": snapshot[0], "name": snapshot[1]}]).subscribe(
           (res) => { this.entityList.getData() },
           (res) => {
             new EntityUtils().handleWSError(this, res, this.entityList.dialogService);
@@ -151,7 +159,7 @@ export class SnapshotListComponent implements OnInit {
 
   doRollback(item) {
     const warningMsg = T("<b>WARNING:</b> Rolling back to this snapshot will permanently delete later snapshots of this dataset. Do not roll back until all desired snapshots have been backed up!");
-    const msg = T("<br><br>Roll back to snapshot <i>") + item.snapshot_name + '</i> from ' + item.creation + '?';
+    const msg = T("<br><br>Roll back to snapshot <i>") + item.name + '</i> from ' + item.creation + '?';
 
     this.entityList.dialogService.confirm(T("Warning"), warningMsg + msg, false, T('Rollback')).subscribe(res => {
       let data = {"force" : true};
@@ -159,7 +167,7 @@ export class SnapshotListComponent implements OnInit {
         this.entityList.loader.open();
         this.entityList.loaderOpen = true;
         this.rest
-        .post('storage/snapshot' + '/' + item.id + '/rollback/', {
+        .post('storage/snapshot' + '/' + item.name + '/rollback/', {
           body : JSON.stringify(data),
         })
         .subscribe(
