@@ -28,7 +28,7 @@ xpaths = {
 }
 
 
-def test_01_navigate_ssh(wb_driver):
+def test_01_navigate_to_service(wb_driver):
     # click Service Menu
     wb_driver.find_element_by_xpath(xpaths['navService']).click()
     # allowing the button to load
@@ -47,6 +47,9 @@ def test_02_navigate_to_configure_ssh(wb_driver):
     time.sleep(2)
     # click on configure button
     wb_driver.find_element_by_xpath(xpaths['configButton']).click()
+    # taking screenshot
+    test_name = sys._getframe().f_code.co_name
+    take_screenshot(wb_driver, script_name, test_name)
     ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
     # get the weather data
     page_data = ui_element.text
@@ -57,18 +60,17 @@ def test_02_navigate_to_configure_ssh(wb_driver):
     page_data = ui_element.text
     # assert response
     assert "SSH" in page_data, page_data
-    test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
 
 
-def test_03_uncheck_ssh_root_login(wb_driver):
+def test_03_allow_root_logins(wb_driver):
     # unchecked on Login as Root with Password
     wb_driver.find_element_by_xpath(xpaths['rootCheckbox']).click()
+    time.sleep(1)
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
     root_checkbox = wb_driver.find_element_by_xpath(xpaths['verifyRootCheck'])
     class_value = root_checkbox.get_attribute('class')
-    assert 'mat-checkbox-checked' not in class_value, class_value
+    assert 'mat-checkbox-checked' in class_value, class_value
 
 
 def test_04_save_ssh_configuration(wb_driver):
@@ -81,17 +83,17 @@ def test_04_save_ssh_configuration(wb_driver):
     assert is_element_present(wb_driver, xpaths['breadcrumbBar2']) is False
 
 
-def test_05_turnoff_ssh(wb_driver):
+def test_05_turn_ssh_service_on(wb_driver):
     # scroll down
     wb_driver.find_element_by_xpath(xpaths['theEnd']).click()
     time.sleep(2)
-    status_change(wb_driver, "14", "stop")
+    status_change(wb_driver, "14", "start")
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
 
 
-def test_06_checkif_ssh_off(wb_driver):
+def test_06_checkif_ssh_on(wb_driver):
     time.sleep(2)
     # status check
     status_check(wb_driver, "14")

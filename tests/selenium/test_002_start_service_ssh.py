@@ -19,6 +19,7 @@ xpaths = {
     'turnoffConfirm': '//*[contains(text(), "OK")]',
     'configButton': "//button[@id='action-button__SSH']",
     'rootCheckbox': '//*[@id="ssh_rootlogin"]/mat-checkbox/label/div',
+    'verifyRootCheck': '//mat-checkbox',
     'breadcrumbBar1': "//div[@id='breadcrumb-bar']/ul/li/a",
     'breadcrumbBar2': "//*[@id='breadcrumb-bar']/ul/li[2]/a",
     'saveButton': '//*[@id="save_button"]',
@@ -46,6 +47,9 @@ def test_02_navigate_to_configure_ssh(wb_driver):
     time.sleep(2)
     # click on configure button
     wb_driver.find_element_by_xpath(xpaths['configButton']).click()
+    # taking screenshot
+    test_name = sys._getframe().f_code.co_name
+    take_screenshot(wb_driver, script_name, test_name)
     ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
     # get the weather data
     page_data = ui_element.text
@@ -56,25 +60,27 @@ def test_02_navigate_to_configure_ssh(wb_driver):
     page_data = ui_element.text
     # assert response
     assert "SSH" in page_data, page_data
-    test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
 
 
-def test_03_allow_root_logins(wb_driver):
+def test_03_check_ssh_root_login(wb_driver):
     # unchecked on Login as Root with Password
     wb_driver.find_element_by_xpath(xpaths['rootCheckbox']).click()
+    time.sleep(1)
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
+    root_checkbox = wb_driver.find_element_by_xpath(xpaths['verifyRootCheck'])
+    class_value = root_checkbox.get_attribute('class')
+    assert 'mat-checkbox-checked' in class_value, class_value
 
 
 def test_04_save_ssh_configuration(wb_driver):
     # click on save button
     wb_driver.find_element_by_xpath(xpaths['saveButton']).click()
     time.sleep(5)
-    assert is_element_present(wb_driver, xpaths['breadcrumbBar2']) is False
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
+    assert is_element_present(wb_driver, xpaths['breadcrumbBar2']) is False
 
 
 def test_05_turn_ssh_service_on(wb_driver):
