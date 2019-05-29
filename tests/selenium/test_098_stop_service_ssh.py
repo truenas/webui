@@ -28,7 +28,7 @@ xpaths = {
 }
 
 
-def test_01_navigate_ssh(wb_driver):
+def test_01_navigate_service(wb_driver):
     # click Service Menu
     wb_driver.find_element_by_xpath(xpaths['navService']).click()
     # allowing the button to load
