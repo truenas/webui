@@ -84,7 +84,7 @@ export const routes: Routes = [
       },
       {
         path: 'summary',
-        data: { title: 'Network Summay', breadcrumb: 'Network Summay', icon: 'view_headline' },
+        data: { title: 'Network Summary', breadcrumb: 'Network Summary', icon: 'view_headline' },
         component: NetworkSummaryComponent,
       },
       {
