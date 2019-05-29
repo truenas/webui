@@ -9,7 +9,7 @@ import time
 cwd = str(os.getcwd())
 sys.path.append(cwd)
 from function import take_screenshot, status_change, status_check
-
+from function import is_element_present
 skip_mesages = "Skipping first run"
 script_name = os.path.basename(__file__).partition('.')[0]
 
@@ -38,7 +38,44 @@ def test_01_navigate_ssh(wb_driver):
     assert "Services" in page_data, page_data
 
 
-def test_02_turnoff_ssh(wb_driver):
+def test_02_navigate_to_configure_ssh(wb_driver):
+    # scroll down
+    wb_driver.find_element_by_xpath(xpaths['theEnd']).click()
+    time.sleep(2)
+    # click on configure button
+    wb_driver.find_element_by_xpath(xpaths['configButton']).click()
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    # get the weather data
+    page_data = ui_element.text
+    # assert response
+    assert "Services" in page_data, page_data
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
+    # get the weather data
+    page_data = ui_element.text
+    # assert response
+    assert "SSH" in page_data, page_data
+    test_name = sys._getframe().f_code.co_name
+    take_screenshot(wb_driver, script_name, test_name)
+
+
+def test_03_uncheck_allow_root_logins(wb_driver):
+    # unchecked on Login as Root with Password
+    wb_driver.find_element_by_xpath(xpaths['rootCheckbox']).click()
+    test_name = sys._getframe().f_code.co_name
+    take_screenshot(wb_driver, script_name, test_name)
+
+
+def test_04_save_ssh_configuration(wb_driver):
+    # click on save button
+    wb_driver.find_element_by_xpath(xpaths['saveButton']).click()
+    time.sleep(5)
+    assert is_element_present(wb_driver, xpaths['breadcrumbBar2']) is False
+    # taking screenshot
+    test_name = sys._getframe().f_code.co_name
+    take_screenshot(wb_driver, script_name, test_name)
+
+
+def test_05_turnoff_ssh(wb_driver):
     # scroll down
     wb_driver.find_element_by_xpath(xpaths['theEnd']).click()
     time.sleep(2)
@@ -48,7 +85,7 @@ def test_02_turnoff_ssh(wb_driver):
     take_screenshot(wb_driver, script_name, test_name)
 
 
-def test_03_checkif_ssh_off(wb_driver):
+def test_06_checkif_ssh_off(wb_driver):
     time.sleep(2)
     # status check
     status_check(wb_driver, "14")
@@ -57,7 +94,7 @@ def test_03_checkif_ssh_off(wb_driver):
     take_screenshot(wb_driver, script_name, test_name)
 
 
-def test_04_return_to_dashboard(wb_driver):
+def test_07_return_to_dashboard(wb_driver):
     # Close the System Tab
     wb_driver.find_element_by_xpath(xpaths['toDashboard']).click()
     time.sleep(1)
