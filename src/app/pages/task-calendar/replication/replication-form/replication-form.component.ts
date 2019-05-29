@@ -24,6 +24,7 @@ import { ReplicationService } from 'app/pages/task-calendar/replication/replicat
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import helptext from '../../../../helptext/task-calendar/replication-form/replication-form';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 
 @Component({
   selector : 'app-replication-form',
@@ -386,18 +387,27 @@ export class ReplicationFormComponent implements OnDestroy {
   }
 
   customEventMethod( data: any ) {
+    const currField = _.find(this.fieldConfig, {'name' : 'repl_remote_hostkey'});
+    currField.hasErrors = false;
+
     const textAreaSSH: ElementRef = (<ElementRef>data.textAreaSSH);
     const hostName: string = this.entityForm.value.repl_remote_hostname;
     const port: number = Number(this.entityForm.value.repl_remote_port);
+    if (hostName == null || hostName == '' || port == 0) {
+      currField.hasErrors = true;
+      currField.errors = 'Please config remote hostname and port first.';
+      return;
+    }
     this.loader.open();
 
-    this.ws.call('replication.public_key').subscribe((res)=> {
+    this.ws.call('replication.ssh_keyscan', [hostName, port]).subscribe((res)=> {
       this.loader.close();
       textAreaSSH.nativeElement.value = res;
       this.entityForm.formGroup.controls.repl_remote_hostkey.setValue(res);
 
     }, (error)=>{
       this.loader.close();
+      new EntityUtils().handleWSError(this, error);
     });
 
 
