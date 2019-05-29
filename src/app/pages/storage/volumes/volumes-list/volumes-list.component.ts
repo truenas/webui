@@ -288,7 +288,7 @@ export class VolumesListTableConfig implements InputTableConf {
           localSnackBar.open(row1.name + " has been unlocked.", 'close', { duration: 5000 });
         }, (res) => {
           localLoader.close();
-          localDialogService.errorReport(T("Error Unlocking"), res.error, res.stack);
+          localDialogService.errorReport(T("Error Unlocking"), res.error.error_message, res.error.traceback);
         });
       }
     }
