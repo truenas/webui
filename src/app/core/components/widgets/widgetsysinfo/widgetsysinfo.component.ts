@@ -47,7 +47,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   ngAfterViewInit(){
     this.core.register({observerClass:this,eventName:"SysInfo"}).subscribe((evt:CoreEvent) => {
       //DEBUG: console.log("******** SysInfo ********");
-      console.log(evt.data);
+      //DEBUG: console.log(evt.data);
       this.loader = false;
       this.data = evt.data;
 

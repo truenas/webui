@@ -445,7 +445,6 @@ export class SupportComponent {
   }
 
   getTrueNASImage(sys_product) {
-    console.log(sys_product);
     if (sys_product.includes('X10')) {
       this.product_image = '/servers/X10.png';
     } else if (sys_product.includes('X20')) {
