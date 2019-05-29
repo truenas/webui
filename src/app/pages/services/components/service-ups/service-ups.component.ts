@@ -44,7 +44,8 @@ export class ServiceUPSComponent {
       tooltip : helptext.ups_remotehost_tooltip,
       required: true,
       isHidden: true,
-      // validation : helptext.ups_remotehost_validation
+      disabled: true,
+      validation : helptext.ups_remotehost_validation
     },
     {
       type : 'input',
@@ -54,6 +55,7 @@ export class ServiceUPSComponent {
       value : helptext.ups_remoteport_value,
       required: true,
       isHidden: true,
+      disabled: true,
       validation : helptext.ups_remoteport_validation
     },
     {
@@ -216,7 +218,23 @@ export class ServiceUPSComponent {
       if (this.ups_drivers_list[res]) {
         entityForm.formGroup.controls['ups_driver'].setValue(this.ups_drivers_list[res]);
       }
-    })
+    });
+
+    entityForm.formGroup.controls['ups_mode'].valueChanges.subscribe((res) => {;
+      if (res === 'slave') {
+        this.hideField('ups_remotehost', false, entityForm);
+        this.hideField('ups_remoteport', false, entityForm);
+      } else {
+        this.hideField('ups_remotehost', true, entityForm)
+        this.hideField('ups_remoteport', true, entityForm)
+      }
+    });
+  }
+
+  hideField(fieldName: any, show: boolean, entity: any) {
+    let target = _.find(this.fieldConfig, {'name' : fieldName});
+    target['isHidden'] = show;
+    entity.setDisabled(fieldName, show, show);
   }
 
   getKeyByValue(object, value) {
