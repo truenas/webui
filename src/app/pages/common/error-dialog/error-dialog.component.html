@@ -1,16 +1,16 @@
-<h1 mat-dialog-title>
+<h1 mat-dialog-title id="err-title">
   <mat-icon class="warning-icon">report_problem</mat-icon>
   {{ title | translate }}
 </h1>
-<div mat-dialog-content>
-  <span [innerHTML]="message"></span>
+<div mat-dialog-content id="err-md-content">
+  <div id="err-message-wrapper"><span [innerHTML]="message"></span></div>
   <div class="more-info" (click)="toggleOpen($event)" *ngIf="backtrace">
     <mat-icon *ngIf="isCloseMoreInfo">add_circle_outline</mat-icon>
     <mat-icon *ngIf="!isCloseMoreInfo">remove_circle_outline</mat-icon>
     <span>More info...</span>
   </div>
-  <div class="backtrace-panel" [ngClass]="{'open':!isCloseMoreInfo}" *ngIf="backtrace">
-    <textarea id="bt-text" readonly matInput>Error: {{backtrace}}</textarea>
+  <div id="err-bt-panel" class="backtrace-panel" [ngClass]="{'open':!isCloseMoreInfo}" *ngIf="backtrace">
+    <textarea id="err-bt-text" readonly matInput>Error: {{backtrace}}</textarea>
   </div>  
 </div>
 <div mat-dialog-actions>
