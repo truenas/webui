@@ -1,4 +1,4 @@
-# Author: Eric Turgeon
+# Author: Rishabh Chauhan
 # License: BSD
 # Location for tests  of FreeNAS new GUI
 # Test case count: 4
