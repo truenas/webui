@@ -1,5 +1,6 @@
 import { Component } from '@angular/core'
 import { MatSnackBar } from '@angular/material';
+import { Router } from '@angular/router';
 
 import { AvailablePluginsComponent } from './available-plugins/available-plugins.component';
 import { PluginComponent } from './plugin/plugin.component';
@@ -11,15 +12,19 @@ import * as _ from 'lodash';
 
 @Component({
   selector: 'app-plugins-ui',
-  template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
+  template:  `<entity-table [title]="title" [conf]="this"></entity-table>`,
 })
 export class PluginsComponent {
   public title = "Plugins";
+
   protected queryCall = 'jail.list_resource';
   protected queryCallOption = ["PLUGIN"];
   protected wsDelete = 'jail.do_delete';
   protected wsMultiDelete = 'core.bulk';
   protected entityList: any;
+
+  public availablePools: any;
+  public activatedPool: any;
 
   public columns: Array<any> = [
     { name: T('Jail'), prop: '1' },
@@ -151,11 +156,62 @@ export class PluginsComponent {
     private loader: AppLoaderService,
     private ws: WebSocketService,
     private dialogService: DialogService,
-    private snackBar: MatSnackBar) { }
+    private snackBar: MatSnackBar,
+    private router: Router) {
+    }
+
+  prerequisite(): Promise<boolean> {
+    return new Promise(async (resolve, reject) => {
+      await this.ws.call('pool.query').toPromise().then((res) => {
+        if (res.length === 0) {
+          resolve(false);
+          this.noPoolDialog();
+          return;
+        }
+        this.availablePools = res
+      }, (err) => {
+        resolve(false);
+        new EntityUtils().handleWSError(this.entityList, err);
+      });
+
+      if (this.availablePools !== undefined) {
+        this.ws.call('jail.get_activated_pool').toPromise().then((res) => {
+          if (res != null) {
+            this.activatedPool = res;
+            resolve(true);
+          } else {
+            resolve(false);
+            this.noActivedPoolDialog();
+          }
+        }, (err) => {
+          resolve(false);
+          new EntityUtils().handleWSError(this.entityList, err);
+        })
+      }
+    });
+  }
+
+  noPoolDialog() {
+    const dialogRef = this.dialogService.confirm(
+      'No Pool Exist',
+      'Jails cannot be created or managed untill a pool is present for storing them. Please create a pool first',
+      true,
+      'Create Pool');
+      dialogRef.subscribe((res) => {
+        if (res) {
+          this.router.navigate(new Array('/').concat(['storage', 'pools', 'manager']));
+        }
+    })
+  }
+
+  noActivedPoolDialog() {
+
+  }
 
   afterInit(entityList: any) {
     this.entityList = entityList;
   }
+
   dataHandler(entityList: any) {
     for (let i = 0; i < entityList.rows.length; i++) {
       if (_.split(entityList.rows[i][6], '|').length > 1) {
