@@ -21,7 +21,8 @@ import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { T } from '../../../../translate-marker';
 
 export interface InputTableConf {
-
+  prerequisite?: any;
+  globalConfig?: any;
   columns:any[];
   columnFilter?: boolean;
   hideTopActions?: boolean;
@@ -150,17 +151,33 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     clearInterval(this.interval);
   }
 
-  ngOnInit():void {
+  ngOnInit() {
 
     this.setTableHeight(); 
 
-    setTimeout(() => {
-      if (this.conf.preInit) {
-        this.conf.preInit(this);
-      }
-      this.getData();
-      if (this.conf.afterInit) {
-        this.conf.afterInit(this);
+    setTimeout(async() => {
+      if (this.conf.prerequisite) {
+        await this.conf.prerequisite().then(
+          (res)=>{
+            if (res) {
+              if (this.conf.preInit) {
+                this.conf.preInit(this);
+              }
+              this.getData();
+              if (this.conf.afterInit) {
+                this.conf.afterInit(this);
+              }
+            }
+          }
+        );
+      } else {
+        if (this.conf.preInit) {
+          this.conf.preInit(this);
+        }
+        this.getData();
+        if (this.conf.afterInit) {
+          this.conf.afterInit(this);
+        }
       }
     })
     this.asyncView = this.conf.asyncView ? this.conf.asyncView : false;
