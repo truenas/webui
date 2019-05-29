@@ -44,7 +44,7 @@ export class ServiceUPSComponent {
       tooltip : helptext.ups_remotehost_tooltip,
       required: true,
       isHidden: true,
-      validation : helptext.ups_remotehost_validation
+      // validation : helptext.ups_remotehost_validation
     },
     {
       type : 'input',
@@ -211,8 +211,11 @@ export class ServiceUPSComponent {
       } 
     });
 
-    entityForm.formGroup.controls['ups_driver'].valueChanges.subscribe((res) => {
-      this.ups_driver_key = this.getKeyByValue(this.ups_drivers_list, res)
+    entityForm.formGroup.controls['ups_driver'].valueChanges.subscribe((res) => {;
+      this.ups_driver_key = this.getKeyByValue(this.ups_drivers_list, res);
+      if (this.ups_drivers_list[res]) {
+        entityForm.formGroup.controls['ups_driver'].setValue(this.ups_drivers_list[res]);
+      }
     })
   }
 
