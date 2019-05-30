@@ -6,7 +6,8 @@ from selenium.webdriver.common.keys import Keys
 cwd = str(os.getcwd())
 sys.path.append(cwd)
 from function import take_screenshot, status_change, status_check
-from function import is_element_present
+from function import is_element_present, ssh_test
+from config import ip
 skip_mesages = "Skipping first run"
 script_name = os.path.basename(__file__).partition('.')[0]
 
@@ -86,19 +87,26 @@ def test_05_enable_nfs_service(wb_driver):
 
 def test_06_start_nfs_service(wb_driver):
     time.sleep(2)
-    status_change(wb_driver, "ssh", "start")
+    status_change(wb_driver, "nfs", "start")
     time.sleep(2)
-    status_check(wb_driver, "ssh")
+    status_check(wb_driver, "nfs")
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
 
 
+def test_07_checking_if_sysctl_vfs_nfsd_server_max_nfsvers_is_4():
+    cmd = 'sysctl -n vfs.nfsd.server_max_nfsvers'
+    results = ssh_test(cmd, 'root', 'testing', ip)
+    assert results['result'] is True, results['output']
+    assert results['output'].strip() == '4', results['output']
+
+
 def test_08_stop_nfs_service(wb_driver):
     time.sleep(2)
-    status_change(wb_driver, "ssh", "start")
+    status_change(wb_driver, "nfs", "start")
     time.sleep(2)
-    status_check(wb_driver, "ssh")
+    status_check(wb_driver, "nfs")
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
