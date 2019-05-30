@@ -1,6 +1,7 @@
 # /usr/bin/env python3.6
 
 from source import *
+from subprocess import run, PIPE
 
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
@@ -43,6 +44,27 @@ service_dict = {
     '14': '//*[@id="slide-toggle__SSH"]',
     '17': '//*[@id="slide-toggle__WebDAV"]'
 }
+
+
+def ssh_test(command, username, passwrd, host):
+    cmd = [] if passwrd is None else ["sshpass", "-p", passwrd]
+    cmd += [
+        "ssh",
+        "-o",
+        "StrictHostKeyChecking=no",
+        "-o",
+        "UserKnownHostsFile=/dev/null",
+        "-o",
+        "VerifyHostKeyDNS=no",
+        f"{username}@{host}",
+    ]
+    cmd += command.split()
+    process = run(cmd, stdout=PIPE, universal_newlines=True)
+    output = process.stdout
+    if process.returncode != 0:
+        return {'result': False, 'output': output}
+    else:
+        return {'result': True, 'output': output}
 
 
 # method to test if an element is present
