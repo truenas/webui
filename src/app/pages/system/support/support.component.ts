@@ -416,7 +416,7 @@ export class SupportComponent {
         let then = new Date(res.license.contract_end.$value);
         let daysLeft = this.daysTillExpiration(now, then);
         this.getTrueNASImage(res.system_product)
-        _.find(this.fieldConfig, {name : "pic"}).paraText = `<img src="../../../assets/images/${this.product_image}">`;
+        _.find(this.fieldConfig, {name : "pic"}).paraText = `<img src="assets/images/${this.product_image}">`;
         _.find(this.fieldConfig, {name : "TN_model"}).paraText += res.system_product;
         _.find(this.fieldConfig, {name : "TN_custname"}).paraText += res.license.customer || '---';
 
@@ -454,7 +454,7 @@ export class SupportComponent {
     }  else if (sys_product.includes('M50')) {
       this.product_image = '/servers/M50.png';
     } else if (sys_product.includes('Z20')) {
-      this.product_image = '/servers/X10.png';
+      this.product_image = '/servers/Z20.png';
     } else if (sys_product.includes('M50')) {
       this.product_image = '/servers/M50.png';
     } else if (sys_product.includes('Z35')) {

@@ -10,6 +10,7 @@ import { DialogService } from '../../../services/dialog.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { AboutModalDialog } from '../dialog/about/about-dialog.component';
 import { TaskManagerComponent } from '../dialog/task-manager/task-manager.component';
+import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
 import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
 import * as hopscotch from 'hopscotch';
@@ -49,7 +50,11 @@ export class TopbarComponent implements OnInit, OnDestroy {
   currentTheme:string = "ix-blue";
   public createThemeLabel = "Create Theme";
   isTaskMangerOpened = false;
+  isDirServicesMonitorOpened = false;
   taskDialogRef: MatDialogRef<TaskManagerComponent>;
+  dirServicesMonitor: MatDialogRef<DirectoryServicesMonitorComponent>;
+  dirServicesStatus = [];
+  showDirServicesIcon = false;
 
   ha_status_text: string;
   ha_disabled_reasons = [];
@@ -105,6 +110,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     });
     this.checkNetworkChangesPending();
     this.checkNetworkCheckinWaiting();
+    this.getDirServicesStatus();
 
     this.continuosStreaming = observableInterval(10000).subscribe(x => {
       this.showReplicationStatus();
@@ -113,6 +119,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
       }
       this.checkNetworkCheckinWaiting();
       this.checkNetworkChangesPending();
+      this.getDirServicesStatus();
     });
 
     this.ws.subscribe('zfs.pool.scan').subscribe(res => {
@@ -322,6 +329,29 @@ export class TopbarComponent implements OnInit, OnDestroy {
     );
   }
 
+  onShowDirServicesMonitor() {
+    if (this.isDirServicesMonitorOpened) {
+      this.dirServicesMonitor.close(true);
+    } else {
+      this.isDirServicesMonitorOpened = true;
+      this.dirServicesMonitor = this.dialog.open(DirectoryServicesMonitorComponent, {
+        disableClose: false,
+        width: '400px',
+        hasBackdrop: true,
+        position: {
+          top: '48px',
+          right: '0px'
+        },
+      });
+    }
+
+    this.dirServicesMonitor.afterClosed().subscribe(
+      (res) => {
+        this.isDirServicesMonitorOpened = false;
+      }
+    );
+  }
+
   getHAStatus() {
     this.ws.call('failover.disabled_reasons').subscribe(res => {
       this.ha_disabled_reasons = res;
@@ -355,5 +385,26 @@ export class TopbarComponent implements OnInit, OnDestroy {
     reasons = reasons + '</ul>';
 
     this.dialogService.Info(ha_status, reasons, '500px', ha_icon, true);
+  }
+
+  getDirServicesStatus() {
+    let counter = 0;
+    this.ws.call('activedirectory.get_state').subscribe((res) => {
+      this.dirServicesStatus.push({name: 'Active Directory', state: res});
+
+      this.ws.call('ldap.get_state').subscribe((res) => {
+        this.dirServicesStatus.push({name: 'LDAP', state: res});
+
+        this.ws.call('nis.get_state').subscribe((res) => {
+          this.dirServicesStatus.push({name: 'NIS', state: res});
+          this.dirServicesStatus.forEach((item) => {
+            if (item.state !== 'DISABLED') {
+              counter ++;
+            } 
+          });
+          counter > 0 ? this.showDirServicesIcon = true : this.showDirServicesIcon = false;
+        });
+      });
+    });
   }
 }

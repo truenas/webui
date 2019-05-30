@@ -132,7 +132,7 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
        this.chart = c3.generate({
          bindto: '#' + this.chartId,
          size: {
-           height:176
+           height:225
          },
          data: {
            x: "x",

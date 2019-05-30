@@ -16,7 +16,8 @@ script_name = os.path.basename(__file__).partition('.')[0]
 
 xpaths = {
     'themeBar': "//*[@id='schemeToggle']/span/mat-icon",
-    'breadcrumbBar': '//*[@id="breadcrumb-bar"]/ul/li[2]/a'
+    'breadcrumbBar1': "//div[@id='breadcrumb-bar']/ul/li/a",
+    'breadcrumbBar2': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
 }
 
 theme_name = [

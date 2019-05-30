@@ -1,0 +1,29 @@
+table#tab-data{
+  width: 100%;
+  padding: 16px 0;
+}
+
+table#tab-data,
+table#tab-data .mat-cell,
+table#tab-data .mat-header-cell {
+  color: var(--fg2);
+}
+
+table#tab-data,
+table#tab-data .mat-header-cell {
+  background-color:var(--bg2);
+}
+
+table#tab-data th,
+table#tab-data td{
+  vertical-align:middle;
+}
+
+table#tab-data tr.mat-header-row{
+  height:48px;
+}
+
+/*table#tab-data tr.mat-header-row,
+table#tab-data tr:nth-child(even){
+  background: rgba(0,0,0,0.1);
+}*/

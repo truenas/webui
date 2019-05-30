@@ -1,6 +1,6 @@
-<mat-card class="view-card" id="{{currentTab}}">
+<mat-card class="view-card" id="{{currentTab.alias}}">
   <mat-toolbar id="Disks-toolbar">
-    <div class="mat-card-title-text">{{currentTab}} on {{selectedEnclosure ? selectedEnclosure.model + ' (' + selectedEnclosure.enclosureKey + ')' : '...'}}</div>
+    <div class="mat-card-title-text">{{currentTab.alias}} on {{selectedEnclosure ? selectedEnclosure.model + ' (' + selectedEnclosure.enclosureKey + ')' : '...'}}</div>
 
     <!-- ENCLOSURE MODEL -->
     <div class="model dom-overlay" style="opacity:0.75;">
@@ -15,7 +15,12 @@
     </div>
 
   </mat-toolbar>
-  <mat-card-content id="Disks-content">
+
+  <!-- Tabs other than Disks -->
+  <tab-content class="other-tab" *ngIf="currentTab.alias !== 'Disks'" [data]="system.enclosures[selectedEnclosure.enclosureKey].elements[currentTab.elementIndex]" ></tab-content>
+  
+  <mat-card-content id="Disks-content" [class]="currentTab.alias">
+
     <!-- VISUALIZATION/OVERVIEW -->
     <div #disksoverview id="disks-overview" [class]="currentView">
 
