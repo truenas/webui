@@ -160,14 +160,10 @@ export class NavigationService {
     },
     {
       name: T('Plugins'),
-      type: 'dropDown',
+      type: 'link',
       tooltip: T('Plugins'),
       icon: 'extension',
       state: 'plugins',
-      sub: [
-        {name: 'Available', state: 'available'},
-        {name: 'Installed', state: 'installed'},
-      ]
     },
     {
       name: T('Jails'),
