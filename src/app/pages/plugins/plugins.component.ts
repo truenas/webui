@@ -9,6 +9,7 @@ import { EntityUtils } from '../common/entity/utils';
 import { DialogService } from '../../../app/services';
 import { T } from '../../translate-marker';
 import * as _ from 'lodash';
+import { DialogFormConfiguration } from '../common/entity/entity-dialog/dialog-form-configuration.interface';
 
 @Component({
   selector: 'app-plugins-ui',
@@ -16,7 +17,15 @@ import * as _ from 'lodash';
 })
 export class PluginsComponent {
   public title = "Plugins";
-
+  protected globalConfig = {
+    id: "config",
+    tooltip: T("Config Pool for Jail Manager"),
+    onClick: () => {
+      this.prerequisite().then((res)=>{
+        this.activatePool();
+      })
+    }
+  };
   protected queryCall = 'jail.list_resource';
   protected queryCallOption = ["PLUGIN"];
   protected wsDelete = 'jail.do_delete';
@@ -181,7 +190,7 @@ export class PluginsComponent {
             resolve(true);
           } else {
             resolve(false);
-            this.noActivedPoolDialog();
+            this.activatePool();
           }
         }, (err) => {
           resolve(false);
@@ -193,10 +202,10 @@ export class PluginsComponent {
 
   noPoolDialog() {
     const dialogRef = this.dialogService.confirm(
-      'No Pool Exist',
-      'Jails cannot be created or managed untill a pool is present for storing them. Please create a pool first',
+      T('No Pool Exist'),
+      T('Jails cannot be created or managed untill a pool is present for storing them. Please create a pool first'),
       true,
-      'Create Pool');
+      T('Create Pool'));
       dialogRef.subscribe((res) => {
         if (res) {
           this.router.navigate(new Array('/').concat(['storage', 'pools', 'manager']));
@@ -204,8 +213,40 @@ export class PluginsComponent {
     })
   }
 
-  noActivedPoolDialog() {
+  activatePool() {
+    const self = this;
 
+    const conf: DialogFormConfiguration = {
+      title: T("Activate Pool for Jail Manager"),
+      fieldConfig: [
+        {
+          type: 'select',
+          name: 'selectedPool',
+          placeholder: T('Choose a pool or dataset for jail storage'),
+          options: this.availablePools.map(pool => {return {label: pool.name, value: pool.name}}),
+          value: this.activatedPool
+        }
+      ],
+      saveButtonText: T("Activate"),
+      customSubmit: function (entityDialog) {
+        const value = entityDialog.formValue;
+        self.entityList.loader.open();
+        self.ws.call('jail.activate', [value['selectedPool']]).subscribe(
+          (res)=>{
+            self.activatedPool = value['selectedPool'];
+            entityDialog.dialogRef.close(true);
+            self.entityList.loaderOpen = true;
+            self.entityList.getData();
+
+            self.snackBar.open("Successfully activate pool " + value['selectedPool'] , 'close', { duration: 5000 });
+          },
+          (res) => {
+            self.entityList.loader.close();
+            new EntityUtils().handleWSError(this.entityList, res);
+          });
+      }
+    }
+    this.dialogService.dialogForm(conf);
   }
 
   afterInit(entityList: any) {
