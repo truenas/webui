@@ -38,7 +38,7 @@ import { ViewChartComponent, ViewChartMetadata } from 'app/core/components/viewc
 
     </div>
   `
-  //template:ViewChartMetadata.template
+  //template:ViewChartDonutMetadata.template
   //templateUrl: './viewchartpie.component.html',
   //styleUrls: ['./viewchartdonut.component.css']
   })

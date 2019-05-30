@@ -23,6 +23,7 @@ import { WidgetComponent } from 'app/core/components/widgets/widget/widget.compo
 import { WidgetChartComponent } from 'app/core/components/widgets/widgetchart/widgetchart.component';
 import { WidgetSysInfoComponent } from 'app/core/components/widgets/widgetsysinfo/widgetsysinfo.component';
 import { WidgetNetInfoComponent } from 'app/core/components/widgets/widgetnetinfo/widgetnetinfo.component';
+import { WidgetCpuComponent } from 'app/core/components/widgets/widgetcpu/widgetcpu.component';
 import { WidgetCpuHistoryComponent } from 'app/core/components/widgets/widgetcpuhistory/widgetcpuhistory.component';
 import { WidgetCpuTempsComponent } from 'app/core/components/widgets/widgetcputemps/widgetcputemps.component';
 import { WidgetLoadHistoryComponent } from 'app/core/components/widgets/widgetloadhistory/widgetloadhistory.component';
@@ -72,6 +73,7 @@ import { TranslateModule } from '@ngx-translate/core';
     WidgetChartComponent,
     WidgetSysInfoComponent,
     WidgetNetInfoComponent,
+    WidgetCpuComponent,
     WidgetCpuHistoryComponent,
     WidgetCpuTempsComponent,
     WidgetLoadHistoryComponent,
@@ -105,6 +107,7 @@ import { TranslateModule } from '@ngx-translate/core';
     WidgetChartComponent,
     WidgetSysInfoComponent,
     WidgetNetInfoComponent,
+    WidgetCpuComponent,
     WidgetCpuHistoryComponent,
     WidgetCpuTempsComponent,
     WidgetLoadHistoryComponent,
@@ -133,6 +136,7 @@ import { TranslateModule } from '@ngx-translate/core';
     WidgetChartComponent,
     WidgetSysInfoComponent,
     WidgetNetInfoComponent,
+    WidgetCpuComponent,
     WidgetCpuHistoryComponent,
     WidgetCpuTempsComponent,
     WidgetLoadHistoryComponent,
