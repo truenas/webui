@@ -37,11 +37,12 @@ service_dict = {
     '1': '//*[@id="slide-toggle__AFP"]',
     '2': '//*[@id="slide-toggle__Domain Controller"]',
     '3': '//*[@id="slide-toggle__Dynamic DNS"]',
+    'nfs': '//*[@id="slide-toggle__NFS"]',
     '4': '//*[@id="slide-toggle__FTP"]',
     '5': '//*[@id="slide-toggle__iSCSI"]',
     '6': '//*[@id="slide-toggle__LLDP"]',
     '12': '//*[@id="slide-toggle__SMB"]',
-    '14': '//*[@id="slide-toggle__SSH"]',
+    'ssh': '//*[@id="slide-toggle__SSH"]',
     '17': '//*[@id="slide-toggle__WebDAV"]'
 }
 

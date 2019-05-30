@@ -85,7 +85,7 @@ def test_05_turnoff_ssh(wb_driver):
     # scroll down
     wb_driver.find_element_by_xpath(xpaths['theEnd']).click()
     time.sleep(2)
-    status_change(wb_driver, "14", "stop")
+    status_change(wb_driver, "ssh", "stop")
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
@@ -94,7 +94,7 @@ def test_05_turnoff_ssh(wb_driver):
 def test_06_checkif_ssh_off(wb_driver):
     time.sleep(2)
     # status check
-    status_check(wb_driver, "14")
+    status_check(wb_driver, "ssh")
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
