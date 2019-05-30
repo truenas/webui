@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 
 import { WebSocketService, EngineerModeService, JailService } from '../../../services';
 import * as _ from 'lodash';
+import { EntityUtils } from '../../common/entity/utils';
 
 @Component({
     selector: 'app-plugins-list',
@@ -76,11 +77,19 @@ export class AvailablePluginsComponent implements OnInit {
                 this.selectedPlugin = res[0];
             },
             (err) => {
-
+                new EntityUtils().handleWSError(this.parent, err, this.parent.dialogService);
+            },
+            () => {
+                if (this.parent.loaderOpen) {
+                    this.parent.loader.close();
+                    this.parent.loaderOpen = false;
+                }
             });
     }
 
     switchBranch(event) {
+        this.parent.loader.open();
+        this.parent.loaderOpen = true;
         this.isSelectedOffical = event.source.selected.group.label === 'official';
         this.queryCallOption = ["PLUGIN", true, true, this.selectedBranch];
         this.getPlugin();
