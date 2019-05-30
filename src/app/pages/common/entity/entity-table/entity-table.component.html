@@ -72,7 +72,7 @@
       </ng-container>
 
       <div id='config' *ngIf="conf.globalConfig">
-        <button mat-icon-button>
+        <button mat-icon-button id="{{ conf.globalConfig.id }}" [matTooltip]="conf.globalConfig.tooltip" (click)="conf.globalConfig.onClick()">
           <mat-icon>settings</mat-icon>
         </button>
       </div>
