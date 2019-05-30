@@ -477,6 +477,12 @@ msgstr ""
 msgid "ACL Type"
 msgstr "ACL类型"
 
+msgid "ACME DNS"
+msgstr ""
+
+msgid "ACME Server Directory URI"
+msgstr ""
+
 msgid "AD Timeout"
 msgstr "AD超时"
 
@@ -496,6 +502,9 @@ msgid "Access Based Share Enumeration"
 msgstr ""
 
 msgid "Access Control Entries"
+msgstr ""
+
+msgid "Access ID Key"
 msgstr ""
 
 msgid "Access Key"
@@ -1114,6 +1123,9 @@ msgstr ""
 msgid "Are you sure?"
 msgstr ""
 
+msgid "Asigra successfully updated."
+msgstr ""
+
 msgid ""
 "Assigning a directory to Minio changes the permissions                      "
 "                        of that directory and every directory in it to      "
@@ -1136,6 +1148,9 @@ msgstr ""
 msgid "Attach NIC"
 msgstr "连接网卡"
 
+msgid "Attach screenshot(s)."
+msgstr ""
+
 msgid "Auth Method"
 msgstr "捡到方式"
 
@@ -1151,6 +1166,12 @@ msgstr "验证类型"
 msgid ""
 "Authentication only functions when a Certificate is selected with either "
 "the <i>SSL</i> or <i>TLS</i> option."
+msgstr ""
+
+msgid "Authenticator"
+msgstr ""
+
+msgid "Authenticator Attributes"
 msgstr ""
 
 msgid "Authorized Access"
@@ -1267,6 +1288,9 @@ msgstr "带宽限制"
 
 msgid "Base DN"
 msgstr "基础 DN"
+
+msgid "Base Filesystem"
+msgstr ""
 
 msgid "Base Name"
 msgstr "Base Name"
@@ -2300,6 +2324,9 @@ msgstr ""
 msgid "Create"
 msgstr "创建"
 
+msgid "Create ACME Certificate"
+msgstr ""
+
 msgid "Create CA"
 msgstr "创建CA"
 
@@ -2372,6 +2399,9 @@ msgstr "凭据"
 
 msgid "Critical"
 msgstr "紧急"
+
+msgid "Criticality"
+msgstr ""
 
 msgid "Cron Jobs"
 msgstr "计划任务列表"
@@ -3339,6 +3369,11 @@ msgstr "给这个共享取个名字。"
 msgid "Enter a name for this Keytab."
 msgstr ""
 
+msgid ""
+"Enter a name to use for the the interface. Use the format laggX, vlanX, or "
+"bridgeX where X is a number representing a non-parent interface."
+msgstr ""
+
 msgid "Enter a netmask."
 msgstr "输入一个子网掩码。"
 
@@ -3749,6 +3784,9 @@ msgstr ""
 msgid "Enter the email address of the person responsible for the CA."
 msgstr ""
 
+msgid "Enter the email of the contact person."
+msgstr ""
+
 msgid "Enter the filesystem to snapshot."
 msgstr ""
 
@@ -3801,6 +3839,9 @@ msgstr "输入启动入口名称。"
 
 msgid "Enter the name of the company or organization."
 msgstr "输入公司或组织名。"
+
+msgid "Enter the name of the contact person."
+msgstr ""
 
 msgid "Enter the name of the destination folder."
 msgstr "输入目标文件夹名称。"
@@ -3872,6 +3913,9 @@ msgid ""
 "Threshold Warning</a> for more information."
 msgstr ""
 
+msgid "Enter the phone number of the contact person."
+msgstr ""
+
 msgid "Enter the pre-defined S3 bucket to use."
 msgstr ""
 
@@ -3911,6 +3955,9 @@ msgid ""
 msgstr ""
 
 msgid "Enter valid VMware ESXI/vSphere credentials to fetch datastores."
+msgstr ""
+
+msgid "Environment"
 msgstr ""
 
 msgid "Error"
@@ -4698,6 +4745,14 @@ msgstr "信息报告"
 msgid "Init/Shutdown Scripts"
 msgstr "启动/关机脚本"
 
+msgid "Initiate Failover"
+msgstr ""
+
+msgid ""
+"Initiating failover will temporarily disable services while failing over.  "
+"Failover now?"
+msgstr ""
+
 msgid "Initiator"
 msgstr ""
 
@@ -4934,6 +4989,9 @@ msgstr "链路聚合协议"
 msgid "Language"
 msgstr "语言"
 
+msgid "Launch DS Operator"
+msgstr ""
+
 msgid ""
 "Leave blank when using AWS. The available buckets are fetched  dynamically. "
 "Enter a  <a "
@@ -4976,6 +5034,9 @@ msgid ""
 msgstr ""
 
 msgid "Link State"
+msgstr ""
+
+msgid "List Available Plugins from Branch:"
 msgstr ""
 
 msgid "List of system services to restart when the pool is unlocked."
@@ -5648,6 +5709,9 @@ msgid ""
 "page explains the finer details."
 msgstr ""
 
+msgid "Number of days to renew certificate before expiring"
+msgstr ""
+
 msgid ""
 "Number of points for each hourly, daily, weekly, monthly, or yearly graph. "
 "Set this to no less than the width of the graphs in pixels."
@@ -5877,9 +5941,6 @@ msgstr ""
 msgid "Passphrase"
 msgstr "密码短语"
 
-msgid "Passphrase changed for pool "
-msgstr "修改存储池密码短语完成 "
-
 msgid "Passphrase created for pool "
 msgstr "创建存储池密码短语完成 "
 
@@ -5979,6 +6040,9 @@ msgstr ""
 msgid "Physical interface of the selected member."
 msgstr "选择成员的物理接口。"
 
+msgid "Please accept terms of service for the given ACME Server."
+msgstr ""
+
 msgid "Please enter the correct password."
 msgstr "请输入正确的密码。"
 
@@ -5998,6 +6062,9 @@ msgid ""
 "Please read about <a href=\"%%docurl%%/storage.html#deduplication\" "
 "target=\"_blank\">deduplication</a> before considering changing this "
 "setting."
+msgstr ""
+
+msgid "Please specify URI of ACME Server Directory."
 msgstr ""
 
 msgid "Please wait"
@@ -6270,6 +6337,9 @@ msgstr "更新后重启"
 msgid "Reboot Standby Storage Controller"
 msgstr ""
 
+msgid "Reboot current storage controller?"
+msgstr ""
+
 msgid "Rebuild Directory Service Cache"
 msgstr "重建目录服务缓存"
 
@@ -6354,8 +6424,14 @@ msgstr "移除额外路径"
 msgid "Remove Keep Flag"
 msgstr "移除保持标志"
 
+msgid "Remove passphrase"
+msgstr ""
+
 msgid "Rename the existing boot environment."
 msgstr "重命名现有启动环境"
+
+msgid "Renew certificate day"
+msgstr ""
 
 msgid "Replacing disk..."
 msgstr ""
@@ -6369,7 +6445,13 @@ msgstr ""
 msgid "Replicate from scratch if incremental is not possible"
 msgstr ""
 
+msgid "Replication"
+msgstr ""
+
 msgid "Replication <i>"
+msgstr ""
+
+msgid "Replication Performance"
 msgstr ""
 
 msgid "Replication Tasks"
@@ -6598,6 +6680,9 @@ msgstr ""
 msgid "SSH Host to connect to."
 msgstr "连接的SSH主机。"
 
+msgid "SSH Keypair/Connection"
+msgstr ""
+
 msgid "SSH Keypairs"
 msgstr ""
 
@@ -6772,6 +6857,9 @@ msgid ""
 "BIOS booting."
 msgstr "选择<i>UEFI</i>用于较新的操作系统，<i>UEFI-CSM</i>（兼容支持模式）用于只支持BIOS引导的操作系统。"
 
+msgid "Select Authenticator"
+msgstr ""
+
 msgid "Select Configuration File"
 msgstr "选择配置文件"
 
@@ -6911,6 +6999,9 @@ msgid ""
 "(default, Unix-style permissions), <b>None</b>, or <b>Mode</b> (ACLs)."
 msgstr ""
 
+msgid "Select one or more screenshots that illustrate the problem."
+msgstr ""
+
 msgid "Select pool to import"
 msgstr "选择存储池来导入"
 
@@ -7002,6 +7093,15 @@ msgstr ""
 msgid ""
 "Select the account to use for TFTP requests. This account must have "
 "permission to the <b>Directory</b>."
+msgstr ""
+
+msgid "Select the appropriate environment."
+msgstr ""
+
+msgid "Select the appropriate level of criticality."
+msgstr ""
+
+msgid "Select the base filesystem."
 msgstr ""
 
 msgid ""
@@ -7164,6 +7264,9 @@ msgstr ""
 msgid ""
 "Select to automatically set the contents of the share to the <i>webdav</i> "
 "user and group."
+msgstr ""
+
+msgid "Select to remove the passphrase from this pool."
 msgstr ""
 
 msgid ""
@@ -8113,9 +8216,6 @@ msgstr ""
 msgid "Show Hidden Files"
 msgstr "显示隐藏文件"
 
-msgid "Show Settings"
-msgstr "显示设置"
-
 msgid "Show Text Console without Password Prompt"
 msgstr ""
 
@@ -8256,6 +8356,9 @@ msgstr ""
 
 msgid "Sparse"
 msgstr "备用"
+
+msgid "Specify Authenticator to be used"
+msgstr ""
 
 msgid ""
 "Specify a port for encrypted connections. The default port <i>8081</i> is "
@@ -8505,6 +8608,9 @@ msgstr ""
 msgid "System hostname."
 msgstr "系统主机名。"
 
+msgid "System is failing over..."
+msgstr ""
+
 msgid "System is restarting..."
 msgstr "系统重启中..."
 
@@ -8577,7 +8683,7 @@ msgstr "目标"
 msgid "Target Alias"
 msgstr "目标别名"
 
-msgid "Target Datasets"
+msgid "Target Dataset"
 msgstr ""
 
 msgid "Target Name"
@@ -8589,8 +8695,14 @@ msgstr "任务"
 msgid "Team Drive ID"
 msgstr ""
 
+msgid "Temp tooltip"
+msgstr ""
+
 msgid "Temperature"
 msgstr "温度"
+
+msgid "Terms of Service"
+msgstr ""
 
 msgid "Tests are not performed when the system enters the selected power mode."
 msgstr ""
@@ -8893,6 +9005,9 @@ msgstr "时间机器 Quota"
 
 msgid "Time Server For Domain"
 msgstr "作为域的时间服务器"
+
+msgid "Time remaining until changes reverted:"
+msgstr ""
 
 msgid "Timeout"
 msgstr "超时"
@@ -9296,6 +9411,9 @@ msgstr "版本"
 msgid "View"
 msgstr "查看"
 
+msgid "View Enclosure"
+msgstr ""
+
 msgid "View the contents of the Service Account JSON file."
 msgstr ""
 
@@ -9669,6 +9787,9 @@ msgid "hostid"
 msgstr ""
 
 msgid "hostid_strict_check"
+msgstr ""
+
+msgid "identifier"
 msgstr ""
 
 msgid "interfaces"

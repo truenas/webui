@@ -6,6 +6,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { GeneralComponent } from './general/general.component';
 import { ConfigResetComponent } from './general/config-reset/config-reset.component';
 import { AdvancedComponent } from './advanced/';
+import { ViewEnclosureComponent } from './viewenclosure/';
 import { DatasetComponent } from './dataset/';
 import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/';
 import { BootEnvironmentRenameComponent } from './bootenv/bootenv-rename/';
@@ -36,11 +37,14 @@ import { CertificateAuthoritySignComponent } from './ca/ca-sign/';
 import { CertificateEditComponent } from './certificates/certificate-edit/';
 import { CertificateListComponent } from './certificates/certificate-list';
 import { CertificateAddComponent } from './certificates/certificate-add';
+import { AcmednsListComponent } from './acmedns/acmedns-list/acmedns-list.component';
+import { AcmednsFormComponent } from './acmedns/acmedns-add/acmedns-form.component';
 import { SupportComponent } from './support/support.component';
 import {EmailComponent} from './email/';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
 import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
+import { CertificateAcmeAddComponent } from './certificates/certificate-acme-add/certificate-acme-add.component';
 import { FailoverComponent } from './failover/failover.component';
 import { ProactiveSupportComponent } from './proactive-support/proactive-support.component';
 import { ReportingComponent } from './reporting/reporting.component';
@@ -70,6 +74,10 @@ export const routes: Routes = [
       path: 'advanced',
       component: AdvancedComponent,
       data: { title: 'Advanced', breadcrumb: 'Advanced', icon: 'settings' },
+    }, {
+      path: 'viewenclosure',
+      component: ViewEnclosureComponent,
+      data: { title: 'View Enclosure', breadcrumb: 'View Enclosure', icon: 'settings' },
     }, {
       path: 'reporting',
       component: ReportingComponent,
@@ -300,11 +308,34 @@ export const routes: Routes = [
         component: CertificateAddComponent,
         data: { title: 'Add', breadcrumb: 'Add' },
       }, {
+        path: 'addacme/:pk',
+        component: CertificateAcmeAddComponent,
+        data: { title: 'Add ACME Certificate', breadcrumb: 'Add ACME Certificate' },
+      }, {
         path: 'view/:pk',
         component: CertificateEditComponent,
         data: { title: 'View', breadcrumb: 'View' },
       }]
     }, {
+      path: 'acmedns',
+      data: { title: 'ACME DNS Authenticators', breadcrumb: 'ACME DNS Authenticators', icon: 'turned_in' },
+      children: [{
+        path: '',
+        component: AcmednsListComponent,
+        data: { title: 'ACME DNS Authenticators', breadcrumb: 'ACME DNS Authenticators' },
+      }, 
+      {
+        path: 'add',
+        component: AcmednsFormComponent,
+        data: { title: 'Add', breadcrumb: 'Add' },
+      }, 
+      {
+        path: 'edit/:pk',
+        component: AcmednsFormComponent,
+        data: { title: 'Edit', breadcrumb: 'Edit' },
+      }
+    ]
+  }, {
       path: 'failover',
       component: FailoverComponent,
       data: { title: 'Failover', breadcrumb: 'Failover', icon: 'device_hub' }
@@ -312,6 +343,7 @@ export const routes: Routes = [
       path: 'support',
       component: SupportComponent,
       data: { title: 'Support', breadcrumb: 'Support', icon: 'perm_phone_msg' },
+
     },
     {
       path: 'proactivesupport',

@@ -10,6 +10,7 @@ import { DialogService } from '../../../services/dialog.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { AboutModalDialog } from '../dialog/about/about-dialog.component';
 import { TaskManagerComponent } from '../dialog/task-manager/task-manager.component';
+import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
 import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
 import { EntityJobComponent } from '../../../pages/common/entity/entity-job/entity-job.component';
@@ -51,13 +52,18 @@ export class TopbarComponent implements OnInit, OnDestroy {
   currentTheme:string = "ix-blue";
   public createThemeLabel = "Create Theme";
   isTaskMangerOpened = false;
+  isDirServicesMonitorOpened = false;
   taskDialogRef: MatDialogRef<TaskManagerComponent>;
+  dirServicesMonitor: MatDialogRef<DirectoryServicesMonitorComponent>;
+  dirServicesStatus = [];
+  showDirServicesIcon = false;
 
   ha_status_text: string;
   ha_disabled_reasons = [];
   ha_pending = false;
   is_ha = false;
   sysName: string = 'FreeNAS';
+  private user_check_in_prompted = false;
 
   protected dialogRef: any;
 
@@ -109,6 +115,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
         }
       });
     });
+    this.checkNetworkChangesPending();
+    this.checkNetworkCheckinWaiting();
+    this.getDirServicesStatus();
 
     this.continuosStreaming = observableInterval(10000).subscribe(x => {
       this.showReplicationStatus();
@@ -118,6 +127,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
       }
       this.checkNetworkCheckinWaiting();
       this.checkNetworkChangesPending();
+      this.getDirServicesStatus();
     });
 
     this.ws.subscribe('zfs.pool.scan').subscribe(res => {
@@ -220,23 +230,32 @@ export class TopbarComponent implements OnInit, OnDestroy {
   
   checkNetworkCheckinWaiting() {
     this.ws.call('interface.checkin_waiting').subscribe(res => {
-      this.waitingNetworkCheckin = res;
+      if (res != null) {
+        this.waitingNetworkCheckin = true;
+        if (!this.user_check_in_prompted) {
+          this.user_check_in_prompted = true;
+          this.showNetworkCheckinWaiting();
+        }
+      } else {
+        this.waitingNetworkCheckin = false;
+      }
     });
   }
 
   showNetworkCheckinWaiting() {
     this.dialogService.confirm(
       network_interfaces_helptext.checkin_title,
-      network_interfaces_helptext.checkin_message,
+      network_interfaces_helptext.pending_checkin_text,
       true, network_interfaces_helptext.checkin_button).subscribe(res => {
         if (res) {
+          this.user_check_in_prompted = false;
           this.loader.open();
           this.ws.call('interface.checkin').subscribe((success) => {
             this.loader.close();
             this.dialogService.Info(
               network_interfaces_helptext.checkin_complete_title,
               network_interfaces_helptext.checkin_complete_message);
-            this.waitingNetworkCheckin = false;
+            this.waitingNetworkCheckin = false; 
           }, (err) => {
             this.loader.close();
             new EntityUtils().handleWSError(null, err, this.dialogService);
@@ -251,8 +270,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.showNetworkCheckinWaiting();
     } else {
       this.dialogService.confirm(
-        T("Pending Network Changes"),
-        T("There are unsaved network interface settings.  Review them now?"),
+        network_interfaces_helptext.pending_changes_title,
+        network_interfaces_helptext.pending_changes_message,
         true, T('Continue')).subscribe(res => {
           if (res) {
             this.router.navigate(['/network/interfaces']);
@@ -314,6 +333,29 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.taskDialogRef.afterClosed().subscribe(
       (res) => {
         this.isTaskMangerOpened = false;
+      }
+    );
+  }
+
+  onShowDirServicesMonitor() {
+    if (this.isDirServicesMonitorOpened) {
+      this.dirServicesMonitor.close(true);
+    } else {
+      this.isDirServicesMonitorOpened = true;
+      this.dirServicesMonitor = this.dialog.open(DirectoryServicesMonitorComponent, {
+        disableClose: false,
+        width: '400px',
+        hasBackdrop: true,
+        position: {
+          top: '48px',
+          right: '0px'
+        },
+      });
+    }
+
+    this.dirServicesMonitor.afterClosed().subscribe(
+      (res) => {
+        this.isDirServicesMonitorOpened = false;
       }
     );
   }
@@ -382,6 +424,27 @@ export class TopbarComponent implements OnInit, OnDestroy {
             this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
           });
         }
+      });
+  }
+
+  getDirServicesStatus() {
+    let counter = 0;
+    this.ws.call('activedirectory.get_state').subscribe((res) => {
+      this.dirServicesStatus.push({name: 'Active Directory', state: res});
+
+      this.ws.call('ldap.get_state').subscribe((res) => {
+        this.dirServicesStatus.push({name: 'LDAP', state: res});
+
+        this.ws.call('nis.get_state').subscribe((res) => {
+          this.dirServicesStatus.push({name: 'NIS', state: res});
+          this.dirServicesStatus.forEach((item) => {
+            if (item.state !== 'DISABLED') {
+              counter ++;
+            } 
+          });
+          counter > 0 ? this.showDirServicesIcon = true : this.showDirServicesIcon = false;
+        });
+      });
     });
   }
 }

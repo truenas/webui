@@ -29,4 +29,14 @@
   </div>
 </mat-card>
 
+<mat-card *ngIf="engineerMode">
+  <mat-label>{{ "List Available Plugins from Branch:" | translate}}</mat-label>
+  <mat-select [(ngModel)]="selectedBranch" (selectionChange)="switchBranch()">
+    <mat-optgroup *ngFor="let branchIndex of availableBranches" [label]="branchIndex.name">
+      <mat-option *ngFor="let branch of branchIndex.branches" [value]="branch.value">
+        {{branch.label}}
+      </mat-option>
+    </mat-optgroup>
+  </mat-select>
+</mat-card>
 <entity-table [title]="title" [conf]="this" *ngIf="isPoolActivated"></entity-table>

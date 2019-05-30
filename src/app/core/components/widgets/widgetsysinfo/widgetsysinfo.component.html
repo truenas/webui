@@ -21,9 +21,9 @@
         <div  *ngIf="data" class="data-container">
           <div *ngIf="!data.system_product"><h3>FreeNAS</h3></div>
           <div *ngIf="data.system_product && manufacturer == 'ixsystems' "><h3>{{data.system_product}}</h3></div>
-          <div  *ngIf="data.license"><span class="label bold"><strong>{{"License" | translate}}:</strong> </span>  <p class="value">{{data.license}}</p></div>
+          <div  *ngIf="data.license"><span class="label bold"><strong>{{"License" | translate}}:</strong> </span>  <p class="value"><span style="text-transform:capitalize">{{data.license.contract_type.toLowerCase()}}</span> contract, expires {{data.license.contract_end.$value}}</p></div>
           <div class="data-row"><span class="label bold"><strong>{{"OS Version" | translate}}:</strong> </span>  <p class="value">{{data.version}}</p><p class="build-date">(Build Date: {{buildDate}})</p></div>
-          <div class="data-row"><span class="label bold"><strong>{{"Processor" | translate}}:</strong> </span>  <p class="value">{{data.model}} ({{data.cores}} cores)</p></div>
+          <div class="data-row"><span class="label bold"><strong>{{"Processor" | translate}}:</strong> </span>  <p class="value">{{data.model}} ({{data.cores}} threads)</p></div>
 
           <div class="data-row">
             <div class="data-inline"><span class="label bold"><strong>{{"Memory" | translate}}:</strong> </span>  <p class="value">{{memory}}</p></div>

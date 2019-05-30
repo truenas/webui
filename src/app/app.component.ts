@@ -69,6 +69,18 @@ export class AppComponent {
       "ha_reconnecting",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/ha_reconnecting.svg")
     );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_logomark",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_logomark.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_logotype",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_logotype.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_logo_full",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_logo_full.svg")
+    );
     // this.title.setTitle('FreeNAS - ' + window.location.hostname);
 
     if (this.detectBrowser("Safari")) {

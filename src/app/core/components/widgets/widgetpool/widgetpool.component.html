@@ -30,7 +30,11 @@
                 <!--<mat-icon>close-circle</mat-icon>-->
                 <mat-icon class="volumeHealth.level" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
               </span>
-              <span *ngIf="volumeHealth.level == 'warn'" class="{{volumeHealth.level}}">
+              <span *ngIf="volumeHealth.level == 'warn' && volumeData.status == 'UNKNOWN'" class="{{volumeHealth.level}}">
+                <!--<mat-icon>alert</mat-icon>-->
+                <mat-icon role="img">help</mat-icon>
+              </span>
+              <span *ngIf="volumeHealth.level == 'warn' && volumeData.status !== 'UNKNOWN'" class="{{volumeHealth.level}}">
                 <!--<mat-icon>alert</mat-icon>-->
                 <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
               </span>

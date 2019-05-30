@@ -206,18 +206,18 @@ export class UpdateComponent implements OnInit, OnDestroy {
 
     this.busy = this.rest.get('system/update', {}).subscribe((res) => {
       this.autoCheck = res.data.upd_autocheck;
-    
+
       this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
         this.fullTrainList = res.trains;
-
+  
         // On page load, make sure we are working with train of the current OS
         this.train = res.current;
         this.selectedTrain = res.current;
-
+  
         if (this.autoCheck) {
           this.check();
         }
-
+  
         this.trains = [];
         for (const i in res.trains) {
           if (this.compareTrains(this.train, i) === 'ALLOWED' || 
@@ -229,7 +229,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
           }
         }
         this.singleDescription = this.trains[0].description;
-
+  
         if (this.fullTrainList[res.current].description.toLowerCase().includes('[nightly]')) {
           this.currentTrainDescription = '[nightly]';
         } else if (this.fullTrainList[res.current].description.toLowerCase().includes('[release]')) {

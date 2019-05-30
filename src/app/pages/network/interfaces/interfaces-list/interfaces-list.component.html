@@ -9,7 +9,7 @@
       </p>
     </div>
     <ng-template #checkIn>
-      <p> {{pending_checkin_text}} </p>
+      <p> {{pending_checkin_text}} {{checkin_remaining}}</p>
     </ng-template>
     <mat-card-actions class="buttons">
       <button *ngIf="!checkinWaiting" mat-button type="button" (click)="commitPendingChanges()" class="btn btn-block btn-warning mat-primary" mat-button color="primary">{{"Commit" | translate}}</button>
