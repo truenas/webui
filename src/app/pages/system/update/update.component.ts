@@ -691,6 +691,8 @@ export class UpdateComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.checkChangesSubscription.unsubscribe();
+    if (this.checkChangesSubscription) {
+      this.checkChangesSubscription.unsubscribe();
+    }
   }
 }
