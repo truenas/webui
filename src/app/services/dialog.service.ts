@@ -17,7 +17,7 @@ export class DialogService {
 
     constructor(private dialog: MatDialog, private ws: WebSocketService, public snackBar: MatSnackBar,protected loader: AppLoaderService) { }
 
-    public confirm(title: string, message: string, hideCheckBox?: boolean, buttonMsg?: string, secondaryCheckBox?: boolean, secondaryCheckBoxMsg?: string, method?:string, data?:any, tooltip?:any): any {
+    public confirm(title: string, message: string, hideCheckBox?: boolean, buttonMsg?: string, secondaryCheckBox?: boolean, secondaryCheckBoxMsg?: string, method?:string, data?:any, tooltip?:any, hideCancel?:boolean): any {
 
         let dialogRef: MatDialogRef<ConfirmDialog>;
 
@@ -36,7 +36,12 @@ export class DialogService {
 
         if(tooltip) {
             dialogRef.componentInstance.tooltip = tooltip;
-        } 
+        }
+
+        if (hideCancel) {
+            dialogRef.componentInstance.hideCancel = hideCancel;
+            dialogRef.disableClose = hideCancel;
+        }
 
         if(secondaryCheckBox) {
             dialogRef.componentInstance.secondaryCheckBox = secondaryCheckBox;
