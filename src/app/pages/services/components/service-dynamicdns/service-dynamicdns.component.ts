@@ -49,6 +49,22 @@ export class ServiceDDNSComponent {
       tooltip: helptext.ssl_tooltip,
     },
     {
+      type: 'input',
+      name: 'custom_ddns_server',
+      placeholder: helptext.custom_ddns_server_placeholder,
+      tooltip: helptext.custom_ddns_server_tooltip,
+      disabled: true,
+      isHidden: true
+    },
+    {
+      type: 'input',
+      name: 'custom_ddns_path',
+      placeholder: helptext.custom_ddns_path_placeholder,
+      tooltip: helptext.custom_ddns_path_tooltip,
+      disabled: true,
+      isHidden: true
+    },
+    {
       type : 'input',
       name : 'domain',
       placeholder : helptext.domain_placeholder,
@@ -98,6 +114,8 @@ export class ServiceDDNSComponent {
       entityForm.formGroup.controls['checkip_server'].setValue(res.checkip_server);
       entityForm.formGroup.controls['checkip_path'].setValue(res.checkip_path);
       entityForm.formGroup.controls['ssl'].setValue(res.ssl);
+      entityForm.formGroup.controls['custom_ddns_server'].setValue(res.custom_ddns_server);
+      entityForm.formGroup.controls['custom_ddns_path'].setValue(res.custom_ddns_path);
       if(!res.domain) {
         entityForm.formGroup.controls['domain'].setValue([]);
       } else {
@@ -107,9 +125,19 @@ export class ServiceDDNSComponent {
       entityForm.formGroup.controls['period'].setValue(res.period);
     })
     entityForm.submitFunction = this.submitFunction;
+
+    entityForm.formGroup.controls['provider'].valueChanges.subscribe((res) => {;
+       if (res === 'custom') {
+        this.hideField('custom_ddns_server', false, entityForm);
+        this.hideField('custom_ddns_path', false, entityForm);
+       } else {
+        this.hideField('custom_ddns_server', true, entityForm);
+        this.hideField('custom_ddns_path', true, entityForm);
+       }
+    });
    }
 
-   clean(value) {
+  clean(value) {
     delete value['password2'];
 
     return value;
@@ -132,6 +160,14 @@ export class ServiceDDNSComponent {
       for (const key in res) {
         this.provider.options.push({label: res[key], value:key});
       }
+      this.provider.options.push({label: "Custom Provider", value: 'custom'});
     });
   }
+
+  hideField(fieldName: any, show: boolean, entity: any) {
+    let target = _.find(this.fieldConfig, {'name' : fieldName});
+    target['isHidden'] = show;
+    entity.setDisabled(fieldName, show, show);
+  }
+  
 }

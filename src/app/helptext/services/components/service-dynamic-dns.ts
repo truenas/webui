@@ -24,6 +24,13 @@ ssl_placeholder : T('SSL'),
 ssl_tooltip: T('Set to use HTTPS for the connection to the server\
  that updates the DNS record.'),
 
+custom_ddns_server_placeholder: T('Custom Server'),
+custom_ddns_server_tooltip: T('Hostname for your custom DDNS provider'),
+
+custom_ddns_path_placeholder: T('Custom Path'),
+custom_ddns_path_tooltip: T('\'%h\' will be replaced with your hostname\
+ and \'%i\' will be replaced with your IP address.'),
+
 domain_placeholder : T('Domain name'),
 domain_tooltip: T('Enter a fully qualified domain name.\
  Example: <b>yourname.dyndns.org</b>'),
