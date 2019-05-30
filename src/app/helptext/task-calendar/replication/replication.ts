@@ -105,8 +105,7 @@ snapshots will be stored. Example: Poolname/Datasetname, not the mountpoint or f
  destination system snapshots and do a full copy of all configured source system snapshots.'),
 
     hold_pending_snapshots_placeholder: T('Hold Pending Snapshots'),
-    hold_pending_snapshots_tooltip: T('Prevent copied source snapshots from being deleted on the destination\
- system if the replication task fails.'),
+    hold_pending_snapshots_tooltip: T('Prevent source system snapshots that have failed replication from being automatically removed by the snapshot retention policy.'),
 
     retention_policy_placeholder: T('Snapshot Retention Policy'),
     retention_policy_tooltip: T('Define when snapshots are deleted from the destination system:<ul>\
