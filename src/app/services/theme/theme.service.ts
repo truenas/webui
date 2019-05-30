@@ -48,7 +48,37 @@ export class ThemeService {
   private _customThemes: Theme[];
 
   public freenasThemes: Theme[] = [
-        {
+    {
+      name:'ix-dark-11.3',
+      label: "iX Dark 11.3",
+      labelSwatch:"blue",
+      description:'iX System Colors on Dark',
+      hasDarkLogo:false,
+      logoPath:'assets/images/light-logo.svg',
+      logoTextPath:'light-logo-text.svg',
+      favorite:false,
+      accentColors:['violet', 'orange', 'cyan', 'magenta', 'red', 'yellow', 'blue', 'green'],
+      primary:"var(--blue)",
+      //secondary:"var(--bg1)",
+      accent:"var(--cyan)",
+      bg1:'#171E26',
+      bg2:'#232d35',//'#1D262D',
+      fg1:'#aaaaaa',
+      fg2:'#cccccc',
+      'alt-bg1':'rgba(122,122,122,0.25)',
+      'alt-bg2':'#6F6E6C',
+      'alt-fg1':'#c1c1c1',
+      'alt-fg2':'#e1e1e1',
+      yellow:'#f0cb00',
+      orange:'#ee9302',
+      red:'#ff0013',
+      magenta:'#d238ff',
+      violet:'#c17ecc',
+      blue:'#0095D5',
+      cyan:'#00d0d6',
+      green:'#21C150'
+    },
+    {
       name:'ix-dark',
       label: "iX Dark",
       labelSwatch:"blue",
@@ -312,7 +342,7 @@ export class ThemeService {
   }
 
   resetToDefaultTheme(){
-    this.activeTheme = "ix-dark";
+    this.activeTheme = "ix-dark-11.3";
     this.changeTheme(this.activeTheme);
   }
 
