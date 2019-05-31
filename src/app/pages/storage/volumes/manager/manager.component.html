@@ -21,6 +21,7 @@
           <tooltip class="volumeTooltip" [message]=encryption_tooltip></tooltip>
           <div *ngIf="poolError" [style.color]="'red'" [innerHTML]="poolError"></div>
           <div>
+            <button id="pool-manager__reset-layout-button" mat-button class="btn btn-accent" (click)="resetLayout()">{{"Reset Layout" | translate}}</button>
             <button id="pool-manager__suggest-layout-button" *ngIf="suggestable_disks.length <= 8" [disabled]="dirty" mat-button class="btn btn-accent" (click)="suggestLayout()">{{"Suggest Layout" | translate}}</button>
             <tooltip class="volumeTooltip" [message]=suggested_layout_tooltip></tooltip>
           </div>
@@ -83,6 +84,7 @@
                   <input matInput
                     id="pool-manager__nameFilter"
                     type='text'
+                    [(ngModel)]="nameFilterField"
                     placeholder='Filter disks by name'
                     (keyup)='updateFilter($event)'
                   />
@@ -91,6 +93,7 @@
                   <input matInput
                     id="pool-manager__capacityFilter"
                     type='text'
+                    [(ngModel)]="capacityFilterField"
                     placeholder='Filter disks by capacity'
                     (keyup)='updateFilter($event)'
                   />
