@@ -251,6 +251,9 @@ export class ActiveDirectoryComponent {
               private dialogservice: DialogService) {}
 
   resourceTransformIncomingRestData(data) {
+    if (data['kerberos_realm'] && data['kerberos_realm'] !== null) {
+      data['kerberos_realm'] = data['kerberos_realm'].id;
+    }
     data['netbiosalias'] = data['netbiosalias'].join(" ");
     delete data['bindpw'];
     return data;
@@ -357,10 +360,15 @@ export class ActiveDirectoryComponent {
   }
 
   beforeSubmit(data){
+    data.netbiosalias = data.netbiosalias.trim();
+    if (data.netbiosalias.length > 0) {
+      data.netbiosalias = data.netbiosalias.split(" ");
+    } else {
+      data.netbiosalias = [];
+    }
     if(data.kerberos_principal){
       data.bindname = ""
       data.bindpw = ""
-      data.netbiosalias = data.netbiosalias.split(" ")
     }
   }
 
