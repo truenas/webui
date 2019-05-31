@@ -45,6 +45,7 @@ import { FormToggleButtonComponent } from './entity-form/components/form-toggle-
 import { FormTaskComponent } from './entity-form/components/form-task/form-task.component';
 import { EntityFormComponent } from './entity-form/entity-form.component';
 import { EntityFormEmbeddedComponent } from './entity-form/entity-form-embedded.component';
+import { DynamicComponentDirective } from './entity-table/dynamic-component.directive';
 import { EntityTableActionsComponent } from './entity-table/entity-table-actions.component';
 import { EntityCardActionsComponent } from './entity-card/entity-card-actions.component';
 import { EntityTableAddActionsComponent } from './entity-table/entity-table-add-actions.component';
@@ -86,6 +87,7 @@ import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-m
     EntityTreeTableComponent,
     EntityCardComponent,
     EntityCardActionsComponent,
+    DynamicComponentDirective,
     EntityTableActionsComponent,
     EntityTableAddActionsComponent,
     EntityTemplateDirective,
@@ -134,6 +136,7 @@ import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-m
     EntityTemplateDirective,
     EntityFormComponent,
     EntityFormEmbeddedComponent,
+    DynamicComponentDirective,
     EntityTableComponent,
     EntityTreeTableComponent,
     EntityCardComponent,
