@@ -30,20 +30,20 @@ xpaths = {
     'deleteButton': '//*[contains(@name, "ok_button")]',
     'detachButton': '//*[contains(@name, "Detach_button")]',
     'closeButton': '//*[contains(text(), "Close")]',
-    'turnoffConfirm': '//*[contains(text(), "OK")]'
+    'turnoffConfirm': "//span[contains(.,'STOP')]"
 }
 
-service_dict = {
-    '1': '//*[@id="slide-toggle__AFP"]',
-    '2': '//*[@id="slide-toggle__Domain Controller"]',
-    '3': '//*[@id="slide-toggle__Dynamic DNS"]',
-    'nfs': '//*[@id="slide-toggle__NFS"]',
-    '4': '//*[@id="slide-toggle__FTP"]',
-    '5': '//*[@id="slide-toggle__iSCSI"]',
-    '6': '//*[@id="slide-toggle__LLDP"]',
-    '12': '//*[@id="slide-toggle__SMB"]',
-    'ssh': '//*[@id="slide-toggle__SSH"]',
-    '17': '//*[@id="slide-toggle__WebDAV"]'
+services_switch_xpath = {
+    '1': "//div[@id='overlay__AFP']",
+    '2': "//div[@id='overlay__Domain Controller']",
+    '3': "//div[@id='overlay__Dynamic DNS']",
+    'nfs': "//div[@id='overlay__NFS']",
+    '4': "//div[@id='overlay__FTP']",
+    '5': "//div[@id='overlay__iSCSI']",
+    '6': "//div[@id='overlay__LLDP']",
+    '12': "//div[@id='overlay__SMB']",
+    'ssh': "//div[@id='overlay__SSH']",
+    '17': "//div[@id='overlay__WebDAV']"
 }
 
 
@@ -116,7 +116,7 @@ def take_screenshot(driver, scriptname, testname):
 
 # status check for services
 def status_check(driver, which):
-    toggle_status = driver.find_element_by_xpath(service_dict[which])
+    toggle_status = driver.find_element_by_xpath(services_switch_xpath[which])
     status_data = toggle_status.get_attribute("class")
     print(status_data)
     if (status_data == "mat-slide-toggle mat-accent ng-star-inserted mat-checked"):
@@ -124,32 +124,32 @@ def status_check(driver, which):
     else:
         print("current status is: STOPPED")
     # get the status data
-    print("current status is: " + service_dict[which])
+    print("current status is: " + services_switch_xpath[which])
 
 
 def status_change(driver, which, to):
-    # get the ui element
-    toggle_status = driver.find_element_by_xpath(service_dict[which])
+    driver.find_element_by_xpath(services_switch_xpath[which]).click()
+
+    if is_element_present(driver, xpaths['turnoffConfirm']):
+        driver.find_element_by_xpath(xpaths['turnoffConfirm']).click()
+
+    toggle_status = driver.find_element_by_xpath(services_switch_xpath[which])
     status_data = toggle_status.get_attribute("class")
+    print(status_data)
     # get the status data
-    if to == "start":
-        if status_data == "STOPPED":
-            # Click on the toggle button
-            toggle_status.click()
-            time.sleep(1)
-            print("status has now changed to running")
-        else:
-            print("the status is already " + status_data)
-    elif to == "stop":
-        if status_data == "RUNNING":
-            # Click on the toggle button
-            toggle_status.click()
-            time.sleep(1)
-            # re-confirming if the turning off the service
-            if is_element_present(driver, xpaths['turnoffConfirm']):
-                driver.find_element_by_xpath(xpaths['turnoffConfirm']).click()
-        else:
-            print("the status is already" + status_data)
+    if status_data == "STOPPED":
+        # Click on the toggle button
+        time.sleep(1)
+        print("status has now changed to running")
+    elif status_data == "RUNNING":
+        # Click on the toggle button
+        time.sleep(1)
+        # re-confirming if the turning off the service
+    else:
+        print("not working " + status_data)
+
+    if is_element_present(driver, xpaths['turnoffConfirm']):
+        driver.find_element_by_xpath(xpaths['turnoffConfirm']).click()
 
 
 def user_edit(driver, type, name):
