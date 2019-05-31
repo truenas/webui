@@ -87,7 +87,7 @@ def test_05_enable_nfs_service(wb_driver):
 
 def test_06_start_nfs_service(wb_driver):
     time.sleep(2)
-    status_change(wb_driver, "nfs", "start")
+    status_change(wb_driver, "nfs")
     time.sleep(2)
     status_check(wb_driver, "nfs")
     # taking screenshot
@@ -104,7 +104,7 @@ def test_07_checking_if_sysctl_vfs_nfsd_server_max_nfsvers_is_4():
 
 def test_08_stop_nfs_service(wb_driver):
     time.sleep(2)
-    status_change(wb_driver, "nfs", "start")
+    status_change(wb_driver, "nfs")
     time.sleep(2)
     status_check(wb_driver, "nfs")
     # taking screenshot

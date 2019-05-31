@@ -34,16 +34,16 @@ xpaths = {
 }
 
 services_switch_xpath = {
-    '1': "//div[@id='overlay__AFP']",
-    '2': "//div[@id='overlay__Domain Controller']",
-    '3': "//div[@id='overlay__Dynamic DNS']",
+    'afp': "//div[@id='overlay__AFP']",
+    'dc': "//div[@id='overlay__Domain Controller']",
+    'dns': "//div[@id='overlay__Dynamic DNS']",
     'nfs': "//div[@id='overlay__NFS']",
-    '4': "//div[@id='overlay__FTP']",
-    '5': "//div[@id='overlay__iSCSI']",
-    '6': "//div[@id='overlay__LLDP']",
-    '12': "//div[@id='overlay__SMB']",
+    'ftp': "//div[@id='overlay__FTP']",
+    'iscsi': "//div[@id='overlay__iSCSI']",
+    'lldp': "//div[@id='overlay__LLDP']",
+    'smb': "//div[@id='overlay__SMB']",
     'ssh': "//div[@id='overlay__SSH']",
-    '17': "//div[@id='overlay__WebDAV']"
+    'webdav': "//div[@id='overlay__WebDAV']"
 }
 
 
@@ -127,7 +127,7 @@ def status_check(driver, which):
     print("current status is: " + services_switch_xpath[which])
 
 
-def status_change(driver, which, to):
+def status_change(driver, which):
     driver.find_element_by_xpath(services_switch_xpath[which]).click()
 
     if is_element_present(driver, xpaths['turnoffConfirm']):

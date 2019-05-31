@@ -35,7 +35,7 @@ def test_01_turnon_smb(wb_driver):
     assert "Services" in page_data, page_data
     # scroll down
     wb_driver.find_element_by_tag_name('body').send_keys(Keys.HOME)
-    status_change(wb_driver, "12", "start")
+    status_change(wb_driver, "smb")
     # smb test takes almost 6 min to turn on and display
     time.sleep(7)
     test_name = sys._getframe().f_code.co_name
@@ -45,14 +45,14 @@ def test_01_turnon_smb(wb_driver):
 def test_02_checkif_smb_on(wb_driver):
     time.sleep(2)
     # status check
-    status_check(wb_driver, "12")
+    status_check(wb_driver, "smb")
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
 
 
 def test_03_turnoff_smb(wb_driver):
     time.sleep(2)
-    status_change(wb_driver, "12", "stop")
+    status_change(wb_driver, "smb")
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
 
@@ -60,6 +60,6 @@ def test_03_turnoff_smb(wb_driver):
 def test_04_checkif_smb_off(wb_driver):
     time.sleep(2)
     # status check
-    status_check(wb_driver, "12")
+    status_check(wb_driver, "smb")
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
