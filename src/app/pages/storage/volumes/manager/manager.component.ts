@@ -6,6 +6,7 @@ import {
   ViewChild,
   ViewChildren,
   AfterViewInit,
+  Query,
 } from '@angular/core';
 import * as _ from 'lodash';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -45,6 +46,8 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public vdevs:
     any = { data: [{}], cache: [], spare: [], log: [] };
   public original_vdevs: any = {};
+  public original_disks: Array < any >;
+  public orig_suggestable_disks: Array < any >;
   public error: string;
   @ViewChild('disksdnd') disksdnd;
   @ViewChildren(VdevComponent) vdevComponents: QueryList < VdevComponent > ;
@@ -61,6 +64,8 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public re_has_errors = false;
   public nameFilter: RegExp;
   public capacityFilter: RegExp;
+  public nameFilterField: string;
+  public capacityFilterField: string;
   public dirty = false;
   protected existing_pools = [];
   public poolError = null;
@@ -230,6 +235,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       }
 
      this.disks = this.sorter.tableSorter(this.disks, 'devname', 'asc');
+     this.original_disks = Array.from(this.disks);
 
 
       // assign disks for suggested layout
@@ -244,6 +250,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
           this.suggestable_disks.push(this.disks[i]);
         }
       }
+      this.orig_suggestable_disks = Array.from(this.suggestable_disks);
       this. can_suggest = this.suggestable_disks.length < 11;
 
       this.temp = [...this.disks];
@@ -540,6 +547,31 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   suggestLayout() {
     // todo: add more layouts, manipulating multiple vdevs is hard
     this.suggestRedundancyLayout();
+  }
+
+  resetLayout() {
+    this.vdevComponents.forEach(vdev => {
+      vdev.remove();
+    });
+    for (const group in this.vdevs) {
+      if (this.vdevs.hasOwnProperty(group)) {
+        while (this.vdevs[group].length > 0) {
+          this.vdevs[group].pop();
+        }
+      }
+    }
+    this.nameFilterField = '';
+    this.capacityFilterField = '';
+    this.nameFilter = new RegExp('');
+    this.capacityFilter = new RegExp('');
+    this.vdevs['data'].push({});
+    this.vdevComponents.first.estimateSize();
+    this.disks = Array.from(this.original_disks);
+    this.suggestable_disks = Array.from(this.orig_suggestable_disks);
+    this.temp = [...this.disks];
+    this.dirty = false;
+    this.table.offset = 0;
+    this.getCurrentLayout();
   }
 
   suggestRedundancyLayout() {
