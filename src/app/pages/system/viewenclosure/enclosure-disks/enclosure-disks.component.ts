@@ -9,7 +9,8 @@ import { DriveTray } from 'app/core/classes/hardware/drivetray';
 import { M50 } from 'app/core/classes/hardware/m50';
 import { ES24 } from 'app/core/classes/hardware/es24';
 import { ES60 } from 'app/core/classes/hardware/es60';
-import { DiskComponent } from './disk.component';
+import { DiskComponent } from './components/disk.component';
+import { TabContentComponent } from './components/tab-content/tab-content.component';
 import { SystemProfiler } from './system-profiler';
 import { tween, easing, styler, value, keyframes } from 'popmotion';
 import { Subject } from 'rxjs';
@@ -28,7 +29,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   @ViewChild('domLabels') domLabels: ElementRef;
   @Input('system-profiler') system: SystemProfiler;
   @Input('selected-enclosure') selectedEnclosure: any;
-  @Input('current-tab') currentTab: string;
+  @Input('current-tab') currentTab: any;
   @Input('controller-events') controllerEvents:Subject<CoreEvent>;
   public app;
   private renderer;
@@ -77,7 +78,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   public theme: any;
   public currentView: string; // pools || status || expanders || details
   public exitingView: string; // pools || status || expanders || details
-  private defaultView = 'pools';
+  private defaultView = 'status';
   private labels: VDevLabelsSVG;
   private identifyBtnRef: any;
   
@@ -115,7 +116,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       }
     });
 
-    //console.log(this.system);
+    console.log(this.system);
     this.pixiInit();
 
     // Listen for DOM changes to avoid race conditions with animations

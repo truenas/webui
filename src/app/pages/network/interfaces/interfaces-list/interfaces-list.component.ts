@@ -61,12 +61,20 @@ export class InterfacesListComponent implements OnDestroy {
   dataHandler(res) {
     const rows = res.rows;
     for (let i=0; i<rows.length; i++) {
-      rows[i]['link_state'] = rows[i]['state']['link_state'];
+      rows[i]['link_state'] = rows[i]['state']['link_state'].replace('LINK_STATE_', '');
       const addresses = [];
       for (let j=0; j<rows[i]['aliases'].length; j++) {
         const alias = rows[i]['aliases'][j];
         if (alias.type.startsWith('INET')) {
-          addresses.push(alias.address);
+          addresses.push(alias.address + '/' + alias.netmask);
+        }
+      }
+      if (rows[i].hasOwnProperty('failover_aliases')) {
+        for (let j=0; j<rows[i]['failover_aliases'].length; j++) {
+          const alias = rows[i]['failover_aliases'][j];
+          if (alias.type.startsWith('INET')) {
+            addresses.push(alias.address + '/' + alias.netmask);
+          }
         }
       }
       rows[i]['addresses'] = addresses.join(', ');

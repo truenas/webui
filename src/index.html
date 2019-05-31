@@ -18,9 +18,9 @@
   <link rel="apple-touch-icon" sizes="152x152" href="assets/images/apple-icon-152x152.png">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-icon-180x180.png">
   <link rel="icon" type="image/png" sizes="192x192"  href="assets/images/android-icon-192x192.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="96x96" href="assets/images/favicon-96x96.png">
-  <link id='fav16' rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png">
+  <!-- <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="assets/images/favicon-96x96.png"> -->
+  <!-- <link id='fav16' rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png"> -->
   <link rel="manifest" href="assets/manifest.json">
   <meta name="msapplication-TileColor" content="#ffffff">
   <meta name="msapplication-TileImage" content="assets/images/ms-icon-144x144.png">
@@ -41,11 +41,19 @@
       let is_freenas = window.localStorage['is_freenas'];
       if (is_freenas === 'true') {
       document.getElementById("main-page-title").innerHTML = "FreeNAS - " + window.location.hostname;
+      setFavicon("assets/images/favicon-96x96.png");
     } else {
       document.getElementById("main-page-title").innerHTML = "TrueNAS - " + window.location.hostname;
       document.getElementById('brandLogo').src = 'assets/images/TrueNAS_Logomark_White.svg';
-      let fav=document.getElementById('fav16');
-      fav.href="assets/images/TrueNAS_Logomark_Black.svg"; // Sets only the smallest favicon;
+      setFavicon("assets/images/TrueNAS_favicon.png");
+    }
+    function setFavicon(str) {
+      let link = document.querySelector("link[rel*='icon']") || document.createElement("link")
+        link.rel = "icon";
+        link.type = "image/png";
+        // link.sizes = "16x16";
+        link.href = str;
+        document.getElementsByTagName('head')[0].appendChild(link);
     }
     </script>
   </app-root>
