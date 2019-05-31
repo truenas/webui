@@ -129,27 +129,10 @@ def status_check(driver, which):
 
 def status_change(driver, which):
     driver.find_element_by_xpath(services_switch_xpath[which]).click()
-
+    time.sleep(2)
     if is_element_present(driver, xpaths['turnoffConfirm']):
         driver.find_element_by_xpath(xpaths['turnoffConfirm']).click()
-
-    toggle_status = driver.find_element_by_xpath(services_switch_xpath[which])
-    status_data = toggle_status.get_attribute("class")
-    print(status_data)
-    # get the status data
-    if status_data == "STOPPED":
-        # Click on the toggle button
-        time.sleep(1)
-        print("status has now changed to running")
-    elif status_data == "RUNNING":
-        # Click on the toggle button
-        time.sleep(1)
-        # re-confirming if the turning off the service
-    else:
-        print("not working " + status_data)
-
-    if is_element_present(driver, xpaths['turnoffConfirm']):
-        driver.find_element_by_xpath(xpaths['turnoffConfirm']).click()
+        time.sleep(2)
 
 
 def user_edit(driver, type, name):
