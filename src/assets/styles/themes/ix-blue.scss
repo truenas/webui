@@ -436,13 +436,13 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   .mat-menu-content button.mat-menu-item:hover, 
-  .mat-menu-content button.mat-menu-item:hover .mat-icon:not([class="theme-picker-swatch-icon"]),
+  .mat-menu-content button.mat-menu-item:hover .mat-icon:not(.theme-picker-swatch-icon),
   .ngx-datatable .datatable-body .datatable-row-wrapper:hover,
   .mat-menu-content button.mat-menu-item:focus, 
-  .mat-menu-content button.mat-menu-item:focus .mat-icon:not([class="theme-picker-swatch-icon"]),
+  .mat-menu-content button.mat-menu-item:focus .mat-icon:not(.theme-picker-swatch-icon),
   .ngx-datatable .datatable-body .datatable-row-wrapper:focus {
     @include variable(background, --primary, $primary, !important);
-    @include variable(color, --primary-txt, $primary-txt);
+    @include variable(color, --primary-txt, $primary-txt !important);
 }
 
 .ngx-datatable .datatable-body .datatable-row-wrapper:hover .mat-checkbox .mat-checkbox-frame {
