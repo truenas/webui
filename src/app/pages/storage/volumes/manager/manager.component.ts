@@ -47,6 +47,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     any = { data: [{}], cache: [], spare: [], log: [] };
   public original_vdevs: any = {};
   public original_disks: Array < any >;
+  public orig_suggestable_disks: Array < any >;
   public error: string;
   @ViewChild('disksdnd') disksdnd;
   @ViewChildren(VdevComponent) vdevComponents: QueryList < VdevComponent > ;
@@ -249,6 +250,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
           this.suggestable_disks.push(this.disks[i]);
         }
       }
+      this.orig_suggestable_disks = Array.from(this.suggestable_disks);
       this. can_suggest = this.suggestable_disks.length < 11;
 
       this.temp = [...this.disks];
@@ -548,6 +550,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   resetLayout() {
+    this.vdevComponents.forEach(vdev => {
+      vdev.remove();
+    });
     for (const group in this.vdevs) {
       if (this.vdevs.hasOwnProperty(group)) {
         while (this.vdevs[group].length > 0) {
@@ -560,7 +565,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.nameFilter = new RegExp('');
     this.capacityFilter = new RegExp('');
     this.vdevs['data'].push({});
+    this.vdevComponents.first.estimateSize();
     this.disks = Array.from(this.original_disks);
+    this.suggestable_disks = Array.from(this.orig_suggestable_disks);
     this.temp = [...this.disks];
     this.dirty = false;
     this.table.offset = 0;
