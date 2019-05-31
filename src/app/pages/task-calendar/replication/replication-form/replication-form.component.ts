@@ -163,19 +163,68 @@ export class ReplicationFormComponent {
             initial: '/mnt',
             explorerType: 'directory',
             multiple: true,
-            name: 'source_datasets',
+            name: 'source_datasets_PUSH',
             placeholder: helptext.source_datasets_placeholder,
             tooltip: helptext.source_datasets_tooltip,
             options: [],
             required: true,
             validation: [Validators.required],
+            isHidden: true,
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'direction',
+                    value: 'PUSH',
+                }]
+            }],
         }, {
             type: 'input',
-            name: 'target_dataset',
+            name: 'target_dataset_PUSH',
             placeholder: helptext.target_dataset_placeholder,
             tooltip: helptext.target_dataset_tooltip,
             required: true,
             validation: [Validators.required],
+            isHidden: true,
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'direction',
+                    value: 'PUSH',
+                }]
+            }],
+        }, {
+            type: 'input',
+            name: 'source_datasets_PULL',
+            placeholder: helptext.source_datasets_placeholder,
+            tooltip: helptext.source_datasets_placeholder,
+            required: true,
+            validation: [Validators.required],
+            isHidden: true,
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'direction',
+                    value: 'PULL',
+                }]
+            }],
+        }, {
+            type: 'explorer',
+            initial: '/mnt',
+            explorerType: 'directory',
+            name: 'target_dataset_PULL',
+            placeholder: helptext.target_dataset_placeholder,
+            tooltip: helptext.target_dataset_placeholder,
+            options: [],
+            required: true,
+            validation: [Validators.required],
+            isHidden: true,
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'direction',
+                    value: 'PULL',
+                }]
+            }],
         }, {
             type: 'checkbox',
             name: 'recursive',
@@ -742,10 +791,24 @@ export class ReplicationFormComponent {
     }
 
     beforeSubmit(data) {
-        for (let i = 0; i < data['source_datasets'].length; i++) {
-            if (_.startsWith(data['source_datasets'][i], '/mnt/')) {
-                data['source_datasets'][i] = data['source_datasets'][i].substring(5);
+        if (data['direction'] == 'PUSH') {
+            for (let i = 0; i < data['source_datasets_PUSH'].length; i++) {
+                if (_.startsWith(data['source_datasets_PUSH'][i], '/mnt/')) {
+                    data['source_datasets_PUSH'][i] = data['source_datasets_PUSH'][i].substring(5);
+                }
             }
+            data['source_datasets'] = _.cloneDeep(data['source_datasets_PUSH']);
+            data['target_dataset'] = _.cloneDeep(data['target_dataset_PUSH']);
+            delete data['source_datasets_PUSH'];
+            delete data['target_dataset_PUSH'];
+        } else {
+            data['source_datasets'] = _.cloneDeep(data['source_datasets_PULL']).split(' ');
+            data['target_dataset'] = _.cloneDeep(data['target_dataset_PULL']);
+            if (_.startsWith(data['target_dataset'], '/mnt/')) {
+                data['target_dataset']  =  data['target_dataset'] .substring(5);
+            }
+            delete data['source_datasets_PULL'];
+            delete data['target_dataset_PULL'];
         }
 
         data["exclude"] = typeof data['exclude'] === "string" ? data['exclude'].split(' ') : data['exclude'];
