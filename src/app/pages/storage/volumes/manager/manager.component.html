@@ -31,6 +31,9 @@
             <input id="pool-manager__extend-name-input-field" matInput placeholder="Name" [value]="name" disabled>
           </mat-input-container>
           <mat-error *ngIf="isEncrypted">{{"Extending an encrypted pool resets the passphrase and recovery key!" | translate }}</mat-error>
+          <div>
+            <button id="pool-manager__reset-layout-button" mat-button class="btn btn-accent" [disabled]="!dirty" (click)="resetLayout()">{{"Reset Layout" | translate}}</button>
+          </div>
         </ng-template>
       </div>
       <div class="wrapper">
