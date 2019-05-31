@@ -445,6 +445,12 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(color, --primary-txt, $primary-txt);
 }
 
+  .mat-menu-content button.mat-menu-item:hover, 
+  .mat-menu-content button.mat-menu-item:hover .mat-icon:not([class="theme-picker-swatch-icon"]){
+    @include variable(background, --bg1, $bg1, !important);
+    @include variable(color, --fg2, $fg2);
+  }
+
 .ngx-datatable .datatable-body .datatable-row-wrapper:hover .mat-checkbox .mat-checkbox-frame {
   @include variable(border-color, --primary-txt, $primary-txt, !important);
 }
