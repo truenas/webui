@@ -49,3 +49,7 @@
 .mdi-icon {
   font-size: 24px;
 }
+
+.hidden-button {
+  display: none;
+}
