@@ -1,0 +1,42 @@
+<mat-card-content class="plugin-info">
+    <section *ngIf="engineerMode">
+        <mat-label>{{ "Browse a Collection" | translate}}</mat-label>
+        <mat-select [(ngModel)]="selectedBranch" (selectionChange)="switchBranch($event)">
+            <mat-optgroup *ngFor="let branchIndex of availableBranches" [label]="branchIndex.name">
+                <mat-option *ngFor="let branch of branchIndex.branches" [value]="branch.value">
+                    {{branch.label}}
+                </mat-option>
+            </mat-optgroup>
+        </mat-select>
+    </section>
+    <div fxLayout="row wrap" fxLayoutAlign="space-around center" *ngIf="selectedPlugin">
+        <div fxFlex fxFlex.xs="100">
+            <div>
+                <img class="plugin-img" height="150" [src]="selectedPlugin[5]" alt="{{selectedPlugin[0]}}" />
+            </div>
+        </div>
+        <div fxFlex="40" fxFlexOffset="3" fxFlex.xs="100">
+            <p class="plugin-description">{{selectedPlugin[1]}}</p>
+        </div>
+        <div fxFlex="25" fxFlexOffset="3" fxFlex.xs="100">
+            <div class="plugin-vinfo">
+                <p *ngIf="isSelectedOffical">Official Plugin <mat-icon class="official-plugin">verified_user</mat-icon></p>
+                <p>Version: {{selectedPlugin[6]}}</p>
+                <p>Installed Instances: {{installedPlugins[selectedPlugin[2]] || 0}}</p>
+            </div>
+            <button mat-flat-button color="primary" (click)="install(selectedPlugin[2]);">
+                {{ "INSTALL" | translate }}
+            </button>
+        </div>
+    </div>
+</mat-card-content>
+<mat-button-toggle-group class="plugin-buttons" [(ngModel)]='selectedPlugin'>
+    <ng-container *ngFor="let plugin of plugins; let index">
+        <mat-button-toggle [value]='plugin'>
+            <figure>
+                <img class="plugin-img" height="40" [src]="plugin[5]" alt="{{plugin[0]}} icon" />
+                <figcaption>{{plugin[0]}}</figcaption>
+            </figure>
+        </mat-button-toggle>
+    </ng-container>
+</mat-button-toggle-group>

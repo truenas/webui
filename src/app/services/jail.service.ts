@@ -97,4 +97,8 @@ export class JailService {
   getVersion() {
     return this.ws.call('jail.get_version');
   }
+
+  getInstalledPlugins() {
+    return this.ws.call('jail.list_resource', ["PLUGIN"]);
+  }
 }
