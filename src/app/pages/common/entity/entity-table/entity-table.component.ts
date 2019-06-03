@@ -86,7 +86,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() legacyWarningLink = '';
   @Input('conf') conf: InputTableConf;
 
-  @ViewChild('filter', { static: true}) filter: ElementRef;
+  @ViewChild('filter', { static: false}) filter: ElementRef;
   @ViewChild('defaultMultiActions', { static: true}) defaultMultiActions: ElementRef;
   @ViewChild('entityTable', { static: true}) table: any;
 
