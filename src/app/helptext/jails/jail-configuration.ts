@@ -378,7 +378,7 @@ ip4_tooltip: T('Control the availability of IPv4 addresses.<br>\
  <b>New</b>: Restrict addresses with <b>ip4_addr</b>.<br> <b>Disable</b>:\
  Stop the jail from using IPv4 entirely.'),
 
-ip6_saddrsel_placeholder: T('ip6_saddrsel'),
+ip6_saddrsel_placeholder: T('ip6.saddrsel'),
 ip6_saddrsel_tooltip: T('Only available when the jail is not configured\
  to use VNET. Disables IPv6 source address selection for the jail in\
  favor of the primary IPv6 address of the jail.'),
