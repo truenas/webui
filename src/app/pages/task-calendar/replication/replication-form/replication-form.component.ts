@@ -21,6 +21,7 @@ export class ReplicationFormComponent {
     protected route_success: string[] = ['tasks', 'replication'];
     protected isEntity = true;
     protected entityForm: any;
+    protected queryRes: any;
 
     protected fieldConfig: FieldConfig[] = [
         {
@@ -741,6 +742,12 @@ export class ReplicationFormComponent {
     }
 
     resourceTransformIncomingRestData(wsResponse) {
+        this.queryRes = _.cloneDeep(wsResponse);
+        wsResponse['source_datasets_PUSH'] = wsResponse['source_datasets'];
+        wsResponse['target_dataset_PUSH'] = wsResponse['target_dataset'];
+        wsResponse['source_datasets_PULL'] = wsResponse['source_datasets'];
+        wsResponse['target_dataset_PULL'] = wsResponse['target_dataset'];
+
         if (wsResponse['ssh_credentials']) {
             wsResponse['ssh_credentials'] = wsResponse['ssh_credentials'].id;
         }
@@ -797,13 +804,14 @@ export class ReplicationFormComponent {
                     data['source_datasets_PUSH'][i] = data['source_datasets_PUSH'][i].substring(5);
                 }
             }
-            data['source_datasets'] = _.cloneDeep(data['source_datasets_PUSH']);
-            data['target_dataset'] = _.cloneDeep(data['target_dataset_PUSH']);
+            data['source_datasets'] = Array.isArray(data['source_datasets_PUSH']) ? _.cloneDeep(data['source_datasets_PUSH']) : _.cloneDeep(data['source_datasets_PUSH']).split(' ');
+            data['target_dataset'] = typeof data['target_dataset_PUSH'] === 'string' ? _.cloneDeep(data['target_dataset_PUSH']) : _.cloneDeep(data['target_dataset_PUSH']).toString();
+
             delete data['source_datasets_PUSH'];
             delete data['target_dataset_PUSH'];
         } else {
-            data['source_datasets'] = _.cloneDeep(data['source_datasets_PULL']).split(' ');
-            data['target_dataset'] = _.cloneDeep(data['target_dataset_PULL']);
+            data['source_datasets'] = Array.isArray(data['source_datasets_PULL']) ? _.cloneDeep(data['source_datasets_PULL']) : _.cloneDeep(data['source_datasets_PULL']).split(' ');
+            data['target_dataset'] = typeof data['target_dataset_PULL'] === 'string' ? _.cloneDeep(data['target_dataset_PULL']) : _.cloneDeep(data['target_dataset_PULL']).toString();
             if (_.startsWith(data['target_dataset'], '/mnt/')) {
                 data['target_dataset']  =  data['target_dataset'] .substring(5);
             }
@@ -856,9 +864,11 @@ export class ReplicationFormComponent {
             if (data["transport"] === "LOCAL") {
                 data['ssh_credentials'] = null;
             }
-            // removed schedule if selected period snapshot task
-            if (this.entityForm.formGroup.controls['schedule'].disabled && this.entityForm.wsResponse['schedule']) {
-                data['schedule'] = null;
+
+            for (const prop in this.queryRes) {
+                if (prop !== 'id' && prop !== 'state' && data[prop] == undefined) {
+                    data[prop] = Array.isArray(this.queryRes[prop]) ? [] : null;
+                }
             }
         }
     }
