@@ -438,6 +438,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-menu-content button.mat-menu-item:hover, 
   .mat-menu-content button.mat-menu-item:hover .mat-icon:not([class="theme-picker-swatch-icon"]),
   .ngx-datatable .datatable-body .datatable-row-wrapper:hover,
+  .ngx-datatable .datatable-body .datatable-row-wrapper:hover .plugin-buttons,
+  .ngx-datatable .datatable-body .datatable-row-wrapper:hover .plugin-icons,
   .mat-menu-content button.mat-menu-item:focus, 
   .mat-menu-content button.mat-menu-item:focus .mat-icon:not([class="theme-picker-swatch-icon"]),
   .ngx-datatable .datatable-body .datatable-row-wrapper:focus {

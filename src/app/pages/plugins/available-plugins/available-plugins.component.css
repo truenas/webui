@@ -23,3 +23,8 @@ mat-icon.official-plugin {
 figcaption {
     color: var(--fg1);
 }
+
+#plugin-install-button {
+    background: var(--primary);
+    color: white;
+}
