@@ -13,7 +13,7 @@ export const helptext_system_dataset = {
   rrd: {
     placeholder: T("Reporting Database"),
     tooltip: T("Store the reporting database on the system dataset.\
- Unset to store reporting information in the system memory."
+ Unset to store reporting information in memory."
     )
   }
 };
