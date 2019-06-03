@@ -319,6 +319,7 @@ export class ReplicationFormComponent {
             name: 'schedule',
             placeholder: helptext.schedule_placeholder,
             tooltip: helptext.schedule_tooltip,
+            value: null,
             relation: [{
                 action: 'HIDE',
                 connective: 'OR',
@@ -433,6 +434,9 @@ export class ReplicationFormComponent {
                 when: [{
                     name: 'schedule',
                     value: false,
+                }, {
+                    name: 'schedule',
+                    value: null,
                 }, {
                     name: 'transport',
                     value: 'LEGACY',
@@ -866,7 +870,10 @@ export class ReplicationFormComponent {
             }
 
             for (const prop in this.queryRes) {
-                if (prop !== 'id' && prop !== 'state' && data[prop] == undefined) {
+                if (prop === 'only_matching_schedule' || prop === 'hold_pending_snapshots') {
+                    data[prop] = false;
+                }
+                if (prop !== 'id' && prop !== 'state' && data[prop] === undefined) {
                     data[prop] = Array.isArray(this.queryRes[prop]) ? [] : null;
                 }
             }
