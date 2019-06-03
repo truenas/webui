@@ -31,6 +31,10 @@ import { NTPServerEditComponent } from './ntpservers/ntpserver-edit/';
 import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
 import { CloudCredentialsFormComponent } from './CloudCredentials/cloudcredentials-form/';
+import { SshConnectionsListComponent } from './ssh-connections/ssh-connections-list/ssh-connections-list.component';
+import { SshConnectionsFormComponent } from './ssh-connections/ssh-connections-form/ssh-connections-form.component';
+import { SshKeypairsListComponent } from './ssh-keypairs/ssh-keypairs-list/ssh-keypairs-list.component';
+import { SshKeypairsFormComponent } from './ssh-keypairs/ssh-keypairs-form/ssh-keypairs-form.component';
 import { CertificateAuthorityListComponent } from './ca/ca-list/';
 import { CertificateAuthorityAddComponent } from './ca/ca-add/';
 import { CertificateAuthorityEditComponent } from './ca/ca-edit/';
@@ -44,13 +48,21 @@ import { TranslateModule } from '@ngx-translate/core';
 import { EmailComponent } from './email';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
+import { AcmednsListComponent } from './acmedns/acmedns-list/acmedns-list.component';
+import { AcmednsFormComponent } from './acmedns/acmedns-add/acmedns-form.component';
+import { CertificateAcmeAddComponent } from './certificates/certificate-acme-add/certificate-acme-add.component';
+import { FailoverComponent } from './failover/failover.component';
+import { ProactiveSupportComponent } from './proactive-support/proactive-support.component';
 import { ReportingComponent } from './reporting/reporting.component';
+import { EnclosureModule } from './viewenclosure/enclosure.module'
+
 
 @NgModule({
   imports: [
     EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, NgUploaderModule, routing,
-    MaterialModule, MarkdownModule.forRoot(), TranslateModule, FlexLayoutModule
+    MaterialModule, MarkdownModule.forRoot(), TranslateModule, FlexLayoutModule,
+    EnclosureModule
   ],
   declarations: [
     GeneralComponent,
@@ -75,6 +87,10 @@ import { ReportingComponent } from './reporting/reporting.component';
     AlertServiceListComponent,
     CloudCredentialsListComponent,
     CloudCredentialsFormComponent,
+    SshConnectionsListComponent,
+    SshConnectionsFormComponent,
+    SshKeypairsListComponent,
+    SshKeypairsFormComponent,
     CertificateAuthorityListComponent,
     CertificateAuthorityAddComponent,
     CertificateAuthorityEditComponent,
@@ -86,6 +102,11 @@ import { ReportingComponent } from './reporting/reporting.component';
     EmailComponent,
     AlertServiceComponent,
     AlertConfigComponent,
+    AcmednsListComponent,
+    AcmednsFormComponent,
+    CertificateAcmeAddComponent,
+    FailoverComponent,
+    ProactiveSupportComponent,
     ReportingComponent,
   ],
   providers: []

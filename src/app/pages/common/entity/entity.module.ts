@@ -34,6 +34,7 @@ import { FormDatepickerComponent } from './entity-form/components/form-datepicke
 import { FormColorpickerComponent } from './entity-form/components/form-colorpicker/form-colorpicker.component';
 import { FormParagraphComponent } from './entity-form/components/form-paragraph/form-paragraph.component';
 import { FormSchedulerComponent } from './entity-form/components/form-scheduler/form-scheduler.component';
+import { FormIpWithNetmaskComponent } from './entity-form/components/form-ipwithnetmask/form-ipwithnetmask.component';
 import { FormListComponent } from './entity-form/components/form-list/form-list.component';
 
 import { FormExplorerComponent } from './entity-form/components/form-explorer/form-explorer.component';
@@ -44,6 +45,7 @@ import { FormToggleButtonComponent } from './entity-form/components/form-toggle-
 import { FormTaskComponent } from './entity-form/components/form-task/form-task.component';
 import { EntityFormComponent } from './entity-form/entity-form.component';
 import { EntityFormEmbeddedComponent } from './entity-form/entity-form-embedded.component';
+import { DynamicComponentDirective } from './entity-table/dynamic-component.directive';
 import { EntityTableActionsComponent } from './entity-table/entity-table-actions.component';
 import { EntityCardActionsComponent } from './entity-card/entity-card-actions.component';
 import { EntityTableAddActionsComponent } from './entity-table/entity-table-add-actions.component';
@@ -85,6 +87,7 @@ import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-m
     EntityTreeTableComponent,
     EntityCardComponent,
     EntityCardActionsComponent,
+    DynamicComponentDirective,
     EntityTableActionsComponent,
     EntityTableAddActionsComponent,
     EntityTemplateDirective,
@@ -105,6 +108,7 @@ import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-m
     FormColorpickerComponent,
     FormExplorerComponent,
     FormPermissionsComponent,
+    FormIpWithNetmaskComponent,
     TooltipComponent,
     TooltipDocReplacePipe,
     FormSliderComponent,
@@ -132,6 +136,7 @@ import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-m
     EntityTemplateDirective,
     EntityFormComponent,
     EntityFormEmbeddedComponent,
+    DynamicComponentDirective,
     EntityTableComponent,
     EntityTreeTableComponent,
     EntityCardComponent,
@@ -171,6 +176,7 @@ import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-m
     FormUploadComponent,
     FormReadFileComponent,
     FormExplorerComponent,
+    FormIpWithNetmaskComponent,
     EntityJobComponent,
     FormSliderComponent,
     FormToggleButtonComponent,

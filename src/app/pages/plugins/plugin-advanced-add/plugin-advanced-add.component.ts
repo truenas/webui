@@ -32,8 +32,8 @@ import helptext from '../../../helptext/jails/jail-configuration';
 export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
 
   protected addCall: string = 'jail.fetch';
-  public route_goback: string[] = ['plugins', 'available'];
-  public route_success: string[] = ['plugins', 'installed'];
+  public route_goback: string[] = ['plugins'];
+  public route_success: string[] = ['plugins'];
   protected route_conf: string[] = ['jails', 'configuration'];
 
   public formGroup: any;
@@ -57,6 +57,20 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
       name: 'dhcp',
       placeholder: helptext.dhcp_placeholder,
       tooltip: helptext.dhcp_tooltip,
+      value: false,
+      relation: [{
+        action: "DISABLE",
+        when: [{
+          name: "nat",
+          value: true
+        }]
+      }],
+    },
+    {
+      type: 'checkbox',
+      name: 'nat',
+      placeholder: helptext.nat_placeholder,
+      tooltip: helptext.nat_tooltip,
       value: true,
     },
     {
@@ -71,17 +85,20 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
       name: 'bpf',
       placeholder: helptext.bpf_placeholder,
       tooltip: helptext.bpf_tooltip,
-      value: true,
     },
     {
       type: 'list',
       name: 'ip4_addr',
       placeholder: 'IPv4 Addresses',
       relation: [{
-        action: 'DISABLE',
+        action: "ENABLE",
+        connective: 'AND',
         when: [{
-          name: 'dhcp',
-          value: true,
+          name: "dhcp",
+          value: false
+        }, {
+          name: 'nat',
+          value: false,
         }]
       }],
       templateListField: [
@@ -95,7 +112,6 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
             value: '',
           }],
           value: '',
-          required: false,
           class: 'inline',
           width: '30%',
         },
@@ -133,6 +149,9 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
           name: 'dhcp',
           value: true,
         }, {
+          name: 'nat',
+          value: true,
+        }, {
           name: 'vnet',
           value: false,
         }]
@@ -166,7 +185,6 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
             value: '',
           }],
           value: '',
-          required: false,
           class: 'inline',
           width: '30%',
         },
@@ -439,6 +457,12 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
     },
     {
       type: 'checkbox',
+      name: 'allow_mount_fusefs',
+      placeholder: helptext.allow_mount_fusefs_placeholder,
+      tooltip: helptext.allow_mount_fusefs_tooltip,
+    },
+    {
+      type: 'checkbox',
       name: 'allow_mount_nullfs',
       placeholder: helptext.allow_mount_nullfs_placeholder,
       tooltip: helptext.allow_mount_nullfs_tooltip,
@@ -460,6 +484,12 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
       name: 'allow_mount_zfs',
       placeholder: helptext.allow_mount_zfs_placeholder,
       tooltip: helptext.allow_mount_zfs_tooltip,
+    },
+    {
+      type: 'checkbox',
+      name: 'allow_vmm',
+      placeholder: helptext.allow_vmm_placeholder,
+      tooltip: helptext.allow_vmm_tooltip,
     },
     {
       type: 'checkbox',
@@ -696,6 +726,18 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
       name: 'rtsold',
       placeholder: helptext.rtsold_placeholder,
       tooltip: helptext.rtsold_tooltip,
+    },
+    {
+      type: 'checkbox',
+      name: 'ip_hostname',
+      placeholder: helptext.ip_hostname_placeholder,
+      tooltip: helptext.ip_hostname_tooltip,
+    },
+    {
+      type: 'checkbox',
+      name: 'assign_localhost',
+      placeholder: helptext.assign_localhost_placeholder,
+      tooltip: helptext.assign_localhost_tooltip,
     }
   ];
   public rctlConfig: FieldConfig[] = [
@@ -850,7 +892,7 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
     'exec_clean',
     'mount_linprocfs',
     'mount_procfs',
-    // 'allow_vmm', ??
+    'allow_vmm',
     'allow_tun',
     'allow_socket_af',
     'allow_quotas',
@@ -858,7 +900,7 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
     'allow_mount_tmpfs',
     'allow_mount_procfs',
     'allow_mount_nullfs',
-    // 'allow_mount_fusefs',??
+    'allow_mount_fusefs',
     'allow_mount_devfs',
     'allow_mount',
     'allow_mlock',
@@ -870,9 +912,9 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
     'mount_devfs',
     'ip6_saddrsel',
     'ip4_saddrsel',
-    // 'ip_hostname',??
-    // 'assign_localhost',??
-    // 'nat', ??
+    'ip_hostname',
+    'assign_localhost',
+    'nat',
   ];
   // fields only accepted by ws with value on/off
   protected OFfields: any = [
@@ -929,26 +971,6 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
     }
   }
 
-  updateInterfaceValidaton(subipFormgroup, subipInterfaceField, ipType) {
-    const targetPropName = ipType + '_addr';
-    if (this.formGroup.controls['dhcp'].value != true &&
-      this.formGroup.controls['vnet'].value == true &&
-      subipFormgroup.controls[targetPropName].value != undefined &&
-      subipFormgroup.controls[targetPropName].value != '') {
-      if (subipInterfaceField.required === false) {
-        subipInterfaceField.required = true;
-        subipInterfaceField['hasError'] = true;
-        subipInterfaceField['errors'] = 'Interface is required';
-      }
-    } else {
-      if (subipInterfaceField.required === true) {
-        subipInterfaceField.required = false;
-        subipInterfaceField['hasError'] = false;
-        subipInterfaceField['errors'] = '';
-      }
-    }
-  }
-
   updateInterface(addVnet?) {
     for (const ipType of ['ip4', 'ip6']) {
       const targetPropName = ipType + '_addr';
@@ -958,10 +980,6 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
 
         if (addVnet != undefined) {
           this.updateInterfaceOptions(subipInterfaceField, addVnet);
-        }
-
-        if (subipInterfaceField != undefined) {
-          this.updateInterfaceValidaton(subipFormgroup, subipInterfaceField, ipType);
         }
       }
     }
@@ -1010,8 +1028,14 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
       _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = res;
       _.find(this.basicfieldConfig, { 'name': 'bpf' }).required = res;
     });
+    this.formGroup.controls['nat'].valueChanges.subscribe((res) => {
+      if (res) {
+        this.formGroup.controls['vnet'].setValue(true);
+      }
+      _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = res;
+    });
     this.formGroup.controls['vnet'].valueChanges.subscribe((res) => {
-      if ((this.formGroup.controls['dhcp'].value || this.formGroup.controls['auto_configure_ip6'].value) && !res) {
+      if (((this.formGroup.controls['dhcp'].value || this.formGroup.controls['nat'].value) || this.formGroup.controls['auto_configure_ip6'].value) && !res) {
         _.find(this.basicfieldConfig, { 'name': 'vnet' })['hasErrors'] = true;
         _.find(this.basicfieldConfig, { 'name': 'vnet' })['errors'] = 'VNET is required.';
       } else {
@@ -1071,7 +1095,7 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
                 res[0][i] = false;
               }
             }
-            if (i !== 'dhcp' && i !== 'vnet' && i !== 'bpf') {
+            if (i !== 'dhcp' && i !== 'vnet' && i !== 'bpf' && i != 'nat') {
               this.formGroup.controls[i].setValue(res[0][i]);
             }
           }
@@ -1091,6 +1115,7 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
       }
     }
     this.formGroup.controls['dhcp'].setValue(this.formGroup.controls['dhcp'].value);
+    this.formGroup.controls['nat'].setValue(this.formGroup.controls['nat'].value);
   }
 
   setRelation(config: FieldConfig) {

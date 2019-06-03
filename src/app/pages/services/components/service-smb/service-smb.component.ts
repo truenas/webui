@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material';
 import { IdmapService, IscsiService, RestService, WebSocketService, UserService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { EntityUtils } from '../../../common/entity/utils';
 import helptext from '../../../../helptext/services/components/service-smb';
 
 @Component({
@@ -139,14 +140,17 @@ export class ServiceSMBComponent {
     {
       type: 'input',
       name: 'idmap_tdb_range_low',
+      inputType: 'number',
       placeholder: helptext .idmap_tdb_range_low_placeholder,
       tooltip: helptext.idmap_tdb_range_low_tooltip,
     },
     {
       type: 'input',
       name: 'idmap_tdb_range_high',
+      inputType: 'number',
       placeholder: helptext.idmap_tdb_range_high_placeholder,
       tooltip: helptext.idmap_tdb_range_high_tooltip,
+      validation: helptext.idmap_tdb_range_high_validation
     }
   ];
 
@@ -158,6 +162,8 @@ export class ServiceSMBComponent {
   protected idmap_tdb_range_low: any;
   protected idmap_tdb_range_high: any;
   protected dialogRef: any;
+  protected idNumber: any;
+  public entityEdit: any;
 
   preInit(entityForm: any) {
     this.cifs_srv_unixcharset = _.find(this.fieldConfig, {"name": "cifs_srv_unixcharset"});
@@ -170,9 +176,14 @@ export class ServiceSMBComponent {
     this.iscsiService.getIpChoices().subscribe((res) => {
       this.cifs_srv_bindip =
         _.find(this.fieldConfig, { 'name': 'cifs_srv_bindip' });
-      res.forEach((item) => {
-        this.cifs_srv_bindip.options.push({ label: item[0], value: item[0] });
-      })
+        for (let key in res) {
+          if (res.hasOwnProperty(key)) {
+              this.cifs_srv_bindip.options.push({ label: res[key], value: res[key] });
+          }
+      }
+      // res.forEach((item) => {
+      //   this.cifs_srv_bindip.options.push({ label: item[0], value: item[0] });
+      // })
     });
     this.ws.call('user.query').subscribe((res) => {
       this.cifs_srv_guest = _.find(this.fieldConfig, {'name':'cifs_srv_guest'});
@@ -201,12 +212,16 @@ export class ServiceSMBComponent {
     protected loader: AppLoaderService, protected dialog: MatDialog) {}
 
   afterInit(entityEdit: any) {
+    this.entityEdit = entityEdit;
     this.rest.get('services/cifs', {}).subscribe((res) => {
       this.idmapID = res['id'];
-      this.ws.call('datastore.query', ['directoryservice.idmap_tdb', [["idmap_ds_type", "=", "5"], ["idmap_ds_id", "=", res.data['id']]]]).subscribe((idmap_res) => {
-        this.defaultIdmap = idmap_res[0];
-        entityEdit.formGroup.controls['idmap_tdb_range_high'].setValue(idmap_res[0].idmap_tdb_range_high);
-        entityEdit.formGroup.controls['idmap_tdb_range_low'].setValue(idmap_res[0].idmap_tdb_range_low);
+      this.ws.call('idmap.get_or_create_idmap_by_domain', ['DS_TYPE_DEFAULT_DOMAIN']).subscribe((idmap_res) => {
+        this.defaultIdmap = idmap_res[0]; // never used and undefined anyway
+        this.idNumber = idmap_res.id;
+        entityEdit.formGroup.controls['idmap_tdb_range_high'].setValue(idmap_res.range_high);
+        entityEdit.formGroup.controls['idmap_tdb_range_low'].setValue(idmap_res.range_low);
+
+
       });
     });
   }
@@ -237,18 +252,14 @@ export class ServiceSMBComponent {
         new_range_high = value[i];
       }
     }
-      this.ws.call('datastore.query', [this.query_call + this.idmap_type, [["idmap_ds_type", "=", this.targetDS]]]).subscribe((res) => {
-        if (res[0]) {
-          this.idmapID = res[0].id;
-        if (new_range_low > new_range_high) {
-          this.error = "Range low is greater than range high.";
-        } else {
-          if (this.idmapID) {
-            this.ws.call(
-              'datastore.update', [this.query_call + this.idmap_type, this.idmapID, value]).subscribe(res=>{
-            });
-          };
-        };
-      }});
+
+    // Puts validation errors on screen but doesn't stop form from submitting
+    //beforeSubmit doesn't block submit from happening even with an error
+    this.ws.call('idmap.tdb.update', [this.idNumber, {range_low: new_range_low, range_high: new_range_high}])
+      .subscribe(() => {},
+      (err)=>{
+        new EntityUtils().handleWSError(this.entityEdit, err);
+      },
+      () => {})
     }
   }

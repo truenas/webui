@@ -15,7 +15,7 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
   selector: 'app-jail-list',
   // template: `<entity-table [title]="title" [conf]="this"></entity-table>`
   templateUrl: './jail-list.component.html',
-  styleUrls: ['../../plugins/plugins-available/plugins-available-list.component.css'],
+  styleUrls: ['jail-list.component.css'],
   providers: [DialogService, StorageService]
 })
 export class JailListComponent implements OnInit {

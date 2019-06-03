@@ -22,6 +22,10 @@ export function rangeValidator(min: number, max?: number) {
       thisControl = control;
     }
 
+    if (!thisControl.value) {
+      return null;
+    }
+
     if (regex.test(thisControl.value)) {
       const num = Number(thisControl.value);
       if (num >= min) {

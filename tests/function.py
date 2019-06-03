@@ -1,6 +1,7 @@
 # /usr/bin/env python3.6
 
 from source import *
+from subprocess import run, PIPE
 
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
@@ -29,20 +30,42 @@ xpaths = {
     'deleteButton': '//*[contains(@name, "ok_button")]',
     'detachButton': '//*[contains(@name, "Detach_button")]',
     'closeButton': '//*[contains(text(), "Close")]',
-    'turnoffConfirm': '//*[contains(text(), "OK")]'
+    'turnoffConfirm': "//span[contains(.,'STOP')]"
 }
 
-service_dict = {
-    '1': '//*[@id="slide-toggle__AFP"]',
-    '2': '//*[@id="slide-toggle__Domain Controller"]',
-    '3': '//*[@id="slide-toggle__Dynamic DNS"]',
-    '4': '//*[@id="slide-toggle__FTP"]',
-    '5': '//*[@id="slide-toggle__iSCSI"]',
-    '6': '//*[@id="slide-toggle__LLDP"]',
-    '12': '//*[@id="slide-toggle__SMB"]',
-    '14': '//*[@id="slide-toggle__SSH"]',
-    '17': '//*[@id="slide-toggle__WebDAV"]'
+services_switch_xpath = {
+    'afp': "//div[@id='overlay__AFP']",
+    'dc': "//div[@id='overlay__Domain Controller']",
+    'dns': "//div[@id='overlay__Dynamic DNS']",
+    'nfs': "//div[@id='overlay__NFS']",
+    'ftp': "//div[@id='overlay__FTP']",
+    'iscsi': "//div[@id='overlay__iSCSI']",
+    'lldp': "//div[@id='overlay__LLDP']",
+    'smb': "//div[@id='overlay__SMB']",
+    'ssh': "//div[@id='overlay__SSH']",
+    'webdav': "//div[@id='overlay__WebDAV']"
 }
+
+
+def ssh_test(command, username, passwrd, host):
+    cmd = [] if passwrd is None else ["sshpass", "-p", passwrd]
+    cmd += [
+        "ssh",
+        "-o",
+        "StrictHostKeyChecking=no",
+        "-o",
+        "UserKnownHostsFile=/dev/null",
+        "-o",
+        "VerifyHostKeyDNS=no",
+        f"{username}@{host}",
+    ]
+    cmd += command.split()
+    process = run(cmd, stdout=PIPE, universal_newlines=True)
+    output = process.stdout
+    if process.returncode != 0:
+        return {'result': False, 'output': output}
+    else:
+        return {'result': True, 'output': output}
 
 
 # method to test if an element is present
@@ -66,6 +89,24 @@ def wait_on_element(driver, xpath, scriptname, testname):
     return True
 
 
+def error_check(driver):
+    title_xpath = "//h1[contains(.,'report_problem error')]"
+    dialog_xpath = '//error-dialog/div/span'
+    tearDown_xpath = "//span[contains(.,'More info...')]"
+    traceback_xpath = "//div[2]/textarea"
+    closeButton = '//*[contains(text(), "Close")]'
+    if is_element_present(driver, title_xpath):
+        dialog = driver.find_element_by_xpath(dialog_xpath)
+        dialog_text = dialog.text
+        driver.find_element_by_xpath(tearDown_xpath).click()
+        traceback = driver.find_element_by_xpath(traceback_xpath)
+        traceback_text = traceback.text
+        driver.find_element_by_xpath(closeButton).click()
+
+        return {'result': False, 'dialog': dialog_text, 'traceback': traceback_text}
+    return {'result': True, 'dialog': '', 'traceback': ''}
+
+
 # screenshot function
 def take_screenshot(driver, scriptname, testname):
     time.sleep(1)
@@ -75,7 +116,7 @@ def take_screenshot(driver, scriptname, testname):
 
 # status check for services
 def status_check(driver, which):
-    toggle_status = driver.find_element_by_xpath(service_dict[which])
+    toggle_status = driver.find_element_by_xpath(services_switch_xpath[which])
     status_data = toggle_status.get_attribute("class")
     print(status_data)
     if (status_data == "mat-slide-toggle mat-accent ng-star-inserted mat-checked"):
@@ -83,32 +124,15 @@ def status_check(driver, which):
     else:
         print("current status is: STOPPED")
     # get the status data
-    print("current status is: " + service_dict[which])
+    print("current status is: " + services_switch_xpath[which])
 
 
-def status_change(driver, which, to):
-    # get the ui element
-    toggle_status = driver.find_element_by_xpath(service_dict[which])
-    status_data = toggle_status.get_attribute("class")
-    # get the status data
-    if to == "start":
-        if status_data == "STOPPED":
-            # Click on the toggle button
-            toggle_status.click()
-            time.sleep(1)
-            print("status has now changed to running")
-        else:
-            print("the status is already " + status_data)
-    elif to == "stop":
-        if status_data == "RUNNING":
-            # Click on the toggle button
-            toggle_status.click()
-            time.sleep(1)
-            # re-confirming if the turning off the service
-            if is_element_present(driver, xpaths['turnoffConfirm']):
-                driver.find_element_by_xpath(xpaths['turnoffConfirm']).click()
-        else:
-            print("the status is already" + status_data)
+def status_change(driver, which):
+    driver.find_element_by_xpath(services_switch_xpath[which]).click()
+    time.sleep(2)
+    if is_element_present(driver, xpaths['turnoffConfirm']):
+        driver.find_element_by_xpath(xpaths['turnoffConfirm']).click()
+        time.sleep(2)
 
 
 def user_edit(driver, type, name):

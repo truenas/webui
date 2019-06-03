@@ -1243,9 +1243,8 @@ div.hopscotch-bubble .hopscotch-nav-button.prev:hover {
     font-size: .7rem;
 }
 .mat-menu-panel.mat-menu-after.mat-menu-below {
-    min-width: 140px !important;
+    min-width: 400px !important;
     }
-
 .theme-list .mat-menu-item {
     width: 25px;
     height: 25px;

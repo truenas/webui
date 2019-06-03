@@ -117,8 +117,8 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   }
 
   ngAfterViewInit(){
-    this.core.register({observerClass:this,eventName:"PoolDisks"}).subscribe((evt:CoreEvent) => {
-      if(evt.data.callArgs[0] == this.volumeData.id){
+    this.core.register({observerClass:this,eventName:"PoolDisks" + this.volumeData.id}).subscribe((evt:CoreEvent) => {
+      //if(evt.data.callArgs[0] == this.volumeData.id){
         // Simulate massive array
         //this.simulateDiskArray = 600;
         if(this.simulateDiskArray){
@@ -146,7 +146,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
           if(this.disks.length > 0){
             this.storage.diskNameSort(this.disks);
           } 
-      }
+      //}
     });
 
 
@@ -284,21 +284,25 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   checkVolumeHealth(){
     switch(this.volumeData.status){
       case "HEALTHY":
+        break;
       case "LOCKED":
+        this.updateVolumeHealth("Pool status is " + this.volumeData.status, false, 'locked');
         break;
       case "UNKNOWN":
       case "OFFLINE":
+        this.updateVolumeHealth("Pool status is " + this.volumeData.status, false, 'unknown');
+        break;
       case "DEGRADED":
-        this.updateVolumeHealth("Pool status is " + this.volumeData.status); // Warning
+        this.updateVolumeHealth("Pool status is " + this.volumeData.status, false, 'degraded');
         break
       case "FAULTED":
       case "REMOVED":
-        this.updateVolumeHealth("Pool status is " + this.volumeData.status, true); // Error
+        this.updateVolumeHealth("Pool status is " + this.volumeData.status, true, 'faulted');
         break;
     }
   }
 
-  updateVolumeHealth(symptom: string, isCritical?: boolean){
+  updateVolumeHealth(symptom: string, isCritical?: boolean, condition?: string){
     if(isCritical){
       this.volumeHealth.errors.push(symptom);
     } else {
@@ -310,14 +314,24 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
 
     if(this.volumeHealth.errors.length > 0){
       this.volumeHealth.level = "error"
-      this.volumeHealth.selector = "fn-theme-red"
     } else if(this.volumeHealth.warnings.length > 0){
       this.volumeHealth.level = "warn"
-      this.volumeHealth.selector = "fn-theme-yellow"
     } else {
       this.volumeHealth.level = "safe"
+    }
+
+    if (condition === 'locked') {
+      this.volumeHealth.selector = "fn-theme-yellow"
+    } else if (condition === 'unknown') {
+      this.volumeHealth.selector = "fn-theme-blue"
+    } else if (condition === 'degraded') {
+      this.volumeHealth.selector = "fn-theme-orange"
+    } else if (condition === 'faulted') {
+      this.volumeHealth.selector = "fn-theme-red"
+    } else {
       this.volumeHealth.selector = "fn-theme-green"
-    } 
+    }
   }
+  
 
 }

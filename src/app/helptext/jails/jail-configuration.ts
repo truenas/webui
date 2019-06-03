@@ -34,6 +34,12 @@ dhcp_tooltip: T('Set to autoconfigure jail networking with the\
  Dynamic Host Configuration Protocol. <b>VNET</b> and\
  <b>Berkeley Packet Filter<b> must also be enabled.'),
 
+nat_placeholder: T('NAT'),
+nat_tooltip: T('Network Address Translation (NAT). Transforms local\
+ network IP addresses into a single IP address. Set when the jail will\
+ share a single connection to the Internet with other systems on the\
+ network.'),
+
 vnet_placeholder: T('VNET'),
 vnet_tooltip: T('Set to use <a\
  href="https://www.freebsd.org/cgi/man.cgi?query=vnet"\
@@ -285,6 +291,13 @@ allow_mount_devfs_tooltip: T('Set to allow privileged users inside the\
  only effective when <b>allow_mount</b> is set and <b>enforce_statfs</b>\
  is set to a value lower than <i>2</i>.'),
 
+allow_mount_fusefs_placeholder: T('allow_mount_fusefs'),
+allow_mount_fusefs_tooltip: T('Set to allow privileged users inside the\
+ jail to mount and unmount the fusefs file system. The jail must have\
+ FreeBSD 12.0 or newer installed. This permission is only effective when\
+ <b>allow_mount</b> is set and and <b>enforce_statfs</b> is set to a\
+ value lower than 2.'),
+
 allow_mount_nullfs_placeholder: T('allow_mount_nullfs'),
 allow_mount_nullfs_tooltip: T('Set to allow privileged users inside the\
  jail to mount and unmount the nullfs file system. This permission is\
@@ -311,6 +324,13 @@ allow_mount_zfs_tooltip: T('Set to allow privileged users inside the\
  <a href="https://www.freebsd.org/cgi/man.cgi?query=zfs"\
  target="_blank">ZFS(8)</a> man page has information on how to configure\
  the ZFS filesystem to operate from within a jail.'),
+
+allow_vmm_placeholder: T('allow_vmm'),
+allow_vmm_tooltip: T('Allow the jail to access the bhyve virtual machine\
+ monitor (VMM). The jail must have FreeBSD 12.0 or newer installed with\
+ the\
+ <a href="https://www.freebsd.org/cgi/man.cgi?query=vmm" target="_blank">vmm(4)</a>\
+ kernel module loaded.'),
 
 allow_quotas_placeholder: T('allow_quotas'),
 allow_quotas_tooltip: T('Set to allow the jail root to administer quotas\
@@ -477,6 +497,19 @@ rtsold_tooltip: T('Use\
  target="_blank">rtsold(8)</a> as part of IPv6 autoconfiguration. Send\
  ICMPv6 Router Solicitation messages to interfaces to discover new\
  routers.'),
+
+ip_hostname_placeholder: T('ip_hostname'),
+ip_hostname_tooltip: T('Set to use DNS records during jail IP\
+ configuration to search the resolver and apply the first open IPv4 and\
+ IPv6 addresses. See\
+ <a href="https://www.freebsd.org/cgi/man.cgi?query=jail" target="_blank">jail(8)</a>.'),
+
+assign_localhost_placeholder: T('assign_localhost'),
+assign_localhost_tooltip: T('Set to add network interface <i>lo0</i> to\
+ the jail and assign it the first available localhost address, starting\
+ with <i>127.0.0.2</i>. <i>VNET</i> must be unset. Jails using\
+ <i>VNET</i> configure a localhost as part of their virtualized network\
+ stack.'),
 
 memoryuse_placeholder: T('memoryuse'),
 memoryuse_tooltip: T('Resident set size in bytes. See\

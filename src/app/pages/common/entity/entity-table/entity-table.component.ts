@@ -21,8 +21,10 @@ import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { T } from '../../../../translate-marker';
 
 export interface InputTableConf {
-
+  prerequisite?: any;
+  globalConfig?: any;
   columns:any[];
+  columnFilter?: boolean;
   hideTopActions?: boolean;
   queryCall?: string;
   queryCallOption?: any;
@@ -30,6 +32,7 @@ export interface InputTableConf {
   route_edit?: string;
   route_add?: string[];
   queryRes?: any [];
+  showActions?: boolean;
   isActionVisible?: any;
   custActions?: any[];
   multiActions?:any[];
@@ -38,6 +41,9 @@ export interface InputTableConf {
   confirmDeleteDialog?: Object;
   checkbox_confirm?: any;
   checkbox_confirm_show?: any;
+  hasDetails?:boolean;
+  rowDetailComponent?: any;
+  cardHeaderComponent?: any;
   asyncView?: boolean;
   addRows?(entity: EntityTableComponent);
   changeEvent?(entity: EntityTableComponent);
@@ -55,6 +61,7 @@ export interface InputTableConf {
   doAdd?();
   onCheckboxChange?(row): any;
   onSliderChange?(row): any;
+  callGetFunction?(entity: EntityTableComponent): any;
 }
 
 export interface SortingConfig {
@@ -81,6 +88,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('filter') filter: ElementRef;
   @ViewChild('defaultMultiActions') defaultMultiActions: ElementRef;
+  @ViewChild('entityTable') table: any;
 
   // MdPaginator Inputs
   public paginationPageSize: number = 8;
@@ -96,6 +104,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public windowHeight: number;
 
   public allColumns: Array<any> = []; // Need this for the checkbox headings
+  public columnFilter = true; // show the column filters by default
   public filterColumns: Array<any> = []; // ...for the filter function - becomes THE complete list of all columns, diplayed or not
   public alwaysDisplayedCols: Array<any> = []; // For cols the user can't turn off
   public presetDisplayedCols: Array<any> = []; // to store only the index of preset cols
@@ -142,17 +151,33 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     clearInterval(this.interval);
   }
 
-  ngOnInit():void {
+  ngOnInit() {
 
     this.setTableHeight(); 
 
-    setTimeout(() => {
-      if (this.conf.preInit) {
-        this.conf.preInit(this);
-      }
-      this.getData();
-      if (this.conf.afterInit) {
-        this.conf.afterInit(this);
+    setTimeout(async() => {
+      if (this.conf.prerequisite) {
+        await this.conf.prerequisite().then(
+          (res)=>{
+            if (res) {
+              if (this.conf.preInit) {
+                this.conf.preInit(this);
+              }
+              this.getData();
+              if (this.conf.afterInit) {
+                this.conf.afterInit(this);
+              }
+            }
+          }
+        );
+      } else {
+        if (this.conf.preInit) {
+          this.conf.preInit(this);
+        }
+        this.getData();
+        if (this.conf.afterInit) {
+          this.conf.afterInit(this);
+        }
       }
     })
     this.asyncView = this.conf.asyncView ? this.conf.asyncView : false;
@@ -164,7 +189,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.alwaysDisplayedCols.push(column); // Make an array of required cols
       }
     });
-
+    this.columnFilter = this.conf.columnFilter === undefined ? true : this.conf.columnFilter;
+    this.showActions = this.conf.showActions === undefined ? true : this.conf.showActions ;
     this.filterColumns = this.conf.columns;
     this.conf.columns = this.allColumns; // Remove any alwaysDisplayed cols from the official list
 
@@ -314,10 +340,18 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.getFunction = this.rest.get(this.conf.resource_name, options);
     }
 
-    this.callGetFunction();
+    if (this.conf.callGetFunction) {
+      this.conf.callGetFunction(this);
+    } else {
+      this.callGetFunction();
+    }
     if (this.asyncView) {
       this.interval = setInterval(() => {
-        this.callGetFunction();
+        if (this.conf.callGetFunction) {
+          this.conf.callGetFunction(this);
+        } else {
+          this.callGetFunction();
+        }
       }, 10000);
     }
 
@@ -329,6 +363,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.handleData(res);
       },
       (res) => {
+        if (this.loaderOpen) {
+          this.loader.close();
+          this.loaderOpen = false;
+        }
         if (res.hasOwnProperty("reason") && (res.hasOwnProperty("trace") && res.hasOwnProperty("type"))) {
           this.dialogService.errorReport(res.type, res.reason, res.trace.formatted);
         }
@@ -556,7 +594,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           this.busy = this.ws.call(this.conf.wsDelete, [id]).subscribe(
             (resinner) => { this.getData() },
             (resinner) => {
-              new EntityUtils().handleError(this, resinner);
+              new EntityUtils().handleWSError(this, resinner, this.dialogService);
               this.loader.close();
             }
           );
@@ -675,22 +713,36 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
-        const data = {};
         if (this.conf.wsMultiDelete) {
           // ws to do multi-delete
           if (this.conf.wsMultiDeleteParams) {
             this.busy = this.ws.job(this.conf.wsMultiDelete, this.conf.wsMultiDeleteParams(selected)).subscribe(
               (res1) => {
+                if (res1.state === 'SUCCESS') {
+                  this.loader.close();
+                  this.loaderOpen = false;
+                  this.getData();
+                  this.selected = [];
+
+                  const selectedName = this.conf.wsMultiDeleteParams(selected)[1];
+                  let message = "";
+                  for (let i = 0; i < res1.result.length; i++) {
+                    if (res1.result[i].error != null) {
+                      message = message + '<li>' + selectedName[i] + ': ' + res1.result[i].error + '</li>';
+                    }
+                  }
+                  if (message === "") {
+                    this.snackBar.open("Items deleted.", 'close', { duration: 5000 });
+                  } else {
+                    message = '<ul>' + message + '</ul>';
+                    this.dialogService.errorReport(T('Items Delete Failed'), message);
+                  }
+                }
                },
               (res1) => {
-                new EntityUtils().handleError(this, res1);
+                new EntityUtils().handleWSError(this, res1, this.dialogService);
                 this.loader.close();
-              },
-              () => {
-                this.loader.close();
-                this.getData();
-                this.selected = [];
-                this.snackBar.open("Items deleted.", 'close', { duration: 5000 });
+                this.loaderOpen = false;
               }
             );
           }
@@ -760,4 +812,13 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   toggleLabels(){
     this.multiActionsIconsOnly = !this.multiActionsIconsOnly;
   }
+
+  toggleExpandRow(row) {
+    //console.log('Toggled Expand Row!', row);
+    this.table.rowDetail.toggleExpandRow(row);
+  }
+
+  onDetailToggle(event) {
+    //console.log('Detail Toggled', event);
+}
 }

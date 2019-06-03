@@ -14,6 +14,13 @@ export const helptext_system_certificates = {
       placeholder: T("Type")
     },
 
+    isCSRonSystem: {
+      placeholder: T("CSR exists on this system"),
+      tooltip: T(
+        'Check this box if importing a certificate for which a CSR exists on this system'
+      )
+    },
+    
     signedby: {
       placeholder: T("Signing Certificate Authority"),
       tooltip: T(
@@ -127,6 +134,12 @@ export const helptext_system_certificates = {
       validation: [Validators.required]
     },
 
+    cert_csr: {
+      placeholder: T("Signing Request"),
+      tooltip: T("Paste the contents of your Certificate Signing Request here."),
+      validation: [Validators.required]
+    },
+
     privatekey: {
       placeholder: T("Private Key"),
       tooltip: T(
@@ -145,6 +158,7 @@ export const helptext_system_certificates = {
     passphrase2: {
       placeholder: T("Confirm Passphrase")
     }
+
   },
 
   edit: {
@@ -183,9 +197,35 @@ export const helptext_system_certificates = {
       action_export_certificate: T("Export Certificate"),
       action_export_private_key: T("Export Private Key"),
 
+      action_create_acme_certificate: T("Create ACME Certificate"),
+
       snackbar_open_window_message: T("Opening download window. Make sure pop-ups are enabled in the browser."),
       snackbar_open_window_action: T("Success"),
 
       action_delete: T("Delete")
+  },
+
+  acme: {
+    identifier: {
+      placeholder: T("identifier"),
+      tooltip: T('Internal identifier of the certificate. Only alphanumeric, "_" and "-" are allowed.')
+    },
+    tos: {
+      placeholder: T("Terms of Service"),
+      tooltip: T("Please accept terms of service for the given ACME Server.")
+    },
+    renew_day: {
+      placeholder: T("Renew certificate day"),
+      tooltip: T("Number of days to renew certificate before expiring"),
+      validation: [Validators.required, Validators.min(0)]
+    },
+    dir_uri: {
+      placeholder: T("ACME Server Directory URI"),
+      tooltip: T("Please specify URI of ACME Server Directory.")
+    },
+    authenticator: {
+      placeholder: T("Authenticator"),
+      tooltip: T("Specify Authenticator to be used")
+    }
   }
 };
