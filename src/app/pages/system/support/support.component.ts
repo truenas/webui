@@ -5,18 +5,21 @@ import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { RestService, WebSocketService } from '../../../services/';
 import { DialogService } from '../../../services/dialog.service';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { SnackbarService } from '../../../services/snackbar.service';
 
 
 @Component({
   selector : 'app-support',
   template : `
   <entity-form [conf]="this"></entity-form>
-  `
+  `,
+  providers: [SnackbarService]
 })
 export class SupportComponent {
   public username: any;
@@ -36,20 +39,6 @@ export class SupportComponent {
   public product_image = '';
   public scrshot: any;
   public subs: any;
-
-  public licenseForm: DialogFormConfiguration = {
-    title: "Update License",
-    fieldConfig: [
-      {
-        type: 'textarea',
-        name: 'license',
-        placeholder: 'License'
-      }
-    ],
-    // method_rest: William says update method not yet ported from legacy UI  - DM filed a ticket,
-    saveButtonText: "Save License"
-  }
-
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
     {
@@ -370,7 +359,8 @@ export class SupportComponent {
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected _injector: Injector,
               protected _appRef: ApplicationRef, protected dialog: MatDialog,
-              private sanitizer: DomSanitizer, protected dialogService: DialogService)
+              private sanitizer: DomSanitizer, protected dialogService: DialogService,
+              public loader: AppLoaderService, private snackbar: SnackbarService)
               {}
 
   afterInit(entityEdit: any) {
@@ -400,7 +390,39 @@ export class SupportComponent {
           id : 'update_license',
           name : 'Update License',
           function : () => {
-            this.dialogService.dialogForm(this.licenseForm);
+            const localLoader = this.loader;
+            const localWS = this.ws;
+            const localSnackbar = this.snackbar;
+            const localDialogService = this.dialogService;
+            
+            const licenseForm: DialogFormConfiguration = {
+              title: "Update License",
+              fieldConfig: [
+                {
+                  type: 'textarea',
+                  name: 'license',
+                  placeholder: 'License'
+                }
+              ],
+              // waiting for middleware - ticket = NAS-101724
+              saveButtonText: "Save License",
+              customSubmit: function (entityDialog) {
+                const value = entityDialog.formValue;
+                // console.log(value)
+                localLoader.open();
+                localWS.call('system.license_update', value).subscribe((res) => {
+                  localLoader.close();
+                  localSnackbar.open('License has been updated.', 'close', { duration: 5000 });
+                }, 
+                (err) => {
+                  localLoader.close();
+                  entityDialog.dialogRef.close(true);
+                  localDialogService.errorReport(("Error Unlocking"), err.reason, err.trace.formatted);
+                });
+              }
+              
+            }
+            this.dialogService.dialogForm(licenseForm);
           }
         },{
           id : 'userguide',
