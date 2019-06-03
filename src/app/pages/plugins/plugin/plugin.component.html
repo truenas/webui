@@ -29,7 +29,7 @@
             <button 
                 *ngIf="action.visible" 
                 mat-menu-item (click)="action.onClick()" 
-                id="plugins_{{action.id}}" 
+                id="plugins_{{action.name}}_{{action.id}}" 
                 class="plugin-buttons" 
                 fxFlex
             >
