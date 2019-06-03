@@ -24,7 +24,7 @@ import { T } from '../../../../translate-marker';
 })
 export class WidgetCpuHistoryComponent extends WidgetChartComponent implements AfterViewInit, OnDestroy {
 
-  //@ViewChild('chartCpu') chartCpu: ViewChartLineComponent;
+  //@ViewChild('chartCpu', { static: true}) chartCpu: ViewChartLineComponent;
   public title:string = T("CPU Usage");
   public subtitle:string = T("% of all cores");
   //public widgetColorCssVar = "var(--primary)";

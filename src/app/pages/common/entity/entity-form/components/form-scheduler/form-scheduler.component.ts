@@ -34,10 +34,10 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   public fieldShow: string;
   public disablePrevious:boolean;
 
-  @ViewChild('calendar', {read:ElementRef}) calendar: ElementRef;
-  @ViewChild('calendar') calendarComp:MatMonthView<any>;
-  @ViewChild('trigger') trigger: ElementRef;
-  @ViewChild('preview'/*, {read:ElementRef}*/) schedulePreview: ElementRef;
+  @ViewChild('calendar', { static: true, read:ElementRef}) calendar: ElementRef;
+  @ViewChild('calendar', { static: true}) calendarComp:MatMonthView<any>;
+  @ViewChild('trigger', { static: true}) trigger: ElementRef;
+  @ViewChild('preview', { static: true}/*, {read:ElementRef}*/) schedulePreview: ElementRef;
 
   // Popup Controls
   /*public minutesCtl = new FormControl('', [Validators.required, Validators.pattern]);

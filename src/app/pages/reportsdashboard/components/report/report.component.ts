@@ -45,7 +45,7 @@ interface LineChartConfig {
 export class ReportComponent extends WidgetComponent implements AfterViewInit, OnChanges ,OnDestroy {
 
   //Chart
-  @ViewChild(LineChartComponent) lineChart:LineChartComponent;
+  @ViewChild(LineChartComponent, { static: false}) lineChart:LineChartComponent;
 
   // Labels
   @Input() title:string = T("CPU Usage");

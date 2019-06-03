@@ -49,10 +49,10 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public original_disks: Array < any >;
   public orig_suggestable_disks: Array < any >;
   public error: string;
-  @ViewChild('disksdnd') disksdnd;
+  @ViewChild('disksdnd', { static: true}) disksdnd;
   @ViewChildren(VdevComponent) vdevComponents: QueryList < VdevComponent > ;
   @ViewChildren(DiskComponent) diskComponents: QueryList < DiskComponent > ;
-  @ViewChild(DatatableComponent) table: DatatableComponent;
+  @ViewChild(DatatableComponent, { static: false}) table: DatatableComponent;
   public temp = [];
 
   public name: string;

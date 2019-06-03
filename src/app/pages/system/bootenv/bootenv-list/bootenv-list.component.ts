@@ -18,7 +18,7 @@ import { EntityUtils } from '../../../common/entity/utils';
 })
 export class BootEnvironmentListComponent {
 
-  @ViewChild('scrubIntervalEvent') scrubIntervalEvent: ElementRef;
+  @ViewChild('scrubIntervalEvent', { static: true}) scrubIntervalEvent: ElementRef;
 
   public title = "Boot Environments";
   protected resource_name: string = 'system/bootenv';

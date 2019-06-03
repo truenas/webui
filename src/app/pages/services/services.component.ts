@@ -19,11 +19,11 @@ import { T } from '../../translate-marker';
 })
 export class Services implements OnInit {
 
-  @ViewChild('filter') filter: ElementRef;
+  @ViewChild('filter', { static: true}) filter: ElementRef;
   @Input() searchTerm: string = '';
   @Input() cards = []; // Display List
-  @ViewChild('viewMode') viewMode: MatButtonToggleGroup;
-  @ViewChild('serviceStatus') serviceStatus: MatSlideToggle;
+  @ViewChild('viewMode', { static: true}) viewMode: MatButtonToggleGroup;
+  @ViewChild('serviceStatus', { static: true}) serviceStatus: MatSlideToggle;
   focusedVM: string;
 
   public services: any[];

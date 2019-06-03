@@ -3,7 +3,7 @@ import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Component, AfterViewChecked, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { Subscription } from "rxjs";
-import { MediaChange, ObservableMedia } from "@angular/flex-layout";
+import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { MatSidenav, MatDialog, MatDialogRef } from '@angular/material';
 import * as Ps from 'perfect-scrollbar';
@@ -32,14 +32,14 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   public currentTheme: string = "";
   // we will just have to add to this list as more languages are added
 
-  @ViewChild(MatSidenav) private sideNave: MatSidenav;
-  @ViewChild('footerBarScroll') private footerBarScroll: ElementRef;
+  @ViewChild(MatSidenav, { static: false}) private sideNave: MatSidenav;
+  @ViewChild('footerBarScroll', { static: true}) private footerBarScroll: ElementRef;
   freenasThemes;
 
   constructor(private router: Router,
     public core: CoreService,
     public themeService: ThemeService,
-    private media: ObservableMedia,
+    private media: MediaObserver,
     protected rest: RestService,
     protected ws: WebSocketService,
     public language: LanguageService,
@@ -56,7 +56,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       }
     });
     // Watches screen size and open/close sidenav
-    this.screenSizeWatcher = media.subscribe((change: MediaChange) => {
+    this.screenSizeWatcher = media.media$.subscribe((change: MediaChange) => {
       this.isMobile = (change.mqAlias == 'xs') || (change.mqAlias == 'sm');
       this.updateSidenav();
     });
