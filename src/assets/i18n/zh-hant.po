@@ -54,6 +54,11 @@ msgid ""
 "encrypted pools, download and safely store the recovery key."
 msgstr ""
 
+msgid ""
+"'%h' will be replaced with your hostname and '%i' will be replaced with "
+"your IP address."
+msgstr ""
+
 msgid "'. All data on that pool was destroyed."
 msgstr ""
 
@@ -505,6 +510,9 @@ msgstr "噪音位準"
 
 msgid "Activate"
 msgstr "啟用"
+
+msgid "Activate Pool for Jail Manager"
+msgstr ""
 
 msgid ""
 "Activates the configuration. Unset to disable the configuration without "
@@ -1277,6 +1285,9 @@ msgstr "網路客戶端可瀏覽"
 msgid "Browse"
 msgstr "瀏覽"
 
+msgid "Browse a Collection"
+msgstr ""
+
 msgid "Browse to a CD-ROM file present on the system storage."
 msgstr ""
 
@@ -1667,18 +1678,6 @@ msgid "Choose an encryption mode."
 msgstr "選擇加密模式。"
 
 msgid ""
-"Choose an existing ZFS Pool to allow the                               "
-"iocage jail manager to create a /iocage                               "
-"dataset in the selected pool. The '/iocage'                               "
-"dataset may not be visible until after the                               "
-"first jail is created. iocage uses this                               "
-"dataset to store FreeBSD RELEASES and all                               "
-"other jail data. To create a new ZFS Pool,                               "
-"navigate Storage/Volumes and click 'Create                               "
-"ZFS Pool'."
-msgstr ""
-
-msgid ""
 "Choose between <i>Off</i>, <a "
 "href=\"http://info.ssl.com/article.aspx?id=10241\" "
 "target=\"_blank\">SSL</a> or <a "
@@ -1966,6 +1965,9 @@ msgstr "壓縮層級"
 msgid "Config"
 msgstr "設定"
 
+msgid "Config Pool for Jail Manager"
+msgstr ""
+
 msgid ""
 "Configure IPv4 networking or internet access for the jail. Enter the IPv4 "
 "address for <a href=\"https://www.freebsd.org/cgi/man.cgi?query=vnet\" "
@@ -2213,8 +2215,14 @@ msgstr "例行作業 (Cron Jobs)"
 msgid "Current Password"
 msgstr "現行密碼"
 
+msgid "Custom Path"
+msgstr ""
+
 msgid "Custom Properties"
 msgstr "客製化屬性"
+
+msgid "Custom Server"
+msgstr ""
 
 msgid "DHCP"
 msgstr "DHCP"
@@ -3037,6 +3045,12 @@ msgstr "結束"
 
 msgid "End Time"
 msgstr "結束時間"
+
+msgid "End User License Agreement - TrueNAS"
+msgstr ""
+
+msgid "End User License Agreement Accepted"
+msgstr ""
 
 msgid ""
 "Ending UID/GID number for which this system is authoritative. UID/GID "
@@ -4226,6 +4240,9 @@ msgstr ""
 msgid "Hostname (Virtual)"
 msgstr ""
 
+msgid "Hostname for your custom DDNS provider"
+msgstr ""
+
 msgid "Hostname or IP address of SMTP server to use for sending this email."
 msgstr ""
 
@@ -4270,6 +4287,9 @@ msgstr ""
 msgid "How often the IP is checked in seconds."
 msgstr ""
 
+msgid "I Agree"
+msgstr ""
+
 msgid "I Understand"
 msgstr "我了解"
 
@@ -4278,6 +4298,9 @@ msgstr ""
 
 msgid "ID & Groups"
 msgstr "ID 與群組"
+
+msgid "INSTALL"
+msgstr ""
 
 msgid "IP"
 msgstr ""
@@ -4615,6 +4638,11 @@ msgstr ""
 msgid "Jails cannot be changed while running."
 msgstr "當 Jail 執行中無法進行變更。"
 
+msgid ""
+"Jails cannot be created or managed untill a pool is present for storing "
+"them. Please create a pool first"
+msgstr ""
+
 msgid "KDC"
 msgstr ""
 
@@ -4779,9 +4807,6 @@ msgstr ""
 msgid "Link State"
 msgstr ""
 
-msgid "List Available Plugins from Branch:"
-msgstr ""
-
 msgid "List of system services to restart when the pool is unlocked."
 msgstr ""
 
@@ -4868,6 +4893,9 @@ msgstr ""
 msgid "MAC Address"
 msgstr "MAC 位址"
 
+msgid "MANAGE"
+msgstr ""
+
 msgid "MOTD Banner"
 msgstr "公告標題"
 
@@ -4885,9 +4913,6 @@ msgstr ""
 
 msgid "Mail Server Port"
 msgstr "郵件伺服器埠號"
-
-msgid "Management"
-msgstr "管理"
 
 msgid "Manycast"
 msgstr "多點廣播"
@@ -5243,6 +5268,9 @@ msgstr "NetBIOS 別名"
 msgid "Netbios Name"
 msgstr "Netbios 名稱"
 
+msgid "Netbios Name (Storage Controller 2)"
+msgstr ""
+
 msgid ""
 "Netbios Name of this NAS. This name must differ from the <i>Workgroup</i> "
 "name and be no greater than 15 characters."
@@ -5355,6 +5383,9 @@ msgstr "否"
 msgid "No Communication Warning Time"
 msgstr ""
 
+msgid "No Pool Exist"
+msgstr ""
+
 msgid "No Stat"
 msgstr ""
 
@@ -5388,9 +5419,6 @@ msgid "Note"
 msgstr "備註"
 
 msgid "Note: Legacy jails created before FreeNAS 11.2 must be managed from the"
-msgstr ""
-
-msgid "Note: Legacy plugins created before FreeNAS 11.2 must be managed from the"
 msgstr ""
 
 msgid "Notes"
@@ -5496,9 +5524,6 @@ msgid ""
 "compatibility with older versions of Windows, but is not recommended and "
 "should not be used on untrusted networks."
 msgstr ""
-
-msgid "Official"
-msgstr "官方"
 
 msgid "Offline"
 msgstr "離線"
@@ -5883,8 +5908,8 @@ msgid "Preserve permissions"
 msgstr ""
 
 msgid ""
-"Prevent copied source snapshots from being deleted on the destination "
-"system if the replication task fails."
+"Prevent source system snapshots that have failed replication from being "
+"automatically removed by the snapshot retention policy."
 msgstr ""
 
 msgid "Preview JSON Service Account Key"
@@ -5983,6 +6008,12 @@ msgstr ""
 msgid "RCTL Limits"
 msgstr ""
 
+msgid "REGISTER"
+msgstr ""
+
+msgid "RESTART"
+msgstr ""
+
 msgid "RRDTool load5"
 msgstr ""
 
@@ -6077,9 +6108,6 @@ msgid "Recursive"
 msgstr "遞迴"
 
 msgid "Redirecting to download. Make sure pop-ups are enabled in the browser."
-msgstr ""
-
-msgid "Register"
 msgstr ""
 
 msgid "Release"
@@ -6240,6 +6268,9 @@ msgstr ""
 msgid "Reset Config"
 msgstr "重置設定"
 
+msgid "Reset Layout"
+msgstr ""
+
 msgid "Reset font size to default value"
 msgstr "重置字型大小為預設值"
 
@@ -6393,6 +6424,12 @@ msgid "SSH port number. Leave empty to use the default port <i>22</i>."
 msgstr "SSH 連接埠號，保持空白則為持預設埠號 <i>22</i>。"
 
 msgid "SSL"
+msgstr ""
+
+msgid "START"
+msgstr ""
+
+msgid "STOP"
 msgstr ""
 
 msgid "SUDO Suffix"
@@ -8648,7 +8685,13 @@ msgstr "參數調整"
 msgid "Type"
 msgstr "類型"
 
+msgid "UNINSTALL"
+msgstr ""
+
 msgid "UNIX Charset"
+msgstr ""
+
+msgid "UPDATE"
 msgstr ""
 
 msgid "UPS Mode"
@@ -8989,9 +9032,6 @@ msgstr "驗證認證"
 
 msgid "Verify passphrase"
 msgstr "驗證複雜密碼"
-
-msgid "Version"
-msgstr "版本"
 
 msgid "View"
 msgstr "檢視"
