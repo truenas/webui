@@ -1,4 +1,4 @@
-<div class="plugin-expaned-pannel">
+<div class="plugin-expanded-panel">
     <section class="info">
         <div fxLayout="row">
             <div>
@@ -24,10 +24,16 @@
         </div>
     </section>
     <mat-divider></mat-divider>
-    <section class="action-buttons" fxLayout="row">
+    <section class="action-buttons plugin-action-buttons" fxLayout="row">
         <div *ngFor="let action of actions">
-            <button *ngIf="action.visible" mat-menu-item (click)="action.onClick()" fxFlex>
-                <mat-icon>{{action.icon}}</mat-icon>
+            <button 
+                *ngIf="action.visible" 
+                mat-menu-item (click)="action.onClick()" 
+                id="plugins_{{action.name}}_{{action.id}}" 
+                class="plugin-buttons" 
+                fxFlex
+            >
+                <mat-icon class="plugin-icons">{{action.icon}}</mat-icon>
                 <span>{{action.label | translate}}</span>
             </button>
         </div>

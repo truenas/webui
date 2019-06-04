@@ -111,6 +111,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public currentPreferredCols: Array<any> = []; // to store current choice of what cols to view
   public anythingClicked: boolean = false; // stores a pristine/touched state for checkboxes
 
+  public startingHeight: number;
+  public expandedRows = 0;
+
   public rows: any[] = [];
   public currentRows: any[] = []; // Rows applying filter
   public seenRows: any[] = [];
@@ -815,7 +818,17 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   toggleExpandRow(row) {
     //console.log('Toggled Expand Row!', row);
+    if (!this.startingHeight) {
+      this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
+    }  
     this.table.rowDetail.toggleExpandRow(row);
+    setTimeout(() => {
+      this.expandedRows = (document.querySelectorAll('.datatable-row-detail').length);
+      let newHeight = (this.expandedRows * 100) + this.startingHeight;
+      let heightStr = `height: ${newHeight}px`;
+      document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
+    }, 100)
+    
   }
 
   onDetailToggle(event) {
