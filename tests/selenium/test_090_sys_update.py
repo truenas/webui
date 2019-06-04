@@ -20,7 +20,7 @@ xpaths = {
     'buttonChecknow': "/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-update/mat-card/div/div[3]/div/button[1]",
     'breadcrumbBar1': "//div[@id='breadcrumb-bar']/ul/li/a",
     'breadcrumbBar2': "//*[@id='breadcrumb-bar']/ul/li[2]/a",
-    'toDashboard': "//span[contains(.,'Dashboard')]",
+    'toDashboard': "//span[contains(.,'Dashboard')]"
 }
 
 

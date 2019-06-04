@@ -59,6 +59,11 @@ msgid ""
 "encrypted pools, download and safely store the recovery key."
 msgstr "’已加密！如果加密存储池的密码短语丢失，数据将会无法恢复！导出/断开加密存储池前请下载保存恢复密钥。"
 
+msgid ""
+"'%h' will be replaced with your hostname and '%i' will be replaced with "
+"your IP address."
+msgstr ""
+
 msgid "'. All data on that pool was destroyed."
 msgstr "’。所有此存储池的数据已被销毁。"
 
@@ -559,6 +564,9 @@ msgstr "声学等级"
 
 msgid "Activate"
 msgstr "启用"
+
+msgid "Activate Pool for Jail Manager"
+msgstr ""
 
 msgid ""
 "Activates the configuration. Unset to disable the configuration without "
@@ -1377,6 +1385,9 @@ msgstr "允许网络客户端浏览"
 msgid "Browse"
 msgstr "浏览"
 
+msgid "Browse a Collection"
+msgstr ""
+
 msgid "Browse to a CD-ROM file present on the system storage."
 msgstr "浏览一个在系统存储上的CD-ROM文件。"
 
@@ -1798,25 +1809,6 @@ msgid "Choose an encryption mode."
 msgstr "选择一个加密模式。"
 
 msgid ""
-"Choose an existing ZFS Pool to allow the                               "
-"iocage jail manager to create a /iocage                               "
-"dataset in the selected pool. The '/iocage'                               "
-"dataset may not be visible until after the                               "
-"first jail is created. iocage uses this                               "
-"dataset to store FreeBSD RELEASES and all                               "
-"other jail data. To create a new ZFS Pool,                               "
-"navigate Storage/Volumes and click 'Create                               "
-"ZFS Pool'."
-msgstr ""
-"Choose an existing ZFS Pool to allow the                               "
-"iocage jail manager to create a /iocage                               "
-"dataset in the selected pool. The '/iocage'                               "
-"dataset may not be visible until after the                               "
-"first jail is created. iocage使用这个数据集来存储FreeBSD发行版和所有其他的Jail数据。To create a "
-"new ZFS Pool,                               navigate Storage/Volumes and "
-"click 'Create                               ZFS Pool'."
-
-msgid ""
 "Choose between <i>Off</i>, <a "
 "href=\"http://info.ssl.com/article.aspx?id=10241\" "
 "target=\"_blank\">SSL</a> or <a "
@@ -2123,6 +2115,9 @@ msgstr "压缩级别"
 msgid "Config"
 msgstr "设置"
 
+msgid "Config Pool for Jail Manager"
+msgstr ""
+
 msgid ""
 "Configure IPv4 networking or internet access for the jail. Enter the IPv4 "
 "address for <a href=\"https://www.freebsd.org/cgi/man.cgi?query=vnet\" "
@@ -2409,8 +2404,14 @@ msgstr "计划任务列表"
 msgid "Current Password"
 msgstr "当前密码"
 
+msgid "Custom Path"
+msgstr ""
+
 msgid "Custom Properties"
 msgstr "自定义属性"
+
+msgid "Custom Server"
+msgstr ""
 
 msgid "DHCP"
 msgstr "DHCP"
@@ -3252,6 +3253,12 @@ msgstr "结束"
 
 msgid "End Time"
 msgstr "结束时间"
+
+msgid "End User License Agreement - TrueNAS"
+msgstr ""
+
+msgid "End User License Agreement Accepted"
+msgstr ""
 
 msgid ""
 "Ending UID/GID number for which this system is authoritative. UID/GID "
@@ -4475,6 +4482,9 @@ msgstr ""
 msgid "Hostname (Virtual)"
 msgstr ""
 
+msgid "Hostname for your custom DDNS provider"
+msgstr ""
+
 msgid "Hostname or IP address of SMTP server to use for sending this email."
 msgstr ""
 
@@ -4519,6 +4529,9 @@ msgstr ""
 msgid "How often the IP is checked in seconds."
 msgstr ""
 
+msgid "I Agree"
+msgstr ""
+
 msgid "I Understand"
 msgstr "我理解"
 
@@ -4526,6 +4539,9 @@ msgid "IBurst"
 msgstr "IBurst"
 
 msgid "ID & Groups"
+msgstr ""
+
+msgid "INSTALL"
 msgstr ""
 
 msgid "IP"
@@ -4870,6 +4886,11 @@ msgstr "Jails"
 msgid "Jails cannot be changed while running."
 msgstr "Jails不能在运行时被修改。"
 
+msgid ""
+"Jails cannot be created or managed untill a pool is present for storing "
+"them. Please create a pool first"
+msgstr ""
+
 msgid "KDC"
 msgstr "KDC"
 
@@ -5036,9 +5057,6 @@ msgstr ""
 msgid "Link State"
 msgstr ""
 
-msgid "List Available Plugins from Branch:"
-msgstr ""
-
 msgid "List of system services to restart when the pool is unlocked."
 msgstr ""
 
@@ -5129,6 +5147,9 @@ msgstr ""
 msgid "MAC Address"
 msgstr "MAC地址"
 
+msgid "MANAGE"
+msgstr ""
+
 msgid "MOTD Banner"
 msgstr "MOTD横幅"
 
@@ -5146,9 +5167,6 @@ msgstr "设备后缀"
 
 msgid "Mail Server Port"
 msgstr "邮件服务器端口"
-
-msgid "Management"
-msgstr "管理"
 
 msgid "Manycast"
 msgstr "多播"
@@ -5522,6 +5540,9 @@ msgstr "NetBIOS 别名"
 msgid "Netbios Name"
 msgstr "NetBIOS 名称"
 
+msgid "Netbios Name (Storage Controller 2)"
+msgstr ""
+
 msgid ""
 "Netbios Name of this NAS. This name must differ from the <i>Workgroup</i> "
 "name and be no greater than 15 characters."
@@ -5636,6 +5657,9 @@ msgstr "否"
 msgid "No Communication Warning Time"
 msgstr ""
 
+msgid "No Pool Exist"
+msgstr ""
+
 msgid "No Stat"
 msgstr "没有数据"
 
@@ -5670,9 +5694,6 @@ msgstr "备注"
 
 msgid "Note: Legacy jails created before FreeNAS 11.2 must be managed from the"
 msgstr "备注：管理在FreeNas 11.2 之前版本创建的经典Jail必须从"
-
-msgid "Note: Legacy plugins created before FreeNAS 11.2 must be managed from the"
-msgstr "备注：管理在FreeNas 11.2 之前版本创建的经典插件必须从"
 
 msgid "Notes"
 msgstr "备注"
@@ -5787,9 +5808,6 @@ msgstr ""
 "insecure and vulnerable NTLMv1 encryption. This setting allows backward "
 "compatibility with older versions of Windows, but is not recommended and "
 "should not be used on untrusted networks."
-
-msgid "Official"
-msgstr ""
 
 msgid "Offline"
 msgstr "离线"
@@ -6178,8 +6196,8 @@ msgid "Preserve permissions"
 msgstr "保留权限"
 
 msgid ""
-"Prevent copied source snapshots from being deleted on the destination "
-"system if the replication task fails."
+"Prevent source system snapshots that have failed replication from being "
+"automatically removed by the snapshot retention policy."
 msgstr ""
 
 msgid "Preview JSON Service Account Key"
@@ -6280,6 +6298,12 @@ msgstr ""
 msgid "RCTL Limits"
 msgstr ""
 
+msgid "REGISTER"
+msgstr ""
+
+msgid "RESTART"
+msgstr ""
+
 msgid "RRDTool load5"
 msgstr ""
 
@@ -6375,9 +6399,6 @@ msgstr "循环"
 
 msgid "Redirecting to download. Make sure pop-ups are enabled in the browser."
 msgstr "重定向到下载。确认浏览器的弹出窗口被启用。"
-
-msgid "Register"
-msgstr "注册"
 
 msgid "Release"
 msgstr "发行"
@@ -6536,6 +6557,9 @@ msgstr "此数据集及其子数据集的保留空间"
 
 msgid "Reset Config"
 msgstr "重置设置"
+
+msgid "Reset Layout"
+msgstr ""
 
 msgid "Reset font size to default value"
 msgstr "重置字体大小到默认值"
@@ -6696,6 +6720,12 @@ msgid "SSH port number. Leave empty to use the default port <i>22</i>."
 msgstr "SSH端口号留空来使用默认端口<i>22</i>。"
 
 msgid "SSL"
+msgstr ""
+
+msgid "START"
+msgstr ""
+
+msgid "STOP"
 msgstr ""
 
 msgid "SUDO Suffix"
@@ -9059,8 +9089,14 @@ msgstr "微调"
 msgid "Type"
 msgstr "类型"
 
+msgid "UNINSTALL"
+msgstr ""
+
 msgid "UNIX Charset"
 msgstr "UNIX 字符集"
+
+msgid "UPDATE"
+msgstr ""
 
 msgid "UPS Mode"
 msgstr "UPS 模式"
@@ -9404,9 +9440,6 @@ msgstr "验证凭据"
 
 msgid "Verify passphrase"
 msgstr "确认密码"
-
-msgid "Version"
-msgstr "版本"
 
 msgid "View"
 msgstr "查看"

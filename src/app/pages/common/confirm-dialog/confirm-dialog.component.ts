@@ -20,6 +20,7 @@ export class ConfirmDialog {
   public method: string;
   public data: string;
   public tooltip: string;
+  public hideCancel = false;
   @Output() switchSelectionEmitter = new EventEmitter<any>();
 
   constructor(public dialogRef: MatDialogRef < ConfirmDialog >, protected translate: TranslateService ) {
