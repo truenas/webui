@@ -31,9 +31,8 @@ export class ReplicationListComponent {
         { name: 'Target Dataset', prop: 'target_dataset' },
         { name: 'Recursive', prop: 'recursive' },
         { name: 'Auto', prop: 'auto' },
-        { name: 'Logging Level', prop: 'logging_level' },
         { name: 'Enabled', prop: 'enabled' },
-        { name: 'State', prop: 'task_state' },
+        { name: 'State', prop: 'task_state', state: 'state' },
         { name: 'Last Snapshot', prop: 'task_last_snapshot' },
     ];
     public config: any = {
@@ -45,8 +44,12 @@ export class ReplicationListComponent {
         },
     };
 
-    constructor(private router: Router, private ws: WebSocketService, private dialog: DialogService,
-        private translateService: TranslateService, private snackbarService: SnackbarService) { }
+    constructor(
+        private router: Router,
+        private ws: WebSocketService,
+        private dialog: DialogService,
+        private translateService: TranslateService,
+        private snackbarService: SnackbarService) { }
 
     afterInit(entityList: any) {
         this.entityList = entityList;
@@ -54,7 +57,7 @@ export class ReplicationListComponent {
 
     dataHandler(entityList) {
         for (let i = 0; i < entityList.rows.length; i++) {
-            entityList.rows[i].task_state = entityList.rows[i].state.state + (entityList.rows[i].state.error ? ': ' + entityList.rows[i].state.error : '');
+            entityList.rows[i].task_state = entityList.rows[i].state.state;
             entityList.rows[i].task_last_snapshot = entityList.rows[i].state.last_snapshot;
             entityList.rows[i].ssh_connection = entityList.rows[i].ssh_credentials ? entityList.rows[i].ssh_credentials.name : '-';
         }
@@ -94,4 +97,9 @@ export class ReplicationListComponent {
         }]
     }
 
+    stateButton(row) {
+        if (row.state.error) {
+            this.dialog.errorReport(row.state.state, row.state.error);
+        }
+    }
 }
