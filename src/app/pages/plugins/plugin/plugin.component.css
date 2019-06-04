@@ -1,3 +1,6 @@
 section.info {
     padding: 10px 24px 10px 24px;
 }
+.plugin-buttons {
+    color: var(--fg2);
+}

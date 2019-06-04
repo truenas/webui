@@ -19,3 +19,12 @@ div.plugin-vinfo {
 mat-icon.official-plugin {
     vertical-align: middle;
 }
+
+figcaption {
+    color: var(--fg1);
+}
+
+#plugin-install-button {
+    background: var(--primary);
+    color: white;
+}

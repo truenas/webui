@@ -34,6 +34,7 @@ export class PluginComponent implements OnInit {
 
   getActions(row) {
     const actions = [{
+      name: row[1],
       id: "start",
       label: T("START"),
       icon: 'play_arrow',
@@ -55,6 +56,7 @@ export class PluginComponent implements OnInit {
       }
     },
     {
+      name: row[1],
       id: "restart",
       label: T("RESTART"),
       icon: 'replay',
@@ -76,6 +78,7 @@ export class PluginComponent implements OnInit {
       }
     },
     {
+      name: row[1],
       id: "stop",
       label: T("STOP"),
       icon: 'stop',
@@ -97,6 +100,7 @@ export class PluginComponent implements OnInit {
       }
     },
     {
+      name: row[1],
       id: "update",
       label: T("UPDATE"),
       icon: 'update',
@@ -112,6 +116,7 @@ export class PluginComponent implements OnInit {
       }
     },
     {
+      name: row[1],
       id: "management",
       label: T("MANAGE"),
       icon: 'settings',
@@ -121,6 +126,7 @@ export class PluginComponent implements OnInit {
       }
     },
     {
+      name: row[1],
       id: "delete",
       label: T("UNINSTALL"),
       icon: 'delete',
@@ -132,6 +138,7 @@ export class PluginComponent implements OnInit {
 
     if (row['1'].startsWith('asigra')) {
       actions.push({
+        name: row[1],
         id: "register",
         label: T('REGISTER'),
         icon: 'assignment',
