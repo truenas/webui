@@ -1,7 +1,6 @@
 import { Injectable, OnInit } from '@angular/core';
 import { RestService, WebSocketService } from 'app/services';
 import { Observable ,  Observer ,  Subject } from 'rxjs';
-import { monthsShort } from 'moment';
 
 export interface NotificationAlert {
   id: string;
