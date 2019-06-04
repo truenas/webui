@@ -1,6 +1,7 @@
 import { Injectable, OnInit } from '@angular/core';
 import { RestService, WebSocketService } from 'app/services';
 import { Observable ,  Observer ,  Subject } from 'rxjs';
+import { monthsShort } from 'moment';
 
 export interface NotificationAlert {
   id: string;
@@ -8,6 +9,8 @@ export interface NotificationAlert {
   icon: string;
   icon_tooltip: string;
   time: string;
+  time_locale: string;
+  timezone: string;
   route: string;
   color: string;
   level: string;
@@ -23,6 +26,8 @@ export class NotificationsService {
   private interval;
   private notifications: NotificationAlert[] = [];
   private running = false;
+  private locale = 'en-US';
+  private timeZone = 'UTC'
 
   constructor(private restService: RestService, private ws: WebSocketService) {
 
@@ -32,7 +37,12 @@ export class NotificationsService {
 
   initMe(): void {
 
-    this.ws.call('alert.list', []).subscribe((res) => {
+    this.ws.call('system.general.config', []).subscribe((res) => {
+      if (res.timezone !== 'WET' && res.timezone !== 'posixrules') {
+        this.timeZone = res.timezone;
+      }
+      
+      this.ws.call('alert.list', []).subscribe((res) => {
         this.notifications = this.alertsArrivedHandler(res);
         this.subject.next(this.notifications);
     });
@@ -51,7 +61,8 @@ export class NotificationsService {
           this.subject.next(this.notifications);
         }
       }, this.intervalPeriod);
-
+      
+    });
 
   }
 
@@ -137,6 +148,7 @@ export class NotificationsService {
     const level: string = <string>alertObj.level;
     const date: Date = new Date(alertObj.datetime.$date);
     const dateStr = date.toUTCString();
+    const dateStrLocale = date.toLocaleString(this.locale, {timeZone: this.timeZone});
     const one_shot: boolean = alertObj.one_shot;
     let icon_tooltip: string = <string>alertObj.level;
     //const dateStr = date.toDateString() + " " + this.getTimeAsString(date.getTime());
@@ -166,6 +178,8 @@ export class NotificationsService {
       icon: icon,
       icon_tooltip: icon_tooltip,
       time: dateStr,
+      time_locale: dateStrLocale,
+      timezone: this.timeZone,
       route: routeName,
       color: color,
       level: level,
