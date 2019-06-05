@@ -119,12 +119,7 @@ export class SshConnectionsFormComponent {
             name: 'private_key',
             placeholder: helptext.private_key_placeholder,
             tooltip: helptext.private_key_tooltip,
-            options: [
-                {
-                    label: 'Create New',
-                    value: 'NEW'
-                }
-            ],
+            options: [],
             value: '',
             required: true,
             validation: [Validators.required],
@@ -235,6 +230,11 @@ export class SshConnectionsFormComponent {
             if (params['pk']) {
                 this.queryCallOption[0].push(params['pk']);
                 _.find(this.fieldConfig, { name: 'setup_method' }).isHidden = true;
+            } else {
+                _.find(this.fieldConfig, { name: 'private_key'}).options.push({
+                    label: 'Create New',
+                    value: 'NEW'
+                });
             }
         });
     }
