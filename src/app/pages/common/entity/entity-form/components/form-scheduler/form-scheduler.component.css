@@ -41,7 +41,7 @@
 ul.schedule-list{
     margin-top: 16px;
     list-style-type: none;
-    max-height: 241px;
+    max-height: 231px;
     
     overflow-y: auto;
 }
