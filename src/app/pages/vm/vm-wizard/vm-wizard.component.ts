@@ -74,6 +74,16 @@ export class VMWizardComponent {
         blurEvent: this.blurEvent,
         parent: this
       },
+      {
+        name: 'time',
+        type: 'select',
+        placeholder: helptext.time_placeholder,
+        tooltip: helptext.time_tooltip,
+        validation: [Validators.required],
+        required: true,
+        value: 'LOCAL',
+        options: [{ label: helptext.time_local_text, value: 'LOCAL' }, { label: 'UTC', value: 'UTC' }]
+      },
       { type: 'select',
         name : 'bootloader',
         placeholder : helptext.bootloader_placeholder,
@@ -591,6 +601,7 @@ async customSubmit(value) {
 
     vm_payload["memory"]= value.memory;
     vm_payload["name"] = value.name;
+    vm_payload["time"]= value.time;
     vm_payload["vcpus"] = value.vcpus;
     vm_payload["memory"] = value.memory;
     vm_payload["bootloader"] = value.bootloader;
