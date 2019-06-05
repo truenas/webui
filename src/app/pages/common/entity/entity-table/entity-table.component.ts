@@ -244,6 +244,17 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
               if( typeof(value) === "boolean" || typeof(value) === "number") {
                 value = String(value).toLowerCase();
               }
+              if (Array.isArray(value)) {
+                let tempStr = '';
+                value.forEach((item) => {
+                  if (typeof(item) === 'string') {
+                    tempStr += ' ' + item;
+                  } else if (typeof(value) === "boolean" || typeof(value) === "number") {
+                    tempStr += String(value);
+                  }
+                })
+                value = tempStr.toLowerCase();
+              }
               if (typeof (value) === "string" && value.length > 0 &&
                 (<string>value.toLowerCase()).indexOf(filterValue.toLowerCase()) >= 0) {
                 newData.push(dataElement);
@@ -255,7 +266,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         } else {
           newData = this.rows;
         }
-
+        
         this.currentRows = newData;
         this.paginationPageIndex  = 0;
         this.setPaginationInfo();
