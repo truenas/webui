@@ -3,7 +3,6 @@
 import {Injectable} from '@angular/core';
 import {RestService} from './rest.service'
 import {WebSocketService} from './ws.service';
-import { tap } from 'rxjs/operators';
 
 @Injectable()
 export class NetworkService {
