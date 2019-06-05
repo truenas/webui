@@ -560,11 +560,17 @@ export class ReplicationWizardComponent {
         this.entityWizard.formArray.controls[0].controls['transport'].valueChanges.subscribe((value) => {
             const ssh = value == 'SSH' ? true : false;
             this.disablefieldGroup(this.transportSSHnetcatFieldGroup, ssh, 0);
+            if (this.entityWizard.formArray.controls[0].controls['ssh_credentials'].value === 'NEW') {
+                this.disablefieldGroup(['cipher'], !ssh, 0);
+            } else if (this.entityWizard.formArray.controls[0].controls['ssh_credentials'].value != '' && this.entityWizard.formArray.controls[0].controls['ssh_credentials'].disabled) {
+                this.disablefieldGroup(['cipher'], false, 0);
+            }
         });
         this.entityWizard.formArray.controls[0].controls['ssh_credentials'].valueChanges.subscribe((value) => {
             const newSSH = value == 'NEW' ? true : false;
             this.disablefieldGroup([...this.sshFieldGroup, ...this.semiSSHFieldGroup, ...this.manualSSHFieldGroup], !newSSH, 0);
             if (newSSH) {
+                this.disablefieldGroup(['cipher'], this.entityWizard.formArray.controls[0].controls['transport'].value === 'SSH+NETCAT', 0);
                 this.entityWizard.formArray.controls[0].controls['setup_method'].setValue(this.entityWizard.formArray.controls[0].controls['setup_method'].value);
             }
         });
