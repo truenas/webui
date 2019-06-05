@@ -19,6 +19,7 @@
       </form>
       </div -->
       <span fxFlex></span>
+      <span class="hostname-label" *ngIf="hostname" matTooltip="Hostname: {{hostname}}">HN: {{hostname}}</span>
       <!--loading icon-->
       <button *ngIf="pendingNetworkChanges" mat-icon-button id="network" matTooltip="Pending Network Changes" (click)="showNetworkChangesPending()" class="topbar-button-right">
         <mat-icon class="movement">device_hub</mat-icon>

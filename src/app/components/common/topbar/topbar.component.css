@@ -53,3 +53,9 @@
 .hidden-button {
   display: none;
 }
+
+.hostname-label {
+  margin-right: 20px;
+  font-weight: 400;
+  font-size: .75rem;
+}
