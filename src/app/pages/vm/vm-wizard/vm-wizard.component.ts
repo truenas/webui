@@ -471,7 +471,7 @@ export class VMWizardComponent {
     });
     this.populate_ds();
 
-    this.networkService.getAllNicChoices().subscribe((res) => {
+    this.networkService.getVmNicChoices().subscribe((res) => {
       this.nic_attach = _.find(this.wizardConfig[4].fieldConfig, {'name' : 'nic_attach'});
       this.nic_attach.options = Object.keys(res || {}).map(nicId => ({
         label: nicId,

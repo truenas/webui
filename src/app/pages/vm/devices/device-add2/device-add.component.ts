@@ -300,7 +300,7 @@ export class DeviceAddComponent implements OnInit {
     });
 
     // nic
-    this.networkService.getAllNicChoices().subscribe((res) => {
+    this.networkService.getVmNicChoices().subscribe((res) => {
       this.nic_attach = _.find(this.nicFieldConfig, { 'name': 'nic_attach' });
       this.nic_attach.options = Object.keys(res || {}).map(nicId => ({
         label: nicId,
