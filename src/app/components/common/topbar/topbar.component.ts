@@ -61,6 +61,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   ha_pending = false;
   is_ha = false;
   sysName: string = 'FreeNAS';
+  hostname: string;
   private user_check_in_prompted = false;
 
   constructor(
@@ -136,6 +137,10 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.resilveringDetails = '';
       }
     }, 2500);
+
+    this.ws.call('system.info').subscribe((res) => {
+      this.hostname = res.hostname;
+    })
   }
 
   ngOnDestroy() {
