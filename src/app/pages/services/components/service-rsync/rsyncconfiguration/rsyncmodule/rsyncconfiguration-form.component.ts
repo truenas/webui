@@ -25,7 +25,8 @@ export class RYSNCConfigurationFormComponent {
         name: 'name',
         placeholder: helptext.rsyncmod_name_placeholder,
         tooltip: helptext.rsyncmod_name_tooltip,
-        validation: Validators.required
+        validation: Validators.required,
+        required: true
     },
     {
         type: 'input',
@@ -40,7 +41,8 @@ export class RYSNCConfigurationFormComponent {
         placeholder: helptext.rsyncmod_path_placeholder,
         name: 'path',
         tooltip: helptext.rsyncmod_path_tooltip,
-        validation: helptext.rsyncmod_path_validation
+        validation: helptext.rsyncmod_path_validation,
+        required: true
     },
     {
         type: 'select',
@@ -48,6 +50,7 @@ export class RYSNCConfigurationFormComponent {
         placeholder: helptext.rsyncmod_mode_placeholder,
         options: helptext.rsyncmod_mode_options,
         tooltip: helptext.rsyncmod_mode_tooltip,
+        required: true
     },
     {
         type: 'input',
@@ -101,39 +104,18 @@ export class RYSNCConfigurationFormComponent {
     protected customFilter: any;
     constructor( protected ws: WebSocketService, protected router: Router,
         protected rest: RestService, protected route: ActivatedRoute) {
-
     }
-    preInit(entityForm: any) {
-        this.route.params.subscribe(params => {
-          this.pk = params['pk'];
-        });
-        this.entityForm = entityForm;
-      }
-    afterInit(entityForm: any) {
-        this.isNew = entityForm.isNew;
-        this.entityForm = entityForm;
 
-        this.route.params.subscribe(params => {
-          if (params['pk']) {
-            this.pk = parseInt(params['pk']);
-            this.ws.call('rsyncmod.query', [
-              [
-                ["id", "=", this.pk]
-              ]
-            ]).subscribe((res) => {
-              for (let item in res[0]) {
-                this.entityForm.formGroup.controls[item].setValue(res[0][item]); // not working
-              }
-            });
-          }
-        });
+    afterInit(entityForm: any) {
+        this.entityForm = entityForm;
+        this.isNew = entityForm.isNew;
 
         this.rsyncmod_user = _.find(this.fieldConfig, {name : "user"});
         entityForm.ws.call('user.query').subscribe((users) => {
             users.forEach((user) => {
                 this.rsyncmod_user.options.push({label : user.username, value : user.username})
-                });
             });
+        });
         this.rsyncmod_group = _.find(this.fieldConfig, {name : "group"});
         entityForm.ws.call('group.query').subscribe((groups) => {
             groups.forEach((group) => {
@@ -141,17 +123,46 @@ export class RYSNCConfigurationFormComponent {
             });
         });
 
-        if (!entityForm.isNew){
+        if (this.isNew) {
+            entityForm.formGroup.controls['mode'].setValue('RO');
+        }
+
+        this.route.params.subscribe(params => {
+            if (params['pk']) {
+              this.pk = parseInt(params['pk']);
+              this.ws.call('rsyncmod.query', [
+                [
+                  ["id", "=", this.pk]
+                ]
+              ]).subscribe((res) => {
+                for (const i in res[0]) {
+                    if (i !== 'id') {
+                        entityForm.formGroup.controls[i].setValue(res[0][i])
+                    }
+                };
+              });
+            };
+        });
+
+        if (!this.isNew) {
             entityForm.submitFunction = this.submitFunction;
-          }
+        };
     }
 
     beforeSubmit(data: any) {
-        data.hostsallow = data.hostsallow.split(/[ ,]+/);
-        data.hostsdeny = data.hostsdeny.split(/[ ,]+/);
+        if (!data.hostsallow || data.hostsallow === '') {
+            data.hostsallow = [];
+        } else if (typeof(data.hostsallow) === 'string') {
+            data.hostsallow = data.hostsallow.split(/[ ,]+/);
+        }
+        if (!data.hostsdeny || data.hostsdeny === '') {
+            data.hostsdeny = []
+        } else if (typeof(data.hostsdeny) === 'string') {
+            data.hostsdeny = data.hostsdeny.split(/[ ,]+/);
+        }
     }
 
     submitFunction(entityForm: any){
         return this.ws.call('rsyncmod.update', [this.pk, entityForm]);
-      }
+      };
 }
