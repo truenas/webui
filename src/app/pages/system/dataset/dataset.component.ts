@@ -20,26 +20,24 @@ export class DatasetComponent implements OnInit{
   protected volume_name: string = 'storage/volume';
   public formGroup: FormGroup;
 
-  public fieldConfig: FieldConfig[] = [{
-    type: 'select',
-    name: 'pool',
-    placeholder: helptext_system_dataset.pool.placeholder,
-    tooltip: helptext_system_dataset.pool.tooltip,
-    options: [
-      {label: '---', value: null},
-      { label: 'freenas-boot', value: 'freenas-boot' },
-    ]
-  },{
+  public fieldConfig: FieldConfig[] = [
+    {
+      type: 'select',
+      name: 'pool',
+      placeholder: helptext_system_dataset.pool.placeholder,
+      tooltip: helptext_system_dataset.pool.tooltip,
+      options: [
+        {label: '---', value: null},
+        { label: 'freenas-boot', value: 'freenas-boot' },
+      ]
+    },
+    {
       type: 'checkbox',
       name: 'syslog',
       placeholder: helptext_system_dataset.syslog.placeholder,
       tooltip : helptext_system_dataset.syslog.tooltip
-    },{
-      type: 'checkbox',
-      name: 'rrd',
-      placeholder: helptext_system_dataset.rrd.placeholder,
-      tooltip : helptext_system_dataset.rrd.tooltip
-    }];
+    }
+  ];
 
   private pool: any;
   private syslog: any;
