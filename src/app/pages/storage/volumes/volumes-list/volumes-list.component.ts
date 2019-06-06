@@ -332,6 +332,8 @@ export class VolumesListTableConfig implements InputTableConf {
     if (rowData.path) {
       rowDataPathSplit = rowData.path.split('/');
     }
+    let p1 = '';
+    let p2 = '';
     const actions = [];
     //workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
     if (rowData.type === 'zpool') {
@@ -339,6 +341,33 @@ export class VolumesListTableConfig implements InputTableConf {
       actions.push({
         label: T("Export/Disconnect"),
         onClick: (row1) => {
+          this.loader.open();
+          this.ws.call('pool.attachments', [row1.id]).subscribe((res) => {
+            if (res.length > 0) {
+              p1 = 'The following processes depend on this pool: ';
+              res.forEach((item) => {
+                p1 += `${item.type}(s): ${item.attachments}; `
+              })
+            }
+          
+            this.ws.call('pool.processes', [row1.id]).subscribe((res) => {
+              let services = [];
+              if (res.length > 0) {
+                res.forEach((item) => {
+                  if (item.service) {
+                    services.push(item);
+                  }
+                })
+                if (services.length > 0) {
+                  p2 = 'The following services are using this pool: ';
+                  services.forEach((service) =>  {
+                    p2 += `${service.service}; `
+                  })
+                }
+              }
+              this.loader.close();
+              console.log(p1)
+              console.log(p2)
 
           let encryptedStatus = row1.vol_encryptkey,
             localParentVol = this.parentVolumesListComponent,
@@ -353,6 +382,16 @@ export class VolumesListTableConfig implements InputTableConf {
               paraText: helptext.detachDialog_pool_detach_warning_paratext_a + row1.name +
                 helptext.detachDialog_pool_detach_warning_paratext_b,
               isHidden: false
+            }, {
+              type: 'paragraph',
+              name: 'pool_processes',
+              paraText: p1,
+              isHidden: p1 === '' ? true : false
+            }, {
+              type: 'paragraph',
+              name: 'pool_services',
+              paraText: p2,
+              isHidden: p2 === '' ? true : false
             }, {
               type: 'paragraph',
               name: 'pool_detach_warning',
@@ -417,6 +456,8 @@ export class VolumesListTableConfig implements InputTableConf {
             
           }
           this.dialogService.dialogFormWide(conf);
+        })
+      })
         }
       });
 
