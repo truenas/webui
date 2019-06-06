@@ -102,7 +102,13 @@ export const helptext_system_general = {
   },
 
   secretseed: {
-    placeholder: T("Export Password Secret Seed")
+    placeholder: T("Export Password Secret Seed"),
+    tooltip: T('')
+  },
+
+  poolkeys: {
+    placeholder: T("Export Pool Ecryption Keys"),
+    tooltip: T('')
   },
 
   crash_reporting: {
