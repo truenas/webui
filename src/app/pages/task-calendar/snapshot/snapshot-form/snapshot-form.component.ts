@@ -144,7 +144,8 @@ export class SnapshotFormComponent {
   }
 
   resourceTransformIncomingRestData(data) {
-    data['snapshot_picker'] = "0" + " " +
+    data['snapshot_picker'] = 
+      data.schedule.minute + " " +
       data.schedule.hour + " " +
       data.schedule.dom + " " +
       data.schedule.month + " " +
@@ -165,6 +166,7 @@ export class SnapshotFormComponent {
       dom: spl[2],
       month: spl[3],
       dow: spl[4],
+      minute: spl[0]
     };
     delete value['begin'];
     delete value['end'];

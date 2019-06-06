@@ -2,7 +2,9 @@ import { T } from '../../translate-marker';
 
 export default {
     name_placeholder: T('Name'),
-    name_tooltip: T('A unique name to identify this keypair.'),
+    name_tooltip: T('A unique name to identify this keypair. Automatically\
+ generated keypairs are named after the object that generated the keypair\
+ with "_keypair" appended to the name.'),
 
     private_key_placeholder: T('Private Key'),
     private_key_tooltip: T('See <i>Public key authentication</i> in <a href="https://www.freebsd.org/cgi/man.cgi?query=ssh"\

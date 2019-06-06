@@ -38,7 +38,7 @@
       <mat-divider id="spacer"></mat-divider>
       <ul class="schedule-list" #preview>
         <ng-container *ngFor="let date of generatedSchedule;">
-          <li>{{date}}</li>
+          <li>{{date | date: 'E LLL  d y h:mm z' }}</li>
         </ng-container>
       </ul>
     </div>

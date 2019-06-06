@@ -24,16 +24,15 @@ export class ReplicationListComponent {
 
     public columns: Array<any> = [
         { name: 'Name', prop: 'name' },
-        { name: 'Direction', prop: 'direction' },
-        { name: 'Transport', prop: 'transport' },
-        { name: 'SSH Connection', prop: 'ssh_connection' },
-        { name: 'Source Dataset', prop: 'source_datasets' },
-        { name: 'Target Dataset', prop: 'target_dataset' },
-        { name: 'Recursive', prop: 'recursive' },
-        { name: 'Auto', prop: 'auto' },
-        { name: 'Logging Level', prop: 'logging_level' },
+        { name: 'Direction', prop: 'direction', hidden: true},
+        { name: 'Transport', prop: 'transport', hidden: true},
+        { name: 'SSH Connection', prop: 'ssh_connection', hidden: true},
+        { name: 'Source Dataset', prop: 'source_datasets', hidden: true},
+        { name: 'Target Dataset', prop: 'target_dataset', hidden: true},
+        { name: 'Recursive', prop: 'recursive', hidden: true},
+        { name: 'Auto', prop: 'auto', hidden: true},
         { name: 'Enabled', prop: 'enabled' },
-        { name: 'State', prop: 'task_state' },
+        { name: 'State', prop: 'task_state', state: 'state' },
         { name: 'Last Snapshot', prop: 'task_last_snapshot' },
     ];
     public config: any = {
@@ -45,8 +44,12 @@ export class ReplicationListComponent {
         },
     };
 
-    constructor(private router: Router, private ws: WebSocketService, private dialog: DialogService,
-        private translateService: TranslateService, private snackbarService: SnackbarService) { }
+    constructor(
+        private router: Router,
+        private ws: WebSocketService,
+        private dialog: DialogService,
+        private translateService: TranslateService,
+        private snackbarService: SnackbarService) { }
 
     afterInit(entityList: any) {
         this.entityList = entityList;
@@ -54,7 +57,7 @@ export class ReplicationListComponent {
 
     dataHandler(entityList) {
         for (let i = 0; i < entityList.rows.length; i++) {
-            entityList.rows[i].task_state = entityList.rows[i].state.state + (entityList.rows[i].state.error ? ': ' + entityList.rows[i].state.error : '');
+            entityList.rows[i].task_state = entityList.rows[i].state.state;
             entityList.rows[i].task_last_snapshot = entityList.rows[i].state.last_snapshot;
             entityList.rows[i].ssh_connection = entityList.rows[i].ssh_credentials ? entityList.rows[i].ssh_credentials.name : '-';
         }
@@ -94,4 +97,9 @@ export class ReplicationListComponent {
         }]
     }
 
+    stateButton(row) {
+        if (row.state.error) {
+            this.dialog.errorReport(row.state.state, row.state.error);
+        }
+    }
 }

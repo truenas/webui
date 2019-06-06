@@ -26,6 +26,10 @@ name_placeholder : T('Name'),
 name_tooltip : T('Enter an alphanumeric name for the virtual machine.'),
 name_validation : [ Validators.required ],
 
+time_placeholder : T('System clock'),
+time_tooltip: T('VM system time. Default is <i>Local</i>.'),
+time_local_text: T('Local'),
+
 bootloader_placeholder : T('Boot Method'),
 bootloader_tooltip : T('Select <i>UEFI</i> for newer operating systems or\
  <i>UEFI-CSM</i> (Compatibility Support Mode) for\

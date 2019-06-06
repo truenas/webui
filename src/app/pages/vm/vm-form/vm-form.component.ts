@@ -1,12 +1,11 @@
-import {ApplicationRef, Component, Injector, OnInit, ViewContainerRef
-} from '@angular/core';
+import {ApplicationRef, Component, Injector} from '@angular/core';
 import {Router} from '@angular/router';
 import * as _ from 'lodash';
 import {
   FieldConfig
 } from '../../common/entity/entity-form/models/field-config.interface';
 
-
+import helptext from './../../../helptext/vm/vm-wizard/vm-wizard';
 import {RestService, WebSocketService} from '../../../services/';
 
 @Component({
@@ -24,6 +23,12 @@ export class VmFormComponent {
   public fieldConfig: FieldConfig[] = [
     { type: 'input', name: 'name', placeholder: 'Name'},
     { type: 'input', name : 'description', placeholder : 'Description'},
+    {
+      name: 'time',
+      placeholder: helptext.time_placeholder,
+      type: 'select',
+      options: [{ label: helptext.time_local_text, value: 'LOCAL'}, { label: 'UTC', value: 'UTC' }]
+    },
     { type : 'input', name: 'vcpus'  ,placeholder : 'Virtual CPUs'},
     { type: 'input', name : 'memory', placeholder : 'Memory Size (MiB)'},
     { type: 'select', name : 'bootloader', placeholder : 'Boot Loader Type', options: []},
@@ -39,14 +44,6 @@ export class VmFormComponent {
               ) {}
 
   afterInit(entityForm: any) {
-    // this.ws.call('vm.query',[[['id', '=', parseInt(entityForm.pk ,10)]]]).subscribe((res)=>{
-    //   if(res[0].status.state === "RUNNING") {
-    //     this.save_button_enabled = false
-    //   } else {
-    //     this.save_button_enabled = true;
-    //   }
-    // })
-
     entityForm.ws.call('notifier.choices', [ 'VM_BOOTLOADER' ]).subscribe((res) => {
           this.bootloader =_.find(this.fieldConfig, {name : 'bootloader'});
           for (let item of res){
