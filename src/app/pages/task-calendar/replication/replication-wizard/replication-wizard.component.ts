@@ -560,11 +560,17 @@ export class ReplicationWizardComponent {
         this.entityWizard.formArray.controls[0].controls['transport'].valueChanges.subscribe((value) => {
             const ssh = value == 'SSH' ? true : false;
             this.disablefieldGroup(this.transportSSHnetcatFieldGroup, ssh, 0);
+            if (this.entityWizard.formArray.controls[0].controls['ssh_credentials'].value === 'NEW') {
+                this.disablefieldGroup(['cipher'], !ssh, 0);
+            } else if (this.entityWizard.formArray.controls[0].controls['ssh_credentials'].value != '') {
+                this.disablefieldGroup(['cipher'], !this.entityWizard.formArray.controls[0].controls['ssh_credentials'].disabled, 0);
+            }
         });
         this.entityWizard.formArray.controls[0].controls['ssh_credentials'].valueChanges.subscribe((value) => {
             const newSSH = value == 'NEW' ? true : false;
             this.disablefieldGroup([...this.sshFieldGroup, ...this.semiSSHFieldGroup, ...this.manualSSHFieldGroup], !newSSH, 0);
             if (newSSH) {
+                this.disablefieldGroup(['cipher'], this.entityWizard.formArray.controls[0].controls['transport'].value === 'SSH+NETCAT', 0);
                 this.entityWizard.formArray.controls[0].controls['setup_method'].setValue(this.entityWizard.formArray.controls[0].controls['setup_method'].value);
             }
         });
@@ -670,7 +676,7 @@ export class ReplicationWizardComponent {
             Object.entries(this.entityWizard.formArray.controls[step].controls).forEach(([name, control]) => {
                 if (name in this.summaryObj) {
                     (<FormControl>control).valueChanges.subscribe(((value) => {
-                        if (value == undefined) {
+                        if (value == undefined || (<FormControl>control).disabled) {
                             this.summaryObj[name] = null;
                         } else {
                             this.summaryObj[name] = value;
