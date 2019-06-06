@@ -15,7 +15,7 @@
         <div class="mat-list-text">
           <h3 class="notific-title {{n.color}}">{{n.level}}</h3>
           <h4 class="message" [innerHTML]="n.message"></h4>
-          <small class="time" [innerHTML]="n.time"></small>
+          <small class="time">{{n.time_locale | date: 'E, d MMM y hh:mm:ss'}} ({{n.timezone}})</small>
           <a (click)="turnMeOff(n,$event)" class="dismiss">Dismiss</a>
         </div>
     </mat-list-item>
@@ -26,7 +26,7 @@
       <span style="font-weight: bolder;">Closed</span>
         <div class="mat-list-text">
           <h4 class="message" [innerHTML]="n.message"></h4>
-          <small class="time" [innerHTML]="n.time"></small>
+          <small class="time">{{n.time_locale | date: 'E, d MMM y hh:mm:ss'}} ({{n.timezone}})</small>
           <a (click)="turnMeOn(n, $event)" class="dismiss">Re-Open</a>
         </div>
     </mat-list-item>

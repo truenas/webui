@@ -436,13 +436,15 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   .mat-menu-content button.mat-menu-item:hover, 
-  .mat-menu-content button.mat-menu-item:hover .mat-icon:not([class="theme-picker-swatch-icon"]),
+  .mat-menu-content button.mat-menu-item:hover .mat-icon:not(.theme-picker-swatch-icon),
   .ngx-datatable .datatable-body .datatable-row-wrapper:hover,
+  .ngx-datatable .datatable-body .datatable-row-wrapper:hover .plugin-buttons,
+  .ngx-datatable .datatable-body .datatable-row-wrapper:hover .plugin-icons,
   .mat-menu-content button.mat-menu-item:focus, 
-  .mat-menu-content button.mat-menu-item:focus .mat-icon:not([class="theme-picker-swatch-icon"]),
+  .mat-menu-content button.mat-menu-item:focus .mat-icon:not(.theme-picker-swatch-icon),
   .ngx-datatable .datatable-body .datatable-row-wrapper:focus {
     @include variable(background, --primary, $primary, !important);
-    @include variable(color, --primary-txt, $primary-txt);
+    @include variable(color, --primary-txt, $primary-txt !important);
 }
 
 .ngx-datatable .datatable-body .datatable-row-wrapper:hover .mat-checkbox .mat-checkbox-frame {
@@ -1064,8 +1066,16 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     -webkit-appearance: none;
   }
   
+  .mat-autocomplete-panel {
+    background: var(--bg2) !important;
+  }
+
+  .mat-autocomplete-panel .mat-option:hover {
+    background-color: var(--primary) !important;
+  }
+
   .mat-autocomplete-panel .mat-option-text {
-    @include variable(color, --fg2, $fg2 !important);
+    color: var(--fg2) !important;
   }
 
   .ui-treetable tr:nth-child(even){
@@ -1217,6 +1227,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     .mat-card-actions {
       margin-left: 15px;
     }
+  }
+
+  entity-form form-combobox mat-form-field {
+    width: 50%;
+    min-width: 180px;
   }
 
  } // end of ix theme

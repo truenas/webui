@@ -48,11 +48,41 @@ export class ThemeService {
   private _customThemes: Theme[];
 
   public freenasThemes: Theme[] = [
-        {
+    {
+      name:'ix-official',
+      label: "iX Official",
+      labelSwatch:"blue",
+      description:'Official iX System Colors on Dark',
+      hasDarkLogo:false,
+      logoPath:'assets/images/light-logo.svg',
+      logoTextPath:'light-logo-text.svg',
+      favorite:false,
+      accentColors:['violet', 'orange', 'cyan', 'magenta', 'red', 'yellow', 'blue', 'green'],
+      primary:"var(--blue)",
+      //secondary:"var(--bg1)",
+      accent:"var(--cyan)",
+      bg1:'#252525',//'#171E26',
+      bg2:'#343333',//'#232d35',//'#1D262D',
+      fg1:'#aaaaaa',
+      fg2:'#cccccc',
+      'alt-bg1':'rgba(122,122,122,0.25)',
+      'alt-bg2':'#6F6E6C',
+      'alt-fg1':'#c1c1c1',
+      'alt-fg2':'#e1e1e1',
+      yellow:'#f0cb00',
+      orange:'#ee9302',
+      red:'#ff0013',
+      magenta:'#d238ff',
+      violet:'#c17ecc',
+      blue:'#0095D5',
+      cyan:'#00d0d6',
+      green:'#21C150'
+    },
+    {
       name:'ix-dark',
       label: "iX Dark",
       labelSwatch:"blue",
-      description:'iX System Colors on Dark',
+      description:'FreeNAS 11.2 default theme',
       hasDarkLogo:false,
       logoPath:'assets/images/light-logo.svg',
       logoTextPath:'light-logo-text.svg',
@@ -82,7 +112,7 @@ export class ThemeService {
       name:'ix-blue',
       label: "iX Blue",
       labelSwatch:"blue",
-      description:'iX System Colors',
+      description:'Official iX System Colors on light',
       hasDarkLogo:false,
       logoPath:'assets/images/light-logo.svg',
       logoTextPath:'light-logo-text.svg',
@@ -172,34 +202,34 @@ export class ThemeService {
       green:'#859900'
     },
     {
-      name:'solarized-light',
-      label: "Solarized Light",
-      labelSwatch:"bg2",
-      description:'Based on Solarized light color scheme',
+      name:'midnight',
+      label: "Midnight",
+      labelSwatch:"blue",
+      description:'Dark theme with blues and greys',
       hasDarkLogo:false,
       logoPath:'assets/images/light-logo.svg',
       logoTextPath:'light-logo-text.svg',
       favorite:false,
-      accentColors:['orange', 'green', 'cyan', 'yellow', 'violet', 'magenta', 'red', 'blue'],
-      primary:"var(--yellow)",
-      accent:"var(--green)",
-      'bg1':'#dfdac8',
-      'bg2':'#fdf6e3',
-      'fg1':'#839496',
-      'fg2':'#282a36',
-      //'alt-bg1':'#002b36',
+      accentColors:['violet', 'orange', 'cyan', 'magenta', 'red', 'yellow', 'blue', 'green'],
+      primary:"var(--blue)",
+      //secondary:"var(--bg1)",
+      accent:"var(--violet)",
+      bg1:'#212a35',
+      bg2:'#303d48',//'#1D262D',
+      fg1:'#aaaaaa',
+      fg2:'#cccccc',
       'alt-bg1':'rgba(122,122,122,0.25)',
-      'alt-bg2':'#073642',
-      'alt-fg1':'#586e75',
-      'alt-fg2':'#657b83',
-      yellow:'#b58900',
-      orange:'#cb4b16',
-      red:'#dc322f',
-      magenta:'#d33682',
-      violet:'#6c71c4',
-      blue:'#268bd2',
-      cyan:'#2aa198',
-      green:'#859900'
+      'alt-bg2':'#6F6E6C',
+      'alt-fg1':'#c1c1c1',
+      'alt-fg2':'#e1e1e1',
+      yellow:'#f0cb00',
+      orange:'#ee9302',
+      red:'#ff0013',
+      magenta:'#d238ff',
+      violet:'#c17ecc',
+      blue:'#1274b5',
+      cyan:'#00d0d6',
+      green:'#1F9642'
     },
     {
       name:'high-contrast',
@@ -312,7 +342,7 @@ export class ThemeService {
   }
 
   resetToDefaultTheme(){
-    this.activeTheme = "ix-dark";
+    this.activeTheme = "ix-dark-11.3";
     this.changeTheme(this.activeTheme);
   }
 

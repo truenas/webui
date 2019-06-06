@@ -59,6 +59,11 @@ msgstr ""
 "datos serían IRRECUPERABLES PERMANENTEMENTE! antes de exportar/desconectar "
 "pools encriptados, descarga y guarda la llave de recuperación."
 
+msgid ""
+"'%h' will be replaced with your hostname and '%i' will be replaced with "
+"your IP address."
+msgstr ""
+
 msgid "'. All data on that pool was destroyed."
 msgstr "' Todos los datos de este pool fueron destruidos."
 
@@ -507,6 +512,9 @@ msgid "Acoustic Level"
 msgstr ""
 
 msgid "Activate"
+msgstr ""
+
+msgid "Activate Pool for Jail Manager"
 msgstr ""
 
 msgid ""
@@ -1270,6 +1278,9 @@ msgstr ""
 msgid "Browse"
 msgstr "Vistazo"
 
+msgid "Browse a Collection"
+msgstr ""
+
 msgid "Browse to a CD-ROM file present on the system storage."
 msgstr ""
 
@@ -1660,18 +1671,6 @@ msgid "Choose an encryption mode."
 msgstr ""
 
 msgid ""
-"Choose an existing ZFS Pool to allow the                               "
-"iocage jail manager to create a /iocage                               "
-"dataset in the selected pool. The '/iocage'                               "
-"dataset may not be visible until after the                               "
-"first jail is created. iocage uses this                               "
-"dataset to store FreeBSD RELEASES and all                               "
-"other jail data. To create a new ZFS Pool,                               "
-"navigate Storage/Volumes and click 'Create                               "
-"ZFS Pool'."
-msgstr ""
-
-msgid ""
 "Choose between <i>Off</i>, <a "
 "href=\"http://info.ssl.com/article.aspx?id=10241\" "
 "target=\"_blank\">SSL</a> or <a "
@@ -1959,6 +1958,9 @@ msgstr ""
 msgid "Config"
 msgstr ""
 
+msgid "Config Pool for Jail Manager"
+msgstr ""
+
 msgid ""
 "Configure IPv4 networking or internet access for the jail. Enter the IPv4 "
 "address for <a href=\"https://www.freebsd.org/cgi/man.cgi?query=vnet\" "
@@ -2206,7 +2208,13 @@ msgstr ""
 msgid "Current Password"
 msgstr ""
 
+msgid "Custom Path"
+msgstr ""
+
 msgid "Custom Properties"
+msgstr ""
+
+msgid "Custom Server"
 msgstr ""
 
 msgid "DHCP"
@@ -3020,6 +3028,12 @@ msgid "End"
 msgstr ""
 
 msgid "End Time"
+msgstr ""
+
+msgid "End User License Agreement - TrueNAS"
+msgstr ""
+
+msgid "End User License Agreement Accepted"
 msgstr ""
 
 msgid ""
@@ -4210,6 +4224,9 @@ msgstr ""
 msgid "Hostname (Virtual)"
 msgstr ""
 
+msgid "Hostname for your custom DDNS provider"
+msgstr ""
+
 msgid "Hostname or IP address of SMTP server to use for sending this email."
 msgstr ""
 
@@ -4254,6 +4271,9 @@ msgstr ""
 msgid "How often the IP is checked in seconds."
 msgstr ""
 
+msgid "I Agree"
+msgstr ""
+
 msgid "I Understand"
 msgstr ""
 
@@ -4261,6 +4281,9 @@ msgid "IBurst"
 msgstr ""
 
 msgid "ID & Groups"
+msgstr ""
+
+msgid "INSTALL"
 msgstr ""
 
 msgid "IP"
@@ -4599,6 +4622,11 @@ msgstr ""
 msgid "Jails cannot be changed while running."
 msgstr ""
 
+msgid ""
+"Jails cannot be created or managed untill a pool is present for storing "
+"them. Please create a pool first"
+msgstr ""
+
 msgid "KDC"
 msgstr ""
 
@@ -4763,9 +4791,6 @@ msgstr ""
 msgid "Link State"
 msgstr ""
 
-msgid "List Available Plugins from Branch:"
-msgstr ""
-
 msgid "List of system services to restart when the pool is unlocked."
 msgstr ""
 
@@ -4852,6 +4877,9 @@ msgstr ""
 msgid "MAC Address"
 msgstr ""
 
+msgid "MANAGE"
+msgstr ""
+
 msgid "MOTD Banner"
 msgstr ""
 
@@ -4868,9 +4896,6 @@ msgid "Machine Suffix"
 msgstr ""
 
 msgid "Mail Server Port"
-msgstr ""
-
-msgid "Management"
 msgstr ""
 
 msgid "Manycast"
@@ -5227,6 +5252,9 @@ msgstr ""
 msgid "Netbios Name"
 msgstr ""
 
+msgid "Netbios Name (Storage Controller 2)"
+msgstr ""
+
 msgid ""
 "Netbios Name of this NAS. This name must differ from the <i>Workgroup</i> "
 "name and be no greater than 15 characters."
@@ -5339,6 +5367,9 @@ msgstr ""
 msgid "No Communication Warning Time"
 msgstr ""
 
+msgid "No Pool Exist"
+msgstr ""
+
 msgid "No Stat"
 msgstr ""
 
@@ -5372,9 +5403,6 @@ msgid "Note"
 msgstr ""
 
 msgid "Note: Legacy jails created before FreeNAS 11.2 must be managed from the"
-msgstr ""
-
-msgid "Note: Legacy plugins created before FreeNAS 11.2 must be managed from the"
 msgstr ""
 
 msgid "Notes"
@@ -5479,9 +5507,6 @@ msgid ""
 "insecure and vulnerable NTLMv1 encryption. This setting allows backward "
 "compatibility with older versions of Windows, but is not recommended and "
 "should not be used on untrusted networks."
-msgstr ""
-
-msgid "Official"
 msgstr ""
 
 msgid "Offline"
@@ -5867,8 +5892,8 @@ msgid "Preserve permissions"
 msgstr ""
 
 msgid ""
-"Prevent copied source snapshots from being deleted on the destination "
-"system if the replication task fails."
+"Prevent source system snapshots that have failed replication from being "
+"automatically removed by the snapshot retention policy."
 msgstr ""
 
 msgid "Preview JSON Service Account Key"
@@ -5967,6 +5992,12 @@ msgstr ""
 msgid "RCTL Limits"
 msgstr ""
 
+msgid "REGISTER"
+msgstr ""
+
+msgid "RESTART"
+msgstr ""
+
 msgid "RRDTool load5"
 msgstr ""
 
@@ -6061,9 +6092,6 @@ msgid "Recursive"
 msgstr ""
 
 msgid "Redirecting to download. Make sure pop-ups are enabled in the browser."
-msgstr ""
-
-msgid "Register"
 msgstr ""
 
 msgid "Release"
@@ -6224,6 +6252,9 @@ msgstr ""
 msgid "Reset Config"
 msgstr ""
 
+msgid "Reset Layout"
+msgstr ""
+
 msgid "Reset font size to default value"
 msgstr ""
 
@@ -6377,6 +6408,12 @@ msgid "SSH port number. Leave empty to use the default port <i>22</i>."
 msgstr ""
 
 msgid "SSL"
+msgstr ""
+
+msgid "START"
+msgstr ""
+
+msgid "STOP"
 msgstr ""
 
 msgid "SUDO Suffix"
@@ -8632,7 +8669,13 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
+msgid "UNINSTALL"
+msgstr ""
+
 msgid "UNIX Charset"
+msgstr ""
+
+msgid "UPDATE"
 msgstr ""
 
 msgid "UPS Mode"
@@ -8972,9 +9015,6 @@ msgid "Verify Credential"
 msgstr ""
 
 msgid "Verify passphrase"
-msgstr ""
-
-msgid "Version"
 msgstr ""
 
 msgid "View"

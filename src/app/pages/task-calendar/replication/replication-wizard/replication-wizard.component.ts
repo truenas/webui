@@ -299,19 +299,40 @@ export class ReplicationWizardComponent {
                     initial: '/mnt',
                     explorerType: 'directory',
                     multiple: true,
-                    name: 'source_datasets',
+                    name: 'source_datasets_PUSH',
                     placeholder: replicationHelptext.source_datasets_placeholder,
                     tooltip: replicationHelptext.source_datasets_tooltip,
                     options: [],
                     required: true,
                     validation: [Validators.required],
+                    isHidden: true,
                 }, {
                     type: 'input',
-                    name: 'target_dataset',
+                    name: 'target_dataset_PUSH',
                     placeholder: replicationHelptext.target_dataset_placeholder,
                     tooltip: replicationHelptext.target_dataset_tooltip,
                     required: true,
                     validation: [Validators.required],
+                    isHidden: true,
+                }, {
+                    type: 'input',
+                    name: 'source_datasets_PULL',
+                    placeholder: replicationHelptext.source_datasets_placeholder,
+                    tooltip: replicationHelptext.source_datasets_placeholder,
+                    required: true,
+                    validation: [Validators.required],
+                    isHidden: true,
+                }, {
+                    type: 'explorer',
+                    initial: '/mnt',
+                    explorerType: 'directory',
+                    name: 'target_dataset_PULL',
+                    placeholder: replicationHelptext.target_dataset_placeholder,
+                    tooltip: replicationHelptext.target_dataset_placeholder,
+                    options: [],
+                    required: true,
+                    validation: [Validators.required],
+                    isHidden: true,
                 }, {
                     type: 'checkbox',
                     name: 'recursive',
@@ -427,8 +448,10 @@ export class ReplicationWizardComponent {
     ];
     protected replicationFieldGroup: any[] = [
         'direction',
-        'source_datasets',
-        'target_dataset',
+        'source_datasets_PUSH',
+        'target_dataset_PUSH',
+        'source_datasets_PULL',
+        'target_dataset_PULL',
         'recursive',
         'exclude',
         'auto',
@@ -465,8 +488,10 @@ export class ReplicationWizardComponent {
         'snapshot_begin': null,
         'snapshot_end': null,
         'direction': null,
-        'source_datasets': null,
-        'target_dataset': null,
+        'source_datasets_PUSH': null,
+        'target_dataset_PUSH': null,
+        'source_datasets_PULL': null,
+        'target_dataset_PULL': null,
         'recursive': null,
         'exclude': null,
         'auto': null,
@@ -535,11 +560,17 @@ export class ReplicationWizardComponent {
         this.entityWizard.formArray.controls[0].controls['transport'].valueChanges.subscribe((value) => {
             const ssh = value == 'SSH' ? true : false;
             this.disablefieldGroup(this.transportSSHnetcatFieldGroup, ssh, 0);
+            if (this.entityWizard.formArray.controls[0].controls['ssh_credentials'].value === 'NEW') {
+                this.disablefieldGroup(['cipher'], !ssh, 0);
+            } else if (this.entityWizard.formArray.controls[0].controls['ssh_credentials'].value != '') {
+                this.disablefieldGroup(['cipher'], !this.entityWizard.formArray.controls[0].controls['ssh_credentials'].disabled, 0);
+            }
         });
         this.entityWizard.formArray.controls[0].controls['ssh_credentials'].valueChanges.subscribe((value) => {
             const newSSH = value == 'NEW' ? true : false;
             this.disablefieldGroup([...this.sshFieldGroup, ...this.semiSSHFieldGroup, ...this.manualSSHFieldGroup], !newSSH, 0);
             if (newSSH) {
+                this.disablefieldGroup(['cipher'], this.entityWizard.formArray.controls[0].controls['transport'].value === 'SSH+NETCAT', 0);
                 this.entityWizard.formArray.controls[0].controls['setup_method'].setValue(this.entityWizard.formArray.controls[0].controls['setup_method'].value);
             }
         });
@@ -594,6 +625,9 @@ export class ReplicationWizardComponent {
             this.disablefieldGroup(['naming_schema'], disablePull, 1);
             this.disablefieldGroup(this.scheduleFieldGroup, disablePull || this.entityWizard.formArray.controls[1].controls['auto'].value == false, 1);
             this.disablefieldGroup(['periodic_snapshot_tasks'], !disablePull, 1);
+
+            this.disablefieldGroup(['source_datasets_PUSH', 'target_dataset_PUSH'], !disablePull, 1);
+            this.disablefieldGroup(['source_datasets_PULL', 'target_dataset_PULL'], disablePull, 1);
         });
 
         this.entityWizard.formArray.controls[1].controls['periodic_snapshot_tasks'].valueChanges.subscribe((value) => {
@@ -603,7 +637,8 @@ export class ReplicationWizardComponent {
             if (!newSnapshot) {
                 const snapshottask = _.find(this.availSnapshottasks, {'id': value});
                 if (snapshottask) {
-                    this.entityWizard.formArray.controls[1].controls['source_datasets'].setValue(snapshottask['dataset']);
+                    const prop = this.entityWizard.formArray.controls[1].controls['direction'].value == 'PUSH' ? 'source_datasets_PUSH' : 'target_dataset_PULL';
+                    this.entityWizard.formArray.controls[1].controls[prop].setValue(snapshottask['dataset']);
                 }
             }
         });
@@ -641,7 +676,7 @@ export class ReplicationWizardComponent {
             Object.entries(this.entityWizard.formArray.controls[step].controls).forEach(([name, control]) => {
                 if (name in this.summaryObj) {
                     (<FormControl>control).valueChanges.subscribe(((value) => {
-                        if (value == undefined) {
+                        if (value == undefined || (<FormControl>control).disabled) {
                             this.summaryObj[name] = null;
                         } else {
                             this.summaryObj[name] = value;
@@ -675,8 +710,8 @@ export class ReplicationWizardComponent {
                 'FreeNAS/TrueNAS URL': this.summaryObj.url,
                 'Cipher': this.summaryObj.cipher,
             },
-            'Source Dataset': this.summaryObj.source_datasets,
-            'Target Dataset': this.summaryObj.target_dataset,
+            'Source Dataset': this.summaryObj['source_datasets_' + this.summaryObj.direction],
+            'Target Dataset': this.summaryObj['target_dataset_' + this.summaryObj.direction],
             'Recurisive': this.summaryObj.recursive,
             'Exclude Child Datasets': this.summaryObj.exclude,
             'Periodic Snapshot Tasks': this.summaryObj.periodic_snapshot_tasks,
@@ -783,6 +818,15 @@ export class ReplicationWizardComponent {
         return this.ws.call('keychaincredential.remote_ssh_host_key_scan', [payload]).toPromise();
     }
 
+    parseLocalDS(value, prop) {
+        value[prop] = typeof value[prop] === "string" ? value[prop].split(' ') : value[prop];
+        for (let i = 0; i < value[prop].length; i++) {
+            if (_.startsWith(value[prop][i], '/mnt/')) {
+                value[prop][i] = value[prop][i].substring(5);
+            }
+        }
+        return value[prop];
+    }
     async doCreate(value, item) {
         let payload;
         if (item === 'private_key') {
@@ -843,15 +887,15 @@ export class ReplicationWizardComponent {
                 transport: value['transport'],
             }
 
-            value['source_datasets'] = typeof value['source_datasets'] === "string" ? value['source_datasets'].split(' ') : value['source_datasets'];
-            for (let i = 0; i < value['source_datasets'].length; i++) {
-                if (_.startsWith(value['source_datasets'][i], '/mnt/')) {
-                    value['source_datasets'][i] = value['source_datasets'][i].substring(5);
-                }
-            }
             if (value['direction'] == 'PUSH') {
+                payload['source_datasets'] = this.parseLocalDS(value, 'source_datasets_PUSH');
+                payload['target_dataset'] = value['target_dataset_PUSH'];
+
                 payload["periodic_snapshot_tasks"] = value['periodic_snapshot_tasks'].toString().split(' ');
             } else {
+                payload['source_datasets'] =  value['source_datasets_PULL'].split(' ');
+                payload['target_dataset'] = this.parseLocalDS(value, 'target_dataset_PULL').join(' ');
+
                 payload['naming_schema'] = value['naming_schema'].split(' ');
                 if (value['schedule_picker']) {
                     payload['schedule'] = this.parsePickerTime(value['schedule_picker'], value['begin'], value['end']);
@@ -863,7 +907,9 @@ export class ReplicationWizardComponent {
                 }
             }
             for (const i of this.replicationFieldGroup) {
-                payload[i] = value[i];
+                if (!i.includes('dataset')) {
+                    payload[i] = value[i];
+                }
             }
         }
        

@@ -21,8 +21,10 @@ import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { T } from '../../../../translate-marker';
 
 export interface InputTableConf {
-
+  prerequisite?: any;
+  globalConfig?: any;
   columns:any[];
+  columnFilter?: boolean;
   hideTopActions?: boolean;
   queryCall?: string;
   queryCallOption?: any;
@@ -30,6 +32,7 @@ export interface InputTableConf {
   route_edit?: string;
   route_add?: string[];
   queryRes?: any [];
+  showActions?: boolean;
   isActionVisible?: any;
   custActions?: any[];
   multiActions?:any[];
@@ -39,6 +42,8 @@ export interface InputTableConf {
   checkbox_confirm?: any;
   checkbox_confirm_show?: any;
   hasDetails?:boolean;
+  rowDetailComponent?: any;
+  cardHeaderComponent?: any;
   asyncView?: boolean;
   addRows?(entity: EntityTableComponent);
   changeEvent?(entity: EntityTableComponent);
@@ -99,11 +104,15 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public windowHeight: number;
 
   public allColumns: Array<any> = []; // Need this for the checkbox headings
+  public columnFilter = true; // show the column filters by default
   public filterColumns: Array<any> = []; // ...for the filter function - becomes THE complete list of all columns, diplayed or not
   public alwaysDisplayedCols: Array<any> = []; // For cols the user can't turn off
   public presetDisplayedCols: Array<any> = []; // to store only the index of preset cols
   public currentPreferredCols: Array<any> = []; // to store current choice of what cols to view
   public anythingClicked: boolean = false; // stores a pristine/touched state for checkboxes
+
+  public startingHeight: number;
+  public expandedRows = 0;
 
   public rows: any[] = [];
   public currentRows: any[] = []; // Rows applying filter
@@ -145,17 +154,33 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     clearInterval(this.interval);
   }
 
-  ngOnInit():void {
+  ngOnInit() {
 
     this.setTableHeight(); 
 
-    setTimeout(() => {
-      if (this.conf.preInit) {
-        this.conf.preInit(this);
-      }
-      this.getData();
-      if (this.conf.afterInit) {
-        this.conf.afterInit(this);
+    setTimeout(async() => {
+      if (this.conf.prerequisite) {
+        await this.conf.prerequisite().then(
+          (res)=>{
+            if (res) {
+              if (this.conf.preInit) {
+                this.conf.preInit(this);
+              }
+              this.getData();
+              if (this.conf.afterInit) {
+                this.conf.afterInit(this);
+              }
+            }
+          }
+        );
+      } else {
+        if (this.conf.preInit) {
+          this.conf.preInit(this);
+        }
+        this.getData();
+        if (this.conf.afterInit) {
+          this.conf.afterInit(this);
+        }
       }
     })
     this.asyncView = this.conf.asyncView ? this.conf.asyncView : false;
@@ -167,7 +192,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.alwaysDisplayedCols.push(column); // Make an array of required cols
       }
     });
-
+    this.columnFilter = this.conf.columnFilter === undefined ? true : this.conf.columnFilter;
+    this.showActions = this.conf.showActions === undefined ? true : this.conf.showActions ;
     this.filterColumns = this.conf.columns;
     this.conf.columns = this.allColumns; // Remove any alwaysDisplayed cols from the official list
 
@@ -340,6 +366,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.handleData(res);
       },
       (res) => {
+        if (this.loaderOpen) {
+          this.loader.close();
+          this.loaderOpen = false;
+        }
         if (res.hasOwnProperty("reason") && (res.hasOwnProperty("trace") && res.hasOwnProperty("type"))) {
           this.dialogService.errorReport(res.type, res.reason, res.trace.formatted);
         }
@@ -788,7 +818,17 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   toggleExpandRow(row) {
     //console.log('Toggled Expand Row!', row);
+    if (!this.startingHeight) {
+      this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
+    }  
     this.table.rowDetail.toggleExpandRow(row);
+    setTimeout(() => {
+      this.expandedRows = (document.querySelectorAll('.datatable-row-detail').length);
+      let newHeight = (this.expandedRows * 100) + this.startingHeight;
+      let heightStr = `height: ${newHeight}px`;
+      document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
+    }, 100)
+    
   }
 
   onDetailToggle(event) {

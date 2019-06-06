@@ -41,7 +41,7 @@ def test_01_turnon_webdav(wb_driver):
     # scroll down
     wb_driver.find_element_by_xpath(xpaths['theEnd']).click()
     time.sleep(2)
-    status_change(wb_driver, "17", "start")
+    status_change(wb_driver, "webdav")
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
@@ -50,7 +50,7 @@ def test_01_turnon_webdav(wb_driver):
 def test_02_checkif_webdav_on(wb_driver):
     time.sleep(2)
     # status check
-    status_check(wb_driver, "17")
+    status_check(wb_driver, "webdav")
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
@@ -82,7 +82,7 @@ def test_04_turnoff_webdav(wb_driver):
     # scroll down
     wb_driver.find_element_by_xpath(xpaths['theEnd']).click()
     time.sleep(2)
-    status_change(wb_driver, "17", "stop")
+    status_change(wb_driver, "webdav")
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
@@ -91,7 +91,7 @@ def test_04_turnoff_webdav(wb_driver):
 def test_05_checkif_wedbdav_off(wb_driver):
     time.sleep(2)
     # status check
-    status_check(wb_driver, "17")
+    status_check(wb_driver, "webdav")
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)

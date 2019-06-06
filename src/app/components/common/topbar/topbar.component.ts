@@ -61,6 +61,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   ha_pending = false;
   is_ha = false;
   sysName: string = 'FreeNAS';
+  hostname: string;
   private user_check_in_prompted = false;
 
   constructor(
@@ -81,6 +82,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (window.localStorage.getItem('is_freenas') === 'false') {
+      this.checkEULA();
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         this.is_ha = is_ha;
         this.getHAStatus();
@@ -135,6 +137,10 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.resilveringDetails = '';
       }
     }, 2500);
+
+    this.ws.call('system.info').subscribe((res) => {
+      this.hostname = res.hostname;
+    })
   }
 
   ngOnDestroy() {
@@ -211,6 +217,22 @@ export class TopbarComponent implements OnInit, OnDestroy {
           }
         });
       });
+    });
+  }
+
+  checkEULA() {
+    this.ws.call('truenas.is_eula_accepted').subscribe(eula_accepted => {
+      if (!eula_accepted) {
+        this.ws.call('truenas.get_eula').subscribe(eula => {
+          this.dialogService.confirm(T("End User License Agreement - TrueNAS"), eula, true, T("I Agree"), false, null, '', null, null, true).subscribe(accept_eula => {
+            if (accept_eula) {
+              this.ws.call('truenas.accept_eula').subscribe(accepted => {
+                this.snackBar.open(T("End User License Agreement Accepted"),T("OK"));
+              });
+            }
+          });
+        });
+      }
     });
   }
 

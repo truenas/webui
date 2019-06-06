@@ -26,8 +26,8 @@ import helptext from '../../../helptext/plugins/plugins';
 export class PluginAddComponent implements OnInit {
 
   protected addCall: string = 'jail.fetch';
-  public route_goback: string[] = ['plugins', 'available'];
-  public route_success: string[] = ['plugins', 'installed'];
+  public route_goback: string[] = ['plugins'];
+  public route_success: string[] = ['plugins'];
   protected isEntity: boolean = false;
 
   public fieldConfig: FieldConfig[] = [{

@@ -13,7 +13,8 @@ import helptext from '../../../../helptext/services/components/service-ups';
 
 export class ServiceUPSComponent {
   protected ups_driver: any;
-  protected ups_driver_fg: any;
+  private ups_drivers_list: any;
+  private ups_driver_key: any;
   protected ups_port: any;
   protected entityForm: any;
 
@@ -43,6 +44,7 @@ export class ServiceUPSComponent {
       tooltip : helptext.ups_remotehost_tooltip,
       required: true,
       isHidden: true,
+      disabled: true,
       validation : helptext.ups_remotehost_validation
     },
     {
@@ -53,10 +55,11 @@ export class ServiceUPSComponent {
       value : helptext.ups_remoteport_value,
       required: true,
       isHidden: true,
+      disabled: true,
       validation : helptext.ups_remoteport_validation
     },
     {
-      type : 'select',
+      type : 'combobox',
       name : 'ups_driver',
       placeholder : helptext.ups_driver_placeholder,
       tooltip : helptext.ups_driver_tooltip,
@@ -196,11 +199,11 @@ export class ServiceUPSComponent {
     this.entityForm = entityForm;
     this.ups_driver = _.find(this.fieldConfig, { name: 'ups_driver' });
     this.ups_port = _.find(this.fieldConfig, { name: 'ups_port' });
-    this.ups_driver_fg = entityForm.formGroup.controls['ups_driver'];
 
     this.ws.call('ups.driver_choices', []).subscribe((res) => {
+      this.ups_drivers_list = res;
       for (const item in res) {
-        this.ups_driver.options.push({ label: res[item], value: item });
+        this.ups_driver.options.push({ label: res[item], value: res[item] });
       }
     });
 
@@ -209,6 +212,37 @@ export class ServiceUPSComponent {
         this.ups_port.options.push({label: res[i], value: res[i]});
       } 
     });
+
+    entityForm.formGroup.controls['ups_driver'].valueChanges.subscribe((res) => {;
+      this.ups_driver_key = this.getKeyByValue(this.ups_drivers_list, res);
+      if (this.ups_drivers_list[res]) {
+        entityForm.formGroup.controls['ups_driver'].setValue(this.ups_drivers_list[res]);
+      }
+    });
+
+    entityForm.formGroup.controls['ups_mode'].valueChanges.subscribe((res) => {;
+      if (res === 'slave') {
+        this.hideField('ups_remotehost', false, entityForm);
+        this.hideField('ups_remoteport', false, entityForm);
+      } else {
+        this.hideField('ups_remotehost', true, entityForm)
+        this.hideField('ups_remoteport', true, entityForm)
+      }
+    });
+  }
+
+  hideField(fieldName: any, show: boolean, entity: any) {
+    let target = _.find(this.fieldConfig, {'name' : fieldName});
+    target['isHidden'] = show;
+    entity.setDisabled(fieldName, show, show);
+  }
+
+  getKeyByValue(object, value) {
+    return Object.keys(object).find(key => object[key] === value);
+  }
+
+  beforeSubmit(data: any) {
+    data.ups_driver = this.ups_driver_key;
   }
 
 }

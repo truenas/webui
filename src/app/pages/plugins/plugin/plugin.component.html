@@ -1,0 +1,41 @@
+<div class="plugin-expanded-panel">
+    <section class="info">
+        <div fxLayout="row">
+            <div>
+                <section>RELEASE</section>
+                <label>{{config[5]}}</label>
+            </div>
+            <div fxFlexOffset="3">
+                <section>AUTOSTART</section>
+                <label>{{config[2]}}</label>
+            </div>
+            <div fxFlexOffset="3">
+                <section>VERSION</section>
+                <label>{{config[10]}}</label>
+            </div>
+            <!-- <div fxFlexOffset="3">
+                <section>COLLECTION</section>
+                <label>XXX</label>
+            </div>
+            <div fxFlexOffset="3">
+                <section>INSTALL DATE</section>
+                <label>XXX</label>
+            </div> -->
+        </div>
+    </section>
+    <mat-divider></mat-divider>
+    <section class="action-buttons plugin-action-buttons" fxLayout="row">
+        <div *ngFor="let action of actions">
+            <button 
+                *ngIf="action.visible" 
+                mat-menu-item (click)="action.onClick()" 
+                id="plugins_{{action.name}}_{{action.id}}" 
+                class="plugin-buttons" 
+                fxFlex
+            >
+                <mat-icon class="plugin-icons">{{action.icon}}</mat-icon>
+                <span>{{action.label | translate}}</span>
+            </button>
+        </div>
+    </section>
+</div>

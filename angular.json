@@ -22,6 +22,7 @@
               "src/icons",
               "src/assets/images",
               "src/assets/fonts",
+              "src/assets/fonts/Roboto",
               "src/assets/customicons"
             ],
             "stylePreprocessorOptions": {
@@ -55,7 +56,8 @@
               "src/assets/styles/fn-styles.css",
               "src/assets/styles/charts.css",
               "src/assets/styles/egret_overrides.css",
-              "src/assets/styles/material-reduction.css"
+              "src/assets/styles/material-reduction.css",
+              "src/assets/styles/fonts.css"
             ],
             "scripts": [
               "node_modules/perfect-scrollbar/dist/js/perfect-scrollbar.js",

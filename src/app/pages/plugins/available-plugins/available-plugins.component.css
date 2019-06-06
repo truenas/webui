@@ -1,0 +1,30 @@
+mat-card-content.plugin-info {
+    padding: 0px 15px 0px 15px;
+}
+
+mat-button-toggle-group.plugin-buttons {
+    width: 100%;
+    overflow-x: auto;
+}
+img.plugin-img {
+    padding-top: 10px;
+}
+
+p.plugin-description {
+    height: 100px;
+}
+div.plugin-vinfo {
+    margin-bottom: 20px;
+}
+mat-icon.official-plugin {
+    vertical-align: middle;
+}
+
+figcaption {
+    color: var(--fg1);
+}
+
+#plugin-install-button {
+    background: var(--primary);
+    color: white;
+}

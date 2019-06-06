@@ -59,8 +59,8 @@ export class NavigationService {
         { name: T('Advanced'), state: 'advanced' },
         { name: T('View Enclosure'), state: 'viewenclosure', disabled: true},
         { name: T('Email'), state: 'email'},
-        { name: T('Reporting'), state: 'reporting'},
         { name: T('System Dataset'), state: 'dataset'},
+        { name: T('Reporting'), state: 'reporting'},
         { name: T('Alert Services'), state: 'alertservice' },
         { name: T('Alert Settings'), state: 'alertsettings' },
         { name: T('Cloud Credentials'), state: 'cloudcredentials' },
@@ -162,14 +162,10 @@ export class NavigationService {
     },
     {
       name: T('Plugins'),
-      type: 'dropDown',
+      type: 'link',
       tooltip: T('Plugins'),
       icon: 'extension',
       state: 'plugins',
-      sub: [
-        {name: 'Available', state: 'available'},
-        {name: 'Installed', state: 'installed'},
-      ]
     },
     {
       name: T('Jails'),

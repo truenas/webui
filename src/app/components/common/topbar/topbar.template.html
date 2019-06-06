@@ -19,6 +19,7 @@
       </form>
       </div -->
       <span fxFlex></span>
+      <span class="hostname-label" *ngIf="hostname" matTooltip="Hostname: {{hostname}}">{{hostname}}</span>
       <!--loading icon-->
       <button *ngIf="pendingNetworkChanges" mat-icon-button id="network" matTooltip="Pending Network Changes" (click)="showNetworkChangesPending()" class="topbar-button-right">
         <mat-icon class="movement">device_hub</mat-icon>
@@ -63,13 +64,13 @@
               <mat-icon class="active-icon" *ngIf="theme.name == themeService.activeTheme">check</mat-icon>
               </div>-->
           <button mat-menu-item *ngFor="let theme of themesMenu" (click)="changeTheme(theme.name)">
-            <span class="theme-picker-swatch" *ngIf="theme.name == themeService.activeTheme" ><mat-icon [style.color]="theme[theme.labelSwatch]">check_circle</mat-icon></span>
-            <span class="theme-picker-swatch" *ngIf="theme.name !== themeService.activeTheme"><mat-icon [style.color]="theme[theme.labelSwatch]">brightness_1b</mat-icon></span>
+            <span class="theme-picker-swatch" *ngIf="theme.name == themeService.activeTheme" ><mat-icon [style.color]="theme[theme.labelSwatch]" class="theme-picker-swatch-icon">check_circle</mat-icon></span>
+            <span class="theme-picker-swatch" *ngIf="theme.name !== themeService.activeTheme"><mat-icon [style.color]="theme[theme.labelSwatch]" class="theme-picker-swatch-icon">brightness_1b</mat-icon></span>
             <span class="mat-list-item-ripple mat-ripple">{{ theme.label }}</span>
           </button>
-
+          <button class="hidden-button" mat-menu-item></button> <!-- Workaround to prevent focus being locked on first button -->
           <button mat-menu-item (click)="createTheme()">
-            <span class="theme-picker-swatch"><mat-icon class="theme-picker-swatch-icon">add_circle</mat-icon></span>
+            <span class="theme-picker-swatch"><mat-icon>add_circle</mat-icon></span>
             <span class="mat-list-item-ripple mat-ripple">Create/Manage Themes</span>
           </button>
             <!--</mat-grid-tile>-->
@@ -100,6 +101,7 @@
             <span *ngIf="lang.code == language.currentLang">{{ lang.name }}</span>
           </ng-container>
         </button-->
+        <button class="hidden-button" mat-menu-item></button>
         <button name="settings-account" mat-menu-item [routerLink]="['/account/users/edit/1']">
           <mat-icon>account_box</mat-icon>
           <span>{{'Account' | translate}}</span>
@@ -130,6 +132,7 @@
           <mat-icon>power_settings_new</mat-icon>
         </button>
         <mat-menu #runMenu="matMenu">
+            <button class="hidden-button" mat-menu-item></button>
             <button name="power-log-out" mat-menu-item (click)="signOut()">
               <mat-icon>exit_to_app</mat-icon>
               <span>{{'Log Out' | translate}}</span>
