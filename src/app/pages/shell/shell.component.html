@@ -4,7 +4,24 @@
   	 	{{"Shell" | translate}}
   	 </div>
   </mat-card-title>
-	<div id="terminal" [ngStyle]="{'font-size' : font_size+'px'}"  #terminal (window:resize)="onResize($event)"></div>
+
+  	<app-context-menu [matMenuTriggerFor]="shellMenuContent" #shellContextMenu>
+		<mat-menu #shellMenuContent="matMenu" xPosition="before">
+			<ng-template matMenuContent>
+				<button mat-menu-item (click)="onCopy()">{{ copyText }}</button>
+				<button mat-menu-item (click)="onPaste()">{{ pasteText }}</button>
+			</ng-template>
+		</mat-menu>
+	</app-context-menu>
+
+	<div
+		id="terminal"
+		[ngStyle]="{'font-size' : font_size+'px'}"
+		 #terminal
+		 (window:resize)="onResize($event)"
+		 (contextmenu)="shellContextMenu.open($event, { name: 'Hello mom' })"
+	></div>
+
 	<mat-card-content *ngIf="shellConnected; else Reconnect">
 		<!-- <mat-divider class="mb-1"></mat-divider> -->
 		{{"Set font size" | translate}}: <mat-slider min="10" max="20" step="1" value="14"  [(ngModel)]="font_size"></mat-slider>

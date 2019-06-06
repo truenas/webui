@@ -5,20 +5,13 @@ import {
   ElementRef,
   OnChanges,
   Input,
-  Output,
-  EventEmitter,
   SimpleChange,
   OnDestroy
-} from '@angular/core';
-import { Subscription } from 'rxjs';
+} from "@angular/core";
 
-import { WebSocketService, ShellService } from '../../services/';
-import { TranslateService } from '@ngx-translate/core';
-import {TooltipComponent} from '../common/entity/entity-form/components/tooltip/tooltip.component';
-import { T } from '../../translate-marker';
-//import { Terminal } from 'vscode-xterm';
-//import * as fit from 'vscode-xterm/lib/addons/fit';
-//import * as attach from 'vscode-xterm/lib/addons/attach';
+import { WebSocketService, ShellService } from "../../services/";
+import { TranslateService } from "@ngx-translate/core";
+import { T } from "../../translate-marker";
 
 @Component({
   selector: 'app-shell',
@@ -39,7 +32,10 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   public token: any;
   public xterm: any;
   public resize_terminal = true;
+  public copyText = T("Copy");
+  public pasteText = T("Paste");
   private shellSubscription: any;
+  private selectedText: string;
 
   public shell_tooltip = T('<b>Ctrl+C</b> kills a foreground process.<br>\
                             Many utilities are built-in:<br> <b>Iperf</b>,\
@@ -74,9 +70,9 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     if(this.shellSubscription){
       this.shellSubscription.unsubscribe();
     }
-  };
+  }
 
-  onResize(event){
+  onResize(event) {
     // this.resizeTerm();
   }
 
@@ -118,6 +114,14 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     });
     this.xterm.open(this.container.nativeElement, true);
     this.xterm.attach(this.ss);
+    this.xterm.attachCustomKeyEventHandler(event => {
+      // Ctrl + Shift + C
+      if (event.ctrlKey && event.shiftKey && (event.keyCode == 3)) {
+        var copySucceeded = document.execCommand('copy');
+        console.log('copy succeeded', copySucceeded);
+        return false;
+      }
+    });
     this.xterm._initialized = true;
   }
 
@@ -154,7 +158,5 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   constructor(private ws: WebSocketService, public ss: ShellService, public translate: TranslateService) {
-//    Terminal.applyAddon(fit);
-//    Terminal.applyAddon(attach);
   }
 }
