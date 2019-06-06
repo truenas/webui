@@ -17,7 +17,7 @@ bsdgrp_gid_validation: [ Validators.required, regexValidator(/^\d+$/) ],
 
 bsdgrp_group_placeholder: T('Name'),
 bsdgrp_group_tooltip: T('Enter an alphanumeric name for the group.'),
-bsdgrp_group_validation: [ Validators.required, regexValidator(UserService.VALIDATOR_NAME) ],
+bsdgrp_group_validation: [ Validators.required, Validators.pattern(UserService.VALIDATOR_NAME) ],
 
 bsdgrp_sudo_placeholder: T('Permit Sudo'),
 bsdgrp_sudo_tooltip: T('Allow group members to use <a\
