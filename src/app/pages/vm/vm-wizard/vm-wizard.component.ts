@@ -471,11 +471,12 @@ export class VMWizardComponent {
     });
     this.populate_ds();
 
-    this.networkService.getAllNicChoices().subscribe((res) => {
+    this.networkService.getVmNicChoices().subscribe((res) => {
       this.nic_attach = _.find(this.wizardConfig[4].fieldConfig, {'name' : 'nic_attach'});
-      res.forEach((item) => {
-        this.nic_attach.options.push({label : item[1], value : item[0]});
-      });
+      this.nic_attach.options = Object.keys(res || {}).map(nicId => ({
+        label: nicId,
+        value: nicId
+      }));
       ( < FormGroup > entityWizard.formArray.get([4])).controls['nic_attach'].setValue(
         this.nic_attach.options[0].value
       )
