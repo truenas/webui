@@ -110,6 +110,24 @@ export class RYSNCConfigurationFormComponent {
         this.entityForm = entityForm;
       }
     afterInit(entityForm: any) {
+        this.isNew = entityForm.isNew;
+        this.entityForm = entityForm;
+
+        this.route.params.subscribe(params => {
+          if (params['pk']) {
+            this.pk = parseInt(params['pk']);
+            this.ws.call('rsyncmod.query', [
+              [
+                ["id", "=", this.pk]
+              ]
+            ]).subscribe((res) => {
+              for (let item in res[0]) {
+                this.entityForm.formGroup.controls[item].setValue(res[0][item]); // not working
+              }
+            });
+          }
+        });
+
         this.rsyncmod_user = _.find(this.fieldConfig, {name : "user"});
         entityForm.ws.call('user.query').subscribe((users) => {
             users.forEach((user) => {
