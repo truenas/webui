@@ -26,7 +26,7 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
 })
 export class JailEditComponent implements OnInit, AfterViewInit {
 
-  @ViewChild('basic') basicPanel:any;
+  @ViewChild('basic', { static: true}) basicPanel:any;
   public isReady: boolean =  false;
   protected updateCall = 'jail.do_update';
   protected upgradeCall = 'jail.upgrade';

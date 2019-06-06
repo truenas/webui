@@ -19,8 +19,8 @@ import { ApiService } from 'app/core/services/api.service';
   styleUrls: ['./signin.component.scss']
 })
 export class SigninComponent implements OnInit {
-  @ViewChild(MatProgressBar) progressBar: MatProgressBar;
-  @ViewChild(MatButton) submitButton: MatButton;
+  @ViewChild(MatProgressBar, { static: false}) progressBar: MatProgressBar;
+  @ViewChild(MatButton, { static: false}) submitButton: MatButton;
 
   private failed: Boolean = false;
   public is_freenas: Boolean = false;

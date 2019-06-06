@@ -19,8 +19,8 @@ export class Display implements OnInit,AfterViewInit{
 
   public displayList: any[] = []; // items in DOM
   public children: any[] = [];
-  @ViewChild('wrapper') wrapper;
-  @ViewChild('test',{read:ViewContainerRef}) test:ViewContainerRef;
+  @ViewChild('wrapper', { static: true}) wrapper;
+  @ViewChild('test', { static: true, read:ViewContainerRef}) test:ViewContainerRef;
 
   constructor(private resolver: ComponentFactoryResolver, private viewContainerRef: ViewContainerRef, private renderer: Renderer2){
     console.log("Display Component Constructor");

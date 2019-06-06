@@ -86,9 +86,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() legacyWarningLink = '';
   @Input('conf') conf: InputTableConf;
 
-  @ViewChild('filter') filter: ElementRef;
-  @ViewChild('defaultMultiActions') defaultMultiActions: ElementRef;
-  @ViewChild('entityTable') table: any;
+  @ViewChild('filter', { static: false}) filter: ElementRef;
+  @ViewChild('defaultMultiActions', { static: false}) defaultMultiActions: ElementRef;
+  @ViewChild('entityTable', { static: false}) table: any;
 
   // MdPaginator Inputs
   public paginationPageSize: number = 8;

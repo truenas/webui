@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RestService } from '../../../../services/';
 import { EntityUtils } from '../../../common/entity/utils';
@@ -6,7 +6,6 @@ import { EntityTableComponent, InputTableConf } from 'app/pages/common/entity/en
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { MatDialog } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';

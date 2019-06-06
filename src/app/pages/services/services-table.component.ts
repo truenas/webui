@@ -17,7 +17,7 @@ export class ServicesTableComponent implements OnChanges, OnInit {
 
   @Input() conf: any;
   @Input() data: any[];
-  @ViewChild('datatable') datatable;
+  @ViewChild('datatable', { static: true}) datatable;
 
 
   public columns: Array < any > = [

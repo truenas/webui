@@ -25,7 +25,7 @@ import globalHelptext from '../../../helptext/global-helptext';
 })
 export class VmCardsComponent  implements OnDestroy {
 
-  @ViewChild('table') table:EntityTableComponent;
+  @ViewChild('table', { static: true}) table:EntityTableComponent;
   protected queryCall = 'vm.query';
   protected route_add: string[] = [ 'vm', 'wizard' ];
   protected route_add_tooltip = "Add VM";

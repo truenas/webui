@@ -25,7 +25,7 @@ interface ViewConfig {
 export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDestroy {
 
   public events:Subject<CoreEvent> ;
-  @ViewChild('navigation') nav: ElementRef
+  @ViewChild('navigation', { static: false}) nav: ElementRef
 
   //public currentView: ViewConfig
   public currentView: ViewConfig =  { 
