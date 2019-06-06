@@ -1,6 +1,7 @@
 import { T } from '../../translate-marker';
 import {Validators} from '@angular/forms';
 import { matchOtherValidator } from '../../pages/common/entity/entity-form/validators/password-validation';
+import { UserService } from 'app/services';
 
 export default {
 user_form_title_name: T('Name & Contact'),
@@ -18,7 +19,7 @@ user_form_username_tooltip : T('Usernames can be up to 16 characters long.\
  tab, or these characters:\
  <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i>. <i>$</i> can only be\
  used as the last character of the username.'),
-user_form_username_validation: [ Validators.required, Validators.pattern('[a-zA-Z_][a-zA-Z0-9_\.-]*[$]?'), Validators.maxLength(16) ],
+user_form_username_validation: [ Validators.required, Validators.pattern(UserService.VALIDATOR_NAME), Validators.maxLength(16) ],
 user_form_email_name:'email',
 user_form_email_placeholder : T('Email'),
 user_form_email_tooltip : T('Enter the email address of the new user.'),
