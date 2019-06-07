@@ -306,23 +306,48 @@ export class ReplicationWizardComponent {
                     required: true,
                     validation: [Validators.required],
                     isHidden: true,
-                }, {
-                    type: 'input',
+                },
+                {
+                    type: 'explorer',
                     name: 'target_dataset_PUSH',
                     placeholder: replicationHelptext.target_dataset_placeholder,
                     tooltip: replicationHelptext.target_dataset_tooltip,
+                    initial: '',
+                    explorerType: 'directory',
+                    customTemplateStringOptions: {
+                        displayField: 'Path',
+                        isExpandedField: 'expanded',
+                        idField: 'uuid',
+                        getChildren: this.getChildren.bind(this),
+                        nodeHeight: 23,
+                        allowDrag: false,
+                        useVirtualScroll: false,
+                    },
                     required: true,
                     validation: [Validators.required],
                     isHidden: true,
-                }, {
-                    type: 'input',
+                },
+                {
+                    type: 'explorer',
                     name: 'source_datasets_PULL',
                     placeholder: replicationHelptext.source_datasets_placeholder,
                     tooltip: replicationHelptext.source_datasets_placeholder,
+                    initial: '',
+                    explorerType: 'directory',
+                    customTemplateStringOptions: {
+                        displayField: 'Path',
+                        isExpandedField: 'expanded',
+                        idField: 'uuid',
+                        getChildren: this.getChildren.bind(this),
+                        nodeHeight: 23,
+                        allowDrag: false,
+                        useVirtualScroll: false,
+                    },
                     required: true,
                     validation: [Validators.required],
                     isHidden: true,
-                }, {
+                },
+                {
                     type: 'explorer',
                     initial: '/mnt',
                     explorerType: 'directory',
@@ -567,6 +592,18 @@ export class ReplicationWizardComponent {
             if (newSSH) {
                 this.entityWizard.formArray.controls[0].controls['setup_method'].setValue(this.entityWizard.formArray.controls[0].controls['setup_method'].value);
             }
+
+            for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
+                const explorerComponent = _.find(this.wizardConfig[1].fieldConfig, {name: item}).customTemplateStringOptions.explorerComponent;
+                if (explorerComponent) {
+                    explorerComponent.nodes = [{
+                        mountpoint: explorerComponent.config.initial,
+                        name: explorerComponent.config.initial,
+                        hasChildren: true
+                    }];
+                }
+            }
+
         });
         this.entityWizard.formArray.controls[0].controls['setup_method'].valueChanges.subscribe((value) => {
             const manual = value == 'manual' ? true : false;
@@ -934,5 +971,13 @@ export class ReplicationWizardComponent {
             begin: begin,
             end: end,
         };
+    }
+
+    getChildren(node) {
+        const transport = this.entityWizard.formArray.controls[0].controls['transport'].value;
+        const sshCredentials = this.entityWizard.formArray.controls[0].controls['ssh_credentials'].value;
+        return new Promise((resolve, reject) => {
+            resolve(this.replicationService.getRemoteDataset(transport,sshCredentials, this));
+        });
     }
 }
