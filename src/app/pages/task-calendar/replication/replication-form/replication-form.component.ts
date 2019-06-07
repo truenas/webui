@@ -4,14 +4,13 @@ import { ActivatedRoute } from '@angular/router';
 
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/task-calendar/replication/replication';
-import { WebSocketService, TaskService, KeychainCredentialService } from 'app/services';
-import { EntityUtils } from '../../../common/entity/utils';
+import { WebSocketService, TaskService, KeychainCredentialService, ReplicationService } from 'app/services';
 import * as _ from 'lodash';
 
 @Component({
     selector: 'app-replication-list',
     template: `<entity-form [conf]='this'></entity-form>`,
-    providers: [TaskService, KeychainCredentialService]
+    providers: [TaskService, KeychainCredentialService, ReplicationService]
 })
 export class ReplicationFormComponent {
 
@@ -702,8 +701,12 @@ export class ReplicationFormComponent {
         },
     ]
 
-    constructor(private ws: WebSocketService, protected taskService: TaskService, private aroute: ActivatedRoute,
-        private keychainCredentialService: KeychainCredentialService) {
+    constructor(
+        private ws: WebSocketService,
+        protected taskService: TaskService,
+        private aroute: ActivatedRoute,
+        private keychainCredentialService: KeychainCredentialService,
+        private replicationService: ReplicationService) {
         const sshCredentialsField = _.find(this.fieldConfig, { name: 'ssh_credentials' });
         this.keychainCredentialService.getSSHConnections().subscribe(
             (res) => {
@@ -920,45 +923,7 @@ export class ReplicationFormComponent {
         const transport = this.entityForm.formGroup.controls['transport'].value;
         const sshCredentials = this.entityForm.formGroup.controls['ssh_credentials'].value;
         return new Promise((resolve, reject) => {
-            resolve(this.getRemoteDataset(transport,sshCredentials));
+            resolve(this.replicationService.getRemoteDataset(transport,sshCredentials, this));
         });
-    }
-
-    getRemoteDataset(transport, sshCredentials) {
-        return this.ws.call('zettarepl.list_datasets', [transport, sshCredentials]).toPromise().then(
-            (res) => {
-                const nodes = [];
-                for (let i = 0; i < res.length; i++) {
-                    const pathArr = res[i].split('/');
-                    if (pathArr.length === 1) {
-                        const node = {
-                            name: res[i],
-                            subTitle: pathArr[0],
-                            hasChildren: false,
-                            children: [],
-                        };
-                        nodes.push(node);
-                    } else {
-                        let parent = _.find(nodes, {'name': pathArr[0]});
-                        let j = 1;
-                        while(_.find(parent.children, {'subTitle': pathArr[j]})) {
-                            parent = _.find(parent.children, {'subTitle': pathArr[j++]});
-                        }
-                        const node = {
-                            name: res[i],
-                            subTitle: pathArr[j],
-                            hasChildren: false,
-                            children: [],
-                        };
-                        parent.children.push(node);
-                        parent.hasChildren = true;
-                    }
-                }
-                return nodes;
-            },
-            (err) => {
-                new EntityUtils().handleWSError(this, err);
-            }
-        );
     }
 }
