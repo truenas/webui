@@ -115,7 +115,7 @@ export class ServiceSNMPComponent {
     },
     {
       type : 'checkbox',
-      name : 'v3',
+      name : 'zilstat',
       placeholder : helptext.zilstat_placeholder,
       tooltip: helptext.zilstat_tooltip,
     },
