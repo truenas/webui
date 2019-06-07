@@ -95,6 +95,9 @@ options_tooltip: T('Enter any additional <a\
  target="_blank">snmpd.conf(5)</a> options. Add one\
  option for each line.'),
 
+zilstat_placeholder: T('Expose zilstat via SNMP'),
+zilstat_tooltip: T('Enabling this option may have performance implications on your pools.'),
+
 loglevel_placeholder : T('Log Level'),
 loglevel_tooltip : T('Choose how many log entries to create. Choices range\
  from the least log entries (<i>Emergency</i>) to the\
