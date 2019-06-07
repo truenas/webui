@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/task-calendar/replication/replication';
 import { WebSocketService, TaskService, KeychainCredentialService } from 'app/services';
+import { EntityUtils } from '../../../common/entity/utils';
 import * as _ from 'lodash';
 
 @Component({
@@ -179,10 +180,21 @@ export class ReplicationFormComponent {
                 }]
             }],
         }, {
-            type: 'input',
+            type: 'explorer',
             name: 'target_dataset_PUSH',
             placeholder: helptext.target_dataset_placeholder,
             tooltip: helptext.target_dataset_tooltip,
+            initial: '',
+            explorerType: 'directory',
+            customTemplateStringOptions: {
+                displayField: 'Path',
+                isExpandedField: 'expanded',
+                idField: 'uuid',
+                getChildren: this.getChildren.bind(this),
+                nodeHeight: 23,
+                allowDrag: false,
+                useVirtualScroll: false,
+            },
             required: true,
             validation: [Validators.required],
             isHidden: true,
@@ -194,10 +206,21 @@ export class ReplicationFormComponent {
                 }]
             }],
         }, {
-            type: 'input',
+            type: 'explorer',
             name: 'source_datasets_PULL',
             placeholder: helptext.source_datasets_placeholder,
             tooltip: helptext.source_datasets_placeholder,
+            initial: '',
+            explorerType: 'directory',
+            customTemplateStringOptions: {
+                displayField: 'Path',
+                isExpandedField: 'expanded',
+                idField: 'uuid',
+                getChildren: this.getChildren.bind(this),
+                nodeHeight: 23,
+                allowDrag: false,
+                useVirtualScroll: false,
+            },
             required: true,
             validation: [Validators.required],
             isHidden: true,
@@ -743,6 +766,19 @@ export class ReplicationFormComponent {
                 entityForm.setDisabled('schedule_end', toDisable, toDisable);
             }
         })
+
+        entityForm.formGroup.controls['ssh_credentials'].valueChanges.subscribe(
+            (res) => {
+                for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
+                    const explorerComponent = _.find(this.fieldConfig, {name: item}).customTemplateStringOptions.explorerComponent;
+                    explorerComponent.nodes = [{
+                        mountpoint: explorerComponent.config.initial,
+                        name: explorerComponent.config.initial,
+                        hasChildren: true
+                    }];
+                }
+            }
+        )
     }
 
     resourceTransformIncomingRestData(wsResponse) {
@@ -880,4 +916,49 @@ export class ReplicationFormComponent {
         }
     }
 
+    getChildren(node) {
+        const transport = this.entityForm.formGroup.controls['transport'].value;
+        const sshCredentials = this.entityForm.formGroup.controls['ssh_credentials'].value;
+        return new Promise((resolve, reject) => {
+            resolve(this.getRemoteDataset(transport,sshCredentials));
+        });
+    }
+
+    getRemoteDataset(transport, sshCredentials) {
+        return this.ws.call('zettarepl.list_datasets', [transport, sshCredentials]).toPromise().then(
+            (res) => {
+                const nodes = [];
+                for (let i = 0; i < res.length; i++) {
+                    const pathArr = res[i].split('/');
+                    if (pathArr.length === 1) {
+                        const node = {
+                            name: res[i],
+                            subTitle: pathArr[0],
+                            hasChildren: false,
+                            children: [],
+                        };
+                        nodes.push(node);
+                    } else {
+                        let parent = _.find(nodes, {'name': pathArr[0]});
+                        let j = 1;
+                        while(_.find(parent.children, {'subTitle': pathArr[j]})) {
+                            parent = _.find(parent.children, {'subTitle': pathArr[j++]});
+                        }
+                        const node = {
+                            name: res[i],
+                            subTitle: pathArr[j],
+                            hasChildren: false,
+                            children: [],
+                        };
+                        parent.children.push(node);
+                        parent.hasChildren = true;
+                    }
+                }
+                return nodes;
+            },
+            (err) => {
+                new EntityUtils().handleWSError(this, err);
+            }
+        );
+    }
 }
