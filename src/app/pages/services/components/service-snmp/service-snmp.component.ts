@@ -114,6 +114,12 @@ export class ServiceSNMPComponent {
       tooltip: helptext.options_tooltip,
     },
     {
+      type : 'checkbox',
+      name : 'v3',
+      placeholder : helptext.zilstat_placeholder,
+      tooltip: helptext.zilstat_tooltip,
+    },
+    {
       type : 'select',
       name : 'loglevel',
       placeholder : helptext.loglevel_placeholder,
@@ -143,6 +149,7 @@ export class ServiceSNMPComponent {
       entityForm.formGroup.controls['v3_privpassphrase'].setValue(res.v3_privpassphrase);
       entityForm.formGroup.controls['v3_privpassphrase2'].setValue(res.v3_privpassphrase);
       entityForm.formGroup.controls['v3_authtype'].setValue(res.v3_authtype);
+      entityForm.formGroup.controls['zilstat'].setValue(res.zilstat);
     });
     entityForm.submitFunction = this.submitFunction;
    }
