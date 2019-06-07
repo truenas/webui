@@ -920,8 +920,20 @@ export class ReplicationFormComponent {
     }
 
     getChildren(node) {
+        for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
+            _.find(this.fieldConfig, {name: 'target_dataset_PUSH'}).hasErrors = false;
+        }
+
         const transport = this.entityForm.formGroup.controls['transport'].value;
         const sshCredentials = this.entityForm.formGroup.controls['ssh_credentials'].value;
+        if (sshCredentials == undefined || sshCredentials == '') {
+            for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
+                _.find(this.fieldConfig, {name: item}).hasErrors = true;
+                _.find(this.fieldConfig, {name: item}).errors = 'Please select a valid SSH Connection';
+            }
+            return;
+        }
+
         return new Promise((resolve, reject) => {
             resolve(this.replicationService.getRemoteDataset(transport,sshCredentials, this));
         });
