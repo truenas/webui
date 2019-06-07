@@ -1,12 +1,11 @@
-import { Component, ElementRef, Injector, ApplicationRef, OnInit } from '@angular/core';
+import { Component, Injector, ApplicationRef } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RestService } from '../../../../services/rest.service';
 import { Subscription } from 'rxjs';
 import { WebSocketService } from 'app/services';
 import { EntityUtils } from '../../../common/entity/utils';
-
 import { T } from '../../../../translate-marker';
-import { isNgTemplate } from '@angular/compiler';
+
 @Component({
   selector: 'app-snapshot-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`
@@ -15,7 +14,7 @@ export class SnapshotListComponent {
 
   public title = "Snapshots";
   protected queryCall = 'zfs.snapshot.query';
-  protected queryCallOption = [[["pool", "!=", "freenas-boot"]], {"select": ["name", "properties"], "order_by": ["name"]}];
+  protected queryCallOption = [[["pool", "!=", "freenas-boot"]], {"select": ["name"], "order_by": ["name"]}];
   protected route_add: string[] = ['storage', 'snapshots', 'add'];
   protected route_add_tooltip = "Add Snapshot";
   protected wsDelete = 'zfs.snapshot.remove';
@@ -25,9 +24,6 @@ export class SnapshotListComponent {
   public sub: Subscription;
   public columns: Array<any> = [
     {name : 'Name', prop : 'name', minWidth: 355},
-    {name : 'Used', prop : 'used'},
-    {name : 'Referenced', prop : 'refer'},
-    {name : 'Date Created', prop: 'creation'}
   ];
   public config: any = {
     paging: true,
@@ -58,11 +54,6 @@ export class SnapshotListComponent {
     protected _injector: Injector, protected _appRef: ApplicationRef) { }
 
   resourceTransformIncomingRestData(rows: any) {
-    for (let i = 0; i < rows.length; i++) {
-      rows[i].used = rows[i].properties.used.rawvalue;
-      rows[i].refer = rows[i].properties.referenced.rawvalue;
-      rows[i].creation = rows[i].properties.creation.value;
-    }
     return rows;
   }
   
