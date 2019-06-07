@@ -237,6 +237,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         let newData: any[] = [];
 
         if (filterValue.length > 0) {
+          this.expandedRows = 0; // TODO: Make this unnecessary by figuring out how to keep expanded rows expanded when filtering
           this.rows.forEach((dataElement) => {
             for (const dataElementProp of this.filterColumns) {
               let value: any = dataElement[dataElementProp.prop];
