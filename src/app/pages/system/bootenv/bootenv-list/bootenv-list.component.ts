@@ -54,25 +54,27 @@ export class BootEnvironmentListComponent {
     },
   };
 
-  preInit(){
+  preInit() {
     this._rest.get('system/advanced/',{}).subscribe(res=>{
       this.scrub_interval = res.data.adv_boot_scrub;
-      this.ws.call('boot.get_state').subscribe(wres => {
-        if (wres.scan.end_time){
-          this.scrub_msg = moment(wres.scan.end_time.$date).format('MMMM Do YYYY, h:mm:ss a');
-        } else{
-          this.scrub_msg="Never"
-        }
-        this.size_consumed = wres.properties.allocated.value;
-        this.condition = wres.properties.health.value;
-        if (this.condition === 'DEGRADED'){
-          this.condition = this.condition + ` Check Notifications for more details.`
-        }
-        this.size_boot =  wres.properties.size.value;
-        this.percentange =  wres.properties.capacity.value;
-      });
     });
+  }
 
+  dataHandler() {
+    this.ws.call("boot.get_state").subscribe(wres => {
+      if (wres.scan.end_time) {
+        this.scrub_msg = moment(wres.scan.end_time.$date).format("MMMM Do YYYY, h:mm:ss a");
+      } else {
+        this.scrub_msg = "Never";
+      }
+      this.size_consumed = wres.properties.allocated.value;
+      this.condition = wres.properties.health.value;
+      if (this.condition === "DEGRADED") {
+        this.condition = this.condition + ` Check Notifications for more details.`;
+      }
+      this.size_boot = wres.properties.size.value;
+      this.percentange = wres.properties.capacity.value;
+    });
   }
 
   changeEvent(){
