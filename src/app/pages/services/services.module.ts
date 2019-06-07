@@ -13,6 +13,7 @@ import {ServiceDDNSComponent} from './components/service-dynamicdns';
 import {ServiceFTPComponent} from './components/service-ftp';
 import {ServiceLLDPComponent} from './components/service-lldp';
 import {ServiceNFSComponent} from './components/service-nfs';
+import {ServiceNetDataComponent} from './components/service-netdata';
 import {ServiceRSYNCComponent} from './components/service-rsync';
 import {RSYNCconfigurationListComponent} from './components/service-rsync/rsyncconfiguration/rsyncconfiguration-list';
 import {CconfigureRYSNCComponent} from './components/service-rsync/rsyncconfiguration/configure_rsync';
@@ -39,7 +40,7 @@ import { ServiceAsigraComponent } from './components/service-asigra/service-asig
     Services, ServiceSSHComponent, ServiceAFPComponent,
     ServiceFTPComponent, ServiceLLDPComponent,
     ServiceRSYNCComponent, CconfigureRYSNCComponent,RSYNCconfigurationListComponent, RYSNCConfigurationFormComponent,
-    ServiceSMARTComponent, ServiceNFSComponent, ServiceTFTPComponent, ServiceUPSComponent, ServiceDDNSComponent,
+    ServiceSMARTComponent, ServiceNFSComponent, ServiceNetDataComponent, ServiceTFTPComponent, ServiceUPSComponent, ServiceDDNSComponent,
     ServiceCIFSComponent, ServiceSMBComponent, ServiceSNMPComponent,
     ServiceWebdavComponent, ServiceS3Component, ServicesTableComponent, ServiceAsigraComponent
   ],
