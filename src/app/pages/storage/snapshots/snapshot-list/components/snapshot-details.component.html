@@ -1,0 +1,19 @@
+<div
+    fxLayoutAlign="start center"
+    fxLayoutGap="48px"
+    [style.margin-left.px]="176"
+    [style.padding.px]="16"
+>
+    <div>
+        <h4>{{ (snapshot$ | async)?.creation.value }}</h4>
+        <p>Date created</p>
+    </div>
+    <div>
+        <h4>{{ (snapshot$ | async)?.used.value }}</h4>
+        <p>Used</p>
+    </div>
+    <div>
+        <h4>{{ (snapshot$ | async)?.referenced.value }}</h4>
+        <p>Referenced</p>
+    </div>
+</div>

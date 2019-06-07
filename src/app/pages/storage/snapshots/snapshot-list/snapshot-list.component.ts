@@ -1,10 +1,11 @@
-import { Component, Injector, ApplicationRef } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { RestService } from '../../../../services/rest.service';
-import { Subscription } from 'rxjs';
+import { ApplicationRef, Component, Injector } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { WebSocketService } from 'app/services';
-import { EntityUtils } from '../../../common/entity/utils';
+import { Subscription } from 'rxjs';
+import { RestService } from '../../../../services/rest.service';
 import { T } from '../../../../translate-marker';
+import { EntityUtils } from '../../../common/entity/utils';
+import { SnapshotDetailsComponent } from './components/snapshot-details.component';
 
 @Component({
   selector: 'app-snapshot-list',
@@ -20,6 +21,8 @@ export class SnapshotListComponent {
   protected wsDelete = 'zfs.snapshot.remove';
   protected loaderOpen = false;
   protected entityList: any;
+  protected hasDetails = true;
+  protected rowDetailComponent = SnapshotDetailsComponent;
   public busy: Subscription;
   public sub: Subscription;
   public columns: Array<any> = [
