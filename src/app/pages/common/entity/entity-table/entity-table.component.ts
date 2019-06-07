@@ -211,7 +211,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       setTimeout(() => { this.setShowSpinner(); }, 500);
 
       // Next section sets the checked/displayed columns
-      if (this.conf.columns && this.conf.columns.length > 10) {
+      if (this.conf.columns && this.conf.columns.length > 9) {
         this.conf.columns = [];
 
         for (let item of this.allColumns) {
