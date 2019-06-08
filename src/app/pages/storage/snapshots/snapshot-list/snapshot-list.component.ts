@@ -19,6 +19,7 @@ export class SnapshotListComponent {
   protected route_add: string[] = ['storage', 'snapshots', 'add'];
   protected route_add_tooltip = "Add Snapshot";
   protected wsDelete = 'zfs.snapshot.remove';
+  protected showActions = false;
   protected loaderOpen = false;
   protected entityList: any;
   protected hasDetails = true;
@@ -91,31 +92,6 @@ export class SnapshotListComponent {
           new EntityUtils().handleWSError(this, res, entityList.dialogService);
       });
     });
-  }
-
-  getActions(parentRow) {
-    const actions = [];
-    
-    actions.push({
-      label: "Delete",
-      onClick: (row1) => {
-        this.doDelete(row1);
-      }
-    });
-    actions.push({
-      label: "Clone",
-      onClick: (row1) => {
-        this._router.navigate(new Array('/').concat(
-          ["storage", "snapshots", "clone", row1.name]));
-      }
-    });
-    actions.push({
-      label: "Rollback",
-      onClick: (row1) => {
-        this.doRollback(row1);
-      }
-    });
-    return actions;
   }
 
   getSelectedNames(selectedSnapshots) {

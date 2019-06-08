@@ -1,21 +1,36 @@
-<div
+<div 
+    *ngIf="snapshot$ | async as snapshot"
     fxLayoutAlign="start center"
-    fxLayoutGap="48px"
+    fxLayoutGap="56px"
     [style.margin-left.px]="176"
     [style.padding.px]="16"
 >
-    <ng-container *ngIf="snapshot$ | async">
+    <section fxLayoutAlign="start center" fxLayoutGap="48px">
         <div>
-            <h4>{{ (snapshot$ | async)?.creation.value }}</h4>
+            <h4>{{ snapshot.creation.value }}</h4>
             <p>Date created</p>
         </div>
         <div>
-            <h4>{{ (snapshot$ | async)?.used.value }}</h4>
+            <h4>{{ snapshot.used.value }}</h4>
             <p>Used</p>
         </div>
         <div>
-            <h4>{{ (snapshot$ | async)?.referenced.value }}</h4>
+            <h4>{{ snapshot.referenced.value }}</h4>
             <p>Referenced</p>
         </div>
-    </ng-container>
+    </section>
+
+    <section fxLayoutAlign="start center" fxLayoutGap="24px">
+        <ng-container *ngFor="let action of actions">
+            <button
+                class="snapshot-buttons"
+                mat-button
+                [color]="action.buttonColor || 'primary'"
+                (click)="action.onClick(snapshot)"
+                id="snapshot_{{ action.name }}_{{ action.id }}"
+            >
+                {{ action.label }}
+            </button>
+        </ng-container>
+    </section>
 </div>
