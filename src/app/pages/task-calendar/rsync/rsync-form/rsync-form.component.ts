@@ -17,7 +17,10 @@ import helptext from '../../../../helptext/task-calendar/resync/resync-form';
 })
 export class RsyncFormComponent {
 
-  protected resource_name: string = 'tasks/rsync';
+  //protected resource_name: string = 'tasks/rsync';
+  protected addCall = 'rsynctask.create';
+  protected editCall = 'rsynctask.update';
+  protected queryCall = 'rsynctask.query';
   protected route_success: string[] = ['tasks', 'rsync'];
   protected entityForm: EntityFormComponent;
   protected isEntity: boolean = true;
@@ -34,7 +37,7 @@ export class RsyncFormComponent {
       {
         type : 'explorer',
         initial: '/mnt',
-        name: 'rsync_path',
+        name: 'path',
         explorerType: 'directory',
         placeholder: helptext.rsync_path_placeholder,
         tooltip: helptext.rsync_path_tooltip,
@@ -42,7 +45,7 @@ export class RsyncFormComponent {
         validation : helptext.rsync_path_validation
       }, {
         type: 'combobox',
-        name: 'rsync_user',
+        name: 'user',
         placeholder: helptext.rsync_user_placeholder,
         tooltip: helptext.rsync_user_tooltip,
         options: [],
@@ -53,53 +56,55 @@ export class RsyncFormComponent {
         updater: this.updateUserSearchOptions,
       }, {
         type: 'input',
-        name: 'rsync_remotehost',
+        name: 'remotehost',
         placeholder: helptext.rsync_remotehost_placeholder,
         required: true,
         validation : helptext.rsync_remotehost_validation,
         tooltip: helptext.rsync_remotehost_tooltip
       }, {
+        type: 'select',
+        name: 'mode',
+        placeholder: helptext.rsync_mode_placeholder,
+        tooltip: helptext.rsync_mode_tooltip,
+        options: [{label: 'Module', value: 'MODULE'},
+                  {label: 'SSH', value: 'SSH'}],
+      }, {
         type: 'input',
-        name: 'rsync_remoteport',
+        name: 'remoteport',
         inputType: 'number',
         placeholder: helptext.rsync_remoteport_placeholder,
         value: 22,
         tooltip: helptext.rsync_remoteport_tooltip
       }, {
-        type: 'select',
-        name: 'rsync_mode',
-        placeholder: helptext.rsync_mode_placeholder,
-        tooltip: helptext.rsync_mode_tooltip,
-        options: [],
-      }, {
         type: 'input',
-        name: 'rsync_remotemodule',
+        name: 'remotemodule',
         placeholder: helptext.rsync_remotemodule_placeholder,
         tooltip: helptext.rsync_remotemodule_tooltip
       }, {
         type : 'explorer',
         initial: '/mnt',
-        name: 'rsync_remotepath',
+        name: 'remotepath',
         explorerType: 'directory',
         placeholder: helptext.rsync_remotepath_placeholder,
         tooltip: helptext.rsync_remotepath_tooltip
       }, {
         type: 'checkbox',
-        name: 'rsync_validate_rpath',
+        name: 'validate_rpath',
         placeholder: helptext.rsync_validate_rpath_placeholder,
         tooltip: helptext.rsync_validate_rpath_tooltip,
         value: true,
       }, {
         type: 'select',
-        name: 'rsync_direction',
+        name: 'direction',
         placeholder: helptext.rsync_direction_placeholder,
         tooltip: helptext.rsync_direction_tooltip,
-        options: [],
+        options: [{label: 'Push', value: 'PUSH'},
+                  {label: 'Pull', value: 'PULL'}],
         required: true,
         validation : helptext.rsync_direction_validation
       }, {
         type: 'input',
-        name: 'rsync_description',
+        name: 'desc',
         placeholder: helptext.rsync_description_placeholder,
         tooltip: helptext.rsync_description_tooltip
       }, {
@@ -110,61 +115,61 @@ export class RsyncFormComponent {
         required: true
       }, {
         type: 'checkbox',
-        name: 'rsync_recursive',
+        name: 'recursive',
         placeholder: helptext.rsync_recursive_placeholder,
         tooltip: helptext.rsync_recursive_tooltip,
         value: true,
       }, {
         type: 'checkbox',
-        name: 'rsync_times',
+        name: 'times',
         placeholder: helptext.rsync_times_placeholder,
         tooltip: helptext.rsync_times_tooltip,
         value: true,
       }, {
         type: 'checkbox',
-        name: 'rsync_compress',
+        name: 'compress',
         placeholder: helptext.rsync_compress_placeholder,
         tooltip: helptext.rsync_compress_tooltip,
         value: true,
       }, {
         type: 'checkbox',
-        name: 'rsync_archive',
+        name: 'archive',
         placeholder: helptext.rsync_archive_placeholder,
         tooltip: helptext.rsync_archive_tooltip
       }, {
         type: 'checkbox',
-        name: 'rsync_delete',
+        name: 'delete',
         placeholder: helptext.rsync_delete_placeholder,
         tooltip: helptext.rsync_delete_tooltip
       }, {
         type: 'checkbox',
-        name: 'rsync_quiet',
+        name: 'quiet',
         placeholder: helptext.rsync_quiet_placeholder,
         tooltip: helptext.rsync_quiet_tooltip
       }, {
         type: 'checkbox',
-        name: 'rsync_preserveperm',
+        name: 'preserveperm',
         placeholder: helptext.rsync_preserveperm_placeholder,
         tooltip: helptext.rsync_preserveperm_tooltip
       }, {
         type: 'checkbox',
-        name: 'rsync_preserveattr',
+        name: 'preserveattr',
         placeholder: helptext.rsync_preserveattr_placeholder,
         tooltip: helptext.rsync_preserveattr_tooltip
       }, {
         type: 'checkbox',
-        name: 'rsync_delayupdates',
+        name: 'delayupdates',
         placeholder: helptext.rsync_delayupdates_placeholder,
         tooltip: helptext.rsync_delayupdates_tooltip,
         value: true,
       }, {
         type: 'textarea',
-        name: 'rsync_extra',
+        name: 'extra',
         placeholder: helptext.rsync_extra_placeholder,
         tooltip: helptext.rsync_extra_tooltip
       }, {
         type: 'checkbox',
-        name: 'rsync_enabled',
+        name: 'enabled',
         placeholder: helptext.rsync_enabled_placeholder,
         tooltip: helptext.rsync_enabled_tooltip,
         value: true,
@@ -174,16 +179,14 @@ export class RsyncFormComponent {
 
   protected hide_fileds: Array<any>;
   protected rsync_module_field: Array<any> = [
-    'rsync_remotemodule',
+    'remotemodule',
   ];
   protected rsync_ssh_field: Array<any> = [
-    'rsync_remoteport',
-    'rsync_remotepath',
-    'rsync_validate_rpath',
+    'remoteport',
+    'remotepath',
+    'validate_rpath',
   ];
   protected user_field: any;
-  protected rsync_mode_field: any;
-  protected rsync_direction_field: any;
 
   constructor(protected router: Router,
     protected taskService: TaskService,
@@ -193,7 +196,7 @@ export class RsyncFormComponent {
   preInit() {
     this.hide_fileds = this.rsync_ssh_field;
 
-    this.user_field = _.find(this.fieldSets[0].config, { 'name': 'rsync_user' });
+    this.user_field = _.find(this.fieldSets[0].config, { 'name': 'user' });
     
     this.userService.listAllUsers().subscribe((res) => {
       let items = res.data.items;
@@ -201,25 +204,11 @@ export class RsyncFormComponent {
          this.user_field.options.push({label: items[i].label, value: items[i].id});
        }
     });
-
-    this.rsync_mode_field = _.find(this.fieldSets[0].config, { 'name': 'rsync_mode' });
-    this.taskService.getRsyncModeChoices().subscribe((res) => {
-      res.forEach((item) => {
-        this.rsync_mode_field.options.push({ label: item[1], value: item[0] });
-      });
-    });
-
-    this.rsync_direction_field = _.find(this.fieldSets[0].config, { 'name': 'rsync_direction' });
-    this.taskService.getRsyncDirectionChoices().subscribe((res) => {
-      res.forEach((item) => {
-        this.rsync_direction_field.options.push({ label: item[1], value: item[0] });
-      });
-    });
   }
 
   afterInit(entityForm) {
-    entityForm.formGroup.controls['rsync_mode'].valueChanges.subscribe((res) => {
-      if( res === "ssh" ){
+    entityForm.formGroup.controls['mode'].valueChanges.subscribe((res) => {
+      if( res === "SSH" ){
         this.hide_fileds = this.rsync_module_field;
       }
       else {
@@ -231,19 +220,21 @@ export class RsyncFormComponent {
   beforeSubmit(value){
     let spl = value.rsync_picker.split(" ");
     delete value.rsync_picker;
-    value['rsync_minute'] = spl[0];
-    value['rsync_hour'] = spl[1];
-    value['rsync_daymonth'] = spl[2];
-    value['rsync_month'] = spl[3];
-    value['rsync_dayweek'] = spl[4];
+    const schedule = {}
+    schedule['minute'] = spl[0];
+    schedule['hour'] = spl[1];
+    schedule['dom'] = spl[2];
+    schedule['month'] = spl[3];
+    schedule['dow'] = spl[4];
+    value['schedule'] = schedule;
   }
 
   resourceTransformIncomingRestData(data) {
-    data['rsync_picker'] = data.rsync_minute + " " +
-                          data.rsync_hour + " " +
-                          data.rsync_daymonth + " " +
-                          data.rsync_month + " " +
-                          data.rsync_dayweek;
+    data['rsync_picker'] = data.schedule.minute + " " +
+                          data.schedule.hour + " " +
+                          data.schedule.dom + " " +
+                          data.schedule.month + " " +
+                          data.schedule.dow;
     return data;
   }
 
