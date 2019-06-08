@@ -53,7 +53,7 @@ export class WidgetCpuComponent extends WidgetChartComponent implements AfterVie
     this.data.subscribe((evt:CoreEvent) => {
       if(evt.name == "CpuStats"){
         //this.cpuData = evt.data;
-        if(evt.data.average && typeof this.cpuLoad !== 'undefined'){
+        if(evt.data.average /*&& typeof this.cpuLoad !== 'undefined'*/){
           this.setCpuLoadData(this.cpuLoad, ['Load', parseInt(evt.data.average.usage.toFixed(1))]);
         }
       }

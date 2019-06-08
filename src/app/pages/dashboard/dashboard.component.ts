@@ -73,18 +73,18 @@ export class DashboardComponent implements OnInit,OnDestroy {
     this.statsData = new StatsUtils();
 
     //this.statsEvents = this.ws.job("reporting.realtime",[{"name": "cpu", "identifier": null}]).subscribe((evt)=>{
-    this.statsEvents = this.ws.sub("reporting.realtime").subscribe((evt)=>{
+    /*this.statsEvents = this.ws.sub("reporting.realtime").subscribe((evt)=>{
       //console.log(evt);
       this.statsDataEvents.next({name:"CpuStats", data:evt.cpu});
       //this.statsDataEvents.next({name:"MemoryStats", data:evt.virtual_memory});
-    });
-
-    /*this.statsEvents = this.ws.sub("trueview.stats:10").subscribe((evt)=>{
-      console.log(evt);
-      this.statsData.updateStats(evt);
-      let cpuLoad = this.statsData.cpuLoad();
-      console.log(cpuLoad);
     });*/
+
+    this.statsEvents = this.ws.sub("trueview.stats:10").subscribe((evt)=>{
+      console.log(evt);
+      /*this.statsData.updateStats(evt);
+      let cpuLoad = this.statsData.cpuLoad();
+      console.log(cpuLoad);*/
+    });
 
     this.core.register({observerClass:this,eventName:"VolumeData"}).subscribe((evt:CoreEvent) => {
       this.setPoolData(evt);

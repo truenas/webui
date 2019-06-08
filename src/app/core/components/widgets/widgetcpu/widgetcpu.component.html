@@ -4,16 +4,18 @@
       <mat-card-content>
         <mat-toolbar-row >
           <h3 class="mat-card-title-text"><div class="card-title-text">{{title | translate}}</div></h3>
-          <ng-template *ngIf="configurable">
+          <!--<ng-template *ngIf="configurable === true">
             <button mat-icon-button (click)="toggleConfig()">
               <mat-icon>settings</mat-icon>
             </button>
-          </ng-template>
+            </ng-template>-->
         </mat-toolbar-row>
         <!--<viewchartline fxFlex="100" fxFlexAlign="end" #chartCpu width="600" height="160" [style.display]="isFlipped ? 'none': 'block'"></viewchartline>-->
         <!-- Chart -->
         <div class="">
-          <viewchartgauge *ngIf="cpuAvg.data" [config]="cpuAvg" #load class="chart"></viewchartgauge>
+          <div id="cpu-load-label">Load</div>
+          <div *ngIf="cpuAvg && cpuAvg.data" id="cpu-load-value">{{cpuAvg.data[1]}}%</div>
+          <viewchartgauge *ngIf="cpuAvg && cpuAvg.data" [config]="cpuAvg" #load class=""></viewchartgauge>
           <!--<div [id]="chartId"></div>
           <div class="x-axis">
             <div class="start-time">{{startTime}}</div>
@@ -37,7 +39,7 @@
       </mat-card-content>
     </mat-card>
 
-    <ng-template *ngIf="configurable">
+    <!--<ng-template *ngIf="configurable">
     <mat-card class="back">
       <mat-card-content fxLayout="column" fxLayoutAlign="start stretch" fxFlex="100">
       </mat-card-content>
@@ -46,6 +48,7 @@
         <button mat-button color="primary" type="submit" form="preferences" (click)="toggleConfig()">{{"Save" | translate}}</button>
       </div>
     </mat-card>
-    </ng-template>
+    </ng-template>-->
+
   </div>
 </div>

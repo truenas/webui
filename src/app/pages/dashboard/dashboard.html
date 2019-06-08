@@ -12,7 +12,7 @@
        fxLayoutAlign.gt-sm="space-around center">
 
     <widget-sysinfo fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"></widget-sysinfo>
-    <widget-cpu fxFlex="600px" fxFlex.xs="100" [data]="statsDataEvents" [widgetSize]="medium"   configurable="false"></widget-cpu>
+    <widget-cpu fxFlex="600px" fxFlex.xs="100" *ngIf="statsDataEvents" [data]="statsDataEvents" [widgetSize]="medium"   configurable="false"></widget-cpu>
     <!--
       <widget-netinfo fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"></widget-netinfo>
 
