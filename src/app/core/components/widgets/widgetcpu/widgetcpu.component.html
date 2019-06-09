@@ -12,10 +12,11 @@
         </mat-toolbar-row>
         <!--<viewchartline fxFlex="100" fxFlexAlign="end" #chartCpu width="600" height="160" [style.display]="isFlipped ? 'none': 'block'"></viewchartline>-->
         <!-- Chart -->
-        <div class="">
-          <div id="cpu-load-label">Load</div>
+        <div id="cpu-load-wrapper">
+          <h3 id="cpu-load-label">LOAD</h3>
           <div *ngIf="cpuAvg && cpuAvg.data" id="cpu-load-value">{{cpuAvg.data[1]}}%</div>
           <viewchartgauge *ngIf="cpuAvg && cpuAvg.data" [config]="cpuAvg" #load class=""></viewchartgauge>
+          <button mat-button color="primary" class="" (click)="router.navigate(['reportsdashboard/cpu'])">CPU REPORTS</button>
           <!--<div [id]="chartId"></div>
           <div class="x-axis">
             <div class="start-time">{{startTime}}</div>

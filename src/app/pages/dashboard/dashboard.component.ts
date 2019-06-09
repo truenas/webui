@@ -26,6 +26,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
   public statsDataEvents:Subject<CoreEvent>;
   public statsData: StatsUtils;
   private statsEvents: any;
+  private statsEventsTC: any;
 
   public isFooterConsoleOpen: boolean;
 
@@ -65,6 +66,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
   ngOnDestroy(){
     //this.core.emit({name:"StatsKillAll", sender:this});
     this.statsEvents.unsubscribe();
+    this.statsEventsTC.unsubscribe();
     this.statsDataEvents.complete();
     this.core.unregister({observerClass:this});
   }
@@ -73,17 +75,23 @@ export class DashboardComponent implements OnInit,OnDestroy {
     this.statsData = new StatsUtils();
 
     //this.statsEvents = this.ws.job("reporting.realtime",[{"name": "cpu", "identifier": null}]).subscribe((evt)=>{
-    /*this.statsEvents = this.ws.sub("reporting.realtime").subscribe((evt)=>{
+    this.statsEvents = this.ws.sub("reporting.realtime").subscribe((evt)=>{
+      if(!evt.virtual_memory){return;}
       //console.log(evt);
-      this.statsDataEvents.next({name:"CpuStats", data:evt.cpu});
+      //this.statsDataEvents.next({name:"CpuStats", data:evt.cpu});
       //this.statsDataEvents.next({name:"MemoryStats", data:evt.virtual_memory});
-    });*/
+    });
 
-    this.statsEvents = this.ws.sub("trueview.stats:10").subscribe((evt)=>{
-      console.log(evt);
-      /*this.statsData.updateStats(evt);
-      let cpuLoad = this.statsData.cpuLoad();
-      console.log(cpuLoad);*/
+    this.statsEventsTC = this.ws.sub("trueview.stats:10").subscribe((evt)=>{
+      if(evt.memory_summary){
+        console.log(evt);
+        //this.statsData.updateStats(evt);
+        //let cpuLoad = this.statsData.cpuLoad();
+        //console.log(cpuLoad);
+      } else if(evt.virtual_memory){
+        console.log(evt);
+        this.statsDataEvents.next({name:"CpuStats", data:evt.cpu});
+      }
     });
 
     this.core.register({observerClass:this,eventName:"VolumeData"}).subscribe((evt:CoreEvent) => {

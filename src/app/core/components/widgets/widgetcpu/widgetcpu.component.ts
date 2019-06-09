@@ -30,7 +30,7 @@ export class WidgetCpuComponent extends WidgetChartComponent implements AfterVie
   @Input() data: Subject<CoreEvent>;
   public cpuData: any;
   public cpuAvg: any;
-  public title:string = T("CPU Usage");
+  public title:string = T("CPU");
   public subtitle:string = T("% of all cores");
   public widgetColorCssVar = "var(--accent)";
   public configurable = false;

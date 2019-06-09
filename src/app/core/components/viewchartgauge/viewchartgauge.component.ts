@@ -120,12 +120,12 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
     
     let background = g.append("path")
         .datum({endAngle: this.doublePI})
-        .style("fill", "#ddd")
+        .style("fill", "var(--bg1)")
         .attr("d", this.arc);
     
     let foreground = g.append("path")
         .datum({endAngle: 0.127 * this.doublePI})
-        .style("fill", "orange")
+        .style("fill", "var(--primary)")
         .attr("class", "value")
         .attr("d", this.arc);
 
