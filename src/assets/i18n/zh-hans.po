@@ -426,7 +426,10 @@ msgstr ""
 msgid "A swap size of 0 is STRONGLY DISCOURAGED."
 msgstr "使用为0的swap大小是极不推荐的。"
 
-msgid "A unique name to identify this keypair."
+msgid ""
+"A unique name to identify this keypair. Automatically generated keypairs "
+"are named after the object that generated the keypair with \"_keypair\" "
+"appended to the name."
 msgstr ""
 
 msgid ""
@@ -981,6 +984,9 @@ msgstr "允许密码验证"
 msgid "Allow repeated GIDs"
 msgstr "允许重复GIDs"
 
+msgid "Allow taking empty snapshots"
+msgstr ""
+
 msgid ""
 "Allow the jail hostname to be changed with <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=hostname&manpath=FreeBSD+11"
@@ -1248,6 +1254,9 @@ msgstr ""
 
 msgid "Auxiliary parameters"
 msgstr "附加参数"
+
+msgid "Auxilliary parameters"
+msgstr ""
 
 msgid "Available Disks"
 msgstr "可用磁盘"
@@ -1992,6 +2001,9 @@ msgstr "云同步任务"
 
 msgid "Cloud sync has started."
 msgstr "云同步已启动"
+
+msgid "Cloud sync stopped."
+msgstr ""
 
 msgid "Com Port"
 msgstr ""
@@ -3224,6 +3236,9 @@ msgid ""
 "mechanism."
 msgstr ""
 
+msgid "Enabling this option may have performance implications on your pools."
+msgstr ""
+
 msgid "Encrypted pool disks must be decrypted prior to import."
 msgstr ""
 
@@ -4097,6 +4112,9 @@ msgstr "导出证书"
 msgid "Export Password Secret Seed"
 msgstr ""
 
+msgid "Export Pool Ecryption Keys"
+msgstr ""
+
 msgid "Export Private Key"
 msgstr "导出私钥"
 
@@ -4120,6 +4138,9 @@ msgstr "导出/断开存储池"
 
 msgid "Exporting Pool..."
 msgstr "导出存储池中..."
+
+msgid "Expose zilstat via SNMP"
+msgstr ""
 
 msgid "Extend"
 msgstr "扩展"
@@ -4463,6 +4484,12 @@ msgstr "主目录权限"
 
 msgid "Host"
 msgstr "主机"
+
+msgid "Host Allow"
+msgstr ""
+
+msgid "Host Deny"
+msgstr ""
 
 msgid "Host Sync"
 msgstr ""
@@ -5070,6 +5097,9 @@ msgstr ""
 msgid "Load Average"
 msgstr "平均负载"
 
+msgid "Local"
+msgstr ""
+
 msgid "Local Master"
 msgstr ""
 
@@ -5265,6 +5295,9 @@ msgid ""
 msgstr ""
 
 msgid "Maximum client idle time in seconds before client is disconnected."
+msgstr ""
+
+msgid "Maximum connections"
 msgstr ""
 
 msgid "Maximum number of SysV message queues."
@@ -6499,9 +6532,6 @@ msgstr ""
 
 msgid "Reporting"
 msgstr "报表"
-
-msgid "Reporting Database"
-msgstr "报告数据库"
 
 msgid "Reports"
 msgstr "报告"
@@ -8029,9 +8059,6 @@ msgstr ""
 msgid "Set to start this VM when the system boots."
 msgstr "设置来使这个虚拟机在系统引导时启动。"
 
-msgid "Set to store the system log on the system dataset."
-msgstr "设置在系统数据集上保存系统日志。"
-
 msgid ""
 "Set to suppress informational messages from the                remote "
 "server."
@@ -8480,6 +8507,9 @@ msgstr ""
 msgid "Stop Scrub"
 msgstr "停止垃圾清理"
 
+msgid "Stop this cloud sync?"
+msgstr ""
+
 msgid "Stopped the scrub on pool <i>"
 msgstr "已停止数据校验在存储池<i>"
 
@@ -8493,11 +8523,9 @@ msgid "Storage & Groups"
 msgstr "存储 & 群组"
 
 msgid ""
-"Store reporting information on the system dataset. When unset, reporting "
-"information is stored to a RAM disk to avoid filling /var."
+"Store system logs on the system dataset. Unset to store system logs in "
+"<i>/var/</i> on the operating system device."
 msgstr ""
-"在系统数据集上存储报表信息。When unset, reporting information is stored to a RAM disk to "
-"avoid filling /var."
 
 msgid "Stream Compression"
 msgstr ""
@@ -8628,6 +8656,9 @@ msgstr "系统负载"
 
 msgid "System Processes"
 msgstr "系统进程"
+
+msgid "System clock"
+msgstr ""
 
 msgid "System domain name, like <i>example.com</i>"
 msgstr "系统域名，例如<i>example.com</i>"
@@ -9399,6 +9430,9 @@ msgstr ""
 
 msgid "VM Snapshot"
 msgstr "虚拟机快照"
+
+msgid "VM system time. Default is <i>Local</i>."
+msgstr ""
 
 msgid "VMWare Sync"
 msgstr "VMWare 同步"

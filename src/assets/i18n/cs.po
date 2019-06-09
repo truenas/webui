@@ -382,7 +382,10 @@ msgstr ""
 msgid "A swap size of 0 is STRONGLY DISCOURAGED."
 msgstr ""
 
-msgid "A unique name to identify this keypair."
+msgid ""
+"A unique name to identify this keypair. Automatically generated keypairs "
+"are named after the object that generated the keypair with \"_keypair\" "
+"appended to the name."
 msgstr ""
 
 msgid ""
@@ -878,6 +881,9 @@ msgstr ""
 msgid "Allow repeated GIDs"
 msgstr ""
 
+msgid "Allow taking empty snapshots"
+msgstr ""
+
 msgid ""
 "Allow the jail hostname to be changed with <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=hostname&manpath=FreeBSD+11"
@@ -1142,6 +1148,9 @@ msgstr ""
 
 msgid "Auxiliary parameters"
 msgstr "Pomocné parametry"
+
+msgid "Auxilliary parameters"
+msgstr ""
 
 msgid "Available Disks"
 msgstr "Disky k dispozici"
@@ -1838,6 +1847,9 @@ msgid "Cloud Sync Tasks"
 msgstr ""
 
 msgid "Cloud sync has started."
+msgstr ""
+
+msgid "Cloud sync stopped."
 msgstr ""
 
 msgid "Com Port"
@@ -2992,6 +3004,9 @@ msgid ""
 "mechanism."
 msgstr ""
 
+msgid "Enabling this option may have performance implications on your pools."
+msgstr ""
+
 msgid "Encrypted pool disks must be decrypted prior to import."
 msgstr ""
 
@@ -3831,6 +3846,9 @@ msgstr ""
 msgid "Export Password Secret Seed"
 msgstr ""
 
+msgid "Export Pool Ecryption Keys"
+msgstr ""
+
 msgid "Export Private Key"
 msgstr ""
 
@@ -3853,6 +3871,9 @@ msgid "Export/Disconnect Pool"
 msgstr ""
 
 msgid "Exporting Pool..."
+msgstr ""
+
+msgid "Expose zilstat via SNMP"
 msgstr ""
 
 msgid "Extend"
@@ -4196,6 +4217,12 @@ msgid "Home Directory Permissions"
 msgstr ""
 
 msgid "Host"
+msgstr ""
+
+msgid "Host Allow"
+msgstr ""
+
+msgid "Host Deny"
 msgstr ""
 
 msgid "Host Sync"
@@ -4796,6 +4823,9 @@ msgstr ""
 msgid "Load Average"
 msgstr ""
 
+msgid "Local"
+msgstr ""
+
 msgid "Local Master"
 msgstr ""
 
@@ -4976,6 +5006,9 @@ msgid ""
 msgstr ""
 
 msgid "Maximum client idle time in seconds before client is disconnected."
+msgstr ""
+
+msgid "Maximum connections"
 msgstr ""
 
 msgid "Maximum number of SysV message queues."
@@ -6185,9 +6218,6 @@ msgstr ""
 
 msgid "Reporting"
 msgstr "Vykazování"
-
-msgid "Reporting Database"
-msgstr ""
 
 msgid "Reports"
 msgstr "Výkazy"
@@ -7648,9 +7678,6 @@ msgstr ""
 msgid "Set to start this VM when the system boots."
 msgstr ""
 
-msgid "Set to store the system log on the system dataset."
-msgstr ""
-
 msgid ""
 "Set to suppress informational messages from the                remote "
 "server."
@@ -8088,6 +8115,9 @@ msgstr ""
 msgid "Stop Scrub"
 msgstr ""
 
+msgid "Stop this cloud sync?"
+msgstr ""
+
 msgid "Stopped the scrub on pool <i>"
 msgstr ""
 
@@ -8101,8 +8131,8 @@ msgid "Storage & Groups"
 msgstr "Úložiště a skupiny"
 
 msgid ""
-"Store reporting information on the system dataset. When unset, reporting "
-"information is stored to a RAM disk to avoid filling /var."
+"Store system logs on the system dataset. Unset to store system logs in "
+"<i>/var/</i> on the operating system device."
 msgstr ""
 
 msgid "Stream Compression"
@@ -8234,6 +8264,9 @@ msgstr ""
 
 msgid "System Processes"
 msgstr "Systémové procesy"
+
+msgid "System clock"
+msgstr ""
 
 msgid "System domain name, like <i>example.com</i>"
 msgstr ""
@@ -8967,6 +9000,9 @@ msgstr ""
 
 msgid "VM Snapshot"
 msgstr "Zachycený stav virt. stroje"
+
+msgid "VM system time. Default is <i>Local</i>."
+msgstr ""
 
 msgid "VMWare Sync"
 msgstr ""
