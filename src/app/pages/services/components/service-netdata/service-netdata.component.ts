@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import * as _ from 'lodash';
 import { WebSocketService, AppLoaderService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -92,26 +93,30 @@ export class ServiceNetDataComponent implements OnInit {
                         {label : 'None', value : 'none'},
                         {label : 'Slave', value : 'slave'},
                         {label : 'Master', value : 'master'}
-                    ]
+                    ],
+                    value: 'none'
                 },
                 {
                     type : 'input', 
                     name : 'destination',
                     placeholder : 'Destination',
-                    tooltip: 'Please provide line/space separated list of destinations where the collected metrics are to be sent in the format HOST:PORT'
+                    tooltip: 'Please provide line/space separated list of destinations where the collected metrics are to be sent in the format HOST:PORT',
+                    isHidden: true
                 },
                 {
                     type : 'input', 
                     name : 'api_key',
                     placeholder : 'API Key',
-                    tooltip: 'The API_KEY to use (as the sender)'
+                    tooltip: 'The API_KEY to use (as the sender)',
+                    isHidden: true
                 },
                 {
                     type : 'input', 
                     name : 'allow_from',
                     placeholder : 'Allow from',
                     tooltip: 'A list of simple patterns matching the IPs of the servers that will be pushing metrics using this API key.',
-                    value: "*"
+                    value: "*",
+                    isHidden: true
                 },
                 
             ]
@@ -125,8 +130,7 @@ export class ServiceNetDataComponent implements OnInit {
         'stream_mode',
         'destination',
         'api_key',
-        'allow_from',
-        'divider'
+        'allow_from'
     ];
 
     isCustActionVisible(actionId: string) {
@@ -155,10 +159,32 @@ export class ServiceNetDataComponent implements OnInit {
         protected ws: WebSocketService,
     ) {}
 
-    afterInit(entityEdit: any) { }
-
+    afterInit(entity: any) {
+        entity.formGroup.controls['stream_mode'].valueChanges.subscribe((res) => {
+            console.log(res)
+            if (res === 'none') {
+                this.hideField('destination', true, entity);
+                this.hideField('api_key', true, entity);
+                this.hideField('allow_from', true, entity);
+            } else if (res === 'slave') {
+                this.hideField('destination', false, entity);
+                this.hideField('api_key', false, entity);
+                this.hideField('allow_from', true, entity);
+            } else if (res === 'master') {
+                this.hideField('destination', true, entity);
+                this.hideField('api_key', false, entity);
+                this.hideField('allow_from', false, entity);
+            }
+        })
+    }
 
     ngOnInit() {
 
+    }
+
+    hideField(fieldName: any, show: boolean, entity: any) {
+        let target = _.find(this.fieldConfig, {'name' : fieldName});
+        target['isHidden'] = show;
+        entity.setDisabled(fieldName, show, show);
     }
 }
