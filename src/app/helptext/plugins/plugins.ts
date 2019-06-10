@@ -4,6 +4,7 @@ export default {
 
 name_placeholder: T('Plugin Name'),
 
+https_placeholder: T('Fetch Method'),
 https_tooltip: T(''),
 
 dhcp_placeholder: T('DHCP'),

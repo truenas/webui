@@ -14,7 +14,7 @@ specified RELEASE directories as nullfs mounts over the jail \
 directories. Basejails are not linked to the original RELEASE \
 when upgraded.'),
 
-https_placeholder: T('Fetch release via HTTPS'),
+https_placeholder: T('Fetch Method'),
 https_tooltip: T(''),
 
 release_placeholder: T('Release'),

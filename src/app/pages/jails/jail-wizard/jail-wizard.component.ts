@@ -78,10 +78,14 @@ export class JailWizardComponent {
           options: [],
         },
         {
-          type: 'checkbox',
+          type: 'radio',
           name: 'https',
           placeholder: helptext.https_placeholder,
           tooltip: helptext.https_tooltip,
+          options: [
+            {label:'HTTP', value: false},
+            {label:'HTTPS', value: true},
+          ],
           value: true,
           isHidden: true,
         },

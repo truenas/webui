@@ -31,8 +31,6 @@ export class PluginAddComponent implements OnInit {
   public route_success: string[] = ['plugins', 'installed'];
   protected isEntity: boolean = false;
 
-  protected https_placeholder = '';
-
   public fieldConfig: FieldConfig[] = [{
       type: 'input',
       name: 'name',
@@ -40,10 +38,14 @@ export class PluginAddComponent implements OnInit {
       disabled: true,
     },
     {
-      type: 'checkbox',
+      type: 'radio',
       name: 'https',
-      placeholder: this.https_placeholder,
+      placeholder: helptext.https_placeholder,
       tooltip: helptext.https_tooltip,
+      options: [
+        {label:'HTTP', value: false},
+        {label:'HTTPS', value: true},
+      ],
       value: true,
     },
     {
@@ -295,9 +297,6 @@ export class PluginAddComponent implements OnInit {
 
     this.aroute.params.subscribe(params => {
       this.pluginName = params['name'];
-      this.translate.get('Fetch ' + this.pluginName + ' via HTTPS').subscribe((translated) => {
-        _.find(this.fieldConfig, {'name': 'https'}).placeholder = translated;
-      });
       this.formGroup.controls['name'].setValue(this.pluginName);
     });
   }

@@ -21,7 +21,7 @@ release_tooltip: T('Choose the FreeBSD release to use as the jail \
 operating system. Releases that have already \
 been downloaded show <b>(fetched)</b>.'),
 
-https_placeholder: T('Fetch release via HTTPS'),
+https_placeholder: T('Fetch Method'),
 https_tooltip: T(''),
 
 step2_label: T('Configure Networking'),
