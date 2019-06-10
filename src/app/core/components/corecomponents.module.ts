@@ -16,6 +16,7 @@ import { ViewChartComponent } from 'app/core/components/viewchart/viewchart.comp
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
 import { ViewChartGaugeComponent } from './viewchartgauge/viewchartgauge.component';
+import { ViewChartBarComponent } from './viewchartbar/viewchartbar.component';
 import { ViewChartLineComponent } from './viewchartline/viewchartline.component';
 import { StorageService } from '../../services/storage.service';
 
@@ -68,6 +69,7 @@ import { TranslateModule } from '@ngx-translate/core';
     ViewChartDonutComponent,
     ViewChartPieComponent,
     ViewChartGaugeComponent,
+    ViewChartBarComponent,
     ViewChartLineComponent,
     WidgetComponent,
     WidgetChartComponent,
@@ -97,6 +99,7 @@ import { TranslateModule } from '@ngx-translate/core';
     ViewChartComponent,
     ViewChartDonutComponent,
     ViewChartGaugeComponent,
+    ViewChartBarComponent,
     ViewChartPieComponent,
     ViewChartLineComponent,
     ViewControlComponent,
@@ -126,6 +129,7 @@ import { TranslateModule } from '@ngx-translate/core';
     ViewChartComponent,
     ViewChartDonutComponent,
     ViewChartGaugeComponent,
+    ViewChartBarComponent,
     ViewChartPieComponent,
     ViewChartLineComponent,
     ViewControlComponent,

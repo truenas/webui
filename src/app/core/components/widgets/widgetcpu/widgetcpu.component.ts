@@ -66,9 +66,11 @@ export class WidgetCpuComponent extends WidgetChartComponent implements AfterVie
     let config: any = {}
     config.title = data[0];
     config.units = "%";
+    config.diameter = 120;
+    config.fontSize = 24;
     config.max = 100;
-    config.width = 184;
-    config.height = 225;
+    //config.width = 184;
+    //config.height = 225;
     config.data = data;
     this.cpuAvg = config;
 

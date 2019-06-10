@@ -29,8 +29,6 @@ import {
 export interface GaugeConfig {
   label: boolean; // to turn off the min/max labels.
   units: string;
-  diameter: number;
-  fontSize: number;
   min?: number; // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
   max?: number; // 100 is default
   width?: number; // for adjusting arc thickness
@@ -38,12 +36,12 @@ export interface GaugeConfig {
 }
 
 @Component({
-  selector: 'viewchartgauge',
+  selector: 'viewchartbar',
   //template:ViewChartMetadata.template
-  templateUrl: './viewchartgauge.component.html',
+  templateUrl: './viewchartbar.component.html',
   //styleUrls: ['./viewchartdonut.component.css']
 })
-export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterViewInit, OnChanges {
+export class ViewChartBarComponent /*extends DisplayObject*/ implements AfterViewInit, OnChanges {
 
   public title:string = '';
   public chartType: string = 'gauge';
@@ -53,7 +51,6 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
   public chartId = UUID.UUID();
   private doublePI = 2 * Math.PI;
   public units = "%"; // default unit type
-  public diameter = 120; // default diameter
 
   /*private gaugeConfig: GaugeConfig = {
     label: true,
@@ -101,30 +98,25 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
 
   render(){ 
     //let tau = 2 * Math.PI; 
-    let lineWidth = 10;
+
     this.arc = d3.arc()
-        .innerRadius(this.config.diameter / 2 - lineWidth) // 80
-        .outerRadius(this.config.diameter / 2) // 90
+        .innerRadius(80)
+        .outerRadius(90)
         .startAngle(0);
     
-    let width = this.config.diameter;
-    let height = this.config.diameter;
+    let width = 240;
+    let height = 240;
     let svg = d3.select("#gauge-" + this.chartId).append("svg")
       .attr("width", width)
       .attr("height", height)
 
     let g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
     
-    //let fontSize = this.diameter * 0.1;
-    let text = svg.append("text");
-    let bbox = text.node().getBBox();
-    console.warn(bbox);
-    text.style("fill", "var(--fg2)")
-        .style("font-size", this.config.fontSize.toString() + "px")
+    /*let fontSize = 18;
+    let text = svg.append("text")
+        .style("fill", "var(--fg2)")
         .attr("x", width / 2)
-        .attr("y", height / 2 )
-        .attr("text-anchor", "middle")
-        .attr("alignment-baseline", "central")
+        .attr("y", (height / 2) - (fontSize / 2))*/
     
     let background = g.append("path")
         .datum({endAngle: this.doublePI})
@@ -146,8 +138,9 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
           .duration(750)
           .attrTween("d", this.load(this.percentToAngle(value)));
 
-    d3.select('#gauge-' + this.chartId + ' text')
-          .text(value + this.config.units)
+      /*d3.select("svg text")
+        .text(value)*/
+        //.enter()
   }
 
   load(newAngle){
