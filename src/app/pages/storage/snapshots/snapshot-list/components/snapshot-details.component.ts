@@ -1,5 +1,6 @@
 import { Component, Input } from "@angular/core";
 import { Router } from "@angular/router";
+import helptext from "app/helptext/storage/snapshots/snapshots";
 import { EntityTableComponent } from "app/pages/common/entity/entity-table";
 import {
   EntityAction,
@@ -14,7 +15,8 @@ import { SnapshotListComponent } from "../snapshot-list.component";
   selector: "app-snapshot-details",
   styles: [
     `
-      .snapshot-buttons {
+      p,
+      h4 {
         color: var(--fg2) !important;
       }
     `
@@ -23,7 +25,7 @@ import { SnapshotListComponent } from "../snapshot-list.component";
 })
 export class SnapshotDetailsComponent implements EntityTableRowDetailComponent<{ name: string }> {
   @Input() public config: { name: string };
-  @Input() public parent: SnapshotListComponent & EntityTableComponent;
+  @Input() public parent: EntityTableComponent & { conf: SnapshotListComponent };
 
   public snapshot$: Observable<any>;
   public actions: EntityAction[];
@@ -33,28 +35,34 @@ export class SnapshotDetailsComponent implements EntityTableRowDetailComponent<{
   public ngOnInit(): void {
     this.snapshot$ = this._ws
       .call("zfs.snapshot.query", [[["name", "=", this.config.name]], { select: ["name", "properties"] }])
-      .pipe(map(response => response[0].properties));
+      .pipe(
+        map(response => ({
+          ...response[0].properties,
+          name: this.config.name,
+          creation: response[0].properties.creation.value
+        }))
+      );
 
     this.actions = [
       {
         id: "delete",
         name: this.config.name,
-        label: "Delete",
+        label: helptext.label_delete,
         buttonColor: "warn",
-        onClick: snapshot => this.parent.doDelete(snapshot)
+        onClick: snapshot => this.parent.conf.doDelete(snapshot)
       },
       {
         id: "clone",
         name: this.config.name,
-        label: "Clone",
+        label: helptext.label_clone,
         onClick: snapshot =>
           this._router.navigate(new Array("/").concat(["storage", "snapshots", "clone", snapshot.name]))
       },
       {
         id: "rollback",
         name: this.config.name,
-        label: "Rollback",
-        onClick: snapshot => this.parent.doRollback(snapshot)
+        label: helptext.label_rollback,
+        onClick: snapshot => this.parent.conf.doRollback(snapshot)
       }
     ];
   }

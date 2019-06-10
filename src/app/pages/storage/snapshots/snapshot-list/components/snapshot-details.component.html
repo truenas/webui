@@ -1,13 +1,13 @@
 <div 
     *ngIf="snapshot$ | async as snapshot"
-    fxLayoutAlign="start center"
+    fxLayoutAlign="space-between center"
     fxLayoutGap="56px"
     [style.margin-left.px]="176"
     [style.padding.px]="16"
 >
     <section fxLayoutAlign="start center" fxLayoutGap="48px">
         <div>
-            <h4>{{ snapshot.creation.value }}</h4>
+            <h4>{{ snapshot.creation }}</h4>
             <p>Date created</p>
         </div>
         <div>
@@ -23,7 +23,6 @@
     <section fxLayoutAlign="start center" fxLayoutGap="24px">
         <ng-container *ngFor="let action of actions">
             <button
-                class="snapshot-buttons"
                 mat-button
                 [color]="action.buttonColor || 'primary'"
                 (click)="action.onClick(snapshot)"
