@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 
 import * as _ from 'lodash';
@@ -15,7 +15,7 @@ import helptext from '../../../../helptext/task-calendar/resync/resync-form';
   template: `<entity-form [conf]="this"></entity-form>`,
   providers: [TaskService, UserService, EntityFormService]
 })
-export class RsyncFormComponent {
+export class RsyncFormComponent implements OnDestroy {
 
   //protected resource_name: string = 'tasks/rsync';
   protected addCall = 'rsynctask.create';
@@ -68,18 +68,22 @@ export class RsyncFormComponent {
         tooltip: helptext.rsync_mode_tooltip,
         options: [{label: 'Module', value: 'MODULE'},
                   {label: 'SSH', value: 'SSH'}],
+        value: 'MODULE'
       }, {
         type: 'input',
         name: 'remoteport',
-        inputType: 'number',
         placeholder: helptext.rsync_remoteport_placeholder,
         value: 22,
-        tooltip: helptext.rsync_remoteport_tooltip
+        required: true,
+        tooltip: helptext.rsync_remoteport_tooltip,
+        validation: helptext.rsync_remoteport_validation
       }, {
         type: 'input',
         name: 'remotemodule',
         placeholder: helptext.rsync_remotemodule_placeholder,
-        tooltip: helptext.rsync_remotemodule_tooltip
+        tooltip: helptext.rsync_remotemodule_tooltip,
+        required: true,
+        validation: helptext.rsync_remotemodule_validation
       }, {
         type : 'explorer',
         initial: '/mnt',
@@ -177,7 +181,6 @@ export class RsyncFormComponent {
     ]
   }];
 
-  protected hide_fileds: Array<any>;
   protected rsync_module_field: Array<any> = [
     'remotemodule',
   ];
@@ -187,6 +190,7 @@ export class RsyncFormComponent {
     'validate_rpath',
   ];
   protected user_field: any;
+  protected mode_subscription: any;
 
   constructor(protected router: Router,
     protected taskService: TaskService,
@@ -194,8 +198,6 @@ export class RsyncFormComponent {
     protected entityFormService: EntityFormService) {}
 
   preInit() {
-    this.hide_fileds = this.rsync_ssh_field;
-
     this.user_field = _.find(this.fieldSets[0].config, { 'name': 'user' });
     
     this.userService.listAllUsers().subscribe((res) => {
@@ -207,13 +209,10 @@ export class RsyncFormComponent {
   }
 
   afterInit(entityForm) {
-    entityForm.formGroup.controls['mode'].valueChanges.subscribe((res) => {
-      if( res === "SSH" ){
-        this.hide_fileds = this.rsync_module_field;
-      }
-      else {
-        this.hide_fileds = this.rsync_ssh_field;
-      }
+    this.entityForm = entityForm
+    this.hideFields(entityForm.formGroup.controls['mode'].value);
+    this.mode_subscription = entityForm.formGroup.controls['mode'].valueChanges.subscribe((res) => {
+      this.hideFields(res);
     });
   }
 
@@ -247,5 +246,28 @@ export class RsyncFormComponent {
       }
       parent.user_field.searchOptions = users;
     });
+  }
+
+  hideFields(mode) {
+    let hide_fields;
+    let show_fields;
+    if( mode === "SSH" ){
+      hide_fields = this.rsync_module_field;
+      show_fields = this.rsync_ssh_field;
+    }
+    else {
+      hide_fields = this.rsync_ssh_field;
+      show_fields = this.rsync_module_field;
+    }
+    for (let i = 0; i < hide_fields.length; i++) {
+      this.entityForm.setDisabled(hide_fields[i], true, true);
+    }
+    for (let i = 0; i < show_fields.length; i++) {
+      this.entityForm.setDisabled(show_fields[i], false, false);
+    }
+  }
+
+  ngOnDestroy() {
+    this.mode_subscription.unsubscribe();
   }
 }
