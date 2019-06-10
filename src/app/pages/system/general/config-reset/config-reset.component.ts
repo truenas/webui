@@ -39,6 +39,8 @@ export class ConfigResetComponent {
       this.dialogRef.close();
       if (!rebootValue) {
         this.ws.logout();
+      } else {
+        this.openSnackBar("System will reboot in 10 seconds", "Rebooting");
       }
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
@@ -48,7 +50,7 @@ export class ConfigResetComponent {
 
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
-      duration: 5000
+      duration: 11000
     });
   }
 
