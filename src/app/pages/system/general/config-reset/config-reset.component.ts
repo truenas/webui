@@ -3,6 +3,7 @@ import { Location } from '@angular/common';
 import { MatSnackBar, MatDialog } from '@angular/material';
 import { WebSocketService, DialogService } from '../../../../services/';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
+import { T } from '../../../../translate-marker';
 import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 
@@ -24,25 +25,20 @@ export class ConfigResetComponent {
   doSubmit(form: NgForm) {
     let rebootValue;
     if (form.value.restart) {
-      console.log('Here I will reset and restart when config.reset is fixed');
       rebootValue = true; 
 
     } else {
-      console.log('Here I will reset w/o restart when config.reset is fixed');
       rebootValue = false;
     }
 
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Reset Config" }, disableClose: true });
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Reset Configuration") }, disableClose: true });
     this.dialogRef.componentInstance.setCall('config.reset', [{ reboot: rebootValue}]);
+    this.dialogRef.componentInstance.setDescription(T('Resetting configuration to default settings'));
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe((res) => {
-      if (rebootValue) {
-        this.ws.call('system.reboot', [{ delay: 5 }]).subscribe((res) => {
-          // this.countDown = setInterval( () => {if(this.count>0){this.count -= 1}}, 1000);
-          this.openSnackBar("System will reboot in 5 seconds", "Rebooting");
-        });
-      } else {
-        this.router.navigate(new Array('').concat(this.route_success));
+    this.dialogRef.componentInstance.success.subscribe(() => {
+      this.dialogRef.close();
+      if (!rebootValue) {
+        this.ws.logout();
       }
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
