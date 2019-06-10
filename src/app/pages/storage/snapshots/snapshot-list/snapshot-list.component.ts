@@ -125,7 +125,6 @@ export class SnapshotListComponent {
         this.entityList.loader.open();
         this.entityList.loaderOpen = true;
         let snapshot = item.name.split('@');
-        console.log({ "dataset": snapshot[0], "name": snapshot[1]})
         this.ws.call(this.wsDelete, [{ "dataset": snapshot[0], "name": snapshot[1]}]).subscribe(
           (res) => { this.entityList.getData() },
           (res) => {
