@@ -17,10 +17,15 @@ export class ServiceNetDataComponent implements OnInit {
     public fieldConfig: FieldConfig[] = []
     public fieldSets: FieldSet[] = [
         {
-            name: '',
-            class: '',
+            name: 'global_settings',
+            class: 'global_settings',
             label: false,
             config:[
+                {
+                    type: 'paragraph',
+                    name: 'global_label',
+                    paraText: 'Global Settings'
+                },
                 {
                     type : 'input', // validate as int
                     name : 'history',
@@ -67,10 +72,16 @@ export class ServiceNetDataComponent implements OnInit {
             ]
         },
         {
-            name: '',
-            class: '',
+            name: 'alarms',
+            class: 'alarms',
             label: false,
             config:[
+                {
+                    type: 'paragraph',
+                    name: 'alarms_label',
+                    paraText: 'Alarms',
+                    class: 'entity_form_label'
+                },
                 {
                     type : 'textarea', // need more info on accceptable key/values
                     name : 'alarms',
@@ -80,10 +91,15 @@ export class ServiceNetDataComponent implements OnInit {
             ]
         },
         {
-            name: '',
-            class: '',
+            name: 'streaming_metrics',
+            class: 'streaming_metrics',
             label: false,
             config:[
+                {
+                    type: 'paragraph',
+                    name: 'streaming_label',
+                    paraText: 'Streaming Metrics'
+                },
                 {
                     type : 'select',
                     name : 'stream_mode',
@@ -130,7 +146,9 @@ export class ServiceNetDataComponent implements OnInit {
         'stream_mode',
         'destination',
         'api_key',
-        'allow_from'
+        'allow_from',
+        'streaming_label',
+        'alarms_label'
     ];
 
     isCustActionVisible(actionId: string) {
