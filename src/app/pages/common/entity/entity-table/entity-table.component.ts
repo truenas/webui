@@ -670,6 +670,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   reorderEvent(event) {
+    const configuredShowActions = this.showActions;
     this.showActions = false;
     this.paginationPageIndex = 0;
     let sort = event.sorts[0],
@@ -678,7 +679,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.rows = rows;
     this.setPaginationInfo();
     setTimeout(() => {
-      this.showActions = true;
+      this.showActions = configuredShowActions;
     }, 50)
   }
 
