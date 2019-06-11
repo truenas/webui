@@ -27,6 +27,7 @@ export interface Disk {
   name: string;
   smart_enabled: boolean;
   size: number;
+  model: string;
   description?: string;
   enclosure_slot?: any;
   expiretime?: any;
@@ -175,12 +176,13 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   }
 
   setDisksData(evt:CoreEvent){
-    for(let i in evt.data){
-      let disk:Disk = {
+    for(const i in evt.data){
+      const disk:Disk = {
         name:evt.data[i].name,
         smart_enabled:evt.data[i].togglesmart,
         size:Number(evt.data[i].size),
         description: evt.data[i].description,
+        model: evt.data[i].model,
         enclosure_slot: evt.data[i].enclosure_slot,
         expiretime: evt.data[i].expiretime,
         hddstandby: evt.data[i].hddstandby,
