@@ -169,21 +169,17 @@ export class InterfacesFormComponent implements OnDestroy {
       type: 'list',
       name: 'aliases',
       placeholder: 'Aliases',
-      // relation: [{
-      //   action: 'DISABLE',
-      //   when: [{
-      //     name: 'auto_configure_ip6',
-      //     value: true,
-      //   }]
-      // }],
+      label: 'Aliases',
+
       templateListField: [
         
           {
             name: 'address',
+            tabName: 'address',
             placeholder: helptext.alias_address_placeholder,
             tooltip: helptext.alias_address_tooltip,
             type: 'ipwithnetmask',
-            validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
+            validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ],
           },
           {
             name: 'failover_address',
@@ -202,15 +198,7 @@ export class InterfacesFormComponent implements OnDestroy {
             isHidden: true,
             type: 'ipwithnetmask',
             validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
-          },
-          // {
-          //   type: 'checkbox',
-          //   name: 'delete',
-          //   placeholder: helptext.delete_placeholder,
-          //   tooltip: helptext.delete_tooltip,
-          //   isHidden: true,
-          //   disabled: true,
-          // }
+          }
       ],
       listFields: []
     },
@@ -297,26 +285,26 @@ export class InterfacesFormComponent implements OnDestroy {
     hideCheckbox: false
   }
 
-  public custActions: Array<any> = [
-    {
-      id : 'add_alias',
-      name : T('Add Additional Alias'),
-      function : () => {
-        this.initialCount.aliases += 1;
-        this.entityFormService.insertFormArrayGroup(
-            this.initialCount.aliases, this.ipformArray, this.iparrayControl.formarray);
-      }
-    },
-    {
-      id : 'remove_alias',
-      name : T('Remove Additional Alias'),
-      function : () => {
-        this.initialCount.aliases -= 1;
-        this.entityFormService.removeFormArrayGroup(this.initialCount.aliases,
-                                                    this.ipformArray);
-      }
-    },
-  ]
+  // public custActions: Array<any> = [
+  //   {
+  //     id : 'add_alias',
+  //     name : T('Add Additional Alias'),
+  //     function : () => {
+  //       this.initialCount.aliases += 1;
+  //       this.entityFormService.insertFormArrayGroup(
+  //           this.initialCount.aliases, this.ipformArray, this.iparrayControl.formarray);
+  //     }
+  //   },
+  //   {
+  //     id : 'remove_alias',
+  //     name : T('Remove Additional Alias'),
+  //     function : () => {
+  //       this.initialCount.aliases -= 1;
+  //       this.entityFormService.removeFormArrayGroup(this.initialCount.aliases,
+  //                                                   this.ipformArray);
+  //     }
+  //   },
+  // ]
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected entityFormService: EntityFormService,
