@@ -164,44 +164,98 @@ export class InterfacesFormComponent implements OnDestroy {
       placeholder : helptext.int_options_placeholder,
       tooltip : helptext.int_options_tooltip,
     },
+
     {
-      type: 'array',
-      name : 'aliases',
-      initialCount: 1,
-      formarray: [{
-        name: 'address',
-        placeholder: helptext.alias_address_placeholder,
-        tooltip: helptext.alias_address_tooltip,
-        type: 'ipwithnetmask',
-        validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
-      },
-      {
-        name: 'failover_address',
-        placeholder: helptext.failover_alias_address_placeholder,
-        tooltip: helptext.failover_alias_address_tooltip,
-        disabled: true,
-        isHidden: true,
-        type: 'ipwithnetmask',
-        validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
-      },
-      {
-        name: 'failover_virtual_address',
-        placeholder: helptext.failover_virtual_alias_address_placeholder,
-        tooltip: helptext.failover_virtual_alias_address_tooltip,
-        disabled: true,
-        isHidden: true,
-        type: 'ipwithnetmask',
-        validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
-      },
-      {
-        type: 'checkbox',
-        name: 'delete',
-        placeholder: helptext.delete_placeholder,
-        tooltip: helptext.delete_tooltip,
-        isHidden: true,
-        disabled: true,
-      }]
+      type: 'list',
+      name: 'aliases',
+      placeholder: 'Aliases',
+      // relation: [{
+      //   action: 'DISABLE',
+      //   when: [{
+      //     name: 'auto_configure_ip6',
+      //     value: true,
+      //   }]
+      // }],
+      templateListField: [
+        
+          {
+            name: 'address',
+            placeholder: helptext.alias_address_placeholder,
+            tooltip: helptext.alias_address_tooltip,
+            type: 'ipwithnetmask',
+            validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
+          },
+          {
+            name: 'failover_address',
+            placeholder: helptext.failover_alias_address_placeholder,
+            tooltip: helptext.failover_alias_address_tooltip,
+            disabled: true,
+            isHidden: true,
+            type: 'ipwithnetmask',
+            validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
+          },
+          {
+            name: 'failover_virtual_address',
+            placeholder: helptext.failover_virtual_alias_address_placeholder,
+            tooltip: helptext.failover_virtual_alias_address_tooltip,
+            disabled: true,
+            isHidden: true,
+            type: 'ipwithnetmask',
+            validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
+          },
+          // {
+          //   type: 'checkbox',
+          //   name: 'delete',
+          //   placeholder: helptext.delete_placeholder,
+          //   tooltip: helptext.delete_tooltip,
+          //   isHidden: true,
+          //   disabled: true,
+          // }
+      ],
+      listFields: []
     },
+
+
+
+
+    // {
+    //   type: 'array',
+    //   name : 'aliases',
+    //   initialCount: 1,
+    //   formarray: [{
+    //     name: 'address',
+    //     placeholder: helptext.alias_address_placeholder,
+    //     tooltip: helptext.alias_address_tooltip,
+    //     type: 'ipwithnetmask',
+    //     validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
+    //   },
+    //   {
+    //     name: 'failover_address',
+    //     placeholder: helptext.failover_alias_address_placeholder,
+    //     tooltip: helptext.failover_alias_address_tooltip,
+    //     disabled: true,
+    //     isHidden: true,
+    //     type: 'ipwithnetmask',
+    //     validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
+    //   },
+    //   {
+    //     name: 'failover_virtual_address',
+    //     placeholder: helptext.failover_virtual_alias_address_placeholder,
+    //     tooltip: helptext.failover_virtual_alias_address_tooltip,
+    //     disabled: true,
+    //     isHidden: true,
+    //     type: 'ipwithnetmask',
+    //     validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
+    //   },
+    //   {
+    //     type: 'checkbox',
+    //     name: 'delete',
+    //     placeholder: helptext.delete_placeholder,
+    //     tooltip: helptext.delete_tooltip,
+    //     isHidden: true,
+    //     disabled: true,
+    //   }]
+    // },
   ];
 
   private vlan_fields = ['vlan_tag', 'vlan_pcp', 'vlan_parent_interface'];
