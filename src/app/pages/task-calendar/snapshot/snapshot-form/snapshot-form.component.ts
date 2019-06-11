@@ -106,6 +106,12 @@ export class SnapshotFormComponent {
     validation: [Validators.required],
   }, {
     type: 'checkbox',
+    name: 'allow_empty',
+    placeholder: helptext.allow_empty_placeholder,
+    tooltip: helptext.allow_empty_tooltip,
+    value: true,
+  }, {
+    type: 'checkbox',
     name: 'enabled',
     placeholder: helptext.enabled_placeholder,
     tooltip: helptext.enabled_tooltip,

@@ -123,7 +123,14 @@ export class GeneralComponent {
     {
       type: 'checkbox',
       name: 'secretseed',
-      placeholder: helptext.secretseed.placeholder
+      placeholder: helptext.secretseed.placeholder,
+      tooltip: helptext.secretseed.tooltip
+    },
+    {
+      type: 'checkbox',
+      name: 'pool_keys',
+      placeholder: helptext.poolkeys.placeholder,
+      tooltip: helptext.poolkeys.tooltip
     }
   ];
   public saveConfigFormConf: DialogFormConfiguration = {
@@ -133,6 +140,7 @@ export class GeneralComponent {
     method_ws: 'core.download',
     saveButtonText: helptext.save_config_form.button_text,
     customSubmit: this.saveConfigSubmit,
+    parent: this,
     warning: helptext.save_config_form.warning,
   }
 
@@ -336,23 +344,26 @@ export class GeneralComponent {
   }
 
   saveConfigSubmit(entityDialog) {
+    parent = entityDialog.parent;
     entityDialog.ws.call('system.info', []).subscribe((res) => {
       let fileName = "";
       if (res) {
         let hostname = res.hostname.split('.')[0];
         let date = entityDialog.datePipe.transform(new Date(),"yyyyMMddHHmmss");
         fileName = hostname + '-' + res.version + '-' + date;
-        if (entityDialog.formValue['secretseed']) {
+        if (entityDialog.formValue['secretseed'] || entityDialog.formValue['pool_keys']) {
           fileName += '.tar';
         } else {
           fileName += '.db';
         }
       }
 
-      entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'] }], fileName])
+      entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'], 
+                                                               'pool_keys': entityDialog.formValue['pool_keys'] }], 
+                                                               fileName])
         .subscribe(
           (res) => {
-            this.snackBar.open(helptext.snackbar_download_success.title, helptext.snackbar_download_success.action, {
+            parent['snackBar'].open(helptext.snackbar_download_success.title, helptext.snackbar_download_success.action, {
               duration: 5000
             });
             if (window.navigator.userAgent.search("Firefox")>0) {
@@ -364,7 +375,7 @@ export class GeneralComponent {
             entityDialog.dialogRef.close();
           },
           (err) => {
-            this.snackBar.open(T("Check the network connection."), T("Failed") , {
+            parent['snackBar'].open(T("Check the network connection."), T("Failed") , {
               duration: 5000
             });
           }

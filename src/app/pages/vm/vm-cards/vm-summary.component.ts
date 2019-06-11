@@ -11,9 +11,9 @@ import { ViewChartLineComponent } from 'app/core/components/viewchartline/viewch
 })
 export class VmSummaryComponent implements AfterViewInit, OnDestroy {
 
-  @ViewChild('cpu') cpuChart:ViewChartLineComponent;
-  @ViewChild('zpool') zpoolChart:ViewChartDonutComponent;
-  @ViewChild('mem') memChart:ViewChartDonutComponent;
+  @ViewChild('cpu', { static: true}) cpuChart:ViewChartLineComponent;
+  @ViewChild('zpool', { static: true}) zpoolChart:ViewChartDonutComponent;
+  @ViewChild('mem', { static: true}) memChart:ViewChartDonutComponent;
   @Input() virtualMachines;
   public chartSize:number = 260;
   public totalVmem:number;

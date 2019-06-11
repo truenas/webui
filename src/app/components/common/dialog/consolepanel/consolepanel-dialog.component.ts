@@ -13,7 +13,7 @@ export class ConsolePanelModalDialog {
   public refreshMsg: String = "Check to stop refresh";
   public intervalPing;
   public consoleMsg: String = "Loading...";
-  @ViewChild('footerBarScroll') private footerBarScroll: ElementRef;
+  @ViewChild('footerBarScroll', { static: true}) private footerBarScroll: ElementRef;
   onEventEmitter = new EventEmitter();
 
   constructor(

@@ -24,9 +24,9 @@ import { ExampleData } from './example-data';
 
 export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnDestroy {
 
-  @ViewChild('disksoverview') overview: ElementRef;
-  @ViewChild('diskdetails') details: ElementRef;
-  @ViewChild('domLabels') domLabels: ElementRef;
+  @ViewChild('disksoverview', { static: true}) overview: ElementRef;
+  @ViewChild('diskdetails', { static: false}) details: ElementRef;
+  @ViewChild('domLabels', { static: false}) domLabels: ElementRef;
   @Input('system-profiler') system: SystemProfiler;
   @Input('selected-enclosure') selectedEnclosure: any;
   @Input('current-tab') currentTab: any;

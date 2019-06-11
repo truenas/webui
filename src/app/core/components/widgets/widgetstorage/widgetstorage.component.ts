@@ -38,7 +38,7 @@ interface Disk {
 })
 export class WidgetStorageComponent extends ViewControllerComponent implements AfterViewInit {
 
-  //@ViewChild('zpool') chartZpool:ViewChartDonutComponent;
+  //@ViewChild('zpool', { static: true}) chartZpool:ViewChartDonutComponent;
   private chartZpool;
   public chartSize:number;
   public title:string = T("Storage");

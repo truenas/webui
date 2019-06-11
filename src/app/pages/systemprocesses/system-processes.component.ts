@@ -23,7 +23,7 @@ import { WebSocketService, ShellService } from '../../services/';
 export class SystemProcessesComponent implements OnInit, OnDestroy {
 
   //xter container
-  @ViewChild('terminal') container: ElementRef;
+  @ViewChild('terminal', { static: true}) container: ElementRef;
 
   // xterm variables
   public token: any;

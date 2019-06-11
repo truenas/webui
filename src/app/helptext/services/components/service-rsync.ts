@@ -26,9 +26,9 @@ rsyncmod_path_validation: Validators.required,
 
 rsyncmod_mode_placeholder: 'Access Mode',
 rsyncmod_mode_options: [
-    { label: 'Read Only', value:'ro' },
-    { label: 'Write Only', value:'wo' },
-    { label: 'Read and Write', value:'rw' },
+    { label: 'Read Only', value:'RO' },
+    { label: 'Write Only', value:'WO' },
+    { label: 'Read and Write', value:'RW' },
 ],
 rsyncmod_mode_tooltip: 'Choose permissions for this rsync module.',
 

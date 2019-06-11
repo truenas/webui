@@ -19,7 +19,7 @@ export class VdevComponent implements OnInit {
   @Input() index: any;
   @Input() group: string;
   @Input() manager: any;
-  @ViewChild('dnd') dnd;
+  @ViewChild('dnd', { static: true}) dnd;
   public type: string;
   public removable: boolean = true;
   public disks: Array<any> = [];

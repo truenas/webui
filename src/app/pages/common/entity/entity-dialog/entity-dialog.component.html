@@ -8,9 +8,9 @@
       <mat-icon matTooltip="Hide" *ngIf="showPassword">visibility</mat-icon>
       <mat-icon matTooltip="Show" *ngIf="!showPassword">visibility_off</mat-icon>
   </button>
-  <span [innerHTML]="conf.warning"></span>
 
   </ng-container>
+  <span [innerHTML]="conf.warning"></span>
 </div>
 <div>
   <p *ngIf="error" type="danger" id="error_message"><span [innerHTML]="error"></span></p>

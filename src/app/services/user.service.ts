@@ -1,15 +1,12 @@
 
 
 import {Injectable} from '@angular/core';
-import {Http} from '@angular/http';
-import {Observable, Subject, Subscription} from 'rxjs/Rx';
-
-import {EntityUtils} from '../pages/common/entity/utils'
 import {RestService} from './rest.service';
-import {WebSocketService} from './ws.service';
 
 @Injectable()
 export class UserService {
+  public static VALIDATOR_NAME = /^[a-zA-Z_][a-zA-Z0-9_\.-]*[$]?$/;
+
   protected accountUserResource: string = 'account/users/';
   protected accountGroupResource: string = 'account/groups/';
   protected accountAllUsersResource: string = 'account/all_users/';
