@@ -36,7 +36,8 @@ export class SnapshotListComponent {
   public busy: Subscription;
   public sub: Subscription;
   public columns: Array<any> = [
-    {name : 'Name', prop : 'name', minWidth: 355},
+    {name : 'Dataset', prop : 'dataset', minWidth: 355},
+    {name : 'Snapshot', prop : 'snapshot', minWidth: 355},
   ];
   public config: any = {
     paging: true,
@@ -110,6 +111,15 @@ export class SnapshotListComponent {
       selected.push([{"dataset": snapshot[0], "name": snapshot[1]}]);
     }
     return selected;
+  }
+
+  dataHandler(list: { rows: { name: string, dataset: string, snapshot: string }[] }): void {
+    list.rows = list.rows.map(ss => {
+      const [datasetName, snapshotName] = ss.name.split('@');
+      ss.dataset = datasetName;
+      ss.snapshot = snapshotName;
+      return ss;
+    });
   }
 
   wsMultiDeleteParams(selected: any) {
