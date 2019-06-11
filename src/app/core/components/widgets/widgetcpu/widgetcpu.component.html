@@ -24,6 +24,9 @@
             </div>-->
         </div>
 
+        <div id="cpu-cores-wrapper">
+          <viewchartbar *ngIf="cpuData && cpuData.data" [config]="cpuData" #cores class=""></viewchartbar>
+        </div>
         <!-- DETAILS -->
         <!--<div class="title-wrapper fn-theme-primary" fxFlex="100">
           <mat-progress-bar class="widget-loader" *ngIf="loader" mode="indeterminate"></mat-progress-bar>

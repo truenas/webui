@@ -15,6 +15,7 @@ import filesize from 'filesize';
 //import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { WidgetChartComponent, TimeData } from 'app/core/components/widgets/widgetchart/widgetchart.component';
 import { ViewChartGaugeComponent } from 'app/core/components/viewchartgauge/viewchartgauge.component';
+import { ViewChartBarComponent } from 'app/core/components/viewchartbar/viewchartbar.component';
 import { TranslateService } from '@ngx-translate/core';
 
 import { T } from '../../../../translate-marker';
@@ -27,6 +28,7 @@ import { T } from '../../../../translate-marker';
 export class WidgetCpuComponent extends WidgetChartComponent implements AfterViewInit, OnDestroy {
 
   @ViewChild('load') cpuLoad: ViewChartGaugeComponent;
+  @ViewChild('cores') cpuCores: ViewChartBarComponent;
   @Input() data: Subject<CoreEvent>;
   public cpuData: any;
   public cpuAvg: any;
@@ -54,7 +56,9 @@ export class WidgetCpuComponent extends WidgetChartComponent implements AfterVie
       if(evt.name == "CpuStats"){
         //this.cpuData = evt.data;
         if(evt.data.average /*&& typeof this.cpuLoad !== 'undefined'*/){
+          console.log(evt);
           this.setCpuLoadData(this.cpuLoad, ['Load', parseInt(evt.data.average.usage.toFixed(1))]);
+          this.setCpuData(this.cpuData, evt.data);
         }
       }
     });
@@ -62,11 +66,57 @@ export class WidgetCpuComponent extends WidgetChartComponent implements AfterVie
 
   }
 
+  parseCpuData(data){
+    // Combine per core cpu usage and temp into 
+    // a single array that the chart can consume
+    
+    let usageData = {
+      name: "Usage",
+      dataPoints: []
+    }
+    
+    //if(data.temperature){
+      let temperatureData = {
+        name: "Temperatures",
+        dataPoints: []
+      }
+    //}
+
+    // Calculate number of cores...
+    let keys = Object.keys(data);
+    let coreCount = data.temperature ? keys.length - 2 : keys.length - 1;
+    console.log("core count = " + coreCount);
+    for(let i = 0; i < coreCount; i++){
+      usageData.dataPoints.push(parseInt(data[i.toString()].usage.toFixed(1)));
+      if(data.temperature){
+        //temperatureData.dataPoints.push(data[i].usage);
+      }
+    }
+
+    let result = [usageData];
+
+    if(temperatureData.dataPoints.length > 0){
+      result.push(temperatureData);
+    }
+
+    return result;
+  }
+
+  setCpuData(chart, data){
+    let config: any = {}
+    config.title = "Cores";
+    //config.units = "%";
+    config.max = 100;
+    config.data = this.parseCpuData(data);
+    this.cpuData = config;
+    console.log(config);
+  }
+
   setCpuLoadData(chart, data){
     let config: any = {}
     config.title = data[0];
     config.units = "%";
-    config.diameter = 120;
+    config.diameter = 140;
     config.fontSize = 24;
     config.max = 100;
     //config.width = 184;

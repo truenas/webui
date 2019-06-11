@@ -84,12 +84,13 @@ export class DashboardComponent implements OnInit,OnDestroy {
 
     this.statsEventsTC = this.ws.sub("trueview.stats:10").subscribe((evt)=>{
       if(evt.memory_summary){
-        console.log(evt);
+        //console.log(evt);
+
         //this.statsData.updateStats(evt);
         //let cpuLoad = this.statsData.cpuLoad();
         //console.log(cpuLoad);
       } else if(evt.virtual_memory){
-        console.log(evt);
+        //console.log(evt);
         this.statsDataEvents.next({name:"CpuStats", data:evt.cpu});
       }
     });

@@ -7,6 +7,13 @@
   width: 100%;
 }
 
+#cpu-cores-wrapper{
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  left: 0;
+}
+
 #cpu-load-wrapper{
   position:relative;
 }

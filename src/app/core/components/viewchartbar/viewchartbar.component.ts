@@ -26,39 +26,38 @@ import {
   //clamp
   } from 'popmotion';
 
-export interface GaugeConfig {
+export interface BarChartConfig {
   label: boolean; // to turn off the min/max labels.
   units: string;
   min?: number; // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
   max?: number; // 100 is default
-  width?: number; // for adjusting arc thickness
-  data: any;
+  width?: number; 
+  data: BarDataSource[];
+}
+
+export interface BarDataSource {
+  name: string;
+  dataPoints: number[]
 }
 
 @Component({
   selector: 'viewchartbar',
   //template:ViewChartMetadata.template
   templateUrl: './viewchartbar.component.html',
-  //styleUrls: ['./viewchartdonut.component.css']
+  styleUrls: ['./viewchartbar.component.css']
 })
 export class ViewChartBarComponent /*extends DisplayObject*/ implements AfterViewInit, OnChanges {
 
   public title:string = '';
-  public chartType: string = 'gauge';
-  public chartClass: string = 'view-chart-gauge';
+  public chartClass: string = 'view-chart-bar';
   private _data;
-  private arc;
   public chartId = UUID.UUID();
-  private doublePI = 2 * Math.PI;
-  public units = "%"; // default unit type
+  private xScale;
+  private yScale;
 
-  /*private gaugeConfig: GaugeConfig = {
-    label: true,
-    units: this.units,
-    data: []
-  }*/
-
-  @Input() config: GaugeConfig;
+  @Input() config: BarChartConfig;
+  //@Input() width: number;
+  //@Input() height: number;
 
   constructor() { 
     //super();
@@ -69,7 +68,8 @@ export class ViewChartBarComponent /*extends DisplayObject*/ implements AfterVie
       if(changes.config.currentValue && changes.config.currentValue.data){
         //console.log(changes.config.currentValue.data);
         this.data = changes.config.currentValue.data;
-        if(!this.arc){
+        //console.warn(this.config.data);
+        /*if(!this.arc){
           //console.log("No chart");
           //console.log(this.data);
           this.render();
@@ -79,7 +79,7 @@ export class ViewChartBarComponent /*extends DisplayObject*/ implements AfterVie
           //console.log(changes.config.currentValue.data[1]);
           this.update(changes.config.currentValue.data[1]);
           
-        }
+        }*/
       }
     }
   }
@@ -96,55 +96,75 @@ export class ViewChartBarComponent /*extends DisplayObject*/ implements AfterVie
     this._data = d;
   }
 
-  render(){ 
-    //let tau = 2 * Math.PI; 
+  render(){
+    let wrapper = d3.select("#bar-" + this.chartId);
+    let wrapperNode = styler(document.querySelector("#bar-" + this.chartId),{})
+    console.warn(this.config.data);
+    //console.warn(wrapperNode.getBoundingClientRect())
+    const margin = 32;
+    let width = wrapperNode.get("width") ;//* margin;
+    let height = wrapperNode.get("height") ;//* margin;
 
-    this.arc = d3.arc()
-        .innerRadius(80)
-        .outerRadius(90)
-        .startAngle(0);
-    
-    let width = 240;
-    let height = 240;
-    let svg = d3.select("#gauge-" + this.chartId).append("svg")
-      .attr("width", width)
-      .attr("height", height)
+    const svg = wrapper.append('svg')
+        .attr('width', width)
+        .attr('height', height)
+        .attr("style", "stroke: var(--fg1)")
 
-    let g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-    
-    /*let fontSize = 18;
-    let text = svg.append("text")
-        .style("fill", "var(--fg2)")
-        .attr("x", width / 2)
-        .attr("y", (height / 2) - (fontSize / 2))*/
-    
-    let background = g.append("path")
-        .datum({endAngle: this.doublePI})
-        .style("fill", "var(--bg1)")
-        .attr("d", this.arc);
-    
-    let foreground = g.append("path")
-        .datum({endAngle: 0.127 * this.doublePI})
-        .style("fill", "var(--primary)")
-        .attr("class", "value")
-        .attr("d", this.arc);
+    const yScale = d3.scaleLinear()
+        .range([height - margin * 2, 0])
+        .domain([0, this.config.max ? this.config.max : 100]);
+
+    svg.append('g')
+        .attr('transform', `translate(${width - margin}, ${margin})`)
+        .call(d3.axisRight(yScale).ticks(5))
+        //.call(d3.axisRight(yScale).ticks(5));
+
+      // add the Y gridlines
+      let make_y_gridLines = () => {
+        return d3.axisLeft(yScale).ticks(5)
+      }
+
+      svg.append("g")			
+        .attr("class", "grid")
+        .attr('transform', `translate(${margin}, ${margin})`)
+        .call(make_y_gridLines()
+            .tickSize(-(width - margin * 2))
+            //.tickFormat("")
+        )
+
+    // Hide Y axis
+    d3.selectAll("#bar-" + this.chartId + " svg path.domain")
+      .style("stroke-opacity", 0)
+
+    // Hide Y axis
+    d3.selectAll("#bar-" + this.chartId + " svg .tick line")
+      .style("stroke", "var(--fg1)")
+      .style("opacity", "0.15")
+
+    const xScale = d3.scaleBand()
+        .range([0, width - margin * 2])
+        /*.domain(this.config.data[0].dataPoints.map((s) => {
+          return [this.config.data[s]]
+        }))
+        .padding(0.2)*/
+        //.domain(this.config.data[0].dataPoints.map((s) => this.config.data.dataPoints))
+
+    // X axis
+    svg.append('g')
+        .attr('transform', `translate(${margin}, ${height - margin})`)
+        .style("stroke-opacity", 0)
+        .call(d3.axisBottom(xScale));
+
+        
 
     this.update(this.config.data[1])
   }
 
   update(value){
-      d3.transition()
-          .select('#gauge-' + this.chartId + ' path.value')
-          .duration(750)
-          .attrTween("d", this.load(this.percentToAngle(value)));
-
-      /*d3.select("svg text")
-        .text(value)*/
-        //.enter()
   }
 
   load(newAngle){
-    return (d) => {
+    /*return (d) => {
 
     let interpolate = d3.interpolate(d.endAngle, newAngle);
 
@@ -154,13 +174,9 @@ export class ViewChartBarComponent /*extends DisplayObject*/ implements AfterVie
   
         return this.arc(d);
       };
-    };
+    };*/
   }
 
-  percentToAngle(value){
-    return value  / 100 * this.doublePI;
-    //return 360 * (value / 100) * this.doublePI;
-  }
   
 
   /*makeConfig(){

@@ -118,7 +118,7 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
     //let fontSize = this.diameter * 0.1;
     let text = svg.append("text");
     let bbox = text.node().getBBox();
-    console.warn(bbox);
+    
     text.style("fill", "var(--fg2)")
         .style("font-size", this.config.fontSize.toString() + "px")
         .attr("x", width / 2)
