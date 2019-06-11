@@ -24,7 +24,9 @@
         <ng-container *ngFor="let action of actions">
             <button
                 mat-button
-                [color]="action.buttonColor || 'primary'"
+                type="button"
+                [class.button-delete]="action.id === 'delete'"
+                [color]="action.buttonColor || 'default'"
                 (click)="action.onClick(snapshot)"
                 id="snapshot_{{ action.name }}_{{ action.id }}"
             >

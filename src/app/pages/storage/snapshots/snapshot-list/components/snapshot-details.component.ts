@@ -19,6 +19,11 @@ import { SnapshotListComponent } from "../snapshot-list.component";
       h4 {
         color: var(--fg2) !important;
       }
+
+      .button-delete {
+        background: var(--red);
+        color: var(--primary-txt) !important;
+      }
     `
   ],
   templateUrl: "./snapshot-details.component.html"
@@ -48,13 +53,13 @@ export class SnapshotDetailsComponent implements EntityTableRowDetailComponent<{
         id: "delete",
         name: this.config.name,
         label: helptext.label_delete,
-        buttonColor: "warn",
         onClick: snapshot => this.parent.conf.doDelete(snapshot)
       },
       {
         id: "clone",
         name: this.config.name,
         label: helptext.label_clone,
+        buttonColor: 'primary',
         onClick: snapshot =>
           this._router.navigate(new Array("/").concat(["storage", "snapshots", "clone", snapshot.name]))
       },
@@ -62,6 +67,7 @@ export class SnapshotDetailsComponent implements EntityTableRowDetailComponent<{
         id: "rollback",
         name: this.config.name,
         label: helptext.label_rollback,
+        buttonColor: 'primary',
         onClick: snapshot => this.parent.conf.doRollback(snapshot)
       }
     ];
