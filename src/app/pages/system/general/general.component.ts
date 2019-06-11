@@ -2,11 +2,13 @@ import { Component, OnDestroy } from '@angular/core';
 import { Http } from '@angular/http';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
+import { MatDialog } from '@angular/material';
 import { DialogService, LanguageService, RestService, WebSocketService, SnackbarService } from '../../../services/';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../common/entity/utils';
 import { T } from '../../../translate-marker';
 
@@ -164,6 +166,25 @@ export class GeneralComponent {
     customSubmit: this.uploadConfigSubmit,
     message: helptext.upload_config_form.message,
   }
+
+  protected resetConfigFieldConf: FieldConfig[] = [
+    {
+      type: 'checkbox',
+      name: 'reboot_option',
+      placeholder: helptext.reset_config_placeholder
+    }
+  ]
+
+  public resetConfigFormConf: DialogFormConfiguration = {
+    title: "Reset Configuration",
+    message: helptext.reset_config_form.message,
+    fieldConfig: this.resetConfigFieldConf,
+    method_ws: 'config.reset',
+    saveButtonText: helptext.reset_config_form.button_text,
+    customSubmit: this.resetConfigSubmit,
+    parent: this
+  }
+
   public custActions: Array<any> = [
   {
     id : 'save_config',
@@ -180,8 +201,12 @@ export class GeneralComponent {
   },{
     id : 'reset_config',
     name: helptext.actions.reset_config,
-    function: () => {this.router.navigate(new Array('').concat(['system', 'general', 'config-reset']))}
+    function: () => {
+      // this.router.navigate(new Array('').concat(['system', 'general', 'config-reset']))
+      this.dialog.dialogForm(this.resetConfigFormConf);
+    }
   }];
+
   private ui_address: any;
   private ui_v6address: any;
   private ui_certificate: any;
@@ -198,18 +223,18 @@ export class GeneralComponent {
   private guicertificate: any;
   //private hostname: '(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])';
   private entityForm: any;
+  private dialogRef: any;
 
   constructor(protected rest: RestService, protected router: Router,
     protected language: LanguageService, protected ws: WebSocketService,
     protected dialog: DialogService, protected loader: AppLoaderService,
-    public http: Http, protected snackBar: SnackbarService) {}
+    public http: Http, protected snackBar: SnackbarService,  private mdDialog: MatDialog) {}
 
   resourceTransformIncomingRestData(value) {
     this.http_port = value['ui_port'];
     this.https_port = value['ui_httpsport'];
     this.redirect = value['ui_httpsredirect'];
     this.guicertificate = value['ui_certificate'].id;
-    value['ui_certificate'] = this.guicertificate;
     this.addresses = value['ui_address'];
     this.v6addresses = value['ui_v6address'];
     return value;
@@ -412,6 +437,32 @@ export class GeneralComponent {
         this.dialog.errorReport(err.status, err.statusText, err._body);
       }
     );
+  }
+
+  resetConfigSubmit(entityDialog) {
+    const parent = entityDialog.parent;
+    entityDialog.dialogRef.close();
+    let rebootValue, message;
+    entityDialog.formValue.reboot_option ? rebootValue = true : rebootValue = false;
+    rebootValue ? message = 'The system will restart.' : message = 'You will be logged out.';
+    
+    this.dialogRef = parent.mdDialog.open(EntityJobComponent, { data: { "title": "Resetting..." }, disableClose: true });
+    this.dialogRef.componentInstance.setCall('config.reset', [{ reboot: rebootValue}]);
+    this.dialogRef.componentInstance.setDescription(T('Resetting system configuration to default settings. ' + message));
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe(() => {
+      this.dialogRef.close();
+      if (!rebootValue) {
+        parent.ws.logout();
+      } else {
+        parent.router.navigate(new Array('').concat(['others', 'config-reset']))
+        // parent.snackBar.open(T("System will restart in 10 seconds."), T('Restarting'), { duration: 11000 });
+      }
+    });
+    this.dialogRef.componentInstance.failure.subscribe((res) => {
+      this.dialogRef.close();
+      parent.dialog.errorReport(res.error, res.state, res.exception);
+    });
   }
 
   public customSubmit(body) {

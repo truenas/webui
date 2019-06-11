@@ -150,6 +150,13 @@ export const helptext_system_general = {
     reset_config: T("Reset Config")
   },
 
+  reset_config_placeholder: T('Reboot the system after reseting config?'),
+
+  reset_config_form: {
+    button_text: T("Reset Config"),
+    message: T('Reset system configuration to default settings. You will be logged out of this session and will be required to reset your password.'),
+  },
+
   dialog_confirm_title: T("Restart Web Service"),
 
   dialog_confirm_message: T(
