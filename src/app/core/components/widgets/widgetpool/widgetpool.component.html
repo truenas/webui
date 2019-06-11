@@ -131,14 +131,17 @@
                   </div>
                 </div>
 
-                <div class="disk-detail-item">
+                <div class="disk-detail-item" *ngIf="diskDetails[selectedDisk].description">
                   <div>
                     <p class="label">{{"Description:" | translate}} </p>
-                    <p class="value" *ngIf="!diskDetails[selectedDisk].description">{{"N/A" | translate}}</p>
                     <p class="value">{{diskDetails[selectedDisk].description}}</p>
                   </div>
                 </div>
 
+                <div class="disk-detail-item" *ngIf="diskDetails[selectedDisk].model">
+                  <p class="label">{{"Model" | translate}} :</p>
+                  <p class="value">{{diskDetails[selectedDisk].model}}</p>
+                </div>
             </div>
           </div>
 

@@ -82,6 +82,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
         smart_enabled:evt.data[i].togglesmart,
         size:Number(evt.data[i].size),
         description: evt.data[i].description,
+        model: evt.data[i].model,
         enclosure_slot: evt.data[i].enclosure_slot,
         expiretime: evt.data[i].expiretime,
         hddstandby: evt.data[i].hddstandby,
