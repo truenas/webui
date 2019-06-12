@@ -23,8 +23,8 @@ export class BootEnvironmentListComponent {
   public title = "Boot Environments";
   protected resource_name: string = 'system/bootenv';
   protected queryCall = 'bootenv.query';
-  protected route_add: string[] = ['system', 'bootenv', 'create']
-  protected route_delete: string[] = [ 'system', 'bootenv', 'delete' ];
+  protected route_add: string[] = ['system', 'boot', 'create']
+  protected route_delete: string[] = [ 'system', 'boot', 'delete' ];
   protected entityList: any;
   protected wsActivate = 'bootenv.activate';
   protected wsKeep = 'bootenv.set_attribute';
@@ -140,7 +140,7 @@ export class BootEnvironmentListComponent {
       id: "clone",
       onClick : (row) => {
         this._router.navigate(new Array('').concat(
-            [ "system", "bootenv", "clone", row.id ]));
+            [ "system", "boot", "clone", row.id ]));
       }
     });
     actions.push({
@@ -148,7 +148,7 @@ export class BootEnvironmentListComponent {
       id: "rename",
       onClick : (row) => {
         this._router.navigate(new Array('').concat(
-            [ "system", "bootenv", "rename", row.id ]));
+            [ "system", "boot", "rename", row.id ]));
       }
     });
     actions.push({
@@ -240,7 +240,7 @@ export class BootEnvironmentListComponent {
 
   goToStatus() {
     this._router.navigate(new Array('').concat(
-      [ "system", "bootenv", "status" ]));
+      [ "system", "boot", "status" ]));
   }
 
   scrub() {
