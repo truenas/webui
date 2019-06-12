@@ -140,7 +140,7 @@ export class VolumeStatusComponent implements OnInit {
     this.ws.call('disk.get_unused').subscribe((res) => {
       for (const i in res) {
         availableDisks.push({
-          label: res[i].name,
+          label: res[i].devname,
           value: res[i].identifier,
         })
       }
