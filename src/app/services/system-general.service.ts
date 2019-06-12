@@ -1,6 +1,6 @@
 
 
-import {Injectable} from '@angular/core';
+import {Injectable, EventEmitter} from '@angular/core';
 import {Http} from '@angular/http';
 import {Observable, Subject, Subscription} from 'rxjs/Rx';
 
@@ -12,6 +12,7 @@ export class SystemGeneralService {
 
   protected certificateList: string = 'certificate.query';
   protected caList: string = 'certificateauthority.query';
+  shouldReboot = new EventEmitter();
 
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
@@ -34,4 +35,6 @@ export class SystemGeneralService {
   getSysInfo() {
     return this.ws.call('system.info', []);
   }
+
+  
 }

@@ -1,6 +1,6 @@
 <div id="wrapper">
 	<mat-card id="shutdown-card">
-		<mat-card-content id="message">{{ "System is restarting..." | translate }}</mat-card-content>
+		<mat-card-content id="message"></mat-card-content>
 		<img id="logo" *ngIf="is_freenas; else isTruenas" src="assets/images/light-logo-full.svg" alt="FreeNAS logo">
 		<ng-template #isTruenas>
 			<img id="logo" src="assets/images/TrueNAS_Logo_Full_White.svg" alt="TrueNAS logo">
