@@ -140,7 +140,7 @@ export class VolumeStatusComponent implements OnInit {
     this.ws.call('disk.get_unused').subscribe((res) => {
       for (const i in res) {
         availableDisks.push({
-          label: res[i].name,
+          label: res[i].devname,
           value: res[i].identifier,
         })
       }
@@ -159,10 +159,12 @@ export class VolumeStatusComponent implements OnInit {
     const actions = [{
       label: "Edit",
       onClick: (row) => {
-        const diskName = _.split(row.name, 'p')[0];
+        const pIndex = row.name.lastIndexOf('p');
+        const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
+
         this.ws.call('disk.query', [
           [
-            ["name", "=", diskName]
+            ["devname", "=", diskName]
           ]
         ]).subscribe((res) => {
           this.editDiskRoute.push(this.pk, "edit", res[0].identifier);
@@ -176,7 +178,8 @@ export class VolumeStatusComponent implements OnInit {
         let name = row.name;
         // if use path as name, show the full path
         if (!_.startsWith(name, '/')) {
-          name = _.split(row.name, 'p')[0];
+          const pIndex = name.lastIndexOf('p');
+          name = pIndex > -1 ? name.substring(0, pIndex) : name;
         }
         this.dialogService.confirm(
           "Offline",
@@ -202,9 +205,12 @@ export class VolumeStatusComponent implements OnInit {
     }, {
       label: "Online",
       onClick: (row) => {
+        const pIndex = row.name.lastIndexOf('p');
+        const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
+
         this.dialogService.confirm(
           "Online",
-          "Online disk " + _.split(row.name, 'p')[0] + "?", false, T('Online')
+          "Online disk " + diskName + "?", false, T('Online')
         ).subscribe((res) => {
           if (res) {
             this.loader.open();
@@ -228,7 +234,8 @@ export class VolumeStatusComponent implements OnInit {
       onClick: (row) => {
         let name = row.name;
         if (!_.startsWith(name, '/')) {
-          name = _.split(row.name, 'p')[0];
+          const pIndex = name.lastIndexOf('p');
+          name = pIndex > -1 ? name.substring(0, pIndex) : name;
         }
         const pk = this.pk;
         _.find(this.replaceDiskFormFields, { name: 'label' }).value = row.guid;
@@ -264,9 +271,12 @@ export class VolumeStatusComponent implements OnInit {
     }, {
       label: "Remove",
       onClick: (row) => {
+        const pIndex = row.name.lastIndexOf('p');
+        const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
+
         this.dialogService.confirm(
           "Remove",
-          "Remove disk " + _.split(row.name, 'p')[0] + "?", false, T('Remove')
+          "Remove disk " + diskName + "?", false, T('Remove')
         ).subscribe((res) => {
           if (res) {
             this.loader.open();
