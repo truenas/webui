@@ -1145,6 +1145,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     color: white !important;
   }
 
+  .advanced-date-picker .cron-fields .mat-form-field.mat-focused .mat-input-element {
+    color: white;
+  }
+
   .advanced-date-picker .cron-fields .mat-form-field.mat-focused .mat-form-field-ripple {
     background-color: white !important;
   }
