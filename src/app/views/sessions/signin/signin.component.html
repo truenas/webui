@@ -91,9 +91,9 @@
           </div>
         </div>
         <ng-template #notconnected>
-          <div class="disconnected">
+          <div class="disconnected" *ngIf="product">
             <div class="fake-icon">?</div>
-            <p *ngIf="product">
+            <p>
               {{"Connecting to " | translate}} {{product}}
               {{"... Make sure the " | translate}} {{product}}
               {{" system is powered on and connected to the network." | translate}}
