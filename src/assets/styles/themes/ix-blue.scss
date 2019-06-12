@@ -330,8 +330,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-color-primary, 
   .mat-button.mat-primary,
   .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > a > span, 
-  .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a, 
-  .mat-focused .mat-form-field-label {
+  .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a 
+  // .mat-focused .mat-form-field-label 
+  {
     @include variable(color, --primary, $primary, !important);
   }
 
@@ -1142,6 +1143,14 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .advanced-date-picker .cron-fields .mat-select-arrow,
   .advanced-date-picker .cron-fields .mat-form-field.mat-focused.mat-primary .mat-select-arrow  {
     color: white !important;
+  }
+
+  .advanced-date-picker .cron-fields .mat-form-field.mat-focused .mat-input-element {
+    color: white;
+  }
+
+  .advanced-date-picker .cron-fields .mat-form-field.mat-focused .mat-form-field-ripple {
+    background-color: white !important;
   }
 
   .advanced-date-picker .cron-fields .mat-form-field-underline {
