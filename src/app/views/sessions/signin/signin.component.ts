@@ -25,6 +25,7 @@ export class SigninComponent implements OnInit {
   private failed: Boolean = false;
   public is_freenas: Boolean = false;
   public logo_ready: Boolean = false;
+  public product: string;
   public showPassword = false;
   public ha_info_ready = false;
   public checking_status = false;
@@ -83,6 +84,10 @@ export class SigninComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.http.get('./assets/product').subscribe((res) => {
+      this.product = res['_body'].trim()
+    });
+
     if (!this.logo_ready) {
       this.interval = setInterval(() => {
         this.checkSystemType();

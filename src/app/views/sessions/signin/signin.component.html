@@ -92,7 +92,12 @@
         </div>
         <ng-template #notconnected>
           <div class="disconnected">
-          <div class="fake-icon">?</div>  {{"Connecting to NAS... Make sure the NAS system is powered on and connected to the network." | translate}}
+            <div class="fake-icon">?</div>
+            <p *ngIf="product">
+              {{"Connecting to " | translate}} {{product}}
+              {{"... Make sure the " | translate}} {{product}}
+              {{" system is powered on and connected to the network." | translate}}
+            </p>
           </div>
         </ng-template>
       </mat-card-content>
