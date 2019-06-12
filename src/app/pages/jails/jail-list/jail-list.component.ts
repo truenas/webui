@@ -15,7 +15,7 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
   selector: 'app-jail-list',
   // template: `<entity-table [title]="title" [conf]="this"></entity-table>`
   templateUrl: './jail-list.component.html',
-  styleUrls: ['../../plugins/plugins-available/plugins-available-list.component.css'],
+  styleUrls: ['jail-list.component.css'],
   providers: [DialogService, StorageService]
 })
 export class JailListComponent implements OnInit {
@@ -36,12 +36,16 @@ export class JailListComponent implements OnInit {
   public legacyWarningLink = T("legacy web interface");
 
   public columns: Array < any > = [
-    { name: T('Jail'), prop: 'host_hostuuid', always_display: true },
-    { name: T('IPv4 Address'), prop: 'ip4_addr' },
-    { name: T('IPv6 Address'), prop: 'ip6_addr' },
-    { name: T('Status'), prop: 'state' },
+    { name: T('JID'), prop: 'jid'},
+    { name: T('Name'), prop: 'host_hostuuid'},
+    { name: T('Boot'), prop: 'boot_readble', hidden: true},
+    { name: T('State'), prop: 'state'},
     { name: T('Type'), prop: 'type', hidden: true, minWidth: 80, maxWidth: 120 },
     { name: T('Release'), prop: 'release', minWidth: 225, maxWidth: 325 },
+    { name: T('IPv4 Address'), prop: 'ip4_addr'},
+    { name: T('IPv6 Address'), prop: 'ip6_addr'},
+    { name: T('Template'), prop: 'source_template', hidden: true},
+    { name: T('Basejail'), prop: 'basejail_readble', hidden: true },
   ];
   public config: any = {
     paging: true,
@@ -384,6 +388,10 @@ export class JailListComponent implements OnInit {
     // Call sort on load to make sure initial sort is by Jail name, asecnding
     entityList.rows = this.sorter.tableSorter(entityList.rows, 'host_hostuuid', 'asc');
     for (let i = 0; i < entityList.rows.length; i++) {
+      entityList.rows[i].boot_readble =  entityList.rows[i].boot === 0 ? 'off' : 'on';
+      entityList.rows[i].source_template =  entityList.rows[i].source_template  ? entityList.rows[i].source_template : '-';
+      entityList.rows[i].basejail_readble =  entityList.rows[i].basejail === 0 ? 'no' : 'yes';
+
       const prefix = (entityList.rows[i].state === 'up' && entityList.rows[i].dhcp === 'on') ? 'DHCP: ' : '';
       if (_.split(entityList.rows[i].ip4_addr, '|').length > 1) {
         entityList.rows[i].ip4_addr = prefix + _.split(entityList.rows[i].ip4_addr, '|')[1];

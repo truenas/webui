@@ -9,7 +9,7 @@ import * as _ from 'lodash';
 })
 export class ISCSI implements OnInit {
 
-  @ViewChild('tabGroup') tabGroup;
+  @ViewChild('tabGroup', { static: true}) tabGroup;
 
   public activedTab: string = 'configuration';
   public navLinks: Array < any > = [{

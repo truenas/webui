@@ -5,6 +5,7 @@ import { DialogService } from '../../../services/dialog.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { interval } from 'rxjs';
 import { Subject } from 'rxjs/Subject';
+import { T } from '../../../translate-marker';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
@@ -13,6 +14,7 @@ import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { MatDialog } from '@angular/material';
 import 'rxjs/add/observable/interval';
 import {EntityTableComponent} from '../../common/entity/entity-table/';
+import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import globalHelptext from '../../../helptext/global-helptext';
 
 @Component({
@@ -23,7 +25,7 @@ import globalHelptext from '../../../helptext/global-helptext';
 })
 export class VmCardsComponent  implements OnDestroy {
 
-  @ViewChild('table') table:EntityTableComponent;
+  @ViewChild('table', { static: true}) table:EntityTableComponent;
   protected queryCall = 'vm.query';
   protected route_add: string[] = [ 'vm', 'wizard' ];
   protected route_add_tooltip = "Add VM";
@@ -40,16 +42,16 @@ export class VmCardsComponent  implements OnDestroy {
   protected entityTable: EntityTableComponent;
 
   public columns: Array<any> = [
-    {name : 'Name', prop : 'name', always_display: true },
-    {name : 'State', prop : 'state', always_display: true, toggle: true },
-    {name : 'VNC Port', prop : 'port', hidden: true},
-    {name : 'Com Port', prop : 'com_port', hidden: true},
-    {name : 'Type', prop : 'vm_type', hidden: false},
-    {name : 'Description', prop : 'description', hidden: true },
-    {name : 'Virtual CPUs', prop : 'vcpus', hidden: false},
-    {name : 'Memory Size (MiB)', prop : 'memory',hidden: false},
-    {name : 'Boot Loader Type', prop : 'bootloader', hidden: true },
-    {name : 'Autostart', prop : 'autostart',hidden: false, selectable: true},
+    {name : T('Name'), prop : 'name', always_display: true },
+    {name : T('State'), prop : 'state', always_display: true, toggle: true },
+    {name : T('VNC Port'), prop : 'port', hidden: true},
+    {name : T('Com Port'), prop : 'com_port', hidden: true},
+    {name : T('Type'), prop : 'vm_type', hidden: false},
+    {name : T('Description'), prop : 'description', hidden: true },
+    {name : T('Virtual CPUs'), prop : 'vcpus', hidden: false},
+    {name : T('Memory Size (MiB)'), prop : 'memory',hidden: false},
+    {name : T('Boot Loader Type'), prop : 'bootloader', hidden: true },
+    {name : T('Autostart'), prop : 'autostart',hidden: false, selectable: true},
 
   ];
   public config: any = {
@@ -86,19 +88,19 @@ export class VmCardsComponent  implements OnDestroy {
     this.core.emit({name: "VmProfilesRequest"});
      this.core.register({observerClass:this,eventName:"VmStartFailure"}).subscribe((evt:CoreEvent) => {
        this.entityTable.getData();
-       this.dialog.errorReport("Error",evt.data.reason,evt.data.trace.formatted);
+       this.dialog.errorReport(T("Error"),evt.data.reason,evt.data.trace.formatted);
      })
      this.core.register({observerClass:this,eventName:"VmStopFailure"}).subscribe((evt:CoreEvent) => {
       this.entityTable.getData();
-      this.dialog.errorReport("Error",evt.data.reason,evt.data.trace.formatted);
+      this.dialog.errorReport(T("Error"),evt.data.reason,evt.data.trace.formatted);
     })
     this.core.register({observerClass:this,eventName:"VmCloneFailure"}).subscribe((evt:CoreEvent) => {
       this.entityTable.getData();
-      this.dialog.errorReport("Error",evt.data.reason,evt.data.trace.formatted);
+      this.dialog.errorReport(T("Error"),evt.data.reason,evt.data.trace.formatted);
     })
     this.core.register({observerClass:this,eventName:"VmDeleteFailure"}).subscribe((evt:CoreEvent) => {
       this.entityTable.getData();
-      this.dialog.errorReport("Error",evt.data.reason,evt.data.trace.formatted);
+      this.dialog.errorReport(T("Error"),evt.data.reason,evt.data.trace.formatted);
     })
     this.core.register({observerClass:this,eventName:"VmProfiles"}).subscribe((evt:CoreEvent) => {
       this.entityTable.getData();
@@ -111,10 +113,11 @@ export class VmCardsComponent  implements OnDestroy {
 
   getActions(row) {
     const actions = [];
+    let localCore = this.core;
     if(row['status']['state'] === "RUNNING"){
       actions.push({
         id : "poweroff",
-        label : "Power Off",
+        label : T("Power Off"),
         onClick : (power_off_row) => {
           const eventName = "VmPowerOff";
           this.core.emit({name: eventName, data:[power_off_row.id]});
@@ -123,7 +126,7 @@ export class VmCardsComponent  implements OnDestroy {
       });
       actions.push({
         id : "stop",
-        label : "Stop",
+        label : T("Stop"),
         onClick : (power_stop_row) => {
           const eventName = "VmStop";
           this.core.emit({name: eventName, data:[power_stop_row.id]});
@@ -132,7 +135,7 @@ export class VmCardsComponent  implements OnDestroy {
       });
       actions.push({
         id: "restart",
-        label: "Restart",
+        label: T("Restart"),
         onClick: (power_restart_row) => {
           const eventName = "VmRestart";
           this.core.emit({name: eventName, data:[power_restart_row.id]});
@@ -142,13 +145,13 @@ export class VmCardsComponent  implements OnDestroy {
     } else {
       actions.push({
         id : "start",
-        label : "Start",
+        label : T("Start"),
         onClick : (start_row) => {
           const eventName = "VmStart";
           let args = [start_row.id];
           let overcommit = [{'overcommit':false}];
-          const dialogText = "Memory overcommitment allows multiple VMs to be launched when there is not enough free memory for configured RAM of all VMs. Use with caution."
-          let startDialog = this.dialog.confirm("Power", undefined, true, "Power On", true, 'Overcommit Memory?', undefined, overcommit, dialogText)
+          const dialogText = T("Memory overcommitment allows multiple VMs to be launched when there is not enough free memory for configured RAM of all VMs. Use with caution.")
+          let startDialog = this.dialog.confirm(T("Power"), undefined, true, T("Power On"), true, T('Overcommit Memory?'), undefined, overcommit, dialogText)
           startDialog.afterClosed().subscribe((res) => {
             if (res) {
               let checkbox = startDialog.componentInstance.data[0].overcommit;
@@ -161,14 +164,14 @@ export class VmCardsComponent  implements OnDestroy {
       });
     }
     actions.push({
-      label : "Edit",
+      label : T("Edit"),
       onClick : (edit_row) => {
         this.router.navigate(
             new Array('').concat([ "vm", "edit", edit_row.id ]));
       }
     });
     actions.push({
-      label : "Delete",
+      label : T("Delete"),
       onClick : (delete_row) => {
           const eventName = "VmDelete";
           let args = [delete_row.id];
@@ -182,23 +185,43 @@ export class VmCardsComponent  implements OnDestroy {
       },
     });
     actions.push({
-      label : "Devices",
+      label : T("Devices"),
       onClick : (devices_row) => {
         this.router.navigate(
             new Array('').concat([ "vm", devices_row.id, "devices", devices_row.name ]));
       }
     });
     actions.push({
-      label : "Clone",
+      label : T("Clone"),
       onClick : (clone_row) => {
-        const eventName = "VmClone";
-        this.core.emit({name: eventName, data:[clone_row.id]});
+        const conf: DialogFormConfiguration = {
+          title: T("Name"),
+          fieldConfig: [
+            {
+              type: 'input',
+              inputType: 'text',
+              name: 'name',
+              placeholder: T('Enter a Name (optional)'),
+              required: false
+            }
+          ],
+          saveButtonText: T("Clone"),
+          customSubmit: function(entityDialog) {
+            const eventName = "VmClone";
+            entityDialog.formValue.name ? 
+              localCore.emit({name: eventName, data: [clone_row.id, entityDialog.formValue.name]}) :
+              localCore.emit({name: eventName, data: [clone_row.id]})
+            entityDialog.dialogRef.close(true);
+          }
+        }
+        this.dialog.dialogForm(conf);
       }
     });
+
     if(row['status']['state'] === "RUNNING"){
       if (this.checkVnc(row)) {
         actions.push({
-        label : "VNC",
+        label : T("VNC"),
         onClick : (vnc_vm) => {
           this.ws.call('vm.get_vnc_web', [ vnc_vm.id ]).subscribe((res) => {
             for (const vnc_port in res){
@@ -209,7 +232,7 @@ export class VmCardsComponent  implements OnDestroy {
         });
       }
       actions.push({
-        label : "Serial",
+        label : T("Serial"),
         onClick : (vm) => {
           this.router.navigate(
             new Array('').concat([ "vm","serial", vm.id])
@@ -275,8 +298,8 @@ export class VmCardsComponent  implements OnDestroy {
       const eventName = "VmStart";
       let args = [row.id];
       let overcommit = [{'overcommit':false}];
-      const dialogText = "Memory overcommitment allows multiple VMs to be launched when there is not enough free memory for configured RAM of all VMs. Use with caution."
-      let startDialog = this.dialog.confirm("Power", undefined, true, "Power On", true, 'Overcommit Memory?', undefined, overcommit, dialogText)
+      const dialogText = T("Memory overcommitment allows multiple VMs to be launched when there is not enough free memory for configured RAM of all VMs. Use with caution.")
+      let startDialog = this.dialog.confirm(T("Power"), undefined, true, T("Power On"), true, T('Overcommit Memory?'), undefined, overcommit, dialogText)
       startDialog.afterClosed().subscribe((res) => {
         if (res) {
           let checkbox = startDialog.componentInstance.data[0].overcommit;

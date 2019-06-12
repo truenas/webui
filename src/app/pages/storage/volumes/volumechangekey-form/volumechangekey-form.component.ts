@@ -57,6 +57,7 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
       tooltip: helptext.changekey_passphrase_tooltip,
       validation: helptext.changekey_passphrase_validation,
       required: true,
+      disabled: false
     },{
       type : 'input',
       inputType: 'password',
@@ -64,7 +65,14 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
       placeholder: helptext.changekey_passphrase2_placeholder,
       tooltip: helptext.changekey_passphrase2_tooltip,
       validation: helptext.changekey_passphrase2_validation,
-      required: true
+      required: true,
+      disabled: false
+    },
+    {
+      type: 'checkbox',
+      name: 'remove_passphrase',
+      placeholder: helptext.changekey_remove_passphrase_placeholder,
+      tooltip: helptext.changekey_remove_passphrase_tooltip
     }
   ];
 
@@ -93,21 +101,44 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
   }
 
   afterInit(entityForm: any) {
-
+    entityForm.formGroup.controls['remove_passphrase'].valueChanges.subscribe((res) => {
+      if (res) {
+        entityForm.setDisabled('passphrase', true);
+        entityForm.setDisabled('passphrase2', true);
+      } else {
+        entityForm.setDisabled('passphrase', false);
+        entityForm.setDisabled('passphrase2', false);
+      }
+    })
   }
 
   customSubmit(value) {
+    let success_msg;
+    if (value.remove_passphrase) {
+      value.passphrase = null;
+      value.passphrase2 = null;
+      success_msg = 'removed from'
+    } else {
+      success_msg = 'changed for'
+    }
+
+    let params = [this.pk];
+    let payload = {
+      'passphrase': value.passphrase,
+      'admin_password': value.adminpw
+    };
+    params.push(payload);
+
     this.loader.open();
-    return this.rest.put(this.resource_name + "/" + this.pk + "/keypassphrase/", { body: JSON.stringify({adminpw: value.adminpw, passphrase: value.passphrase, passphrase2: value.passphrase2}) }).subscribe((restPostResp) => {
+    this.ws.call('pool.passphrase', params).subscribe(() => {
       this.loader.close();
-      this.dialogService.Info(T("Change Pool Passphrase"), T("Passphrase changed for pool ") + value.name);
-
-      this.router.navigate(new Array('/').concat(
-        this.route_success));
-    }, (res) => {
+      this.dialogService.Info(T("Change Pool Passphrase"), T("Passphrase " + success_msg + " pool ") + value.name)
+        .subscribe(() => {
+          this.router.navigate(new Array('/').concat(this.route_success));
+        })
+    },(err) => {
       this.loader.close();
-      this.dialogService.errorReport(T("Error changing passphrase for pool ") + value.name, res.error.message, res.error.traceback);
-    });
+      this.dialogService.errorReport(T("Error changing passphrase for pool ") + value.name, err.reason, err.trace.formatted);
+    })
   }
-
 }

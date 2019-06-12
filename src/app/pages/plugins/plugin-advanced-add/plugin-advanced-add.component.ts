@@ -21,7 +21,7 @@ import { FieldRelationService } from '../../common/entity/entity-form/services/f
 import { EntityUtils } from '../../common/entity/utils';
 import { DialogService, NetworkService } from '../../../services';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
-import helptext from '../../../helptext/jails/jails-add';
+import helptext from '../../../helptext/jails/jail-configuration';
 
 @Component({
   selector: 'app-plugin-advanced-add',
@@ -32,8 +32,8 @@ import helptext from '../../../helptext/jails/jails-add';
 export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
 
   protected addCall: string = 'jail.fetch';
-  public route_goback: string[] = ['plugins', 'available'];
-  public route_success: string[] = ['plugins', 'installed'];
+  public route_goback: string[] = ['plugins'];
+  public route_success: string[] = ['plugins'];
   protected route_conf: string[] = ['jails', 'configuration'];
 
   public formGroup: any;

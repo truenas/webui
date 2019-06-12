@@ -313,7 +313,7 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
 /* Split Layout Widgets */
 .widget.splitv, .widget.splith{
   width:600px;
-  height:320px;
+  height:400px;
 }
 
 

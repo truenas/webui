@@ -76,6 +76,7 @@ export class FormExplorerComponent implements Field, OnInit {
       if (!this.config.customTemplateStringOptions.actionMapping) {
         this.config.customTemplateStringOptions.actionMapping = this.actionMapping;
       }
+      this.config.customTemplateStringOptions.explorerComponent = this;
       this.customTemplateStringOptions = this.config.customTemplateStringOptions;
       this.config.customTemplateStringOptions.explorer = this;
     }
@@ -143,8 +144,8 @@ export class FormExplorerComponent implements Field, OnInit {
     let res = [];
     for (let i = 0; i < selectedTreeNodes.length; i++) {
         if (selectedTreeNodes[i].parent.isAllSelected) {
-          let parent = selectedTreeNodes[i].parent;
-          while (parent && parent.parent && !parent.parent.isRoot && parent.parent.isAllSelected) {
+          let parent = selectedTreeNodes[i];
+          while (parent && parent.isRoot != true && parent.parent && !parent.parent.isRoot && parent.parent.isAllSelected) {
             parent = parent.parent;
           }
           if (res.indexOf(parent.data.name) === -1) {

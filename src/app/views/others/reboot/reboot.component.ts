@@ -30,7 +30,7 @@ export class RebootComponent implements OnInit {
     if (this.ws.connected) {
       this.loader.close();
       // ws is connected
-      window.location.href = '/session/signin';
+      this.router.navigate(['/session/signin']);
     } else {
       setTimeout(() => {
         this.isWSConnected();

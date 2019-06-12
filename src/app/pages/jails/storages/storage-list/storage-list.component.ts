@@ -64,8 +64,8 @@ export class StorageListComponent {
     entityList.rows = [];
 
     if (this.queryRes[0]) {
-      for (let i = 0; i < Object.keys(this.queryRes[0]).length - 1; i++) {
-        if (this.queryRes[0][i].type != "SYSTEM") {
+      for(let i in this.queryRes[0]) {
+        if (this.queryRes[0][i].type && this.queryRes[0][i].type != "SYSTEM") {
           let row = [];
           row['source'] = this.queryRes[0][i].entry[0];
           row['destination'] = this.queryRes[0][i].entry[1];

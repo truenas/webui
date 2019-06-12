@@ -11,7 +11,7 @@ import { JailService, NetworkService, DialogService } from '../../../services/';
 import { EntityUtils } from '../../common/entity/utils';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 import { T } from '../../../translate-marker'
-import helptext from '../../../helptext/jails/jail-wizard';
+import helptext from '../../../helptext/jails/jail-configuration';
 
 @Component({
   selector: 'jail-wizard',
@@ -41,7 +41,7 @@ export class JailWizardComponent {
   }];
 
   protected wizardConfig: Wizard[] = [{
-      label: helptext.step1_label,
+      label: helptext.wizard_step1_label,
       fieldConfig: [{
           type: 'input',
           name: 'uuid',
@@ -92,9 +92,8 @@ export class JailWizardComponent {
       ]
     },
     {
-      label: helptext.step2_label,
-      fieldConfig: [
-        {
+      label: helptext.wizard_step2_label,
+      fieldConfig: [{
           type: 'checkbox',
           name: 'dhcp',
           placeholder: helptext.dhcp_placeholder,

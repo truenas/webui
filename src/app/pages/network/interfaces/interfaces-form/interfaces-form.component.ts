@@ -45,6 +45,12 @@ export class InterfacesFormComponent implements OnDestroy {
       validation : helptext.int_name_validation
     },
     {
+      type: 'input',
+      name: 'description',
+      placeholder: helptext.int_description_placeholder,
+      tooltip: helptext.int_description_tooltip,
+    },
+    {
       type : 'checkbox',
       name : 'ipv4_dhcp',
       placeholder : helptext.int_dhcp_placeholder,

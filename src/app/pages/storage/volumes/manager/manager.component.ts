@@ -45,11 +45,13 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public vdevs:
     any = { data: [{}], cache: [], spare: [], log: [] };
   public original_vdevs: any = {};
+  public original_disks: Array < any >;
+  public orig_suggestable_disks: Array < any >;
   public error: string;
-  @ViewChild('disksdnd') disksdnd;
+  @ViewChild('disksdnd', { static: true}) disksdnd;
   @ViewChildren(VdevComponent) vdevComponents: QueryList < VdevComponent > ;
   @ViewChildren(DiskComponent) diskComponents: QueryList < DiskComponent > ;
-  @ViewChild(DatatableComponent) table: DatatableComponent;
+  @ViewChild(DatatableComponent, { static: false}) table: DatatableComponent;
   public temp = [];
 
   public name: string;
@@ -61,10 +63,13 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public re_has_errors = false;
   public nameFilter: RegExp;
   public capacityFilter: RegExp;
+  public nameFilterField: string;
+  public capacityFilterField: string;
   public dirty = false;
   protected existing_pools = [];
   public poolError = null;
   public isFooterConsoleOpen: boolean;
+  public loaderOpen = false;
 
   public submitTitle = T("Create");
   protected extendedSubmitTitle = T("Extend");
@@ -180,7 +185,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       },
       (err) => {
-        new EntityUtils().handleError(this, err);
+        new EntityUtils().handleWSError(this, err, this.dialog);
       }
     );
     this.rest.get(this.resource_name + this.pk, {}).subscribe((res) => {
@@ -221,15 +226,24 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     this.nameFilter = new RegExp('');
     this.capacityFilter = new RegExp('');
-    this.ws.call("notifier.get_disks", [true]).subscribe((res) => {
+
+  }
+
+  ngAfterViewInit() {
+    this.loader.open();
+    this.loaderOpen = true;
+    this.ws.call("disk.get_unused", [true]).subscribe((res) => {
+      this.loader.close();
+      this.loaderOpen = false;
       this.disks = [];
       for (let i in res) {
-        res[i]['real_capacity'] = res[i]['capacity'];
-        res[i]['capacity'] = (<any>window).filesize(res[i]['capacity'], {standard : "iec"});
+        res[i]['real_capacity'] = res[i]['size'];
+        res[i]['capacity'] = (<any>window).filesize(res[i]['size'], {standard : "iec"});
         this.disks.push(res[i]);
       }
 
      this.disks = this.sorter.tableSorter(this.disks, 'devname', 'asc');
+     this.original_disks = Array.from(this.disks);
 
 
       // assign disks for suggested layout
@@ -244,23 +258,29 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
           this.suggestable_disks.push(this.disks[i]);
         }
       }
+      this.orig_suggestable_disks = Array.from(this.suggestable_disks);
       this. can_suggest = this.suggestable_disks.length < 11;
 
       this.temp = [...this.disks];
+    }, (err) => {
+      this.loader.close();
+      new EntityUtils().handleWSError(this, err, this.dialog)
     });
     this.ws.call('system.advanced.config').subscribe((res)=> {
       if (res) {
         this.isFooterConsoleOpen = res.consolemsg;
       }
     });
-  }
 
-  ngAfterViewInit() {
     if (!this.isNew) {
       setTimeout(() => { // goofy workaround for stupid angular error
         this.dialog.confirm(T("Warning"), helptext.manager_extend_warning, 
             false, T("Continue")).subscribe((res) => {
           if (!res) {
+            if (this.loaderOpen) {
+              this.loader.close();
+              this.loaderOpen = false;
+            }
             this.goBack();
           }
         });
@@ -540,6 +560,31 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   suggestLayout() {
     // todo: add more layouts, manipulating multiple vdevs is hard
     this.suggestRedundancyLayout();
+  }
+
+  resetLayout() {
+    this.vdevComponents.forEach(vdev => {
+      vdev.remove();
+    });
+    for (const group in this.vdevs) {
+      if (this.vdevs.hasOwnProperty(group)) {
+        while (this.vdevs[group].length > 0) {
+          this.vdevs[group].pop();
+        }
+      }
+    }
+    this.nameFilterField = '';
+    this.capacityFilterField = '';
+    this.nameFilter = new RegExp('');
+    this.capacityFilter = new RegExp('');
+    this.vdevs['data'].push({});
+    this.vdevComponents.first.estimateSize();
+    this.disks = Array.from(this.original_disks);
+    this.suggestable_disks = Array.from(this.orig_suggestable_disks);
+    this.temp = [...this.disks];
+    this.dirty = false;
+    this.table.offset = 0;
+    this.getCurrentLayout();
   }
 
   suggestRedundancyLayout() {

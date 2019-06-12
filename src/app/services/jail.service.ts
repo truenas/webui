@@ -89,4 +89,16 @@ export class JailService {
   getRemoteReleaseChoices() {
     return this.ws.call('jail.list_resource', ["RELEASE", true]);
   };
+
+  getBranches() {
+    return this.ws.call('jail.list_resource', ["BRANCHES"]);
+  }
+
+  getVersion() {
+    return this.ws.call('jail.get_version');
+  }
+
+  getInstalledPlugins() {
+    return this.ws.call('jail.list_resource', ["PLUGIN"]);
+  }
 }

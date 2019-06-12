@@ -1,33 +1,43 @@
-import { Component, ElementRef, Injector, ApplicationRef, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { RestService } from '../../../../services/rest.service';
-import { Subscription } from 'rxjs';
+import { ApplicationRef, Component, Injector } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { WebSocketService } from 'app/services';
-import { EntityUtils } from '../../../common/entity/utils';
-
+import { Subscription } from 'rxjs';
+import { RestService } from '../../../../services/rest.service';
 import { T } from '../../../../translate-marker';
-import { isNgTemplate } from '@angular/compiler';
+import { EntityUtils } from '../../../common/entity/utils';
+import { SnapshotDetailsComponent } from './components/snapshot-details.component';
+
 @Component({
   selector: 'app-snapshot-list',
+  styles: [`
+      :host ::ng-deep .datatable-body {
+        overflow-x: hidden !important;
+      }
+
+      :host ::ng-deep .datatable-row-detail {
+        background: var(--bg2) !important;
+      }
+  `],
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class SnapshotListComponent {
 
   public title = "Snapshots";
   protected queryCall = 'zfs.snapshot.query';
-  protected queryCallOption = [[["pool", "!=", "freenas-boot"]], {"select": ["name", "properties"], "order_by": ["name"]}];
+  protected queryCallOption = [[["pool", "!=", "freenas-boot"]], {"select": ["name"], "order_by": ["name"]}];
   protected route_add: string[] = ['storage', 'snapshots', 'add'];
   protected route_add_tooltip = "Add Snapshot";
   protected wsDelete = 'zfs.snapshot.remove';
+  protected showActions = false;
   protected loaderOpen = false;
   protected entityList: any;
+  protected hasDetails = true;
+  protected rowDetailComponent = SnapshotDetailsComponent;
   public busy: Subscription;
   public sub: Subscription;
   public columns: Array<any> = [
-    {name : 'Name', prop : 'name', minWidth: 355},
-    {name : 'Used', prop : 'used'},
-    {name : 'Referenced', prop : 'refer'},
-    {name : 'Date Created', prop: 'creation'}
+    {name : 'Dataset', prop : 'dataset', minWidth: 355},
+    {name : 'Snapshot', prop : 'snapshot', minWidth: 355},
   ];
   public config: any = {
     paging: true,
@@ -58,11 +68,6 @@ export class SnapshotListComponent {
     protected _injector: Injector, protected _appRef: ApplicationRef) { }
 
   resourceTransformIncomingRestData(rows: any) {
-    for (let i = 0; i < rows.length; i++) {
-      rows[i].used = rows[i].properties.used.rawvalue;
-      rows[i].refer = rows[i].properties.referenced.rawvalue;
-      rows[i].creation = rows[i].properties.creation.value;
-    }
     return rows;
   }
   
@@ -99,37 +104,22 @@ export class SnapshotListComponent {
     });
   }
 
-  getActions(parentRow) {
-    const actions = [];
-    
-    actions.push({
-      label: "Delete",
-      onClick: (row1) => {
-        this.doDelete(row1);
-      }
-    });
-    actions.push({
-      label: "Clone",
-      onClick: (row1) => {
-        this._router.navigate(new Array('/').concat(
-          ["storage", "snapshots", "clone", row1.id]));
-      }
-    });
-    actions.push({
-      label: "Rollback",
-      onClick: (row1) => {
-        this.doRollback(row1);
-      }
-    });
-    return actions;
-  }
-
   getSelectedNames(selectedSnapshots) {
     let selected: any = [];
     for (let i in selectedSnapshots) {
-      selected.push([{"dataset": selectedSnapshots[i].dataset, "name": selectedSnapshots[i].snapshot_name}]);
+      let snapshot = selectedSnapshots[i].name.split('@');
+      selected.push([{"dataset": snapshot[0], "name": snapshot[1]}]);
     }
     return selected;
+  }
+
+  dataHandler(list: { rows: { name: string, dataset: string, snapshot: string }[] }): void {
+    list.rows = list.rows.map(ss => {
+      const [datasetName, snapshotName] = ss.name.split('@');
+      ss.dataset = datasetName;
+      ss.snapshot = snapshotName;
+      return ss;
+    });
   }
 
   wsMultiDeleteParams(selected: any) {
@@ -144,7 +134,8 @@ export class SnapshotListComponent {
       if (res) {
         this.entityList.loader.open();
         this.entityList.loaderOpen = true;
-        this.ws.call(this.wsDelete, [{ "dataset": item.dataset, "name": item.snapshot_name}]).subscribe(
+        let snapshot = item.name.split('@');
+        this.ws.call(this.wsDelete, [{ "dataset": snapshot[0], "name": snapshot[1]}]).subscribe(
           (res) => { this.entityList.getData() },
           (res) => {
             new EntityUtils().handleWSError(this, res, this.entityList.dialogService);
@@ -157,7 +148,7 @@ export class SnapshotListComponent {
 
   doRollback(item) {
     const warningMsg = T("<b>WARNING:</b> Rolling back to this snapshot will permanently delete later snapshots of this dataset. Do not roll back until all desired snapshots have been backed up!");
-    const msg = T("<br><br>Roll back to snapshot <i>") + item.snapshot_name + '</i> from ' + item.creation + '?';
+    const msg = T("<br><br>Roll back to snapshot <i>") + item.name + '</i> from ' + item.creation + '?';
 
     this.entityList.dialogService.confirm(T("Warning"), warningMsg + msg, false, T('Rollback')).subscribe(res => {
       let data = {"force" : true};
@@ -165,7 +156,7 @@ export class SnapshotListComponent {
         this.entityList.loader.open();
         this.entityList.loaderOpen = true;
         this.rest
-        .post('storage/snapshot' + '/' + item.id + '/rollback/', {
+        .post('storage/snapshot' + '/' + item.name + '/rollback/', {
           body : JSON.stringify(data),
         })
         .subscribe(

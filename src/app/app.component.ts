@@ -57,7 +57,31 @@ export class AppComponent {
       "jail_icon",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/jail_icon.svg")
     );
-    this.title.setTitle('FreeNAS - ' + window.location.hostname);
+    this.matIconRegistry.addSvgIcon(
+      "ha_disabled",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/ha_disabled.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "ha_enabled",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/ha_enabled.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "ha_reconnecting",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/ha_reconnecting.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_logomark",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_logomark.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_logotype",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_logotype.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_logo_full",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_logo_full.svg")
+    );
+    // this.title.setTitle('FreeNAS - ' + window.location.hostname);
 
     if (this.detectBrowser("Safari")) {
       document.body.className += " safari-platform";

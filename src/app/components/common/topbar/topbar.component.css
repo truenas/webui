@@ -45,3 +45,17 @@
   /*padding-left: 30px;
   background-position-x: left;*/
 }
+
+.mdi-icon {
+  font-size: 24px;
+}
+
+.hidden-button {
+  display: none;
+}
+
+.hostname-label {
+  margin-right: 20px;
+  font-weight: 400;
+  font-size: .75rem;
+}

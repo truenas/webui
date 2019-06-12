@@ -271,10 +271,10 @@ export class AdvancedComponent implements OnDestroy {
       this.adv_serialport['isHidden'] = !value;
     });
     entityEdit.ws.call('system.advanced.serial_port_choices').subscribe((serial_port_choices)=>{
-      for(let i=0; i<serial_port_choices.length; i++){
+      for(const k in serial_port_choices){
         this.adv_serialport.options.push(
           {
-            label: serial_port_choices[i], value: serial_port_choices[i]
+            label: k, value: serial_port_choices[k]
           }
         )}
     });

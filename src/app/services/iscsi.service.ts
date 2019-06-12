@@ -57,4 +57,8 @@ export class IscsiService {
   getAuth() {
     return this.ws.call('iscsi.auth.query', []);
   }
+
+  getGlobalSessions() {
+    return this.ws.call('iscsi.global.sessions');
+  }
 }

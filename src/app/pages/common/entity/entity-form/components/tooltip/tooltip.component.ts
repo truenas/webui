@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class TooltipComponent {
   @Input('message') message: string;
-  @ViewChild('tooltip') private tooltip: ElementRef;
+  @ViewChild('tooltip', { static: true}) private tooltip: ElementRef;
 
   public isShowTooltip: Boolean;
   public tooltipMsgStyle: any;

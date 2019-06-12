@@ -19,14 +19,17 @@ import { ApiService } from 'app/core/services/api.service';
   styleUrls: ['./signin.component.scss']
 })
 export class SigninComponent implements OnInit {
-  @ViewChild(MatProgressBar) progressBar: MatProgressBar;
-  @ViewChild(MatButton) submitButton: MatButton;
+  @ViewChild(MatProgressBar, { static: false}) progressBar: MatProgressBar;
+  @ViewChild(MatButton, { static: false}) submitButton: MatButton;
 
   private failed: Boolean = false;
   public is_freenas: Boolean = false;
   public logo_ready: Boolean = false;
   public showPassword = false;
+  public ha_info_ready = false;
+  public checking_status = false;
   public copyrightYear = globalHelptext.copyright_year;
+  private interval: any;
 
   signinData = {
     username: '',
@@ -34,6 +37,18 @@ export class SigninComponent implements OnInit {
   }
   public setPasswordFormGroup: FormGroup;
   public has_root_password: Boolean = true;
+  public failover_status = '';
+  public failover_statuses = {
+    'SINGLE': "",
+    'MASTER': T("Active storage controller."),
+    'BACKUP': T("Passive storage controller."),
+    'ELECTING': T("Electing storage controller."),
+    'IMPORTING': T("Importing pools."),
+    'ERROR': T("Failover is in an error state.")
+  }
+  public failover_ips = [];
+  public ha_disabled_reasons =[];
+  public ha_status_text = T('Checking HA status');
 
   constructor(private ws: WebSocketService, private router: Router,
     private snackBar: MatSnackBar, public translate: TranslateService,
@@ -43,12 +58,7 @@ export class SigninComponent implements OnInit {
     private api:ApiService,
     private http:Http) {
     this.ws = ws;
-    this.ws.call('system.is_freenas').subscribe((res)=>{
-      this.logo_ready = true;
-      this.is_freenas = res;
-      window.localStorage.setItem('is_freenas', res);
-    });
-
+    this.checkSystemType();
     this.core.register({observerClass:this, eventName:"ThemeChanged"}).subscribe((evt:CoreEvent) => {
       if (this.router.url == '/sessions/signin' && evt.sender.userThemeLoaded == true) {
         this.redirect();
@@ -56,7 +66,28 @@ export class SigninComponent implements OnInit {
     })
    }
 
+  checkSystemType() {
+    if (!this.logo_ready) {
+      this.ws.call('system.is_freenas').subscribe((res)=>{
+        this.logo_ready = true;
+        this.is_freenas = res;
+        if (this.interval) {
+          clearInterval(this.interval);
+        }
+        setInterval(() => {
+          this.getHAStatus();
+        }, 5000);
+        window.localStorage.setItem('is_freenas', res);
+      });
+    }
+  }
+
   ngOnInit() {
+    if (!this.logo_ready) {
+      this.interval = setInterval(() => {
+        this.checkSystemType();
+      }, 5000);
+    }
     this.ws.call('user.has_root_password').subscribe((res) => {
       this.has_root_password = res;
     })
@@ -108,6 +139,43 @@ export class SigninComponent implements OnInit {
       password: new FormControl('', [Validators.required]),
       password2: new FormControl('', [Validators.required, matchOtherValidator('password')]),
     })
+  }
+
+  getHAStatus() {
+    if (!this.is_freenas && !this.checking_status) {
+      this.checking_status = true;
+      this.ws.call('failover.status').subscribe(res => {
+        this.failover_status = res;
+        this.ha_info_ready = true;
+        if (res !== 'SINGLE') {
+          this.ws.call('failover.get_ips').subscribe(ips => {
+            this.failover_ips = ips;
+          }, err => {
+            console.log(err);
+          });
+          this.ws.call('failover.disabled_reasons').subscribe(reason => {
+            this.checking_status = false;
+            this.ha_disabled_reasons = reason;
+            if (reason.length === 0) {
+              this.ha_status_text = T('HA is enabled.');
+            } else if (reason.length === 1 && reason[0] === 'NO_SYSTEM_READY') {
+              this.ha_status_text = T('HA is reconnecting.');
+            } else {
+              this.ha_status_text = T('HA is disabled.');
+            }
+          }, err => {
+            this.checking_status = false;
+            console.log(err);
+          },
+          () => {
+            this.checking_status = false;
+          });
+        }
+      }, err => {
+        this.checking_status = false;
+        console.log(err);
+      });
+    }
   }
 
   get password() {

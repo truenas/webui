@@ -16,7 +16,7 @@ export class FormTextareaButtonComponent implements Field {
   group: FormGroup;
   fieldShow: string;
 
-  @ViewChild("textAreaSSH")
+  @ViewChild("textAreaSSH", { static: true})
   textAreaSSH: ElementRef;
 
   constructor(public translate: TranslateService) {}

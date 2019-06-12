@@ -1,0 +1,269 @@
+nav.view-nav-bar{
+  background-color:var(--alt-bg1);
+  color:var(--alt-fg1);
+  width:100%;
+  height:32px;
+  padding-bottom: 4px;
+  margin:-15px 0 32px;
+}
+
+.view-nav-bar .view-nav-btn{
+  /*display:inline-block;*/
+  height:40px;
+  text-transform: capitalize !important;
+  /*font-weight:500;
+  padding:0 16px;
+  text-align:center;*/
+}
+
+.view-card{
+  max-width:960px;
+  margin: 0 auto;
+  min-height:480px;
+  padding:0;
+}
+
+.view-card #disks-overview{
+  height:304px;
+  background-color:rgba(0, 0, 0, 0.85);
+  position: relative;
+  color:#ccc;
+  cursor:default;
+  user-select:none;
+  overflow:hidden;
+}
+
+.view-card .expanders .caption,
+.view-card .expanders canvas{
+  opacity:0;
+}
+
+.view-card #disks-details{
+  height:250px;
+}
+
+.view-card #disks-details-header{
+  font-size: 1.15rem;
+  border-bottom:solid 1px var(--bg1);
+  padding:12px 16px;
+}
+
+.view-card .tiles{
+  text-align: center;
+  border-left:solid 1px var(--bg1);
+}
+
+.view-card .tiles:first-child{
+  border-left: none;
+}
+
+.view-card .details-wrapper{
+  width: 100%;
+  min-height: 400;
+}
+
+.view-card .tiles.active{
+  background-color:rgba(0,0,0,0.1);
+}
+
+.view-card .primary-number{
+  font-size: 3.25rem;
+  font-weight: 100;
+}
+
+.view-card .title{
+  font-size: 1rem;
+}
+
+.view-card .subtitle{
+  font-size: 0.65rem;
+  opacity: 0.85;
+}
+
+.view-card .tiles .mat-button{
+  margin: 16px;
+}
+
+.view-card .disk-actions{
+  margin:16px;
+  text-align: center;
+}
+
+.view-card .disk-actions button{
+  margin:4px 16px;
+}
+
+.view-card #disks-details-header {
+  position:relative;
+}
+
+.view-card #disks-details-header.details {
+  padding-left:56px;
+}
+
+.view-card #disks-details-header .back{
+  cursor:pointer;
+  position:absolute;
+  border-radius: 50%;
+  width:24px;
+  height:24px;
+  top:8px;
+  left:12px;
+  padding:4px;
+  background: var(--primary);
+}
+
+.view-card .disk-advanced-details .detail{
+  text-align:left;
+  margin:8px 0;
+}
+
+.view-card .disk-advanced-details .detail .label{
+  font-size:100%;
+  font-weight:500;
+}
+
+.view-card .disk-advanced-details .detail .value{
+  text-align:left;
+  font-weight:300;
+  font-size: 120%;
+  line-height: 85%;
+/*
+    text-align: left;
+    font-weight: 300;
+    font-size: 120%;
+    line-height: 85%;
+*/
+}
+
+.view-card #view-selector{
+}
+
+.view-card .disk-advanced-details .detail{
+  padding:8px 16px;
+}
+
+.view-card .disk-basic-details .capacity{
+    font-weight: 500;
+    font-size: 120%;
+}
+
+.view-card .dom-overlay{
+  width:100%;
+  height: 100%;
+  position:absolute;
+  z-index:3;
+}
+
+.view-card .dom-overlay .content{
+  opacity:0; /* animations will change this */
+  text-align:center;
+  position:absolute;
+}
+
+.view-card .dom-overlay .content .legend{
+  text-align:left;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.view-card .dom-overlay.expanders .content{
+  width:100%;
+}
+
+.view-card .dom-overlay.stage-left,
+.view-card .dom-overlay.stage-right{
+  position:absolute;
+  display:block;
+  width:25%;
+}
+
+.view-card .dom-overlay.stage-right{
+  /*right: 0;*/
+  left:calc(75%);
+}
+
+.view-card .dom-overlay.stage-right .vdev-type{
+  border-bottom:solid 1px rgba(255,255,255,0.5);
+  text-transform:capitalize;
+}
+
+.view-card .caption.dom-overlay{
+  height:auto;
+  bottom:20px;
+  text-align:center;
+  opacity:0.5;
+}
+
+
+.view-card .model.dom-overlay{
+  height:auto;
+  /*top:12px;*/
+  text-align:center;
+  position: absolute;
+  left: 0;
+  z-index: 3;
+}
+
+.view-card .model.dom-overlay img.logo.mark {
+  height:30px;
+  position:relative;
+  top:4px;
+  left: -8px;
+}
+
+.view-card .model.dom-overlay img.logo.type {
+    height: 18px;
+    position: relative;
+    left: 2px;
+    top: 0px;
+    margin-right: 12px;
+}
+
+.view-card .model.dom-overlay .text {
+  font-size:20px;
+}
+
+div.vdev-disk {
+  /*border-left: solid 2px var(--blue);*/
+  padding:0 8px 0 0;
+  margin:2px 0;
+}
+
+.view-card .dom-overlay.stage-right.list > div{
+  text-align:left;
+}
+
+.view-card .dom-overlay.stage-right.list .swatch{
+  border-radius:50%;
+  width:10px;
+  height:10px;
+  display: inline-block;
+  margin-right: 12px;
+}
+
+.view-card .dom-overlay.stage-right .vdev-disk .swatch{
+  border-radius:50%;
+  width:6px;
+  height:6px;
+  display: inline-block;
+  margin: 0px 8px 2px 0;
+}
+
+/*.view-card .mat-toolbar#Disks-toolbar,*/
+.view-card mat-card-content#Disks-content {
+  display:none;
+}
+
+.view-card mat-card-content#Disks-content.Disks {
+  display:block;
+}
+
+
+/*.view-card#Disks .mat-toolbar#Disks-toolbar,*/
+.view-card#Disks .mat-card-content#Disks-content{
+  opacity:1;
+  position:static;
+}
+
+

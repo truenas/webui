@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RestService } from '../../../../services/';
 import { EntityUtils } from '../../../common/entity/utils';
@@ -6,7 +6,6 @@ import { EntityTableComponent, InputTableConf } from 'app/pages/common/entity/en
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { MatDialog } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
@@ -546,12 +545,38 @@ export class VolumesListTableConfig implements InputTableConf {
         actions.push({
           label: T("Edit Permissions"),
           onClick: (row1) => {
+            this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + row1.path]).subscribe(acl_is_trivial => {
+              if (acl_is_trivial) {
+                this._router.navigate(new Array('/').concat([
+                  "storage", "pools", "id", row1.path.split('/')[0], "dataset",
+                  "permissions", row1.path
+                ]));
+              } else {
+                this.dialogService.confirm(T("Dataset has complex ACLs"),
+                  T("This dataset has ACLs that are too complex to be edited with \
+                    the permissions editor.  Open in ACL editor instead?"), 
+                  true, T("EDIT ACL")).subscribe(edit_acl => {
+                    if (edit_acl) {
+                        this._router.navigate(new Array('/').concat([
+                          "storage", "pools", "id", row1.path.split('/')[0], "dataset",
+                          "acl", row1.path
+                        ]));
+                      }
+                });
+              }
+            });
+          }
+        },
+        {
+          label: T("Edit ACL"),
+          onClick: (row1) => {
             this._router.navigate(new Array('/').concat([
               "storage", "pools", "id", row1.path.split('/')[0], "dataset",
-              "permissions", row1.path
+              "acl", row1.path
             ]));
           }
-        });
+        },
+        );
       }
 
       if (rowData.path.indexOf('/') !== -1) {

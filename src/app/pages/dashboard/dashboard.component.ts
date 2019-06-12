@@ -60,7 +60,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
   init(){
     //console.log("******** Dashboard Initializing... ********");
 
-    this.core.register({observerClass:this,eventName:"PoolData"}).subscribe((evt:CoreEvent) => {
+    this.core.register({observerClass:this,eventName:"VolumeData"}).subscribe((evt:CoreEvent) => {
       this.setPoolData(evt);
     });
 
@@ -68,7 +68,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
       this.setDisksData(evt);
     });
 
-    this.core.emit({name:"PoolDataRequest"});
+    this.core.emit({name:"VolumeDataRequest"});
     this.core.emit({name:"DisksInfoRequest"});
   }
 
@@ -82,6 +82,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
         smart_enabled:evt.data[i].togglesmart,
         size:Number(evt.data[i].size),
         description: evt.data[i].description,
+        model: evt.data[i].model,
         enclosure_slot: evt.data[i].enclosure_slot,
         expiretime: evt.data[i].expiretime,
         hddstandby: evt.data[i].hddstandby,
