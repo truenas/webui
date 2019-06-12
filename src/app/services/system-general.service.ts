@@ -13,6 +13,8 @@ export class SystemGeneralService {
   protected certificateList: string = 'certificate.query';
   protected caList: string = 'certificateauthority.query';
   shouldReboot = new EventEmitter();
+  rebootStatus = new Subject<string>();
+  reboot: string;
 
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
@@ -34,6 +36,15 @@ export class SystemGeneralService {
 
   getSysInfo() {
     return this.ws.call('system.info', []);
+  }
+
+  setRebootStatus(status: string) {
+    this.rebootStatus.next(status);
+    this.reboot = status;
+  }
+
+  getRebootStatus() {
+    return this.rebootStatus.asObservable();
   }
 
   

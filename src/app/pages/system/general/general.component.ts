@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { Http } from '@angular/http';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
@@ -9,7 +9,6 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../common/entity/utils';
 import { T } from '../../../translate-marker';
 
@@ -440,39 +439,15 @@ export class GeneralComponent {
     );
   }
   fireEmitter(r) {
-    console.log(r)
-    this.sysGeneralService.shouldReboot.emit('r');
+    this.sysGeneralService.setRebootStatus(r);
   }
 
   resetConfigSubmit(entityDialog) {
     const parent = entityDialog.parent;
-    
-
-    // entityDialog.dialogRef.close();
     let rebootValue;
     entityDialog.formValue.reboot_option ? rebootValue = 'true' : rebootValue = 'false';
-    parent.sysGeneralService.shouldReboot.emit(rebootValue);
     parent.fireEmitter(rebootValue)
-    // parent.router.navigate(new Array('').concat(['others', 'config-reset']))
-    // rebootValue ? message = 'The system will restart.' : message = 'You will be logged out.';
-    
-    // this.dialogRef = parent.mdDialog.open(EntityJobComponent, { data: { "title": "Resetting..." }, disableClose: true });
-    // this.dialogRef.componentInstance.setCall('config.reset', [{ reboot: rebootValue}]);
-    // this.dialogRef.componentInstance.setDescription(T('Resetting system configuration to default settings. ' + message));
-    // this.dialogRef.componentInstance.submit();
-    // this.dialogRef.componentInstance.success.subscribe(() => {
-    //   this.dialogRef.close();
-    //   if (!rebootValue) {
-    //     parent.ws.logout();
-    //   } else {
-    //     parent.router.navigate(new Array('').concat(['others', 'config-reset']))
-    //     // parent.snackBar.open(T("System will restart in 10 seconds."), T('Restarting'), { duration: 11000 });
-    //   }
-    // });
-    // this.dialogRef.componentInstance.failure.subscribe((res) => {
-    //   this.dialogRef.close();
-    //   parent.dialog.errorReport(res.error, res.state, res.exception);
-    // });
+    parent.router.navigate(new Array('').concat(['others', 'config-reset']))
   }
 
   public customSubmit(body) {
