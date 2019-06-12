@@ -6,12 +6,14 @@ import { Http } from '@angular/http';
 import { matchOtherValidator } from '../../../pages/common/entity/entity-form/validators/password-validation';
 import { TranslateService } from '@ngx-translate/core';
 import globalHelptext from '../../../helptext/global-helptext';
+import productText from '../../../helptext/product';
 
 import { T } from '../../../translate-marker';
 import {WebSocketService} from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { ApiService } from 'app/core/services/api.service';
+import product from '../../../helptext/product';
 
 @Component({
   selector: 'app-signin',
@@ -25,7 +27,7 @@ export class SigninComponent implements OnInit {
   private failed: Boolean = false;
   public is_freenas: Boolean = false;
   public logo_ready: Boolean = false;
-  public product: string;
+  public product = productText.product;
   public showPassword = false;
   public ha_info_ready = false;
   public checking_status = false;
@@ -84,10 +86,6 @@ export class SigninComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.http.get('./assets/product').subscribe((res) => {
-      this.product = res['_body'].trim()
-    });
-
     if (!this.logo_ready) {
       this.interval = setInterval(() => {
         this.checkSystemType();
