@@ -37,6 +37,14 @@
         <!-- Put a loader in here at some point -->
       </div>
     </div>
+    <script src='assets/scripts/product.js'>
+    </script>
+    <script>
+      if (product.trim() === 'TrueNAS') {
+        console.log("foo");
+        document.getElementById('brandLogo').src = 'assets/images/TrueNAS_Logomark_White.svg';
+      }
+    </script>
   </app-root>
 </body>
 </html>

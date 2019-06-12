@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { URLSearchParams, } from '@angular/http';
@@ -32,6 +32,7 @@ export class AppComponent {
   appTitle = 'FreeNAS';
   protected accountUserResource: string = 'account/users/1';
   protected user: any;
+  @ViewChild('brandLogo', {static: true}) brandLogo: any;
 
   constructor(public title: Title,
     private router: Router,
