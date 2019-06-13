@@ -4,6 +4,8 @@ import * as _ from 'lodash';
 import { WebSocketService, AppLoaderService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import helptext from 'app/helptext/services/components/service-netdata';
+import { Placeholder } from '@angular/compiler/src/i18n/i18n_ast';
 
 @Component({
   selector: 'app-service-netdata',
@@ -24,31 +26,34 @@ export class ServiceNetDataComponent implements OnInit {
                 {
                     type: 'paragraph',
                     name: 'global_label',
-                    paraText: 'Global Settings'
+                    paraText: helptext.global_paratext
                 },
                 {
-                    type : 'input', // validate as int
+                    type : 'input',
                     name : 'history',
-                    placeholder : 'History',
-                    tooltip: 'The number of entries the netdata daemon will by default keep in memory for each chart dimension.'
+                    placeholder : helptext.history.placeholder,
+                    tooltip: helptext.history.tooltip,
+                    validation: helptext.history.validation
                 },
                 {
-                    type : 'input', // validate as int
+                    type : 'input',
                     name : 'update_frequency',
-                    placeholder : 'Update Frequency',
-                    tooltip: 'The frequency in seconds, for data collection.'
+                    placeholder : helptext.update_frequency.placeholder,
+                    tooltip: helptext.update_frequency.tooltip,
+                    validation: helptext.update_frequency.validation
                 },
                 {
-                    type : 'input', // validate as int
+                    type : 'input',
                     name : 'http_port_listen_backlog',
-                    placeholder : 'HTTP Port Listen Backlog',
-                    tooltip: 'The port backlog'
+                    placeholder : helptext.http_port_listen_backlog.placeholder,
+                    tooltip: helptext.http_port_listen_backlog.tooltip,
+                    validation: helptext.http_port_listen_backlog.validation
                 },
                 {
                     type : 'select',
                     name : 'bind_to',
-                    placeholder : 'Bind to',
-                    tooltip: 'Select one or more IP addresses to which to bind the Netdata service.',
+                    placeholder : helptext.bind_to.placeholder,
+                    tooltip: helptext.bind_to.tooltip,
                     multiple : true,
                     options : [
                         {label : '0.0.0.0', value : '0.0.0.0'},
@@ -57,17 +62,18 @@ export class ServiceNetDataComponent implements OnInit {
                     ]
                 },
                 {
-                    type : 'input', // validate as int
+                    type : 'input',
                     name : 'bind_to_port',
-                    placeholder : 'Bind to port',
-                    tooltip: 'The port which will be used with selected bind to IP addresses',
+                    placeholder : helptext.bind_to_port.placeholder,
+                    tooltip: helptext.bind_to_port.tooltip,
+                    validation: helptext.bind_to_port.validation,
                     value: 19999
                 },
                 {
                     type : 'textarea', // need more info on accceptable key/values
                     name : 'additional_params',
-                    placeholder : 'Additional parameters',
-                    tooltip: 'Instructions on adding keys and vlaues',
+                    placeholder : helptext.additional_params.placeholder,
+                    tooltip: helptext.additional_params.tooltip
                 }
             ]
         },
@@ -79,14 +85,14 @@ export class ServiceNetDataComponent implements OnInit {
                 {
                     type: 'paragraph',
                     name: 'alarms_label',
-                    paraText: 'Alarms',
+                    paraText: helptext.alarms_paratext,
                     class: 'entity_form_label'
                 },
                 {
                     type : 'textarea', // need more info on accceptable key/values
                     name : 'alarms',
-                    placeholder : 'Placeholder for dynamically created alarms',
-                    tooltip: 'Instructions on alarms',
+                    placeholder : helptext.alarms.placeholder,
+                    tooltip: helptext.alarms.tooltip
                 }
             ]
         },
@@ -98,13 +104,13 @@ export class ServiceNetDataComponent implements OnInit {
                 {
                     type: 'paragraph',
                     name: 'streaming_label',
-                    paraText: 'Streaming Metrics'
+                    paraText: helptext.streaming_paratext
                 },
                 {
                     type : 'select',
                     name : 'stream_mode',
-                    placeholder : 'Stream Mode',
-                    tooltip: 'Select a stream mode if system is to be used for streaming',
+                    placeholder : helptext.stream_mode.placeholder,
+                    tooltip: helptext.stream_mode.tooltip,
                     options : [
                         {label : 'None', value : 'none'},
                         {label : 'Slave', value : 'slave'},
@@ -115,22 +121,22 @@ export class ServiceNetDataComponent implements OnInit {
                 {
                     type : 'input', 
                     name : 'destination',
-                    placeholder : 'Destination',
-                    tooltip: 'Please provide line/space separated list of destinations where the collected metrics are to be sent in the format HOST:PORT',
+                    placeholder : helptext.destination.placeholder,
+                    tooltip: helptext.destination.tooltip,
                     isHidden: true
                 },
                 {
                     type : 'input', 
                     name : 'api_key',
-                    placeholder : 'API Key',
-                    tooltip: 'The API_KEY to use (as the sender)',
+                    placeholder : helptext.api_key.placeholder,
+                    tooltip: helptext.api_key.tooltip,
                     isHidden: true
                 },
                 {
                     type : 'input', 
                     name : 'allow_from',
-                    placeholder : 'Allow from',
-                    tooltip: 'A list of simple patterns matching the IPs of the servers that will be pushing metrics using this API key.',
+                    placeholder : helptext.allow_from.placeholder,
+                    tooltip: helptext.allow_from.tooltip,
                     value: "*",
                     isHidden: true
                 },
