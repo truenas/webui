@@ -25,7 +25,7 @@ xpaths = {
     'saveButton': "//button[@id='save_button']/span",
     'theEnd': "//a[contains(text(),'2')]",
     'toDashboard': "//span[contains(.,'Dashboard')]",
-    'scrollssh': "//datatable-row-wrapper[9]/datatable-body-row/div[2]/datatable-body-cell/div/div"
+    'scrollToSSH': "//datatable-row-wrapper[9]/datatable-body-row/div[2]/datatable-body-cell/div/div"
 }
 
 
@@ -44,8 +44,10 @@ def test_01_navigate_service(wb_driver):
 
 def test_02_navigate_to_configure_ssh(wb_driver):
     # scroll down
-    wb_driver.find_element_by_xpath(xpaths['theEnd']).click()
-    time.sleep(2)
+    scroll = wb_driver.find_element_by_xpath(xpaths['scrollToSSH'])
+    time.sleep(1)
+    wb_driver.execute_script("arguments[0].scrollIntoView(true);", scroll)
+    time.sleep(1)
     # click on configure button
     wb_driver.find_element_by_xpath(xpaths['configButton']).click()
     ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
@@ -84,7 +86,10 @@ def test_04_save_ssh_configuration(wb_driver):
 
 def test_05_turnoff_ssh(wb_driver):
     # scroll down
-    wb_driver.find_element_by_xpath(xpaths['theEnd']).click()
+    scroll = wb_driver.find_element_by_xpath(xpaths['scrollToSSH'])
+    time.sleep(1)
+    wb_driver.execute_script("arguments[0].scrollIntoView(true);", scroll)
+    time.sleep(1)
     time.sleep(2)
     status_change(wb_driver, "ssh")
     # taking screenshot
