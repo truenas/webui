@@ -53,6 +53,16 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
       disabled: true,
     },
     {
+      type: 'radio',
+      name: 'https',
+      placeholder: helptext.https_placeholder,
+      options: [
+        {label:'HTTPS', value: true, tooltip: helptext.https_tooltip,},
+        {label:'HTTP', value: false, tooltip: helptext.http_tooltip,},
+      ],
+      value: true,
+    },
+    {
       type: 'checkbox',
       name: 'dhcp',
       placeholder: helptext.dhcp_placeholder,
@@ -1223,7 +1233,7 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
             }
             delete value[i];
           } else {
-            if (i != 'uuid' && i != 'release') {
+            if (i != 'uuid' && i != 'release' && i != 'https') {
               property.push(i + '=' + value[i]);
               delete value[i];
             }
