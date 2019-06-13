@@ -616,7 +616,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     })
   }
 
-  doDeleteJob(item: any): Observable<number> {
+  doDeleteJob(item: any): Observable<{ state: 'SUCCESS' | 'FAILURE' } | false> {
     const deleteMsg = this.getDeleteMessage(item);
     let id;
     if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.id_prop) {
