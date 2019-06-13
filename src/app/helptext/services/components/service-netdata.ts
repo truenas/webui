@@ -10,24 +10,24 @@ export default {
     history: {
         placeholder: T('History'),
         tooltip: T('The number of entries the netdata daemon will\
- by default keep in memory for each chart dimension.'),
+ by default keep in memory for each chart dimension. Default is 86400.'),
      validation: [ Validators.required, regexValidator(/^\d+$/) ]
     },
-    update_frequency: {
+    update_every: {
         placeholder : T('Update Frequency'),
         tooltip: T('The frequency in seconds, for data collection.'),
-        validation: [ Validators.required, regexValidator(/^\d+$/) ]
+        validation: [regexValidator(/^\d+$/) ]
     },
     http_port_listen_backlog: {
         placeholder : T('HTTP Port Listen Backlog'),
         tooltip: T('The port backlog'),
-        validation: [ Validators.required, regexValidator(/^\d+$/) ]
+        validation: [ regexValidator(/^\d+$/) ]
     },
-    bind_to: {
+    bind: {
         placeholder : T('Bind to'),
         tooltip: T('Select one or more IP addresses to which to bind the Netdata service.')
     },
-    bind_to_port: {
+    port: {
         placeholder : T('Bind to port'),
         tooltip: T('The port which will be used with selected bind to IP addresses'),
         validation: [ Validators.required, regexValidator(/^\d+$/) ]
@@ -57,7 +57,8 @@ export default {
     },
     api_key: {
         placeholder : T('API Key'),
-        tooltip: T('The API_KEY to use (as the sender)')
+        tooltip: T('The API_KEY to use (as the sender). This must be a valid UUID, and\
+ can be generated in command line by typing "uuidgen".')
     },
     allow_from: {
         placeholder : T('Allow from'),

@@ -5,7 +5,6 @@ import { WebSocketService, AppLoaderService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from 'app/helptext/services/components/service-netdata';
-import { Placeholder } from '@angular/compiler/src/i18n/i18n_ast';
 
 @Component({
   selector: 'app-service-netdata',
@@ -15,6 +14,7 @@ export class ServiceNetDataComponent implements OnInit {
     protected resource_name: string = 'services/netdata';
     protected isBasicMode: boolean = true;
     protected route_success: string[] = [ 'services' ];
+    protected editCall: 'netdata.update';
 
     public fieldConfig: FieldConfig[] = []
     public fieldSets: FieldSet[] = [
@@ -29,48 +29,49 @@ export class ServiceNetDataComponent implements OnInit {
                     paraText: helptext.global_paratext
                 },
                 {
-                    type : 'input',
+                    type : 'input', // int
                     name : 'history',
                     placeholder : helptext.history.placeholder,
                     tooltip: helptext.history.tooltip,
                     validation: helptext.history.validation
+                    
                 },
                 {
                     type : 'input',
-                    name : 'update_frequency',
-                    placeholder : helptext.update_frequency.placeholder,
-                    tooltip: helptext.update_frequency.tooltip,
-                    validation: helptext.update_frequency.validation
+                    name : 'update_every', // int
+                    placeholder : helptext.update_every.placeholder,
+                    tooltip: helptext.update_every.tooltip,
+                    validation: helptext.update_every.validation
                 },
                 {
                     type : 'input',
-                    name : 'http_port_listen_backlog',
+                    name : 'http_port_listen_backlog', // int
                     placeholder : helptext.http_port_listen_backlog.placeholder,
                     tooltip: helptext.http_port_listen_backlog.tooltip,
                     validation: helptext.http_port_listen_backlog.validation
                 },
                 {
                     type : 'select',
-                    name : 'bind_to',
-                    placeholder : helptext.bind_to.placeholder,
-                    tooltip: helptext.bind_to.tooltip,
+                    name : 'bind', // array of strings [{'string'}] ???
+                    placeholder : helptext.bind.placeholder,
+                    tooltip: helptext.bind.tooltip,
                     multiple : true,
                     options : [
                         {label : '0.0.0.0', value : '0.0.0.0'},
                         {label : '10.231.2.63', value : '10.231.2.63'},
-                        {label : 'other_dummy', value : 'Dummy Data'}
-                    ]
+                        {label : 'Dummy Data', value : '2.2.2.2'}
+                    ],
+                    value: '0.0.0.0'
                 },
                 {
-                    type : 'input',
-                    name : 'bind_to_port',
-                    placeholder : helptext.bind_to_port.placeholder,
-                    tooltip: helptext.bind_to_port.tooltip,
-                    validation: helptext.bind_to_port.validation,
-                    value: 19999
+                    type : 'input', // int
+                    name : 'port',
+                    placeholder : helptext.port.placeholder,
+                    tooltip: helptext.port.tooltip,
+                    validation: helptext.port.validation
                 },
                 {
-                    type : 'textarea', // need more info on accceptable key/values
+                    type : 'textarea', // need more info on accceptable key/values - string
                     name : 'additional_params',
                     placeholder : helptext.additional_params.placeholder,
                     tooltip: helptext.additional_params.tooltip
@@ -89,7 +90,7 @@ export class ServiceNetDataComponent implements OnInit {
                     class: 'entity_form_label'
                 },
                 {
-                    type : 'textarea', // need more info on accceptable key/values
+                    type : 'textarea', // need more info on accceptable key/values - object
                     name : 'alarms',
                     placeholder : helptext.alarms.placeholder,
                     tooltip: helptext.alarms.tooltip
@@ -108,7 +109,7 @@ export class ServiceNetDataComponent implements OnInit {
                 },
                 {
                     type : 'select',
-                    name : 'stream_mode',
+                    name : 'stream_mode', // str
                     placeholder : helptext.stream_mode.placeholder,
                     tooltip: helptext.stream_mode.tooltip,
                     options : [
@@ -119,7 +120,7 @@ export class ServiceNetDataComponent implements OnInit {
                     value: 'none'
                 },
                 {
-                    type : 'input', 
+                    type : 'input', // array of strings [{'string'}] ???
                     name : 'destination',
                     placeholder : helptext.destination.placeholder,
                     tooltip: helptext.destination.tooltip,
@@ -127,19 +128,19 @@ export class ServiceNetDataComponent implements OnInit {
                 },
                 {
                     type : 'input', 
-                    name : 'api_key',
+                    name : 'api_key', // string
                     placeholder : helptext.api_key.placeholder,
                     tooltip: helptext.api_key.tooltip,
                     isHidden: true
                 },
                 {
                     type : 'input', 
-                    name : 'allow_from',
+                    name : 'allow_from', // array of strings [{'string'}] ???
                     placeholder : helptext.allow_from.placeholder,
                     tooltip: helptext.allow_from.tooltip,
                     value: "*",
                     isHidden: true
-                },
+                }
                 
             ]
         }
@@ -185,7 +186,6 @@ export class ServiceNetDataComponent implements OnInit {
 
     afterInit(entity: any) {
         entity.formGroup.controls['stream_mode'].valueChanges.subscribe((res) => {
-            console.log(res)
             if (res === 'none') {
                 this.hideField('destination', true, entity);
                 this.hideField('api_key', true, entity);
@@ -199,6 +199,15 @@ export class ServiceNetDataComponent implements OnInit {
                 this.hideField('api_key', false, entity);
                 this.hideField('allow_from', false, entity);
             }
+        });
+
+        this.ws.call('netdata.config').subscribe((res) => {
+            entity.formGroup.controls['history'].setValue(res.history);
+            entity.formGroup.controls['update_every'].setValue(res.update_every);
+            entity.formGroup.controls['http_port_listen_backlog'].setValue(res.http_port_listen_backlog);
+            entity.formGroup.controls['port'].setValue(res.port);
+            entity.formGroup.controls['additional_params'].setValue(res.additional_params);
+            entity.formGroup.controls['api_key'].setValue(res.api_key);
         })
     }
 
@@ -211,4 +220,8 @@ export class ServiceNetDataComponent implements OnInit {
         target['isHidden'] = show;
         entity.setDisabled(fieldName, show, show);
     }
+
+    // customSubmit(payload){
+    //     console.log(payload);
+    // }
 }
