@@ -17,14 +17,15 @@ script_name = os.path.basename(__file__).partition('.')[0]
 xpaths = {
     'navService': '//*[@id="nav-8"]/div/a[1]',
     'turnoffConfirm': '//*[contains(text(), "OK")]',
-    'configButton': "//button[@id='action-button__SSH']",
+    'configButton': "//button[@id='action-button__SSH']/span/mat-icon",
     'rootCheckbox': '//*[@id="ssh_rootlogin"]/mat-checkbox/label/div',
     'verifyRootCheck': '//mat-checkbox',
     'breadcrumbBar1': "//div[@id='breadcrumb-bar']/ul/li/a",
     'breadcrumbBar2': "//*[@id='breadcrumb-bar']/ul/li[2]/a",
-    'saveButton': '//*[@id="save_button"]',
+    'saveButton': "//button[@id='save_button']/span",
     'theEnd': "//a[contains(text(),'2')]",
-    'toDashboard': "//span[contains(.,'Dashboard')]"
+    'toDashboard': "//span[contains(.,'Dashboard')]",
+    'scrollssh': "//datatable-row-wrapper[9]/datatable-body-row/div[2]/datatable-body-cell/div/div"
 }
 
 
