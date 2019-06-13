@@ -637,8 +637,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   #disk_radio tooltip {
-    float: right;
-    margin-top: 23px;
+    position: relative;
+    top: 30px;
+    left: 180px;
   }
   // ---------------
 
@@ -1245,6 +1246,12 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   entity-form form-combobox mat-form-field {
     width: 50%;
     min-width: 180px;
+  }
+
+  mat-radio-group .tooltip .material-icons,
+  mat-radio-group .tooltip .material-icons {
+    position: relative;
+    top: 4px;
   }
 
  } // end of ix theme
