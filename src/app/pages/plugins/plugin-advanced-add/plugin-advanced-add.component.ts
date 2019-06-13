@@ -39,7 +39,6 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
   public formGroup: any;
   public error: string;
   public busy: Subscription;
-  protected https_placeholder = '';
 
   protected dialogRef: any;
   protected formFields: FieldConfig[];
@@ -54,9 +53,13 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
       disabled: true,
     },
     {
-      type: 'checkbox',
+      type: 'radio',
       name: 'https',
-      placeholder: this.https_placeholder,
+      placeholder: helptext.https_placeholder,
+      options: [
+        {label:'HTTPS', value: true, tooltip: helptext.https_tooltip,},
+        {label:'HTTP', value: false, tooltip: helptext.http_tooltip,},
+      ],
       value: true,
     },
     {
@@ -995,9 +998,6 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.aroute.params.subscribe(params => {
       this.plugin_name = params['pk'];
-      this.translate.get('Fetch ' + this.plugin_name + ' via HTTPS').subscribe((translated) => {
-        _.find(this.basicfieldConfig, {'name': 'https'}).placeholder = translated;
-      });
       const nameField = _.find(this.basicfieldConfig, { 'name': 'uuid' });
       nameField.value = this.plugin_name;
     });

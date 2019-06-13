@@ -6,6 +6,7 @@ name_placeholder: T('Plugin Name'),
 
 https_placeholder: T('Fetch Method'),
 https_tooltip: T(''),
+http_tooltip: T(''),
 
 dhcp_placeholder: T('DHCP'),
 dhcp_tooltip: T('Set for <a \
