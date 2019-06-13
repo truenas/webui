@@ -59,23 +59,7 @@ export class BootEnvironmentListComponent {
   preInit() {
     this._rest.get('system/advanced/',{}).subscribe(res=>{
       this.scrub_interval = res.data.adv_boot_scrub;
-    });
-  }
-
-  dataHandler() {
-    this.ws.call("boot.get_state").subscribe(wres => {
-      if (wres.scan.end_time) {
-        this.scrub_msg = moment(wres.scan.end_time.$date).format("MMMM Do YYYY, h:mm:ss a");
-      } else {
-        this.scrub_msg = "Never";
-      }
-      this.size_consumed = wres.properties.allocated.value;
-      this.condition = wres.properties.health.value;
-      if (this.condition === "DEGRADED") {
-        this.condition = this.condition + ` Check Notifications for more details.`;
-      }
-      this.size_boot = wres.properties.size.value;
-      this.percentange = wres.properties.capacity.value;
+      this.updateBootState();
     });
   }
 
@@ -134,9 +118,23 @@ export class BootEnvironmentListComponent {
       actions.push({
         label: "Delete",
         id: "delete",
-        onClick: row => {
-          this.entityList.doDeleteJob(row).subscribe(console.log, console.error, () => this.entityList.getData());
-        }
+        onClick: row =>
+          this.entityList.doDeleteJob(row).subscribe(
+            success => {
+              if (!success) {
+                this.snackBar.open(
+                  helptext_system_bootenv.snackbar_delete_failure_message,
+                  helptext_system_bootenv.snackbar_action_dismiss,
+                  { duration: 2000 }
+                );
+              }
+            },
+            console.error,
+            () => {
+              this.entityList.getData();
+              this.updateBootState();
+            }
+          )
       });
     }
     actions.push({
@@ -202,6 +200,24 @@ export class BootEnvironmentListComponent {
       }
     })
   }
+
+  updateBootState(): void {
+    this.ws.call("boot.get_state").subscribe(wres => {
+      if (wres.scan.end_time) {
+        this.scrub_msg = moment(wres.scan.end_time.$date).format("MMMM Do YYYY, h:mm:ss a");
+      } else {
+        this.scrub_msg = "Never";
+      }
+      this.size_consumed = wres.properties.allocated.value;
+      this.condition = wres.properties.health.value;
+      if (this.condition === "DEGRADED") {
+        this.condition = this.condition + ` Check Notifications for more details.`;
+      }
+      this.size_boot = wres.properties.size.value;
+      this.percentange = wres.properties.capacity.value;
+    });
+  }
+
   toggleKeep(id, status) {
     if (!status){
       this.dialog.confirm("Keep", "Keep this Boot Environment?", false, helptext_system_bootenv.list_dialog_keep_action).subscribe((res) => {

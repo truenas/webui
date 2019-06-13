@@ -659,7 +659,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
             })
           )
         ),
-        switchMap(jobId => this.job.getJobStatus(jobId))
+        switchMap(jobId => (jobId ? this.job.getJobStatus(jobId) : of(false)))
       );
   }
 
