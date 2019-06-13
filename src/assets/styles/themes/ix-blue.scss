@@ -1139,6 +1139,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     overflow-y: auto;
   }
 
+  .xterm-rows > div {
+    height: 15px !important;
+  }
+
   .advanced-date-picker .cron-fields .mat-select-value,
   .advanced-date-picker .cron-fields .mat-select-arrow,
   .advanced-date-picker .cron-fields .mat-form-field.mat-focused.mat-primary .mat-select-arrow  {

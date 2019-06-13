@@ -27,6 +27,10 @@ release_tooltip: T('Choose the FreeBSD release or template to use\
  as the jail operating system. Releases already downloaded show\
  <b>(fetched)</b>.'),
 
+https_placeholder: T('Fetch Method'),
+https_tooltip: T('Use encrypted connection for increased security (preferred).'),
+http_tooltip: T('Use unencrypted connection.'),
+
 wizard_step2_label: T('Configure Networking'),
 
 dhcp_placeholder: T('DHCP Autoconfigure IPv4'),

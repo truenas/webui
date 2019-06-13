@@ -1,7 +1,7 @@
 
-import {fromEvent as observableFromEvent,  Observable ,  BehaviorSubject ,  Subscription } from 'rxjs';
+import {fromEvent as observableFromEvent,  Observable ,  BehaviorSubject ,  Subscription, of } from 'rxjs';
 
-import {distinctUntilChanged, debounceTime} from 'rxjs/operators';
+import {distinctUntilChanged, debounceTime, filter, switchMap, tap, catchError, take} from 'rxjs/operators';
 import { Component, OnInit, OnDestroy ,Input, ElementRef, ViewEncapsulation, ViewChild, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataSource } from '@angular/cdk/collections';
@@ -14,7 +14,7 @@ import { RestService } from '../../../../services/rest.service';
 import { WebSocketService } from '../../../../services/ws.service';
 import { EntityUtils } from '../utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { DialogService } from '../../../../services';
+import { DialogService, JobService } from '../../../../services';
 import { ErdService } from '../../../../services/erd.service';
 import { StorageService } from '../../../../services/storage.service'
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
@@ -142,7 +142,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(protected core: CoreService, protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService, 
     protected erdService: ErdService, protected translate: TranslateService, protected snackBar: MatSnackBar,
-    public sorter: StorageService) { 
+    public sorter: StorageService, protected job: JobService) { 
       this.core.register({observerClass:this, eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
         this.multiActionsIconsOnly = evt.data.preferIconsOnly;
       });
@@ -639,6 +639,53 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       );
     }
+  }
+
+  doDeleteJob(item: any): Observable<{ state: 'SUCCESS' | 'FAILURE' } | false> {
+    const deleteMsg = this.getDeleteMessage(item);
+    let id;
+    if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.id_prop) {
+      id = item[this.conf.config.deleteMsg.id_prop];
+    } else {
+      id = item.id;
+    }
+    let dialog = {};
+    if (this.conf.checkbox_confirm && this.conf.checkbox_confirm_show && this.conf.checkbox_confirm_show(id)) {
+      this.conf.checkbox_confirm(id, deleteMsg);
+      return;
+    }
+    if (this.conf.confirmDeleteDialog) {
+      dialog = this.conf.confirmDeleteDialog;
+    }
+
+    return this.dialogService
+      .confirm(
+        dialog.hasOwnProperty("title") ? dialog["title"] : T("Delete"),
+        dialog.hasOwnProperty("message") ? dialog["message"] + deleteMsg : deleteMsg,
+        dialog.hasOwnProperty("hideCheckbox") ? dialog["hideCheckbox"] : false,
+        dialog.hasOwnProperty("button") ? dialog["button"] : T("Delete")
+      )
+      .pipe(
+        filter(ok => !!ok),
+        tap(() => {
+          this.loader.open();
+          this.loaderOpen = true;
+        }),
+        switchMap(() =>
+          (this.conf.wsDelete
+            ? this.ws.call(this.conf.wsDelete, [id])
+            : this.rest.delete(this.conf.resource_name + "/" + id, {})
+          ).pipe(
+            take(1),
+            catchError(error => {
+              new EntityUtils().handleWSError(this, error, this.dialogService);
+              this.loader.close();
+              return of(false);
+            })
+          )
+        ),
+        switchMap(jobId => (jobId ? this.job.getJobStatus(jobId) : of(false)))
+      );
   }
 
   setPaginationPageSizeOptions(setPaginationPageSizeOptionsInput: string) {

@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { RestService } from '../../../../services/';
+import { RestService, JobService } from '../../../../services/';
 import { EntityUtils } from '../../../common/entity/utils';
 import { EntityTableComponent, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { DialogService } from 'app/services/dialog.service';
@@ -840,8 +840,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   constructor(protected core: CoreService ,protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
-    public sorter: StorageService, protected snackBar: MatSnackBar, protected snackbarService: SnackbarService) {
-    super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, snackBar, sorter);
+    public sorter: StorageService, protected snackBar: MatSnackBar, protected snackbarService: SnackbarService, protected job: JobService) {
+    super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, snackBar, sorter, job);
   }
 
   public repaintMe() {

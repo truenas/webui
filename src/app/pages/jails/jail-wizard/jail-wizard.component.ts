@@ -77,6 +77,17 @@ export class JailWizardComponent {
           tooltip: helptext.release_tooltip,
           options: [],
         },
+        {
+          type: 'radio',
+          name: 'https',
+          placeholder: helptext.https_placeholder,
+          options: [
+            {label:'HTTPS', value: true, tooltip: helptext.https_tooltip,},
+            {label:'HTTP', value: false, tooltip: helptext.http_tooltip,},
+          ],
+          value: true,
+          isHidden: true,
+        },
       ]
     },
     {
@@ -279,6 +290,7 @@ export class JailWizardComponent {
   public ipv4: any;
   public ipv6: any;
   protected template_list: string[];
+  protected unfetchedRelease = [];
 
   constructor(protected rest: RestService,
               protected ws: WebSocketService,
@@ -322,6 +334,7 @@ export class JailWizardComponent {
                     let rmVersion = Number(_.split(res_remote[i], '-')[0]);
                     if (this.currentServerVersion >= Math.floor(rmVersion)) {
                       this.releaseField.options.push({ label: res_remote[i], value: res_remote[i] });
+                      this.unfetchedRelease.push(res_remote[i]);
                     }
                   }
                 }
@@ -344,7 +357,7 @@ export class JailWizardComponent {
     this.ip6_prefixField = _.find(this.wizardConfig[1].fieldConfig, {'name': 'ip6_prefix'});
 
     // get interface options
-    this.ws.call('interfaces.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
+    this.ws.call('interface.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
       (res)=>{
         for (let i in res) {
           this.ip4_interfaceField.options.push({ label: res[i].name, value: res[i].name});
@@ -404,11 +417,15 @@ export class JailWizardComponent {
 
   afterInit(entityWizard: EntityWizardComponent) {
     this.entityWizard = entityWizard;
+    const httpsField =  _.find(this.wizardConfig[0].fieldConfig, {'name': 'https'});
+
     ( < FormGroup > entityWizard.formArray.get([0]).get('uuid')).valueChanges.subscribe((res) => {
       this.summary[T('Jail Name')] = res;
     });
     ( < FormGroup > entityWizard.formArray.get([0])).get('release').valueChanges.subscribe((res) => {
       this.summary[T('Release')] = res;
+
+      httpsField.isHidden = _.indexOf(this.unfetchedRelease, res) > -1 ? false : true;
     });
     // update ipv4
     ( < FormGroup > entityWizard.formArray.get([1])).get('ip4_interface').valueChanges.subscribe((res) => {
@@ -536,7 +553,7 @@ export class JailWizardComponent {
             }
             delete value[i];
           } else {
-            if (i != 'uuid' && i != 'release' && i != 'basejail') {
+            if (i != 'uuid' && i != 'release' && i != 'basejail' && i != 'https') {
               property.push(i + '=' + value[i]);
               delete value[i];
             }
