@@ -38,6 +38,12 @@ export class TooltipComponent {
       else {
         this.tooltipMsgStyle = {'right' : '8px', 'max-width' :  dynamicWidth + 'px'};
       }
+    } else if (this.message.length > 750) {
+        if((posX/screenW) <= .6) {
+          this.tooltipMsgStyle = {'left' : '0px', 'max-width' :  '600px', 'top' : '-20px'};
+        } else {
+          this.tooltipMsgStyle = {'right' : '8px', 'max-width' :  '600px', 'top' : '-20px'};
+        }
     }
     else {
       if((posX/screenW) <= .52) {
