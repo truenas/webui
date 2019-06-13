@@ -602,30 +602,43 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : false, 
         dialog.hasOwnProperty("button") ? dialog['button'] : T("Delete")).subscribe((res) => {
       if (res) {
-        this.loader.open();
-        this.loaderOpen = true;
-        const data = {};
-        if (this.conf.wsDelete) {
-          this.busy = this.ws.call(this.conf.wsDelete, [id]).subscribe(
-            (resinner) => { this.getData() },
-            (resinner) => {
-              new EntityUtils().handleWSError(this, resinner, this.dialogService);
-              this.loader.close();
+        if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.doubleConfirm) {
+          // double confirm: input delete item's name to confirm deletion
+          this.conf.config.deleteMsg.doubleConfirm(item).subscribe((doubleConfirmDialog) => {
+            if (doubleConfirmDialog) {
+              this.delete(id);
             }
-          );
+          });
         } else {
-          this.busy = this.rest.delete(this.conf.resource_name + '/' + id, data).subscribe(
-            (resinner) => {
-              this.getData();
-            },
-            (resinner) => {
-              new EntityUtils().handleError(this, resinner);
-              this.loader.close();
-            }
-          );
+          this.delete(id);
         }
       }
     })
+  }
+
+  delete(id) {
+    this.loader.open();
+    this.loaderOpen = true;
+    const data = {};
+    if (this.conf.wsDelete) {
+      this.busy = this.ws.call(this.conf.wsDelete, [id]).subscribe(
+        (resinner) => { this.getData() },
+        (resinner) => {
+          new EntityUtils().handleWSError(this, resinner, this.dialogService);
+          this.loader.close();
+        }
+      );
+    } else {
+      this.busy = this.rest.delete(this.conf.resource_name + '/' + id, data).subscribe(
+        (resinner) => {
+          this.getData();
+        },
+        (resinner) => {
+          new EntityUtils().handleError(this, resinner);
+          this.loader.close();
+        }
+      );
+    }
   }
 
   setPaginationPageSizeOptions(setPaginationPageSizeOptionsInput: string) {
