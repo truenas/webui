@@ -81,10 +81,9 @@ export class JailWizardComponent {
           type: 'radio',
           name: 'https',
           placeholder: helptext.https_placeholder,
-          tooltip: helptext.https_tooltip,
           options: [
-            {label:'HTTP', value: false},
-            {label:'HTTPS', value: true},
+            {label:'HTTPS', value: true, tooltip: helptext.https_tooltip,},
+            {label:'HTTP', value: false, tooltip: helptext.http_tooltip,},
           ],
           value: true,
           isHidden: true,

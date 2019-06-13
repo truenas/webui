@@ -29,6 +29,7 @@ release_tooltip: T('Choose the FreeBSD release or template to use\
 
 https_placeholder: T('Fetch Method'),
 https_tooltip: T(''),
+http_tooltip: T(''),
 
 wizard_step2_label: T('Configure Networking'),
 
