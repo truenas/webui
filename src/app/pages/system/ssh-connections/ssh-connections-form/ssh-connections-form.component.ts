@@ -302,7 +302,7 @@ export class SshConnectionsFormComponent {
             (err) => {
                 this.loader.close();
                 if (err.hasOwnProperty("reason") && (err.hasOwnProperty("trace"))) {
-                    new EntityUtils().handleWSError(this, err);
+                    new EntityUtils().handleWSError(this, err, this.dialogService);
                 } else {
                     new EntityUtils().handleError(this, err);
                 }
