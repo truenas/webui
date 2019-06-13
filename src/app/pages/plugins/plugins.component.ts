@@ -156,16 +156,16 @@ export class PluginsComponent {
             });
       }
     },
-    {
-      id: "mdelete",
-      label: T("Delete"),
-      icon: "delete",
-      enable: true,
-      ttpos: "above",
-      onClick: (selected) => {
-        this.entityList.doMultiDelete(selected);
-      }
-    }
+    // {
+    //   id: "mdelete",
+    //   label: T("Delete"),
+    //   icon: "delete",
+    //   enable: true,
+    //   ttpos: "above",
+    //   onClick: (selected) => {
+    //     this.entityList.doMultiDelete(selected);
+    //   }
+    // }
   ];
 
   constructor(
