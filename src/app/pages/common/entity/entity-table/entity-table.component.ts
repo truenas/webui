@@ -211,7 +211,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       setTimeout(() => { this.setShowSpinner(); }, 500);
 
       // Next section sets the checked/displayed columns
-      if (this.conf.columns && this.conf.columns.length > 10) {
+      if (this.conf.columns && this.conf.columns.length > 9) {
         this.conf.columns = [];
 
         for (let item of this.allColumns) {
@@ -237,12 +237,24 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         let newData: any[] = [];
 
         if (filterValue.length > 0) {
+          this.expandedRows = 0; // TODO: Make this unnecessary by figuring out how to keep expanded rows expanded when filtering
           this.rows.forEach((dataElement) => {
             for (const dataElementProp of this.filterColumns) {
               let value: any = dataElement[dataElementProp.prop];
 
               if( typeof(value) === "boolean" || typeof(value) === "number") {
                 value = String(value).toLowerCase();
+              }
+              if (Array.isArray(value)) {
+                let tempStr = '';
+                value.forEach((item) => {
+                  if (typeof(item) === 'string') {
+                    tempStr += ' ' + item;
+                  } else if (typeof(value) === "boolean" || typeof(value) === "number") {
+                    tempStr += String(value);
+                  }
+                })
+                value = tempStr.toLowerCase();
               }
               if (typeof (value) === "string" && value.length > 0 &&
                 (<string>value.toLowerCase()).indexOf(filterValue.toLowerCase()) >= 0) {
@@ -255,7 +267,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         } else {
           newData = this.rows;
         }
-
+        
         this.currentRows = newData;
         this.paginationPageIndex  = 0;
         this.setPaginationInfo();
@@ -705,6 +717,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   reorderEvent(event) {
+    const configuredShowActions = this.showActions;
     this.showActions = false;
     this.paginationPageIndex = 0;
     let sort = event.sorts[0],
@@ -713,7 +726,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.rows = rows;
     this.setPaginationInfo();
     setTimeout(() => {
-      this.showActions = true;
+      this.showActions = configuredShowActions;
     }, 50)
   }
 

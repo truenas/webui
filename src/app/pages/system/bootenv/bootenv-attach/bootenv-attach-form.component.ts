@@ -13,7 +13,7 @@ import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job
 })
 
 export class BootEnvAttachFormComponent {
-  protected route_success: string[] = [ 'system', 'bootenv', 'status' ];
+  protected route_success: string[] = [ 'system', 'boot', 'status' ];
   protected isEntity: boolean = true;
   protected addCall = 'boot.attach';
   protected pk: any;
@@ -84,7 +84,7 @@ preInit(entityForm: any) {
       this.dialogRef.close(false);
       this.openSnackBar("Device attached.", "Success");
       this.router.navigate(
-        new Array('').concat('system','bootenv')
+        new Array('').concat('system','boot')
       );
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
