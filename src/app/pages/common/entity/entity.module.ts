@@ -13,7 +13,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { DocsService} from '../../../services/docs.service';
-import { RestService, WebSocketService } from '../../../services/index';
+import { RestService, WebSocketService, JobService } from '../../../services/index';
 import { Ng2DropdownModule } from 'ng2-material-dropdown';
 import { TranslateModule } from '@ngx-translate/core';
 import { TreeTableModule } from 'primeng/treetable';
@@ -188,7 +188,8 @@ import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-m
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
     AppLoaderService,
-    DocsService
+    DocsService,
+    JobService
   ]
 })
 export class EntityModule {}

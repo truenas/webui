@@ -3,6 +3,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
 import { Router } from '@angular/router';
 import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { DialogService } from 'app/services';
 import * as moment from 'moment';
 import { fromEvent as observableFromEvent, Subscription } from 'rxjs';
@@ -25,7 +26,8 @@ export class BootEnvironmentListComponent {
   protected queryCall = 'bootenv.query';
   protected route_add: string[] = ['system', 'bootenv', 'create']
   protected route_delete: string[] = [ 'system', 'bootenv', 'delete' ];
-  protected entityList: any;
+  protected wsDelete = 'bootenv.delete'
+  protected entityList: EntityTableComponent;
   protected wsActivate = 'bootenv.activate';
   protected wsKeep = 'bootenv.set_attribute';
   protected loaderOpen: boolean = false;
@@ -127,13 +129,13 @@ export class BootEnvironmentListComponent {
   }
 
   getActions(row) {
-    let actions = [];
+    const actions = [];
     if (row.active === '-'){
       actions.push({
-        label : "Delete",
+        label: "Delete",
         id: "delete",
-        onClick : (row) => {
-          this.entityList.doDelete(row);
+        onClick: row => {
+          this.entityList.doDeleteJob(row).subscribe(console.log, console.error, () => this.entityList.getData());
         }
       });
     }
