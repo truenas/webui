@@ -8,7 +8,7 @@
   </div>
   <div *ngIf="zfsPoolRows.length > 0">
     <mat-accordion [multi]="true">
-      <mat-expansion-panel *ngFor="let row of zfsPoolRows" [expanded]="expanded" id="expansionpanel_zfs_{{row.name}}">
+      <mat-expansion-panel *ngFor="let row of zfsPoolRows" [expanded]="true" id="expansionpanel_zfs_{{row.name}}">
         <mat-expansion-panel-header>
           <mat-panel-title>
             <div *ngIf="row.vol_encrypt > 0" class="panel_status_enc" title="Encryption On" id="volume_encrypt_on_{{row.name}}">
