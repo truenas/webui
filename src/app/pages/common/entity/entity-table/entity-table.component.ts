@@ -125,6 +125,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public asyncView = false; //default table view is not async
   public showDefaults: boolean = false;
   public showSpinner: boolean = false;
+  public cardHeaderReady = false;
   public showActions: boolean = true;
   private _multiActionsIconsOnly: boolean = false;
   get multiActionsIconsOnly(){
@@ -155,7 +156,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-
+    this.cardHeaderReady = this.conf.cardHeaderComponent ? false : true;
     this.setTableHeight(); 
 
     setTimeout(async() => {
