@@ -50,7 +50,7 @@
     "@angular/router": "8.0.0",
     "@ngx-translate/core": "11.0.1",
     "@ngx-translate/http-loader": "4.0.0",
-    "@swimlane/ngx-datatable": "15.0.1",
+    "@swimlane/ngx-datatable": "15.0.2",
     "angular-calendar": "0.26.4",
     "angular-draggable-droppable": "4.0.2",
     "angular-resizable-element": "3.2.2",
