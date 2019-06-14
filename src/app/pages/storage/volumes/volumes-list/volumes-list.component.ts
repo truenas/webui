@@ -23,6 +23,7 @@ import helptext from '../../../../helptext/storage/volumes/volume-list';
 
 import { CoreService } from 'app/core/services/core.service';
 import { SnackbarService } from '../../../../services/snackbar.service';
+import { map, switchMap } from 'rxjs/operators';
 
 export interface ZfsPoolData {
   avail?: number;
@@ -103,7 +104,8 @@ export class VolumesListTableConfig implements InputTableConf {
     protected loader: AppLoaderService,
     protected translate: TranslateService,
     protected snackBar: MatSnackBar,
-    protected snackbarService: SnackbarService
+    protected snackbarService: SnackbarService,
+    protected storageService: StorageService
   ) {
 
     if (typeof (this._classId) !== "undefined" && this._classId !== "") {
@@ -254,68 +256,67 @@ export class VolumesListTableConfig implements InputTableConf {
   }
 
   unlockAction(row1) {
-    let localLoader = this.loader,
+    const localLoader = this.loader,
     localRest = this.rest,
     localParentVol = this.parentVolumesListComponent,
     localDialogService = this.dialogService,
     localSnackBar = this.snackBar;
 
-    const conf: DialogFormConfiguration = {
-      title: "Unlock " + row1.name,
-      fieldConfig: [{
-        type : 'input',
-        inputType: 'password',
-        name : 'passphrase',
-        togglePw: true,
-        placeholder: helptext.unlockDialog_password_placeholder,
-      },
-      {
-        type: 'input',
-        name: 'recovery_key',
-        placeholder: helptext.unlockDialog_recovery_key_placeholder,
-        tooltip: helptext.unlockDialog_recovery_key_tooltip,
-        inputType: 'file',
-        fileType: 'binary'
-      },
-      {
-        type: 'select',
-        name: 'services',
-        placeholder: helptext.unlockDialog_services_placeholder,
-        tooltip: helptext.unlockDialog_services_tooltip,
-        multiple: true,
-        value: ['afp','cifs','ftp','iscsitarget','nfs','webdav','jails'],
-        options: [{label: 'AFP', value: 'afp'},
-                 {label: 'SMB', value: 'cifs'},
-                 {label: 'FTP', value: 'ftp'},
-                 {label: 'iSCSI', value: 'iscsitarget'},
-                 {label: 'NFS', value: 'nfs'},
-                 {label: 'WebDAV', value: 'webdav'},
-                 {label: 'Jails/Plugins', value: 'jails'}]
-      }
-      ],
-
-      saveButtonText: T("Unlock"),
-      customSubmit: function (entityDialog) {
-        const value = entityDialog.formValue;
-        localLoader.open();
-        return localRest.post("storage/volume/" + row1.name + "/unlock/",
-          { body: JSON.stringify({
-             passphrase: value.passphrase,
-             recovery_key: value.recovery_key,
-             services: value.services
-            }) 
-          }).subscribe((restPostResp) => {
-          entityDialog.dialogRef.close(true);
-          localLoader.close();
-          localParentVol.repaintMe();
-          localSnackBar.open(row1.name + " has been unlocked.", 'close', { duration: 5000 });
-        }, (res) => {
-          localLoader.close();
-          localDialogService.errorReport(T("Error Unlocking"), res.error.error_message, res.error.traceback);
-        });
-      }
-    }
-    this.dialogService.dialogForm(conf);
+    this.storageService.poolUnlockServiceChoices().pipe(
+      map(serviceChoices => {
+        return {
+          title: "Unlock " + row1.name,
+          fieldConfig: [
+            {
+              type : 'input',
+              inputType: 'password',
+              name : 'passphrase',
+              togglePw: true,
+              placeholder: helptext.unlockDialog_password_placeholder,
+            },
+            {
+              type: 'input',
+              name: 'recovery_key',
+              placeholder: helptext.unlockDialog_recovery_key_placeholder,
+              tooltip: helptext.unlockDialog_recovery_key_tooltip,
+              inputType: 'file',
+              fileType: 'binary'
+            },
+            {
+              type: 'select',
+              name: 'services',
+              placeholder: helptext.unlockDialog_services_placeholder,
+              tooltip: helptext.unlockDialog_services_tooltip,
+              multiple: true,
+              value: serviceChoices.map(choice => choice.value),
+              options: serviceChoices
+            }
+          ],
+    
+          saveButtonText: T("Unlock"),
+          customSubmit: function (entityDialog) {
+            const value = entityDialog.formValue;
+            localLoader.open();
+            return localRest.post("storage/volume/" + row1.name + "/unlock/",
+              { body: JSON.stringify({
+                passphrase: value.passphrase,
+                recovery_key: value.recovery_key,
+                services: value.services
+                }) 
+              }).subscribe((restPostResp) => {
+              entityDialog.dialogRef.close(true);
+              localLoader.close();
+              localParentVol.repaintMe();
+              localSnackBar.open(row1.name + " has been unlocked.", 'close', { duration: 5000 });
+            }, (res) => {
+              localLoader.close();
+              localDialogService.errorReport(T("Error Unlocking"), res.error.error_message, res.error.traceback);
+            });
+          }
+        };
+      }),
+      switchMap(conf => this.dialogService.dialogForm(conf))
+    ).subscribe(() => {})
   }
 
   getPoolData(poolId: number) {
