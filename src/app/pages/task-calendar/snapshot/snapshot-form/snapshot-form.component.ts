@@ -181,6 +181,5 @@ export class SnapshotFormComponent {
     };
     delete value['begin'];
     delete value['end'];
-    console.log({taskPayload: value})
   }
 }
