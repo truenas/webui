@@ -40,9 +40,15 @@ ldap_bindpw_placeholder : T('Bind Password'),
 ldap_bindpw_tooltip: T('Password for the Bind DN.'),
 
 ldap_anonbind_name : 'ldap_anonbind',
-ldap_anonbind_placeholder : T('Allow Anonymous Binding'),
-ldap_anonbind_tooltip: T('Set for the LDAP server to disable authentication and\
- allow read and write access to any client.'),
+ldap_anonbind_placeholder: T('Allow Anonymous Binding'),
+ldap_anonbind_tooltip : T('Set for the LDAP server to disable authentication and\
+allow read and write access to any client.'),
+
+ldap_disable_fn_cache_name : 'ldap_disable_freenas_cache',
+ldap_disable_fn_cache_placeholder : T('Disable LDAP user/group cache'),
+ldap_disable_fn_cache_tooltip: T('Set to disable caching LDAP users and groups in large LDAP environments. \
+ When caching is disabled, LDAP users and groups do not appear in dropdown \
+ menus, but are still accepted when manually entered.'),
 
 ldap_usersuffix_name : 'ldap_usersuffix',
 ldap_usersuffix_placeholder : T('User Suffix'),
@@ -138,6 +144,7 @@ ldap_netbiosalias_tooltip: T('Alternative names that SMB clients can use when\
 ldap_advanced_fields : 
 [
 'ldap_anonbind',
+'ldap_disable_freenas_cache',
 'ldap_usersuffix',
 'ldap_groupsuffix',
 'ldap_passwordsuffix',
