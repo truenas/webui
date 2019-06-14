@@ -54,6 +54,13 @@
                 [externalSorting]="true"
                 (sort)='reorderEvent($event)'
                 (select)='onSelect($event)'>
+                <ngx-datatable-row-detail [rowHeight]="100" #myDetailRow>
+                    <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
+                      <div *ngFor="let detail of row.details" style="padding-left:35px;">
+                        <strong>{{detail.label | translate}}:</strong> {{detail.value}}
+                      </div>
+                  </ng-template>
+                </ngx-datatable-row-detail>
                 <ngx-datatable-column [width]="82" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
                   <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
                     <div class="headerCheckBox">
@@ -79,9 +86,29 @@
                   name="Disk"
                   prop="devname"></ngx-datatable-column>
                 <ngx-datatable-column
+                  [width]="100"
+                  name="Type"
+                  prop="type"></ngx-datatable-column>
+                <ngx-datatable-column
                   [width]="120"
                   name="Capacity"
                   prop="capacity"></ngx-datatable-column>
+                <ngx-datatable-column
+                  [width]="50"
+                  [resizeable]="false"
+                  [sortable]="false"
+                  [draggable]="false"
+                  [canAutoResize]="false">
+                  <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+                    <a
+                      href="javascript:void(0)"
+                      [class.datatable-icon-right]="!expanded"
+                      [class.datatable-icon-down]="expanded"
+                      title="Expand/Collapse Row"
+                      (click)="toggleExpandRow(row)">
+                    </a>
+                  </ng-template>
+                </ngx-datatable-column>
               </ngx-datatable>
               <mat-form-field>
                   <input matInput
