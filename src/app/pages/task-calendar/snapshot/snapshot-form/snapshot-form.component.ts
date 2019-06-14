@@ -165,6 +165,11 @@ export class SnapshotFormComponent {
     const spl = value.snapshot_picker.split(" ");
     delete value.snapshot_picker;
 
+    if (value.exclude) {
+      // filter() needed because: "hello, world,".split(",") === ["hello", "world", ""]
+      value.exclude = value.exclude.split(",").map((val: string) => val.trim()).filter((val: string) => !!val);
+    }
+
     value['schedule'] = {
       begin: value['begin'],
       end: value['end'],
@@ -176,5 +181,6 @@ export class SnapshotFormComponent {
     };
     delete value['begin'];
     delete value['end'];
+    console.log({taskPayload: value})
   }
 }
