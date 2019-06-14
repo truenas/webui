@@ -158,6 +158,10 @@ export class SnapshotFormComponent {
       data.schedule.dow;
     data['begin'] = data.schedule.begin;
     data['end'] = data.schedule.end;
+    if (data.exclude && Array.isArray(data.exclude) && data.exclude.length > 0) {
+      const newline = String.fromCharCode(13, 10);
+      data.exclude = data.exclude.join(`,${newline}`);
+    }
     return data;
   }
 
