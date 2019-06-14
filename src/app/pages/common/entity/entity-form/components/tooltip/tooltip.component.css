@@ -21,6 +21,7 @@
     visibility: hidden;
     opacity: 0;
     transition: visibility 0s linear 0.33s, opacity 0.33s linear;
+    white-space: normal;
 }
 
 /* Show the tooltip text when the mouse is hovering over the tooltip container */
