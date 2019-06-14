@@ -75,6 +75,7 @@ export class AvailablePluginsComponent implements OnInit {
             (res) => {
                 this.plugins = res;
                 this.selectedPlugin = res[0];
+                this.parent.cardHeaderReady = true;
             },
             (err) => {
                 new EntityUtils().handleWSError(this.parent, err, this.parent.dialogService);
