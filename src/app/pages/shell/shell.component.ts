@@ -35,7 +35,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   // xterm variables
   cols: string;
   rows: string;
-  font_size: number;
+  font_size = 14;
   public token: any;
   public xterm: any;
   public resize_terminal = true;
