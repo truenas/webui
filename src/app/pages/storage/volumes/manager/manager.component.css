@@ -37,8 +37,8 @@
 	flex-basis: auto;
 	-webkit-box-flex: 1;
 	flex-grow: 1;
-	min-width: 400px;
-	max-width: 450px;
+	min-width: 520px;
+	max-width: 580px;
 }
 
 .fields {
