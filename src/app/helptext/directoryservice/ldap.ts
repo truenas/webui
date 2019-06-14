@@ -42,7 +42,7 @@ ldap_bindpw_tooltip: T('Password for the Bind DN.'),
 ldap_anonbind_name : 'ldap_anonbind',
 ldap_anonbind_placeholder: T('Allow Anonymous Binding'),
 ldap_anonbind_tooltip : T('Set for the LDAP server to disable authentication and\
-allow read and write access to any client.'),
+ allow read and write access to any client.'),
 
 ldap_disable_fn_cache_name : 'ldap_disable_freenas_cache',
 ldap_disable_fn_cache_placeholder : T('Disable LDAP user/group cache'),
