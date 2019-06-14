@@ -104,12 +104,6 @@ export class LdapComponent {
       tooltip: helptext.ldap_anonbind_tooltip
     },
     {
-      type : 'checkbox',
-      name : helptext.ldap_disable_fn_cache_name,
-      placeholder : helptext.ldap_disable_fn_cache_placeholder,
-      tooltip: helptext.ldap_disable_fn_cache_tooltip
-    },
-    {
       type : 'input',
       name : helptext.ldap_usersuffix_name,
       placeholder : helptext.ldap_usersuffix_placeholder,
@@ -166,6 +160,12 @@ export class LdapComponent {
       placeholder : helptext.ldap_certificate_placeholder,
       tooltip: helptext.ldap_certificate_tooltip,
       options : []
+    },
+    {
+      type : 'checkbox',
+      name : helptext.ldap_disable_fn_cache_name,
+      placeholder : helptext.ldap_disable_fn_cache_placeholder,
+      tooltip: helptext.ldap_disable_fn_cache_tooltip
     },
     {
       type : 'input',
