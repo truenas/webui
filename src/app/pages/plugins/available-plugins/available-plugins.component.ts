@@ -22,6 +22,7 @@ export class AvailablePluginsComponent implements OnInit {
     public selectedPlugin: any;
     public isSelectedOffical = true;
     public engineerMode: boolean;
+    public isFreenas = window.localStorage['is_freenas'] === 'true';
     public availableBranches = [];
     public selectedBranch: any;
     public installedPlugins: any = {};
