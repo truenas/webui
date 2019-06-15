@@ -127,6 +127,23 @@ export class CloudsyncFormComponent implements OnInit {
       {label: "None", value: ""},
       {label: "AES-256", value: "AES256"},
     ],
+    value: "",
+    isHidden: true,
+  }, {
+    type: 'select',
+    name: 'storage_class',
+    placeholder: helptext.storage_class_placeholder,
+    tooltip: helptext.storage_class_tooltip,
+    options: [
+      {label: "---------", value: ""},
+      {label: "STANDARD", value: "STANDARD"},
+      {label: "REDUCED_REDUNDANCY", value: "REDUCED_REDUNDANCY"},
+      {label: "STANDARD_IA", value: "STANDARD_IA"},
+      {label: "ONEZONE_IA", value: "ONEZONE_IA"},
+      {label: "GLACIER", value: "GLACIER"},
+      {label: "DEEP_ARCHIVE", value: "DEEP_ARCHIVE"},
+    ],
+    value: '',
     isHidden: true,
   }, {
     type: 'input',
@@ -542,6 +559,7 @@ export class CloudsyncFormComponent implements OnInit {
                 this.setDisabled('task_encryption', true, true);
                 this.setDisabled('fast_list', true, true);
                 this.setDisabled('b2-chunk-size', true, true);
+                this.setDisabled('storage_class', true, true);
               } else {
                 for (const i in task_schema) {
                   if (task_schema[i].property == 'encryption') {
@@ -703,8 +721,12 @@ export class CloudsyncFormComponent implements OnInit {
     attributes['folder'] = value.folder;
     delete value.folder;
     if (value.task_encryption != undefined) {
-      attributes['encryption'] = value.task_encryption;
+      attributes['encryption'] = value.task_encryption === '' ? null : value.task_encryption;
       delete value.task_encryption;
+    }
+    if (value['storage_class'] != undefined) {
+      attributes['storage_class'] = value['storage_class'];
+      delete value['storage_class'];
     }
     if (value.fast_list != undefined) {
       attributes['fast_list'] = value.fast_list;
