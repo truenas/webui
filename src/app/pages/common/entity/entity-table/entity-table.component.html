@@ -56,7 +56,7 @@
       <div style="text-align:right;">
         <app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
       </div>
-      <mat-spinner [diameter]='40' id="entity-spinner" *ngIf="!showDefaults && showSpinner" #entityspinner>
+      <mat-spinner [diameter]='40' id="entity-spinner" *ngIf="(!showDefaults && showSpinner) || !cardHeaderReady" #entityspinner>
       </mat-spinner>
 
       <ng-container *ngIf="conf && conf.custActions">
@@ -82,7 +82,7 @@
   <!-- END OF CONTROLS SECTION -->
 
   <!-- INSERT DYNAMIC CARDHEADER HERE -->
-  <ng-template dynamicComponent *ngIf="conf.cardHeaderComponent && showDefaults" [component]="conf.cardHeaderComponent" [config]=""
+  <ng-template dynamicComponent *ngIf="conf.cardHeaderComponent" [component]="conf.cardHeaderComponent" [config]=""
     [parent]="this"></ng-template>
 
   <!-- TABLE START -->

@@ -201,6 +201,11 @@ mat-form-field.cron-presets{
 ::ng-deep .mat-calendar-body-today{
   border-color:var(--green) !important;
 }
+#no-spaces {
+  position: relative;
+  top: -9px;
+  font-size: 75%;
+}
 @media screen and (max-height:700px){
   .advanced-date-picker.mat-card{
     top:-20px;

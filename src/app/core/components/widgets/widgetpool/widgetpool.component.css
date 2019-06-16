@@ -375,7 +375,8 @@ height:calc(100% - 48px);
 }
 
 .pool-data div.inner span.value{
-  font-size:300%;
+  font-size: 28px;
+  line-height: 28px;
 }
 
 .title-wrapper{

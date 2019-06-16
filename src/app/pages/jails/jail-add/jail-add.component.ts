@@ -21,7 +21,7 @@ import { FieldRelationService } from '../../common/entity/entity-form/services/f
 import { EntityUtils } from '../../common/entity/utils';
 import { DialogService, NetworkService } from '../../../services';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
-import helptext from '../../../helptext/jails/jails-add';
+import helptext from '../../../helptext/jails/jail-configuration';
 
 @Component({
   selector: 'jail-add',
@@ -78,6 +78,17 @@ export class JailAddComponent implements OnInit, AfterViewInit {
       options: [],
       required: true,
       validation: [ Validators.required ],
+    },
+    {
+      type: 'radio',
+      name: 'https',
+      placeholder: helptext.https_placeholder,
+      options: [
+        {label:'HTTPS', value: true, tooltip: helptext.https_tooltip,},
+        {label:'HTTP', value: false, tooltip: helptext.http_tooltip,},
+      ],
+      value: true,
+      isHidden: true,
     },
     {
       type: 'checkbox',
@@ -972,6 +983,7 @@ export class JailAddComponent implements OnInit, AfterViewInit {
   protected ip6_prefixField: any;
   protected vnet_default_interfaceField:any;
   protected template_list: string[];
+  protected unfetchedRelease = [];
 
   constructor(protected router: Router,
     protected jailService: JailService,
@@ -1042,6 +1054,7 @@ export class JailAddComponent implements OnInit, AfterViewInit {
                   let rmVersion = Number(_.split(res_remote[i], '-')[0]);
                   if (this.currentServerVersion >= Math.floor(rmVersion)) {
                     this.releaseField.options.push({ label: res_remote[i], value: res_remote[i] });
+                    this.unfetchedRelease.push(res_remote[i]);
                   }
                 }
               }
@@ -1063,7 +1076,7 @@ export class JailAddComponent implements OnInit, AfterViewInit {
     this.vnet_default_interfaceField = _.find(this.networkfieldConfig, {'name': 'vnet_default_interface'});
 
     // get interface options
-    this.ws.call('interfaces.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
+    this.ws.call('interface.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
       (res)=>{
         for (let i in res) {
           this.ip4_interfaceField.options.push({ label: res[i].name, value: res[i].name});
@@ -1085,6 +1098,11 @@ export class JailAddComponent implements OnInit, AfterViewInit {
         this.setRelation(config);
       }
     }
+
+    const httpsField =  _.find(this.formFileds, {'name': 'https'});
+    this.formGroup.controls['release'].valueChanges.subscribe((res) => {
+      httpsField.isHidden = _.indexOf(this.unfetchedRelease, res) > -1 ? false : true;
+    });
 
     this.formGroup.controls['dhcp'].valueChanges.subscribe((res) => {
       if (res) {
@@ -1294,7 +1312,7 @@ export class JailAddComponent implements OnInit, AfterViewInit {
               }
               delete value[i];
           } else {
-            if (i != 'uuid' && i != 'release' && i != 'basejail') {
+            if (i != 'uuid' && i != 'release' && i != 'basejail' && i != 'https') {
               property.push(i + '=' + value[i]);
               delete value[i];
             }

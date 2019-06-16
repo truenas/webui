@@ -108,7 +108,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
 
   get hours(){ return this._hours}
   set hours(val){ 
-    if (val !== ""){
+    if (val !== "" && val.indexOf(' ') === -1){
       const string = "* * " + val + " * * *";
       try {
         parser.parseExpression(string);
