@@ -13,7 +13,7 @@ import * as c3 from 'c3';
 
 import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
-//import { WidgetChartComponent, TimeData } from 'app/core/components/widgets/widgetchart/widgetchart.component';
+
 import { ViewChartGaugeComponent } from 'app/core/components/viewchartgauge/viewchartgauge.component';
 import { ViewChartBarComponent } from 'app/core/components/viewchartbar/viewchartbar.component';
 import { TranslateService } from '@ngx-translate/core';
@@ -46,8 +46,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       // So this is the workaround
       this.legendData[0].value = this.cpuData.data[0][this.legendIndex + 1];
       this.legendData[1].value = this.cpuData.data[1][this.legendIndex + 1];
-      //this.hoverHighlight();
-      //this.legendColors = ["var(--primary)", this.colorFromTemperature(this.legendData[1].value)];
     }
   }
 
@@ -66,7 +64,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
   constructor(public router: Router, public translate: TranslateService){
     super(translate);
-
   }
 
   ngOnDestroy(){
@@ -74,11 +71,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   }
 
   ngAfterViewInit(){
-    //this.core.emit({name:"", sender:this });
-    /*this.core.register({observerClass:this,eventName:"StatsCpuAggregateAverage"}).subscribe((evt:CoreEvent) => {
-      this.setChartData(evt);
-
-    });*/
 
     this.core.register({observerClass: this, eventName:"ThemeChanged"}).subscribe((evt: CoreEvent) => {
       console.log(evt);
@@ -99,7 +91,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
         }
       }
     });
-    //this.setCpuLoadData(this.cpuLoad, ['Load', 64]);
 
   }
 
@@ -116,16 +107,9 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     }
     
     for(let i = 0; i < this.coreCount; i++){
-      //if(i > 3) continue;
       usageColumn.push( parseInt(data[i.toString()].usage.toFixed(1)) );
-      /*usageColumn.push( parseInt(data[i.toString()].usage.toFixed(1)) );
-      usageColumn.push( parseInt(data[i.toString()].usage.toFixed(1)) );
-      usageColumn.push( parseInt(data[i.toString()].usage.toFixed(1)) );*/
       if(data.temperature && data.temperature[i]){
         temperatureColumn.push(parseInt(((data.temperature[i] / 10) - 273.05).toFixed(1)));
-        /*temperatureColumn.push(parseInt(((data.temperature[i] / 10) - 273.05).toFixed(1)));
-        temperatureColumn.push(parseInt(((data.temperature[i] / 10) - 273.05).toFixed(1)));
-        temperatureColumn.push(parseInt(((data.temperature[i] / 10) - 273.05).toFixed(1)));*/
       }
       /*
       // JSON Approach (c3 has a bug in angular)
@@ -163,19 +147,8 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     config.diameter = 136;
     config.fontSize = 24;
     config.max = 100;
-    //config.width = 184;
-    //config.height = 225;
     config.data = data;
     this.cpuAvg = config;
-
-    /*chart.title = data[0];
-    chart.units = "%";
-    chart.max = 100;
-    chart.width = 600;
-    chart.height = 225;*/
-    //chart.data = [{legend: data[0], value: [data[1]]}
-    //chart.data = data; 
-    //this.cpuAvg = data;
   }
 
 
@@ -189,9 +162,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   }
 
   coresChartInit(){
-    //console.log(this);
-    //console.log(this.cpuData);
-    //console.log(this.cpuData.data.map((x) => x.coreNumber));
     let conf = {
       bindto: '#cpu-cores-chart',
       size: {
@@ -201,7 +171,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       tooltip:{
         show: true,
         contents: (raw, defaultTitleFormat, defaultValueFormat, color) => {
-          //let ld = {value:raw.value, index: raw.index, name:raw.name}
           this.legendData = raw;
           this.legendIndex = raw[0].index;
           this.hoverHighlight();
@@ -214,25 +183,18 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       data: {
         onmouseout: (d) => {
           this.legendData = null;
-          //setTimeout(() => {
-            //if(!this.legendIndex){
-              this.hoverHighlight(true);
-            //}
-          //}, 1000)
+          this.hoverHighlight(true);
           this.legendIndex = null;
         },
         colors: {
           Usage: 'var(--primary)',
           Temperature: 'var(--accent)',
-          /*Temperature: (t) => { 
-            return this.colorFromTemperature(t);
-          }*/
         },
         columns: this.cpuData.data,
         type: 'bar'
       },
       bar: {
-        width: this.coreCount > 16 ? {ratio: 0.5} : 10
+        width: this.coreCount < 16 ? 10 : {ratio: 0.45}
       },
       axis: {
         y: {
@@ -324,13 +286,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     this.chart.load({
         columns: this.cpuData.data,
     });
-    /*this.chart.unload({
-      done: () => {
-        this.chart.load({
-          columns: this.cpuData.datax
-        })
-      }
-    });*/
   }
 
   hoverHighlight(remove?: boolean){
