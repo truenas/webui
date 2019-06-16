@@ -66,6 +66,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
   constructor(public router: Router, public translate: TranslateService){
     super(translate);
+
   }
 
   ngOnDestroy(){
@@ -78,6 +79,15 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       this.setChartData(evt);
 
     });*/
+
+    this.core.register({observerClass: this, eventName:"ThemeChanged"}).subscribe((evt: CoreEvent) => {
+      console.log(evt);
+      d3.select('#grad1 .begin')
+        .style('stop-color', this.getHighlightColor(0))
+
+      d3.select('#grad1 .end')
+        .style('stop-color', this.getHighlightColor(0.15))
+    });
 
     this.data.subscribe((evt:CoreEvent) => {
       if(evt.name == "CpuStats"){
@@ -260,12 +270,16 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       .attr('y2', '100%')
 
     def.append('stop')
+      .attr('class', 'begin')
       .attr('offset', '0%')
-      .style('stop-color', 'rgba(255,255,255,0)')
+      .style('stop-color', this.getHighlightColor(0))
+      //.style('stop-color', 'rgba(255,255,255,0)')
 
     def.append('stop')
+      .attr('class', 'end')
       .attr('offset', '100%')
-      .style('stop-color', 'rgba(255,255,255,0.15)')
+      .style('stop-color', this.getHighlightColor(0.15))
+      //.style('stop-color', 'rgba(255,255,255,0.15)')
 
     let g = d3.select('#cpu-cores-chart svg g.c3-chart')
     g.insert('rect', ':first-child')
@@ -275,6 +289,23 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     highlightRect.attr('class', 'active c3-event-rect-highlighted active')
       .attr('x', '-1000')
       .attr('fill', 'url(#grad1)')
+  }
+
+  getHighlightColor(opacity: number){
+    // Get highlight color
+    let currentTheme = this.themeService.currentTheme();
+    let txtColor = currentTheme.fg2;
+    console.log(txtColor);
+
+    // convert to rgb
+    let rgb = this.themeService.hexToRGB(txtColor).rgb;
+    console.log(rgb);
+
+    // return rgba
+    let rgba =  "rgba(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + "," + opacity + ")";
+    console.log(rgba);
+
+    return rgba;
   }
 
   colorFromTemperature(t){
