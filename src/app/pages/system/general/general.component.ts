@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { Http } from '@angular/http';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
@@ -117,6 +117,12 @@ export class GeneralComponent {
       name: 'crash_reporting',
       placeholder: helptext.crash_reporting.placeholder,
       tooltip: helptext.crash_reporting.tooltip
+    },
+    {
+      type: 'checkbox',
+      name: 'usage_collection',
+      placeholder: helptext.usage_collection.placeholder,
+      tooltip: helptext.usage_collection.tooltip
     }
   ];
   protected saveConfigFieldConf: FieldConfig[] = [
