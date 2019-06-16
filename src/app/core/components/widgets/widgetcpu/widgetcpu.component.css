@@ -7,15 +7,53 @@
   width: 100%;
 }
 
-#cpu-cores-wrapper{
-  position: absolute;
-  bottom: 0;
-  width: 100%;
+#cpu-cores-chart{
+  /*position: absolute;
   left: 0;
+  bottom: 0;*/
+  width: 536px;
+  margin:0 16px;
+}
+
+#cpu-cores-wrapper{
+  /*border-top:solid 1px var(--bg1);*/
 }
 
 #cpu-load-wrapper{
   position:relative;
+  height:170px;
+}
+
+#cpu-load-cores{
+  /*opacity:0.5;*/
+}
+
+#cpu-load-cores-legend{
+  /*margin-top:36px;*/
+}
+
+#cpu-load-cores-legend .legend-item.chart-label{
+  text-align:center;
+}
+
+#cpu-load-cores-legend .legend-item{
+  text-align:left;
+}
+
+#cpu-load-cores-legend .legend-item .label{
+  font-weight:500;
+}
+
+#cpu-load-cores-legend .legend-item .legend-swatch{
+  margin: 4px 8px 0;
+}
+
+#cpu-load-cores-values {
+  width:100%;
+}
+
+#cpu-load-cores-values .temperature{
+  text-align:right;
 }
 
 #cpu-load-label{
@@ -102,3 +140,8 @@
   max-height:320px;
 }
 
+/* Overrides */
+.widget .c3 .c3-axis g.tick tspan{
+  fill-opacity:1;
+  font-weight:500;
+}

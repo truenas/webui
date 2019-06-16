@@ -1,10 +1,11 @@
-import { Component, AfterViewInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, AfterViewInit, Input, ViewChild, ElementRef, OnChanges, SimpleChanges } from '@angular/core';
 import { ViewChartComponent, ViewChartMetadata } from 'app/core/components/viewchart/viewchart.component';
 import {UUID} from 'angular2-uuid';
 //import { DisplayObject } from 'app/core/classes/display-object';
-//import * as c3 from 'c3';
+import * as c3 from 'c3';
 import * as d3 from 'd3';
-import { transition } from 'd3-transition'
+//import { select, Selection } from 'd3-selection';
+import { transition, Transition } from 'd3-transition'
 import {
   tween,
   styler,
@@ -33,11 +34,13 @@ export interface BarChartConfig {
   max?: number; // 100 is default
   width?: number; 
   data: BarDataSource[];
+  orientation?: string; // horizontal || vertical
 }
 
 export interface BarDataSource {
-  name: string;
-  dataPoints: number[]
+  coreNumber: number;
+  usage?: number | string;
+  temperature?: number | string;
 }
 
 @Component({
@@ -49,15 +52,19 @@ export interface BarDataSource {
 export class ViewChartBarComponent /*extends DisplayObject*/ implements AfterViewInit, OnChanges {
 
   public title:string = '';
+  private chart: any; 
   public chartClass: string = 'view-chart-bar';
+  public chartConfig: any;
   private _data;
   public chartId = UUID.UUID();
   private xScale;
   private yScale;
+  private barScale;
+  private margin;
+  private wrapperNode;
 
   @Input() config: BarChartConfig;
-  //@Input() width: number;
-  //@Input() height: number;
+  @ViewChild('wrapper', {static: true}) el: ElementRef;
 
   constructor() { 
     //super();
@@ -66,20 +73,14 @@ export class ViewChartBarComponent /*extends DisplayObject*/ implements AfterVie
   ngOnChanges(changes: SimpleChanges) {
     if(changes.config){
       if(changes.config.currentValue && changes.config.currentValue.data){
-        //console.log(changes.config.currentValue.data);
+
         this.data = changes.config.currentValue.data;
-        //console.warn(this.config.data);
-        /*if(!this.arc){
-          //console.log("No chart");
-          //console.log(this.data);
+
+        if(!this.wrapperNode){
           this.render();
         } else {
-          //console.log("Chart");
-          //console.log(this.arc);
-          //console.log(changes.config.currentValue.data[1]);
-          this.update(changes.config.currentValue.data[1]);
-          
-        }*/
+          this.update(changes.config.currentValue.data);
+        }
       }
     }
   }
@@ -97,38 +98,43 @@ export class ViewChartBarComponent /*extends DisplayObject*/ implements AfterVie
   }
 
   render(){
+    this.margin = 32;
+
     let wrapper = d3.select("#bar-" + this.chartId);
-    let wrapperNode = styler(document.querySelector("#bar-" + this.chartId),{})
-    console.warn(this.config.data);
-    //console.warn(wrapperNode.getBoundingClientRect())
-    const margin = 32;
-    let width = wrapperNode.get("width") ;//* margin;
-    let height = wrapperNode.get("height") ;//* margin;
+    if(!this.el){ return }
+    console.log(this.el.nativeElement);
+    this.wrapperNode = styler(this.el.nativeElement,{});
+
+    this.chartConfig = this.makeConfig();
+    this.chart = c3.generate(this.chartConfig);
+    /*
+    let width = this.wrapperNode.get("width") ;
+    let height = this.wrapperNode.get("height") ;
 
     const svg = wrapper.append('svg')
+        .attr('id', 'svg-' + this.chartId)
         .attr('width', width)
         .attr('height', height)
         .attr("style", "stroke: var(--fg1)")
 
-    const yScale = d3.scaleLinear()
-        .range([height - margin * 2, 0])
+    this.yScale = d3.scaleLinear()
+        .range([height - this.margin * 2, 0])
         .domain([0, this.config.max ? this.config.max : 100]);
 
     svg.append('g')
-        .attr('transform', `translate(${width - margin}, ${margin})`)
-        .call(d3.axisRight(yScale).ticks(5))
-        //.call(d3.axisRight(yScale).ticks(5));
+        .attr('transform', `translate(${width - this.margin}, ${this.margin})`)
+        .call(d3.axisRight(this.yScale).ticks(5))
 
       // add the Y gridlines
       let make_y_gridLines = () => {
-        return d3.axisLeft(yScale).ticks(5)
+        return d3.axisLeft(this.yScale).ticks(5)
       }
 
       svg.append("g")			
         .attr("class", "grid")
-        .attr('transform', `translate(${margin}, ${margin})`)
+        .attr('transform', `translate(${this.margin}, ${this.margin})`)
         .call(make_y_gridLines()
-            .tickSize(-(width - margin * 2))
+            .tickSize(-(width - this.margin * 2))
             //.tickFormat("")
         )
 
@@ -141,54 +147,79 @@ export class ViewChartBarComponent /*extends DisplayObject*/ implements AfterVie
       .style("stroke", "var(--fg1)")
       .style("opacity", "0.15")
 
-    const xScale = d3.scaleBand()
-        .range([0, width - margin * 2])
-        /*.domain(this.config.data[0].dataPoints.map((s) => {
-          return [this.config.data[s]]
-        }))
-        .padding(0.2)*/
-        //.domain(this.config.data[0].dataPoints.map((s) => this.config.data.dataPoints))
+    let cores = this.config.data.map((s:any) => {
+            return s.coreNumber;
+    });
+    
+    this.xScale = d3.scaleBand() // was scaleBand
+        .domain(cores)
+        .range([0, width - this.margin * 2])
+        .padding(0.9)
 
     // X axis
     svg.append('g')
-        .attr('transform', `translate(${margin}, ${height - margin})`)
+        .attr('transform', `translate(${this.margin}, ${height - this.margin})`)
         .style("stroke-opacity", 0)
-        .call(d3.axisBottom(xScale));
+        .call(d3.axisBottom(this.xScale));
 
-        
-
-    this.update(this.config.data[1])
+    this.barScale = this.config.orientation == 'horizontal' ? this.xScale : this.yScale
+    d3.select('#svg-' + this.chartId)
+	.selectAll('rect')
+	.data(this.config.data)
+	.enter()
+	.append('rect')
+        .style('stroke-opacity', 0)
+        .style('fill', 'var(--primary)')
+        .style('fill-opacity', '0.75')
+        .attr('class','bar')
+	.attr('x', (d:BarDataSource) => {
+		return this.margin + this.xScale(d.coreNumber);
+	})
+	.attr('width', this.barScale.bandwidth())
+	.attr('height', (d:BarDataSource, i) => this.yScale(d.usage))
+	.attr('y', (d:BarDataSource) => {
+		return height - this.margin - this.yScale(d.usage);
+	})*/
   }
 
-  update(value){
+  update(data?){
+    if(!data){ data = this.config.data}
+    
+      this.chart.load({
+        columns: this.config.data,
+      })
+      
+    /*
+    //this.wrapperNode = styler(document.querySelector("#bar-" + this.chartId),{})
+    let height = this.wrapperNode.get("height") ;
+
+    let elems = this.el.nativeElement.querySelectorAll('rect.bar');
+    let stylerElems = styler(elems);
+    elems.forEach((item, index) => {
+      let bar = styler(item);
+      //console.log(bar.get('height'));
+      tween({
+        from: {y: bar.get('y'), height: bar.get('height')},
+        to: {
+          y: this.yScale(this.config.data[index].usage), 
+          height: stylerElems.get('height') - this.margin - this.yScale(this.config.data[index].usage)
+        },
+        duration:750
+      }).start(bar.set);
+    });*/
   }
-
-  load(newAngle){
-    /*return (d) => {
-
-    let interpolate = d3.interpolate(d.endAngle, newAngle);
-
-      return (t) => {
-  
-        d.endAngle = interpolate(t);
-  
-        return this.arc(d);
-      };
-    };*/
-  }
-
   
 
-  /*makeConfig(){
+  makeConfig(){
   
     this.chartConfig = {
-      bindto: '#' + this._chartId,
+      bindto: '#bar-' + this.chartId,
       data: {
         //columns: this._data,
         columns: this.config.data,
-        type: this.chartType
+        type: 'bar'
       },
-      gauge:{
+      bar:{
         label:{
           //show: this.gaugeConfig.label
           show: false
@@ -196,20 +227,22 @@ export class ViewChartBarComponent /*extends DisplayObject*/ implements AfterVie
         width:15,
         fullCircle:true
       },
-      size:{
+      /*size:{
         width: this.config.width,
         height: this.config.width
-      },
+      },*/
       tooltip:{
         show: false,
       },
       interaction: {
         enabled: false
+      },
+      legend: {
+        hide:true
       }
     }
-
     return this.chartConfig;
-  }*/
+  }
 
 
 

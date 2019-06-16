@@ -342,7 +342,7 @@ export class ThemeService {
   }
 
   resetToDefaultTheme(){
-    this.activeTheme = "ix-dark-11.3";
+    this.activeTheme = "ix-official";
     this.changeTheme(this.activeTheme);
   }
 
@@ -355,11 +355,15 @@ export class ThemeService {
       let t = this.allThemes[i];
       if(t.name == name){ return t;}
     }
-    if(reset){
-      //Optionally reset if not found
-      this.resetToDefaultTheme();
-      return this.freenasThemes[this.freeThemeDefaultIndex];
+    
+    //Optionally reset if not found
+    this.resetToDefaultTheme();
+
+    if(!reset){
+      console.warn('Theme not found and reset not initiated.');
     }
+
+    return this.freenasThemes[this.freeThemeDefaultIndex];
   }
 
   changeTheme(theme:string) {
