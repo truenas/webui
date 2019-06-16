@@ -15,7 +15,7 @@ import { Subscription } from 'rxjs';
   selector: 'app-config-reset',
   templateUrl: './config-reset.component.html',
   styleUrls: ['./config-reset.component.css'],
-  providers: [SystemGeneralService]
+  providers: []
 })
 export class ConfigResetComponent implements OnInit {
 
@@ -25,9 +25,9 @@ export class ConfigResetComponent implements OnInit {
   public shouldReboot: boolean = true;
   private rebootStatusSub: Subscription;
 
-  constructor(protected ws: WebSocketService, protected router: Router, 
+  constructor(protected ws: WebSocketService, protected router: Router,
     protected loader: AppLoaderService, public translate: TranslateService,
-    protected dialogService: DialogService, protected dialog: MatDialog, 
+    protected dialogService: DialogService, protected dialog: MatDialog,
     private sysGeneralService: SystemGeneralService) {
       this.ws = ws;
       this.ws.call('system.is_freenas').subscribe((res)=>{
@@ -50,11 +50,14 @@ export class ConfigResetComponent implements OnInit {
   ngOnInit() {
     if (window.localStorage.getItem('is_freenas') === 'true') {
       this.is_freenas = true;
-    } 
+    }
 
-    this.rebootStatusSub = this.sysGeneralService.getRebootStatus().subscribe((res) => {
-      console.log('rebootstatus: ', res);
-    })
+    this.rebootStatusSub = this.sysGeneralService.getRebootStatusListener()
+      .subscribe((res) => {
+        console.log('rebootstatus: ', res);
+        this.shouldReboot = res;
+      })
+
     this.dialog.closeAll();
     // this.resetConfigSubmit();
   }
@@ -62,7 +65,7 @@ export class ConfigResetComponent implements OnInit {
   resetConfigSubmit() {
     let message;
     this.shouldReboot ? message = 'The system will restart.' : message = 'You will be logged out.';
-    
+
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Resetting..." }, disableClose: true });
     this.dialogRef.componentInstance.setCall('config.reset', [{ reboot: this.shouldReboot}]);
     this.dialogRef.componentInstance.setDescription(T('Resetting system configuration to default settings. ' + message));
@@ -88,7 +91,7 @@ export class ConfigResetComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.rebootStatusSub.unsubscribe();
+    // this.rebootStatusSub.unsubscribe();
   }
 
 }

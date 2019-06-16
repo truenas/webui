@@ -7,14 +7,12 @@ import {Observable, Subject, Subscription} from 'rxjs/Rx';
 import {RestService} from './rest.service';
 import {WebSocketService} from './ws.service';
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class SystemGeneralService {
 
   protected certificateList: string = 'certificate.query';
   protected caList: string = 'certificateauthority.query';
-  shouldReboot = new EventEmitter();
-  rebootStatus = new Subject<string>();
-  reboot: string;
+  rebootStatus = new Subject<boolean>();
 
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
@@ -38,14 +36,15 @@ export class SystemGeneralService {
     return this.ws.call('system.info', []);
   }
 
-  setRebootStatus(status: string) {
-    this.rebootStatus.next(status);
-    this.reboot = status;
+  getRebootStatusListener() {
+    return this.rebootStatus;
   }
 
-  getRebootStatus() {
-    return this.rebootStatus.asObservable();
+  setRebootStatus(status) {
+    setTimeout(() => {
+      this.rebootStatus.next(status);
+    }, 200);
   }
 
-  
+
 }

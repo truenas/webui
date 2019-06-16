@@ -16,7 +16,7 @@ import { T } from '../../../translate-marker';
   selector: 'app-general',
   template: `<entity-form [conf]="this"></entity-form>`,
   styleUrls: ['./general.component.css'],
-  providers: [SnackbarService, SystemGeneralService]
+  providers: [SnackbarService]
 })
 export class GeneralComponent {
 
@@ -383,8 +383,8 @@ export class GeneralComponent {
         }
       }
 
-      entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'], 
-                                                               'pool_keys': entityDialog.formValue['pool_keys'] }], 
+      entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'],
+                                                               'pool_keys': entityDialog.formValue['pool_keys'] }],
                                                                fileName])
         .subscribe(
           (res) => {
@@ -438,14 +438,14 @@ export class GeneralComponent {
       }
     );
   }
-  fireEmitter(r) {
-    this.sysGeneralService.setRebootStatus(r);
+  fireEmitter(status) {
+    this.sysGeneralService.setRebootStatus(status);
   }
 
   resetConfigSubmit(entityDialog) {
     const parent = entityDialog.parent;
     let rebootValue;
-    entityDialog.formValue.reboot_option ? rebootValue = 'true' : rebootValue = 'false';
+    entityDialog.formValue.reboot_option ? rebootValue = true : rebootValue = false;
     parent.fireEmitter(rebootValue)
     parent.router.navigate(new Array('').concat(['others', 'config-reset']))
   }
