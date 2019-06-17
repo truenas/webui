@@ -24,11 +24,12 @@ export class TooltipComponent {
     let posX = this.tooltip.nativeElement.getBoundingClientRect().left;
     let posY = this.tooltip.nativeElement.getBoundingClientRect().bottom;
     let dynamicWidth = this.message.length * 8.5;
-    
-    if((posY / screenH > .85)) {
+    let tooltipHeight = this.tooltip.nativeElement.scrollHeight;
+
+    if (tooltipHeight > 200) {
+      this.tooltip.nativeElement.lastElementChild.id = 'adjustme';
+    } else if((posY / screenH > .85)) {
       this.tooltip.nativeElement.lastElementChild.id = "raised-tooltip";
-    } else {
-      this.tooltip.nativeElement.lastElementChild.id = "";
     }
 
     if(this.message.length <= 40) {
