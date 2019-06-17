@@ -1248,14 +1248,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     min-width: 180px;
   }
 
-  app-interfaces-form tooltip {
-    display: inline-block !important;
-  }
-
-  app-interfaces-form #failover_address, app-interfaces-form #failover_virtual_address {
-    margin-left: 12px;
-
-  }
   mat-radio-group .tooltip .material-icons,
   mat-radio-group .tooltip .material-icons {
     position: relative;
