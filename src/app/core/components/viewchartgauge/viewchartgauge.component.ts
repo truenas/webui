@@ -39,9 +39,7 @@ export interface GaugeConfig {
 
 @Component({
   selector: 'viewchartgauge',
-  //template:ViewChartMetadata.template
   templateUrl: './viewchartgauge.component.html',
-  //styleUrls: ['./viewchartdonut.component.css']
 })
 export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterViewInit, OnChanges {
 
@@ -55,33 +53,19 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
   public units = "%"; // default unit type
   public diameter = 120; // default diameter
 
-  /*private gaugeConfig: GaugeConfig = {
-    label: true,
-    units: this.units,
-    data: []
-  }*/
-
   @Input() config: GaugeConfig;
 
   constructor() { 
-    //super();
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if(changes.config){
       if(changes.config.currentValue && changes.config.currentValue.data){
-        //console.log(changes.config.currentValue.data);
         this.data = changes.config.currentValue.data;
         if(!this.arc){
-          //console.log("No chart");
-          //console.log(this.data);
           this.render();
         } else {
-          //console.log("Chart");
-          //console.log(this.arc);
-          //console.log(changes.config.currentValue.data[1]);
           this.update(changes.config.currentValue.data[1]);
-          
         }
       }
     }
@@ -100,7 +84,6 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
   }
 
   render(){ 
-    //let tau = 2 * Math.PI; 
     let lineWidth = 10;
     this.arc = d3.arc()
         .innerRadius(this.config.diameter / 2 - lineWidth) // 80
@@ -115,7 +98,6 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
 
     let g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
     
-    //let fontSize = this.diameter * 0.1;
     let text = svg.append("text");
     let bbox = text.node().getBBox();
     
@@ -168,40 +150,5 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
     return value  / 100 * this.doublePI;
     //return 360 * (value / 100) * this.doublePI;
   }
-  
-
-  /*makeConfig(){
-  
-    this.chartConfig = {
-      bindto: '#' + this._chartId,
-      data: {
-        //columns: this._data,
-        columns: this.config.data,
-        type: this.chartType
-      },
-      gauge:{
-        label:{
-          //show: this.gaugeConfig.label
-          show: false
-        },
-        width:15,
-        fullCircle:true
-      },
-      size:{
-        width: this.config.width,
-        height: this.config.width
-      },
-      tooltip:{
-        show: false,
-      },
-      interaction: {
-        enabled: false
-      }
-    }
-
-    return this.chartConfig;
-  }*/
-
-
 
 }

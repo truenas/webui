@@ -73,7 +73,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   ngAfterViewInit(){
 
     this.core.register({observerClass: this, eventName:"ThemeChanged"}).subscribe((evt: CoreEvent) => {
-      console.log(evt);
       d3.select('#grad1 .begin')
         .style('stop-color', this.getHighlightColor(0))
 
@@ -257,15 +256,12 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     // Get highlight color
     let currentTheme = this.themeService.currentTheme();
     let txtColor = currentTheme.fg2;
-    console.log(txtColor);
 
     // convert to rgb
     let rgb = this.themeService.hexToRGB(txtColor).rgb;
-    console.log(rgb);
 
     // return rgba
     let rgba =  "rgba(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + "," + opacity + ")";
-    console.log(rgba);
 
     return rgba;
   }
