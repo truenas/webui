@@ -83,10 +83,9 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     this.data.subscribe((evt:CoreEvent) => {
       if(evt.name == "CpuStats"){
         //this.cpuData = evt.data;
-        if(evt.data.average /*&& typeof this.cpuLoad !== 'undefined'*/){
-          //console.log(evt);
-          this.setCpuLoadData(/*this.cpuLoad,*/ ['Load', parseInt(evt.data.average.usage.toFixed(1))]);
-          this.setCpuData(/*this.cpuCores,*/ evt.data);
+        if(evt.data.average){
+          this.setCpuLoadData(['Load', parseInt(evt.data.average.usage.toFixed(1))]);
+          this.setCpuData(evt.data);
         }
       }
     });
