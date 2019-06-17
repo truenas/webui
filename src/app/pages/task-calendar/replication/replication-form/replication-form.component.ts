@@ -627,20 +627,22 @@ export class ReplicationFormComponent {
                     value: 'LEGACY',
                 }]
             }],
-        }, {
-            type: 'checkbox',
-            name: 'embed',
-            placeholder: helptext.embed_placeholder,
-            tooltip: helptext.embed_tooltip,
-            value: true,
-            relation: [{
-                action: 'HIDE',
-                when: [{
-                    name: 'transport',
-                    value: 'LEGACY',
-                }]
-            }],
-        }, {
+        },
+        // {
+        //     type: 'checkbox',
+        //     name: 'embed',
+        //     placeholder: helptext.embed_placeholder,
+        //     tooltip: helptext.embed_tooltip,
+        //     value: true,
+        //     relation: [{
+        //         action: 'HIDE',
+        //         when: [{
+        //             name: 'transport',
+        //             value: 'LEGACY',
+        //         }]
+        //     }],
+        // },
+        {
             type: 'checkbox',
             name: 'compressed',
             placeholder: helptext.compressed_placeholder,
