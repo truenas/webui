@@ -1,13 +1,22 @@
 import { Component, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
-
-import { WebSocketService } from '../../../../services';
-import { T } from '../../../../translate-marker';
 import * as _ from 'lodash';
+import { WebSocketService } from '../../../../services';
 import { StorageService } from '../../../../services/storage.service';
+import { T } from '../../../../translate-marker';
+import { DiskDetailsComponent } from './components/disk-details.component';
 
 @Component ({
 	selector: 'disk-list',
+  styles: [`
+      :host ::ng-deep .datatable-body {
+        overflow-x: hidden !important;
+      }
+
+      :host ::ng-deep .datatable-row-detail {
+        background: var(--bg2) !important;
+      }
+  `],
 	template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
 })
 export class DiskListComponent {
@@ -44,6 +53,9 @@ export class DiskListComponent {
 	public acousticLevel: Array<any> = [];
 	public diskToggle: boolean;
 	public SMARToptions: Array<any> = [];
+	showActions = false;
+  protected hasDetails = true;
+  protected rowDetailComponent = DiskDetailsComponent;
 
   public multiActions: Array < any > = [{
 		id: "medit",
@@ -99,7 +111,7 @@ export class DiskListComponent {
 
 	protected disk_ready: EventEmitter<boolean> = new EventEmitter();
 	protected unusedDisk_ready: EventEmitter<boolean> = new EventEmitter();
-	protected unused: any;
+	public unused: any;
 	protected disk_pool: Map<string, string> = new Map<string, string>();
 	constructor(protected ws: WebSocketService, protected router: Router,  public diskbucket: StorageService) {
 		this.ws.call('boot.get_disks', []).subscribe((boot_res) => {
@@ -150,14 +162,12 @@ export class DiskListComponent {
     return actions;
   }
 
-	dataHandler(entityList: any) {
+  dataHandler(entityList: any) {
 		this.disk_ready.subscribe((res)=>{
 			for (let i = 0; i < entityList.rows.length; i++) {
 	      entityList.rows[i].readable_size = (<any>window).filesize(entityList.rows[i].size, { standard: "iec" });
 	      entityList.rows[i].pool = this.disk_pool.get(entityList.rows[i].name) || this.disk_pool.get(entityList.rows[i].devname);
-	    }
+			}
 		})
-
-
   }
 }

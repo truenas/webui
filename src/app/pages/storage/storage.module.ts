@@ -43,6 +43,7 @@ import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volumech
 import { VolumeImportWizardComponent} from './volumes/volume-import-wizard';
 import { MessageService } from '../common/entity/entity-form/services/message.service';
 import { JobService } from 'app/services';
+import { DiskDetailsComponent } from './disks/disk-list/components/disk-details.component';
 
 @NgModule({
   imports : [
@@ -75,13 +76,14 @@ import { JobService } from 'app/services';
     VMwareSnapshotFormComponent,
     VMwareSnapshotListComponent,
     DiskListComponent,
+    DiskDetailsComponent,
     VolumeStatusComponent,
     MultipathsComponent,
     DiskFormComponent,
     DiskWipeComponent,
     DiskBulkEditComponent
   ],
-  entryComponents: [SnapshotDetailsComponent],
+  entryComponents: [DiskDetailsComponent, SnapshotDetailsComponent],
   providers : [UserService, StorageService, MessageService, JobService]
 })
 export class StorageModule {
