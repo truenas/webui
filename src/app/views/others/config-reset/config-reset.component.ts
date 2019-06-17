@@ -43,7 +43,7 @@ export class ConfigResetComponent implements OnInit {
     } else {
       setTimeout(() => {
         this.isWSConnected();
-      }, 5000);
+      }, 1000);
     }
   }
 
@@ -54,12 +54,10 @@ export class ConfigResetComponent implements OnInit {
 
     this.rebootStatusSub = this.sysGeneralService.getRebootStatusListener()
       .subscribe((res) => {
-        console.log('rebootstatus: ', res);
         this.shouldReboot = res;
-      })
-
-    this.dialog.closeAll();
-    // this.resetConfigSubmit();
+        this.dialog.closeAll();
+        this.resetConfigSubmit();
+      });
   }
 
   resetConfigSubmit() {
@@ -75,7 +73,6 @@ export class ConfigResetComponent implements OnInit {
       if (!this.shouldReboot) {
         this.ws.logout();
         this.dialog.closeAll();
-        this.router.navigate(['/session/signin']);
       } else {
         this.ws.prepare_shutdown();
         this.loader.open();
@@ -91,7 +88,9 @@ export class ConfigResetComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    // this.rebootStatusSub.unsubscribe();
+    if (this.rebootStatusSub) {
+      this.rebootStatusSub.unsubscribe();
+    }
   }
 
 }
