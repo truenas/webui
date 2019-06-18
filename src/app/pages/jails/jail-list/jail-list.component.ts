@@ -35,20 +35,15 @@ export class JailListComponent implements OnInit {
   public showActions = false;
   protected hasDetails = true;
   protected rowDetailComponent = JailDetailsComponent;
+  protected detailRowHeight = 156;
   public legacyWarning = T("Note: Legacy jails created before FreeNAS 11.2 must be managed from the");
   public legacyWarningLink = T("legacy web interface");
 
   public columns: Array < any > = [
-    { name: T('JID'), prop: 'jid'},
     { name: T('Name'), prop: 'host_hostuuid'},
     { name: T('Boot'), prop: 'boot_readble', hidden: true},
     { name: T('State'), prop: 'state'},
-    { name: T('Type'), prop: 'type', hidden: true, minWidth: 80, maxWidth: 120 },
-    { name: T('Release'), prop: 'release', minWidth: 225, maxWidth: 325 },
-    { name: T('IPv4 Address'), prop: 'ip4_addr'},
-    { name: T('IPv6 Address'), prop: 'ip6_addr'},
-    { name: T('Template'), prop: 'source_template', hidden: true},
-    { name: T('Basejail'), prop: 'basejail_readble', hidden: true },
+    { name: T('Release'), prop: 'release' },
   ];
   public config: any = {
     paging: true,

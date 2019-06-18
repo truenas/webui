@@ -37,16 +37,19 @@ export class JailDetailsComponent implements EntityTableRowDetailComponent<Jail>
       {
         id: "edit",
         label: T("Edit"),
+        buttonColor: "primary",
         onClick: row => this.parent.conf.router.navigate(new Array("").concat(["jails", "edit", row.host_hostuuid]))
       },
       {
         id: "mount",
         label: T("Mount points"),
+        buttonColor: "primary",
         onClick: row => this.parent.conf.router.navigate(new Array("").concat(["jails", "storage", row.host_hostuuid]))
       },
       {
         id: "start",
         label: T("Start"),
+        buttonColor: "primary",
         onClick: row => {
           this.parent.conf.entityList.busy = this.parent.conf.loader.open();
           this.parent.conf.ws.call("jail.start", [row.host_hostuuid]).subscribe(
@@ -66,6 +69,7 @@ export class JailDetailsComponent implements EntityTableRowDetailComponent<Jail>
       {
         id: "restart",
         label: T("Restart"),
+        buttonColor: "primary",
         onClick: row => {
           this.parent.conf.entityList.busy = this.parent.conf.loader.open();
           row.state = "restarting";
@@ -86,6 +90,7 @@ export class JailDetailsComponent implements EntityTableRowDetailComponent<Jail>
       {
         id: "stop",
         label: T("Stop"),
+        buttonColor: "primary",
         onClick: row => {
           const dialog = {};
           this.parent.conf.dialogService
@@ -121,6 +126,7 @@ export class JailDetailsComponent implements EntityTableRowDetailComponent<Jail>
       {
         id: "update",
         label: T("Update"),
+        buttonColor: "primary",
         onClick: row => {
           const dialogRef = this.parent.conf.dialog.open(EntityJobComponent, {
             data: { title: T("Updating Jail") },
@@ -139,11 +145,13 @@ export class JailDetailsComponent implements EntityTableRowDetailComponent<Jail>
       {
         id: "shell",
         label: T("Shell"),
+        buttonColor: "primary",
         onClick: row => this.parent.conf.router.navigate(new Array("").concat(["jails", "shell", row.host_hostuuid]))
       },
       {
         id: "delete",
         label: T("Delete"),
+        buttonColor: "warn",
         onClick: row => this.parent.conf.entityList.doDelete(row)
       }
     ];
@@ -285,7 +293,7 @@ export interface Jail {
   writebps: string;
   writeiops: string;
   id: string;
-  jid: null;
+  jid: any;
   _level: number;
   boot_readble: string;
   source_template: string;
