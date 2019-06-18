@@ -584,39 +584,44 @@ export class VolumesListTableConfig implements InputTableConf {
         actions.push({
           label: T("Delete Dataset"),
           onClick: (row1) => {
-
             this.dialogService.confirm(T("Delete"), 
               T("Delete the dataset ") + "<i>" + row1.path + "</i>"+  T(" and all snapshots of it?")
               , false, T('Delete Dataset')).subscribe((confirmed) => {
                 if (confirmed) {
-
-                  this.loader.open();
-                  this.ws.call('pool.dataset.delete', [row1.path, {"recursive": true}]).subscribe((wsResp) => {
-                    this.loader.close();
-                    this.parentVolumesListComponent.repaintMe();
-    
-                  }, (e_res) => {
-                    this.loader.close();
-                    if (e_res.reason.indexOf('Device busy') > -1) {
-                      this.dialogService.confirm(T('Device Busy'), T('Do you want to force delete dataset ') + "<i>" + row1.path + "</i>?", false, T('Force Delete')).subscribe(
-                        (res) => {
-                          if (res) {
-                            this.loader.open();
-                            this.ws.call('pool.dataset.delete', [row1.path, {"recursive": true, "force": true}]).subscribe(
-                              (wsres) => {
-                                this.loader.close();
-                                this.parentVolumesListComponent.repaintMe();
-                              },
-                              (err) => {
-                                this.loader.close();
-                                this.dialogService.errorReport(T("Error deleting dataset ") + "<i>" + row1.path + "</i>.", err.reason, err.stack);
+                  this.dialogService.doubleConfirm(
+                    T('Verify Deletion of ') + row1.path + T(' Dataset'),
+                    T('To delete the <b>') + row1.path + T('</b> dataset and all snapshots stored with it, please type the name of the dataset to confirm:'),
+                    row1.path
+                  ).subscribe((doubleConfirmDialog)=> {
+                    if (doubleConfirmDialog) {
+                      this.loader.open();
+                      this.ws.call('pool.dataset.delete', [row1.path, {"recursive": true}]).subscribe((wsResp) => {
+                        this.loader.close();
+                        this.parentVolumesListComponent.repaintMe();
+                      }, (e_res) => {
+                        this.loader.close();
+                        if (e_res.reason.indexOf('Device busy') > -1) {
+                          this.dialogService.confirm(T('Device Busy'), T('Do you want to force delete dataset ') + "<i>" + row1.path + "</i>?", false, T('Force Delete')).subscribe(
+                            (res) => {
+                              if (res) {
+                                this.loader.open();
+                                this.ws.call('pool.dataset.delete', [row1.path, {"recursive": true, "force": true}]).subscribe(
+                                  (wsres) => {
+                                    this.loader.close();
+                                    this.parentVolumesListComponent.repaintMe();
+                                  },
+                                  (err) => {
+                                    this.loader.close();
+                                    this.dialogService.errorReport(T("Error deleting dataset ") + "<i>" + row1.path + "</i>.", err.reason, err.stack);
+                                  }
+                                );
                               }
-                            );
-                          }
+                            }
+                          )
+                        } else {
+                          this.dialogService.errorReport(T("Error deleting dataset ") + "<i>" + row1.path + "</i>.", e_res.reason, e_res.stack);
                         }
-                      )
-                    } else {
-                      this.dialogService.errorReport(T("Error deleting dataset ") + "<i>" + row1.path + "</i>.", e_res.reason, e_res.stack);
+                      });
                     }
                   });
                 }
