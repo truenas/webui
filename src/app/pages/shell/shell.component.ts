@@ -1,17 +1,9 @@
-import {
-  Component,
-  OnInit,
-  ViewChild,
-  ElementRef,
-  OnChanges,
-  Input,
-  SimpleChange,
-  OnDestroy
-} from "@angular/core";
-
-import { WebSocketService, ShellService } from "../../services/";
+import { Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, ViewChild } from "@angular/core";
+import { MatSnackBar } from "@angular/material";
 import { TranslateService } from "@ngx-translate/core";
+import { ShellService, WebSocketService } from "../../services/";
 import { T } from "../../translate-marker";
+
 
 @Component({
   selector: 'app-shell',
@@ -93,6 +85,19 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
+  onRightClick(): void {
+    this._snackbar.open(
+      T(
+        'Context menu copy and pasting operations \
+        are disabled in the Shell. If the expected \
+        keyboard shortcuts are not working, try \
+        Ctrl + Insert to copy or Shift + Insert to \
+        paste.'
+      ),
+      T('Dismiss')
+    )
+  }
+
   initializeTerminal() {
     const domHeight = document.body.offsetHeight;
     const domWidth = document.body.offsetWidth;
@@ -157,6 +162,6 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     this.ss.connect();
   }
 
-  constructor(private ws: WebSocketService, public ss: ShellService, public translate: TranslateService) {
+  constructor(private ws: WebSocketService, public ss: ShellService, public translate: TranslateService, private _snackbar: MatSnackBar) {
   }
 }

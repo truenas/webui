@@ -5,21 +5,12 @@
   	 </div>
   </mat-card-title>
 
-  	<app-context-menu [matMenuTriggerFor]="shellMenuContent" #shellContextMenu>
-		<mat-menu #shellMenuContent="matMenu" xPosition="before">
-			<ng-template matMenuContent>
-				<button mat-menu-item (click)="onCopy()">{{ copyText }}</button>
-				<button mat-menu-item (click)="onPaste()">{{ pasteText }}</button>
-			</ng-template>
-		</mat-menu>
-	</app-context-menu>
-
 	<div
 		id="terminal"
 		[ngStyle]="{'font-size' : font_size+'px'}"
-		 #terminal
-		 (window:resize)="onResize($event)"
-		 (contextmenu)="shellContextMenu.open($event, { name: 'Hello mom' })"
+		#terminal
+		(window:resize)="onResize($event)"
+		(contextmenu)="onRightClick()"
 	></div>
 
 	<mat-card-content *ngIf="shellConnected; else Reconnect">
