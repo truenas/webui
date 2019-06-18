@@ -199,6 +199,14 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.filterColumns = this.conf.columns;
     this.conf.columns = this.allColumns; // Remove any alwaysDisplayed cols from the official list
 
+    // Get preferred list of columns from pref service
+    let preferredCols = this.prefService.preferences.tableDisplayedColumns;
+    preferredCols.forEach((i) => {
+      if (i.title === this.title) {
+        this.conf.columns = i.cols;
+      }
+    });
+
     this.displayedColumns.push("action");
     if (this.conf.changeEvent) {
       this.conf.changeEvent(this);
@@ -852,11 +860,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   
     let preferredCols = this.prefService.preferences.tableDisplayedColumns;
     preferredCols.forEach((i) => {
-     if (i.title === this.title) {
-       preferredCols.splice(preferredCols.indexOf(i), 1); 
-     }
-    })
+      if (i.title === this.title) {
+        preferredCols.splice(preferredCols.indexOf(i), 1); 
+      }
+    });
     preferredCols.push(obj);
+    this.prefService.savePreferences(this.prefService.preferences);
   }
 
   isChecked(col:any) {

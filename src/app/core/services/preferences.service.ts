@@ -145,7 +145,6 @@ export class PreferencesService {
       this.preferences = data;
 
       //Notify Guided Tour & Theme Service
-      console.log({preferences: this.preferences});
       this.core.emit({name:"UserPreferencesChanged", data:this.preferences});
   }
 
