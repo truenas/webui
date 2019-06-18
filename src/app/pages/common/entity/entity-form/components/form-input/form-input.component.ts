@@ -12,7 +12,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
   styleUrls: ['../dynamic-field/dynamic-field.css'],
 })
 export class FormInputComponent implements Field {
-  @ViewChild('fileInput') fileInput;
+  @ViewChild('fileInput', { static: true}) fileInput;
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;

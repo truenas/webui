@@ -6,7 +6,7 @@ import { EnclosureDisksComponent} from './enclosure-disks/enclosure-disks.compon
 
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
-import { SystemProfiler } from './enclosure-disks/system-profiler';
+import { SystemProfiler } from 'app/core/classes/system-profiler';
 
 interface ViewConfig {
   name: string;
@@ -25,7 +25,7 @@ interface ViewConfig {
 export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDestroy {
 
   public events:Subject<CoreEvent> ;
-  @ViewChild('navigation') nav: ElementRef
+  @ViewChild('navigation', { static: false}) nav: ElementRef
 
   //public currentView: ViewConfig
   public currentView: ViewConfig =  { 

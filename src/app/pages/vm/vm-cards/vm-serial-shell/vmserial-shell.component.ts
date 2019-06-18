@@ -26,7 +26,7 @@ import helptext from '../../../../helptext/vm/vm-cards/vm-cards';
 
 export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
   @Input() prompt= '';
-  @ViewChild('terminal') container: ElementRef;
+  @ViewChild('terminal', { static: true}) container: ElementRef;
   cols: string;
   rows: string;
   font_size: number;

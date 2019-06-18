@@ -102,13 +102,25 @@ export const helptext_system_general = {
   },
 
   secretseed: {
-    placeholder: T("Export Password Secret Seed")
+    placeholder: T("Export Password Secret Seed"),
+    tooltip: T('')
+  },
+
+  poolkeys: {
+    placeholder: T("Export Pool Ecryption Keys"),
+    tooltip: T('')
   },
 
   crash_reporting: {
     placeholder: T("Crash reporting"),
     tooltip: T("Enable sending anonymous crash reports to iXsystems")
   },
+
+  usage_collection: {
+    placeholder: T("Usage collection"),
+    tooltip: T("Enable sending anonymous usage statistics to iXsystems")
+  },
+
 
   save_config_form: {
     message: T(

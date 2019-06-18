@@ -3,13 +3,13 @@ import { Router } from '@angular/router';
 
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../../../common/entity/utils';
-import { WebSocketService, DialogService, SnackbarService } from '../../../../services';
+import { WebSocketService, DialogService, SnackbarService, JobService } from '../../../../services';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-replication-list',
     template: `<entity-table [title]='title' [conf]='this'></entity-table>`,
-    providers: [SnackbarService]
+    providers: [SnackbarService, JobService]
 })
 export class ReplicationListComponent {
 
@@ -49,7 +49,8 @@ export class ReplicationListComponent {
         private ws: WebSocketService,
         private dialog: DialogService,
         private translateService: TranslateService,
-        private snackbarService: SnackbarService) { }
+        private snackbarService: SnackbarService,
+        protected job: JobService) { }
 
     afterInit(entityList: any) {
         this.entityList = entityList;
@@ -100,6 +101,8 @@ export class ReplicationListComponent {
     stateButton(row) {
         if (row.state.error) {
             this.dialog.errorReport(row.state.state, row.state.error);
+        } else if (row.state.job) {
+            this.job.showLogs(row.state.job.id);
         }
     }
 }

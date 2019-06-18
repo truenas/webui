@@ -102,7 +102,7 @@ export class CronFormComponent {
      }
    ];
 
-   @ViewChild('form') form:EntityFormComponent;
+   @ViewChild('form', { static: true}) form:EntityFormComponent;
 
    constructor(
      protected userService: UserService,

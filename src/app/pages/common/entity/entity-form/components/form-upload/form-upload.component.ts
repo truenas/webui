@@ -16,7 +16,7 @@ import { DialogService } from '../../../../../../services/';
   styleUrls: ['../dynamic-field/dynamic-field.css', 'form-upload.component.css'],
 })
 export class FormUploadComponent {
-  @ViewChild('fileInput') fileInput;
+  @ViewChild('fileInput', { static: true}) fileInput;
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;

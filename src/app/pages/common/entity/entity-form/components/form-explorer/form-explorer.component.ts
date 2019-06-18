@@ -76,6 +76,7 @@ export class FormExplorerComponent implements Field, OnInit {
       if (!this.config.customTemplateStringOptions.actionMapping) {
         this.config.customTemplateStringOptions.actionMapping = this.actionMapping;
       }
+      this.config.customTemplateStringOptions.explorerComponent = this;
       this.customTemplateStringOptions = this.config.customTemplateStringOptions;
       this.config.customTemplateStringOptions.explorer = this;
     }

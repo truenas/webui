@@ -212,7 +212,7 @@ export class SmdFabSpeedDialComponent implements AfterContentInit {
 
     @Output() openChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    @ContentChild(SmdFabSpeedDialActions) _childActions: SmdFabSpeedDialActions;
+    @ContentChild(SmdFabSpeedDialActions, { static: true}) _childActions: SmdFabSpeedDialActions;
 
     constructor(private elementRef: ElementRef, private renderer: Renderer) {
     }

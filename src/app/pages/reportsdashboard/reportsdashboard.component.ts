@@ -80,9 +80,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   public filteredData: ChartConfigData[] = [];
   public filteredPaginatedData: ChartConfigData[] = [];
   public chartLayout = 'Grid'; // Defaults to grid layout
-  //@ViewChild('chartWidth') chartWidth: MatButtonToggleGroup; 
+  //@ViewChild('chartWidth', { static: true}) chartWidth: MatButtonToggleGroup; 
   public isFooterConsoleOpen: boolean;
-  @ViewChild('pager') pagerElement;
+  @ViewChild('pager', { static: true}) pagerElement;
   
   
 

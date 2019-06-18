@@ -33,7 +33,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
   // sets the shell prompt
   @Input() prompt = '';
   //xter container
-  @ViewChild('terminal') container: ElementRef;
+  @ViewChild('terminal', { static: true}) container: ElementRef;
   // xterm variables
   cols: string;
   rows: string;

@@ -3,6 +3,8 @@ import { WebSocketService } from './ws.service';
 import { RestService } from './rest.service';
 
 import * as moment from 'moment';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class StorageService {
@@ -203,5 +205,16 @@ export class StorageService {
         }
       }
     }
+  }
+
+  poolUnlockServiceChoices(): Observable<{ label: string; value: string; }[]> {
+    return this.ws.call("pool.unlock_services_restart_choices", []).pipe(
+      map((response: { [serviceId: string]: string }) =>
+        Object.keys(response || {}).map(serviceId => ({
+            label: response[serviceId],
+            value: serviceId
+        }))
+      )
+    );
   }
 }

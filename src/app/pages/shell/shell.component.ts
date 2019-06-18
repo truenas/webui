@@ -16,11 +16,11 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   // sets the shell prompt
   @Input() prompt = '';
   //xter container
-  @ViewChild('terminal') container: ElementRef;
+  @ViewChild('terminal', { static: true}) container: ElementRef;
   // xterm variables
   cols: string;
   rows: string;
-  font_size: number;
+  font_size = 14;
   public token: any;
   public xterm: any;
   public resize_terminal = true;

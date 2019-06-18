@@ -12,7 +12,7 @@ export default {
 
     exclude_placeholder: T('Exclude'),
     exclude_tooltip: T('Exclude specific child datasets from the snapshot.\
- Use with recursive snapshots. List paths to any child datasets to exclude.\
+ Use with recursive snapshots. Comma-separated list of paths to any child datasets to exclude.\
  Example: <i>pool1/dataset1/child1</i>. A recursive snapshot of\
  <i>pool1/dataset1</i> will include all child datasets except <i>child1</i>.'),
 
@@ -39,6 +39,9 @@ export default {
     snapshot_picker_placeholder: T('Schedule the Periodic Snapshot Task'),
     snapshot_picker_tooltip: T('Choose one of the presets\
  or choose <i>Custom</i> to use the advanced scheduler.'),
+
+    allow_empty_placeholder: T('Allow taking empty snapshots'),
+    allow_empty_tooltip: T(''),
 
     enabled_placeholder: T('Enabled'),
     enabled_tooltip: T('Unset to disable this task without deleting it.'),
