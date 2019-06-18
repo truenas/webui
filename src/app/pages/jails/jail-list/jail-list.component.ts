@@ -1,19 +1,19 @@
-import { RestService, WebSocketService } from '../../../services';
 import { Component, OnInit } from '@angular/core';
+import { MatDialog, MatSnackBar } from '@angular/material';
 import { Router } from '@angular/router';
-import * as _ from 'lodash';
-import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { StorageService } from '../../../services/storage.service'
-import { EntityUtils } from '../../common/entity/utils';
 import { TranslateService } from '@ngx-translate/core';
+import * as _ from 'lodash';
 import { DialogService } from '../../../../app/services';
+import { RestService, WebSocketService } from '../../../services';
+import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { StorageService } from '../../../services/storage.service';
 import { T } from '../../../translate-marker';
-import { MatSnackBar, MatDialog } from '@angular/material';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { EntityUtils } from '../../common/entity/utils';
+import { JailDetailsComponent } from './components/jail-details.component';
 
 @Component({
   selector: 'app-jail-list',
-  // template: `<entity-table [title]="title" [conf]="this"></entity-table>`
   templateUrl: './jail-list.component.html',
   styleUrls: ['jail-list.component.css'],
   providers: [DialogService, StorageService]
@@ -28,10 +28,13 @@ export class JailListComponent implements OnInit {
   protected queryCall = 'jail.query';
   protected wsDelete = 'jail.do_delete';
   protected wsMultiDelete = 'core.bulk';
-  protected entityList: any;
+  public entityList;
   protected route_add = ["jails", "add", "wizard"];
   protected route_add_tooltip = "Add Jail";
   public toActivatePool: boolean = false;
+  public showActions = false;
+  protected hasDetails = true;
+  protected rowDetailComponent = JailDetailsComponent;
   public legacyWarning = T("Note: Legacy jails created before FreeNAS 11.2 must be managed from the");
   public legacyWarningLink = T("legacy web interface");
 
@@ -163,9 +166,9 @@ export class JailListComponent implements OnInit {
   this dataset to store FreeBSD releases \
   and all other jail data.");
 
-  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, 
-    protected loader: AppLoaderService, protected dialogService: DialogService, private translate: TranslateService,
-    protected snackBar: MatSnackBar, public sorter: StorageService, protected dialog: MatDialog,) {}
+  constructor(public router: Router, protected rest: RestService, public ws: WebSocketService, 
+    public loader: AppLoaderService, public dialogService: DialogService, private translate: TranslateService,
+    public snackBar: MatSnackBar, public sorter: StorageService, public dialog: MatDialog,) {}
 
 
   ngOnInit(){

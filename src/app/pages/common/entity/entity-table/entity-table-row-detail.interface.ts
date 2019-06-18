@@ -19,7 +19,7 @@ export interface EntityTableRowDetailComponent<T = any, U = EntityTableComponent
 export interface EntityAction {
   id: string | number;
   label: string;
-  name: string;
+  name?: string;
   onClick: (args?: any) => any | void;
   buttonColor?: "primary" | "accent" | "warn";
   icon?: string;
