@@ -269,7 +269,8 @@ export class CloudsyncFormComponent implements OnInit {
     name: 'cloudsync_picker',
     placeholder: helptext.cloudsync_picker_placeholder,
     tooltip: helptext.cloudsync_picker_tooltip,
-    required: true
+    required: true,
+    value: "0 0 * * *",
   },
   {
     type: 'input',
