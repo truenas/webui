@@ -147,7 +147,6 @@ export class SMBFormComponent implements OnDestroy {
     'cifs_showhiddenfiles',
     'cifs_recyclebin',
     'cifs_browsable',
-    'cifs_default_permissions',
     'cifs_ro',
   ];
 
