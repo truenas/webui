@@ -18,6 +18,7 @@ import { DialogService, JobService } from '../../../../services';
 import { ErdService } from '../../../../services/erd.service';
 import { StorageService } from '../../../../services/storage.service'
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { PreferencesService } from 'app/core/services/preferences.service';
 import { T } from '../../../../translate-marker';
 
 export interface InputTableConf {
@@ -143,7 +144,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(protected core: CoreService, protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService, 
     protected erdService: ErdService, protected translate: TranslateService, protected snackBar: MatSnackBar,
-    public sorter: StorageService, protected job: JobService) { 
+    public sorter: StorageService, protected job: JobService, protected prefService: PreferencesService) { 
       this.core.register({observerClass:this, eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
         this.multiActionsIconsOnly = evt.data.preferIconsOnly;
       });
@@ -839,6 +840,23 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.conf.columns = [...this.conf.columns, col];
     }
+
+    this.selectColumnsToShowOrHide();
+  }
+
+  // Stores currently selected columns in preference service
+  selectColumnsToShowOrHide() {
+    let obj = {};
+    obj['title'] = this.title;
+    obj['cols'] = this.conf.columns;
+  
+    let preferredCols = this.prefService.preferences.tableDisplayedColumns;
+    preferredCols.forEach((i) => {
+     if (i.title === this.title) {
+       preferredCols.splice(preferredCols.indexOf(i), 1); 
+     }
+    })
+    preferredCols.push(obj);
   }
 
   isChecked(col:any) {
@@ -851,11 +869,13 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   checkAll() {
     this.anythingClicked = true;
     if (this.conf.columns.length < this.allColumns.length) {
-
       this.conf.columns = this.allColumns;
+      this.selectColumnsToShowOrHide();
       return this.conf.columns
     } else {
-      return this.conf.columns = this.currentPreferredCols;
+      this.conf.columns = this.currentPreferredCols;
+      this.selectColumnsToShowOrHide();
+      return this.conf.columns;
     }
   }
 

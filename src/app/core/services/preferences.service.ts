@@ -16,6 +16,7 @@ export interface UserPreferences {
   enableWarning:boolean;
   preferIconsOnly:boolean;
   rebootAfterManualUpdate:boolean;
+  tableDisplayedColumns:any;
 }
 
 @Injectable()
@@ -35,6 +36,7 @@ export class PreferencesService {
     "enableWarning": true,
     "preferIconsOnly": false,
     "rebootAfterManualUpdate": false,
+    "tableDisplayedColumns":[]
   }
   constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router,
     private aroute: ActivatedRoute) {
@@ -143,6 +145,7 @@ export class PreferencesService {
       this.preferences = data;
 
       //Notify Guided Tour & Theme Service
+      console.log({preferences: this.preferences});
       this.core.emit({name:"UserPreferencesChanged", data:this.preferences});
   }
 
