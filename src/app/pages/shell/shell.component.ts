@@ -85,7 +85,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  onRightClick(): void {
+  onRightClick(): false {
     this._snackbar.open(
       T(
         'Context menu copy and pasting operations \
@@ -95,7 +95,8 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
         paste.'
       ),
       T('Dismiss')
-    )
+    );
+    return false;
   }
 
   initializeTerminal() {
@@ -119,14 +120,6 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     });
     this.xterm.open(this.container.nativeElement, true);
     this.xterm.attach(this.ss);
-    this.xterm.attachCustomKeyEventHandler(event => {
-      // Ctrl + Shift + C
-      if (event.ctrlKey && event.shiftKey && (event.keyCode == 3)) {
-        var copySucceeded = document.execCommand('copy');
-        console.log('copy succeeded', copySucceeded);
-        return false;
-      }
-    });
     this.xterm._initialized = true;
   }
 
