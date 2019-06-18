@@ -111,6 +111,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public presetDisplayedCols: Array<any> = []; // to store only the index of preset cols
   public currentPreferredCols: Array<any> = []; // to store current choice of what cols to view
   public anythingClicked: boolean = false; // stores a pristine/touched state for checkboxes
+  public originalConfColumns: any; // The 'factory setting
 
   public startingHeight: number;
   public expandedRows = 0;
@@ -229,6 +230,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
             this.conf.columns.push(item);
             this.presetDisplayedCols.push(item);
           }
+          this.originalConfColumns = this.conf.columns; // to go back to defaults
         }
 
         this.currentPreferredCols = this.conf.columns;
@@ -865,6 +867,17 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     preferredCols.push(obj);
+    this.prefService.savePreferences(this.prefService.preferences);
+  }
+
+  resetColView() {
+    let preferredCols = this.prefService.preferences.tableDisplayedColumns;
+    preferredCols.forEach((i) => {
+      if (i.title === this.title) {
+        preferredCols.splice(preferredCols.indexOf(i), 1); 
+      }
+    });
+    this.conf.columns = this.originalConfColumns;
     this.prefService.savePreferences(this.prefService.preferences);
   }
 

@@ -48,6 +48,12 @@
               <span>{{col.name}}</span>
             </button>
           </div>
+
+          <div (click)="$event.stopPropagation()">
+            <button mat-menu-item (click)="resetColView()" id="reset_col_view">
+              <span id="reset">Reset to Default Columns</span>
+            </button>
+          </div>
         </mat-menu>
       </div>
       <!-- END MultiMenu-->
