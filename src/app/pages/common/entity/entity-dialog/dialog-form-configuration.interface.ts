@@ -14,5 +14,6 @@ export interface DialogFormConfiguration {
   message?: any,
   warning?: any,
   preInit?: any,
+  afterInit?: any,
   parent?: any
 }
