@@ -719,6 +719,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     opacity: 0.38;
   }
 
+  #vdev__close-button {
+    color: var(--primary) !important;
+  }
+
   // style nav chevrons on datatable pager w/regard to theme
   .mat-button-wrapper .mat-paginator-decrement,
   .mat-button-wrapper .mat-paginator-increment {
