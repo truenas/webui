@@ -902,8 +902,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // Used by the select all checkbox to determine whether it should be checked
-  checkLength() {
-    return this.conf.columns.length === this.allColumns.length;
+  checkLength() { 
+    if (this.allColumns) {
+      return this.conf.columns.length === this.allColumns.length;
+    }
   }
 
   onGoToLegacy() {
