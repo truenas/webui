@@ -21,92 +21,104 @@ msgid ""
 "useful to set this to a smaller number if the remote is giving a lot of "
 "timeouts, or a larger number if there is high bandwidth and a fast remote."
 msgstr ""
-"<a href=\"%%docurl%%/sharing.html#block-iscsi\" target=\"_blank\">iSCSI</a> "
-"поддерживает несколько методов аутентификации при обнаружении устройств. "
-"<i>Нет</i> позволяет анонимное обнаружение, в то время как <i>CHAP</i> и "
-"<i>Взаимный CHAP </i> требуют аутентификации."
+" Количество передач файлов запускаемых параллельно. Иногда может быть "
+"полезно установить меньшее, если удаленная сторона возвращает много "
+"таймаутов, или большее, при наличии высокой пропускной способности."
 
 msgid ""
 " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network "
 "port number of the UPS <i>Master</i> system. The default port is "
 "<i>3493</i>."
 msgstr ""
+" Когда <b>Режим ИБП</b> установлен в <i>ведомый</i>. Введите номер открытого "
+"сетевого порта <i>ведущей</i> системы ИБП. Порт по умолчанию - "
+"<i>3493</i>."
 
 msgid " and all snapshots of it?"
-msgstr ""
+msgstr " и все снимки этого?"
 
 msgid " but datastore "
-msgstr ""
+msgstr " но хранилище "
 
 msgid " disks, new vdev has "
-msgstr ""
+msgstr " дисков, новый vdev имеет "
 
 msgid " is "
-msgstr ""
+msgstr " - "
 
 msgid ""
 " is the minimum recommended record size. Choosing a smaller size can reduce "
 "system performance."
 msgstr ""
+" - минимально рекомендуемый размер записи. Выбор меньшего размера может уменьшить "
+"производительность системы."
 
 msgid " seconds unless kept permanently."
-msgstr ""
+msgstr " секунд, если не сохранены на постоянно."
 
 msgid " system is powered on and connected to the network."
-msgstr ""
+msgstr " система включена и подключена к сети."
 
 msgid " updated."
-msgstr ""
+msgstr " обновлен."
 
 msgid "% of all cores"
-msgstr ""
+msgstr "% от всех ядер"
 
 msgid ""
 "' is encrypted! If the passphrase for this encrypted pool has been lost, "
 "the data will be PERMANENTLY UNRECOVERABLE! Before exporting/disconnecting "
 "encrypted pools, download and safely store the recovery key."
 msgstr ""
+"' зашифрован! Если пароль для этого зашифрованного пула будет утерян, "
+"данные будут БЕЗВОЗВРАТНО НЕВОССТАНОВИМЫ! Перед экспортом/отключением "
+"зашифрованных пулов, скачайте и надежно сохраните ключ восстановления."
 
 msgid ""
 "'%h' will be replaced with your hostname and '%i' will be replaced with "
 "your IP address."
 msgstr ""
+"'%h' будет заменен вашим именем хоста, а '%i' будет заменен на "
+"ваш IP-адрес."
 
 msgid "'. All data on that pool was destroyed."
-msgstr ""
+msgstr "'. Все данные на этом пуле были уничтожены."
 
 msgid ""
 "'. Exporting/disconnecting a pool makes the data unavailable. The pool data "
 "can also be wiped by setting the related option. Back up any critical data "
 "before exporting/disconnecting a pool."
 msgstr ""
+"'. Экспорт/отключение пула делает данные на нем недоступными. Данные пула "
+"также могут быть стерты установкой соответствующей опции. Резервируйте любые "
+"критичные данные перед экспортом/отключением пула."
 
 msgid "(No description)"
-msgstr ""
+msgstr "(Нет описания)"
 
 msgid "*allow_sysvipc"
 msgstr ""
 
 msgid ", new vdev is "
-msgstr ""
+msgstr ", новый vdev - "
 
 msgid ". All data on that pool was destroyed."
-msgstr ""
+msgstr ". Все данные на этом пуле были уничтожены."
 
 msgid ". Is this correct?"
-msgstr ""
+msgstr ". Это верно?"
 
 msgid "... Make sure the "
-msgstr ""
+msgstr "... Убедитесь что "
 
 msgid "0=Disabled, blank=inherit"
 msgstr ""
 
 msgid "20 characters is the maximum length."
-msgstr ""
+msgstr "Максимальная длина 20 символов."
 
 msgid ": Automatic update check failed. Please check system network settings."
-msgstr ""
+msgstr ": Автоматическая проверка обновления не удалась. Пожалуйста, проверьте настройки сети."
 
 msgid ""
 "</b> dataset and all snapshots stored with it, please type the name of the "
@@ -119,10 +131,10 @@ msgid ""
 msgstr ""
 
 msgid "</i> has started."
-msgstr ""
+msgstr "</i> начата."
 
 msgid "</i> now?"
-msgstr ""
+msgstr "</i> сейчас?"
 
 msgid ""
 "<a href=\"%%docurl%%/sharing.html#block-iscsi\" target=\"_blank\">iSCSI</a> "
@@ -130,12 +142,19 @@ msgid ""
 "discover valid devices. <i>None</i> allows anonymous discovery while "
 "<i>CHAP</i> and <i>Mutual CHAP</i> require authentication."
 msgstr ""
+"<a href=\"%%docurl%%/sharing.html#block-iscsi\" target=\"_blank\">iSCSI</a> "
+"поддерживает несколько методов аутентификации при обнаружении устройств. "
+"<i>Нет</i> позволяет анонимное обнаружение, в то время как "
+"<i>CHAP</i> и <i>Взаимный CHAP </i> требуют аутентификации."
 
 msgid ""
 "<a href=\"https://docs.pcloud.com/methods/intro/authentication.html\" "
 "target=\"_blank\">pCloud Access Token</a>. These tokens can expire and "
 "require extension."
 msgstr ""
+"<a href=\"https://docs.pcloud.com/methods/intro/authentication.html\" "
+"target=\"_blank\">pCloud Access Token</a>. Эти токены могут истечь и "
+"требуют продления."
 
 msgid ""
 "<a href=\"https://en.wikipedia.org/wiki/Extended_file_attributes\"          "
@@ -300,7 +319,8 @@ msgstr ""
 "<i>AHCI</i> эмулирует жесткий диск AHCI для лучшей совместимости "
 "программного обеспечения. <i>VirtIO</i> использует паравиртуализированные "
 "драйверы и может обеспечить лучшую производительность, но требует от "
-"операционной системы, установленной в виртуальной машине, »\n"
+"операционной системы, установленной в виртуальной машине, поддержки "
+"дисковых устройств VirtIO."
 
 msgid ""
 "<i>AHCI</i> emulates an AHCI hard disk for better software compatibility. "
@@ -308,6 +328,11 @@ msgid ""
 "performance, but requires the operating system installed in the VM to "
 "support VirtIO disk devices."
 msgstr ""
+"<i>AHCI</i> эмулирует жесткий диск AHCI для лучшей совместимости "
+"программного обеспечения. <i>VirtIO</i> использует паравиртуализированные "
+"драйверы и может обеспечить лучшую производительность, но требует от "
+"операционной системы, установленной в виртуальной машине, поддержки "
+"дисковых устройств VirtIO."
 
 msgid ""
 "<i>Basic Authentication</i> is unencrypted. <i>Digest Authentication</i> is "
@@ -512,6 +537,10 @@ msgid ""
 "configure the jail with no IPv4 default route.<br> <b>A jail without a "
 "default route will not be able to access any networks.</b>"
 msgstr ""
+"Действительный адрес IPv4 для использования в качестве маршрута по "
+"умолчанию. <br>Введите <b>none</b>, чтобы настроить jail без маршрута по "
+"умолчанию IPv4.<br> <b>Jail без маршрута по умолчанию не сможет получить "
+"доступ ни к каким сетям.</b>"
 
 msgid ""
 "A valid IPv6 address to use as the default route. <br>Enter <b>none</b> to "
@@ -538,6 +567,10 @@ msgid ""
 "configure the jail without an IPv6 default route.<br> <b>A jail without a "
 "default route will not be able to access any networks.</b>"
 msgstr ""
+"Действительный адрес IPv6 для использования в качестве маршрута по "
+"умолчанию. <br>Введите <b>none</b>, чтобы настроить jail без маршрута по "
+"умолчанию IPv6.<br> <b>Jail без маршрута по умолчанию не сможет получить "
+"доступ ни к каким сетям.</b>"
 
 msgid "ACL Manager"
 msgstr "Менеджер ACL"
@@ -750,6 +783,10 @@ msgid ""
 "This is translated as new lines in <i>resolv.conf</i>. Enter <i>none</i> to "
 "inherit <i>resolv.conf</i> from the host."
 msgstr ""
+"Добавить строки в <b>resolv.conf</b> jail. <b>Пример:</b> <i>nameserver "
+"IP;search domain. local</i>. Поля должны быть разделены точкой с запятой "
+"(;). Это преобразыется в новые строки в <i>resolv.conf</i>. Введите "
+"<i>none</i>, чтобы наследовать <b>resolv.conf</b> от хоста."
 
 msgid ""
 "Add more options from <a "
@@ -1076,6 +1113,13 @@ msgid ""
 "private keys.<br> <b>Disable</b>: The jail cannot perform any "
 "<b>sysvmsg</b> related system calls."
 msgstr ""
+"Разрешить или запретить доступ к примитивам сообщений SYSV IPC. <br>"
+"<b>Унаследовать</b>: Все объекты IPC в системе видны jail. "
+"<br> <b>Новые</b>: Только объекты созданные jail с использованием закрытого "
+"пространства имен ключей являются видимыми. Система и родительский jail "
+"имеют доступ к объектам\n"
+"jail, но <i>не</i> к закрытым ключам.<br> <b>Отключить</b>: jail не может "
+"выполнять какие-либо системные вызовы связанные с <b>sysvmsg</b>."
 
 msgid ""
 "Allow or deny access to SYSV IPC semaphore primitives. <br> <b>Inherit</b>: "
@@ -1101,6 +1145,13 @@ msgid ""
 "private keys. <br> <b>Disable</b>: The jail cannot perform any "
 "<b>sysvmem</b> related system calls."
 msgstr ""
+"Разрешить или запретить доступ к примитивам семафоров SYSV IPC.<br> "
+"<b>Унаследовать</b>: Все объекты IPC в системе видны jail.<br> "
+"<b>Новые</b>: Только объекты созданные jail с использованием закрытого "
+"пространства имен ключей являются видимыми. Система и родительский jail "
+"имеют доступ к объектам\n"
+"jail, но <i>не</i> к закрытым ключам. <br> <b>Отключить</b>: jail не может "
+"выполнять какие-либо системные вызовы связанные с <b>sysvmem</b>."
 
 msgid ""
 "Allow or deny access to SYSV IPC shared memory primitives. "
@@ -1126,6 +1177,13 @@ msgid ""
 "but <i>not</i> private keys.<br> <b>Disable</b>: The jail cannot perform "
 "any <b>sysvshm</b> related system calls."
 msgstr ""
+"Разрешить или запретить доступ к примитивам разделяемой памяти SYSV IPC.<br> "
+"<b>Унаследовать</b>: Все объекты IPC в системе видны jail.<br> "
+"<b>Новые</b>: Только объекты созданные jail с использованием закрытого "
+"пространства имен ключей являются видимыми. Система и родительский jail "
+"имеют доступ к объектам jail, но <i>не</i> к закрытым ключам. "
+"<br> <b>Отключить</b>: jail не может выполнять какие-либо системные вызовы "
+"связанные с <b>sysvshm</b>."
 
 msgid "Allow password authentication"
 msgstr "Разрешить аутентификацию по паролю"
@@ -1143,6 +1201,11 @@ msgid ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=sethostname\" "
 "target=\"_blank\">sethostname(3)</a>."
 msgstr ""
+"Разрешить изменение имени хоста jail с помощью <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=hostname\" "
+"target=\"_blank\">hostname(1)</a> or <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=sethostname\" "
+"target=\"_blank\">sethostname(3)</a>."
 
 msgid ""
 "Allow the jail hostname to be changed with <a "
@@ -1224,28 +1287,31 @@ msgid ""
 "through <i>My account -> Security Credentials -> Access Keys (Access Key ID "
 "and Secret Access Key)</i>."
 msgstr ""
-"По крайней мере, один модуль должен быть определен в <a "
-"href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\" "
-"target=\"_blank\">rsyncd.conf(5)</a> сервера rsync или в <b>Rsync "
-"Modules</b> другой системы."
+"Amazon Web Services Key ID. Его можно найти в <a "
+"href=\"https://aws.amazon.com/\" target=\"_blank\">Amazon AWS</a>, пройдя "
+"через <i>My account -> Security Credentials -> Access Keys (Access Key ID "
+"and Secret Access Key)</i>."
 
 msgid ""
 "Amazon Web Services password. If the Secret Access Key cannot be found or "
 "remembered, go to <i>My Account > Security Credentials > Access Keys</i> "
 "and create a new key pair."
 msgstr ""
+"Пароль Amazon Web Services. Если Secret Access Key не может быть найден "
+"или вспомнен, перейдите в раздел <i>My Account > Security Credentials > "
+"Access Keys</i> и создайте новую пару ключей."
 
 msgid "Amount of locked memory in bytes for the jail."
-msgstr ""
+msgstr "Количество заблокированной памяти в байтах для jail."
 
 msgid "An update is already applied. Please reboot the system."
-msgstr ""
+msgstr "Обновление уже применено. Пожалуйста, перезагрузите систему."
 
 msgid "Anonymous User Download Bandwidth"
-msgstr ""
+msgstr "Полоса Скачивания Анонимного Пользователя"
 
 msgid "Anonymous User Upload Bandwidth"
-msgstr ""
+msgstr "Полоса Закачки Анонимного Пользователя"
 
 msgid "Appdefaults Auxiliary Parameters"
 msgstr ""
@@ -1254,65 +1320,69 @@ msgid ""
 "Append <i>@realm</i> to <i>cn</i> in LDAP queries for both groups and users "
 "when User CN is set)."
 msgstr ""
+"Добавлять <i>@realm</i> к <i>cn</i> в запросах LDAP для групп и "
+"пользователей, если задан User CN)."
 
 msgid "Apple (AFP) Shares"
-msgstr ""
+msgstr "Общие ресурсы Apple (AFP)"
 
 msgid "Application Client Secret"
-msgstr ""
+msgstr "Секрет Клиента Приложения"
 
 msgid "Apply Group"
-msgstr ""
+msgstr "Применить Группу"
 
 msgid "Apply Mode"
-msgstr ""
+msgstr "Применить Режим"
 
 msgid "Apply Network Changes"
-msgstr ""
+msgstr "Применить Изменения Сети"
 
 msgid "Apply Pending Updates"
-msgstr ""
+msgstr "Применить Ожидающие Обновления"
 
 msgid "Apply Pending update"
-msgstr ""
+msgstr "Применить Ожидающее Обновление"
 
 msgid "Apply User"
-msgstr ""
+msgstr "Применить Пользователя"
 
 msgid "Apply network changes? Network connectivity will be interrupted."
-msgstr ""
+msgstr "Применить сетевые изменения? Сетевое подключение будет прервано."
 
 msgid "Apply permissions recursively"
-msgstr ""
+msgstr "Применить разрешения рекурсивно"
 
 msgid "Apply permissions recursively all child datasets within the current dataset"
-msgstr ""
+msgstr "Применить разрешения рекурсивно ко всем дочерним наборам данных внутри текущего набора данных"
 
 msgid ""
 "Apply permissions recursively to all directories and files within the "
 "current dataset"
 msgstr ""
+"Рекурсивно применять разрешения ко всем каталогам и файлам в текущем "
+"наборе данных"
 
 msgid "Apply permissions to child datasets"
-msgstr ""
+msgstr "Применить разрешения к дочерним наборам данных"
 
 msgid "Apply updates and reboot system after downloading."
-msgstr ""
+msgstr "Примените обновления и перезагрузите систему после загрузки."
 
 msgid "Archive"
-msgstr ""
+msgstr "Архив"
 
 msgid "Are you sure you want to sync from peer?"
-msgstr ""
+msgstr "Вы уверены, что хотите синхронизироваться с напарника?"
 
 msgid "Are you sure you want to sync to peer?"
-msgstr ""
+msgstr "Вы уверены, что хотите синхронизировать напарника?"
 
 msgid "Are you sure?"
-msgstr ""
+msgstr "Вы уверены?"
 
 msgid "Asigra successfully updated."
-msgstr ""
+msgstr "Asigra успешно обновлена."
 
 msgid ""
 "Assigning a directory to Minio changes the permissions                      "
@@ -1322,6 +1392,9 @@ msgid ""
 "a separate dataset for Minio is strongly                                    "
 "          recommended."
 msgstr ""
+"Назначение каталога для Minio меняет разрешения для этого каталога и каждого "
+"каталога в нем на minio:minio и отменяет все предыдущие разрешения. "
+"Настоятельно рекомендуется создать отдельный набор данных для Minio."
 
 msgid ""
 "At least one module must be defined in <a                "
@@ -1329,6 +1402,10 @@ msgid ""
 "target=\"_blank\">rsyncd.conf(5)</a> of the rsync                server or "
 "in the <b>Rsync Modules</b> of another                system."
 msgstr ""
+"По крайней мере, один модуль должен быть определен в <a "
+"href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\" "
+"target=\"_blank\">rsyncd.conf(5)</a> сервера rsync или в "
+"<b>Rsync Modules</b> другой системы."
 
 msgid "Attach Debug"
 msgstr "Прикрепить Отладку"
@@ -1470,6 +1547,12 @@ msgid ""
 msgstr ""
 "Backblaze B2 Application Key. Войдите в учетную запись B2 и сгенерируйте "
 "ключ на странице Buckets. <а "
+"href=\"https://help.backblaze.com/hc/en-us/articles/224991568-Where-can-I-"
+"find-my-Account-ID-and-Application-Key-\" target=\"_blank\">Создание нового "
+"Master Application Key</a> сделает недействительным существующий Master key "
+"и потребует обновления этого поля. Для использования ключа приложения с "
+"ограниченными разрешениями также необходимо изменить <i>Account ID</i> на "
+"новый <i>keyID</i>."
 
 msgid ""
 "Backend used to map Windows security identifiers (SIDs) to UNIX UIDs and "
@@ -1546,7 +1629,7 @@ msgid "Block size"
 msgstr "Размер блока"
 
 msgid "Boot"
-msgstr ""
+msgstr "Загрузка"
 
 msgid "Boot Loader Type"
 msgstr "Тип Загрузчика"
@@ -1567,38 +1650,49 @@ msgid ""
 "vs-brainpool\" target=\"blank\"> Elliptic Curve performance: NIST vs "
 "Brainpool </a> for more information."
 msgstr ""
+"Кривые Brainpool могут быть более безопасными, а кривые secp - быстрее. "
+"Смотрите <a "
+"href=\"https://tls.mbed.org/kb/cryptography/elliptic-curve-performance-nist-"
+"vs-brainpool\" target=\"blank\"> Elliptic Curve performance: NIST vs "
+"Brainpool </a> для получения дополнительной информации."
 
 msgid "Bridge Members"
-msgstr ""
+msgstr "Компоненты Моста"
 
 msgid "Browsable to Network Clients"
-msgstr ""
+msgstr "Доступно для просмотра сетевым клиентам"
 
 msgid "Browse"
-msgstr ""
+msgstr "Просмотр"
 
 msgid "Browse a Collection"
-msgstr ""
+msgstr "Просмотреть Коллекцию"
 
 msgid "Browse to a CD-ROM file present on the system storage."
-msgstr ""
+msgstr "Найти файл компакт-диска, который находится в системном хранилище."
 
 msgid ""
 "Browse to a storage location and add the name of the new raw file on the "
 "end of the path."
 msgstr ""
+"Перейдите к месту хранения и добавьте имя нового raw файла в конце пути."
 
 msgid ""
 "Browse to an <b>existing</b> directory to use for storage. Some devices can "
 "require a specific directory name. Consult the documentation for that "
 "device to see if there are any restrictions."
 msgstr ""
+"Перейдите в <b>существующий</b> каталог для хранения. Некоторые устройства "
+"могут требовать определенного имени каталога. Обратитесь к документации для "
+"этого устройства, чтобы увидеть, есть ли какие-либо ограничения."
 
 msgid ""
 "Browse to an empty directory within the jail or enter a new directory name "
 "within the jail directory structure. This links to the <b>Source</b> "
 "storage area."
 msgstr ""
+"Перейдите к пустому каталогу внутри jail или введите новое имя каталога в "
+"структуре каталога jail. Это ссылка на область хранения <b>Source</b>."
 
 msgid ""
 "Browse to an existing file and use <i>0</i> as the <b>Extent size</b>, or "
@@ -1606,52 +1700,66 @@ msgid ""
 "Name</b> to the path, and specify a value in <b>Extent Size</b>. Extents "
 "cannot be created inside the jail root directory."
 msgstr ""
+"Найдите существующий файл и используйте <i>0</i> в качестве <b>Размера "
+"Экстента</b> или перейдите к пулу или набору данных, нажмите <b>Закрыть</b> "
+"и добавьте <b>Имя экстента</b> для пути и укажите значение в <b>Размер "
+"экстента</b>. Экстенты нельзя создать внутри корневого каталога jail."
 
 msgid ""
 "Browse to an existing file. Create a new file by browsing to a dataset and "
 "appending /<i>{filename.ext}</i> to the path."
 msgstr ""
+"Перейдите к существующему файлу. Создайте новый файл, перейдя к набору данных "
+"и добавив /<i>{filename.ext}</i> к пути."
 
 msgid "Browse to an existing pool or dataset to store the new zvol."
-msgstr ""
+msgstr "Перейдите к существующему пулу или набору данных, чтобы сохранить новый zvol."
 
 msgid "Browse to the ZFS dataset that will hold the copied data."
-msgstr ""
+msgstr "Перейдите к набору данных ZFS, в котором будут храниться скопированные данные."
 
 msgid "Browse to the desired zvol on the disk."
-msgstr ""
+msgstr "Перейдите к нужному zvol на диске."
 
 msgid "Browse to the directory for the S3 filesystem."
-msgstr ""
+msgstr "Перейдите в каталог для файловой системы S3."
 
 msgid ""
 "Browse to the directory on the system which will be accessed by the jail. "
 "This directory <b>must</b> be separate from the jail pool or dataset."
 msgstr ""
+"Перейдите в каталог в системе, к которому будет обращаться jail. "
+"Этот каталог <b>должен</b> быть отдельным от пула или набора данных jail."
 
 msgid ""
 "Browse to the existing path on the remote host to                sync with. "
 "Maximum path length is 255 characters"
 msgstr ""
+"Найдите существующий путь на удаленном хосте для синхронизации. "
+"Максимальная длина пути составляет 255 символов"
 
 msgid "Browse to the keytab file to upload."
-msgstr ""
+msgstr "Перейдите к файлу keytab для загрузки."
 
 msgid "Browse to the operating system installer image file."
-msgstr ""
+msgstr "Перейдите к файлу образа установщика операционной системы."
 
 msgid ""
 "Browse to the path to be copied. Path lengths cannot                be "
 "greater than 255 characters."
 msgstr ""
+"Найдите путь для копирования. Длина пути не может превышать 255 символов."
 
 msgid "Browse to the pool or dataset to share."
-msgstr ""
+msgstr "Перейдите к пулу или набору данных для доступа."
 
 msgid ""
 "Browse to the pool or dataset to share. Netatalk does not fully support "
 "nesting additional pools, datasets, or symbolic links beneath this path."
 msgstr ""
+"Перейдите к пулу или набору данных для доступа. Netatalk не полностью "
+"поддерживает вложение дополнительных пулов, наборов данных или символических "
+"ссылок под этим путем."
 
 msgid "Bucket"
 msgstr ""
@@ -1666,18 +1774,27 @@ msgid ""
 "they are created without swap. Setting to <i>0</i> disables swap creation "
 "completely. <b>STRONGLY DISCOURAGED</b>"
 msgstr ""
+"По умолчанию все диски с данными создаются с указанным объемом подкачки. "
+"Изменение значения не влияет на объем подкачки на существующих дисках, "
+"только диски, добавленные после изменения. Не влияет на устройства журнала "
+"и кеша, так как они создаются без подкачки. Установка <i>0</i> полностью "
+"отключает создание свопа. <b>НАСТОЯТЕЛЬНО НЕ РЕКОМЕНДУЕТСЯ</b>"
 
 msgid ""
 "By default, the VM receives an auto-generated random MAC address. Enter a "
 "custom address into the field to override the default. Click <b>Generate "
 "MAC Address</b> to add a new randomized address into this field."
 msgstr ""
+"По умолчанию виртуальная машина получает автоматически сгенерированный "
+"случайный MAC-адрес. Введите пользовательский адрес в поле, чтобы "
+"переопределить значение по умолчанию. Нажмите <b>Создать MAC-адрес</b>, "
+"чтобы добавить новый случайный адрес в это поле."
 
 msgid "CA ID"
 msgstr ""
 
 msgid "CAs"
-msgstr ""
+msgstr "Центры сертификации"
 
 msgid "CD-ROM Path"
 msgstr ""
@@ -1686,10 +1803,10 @@ msgid "CLOSE"
 msgstr ""
 
 msgid "CN Realm"
-msgstr ""
+msgstr "CN Область"
 
 msgid "CPU"
-msgstr ""
+msgstr "Процессор"
 
 msgid "CPU Temperatures"
 msgstr ""
@@ -1715,25 +1832,25 @@ msgid ""
 msgstr ""
 
 msgid "Cancel"
-msgstr ""
+msgstr "Отмена"
 
 msgid "Case Sensitivity"
-msgstr ""
+msgstr "Чувствительность к регистру"
 
 msgid "Category"
 msgstr ""
 
 msgid "Certificate"
-msgstr ""
+msgstr "Сертификат"
 
 msgid "Certificates"
-msgstr ""
+msgstr "Сертификаты"
 
 msgid "Change Device Order"
 msgstr ""
 
 msgid "Change Passphrase"
-msgstr ""
+msgstr "Сменить пароль"
 
 msgid "Change Password"
 msgstr ""
@@ -1742,7 +1859,7 @@ msgid "Change Pool Passphrase"
 msgstr ""
 
 msgid "Change User & Group Ownership"
-msgstr ""
+msgstr "Сменить владельца и группу"
 
 msgid ""
 "Change from <i>public</i to increase system security. Can only contain "
@@ -1808,7 +1925,7 @@ msgid "Check Release Notes"
 msgstr ""
 
 msgid "Check for Updates"
-msgstr ""
+msgstr "Проверить наличие обновлений"
 
 msgid "Check for Updates Daily and Download if Available"
 msgstr ""
@@ -2150,10 +2267,10 @@ msgid "Client secret for the Amazon Drive account."
 msgstr ""
 
 msgid "Clients"
-msgstr ""
+msgstr "Клиенты"
 
 msgid "Clone"
-msgstr ""
+msgstr "Клонировать"
 
 msgid "Close"
 msgstr ""
@@ -2202,7 +2319,7 @@ msgid ""
 msgstr ""
 
 msgid "Command"
-msgstr ""
+msgstr "Команда"
 
 msgid ""
 "Commands to run in the jail environment before the jail is removed and "
@@ -2239,28 +2356,28 @@ msgid "Commands to run in the system environment before a jail is stopped."
 msgstr ""
 
 msgid "Comment"
-msgstr ""
+msgstr "Комментарий"
 
 msgid "Comments"
-msgstr ""
+msgstr "Комментарии"
 
 msgid "Commit"
 msgstr ""
 
 msgid "Common Name"
-msgstr ""
+msgstr "Общее имя"
 
 msgid "Community"
-msgstr ""
+msgstr "Сообщество"
 
 msgid "Compress"
-msgstr ""
+msgstr "Сжатие"
 
 msgid "Compress connections"
 msgstr ""
 
 msgid "Compression level"
-msgstr ""
+msgstr "Степень сжатия"
 
 msgid "Config"
 msgstr ""
@@ -2306,19 +2423,19 @@ msgid ""
 msgstr ""
 
 msgid "Confirm"
-msgstr ""
+msgstr "Подтвердите"
 
 msgid "Confirm Options"
 msgstr ""
 
 msgid "Confirm Passphrase"
-msgstr ""
+msgstr "Подтвердите пароль"
 
 msgid "Confirm Password"
-msgstr ""
+msgstr "Подтверждение пароля"
 
 msgid "Confirm Privacy Passphrase"
-msgstr ""
+msgstr "Подтвердите пароль"
 
 msgid "Confirm RRD Destroy"
 msgstr ""
@@ -2354,22 +2471,22 @@ msgid "Connecting to "
 msgstr ""
 
 msgid "Connections"
-msgstr ""
+msgstr "Соединения"
 
 msgid "Connectivity Check"
 msgstr ""
 
 msgid "Console Keyboard Map"
-msgstr ""
+msgstr "Раскладка клавиатуры консоли"
 
 msgid "Contact"
-msgstr ""
+msgstr "Контакт"
 
 msgid "Container"
 msgstr ""
 
 msgid "Continue"
-msgstr ""
+msgstr "Продолжить"
 
 msgid "Continue with download?"
 msgstr ""
@@ -2412,16 +2529,16 @@ msgid "Could not delete boot environment."
 msgstr ""
 
 msgid "Country"
-msgstr ""
+msgstr "Страна"
 
 msgid "Country Code"
-msgstr ""
+msgstr "Код страны"
 
 msgid "Crash reporting"
 msgstr ""
 
 msgid "Create"
-msgstr ""
+msgstr "Создать"
 
 msgid "Create ACME Certificate"
 msgstr ""
@@ -2433,7 +2550,7 @@ msgid "Create Certificate"
 msgstr ""
 
 msgid "Create Passphrase"
-msgstr ""
+msgstr "Задать пароль"
 
 msgid "Create Pool"
 msgstr ""
@@ -2442,7 +2559,7 @@ msgid "Create Pool Passphrase"
 msgstr ""
 
 msgid "Create Snapshot"
-msgstr ""
+msgstr "Создать снимок"
 
 msgid "Create a new Pool."
 msgstr ""
@@ -2491,16 +2608,16 @@ msgid ""
 msgstr ""
 
 msgid "Credential"
-msgstr ""
+msgstr "Реквизиты"
 
 msgid "Critical"
-msgstr ""
+msgstr "Критично"
 
 msgid "Criticality"
 msgstr ""
 
 msgid "Cron Jobs"
-msgstr ""
+msgstr "Задания Cron"
 
 msgid "Current Password"
 msgstr ""
@@ -2518,7 +2635,7 @@ msgid "DELETE"
 msgstr ""
 
 msgid "DHCP"
-msgstr ""
+msgstr "DHCP"
 
 msgid "DHCP Autoconfigure IPv4"
 msgstr ""
@@ -2533,7 +2650,7 @@ msgid "DNS Timeout"
 msgstr ""
 
 msgid "DNS timeout"
-msgstr ""
+msgstr "Таймаут DNS"
 
 msgid "DNS timeout in seconds. Increase this value if DNS queries timeout."
 msgstr ""
@@ -2548,16 +2665,16 @@ msgid "Data VDevs"
 msgstr ""
 
 msgid "Database Path"
-msgstr ""
+msgstr "Путь к базе данных"
 
 msgid "Dataset"
-msgstr ""
+msgstr "Набор данных"
 
 msgid "Dataset has complex ACLs"
 msgstr ""
 
 msgid "Datastore"
-msgstr ""
+msgstr "Хранилище"
 
 msgid "Day of Month"
 msgstr ""
@@ -2600,7 +2717,7 @@ msgid "Default is UTF-8 which supports all characters in all languages."
 msgstr ""
 
 msgid "Default umask"
-msgstr ""
+msgstr "umask по умолчанию"
 
 msgid ""
 "Define a length of time to retain the snapshot on this system. After the "
@@ -2698,13 +2815,13 @@ msgid ""
 msgstr ""
 
 msgid "Delay Updates"
-msgstr ""
+msgstr "Задержать обновления"
 
 msgid "Delay VM Boot until VNC Connects"
 msgstr ""
 
 msgid "Delete"
-msgstr ""
+msgstr "Удалить"
 
 msgid "Delete "
 msgstr ""
@@ -2783,7 +2900,7 @@ msgid "Describe this service."
 msgstr ""
 
 msgid "Description"
-msgstr ""
+msgstr "Описание"
 
 msgid "Description (max. 25 characters)"
 msgstr ""
@@ -2798,7 +2915,7 @@ msgid "Description:"
 msgstr ""
 
 msgid "Destination"
-msgstr ""
+msgstr "Назначение"
 
 msgid "Destination Path"
 msgstr ""
@@ -2817,7 +2934,7 @@ msgid ""
 msgstr ""
 
 msgid "Detach"
-msgstr ""
+msgstr "Отсоединить"
 
 msgid "Detach Pool"
 msgstr ""
@@ -2865,7 +2982,7 @@ msgid ""
 msgstr ""
 
 msgid "Device"
-msgstr ""
+msgstr "Устройство"
 
 msgid "Device Busy"
 msgstr ""
@@ -2877,16 +2994,16 @@ msgid "Devices"
 msgstr ""
 
 msgid "Difference"
-msgstr ""
+msgstr "Разница"
 
 msgid "Digest Algorithm"
-msgstr ""
+msgstr "Алгоритм хеширования"
 
 msgid "Direct the flow of data to the remote host."
 msgstr ""
 
 msgid "Direction"
-msgstr ""
+msgstr "Направление"
 
 msgid ""
 "Direction of travel. <i>Push</i> sends snapshots to a remote system. "
@@ -2897,16 +3014,16 @@ msgid "Directories & Permissions"
 msgstr ""
 
 msgid "Directory"
-msgstr ""
+msgstr "Каталог"
 
 msgid "Directory Mask"
 msgstr ""
 
 msgid "Directory Permission"
-msgstr ""
+msgstr "Права доступа к каталогу"
 
 msgid "Directory Services"
-msgstr ""
+msgstr "Службы каталогов"
 
 msgid "Directory/Files"
 msgstr ""
@@ -2927,7 +3044,7 @@ msgid "Disable physical block size reporting"
 msgstr ""
 
 msgid "Disabled"
-msgstr ""
+msgstr "Отключён"
 
 msgid "Discard"
 msgstr ""
@@ -2942,16 +3059,16 @@ msgid "Discover Remote Host Key"
 msgstr ""
 
 msgid "Discovery Auth Group"
-msgstr ""
+msgstr "Группа аутентификации обнаружения"
 
 msgid "Discovery Auth Method"
-msgstr ""
+msgstr "Метод аутентификации обнаружения"
 
 msgid "Disk"
-msgstr ""
+msgstr "Диск"
 
 msgid "Disk Size"
-msgstr ""
+msgstr "Размер диска"
 
 msgid "Disk sector size"
 msgstr ""
@@ -2963,7 +3080,7 @@ msgid "Disk to wipe."
 msgstr ""
 
 msgid "Disks"
-msgstr ""
+msgstr "Диски"
 
 msgid "Disks in Use"
 msgstr ""
@@ -2975,13 +3092,13 @@ msgid "Display Login"
 msgstr ""
 
 msgid "Display System Processes"
-msgstr ""
+msgstr "Отобразить системные процессы"
 
 msgid "Display console messages in real time at the bottom of the browser."
 msgstr ""
 
 msgid "Distinguished Name"
-msgstr ""
+msgstr "Уникальное имя"
 
 msgid ""
 "Do <b>NOT</b> change this setting when using Windows as the initiator. Only "
@@ -3004,16 +3121,16 @@ msgid "Docker Host"
 msgstr ""
 
 msgid "Domain"
-msgstr ""
+msgstr "Домен"
 
 msgid "Domain Account Name"
-msgstr ""
+msgstr "Учетная запись домена"
 
 msgid "Domain Account Password"
-msgstr ""
+msgstr "Пароль учетной записи домена"
 
 msgid "Domain Forest Level"
-msgstr ""
+msgstr "Уровень доменного леса"
 
 msgid "Domain Logons"
 msgstr ""
@@ -3022,10 +3139,10 @@ msgid "Domain Name"
 msgstr ""
 
 msgid "Domain name"
-msgstr ""
+msgstr "Доменное имя"
 
 msgid "Done"
-msgstr ""
+msgstr "Готово"
 
 msgid "Download Encrypt Key"
 msgstr ""
@@ -3046,7 +3163,7 @@ msgid "Drive ID"
 msgstr ""
 
 msgid "Driver"
-msgstr ""
+msgstr "Драйвер"
 
 msgid "EC Curve"
 msgstr ""
@@ -3055,7 +3172,7 @@ msgid "EDIT ACL"
 msgstr ""
 
 msgid "Edit"
-msgstr ""
+msgstr "Изменить"
 
 msgid "Edit ACL"
 msgstr ""
@@ -3070,7 +3187,7 @@ msgid "Edit Note"
 msgstr ""
 
 msgid "Edit Options"
-msgstr ""
+msgstr "Редактировать параметры"
 
 msgid "Edit Permissions"
 msgstr ""
@@ -3091,10 +3208,10 @@ msgid "Electing storage controller."
 msgstr ""
 
 msgid "Email"
-msgstr ""
+msgstr "Электронная почта"
 
 msgid "Email Subject"
-msgstr ""
+msgstr "Тема письма"
 
 msgid ""
 "Emulating an <i>Intel e82545 (e1000)</i> Ethernet card provides "
@@ -3104,7 +3221,7 @@ msgid ""
 msgstr ""
 
 msgid "Enable"
-msgstr ""
+msgstr "Включено"
 
 msgid "Enable Atime"
 msgstr ""
@@ -3116,13 +3233,13 @@ msgid "Enable Debug Kernel"
 msgstr ""
 
 msgid "Enable FXP"
-msgstr ""
+msgstr "Включить FXP"
 
 msgid "Enable NFSv4"
-msgstr ""
+msgstr "Включить NFSv4"
 
 msgid "Enable S.M.A.R.T."
-msgstr ""
+msgstr "Включить S.M.A.R.T."
 
 msgid "Enable SMB1 support"
 msgstr ""
@@ -3131,16 +3248,16 @@ msgid "Enable Serial Console"
 msgstr ""
 
 msgid "Enable Service"
-msgstr ""
+msgstr "Включить службу"
 
 msgid "Enable Shadow Copies"
 msgstr ""
 
 msgid "Enable TLS"
-msgstr ""
+msgstr "Включить TLS"
 
 msgid "Enable TPC"
-msgstr ""
+msgstr "Включить TPC"
 
 msgid "Enable Time Machine backups on this share."
 msgstr ""
@@ -3163,16 +3280,16 @@ msgid "Enable automatic support alerts to iXsystems (Silver/Gold support only)"
 msgstr ""
 
 msgid "Enable autotune"
-msgstr ""
+msgstr "Разрешить самонастройку"
 
 msgid "Enable iSCSI ALUA"
-msgstr ""
+msgstr "Включить iSCSI ALUA"
 
 msgid "Enable if Mac clients will be connecting to the SMB share."
 msgstr ""
 
 msgid "Enable netwait feature"
-msgstr ""
+msgstr "Включить ожидание сети"
 
 msgid "Enable password login"
 msgstr ""
@@ -3242,7 +3359,7 @@ msgid ""
 msgstr ""
 
 msgid "Enabled"
-msgstr ""
+msgstr "Включено"
 
 msgid ""
 "Enables the autotune script which attempts to optimize the system depending "
@@ -3267,16 +3384,16 @@ msgid "Encrypted pool disks must be decrypted prior to import."
 msgstr ""
 
 msgid "Encryption"
-msgstr ""
+msgstr "Шифрование"
 
 msgid "Encryption Key"
-msgstr ""
+msgstr "Ключ шифрования"
 
 msgid "Encryption Key Required"
 msgstr ""
 
 msgid "Encryption Mode"
-msgstr ""
+msgstr "Режим шифрования"
 
 msgid "Encryption Password"
 msgstr ""
@@ -3288,7 +3405,7 @@ msgid "Encryption Salt"
 msgstr ""
 
 msgid "End"
-msgstr ""
+msgstr "Конец"
 
 msgid "End Time"
 msgstr ""
@@ -3974,7 +4091,7 @@ msgid "Environment"
 msgstr ""
 
 msgid "Error"
-msgstr ""
+msgstr "Ошибка"
 
 msgid "Error Deleting Key"
 msgstr ""
@@ -4110,10 +4227,10 @@ msgid "Export Private Key"
 msgstr ""
 
 msgid "Export Read Only"
-msgstr ""
+msgstr "Экспортировать только для чтения"
 
 msgid "Export Recycle Bin"
-msgstr ""
+msgstr "Экспортировать Корзину"
 
 msgid ""
 "Export ZFS snapshots as <a "
@@ -4143,13 +4260,13 @@ msgid "Extending an encrypted pool resets the passphrase and recovery key!"
 msgstr ""
 
 msgid "Extent"
-msgstr ""
+msgstr "Экстент"
 
 msgid "Extent name"
 msgstr ""
 
 msgid "Extent size"
-msgstr ""
+msgstr "Размер экстента"
 
 msgid "Extent type"
 msgstr ""
@@ -4158,7 +4275,7 @@ msgid "Extra Users"
 msgstr ""
 
 msgid "Extra options"
-msgstr ""
+msgstr "Дополнительные параметры"
 
 msgid "FTP Host to connect to. Example: <i>ftp.example.com</i>."
 msgstr ""
@@ -4167,7 +4284,7 @@ msgid "FTP Port number. Leave blank to use a default port of <i>21</i>."
 msgstr ""
 
 msgid "Failed"
-msgstr ""
+msgstr "Ошибка"
 
 msgid "Failover"
 msgstr ""
@@ -4194,13 +4311,13 @@ msgid "Fetch and Install Updates"
 msgstr ""
 
 msgid "File"
-msgstr ""
+msgstr "Файл"
 
 msgid "File Mask"
 msgstr ""
 
 msgid "File Permission"
-msgstr ""
+msgstr "Права доступа к файлу"
 
 msgid "File Permissions"
 msgstr ""
@@ -4258,13 +4375,13 @@ msgid ""
 msgstr ""
 
 msgid "Force"
-msgstr ""
+msgstr "Принудить"
 
 msgid "Force Delete"
 msgstr ""
 
 msgid "Force size"
-msgstr ""
+msgstr "Установить размер"
 
 msgid ""
 "Force using <a "
@@ -4296,7 +4413,7 @@ msgid "From E-mail"
 msgstr ""
 
 msgid "Full Name"
-msgstr ""
+msgstr "Полное Имя"
 
 msgid ""
 "Full path to the pool or dataset to share. Mandatory. Click <b>ADD "
@@ -4304,10 +4421,10 @@ msgid ""
 msgstr ""
 
 msgid "Full with random data"
-msgstr ""
+msgstr "Полная со случайными данными"
 
 msgid "Full with zeros"
-msgstr ""
+msgstr "Полная с заполнением нулями"
 
 msgid "GID"
 msgstr ""
@@ -4316,10 +4433,10 @@ msgid "GUI SSL Certificate"
 msgstr ""
 
 msgid "Gateway"
-msgstr ""
+msgstr "Шлюз"
 
 msgid "General"
-msgstr ""
+msgstr "Общие"
 
 msgid "Generate Debug File"
 msgstr ""
@@ -4338,10 +4455,10 @@ msgid ""
 msgstr ""
 
 msgid "Global Configuration"
-msgstr ""
+msgstr "Общие настройки"
 
 msgid "Global auxiliary parameters"
-msgstr ""
+msgstr "Глобальные дополнительные параметры"
 
 msgid "Global password to unlock SEDs."
 msgstr ""
@@ -4359,22 +4476,22 @@ msgid "Graphite Server"
 msgstr ""
 
 msgid "Group"
-msgstr ""
+msgstr "Группа"
 
 msgid "Group Bind Path"
-msgstr ""
+msgstr "Путь привязки группы"
 
 msgid "Group ID"
-msgstr ""
+msgstr "Идентификатор группы"
 
 msgid "Group Suffix"
-msgstr ""
+msgstr "Суффикс группы"
 
 msgid "Groups"
-msgstr ""
+msgstr "Группы"
 
 msgid "Guest Access"
-msgstr ""
+msgstr "Гостевой доступ"
 
 msgid "Guest Account"
 msgstr ""
@@ -4383,7 +4500,7 @@ msgid "Guest Operating System"
 msgstr ""
 
 msgid "Guide"
-msgstr ""
+msgstr "Гид"
 
 msgid "HA Disabled"
 msgstr ""
@@ -4407,19 +4524,19 @@ msgid "HA is reconnecting."
 msgstr ""
 
 msgid "HDD Standby"
-msgstr ""
+msgstr "Отключение диска"
 
 msgid "HTTP Authentication"
-msgstr ""
+msgstr "HTTP Аутентификация"
 
 msgid "HTTP Port"
-msgstr ""
+msgstr "HTTP порт"
 
 msgid "HTTP Proxy"
-msgstr ""
+msgstr "HTTP-прокси"
 
 msgid "HTTPS Port"
-msgstr ""
+msgstr "HTTPS порт"
 
 msgid "Hard Disk"
 msgstr ""
@@ -4464,7 +4581,7 @@ msgid "Hold Pending Snapshots"
 msgstr ""
 
 msgid "Home Directory"
-msgstr ""
+msgstr "Домашний Каталог"
 
 msgid "Home Directory Permissions"
 msgstr ""
@@ -4488,7 +4605,7 @@ msgid "HostName"
 msgstr ""
 
 msgid "Hostname"
-msgstr ""
+msgstr "Имя хоста"
 
 msgid "Hostname (Storage Controller 2)"
 msgstr ""
@@ -4511,13 +4628,13 @@ msgid ""
 msgstr ""
 
 msgid "Hosts Allow"
-msgstr ""
+msgstr "Разрешенные хосты"
 
 msgid "Hosts Deny"
-msgstr ""
+msgstr "Запрещенные хосты"
 
 msgid "Hour"
-msgstr ""
+msgstr "Час"
 
 msgid "Hour and minute the system can begin taking snapshots."
 msgstr ""
@@ -4550,7 +4667,7 @@ msgid "I Understand"
 msgstr ""
 
 msgid "IBurst"
-msgstr ""
+msgstr "IBurst"
 
 msgid "ID & Groups"
 msgstr ""
@@ -4562,7 +4679,7 @@ msgid "IP"
 msgstr ""
 
 msgid "IP Address"
-msgstr ""
+msgstr "IP адрес"
 
 msgid "IP Addresses"
 msgstr ""
@@ -4573,13 +4690,13 @@ msgid ""
 msgstr ""
 
 msgid "IPMI"
-msgstr ""
+msgstr "IPMI"
 
 msgid "IPv4 Address"
-msgstr ""
+msgstr "Адрес IPv4"
 
 msgid "IPv4 Default Gateway"
-msgstr ""
+msgstr "Шлюз IPv4 по умолчанию"
 
 msgid "IPv4 Default Router"
 msgstr ""
@@ -4588,7 +4705,7 @@ msgid "IPv4 Interface"
 msgstr ""
 
 msgid "IPv4 Netmask"
-msgstr ""
+msgstr "Маска сети IPv4"
 
 msgid "IPv4 address for the jail."
 msgstr ""
@@ -4608,13 +4725,13 @@ msgid "IPv4 netmask for the jail."
 msgstr ""
 
 msgid "IPv6 Address"
-msgstr ""
+msgstr "Адрес IPv6"
 
 msgid "IPv6 Auto Configure"
 msgstr ""
 
 msgid "IPv6 Default Gateway"
-msgstr ""
+msgstr "Шлюз IPv6 по умолчанию"
 
 msgid "IPv6 Default Router"
 msgstr ""
@@ -4626,7 +4743,7 @@ msgid "IPv6 Prefix"
 msgstr ""
 
 msgid "IPv6 Prefix Length"
-msgstr ""
+msgstr "Длина префикса IPv6"
 
 msgid "IPv6 address for the jail."
 msgstr ""
@@ -4644,13 +4761,13 @@ msgid "Id"
 msgstr ""
 
 msgid "Identifier"
-msgstr ""
+msgstr "Идентификатор"
 
 msgid "Idmap Backend"
-msgstr ""
+msgstr "Механизм idmap"
 
 msgid "Idmap backend"
-msgstr ""
+msgstr "Idmap задняя часть"
 
 msgid "If selected, sets several environment variables."
 msgstr ""
@@ -4694,13 +4811,13 @@ msgid ""
 msgstr ""
 
 msgid "Ignore Builtin"
-msgstr ""
+msgstr "Игнорировать BUILTIN"
 
 msgid "Import"
-msgstr ""
+msgstr "Импорт"
 
 msgid "Import Disk"
-msgstr ""
+msgstr "Импорт диска"
 
 msgid "Import a pool that exists but is not connected."
 msgstr ""
@@ -4767,10 +4884,10 @@ msgid ""
 msgstr ""
 
 msgid "Informational"
-msgstr ""
+msgstr "Информационные"
 
 msgid "Init/Shutdown Scripts"
-msgstr ""
+msgstr "Скрипты запуска/завершения"
 
 msgid "Initiate Failover"
 msgstr ""
@@ -4781,13 +4898,13 @@ msgid ""
 msgstr ""
 
 msgid "Initiator"
-msgstr ""
+msgstr "Инициатор"
 
 msgid "Initiator Group ID"
-msgstr ""
+msgstr "Идентификатор группы инициаторов"
 
 msgid "Initiators"
-msgstr ""
+msgstr "Инициаторы"
 
 msgid "Input the pre-defined S3 bucket to use."
 msgstr ""
@@ -4796,7 +4913,7 @@ msgid "Input the pre-defined container to use."
 msgstr ""
 
 msgid "Install"
-msgstr ""
+msgstr "Установка"
 
 msgid "Install Manual Update File"
 msgstr ""
@@ -4808,10 +4925,10 @@ msgid "Installing plugin..."
 msgstr ""
 
 msgid "Interface Description"
-msgstr ""
+msgstr "Описание интерфейса"
 
 msgid "Interfaces"
-msgstr ""
+msgstr "Интерфейсы"
 
 msgid ""
 "Interfaces marked <i>critical</i> are considered necessary for normal "
@@ -4821,7 +4938,7 @@ msgid ""
 msgstr ""
 
 msgid "Internal"
-msgstr ""
+msgstr "Внутренний"
 
 msgid ""
 "Internal identifier of the certificate. Only alphanumeric, \"_\" and \"-\" "
@@ -4829,7 +4946,7 @@ msgid ""
 msgstr ""
 
 msgid "Invalid password"
-msgstr ""
+msgstr "Неверный пароль"
 
 msgid "Invalid regex filter"
 msgstr ""
@@ -4838,7 +4955,7 @@ msgid "Is the pool encrypted?"
 msgstr ""
 
 msgid "Issuer"
-msgstr ""
+msgstr "Поставщик"
 
 msgid ""
 "It is not recommended to create a pool with vdevs containing different "
@@ -4857,7 +4974,7 @@ msgid "JID"
 msgstr ""
 
 msgid "Jail"
-msgstr ""
+msgstr "Jail"
 
 msgid "Jail "
 msgstr ""
@@ -4868,7 +4985,7 @@ msgid ""
 msgstr ""
 
 msgid "Jail Name"
-msgstr ""
+msgstr "Имя jail"
 
 msgid "Jail Properties"
 msgstr ""
@@ -4889,7 +5006,7 @@ msgid "Jail stack size in bytes."
 msgstr ""
 
 msgid "Jails"
-msgstr ""
+msgstr "Jail"
 
 msgid "Jails cannot be changed while running."
 msgstr ""
@@ -4900,7 +5017,7 @@ msgid ""
 msgstr ""
 
 msgid "KDC"
-msgstr ""
+msgstr "KDC"
 
 msgid "KEEP NETWORK CHANGES PERMANENTLY"
 msgstr ""
@@ -4925,49 +5042,49 @@ msgid "Keep user primary group"
 msgstr ""
 
 msgid "Kerberos Keytab"
-msgstr ""
+msgstr "Kerberos Keytab"
 
 msgid "Kerberos Keytabs"
-msgstr ""
+msgstr "Kerberos Keytabs"
 
 msgid "Kerberos Principal"
-msgstr ""
+msgstr "Основной Kerberos"
 
 msgid "Kerberos Realm"
-msgstr ""
+msgstr "Область Kerberos"
 
 msgid "Kerberos Realms"
-msgstr ""
+msgstr "Области Kerberos"
 
 msgid "Kerberos Settings"
-msgstr ""
+msgstr "Настройки Kerberos"
 
 msgid "Key Length"
-msgstr ""
+msgstr "Длина ключа"
 
 msgid "Key Type"
 msgstr ""
 
 msgid "LDAP"
-msgstr ""
+msgstr "LDAP"
 
 msgid "LDAP Domain"
-msgstr ""
+msgstr "Домен LDAP"
 
 msgid "LDAP Realm"
-msgstr ""
+msgstr "Область LDAP"
 
 msgid "LDAP Server"
-msgstr ""
+msgstr "Сервер LDAP"
 
 msgid "LDAP URL"
-msgstr ""
+msgstr "Адрес LDAP"
 
 msgid "LDAP User DN"
-msgstr ""
+msgstr "LDAP User DN"
 
 msgid "LDAP User DN Password"
-msgstr ""
+msgstr "Пароль LDAP User DN"
 
 msgid ""
 "LDAP server to use for SID/uid/gid map entries. When undefined, idmap_ldap "
@@ -4976,7 +5093,7 @@ msgid ""
 msgstr ""
 
 msgid "LDAP timeout"
-msgstr ""
+msgstr "Таймаут LDAP"
 
 msgid ""
 "LDAP timeout in seconds. Increase this value if a Kerberos ticket timeout "
@@ -4987,10 +5104,10 @@ msgid "LEGACY WEB INTERFACE"
 msgstr ""
 
 msgid "LUN ID"
-msgstr ""
+msgstr "LUN ID"
 
 msgid "LUN RPM"
-msgstr ""
+msgstr "Частота вращения"
 
 msgid "Lagg Interface"
 msgstr ""
@@ -5014,7 +5131,7 @@ msgid "Lagg Protocol"
 msgstr ""
 
 msgid "Language"
-msgstr ""
+msgstr "Язык"
 
 msgid "Launch DS Operator"
 msgstr ""
@@ -5047,10 +5164,10 @@ msgid "Libdefaults Auxiliary Parameters"
 msgstr ""
 
 msgid "License"
-msgstr ""
+msgstr "Лицензия"
 
 msgid "Lifetime"
-msgstr ""
+msgstr "Время жизни"
 
 msgid "Limit (kbps)"
 msgstr ""
@@ -5067,13 +5184,13 @@ msgid "List of system services to restart when the pool is unlocked."
 msgstr ""
 
 msgid "Load Average"
-msgstr ""
+msgstr "Средняя нагрузка"
 
 msgid "Local"
 msgstr ""
 
 msgid "Local Master"
-msgstr ""
+msgstr "Локальный Мастер"
 
 msgid "Local User Download Bandwidth"
 msgstr ""
@@ -5082,10 +5199,10 @@ msgid "Local User Upload Bandwidth"
 msgstr ""
 
 msgid "Locality"
-msgstr ""
+msgstr "Местоположение"
 
 msgid "Location"
-msgstr ""
+msgstr "Расположение"
 
 msgid "Lock"
 msgstr ""
@@ -5100,7 +5217,7 @@ msgid "Log Level"
 msgstr ""
 
 msgid "Log Out"
-msgstr ""
+msgstr "Выйти"
 
 msgid "Log VDev"
 msgstr ""
@@ -5115,10 +5232,10 @@ msgid "Log in to Legacy User Interface?"
 msgstr ""
 
 msgid "Log mountd(8) requests"
-msgstr ""
+msgstr "Журналировать запросы mountd(8)"
 
 msgid "Log rpc.statd(8) and rpc.lockd(8)"
-msgstr ""
+msgstr "Журналировать rpc.statd(8) и rpc.lockd(8)"
 
 msgid "Logging Level"
 msgstr ""
@@ -5127,7 +5244,7 @@ msgid "Logical block size"
 msgstr ""
 
 msgid "Login Attempts"
-msgstr ""
+msgstr "Попытки входа"
 
 msgid "Logs"
 msgstr ""
@@ -5161,34 +5278,34 @@ msgid "Mac Address"
 msgstr ""
 
 msgid "Machine Suffix"
-msgstr ""
+msgstr "Суффикс машины"
 
 msgid "Mail Server Port"
 msgstr ""
 
 msgid "Manycast"
-msgstr ""
+msgstr "Manycast"
 
 msgid "Map ACLs"
-msgstr ""
+msgstr "Карта ACLs"
 
 msgid "Mapall Group"
-msgstr ""
+msgstr "Закрепить идентификатор all за группой"
 
 msgid "Mapall User"
-msgstr ""
+msgstr "Закрепить идентификатор all за пользователем"
 
 msgid "Maproot Group"
-msgstr ""
+msgstr "Закрепить идентификатор root за группой"
 
 msgid "Maproot User"
-msgstr ""
+msgstr "Закрепить идентификатор root за пользователем"
 
 msgid "Masquerade Address"
 msgstr ""
 
 msgid "Master"
-msgstr ""
+msgstr "Мастер"
 
 msgid "Master Application Key or Application Key"
 msgstr ""
@@ -5199,10 +5316,10 @@ msgid ""
 msgstr ""
 
 msgid "Max. Connections"
-msgstr ""
+msgstr "Макс. количество соединений"
 
 msgid "Max. Poll"
-msgstr ""
+msgstr "Макс. Poll"
 
 msgid "Maximum Passive Port"
 msgstr ""
@@ -5274,7 +5391,7 @@ msgid "Member Disk"
 msgstr ""
 
 msgid "Members"
-msgstr ""
+msgstr "Члены"
 
 msgid "Members of"
 msgstr ""
@@ -5286,7 +5403,7 @@ msgid ""
 msgstr ""
 
 msgid "Memory"
-msgstr ""
+msgstr "Память"
 
 msgid "Memory Size (MiB)"
 msgstr ""
@@ -5300,7 +5417,7 @@ msgid ""
 msgstr ""
 
 msgid "Method"
-msgstr ""
+msgstr "Метод"
 
 msgid ""
 "Method for snapshot transfer:<ul> <li><i>SSH</i> is supported by most "
@@ -5318,7 +5435,7 @@ msgid ""
 msgstr ""
 
 msgid "Microsoft Account"
-msgstr ""
+msgstr "Учетная запись Microsoft"
 
 msgid ""
 "Microsoft Onedrive <a "
@@ -5327,13 +5444,13 @@ msgid ""
 msgstr ""
 
 msgid "Min. Poll"
-msgstr ""
+msgstr "Мин. Poll"
 
 msgid "Minimum Passive Port"
 msgstr ""
 
 msgid "Minute"
-msgstr ""
+msgstr "Минута"
 
 msgid "Mirror"
 msgstr ""
@@ -5342,7 +5459,7 @@ msgid "Mixing disks of different sizes in a VDEV is not recommended."
 msgstr ""
 
 msgid "Mode"
-msgstr ""
+msgstr "Режим"
 
 msgid "Model"
 msgstr ""
@@ -5360,13 +5477,13 @@ msgid ""
 msgstr ""
 
 msgid "Monitor Password"
-msgstr ""
+msgstr "Пароль мониторинга"
 
 msgid "Monitor User"
-msgstr ""
+msgstr "Пользаватель мониторинга"
 
 msgid "Month"
-msgstr ""
+msgstr "Месяц"
 
 msgid ""
 "Mount a <a href=\"https://www.freebsd.org/cgi/man.cgi?query=devfs\" "
@@ -5417,25 +5534,25 @@ msgid "Mutual secret password. Must be different than <i>Secret</i>."
 msgstr ""
 
 msgid "NAT"
-msgstr ""
+msgstr "NAT"
 
 msgid "NAT Autoconfigure IPv4"
 msgstr ""
 
 msgid "NFSv3 ownership model for NFSv4"
-msgstr ""
+msgstr "Модель собственности NFSv3 для NFSv4"
 
 msgid "NIC"
-msgstr ""
+msgstr "Сетевой интерфейс"
 
 msgid "NIS"
-msgstr ""
+msgstr "NIS"
 
 msgid "NIS domain"
-msgstr ""
+msgstr "Домен NIS"
 
 msgid "NIS servers"
-msgstr ""
+msgstr "Серверы NIS"
 
 msgid "NO"
 msgstr ""
@@ -5444,10 +5561,10 @@ msgid "NTLMv1 Auth"
 msgstr ""
 
 msgid "NTP Servers"
-msgstr ""
+msgstr "NTP серверы"
 
 msgid "Name"
-msgstr ""
+msgstr "Имя"
 
 msgid "Name & Contact"
 msgstr ""
@@ -5481,13 +5598,13 @@ msgid ""
 msgstr ""
 
 msgid "Nameserver 1"
-msgstr ""
+msgstr "Сервер имен 1"
 
 msgid "Nameserver 2"
-msgstr ""
+msgstr "Сервер имен 2"
 
 msgid "Nameserver 3"
-msgstr ""
+msgstr "Сервер имен 3"
 
 msgid "Nameservers"
 msgstr ""
@@ -5502,13 +5619,13 @@ msgid "NetBIOS Alias:"
 msgstr ""
 
 msgid "NetBIOS Name"
-msgstr ""
+msgstr "Имя компьютера NetBIOS"
 
 msgid "NetBIOS Name:"
 msgstr ""
 
 msgid "NetBIOS alias"
-msgstr ""
+msgstr "Псевдоним NetBIOS"
 
 msgid "Netbios Name"
 msgstr ""
@@ -5540,10 +5657,10 @@ msgid "Netmask"
 msgstr ""
 
 msgid "Netwait IP list"
-msgstr ""
+msgstr "Список IP для ожидания"
 
 msgid "Network"
-msgstr ""
+msgstr "Сеть"
 
 msgid ""
 "Network Address Translation (NAT). Transforms local network IP addresses "
@@ -5561,7 +5678,7 @@ msgid "Network Properties"
 msgstr ""
 
 msgid "Network Summary"
-msgstr ""
+msgstr "Сводка сети"
 
 msgid ""
 "Network addresses that can use this initiator. Enter <i>ALL</i> or list "
@@ -5601,7 +5718,7 @@ msgid "Network interfaces to include in the bridge."
 msgstr ""
 
 msgid "New Password"
-msgstr ""
+msgstr "Новый пароль"
 
 msgid "New Primary Group"
 msgstr ""
@@ -5617,13 +5734,13 @@ msgid ""
 msgstr ""
 
 msgid "Next"
-msgstr ""
+msgstr "Следующая"
 
 msgid "Nic to attach:"
 msgstr ""
 
 msgid "No"
-msgstr ""
+msgstr "Нет"
 
 msgid "No Communication Warning Time"
 msgstr ""
@@ -5632,7 +5749,7 @@ msgid "No Pool Exist"
 msgstr ""
 
 msgid "No Stat"
-msgstr ""
+msgstr "Не использовать stat"
 
 msgid "No interfaces configured with Virtual IP."
 msgstr ""
@@ -5717,7 +5834,7 @@ msgid ""
 msgstr ""
 
 msgid "Number of servers"
-msgstr ""
+msgstr "Количество серверов"
 
 msgid ""
 "Number of virtual CPUs to allocate to the virtual machine. The maximum is "
@@ -5744,7 +5861,7 @@ msgid "OAuth Client Secret"
 msgstr ""
 
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 msgid "OS Version"
 msgstr ""
@@ -5762,16 +5879,16 @@ msgid ""
 msgstr ""
 
 msgid "Offline"
-msgstr ""
+msgstr "Offline"
 
 msgid "Ok"
 msgstr ""
 
 msgid "Online"
-msgstr ""
+msgstr "Online"
 
 msgid "Only Allow Guest Access"
-msgstr ""
+msgstr "Разрешить только гостевой доступ"
 
 msgid "Only Replicate Snapshots Matching Schedule"
 msgstr ""
@@ -5862,7 +5979,7 @@ msgid "Optional: Choose installation media image"
 msgstr ""
 
 msgid "Options"
-msgstr ""
+msgstr "Параметры"
 
 msgid ""
 "Order of selected interface within the lagg. Configure a failover to set "
@@ -5871,10 +5988,10 @@ msgid ""
 msgstr ""
 
 msgid "Organization"
-msgstr ""
+msgstr "Организация"
 
 msgid "Organizational Unit"
-msgstr ""
+msgstr "Подразделение"
 
 msgid "Organizational unit of the entity."
 msgstr ""
@@ -5898,28 +6015,28 @@ msgid "Owner of the jail. Can be any string."
 msgstr ""
 
 msgid "Parent Interface"
-msgstr ""
+msgstr "Исходный интерфейс"
 
 msgid "Partition"
-msgstr ""
+msgstr "Раздел"
 
 msgid "Passive storage controller."
 msgstr ""
 
 msgid "Passphrase"
-msgstr ""
+msgstr "Пароль"
 
 msgid "Passphrase created for pool "
 msgstr ""
 
 msgid "Password"
-msgstr ""
+msgstr "Пароль"
 
 msgid "Password Server"
-msgstr ""
+msgstr "Сервер Паролей"
 
 msgid "Password Suffix"
-msgstr ""
+msgstr "Суффикс пароля"
 
 msgid "Password associated with the LDAP User DN."
 msgstr ""
@@ -5951,7 +6068,7 @@ msgid ""
 msgstr ""
 
 msgid "Passwords do not match"
-msgstr ""
+msgstr "Пароли не совпадают"
 
 msgid "Paste the certificate for the CA."
 msgstr ""
@@ -5965,31 +6082,31 @@ msgid ""
 msgstr ""
 
 msgid "Path"
-msgstr ""
+msgstr "Путь"
 
 msgid "Path to the extent"
-msgstr ""
+msgstr "Путь к экстенту"
 
 msgid "Peer Secret"
-msgstr ""
+msgstr "Секрет напарника"
 
 msgid "Peer Secret (Confirm)"
-msgstr ""
+msgstr "Секрет напарника (Подтверждение)"
 
 msgid "Peer User"
-msgstr ""
+msgstr "Пользователь напарника"
 
 msgid "Pending Network Changes"
 msgstr ""
 
 msgid "Perform Reverse DNS Lookups"
-msgstr ""
+msgstr "Выполнять обратное преобразование DNS"
 
 msgid "Performs authentication from an LDAP server."
 msgstr ""
 
 msgid "Periodic Snapshot Tasks"
-msgstr ""
+msgstr "Задания создания снимков"
 
 msgid "Permissions"
 msgstr ""
@@ -5998,7 +6115,7 @@ msgid "Permissions Type"
 msgstr ""
 
 msgid "Permit Sudo"
-msgstr ""
+msgstr "Разрешить sudo"
 
 msgid "Phone"
 msgstr ""
@@ -6052,13 +6169,13 @@ msgid "Plugin installed successfully"
 msgstr ""
 
 msgid "Plugins"
-msgstr ""
+msgstr "Плагины"
 
 msgid "Pool"
-msgstr ""
+msgstr "Пул"
 
 msgid "Pool Available Space Threshold (%)"
-msgstr ""
+msgstr "Порог доступного места для пула (%)"
 
 msgid "Pool Manager"
 msgstr ""
@@ -6079,16 +6196,16 @@ msgid "Pools & Snapshots"
 msgstr ""
 
 msgid "Port"
-msgstr ""
+msgstr "Порт"
 
 msgid "Port or Hostname"
 msgstr ""
 
 msgid "Portal"
-msgstr ""
+msgstr "Портал"
 
 msgid "Portal Group ID"
-msgstr ""
+msgstr "Идентификатор гуппы порталов"
 
 msgid "Post-script"
 msgstr ""
@@ -6103,7 +6220,7 @@ msgid "Power Off"
 msgstr ""
 
 msgid "Power Off UPS"
-msgstr ""
+msgstr "Отключить ИБП"
 
 msgid "Power On"
 msgstr ""
@@ -6132,16 +6249,16 @@ msgid "Pre-script"
 msgstr ""
 
 msgid "Prefer"
-msgstr ""
+msgstr "Предпочтитать"
 
 msgid "Preferences"
 msgstr ""
 
 msgid "Preserve extended attributes"
-msgstr ""
+msgstr "Сохранять расширенные атрибуты"
 
 msgid "Preserve permissions"
-msgstr ""
+msgstr "Сохранить права"
 
 msgid ""
 "Prevent source system snapshots that have failed replication from being "
@@ -6152,7 +6269,7 @@ msgid "Preview JSON Service Account Key"
 msgstr ""
 
 msgid "Previous"
-msgstr ""
+msgstr "Предыдущая"
 
 msgid "Primary Contact"
 msgstr ""
@@ -6161,7 +6278,7 @@ msgid "Primary DNS server."
 msgstr ""
 
 msgid "Primary Group"
-msgstr ""
+msgstr "Основная Группа"
 
 msgid "Primary NIC"
 msgstr ""
@@ -6170,13 +6287,13 @@ msgid "Priority Code Point"
 msgstr ""
 
 msgid "Privacy Passphrase"
-msgstr ""
+msgstr "Пароль"
 
 msgid "Privacy Protocol"
-msgstr ""
+msgstr "Протокол"
 
 msgid "Private Key"
-msgstr ""
+msgstr "Закрытый ключ"
 
 msgid "Private Key ID"
 msgstr ""
@@ -6205,10 +6322,10 @@ msgid "Promote Dataset"
 msgstr ""
 
 msgid "Protocol"
-msgstr ""
+msgstr "Протокол"
 
 msgid "Provider"
-msgstr ""
+msgstr "Провайдер"
 
 msgid "Provides a pop-up window of diagnostic information if a fatal error occurs."
 msgstr ""
@@ -6222,10 +6339,10 @@ msgid "Public Key"
 msgstr ""
 
 msgid "Quick"
-msgstr ""
+msgstr "Быстрый"
 
 msgid "Quiet"
-msgstr ""
+msgstr "Тихий"
 
 msgid "Quota critical alert at, %"
 msgstr ""
@@ -6236,7 +6353,7 @@ msgid ""
 msgstr ""
 
 msgid "Quota for this dataset"
-msgstr ""
+msgstr "Квота для этого набора данных"
 
 msgid "Quota warning alert at, %"
 msgstr ""
@@ -6263,13 +6380,13 @@ msgid "Raid-z3"
 msgstr ""
 
 msgid "Range High"
-msgstr ""
+msgstr "Верх диапазона"
 
 msgid "Range Low"
-msgstr ""
+msgstr "Низ диапазона"
 
 msgid "Range Size"
-msgstr ""
+msgstr "Размер диапазона"
 
 msgid "Raw File"
 msgstr ""
@@ -6284,22 +6401,22 @@ msgid "Re-keyed Pool"
 msgstr ""
 
 msgid "Read Only"
-msgstr ""
+msgstr "Только чтение"
 
 msgid "Read Only Access"
 msgstr ""
 
 msgid "Read-Only"
-msgstr ""
+msgstr "Только чтение"
 
 msgid "Read-only"
-msgstr ""
+msgstr "Только чтение"
 
 msgid "Read/Write Access"
 msgstr ""
 
 msgid "Realm"
-msgstr ""
+msgstr "Область"
 
 msgid "Reboot After Update"
 msgstr ""
@@ -6311,7 +6428,7 @@ msgid "Reboot current storage controller?"
 msgstr ""
 
 msgid "Rebuild Directory Service Cache"
-msgstr ""
+msgstr "Перестроить кеш службы каталогов"
 
 msgid ""
 "Recommended when <i>Max. Poll</i> is greater   than 10. Only use on "
@@ -6329,19 +6446,19 @@ msgid "Reconnect"
 msgstr ""
 
 msgid "Record Size"
-msgstr ""
+msgstr "Размер записи"
 
 msgid "Recovery Attempts"
 msgstr ""
 
 msgid "Recovery Key"
-msgstr ""
+msgstr "Ключ восстановления"
 
 msgid "Recovery key added to pool "
 msgstr ""
 
 msgid "Recursive"
-msgstr ""
+msgstr "Рекурсивно"
 
 msgid "Redirecting to download. Make sure pop-ups are enabled in the browser."
 msgstr ""
@@ -6356,31 +6473,31 @@ msgid "Remote Encryption"
 msgstr ""
 
 msgid "Remote Graphite Server Hostname"
-msgstr ""
+msgstr "Имя удаленного хоста Graphite"
 
 msgid "Remote Host"
-msgstr ""
+msgstr "Удаленный хост"
 
 msgid "Remote Host Key"
 msgstr ""
 
 msgid "Remote Module Name"
-msgstr ""
+msgstr "Имя удалённого модуля"
 
 msgid "Remote Monitor"
-msgstr ""
+msgstr "Удаленный монитор"
 
 msgid "Remote Path"
-msgstr ""
+msgstr "Удаленный путь"
 
 msgid "Remote Port"
-msgstr ""
+msgstr "Удаленный порт"
 
 msgid "Remote SSH Port"
-msgstr ""
+msgstr "Удаленный порт SSH"
 
 msgid "Remove"
-msgstr ""
+msgstr "Удалить"
 
 msgid "Remove Additional Alias"
 msgstr ""
@@ -6392,7 +6509,7 @@ msgid "Remove Keep Flag"
 msgstr ""
 
 msgid "Remove passphrase"
-msgstr ""
+msgstr "Удалить пароль"
 
 msgid "Rename the existing boot environment."
 msgstr ""
@@ -6413,7 +6530,7 @@ msgid "Replicate from scratch if incremental is not possible"
 msgstr ""
 
 msgid "Replication"
-msgstr ""
+msgstr "Репликация"
 
 msgid "Replication <i>"
 msgstr ""
@@ -6422,7 +6539,7 @@ msgid "Replication Performance"
 msgstr ""
 
 msgid "Replication Tasks"
-msgstr ""
+msgstr "Задания репликации"
 
 msgid "Replication task name."
 msgstr ""
@@ -6444,16 +6561,16 @@ msgid ""
 msgstr ""
 
 msgid "Reporting"
-msgstr ""
+msgstr "Отчёты"
 
 msgid "Reports"
 msgstr ""
 
 msgid "Require IDENT Authentication"
-msgstr ""
+msgstr "Требовать IDENT аутентификации"
 
 msgid "Require Kerberos for NFSv4"
-msgstr ""
+msgstr "Требовать Kerberos для NFSv4"
 
 msgid ""
 "Required for <a href=\"%%docurl%%/services.html#lldp\" "
@@ -6493,10 +6610,10 @@ msgid ""
 msgstr ""
 
 msgid "Reserved space for this dataset"
-msgstr ""
+msgstr "Зарезервированное место для этого набора данных"
 
 msgid "Reserved space for this dataset and all children"
-msgstr ""
+msgstr "Зарезервированное место для этого набора данных и всех его производных"
 
 msgid "Reset Config"
 msgstr ""
@@ -6520,7 +6637,7 @@ msgid "Resolution"
 msgstr ""
 
 msgid "Restart"
-msgstr ""
+msgstr "Перезапуск"
 
 msgid "Restart Services"
 msgstr ""
@@ -6552,16 +6669,16 @@ msgid "Rollback"
 msgstr ""
 
 msgid "Root Password"
-msgstr ""
+msgstr "Пароль администратора"
 
 msgid "Root password"
-msgstr ""
+msgstr "Пароль администратора"
 
 msgid "Rotation Rate"
 msgstr ""
 
 msgid "Rsync Tasks"
-msgstr ""
+msgstr "Задания Rsync"
 
 msgid "Rsync mode"
 msgstr ""
@@ -6576,7 +6693,7 @@ msgid "Run Automatically"
 msgstr ""
 
 msgid "Run Now"
-msgstr ""
+msgstr "Запустить сейчас"
 
 msgid ""
 "Run commands in a clean environment. The current environment is discarded "
@@ -6607,13 +6724,13 @@ msgid "S.M.A.R.T. Options"
 msgstr ""
 
 msgid "S.M.A.R.T. Tests"
-msgstr ""
+msgstr "Тесты S.M.A.R.T."
 
 msgid "S.M.A.R.T. extra options"
-msgstr ""
+msgstr "Дополнительные параметры S.M.A.R.T."
 
 msgid "SASL wrapping"
-msgstr ""
+msgstr "Обертка SASL"
 
 msgid "SAVE CONFIGURATION"
 msgstr ""
@@ -6636,7 +6753,7 @@ msgid ""
 msgstr ""
 
 msgid "SNMP v3 Support"
-msgstr ""
+msgstr "Поддержка SNMP v3"
 
 msgid "SSH Connection"
 msgstr ""
@@ -6654,7 +6771,7 @@ msgid "SSH Keypairs"
 msgstr ""
 
 msgid "SSH Public Key"
-msgstr ""
+msgstr "Открытый Ключ SSH"
 
 msgid "SSH Username."
 msgstr ""
@@ -6663,7 +6780,7 @@ msgid "SSH port number. Leave empty to use the default port <i>22</i>."
 msgstr ""
 
 msgid "SSL"
-msgstr ""
+msgstr "SSL"
 
 msgid "START"
 msgstr ""
@@ -6672,16 +6789,16 @@ msgid "STOP"
 msgstr ""
 
 msgid "SUDO Suffix"
-msgstr ""
+msgstr "Суффикс SUDO"
 
 msgid "Samba Schema"
-msgstr ""
+msgstr "Схема Samba"
 
 msgid "Save"
-msgstr ""
+msgstr "Сохранить"
 
 msgid "Save Config"
-msgstr ""
+msgstr "Сохранить конфигурацию"
 
 msgid "Save Network Interface Changes"
 msgstr ""
@@ -6726,7 +6843,7 @@ msgid "Schema mode"
 msgstr ""
 
 msgid "Script"
-msgstr ""
+msgstr "Скрипт"
 
 msgid "Script to execute after running sync."
 msgstr ""
@@ -6753,22 +6870,22 @@ msgid "Secondary DNS server."
 msgstr ""
 
 msgid "Secret"
-msgstr ""
+msgstr "Секрет"
 
 msgid "Secret (Confirm)"
-msgstr ""
+msgstr "Секрет (Подтверждение)"
 
 msgid "Secret Access Key"
 msgstr ""
 
 msgid "Secret Key"
-msgstr ""
+msgstr "Секретный ключ"
 
 msgid "Secure mode"
-msgstr ""
+msgstr "Безопасный режим"
 
 msgid "Security"
-msgstr ""
+msgstr "Безопасность"
 
 msgid ""
 "See <a "
@@ -7244,13 +7361,13 @@ msgid "Send Deduplicated Stream"
 msgstr ""
 
 msgid "Send Email Status Updates"
-msgstr ""
+msgstr "Присылать сообщения об изменении статуса"
 
 msgid "Send Test Alert"
 msgstr ""
 
 msgid "Serial"
-msgstr ""
+msgstr "Серийный номер"
 
 msgid "Serial Number"
 msgstr ""
@@ -7262,7 +7379,7 @@ msgid "Serial Speed"
 msgstr ""
 
 msgid "Serve UDP NFS clients"
-msgstr ""
+msgstr "Обслуживать клиентов NFS по протоколу UDP"
 
 msgid "Server Maximum Protocol"
 msgstr ""
@@ -7271,7 +7388,7 @@ msgid "Server Minimum Protocol"
 msgstr ""
 
 msgid "Server Role"
-msgstr ""
+msgstr "Роль сервера"
 
 msgid "Server Side Encryption"
 msgstr ""
@@ -7289,7 +7406,7 @@ msgid "Service started"
 msgstr ""
 
 msgid "Services"
-msgstr ""
+msgstr "Службы"
 
 msgid "Set Keep Flag"
 msgstr ""
@@ -8042,25 +8159,25 @@ msgid ""
 msgstr ""
 
 msgid "Share Name"
-msgstr ""
+msgstr "Имя Ресурса"
 
 msgid "Share Type"
 msgstr ""
 
 msgid "Sharing"
-msgstr ""
+msgstr "Общий доступ"
 
 msgid "Sharing Controls"
 msgstr ""
 
 msgid "Shell"
-msgstr ""
+msgstr "Командный интерпретатор"
 
 msgid "Short Description"
 msgstr ""
 
 msgid "Short description"
-msgstr ""
+msgstr "Краткое описание"
 
 msgid ""
 "Should only be used for highly accurate <b>NTP</b>   servers such as those "
@@ -8073,13 +8190,13 @@ msgid ""
 msgstr ""
 
 msgid "Show Hidden Files"
-msgstr ""
+msgstr "Показывать скрытые файлы"
 
 msgid "Show Text Console without Password Prompt"
 msgstr ""
 
 msgid "Show advanced fields by default"
-msgstr ""
+msgstr "Показывать продвинутые настройки по умолчанию"
 
 msgid "Show console messages"
 msgstr ""
@@ -8109,7 +8226,7 @@ msgid "Shut down the system?"
 msgstr ""
 
 msgid "Shutdown Command"
-msgstr ""
+msgstr "Команда выключения"
 
 msgid "Shutdown Mode"
 msgstr ""
@@ -8127,22 +8244,22 @@ msgid "Sign in"
 msgstr ""
 
 msgid "Signing Certificate Authority"
-msgstr ""
+msgstr "Удостоверяющий центр"
 
 msgid "Signing Request"
-msgstr ""
+msgstr "Запрос подписи"
 
 msgid "Site Name"
-msgstr ""
+msgstr "Имя Сайта"
 
 msgid "Size"
-msgstr ""
+msgstr "Размер"
 
 msgid "Size (GiB)"
 msgstr ""
 
 msgid "Size for this zvol"
-msgstr ""
+msgstr "Размер этого zvol"
 
 msgid ""
 "Skip automatic detection of the Endpoint URL region. Set this when "
@@ -8182,13 +8299,13 @@ msgid ""
 msgstr ""
 
 msgid "Snapshot successfully taken."
-msgstr ""
+msgstr "Снимок успешно создан."
 
 msgid "Snapshots"
-msgstr ""
+msgstr "Снимки"
 
 msgid "Source"
-msgstr ""
+msgstr "Источник"
 
 msgid "Source Datasets"
 msgstr ""
@@ -8263,7 +8380,7 @@ msgid "Speeds up the initial synchronization (seconds instead of minutes)."
 msgstr ""
 
 msgid "Start"
-msgstr ""
+msgstr "Запустить"
 
 msgid "Start Scrub"
 msgstr ""
@@ -8283,22 +8400,22 @@ msgid "Starting job..."
 msgstr ""
 
 msgid "State"
-msgstr ""
+msgstr "Состояние"
 
 msgid "Static IPv4 address of the IPMI web interface."
 msgstr ""
 
 msgid "Static Routes"
-msgstr ""
+msgstr "Статические маршруты"
 
 msgid "Status"
-msgstr ""
+msgstr "Статус"
 
 msgid "Stop"
-msgstr ""
+msgstr "Остановить"
 
 msgid "Stop "
-msgstr ""
+msgstr "Остановить "
 
 msgid "Stop Scrub"
 msgstr ""
@@ -8313,7 +8430,7 @@ msgid "Stopping scrub on pool <i>"
 msgstr ""
 
 msgid "Storage"
-msgstr ""
+msgstr "Хранилище"
 
 msgid "Storage & Groups"
 msgstr ""
@@ -8341,13 +8458,13 @@ msgid ""
 msgstr ""
 
 msgid "Subject"
-msgstr ""
+msgstr "Тема"
 
 msgid "Subject Alternate Names"
 msgstr ""
 
 msgid "Submit"
-msgstr ""
+msgstr "Отправить"
 
 msgid "Subnet mask of the IPv4 address."
 msgstr ""
@@ -8397,10 +8514,10 @@ msgid "Suggest Layout"
 msgstr ""
 
 msgid "Support"
-msgstr ""
+msgstr "Поддержка"
 
 msgid "Support >16 groups"
-msgstr ""
+msgstr "Поддержка >16 групп"
 
 msgid "Swap size in GiB"
 msgstr ""
@@ -8430,19 +8547,19 @@ msgid "Sync to Peer: Success!"
 msgstr ""
 
 msgid "Syslog"
-msgstr ""
+msgstr "Syslog"
 
 msgid "Syslog level"
-msgstr ""
+msgstr "Уровень Syslog"
 
 msgid "Syslog server"
-msgstr ""
+msgstr "Сервер Syslog"
 
 msgid "System"
-msgstr ""
+msgstr "Система"
 
 msgid "System Dataset"
-msgstr ""
+msgstr "Системный набор данных"
 
 msgid "System Dataset Pool"
 msgstr ""
@@ -8481,7 +8598,7 @@ msgid "System that will open ports for the direct connection"
 msgstr ""
 
 msgid "TCP Port"
-msgstr ""
+msgstr "Порт TCP"
 
 msgid "TCP port"
 msgstr ""
@@ -8538,19 +8655,19 @@ msgid "Take Snapshot"
 msgstr ""
 
 msgid "Target"
-msgstr ""
+msgstr "Цель"
 
 msgid "Target Alias"
-msgstr ""
+msgstr "Псевдоним цели"
 
 msgid "Target Dataset"
 msgstr ""
 
 msgid "Target Name"
-msgstr ""
+msgstr "Имя цели"
 
 msgid "Tasks"
-msgstr ""
+msgstr "Задания"
 
 msgid "Team Drive ID"
 msgstr ""
@@ -8752,7 +8869,7 @@ msgid ""
 msgstr ""
 
 msgid "The update file is temporarily stored here before being applied."
-msgstr ""
+msgstr "Файл обновления будет временно сохранен здесь до момента применения."
 
 msgid ""
 "The value of the jail <a "
@@ -8800,7 +8917,7 @@ msgid ""
 msgstr ""
 
 msgid "This field is required"
-msgstr ""
+msgstr "Это обязательное поле"
 
 msgid ""
 "This field remains empty until a valid <b>Username</b> and <b>Password</b> "
@@ -8827,10 +8944,10 @@ msgid "This operation might take a long time. Proceed?"
 msgstr ""
 
 msgid "Threshold days"
-msgstr ""
+msgstr "Порог дней"
 
 msgid "Time Machine"
-msgstr ""
+msgstr "Машина времени"
 
 msgid "Time Machine Quota"
 msgstr ""
@@ -8842,13 +8959,13 @@ msgid "Time remaining until changes reverted:"
 msgstr ""
 
 msgid "Timeout"
-msgstr ""
+msgstr "Таймаут"
 
 msgid "Times"
-msgstr ""
+msgstr "Время"
 
 msgid "Timezone"
-msgstr ""
+msgstr "Часовой пояс"
 
 msgid "Title"
 msgstr ""
@@ -8872,10 +8989,10 @@ msgid ""
 msgstr ""
 
 msgid "Train"
-msgstr ""
+msgstr "Поезд"
 
 msgid "Transfer Mode"
-msgstr ""
+msgstr "Режим передачи"
 
 msgid "Transfers"
 msgstr ""
@@ -8884,10 +9001,10 @@ msgid "Transport"
 msgstr ""
 
 msgid "Tunables"
-msgstr ""
+msgstr "Параметры настройки"
 
 msgid "Type"
-msgstr ""
+msgstr "Тип"
 
 msgid "UNINSTALL"
 msgstr ""
@@ -8899,10 +9016,10 @@ msgid "UPDATE"
 msgstr ""
 
 msgid "UPS Mode"
-msgstr ""
+msgstr "Режим ИБП"
 
 msgid "URL"
-msgstr ""
+msgstr "Ссылка (URL)"
 
 msgid "URL of the HTTP host to connect to."
 msgstr ""
@@ -8917,13 +9034,13 @@ msgid "Unique LUN ID. The default is generated from the MAC address of the syste
 msgstr ""
 
 msgid "Unix (NFS) Shares"
-msgstr ""
+msgstr "Общие ресурсы Unix (NFS)"
 
 msgid "Unix Extensions"
-msgstr ""
+msgstr "Расшиения Unix"
 
 msgid "Unlock"
-msgstr ""
+msgstr "Разблокировать"
 
 msgid ""
 "Unmask is used for newly created files. Default is <i>000</i> (anyone can "
@@ -8958,13 +9075,13 @@ msgid ""
 msgstr ""
 
 msgid "Until"
-msgstr ""
+msgstr "До"
 
 msgid "Unused"
 msgstr ""
 
 msgid "Update"
-msgstr ""
+msgstr "Обновить"
 
 msgid "Update File"
 msgstr ""
@@ -9012,13 +9129,13 @@ msgid "Upgrading Jail"
 msgstr ""
 
 msgid "Upload"
-msgstr ""
+msgstr "Выгрузить"
 
 msgid "Upload Chunk Size (MiB)"
 msgstr ""
 
 msgid "Upload Config"
-msgstr ""
+msgstr "Загрузить конфигурацию"
 
 msgid "Upload an installer image file"
 msgstr ""
@@ -9036,7 +9153,7 @@ msgid ""
 msgstr ""
 
 msgid "Uptime"
-msgstr ""
+msgstr "Время непрерывной работы"
 
 msgid "Usage collection"
 msgstr ""
@@ -9057,10 +9174,10 @@ msgid "Use DHCP. Unset to manually configure a static IPv4 connection."
 msgstr ""
 
 msgid "Use Default Domain"
-msgstr ""
+msgstr "Использовать домен по умолчанию"
 
 msgid "Use FQDN for logging"
-msgstr ""
+msgstr "Использовать FQDN для журнала"
 
 msgid "Use Signature Version 2"
 msgstr ""
@@ -9078,7 +9195,7 @@ msgid "Use all disk space"
 msgstr ""
 
 msgid "Use as home share"
-msgstr ""
+msgstr "Использовать как домашний ресурс"
 
 msgid ""
 "Use compressed WRITE records to make the stream more efficient. The "
@@ -9094,7 +9211,7 @@ msgid "Use existing disk image"
 msgstr ""
 
 msgid "Use syslog only"
-msgstr ""
+msgstr "Использовать только syslog"
 
 msgid "Use the format <i>A.B.C.D/E</i> where <i>E</i> is the CIDR mask."
 msgstr ""
@@ -9127,19 +9244,19 @@ msgid ""
 msgstr ""
 
 msgid "User"
-msgstr ""
+msgstr "Пользователь"
 
 msgid "User Bind Path"
-msgstr ""
+msgstr "Путь привязки пользователя"
 
 msgid "User CN"
-msgstr ""
+msgstr "Пользователь CN"
 
 msgid "User Controls"
 msgstr ""
 
 msgid "User DN"
-msgstr ""
+msgstr "DN пользователя"
 
 msgid "User Distinguished Name (DN) to use for authentication."
 msgstr ""
@@ -9148,10 +9265,10 @@ msgid "User Distinguished Name to use for authentication."
 msgstr ""
 
 msgid "User ID"
-msgstr ""
+msgstr "Идентификатор пользователя"
 
 msgid "User Suffix"
-msgstr ""
+msgstr "Суффикс пользователя"
 
 msgid ""
 "User accounts have an ID greater than 1000 and system accounts have an ID "
@@ -9162,7 +9279,7 @@ msgid "User passed to <i>camcontrol security -u</i> to unlock SEDs"
 msgstr ""
 
 msgid "Username"
-msgstr ""
+msgstr "Имя пользователя"
 
 msgid ""
 "Username for a <a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> "
@@ -9185,22 +9302,22 @@ msgid ""
 msgstr ""
 
 msgid "Users"
-msgstr ""
+msgstr "Пользователи"
 
 msgid "Users & Groups"
 msgstr ""
 
 msgid "VFS Objects"
-msgstr ""
+msgstr "Объекты VFS"
 
 msgid "VLAN ID"
-msgstr ""
+msgstr "VLAN ID"
 
 msgid "VLAN Parent Interface"
 msgstr ""
 
 msgid "VLAN Tag"
-msgstr ""
+msgstr "Тег VLAN"
 
 msgid "VM Snapshot"
 msgstr ""
@@ -9209,10 +9326,10 @@ msgid "VM system time. Default is <i>Local</i>."
 msgstr ""
 
 msgid "VMWare Sync"
-msgstr ""
+msgstr "Синхронизация VMWare"
 
 msgid "VMware-Snapshots"
-msgstr ""
+msgstr "VMware-Снимки"
 
 msgid "VNC"
 msgstr ""
@@ -9232,16 +9349,16 @@ msgid "VNET Virtual Networking"
 msgstr ""
 
 msgid "Validate Remote Path"
-msgstr ""
+msgstr "Проверить удаленный путь"
 
 msgid "Value"
-msgstr ""
+msgstr "Значение"
 
 msgid "Variable"
-msgstr ""
+msgstr "Переменная"
 
 msgid "Verbose logging"
-msgstr ""
+msgstr "Подробное журналирование"
 
 msgid "Verify Credential"
 msgstr ""
@@ -9256,7 +9373,7 @@ msgid "View"
 msgstr ""
 
 msgid "View Enclosure"
-msgstr ""
+msgstr "Показать Enclosure"
 
 msgid "View the contents of the Service Account JSON file."
 msgstr ""
@@ -9271,7 +9388,7 @@ msgid "Virtual IP Address"
 msgstr ""
 
 msgid "Virtual Interface"
-msgstr ""
+msgstr "Виртуальный интерфейс"
 
 msgid "Virtual Machine (VM) Wizard type."
 msgstr ""
@@ -9303,7 +9420,7 @@ msgid "Wallclock time in seconds."
 msgstr ""
 
 msgid "Warning"
-msgstr ""
+msgstr "Внимание"
 
 msgid "Warning: iSCSI Target is already in use.</font><br>"
 msgstr ""
@@ -9312,7 +9429,7 @@ msgid "Web Interface"
 msgstr ""
 
 msgid "WebDAV Shares"
-msgstr ""
+msgstr "Общие ресурсы WebDAV"
 
 msgid "WebDAV account password."
 msgstr ""
@@ -9324,31 +9441,31 @@ msgid "WebDAV service"
 msgstr ""
 
 msgid "WebGUI HTTP -> HTTPS Redirect"
-msgstr ""
+msgstr "HTTP -> HTTPS перенаправление WEB-интерфейса"
 
 msgid "WebGUI HTTP Port"
-msgstr ""
+msgstr "HTTP порт web-интерфейса"
 
 msgid "WebGUI HTTPS Port"
-msgstr ""
+msgstr "HTTPS порт web-интерфейса"
 
 msgid "WebGUI IPv4 Address"
-msgstr ""
+msgstr "IPv4 адрес web-интерфейса"
 
 msgid "WebGUI IPv6 Address"
-msgstr ""
+msgstr "IPv6 адрес web-интерфейса"
 
 msgid "Webdav Password"
-msgstr ""
+msgstr "Пароль WebDAV"
 
 msgid "Webdav SSL Certificate"
-msgstr ""
+msgstr "WebDAV SSL сертификат"
 
 msgid "What are you using this for"
 msgstr ""
 
 msgid "When"
-msgstr ""
+msgstr "Когда"
 
 msgid "When Syslog server is defined, only logs matching this level are sent."
 msgstr ""
@@ -9418,13 +9535,13 @@ msgid "Widget Base Class"
 msgstr ""
 
 msgid "Winbind NSS Info"
-msgstr ""
+msgstr "Информация Winbind NSS"
 
 msgid "Windows (SMB) Shares"
-msgstr ""
+msgstr "Общие ресурсы Windows (SMB)"
 
 msgid "Wipe"
-msgstr ""
+msgstr "Стереть"
 
 msgid "Wipe Disk"
 msgstr ""
@@ -9436,13 +9553,13 @@ msgid "Wiping Disk..."
 msgstr ""
 
 msgid "Workgroup"
-msgstr ""
+msgstr "Рабочая группа"
 
 msgid "Write a percentage limit of a single CPU core."
 msgstr ""
 
 msgid "Xen initiator compat mode"
-msgstr ""
+msgstr "Режим совместимости с Xen"
 
 msgid ""
 "Yandex <a "
@@ -9451,19 +9568,19 @@ msgid ""
 msgstr ""
 
 msgid "Yes"
-msgstr ""
+msgstr "Да"
 
 msgid "Yes, decrypt the disks"
 msgstr ""
 
 msgid "ZFS"
-msgstr ""
+msgstr "ZFS"
 
 msgid "ZFS Deduplication"
-msgstr ""
+msgstr "Дедупликация ZFS"
 
 msgid "ZFS Filesystem"
-msgstr ""
+msgstr "Файловая система ZFS"
 
 msgid "ZFS Pool"
 msgstr ""
@@ -9478,10 +9595,10 @@ msgid ""
 msgstr ""
 
 msgid "Zero Device Numbers"
-msgstr ""
+msgstr "Обнулять номера устройств"
 
 msgid "Zeroconf share discovery"
-msgstr ""
+msgstr "Zeroconf обнаружение ресурса"
 
 msgid ""
 "[Use fewer transactions in exchange for more "
@@ -9694,7 +9811,7 @@ msgid "mount_procfs"
 msgstr ""
 
 msgid "mountd(8) bind port"
-msgstr ""
+msgstr "Порт mountd(8)"
 
 msgid "msgqqueued"
 msgstr ""
@@ -9745,10 +9862,10 @@ msgid "rlimits"
 msgstr ""
 
 msgid "rpc.lockd(8) bind port"
-msgstr ""
+msgstr "Порт rpc.lockd(8)"
 
 msgid "rpc.statd(8) bind port"
-msgstr ""
+msgstr "Порт rpc.statd(8)"
 
 msgid "securelevel"
 msgstr ""
