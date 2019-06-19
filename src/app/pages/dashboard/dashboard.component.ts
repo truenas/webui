@@ -77,10 +77,13 @@ export class DashboardComponent implements OnInit,OnDestroy {
     //this.statsEvents = this.ws.job("reporting.realtime",[{"name": "cpu", "identifier": null}]).subscribe((evt)=>{
     this.statsEvents = this.ws.sub("reporting.realtime").subscribe((evt)=>{
       //if(!evt.virtual_memory){return;}
+      console.log(evt);
       if(evt.cpu){
         this.statsDataEvents.next({name:"CpuStats", data:evt.cpu});
       }
-      //this.statsDataEvents.next({name:"MemoryStats", data:evt.virtual_memory});
+      if(evt.virtual_memory){
+        this.statsDataEvents.next({name:"MemoryStats", data:evt.virtual_memory});
+      }
     });
 
     /*this.statsEventsTC = this.ws.sub("trueview.stats:10").subscribe((evt)=>{

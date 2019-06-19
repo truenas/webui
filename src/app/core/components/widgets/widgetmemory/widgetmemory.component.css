@@ -1,0 +1,161 @@
+.widget{
+  width:600px;
+  height:400px;
+}
+
+.widget mat-card-content{
+  width: 100%;
+}
+
+#cpu-cores-chart{
+  /*position: absolute;
+  left: 0;
+  bottom: 0;*/
+  width: 536px;
+  margin:0 16px;
+}
+
+#cpu-cores-wrapper{
+  /*border-top:solid 1px var(--bg1);*/
+}
+
+#cpu-load-wrapper{
+  position:relative;
+  height:170px;
+}
+
+#cpu-load-cores{
+  /*opacity:0.5;*/
+}
+
+#cpu-load-cores-legend{
+  /*margin-top:36px;*/
+}
+
+#cpu-load-cores-legend .legend-item.chart-label{
+  text-align:center;
+}
+
+#cpu-load-cores-legend .legend-item{
+  text-align:left;
+}
+
+#cpu-load-cores-legend .legend-item .label{
+  font-weight:500;
+}
+
+#cpu-load-cores-legend .legend-item .legend-swatch{
+  margin: 4px 8px 0;
+}
+
+#cpu-load-cores-values {
+  width:100%;
+}
+
+#cpu-load-cores-values .temperature{
+  text-align:right;
+}
+
+#cpu-load-label{
+  margin-bottom:0;
+  font-weight:400;
+}
+
+#cpu-load-value{
+  position:absolute;
+  top:41%;
+  width:100%;
+  font-size:175%;
+}
+
+.title-wrapper{
+  /*background-color:var(--blue);
+  color:#fff;*/
+  height:45%;
+  text-align: left;
+  padding: 16px;
+  width:100%;
+}
+
+.title-wrapper .widget-loader{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+}
+
+.title-wrapper .title{
+  font-size:150%;
+}
+
+.title-wrapper .subtitle{
+  font-size:80%;
+}
+
+.bar-chart{
+  margin-bottom:32px;
+}
+
+h1.memory-used{
+  margin: 32px 0 0;
+  font-weight: 400;
+  font-size: 300%;
+}
+
+h1.memory-used span.memory-used-units{
+  font-size:50%;
+}
+
+/*.reports-btn{
+  position:absolute;
+  right:16px;
+  bottom:16px;
+  font-weight:500;
+  text-transform:capitalize;
+}*/
+
+.chart-wrapper{
+  position:relative;
+  width:100%;
+}
+
+.x-axis .start-time, 
+.x-axis .end-time{
+    font-size: 75%;
+    position: absolute;
+    bottom: 0;
+    font-weight:500;
+    font-family:Roboto;
+    opacity:0.5;
+}
+
+.x-axis .start-time{
+  left:8px;
+}
+.x-axis .end-time{
+  right:8px;
+}
+
+/*:host ::ng-deep .c3-axis-y g:nth-child(2n){
+  visibility:hidden;
+}*/
+
+/* MARKER */
+:host ::ng-deep .c3-chart-line .c3-circles circle._expanded_{
+  stroke:var(--primary) !important;
+}
+:host ::ng-deep .c3-chart-line circle.c3-circle{
+  fill:var(--bg2) !important;
+}
+
+/* NARROW SCREENS */
+.xs.widget{
+  width:100%;
+  max-height:320px;
+}
+
+/* Overrides */
+.widget .c3 .c3-axis g.tick tspan{
+  fill-opacity:1;
+  font-weight:500;
+}

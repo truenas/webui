@@ -1,0 +1,74 @@
+<div class="widget stats-widget" ngClass.xs="double-height xs">
+  <div class="card-container  front">
+    <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
+      <mat-card-content>
+        <mat-toolbar-row >
+          <h3 class="mat-card-title-text"><div class="card-title-text">{{title | translate}}</div></h3>
+          <!--<ng-template *ngIf="configurable === true">
+            <button mat-icon-button (click)="toggleConfig()">
+            <mat-icon>settings</mat-icon>
+            </button>
+            </ng-template>-->
+            <!--<button mat-button color="primary" class="" (click)="router.navigate(['reportsdashboard/cpu'])">CPU REPORTS</button>-->
+        </mat-toolbar-row>
+        <!--<viewchartline fxFlex="100" fxFlexAlign="end" #chartCpu width="600" height="160" [style.display]="isFlipped ? 'none': 'block'"></viewchartline>-->
+        <!-- Chart -->
+        <!--<div id="cpu-load-wrapper" fxLayout="row wrap" fxLayoutAlign="space-around center">
+          <h3 fxFlex="33" id="cpu-load-label">USAGE</h3>
+          <div *ngIf="cpuAvg && cpuAvg.data" id="cpu-load-value">{{cpuAvg.data[1]}}%</div>
+          <viewchartgauge fxFlex="34" *ngIf="usage && usage.data" [config]="usage" #memorygauge class=""></viewchartgauge>
+          <h4 fxFlex="33" id="cpu-load-cores"> <span *ngIf="usage && usage.data && usage.data.total">{{usage.data.total}}</span>GiB Installed Memory</h4>
+          </div>-->
+
+
+        <div id="cpu-cores-wrapper" class="bar-chart-wrapper" fxLayout="column">
+          <h1 fxFlex="100" class="memory-used">{{memData ? memData.data[0][1] : 'Loading...'}}<span class="memory-used-units">GiB</span></h1> 
+          <div fxFlex="100" class="memory-used-caption">free memory available</div>
+          <div fxFlex="100" id="memory-usage-chart" class="bar-chart"></div>
+            <div fxFlex="100" id="cpu-load-cores-legend" fxLayout="row wrap">
+              <div *ngIf="memData; else noLegend" id="cpu-load-cores-legend-values" fxFlex fxLayout="row wrap" fxLayoutAlign="space-around center">
+                <div fxFlex="26" *ngFor="let legendItem of memData.data; let i=index"  class="legend-item">
+                  <div class="legend-swatch" [style.background-color]="trustedSecurity(colorPattern[i])"></div><span class="label">{{legendItem[0]}}:</span> {{legendItem[1]}} GiB
+                </div>
+              </div>
+            </div>
+
+            <ng-template #noLegend>
+              <div id="cpu-load-cores-legend-values" fxFlex fxLayout="row" fxLayoutAlign="space-around center">
+                <div fxFlex="100" class="legend-item chart-label">
+                  <span class="label">CPU Usage/Temperature per Core</span>
+                </div>
+              </div>
+            </ng-template>
+
+          </div> <!-- Cores Wrapper -->
+
+        <!-- DETAILS -->
+        <!--<div class="title-wrapper fn-theme-primary" fxFlex="100">
+          <mat-progress-bar class="widget-loader" *ngIf="loader" mode="indeterminate"></mat-progress-bar>
+          <ng-container *ngIf="showLegendValues">
+          <p class="title">{{altTitle}}</p>
+          <p class="subtitle">{{altSubtitle}}</p>
+          </ng-container>
+          <ng-container *ngIf="!showLegendValues">
+          <p class="title">{{title}}</p>
+          <p class="subtitle">{{subtitle}}</p>
+          </ng-container>
+          <button mat-button class="reports-btn" (click)="router.navigate(['reportsdashboard/cpu'])">REPORTS</button>
+          </div>-->
+      </mat-card-content>
+    </mat-card>
+
+    <!--<ng-template *ngIf="configurable">
+      <mat-card class="back">
+      <mat-card-content fxLayout="column" fxLayoutAlign="start stretch" fxFlex="100">
+      </mat-card-content>
+      <div class="widget-footer">
+      <button mat-button color="accent" (click)="toggleConfig()">{{"Cancel" | translate}}</button>
+      <button mat-button color="primary" type="submit" form="preferences" (click)="toggleConfig()">{{"Save" | translate}}</button>
+      </div>
+      </mat-card>
+      </ng-template>-->
+
+  </div>
+</div>
