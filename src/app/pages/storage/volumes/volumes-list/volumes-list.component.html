@@ -53,7 +53,7 @@
           </div>
         </div>
         <div>
-          <entity-tree-table [conf]="row.volumesListTableConfig"></entity-tree-table>
+          <entity-tree-table *ngIf="row.volumesListTableConfig.tableData?.length > 0" [conf]="row.volumesListTableConfig" [expandRootNodes]="true"></entity-tree-table>
         </div>
       </mat-expansion-panel>
     </mat-accordion>
