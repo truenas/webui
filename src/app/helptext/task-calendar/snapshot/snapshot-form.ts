@@ -12,7 +12,7 @@ export default {
 
     exclude_placeholder: T('Exclude'),
     exclude_tooltip: T('Exclude specific child datasets from the snapshot.\
- Use with recursive snapshots. List paths to any child datasets to exclude.\
+ Use with recursive snapshots. Comma-separated list of paths to any child datasets to exclude.\
  Example: <i>pool1/dataset1/child1</i>. A recursive snapshot of\
  <i>pool1/dataset1</i> will include all child datasets except <i>child1</i>.'),
 

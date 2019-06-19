@@ -12,7 +12,9 @@
        fxLayoutAlign.gt-sm="space-around center">
 
     <widget-sysinfo fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"></widget-sysinfo>
-    <widget-netinfo fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"></widget-netinfo>
+    <widget-cpu fxFlex="600px" fxFlex.xs="100" *ngIf="statsDataEvents" [data]="statsDataEvents" [widgetSize]="medium"   configurable="false"></widget-cpu>
+    <!--
+      <widget-netinfo fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"></widget-netinfo>
 
       <ng-container  *ngFor="let volume of volumes; let i=index">
         <widget-pool [volumeData]="volumes[i]" fxFlex.xs="100" fxFlex="600px" [widgetSize]="medium"   configurable="false"></widget-pool>
@@ -21,7 +23,7 @@
     <widget-memory-history fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"  configurable="false"></widget-memory-history>
     <widget-cpu-history fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"   configurable="false"></widget-cpu-history>
     <widget-cpu-temps fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"   configurable="false"></widget-cpu-temps>
-    <widget-load fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"   configurable="false"></widget-load>
+    <widget-load fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"   configurable="false"></widget-load>-->
 
 
 

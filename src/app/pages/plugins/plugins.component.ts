@@ -54,6 +54,13 @@ export class PluginsComponent {
       title: 'Plugin',
       key_props: ['1'],
       id_prop: '1',
+      doubleConfirm: (item) => {
+        return this.dialogService.doubleConfirm(
+          T('Verify Deletion of ') + item[1] + T(' Plugin'),
+          T('To delete the <b>') + item[1] + T('</b> plugin and all data and snapshots stored with it, please type the name of the plugin to confirm:'),
+          item[1]
+        );
+      },
     },
   };
   protected columnFilter = false;
@@ -149,16 +156,16 @@ export class PluginsComponent {
             });
       }
     },
-    {
-      id: "mdelete",
-      label: T("Delete"),
-      icon: "delete",
-      enable: true,
-      ttpos: "above",
-      onClick: (selected) => {
-        this.entityList.doMultiDelete(selected);
-      }
-    }
+    // {
+    //   id: "mdelete",
+    //   label: T("Delete"),
+    //   icon: "delete",
+    //   enable: true,
+    //   ttpos: "above",
+    //   onClick: (selected) => {
+    //     this.entityList.doMultiDelete(selected);
+    //   }
+    // }
   ];
 
   constructor(

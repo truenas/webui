@@ -13,7 +13,7 @@
   <span [innerHTML]="conf.warning"></span>
 </div>
 <div>
-  <p *ngIf="error" type="danger" id="error_message"><span [innerHTML]="error"></span></p>
+  <mat-error *ngIf="error" type="danger" id="error_message"><div [innerHTML]="error"></div></mat-error>
 </div>
 
 <div mat-dialog-actions>
@@ -24,6 +24,6 @@
       (click)="custBtn['function']()" [name]="custBtn.name + '_button'">{{custBtn.name | translate}}</button>
   </span>
   <button mat-button class="mat-flat-button mat-accent" (click)="cancel()" [name]="cancelButtonText + '_button'">{{cancelButtonText | translate}}</button>
-  <button mat-button class="mat-flat-button mat-primary" (click)="submit()" [disabled]="!formGroup.valid"
+  <button mat-button class="mat-flat-button mat-primary" (click)="submit()" [disabled]="!formGroup.valid || !submitEnabled"
     *ngIf="saveButtonText" [name]="saveButtonText + '_button'">{{saveButtonText | translate}}</button>
 </div>
