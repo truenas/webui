@@ -4,8 +4,7 @@ import {fromEvent as observableFromEvent,  Observable ,  BehaviorSubject ,  Subs
 import {distinctUntilChanged, debounceTime, filter, switchMap, tap, catchError, take} from 'rxjs/operators';
 import { Component, OnInit, OnDestroy ,Input, ElementRef, ViewEncapsulation, ViewChild, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { DataSource } from '@angular/cdk/collections';
-import { MatPaginator, MatSort, PageEvent, MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 
@@ -108,8 +107,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public columnFilter = true; // show the column filters by default
   public filterColumns: Array<any> = []; // ...for the filter function - becomes THE complete list of all columns, diplayed or not
   public alwaysDisplayedCols: Array<any> = []; // For cols the user can't turn off
-  public presetDisplayedCols: Array<any> = []; // to store only the index of preset cols
-  public currentPreferredCols: Array<any> = []; // to store current choice of what cols to view
   public anythingClicked: boolean = false; // stores a pristine/touched state for checkboxes
   public originalConfColumns: any; // The 'factory setting
 
@@ -187,6 +184,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     })
     this.asyncView = this.conf.asyncView ? this.conf.asyncView : false;
+
     this.conf.columns.forEach((column) => {
       this.displayedColumns.push(column.prop);
       if (!column.always_display) {
@@ -228,7 +226,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       for (let item of this.allColumns) {
         if (!item.hidden) {
           this.originalConfColumns.push(item);
-          this.presetDisplayedCols.push(item);
         }
       }
     }
@@ -671,7 +668,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   paginationUpdate($pageEvent: any) {
-
     this.paginationPageEvent = $pageEvent;
     this.paginationPageIndex = (typeof(this.paginationPageEvent.offset) !== "undefined" ) 
     ? this.paginationPageEvent.offset : this.paginationPageEvent.pageIndex;
@@ -680,7 +676,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   protected setPaginationInfo() {
-
     const beginIndex = this.paginationPageIndex * this.paginationPageSize;
     const endIndex = beginIndex + this.paginationPageSize ;
 
@@ -849,15 +844,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.prefService.savePreferences(this.prefService.preferences);
   }
 
-  resetColView() {
-    let preferredCols = this.prefService.preferences.tableDisplayedColumns;
-    preferredCols.forEach((i) => {
-      if (i.title === this.title) {
-        preferredCols.splice(preferredCols.indexOf(i), 1); 
-      }
-    });
+  // resets col view to the default set in the table's component
+  resetColViewToDefaults() {
     this.conf.columns = this.originalConfColumns;
-    this.prefService.savePreferences(this.prefService.preferences);
+    this.selectColumnsToShowOrHide();
   }
 
   isChecked(col:any) {
@@ -866,7 +856,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }) !=undefined;
   }
 
-  // Toggle between all cols selected and the current stored preference
+  // Toggle between all/none cols selected
   checkAll() {
     this.anythingClicked = true;
     if (this.conf.columns.length < this.allColumns.length) {
@@ -894,8 +884,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
   }
-
   // End checkbox section -----------------------
+  
   toggleLabels(){
     this.multiActionsIconsOnly = !this.multiActionsIconsOnly;
   }

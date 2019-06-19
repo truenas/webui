@@ -34,7 +34,8 @@
                 <mat-icon *ngIf="checkLength()">check_circle</mat-icon>
                 <mat-icon *ngIf="!checkLength()">remove</mat-icon>
               </span>
-              <span>Select All</span>
+              <span *ngIf="!checkLength()">Select All</span>
+              <span *ngIf="checkLength()">Unselect All</span>
             </button>
           </div>
 
@@ -50,7 +51,7 @@
           </div>
 
           <div (click)="$event.stopPropagation()">
-            <button mat-menu-item (click)="resetColView()" id="reset_col_view">
+            <button mat-menu-item (click)="resetColViewToDefaults()" id="reset_col_view">
               <span>
                 <mat-icon>undo</mat-icon>
               </span>
