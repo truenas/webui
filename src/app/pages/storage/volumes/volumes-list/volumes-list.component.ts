@@ -819,7 +819,7 @@ export class VolumesListTableConfig implements InputTableConf {
   templateUrl: './volumes-list.component.html',
   providers: [SnackbarService]
 })
-export class VolumesListComponent extends EntityTableComponent implements OnInit, AfterViewInit {
+export class VolumesListComponent extends EntityTableComponent implements OnInit {
 
   title = T("Pools");
   zfsPoolRows: ZfsPoolData[] = [];
@@ -923,9 +923,4 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.systemdatasetPool = res.pool;
     })
   }
-
-  ngAfterViewInit(): void {
-
-  }
-
 }
