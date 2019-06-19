@@ -14,6 +14,14 @@
   bottom:0;
 }
 
+.widget .chart-wrapper{
+  border-top:solid 1px var(--bg1);
+}
+
+.widget .mat-toolbar-row{
+  border-bottom:solid 1px var(--bg1);
+}
+
 /* Legends */
 
 .legend-wrapper{
@@ -186,6 +194,11 @@ div.c3.area-spline .c3-chart-line .c3-lines path.c3-line{
 .area-spline .c3-event-rects{
   cursor:crosshair !important;
 }
+
+/*.bar-chart .c3-event-rects:nth-child(odd){
+  fill: url(#grad1);
+}*/
+
 /*
 
 .c3.line g.c3-event-rects,
@@ -228,3 +241,6 @@ g.c3-brush + g{
   background-color: var(--bg1);
 }
 
+.widget .bar-chart .c3-xgrid-focus{
+  opacity: 0;
+}

@@ -31,6 +31,9 @@ folder_tooltip: T('Enter the name of the destination folder.'),
 encryption_placeholder: T('Server Side Encryption'),
 encryption_tooltip: T('Choose <i>AES-256</i> or <i>None</i>.'),
 
+storage_class_placeholder: T('Storage Class'),
+storage_class_tooltip: T(''),
+
 b2_chunk_size_placeholder:  T('Upload Chunk Size (MiB)'),
 b2_chunk_size_tooltip: T('Files are split into chunks of this size before upload.\
  Up to «--transfers» chunks can be in progress at one time. The single largest file\

@@ -294,7 +294,7 @@ export class VMWizardComponent {
         for (const item of res){
           vnc_bind.options.push({label : item[1], value : item[0]});
         }
-        this.ws.call('interfaces.ip_in_use', [{"ipv4": true}]).subscribe(
+        this.ws.call('interface.ip_in_use', [{"ipv4": true}]).subscribe(
           (ip) => {
             if (_.find(vnc_bind.options, { value: ip[0].address })){
               ( < FormGroup > entityWizard.formArray.get([1]).get('vnc_bind')).setValue(ip[0].address);

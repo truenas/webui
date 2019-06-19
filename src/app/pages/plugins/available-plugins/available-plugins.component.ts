@@ -22,6 +22,7 @@ export class AvailablePluginsComponent implements OnInit {
     public selectedPlugin: any;
     public isSelectedOffical = true;
     public engineerMode: boolean;
+    public isFreenas = window.localStorage['is_freenas'] === 'true';
     public availableBranches = [];
     public selectedBranch: any;
     public installedPlugins: any = {};
@@ -75,6 +76,7 @@ export class AvailablePluginsComponent implements OnInit {
             (res) => {
                 this.plugins = res;
                 this.selectedPlugin = res[0];
+                this.parent.cardHeaderReady = true;
             },
             (err) => {
                 new EntityUtils().handleWSError(this.parent, err, this.parent.dialogService);

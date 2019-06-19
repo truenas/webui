@@ -1,5 +1,5 @@
 <mat-card-content class="plugin-info">
-    <section *ngIf="engineerMode">
+    <section *ngIf="engineerMode || isFreenas">
         <mat-label>{{ "Browse a Collection" | translate}}</mat-label>
         <mat-select [(ngModel)]="selectedBranch" (selectionChange)="switchBranch($event)">
             <mat-optgroup *ngFor="let branchIndex of availableBranches" [label]="branchIndex.name">

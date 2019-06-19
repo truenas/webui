@@ -42,6 +42,7 @@ import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecr
 import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volumechangekey-form/volumechangekey-form.component';
 import { VolumeImportWizardComponent} from './volumes/volume-import-wizard';
 import { MessageService } from '../common/entity/entity-form/services/message.service';
+import { JobService } from 'app/services';
 
 @NgModule({
   imports : [
@@ -81,7 +82,7 @@ import { MessageService } from '../common/entity/entity-form/services/message.se
     DiskBulkEditComponent
   ],
   entryComponents: [SnapshotDetailsComponent],
-  providers : [UserService, StorageService, MessageService]
+  providers : [UserService, StorageService, MessageService, JobService]
 })
 export class StorageModule {
 }

@@ -158,12 +158,21 @@ export class SnapshotFormComponent {
       data.schedule.dow;
     data['begin'] = data.schedule.begin;
     data['end'] = data.schedule.end;
+    if (data.exclude && Array.isArray(data.exclude) && data.exclude.length > 0) {
+      const newline = String.fromCharCode(13, 10);
+      data.exclude = data.exclude.join(`,${newline}`);
+    }
     return data;
   }
 
   beforeSubmit(value) {
     const spl = value.snapshot_picker.split(" ");
     delete value.snapshot_picker;
+
+    if (value.exclude) {
+      // filter() needed because: "hello, world,".split(",") === ["hello", "world", ""]
+      value.exclude = value.exclude.split(",").map((val: string) => val.trim()).filter((val: string) => !!val);
+    }
 
     value['schedule'] = {
       begin: value['begin'],
