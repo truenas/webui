@@ -91,7 +91,6 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   }
 
   parseMemData(data){
-    console.log(data);
     let services = this.aggregate([
       data["active"],
       data["shared"],
