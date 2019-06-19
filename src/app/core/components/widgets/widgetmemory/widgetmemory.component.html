@@ -23,7 +23,7 @@
 
         <div id="cpu-cores-wrapper" class="bar-chart-wrapper" fxLayout="column">
           <h1 fxFlex="100" class="memory-used">{{memData ? memData.data[0][1] : 'Loading...'}}<span class="memory-used-units">GiB</span></h1> 
-          <div fxFlex="100" class="memory-used-caption">free memory available</div>
+          <div fxFlex="100" class="memory-used-caption">free of {{memData ? memData.max : 'unknown'}}GiB total</div>
           <div fxFlex="100" id="memory-usage-chart" class="bar-chart"></div>
             <div fxFlex="100" id="cpu-load-cores-legend" fxLayout="row wrap">
               <div *ngIf="memData; else noLegend" id="cpu-load-cores-legend-values" fxFlex fxLayout="row wrap" fxLayoutAlign="space-around center">

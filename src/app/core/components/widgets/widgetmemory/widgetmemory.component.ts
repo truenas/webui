@@ -60,7 +60,6 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   public chartId = UUID.UUID();
   public memTotal: number;
   public legendData: any;
-  public formattedData: any;
   public colorPattern:string[];
 
   public legendColors: string[];
@@ -77,24 +76,9 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
 
   ngAfterViewInit(){
 
-    /*this.core.register({observerClass: this, eventName:"ThemeChanged"}).subscribe((evt: CoreEvent) => {
-      d3.select('#grad1 .begin')
-        .style('stop-color', this.getHighlightColor(0))
-
-      d3.select('#grad1 .end')
-        .style('stop-color', this.getHighlightColor(0.15))
-    });*/
-
     this.data.subscribe((evt:CoreEvent) => {
-      console.log(evt);
       if(evt.name == "MemoryStats"){
-        console.log("MemoryStats!!!");
-        //this.cpuData = evt.data;
         if(evt.data.used){
-          //const converted = this.bytesToGigabytes(evt.data.used);
-          //this.setUsageData(['Used', parseInt(converted.toFixed(1))]);
-          //this.setCpuLoadData(['Load', parseInt(evt.data.average.usage.toFixed(1))]);
-          //this.setUsageData(evt.data);
           this.setMemData(evt.data);
         }
       }
@@ -107,23 +91,26 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   }
 
   parseMemData(data){
-    let columns = [];
+    console.log(data);
+    let services = this.aggregate([
+      data["active"],
+      data["shared"],
+      data["cached"],
+      data["buffers"],
+      data["inactive"],
+    ]);
 
-    const keys = Object.keys(data);
-    let clone = Object.assign({}, data);
-
-    keys.forEach((item, index) => {
-      let converted = this.bytesToGigabytes(data[item]);
-      if(item == 'total' || item == 'used' || item == 'percent' || item == 'available'){ 
-        return; 
-      } else {
-        clone[item] = converted.toFixed(1);
-        columns.push([item, clone[item]])
-      }
-    });
-    this.formattedData = clone;
+    let columns = [
+      [ "Free", this.bytesToGigabytes(data["free"]).toFixed(1)],
+      [ "ZFS Cache", this.bytesToGigabytes(data["wired"]).toFixed(1)],
+      [ "Services", this.bytesToGigabytes(services).toFixed(1)]
+    ];
 
     return  columns
+  }
+
+  aggregate(data){
+    return data.reduce((total, num) => total + num);
   }
 
   setMemData( data){
@@ -140,7 +127,6 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     } else {
       this.memChartUpdate();
     }
-    console.log(config);
   }
 
   setUsageData( data){
@@ -178,9 +164,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   memChartInit(){
 
     let currentTheme = this.themeService.currentTheme();
-    this.colorPattern = currentTheme.accentColors.map((hue) => {
-      return 'var(--' + hue + ')';
-    })
+    this.colorPattern = ["var(--green)", "var(--primary)", "var(--accent)"];
 
     let conf = {
       bindto: '#memory-usage-chart',
@@ -198,11 +182,6 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
         pattern: this.colorPattern
       },
       data: {
-        /*onmouseout: (d) => {
-          this.legendData = null;
-          //this.hoverHighlight(true);
-          this.legendIndex = null;
-        },*/
         colors: {
           Usage: 'var(--primary)',
           Temperature: 'var(--accent)',
@@ -210,85 +189,19 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
         columns: this.memData.data,
         type: 'bar',
         groups: [
-          ['free','active','inactive','buffers','cached','shared','wired']
+          ["Free", "ZFS Cache", "Services"]
         ]
-      },
-      bar: {
-        //width: 400//this.coreCount < 16 ? 10 : {ratio: 0.45}
       },
       axis: {
         rotated:true,
         x:{ show: false },
         y:{ show: false }
       },
-      /*grid: {
-        x: {
-          show: false
-        },
-        y: {
-          show:true
-        }
-      }*/
     }
 
     this.chart = c3.generate(conf);
       
-    // setup highlight svg gradient
-    /*let def = d3.select('#cpu-cores-chart svg defs')
-      .append('linearGradient')
-      .attr('id', 'grad1')
-      .attr('x1', '0%')
-      .attr('y1', '0%')
-      .attr('x2', '0%')
-      .attr('y2', '100%')
-
-    def.append('stop')
-      .attr('class', 'begin')
-      .attr('offset', '0%')
-      //.style('stop-color', this.getHighlightColor(0))
-      //.style('stop-color', 'rgba(255,255,255,0)')
-
-    def.append('stop')
-      .attr('class', 'end')
-      .attr('offset', '100%')
-      //.style('stop-color', this.getHighlightColor(0.15))
-      //.style('stop-color', 'rgba(255,255,255,0.15)')
-
-    let g = d3.select('#cpu-cores-chart svg g.c3-chart')
-    g.insert('rect', ':first-child')
-      .attr('class', 'c3-event-rect-highlighted')
-    
-    let highlightRect = d3.select('rect.c3-event-rect-highlighted')
-    highlightRect.attr('class', 'active c3-event-rect-highlighted active')
-      .attr('x', '-1000')
-      .attr('fill', 'url(#grad1)')*/
   }
-
-  /*getHighlightColor(opacity: number){
-    // Get highlight color
-    let currentTheme = this.themeService.currentTheme();
-    let txtColor = currentTheme.fg2;
-
-    // convert to rgb
-    let rgb = this.themeService.hexToRGB(txtColor).rgb;
-
-    // return rgba
-    let rgba =  "rgba(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + "," + opacity + ")";
-
-    return rgba;
-  }*/
-
-  /*colorFromTemperature(t){
-    let color = "var(--green)";
-    if(t.value >= 80){
-      color = "var(--red)";
-    } else if (t.value < 80 && t.value > 63){
-      color = "var(--yellow)";
-    } else if(t.value < 64){
-      color = "var(--green)";
-    }
-    return color;
-  }*/
 
   memChartUpdate(){
     this.chart.load({
@@ -299,23 +212,5 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
    trustedSecurity(style) {
       return this.sanitizer.bypassSecurityTrustStyle(style);
    }
-
-  /*hoverHighlight(remove?: boolean){
-    let eventRect = d3.select('rect.c3-event-rect-' + this.legendIndex)
-    let highlightRect = d3.select('rect.c3-event-rect-highlighted')
-    // Remove fill attributes from all event rects
-    // if this just a removal only, skip highlight
-    if(remove){
-        highlightRect.attr('y', '10000');
-      return;
-    }
-
-    // highlight chosen rect
-    highlightRect.attr('x', eventRect.attr('x'))
-      .attr('y', eventRect.attr('y'))
-      .attr('width', eventRect.attr('width'))
-      .attr('height', eventRect.attr('height'))
-  }*/
-  
 
 }
