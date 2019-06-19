@@ -1,4 +1,4 @@
-import { RestService, WebSocketService } from '../../../../services';
+import { RestService, WebSocketService, AppLoaderService } from '../../../../services';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Component, AfterViewChecked, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
@@ -43,7 +43,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     protected rest: RestService,
     protected ws: WebSocketService,
     public language: LanguageService,
-    public dialog: MatDialog) {
+    public dialog: MatDialog, private loader: AppLoaderService) {
     // detect server type
     ws.call('system.is_freenas').subscribe((res)=>{
       this.is_freenas = res;
@@ -93,6 +93,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       this.isSidenavOpen = false;
     }
     this.checkIfConsoleMsgShows();
+    this.loader.open();
   }
 
   ngAfterViewChecked() {
