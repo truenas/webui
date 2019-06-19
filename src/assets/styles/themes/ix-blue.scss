@@ -1252,6 +1252,14 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     min-width: 180px;
   }
 
+  app-replication-wizard #adjustme {
+    top: -70px;
+  }
+
+  jail-wizard .tooltiptext {
+    top: -1px;
+  }
+  
   mat-radio-group .tooltip .material-icons,
   mat-radio-group .tooltip .material-icons {
     position: relative;
