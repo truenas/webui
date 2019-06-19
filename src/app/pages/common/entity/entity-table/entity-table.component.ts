@@ -199,6 +199,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showActions = this.conf.showActions === undefined ? true : this.conf.showActions ;
     this.filterColumns = this.conf.columns;
     this.conf.columns = this.allColumns; // Remove any alwaysDisplayed cols from the official list
+    this.originalConfColumns = this.conf.columns; // to go back to defaults
 
     // Get preferred list of columns from pref service
     let preferredCols = this.prefService.preferences.tableDisplayedColumns;
@@ -217,25 +218,21 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.hideTopActions = this.conf.hideTopActions;
     }
 
+    // Delay spinner 500ms so it won't show up on a fast-loading page
+    setTimeout(() => { this.setShowSpinner(); }, 500);
 
-      // Delay spinner 500ms so it won't show up on a fast-loading page
-      setTimeout(() => { this.setShowSpinner(); }, 500);
+    // Next section keeps track of original layout on big tables
+    if (this.originalConfColumns && this.originalConfColumns.length > 9) {
+      this.originalConfColumns = [];
 
-      // Next section sets the checked/displayed columns
-      if (this.conf.columns && this.conf.columns.length > 9) {
-        this.conf.columns = [];
-
-        for (let item of this.allColumns) {
-          if (!item.hidden) {
-            this.conf.columns.push(item);
-            this.presetDisplayedCols.push(item);
-          }
-          this.originalConfColumns = this.conf.columns; // to go back to defaults
+      for (let item of this.allColumns) {
+        if (!item.hidden) {
+          this.originalConfColumns.push(item);
+          this.presetDisplayedCols.push(item);
         }
-
-        this.currentPreferredCols = this.conf.columns;
       }
-        // End of checked/display section ------------                 
+    }
+      // End of layout section ------------                 
 
     this.erdService.attachResizeEventToElement("entity-table-component");
   }
@@ -283,25 +280,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.currentRows = newData;
         this.paginationPageIndex  = 0;
         this.setPaginationInfo();
-      });
-
-      // Delay spinner 500ms so it won't show up on a fast-loading page
-      setTimeout(() => { this.setShowSpinner(); }, 500);
-
-      // Next section sets the checked/displayed columns
-      if (this.conf.columns && this.conf.columns.length > 10) {
-        this.conf.columns = [];
-
-        for (let item of this.allColumns) {
-          if (!item.hidden) {
-            this.conf.columns.push(item);
-            this.presetDisplayedCols.push(item);
-          }
-        }
-
-        this.currentPreferredCols = this.conf.columns;
-      }
-        // End of checked/display section ------------                 
+      });              
   }
 
   setTableHeight() {
@@ -895,7 +874,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.selectColumnsToShowOrHide();
       return this.conf.columns
     } else {
-      this.conf.columns = this.currentPreferredCols;
+      this.conf.columns = [];
       this.selectColumnsToShowOrHide();
       return this.conf.columns;
     }
@@ -903,7 +882,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Used by the select all checkbox to determine whether it should be checked
   checkLength() { 
-    if (this.allColumns) {
+    if (this.allColumns && this.conf.columns) {
       return this.conf.columns.length === this.allColumns.length;
     }
   }
@@ -922,7 +901,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   toggleExpandRow(row) {
-    //console.log('Toggled Expand Row!', row);
     if (!this.startingHeight) {
       this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
     }  
@@ -933,10 +911,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       let heightStr = `height: ${newHeight}px`;
       document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
     }, 100)
-    
   }
 
   onDetailToggle(event) {
     //console.log('Detail Toggled', event);
-}
+  }
 }

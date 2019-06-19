@@ -51,7 +51,10 @@
 
           <div (click)="$event.stopPropagation()">
             <button mat-menu-item (click)="resetColView()" id="reset_col_view">
-              <span id="reset">Reset to Default Columns</span>
+              <span>
+                <mat-icon>undo</mat-icon>
+              </span>
+              <span>Reset to Defaults</span>
             </button>
           </div>
         </mat-menu>
