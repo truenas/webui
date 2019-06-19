@@ -4,8 +4,7 @@ import {fromEvent as observableFromEvent,  Observable ,  BehaviorSubject ,  Subs
 import {distinctUntilChanged, debounceTime, filter, switchMap, tap, catchError, take} from 'rxjs/operators';
 import { Component, OnInit, OnDestroy ,Input, ElementRef, ViewEncapsulation, ViewChild, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { DataSource } from '@angular/cdk/collections';
-import { MatPaginator, MatSort, PageEvent, MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 
@@ -18,6 +17,7 @@ import { DialogService, JobService } from '../../../../services';
 import { ErdService } from '../../../../services/erd.service';
 import { StorageService } from '../../../../services/storage.service'
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { PreferencesService } from 'app/core/services/preferences.service';
 import { T } from '../../../../translate-marker';
 
 export interface InputTableConf {
@@ -107,9 +107,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public columnFilter = true; // show the column filters by default
   public filterColumns: Array<any> = []; // ...for the filter function - becomes THE complete list of all columns, diplayed or not
   public alwaysDisplayedCols: Array<any> = []; // For cols the user can't turn off
-  public presetDisplayedCols: Array<any> = []; // to store only the index of preset cols
-  public currentPreferredCols: Array<any> = []; // to store current choice of what cols to view
   public anythingClicked: boolean = false; // stores a pristine/touched state for checkboxes
+  public originalConfColumns: any; // The 'factory setting
 
   public startingHeight: number;
   public expandedRows = 0;
@@ -143,7 +142,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(protected core: CoreService, protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService, 
     protected erdService: ErdService, protected translate: TranslateService, protected snackBar: MatSnackBar,
-    public sorter: StorageService, protected job: JobService) { 
+    public sorter: StorageService, protected job: JobService, protected prefService: PreferencesService) { 
       this.core.register({observerClass:this, eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
         this.multiActionsIconsOnly = evt.data.preferIconsOnly;
       });
@@ -185,6 +184,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     })
     this.asyncView = this.conf.asyncView ? this.conf.asyncView : false;
+
     this.conf.columns.forEach((column) => {
       this.displayedColumns.push(column.prop);
       if (!column.always_display) {
@@ -197,6 +197,15 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showActions = this.conf.showActions === undefined ? true : this.conf.showActions ;
     this.filterColumns = this.conf.columns;
     this.conf.columns = this.allColumns; // Remove any alwaysDisplayed cols from the official list
+    this.originalConfColumns = this.conf.columns; // to go back to defaults
+
+    // Get preferred list of columns from pref service
+    let preferredCols = this.prefService.preferences.tableDisplayedColumns;
+    preferredCols.forEach((i) => {
+      if (i.title === this.title) {
+        this.conf.columns = i.cols;
+      }
+    });
 
     this.displayedColumns.push("action");
     if (this.conf.changeEvent) {
@@ -207,24 +216,20 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.hideTopActions = this.conf.hideTopActions;
     }
 
+    // Delay spinner 500ms so it won't show up on a fast-loading page
+    setTimeout(() => { this.setShowSpinner(); }, 500);
 
-      // Delay spinner 500ms so it won't show up on a fast-loading page
-      setTimeout(() => { this.setShowSpinner(); }, 500);
+    // Next section keeps track of original layout on big tables
+    if (this.originalConfColumns && this.originalConfColumns.length > 9) {
+      this.originalConfColumns = [];
 
-      // Next section sets the checked/displayed columns
-      if (this.conf.columns && this.conf.columns.length > 9) {
-        this.conf.columns = [];
-
-        for (let item of this.allColumns) {
-          if (!item.hidden) {
-            this.conf.columns.push(item);
-            this.presetDisplayedCols.push(item);
-          }
+      for (let item of this.allColumns) {
+        if (!item.hidden) {
+          this.originalConfColumns.push(item);
         }
-
-        this.currentPreferredCols = this.conf.columns;
       }
-        // End of checked/display section ------------                 
+    }
+      // End of layout section ------------                 
 
     this.erdService.attachResizeEventToElement("entity-table-component");
   }
@@ -272,25 +277,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.currentRows = newData;
         this.paginationPageIndex  = 0;
         this.setPaginationInfo();
-      });
-
-      // Delay spinner 500ms so it won't show up on a fast-loading page
-      setTimeout(() => { this.setShowSpinner(); }, 500);
-
-      // Next section sets the checked/displayed columns
-      if (this.conf.columns && this.conf.columns.length > 10) {
-        this.conf.columns = [];
-
-        for (let item of this.allColumns) {
-          if (!item.hidden) {
-            this.conf.columns.push(item);
-            this.presetDisplayedCols.push(item);
-          }
-        }
-
-        this.currentPreferredCols = this.conf.columns;
-      }
-        // End of checked/display section ------------                 
+      });              
   }
 
   setTableHeight() {
@@ -694,7 +681,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   paginationUpdate($pageEvent: any) {
-
     this.paginationPageEvent = $pageEvent;
     this.paginationPageIndex = (typeof(this.paginationPageEvent.offset) !== "undefined" ) 
     ? this.paginationPageEvent.offset : this.paginationPageEvent.pageIndex;
@@ -703,7 +689,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   protected setPaginationInfo() {
-
     const beginIndex = this.paginationPageIndex * this.paginationPageSize;
     const endIndex = beginIndex + this.paginationPageSize ;
 
@@ -852,6 +837,30 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.conf.columns = [...this.conf.columns, col];
     }
+
+    this.selectColumnsToShowOrHide();
+  }
+
+  // Stores currently selected columns in preference service
+  selectColumnsToShowOrHide() {
+    let obj = {};
+    obj['title'] = this.title;
+    obj['cols'] = this.conf.columns;
+  
+    let preferredCols = this.prefService.preferences.tableDisplayedColumns;
+    preferredCols.forEach((i) => {
+      if (i.title === this.title) {
+        preferredCols.splice(preferredCols.indexOf(i), 1); 
+      }
+    });
+    preferredCols.push(obj);
+    this.prefService.savePreferences(this.prefService.preferences);
+  }
+
+  // resets col view to the default set in the table's component
+  resetColViewToDefaults() {
+    this.conf.columns = this.originalConfColumns;
+    this.selectColumnsToShowOrHide();
   }
 
   isChecked(col:any) {
@@ -860,21 +869,25 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }) !=undefined;
   }
 
-  // Toggle between all cols selected and the current stored preference
+  // Toggle between all/none cols selected
   checkAll() {
     this.anythingClicked = true;
     if (this.conf.columns.length < this.allColumns.length) {
-
       this.conf.columns = this.allColumns;
+      this.selectColumnsToShowOrHide();
       return this.conf.columns
     } else {
-      return this.conf.columns = this.currentPreferredCols;
+      this.conf.columns = [];
+      this.selectColumnsToShowOrHide();
+      return this.conf.columns;
     }
   }
 
   // Used by the select all checkbox to determine whether it should be checked
-  checkLength() {
-    return this.conf.columns.length === this.allColumns.length;
+  checkLength() { 
+    if (this.allColumns && this.conf.columns) {
+      return this.conf.columns.length === this.allColumns.length;
+    }
   }
 
   onGoToLegacy() {
@@ -884,14 +897,13 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
   }
-
   // End checkbox section -----------------------
+  
   toggleLabels(){
     this.multiActionsIconsOnly = !this.multiActionsIconsOnly;
   }
 
   toggleExpandRow(row) {
-    //console.log('Toggled Expand Row!', row);
     if (!this.startingHeight) {
       this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
     }  
@@ -902,10 +914,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       let heightStr = `height: ${newHeight}px`;
       document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
     }, 100)
-    
   }
 
   onDetailToggle(event) {
     //console.log('Detail Toggled', event);
-}
+  }
 }
