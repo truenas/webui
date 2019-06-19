@@ -131,7 +131,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     let neededNumberconsoleMsg = 3; // Just 3 messages for footer bar
 
     this.ws.sub(subName).subscribe((res) => {
-      if(res && res.data != ""){
+      if(res && res.data && typeof res.data === 'string'){
         this.consoleMsg = this.accumulateConsoleMsg(res.data, neededNumberconsoleMsg);
       }
     });
