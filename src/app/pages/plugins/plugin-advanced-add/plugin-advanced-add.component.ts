@@ -21,7 +21,7 @@ import { FieldRelationService } from '../../common/entity/entity-form/services/f
 import { EntityUtils } from '../../common/entity/utils';
 import { DialogService, NetworkService } from '../../../services';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
-import helptext from '../../../helptext/jails/jails-add';
+import helptext from '../../../helptext/jails/jail-configuration';
 
 @Component({
   selector: 'app-plugin-advanced-add',
@@ -51,6 +51,16 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
       required: true,
       validation: [regexValidator(/^[a-zA-Z0-9-_]+$/)],
       disabled: true,
+    },
+    {
+      type: 'radio',
+      name: 'https',
+      placeholder: helptext.https_placeholder,
+      options: [
+        {label:'HTTPS', value: true, tooltip: helptext.https_tooltip,},
+        {label:'HTTP', value: false, tooltip: helptext.http_tooltip,},
+      ],
+      value: true,
     },
     {
       type: 'checkbox',
@@ -997,7 +1007,7 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
     this.vnet_default_interfaceField = _.find(this.networkfieldConfig, { 'name': 'vnet_default_interface' });
 
     // get interface options
-    this.ws.call('interfaces.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
+    this.ws.call('interface.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
       (res) => {
         for (let i in res) {
           this.ip4_interfaceField.options.push({ label: res[i].name, value: res[i].name });
@@ -1223,7 +1233,7 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
             }
             delete value[i];
           } else {
-            if (i != 'uuid' && i != 'release') {
+            if (i != 'uuid' && i != 'release' && i != 'https') {
               property.push(i + '=' + value[i]);
               delete value[i];
             }

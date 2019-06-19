@@ -82,8 +82,8 @@ export const routes: Routes = [
       component: DatasetComponent,
       data: { title: 'System Dataset', breadcrumb: 'System Dataset', icon: 'storage' },
     }, {
-      path: 'bootenv',
-      data: { title: 'Boot Environments', breadcrumb: 'Boot Environments', icon: 'replay' },
+      path: 'boot',
+      data: { title: 'Boot', breadcrumb: 'Boot', icon: 'replay' },
       children: [{
         path: '',
         component: BootEnvironmentListComponent,

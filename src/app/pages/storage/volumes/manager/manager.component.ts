@@ -108,6 +108,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public encryption_message = helptext.manager_encryption_message;
 
+  public startingHeight: any;
+  public expandedRows: any;
+
   constructor(
     private rest: RestService,
     private ws: WebSocketService,
@@ -239,6 +242,16 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       for (let i in res) {
         res[i]['real_capacity'] = res[i]['size'];
         res[i]['capacity'] = (<any>window).filesize(res[i]['size'], {standard : "iec"});
+        const details = [];
+        if (res[i]['rotationrate']) {
+          details.push({label:T('Rotation Rate'), value:res[i]['rotationrate']});
+        }
+        details.push({label:T('Model'), value:res[i]['model']});
+        details.push({label:T('Serial'), value:res[i]['serial']});
+        if (res[i]['enclosure']) {
+          details.push({label:T('Enclosure'), value:res[i]['enclosure']['number']});
+        }
+        res[i]['details'] = details;
         this.disks.push(res[i]);
       }
 
@@ -609,5 +622,20 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     let sort = event.sorts[0],
       rows = this.disks;
     this.sorter.tableSorter(rows, sort.prop, sort.dir);
+  }
+
+  toggleExpandRow(row) {
+    //console.log('Toggled Expand Row!', row);
+    if (!this.startingHeight) {
+      this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
+    }  
+    this.table.rowDetail.toggleExpandRow(row);
+    setTimeout(() => {
+      this.expandedRows = (document.querySelectorAll('.datatable-row-detail').length);
+      const newHeight = (this.expandedRows * 100) + this.startingHeight;
+      const heightStr = `height: ${newHeight}px`;
+      document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
+    }, 100)
+    
   }
 }

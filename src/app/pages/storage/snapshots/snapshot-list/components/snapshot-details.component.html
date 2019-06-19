@@ -1,0 +1,37 @@
+<div 
+    *ngIf="snapshot$ | async as snapshot"
+    fxLayoutAlign="space-between center"
+    fxLayoutGap="56px"
+    [style.margin-left.px]="176"
+    [style.padding.px]="16"
+>
+    <section fxLayoutAlign="start center" fxLayoutGap="48px">
+        <div>
+            <h4>{{ snapshot.creation }}</h4>
+            <p>Date created</p>
+        </div>
+        <div>
+            <h4>{{ snapshot.used.value }}</h4>
+            <p>Used</p>
+        </div>
+        <div>
+            <h4>{{ snapshot.referenced.value }}</h4>
+            <p>Referenced</p>
+        </div>
+    </section>
+
+    <section fxLayoutAlign="start center" fxLayoutGap="24px">
+        <ng-container *ngFor="let action of actions">
+            <button
+                mat-button
+                type="button"
+                [class.button-delete]="action.id === 'delete'"
+                [color]="action.buttonColor || 'default'"
+                (click)="action.onClick(snapshot)"
+                id="snapshot_{{ action.name }}_{{ action.id }}"
+            >
+                {{ action.label }}
+            </button>
+        </ng-container>
+    </section>
+</div>

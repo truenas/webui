@@ -145,7 +145,7 @@ export class ReplicationWizardComponent {
                     tooltip: sshConnectionsHelptex.private_key_tooltip,
                     options: [
                         {
-                            label: 'Create New',
+                            label: 'Generate New',
                             value: 'NEW'
                         }
                     ],
@@ -814,7 +814,7 @@ export class ReplicationWizardComponent {
                 }
             )
         }
- 
+
         const createdItems = {
             private_key: null,
             ssh_credentials: null,
@@ -868,7 +868,7 @@ export class ReplicationWizardComponent {
         let payload;
         if (item === 'private_key') {
             payload = {
-                name: value['name'] + '_keypair',
+                name: value['name'] + ' Key',
                 type: 'SSH_KEY_PAIR',
                 attributes: value['sshkeypair'],
             }
@@ -949,7 +949,7 @@ export class ReplicationWizardComponent {
                 }
             }
         }
-       
+
         return this.ws.call(this.createCalls[item], [payload]).toPromise();
     }
 

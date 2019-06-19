@@ -37,24 +37,12 @@
         <!-- Put a loader in here at some point -->
       </div>
     </div>
+    <script src='assets/scripts/product.js'>
+    </script>
     <script>
-      let is_freenas = window.localStorage['is_freenas'];
-      if (is_freenas === 'true') {
-      document.getElementById("main-page-title").innerHTML = "FreeNAS - " + window.location.hostname;
-      setFavicon("assets/images/favicon-96x96.png");
-    } else {
-      document.getElementById("main-page-title").innerHTML = "TrueNAS - " + window.location.hostname;
-      document.getElementById('brandLogo').src = 'assets/images/TrueNAS_Logomark_White.svg';
-      setFavicon("assets/images/TrueNAS_favicon.png");
-    }
-    function setFavicon(str) {
-      let link = document.querySelector("link[rel*='icon']") || document.createElement("link")
-        link.rel = "icon";
-        link.type = "image/png";
-        // link.sizes = "16x16";
-        link.href = str;
-        document.getElementsByTagName('head')[0].appendChild(link);
-    }
+      if (product.trim() === 'TrueNAS') {
+        document.getElementById('brandLogo').src = 'assets/images/TrueNAS_Logomark_White.svg';
+      }
     </script>
   </app-root>
 </body>

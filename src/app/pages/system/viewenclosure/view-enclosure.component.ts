@@ -6,7 +6,7 @@ import { EnclosureDisksComponent} from './enclosure-disks/enclosure-disks.compon
 
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
-import { SystemProfiler } from './enclosure-disks/system-profiler';
+import { SystemProfiler } from 'app/core/classes/system-profiler';
 
 interface ViewConfig {
   name: string;

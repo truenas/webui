@@ -119,6 +119,12 @@ export class GeneralComponent {
       name: 'crash_reporting',
       placeholder: helptext.crash_reporting.placeholder,
       tooltip: helptext.crash_reporting.tooltip
+    },
+    {
+      type: 'checkbox',
+      name: 'usage_collection',
+      placeholder: helptext.usage_collection.placeholder,
+      tooltip: helptext.usage_collection.tooltip
     }
   ];
   protected saveConfigFieldConf: FieldConfig[] = [

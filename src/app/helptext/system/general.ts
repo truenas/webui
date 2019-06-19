@@ -116,6 +116,12 @@ export const helptext_system_general = {
     tooltip: T("Enable sending anonymous crash reports to iXsystems")
   },
 
+  usage_collection: {
+    placeholder: T("Usage collection"),
+    tooltip: T("Enable sending anonymous usage statistics to iXsystems")
+  },
+
+
   save_config_form: {
     message: T(
       "<b>WARNING:</b> This configuration file contains system\

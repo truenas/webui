@@ -232,7 +232,7 @@ export class SshConnectionsFormComponent {
                 _.find(this.fieldConfig, { name: 'setup_method' }).isHidden = true;
             } else {
                 _.find(this.fieldConfig, { name: 'private_key'}).options.push({
-                    label: 'Create New',
+                    label: 'Generate New',
                     value: 'NEW'
                 });
             }
@@ -261,7 +261,7 @@ export class SshConnectionsFormComponent {
             await this.replicationService.genSSHKeypair().then(
                 async (res) => {
                     const payload = {
-                        name: data['name'] + '_keypair',
+                        name: data['name'] + ' Key',
                         type: 'SSH_KEY_PAIR',
                         attributes: res,
                     };
@@ -302,7 +302,7 @@ export class SshConnectionsFormComponent {
             (err) => {
                 this.loader.close();
                 if (err.hasOwnProperty("reason") && (err.hasOwnProperty("trace"))) {
-                    new EntityUtils().handleWSError(this, err);
+                    new EntityUtils().handleWSError(this, err, this.dialogService);
                 } else {
                     new EntityUtils().handleError(this, err);
                 }
