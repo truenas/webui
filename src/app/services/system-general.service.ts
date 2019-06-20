@@ -1,18 +1,17 @@
 
 
-import {Injectable, EventEmitter} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Http} from '@angular/http';
 import {Observable, Subject, Subscription} from 'rxjs/Rx';
 
 import {RestService} from './rest.service';
 import {WebSocketService} from './ws.service';
 
-@Injectable({providedIn: 'root'})
+@Injectable()
 export class SystemGeneralService {
 
   protected certificateList: string = 'certificate.query';
   protected caList: string = 'certificateauthority.query';
-  rebootStatus = new Subject<boolean>();
 
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
@@ -35,16 +34,5 @@ export class SystemGeneralService {
   getSysInfo() {
     return this.ws.call('system.info', []);
   }
-
-  getRebootStatusListener() {
-    return this.rebootStatus;
-  }
-
-  setRebootStatus(status) {
-    setTimeout(() => {
-      this.rebootStatus.next(status);
-    }, 200);
-  }
-
 
 }

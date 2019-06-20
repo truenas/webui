@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { MatDialog } from '@angular/material';
 import { DialogService, LanguageService, RestService, WebSocketService, SnackbarService } from '../../../services/';
-import { SystemGeneralService } from '../../../services/system-general.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
@@ -177,7 +176,8 @@ export class GeneralComponent {
     {
       type: 'checkbox',
       name: 'reboot_option',
-      placeholder: helptext.reset_config_placeholder
+      placeholder: helptext.reset_config_placeholder,
+      required: true
     }
   ]
 
@@ -233,8 +233,7 @@ export class GeneralComponent {
   constructor(protected rest: RestService, protected router: Router,
     protected language: LanguageService, protected ws: WebSocketService,
     protected dialog: DialogService, protected loader: AppLoaderService,
-    public http: Http, protected snackBar: SnackbarService,  private mdDialog: MatDialog,
-    private sysGeneralService: SystemGeneralService) {}
+    public http: Http, protected snackBar: SnackbarService,  private mdDialog: MatDialog) {}
 
   resourceTransformIncomingRestData(value) {
     this.http_port = value['ui_port'];
@@ -444,21 +443,15 @@ export class GeneralComponent {
       }
     );
   }
-  fireEmitter(status) {
-    this.sysGeneralService.setRebootStatus(status);
-  }
 
   resetConfigSubmit(entityDialog) {
     const parent = entityDialog.parent;
-    let rebootValue;
-    entityDialog.formValue.reboot_option ? rebootValue = true : rebootValue = false;
-    parent.fireEmitter(rebootValue)
     parent.router.navigate(new Array('').concat(['others', 'config-reset']))
   }
 
   public customSubmit(body) {
     this.loader.open();
-    return this.ws.call('system.general.update', [body]).subscribe((res) => {
+    return this.ws.call('system.general.update', [body]).subscribe(() => {
       this.loader.close();
       this.snackBar.open(T("Settings saved."), T('close'), { duration: 5000 });
       this.afterSubmit(body);

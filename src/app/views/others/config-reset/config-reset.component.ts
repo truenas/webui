@@ -1,15 +1,13 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { WebSocketService } from '../../../services/ws.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogService } from '../../../services/dialog.service';
-import { SystemGeneralService } from '../../../services/system-general.service';
 import { MatDialog } from '@angular/material';
 import globalHelptext from '../../../helptext/global-helptext';
 import { EntityJobComponent } from '../../../../app/pages/common/entity/entity-job/entity-job.component';
 import { T } from '../../../translate-marker';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-config-reset',
@@ -22,13 +20,10 @@ export class ConfigResetComponent implements OnInit {
   public is_freenas: Boolean = false;
   public copyrightYear = globalHelptext.copyright_year;
   public dialogRef: any;
-  public shouldReboot: boolean = true;
-  private rebootStatusSub: Subscription;
 
   constructor(protected ws: WebSocketService, protected router: Router,
     protected loader: AppLoaderService, public translate: TranslateService,
-    protected dialogService: DialogService, protected dialog: MatDialog,
-    private sysGeneralService: SystemGeneralService) {
+    protected dialogService: DialogService, protected dialog: MatDialog) {
       this.ws = ws;
       this.ws.call('system.is_freenas').subscribe((res)=>{
         this.is_freenas = res;
@@ -52,45 +47,27 @@ export class ConfigResetComponent implements OnInit {
       this.is_freenas = true;
     }
 
-    this.rebootStatusSub = this.sysGeneralService.getRebootStatusListener()
-      .subscribe((res) => {
-        this.shouldReboot = res;
-        this.dialog.closeAll();
-        this.resetConfigSubmit();
-      });
+    this.dialog.closeAll();
+    this.resetConfigSubmit();
   }
 
   resetConfigSubmit() {
-    let message;
-    this.shouldReboot ? message = 'The system will restart.' : message = 'You will be logged out.';
-
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Resetting..." }, disableClose: true });
-    this.dialogRef.componentInstance.setCall('config.reset', [{ reboot: this.shouldReboot}]);
-    this.dialogRef.componentInstance.setDescription(T('Resetting system configuration to default settings. ' + message));
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Resetting. Please wait..." }, disableClose: true });
+    this.dialogRef.componentInstance.setCall('config.reset', [{ reboot: true}]);
+    this.dialogRef.componentInstance.setDescription(T('Resetting system configuration to default settings. The system will restart.'));
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe(() => {
       this.dialogRef.close();
-      if (!this.shouldReboot) {
-        this.ws.logout();
-        this.dialog.closeAll();
-      } else {
-        this.ws.prepare_shutdown();
-        this.loader.open();
-        setTimeout(() => {
-          this.isWSConnected();
-        }, 15000);
-      }
+      this.ws.prepare_shutdown();
+      this.loader.open();
+      setTimeout(() => {
+        this.isWSConnected();
+      }, 15000);
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
       this.dialogRef.close();
       this.dialogService.errorReport(res.error, res.state, res.exception);
     });
-  }
-
-  ngOnDestroy() {
-    if (this.rebootStatusSub) {
-      this.rebootStatusSub.unsubscribe();
-    }
   }
 
 }
