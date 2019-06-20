@@ -13,7 +13,7 @@ export class WebSocketService {
   onCloseSubject: Subject<any>;
   onOpenSubject: Subject<any>;
   pendingCalls: any;
-  pendingSub: any;
+  pendingSubs: any = {};
   pendingMessages: any[] = [];
   socket: WebSocket;
   connected: boolean = false;
@@ -118,15 +118,21 @@ export class WebSocketService {
       setTimeout(this.ping.bind(this), 20000);
       this.onconnect();
     } else if (data.msg == "added") {
-      let subObserver = this.pendingSub;
+      console.log(data);
+      let nom = data.collection.replace('.', '_');
+      if(this.pendingSubs[nom] && this.pendingSubs[nom].observers){
+          for(let uuid in this.pendingSubs[nom].observers){
+          let subObserver = this.pendingSubs[nom].observers[uuid];
+          if (data.error) {
+            console.log("Error: ", data.error);
+            subObserver.error(data.error);
+          }
+          if (subObserver) {
+            subObserver.next(data.fields);
+          }
+        }
+      }
 
-      if (data.error) {
-        console.log("Error: ", data.error);
-        subObserver.error(data.error);
-      }
-      if (subObserver) {
-        subObserver.next(data.fields);
-      }
     } else if (data.msg == "changed") {
       this.subscriptions.forEach((v, k) => {
         if (k == '*' || k == data.collection) {
@@ -192,16 +198,45 @@ export class WebSocketService {
 
   sub(name): Observable<any> {
 
+    /*let source = Observable.create((observer) => {
+      this.pendingSubs = observer;
+      this.send(payload);      
+    });
+    
+    return source;
+    */
+
+    let nom = name.replace('.','_'); // Avoid weird behavior
+    if(!this.pendingSubs[nom]){ 
+      this.pendingSubs[nom]= {
+        observers: {} 
+      }; 
+    }
+
     let uuid = UUID.UUID();
     let payload =
         {"id" : uuid, "name" : name, "msg" : "sub" };
 
-    let source = Observable.create((observer) => {
-      this.pendingSub = observer;
+    let obs = Observable.create((observer) => {
+      this.pendingSubs[nom].observers[uuid] = observer;
+      console.log("CREATING...");
+      console.log(this.pendingSubs);
       this.send(payload);      
-    });
+      
+      // cleanup routine 
+      observer.complete = () => {
+        let unsub_payload = {"id" : uuid, "name" : name, "msg" : "unsub" };
+        this.send(unsub_payload);  
+        this.pendingSubs[nom].observers[uuid].unsubscribe();
+        delete this.pendingSubs[nom].observers[uuid];
+        if(!this.pendingSubs[nom].observers){ delete this.pendingSubs[nom]}
+        console.log("COMPLETING...");
+        console.log(this.pendingSubs);
+      }
 
-    return source;
+      return observer;
+    });
+    return obs;
   }
 
   job(method, params?: any): Observable<any> {
