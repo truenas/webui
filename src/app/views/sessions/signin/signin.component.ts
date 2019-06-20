@@ -77,9 +77,12 @@ export class SigninComponent implements OnInit {
         if (this.interval) {
           clearInterval(this.interval);
         }
-        setInterval(() => {
+        if (!this.is_freenas) {
           this.getHAStatus();
-        }, 5000);
+          setInterval(() => {
+            this.getHAStatus();
+          }, 6000);
+        }
         window.localStorage.setItem('is_freenas', res);
       });
     }
