@@ -30,6 +30,7 @@ import { WidgetCpuTempsComponent } from 'app/core/components/widgets/widgetcpute
 import { WidgetLoadHistoryComponent } from 'app/core/components/widgets/widgetloadhistory/widgetloadhistory.component';
 import { WidgetLoadComponent } from 'app/core/components/widgets/widgetload/widgetload.component';
 import { WidgetMemoryHistoryComponent } from 'app/core/components/widgets/widgetmemoryhistory/widgetmemoryhistory.component';
+import { WidgetMemoryComponent } from 'app/core/components/widgets/widgetmemory/widgetmemory.component';
 import { WidgetStorageComponent } from 'app/core/components/widgets/widgetstorage/widgetstorage.component';
 import { WidgetStorageCollectionComponent } from 'app/core/components/widgets/widgetstoragecollection/widgetstoragecollection.component';
 import { WidgetNoteComponent } from 'app/core/components/widgets/widgetnote/widgetnote.component';
@@ -81,6 +82,7 @@ import { TranslateModule } from '@ngx-translate/core';
     WidgetLoadHistoryComponent,
     WidgetLoadComponent,
     WidgetMemoryHistoryComponent,
+    WidgetMemoryComponent,
     WidgetStorageComponent,
     WidgetStorageCollectionComponent,
     WidgetNoteComponent,
@@ -116,6 +118,7 @@ import { TranslateModule } from '@ngx-translate/core';
     WidgetLoadHistoryComponent,
     WidgetLoadComponent,
     WidgetMemoryHistoryComponent,
+    WidgetMemoryComponent,
     WidgetStorageComponent,
     WidgetStorageCollectionComponent,
     WidgetNoteComponent,
@@ -146,6 +149,7 @@ import { TranslateModule } from '@ngx-translate/core';
     WidgetLoadHistoryComponent,
     WidgetLoadComponent,
     WidgetMemoryHistoryComponent,
+    WidgetMemoryComponent,
     WidgetStorageComponent,
     WidgetStorageCollectionComponent,
     WidgetNoteComponent,
