@@ -23,7 +23,6 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
   @Input() public config: { name: string };
   @Input() public parent: EntityTableComponent & { conf: SnapshotListComponent };
 
-  public snapshot$: Observable<any>;
   public actions: EntityAction[];
 
   public details: { label: string; value: string | number }[] = [];
