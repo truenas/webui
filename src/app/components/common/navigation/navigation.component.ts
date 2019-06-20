@@ -55,6 +55,13 @@ export class NavigationComponent implements OnInit {
             });
           }
         }
+
+        this.ws.call('system.info').subscribe((res) => {
+          if (_.findIndex(res.license.features, 'JAILS') === -1) {
+            _.find(menuItem, {state : "plugins"}).disabled = true;
+            _.find(menuItem, {state : "jails"}).disabled = true;
+          }
+        })
       }
 
       this.menuItems = menuItem;
