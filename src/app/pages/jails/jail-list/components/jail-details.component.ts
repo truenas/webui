@@ -1,55 +1,59 @@
 import { Component, Input } from "@angular/core";
 import { EntityJobComponent } from "app/pages/common/entity/entity-job";
-import { EntityTableComponent } from "app/pages/common/entity/entity-table";
 import {
   EntityAction,
-  EntityTableRowDetailComponent
-} from "app/pages/common/entity/entity-table/entity-table-row-detail.interface";
+  EntityRowDetails
+} from "app/pages/common/entity/entity-row-details/entity-row-details.interface";
+import { EntityTableComponent } from "app/pages/common/entity/entity-table";
 import { EntityUtils } from "app/pages/common/entity/utils";
 import { T } from "app/translate-marker";
 import { JailListComponent } from "../jail-list.component";
 
 @Component({
   selector: "app-jail-details",
-  styles: [
-    `
-      p,
-      h4 {
-        color: var(--fg2) !important;
-      }
-
-      .button-delete {
-        background: var(--red);
-        color: var(--primary-txt) !important;
-      }
-    `
-  ],
-  templateUrl: "./jail-details.component.html"
+  template: `
+    <app-entity-row-details [conf]="this"></app-entity-row-details>
+  `
 })
-export class JailDetailsComponent implements EntityTableRowDetailComponent<Jail> {
+export class JailDetailsComponent implements EntityRowDetails<Jail> {
+  public readonly entityName: "jail";
+
   @Input() public config: Jail;
   @Input() public parent: EntityTableComponent & { conf: JailListComponent };
 
   public actions: EntityAction[] = [];
 
+  public details: { label: string; value: string | number }[] = [];
+
   public ngOnInit(): void {
+    this.details = [
+      { label: "IPv4", value: this.config.ip4_addr },
+      { label: "IPv6", value: this.config.ip6_addr },
+      { label: "Type", value: this.config.type },
+      { label: "Template", value: this.config.template },
+      { label: "Basejail", value: this.config.basejail_readble }
+    ];
+
     this.actions = [
       {
         id: "edit",
+        icon: "edit",
+        name: this.config.jid,
         label: T("Edit"),
-        buttonColor: "primary",
         onClick: row => this.parent.conf.router.navigate(new Array("").concat(["jails", "edit", row.host_hostuuid]))
       },
       {
         id: "mount",
+        icon: "folder",
+        name: this.config.jid,
         label: T("Mount points"),
-        buttonColor: "primary",
         onClick: row => this.parent.conf.router.navigate(new Array("").concat(["jails", "storage", row.host_hostuuid]))
       },
       {
         id: "start",
+        icon: "play_arrow",
+        name: this.config.jid,
         label: T("Start"),
-        buttonColor: "primary",
         onClick: row => {
           this.parent.conf.entityList.busy = this.parent.conf.loader.open();
           this.parent.conf.ws.call("jail.start", [row.host_hostuuid]).subscribe(
@@ -68,8 +72,9 @@ export class JailDetailsComponent implements EntityTableRowDetailComponent<Jail>
       },
       {
         id: "restart",
+        icon: "replay",
+        name: this.config.jid,
         label: T("Restart"),
-        buttonColor: "primary",
         onClick: row => {
           this.parent.conf.entityList.busy = this.parent.conf.loader.open();
           row.state = "restarting";
@@ -89,8 +94,9 @@ export class JailDetailsComponent implements EntityTableRowDetailComponent<Jail>
       },
       {
         id: "stop",
+        icon: "stop",
+        name: this.config.jid,
         label: T("Stop"),
-        buttonColor: "primary",
         onClick: row => {
           const dialog = {};
           this.parent.conf.dialogService
@@ -125,8 +131,9 @@ export class JailDetailsComponent implements EntityTableRowDetailComponent<Jail>
       },
       {
         id: "update",
+        icon: "update",
+        name: this.config.jid,
         label: T("Update"),
-        buttonColor: "primary",
         onClick: row => {
           const dialogRef = this.parent.conf.dialog.open(EntityJobComponent, {
             data: { title: T("Updating Jail") },
@@ -144,14 +151,16 @@ export class JailDetailsComponent implements EntityTableRowDetailComponent<Jail>
       },
       {
         id: "shell",
+        icon: "keyboard_arrow_right",
+        name: this.config.jid,
         label: T("Shell"),
-        buttonColor: "primary",
         onClick: row => this.parent.conf.router.navigate(new Array("").concat(["jails", "shell", row.host_hostuuid]))
       },
       {
         id: "delete",
+        icon: "delete",
+        name: this.config.jid,
         label: T("Delete"),
-        buttonColor: "warn",
         onClick: row => this.parent.conf.entityList.doDelete(row)
       }
     ];

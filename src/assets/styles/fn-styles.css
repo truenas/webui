@@ -148,6 +148,9 @@ code {
 .mr-1 {
     margin-right: 1rem !important;
 }
+.mb-0 {
+    margin-bottom: 0 !important;
+}
 .mb-1 {
     margin-bottom: 1rem !important;
 }
@@ -165,6 +168,9 @@ code {
 }
 .pr-1 {
     padding-right: 1rem !important;
+}
+.pb-0 {
+    padding-bottom: 0 !important;
 }
 .pb-1 {
     padding-bottom: 1rem !important;

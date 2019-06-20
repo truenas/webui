@@ -35,7 +35,6 @@ export class JailListComponent implements OnInit {
   public showActions = false;
   protected hasDetails = true;
   protected rowDetailComponent = JailDetailsComponent;
-  protected detailRowHeight = 156;
   public legacyWarning = T("Note: Legacy jails created before FreeNAS 11.2 must be managed from the");
   public legacyWarningLink = T("legacy web interface");
 

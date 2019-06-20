@@ -2,10 +2,6 @@
   overflow-x: hidden !important;
 }
 
-:host ::ng-deep .datatable-row-detail {
-  background: var(--bg2) !important;
-}
-
 .has-tooltip mat-form-field.full-width {
   width: calc(100% - 25px);
 }
