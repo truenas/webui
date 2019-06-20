@@ -34,4 +34,5 @@ export class SystemGeneralService {
   getSysInfo() {
     return this.ws.call('system.info', []);
   }
+
 }
