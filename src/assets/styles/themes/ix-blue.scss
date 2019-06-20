@@ -521,6 +521,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-checkbox {
     margin: 4px;
   }
+  .form-line .mat-checkbox {
+    margin-left: 0;
+  }
 
   .ngx-datatable .mat-checkbox-inner-container {
     margin-left: 4px;
@@ -1259,7 +1262,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   jail-wizard .tooltiptext {
     top: -1px;
   }
-  
+
   mat-radio-group .tooltip .material-icons,
   mat-radio-group .tooltip .material-icons {
     position: relative;
