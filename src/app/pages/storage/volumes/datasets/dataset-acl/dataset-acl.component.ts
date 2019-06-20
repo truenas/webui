@@ -71,6 +71,26 @@ export class DatasetAclComponent implements OnDestroy {
       readonly: true
     },
     {
+      type: 'combobox',
+      name: 'uid',
+      placeholder: helptext.dataset_acl_uid_placeholder,
+      tooltip: helptext.dataset_acl_uid_tooltip,
+      options: [],
+      searchOptions: [],
+      parent: this,
+      updater: this.updateUserSearchOptions,
+    },
+    {
+      type: 'combobox',
+      name: 'gid',
+      placeholder: helptext.dataset_acl_gid_placeholder,
+      tooltip: helptext.dataset_acl_gid_tooltip,
+      options: [],
+      searchOptions: [],
+      parent: this,
+      updater: this.updateGroupSearchOptions,
+    },
+    {
       type: 'list',
       name: 'aces',
       width: '100%',
@@ -217,6 +237,9 @@ export class DatasetAclComponent implements OnDestroy {
         users.push({label: items[i].label, value: items[i].id});
       }
       this.userOptions = users;
+
+      const uid_fc = _.find(this.fieldConfig, {"name": "uid"});
+      uid_fc.options = this.userOptions;
     });
 
     this.userService.listAllGroups().subscribe(res => {
@@ -226,6 +249,9 @@ export class DatasetAclComponent implements OnDestroy {
         groups.push({label: items[i].label, value: items[i].id});
       }
       this.groupOptions = groups;
+
+      const gid_fc = _.find(this.fieldConfig, {"name": "gid"});
+      gid_fc.options = this.groupOptions;
     });
   }
 
@@ -330,7 +356,24 @@ export class DatasetAclComponent implements OnDestroy {
   }
 
   async dataHandler(entityForm) {
-    let data = entityForm.queryResponse;
+    const res = entityForm.queryResponse;
+    console.log(res.uid);
+    console.log(res.gid);
+    await this.ws.call('notifier.get_user_object', [res.uid]).toPromise().then(userObj => {
+      if (userObj && userObj.length > 2) {
+        entityForm.formGroup.controls['uid'].setValue(userObj[0]);
+      }
+    }, err => {
+      console.error(err);
+    });
+    await this.ws.call('notifier.get_group_object', [res.gid]).toPromise().then(groupObj => {
+      if (groupObj && groupObj.length > 2) {
+        entityForm.formGroup.controls['gid'].setValue(groupObj[0]);
+      }
+    }, err => {
+      console.error(err);
+    });
+    let data = res.acl;
     let acl;
     if (!data.length) {
       data = [data];
@@ -465,7 +508,7 @@ export class DatasetAclComponent implements OnDestroy {
       }
     }
     this.dialogRef.componentInstance.setCall(this.updateCall,
-      [body.path, dacl,
+      [body.path, dacl, body.uid, body.gid,
         {'recursive': body.recursive,
          'traverse': body.traverse,
          'stripacl': body.stripacl
