@@ -48,7 +48,7 @@ export class JailAddComponent implements OnInit, AfterViewInit {
       placeholder: helptext.uuid_placeholder,
       tooltip: helptext.uuid_tooltip,
       required: true,
-      validation: [ regexValidator(/^[a-zA-Z0-9-_]+$/) ],
+      validation: [ regexValidator(/^[a-zA-Z0-9\._-]+$/) ],
       blurStatus: true,
       blurEvent: this.blurEvent,
       parent: this

@@ -48,7 +48,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       tooltip: helptext.host_hostuuid_tooltip,
       required: true,
       disabled: false,
-      validation: [ Validators.required ],
+      validation: [ Validators.required, regexValidator(/^[a-zA-Z0-9\._-]+$/) ],
     },
     {
       type: 'select',

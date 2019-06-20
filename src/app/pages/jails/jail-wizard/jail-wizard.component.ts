@@ -48,6 +48,7 @@ export class JailWizardComponent {
           required: true,
           placeholder: helptext.uuid_placeholder,
           tooltip: helptext.uuid_tooltip,
+          validation: [regexValidator(/^[a-zA-Z0-9\._-]+$/)],
           blurStatus: true,
           blurEvent: this.blurEvent,
           parent: this
