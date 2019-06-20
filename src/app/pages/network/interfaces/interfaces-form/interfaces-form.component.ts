@@ -384,6 +384,47 @@ export class InterfacesFormComponent implements OnDestroy {
     return data;
   }
 
+  async dataHandler(entityForm) {
+    console.log(entityForm)
+    if (!entityForm.isNew) {
+      let data = entityForm.queryResponse[0];
+      console.log(data);
+      let interfaces, bridge_members, aliases;
+
+      bridge_members = [];
+      data.bridge_members.forEach((member) => {
+        bridge_members.push(member);
+      })
+
+      interfaces = {};
+      interfaces.type = data.type;
+      interfaces.name = data.name;
+      interfaces.description = data.description;
+      interfaces.ipv4_dhcp = data.ipv4_dhcp;
+      interfaces.ipv6_auto = data.ipv6_auto;
+      interfaces.mtu = data.mtu;
+      interfaces.options = data.options;
+      interfaces.bridge_members = bridge_members;
+      console.log(interfaces)
+
+      for (const prop in interfaces) {
+        if (interfaces.hasOwnProperty(prop)) {
+          entityForm.formGroup.controls[prop].setValue(interfaces[prop]);
+        }
+      }
+    }
+   
+
+    // const propName = "aliases";
+    // const aliases_fg = entityForm.formGroup.controls[propName];
+    // if (aliases_fg.controls[i] === undefined) {
+    //   // add controls;
+    //   const templateListField = _.cloneDeep(_.find(this.fieldConfig, {'name': propName}).templateListField);
+    //   aces_fg.push(entityForm.entityFormService.createFormGroup(templateListField));
+    //   this.aces_fc.listFields.push(templateListField);
+    // }
+  }
+
   ngOnDestroy() {
     if (this.type_subscription) {
       this.type_subscription.unsubscribe();

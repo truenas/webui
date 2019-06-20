@@ -330,6 +330,7 @@ export class DatasetAclComponent implements OnDestroy {
   }
 
   async dataHandler(entityForm) {
+    console.log(entityForm)
     let data = entityForm.queryResponse;
     let acl;
     if (!data.length) {
