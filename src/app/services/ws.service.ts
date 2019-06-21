@@ -222,19 +222,19 @@ export class WebSocketService {
     let obs = Observable.create((observer) => {
       this.pendingSubs[nom].observers[uuid] = observer;
       console.log("CREATING...");
-      console.log(this.pendingSubs);
+      console.log(payload);
       this.send(payload);      
       
       // cleanup routine 
       observer.complete = () => {
-        //let unsub_payload = {"id" : uuid, "name" : name, "msg" : "unsub" };
-        //console.log(unsub_payload);
-        //this.send(unsub_payload);  
+        let unsub_payload = {"id" : uuid, /*"name" : name,*/ "msg" : "unsub" };
+        console.log(unsub_payload);
+        this.send(unsub_payload);  
         this.pendingSubs[nom].observers[uuid].unsubscribe();
         delete this.pendingSubs[nom].observers[uuid];
         if(!this.pendingSubs[nom].observers){ delete this.pendingSubs[nom]}
-        console.log("COMPLETING...");
-        console.log(this.pendingSubs);
+        //console.log("COMPLETING...");
+        //console.log(this.pendingSubs);
       }
 
       return observer;
