@@ -120,7 +120,6 @@ export class WebSocketService {
     } else if (data.msg == "nosub") {
       console.warn(data);
     } else if (data.msg == "added") {
-      //console.log(data);
       let nom = data.collection.replace('.', '_');
       if(this.pendingSubs[nom] && this.pendingSubs[nom].observers){
         for(let uuid in this.pendingSubs[nom].observers){
@@ -200,14 +199,6 @@ export class WebSocketService {
 
   sub(name): Observable<any> {
 
-    /*let source = Observable.create((observer) => {
-      this.pendingSubs = observer;
-      this.send(payload);      
-    });
-    
-    return source;
-    */
-
     let nom = name.replace('.','_'); // Avoid weird behavior
     if(!this.pendingSubs[nom]){ 
       this.pendingSubs[nom]= {
@@ -221,20 +212,15 @@ export class WebSocketService {
 
     let obs = Observable.create((observer) => {
       this.pendingSubs[nom].observers[uuid] = observer;
-      console.log("CREATING...");
-      console.log(payload);
       this.send(payload);      
       
       // cleanup routine 
       observer.complete = () => {
-        let unsub_payload = {"id" : uuid, /*"name" : name,*/ "msg" : "unsub" };
-        console.log(unsub_payload);
+        let unsub_payload = {"id" : uuid, "msg" : "unsub" };
         this.send(unsub_payload);  
         this.pendingSubs[nom].observers[uuid].unsubscribe();
         delete this.pendingSubs[nom].observers[uuid];
         if(!this.pendingSubs[nom].observers){ delete this.pendingSubs[nom]}
-        //console.log("COMPLETING...");
-        //console.log(this.pendingSubs);
       }
 
       return observer;
