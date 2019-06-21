@@ -83,6 +83,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
         console.log("LEAK!!");
         return;
       }
+      console.log(evt);
       
       if(evt.cpu){
         this.statsDataEvents.next({name:"CpuStats", data:evt.cpu});

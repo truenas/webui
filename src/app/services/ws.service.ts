@@ -117,11 +117,13 @@ export class WebSocketService {
       this.connected = true;
       setTimeout(this.ping.bind(this), 20000);
       this.onconnect();
+    } else if (data.msg == "nosub") {
+      console.warn(data);
     } else if (data.msg == "added") {
-      console.log(data);
+      //console.log(data);
       let nom = data.collection.replace('.', '_');
       if(this.pendingSubs[nom] && this.pendingSubs[nom].observers){
-          for(let uuid in this.pendingSubs[nom].observers){
+        for(let uuid in this.pendingSubs[nom].observers){
           let subObserver = this.pendingSubs[nom].observers[uuid];
           if (data.error) {
             console.log("Error: ", data.error);
@@ -225,8 +227,9 @@ export class WebSocketService {
       
       // cleanup routine 
       observer.complete = () => {
-        let unsub_payload = {"id" : uuid, "name" : name, "msg" : "unsub" };
-        this.send(unsub_payload);  
+        //let unsub_payload = {"id" : uuid, "name" : name, "msg" : "unsub" };
+        //console.log(unsub_payload);
+        //this.send(unsub_payload);  
         this.pendingSubs[nom].observers[uuid].unsubscribe();
         delete this.pendingSubs[nom].observers[uuid];
         if(!this.pendingSubs[nom].observers){ delete this.pendingSubs[nom]}
