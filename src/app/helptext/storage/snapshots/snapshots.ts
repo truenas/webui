@@ -9,7 +9,9 @@ snapshot_add_dataset_validation: [Validators.required],
 
 snapshot_add_name_placeholder: 'Name',
 snapshot_add_name_tooltip: T('Add a name for the new snapshot'),
-snapshot_add_name_validation: [Validators.required],
+
+snapshot_add_naming_schema_placeholder: 'Naming Schema',
+snapshot_add_naming_schema_tooltip: T('Add a naming schema for the new snapshot'),
 
 snapshot_add_recursive_placeholder: 'Recursive',
 snapshot_add_recursive_tooltip: T('Set to include child datasets of the chosen dataset.'),
