@@ -1879,7 +1879,7 @@ msgid "Change User & Group Ownership"
 msgstr "Сменить владельца и группу"
 
 msgid ""
-"Change from <i>public</i to increase system security. Can only contain "
+"Change from <i>public</i> to increase system security. Can only contain "
 "alphanumeric characters, underscores, dashes, periods, and spaces. This can "
 "be left empty for <i>SNMPv3</i> networks."
 msgstr ""
