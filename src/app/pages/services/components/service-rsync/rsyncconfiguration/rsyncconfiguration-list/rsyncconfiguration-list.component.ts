@@ -42,7 +42,7 @@ import { T } from '../../../../../../translate-marker';
         rows[i].details.push({label: T("Maximum connections"), value:rows[i]["maxconn"]},
                              {label: T("Host Allow"), value:rows[i]["hostsallow"]},
                              {label: T("Host Deny"), value:rows[i]["hostsdeny"]},
-                             {label: T("Auxilliary parameters"), value:rows[i]["auxiliary"]}
+                             {label: T("Auxiliary parameters"), value:rows[i]["auxiliary"]}
         );
       }
       
