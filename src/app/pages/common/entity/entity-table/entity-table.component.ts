@@ -19,6 +19,7 @@ import { StorageService } from '../../../../services/storage.service'
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { T } from '../../../../translate-marker';
+import { DatatableComponent } from '@swimlane/ngx-datatable';
 
 export interface InputTableConf {
   prerequisite?: any;
@@ -88,7 +89,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('filter', { static: false}) filter: ElementRef;
   @ViewChild('defaultMultiActions', { static: false}) defaultMultiActions: ElementRef;
-  @ViewChild('entityTable', { static: false}) table: any;
+  @ViewChild('entityTable', { static: false}) table: DatatableComponent;
 
   // MdPaginator Inputs
   public paginationPageSize: number = 8;
@@ -112,6 +113,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public startingHeight: number;
   public expandedRows = 0;
+  public expandedRowDetails = [];
 
   public rows: any[] = [];
   public currentRows: any[] = []; // Rows applying filter
@@ -412,8 +414,18 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.paginationPageIndex  = 0;
     this.setPaginationInfo();
     this.showDefaults = true;
-    return res;
 
+    if (this.expandedRowDetails.length > 0) {
+      this.currentRows
+        .filter(row => this.expandedRowDetails.some(details => details.id === row.id))
+        .forEach(row => {
+            this.table.rowDetail.toggleExpandRow(row);
+        });
+        
+      console.log(this.currentRows, this.table.rows);
+    }
+
+    return res;
   }
 
   generateRows(res): Array<any> {
@@ -905,6 +917,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   toggleExpandRow(row) {
+    if (this.expandedRowDetails.some(details => details.name === row.name)) {
+      this.expandedRowDetails = this.expandedRowDetails.filter(details => details.name !== row.name);
+    } else {
+      this.expandedRowDetails.push(row);
+    }
     if (!this.startingHeight) {
       this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
     }  
@@ -918,6 +935,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onDetailToggle(event) {
-    //console.log('Detail Toggled', event);
+    
   }
 }

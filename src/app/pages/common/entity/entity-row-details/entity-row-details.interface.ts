@@ -14,9 +14,13 @@ export interface EntityRowDetails<T = any, U = EntityTableComponent> extends Com
   config: T;
   parent: U;
 
-  details: { label: string; value: string | number }[];
-
+  details: EntityDetail[];
   actions?: EntityAction[];
+}
+
+export interface EntityDetail {
+  label: string;
+  value: string | number;
 }
 
 export interface EntityAction {
