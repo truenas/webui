@@ -16,6 +16,7 @@ import { ViewChartComponent } from 'app/core/components/viewchart/viewchart.comp
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
 import { ViewChartGaugeComponent } from './viewchartgauge/viewchartgauge.component';
+import { ViewChartBarComponent } from './viewchartbar/viewchartbar.component';
 import { ViewChartLineComponent } from './viewchartline/viewchartline.component';
 import { StorageService } from '../../services/storage.service';
 
@@ -23,11 +24,13 @@ import { WidgetComponent } from 'app/core/components/widgets/widget/widget.compo
 import { WidgetChartComponent } from 'app/core/components/widgets/widgetchart/widgetchart.component';
 import { WidgetSysInfoComponent } from 'app/core/components/widgets/widgetsysinfo/widgetsysinfo.component';
 import { WidgetNetInfoComponent } from 'app/core/components/widgets/widgetnetinfo/widgetnetinfo.component';
+import { WidgetCpuComponent } from 'app/core/components/widgets/widgetcpu/widgetcpu.component';
 import { WidgetCpuHistoryComponent } from 'app/core/components/widgets/widgetcpuhistory/widgetcpuhistory.component';
 import { WidgetCpuTempsComponent } from 'app/core/components/widgets/widgetcputemps/widgetcputemps.component';
 import { WidgetLoadHistoryComponent } from 'app/core/components/widgets/widgetloadhistory/widgetloadhistory.component';
 import { WidgetLoadComponent } from 'app/core/components/widgets/widgetload/widgetload.component';
 import { WidgetMemoryHistoryComponent } from 'app/core/components/widgets/widgetmemoryhistory/widgetmemoryhistory.component';
+import { WidgetMemoryComponent } from 'app/core/components/widgets/widgetmemory/widgetmemory.component';
 import { WidgetStorageComponent } from 'app/core/components/widgets/widgetstorage/widgetstorage.component';
 import { WidgetStorageCollectionComponent } from 'app/core/components/widgets/widgetstoragecollection/widgetstoragecollection.component';
 import { WidgetNoteComponent } from 'app/core/components/widgets/widgetnote/widgetnote.component';
@@ -67,16 +70,19 @@ import { TranslateModule } from '@ngx-translate/core';
     ViewChartDonutComponent,
     ViewChartPieComponent,
     ViewChartGaugeComponent,
+    ViewChartBarComponent,
     ViewChartLineComponent,
     WidgetComponent,
     WidgetChartComponent,
     WidgetSysInfoComponent,
     WidgetNetInfoComponent,
+    WidgetCpuComponent,
     WidgetCpuHistoryComponent,
     WidgetCpuTempsComponent,
     WidgetLoadHistoryComponent,
     WidgetLoadComponent,
     WidgetMemoryHistoryComponent,
+    WidgetMemoryComponent,
     WidgetStorageComponent,
     WidgetStorageCollectionComponent,
     WidgetNoteComponent,
@@ -95,6 +101,7 @@ import { TranslateModule } from '@ngx-translate/core';
     ViewChartComponent,
     ViewChartDonutComponent,
     ViewChartGaugeComponent,
+    ViewChartBarComponent,
     ViewChartPieComponent,
     ViewChartLineComponent,
     ViewControlComponent,
@@ -105,11 +112,13 @@ import { TranslateModule } from '@ngx-translate/core';
     WidgetChartComponent,
     WidgetSysInfoComponent,
     WidgetNetInfoComponent,
+    WidgetCpuComponent,
     WidgetCpuHistoryComponent,
     WidgetCpuTempsComponent,
     WidgetLoadHistoryComponent,
     WidgetLoadComponent,
     WidgetMemoryHistoryComponent,
+    WidgetMemoryComponent,
     WidgetStorageComponent,
     WidgetStorageCollectionComponent,
     WidgetNoteComponent,
@@ -123,6 +132,7 @@ import { TranslateModule } from '@ngx-translate/core';
     ViewChartComponent,
     ViewChartDonutComponent,
     ViewChartGaugeComponent,
+    ViewChartBarComponent,
     ViewChartPieComponent,
     ViewChartLineComponent,
     ViewControlComponent,
@@ -133,11 +143,13 @@ import { TranslateModule } from '@ngx-translate/core';
     WidgetChartComponent,
     WidgetSysInfoComponent,
     WidgetNetInfoComponent,
+    WidgetCpuComponent,
     WidgetCpuHistoryComponent,
     WidgetCpuTempsComponent,
     WidgetLoadHistoryComponent,
     WidgetLoadComponent,
     WidgetMemoryHistoryComponent,
+    WidgetMemoryComponent,
     WidgetStorageComponent,
     WidgetStorageCollectionComponent,
     WidgetNoteComponent,

@@ -186,7 +186,7 @@ export class ThemeService {
       bg1:'#002b36',
       bg2:'#073642',
       fg1:'#586e75',
-      fg2:'#657b83',
+      fg2:'#7f99a2', //'#657b83',
       //'alt-bg1':'#eee8d5',
       'alt-bg1':'rgba(122,122,122,0.25)',
       'alt-bg2':'#fdf6e3',
@@ -342,7 +342,7 @@ export class ThemeService {
   }
 
   resetToDefaultTheme(){
-    this.activeTheme = "ix-dark-11.3";
+    this.activeTheme = "ix-official";
     this.changeTheme(this.activeTheme);
   }
 
@@ -355,11 +355,15 @@ export class ThemeService {
       let t = this.allThemes[i];
       if(t.name == name){ return t;}
     }
-    if(reset){
-      //Optionally reset if not found
-      this.resetToDefaultTheme();
-      return this.freenasThemes[this.freeThemeDefaultIndex];
+    
+    //Optionally reset if not found
+    this.resetToDefaultTheme();
+
+    if(!reset){
+      console.warn('Theme not found and reset not initiated.');
     }
+
+    return this.freenasThemes[this.freeThemeDefaultIndex];
   }
 
   changeTheme(theme:string) {
@@ -403,6 +407,7 @@ export class ThemeService {
     let accentTextColor = this.textContrast(theme[accentColor], theme["bg2"]);
     (<any>document).documentElement.style.setProperty("--primary-txt", /*'var(--' + primaryColor + '-txt)'*/primaryTextColor);
     (<any>document).documentElement.style.setProperty("--accent-txt", /*'var(--' + accentColor + '-txt)'*/accentTextColor);
+    (<any>document).documentElement.style.setProperty("--highlight", accentTextColor);
 
     // Logo light/dark
     if(theme["hasDarkLogo"]){

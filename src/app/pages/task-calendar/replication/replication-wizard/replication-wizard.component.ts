@@ -46,7 +46,10 @@ export class ReplicationWizardComponent {
                     placeholder: helptext.name_placeholder,
                     tooltip: helptext.name_tooltip,
                     required: true,
-                    validation: [Validators.required]
+                    validation: [Validators.required],
+                    blurStatus: true,
+                    blurEvent: this.blurEvent,
+                    parent: this
                 },
                 {
                     type: 'select',
@@ -145,7 +148,7 @@ export class ReplicationWizardComponent {
                     tooltip: sshConnectionsHelptex.private_key_tooltip,
                     options: [
                         {
-                            label: 'Create New',
+                            label: 'Generate New',
                             value: 'NEW'
                         }
                     ],
@@ -306,23 +309,48 @@ export class ReplicationWizardComponent {
                     required: true,
                     validation: [Validators.required],
                     isHidden: true,
-                }, {
-                    type: 'input',
+                },
+                {
+                    type: 'explorer',
                     name: 'target_dataset_PUSH',
                     placeholder: replicationHelptext.target_dataset_placeholder,
                     tooltip: replicationHelptext.target_dataset_tooltip,
+                    initial: '',
+                    explorerType: 'directory',
+                    customTemplateStringOptions: {
+                        displayField: 'Path',
+                        isExpandedField: 'expanded',
+                        idField: 'uuid',
+                        getChildren: this.getChildren.bind(this),
+                        nodeHeight: 23,
+                        allowDrag: false,
+                        useVirtualScroll: false,
+                    },
                     required: true,
                     validation: [Validators.required],
                     isHidden: true,
-                }, {
-                    type: 'input',
+                },
+                {
+                    type: 'explorer',
                     name: 'source_datasets_PULL',
                     placeholder: replicationHelptext.source_datasets_placeholder,
                     tooltip: replicationHelptext.source_datasets_placeholder,
+                    initial: '',
+                    explorerType: 'directory',
+                    customTemplateStringOptions: {
+                        displayField: 'Path',
+                        isExpandedField: 'expanded',
+                        idField: 'uuid',
+                        getChildren: this.getChildren.bind(this),
+                        nodeHeight: 23,
+                        allowDrag: false,
+                        useVirtualScroll: false,
+                    },
                     required: true,
                     validation: [Validators.required],
                     isHidden: true,
-                }, {
+                },
+                {
                     type: 'explorer',
                     initial: '/mnt',
                     explorerType: 'directory',
@@ -570,16 +598,33 @@ export class ReplicationWizardComponent {
             const newSSH = value == 'NEW' ? true : false;
             this.disablefieldGroup([...this.sshFieldGroup, ...this.semiSSHFieldGroup, ...this.manualSSHFieldGroup], !newSSH, 0);
             if (newSSH) {
+                this.blurEvent(this);
                 this.disablefieldGroup(['cipher'], this.entityWizard.formArray.controls[0].controls['transport'].value === 'SSH+NETCAT', 0);
                 this.entityWizard.formArray.controls[0].controls['setup_method'].setValue(this.entityWizard.formArray.controls[0].controls['setup_method'].value);
             }
+
+            for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
+                const explorerComponent = _.find(this.wizardConfig[1].fieldConfig, {name: item}).customTemplateStringOptions.explorerComponent;
+                if (explorerComponent) {
+                    explorerComponent.nodes = [{
+                        mountpoint: explorerComponent.config.initial,
+                        name: explorerComponent.config.initial,
+                        hasChildren: true
+                    }];
+                }
+            }
+
         });
         this.entityWizard.formArray.controls[0].controls['setup_method'].valueChanges.subscribe((value) => {
             const manual = value == 'manual' ? true : false;
             this.disablefieldGroup(this.semiSSHFieldGroup, manual, 0);
             this.disablefieldGroup(this.manualSSHFieldGroup, !manual, 0);
         });
-
+        this.entityWizard.formArray.controls[0].controls['private_key'].valueChanges.subscribe((value) => {
+            if (value == 'NEW') {
+                this.blurEvent(this);
+            }
+        });
         this.entityWizard.formArray.controls[0].controls['setup_method'].setValue('semiautomatic');
         this.entityWizard.formArray.controls[0].controls['ssh_credentials'].setValue('');
         this.entityWizard.formArray.controls[0].controls['transport'].setValue('SSH');
@@ -777,7 +822,7 @@ export class ReplicationWizardComponent {
                 }
             )
         }
- 
+
         const createdItems = {
             private_key: null,
             ssh_credentials: null,
@@ -831,7 +876,7 @@ export class ReplicationWizardComponent {
         let payload;
         if (item === 'private_key') {
             payload = {
-                name: value['name'] + '_keypair',
+                name: value['name'] + ' Key',
                 type: 'SSH_KEY_PAIR',
                 attributes: value['sshkeypair'],
             }
@@ -912,7 +957,7 @@ export class ReplicationWizardComponent {
                 }
             }
         }
-       
+
         return this.ws.call(this.createCalls[item], [payload]).toPromise();
     }
 
@@ -940,5 +985,53 @@ export class ReplicationWizardComponent {
             begin: begin,
             end: end,
         };
+    }
+
+    getChildren(node) {
+        const transport = this.entityWizard.formArray.controls[0].controls['transport'].value;
+        const sshCredentials = this.entityWizard.formArray.controls[0].controls['ssh_credentials'].value;
+        return new Promise((resolve, reject) => {
+            resolve(this.replicationService.getRemoteDataset(transport,sshCredentials, this));
+        });
+    }
+
+    blurEvent(parent){
+        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['hasErrors'] = false;
+        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['errors'] = '';
+        const name = parent.entityWizard.formGroup.value.formArray[0].name;
+        const privateKey = parent.entityWizard.formGroup.controls.formArray.controls[0].controls.private_key.value;
+        const sshConnection = parent.entityWizard.formGroup.controls.formArray.controls[0].controls.ssh_credentials.value;
+
+        const typeLabel = {
+            'SSH_CREDENTIALS': 'SSH Connection',
+            'SSH_KEY_PAIR': 'Private Key',
+        }
+        parent.ws.call('replication.query', [[['name', '=', name]]]).subscribe((res) => {
+            if (res.length > 0) {
+                _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['errors'] = `Replication '${res[0].name}' already exists.`;
+                showError();
+            }
+        });
+        if (sshConnection == 'NEW') {
+            parent.ws.call('keychaincredential.query', [[['name', '=', name]]]).subscribe((res) => {
+                if (res.length > 0) {
+                    _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['errors'] = `${typeLabel[res[0].type]} '${res[0].name}' already exists.`;
+                    showError();
+                }
+            });
+        }
+        if (privateKey == 'NEW') {
+            parent.ws.call('keychaincredential.query', [[['name', '=', name + ' Key']]]).subscribe((res) => {
+                if (res.length > 0) {
+                    _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['errors'] = `${typeLabel[res[0].type]} '${res[0].name}' already exists.`;
+                    showError();
+                }
+            });
+        }
+
+        function showError() {
+            _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['hasErrors'] = true;
+            parent.entityWizard.formGroup.controls.formArray.controls[0].controls.name.setValue("");
+        }
     }
 }

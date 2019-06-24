@@ -15,7 +15,7 @@ contact_tooltip: T('Enter an email address to receive messages from the\
 contact_validation: [Validators.required, Validators.email],
 
 community_placeholder : T('Community'),
-community_tooltip: T('Change from <i>public</i to increase system security.\
+community_tooltip: T('Change from <i>public</i> to increase system security.\
  Can only contain alphanumeric characters, underscores,\
  dashes, periods, and spaces. This can be left empty\
  for <i>SNMPv3</i> networks.'),
@@ -94,6 +94,9 @@ options_tooltip: T('Enter any additional <a\
  href="http://net-snmp.sourceforge.net/docs/man/snmpd.conf.html"\
  target="_blank">snmpd.conf(5)</a> options. Add one\
  option for each line.'),
+
+zilstat_placeholder: T('Expose zilstat via SNMP'),
+zilstat_tooltip: T('Enabling this option may have performance implications on your pools.'),
 
 loglevel_placeholder : T('Log Level'),
 loglevel_tooltip : T('Choose how many log entries to create. Choices range\

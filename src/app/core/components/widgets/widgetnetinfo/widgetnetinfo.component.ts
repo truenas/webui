@@ -63,7 +63,7 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
     this.configurable = false;
     setTimeout(() => {
       if(!this.rx){
-        this.loader = true;
+        //this.loader = true;
       }
     }, 3000);
   }
@@ -77,7 +77,7 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
 
     //Get Network info and determine Primary interface
     this.core.register({observerClass:this,eventName:"NetInfo"}).subscribe((evt:CoreEvent) => {
-      
+      console.log(evt); 
       this.defaultRoutes = evt.data.default_routes.toString();
       this.nameServers = evt.data.nameservers.toString().replace(/,/g, " , ");
       this.data = evt.data;
@@ -108,7 +108,7 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
         }
         // If we have the Primary NIC, register as a listener for the stat.
         if(this.primaryNIC){
-          this.core.emit({name:"StatsAddListener", data:{name:"NIC", obj:this, key:this.primaryNIC} });
+          //this.core.emit({name:"StatsAddListener", data:{name:"NIC", obj:this, key:this.primaryNIC} });
         }
       }
 

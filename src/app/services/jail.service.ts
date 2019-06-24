@@ -70,6 +70,8 @@ export class JailService {
   protected jailsConfig: string = 'jails/configuration';
   protected jailsTemplate: string = 'jails/templates';
 
+  public jailNameRegex = /^[a-zA-Z0-9\._-]+$/;
+
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
   getIpv4Netmask() { return this.ipv4_netmask_options; }

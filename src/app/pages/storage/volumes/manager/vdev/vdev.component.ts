@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { StorageService } from '../../../../../services/storage.service';
+import { DatatableComponent } from '@swimlane/ngx-datatable';
 import helptext from '../../../../../helptext/storage/volumes/manager/vdev';
 
 @Component({
@@ -20,6 +21,7 @@ export class VdevComponent implements OnInit {
   @Input() group: string;
   @Input() manager: any;
   @ViewChild('dnd', { static: true}) dnd;
+  @ViewChild(DatatableComponent, { static: false}) table: DatatableComponent;
   public type: string;
   public removable: boolean = true;
   public disks: Array<any> = [];
@@ -31,6 +33,9 @@ export class VdevComponent implements OnInit {
   public error;
   public diskSizeErrorMsg = helptext.vdev_diskSizeErrorMsg;
   public vdev_type_tooltip = helptext.vdev_type_tooltip;
+
+  public startingHeight: any;
+  public expandedRows: any;
 
   constructor(public elementRef: ElementRef,
     public translate: TranslateService,
@@ -164,5 +169,20 @@ export class VdevComponent implements OnInit {
     let sort = event.sorts[0],
       rows = this.disks;
     this.sorter.tableSorter(rows, sort.prop, sort.dir);
+  }
+
+  toggleExpandRow(row) {
+    //console.log('Toggled Expand Row!', row);
+    if (!this.startingHeight) {
+      this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
+    }  
+    this.table.rowDetail.toggleExpandRow(row);
+    setTimeout(() => {
+      this.expandedRows = (document.querySelectorAll('.datatable-row-detail').length);
+      const newHeight = (this.expandedRows * 100) + this.startingHeight;
+      const heightStr = `height: ${newHeight}px`;
+      document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
+    }, 100)
+    
   }
 }

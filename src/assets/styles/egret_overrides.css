@@ -230,7 +230,8 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
   margin:0;
 }
 
-.widget .mat-card .mat-toolbar-row{
+.widget.splitv .mat-card .mat-toolbar-row,
+.widget.splith .mat-card .mat-toolbar-row{
   padding:0 !important;
 }
 
@@ -311,7 +312,7 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
 }
 
 /* Split Layout Widgets */
-.widget.splitv, .widget.splith{
+.widget.splitv, .widget.splith, .widget.stats-widget{
   width:600px;
   height:400px;
 }

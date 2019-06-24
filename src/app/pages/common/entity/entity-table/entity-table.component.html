@@ -34,7 +34,8 @@
                 <mat-icon *ngIf="checkLength()">check_circle</mat-icon>
                 <mat-icon *ngIf="!checkLength()">remove</mat-icon>
               </span>
-              <span>Select All</span>
+              <span *ngIf="!checkLength()">Select All</span>
+              <span *ngIf="checkLength()">Unselect All</span>
             </button>
           </div>
 
@@ -48,6 +49,15 @@
               <span>{{col.name}}</span>
             </button>
           </div>
+
+          <div (click)="$event.stopPropagation()">
+            <button mat-menu-item (click)="resetColViewToDefaults()" id="reset_col_view">
+              <span>
+                <mat-icon>undo</mat-icon>
+              </span>
+              <span>Reset to Defaults</span>
+            </button>
+          </div>
         </mat-menu>
       </div>
       <!-- END MultiMenu-->
@@ -56,7 +66,7 @@
       <div style="text-align:right;">
         <app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
       </div>
-      <mat-spinner [diameter]='40' id="entity-spinner" *ngIf="!showDefaults && showSpinner" #entityspinner>
+      <mat-spinner [diameter]='40' id="entity-spinner" *ngIf="(!showDefaults && showSpinner) || !cardHeaderReady" #entityspinner>
       </mat-spinner>
 
       <ng-container *ngIf="conf && conf.custActions">
@@ -82,7 +92,7 @@
   <!-- END OF CONTROLS SECTION -->
 
   <!-- INSERT DYNAMIC CARDHEADER HERE -->
-  <ng-template dynamicComponent *ngIf="conf.cardHeaderComponent && showDefaults" [component]="conf.cardHeaderComponent" [config]=""
+  <ng-template dynamicComponent *ngIf="conf.cardHeaderComponent" [component]="conf.cardHeaderComponent" [config]=""
     [parent]="this"></ng-template>
 
   <!-- TABLE START -->
@@ -163,7 +173,7 @@
       #entityTable>
 
       <!-- Row Detail Template -->
-      <ngx-datatable-row-detail *ngIf="conf.hasDetails" [rowHeight]="100" #myDetailRow (toggle)="onDetailToggle($event)">
+      <ngx-datatable-row-detail *ngIf="conf.hasDetails" [rowHeight]="conf.detailRowHeight || detailRowHeight" #myDetailRow (toggle)="onDetailToggle($event)">
         <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
           <!-- default -->
           <div *ngFor="let detail of row.details" style="padding-left:35px;">
