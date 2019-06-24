@@ -105,25 +105,24 @@
     "zone.js": "0.9.1"
   },
   "devDependencies": {
-    "@angular-devkit/core": "8.0.2",
     "@angular-devkit/build-angular": "0.800.2",
     "@angular-devkit/build-optimizer": "0.800.2",
+    "@angular-devkit/core": "8.0.2",
     "@angular/cli": "8.0.2",
     "@angular/compiler-cli": "8.0.0",
-    "webpack-cli": "3.3.3",
-    "@types/d3": "4.12.0",
-    "@types/d3-dsv": "1.0.32",
-    "@types/pixi.js": "4.8.7",
-    "commander": "2.20.0",
     "@biesbjerg/ngx-translate-extract": "2.3.4",
     "@types/c3": "0.4.52",
     "@types/chartist": "0.9.43",
+    "@types/d3": "4.12.0",
+    "@types/d3-dsv": "1.0.32",
     "@types/hopscotch": "0.2.30",
     "@types/jasmine": "2.8.11",
     "@types/lodash": "4.14.134",
     "@types/node": "10.12.7",
+    "@types/pixi.js": "4.8.7",
     "c3": "0.4.18",
     "codelyzer": "5.1.0",
+    "commander": "2.20.0",
     "enhanced-resolve": "4.1.0",
     "jasmine-core": "3.3.0",
     "jasmine-spec-reporter": "4.2.1",
@@ -137,6 +136,7 @@
     "protractor": "5.4.2",
     "ts-node": "8.2.0",
     "tslint": "5.17.0",
-    "typescript": "3.4.3"
+    "typescript": "3.4.3",
+    "webpack-cli": "3.3.3"
   }
 }
