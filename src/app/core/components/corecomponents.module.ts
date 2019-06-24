@@ -39,6 +39,7 @@ import { WidgetPoolComponent } from 'app/core/components/widgets/widgetpool/widg
 
 import { TranslateModule } from '@ngx-translate/core';
 import { ContextMenuComponent } from './context-menu/context-menu.component';
+import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
 
 /*
  *
@@ -58,6 +59,7 @@ import { ContextMenuComponent } from './context-menu/context-menu.component';
   ],
   declarations: [
     ContextMenuComponent,
+    CopyPasteMessageComponent,
     PageComponent,
     ViewComponent,
     CardComponent,
@@ -97,6 +99,7 @@ import { ContextMenuComponent } from './context-menu/context-menu.component';
     Display,
     DisplayContainer,
     ContextMenuComponent,
+    CopyPasteMessageComponent,
     PageComponent,
     ViewComponent,
     C3ChartComponent,
@@ -129,6 +132,7 @@ import { ContextMenuComponent } from './context-menu/context-menu.component';
   ],
   entryComponents:[
     ContextMenuComponent,
+    CopyPasteMessageComponent,
     DisplayContainer,
     ViewComponent,
     C3ChartComponent,
