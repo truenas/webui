@@ -1,9 +1,34 @@
-import { Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, ViewChild } from "@angular/core";
-import { MatSnackBar } from "@angular/material";
+import {
+  Component,
+  ElementRef,
+  Inject,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  SimpleChange,
+  ViewChild
+} from "@angular/core";
+import { MatSnackBar, MAT_SNACK_BAR_DATA } from "@angular/material";
 import { TranslateService } from "@ngx-translate/core";
 import { ShellService, WebSocketService } from "../../services/";
-import { T } from "../../translate-marker";
+import helptext from "./../../helptext/shell/shell";
 
+@Component({
+  selector: "app-copy-paste-message",
+  template: `
+    <section fxLayoutAlign="space-between center" fxLayoutGap="8px">
+      <p [innerHtml]="data.message_html"></p>
+      <button mat-button color="accent" fxFlex="88px" (click)="snackBar.dismiss()">{{ data.action }}</button>
+    </section>
+  `
+})
+export class CopyPasteMessageComponent {
+  constructor(
+    @Inject(MAT_SNACK_BAR_DATA) public data: { message_html: string; action: string },
+    public snackBar: MatSnackBar
+  ) {}
+}
 
 @Component({
   selector: 'app-shell',
@@ -11,7 +36,6 @@ import { T } from "../../translate-marker";
   styleUrls: ['./shell.component.css'],
   providers: [ShellService],
 })
-
 export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   // sets the shell prompt
   @Input() prompt = '';
@@ -24,21 +48,10 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   public token: any;
   public xterm: any;
   public resize_terminal = true;
-  public copyText = T("Copy");
-  public pasteText = T("Paste");
   private shellSubscription: any;
   private selectedText: string;
 
-  public shell_tooltip = T('<b>Ctrl+C</b> kills a foreground process.<br>\
-                            Many utilities are built-in:<br> <b>Iperf</b>,\
-                            <b>Netperf</b>, <b>IOzone</b>, <b>arcsat</b>,\
-                            <b>tw_cli</b>, <br><b>MegaCli</b>,\
-                            <b>freenas-debug</b>, <b>tmux</b>,\
-                            <b>Dmidecode</b>.<br> Refer to the <a\
-                            href="%%docurl%%/cli.html"\
-                            target="_blank">Command Line Utilities</a>\
-                            chapter in the guide for usage information\
-                            and examples.');
+  public usage_tooltip = helptext.usage_tooltip;
 
   clearLine = "\u001b[2K\r"
   public shellConnected: boolean = false;
@@ -86,17 +99,13 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   onRightClick(): false {
-    this._snackbar.open(
-      T(
-        'Context menu copy and paste operations \
-        are disabled in the Shell. Copy and paste \
-        shortcuts for Mac are <i>Command+c</i> and \
-        <i>Command+v</i>. For most operating \
-        systems, use <i>Ctrl+Insert</i> to copy and \
-        <i>Shift+Insert</i> to paste.'
-      ),
-      T('Dismiss')
-    );
+    this._snackbar.openFromComponent(CopyPasteMessageComponent, {
+      data: {
+        message_html: helptext.copy_paste_message,
+        action: helptext.action_dismiss
+      }
+    });
+
     return false;
   }
 

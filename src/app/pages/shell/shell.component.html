@@ -18,7 +18,7 @@
 		{{"Set font size" | translate}}:
 		<mat-slider min="10" max="20" step="1" [(ngModel)]="font_size"></mat-slider>
 		<button mat-button class="mat-basic" (click)="resetDefault()" matTooltip="{{'Reset font size to default value' | translate }}">{{"Restore default" | translate}}</button>
-		<tooltip class="shellTooltip" [message]=shell_tooltip></tooltip>
+		<tooltip class="shellTooltip" [message]=usage_tooltip></tooltip>
 	</mat-card-content>
 	<ng-template #Reconnect>
 		<mat-card-content>

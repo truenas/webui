@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { MaterialModule } from '../../appMaterial.module';
 import {EntityModule} from '../common/entity/entity.module';
 //Component Modules
-import { ShellComponent } from './shell.component';
+import { ShellComponent, CopyPasteMessageComponent } from './shell.component';
 import { routing } from './shell.routing';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/components/corecomponents.module';
@@ -13,8 +13,9 @@ import { CoreComponents } from 'app/core/components/corecomponents.module';
 @NgModule({
   imports: [CommonModule, FormsModule, EntityModule, routing, MaterialModule, TranslateModule, CoreComponents],
   declarations: [
-    ShellComponent
+    ShellComponent,
+    CopyPasteMessageComponent
   ],
-  providers: []
+  entryComponents: [CopyPasteMessageComponent],
 })
 export class ShellModule {}
