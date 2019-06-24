@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormControl, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from '@angular/router';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
-import { matchOtherValidator } from "app/pages/common/entity/entity-form/validators/password-validation";
+import { matchOtherValidator, doesNotEqual } from "app/pages/common/entity/entity-form/validators/password-validation";
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../../../services/ws.service';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
@@ -78,6 +78,7 @@ export class AuthorizedAccessFormComponent {
       validation : [
         Validators.minLength(12),
         Validators.maxLength(16),
+        doesNotEqual("secret"),
         matchOtherValidator("peersecret_confirm")
       ],
       blurStatus: true,
@@ -118,7 +119,8 @@ export class AuthorizedAccessFormComponent {
           Validators.required,
           Validators.minLength(12),
           Validators.maxLength(16),
-          matchOtherValidator("peersecret_confirm")
+          matchOtherValidator("peersecret_confirm"),
+          doesNotEqual("secret")
         ]);
       } else {
         peersecretControl.clearValidators();
