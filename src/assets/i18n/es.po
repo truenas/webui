@@ -460,6 +460,9 @@ msgstr ""
 msgid "ACL Manager"
 msgstr ""
 
+msgid "ACL Mode"
+msgstr ""
+
 msgid "ACL Type"
 msgstr ""
 
@@ -1215,9 +1218,6 @@ msgstr ""
 msgid "Auxiliary parameters"
 msgstr ""
 
-msgid "Auxilliary parameters"
-msgstr ""
-
 msgid "Available Disks"
 msgstr ""
 
@@ -1264,9 +1264,6 @@ msgid "Base Name"
 msgstr ""
 
 msgid "Base64 encoded key for the Azure account."
-msgstr ""
-
-msgid "Basejail"
 msgstr ""
 
 msgid "Basic Mode"
@@ -1516,7 +1513,7 @@ msgid "Change User & Group Ownership"
 msgstr ""
 
 msgid ""
-"Change from <i>public</i to increase system security. Can only contain "
+"Change from <i>public</i> to increase system security. Can only contain "
 "alphanumeric characters, underscores, dashes, periods, and spaces. This can "
 "be left empty for <i>SNMPv3</i> networks."
 msgstr ""
@@ -2721,6 +2718,9 @@ msgstr ""
 msgid "Disk"
 msgstr "Disco"
 
+msgid "Disk Selection Required"
+msgstr ""
+
 msgid "Disk Size"
 msgstr "Tamaño del disco"
 
@@ -3362,9 +3362,6 @@ msgstr ""
 msgid ""
 "Enter an alphanumeric name for the certificate. Underscore (_), and dash "
 "(-) characters are allowed."
-msgstr ""
-
-msgid "Enter an alphanumeric name for the group."
 msgstr ""
 
 msgid "Enter an alphanumeric name for the virtual machine."
@@ -4141,6 +4138,12 @@ msgstr ""
 msgid "Group Suffix"
 msgstr ""
 
+msgid ""
+"Group name cannot begin with a hyphen (<i>-</i>) or contain a space, tab, "
+"or these characters: <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i>. <i>$</i> can "
+"only be used as the last character of the username."
+msgstr ""
+
 msgid "Groups"
 msgstr "Grupos"
 
@@ -4622,9 +4625,6 @@ msgid ""
 msgstr ""
 
 msgid "Items Delete Failed"
-msgstr ""
-
-msgid "JID"
 msgstr ""
 
 msgid "Jail"
@@ -6279,6 +6279,14 @@ msgid "Reset font size to default value"
 msgstr ""
 
 msgid ""
+"Reset system configuration to default settings. The system  will restart to "
+"complete this operation. You will be required to reset your password."
+msgstr ""
+
+msgid "Resetting system configuration to default settings. The system will restart."
+msgstr ""
+
+msgid ""
 "Resident set size in bytes. See <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=rctl\" "
 "target=\"_blank\">RCTL(8)</a> for more details."
@@ -6730,6 +6738,9 @@ msgid ""
 "(default, Unix-style permissions), <b>None</b>, or <b>Mode</b> (ACLs)."
 msgstr ""
 
+msgid "Select one or more disks to decrypt."
+msgstr ""
+
 msgid "Select one or more screenshots that illustrate the problem."
 msgstr ""
 
@@ -6876,12 +6887,6 @@ msgid "Select the disks to monitor."
 msgstr ""
 
 msgid ""
-"Select the group to control the pool/dataset. Groups                        "
-"   manually created or imported from a directory service                    "
-"       will appear in the drop-down menu."
-msgstr ""
-
-msgid ""
 "Select the group to control the pool/dataset. Groups manually created or "
 "imported from a directory service will appear in the drop-down menu."
 msgstr ""
@@ -6958,12 +6963,6 @@ msgstr ""
 msgid ""
 "Select the unformatted disk, controller, zvol, zvol snapshot, or HAST "
 "device. Select <i>Create New</i> for options to create a new zvol."
-msgstr ""
-
-msgid ""
-"Select the user to control the pool/dataset. Users                          "
-" manually created or imported from a directory service                      "
-"     will appear in the drop-down menu."
 msgstr ""
 
 msgid ""
@@ -7792,9 +7791,9 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Setting this will strip ACLs from the current dataset.  ACLs will also be "
-"stripped recursively to directories and child datasets if paired with  "
-"those options"
+"Setting this will strip ACLs from the current dataset. ACLs will also be "
+"stripped recursively to directories and child datasets if paired with  hose "
+"options"
 msgstr ""
 
 msgid "Settings saved."
@@ -8011,7 +8010,7 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Specify the IP addresses to listen for FTP connections. If none are "
+"Specify the IP addresses to listen for AFP connections. If none are "
 "specified, advertise the first IP address of the system, but listen for any "
 "incoming request."
 msgstr ""
@@ -8107,7 +8106,7 @@ msgid "Stripe"
 msgstr ""
 
 msgid ""
-"Stripping ACLs will reset the permissions  of this dataset. This may make "
+"Stripping ACLs will reset the permissions of this dataset. This may make "
 "data inaccessible."
 msgstr ""
 
@@ -8330,9 +8329,6 @@ msgid "Temp tooltip"
 msgstr ""
 
 msgid "Temperature"
-msgstr ""
-
-msgid "Template"
 msgstr ""
 
 msgid "Terms of Service"
