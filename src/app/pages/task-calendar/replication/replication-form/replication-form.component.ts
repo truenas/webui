@@ -162,7 +162,7 @@ export class ReplicationFormComponent {
         }, {
             type: 'explorer',
             initial: '/mnt',
-            explorerType: 'directory',
+            explorerType: 'zvol',
             multiple: true,
             name: 'source_datasets_PUSH',
             placeholder: helptext.source_datasets_placeholder,
@@ -233,7 +233,7 @@ export class ReplicationFormComponent {
         }, {
             type: 'explorer',
             initial: '/mnt',
-            explorerType: 'directory',
+            explorerType: 'zvol',
             name: 'target_dataset_PULL',
             placeholder: helptext.target_dataset_placeholder,
             tooltip: helptext.target_dataset_placeholder,
