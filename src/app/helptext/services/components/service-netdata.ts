@@ -37,11 +37,9 @@ export default {
         tooltip: T('Instructions on adding keys and values')
     },
 
-    alarms_paratext: T('Alarms'),
-
     alarms: {
-        placeholder : T('Placeholder for dynamically created alarms'),
-        tooltip: T('Instructions on alarms')
+        placeholder : T('Alarms'),
+        tooltip: T('Click on alarms to select or unselect.')
     },
 
     streaming_paratext: T('Streaming Metrics'),

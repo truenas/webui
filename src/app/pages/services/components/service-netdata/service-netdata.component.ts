@@ -79,13 +79,7 @@ export class ServiceNetDataComponent {
             label: false,
             config:[
                 {
-                    type: 'paragraph',
-                    name: 'alarms_label',
-                    paraText: helptext.alarms_paratext,
-                    class: 'entity_form_label'
-                },
-                {
-                    type : 'select', // needs to be selectable
+                    type : 'select',
                     name : 'alarms',
                     placeholder : helptext.alarms.placeholder,
                     tooltip: helptext.alarms.tooltip,
@@ -136,7 +130,6 @@ export class ServiceNetDataComponent {
                     tooltip: helptext.allow_from.tooltip,
                     isHidden: true
                 }
-                
             ]
         }
     ];
@@ -177,6 +170,7 @@ export class ServiceNetDataComponent {
 
     private bind: any;
     private alarms: any;
+    private allAlarmEntries: any;
 
     constructor(
         protected router: Router,
@@ -201,10 +195,7 @@ export class ServiceNetDataComponent {
         });
 
         this.ws.call('netdata.config').subscribe((res) => {
-            console.log(res.alarms);
-            for (let i of res.alarms) {
-                console.log(i, i['enabled'])
-            }
+            console.log(res);
             entity.formGroup.controls['history'].setValue(res.history);
             entity.formGroup.controls['update_every'].setValue(res.update_every);
             entity.formGroup.controls['http_port_listen_backlog'].setValue(res.http_port_listen_backlog);
@@ -220,24 +211,21 @@ export class ServiceNetDataComponent {
             entity.formGroup.controls['additional_params'].setValue(res.additional_params);
             
             //alarms
+            let currentAlarms = [];
             this.alarms = _.find(this.fieldConfig, {'name' : 'alarms'});
-            const keys = Object.keys(res.alarms);
-            const entries = Object.entries(res.alarms);
-            console.log(entries)
-            for (const [name, value] of entries) {
-                console.log(name, value)
+            this.allAlarmEntries = Object.entries(res.alarms);
+            for (const [name, value] of this.allAlarmEntries) {
+                this.alarms.options.push({label: name, value: name});
+                if (value['enabled']) {
+                    currentAlarms.push(name);
+                }
             }
-            for (const key of keys) {
-                this.alarms.options.push(
-                    {label: key, value: key}
-                );
-            };
-            // entity.formGroup.controls['groups'].setValue(res[0].groups);
+            entity.formGroup.controls['alarms'].setValue(currentAlarms);
 
             entity.formGroup.controls['stream_mode'].setValue(res.stream_mode);
-
             //destination
             entity.formGroup.controls['destination'].setValue(res.destination);
+
             entity.formGroup.controls['api_key'].setValue(res.api_key);
             entity.formGroup.controls['allow_from'].setValue(res.allow_from);
         })
@@ -247,6 +235,26 @@ export class ServiceNetDataComponent {
         let target = _.find(this.fieldConfig, {'name' : fieldName});
         target['isHidden'] = show;
         entity.setDisabled(fieldName, show, show);
+    }
+
+    beforeSubmit(data: any){
+        console.log(data);
+        const values = Object.values(this.allAlarmEntries)
+        for (let value of values) {
+            value[1] = {enabled: false};
+        }
+        let obj = {};
+        data.alarms.forEach((alarm) => {
+            this.allAlarmEntries.forEach((entry) =>  {
+                if (alarm === entry[0]) {
+                    entry[1] = {enabled: true};
+                }
+                obj[entry[0]] = entry[1]
+            });
+        });
+        data.alarms = obj;
+        delete data.global_label;
+        delete data.streaming_label;
     }
 
     customSubmit(payload){
