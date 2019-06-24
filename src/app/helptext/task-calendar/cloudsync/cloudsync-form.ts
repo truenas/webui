@@ -64,7 +64,8 @@ transfer_mode_tooltip: T('<i>SYNC</i> makes files on the destination system iden
 transfer_mode_validation : [ Validators.required ],
 
 snapshot_placeholder: T('Take Snapshot'),
-snapshot_tooltip: T('Create a snapshot of the dataset before pushing data.'),
+snapshot_tooltip: T('Set to take a snapshot of the dataset before a\
+ <i>PUSH</i> or <i>PULL</i>.'),
 
 pre_script_placeholder: T('Pre-script'),
 pre_script_tooltip: T('Script to execute before running sync.'),
@@ -104,9 +105,10 @@ follow_symlinks_placeholder: T('Follow Symlinks'),
 follow_symlinks_tooltip: T('Follow symlinks and copy the items to which they link.'),
 
 transfers_placeholder: T('Transfers'),
-transfers_tooltip: T(' The number of file transfers to run in parallel. It can\
- sometimes be useful to set this to a smaller number if the remote is giving a lot of\
- timeouts, or a larger number if there is high bandwidth and a fast remote.'),
+transfers_tooltip: T('Number of simultaneous file transfers. Enter a\
+ number based on the available bandwidth and destination system\
+ performance. See <a href="https://rclone.org/docs/#transfers-n"\
+ target="_blank">rclone --transfers</a>.'),
 
 enabled_placeholder: T('Enabled'),
 enabled_tooltip: T('Enable this Cloud Sync Task. Unset to disable this Cloud\
