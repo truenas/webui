@@ -88,11 +88,12 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   onRightClick(): false {
     this._snackbar.open(
       T(
-        'Context menu copy and pasting operations \
-        are disabled in the Shell. If the expected \
-        keyboard shortcuts are not working, try \
-        Ctrl + Insert to copy or Shift + Insert to \
-        paste.'
+        'Context menu copy and paste operations \
+        are disabled in the Shell. Copy and paste \
+        shortcuts for Mac are <i>Command+c</i> and \
+        <i>Command+v</i>. For most operating \
+        systems, use <i>Ctrl+Insert</i> to copy and \
+        <i>Shift+Insert</i> to paste.'
       ),
       T('Dismiss')
     );
