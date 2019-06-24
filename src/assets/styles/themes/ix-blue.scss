@@ -521,6 +521,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-checkbox {
     margin: 4px;
   }
+  .form-line .mat-checkbox {
+    margin-left: 0;
+  }
 
   .ngx-datatable .mat-checkbox-inner-container {
     margin-left: 4px;
@@ -717,6 +720,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   .vdev-action-btn:disabled {
     opacity: 0.38;
+  }
+
+  #vdev__close-button {
+    color: var(--primary) !important;
   }
 
   // style nav chevrons on datatable pager w/regard to theme
@@ -1248,10 +1255,22 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     min-width: 180px;
   }
 
+  app-replication-wizard #adjustme {
+    top: -70px;
+  }
+
+  jail-wizard .tooltiptext {
+    top: -1px;
+  }
+
   mat-radio-group .tooltip .material-icons,
   mat-radio-group .tooltip .material-icons {
     position: relative;
     top: 4px;
+  }
+
+  .navigation-hold#scroll-area .ps__scrollbar-y-rail {
+    top: 50px !important;
   }
 
  } // end of ix theme

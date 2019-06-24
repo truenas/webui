@@ -71,6 +71,28 @@ export class DatasetAclComponent implements OnDestroy {
       readonly: true
     },
     {
+      type: 'combobox',
+      name: 'uid',
+      placeholder: helptext.dataset_acl_uid_placeholder,
+      tooltip: helptext.dataset_acl_uid_tooltip,
+      updateLocal: true,
+      options: [],
+      searchOptions: [],
+      parent: this,
+      updater: this.updateUserSearchOptions,
+    },
+    {
+      type: 'combobox',
+      name: 'gid',
+      placeholder: helptext.dataset_acl_gid_placeholder,
+      tooltip: helptext.dataset_acl_gid_tooltip,
+      updateLocal: true,
+      options: [],
+      searchOptions: [],
+      parent: this,
+      updater: this.updateGroupSearchOptions,
+    },
+    {
       type: 'list',
       name: 'aces',
       width: '100%',
@@ -210,22 +232,26 @@ export class DatasetAclComponent implements OnDestroy {
       this.pk = this.path;
     });
 
-    this.userService.listAllUsers().subscribe(res => {
+    this.userService.userQueryDSCache().subscribe(items => {
       const users = [];
-      const items = res.data.items;
       for (let i = 0; i < items.length; i++) {
-        users.push({label: items[i].label, value: items[i].id});
+        users.push({label: items[i].username, value: items[i].username});
       }
       this.userOptions = users;
+
+      const uid_fc = _.find(this.fieldConfig, {"name": "uid"});
+      uid_fc.options = this.userOptions;
     });
 
-    this.userService.listAllGroups().subscribe(res => {
+    this.userService.groupQueryDSCache().subscribe(items => {
       const groups = [];
-      const items = res.data.items;
       for (let i = 0; i < items.length; i++) {
-        groups.push({label: items[i].label, value: items[i].id});
+        groups.push({label: items[i].group, value: items[i].group});
       }
       this.groupOptions = groups;
+
+      const gid_fc = _.find(this.fieldConfig, {"name": "gid"});
+      gid_fc.options = this.groupOptions;
     });
   }
 
@@ -330,7 +356,22 @@ export class DatasetAclComponent implements OnDestroy {
   }
 
   async dataHandler(entityForm) {
-    let data = entityForm.queryResponse;
+    const res = entityForm.queryResponse;
+    await this.userService.getUserByUID(res.uid).toPromise().then(userObj => {
+      if (userObj && userObj.length > 0) {
+        entityForm.formGroup.controls['uid'].setValue(userObj[0].username);
+      }
+    }, err => {
+      console.error(err);
+    });
+    await this.userService.getGroupByGID(res.gid).toPromise().then(groupObj => {
+      if (groupObj && groupObj.length > 0) {
+        entityForm.formGroup.controls['gid'].setValue(groupObj[0].group);
+      }
+    }, err => {
+      console.error(err);
+    });
+    let data = res.acl;
     let acl;
     if (!data.length) {
       data = [data];
@@ -340,17 +381,17 @@ export class DatasetAclComponent implements OnDestroy {
       acl.type = data[i].type;
       acl.tag = data[i].tag;
       if (acl.tag === 'USER') {
-        await this.ws.call('notifier.get_user_object', [data[i].id]).toPromise().then(userObj => {
-          if (userObj && userObj.length > 2) {
-            acl.user = userObj[0];
+        await this.userService.getUserByUID(data[i].id).toPromise().then(userObj => {
+          if (userObj && userObj.length > 0) {
+            acl.user = userObj[0].username;
           }
         }, err => {
           console.error(err);
         });
       } else if (acl.tag === 'GROUP') {
-        await this.ws.call('notifier.get_group_object', [data[i].id]).toPromise().then(groupObj => {
+        await this.userService.getGroupByGID(data[i].id).toPromise().then(groupObj => {
           if (groupObj && groupObj.length > 2) {
-            acl.group = groupObj[0];
+            acl.group = groupObj[0].group;
           }
         }, err => {
           console.error(err);
@@ -444,20 +485,36 @@ export class DatasetAclComponent implements OnDestroy {
     if (body.stripacl) {
       dacl = [];
     }
+    await this.userService.getUserByName(body.uid).toPromise().then(userObj => {
+      if (userObj && userObj.hasOwnProperty('pw_uid')) {
+        body.uid = userObj.pw_uid;
+      }
+    }, err => {
+      console.error(err);
+    });
+
+    await this.userService.getGroupByName(body.gid).toPromise().then(groupObj => {
+      if (groupObj && groupObj.hasOwnProperty('gr_gid')) {
+        body.gid = groupObj.gr_gid;
+      }
+    }, err => {
+      console.error(err);
+    });
+
     for (let i = 0; i < dacl.length; i++) {
       if (dacl[i].tag === 'USER') {
-        await this.ws.call('notifier.get_user_object', [dacl[i].id]).toPromise().then(userObj => {
-          if (userObj && userObj.length > 2) {
-            dacl[i]['id'] = userObj[2];
+        await this.userService.getUserByName(dacl[i].id).toPromise().then(userObj => {
+          if (userObj && userObj.hasOwnProperty('pw_uid')) {
+            dacl[i]['id'] = userObj.pw_uid;
           }
         }, err => {
           console.error(err);
         });
 
       } else if (dacl[i].tag === 'GROUP') {
-        await this.ws.call('notifier.get_group_object', [dacl[i].id]).toPromise().then(groupObj => {
-          if (groupObj && groupObj.length > 2) {
-            dacl[i]['id'] = groupObj[2];
+        await this.userService.getGroupByName(dacl[i].id).toPromise().then(groupObj => {
+          if (groupObj && groupObj.hasOwnProperty('gr_gid')) {
+            dacl[i]['id'] = groupObj.gr_gid;
           }
         }, err => {
           console.error(err);
@@ -465,12 +522,13 @@ export class DatasetAclComponent implements OnDestroy {
       }
     }
     this.dialogRef.componentInstance.setCall(this.updateCall,
-      [body.path, dacl,
-        {'recursive': body.recursive,
+      [{'path': body.path, 'dacl': dacl,
+        'uid': body.uid, 'gid': body.gid,
+        'options' : {'recursive': body.recursive,
          'traverse': body.traverse,
          'stripacl': body.stripacl
         }
-      ]);
+      }]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
       this.entityForm.success = true;
@@ -483,22 +541,20 @@ export class DatasetAclComponent implements OnDestroy {
   }
 
   updateGroupSearchOptions(value = "", parent, config) {
-    parent.userService.listAllGroups(value).subscribe(res => {
+    parent.userService.groupQueryDSCache(value).subscribe(items => {
       const groups = [];
-      const items = res.data.items;
       for (let i = 0; i < items.length; i++) {
-        groups.push({label: items[i].label, value: items[i].id});
+        groups.push({label: items[i].group, value: items[i].group});
       }
-        config.searchOptions = groups;
+      config.searchOptions = groups;
     });
   }
 
   updateUserSearchOptions(value = "", parent, config) {
-    parent.userService.listAllUsers(value).subscribe(res => {
+    parent.userService.userQueryDSCache(value).subscribe(items => {
       const users = [];
-      const items = res.data.items;
       for (let i = 0; i < items.length; i++) {
-        users.push({label: items[i].label, value: items[i].id});
+        users.push({label: items[i].username, value: items[i].username});
       }
       config.searchOptions = users;
     });

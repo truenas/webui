@@ -77,3 +77,9 @@ h4 {
 #pool-manager__encryption-checkbox {
 	margin-left: 10px;
 }
+
+#pool-manager__reset-layout-button:disabled,
+#pool-manager__suggest-layout-button:disabled {
+	color: var(--fg2);
+	opacity: .38;
+}
