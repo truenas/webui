@@ -55,6 +55,7 @@ export class ServiceNetDataComponent implements OnInit {
                     name : 'bind', // array of strings [{'string'}] ???
                     placeholder : helptext.bind.placeholder,
                     tooltip: helptext.bind.tooltip,
+                    options: [],
                     multiple : true,
                 },
                 {
@@ -84,10 +85,12 @@ export class ServiceNetDataComponent implements OnInit {
                     class: 'entity_form_label'
                 },
                 {
-                    type : 'textarea', // need more info on accceptable key/values - object
+                    type : 'select', // need more info on accceptable key/values - object
                     name : 'alarms',
                     placeholder : helptext.alarms.placeholder,
-                    tooltip: helptext.alarms.tooltip
+                    tooltip: helptext.alarms.tooltip,
+                    options: [],
+                    multiple: true
                 }
             ]
         },
@@ -173,6 +176,7 @@ export class ServiceNetDataComponent implements OnInit {
     ];
 
     private bind: any;
+    private alarms: any;
 
     constructor(
         protected router: Router,
@@ -207,13 +211,30 @@ export class ServiceNetDataComponent implements OnInit {
             entity.formGroup.controls['history'].setValue(res.history);
             entity.formGroup.controls['update_every'].setValue(res.update_every);
             entity.formGroup.controls['http_port_listen_backlog'].setValue(res.http_port_listen_backlog);
-            // bind          
-            entity.formGroup.controls['bind'].setValue(res.bind);
+           
+            // bind
+            this.bind = _.find(this.fieldConfig, {'name' : 'bind'});
+            res.bind.forEach((item) => {
+                this.bind.options.push(
+                    {label : item, value : item});
+            });
+            
             entity.formGroup.controls['port'].setValue(res.port);
             entity.formGroup.controls['additional_params'].setValue(res.additional_params);
+            
             //alarms
+            this.alarms = _.find(this.fieldConfig, {'name' : 'alarms'});
+            const keys = Object.keys(res.alarms);
+            for (const key of keys) {
+                this.alarms.options.push(
+                    {label: key, value: key}
+                )
+            };
+
             entity.formGroup.controls['stream_mode'].setValue(res.stream_mode);
+
             //destination
+            entity.formGroup.controls['destination'].setValue(res.destination);
             entity.formGroup.controls['api_key'].setValue(res.api_key);
             entity.formGroup.controls['allow_from'].setValue(res.allow_from);
         })
