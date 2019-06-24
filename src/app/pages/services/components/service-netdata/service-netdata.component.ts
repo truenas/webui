@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
-import { WebSocketService, AppLoaderService } from '../../../../services';
+import { WebSocketService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from 'app/helptext/services/components/service-netdata';
@@ -10,7 +10,7 @@ import helptext from 'app/helptext/services/components/service-netdata';
   selector: 'app-service-netdata',
   template : ` <entity-form [conf]="this"></entity-form>`
 })
-export class ServiceNetDataComponent implements OnInit {
+export class ServiceNetDataComponent {
     protected resource_name: string = 'services/netdata';
     protected isBasicMode: boolean = true;
     protected route_success: string[] = [ 'services' ];
@@ -29,7 +29,7 @@ export class ServiceNetDataComponent implements OnInit {
                     paraText: helptext.global_paratext
                 },
                 {
-                    type : 'input', // int
+                    type : 'input',
                     name : 'history',
                     placeholder : helptext.history.placeholder,
                     tooltip: helptext.history.tooltip,
@@ -38,14 +38,14 @@ export class ServiceNetDataComponent implements OnInit {
                 },
                 {
                     type : 'input',
-                    name : 'update_every', // int
+                    name : 'update_every',
                     placeholder : helptext.update_every.placeholder,
                     tooltip: helptext.update_every.tooltip,
                     validation: helptext.update_every.validation
                 },
                 {
                     type : 'input',
-                    name : 'http_port_listen_backlog', // int
+                    name : 'http_port_listen_backlog',
                     placeholder : helptext.http_port_listen_backlog.placeholder,
                     tooltip: helptext.http_port_listen_backlog.tooltip,
                     validation: helptext.http_port_listen_backlog.validation
@@ -59,7 +59,7 @@ export class ServiceNetDataComponent implements OnInit {
                     multiple : true,
                 },
                 {
-                    type : 'input', // int
+                    type : 'input',
                     name : 'port',
                     placeholder : helptext.port.placeholder,
                     tooltip: helptext.port.tooltip,
@@ -85,7 +85,7 @@ export class ServiceNetDataComponent implements OnInit {
                     class: 'entity_form_label'
                 },
                 {
-                    type : 'select', // need more info on accceptable key/values - object
+                    type : 'select', // needs to be selectable
                     name : 'alarms',
                     placeholder : helptext.alarms.placeholder,
                     tooltip: helptext.alarms.tooltip,
@@ -131,7 +131,7 @@ export class ServiceNetDataComponent implements OnInit {
                 },
                 {
                     type : 'input', 
-                    name : 'allow_from', // array of strings [{'string'}] ???
+                    name : 'allow_from',
                     placeholder : helptext.allow_from.placeholder,
                     tooltip: helptext.allow_from.tooltip,
                     isHidden: true
@@ -183,24 +183,17 @@ export class ServiceNetDataComponent implements OnInit {
         protected ws: WebSocketService,
     ) {}
 
-    ngOnInit() {
-        this.ws.call('netdata.config').subscribe((res) => {
-            console.log(res);
-        })
-
-    }
-
     afterInit(entity: any) {
         entity.formGroup.controls['stream_mode'].valueChanges.subscribe((res) => {
-            if (res === 'none') {
+            if (res === 'NONE') {
                 this.hideField('destination', true, entity);
                 this.hideField('api_key', true, entity);
                 this.hideField('allow_from', true, entity);
-            } else if (res === 'slave') {
+            } else if (res === 'SLAVE') {
                 this.hideField('destination', false, entity);
                 this.hideField('api_key', false, entity);
                 this.hideField('allow_from', true, entity);
-            } else if (res === 'master') {
+            } else if (res === 'MASTER') {
                 this.hideField('destination', true, entity);
                 this.hideField('api_key', false, entity);
                 this.hideField('allow_from', false, entity);
@@ -208,6 +201,10 @@ export class ServiceNetDataComponent implements OnInit {
         });
 
         this.ws.call('netdata.config').subscribe((res) => {
+            console.log(res.alarms);
+            for (let i of res.alarms) {
+                console.log(i, i['enabled'])
+            }
             entity.formGroup.controls['history'].setValue(res.history);
             entity.formGroup.controls['update_every'].setValue(res.update_every);
             entity.formGroup.controls['http_port_listen_backlog'].setValue(res.http_port_listen_backlog);
@@ -225,11 +222,17 @@ export class ServiceNetDataComponent implements OnInit {
             //alarms
             this.alarms = _.find(this.fieldConfig, {'name' : 'alarms'});
             const keys = Object.keys(res.alarms);
+            const entries = Object.entries(res.alarms);
+            console.log(entries)
+            for (const [name, value] of entries) {
+                console.log(name, value)
+            }
             for (const key of keys) {
                 this.alarms.options.push(
                     {label: key, value: key}
-                )
+                );
             };
+            // entity.formGroup.controls['groups'].setValue(res[0].groups);
 
             entity.formGroup.controls['stream_mode'].setValue(res.stream_mode);
 
