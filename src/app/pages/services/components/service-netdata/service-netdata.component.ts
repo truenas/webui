@@ -56,12 +56,6 @@ export class ServiceNetDataComponent implements OnInit {
                     placeholder : helptext.bind.placeholder,
                     tooltip: helptext.bind.tooltip,
                     multiple : true,
-                    options : [
-                        {label : '0.0.0.0', value : '0.0.0.0'},
-                        {label : '10.231.2.63', value : '10.231.2.63'},
-                        {label : 'Dummy Data', value : '2.2.2.2'}
-                    ],
-                    value: '0.0.0.0'
                 },
                 {
                     type : 'input', // int
@@ -109,15 +103,14 @@ export class ServiceNetDataComponent implements OnInit {
                 },
                 {
                     type : 'select',
-                    name : 'stream_mode', // str
+                    name : 'stream_mode',
                     placeholder : helptext.stream_mode.placeholder,
                     tooltip: helptext.stream_mode.tooltip,
                     options : [
-                        {label : 'None', value : 'none'},
-                        {label : 'Slave', value : 'slave'},
-                        {label : 'Master', value : 'master'}
+                        {label : 'None', value : 'NONE'},
+                        {label : 'Slave', value : 'SLAVE'},
+                        {label : 'Master', value : 'MASTER'}
                     ],
-                    value: 'none'
                 },
                 {
                     type : 'input', // array of strings [{'string'}] ???
@@ -128,7 +121,7 @@ export class ServiceNetDataComponent implements OnInit {
                 },
                 {
                     type : 'input', 
-                    name : 'api_key', // string
+                    name : 'api_key',
                     placeholder : helptext.api_key.placeholder,
                     tooltip: helptext.api_key.tooltip,
                     isHidden: true
@@ -138,7 +131,6 @@ export class ServiceNetDataComponent implements OnInit {
                     name : 'allow_from', // array of strings [{'string'}] ???
                     placeholder : helptext.allow_from.placeholder,
                     tooltip: helptext.allow_from.tooltip,
-                    value: "*",
                     isHidden: true
                 }
                 
@@ -179,10 +171,20 @@ export class ServiceNetDataComponent implements OnInit {
             function : () => { this.isBasicMode = !this.isBasicMode; }
         }
     ];
+
+    private bind: any;
+
     constructor(
         protected router: Router,
         protected ws: WebSocketService,
     ) {}
+
+    ngOnInit() {
+        this.ws.call('netdata.config').subscribe((res) => {
+            console.log(res);
+        })
+
+    }
 
     afterInit(entity: any) {
         entity.formGroup.controls['stream_mode'].valueChanges.subscribe((res) => {
@@ -205,14 +207,16 @@ export class ServiceNetDataComponent implements OnInit {
             entity.formGroup.controls['history'].setValue(res.history);
             entity.formGroup.controls['update_every'].setValue(res.update_every);
             entity.formGroup.controls['http_port_listen_backlog'].setValue(res.http_port_listen_backlog);
+            // bind          
+            entity.formGroup.controls['bind'].setValue(res.bind);
             entity.formGroup.controls['port'].setValue(res.port);
             entity.formGroup.controls['additional_params'].setValue(res.additional_params);
+            //alarms
+            entity.formGroup.controls['stream_mode'].setValue(res.stream_mode);
+            //destination
             entity.formGroup.controls['api_key'].setValue(res.api_key);
+            entity.formGroup.controls['allow_from'].setValue(res.allow_from);
         })
-    }
-
-    ngOnInit() {
-
     }
 
     hideField(fieldName: any, show: boolean, entity: any) {
@@ -221,7 +225,7 @@ export class ServiceNetDataComponent implements OnInit {
         entity.setDisabled(fieldName, show, show);
     }
 
-    // customSubmit(payload){
-    //     console.log(payload);
-    // }
+    customSubmit(payload){
+        console.log(payload);
+    }
 }
