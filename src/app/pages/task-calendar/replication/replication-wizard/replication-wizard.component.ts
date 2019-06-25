@@ -299,8 +299,8 @@ export class ReplicationWizardComponent {
                 },
                 {
                     type: 'explorer',
-                    initial: '/mnt',
-                    explorerType: 'zvol',
+                    initial: '',
+                    explorerType: 'dataset',
                     multiple: true,
                     name: 'source_datasets_PUSH',
                     placeholder: replicationHelptext.source_datasets_placeholder,
@@ -352,8 +352,8 @@ export class ReplicationWizardComponent {
                 },
                 {
                     type: 'explorer',
-                    initial: '/mnt',
-                    explorerType: 'zvol',
+                    initial: '',
+                    explorerType: 'dataset',
                     name: 'target_dataset_PULL',
                     placeholder: replicationHelptext.target_dataset_placeholder,
                     tooltip: replicationHelptext.target_dataset_placeholder,
