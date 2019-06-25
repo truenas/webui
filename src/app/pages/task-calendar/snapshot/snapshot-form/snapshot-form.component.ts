@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
-import { Router,ActivatedRoute} from '@angular/router';
 import { Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
-
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { TaskService } from '../../../../services/';
-import { EntityUtils } from '../../../common/entity/utils';
 import helptext from '../../../../helptext/task-calendar/snapshot/snapshot-form';
+import { StorageService, TaskService } from '../../../../services/';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { EntityUtils } from '../../../common/entity/utils';
+
 
 @Component({
   selector: 'cron-snapshot-task-add',
@@ -119,9 +119,10 @@ export class SnapshotFormComponent {
   }];
 
   constructor(protected router: Router, protected taskService: TaskService,
-              protected aroute: ActivatedRoute) {
+              protected aroute: ActivatedRoute, protected storageService: StorageService) {
     const datasetField = _.find(this.fieldConfig, { 'name': 'dataset' });
     this.taskService.getVolumeList().subscribe((res) => {
+      console.log({ volumeResponse: res });
       for (let i = 0; i < res.data.length; i++) {
         const volume_list = new EntityUtils().flattenData(res.data[i].children);
         for (const j in volume_list) {
@@ -129,7 +130,10 @@ export class SnapshotFormComponent {
         }
       }
       datasetField.options = _.sortBy(datasetField.options, [function (o) { return o.label; }]);
+      console.log({ oldOptions: datasetField.options });
     });
+
+    this.storageService.getDatasetNames().subscribe(console.log, console.error);
 
     const begin_field = _.find(this.fieldConfig, { 'name': 'begin' });
     const end_field = _.find(this.fieldConfig, { 'name': 'end' });
