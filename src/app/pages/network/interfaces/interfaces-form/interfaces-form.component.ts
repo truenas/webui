@@ -165,7 +165,7 @@ export class InterfacesFormComponent implements OnDestroy {
     {
       type: 'list',
       name: 'aliases',
-      width: '100%',
+      width: '70%',
       placeholder: 'Aliases',
       label: 'Aliases',
       templateListField: [
@@ -276,7 +276,7 @@ export class InterfacesFormComponent implements OnDestroy {
 
   afterInit(entityForm: any) {
     this.aliases_fc = _.find(this.fieldConfig, {"name": "aliases"});
-    console.log(this.aliases_fc)
+    // console.log(this.aliases_fc)
 
     if (window.localStorage.getItem('is_freenas') === 'false') {
       this.ws.call('failover.licensed').subscribe((is_ha) => { //fixme, stupid race condition makes me need to call this again
