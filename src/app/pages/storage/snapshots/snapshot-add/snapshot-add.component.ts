@@ -20,6 +20,7 @@ export class SnapshotAddComponent implements AfterViewInit, Formconfiguration {
   public isNew = true;
   public fieldConfig: FieldConfig[] = [];
   public initialized = true;
+  public addCall = 'zfs.snapshot.create';
 
   private entityForm: EntityFormComponent;
   private nameValidator: ValidatorFn;
@@ -124,10 +125,6 @@ export class SnapshotAddComponent implements AfterViewInit, Formconfiguration {
     }
 
     nameControl.setValidators(this.nameValidator.bind(this));
-  }
-
-  addCall(snapshot) {
-    return this.ws.call('zfs.snapshot.create', [snapshot]);
   }
 
   beforeSubmit(snapshot): void {
