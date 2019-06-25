@@ -3,10 +3,9 @@ import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import helptext from '../../../../helptext/task-calendar/snapshot/snapshot-form';
-import { StorageService, TaskService } from '../../../../services/';
+import { DialogService, StorageService, TaskService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../common/entity/utils';
-
 
 @Component({
   selector: 'cron-snapshot-task-add',
@@ -119,21 +118,16 @@ export class SnapshotFormComponent {
   }];
 
   constructor(protected router: Router, protected taskService: TaskService,
-              protected aroute: ActivatedRoute, protected storageService: StorageService) {
+              protected aroute: ActivatedRoute, protected storageService: StorageService,
+              private dialog: DialogService) {
     const datasetField = _.find(this.fieldConfig, { 'name': 'dataset' });
-    this.taskService.getVolumeList().subscribe((res) => {
-      console.log({ volumeResponse: res });
-      for (let i = 0; i < res.data.length; i++) {
-        const volume_list = new EntityUtils().flattenData(res.data[i].children);
-        for (const j in volume_list) {
-          datasetField.options.push({ label: volume_list[j].path, value: volume_list[j].path });
-        }
-      }
-      datasetField.options = _.sortBy(datasetField.options, [function (o) { return o.label; }]);
-      console.log({ oldOptions: datasetField.options });
-    });
 
-    this.storageService.getDatasetNames().subscribe(console.log, console.error);
+    this.storageService.getDatasetNameOptions().subscribe(
+      options => {
+        datasetField.options = _.sortBy(options, [o => o.label]);
+      },
+      error => new EntityUtils().handleWSError(this, error, this.dialog)
+    );
 
     const begin_field = _.find(this.fieldConfig, { 'name': 'begin' });
     const end_field = _.find(this.fieldConfig, { 'name': 'end' });

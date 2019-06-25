@@ -218,7 +218,9 @@ export class StorageService {
     );
   }
 
-  getDatasetNames(): Observable<{ label: string, value: string }[]> {
-    return this.ws.call('pool.filesystem_choices');
+  getDatasetNameOptions(): Observable<{ label: string; value: string }[]> {
+    return this.ws
+      .call("pool.filesystem_choices")
+      .pipe(map(response => response.map(value => ({ label: value, value }))));
   }
 }
