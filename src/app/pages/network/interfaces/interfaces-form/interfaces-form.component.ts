@@ -23,6 +23,7 @@ export class InterfacesFormComponent implements OnDestroy {
   protected route_success: string[] = [ 'network', 'interfaces' ];
   protected isEntity = true;
   protected is_ha = false;
+  private aliases_fc: any;
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -175,24 +176,24 @@ export class InterfacesFormComponent implements OnDestroy {
             type: 'ipwithnetmask',
             validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ],
           },
-          {
-            name: 'failover_address',
-            placeholder: helptext.failover_alias_address_placeholder,
-            tooltip: helptext.failover_alias_address_tooltip,
-            disabled: true,
-            isHidden: true,
-            type: 'ipwithnetmask',
-            validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
-          },
-          {
-            name: 'failover_virtual_address',
-            placeholder: helptext.failover_virtual_alias_address_placeholder,
-            tooltip: helptext.failover_virtual_alias_address_tooltip,
-            disabled: true,
-            isHidden: true,
-            type: 'ipwithnetmask',
-            validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
-          }
+          // {
+          //   name: 'failover_address',
+          //   placeholder: helptext.failover_alias_address_placeholder,
+          //   tooltip: helptext.failover_alias_address_tooltip,
+          //   disabled: true,
+          //   isHidden: true,
+          //   type: 'ipwithnetmask',
+          //   validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
+          // },
+          // {
+          //   name: 'failover_virtual_address',
+          //   placeholder: helptext.failover_virtual_alias_address_placeholder,
+          //   tooltip: helptext.failover_virtual_alias_address_tooltip,
+          //   disabled: true,
+          //   isHidden: true,
+          //   type: 'ipwithnetmask',
+          //   validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
+          // }
       ],
       listFields: []
     }
@@ -274,6 +275,9 @@ export class InterfacesFormComponent implements OnDestroy {
   }
 
   afterInit(entityForm: any) {
+    this.aliases_fc = _.find(this.fieldConfig, {"name": "aliases"});
+    console.log(this.aliases_fc)
+
     if (window.localStorage.getItem('is_freenas') === 'false') {
       this.ws.call('failover.licensed').subscribe((is_ha) => { //fixme, stupid race condition makes me need to call this again
         for (let i = 0; i < this.failover_fields.length; i++) {
@@ -385,10 +389,8 @@ export class InterfacesFormComponent implements OnDestroy {
   }
 
   async dataHandler(entityForm) {
-    console.log(entityForm)
     if (!entityForm.isNew) {
       let data = entityForm.queryResponse[0];
-      console.log(data);
       let interfaces, bridge_members, aliases;
 
       bridge_members = [];
@@ -405,24 +407,30 @@ export class InterfacesFormComponent implements OnDestroy {
       interfaces.mtu = data.mtu;
       interfaces.options = data.options;
       interfaces.bridge_members = bridge_members;
-      console.log(interfaces)
 
       for (const prop in interfaces) {
         if (interfaces.hasOwnProperty(prop)) {
           entityForm.formGroup.controls[prop].setValue(interfaces[prop]);
         }
       }
+    
+      // console.log(entityForm)
+      const propName = "aliases";
+      const aliases_fg = entityForm.formGroup.controls[propName];
+      // console.log(aliases_fg)
+      let aliasList = data.aliases
+      // console.log(aliasList)
+      for (let i = 0; i < aliasList.length; i++) {
+        if (aliases_fg.controls[i] !== undefined) {
+          aliases_fg.controls[i].setValue(aliasList[i]);
+        } else {
+          // add controls;
+          const templateListField = _.cloneDeep(_.find(this.fieldConfig, {'name': propName}).templateListField);
+          aliases_fg.push(entityForm.entityFormService.createFormGroup(templateListField));
+          this.aliases_fc.listFields.push(templateListField);
+        }
+      }
     }
-   
-
-    // const propName = "aliases";
-    // const aliases_fg = entityForm.formGroup.controls[propName];
-    // if (aliases_fg.controls[i] === undefined) {
-    //   // add controls;
-    //   const templateListField = _.cloneDeep(_.find(this.fieldConfig, {'name': propName}).templateListField);
-    //   aces_fg.push(entityForm.entityFormService.createFormGroup(templateListField));
-    //   this.aces_fc.listFields.push(templateListField);
-    // }
   }
 
   ngOnDestroy() {
