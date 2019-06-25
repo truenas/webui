@@ -391,26 +391,10 @@ export class InterfacesFormComponent implements OnDestroy {
   async dataHandler(entityForm) {
     if (!entityForm.isNew) {
       let data = entityForm.queryResponse[0];
-      let interfaces, bridge_members, aliases;
 
-      bridge_members = [];
-      data.bridge_members.forEach((member) => {
-        bridge_members.push(member);
-      })
-
-      interfaces = {};
-      interfaces.type = data.type;
-      interfaces.name = data.name;
-      interfaces.description = data.description;
-      interfaces.ipv4_dhcp = data.ipv4_dhcp;
-      interfaces.ipv6_auto = data.ipv6_auto;
-      interfaces.mtu = data.mtu;
-      interfaces.options = data.options;
-      interfaces.bridge_members = bridge_members;
-
-      for (const prop in interfaces) {
-        if (interfaces.hasOwnProperty(prop)) {
-          entityForm.formGroup.controls[prop].setValue(interfaces[prop]);
+      for (const prop in data) {
+        if (entityForm.formGroup.controls[prop] && prop !== 'aliases') {
+          entityForm.formGroup.controls[prop].setValue(data[prop]);
         }
       }
     
@@ -421,14 +405,13 @@ export class InterfacesFormComponent implements OnDestroy {
       let aliasList = data.aliases
       // console.log(aliasList)
       for (let i = 0; i < aliasList.length; i++) {
-        if (aliases_fg.controls[i] !== undefined) {
-          aliases_fg.controls[i].setValue(aliasList[i]);
-        } else {
+        if (aliases_fg.controls[i] === undefined) {
           // add controls;
           const templateListField = _.cloneDeep(_.find(this.fieldConfig, {'name': propName}).templateListField);
           aliases_fg.push(entityForm.entityFormService.createFormGroup(templateListField));
           this.aliases_fc.listFields.push(templateListField);
-        }
+        } 
+        aliases_fg.controls[i].setValue(aliasList[i]);
       }
     }
   }
