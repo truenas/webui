@@ -31,7 +31,6 @@ export class Services implements OnInit {
 
   public name_MAP: Object = {
     'afp': 'AFP',
-    'asigra': 'Asigra',
     'dynamicdns': 'Dynamic DNS',
     'ftp': 'FTP',
     'iscsitarget': 'iSCSI',
