@@ -34,15 +34,15 @@ export class PluginComponent implements OnInit {
 
   getActions(row) {
     const actions = [{
-      name: row[1],
+      name: row.name,
       id: "start",
       label: T("START"),
       icon: 'play_arrow',
       visible: this.isActionVisible('start'),
       onClick: () => {
         this.parent.loader.open();
-        row[3] = 'STARTING...';
-        this.parent.ws.job('jail.start', [row[1]]).subscribe(
+        row.state = 'STARTING...';
+        this.parent.ws.job('jail.start', [row.name]).subscribe(
           (res) => {
             this.parent.conf.updateRows([row]).then(() => {
               this.actions = this.getActions(this.config);
@@ -56,15 +56,15 @@ export class PluginComponent implements OnInit {
       }
     },
     {
-      name: row[1],
+      name: row.name,
       id: "restart",
       label: T("RESTART"),
       icon: 'replay',
       visible: this.isActionVisible('restart'),
       onClick: () => {
         this.parent.loader.open();
-        row[3] = 'RESTARTING...';
-        this.parent.ws.job('jail.restart', [row[1]]).subscribe(
+        row.state = 'RESTARTING...';
+        this.parent.ws.job('jail.restart', [row.name]).subscribe(
           (res) => {
             this.parent.conf.updateRows([row]).then(() => {
               this.actions = this.getActions(this.config);
@@ -78,15 +78,15 @@ export class PluginComponent implements OnInit {
       }
     },
     {
-      name: row[1],
+      name: row.name,
       id: "stop",
       label: T("STOP"),
       icon: 'stop',
       visible: this.isActionVisible('stop'),
       onClick: () => {
         this.parent.loader.open();
-        row[3] = 'STOPPING...';
-        this.parent.ws.job('jail.stop', [row[1]]).subscribe(
+        row.state = 'STOPPING...';
+        this.parent.ws.job('jail.stop', [row.name]).subscribe(
           (res) => {
             this.parent.conf.updateRows([row]).then(() => {
               this.actions = this.getActions(this.config);
@@ -100,14 +100,14 @@ export class PluginComponent implements OnInit {
       }
     },
     {
-      name: row[1],
+      name: row.name,
       id: "update",
       label: T("UPDATE"),
       icon: 'update',
       visible: this.isActionVisible('update'),
       onClick: () => {
         const dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Updating Plugin") }, disableClose: true });
-        dialogRef.componentInstance.setCall('jail.update_to_latest_patch', [row[1]]);
+        dialogRef.componentInstance.setCall('jail.update_to_latest_patch', [row.name]);
         dialogRef.componentInstance.submit();
         dialogRef.componentInstance.success.subscribe((res) => {
           dialogRef.close(true);
@@ -116,17 +116,17 @@ export class PluginComponent implements OnInit {
       }
     },
     {
-      name: row[1],
+      name: row.name,
       id: "management",
       label: T("MANAGE"),
       icon: 'settings',
       visible: this.isActionVisible('management'),
       onClick: () => {
-        window.open(row[9]);
+        window.open(row.admin_portal);
       }
     },
     {
-      name: row[1],
+      name: row.name,
       id: "delete",
       label: T("UNINSTALL"),
       icon: 'delete',
@@ -136,7 +136,7 @@ export class PluginComponent implements OnInit {
       }
     }];
 
-    if (row['1'].startsWith('asigra')) {
+    if (row.name.startsWith('asigra')) {
       actions.push({
         name: row[1],
         id: "register",
@@ -152,13 +152,13 @@ export class PluginComponent implements OnInit {
   }
 
   isActionVisible(actionId: string) {
-    if (actionId === 'start' && this.config[3] === "up") {
+    if (actionId === 'start' && this.config.state === "up") {
       return false;
-    } else if (actionId === 'stop' && this.config[3] === "down") {
+    } else if (actionId === 'stop' && this.config.state === "down") {
       return false;
-    } else if (actionId === 'management' && (this.config[3] === "down" || this.config[9] == null)) {
+    } else if (actionId === 'management' && (this.config.state === "down" || this.config.admin_portal == null)) {
       return false;
-    } else if (actionId === 'restart' && this.config[3] === "down") {
+    } else if (actionId === 'restart' && this.config.state === "down") {
       return false;
     }
     return true;
