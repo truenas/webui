@@ -93,7 +93,7 @@ export class JailService {
   };
 
   getBranches() {
-    return this.ws.call('jail.list_resource', ["BRANCHES"]);
+    return this.ws.job('jail.list_resource', ["BRANCHES"]);
   }
 
   getVersion() {
@@ -101,6 +101,6 @@ export class JailService {
   }
 
   getInstalledPlugins() {
-    return this.ws.call('jail.list_resource', ["PLUGIN"]);
+    return this.ws.job('jail.list_resource', ["PLUGIN"]);
   }
 }
