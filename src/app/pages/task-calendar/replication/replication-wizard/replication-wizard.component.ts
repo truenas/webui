@@ -9,7 +9,7 @@ import replicationHelptext from '../../../../helptext/task-calendar/replication/
 import sshConnectionsHelptex from '../../../../helptext/system/ssh-connections';
 import snapshotHelptext from '../../../../helptext/task-calendar/snapshot/snapshot-form';
 
-import { DialogService, KeychainCredentialService, WebSocketService, ReplicationService, TaskService } from '../../../../services';
+import { DialogService, KeychainCredentialService, WebSocketService, ReplicationService, TaskService, StorageService } from '../../../../services';
 import { EntityUtils } from '../../../common/entity/utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 
@@ -551,7 +551,7 @@ export class ReplicationWizardComponent {
     constructor(private router: Router, private keychainCredentialService: KeychainCredentialService,
         private loader: AppLoaderService, private dialogService: DialogService,
         private ws: WebSocketService, private replicationService: ReplicationService,
-        private taskService: TaskService) { }
+        private taskService: TaskService, private storageService: StorageService) { }
 
     isCustActionVisible(id, stepperIndex) {
         if (stepperIndex == 0) {
@@ -643,15 +643,12 @@ export class ReplicationWizardComponent {
         )
 
         const datasetField = _.find(this.wizardConfig[1].fieldConfig, { 'name': 'dataset' });
-        this.taskService.getVolumeList().subscribe((res) => {
-            for (let i = 0; i < res.data.length; i++) {
-                const volume_list = new EntityUtils().flattenData(res.data[i].children);
-                for (const j in volume_list) {
-                    datasetField.options.push({ label: volume_list[j].path, value: volume_list[j].path });
-                }
-            }
-            datasetField.options = _.sortBy(datasetField.options, [function (o) { return o.label; }]);
-        });
+        this.storageService.getDatasetNameOptions().subscribe(
+            options => {
+                datasetField.options = _.sortBy(options, [o => o.label]);
+            },
+            error => new EntityUtils().handleWSError(this, error, this.dialogService)
+        )
 
         const snapshot_begin_field = _.find(this.wizardConfig[1].fieldConfig, { name: 'snapshot_begin' });
         const snapshot_end_field = _.find(this.wizardConfig[1].fieldConfig, { name: 'snapshot_end' });
