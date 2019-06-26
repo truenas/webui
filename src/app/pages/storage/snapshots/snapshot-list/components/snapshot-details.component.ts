@@ -31,7 +31,7 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
 
   public ngOnInit(): void {
     this._ws
-      .call("zfs.snapshot.query", [[["name", "=", this.config.name]], { select: ["name", "properties"] }])
+      .call("zfs.snapshot.query", [[["id", "=", this.config.name]]])
       .pipe(
         map(response => ({
           ...response[0].properties,
