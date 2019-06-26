@@ -311,8 +311,6 @@ export class SupportComponent {
           placeholder: helptext.screenshot.placeholder,
           tooltip: helptext.screenshot.tooltip,
           fileLocation: '',
-          // message: this.messageService,
-          // acceptedFiles: 'image/*',
           updater: this.updater,
           parent: this,
           hideButton: true,
@@ -404,11 +402,9 @@ export class SupportComponent {
                   placeholder: 'License'
                 }
               ],
-              // waiting for middleware - ticket = NAS-101724
               saveButtonText: "Save License",
               customSubmit: function (entityDialog) {
                 const value = entityDialog.formValue;
-                // console.log(value)
                 localLoader.open();
                 localWS.call('system.license_update', value).subscribe((res) => {
                   localLoader.close();
@@ -429,7 +425,7 @@ export class SupportComponent {
           name: 'User Guide (pdf)',
           function : () => {
             // TODO: Need updated address before release
-            window.open('https://ixsystems.com/documentation/freenas/11.2-U4/FreeNAS-11.2-U4-User-Guide.pdf')
+            window.open('https://www.ixsystems.com/blog/knowledgebase_category/truenas/')
           }
         }
       ]
