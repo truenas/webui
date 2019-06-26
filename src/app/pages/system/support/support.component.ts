@@ -404,9 +404,9 @@ export class SupportComponent {
               ],
               saveButtonText: "Save License",
               customSubmit: function (entityDialog) {
-                const value = entityDialog.formValue;
+                const value = entityDialog.formValue.license;
                 localLoader.open();
-                localWS.call('system.license_update', value).subscribe((res) => {
+                localWS.call('system.license_update', [value]).subscribe((res) => {
                   localLoader.close();
                   localSnackbar.open('License has been updated.', 'close', { duration: 5000 });
                 }, 
