@@ -156,6 +156,14 @@ export const helptext_system_general = {
     reset_config: T("Reset Config")
   },
 
+  reset_config_placeholder: T('Confirm'),
+
+  reset_config_form: {
+    button_text: T("Reset Config"),
+    message: T('Reset system configuration to default settings. The system \
+ will restart to complete this operation. You will be required to reset your password.'),
+  },
+
   dialog_confirm_title: T("Restart Web Service"),
 
   dialog_confirm_message: T(

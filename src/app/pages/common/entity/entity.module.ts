@@ -74,6 +74,7 @@ import { EntityToolbarComponent } from './entity-toolbar/entity-toolbar.componen
 import { ToolbarButtonComponent } from './entity-toolbar/components/toolbar-button/toolbar-button.component';
 import { ToolbarMenuComponent } from './entity-toolbar/components/toolbar-menu/toolbar-menu.component';
 import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-multimenu/toolbar-multimenu.component';
+import { EntityRowDetailsComponent } from './entity-row-details/entity-row-details.component';
 
 @NgModule({
   imports: [
@@ -84,6 +85,7 @@ import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-m
   ],
   declarations: [
     EntityTableComponent,
+    EntityRowDetailsComponent,
     EntityTreeTableComponent,
     EntityCardComponent,
     EntityCardActionsComponent,
@@ -138,6 +140,7 @@ import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-m
     EntityFormEmbeddedComponent,
     DynamicComponentDirective,
     EntityTableComponent,
+    EntityRowDetailsComponent,
     EntityTreeTableComponent,
     EntityCardComponent,
     EntityCardActionsComponent,

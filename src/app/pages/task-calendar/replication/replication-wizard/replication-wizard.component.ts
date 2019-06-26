@@ -46,7 +46,10 @@ export class ReplicationWizardComponent {
                     placeholder: helptext.name_placeholder,
                     tooltip: helptext.name_tooltip,
                     required: true,
-                    validation: [Validators.required]
+                    validation: [Validators.required],
+                    blurStatus: true,
+                    blurEvent: this.blurEvent,
+                    parent: this
                 },
                 {
                     type: 'select',
@@ -296,8 +299,8 @@ export class ReplicationWizardComponent {
                 },
                 {
                     type: 'explorer',
-                    initial: '/mnt',
-                    explorerType: 'directory',
+                    initial: '',
+                    explorerType: 'dataset',
                     multiple: true,
                     name: 'source_datasets_PUSH',
                     placeholder: replicationHelptext.source_datasets_placeholder,
@@ -349,8 +352,8 @@ export class ReplicationWizardComponent {
                 },
                 {
                     type: 'explorer',
-                    initial: '/mnt',
-                    explorerType: 'directory',
+                    initial: '',
+                    explorerType: 'dataset',
                     name: 'target_dataset_PULL',
                     placeholder: replicationHelptext.target_dataset_placeholder,
                     tooltip: replicationHelptext.target_dataset_placeholder,
@@ -595,6 +598,7 @@ export class ReplicationWizardComponent {
             const newSSH = value == 'NEW' ? true : false;
             this.disablefieldGroup([...this.sshFieldGroup, ...this.semiSSHFieldGroup, ...this.manualSSHFieldGroup], !newSSH, 0);
             if (newSSH) {
+                this.blurEvent(this);
                 this.disablefieldGroup(['cipher'], this.entityWizard.formArray.controls[0].controls['transport'].value === 'SSH+NETCAT', 0);
                 this.entityWizard.formArray.controls[0].controls['setup_method'].setValue(this.entityWizard.formArray.controls[0].controls['setup_method'].value);
             }
@@ -616,7 +620,11 @@ export class ReplicationWizardComponent {
             this.disablefieldGroup(this.semiSSHFieldGroup, manual, 0);
             this.disablefieldGroup(this.manualSSHFieldGroup, !manual, 0);
         });
-
+        this.entityWizard.formArray.controls[0].controls['private_key'].valueChanges.subscribe((value) => {
+            if (value == 'NEW') {
+                this.blurEvent(this);
+            }
+        });
         this.entityWizard.formArray.controls[0].controls['setup_method'].setValue('semiautomatic');
         this.entityWizard.formArray.controls[0].controls['ssh_credentials'].setValue('');
         this.entityWizard.formArray.controls[0].controls['transport'].setValue('SSH');
@@ -985,5 +993,45 @@ export class ReplicationWizardComponent {
         return new Promise((resolve, reject) => {
             resolve(this.replicationService.getRemoteDataset(transport,sshCredentials, this));
         });
+    }
+
+    blurEvent(parent){
+        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['hasErrors'] = false;
+        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['errors'] = '';
+        const name = parent.entityWizard.formGroup.value.formArray[0].name;
+        const privateKey = parent.entityWizard.formGroup.controls.formArray.controls[0].controls.private_key.value;
+        const sshConnection = parent.entityWizard.formGroup.controls.formArray.controls[0].controls.ssh_credentials.value;
+
+        const typeLabel = {
+            'SSH_CREDENTIALS': 'SSH Connection',
+            'SSH_KEY_PAIR': 'Private Key',
+        }
+        parent.ws.call('replication.query', [[['name', '=', name]]]).subscribe((res) => {
+            if (res.length > 0) {
+                _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['errors'] = `Replication '${res[0].name}' already exists.`;
+                showError();
+            }
+        });
+        if (sshConnection == 'NEW') {
+            parent.ws.call('keychaincredential.query', [[['name', '=', name]]]).subscribe((res) => {
+                if (res.length > 0) {
+                    _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['errors'] = `${typeLabel[res[0].type]} '${res[0].name}' already exists.`;
+                    showError();
+                }
+            });
+        }
+        if (privateKey == 'NEW') {
+            parent.ws.call('keychaincredential.query', [[['name', '=', name + ' Key']]]).subscribe((res) => {
+                if (res.length > 0) {
+                    _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['errors'] = `${typeLabel[res[0].type]} '${res[0].name}' already exists.`;
+                    showError();
+                }
+            });
+        }
+
+        function showError() {
+            _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['hasErrors'] = true;
+            parent.entityWizard.formGroup.controls.formArray.controls[0].controls.name.setValue("");
+        }
     }
 }

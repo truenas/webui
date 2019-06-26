@@ -126,6 +126,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public showSpinner: boolean = false;
   public cardHeaderReady = false;
   public showActions: boolean = true;
+  public detailRowHeight = 100;
   private _multiActionsIconsOnly: boolean = false;
   get multiActionsIconsOnly(){
     return this._multiActionsIconsOnly;
