@@ -116,8 +116,9 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
 
     });
 
-    this.core.register({observerClass:this, eventName:"PrimaryNicInfo"}).subscribe((evt:CoreEvent) => {
-      if(!evt.data){ 
+    this.core.register({observerClass:this, eventName:"NicInfo"}).subscribe((evt:CoreEvent) => {
+      console.warn(evt);
+      /*if(!evt.data){ 
         console.warn("PrimaryNicInfo event sent without data attached.");
         console.warn(evt);
         return;
@@ -127,12 +128,12 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
         if(aliases[i].type == "INET"){
           this.connectionIp = aliases[i].address;
         }
-      }
+      }*/
       
       this.core.emit({name:"NetInfoRequest"});
     });
 
-    this.core.emit({name:"PrimaryNicInfoRequest"});
+    this.core.emit({name:"NicInfoRequest"});
 
   }
 

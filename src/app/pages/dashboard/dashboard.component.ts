@@ -33,6 +33,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
   // For widgetpool
   public volumes: VolumeData[] = [];
   public disks:Disk[] = [];
+  public nics: any[] = [];
 
   public animation = "stop";
   public shake = false;
@@ -113,8 +114,14 @@ export class DashboardComponent implements OnInit,OnDestroy {
       this.setDisksData(evt);
     });
 
+    this.core.register({observerClass:this,eventName:"NicInfo"}).subscribe((evt:CoreEvent) => {
+      console.log(evt);
+      this.nics = evt.data;
+    });
+
     this.core.emit({name:"VolumeDataRequest"});
     this.core.emit({name:"DisksInfoRequest"});
+    this.core.emit({name:"NicInfoRequest"});
   }
 
   parseStats(data){

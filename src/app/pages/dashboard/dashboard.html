@@ -15,7 +15,11 @@
     <widget-sysinfo fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"></widget-sysinfo>
     <widget-cpu fxFlex="600px" fxFlex.xs="100" *ngIf="statsDataEvents" [data]="statsDataEvents" [widgetSize]="medium"   configurable="false"></widget-cpu>
     <widget-memory fxFlex="600px" fxFlex.xs="100" *ngIf="statsDataEvents" [data]="statsDataEvents" [widgetSize]="medium"   configurable="false"></widget-memory>
-    <widget-netinfo fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"></widget-netinfo>
+    <!--<widget-nic fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"></widget-nic>-->
+
+    <ng-container  *ngFor="let nic of nics; let i=index">
+      <widget-nic [nicState]="nics[i].state" fxFlex.xs="100" fxFlex="600px" [widgetSize]="medium"   configurable="false"></widget-nic>
+    </ng-container>
 
     <!-- OLD WIDGETS -->
     <!--<widget-netinfo fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"></widget-netinfo>

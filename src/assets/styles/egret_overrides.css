@@ -317,5 +317,14 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
   height:400px;
 }
 
+/* New Rules */
+.widget mat-card-content{
+  background: rgba(0,0,0,0.05);
+}
+
+.widget mat-toolbar-row{
+  background: var(--bg2);
+}
+
 
 

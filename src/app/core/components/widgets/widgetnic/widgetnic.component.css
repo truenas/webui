@@ -1,0 +1,103 @@
+.widget{
+  width:600px;
+  height:400px;
+}
+
+.widget mat-card-content{
+  width: 100%;
+}
+
+/*:host ::ng-deep .c3-axis-y g:nth-child(2n){
+  visibility:hidden;
+}*/
+
+
+.carousel{
+  position:absolute;
+  top:48px;
+  width:200%;
+  height:calc(100% - 96px);
+  /*background:var(--alt-bg2);*/
+}
+
+.slide{
+  /*position:absolute;
+  top:48px;*/
+  display:inline;
+  width:100%;
+  /*height:calc(100% - 96px);*/
+  height:100%;
+  border-left:solid 1px var(--bg1);
+}
+
+.slide .hidden{
+  display:none;
+}
+
+.slide .left,
+.slide .right{
+  width:50%;
+  height:100%;
+  display:inline-block;
+  padding:32px 0;
+}
+
+.slide .right{
+  text-align:left;
+}
+
+.slide .right li{
+  font-size: 115%;
+  padding: 6px;
+  margin-left: 8px;
+}
+
+.nic-name{
+  font-size:300%;
+}
+
+.link-state .icon-wrapper{
+  display: inline-block;
+  font-size: 175%;
+  top: 3px;
+  position: relative;
+}
+
+.link-state.up .icon-wrapper{
+  color: var(--green);
+}
+
+.link-state.down .icon-wrapper{
+  color: var(--red);
+}
+
+.carousel-nav{
+  position:absolute;
+  bottom:0;
+  width:100%;
+  height:48px;
+  padding:14px 0;
+  border-top:solid 1px var(--bg1);
+  background:var(--bg2);
+}
+
+.carousel-nav .btn{
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  display:inline-block;
+  margin:0 4px;
+  background-color:var(--fg1);
+  opacity:0.5;
+  cursor:pointer;
+}
+
+.carousel-nav .btn.active{
+  opacity:1;
+}
+
+/* NARROW SCREENS */
+.xs.widget{
+  width:100%;
+  max-height:320px;
+}
