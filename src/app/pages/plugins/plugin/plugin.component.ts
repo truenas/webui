@@ -111,7 +111,7 @@ export class PluginComponent implements OnInit {
         dialogRef.componentInstance.submit();
         dialogRef.componentInstance.success.subscribe((res) => {
           dialogRef.close(true);
-          this.parent.snackBar.open(T("Plugin ") + row[1] + T(" updated."), T('Close'), { duration: 5000 });
+          this.parent.snackBar.open(T("Plugin ") + row.name + T(" updated."), T('Close'), { duration: 5000 });
         });
       }
     },
@@ -138,7 +138,7 @@ export class PluginComponent implements OnInit {
 
     if (row.name.startsWith('asigra')) {
       actions.push({
-        name: row[1],
+        name: row.name,
         id: "register",
         label: T('REGISTER'),
         icon: 'assignment',
