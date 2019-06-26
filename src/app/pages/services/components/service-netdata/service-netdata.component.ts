@@ -13,9 +13,10 @@ import helptext from 'app/helptext/services/components/service-netdata';
 export class ServiceNetDataComponent {
     protected resource_name: string = 'services/netdata';
     protected isBasicMode: boolean = true;
+    protected isEntity: boolean = true;
     protected route_success: string[] = [ 'services' ];
-    protected editCall: 'netdata.update';
-
+    protected addCall = 'netdata.update';
+    protected queryCall = 'netdata.config';
     public fieldConfig: FieldConfig[] = []
     public fieldSets: FieldSet[] = [
         {
@@ -66,7 +67,7 @@ export class ServiceNetDataComponent {
                     validation: helptext.port.validation
                 },
                 {
-                    type : 'textarea', // need more info on accceptable key/values - string
+                    type : 'textarea',
                     name : 'additional_params',
                     placeholder : helptext.additional_params.placeholder,
                     tooltip: helptext.additional_params.tooltip
@@ -110,7 +111,7 @@ export class ServiceNetDataComponent {
                     ],
                 },
                 {
-                    type : 'input', // array of strings [{'string'}] ???
+                    type : 'textarea',
                     name : 'destination',
                     placeholder : helptext.destination.placeholder,
                     tooltip: helptext.destination.tooltip,
@@ -194,7 +195,7 @@ export class ServiceNetDataComponent {
             }
         });
 
-        this.ws.call('netdata.config').subscribe((res) => {
+        this.ws.call(this.queryCall).subscribe((res) => {
             console.log(res);
             entity.formGroup.controls['history'].setValue(res.history);
             entity.formGroup.controls['update_every'].setValue(res.update_every);
@@ -253,11 +254,9 @@ export class ServiceNetDataComponent {
             });
         });
         data.alarms = obj;
+        data.destination = data.destination.replace(/\n/g, ' ').replace(/,/g, ' ').split(' ');
+        console.log(data.destination)
         delete data.global_label;
         delete data.streaming_label;
-    }
-
-    customSubmit(payload){
-        console.log(payload);
     }
 }

@@ -9,13 +9,13 @@ export default {
 
     history: {
         placeholder: T('History'),
-        tooltip: T('The number of entries the netdata daemon will\
+        tooltip: T('The number of <samp>entries</samp> the netdata daemon will\
  by default keep in memory for each chart dimension. Default is 86400.'),
      validation: [ Validators.required, regexValidator(/^\d+$/) ]
     },
     update_every: {
         placeholder : T('Update Frequency'),
-        tooltip: T('The frequency in seconds, for data collection.'),
+        tooltip: T('The frequency, in seconds, for data collection.'),
         validation: [regexValidator(/^\d+$/) ]
     },
     http_port_listen_backlog: {
@@ -34,7 +34,10 @@ export default {
     },
     additional_params: {
         placeholder : T('Additional parameters'),
-        tooltip: T('Instructions on adding keys and values')
+        tooltip: T('Define other sections and their respective key, value pairs if any. The following \
+ format should be followed: <br>\
+ [Section name] <br> \
+    key=value')
     },
 
     alarms: {
