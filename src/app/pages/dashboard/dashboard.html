@@ -18,7 +18,7 @@
     <!--<widget-nic fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"></widget-nic>-->
 
     <ng-container  *ngFor="let nic of nics; let i=index">
-      <widget-nic [nicState]="nics[i].state" fxFlex.xs="100" fxFlex="600px" [widgetSize]="medium"   configurable="false"></widget-nic>
+      <widget-nic *ngIf="statsDataEvents" [nicState]="nics[i].state" [stats]="statsDataEvents" fxFlex.xs="100" fxFlex="600px" [widgetSize]="medium"   configurable="false"></widget-nic>
     </ng-container>
 
     <!-- OLD WIDGETS -->

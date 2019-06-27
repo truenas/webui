@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit,OnDestroy, Input, ViewChild, Renderer2, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit,OnDestroy, Input, ViewChild, Renderer2, ElementRef, OnChanges, SimpleChanges } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { Router } from '@angular/router';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
@@ -39,18 +39,25 @@ interface NetIfInfo {
   aliases?: string;
 }
 
+interface NetTraffic {
+  "KB/s in": string;
+  "KB/s out": string;
+  name: string;
+}
+
 
 @Component({
   selector: 'widget-nic',
   templateUrl:'./widgetnic.component.html',
   styleUrls: ['./widgetnic.component.css']
 })
-export class WidgetNicComponent extends WidgetComponent implements OnInit, AfterViewInit,OnDestroy {
+export class WidgetNicComponent extends WidgetComponent implements OnInit, AfterViewInit,OnDestroy, OnChanges {
 
   @Input() stats;
   @Input() nicState;
   @ViewChild('carousel', {static:true}) carousel:ElementRef;
   @ViewChild('carouselparent', {static:true}) carouselParent:ElementRef;
+  public traffic: NetTraffic;
   public currentSlide:string = "0"; 
   public title: string = "Interface";
 
@@ -79,6 +86,9 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
     this.core.unregister({observerClass:this});
   }
 
+  ngOnChanges(changes: SimpleChanges){
+  }
+
   ngOnInit(){
 
     this.core.emit({name:"NetInfoRequest"});
@@ -93,6 +103,11 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
   }
 
   ngAfterViewInit(){
+    this.stats.subscribe((evt:CoreEvent) => {
+      if(evt.name == "NetTraffic_" + this.nicState.name){
+        this.traffic = evt.data;
+      }
+    })
   }
 
   updateSlidePosition(value){

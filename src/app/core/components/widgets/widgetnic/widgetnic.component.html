@@ -17,6 +17,7 @@
             <div class="left">
               <div>
                 <div class="nic-name">{{nicState.name}}</div> 
+
                 <div class="link-state" [ngClass]="{'up': nicState.link_state == 'LINK_STATE_UP', 'down': nicState.link_state !== 'LINK_STATE_UP'}">
                   {{linkState}}&nbsp;&nbsp;
                   <div class="icon-wrapper">
@@ -24,6 +25,20 @@
                     <mat-icon *ngIf="nicState.link_state !== 'LINK_STATE_UP' " role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
                   </div>
                 </div>
+
+                <div *ngIf="traffic && nicState.link_state == 'LINK_STATE_UP'" class="nic-traffic">
+                  <div><strong>In: </strong><span class="stat">{{traffic["KB/s in"]}}</span> KB/s</div>
+                  <div><strong>Out: </strong><span class="stat">{{traffic["KB/s out"]}}</span> KB/s</div>
+                </div>
+
+                <div *ngIf="!traffic && nicState.link_state == 'LINK_STATE_UP'" class="nic-traffic-gathering">
+                  Gathering data...
+                </div> 
+
+                <div *ngIf="nicState.link_state !== 'LINK_STATE_UP'" class="no-nic-traffic">
+                  No Traffic
+                </div> 
+
               </div>
             </div>
             <div class="right">

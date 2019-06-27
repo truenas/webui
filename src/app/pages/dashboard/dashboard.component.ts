@@ -27,12 +27,14 @@ export class DashboardComponent implements OnInit,OnDestroy {
   //public statsData: StatsUtils;
   private statsEvents: any;
   private statsEventsTC: any;
+  public tcStats: any;
 
   public isFooterConsoleOpen: boolean;
 
   // For widgetpool
   public volumes: VolumeData[] = [];
   public disks:Disk[] = [];
+
   public nics: any[] = [];
 
   public animation = "stop";
@@ -69,7 +71,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
     //this.ws.unsub();
     //this.statsEvents.unsubscribe();
     this.statsEvents.complete();
-    //this.statsEventsTC.complete();
+    this.statsEventsTC.complete();
     //this.statsEventsTC.unsubscribe();
     this.statsDataEvents.complete();
     this.core.unregister({observerClass:this});
@@ -94,17 +96,20 @@ export class DashboardComponent implements OnInit,OnDestroy {
       }
     });
 
-    /*this.statsEventsTC = this.ws.sub("trueview.stats:10").subscribe((evt)=>{
+    this.statsEventsTC = this.ws.sub("trueview.stats:10").subscribe((evt)=>{
       if(evt.virtual_memory){return;}// TC and MW subscriptions leak into each other.
 
+        evt.network_usage.forEach((item, index) => {
+          this.statsDataEvents.next({name:"NetTraffic_" + item.name, data:item});
+        });
+
       if(evt.memory_summary){
-        console.log(evt);
 
         //this.statsData.updateStats(evt);
         //let cpuLoad = this.statsData.cpuLoad();
         //console.log(cpuLoad);
       } 
-    });*/
+    });
 
     this.core.register({observerClass:this,eventName:"VolumeData"}).subscribe((evt:CoreEvent) => {
       this.setPoolData(evt);
