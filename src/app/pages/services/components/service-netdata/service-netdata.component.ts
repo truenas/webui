@@ -222,10 +222,18 @@ export class ServiceNetDataComponent {
                 }
             }
             entity.formGroup.controls['alarms'].setValue(currentAlarms);
-
             entity.formGroup.controls['stream_mode'].setValue(res.stream_mode);
+            
             //destination
-            entity.formGroup.controls['destination'].setValue(res.destination);
+            let destStr = '';
+            if (res.destination && typeof(res.destination) !== 'string') {
+                for (let i = 0; i < res.destination.length; i++) {
+                    i !== res.destination.length - 1 ? 
+                        destStr += res.destination[i] + ', ' : 
+                        destStr += res.destination[i];
+                }
+            };
+            entity.formGroup.controls['destination'].setValue(destStr);
 
             entity.formGroup.controls['api_key'].setValue(res.api_key);
             entity.formGroup.controls['allow_from'].setValue(res.allow_from);
@@ -254,7 +262,7 @@ export class ServiceNetDataComponent {
             });
         });
         data.alarms = obj;
-        data.destination = data.destination.replace(/\n/g, ' ').replace(/,/g, ' ').split(' ');
+        data.destination = data.destination.replace(/\n/g, ' ').replace(/,/g, '').split(' ');
         console.log(data.destination)
         delete data.global_label;
         delete data.streaming_label;
