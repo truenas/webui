@@ -3328,7 +3328,7 @@ msgid "Directory"
 msgstr "Каталог"
 
 msgid "Directory Mask"
-msgstr "Иаска каталога"
+msgstr "Маска каталога"
 
 msgid "Directory Permission"
 msgstr "Права доступа к каталогу"
