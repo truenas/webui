@@ -3346,7 +3346,7 @@ msgid "Disable Failover"
 msgstr "Отключить отказоустойчивость"
 
 msgid "Disable FreeNAS Cache"
-msgstr Отключить кэш FreeNAS""
+msgstr "Отключить кэш FreeNAS"
 
 msgid "Disable LDAP user/group cache"
 msgstr "Отключить кэш пользователей/групп LDAP"
