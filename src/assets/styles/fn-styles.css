@@ -123,6 +123,10 @@ code {
     padding: 8px;
     background: rgba(0, 0, 0, .08);
 }
+samp {
+    font-family: 'Droid Sans Mono', 'Courier New', Courier, monospace;
+    padding: 2px;
+}
 /*---- Common -----*/
 .bg-none {
     background: transparent !important;
