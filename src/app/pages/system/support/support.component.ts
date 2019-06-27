@@ -386,7 +386,7 @@ export class SupportComponent {
       this.custActions = [
         {
           id : 'update_license',
-          name : 'Update License',
+          name : helptext.update_license.open_dialog_button,
           function : () => {
             const localLoader = this.loader;
             const localWS = this.ws;
@@ -394,26 +394,27 @@ export class SupportComponent {
             const localDialogService = this.dialogService;
             
             const licenseForm: DialogFormConfiguration = {
-              title: "Update License",
+              title: helptext.update_license.dialog_title,
               fieldConfig: [
                 {
                   type: 'textarea',
                   name: 'license',
-                  placeholder: 'License'
+                  placeholder: helptext.update_license.license_placeholder
                 }
               ],
-              saveButtonText: "Save License",
+              saveButtonText: helptext.update_license.save_button,
               customSubmit: function (entityDialog) {
                 const value = entityDialog.formValue.license;
                 localLoader.open();
                 localWS.call('system.license_update', [value]).subscribe((res) => {
                   localLoader.close();
-                  localSnackbar.open('License has been updated.', 'close', { duration: 5000 });
+                  localSnackbar.open(helptext.update_license.success_message, 
+                    helptext.update_license.snackbar_action, { duration: 5000 });
                 }, 
                 (err) => {
                   localLoader.close();
                   entityDialog.dialogRef.close(true);
-                  localDialogService.errorReport(("Error Unlocking"), err.reason, err.trace.formatted);
+                  localDialogService.errorReport((helptext.update_license.error_dialog_title), err.reason, err.trace.formatted);
                 });
               }
               
@@ -422,7 +423,7 @@ export class SupportComponent {
           }
         },{
           id : 'userguide',
-          name: 'User Guide (pdf)',
+          name: helptext.update_license.user_guide_button,
           function : () => {
             // TODO: Need updated address before release
             window.open('https://www.ixsystems.com/blog/knowledgebase_category/truenas/')
