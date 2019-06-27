@@ -28,6 +28,7 @@ export interface InputTableConf {
   hideTopActions?: boolean;
   queryCall?: string;
   queryCallOption?: any;
+  queryCallJob?: any;
   resource_name?: string;
   route_edit?: string;
   route_add?: string[];
@@ -335,10 +336,18 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     if (this.conf.queryCall) {
-      if (this.conf.queryCallOption) {
-        this.getFunction = this.ws.call(this.conf.queryCall, this.conf.queryCallOption);
+      if (this.conf.queryCallJob) {
+        if (this.conf.queryCallOption) {
+          this.getFunction = this.ws.job(this.conf.queryCall, this.conf.queryCallOption);
+        } else {
+          this.getFunction = this.ws.job(this.conf.queryCall, []);
+        }
       } else {
-        this.getFunction = this.ws.call(this.conf.queryCall, []);
+        if (this.conf.queryCallOption) {
+          this.getFunction = this.ws.call(this.conf.queryCall, this.conf.queryCallOption);
+        } else {
+          this.getFunction = this.ws.call(this.conf.queryCall, []);
+        }
       }
     } else {
       this.getFunction = this.rest.get(this.conf.resource_name, options);
@@ -424,7 +433,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     if (res.data) {
-      rows = new EntityUtils().flattenData(res.data);
+      if (res.data.result) {
+        rows = new EntityUtils().flattenData(res.data.result);
+      } else {
+        rows = new EntityUtils().flattenData(res.data);
+      }
     } else {
       rows = new EntityUtils().flattenData(res);
     }
