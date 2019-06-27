@@ -17,10 +17,12 @@ export interface EntityRowDetails<T = any, U = EntityTableComponent> extends Com
   details: { label: string; value: string | number }[];
 
   actions?: EntityAction[];
+
+  isActionVisible?(actionId: string, entity: T): boolean;
 }
 
 export interface EntityAction {
-  id: string | number;
+  id: string;
   label: string;
   icon: string;
   name: string;

@@ -165,6 +165,20 @@ export class JailDetailsComponent implements EntityRowDetails<Jail> {
       }
     ];
   }
+
+  public isActionVisible(actionId: string, row: Jail): boolean {
+    if (actionId === "start" && row.state === "up") {
+      return false;
+    } else if (actionId === "stop" && row.state === "down") {
+      return false;
+    } else if (actionId === "shell" && row.state === "down") {
+      return false;
+    } else if (actionId === "restart" && row.state === "down") {
+      return false;
+    }
+
+    return true;
+  }
 }
 
 export interface Jail {

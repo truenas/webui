@@ -23,8 +23,6 @@ export class EntityRowDetailsComponent {
   @Input() public conf: EntityRowDetails;
 
   public isActionVisible(action: EntityAction): boolean {
-    return this.conf.parent.conf.isActionVisible
-      ? this.conf.parent.conf.isActionVisible(action.id, this.conf.config)
-      : true;
+    return this.conf.isActionVisible ? this.conf.isActionVisible(action.id, this.conf.config) : true;
   }
 }
