@@ -5,6 +5,7 @@ import { DocsService } from "../../../services/docs.service";
 import {Router} from "@angular/router";
 import * as _ from 'lodash';
 import * as Ps from 'perfect-scrollbar';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'navigation',
@@ -42,6 +43,13 @@ export class NavigationComponent implements OnInit {
               {name : "Failover"}).disabled = false;
           }
         });
+
+        this.ws
+          .call("system.feature_enabled", ["VM"])
+          .pipe(filter(vmsEnabled => !vmsEnabled))
+          .subscribe(() => {
+            _.find(menuItem, { state: "vm" }).disabled = true;
+          });
 
         for(let i = 0; i < this.navService.turenasFeatures.length; i++) {
           const targetMenu = this.navService.turenasFeatures[i];
