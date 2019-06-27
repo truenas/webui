@@ -90,7 +90,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
           {
             type: 'checkbox',
             name: 'enableWarning',
-            width: '300px',
+            width: '330px',
             placeholder: 'Enable "Save Configuration" Dialog Before Upgrade',
             value:this.enableWarning,
             tooltip: T('Show or hide a dialog to save the system\

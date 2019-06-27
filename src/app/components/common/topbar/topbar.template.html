@@ -19,7 +19,6 @@
       </form>
       </div -->
       <span fxFlex></span>
-      <span class="hostname-label" *ngIf="hostname" matTooltip="Hostname: {{hostname}}">{{hostname}}</span>
       <!--loading icon-->
       <button *ngIf="pendingNetworkChanges" mat-icon-button id="network" matTooltip="Pending Network Changes" (click)="showNetworkChangesPending()" class="topbar-button-right">
         <mat-icon class="movement">device_hub</mat-icon>
@@ -52,9 +51,9 @@
       </button>
       <!-- Theme Switcher -->
       <!-- Theme Switcher -->
-      <button mat-icon-button id="schemeToggle" [style.overflow]="'visible'" matTooltip="{{sysName}} Themes" [matMenuTriggerFor]="themeMenu" class="topbar-button-right">
+      <!-- <button mat-icon-button id="schemeToggle" [style.overflow]="'visible'" matTooltip="{{sysName}} Themes" [matMenuTriggerFor]="themeMenu" class="topbar-button-right">
         <mat-icon>format_color_fill</mat-icon>
-      </button>
+      </button> -->
 
       <mat-menu #themeMenu="matMenu">
         <!--<mat-grid-list class="theme-list" cols="1" rowHeight="24px">-->
