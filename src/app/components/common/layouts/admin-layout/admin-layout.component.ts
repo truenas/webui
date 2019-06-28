@@ -95,9 +95,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     }
     this.checkIfConsoleMsgShows();
 
-    /* Debugging purposes */
-    this.loader.open();
-
     this.ws.call('system.info').subscribe((res) => {
       this.hostname = res.hostname;
     })
