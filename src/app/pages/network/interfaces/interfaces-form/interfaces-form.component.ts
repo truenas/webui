@@ -165,7 +165,7 @@ export class InterfacesFormComponent implements OnDestroy {
     {
       type: 'list',
       name: 'aliases',
-      width: '70%',
+      width: '90%',
       placeholder: 'Aliases',
       label: 'Aliases',
       templateListField: [
@@ -176,24 +176,26 @@ export class InterfacesFormComponent implements OnDestroy {
             type: 'ipwithnetmask',
             validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ],
           },
-          // {
-          //   name: 'failover_address',
-          //   placeholder: helptext.failover_alias_address_placeholder,
-          //   tooltip: helptext.failover_alias_address_tooltip,
-          //   disabled: true,
-          //   isHidden: true,
-          //   type: 'ipwithnetmask',
-          //   validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
-          // },
-          // {
-          //   name: 'failover_virtual_address',
-          //   placeholder: helptext.failover_virtual_alias_address_placeholder,
-          //   tooltip: helptext.failover_virtual_alias_address_tooltip,
-          //   disabled: true,
-          //   isHidden: true,
-          //   type: 'ipwithnetmask',
-          //   validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
-          // }
+          {
+            name: 'failover_address',
+            placeholder: helptext.failover_alias_address_placeholder,
+            tooltip: helptext.failover_alias_address_tooltip,
+            disabled: true,
+            isHidden: true,
+            type: 'ipwithnetmask',
+            validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ],
+
+          },
+          {
+            name: 'failover_virtual_address',
+            placeholder: helptext.failover_virtual_alias_address_placeholder,
+            tooltip: helptext.failover_virtual_alias_address_tooltip,
+            disabled: true,
+            isHidden: true,
+            type: 'ipwithnetmask',
+            validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ],
+
+          }
       ],
       listFields: []
     }
@@ -247,8 +249,8 @@ export class InterfacesFormComponent implements OnDestroy {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         this.is_ha = is_ha;
         if (this.is_ha) {
-          const failover_virtual_address = _.find(this.ipListControl.formarray, {"name":"failover_virtual_address"});
-          const failover_address = _.find(this.ipListControl.formarray, {"name":"failover_address"});
+          const failover_virtual_address = _.find(this.ipListControl.templateListField, {"name":"failover_virtual_address"});
+          const failover_address = _.find(this.ipListControl.templateListField, {'name': 'failover_address'});
           failover_virtual_address['disabled'] = false;
           failover_virtual_address['isHidden'] = false;
           failover_address['disabled'] = false;
@@ -276,7 +278,6 @@ export class InterfacesFormComponent implements OnDestroy {
 
   afterInit(entityForm: any) {
     this.aliases_fc = _.find(this.fieldConfig, {"name": "aliases"});
-    // console.log(this.aliases_fc)
 
     if (window.localStorage.getItem('is_freenas') === 'false') {
       this.ws.call('failover.licensed').subscribe((is_ha) => { //fixme, stupid race condition makes me need to call this again
@@ -350,6 +351,7 @@ export class InterfacesFormComponent implements OnDestroy {
   }
 
   resourceTransformIncomingRestData(data) {
+    console.log(data)
     const aliases = data['aliases'];
     const a = [];
     const failover_aliases = data['failover_aliases'];
@@ -391,23 +393,21 @@ export class InterfacesFormComponent implements OnDestroy {
   async dataHandler(entityForm) {
     if (!entityForm.isNew) {
       let data = entityForm.queryResponse[0];
-
       for (const prop in data) {
         if (entityForm.formGroup.controls[prop] && prop !== 'aliases') {
           entityForm.formGroup.controls[prop].setValue(data[prop]);
         }
       }
     
-      // console.log(entityForm)
       const propName = "aliases";
       const aliases_fg = entityForm.formGroup.controls[propName];
-      // console.log(aliases_fg)
-      let aliasList = data.aliases
-      // console.log(aliasList)
+      let aliasList = data.aliases;
+      console.log(aliasList, aliasList.length)
       for (let i = 0; i < aliasList.length; i++) {
-        if (aliases_fg.controls[i] === undefined) {
+        if (aliases_fg.controls[i] === undefined) { 
           // add controls;
           const templateListField = _.cloneDeep(_.find(this.fieldConfig, {'name': propName}).templateListField);
+          console.log(templateListField)
           aliases_fg.push(entityForm.entityFormService.createFormGroup(templateListField));
           this.aliases_fc.listFields.push(templateListField);
         } 
