@@ -39,6 +39,7 @@
           root
         </span>
       </div>
+      <div class="hostname-label" *ngIf="hostname" matTooltip="Hostname: {{hostname}}">{{hostname}}</div>
       <navigation (onStateChange)="changeState($event)"></navigation>
     </div>
   </mat-sidenav>
