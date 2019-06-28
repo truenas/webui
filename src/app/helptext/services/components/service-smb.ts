@@ -71,12 +71,6 @@ cifs_srv_smb_options_tooltip: T('Enter additional <b>smb.conf</b> options. See t
 cifs_srv_zeroconf_placeholder: T('Zeroconf share discovery'),
 cifs_srv_zeroconf_tooltip: T('Enable if Mac clients will be connecting to the SMB share.'),
 
-cifs_srv_hostlookup_placeholder: T('Hostnames Lookups'),
-cifs_srv_hostlookup_tooltip: T('Set to allow using hostnames rather than IP addresses in\
- the <i>Hosts Allow</b> or </i>Hosts Deny</b> fields\
- of a SMB share. Leave this option\
- unset when IP addresses are used to avoid the delay of a host lookup.'),
-
 cifs_srv_ntlmv1_auth_placeholder: T('NTLMv1 Auth'),
 cifs_srv_ntlmv1_auth_tooltip: T('Off by default. When set,\
  <a href="https://www.freebsd.org/cgi/man.cgi?query=smbd" target="_blank">smbd(8)</a>\
