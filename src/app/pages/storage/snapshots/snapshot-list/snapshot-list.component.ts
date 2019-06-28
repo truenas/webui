@@ -9,15 +9,6 @@ import { SnapshotDetailsComponent } from './components/snapshot-details.componen
 
 @Component({
   selector: 'app-snapshot-list',
-  styles: [`
-      :host ::ng-deep .datatable-body {
-        overflow-x: hidden !important;
-      }
-
-      :host ::ng-deep .datatable-row-detail {
-        background: var(--bg2) !important;
-      }
-  `],
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class SnapshotListComponent {

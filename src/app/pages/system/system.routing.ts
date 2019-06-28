@@ -4,7 +4,6 @@ import { RouterModule, Routes } from '@angular/router';
 //import {GeneralComponent} from './general/';
 
 import { GeneralComponent } from './general/general.component';
-import { ConfigResetComponent } from './general/config-reset/config-reset.component';
 import { AdvancedComponent } from './advanced/';
 import { ViewEnclosureComponent } from './viewenclosure/';
 import { DatasetComponent } from './dataset/';
@@ -65,10 +64,6 @@ export const routes: Routes = [
         path: '',
         component: GeneralComponent,
         data: { title: 'General', breadcrumb: 'General' },
-      }, {
-        path: 'config-reset',
-        component: ConfigResetComponent,
-        data: { title: 'Config Reset', breadcrumb: 'Config Reset' },
       }]
     }, {
       path: 'advanced',

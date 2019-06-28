@@ -76,24 +76,26 @@ export class DashboardComponent implements OnInit,OnDestroy {
 
     //this.statsEvents = this.ws.job("reporting.realtime",[{"name": "cpu", "identifier": null}]).subscribe((evt)=>{
     this.statsEvents = this.ws.sub("reporting.realtime").subscribe((evt)=>{
-      //if(!evt.virtual_memory){return;}
+      if(!evt.virtual_memory){return;}
+      //console.log(evt);
       if(evt.cpu){
         this.statsDataEvents.next({name:"CpuStats", data:evt.cpu});
       }
-      //this.statsDataEvents.next({name:"MemoryStats", data:evt.virtual_memory});
+      if(evt.virtual_memory){
+        this.statsDataEvents.next({name:"MemoryStats", data:evt.virtual_memory});
+      }
     });
 
     /*this.statsEventsTC = this.ws.sub("trueview.stats:10").subscribe((evt)=>{
+      if(evt.virtual_memory){return;}// TC and MW subscriptions leak into each other.
+
       if(evt.memory_summary){
-        //console.log(evt);
+        console.log(evt);
 
         //this.statsData.updateStats(evt);
         //let cpuLoad = this.statsData.cpuLoad();
         //console.log(cpuLoad);
-      } else if(evt.virtual_memory){
-        //console.log(evt);
-        //this.statsDataEvents.next({name:"CpuStats", data:evt.cpu});
-      }
+      } 
     });*/
 
     this.core.register({observerClass:this,eventName:"VolumeData"}).subscribe((evt:CoreEvent) => {

@@ -1,4 +1,4 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { MaterialModule } from '../../appMaterial.module';
 import { CommonModule } from '@angular/common';
 
@@ -30,14 +30,16 @@ import { WidgetCpuTempsComponent } from 'app/core/components/widgets/widgetcpute
 import { WidgetLoadHistoryComponent } from 'app/core/components/widgets/widgetloadhistory/widgetloadhistory.component';
 import { WidgetLoadComponent } from 'app/core/components/widgets/widgetload/widgetload.component';
 import { WidgetMemoryHistoryComponent } from 'app/core/components/widgets/widgetmemoryhistory/widgetmemoryhistory.component';
+import { WidgetMemoryComponent } from 'app/core/components/widgets/widgetmemory/widgetmemory.component';
 import { WidgetStorageComponent } from 'app/core/components/widgets/widgetstorage/widgetstorage.component';
 import { WidgetStorageCollectionComponent } from 'app/core/components/widgets/widgetstoragecollection/widgetstoragecollection.component';
 import { WidgetNoteComponent } from 'app/core/components/widgets/widgetnote/widgetnote.component';
 import { WidgetNotesCollectionComponent } from 'app/core/components/widgets/widgetnotescollection/widgetnotescollection.component';
 import { WidgetPoolComponent } from 'app/core/components/widgets/widgetpool/widgetpool.component';
 
-
 import { TranslateModule } from '@ngx-translate/core';
+import { ContextMenuComponent } from './context-menu/context-menu.component';
+import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
 
 /*
  *
@@ -56,6 +58,8 @@ import { TranslateModule } from '@ngx-translate/core';
     TranslateModule
   ],
   declarations: [
+    ContextMenuComponent,
+    CopyPasteMessageComponent,
     PageComponent,
     ViewComponent,
     CardComponent,
@@ -81,6 +85,7 @@ import { TranslateModule } from '@ngx-translate/core';
     WidgetLoadHistoryComponent,
     WidgetLoadComponent,
     WidgetMemoryHistoryComponent,
+    WidgetMemoryComponent,
     WidgetStorageComponent,
     WidgetStorageCollectionComponent,
     WidgetNoteComponent,
@@ -93,6 +98,8 @@ import { TranslateModule } from '@ngx-translate/core';
     FlexLayoutModule,
     Display,
     DisplayContainer,
+    ContextMenuComponent,
+    CopyPasteMessageComponent,
     PageComponent,
     ViewComponent,
     C3ChartComponent,
@@ -116,6 +123,7 @@ import { TranslateModule } from '@ngx-translate/core';
     WidgetLoadHistoryComponent,
     WidgetLoadComponent,
     WidgetMemoryHistoryComponent,
+    WidgetMemoryComponent,
     WidgetStorageComponent,
     WidgetStorageCollectionComponent,
     WidgetNoteComponent,
@@ -123,6 +131,8 @@ import { TranslateModule } from '@ngx-translate/core';
     WidgetPoolComponent
   ],
   entryComponents:[
+    ContextMenuComponent,
+    CopyPasteMessageComponent,
     DisplayContainer,
     ViewComponent,
     C3ChartComponent,
@@ -146,6 +156,7 @@ import { TranslateModule } from '@ngx-translate/core';
     WidgetLoadHistoryComponent,
     WidgetLoadComponent,
     WidgetMemoryHistoryComponent,
+    WidgetMemoryComponent,
     WidgetStorageComponent,
     WidgetStorageCollectionComponent,
     WidgetNoteComponent,

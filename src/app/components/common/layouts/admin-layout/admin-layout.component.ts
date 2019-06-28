@@ -25,6 +25,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   isShowFooterConsole: Boolean = false;
   isSidenotOpen: Boolean = false;
   consoleMsg: String = "";
+  hostname: string;
   consoleMSgList: any[] = [];
   public is_freenas: Boolean = window.localStorage['is_freenas'];
   public logoPath: string = 'assets/images/light-logo.svg';
@@ -93,7 +94,13 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       this.isSidenavOpen = false;
     }
     this.checkIfConsoleMsgShows();
+
+    /* Debugging purposes */
     this.loader.open();
+
+    this.ws.call('system.info').subscribe((res) => {
+      this.hostname = res.hostname;
+    })
   }
 
   ngAfterViewChecked() {
@@ -132,7 +139,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     let neededNumberconsoleMsg = 3; // Just 3 messages for footer bar
 
     this.ws.sub(subName).subscribe((res) => {
-      if(res && res.data != ""){
+      if(res && res.data && typeof res.data === 'string'){
         this.consoleMsg = this.accumulateConsoleMsg(res.data, neededNumberconsoleMsg);
       }
     });
