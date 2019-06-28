@@ -2,10 +2,10 @@ import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {UUID} from 'angular2-uuid';
 import {LocalStorage} from 'ngx-webstorage';
-import {Observable, Subject, Subscription} from 'rxjs/Rx';
+import {Observable, Subject} from 'rxjs/Rx';
 
 import {environment} from '../../environments/environment';
-import { tap, filter, map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 
 @Injectable()
 export class WebSocketService {
@@ -46,7 +46,6 @@ export class WebSocketService {
   get consoleMessages() {
     if (!this.consoleSub) {
       this.consoleSub = this.sub("filesystem.file_tail_follow:/var/log/messages:499").pipe(
-        tap(console.log),
         filter(res => res && res.data && typeof res.data === "string"),
         map(res => res.data)
       );
