@@ -6,6 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import {FieldConfig} from '../../models/field-config.interface';
 import {Field} from '../../models/field.interface';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector : 'form-explorer',
@@ -20,6 +21,7 @@ export class FormExplorerComponent implements Field, OnInit {
   group: FormGroup;
   fieldShow: string;
   nodes: any[];
+  tooltipRemove = T('Remove this path');
 
   private treeVisible: boolean = false;
   private displayFieldName: string;

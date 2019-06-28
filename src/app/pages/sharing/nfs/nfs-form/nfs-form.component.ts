@@ -30,8 +30,7 @@ export class NFSFormComponent {
       name : 'nfs_paths',
       initialCount: 1,
       isExplorerMultiPath: true,
-      onAddMultiPath: (event: MouseEvent) => {
-        event.stopImmediatePropagation();
+      onAddMultiPath: () => {
         this.initialCount += 1;
         this.entityFormService.insertFormArrayGroup(
           this.initialCount, this.formArray, this.arrayControl.formarray

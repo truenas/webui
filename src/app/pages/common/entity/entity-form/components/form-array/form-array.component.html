@@ -1,23 +1,13 @@
 <div id="{{config.name}}" class="dynamic-field form-array" [formGroup]="group.controls[config.name]">
 	<fieldset class="formarray-fieldset" *ngFor="let array of group.controls[config.name]['controls']; let i = index ">
-		<ng-container
-			*ngFor="let field of config.formarray"
-			dynamicField
-			[config]="buildConfig(field, i)"
-			[group]="group.controls[config.name].controls[i]"
-		>
-		</ng-container>
+		<ng-container *ngFor="let field of config.formarray" dynamicField [config]="buildConfig(field, i)" [group]="group.controls[config.name].controls[i]"></ng-container>
 	</fieldset>
 	<mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
 
-	<button
-		*ngIf="config.isExplorerMultiPath"
-		mat-button
-		type="button"
-		color="primary"
-		class="mb-1"
-		(click)="config.onAddMultiPath($event); $event.stopPropagation()"
-	>
-		{{ 'Add Additional Path' | translate }}
+	<button *ngIf="config.isExplorerMultiPath" mat-button type="button" color="primary" class="mb-1" (click)="config.onAddMultiPath()">
+		<div fxLayoutAlign="center center" fxLayoutGap="6px">
+			<mat-icon>add_circle</mat-icon>
+			<span>{{ 'Add Additional Path' | translate }}</span>
+		</div>
 	</button>
 </div>

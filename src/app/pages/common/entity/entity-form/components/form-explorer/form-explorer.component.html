@@ -1,6 +1,14 @@
 <div id="{{config.name}}" class="dynamic-field form-explorer" [formGroup]="group" [ngClass]="fieldShow" [style.position]="'relative'" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
-    <mat-icon *ngIf="config.isExplorerMultiPath && config.arrayIndex > 0" (click)="config.onRemoveMultiPath()" class="icon_add-explorer">delete</mat-icon>
     <div class="form-ex-flex-container" id="form-ex-flex-container">
+        <mat-icon
+            *ngIf="config.isExplorerMultiPath && config.arrayIndex > 0"
+            (click)="config.onRemoveMultiPath()"
+            class="icon_add-explorer"
+            [matTooltip]="tooltipRemove"
+            [matTooltipShowDelay]="300"
+        >
+            delete
+        </mat-icon>
         <div id="box1">
             <!-- <button mat-button (click)="toggleTree()" type="button">{{"Browse" | translate}}</button> -->
             <i class="material-icons form-ex-folder" (click)="toggleTree()">folder</i>
