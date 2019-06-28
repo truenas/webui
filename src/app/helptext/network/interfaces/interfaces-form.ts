@@ -6,7 +6,7 @@ export default {
 int_type_placeholder: T('Type'),
 int_type_tooltip: T('Read-only when editing an interface. Choose the\
  type of interface. <i>Bridge</i> creates a logical link between\
- multiple networks. Link Aggregation combines multiple network\
+ multiple networks. <i>Link Aggregation</i> combines multiple network\
  connections into a single interface. A Virtual LAN (VLAN) partitions\
  and isolates a segment of the connection.'),
 int_type_options: [
