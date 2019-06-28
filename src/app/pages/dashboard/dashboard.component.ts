@@ -98,7 +98,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
 
     this.statsEventsTC = this.ws.sub("trueview.stats:10").subscribe((evt)=>{
       if(evt.virtual_memory){return;}// TC and MW subscriptions leak into each other.
-
+        console.log(evt);
         evt.network_usage.forEach((item, index) => {
           this.statsDataEvents.next({name:"NetTraffic_" + item.name, data:item});
         });

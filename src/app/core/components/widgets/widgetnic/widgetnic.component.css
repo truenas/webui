@@ -63,10 +63,17 @@
   position: relative;
 }
 
+.nic-name .icon-wrapper{
+  display: inline;
+  font-size: 75%;
+}
+
+.nic-name.up .icon-wrapper,
 .link-state.up .icon-wrapper{
   color: var(--green);
 }
 
+.nic-name.down .icon-wrapper,
 .link-state.down .icon-wrapper{
   color: var(--red);
 }
@@ -94,6 +101,18 @@
 
 .carousel-nav .btn.active{
   opacity:1;
+}
+
+.nic-traffic{
+  /*font-size: 150%;*/
+}
+
+.stat{
+  /*font-size: 250%;*/
+}
+
+.mat-list-base .mat-list-item{
+  border-bottom:solid 1px var(--bg1);
 }
 
 /* NARROW SCREENS */
