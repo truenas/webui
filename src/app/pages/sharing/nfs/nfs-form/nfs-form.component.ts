@@ -249,14 +249,13 @@ export class NFSFormComponent {
     this.entityForm = EntityForm;
     this.formArray = EntityForm.formGroup.controls['nfs_paths'];
 
-    this.userService.listAllUsers().subscribe(res => {
+    this.userService.userQueryDSCache().subscribe(items => {
       const users = [{
         label: '---------',
         value: '',
       }];
-      let items = res.data.items;
       for (let i = 0; i < items.length; i++) {
-        users.push({label: items[i].label, value: items[i].id});
+        users.push({label: items[i].username, value: items[i].username});
       }
       this.nfs_mapall_user = _.find(this.fieldConfig, {'name' : 'nfs_mapall_user'});
       this.nfs_mapall_user.options = users;
@@ -264,14 +263,13 @@ export class NFSFormComponent {
       this.nfs_maproot_user.options = users;
     });
 
-    this.userService.listAllGroups().subscribe(res => {
+    this.userService.groupQueryDSCache().subscribe(items => {
       const groups = [{
         label: '---------',
         value: '',
       }];
-      let items = res.data.items;
       for (let i = 0; i < items.length; i++) {
-        groups.push({label: items[i].label, value: items[i].id});
+        groups.push({label: items[i].group, value: items[i].group});
       }
       this.nfs_mapall_group = _.find(this.fieldConfig, {'name' : 'nfs_mapall_group'});
       this.nfs_mapall_group.options = groups;
@@ -426,13 +424,12 @@ export class NFSFormComponent {
   }
 
   updateGroupSearchOptions(value = "", parent, field) {
-    parent.userService.listAllGroups(value).subscribe(res => {
+    parent.userService.groupQueryDSCache(value).subscribe(items => {
       const groups = [];
-      let items = res.data.items;
       for (let i = 0; i < items.length; i++) {
-        groups.push({label: items[i].label, value: items[i].id});
+        groups.push({label: items[i].group, value: items[i].group});
       }
-        parent[field].searchOptions = groups;
+      parent[field].searchOptions = groups;
     });
   }
 
@@ -445,11 +442,10 @@ export class NFSFormComponent {
   }
 
   updateUserSearchOptions(value = "", parent, field) {
-    parent.userService.listAllUsers(value).subscribe(res => {
+    parent.userService.userQueryDSCache(value).subscribe(items => {
       const users = [];
-      let items = res.data.items;
       for (let i = 0; i < items.length; i++) {
-        users.push({label: items[i].label, value: items[i].id});
+        users.push({label: items[i].username, value: items[i].username});
       }
       parent[field].searchOptions = users;
     });
