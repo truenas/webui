@@ -55,7 +55,7 @@ export class NavigationService {
         //{name: 'Information', state: 'information'},
         { name: T('General'), state: 'general' },
         { name: T('NTP Servers'), state: 'ntpservers' },
-        { name: T('Boot Environments'), state: 'bootenv' },
+        { name: T('Boot'), state: 'boot' },
         { name: T('Advanced'), state: 'advanced' },
         { name: T('View Enclosure'), state: 'viewenclosure', disabled: true},
         { name: T('Email'), state: 'email'},

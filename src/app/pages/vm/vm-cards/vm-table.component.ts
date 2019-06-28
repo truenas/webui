@@ -57,7 +57,7 @@ export class VmTableComponent implements OnChanges{
   @Output() edit: EventEmitter<any> = new EventEmitter<any>();
   @Output() delete: EventEmitter<any> = new EventEmitter<any>();
   @Output() power: EventEmitter<any> = new EventEmitter<any>();
-  @ViewChild('datatable') datatable;
+  @ViewChild('datatable', { static: true}) datatable;
   public page = new Page();
 
   public rows = new Array<any>();

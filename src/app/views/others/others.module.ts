@@ -18,6 +18,7 @@ import { FailoverComponent } from "./failover/failover.component";
 import { RebootComponent } from "./reboot/reboot.component";
 import { ShutdownComponent } from "./shutdown/shutdown.component";
 import { TranslateModule } from '@ngx-translate/core';
+import { ConfigResetComponent } from './config-reset/config-reset.component';
 
 @NgModule({
   imports: [
@@ -34,6 +35,6 @@ import { TranslateModule } from '@ngx-translate/core';
     TranslateModule,
     RouterModule.forChild(OthersRoutes)
   ],
-  declarations: [AppBlankComponent, RebootComponent, FailoverComponent, ShutdownComponent]
+  declarations: [AppBlankComponent, RebootComponent, FailoverComponent, ShutdownComponent, ConfigResetComponent]
 })
 export class OthersModule { }

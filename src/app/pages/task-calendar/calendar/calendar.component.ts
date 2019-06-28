@@ -33,7 +33,7 @@ interface Task {
 export class TaskCalendarComponent implements OnInit {
   view = 'month';
   viewDate = new Date();
-  @ViewChild('modalContent') modalContent: TemplateRef < any > ;
+  @ViewChild('modalContent', { static: true}) modalContent: TemplateRef < any > ;
   dialogRef;
 
   public spin: boolean = true;

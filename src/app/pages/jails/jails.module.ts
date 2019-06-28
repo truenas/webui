@@ -16,6 +16,7 @@ import { JailAddComponent } from './jail-add/';
 import { JailEditComponent } from './jail-edit/';
 import { JailWizardComponent } from './jail-wizard/';
 import { JailShellComponent } from './jail-shell/';
+import { JailDetailsComponent } from './jail-list/components/jail-details.component';
 
 @NgModule({
   imports : [
@@ -23,6 +24,7 @@ import { JailShellComponent } from './jail-shell/';
   ],
   declarations : [
     JailListComponent,
+    JailDetailsComponent,
     StorageListComponent,
     StorageFormComponent,
     JailAddComponent,
@@ -30,6 +32,7 @@ import { JailShellComponent } from './jail-shell/';
     JailWizardComponent,
     JailShellComponent
   ],
+  entryComponents: [JailDetailsComponent],
   providers : [
     JailService,
   ]

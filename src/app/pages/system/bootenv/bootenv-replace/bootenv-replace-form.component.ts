@@ -11,7 +11,7 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 })
 
 export class BootEnvReplaceFormComponent {
-  protected route_success: string[] = [ 'system', 'bootenv', 'status' ];
+  protected route_success: string[] = [ 'system', 'boot', 'status' ];
   protected isEntity: boolean = true;
   protected addCall = 'boot.replace';
   protected pk: any;

@@ -270,6 +270,9 @@ export const helptext_sharing_iscsi = {
   authaccess_tooltip_peersecret: T(
     "Mutual secret password. Must be different than <i>Secret</i>."
   ),
+  authaccess_error_peersecret: T('Must match Peer Secret (Confirm) and be\
+ between 12 and 16 characters in length. Cannot be the same as\
+ Secret.'),
 
   authaccess_placeholder_peersecret_confirm: T("Peer Secret (Confirm)"),
 

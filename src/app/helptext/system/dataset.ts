@@ -9,11 +9,5 @@ export const helptext_system_dataset = {
     placeholder: T("Syslog"),
     tooltip: T("Store system logs on the system dataset. Unset to store\
  system logs in <i>/var/</i> on the operating system device.")
-  },
-  rrd: {
-    placeholder: T("Reporting Database"),
-    tooltip: T("Store the reporting database on the system dataset.\
- Unset to store reporting information in memory."
-    )
   }
 };
