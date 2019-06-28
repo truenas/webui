@@ -13,6 +13,8 @@ import { MatDialog } from '@angular/material';
 import { T } from '../../../translate-marker';
 import { DialogService } from '../../../services/dialog.service';
 import helptext from '../../../helptext/vm/vm-wizard/vm-wizard';
+import { map } from 'rxjs/operators';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 
 @Component({
   selector: 'app-vm-wizard',
@@ -171,21 +173,14 @@ export class VMWizardComponent {
           required: true
         },
         {
-          type: 'paragraph',
-          name: 'pool_detach_warning',
-          paraText: helptext.pool_detach_warning_paraText,
-        },
-        {
-          type: 'explorer',
+          type: 'select',
           name: 'datastore',
           tooltip: helptext.datastore_tooltip,
+          placeholder: helptext.datastore_placeholder,
           options: [],
           isHidden: false,
-          initial: '/mnt',
-          explorerType: 'directory',
           validation: [Validators.required],
-          required: true,
-          hideDirs: 'iocage'
+          required: true
         },
         {
           type: 'select',
@@ -303,6 +298,13 @@ export class VMWizardComponent {
         )
       }
     });
+
+    this.ws
+      .call("pool.filesystem_choices", [["FILESYSTEM"]])
+      .pipe(map(new EntityUtils().array1DToLabelValuePair))
+      .subscribe(options => {
+        this.wizardConfig[3].fieldConfig.find(config => config.name === "datastore").options = options;
+      });
 
     this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]]]).subscribe((zvols)=>{
       zvols.forEach(zvol => {
