@@ -49,41 +49,6 @@
       <button mat-icon-button id="task-manager" matTooltip="Task Manager" (click)="onShowTaskManager()" >
         <mat-icon>assignment</mat-icon>
       </button>
-      <!-- Theme Switcher -->
-      <!-- Theme Switcher -->
-      <!-- <button mat-icon-button id="schemeToggle" [style.overflow]="'visible'" matTooltip="{{sysName}} Themes" [matMenuTriggerFor]="themeMenu" class="topbar-button-right">
-        <mat-icon>format_color_fill</mat-icon>
-      </button> -->
-
-      <mat-menu #themeMenu="matMenu">
-        <!--<mat-grid-list class="theme-list" cols="1" rowHeight="24px">-->
-          <!--<mat-grid-tile *ngFor="let theme of themesMenu" (click)="changeTheme(theme.name)">-->
-            <!--<div mat-menu-item [title]="theme.label">
-              <div [style.background]="theme[theme.labelSwatch]" class="egret-swatch"></div>
-              <mat-icon class="active-icon" *ngIf="theme.name == themeService.activeTheme">check</mat-icon>
-              </div>-->
-          <button mat-menu-item *ngFor="let theme of themesMenu" (click)="changeTheme(theme.name)">
-            <span class="theme-picker-swatch" *ngIf="theme.name == themeService.activeTheme" ><mat-icon [style.color]="theme[theme.labelSwatch]" class="theme-picker-swatch-icon">check_circle</mat-icon></span>
-            <span class="theme-picker-swatch" *ngIf="theme.name !== themeService.activeTheme"><mat-icon [style.color]="theme[theme.labelSwatch]" class="theme-picker-swatch-icon">brightness_1b</mat-icon></span>
-            <span class="mat-list-item-ripple mat-ripple">{{ theme.label }}</span>
-          </button>
-          <button class="hidden-button" mat-menu-item></button> <!-- Workaround to prevent focus being locked on first button -->
-          <button mat-menu-item (click)="createTheme()">
-            <span class="theme-picker-swatch"><mat-icon>add_circle</mat-icon></span>
-            <span class="mat-list-item-ripple mat-ripple">Create/Manage Themes</span>
-          </button>
-            <!--</mat-grid-tile>-->
-
-
-            <!--<mat-grid-tile (click)="createTheme()">-->
-            <!--<div mat-menu-item [title]="createThemeLabel">
-              <div style="background-color:var(accent);" class="egret-swatch"></div>
-              <mat-icon class="active-icon" >add</mat-icon>
-              </div>-->
-              <!--<span style="cursor: pointer;"  class="text-sm mat-list-item-ripple mat-ripple" >Manage Themes</span>-->
-            <!--</mat-grid-tile>-->
-          <!--</mat-grid-list>-->
-</mat-menu>
       <!-- Notification toggle button -->
       <button mat-icon-button matTooltip="Alerts" (click)="toggleNotific()" [style.overflow]="'visible'" class="topbar-button-right">
         <mat-icon>notifications</mat-icon>
