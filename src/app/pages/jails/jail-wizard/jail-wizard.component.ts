@@ -306,47 +306,56 @@ export class JailWizardComponent {
   preInit() {
     this.releaseField = _.find(this.wizardConfig[0].fieldConfig, { 'name': 'release' });
     this.template_list = new Array<string>();
-    this.ws.call('jail.list_resource', ["TEMPLATE"]).subscribe(
+    this.jailService.getTemplates().subscribe(
       (res) => {
-        for (const i in res) {
-          this.template_list.push(res[i][1]);
-          this.releaseField.options.push({ label: res[i][1] + '(template)', value: res[i][1] });
+        if (res.result) {
+          for (const i in res.result) {
+            this.template_list.push(res.result[i][1]);
+            this.releaseField.options.push({ label: res.result[i][1] + '(template)', value: res.result[i][1] });
+          }
         }
-      },
-      (err) => {
-        new EntityUtils().handleWSError(this, err, this.dialogService);
+        if (res.error) {
+          this.dialogService.errorReport(T('Error: Displaying templates failed.'), res.error, res.exception);
+        }
       }
     )
 
     this.ws.call('system.info').subscribe((res) => {
-        this.currentServerVersion = Number(_.split(res.version, '-')[1]);
-        this.jailService.getLocalReleaseChoices().subscribe(
-          (res_local) => {
-            for (let j in res_local) {
-              let rlVersion = Number(_.split(res_local[j], '-')[0]);
+      this.currentServerVersion = Number(_.split(res.version, '-')[1]);
+      this.jailService.getLocalReleaseChoices().subscribe(
+        (res_local) => {
+          if (res_local.result) {
+            for (const j in res_local.result) {
+              const rlVersion = Number(_.split(res_local.result[j], '-')[0]);
               if (this.currentServerVersion >= Math.floor(rlVersion)) {
-                this.releaseField.options.push({ label: res_local[j] + '(fetched)', value: res_local[j] });
+                this.releaseField.options.push({ label: res_local.result[j] + '(fetched)', value: res_local.result[j] });
               }
             }
+
             this.jailService.getRemoteReleaseChoices().subscribe(
               (res_remote) => {
-                for (let i in res_remote) {
-                  if (_.indexOf(res_local, res_remote[i]) < 0) {
-                    let rmVersion = Number(_.split(res_remote[i], '-')[0]);
-                    if (this.currentServerVersion >= Math.floor(rmVersion)) {
-                      this.releaseField.options.push({ label: res_remote[i], value: res_remote[i] });
-                      this.unfetchedRelease.push(res_remote[i]);
+                if (res_remote.result) {
+                  for (const i in res_remote.result) {
+                    if (_.indexOf(res_local.result, res_remote.result[i]) < 0) {
+                      const rmVersion = Number(_.split(res_remote.result[i], '-')[0]);
+                      if (this.currentServerVersion >= Math.floor(rmVersion)) {
+                        this.releaseField.options.push({ label: res_remote.result[i], value: res_remote.result[i] });
+                        this.unfetchedRelease.push(res_remote.result[i]);
+                      }
                     }
                   }
                 }
-              },
-              (res_remote) => {
-                this.dialogService.errorReport(T('Error: Fetching remote release choices failed.'), res_remote.reason, res_remote.trace.formatted);
+
+                if (res_remote.error) {
+                  this.dialogService.errorReport(T('Error: Fetching remote release choices failed.'), res_remote.error, res_remote.exception);
+                }
               });
-          },
-          (res_local) => {
-            this.dialogService.errorReport(T('Error: Displaying local fetched releases failed.'), res_local.reason, res_local.trace.formatted);
-          });
+          }
+
+          if (res_local.error) {
+            this.dialogService.errorReport(T('Error: Displaying local fetched releases failed.'), res_local.error, res_local.exception);
+          }
+        });
       },
       (res) => {
         new EntityUtils().handleError(this, res);

@@ -24,7 +24,7 @@ export class DownloadKeyModalDialog {
     private loader:AppLoaderService) { }
 
   ngOnInit() {
-    
+
   }
 
   downloadKey() {
@@ -32,13 +32,13 @@ export class DownloadKeyModalDialog {
     this.ws.call("pool.download_encryption_key", [this.volumeId]).subscribe((res) => {
       this.loader.close();
       if(res !== null && res !== "") {
-        window.open("http://" + environment.remote + res);
+        window.open(res);
         this.isDownloaded = true;
       }
     }, (resError)=>{
       this.isDownloaded = true;
       this.loader.close();
-    
+
     });
   }
 }

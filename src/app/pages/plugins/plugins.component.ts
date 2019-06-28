@@ -28,6 +28,7 @@ export class PluginsComponent {
   };
   protected queryCall = 'jail.list_resource';
   protected queryCallOption = ["PLUGIN"];
+  protected queryCallJob = true;
   protected wsDelete = 'jail.do_delete';
   protected wsMultiDelete = 'core.bulk';
   protected entityList: any;
@@ -36,15 +37,10 @@ export class PluginsComponent {
   public activatedPool: any;
 
   public columns: Array<any> = [
-    { name: T('Jail'), prop: '1' },
-    { name: T('Status'), prop: '3' },
-    { name: T('IPv4 Address'), prop: '6' },
-    { name: T('IPv6 Address'), prop: '7' },
-    // { name: T('Version'), prop: '10' },
-    // { name: T('Boot'), prop: '2' },
-    // { name: 'Type', prop: '4' },
-    // { name: T('Release'), prop: '5' },
-    // { name: T('Template'), prop: '8' }
+    { name: T('Jail'), prop: 'name' },
+    { name: T('Status'), prop: 'state' },
+    { name: T('IPv4 Address'), prop: 'ip4' },
+    { name: T('IPv6 Address'), prop: 'ip6' },
   ];
   public config: any = {
     paging: true,
@@ -52,13 +48,13 @@ export class PluginsComponent {
     multiSelect: true,
     deleteMsg: {
       title: 'Plugin',
-      key_props: ['1'],
-      id_prop: '1',
+      key_props: ['name'],
+      id_prop: 'name',
       doubleConfirm: (item) => {
         return this.dialogService.doubleConfirm(
-          T('Verify Deletion of ') + item[1] + T(' Plugin'),
-          T('To delete the <b>') + item[1] + T('</b> plugin and all data and snapshots stored with it, please type the name of the plugin to confirm:'),
-          item[1]
+          T('Verify Deletion of ') + item.name + T(' Plugin'),
+          T('To delete the <b>') + item.name + T('</b> plugin and all data and snapshots stored with it, please type the name of the plugin to confirm:'),
+          item.name
         );
       },
     },
@@ -262,34 +258,51 @@ export class PluginsComponent {
 
   dataHandler(entityList: any) {
     for (let i = 0; i < entityList.rows.length; i++) {
-      if (_.split(entityList.rows[i][6], '|').length > 1) {
-        entityList.rows[i][6] = _.split(entityList.rows[i][6], '|')[1];
-      }
-    }
+      for (const ipType of ['ip4', 'ip6']) {
+        if (entityList.rows[i][ipType] != null) {
+          entityList.rows[i][ipType] = entityList.rows[i][ipType]
+            .split(',')
+            .map(function (e) {
+              return _.split(e, '|').length > 1 ? _.split(e, '|')[1] : e;
+            })
+            .join(',');
+        };
+      };
+    };
   }
 
   getSelectedNames(selectedJails) {
     const selected: any = [];
     for (const i in selectedJails) {
-      selected.push([selectedJails[i][1]]);
+      selected.push([selectedJails[i]['name']]);
     }
     return selected;
   }
 
   updateRows(rows: Array<any>): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      this.ws.call('jail.list_resource', ["PLUGIN"]).subscribe(
+      this.ws.job('jail.list_resource', ["PLUGIN"]).subscribe(
         (res) => {
-          for (const row of rows) {
-            const targetIndex = _.findIndex(res, function (o) { return o[1] === row[1] });
-            if (targetIndex === -1) {
-              reject(false);
+          if (res.result) {
+            for (const row of rows) {
+              const targetIndex = _.findIndex(res.result, function (o) { return o['name'] === row.name });
+              if (targetIndex === -1) {
+                reject(false);
+              }
+              for (const i in row) {
+                row[i] = ((i === 'ip4' || i === 'ip6') && res.result[targetIndex][i] != null) ? res.result[targetIndex][i]
+                  .split(',')
+                  .map(function (e) {
+                    return _.split(e, '|').length > 1 ? _.split(e, '|')[1] : e;
+                  })
+                  .join(',') : res.result[targetIndex][i];
+              }
             }
-            for (const i in row) {
-              row[i] = (i === '6' && _.split(res[targetIndex][i], '|').length > 1) ? _.split(res[targetIndex][i], '|')[1] : res[targetIndex][i];
-            }
+            resolve(true);
           }
-          resolve(true);
+          if (res.error) {
+            reject(res);
+          }
         },
         (err) => {
           reject(err);
@@ -299,13 +312,13 @@ export class PluginsComponent {
   };
 
   updateMultiAction(selected: any) {
-    if (_.find(selected, function (plugin) { return plugin[3] == 'up'; })) {
+    if (_.find(selected, function (plugin) { return plugin.state == 'up'; })) {
       _.find(this.multiActions, { 'id': 'mstop' as any })['enable'] = true;
     } else {
       _.find(this.multiActions, { 'id': 'mstop' as any })['enable'] = false;
     }
 
-    if (_.find(selected, function (plugin) { return plugin[3] == 'down'; })) {
+    if (_.find(selected, function (plugin) { return plugin.state == 'down'; })) {
       _.find(this.multiActions, { 'id': 'mstart' as any })['enable'] = true;
     } else {
       _.find(this.multiActions, { 'id': 'mstart' as any })['enable'] = false;

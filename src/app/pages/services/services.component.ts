@@ -31,7 +31,6 @@ export class Services implements OnInit {
 
   public name_MAP: Object = {
     'afp': 'AFP',
-    'asigra': 'Asigra',
     'dynamicdns': 'Dynamic DNS',
     'ftp': 'FTP',
     'iscsitarget': 'iSCSI',
@@ -72,7 +71,7 @@ export class Services implements OnInit {
 
   ngOnInit() {
     // window.localStorage.getItem('viewValue') ? this.viewMode.value = window.localStorage.getItem('viewValue') : this.viewMode.value = 'cards';
-    this.viewMode.value = 'table';   
+    this.viewMode.value = 'table';
     this.busy =
       this.ws.call('service.query', [
         [], { "order_by": ["service"] }
@@ -198,7 +197,7 @@ export class Services implements OnInit {
       this.router.navigate(new Array('').concat(route));
     } else if (service === 'netdata') {
       // launch netdata
-      window.open("http://" + environment.remote + "/netdata/");
+      window.open("/netdata/");
     } else if (service === 'cifs') {
       this.router.navigate(new Array('').concat(['services', 'smb']));
     } else {

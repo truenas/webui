@@ -97,5 +97,8 @@ dataset_form_casesensitivity_placeholder: T('Case Sensitivity'),
 dataset_form_casesensitivity_tooltip: T('<i>Sensitive</i> assumes filenames are case sensitive.\
  <i>Insensitive</i> assumes filenames are not case\
  sensitive. <i>Mixed</b> understands both types of\
- filenames.')
+ filenames.'),
+
+dataset_form_aclmode_placeholder: T('ACL Mode'),
+dataset_form_aclmode_tooltip: T('')
 }

@@ -173,19 +173,6 @@ export class JailListComponent implements OnInit {
     this.entityList = entityList;
   }
 
-  isActionVisible(actionId: string, row: any) {
-    if (actionId === 'start' && row.state === "up") {
-      return false;
-    } else if (actionId === 'stop' && row.state === "down") {
-      return false;
-    } else if (actionId === 'shell' && row.state === "down") {
-      return false;
-    } if (actionId === 'restart' && row.state === "down") {
-      return false;
-    }
-    return true;
-  }
-
   getActivatedPool(){
     this.ws.call('jail.get_activated_pool').subscribe(
       (res)=>{
