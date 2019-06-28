@@ -1,11 +1,11 @@
 .form-ex-flex-container {
-    max-width: 630px;
+    // max-width: 630px;
     padding: 7px;
 }
 
 .form-explorer {
-    margin-bottom: 10px;
-    width: 90%;
+    margin-bottom: 24px;
+    // width: 90%;
 }
 
 #box1 {
@@ -38,6 +38,14 @@
     position: relative;
     left: 28px;
     top: 20px;
+}
+
+.icon_add-explorer {
+    color: var(--red);
+    cursor: pointer;
+    position: absolute;
+    right: -12px;
+    top: -8px;
 }
   
 @media screen and (max-width: 768px) {

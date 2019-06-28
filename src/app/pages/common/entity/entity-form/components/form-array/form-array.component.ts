@@ -1,9 +1,7 @@
-import {Component, ViewContainerRef} from '@angular/core';
-import {FormGroup} from '@angular/forms';
-
-import {FieldConfig} from '../../models/field-config.interface';
-import {Field} from '../../models/field.interface';
-import {TooltipComponent} from '../tooltip/tooltip.component';
+import { Component } from '@angular/core';
+import { FormGroup } from '@angular/forms';
+import { FieldConfig } from '../../models/field-config.interface';
+import { Field } from '../../models/field.interface';
 
 @Component({
   selector : 'form-array',
@@ -14,4 +12,11 @@ export class FormArrayComponent implements Field {
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
+
+  buildConfig(config, index) {
+    return {
+      ...config,
+      arrayIndex: index
+    }
+  }
 }

@@ -16,7 +16,7 @@ export interface FieldConfig {
   noexec?: boolean, blurStatus?:boolean,blurEvent?:any,noMinutes?:boolean,
   warnings?: string, hideButton?:boolean, searchOptions?: any[], hideDirs?: any,
   listFields?: Array<FieldConfig>[], templateListField?: FieldConfig[],
-  updateLocal?: boolean
-  customEventMethod?(data:any), onChangeOption?(data:any), 
-  
+  updateLocal?: boolean, isExplorerMultiPath?: boolean, arrayIndex?: number,
+  onAddMultiPath?(event: MouseEvent): void, onRemoveMultiPath?(): void,
+  customEventMethod?(data:any), onChangeOption?(data:any)
 }

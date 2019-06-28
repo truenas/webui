@@ -1,10 +1,4 @@
 .formarray-fieldset {
   flex-shrink: inherit;
   min-width: 40% !important;
-
-  padding: 2px;
-  border-width: 2px;
-  border-style: groove;
-  border-color: threedface;
-  border-image: initial;
 }

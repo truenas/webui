@@ -29,6 +29,14 @@ export class NFSFormComponent {
       type: 'array',
       name : 'nfs_paths',
       initialCount: 1,
+      isExplorerMultiPath: true,
+      onAddMultiPath: (event: MouseEvent) => {
+        event.stopImmediatePropagation();
+        this.initialCount += 1;
+        this.entityFormService.insertFormArrayGroup(
+          this.initialCount, this.formArray, this.arrayControl.formarray
+        );
+      },
       formarray: [{
         name: 'path',
         placeholder: helptext_sharing_nfs.placeholder_path,
@@ -37,15 +45,12 @@ export class NFSFormComponent {
         explorerType: 'directory',
         initial: '/mnt',
         required: true,
-        validation : helptext_sharing_nfs.validators_path
-      },
-      {
-        type: 'checkbox',
-        name: 'delete',
-        placeholder: helptext_sharing_nfs.placeholder_delete,
-        tooltip: helptext_sharing_nfs.tooltip_delete,
-        isHidden: true,
-        disabled: true,
+        validation : helptext_sharing_nfs.validators_path,
+        isExplorerMultiPath: true,
+        onRemoveMultiPath: () => {
+          this.initialCount -= 1;
+          this.entityFormService.removeFormArrayGroup(this.initialCount, this.formArray);
+        },
       }]
     },
     {
@@ -170,24 +175,6 @@ export class NFSFormComponent {
   protected initialCount_default = 1;
 
   public custActions: Array<any> = [
-    {
-      id : 'add_path',
-      name : helptext_sharing_nfs.actions_add_path,
-      function : () => {
-        this.initialCount += 1;
-        this.entityFormService.insertFormArrayGroup(
-            this.initialCount, this.formArray, this.arrayControl.formarray);
-      }
-    },
-    {
-      id : 'remove_path',
-      name : helptext_sharing_nfs.actions_remove_path,
-      function : () => {
-        this.initialCount -= 1;
-        this.entityFormService.removeFormArrayGroup(this.initialCount,
-                                                    this.formArray);
-      }
-    },
     {
       id : 'basic_mode',
       name : helptext_sharing_nfs.actions_basic_mode,
