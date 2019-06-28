@@ -10,7 +10,7 @@ import * as _ from 'lodash';
 @Component({
     selector: 'app-iscsi-fibre-channel-ports',
     templateUrl: './fibre-channel-ports.component.html',
-    styleUrls: ['../../../common/entity/entity-form/entity-form.component.scss'],
+    styleUrls: ['./fibre-channel-ports.component.css', '../../../common/entity/entity-form/entity-form.component.scss'],
     providers: [IscsiService]
 })
 export class FibreChannelPortsComponent implements OnInit {
@@ -57,19 +57,28 @@ export class FibreChannelPortsComponent implements OnInit {
                     name: 'target',
                     placeholder: 'Targets',
                     tooltip: '',
-                    options: [],
+                    options: [{
+                        label: '---------',
+                        value: null,
+                    }],
+                    value: null,
+                    disabled: false,
+                    isHidden: false,
                 },
                 {
                     type: 'textarea',
                     name: 'initiators',
                     placeholder: 'Connected Initiators',
                     tooltip: '',
+                    disabled: false,
+                    isHidden: false,
                 }
             ]
         }
     ];
     public fieldConfig: FieldConfig[];
     public formArray: FormArray;
+    public fieldCofigArray: FieldConfig[];
 
     constructor(
         private ws: WebSocketService,
@@ -112,9 +121,11 @@ export class FibreChannelPortsComponent implements OnInit {
 
         this.ws.call('fcport.query').subscribe(
             (res) => {
+                // res[1].initiators = ['naa.5000000d668ad303', 'naa.5000000d668ad302', 'naa.5000000d668ad305', 'naa.5000000d668ad306','naa.5000000d668ad303', 'naa.5000000d668ad302', 'naa.5000000d668ad305', 'naa.5000000d668ad306','naa.5000000d668ad303', 'naa.5000000d668ad302', 'naa.5000000d668ad305', 'naa.5000000d668ad306','naa.5000000d668ad303', 'naa.5000000d668ad302', 'naa.5000000d668ad305', 'naa.5000000d668ad306'];
                 this.fibreChannels = res;
                 for (let i = 0; i < this.fibreChannels.length; i++) {
-                    this.formArray.push(this.entityFormService.createFormGroup(_.cloneDeep(this.fieldConfig)));
+                    const config = _.cloneDeep(this.fieldConfig);
+                    this.formArray.push(this.entityFormService.createFormGroup(config));
                     for (const item in this.fibreChannels[i]) {
                         const fg = (<FormGroup>this.formArray.controls[i]).controls[item];
                         if (fg) {
@@ -128,7 +139,10 @@ export class FibreChannelPortsComponent implements OnInit {
             });
     }
 
-    isShow(id: any): any {
+    isShow(field, index) {
+        if (field === 'target' || field == 'initiators') {
+            return (<FormGroup> this.formArray.controls[index]).controls['mode'].value == 'TARGET';
+        }
         return true;
     }
 }

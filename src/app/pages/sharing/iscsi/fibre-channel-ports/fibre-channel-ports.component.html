@@ -19,8 +19,16 @@
                             fxFlex.gt-xs="calc({{field.width}} - 16px)"
                             [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'"
                             id="{{fieldSet.name}}-{{ii}}">
-                            <div id="form_field_{{field.name}}" dynamicField [config]="field" [group]="formArray.controls[fc_index]"
-                                [fieldShow]="isShow(field.name) ? 'show' :'hide'"></div>
+                            <div *ngIf="field.name == 'initiators'; else template">
+                                <label *ngIf="isShow(field.name, fc_index)">{{field.placeholder}}</label>
+                                <ul *ngIf="isShow(field.name, fc_index)" class="initiators-list">
+                                    <li *ngFor="let initiator of fc.initiators">{{initiator}}</li>
+                                </ul>
+                            </div>
+                            <ng-template #template>
+                                <div id="form_field_{{field.name}}" dynamicField [config]="field" [group]="formArray.controls[fc_index]"
+                                    [fieldShow]="isShow(field.name, fc_index) ? 'show' :'hide'"></div>
+                            </ng-template>
                         </div>
                     </div>
                 </ng-container>
