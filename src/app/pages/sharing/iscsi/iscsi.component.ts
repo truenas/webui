@@ -40,6 +40,10 @@ export class ISCSI implements OnInit {
       label: 'Associated Targets',
       path: '/sharing/iscsi/associatedtarget',
     },
+    {
+      label: 'Fibre Channel Ports',
+      path: '/sharing/iscsi/fibrechannel',
+    },
   ];
   protected route_wizard = ["sharing", "iscsi", "wizard"];
   constructor(protected router: Router, protected aroute: ActivatedRoute, ) {}
