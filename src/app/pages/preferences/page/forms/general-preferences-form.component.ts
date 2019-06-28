@@ -125,6 +125,12 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
       // Get current preferences so for form values
       this.init();
     }
+    
+    afterInit(entity: any) {
+      entity.formGroup.controls['userTheme'].valueChanges.subscribe((theme) => {
+        this.themeService.changeTheme(theme);
+      })
+    }
 
     ngOnChanges(changes){
       if(changes.baseTheme){
