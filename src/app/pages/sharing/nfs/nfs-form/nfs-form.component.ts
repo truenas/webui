@@ -26,10 +26,10 @@ export class NFSFormComponent {
 
   protected fieldConfig: FieldConfig[] = [
     {
-      type: 'array',
+      type: 'list',
       name : 'nfs_paths',
       initialCount: 1,
-      formarray: [{
+      templateListField: [{
         name: 'path',
         placeholder: helptext_sharing_nfs.placeholder_path,
         tooltip: helptext_sharing_nfs.tooltip_path,
@@ -38,15 +38,8 @@ export class NFSFormComponent {
         initial: '/mnt',
         required: true,
         validation : helptext_sharing_nfs.validators_path
-      },
-      {
-        type: 'checkbox',
-        name: 'delete',
-        placeholder: helptext_sharing_nfs.placeholder_delete,
-        tooltip: helptext_sharing_nfs.tooltip_delete,
-        isHidden: true,
-        disabled: true,
-      }]
+      }],
+      listFields: []
     },
     {
       type: 'input',
