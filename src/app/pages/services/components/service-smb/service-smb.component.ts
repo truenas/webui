@@ -119,12 +119,6 @@ export class ServiceSMBComponent {
     },
     {
       type: 'checkbox',
-      name: 'cifs_srv_hostlookup',
-      placeholder: helptext.cifs_srv_hostlookup_placeholder,
-      tooltip: helptext.cifs_srv_hostlookup_tooltip,
-    },
-    {
-      type: 'checkbox',
       name: 'cifs_srv_ntlmv1_auth',
       placeholder: helptext.cifs_srv_ntlmv1_auth_placeholder,
       tooltip: helptext.cifs_srv_ntlmv1_auth_tooltip,

@@ -8,7 +8,6 @@ import {EntityModule} from '../common/entity/entity.module';
 import {AppConfirmModule} from "../../services/app-confirm/app-confirm.module";
 
 import {ServiceAFPComponent} from './components/service-afp';
-import {ServiceCIFSComponent} from './components/service-cifs';
 import {ServiceDDNSComponent} from './components/service-dynamicdns';
 import {ServiceFTPComponent} from './components/service-ftp';
 import {ServiceLLDPComponent} from './components/service-lldp';
@@ -39,7 +38,7 @@ import { UserService } from '../../services/user.service';
     ServiceFTPComponent, ServiceLLDPComponent,
     ServiceRSYNCComponent, CconfigureRYSNCComponent,RSYNCconfigurationListComponent, RYSNCConfigurationFormComponent,
     ServiceSMARTComponent, ServiceNFSComponent, ServiceTFTPComponent, ServiceUPSComponent, ServiceDDNSComponent,
-    ServiceCIFSComponent, ServiceSMBComponent, ServiceSNMPComponent,
+    ServiceSMBComponent, ServiceSNMPComponent,
     ServiceWebdavComponent, ServiceS3Component, ServicesTableComponent
   ],
   providers : [UserService]
