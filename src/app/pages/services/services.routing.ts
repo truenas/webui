@@ -2,7 +2,6 @@ import {ModuleWithProviders} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 
 import {ServiceAFPComponent} from './components/service-afp/';
-import {ServiceCIFSComponent} from './components/service-cifs/';
 import {ServiceDDNSComponent} from './components/service-dynamicdns/';
 import {ServiceFTPComponent} from './components/service-ftp/';
 import {ServiceLLDPComponent} from './components/service-lldp/';
