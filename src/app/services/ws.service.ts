@@ -172,7 +172,7 @@ export class WebSocketService {
     });
   }
 
-  call(method, params?: any): Observable<any> {
+  call(method, params?: any, debug = false): Observable<any> {
 
     let uuid = UUID.UUID();
     let payload =
@@ -183,6 +183,10 @@ export class WebSocketService {
         "args" : params,
         "observer" : observer,
       });
+
+      if (debug) {
+        console.log({ payload });
+      }
 
       this.send(payload);
     });

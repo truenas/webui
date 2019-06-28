@@ -177,6 +177,8 @@ export class VMWizardComponent {
           name: 'datastore',
           tooltip: helptext.datastore_tooltip,
           placeholder: helptext.datastore_placeholder,
+          blurStatus: true,
+          blurEvent: this.blurEvent3,
           options: [],
           isHidden: false,
           validation: [Validators.required],
@@ -266,7 +268,6 @@ export class VMWizardComponent {
 
   protected releaseField: any;
   protected currentServerVersion: any;
-  private datastore: any;
   private nic_attach: any;
   private nicType:  any;
   private bootloader: any;
@@ -371,7 +372,7 @@ export class VMWizardComponent {
           _.find(this.wizardConfig[3].fieldConfig, {'name' : 'datastore'}).hasErrors = false;
           _.find(this.wizardConfig[3].fieldConfig, {'name' : 'datastore'}).errors = null;
         const volsize = ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].value * 1073741824;
-        this.ws.call('filesystem.statfs',[datastore]).subscribe((stat)=> {
+        this.ws.call('filesystem.statfs',[`/mnt/${datastore}`]).subscribe((stat)=> {
           _.find(this.wizardConfig[3].fieldConfig, {'name' : 'volsize'})['hasErrors'] = false;
           _.find(this.wizardConfig[3].fieldConfig, {'name' : 'volsize'})['errors'] = '';
          if (stat.free_bytes < volsize ) {
@@ -415,7 +416,6 @@ export class VMWizardComponent {
       this.ws.call('vm.get_available_memory').subscribe((available_memory)=>{
         if (available_memory > 512 * 1048576) {
           this.res = res;
-          this.populate_ds();
           if (res === 'Windows') {
             ( < FormGroup > entityWizard.formArray.get([2])).controls['vcpus'].setValue(2);
             ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(4096);
@@ -471,7 +471,6 @@ export class VMWizardComponent {
       }
 
     });
-    this.populate_ds();
 
     this.networkService.getVmNicChoices().subscribe((res) => {
       this.nic_attach = _.find(this.wizardConfig[4].fieldConfig, {'name' : 'nic_attach'});
@@ -542,7 +541,7 @@ blurEvent3(parent){
     const datastore = parent.entityWizard.formArray.controls[3].value.datastore;
     const vm_name = parent.entityWizard.formGroup.value.formArray[1].name;
     if(datastore !== undefined && datastore !== "" && datastore !== "/mnt"){
-    parent.ws.call('filesystem.statfs',[datastore]).subscribe((stat)=> {
+    parent.ws.call('filesystem.statfs', [`/mnt/${datastore}`]).subscribe((stat)=> {
       if (stat.free_bytes < volsize ) {
         _.find(parent.wizardConfig[3].fieldConfig, {'name' : 'volsize'})['hasErrors'] = true;
         _.find(parent.wizardConfig[3].fieldConfig, {'name' : 'volsize'})['errors'] = `Cannot allocate ${volsize / (1073741824)} Gib to for storage virtual machine: ${vm_name}.`;
@@ -561,35 +560,6 @@ blurEvent3(parent){
   }
 }
 }
-populate_ds(this) {
-  this.ws.call('pool.dataset.query').subscribe((filesystem_res)=>{
-    this.datastore = _.find(this.wizardConfig[3].fieldConfig, { name : 'datastore' });
-    for (const idx in filesystem_res) {
-      if(!filesystem_res[idx].name.includes("/") && !filesystem_res[idx].name.includes("freenas-boot")){
-        this.datastore.options.push(
-          {label : filesystem_res[idx].name, value : filesystem_res[idx].name});
-      }
-    };
-    if (this.datastore.options.length > 0) {
-      this.entityWizard.formArray.get([3]).controls['datastore'].setValue('/mnt/'+this.datastore.options[0].value);
-      if (this.res) {
-        if (this.datastore.options[0].value !== undefined && this.datastore.options[0].value!==""){
-        this.ws.call('filesystem.statfs',['/mnt/'+this.datastore.options[0].value]).subscribe((stat)=> {
-          let storage = 10*1073741824
-          if (this.res === "Windows") { 
-            storage = 40*1073741824;
-          }
-          if (storage && stat.free_bytes < storage ) {
-            this.entityWizard.formArray.get([3]).controls['volsize'].setValue(Math.floor(stat.free_bytes/(1073741824))); 
-          };
-         });
-        };
-      }
-    }
-    
-
-  });
-};
 
 async customSubmit(value) {
     value.datastore = value.datastore.replace('/mnt/','')
