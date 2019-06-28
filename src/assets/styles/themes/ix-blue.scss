@@ -706,7 +706,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   // Style file trees to be highlighted with a theme color
   .node-content-wrapper:hover,
   .node-content-wrapper-focused{
-      // @include variable(background, --bg1, $bg1);
       background-color: var(--bg2);
   }
 
@@ -1267,7 +1266,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   mat-radio-group .tooltip .material-icons,
   mat-radio-group .tooltip .material-icons {
     position: relative;
-    top: 4px
+    top: 4px;
   }
 
   .navigation-hold#scroll-area .ps__scrollbar-y-rail {
