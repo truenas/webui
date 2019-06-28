@@ -1,0 +1,34 @@
+<mat-card>
+    <form>
+        <mat-expansion-panel *ngFor="let fc of fibreChannels; let fc_index = index ">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    {{fc.name}} - {{fc.state}}
+                </mat-panel-title>
+                <mat-panel-description>
+                    {{fc.wwpn}}
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+            <div class="form-wrap">
+                <ng-container *ngFor="let fieldSet of fieldSets; let i = index">
+                    <div [ngClass]="fieldSet.class" class="fieldset divider-{{fieldSet.divider}}" fxLayout="row wrap"
+                        fxLayoutAlign="start start" fxFlex="100%" fxFlex.gt-xs="calc({{fieldSets[i].width}} - 16px)">
+                        <mat-divider *ngIf="fieldSets[i].divider && i > 0"></mat-divider>
+                        <h4 *ngIf="fieldSet.label" class="fieldset-label">{{fieldSet.name}}</h4>
+                        <div *ngFor="let field of fieldSet.config; let ii = index" fxFlex="100%"
+                            fxFlex.gt-xs="calc({{field.width}} - 16px)"
+                            [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'"
+                            id="{{fieldSet.name}}-{{ii}}">
+                            <div id="form_field_{{field.name}}" dynamicField [config]="field" [group]="formArray.controls[fc_index]"
+                                [fieldShow]="isShow(field.name) ? 'show' :'hide'"></div>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </mat-expansion-panel>
+        <mat-card-actions>
+            <button class="btn btn-block btn-warning" type="submit" mat-button
+                color="primary">{{ "Save" | translate }}</button>
+        </mat-card-actions>
+    </form>
+</mat-card>
