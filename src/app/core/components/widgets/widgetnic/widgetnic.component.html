@@ -11,52 +11,59 @@
             </ng-template>-->
             <!--<button mat-button color="primary" class="" (click)="router.navigate(['reportsdashboard/cpu'])">CPU REPORTS</button>-->
         </mat-toolbar-row>
-        <!-- Chart -->
+        <!-- Carousel -->
         <div id="" class="carousel" #carousel>
-          <div fxFlex="100" class="slide">
-            <div class="left">
-              <div>
-                <div class="nic-name">{{nicState.name}}</div> 
+          <div fxFlex="100" class="slide" fxLayout="row" fxLayoutAlign="space-between">
+            <div class="left" fxFlex="50" fxLayout="column" fxLayoutAlign="space-around center">
 
-                <div class="link-state" [ngClass]="{'up': nicState.link_state == 'LINK_STATE_UP', 'down': nicState.link_state !== 'LINK_STATE_UP'}">
-                  {{linkState}}&nbsp;&nbsp;
+              <div fxFlex="95">
+                <div class="nic-name" [ngClass]="{ 'up': nicState.link_state == 'LINK_STATE_UP', 'down': nicState.link_state !== 'LINK_STATE_UP' }">
+                  {{nicState.name}}
                   <div class="icon-wrapper">
                     <mat-icon *ngIf="nicState.link_state == 'LINK_STATE_UP' " role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
                     <mat-icon *ngIf="nicState.link_state !== 'LINK_STATE_UP' " role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
                   </div>
-                </div>
-
-                <div *ngIf="traffic && nicState.link_state == 'LINK_STATE_UP'" class="nic-traffic">
-                  <div><strong>In: </strong><span class="stat">{{traffic["KB/s in"]}}</span> KB/s</div>
-                  <div><strong>Out: </strong><span class="stat">{{traffic["KB/s out"]}}</span> KB/s</div>
-                </div>
-
-                <div *ngIf="!traffic && nicState.link_state == 'LINK_STATE_UP'" class="nic-traffic-gathering">
-                  Gathering data...
                 </div> 
 
-                <div *ngIf="nicState.link_state !== 'LINK_STATE_UP'" class="no-nic-traffic">
-                  No Traffic
-                </div> 
+                <div class="link-state" [ngClass]="{'up': nicState.link_state == 'LINK_STATE_UP', 'down': nicState.link_state !== 'LINK_STATE_UP'}">
+                  {{linkState}}
+
+                  <div *ngIf="traffic && nicState.link_state == 'LINK_STATE_UP'" class="nic-traffic">
+                    <div><strong>In: </strong><span class="stat">{{traffic["KB/s in"]}}</span> KB/s</div>
+                    <div><strong>Out: </strong><span class="stat">{{traffic["KB/s out"]}}</span> KB/s</div>
+                  </div>
+
+                  <div *ngIf="!traffic && nicState.link_state == 'LINK_STATE_UP'" class="nic-traffic-gathering">
+                    Gathering data...
+                  </div> 
+
+                  <div *ngIf="nicState.link_state !== 'LINK_STATE_UP'" class="no-nic-traffic">
+                    No Traffic
+                  </div> 
+                </div>
 
               </div>
             </div>
-            <div class="right">
-              <ul>
-                <li><strong>Media Type: </strong>{{nicState.active_media_type}}</li>
-                <li><strong>Media Subtype: </strong>{{nicState.active_media_subtype}}</li>
-                <li><strong>IP Addresses: </strong>{{ipAddresses.length}}</li>
-              </ul>
+
+            <div class="right" fxFlex="50" fxLayout="column" fxLayoutAlign="space-around center">
+              <div fxFlex="75">
+                <ul>
+                  <li><strong>Media Type: </strong>{{nicState.active_media_type}}</li>
+                  <li><strong>Media Subtype: </strong>{{nicState.active_media_subtype}}</li>
+                  <li><strong>IP Addresses: </strong>{{ipAddresses.length}}</li>
+                </ul>
+              </div>
             </div>
+
           </div>
-          
-          
-          <div class="slide">
-            <ul > 
-              <li *ngFor="let ip of nicState.aliases;" [ngClass]="{'hidden': ip.type !== 'INET'}">
+
+
+          <div class="slide"fxFlex="100">
+            <mat-list > 
+              <mat-list-item role="listitem"*ngFor="let ip of nicState.aliases;" [ngClass]="{'hidden': ip.type !== 'INET'}">
                 {{ip.type}}: {{ip.address}}
-              </li>
-            </ul>
+              </mat-list-item>
+            </mat-list>
           </div>
         </div>
 
