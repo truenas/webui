@@ -191,11 +191,10 @@ export class ServiceSMBComponent {
         this.cifs_srv_guest.options.push({ label: user.username, value: user.username });
       });
     });
-    this.userService.listAllGroups().subscribe(res => {
-      let groups = [];
-      let items = res.data.items;
+    this.userService.groupQueryDSCache().subscribe(items => {
+      const groups = [];
       items.forEach((item) => {
-        groups.push({label: item.label, value: item.id});
+        groups.push({label: item.group, value: item.group});
       });
       this.cifs_srv_admin_group = _.find(this.fieldConfig, {'name':'cifs_srv_admin_group'});
       groups.forEach((group) => {
@@ -227,11 +226,10 @@ export class ServiceSMBComponent {
   }
 
   updateGroupSearchOptions(value = "", parent) {
-    parent.userService.listAllGroups(value).subscribe(res => {
-      let groups = [];
-      let items = res.data.items;
+    parent.userService.groupQueryDSCache(value).subscribe(items => {
+      const groups = [];
       for (let i = 0; i < items.length; i++) {
-        groups.push({label: items[i].label, value: items[i].id});
+        groups.push({label: items[i].group, value: items[i].group});
       }
         parent.cifs_srv_admin_group.searchOptions = groups;
     });
