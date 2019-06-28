@@ -25,7 +25,7 @@ int_description_tooltip : T('Enter a description of the interface.'),
 
 int_name_placeholder : T('Name'),
 int_name_tooltip : T('Read-only when editing an interface. Enter a\
- name to use for the the interface. Use the format laggX, vlanX, or\
+ name to use for the the interface. Use the format <samp>lagg<i>X</i></samp>, <samp>vlan<i>X</i></samp>, or\
  bridgeX where X is a number representing a non-parent interface.'),
 int_name_validation : [ Validators.required ],
 
