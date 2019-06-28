@@ -17,8 +17,8 @@ int_type_options: [
 ],
 
 int_interface_placeholder : T('NIC'),
-int_interface_tooltip : T('Enter the FreeBSD device name of the interface. This\
- cannot be changed after the interface is created.'),
+int_interface_tooltip : T('Enter the FreeBSD device name of the\
+ interface. This cannot be changed after the interface is created.'),
 int_interface_validation : [ Validators.required ],
 
 int_description_placeholder : T('Description'),
@@ -27,9 +27,9 @@ int_description_tooltip : T('Enter a description of the interface.'),
 int_name_placeholder : T('Name'),
 int_name_tooltip : T('Enter a name to use for the the interface.\
  Use the format <samp>lagg<i>X</i></samp>,\
- <samp>vlan<i>X</i></samp>, or bridgeX where X is a number\
- representing a non-parent interface. Read-only when editing an\
- interface.'),
+ <samp>vlan<i>X</i></samp>, or <samp>bridge<i>X</i></samp> where\
+ <i>X</i> is a number representing a non-parent interface. Read-only\
+ when editing an interface.'),
 int_name_validation : [ Validators.required ],
 
 int_dhcp_placeholder : T('DHCP'),
