@@ -2,7 +2,7 @@ import {Component, OnDestroy} from '@angular/core';
 import {Router} from '@angular/router';
 import {interval} from 'rxjs';
 
-import { WebSocketService, NetworkService } from '../../../../services';
+import { WebSocketService, NetworkService, DialogService } from '../../../../services';
 import { T } from '../../../../translate-marker';
 import { MatSnackBar } from '@angular/material';
 import helptext from '../../../../helptext/network/interfaces/interfaces-list';
@@ -38,6 +38,7 @@ export class InterfacesListComponent implements OnDestroy {
   public checkin_timeout_pattern = /\d+/;
   public checkin_remaining = null;
   checkin_interval;
+  public ha_enabled = false;
 
   public columns: Array<any> = [
     {name : T('Name'), prop : 'name'},
@@ -56,7 +57,7 @@ export class InterfacesListComponent implements OnDestroy {
   };
 
   constructor(private ws: WebSocketService, private router: Router, private networkService: NetworkService,
-              private snackBar: MatSnackBar) {}
+              private snackBar: MatSnackBar, private dialog: DialogService) {}
 
   dataHandler(res) {
     const rows = res.rows;
@@ -97,6 +98,30 @@ export class InterfacesListComponent implements OnDestroy {
 
   }
 
+  getActions(row) {
+    return [{
+      id: "edit",
+      label: T("Edit"),
+      onClick: (rowinner) => { 
+        if(this.ha_enabled) {
+          this.dialog.Info(helptext.ha_enabled_edit_title, helptext.ha_enabled_delete_msg);
+        } else {
+          this.entityList.doEdit(rowinner.id);
+        }
+      },
+    }, {
+      id: "delete",
+      label: T("Delete"),
+      onClick: (rowinner) => {
+        if(this.ha_enabled) {
+          this.dialog.Info(helptext.ha_enabled_delete_title, helptext.ha_enabled_delete_msg);
+        } else {
+          this.entityList.doDelete(rowinner);
+        }
+      },
+    }]
+  }
+
   preInit(entityList) {
     this.pending_changes_text = helptext.pending_changes_text;
     this.pending_checkin_text = helptext.pending_checkin_text + " " + helptext.pending_checkin_text_2;
@@ -107,6 +132,18 @@ export class InterfacesListComponent implements OnDestroy {
       this.checkPendingChanges();
       this.checkWaitingCheckin();
     });
+
+    if (window.localStorage.getItem('is_freenas') === 'false') {
+      this.ws.call('failover.licensed').subscribe((is_ha) => {
+        if (is_ha) {
+          this.ws.call('failover.disabled_reasons').subscribe((failover_disabled) => {
+            if (failover_disabled.length === 0) {
+              this.ha_enabled = true;
+            }
+          });
+        }
+      });
+    }
   }
 
   checkPendingChanges() {
