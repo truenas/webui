@@ -11,12 +11,28 @@ import helptext from 'app/helptext/services/components/service-netdata';
   template : ` <entity-form [conf]="this"></entity-form>`
 })
 export class ServiceNetDataComponent {
-    protected resource_name: string = 'services/netdata';
-    protected isBasicMode: boolean = true;
-    protected isEntity: boolean = true;
+    protected resource_name = 'services/netdata';
+    protected isBasicMode = true;
+    protected isEntity = true;
     protected route_success: string[] = [ 'services' ];
     protected addCall = 'netdata.update';
     protected queryCall = 'netdata.config';
+    private bind: any;
+    private alarms: any;
+    private allAlarmEntries: any;
+    public custActions: Array<any> = [
+      {
+          id : 'basic_mode',
+          name : 'Basic Mode',
+          function : () => { this.isBasicMode = !this.isBasicMode; }
+      },
+      {
+          'id' : 'advanced_mode',
+          name : 'Advanced Mode',
+          function : () => { this.isBasicMode = !this.isBasicMode; }
+      }
+    ];
+
     public fieldConfig: FieldConfig[] = []
     public fieldSets: FieldSet[] = [
         {
@@ -34,37 +50,41 @@ export class ServiceNetDataComponent {
                     name : 'history',
                     placeholder : helptext.history.placeholder,
                     tooltip: helptext.history.tooltip,
-                    validation: helptext.history.validation
-                    
+                    validation: helptext.history.validation,
+                    required: true
                 },
                 {
                     type : 'input',
                     name : 'update_every',
                     placeholder : helptext.update_every.placeholder,
                     tooltip: helptext.update_every.tooltip,
-                    validation: helptext.update_every.validation
+                    validation: helptext.update_every.validation,
+                    required: true
                 },
                 {
                     type : 'input',
                     name : 'http_port_listen_backlog',
                     placeholder : helptext.http_port_listen_backlog.placeholder,
                     tooltip: helptext.http_port_listen_backlog.tooltip,
-                    validation: helptext.http_port_listen_backlog.validation
+                    validation: helptext.http_port_listen_backlog.validation,
+                    required: true
                 },
                 {
                     type : 'select',
-                    name : 'bind', // array of strings [{'string'}] ???
+                    name : 'bind',
                     placeholder : helptext.bind.placeholder,
                     tooltip: helptext.bind.tooltip,
                     options: [],
                     multiple : true,
+                    required: true
                 },
                 {
                     type : 'input',
                     name : 'port',
                     placeholder : helptext.port.placeholder,
                     tooltip: helptext.port.tooltip,
-                    validation: helptext.port.validation
+                    validation: helptext.port.validation,
+                    required: true
                 },
                 {
                     type : 'textarea',
@@ -115,21 +135,27 @@ export class ServiceNetDataComponent {
                     name : 'destination',
                     placeholder : helptext.destination.placeholder,
                     tooltip: helptext.destination.tooltip,
-                    isHidden: true
+                    isHidden: true,
+                    required: true,
+                    validation: helptext.destination.validation
                 },
                 {
-                    type : 'input', 
+                    type : 'input',
                     name : 'api_key',
                     placeholder : helptext.api_key.placeholder,
                     tooltip: helptext.api_key.tooltip,
-                    isHidden: true
+                    isHidden: true,
+                    required: true,
+                    validation: helptext.api_key.validation
                 },
                 {
-                    type : 'input', 
+                    type : 'input',
                     name : 'allow_from',
                     placeholder : helptext.allow_from.placeholder,
                     tooltip: helptext.allow_from.tooltip,
-                    isHidden: true
+                    isHidden: true,
+                    required: true,
+                    validation: helptext.allow_from.validation
                 }
             ]
         }
@@ -148,35 +174,15 @@ export class ServiceNetDataComponent {
     ];
 
     isCustActionVisible(actionId: string) {
-        if (actionId == 'advanced_mode' && this.isBasicMode == false) {
+        if (actionId === 'advanced_mode' && this.isBasicMode === false) {
             return false;
-        } else if (actionId == 'basic_mode' && this.isBasicMode == true) {
+        } else if (actionId === 'basic_mode' && this.isBasicMode === true) {
             return false;
         }
         return true;
     }
 
-    public custActions: Array<any> = [
-        {
-            id : 'basic_mode',
-            name : 'Basic Mode',
-            function : () => { this.isBasicMode = !this.isBasicMode; }
-        },
-        {
-            'id' : 'advanced_mode',
-            name : 'Advanced Mode',
-            function : () => { this.isBasicMode = !this.isBasicMode; }
-        }
-    ];
-
-    private bind: any;
-    private alarms: any;
-    private allAlarmEntries: any;
-
-    constructor(
-        protected router: Router,
-        protected ws: WebSocketService,
-    ) {}
+    constructor(protected router: Router, protected ws: WebSocketService) {}
 
     afterInit(entity: any) {
         entity.formGroup.controls['stream_mode'].valueChanges.subscribe((res) => {
@@ -196,23 +202,23 @@ export class ServiceNetDataComponent {
         });
 
         this.ws.call(this.queryCall).subscribe((res) => {
-            console.log(res);
             entity.formGroup.controls['history'].setValue(res.history);
             entity.formGroup.controls['update_every'].setValue(res.update_every);
             entity.formGroup.controls['http_port_listen_backlog'].setValue(res.http_port_listen_backlog);
-           
+
             // bind
             this.bind = _.find(this.fieldConfig, {'name' : 'bind'});
             res.bind.forEach((item) => {
                 this.bind.options.push(
                     {label : item, value : item});
             });
-            
+            entity.formGroup.controls['bind'].setValue(res.bind);
+
             entity.formGroup.controls['port'].setValue(res.port);
-            entity.formGroup.controls['additional_params'].setValue(res.additional_params);
-            
+            entity.formGroup.controls['additional_params'].setValue(res.additional_params.substring(2));
+
             //alarms
-            let currentAlarms = [];
+            const currentAlarms = [];
             this.alarms = _.find(this.fieldConfig, {'name' : 'alarms'});
             this.allAlarmEntries = Object.entries(res.alarms);
             for (const [name, value] of this.allAlarmEntries) {
@@ -223,13 +229,13 @@ export class ServiceNetDataComponent {
             }
             entity.formGroup.controls['alarms'].setValue(currentAlarms);
             entity.formGroup.controls['stream_mode'].setValue(res.stream_mode);
-            
+
             //destination
             let destStr = '';
             if (res.destination && typeof(res.destination) !== 'string') {
                 for (let i = 0; i < res.destination.length; i++) {
-                    i !== res.destination.length - 1 ? 
-                        destStr += res.destination[i] + ', ' : 
+                    i !== res.destination.length - 1 ?
+                        destStr += res.destination[i] + ', ' :
                         destStr += res.destination[i];
                 }
             };
@@ -241,18 +247,18 @@ export class ServiceNetDataComponent {
     }
 
     hideField(fieldName: any, show: boolean, entity: any) {
-        let target = _.find(this.fieldConfig, {'name' : fieldName});
+        const target = _.find(this.fieldConfig, {'name' : fieldName});
         target['isHidden'] = show;
         entity.setDisabled(fieldName, show, show);
     }
 
     beforeSubmit(data: any){
-        console.log(data);
+        // Parse alarms
         const values = Object.values(this.allAlarmEntries)
-        for (let value of values) {
+        for (const value of values) {
             value[1] = {enabled: false};
         }
-        let obj = {};
+        const obj = {};
         data.alarms.forEach((alarm) => {
             this.allAlarmEntries.forEach((entry) =>  {
                 if (alarm === entry[0]) {
@@ -262,8 +268,20 @@ export class ServiceNetDataComponent {
             });
         });
         data.alarms = obj;
-        data.destination = data.destination.replace(/\n/g, ' ').replace(/,/g, '').split(' ');
-        console.log(data.destination)
+
+        // Parse destination
+        if (data.destination) {
+          data.destination = data.destination.replace(/\n/g, ' ').replace(/,/g, ' ').split(' ');
+          const tempArr = [];
+          for (let i = 0; i < data.destination.length; i++) {
+            if (data.destination[i] !== ' ' && data.destination[i] !== '') {
+              tempArr.push(data.destination[i]);
+            }
+          }
+          data.destination = tempArr;
+        }
+
+        // Remove form labels
         delete data.global_label;
         delete data.streaming_label;
     }

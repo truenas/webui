@@ -16,12 +16,12 @@ export default {
     update_every: {
         placeholder : T('Update Frequency'),
         tooltip: T('The frequency, in seconds, for data collection.'),
-        validation: [regexValidator(/^\d+$/) ]
+        validation: [Validators.required, regexValidator(/^\d+$/) ]
     },
     http_port_listen_backlog: {
         placeholder : T('HTTP Port Listen Backlog'),
         tooltip: T('The port backlog'),
-        validation: [ regexValidator(/^\d+$/) ]
+        validation: [ Validators.required, regexValidator(/^\d+$/) ]
     },
     bind: {
         placeholder : T('Bind to'),
@@ -34,10 +34,11 @@ export default {
     },
     additional_params: {
         placeholder : T('Additional parameters'),
-        tooltip: T('Define other sections and their respective key, value pairs if any. The following \
- format should be followed: <br>\
- [Section name] <br> \
-    key=value')
+        tooltip: T('Define other sections and their respective key/value pairs (if any). Enclose each\
+ section name in square brackets, and put each key/value pair on a new line. Example: <br>\
+ [system.intr] <br> \
+ history=86400 <br> \
+ enabled=yes')
     },
 
     alarms: {
@@ -54,17 +55,21 @@ export default {
     destination: {
         placeholder : T('Destination'),
         tooltip: T('Please provide line/space separated list of destinations where the\
- collected metrics are to be sent in the format HOST:PORT')
+ collected metrics are to be sent in the format HOST:PORT (port is optional). Netdata\
+ will use the first working destination.'),
+        validation: [Validators.required]
     },
     api_key: {
         placeholder : T('API Key'),
         tooltip: T('The API_KEY to use (as the sender). This must be a valid UUID, and\
- can be generated in command line by typing "uuidgen".')
+ can be generated in command line by typing "uuidgen".'),
+        validation: [Validators.required]
     },
     allow_from: {
         placeholder : T('Allow from'),
         tooltip: T('A list of simple patterns matching the IPs of the servers that will\
- be pushing metrics using this API key.')
-    }                 
+ be pushing metrics using this API key.'),
+        validation: [Validators.required]
+    }
 
 }
