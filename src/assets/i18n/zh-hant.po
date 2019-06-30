@@ -17,12 +17,6 @@ msgid " Plugin"
 msgstr ""
 
 msgid ""
-" The number of file transfers to run in parallel. It can sometimes be "
-"useful to set this to a smaller number if the remote is giving a lot of "
-"timeouts, or a larger number if there is high bandwidth and a fast remote."
-msgstr ""
-
-msgid ""
 " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network "
 "port number of the UPS <i>Master</i> system. The default port is "
 "<i>3493</i>."
@@ -167,7 +161,7 @@ msgstr ""
 
 msgid ""
 "<b>Ctrl+C</b> kills a foreground process.<br>                            "
-"Many utilities are built-in:<br> <b>Iperf</b>,                            "
+"Many utilities are built-in:<br> b>Iperf</b>,                            "
 "<b>Netperf</b>, <b>IOzone</b>, <b>arcsat</b>,                            "
 "<b>tw_cli</b>, <br><b>MegaCli</b>,                            "
 "<b>freenas-debug</b>, <b>tmux</b>,                            "
@@ -179,16 +173,12 @@ msgid ""
 msgstr ""
 
 msgid ""
-"<b>Ctrl+C</b> kills a foreground process.<br>                            "
-"Many utilities are built-in:<br> b>Iperf</b>,                            "
-"<b>Netperf</b>, <b>IOzone</b>, <b>arcsat</b>,                            "
-"<b>tw_cli</b>, <br><b>MegaCli</b>,                            "
-"<b>freenas-debug</b>, <b>tmux</b>,                            "
-"<b>Dmidecode</b>.<br> Refer to the <a                            "
-"href=\"%%docurl%%/cli.html\"                            "
-"target=\"_blank\">Command Line Utilities</a>                            "
-"chapter in the guide for usage information                            and "
-"examples."
+"<b>Ctrl+C</b> kills a foreground process.<br>    Many utilities are "
+"built-in:<br> <b>Iperf</b>,    <b>Netperf</b>, <b>IOzone</b>, "
+"<b>arcsat</b>,    <b>tw_cli</b>, <br><b>MegaCli</b>,    "
+"<b>freenas-debug</b>, <b>tmux</b>,    <b>Dmidecode</b>.<br> Refer to the <a "
+"   href=\"%%docurl%%/cli.html\"    target=\"_blank\">Command Line "
+"Utilities</a>    chapter in the guide for usage information    and examples."
 msgstr ""
 
 msgid "<b>Not recommended.</b> Allow multiple groups to share the same group ID."
@@ -614,6 +604,9 @@ msgstr "加入新快照的名稱"
 msgid "Add a name for the new snapshot."
 msgstr "加入新快照的名稱。"
 
+msgid "Add a naming schema for the new snapshot"
+msgstr ""
+
 msgid ""
 "Add an <a href=\"%%docurl%%/system.html#certificates\" "
 "target=\"_blank\">SSL certificate</a> to be used for secure S3 connections."
@@ -830,12 +823,6 @@ msgstr ""
 msgid "Allow DNS updates"
 msgstr "允許 DNS 更新"
 
-msgid "Allow Empty Password"
-msgstr "允許空白密碼"
-
-msgid "Allow Execute Always"
-msgstr "允許永遠執行"
-
 msgid "Allow Guest Access"
 msgstr "允許訪客存取"
 
@@ -853,6 +840,9 @@ msgstr "允許 Root 登入"
 
 msgid "Allow TCP port forwarding"
 msgstr "允許 TCP 埠轉送"
+
+msgid "Allow Taking Empty Snapshots"
+msgstr ""
 
 msgid "Allow Transfer Resumption"
 msgstr "允許重新傳輸"
@@ -951,9 +941,6 @@ msgstr "允許密碼驗證"
 
 msgid "Allow repeated GIDs"
 msgstr "允許重複 GID"
-
-msgid "Allow taking empty snapshots"
-msgstr ""
 
 msgid ""
 "Allow the jail hostname to be changed with <a "
@@ -1100,9 +1087,6 @@ msgid "Are you sure you want to sync to peer?"
 msgstr ""
 
 msgid "Are you sure?"
-msgstr ""
-
-msgid "Asigra successfully updated."
 msgstr ""
 
 msgid ""
@@ -1258,9 +1242,6 @@ msgstr "頻寬限制"
 
 msgid "Base DN"
 msgstr "基礎 DN"
-
-msgid "Base Filesystem"
-msgstr ""
 
 msgid "Base Name"
 msgstr "基本名稱"
@@ -1526,6 +1507,9 @@ msgstr "異動記錄"
 msgid ""
 "Change the default password to improve system security. The new password "
 "cannot contain a space or <b>#</b>."
+msgstr ""
+
+msgid "Changes Submitted"
 msgstr ""
 
 msgid "Changes will revert after "
@@ -2138,6 +2122,13 @@ msgstr "聯絡人"
 msgid "Container"
 msgstr "容器"
 
+msgid ""
+"Context menu copy and paste operations     are disabled in the Shell. Copy "
+"and paste     shortcuts for Mac are <i>Command+c</i> and     "
+"<i>Command+v</i>. For most operating     systems, use <i>Ctrl+Insert</i> to "
+"copy and     <i>Shift+Insert</i> to paste."
+msgstr ""
+
 msgid "Continue"
 msgstr "繼續"
 
@@ -2226,9 +2217,6 @@ msgstr "建立儲存集區："
 msgid "Create a recommended formation of vdevs in a pool."
 msgstr ""
 
-msgid "Create a snapshot of the dataset before pushing data."
-msgstr ""
-
 msgid "Create new Pool"
 msgstr "建立新儲存集區"
 
@@ -2246,6 +2234,12 @@ msgstr "建立或匯入儲存集區"
 
 msgid "Create or Import pool"
 msgstr "建立或匯入儲存集區"
+
+msgid ""
+"Creates dataset snapshots when there are no changes. Set to support "
+"periodic snapshot schedules and replications created in %brand% 11.2 and "
+"earlier."
+msgstr ""
 
 msgid "Creating Jail"
 msgstr "正在建立 Jail"
@@ -2307,9 +2301,6 @@ msgstr "DNS 逾時"
 
 msgid "DNS timeout in seconds. Increase this value if DNS queries timeout."
 msgstr ""
-
-msgid "DOS Charset"
-msgstr "DOS 字元編碼"
 
 msgid "Dashboard"
 msgstr "資訊看板"
@@ -2669,9 +2660,6 @@ msgstr "目錄與權限"
 msgid "Directory"
 msgstr "目錄"
 
-msgid "Directory Mask"
-msgstr "目錄遮罩"
-
 msgid "Directory Permission"
 msgstr "目錄權限"
 
@@ -2787,9 +2775,6 @@ msgstr "網域帳戶密碼"
 
 msgid "Domain Forest Level"
 msgstr "網域樹系等級"
-
-msgid "Domain Logons"
-msgstr "登入網域"
 
 msgid "Domain Name"
 msgstr "網域名稱"
@@ -3839,6 +3824,9 @@ msgstr "錯誤："
 msgid "Error: Displaying local fetched releases failed."
 msgstr ""
 
+msgid "Error: Displaying templates failed."
+msgstr ""
+
 msgid "Error: Fetching remote release choices failed."
 msgstr ""
 
@@ -3965,9 +3953,6 @@ msgstr "取得並安裝更新"
 
 msgid "File"
 msgstr "檔案"
-
-msgid "File Mask"
-msgstr "檔案遮罩"
 
 msgid "File Permission"
 msgstr "檔案權限"
@@ -4277,9 +4262,6 @@ msgstr ""
 
 msgid "Hostname or IP address of SMTP server to use for sending this email."
 msgstr ""
-
-msgid "Hostnames Lookups"
-msgstr "主機名稱反查"
 
 msgid ""
 "Hostnames or IP addresses of the ISNS servers to be registered with the "
@@ -4789,9 +4771,6 @@ msgstr "網路聚合協定"
 msgid "Language"
 msgstr "語言"
 
-msgid "Launch DS Operator"
-msgstr ""
-
 msgid ""
 "Leave blank when using AWS. The available buckets are fetched  dynamically. "
 "Enter a  <a "
@@ -4821,6 +4800,9 @@ msgstr ""
 
 msgid "License"
 msgstr "授權"
+
+msgid "License has been updated."
+msgstr ""
 
 msgid "Lifetime"
 msgstr "存留時間"
@@ -5179,6 +5161,11 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Must match Peer Secret (Confirm) and be between 12 and 16 characters in "
+"length. Cannot be the same as Secret."
+msgstr ""
+
+msgid ""
 "Must match Windows workgroup name. This setting is ignored if the <a "
 "href=\"%%docurl%%/directoryservices.html#active-directory\" "
 "target=\"_blank\">Active Directory</a> or <a "
@@ -5231,6 +5218,9 @@ msgstr "輸入 Jail 名稱與選擇 FreeBSD 版本"
 msgid "Name Servers"
 msgstr "名稱伺服器"
 
+msgid "Name and Naming Schema cannot be provided at the same time."
+msgstr ""
+
 msgid "Name of NIS domain."
 msgstr "NIS 網域名稱。"
 
@@ -5253,6 +5243,12 @@ msgid ""
 "initiators use the initiator name as the user name."
 msgstr ""
 
+msgid "Name or Naming Schema is required. Only one field can be used at a time."
+msgstr ""
+
+msgid "Name or Naming Schema must be provided."
+msgstr ""
+
 msgid "Nameserver 1"
 msgstr "名稱伺服器 1"
 
@@ -5271,14 +5267,8 @@ msgstr ""
 msgid "NetBIOS Alias"
 msgstr "NetBIOS 別名"
 
-msgid "NetBIOS Alias:"
-msgstr "NetBIOS 別名："
-
 msgid "NetBIOS Name"
 msgstr "NetBIOS 名稱"
-
-msgid "NetBIOS Name:"
-msgstr "NetBIOS 名稱："
 
 msgid "NetBIOS alias"
 msgstr "NetBIOS 別名"
@@ -5493,6 +5483,13 @@ msgid "Number of servers"
 msgstr "伺服器數量"
 
 msgid ""
+"Number of simultaneous file transfers. Enter a number based on the "
+"available bandwidth and destination system performance. See <a "
+"href=\"https://rclone.org/docs/#transfers-n\" target=\"_blank\">rclone "
+"--transfers</a>."
+msgstr ""
+
+msgid ""
 "Number of virtual CPUs to allocate to the virtual machine. The maximum is "
 "16, or fewer if the host CPU limits the maximum. The VM operating system "
 "might also have operational or licensing restrictions on the number of CPUs."
@@ -5521,9 +5518,6 @@ msgstr "確定"
 
 msgid "OS Version"
 msgstr "作業系統版本"
-
-msgid "Obey Pam Restrictions"
-msgstr ""
 
 msgid ""
 "Off by default. When set, <a "
@@ -6464,6 +6458,9 @@ msgstr "儲存"
 msgid "Save Config"
 msgstr "儲存設定"
 
+msgid "Save License"
+msgstr ""
+
 msgid "Save Network Interface Changes"
 msgstr "儲存網路介面的修改"
 
@@ -6838,9 +6835,6 @@ msgstr ""
 msgid "Select the appropriate level of criticality."
 msgstr ""
 
-msgid "Select the base filesystem."
-msgstr ""
-
 msgid ""
 "Select the certificate of the Active Directory server if SSL connections "
 "are used. Add a certificate here by creating a <a "
@@ -7035,12 +7029,6 @@ msgstr "序列埠速度"
 
 msgid "Serve UDP NFS clients"
 msgstr "支援 UDP NFS 客戶端"
-
-msgid "Server Maximum Protocol"
-msgstr ""
-
-msgid "Server Minimum Protocol"
-msgstr ""
 
 msgid "Server Role"
 msgstr "伺服器角色"
@@ -7333,12 +7321,6 @@ msgid ""
 "Set to allow users to bypass firewall restrictions using the SSH port <a "
 "href=\"https://www.symantec.com/connect/articles/ssh-port-forwarding\" "
 "target=\"_blank\">forwarding feature</a>."
-msgstr ""
-
-msgid ""
-"Set to allow using hostnames rather than IP addresses in the <i>Hosts "
-"Allow</b> or </i>Hosts Deny</b> fields of a SMB share. Leave this option "
-"unset when IP addresses are used to avoid the delay of a host lookup."
 msgstr ""
 
 msgid "Set to always show advanced fields, when available."
@@ -7651,6 +7633,9 @@ msgid ""
 msgstr ""
 
 msgid "Set to switch from NFSv3 to NFSv4."
+msgstr ""
+
+msgid "Set to take a snapshot of the dataset before a <i>PUSH</i> or <i>PULL</i>."
 msgstr ""
 
 msgid ""
@@ -8604,9 +8589,6 @@ msgstr ""
 msgid "Time Machine Quota"
 msgstr "Time Machine 配額"
 
-msgid "Time Server For Domain"
-msgstr "網域時間伺服器"
-
 msgid "Time remaining until changes reverted:"
 msgstr ""
 
@@ -8688,9 +8670,6 @@ msgstr ""
 msgid "Unix (NFS) Shares"
 msgstr "Unix 共用 (NFS)"
 
-msgid "Unix Extensions"
-msgstr ""
-
 msgid "Unlock"
 msgstr "解鎖"
 
@@ -8739,6 +8718,9 @@ msgid "Update File"
 msgstr "更新檔案"
 
 msgid "Update File Temporary Storage Location"
+msgstr ""
+
+msgid "Update License"
 msgstr ""
 
 msgid "Update Period"
@@ -8914,6 +8896,9 @@ msgid "User Distinguished Name (DN) to use for authentication."
 msgstr ""
 
 msgid "User Distinguished Name to use for authentication."
+msgstr ""
+
+msgid "User Guide (pdf)"
 msgstr ""
 
 msgid "User ID"
