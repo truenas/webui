@@ -134,4 +134,8 @@ export class EntityUtils {
                ? false
                : !!v;
   }
+
+  array1DToLabelValuePair(arr: any[]): { label: string, value: any }[] {
+    return arr.map(value => ({ label: value.toString(), value }))
+  }
 }

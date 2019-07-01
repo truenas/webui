@@ -24,3 +24,9 @@
 .rightside-content-hold {
 	padding-bottom: 5px;
 }
+
+.hostname-label {
+	text-align: center;
+	font-size: smaller;
+	margin: -8px 0;
+}

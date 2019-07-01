@@ -2,7 +2,6 @@ import {ModuleWithProviders} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 
 import {ServiceAFPComponent} from './components/service-afp/';
-import {ServiceCIFSComponent} from './components/service-cifs/';
 import {ServiceDDNSComponent} from './components/service-dynamicdns/';
 import {ServiceFTPComponent} from './components/service-ftp/';
 import {ServiceLLDPComponent} from './components/service-lldp/';
@@ -21,7 +20,6 @@ import {ServiceTFTPComponent} from './components/service-tftp/';
 import {ServiceUPSComponent} from './components/service-ups/';
 import {ServiceWebdavComponent} from './components/service-webdav/';
 import {Services} from './services.component';
-import { ServiceAsigraComponent } from './components/service-asigra';
 
 export const routes: Routes = [
   {
@@ -38,11 +36,6 @@ export const routes: Routes = [
     data: { title: 'AFP', breadcrumb: 'AFP'},
     path : 'afp',
     component : ServiceAFPComponent,
-  },
-  {
-    data: { title: 'Asigra', breadcrumb: 'Asigra'},
-    path : 'asigra',
-    component : ServiceAsigraComponent,
   },
   {
     data: { title: 'FTP', breadcrumb: 'FTP'},

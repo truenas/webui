@@ -706,7 +706,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   // Style file trees to be highlighted with a theme color
   .node-content-wrapper:hover,
   .node-content-wrapper-focused{
-      @include variable(background, --bg1, $bg1);
+      background-color: var(--bg2);
   }
 
   // Give vdev arrow buttons theme colors
@@ -1277,6 +1277,16 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   .navigation-hold#scroll-area .ps__scrollbar-y-rail {
     top: 50px !important;
+  }
+
+  .tooltiptext samp {
+      background: rgba(255, 255, 255, 0.25);
+  }
+
+  tree-node-content span {
+    position: relative;
+    top: -7px;
+    left: 3px;
   }
 
  } // end of ix theme

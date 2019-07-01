@@ -8,7 +8,6 @@ import {EntityModule} from '../common/entity/entity.module';
 import {AppConfirmModule} from "../../services/app-confirm/app-confirm.module";
 
 import {ServiceAFPComponent} from './components/service-afp';
-import {ServiceCIFSComponent} from './components/service-cifs';
 import {ServiceDDNSComponent} from './components/service-dynamicdns';
 import {ServiceFTPComponent} from './components/service-ftp';
 import {ServiceLLDPComponent} from './components/service-lldp';
@@ -32,7 +31,6 @@ import {routing} from './services.routing';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { UserService } from '../../services/user.service';
-import { ServiceAsigraComponent } from './components/service-asigra/service-asigra.component';
 
 @NgModule({
   imports : [ CommonModule, FormsModule, EntityModule, routing, MaterialModule, AppConfirmModule, NgxDatatableModule, TranslateModule ],
@@ -40,9 +38,9 @@ import { ServiceAsigraComponent } from './components/service-asigra/service-asig
     Services, ServiceSSHComponent, ServiceAFPComponent,
     ServiceFTPComponent, ServiceLLDPComponent,
     ServiceRSYNCComponent, CconfigureRYSNCComponent,RSYNCconfigurationListComponent, RYSNCConfigurationFormComponent,
-    ServiceSMARTComponent, ServiceNFSComponent, ServiceNetDataComponent, ServiceTFTPComponent, ServiceUPSComponent, ServiceDDNSComponent,
-    ServiceCIFSComponent, ServiceSMBComponent, ServiceSNMPComponent,
-    ServiceWebdavComponent, ServiceS3Component, ServicesTableComponent, ServiceAsigraComponent
+    ServiceSMARTComponent, ServiceNFSComponent, ServiceNetDataComponent, ServiceTFTPComponent, ServiceUPSComponent,
+    ServiceDDNSComponent, ServiceSMBComponent, ServiceSNMPComponent,
+    ServiceWebdavComponent, ServiceS3Component, ServicesTableComponent
   ],
   providers : [UserService]
 })

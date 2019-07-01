@@ -1,5 +1,5 @@
 import { Component, Input } from "@angular/core";
-import { EntityRowDetails } from "./entity-row-details.interface";
+import { EntityAction, EntityRowDetails } from "./entity-row-details.interface";
 
 @Component({
   selector: "app-entity-row-details",
@@ -21,4 +21,8 @@ import { EntityRowDetails } from "./entity-row-details.interface";
 })
 export class EntityRowDetailsComponent {
   @Input() public conf: EntityRowDetails;
+
+  public isActionVisible(action: EntityAction): boolean {
+    return this.conf.isActionVisible ? this.conf.isActionVisible(action.id, this.conf.config) : true;
+  }
 }

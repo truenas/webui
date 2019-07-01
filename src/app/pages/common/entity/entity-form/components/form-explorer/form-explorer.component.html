@@ -20,7 +20,7 @@
                 <mat-icon>folder</mat-icon>
                 <span title="{{node.data.mountpoint}}">{{ node.data.name }}</span>
             </ng-template>
-            <ng-template #treeNodeTemplate let-node *ngIf="(config.explorerType == 'directory') || (config.explorerType == 'file') || !config.explorerType">
+            <ng-template #treeNodeTemplate let-node *ngIf="(config.explorerType == 'directory') || (config.explorerType == 'dataset') || (config.explorerType == 'file') || !config.explorerType">
                 <mat-icon *ngIf="node.data.hasChildren || node.data.children; else fileIcon">folder</mat-icon>
                 <ng-template #fileIcon><mat-icon>insert_drive_file</mat-icon></ng-template>
                 <span title="{{node.data.name}}">{{ node.data.subTitle }}</span>
