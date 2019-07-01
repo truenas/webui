@@ -306,6 +306,7 @@ export class ReplicationWizardComponent {
                     placeholder: replicationHelptext.source_datasets_placeholder,
                     tooltip: replicationHelptext.source_datasets_tooltip,
                     options: [],
+                    disabled: false,
                     required: true,
                     validation: [Validators.required],
                     isHidden: true,
@@ -326,6 +327,7 @@ export class ReplicationWizardComponent {
                         allowDrag: false,
                         useVirtualScroll: false,
                     },
+                    disabled: false,
                     required: true,
                     validation: [Validators.required],
                     isHidden: true,
@@ -547,6 +549,8 @@ export class ReplicationWizardComponent {
     }
 
     protected availSnapshottasks: any;
+    protected targetDatasetPush: any;
+    protected sourceDatasetPull: any;
 
     constructor(private router: Router, private keychainCredentialService: KeychainCredentialService,
         private loader: AppLoaderService, private dialogService: DialogService,
@@ -594,9 +598,14 @@ export class ReplicationWizardComponent {
                 this.disablefieldGroup(['cipher'], !this.entityWizard.formArray.controls[0].controls['ssh_credentials'].disabled, 0);
             }
         });
+
+        this.targetDatasetPush = _.find(this.wizardConfig[1].fieldConfig, { 'name': 'target_dataset_PUSH' });
+        this.sourceDatasetPull = _.find(this.wizardConfig[1].fieldConfig, { 'name': 'source_datasets_PULL' });
         this.entityWizard.formArray.controls[0].controls['ssh_credentials'].valueChanges.subscribe((value) => {
             const newSSH = value == 'NEW' ? true : false;
             this.disablefieldGroup([...this.sshFieldGroup, ...this.semiSSHFieldGroup, ...this.manualSSHFieldGroup], !newSSH, 0);
+            this.targetDatasetPush.disabled = newSSH;
+            this.sourceDatasetPull.disabled = newSSH;
             if (newSSH) {
                 this.blurEvent(this);
                 this.disablefieldGroup(['cipher'], this.entityWizard.formArray.controls[0].controls['transport'].value === 'SSH+NETCAT', 0);
@@ -670,6 +679,8 @@ export class ReplicationWizardComponent {
 
             this.disablefieldGroup(['source_datasets_PUSH', 'target_dataset_PUSH'], !disablePull, 1);
             this.disablefieldGroup(['source_datasets_PULL', 'target_dataset_PULL'], disablePull, 1);
+            this.targetDatasetPush.disabled = this.entityWizard.formArray.controls[0].controls['ssh_credentials'].value == 'NEW' ? true : false;
+            this.sourceDatasetPull.disabled = this.entityWizard.formArray.controls[0].controls['ssh_credentials'].value == 'NEW' ? true : false;
         });
 
         this.entityWizard.formArray.controls[1].controls['periodic_snapshot_tasks'].valueChanges.subscribe((value) => {
@@ -988,7 +999,13 @@ export class ReplicationWizardComponent {
         const transport = this.entityWizard.formArray.controls[0].controls['transport'].value;
         const sshCredentials = this.entityWizard.formArray.controls[0].controls['ssh_credentials'].value;
         return new Promise((resolve, reject) => {
-            resolve(this.replicationService.getRemoteDataset(transport,sshCredentials, this));
+            this.replicationService.getRemoteDataset(transport,sshCredentials, this).then(
+                (res) => {
+                    resolve(res);
+                },
+                (err) => {
+                    node.collapse();
+                })
         });
     }
 
