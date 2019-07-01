@@ -6,7 +6,7 @@ import { FieldConfig } from '../../../../common/entity/entity-form/models/field-
 import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.interface';
 import { EntityFormService } from '../../../../common/entity/entity-form/services/entity-form.service';
 import * as _ from 'lodash';
-import {EntityUtils} from '../../../../common/entity/utils';
+import { EntityUtils } from '../../../../common/entity/utils';
 
 @Component({
     selector: 'app-iscsi-fibre-channel-port',
@@ -63,46 +63,40 @@ export class FibreChannelPortComponent implements OnInit {
                         value: null,
                     }],
                     value: null,
-                    disabled: false,
-                    isHidden: false,
                 },
                 {
                     type: 'textarea',
                     name: 'initiators',
                     placeholder: 'Connected Initiators',
                     tooltip: '',
-                    disabled: false,
-                    isHidden: false,
                 }
             ]
         }
     ];
-    public fieldConfig: FieldConfig[];
+    public fieldConfig: FieldConfig[] = [];
     public formGroup: FormGroup;
 
     constructor(
         private ws: WebSocketService,
         private entityFormService: EntityFormService,
         private iscsiService: IscsiService) {
-            const targetField = _.find(this.fieldSets[1].config, { name: 'target' });
-            this.iscsiService.getTargets().subscribe(
-                (res) => {
-                    for (let i = 0; i < res.length; i++) {
-                        targetField.options.push({
-                            label: res[i].name,
-                            value: res[i].id,
-                        });
-                    }
-                },
-                (err) => {
-                    new EntityUtils().handleWSError(this, err, this.parent.dialogService);
+        const targetField = _.find(this.fieldSets[1].config, { name: 'target' });
+        this.iscsiService.getTargets().subscribe(
+            (res) => {
+                for (let i = 0; i < res.length; i++) {
+                    targetField.options.push({
+                        label: res[i].name,
+                        value: res[i].id,
+                    });
                 }
-            )
-        }
+            },
+            (err) => {
+                new EntityUtils().handleWSError(this, err, this.parent.dialogService);
+            }
+        )
+    }
 
     ngOnInit() {
-        // this.config.initiators = ['naa.5000000d668ad303', 'naa.5000000d668ad302', 'naa.5000000d668ad305', 'naa.5000000d668ad306','naa.5000000d668ad303', 'naa.5000000d668ad302', 'naa.5000000d668ad305', 'naa.5000000d668ad306','naa.5000000d668ad303', 'naa.5000000d668ad302', 'naa.5000000d668ad305', 'naa.5000000d668ad306','naa.5000000d668ad303', 'naa.5000000d668ad302', 'naa.5000000d668ad305', 'naa.5000000d668ad306'];
-        this.fieldConfig = [];
         for (let i = 0; i < this.fieldSets.length; i++) {
             const fieldset = this.fieldSets[i];
             if (fieldset.config) {
@@ -111,7 +105,7 @@ export class FibreChannelPortComponent implements OnInit {
         }
         this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
-        const targetField = _.find(this.fieldConfig, {name: 'target'});
+        const targetField = _.find(this.fieldConfig, { name: 'target' });
         this.formGroup.controls['mode'].valueChanges.subscribe((res) => {
             targetField.required = res == 'TARGET' ? true : false;
             if (res == 'TARGET') {
@@ -119,11 +113,12 @@ export class FibreChannelPortComponent implements OnInit {
                 this.formGroup.controls['target'].updateValueAndValidity();
             } else {
                 this.formGroup.controls['target'].clearValidators();
+                this.formGroup.controls['target'].updateValueAndValidity();
             }
         })
-        for (const i in this.config){
+        for (const i in this.config) {
             if (this.formGroup.controls[i]) {
-              this.formGroup.controls[i].setValue(this.config[i]);
+                this.formGroup.controls[i].setValue(this.config[i]);
             }
         }
     }
