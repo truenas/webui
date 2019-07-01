@@ -201,13 +201,36 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.conf.columns = this.allColumns; // Remove any alwaysDisplayed cols from the official list
     this.originalConfColumns = this.conf.columns; // to go back to defaults
 
+    // Keep track of original layout
+    if (this.originalConfColumns) {
+      this.originalConfColumns = [];
+
+      for (let item of this.allColumns) {
+        if (!item.hidden) {
+          this.originalConfColumns.push(item);
+        }
+      }
+    }
+
     // Get preferred list of columns from pref service
     let preferredCols = this.prefService.preferences.tableDisplayedColumns;
-    preferredCols.forEach((i) => {
-      if (i.title === this.title) {
-        this.conf.columns = i.cols;
-      }
-    });
+    // No preferences set for any table, show 'default' configuration
+    if (preferredCols.length === 0) {
+      this.conf.columns = this.originalConfColumns;  
+    } else {
+      preferredCols.forEach((i) => {
+        let match = 0;
+        // If preferred columns have been set for THIS table...
+        if (i.title === this.title) {
+          this.conf.columns = i.cols;
+          match++;
+        }
+        // If no preferred columns for THIS table, show 'default' configuration
+        if (match === 0) {
+          this.conf.columns = this.originalConfColumns;
+        }
+      });
+    }
 
     this.displayedColumns.push("action");
     if (this.conf.changeEvent) {
@@ -221,16 +244,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     // Delay spinner 500ms so it won't show up on a fast-loading page
     setTimeout(() => { this.setShowSpinner(); }, 500);
 
-    // Next section keeps track of original layout on big tables
-    if (this.originalConfColumns && this.originalConfColumns.length > 9) {
-      this.originalConfColumns = [];
 
-      for (let item of this.allColumns) {
-        if (!item.hidden) {
-          this.originalConfColumns.push(item);
-        }
-      }
-    }
       // End of layout section ------------                 
 
     this.erdService.attachResizeEventToElement("entity-table-component");
