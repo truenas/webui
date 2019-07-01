@@ -75,8 +75,6 @@ volsize_tooltip: T('Allocate a number of gigabytes of space for the\
  new zvol.'),
 volsize_validation: [Validators.required, Validators.min(1)],
 
-pool_detach_warning_paraText: T("Select zvol"),
-
 datastore_tooltip: T('Select a dataset for the new zvol.'),
 datastore_placeholder: T('Zvol Dataset Location'),
 
