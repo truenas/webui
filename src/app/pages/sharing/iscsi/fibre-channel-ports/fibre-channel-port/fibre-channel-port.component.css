@@ -1,3 +1,7 @@
+div.fc-row-detail {
+    padding: 10px 24px 10px 24px;
+}
+
 ul.initiators-list {
     max-height: 200px;
     overflow: auto;

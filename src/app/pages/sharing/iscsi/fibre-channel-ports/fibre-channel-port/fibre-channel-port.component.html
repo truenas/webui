@@ -1,0 +1,27 @@
+<div class="fc-row-detail">
+    <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" class="form-wrap" #entityForm="ngForm">
+        <ng-container *ngFor="let fieldSet of fieldSets; let i = index">
+            <div [ngClass]="fieldSet.class" class="fieldset divider-{{fieldSet.divider}}" fxLayout="row wrap"
+                fxLayoutAlign="start start" fxFlex="100%" fxFlex.gt-xs="calc({{fieldSets[i].width}} - 16px)">
+                <mat-divider *ngIf="fieldSets[i].divider && i > 0"></mat-divider>
+                <h4 *ngIf="fieldSet.label" class="fieldset-label">{{fieldSet.name}}</h4>
+                <div *ngFor="let field of fieldSet.config; let ii = index" fxFlex="100%"
+                    fxFlex.gt-xs="calc({{field.width}} - 16px)"
+                    [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'" id="{{fieldSet.name}}-{{ii}}">
+                    <div *ngIf="field.name == 'initiators'; else template">
+                        <label *ngIf="isShow(field.name)">{{field.placeholder}} ({{config.initiators.length}})</label>
+                        <ul *ngIf="isShow(field.name)" class="initiators-list">
+                            <li *ngFor="let initiator of config.initiators">{{initiator}}</li>
+                        </ul>
+                    </div>
+                    <ng-template #template>
+                        <div id="form_field_{{field.name}}" dynamicField [config]="field" [group]="formGroup"
+                            [fieldShow]="isShow(field.name) ? 'show' :'hide'"></div>
+                    </ng-template>
+                </div>
+            </div>
+        </ng-container>
+        <button class="btn btn-block btn-warning" type="submit" mat-button
+            color="primary">{{ "Save" | translate }}</button>
+    </form>
+</div>
