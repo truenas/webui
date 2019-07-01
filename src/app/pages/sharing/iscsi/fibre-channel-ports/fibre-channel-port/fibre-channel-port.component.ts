@@ -7,6 +7,7 @@ import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.
 import { EntityFormService } from '../../../../common/entity/entity-form/services/entity-form.service';
 import * as _ from 'lodash';
 import { EntityUtils } from '../../../../common/entity/utils';
+import { helptext_sharing_iscsi } from '../../../../../helptext/sharing';
 
 @Component({
     selector: 'app-iscsi-fibre-channel-port',
@@ -28,8 +29,8 @@ export class FibreChannelPortComponent implements OnInit {
                 {
                     type: 'radio',
                     name: 'mode',
-                    placeholder: '',
-                    tooltip: '',
+                    placeholder: helptext_sharing_iscsi.fc_mode_placeholder,
+                    tooltip: helptext_sharing_iscsi.fc_mode_tooltip,
                     options: [
                         {
                             label: 'Initiator',
@@ -56,8 +57,8 @@ export class FibreChannelPortComponent implements OnInit {
                 {
                     type: 'select',
                     name: 'target',
-                    placeholder: 'Targets',
-                    tooltip: '',
+                    placeholder: helptext_sharing_iscsi.fc_target_placeholder,
+                    tooltip: helptext_sharing_iscsi.fc_target_tooltip,
                     options: [{
                         label: '---------',
                         value: null,
@@ -67,8 +68,8 @@ export class FibreChannelPortComponent implements OnInit {
                 {
                     type: 'textarea',
                     name: 'initiators',
-                    placeholder: 'Connected Initiators',
-                    tooltip: '',
+                    placeholder: helptext_sharing_iscsi.fc_initiators_placeholder,
+                    tooltip: helptext_sharing_iscsi.fc_initiators_tooltip,
                 }
             ]
         }
