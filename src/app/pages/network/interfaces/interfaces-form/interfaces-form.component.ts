@@ -361,7 +361,7 @@ export class InterfacesFormComponent implements OnDestroy {
       });
     } else {
       entityForm.setDisabled('name', true);
-      entityForm.setDisabled('type', true);
+      entityForm.setDisabled('type', true, true );
     }
     this.ws.call('notifier.choices', ['VLAN_PCP_CHOICES']).subscribe((res) => {
       this.vlan_pcp = _.find(this.fieldConfig, {'name' : 'vlan_pcp'});

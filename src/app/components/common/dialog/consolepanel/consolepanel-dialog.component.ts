@@ -18,8 +18,7 @@ export class ConsolePanelModalDialog {
 
   constructor(
     protected translate: TranslateService,
-    public dialogRef: MatDialogRef<ConsolePanelModalDialog>,
-    private ws: WebSocketService) { }
+    public dialogRef: MatDialogRef<ConsolePanelModalDialog>) { }
 
   ngOnInit() {
     this.getLogConsoleMsg();

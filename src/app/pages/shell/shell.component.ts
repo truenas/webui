@@ -1,24 +1,9 @@
-import {
-  Component,
-  OnInit,
-  ViewChild,
-  ElementRef,
-  OnChanges,
-  Input,
-  Output,
-  EventEmitter,
-  SimpleChange,
-  OnDestroy
-} from '@angular/core';
-import { Subscription } from 'rxjs';
-
-import { WebSocketService, ShellService } from '../../services/';
-import { TranslateService } from '@ngx-translate/core';
-import {TooltipComponent} from '../common/entity/entity-form/components/tooltip/tooltip.component';
-import { T } from '../../translate-marker';
-//import { Terminal } from 'vscode-xterm';
-//import * as fit from 'vscode-xterm/lib/addons/fit';
-//import * as attach from 'vscode-xterm/lib/addons/attach';
+import { Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, ViewChild } from "@angular/core";
+import { MatSnackBar } from "@angular/material";
+import { TranslateService } from "@ngx-translate/core";
+import { ShellService, WebSocketService } from "../../services/";
+import helptext from "./../../helptext/shell/shell";
+import { CopyPasteMessageComponent } from "./copy-paste-message.component";
 
 @Component({
   selector: 'app-shell',
@@ -26,7 +11,6 @@ import { T } from '../../translate-marker';
   styleUrls: ['./shell.component.css'],
   providers: [ShellService],
 })
-
 export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   // sets the shell prompt
   @Input() prompt = '';
@@ -41,16 +25,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   public resize_terminal = true;
   private shellSubscription: any;
 
-  public shell_tooltip = T('<b>Ctrl+C</b> kills a foreground process.<br>\
-                            Many utilities are built-in:<br> <b>Iperf</b>,\
-                            <b>Netperf</b>, <b>IOzone</b>, <b>arcsat</b>,\
-                            <b>tw_cli</b>, <br><b>MegaCli</b>,\
-                            <b>freenas-debug</b>, <b>tmux</b>,\
-                            <b>Dmidecode</b>.<br> Refer to the <a\
-                            href="%%docurl%%/cli.html"\
-                            target="_blank">Command Line Utilities</a>\
-                            chapter in the guide for usage information\
-                            and examples.');
+  public usage_tooltip = helptext.usage_tooltip;
 
   clearLine = "\u001b[2K\r"
   public shellConnected: boolean = false;
@@ -74,9 +49,9 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     if(this.shellSubscription){
       this.shellSubscription.unsubscribe();
     }
-  };
+  }
 
-  onResize(event){
+  onResize(event) {
     // this.resizeTerm();
   }
 
@@ -95,6 +70,12 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
         this.xterm.write(this.clearLine + this.prompt)
       }
     }
+  }
+
+  onRightClick(): false {
+    this._snackbar.openFromComponent(CopyPasteMessageComponent);
+
+    return false;
   }
 
   initializeTerminal() {
@@ -153,8 +134,6 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     this.ss.connect();
   }
 
-  constructor(private ws: WebSocketService, public ss: ShellService, public translate: TranslateService) {
-//    Terminal.applyAddon(fit);
-//    Terminal.applyAddon(attach);
+  constructor(private ws: WebSocketService, public ss: ShellService, public translate: TranslateService, private _snackbar: MatSnackBar) {
   }
 }

@@ -161,8 +161,8 @@ export class ReplicationFormComponent {
             }],
         }, {
             type: 'explorer',
-            initial: '/mnt',
-            explorerType: 'directory',
+            initial: '',
+            explorerType: 'dataset',
             multiple: true,
             name: 'source_datasets_PUSH',
             placeholder: helptext.source_datasets_placeholder,
@@ -232,8 +232,8 @@ export class ReplicationFormComponent {
             }],
         }, {
             type: 'explorer',
-            initial: '/mnt',
-            explorerType: 'directory',
+            initial: '',
+            explorerType: 'dataset',
             name: 'target_dataset_PULL',
             placeholder: helptext.target_dataset_placeholder,
             tooltip: helptext.target_dataset_placeholder,
@@ -627,20 +627,22 @@ export class ReplicationFormComponent {
                     value: 'LEGACY',
                 }]
             }],
-        }, {
-            type: 'checkbox',
-            name: 'embed',
-            placeholder: helptext.embed_placeholder,
-            tooltip: helptext.embed_tooltip,
-            value: true,
-            relation: [{
-                action: 'HIDE',
-                when: [{
-                    name: 'transport',
-                    value: 'LEGACY',
-                }]
-            }],
-        }, {
+        },
+        // {
+        //     type: 'checkbox',
+        //     name: 'embed',
+        //     placeholder: helptext.embed_placeholder,
+        //     tooltip: helptext.embed_tooltip,
+        //     value: true,
+        //     relation: [{
+        //         action: 'HIDE',
+        //         when: [{
+        //             name: 'transport',
+        //             value: 'LEGACY',
+        //         }]
+        //     }],
+        // },
+        {
             type: 'checkbox',
             name: 'compressed',
             placeholder: helptext.compressed_placeholder,

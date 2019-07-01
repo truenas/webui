@@ -9,6 +9,7 @@ import {WebSocketService} from '../services/ws.service';
 import { MatSnackBar } from '@angular/material';
 import { AppLoaderService } from '../services/app-loader/app-loader.service';
 import { EntityDialogComponent } from '../pages/common/entity/entity-dialog/entity-dialog.component';
+import { T } from 'app/translate-marker';
 
 @Injectable()
 export class DialogService {
@@ -145,4 +146,27 @@ export class DialogService {
         return dialogRef.afterClosed();
     }
 
+    public doubleConfirm(title: string, message: string, name: string): any {
+        const conf = {
+            title: title,
+            message: message,
+            fieldConfig: [
+              {
+                type: 'input',
+                name: 'name',
+                required: true,
+              }
+            ],
+            saveButtonText: T("DELETE"),
+            afterInit: function(entityDialog) {
+                entityDialog.formGroup.controls['name'].valueChanges.subscribe((res) => {
+                    entityDialog.submitEnabled = res === name;
+                })
+            },
+            customSubmit: function (entityDialog) {
+                return entityDialog.dialogRef.close(true);
+            }
+          }
+        return this.dialogForm(conf);
+    }
 }

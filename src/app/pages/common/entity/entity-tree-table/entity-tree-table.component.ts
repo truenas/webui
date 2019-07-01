@@ -1,10 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { TreeNode } from 'primeng/api';
-
-import { EntityTreeTable, EntityTreeTableColumn } from './entity-tree-table.model';
-import { EntityTreeTableService } from './entity-tree-table.service';
-import { WebSocketService, DialogService } from '../../../../services';
+import { DialogService, WebSocketService } from '../../../../services';
 import { EntityUtils } from '../../entity/utils';
+import { EntityTreeTable } from './entity-tree-table.model';
+import { EntityTreeTableService } from './entity-tree-table.service';
 
 @Component({
 	selector: 'entity-tree-table',
@@ -12,7 +11,8 @@ import { EntityUtils } from '../../entity/utils';
 	providers: [EntityTreeTableService]
 })
 export class EntityTreeTableComponent implements OnInit {
-	@Input('conf') conf: EntityTreeTable;
+	@Input() conf: EntityTreeTable;
+	@Input() expandRootNodes = false;
 
 	showActions = true;
 	treeTableData: Array<TreeNode> = [];
@@ -24,6 +24,9 @@ export class EntityTreeTableComponent implements OnInit {
 	ngOnInit() {
 		if (this.conf.queryCall) {
 			this.getData();
+		} else if (this.conf.tableData && this.expandRootNodes) {
+			/* Expand the root nodes by default */
+			this.conf.tableData.filter(node => !node.parent).forEach(node => (node.expanded = true));
 		}
 	}
 
