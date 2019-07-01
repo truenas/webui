@@ -77,8 +77,8 @@ volsize_validation: [Validators.required, Validators.min(1)],
 
 pool_detach_warning_paraText: T("Select zvol"),
 
-datastore_tooltip: T('Select where to create the new zvol.'),
-datastore_placeholder: T('Zvol Location'),
+datastore_tooltip: T('Select a dataset for the new zvol.'),
+datastore_placeholder: T('Zvol Dataset Location'),
 
 hdd_type_placeholder: T('Select Disk Type'),
 hdd_type_tooltip: T('Select desired disk type.'),
