@@ -163,7 +163,7 @@ export class SupportComponent {
         },
         {
           type: 'paragraph',
-          name: 'FN_col2-2',
+          name: 'FN_jira-info',
           paraText: this.sanitizer.bypassSecurityTrustHtml('<a href="https://jira.ixsystems.com/secure/Signup!default.jspa" target="_blank" \
           style="text-decoration:underline;">Create a Jira account</a> to file an issue. Use a valid \
           email address when registering to receive issue status updates.')
@@ -329,7 +329,7 @@ export class SupportComponent {
 
   private freeNASFields: Array<any> = [
     'FN_col1',
-    'FN_col2-2',
+    'FN_jira-info',
     'FN_version',
     'FN_model',
     'FN_memory',
@@ -356,7 +356,7 @@ export class SupportComponent {
     'TNCategory',
     'environment',
     'criticality',
-    'screenshot'
+    // 'screenshot'
   ];
 
   public custActions: Array<any> = [];
@@ -596,7 +596,11 @@ export class SupportComponent {
                 this.category.options.push({label : property, value : res[property]});
               }
             }},(error)=>{
-              console.log(error)
+              if (error.reason[0] === '[') {
+                while (error.reason[0] !== ' ') {
+                  error.reason = error.reason.slice(1);
+                }
+              }
               parent.entityEdit.setDisabled('category', true);
               this.category['isLoading'] = false;
               this.password_fc['hasErrors'] = true;

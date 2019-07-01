@@ -1248,6 +1248,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     .mat-card-actions {
       margin-left: 15px;
     }
+
+    #FN_jira-info {
+      margin-bottom: 10px;
+    }
   }
 
   entity-form form-combobox mat-form-field {
