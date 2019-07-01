@@ -1,6 +1,6 @@
 <div id="{{config.name}}" class="dynamic-field form-list" [formGroup]="group" [ngClass]="fieldShow">
     <ng-container>
-        <div *ngFor="let liControl of listsFromArray.controls; let i = index" [fxLayout]="config.width == '100%' ? 'row wrap' : (default)">
+        <div *ngFor="let liControl of listsFromArray?.controls; let i = index" [fxLayout]="config.width == '100%' ? 'row wrap' : (default)">
             <div *ngFor="let field of config.listFields[i]; let ii = index" fxFlex="100%"
                 fxFlex.gt-xs="calc({{field.width}} - 16px)"
                 [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'">

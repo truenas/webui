@@ -164,24 +164,6 @@ export class NFSFormComponent {
 
   public custActions: Array<any> = [
     {
-      id : 'add_path',
-      name : helptext_sharing_nfs.actions_add_path,
-      function : () => {
-        this.initialCount += 1;
-        this.entityFormService.insertFormArrayGroup(
-            this.initialCount, this.formArray, this.arrayControl.formarray);
-      }
-    },
-    {
-      id : 'remove_path',
-      name : helptext_sharing_nfs.actions_remove_path,
-      function : () => {
-        this.initialCount -= 1;
-        this.entityFormService.removeFormArrayGroup(this.initialCount,
-                                                    this.formArray);
-      }
-    },
-    {
       id : 'basic_mode',
       name : helptext_sharing_nfs.actions_basic_mode,
       function : () => { this.isBasicMode = !this.isBasicMode; }
@@ -222,9 +204,9 @@ export class NFSFormComponent {
       _.find(this.fieldConfig, {'name' : 'nfs_paths'});
     this.route.params.subscribe(params => {
       if(params['pk']) {
-         this.arrayControl.initialCount = this.initialCount = this.initialCount_default = 0;
-         this.arrayControl.formarray[1]['isHidden'] = false;
-         this.arrayControl.formarray[1].disabled = false;
+        // this.arrayControl.initialCount = this.initialCount = this.initialCount_default = 0;
+        //  this.arrayControl.templateListField[1]['isHidden'] = false;
+        //  this.arrayControl.templateListField[1].disabled = false;
       }
     });
 

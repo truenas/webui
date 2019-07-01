@@ -297,7 +297,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               const fg = this.formGroup.controls[i];
               if (fg) {
                 const current_field = this.fieldConfig.find((control) => control.name === i);
-                if (current_field.type === "array") {
+                if (current_field.type === "array" || (current_field.type === "list" && current_field.templateListField.every(field => field.type === "explorer"))) {
                     this.setArrayValue(this.data[i], fg, i);
                 } else {
                   if (!_.isArray(this.data[i]) && current_field.type === "select" && current_field.multiple) {
@@ -598,7 +598,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     for (const i in this.fieldConfig) {
       const config = this.fieldConfig[i];
       if (config.name === name) {
-        array_controls = config.formarray;
+        array_controls = config.formarray || config.templateListField;
       }
     }
 
