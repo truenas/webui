@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 
 import { WebSocketService, IscsiService } from '../../../../../services';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
@@ -111,6 +111,16 @@ export class FibreChannelPortComponent implements OnInit {
         }
         this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
+        const targetField = _.find(this.fieldConfig, {name: 'target'});
+        this.formGroup.controls['mode'].valueChanges.subscribe((res) => {
+            targetField.required = res == 'TARGET' ? true : false;
+            if (res == 'TARGET') {
+                this.formGroup.controls['target'].setValidators([Validators.required]);
+                this.formGroup.controls['target'].updateValueAndValidity();
+            } else {
+                this.formGroup.controls['target'].clearValidators();
+            }
+        })
         for (const i in this.config){
             if (this.formGroup.controls[i]) {
               this.formGroup.controls[i].setValue(this.config[i]);

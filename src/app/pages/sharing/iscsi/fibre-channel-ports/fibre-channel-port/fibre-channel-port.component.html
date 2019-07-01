@@ -22,6 +22,6 @@
             </div>
         </ng-container>
         <button class="btn btn-block btn-warning" type="submit" mat-button
-            color="primary">{{ "Save" | translate }}</button>
+            color="primary" [disabled]="!entityForm.form.valid">{{ "Save" | translate }}</button>
     </form>
 </div>
