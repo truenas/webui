@@ -1283,4 +1283,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     left: 3px;
   }
 
+  .form-input-spinner {
+    top: 25px;
+    margin: auto;
+  }
+
  } // end of ix theme

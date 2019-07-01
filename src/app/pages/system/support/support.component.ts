@@ -107,10 +107,7 @@ export class SupportComponent {
               already been created, add a comment to the existing issue. \
               Please visit the <a href="http://www.ixsystems.com/storage/" target="_blank" \
               style="text-decoration:underline;">iXsystems storage page</a> \
-              for enterprise-grade storage solutions and support.<br><br> \
-              <a href="https://jira.ixsystems.com/secure/Signup!default.jspa" target="_blank" \
-              style="text-decoration:underline;">Create a Jira account</a> to file an issue. Use a valid \
-              email address when registering to receive issue status updates.')
+              for enterprise-grade storage solutions and support.')
         }
       ]
     },
@@ -163,6 +160,13 @@ export class SupportComponent {
           type: 'paragraph',
           name: 'FN_col2',
           paraText: '<i class="material-icons">mail</i>Contact Support'
+        },
+        {
+          type: 'paragraph',
+          name: 'FN_col2-2',
+          paraText: this.sanitizer.bypassSecurityTrustHtml('<a href="https://jira.ixsystems.com/secure/Signup!default.jspa" target="_blank" \
+          style="text-decoration:underline;">Create a Jira account</a> to file an issue. Use a valid \
+          email address when registering to receive issue status updates.')
         },
         {
           type : 'input',
@@ -281,7 +285,9 @@ export class SupportComponent {
           tooltip : helptext.category.tooltip,
           required: true,
           validation : helptext.category.validation,
-          options:[]
+          options:[],
+          disabled: true,
+          isLoading: false
         },
         {
           type : 'checkbox',
@@ -323,6 +329,7 @@ export class SupportComponent {
 
   private freeNASFields: Array<any> = [
     'FN_col1',
+    'FN_col2-2',
     'FN_version',
     'FN_model',
     'FN_memory',
@@ -377,7 +384,7 @@ export class SupportComponent {
         _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText ? 
         _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText += res.system_serial :
         _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText = '';
-        _.find(this.fieldConfig, {name : "pic"}).paraText = `<img src="../../../assets/images/${this.product_image}" height="350">`;
+        _.find(this.fieldConfig, {name : "pic"}).paraText = `<img src="assets/images/${this.product_image}" height="350">`;
       })
     } else {
       for (let i in this.freeNASFields) {
@@ -580,14 +587,20 @@ export class SupportComponent {
           this.category.options = [];
         }
         if(this.category.options.length === 0 && this.username !== '' && this.password !== ''){
+          this.category['isLoading'] = true;
           parent.ws.call('support.fetch_categories',[this.username,this.password]).subscribe((res)=>{
+            this.category['isLoading'] = false;
+            parent.entityEdit.setDisabled('category', false);
             for (const property in res) {
               if (res.hasOwnProperty(property)) {
                 this.category.options.push({label : property, value : res[property]});
               }
             }},(error)=>{
+              console.log(error)
+              parent.entityEdit.setDisabled('category', true);
+              this.category['isLoading'] = false;
               this.password_fc['hasErrors'] = true;
-              this.password_fc['errors'] = 'Incorrect Username/Password.';
+              this.password_fc['errors'] = error.reason;
             });
         }
       }
