@@ -127,7 +127,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
       // Store keys for fast lookup
       let nicKeys = {};
       evt.data.forEach((item, index) => {
-        nicKeys[item.name] = index;
+        nicKeys[item.name] = index.toString();
       });
         
       // Process Vlans (attach vlans to their parent)
@@ -137,7 +137,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
         }
 
         if(item.type == "VLAN"){
-          let parentIndex = nicKeys[item.state.parent];
+          let parentIndex = parseInt(nicKeys[item.state.parent]);
           if(!clone[parentIndex].state.vlans) {
             clone[parentIndex].state.vlans = [];
           }
@@ -162,6 +162,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
             
             // Mark interface for removal
             removeNics[nic] = nicKeys[nic];
+            console.log(removeNics)
           });
         }
       });
