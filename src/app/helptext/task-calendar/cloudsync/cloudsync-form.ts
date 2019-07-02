@@ -36,7 +36,7 @@ storage_class_tooltip: T('Classification for each S3 object. Choose a\
  class based on the specific use case or performance requirements.\
  See <a\
  href="https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-class-intro.html"\
- target="_blank">Amazon S3 Storage Classes</a> for more information\
+ target="_blank">Amazon S3 Storage Classes</a> for more information.'),
  on which storage class to choose.'),
 
 b2_chunk_size_placeholder:  T('Upload Chunk Size (MiB)'),
