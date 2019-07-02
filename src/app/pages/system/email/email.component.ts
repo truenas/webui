@@ -137,7 +137,12 @@ export class EmailComponent implements OnDestroy {
               protected dialog: MatDialog, protected loader: AppLoaderService
             ) {}
 
-afterInit(entityEdit: any) {
+  resourceTransformIncomingRestData(data): void {
+    delete data.pass;
+    return data;
+  }
+
+  afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
     const payload = [];
     payload.push("username");
@@ -160,6 +165,9 @@ afterInit(entityEdit: any) {
 
   saveConfigSubmit(emailConfig): void {
     this.loader.open();
+    if (emailConfig.pass && typeof emailConfig.pass === 'string' && emailConfig.pass.trim() === '') {
+      delete emailConfig.pass;
+    }
     this.ws
       .call(this.updateCall, [emailConfig])
       .subscribe(
