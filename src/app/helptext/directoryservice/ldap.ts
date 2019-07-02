@@ -71,14 +71,14 @@ ldap_sudosuffix_tooltip: T('Suffix for LDAP-based users that need superuser acce
 ldap_kerberos_realm_name : 'ldap_kerberos_realm',
 ldap_kerberos_realm_placeholder : T('Kerberos Realm'),
 ldap_kerberos_realm_tooltip: T('Select the realm created using the instructions in <a\
- href="%%docurl%%/directoryservices.html#kerberos-realms"\
+ href="--docurl--/directoryservices.html#kerberos-realms"\
  target="_blank">Kerberos Realms</a>.'),
 
 ldap_kerberos_principal_name : 'ldap_kerberos_principal',
 ldap_kerberos_principal_placeholder : T('Kerberos Principal'),
 ldap_kerberos_principal_tooltip: T('Select the location of the principal in the keytab\
  created as described in <a\
- href="%%docurl%%/directoryservices.html#kerberos-keytabs"\
+ href="--docurl--/directoryservices.html#kerberos-keytabs"\
  target="_blank">Kerberos Keytabs</a>.'),
 
 ldap_ssl_name : 'ldap_ssl',
