@@ -36,7 +36,6 @@ export class EmailComponent implements OnDestroy {
           "text" : "This is a test message from FreeNAS.",
         };
         combineLatest(this.ws.call(this.queryCall), this.ws.call('system.info')).subscribe(([emailConfig, sysInfo]) => {
-          console.log({emailConfig, value})
           value.pass = value.pass || this.entityEdit.data.pass
           mailObj['subject'] += " hostname: " + sysInfo['hostname'];
           this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "EMAIL" }, disableClose: true });
