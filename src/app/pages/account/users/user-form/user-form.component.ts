@@ -317,7 +317,6 @@ export class UserFormComponent {
     /* list groups */
 
     this.ws.call('group.query').subscribe((res) => {
-      console.log(res)
       this.loader.callDone.emit(status);
       this.group = _.find(this.fieldConfig, {name : "group"});
       this.groups = _.find(this.fieldConfig, {name : "groups"});
