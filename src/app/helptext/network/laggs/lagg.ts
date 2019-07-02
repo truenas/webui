@@ -8,7 +8,7 @@ lagg_interface_tooltip : T('Description of the lagg interface.'),
 
 lagg_protocol_placeholder : T('Lagg Protocol'),
 lagg_protocol_tooltip : T('Select the <a\
- href="%%docurl%%/network.html#link-aggregations"\
+ href="--docurl--/network.html#link-aggregations"\
  target="_blank">Protocol Type</a>.<br>\
  <i>LACP</i> is the recommended protocol if the network\
  switch is capable of active LACP.<br>\

@@ -18,7 +18,7 @@ dataset_form_sync_tooltip: T('<i>Standard</i> uses the sync settings that have b
 dataset_form_compression_placeholder: T('Compression level'),
 dataset_form_compression_tooltip: T('For more information about the available compression\
  algorithms, refer to the <a\
- href="%%docurl%%/storage.html#compression"\
+ href="--docurl--/storage.html#compression"\
  target="_blank">Compression section</a> of the guide.'),
 
 dataset_form_atime_placeholder: T('Enable Atime'),
@@ -70,7 +70,7 @@ dataset_form_reservation_validation: [Validators.min(0)],
 
 dataset_form_deduplication_label: T('ZFS deduplication'),
 dataset_form_deduplication_placeholder: T('ZFS Deduplication'),
-dataset_form_deduplication_tooltip: T('Please read about <a href="%%docurl%%/storage.html#deduplication"\
+dataset_form_deduplication_tooltip: T('Please read about <a href="--docurl--/storage.html#deduplication"\
  target="_blank">deduplication</a> before considering\
  changing this setting.'),
 

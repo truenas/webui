@@ -80,7 +80,7 @@ export class NavigationComponent implements OnInit {
       this.ws.call('system.info').subscribe((res) => {
         if (res.version) {
             window.localStorage.setItem('running_version', res['version']);
-            const docUrl = this.docsService.docReplace("%%docurl%%");
+            const docUrl = this.docsService.docReplace("--docurl--");
             const guide = _.find(menuItem, {name: 'Guide'});
             guide.state = docUrl;
         }
