@@ -357,7 +357,7 @@ export class SupportComponent {
     'TNCategory',
     'environment',
     'criticality',
-    'screenshot'
+    // 'screenshot'
   ];
 
   public custActions: Array<any> = [];
@@ -542,22 +542,25 @@ export class SupportComponent {
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.subscribe(res=>{
       const url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
-      if (this.is_freenas === 'true') {
-        dialogRef.componentInstance.setDescription(url);
-      } else {
+      // if (this.is_freenas === 'true') {
+      //   dialogRef.componentInstance.setDescription(url);
+      // } else {
         if (this.subs.length > 0) {
+          console.log(this.subs)
           this.subs.forEach((item) => {
             const formData: FormData = new FormData();
             formData.append('data', JSON.stringify({
               "method": "support.attach_ticket",
-              "params": [{'ticket': (res.result.ticket).toString(), 'filename': item.file.name}]
+              "params": [{'ticket': ('res.result.ticket').toString(), 'filename': item.file.name}]
             }));
-            formData.append('file', item.file);
+            console.log(item.file.name, item.file)
+            formData.append('file', item.file, item.apiEndPoint);
             dialogRef.componentInstance.wspost(item.apiEndPoint, formData);
             dialogRef.componentInstance.success.subscribe(res=>{
               // console.info(res);
             }),
             dialogRef.componentInstance.failure.subscribe((res) => {
+              console.log(res)
               dialogRef.componentInstance.setDescription(res.error);
             });
           });
@@ -565,9 +568,10 @@ export class SupportComponent {
         } else {
           dialogRef.componentInstance.setDescription(url);
         }
-      }
-    }),
+      // }
+    })
     dialogRef.componentInstance.failure.subscribe((res) => {
+      console.log(res)
       dialogRef.componentInstance.setDescription(res.error);
     });
   }
@@ -612,6 +616,7 @@ export class SupportComponent {
   }
 
   updater(file: any, parent: any){
+    console.log(file)
     parent.subs = [];
     const fileBrowser = file.fileInput.nativeElement;
     this.scrshot = _.find(parent.fieldConfig, { name: 'screenshot' });
@@ -627,6 +632,7 @@ export class SupportComponent {
         }
       }
     }
+    console.log(parent)
   }
 
   hideField(fieldName: any, show: boolean, entity: any) {
