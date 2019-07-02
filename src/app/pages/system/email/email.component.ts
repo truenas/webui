@@ -8,8 +8,6 @@ import { FieldConfig } from '../../common/entity/entity-form/models/field-config
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from 'app/translate-marker';
-import { combineLatest } from 'rxjs';
-import { Validators } from '@angular/forms';
 
 @Component({
   selector : 'app-email',
@@ -27,7 +25,7 @@ export class EmailComponent implements OnDestroy {
   customSubmit = this.saveConfigSubmit;
   public custActions: Array < any > = [{
     id: 'send_mail',
-    name: 'Send Mail',
+    name: T('Send Test Mail'),
     function: () => {
       if (this.rootEmail){
         const value = _.cloneDeep(this.entityEdit.formGroup.value);
@@ -35,7 +33,7 @@ export class EmailComponent implements OnDestroy {
           "subject" : "FreeNAS Test Message",
           "text" : "This is a test message from FreeNAS.",
         };
-        combineLatest(this.ws.call(this.queryCall), this.ws.call('system.info')).subscribe(([emailConfig, sysInfo]) => {
+        this.ws.call('system.info').subscribe((sysInfo => {
           value.pass = value.pass || this.entityEdit.data.pass
           mailObj['subject'] += " hostname: " + sysInfo['hostname'];
           this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "EMAIL" }, disableClose: true });
