@@ -20,7 +20,7 @@ export default {
     },
     http_port_listen_backlog: {
         placeholder : T('HTTP Port Listen Backlog'),
-        tooltip: T('The port backlog'),
+        tooltip: T('The maximum length of the queue of pending connections. Default is 100.'),
         validation: [ Validators.required, regexValidator(/^\d+$/) ]
     },
     bind: {
@@ -36,8 +36,8 @@ export default {
         placeholder : T('Additional Parameters'),
         tooltip: T('Define other sections and their key/value pairs. Enclose each\
  section name in square brackets, and put each key/value pair on a new line. Example: <br>\
- [system.intr] <br> \
- history=86400 <br> \
+ [system.intr]<br> \
+ history=86400<br> \
  enabled=yes')
     },
 
