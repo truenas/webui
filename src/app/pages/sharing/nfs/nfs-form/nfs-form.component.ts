@@ -204,9 +204,7 @@ export class NFSFormComponent {
       _.find(this.fieldConfig, {'name' : 'nfs_paths'});
     this.route.params.subscribe(params => {
       if(params['pk']) {
-        // this.arrayControl.initialCount = this.initialCount = this.initialCount_default = 0;
-        //  this.arrayControl.templateListField[1]['isHidden'] = false;
-        //  this.arrayControl.templateListField[1].disabled = false;
+        this.arrayControl.initialCount = this.initialCount = this.initialCount_default = 0;
       }
     });
 
