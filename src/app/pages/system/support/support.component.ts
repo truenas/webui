@@ -230,6 +230,17 @@ export class SupportComponent {
         },
         {
           type : 'select',
+          name : 'category',
+          placeholder : helptext.category.placeholder,
+          tooltip : helptext.category.tooltip,
+          required: true,
+          validation : helptext.category.validation,
+          options:[],
+          disabled: true,
+          isLoading: false
+        },
+        {
+          type : 'select',
           name : 'TNCategory',
           placeholder : helptext.type.placeholder,
           tooltip : helptext.type.tooltip,
@@ -279,17 +290,6 @@ export class SupportComponent {
           value: 'inquiry'
         },
         {
-          type : 'select',
-          name : 'category',
-          placeholder : helptext.category.placeholder,
-          tooltip : helptext.category.tooltip,
-          required: true,
-          validation : helptext.category.validation,
-          options:[],
-          disabled: true,
-          isLoading: false
-        },
-        {
           type : 'checkbox',
           name : 'attach_debug',
           placeholder : helptext.attach_debug.placeholder,
@@ -309,7 +309,8 @@ export class SupportComponent {
           placeholder : helptext.body.placeholder,
           tooltip : helptext.body.tooltip,
           required: true,
-          validation : helptext.body.validation
+          validation : helptext.body.validation,
+          textAreaRows: 8
         },
         {
           type: 'upload',
@@ -356,7 +357,7 @@ export class SupportComponent {
     'TNCategory',
     'environment',
     'criticality',
-    // 'screenshot'
+    'screenshot'
   ];
 
   public custActions: Array<any> = [];
@@ -587,9 +588,9 @@ export class SupportComponent {
           this.category.options = [];
         }
         if(this.category.options.length === 0 && this.username !== '' && this.password !== ''){
-          this.category['isLoading'] = true;
+          this.category.isLoading = true;
           parent.ws.call('support.fetch_categories',[this.username,this.password]).subscribe((res)=>{
-            this.category['isLoading'] = false;
+            this.category.isLoading = false;
             parent.entityEdit.setDisabled('category', false);
             for (const property in res) {
               if (res.hasOwnProperty(property)) {
@@ -602,7 +603,7 @@ export class SupportComponent {
                 }
               }
               parent.entityEdit.setDisabled('category', true);
-              this.category['isLoading'] = false;
+              this.category.isLoading = false;
               this.password_fc['hasErrors'] = true;
               this.password_fc['errors'] = error.reason;
             });

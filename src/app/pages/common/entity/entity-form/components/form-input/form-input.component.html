@@ -3,12 +3,6 @@
 	<input name = "DummyUsername" type="text" style="display:none;">
 	<input name = "DummyPassword" type="password" style="display:none;">
 
-	<mat-spinner 
-            [diameter]='40' 
-			class="form-input-spinner"
-            *ngIf="config.isLoading">
-	</mat-spinner> 
-	
 	<mat-form-field class="full-width" *ngIf="config.inputType != 'file' else elseBlock">
 		<input matInput [type]="config.inputType ? config.inputType : 'text'"
 			[placeholder]="config.placeholder | translate"
