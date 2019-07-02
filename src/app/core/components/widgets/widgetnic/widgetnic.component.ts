@@ -59,7 +59,11 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
   @ViewChild('carouselparent', {static:true}) carouselParent:ElementRef;
   public traffic: NetTraffic;
   public currentSlide:string = "0"; 
+  public currentSlideName:string = "addresses"; // Secondary slide
   public title: string = "Interface";
+  get totalSlides() {
+    return this.nicState.lagg_ports ? 4 : 3;
+  }
 
   get ipAddresses(){
     if(!this.nicState && !this.nicState.aliases){ return [];}
@@ -87,6 +91,9 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
   }
 
   ngOnChanges(changes: SimpleChanges){
+    if(changes.nicState){
+      this.title = this.nicState.name;
+    }
   }
 
   ngOnInit(){
@@ -108,6 +115,20 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
         this.traffic = evt.data;
       }
     })
+  }
+
+  updateSlide(name:string,verified: boolean){
+    if(name !=="overview" && !verified){ return; }
+
+    let slides = {
+      'overview': 0,
+      'addresses': 1,
+      'vlans': 1,
+      'interfaces': 1
+    }
+
+    this.currentSlideName = name == 'overview' ? this.currentSlideName: name;
+    this.updateSlidePosition(slides[name]);
   }
 
   updateSlidePosition(value){

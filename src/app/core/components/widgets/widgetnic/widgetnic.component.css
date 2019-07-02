@@ -20,6 +20,10 @@
   /*background:var(--alt-bg2);*/
 }
 
+/*.carousel.lagg{
+  width:400%;
+}*/
+
 .slide{
   /*position:absolute;
   top:48px;*/
@@ -42,10 +46,22 @@
   padding:32px 0;
 }
 
+.slide.overview .right > div{
+  width:100%;
+}
+
+.slide.overview .right{
+  padding:0;
+}
+
+.slide.overview .left{
+  background-color:var(--alt-bg1);
+}
+
 .slide .right{
   text-align:left;
 }
-
+ 
 .slide .right li{
   font-size: 115%;
   padding: 6px;
@@ -83,9 +99,10 @@
   bottom:0;
   width:100%;
   height:48px;
-  padding:14px 0;
+  padding:6px;
   border-top:solid 1px var(--bg1);
   background:var(--bg2);
+  text-align:left;
 }
 
 .carousel-nav .btn{
@@ -99,6 +116,10 @@
   cursor:pointer;
 }
 
+.carousel-nav .back-arrow.mat-icon{
+  margin-top: -3px;
+}
+
 .carousel-nav .btn.active{
   opacity:1;
 }
@@ -109,6 +130,15 @@
 
 .stat{
   /*font-size: 250%;*/
+}
+
+.overview .mat-list-item.clickable{
+  cursor:pointer;
+}
+
+.overview .mat-icon.next-slide{
+  position:absolute;
+  right:0;
 }
 
 .mat-list-base .mat-list-item{

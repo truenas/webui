@@ -98,7 +98,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
 
     this.statsEventsTC = this.ws.sub("trueview.stats:10").subscribe((evt)=>{
       if(evt.virtual_memory){return;}// TC and MW subscriptions leak into each other.
-        console.log(evt);
+        //console.log(evt);
         evt.network_usage.forEach((item, index) => {
           this.statsDataEvents.next({name:"NetTraffic_" + item.name, data:item});
         });
@@ -121,7 +121,66 @@ export class DashboardComponent implements OnInit,OnDestroy {
 
     this.core.register({observerClass:this,eventName:"NicInfo"}).subscribe((evt:CoreEvent) => {
       console.log(evt);
-      this.nics = evt.data;
+      let clone = Object.assign([],evt.data);
+      let removeNics = {};
+
+      // Store keys for fast lookup
+      let nicKeys = {};
+      evt.data.forEach((item, index) => {
+        nicKeys[item.name] = index;
+      });
+        
+      // Process Vlans (attach vlans to their parent)
+      evt.data.forEach((item, index) => {
+        if(item.type !== "VLAN" && !clone[index].state.vlans){
+          clone[index].state.vlans = [];
+        }
+
+        if(item.type == "VLAN"){
+          let parentIndex = nicKeys[item.state.parent];
+          if(!clone[parentIndex].state.vlans) {
+            clone[parentIndex].state.vlans = [];
+          }
+
+          clone[parentIndex].state.vlans.push(item.state);
+          removeNics[item.name] = index;
+        }
+      })
+
+      // Process LAGGs
+      evt.data.forEach((item, index) => {
+        if(item.type == "LINK_AGGREGATION" ){
+          clone[index].state.lagg_ports = item.lag_ports;
+          item.lag_ports.forEach((nic) => {
+            // Consolidate addresses 
+            clone[index].state.aliases.forEach((item) => { item.interface = nic});
+            clone[index].state.aliases = clone[index].state.aliases.concat(clone[nicKeys[nic]].state.aliases);
+
+            // Consolidate vlans
+            clone[index].state.vlans.forEach((item) => { item.interface = nic});
+            clone[index].state.vlans = clone[index].state.vlans.concat(clone[nicKeys[nic]].state.vlans);
+            
+            // Mark interface for removal
+            removeNics[nic] = nicKeys[nic];
+          });
+        }
+      });
+
+      // Remove NICs from list
+      for(let i = clone.length - 1; i >= 0; i--){
+        if(removeNics[clone[i].name]){ 
+          // Remove
+          clone.splice(i, 1)
+        } else {
+          // Only keep INET addresses
+          clone[i].state.aliases = clone[i].state.aliases.filter(address => address.type == "INET");
+        }
+      }
+      
+      // Update NICs array
+      //this.nics = evt.data;
+      console.warn(clone);
+      this.nics = clone;
     });
 
     this.core.emit({name:"VolumeDataRequest"});
