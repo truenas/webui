@@ -33,7 +33,7 @@ export class EmailComponent implements OnDestroy {
           "subject" : "FreeNAS Test Message",
           "text" : "This is a test message from FreeNAS.",
         };
-        this.ws.call('system.info').subscribe((sysInfo => {
+        this.ws.call('system.info').subscribe(sysInfo => {
           value.pass = value.pass || this.entityEdit.data.pass
           mailObj['subject'] += " hostname: " + sysInfo['hostname'];
           this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "EMAIL" }, disableClose: true });
@@ -129,7 +129,6 @@ export class EmailComponent implements OnDestroy {
 
   private smtp;
   private smtp_subscription;
-  private user;
   private pass;
 
   constructor(protected router: Router, protected rest: RestService,
@@ -147,15 +146,10 @@ afterInit(entityEdit: any) {
     this.ws.call('user.query', [[payload]]).subscribe((res)=>{
       this.rootEmail = res[0].email;
     });
-    this.user = _.find(this.fieldConfig, {'name': 'user'});
     this.pass = _.find(this.fieldConfig, {'name': 'pass'});
     this.smtp = entityEdit.formGroup.controls['smtp'];
-    this.user['isHidden'] = !this.smtp.value;
-    this.pass['isHidden'] = !this.smtp.value;
 
     this.smtp_subscription = this.smtp.valueChanges.subscribe((value) => {
-      this.user['isHidden'] = !value;
-      this.pass['isHidden'] = !value;
       this.pass.hideButton = !value;
     });
   }
