@@ -50,6 +50,7 @@ import { EntityTableActionsComponent } from './entity-table/entity-table-actions
 import { EntityCardActionsComponent } from './entity-card/entity-card-actions.component';
 import { EntityTableAddActionsComponent } from './entity-table/entity-table-add-actions.component';
 import { EntityTableComponent } from './entity-table/entity-table.component';
+import { EntityTableRowDetailsComponent } from './entity-table/entity-table-row-details/entity-table-row-details.component';
 import { EntityTreeTableComponent } from './entity-tree-table/entity-tree-table.component';
 import { EntityCardComponent } from './entity-card/entity-card.component';
 import { EntityTemplateDirective } from './entity-template.directive';
@@ -85,6 +86,7 @@ import { EntityRowDetailsComponent } from './entity-row-details/entity-row-detai
   ],
   declarations: [
     EntityTableComponent,
+    EntityTableRowDetailsComponent,
     EntityRowDetailsComponent,
     EntityTreeTableComponent,
     EntityCardComponent,
@@ -159,7 +161,7 @@ import { EntityRowDetailsComponent } from './entity-row-details/entity-row-detai
     EntityToolbarComponent,
     ToolbarButtonComponent,
     ToolbarMenuComponent,
-    ToolbarMultimenuComponent
+    ToolbarMultimenuComponent,
   ],
   entryComponents: [
     FormButtonComponent,
@@ -187,6 +189,7 @@ import { EntityRowDetailsComponent } from './entity-row-details/entity-row-detai
     FormParagraphComponent,
     EntityToolbarComponent,
     EntitySnackbarComponent,
+    EntityTableRowDetailsComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
