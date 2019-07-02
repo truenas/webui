@@ -25,7 +25,7 @@ int_description_placeholder : T('Description'),
 int_description_tooltip : T('Enter a description of the interface.'),
 
 int_name_placeholder : T('Name'),
-int_name_tooltip : T('Enter a name to use for the the interface.\
+int_name_tooltip : T('Enter a name for the interface.\
  Use the format <samp>lagg<i>X</i></samp>,\
  <samp>vlan<i>X</i></samp>, or <samp>bridge<i>X</i></samp> where\
  <i>X</i> is a number representing a non-parent interface. Read-only\
