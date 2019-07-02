@@ -296,5 +296,14 @@ export const helptext_sharing_iscsi = {
 
   associated_target_placeholder_extent: T("Extent"),
   associated_target_tooltip_extent: T("Select an existing extent."),
-  associated_target_validators_extent: [Validators.required]
+  associated_target_validators_extent: [Validators.required],
+
+  fc_mode_placeholder: T('Mode'),
+  fc_mode_tooltip: T(''),
+
+  fc_target_placeholder: T('Targets'),
+  fc_target_tooltip: T(''),
+
+  fc_initiators_placeholder: T('Connected Initiators'),
+  fc_initiators_tooltip: T(''),
 };
