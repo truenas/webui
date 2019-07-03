@@ -114,7 +114,6 @@
     "@types/c3": "0.4.52",
     "@types/chartist": "0.9.43",
     "@types/d3": "4.12.0",
-    "@types/d3-dsv": "1.0.32",
     "@types/hopscotch": "0.2.30",
     "@types/jasmine": "2.8.11",
     "@types/lodash": "4.14.134",
