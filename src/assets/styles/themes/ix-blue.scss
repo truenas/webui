@@ -1273,4 +1273,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     top: 50px !important;
   }
 
+  .mat-card{
+    border-radius:6px;
+    overflow:hidden;
+  }
+
  } // end of ix theme

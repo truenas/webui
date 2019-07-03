@@ -145,6 +145,10 @@
   border-bottom:solid 1px var(--bg1);
 }
 
+.mat-list-base {
+  border-left:solid 1px var(--bg1);
+}
+
 /* NARROW SCREENS */
 .xs.widget{
   width:100%;

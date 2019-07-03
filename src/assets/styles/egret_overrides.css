@@ -228,6 +228,7 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
   height:100%;
   padding:0;
   margin:0;
+  overflow:hidden;
 }
 
 .widget.splitv .mat-card .mat-toolbar-row,
@@ -319,7 +320,7 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
 
 /* New Rules */
 .widget mat-card-content{
-  background: rgba(0,0,0,0.05);
+  /*background: rgba(0,0,0,0.05);*/
 }
 
 .widget mat-toolbar-row{
