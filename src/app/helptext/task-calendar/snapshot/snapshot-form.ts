@@ -43,7 +43,7 @@ export default {
     allow_empty_placeholder: T('Allow Taking Empty Snapshots'),
     allow_empty_tooltip: T('Creates dataset snapshots when there are no\
  changes. Set to support periodic snapshot schedules and replications\
- created in %brand% 11.2 and earlier.'),
+ created in version 11.2 and earlier.'),
 
     enabled_placeholder: T('Enabled'),
     enabled_tooltip: T('Unset to disable this task without deleting it.'),

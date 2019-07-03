@@ -20,11 +20,11 @@
         </div>
     </mat-list-item>
     <div class="text-center mt-1" *ngIf="notifications.length">
-      <small><a href="#" (click)="closeAll($event)">Clear All Alerts</a></small>
+      <small><a href="#" (click)="closeAll($event)">Dismiss All Alerts</a></small>
     </div>
     <mat-list-item *ngFor="let n of dismissedNotifications" class="notific-item" role="listitem">
-      <span style="font-weight: bolder;">Closed</span>
-        <div class="mat-list-text">
+      <mat-icon class="notific-icon dismissed" matTooltip="DISMISSED">check_circle</mat-icon>
+        <div class="mat-list-text dismissed">
           <h4 class="message" [innerHTML]="n.message"></h4>
           <small class="time">{{n.time_locale | date: 'E, d MMM y hh:mm:ss'}} ({{n.timezone}})</small>
           <a (click)="turnMeOn(n, $event)" class="dismiss">Re-Open</a>
