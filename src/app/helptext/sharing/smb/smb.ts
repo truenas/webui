@@ -102,6 +102,8 @@ export const helptext_sharing_smb = {
     actions_basic_mode: T('Basic Mode'),
     actions_advanced_mode: T('Advanced Mode'),
 
+    action_edit_acl: T('Edit ACL'),
+
     dialog_enable_service_title: T("Enable service"),
     dialog_enable_service_message: T("Enable this service?"),
     dialog_enable_service_button: T("Enable Service"),
