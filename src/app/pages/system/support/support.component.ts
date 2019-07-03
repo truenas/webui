@@ -35,7 +35,7 @@ export class SupportComponent {
   public saveSubmitText = "Submit";
   public password_fc: any;
   public username_fc: any;
-  public is_freenas: string = window.localStorage['is_freenas'];
+  public is_freenas: boolean;
   public product_image = '';
   public scrshot: any;
   public subs: any;
@@ -372,7 +372,10 @@ export class SupportComponent {
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
     this.category = _.find(this.fieldConfig, {name: "category"});
-    if (this.is_freenas === 'true') {
+    if (window.localStorage['is_freenas'] === 'true') {
+      this.is_freenas = true;
+    };
+    if (this.is_freenas) {
       for (let i in this.trueNASFields) {
         this.hideField(this.trueNASFields[i], true, entityEdit);
       }
@@ -514,7 +517,7 @@ export class SupportComponent {
   }
 
   customSubmit(entityEdit): void{
-    if (this.is_freenas === 'true') {
+    if (this.is_freenas) {
       this.payload['username'] = entityEdit.username;
       this.payload['password'] = entityEdit.password;
       this.payload['category'] = entityEdit.category;
@@ -542,36 +545,35 @@ export class SupportComponent {
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.subscribe(res=>{
       const url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
-      // if (this.is_freenas === 'true') {
-      //   dialogRef.componentInstance.setDescription(url);
-      // } else {
-        if (this.subs.length > 0) {
-          console.log(this.subs)
-          this.subs.forEach((item) => {
-            const formData: FormData = new FormData();
+      if (this.subs.length > 0) {
+        this.subs.forEach((item) => {
+          const formData: FormData = new FormData();
+          if (this.is_freenas) {
             formData.append('data', JSON.stringify({
               "method": "support.attach_ticket",
-              "params": [{'ticket': ('res.result.ticket').toString(), 'filename': item.file.name}]
+              "params": [{'ticket': (res.result.ticket), 'filename': item.file.name, 'username': this.payload['username'], 'password': this.payload['password'] }]
             }));
-            console.log(item.file.name, item.file)
-            formData.append('file', item.file, item.apiEndPoint);
-            dialogRef.componentInstance.wspost(item.apiEndPoint, formData);
-            dialogRef.componentInstance.success.subscribe(res=>{
-              // console.info(res);
-            }),
-            dialogRef.componentInstance.failure.subscribe((res) => {
-              console.log(res)
-              dialogRef.componentInstance.setDescription(res.error);
-            });
+          } else { // TrueNAS support form doesn't ask for sign-in creds
+            formData.append('data', JSON.stringify({
+              "method": "support.attach_ticket",
+              "params": [{'ticket': (res.result.ticket), 'filename': item.file.name }]
+            }));
+          }
+          formData.append('file', item.file, item.apiEndPoint);
+          dialogRef.componentInstance.wspost(item.apiEndPoint, formData);
+          dialogRef.componentInstance.success.subscribe(res=>{
+            // console.info(res);
+          }),
+          dialogRef.componentInstance.failure.subscribe((res) => {
+            dialogRef.componentInstance.setDescription(res.error);
           });
-          dialogRef.componentInstance.setDescription(url);
-        } else {
-          dialogRef.componentInstance.setDescription(url);
-        }
-      // }
+        });
+        dialogRef.componentInstance.setDescription(url);
+      } else {
+        dialogRef.componentInstance.setDescription(url);
+      }
     })
     dialogRef.componentInstance.failure.subscribe((res) => {
-      console.log(res)
       dialogRef.componentInstance.setDescription(res.error);
     });
   }
@@ -616,7 +618,6 @@ export class SupportComponent {
   }
 
   updater(file: any, parent: any){
-    console.log(file)
     parent.subs = [];
     const fileBrowser = file.fileInput.nativeElement;
     this.scrshot = _.find(parent.fieldConfig, { name: 'screenshot' });
@@ -632,7 +633,6 @@ export class SupportComponent {
         }
       }
     }
-    console.log(parent)
   }
 
   hideField(fieldName: any, show: boolean, entity: any) {
