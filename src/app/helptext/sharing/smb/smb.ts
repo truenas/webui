@@ -107,6 +107,10 @@ export const helptext_sharing_smb = {
     dialog_enable_service_button: T("Enable Service"),
     dialog_warning: T('Warning'),
     dialog_warning_message: T("Setting default permissions will reset the permissions of this share and any others within its path."),
+
+    dialog_edit_acl_title: T("Configure ACL"),
+    dialog_edit_acl_message: T("Configure permissions for this share's dataset now?"),
+    dialog_edit_acl_button: T("Configure now"),
     
     snackbar_close: T('close'),
     snackbar_service_started: T("Service started")
