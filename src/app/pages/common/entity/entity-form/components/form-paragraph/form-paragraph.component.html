@@ -1,5 +1,5 @@
 <div id="{{config.name}}" class="dynamic-field form-textarea" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
-    <p [innerHTML]="config.paraText"></p>
+    <p [innerHTML]="config.paraText | translate | docreplace"></p>
 	<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
   <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
   <mat-form-field class="full-width" style="display:none">
