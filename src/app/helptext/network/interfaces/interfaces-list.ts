@@ -24,5 +24,11 @@ checkin_complete_message: T("Network changes have been made permanent."),
 checkin_button: T('KEEP NETWORK CHANGES PERMANENTLY'),
 
 pending_changes_title: T("Pending Network Changes"),
-pending_changes_message: T("There are unsaved network interface settings.  Review them now?")
+pending_changes_message: T("There are unsaved network interface settings.  Review them now?"),
+
+ha_enabled_edit_title: T("Cannot Edit while HA is Enabled"),
+ha_enabled_edit_msg: T("Editing interfaces while HA is enabled is not allowed."),
+
+ha_enabled_delete_title: T("Cannot Delete while HA is Enabled"),
+ha_enabled_delete_msg: T("Deleting interfaces while HA is enabled is not allowed."),
 }

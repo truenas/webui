@@ -3,15 +3,19 @@
         <div fxLayout="row">
             <div>
                 <section>RELEASE</section>
-                <label>{{config[5]}}</label>
+                <label>{{config.release}}</label>
             </div>
             <div fxFlexOffset="3">
                 <section>AUTOSTART</section>
-                <label>{{config[2]}}</label>
+                <label>{{config.boot}}</label>
             </div>
             <div fxFlexOffset="3">
                 <section>VERSION</section>
-                <label>{{config[10]}}</label>
+                <label>{{config.version}}</label>
+            </div>
+            <div fxFlexOffset="3">
+                <section>REVISION</section>
+                <label>{{config.revision}}</label>
             </div>
             <!-- <div fxFlexOffset="3">
                 <section>COLLECTION</section>

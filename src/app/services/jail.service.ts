@@ -85,15 +85,15 @@ export class JailService {
   listTemplates() { return this.rest.get(this.jailsTemplate, {}); }
 
   getLocalReleaseChoices() {
-    return this.ws.call('jail.list_resource', ["RELEASE"]);
+    return this.ws.job('jail.list_resource', ["RELEASE"]);
   };
 
   getRemoteReleaseChoices() {
-    return this.ws.call('jail.list_resource', ["RELEASE", true]);
+    return this.ws.job('jail.list_resource', ["RELEASE", true]);
   };
 
   getBranches() {
-    return this.ws.call('jail.list_resource', ["BRANCHES"]);
+    return this.ws.job('jail.list_resource', ["BRANCHES"]);
   }
 
   getVersion() {
@@ -101,6 +101,10 @@ export class JailService {
   }
 
   getInstalledPlugins() {
-    return this.ws.call('jail.list_resource', ["PLUGIN"]);
+    return this.ws.job('jail.list_resource', ["PLUGIN"]);
+  }
+
+  getTemplates() {
+    return this.ws.job('jail.list_resource', ["TEMPLATE"]);
   }
 }

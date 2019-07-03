@@ -156,14 +156,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.onLangChange.emit(this.language.currentLang);
   }
 
-  changeTheme(theme) {
-    this.themeService.changeTheme(theme);
-  }
-
-  createTheme(){
-    this.router.navigate(['/ui-preferences']);
-  }
-
   toggleNotific() {
     this.notificPanel.toggle();
   }

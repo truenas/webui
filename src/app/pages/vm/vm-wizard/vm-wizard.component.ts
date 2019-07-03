@@ -13,6 +13,8 @@ import { MatDialog } from '@angular/material';
 import { T } from '../../../translate-marker';
 import { DialogService } from '../../../services/dialog.service';
 import helptext from '../../../helptext/vm/vm-wizard/vm-wizard';
+import { map } from 'rxjs/operators';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 
 @Component({
   selector: 'app-vm-wizard',
@@ -34,24 +36,6 @@ export class VMWizardComponent {
   public res;
 
   protected wizardConfig: Wizard[] = [
-
-    {
-      label: helptext.wizard_type_label,
-      fieldConfig: [
-
-        {
-          type: 'select',
-          name: 'wizard_type',
-          required: true,
-          placeholder: helptext.wizard_type_placeholder,
-          tooltip: helptext.wizard_type_tooltip,
-          options: helptext.wizard_type_options,
-          validation : [ Validators.required ],
-          value: 'vm'
-        },
-      ]
-    },
-
     {
       label: helptext.os_label,
       fieldConfig: [
@@ -171,21 +155,16 @@ export class VMWizardComponent {
           required: true
         },
         {
-          type: 'paragraph',
-          name: 'pool_detach_warning',
-          paraText: helptext.pool_detach_warning_paraText,
-        },
-        {
-          type: 'explorer',
+          type: 'select',
           name: 'datastore',
           tooltip: helptext.datastore_tooltip,
+          placeholder: helptext.datastore_placeholder,
+          blurStatus: true,
+          blurEvent: this.blurEvent3,
           options: [],
           isHidden: false,
-          initial: '/mnt',
-          explorerType: 'directory',
           validation: [Validators.required],
-          required: true,
-          hideDirs: 'iocage'
+          required: true
         },
         {
           type: 'select',
@@ -271,7 +250,6 @@ export class VMWizardComponent {
 
   protected releaseField: any;
   protected currentServerVersion: any;
-  private datastore: any;
   private nic_attach: any;
   private nicType:  any;
   private bootloader: any;
@@ -290,23 +268,30 @@ export class VMWizardComponent {
   afterInit(entityWizard: EntityWizardComponent) {
     this.systemGeneralService.getIPChoices().subscribe((res) => {
       if (res.length > 0) {
-        const vnc_bind = _.find(this.wizardConfig[1].fieldConfig, {'name' : 'vnc_bind'});
+        const vnc_bind = _.find(this.wizardConfig[0].fieldConfig, {'name' : 'vnc_bind'});
         for (const item of res){
           vnc_bind.options.push({label : item[1], value : item[0]});
         }
         this.ws.call('interface.ip_in_use', [{"ipv4": true}]).subscribe(
           (ip) => {
             if (_.find(vnc_bind.options, { value: ip[0].address })){
-              ( < FormGroup > entityWizard.formArray.get([1]).get('vnc_bind')).setValue(ip[0].address);
+              ( < FormGroup > entityWizard.formArray.get([0]).get('vnc_bind')).setValue(ip[0].address);
             }
           }
         )
       }
     });
 
+    this.ws
+      .call("pool.filesystem_choices", [["FILESYSTEM"]])
+      .pipe(map(new EntityUtils().array1DToLabelValuePair))
+      .subscribe(options => {
+        this.wizardConfig[2].fieldConfig.find(config => config.name === "datastore").options = options;
+      });
+
     this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]]]).subscribe((zvols)=>{
       zvols.forEach(zvol => {
-        _.find(this.wizardConfig[3].fieldConfig, {name : 'hdd_path'}).options.push(
+        _.find(this.wizardConfig[2].fieldConfig, {name : 'hdd_path'}).options.push(
           {
             label : zvol.id, value : zvol.id
           }
@@ -314,92 +299,92 @@ export class VMWizardComponent {
       });
     });
 
-    ( < FormGroup > entityWizard.formArray.get([1]).get('bootloader')).valueChanges.subscribe((bootloader) => {
+    ( < FormGroup > entityWizard.formArray.get([0]).get('bootloader')).valueChanges.subscribe((bootloader) => {
       if(bootloader === "UEFI_CSM"){
-        _.find(this.wizardConfig[1].fieldConfig, {name : 'enable_vnc'})['isHidden'] = true;
+        _.find(this.wizardConfig[0].fieldConfig, {name : 'enable_vnc'})['isHidden'] = true;
       } else {
-        _.find(this.wizardConfig[1].fieldConfig, {name : 'enable_vnc'})['isHidden'] = false;
+        _.find(this.wizardConfig[0].fieldConfig, {name : 'enable_vnc'})['isHidden'] = false;
       }
 
 
     });
 
-    ( < FormGroup > entityWizard.formArray.get([1]).get('enable_vnc')).valueChanges.subscribe((res) => {
-      _.find(this.wizardConfig[1].fieldConfig, {name : 'vnc_bind'}).isHidden = !res;
-      res ? ( < FormGroup > entityWizard.formArray.get([1]).get('vnc_bind')).enable() : ( < FormGroup > entityWizard.formArray.get([1]).get('vnc_bind')).disable();
+    ( < FormGroup > entityWizard.formArray.get([0]).get('enable_vnc')).valueChanges.subscribe((res) => {
+      _.find(this.wizardConfig[0].fieldConfig, {name : 'vnc_bind'}).isHidden = !res;
+      res ? ( < FormGroup > entityWizard.formArray.get([0]).get('vnc_bind')).enable() : ( < FormGroup > entityWizard.formArray.get([0]).get('vnc_bind')).disable();
     });
 
 
-    ( < FormGroup > entityWizard.formArray.get([1]).get('os')).valueChanges.subscribe((res) => {
+    ( < FormGroup > entityWizard.formArray.get([0]).get('os')).valueChanges.subscribe((res) => {
       this.summary[T('Guest Operating System')] = res;
-      ( < FormGroup > entityWizard.formArray.get([1])).get('name').valueChanges.subscribe((name) => {
+      ( < FormGroup > entityWizard.formArray.get([0])).get('name').valueChanges.subscribe((name) => {
         this.summary[T('Name')] = name;
       });
-      ( < FormGroup > entityWizard.formArray.get([2])).get('vcpus').valueChanges.subscribe((vcpus) => {
+      ( < FormGroup > entityWizard.formArray.get([1])).get('vcpus').valueChanges.subscribe((vcpus) => {
         this.summary[T('Number of CPUs')] = vcpus;
       });
-      ( < FormGroup > entityWizard.formArray.get([2])).get('memory').valueChanges.subscribe((memory) => {
+      ( < FormGroup > entityWizard.formArray.get([1])).get('memory').valueChanges.subscribe((memory) => {
         this.summary[T('Memory')] = memory + ' MiB';
       });
 
-      ( < FormGroup > entityWizard.formArray.get([3])).get('volsize').valueChanges.subscribe((volsize) => {
+      ( < FormGroup > entityWizard.formArray.get([2])).get('volsize').valueChanges.subscribe((volsize) => {
         this.summary[T('Hard Disk Size')] = volsize + ' GiB';
       });
 
-      ( < FormGroup > entityWizard.formArray.get([3])).get('disk_radio').valueChanges.subscribe((disk_radio)=>{
+      ( < FormGroup > entityWizard.formArray.get([2])).get('disk_radio').valueChanges.subscribe((disk_radio)=>{
         if(this.summary[T('Hard Disk')] || this.summary[T('Hard Disk Size')]){
           delete this.summary[T('Hard Disk')];
           delete this.summary[T('Hard Disk Size')];
         }
         if(disk_radio) {
-          this.summary[T('Hard Disk Size')] = ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].value + ' Gib';
-            ( < FormGroup > entityWizard.formArray.get([3])).get('volsize').valueChanges.subscribe((volsize) => {
+          this.summary[T('Hard Disk Size')] = ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].value + ' Gib';
+            ( < FormGroup > entityWizard.formArray.get([2])).get('volsize').valueChanges.subscribe((volsize) => {
               this.summary[T('Hard Disk Size')] = volsize + ' GiB';
             });
         } else {
-          this.summary[T('Hard Disk')] = ( < FormGroup > entityWizard.formArray.get([3])).controls['hdd_path'].value;
-            ( < FormGroup > entityWizard.formArray.get([3])).get('hdd_path').valueChanges.subscribe((existing_hdd_path)=>{
+          this.summary[T('Hard Disk')] = ( < FormGroup > entityWizard.formArray.get([2])).controls['hdd_path'].value;
+            ( < FormGroup > entityWizard.formArray.get([2])).get('hdd_path').valueChanges.subscribe((existing_hdd_path)=>{
               this.summary[T('Hard Disk')] = existing_hdd_path;
             })
         }
       });
 
-      ( < FormGroup > entityWizard.formArray.get([3])).get('datastore').valueChanges.subscribe((datastore)=>{
+      ( < FormGroup > entityWizard.formArray.get([2])).get('datastore').valueChanges.subscribe((datastore)=>{
         if(datastore !== undefined && datastore !== "" && datastore !== "/mnt"){
-          _.find(this.wizardConfig[3].fieldConfig, {'name' : 'datastore'}).hasErrors = false;
-          _.find(this.wizardConfig[3].fieldConfig, {'name' : 'datastore'}).errors = null;
-        const volsize = ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].value * 1073741824;
-        this.ws.call('filesystem.statfs',[datastore]).subscribe((stat)=> {
-          _.find(this.wizardConfig[3].fieldConfig, {'name' : 'volsize'})['hasErrors'] = false;
-          _.find(this.wizardConfig[3].fieldConfig, {'name' : 'volsize'})['errors'] = '';
+          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'datastore'}).hasErrors = false;
+          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'datastore'}).errors = null;
+        const volsize = ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].value * 1073741824;
+        this.ws.call('filesystem.statfs',[`/mnt/${datastore}`]).subscribe((stat)=> {
+          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'volsize'})['hasErrors'] = false;
+          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'volsize'})['errors'] = '';
          if (stat.free_bytes < volsize ) {
-          ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(Math.floor(stat.free_bytes / (1073741824)));
+          ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(Math.floor(stat.free_bytes / (1073741824)));
          } else if (stat.free_bytes > 40*1073741824) {
-              const vm_os = ( < FormGroup > entityWizard.formArray.get([1]).get('os')).value;
+              const vm_os = ( < FormGroup > entityWizard.formArray.get([0]).get('os')).value;
               if (vm_os === "Windows"){
-                  ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(volsize/1073741824);
+                  ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(volsize/1073741824);
               } else {
-                  ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(volsize/1073741824);
+                  ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(volsize/1073741824);
               };
         } else if (stat.free_bytes > 10*1073741824) {
-              const vm_os = ( < FormGroup > entityWizard.formArray.get([1]).get('os')).value;
-              ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(volsize/1073741824);
+              const vm_os = ( < FormGroup > entityWizard.formArray.get([0]).get('os')).value;
+              ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(volsize/1073741824);
           };
         });
       } else {
         if(datastore === '/mnt'){
-          ( < FormGroup > entityWizard.formArray.get([3])).controls['datastore'].setValue(null);
-          _.find(this.wizardConfig[3].fieldConfig, {'name' : 'datastore'}).hasErrors = true;
-          _.find(this.wizardConfig[3].fieldConfig, {'name' : 'datastore'}).errors = `Virtual machines cannot be stored in an unmounted mountpoint: ${datastore}`;
+          ( < FormGroup > entityWizard.formArray.get([2])).controls['datastore'].setValue(null);
+          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'datastore'}).hasErrors = true;
+          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'datastore'}).errors = `Virtual machines cannot be stored in an unmounted mountpoint: ${datastore}`;
         }
         if(datastore === ''){
-          ( < FormGroup > entityWizard.formArray.get([3])).controls['datastore'].setValue(null);
-          _.find(this.wizardConfig[3].fieldConfig, {'name' : 'datastore'}).hasErrors = true;
-          _.find(this.wizardConfig[3].fieldConfig, {'name' : 'datastore'}).errors = `Please select a valid path`;
+          ( < FormGroup > entityWizard.formArray.get([2])).controls['datastore'].setValue(null);
+          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'datastore'}).hasErrors = true;
+          _.find(this.wizardConfig[2].fieldConfig, {'name' : 'datastore'}).errors = `Please select a valid path`;
         }
       }
       });
-      ( < FormGroup > entityWizard.formArray.get([5]).get('iso_path')).valueChanges.subscribe((iso_path) => {
+      ( < FormGroup > entityWizard.formArray.get([4]).get('iso_path')).valueChanges.subscribe((iso_path) => {
         if (iso_path && iso_path !== undefined){
           this.summary[T('Installation Media')] = iso_path;
         } else {
@@ -408,99 +393,97 @@ export class VMWizardComponent {
         
       });
       this.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
-        ( < FormGroup > entityWizard.formArray.get([5]).get('iso_path')).setValue(message);
+        ( < FormGroup > entityWizard.formArray.get([4]).get('iso_path')).setValue(message);
       })
       this.ws.call('vm.get_available_memory').subscribe((available_memory)=>{
         if (available_memory > 512 * 1048576) {
           this.res = res;
-          this.populate_ds();
           if (res === 'Windows') {
-            ( < FormGroup > entityWizard.formArray.get([2])).controls['vcpus'].setValue(2);
-            ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(4096);
-            ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(40);
+            ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(2);
+            ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue(4096);
+            ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(40);
           }
           else {
-            ( < FormGroup > entityWizard.formArray.get([2])).controls['vcpus'].setValue(1);
-            ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(512);
-            ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(10);
+            ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(1);
+            ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue(512);
+            ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(10);
           }
 
         } else {
           if (res === 'Windows') {
-            ( < FormGroup > entityWizard.formArray.get([2])).controls['vcpus'].setValue(2);
-            ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(0);
-            ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(40);
+            ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(2);
+            ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue(0);
+            ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(40);
           }
           else {
-            ( < FormGroup > entityWizard.formArray.get([2])).controls['vcpus'].setValue(1);
-            ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(0);
-            ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(10);
+            ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(1);
+            ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue(0);
+            ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(10);
           }
 
         }
       })
 
     });
-    ( < FormGroup > entityWizard.formArray.get([3]).get('disk_radio')).valueChanges.subscribe((res) => {
+    ( < FormGroup > entityWizard.formArray.get([2]).get('disk_radio')).valueChanges.subscribe((res) => {
       if (res){
-        _.find(this.wizardConfig[3].fieldConfig, {name : 'volsize'}).isHidden = false;
-        _.find(this.wizardConfig[3].fieldConfig, {name : 'datastore'}).isHidden = false;
-        _.find(this.wizardConfig[3].fieldConfig, {name : 'hdd_path'}).isHidden = true;
+        _.find(this.wizardConfig[2].fieldConfig, {name : 'volsize'}).isHidden = false;
+        _.find(this.wizardConfig[2].fieldConfig, {name : 'datastore'}).isHidden = false;
+        _.find(this.wizardConfig[2].fieldConfig, {name : 'hdd_path'}).isHidden = true;
       } else {
-        _.find(this.wizardConfig[3].fieldConfig, {name : 'volsize'}).isHidden = true;
-        _.find(this.wizardConfig[3].fieldConfig, {name : 'datastore'}).isHidden = true;
-        _.find(this.wizardConfig[3].fieldConfig, {name : 'hdd_path'}).isHidden = false;
+        _.find(this.wizardConfig[2].fieldConfig, {name : 'volsize'}).isHidden = true;
+        _.find(this.wizardConfig[2].fieldConfig, {name : 'datastore'}).isHidden = true;
+        _.find(this.wizardConfig[2].fieldConfig, {name : 'hdd_path'}).isHidden = false;
       }
 
     });
-    ( < FormGroup > entityWizard.formArray.get([5]).get('upload_iso_checkbox')).valueChanges.subscribe((res) => {
+    ( < FormGroup > entityWizard.formArray.get([4]).get('upload_iso_checkbox')).valueChanges.subscribe((res) => {
       if (res){
-        _.find(this.wizardConfig[5].fieldConfig, {name : 'upload_iso'})['isHidden'] = false;
-        _.find(this.wizardConfig[5].fieldConfig, {name : 'upload_iso_path'})['isHidden'] = false;
+        _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso'})['isHidden'] = false;
+        _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso_path'})['isHidden'] = false;
       } else {
-        _.find(this.wizardConfig[5].fieldConfig, {name : 'upload_iso'})['isHidden'] = true;
-        _.find(this.wizardConfig[5].fieldConfig, {name : 'upload_iso_path'})['isHidden'] = true;
+        _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso'})['isHidden'] = true;
+        _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso_path'})['isHidden'] = true;
       }
 
     });
-    ( < FormGroup > entityWizard.formArray.get([5]).get('upload_iso_path')).valueChanges.subscribe((res) => {
+    ( < FormGroup > entityWizard.formArray.get([4]).get('upload_iso_path')).valueChanges.subscribe((res) => {
       if (res){
-        _.find(this.wizardConfig[5].fieldConfig, {name : 'upload_iso'}).fileLocation = res;
+        _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso'}).fileLocation = res;
       }
 
     });
-    this.populate_ds();
 
     this.networkService.getVmNicChoices().subscribe((res) => {
-      this.nic_attach = _.find(this.wizardConfig[4].fieldConfig, {'name' : 'nic_attach'});
+      this.nic_attach = _.find(this.wizardConfig[3].fieldConfig, {'name' : 'nic_attach'});
       this.nic_attach.options = Object.keys(res || {}).map(nicId => ({
         label: nicId,
         value: nicId
       }));
-      ( < FormGroup > entityWizard.formArray.get([4])).controls['nic_attach'].setValue(
+      ( < FormGroup > entityWizard.formArray.get([3])).controls['nic_attach'].setValue(
         this.nic_attach.options[0].value
       )
       this.ws.call('vm.random_mac').subscribe((mac_res)=>{
-        ( < FormGroup > entityWizard.formArray.get([4])).controls['NIC_mac'].setValue(mac_res);
+        ( < FormGroup > entityWizard.formArray.get([3])).controls['NIC_mac'].setValue(mac_res);
       });
 
     });
     this.ws.call('notifier.choices', [ 'VM_NICTYPES' ]).subscribe((res) => {
-          this.nicType = _.find(this.wizardConfig[4].fieldConfig, {name : "NIC_type"});
+          this.nicType = _.find(this.wizardConfig[3].fieldConfig, {name : "NIC_type"});
           res.forEach((item) => {
             this.nicType.options.push({label : item[1], value : item[0]});
           });
-        ( < FormGroup > entityWizard.formArray.get([4])).controls['NIC_type'].setValue(
+        ( < FormGroup > entityWizard.formArray.get([3])).controls['NIC_type'].setValue(
           this.nicType.options[0].value
         )
         });
 
       this.ws.call('notifier.choices', [ 'VM_BOOTLOADER' ]).subscribe((res) => {
-        this.bootloader = _.find(this.wizardConfig[1].fieldConfig, {name : 'bootloader'});
+        this.bootloader = _.find(this.wizardConfig[0].fieldConfig, {name : 'bootloader'});
         res.forEach((item) => {
           this.bootloader.options.push({label : item[1], value : item[0]})
         });
-      ( < FormGroup > entityWizard.formArray.get([1])).controls['bootloader'].setValue(
+      ( < FormGroup > entityWizard.formArray.get([0])).controls['bootloader'].setValue(
         this.bootloader.options[0].value
       )
       });
@@ -514,7 +497,7 @@ blurEvent(parent){
     if(vm_wizard_res.length > 0){
       _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['hasErrors'] = true;
       _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['errors'] = `Virtual machine ${vm_wizard_res[0].name} already exists.`;
-      parent.entityWizard.formArray.get([1]).get('name').setValue("");
+      parent.entityWizard.formArray.get([0]).get('name').setValue("");
 
     }
   })
@@ -527,7 +510,7 @@ blurEvent2(parent){
     if( vm_memory_requested *1048576> vm_memory_available){
       _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'})['hasErrors'] = true;
       _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'})['errors'] = `Cannot allocate ${vm_memory_requested} Mib to virtual machine: ${vm_name}.`;
-      parent.entityWizard.formArray.get([2]).get('memory').setValue(0);
+      parent.entityWizard.formArray.get([1]).get('memory').setValue(0);
     } else{
       _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'})['hasErrors'] = false;
       _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'})['errors'] = '';
@@ -540,54 +523,25 @@ blurEvent3(parent){
     const datastore = parent.entityWizard.formArray.controls[3].value.datastore;
     const vm_name = parent.entityWizard.formGroup.value.formArray[1].name;
     if(datastore !== undefined && datastore !== "" && datastore !== "/mnt"){
-    parent.ws.call('filesystem.statfs',[datastore]).subscribe((stat)=> {
+    parent.ws.call('filesystem.statfs', [`/mnt/${datastore}`]).subscribe((stat)=> {
       if (stat.free_bytes < volsize ) {
         _.find(parent.wizardConfig[3].fieldConfig, {'name' : 'volsize'})['hasErrors'] = true;
         _.find(parent.wizardConfig[3].fieldConfig, {'name' : 'volsize'})['errors'] = `Cannot allocate ${volsize / (1073741824)} Gib to for storage virtual machine: ${vm_name}.`;
-        parent.entityWizard.formArray.get([3]).get('volsize').setValue(0);
+        parent.entityWizard.formArray.get([2]).get('volsize').setValue(0);
        } else {
         _.find(parent.wizardConfig[3].fieldConfig, {'name' : 'volsize'})['hasErrors'] = false;
         _.find(parent.wizardConfig[3].fieldConfig, {'name' : 'volsize'})['errors'] = '';
         const vm_os = parent.entityWizard.formArray.controls[1].os;
         if (vm_os === "Windows"){
-          parent.entityWizard.formArray.get([3]).get('volsize').setValue(volsize/1073741824);
+          parent.entityWizard.formArray.get([2]).get('volsize').setValue(volsize/1073741824);
         } else {
-          parent.entityWizard.formArray.get([3]).get('volsize').setValue(volsize/1073741824);
+          parent.entityWizard.formArray.get([2]).get('volsize').setValue(volsize/1073741824);
         };
        }
     })
   }
 }
 }
-populate_ds(this) {
-  this.ws.call('pool.dataset.query').subscribe((filesystem_res)=>{
-    this.datastore = _.find(this.wizardConfig[3].fieldConfig, { name : 'datastore' });
-    for (const idx in filesystem_res) {
-      if(!filesystem_res[idx].name.includes("/") && !filesystem_res[idx].name.includes("freenas-boot")){
-        this.datastore.options.push(
-          {label : filesystem_res[idx].name, value : filesystem_res[idx].name});
-      }
-    };
-    if (this.datastore.options.length > 0) {
-      this.entityWizard.formArray.get([3]).controls['datastore'].setValue('/mnt/'+this.datastore.options[0].value);
-      if (this.res) {
-        if (this.datastore.options[0].value !== undefined && this.datastore.options[0].value!==""){
-        this.ws.call('filesystem.statfs',['/mnt/'+this.datastore.options[0].value]).subscribe((stat)=> {
-          let storage = 10*1073741824
-          if (this.res === "Windows") { 
-            storage = 40*1073741824;
-          }
-          if (storage && stat.free_bytes < storage ) {
-            this.entityWizard.formArray.get([3]).controls['volsize'].setValue(Math.floor(stat.free_bytes/(1073741824))); 
-          };
-         });
-        };
-      }
-    }
-    
-
-  });
-};
 
 async customSubmit(value) {
     value.datastore = value.datastore.replace('/mnt/','')

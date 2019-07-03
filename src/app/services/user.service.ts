@@ -24,22 +24,6 @@ export class UserService {
 
   listGroups() { return this.rest.get(this.accountGroupResource, {limit: 50}); };
   
-  listAllUsers(search = "", offset: number = 0) { 
-    let resource = this.accountAllUsersResource;
-    if (search) {
-      resource = resource + '?q=' + search;
-    }
-    return this.rest.get(resource,
-            {offset: offset, limit: 50}) };
-
-  listAllGroups(search = "", offset: number = 0) { 
-    let resource = this.accountAllGroupsResource;
-    if (search) {
-      resource = resource + '?q=' + search;
-    }
-    return this.rest.get(resource,
-            {offset: offset, limit: 50}) };
-
   groupQueryDSCache(search = "") {
     let queryArgs = [];
     search = search.trim();
