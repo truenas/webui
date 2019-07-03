@@ -9,6 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 
 //local libs
+import { EntityTableRowDetailsComponent } from './entity-table-row-details/entity-table-row-details.component';
 import { RestService } from '../../../../services/rest.service';
 import { WebSocketService } from '../../../../services/ws.service';
 import { EntityUtils } from '../utils';
@@ -128,6 +129,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public cardHeaderReady = false;
   public showActions: boolean = true;
   public detailRowHeight = 100;
+  public entityTableRowDetailsComponent = EntityTableRowDetailsComponent;
   private _multiActionsIconsOnly: boolean = false;
   get multiActionsIconsOnly(){
     return this._multiActionsIconsOnly;
