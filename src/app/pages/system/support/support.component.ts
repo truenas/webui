@@ -357,7 +357,6 @@ export class SupportComponent {
     'TNCategory',
     'environment',
     'criticality',
-    // 'screenshot'
   ];
 
   public custActions: Array<any> = [];
