@@ -3,7 +3,7 @@ import { EntityJobComponent } from "app/pages/common/entity/entity-job";
 import {
   EntityAction,
   EntityRowDetails
-} from "app/pages/common/entity/entity-row-details/entity-row-details.interface";
+} from "app/pages/common/entity/entity-table/entity-row-details.interface";
 import { EntityTableComponent } from "app/pages/common/entity/entity-table";
 import { EntityUtils } from "app/pages/common/entity/utils";
 import { T } from "app/translate-marker";
