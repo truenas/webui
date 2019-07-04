@@ -458,6 +458,7 @@ export class DatasetAclComponent implements OnDestroy {
       if (acl.perms_type === "BASIC") {
         d['perms'] = {'BASIC':acl.basic_perms};
       } else {
+        d['perms'] = {};
         const adv_perm_options = helptext.dataset_acl_advanced_perms_options;
         for (let j = 0; j < adv_perm_options.length; j++) {
           const perm = adv_perm_options[j].value;
