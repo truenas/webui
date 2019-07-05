@@ -150,4 +150,86 @@ export class TaskService {
   getSmarttestTypeChoices() {
     return this.ws.call('notifier.choices', ['SMART_TEST', [true, false]]);
   };
+
+  cronToHumanReadable(cronExpression: string): string {
+    const cron = cronExpression.split(" ");
+    let minutes = cron[0];
+    let hours = cron[1];
+    const dayOfMonth = cron[2];
+    let dayOfWeek = cron[4];
+  
+    let cronToString = "Runs at ";
+  
+    // Formatting time if composed of zeros
+    if (minutes === "0") { minutes = "00"; }
+    if (hours === "0") { hours = "00"; }
+    // If it's not past noon add a zero before the hour to make it look like "04h00" instead of "4h00"
+    else if (hours.length === 1 && hours !== "*") {
+      hours = "0" + hours;
+    }
+    // Our activities do not allow launching pipelines every minute. It won't be processed.
+    if (minutes === "*") {
+      cronToString =
+        "Unreadable cron format. Cron will be displayed in its raw form: " +
+        cronExpression;
+    }
+  
+    cronToString = cronToString + hours + "h" + minutes + " ";
+  
+    if (dayOfWeek === "0,6") { dayOfWeek = "on weekends"; }
+    else if (dayOfWeek === "1-5") { dayOfWeek = "on weekdays"; }
+    else if (dayOfWeek.length === 1) {
+      if (dayOfWeek === "*" && dayOfMonth === "*") { dayOfWeek = "every day "; }
+      else if (dayOfWeek === "*" && dayOfMonth !== "*") {
+        cronToString = cronToString + "on the " + dayOfMonth;
+        if (
+          dayOfMonth === "1" ||
+          dayOfMonth === "21" ||
+          dayOfMonth === "31"
+        ) {
+          cronToString = cronToString + "st ";
+        } else if (dayOfMonth === "2" || dayOfMonth === "22") {
+          cronToString = cronToString + "nd ";
+        } else if (dayOfMonth === "3" || dayOfMonth === "23") {
+          cronToString = cronToString + "rd ";
+        } else {
+          cronToString = cronToString + "th ";
+        }
+        cronToString = cronToString + "day of every month";
+        return cronToString;
+      } else if (dayOfWeek !== "*" && dayOfMonth === "*") {
+        switch (parseInt(dayOfWeek, 10)) {
+          case 0:
+            dayOfWeek = "on Sundays";
+            break;
+          case 1:
+            dayOfWeek = "on Mondays";
+            break;
+          case 2:
+            dayOfWeek = "on Tuesdays";
+            break;
+          case 3:
+            dayOfWeek = "on Wednesdays";
+            break;
+          case 4:
+            dayOfWeek = "on Thursdays";
+            break;
+          case 5:
+            dayOfWeek = "on Fridays";
+            break;
+          case 6:
+            dayOfWeek = "on Saturdays";
+            break;
+          default:
+            cronToString =
+              "Unreadable cron format. Cron will be displayed in its raw form: " +
+              cronExpression;
+            return cronToString;
+        }
+      }
+      cronToString = cronToString + dayOfWeek + " ";
+    }
+  
+    return cronToString;
+  }
 }
