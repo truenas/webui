@@ -344,7 +344,7 @@ export class DatasetAclComponent implements OnDestroy {
               basic_perms_fc.disabled = true;
             } else {
               adv_perms_fc.isHidden = true;
-              adv_flags_fc.disabled = true;
+              adv_perms_fc.disabled = true;
               basic_perms_fc.isHidden = false;
               basic_perms_fc.disabled = false;
               if (res[i].basic_perms === "OTHER") {
@@ -421,6 +421,7 @@ export class DatasetAclComponent implements OnDestroy {
         acl.basic_flags = data[i].flags['BASIC'];
       } else {
         acl.flags_type = 'ADVANCED';
+        console.log(data[i].flags);
         acl.advanced_flags = data[i].flags;
       }
       if (data[i].perms.hasOwnProperty('BASIC')) {
