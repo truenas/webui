@@ -26,10 +26,10 @@ export class NFSFormComponent {
 
   protected fieldConfig: FieldConfig[] = [
     {
-      type: 'array',
+      type: 'list',
       name : 'nfs_paths',
       initialCount: 1,
-      formarray: [{
+      templateListField: [{
         name: 'path',
         placeholder: helptext_sharing_nfs.placeholder_path,
         tooltip: helptext_sharing_nfs.tooltip_path,
@@ -38,15 +38,8 @@ export class NFSFormComponent {
         initial: '/mnt',
         required: true,
         validation : helptext_sharing_nfs.validators_path
-      },
-      {
-        type: 'checkbox',
-        name: 'delete',
-        placeholder: helptext_sharing_nfs.placeholder_delete,
-        tooltip: helptext_sharing_nfs.tooltip_delete,
-        isHidden: true,
-        disabled: true,
-      }]
+      }],
+      listFields: []
     },
     {
       type: 'input',
@@ -171,24 +164,6 @@ export class NFSFormComponent {
 
   public custActions: Array<any> = [
     {
-      id : 'add_path',
-      name : helptext_sharing_nfs.actions_add_path,
-      function : () => {
-        this.initialCount += 1;
-        this.entityFormService.insertFormArrayGroup(
-            this.initialCount, this.formArray, this.arrayControl.formarray);
-      }
-    },
-    {
-      id : 'remove_path',
-      name : helptext_sharing_nfs.actions_remove_path,
-      function : () => {
-        this.initialCount -= 1;
-        this.entityFormService.removeFormArrayGroup(this.initialCount,
-                                                    this.formArray);
-      }
-    },
-    {
       id : 'basic_mode',
       name : helptext_sharing_nfs.actions_basic_mode,
       function : () => { this.isBasicMode = !this.isBasicMode; }
@@ -229,9 +204,7 @@ export class NFSFormComponent {
       _.find(this.fieldConfig, {'name' : 'nfs_paths'});
     this.route.params.subscribe(params => {
       if(params['pk']) {
-         this.arrayControl.initialCount = this.initialCount = this.initialCount_default = 0;
-         this.arrayControl.formarray[1]['isHidden'] = false;
-         this.arrayControl.formarray[1].disabled = false;
+        this.arrayControl.initialCount = this.initialCount = this.initialCount_default = 0;
       }
     });
 

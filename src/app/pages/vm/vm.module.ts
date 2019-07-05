@@ -6,8 +6,6 @@ import { MaterialModule } from '../../appMaterial.module';
 import {EntityFormService} from '../../pages/common/entity/entity-form/services/entity-form.service';
 import {MessageService} from '../../pages/common/entity/entity-form/services/message.service';
 import { TranslateModule } from '@ngx-translate/core';
-
-//import { BrowserModule } from '@angular/platform-browser';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 import {
@@ -28,6 +26,7 @@ import { CoreComponents } from 'app/core/components/corecomponents.module';
 import { VMWizardComponent } from './vm-wizard/';
 import {VMSerialShellComponent} from './vm-cards/vm-serial-shell';
 import { DeviceAddComponent } from './devices/device-add2';
+import { VmDetailsComponent } from './vm-cards/vm-details.component';
 
 @NgModule({
   imports : [
@@ -46,13 +45,10 @@ import { DeviceAddComponent } from './devices/device-add2';
     VmSummaryComponent,
     VMWizardComponent,
     VMSerialShellComponent,
+    VmDetailsComponent,
     DeviceAddComponent
   ],
+  entryComponents: [VmDetailsComponent],
   providers : [ VmService, EntityFormService, NetworkService, SystemGeneralService,MessageService ]
 })
-/*
-    export class VmModule {} import {
-      NgaModule
-    } from '../../theme/nga.module';
- */
 export class VmModule {};

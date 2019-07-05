@@ -414,6 +414,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   .toggle-children {
     filter: invert(50%);
+    top: 5px;
+    left: 4px;
   }
 
   .mat-menu-item[disabled] {
@@ -1283,10 +1285,17 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       background: rgba(255, 255, 255, 0.25);
   }
 
+  .node-content-wrapper {
+    margin-left: 2px;
+    padding-left: 3px;
+  }
+  tree-node-content mat-icon {
+     vertical-align: top;
+  }
   tree-node-content span {
-    position: relative;
-    top: -7px;
-    left: 3px;
+    vertical-align: top;
+    line-height: 25px;
+    padding-left: 3px;
   }
 
  } // end of ix theme

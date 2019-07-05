@@ -33,7 +33,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
                             <b>tw_cli</b>, <br><b>MegaCli</b>,\
                             <b>freenas-debug</b>, <b>tmux</b>,\
                             <b>Dmidecode</b>.<br> Refer to the <a\
-                            href="%%docurl%%/cli.html"\
+                            href="--docurl--/cli.html"\
                             target="_blank">Command Line Utilities</a>\
                             chapter in the guide for usage information\
                             and examples.');

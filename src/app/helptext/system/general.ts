@@ -9,9 +9,9 @@ export const helptext_system_general = {
       'Required for <i>HTTPS</i>. Browse to the location of\
  the certificate to use for encrypted connections. If\
  there are no certificates, create a <a\
- href="%%docurl%%/system.html#cas"\
+ href="--docurl--/system.html#cas"\
  target="_blank">Certificate Authority (CA)</a> then\
- the <a href="%%docurl%%/system.html#certificates"\
+ the <a href="--docurl--/system.html#certificates"\
  target="_blank">Certificate</a>.'
     ),
     validation: [Validators.required]

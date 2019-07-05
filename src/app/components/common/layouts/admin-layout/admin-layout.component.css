@@ -1,5 +1,6 @@
 .notification-sidenav {
-	min-width: 300px;
+  min-width: 350px;
+	width: 400px;
 	max-width: 30%;
 }
 .app-logo, .app-logo-text {

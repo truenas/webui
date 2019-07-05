@@ -1,21 +1,20 @@
-import { Component, OnDestroy, ViewChild} from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
-import { WebSocketService, RestService } from '../../../services/';
-import { DialogService } from '../../../services/dialog.service';
-import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { interval } from 'rxjs';
-import { Subject } from 'rxjs/Subject';
-import { T } from '../../../translate-marker';
-import 'rxjs/add/operator/map';
+import { CoreEvent, CoreService } from 'app/core/services/core.service';
+import 'rxjs/add/observable/fromEvent';
+import 'rxjs/add/observable/interval';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
-import 'rxjs/add/observable/fromEvent';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { MatDialog } from '@angular/material';
-import 'rxjs/add/observable/interval';
-import {EntityTableComponent} from '../../common/entity/entity-table/';
-import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import 'rxjs/add/operator/map';
+import { Subject } from 'rxjs/Subject';
 import globalHelptext from '../../../helptext/global-helptext';
+import { RestService, WebSocketService } from '../../../services/';
+import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { DialogService } from '../../../services/dialog.service';
+import { T } from '../../../translate-marker';
+import { EntityTableComponent } from '../../common/entity/entity-table/';
+import { VmDetailsComponent } from './vm-details.component';
 
 @Component({
   selector: 'app-vm-cards',
@@ -38,21 +37,16 @@ export class VmCardsComponent  implements OnDestroy {
   public controlEvents:Subject<CoreEvent> = new Subject();
   public actions = [];
   public showSpinner = true;
+  protected showActions = false;
+  protected hasDetails = true;
+  protected rowDetailComponent = VmDetailsComponent;
 
   protected entityTable: EntityTableComponent;
 
   public columns: Array<any> = [
     {name : T('Name'), prop : 'name', always_display: true },
     {name : T('State'), prop : 'state', always_display: true, toggle: true },
-    {name : T('VNC Port'), prop : 'port', hidden: true},
-    {name : T('Com Port'), prop : 'com_port', hidden: true},
-    {name : T('Type'), prop : 'vm_type', hidden: false},
-    {name : T('Description'), prop : 'description', hidden: true },
-    {name : T('Virtual CPUs'), prop : 'vcpus', hidden: false},
-    {name : T('Memory Size (MiB)'), prop : 'memory',hidden: false},
-    {name : T('Boot Loader Type'), prop : 'bootloader', hidden: true },
     {name : T('Autostart'), prop : 'autostart',hidden: false, selectable: true},
-
   ];
   public config: any = {
     paging : true,
@@ -63,8 +57,8 @@ export class VmCardsComponent  implements OnDestroy {
     },
   };
 
-  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService,
-              private core:CoreService,private dialog: DialogService,protected loader: AppLoaderService,
+  constructor(public router: Router, protected rest: RestService, public ws: WebSocketService,
+              public core:CoreService,public dialog: DialogService,protected loader: AppLoaderService,
               protected matdialog: MatDialog
               ) {}
 
@@ -76,7 +70,7 @@ export class VmCardsComponent  implements OnDestroy {
         vms[vm_index]['port'] = this.vncPort(vms[vm_index]);
       } else {
         vms[vm_index]['port'] = 'N/A';
-      if (vms[vm_index]['vm_type'] === "Container Provider")
+      if (vms[vm_index]['vm_type'] === "Container Provider") 
         vms[vm_index]['vm_type'] = globalHelptext.dockerhost;
       };
     }
@@ -111,139 +105,6 @@ export class VmCardsComponent  implements OnDestroy {
     });
   }
 
-  getActions(row) {
-    const actions = [];
-    let localCore = this.core;
-    if(row['status']['state'] === "RUNNING"){
-      actions.push({
-        id : "poweroff",
-        label : T("Power Off"),
-        onClick : (power_off_row) => {
-          const eventName = "VmPowerOff";
-          this.core.emit({name: eventName, data:[power_off_row.id]});
-          this.setTransitionState("POWERING OFF", power_off_row);
-        }
-      });
-      actions.push({
-        id : "stop",
-        label : T("Stop"),
-        onClick : (power_stop_row) => {
-          const eventName = "VmStop";
-          this.core.emit({name: eventName, data:[power_stop_row.id]});
-          this.setTransitionState("STOPPING", power_stop_row);
-        }
-      });
-      actions.push({
-        id: "restart",
-        label: T("Restart"),
-        onClick: (power_restart_row) => {
-          const eventName = "VmRestart";
-          this.core.emit({name: eventName, data:[power_restart_row.id]});
-          this.setTransitionState("RESTARTING", power_restart_row);
-        }
-      });
-    } else {
-      actions.push({
-        id : "start",
-        label : T("Start"),
-        onClick : (start_row) => {
-          const eventName = "VmStart";
-          let args = [start_row.id];
-          let overcommit = [{'overcommit':false}];
-          const dialogText = T("Memory overcommitment allows multiple VMs to be launched when there is not enough free memory for configured RAM of all VMs. Use with caution.")
-          let startDialog = this.dialog.confirm(T("Power"), undefined, true, T("Power On"), true, T('Overcommit Memory?'), undefined, overcommit, dialogText)
-          startDialog.afterClosed().subscribe((res) => {
-            if (res) {
-              let checkbox = startDialog.componentInstance.data[0].overcommit;
-              args.push({"overcommit": checkbox});
-              this.core.emit({name: eventName, data:args});
-              this.setTransitionState("STARTING", start_row);
-            }
-          });
-        }
-      });
-    }
-    actions.push({
-      label : T("Edit"),
-      onClick : (edit_row) => {
-        this.router.navigate(
-            new Array('').concat([ "vm", "edit", edit_row.id ]));
-      }
-    });
-    actions.push({
-      label : T("Delete"),
-      onClick : (delete_row) => {
-          const eventName = "VmDelete";
-          let args = [delete_row.id];
-          let deleteDialog = this.dialog.confirm("Delete VM", 'Delete VM ' + delete_row.name + ' ?');
-          deleteDialog.subscribe((res) => {
-            if (res) {
-              this.core.emit({name: eventName, data:args});
-              this.setTransitionState("DELETING", delete_row);
-            }
-          });
-      },
-    });
-    actions.push({
-      label : T("Devices"),
-      onClick : (devices_row) => {
-        this.router.navigate(
-            new Array('').concat([ "vm", devices_row.id, "devices", devices_row.name ]));
-      }
-    });
-    actions.push({
-      label : T("Clone"),
-      onClick : (clone_row) => {
-        const conf: DialogFormConfiguration = {
-          title: T("Name"),
-          fieldConfig: [
-            {
-              type: 'input',
-              inputType: 'text',
-              name: 'name',
-              placeholder: T('Enter a Name (optional)'),
-              required: false
-            }
-          ],
-          saveButtonText: T("Clone"),
-          customSubmit: function(entityDialog) {
-            const eventName = "VmClone";
-            entityDialog.formValue.name ? 
-              localCore.emit({name: eventName, data: [clone_row.id, entityDialog.formValue.name]}) :
-              localCore.emit({name: eventName, data: [clone_row.id]})
-            entityDialog.dialogRef.close(true);
-          }
-        }
-        this.dialog.dialogForm(conf);
-      }
-    });
-
-    if(row['status']['state'] === "RUNNING"){
-      if (this.checkVnc(row)) {
-        actions.push({
-        label : T("VNC"),
-        onClick : (vnc_vm) => {
-          this.ws.call('vm.get_vnc_web', [ vnc_vm.id ]).subscribe((res) => {
-            for (const vnc_port in res){
-              window.open(res[vnc_port])
-              }
-            });
-          }
-        });
-      }
-      actions.push({
-        label : T("Serial"),
-        onClick : (vm) => {
-          this.router.navigate(
-            new Array('').concat([ "vm","serial", vm.id])
-          );
-        }
-      });
-
-    }
-
-    return actions;
-  }
   checkVnc(vm){
     const devices = vm.devices
     if(!devices || devices.length === 0){

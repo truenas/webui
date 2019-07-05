@@ -45,7 +45,7 @@ dc_forest_level_options : [
 
 dc_passwd_placeholder : T('Administrator Password'),
 dc_passwd_tooltip: T('Enter the password to be used for the\
- <a href="%%docurl%%/directoryservices.html#active-directory"\
+ <a href="--docurl--/directoryservices.html#active-directory"\
  target=”_blank”>Active Directory</a> administrator account.'),
 dc_passwd_validation :
       [ Validators.minLength(8), matchOtherValidator('dc_passwd2') ],
