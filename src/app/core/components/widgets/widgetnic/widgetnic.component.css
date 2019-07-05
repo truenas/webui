@@ -132,6 +132,10 @@
   /*font-size: 250%;*/
 }
 
+.slide{
+  overflow:auto;
+}
+
 .slide .mat-list-item.clickable{
   cursor:pointer;
 }
