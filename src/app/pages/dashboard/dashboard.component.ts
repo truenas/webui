@@ -1,6 +1,8 @@
 import { Component, OnInit, AfterViewInit, ViewChild,OnDestroy } from '@angular/core';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { StatsService } from 'app/services/stats.service';
+//import { StatsService } from 'app/services/stats.service';
+import { SystemProfiler } from 'app/core/classes/system-profiler';
+//import { StatsUtils } from 'app/core/classes/stats-utils';
 
 import { Subject } from 'rxjs';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component'; // POC
@@ -21,6 +23,11 @@ export class DashboardComponent implements OnInit,OnDestroy {
   public zPoolFlex:string = "100";
   public noteFlex:string = "23";
 
+  public statsDataEvents:Subject<CoreEvent>;
+  //public statsData: StatsUtils;
+  private statsEvents: any;
+  private statsEventsTC: any;
+
   public isFooterConsoleOpen: boolean;
 
   // For widgetpool
@@ -32,7 +39,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
 
   public showSpinner: boolean = true;
 
-  constructor(protected core:CoreService, stats: StatsService, protected ws: WebSocketService){
+  constructor(protected core:CoreService, /*stats: StatsService,*/ protected ws: WebSocketService){
     //this.core.emit({name:"StatsAddListener", data:{name:"CpuAggregate", key:"sum", obj:this }});
     //this.core.emit({name:"StatsAddListener", data:{name:"CpuAggregate", key:"average", obj:this }});
     //this.core.emit({name:"StatsAddListener", data:{name:"CpuAggregate", key:"test", obj:this }});
@@ -41,24 +48,55 @@ export class DashboardComponent implements OnInit,OnDestroy {
       this.core.emit({name:"StatsRemoveListener", data:{name:"Cpu", obj:this} });
     }, 20000);*/
 
+    this.statsDataEvents = new Subject<CoreEvent>();
   }
 
   ngOnInit(){
+
     this.init();
+
     this.ws.call('system.advanced.config').subscribe((res)=> {
       if (res) {
         this.isFooterConsoleOpen = res.consolemsg;
       }
     });
+
   }
 
   ngOnDestroy(){
-    this.core.emit({name:"StatsKillAll", sender:this});
+    //this.core.emit({name:"StatsKillAll", sender:this});
+    this.statsEvents.unsubscribe();
+    //this.statsEventsTC.unsubscribe();
+    this.statsDataEvents.complete();
     this.core.unregister({observerClass:this});
   }
 
   init(){
-    //console.log("******** Dashboard Initializing... ********");
+    //this.statsData = new StatsUtils();
+
+    //this.statsEvents = this.ws.job("reporting.realtime",[{"name": "cpu", "identifier": null}]).subscribe((evt)=>{
+    this.statsEvents = this.ws.sub("reporting.realtime").subscribe((evt)=>{
+      if(!evt.virtual_memory){return;}
+      //console.log(evt);
+      if(evt.cpu){
+        this.statsDataEvents.next({name:"CpuStats", data:evt.cpu});
+      }
+      if(evt.virtual_memory){
+        this.statsDataEvents.next({name:"MemoryStats", data:evt.virtual_memory});
+      }
+    });
+
+    /*this.statsEventsTC = this.ws.sub("trueview.stats:10").subscribe((evt)=>{
+      if(evt.virtual_memory){return;}// TC and MW subscriptions leak into each other.
+
+      if(evt.memory_summary){
+        console.log(evt);
+
+        //this.statsData.updateStats(evt);
+        //let cpuLoad = this.statsData.cpuLoad();
+        //console.log(cpuLoad);
+      } 
+    });*/
 
     this.core.register({observerClass:this,eventName:"VolumeData"}).subscribe((evt:CoreEvent) => {
       this.setPoolData(evt);
@@ -72,6 +110,8 @@ export class DashboardComponent implements OnInit,OnDestroy {
     this.core.emit({name:"DisksInfoRequest"});
   }
 
+  parseStats(data){
+  }
 
   setDisksData(evt:CoreEvent){
     //DEBUG: console.log("******** DISKS INFO ********");

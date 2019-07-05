@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { WebSocketService } from './ws.service';
 import { EntityUtils } from '../pages/common/entity/utils';
 import * as _ from 'lodash';
+import { reject } from 'q';
 
 @Injectable()
 export class ReplicationService {
@@ -54,7 +55,8 @@ export class ReplicationService {
                 return nodes;
             },
             (err) => {
-                new EntityUtils().handleWSError(parentComponent, err);
+                new EntityUtils().handleWSError(parentComponent, err, parentComponent.dialogService);
+                return reject(err);
             }
         );
     }

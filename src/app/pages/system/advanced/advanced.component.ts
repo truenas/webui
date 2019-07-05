@@ -189,7 +189,7 @@ export class AdvancedComponent implements OnDestroy {
 // This tooltip wraps to the next line when uncommented.
 // Erin said it's more than likely the CSS. Commented out for now and
 // linking to the user guide from the test instead.
-//  tooltip: T('See the <a href="%%docurl%%/system.html#self-encrypting-drives"\
+//  tooltip: T('See the <a href="--docurl--/system.html#self-encrypting-drives"\
 //                target="_blank"> Self Encrypting Drives</a> section of\
 //                the user guide for more information.'),
 //

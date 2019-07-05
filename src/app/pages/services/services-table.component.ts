@@ -1,12 +1,6 @@
-import { Component, OnChanges, ElementRef, OnInit, AfterViewInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnChanges, OnInit, ViewChild, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription ,  Observable } from 'rxjs';
-import { BrowserModule } from '@angular/platform-browser';
-import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { RestService, WebSocketService } from '../../services/';
-import { MaterialModule } from '../../appMaterial.module';
-import { MatButtonToggleGroup } from '@angular/material/button-toggle';
-
 
 @Component({
   selector: 'services-table',
@@ -31,6 +25,7 @@ export class ServicesTableComponent implements OnChanges, OnInit {
   public minPageSize: number = 3;
   public baseWindowHeight: number = 910;
   public tableHeight:number;
+  public isFooterConsoleOpen: boolean;
 
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService) {}
 
@@ -40,6 +35,13 @@ export class ServicesTableComponent implements OnChanges, OnInit {
     window.onresize = () => {
       this.findPageSize()
     }
+
+    this.ws.call('system.advanced.config').subscribe((res)=> {
+      if (res) {
+        this.isFooterConsoleOpen = res.consolemsg;
+        this.setTableHeight(this.datatable);
+      }
+    });
   }
 
   findPageSize() {
@@ -64,6 +66,10 @@ export class ServicesTableComponent implements OnChanges, OnInit {
   }
 
   setTableHeight(t){
-    this.tableHeight = (50*this.pageSize) + 100;
+    if (this.isFooterConsoleOpen) {
+      this.tableHeight = (50*this.pageSize) + 50  
+    } else {
+      this.tableHeight = (50*this.pageSize) + 100;
+    }
   }
 }

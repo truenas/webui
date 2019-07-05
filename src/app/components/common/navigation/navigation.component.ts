@@ -5,6 +5,7 @@ import { DocsService } from "../../../services/docs.service";
 import {Router} from "@angular/router";
 import * as _ from 'lodash';
 import * as Ps from 'perfect-scrollbar';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'navigation',
@@ -43,6 +44,13 @@ export class NavigationComponent implements OnInit {
           }
         });
 
+        this.ws
+          .call("system.feature_enabled", ["VM"])
+          .pipe(filter(vmsEnabled => !vmsEnabled))
+          .subscribe(() => {
+            _.find(menuItem, { state: "vm" }).disabled = true;
+          });
+
         for(let i = 0; i < this.navService.turenasFeatures.length; i++) {
           const targetMenu = this.navService.turenasFeatures[i];
           _.find(_.find(menuItem, { state: targetMenu.menu }).sub, { state : targetMenu.sub}).disabled = false;
@@ -55,6 +63,13 @@ export class NavigationComponent implements OnInit {
             });
           }
         }
+
+        this.ws.call('system.info').subscribe((res) => {
+          if (res.license.features.indexOf('JAILS') === -1) {
+            _.find(menuItem, {state : "plugins"}).disabled = true;
+            _.find(menuItem, {state : "jails"}).disabled = true;
+          }
+        })
       }
 
       this.menuItems = menuItem;
@@ -65,7 +80,7 @@ export class NavigationComponent implements OnInit {
       this.ws.call('system.info').subscribe((res) => {
         if (res.version) {
             window.localStorage.setItem('running_version', res['version']);
-            const docUrl = this.docsService.docReplace("%%docurl%%");
+            const docUrl = this.docsService.docReplace("--docurl--");
             const guide = _.find(menuItem, {name: 'Guide'});
             guide.state = docUrl;
         }

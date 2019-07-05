@@ -58,7 +58,6 @@ import { DiskDetailsComponent } from './disks/disk-list/components/disk-details.
     DiskComponent,
     VdevComponent,
     DatasetFormComponent,
-    // VolumesEditComponent,
     VolumeDeleteComponent,
     VolumeRekeyFormComponent,
     VolumeAddkeyFormComponent,

@@ -72,4 +72,8 @@
     color: var(--red);
 }
 
-
+.mat-expansion-panel-header-title {
+    max-width: 30%;
+    width: 30%;
+    min-width: 30%;
+}

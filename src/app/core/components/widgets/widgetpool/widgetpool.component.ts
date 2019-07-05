@@ -36,6 +36,12 @@ export interface Disk {
   smartoptions?: string;
   temp?: number;
   displaysize?: string;
+  transfermode?: string;
+  advpowermgmt?: string;
+  acousticlevel?: any;
+  passwd?: string;
+  togglesmart?: any;
+  rotationrate?: number;
 }
 
 export interface VolumeData {

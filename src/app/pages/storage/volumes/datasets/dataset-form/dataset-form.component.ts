@@ -20,6 +20,7 @@ interface DatasetFormData {
   compression: string;
   atime: string;
   share_type: string;
+  aclmode: string;
   refquota: number;
   refquota_unit?: string;
   quota: number;
@@ -129,16 +130,6 @@ export class DatasetFormComponent implements Formconfiguration{
         { label: 'zle (runs of zeros)', value: 'ZLE' },
         { label: 'lzjb (legacy, not recommended)', value: 'LZJB' }
       ],
-    },
-    {
-      type: 'radio',
-      name: 'share_type',
-      placeholder: helptext.dataset_form_share_type_placeholder,
-      tooltip: helptext.dataset_form_share_type_tooltip,
-      options: [{label:'Unix', value: 'UNIX'},
-                {label:'Windows', value: 'WINDOWS'},
-                {label:'Mac', value: 'MAC'}],
-      value: 'UNIX'
     },
     {
       type: 'select',
@@ -422,6 +413,15 @@ export class DatasetFormComponent implements Formconfiguration{
     },
     {
       type: 'select',
+      name: 'aclmode',
+      placeholder: helptext.dataset_form_aclmode_placeholder,
+      tooltip: helptext.dataset_form_aclmode_tooltip,
+      options: [{label:'Passthrough', value: 'PASSTHROUGH'},
+                {label:'Restricted', value: 'RESTRICTED'}],
+      value: 'PASSTHROUGH'
+    },
+    {
+      type: 'select',
       name: 'casesensitivity',
       placeholder: helptext.dataset_form_casesensitivity_placeholder,
       tooltip: helptext.dataset_form_casesensitivity_tooltip,
@@ -431,8 +431,18 @@ export class DatasetFormComponent implements Formconfiguration{
         { label: 'Mixed', value: 'MIXED' }
       ],
       value: 'SENSITIVE'
+    },
+    {
+      type: 'select',
+      name: 'share_type',
+      placeholder: helptext.dataset_form_share_type_placeholder,
+      tooltip: helptext.dataset_form_share_type_tooltip,
+      options: [{label:'Generic', value: 'GENERIC'},
+                {label:'SMB', value: 'SMB'}],
+      value: 'GENERIC',
+      disabled: true,
+      isHidden: true,
     }
-
   ];
 
   public advanced_field: Array<any> = [
@@ -452,7 +462,8 @@ export class DatasetFormComponent implements Formconfiguration{
     'quota_warning',
     'quota_critical',
     'refquota_warning',
-    'refquota_critical'
+    'refquota_critical',
+    'aclmode'
 
   ];
 
@@ -553,6 +564,8 @@ export class DatasetFormComponent implements Formconfiguration{
       entityForm.setDisabled('casesensitivity',true);
       entityForm.setDisabled('name',true);
       _.find(this.fieldConfig, {name:'name'}).tooltip = "Dataset name (read-only)."
+    } else {
+      entityForm.setDisabled('share_type', false, false);
     }
     this.recordsize_fg = this.entityForm.formGroup.controls['recordsize'];
 
@@ -768,6 +781,7 @@ export class DatasetFormComponent implements Formconfiguration{
         name: this.getFieldValueOrRaw(wsResponse.name),
         atime: this.getFieldValueOrRaw(wsResponse.atime),
         share_type: this.getFieldValueOrRaw(wsResponse.share_type),
+        aclmode: this.getFieldValueOrRaw(wsResponse.aclmode),
         casesensitivity: this.getFieldValueOrRaw(wsResponse.casesensitivity),
         comments: this.getFieldValueOrRaw(wsResponse.comments),
         compression: this.getFieldValueOrRaw(wsResponse.compression),

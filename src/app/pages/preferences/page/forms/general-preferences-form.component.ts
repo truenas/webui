@@ -1,11 +1,10 @@
-import { ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, ViewContainerRef, OnChanges, OnDestroy } from '@angular/core';
-import { NgModel }   from '@angular/forms';
+import { ApplicationRef, Component, Injector, OnInit, OnChanges, OnDestroy } from '@angular/core';
 import {Router} from '@angular/router';
 import * as _ from 'lodash';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import {RestService, WebSocketService} from 'app/services/';
+import { MatSnackBar } from '@angular/material';
 import { ThemeService, Theme} from 'app/services/theme/theme.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
@@ -90,7 +89,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
           {
             type: 'checkbox',
             name: 'enableWarning',
-            width: '300px',
+            width: '330px',
             placeholder: 'Enable "Save Configuration" Dialog Before Upgrade',
             value:this.enableWarning,
             tooltip: T('Show or hide a dialog to save the system\
@@ -118,12 +117,19 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
       protected _appRef: ApplicationRef,
       public themeService:ThemeService,
       public prefs:PreferencesService,
+      public snackBar: MatSnackBar,
       private core:CoreService
     ) {}
 
     ngOnInit(){
       // Get current preferences so for form values
       this.init();
+    }
+    
+    afterInit(entity: any) {
+      entity.formGroup.controls['userTheme'].valueChanges.subscribe((theme) => {
+        this.themeService.changeTheme(theme);
+      })
     }
 
     ngOnChanges(changes){
@@ -147,6 +153,9 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
         switch(evt.name){
         case "FormSubmitted":
           this.core.emit({name:"ChangePreferences",data:evt.data});
+          this.snackBar.open(T('Changes Submitted'), T('close'), {
+            duration: 3000
+          });
           break;
         case "CreateTheme":
           this.router.navigate(new Array('').concat(['ui-preferences', 'create-theme']));

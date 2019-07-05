@@ -7,7 +7,7 @@
       [multiple]="config.multiple" 
       [required]="config.required" 
       [placeholder]="config.placeholder | translate" 
-      (change)="onChangeOption($event)">
+      (selectionChange)="onChangeOption($event)">
 
      
       <mat-select-trigger *ngIf="config.multiple">
