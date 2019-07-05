@@ -15,7 +15,7 @@
 .carousel{
   position:absolute;
   top:48px;
-  width:200%;
+  width:300%;
   height:calc(100% - 96px);
   /*background:var(--alt-bg2);*/
 }
@@ -132,11 +132,11 @@
   /*font-size: 250%;*/
 }
 
-.overview .mat-list-item.clickable{
+.slide .mat-list-item.clickable{
   cursor:pointer;
 }
 
-.overview .mat-icon.next-slide{
+.slide .mat-icon.next-slide{
   position:absolute;
   right:0;
 }
@@ -147,6 +147,15 @@
 
 .mat-list-base {
   border-left:solid 1px var(--bg1);
+}
+
+.list-subheader{
+  text-transform:capitalize;
+  font-weight:700;
+  padding:8px 8px 0 16px;
+  text-align:left;
+  font-size: 90%;
+  color: var(--fg1);
 }
 
 /* NARROW SCREENS */

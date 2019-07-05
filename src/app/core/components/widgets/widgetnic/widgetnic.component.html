@@ -3,7 +3,21 @@
     <mat-card style="overflow:hidden" class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-card-content #carouselparent>
         <mat-toolbar-row >
-          <h3 class="mat-card-title-text"><div class="card-title-text">{{title | translate}}</div></h3>
+          <button class="mat-card-title-text" *ngIf="currentSlide !== '0'" mat-icon-button color="default" (click)="updateSlide(path[previousSlide].name, true, previousSlide)">
+            <mat-icon class="back-arrow">chevron_left</mat-icon>
+          </button>
+          <h3 class="mat-card-title-text">
+            <div class="card-title-text">
+              &nbsp;{{title | translate}} 
+            </div>
+          </h3>
+          <!--<ng-template #backBtn>
+            <button class="mat-card-title-text" *ngIf="currentSlide !== '0'" mat-button color="default" (click)="updateSlide(path[previousSlide].name, true, previousSlide)">
+              <mat-icon class="back-arrow">chevron_left</mat-icon>
+            </button>
+            &nbsp;&nbsp; {{title | translate}}
+            </ng-template>-->
+
           <!--<ng-template *ngIf="configurable === true">
             <button mat-icon-button (click)="toggleConfig()">
             <mat-icon>settings</mat-icon>
@@ -12,7 +26,7 @@
             <!--<button mat-button color="primary" class="" (click)="router.navigate(['reportsdashboard/cpu'])">CPU REPORTS</button>-->
         </mat-toolbar-row>
         <!-- Carousel -->
-        <div id="" class="carousel" #carousel [ngClass]="{'lagg': nicState.lagg_ports}">
+        <div id="" class="carousel" #carousel [ngClass]="{'lagg': nicState.lagg_ports}" >
           <div fxFlex="100" class="slide overview" fxLayout="row" fxLayoutAlign="space-between">
             <div class="left" fxFlex="50" fxLayout="column" fxLayoutAlign="space-around center">
 
@@ -47,18 +61,19 @@
 
             <div class="right" fxFlex="50" fxLayout="column" fxLayoutAlign="space-around center">
               <div fxFlex="100">
+                <div class="list-subheader">{{currentSlideName}}</div>
                 <mat-list>
                   <mat-list-item><strong>Media Type: </strong>&nbsp;&nbsp;{{nicState.active_media_type}}</mat-list-item>
                   <mat-list-item><strong>Media Subtype: </strong>&nbsp;&nbsp;{{nicState.active_media_subtype}}</mat-list-item>
-                  <mat-list-item (click)="updateSlide('addresses', ipAddresses.length > 0)" [ngClass]="{'clickable': ipAddresses.length > 0}">
+                  <mat-list-item (click)="updateSlide('addresses', ipAddresses.length > 0, 1)" [ngClass]="{'clickable': ipAddresses.length > 0}">
                       <strong>IP Addresses: </strong>&nbsp;&nbsp;  {{ipAddresses.length}}
                       <mat-icon *ngIf="ipAddresses.length > 0" class="next-slide">chevron_right</mat-icon>
                   </mat-list-item>
-                  <mat-list-item (click)="updateSlide('vlans', nicState.vlans.length > 0)" [ngClass]="{'clickable': nicState.vlans.length > 0}">
+                  <mat-list-item (click)="updateSlide('vlans', nicState.vlans.length > 0, 1)" [ngClass]="{'clickable': nicState.vlans.length > 0}">
                       <strong>VLANs: </strong>&nbsp;&nbsp;  {{nicState.vlans.length}}
                       <mat-icon *ngIf="nicState.vlans.length > 0" class="next-slide">chevron_right</mat-icon>
                   </mat-list-item>
-                  <mat-list-item *ngIf="nicState.lagg_ports" (click)="updateSlide('interfaces',nicState.lagg_ports.length > 0)" [ngClass]="{'clickable': nicState.lagg_ports.length > 0}">
+                  <mat-list-item *ngIf="nicState.lagg_ports" (click)="updateSlide('interfaces',nicState.lagg_ports.length > 0, 1)" [ngClass]="{'clickable': nicState.lagg_ports.length > 0}">
                       <strong>Interfaces: </strong>&nbsp;&nbsp;  {{nicState.lagg_ports.length}}
                       <mat-icon *ngIf="nicState.lagg_ports.length > 0" class="next-slide">chevron_right</mat-icon>
                   </mat-list-item>
@@ -69,51 +84,63 @@
           </div>
 
 
-          <div class="slide addresses" *ngIf="currentSlideName == 'addresses'" fxFlex="100">
-            <mat-list *ngIf="nicState && nicState.aliases.length > 0; else noAddresses"> 
+          <div class="slide addresses" *ngIf="path[1].name == 'addresses'" fxFlex="100">
+            <div class="list-subheader">{{currentSlideName}}</div>
+            <mat-list *ngIf="nicState && nicState.aliases.length > 0"> 
               <mat-list-item role="listitem"*ngFor="let ip of nicState.aliases;" [ngClass]="{'hidden': ip.type !== 'INET'}">
-                {{ip.type}}: {{ip.address}}
+                {{ip.type}}: {{ip.address}}/{{ip.netmask}}
               </mat-list-item>
             </mat-list>
-            <ng-template #noAddresses>
-              <h3>No Addresses Assigned</h3>
-            </ng-template>
           </div>
         
 
-          <div class="slide vlans" *ngIf="currentSlideName == 'vlans'" fxFlex="100">
-            <mat-list *ngIf="nicState && nicState.vlans && nicState.vlans.length > 0; else noVlans"> 
-              <mat-list-item role="listitem"*ngFor="let vlan of nicState.vlans;" >
-                <strong>{{vlan.name}}:</strong>&nbsp;&nbsp; {{vlan.aliases.length}} addresses
+          <div class="slide vlans" *ngIf="path[1].name == 'vlans'" fxFlex="100">
+            <div class="list-subheader">{{currentSlideName}}</div>
+            <mat-list *ngIf="nicState && nicState.vlans && nicState.vlans.length > 0"> 
+              <mat-list-item role="listitem" 
+                *ngFor="let vlan of nicState.vlans; let i=index" 
+                (click)="updateSlide('vlan addresses',vlanAliases(i).length > 0, 2, i)" 
+                [ngClass]="{'clickable': vlan.aliases.length > 0}">
+                
+                <strong>{{vlan.name}}:</strong>&nbsp;&nbsp; {{vlanAliases(i).length}} addresses
+                <mat-icon *ngIf="vlan.aliases.length > 0" class="next-slide">chevron_right</mat-icon>
+              
               </mat-list-item>
             </mat-list>
-            <ng-template #noVlans>
-              <h3>No Vlans attached</h3>
-            </ng-template>
           </div>
 
-          <div *ngIf="nicState.lagg_ports && currentSlideName == 'interfaces'" class="slide lagg-ports"fxFlex="100">
+          <div *ngIf="nicState.lagg_ports && path[1].name == 'interfaces'" class="slide lagg-ports"fxFlex="100">
+            <div class="list-subheader">{{currentSlideName}}</div>
             <mat-list> 
               <mat-list-item role="listitem" *ngFor="let port of nicState.lagg_ports;" >
                 <strong>Interface:</strong>&nbsp;&nbsp; {{port}}
               </mat-list-item>
             </mat-list>
           </div>
-        
+
+          <div class="slide empty" *ngIf="path[1].name == 'empty'" fxFlex="100">
+          </div>
+
+          <div class="slide vlan-addresses" *ngIf="path[2].name == 'vlan addresses'"  fxFlex="100">
+            <div class="list-subheader">{{currentSlideName}}</div>
+            <mat-list *ngIf="nicState && vlanAliases(path[2].index).length > 0"> 
+              <mat-list-item role="listitem"*ngFor="let ip of vlanAliases(path[2].index);" [ngClass]="{'hidden': ip.type !== 'INET'}">
+                <strong>{{ip.type}}:</strong>&nbsp;&nbsp; {{ip.address}}/{{ip.netmask}}
+              </mat-list-item>
+            </mat-list>
+          </div>
+
+          <div class="slide empty" *ngIf="path[2].name == 'empty'" fxFlex="100">
+          </div>
+
         </div>
 
         <div class="carousel-nav">
           <div class="btn-wrapper">
 
-            <button *ngIf="currentSlide == '0'" mat-button color="default" (click)="updateSlide('overview')">Overview</button>
-            <button *ngIf="currentSlide !== '0'" mat-button color="default" (click)="updateSlide('overview')"><mat-icon class="back-arrow">chevron_left</mat-icon>&nbsp; {{currentSlideName}}</button>
+            <!--<button *ngIf="currentSlide == '0'" mat-button color="default" (click)="updateSlide('overview', 0, previousSlide)">Overview</button>
+              <button *ngIf="currentSlide !== '0'" mat-button color="default" (click)="updateSlide(path[previousSlide].name, true, previousSlide)"><mat-icon class="back-arrow">chevron_left</mat-icon>&nbsp; {{currentSlideName}}</button>-->
 
-            <!--<div class="btn" [ngClass]="{'active': currentSlide == '0'}" (click)="updateSlidePosition(0)"></div>
-              <div class="btn" [ngClass]="{'active': currentSlide == '1'}" (click)="updateSlidePosition(1)" ></div>-->
-              <!--<button mat-button color="primary" (click)="updateSlide('overview')">Overview</button>
-              <button mat-button color="primary" (click)="updateSlide('addresses')">Addresses</button>
-              <button mat-button color="primary" (click)="updateSlide('vlans')">Vlans</button>
-              <button mat-button color="primary" *ngIf="nicState.lagg_ports" (click)="updateSlide('interfaces')">Interfaces</button>-->
           </div>
         </div>
 

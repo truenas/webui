@@ -45,6 +45,11 @@ interface NetTraffic {
   name: string;
 }
 
+interface Slide {
+  name: string;
+  index?: string;
+}
+
 
 @Component({
   selector: 'widget-nic',
@@ -58,12 +63,23 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
   @ViewChild('carousel', {static:true}) carousel:ElementRef;
   @ViewChild('carouselparent', {static:true}) carouselParent:ElementRef;
   public traffic: NetTraffic;
-  public currentSlide:string = "0"; 
-  public currentSlideName:string = "addresses"; // Secondary slide
-  public title: string = "Interface";
-  get totalSlides() {
-    return this.nicState.lagg_ports ? 4 : 3;
+  public currentSlide:string = "0";
+  
+  get currentSlideName(){
+    return this.path[parseInt(this.currentSlide)].name;
   }
+
+  get previousSlide(){
+    return this.currentSlide == '0' ? 0 : parseInt(this.currentSlide) - 1;
+  }
+
+  public title: string = "Interface";
+
+  path: Slide[] = [
+    { name: "overview"},
+    { name: "empty"},
+    { name: "empty"}
+  ];
 
   get ipAddresses(){
     if(!this.nicState && !this.nicState.aliases){ return [];}
@@ -71,6 +87,19 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
     let result = this.nicState.aliases.filter((item) => {
       return item.type == 'INET' ;
     });
+
+    return result;
+  }
+
+  get vlanAddresses(){
+    if(!this.nicState){ return [];}
+    if(this.path[2].name == 'empty' || this.nicState.vlans.length == 0 || !this.nicState.vlans[ parseInt(this.path[2].index) ]){ return [];}
+
+    let vlan = this.nicState.vlans[ parseInt(this.path[2].index) ];
+    let result = vlan.aliases.filter((item) => {
+      return item.type == 'INET' ;
+    });
+    console.log(vlan);
 
     return result;
   }
@@ -117,18 +146,16 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
     })
   }
 
-  updateSlide(name:string,verified: boolean){
+  updateSlide(name:string,verified: boolean, slideIndex:number, dataIndex?: number){
     if(name !=="overview" && !verified){ return; }
-
-    let slides = {
-      'overview': 0,
-      'addresses': 1,
-      'vlans': 1,
-      'interfaces': 1
+    let slide: Slide = {
+      name: name,
+      index: typeof dataIndex !== 'undefined' ? dataIndex.toString() : null
     }
 
-    this.currentSlideName = name == 'overview' ? this.currentSlideName: name;
-    this.updateSlidePosition(slides[name]);
+    this.path[slideIndex] = slide;
+    this.updateSlidePosition(slideIndex);
+    
   }
 
   updateSlidePosition(value){
@@ -142,26 +169,16 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
     }).start(el.set);
     
     this.currentSlide = value.toString();
-
-    /*tween({
-      from:(parseInt(this.currentSlide) * 100) * -1,
-      //to:(value * 100) * -1,
-      to:(value * 600) * -1,
-      duration: 250
-    }).start({
-      update: (v) => { 
-        //console.log(this.carousel);
-        //console.log(v.toString() + "px");
-        //return this.carousel.nativeElement.style.left = v.toString() + "%";
-        this.carousel.nativeElement.style.transform = "translateX(" + v.toString() + "px);";
-        console.log(this.carousel.nativeElement.style.transform);
-        return v;
-      },
-      complete: () => {
-        this.currentSlide = value.toString();
-      }
-    });*/
     
+  }
+
+  vlanAliases(vlanIndex:string|number){
+    if(typeof vlanIndex == 'string'){ vlanIndex = parseInt(vlanIndex); }
+    let vlan = this.nicState.vlans[vlanIndex];
+    let result = vlan.aliases.filter((item) => {
+      return item.type == 'INET' ;
+    });
+    return result;
   }
 
   getMbps(arr:number[]){
