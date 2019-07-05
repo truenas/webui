@@ -75,6 +75,8 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
 
   ngOnInit(){
 
+    this.core.emit({name:"NetInfoRequest"});
+    
     //Get Network info and determine Primary interface
     this.core.register({observerClass:this,eventName:"NetInfo"}).subscribe((evt:CoreEvent) => {
       console.log(evt); 
@@ -114,8 +116,9 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
 
     });
 
-    this.core.register({observerClass:this, eventName:"PrimaryNicInfo"}).subscribe((evt:CoreEvent) => {
-      if(!evt.data){ 
+    this.core.register({observerClass:this, eventName:"NicInfo"}).subscribe((evt:CoreEvent) => {
+      console.warn(evt);
+      /*if(!evt.data){ 
         console.warn("PrimaryNicInfo event sent without data attached.");
         console.warn(evt);
         return;
@@ -125,12 +128,12 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
         if(aliases[i].type == "INET"){
           this.connectionIp = aliases[i].address;
         }
-      }
+      }*/
       
       this.core.emit({name:"NetInfoRequest"});
     });
 
-    this.core.emit({name:"PrimaryNicInfoRequest"});
+    this.core.emit({name:"NicInfoRequest"});
 
   }
 
@@ -138,11 +141,11 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
   }
 
   registerObservers(nic){
-      let Nic = nic.charAt(0).toUpperCase() + nic.slice(1); // Capitalize first letter
+      /*let Nic = nic.charAt(0).toUpperCase() + nic.slice(1); // Capitalize first letter
       this.core.register({observerClass:this,eventName:"StatsNIC" + Nic}).subscribe((evt:CoreEvent) => {
         this.data = evt.data.data;
         this.collectData(evt);
-      });
+      });*/
   }
 
   trimRanges(a:string[]){

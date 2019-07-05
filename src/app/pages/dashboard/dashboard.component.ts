@@ -27,12 +27,15 @@ export class DashboardComponent implements OnInit,OnDestroy {
   //public statsData: StatsUtils;
   private statsEvents: any;
   private statsEventsTC: any;
+  public tcStats: any;
 
   public isFooterConsoleOpen: boolean;
 
   // For widgetpool
   public volumes: VolumeData[] = [];
   public disks:Disk[] = [];
+
+  public nics: any[] = [];
 
   public animation = "stop";
   public shake = false;
@@ -65,7 +68,10 @@ export class DashboardComponent implements OnInit,OnDestroy {
 
   ngOnDestroy(){
     //this.core.emit({name:"StatsKillAll", sender:this});
-    this.statsEvents.unsubscribe();
+    //this.ws.unsub();
+    //this.statsEvents.unsubscribe();
+    this.statsEvents.complete();
+    this.statsEventsTC.complete();
     //this.statsEventsTC.unsubscribe();
     this.statsDataEvents.complete();
     this.core.unregister({observerClass:this});
@@ -76,8 +82,12 @@ export class DashboardComponent implements OnInit,OnDestroy {
 
     //this.statsEvents = this.ws.job("reporting.realtime",[{"name": "cpu", "identifier": null}]).subscribe((evt)=>{
     this.statsEvents = this.ws.sub("reporting.realtime").subscribe((evt)=>{
-      if(!evt.virtual_memory){return;}
+      if(evt.memory_summary){
+        console.log("LEAK!!");
+        return;
+      }
       //console.log(evt);
+      
       if(evt.cpu){
         this.statsDataEvents.next({name:"CpuStats", data:evt.cpu});
       }
@@ -86,28 +96,94 @@ export class DashboardComponent implements OnInit,OnDestroy {
       }
     });
 
-    /*this.statsEventsTC = this.ws.sub("trueview.stats:10").subscribe((evt)=>{
+    this.statsEventsTC = this.ws.sub("trueview.stats:10").subscribe((evt)=>{
       if(evt.virtual_memory){return;}// TC and MW subscriptions leak into each other.
+        //console.log(evt);
+        evt.network_usage.forEach((item, index) => {
+          this.statsDataEvents.next({name:"NetTraffic_" + item.name, data:item});
+        });
 
       if(evt.memory_summary){
-        console.log(evt);
 
         //this.statsData.updateStats(evt);
         //let cpuLoad = this.statsData.cpuLoad();
         //console.log(cpuLoad);
       } 
-    });*/
+    });
 
     this.core.register({observerClass:this,eventName:"VolumeData"}).subscribe((evt:CoreEvent) => {
       this.setPoolData(evt);
-    });
+    })
 
     this.core.register({observerClass:this,eventName:"DisksInfo"}).subscribe((evt:CoreEvent) => {
       this.setDisksData(evt);
     });
 
+    this.core.register({observerClass:this,eventName:"NicInfo"}).subscribe((evt:CoreEvent) => {
+      let clone = Object.assign([],evt.data);
+      let removeNics = {};
+
+      // Store keys for fast lookup
+      let nicKeys = {};
+      evt.data.forEach((item, index) => {
+        nicKeys[item.name] = index.toString();
+      });
+        
+      // Process Vlans (attach vlans to their parent)
+      evt.data.forEach((item, index) => {
+        if(item.type !== "VLAN" && !clone[index].state.vlans){
+          clone[index].state.vlans = [];
+        }
+
+        if(item.type == "VLAN"){
+          let parentIndex = parseInt(nicKeys[item.state.parent]);
+          if(!clone[parentIndex].state.vlans) {
+            clone[parentIndex].state.vlans = [];
+          }
+
+          clone[parentIndex].state.vlans.push(item.state);
+          removeNics[item.name] = index;
+        }
+      })
+
+      // Process LAGGs
+      evt.data.forEach((item, index) => {
+        if(item.type == "LINK_AGGREGATION" ){
+          clone[index].state.lagg_ports = item.lag_ports;
+          item.lag_ports.forEach((nic) => {
+            // Consolidate addresses 
+            clone[index].state.aliases.forEach((item) => { item.interface = nic});
+            clone[index].state.aliases = clone[index].state.aliases.concat(clone[nicKeys[nic]].state.aliases);
+
+            // Consolidate vlans
+            clone[index].state.vlans.forEach((item) => { item.interface = nic});
+            clone[index].state.vlans = clone[index].state.vlans.concat(clone[nicKeys[nic]].state.vlans);
+            
+            // Mark interface for removal
+            removeNics[nic] = nicKeys[nic];
+          });
+        }
+      });
+
+      // Remove NICs from list
+      for(let i = clone.length - 1; i >= 0; i--){
+        if(removeNics[clone[i].name]){ 
+          // Remove
+          clone.splice(i, 1)
+        } else {
+          // Only keep INET addresses
+          clone[i].state.aliases = clone[i].state.aliases.filter(address => address.type == "INET");
+        }
+      }
+      
+      // Update NICs array
+      //this.nics = evt.data;
+      this.nics = clone;
+    });
+
     this.core.emit({name:"VolumeDataRequest"});
     this.core.emit({name:"DisksInfoRequest"});
+    this.core.emit({name:"NicInfoRequest"});
   }
 
   parseStats(data){
