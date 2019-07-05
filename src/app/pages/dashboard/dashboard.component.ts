@@ -120,7 +120,6 @@ export class DashboardComponent implements OnInit,OnDestroy {
     });
 
     this.core.register({observerClass:this,eventName:"NicInfo"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
       let clone = Object.assign([],evt.data);
       let removeNics = {};
 
@@ -162,7 +161,6 @@ export class DashboardComponent implements OnInit,OnDestroy {
             
             // Mark interface for removal
             removeNics[nic] = nicKeys[nic];
-            console.log(removeNics)
           });
         }
       });
@@ -180,7 +178,6 @@ export class DashboardComponent implements OnInit,OnDestroy {
       
       // Update NICs array
       //this.nics = evt.data;
-      console.warn(clone);
       this.nics = clone;
     });
 
