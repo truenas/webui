@@ -104,6 +104,7 @@ export class DatasetAclComponent implements OnDestroy {
           placeholder: helptext.dataset_acl_tag_placeholder,
           options: helptext.dataset_acl_tag_options,
           tooltip: helptext.dataset_acl_tag_tooltip,
+          required: true,
         },
         {
           type: 'combobox',
@@ -116,6 +117,7 @@ export class DatasetAclComponent implements OnDestroy {
           parent: this,
           updater: this.updateUserSearchOptions,
           isHidden: true,
+          required: true,
         },
         {
           type: 'combobox',
@@ -128,6 +130,7 @@ export class DatasetAclComponent implements OnDestroy {
           parent: this,
           updater: this.updateGroupSearchOptions,
           isHidden: true,
+          required: true,
         },
         {
           type: 'select',
@@ -135,17 +138,21 @@ export class DatasetAclComponent implements OnDestroy {
           placeholder: helptext.dataset_acl_type_placeholder,
           tooltip: helptext.dataset_acl_type_tooltip,
           options: helptext.dataset_acl_type_options,
+          required: true,
         },
         {
           type: 'select',
           name: 'perms_type',
+          required: true,
           placeholder: helptext.dataset_acl_perms_type_placeholder,
           tooltip: helptext.dataset_acl_perms_type_placeholder,
           options: helptext.dataset_acl_perms_type_options,
+          value: 'BASIC'
         },
         {
           type: 'select',
           name: 'basic_perms',
+          required: true,
           placeholder: helptext.dataset_acl_perms_placeholder,
           tooltip: helptext.dataset_acl_perms_tooltip,
           options: helptext.dataset_acl_basic_perms_options,
@@ -154,6 +161,8 @@ export class DatasetAclComponent implements OnDestroy {
           type: 'select',
           multiple: true,
           isHidden: true,
+          disabled: true,
+          required: true,
           name: 'advanced_perms',
           placeholder: helptext.dataset_acl_perms_placeholder,
           tooltip: helptext.dataset_acl_perms_tooltip,
@@ -312,22 +321,32 @@ export class DatasetAclComponent implements OnDestroy {
             }
             if (res[i].tag === 'USER') {
               user_fc.isHidden = false;
+              user_fc.disabled = false;
               group_fc.isHidden = true;
+              group_fc.disabled = true;
             } else if (res[i].tag === 'GROUP') {
               user_fc.isHidden = true;
+              user_fc.disabled = true;
               group_fc.isHidden = false;
+              group_fc.disabled = false;
             } else {
               user_fc.isHidden = true;
+              user_fc.disabled = true;
               group_fc.isHidden = true;
+              group_fc.disabled = true;
             }
             adv_perms_fc = _.find(controls, {"name": "advanced_perms"});
             basic_perms_fc = _.find(controls, {"name": "basic_perms"});
             if (res[i].perms_type === "ADVANCED") {
               adv_perms_fc.isHidden = false;
+              adv_perms_fc.disabled = false;
               basic_perms_fc.isHidden = true;
+              basic_perms_fc.disabled = true;
             } else {
               adv_perms_fc.isHidden = true;
+              adv_flags_fc.disabled = true;
               basic_perms_fc.isHidden = false;
+              basic_perms_fc.disabled = false;
               if (res[i].basic_perms === "OTHER") {
                 basic_perms_fc.warnings = helptext.dataset_acl_basic_perms_other_warning;
                 canSave = false;
