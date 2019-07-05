@@ -9,6 +9,8 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../translate-marker';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+import { EntityUtils } from '../../../pages/common/entity/utils';
+
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 
 @Component({
@@ -49,7 +51,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   public fullTrainList: any[];
   public isFooterConsoleOpen: boolean;
   public updateMethod: string = 'update.update';
-  public isHA: boolean;
+  public isHA = false;
   public ds: any;
   public failover_upgrade_pending = false;
   isfreenas: boolean;
@@ -256,7 +258,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
           this.updateMethod = 'failover.upgrade';
           this.isHA = true;
           this.checkUpgradePending();
-          this.keepChecking();
+          // this.keepChecking();
         }
       })
     }
@@ -344,8 +346,8 @@ export class UpdateComponent implements OnInit, OnDestroy {
     this.dialogRef.componentInstance.success.subscribe((res) => {
       this.router.navigate(['/others/reboot']);
     });
-    this.dialogRef.componentInstance.failure.subscribe((res) => {
-      this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
+    this.dialogRef.componentInstance.failure.subscribe((err) => {
+      new EntityUtils().handleWSError(this, err, this.dialogService);
     });
   }
 
@@ -424,8 +426,8 @@ export class UpdateComponent implements OnInit, OnDestroy {
                         this.pendingupdates();
 
                       });
-                      this.dialogRef.componentInstance.failure.subscribe((failure) => {
-                        this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
+                      this.dialogRef.componentInstance.failure.subscribe((err) => {
+                        new EntityUtils().handleWSError(this, err, this.dialogService);
                       });
                     }
                     else{
@@ -455,8 +457,8 @@ export class UpdateComponent implements OnInit, OnDestroy {
                             this.pendingupdates();
 
                           });
-                          this.dialogRef.componentInstance.failure.subscribe((failure) => {
-                            this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
+                          this.dialogRef.componentInstance.failure.subscribe((err) => {
+                            new EntityUtils().handleWSError(this, err, this.dialogService);
                           });
                         }
                         else{
@@ -488,6 +490,8 @@ export class UpdateComponent implements OnInit, OnDestroy {
         },
         (err) => {
           this.loader.close();
+          new EntityUtils().handleWSError(this, err, this.dialogService);
+///////          
           this.dialogService.errorReport(T("Error checking for updates."), err.reason, err.trace.formatted);
         },
         () => {
@@ -505,28 +509,29 @@ export class UpdateComponent implements OnInit, OnDestroy {
         }
       },
       (err) => {
-        this.dialogService.errorReport(T("Error"), err.reason, err.trace.formatted);
+        new EntityUtils().handleWSError(this, err, this.dialogService);
       });
   }
 
   update() {
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: true });
     if (!this.isHA) {
-      this.dialogRef.componentInstance.setCall(this.updateMethod, [{ train: this.train, reboot: false }]);
+      this.dialogRef.componentInstance.setCall('update.update', [{ train: this.train, reboot: false }]);
     } else {
       this.ws.call('update.set_train', [this.train]).subscribe(() => { 
-        this.dialogRef.componentInstance.setCall(this.updateMethod);
+        this.dialogRef.componentInstance.setCall('failover.upgrade');
+        this.dialogRef.componentInstance.submit();
+        this.dialogRef.componentInstance.success.subscribe(() => {
+          if (!this.isHA) { 
+            this.router.navigate(['/others/reboot']); 
+          }
+        });
+        this.dialogRef.componentInstance.failure.subscribe((err) => {
+          new EntityUtils().handleWSError(this, err, this.dialogService);
+        })
       })
     }
-    this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe((res) => {
-      if (!this.isHA) { 
-        this.router.navigate(['/others/reboot']); 
-      }
-    });
-    this.dialogRef.componentInstance.failure.subscribe((res) => {
-      this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
-    });
+;
   }
 
   ApplyPendingUpdate() {
