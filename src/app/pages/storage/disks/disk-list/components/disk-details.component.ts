@@ -24,8 +24,6 @@ export class DiskDetailsComponent implements EntityRowDetails<Disk>, OnInit {
   public actions: EntityAction[] = [];
 
   public ngOnInit(): void {
-    console.log({ disk: this.config });
-
     this.actions.push({
       id: "edit",
       name: this.config.name,
@@ -46,6 +44,9 @@ export class DiskDetailsComponent implements EntityRowDetails<Disk>, OnInit {
     }
 
     /* Build details */
+    const isDefinedAndColumnHidden = detail =>
+      !!detail.value && !this.parent.conf.columns.some(col => col.name === detail.label && col.hidden);
+
     this.details = [
       { label: T("Serial"), value: this.config.serial },
       { label: T("Model"), value: this.config.model },
@@ -57,7 +58,8 @@ export class DiskDetailsComponent implements EntityRowDetails<Disk>, OnInit {
       { label: T("Acoustic Level"), value: this.config.acousticlevel },
       { label: T("Enable S.M.A.R.T."), value: this.config.togglesmart },
       { label: T("S.M.A.R.T. extra options"), value: this.config.smartoptions },
-      { label: T("Password for SED"), value: this.config.passwd }
-    ].filter(detail => !!detail.value);
+      { label: T("Password for SED"), value: this.config.passwd },
+      { label: T("Enclosure"), value: this.config.enclosure ? this.config.enclosure.number : undefined }
+    ].filter(isDefinedAndColumnHidden);
   }
 }

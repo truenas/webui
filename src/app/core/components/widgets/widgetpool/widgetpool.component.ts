@@ -1,18 +1,11 @@
-import { Component, AfterViewInit, Input, ViewChild, OnChanges, OnDestroy } from '@angular/core';
-import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { Router } from '@angular/router';
-import { MaterialModule } from 'app/appMaterial.module';
+import { AfterViewInit, Component, Input, OnChanges, OnDestroy } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { ChartData } from 'app/core/components/viewchart/viewchart.component';
-import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
-import { StorageService } from '../../../../services/storage.service'
-
-import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
-import filesize from 'filesize';
-
+import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-
+import { ChartData } from 'app/core/components/viewchart/viewchart.component';
+import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
+import { CoreEvent } from 'app/core/services/core.service';
+import { StorageService } from '../../../../services/storage.service';
 import { T } from '../../../../translate-marker';
 
 interface PoolDiagnosis {
@@ -42,6 +35,7 @@ export interface Disk {
   passwd?: string;
   togglesmart?: any;
   rotationrate?: number;
+  enclosure?: { number: any; };
 }
 
 export interface VolumeData {

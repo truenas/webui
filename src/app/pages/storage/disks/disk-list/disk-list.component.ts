@@ -142,28 +142,6 @@ export class DiskListComponent {
 		});
 	}
 
-	getActions(parentRow) {
-   	const actions = [{
-      label: T("Edit"),
-      onClick: (row) => {
-        this.router.navigate(new Array('/').concat([
-          "storage", "disks", "edit", row.identifier
-        ]));
-      }
-    }];
-		if (_.find(this.unused, {"name": parentRow.name})) {
-	   	actions.push({
-	   		label: T("Wipe"),
-	       onClick: (row) => {
-	        this.router.navigate(new Array('/').concat([
-	          "storage", "disks", "wipe", row.name
-	        ]));
-	      }
-	  	})
-	  }
-    return actions;
-  }
-
   dataHandler(entityList: any) {
 		this.disk_ready.subscribe((res)=>{
 			for (let i = 0; i < entityList.rows.length; i++) {
