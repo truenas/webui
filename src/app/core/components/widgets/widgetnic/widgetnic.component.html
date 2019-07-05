@@ -84,7 +84,7 @@
           <div class="slide vlans" *ngIf="currentSlideName == 'vlans'" fxFlex="100">
             <mat-list *ngIf="nicState && nicState.vlans && nicState.vlans.length > 0; else noVlans"> 
               <mat-list-item role="listitem"*ngFor="let vlan of nicState.vlans;" >
-                {{vlan.name}}: {{vlan.aliases.length}} addresses
+                <strong>{{vlan.name}}:</strong>&nbsp;&nbsp; {{vlan.aliases.length}} addresses
               </mat-list-item>
             </mat-list>
             <ng-template #noVlans>
@@ -95,7 +95,7 @@
           <div *ngIf="nicState.lagg_ports && currentSlideName == 'interfaces'" class="slide lagg-ports"fxFlex="100">
             <mat-list> 
               <mat-list-item role="listitem" *ngFor="let port of nicState.lagg_ports;" >
-                LAGG Interface: {{port}}
+                <strong>Interface:</strong>&nbsp;&nbsp; {{port}}
               </mat-list-item>
             </mat-list>
           </div>
