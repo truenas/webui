@@ -203,4 +203,8 @@ export class Services implements OnInit {
       this.router.navigate(new Array('').concat(['services', service]));
     }
   }
+
+  openNetdataPortal() {
+    window.open('/netdata/');
+  }
 }

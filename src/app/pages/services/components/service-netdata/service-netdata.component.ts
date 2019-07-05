@@ -19,6 +19,7 @@ export class ServiceNetDataComponent {
     protected queryCall = 'netdata.config';
     private bind: any;
     private alarms: any;
+    public runningDisabled = true;
     private allAlarmEntries: any;
     public custActions: Array<any> = [
       {
@@ -27,10 +28,16 @@ export class ServiceNetDataComponent {
           function : () => { this.isBasicMode = !this.isBasicMode; }
       },
       {
-          'id' : 'advanced_mode',
+          id : 'advanced_mode',
           name : 'Advanced Mode',
           function : () => { this.isBasicMode = !this.isBasicMode; }
-      }
+      },
+      {
+        id : 'open_netdata_portal',
+        name : 'Open Netdata Portal',
+        disabled : this.runningDisabled,
+        function : () => { window.open('/netdata/'); }
+        }
     ];
 
     public fieldConfig: FieldConfig[] = []
@@ -185,6 +192,15 @@ export class ServiceNetDataComponent {
     constructor(protected router: Router, protected ws: WebSocketService) {}
 
     afterInit(entity: any) {
+        this.ws.call('service.query', []).subscribe((res) => {
+            let netdata = res.find((item) => {
+                return item.service === 'netdata';
+            })
+            if (netdata.state === 'RUNNING') {
+                _.find(this.custActions, {id : "open_netdata_portal"})['disabled'] = false;
+            }
+        });
+
         entity.formGroup.controls['stream_mode'].valueChanges.subscribe((res) => {
             if (res === 'NONE') {
                 this.hideField('destination', true, entity);
