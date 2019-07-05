@@ -6,7 +6,7 @@ import { SystemProfiler } from 'app/core/classes/system-profiler';
 
 import { Subject } from 'rxjs';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component'; // POC
-import { Disk, VolumeData } from 'app/core/components/widgets/widgetpool/widgetpool.component';
+import { WidgetPoolComponent } from 'app/core/components/widgets/widgetpool/widgetpool.component';
 
 import {RestService,WebSocketService} from '../../services/';
 
@@ -32,8 +32,10 @@ export class DashboardComponent implements OnInit,OnDestroy {
   public isFooterConsoleOpen: boolean;
 
   // For widgetpool
-  public volumes: VolumeData[] = [];
-  public disks:Disk[] = [];
+  public system: any;
+  public system_product: string = "Generic"
+  //public volumes: VolumeData[] = [];
+  //public disks:Disk[] = [];
 
   public nics: any[] = [];
 
@@ -184,12 +186,34 @@ export class DashboardComponent implements OnInit,OnDestroy {
     this.core.emit({name:"VolumeDataRequest"});
     this.core.emit({name:"DisksInfoRequest"});
     this.core.emit({name:"NicInfoRequest"});
+    this.getDisksData();
   }
 
-  parseStats(data){
+  getDisksData(){
+    this.core.register({observerClass: this, eventName: 'EnclosureData'}).subscribe((evt:CoreEvent) => {
+      this.system = new SystemProfiler(this.system_product, evt.data);
+      this.core.emit({name: 'DisksRequest', sender: this});
+    });
+
+    this.core.register({observerClass: this, eventName: 'PoolData'}).subscribe((evt:CoreEvent) => {
+      this.system.pools = evt.data;
+      console.log(this.system);
+    });
+
+
+    this.core.register({observerClass: this, eventName: 'DisksData'}).subscribe((evt:CoreEvent) => {
+      this.system.diskData = evt.data;
+      this.core.emit({name: 'PoolDataRequest', sender: this});
+    });
+
+    this.core.register({observerClass: this, eventName: 'SysInfo'}).subscribe((evt:CoreEvent) => {
+      this.system_product = 'M50'; // Just for testing on my FreeNAS box
+      this.core.emit({name: 'EnclosureDataRequest', sender: this});
+    });
+    this.core.emit({name: 'SysInfoRequest', sender: this});
   }
 
-  setDisksData(evt:CoreEvent){
+  /*setDisksData(evt:CoreEvent){
     //DEBUG: console.log("******** DISKS INFO ********");
     //DEBUG: console.log(evt);
     for(let i in evt.data){
@@ -246,7 +270,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
         return 0;
     });
     // this.showSpinner = false;
-  }
+  }*/
 
   toggleShake(){
     if(this.shake){
