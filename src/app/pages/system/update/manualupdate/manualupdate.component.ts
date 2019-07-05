@@ -64,7 +64,8 @@ export class ManualUpdateComponent {
       name: 'rebootAfterManualUpdate',
       placeholder: helptext.rebootAfterManualUpdate.placeholder,
       tooltip: helptext.rebootAfterManualUpdate.tooltip,
-      value: false
+      value: false,
+      isHidden: true
     }
   ];
   protected saveConfigFieldConf: FieldConfig[] = [
@@ -104,6 +105,8 @@ export class ManualUpdateComponent {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         if (is_ha) {
           this.isHA = true;
+        } else {
+          _.find(this.fieldConfig, {name : "rebootAfterManualUpdate"})['isHidden'] = false;
         }
       })
     }
@@ -155,19 +158,21 @@ export class ManualUpdateComponent {
       this.dialogRef.componentInstance.wspost(this.subs.apiEndPoint, this.subs.formData);
       this.dialogRef.componentInstance.success.subscribe((succ)=>{
         this.dialogRef.close(false);
-        if (ures[0].attributes.preferences['rebootAfterManualUpdate']) {
-          this.router.navigate(['/others/reboot']);
-        } else {
-          this.translate.get('Restart').subscribe((reboot: string) => {
-            this.translate.get('Update successful. Please reboot for the update to take effect. Reboot now?').subscribe((reboot_prompt: string) => {
-              this.dialogService.confirm(reboot, reboot_prompt).subscribe((reboot_res) => {
-                if (reboot_res) {
-                  this.router.navigate(['/others/reboot']);
-                }
+        if (!this.isHA) {
+          if (ures[0].attributes.preferences['rebootAfterManualUpdate']) {
+            this.router.navigate(['/others/reboot']);
+          } else {
+            this.translate.get('Restart').subscribe((reboot: string) => {
+              this.translate.get('Update successful. Please reboot for the update to take effect. Reboot now?').subscribe((reboot_prompt: string) => {
+                this.dialogService.confirm(reboot, reboot_prompt).subscribe((reboot_res) => {
+                  if (reboot_res) {
+                    this.router.navigate(['/others/reboot']);
+                  }
+                });
               });
             });
-          });
-        };
+          };
+        } 
       })
       this.dialogRef.componentInstance.prefailure.subscribe((prefailure)=>{
         this.dialogRef.close(false);
@@ -179,8 +184,6 @@ export class ManualUpdateComponent {
         this.dialogService.errorReport(failure.error,failure.state,failure.exception)
       })
     })
-
-
   }
 
 updater(file: any, parent: any){

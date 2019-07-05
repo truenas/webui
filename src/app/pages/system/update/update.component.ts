@@ -406,7 +406,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
                       this.updateMethod,[{ train: this.train, reboot: false }]
                   )                  
                 } else {
-                  this.ws.call('update.set_train', [this.train]).subscribe(() => { // Waiting for update.set_train in MW
+                  this.ws.call('update.set_train', [this.train]).subscribe(() => { 
                     this.ds  = this.dialogService.confirm(
                       T("Download Update"), T("Continue with download?"),true,"",false, "", this.updateMethod, {}
                     )
@@ -465,7 +465,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
                       }
                     });
                    } else {
-                    // this.ws.call('update.set_train', [this.train]).subscribe(() => { // Waiting for update.set_train in MW
+                    this.ws.call('update.set_train', [this.train]).subscribe(() => { 
                       this.ds  = this.dialogService.confirm(
                         T("Download Update"), T("Upgrades both controllers. Files will be downloaded in the Active Controller\
                          and then transferred to the Standby Controller. Upgrade process will start concurrently on both nodes.\
@@ -475,7 +475,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
                           this.update()
                         }
                       })
-                    // })
+                    })
                   }
 
                 });
@@ -514,7 +514,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     if (!this.isHA) {
       this.dialogRef.componentInstance.setCall(this.updateMethod, [{ train: this.train, reboot: false }]);
     } else {
-      this.ws.call('update.set_train', [this.train]).subscribe(() => { // Waiting for update.set_train in MW
+      this.ws.call('update.set_train', [this.train]).subscribe(() => { 
         this.dialogRef.componentInstance.setCall(this.updateMethod);
       })
     }
