@@ -25,7 +25,8 @@ export class CronDetailsComponent implements EntityRowDetails<any>, OnInit {
 
   public ngOnInit(): void {
     const isDefinedAndColumnHidden = detail =>
-      !!detail.value && !this.parent.conf.columns.some(col => col.name === detail.label && col.hidden);
+      (typeof detail.value === "boolean" || !!detail.value) &&
+      !this.parent.conf.columns.some(col => col.name === detail.label && col.hidden);
 
     this.details = [
       { label: T("Next Run"), value: this.config.cron_next_run },
