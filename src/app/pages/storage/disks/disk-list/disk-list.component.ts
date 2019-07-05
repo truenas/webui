@@ -5,6 +5,7 @@ import { WebSocketService } from '../../../../services';
 import { T } from '../../../../translate-marker';
 import * as _ from 'lodash';
 import { StorageService } from '../../../../services/storage.service';
+import { DiskDetailsComponent } from './components/disk-details.component';
 
 @Component ({
 	selector: 'disk-list',
@@ -17,14 +18,15 @@ export class DiskListComponent {
 	public columns: Array<any> = [
 	    { name: T('Name'), prop: 'name', always_display: true },
 	    { name: T('Pool'), prop: "pool" },
-	    { name: T('Serial'), prop: 'serial' },
-	    { name: T('Disk Size'), prop: 'readable_size' },
+		{ name: T('Disk Size'), prop: 'readable_size' },
+		{ name: T('Disk Type'), prop: 'type' },
+	    { name: T('Serial'), prop: 'serial', hidden: true },
 	    { name: T('Description'), prop: 'description', hidden: true },
 	    { name: T('Transfer Mode'), prop: 'transfermode', hidden: true },
 	    { name: T('HDD Standby'), prop: 'hddstandby', hidden: true },
-	    { name: T('Adv. Power Management'), prop: 'advpowermgmt' },
-	    { name: T('Acoustic Level'), prop: 'acousticlevel' },
-	    { name: T('Enable S.M.A.R.T.'), prop: 'togglesmart' },
+	    { name: T('Adv. Power Management'), prop: 'advpowermgmt', hidden: true },
+	    { name: T('Acoustic Level'), prop: 'acousticlevel', hidden: true },
+	    { name: T('Enable S.M.A.R.T.'), prop: 'togglesmart', hidden: true },
 	    { name: T('S.M.A.R.T. extra options'), prop: 'smartoptions', hidden: true },
 	    { name: T('Password for SED'), prop: 'passwd', hidden: true },
 	];
@@ -44,6 +46,10 @@ export class DiskListComponent {
 	public acousticLevel: Array<any> = [];
 	public diskToggle: boolean;
 	public SMARToptions: Array<any> = [];
+	public showActions = false;
+	public hasDetails = true;
+	public rowDetailComponent = DiskDetailsComponent;
+
 
   public multiActions: Array < any > = [{
 		id: "medit",
@@ -99,9 +105,9 @@ export class DiskListComponent {
 
 	protected disk_ready: EventEmitter<boolean> = new EventEmitter();
 	protected unusedDisk_ready: EventEmitter<boolean> = new EventEmitter();
-	protected unused: any;
+	public unused: any;
 	protected disk_pool: Map<string, string> = new Map<string, string>();
-	constructor(protected ws: WebSocketService, protected router: Router,  public diskbucket: StorageService) {
+	constructor(protected ws: WebSocketService, public router: Router,  public diskbucket: StorageService) {
 		this.ws.call('boot.get_disks', []).subscribe((boot_res) => {
 			for (const boot in boot_res) {
 				this.disk_pool.set(boot_res[boot], T('Boot Pool'));
