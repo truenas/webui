@@ -32,7 +32,7 @@ import { T } from '../../../translate-marker';
   providers : [ TooltipsService, SnackbarService ],
 })
 export class IPMIComponent {
-  @ViewChild('selectedChannel') select: ElementRef;
+  @ViewChild('selectedChannel', { static: true}) select: ElementRef;
   selectedValue: string;
 
   protected resource_name = '';

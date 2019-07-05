@@ -26,6 +26,10 @@ name_placeholder : T('Name'),
 name_tooltip : T('Enter an alphanumeric name for the virtual machine.'),
 name_validation : [ Validators.required ],
 
+time_placeholder : T('System clock'),
+time_tooltip: T('VM system time. Default is <i>Local</i>.'),
+time_local_text: T('Local'),
+
 bootloader_placeholder : T('Boot Method'),
 bootloader_tooltip : T('Select <i>UEFI</i> for newer operating systems or\
  <i>UEFI-CSM</i> (Compatibility Support Mode) for\
@@ -71,9 +75,8 @@ volsize_tooltip: T('Allocate a number of gigabytes of space for the\
  new zvol.'),
 volsize_validation: [Validators.required, Validators.min(1)],
 
-pool_detach_warning_paraText: T("Select zvol"),
-
-datastore_tooltip: T('Choose a pool or dataset for the new zvol.'),
+datastore_tooltip: T('Select a dataset for the new zvol.'),
+datastore_placeholder: T('Zvol Dataset Location'),
 
 hdd_type_placeholder: T('Select Disk Type'),
 hdd_type_tooltip: T('Select desired disk type.'),

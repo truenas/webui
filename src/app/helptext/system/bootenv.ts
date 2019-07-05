@@ -30,5 +30,8 @@ export const helptext_system_bootenv = {
   rename_name_placeholder: T("Name"),
   rename_name_tooltip: T("Rename the existing boot environment."),
 
-  replace_name_placeholder: T("Member Disk")
+  replace_name_placeholder: T("Member Disk"),
+
+  snackbar_delete_failure_message: T("Could not delete boot environment."),
+  snackbar_action_dismiss: T("Dismiss")
 };

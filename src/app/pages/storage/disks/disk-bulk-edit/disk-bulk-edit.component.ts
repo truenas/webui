@@ -73,7 +73,7 @@ export class DiskBulkEditComponent {
       value: this.diskBucket.diskToggleStatus,
       tooltip : T('Set by default if the disk supports S.M.A.R.T.\
                    Unset to disable any configured <a\
-                   href="%%docurl%%/tasks.html#s-m-a-r-t-tests"\
+                   href="--docurl--/tasks.html#s-m-a-r-t-tests"\
                    target="_blank">S.M.A.R.T. tests</a>.'),
     },
     {

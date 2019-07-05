@@ -11,7 +11,7 @@ import { ES24 } from 'app/core/classes/hardware/es24';
 import { ES60 } from 'app/core/classes/hardware/es60';
 import { DiskComponent } from './components/disk.component';
 import { TabContentComponent } from './components/tab-content/tab-content.component';
-import { SystemProfiler } from './system-profiler';
+import { SystemProfiler } from 'app/core/classes/system-profiler';
 import { tween, easing, styler, value, keyframes } from 'popmotion';
 import { Subject } from 'rxjs';
 import { ExampleData } from './example-data';
@@ -24,9 +24,9 @@ import { ExampleData } from './example-data';
 
 export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnDestroy {
 
-  @ViewChild('disksoverview') overview: ElementRef;
-  @ViewChild('diskdetails') details: ElementRef;
-  @ViewChild('domLabels') domLabels: ElementRef;
+  @ViewChild('disksoverview', { static: true}) overview: ElementRef;
+  @ViewChild('diskdetails', { static: false}) details: ElementRef;
+  @ViewChild('domLabels', { static: false}) domLabels: ElementRef;
   @Input('system-profiler') system: SystemProfiler;
   @Input('selected-enclosure') selectedEnclosure: any;
   @Input('current-tab') currentTab: any;
@@ -456,7 +456,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
  
     let sideStage = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className);
     let html = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className + ' .content')
-    let el = styler(html);
+    let el = styler(html, {});
 
     let x = (sideStage.offsetWidth * 0.5) - (el.get('width') * 0.5);
     let y = sideStage.offsetTop + (sideStage.offsetHeight * 0.5) - (el.get('height') * 0.5);
@@ -479,7 +479,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
  
     let sideStage = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className);
     let html = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className + ' .content')
-    let el = styler(html);
+    let el = styler(html, {});
 
     let x = (sideStage.offsetWidth * 0.5) - (el.get('width') * 0.5);
     let y = sideStage.offsetTop + (sideStage.offsetHeight * 0.5) - (el.get('height') * 0.5);
@@ -502,7 +502,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   exit(className){ // stage-left or stage-right or full-stage
     let html = this.overview.nativeElement.querySelector('.' + className + '.' + this.exitingView);
-    let el = styler(html);
+    let el = styler(html, {});
     let duration = 360;
 
     // x is the position relative to it's starting point.
@@ -648,7 +648,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
     } else if(!this.identifyBtnRef && !kill) {
 
-      let btn = styler(this.details.nativeElement.querySelector('#identify-btn'));
+      let btn = styler(this.details.nativeElement.querySelector('#identify-btn'), {});
       let startShadow = btn.get('box-shadow');
 
       const elementBorder = value({borderColor: '', borderWidth: 0 }, ({ borderColor, borderWidth }) => btn.set({

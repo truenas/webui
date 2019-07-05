@@ -38,15 +38,15 @@ export class CardComponent extends ViewControllerComponent {
    * addPrimaryAction(btn:  ViewFabButton);
    */	
 
-  //@ViewChild('display') display; // Already created in base class by default
+  //@ViewChild('display', { static: true}) display; // Already created in base class by default
   public primaryAction?: any; /*ViewFabButton*/
   public header: boolean = false;
   public headerTitle?: string;
   //public headerOptions?: any; /*ViewControl*/
-  @ViewChild('headerOptions') headerOptions;
+  @ViewChild('headerOptions', { static: true}) headerOptions;
 
   public footer: boolean = true;
-  @ViewChild('footerControls') footerControls;
+  @ViewChild('footerControls', { static: true}) footerControls;
 
   constructor(){
     super();

@@ -77,7 +77,7 @@ export class CloudsyncListComponent {
 
   getActions(parentrow) {
     return [{
-      id: "run",
+      id: "start",
       label: T("Run Now"),
       onClick: (row) => {
         this.dialog.confirm(T("Run Now"), T("Run this cloud sync now?"), true).subscribe((res) => {
@@ -107,6 +107,24 @@ export class CloudsyncListComponent {
         });
       },
     }, {
+      id: "stop",
+      label: T("Stop"),
+      onClick: (row) => {
+        this.dialog.confirm(T("Stop"), T("Stop this cloud sync?"), true).subscribe((res) => {
+          if (res) {
+            this.ws.call('cloudsync.abort', [row.id]).subscribe(
+              (wsRes) => {
+                this.translateService.get("close").subscribe((close) => {
+                  this.entityList.snackBar.open(T('Cloud sync stopped.'), close, { duration: 5000 });
+                });
+              },
+              (wsErr) => {
+                new EntityUtils().handleWSError(this.entityList, wsErr);
+              })
+          }
+        });
+      },
+    }, {
       id: "edit",
       label: T("Edit"),
       onClick: (row) => {
@@ -120,6 +138,15 @@ export class CloudsyncListComponent {
         this.entityList.doDelete(row);
       },
     }]
+  }
+
+  isActionVisible(actionId: string, row: any) {
+    if (actionId === 'start' && row.job && row.job.state === 'RUNNING') {
+      return false;
+    } else if (actionId === 'stop' && row.job && row.job.state !== 'RUNNING') {
+      return false;
+    }
+    return true;
   }
 
   dataHandler(entityList: any) {

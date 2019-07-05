@@ -21,7 +21,7 @@ import { T } from '../../../../translate-marker';
 })
 export class WidgetLoadHistoryComponent extends WidgetComponent implements AfterViewInit, OnDestroy {
 
-  @ViewChild('chartLoad') chartLoad: ViewChartLineComponent;
+  @ViewChild('chartLoad', { static: true}) chartLoad: ViewChartLineComponent;
   public title:string = T("System Load");
 
   constructor(public translate: TranslateService){

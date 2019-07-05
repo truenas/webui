@@ -2,9 +2,10 @@ import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {UUID} from 'angular2-uuid';
 import {LocalStorage} from 'ngx-webstorage';
-import {Observable, Subject, Subscription} from 'rxjs/Rx';
+import {Observable, Subject} from 'rxjs/Rx';
 
 import {environment} from '../../environments/environment';
+import { filter, map } from 'rxjs/operators';
 
 @Injectable()
 export class WebSocketService {
@@ -24,6 +25,7 @@ export class WebSocketService {
 
   protocol: any;
   remote: any;
+  private consoleSub: Observable<string>;
 
   public subscriptions: Map<string, Array<any>> = new Map<string, Array<any>>();
 
@@ -39,6 +41,16 @@ export class WebSocketService {
 
   get authStatus(){
     return this._authStatus.asObservable();
+  }
+
+  get consoleMessages() {
+    if (!this.consoleSub) {
+      this.consoleSub = this.sub("filesystem.file_tail_follow:/var/log/messages:499").pipe(
+        filter(res => res && res.data && typeof res.data === "string"),
+        map(res => res.data)
+      );
+    }
+    return this.consoleSub;
   }
 
   reconnect(protocol = window.location.protocol, remote = environment.remote) {
@@ -172,7 +184,7 @@ export class WebSocketService {
     });
   }
 
-  call(method, params?: any): Observable<any> {
+  call(method, params?: any, debug = false): Observable<any> {
 
     let uuid = UUID.UUID();
     let payload =
@@ -183,6 +195,10 @@ export class WebSocketService {
         "args" : params,
         "observer" : observer,
       });
+
+      if (debug) {
+        console.log({ payload });
+      }
 
       this.send(payload);
     });

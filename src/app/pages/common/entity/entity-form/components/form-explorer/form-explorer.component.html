@@ -1,8 +1,9 @@
 <div id="{{config.name}}" class="dynamic-field form-explorer" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
     <div class="form-ex-flex-container" id="form-ex-flex-container">
         <div id="box1">
-            <!-- <button mat-button (click)="toggleTree()" type="button">{{"Browse" | translate}}</button> -->
-            <i class="material-icons form-ex-folder" (click)="toggleTree()">folder</i>
+            <button mat-icon-button aria-label="Toggle Tree" (click)="toggleTree()" [disabled]="config.disabled">
+                <mat-icon class="explorer-folder">folder</mat-icon>
+            </button>
         </div>
 
         <div id="box2">
@@ -15,12 +16,12 @@
             </mat-form-field>
         </div>
 
-        <tree-root #tree id="form-ex-input" *ngIf="treeVisible" [nodes]="nodes" [options]="customTemplateStringOptions" [focused]="true" id="box3" (select)="onClick($event)" (deselect)="onClick($event)">
+        <tree-root #tree id="form-ex-input" *ngIf="treeVisible && !config.disabled" [nodes]="nodes" [options]="customTemplateStringOptions" [focused]="true" id="box3" (select)="onClick($event)" (deselect)="onClick($event)">
             <ng-template #treeNodeTemplate let-node *ngIf="(config.explorerType == 'zvol')">
                 <mat-icon>folder</mat-icon>
                 <span title="{{node.data.mountpoint}}">{{ node.data.name }}</span>
             </ng-template>
-            <ng-template #treeNodeTemplate let-node *ngIf="(config.explorerType == 'directory') || (config.explorerType == 'file') || !config.explorerType">
+            <ng-template #treeNodeTemplate let-node *ngIf="(config.explorerType == 'directory') || (config.explorerType == 'dataset') || (config.explorerType == 'file') || !config.explorerType">
                 <mat-icon *ngIf="node.data.hasChildren || node.data.children; else fileIcon">folder</mat-icon>
                 <ng-template #fileIcon><mat-icon>insert_drive_file</mat-icon></ng-template>
                 <span title="{{node.data.name}}">{{ node.data.subTitle }}</span>

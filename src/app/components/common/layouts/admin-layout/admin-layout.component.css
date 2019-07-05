@@ -1,5 +1,6 @@
 .notification-sidenav {
-	min-width: 300px;
+  min-width: 350px;
+	width: 400px;
 	max-width: 30%;
 }
 .app-logo, .app-logo-text {
@@ -23,4 +24,10 @@
 /* To get rid of VScroll on entity tables */
 .rightside-content-hold {
 	padding-bottom: 5px;
+}
+
+.hostname-label {
+	text-align: center;
+	font-size: smaller;
+	margin: -8px 0;
 }

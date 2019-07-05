@@ -63,6 +63,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   ha_pending = false;
   is_ha = false;
   sysName: string = 'FreeNAS';
+  hostname: string;
   private user_check_in_prompted = false;
 
   protected dialogRef: any;
@@ -144,6 +145,10 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.resilveringDetails = '';
       }
     }, 2500);
+
+    this.ws.call('system.info').subscribe((res) => {
+      this.hostname = res.hostname;
+    })
   }
 
   ngOnDestroy() {
@@ -157,14 +162,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   setLang(lang) {
     this.language.currentLang = lang;
     this.onLangChange.emit(this.language.currentLang);
-  }
-
-  changeTheme(theme) {
-    this.themeService.changeTheme(theme);
-  }
-
-  createTheme(){
-    this.router.navigate(['/ui-preferences']);
   }
 
   toggleNotific() {

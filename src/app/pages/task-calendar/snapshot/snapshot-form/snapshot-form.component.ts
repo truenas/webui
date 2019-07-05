@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
-import { Router,ActivatedRoute} from '@angular/router';
 import { Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
-
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { TaskService } from '../../../../services/';
-import { EntityUtils } from '../../../common/entity/utils';
 import helptext from '../../../../helptext/task-calendar/snapshot/snapshot-form';
+import { DialogService, StorageService, TaskService } from '../../../../services/';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
   selector: 'cron-snapshot-task-add',
@@ -106,6 +105,12 @@ export class SnapshotFormComponent {
     validation: [Validators.required],
   }, {
     type: 'checkbox',
+    name: 'allow_empty',
+    placeholder: helptext.allow_empty_placeholder,
+    tooltip: helptext.allow_empty_tooltip,
+    value: true,
+  }, {
+    type: 'checkbox',
     name: 'enabled',
     placeholder: helptext.enabled_placeholder,
     tooltip: helptext.enabled_tooltip,
@@ -113,17 +118,16 @@ export class SnapshotFormComponent {
   }];
 
   constructor(protected router: Router, protected taskService: TaskService,
-              protected aroute: ActivatedRoute) {
+              protected aroute: ActivatedRoute, protected storageService: StorageService,
+              private dialog: DialogService) {
     const datasetField = _.find(this.fieldConfig, { 'name': 'dataset' });
-    this.taskService.getVolumeList().subscribe((res) => {
-      for (let i = 0; i < res.data.length; i++) {
-        const volume_list = new EntityUtils().flattenData(res.data[i].children);
-        for (const j in volume_list) {
-          datasetField.options.push({ label: volume_list[j].path, value: volume_list[j].path });
-        }
-      }
-      datasetField.options = _.sortBy(datasetField.options, [function (o) { return o.label; }]);
-    });
+
+    this.storageService.getDatasetNameOptions().subscribe(
+      options => {
+        datasetField.options = _.sortBy(options, [o => o.label]);
+      },
+      error => new EntityUtils().handleWSError(this, error, this.dialog)
+    );
 
     const begin_field = _.find(this.fieldConfig, { 'name': 'begin' });
     const end_field = _.find(this.fieldConfig, { 'name': 'end' });
@@ -144,19 +148,33 @@ export class SnapshotFormComponent {
   }
 
   resourceTransformIncomingRestData(data) {
-    data['snapshot_picker'] = "0" + " " +
+    data['snapshot_picker'] = 
+      data.schedule.minute + " " +
       data.schedule.hour + " " +
       data.schedule.dom + " " +
       data.schedule.month + " " +
       data.schedule.dow;
     data['begin'] = data.schedule.begin;
     data['end'] = data.schedule.end;
+    if (data.exclude && Array.isArray(data.exclude) && data.exclude.length > 0) {
+      const newline = String.fromCharCode(13, 10);
+      data.exclude = data.exclude.join(`,${newline}`);
+    } else {
+      data.exclude = '';
+    }
     return data;
   }
 
   beforeSubmit(value) {
     const spl = value.snapshot_picker.split(" ");
     delete value.snapshot_picker;
+
+    if (value.exclude && value.exclude.trim()) {
+      // filter() needed because: "hello, world,".split(",") === ["hello", "world", ""]
+      value.exclude = value.exclude.split(",").map((val: string) => val.trim()).filter((val: string) => !!val);
+    } else {
+      value.exclude = [];
+    }
 
     value['schedule'] = {
       begin: value['begin'],
@@ -165,6 +183,7 @@ export class SnapshotFormComponent {
       dom: spl[2],
       month: spl[3],
       dow: spl[4],
+      minute: spl[0]
     };
     delete value['begin'];
     delete value['end'];

@@ -85,6 +85,7 @@ export class WidgetStorageCollectionComponent extends WidgetComponent implements
         name:evt.data[i].name,
         smart_enabled:evt.data[i].togglesmart,
         size:Number(evt.data[i].size),
+        model: evt.data[i].model,
         description: evt.data[i].description,
         enclosure_slot: evt.data[i].enclosure_slot,
         expiretime: evt.data[i].expiretime,

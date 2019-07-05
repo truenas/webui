@@ -1,14 +1,12 @@
 import { Component } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-
-import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
-import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
-import { EntityUtils } from '../../../../common/entity/utils';
-import { WebSocketService } from '../../../../../services/ws.service';
-import * as _ from 'lodash';
+import { FormControl, Validators } from "@angular/forms";
+import { ActivatedRoute, Router } from '@angular/router';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
-import { Validators } from "@angular/forms";
-import { matchOtherValidator } from "app/pages/common/entity/entity-form/validators/password-validation";
+import { matchOtherValidator, doesNotEqual } from "app/pages/common/entity/entity-form/validators/password-validation";
+import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
+import { WebSocketService } from '../../../../../services/ws.service';
+import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
+import { EntityUtils } from '../../../../common/entity/utils';
 
 @Component({
   selector : 'app-iscsi-authorizedaccess-form',
@@ -77,10 +75,14 @@ export class AuthorizedAccessFormComponent {
       tooltip: helptext_sharing_iscsi.authaccess_tooltip_peersecret,
       inputType : 'password',
       togglePw: true,
-      // validation : [
-      //   Validators.minLength(12),
-      //   matchOtherValidator("peersecret_confirm")
-      // ],
+      validation : [
+        Validators.minLength(12),
+        Validators.maxLength(16),
+        doesNotEqual("secret"),
+        matchOtherValidator("peersecret_confirm")
+      ],
+      blurStatus: true,
+      errors: helptext_sharing_iscsi.authaccess_error_peersecret
     },
     {
       type : 'input',
@@ -102,24 +104,42 @@ export class AuthorizedAccessFormComponent {
     this.aroute.params.subscribe(params => {
       if (params['pk']) {
         this.pk = params['pk'];
-        this.customFilter[0][0].push(parseInt(params['pk']));
+        this.customFilter[0][0].push(parseInt(params['pk'], 10));
       }
     });
   }
 
   afterInit(entityForm) {
+    const peersecretControl: FormControl = entityForm.formGroup.controls['peersecret'];
+    const peersecretConfig = this.fieldConfig.find(config => config.name === 'peersecret');
+
     entityForm.formGroup.controls['peeruser'].valueChanges.subscribe((res) => {
       if (res != '') {
-        entityForm.formGroup.controls['peersecret'].setValidators([
+        peersecretControl.setValidators([
           Validators.required,
           Validators.minLength(12),
-          matchOtherValidator("peersecret_confirm")
+          Validators.maxLength(16),
+          matchOtherValidator("peersecret_confirm"),
+          doesNotEqual("secret")
         ]);
       } else {
-        entityForm.formGroup.controls['peersecret'].clearValidators();
+        peersecretControl.clearValidators();
       }
-      entityForm.formGroup.controls['peersecret'].updateValueAndValidity();
+      peersecretControl.updateValueAndValidity();
     });
+
+    peersecretControl.valueChanges.subscribe((res) => {
+      peersecretConfig.hasErrors = !!res && peersecretControl.touched && peersecretControl.invalid;
+    });
+
+    peersecretConfig.blurEvent = () => {
+      peersecretConfig.hasErrors = (!!entityForm.formGroup.controls['peeruser'].value && !peersecretControl.value) || (!!peersecretControl.value && peersecretControl.invalid);
+      peersecretControl.updateValueAndValidity();
+    };
+
+    entityForm.formGroup.controls['peersecret_confirm'].valueChanges.subscribe(() => {
+      peersecretControl.updateValueAndValidity();
+    })
   }
 
   beforeSubmit(value) {

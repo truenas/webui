@@ -4,13 +4,13 @@ import { ActivatedRoute } from '@angular/router';
 
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/task-calendar/replication/replication';
-import { WebSocketService, TaskService, KeychainCredentialService } from 'app/services';
+import { WebSocketService, TaskService, KeychainCredentialService, ReplicationService } from 'app/services';
 import * as _ from 'lodash';
 
 @Component({
     selector: 'app-replication-list',
     template: `<entity-form [conf]='this'></entity-form>`,
-    providers: [TaskService, KeychainCredentialService]
+    providers: [TaskService, KeychainCredentialService, ReplicationService]
 })
 export class ReplicationFormComponent {
 
@@ -21,6 +21,7 @@ export class ReplicationFormComponent {
     protected route_success: string[] = ['tasks', 'replication'];
     protected isEntity = true;
     protected entityForm: any;
+    protected queryRes: any;
 
     protected fieldConfig: FieldConfig[] = [
         {
@@ -160,22 +161,93 @@ export class ReplicationFormComponent {
             }],
         }, {
             type: 'explorer',
-            initial: '/mnt',
-            explorerType: 'directory',
+            initial: '',
+            explorerType: 'dataset',
             multiple: true,
-            name: 'source_datasets',
+            name: 'source_datasets_PUSH',
             placeholder: helptext.source_datasets_placeholder,
             tooltip: helptext.source_datasets_tooltip,
             options: [],
             required: true,
             validation: [Validators.required],
+            isHidden: true,
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'direction',
+                    value: 'PUSH',
+                }]
+            }],
         }, {
-            type: 'input',
-            name: 'target_dataset',
+            type: 'explorer',
+            name: 'target_dataset_PUSH',
             placeholder: helptext.target_dataset_placeholder,
             tooltip: helptext.target_dataset_tooltip,
+            initial: '',
+            explorerType: 'directory',
+            customTemplateStringOptions: {
+                displayField: 'Path',
+                isExpandedField: 'expanded',
+                idField: 'uuid',
+                getChildren: this.getChildren.bind(this),
+                nodeHeight: 23,
+                allowDrag: false,
+                useVirtualScroll: false,
+            },
             required: true,
             validation: [Validators.required],
+            isHidden: true,
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'direction',
+                    value: 'PUSH',
+                }]
+            }],
+        }, {
+            type: 'explorer',
+            name: 'source_datasets_PULL',
+            placeholder: helptext.source_datasets_placeholder,
+            tooltip: helptext.source_datasets_placeholder,
+            initial: '',
+            explorerType: 'directory',
+            customTemplateStringOptions: {
+                displayField: 'Path',
+                isExpandedField: 'expanded',
+                idField: 'uuid',
+                getChildren: this.getChildren.bind(this),
+                nodeHeight: 23,
+                allowDrag: false,
+                useVirtualScroll: false,
+            },
+            required: true,
+            validation: [Validators.required],
+            isHidden: true,
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'direction',
+                    value: 'PULL',
+                }]
+            }],
+        }, {
+            type: 'explorer',
+            initial: '',
+            explorerType: 'dataset',
+            name: 'target_dataset_PULL',
+            placeholder: helptext.target_dataset_placeholder,
+            tooltip: helptext.target_dataset_placeholder,
+            options: [],
+            required: true,
+            validation: [Validators.required],
+            isHidden: true,
+            relation: [{
+                action: 'SHOW',
+                when: [{
+                    name: 'direction',
+                    value: 'PULL',
+                }]
+            }],
         }, {
             type: 'checkbox',
             name: 'recursive',
@@ -269,6 +341,7 @@ export class ReplicationFormComponent {
             name: 'schedule',
             placeholder: helptext.schedule_placeholder,
             tooltip: helptext.schedule_tooltip,
+            value: null,
             relation: [{
                 action: 'HIDE',
                 connective: 'OR',
@@ -383,6 +456,9 @@ export class ReplicationFormComponent {
                 when: [{
                     name: 'schedule',
                     value: false,
+                }, {
+                    name: 'schedule',
+                    value: null,
                 }, {
                     name: 'transport',
                     value: 'LEGACY',
@@ -551,20 +627,22 @@ export class ReplicationFormComponent {
                     value: 'LEGACY',
                 }]
             }],
-        }, {
-            type: 'checkbox',
-            name: 'embed',
-            placeholder: helptext.embed_placeholder,
-            tooltip: helptext.embed_tooltip,
-            value: true,
-            relation: [{
-                action: 'HIDE',
-                when: [{
-                    name: 'transport',
-                    value: 'LEGACY',
-                }]
-            }],
-        }, {
+        },
+        // {
+        //     type: 'checkbox',
+        //     name: 'embed',
+        //     placeholder: helptext.embed_placeholder,
+        //     tooltip: helptext.embed_tooltip,
+        //     value: true,
+        //     relation: [{
+        //         action: 'HIDE',
+        //         when: [{
+        //             name: 'transport',
+        //             value: 'LEGACY',
+        //         }]
+        //     }],
+        // },
+        {
             type: 'checkbox',
             name: 'compressed',
             placeholder: helptext.compressed_placeholder,
@@ -625,8 +703,12 @@ export class ReplicationFormComponent {
         },
     ]
 
-    constructor(private ws: WebSocketService, protected taskService: TaskService, private aroute: ActivatedRoute,
-        private keychainCredentialService: KeychainCredentialService) {
+    constructor(
+        private ws: WebSocketService,
+        protected taskService: TaskService,
+        private aroute: ActivatedRoute,
+        private keychainCredentialService: KeychainCredentialService,
+        private replicationService: ReplicationService) {
         const sshCredentialsField = _.find(this.fieldConfig, { name: 'ssh_credentials' });
         this.keychainCredentialService.getSSHConnections().subscribe(
             (res) => {
@@ -689,9 +771,28 @@ export class ReplicationFormComponent {
                 entityForm.setDisabled('schedule_end', toDisable, toDisable);
             }
         })
+
+        entityForm.formGroup.controls['ssh_credentials'].valueChanges.subscribe(
+            (res) => {
+                for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
+                    const explorerComponent = _.find(this.fieldConfig, {name: item}).customTemplateStringOptions.explorerComponent;
+                    explorerComponent.nodes = [{
+                        mountpoint: explorerComponent.config.initial,
+                        name: explorerComponent.config.initial,
+                        hasChildren: true
+                    }];
+                }
+            }
+        )
     }
 
     resourceTransformIncomingRestData(wsResponse) {
+        this.queryRes = _.cloneDeep(wsResponse);
+        wsResponse['source_datasets_PUSH'] = wsResponse['source_datasets'];
+        wsResponse['target_dataset_PUSH'] = wsResponse['target_dataset'];
+        wsResponse['source_datasets_PULL'] = wsResponse['source_datasets'];
+        wsResponse['target_dataset_PULL'] = wsResponse['target_dataset'];
+
         if (wsResponse['ssh_credentials']) {
             wsResponse['ssh_credentials'] = wsResponse['ssh_credentials'].id;
         }
@@ -742,10 +843,25 @@ export class ReplicationFormComponent {
     }
 
     beforeSubmit(data) {
-        for (let i = 0; i < data['source_datasets'].length; i++) {
-            if (_.startsWith(data['source_datasets'][i], '/mnt/')) {
-                data['source_datasets'][i] = data['source_datasets'][i].substring(5);
+        if (data['direction'] == 'PUSH') {
+            for (let i = 0; i < data['source_datasets_PUSH'].length; i++) {
+                if (_.startsWith(data['source_datasets_PUSH'][i], '/mnt/')) {
+                    data['source_datasets_PUSH'][i] = data['source_datasets_PUSH'][i].substring(5);
+                }
             }
+            data['source_datasets'] = Array.isArray(data['source_datasets_PUSH']) ? _.cloneDeep(data['source_datasets_PUSH']) : _.cloneDeep(data['source_datasets_PUSH']).split(' ');
+            data['target_dataset'] = typeof data['target_dataset_PUSH'] === 'string' ? _.cloneDeep(data['target_dataset_PUSH']) : _.cloneDeep(data['target_dataset_PUSH']).toString();
+
+            delete data['source_datasets_PUSH'];
+            delete data['target_dataset_PUSH'];
+        } else {
+            data['source_datasets'] = Array.isArray(data['source_datasets_PULL']) ? _.cloneDeep(data['source_datasets_PULL']) : _.cloneDeep(data['source_datasets_PULL']).split(' ');
+            data['target_dataset'] = typeof data['target_dataset_PULL'] === 'string' ? _.cloneDeep(data['target_dataset_PULL']) : _.cloneDeep(data['target_dataset_PULL']).toString();
+            if (_.startsWith(data['target_dataset'], '/mnt/')) {
+                data['target_dataset']  =  data['target_dataset'] .substring(5);
+            }
+            delete data['source_datasets_PULL'];
+            delete data['target_dataset_PULL'];
         }
 
         data["exclude"] = typeof data['exclude'] === "string" ? data['exclude'].split(' ') : data['exclude'];
@@ -793,11 +909,35 @@ export class ReplicationFormComponent {
             if (data["transport"] === "LOCAL") {
                 data['ssh_credentials'] = null;
             }
-            // removed schedule if selected period snapshot task
-            if (this.entityForm.formGroup.controls['schedule'].disabled && this.entityForm.wsResponse['schedule']) {
-                data['schedule'] = null;
+
+            for (const prop in this.queryRes) {
+                if (prop === 'only_matching_schedule' || prop === 'hold_pending_snapshots') {
+                    data[prop] = false;
+                }
+                if (prop !== 'id' && prop !== 'state' && data[prop] === undefined) {
+                    data[prop] = Array.isArray(this.queryRes[prop]) ? [] : null;
+                }
             }
         }
     }
 
+    getChildren(node) {
+        for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
+            _.find(this.fieldConfig, {name: 'target_dataset_PUSH'}).hasErrors = false;
+        }
+
+        const transport = this.entityForm.formGroup.controls['transport'].value;
+        const sshCredentials = this.entityForm.formGroup.controls['ssh_credentials'].value;
+        if (sshCredentials == undefined || sshCredentials == '') {
+            for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
+                _.find(this.fieldConfig, {name: item}).hasErrors = true;
+                _.find(this.fieldConfig, {name: item}).errors = 'Please select a valid SSH Connection';
+            }
+            return;
+        }
+
+        return new Promise((resolve, reject) => {
+            resolve(this.replicationService.getRemoteDataset(transport,sshCredentials, this));
+        });
+    }
 }

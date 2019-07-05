@@ -3,6 +3,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
 import { Router } from '@angular/router';
 import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { DialogService } from 'app/services';
 import * as moment from 'moment';
 import { fromEvent as observableFromEvent, Subscription } from 'rxjs';
@@ -18,14 +19,15 @@ import { EntityUtils } from '../../../common/entity/utils';
 })
 export class BootEnvironmentListComponent {
 
-  @ViewChild('scrubIntervalEvent') scrubIntervalEvent: ElementRef;
+  @ViewChild('scrubIntervalEvent', { static: true}) scrubIntervalEvent: ElementRef;
 
   public title = "Boot Environments";
   protected resource_name: string = 'system/bootenv';
   protected queryCall = 'bootenv.query';
-  protected route_add: string[] = ['system', 'bootenv', 'create']
-  protected route_delete: string[] = [ 'system', 'bootenv', 'delete' ];
-  protected entityList: any;
+  protected route_add: string[] = ['system', 'boot', 'create']
+  protected route_delete: string[] = [ 'system', 'boot', 'delete' ];
+  protected wsDelete = 'bootenv.delete'
+  protected entityList: EntityTableComponent;
   protected wsActivate = 'bootenv.activate';
   protected wsKeep = 'bootenv.set_attribute';
   protected loaderOpen: boolean = false;
@@ -54,25 +56,11 @@ export class BootEnvironmentListComponent {
     },
   };
 
-  preInit(){
+  preInit() {
     this._rest.get('system/advanced/',{}).subscribe(res=>{
       this.scrub_interval = res.data.adv_boot_scrub;
-      this.ws.call('boot.get_state').subscribe(wres => {
-        if (wres.scan.end_time){
-          this.scrub_msg = moment(wres.scan.end_time.$date).format('MMMM Do YYYY, h:mm:ss a');
-        } else{
-          this.scrub_msg="Never"
-        }
-        this.size_consumed = wres.properties.allocated.value;
-        this.condition = wres.properties.health.value;
-        if (this.condition === 'DEGRADED'){
-          this.condition = this.condition + ` Check Notifications for more details.`
-        }
-        this.size_boot =  wres.properties.size.value;
-        this.percentange =  wres.properties.capacity.value;
-      });
+      this.updateBootState();
     });
-
   }
 
   changeEvent(){
@@ -125,14 +113,28 @@ export class BootEnvironmentListComponent {
   }
 
   getActions(row) {
-    let actions = [];
+    const actions = [];
     if (row.active === '-'){
       actions.push({
-        label : "Delete",
+        label: "Delete",
         id: "delete",
-        onClick : (row) => {
-          this.entityList.doDelete(row);
-        }
+        onClick: row =>
+          this.entityList.doDeleteJob(row).subscribe(
+            success => {
+              if (!success) {
+                this.snackBar.open(
+                  helptext_system_bootenv.snackbar_delete_failure_message,
+                  helptext_system_bootenv.snackbar_action_dismiss,
+                  { duration: 2000 }
+                );
+              }
+            },
+            console.error,
+            () => {
+              this.entityList.getData();
+              this.updateBootState();
+            }
+          )
       });
     }
     actions.push({
@@ -140,7 +142,7 @@ export class BootEnvironmentListComponent {
       id: "clone",
       onClick : (row) => {
         this._router.navigate(new Array('').concat(
-            [ "system", "bootenv", "clone", row.id ]));
+            [ "system", "boot", "clone", row.id ]));
       }
     });
     actions.push({
@@ -148,7 +150,7 @@ export class BootEnvironmentListComponent {
       id: "rename",
       onClick : (row) => {
         this._router.navigate(new Array('').concat(
-            [ "system", "bootenv", "rename", row.id ]));
+            [ "system", "boot", "rename", row.id ]));
       }
     });
     actions.push({
@@ -198,6 +200,24 @@ export class BootEnvironmentListComponent {
       }
     })
   }
+
+  updateBootState(): void {
+    this.ws.call("boot.get_state").subscribe(wres => {
+      if (wres.scan.end_time) {
+        this.scrub_msg = moment(wres.scan.end_time.$date).format("MMMM Do YYYY, h:mm:ss a");
+      } else {
+        this.scrub_msg = "Never";
+      }
+      this.size_consumed = wres.properties.allocated.value;
+      this.condition = wres.properties.health.value;
+      if (this.condition === "DEGRADED") {
+        this.condition = this.condition + ` Check Notifications for more details.`;
+      }
+      this.size_boot = wres.properties.size.value;
+      this.percentange = wres.properties.capacity.value;
+    });
+  }
+
   toggleKeep(id, status) {
     if (!status){
       this.dialog.confirm("Keep", "Keep this Boot Environment?", false, helptext_system_bootenv.list_dialog_keep_action).subscribe((res) => {
@@ -240,7 +260,7 @@ export class BootEnvironmentListComponent {
 
   goToStatus() {
     this._router.navigate(new Array('').concat(
-      [ "system", "bootenv", "status" ]));
+      [ "system", "boot", "status" ]));
   }
 
   scrub() {

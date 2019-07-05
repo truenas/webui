@@ -1,4 +1,4 @@
-import {  Component,  ViewChild, } from '@angular/core';
+import {  Component,  ViewChild, ElementRef, } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Subscription ,  Observer  } from 'rxjs';
 import { HttpClient, HttpRequest, HttpEventType, HttpResponse } from '@angular/common/http';
@@ -16,7 +16,7 @@ import { DialogService } from '../../../../../../services/';
   styleUrls: ['../dynamic-field/dynamic-field.css', 'form-upload.component.css'],
 })
 export class FormUploadComponent {
-  @ViewChild('fileInput') fileInput;
+  @ViewChild('fileInput', { static: false}) fileInput: ElementRef<HTMLInputElement>;
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;

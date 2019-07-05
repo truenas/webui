@@ -4,7 +4,7 @@ import { Validators } from '@angular/forms';
 
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/system/ssh-connections';
-import { KeychainCredentialService, WebSocketService, DialogService } from '../../../../services';
+import { KeychainCredentialService, WebSocketService, DialogService, ReplicationService } from '../../../../services';
 import * as _ from 'lodash';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../common/entity/utils';
@@ -12,7 +12,7 @@ import { EntityUtils } from '../../../common/entity/utils';
 @Component({
     selector: 'app-ssh-connections-form',
     template: `<entity-form [conf]="this"></entity-form>`,
-    providers: [KeychainCredentialService]
+    providers: [KeychainCredentialService, ReplicationService]
 })
 export class SshConnectionsFormComponent {
 
@@ -119,12 +119,7 @@ export class SshConnectionsFormComponent {
             name: 'private_key',
             placeholder: helptext.private_key_placeholder,
             tooltip: helptext.private_key_tooltip,
-            options: [
-                {
-                    label: '---------',
-                    value: '',
-                }
-            ],
+            options: [],
             value: '',
             required: true,
             validation: [Validators.required],
@@ -206,9 +201,13 @@ export class SshConnectionsFormComponent {
     ];
     protected entityForm: any;
 
-    constructor(private aroute: ActivatedRoute, private keychainCredentialService: KeychainCredentialService,
-        private ws: WebSocketService, private loader: AppLoaderService,
-        private dialogService: DialogService) {
+    constructor(
+        private aroute: ActivatedRoute,
+        private keychainCredentialService: KeychainCredentialService,
+        private ws: WebSocketService,
+        private loader: AppLoaderService,
+        private dialogService: DialogService,
+        private replicationService: ReplicationService) {
         const privateKeyField = _.find(this.fieldConfig, { name: 'private_key' });
         this.keychainCredentialService.getSSHKeys().subscribe(
             (res) => {
@@ -231,6 +230,11 @@ export class SshConnectionsFormComponent {
             if (params['pk']) {
                 this.queryCallOption[0].push(params['pk']);
                 _.find(this.fieldConfig, { name: 'setup_method' }).isHidden = true;
+            } else {
+                _.find(this.fieldConfig, { name: 'private_key'}).options.push({
+                    label: 'Generate New',
+                    value: 'NEW'
+                });
             }
         });
     }
@@ -251,7 +255,32 @@ export class SshConnectionsFormComponent {
         return wsResponse;
     }
 
-    beforeSubmit(data) {
+    async customSubmit(data) {
+        this.loader.open();
+        if (data['private_key'] == 'NEW') {
+            await this.replicationService.genSSHKeypair().then(
+                async (res) => {
+                    const payload = {
+                        name: data['name'] + ' Key',
+                        type: 'SSH_KEY_PAIR',
+                        attributes: res,
+                    };
+                    await this.ws.call('keychaincredential.create', [payload]).toPromise().then(
+                        (sshKey) => {
+                            data['private_key'] = sshKey.id;
+                        },
+                        (sshKey_err) => {
+                            this.loader.close();
+                            new EntityUtils().handleWSError(this, sshKey_err, this.dialogService);
+                        });
+                },
+                (err) => {
+                    this.loader.close();
+                    new EntityUtils().handleWSError(this, err, this.dialogService);
+                }
+            )
+        }
+
         if (data['setup_method'] === 'manual') {
             const attributes = {};
             for (const item in this.manualMethodFields) {
@@ -263,7 +292,20 @@ export class SshConnectionsFormComponent {
                 data['type'] = 'SSH_CREDENTIALS';
             }
         }
-
         delete data['setup_method'];
+
+        this.entityForm.submitFunction(data).subscribe(
+            (res) => {
+                this.loader.close();
+                this.entityForm.router.navigate(new Array('/').concat(this.route_success));
+            },
+            (err) => {
+                this.loader.close();
+                if (err.hasOwnProperty("reason") && (err.hasOwnProperty("trace"))) {
+                    new EntityUtils().handleWSError(this, err, this.dialogService);
+                } else {
+                    new EntityUtils().handleError(this, err);
+                }
+            });
     }
 }
