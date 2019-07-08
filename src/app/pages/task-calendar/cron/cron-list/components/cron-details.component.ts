@@ -7,7 +7,7 @@ import {
 } from "app/pages/common/entity/entity-table/entity-row-details.interface";
 import { EntityUtils } from "app/pages/common/entity/utils";
 import { T } from "app/translate-marker";
-import { filter } from "rxjs/operators";
+import { filter, switchMap } from "rxjs/operators";
 import { CronListComponent } from "../cron-list.component";
 
 @Component({
@@ -48,15 +48,18 @@ export class CronDetailsComponent implements EntityRowDetails<any>, OnInit {
         onClick: row =>
           this.parent.conf.dialog
             .confirm(T("Run Now"), T("Run this cron job now?"), true)
-            .pipe(filter(run => !!run))
-            .subscribe(() =>
-              this.parent.conf.rest.post(this.parent.conf.resource_name + "/" + row.id + "/run/", {}).subscribe(
-                res =>
-                  this.parent.conf.translate.get("close").subscribe(close => {
-                    this.parent.conf.entityList.snackBar.open(res.data, close, { duration: 5000 });
-                  }),
-                err => new EntityUtils().handleError(this, err)
+            .pipe(
+              filter(run => !!run),
+              switchMap(() =>
+                this.parent.conf.rest.post(this.parent.conf.resource_name + "/" + row.id + "/run/", {})
               )
+            )
+            .subscribe(
+              res =>
+                this.parent.conf.translate.get("close").subscribe(close => {
+                  this.parent.conf.entityList.snackBar.open(res.data, close, { duration: 5000 });
+                }),
+              err => new EntityUtils().handleError(this, err)
             )
       },
       {
