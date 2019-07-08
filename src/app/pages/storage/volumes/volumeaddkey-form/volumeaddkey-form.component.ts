@@ -37,6 +37,11 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
 
   fieldConfig: FieldConfig[] = [
     {
+      type: 'paragraph',
+      name: 'addkey-instructions',
+      paraText: helptext.add_key_instructions,
+    },
+    {
       type : 'input',
       name : 'name',
       isHidden: true,

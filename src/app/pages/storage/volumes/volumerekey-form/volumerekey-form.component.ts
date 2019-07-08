@@ -40,6 +40,10 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
       name : 'name',
       isHidden: true
     },{
+      type: 'paragraph',
+      name: 'rekey-instructions',
+      paraText: helptext.rekey_instructions
+    },{
       type : 'input',
       inputType: 'password',
       name : 'passphrase',

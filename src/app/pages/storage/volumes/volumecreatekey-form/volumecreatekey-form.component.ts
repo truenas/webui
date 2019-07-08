@@ -41,6 +41,10 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
       name : 'name',
       isHidden: true
     },{
+      type: 'paragraph',
+      name: 'createkey-instructions',
+      paraText: helptext.changekey_instructions
+    },{
       type : 'input',
       inputType: 'password',
       name : 'passphrase',
