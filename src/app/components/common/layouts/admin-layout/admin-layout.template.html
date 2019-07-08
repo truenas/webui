@@ -38,8 +38,8 @@
           <mat-icon class="icon-xs text-muted">lock</mat-icon>
           root
         </span>
+        <div class="hostname-label" *ngIf="hostname" matTooltip="Hostname: {{hostname}}">{{hostname}}</div>
       </div>
-      <div class="hostname-label" *ngIf="hostname" matTooltip="Hostname: {{hostname}}">{{hostname}}</div>
       <navigation (onStateChange)="changeState($event)"></navigation>
     </div>
   </mat-sidenav>
