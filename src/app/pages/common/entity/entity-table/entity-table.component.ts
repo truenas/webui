@@ -432,11 +432,18 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.conf.addRows) {
       this.conf.addRows(this);
     }
+    if (!this.showDefaults) {
+      this.currentRows = this.filter.nativeElement.value === '' ? this.rows : this.currentRows;
+      this.paginationPageIndex  = 0;
+      this.setPaginationInfo();
+      this.showDefaults = true;
+    }
+    if (this.expandedRows == 0 && this.filter.nativeElement.value === '') {
+      this.currentRows = this.rows;
+      this.paginationPageIndex  = 0;
+      this.setPaginationInfo();
+    }
 
-    this.currentRows = this.filter.nativeElement.value === '' ? this.rows : this.currentRows;
-    this.paginationPageIndex  = 0;
-    this.setPaginationInfo();
-    this.showDefaults = true;
     return res;
 
   }
@@ -475,14 +482,14 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.conf.queryRes = rows;
       }
     } else {
-      const newCurrentRows = this.currentRows;
-      for (let i = 0; i < newCurrentRows.length; i++) {
-        const index = _.findIndex(rows, {id: newCurrentRows[i].id});
+      for (let i = 0; i < this.currentRows.length; i++) {
+        const index = _.findIndex(rows, {id: this.currentRows[i].id});
         if (index > -1) {
-          newCurrentRows[i] = rows[index];
+          for (let prop in rows[index]) {
+            this.currentRows[i][prop] = rows[index][prop];
+          }
         }
       }
-      this.currentRows = newCurrentRows;
 
       const newRows = [];
       for (let i = 0; i < this.rows.length; i++) {
