@@ -25,6 +25,14 @@ export class CloudsyncListComponent {
 
   public columns: Array < any > = [
     { name: T('Description'), prop: 'description' },
+    { name: T('Credential'), prop: 'credential', hidden: true },
+    { name: T('Direction'), prop: 'direction', hidden: true},
+    { name: T('Path'), prop: 'path', hidden: true},
+    { name: T('Minute'), prop: 'minute', hidden: true },
+    { name: T('Hour'), prop: 'hour', hidden: true },
+    { name: T('Day of Month'), prop: 'daymonth', hidden: true },
+    { name: T('Month'), prop: 'month', hidden: true },
+    { name: T('Day of Week'), prop: 'dayweek', hidden: true },
     { name: T('Status'), prop: 'status', state: 'state'},
     { name: T('Enabled'), prop: 'enabled' },
   ];
@@ -153,6 +161,13 @@ export class CloudsyncListComponent {
 
   dataHandler(entityList: any) {
     for (let i = 0; i < entityList.rows.length; i++) {
+      entityList.rows[i].minute = entityList.rows[i].schedule['minute'];
+      entityList.rows[i].hour = entityList.rows[i].schedule['hour'];
+      entityList.rows[i].daymonth = entityList.rows[i].schedule['dom'];
+      entityList.rows[i].month = entityList.rows[i].schedule['month'];
+      entityList.rows[i].dayweek = entityList.rows[i].schedule['dow'];
+      entityList.rows[i].credential = entityList.rows[i].credentials['name'];
+
       if (entityList.rows[i].job == null) {
         entityList.rows[i].status = T("Not run since last boot");
       } else {
