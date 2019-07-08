@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { interval } from 'rxjs';
+import * as _ from 'lodash';
 
 @Component ({
     selector: 'app-entity-table-row-details',
@@ -10,22 +10,18 @@ export class EntityTableRowDetailsComponent implements OnInit {
     @Input() config: any;
     @Input() parent: any;
 
-    public direction = 'row';
+    public direction = 'horizontal';
     public showActions = false;
     public columns = [];
     public actions = [];
     constructor(){}
 
     ngOnInit() {
-        console.log('onInit', this.config, this.parent);
-        
         if (this.parent.conf.detailsConf) {
             this.direction = this.parent.conf.detailsConf.direction != undefined ? this.parent.conf.detailsConf.direction : 'row';
             this.showActions = this.parent.conf.detailsConf.showActions != undefined ? this.parent.conf.detailsConf.showActions : false;
         }
-
         this.columns = this.parent.conf.detailColumns;
-
         if (this.showActions) {
             this.actions = this.parent.getActions(this.config);
             for (let i = 0; i < this.actions.length; i++) {
@@ -36,7 +32,10 @@ export class EntityTableRowDetailsComponent implements OnInit {
                 this.actions[i].visible = true;
                 }
             }
-            console.log(this.actions);
         } 
+    }
+
+    getPropValue(prop) {
+        return _.get(this.config, prop.split('.'));
     }
 }

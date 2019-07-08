@@ -1,18 +1,18 @@
 <div class="entity-table-expanded-panel">
     <section class="info">
-        <div fxLayout="row" *ngIf="direction == 'row'">
+        <div fxLayout="row" *ngIf="direction == 'horizontal'">
             <div *ngFor="let column of this.columns; let i = index">
                 <div *ngIf="column.isHidden == undefined ? true : !column.isHidden" class="layout-gap">
                     <h6><strong>{{ column.name }}</strong></h6>
-                    {{config[column.prop]}}
+                    {{ getPropValue(column.prop) }}
                 </div>
             </div>
         </div>
-        <div fxLayout="column" *ngIf="direction == 'column'">
+        <div fxLayout="column" *ngIf="direction == 'vertical'">
             <div *ngFor="let column of this.columns; let i = index">
                 <div *ngIf="column.isHidden == undefined ? true : !column.isHidden">
                     <strong>{{ column.name }}:</strong>
-                    {{config[column.prop]}}
+                    {{ getPropValue(column.prop) }}
                 </div>
             </div>
         </div>
