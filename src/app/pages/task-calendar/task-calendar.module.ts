@@ -30,6 +30,7 @@ import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-lis
 import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
 import { ResilverComponent } from './resilver/resilver.component';
 import { CronDetailsComponent } from './cron/cron-list/components/cron-details.component';
+import { CloudsyncDetailsComponent } from './cloudsync/cloudsync-list/components/cloudsync-details.component';
 
 @NgModule({
   imports: [
@@ -65,9 +66,10 @@ import { CronDetailsComponent } from './cron/cron-list/components/cron-details.c
     ScrubFormComponent,
     CloudsyncListComponent,
     CloudsyncFormComponent,
+    CloudsyncDetailsComponent,
     ResilverComponent,
     CronDetailsComponent
   ],
-  entryComponents: [CronDetailsComponent]
+  entryComponents: [CronDetailsComponent, CloudsyncDetailsComponent]
 })
 export class TaskCalendarModule {}

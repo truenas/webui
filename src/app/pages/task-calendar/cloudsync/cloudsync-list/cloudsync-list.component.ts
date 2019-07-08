@@ -6,6 +6,9 @@ import * as _ from 'lodash';
 import { T } from '../../../../translate-marker';
 import { TranslateService } from '@ngx-translate/core';
 import { EntityUtils } from '../../../common/entity/utils';
+import { Moment } from 'moment';
+import * as cronParser from 'cron-parser';
+import { CloudsyncDetailsComponent } from './components/cloudsync-details.component';
 
 @Component({
   selector: 'app-cloudsync-list',
@@ -20,22 +23,20 @@ export class CloudsyncListComponent {
   protected route_add_tooltip = "Add Cloud Sync Task";
   protected route_edit: string[] = ['tasks', 'cloudsync', 'edit'];
   protected wsDelete = "cloudsync.delete";
-  protected entityList: any;
+  public entityList: any;
   protected asyncView = true;
+  protected hasDetails = false;
+  protected rowDetailComponent = CloudsyncDetailsComponent;
 
   public columns: Array < any > = [
     { name: T('Description'), prop: 'description' },
-    { name: T('Direction'), prop: 'direction'},
     { name: T('Path'), prop: 'path'},
     { name: T('Status'), prop: 'status', state: 'state'},
-    { name: T('Minute'), prop: 'minute' },
-    { name: T('Hour'), prop: 'hour' },
-    { name: T('Day of Month'), prop: 'daymonth' },
-    { name: T('Month'), prop: 'month' },
-    { name: T('Day of Week'), prop: 'dayweek' },
-    // { name: T('Auxiliary arguments'), prop: 'args' },
-    { name: T('Credential'), prop: 'credential' },
     { name: T('Enabled'), prop: 'enabled' },
+    { name: T('Schedule'), prop: 'schedule', hidden: true },
+    { name: T('Next Run'), prop: 'next_run', hidden: true },
+    { name: T('Direction'), prop: 'direction', hidden: true},
+    { name: T('Credential'), prop: 'credential', hidden: true },
   ];
   public config: any = {
     paging: true,
@@ -46,11 +47,11 @@ export class CloudsyncListComponent {
     },
   };
 
-  constructor(protected router: Router,
-              protected ws: WebSocketService,
-              protected translateService: TranslateService,
-              protected dialog: DialogService,
-              protected job: JobService,
+  constructor(public router: Router,
+              public ws: WebSocketService,
+              public translateService: TranslateService,
+              public dialog: DialogService,
+              public job: JobService,
               protected engineerModeService: EngineerModeService) {
               }
 
@@ -151,33 +152,35 @@ export class CloudsyncListComponent {
 
   dataHandler(entityList: any) {
     for (let i = 0; i < entityList.rows.length; i++) {
-      entityList.rows[i].minute = entityList.rows[i].schedule['minute'];
-      entityList.rows[i].hour = entityList.rows[i].schedule['hour'];
-      entityList.rows[i].daymonth = entityList.rows[i].schedule['dom'];
-      entityList.rows[i].month = entityList.rows[i].schedule['month'];
-      entityList.rows[i].dayweek = entityList.rows[i].schedule['dow'];
-      entityList.rows[i].credential = entityList.rows[i].credentials['name'];
-      if (entityList.rows[i].job == null) {
-        entityList.rows[i].status = T("Not run since last boot");
+      const row = entityList.rows[i];
+      row.schedule = `${row.schedule.minute} ${row.schedule.hour} ${row.schedule.dom} ${row.schedule.month} ${row.schedule.dow}`;
+
+      /* Weird type assertions are due to a type definition error in the cron-parser library */
+      row.next_run = ((cronParser.parseExpression(row.schedule, { iterator: true }).next() as unknown) as {
+        value: { _date: Moment };
+      }).value._date.fromNow();
+
+      row.credential = row.credentials['name'];
+      if (row.job == null) {
+        row.status = T("Not run since last boot");
       } else {
-        entityList.rows[i].state = entityList.rows[i].job.state;
-        entityList.rows[i].status = entityList.rows[i].job.state;
-        if (entityList.rows[i].job.error) {
-          entityList.rows[i].status += ":" + entityList.rows[i].job.error;
+        row.state = row.job.state;
+        row.status = row.job.state;
+        if (row.job.error) {
+          row.status += ":" + row.job.error;
         }
-        this.job.getJobStatus(entityList.rows[i].job.id).subscribe((task) => {
-          entityList.rows[i].state = entityList.rows[i].job.state;
-          entityList.rows[i].status = task.state;
+        this.job.getJobStatus(row.job.id).subscribe((task) => {
+          row.state = row.job.state;
+          row.status = task.state;
           if (task.error) {
-            entityList.rows[i].status += ":" + task.error;
+            row.status += ":" + task.error;
           }
-          if (task.progress.description && task.state != 'SUCCESS') {
-            entityList.rows[i].status += ':' + task.progress.description;
+          if (task.progress.description && task.state !== 'SUCCESS') {
+            row.status += ':' + task.progress.description;
           }
         });
       }
     }
-
   }
 
   stateButton(row) {
