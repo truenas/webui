@@ -33,7 +33,6 @@ import { WidgetLoadComponent } from 'app/core/components/widgets/widgetload/widg
 import { WidgetMemoryHistoryComponent } from 'app/core/components/widgets/widgetmemoryhistory/widgetmemoryhistory.component';
 import { WidgetMemoryComponent } from 'app/core/components/widgets/widgetmemory/widgetmemory.component';
 import { WidgetStorageComponent } from 'app/core/components/widgets/widgetstorage/widgetstorage.component';
-import { WidgetStorageCollectionComponent } from 'app/core/components/widgets/widgetstoragecollection/widgetstoragecollection.component';
 import { WidgetNoteComponent } from 'app/core/components/widgets/widgetnote/widgetnote.component';
 import { WidgetNotesCollectionComponent } from 'app/core/components/widgets/widgetnotescollection/widgetnotescollection.component';
 import { WidgetPoolComponent } from 'app/core/components/widgets/widgetpool/widgetpool.component';
@@ -89,7 +88,6 @@ import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.co
     WidgetMemoryHistoryComponent,
     WidgetMemoryComponent,
     WidgetStorageComponent,
-    WidgetStorageCollectionComponent,
     WidgetNoteComponent,
     WidgetNotesCollectionComponent,
     WidgetPoolComponent
@@ -128,7 +126,6 @@ import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.co
     WidgetMemoryHistoryComponent,
     WidgetMemoryComponent,
     WidgetStorageComponent,
-    WidgetStorageCollectionComponent,
     WidgetNoteComponent,
     WidgetNotesCollectionComponent,
     WidgetPoolComponent
@@ -162,7 +159,6 @@ import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.co
     WidgetMemoryHistoryComponent,
     WidgetMemoryComponent,
     WidgetStorageComponent,
-    WidgetStorageCollectionComponent,
     WidgetNoteComponent,
     WidgetNotesCollectionComponent,
     WidgetPoolComponent
