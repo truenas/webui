@@ -179,6 +179,7 @@
           <div *ngFor="let detail of row.details" style="padding-left:35px;">
             <strong>{{detail.label | translate}}:</strong> {{detail.value}}
           </div>
+          <div dynamicComponent [component]="entityTableRowDetailsComponent" [config]="row" [parent]="this"></div>
           <!-- customized -->
           <div *ngIf="conf.rowDetailComponent" dynamicComponent [component]="conf.rowDetailComponent" [config]="row" [parent]="this"></div>
         </ng-template>

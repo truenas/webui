@@ -1257,6 +1257,12 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     min-width: 180px;
   }
 
+  app-service-netdata form-paragraph {
+    font-size: larger;
+    font-weight: 700;
+    margin-bottom: 7px;
+  }
+  
   app-replication-wizard #adjustme {
     top: -70px;
   }
@@ -1290,6 +1296,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     vertical-align: top;
     line-height: 25px;
     padding-left: 3px;
+  }
+
+  .mat-card{
+    border-radius: 6px;
+    //overflow: hidden; // This clips tooltips
   }
 
  } // end of ix theme

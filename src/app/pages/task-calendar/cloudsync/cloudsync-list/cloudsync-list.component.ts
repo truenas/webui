@@ -8,7 +8,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { EntityUtils } from '../../../common/entity/utils';
 import { Moment } from 'moment';
 import * as cronParser from 'cron-parser';
-import { CloudsyncDetailsComponent } from './components/cloudsync-details.component';
 
 @Component({
   selector: 'app-cloudsync-list',
@@ -23,20 +22,23 @@ export class CloudsyncListComponent {
   protected route_add_tooltip = "Add Cloud Sync Task";
   protected route_edit: string[] = ['tasks', 'cloudsync', 'edit'];
   protected wsDelete = "cloudsync.delete";
-  public entityList: any;
+  protected entityList: any;
   protected asyncView = true;
-  protected hasDetails = false;
-  protected rowDetailComponent = CloudsyncDetailsComponent;
 
   public columns: Array < any > = [
     { name: T('Description'), prop: 'description' },
-    { name: T('Path'), prop: 'path'},
+    { name: T('Schedule'), prop: 'cron', hidden: true },
+    { name: T('Next Run'), prop: 'next_run', hidden: true },
+    { name: T('Credential'), prop: 'credential', hidden: true },
+    { name: T('Direction'), prop: 'direction', hidden: true},
+    { name: T('Path'), prop: 'path', hidden: true},
+    { name: T('Minute'), prop: 'minute', hidden: true },
+    { name: T('Hour'), prop: 'hour', hidden: true },
+    { name: T('Day of Month'), prop: 'dom', hidden: true },
+    { name: T('Month'), prop: 'month', hidden: true },
+    { name: T('Day of Week'), prop: 'dow', hidden: true },
     { name: T('Status'), prop: 'status', state: 'state'},
     { name: T('Enabled'), prop: 'enabled' },
-    { name: T('Schedule'), prop: 'schedule', hidden: true },
-    { name: T('Next Run'), prop: 'next_run', hidden: true },
-    { name: T('Direction'), prop: 'direction', hidden: true},
-    { name: T('Credential'), prop: 'credential', hidden: true },
   ];
   public config: any = {
     paging: true,
@@ -47,11 +49,30 @@ export class CloudsyncListComponent {
     },
   };
 
-  constructor(public router: Router,
-              public ws: WebSocketService,
-              public translateService: TranslateService,
-              public dialog: DialogService,
-              public job: JobService,
+  public hasDetails = true;
+  public detailsConf = {
+    direction: 'horizontal',
+    showAction: false,
+  };
+  public detailColumns: Array < any > = [
+    { name: T('Direction'), prop: 'direction'},
+    { name: T('Path'), prop: 'path'},
+    { name: T('Schedule'), prop: 'cron' },
+    { name: T('Next Run'), prop: 'next_run' },
+    { name: T('Minute'), prop: 'minute' },
+    { name: T('Hour'), prop: 'hour' },
+    { name: T('Day of Month'), prop: 'dom' },
+    { name: T('Month'), prop: 'month' },
+    { name: T('Day of Week'), prop: 'dow' },
+    { name: T('Auxiliary arguments'), prop: 'args', isHidden: true},
+    { name: T('Credential'), prop: 'credentials.name' },
+  ];
+
+  constructor(protected router: Router,
+              protected ws: WebSocketService,
+              protected translateService: TranslateService,
+              protected dialog: DialogService,
+              protected job: JobService,
               protected engineerModeService: EngineerModeService) {
               }
 
@@ -59,15 +80,9 @@ export class CloudsyncListComponent {
     if (localStorage.getItem('engineerMode') === 'true') {
       this.columns.splice(9, 0, { name: T('Auxiliary arguments'), prop: 'args' });
     }
-
+    const argsColumn = _.find(this.detailColumns, {prop: 'args'});
     this.engineerModeService.engineerMode.subscribe((res) => {
-      if (res === 'true') {
-        this.columns.splice(9, 0, { name: T('Auxiliary arguments'), prop: 'args' });
-      } else {
-        if (this.columns.length === 12) {
-          this.columns.splice(9, 1);
-        }
-      }
+      argsColumn.isHidden = res === 'true' ? false : true;
     });
 
   }
@@ -152,34 +167,42 @@ export class CloudsyncListComponent {
 
   dataHandler(entityList: any) {
     for (let i = 0; i < entityList.rows.length; i++) {
-      const row = entityList.rows[i];
-      row.schedule = `${row.schedule.minute} ${row.schedule.hour} ${row.schedule.dom} ${row.schedule.month} ${row.schedule.dow}`;
+      const task = entityList.rows[i];
+
+      task.minute = task.schedule['minute'];
+      task.hour = task.schedule['hour'];
+      task.dom = task.schedule['dom'];
+      task.month = task.schedule['month'];
+      task.dow = task.schedule['dow'];
+      task.credential = task.credentials['name'];
+
+      task.cron = `${task.minute} ${task.hour} ${task.dom} ${task.month} ${task.dow}`;
 
       /* Weird type assertions are due to a type definition error in the cron-parser library */
-      row.next_run = ((cronParser.parseExpression(row.schedule, { iterator: true }).next() as unknown) as {
+      task.next_run = ((cronParser.parseExpression(task.cron, { iterator: true }).next() as unknown) as {
         value: { _date: Moment };
       }).value._date.fromNow();
 
-      row.credential = row.credentials['name'];
-      if (row.job == null) {
-        row.status = T("Not run since last boot");
+      if (task.job == null) {
+        task.status = T("Not run since last boot");
       } else {
-        row.state = row.job.state;
-        row.status = row.job.state;
-        if (row.job.error) {
-          row.status += ":" + row.job.error;
+        task.state = task.job.state;
+        task.status = task.job.state;
+        if (task.job.error) {
+          task.status += ":" + task.job.error;
         }
-        this.job.getJobStatus(row.job.id).subscribe((task) => {
-          row.state = row.job.state;
-          row.status = task.state;
-          if (task.error) {
-            row.status += ":" + task.error;
+        this.job.getJobStatus(task.job.id).subscribe((t) => {
+          task.state = task.job.state;
+          task.status = t.state;
+          if (t.error) {
+            task.status += ":" + t.error;
           }
-          if (task.progress.description && task.state !== 'SUCCESS') {
-            row.status += ':' + task.progress.description;
+          if (t.progress.description && t.state !== 'SUCCESS') {
+            task.status += ':' + t.progress.description;
           }
         });
       }
+      console.log({task});
     }
   }
 

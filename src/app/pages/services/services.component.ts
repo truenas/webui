@@ -35,6 +35,7 @@ export class Services implements OnInit {
     'ftp': 'FTP',
     'iscsitarget': 'iSCSI',
     'lldp': 'LLDP',
+    'netdata': 'Netdata',
     'nfs': 'NFS',
     'rsync': 'Rsync',
     's3': 'S3',
@@ -195,14 +196,15 @@ export class Services implements OnInit {
       // iscsi target global config route
       const route = ['sharing', 'iscsi'];
       this.router.navigate(new Array('').concat(route));
-    } else if (service === 'netdata') {
-      // launch netdata
-      window.open("/netdata/");
     } else if (service === 'cifs') {
       this.router.navigate(new Array('').concat(['services', 'smb']));
     } else {
       // Determines the route path
       this.router.navigate(new Array('').concat(['services', service]));
     }
+  }
+
+  openNetdataPortal() {
+    window.open('/netdata/');
   }
 }

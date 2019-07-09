@@ -144,6 +144,15 @@ export class ApiService {
         responseEvent: "PrimaryNicInfo"
       }
     },
+    NicInfoRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        namespace:"interface.query",
+        args: [],
+        responseEvent: "NicInfo"
+      }
+    },
     NetInfoRequest:{
       apiCall:{
         protocol:"websocket",

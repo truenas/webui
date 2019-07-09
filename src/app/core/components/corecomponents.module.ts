@@ -24,6 +24,7 @@ import { WidgetComponent } from 'app/core/components/widgets/widget/widget.compo
 import { WidgetChartComponent } from 'app/core/components/widgets/widgetchart/widgetchart.component';
 import { WidgetSysInfoComponent } from 'app/core/components/widgets/widgetsysinfo/widgetsysinfo.component';
 import { WidgetNetInfoComponent } from 'app/core/components/widgets/widgetnetinfo/widgetnetinfo.component';
+import { WidgetNicComponent } from 'app/core/components/widgets/widgetnic/widgetnic.component';
 import { WidgetCpuComponent } from 'app/core/components/widgets/widgetcpu/widgetcpu.component';
 import { WidgetCpuHistoryComponent } from 'app/core/components/widgets/widgetcpuhistory/widgetcpuhistory.component';
 import { WidgetCpuTempsComponent } from 'app/core/components/widgets/widgetcputemps/widgetcputemps.component';
@@ -79,6 +80,7 @@ import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.co
     WidgetChartComponent,
     WidgetSysInfoComponent,
     WidgetNetInfoComponent,
+    WidgetNicComponent,
     WidgetCpuComponent,
     WidgetCpuHistoryComponent,
     WidgetCpuTempsComponent,
@@ -117,6 +119,7 @@ import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.co
     WidgetChartComponent,
     WidgetSysInfoComponent,
     WidgetNetInfoComponent,
+    WidgetNicComponent,
     WidgetCpuComponent,
     WidgetCpuHistoryComponent,
     WidgetCpuTempsComponent,
@@ -150,6 +153,7 @@ import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.co
     WidgetChartComponent,
     WidgetSysInfoComponent,
     WidgetNetInfoComponent,
+    WidgetNicComponent,
     WidgetCpuComponent,
     WidgetCpuHistoryComponent,
     WidgetCpuTempsComponent,
