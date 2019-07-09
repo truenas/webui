@@ -544,10 +544,11 @@ export class SupportComponent {
     dialogRef.componentInstance.setCall('support.new_ticket', [this.payload]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.subscribe(res=>{
+      console.log(res)
       if (res.result) {
         url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
       }
-      if (this.subs.length > 0) {
+      if (res.method === 'support.new_ticket' && this.subs.length > 0) {
         this.subs.forEach((item) => {
           const formData: FormData = new FormData();
           if (this.is_freenas) {
