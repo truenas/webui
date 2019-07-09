@@ -59,6 +59,21 @@ interface PoolDiagnosis {
   level: string;
 }
 
+export interface Disk {
+  name: string;
+  smart_enabled: boolean;
+  size: number;
+  model: string;
+  description?: string;
+  enclosure_slot?: any;
+  expiretime?: any;
+  hddstandby?: string;
+  serial?: string;
+  smartoptions?: string;
+  temp?: number;
+  displaysize?: string;
+}
+
 @Component({
   selector: 'widget-pool',
   templateUrl:'./widgetpool.component.html',
@@ -98,6 +113,12 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     level: "safe"
   };
 
+  public currentDiskDetails:Disk;
+  get currentDiskDetailsKeys(){
+    return this.currentDiskDetails ? Object.keys(this.currentDiskDetails) : [];
+  }
+  
+
   constructor(public router: Router, public translate: TranslateService){
     super(translate);
     this.configurable = false;
@@ -127,6 +148,17 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   ngAfterViewInit(){
+    this.core.register({observerClass:this,eventName:"DisksData"}).subscribe((evt:CoreEvent) => {
+      console.log(evt);
+      delete evt.data[0].enclosure;
+      delete evt.data[0].name;
+      delete evt.data[0].devname;
+      this.currentDiskDetails = evt.data[0];
+    });
+  }
+
+  getDiskDetails(key:string, value:string){
+    this.core.emit({name:"DisksRequest", data:[[[key, "=", value]]]});
   }
 
   updateSlide(name:string,verified: boolean, slideIndex:number, dataIndex?: number, dataSource?:any){

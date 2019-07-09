@@ -135,6 +135,7 @@
             <mat-list >
               <mat-list-item role="listitem" *ngFor="let disk of path[2].dataSource.children; let i=index" 
                  (click)="updateSlide('disk details', true, 3, i, disk)" 
+                 (click)="getDiskDetails('name', disk.disk)" 
                  [ngClass]="{'clickable': true}">
                 <strong>{{disk.disk}}:</strong>&nbsp;&nbsp; {{disk.status}}
                 <span *ngIf="disk.status == 'ONLINE'" class="{{poolHealth.level}} healthy" >
@@ -165,7 +166,15 @@
               </mat-list-item>
               <mat-list-item role="listitem">
                 <strong> Self Healed:</strong>&nbsp;&nbsp; {{path[3].dataSource.stats.self_healed}}
-                </mat-list-item>
+              </mat-list-item>
+            </mat-list>
+            
+            <!-- Dynamic disk details-->
+            <div class="list-subheader">Advanced Details</div>
+            <mat-list >
+              <mat-list-item *ngFor="let key of currentDiskDetailsKeys" role="listitem">
+                <strong class="detail-key"> {{key}}:</strong>&nbsp;&nbsp; {{currentDiskDetails[key]}}
+              </mat-list-item>
             </mat-list>
           </div>
 
