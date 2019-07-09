@@ -12,6 +12,7 @@ import { FieldConfig } from '../../common/entity/entity-form/models/field-config
 import { EntityUtils } from '../../../pages/common/entity/utils';
 
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { SelectControlValueAccessor } from '@angular/forms';
 
 @Component({
   selector: 'app-update',
@@ -258,7 +259,6 @@ export class UpdateComponent implements OnInit, OnDestroy {
           this.updateMethod = 'failover.upgrade';
           this.isHA = true;
           this.checkUpgradePending();
-          // this.keepChecking();
         }
       })
     }
@@ -270,19 +270,14 @@ export class UpdateComponent implements OnInit, OnDestroy {
     })
   }
 
-  keepChecking() {
-    this.checkChangesSubscription = observableInterval(10000).subscribe(x => {
-      this.checkUpgradePending();
-    })
-  }
-
   applyFailoverUpgrade() {
     this.dialogService.confirm(T("Finish Upgrade?"), T(""), true, T("Continue")).subscribe((res) => {
       if (res) {
         this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
         this.dialogRef.componentInstance.setCall('failover.upgrade_finish');
         this.dialogRef.componentInstance.submit();
-        this.dialogRef.componentInstance.success.subscribe((succ) => {
+        this.dialogRef.componentInstance.success.subscribe((success) => {
+          console.log('success', success)
           this.failover_upgrade_pending = false;
           this.dialogRef.close(false);
         });

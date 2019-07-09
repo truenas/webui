@@ -46,8 +46,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   waitingNetworkCheckin = false;
   replicationDetails;
   resilveringDetails;
-  upgradeWaitingToFinish = false;
-  user_notified_of_pending_upgrade = false;
   themesMenu: Theme[] = this.themeService.themesMenu;
   currentTheme:string = "ix-blue";
   public createThemeLabel = "Create Theme";
@@ -58,10 +56,13 @@ export class TopbarComponent implements OnInit, OnDestroy {
   dirServicesStatus = [];
   showDirServicesIcon = false;
 
+  node: string;
+
   ha_status_text: string;
   ha_disabled_reasons = [];
   ha_pending = false;
   is_ha = false;
+  upgradeWaitingToFinish = false; 
   sysName: string = 'FreeNAS';
   hostname: string;
   private user_check_in_prompted = false;
@@ -120,12 +121,14 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.checkNetworkChangesPending();
     this.checkNetworkCheckinWaiting();
     this.getDirServicesStatus();
+    this.ws.call('failover.node').subscribe((res) => {
+      this.node = res;
+    })
 
     this.continuosStreaming = observableInterval(10000).subscribe(x => {
       this.showReplicationStatus();
       if (this.is_ha) {
         this.getHAStatus();
-        this.checkUpgradePending();
       }
       this.checkNetworkCheckinWaiting();
       this.checkNetworkChangesPending();
@@ -412,33 +415,27 @@ export class TopbarComponent implements OnInit, OnDestroy {
   checkUpgradePending() {
     this.ws.call('failover.upgrade_pending').subscribe((res) => {
       this.upgradeWaitingToFinish = res;
-      if (res && !this.user_notified_of_pending_upgrade) {
-        this.showUpgradePending();
+      if(res) {
+        this.dialogService.confirm(
+          T("Pending Upgrade"),
+          T("There is an upgrade waiting to finish."),
+          true, T('Continue')).subscribe(res => {
+            if (res) {
+              this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
+              this.dialogRef.componentInstance.setCall('failover.upgrade_finish');
+              this.dialogRef.componentInstance.submit();
+              this.dialogRef.componentInstance.success.subscribe((success) => {
+                this.dialogRef.close(false);
+                console.log('success', success);
+                this.upgradeWaitingToFinish = false
+              });
+              this.dialogRef.componentInstance.failure.subscribe((failure) => {
+                this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
+              });
+            }
+          });        
       }
-    })
-  }
-
-  showUpgradePending() {
-    this.user_notified_of_pending_upgrade = true;
-    this.dialogService.confirm(
-      T("Pending Upgrade"),
-      T("There is an upgrade waiting to finish."),
-      true, T('Continue')).subscribe(res => {
-        if (res) {
-          this.upgradeWaitingToFinish = false;
-          this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
-          this.dialogRef.componentInstance.setCall('failover.upgrade_finish');
-          this.dialogRef.componentInstance.submit();
-          this.dialogRef.componentInstance.success.subscribe((succ) => {
-            this.user_notified_of_pending_upgrade = false;
-            this.dialogRef.close(false);
-            console.log('success');
-          });
-          this.dialogRef.componentInstance.failure.subscribe((failure) => {
-            this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
-          });
-        }
-      });
+    });
   }
 
   getDirServicesStatus() {
