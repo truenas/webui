@@ -421,15 +421,26 @@ export class DatasetAclComponent implements OnDestroy {
         acl.basic_flags = data[i].flags['BASIC'];
       } else {
         acl.flags_type = 'ADVANCED';
-        console.log(data[i].flags);
-        acl.advanced_flags = data[i].flags;
+        const flags = data[i].flags;
+        acl.advanced_flags = []
+        for (const flag in flags) {
+          if (flags.hasOwnProperty(flag) && flags[flag]) {
+            acl.advanced_flags.push(flag);
+          }
+        }
       }
       if (data[i].perms.hasOwnProperty('BASIC')) {
         acl.perms_type = 'BASIC';
         acl.basic_perms = data[i].perms['BASIC'];
       } else {
-        acl.flags_perms = 'ADVANCED';
-        acl.advanced_perms = data[i].perms;
+        acl.perms_type = 'ADVANCED';
+        const perms = data[i].perms;
+        acl.advanced_perms = []
+        for (const perm in perms) {
+          if (perms.hasOwnProperty(perm) && perms[perm]) {
+            acl.advanced_perms.push(perm);
+          }
+        }
       }
 
       const propName = "aces";
@@ -483,7 +494,9 @@ export class DatasetAclComponent implements OnDestroy {
         const adv_perm_options = helptext.dataset_acl_advanced_perms_options;
         for (let j = 0; j < adv_perm_options.length; j++) {
           const perm = adv_perm_options[j].value;
-          d['perms'][perm] = acl.advanced_perms.hasOwnProperty(perm);
+          if (_.indexOf(acl.advanced_perms, perm) > -1) {
+            d['perms'][perm] = true;
+          }
         }
       }
       if (acl.flags_type === "BASIC") {
@@ -492,7 +505,9 @@ export class DatasetAclComponent implements OnDestroy {
         const adv_flag_options = helptext.dataset_acl_advanced_flags_options;
         for (let j = 0; j < adv_flag_options.length; j++) {
           const flag = adv_flag_options[j].value;
-          d['flags'][flag] = acl.advanced_flags.hasOwnProperty(flag);
+          if (_.indexOf(acl.advanced_flags, flag) > -1) {
+            d['flags'][flag] = true;
+          }
         }
       }
       dacl.push(d);
