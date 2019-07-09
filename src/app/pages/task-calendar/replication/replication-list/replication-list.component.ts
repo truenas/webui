@@ -1,9 +1,6 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import * as moment from 'moment';
-import { DialogService, JobService, SnackbarService, WebSocketService } from '../../../../services';
-import { T } from 'app/translate-marker';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogService, JobService, SnackbarService } from '../../../../services';
 
 @Component({
     selector: 'app-replication-list',
@@ -24,13 +21,8 @@ export class ReplicationListComponent {
 
     public columns: Array<any> = [
         { name: 'Name', prop: 'name' },
-        { name: 'Direction', prop: 'direction', hidden: true},
-        { name: 'Transport', prop: 'transport', hidden: true},
-        { name: 'SSH Connection', prop: 'ssh_connection', hidden: true},
         { name: 'Source Dataset', prop: 'source_datasets', hidden: true},
         { name: 'Target Dataset', prop: 'target_dataset', hidden: true},
-        { name: 'Recursive', prop: 'recursive', hidden: true},
-        { name: 'Auto', prop: 'auto', hidden: true},
         { name: 'Enabled', prop: 'enabled' },
         { name: 'State', prop: 'task_state', state: 'state' },
         { name: 'Last Snapshot', prop: 'task_last_snapshot' },
@@ -58,12 +50,7 @@ export class ReplicationListComponent {
         },
     };
 
-    constructor(
-        private router: Router,
-        private ws: WebSocketService,
-        private dialog: DialogService,
-        private snackbarService: SnackbarService,
-        protected job: JobService) { }
+    constructor(private dialog: DialogService, protected job: JobService) { }
 
     afterInit(entityList: any) {
         this.entityList = entityList;
@@ -77,42 +64,7 @@ export class ReplicationListComponent {
                 const d = moment(task.state.job.time_finished.$date);
                 task.task_last_snapshot = d.format('MM/D/YYYY h:mma') + ` (${d.fromNow()})`;
             }
-            console.log({ task })
         }
-    }
-
-    getActions(parentrow) {
-        return [{
-            id: "run",
-            label: T("Run Now"),
-            onClick: (row) => {
-                this.dialog.confirm(T("Run Now"), T("Replicate <i>") + row.name + T("</i> now?"), true).subscribe((res) => {
-                    if (res) {
-                        row.state = 'RUNNING';
-                        this.ws.call('replication.run', [row.id]).subscribe(
-                            (res) => {
-                                this.snackbarService.open(T('Replication <i>') + row.name + T('</i> has started.'), T('close'), { duration: 5000 });
-                            },
-                            (err) => {
-                                new EntityUtils().handleWSError(this.entityList, err);
-                            })
-                    }
-                });
-            },
-        }, {
-            id: "edit",
-            label: T("Edit"),
-            onClick: (row) => {
-                this.route_edit.push(row.id);
-                this.router.navigate(this.route_edit);
-            },
-        }, {
-            id: "delete",
-            label: T("Delete"),
-            onClick: (row) => {
-                this.entityList.doDelete(row);
-            },
-        }]
     }
 
     stateButton(row) {
