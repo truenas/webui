@@ -13,7 +13,7 @@ import { MatDialog } from '@angular/material';
 import { T } from '../../../translate-marker';
 import { DialogService } from '../../../services/dialog.service';
 import helptext from '../../../helptext/vm/vm-wizard/vm-wizard';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 
 @Component({
@@ -108,6 +108,11 @@ export class VMWizardComponent {
           min: 1,
           validation : [ Validators.required, Validators.min(1), Validators.max(16) ],
           tooltip: helptext.vcpus_tooltip,
+        },
+        {
+          type: 'paragraph',
+          name: 'memory_limitation',
+          paraText: helptext.memory_limitation + ' 0 MB'
         },
         {
           type: 'input',
@@ -288,6 +293,20 @@ export class VMWizardComponent {
       .subscribe(options => {
         this.wizardConfig[2].fieldConfig.find(config => config.name === "datastore").options = options;
       });
+
+    /* Patch memory paraText with machine's available memory */
+    this.ws
+      .call("vm.get_available_memory", [])
+      .pipe(filter(availableMemory => typeof availableMemory === "number" && availableMemory > 0))
+      .subscribe(
+        availableMemory => {
+          this.wizardConfig
+            .find(step => step.label === helptext.vcpus_label)
+            .fieldConfig.find(config => config.type === "paragraph").paraText =
+              helptext.memory_limitation + `: ${(window as any).filesize(availableMemory, { exponent: 2 })}`;
+        },
+        error => new EntityUtils().handleWSError(this, error, this.dialogService)
+      );
 
     this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]]]).subscribe((zvols)=>{
       zvols.forEach(zvol => {
