@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { T } from 'app/translate-marker';
 import * as moment from 'moment';
-import { DialogService, JobService, SnackbarService } from '../../../../services';
+import { DialogService, JobService, SnackbarService, WebSocketService } from '../../../../services';
 
 @Component({
     selector: 'app-replication-list',
@@ -50,7 +53,12 @@ export class ReplicationListComponent {
         },
     };
 
-    constructor(private dialog: DialogService, protected job: JobService) { }
+    constructor(
+        private router: Router,
+        private ws: WebSocketService,
+        private dialog: DialogService,
+        private snackbarService: SnackbarService,
+        protected job: JobService) { }
 
     afterInit(entityList: any) {
         this.entityList = entityList;
@@ -65,6 +73,40 @@ export class ReplicationListComponent {
                 task.task_last_snapshot = d.format('MM/D/YYYY h:mma') + ` (${d.fromNow()})`;
             }
         }
+    }
+    
+    getActions(parentrow) {
+        return [{
+            id: "run",
+            label: T("Run Now"),
+            onClick: (row) => {
+                this.dialog.confirm(T("Run Now"), T("Replicate <i>") + row.name + T("</i> now?"), true).subscribe((res) => {
+                    if (res) {
+                        row.state = 'RUNNING';
+                        this.ws.call('replication.run', [row.id]).subscribe(
+                            (res) => {
+                                this.snackbarService.open(T('Replication <i>') + row.name + T('</i> has started.'), T('close'), { duration: 5000 });
+                            },
+                            (err) => {
+                                new EntityUtils().handleWSError(this.entityList, err);
+                            })
+                    }
+                });
+            },
+        }, {
+            id: "edit",
+            label: T("Edit"),
+            onClick: (row) => {
+                this.route_edit.push(row.id);
+                this.router.navigate(this.route_edit);
+            },
+        }, {
+            id: "delete",
+            label: T("Delete"),
+            onClick: (row) => {
+                this.entityList.doDelete(row);
+            },
+        }]
     }
 
     stateButton(row) {

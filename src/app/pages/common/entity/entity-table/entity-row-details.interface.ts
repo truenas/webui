@@ -15,14 +15,10 @@ export interface EntityRowDetails<T = any, U = EntityTableComponent> extends Com
   parent: U;
 
   details: EntityDetail[];
+
   actions?: EntityAction[];
 
   isActionVisible?(actionId: string, entity: T): boolean;
-}
-
-export interface EntityDetail {
-  label: string;
-  value: string | number;
 }
 
 export interface EntityAction {
