@@ -161,7 +161,6 @@ export class DatasetAclComponent implements OnDestroy {
           type: 'select',
           multiple: true,
           isHidden: true,
-          disabled: true,
           required: true,
           name: 'advanced_perms',
           placeholder: helptext.dataset_acl_perms_placeholder,
@@ -339,14 +338,14 @@ export class DatasetAclComponent implements OnDestroy {
             basic_perms_fc = _.find(controls, {"name": "basic_perms"});
             if (res[i].perms_type === "ADVANCED") {
               adv_perms_fc.isHidden = false;
-              adv_perms_fc.disabled = false;
+              adv_perms_fc.required = true;
               basic_perms_fc.isHidden = true;
-              basic_perms_fc.disabled = true;
+              basic_perms_fc.required = false;
             } else {
               adv_perms_fc.isHidden = true;
-              adv_perms_fc.disabled = true;
+              adv_perms_fc.required = false;
               basic_perms_fc.isHidden = false;
-              basic_perms_fc.disabled = false;
+              basic_perms_fc.required = true;
               if (res[i].basic_perms === "OTHER") {
                 basic_perms_fc.warnings = helptext.dataset_acl_basic_perms_other_warning;
                 canSave = false;
