@@ -114,14 +114,25 @@
           <div class="slide topology" *ngIf="path[1].name == 'topology' && currentSlide == '1'; else emptySlide" fxFlex="100">
             <div class="list-subheader">{{currentSlideName}}</div>
             <mat-list *ngIf="poolState && poolState.topology.data">
-              <mat-list-item role="listitem"*ngFor="let vdev of poolState.topology.data; let i=index" 
-                 (click)="updateSlide('disks', vdev.children.length > 0, 2, i, vdev)" 
-                 [ngClass]="{'clickable': vdev.children.length > 0}">
-                <strong>{{vdev.type}}:</strong>&nbsp;&nbsp; {{vdev.status}}
-                <span *ngIf="vdev.status == 'ONLINE'" class="{{poolHealth.level}} healthy" >
-                  <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
-                </span>
-                <mat-icon *ngIf="vdev.children.length > 0" class="next-slide">chevron_right</mat-icon>
+              <mat-list-item role="listitem"*ngFor="let vdev of poolState.topology.data; let i=index"
+                 (click)="updateSlide('disks', true, currentSlideIndex + 1, i, vdev)" 
+                 [ngClass]="{'clickable': true}">
+                  <strong>{{vdev.type}}:</strong>&nbsp;&nbsp; {{vdev.status}}
+                  <span *ngIf="vdev.status == 'ONLINE'" class="{{poolHealth.level}} healthy" >
+                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
+                  </span>
+
+                <!--<div *ngIf="vdev.type == 'DISK'"
+                 (click)="updateSlide('disk details', true, currentSlideIndex + 1, i, vdev)" 
+                 (click)="getDiskDetails('name', vdev.disk)" 
+                 [ngClass]="{'clickable': true}">
+                  <strong>({{currentSlideIndex + 1}}) {{vdev.type}}:</strong>&nbsp;&nbsp; {{vdev.status}}
+                  <span *ngIf="vdev.status == 'ONLINE'" class="{{poolHealth.level}} healthy" >
+                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
+                  </span>
+                  </div>-->
+
+                <mat-icon class="next-slide">chevron_right</mat-icon>
               </mat-list-item>
             </mat-list>
           </div>
@@ -132,7 +143,7 @@
 
           <div class="slide disks" *ngIf="path[2].name == 'disks' && currentSlide == '2'; else emptySlide"  fxFlex="100">
             <div class="list-subheader">Disks</div>
-            <mat-list >
+            <mat-list *ngIf="path[2].dataSource.type !== 'DISK'">
               <mat-list-item role="listitem" *ngFor="let disk of path[2].dataSource.children; let i=index" 
                  (click)="updateSlide('disk details', true, 3, i, disk)" 
                  (click)="getDiskDetails('name', disk.disk)" 
@@ -144,28 +155,41 @@
                 <mat-icon class="next-slide">chevron_right</mat-icon>
               </mat-list-item>
             </mat-list>
+
+            <mat-list *ngIf="path[2].dataSource.type == 'DISK'">
+              <mat-list-item role="listitem" 
+                 (click)="updateSlide('disk details', true, 3, i, path[2].dataSource)" 
+                 (click)="getDiskDetails('name', path[2].dataSource.disk)" 
+                 [ngClass]="{'clickable': true}">
+                <strong>{{path[2].dataSource.disk}}:</strong>&nbsp;&nbsp; {{path[2].dataSource.status}}
+                <span *ngIf="path[2].dataSource.status == 'ONLINE'" class="{{poolHealth.level}} healthy" >
+                  <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
+                </span>
+                <mat-icon class="next-slide">chevron_right</mat-icon>
+              </mat-list-item>
+            </mat-list>
           </div>
 
           <!--<div class="slide empty" *ngIf="path[2].name == 'empty'" fxFlex="100">
             </div>-->
 
-          <div class="slide disk-details" *ngIf="path[3].name == 'disk details' && currentSlide == '3'; else emptySlide"  fxFlex="100">
-            <div class="list-subheader">Details for {{path[3].dataSource.disk}}</div>
+          <div class="slide disk-details" *ngIf="path[currentSlideIndex].name == 'disk details'; else emptySlide"  fxFlex="100">
+            <div class="list-subheader">Details for {{path[currentSlideIndex].dataSource.disk}}</div>
             <mat-list >
               <mat-list-item role="listitem">
-                <strong> Name:</strong>&nbsp;&nbsp; {{path[3].dataSource.disk}}
+                <strong> Name:</strong>&nbsp;&nbsp; {{path[currentSlideIndex].dataSource.disk}}
               </mat-list-item>
               <mat-list-item role="listitem">
-                <strong> GUID:</strong>&nbsp;&nbsp; {{path[3].dataSource.guid}}
+                <strong> GUID:</strong>&nbsp;&nbsp; {{path[currentSlideIndex].dataSource.guid}}
               </mat-list-item>
               <mat-list-item role="listitem">
-                <strong> Read Errors:</strong>&nbsp;&nbsp; {{path[3].dataSource.stats.read_errors}}
+                <strong> Read Errors:</strong>&nbsp;&nbsp; {{path[currentSlideIndex].dataSource.stats.read_errors}}
               </mat-list-item>
               <mat-list-item role="listitem">
-                <strong> Write Errors:</strong>&nbsp;&nbsp; {{path[3].dataSource.stats.write_errors}}
+                <strong> Write Errors:</strong>&nbsp;&nbsp; {{path[currentSlideIndex].dataSource.stats.write_errors}}
               </mat-list-item>
               <mat-list-item role="listitem">
-                <strong> Self Healed:</strong>&nbsp;&nbsp; {{path[3].dataSource.stats.self_healed}}
+                <strong> Self Healed:</strong>&nbsp;&nbsp; {{path[currentSlideIndex].dataSource.stats.self_healed}}
               </mat-list-item>
             </mat-list>
             

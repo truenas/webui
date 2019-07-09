@@ -87,6 +87,10 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
   // NAVIGATION
   public currentSlide:string = "0";
+
+  get currentSlideIndex(){
+    return parseInt(this.currentSlide);
+  }
   
   get currentSlideName(){
     return this.path[parseInt(this.currentSlide)].name;
@@ -164,6 +168,8 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   updateSlide(name:string,verified: boolean, slideIndex:number, dataIndex?: number, dataSource?:any){
     if(name !=="overview" && !verified){ return; }
     const direction = parseInt(this.currentSlide) < slideIndex ? 'forward' : 'back';
+    console.log(this.path);
+    console.log('name:' + name + ', verified: ' + verified + ', slideIndex: ' + slideIndex + ', dataIndex: ' + dataIndex + ', dataSource: ' + dataSource);
 
     if(direction == 'forward'){
       // Setup next path segment

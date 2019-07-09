@@ -137,6 +137,7 @@
   overflow:auto;
 }
 
+.slide div.clickable,
 .slide .mat-list-item.clickable{
   cursor:pointer;
 }
