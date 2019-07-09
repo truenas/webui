@@ -385,8 +385,8 @@ export class SupportComponent {
         _.find(this.fieldConfig, {name : "FN_model"}).paraText += res.system_product;
         _.find(this.fieldConfig, {name : "FN_memory"}).paraText += Number(res.physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB';
         _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText ? 
-        _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText += res.system_serial :
-        _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText = '';
+          _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText += res.system_serial :
+          _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText = '';
         _.find(this.fieldConfig, {name : "pic"}).paraText = `<img src="assets/images/${this.product_image}" height="350">`;
       })
     } else {
@@ -540,10 +540,13 @@ export class SupportComponent {
 
   openDialog() {
     const dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Ticket","CloseOnClickOutside":true}});
+    let url;
     dialogRef.componentInstance.setCall('support.new_ticket', [this.payload]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.subscribe(res=>{
-      const url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
+      if (res.result) {
+        url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
+      }
       if (this.subs.length > 0) {
         this.subs.forEach((item) => {
           const formData: FormData = new FormData();
