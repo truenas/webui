@@ -374,6 +374,7 @@ export class DatasetAclComponent implements OnDestroy {
   }
 
   async dataHandler(entityForm) {
+    this.loader.open();
     const res = entityForm.queryResponse;
     await this.userService.getUserByUID(res.uid).toPromise().then(userObj => {
       if (userObj && userObj.length > 0) {
@@ -453,6 +454,7 @@ export class DatasetAclComponent implements OnDestroy {
         }
       }
     }
+    this.loader.close();
   }
 
   ngOnDestroy() {
