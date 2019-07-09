@@ -18,7 +18,7 @@ export class EntityTableRowDetailsComponent implements OnInit {
 
     ngOnInit() {
         if (this.parent.conf.detailsConf) {
-            this.direction = this.parent.conf.detailsConf.direction != undefined ? this.parent.conf.detailsConf.direction : 'row';
+            this.direction = this.parent.conf.detailsConf.direction != undefined ? this.parent.conf.detailsConf.direction : 'horizontal';
             this.showActions = this.parent.conf.detailsConf.showActions != undefined ? this.parent.conf.detailsConf.showActions : false;
         }
         this.columns = this.parent.conf.detailColumns;
