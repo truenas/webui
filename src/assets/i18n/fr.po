@@ -385,6 +385,11 @@ msgid ""
 msgstr ""
 
 msgid ""
+"A list of simple patterns matching the IPs of the servers that will be "
+"pushing metrics using this API key."
+msgstr ""
+
+msgid ""
 "A new jail hostid, if desired. <br><b>Example hostid:</b> "
 "<i>1a2bc345-678d-90e1-23fa-4b56c78901de</i>."
 msgstr ""
@@ -473,6 +478,9 @@ msgstr ""
 
 msgid "AFP3 Unix Privs"
 msgstr "AFP3 Unix Privs"
+
+msgid "API Key"
+msgstr ""
 
 msgid "APPLY CHANGES"
 msgstr ""
@@ -712,6 +720,9 @@ msgstr ""
 msgid "Additional Domains"
 msgstr ""
 
+msgid "Additional Parameters"
+msgstr ""
+
 msgid ""
 "Additional hosts to be appended to <i>/etc/hosts</i>. Each host entry is a "
 "single line with whitespace-delimited IP address, hostname, and any "
@@ -787,6 +798,9 @@ msgstr ""
 msgid ""
 "After entering the <b>Hostname, Username</b>, and <b>Password</b>, click "
 "<b>Fetch Datastores</b> and select the datastore to be synchronized."
+msgstr ""
+
+msgid "Alarms"
 msgstr ""
 
 msgid "Alert"
@@ -875,6 +889,9 @@ msgid ""
 "Allow different groups to be configured with different authentication "
 "profiles. Example: all users with a group ID of <i>1</i> will inherit the "
 "authentication profile associated with Group <i>1</i>."
+msgstr ""
+
+msgid "Allow from"
 msgstr ""
 
 msgid ""
@@ -1295,6 +1312,12 @@ msgstr ""
 msgid "Bind interfaces"
 msgstr ""
 
+msgid "Bind to"
+msgstr ""
+
+msgid "Bind to Port"
+msgstr ""
+
 msgid "Block (iSCSI)"
 msgstr ""
 
@@ -1331,9 +1354,6 @@ msgid "Bridge Members"
 msgstr ""
 
 msgid "Browsable to Network Clients"
-msgstr ""
-
-msgid "Browse"
 msgstr ""
 
 msgid "Browse a Collection"
@@ -1474,6 +1494,12 @@ msgid ""
 msgstr ""
 
 msgid "Cancel"
+msgstr ""
+
+msgid "Cannot Delete while HA is Enabled"
+msgstr ""
+
+msgid "Cannot Edit while HA is Enabled"
 msgstr ""
 
 msgid "Case Sensitivity"
@@ -1693,9 +1719,6 @@ msgstr ""
 msgid "Choose a pool or dataset for jail storage"
 msgstr ""
 
-msgid "Choose a pool or dataset for the new zvol."
-msgstr ""
-
 msgid "Choose a pool to scrub."
 msgstr ""
 
@@ -1902,6 +1925,9 @@ msgid ""
 "system to decrypt the disks."
 msgstr ""
 
+msgid "Click on alarms to select or unselect."
+msgstr ""
+
 msgid ""
 "Client ID for the <a "
 "href=\"https://developer.amazon.com/docs/amazon-drive/ad-get-started.html\" "
@@ -2067,6 +2093,9 @@ msgid ""
 "target=\"_blank\">idmap_script(8)</a> for more details."
 msgstr ""
 
+msgid "Configure the root user email address."
+msgstr ""
+
 msgid "Confirm"
 msgstr ""
 
@@ -2110,6 +2139,9 @@ msgid "Confirm these settings."
 msgstr ""
 
 msgid "Connect Timeout"
+msgstr ""
+
+msgid "Connected Initiators"
 msgstr ""
 
 msgid "Connecting to "
@@ -2245,7 +2277,7 @@ msgstr ""
 
 msgid ""
 "Creates dataset snapshots when there are no changes. Set to support "
-"periodic snapshot schedules and replications created in %brand% 11.2 and "
+"periodic snapshot schedules and replications created in version 11.2 and "
 "earlier."
 msgstr ""
 
@@ -2314,6 +2346,9 @@ msgid "Dashboard"
 msgstr ""
 
 msgid "Data VDevs"
+msgstr ""
+
+msgid "Data collection frequency, in seconds."
 msgstr ""
 
 msgid "Database Path"
@@ -2419,6 +2454,12 @@ msgid ""
 "href=\"http://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf."
 "html#libdefaults\" target=\"_blank\">libdefaults section of "
 "krb.conf(5).</a>."
+msgstr ""
+
+msgid ""
+"Define other sections and their key/value pairs. Enclose each section name "
+"in square brackets, and put each key/value pair on a new line. Example: "
+"<br> [system.intr]<br>  history=86400<br>  enabled=yes"
 msgstr ""
 
 msgid ""
@@ -2532,6 +2573,9 @@ msgid "Delete zvol"
 msgstr ""
 
 msgid "Deleted Recovery Key"
+msgstr ""
+
+msgid "Deleting interfaces while HA is enabled is not allowed."
 msgstr ""
 
 msgid "Deny list"
@@ -2842,6 +2886,9 @@ msgid "Edit Permissions"
 msgstr ""
 
 msgid "Edit Zvol"
+msgstr ""
+
+msgid "Editing interfaces while HA is enabled is not allowed."
 msgstr ""
 
 msgid "Editing the following disks:"
@@ -3655,9 +3702,6 @@ msgid ""
 "result in data loss."
 msgstr ""
 
-msgid "Enter the password to submit settings changes."
-msgstr ""
-
 msgid "Enter the password used to connect to the IPMI interface from a web browser."
 msgstr ""
 
@@ -4103,6 +4147,9 @@ msgstr ""
 msgid "Global Configuration"
 msgstr ""
 
+msgid "Global Settings"
+msgstr ""
+
 msgid "Global auxiliary parameters"
 msgstr ""
 
@@ -4184,6 +4231,9 @@ msgstr ""
 msgid "HTTP Port"
 msgstr ""
 
+msgid "HTTP Port Listen Backlog"
+msgstr ""
+
 msgid "HTTP Proxy"
 msgstr ""
 
@@ -4227,6 +4277,9 @@ msgid ""
 msgstr ""
 
 msgid "Highest port number open to connections."
+msgstr ""
+
+msgid "History"
 msgstr ""
 
 msgid "Hold Pending Snapshots"
@@ -5542,6 +5595,9 @@ msgstr ""
 msgid "Ok"
 msgstr ""
 
+msgid "One or more IP addresses to which to bind the Netdata service."
+msgstr ""
+
 msgid "Online"
 msgstr ""
 
@@ -5797,6 +5853,12 @@ msgid "Please enter your username"
 msgstr ""
 
 msgid "Please enter your username again"
+msgstr ""
+
+msgid ""
+"Please provide a line- or space-separated list of destinations where the "
+"collected metrics are to be sent. Use the format HOST:PORT (port is "
+"optional). Netdata uses the first working destination."
 msgstr ""
 
 msgid ""
@@ -6634,6 +6696,9 @@ msgid ""
 "replicated."
 msgstr ""
 
+msgid "Select a dataset for the new zvol."
+msgstr ""
+
 msgid "Select a key before decrypting the disks."
 msgstr ""
 
@@ -6682,6 +6747,9 @@ msgstr ""
 msgid ""
 "Select a sector size in bytes. <i>Default</i> leaves the leaves the sector "
 "size unset."
+msgstr ""
+
+msgid "Select a stream mode if system is to be used for streaming."
 msgstr ""
 
 msgid "Select a time zone."
@@ -7005,9 +7073,6 @@ msgstr ""
 msgid "Select which existing initiator group has access to the target."
 msgstr ""
 
-msgid "Select zvol"
-msgstr ""
-
 msgid "Selected jails updated."
 msgstr ""
 
@@ -7021,6 +7086,9 @@ msgid "Send Email Status Updates"
 msgstr ""
 
 msgid "Send Test Alert"
+msgstr ""
+
+msgid "Send Test Mail"
 msgstr ""
 
 msgid "Serial"
@@ -8094,6 +8162,12 @@ msgstr ""
 msgid "Stream Compression"
 msgstr ""
 
+msgid "Stream Mode"
+msgstr ""
+
+msgid "Streaming Metrics"
+msgstr ""
+
 msgid "Strip ACLs"
 msgstr ""
 
@@ -8251,6 +8325,9 @@ msgstr ""
 msgid "TCP port"
 msgstr ""
 
+msgid "TCP port to use on bind to IP addresses"
+msgstr ""
+
 msgid "TCP port used to access the iSCSI target. Default is 3260."
 msgstr ""
 
@@ -8314,6 +8391,9 @@ msgstr ""
 msgid "Target Name"
 msgstr ""
 
+msgid "Targets"
+msgstr ""
+
 msgid "Tasks"
 msgstr ""
 
@@ -8329,6 +8409,9 @@ msgstr ""
 msgid "Terms of Service"
 msgstr ""
 
+msgid "Test email sent!"
+msgstr ""
+
 msgid "Tests are not performed when the system enters the selected power mode."
 msgstr ""
 
@@ -8339,6 +8422,11 @@ msgid ""
 "enforced. Mounting <b>devfs</b> inside a jail is only possible when the "
 "<b>allow_mount</b> and <b>allow_mount_devfs</b> permissions are enabled and "
 "<b>enforce_statfs</b> is set to a value lower than <i>2</i>."
+msgstr ""
+
+msgid ""
+"The API_KEY to use as the sender. This must be a valid UUID. It can be "
+"generated from the command line by typing <samp>uuidgen</samp>."
 msgstr ""
 
 msgid "The Credential is valid."
@@ -8440,6 +8528,9 @@ msgstr ""
 msgid "The lifetime of the CA specified in days."
 msgstr ""
 
+msgid "The maximum length of the queue of pending connections. Default is 100."
+msgstr ""
+
 msgid "The maximum number of simultaneous clients."
 msgstr ""
 
@@ -8452,6 +8543,11 @@ msgstr ""
 msgid ""
 "The number of bits in the key used by the cryptographic algorithm. For "
 "security reasons, a minimum key length of <i>2048</i> is recommended."
+msgstr ""
+
+msgid ""
+"The number of entries the netdata daemon keeps in memory for each chart "
+"dimension. Default is 86400."
 msgstr ""
 
 msgid ""
@@ -8726,6 +8822,9 @@ msgid "Update File"
 msgstr ""
 
 msgid "Update File Temporary Storage Location"
+msgstr ""
+
+msgid "Update Frequency"
 msgstr ""
 
 msgid "Update License"
@@ -9245,6 +9344,9 @@ msgstr ""
 msgid "Zeroconf share discovery"
 msgstr ""
 
+msgid "Zvol Dataset Location"
+msgstr ""
+
 msgid ""
 "[Use fewer transactions in exchange for more "
 "RAM.](https://rclone.org/docs/#fast-list) This can also speed up or slow "
@@ -9333,6 +9435,9 @@ msgid "destroy"
 msgstr ""
 
 msgid "devfs_ruleset"
+msgstr ""
+
+msgid "email"
 msgstr ""
 
 msgid "enforce_statfs"
