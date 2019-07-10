@@ -24,15 +24,20 @@ export class ReplicationListComponent {
 
     public columns: Array<any> = [
         { name: 'Name', prop: 'name' },
-        { name: 'Source Dataset', prop: 'source_datasets', hidden: true},
-        { name: 'Target Dataset', prop: 'target_dataset', hidden: true},
+        { name: 'Source Dataset', prop: 'source_datasets', hidden: true },
+        { name: 'Target Dataset', prop: 'target_dataset', hidden: true },
         { name: 'Enabled', prop: 'enabled' },
         { name: 'State', prop: 'task_state', state: 'state' },
         { name: 'Last Snapshot', prop: 'task_last_snapshot' },
+        { name: 'Direction', prop: 'direction', hidden: true },
+        { name: 'Transport', prop: 'transport', hidden: true },
+        { name: 'SSH Connection', prop: 'ssh_connection', hidden: true },
+        { name: 'Recursive', prop: 'recursive', hidden: true },
+        { name: 'Auto', prop: 'auto', hidden: true }
     ];
     public detailsConf = {
       direction: 'horizontal',
-      showAction: false,
+      showAction: false
     };
     public detailColumns: Array < any > = [
         { name: 'Direction', prop: 'direction'},
@@ -41,7 +46,7 @@ export class ReplicationListComponent {
         { name: 'Source Dataset', prop: 'source_datasets'},
         { name: 'Target Dataset', prop: 'target_dataset'},
         { name: 'Recursive', prop: 'recursive'},
-        { name: 'Auto', prop: 'auto'},
+        { name: 'Auto', prop: 'auto'}
     ];
 
     public config: any = {
