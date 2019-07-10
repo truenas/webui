@@ -93,7 +93,7 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
     return this.rest.post(this.resource_name + "/" + this.pk + "/rekey/", 
       { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
         this.loader.close();
-        this.snackBar.open(T('Successfully re-keyed pool ' + value.name), T("Close"), {
+        this.snackBar.open(T('Successfully re-keyed pool ') + value.name, T("Close"), {
           duration: 5000,
       });
         let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
