@@ -170,6 +170,7 @@ export class DatasetAclComponent implements OnDestroy {
         {
           type: 'select',
           name: 'flags_type',
+          required: true,
           placeholder: helptext.dataset_acl_flags_type_placeholder,
           tooltip: helptext.dataset_acl_flags_type_placeholder,
           options: helptext.dataset_acl_flags_type_options,
@@ -177,6 +178,8 @@ export class DatasetAclComponent implements OnDestroy {
         {
           type: 'select',
           name: 'basic_flags',
+          required: true,
+          isHidden: true,
           placeholder: helptext.dataset_acl_flags_placeholder,
           tooltip: helptext.dataset_acl_flags_tooltip,
           options: helptext.dataset_acl_basic_flags_options,
@@ -185,6 +188,7 @@ export class DatasetAclComponent implements OnDestroy {
           type: 'select',
           multiple: true,
           isHidden: true,
+          required: true,
           name: 'advanced_flags',
           placeholder: helptext.dataset_acl_flags_placeholder,
           tooltip: helptext.dataset_acl_flags_tooltip,
@@ -357,10 +361,14 @@ export class DatasetAclComponent implements OnDestroy {
             basic_flags_fc = _.find(controls, {"name": "basic_flags"});
             if (res[i].flags_type === "ADVANCED") {
               adv_flags_fc.isHidden = false;
+              adv_flags_fc.required = true;
               basic_flags_fc.isHidden = true;
+              basic_flags_fc.required = false;
             } else {
               adv_flags_fc.isHidden = true;
+              adv_flags_fc.required = false;
               basic_flags_fc.isHidden = false;
+              basic_flags_fc.required = true;
             }
           }
         }
@@ -502,6 +510,7 @@ export class DatasetAclComponent implements OnDestroy {
       if (acl.flags_type === "BASIC") {
         d['flags'] = {'BASIC':acl.basic_flags};
       } else {
+        d['flags'] = {};
         const adv_flag_options = helptext.dataset_acl_advanced_flags_options;
         for (let j = 0; j < adv_flag_options.length; j++) {
           const flag = adv_flag_options[j].value;
