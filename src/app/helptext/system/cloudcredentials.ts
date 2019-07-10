@@ -15,6 +15,16 @@ export const helptext_system_cloudcredentials = {
     validation: [Validators.required]
   },
 
+  client_id: {
+    placeholder: T('OAuth Client ID'),
+    tooltip: T(''),
+  },
+
+  client_secret: {
+    placeholder: T('OAuth Client Secret'),
+    tooltip: T(''),
+  },
+
   client_id_amazon_cloud_drive: {
     placeholder: T("Amazon Application Client ID"),
     tooltip: T(
@@ -307,15 +317,10 @@ export const helptext_system_cloudcredentials = {
     tooltip: T("Password for the SSH Username account.")
   },
 
-  key_file_sftp: {
-    placeholder: T("PEM-encoded private key file path"),
-    tooltip: T(
-      'Path to an unencrypted <a\
- href="https://en.wikipedia.org/wiki/Privacy-Enhanced_Mail"\
- target="_blank">PEM-encoded</a> private key file.\
- Example: <i>/home/$USER/.ssh/id_rsa</i>. Leave blank\
- to use <i>ssh-agent</i>.'
-    )
+  private_key_sftp: {
+    placeholder: T("Private Key ID"),
+    tooltip: T('Import the private key from an existing SSH keypair.\
+ Choose the name of the SSH keypair to use for this connection.')
   },
 
   url_webdav: {

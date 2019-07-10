@@ -34,7 +34,7 @@ export interface ViewConfig {
 export class ViewControllerComponent extends ViewController implements AfterViewInit {
 
   readonly componentName = ViewControllerComponent;
-  @ViewChild('display') display;
+  @ViewChild('display', { static: true}) display;
   //public displayList: ComponentRef[] = [];
   protected core: CoreService;
   public controlEvents: Subject<CoreEvent> = new Subject();

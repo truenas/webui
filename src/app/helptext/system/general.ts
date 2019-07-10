@@ -2,16 +2,6 @@ import { Validators } from "@angular/forms";
 import { T } from "app/translate-marker";
 
 export const helptext_system_general = {
-  stg_guiprotocol: {
-    placeholder: T("Protocol"),
-    tooltip: T(
-      "Define the web protocol to use when connecting to the\
- administrative GUI from a browser. To change the\
- default <i>HTTP</i> to <i>HTTPS</i> or\
- <i>HTTP+HTTPS</i>, a <b>Certificate</b> must also be\
- chosen."
-    )
-  },
 
   stg_guicertificate: {
     placeholder: T("GUI SSL Certificate"),
@@ -19,9 +9,9 @@ export const helptext_system_general = {
       'Required for <i>HTTPS</i>. Browse to the location of\
  the certificate to use for encrypted connections. If\
  there are no certificates, create a <a\
- href="%%docurl%%/system.html%%webversion%%#cas"\
+ href="--docurl--/system.html#cas"\
  target="_blank">Certificate Authority (CA)</a> then\
- the <a href="%%docurl%%/system.html%%webversion%%#certificates"\
+ the <a href="--docurl--/system.html#certificates"\
  target="_blank">Certificate</a>.'
     ),
     validation: [Validators.required]
@@ -112,8 +102,25 @@ export const helptext_system_general = {
   },
 
   secretseed: {
-    placeholder: T("Export Password Secret Seed")
+    placeholder: T("Export Password Secret Seed"),
+    tooltip: T('')
   },
+
+  poolkeys: {
+    placeholder: T("Export Pool Ecryption Keys"),
+    tooltip: T('')
+  },
+
+  crash_reporting: {
+    placeholder: T("Crash reporting"),
+    tooltip: T("Enable sending anonymous crash reports to iXsystems")
+  },
+
+  usage_collection: {
+    placeholder: T("Usage collection"),
+    tooltip: T("Enable sending anonymous usage statistics to iXsystems")
+  },
+
 
   save_config_form: {
     message: T(
@@ -147,6 +154,14 @@ export const helptext_system_general = {
     save_config: T("Save Config"),
     upload_config: T("Upload Config"),
     reset_config: T("Reset Config")
+  },
+
+  reset_config_placeholder: T('Confirm'),
+
+  reset_config_form: {
+    button_text: T("Reset Config"),
+    message: T('Reset system configuration to default settings. The system \
+ will restart to complete this operation. You will be required to reset your password.'),
   },
 
   dialog_confirm_title: T("Restart Web Service"),

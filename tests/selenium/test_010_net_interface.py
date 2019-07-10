@@ -15,21 +15,24 @@ skip_mesages = "Skipping first run"
 script_name = os.path.basename(__file__).partition('.')[0]
 
 xpaths = {
-    'navNetwork': '//*[@id="nav-4"]/div/a[1]',
-    'submenuInterface': '//*[@id="4-1"]',
-    'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
+    'navNetwork': "//span[contains(.,'Network')]",
+    'submenuInterface': "//a[contains(.,'Interfaces')]",
+    'breadcrumbBar1': "//div[@id='breadcrumb-bar']/ul/li/a",
+    'breadcrumbBar2': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
 }
-
-
-def test_00_set_implicitly_wait(wb_driver):
-    wb_driver.implicitly_wait(1)
 
 
 def test_01_nav_net_interface(wb_driver):
     # Click on the vlan submenu
     wb_driver.find_element_by_xpath(xpaths['submenuInterface']).click()
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    # get the weather data
+    page_data = ui_element.text
+    # assert response
+    assert "Network" in page_data, page_data
+    # get the ui element
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     page_data = ui_element.text
     # assert response

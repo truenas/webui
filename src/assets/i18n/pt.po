@@ -4,16 +4,16 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+msgid " Dataset"
+msgstr ""
+
 msgid " First vdev has "
 msgstr ""
 
 msgid " First vdev is a "
 msgstr ""
 
-msgid ""
-" The number of file transfers to run in parallel. It can sometimes be "
-"useful to set this to a smaller number if the remote is giving a lot of "
-"timeouts, or a larger number if there is high bandwidth and a fast remote."
+msgid " Plugin"
 msgstr ""
 
 msgid ""
@@ -25,12 +25,24 @@ msgstr ""
 msgid " and all snapshots of it?"
 msgstr ""
 
+msgid " but datastore "
+msgstr ""
+
 msgid " disks, new vdev has "
+msgstr ""
+
+msgid " is "
 msgstr ""
 
 msgid ""
 " is the minimum recommended record size. Choosing a smaller size can reduce "
 "system performance."
+msgstr ""
+
+msgid " seconds unless kept permanently."
+msgstr ""
+
+msgid " system is powered on and connected to the network."
 msgstr ""
 
 msgid " updated."
@@ -45,6 +57,11 @@ msgid ""
 "encrypted pools, download and safely store the recovery key."
 msgstr ""
 
+msgid ""
+"'%h' will be replaced with your hostname and '%i' will be replaced with "
+"your IP address."
+msgstr ""
+
 msgid "'. All data on that pool was destroyed."
 msgstr ""
 
@@ -54,9 +71,7 @@ msgid ""
 "before exporting/disconnecting a pool."
 msgstr ""
 
-msgid ""
-") before configuring other interfaces to avoid losing connection to the "
-"user interface."
+msgid "(No description)"
 msgstr ""
 
 msgid "*allow_sysvipc"
@@ -66,6 +81,12 @@ msgid ", new vdev is "
 msgstr ""
 
 msgid ". All data on that pool was destroyed."
+msgstr ""
+
+msgid ". Is this correct?"
+msgstr ""
+
+msgid "... Make sure the "
 msgstr ""
 
 msgid "0=Disabled, blank=inherit"
@@ -78,11 +99,26 @@ msgid ": Automatic update check failed. Please check system network settings."
 msgstr ""
 
 msgid ""
-"<a href=\"%%docurl%%/sharing.html%%webversion%%#block-iscsi\" "
-"target=\"_blank\">iSCSI</a> supports multiple authentication methods that "
-"are used by the target to discover valid devices. <i>None</i> allows "
-"anonymous discovery while <i>CHAP</i> and <i>Mutual CHAP</i> require "
-"authentication."
+"</b> dataset and all snapshots stored with it, please type the name of the "
+"dataset to confirm:"
+msgstr ""
+
+msgid ""
+"</b> plugin and all data and snapshots stored with it, please type the name "
+"of the plugin to confirm:"
+msgstr ""
+
+msgid "</i> has started."
+msgstr ""
+
+msgid "</i> now?"
+msgstr ""
+
+msgid ""
+"<a href=\"--docurl--/sharing.html#block-iscsi\" target=\"_blank\">iSCSI</a> "
+"supports multiple authentication methods that are used by the target to "
+"discover valid devices. <i>None</i> allows anonymous discovery while "
+"<i>CHAP</i> and <i>Mutual CHAP</i> require authentication."
 msgstr ""
 
 msgid ""
@@ -108,29 +144,16 @@ msgid ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=geli&manpath=FreeBSD+11.1-"
 "RELEASE+and+Ports\" target=\"_blank\">GELI</a> encryption is available for "
 "ZFS pools. <b>WARNING:</b> Read the <a "
-"href=\"%%docurl%%/storage.html%%webversion%%#managing-encrypted-pools\" "
+"href=\"--docurl--/storage.html#managing-encrypted-pools\" "
 "target=\"_blank\">Encryption section</a> of the guide before activating "
 "this option."
 msgstr ""
 
 msgid ""
-"<a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=setfib&sektion=1&apropos=0&"
-"manpath=FreeBSD+11.1-RELEASE+and+Ports\" target=\"_blank\">FIB </a> "
-"(routing table) to set when running commands inside the jail."
-msgstr ""
-
-msgid ""
-"<b>Ctrl+C</b> kills a foreground process.<br>                            "
-"Many utilities are built-in:<br> <b>Iperf</b>,                            "
-"<b>Netperf</b>, <b>IOzone</b>, <b>arcsat</b>,                            "
-"<b>tw_cli</b>, <br><b>MegaCli</b>,                            "
-"<b>freenas-debug</b>, <b>tmux</b>,                            "
-"<b>Dmidecode</b>.<br> Refer to the <a                            "
-"href=\"%%docurl%%/cli.html%%webversion%%\"                            "
-"target=\"_blank\">Command Line Utilities</a>                            "
-"chapter in the guide for usage information                            and "
-"examples."
+"<a href='--docurl--/sharing.html--webversion--#block-iscsi' "
+"target='_blank'>iSCSI</a> supports multiple authentication methods that are "
+"used by the target to discover valid devices. None allows anonymous "
+"discovery while CHAP and Mutual CHAP require authentication."
 msgstr ""
 
 msgid ""
@@ -140,10 +163,19 @@ msgid ""
 "<b>tw_cli</b>, <br><b>MegaCli</b>,                            "
 "<b>freenas-debug</b>, <b>tmux</b>,                            "
 "<b>Dmidecode</b>.<br> Refer to the <a                            "
-"href=\"%%docurl%%/cli.html%%webversion%%\"                            "
+"href=\"--docurl--/cli.html\"                            "
 "target=\"_blank\">Command Line Utilities</a>                            "
 "chapter in the guide for usage information                            and "
 "examples."
+msgstr ""
+
+msgid ""
+"<b>Ctrl+C</b> kills a foreground process.<br>    Many utilities are "
+"built-in:<br> <b>Iperf</b>,    <b>Netperf</b>, <b>IOzone</b>, "
+"<b>arcsat</b>,    <b>tw_cli</b>, <br><b>MegaCli</b>,    "
+"<b>freenas-debug</b>, <b>tmux</b>,    <b>Dmidecode</b>.<br> Refer to the <a "
+"   href=\"--docurl--/cli.html\"    target=\"_blank\">Command Line "
+"Utilities</a>    chapter in the guide for usage information    and examples."
 msgstr ""
 
 msgid "<b>Not recommended.</b> Allow multiple groups to share the same group ID."
@@ -152,13 +184,11 @@ msgstr ""
 msgid ""
 "<b>Root logins are discouraged.</b> Set to allow root logins. A password "
 "must be set for the <i>root</i> user in <a "
-"href=\"%%docurl%%/accounts.html%%webversion%%#users\" "
-"target=\"_blank\">Users</a>."
+"href=\"--docurl--/accounts.html#users\" target=\"_blank\">Users</a>."
 msgstr ""
 
 msgid ""
-"<b>SED (<a "
-"href=\"%%docurl%%/system.html%%webversion%%#self-encrypting-drives\" "
+"<b>SED (<a href=\"--docurl--/system.html#self-encrypting-drives\" "
 "target=\"_blank\">Self-Encrypting Drives</a>) Options</b>"
 msgstr ""
 
@@ -184,6 +214,9 @@ msgstr ""
 msgid "<br><br>Roll back to snapshot <i>"
 msgstr ""
 
+msgid "<font color=\"red\"> There are "
+msgstr ""
+
 msgid ""
 "<font color=\"red\">WARNING</font>: use <i>rid</i> or <i>autorid</i> for "
 "networks with only Windows computers, like most home networks. Mac "
@@ -199,7 +232,7 @@ msgid ""
 "target=\"_blank\">idmap_autorid(8)</a>, <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=idmap_ad\" "
 "target=\"_blank\">ad</a>, <a "
-"href=\"%%docurl%%/directoryservices.html%%webversion%%#id12\" "
+"href=\"--docurl--/directoryservices.html#id12\" "
 "target=\"_blank\">fruit</a>, <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=idmap_ldap\" "
 "target=\"_blank\">idmap_ldap(8)</a>, <a "
@@ -256,6 +289,12 @@ msgid ""
 msgstr ""
 
 msgid ""
+"<i>Device</i> provide virtual storage access to zvols, zvol snapshots, or "
+"physical devices. <i>File</i> provides virtual storage access to an "
+"individual file."
+msgstr ""
+
+msgid ""
 "<i>File</i> shares the contents of an individual file. <i>Device</i> shares "
 "an entire device."
 msgstr ""
@@ -300,13 +339,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"<i>Standard</i> provides the best security.     <i>Fast</i> is less secure, "
-"but has better transfer rates for     devices with limited cryptographic "
-"speed. <i>Disabled</i> is     for networks where the entire path between "
-"sources and     destinations is trusted."
-msgstr ""
-
-msgid ""
 "<i>Standard</i> uses the sync settings that have been requested by the "
 "client software, <i>Always</i> waits for data writes to complete, and "
 "<i>Disabled</i> never waits for writes to complete."
@@ -339,11 +371,27 @@ msgid ""
 msgstr ""
 
 msgid ""
+"A list of simple patterns matching the IPs of the servers that will be "
+"pushing metrics using this API key."
+msgstr ""
+
+msgid ""
 "A new jail hostid, if desired. <br><b>Example hostid:</b> "
 "<i>1a2bc345-678d-90e1-23fa-4b56c78901de</i>."
 msgstr ""
 
+msgid ""
+"A new jail hostid, if desired.<br> <b>Example hostid:</b> "
+"<i>1a2bc345-678d-90e1-23fa-4b56c78901de</i>."
+msgstr ""
+
 msgid "A pool with this name already exists."
+msgstr ""
+
+msgid ""
+"A space-delimited list of network interfaces attached to a <b>VNET</b> "
+"enabled jail after it is created. Interfaces are automatically released "
+"when the jail is removed."
 msgstr ""
 
 msgid ""
@@ -353,6 +401,12 @@ msgid ""
 msgstr ""
 
 msgid "A swap size of 0 is STRONGLY DISCOURAGED."
+msgstr ""
+
+msgid ""
+"A unique name to identify this keypair. Automatically generated keypairs "
+"are named after the object that generated the keypair with \" Key\" "
+"appended to the name."
 msgstr ""
 
 msgid ""
@@ -367,10 +421,9 @@ msgid ""
 msgstr ""
 
 msgid ""
-"A valid IPv4 address to use as the default route. <br>Enter <b>none</b> to "
-"configure the jail with no IPv4 default route. <br><b>A jail without a "
-"default route will not be able to access the network without additional "
-"configuration.</b>"
+"A valid IPv4 address to use as the default route.<br> Enter <b>none</b> to "
+"configure the jail with no IPv4 default route.<br> <b>A jail without a "
+"default route will not be able to access any networks.</b>"
 msgstr ""
 
 msgid ""
@@ -386,19 +439,36 @@ msgid ""
 msgstr ""
 
 msgid ""
-"A valid IPv6 address to use as the default route. <br>Enter <b>none</b> to "
-"configure the jail without an IPv6 default route. <br><b>A jail without a "
-"default route will not be able to access the network without additional "
-"configuration."
+"A valid IPv6 address to use as the default route.<br> Enter <b>none</b> to "
+"configure the jail without an IPv6 default route.<br> <b>A jail without a "
+"default route will not be able to access any networks.</b>"
+msgstr ""
+
+msgid "ACL Manager"
+msgstr ""
+
+msgid "ACL Mode"
 msgstr ""
 
 msgid "ACL Type"
 msgstr "Tipo de ACL"
 
+msgid "ACME DNS"
+msgstr ""
+
+msgid "ACME Server Directory URI"
+msgstr ""
+
 msgid "AD Timeout"
 msgstr ""
 
 msgid "AFP3 Unix Privs"
+msgstr ""
+
+msgid "API Key"
+msgstr ""
+
+msgid "APPLY CHANGES"
 msgstr ""
 
 msgid "ATA Security User"
@@ -408,6 +478,12 @@ msgid "About"
 msgstr "Sobre"
 
 msgid "Access Based Share Enumeration"
+msgstr ""
+
+msgid "Access Control Entries"
+msgstr ""
+
+msgid "Access ID Key"
 msgstr ""
 
 msgid "Access Key"
@@ -458,6 +534,9 @@ msgstr "Nível Acústico"
 msgid "Activate"
 msgstr ""
 
+msgid "Activate Pool for Jail Manager"
+msgstr ""
+
 msgid ""
 "Activates the configuration. Unset to disable the configuration without "
 "deleting it."
@@ -466,7 +545,7 @@ msgstr ""
 msgid ""
 "Activates the process for ZFS to transparently reuse a single copy of "
 "duplicated data to save space. The <a "
-"href=\"%%docurl%%/storage.html%%webversion%%#deduplication\" "
+"href=\"--docurl--/storage.html#deduplication\" "
 "target=\"_blank\">Deduplication section</a> of the Guide describes each "
 "option."
 msgstr ""
@@ -477,16 +556,22 @@ msgstr "Active Directory"
 msgid "Active Directory IDMAP change!"
 msgstr ""
 
+msgid "Active Media Subtype"
+msgstr ""
+
+msgid "Active Media Type"
+msgstr ""
+
+msgid "Active storage controller."
+msgstr ""
+
 msgid "Adapter Type"
 msgstr "Tipo de Adaptador"
 
 msgid "Adapter Type:"
 msgstr ""
 
-msgid "Add Additional IPv4 Alias"
-msgstr ""
-
-msgid "Add Additional IPv6 Alias"
+msgid "Add Additional Alias"
 msgstr ""
 
 msgid "Add Additional Path"
@@ -522,8 +607,11 @@ msgstr "Adicione um nome para o nove snapshot"
 msgid "Add a name for the new snapshot."
 msgstr ""
 
+msgid "Add a naming schema for the new snapshot"
+msgstr ""
+
 msgid ""
-"Add an <a href=\"%%docurl%%/system.html%%webversion%%#certificates\" "
+"Add an <a href=\"--docurl--/system.html#certificates\" "
 "target=\"_blank\">SSL certificate</a> to be used for secure S3 connections."
 msgstr ""
 
@@ -543,6 +631,13 @@ msgid ""
 "IP;search domain. local</i>. Fields must be delimited with a semicolon (;), "
 "This is translated as new lines in <b>resolv.conf</b>. Enter <i>none</i> to "
 "inherit <b>resolv.conf</b> from the host."
+msgstr ""
+
+msgid ""
+"Add lines to the jail <i>resolv.conf</i>. <b>Example:</b> <i>nameserver "
+"IP;search domain.local</i>. Fields must be delimited with a semicolon (;), "
+"This is translated as new lines in <i>resolv.conf</i>. Enter <i>none</i> to "
+"inherit <i>resolv.conf</i> from the host."
 msgstr ""
 
 msgid ""
@@ -607,11 +702,14 @@ msgstr ""
 msgid "Additional Domains"
 msgstr ""
 
+msgid "Additional Parameters"
+msgstr ""
+
 msgid ""
-"Additional hosts to be appended to <i>/etc/hosts</i> can be added here. "
-"Each host entry is a single line with whitespace-delimited IP address, "
-"hostname, and any aliases. Hosts defined here are still accessible by name "
-"even when DNS is not available. See <a "
+"Additional hosts to be appended to <i>/etc/hosts</i>. Each host entry is a "
+"single line with whitespace-delimited IP address, hostname, and any "
+"aliases. Hosts defined here are still accessible by name even when DNS is "
+"not available. See <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=hosts\" "
 "target=\"_blank\">hosts(5)</a> for additional information."
 msgstr ""
@@ -640,8 +738,7 @@ msgid "Address space limit in bytes for the jail."
 msgstr ""
 
 msgid ""
-"Adds <a "
-"href=\"%%docurl%%/sharing.html%%webversion%%#avail-vfs-modules-tab\" "
+"Adds <a href=\"--docurl--/sharing.html#avail-vfs-modules-tab\" "
 "target=\"blank\">virtual file system modules</a> to enhance functionality."
 msgstr ""
 
@@ -685,6 +782,9 @@ msgid ""
 "<b>Fetch Datastores</b> and select the datastore to be synchronized."
 msgstr ""
 
+msgid "Alarms"
+msgstr ""
+
 msgid "Alert"
 msgstr ""
 
@@ -718,14 +818,14 @@ msgstr ""
 msgid "Allow Anonymous Login"
 msgstr "Permitir Login Anónimo"
 
-msgid "Allow DNS updates"
+msgid "Allow Blocks Larger than 128KB"
 msgstr ""
 
-msgid "Allow Empty Password"
-msgstr "Permitir Password Vazia"
+msgid "Allow Compressed WRITE Records"
+msgstr ""
 
-msgid "Allow Execute Always"
-msgstr "Permitir Executar Sempre"
+msgid "Allow DNS updates"
+msgstr ""
 
 msgid "Allow Guest Access"
 msgstr "Permitir Acesso Convidado"
@@ -745,10 +845,16 @@ msgstr "Permitir login como root"
 msgid "Allow TCP port forwarding"
 msgstr ""
 
+msgid "Allow Taking Empty Snapshots"
+msgstr ""
+
 msgid "Allow Transfer Resumption"
 msgstr "Permitir Ressunção da Transferência"
 
 msgid "Allow Trusted Domains"
+msgstr ""
+
+msgid "Allow WRITE_EMBEDDED Records"
 msgstr ""
 
 msgid ""
@@ -765,6 +871,9 @@ msgid ""
 "Allow different groups to be configured with different authentication "
 "profiles. Example: all users with a group ID of <i>1</i> will inherit the "
 "authentication profile associated with Group <i>1</i>."
+msgstr ""
+
+msgid "Allow from"
 msgstr ""
 
 msgid ""
@@ -790,8 +899,26 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Allow or deny access to SYSV IPC message primitives. <br><b>Inherit</b>: "
+"All IPC objects on the system are visible to the jail.<br> <b>New</b>: Only "
+"objects the jail creates using the private key namespace are visible. The "
+"system and parent jails have access to the jail objects but <i>not</i> "
+"private keys.<br> <b>Disable</b>: The jail cannot perform any "
+"<b>sysvmsg</b> related system calls."
+msgstr ""
+
+msgid ""
 "Allow or deny access to SYSV IPC semaphore primitives. <br> <b>Inherit</b>: "
 "All IPC objects on the system are visible to the jail. <br><b>New</b>: Only "
+"objects the jail creates using the private key namespace are visible. The "
+"system and parent jails have access to the jail objects but <i>not</i> "
+"private keys. <br> <b>Disable</b>: The jail cannot perform any "
+"<b>sysvmem</b> related system calls."
+msgstr ""
+
+msgid ""
+"Allow or deny access to SYSV IPC semaphore primitives.<br> <b>Inherit</b>: "
+"All IPC objects on the system are visible to the jail.<br> <b>New</b>: Only "
 "objects the jail creates using the private key namespace are visible. The "
 "system and parent jails have access to the jail objects but <i>not</i> "
 "private keys. <br> <b>Disable</b>: The jail cannot perform any "
@@ -807,6 +934,15 @@ msgid ""
 "perform any <b>sysvshm</b> related system calls."
 msgstr ""
 
+msgid ""
+"Allow or deny access to SYSV IPC shared memory primitives.<br> "
+"<b>Inherit</b>: All IPC objects on the system are visible to the jail.<br> "
+"<b>New</b>: Only objects the jail creates using the private key namespace "
+"are visible. The system and parent jails have access to the jail objects "
+"but <i>not</i> private keys.<br> <b>Disable</b>: The jail cannot perform "
+"any <b>sysvshm</b> related system calls."
+msgstr ""
+
 msgid "Allow password authentication"
 msgstr ""
 
@@ -815,10 +951,10 @@ msgstr "Permitir GIDs repetidos"
 
 msgid ""
 "Allow the jail hostname to be changed with <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=hostname&manpath=FreeBSD+11"
-".1-RELEASE+and+Ports\" target=\"_blank\">hostname(1)</a> or <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=sethostname&manpath="
-"FreeBSD+11.1-RELEASE+and+Ports\" target=\"_blank\">sethostname(3)</a>."
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=hostname\" "
+"target=\"_blank\">hostname(1)</a> or <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=sethostname\" "
+"target=\"_blank\">sethostname(3)</a>."
 msgstr ""
 
 msgid ""
@@ -830,6 +966,19 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Allow the jail to access the bhyve virtual machine monitor (VMM). The jail "
+"must have FreeBSD 12.0 or newer installed with the <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=vmm\" "
+"target=\"_blank\">vmm(4)</a> kernel module loaded."
+msgstr ""
+
+msgid ""
+"Allows different groups to be configured with different authentication "
+"profiles. Example: all users with a group ID of 1 will inherit the "
+"authentication profile associated with Group 1."
+msgstr ""
+
+msgid ""
 "Alphanumeric <a href=\"https://www.backblaze.com/b2/cloud-storage.html\" "
 "target=\"_blank\">Backblaze B2</a> ID. Find an Account ID or "
 "applicationKeyID by logging in to the account, clicking <i>Buckets</i>, and "
@@ -837,6 +986,9 @@ msgid ""
 "ID</i> to associate the entire account or generate a new <i>Application "
 "Key</i>. The <i>keyID</i> replaces the Account ID and the key string is "
 "used in place of the <i>Master Application Key</i>."
+msgstr ""
+
+msgid "Also Include Naming Schema"
 msgstr ""
 
 msgid ""
@@ -900,6 +1052,9 @@ msgstr "Aplicar Grupo"
 msgid "Apply Mode"
 msgstr "Aplicar Modo"
 
+msgid "Apply Network Changes"
+msgstr ""
+
 msgid "Apply Pending Updates"
 msgstr ""
 
@@ -909,12 +1064,21 @@ msgstr ""
 msgid "Apply User"
 msgstr "Aplicar Utilizador"
 
+msgid "Apply network changes? Network connectivity will be interrupted."
+msgstr ""
+
 msgid "Apply permissions recursively"
 msgstr "Aplicar permissões recursivamente"
+
+msgid "Apply permissions recursively all child datasets within the current dataset"
+msgstr ""
 
 msgid ""
 "Apply permissions recursively to all directories and files within the "
 "current dataset"
+msgstr ""
+
+msgid "Apply permissions to child datasets"
 msgstr ""
 
 msgid "Apply updates and reboot system after downloading."
@@ -922,6 +1086,15 @@ msgstr ""
 
 msgid "Archive"
 msgstr "Arquivo"
+
+msgid "Are you sure you want to sync from peer?"
+msgstr ""
+
+msgid "Are you sure you want to sync to peer?"
+msgstr ""
+
+msgid "Are you sure?"
+msgstr ""
 
 msgid ""
 "Assigning a directory to Minio changes the permissions                      "
@@ -945,8 +1118,14 @@ msgstr ""
 msgid "Attach NIC"
 msgstr ""
 
+msgid "Attach screenshot(s)."
+msgstr ""
+
 msgid "Auth Method"
 msgstr "Método de Autenticação"
+
+msgid "Authenticate"
+msgstr ""
 
 msgid "Authentication Group number"
 msgstr "Número de Grupo de Autenticação"
@@ -957,6 +1136,15 @@ msgstr ""
 msgid ""
 "Authentication only functions when a Certificate is selected with either "
 "the <i>SSL</i> or <i>TLS</i> option."
+msgstr ""
+
+msgid "Authenticator"
+msgstr ""
+
+msgid "Authenticator Attributes"
+msgstr ""
+
+msgid "Authorized Access"
 msgstr ""
 
 msgid "Authorized Hosts and IP addresses"
@@ -984,8 +1172,8 @@ msgstr ""
 
 msgid ""
 "Automatically compress data written to the zvol. Choose a <a "
-"href=\"%%docurl%%/storage.html%%webversion%%#compression\" "
-"target=\"_blank\">compression algorithm</a>."
+"href=\"--docurl--/storage.html#compression\" target=\"_blank\">compression "
+"algorithm</a>."
 msgstr ""
 
 msgid ""
@@ -997,6 +1185,9 @@ msgid "Automatically reboot the system after the update is applied."
 msgstr ""
 
 msgid "Automatically stop the script or command after the specified seconds."
+msgstr ""
+
+msgid "Autostart"
 msgstr ""
 
 msgid "Auxiliary Arguments"
@@ -1103,13 +1294,22 @@ msgstr ""
 msgid "Bind interfaces"
 msgstr ""
 
+msgid "Bind to"
+msgstr ""
+
+msgid "Bind to Port"
+msgstr ""
+
 msgid "Block (iSCSI)"
 msgstr "Block (iSCSI)"
+
+msgid "Block Size"
+msgstr ""
 
 msgid "Block size"
 msgstr ""
 
-msgid "Boot Environments"
+msgid "Boot"
 msgstr ""
 
 msgid "Boot Loader Type"
@@ -1132,11 +1332,14 @@ msgid ""
 "Brainpool </a> for more information."
 msgstr ""
 
+msgid "Bridge Members"
+msgstr ""
+
 msgid "Browsable to Network Clients"
 msgstr "Navegável para Clientes na Rede"
 
-msgid "Browse"
-msgstr "Navegar"
+msgid "Browse a Collection"
+msgstr ""
 
 msgid "Browse to a CD-ROM file present on the system storage."
 msgstr ""
@@ -1163,6 +1366,14 @@ msgid ""
 "browse to the pool or dataset, click <b>Close</b>, append the <b>Extent "
 "Name</b> to the path, and specify a value in <b>Extent Size</b>. Extents "
 "cannot be created inside the jail root directory."
+msgstr ""
+
+msgid ""
+"Browse to an existing file. Create a new file by browsing to a dataset and "
+"appending /<i>{filename.ext}</i> to the path."
+msgstr ""
+
+msgid "Browse to an existing pool or dataset to store the new zvol."
 msgstr ""
 
 msgid "Browse to the ZFS dataset that will hold the copied data."
@@ -1232,6 +1443,9 @@ msgstr "CAs"
 msgid "CD-ROM Path"
 msgstr ""
 
+msgid "CLOSE"
+msgstr ""
+
 msgid "CN Realm"
 msgstr ""
 
@@ -1247,6 +1461,9 @@ msgstr ""
 msgid "CPU and Memory"
 msgstr "CPU e Memória"
 
+msgid "CSR exists on this system"
+msgstr ""
+
 msgid "CSRs"
 msgstr ""
 
@@ -1260,6 +1477,12 @@ msgstr ""
 
 msgid "Cancel"
 msgstr "Cancelar"
+
+msgid "Cannot Delete while HA is Enabled"
+msgstr ""
+
+msgid "Cannot Edit while HA is Enabled"
+msgstr ""
 
 msgid "Case Sensitivity"
 msgstr "Case Sensitivity"
@@ -1289,7 +1512,7 @@ msgid "Change User & Group Ownership"
 msgstr ""
 
 msgid ""
-"Change from <i>public</i to increase system security. Can only contain "
+"Change from <i>public</i> to increase system security. Can only contain "
 "alphanumeric characters, underscores, dashes, periods, and spaces. This can "
 "be left empty for <i>SNMPv3</i> networks."
 msgstr ""
@@ -1300,6 +1523,12 @@ msgstr "Change log"
 msgid ""
 "Change the default password to improve system security. The new password "
 "cannot contain a space or <b>#</b>."
+msgstr ""
+
+msgid "Changes Submitted"
+msgstr ""
+
+msgid "Changes will revert after "
 msgstr ""
 
 msgid ""
@@ -1317,6 +1546,9 @@ msgstr ""
 msgid ""
 "Changing dataset permission mode can severely affect existing permissions, "
 "particularly when going from Windows to Unix permissions."
+msgstr ""
+
+msgid "Changing dataset permission mode can severely affect existing permissions."
 msgstr ""
 
 msgid ""
@@ -1356,6 +1588,11 @@ msgid ""
 "do not start the jail"
 msgstr ""
 
+msgid ""
+"Check the <i>hostid</i> property of the jail. If not the same as the host, "
+"do not start the jail."
+msgstr ""
+
 msgid "Check the network connection"
 msgstr ""
 
@@ -1372,8 +1609,16 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Check this box if importing a certificate for which a CSR exists on this "
+"system"
+msgstr ""
+
+msgid ""
 "Check this to redirect <i>HTTP</i> connections to        <i>HTTPS</i>. "
 "<i>HTTPS</i> must be selected in        <b>Protocol</b>."
+msgstr ""
+
+msgid "Check-in"
 msgstr ""
 
 msgid "CheckIP Path"
@@ -1383,6 +1628,14 @@ msgid "CheckIP Server"
 msgstr ""
 
 msgid "CheckIP Server SSL"
+msgstr ""
+
+msgid "Checking HA status"
+msgstr ""
+
+msgid ""
+"Child datasets to exclude from the recursive replication. Example: "
+"Poolname/Datasetname/childdataset, not the mountpoint or filesystem path."
 msgstr ""
 
 msgid "Chmod Request"
@@ -1403,11 +1656,10 @@ msgid "Choices are <i>None, Auto, CHAP,</i> or <i>Mutual CHAP</i>."
 msgstr ""
 
 msgid ""
-"Choose <a                 "
-"href=\"%%docurl%%/tasks.html%%webversion%%#rsync-module-mode\"              "
-"  target=\"_blank\">rsync module mode</a> or <a                 "
-"href=\"%%docurl%%/tasks.html%%webversion%%#rsync-over-ssh-mode\"            "
-"    target=\"_blank\">rsync over SSH mode</a>"
+"Choose <a                 href=\"--docurl--/tasks.html#rsync-module-mode\"  "
+"              target=\"_blank\">rsync module mode</a> or <a                 "
+"href=\"--docurl--/tasks.html#rsync-over-ssh-mode\"                "
+"target=\"_blank\">rsync over SSH mode</a>"
 msgstr ""
 
 msgid "Choose <i>AES-256</i> or <i>None</i>."
@@ -1436,8 +1688,8 @@ msgstr ""
 msgid ""
 "Choose a <i>Stripe</i>, <i>Mirror</i>, or <i>Raid-Z</i> configuration for "
 "the chosen disk layout. See the <a "
-"href=\"%%docurl%%/storage.html%%webversion%%#pool-manager\" "
-"target=\"_blank\">Pool Manager</a> section of the guide for more details."
+"href=\"--docurl--/storage.html#pool-manager\" target=\"_blank\">Pool "
+"Manager</a> section of the guide for more details."
 msgstr ""
 
 msgid "Choose a color scheme."
@@ -1447,9 +1699,6 @@ msgid "Choose a location to store the installer image file."
 msgstr ""
 
 msgid "Choose a pool or dataset for jail storage"
-msgstr ""
-
-msgid "Choose a pool or dataset for the new zvol."
 msgstr ""
 
 msgid "Choose a pool to scrub."
@@ -1496,18 +1745,6 @@ msgid "Choose an encryption mode."
 msgstr ""
 
 msgid ""
-"Choose an existing ZFS Pool to allow the                               "
-"iocage jail manager to create a /iocage                               "
-"dataset in the selected pool. The '/iocage'                               "
-"dataset may not be visible until after the                               "
-"first jail is created. iocage uses this                               "
-"dataset to store FreeBSD RELEASES and all                               "
-"other jail data. To create a new ZFS Pool,                               "
-"navigate Storage/Volumes and click 'Create                               "
-"ZFS Pool'."
-msgstr ""
-
-msgid ""
 "Choose between <i>Off</i>, <a "
 "href=\"http://info.ssl.com/article.aspx?id=10241\" "
 "target=\"_blank\">SSL</a> or <a "
@@ -1543,8 +1780,30 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Choose one of the presets or choose <i>Custom</i> to use the advanced "
+"scheduler."
+msgstr ""
+
+msgid ""
+"Choose one or more datasets on the source system to be replicated. Each "
+"dataset must have an enabled periodic snapshot task."
+msgstr ""
+
+msgid ""
+"Choose the FreeBSD release or template to use as the jail operating system. "
+"Releases already downloaded show <b>(fetched)</b>."
+msgstr ""
+
+msgid ""
 "Choose the FreeBSD release to use as the jail operating system. Releases "
 "that have already been downloaded show <b>(fetched)</b>."
+msgstr ""
+
+msgid ""
+"Choose the SSH connection to use for the replication. Choose from a list of "
+"connections configured in System > <a "
+"href=\"--docurl--/system.html#ssh-connection\" target=\"_blank\">SSH "
+"connection</a>."
 msgstr ""
 
 msgid "Choose the VM operating system type."
@@ -1553,15 +1812,6 @@ msgstr ""
 msgid ""
 "Choose the backend to map Windows security identifiers (SIDs) to UNIX UIDs "
 "and GIDs. Click Edit to configure that backend."
-msgstr ""
-
-msgid ""
-"Choose the configuration mode for the remote.                 "
-"<i>Semi-automatic</i> only works with remote                 version 9.10.2 "
-"or later."
-msgstr ""
-
-msgid "Choose the days of the week to take snapshots."
 msgstr ""
 
 msgid ""
@@ -1575,13 +1825,13 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Choose the hour and minute when the system can begin                taking "
-"snapshots."
+"Choose the level in the system log for messages related to this replication "
+"task."
 msgstr ""
 
 msgid ""
-"Choose the hour and minute when the system must stop                taking "
-"snapshots."
+"Choose the platform that will use this share. The associated options are "
+"applied to this share."
 msgstr ""
 
 msgid ""
@@ -1610,14 +1860,28 @@ msgstr ""
 
 msgid ""
 "Choose the type of filesystem on the disk. Refer to the guide section on <a "
-"href=\"%%docurl%%/storage.html%%webversion%%#import-disk\" "
-"target=\"_blank\">importing disks</a> for more details."
+"href=\"--docurl--/storage.html#import-disk\" target=\"_blank\">importing "
+"disks</a> for more details."
+msgstr ""
+
+msgid ""
+"Choose the type of interface. <i>Bridge</i> creates a logical link between "
+"multiple networks. Link Aggregation combines multiple network connections "
+"into a single interface. A virtual LAN (VLAN) partitions and isolates a "
+"segment of the connection."
 msgstr ""
 
 msgid "Choose the type that matches the type of client accessing the pool/dataset."
 msgstr ""
 
 msgid "Choose when the UPS initiates shutdown."
+msgstr ""
+
+msgid ""
+"Choose whether a process in the jail has access to System V IPC primitives. "
+"Equivalent to setting <b>sysvmsg</b>, <b>sysvsem</b>, and <b>sysvshm</b> to "
+"<i>Inherit</i>. <b>Deprecated in FreeBSD 11.0 and newer!</b><br> Use "
+"<b>sysvmsg</b>, <b>sysvsem</b>, and <b>sysvshm</b> instead."
 msgstr ""
 
 msgid ""
@@ -1630,6 +1894,9 @@ msgstr ""
 msgid "Choose your language."
 msgstr "Escolha a sua língua."
 
+msgid "Cipher"
+msgstr ""
+
 msgid ""
 "Click <b>Browse</b> to select a recovery key to upload. This allows the "
 "system to decrypt the disks."
@@ -1638,6 +1905,9 @@ msgstr ""
 msgid ""
 "Click <b>Browse</b> to select an encryption key to upload. This allows the "
 "system to decrypt the disks."
+msgstr ""
+
+msgid "Click on alarms to select or unselect."
 msgstr ""
 
 msgid ""
@@ -1652,6 +1922,9 @@ msgstr ""
 msgid "Clients"
 msgstr "Clientes"
 
+msgid "Clone"
+msgstr ""
+
 msgid "Close"
 msgstr "Fechar"
 
@@ -1662,6 +1935,12 @@ msgid "Cloud Sync Tasks"
 msgstr "Tarefas de Sincronização com a Cloud"
 
 msgid "Cloud sync has started."
+msgstr ""
+
+msgid "Cloud sync stopped."
+msgstr ""
+
+msgid "Com Port"
 msgstr ""
 
 msgid "Comma-, space-, or tab-delimited list of allowed hostnames or IP addresses."
@@ -1710,18 +1989,9 @@ msgstr ""
 
 msgid ""
 "Commands to run in the jail environment when the jail is created. Example: "
-"<b>sh /etc/rc</b>. The pseudo-parameters section of <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=jail&apropos=0&sektion=0&"
-"manpath=FreeBSD+11.1-RELEASE+and+Ports\" target=\"_blank\">JAIL(8)</a> "
-"describes <b>exec.start</b> usage."
-msgstr ""
-
-msgid ""
-"Commands to run in the system environment after a jail is created and any "
-"<b>exec.start</b> commands are finished."
-msgstr ""
-
-msgid "Commands to run in the system environment after a jail is removed."
+"<i>sh /etc/rc</i>. The pseudo-parameters section of <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=jail\" "
+"target=\"_blank\">JAIL(8)</a> describes <b>exec.start</b> usage."
 msgstr ""
 
 msgid ""
@@ -1730,12 +2000,6 @@ msgid ""
 msgstr ""
 
 msgid "Commands to run in the system environment after a jail is stopped."
-msgstr ""
-
-msgid "Commands to run in the system environment before a jail is created."
-msgstr ""
-
-msgid "Commands to run in the system environment before a jail is removed."
 msgstr ""
 
 msgid "Commands to run in the system environment before a jail is started."
@@ -1749,6 +2013,9 @@ msgstr "Comentário"
 
 msgid "Comments"
 msgstr "Comentários"
+
+msgid "Commit"
+msgstr ""
 
 msgid "Common Name"
 msgstr ""
@@ -1768,23 +2035,14 @@ msgstr "Nível de Compressão"
 msgid "Config"
 msgstr ""
 
+msgid "Config Pool for Jail Manager"
+msgstr ""
+
 msgid ""
 "Configure IPv4 networking or internet access for the jail. Enter the IPv4 "
 "address for <a href=\"https://www.freebsd.org/cgi/man.cgi?query=vnet\" "
 "target=\"_blank\">VNET(9)</a> and shared IP jails. <br>Single interface "
 "format: <b>[interface|]ip-address[/netmask]</b>. <br>Example: "
-"<b>vnet2|192.168.0.15/24</b> <br>Multiple interface format: "
-"<b>[interface|]ip-address[/netmask],[interface|]ip-address[/netmask]</b>.<"
-"br>Example: <b>192.168.0.10/24,vnet3|192.168.10.50</b>"
-msgstr ""
-
-msgid ""
-"Configure IPv4 networking or internet access for the jail. Enter the IPv4 "
-"address for <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=vnet&apropos=0&sektion=0&"
-"manpath=FreeBSD+11.1-RELEASE+and+Ports\" target=\"_blank\">VNET(9)</a> and "
-"shared IP jails. <br>Single interface format: "
-"<b>[interface|]ip-address[/netmask]</b>. <br>Example: "
 "<b>vnet2|192.168.0.15/24</b> <br>Multiple interface format: "
 "<b>[interface|]ip-address[/netmask],[interface|]ip-address[/netmask]</b>.<"
 "br>Example: <b>192.168.0.10/24,vnet3|192.168.10.50</b>"
@@ -1796,19 +2054,6 @@ msgid ""
 "target=\"_blank\">VNET(9)</a> and shared IP jails. <br>Single interface "
 "format: <b>[interface|]ip-address[/netmask]</b>. <br>Example: "
 "<b>re0|fe80::/64</b> <br>Multiple interface format: "
-"<b>[interface|]ip-address[/netmask],[interface|]ip-address[/netmask]</b>.<"
-"br>Example: <b>re1|2607:f0d0:1002:51:0000:0000:0000:0004, "
-"re5|2001:db8:85a3::8a2e:370:7334/24</b>"
-msgstr ""
-
-msgid ""
-"Configure IPv6 networking or internet access for the jail. Enter the IPv6 "
-"address for <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=vnet&apropos=0&sektion=0&"
-"manpath=FreeBSD+11.1-RELEASE+and+Ports\" target=\"_blank\">VNET(9)</a> and "
-"shared IP jails. <br>Single interface format: "
-"<b>[interface|]ip-address[/netmask]</b>. <br>Example: <b>re0|fe80::/64</b> "
-"<br>Multiple interface format: "
 "<b>[interface|]ip-address[/netmask],[interface|]ip-address[/netmask]</b>.<"
 "br>Example: <b>re1|2607:f0d0:1002:51:0000:0000:0000:0004, "
 "re5|2001:db8:85a3::8a2e:370:7334/24</b>"
@@ -1830,6 +2075,9 @@ msgid ""
 "target=\"_blank\">idmap_script(8)</a> for more details."
 msgstr ""
 
+msgid "Configure the root user email address."
+msgstr ""
+
 msgid "Confirm"
 msgstr "Confirmar"
 
@@ -1843,6 +2091,9 @@ msgid "Confirm Password"
 msgstr "Confirmar Password"
 
 msgid "Confirm Privacy Passphrase"
+msgstr ""
+
+msgid "Confirm RRD Destroy"
 msgstr ""
 
 msgid "Confirm SED Password"
@@ -1869,9 +2120,13 @@ msgstr ""
 msgid "Confirm these settings."
 msgstr ""
 
-msgid ""
-"Connecting to NAS... Make sure the NAS system is powered on and connected "
-"to the network."
+msgid "Connect Timeout"
+msgstr ""
+
+msgid "Connected Initiators"
+msgstr ""
+
+msgid "Connecting to "
 msgstr ""
 
 msgid "Connections"
@@ -1887,6 +2142,13 @@ msgid "Contact"
 msgstr "Contacto"
 
 msgid "Container"
+msgstr ""
+
+msgid ""
+"Context menu copy and paste operations     are disabled in the Shell. Copy "
+"and paste     shortcuts for Mac are <i>Command+c</i> and     "
+"<i>Command+v</i>. For most operating     systems, use <i>Ctrl+Insert</i> to "
+"copy and     <i>Shift+Insert</i> to paste."
 msgstr ""
 
 msgid "Continue"
@@ -1906,14 +2168,31 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Control the availability of IPv4 addresses.<br> <b>Inherit</b>: Allow "
+"unrestricted access to all system addresses.<br> <b>New</b>: Restrict "
+"addresses with <b>ip4_addr</b>.<br> <b>Disable</b>: Stop the jail from "
+"using IPv4 entirely."
+msgstr ""
+
+msgid ""
 "Control the availability of IPv6 addresses. <br><b>Inherit</b>: Allow "
 "unrestricted access to all system addresses. <br><b>New</b>: Restrict "
 "addresses with <b>ip6_addr</b>. <br><b>Disable</b>: Stop the jail from "
 "using IPv4 entirely."
 msgstr ""
 
+msgid ""
+"Control the availability of IPv6 addresses.<br> <b>Inherit</b>: Allow "
+"unrestricted access to all system addresses.<br> <b>New</b>: Restrict "
+"addresses with <b>ip6_addr</b>.<br> <b>Disable</b>: Stop the jail from "
+"using IPv6 entirely."
+msgstr ""
+
 msgid "Copies"
 msgstr "Cópias"
+
+msgid "Could not delete boot environment."
+msgstr ""
 
 msgid "Country"
 msgstr "País"
@@ -1921,8 +2200,14 @@ msgstr "País"
 msgid "Country Code"
 msgstr "Código de País"
 
+msgid "Crash reporting"
+msgstr ""
+
 msgid "Create"
 msgstr "Criar"
+
+msgid "Create ACME Certificate"
+msgstr ""
 
 msgid "Create CA"
 msgstr ""
@@ -1954,9 +2239,6 @@ msgstr ""
 msgid "Create a recommended formation of vdevs in a pool."
 msgstr ""
 
-msgid "Create a snapshot of the dataset before pushing data."
-msgstr ""
-
 msgid "Create new Pool"
 msgstr ""
 
@@ -1966,10 +2248,19 @@ msgstr ""
 msgid "Create new pool"
 msgstr ""
 
+msgid "Create or Choose Block Device"
+msgstr ""
+
 msgid "Create or Import Pool"
 msgstr ""
 
 msgid "Create or Import pool"
+msgstr ""
+
+msgid ""
+"Creates dataset snapshots when there are no changes. Set to support "
+"periodic snapshot schedules and replications created in version 11.2 and "
+"earlier."
 msgstr ""
 
 msgid "Creating Jail"
@@ -1991,19 +2282,34 @@ msgstr ""
 msgid "Critical"
 msgstr ""
 
+msgid "Criticality"
+msgstr ""
+
 msgid "Cron Jobs"
 msgstr ""
 
 msgid "Current Password"
 msgstr ""
 
+msgid "Custom Path"
+msgstr ""
+
 msgid "Custom Properties"
+msgstr ""
+
+msgid "Custom Server"
+msgstr ""
+
+msgid "DELETE"
 msgstr ""
 
 msgid "DHCP"
 msgstr "DHCP"
 
 msgid "DHCP Autoconfigure IPv4"
+msgstr ""
+
+msgid "DISCARD CHANGES"
 msgstr ""
 
 msgid "DNS Forwarder"
@@ -2018,16 +2324,22 @@ msgstr ""
 msgid "DNS timeout in seconds. Increase this value if DNS queries timeout."
 msgstr ""
 
-msgid "DOS Charset"
-msgstr "DOS Charset"
-
 msgid "Dashboard"
 msgstr ""
 
 msgid "Data VDevs"
 msgstr ""
 
+msgid "Data collection frequency, in seconds."
+msgstr ""
+
 msgid "Database Path"
+msgstr ""
+
+msgid "Dataset"
+msgstr ""
+
+msgid "Dataset has complex ACLs"
 msgstr ""
 
 msgid "Datastore"
@@ -2039,19 +2351,17 @@ msgstr ""
 msgid "Day of Week"
 msgstr ""
 
-msgid "Day of week"
-msgstr ""
-
 msgid "Days of the Week"
 msgstr ""
 
 msgid "Decrypt pool"
 msgstr ""
 
-msgid "Dedicated User"
-msgstr ""
-
-msgid "Dedicated User Enabled"
+msgid ""
+"Deduplicate the stream to avoid sending redundant data blocks. The "
+"destination system must also support deduplicated streams. See <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\" "
+"target=\"_blank\">zfs(8)</a>."
 msgstr ""
 
 msgid "Default Permissions"
@@ -2079,10 +2389,9 @@ msgid "Default umask"
 msgstr ""
 
 msgid ""
-"Define a length of time to retain the snapshot on this                "
-"system. After the time expires, the snapshot is removed.                "
-"Snapshots which have been replicated to other systems                are "
-"not affected."
+"Define a length of time to retain the snapshot on this system. After the "
+"time expires, the snapshot is removed. Snapshots which have been replicated "
+"to other systems are not affected."
 msgstr ""
 
 msgid ""
@@ -2090,6 +2399,9 @@ msgid ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=smartd&manpath=FreeBSD+11.1"
 "-RELEASE+and+Ports\" target=\"_blank\">smartd</a> to wake up and check if "
 "any tests are configured to run."
+msgstr ""
+
+msgid "Define a starting time when the replication task cannot run."
 msgstr ""
 
 msgid "Define a time to start the replication task."
@@ -2103,6 +2415,11 @@ msgstr ""
 msgid ""
 "Define an <i>IP address or hostname:optional_port_number</i> to send logs. "
 "When set, log entries write to both the console and remote server."
+msgstr ""
+
+msgid ""
+"Define an ending time for the replication task restriction. The task is "
+"allowed to run after the specified time."
 msgstr ""
 
 msgid ""
@@ -2122,63 +2439,20 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Define how often the system takes snapshots between the                "
-"<b>Begin</b> and <b>End</b> times."
+"Define other sections and their key/value pairs. Enclose each section name "
+"in square brackets, and put each key/value pair on a new line. Example: "
+"<br> [system.intr]<br>  history=86400<br>  enabled=yes"
 msgstr ""
 
-msgid "Define in bytes the address space limit for the jail."
-msgstr ""
-
-msgid "Define in bytes the amount of locked memory for the jail."
-msgstr ""
-
-msgid "Define in bytes the maximum SysV message queue size for the jail."
-msgstr ""
-
-msgid "Define in bytes the number of SysV shared memory segments."
-msgstr ""
-
-msgid "Define in seconds the wallclock time."
+msgid ""
+"Define specific times to automatically start the replication task. Disables "
+"running the replication immediately after the periodic snapshot task."
 msgstr ""
 
 msgid ""
 "Define the dataset to be jailed and fully handed over to a jail. Enter a "
 "ZFS filesystem name <i>without</i> a pool name. <b>jail_zfs</b> must be set "
 "for this option to work."
-msgstr ""
-
-msgid ""
-"Define the dataset to be jailed and fully handed over to a jail. Enter a "
-"ZFS filesystem name <i>without</i> a pool name. <br> <b>jail_zfs</b> must "
-"be checked for this option to work."
-msgstr ""
-
-msgid ""
-"Define the jail CPU affinity. Options are <i>off</i> or a combination of "
-"<i>1-4</i>, separated by commas (,). <b>Example:</b> <i>1,2,3,4</i>"
-msgstr ""
-
-msgid "Define the jail core dump size in bytes."
-msgstr ""
-
-msgid "Define the jail data size in bytes."
-msgstr ""
-
-msgid "Define the jail stack size in bytes."
-msgstr ""
-
-msgid ""
-"Define the maximum amount of CPU time a jail process may consume. The "
-"kernel terminates processes exceeding the defined limit."
-msgstr ""
-
-msgid "Define the maximum number of SysV message queues."
-msgstr ""
-
-msgid ""
-"Define the number of SysV semaphores modified in a single <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=semop&sektion=2&manpath="
-"FreeBSD+11.1-RELEASE+and+Ports\" target=\"_blank\">semop(2)</a> call."
 msgstr ""
 
 msgid ""
@@ -2193,18 +2467,9 @@ msgid ""
 "the scrub always occurs on the same                weekday."
 msgstr ""
 
-msgid "Define the number of queued SysV messages allowed for the jail."
-msgstr ""
-
 msgid ""
-"Define the point in time by which replication must                 start. A "
-"started replication task continues until                 it is finished."
-msgstr ""
-
-msgid ""
-"Define the resident set size in bytes. See <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=rctl&manpath=FreeBSD+11.1-"
-"RELEASE+and+Ports\" target=\"_blank\">RCTL(8)</a> for more details."
+"Define the point in time by which replication must start. A started "
+"replication task continues until it is finished."
 msgstr ""
 
 msgid "Define the server where all changes to the database are performed."
@@ -2217,9 +2482,11 @@ msgid "Define the size of the raw file in GiB."
 msgstr ""
 
 msgid ""
-"Define the web protocol to use when connecting to the administrative GUI "
-"from a browser. To change the default <i>HTTP</i> to <i>HTTPS</i> or "
-"<i>HTTP+HTTPS</i>, a <b>Certificate</b> must also be chosen."
+"Define when snapshots are deleted from the destination system:<ul> "
+"<li><i>Same as Source</i>: duplicate the snapshot lifetime setting from the "
+"source system.</li> <li><i>Custom</i>: define a snapshot lifetime for the "
+"destination system.</li> <li><i>None</i>: never delete snapshots from the "
+"destination system.</li>"
 msgstr ""
 
 msgid "Delay Updates"
@@ -2243,10 +2510,10 @@ msgstr ""
 msgid "Delete Mount Point"
 msgstr ""
 
-msgid "Delete Recovery Key"
+msgid "Delete Path"
 msgstr ""
 
-msgid "Delete Stale Snapshots on Remote System"
+msgid "Delete Recovery Key"
 msgstr ""
 
 msgid "Delete Zvol"
@@ -2272,11 +2539,6 @@ msgstr ""
 msgid "Delete snapshot "
 msgstr ""
 
-msgid ""
-"Delete snapshots from the remote system which are                 also no "
-"longer present on the source computer."
-msgstr ""
-
 msgid "Delete the dataset "
 msgstr ""
 
@@ -2286,10 +2548,16 @@ msgstr ""
 msgid "Delete this device?"
 msgstr ""
 
+msgid "Delete this path."
+msgstr ""
+
 msgid "Delete zvol"
 msgstr ""
 
 msgid "Deleted Recovery Key"
+msgstr ""
+
+msgid "Deleting interfaces while HA is enabled is not allowed."
 msgstr ""
 
 msgid "Deny list"
@@ -2330,7 +2598,17 @@ msgstr ""
 msgid "Destination Path"
 msgstr ""
 
+msgid ""
+"Destination hostname or IP address for collectd data sent by the Graphite "
+"plugin."
+msgstr ""
+
 msgid "Destroy data on this pool?"
+msgstr ""
+
+msgid ""
+"Destroy the reporting database. Required for changes to <i>Graph Age</i> "
+"and <i>Graph Points</i> to take effect."
 msgstr ""
 
 msgid "Detach"
@@ -2340,6 +2618,11 @@ msgid "Detach Pool"
 msgstr ""
 
 msgid "Details"
+msgstr ""
+
+msgid ""
+"Determine whether this share name is included when browsing shares. Home "
+"shares are only visible to the owner regardless of this setting."
 msgstr ""
 
 msgid ""
@@ -2362,24 +2645,30 @@ msgstr ""
 msgid ""
 "Determine which information the processes in a jail are able to obtain "
 "about mount points. The behavior of multiple syscalls is affected. <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=statfs&manpath=FreeBSD+11.1"
-"-RELEASE+and+Ports\" target=\"_blank\">statfs(2)</a>, <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=statfs&manpath=FreeBSD+11.1"
-"-RELEASE+and+Ports\" target=\"_blank\">fstatfs(2)</a>, <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=getfsstat&manpath=FreeBSD+1"
-"1.1-RELEASE+and+Ports\" target=\"_blank\">getfsstat(2)</a>, <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=fhstatfs&manpath=FreeBSD+11"
-".1-RELEASE+and+Ports\" target=\"_blank\">fhstatfs(2)</a>, and other similar "
-"compatibility syscalls. <br> Set to <i>0</i>: All mount points are "
-"available without restriction. <br>Set to <i>1</i>: Only mount points below "
-"the jail chroot directory are available. <br>Set to <i>2</i> (default): "
-"Only mounts point where the jail chroot directory is located are available."
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=statfs\" "
+"target=\"_blank\">statfs(2)</a>, <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=statfs\" "
+"target=\"_blank\">fstatfs(2)</a>, <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=getfsstat\" "
+"target=\"_blank\">getfsstat(2)</a>, <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=fhstatfs\" "
+"target=\"_blank\">fhstatfs(2)</a>, and other similar compatibility "
+"syscalls.<br> Set to <i>0</i> for all mount points to be available without "
+"restriction. Set to <i>1</i> for mount points below the jail <i>chroot</i> "
+"directory to be available. Set to <i>2</i> (default) for mounts that point "
+"to the jail <i>chroot</i> directory to be available."
 msgstr ""
 
 msgid "Device"
 msgstr ""
 
+msgid "Device Busy"
+msgstr ""
+
 msgid "Device Order"
+msgstr ""
+
+msgid "Devices"
 msgstr ""
 
 msgid "Difference"
@@ -2394,13 +2683,15 @@ msgstr ""
 msgid "Direction"
 msgstr ""
 
+msgid ""
+"Direction of travel. <i>Push</i> sends snapshots to a remote system. "
+"<i>Pull</i> receives snapshots from a remote system."
+msgstr ""
+
 msgid "Directories & Permissions"
 msgstr ""
 
 msgid "Directory"
-msgstr ""
-
-msgid "Directory Mask"
 msgstr ""
 
 msgid "Directory Permission"
@@ -2415,10 +2706,31 @@ msgstr ""
 msgid "Disable Endpoint Region"
 msgstr ""
 
+msgid "Disable Failover"
+msgstr ""
+
 msgid "Disable FreeNAS Cache"
 msgstr ""
 
+msgid "Disable LDAP user/group cache"
+msgstr ""
+
 msgid "Disable physical block size reporting"
+msgstr ""
+
+msgid "Disabled"
+msgstr ""
+
+msgid "Discard"
+msgstr ""
+
+msgid "Discard Network Changes"
+msgstr ""
+
+msgid "Discard unapplied network changes?"
+msgstr ""
+
+msgid "Discover Remote Host Key"
 msgstr ""
 
 msgid "Discovery Auth Group"
@@ -2429,6 +2741,9 @@ msgstr ""
 
 msgid "Disk"
 msgstr "Disco"
+
+msgid "Disk Selection Required"
+msgstr ""
 
 msgid "Disk Size"
 msgstr ""
@@ -2446,6 +2761,9 @@ msgid "Disks"
 msgstr "Discos"
 
 msgid "Disks in Use"
+msgstr ""
+
+msgid "Dismiss"
 msgstr ""
 
 msgid "Display Login"
@@ -2474,6 +2792,9 @@ msgstr ""
 msgid "Do not set this if the Serial Port is disabled."
 msgstr ""
 
+msgid "Do you want to force delete dataset "
+msgstr ""
+
 msgid "Docker Host"
 msgstr ""
 
@@ -2487,9 +2808,6 @@ msgid "Domain Account Password"
 msgstr ""
 
 msgid "Domain Forest Level"
-msgstr ""
-
-msgid "Domain Logons"
 msgstr ""
 
 msgid "Domain Name"
@@ -2525,19 +2843,19 @@ msgstr "Driver"
 msgid "EC Curve"
 msgstr ""
 
+msgid "EDIT ACL"
+msgstr ""
+
 msgid "Edit"
 msgstr "Editar"
+
+msgid "Edit ACL"
+msgstr ""
 
 msgid "Edit Disk(s)"
 msgstr ""
 
 msgid "Edit Idmap"
-msgstr ""
-
-msgid "Edit Interface"
-msgstr "Editar Interface"
-
-msgid "Edit Members"
 msgstr ""
 
 msgid "Edit Note"
@@ -2552,6 +2870,9 @@ msgstr "Editar Permissões"
 msgid "Edit Zvol"
 msgstr "Editar zvol"
 
+msgid "Editing interfaces while HA is enabled is not allowed."
+msgstr ""
+
 msgid "Editing the following disks:"
 msgstr ""
 
@@ -2559,6 +2880,9 @@ msgid ""
 "Either single bandwidth limit or bandwidth limit schedule in rclone "
 "format.<br /> Example: \"08:00,512 12:00,10MB 13:00,512 18:00,30MB "
 "23:00,off\".<br /> Default unit is kilobytes."
+msgstr ""
+
+msgid "Electing storage controller."
 msgstr ""
 
 msgid "Email"
@@ -2633,6 +2957,9 @@ msgid ""
 "<i>UEFI</i> booting."
 msgstr ""
 
+msgid "Enable automatic support alerts to iXsystems (Silver/Gold support only)"
+msgstr ""
+
 msgid "Enable autotune"
 msgstr "Activar autotune"
 
@@ -2653,10 +2980,29 @@ msgid ""
 "<b>No</b> removes the <b>Lock User</b> and <b>Permit Sudo</b> options."
 msgstr ""
 
+msgid ""
+"Enable running services that require <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=mlock\" "
+"target=\"_blank\">mlock(2)</a> in a jail."
+msgstr ""
+
 msgid "Enable running services that require mlock() in a jail."
 msgstr ""
 
+msgid "Enable sending anonymous crash reports to iXsystems"
+msgstr ""
+
+msgid "Enable sending anonymous usage statistics to iXsystems"
+msgstr ""
+
 msgid "Enable service"
+msgstr ""
+
+msgid ""
+"Enable the stream to send large data blocks. The destination system must "
+"also support large blocks. See <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\" "
+"target=\"_blank\">zfs(8)</a>."
 msgstr ""
 
 msgid ""
@@ -2700,7 +3046,7 @@ msgid ""
 "Enables the autotune script which attempts to optimize the system depending "
 "on the installed hardware. <b>Warning:</b> Autotuning is only used as a "
 "temporary measure and is not a permanent fix for system hardware issues. "
-"See the <a href=\"%%docurl%%/system.html%%webversion%%#autotune\" "
+"See the <a href=\"--docurl--/system.html#autotune\" "
 "target=\"_blank\">Autotune section</a> of the guide for more information."
 msgstr ""
 
@@ -2709,14 +3055,17 @@ msgid ""
 "mechanism."
 msgstr ""
 
+msgid "Enabling this option may have performance implications on your pools."
+msgstr ""
+
+msgid "Enclosure"
+msgstr ""
+
 msgid "Encrypted pool disks must be decrypted prior to import."
 msgstr ""
 
 msgid "Encryption"
 msgstr "Encriptação"
-
-msgid "Encryption Cipher"
-msgstr "Cifra de Encriptação"
 
 msgid "Encryption Key"
 msgstr ""
@@ -2742,6 +3091,12 @@ msgstr "Fim"
 msgid "End Time"
 msgstr ""
 
+msgid "End User License Agreement - TrueNAS"
+msgstr ""
+
+msgid "End User License Agreement Accepted"
+msgstr ""
+
 msgid ""
 "Ending UID/GID number for which this system is authoritative. UID/GID "
 "values below Range Low or higher than Range High are ignored."
@@ -2751,17 +3106,22 @@ msgid "Endpoint URL"
 msgstr ""
 
 msgid ""
-"Ensure <a "
-"href=\"%%docurl%%/directoryservices.html%%webversion%%#kerberos-realms\" "
+"Ensure <a href=\"--docurl--/directoryservices.html#kerberos-realms\" "
 "target=\"_blank\">Kerberos Realms</a> and <a "
-"href=\"%%docurl%%/directoryservices.html%%webversion%%#kerberos-keytabs\" "
+"href=\"--docurl--/directoryservices.html#kerberos-keytabs\" "
 "target=\"_blank\">Kerberos Keytabs</a> are configured and the system can "
 "communicate with the Kerberos Domain Controller before setting."
+msgstr ""
+
+msgid "Enter <i>ALL</i> or a list of initiator hostnames separated by spaces."
 msgstr ""
 
 msgid ""
 "Enter a <a href=\"https://www.freebsd.org/doc/handbook/network-nis.html\" "
 "target=\"_blank\">NIS Domain name</a> for the jail."
+msgstr ""
+
+msgid "Enter a Name (optional)"
 msgstr ""
 
 msgid ""
@@ -2849,6 +3209,11 @@ msgstr ""
 msgid "Enter a name for this Keytab."
 msgstr ""
 
+msgid ""
+"Enter a name to use for the the interface. Use the format laggX, vlanX, or "
+"bridgeX where X is a number representing a non-parent interface."
+msgstr ""
+
 msgid "Enter a netmask."
 msgstr ""
 
@@ -2873,24 +3238,10 @@ msgid ""
 "also have operational or licensing restrictions on the number of CPUs."
 msgstr ""
 
-msgid "Enter a number to define the maximum number of processes for the jail."
-msgstr "Insira um número para definir a quantidade máxima de processos no jail."
-
-msgid "Enter a numeric value for the number of PTYs available to the jail."
-msgstr ""
-
 msgid "Enter a numeric value for the number of threads the jail can use."
 msgstr ""
 "Insira um valor numérico para a quantidade de threads que o jail pode "
 "utilizar."
-
-msgid "Enter a numeric value to define the file descriptor table size."
-msgstr ""
-"Insira um valor numérico para definir o tamanho da tabela de file "
-"descriptors."
-
-msgid "Enter a numeric value to define the maximum swap use for the jail."
-msgstr "Insira um valor numérico para definir o uso máximo de swap para o jail."
 
 msgid ""
 "Enter a one to three paragraph summary of the issue. Describe the problem "
@@ -2900,6 +3251,9 @@ msgstr ""
 msgid ""
 "Enter a password for the <i>rancher</i> user. This is used to log in to the "
 "VM from the serial shell."
+msgstr ""
+
+msgid "Enter a password for the User. Must be between 12 and 16 characters."
 msgstr ""
 
 msgid "Enter a password of at least eight characters."
@@ -2935,20 +3289,12 @@ msgid ""
 "successful or the list is exhausted. Leave empty to use the default gateway."
 msgstr ""
 
-msgid "Enter a static IPv4 address. Example: <i>10.0.0.2</i>."
-msgstr ""
-
-msgid "Enter a static IPv4 address. Example: <i>10.0.0.3</i>."
+msgid "Enter a static IPv4 or IPv6 address. Example: <i>10.0.0.3</i>."
 msgstr ""
 
 msgid ""
 "Enter a static IPv6 address if DHCP is unset. Example: "
 "<i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>"
-msgstr ""
-
-msgid ""
-"Enter a static IPv6 address. Example: "
-"<i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>."
 msgstr ""
 
 msgid ""
@@ -2989,24 +3335,12 @@ msgstr ""
 msgid "Enter a username to register with this service."
 msgstr ""
 
-msgid "Enter a valid MAC address for the VNET0 interface."
-msgstr ""
-
-msgid "Enter a valid MAC address for the VNET1 interface."
-msgstr ""
-
-msgid "Enter a valid MAC address for the VNET2 interface."
-msgstr ""
-
-msgid "Enter a valid MAC address for the VNET3 interface."
-msgstr ""
-
 msgid "Enter a valid MAC address vendor prefix. <b>Example:</b> <i>E4F4C6</i>"
 msgstr ""
 
 msgid ""
 "Enter a valid username for the <a "
-"href=\"https://redmine.ixsystems.com/projects/freenas/issues\" "
+"href=\"https://jira.ixsystems.com/projects/NAS/issues/\" "
 "target=\"_blank\">FreeNAS bug tracking system</a>"
 msgstr ""
 
@@ -3059,23 +3393,19 @@ msgid ""
 "(-) characters are allowed."
 msgstr ""
 
-msgid "Enter an alphanumeric name for the group."
-msgstr ""
-
 msgid "Enter an alphanumeric name for the virtual machine."
 msgstr ""
 
 msgid ""
 "Enter an email address to receive <a "
-"href=\"%%docurl%%/services.html%%webversion%%#s-m-a-r-t\" "
+"href=\"--docurl--/services.html#s-m-a-r-t\" "
 "target=\"_blank\">S.M.A.R.T.</a> alerts; use a space to  separate multiple "
 "email addresses."
 msgstr ""
 
 msgid ""
 "Enter an email address to receive messages from the <a "
-"href=\"%%docurl%%/services.html%%webversion%%#snmp\" target=\"_blank\">SNMP "
-"service</a>."
+"href=\"--docurl--/services.html#snmp\" target=\"_blank\">SNMP service</a>."
 msgstr ""
 
 msgid ""
@@ -3110,6 +3440,9 @@ msgstr ""
 msgid "Enter any notes about the jail here."
 msgstr ""
 
+msgid "Enter any notes about the jail."
+msgstr ""
+
 msgid "Enter any notes about this dataset."
 msgstr ""
 
@@ -3133,13 +3466,20 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Enter or paste the <b>public</b> SSH key of the user for any key-based "
-"authentication. <b>Do not paste the private key.</b>"
+"Enter name of user account to use for CHAP authentication with the user on "
+"the remote system. Many initiators default to the initiator name as the "
+"user."
 msgstr ""
 
 msgid ""
-"Enter or paste the temporary token from the system                 with the "
-"<b>Remote ZFS Pool/Dataset</b>."
+"Enter network proxy information if a proxy is used. Example: "
+"<i>http://my.proxy.server:3128</i> or "
+"<i>http://user:password@my.proxy.server:3128</i>"
+msgstr ""
+
+msgid ""
+"Enter or paste the <b>public</b> SSH key of the user for any key-based "
+"authentication. <b>Do not paste the private key.</b>"
 msgstr ""
 
 msgid "Enter passphrase to lock pool "
@@ -3160,8 +3500,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Enter the FreeBSD device name of the interface. This cannot change after "
-"creating the interface."
+"Enter the FreeBSD device name of the interface. This cannot be changed "
+"after the interface is created."
 msgstr ""
 
 msgid "Enter the GELI passphrase."
@@ -3174,11 +3514,6 @@ msgstr ""
 
 msgid "Enter the IP address of the gateway."
 msgstr "Insira o endereço IP do gateway."
-
-msgid ""
-"Enter the IP address or DNS name of the remote                 system to "
-"receive the replication data."
-msgstr ""
 
 msgid "Enter the IP address or hostname for SNMP UPS."
 msgstr ""
@@ -3199,9 +3534,21 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Enter the IP address which runs the <a "
-"href=\"%%docurl%%/services.html%%webversion%%#s3\" target=\"_blank\">S3 "
-"service</a>. <i>0.0.0.0</i> tells the server to listen on all addresses."
+"Enter the IP address which runs the <a href=\"--docurl--/services.html#s3\" "
+"target=\"_blank\">S3 service</a>. <i>0.0.0.0</i> tells the server to listen "
+"on all addresses."
+msgstr ""
+
+msgid ""
+"Enter the IPv4 address for <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=vnet\" "
+"target=\"_blank\">VNET(9)</a> and shared IP jails."
+msgstr ""
+
+msgid ""
+"Enter the IPv6 address for <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=vnet\" "
+"target=\"_blank\">VNET(9)</a> and shared IP jails."
 msgstr ""
 
 msgid "Enter the S3 username."
@@ -3213,12 +3560,6 @@ msgstr ""
 msgid "Enter the TCP port which provides the S3 service."
 msgstr ""
 
-msgid ""
-"Enter the ZFS pool/dataset on the remote or                 destination "
-"computer which will store snapshots.                 Example: "
-"Poolname/Datasetname, not the mountpoint                 or filesystem path."
-msgstr ""
-
 msgid "Enter the administrator account password."
 msgstr ""
 
@@ -3226,6 +3567,12 @@ msgid "Enter the bug tracker account password."
 msgstr ""
 
 msgid "Enter the command with any options."
+msgstr ""
+
+msgid ""
+"Enter the dataset on the remote or destination system wheresnapshots will "
+"be stored. Example: Poolname/Datasetname, not the mountpoint or filesystem "
+"path"
 msgstr ""
 
 msgid "Enter the decryption passphrase."
@@ -3243,6 +3590,9 @@ msgid "Enter the email address of the new user."
 msgstr ""
 
 msgid "Enter the email address of the person responsible for the CA."
+msgstr ""
+
+msgid "Enter the email of the contact person."
 msgstr ""
 
 msgid "Enter the filesystem to snapshot."
@@ -3292,6 +3642,9 @@ msgstr ""
 msgid "Enter the name of the company or organization."
 msgstr ""
 
+msgid "Enter the name of the contact person."
+msgstr ""
+
 msgid "Enter the name of the destination folder."
 msgstr ""
 
@@ -3307,9 +3660,6 @@ msgstr ""
 msgid "Enter the name of the realm."
 msgstr ""
 
-msgid "Enter the number of SysV shared memory segments."
-msgstr "Insira o número de segmentos de memória partilhada System V."
-
 msgid "Enter the numeric tag configured in the switched network."
 msgstr ""
 
@@ -3319,7 +3669,9 @@ msgstr ""
 msgid "Enter the password associated with <b>Username</b>."
 msgstr ""
 
-msgid "Enter the password if the SMTP server requires authentication."
+msgid ""
+"Enter the password for the SMTP server. Only plain ASCII characters are "
+"accepted."
 msgstr ""
 
 msgid "Enter the password that must be used by connecting S3 systems."
@@ -3327,7 +3679,7 @@ msgstr ""
 
 msgid ""
 "Enter the password to be used for the <a "
-"href=\"%%docurl%%/directoryservices.html%%webversion%%#active-directory\" "
+"href=\"--docurl--/directoryservices.html#active-directory\" "
 "target=”_blank”>Active Directory</a> administrator account."
 msgstr ""
 
@@ -3335,9 +3687,6 @@ msgid ""
 "Enter the password to encrypt and decrypt remote data. <b>Warning</b>: "
 "Always save and back up this password. Losing the encryption password can "
 "result in data loss."
-msgstr ""
-
-msgid "Enter the password to submit settings changes."
 msgstr ""
 
 msgid "Enter the password used to connect to the IPMI interface from a web browser."
@@ -3354,20 +3703,14 @@ msgstr ""
 msgid ""
 "Enter the percentage of free space to remain in the pool. When this "
 "percentage is reached, the system issues an alert, but only if zvols are "
-"used. See <a href=\"%%docurl%%/vaai.html%%webversion%%#vaai\" "
-"target=\"_blank\">VAAI Threshold Warning</a> for more information."
+"used. See <a href=\"--docurl--/vaai.html#vaai\" target=\"_blank\">VAAI "
+"Threshold Warning</a> for more information."
 msgstr ""
 
-msgid "Enter the port used by the SSH server on the remote                 system."
+msgid "Enter the phone number of the contact person."
 msgstr ""
 
 msgid "Enter the pre-defined S3 bucket to use."
-msgstr ""
-
-msgid ""
-"Enter the proxy information for the network. Example: "
-"<i>http://my.proxy.server:3128</i> or "
-"<i>http://user:password@my.proxy.server:3128</i>"
 msgstr ""
 
 msgid ""
@@ -3379,6 +3722,12 @@ msgid "Enter the root password to authorize this operation."
 msgstr ""
 
 msgid "Enter the root password."
+msgstr ""
+
+msgid ""
+"Enter the routing table (<a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=setfib\" "
+"target=\"_blank\">FIB</a>) to use when running commands inside the jail."
 msgstr ""
 
 msgid "Enter the state or province of the organization."
@@ -3405,7 +3754,17 @@ msgid ""
 "the virtual interface should be attached."
 msgstr ""
 
+msgid ""
+"Enter up to four interface configurations in the format "
+"<i>interface</i>:<i>bridge</i>, separated by a comma (,). The left value is "
+"the virtual VNET interface name and the right value is the bridge name "
+"where the virtual interface should be attached."
+msgstr ""
+
 msgid "Enter valid VMware ESXI/vSphere credentials to fetch datastores."
+msgstr ""
+
+msgid "Environment"
 msgstr ""
 
 msgid "Error"
@@ -3492,6 +3851,9 @@ msgstr ""
 msgid "Error stopping service "
 msgstr ""
 
+msgid "Error submitting file"
+msgstr ""
+
 msgid "Error updating disks."
 msgstr ""
 
@@ -3499,6 +3861,9 @@ msgid "Error: "
 msgstr ""
 
 msgid "Error: Displaying local fetched releases failed."
+msgstr ""
+
+msgid "Error: Displaying templates failed."
 msgstr ""
 
 msgid "Error: Fetching remote release choices failed."
@@ -3516,6 +3881,16 @@ msgstr ""
 msgid "Exclude"
 msgstr ""
 
+msgid "Exclude Child Datasets"
+msgstr ""
+
+msgid ""
+"Exclude specific child datasets from the snapshot. Use with recursive "
+"snapshots. Comma-separated list of paths to any child datasets to exclude. "
+"Example: <i>pool1/dataset1/child1</i>. A recursive snapshot of "
+"<i>pool1/dataset1</i> will include all child datasets except <i>child1</i>."
+msgstr ""
+
 msgid "Exec"
 msgstr "Executar"
 
@@ -3523,6 +3898,9 @@ msgid "Export Certificate"
 msgstr ""
 
 msgid "Export Password Secret Seed"
+msgstr ""
+
+msgid "Export Pool Ecryption Keys"
 msgstr ""
 
 msgid "Export Private Key"
@@ -3547,6 +3925,9 @@ msgid "Export/Disconnect Pool"
 msgstr ""
 
 msgid "Exporting Pool..."
+msgstr ""
+
+msgid "Expose zilstat via SNMP"
 msgstr ""
 
 msgid "Extend"
@@ -3585,11 +3966,32 @@ msgstr ""
 msgid "Failed"
 msgstr "Failed"
 
+msgid "Failover"
+msgstr ""
+
+msgid "Failover Group"
+msgstr ""
+
+msgid "Failover IP Address"
+msgstr ""
+
+msgid "Failover VHID"
+msgstr ""
+
+msgid "Failover is administratively disabled."
+msgstr ""
+
+msgid "Failover is in an error state."
+msgstr ""
+
+msgid "Fetch Method"
+msgstr ""
+
 msgid "Fetch and Install Updates"
 msgstr ""
 
-msgid "File Mask"
-msgstr "Máscara de Ficheiro"
+msgid "File"
+msgstr ""
 
 msgid "File Permission"
 msgstr "Permissão de Ficheiro"
@@ -3598,6 +4000,15 @@ msgid "File Permissions"
 msgstr ""
 
 msgid "Filename Encryption"
+msgstr ""
+
+msgid ""
+"Files are split into chunks of this size before upload. Up to «--transfers» "
+"chunks can be in progress at one time. The single largest file being "
+"transferred must fit into no more than 10,000 chunks."
+msgstr ""
+
+msgid "Filesize"
 msgstr ""
 
 msgid "Filesystem type"
@@ -3609,18 +4020,17 @@ msgstr "Filtro"
 msgid "Fix Credential"
 msgstr ""
 
+msgid "Flags"
+msgstr ""
+
+msgid "Flags Type"
+msgstr ""
+
 msgid ""
 "Flags to pass to <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=login\" "
 "target=\"_blank\">LOGIN(1)</a> when logging in to the jail using the "
 "<b>console</b> function."
-msgstr ""
-
-msgid ""
-"Flags to pass to <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=login&manpath=FreeBSD+11.1-"
-"RELEASE+and+Ports\" target=\"_blank\">LOGIN(1)</a> when logging in to the "
-"jail using the <b>console</b> function."
 msgstr ""
 
 msgid "Flip"
@@ -3637,12 +4047,15 @@ msgstr ""
 
 msgid ""
 "For more information about the available compression algorithms, refer to "
-"the <a href=\"%%docurl%%/storage.html%%webversion%%#compression\" "
+"the <a href=\"--docurl--/storage.html#compression\" "
 "target=\"_blank\">Compression section</a> of the guide."
 msgstr ""
 
 msgid "Force"
 msgstr "Forçar"
+
+msgid "Force Delete"
+msgstr ""
 
 msgid "Force size"
 msgstr ""
@@ -3666,6 +4079,9 @@ msgstr ""
 
 msgid "Form Invalid"
 msgstr "Formulário inválido"
+
+msgid "FreeNAS URL"
+msgstr ""
 
 msgid "From"
 msgstr ""
@@ -3702,6 +4118,9 @@ msgstr "Geral"
 msgid "Generate Debug File"
 msgstr ""
 
+msgid "Generate Keypair"
+msgstr ""
+
 msgid ""
 "Give this user permission to use <a href=\"https://www.sudo.ws/\" "
 "target=\"_blank\">sudo</a>."
@@ -3715,6 +4134,9 @@ msgstr ""
 msgid "Global Configuration"
 msgstr "Configuração Global"
 
+msgid "Global Settings"
+msgstr ""
+
 msgid "Global auxiliary parameters"
 msgstr "Parâmetros Auxiliares Globais"
 
@@ -3722,6 +4144,15 @@ msgid "Global password to unlock SEDs."
 msgstr ""
 
 msgid "Go Back to Jails"
+msgstr ""
+
+msgid "Graph Age"
+msgstr ""
+
+msgid "Graph Points"
+msgstr ""
+
+msgid "Graphite Server"
 msgstr ""
 
 msgid "Group"
@@ -3734,6 +4165,12 @@ msgid "Group ID"
 msgstr "ID de Grupo"
 
 msgid "Group Suffix"
+msgstr ""
+
+msgid ""
+"Group name cannot begin with a hyphen (<i>-</i>) or contain a space, tab, "
+"or these characters: <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i>. <i>$</i> can "
+"only be used as the last character of the username."
 msgstr ""
 
 msgid "Groups"
@@ -3751,6 +4188,27 @@ msgstr ""
 msgid "Guide"
 msgstr "Manual"
 
+msgid "HA Disabled"
+msgstr ""
+
+msgid "HA Enabled"
+msgstr ""
+
+msgid "HA Status"
+msgstr ""
+
+msgid "HA is disabled."
+msgstr ""
+
+msgid "HA is enabled"
+msgstr ""
+
+msgid "HA is enabled."
+msgstr ""
+
+msgid "HA is reconnecting."
+msgstr ""
+
 msgid "HDD Standby"
 msgstr "HDD Standby"
 
@@ -3759,6 +4217,9 @@ msgstr "Autenticação HTTP"
 
 msgid "HTTP Port"
 msgstr "Porta HTTP"
+
+msgid "HTTP Port Listen Backlog"
+msgstr ""
 
 msgid "HTTP Proxy"
 msgstr "Proxy HTTP"
@@ -3802,6 +4263,15 @@ msgid ""
 "to run the command."
 msgstr ""
 
+msgid "Highest port number open to connections."
+msgstr ""
+
+msgid "History"
+msgstr ""
+
+msgid "Hold Pending Snapshots"
+msgstr ""
+
 msgid "Home Directory"
 msgstr "Directório de Utilizador"
 
@@ -3809,6 +4279,12 @@ msgid "Home Directory Permissions"
 msgstr ""
 
 msgid "Host"
+msgstr ""
+
+msgid "Host Allow"
+msgstr ""
+
+msgid "Host Deny"
 msgstr ""
 
 msgid "Host Sync"
@@ -3823,11 +4299,17 @@ msgstr ""
 msgid "Hostname"
 msgstr "Hostname"
 
-msgid "Hostname or IP address of SMTP server to use for sending this email."
+msgid "Hostname (Storage Controller 2)"
 msgstr ""
 
-msgid "Hostnames Lookups"
-msgstr "Pesquisa de Hostnames"
+msgid "Hostname (Virtual)"
+msgstr ""
+
+msgid "Hostname for your custom DDNS provider"
+msgstr ""
+
+msgid "Hostname or IP address of SMTP server to use for sending this email."
+msgstr ""
 
 msgid ""
 "Hostnames or IP addresses of the ISNS servers to be registered with the "
@@ -3843,11 +4325,32 @@ msgstr "Proibir Hosts"
 msgid "Hour"
 msgstr "Hora"
 
+msgid "Hour and minute the system can begin taking snapshots."
+msgstr ""
+
+msgid ""
+"Hour and minute the system must stop creating snapshots. Snapshots already "
+"in progress will continue until complete."
+msgstr ""
+
 msgid "Hover to expand"
+msgstr ""
+
+msgid ""
+"How long a snapshot will remain on the destination system. Enter a number "
+"and choose a measure of time from the drop-down."
+msgstr ""
+
+msgid ""
+"How many times the replication task will be attempted before stopping and "
+"marking it failed."
 msgstr ""
 
 msgid "How often the IP is checked in seconds."
 msgstr "Frequência de verificação de IP em segundos."
+
+msgid "I Agree"
+msgstr ""
 
 msgid "I Understand"
 msgstr ""
@@ -3858,8 +4361,17 @@ msgstr ""
 msgid "ID & Groups"
 msgstr ""
 
+msgid "INSTALL"
+msgstr ""
+
+msgid "IP"
+msgstr ""
+
 msgid "IP Address"
 msgstr "Endereço IP"
+
+msgid "IP Addresses"
+msgstr ""
 
 msgid ""
 "IP address of the remote system with <i>UPS Mode</i> set as <i>Master</i>. "
@@ -3871,9 +4383,6 @@ msgstr "IPMI"
 
 msgid "IPv4 Address"
 msgstr "Endereço IPv4"
-
-msgid "IPv4 Addresses"
-msgstr "Endereços IPv4"
 
 msgid "IPv4 Default Gateway"
 msgstr "Gateway Padrão IPv4"
@@ -3890,6 +4399,11 @@ msgstr "Netmask IPv4"
 msgid "IPv4 address for the jail."
 msgstr ""
 
+msgid ""
+"IPv4 address to use for the failover interface. Set a manual IP address "
+"here if DHCP is not used."
+msgstr ""
+
 msgid "IPv4 interface"
 msgstr ""
 
@@ -3902,17 +4416,11 @@ msgstr ""
 msgid "IPv6 Address"
 msgstr "Endereço IPv6"
 
-msgid "IPv6 Addresses"
-msgstr "Endereços IPv6"
-
 msgid "IPv6 Auto Configure"
 msgstr ""
 
 msgid "IPv6 Default Gateway"
 msgstr "Gateway Padrão IPv6"
-
-msgid "IPv6 Default Route"
-msgstr ""
 
 msgid "IPv6 Default Router"
 msgstr ""
@@ -4006,6 +4514,11 @@ msgstr ""
 msgid "Import an existing pool"
 msgstr ""
 
+msgid ""
+"Import the private key from an existing SSH keypair. Choose the name of the "
+"SSH keypair to use for this connection."
+msgstr ""
+
 msgid "Importing Disk"
 msgstr "A Importar Disco"
 
@@ -4018,15 +4531,13 @@ msgstr ""
 msgid "Importing Pool..."
 msgstr ""
 
+msgid "Importing pools."
+msgstr ""
+
 msgid "In KiB/s. A default of <i>0</i> means unlimited."
 msgstr ""
 
 msgid "Include Password Secret Seed"
-msgstr ""
-
-msgid ""
-"Include snapshots of child datasets from the                 primary "
-"dataset."
 msgstr ""
 
 msgid ""
@@ -4067,6 +4578,17 @@ msgstr ""
 msgid "Init/Shutdown Scripts"
 msgstr ""
 
+msgid "Initiate Failover"
+msgstr ""
+
+msgid ""
+"Initiating failover will temporarily disable services while failing over.  "
+"Failover now?"
+msgstr ""
+
+msgid "Initiator"
+msgstr ""
+
 msgid "Initiator Group ID"
 msgstr ""
 
@@ -4091,17 +4613,18 @@ msgstr "Suporte de Instalação"
 msgid "Installing plugin..."
 msgstr ""
 
-msgid "Interface"
-msgstr "Interface"
-
 msgid "Interface Description"
 msgstr "Descrição da Interface"
 
-msgid "Interface Name"
-msgstr "Nome da Interface"
-
 msgid "Interfaces"
 msgstr "Interfaces"
+
+msgid ""
+"Interfaces marked <i>critical</i> are considered necessary for normal "
+"operation. When the last critical interface in a failover group is "
+"preempted by the other storage controller through the VRRP or CARP "
+"protocols, a failover is triggered."
+msgstr ""
 
 msgid "Internal"
 msgstr ""
@@ -4110,9 +4633,6 @@ msgid ""
 "Internal identifier of the certificate. Only alphanumeric, \"_\" and \"-\" "
 "are allowed."
 msgstr ""
-
-msgid "Interval"
-msgstr "Intervalo"
 
 msgid "Invalid password"
 msgstr ""
@@ -4134,6 +4654,9 @@ msgstr ""
 msgid ""
 "It is not recommended to extend a pool with one or more vdevs containing "
 "different numbers of disks. Continue?"
+msgstr ""
+
+msgid "Items Delete Failed"
 msgstr ""
 
 msgid "Jail"
@@ -4174,7 +4697,26 @@ msgstr "Jails"
 msgid "Jails cannot be changed while running."
 msgstr ""
 
+msgid ""
+"Jails cannot be created or managed untill a pool is present for storing "
+"them. Please create a pool first"
+msgstr ""
+
 msgid "KDC"
+msgstr ""
+
+msgid "KEEP NETWORK CHANGES PERMANENTLY"
+msgstr ""
+
+msgid "Keep Network Changes"
+msgstr ""
+
+msgid "Keep changed network settings permanently?"
+msgstr ""
+
+msgid ""
+"Keep the name short. Using a name longer than 63 characters can prevent "
+"accessing the block device."
 msgstr ""
 
 msgid ""
@@ -4265,6 +4807,9 @@ msgstr "Interfaces LAGG"
 msgid "Lagg Physical NIC"
 msgstr ""
 
+msgid "Lagg Ports"
+msgstr ""
+
 msgid "Lagg Priority Number"
 msgstr ""
 
@@ -4304,34 +4849,30 @@ msgstr ""
 msgid "License"
 msgstr ""
 
+msgid "License has been updated."
+msgstr ""
+
 msgid "Lifetime"
 msgstr "Tempo de Vida"
 
-msgid "Limit (kpbs)"
+msgid "Limit (kbps)"
 msgstr ""
 
 msgid ""
-"Limit replication speed to the specified value in                 "
-"kilobits/second. The default <i>0</i> is unlimited."
+"Limit replication speed to the specified value in kilobits/second. The "
+"default 0 is unlimited."
 msgstr ""
 
-msgid "Link Aggregation Members"
+msgid "Link State"
 msgstr ""
-
-msgid "Link Aggregations"
-msgstr "Link Aggregations"
 
 msgid "List of system services to restart when the pool is unlocked."
 msgstr ""
 
-msgid ""
-"List up to four interface configurations in the format "
-"<i>interface:bridge</i>, separated by a comma (,). The left value is the "
-"virtual VNET interface name and the right value is the bridge name where "
-"the virtual interface is attached."
+msgid "Load Average"
 msgstr ""
 
-msgid "Load Average"
+msgid "Local"
 msgstr ""
 
 msgid "Local Master"
@@ -4382,6 +4923,9 @@ msgstr ""
 msgid "Log rpc.statd(8) and rpc.lockd(8)"
 msgstr ""
 
+msgid "Logging Level"
+msgstr ""
+
 msgid "Logical block size"
 msgstr "Tamanho de Bloco Lógico"
 
@@ -4398,13 +4942,22 @@ msgid ""
 "target=\"_blank\">RFC3721</a>."
 msgstr ""
 
+msgid "Lowest port number open to connections."
+msgstr ""
+
 msgid "MAC Address"
+msgstr ""
+
+msgid "MANAGE"
 msgstr ""
 
 msgid "MOTD Banner"
 msgstr "MOTD Banner"
 
 msgid "MSDOSFS locale"
+msgstr ""
+
+msgid "MTU"
 msgstr ""
 
 msgid "Mac Address"
@@ -4415,9 +4968,6 @@ msgstr ""
 
 msgid "Mail Server Port"
 msgstr "Porta do Servidor de Email"
-
-msgid "Management"
-msgstr "Gestão"
 
 msgid "Manycast"
 msgstr ""
@@ -4438,6 +4988,9 @@ msgid "Maproot User"
 msgstr ""
 
 msgid "Masquerade Address"
+msgstr ""
+
+msgid "Master"
 msgstr ""
 
 msgid "Master Application Key or Application Key"
@@ -4461,14 +5014,17 @@ msgid "Maximum SysV message queue size in bytes for the jail."
 msgstr ""
 
 msgid ""
-"Maximum amount of CPU time a jail process may consume. The kernel "
-"terminates processes exceeding the specified limit."
+"Maximum Transmission Unit, the largest protocol data unit that can be "
+"communicated. The largest workable MTU size varies with network interfaces "
+"and equipment. *1500* and *9000* are standard Ethernet MTU sizes."
+msgstr ""
+
+msgid "Maximum age of graph stored, in months."
 msgstr ""
 
 msgid ""
-"Maximum amount of time in seconds to wait for a command to complete. A jail "
-"cannot be created or removed when a command is still running after the "
-"allotted time."
+"Maximum amount of CPU time a jail process may consume. The kernel "
+"terminates processes exceeding the specified limit."
 msgstr ""
 
 msgid ""
@@ -4477,11 +5033,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Maximum amount of time in seconds to wait for jail processes to exit after "
-"sending a SIGTERM signal. The timeout starts after <b>exec.stop</b> "
-"commands have completed. When time is up the jail is removed, killing any "
-"remaining processes. When set to <i>0</i>, no SIGTERM is sent and the jail "
-"is immediately removed. The default timeout is 10 seconds."
+"Maximum amount of time in seconds to wait for a command to complete. If a "
+"command is still running after the allowed time, the jail is stopped."
 msgstr ""
 
 msgid ""
@@ -4492,7 +5045,18 @@ msgid ""
 "removed immediately."
 msgstr ""
 
+msgid ""
+"Maximum amount of time in seconds to wait for jail processes to exit after "
+"sending a SIGTERM signal. This happens after any <b>exec_stop</b> commands "
+"are complete. After the specified time, the jail is removed, killing any "
+"remaining processes. The default timeout is 10 seconds.If set to <i>0</i>, "
+"no SIGTERM is sent and the jail is removed immediately."
+msgstr ""
+
 msgid "Maximum client idle time in seconds before client is disconnected."
+msgstr ""
+
+msgid "Maximum connections"
 msgstr ""
 
 msgid "Maximum number of SysV message queues."
@@ -4508,9 +5072,6 @@ msgstr ""
 
 msgid "Maximum swap space to use for the jail."
 msgstr ""
-
-msgid "Media Status"
-msgstr "Estado do Meio"
 
 msgid "Member Disk"
 msgstr "Disco Membro"
@@ -4536,8 +5097,28 @@ msgstr "Tamanho da Memória (MiB)"
 msgid "Memory Usage"
 msgstr ""
 
+msgid ""
+"Memory overcommitment allows multiple VMs to be launched when there is not "
+"enough free memory for configured RAM of all VMs. Use with caution."
+msgstr ""
+
 msgid "Method"
 msgstr "Método"
+
+msgid ""
+"Method for snapshot transfer:<ul> <li><i>SSH</i> is supported by most "
+"systems. It requires a previously created <a "
+"href=\"--docurl--/system.html#ssh-connection\" target=\"_blank\">SSH "
+"connection</a>.</li> <li><i>SSH+NETCAT</i> uses SSH to establish a "
+"connection to the remote system, then uses <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=nc\" "
+"target=\"_blank\">nc(1)</a> to send an unencrypted data stream for higher "
+"transfer speeds. This is only an option when replicating to a FreeBSD "
+"system that has <a href=\"https://github.com/freenas/py-libzfs\" "
+"target=\"_blank\">py-libzfs</a> installed.</li> <li><i>LOCAL</i> replicates "
+"snapshots to another dataset on the same system.</li> <li><i>LEGACY</i> "
+"uses the legacy replication engine from FreeNAS 11.2 and earlier.</li></ul>"
+msgstr ""
 
 msgid "Microsoft Account"
 msgstr "Conta Microsoft"
@@ -4565,6 +5146,9 @@ msgstr ""
 
 msgid "Mode"
 msgstr "Modo"
+
+msgid "Model"
+msgstr ""
 
 msgid ""
 "Modify for disks that understand <a                   "
@@ -4595,25 +5179,16 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Mount a <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=devfs&sektion=5&manpath="
-"FreeBSD+11.1-RELEASE+and+Ports\" target=\"_blank\">devfs(5)</a> filesystem "
-"on the <i>chrooted /dev directory</i> and apply the ruleset in the "
-"<b>devfs_ruleset</b> parameter to restrict the devices visible inside the "
-"jail."
+"Mount a <a href=\"https://www.freebsd.org/cgi/man.cgi?query=devfs\" "
+"target=\"_blank\">devfs(5)</a> filesystem on the chrooted <i>/dev</i> "
+"directory and apply the <b>devfs_ruleset</b> parameter to restrict the "
+"devices visible inside the jail."
 msgstr ""
 
 msgid ""
 "Mount an <a href=\"https://www.freebsd.org/cgi/man.cgi?query=fdescfs\" "
 "target=\"_blank\">fdescfs(5)</a> filesystem in the jail <i>/dev/fd</i> "
 "directory."
-msgstr ""
-
-msgid ""
-"Mount an <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=fdescfs&sektion=5&manpath="
-"FreeBSD+11.1-RELEASE+and+Ports\" target=\"_blank\">fdescfs(5)</a> "
-"filesystem in the jail <i>/dev/fd</i> directory."
 msgstr ""
 
 msgid "Mount points"
@@ -4629,17 +5204,30 @@ msgid "Multipaths"
 msgstr ""
 
 msgid ""
+"Multiple critical interfaces are combined into a single failover group. A "
+"failover is triggered if all of the interfaces in the group fail."
+msgstr ""
+
+msgid ""
+"Must match Peer Secret (Confirm) and be between 12 and 16 characters in "
+"length. Cannot be the same as Secret."
+msgstr ""
+
+msgid ""
 "Must match Windows workgroup name. This setting is ignored if the <a "
-"href=\"%%docurl%%/directoryservices.html%%webversion%%#active-directory\" "
+"href=\"--docurl--/directoryservices.html#active-directory\" "
 "target=\"_blank\">Active Directory</a> or <a "
-"href=\"%%docurl%%/directoryservices.html%%webversion%%#ldap\" "
-"target=\"_blank\">LDAP</a> service is running."
+"href=\"--docurl--/directoryservices.html#ldap\" target=\"_blank\">LDAP</a> "
+"service is running."
 msgstr ""
 
 msgid "Mutual secret password. Must be different than <i>Secret</i>."
 msgstr ""
 
-msgid "N/A"
+msgid "NAT"
+msgstr ""
+
+msgid "NAT Autoconfigure IPv4"
 msgstr ""
 
 msgid "NFSv3 ownership model for NFSv4"
@@ -4678,6 +5266,9 @@ msgstr ""
 msgid "Name Servers"
 msgstr ""
 
+msgid "Name and Naming Schema cannot be provided at the same time."
+msgstr ""
+
 msgid "Name of NIS domain."
 msgstr ""
 
@@ -4700,6 +5291,12 @@ msgid ""
 "initiators use the initiator name as the user name."
 msgstr ""
 
+msgid "Name or Naming Schema is required. Only one field can be used at a time."
+msgstr ""
+
+msgid "Name or Naming Schema must be provided."
+msgstr ""
+
 msgid "Nameserver 1"
 msgstr "Nameserver 1"
 
@@ -4712,17 +5309,14 @@ msgstr "Nameserver 3"
 msgid "Nameservers"
 msgstr ""
 
+msgid "Naming Schema"
+msgstr ""
+
 msgid "NetBIOS Alias"
 msgstr "Alias NetBIOS"
 
-msgid "NetBIOS Alias:"
-msgstr "Alias NetBIOS:"
-
 msgid "NetBIOS Name"
 msgstr "Nome NetBIOS"
-
-msgid "NetBIOS Name:"
-msgstr "Nome NetBIOS:"
 
 msgid "NetBIOS alias"
 msgstr ""
@@ -4730,9 +5324,30 @@ msgstr ""
 msgid "Netbios Name"
 msgstr ""
 
+msgid "Netbios Name (Storage Controller 2)"
+msgstr ""
+
 msgid ""
 "Netbios Name of this NAS. This name must differ from the <i>Workgroup</i> "
 "name and be no greater than 15 characters."
+msgstr ""
+
+msgid "Netcat Active Side"
+msgstr ""
+
+msgid "Netcat Active Side Connect Address"
+msgstr ""
+
+msgid "Netcat Active Side Listen Address"
+msgstr ""
+
+msgid "Netcat Active Side Max Port"
+msgstr ""
+
+msgid "Netcat Active Side Min Port"
+msgstr ""
+
+msgid "Netmask"
 msgstr ""
 
 msgid "Netwait IP list"
@@ -4740,6 +5355,15 @@ msgstr ""
 
 msgid "Network"
 msgstr "Rede"
+
+msgid ""
+"Network Address Translation (NAT). Transforms local network IP addresses "
+"into a single IP address. Set when the jail will share a single connection "
+"to the Internet with other systems on the network."
+msgstr ""
+
+msgid "Network Changes Made Permanent"
+msgstr ""
 
 msgid "Network Interface"
 msgstr "Interface de Rede"
@@ -4751,6 +5375,12 @@ msgid "Network Summary"
 msgstr ""
 
 msgid ""
+"Network addresses that can use this initiator. Enter <i>ALL</i> or list "
+"network addresses with a CIDR mask. Separate multiple addresses with a "
+"space: <i>192.168.2.0/24 192.168.2.1/12</i>."
+msgstr ""
+
+msgid ""
 "Network addresses which can use this initiator. Use <i>ALL</i> or list "
 "network addresses with a <a "
 "href=\"https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing\" "
@@ -4758,10 +5388,27 @@ msgid ""
 "<i>192.168.2.0/24 192.168.2.1/12</i>."
 msgstr ""
 
+msgid "Network changes applied successfully."
+msgstr ""
+
+msgid "Network changes discarded."
+msgstr ""
+
+msgid ""
+"Network changes have been applied. Keep changes permanently? Changes will "
+"be automatically discarded if they are not permanently applied."
+msgstr ""
+
+msgid "Network changes have been made permanent."
+msgstr ""
+
 msgid "Network connectivity will be interrupted. "
 msgstr ""
 
 msgid "Network connectivity will be interrupted. Proceed?"
+msgstr ""
+
+msgid "Network interfaces to include in the bridge."
 msgstr ""
 
 msgid "New Password"
@@ -4792,10 +5439,19 @@ msgstr ""
 msgid "No Communication Warning Time"
 msgstr ""
 
+msgid "No Pool Exist"
+msgstr ""
+
 msgid "No Stat"
 msgstr ""
 
+msgid "No interfaces configured with Virtual IP."
+msgstr ""
+
 msgid "No pools"
+msgstr ""
+
+msgid "No pools are configured."
 msgstr ""
 
 msgid ""
@@ -4819,9 +5475,6 @@ msgid "Note"
 msgstr "Nota"
 
 msgid "Note: Legacy jails created before FreeNAS 11.2 must be managed from the"
-msgstr ""
-
-msgid "Note: Legacy plugins created before FreeNAS 11.2 must be managed from the"
 msgstr ""
 
 msgid "Notes"
@@ -4850,16 +5503,18 @@ msgid ""
 "target=\"_blank\">JAIL(8)</a> man page explains the finer details."
 msgstr ""
 
+msgid "Number of days to renew certificate before expiring"
+msgstr ""
+
 msgid ""
-"Number of child jails allowed to be created by the jail or other jails "
-"under this jail. A limit of <i>0</i> restricts the jail from creating child "
-"jails. Hierarchical Jails in the <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=jail&apropos=0&sektion=0&"
-"manpath=FreeBSD+11.1-RELEASE+and+Ports\" target=\"_blank\">JAIL(8)</a> man "
-"page explains the finer details."
+"Number of points for each hourly, daily, weekly, monthly, or yearly graph. "
+"Set this to no less than the width of the graphs in pixels."
 msgstr ""
 
 msgid "Number of queued SysV messages allowed for the jail."
+msgstr ""
+
+msgid "Number of retries for failed replications"
 msgstr ""
 
 msgid ""
@@ -4873,6 +5528,13 @@ msgid ""
 msgstr ""
 
 msgid "Number of servers"
+msgstr ""
+
+msgid ""
+"Number of simultaneous file transfers. Enter a number based on the "
+"available bandwidth and destination system performance. See <a "
+"href=\"https://rclone.org/docs/#transfers-n\" target=\"_blank\">rclone "
+"--transfers</a>."
 msgstr ""
 
 msgid ""
@@ -4893,14 +5555,17 @@ msgstr ""
 msgid "Numeric value to set the file descriptor table size."
 msgstr ""
 
+msgid "OAuth Client ID"
+msgstr ""
+
+msgid "OAuth Client Secret"
+msgstr ""
+
 msgid "OK"
 msgstr ""
 
 msgid "OS Version"
 msgstr ""
-
-msgid "Obey Pam Restrictions"
-msgstr "Obedecer às Restrições PAM"
 
 msgid ""
 "Off by default. When set, <a "
@@ -4911,25 +5576,22 @@ msgid ""
 "should not be used on untrusted networks."
 msgstr ""
 
-msgid "Official"
-msgstr ""
-
 msgid "Offline"
 msgstr ""
 
 msgid "Ok"
 msgstr "Ok"
 
-msgid ""
-"On the source computer with snapshots to replicate,                 choose "
-"an existing ZFS pool or dataset with an                 active periodic "
-"snapshot task."
+msgid "One or more IP addresses to which to bind the Netdata service."
 msgstr ""
 
 msgid "Online"
 msgstr ""
 
 msgid "Only Allow Guest Access"
+msgstr ""
+
+msgid "Only Replicate Snapshots Matching Schedule"
 msgstr ""
 
 msgid ""
@@ -4940,8 +5602,8 @@ msgstr ""
 msgid ""
 "Only appears if a <i>File</i> or zvol is selected. When the specified "
 "percentage of free space is reached, the system issues an alert. See <a "
-"href=\"%%docurl%%/vaai.html%%webversion%%#vaai\" target=\"_blank\">VAAI</a> "
-"Threshold Warning."
+"href=\"--docurl--/vaai.html#vaai\" target=\"_blank\">VAAI</a> Threshold "
+"Warning."
 msgstr ""
 
 msgid "Only applies to Unix or Mac permission types."
@@ -4967,6 +5629,9 @@ msgstr ""
 msgid ""
 "Only needed when connecting to a Team Drive. The ID of the top level folder "
 "of the Team Drive."
+msgstr ""
+
+msgid "Only override the default if the initiator requires a different block size."
 msgstr ""
 
 msgid ""
@@ -5032,13 +5697,22 @@ msgstr ""
 msgid "Organizational unit of the entity."
 msgstr ""
 
+msgid "Other storage controller cannot be reached."
+msgstr ""
+
+msgid "Other storage controller has no license."
+msgstr ""
+
+msgid "Other storage controller has not finished booting."
+msgstr ""
+
 msgid "Outgoing Mail Server"
 msgstr "Servidor de email de saída"
 
-msgid "Owner of the jail. Can be any string."
+msgid "Overcommit Memory?"
 msgstr ""
 
-msgid "PEM-encoded private key file path"
+msgid "Owner of the jail. Can be any string."
 msgstr ""
 
 msgid "Parent Interface"
@@ -5047,11 +5721,11 @@ msgstr ""
 msgid "Partition"
 msgstr ""
 
+msgid "Passive storage controller."
+msgstr ""
+
 msgid "Passphrase"
 msgstr "Passphrase"
-
-msgid "Passphrase changed for pool "
-msgstr ""
 
 msgid "Passphrase created for pool "
 msgstr ""
@@ -5100,11 +5774,7 @@ msgstr ""
 msgid "Paste the certificate for the CA."
 msgstr ""
 
-msgid ""
-"Paste the host key of the destination NAS                 for the "
-"Replication Task. Use the                 Scan SSH Key button to "
-"automatically retrieve the                 public host key of the remote "
-"system."
+msgid "Paste the contents of your Certificate Signing Request here."
 msgstr ""
 
 msgid ""
@@ -5114,13 +5784,6 @@ msgstr ""
 
 msgid "Path"
 msgstr "Caminho"
-
-msgid ""
-"Path to an unencrypted <a "
-"href=\"https://en.wikipedia.org/wiki/Privacy-Enhanced_Mail\" "
-"target=\"_blank\">PEM-encoded</a> private key file. Example: "
-"<i>/home/$USER/.ssh/id_rsa</i>. Leave blank to use <i>ssh-agent</i>."
-msgstr ""
 
 msgid "Path to the extent"
 msgstr "Caminho para o extent"
@@ -5134,28 +5797,34 @@ msgstr "Segredo do peer (Confirmar)"
 msgid "Peer User"
 msgstr ""
 
+msgid "Pending Network Changes"
+msgstr ""
+
 msgid "Perform Reverse DNS Lookups"
 msgstr ""
 
 msgid "Performs authentication from an LDAP server."
 msgstr ""
 
-msgid "Periodic Notification User"
-msgstr ""
-
 msgid "Periodic Snapshot Tasks"
 msgstr "Tarefas de Snapshots Periódicos"
+
+msgid "Permissions"
+msgstr ""
+
+msgid "Permissions Type"
+msgstr ""
 
 msgid "Permit Sudo"
 msgstr "Permitir Sudo"
 
-msgid "Physical NIC"
+msgid "Phone"
 msgstr ""
 
 msgid "Physical interface of the selected member."
 msgstr ""
 
-msgid "Please configure the Web UI interface ("
+msgid "Please accept terms of service for the given ACME Server."
 msgstr ""
 
 msgid "Please enter the correct password."
@@ -5174,10 +5843,18 @@ msgid "Please enter your username again"
 msgstr "Por favor insira o seu username novamente"
 
 msgid ""
-"Please read about <a "
-"href=\"%%docurl%%/storage.html%%webversion%%#deduplication\" "
+"Please provide a line- or space-separated list of destinations where the "
+"collected metrics are to be sent. Use the format HOST:PORT (port is "
+"optional). Netdata uses the first working destination."
+msgstr ""
+
+msgid ""
+"Please read about <a href=\"--docurl--/storage.html#deduplication\" "
 "target=\"_blank\">deduplication</a> before considering changing this "
 "setting."
+msgstr ""
+
+msgid "Please specify URI of ACME Server Directory."
 msgstr ""
 
 msgid "Please wait"
@@ -5231,17 +5908,29 @@ msgstr "Porta"
 msgid "Port or Hostname"
 msgstr ""
 
+msgid "Portal"
+msgstr ""
+
 msgid "Portal Group ID"
 msgstr ""
 
 msgid "Post-script"
 msgstr ""
 
+msgid "Power"
+msgstr ""
+
 msgid "Power Mode"
 msgstr "Modo de Energia"
 
+msgid "Power Off"
+msgstr ""
+
 msgid "Power Off UPS"
 msgstr "Desligar UPS"
+
+msgid "Power On"
+msgstr ""
 
 msgid ""
 "Power of 2 in seconds; cannot be higher than 17 or   lower than <i>Min. "
@@ -5278,11 +5967,19 @@ msgstr "Preservar extended attributes"
 msgid "Preserve permissions"
 msgstr "Preservar permissões"
 
+msgid ""
+"Prevent source system snapshots that have failed replication from being "
+"automatically removed by the snapshot retention policy."
+msgstr ""
+
 msgid "Preview JSON Service Account Key"
 msgstr ""
 
 msgid "Previous"
 msgstr "Anterior"
+
+msgid "Primary Contact"
+msgstr ""
 
 msgid "Primary DNS server."
 msgstr ""
@@ -5304,6 +6001,17 @@ msgstr ""
 
 msgid "Private Key"
 msgstr "Chave Privada"
+
+msgid "Private Key ID"
+msgstr ""
+
+msgid "Proactive Support"
+msgstr ""
+
+msgid ""
+"Proactive Support can notify iXsystems by email when TrueNAS hardware "
+"conditions require attention."
+msgstr ""
 
 msgid "Proceed"
 msgstr ""
@@ -5334,6 +6042,9 @@ msgid ""
 "NAT device."
 msgstr ""
 
+msgid "Public Key"
+msgstr ""
+
 msgid "Quick"
 msgstr ""
 
@@ -5355,6 +6066,12 @@ msgid "Quota warning alert at, %"
 msgstr ""
 
 msgid "RCTL Limits"
+msgstr ""
+
+msgid "REGISTER"
+msgstr ""
+
+msgid "RESTART"
 msgstr ""
 
 msgid "RRDTool load5"
@@ -5411,6 +6128,12 @@ msgstr "Realm"
 msgid "Reboot After Update"
 msgstr ""
 
+msgid "Reboot Standby Storage Controller"
+msgstr ""
+
+msgid "Reboot current storage controller?"
+msgstr ""
+
 msgid "Rebuild Directory Service Cache"
 msgstr ""
 
@@ -5444,16 +6167,10 @@ msgstr ""
 msgid "Recursive"
 msgstr "Recursivo"
 
-msgid "Recursively Replicate Child Dataset Snapshots"
-msgstr "Replicar Recursivamente Snapshots de Datasets Filhos"
-
 msgid "Redirecting to download. Make sure pop-ups are enabled in the browser."
 msgstr ""
 "A redireccionar para o download. Certifique-se que os pop-ups são "
 "permitidos pelo browser."
-
-msgid "Register"
-msgstr ""
 
 msgid "Release"
 msgstr ""
@@ -5461,29 +6178,17 @@ msgstr ""
 msgid "Release Notes"
 msgstr "Release Notes"
 
-msgid "Remote Auth Token"
-msgstr ""
-
 msgid "Remote Encryption"
 msgstr ""
 
 msgid "Remote Graphite Server Hostname"
 msgstr ""
 
-msgid "Remote HTTP/HTTPS Port"
-msgstr "Porta HTTP/HTTPS Remota"
-
-msgid "Remote HTTPS"
-msgstr "HTTPS Remoto"
-
 msgid "Remote Host"
 msgstr "Host Remoto"
 
-msgid "Remote Hostkey"
-msgstr "Hostkey Remoto"
-
-msgid "Remote Hostname"
-msgstr "Hostname Remoto"
+msgid "Remote Host Key"
+msgstr ""
 
 msgid "Remote Module Name"
 msgstr ""
@@ -5500,16 +6205,10 @@ msgstr "Porta Remota"
 msgid "Remote SSH Port"
 msgstr "Porta SSH remota"
 
-msgid "Remote ZFS Pool/Dataset"
-msgstr ""
-
 msgid "Remove"
 msgstr ""
 
-msgid "Remove Additional IPv4 Alias"
-msgstr ""
-
-msgid "Remove Additional IPv6 Alias"
+msgid "Remove Additional Alias"
 msgstr ""
 
 msgid "Remove Additional Path"
@@ -5518,17 +6217,44 @@ msgstr "Remover Caminho Adicional"
 msgid "Remove Keep Flag"
 msgstr ""
 
+msgid "Remove passphrase"
+msgstr ""
+
 msgid "Rename the existing boot environment."
 msgstr "Alterar o nome a um ambiente de arranque existente."
+
+msgid "Renew certificate day"
+msgstr ""
 
 msgid "Replacing disk..."
 msgstr ""
 
-msgid "Replication Stream Compression"
-msgstr "Compressão do Stream de Replicação"
+msgid "Replicate <i>"
+msgstr ""
+
+msgid "Replicate all child dataset snapshots."
+msgstr ""
+
+msgid "Replicate from scratch if incremental is not possible"
+msgstr ""
+
+msgid "Replication"
+msgstr ""
+
+msgid "Replication <i>"
+msgstr ""
+
+msgid "Replication Performance"
+msgstr ""
 
 msgid "Replication Tasks"
 msgstr "Tarefas de Replicação"
+
+msgid "Replication task name."
+msgstr ""
+
+msgid "Report CPU usage in percent"
+msgstr ""
 
 msgid "Report CPU usage in percentage"
 msgstr "Reportar uso do CPU em percentagem"
@@ -5546,9 +6272,6 @@ msgstr ""
 msgid "Reporting"
 msgstr "Relatórios"
 
-msgid "Reporting Database"
-msgstr ""
-
 msgid "Reports"
 msgstr "Relatórios"
 
@@ -5559,7 +6282,7 @@ msgid "Require Kerberos for NFSv4"
 msgstr ""
 
 msgid ""
-"Required for <a href=\"%%docurl%%/services.html%%webversion%%#lldp\" "
+"Required for <a href=\"--docurl--/services.html#lldp\" "
 "target=\"_blank\">LLDP</a> location support. Enter a two-letter ISO 3166 "
 "country code."
 msgstr ""
@@ -5567,9 +6290,8 @@ msgstr ""
 msgid ""
 "Required for <i>HTTPS</i>. Browse to the location of the certificate to use "
 "for encrypted connections. If there are no certificates, create a <a "
-"href=\"%%docurl%%/system.html%%webversion%%#cas\" "
-"target=\"_blank\">Certificate Authority (CA)</a> then the <a "
-"href=\"%%docurl%%/system.html%%webversion%%#certificates\" "
+"href=\"--docurl--/system.html#cas\" target=\"_blank\">Certificate Authority "
+"(CA)</a> then the <a href=\"--docurl--/system.html#certificates\" "
 "target=\"_blank\">Certificate</a>."
 msgstr ""
 
@@ -5605,8 +6327,19 @@ msgstr "Espaço reservado para este dataset e todos os filhos"
 msgid "Reset Config"
 msgstr ""
 
+msgid "Reset Layout"
+msgstr ""
+
 msgid "Reset font size to default value"
 msgstr "Reset da fonte para o tamanho padrão"
+
+msgid ""
+"Reset system configuration to default settings. The system  will restart to "
+"complete this operation. You will be required to reset your password."
+msgstr ""
+
+msgid "Resetting system configuration to default settings. The system will restart."
+msgstr ""
 
 msgid ""
 "Resident set size in bytes. See <a "
@@ -5641,6 +6374,9 @@ msgid ""
 "target=_blank>smb.conf(5)</a>."
 msgstr ""
 
+msgid "Retype the <i>Secret</i>."
+msgstr ""
+
 msgid ""
 "Reveal <i>tun</i> devices for the jail with an individual devfs ruleset. "
 "Allow the creation of <i>tun</i> devices in the jail."
@@ -5655,14 +6391,23 @@ msgstr ""
 msgid "Root password"
 msgstr ""
 
+msgid "Rotation Rate"
+msgstr ""
+
 msgid "Rsync Tasks"
 msgstr "Tarefas Rsync"
 
 msgid "Rsync mode"
 msgstr "Modo Rsync"
 
+msgid "Rsync task started."
+msgstr ""
+
 msgid "Run As User"
 msgstr "Correr Como Utilizador"
+
+msgid "Run Automatically"
+msgstr ""
 
 msgid "Run Now"
 msgstr ""
@@ -5727,7 +6472,19 @@ msgstr ""
 msgid "SNMP v3 Support"
 msgstr "Suporte para SNMP v3"
 
+msgid "SSH Connection"
+msgstr ""
+
+msgid "SSH Connections"
+msgstr ""
+
 msgid "SSH Host to connect to."
+msgstr ""
+
+msgid "SSH Keypair/Connection"
+msgstr ""
+
+msgid "SSH Keypairs"
 msgstr ""
 
 msgid "SSH Public Key"
@@ -5742,6 +6499,12 @@ msgstr ""
 msgid "SSL"
 msgstr ""
 
+msgid "START"
+msgstr ""
+
+msgid "STOP"
+msgstr ""
+
 msgid "SUDO Suffix"
 msgstr ""
 
@@ -5754,25 +6517,34 @@ msgstr "Guardar"
 msgid "Save Config"
 msgstr ""
 
-msgid "Save Network Interface Changes"
+msgid "Save License"
 msgstr ""
 
-msgid "Save VLAN Interface Changes"
+msgid "Save Network Interface Changes"
 msgstr ""
 
 msgid "Save configuration settings from this machine before updating?"
 msgstr ""
 
-msgid "Save notes about the jail."
+msgid "Saving ACLs"
+msgstr ""
+
+msgid "Saving ACLs..."
 msgstr ""
 
 msgid "Saving Debug"
+msgstr ""
+
+msgid "Schedule"
 msgstr ""
 
 msgid "Schedule a Cron Job"
 msgstr ""
 
 msgid "Schedule the Cloud Sync Task"
+msgstr ""
+
+msgid "Schedule the Periodic Snapshot Task"
 msgstr ""
 
 msgid "Schedule the Rsync Task"
@@ -5811,6 +6583,9 @@ msgstr "Tarefas de Scrub"
 msgid "Scrub complete on pool <i>"
 msgstr ""
 
+msgid "Secondary Contact (optional)"
+msgstr ""
+
 msgid "Secondary DNS server."
 msgstr "Servidor DNS secundário."
 
@@ -5838,6 +6613,12 @@ msgid ""
 "curve-cryptography-not-widely-used-compared-to-rsa\" target=\"blank\"> Why "
 "is elliptic curve cryptography not widely used, compared to RSA?</a> for "
 "more information about key types."
+msgstr ""
+
+msgid ""
+"See <i>Public key authentication</i> in <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=ssh\" "
+"target=\"_blank\">SSH/Authentication</a>."
 msgstr ""
 
 msgid ""
@@ -5879,6 +6660,9 @@ msgid ""
 "BIOS booting."
 msgstr ""
 
+msgid "Select Authenticator"
+msgstr ""
+
 msgid "Select Configuration File"
 msgstr ""
 
@@ -5897,8 +6681,11 @@ msgid "Select VM wizard type"
 msgstr ""
 
 msgid ""
-"Select a compression algorithm to reduce the size                 of the "
-"data being replicated."
+"Select a compression algorithm to reduce the size of the data being "
+"replicated."
+msgstr ""
+
+msgid "Select a dataset for the new zvol."
 msgstr ""
 
 msgid "Select a key before decrypting the disks."
@@ -5924,7 +6711,7 @@ msgstr ""
 
 msgid ""
 "Select a previously imported or created <a "
-"href=\"%%docurl%%/system.html%%webversion%%#cas\" target=\"_blank\">CA</a>."
+"href=\"--docurl--/system.html#cas\" target=\"_blank\">CA</a>."
 msgstr ""
 
 msgid ""
@@ -5937,6 +6724,9 @@ msgid ""
 "scheduler."
 msgstr ""
 
+msgid "Select a schedule preset or choose Custom to open the advanced scheduler."
+msgstr ""
+
 msgid "Select a schema when Samba Schema is set."
 msgstr ""
 
@@ -5946,6 +6736,9 @@ msgstr ""
 msgid ""
 "Select a sector size in bytes. <i>Default</i> leaves the leaves the sector "
 "size unset."
+msgstr ""
+
+msgid "Select a stream mode if system is to be used for streaming."
 msgstr ""
 
 msgid "Select a time zone."
@@ -5962,8 +6755,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Select a user to receive security output emails. This output runs nightly "
-"but only sends an email when the system reboots or encounters an error."
+"Select a user created in Authorized Access if the Discovery Auth Method is "
+"set to CHAP or Mutual CHAP."
 msgstr ""
 
 msgid "Select an IP address to use for VNC sessions."
@@ -5983,7 +6776,17 @@ msgstr ""
 msgid "Select an existing extent."
 msgstr ""
 
+msgid ""
+"Select an existing portal or choose <i>Create New</i> to configure a new "
+"portal."
+msgstr ""
+
 msgid "Select an existing target."
+msgstr ""
+
+msgid ""
+"Select an existing user configuration or <i>Create New</i> to view options "
+"for a new user configuration."
 msgstr ""
 
 msgid "Select desired disk type."
@@ -5999,6 +6802,12 @@ msgid ""
 "(default, Unix-style permissions), <b>None</b>, or <b>Mode</b> (ACLs)."
 msgstr ""
 
+msgid "Select one or more disks to decrypt."
+msgstr ""
+
+msgid "Select one or more screenshots that illustrate the problem."
+msgstr ""
+
 msgid "Select pool to import"
 msgstr ""
 
@@ -6006,8 +6815,7 @@ msgid "Select pool, dataset, or directory to share."
 msgstr ""
 
 msgid ""
-"Select the <a "
-"href=\"%%docurl%%/network.html%%webversion%%#link-aggregations\" "
+"Select the <a href=\"--docurl--/network.html#link-aggregations\" "
 "target=\"_blank\">Protocol Type</a>.<br> <i>LACP</i> is the recommended "
 "protocol if the network switch is capable of active LACP.<br> "
 "<i>Failover</i> is the default protocol choice and should only be used if "
@@ -6015,7 +6823,16 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Select the <a href=\"%%docurl%%/system.html%%webversion%%#certificates\" "
+"Select the <a "
+"href=\"--docurl--/network.html--webversion--#link-aggregations\" "
+"target=\"_blank\">Protocol Type</a>.<br> <i>LACP</i> is the recommended "
+"protocol if the network switch is capable of active LACP.<br> "
+"<i>Failover</i> is the default protocol choice and should only be used if "
+"the network switch does not support active LACP."
+msgstr ""
+
+msgid ""
+"Select the <a href=\"--docurl--/system.html#certificates\" "
 "target=\"_blank\">SSL certificate</a> to use for encrypted connections."
 msgstr ""
 
@@ -6040,8 +6857,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Select the FreeBSD release to use as the jail operating system. "
-"<br>Releases already downloaded display <b>(fetched)</b>."
+"Select the IP address associated with an interface or the wildcard address "
+"of 0.0.0.0 (any interface)."
 msgstr ""
 
 msgid ""
@@ -6063,6 +6880,12 @@ msgid ""
 "available until the system is rebooted."
 msgstr ""
 
+msgid ""
+"Select the VLAN Parent Interface. Usually an Ethernet card connected to a "
+"switch port configured for the VLAN. New link aggregations are not "
+"available until the system is restarted."
+msgstr ""
+
 msgid "Select the Virtual Machine (VM) Wizard type."
 msgstr ""
 
@@ -6071,13 +6894,18 @@ msgid ""
 "permission to the <b>Directory</b>."
 msgstr ""
 
+msgid "Select the appropriate environment."
+msgstr ""
+
+msgid "Select the appropriate level of criticality."
+msgstr ""
+
 msgid ""
 "Select the certificate of the Active Directory server if SSL connections "
 "are used. Add a certificate here by creating a <a "
-"href=\"%%docurl%%/system.html%%webversion%%#cas\" target=\"_blank\">CA</a>, "
-"then creating a certificate on the Active Directory server. Import the "
-"certificate on this system with the <a "
-"href=\"%%docurl%%/system.html%%webversion%%#certificates\" "
+"href=\"--docurl--/system.html#cas\" target=\"_blank\">CA</a>, then creating "
+"a certificate on the Active Directory server. Import the certificate on "
+"this system with the <a href=\"--docurl--/system.html#certificates\" "
 "target=\"_blank\">Certificates</a> menu."
 msgstr ""
 
@@ -6131,7 +6959,7 @@ msgstr ""
 
 msgid ""
 "Select the keytab created in <a "
-"href=\"%%docurl%%/directoryservices.html%%webversion%%#kerberos-keytabs\" "
+"href=\"--docurl--/directoryservices.html#kerberos-keytabs\" "
 "target=\"_blank\">Kerberos Keytabs</a>."
 msgstr ""
 
@@ -6142,8 +6970,7 @@ msgstr ""
 
 msgid ""
 "Select the location of the principal in the keytab created as described in "
-"<a "
-"href=\"%%docurl%%/directoryservices.html%%webversion%%#kerberos-keytabs\" "
+"<a href=\"--docurl--/directoryservices.html#kerberos-keytabs\" "
 "target=\"_blank\">Kerberos Keytabs</a>."
 msgstr ""
 
@@ -6164,17 +6991,20 @@ msgstr ""
 
 msgid ""
 "Select the realm created in <a "
-"href=\"%%docurl%%/directoryservices.html%%webversion%%#kerberos-realms\" "
+"href=\"--docurl--/directoryservices.html#kerberos-realms\" "
 "target=\"_blank\">Kerberos Realms</a>."
 msgstr ""
 
 msgid ""
 "Select the realm created using the instructions in <a "
-"href=\"%%docurl%%/directoryservices.html%%webversion%%#kerberos-realms\" "
+"href=\"--docurl--/directoryservices.html#kerberos-realms\" "
 "target=\"_blank\">Kerberos Realms</a>."
 msgstr ""
 
-msgid "Select the script from an existing pool."
+msgid ""
+"Select the script.     The script will be run using     <a "
+"href=https://www.freebsd.org/cgi/man.cgi?query=sh     "
+"target=\"_blank\">sh(1)</a>."
 msgstr ""
 
 msgid "Select the serial port address in hex."
@@ -6191,7 +7021,9 @@ msgstr ""
 msgid "Select the type that matches the type of client accessing the pool/dataset."
 msgstr ""
 
-msgid "Select the user account to use for replication."
+msgid ""
+"Select the unformatted disk, controller, zvol, zvol snapshot, or HAST "
+"device. Select <i>Create New</i> for options to create a new zvol."
 msgstr ""
 
 msgid ""
@@ -6216,6 +7048,9 @@ msgid ""
 "user and group."
 msgstr ""
 
+msgid "Select to remove the passphrase from this pool."
+msgstr ""
+
 msgid ""
 "Select when the command or script runs:<br>     <i>Pre Init</i> is early in "
 "the boot process, after mounting     filesystems and starting "
@@ -6227,19 +7062,22 @@ msgstr ""
 msgid "Select which existing initiator group has access to the target."
 msgstr ""
 
-msgid "Select zvol"
-msgstr ""
-
 msgid "Selected jails updated."
 msgstr ""
 
 msgid "Selected plugins updated."
 msgstr ""
 
+msgid "Send Deduplicated Stream"
+msgstr ""
+
 msgid "Send Email Status Updates"
 msgstr ""
 
 msgid "Send Test Alert"
+msgstr ""
+
+msgid "Send Test Mail"
 msgstr ""
 
 msgid "Serial"
@@ -6255,12 +7093,6 @@ msgid "Serial Speed"
 msgstr "Velocidade Porta Série"
 
 msgid "Serve UDP NFS clients"
-msgstr ""
-
-msgid "Server Maximum Protocol"
-msgstr ""
-
-msgid "Server Minimum Protocol"
 msgstr ""
 
 msgid "Server Role"
@@ -6290,13 +7122,13 @@ msgstr ""
 msgid ""
 "Set by default if the disk supports S.M.A.R.T.                   Unset to "
 "disable any configured <a                   "
-"href=\"%%docurl%%/tasks.html%%webversion%%#s-m-a-r-t-tests\"                "
-"   target=\"_blank\">S.M.A.R.T. tests</a>."
+"href=\"--docurl--/tasks.html#s-m-a-r-t-tests\"                   "
+"target=\"_blank\">S.M.A.R.T. tests</a>."
 msgstr ""
 
 msgid ""
 "Set by default if the disk supports S.M.A.R.T. Unset to disable any "
-"configured <a href=\"%%docurl%%/tasks.html%%webversion%%#s-m-a-r-t-tests\" "
+"configured <a href=\"--docurl--/tasks.html#s-m-a-r-t-tests\" "
 "target=\"_blank\">S.M.A.R.T. tests</a>."
 msgstr ""
 
@@ -6363,9 +7195,10 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Set resource limitations of the jail using the <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=setrlimit&manpath=FreeBSD+1"
-"1.1-RELEASE+and+Ports\" target=\"_blank\">getrlimit(2)</a> utility."
+"Set the default VNET interface. Only takes effect when <i>VNET</i> is set. "
+"Choose a specific interface or set to <i>auto</i> to use the interface that "
+"has the default route. Choose <i>none</i> to not set a default VNET "
+"interface."
 msgstr ""
 
 msgid ""
@@ -6405,18 +7238,16 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Set this boolean option to <i>True</i> to look for the "
-"<b>exec.jail_user</b> in the system <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=passwd&sektion=5&manpath="
-"FreeBSD+11.1-RELEASE+and+Ports\" target=\"_blank\">passwd(5)</a> file "
-"<i>instead</i> of the jail passwd."
+"Set to <i>1</i> to look for the <b>exec.jail_user</b> in the system <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=passwd\" "
+"target=\"_blank\">passwd(5)</a> file instead of the jail <i>passwd</i> file."
 msgstr ""
 
 msgid ""
-"Set this to take separate snapshots of the                pool/dataset and "
-"each of its child datasets. Leave                unset to take a single "
-"snapshot of the specified                pool/dataset with <b>no</b> child "
-"datasets."
+"Set to add network interface <i>lo0</i> to the jail and assign it the first "
+"available localhost address, starting with <i>127.0.0.2</i>. <i>VNET</i> "
+"must be unset. Jails using <i>VNET</i> configure a localhost as part of "
+"their virtualized network stack."
 msgstr ""
 
 msgid ""
@@ -6430,27 +7261,21 @@ msgid "Set to allow FTP clients to resume interrupted transfers."
 msgstr ""
 
 msgid ""
-"Set to allow a user account other than <i>root</i>                 to be "
-"used for replication."
-msgstr ""
-
-msgid ""
-"Set to allow access to other protocol stacks beyond IPv4, IPv6, local "
-"(UNIX), and route. <br><b>Warning:</b> jail functionality does not exist "
-"for all protocal stacks."
-msgstr ""
-
-msgid ""
 "Set to allow access to other protocol stacks beyond IPv4, IPv6, local "
 "(UNIX), and route. <br><b>Warning:</b> jail functionality does not exist "
 "for all protocol stacks."
 msgstr ""
 
 msgid ""
+"Set to allow access to other protocol stacks beyond IPv4, IPv6, local "
+"(UNIX), and route.<br> <b>Warning:</b> jail functionality does not exist "
+"for all protocol stacks."
+msgstr ""
+
+msgid ""
 "Set to allow access to this share without a password. See the <a "
-"href=\"%%docurl%%/services.html%%webversion%%#smb\" "
-"target=\"_blank\">SMB</a> service documentation for more information about "
-"guest user permissions."
+"href=\"--docurl--/services.html#smb\" target=\"_blank\">SMB</a> service "
+"documentation for more information about guest user permissions."
 msgstr ""
 
 msgid ""
@@ -6487,20 +7312,17 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Set to allow privileged users inside the jail to mount and unmount the ZFS "
-"file system. This permission is only effective when <b>allow_mount</b> is "
-"set and <b>enforce_statfs</b> is set to a value lower than <i>2</i>. The <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs&sektion=8&apropos=0&"
-"manpath=FreeBSD+11.1-RELEASE+and+Ports\" target=\"_blank\">ZFS(8)</a> man "
-"page has information on how to configure the ZFS filesystem to operate from "
-"within a jail."
-msgstr ""
-
-msgid ""
 "Set to allow privileged users inside the jail to mount and unmount the "
 "devfs file system. This permission is only effective when "
 "<b>allow_mount</b> is set and <b>enforce_statfs</b> is set to a value lower "
 "than <i>2</i>."
+msgstr ""
+
+msgid ""
+"Set to allow privileged users inside the jail to mount and unmount the "
+"fusefs file system. The jail must have FreeBSD 12.0 or newer installed. "
+"This permission is only effective when <b>allow_mount</b> is set and and "
+"<b>enforce_statfs</b> is set to a value lower than 2."
 msgstr ""
 
 msgid ""
@@ -6532,16 +7354,6 @@ msgid ""
 "target=\"_blank\">traceroute(8)</a> require raw sockets. When set, source "
 "IP addresses are enforced to comply with the IP addresses bound to the "
 "jail, ignoring the IP_HDRINCL flag on the socket."
-msgstr ""
-
-msgid ""
-"Set to allow raw sockets. Utilities like <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=ping&manpath=FreeBSD+11.1-"
-"RELEASE+and+Ports\" target=\"_blank\">ping(8)</a> and <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=traceroute&manpath=FreeBSD+"
-"11.1-RELEASE+and+Ports\" target=\"_blank\">traceroute(8)</a> require raw "
-"sockets. When set, source IP addresses are enforced to comply with the IP "
-"addresses bound to the jail, ignoring the IP_HDRINCL flag on the socket."
 msgstr ""
 
 msgid "Set to allow the client to mount any subdirectory within the <b>Path</b>."
@@ -6576,12 +7388,6 @@ msgid ""
 "target=\"_blank\">forwarding feature</a>."
 msgstr ""
 
-msgid ""
-"Set to allow using hostnames rather than IP addresses in the <i>Hosts "
-"Allow</b> or </i>Hosts Deny</b> fields of a SMB share. Leave this option "
-"unset when IP addresses are used to avoid the delay of a host lookup."
-msgstr ""
-
 msgid "Set to always show advanced fields, when available."
 msgstr ""
 
@@ -6606,6 +7412,11 @@ msgstr ""
 msgid ""
 "Set to autoconfigure jail networking with the Dynamic Host Configuration "
 "Protocol. <b>VNET</b> and <b>Berkeley Packet Filter<b> are also required."
+msgstr ""
+
+msgid ""
+"Set to autoconfigure jail networking with the Dynamic Host Configuration "
+"Protocol. <b>VNET</b> and <b>Berkeley Packet Filter<b> must also be enabled."
 msgstr ""
 
 msgid ""
@@ -6637,8 +7448,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Set to delay the start of network-reliant services until ICMP packets to a "
-"destination in the <i>netwait IP list</i> are flowing."
+"Set to delay the start of network services until pings are returned from "
+"the IP addresses in the <i>netwait IP list</i>."
 msgstr ""
 
 msgid "Set to delete this alias."
@@ -6653,6 +7464,12 @@ msgstr ""
 msgid ""
 "Set to disable caching AD users and groups. This can help when unable to "
 "bind to a domain with a large number of users or groups."
+msgstr ""
+
+msgid ""
+"Set to disable caching LDAP users and groups in large LDAP environments.  "
+"When caching is disabled, LDAP users and groups do not appear in dropdown  "
+"menus, but are still accepted when manually entered."
 msgstr ""
 
 msgid "Set to disable logging in to this user account."
@@ -6698,8 +7515,7 @@ msgstr ""
 
 msgid ""
 "Set to enable encrypted connections. Requires a certificate to be created "
-"or imported using <a "
-"href=\"%%docurl%%/system.html%%webversion%%#certificates\" "
+"or imported using <a href=\"--docurl--/system.html#certificates\" "
 "target=\"_blank\">Certificates</a>"
 msgstr ""
 
@@ -6796,23 +7612,15 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Set to mount a <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=linprocfs&manpath=FreeBSD+1"
-"1.1-RELEASE+and+Ports\" target=\"_blank\">linprocfs(5)</a> filesystem in "
-"the jail."
+"Set to mount a <a href=\"https://www.freebsd.org/cgi/man.cgi?query=procfs\" "
+"target=\"_blank\">procfs(5)</a> filesystem in the jail <i>/dev/proc</i> "
+"directory."
 msgstr ""
 
 msgid ""
 "Set to mount a <a href=\"https://www.freebsd.org/cgi/man.cgi?query=procfs\" "
 "target=\"_blank\">procfs(5)</a> filesystems in the jail <i>/dev/proc</i> "
 "directory."
-msgstr ""
-
-msgid ""
-"Set to mount a <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=procfs&manpath=FreeBSD+11.1"
-"-RELEASE+and+Ports\" target=\"_blank\">procfs(5)</a> filesystems in the "
-"jail <i>/dev/proc</i> directory."
 msgstr ""
 
 msgid ""
@@ -6881,15 +7689,7 @@ msgstr ""
 msgid "Set to start the VM automatically on boot."
 msgstr ""
 
-msgid ""
-"Set to start the jail with the Dynamic Host Configuration Protocol enabled. "
-"<b>VNET</b> and <b>Berkeley Packet Filter</b> must also be enabled."
-msgstr ""
-
 msgid "Set to start this VM when the system boots."
-msgstr ""
-
-msgid "Set to store the system log on the system dataset."
 msgstr ""
 
 msgid ""
@@ -6900,12 +7700,13 @@ msgstr ""
 msgid "Set to switch from NFSv3 to NFSv4."
 msgstr ""
 
+msgid "Set to take a snapshot of the dataset before a <i>PUSH</i> or <i>PULL</i>."
+msgstr ""
+
 msgid ""
-"Set to the HTTPS port (usually 443) when <b>WebGUI                 HTTP -> "
-"HTTPS Redirect</b> is enabled in <a                 href=\"system/general\" "
-"                target=\"_blank\">System/General</a> on the                 "
-"destination system. <b>Remote HTTPS</b> must also                 be "
-"enabled when creating the replication on the                 source system."
+"Set to take separate snapshots of the dataset and each of its child "
+"datasets. Leave unset to take a single snapshot only of the specified "
+"dataset <i>without</i> child datasets."
 msgstr ""
 
 msgid ""
@@ -6934,6 +7735,13 @@ msgid ""
 "fully virtualized per-jail network stack will be installed."
 msgstr ""
 
+msgid ""
+"Set to use DNS records during jail IP configuration to search the resolver "
+"and apply the first open IPv4 and IPv6 addresses. See <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=jail\" "
+"target=\"_blank\">jail(8)</a>."
+msgstr ""
+
 msgid "Set to use HTTPS for the connection to the <b>CheckIP Server</b>."
 msgstr ""
 
@@ -6955,10 +7763,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Set to use the Berkeley Packet Filter (<a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=bpf&manpath=FreeBSD+11.1-"
-"RELEASE+and+Ports\" target=\"_blank\">BPF(4)</a>) to data link layers in a "
-"protocol independent fashion."
+"Set to use the replication task schedule as part of the Snapshot "
+"Replication Schedule."
 msgstr ""
 
 msgid "Set up Users and Groups."
@@ -7036,10 +7842,16 @@ msgid ""
 "on the client."
 msgstr ""
 
+msgid ""
+"Setting this will strip ACLs from the current dataset. ACLs will also be "
+"stripped recursively to directories and child datasets if paired with  hose "
+"options"
+msgstr ""
+
 msgid "Settings saved."
 msgstr ""
 
-msgid "Setup Mode"
+msgid "Setup Method"
 msgstr ""
 
 msgid "Setup Users and Groups."
@@ -7083,9 +7895,6 @@ msgid ""
 msgstr ""
 
 msgid "Show Hidden Files"
-msgstr ""
-
-msgid "Show Settings"
 msgstr ""
 
 msgid "Show Text Console without Password Prompt"
@@ -7148,6 +7957,9 @@ msgstr ""
 msgid "Site Name"
 msgstr ""
 
+msgid "Size"
+msgstr ""
+
 msgid "Size (GiB)"
 msgstr ""
 
@@ -7162,8 +7974,34 @@ msgstr ""
 msgid "Snapshot Lifetime"
 msgstr "Tempo de vida do snapshot"
 
+msgid "Snapshot Replication Schedule"
+msgstr ""
+
+msgid "Snapshot Retention Policy"
+msgstr ""
+
 msgid "Snapshot directory"
 msgstr "Directório de snapshots"
+
+msgid ""
+"Snapshot name format string. The default is <i>snap-%Y-%m-%d-%H-%M</i>. "
+"Must include the strings <i>%Y</i>, <i>%m</i>, <i>%d</i>, <i>%H</i>, and "
+"<i>%M</i>, which are replaced with the four-digit year, month, day of "
+"month, hour, and minute as defined in <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=strftime\" "
+"target=\"_blank\">strftime(3)</a>. A string showing the snapshot lifetime "
+"is appended to the name. For example, snapshots of <i>pool1</i> with a "
+"Naming Schema of <i>customsnap-%Y%m%d.%H%M</i> and lifetime of two weeks "
+"have names like <i>pool1@customsnap-20190315.0527-2w</i>."
+msgstr ""
+
+msgid ""
+"Snapshot source for this replication task. Choose from configured <a "
+"href=\"--docurl--/tasks.html#periodic-snapshot-tasks\" "
+"target=\"_blank\">Periodic Snapshot Tasks</a>. The replication task must "
+"have the same Recursive and Exclude Child Datasets as the chosen periodic "
+"snapshot task."
+msgstr ""
 
 msgid "Snapshot successfully taken."
 msgstr ""
@@ -7173,6 +8011,9 @@ msgstr "Snapshots"
 
 msgid "Source"
 msgstr "Fonte"
+
+msgid "Source Datasets"
+msgstr ""
 
 msgid ""
 "Space-delimited list of allowed IP addresses <i>(192.168.1.10)</i> or "
@@ -7191,6 +8032,9 @@ msgid "Spare VDev"
 msgstr ""
 
 msgid "Sparse"
+msgstr ""
+
+msgid "Specify Authenticator to be used"
 msgstr ""
 
 msgid ""
@@ -7218,7 +8062,7 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Specify the IP addresses to listen for FTP connections. If none are "
+"Specify the IP addresses to listen for AFP connections. If none are "
 "specified, advertise the first IP address of the system, but listen for any "
 "incoming request."
 msgstr ""
@@ -7229,6 +8073,9 @@ msgid ""
 msgstr ""
 
 msgid "Specify the physical location of the host."
+msgstr ""
+
+msgid "Specify the size of the new zvol."
 msgstr ""
 
 msgid "Speeds up the initial synchronization   (seconds instead of minutes)."
@@ -7249,6 +8096,11 @@ msgstr ""
 msgid "Start scrub on pool <i>"
 msgstr ""
 
+msgid ""
+"Start this replication task immediately after the linked periodic snapshot "
+"task completes."
+msgstr ""
+
 msgid "Starting job..."
 msgstr ""
 
@@ -7267,10 +8119,13 @@ msgstr ""
 msgid "Stop"
 msgstr ""
 
+msgid "Stop "
+msgstr ""
+
 msgid "Stop Scrub"
 msgstr ""
 
-msgid "Stop this service?"
+msgid "Stop this cloud sync?"
 msgstr ""
 
 msgid "Stopped the scrub on pool <i>"
@@ -7285,12 +8140,32 @@ msgstr ""
 msgid "Storage & Groups"
 msgstr ""
 
+msgid "Storage Class"
+msgstr ""
+
 msgid ""
-"Store reporting information on the system dataset. When unset, reporting "
-"information is stored to a RAM disk to avoid filling /var."
+"Store system logs on the system dataset. Unset to store system logs in "
+"<i>/var/</i> on the operating system device."
+msgstr ""
+
+msgid "Stream Compression"
+msgstr ""
+
+msgid "Stream Mode"
+msgstr ""
+
+msgid "Streaming Metrics"
+msgstr ""
+
+msgid "Strip ACLs"
 msgstr ""
 
 msgid "Stripe"
+msgstr ""
+
+msgid ""
+"Stripping ACLs will reset the permissions of this dataset. This may make "
+"data inaccessible."
 msgstr ""
 
 msgid "Subject"
@@ -7370,6 +8245,18 @@ msgstr ""
 msgid "Sync"
 msgstr ""
 
+msgid "Sync from Peer"
+msgstr ""
+
+msgid "Sync from Peer: Success!"
+msgstr ""
+
+msgid "Sync to Peer"
+msgstr ""
+
+msgid "Sync to Peer: Success!"
+msgstr ""
+
 msgid "Syslog"
 msgstr ""
 
@@ -7397,6 +8284,9 @@ msgstr ""
 msgid "System Processes"
 msgstr "Processos do Sistema"
 
+msgid "System clock"
+msgstr ""
+
 msgid "System domain name, like <i>example.com</i>"
 msgstr ""
 
@@ -7406,16 +8296,28 @@ msgstr ""
 msgid "System hostname."
 msgstr ""
 
+msgid "System is failing over..."
+msgstr ""
+
 msgid "System is restarting..."
 msgstr ""
 
 msgid "System is shutting down..."
 msgstr "O sistema está a encerrar..."
 
+msgid "System that will open ports for the direct connection"
+msgstr ""
+
 msgid "TCP Port"
 msgstr "Porta TCP"
 
 msgid "TCP port"
+msgstr ""
+
+msgid "TCP port to use on bind to IP addresses"
+msgstr ""
+
+msgid "TCP port used to access the iSCSI target. Default is 3260."
 msgstr ""
 
 msgid "TCP port used to access the iSCSI target. Default is <i>3260</i>."
@@ -7460,6 +8362,9 @@ msgstr ""
 msgid "TLS Policy"
 msgstr ""
 
+msgid "Tag"
+msgstr ""
+
 msgid "Take Snapshot"
 msgstr ""
 
@@ -7469,7 +8374,13 @@ msgstr ""
 msgid "Target Alias"
 msgstr ""
 
+msgid "Target Dataset"
+msgstr ""
+
 msgid "Target Name"
+msgstr ""
+
+msgid "Targets"
 msgstr ""
 
 msgid "Tasks"
@@ -7478,10 +8389,33 @@ msgstr ""
 msgid "Team Drive ID"
 msgstr ""
 
+msgid "Temp tooltip"
+msgstr ""
+
 msgid "Temperature"
 msgstr ""
 
+msgid "Terms of Service"
+msgstr ""
+
+msgid "Test email sent!"
+msgstr ""
+
 msgid "Tests are not performed when the system enters the selected power mode."
+msgstr ""
+
+msgid ""
+"The <a href=\"https://www.freebsd.org/cgi/man.cgi?query=devfs "
+"\"target=\"_blank\">devfs(8)</a> ruleset number to enforce when mounting "
+"<b>devfs</b> in the jail. The default <i>0</i> means no ruleset is "
+"enforced. Mounting <b>devfs</b> inside a jail is only possible when the "
+"<b>allow_mount</b> and <b>allow_mount_devfs</b> permissions are enabled and "
+"<b>enforce_statfs</b> is set to a value lower than <i>2</i>."
+msgstr ""
+
+msgid ""
+"The API_KEY to use as the sender. This must be a valid UUID. It can be "
+"generated from the command line by typing <samp>uuidgen</samp>."
 msgstr ""
 
 msgid "The Credential is valid."
@@ -7565,7 +8499,7 @@ msgstr ""
 msgid ""
 "The envelope <i>From</i> address shown in the email. This can be set to "
 "make filtering mail on the receiving system easier. The friendly name is "
-"set like this: <i>\"Friendly Name\" <address@example.com></i>"
+"set like this: <i>\"Friendly Name\" &ltaddress@example.com&gt</i>"
 msgstr ""
 
 msgid ""
@@ -7574,10 +8508,16 @@ msgid ""
 "Update file names end with <i>-manual-update-unsigned.tar</i>"
 msgstr ""
 
+msgid "The filesystem "
+msgstr ""
+
 msgid "The hostname or IP address of the LDAP server."
 msgstr ""
 
 msgid "The lifetime of the CA specified in days."
+msgstr ""
+
+msgid "The maximum length of the queue of pending connections. Default is 100."
 msgstr ""
 
 msgid "The maximum number of simultaneous clients."
@@ -7595,23 +8535,17 @@ msgid ""
 msgstr ""
 
 msgid ""
+"The number of entries the netdata daemon keeps in memory for each chart "
+"dimension. Default is 86400."
+msgstr ""
+
+msgid ""
 "The number of the <a href=\"https://www.freebsd.org/cgi/man.cgi?query=devfs "
 "\"target=\"_blank\">devfs(8) ruleset</a> to enforce when mounting "
 "<b>devfs</b> in the jail. The default value of <i>0</i> means no ruleset is "
 "enforced. Mounting <b>devfs</b> inside a jail is only possible when the "
 "<b>allow_mount</b> and <b>allow_mount_devfs</b> permissions are enabled and "
 "<b>enforce_statfs</b> is set to a value lower than <i>2</i>."
-msgstr ""
-
-msgid ""
-"The number of the <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=devfs&apropos=0&sektion=0&"
-"manpath=FreeBSD+11.1-RELEASE+and+Ports \"target=\"_blank\">devfs(8) "
-"ruleset</a> to enforce when mounting <b>devfs</b> in the jail. The default "
-"value of <i>0</i> means no ruleset is enforced. Mounting <b>devfs</b> "
-"inside a jail is only possible when the <b>allow_mount</b> and "
-"<b>allow_mount_devfs</b> permissions are enabled and <b>enforce_statfs</b> "
-"is set to a value lower than <i>2</i>."
 msgstr ""
 
 msgid "The numeric <i>UUID</i> or <i>custom name</i> of the jail."
@@ -7651,6 +8585,9 @@ msgstr ""
 msgid "The specified permissions of that user are used by all clients."
 msgstr ""
 
+msgid "The storage controllers do not have the same quantity of disks."
+msgstr ""
+
 msgid ""
 "The system restricts creating a zvol that brings the pool to over 80% "
 "capacity. Set to force creation of the zvol (<b>NOT Recommended</b>)."
@@ -7684,11 +8621,29 @@ msgid ""
 msgstr ""
 
 msgid ""
+"There are unapplied network changes. Apply them now? Unapplied changes will "
+"be lost."
+msgstr ""
+
+msgid "There are unsaved network interface settings.  Review them now?"
+msgstr ""
+
+msgid ""
 "These arguments are passed to <a href=\"https://rclone.org/docs/\" "
 "target=\"_blank\">rclone</a>."
 msgstr ""
 
-msgid "Third DNS server"
+msgid ""
+"These permissions are too complicated to be displayed and cannot be saved "
+"unless changed."
+msgstr ""
+
+msgid "Third DNS server."
+msgstr ""
+
+msgid ""
+"This dataset has ACLs that are too complex to be edited with                "
+"     the permissions editor.  Open in ACL editor instead?"
 msgstr ""
 
 msgid "This field is required"
@@ -7727,7 +8682,7 @@ msgstr "Time Machine"
 msgid "Time Machine Quota"
 msgstr "Quota Time Machine"
 
-msgid "Time Server For Domain"
+msgid "Time remaining until changes reverted:"
 msgstr ""
 
 msgid "Timeout"
@@ -7738,6 +8693,15 @@ msgstr ""
 
 msgid "Timezone"
 msgstr "Fuso Horário"
+
+msgid "Title"
+msgstr ""
+
+msgid "Title "
+msgstr ""
+
+msgid "To delete the <b>"
+msgstr ""
 
 msgid ""
 "Token created with <a "
@@ -7760,14 +8724,23 @@ msgstr "Modo de Transferência"
 msgid "Transfers"
 msgstr ""
 
+msgid "Transport"
+msgstr ""
+
 msgid "Tunables"
 msgstr "Tunables"
 
 msgid "Type"
 msgstr "Tipo"
 
+msgid "UNINSTALL"
+msgstr ""
+
 msgid "UNIX Charset"
 msgstr "UNIX Charset"
+
+msgid "UPDATE"
+msgstr ""
 
 msgid "UPS Mode"
 msgstr "Modo UPS"
@@ -7790,9 +8763,6 @@ msgstr ""
 msgid "Unix (NFS) Shares"
 msgstr "Shares Unix (NFS)"
 
-msgid "Unix Extensions"
-msgstr "Extensões Unix"
-
 msgid "Unlock"
 msgstr ""
 
@@ -7804,16 +8774,13 @@ msgstr ""
 msgid "Unset to add a login prompt to the system before the console menu is shown."
 msgstr ""
 
-msgid "Unset to disable secure connections."
-msgstr ""
-
 msgid "Unset to disable the configuration without deleting it."
 msgstr ""
 
 msgid "Unset to disable the scheduled scrub without                 deleting it."
 msgstr ""
 
-msgid "Unset to disable this replication task without                 deleting it."
+msgid "Unset to disable this replication task without deleting it."
 msgstr ""
 
 msgid "Unset to disable this task without deleting it."
@@ -7844,6 +8811,12 @@ msgid "Update File"
 msgstr ""
 
 msgid "Update File Temporary Storage Location"
+msgstr ""
+
+msgid "Update Frequency"
+msgstr ""
+
+msgid "Update License"
 msgstr ""
 
 msgid "Update Period"
@@ -7888,6 +8861,9 @@ msgstr ""
 msgid "Upload"
 msgstr ""
 
+msgid "Upload Chunk Size (MiB)"
+msgstr ""
+
 msgid "Upload Config"
 msgstr ""
 
@@ -7907,6 +8883,9 @@ msgid ""
 msgstr ""
 
 msgid "Uptime"
+msgstr ""
+
+msgid "Usage collection"
 msgstr ""
 
 msgid "Use --fast-list"
@@ -7933,11 +8912,30 @@ msgstr ""
 msgid "Use Signature Version 2"
 msgstr ""
 
+msgid ""
+"Use WRITE_EMBEDDED records to make the stream more efficient. The "
+"destination system must also support WRITE_EMBEDDED records. When the "
+"source system is using lz4 compression, the destination system must use the "
+"same compression. See <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\" "
+"target=\"_blank\">zfs(8)</a>."
+msgstr ""
+
 msgid "Use all disk space"
 msgstr "Utilizar todo o espaço do disco"
 
 msgid "Use as home share"
 msgstr "Utilizar como home share"
+
+msgid ""
+"Use compressed WRITE records to make the stream more efficient. The "
+"destination system must also support compressed WRITE records. See <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\" "
+"target=\"_blank\">zfs(8)</a>."
+msgstr ""
+
+msgid "Use encrypted connection for increased security (preferred)."
+msgstr ""
 
 msgid "Use existing disk image"
 msgstr "UItilizar imagem de disco existente"
@@ -7949,9 +8947,20 @@ msgid "Use the format <i>A.B.C.D/E</i> where <i>E</i> is the CIDR mask."
 msgstr ""
 
 msgid ""
+"Use the scheduler to define which periodic snapshots are replicated. All "
+"snapshots are replicated by default. For example, the periodic snapshot "
+"task takes a snapshot every hour, but only every other snapshot is needed "
+"for replication. The scheduler is set to even hours and only snapshots "
+"taken at those times are replicated."
+msgstr ""
+
+msgid ""
 "Use this option to allow legacy SMB clients to connect to the server. Note "
 "that SMB1 is being deprecated and it is advised to upgrade clients to "
 "operating system versions that support modern versions of the SMB protocol."
+msgstr ""
+
+msgid "Use unencrypted connection."
 msgstr ""
 
 msgid ""
@@ -7985,6 +8994,9 @@ msgstr ""
 msgid "User Distinguished Name to use for authentication."
 msgstr ""
 
+msgid "User Guide (pdf)"
+msgstr ""
+
 msgid "User ID"
 msgstr "ID de Utilizador"
 
@@ -8008,16 +9020,18 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Usernames of 8 characters or less are recommended for compatibility with "
-"application software, but up to 16 characters are allowed."
+"Usernames can be up to 16 characters long. When using NIS or other legacy "
+"software with limited username lengths, keep usernames to eight characters "
+"or less for compatibility."
 msgstr ""
 
 msgid ""
-"Usernames of eight characters or less are recommended for compatibility "
-"with application software, but up to sixteen characters are allowed. "
-"Usernames cannot begin with a hyphen (<i>-</i>) or contain a space, tab, or "
-"these characters: <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i>. Note that "
-"<i>$</i> can only be used as the last character."
+"Usernames can be up to 16 characters long. When using NIS or other legacy "
+"software with limited username lengths, keep usernames to eight characters "
+"or less for compatibility. Usernames cannot begin with a hyphen (<i>-</i>) "
+"or contain a space, tab, or these characters: <i>, : + & # % ^ ( ) ! @ ~ * "
+"? < > =</i>. <i>$</i> can only be used as the last character of the "
+"username."
 msgstr ""
 
 msgid "Users"
@@ -8032,17 +9046,29 @@ msgstr "Objectos VFS"
 msgid "VLAN ID"
 msgstr "VLAN ID"
 
-msgid "VLANs"
-msgstr "VLANs"
+msgid "VLAN Parent Interface"
+msgstr ""
+
+msgid "VLAN Tag"
+msgstr ""
 
 msgid "VM Snapshot"
 msgstr "Snapshot de VM"
+
+msgid "VM system time. Default is <i>Local</i>."
+msgstr ""
 
 msgid "VMWare Sync"
 msgstr ""
 
 msgid "VMware-Snapshots"
 msgstr "VMware-Snapshots"
+
+msgid "VNC"
+msgstr ""
+
+msgid "VNC Port"
+msgstr ""
 
 msgid ""
 "VNC network interface IP address. The primary interface IP address is the "
@@ -8070,13 +9096,16 @@ msgstr ""
 msgid "Verify Credential"
 msgstr ""
 
+msgid "Verify Deletion of "
+msgstr ""
+
 msgid "Verify passphrase"
 msgstr ""
 
-msgid "Version"
+msgid "View"
 msgstr ""
 
-msgid "View"
+msgid "View Enclosure"
 msgstr ""
 
 msgid "View the contents of the Service Account JSON file."
@@ -8084,6 +9113,12 @@ msgstr ""
 
 msgid "Virtual CPUs"
 msgstr "CPUs Virtuais"
+
+msgid "Virtual Host ID for the failover interface."
+msgstr ""
+
+msgid "Virtual IP Address"
+msgstr ""
 
 msgid "Virtual Interface"
 msgstr ""
@@ -8119,6 +9154,9 @@ msgstr ""
 
 msgid "Warning"
 msgstr "Aviso"
+
+msgid "Warning: iSCSI Target is already in use.</font><br>"
+msgstr ""
 
 msgid "Web Interface"
 msgstr ""
@@ -8156,6 +9194,9 @@ msgstr "Password Webdav"
 msgid "Webdav SSL Certificate"
 msgstr "Certificado SSL Webdav"
 
+msgid "What are you using this for"
+msgstr ""
+
 msgid "When"
 msgstr "Quando"
 
@@ -8189,6 +9230,9 @@ msgid ""
 "reclaim space and is automatically recreated when a file is deleted."
 msgstr ""
 
+msgid "When set, report CPU usage in percent instead of jiffies."
+msgstr ""
+
 msgid ""
 "When set, rsync is run recursively, preserving                symlinks, "
 "permissions, modification times, group,                and special files. "
@@ -8210,9 +9254,14 @@ msgid ""
 msgstr ""
 
 msgid ""
-"When set, users see the contents of <i>/homes</i>, which includes the home "
-"directories of other users. When unset, users only see their own home "
-"directory."
+"When source snapshots are out of sync with the destination system, destroy "
+"destination system snapshots and do a full copy of all configured source "
+"system snapshots."
+msgstr ""
+
+msgid ""
+"When the file already exists, enter a size of 0 to use the actual file "
+"size. For new files, enter the size of the file to create."
 msgstr ""
 
 msgid "Widget Base Class"
@@ -8284,6 +9333,9 @@ msgstr ""
 msgid "Zeroconf share discovery"
 msgstr ""
 
+msgid "Zvol Dataset Location"
+msgstr ""
+
 msgid ""
 "[Use fewer transactions in exchange for more "
 "RAM.](https://rclone.org/docs/#fast-list) This can also speed up or slow "
@@ -8300,6 +9352,9 @@ msgid "allow_mount"
 msgstr ""
 
 msgid "allow_mount_devfs"
+msgstr ""
+
+msgid "allow_mount_fusefs"
 msgstr ""
 
 msgid "allow_mount_nullfs"
@@ -8326,7 +9381,16 @@ msgstr ""
 msgid "allow_socket_af"
 msgstr ""
 
+msgid "allow_sysvipc"
+msgstr ""
+
 msgid "allow_tun"
+msgstr ""
+
+msgid "allow_vmm"
+msgstr ""
+
+msgid "assign_localhost"
 msgstr ""
 
 msgid "boot"
@@ -8360,6 +9424,9 @@ msgid "destroy"
 msgstr ""
 
 msgid "devfs_ruleset"
+msgstr ""
+
+msgid "email"
 msgstr ""
 
 msgid "enforce_statfs"
@@ -8419,6 +9486,9 @@ msgstr ""
 msgid "hostid_strict_check"
 msgstr ""
 
+msgid "identifier"
+msgstr ""
+
 msgid "interfaces"
 msgstr ""
 
@@ -8431,8 +9501,11 @@ msgstr ""
 msgid "ip6"
 msgstr "ip6"
 
-msgid "ip6_saddrsel"
-msgstr "ip6_saddrsel"
+msgid "ip6.saddrsel"
+msgstr ""
+
+msgid "ip_hostname"
+msgstr ""
 
 msgid "jail_zfs"
 msgstr "jail_zfs"

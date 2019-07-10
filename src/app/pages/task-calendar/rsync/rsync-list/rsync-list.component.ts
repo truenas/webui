@@ -1,4 +1,4 @@
-import { RestService, DialogService } from '../../../../services';
+import { WebSocketService, DialogService, SnackbarService } from '../../../../services';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
@@ -11,34 +11,36 @@ import { T } from '../../../../translate-marker';
 @Component({
   selector: 'app-rsync-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
-  providers: [TaskService]
+  providers: [TaskService, SnackbarService]
 })
 export class RsyncListComponent {
 
   public title = "Rsync Tasks";
-  protected resource_name = 'tasks/rsync';
+  //protected resource_name = 'tasks/rsync';
+  protected queryCall = 'rsynctask.query';
+  protected wsDelete = 'rsynctask.delete';
   protected route_add: string[] = ['tasks', 'rsync', 'add'];
   protected route_add_tooltip = "Add Rsync Task";
   protected route_edit: string[] = ['tasks', 'rsync', 'edit'];
   protected entityList: any;
 
   public columns: Array < any > = [
-    { name: T('Path'), prop: 'rsync_path' },
-    { name: T('Remote Host'), prop: 'rsync_remotehost' },
-    { name: T('Remote Module Name'), prop: 'rsync_remotemodule' },
-    { name: T('User'), prop: 'rsync_user' },
+    { name: T('Path'), prop: 'path' },
+    { name: T('Remote Host'), prop: 'remotehost' },
+    { name: T('Remote Module Name'), prop: 'remotemodule' },
+    { name: T('User'), prop: 'user' },
   ];
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
       title: 'Rsync Task',
-      key_props: ['rsync_remotehost', 'rsync_remotemodule']
+      key_props: ['remotehost', 'remotemodule']
     },
   };
 
-  constructor(protected router: Router, protected rest: RestService, protected taskService: TaskService,
-              protected dialog: DialogService, protected translate: TranslateService) {}
+  constructor(protected router: Router, protected ws: WebSocketService, protected taskService: TaskService,
+              protected dialog: DialogService, protected translate: TranslateService, protected snackBar: SnackbarService) {}
 
   afterInit(entityList: any) { this.entityList = entityList; }
 
@@ -50,12 +52,10 @@ export class RsyncListComponent {
       onClick : (members) => {
         this.dialog.confirm(T("Run Now"), T("Run this rsync now?"), true).subscribe((run) => {
           if (run) {
-            this.rest.post(this.resource_name + '/' + row.id + '/run/', {} ).subscribe((res) => {
-              this.translate.get("close").subscribe((close) => {
-                this.entityList.snackBar.open(res.data, close, { duration: 5000 });
-              });
+            this.ws.call('rsynctask.run', [row.id] ).subscribe((res) => {
+              this.snackBar.open(T('Rsync task started.'), T('CLOSE'), { duration: 5000 });
             }, (err) => {
-              new EntityUtils().handleError(this, err);
+              new EntityUtils().handleWSError(this, err);
             });
           }
         });

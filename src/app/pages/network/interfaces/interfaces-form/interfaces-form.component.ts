@@ -18,161 +18,224 @@ import helptext from '../../../../helptext/network/interfaces/interfaces-form';
 })
 export class InterfacesFormComponent implements OnDestroy {
 
-  protected resource_name = 'network/interface/';
+  //protected resource_name = 'network/interface/';
+  protected queryCall = 'interface.query';
+  protected addCall = 'interface.create';
+  protected editCall = 'interface.update';
+  protected queryKey = 'id';
   protected route_success: string[] = [ 'network', 'interfaces' ];
   protected isEntity = true;
+  protected is_ha = false;
 
   public fieldConfig: FieldConfig[] = [
     {
-      type : 'input',
-      name : 'int_interface',
-      placeholder : helptext.int_interface_placeholder,
-      tooltip : helptext.int_interface_tooltip,
+      type : 'select',
+      name : 'type',
+      placeholder: helptext.int_type_placeholder,
+      tooltip: helptext.int_type_tooltip,
       required: true,
-      validation : helptext.int_interface_validation
+      options: helptext.int_type_options
     },
     {
       type : 'input',
-      name : 'int_name',
+      name : 'name',
       placeholder : helptext.int_name_placeholder,
       tooltip : helptext.int_name_tooltip,
       required: true,
       validation : helptext.int_name_validation
     },
     {
+      type: 'input',
+      name: 'description',
+      placeholder: helptext.int_description_placeholder,
+      tooltip: helptext.int_description_tooltip,
+    },
+    {
       type : 'checkbox',
-      name : 'int_dhcp',
+      name : 'ipv4_dhcp',
       placeholder : helptext.int_dhcp_placeholder,
       tooltip : helptext.int_dhcp_tooltip,
     },
     {
-      type : 'input',
-      name : 'int_ipv4address',
-      placeholder : helptext.int_ipv4address_placeholder,
-      tooltip : helptext.int_ipv4address_tooltip,
-      validation : [ regexValidator(this.networkService.ipv4_regex) ],
-      relation : [
-        {action : "DISABLE", when : [ {name : "int_dhcp", value : true} ]}
-      ]
-    },
-    {
-      type : 'select',
-      name : 'int_v4netmaskbit',
-      placeholder : helptext.int_v4netmaskbit_placeholder,
-      tooltip : helptext.int_v4netmaskbit_tooltip,
-      options : this.networkService.getV4Netmasks(),
-      value: '',
-      relation : [
-        {action : "DISABLE", when : [ {name : "int_dhcp", value : true} ]}
-      ]
-    },
-    {
       type : 'checkbox',
-      name : 'int_ipv6auto',
+      name : 'ipv6_auto',
       placeholder : helptext.int_ipv6auto_placeholder,
       tooltip : helptext.int_ipv6auto_tooltip
     },
     {
-      type : 'input',
-      name : 'int_ipv6address',
-      placeholder : helptext.int_ipv6address_placeholder,
-      tooltip : helptext.int_ipv6address_tooltip,
-      validation : [ regexValidator(this.networkService.ipv6_regex) ],
-      relation : [
-        {action : "DISABLE", when : [ {name : "int_ipv6auto", value : true} ]}
-      ]
+      type: 'select',
+      name: 'bridge_members',
+      placeholder: helptext.bridge_members_placeholder,
+      tooltip: helptext.bridge_members_tooltip,
+      multiple: true,
+      options: [],
+      isHidden: true,
+      disabled: true,
     },
     {
       type : 'select',
-      name : 'int_v6netmaskbit',
-      placeholder : helptext.int_v6netmaskbit_placeholder,
-      tooltip : helptext.int_v6netmaskbit_tooltip,
-      options : this.networkService.getV6PrefixLength(),
-      value: '',
-      relation : [
-        {action : "DISABLE", when : [ {name : "int_ipv6auto", value : true} ]}
-      ]
+      name : 'lag_protocol',
+      placeholder : helptext.lagg_protocol_placeholder,
+      tooltip : helptext.lagg_protocol_tooltip,
+      options : helptext.lagg_protocol_options,
+      required: true,
+      isHidden: true,
+      disabled: true,
+      validation : helptext.lagg_protocol_validation,
+      value: "NONE"
+    },
+    {
+      type : 'select',
+      name : 'lag_ports',
+      placeholder : helptext.lagg_interfaces_placeholder,
+      tooltip : helptext.lagg_interfaces_tooltip,
+      options : [],
+      multiple : true,
+      required: true,
+      isHidden: true,
+      disabled: true,
+      validation : helptext.lagg_interfaces_validation,
+    },
+    {
+      type: 'checkbox',
+      name: 'failover_critical',
+      placeholder: helptext.failover_critical_placeholder,
+      tooltip: helptext.failover_critical_tooltip,
+      isHidden: true,
+      disabled: true,
+    },
+    {
+      type: 'select',
+      name: 'failover_group',
+      placeholder: helptext.failover_group_placeholder,
+      tooltip: helptext.failover_group_tooltip,
+      isHidden: true,
+      disabled: true,
+      options: [{label: '---', value: null}]
+    },
+    {
+      type: 'input',
+      name: 'failover_vhid',
+      placeholder: helptext.failover_vhid_placeholder,
+      tooltip: helptext.failover_vhid_tooltip,
+      isHidden: true,
+      disabled: true,
+    },
+    {
+      type: 'select',
+      name: 'vlan_parent_interface',
+      placeholder: helptext.vlan_pint_placeholder,
+      tooltip: helptext.vlan_pint_tooltip,
+      options: [],
+      required: true,
+      isHidden: true,
+      disabled: true,
+      validation: helptext.vlan_pint_validation
+    },
+    {
+      type: 'input',
+      name: 'vlan_tag',
+      placeholder: helptext.vlan_tag_placeholder,
+      tooltip: helptext.vlan_tag_tooltip,
+      required: true,
+      isHidden: true,
+      disabled: true,
+      validation: helptext.vlan_tag_validation
+    },
+    {
+      type: 'select',
+      name: 'vlan_pcp',
+      placeholder: helptext.vlan_pcp_placeholder,
+      options: [],
+      tooltip: helptext.vlan_pcp_tooltip,
+      isHidden: true,
+      disabled: true,
+    },
+    {
+      type: 'input',
+      name: 'mtu',
+      placeholder: helptext.mtu_placeholder,
+      tooltip: helptext.mtu_tooltip,
+      validation: helptext.mtu_validation,
     },
     {
       type : 'input',
-      name : 'int_options',
+      name : 'options',
       placeholder : helptext.int_options_placeholder,
       tooltip : helptext.int_options_tooltip,
     },
     {
       type: 'array',
-      name : 'ipv4_aliases',
+      name : 'aliases',
       initialCount: 1,
       formarray: [{
-        name: 'alias_address',
+        name: 'address',
         placeholder: helptext.alias_address_placeholder,
         tooltip: helptext.alias_address_tooltip,
-        type: 'input',
-        validation : [ regexValidator(this.networkService.ipv4_regex) ]
+        type: 'ipwithnetmask',
+        validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
       },
       {
-        name: 'alias_netmaskbit',
-        placeholder: helptext.alias_netmaskbit_placeholder,
-        tooltip : helptext.alias_netmaskbit_tooltip,
-        type: 'select',
-        options : this.networkService.getV4Netmasks(),
-        value: '',
+        name: 'failover_address',
+        placeholder: helptext.failover_alias_address_placeholder,
+        tooltip: helptext.failover_alias_address_tooltip,
+        disabled: true,
+        isHidden: true,
+        type: 'ipwithnetmask',
+        validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
+      },
+      {
+        name: 'failover_virtual_address',
+        placeholder: helptext.failover_virtual_alias_address_placeholder,
+        tooltip: helptext.failover_virtual_alias_address_tooltip,
+        disabled: true,
+        isHidden: true,
+        type: 'ipwithnetmask',
+        validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
       },
       {
         type: 'checkbox',
         name: 'delete',
         placeholder: helptext.delete_placeholder,
         tooltip: helptext.delete_tooltip,
-      }]
-    },
-    {
-      type: 'array',
-      name : 'ipv6_aliases',
-      initialCount: 1,
-      formarray: [{
-        name: 'alias_address',
-        placeholder: helptext.alias_address6_placeholder,
-        tooltip: helptext.alias_address6_tooltip,
-        type: 'input',
-        validation : [ regexValidator(this.networkService.ipv6_regex) ]
-      },
-      {
-        name: 'alias_netmaskbit',
-        placeholder: helptext.alias_netmaskbit6_placeholder,
-        tooltip : helptext.alias_netmaskbit6_tooltip,
-        type: 'select',
-        options : this.networkService.getV6PrefixLength(),
-        value: '',
-      },
-      {
-        type: 'checkbox',
-        name: 'delete',
-        placeholder: helptext.delete_placeholder6,
-        tooltip: helptext.delete_tooltip6,
+        isHidden: true,
+        disabled: true,
       }]
     },
   ];
 
-  private int_dhcp: any;
+  private vlan_fields = ['vlan_tag', 'vlan_pcp', 'vlan_parent_interface'];
+  private lagg_fields = ['lag_protocol', 'lag_ports'];
+  private bridge_fields = ['bridge_members'];
+  private failover_fields = ['failover_critical', 'failover_group', 'failover_vhid'];
+  private physical_fields;
+  /*private int_dhcp: any;
   private int_dhcp_subscription: any;
   private int_ipv6auto: any;
-  private int_ipv6auto_subscription: any;
-  private int_v4netmaskbit: any;
-  private int_ipv4address: any;
-  private int_v6netmaskbit: any;
-  private int_ipv6address: any;
-  private int_interface: any;
+  private int_ipv6auto_subscription: any;*/
+  private vlan_pcp:any;
+  private vlan_pint:any;
+  private lag_protocol: any;
+  private lag_ports: any;
+  private bridge_members: any;
+  private type: any;
+  private type_fg: any;
+  private type_subscription: any;
+  /*private int_interface: any;
   private int_interface_fg: any;
   private int_interface_fg_sub: any;
-  private int_interface_warning: string;
+  private int_interface_warning: string;*/
   private wsint: string;
   private entityForm: any;
-  protected ipv4formArray: FormArray;
-  protected ipv6formArray: FormArray;
-  protected ipv6arrayControl: any;
-  protected ipv4arrayControl: any;
-  protected initialCount = {'ipv4_aliases':1, 'ipv6_aliases': 1};
-  protected initialCount_default = {'ipv4_aliases':1, 'ipv6_aliases': 1};
+  protected ipformArray: FormArray;
+  protected iparrayControl: any;
+  protected failover_group: any;
+  protected failover_formArray: FormArray;
+  protected failover_arrayControl: any;
+  protected failover_virtual_formArray: FormArray;
+  protected failover_virtual_arrayControl:any;
+  protected initialCount = {'aliases':1};
+  protected initialCount_default = {'aliases':1};
   public confirmSubmit = false;
   public confirmSubmitDialog = {
     title: T("Save Network Interface Changes"),
@@ -182,44 +245,24 @@ export class InterfacesFormComponent implements OnDestroy {
 
   public custActions: Array<any> = [
     {
-      id : 'add_ipv4_alias',
-      name : T('Add Additional IPv4 Alias'),
+      id : 'add_alias',
+      name : T('Add Additional Alias'),
       function : () => {
-        this.initialCount.ipv4_aliases += 1;
+        this.initialCount.aliases += 1;
         this.entityFormService.insertFormArrayGroup(
-            this.initialCount.ipv4_aliases, this.ipv4formArray, this.ipv4arrayControl.formarray);
+            this.initialCount.aliases, this.ipformArray, this.iparrayControl.formarray);
       }
     },
     {
-      id : 'remove_ipv4_alias',
-      name : T('Remove Additional IPv4 Alias'),
+      id : 'remove_alias',
+      name : T('Remove Additional Alias'),
       function : () => {
-        this.initialCount.ipv4_aliases -= 1;
-        this.entityFormService.removeFormArrayGroup(this.initialCount.ipv4_aliases,
-                                                    this.ipv4formArray);
+        this.initialCount.aliases -= 1;
+        this.entityFormService.removeFormArrayGroup(this.initialCount.aliases,
+                                                    this.ipformArray);
       }
     },
-    {
-      id : 'add_ipv6_alias',
-      name : T('Add Additional IPv6 Alias'),
-      function : () => {
-        this.initialCount.ipv6_aliases += 1;
-        this.entityFormService.insertFormArrayGroup(
-          this.initialCount.ipv6_aliases, this.ipv6formArray, this.ipv6arrayControl.formarray);
-        }
-    },
-    {
-    id : 'remove_ipv6_alias',
-    name : T('Remove Additional IPv6 Alias'),
-    function : () => {
-      this.initialCount.ipv6_aliases -= 1;
-      this.entityFormService.removeFormArrayGroup(this.initialCount.ipv6_aliases,
-                                                  this.ipv6formArray);
-    }
-  }];
-
-  int_warning = T("Please configure the Web UI interface (");
-  int_warning_2 = T(") before configuring other interfaces to avoid losing connection to the user interface.");
+  ]
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected entityFormService: EntityFormService,
@@ -227,154 +270,182 @@ export class InterfacesFormComponent implements OnDestroy {
               protected ws: WebSocketService, protected translate: TranslateService) {}
 
   isCustActionVisible(actionId: string) {
-    if (actionId == 'remove_ipv4_alias' && this.initialCount['ipv4_aliases'] <= this.initialCount_default['ipv4_aliases']) {
-      return false;
-    }
-    if (actionId == 'remove_ipv6_alias' && this.initialCount['ipv6_aliases'] <= this.initialCount_default['ipv6_aliases']) {
+    if (actionId == 'remove_alias' && this.initialCount['aliases'] <= this.initialCount_default['aliases']) {
       return false;
     }
     return true;
   }
 
+  setType(type: string) {
+    const is_physical = (type === "PHYSICAL");
+    const is_vlan = (type === "VLAN");
+    const is_bridge = (type === "BRIDGE");
+    const is_lagg = (type === "LINK_AGGREGATION");
+    for (let i = 0; i < this.vlan_fields.length; i++) {
+      this.entityForm.setDisabled(this.vlan_fields[i], !is_vlan, !is_vlan);
+    }
+    for (let i = 0; i < this.lagg_fields.length; i++) {
+      this.entityForm.setDisabled(this.lagg_fields[i], !is_lagg, !is_lagg);
+    }
+    for (let i = 0; i < this.vlan_fields.length; i++) {
+      this.entityForm.setDisabled(this.bridge_fields[i], !is_bridge, !is_bridge);
+    }
+
+  }
+
   preInit(entityForm: any) {
-    this.int_interface = _.find(this.fieldConfig, {'name' : 'int_interface'});
-    this.ipv4arrayControl = _.find(this.fieldConfig, {'name' : 'ipv4_aliases'});
-    this.ipv6arrayControl = _.find(this.fieldConfig, {'name' : 'ipv6_aliases'});
+    if (window.localStorage.getItem('is_freenas') === 'false') {
+      this.ws.call('failover.licensed').subscribe((is_ha) => {
+        this.is_ha = is_ha;
+        if (this.is_ha) {
+          const failover_virtual_address = _.find(this.iparrayControl.formarray, {"name":"failover_virtual_address"});
+          const failover_address = _.find(this.iparrayControl.formarray, {"name":"failover_address"});
+          failover_virtual_address['disabled'] = false;
+          failover_virtual_address['isHidden'] = false;
+          failover_address['disabled'] = false;
+          failover_address['isHidden'] = false;
+        }
+      });
+    }
+    this.entityForm = entityForm;
+    this.type = _.find(this.fieldConfig, {'name' : 'type'});
+    this.iparrayControl = _.find(this.fieldConfig, {'name' : 'aliases'});
+    this.failover_group = _.find(this.fieldConfig, {'name': 'failover_group'});
+    for (let i = 1; i <= 32; i++) {
+      this.failover_group.options.push({label:i, value:i});
+    }
+
+    this.vlan_pint = _.find(this.fieldConfig, {'name' : 'vlan_parent_interface'});
+    this.bridge_members = _.find(this.fieldConfig, {'name' : 'bridge_members'});
+    this.lag_ports = _.find(this.fieldConfig, {'name' : 'lag_ports'});
     this.route.params.subscribe(params => {
       if(!params['pk']) {
-        this.int_interface.type = 'select';
-        this.int_interface.options = [];
+        this.type.type = 'select';
       } else {
-        this.confirmSubmit = true;
-        this.ipv4arrayControl.initialCount = this.initialCount['ipv4_aliases']
-          = this.initialCount_default['ipv4_aliases'] = 0;
-        this.ipv6arrayControl.initialCount = this.initialCount['ipv6_aliases']
-          = this.initialCount_default['ipv6_aliases'] = 0;
+        this.iparrayControl.initialCount = this.initialCount['aliases']
+          = this.initialCount_default['aliases'] = 0;
+
+        this.iparrayControl.formarray[3]['isHidden'] = false;
+        this.iparrayControl.formarray[3].disabled = false;
       }
     });
   }
 
   afterInit(entityForm: any) {
-    this.int_interface_fg = entityForm.formGroup.controls['int_interface'];
-
-    if (entityForm.isNew) {
-      this.rest.get(this.resource_name, []).subscribe((res) => {
-        if (res.data.length === 0) {
-          this.ws.call('interfaces.websocket_interface', []).subscribe((wsint) => {
-            if (wsint && wsint.name) {
-              this.wsint = wsint.name;
-              this.translate.get(this.int_warning).subscribe((int_warning) => {
-                this.translate.get(this.int_warning_2).subscribe((int_warning_2) => {
-                  this.int_interface_warning = int_warning + wsint.name + int_warning_2;
-                });
-              });
-              this.int_interface_fg_sub = this.int_interface_fg.valueChanges.subscribe((val) => {
-                if (val !== this.wsint) {
-                  this.int_interface.warnings = this.int_interface_warning;
-                } else {
-                  this.int_interface.warnings = null;
-                }
-              });
-              this.int_interface_fg.setValue(wsint.name);
-              entityForm.formGroup.controls['int_name'].setValue(wsint.name);
-            }
-          }, (err) => {
-            new EntityUtils().handleWSError(entityForm, err);
-          });
+    if (window.localStorage.getItem('is_freenas') === 'false') {
+      this.ws.call('failover.licensed').subscribe((is_ha) => { //fixme, stupid race condition makes me need to call this again
+        for (let i = 0; i < this.failover_fields.length; i++) {
+          entityForm.setDisabled(this.failover_fields[i], !is_ha, !is_ha);
         }
       });
     }
-    this.ipv4formArray = entityForm.formGroup.controls['ipv4_aliases'];
-    this.ipv6formArray = entityForm.formGroup.controls['ipv6_aliases'];
-    this.int_ipv4address = _.find(this.fieldConfig, {'name': 'int_ipv4address'});
-    this.int_ipv6address = _.find(this.fieldConfig, {'name': 'int_ipv6address'});
-    this.int_v4netmaskbit =
-        _.find(this.fieldConfig, {'name' : 'int_v4netmaskbit'});
-
-    this.int_v6netmaskbit =
-        _.find(this.fieldConfig, {'name' : 'int_v6netmaskbit'});
-
-    this.int_dhcp = entityForm.formGroup.controls['int_dhcp'];
-    this.int_ipv6auto = entityForm.formGroup.controls['int_ipv6auto'];
-
-    this.int_ipv4address['isHidden'] = this.int_v4netmaskbit['isHidden'] = this.int_dhcp.value;
-    this.int_ipv6address['isHidden'] = this.int_v6netmaskbit['isHidden'] = this.int_ipv6auto.value;
-
-    this.int_dhcp_subscription = this.int_dhcp.valueChanges.subscribe((value) => {
-      this.int_ipv4address['isHidden'] = this.int_v4netmaskbit['isHidden'] = value;
-    });
-    this.int_ipv6auto_subscription = this.int_ipv6auto.valueChanges.subscribe((value) => {
-      this.int_ipv6address['isHidden'] = this.int_v6netmaskbit['isHidden'] = value;
-    });
-
-    if (!entityForm.isNew) {
-      entityForm.setDisabled('int_interface', true);
-    }
-    else {
-      this.networkService.getInterfaceNicChoices().subscribe((res) => {
-        res.forEach((item) => {
-          this.int_interface.options.push({label : item[1], value : item[0]});
-        });
+    if (entityForm.isNew) {
+      this.type_fg = entityForm.formGroup.controls['type'];
+      this.type_subscription = this.type_fg.valueChanges.subscribe((type) => {
+        this.setType(type);
       });
+      this.networkService.getVlanParentInterfaceChoices().subscribe((res) => {
+        for (const key in res) {
+          this.vlan_pint.options.push({label: key, value: res[key]});
+        }
+      });
+      this.networkService.getLaggPortsChoices().subscribe((res) => {
+        for (const key in res) {
+          this.lag_ports.options.push({label: key, value: res[key]});
+        }
+      });
+      this.networkService.getBridgeMembersChoices().subscribe((res) => {
+        for (const key in res) {
+          this.bridge_members.options.push({label: key, value: res[key]});
+        }
+      });
+    } else {
+      entityForm.setDisabled('name', true);
+      entityForm.setDisabled('type', true, true );
     }
+    this.ws.call('notifier.choices', ['VLAN_PCP_CHOICES']).subscribe((res) => {
+      this.vlan_pcp = _.find(this.fieldConfig, {'name' : 'vlan_pcp'});
+      res.forEach((item) => {
+        this.vlan_pcp.options.push({label : item[1], value : item[0]});
+      });
+    });
+    this.ipformArray = entityForm.formGroup.controls['aliases'];
   }
 
   clean(data) {
-    let aliases = []
-    for (let i = 0; i < data.ipv4_aliases.length; i++) {
-      if (!data.ipv4_aliases[i]['delete'] &&
-          !!data.ipv4_aliases[i]['alias_address'] &&
-          !!data.ipv4_aliases[i]['alias_netmaskbit']) {
-        aliases.push(data.ipv4_aliases[i]['alias_address'] + '/'
-                     + data.ipv4_aliases[i]['alias_netmaskbit']);
+    const aliases = [];
+    const failover_aliases = [];
+    const failover_virtual_aliases = [];
+    for (let i = 0; i < data.aliases.length; i++) {
+      if (!data.aliases[i]['delete'] &&
+          !!data.aliases[i]['address']) {
+        const strings = data.aliases[i]['address'].split('/');
+        aliases.push({address:strings[0],
+                      netmask:parseInt(strings[1],10)});
+        if (!!data.aliases[i]['failover_address'] &&
+            !!data.aliases[i]['failover_virtual_address']) {
+          const f_strings = data.aliases[i]['failover_address'].split('/');
+          failover_aliases.push({address:f_strings[0],
+                        netmask:parseInt(f_strings[1],10)});
+          const fv_strings = data.aliases[i]['failover_virtual_address'].split('/');
+          failover_virtual_aliases.push({address:fv_strings[0],
+                        netmask:parseInt(fv_strings[1],10)});
+          }
       }
     }
-    for (let i = 0; i < data.ipv6_aliases.length; i++) {
-      if (!data.ipv6_aliases[i]['delete'] &&
-          !!data.ipv6_aliases[i]['alias_address'] &&
-          !!data.ipv6_aliases[i]['alias_netmaskbit']) {
-        aliases.push(data.ipv6_aliases[i]['alias_address'] + '/'
-                     + data.ipv6_aliases[i]['alias_netmaskbit']);
-      }
+  
+    data.aliases = aliases;
+    if (failover_aliases.length > 0) {
+      data.failover_aliases = failover_aliases;
     }
-    delete data.ipv4_aliases;
-    delete data.ipv6_aliases;
-    data.int_aliases = aliases;
+    if (failover_virtual_aliases.length > 0) {
+      data.failover_virtual_aliases = failover_virtual_aliases;
+    }
     return data;
   }
 
-  preHandler(data: any[]): any[] {
-    let aliases = [];
-    for (let i = 0; i < data.length; i++) {
-      let alias = data[i].split('/');
-      if (alias.length === 2) {
-        aliases.push({alias_address:alias[0], alias_netmaskbit:alias[1]});
-      }
-    }
-    return aliases;
-  }
-
   resourceTransformIncomingRestData(data) {
-    const ipv4_aliases = [];
-    const ipv6_aliases = [];
-    const aliases = data['int_aliases'];
+    const aliases = data['aliases'];
+    const a = [];
+    const failover_aliases = data['failover_aliases'];
+    const failover_virtual_aliases = data['failover_virtual_aliases'];
     for (let i = 0; i < aliases.length; i++) {
-      if (aliases[i].indexOf(':') === -1) {
-        ipv4_aliases.push(aliases[i]);
-      } else {
-        ipv6_aliases.push(aliases[i]);
+      a[i] = {};
+      a[i].address = aliases[i].address + '/' + aliases[i].netmask;
+      if (failover_aliases && failover_aliases[i]) {
+        a[i].failover_address = failover_aliases[i].address + '/' + failover_aliases[i].netmask;
+      }
+      if (failover_virtual_aliases && failover_virtual_aliases[i]) {
+        a[i].failover_virtual_address = failover_virtual_aliases[i].address + '/' + failover_virtual_aliases[i].netmask
       }
     }
-    data['ipv4_aliases'] = ipv4_aliases;
-    data['ipv6_aliases'] = ipv6_aliases;
+    data['aliases'] = a;
+
+    const type = data['type'];
+    const id = data['id'];
+    this.setType(type);
+    if (type === "LINK_AGGREGATION") {
+      this.networkService.getLaggPortsChoices(id).subscribe((res) => {
+        for (const key in res) {
+          this.lag_ports.options.push({label: key, value: res[key]});
+        }
+      });
+    } else if (type === "BRIDGE") {
+      this.networkService.getBridgeMembersChoices(id).subscribe((res) => {
+        for (const key in res) {
+          this.bridge_members.options.push({label: key, value: res[key]});
+        }
+      });
+    } else if (type === "VLAN") {
+      this.entityForm.setDisabled('vlan_parent_interface', true);
+    }
+
     return data;
   }
 
   ngOnDestroy() {
-    this.int_dhcp_subscription.unsubscribe();
-    this.int_ipv6auto_subscription.unsubscribe();
-    if (this.int_interface_fg_sub) {
-      this.int_interface_fg_sub.unsubscribe();
+    if (this.type_subscription) {
+      this.type_subscription.unsubscribe();
     }
   }
 }

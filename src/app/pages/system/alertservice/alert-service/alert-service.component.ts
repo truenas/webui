@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormArray, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
 import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
@@ -83,6 +82,21 @@ export class AlertServiceComponent implements OnInit {
       }],
       value: 'AWSSNS',
     },
+    {
+      type: 'select',
+      name: 'level',
+      placeholder: 'Level',
+      tooltip: 'Select the level of severity.',
+      options: [
+        {label : 'Info', value : 'INFO'},
+        {label : 'Notice', value : 'NOTICE'},
+        {label : 'Warning', value : 'WARNING'},
+        {label : 'Error', value : 'ERROR'},
+        {label : 'Critical', value : 'CRITICAL'},
+        {label : 'Alert', value : 'ALERT'},
+        {label : 'Emergency', value : 'EMERGENCY'}
+      ]
+    }
   ];
 
   public awssnsFieldConfig: FieldConfig[] = [
@@ -252,6 +266,11 @@ export class AlertServiceComponent implements OnInit {
                 into the OpsGenie web interface and going to\
                 Integrations/Configured Integrations. Click the desired\
                 integration, Settings, and read the API Key field.',
+    },{
+      type : 'input',
+      name : 'api_url',
+      placeholder: 'API URL',
+      tooltip: 'Leave empty for default (<a href="https://api.opsgenie.com" target="_blank">OpsGenie API</a>)',
     }
   ];
   public pagerdutyFieldConfig: FieldConfig[] = [
@@ -327,8 +346,6 @@ export class AlertServiceComponent implements OnInit {
                 target="_blank">VictorOps routing key</a>.',
     }];
 
-  public settingFieldConfig: FieldConfig[] = [];
-
   public formGroup: any;
   public activeFormGroup: any;
   public emailFormGroup: any;
@@ -346,8 +363,6 @@ export class AlertServiceComponent implements OnInit {
     label: 'INHERIT',
     value: 'INHERIT',
   }];
-  public settingFormGroup: any;
-  public settingEnabled: boolean = false;
 
   public fieldSets: any;
 
@@ -363,19 +378,6 @@ export class AlertServiceComponent implements OnInit {
       for(let i = 0; i < res.length; i++) {
         this.settingOptions.push({label: res[i], value: res[i]});
       }
-    });
-    this.ws.call('alert.list_sources', []).subscribe((res) => {
-      for (let i = 0; i < res.length; i++) {
-        this.settingFieldConfig.push(
-          {
-            type: 'select',
-            name: res[i].name,
-            placeholder: res[i].title,
-            options: this.settingOptions,
-            value: 'INHERIT',
-          });
-      }
-      this.settingFormGroup = this.entityFormService.createFormGroup(this.settingFieldConfig);
     });
   }
 
@@ -397,7 +399,6 @@ export class AlertServiceComponent implements OnInit {
         htpchatFieldConfig: this.htpchatFieldConfig,
         pagerdutyFieldConfig: this.pagerdutyFieldConfig,
         victoropsFieldConfig: this.victoropsFieldConfig,
-        settingFieldConfig: this.settingFieldConfig,
       },
       {
         name:'divider',
@@ -453,17 +454,11 @@ export class AlertServiceComponent implements OnInit {
             ['id', '=', Number(this.pk)]
           ]
         ]).subscribe((res) => {
-          if ((<any>Object).keys(res[0].settings).length > 0) {
-            this.settingEnabled = true;
-          }
           for (const i in this.formGroup.controls) {
             this.formGroup.controls[i].setValue(res[0][i]);
           }
           for (const j in this.activeFormGroup.controls) {
             this.activeFormGroup.controls[j].setValue(res[0].attributes[j]);
-          }
-          for (const k in res[0].settings) {
-            this.settingFormGroup.controls[k].setValue(res[0].settings[k]);
           }
         })
       } else {
@@ -475,15 +470,8 @@ export class AlertServiceComponent implements OnInit {
   onSubmit(event: Event) {
     let payload = _.cloneDeep(this.formGroup.value);
     let serviceValue = _.cloneDeep(this.activeFormGroup.value);
-    let settingValue = _.cloneDeep(this.settingFormGroup.value);
-    for (let i in settingValue) {
-      if (settingValue[i] == 'INHERIT') {
-        delete settingValue[i];
-      }
-    }
 
     payload['attributes'] = serviceValue;
-    payload['settings'] = settingValue;
 
     this.loader.open();
     if (this.isNew) {
@@ -515,7 +503,6 @@ export class AlertServiceComponent implements OnInit {
     let serviceValue = _.cloneDeep(this.activeFormGroup.value);
 
     testPayload['attributes'] = serviceValue;
-    testPayload['settings'] = {};
 
     this.loader.open();
     this.ws.call(this.testCall, [testPayload]).subscribe(

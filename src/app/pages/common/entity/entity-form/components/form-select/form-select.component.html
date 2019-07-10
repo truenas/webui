@@ -1,5 +1,11 @@
-<div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
+<div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" [hidden]="config.isHidden">
   <mat-form-field class="full-width" value="fromFormField" #field>
+      <mat-spinner
+        diameter='40'
+        class="form-select-spinner"
+        id="{{config.name}}_form-select-spinner"
+        *ngIf="config.isLoading">
+      </mat-spinner>
     <mat-select 
       #selectTrigger
       [value]="formValue"
@@ -7,14 +13,15 @@
       [multiple]="config.multiple" 
       [required]="config.required" 
       [placeholder]="config.placeholder | translate" 
-      (change)="onChangeOption($event)">
+      (selectionChange)="onChangeOption($event)">
 
      
       <mat-select-trigger *ngIf="config.multiple">
-        {{ customTriggerValue }}
+        <span *ngFor="let value of customTriggerValue ; last as isLast">
+            {{ value }}{{ isLast ? '' : ', ' }}
+        </span>
       </mat-select-trigger>
      
-
       <!--
         <div class="mat-option" (click)="onToggleSelectAll()">
           <span *ngIf="config.multiple">

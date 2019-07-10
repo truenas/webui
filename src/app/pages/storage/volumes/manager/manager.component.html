@@ -21,6 +21,7 @@
           <tooltip class="volumeTooltip" [message]=encryption_tooltip></tooltip>
           <div *ngIf="poolError" [style.color]="'red'" [innerHTML]="poolError"></div>
           <div>
+            <button id="pool-manager__reset-layout-button" mat-button class="btn btn-accent" [disabled]="!dirty" (click)="resetLayout()">{{"Reset Layout" | translate}}</button>
             <button id="pool-manager__suggest-layout-button" *ngIf="suggestable_disks.length <= 8" [disabled]="dirty" mat-button class="btn btn-accent" (click)="suggestLayout()">{{"Suggest Layout" | translate}}</button>
             <tooltip class="volumeTooltip" [message]=suggested_layout_tooltip></tooltip>
           </div>
@@ -30,6 +31,9 @@
             <input id="pool-manager__extend-name-input-field" matInput placeholder="Name" [value]="name" disabled>
           </mat-form-field>
           <mat-error *ngIf="isEncrypted">{{"Extending an encrypted pool resets the passphrase and recovery key!" | translate }}</mat-error>
+          <div>
+            <button id="pool-manager__reset-layout-button" mat-button class="btn btn-accent" [disabled]="!dirty" (click)="resetLayout()">{{"Reset Layout" | translate}}</button>
+          </div>
         </ng-template>
       </div>
       <div class="wrapper">
@@ -50,6 +54,13 @@
                 [externalSorting]="true"
                 (sort)='reorderEvent($event)'
                 (select)='onSelect($event)'>
+                <ngx-datatable-row-detail [rowHeight]="100" #myDetailRow>
+                    <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
+                      <div *ngFor="let detail of row.details" style="padding-left:35px;">
+                        <strong>{{detail.label | translate}}:</strong> {{detail.value}}
+                      </div>
+                  </ng-template>
+                </ngx-datatable-row-detail>
                 <ngx-datatable-column [width]="82" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
                   <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
                     <div class="headerCheckBox">
@@ -71,18 +82,39 @@
                   [resizeable]="false">
                 </ngx-datatable-column> -->
                 <ngx-datatable-column
-                  [width]="158"
+                  [width]="125"
                   name="Disk"
                   prop="devname"></ngx-datatable-column>
+                <ngx-datatable-column
+                  [width]="100"
+                  name="Type"
+                  prop="type"></ngx-datatable-column>
                 <ngx-datatable-column
                   [width]="120"
                   name="Capacity"
                   prop="capacity"></ngx-datatable-column>
+                <ngx-datatable-column
+                  [width]="50"
+                  [resizeable]="false"
+                  [sortable]="false"
+                  [draggable]="false"
+                  [canAutoResize]="false">
+                  <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+                    <a
+                      href="javascript:void(0)"
+                      [class.datatable-icon-right]="!expanded"
+                      [class.datatable-icon-down]="expanded"
+                      title="Expand/Collapse Row"
+                      (click)="toggleExpandRow(row)">
+                    </a>
+                  </ng-template>
+                </ngx-datatable-column>
               </ngx-datatable>
               <mat-form-field>
                   <input matInput
                     id="pool-manager__nameFilter"
                     type='text'
+                    [(ngModel)]="nameFilterField"
                     placeholder='Filter disks by name'
                     (keyup)='updateFilter($event)'
                   />
@@ -91,6 +123,7 @@
                   <input matInput
                     id="pool-manager__capacityFilter"
                     type='text'
+                    [(ngModel)]="capacityFilterField"
                     placeholder='Filter disks by capacity'
                     (keyup)='updateFilter($event)'
                   />

@@ -30,7 +30,11 @@
                 <!--<mat-icon>close-circle</mat-icon>-->
                 <mat-icon class="volumeHealth.level" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
               </span>
-              <span *ngIf="volumeHealth.level == 'warn'" class="{{volumeHealth.level}}">
+              <span *ngIf="volumeHealth.level == 'warn' && volumeData.status == 'UNKNOWN'" class="{{volumeHealth.level}}">
+                <!--<mat-icon>alert</mat-icon>-->
+                <mat-icon role="img">help</mat-icon>
+              </span>
+              <span *ngIf="volumeHealth.level == 'warn' && volumeData.status !== 'UNKNOWN'" class="{{volumeHealth.level}}">
                 <!--<mat-icon>alert</mat-icon>-->
                 <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
               </span>
@@ -38,10 +42,18 @@
             <div class="pool-data">
               <div class="inner">
                 <span *ngIf="voldataavail;else unavail">
-                  <!-- <span class="value">{{(volumeData.avail/1073741824).toFixed(2)}}</span> -->
-                  <span class="value">{{diskSize}}</span>
-                  <span class="value-units">{{diskSizeLabel}}</span>
-                  <p class="label">Available</p>
+                  <div fxLayoutAlign="center end" fxLayoutGap="8px" [style.margin-bottom.px]="8">
+                    <div>
+                      <span class="value">{{diskSize}}</span>
+                      <span>{{diskSizeLabel}}</span>
+                    </div>
+                    <span class="value">/</span>
+                    <div>
+                      <span class="value">{{diskSizeTotal}}</span>
+                      <span>{{diskSizeTotalLabel}}</span>
+                    </div>
+                  </div>
+                  <p class="label">Available / Total</p>
                 </span>
                 <ng-template #unavail>
                   <span class="value">{{volumeData.avail}}</span>
@@ -119,14 +131,17 @@
                   </div>
                 </div>
 
-                <div class="disk-detail-item">
+                <div class="disk-detail-item" *ngIf="diskDetails[selectedDisk].description">
                   <div>
                     <p class="label">{{"Description:" | translate}} </p>
-                    <p class="value" *ngIf="!diskDetails[selectedDisk].description">{{"N/A" | translate}}</p>
                     <p class="value">{{diskDetails[selectedDisk].description}}</p>
                   </div>
                 </div>
 
+                <div class="disk-detail-item" *ngIf="diskDetails[selectedDisk].model">
+                  <p class="label">{{"Model" | translate}} :</p>
+                  <p class="value">{{diskDetails[selectedDisk].model}}</p>
+                </div>
             </div>
           </div>
 

@@ -34,10 +34,10 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   public fieldShow: string;
   public disablePrevious:boolean;
 
-  @ViewChild('calendar', {read:ElementRef}) calendar: ElementRef;
-  @ViewChild('calendar') calendarComp:MatMonthView<any>;
-  @ViewChild('trigger') trigger: ElementRef;
-  @ViewChild('preview'/*, {read:ElementRef}*/) schedulePreview: ElementRef;
+  @ViewChild('calendar', { static: false, read:ElementRef}) calendar: ElementRef;
+  @ViewChild('calendar', { static: true}) calendarComp:MatMonthView<any>;
+  @ViewChild('trigger', { static: false}) trigger: ElementRef;
+  @ViewChild('preview', { static: false, read:ElementRef}) schedulePreview: ElementRef;
 
   // Popup Controls
   /*public minutesCtl = new FormControl('', [Validators.required, Validators.pattern]);
@@ -108,7 +108,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
 
   get hours(){ return this._hours}
   set hours(val){ 
-    if (val !== ""){
+    if (val !== "" && val.indexOf(' ') === -1){
       const string = "* * " + val + " * * *";
       try {
         parser.parseExpression(string);

@@ -33,7 +33,7 @@ export class DiskBulkEditComponent {
       placeholder: T('Serial'),
       tooltip : T('This is the serial number of the disk.'),
       value: [this.diskBucket.ids],
-      readonly: true, 
+      readonly: true,
       isHidden: true
     },
     {
@@ -73,7 +73,7 @@ export class DiskBulkEditComponent {
       value: this.diskBucket.diskToggleStatus,
       tooltip : T('Set by default if the disk supports S.M.A.R.T.\
                    Unset to disable any configured <a\
-                   href="%%docurl%%/tasks.html%%webversion%%#s-m-a-r-t-tests"\
+                   href="--docurl--/tasks.html#s-m-a-r-t-tests"\
                    target="_blank">S.M.A.R.T. tests</a>.'),
     },
     {
@@ -143,13 +143,13 @@ export class DiskBulkEditComponent {
     this.loader.open();
     let req = []
     let data = {
-      "hddstandby": event.disk_hddstandby, 
-      "advpowermgmt" : event.disk_advpowermgmt, 
+      "hddstandby": event.disk_hddstandby,
+      "advpowermgmt" : event.disk_advpowermgmt,
       "acousticlevel" : event.disk_acousticlevel,
       "togglesmart" : event.disk_togglesmart,
       "smartoptions" : event.disk_smartoptions
     }
-    
+
     if (!data.togglesmart) {
       data.smartoptions = '';
     }
@@ -160,7 +160,7 @@ export class DiskBulkEditComponent {
 
     this.ws.job('core.bulk', ["disk.update", req])
       .subscribe(
-        (res) => { 
+        (res) => {
           if(res.state === 'SUCCESS') {
             this.loader.close();
             let success_state = true;

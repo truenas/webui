@@ -38,7 +38,7 @@
                 <!-- </div> -->
                 <!-- <div class="btn-group btn-group-justified"> -->
                 <span *ngFor="let custBtn of conf.custActions">
-                  <button id="cust_button_{{custBtn.name}}" mat-button class="mat-basic" *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" (click)="custBtn['function']()">{{custBtn.name | translate}}</button>
+                  <button id="cust_button_{{custBtn.name}}" mat-button class="mat-basic" *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" [disabled]="custBtn.disabled" type="button" (click)="custBtn['function']()">{{custBtn.name | translate}}</button>
                 </span>
                 <button mat-button *ngIf="conf.route_delete" class="btn btn-block btn-danger" type="button" (click)="gotoDelete()">{{"Delete" | translate}}</button>
                 <!-- </div> -->

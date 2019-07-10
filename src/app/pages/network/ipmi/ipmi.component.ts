@@ -2,18 +2,25 @@ import { ApplicationRef, Component, Injector, Input, ViewChild, ElementRef} from
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import {  DialogService, RestService, TooltipsService, WebSocketService, NetworkService } from '../../../services/';
+import {  DialogService, RestService, TooltipsService, WebSocketService, NetworkService, SnackbarService } from '../../../services/';
 import { FormGroup } from '@angular/forms';
 
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../helptext/network/ipmi/ipmi';
+import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { EntityUtils } from '../../common/entity/utils';
+import { T } from '../../../translate-marker';
 
 
 @Component({
   selector : 'app-ipmi',
   template : `
   <mat-card class="ipmi-card">
-  <mat-select #selectedChannel name="channel" placeholder="Channel" (change)="switchChannel()" [(ngModel)]="selectedValue">
+  <mat-select *ngIf="is_ha" #storageController name="controller" placeholder="Controller" (selectionChange)="loadData()" [(ngModel)]="remoteController">
+    <mat-option [value]="false">Current controller</mat-option>
+    <mat-option [value]="true">Failover controller</mat-option>
+  </mat-select><br/>
+  <mat-select #selectedChannel name="channel" placeholder="Channel" (selectionChange)="switchChannel()" [(ngModel)]="selectedValue">
     <mat-option *ngFor="let channel of channels" [value]="channel.value">
       Channel {{channel.value}}
     </mat-option>
@@ -22,11 +29,10 @@ import helptext from '../../../helptext/network/ipmi/ipmi';
   <entity-form [conf]="this"></entity-form>
   `,
   styleUrls: ['./ipmi.component.css'],
-  providers : [ TooltipsService ],
+  providers : [ TooltipsService, SnackbarService ],
 })
 export class IPMIComponent {
-  @Input('conf') conf: any;
-  @ViewChild('selectedChannel') select: ElementRef;
+  @ViewChild('selectedChannel', { static: true}) select: ElementRef;
   selectedValue: string;
 
   protected resource_name = '';
@@ -37,6 +43,8 @@ export class IPMIComponent {
   protected netmask: any;
   protected ipaddress: any;
   protected entityEdit: any;
+  public remoteController = false;
+  public is_ha = false;
   private options: Array<any> = [
     {label:'Indefinitely', value: 'force'},
     {label:'15 seconds', value: 15},
@@ -115,12 +123,17 @@ export class IPMIComponent {
               protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected tooltipsService: TooltipsService,
-              protected networkService: NetworkService, protected dialog: DialogService
+              protected networkService: NetworkService, protected dialog: DialogService,
+              protected loader: AppLoaderService, protected snackBar: SnackbarService
             ) {}
 
 
   preInit(entityEdit: any) {
-
+    if (window.localStorage.getItem('is_freenas') === 'false') {
+      this.ws.call('failover.licensed').subscribe((is_ha) => {
+        this.is_ha = is_ha;
+      });
+    }
   }
 
   afterInit(entityEdit: any) {
@@ -130,7 +143,6 @@ export class IPMIComponent {
         this.channels.push({label: res[i].channel, value: res[i].channel})
       }
     });
-    entityEdit.submitFunction = this.submitFunction;
     this.entityEdit = entityEdit;
     this.loadData();
 
@@ -138,37 +150,46 @@ export class IPMIComponent {
       res === 'INVALID' ? _.find(this.fieldConfig)['hasErrors'] = true : _.find(this.fieldConfig)['hasErrors'] = false;
     })
   }
-    submitFunction({}){
-      const payload = {}
-      const formvalue = _.cloneDeep(this.formGroup.value);
-      payload['password'] = formvalue.password;
-      payload['dhcp'] = formvalue.dhcp;
-      payload['gateway'] = formvalue.gateway;
-      payload['ipaddress'] = formvalue.ipaddress;
-      payload['netmask'] = formvalue.netmask;
-      payload['vlan'] = formvalue.vlan;
-      return this.ws.call('ipmi.update', [ this.conf.selectedValue, payload ]);
 
-    }
-    switchChannel(){
-      const myFilter = [];
-      myFilter.push("id")
-      myFilter.push("=")
-      myFilter.push(this.selectedValue)
-      this.loadData([[myFilter]]);
+  customSubmit(payload){
+    let call = this.ws.call('ipmi.update', [ this.selectedValue, payload ]);
+    if (this.remoteController) {
+      call = this.ws.call('failover.call_remote', ['ipmi.update', [ this.selectedValue, payload ]]);
     }
 
-    loadData(filter = []){
-      this.ws.call('ipmi.query', filter).subscribe((res) => {
-        for (let i = 0; i < res.length; i++) {
-          this.selectedValue = res[i].channel;
-          this.entityEdit.formGroup.controls['netmask'].setValue(res[i].netmask);
-          this.entityEdit.formGroup.controls['dhcp'].setValue(res[i].dhcp);
-          this.entityEdit.formGroup.controls['ipaddress'].setValue(res[i].ipaddress);
-          this.entityEdit.formGroup.controls['gateway'].setValue(res[i].gateway);
-          this.entityEdit.formGroup.controls['vlan'].setValue(res[i].vlan);
-        }
-      });
+    this.loader.open();
+    return call.subscribe((res) => {
+      this.loader.close();
+      this.snackBar.open(T("Settings saved."), T('close'), { duration: 5000 });
+    }, (res) => {
+      this.loader.close();
+      new EntityUtils().handleWSError(this.entityEdit, res);
+    });
+  }
+
+  switchChannel(){
+    const myFilter = [];
+    myFilter.push("id")
+    myFilter.push("=")
+    myFilter.push(this.selectedValue)
+    this.loadData([[myFilter]]);
+  }
+
+  loadData(filter = []){
+    let query = this.ws.call('ipmi.query', filter);
+    if (this.remoteController) {
+      query = this.ws.call('failover.call_remote', ['ipmi.query', [filter]]);
     }
+    query.subscribe((res) => {
+      for (let i = 0; i < res.length; i++) {
+        this.selectedValue = res[i].channel;
+        this.entityEdit.formGroup.controls['netmask'].setValue(res[i].netmask);
+        this.entityEdit.formGroup.controls['dhcp'].setValue(res[i].dhcp);
+        this.entityEdit.formGroup.controls['ipaddress'].setValue(res[i].ipaddress);
+        this.entityEdit.formGroup.controls['gateway'].setValue(res[i].gateway);
+        this.entityEdit.formGroup.controls['vlan'].setValue(res[i].vlan);
+      }
+    });
+  }
 
 }

@@ -3,17 +3,17 @@ import { T } from "app/translate-marker";
 import { matchOtherValidator } from "app/pages/common/entity/entity-form/validators/password-validation";
 
 export const helptext_system_email = {
-  em_fromemail: {
+  fromemail: {
     placeholder: T("From E-mail"),
     tooltip: T(
       'The envelope <i>From</i> address shown in the email.\
  This can be set to make filtering mail on the\
  receiving system easier. The friendly name is set like this:\
- <i>"Friendly Name" <address@example.com></i>'
+ <i>"Friendly Name" &ltaddress@example.com&gt</i>'
     )
   },
 
-  em_outgoingserver: {
+  outgoingserver: {
     placeholder: T("Outgoing Mail Server"),
     tooltip: T(
       "Hostname or IP address of SMTP server to use for\
@@ -21,7 +21,7 @@ export const helptext_system_email = {
     )
   },
 
-  em_port: {
+  port: {
     placeholder: T("Mail Server Port"),
     tooltip: T(
       "SMTP port number. Typically <i>25,465</i>\
@@ -29,7 +29,7 @@ export const helptext_system_email = {
     )
   },
 
-  em_security: {
+  security: {
     placeholder: T("Security"),
     tooltip: T(
       '<a href="https://www.fastmail.com/help/technical/ssltlsstarttls.html"\
@@ -39,7 +39,7 @@ export const helptext_system_email = {
     )
   },
 
-  em_smtp: {
+  smtp: {
     placeholder: T("SMTP Authentication"),
     tooltip: T(
       'Enable/disable\
@@ -49,7 +49,7 @@ export const helptext_system_email = {
     )
   },
 
-  em_user: {
+  user: {
     placeholder: T("Username"),
     tooltip: T(
       "Enter the username if the SMTP server requires\
@@ -58,16 +58,11 @@ export const helptext_system_email = {
     validation: [Validators.required]
   },
 
-  em_pwmessage: {
-    paraText: T('Enter the password to submit settings changes.')
-  },
-
-  em_pass: {
+  pass: {
     placeholder: T("Password"),
     tooltip: T(
-      "Enter the password if the SMTP server requires\
- authentication."
-    ),
-    validation: [Validators.required]
+      "Enter the password for the SMTP server. Only plain ASCII\
+ characters are accepted."
+    )
   }
 };

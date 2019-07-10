@@ -14,9 +14,11 @@ import {
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { AppBlankComponent } from './app-blank/app-blank.component';
 import { OthersRoutes } from "./others.routing";
+import { FailoverComponent } from "./failover/failover.component";
 import { RebootComponent } from "./reboot/reboot.component";
 import { ShutdownComponent } from "./shutdown/shutdown.component";
 import { TranslateModule } from '@ngx-translate/core';
+import { ConfigResetComponent } from './config-reset/config-reset.component';
 
 @NgModule({
   imports: [
@@ -33,6 +35,6 @@ import { TranslateModule } from '@ngx-translate/core';
     TranslateModule,
     RouterModule.forChild(OthersRoutes)
   ],
-  declarations: [AppBlankComponent, RebootComponent, ShutdownComponent]
+  declarations: [AppBlankComponent, RebootComponent, FailoverComponent, ShutdownComponent, ConfigResetComponent]
 })
 export class OthersModule { }

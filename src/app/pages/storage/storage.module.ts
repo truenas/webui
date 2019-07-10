@@ -15,9 +15,10 @@ import { StorageService } from '../../services/storage.service';
 
 import { SnapshotAddComponent } from './snapshots/snapshot-add/';
 import { SnapshotCloneComponent } from './snapshots/snapshot-clone/';
-import { SnapshotListComponent } from './snapshots/snapshot-list/';
+import { SnapshotDetailsComponent, SnapshotListComponent } from './snapshots/snapshot-list/';
 import { DatasetFormComponent } from './volumes/datasets/dataset-form/';
-import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissions/'
+import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissions/';
+import { DatasetAclComponent } from './volumes/datasets/dataset-acl/';
 import {ImportDiskComponent} from './import-disk/import-disk.component';
 
 import { DiskComponent, ManagerComponent, VdevComponent } from './volumes/manager/';
@@ -34,7 +35,6 @@ import { DiskListComponent } from './disks/disk-list/';
 import { DiskFormComponent } from './disks/disk-form/';
 import { DiskBulkEditComponent } from './disks/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
-import { BrowserModule } from '@angular/platform-browser';
 import { TreeTableModule } from 'primeng/treetable';
 import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form';
 import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddkey-form';
@@ -42,6 +42,7 @@ import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecr
 import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volumechangekey-form/volumechangekey-form.component';
 import { VolumeImportWizardComponent} from './volumes/volume-import-wizard';
 import { MessageService } from '../common/entity/entity-form/services/message.service';
+import { JobService } from 'app/services';
 
 @NgModule({
   imports : [
@@ -65,10 +66,12 @@ import { MessageService } from '../common/entity/entity-form/services/message.se
     ZvolFormComponent,
     VolumeImportWizardComponent,
     SnapshotListComponent,
+    SnapshotDetailsComponent,
     SnapshotCloneComponent,
     SnapshotAddComponent,
     ImportDiskComponent,
     DatasetPermissionsComponent,
+    DatasetAclComponent,
     VMwareSnapshotFormComponent,
     VMwareSnapshotListComponent,
     DiskListComponent,
@@ -78,7 +81,8 @@ import { MessageService } from '../common/entity/entity-form/services/message.se
     DiskWipeComponent,
     DiskBulkEditComponent
   ],
-  providers : [UserService, StorageService, MessageService]
+  entryComponents: [SnapshotDetailsComponent],
+  providers : [UserService, StorageService, MessageService, JobService]
 })
 export class StorageModule {
 }

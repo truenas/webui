@@ -12,7 +12,7 @@ import { regexValidator } from '../../../common/entity/entity-form/validators/re
 })
 export class BootEnvironmentRenameComponent {
 
-  protected route_success: string[] = [ 'system', 'bootenv' ];
+  protected route_success: string[] = [ 'system', 'boot' ];
   protected editCall = 'bootenv.update';
   protected pk: any;
   protected isNew = false;

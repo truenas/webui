@@ -33,7 +33,7 @@ export class FormExplorerComponent implements Field, OnInit {
         TREE_ACTIONS.TOGGLE_EXPANDED(tree, node, $event);
       },
       click: (tree, node, $event) => {
-        if (this.config.useCheckbox) {
+        if (this.config.multiple) {
           TREE_ACTIONS.TOGGLE_SELECTED(tree, node, $event);
         } else {
           this.setPath(node);
@@ -68,14 +68,15 @@ export class FormExplorerComponent implements Field, OnInit {
   ngOnInit() {
     this.treeVisible = false;
 
-    if (this.config.useCheckbox) {
-      this.customTemplateStringOptions.useCheckbox = this.config.useCheckbox;
+    if (this.config.multiple) {
+      this.customTemplateStringOptions.useCheckbox = this.config.multiple;
     }
 
     if (this.config.customTemplateStringOptions) {
       if (!this.config.customTemplateStringOptions.actionMapping) {
         this.config.customTemplateStringOptions.actionMapping = this.actionMapping;
       }
+      this.config.customTemplateStringOptions.explorerComponent = this;
       this.customTemplateStringOptions = this.config.customTemplateStringOptions;
       this.config.customTemplateStringOptions.explorer = this;
     }
@@ -107,6 +108,9 @@ export class FormExplorerComponent implements Field, OnInit {
       }
       else if(this.config.explorerType === "file") {
         resolve(this.entityFormService.getFilesystemListdirChildren(node));
+      }
+      else if (this.config.explorerType === "dataset") {
+        resolve(this.entityFormService.getPoolDatasets());
       }
       else {
         resolve(this.entityFormService.getFilesystemListdirChildren(node));
@@ -143,8 +147,8 @@ export class FormExplorerComponent implements Field, OnInit {
     let res = [];
     for (let i = 0; i < selectedTreeNodes.length; i++) {
         if (selectedTreeNodes[i].parent.isAllSelected) {
-          let parent = selectedTreeNodes[i].parent;
-          while (parent && parent.parent && !parent.parent.isRoot && parent.parent.isAllSelected) {
+          let parent = selectedTreeNodes[i];
+          while (parent && parent.isRoot != true && parent.parent && !parent.parent.isRoot && parent.parent.isAllSelected) {
             parent = parent.parent;
           }
           if (res.indexOf(parent.data.name) === -1) {

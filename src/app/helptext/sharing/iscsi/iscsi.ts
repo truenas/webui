@@ -50,7 +50,7 @@ export const helptext_sharing_iscsi = {
 
   portal_form_placeholder_discovery_authmethod: T("Discovery Auth Method"),
   portal_form_tooltip_discovery_authmethod: T(
-    '<a href="%%docurl%%/sharing.html%%webversion%%#block-iscsi"\
+    '<a href="--docurl--/sharing.html#block-iscsi"\
  target="_blank">iSCSI</a> supports multiple\
  authentication methods that are used by the target to\
  discover valid devices. <i>None</i> allows anonymous\
@@ -124,7 +124,7 @@ export const helptext_sharing_iscsi = {
     'Enter the percentage of free space to remain\
  in the pool. When this percentage is reached,\
  the system issues an alert, but only if zvols are used.\
- See <a href="%%docurl%%/vaai.html%%webversion%%#vaai"\
+ See <a href="--docurl--/vaai.html#vaai"\
  target="_blank">VAAI Threshold Warning</a> for more\
  information.'
   ),
@@ -203,7 +203,7 @@ export const helptext_sharing_iscsi = {
     'Only appears if a <i>File</i> or zvol is selected. When\
  the specified percentage of free space is reached,\
  the system issues an alert.\
- See <a href="%%docurl%%/vaai.html%%webversion%%#vaai"\
+ See <a href="--docurl--/vaai.html#vaai"\
  target="_blank">VAAI</a> Threshold Warning.'
   ),
 
@@ -270,6 +270,9 @@ export const helptext_sharing_iscsi = {
   authaccess_tooltip_peersecret: T(
     "Mutual secret password. Must be different than <i>Secret</i>."
   ),
+  authaccess_error_peersecret: T('Must match Peer Secret (Confirm) and be\
+ between 12 and 16 characters in length. Cannot be the same as\
+ Secret.'),
 
   authaccess_placeholder_peersecret_confirm: T("Peer Secret (Confirm)"),
 
@@ -293,5 +296,14 @@ export const helptext_sharing_iscsi = {
 
   associated_target_placeholder_extent: T("Extent"),
   associated_target_tooltip_extent: T("Select an existing extent."),
-  associated_target_validators_extent: [Validators.required]
+  associated_target_validators_extent: [Validators.required],
+
+  fc_mode_placeholder: T('Mode'),
+  fc_mode_tooltip: T(''),
+
+  fc_target_placeholder: T('Targets'),
+  fc_target_tooltip: T(''),
+
+  fc_initiators_placeholder: T('Connected Initiators'),
+  fc_initiators_tooltip: T(''),
 };

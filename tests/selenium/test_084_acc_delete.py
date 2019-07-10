@@ -21,12 +21,10 @@ xpaths = {
     'submenuGroup': '//*[@id="1-0"]',
     'confirmCheckbox': '//*[contains(@name, "confirm_checkbox")]',
     'deleteButton': '//*[contains(@name, "ok_button")]',
-    'breadcrumbBar': '//*[@id="breadcrumb-bar"]/ul/li[2]/a'
+    'breadcrumbBar1': "//div[@id='breadcrumb-bar']/ul/li/a",
+    'breadcrumbBar2': "//*[@id='breadcrumb-bar']/ul/li[2]/a",
+    'toDashboard': "//span[contains(.,'Dashboard')]",
 }
-
-
-def test_00_set_implicitly_wait(wb_driver):
-    wb_driver.implicitly_wait(1)
 
 
 def test_01_nav_acc_user(wb_driver):
@@ -35,8 +33,14 @@ def test_01_nav_acc_user(wb_driver):
     time.sleep(1)
     # Click User sub-menu
     wb_driver.find_element_by_xpath(xpaths['submenuUser']).click()
+     # get the ui element
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    # get the weather data
+    page_data = ui_element.text
+    # assert response
+    assert "Account" in page_data, page_data
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     page_data = ui_element.text
     # assert response
@@ -84,7 +88,7 @@ def test_07_nav_acc_group(wb_driver):
     # Click User submenu
     wb_driver.find_element_by_xpath(xpaths['submenuGroup']).click()
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     page_data = ui_element.text
     # assert response
@@ -126,8 +130,16 @@ def test_11_delete_group(wb_driver):
     take_screenshot(wb_driver, script_name, test_name)
 
 
-def test_12_close_navAccount(wb_driver):
-    wb_driver.find_element_by_xpath(xpaths['navAccount']).click()
+def test_12_return_to_dashboard(wb_driver):
+    # Close the System Tab
+    wb_driver.find_element_by_xpath(xpaths['toDashboard']).click()
+    time.sleep(1)
+    # get the ui element
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    # get the weather data
+    page_data = ui_element.text
+    # assert response
+    assert page_data == "Dashboard", page_data
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)

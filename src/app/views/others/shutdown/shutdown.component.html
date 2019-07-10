@@ -4,7 +4,7 @@
 		<mat-card-content id="shutdown-message">{{ "System is shutting down..." | translate }}</mat-card-content>
 		<img id="logo" *ngIf="is_freenas; else isTruenas" src="assets/images/light-logo-full.svg" alt="FreeNAS logo">
 		<ng-template #isTruenas>
-			<img id="logo" src="assets/images/CMYK_OnDark_TrueNAS_Logo.svg" alt="TrueNAS logo">
+			<img id="logo" src="assets/images/TrueNAS_Logo_Full_White.svg" alt="TrueNAS logo">
 		</ng-template>
 		<div>
 			<span *ngIf="is_freenas; else isTruenasCopyright" fxFlex class="copyright-txt">FreeNAS® © {{copyrightYear}} - <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.</span>

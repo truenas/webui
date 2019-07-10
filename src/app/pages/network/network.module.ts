@@ -10,12 +10,6 @@ import {EntityModule} from '../common/entity/entity.module';
 import {NetworkService} from '../../services';
 import { EntityFormService } from '../common/entity/entity-form/services/entity-form.service';
 
-import {VlanFormComponent} from './vlans/vlan-form/';
-import {VlanListComponent} from './vlans/vlan-list/';
-import {LaggFormComponent} from './laggs/lagg-form/';
-import {LaggListComponent} from './laggs/lagg-list/';
-import {LaggMembersFormComponent} from './laggs/members/members-form';
-import {LaggMembersListComponent} from './laggs/members/members-list';
 import {StaticRouteFormComponent} from './staticroutes/staticroute-form/';
 import {StaticRouteListComponent} from './staticroutes/staticroute-list/';
 import {InterfacesFormComponent} from './interfaces/interfaces-form/';
@@ -31,12 +25,6 @@ import {routing} from './network.routing';
     ReactiveFormsModule, NgUploaderModule, routing, MaterialModule, FlexLayoutModule, TranslateModule
   ],
   declarations : [
-    VlanFormComponent,
-    VlanListComponent,
-    LaggFormComponent,
-    LaggListComponent,
-    LaggMembersFormComponent,
-    LaggMembersListComponent,
     StaticRouteFormComponent,
     StaticRouteListComponent,
     InterfacesListComponent,

@@ -60,18 +60,12 @@
               <div dynamicField [config]="victoropsField" [group]="victoropsFormGroup"></div>
             </div>
           </div>
-          <div *ngIf="settingEnabled" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
-            <div *ngFor="let settingField of fieldSet.settingFieldConfig;">
-              <div dynamicField [config]="settingField" [group]="settingFormGroup"></div>
-            </div>
-          </div>
         </div>
       </ng-container>
       <mat-card-actions class="buttons">
         <button id="save_button" class="btn btn-block btn-warning" type="submit" mat-button color="primary" [disabled]="!entityForm.form.valid">{{"Save" | translate}}</button>
         <button id="goback_button" *ngIf="route_success" class="btn  btn-block btn-lg btn-primary" type="button" (click)="goBack()" mat-button color="accent">{{"Cancel" | translate}}</button>
         <button id="test-alert" type="button" (click)="sendTestAlet()" mat-button class="mat-basic" [disabled]="!entityForm.form.valid">{{"Send Test Alert" | translate}}</button>
-        <button type="button" (click)="settingEnabled = !settingEnabled" mat-button class="mat-basic">{{ settingEnabled ? "Hide Settings" : "Show Settings" | translate }}</button>
       </mat-card-actions>
     </div>
   </form>

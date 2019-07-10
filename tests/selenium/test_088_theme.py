@@ -16,7 +16,8 @@ script_name = os.path.basename(__file__).partition('.')[0]
 
 xpaths = {
     'themeBar': "//*[@id='schemeToggle']/span/mat-icon",
-    'breadcrumbBar': '//*[@id="breadcrumb-bar"]/ul/li[2]/a'
+    'breadcrumbBar1': "//div[@id='breadcrumb-bar']/ul/li/a",
+    'breadcrumbBar2': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
 }
 
 theme_name = [
@@ -27,10 +28,6 @@ theme_name = [
     'High Contrast',
     'iX Dark'
 ]
-
-
-def test_00_set_implicitly_wait(wb_driver):
-    wb_driver.implicitly_wait(1)
 
 
 @pytest.mark.parametrize("theme", theme_name)

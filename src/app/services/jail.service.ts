@@ -70,6 +70,8 @@ export class JailService {
   protected jailsConfig: string = 'jails/configuration';
   protected jailsTemplate: string = 'jails/templates';
 
+  public jailNameRegex = /^[a-zA-Z0-9\._-]+$/;
+
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
   getIpv4Netmask() { return this.ipv4_netmask_options; }
@@ -83,10 +85,26 @@ export class JailService {
   listTemplates() { return this.rest.get(this.jailsTemplate, {}); }
 
   getLocalReleaseChoices() {
-    return this.ws.call('jail.list_resource', ["RELEASE"]);
+    return this.ws.job('jail.list_resource', ["RELEASE"]);
   };
 
   getRemoteReleaseChoices() {
-    return this.ws.call('jail.list_resource', ["RELEASE", true]);
+    return this.ws.job('jail.list_resource', ["RELEASE", true]);
   };
+
+  getBranches() {
+    return this.ws.job('jail.list_resource', ["BRANCHES"]);
+  }
+
+  getVersion() {
+    return this.ws.call('jail.get_version');
+  }
+
+  getInstalledPlugins() {
+    return this.ws.job('jail.list_resource', ["PLUGIN"]);
+  }
+
+  getTemplates() {
+    return this.ws.job('jail.list_resource', ["TEMPLATE"]);
+  }
 }

@@ -40,8 +40,8 @@ ldap_bindpw_placeholder : T('Bind Password'),
 ldap_bindpw_tooltip: T('Password for the Bind DN.'),
 
 ldap_anonbind_name : 'ldap_anonbind',
-ldap_anonbind_placeholder : T('Allow Anonymous Binding'),
-ldap_anonbind_tooltip: T('Set for the LDAP server to disable authentication and\
+ldap_anonbind_placeholder: T('Allow Anonymous Binding'),
+ldap_anonbind_tooltip : T('Set for the LDAP server to disable authentication and\
  allow read and write access to any client.'),
 
 ldap_usersuffix_name : 'ldap_usersuffix',
@@ -71,14 +71,14 @@ ldap_sudosuffix_tooltip: T('Suffix for LDAP-based users that need superuser acce
 ldap_kerberos_realm_name : 'ldap_kerberos_realm',
 ldap_kerberos_realm_placeholder : T('Kerberos Realm'),
 ldap_kerberos_realm_tooltip: T('Select the realm created using the instructions in <a\
- href="%%docurl%%/directoryservices.html%%webversion%%#kerberos-realms"\
+ href="--docurl--/directoryservices.html#kerberos-realms"\
  target="_blank">Kerberos Realms</a>.'),
 
 ldap_kerberos_principal_name : 'ldap_kerberos_principal',
 ldap_kerberos_principal_placeholder : T('Kerberos Principal'),
 ldap_kerberos_principal_tooltip: T('Select the location of the principal in the keytab\
  created as described in <a\
- href="%%docurl%%/directoryservices.html%%webversion%%#kerberos-keytabs"\
+ href="--docurl--/directoryservices.html#kerberos-keytabs"\
  target="_blank">Kerberos Keytabs</a>.'),
 
 ldap_ssl_name : 'ldap_ssl',
@@ -90,6 +90,12 @@ ldap_certificate_name : 'ldap_certificate',
 ldap_certificate_placeholder : T('Certificate'),
 ldap_certificate_tooltip: T('Select the LDAP CA certificate. The certificate for the\
  LDAP server CA must first be imported using the System/Certificates menu.'),
+
+ldap_disable_fn_cache_name : 'ldap_disable_freenas_cache',
+ldap_disable_fn_cache_placeholder : T('Disable LDAP user/group cache'),
+ldap_disable_fn_cache_tooltip: T('Set to disable caching LDAP users and groups in large LDAP environments. \
+ When caching is disabled, LDAP users and groups do not appear in dropdown \
+ menus, but are still accepted when manually entered.'),
 
 ldap_timeout_name : 'ldap_timeout',
 ldap_timeout_placeholder : T('LDAP timeout'),
@@ -138,6 +144,7 @@ ldap_netbiosalias_tooltip: T('Alternative names that SMB clients can use when\
 ldap_advanced_fields : 
 [
 'ldap_anonbind',
+'ldap_disable_freenas_cache',
 'ldap_usersuffix',
 'ldap_groupsuffix',
 'ldap_passwordsuffix',

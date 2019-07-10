@@ -1,4 +1,7 @@
 <mat-card>
+    <div dir="rtl" >
+      <button mat-button color="primary" id="iscsi_wizard_action_button" (click)="gotoWizard()">Wizard</button>
+    </div>
   <nav mat-tab-nav-bar>
     <a mat-tab-link *ngFor="let link of navLinks" [routerLink]="link.path" routerLinkActive #rla="routerLinkActive" [active]="rla.isActive">
     {{link.label}}
@@ -12,5 +15,6 @@
     <app-iscsi-target-list *ngIf="activedTab == 'target'"></app-iscsi-target-list>
     <app-iscsi-extent-list *ngIf="activedTab == 'extent'"></app-iscsi-extent-list>
     <app-iscsi-associated-target-list *ngIf="activedTab == 'associatedtarget'"></app-iscsi-associated-target-list>
+    <app-iscsi-fibre-channel-ports *ngIf="activedTab == 'fibrechannel' && fcEnabled"></app-iscsi-fibre-channel-ports>
   </router-outlet>
 </mat-card>

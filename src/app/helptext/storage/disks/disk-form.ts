@@ -28,7 +28,7 @@ disk_form_acousticlevel_tooltip : T('Modify for disks that understand <a\
 disk_form_togglesmart_placeholder : T('Enable S.M.A.R.T.'),
 disk_form_togglesmart_tooltip : T('Set by default if the disk supports S.M.A.R.T.\
  Unset to disable any configured <a\
- href="%%docurl%%/tasks.html%%webversion%%#s-m-a-r-t-tests"\
+ href="--docurl--/tasks.html#s-m-a-r-t-tests"\
  target="_blank">S.M.A.R.T. tests</a>.'),
 
 disk_form_smartoptions_placeholder: T('S.M.A.R.T. extra options'),

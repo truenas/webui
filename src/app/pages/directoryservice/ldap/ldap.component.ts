@@ -162,6 +162,12 @@ export class LdapComponent {
       options : []
     },
     {
+      type : 'checkbox',
+      name : helptext.ldap_disable_fn_cache_name,
+      placeholder : helptext.ldap_disable_fn_cache_placeholder,
+      tooltip: helptext.ldap_disable_fn_cache_tooltip
+    },
+    {
       type : 'input',
       name : helptext.ldap_timeout_name,
       placeholder : helptext.ldap_timeout_placeholder,
@@ -324,4 +330,5 @@ export class LdapComponent {
     }
     delete(data['ldap_hostname_noreq']);
   }
+
 }

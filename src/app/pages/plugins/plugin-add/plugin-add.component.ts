@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { Validators } from '@angular/forms';
 
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -20,13 +22,13 @@ import helptext from '../../../helptext/plugins/plugins';
   selector: 'app-plugin-add',
   templateUrl: './plugin-add.component.html',
   styleUrls: ['../../common/entity/entity-form/entity-form.component.scss'],
-  providers: [EntityFormService, FieldRelationService, NetworkService],
+  providers: [EntityFormService, FieldRelationService, NetworkService, TranslateService],
 })
 export class PluginAddComponent implements OnInit {
 
   protected addCall: string = 'jail.fetch';
-  public route_goback: string[] = ['plugins', 'available'];
-  public route_success: string[] = ['plugins', 'installed'];
+  public route_goback: string[] = ['plugins'];
+  public route_success: string[] = ['plugins'];
   protected isEntity: boolean = false;
 
   public fieldConfig: FieldConfig[] = [{
@@ -36,10 +38,34 @@ export class PluginAddComponent implements OnInit {
       disabled: true,
     },
     {
+      type: 'radio',
+      name: 'https',
+      placeholder: helptext.https_placeholder,
+      options: [
+        {label:'HTTPS', value: true, tooltip: helptext.https_tooltip,},
+        {label:'HTTP', value: false, tooltip: helptext.http_tooltip,},
+      ],
+      value: true,
+    },
+    {
       type: 'checkbox',
       name: 'dhcp',
       placeholder: helptext.dhcp_placeholder,
       tooltip: helptext.dhcp_tooltip,
+      value: false,
+      relation: [{
+        action: "DISABLE",
+        when: [{
+          name: "nat",
+          value: true
+        }]
+      }],
+    },
+    {
+      type: 'checkbox',
+      name: 'nat',
+      placeholder: helptext.nat_placeholder,
+      tooltip: helptext.nat_tooltip,
       value: true,
     },
     {
@@ -55,10 +81,14 @@ export class PluginAddComponent implements OnInit {
       ],
       value: '',
       relation: [{
-        action: 'DISABLE',
+        action: "ENABLE",
+        connective: 'AND',
         when: [{
-          name: 'dhcp',
-          value: true,
+          name: "dhcp",
+          value: false
+        }, {
+          name: 'nat',
+          value: false,
         }]
       }],
       class: 'inline',
@@ -71,11 +101,15 @@ export class PluginAddComponent implements OnInit {
       tooltip: helptext.ip4_addr_tooltip,
       validation : [ regexValidator(this.networkService.ipv4_regex) ],
       relation: [{
-      action: 'DISABLE',
-      when: [{
-        name: 'dhcp',
-        value: true,
-       }]
+        action: "ENABLE",
+        connective: 'AND',
+        when: [{
+          name: "dhcp",
+          value: false
+        }, {
+          name: 'nat',
+          value: false,
+        }]
       }],
       required: true,
       class: 'inline',
@@ -89,13 +123,16 @@ export class PluginAddComponent implements OnInit {
       options: this.networkService.getV4Netmasks(),
       value: '',
       relation: [{
-        action: 'DISABLE',
+        action: "ENABLE",
+        connective: 'AND',
         when: [{
-          name: 'dhcp',
-          value: true,
+          name: "dhcp",
+          value: false
+        }, {
+          name: 'nat',
+          value: false,
         }]
       }],
-      required: false,
       class: 'inline',
       width: '20%',
     },
@@ -114,10 +151,14 @@ export class PluginAddComponent implements OnInit {
       class: 'inline',
       width: '30%',
       relation: [{
-        action: "DISABLE",
+        action: "ENABLE",
+        connective: 'AND',
         when: [{
           name: "dhcp",
-          value: true
+          value: false
+        }, {
+          name: 'nat',
+          value: false,
         }]
       }],
     },
@@ -128,10 +169,14 @@ export class PluginAddComponent implements OnInit {
       tooltip: helptext.ip6_addr_tooltip,
       validation : [ regexValidator(this.networkService.ipv6_regex) ],
       relation: [{
-        action: "DISABLE",
+        action: "ENABLE",
+        connective: 'AND',
         when: [{
           name: "dhcp",
-          value: true
+          value: false
+        }, {
+          name: 'nat',
+          value: false,
         }]
       }],
       required: true,
@@ -145,14 +190,17 @@ export class PluginAddComponent implements OnInit {
       tooltip: helptext.ip6_prefix_tooltip,
       options: this.networkService.getV6PrefixLength(),
       value: '',
-      required: false,
       class: 'inline',
       width: '20%',
       relation: [{
-        action: "DISABLE",
+        action: "ENABLE",
+        connective: 'AND',
         when: [{
           name: "dhcp",
-          value: true
+          value: false
+        }, {
+          name: 'nat',
+          value: false,
         }]
       }],
     }
@@ -179,7 +227,39 @@ export class PluginAddComponent implements OnInit {
     protected dialog: DialogService,
     protected networkService: NetworkService,
     protected snackBar: MatSnackBar,
-    protected matdialog: MatDialog) {}
+    protected matdialog: MatDialog,
+    protected translate: TranslateService) {}
+
+  updateIpValidation() {
+    const ip4AddrField = _.find(this.fieldConfig, {'name': 'ip4_addr'});
+    const ip6AddrField = _.find(this.fieldConfig, {'name': 'ip6_addr'});
+    if (this.formGroup.controls['dhcp'].value == false && this.formGroup.controls['nat'].value == false) {
+      if ((this.formGroup.controls['ip4_addr'].value == '' || this.formGroup.controls['ip4_addr'].value == undefined) &&
+      (this.formGroup.controls['ip6_addr'].value == '' || this.formGroup.controls['ip6_addr'].value == undefined)) {
+        if (ip4AddrField.required == false) {
+          ip4AddrField.required = true;
+          this.formGroup.controls['ip4_addr'].setValidators([Validators.required]);
+          this.formGroup.controls['ip4_addr'].updateValueAndValidity();
+        }
+        if (ip6AddrField.required == false) {
+          ip6AddrField.required = true;
+          this.formGroup.controls['ip6_addr'].setValidators([Validators.required]);
+          this.formGroup.controls['ip6_addr'].updateValueAndValidity();
+        }
+      } else {
+        if (ip4AddrField.required == true) {
+          ip4AddrField.required = false;
+          this.formGroup.controls['ip4_addr'].clearValidators();
+          this.formGroup.controls['ip4_addr'].updateValueAndValidity();
+        }
+        if (ip6AddrField.required == true) {
+          ip6AddrField.required = false;
+          this.formGroup.controls['ip6_addr'].clearValidators();
+          this.formGroup.controls['ip6_addr'].updateValueAndValidity();
+        }
+      }
+    }
+  }
 
   ngOnInit() {
     this.ip4_interfaceField = _.find(this.fieldConfig, {'name': 'ip4_interface'});
@@ -187,7 +267,7 @@ export class PluginAddComponent implements OnInit {
     this.ip6_interfaceField = _.find(this.fieldConfig, {'name': 'ip6_interface'});
     this.ip6_prefixField = _.find(this.fieldConfig, {'name': 'ip6_prefix'});
     // get interface options
-    this.ws.call('interfaces.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
+    this.ws.call('interface.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
       (res)=>{
         for (let i in res) {
           this.ip4_interfaceField.options.push({ label: res[i].name, value: res[i].name});
@@ -201,55 +281,11 @@ export class PluginAddComponent implements OnInit {
 
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
     this.formGroup.controls['ip4_addr'].valueChanges.subscribe((res) => {
-      if (res != '' && res != undefined) {
-        if (this.formGroup.controls['ip6_addr'].disabled == false) {
-          this.formGroup.controls['ip6_interface'].disable();
-          this.formGroup.controls['ip6_addr'].disable();
-          this.formGroup.controls['ip6_prefix'].disable();
-        }
-      } else {
-        if (this.formGroup.controls['ip6_addr'].disabled == true && this.formGroup.controls['dhcp'].value != true) {
-          this.formGroup.controls['ip6_interface'].enable();
-          this.formGroup.controls['ip6_addr'].enable();
-          this.formGroup.controls['ip6_prefix'].enable();
-        }
-      }
+      this.updateIpValidation()
     });
     this.formGroup.controls['ip6_addr'].valueChanges.subscribe((res) => {
-      if (res != '' && res != undefined) {
-        if (this.formGroup.controls['ip4_addr'].disabled == false) {
-          this.formGroup.controls['ip4_interface'].disable();
-          this.formGroup.controls['ip4_addr'].disable();
-          this.formGroup.controls['ip4_netmask'].disable();
-        }
-      } else {
-        if (this.formGroup.controls['ip4_addr'].disabled == true && this.formGroup.controls['dhcp'].value != true) {
-          this.formGroup.controls['ip4_interface'].enable();
-          this.formGroup.controls['ip4_addr'].enable();
-          this.formGroup.controls['ip4_netmask'].enable();
-        }
-      }
+      this.updateIpValidation();
     });
-
-    this.formGroup.controls['ip4_addr'].valueChanges.subscribe((res) => {
-      if (res == undefined || res == 'none' || res == '') {
-        this.ip4_interfaceField.required = false;
-        this.ip4_netmaskField.required = false;
-      } else {
-        this.ip4_interfaceField.required = true;
-        this.ip4_netmaskField.required = true;
-      }
-    });
-    this.formGroup.controls['ip6_addr'].valueChanges.subscribe((res) => {
-      if (res == undefined || res == 'none' || res == '') {
-        this.ip6_interfaceField.required = false;
-        this.ip6_prefixField.required = false;
-      } else {
-        this.ip6_interfaceField.required = true;
-        this.ip6_prefixField.required = true;
-      }
-    });
-
 
     for (let i in this.fieldConfig) {
       let config = this.fieldConfig[i];
@@ -286,12 +322,17 @@ export class PluginAddComponent implements OnInit {
     }
 
     for (let i in value) {
-      if (value.hasOwnProperty(i)) {
+      if (value.hasOwnProperty(i) && i != 'https') {
         if (value[i] != undefined && value[i] != '') {
           if (value[i] == true) {
-            property.push('bpf=yes');
-            property.push('dhcp=on');
-            property.push('vnet=on');
+            if (i == 'dhcp') {
+              property.push('bpf=1');
+              property.push('dhcp=1');
+              property.push('vnet=1');
+            } else if (i == 'nat') {
+              property.push('nat=1');
+              property.push('vnet=1');
+            }
           } else {
             property.push(i + '=' + value[i]);
           }

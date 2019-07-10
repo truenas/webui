@@ -1,4 +1,5 @@
 import {Validators} from '@angular/forms';
+import { rangeValidator } from '../../../pages/common/entity/entity-form/validators/range-validation';
 import { T } from '../../../translate-marker';
 
 export default {
@@ -22,12 +23,13 @@ export default {
 
     rsync_remoteport_placeholder: T('Remote SSH Port'),
     rsync_remoteport_tooltip: T('Enter the SSH Port of the remote system.'),
+    rsync_remoteport_validation: [rangeValidator(1, 65535), Validators.required],
 
     rsync_mode_placeholder: T('Rsync mode'),
     rsync_mode_tooltip: T('Choose <a \
-                href="%%docurl%%/tasks.html%%webversion%%#rsync-module-mode"\
+                href="--docurl--/tasks.html#rsync-module-mode"\
                 target="_blank">rsync module mode</a> or <a \
-                href="%%docurl%%/tasks.html%%webversion%%#rsync-over-ssh-mode"\
+                href="--docurl--/tasks.html#rsync-over-ssh-mode"\
                 target="_blank">rsync over SSH mode</a>'),
 
     rsync_remotemodule_placeholder: T('Remote Module Name'),
@@ -36,6 +38,7 @@ export default {
                 target="_blank">rsyncd.conf(5)</a> of the rsync\
                 server or in the <b>Rsync Modules</b> of another\
                 system.'),
+    rsync_remotemodule_validation: [ Validators.required ],
 
     rsync_remotepath_placeholder: T('Remote Path'),
     rsync_remotepath_tooltip: T('Browse to the existing path on the remote host to\

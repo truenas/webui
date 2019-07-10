@@ -1,18 +1,22 @@
 import { T } from '../../translate-marker';
-import {Validators} from '@angular/forms';
-import {
-  regexValidator
-} from '../../pages/common/entity/entity-form/validators/regex-validation';
 
 export default {
 
 name_placeholder: T('Plugin Name'),
+
+https_placeholder: T('Fetch Method'),
+https_tooltip: T('Use encrypted connection for increased security (preferred).'),
+http_tooltip: T('Use unencrypted connection.'),
 
 dhcp_placeholder: T('DHCP'),
 dhcp_tooltip: T('Set for <a \
 href="https://kb.iu.edu/d/adov" \
 target="_blank">DHCP</a> to automatically configure \
 network settings.'),
+
+nat_placeholder: T('NAT'),
+nat_tooltip: T('Network Address Translation (NAT). Transforms local network IP addresses into a single IP address.\
+ Set when the jail will share a single connection to the Internet with other systems on the network.'),
 
 ip4_interface_placeholder: T('IPv4 interface'),
 ip4_interface_tooltip: T('IPv4 interface for the jail.'),

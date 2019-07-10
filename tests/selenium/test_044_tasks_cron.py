@@ -13,14 +13,11 @@ skip_mesages = "Skipping first run"
 script_name = os.path.basename(__file__).partition('.')[0]
 
 xpaths = {
-    'navTasks': "//mat-list-item[@id='nav-3']/div/a/mat-icon[2]",
-    'submenuCron': "//a[@id='3-0']",
-    'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
+    'navTasks': "//span[contains(.,'Tasks')]",
+    'submenuCron': "//a[contains(.,'Cron Jobs')]",
+    'breadcrumbBar1': "//div[@id='breadcrumb-bar']/ul/li/a",
+    'breadcrumbBar2': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
 }
-
-
-def test_00_set_implicitly_wait(wb_driver):
-    wb_driver.implicitly_wait(1)
 
 
 def test_01_nav_tasks_cron(wb_driver):
@@ -29,7 +26,13 @@ def test_01_nav_tasks_cron(wb_driver):
     # allowing page to load by giving explicit time(in seconds)
     wb_driver.find_element_by_xpath(xpaths['submenuCron']).click()
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    # get the weather data
+    page_data = ui_element.text
+    # assert response
+    assert "Tasks" in page_data, page_data
+    # get the ui element
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     page_data = ui_element.text
     # assert response

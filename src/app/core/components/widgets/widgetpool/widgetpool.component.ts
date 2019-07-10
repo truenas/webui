@@ -27,6 +27,7 @@ export interface Disk {
   name: string;
   smart_enabled: boolean;
   size: number;
+  model: string;
   description?: string;
   enclosure_slot?: any;
   expiretime?: any;
@@ -92,8 +93,11 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   public currentDiskSet:number = 0;
   private simulateDiskArray:number;
   public displayValue: any;
+  public displayValueTotal: string;
   public diskSize: any;
   public diskSizeLabel: string;
+  public diskSizeTotal: any;
+  public diskSizeTotalLabel: string;
   @Input() configurable:boolean;
 
   constructor(public router: Router, public translate: TranslateService, public storage: StorageService){
@@ -117,8 +121,8 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   }
 
   ngAfterViewInit(){
-    this.core.register({observerClass:this,eventName:"PoolDisks"}).subscribe((evt:CoreEvent) => {
-      if(evt.data.callArgs[0] == this.volumeData.id){
+    this.core.register({observerClass:this,eventName:"PoolDisks" + this.volumeData.id}).subscribe((evt:CoreEvent) => {
+      //if(evt.data.callArgs[0] == this.volumeData.id){
         // Simulate massive array
         //this.simulateDiskArray = 600;
         if(this.simulateDiskArray){
@@ -146,20 +150,23 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
           if(this.disks.length > 0){
             this.storage.diskNameSort(this.disks);
           } 
-      }
+      //}
     });
 
 
     this.core.register({observerClass:this,eventName:"StatsDiskTemp"}).subscribe((evt:CoreEvent) => {
-      let data = evt.data.data.data;
-      let temp: number;
-      for(let i = data.length-1; i >= 0; i--){
-        if(data[i][0]){
-          temp = data[i][0];
-          break;
+      let data = [];
+      let temp = 0;
+      if (evt.data && evt.data.data && evt.data.data.data) {
+        data = evt.data.data.data;
+        for(let i = data.length-1; i >= 0; i--){
+          if(data[i][0]){
+            temp = data[i][0];
+            break;
+          }
         }
+        this.diskDetails[evt.data.callArgs[1]].temp = temp;
       }
-      this.diskDetails[evt.data.callArgs[1]].temp = temp;
     });
 
     this.core.register({observerClass:this,eventName:"DisksInfo"}).subscribe((evt:CoreEvent) => {
@@ -172,12 +179,13 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   }
 
   setDisksData(evt:CoreEvent){
-    for(let i in evt.data){
-      let disk:Disk = {
+    for(const i in evt.data){
+      const disk:Disk = {
         name:evt.data[i].name,
         smart_enabled:evt.data[i].togglesmart,
         size:Number(evt.data[i].size),
         description: evt.data[i].description,
+        model: evt.data[i].model,
         enclosure_slot: evt.data[i].enclosure_slot,
         expiretime: evt.data[i].expiretime,
         hddstandby: evt.data[i].hddstandby,
@@ -243,6 +251,14 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     } else {
       this.diskSizeLabel = this.displayValue.slice(-3);
       this.diskSize = new Intl.NumberFormat().format(parseFloat(this.displayValue.slice(0, -4)))
+    }    
+    this.displayValueTotal = (<any>window).filesize(this.volumeData.avail + this.volumeData.used, {standard: "iec"});
+    if (this.displayValueTotal.slice(-2) === ' B') {
+      this.diskSizeTotalLabel = this.displayValueTotal.slice(-1);
+      this.diskSizeTotal = new Intl.NumberFormat().format(parseFloat(this.displayValueTotal.slice(0, -2)))
+    } else {
+      this.diskSizeTotalLabel = this.displayValueTotal.slice(-3);
+      this.diskSizeTotal = new Intl.NumberFormat().format(parseFloat(this.displayValueTotal.slice(0, -4)))
     }
     // Adds a zero to numbers with one (and only one) digit after the decimal
     if (this.diskSize.charAt(this.diskSize.length - 2) === '.' || this.diskSize.charAt(this.diskSize.length - 2) === ',') {
@@ -281,21 +297,25 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   checkVolumeHealth(){
     switch(this.volumeData.status){
       case "HEALTHY":
+        break;
       case "LOCKED":
+        this.updateVolumeHealth("Pool status is " + this.volumeData.status, false, 'locked');
         break;
       case "UNKNOWN":
       case "OFFLINE":
+        this.updateVolumeHealth("Pool status is " + this.volumeData.status, false, 'unknown');
+        break;
       case "DEGRADED":
-        this.updateVolumeHealth("Pool status is " + this.volumeData.status); // Warning
+        this.updateVolumeHealth("Pool status is " + this.volumeData.status, false, 'degraded');
         break
       case "FAULTED":
       case "REMOVED":
-        this.updateVolumeHealth("Pool status is " + this.volumeData.status, true); // Error
+        this.updateVolumeHealth("Pool status is " + this.volumeData.status, true, 'faulted');
         break;
     }
   }
 
-  updateVolumeHealth(symptom: string, isCritical?: boolean){
+  updateVolumeHealth(symptom: string, isCritical?: boolean, condition?: string){
     if(isCritical){
       this.volumeHealth.errors.push(symptom);
     } else {
@@ -307,14 +327,24 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
 
     if(this.volumeHealth.errors.length > 0){
       this.volumeHealth.level = "error"
-      this.volumeHealth.selector = "fn-theme-red"
     } else if(this.volumeHealth.warnings.length > 0){
       this.volumeHealth.level = "warn"
-      this.volumeHealth.selector = "fn-theme-yellow"
     } else {
       this.volumeHealth.level = "safe"
+    }
+
+    if (condition === 'locked') {
+      this.volumeHealth.selector = "fn-theme-yellow"
+    } else if (condition === 'unknown') {
+      this.volumeHealth.selector = "fn-theme-blue"
+    } else if (condition === 'degraded') {
+      this.volumeHealth.selector = "fn-theme-orange"
+    } else if (condition === 'faulted') {
+      this.volumeHealth.selector = "fn-theme-red"
+    } else {
       this.volumeHealth.selector = "fn-theme-green"
-    } 
+    }
   }
+  
 
 }
