@@ -12,7 +12,7 @@ cifs_srv_netbiosname_validation : [ Validators.required, Validators.maxLength(15
 
 cifs_srv_netbiosalias_placeholder: T('NetBIOS Alias'),
 cifs_srv_netbiosalias_tooltip: T('Enter any aliases, separated by spaces.\
- Each alias cannot be longer than 15 characters.'),
+ Each alias can be up to 15 characters long.'),
 cifs_srv_netbiosalias_validation: [ Validators.maxLength(15) ],
 
 cifs_srv_workgroup_placeholder: T('Workgroup'),
