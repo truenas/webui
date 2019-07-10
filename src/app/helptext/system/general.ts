@@ -63,7 +63,7 @@ export const helptext_system_general = {
     placeholder: T("WebGUI HTTP -> HTTPS Redirect"),
     tooltip: T(
       "Check this to redirect <i>HTTP</i> connections to\
- <i>HTTPS</i>. A <b>GUI SSL Certificate</b> must be selected."
+ <i>HTTPS</i>. A <i>GUI SSL Certificate</i> must be selected."
     )
   },
 
