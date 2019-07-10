@@ -1318,4 +1318,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     //overflow: hidden; // This clips tooltips
   }
 
+  app-support a {
+    text-decoration: underline;
+  }
+
  } // end of ix theme
