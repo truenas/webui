@@ -112,6 +112,20 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
           tooltip: 'Enter a short name for the theme. The Menu Label is \
                     shown when the theme is listed in Preferences.'
         },
+        // Not using this now, but theme preview breaks if it isn't here...
+        {
+          type: 'select',
+          name: 'labelSwatch',
+          width:'100%',
+          placeholder: 'Menu Swatch',
+          required:false,
+          isHidden: true,
+          options:this.colorOptions,
+          tooltip: "Choose the color to display next to the Menu Label \
+                    in the Favorites menu.",
+          class:'inline'
+                   
+        },
         { type: 'input',
           name : 'description',
           width:'100%',
