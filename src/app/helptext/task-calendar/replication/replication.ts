@@ -123,7 +123,7 @@ snapshots will be stored. Example: Poolname/Datasetname, not the mountpoint or f
     compression_placeholder: T('Stream Compression'),
     compression_tooltip: T('Select a compression algorithm to reduce the size of the data being replicated.'),
 
-    speed_limit_placeholder: T('Limit (KiBs)'),
+    speed_limit_placeholder: T('Limit (KiB/s)'),
     speed_limit_tooltip: T('Limit replication speed to the specified value in kilobytes/second. The default 0 is unlimited.'),
 
     dedup_placeholder: T('Send Deduplicated Stream'),
