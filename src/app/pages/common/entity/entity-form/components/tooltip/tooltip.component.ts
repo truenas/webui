@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class TooltipComponent {
   @Input('message') message: string;
-  @ViewChild('tooltip') private tooltip: ElementRef;
+  @ViewChild('tooltip', { static: true}) private tooltip: ElementRef;
 
   public isShowTooltip: Boolean;
   public tooltipMsgStyle: any;
@@ -24,11 +24,12 @@ export class TooltipComponent {
     let posX = this.tooltip.nativeElement.getBoundingClientRect().left;
     let posY = this.tooltip.nativeElement.getBoundingClientRect().bottom;
     let dynamicWidth = this.message.length * 8.5;
-    
-    if((posY / screenH > .85)) {
+    let tooltipHeight = this.tooltip.nativeElement.scrollHeight;
+
+    if (tooltipHeight > 200) {
+      this.tooltip.nativeElement.lastElementChild.id = 'adjustme';
+    } else if((posY / screenH > .85)) {
       this.tooltip.nativeElement.lastElementChild.id = "raised-tooltip";
-    } else {
-      this.tooltip.nativeElement.lastElementChild.id = "";
     }
 
     if(this.message.length <= 40) {
@@ -38,6 +39,12 @@ export class TooltipComponent {
       else {
         this.tooltipMsgStyle = {'right' : '8px', 'max-width' :  dynamicWidth + 'px'};
       }
+    } else if (this.message.length > 750) {
+        if((posX/screenW) <= .6) {
+          this.tooltipMsgStyle = {'left' : '0px', 'max-width' :  '600px', 'top' : '-20px'};
+        } else {
+          this.tooltipMsgStyle = {'right' : '8px', 'max-width' :  '600px', 'top' : '-20px'};
+        }
     }
     else {
       if((posX/screenW) <= .52) {

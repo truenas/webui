@@ -2,11 +2,11 @@ import {ModuleWithProviders} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 
 import {ServiceAFPComponent} from './components/service-afp/';
-import {ServiceCIFSComponent} from './components/service-cifs/';
 import {ServiceDDNSComponent} from './components/service-dynamicdns/';
 import {ServiceFTPComponent} from './components/service-ftp/';
 import {ServiceLLDPComponent} from './components/service-lldp/';
 import {ServiceNFSComponent} from './components/service-nfs/';
+import {ServiceNetDataComponent} from './components/service-netdata';
 import {ServiceRSYNCComponent} from './components/service-rsync/';
 import {CconfigureRYSNCComponent} from './components/service-rsync/rsyncconfiguration/configure_rsync';
 import {RSYNCconfigurationListComponent} from './components/service-rsync/rsyncconfiguration/rsyncconfiguration-list/';
@@ -86,6 +86,11 @@ export const routes: Routes = [
     data: { title: 'NFS', breadcrumb: 'NFS'},
     path : 'nfs',
     component : ServiceNFSComponent,
+  },
+  {
+    data: { title: 'Netdata', breadcrumb: 'Netdata'},
+    path : 'netdata',
+    component : ServiceNetDataComponent,
   },
   {
     data: { title: 'TFTP', breadcrumb: 'TFTP'},

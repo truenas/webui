@@ -85,7 +85,7 @@ export class BootStatusListComponent implements OnInit {
         (res) => {
           this.loader.close();
           this._router.navigate(
-            new Array('').concat('system','bootenv')
+            new Array('').concat('system','boot')
           );
           this.openSnackBar("Device detached.", "Success");
         },
@@ -126,7 +126,7 @@ export class BootStatusListComponent implements OnInit {
         item.actions = [{
           label: "Attach",
           onClick: (row) => {
-            this._router.navigate(new Array('').concat([ "system", "bootenv", "attach", row.name ]));
+            this._router.navigate(new Array('').concat([ "system", "boot", "attach", row.name ]));
           },
           isHidden: false,
         }];
@@ -141,7 +141,7 @@ export class BootStatusListComponent implements OnInit {
         },
         {
           label: "Replace",
-          onClick: (row) => { this._router.navigate(new Array('').concat([ "system", "bootenv", "replace", row.name ]));
+          onClick: (row) => { this._router.navigate(new Array('').concat([ "system", "boot", "replace", row.name ]));
           },
           isHidden: false,
         }];
@@ -150,7 +150,7 @@ export class BootStatusListComponent implements OnInit {
         item.actions = [
         {
           label: "Replace",
-          onClick: (row) => { this._router.navigate(new Array('').concat([ "system", "bootenv", "replace", row.name ]));
+          onClick: (row) => { this._router.navigate(new Array('').concat([ "system", "boot", "replace", row.name ]));
           },
           isHidden: false,
         }];

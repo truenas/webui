@@ -14,6 +14,9 @@ specified RELEASE directories as nullfs mounts over the jail \
 directories. Basejails are not linked to the original RELEASE \
 when upgraded.'),
 
+https_placeholder: T('Fetch Method'),
+https_tooltip: T(''),
+
 release_placeholder: T('Release'),
 release_tooltip: T('Choose the FreeBSD release to use as the jail \
 operating system. Releases that have already \

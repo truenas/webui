@@ -45,6 +45,12 @@ export class InterfacesFormComponent implements OnDestroy {
       validation : helptext.int_name_validation
     },
     {
+      type: 'input',
+      name: 'description',
+      placeholder: helptext.int_description_placeholder,
+      tooltip: helptext.int_description_tooltip,
+    },
+    {
       type : 'checkbox',
       name : 'ipv4_dhcp',
       placeholder : helptext.int_dhcp_placeholder,
@@ -355,7 +361,7 @@ export class InterfacesFormComponent implements OnDestroy {
       });
     } else {
       entityForm.setDisabled('name', true);
-      entityForm.setDisabled('type', true);
+      entityForm.setDisabled('type', true, true );
     }
     this.ws.call('notifier.choices', ['VLAN_PCP_CHOICES']).subscribe((res) => {
       this.vlan_pcp = _.find(this.fieldConfig, {'name' : 'vlan_pcp'});

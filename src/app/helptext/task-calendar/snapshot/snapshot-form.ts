@@ -1,49 +1,50 @@
 import { T } from '../../../translate-marker';
-import {Validators} from '@angular/forms';
+
 
 export default {
-    task_filesystem_placeholder: T('Pool/Dataset'),
-    task_filesystem_tooltip: T('Select a pool, dataset, or zvol.'),
-    task_filesystem_validation : [ Validators.required ],
+    dataset_placeholder: T('Dataset'),
+    dataset_tooltip: T('Select a pool, dataset, or zvol.'),
 
-    task_recursive_placeholder: T('Recursive'),
-    task_recursive_tooltip: T('Set this to take separate snapshots of the\
-                pool/dataset and each of its child datasets. Leave\
-                unset to take a single snapshot of the specified\
-                pool/dataset with <b>no</b> child datasets.'),
+    recursive_placeholder: T('Recursive'),
+    recursive_tooltip: T('Set to take separate snapshots of the\
+ dataset and each of its child datasets. Leave unset to take a\
+ single snapshot only of the specified dataset <i>without</i> child datasets.'),
 
-    task_ret_count_placeholder: T('Snapshot Lifetime'),
-    task_ret_count_validation: [Validators.min(0)],
+    exclude_placeholder: T('Exclude'),
+    exclude_tooltip: T('Exclude specific child datasets from the snapshot.\
+ Use with recursive snapshots. Comma-separated list of paths to any child datasets to exclude.\
+ Example: <i>pool1/dataset1/child1</i>. A recursive snapshot of\
+ <i>pool1/dataset1</i> will include all child datasets except <i>child1</i>.'),
 
-    task_ret_unit_tooltip: T('Define a length of time to retain the snapshot on this\
-                system. After the time expires, the snapshot is removed.\
-                Snapshots which have been replicated to other systems\
-                are not affected.'),
+    lifetime_value_placeholder: T('Snapshot Lifetime'),
+    lifetime_unit_tooltip: T('Define a length of time to retain the snapshot on this\
+ system. After the time expires, the snapshot is removed. Snapshots which have\
+ been replicated to other systems are not affected.'),
 
-                type: 'select',
-    name: 'task_begin',
-    task_begin_placeholder: T('Begin'),
-    task_begin_tooltip: T('Choose the hour and minute when the system can begin\
-                taking snapshots.'),
-    options: [],
-    value: '',
-    required: true,
-    task_begin_validation : [ Validators.required ],
+    naming_schema_placeholder: T('Naming Schema'),
+    naming_schema_tooltip: T('Snapshot name format string. The default is <i>snap-%Y-%m-%d-%H-%M</i>.\
+ Must include the strings <i>%Y</i>, <i>%m</i>, <i>%d</i>, <i>%H</i>, and <i>%M</i>, which are replaced with the four-digit year,\
+ month, day of month, hour, and minute as defined in <a href="https://www.freebsd.org/cgi/man.cgi?query=strftime" target="_blank">strftime(3)</a>. A string showing the snapshot\
+ lifetime is appended to the name. For example, snapshots of <i>pool1</i> with a Naming Schema of\
+ <i>customsnap-%Y%m%d.%H%M</i> and lifetime of two weeks have names like <i>pool1@customsnap-20190315.0527-2w</i>.'),
 
-    task_end_placeholder: T('End'),
-    task_end_tooltip: T('Choose the hour and minute when the system must stop\
-                taking snapshots.'),
-    task_end_validation : [ Validators.required ],
+    begin_placeholder: T('Begin'),
+    begin_tooltip: T('Hour and minute the system can begin\
+ taking snapshots.'),
 
-    task_interval_placeholder: T('Interval'),
-    task_interval_tooltip: T('Define how often the system takes snapshots between the\
-                <b>Begin</b> and <b>End</b> times.'),
-    task_interval_validation : [ Validators.required ],
+    end_placeholder: T('End'),
+    end_tooltip: T('Hour and minute the system must stop\
+ creating snapshots. Snapshots already in progress will continue until complete.'),
 
-    task_byweekday_placeholder: T('Day of week'),
-    task_byweekday_tooltip: T('Choose the days of the week to take snapshots.'),
-    task_byweekday_validation : [ Validators.required ],
+    snapshot_picker_placeholder: T('Schedule the Periodic Snapshot Task'),
+    snapshot_picker_tooltip: T('Choose one of the presets\
+ or choose <i>Custom</i> to use the advanced scheduler.'),
 
-    task_enabled_placeholder: T('Enabled'),
-    task_enabled_tooltip: T('Unset to disable this task without deleting it.'),
+    allow_empty_placeholder: T('Allow Taking Empty Snapshots'),
+    allow_empty_tooltip: T('Creates dataset snapshots when there are no\
+ changes. Set to support periodic snapshot schedules and replications\
+ created in version 11.2 and earlier.'),
+
+    enabled_placeholder: T('Enabled'),
+    enabled_tooltip: T('Unset to disable this task without deleting it.'),
 }

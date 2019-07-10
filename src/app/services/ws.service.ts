@@ -2,9 +2,10 @@ import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {UUID} from 'angular2-uuid';
 import {LocalStorage} from 'ngx-webstorage';
-import {Observable, Subject, Subscription} from 'rxjs/Rx';
+import {Observable, Subject} from 'rxjs/Rx';
 
 import {environment} from '../../environments/environment';
+import { filter, map } from 'rxjs/operators';
 
 @Injectable()
 export class WebSocketService {
@@ -13,7 +14,7 @@ export class WebSocketService {
   onCloseSubject: Subject<any>;
   onOpenSubject: Subject<any>;
   pendingCalls: any;
-  pendingSub: any;
+  pendingSubs: any = {};
   pendingMessages: any[] = [];
   socket: WebSocket;
   connected: boolean = false;
@@ -24,6 +25,7 @@ export class WebSocketService {
 
   protocol: any;
   remote: any;
+  private consoleSub: Observable<string>;
 
   public subscriptions: Map<string, Array<any>> = new Map<string, Array<any>>();
 
@@ -39,6 +41,16 @@ export class WebSocketService {
 
   get authStatus(){
     return this._authStatus.asObservable();
+  }
+
+  get consoleMessages() {
+    if (!this.consoleSub) {
+      this.consoleSub = this.sub("filesystem.file_tail_follow:/var/log/messages:499").pipe(
+        filter(res => res && res.data && typeof res.data === "string"),
+        map(res => res.data)
+      );
+    }
+    return this.consoleSub;
   }
 
   reconnect(protocol = window.location.protocol, remote = environment.remote) {
@@ -81,7 +93,7 @@ export class WebSocketService {
   ping() {
     if (this.connected) {
       this.socket.send(JSON.stringify({"msg" : "ping", "id" : UUID.UUID()}));
-      if (typeof(this.token) !== 'undefined') {
+      if (this.token && typeof(this.token) !== 'undefined') {
         // check to see if the token is still valid (keepalive)
         this.call('auth.token', [ this.token ]).subscribe((result) => {
           if (!result && !this.shuttingdown) {
@@ -117,16 +129,23 @@ export class WebSocketService {
       this.connected = true;
       setTimeout(this.ping.bind(this), 20000);
       this.onconnect();
+    } else if (data.msg == "nosub") {
+      console.warn(data);
     } else if (data.msg == "added") {
-      let subObserver = this.pendingSub;
+      let nom = data.collection.replace('.', '_');
+      if(this.pendingSubs[nom] && this.pendingSubs[nom].observers){
+        for(let uuid in this.pendingSubs[nom].observers){
+          let subObserver = this.pendingSubs[nom].observers[uuid];
+          if (data.error) {
+            console.log("Error: ", data.error);
+            subObserver.error(data.error);
+          }
+          if (subObserver) {
+            subObserver.next(data.fields);
+          }
+        }
+      }
 
-      if (data.error) {
-        console.log("Error: ", data.error);
-        subObserver.error(data.error);
-      }
-      if (subObserver) {
-        subObserver.next(data.fields);
-      }
     } else if (data.msg == "changed") {
       this.subscriptions.forEach((v, k) => {
         if (k == '*' || k == data.collection) {
@@ -172,7 +191,7 @@ export class WebSocketService {
     });
   }
 
-  call(method, params?: any): Observable<any> {
+  call(method, params?: any, debug = false): Observable<any> {
 
     let uuid = UUID.UUID();
     let payload =
@@ -184,6 +203,10 @@ export class WebSocketService {
         "observer" : observer,
       });
 
+      if (debug) {
+        console.log({ payload });
+      }
+
       this.send(payload);
     });
 
@@ -192,16 +215,33 @@ export class WebSocketService {
 
   sub(name): Observable<any> {
 
+    let nom = name.replace('.','_'); // Avoid weird behavior
+    if(!this.pendingSubs[nom]){ 
+      this.pendingSubs[nom]= {
+        observers: {} 
+      }; 
+    }
+
     let uuid = UUID.UUID();
     let payload =
         {"id" : uuid, "name" : name, "msg" : "sub" };
 
-    let source = Observable.create((observer) => {
-      this.pendingSub = observer;
+    let obs = Observable.create((observer) => {
+      this.pendingSubs[nom].observers[uuid] = observer;
       this.send(payload);      
-    });
+      
+      // cleanup routine 
+      observer.complete = () => {
+        let unsub_payload = {"id" : uuid, "msg" : "unsub" };
+        this.send(unsub_payload);  
+        this.pendingSubs[nom].observers[uuid].unsubscribe();
+        delete this.pendingSubs[nom].observers[uuid];
+        if(!this.pendingSubs[nom].observers){ delete this.pendingSubs[nom]}
+      }
 
-    return source;
+      return observer;
+    });
+    return obs;
   }
 
   job(method, params?: any): Observable<any> {
@@ -249,9 +289,11 @@ export class WebSocketService {
 
   login_token(token): Observable<any> {
     return Observable.create((observer) => {
-      this.call('auth.token', [ token ]).subscribe((result) => {
-        this.loginCallback(result, observer);
-      });
+      if(token) {
+        this.call('auth.token', [ token ]).subscribe((result) => {
+          this.loginCallback(result, observer);
+        });
+      }
     });
   }
 

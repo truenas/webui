@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { Validators } from '@angular/forms';
 
 import * as _ from 'lodash';
@@ -21,13 +22,13 @@ import helptext from '../../../helptext/plugins/plugins';
   selector: 'app-plugin-add',
   templateUrl: './plugin-add.component.html',
   styleUrls: ['../../common/entity/entity-form/entity-form.component.scss'],
-  providers: [EntityFormService, FieldRelationService, NetworkService],
+  providers: [EntityFormService, FieldRelationService, NetworkService, TranslateService],
 })
 export class PluginAddComponent implements OnInit {
 
   protected addCall: string = 'jail.fetch';
-  public route_goback: string[] = ['plugins', 'available'];
-  public route_success: string[] = ['plugins', 'installed'];
+  public route_goback: string[] = ['plugins'];
+  public route_success: string[] = ['plugins'];
   protected isEntity: boolean = false;
 
   public fieldConfig: FieldConfig[] = [{
@@ -35,6 +36,16 @@ export class PluginAddComponent implements OnInit {
       name: 'name',
       placeholder: helptext.name_placeholder,
       disabled: true,
+    },
+    {
+      type: 'radio',
+      name: 'https',
+      placeholder: helptext.https_placeholder,
+      options: [
+        {label:'HTTPS', value: true, tooltip: helptext.https_tooltip,},
+        {label:'HTTP', value: false, tooltip: helptext.http_tooltip,},
+      ],
+      value: true,
     },
     {
       type: 'checkbox',
@@ -216,7 +227,8 @@ export class PluginAddComponent implements OnInit {
     protected dialog: DialogService,
     protected networkService: NetworkService,
     protected snackBar: MatSnackBar,
-    protected matdialog: MatDialog) {}
+    protected matdialog: MatDialog,
+    protected translate: TranslateService) {}
 
   updateIpValidation() {
     const ip4AddrField = _.find(this.fieldConfig, {'name': 'ip4_addr'});
@@ -255,7 +267,7 @@ export class PluginAddComponent implements OnInit {
     this.ip6_interfaceField = _.find(this.fieldConfig, {'name': 'ip6_interface'});
     this.ip6_prefixField = _.find(this.fieldConfig, {'name': 'ip6_prefix'});
     // get interface options
-    this.ws.call('interfaces.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
+    this.ws.call('interface.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
       (res)=>{
         for (let i in res) {
           this.ip4_interfaceField.options.push({ label: res[i].name, value: res[i].name});
@@ -310,7 +322,7 @@ export class PluginAddComponent implements OnInit {
     }
 
     for (let i in value) {
-      if (value.hasOwnProperty(i)) {
+      if (value.hasOwnProperty(i) && i != 'https') {
         if (value[i] != undefined && value[i] != '') {
           if (value[i] == true) {
             if (i == 'dhcp') {

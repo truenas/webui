@@ -16,8 +16,11 @@ int_interface_tooltip : T('Enter the FreeBSD device name of the interface. This\
  cannot be changed after the interface is created.'),
 int_interface_validation : [ Validators.required ],
 
-int_name_placeholder : T('Description'),
-int_name_tooltip : T('Enter a description of the interface.'),
+int_description_placeholder : T('Description'),
+int_description_tooltip : T('Enter a description of the interface.'),
+
+int_name_placeholder : T('Name'),
+int_name_tooltip : T('Enter a name to use for the the interface. Use the format laggX, vlanX, or bridgeX where X is a number representing a non-parent interface.'),
 int_name_validation : [ Validators.required ],
 
 int_dhcp_placeholder : T('DHCP'),
@@ -95,7 +98,7 @@ vlan_pcp_tooltip: T('Select the Class of Service. The available 802.1p\
 
 lagg_protocol_placeholder : T('Lagg Protocol'),
 lagg_protocol_tooltip : T('Select the <a\
- href="%%docurl%%/network.html%%webversion%%#link-aggregations"\
+ href="--docurl--/network.html--webversion--#link-aggregations"\
  target="_blank">Protocol Type</a>.<br>\
  <i>LACP</i> is the recommended protocol if the network\
  switch is capable of active LACP.<br>\

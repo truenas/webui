@@ -16,15 +16,29 @@
 	/* flex-basis: auto;
 	-webkit-box-flex: 1;
 	flex-grow: 1; */
-	width: 390px; 
+	width: 510px; 
 	/* max-width: 400px; */
 }
+
+.disk-details-icon {
+	float: right;
+	width: 50px;
+}
+
+.disk-icon {
+	font-size: 24px;
+}
+
+.disk-details {
+	float: left;
+}
+
 .pool {
 	flex-basis: auto;
 	-webkit-box-flex: 1;
 	flex-grow: 1;
-	min-width: 400px;
-	max-width: 450px;
+	min-width: 520px;
+	max-width: 580px;
 }
 
 .fields {
@@ -58,4 +72,14 @@ h4 {
 
 .vdev-h4 {
 	margin-bottom: 0;
+}
+
+#pool-manager__encryption-checkbox {
+	margin-left: 10px;
+}
+
+#pool-manager__reset-layout-button:disabled,
+#pool-manager__suggest-layout-button:disabled {
+	color: var(--fg2);
+	opacity: .38;
 }

@@ -2,7 +2,7 @@ import {Component, OnDestroy} from '@angular/core';
 import {Router} from '@angular/router';
 import {interval} from 'rxjs';
 
-import { WebSocketService, NetworkService } from '../../../../services';
+import { WebSocketService, NetworkService, DialogService } from '../../../../services';
 import { T } from '../../../../translate-marker';
 import { MatSnackBar } from '@angular/material';
 import helptext from '../../../../helptext/network/interfaces/interfaces-list';
@@ -36,6 +36,9 @@ export class InterfacesListComponent implements OnDestroy {
   checkin_text_2: string = T(" seconds unless kept permanently.");
   public checkin_timeout = 60;
   public checkin_timeout_pattern = /\d+/;
+  public checkin_remaining = null;
+  checkin_interval;
+  public ha_enabled = false;
 
   public columns: Array<any> = [
     {name : T('Name'), prop : 'name'},
@@ -54,17 +57,25 @@ export class InterfacesListComponent implements OnDestroy {
   };
 
   constructor(private ws: WebSocketService, private router: Router, private networkService: NetworkService,
-              private snackBar: MatSnackBar) {}
+              private snackBar: MatSnackBar, private dialog: DialogService) {}
 
   dataHandler(res) {
     const rows = res.rows;
     for (let i=0; i<rows.length; i++) {
-      rows[i]['link_state'] = rows[i]['state']['link_state'];
+      rows[i]['link_state'] = rows[i]['state']['link_state'].replace('LINK_STATE_', '');
       const addresses = [];
       for (let j=0; j<rows[i]['aliases'].length; j++) {
         const alias = rows[i]['aliases'][j];
         if (alias.type.startsWith('INET')) {
-          addresses.push(alias.address);
+          addresses.push(alias.address + '/' + alias.netmask);
+        }
+      }
+      if (rows[i].hasOwnProperty('failover_aliases')) {
+        for (let j=0; j<rows[i]['failover_aliases'].length; j++) {
+          const alias = rows[i]['failover_aliases'][j];
+          if (alias.type.startsWith('INET')) {
+            addresses.push(alias.address + '/' + alias.netmask);
+          }
         }
       }
       rows[i]['addresses'] = addresses.join(', ');
@@ -87,9 +98,33 @@ export class InterfacesListComponent implements OnDestroy {
 
   }
 
+  getActions(row) {
+    return [{
+      id: "edit",
+      label: T("Edit"),
+      onClick: (rowinner) => { 
+        if(this.ha_enabled) {
+          this.dialog.Info(helptext.ha_enabled_edit_title, helptext.ha_enabled_delete_msg);
+        } else {
+          this.entityList.doEdit(rowinner.id);
+        }
+      },
+    }, {
+      id: "delete",
+      label: T("Delete"),
+      onClick: (rowinner) => {
+        if(this.ha_enabled) {
+          this.dialog.Info(helptext.ha_enabled_delete_title, helptext.ha_enabled_delete_msg);
+        } else {
+          this.entityList.doDelete(rowinner);
+        }
+      },
+    }]
+  }
+
   preInit(entityList) {
     this.pending_changes_text = helptext.pending_changes_text;
-    this.pending_checkin_text = helptext.pending_checkin_text;
+    this.pending_checkin_text = helptext.pending_checkin_text + " " + helptext.pending_checkin_text_2;
     this.entityList = entityList;
 
     this.checkPendingChanges();
@@ -97,6 +132,18 @@ export class InterfacesListComponent implements OnDestroy {
       this.checkPendingChanges();
       this.checkWaitingCheckin();
     });
+
+    if (window.localStorage.getItem('is_freenas') === 'false') {
+      this.ws.call('failover.licensed').subscribe((is_ha) => {
+        if (is_ha) {
+          this.ws.call('failover.disabled_reasons').subscribe((failover_disabled) => {
+            if (failover_disabled.length === 0) {
+              this.ha_enabled = true;
+            }
+          });
+        }
+      });
+    }
   }
 
   checkPendingChanges() {
@@ -107,7 +154,28 @@ export class InterfacesListComponent implements OnDestroy {
 
   checkWaitingCheckin() {
     this.ws.call('interface.checkin_waiting').subscribe(res => {
-      this.checkinWaiting = res;
+      if (res != null) {
+        const seconds = res.toFixed(0);
+        if (seconds > 0 && this.checkin_remaining == null) {
+          this.checkin_remaining = seconds;
+          this.checkin_interval = setInterval(() => {
+            if (this.checkin_remaining > 0) {
+              this.checkin_remaining -= 1;
+            } else {
+              this.checkin_remaining = null;
+              this.checkinWaiting = false;
+              clearInterval(this.checkin_interval);
+            }
+          }, 1000);
+        }
+        this.checkinWaiting = true;
+      } else {
+        this.checkinWaiting = false;
+        this.checkin_remaining = null;
+        if (this.checkin_interval) {
+          clearInterval(this.checkin_interval);
+        }
+      }
     });
   }
 
@@ -148,6 +216,8 @@ export class InterfacesListComponent implements OnDestroy {
               helptext.checkin_complete_message);
             this.hasPendingChanges = false;
             this.checkinWaiting = false;
+            clearInterval(this.checkin_interval);
+            this.checkin_remaining = null;
           }, (err) => {
             this.entityList.loader.close();
             new EntityUtils().handleWSError(this.entityList, err);

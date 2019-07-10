@@ -8,11 +8,11 @@ import {EntityModule} from '../common/entity/entity.module';
 import {AppConfirmModule} from "../../services/app-confirm/app-confirm.module";
 
 import {ServiceAFPComponent} from './components/service-afp';
-import {ServiceCIFSComponent} from './components/service-cifs';
 import {ServiceDDNSComponent} from './components/service-dynamicdns';
 import {ServiceFTPComponent} from './components/service-ftp';
 import {ServiceLLDPComponent} from './components/service-lldp';
 import {ServiceNFSComponent} from './components/service-nfs';
+import {ServiceNetDataComponent} from './components/service-netdata';
 import {ServiceRSYNCComponent} from './components/service-rsync';
 import {RSYNCconfigurationListComponent} from './components/service-rsync/rsyncconfiguration/rsyncconfiguration-list';
 import {CconfigureRYSNCComponent} from './components/service-rsync/rsyncconfiguration/configure_rsync';
@@ -38,8 +38,8 @@ import { UserService } from '../../services/user.service';
     Services, ServiceSSHComponent, ServiceAFPComponent,
     ServiceFTPComponent, ServiceLLDPComponent,
     ServiceRSYNCComponent, CconfigureRYSNCComponent,RSYNCconfigurationListComponent, RYSNCConfigurationFormComponent,
-    ServiceSMARTComponent, ServiceNFSComponent, ServiceTFTPComponent, ServiceUPSComponent, ServiceDDNSComponent,
-    ServiceCIFSComponent, ServiceSMBComponent, ServiceSNMPComponent,
+    ServiceSMARTComponent, ServiceNFSComponent, ServiceNetDataComponent, ServiceTFTPComponent, ServiceUPSComponent,
+    ServiceDDNSComponent, ServiceSMBComponent, ServiceSNMPComponent,
     ServiceWebdavComponent, ServiceS3Component, ServicesTableComponent
   ],
   providers : [UserService]

@@ -18,7 +18,8 @@ xpaths = {
     'submenuDisks': '//*[@id="5-3"]',
     'confirmCheckbox': '//*[contains(@name, "confirm_checkbox")]',
     'deleteButton': '//*[contains(@name, "ok_button")]',
-    'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a",
+    'breadcrumbBar1': "//div[@id='breadcrumb-bar']/ul/li/a",
+    'breadcrumbBar2': "//*[@id='breadcrumb-bar']/ul/li[2]/a",
     'poolID': '//mat-expansion-panel-header/span[2]',
     'poolDetach': "//button[@id='action_button_Export/Disconnect__name_",
     'pooldestroyCheckbox': '//*[@id="destroy"]/mat-checkbox/label/div',
@@ -27,7 +28,8 @@ xpaths = {
     'closeButton': '//div[2]/button/span',
     'foldPoolTable': "//mat-panel-title",
     'topPoolTable': '//td',
-    'noPool': '//mat-card-content'
+    'noPool': '//mat-card-content',
+    'toDashboard': "//span[contains(.,'Dashboard')]"
 }
 
 
@@ -40,7 +42,13 @@ def test_01_nav_store_pool(wb_driver):
     # Click Pool submenu
     wb_driver.find_element_by_xpath(xpaths['submenuPool']).click()
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    # get the weather data
+    page_data = ui_element.text
+    # assert response
+    assert "Storage" in page_data, page_data
+    # get the ui element
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     element_text = ui_element.text
     # assert response
@@ -67,7 +75,7 @@ def test_03_delete_pool1(wb_driver):
     test_name = sys._getframe().f_code.co_name
     # Wait for xpath to be available
     wait_on_element(wb_driver, xpaths['poolID'], script_name, test_name)
-    wb_driver.find_element_by_xpath(xpaths['poolID']).click()
+    # wb_driver.find_element_by_xpath(xpaths['poolID']).click()
     time.sleep(1)
     pool_detach(wb_driver, pool1, script_name, test_name)
     # taking screenshot
@@ -112,6 +120,21 @@ def test_06_looking_for_pool2(wb_driver):
 
 def test_07_close_navStorage(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['navStorage']).click()
+    test_name = sys._getframe().f_code.co_name
+    take_screenshot(wb_driver, script_name, test_name)
+
+
+def test_08_return_to_dashboard(wb_driver):
+    # Close the System Tab
+    wb_driver.find_element_by_xpath(xpaths['toDashboard']).click()
+    time.sleep(1)
+    # get the ui element
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    # get the weather data
+    page_data = ui_element.text
+    # assert response
+    assert page_data == "Dashboard", page_data
+    # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
 

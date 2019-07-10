@@ -14,21 +14,28 @@ skip_mesages = "Skipping first run"
 script_name = os.path.basename(__file__).partition('.')[0]
 
 xpaths = {
-    'navSystem': '//*[@id="nav-2"]/div/a[1]',
-    'submenuBootenv': '//*[@id="2-2"]',
-    'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
+    'navSystem': "//span[contains(.,'System')]",
+    'submenuBoot': "//a[contains(.,'Boot')]",
+    'breadcrumbBar1': "//div[@id='breadcrumb-bar']/ul/li/a",
+    'breadcrumbBar2': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
+
 }
 
 
 def test_01_nav_system_bootenv(wb_driver):
-    wb_driver.find_element_by_xpath(xpaths['submenuBootenv']).click()
-    # cancelling the tour
+    wb_driver.find_element_by_xpath(xpaths['submenuBoot']).click()
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
     # get the weather data
     page_data = ui_element.text
     # assert response
-    assert "Boot Environments" in page_data, page_data
+    assert "System" in page_data, page_data
+    # get the ui element
+    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
+    # get the weather data
+    page_data = ui_element.text
+    # assert response
+    assert page_data == 'Boot', page_data
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)

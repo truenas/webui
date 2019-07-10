@@ -1,13 +1,10 @@
 import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { MatGridListModule } from '@angular/material';
-import { MatButtonToggleGroup } from '@angular/material/button-toggle';
+import { MatButtonToggleGroup, MatSlideToggle } from '@angular/material';
 import { Router } from '@angular/router';
-import { environment } from '../../../environments/environment';
-import { AppConfirmService } from "../../services/app-confirm/app-confirm.service";
-import { MatSlideToggleChange, MatSlideToggle } from "@angular/material";
 
-import { RestService, WebSocketService } from '../../services/';
+import { environment } from '../../../environments/environment';
+import { RestService, WebSocketService, IscsiService} from '../../services/';
 import { DialogService } from '../../services/dialog.service';
 
 import * as _ from 'lodash';
@@ -17,15 +14,16 @@ import { T } from '../../translate-marker';
 @Component({
   selector: 'services',
   styleUrls: [ './services.component.css'],
-  templateUrl: './services.component.html'
+  templateUrl: './services.component.html',
+  providers: [IscsiService]
 })
 export class Services implements OnInit {
 
-  @ViewChild('filter') filter: ElementRef;
+  @ViewChild('filter', { static: true}) filter: ElementRef;
   @Input() searchTerm: string = '';
   @Input() cards = []; // Display List
-  @ViewChild('viewMode') viewMode: MatButtonToggleGroup;
-  @ViewChild('serviceStatus') serviceStatus: MatSlideToggle;
+  @ViewChild('viewMode', { static: true}) viewMode: MatButtonToggleGroup;
+  @ViewChild('serviceStatus', { static: true}) serviceStatus: MatSlideToggle;
   focusedVM: string;
 
   public services: any[];
@@ -37,6 +35,7 @@ export class Services implements OnInit {
     'ftp': 'FTP',
     'iscsitarget': 'iSCSI',
     'lldp': 'LLDP',
+    'netdata': 'Netdata',
     'nfs': 'NFS',
     'rsync': 'Rsync',
     's3': 'S3',
@@ -54,7 +53,7 @@ export class Services implements OnInit {
   // public viewValue: any;
 
   constructor(protected rest: RestService, protected ws: WebSocketService, protected router: Router,
-    private confirmService: AppConfirmService, private dialog: DialogService) {}
+    private dialog: DialogService, private iscsiService: IscsiService) {}
 
   parseResponse(data) {
     const card = {
@@ -73,7 +72,7 @@ export class Services implements OnInit {
 
   ngOnInit() {
     // window.localStorage.getItem('viewValue') ? this.viewMode.value = window.localStorage.getItem('viewValue') : this.viewMode.value = 'cards';
-    this.viewMode.value = 'table';   
+    this.viewMode.value = 'table';
     this.busy =
       this.ws.call('service.query', [
         [], { "order_by": ["service"] }
@@ -101,7 +100,7 @@ export class Services implements OnInit {
       this.displayAll();
     } else {
       this.cards = this.cache.filter((card) => {
-        var result = card[key].toLowerCase().indexOf(query.toLowerCase()) > -1;
+        const result = card[key].toLowerCase().indexOf(query.toLowerCase()) > -1;
         return result;
       });
     }
@@ -129,12 +128,25 @@ export class Services implements OnInit {
     }
 
     if (rpc === 'service.stop') {
-      let confirm = this.confirmService.confirm(T('Alert'), T('Stop this service?'), T('Stop'));
-      confirm.subscribe(res => {
-        if (res) {
-          this.updateService(rpc, service);
-        }
-      })
+      if (service.title == 'iscsitarget') {
+        this.iscsiService.getGlobalSessions().subscribe(
+          (res) => {
+            const msg = res.length == 0 ? '' : T('<font color="red"> There are ') + res.length +
+              T(' active iSCSI connections.</font><br>Stop the ' + service.label + ' service and close these connections?');
+            this.dialog.confirm(T('Alert'),  msg == '' ? T('Stop ') + service.label + '?' : msg, true, T('Stop')).subscribe(dialogRes => {
+              if (dialogRes) {
+                this.updateService(rpc, service);
+              }
+            });
+          }
+        )
+      } else {
+        this.dialog.confirm(T('Alert'), T('Stop ') + service.label + '?', true, T('Stop')).subscribe(res => {
+          if (res) {
+            this.updateService(rpc, service);
+          }
+        });
+      }
     } else {
       this.updateService(rpc, service);
     }
@@ -184,14 +196,15 @@ export class Services implements OnInit {
       // iscsi target global config route
       const route = ['sharing', 'iscsi'];
       this.router.navigate(new Array('').concat(route));
-    } else if (service === 'netdata') {
-      // launch netdata
-      window.open("http://" + environment.remote + "/netdata/");
     } else if (service === 'cifs') {
       this.router.navigate(new Array('').concat(['services', 'smb']));
     } else {
       // Determines the route path
       this.router.navigate(new Array('').concat(['services', service]));
     }
+  }
+
+  openNetdataPortal() {
+    window.open('/netdata/');
   }
 }

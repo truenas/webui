@@ -312,6 +312,7 @@ export class IdmapComponent implements OnInit {
   protected targetDS: any;
   protected idmap: any;
   public idmap_type: any;
+  private idmap_domain_name: any = null;
   protected idmapID: any;
   protected defaultIdmap: any;
   constructor(protected router: Router,
@@ -327,12 +328,14 @@ export class IdmapComponent implements OnInit {
         this.route_success.push(res['service']);
         if (res['service'] === 'activedirectory') {
           this.targetDS = 1;
+          this.idmap_domain_name = 'DS_TYPE_ACTIVEDIRECTORY';
         } else if (res['service'] === 'ldap') {
           this.targetDS = 2;
+          this.idmap_domain_name = 'DS_TYPE_LDAP';
         }
       }
       if (res['pk']) {
-        this.idmap_type = res['pk'];
+        this.idmap_type = res['pk'].toLowerCase();
       }
     });
 
@@ -360,17 +363,19 @@ export class IdmapComponent implements OnInit {
 
     // get default idmap range
     this.rest.get('services/cifs', {}).subscribe((res) => {
-      this.ws.call('datastore.query', ['directoryservice.idmap_tdb', [["idmap_ds_type", "=", "5"], ["idmap_ds_id", "=", res.data['id']]]]).subscribe((idmap_res) => {
-        this.defaultIdmap = idmap_res[0];
+      this.ws.call('idmap.get_or_create_idmap_by_domain', [this.idmap_domain_name]).subscribe((idmap_res) => {
+        this.defaultIdmap = idmap_res;
       });
     });
-
-    this.ws.call('datastore.query', [this.query_call + this.idmap_type, [["idmap_ds_type", "=", this.targetDS]]]).subscribe((res) => {
-      if (res[0]) {
-        this.idmapID = res[0]['id'];
-        for (let i in res[0]) {
-          if (this.formGroup.controls[i]) {
-            this.formGroup.controls[i].setValue(res[0][i]);
+                                                     
+    this.ws.call('idmap.get_or_create_idmap_by_domain', [this.idmap_domain_name]).subscribe((res) => {
+      if (res && res['id']) {
+        this.idmapID = res['id'];
+        for (let i in this.formGroup.controls) {
+          if(_.endsWith(i, 'range_low')) {
+              this.formGroup.controls[i].setValue(res['range_low']);
+          } else if (_.endsWith(i, 'range_high')) {
+            this.formGroup.controls[i].setValue(res['range_high']);
           }
         }
       } else {
@@ -420,8 +425,8 @@ export class IdmapComponent implements OnInit {
     if (new_range_low > new_range_high) {
       this.error = helptext.idmap_range_comparison_error;
     } else {
-      if (new_range_low < this.defaultIdmap['idmap_tdb_range_low'] || new_range_low > this.defaultIdmap['idmap_tdb_range_high']) {
-        if (new_range_high < this.defaultIdmap['idmap_tdb_range_low'] || new_range_high > this.defaultIdmap['idmap_tdb_range_high']) {
+      if (new_range_low < this.defaultIdmap['range_low'] || new_range_low > this.defaultIdmap['range_high']) {
+        if (new_range_high < this.defaultIdmap['range_low'] || new_range_high > this.defaultIdmap['range_high']) {
           // no overlap, update/insert into datastore
           if (this.idmapID) {
             this.loader.open();
@@ -432,7 +437,6 @@ export class IdmapComponent implements OnInit {
               },
               (res) => {
                 this.loader.close();
-                console.log(res);
               }
             );
           } else {
@@ -445,15 +449,14 @@ export class IdmapComponent implements OnInit {
               },
               (res) => {
                 this.loader.close();
-                console.log(res);
               }
             );
           }
         } else {
-          this.error = helptext.idmap_range_overlap_error + this.defaultIdmap['idmap_tdb_range_low'] + "," + this.defaultIdmap['idmap_tdb_range_high'] + "] !";
+          this.error = helptext.idmap_range_overlap_error + this.defaultIdmap['range_low'] + "," + this.defaultIdmap['range_high'] + "] !";
         }
       } else {
-        this.error = helptext.idmap_range_overlap_error + this.defaultIdmap['idmap_tdb_range_low'] + "," + this.defaultIdmap['idmap_tdb_range_high'] + "] !";
+        this.error = helptext.idmap_range_overlap_error + this.defaultIdmap['range_low'] + "," + this.defaultIdmap['range_high'] + "] !";
       }
     }
   }

@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RestService, WebSocketService } from '../../../../services/';
 
 @Component({
   selector: 'app-alertservice-list',
@@ -19,6 +18,7 @@ export class AlertServiceListComponent {
   public columns: Array<any> = [
     { name: 'Service Name', prop: 'name' },
     { name: 'Type', prop: 'type'},
+    { name: 'Level', prop: 'level'},
     { name: 'Enabled', prop: 'enabled' },
   ];
   public config: any = {

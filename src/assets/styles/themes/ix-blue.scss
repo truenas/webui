@@ -18,7 +18,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(background, --accent, $accent, !important);
 //    opacity: 0.4;
   }
-  .mat-button.mat-primary .mat-ripple-element, 
+  .mat-button.mat-primary .mat-ripple-element,
   .mat-icon-button.mat-primary .mat-ripple-element,
   .mat-tab-label .mat-ripple-element {
     @include variable(background, --primary, $primary, !important);
@@ -68,7 +68,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       @include variable(background, --bg2, $bg2, !important);
       @include variable(color, --fg1, $fg1, !important);
   }
-  /* Hopscotch Tour */ 
+  /* Hopscotch Tour */
   div.hopscotch-bubble {
       border-color: $primary-dark;
       @include variable(border-color, --primary, $primary);
@@ -167,7 +167,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-tab-label, .mat-tab-link{
     @include variable(color, --fg1, $fg1);
   }
-  .mat-menu-item .mat-icon:not([color]), 
+  .mat-menu-item .mat-icon:not([color]),
   .mat-menu-item .theme-picker-swatch .mat-icon:not([color]),
   .mat-menu-item-submenu-trigger::after{
     @include variable(color, --fg1, $fg1);
@@ -180,13 +180,13 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   .mat-bg-primary,
   .mat-raised-button.mat-primary, .mat-fab.mat-primary, .mat-mini-fab.mat-primary,
-  .topbar, 
-  .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret), 
-  .chats-wrap .conversations-hold .single-conversation.me .conversation-msg, 
-  .ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a, 
-  .fileupload-drop-zone.dz-file-over, 
-  .toolbar-avatar.online > .status-dot, 
-  .cal-open-day-events, 
+  .topbar,
+  .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret),
+  .chats-wrap .conversations-hold .single-conversation.me .conversation-msg,
+  .ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a,
+  .fileupload-drop-zone.dz-file-over,
+  .toolbar-avatar.online > .status-dot,
+  .cal-open-day-events,
   //.datatable-header,.datatable-footer,
   .mat-step-header .mat-step-icon,
   div.hopscotch-bubble{
@@ -220,7 +220,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   div.hopscotch-bubble .hopscotch-nav-button.next:hover,
   div.hopscotch-bubble .hopscotch-nav-button.next,
   .ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a,
-  .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background, 
+  .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background,
   .mat-checkbox-checked.mat-accent .mat-checkbox-background{
       background-color: map-get($md-accent, 500);
       color: black;
@@ -243,7 +243,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
   .mat-button-toggle-checked{
     background-color:rgba(0,0,0,0.1);
-    @include variable(color, --fg2, $fg2); 
+    @include variable(color, --fg2, $fg2);
   }
 
   .mat-select-panel .mat-option:hover,
@@ -267,13 +267,13 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .sidebar-panel .mat-nav-list .mat-list-item,
   .app-user .app-user-name, .text-muted,
   .mat-expansion-panel-header-title,
-  .mat-expansion-panel-header-description, 
+  .mat-expansion-panel-header-description,
 
   .mat-list .mat-list-item,
   .mat-menu-panel button,
   .mat-paginator-navigation-next, .mat-paginator-navigation-previous,
 
-  .mat-nav-list .mat-list-item, 
+  .mat-nav-list .mat-list-item,
   .mat-form-field-label,
   .mat-selection-list .mat-list-item,.mat-option,
   .mat-select-arrow, .mat-select-value {
@@ -327,11 +327,12 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(background-color, --primary, $primary);
   }
 
-  .mat-color-primary, 
+  .mat-color-primary,
   .mat-button.mat-primary,
-  .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > a > span, 
-  .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a, 
-  .mat-focused .mat-form-field-label {
+  .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > a > span,
+  .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a
+  // .mat-focused .mat-form-field-label
+  {
     @include variable(color, --primary, $primary, !important);
   }
 
@@ -397,7 +398,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     opacity:0.38;
   }
 
-  .egret-swatch, .mat-checkbox-frame, .mat-radio-outer-circle { 
+  .egret-swatch, .mat-checkbox-frame, .mat-radio-outer-circle {
     @include variable(border-color, --fg1, $fg1);
     // border-color: gray;
   }
@@ -413,6 +414,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   .toggle-children {
     filter: invert(50%);
+    top: 5px;
+    left: 4px;
   }
 
   .mat-menu-item[disabled] {
@@ -430,19 +433,21 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   // System wide hover effects
   .mat-select-panel .mat-option:focus,
-  .mat-select-panel .mat-option.mat-selected:not(.mat-option-multiple){ 
+  .mat-select-panel .mat-option.mat-selected:not(.mat-option-multiple){
     @include variable(background, --primary, $primary, !important);
     @include variable(color, --primary-txt, $primary-txt, !important);
   }
 
-  .mat-menu-content button.mat-menu-item:hover, 
-  .mat-menu-content button.mat-menu-item:hover .mat-icon:not([class="theme-picker-swatch-icon"]),
+  .mat-menu-content button.mat-menu-item:hover,
+  .mat-menu-content button.mat-menu-item:hover .mat-icon:not(.theme-picker-swatch-icon),
   .ngx-datatable .datatable-body .datatable-row-wrapper:hover,
-  .mat-menu-content button.mat-menu-item:focus, 
-  .mat-menu-content button.mat-menu-item:focus .mat-icon:not([class="theme-picker-swatch-icon"]),
+  .ngx-datatable .datatable-body .datatable-row-wrapper:hover .plugin-buttons,
+  .ngx-datatable .datatable-body .datatable-row-wrapper:hover .plugin-icons,
+  .mat-menu-content button.mat-menu-item:focus,
+  .mat-menu-content button.mat-menu-item:focus .mat-icon:not(.theme-picker-swatch-icon),
   .ngx-datatable .datatable-body .datatable-row-wrapper:focus {
     @include variable(background, --primary, $primary, !important);
-    @include variable(color, --primary-txt, $primary-txt);
+    @include variable(color, --primary-txt, $primary-txt !important);
 }
 
 .ngx-datatable .datatable-body .datatable-row-wrapper:hover .mat-checkbox .mat-checkbox-frame {
@@ -496,7 +501,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     max-width:960px;
     margin:0 auto;
   }
-  
+
   .mat-card-actions .mat-button {
     margin-right: 3px !important;
     margin-left: 1px !important;
@@ -515,10 +520,20 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       max-height: 256px;
   }
 
+  .mat-checkbox {
+    margin: 4px;
+  }
+  .form-line .mat-checkbox {
+    margin-left: 0;
+  }
+
+  .ngx-datatable .mat-checkbox-inner-container {
+    margin-left: 4px;
+  }
+
   .mat-checkbox-inner-container{
     width:16px;
     height:16px;
-    margin:4px;
     overflow: visible;
   }
   .mat-checkbox-ripple{
@@ -536,12 +551,12 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       margin-right: 10px;
     }
   }
-  
+
   .mat-dialog-content {
     max-width: 600px;
     padding-bottom: -3px;
     overflow: hidden;
-  
+
     .info-panel {
       max-height: 100px;
       padding: 0px;
@@ -552,12 +567,12 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       -o-transition: max-height 0.3s linear;
       -ms-transition: max-height 0.3s linear;
       transition: max-height 0.5s linear;
-  
+
       &.open {
         max-height: calc( 100px + 2rem + 4px );
         padding: 2px;
       }
-  
+
       textarea {
         overflow: auto;
         background: white;
@@ -579,12 +594,12 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       -o-transition: max-height 0.3s linear;
       -ms-transition: max-height 0.3s linear;
       transition: max-height 0.5s linear;
-  
+
       &.open {
         max-height: calc( 100px + 2rem + 4px );
         padding: 2px;
       }
-  
+
       textarea {
         overflow: auto;
         background: white;
@@ -627,12 +642,13 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   #disk_radio tooltip {
-    float: right;
-    margin-top: 23px;
+    position: relative;
+    top: 30px;
+    left: 180px;
   }
   // ---------------
 
-  // Vertically align header-footer items on datatables  
+  // Vertically align header-footer items on datatables
   .datatable-header-cell {
     position: relative;
     // top: -5px;
@@ -651,7 +667,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .entity-job-dialog {
     min-width: 200px;
     max-width: 500px;
-    max-height: 300px; 
+    max-height: 300px;
   }
 
   // Fix bug where ngx-datatable rows get stuck at original window width
@@ -692,7 +708,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   // Style file trees to be highlighted with a theme color
   .node-content-wrapper:hover,
   .node-content-wrapper-focused{
-      @include variable(background, --bg1, $bg1);
+      background-color: var(--bg2);
   }
 
   // Give vdev arrow buttons theme colors
@@ -708,25 +724,29 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     opacity: 0.38;
   }
 
+  #vdev__close-button {
+    color: var(--primary) !important;
+  }
+
   // style nav chevrons on datatable pager w/regard to theme
   .mat-button-wrapper .mat-paginator-decrement,
   .mat-button-wrapper .mat-paginator-increment {
     @include variable(border-color, --fg1, $fg1);
-  } 
+  }
 
   .mat-icon-button:disabled .mat-button-wrapper .mat-paginator-decrement,
   .mat-icon-button:disabled .mat-button-wrapper .mat-paginator-increment {
     @include variable(border-color, --fg1, $fg1);
     opacity: .38;
-  } 
+  }
 
   // style to make sure all radio buttons catch the theme color
   .mat-radio-button.mat-accent .mat-radio-inner-circle {
-    @include variable(background-color, --accent, $accent !important);
+    background-color: var(--accent) !important;
   }
 
   .mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
-    @include variable(border-color, --accent, $accent !important);
+    border-color: var(--accent) !important;
   }
 
   // Fix icon color in notification area
@@ -736,7 +756,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   .mat-spinner circle {
     @include variable(stroke, --primary, $primary, !important);
-  } 
+  }
 
   // Align button and tooltip on Add Replication form
   #repl_remote_hostkey button {
@@ -778,7 +798,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     padding-top: 1px;
   }
 
-  // Background visually links the items in the form-explorer 
+  // Background visually links the items in the form-explorer
   .form-ex-flex-container {
     @include variable(background, --bg1, $bg1);
   }
@@ -909,11 +929,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   // Bring theme color to small icon buttons
   .mat-icon-button.mat-primary {
-    @include variable(color, --primary, $primary !important);  
+    @include variable(color, --primary, $primary !important);
   }
 
   .mat-icon-button.mat-accent {
-    @include variable(color, --accent, $accent !important);  
+    @include variable(color, --accent, $accent !important);
   }
 
   // Make room for checkbox ripple effect in datatables
@@ -975,7 +995,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   #password, #sed_passwd, #em_pass1, #bsdusr_passwd_currnt,
     #Passphrase, #passphrase, #disk_passwd, #ldap_bindpw, #iscsi_target_auth_secret,
       #iscsi_target_auth_peersecret, #dc_passwd, #secret_key, #ad_bindpw, #v3_password,
-      #secret_access_key-S3, #v3_privpassphrase, #secret_access_key-S3, #pass-FTP, 
+      #secret_access_key-S3, #v3_privpassphrase, #secret_access_key-S3, #pass-FTP,
       #pass-MEGA, #pass-SFTP, #pass-WEBDAV, #aws_secret_access_key {
     max-width: 640px;
     min-width: 225px;
@@ -1001,6 +1021,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   .has-pwtoggle > mat-form-field {
     width: 70% !important;
+  }
+
+  app-support .has-pwtoggle > mat-form-field {
+    width: calc( 100% - 66px ) !important;
   }
 
   app-entity-dialog .has-pwtoggle  {
@@ -1052,15 +1076,23 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   input[type=number]::-webkit-inner-spin-button {
     -webkit-appearance: none;
   }
-  
+
+  .mat-autocomplete-panel {
+    background: var(--bg2) !important;
+  }
+
+  .mat-autocomplete-panel .mat-option:hover {
+    background-color: var(--primary) !important;
+  }
+
   .mat-autocomplete-panel .mat-option-text {
-    @include variable(color, --fg2, $fg2 !important);
+    color: var(--fg2) !important;
   }
 
   .ui-treetable tr:nth-child(even){
     background-color:rgba(123,123,123,0.2);
   }
-  
+
   .ui-treetable tr:hover {
     @include variable(background, --primary, $primary, !important);
     @include variable(color, --primary-txt, $primary-txt);
@@ -1104,7 +1136,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   #em_pwmessage {
     margin: 10px 0;
   }
-  
+
   .rightside-content-hold {
     overflow-y: auto;
   }
@@ -1117,20 +1149,173 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     overflow-y: auto;
   }
 
+  .xterm-rows > div {
+    height: 15px !important;
+  }
+
   .advanced-date-picker .cron-fields .mat-select-value,
   .advanced-date-picker .cron-fields .mat-select-arrow,
   .advanced-date-picker .cron-fields .mat-form-field.mat-focused.mat-primary .mat-select-arrow  {
     color: white !important;
   }
 
+  .advanced-date-picker .cron-fields .mat-form-field.mat-focused .mat-input-element {
+    color: white;
+  }
+
+  .advanced-date-picker .cron-fields .mat-form-field.mat-focused .mat-form-field-ripple {
+    background-color: white !important;
+  }
+
   .advanced-date-picker .cron-fields .mat-form-field-underline {
     background-color: white !important;
     opacity: .99;
   }
-  
+
   app-select-dialog .mat-select-placeholder,
   app-ipmi .mat-select-placeholder {
     @include variable(color, --fg2, $fg2);
+  }
+
+  app-acmedns-form {
+    h4 {
+      font-size: 20px;
+    }
+    .fieldset:first-of-type {
+      padding-left: 5px;
+    }
+    .fieldset:nth-of-type(2) {
+      padding-left: 30px;
+      padding-top: 38px;
+    }
+    & p .material-icons {
+      font-size: 36px;
+      margin-right: 10px;
+      margin-left: -4px;
+      position: relative;
+      top: 10px;
+    }
+    & #select_auth, #auth_attributes {
+      font-size: 140%;
+    }
+  }
+
+  #acme_directory_uri mat-form-field {
+    width: 50%;
+  }
+
+  app-support {
+    .fieldset {
+      padding-left: 15px;
+    }
+    #FN_col1, #FN_col2, #TN_col1 {
+      font-size: 180%;
+      margin-bottom: 15px;
+
+      & .material-icons {
+        margin-right: 10px;
+        margin-left: -5px;
+        position: relative;
+        top: 10px;
+        font-size: 36px;
+      }
+    }
+    #TN_col1, #FN_col1, #support_text {
+      width: 200%;
+    }
+    .lowerme {
+      margin-top: 60px !important;
+    }
+    #support_text {
+      font-size: 110%;
+      margin-right: 30px;
+      margin-top: 10px;
+    }
+    h4 {
+      font-size: 130%;
+      margin-top: 15px;
+      margin-bottom: 5px;
+    }
+    #pic {
+      text-align: center;
+      margin-top: 25px;
+      margin-bottom: -25px;
+      position: relative;
+      right: 40px;
+
+      & img {
+        max-width: 480px;
+      }
+    }
+    .mat-card-actions {
+      margin-left: 15px;
+    }
+
+    #FN_jira-info {
+      margin-bottom: 10px;
+    }
+
+    #category_form-select-spinner {
+      position: absolute;
+      top: -20px;
+      right: 45%;
+    }
+
+    .mat-card-actions {
+      margin-top: -54px;
+      width: 50%
+    }
+  }
+
+  entity-form form-combobox mat-form-field {
+    width: 50%;
+    min-width: 180px;
+  }
+
+  app-service-netdata form-paragraph {
+    font-size: larger;
+    font-weight: 700;
+    margin-bottom: 7px;
+  }
+  
+  app-replication-wizard #adjustme {
+    top: -70px;
+  }
+
+  jail-wizard .tooltiptext {
+    top: -1px;
+  }
+
+  mat-radio-group .tooltip .material-icons,
+  mat-radio-group .tooltip .material-icons {
+    position: relative;
+    top: 4px;
+  }
+
+  .navigation-hold#scroll-area .ps__scrollbar-y-rail {
+    top: 50px !important;
+  }
+
+  .tooltiptext samp {
+      background: rgba(255, 255, 255, 0.25);
+  }
+
+  .node-content-wrapper {
+    margin-left: 2px;
+    padding-left: 3px;
+  }
+  tree-node-content mat-icon {
+     vertical-align: top;
+  }
+  tree-node-content span {
+    vertical-align: top;
+    line-height: 25px;
+    padding-left: 3px;
+  }
+
+  .mat-card{
+    border-radius: 6px;
+    //overflow: hidden; // This clips tooltips
   }
 
  } // end of ix theme

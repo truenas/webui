@@ -9,6 +9,7 @@ import {WebSocketService} from '../services/ws.service';
 import { MatSnackBar } from '@angular/material';
 import { AppLoaderService } from '../services/app-loader/app-loader.service';
 import { EntityDialogComponent } from '../pages/common/entity/entity-dialog/entity-dialog.component';
+import { T } from 'app/translate-marker';
 
 @Injectable()
 export class DialogService {
@@ -17,7 +18,7 @@ export class DialogService {
 
     constructor(private dialog: MatDialog, private ws: WebSocketService, public snackBar: MatSnackBar,protected loader: AppLoaderService) { }
 
-    public confirm(title: string, message: string, hideCheckBox?: boolean, buttonMsg?: string, secondaryCheckBox?: boolean, secondaryCheckBoxMsg?: string, method?:string, data?:any, tooltip?:any): any {
+    public confirm(title: string, message: string, hideCheckBox?: boolean, buttonMsg?: string, secondaryCheckBox?: boolean, secondaryCheckBoxMsg?: string, method?:string, data?:any, tooltip?:any, hideCancel?:boolean): any {
 
         let dialogRef: MatDialogRef<ConfirmDialog>;
 
@@ -36,7 +37,12 @@ export class DialogService {
 
         if(tooltip) {
             dialogRef.componentInstance.tooltip = tooltip;
-        } 
+        }
+
+        if (hideCancel) {
+            dialogRef.componentInstance.hideCancel = hideCancel;
+            dialogRef.disableClose = hideCancel;
+        }
 
         if(secondaryCheckBox) {
             dialogRef.componentInstance.secondaryCheckBox = secondaryCheckBox;
@@ -78,7 +84,7 @@ export class DialogService {
         return dialogRef.afterClosed();
     }
 
-    public Info(title: string, info: string, width='500px', icon="report_problem" ): Observable<boolean> {
+    public Info(title: string, info: string, width='500px', icon="report_problem", is_html=false ): Observable<boolean> {
         
         let dialogRef: MatDialogRef<InfoDialog>;
 
@@ -87,6 +93,7 @@ export class DialogService {
         dialogRef.componentInstance.title = title;
         dialogRef.componentInstance.info = info;
         dialogRef.componentInstance.icon = icon;
+        dialogRef.componentInstance.is_html = is_html;
 
         return dialogRef.afterClosed();
     }
@@ -139,4 +146,27 @@ export class DialogService {
         return dialogRef.afterClosed();
     }
 
+    public doubleConfirm(title: string, message: string, name: string): any {
+        const conf = {
+            title: title,
+            message: message,
+            fieldConfig: [
+              {
+                type: 'input',
+                name: 'name',
+                required: true,
+              }
+            ],
+            saveButtonText: T("DELETE"),
+            afterInit: function(entityDialog) {
+                entityDialog.formGroup.controls['name'].valueChanges.subscribe((res) => {
+                    entityDialog.submitEnabled = res === name;
+                })
+            },
+            customSubmit: function (entityDialog) {
+                return entityDialog.dialogRef.close(true);
+            }
+          }
+        return this.dialogForm(conf);
+    }
 }

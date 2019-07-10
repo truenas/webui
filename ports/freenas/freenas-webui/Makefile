@@ -32,6 +32,8 @@ checksum:
 
 fetch:
 	${MKDIR} ${WRKDIR}
+	${ECHO} "export default { product:'${PRODUCT}' }" > ${WRKSRC}/src/app/helptext/product.ts
+	${ECHO} "var product = '${PRODUCT}'" > ${WRKSRC}/src/assets/scripts/product.js
 	(cd ${WRKSRC} && ${LOCALBASE}/bin/yarn install && ${LOCALBASE}/bin/yarn run build:prod:aot)
 
 extract:

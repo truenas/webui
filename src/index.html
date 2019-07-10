@@ -2,10 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="-1">
+  <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
   <!--<meta http-equiv="X-UA-Compatible" content="IE=edge" />-->
   <!--<script  src="generated/ie-polyfills.min.js"></script>-->
   <script nomodule="" src="assets/scripts/ie-support/ie-polyfills.min.js"></script>
-  <title>FreeNAS</title>
+  <title id="main-page-title"></title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="apple-touch-icon" sizes="57x57" href="assets/images/apple-icon-57x57.png">
@@ -18,9 +21,9 @@
   <link rel="apple-touch-icon" sizes="152x152" href="assets/images/apple-icon-152x152.png">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-icon-180x180.png">
   <link rel="icon" type="image/png" sizes="192x192"  href="assets/images/android-icon-192x192.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="96x96" href="assets/images/favicon-96x96.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png">
+  <!-- <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="assets/images/favicon-96x96.png"> -->
+  <!-- <link id='fav16' rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png"> -->
   <link rel="manifest" href="assets/manifest.json">
   <meta name="msapplication-TileColor" content="#ffffff">
   <meta name="msapplication-TileImage" content="assets/images/ms-icon-144x144.png">
@@ -29,17 +32,22 @@
   <link href="assets/iconfont/mdi/css/materialdesignicons.min.css" rel="stylesheet" />
   <link href="assets/iconfont/primeicons/primeicons.css" rel="stylesheet" />
 </head>
-<body class="ix-blue"> 
+<body class="ix-blue">
   <app-root>
     <div class="app-loadr" style="background-color:var(--bg2);height:100vh; --bg1:#171E26;--bg2:#232d35;--fg1:#aaaaaa;--fg2:#cccccc;">
       <div style="position:relative;z-index:2;width:180px;height:180px;top:calc(50% - 90px);left:calc(50% - 90px);">
-        <img alt="logo image background" class="" src="assets/images/light-logo.svg" style="width:100%; height:100%;">
+        <div style="text-align:center; position:relative; top:calc(50% - 75px);">
+        <img alt="logo image background" class="" id="brandLogo" src="assets/images/light-logo.svg" style="width:100%; height:100%;">
         <!-- Put a loader in here at some point -->
       </div>
-
-
-
     </div>
+    <script src='assets/scripts/product.js'>
+    </script>
+    <script>
+      if (product.trim() === 'TrueNAS') {
+        document.getElementById('brandLogo').src = 'assets/images/TrueNAS_Logomark_White.svg';
+      }
+    </script>
   </app-root>
 </body>
 </html>

@@ -26,10 +26,10 @@ export class NFSFormComponent {
 
   protected fieldConfig: FieldConfig[] = [
     {
-      type: 'array',
+      type: 'list',
       name : 'nfs_paths',
       initialCount: 1,
-      formarray: [{
+      templateListField: [{
         name: 'path',
         placeholder: helptext_sharing_nfs.placeholder_path,
         tooltip: helptext_sharing_nfs.tooltip_path,
@@ -38,15 +38,8 @@ export class NFSFormComponent {
         initial: '/mnt',
         required: true,
         validation : helptext_sharing_nfs.validators_path
-      },
-      {
-        type: 'checkbox',
-        name: 'delete',
-        placeholder: helptext_sharing_nfs.placeholder_delete,
-        tooltip: helptext_sharing_nfs.tooltip_delete,
-        isHidden: true,
-        disabled: true,
-      }]
+      }],
+      listFields: []
     },
     {
       type: 'input',
@@ -171,24 +164,6 @@ export class NFSFormComponent {
 
   public custActions: Array<any> = [
     {
-      id : 'add_path',
-      name : helptext_sharing_nfs.actions_add_path,
-      function : () => {
-        this.initialCount += 1;
-        this.entityFormService.insertFormArrayGroup(
-            this.initialCount, this.formArray, this.arrayControl.formarray);
-      }
-    },
-    {
-      id : 'remove_path',
-      name : helptext_sharing_nfs.actions_remove_path,
-      function : () => {
-        this.initialCount -= 1;
-        this.entityFormService.removeFormArrayGroup(this.initialCount,
-                                                    this.formArray);
-      }
-    },
-    {
       id : 'basic_mode',
       name : helptext_sharing_nfs.actions_basic_mode,
       function : () => { this.isBasicMode = !this.isBasicMode; }
@@ -229,9 +204,7 @@ export class NFSFormComponent {
       _.find(this.fieldConfig, {'name' : 'nfs_paths'});
     this.route.params.subscribe(params => {
       if(params['pk']) {
-         this.arrayControl.initialCount = this.initialCount = this.initialCount_default = 0;
-         this.arrayControl.formarray[1]['isHidden'] = false;
-         this.arrayControl.formarray[1].disabled = false;
+        this.arrayControl.initialCount = this.initialCount = this.initialCount_default = 0;
       }
     });
 
@@ -249,14 +222,13 @@ export class NFSFormComponent {
     this.entityForm = EntityForm;
     this.formArray = EntityForm.formGroup.controls['nfs_paths'];
 
-    this.userService.listAllUsers().subscribe(res => {
+    this.userService.userQueryDSCache().subscribe(items => {
       const users = [{
         label: '---------',
         value: '',
       }];
-      let items = res.data.items;
       for (let i = 0; i < items.length; i++) {
-        users.push({label: items[i].label, value: items[i].id});
+        users.push({label: items[i].username, value: items[i].username});
       }
       this.nfs_mapall_user = _.find(this.fieldConfig, {'name' : 'nfs_mapall_user'});
       this.nfs_mapall_user.options = users;
@@ -264,14 +236,13 @@ export class NFSFormComponent {
       this.nfs_maproot_user.options = users;
     });
 
-    this.userService.listAllGroups().subscribe(res => {
+    this.userService.groupQueryDSCache().subscribe(items => {
       const groups = [{
         label: '---------',
         value: '',
       }];
-      let items = res.data.items;
       for (let i = 0; i < items.length; i++) {
-        groups.push({label: items[i].label, value: items[i].id});
+        groups.push({label: items[i].group, value: items[i].group});
       }
       this.nfs_mapall_group = _.find(this.fieldConfig, {'name' : 'nfs_mapall_group'});
       this.nfs_mapall_group.options = groups;
@@ -426,13 +397,12 @@ export class NFSFormComponent {
   }
 
   updateGroupSearchOptions(value = "", parent, field) {
-    parent.userService.listAllGroups(value).subscribe(res => {
+    parent.userService.groupQueryDSCache(value).subscribe(items => {
       const groups = [];
-      let items = res.data.items;
       for (let i = 0; i < items.length; i++) {
-        groups.push({label: items[i].label, value: items[i].id});
+        groups.push({label: items[i].group, value: items[i].group});
       }
-        parent[field].searchOptions = groups;
+      parent[field].searchOptions = groups;
     });
   }
 
@@ -445,11 +415,10 @@ export class NFSFormComponent {
   }
 
   updateUserSearchOptions(value = "", parent, field) {
-    parent.userService.listAllUsers(value).subscribe(res => {
+    parent.userService.userQueryDSCache(value).subscribe(items => {
       const users = [];
-      let items = res.data.items;
       for (let i = 0; i < items.length; i++) {
-        users.push({label: items[i].label, value: items[i].id});
+        users.push({label: items[i].username, value: items[i].username});
       }
       parent[field].searchOptions = users;
     });

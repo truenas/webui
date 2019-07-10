@@ -25,7 +25,7 @@ export const helptext_system_certificates = {
       placeholder: T("Signing Certificate Authority"),
       tooltip: T(
         'Select a previously imported or created <a\
- href="%%docurl%%/system.html#cas"\
+ href="--docurl--/system.html#cas"\
  target="_blank">CA</a>.'
       ),
       validation: [Validators.required]
@@ -197,9 +197,35 @@ export const helptext_system_certificates = {
       action_export_certificate: T("Export Certificate"),
       action_export_private_key: T("Export Private Key"),
 
+      action_create_acme_certificate: T("Create ACME Certificate"),
+
       snackbar_open_window_message: T("Opening download window. Make sure pop-ups are enabled in the browser."),
       snackbar_open_window_action: T("Success"),
 
       action_delete: T("Delete")
+  },
+
+  acme: {
+    identifier: {
+      placeholder: T("identifier"),
+      tooltip: T('Internal identifier of the certificate. Only alphanumeric, "_" and "-" are allowed.')
+    },
+    tos: {
+      placeholder: T("Terms of Service"),
+      tooltip: T("Please accept terms of service for the given ACME Server.")
+    },
+    renew_day: {
+      placeholder: T("Renew certificate day"),
+      tooltip: T("Number of days to renew certificate before expiring"),
+      validation: [Validators.required, Validators.min(0)]
+    },
+    dir_uri: {
+      placeholder: T("ACME Server Directory URI"),
+      tooltip: T("Please specify URI of ACME Server Directory.")
+    },
+    authenticator: {
+      placeholder: T("Authenticator"),
+      tooltip: T("Specify Authenticator to be used")
+    }
   }
 };

@@ -1,21 +1,21 @@
-import { RestService, WebSocketService } from '../../../services';
 import { Component, OnInit } from '@angular/core';
+import { MatDialog, MatSnackBar } from '@angular/material';
 import { Router } from '@angular/router';
-import * as _ from 'lodash';
-import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { StorageService } from '../../../services/storage.service'
-import { EntityUtils } from '../../common/entity/utils';
 import { TranslateService } from '@ngx-translate/core';
+import * as _ from 'lodash';
 import { DialogService } from '../../../../app/services';
+import { RestService, WebSocketService } from '../../../services';
+import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { StorageService } from '../../../services/storage.service';
 import { T } from '../../../translate-marker';
-import { MatSnackBar, MatDialog } from '@angular/material';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { EntityUtils } from '../../common/entity/utils';
+import { JailDetailsComponent } from './components/jail-details.component';
 
 @Component({
   selector: 'app-jail-list',
-  // template: `<entity-table [title]="title" [conf]="this"></entity-table>`
   templateUrl: './jail-list.component.html',
-  styleUrls: ['../../plugins/plugins-available/plugins-available-list.component.css'],
+  styleUrls: ['jail-list.component.css'],
   providers: [DialogService, StorageService]
 })
 export class JailListComponent implements OnInit {
@@ -28,20 +28,21 @@ export class JailListComponent implements OnInit {
   protected queryCall = 'jail.query';
   protected wsDelete = 'jail.do_delete';
   protected wsMultiDelete = 'core.bulk';
-  protected entityList: any;
+  public entityList;
   protected route_add = ["jails", "add", "wizard"];
   protected route_add_tooltip = "Add Jail";
   public toActivatePool: boolean = false;
+  public showActions = false;
+  protected hasDetails = true;
+  protected rowDetailComponent = JailDetailsComponent;
   public legacyWarning = T("Note: Legacy jails created before FreeNAS 11.2 must be managed from the");
   public legacyWarningLink = T("legacy web interface");
 
   public columns: Array < any > = [
-    { name: T('Jail'), prop: 'host_hostuuid', always_display: true },
-    { name: T('IPv4 Address'), prop: 'ip4_addr' },
-    { name: T('IPv6 Address'), prop: 'ip6_addr' },
-    { name: T('Status'), prop: 'state' },
-    { name: T('Type'), prop: 'type', hidden: true, minWidth: 80, maxWidth: 120 },
-    { name: T('Release'), prop: 'release', minWidth: 225, maxWidth: 325 },
+    { name: T('Name'), prop: 'host_hostuuid'},
+    { name: T('Boot'), prop: 'boot_readble', hidden: true},
+    { name: T('State'), prop: 'state'},
+    { name: T('Release'), prop: 'release' },
   ];
   public config: any = {
     paging: true,
@@ -159,9 +160,9 @@ export class JailListComponent implements OnInit {
   this dataset to store FreeBSD releases \
   and all other jail data.");
 
-  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, 
-    protected loader: AppLoaderService, protected dialogService: DialogService, private translate: TranslateService,
-    protected snackBar: MatSnackBar, public sorter: StorageService, protected dialog: MatDialog,) {}
+  constructor(public router: Router, protected rest: RestService, public ws: WebSocketService, 
+    public loader: AppLoaderService, public dialogService: DialogService, private translate: TranslateService,
+    public snackBar: MatSnackBar, public sorter: StorageService, public dialog: MatDialog,) {}
 
 
   ngOnInit(){
@@ -170,19 +171,6 @@ export class JailListComponent implements OnInit {
   }
   afterInit(entityList: any) {
     this.entityList = entityList;
-  }
-
-  isActionVisible(actionId: string, row: any) {
-    if (actionId === 'start' && row.state === "up") {
-      return false;
-    } else if (actionId === 'stop' && row.state === "down") {
-      return false;
-    } else if (actionId === 'shell' && row.state === "down") {
-      return false;
-    } if (actionId === 'restart' && row.state === "down") {
-      return false;
-    }
-    return true;
   }
 
   getActivatedPool(){
@@ -384,6 +372,10 @@ export class JailListComponent implements OnInit {
     // Call sort on load to make sure initial sort is by Jail name, asecnding
     entityList.rows = this.sorter.tableSorter(entityList.rows, 'host_hostuuid', 'asc');
     for (let i = 0; i < entityList.rows.length; i++) {
+      entityList.rows[i].boot_readble =  entityList.rows[i].boot === 0 ? 'off' : 'on';
+      entityList.rows[i].source_template =  entityList.rows[i].source_template  ? entityList.rows[i].source_template : '-';
+      entityList.rows[i].basejail_readble =  entityList.rows[i].basejail === 0 ? 'no' : 'yes';
+
       const prefix = (entityList.rows[i].state === 'up' && entityList.rows[i].dhcp === 'on') ? 'DHCP: ' : '';
       if (_.split(entityList.rows[i].ip4_addr, '|').length > 1) {
         entityList.rows[i].ip4_addr = prefix + _.split(entityList.rows[i].ip4_addr, '|')[1];
