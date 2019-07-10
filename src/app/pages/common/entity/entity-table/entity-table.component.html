@@ -231,7 +231,7 @@
           </div>
         </ng-template>
       </ngx-datatable-column>
-      <ngx-datatable-column *ngIf="conf.hasDetails && showActions"
+      <ngx-datatable-column *ngIf="conf.hasDetails && (showActions || (!showActions && !conf.config.multiSelect))"
         [width]="50"
         [resizeable]="false"
         [sortable]="false"
@@ -310,7 +310,7 @@
         </ng-template>
       </ngx-datatable-column>
 
-      <ngx-datatable-column *ngIf="conf.hasDetails && !showActions"
+      <ngx-datatable-column *ngIf="conf.hasDetails && !showActions && conf.config.multiSelect"
         [width]="50"
         [resizeable]="false"
         [sortable]="false"

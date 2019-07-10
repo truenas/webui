@@ -202,7 +202,6 @@ export class CloudsyncListComponent {
           }
         });
       }
-      console.log({task});
     }
   }
 
