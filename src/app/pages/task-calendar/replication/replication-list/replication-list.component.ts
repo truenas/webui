@@ -79,7 +79,7 @@ export class ReplicationListComponent {
             }
         }
     }
-    
+
     getActions(parentrow) {
         return [{
             id: "run",
