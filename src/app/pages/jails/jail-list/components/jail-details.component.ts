@@ -55,19 +55,32 @@ export class JailDetailsComponent implements EntityRowDetails<Jail> {
         name: this.config.jid,
         label: T("Start"),
         onClick: row => {
-          this.parent.conf.entityList.busy = this.parent.conf.loader.open();
-          this.parent.conf.ws.call("jail.start", [row.host_hostuuid]).subscribe(
-            () => {
-              row.state = "up";
-              this.parent.conf.updateRow(row);
-              this.parent.conf.updateMultiAction([row]);
-              this.parent.conf.loader.close();
-            },
-            res => {
-              this.parent.conf.loader.close();
-              new EntityUtils().handleWSError(this.parent.conf.entityList, res, this.parent.conf.dialogService);
-            }
-          );
+          const dialogRef = this.parent.conf.dialog.open(EntityJobComponent, { data: { title: T('Starting Jail') } });
+
+          dialogRef.componentInstance.setDescription(T('Starting') + ` ${row.host_hostuuid}...`);
+          dialogRef.componentInstance.setCall('jail.start', [row.host_hostuuid]);
+          dialogRef.componentInstance.submit();
+
+          dialogRef
+            .componentInstance
+            .success
+            .subscribe(
+              () => {
+                row.state = "up";
+                this.parent.conf.updateRow(row);
+                this.parent.conf.updateMultiAction([row]);
+                dialogRef.close();
+                this.parent.conf.snackBar.open(T('Jail started successfully'), T("Success"));
+              }
+            );
+
+          dialogRef
+            .componentInstance
+            .failure
+            .subscribe(error => {
+              dialogRef.close();
+              new EntityUtils().handleWSError(this, error, this.parent.conf.dialogService);
+            });
         }
       },
       {
@@ -76,20 +89,32 @@ export class JailDetailsComponent implements EntityRowDetails<Jail> {
         name: this.config.jid,
         label: T("Restart"),
         onClick: row => {
-          this.parent.conf.entityList.busy = this.parent.conf.loader.open();
-          row.state = "restarting";
-          this.parent.conf.ws.call("jail.restart", [row.host_hostuuid]).subscribe(
-            () => {
-              row.state = "up";
-              this.parent.conf.updateRow(row);
-              this.parent.conf.updateMultiAction([row]);
-              this.parent.conf.loader.close();
-            },
-            err => {
-              this.parent.conf.loader.close();
-              new EntityUtils().handleWSError(this.parent.conf.entityList, err, this.parent.conf.dialogService);
-            }
-          );
+          const dialogRef = this.parent.conf.dialog.open(EntityJobComponent, { data: { title: T('Restarting Jail') } });
+
+          dialogRef.componentInstance.setDescription(T('Restarting') + ` ${row.host_hostuuid}...`);
+          dialogRef.componentInstance.setCall('jail.restart', [row.host_hostuuid]);
+          dialogRef.componentInstance.submit();
+
+          dialogRef
+            .componentInstance
+            .success
+            .subscribe(
+              () => {
+                row.state = "up";
+                this.parent.conf.updateRow(row);
+                this.parent.conf.updateMultiAction([row]);
+                dialogRef.close();
+                this.parent.conf.snackBar.open(T('Jail restarted successfully'), T("Success"));
+              }
+            );
+
+          dialogRef
+            .componentInstance
+            .failure
+            .subscribe(error => {
+                dialogRef.close();
+                new EntityUtils().handleWSError(this, error, this.parent.conf.dialogService);
+            });
         }
       },
       {
@@ -98,34 +123,29 @@ export class JailDetailsComponent implements EntityRowDetails<Jail> {
         name: this.config.jid,
         label: T("Stop"),
         onClick: row => {
-          const dialog = {};
-          this.parent.conf.dialogService
-            .confirm(
-              "Stop",
-              "Stop the selected jails?",
-              dialog.hasOwnProperty("hideCheckbox") ? dialog["hideCheckbox"] : true,
-              T("Stop")
-            )
-            .subscribe(res => {
-              if (res) {
-                this.parent.conf.loader.open();
-                this.parent.conf.entityList.busy = this.parent.conf.ws.call("jail.stop", [row.host_hostuuid]).subscribe(
-                  () => {
-                    row.state = "down";
-                    this.parent.conf.updateRow(row);
-                    this.parent.conf.updateMultiAction([row]);
-                    this.parent.conf.loader.close();
-                  },
-                  response => {
-                    this.parent.conf.loader.close();
-                    new EntityUtils().handleWSError(
-                      this.parent.conf.entityList,
-                      response,
-                      this.parent.conf.dialogService
-                    );
-                  }
-                );
-              }
+          const dialogRef = this.parent.conf.dialog.open(EntityJobComponent, { data: { title: T('Stopping Jail') } });
+
+          dialogRef.componentInstance.setDescription(T('Stopping') + ` ${row.host_hostuuid}...`);
+          dialogRef.componentInstance.setCall('jail.stop', [row.host_hostuuid]);
+          dialogRef.componentInstance.submit();
+
+          dialogRef
+            .componentInstance
+            .success
+            .subscribe(() => {
+                row.state = "down";
+                this.parent.conf.updateRow(row);
+                this.parent.conf.updateMultiAction([row]);
+                dialogRef.close();
+                this.parent.conf.snackBar.open(T('Jail stopped successfully'), T("Success"));
+            });
+
+          dialogRef
+            .componentInstance
+            .failure
+            .subscribe(error => {
+              dialogRef.close();
+              new EntityUtils().handleWSError(this, error, this.parent.conf.dialogService);
             });
         }
       },
