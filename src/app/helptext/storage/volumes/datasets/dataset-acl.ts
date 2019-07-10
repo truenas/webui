@@ -126,8 +126,8 @@ dataset_acl_recursive_tooltip: T('Apply permissions recursively to all\
  directories and files in the current dataset.'),
 
 dataset_acl_traverse_placeholder: T('Apply permissions to child datasets'),
-dataset_acl_traverse_tooltip: T('Apply permissions recursively all child\
- datasets within the current dataset'),
+dataset_acl_traverse_tooltip: T('Apply permissions recursively to all child\
+ datasets of the current dataset'),
 
 dataset_acl_dialog_warning: T('Warning'),
 dataset_acl_dialog_warning_message: T('Changing dataset permission mode\
