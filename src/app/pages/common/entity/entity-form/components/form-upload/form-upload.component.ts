@@ -1,4 +1,4 @@
-import {  Component,  ViewChild, ElementRef, } from '@angular/core';
+import { Component,  ViewChild, ElementRef } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Subscription ,  Observer  } from 'rxjs';
 import { HttpClient, HttpRequest, HttpEventType, HttpResponse } from '@angular/common/http';
