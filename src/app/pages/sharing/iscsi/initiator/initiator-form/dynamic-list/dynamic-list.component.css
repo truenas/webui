@@ -1,0 +1,18 @@
+div.dynamic-list {
+    overflow: auto;
+    height: 220px;
+    width: 100%;
+    border: 1px solid var(--bg1);
+}
+div.input-add {
+    padding-left: 74px;
+}
+mat-list-item.dynamic-list {
+    height: 48px !important;
+}
+div.dynamic-list-container {
+    margin-bottom: 13px;
+}
+div.move-to-action {
+    padding-right: 10px;
+}

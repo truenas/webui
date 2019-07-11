@@ -1,0 +1,30 @@
+<div class="dynamic-list-container">
+    <div fxLayout="row" class="input-add">
+        <div fxFlex="100%">
+            <div id="dynamicField_auth_network_add" dynamicField [config]="config"
+                [group]="group" [fieldShow]="'show'"></div>
+        </div>
+        <div>
+            <button mat-flat-button color="primary">
+                <mat-icon>add</mat-icon>
+            </button>
+        </div>
+    </div>
+    <div fxLayout="row">
+        <div fxFlexAlign="center" class="move-to-action">
+            <button mat-flat-button color="primary" class="move-to-btn">
+                <mat-icon>arrow_forward</mat-icon>
+            </button>
+        </div>
+        <div class="dynamic-list">
+            <mat-list>
+                <mat-list-item *ngFor="let item of lists" class="dynamic-list">
+                    <h4 mat-line>{{item}}</h4>
+                    <button mat-flat-button (click)="save()" color="accent">
+                        <mat-icon mat-list-icon>remove</mat-icon>
+                    </button>
+                </mat-list-item>
+            </mat-list>
+        </div>
+    </div>
+</div>
