@@ -243,7 +243,6 @@ export class StorageService {
      */
     path = path.indexOf('/') === 0 ? path.substr(1) : path;
 
-    console.log({ path, l: path.split('/').length })
     return path.split('/').length === 2;
   }
 }
