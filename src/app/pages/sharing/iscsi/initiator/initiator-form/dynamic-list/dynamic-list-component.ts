@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormGroup, AbstractControl } from '@angular/forms';
+import { FormGroup, AbstractControl, FormControl } from '@angular/forms';
 
 @Component({
     selector: 'app-dynamic-list',
@@ -11,30 +11,37 @@ export class DynamciListComponent implements OnInit {
     @Input() group: FormGroup;
     @Input() source: any;
 
-    public lists: any;
     protected listControl: AbstractControl;
+    protected inputConfig: any;
     protected inputControl: AbstractControl;
 
     constructor() { }
 
     ngOnInit() {
-        this.inputControl = this.group.controls[this.config.name];
-        this.listControl = this.group.controls[this.config.name.substring(0, this.config.name.length - 4)];
-        this.lists = this.listControl.value;
-        console.log(this.config, this.group, this.lists);
-        this.source.selectionChange.subscribe((res) => {
-            console.log(res);
+        // define input config and control
+        this.inputConfig = {
+            type : 'input',
+            name : this.config.name + '_input',
+            placeholder : this.config.placeholder,
+            tooltip: this.config.tooltip,
+        },
+        this.group.controls[this.inputConfig.name] = new FormControl();
 
-            console.log(this.source.selectedOptions);
-
-        })
+        this.inputControl = this.group.controls[this.inputConfig.name];
+        this.listControl = this.group.controls[this.config.name];
+        if (this.listControl.value === undefined) {
+            this.listControl.setValue(new Set([]));
+        }
     }
 
     add() {
-        this.listControl.value.push(this.inputControl.value);
+        this.listControl.value.add(this.inputControl.value);
         this.inputControl.setValue(undefined);
     }
-    delete(index) {
-        this.listControl.value.splice(index, 1);
+    remove(item) {
+        this.listControl.value.delete(item);
+    }
+    drop() {
+        this.config.onDrop(this);
     }
 }
