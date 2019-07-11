@@ -1,0 +1,39 @@
+<mat-card>
+    <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup">
+        <div class="form-wrap">
+            <div [ngClass]="'form-line'" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)">
+                <div id="dynamicField_allow_all_initiators" dynamicField [config]="allowAllInitiatorsField"
+                    [group]="formGroup" [fieldShow]="'show'"></div>
+            </div>
+            <div [ngClass]="'form-inline'" fxFlex="100%" fxFlex.gt-xs="calc(50% - 16px)" class="connected-initiators-container">
+                <span>{{'Connected Initiators'}}</span>
+                <mat-selection-list class="connected-initiators-list" #connectedInitiatorsList>
+                    <mat-list-option *ngFor="let initiator of connectedInitiators" [value]="initiator">
+                        {{initiator['initiator']}} ({{initiator['initiator_addr']}})
+                    </mat-list-option>
+                </mat-selection-list>
+                <div fxLayoutAlign="end center">
+                    <button mat-flat-button color="primary">
+                        <mat-icon>refresh</mat-icon> {{'REFRESH'}}
+                    </button>
+                </div>
+
+            </div>
+
+            <div [ngClass]="'form-inline'" fxFlex="100%" fxFlex.gt-xs="calc(50% - 16px)">
+                <app-dynamic-list [config]="initiatorsField" [group]="formGroup" [source]="connectedInitiatorsList"></app-dynamic-list>
+                <app-dynamic-list [config]="authnetworkField" [group]="formGroup" [source]="connectedInitiatorsList"></app-dynamic-list>
+            </div>
+            <div [ngClass]="'form-line'" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)">
+                <div id="dynamicField_comment" dynamicField [config]="commentField" [group]="formGroup"
+                    [fieldShow]="'show'"></div>
+            </div>
+        </div>
+        <mat-card-actions>
+            <button class="btn btn-block btn-warning" type="submit" mat-button color="primary"
+                [disabled]="!formGroup.valid">{{ "Save" | translate }} </button>
+            <button *ngIf="route_success" (click)="goBack()" type="button" mat-button
+                color="accent">{{ "Cancel" | translate }}</button>
+        </mat-card-actions>
+    </form>
+</mat-card>

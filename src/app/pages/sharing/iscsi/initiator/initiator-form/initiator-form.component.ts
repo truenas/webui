@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
+import {EntityFormService} from '../../../../common/entity/entity-form/services/entity-form.service';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../../common/entity/utils';
 import { WebSocketService } from '../../../../../services/';
@@ -9,81 +10,75 @@ import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 
 @Component({
   selector : 'app-iscsi-initiator-form',
-  template : `<entity-form [conf]="this"></entity-form>`
+  templateUrl: './initiator-form.component.html',
+  styleUrls: ['./initiator-form.component.css', '../../../../common/entity/entity-form/entity-form.component.scss']
 })
-export class InitiatorFormComponent {
+export class InitiatorFormComponent implements OnInit{
 
   protected addCall: string = 'iscsi.initiator.create';
   protected queryCall: string = 'iscsi.initiator.query';
   protected editCall = 'iscsi.initiator.update';
   protected customFilter: Array<any> = [[["id", "="]]];
-  protected route_success: string[] = [ 'sharing', 'iscsi', 'initiator' ];
+  public route_success: string[] = [ 'sharing', 'iscsi', 'initiator' ];
   protected isEntity: boolean = true;
   protected pk: any;
   protected entityForm: any;
 
-  protected fieldConfig: FieldConfig[] = [
-    {
-      type : 'input',
-      name : 'initiators',
-      placeholder : helptext_sharing_iscsi.initiator_form_placeholder_initiators,
-      tooltip: helptext_sharing_iscsi.initiator_form_tooltip_initiators,
-      value: '',
-      inputType : 'textarea',
-    },
-    {
-      type : 'input',
-      name : 'auth_network',
-      placeholder : helptext_sharing_iscsi.initiator_form_placeholder_auth_network,
-      tooltip: helptext_sharing_iscsi.initiator_form_tooltip_auth_network,
-      value: '',
-      inputType : 'textarea',
-    },
-    {
-      type : 'input',
-      name : 'comment',
-      placeholder : helptext_sharing_iscsi.initiator_form_placeholder_comment,
-      tooltip: helptext_sharing_iscsi.initiator_form_tooltip_comment,
-    },
-  ];
-
-  constructor(protected router: Router, protected aroute: ActivatedRoute, protected loader: AppLoaderService, protected ws: WebSocketService) {}
-
-  preInit() {
-    this.aroute.params.subscribe(params => {
-      if (params['pk']) {
-        this.pk = params['pk'];
-        this.customFilter[0][0].push(parseInt(params['pk']));
+  public allowAllInitiatorsField = {
+    type : 'checkbox',
+    name : 'all',
+    placeholder : 'Allow all initiators',
+    tooltip: '',
+  };
+  public initiatorsField = {
+    type : 'input-list',
+    name : 'initiators',
+    placeholder : 'Allowed Initiators (IQN)',
+    tooltip: helptext_sharing_iscsi.initiator_form_placeholder_initiators,
+    onDrop: (parent) => {
+      for (let i = 0; i < parent.source.selectedOptions.selected.length; i++) {
+        parent.listControl.value.add(parent.source.selectedOptions.selected[i].value.initiator);
       }
-    });
-  }
-
-  afterInit(entityForm) {
-    this.entityForm = entityForm;
-  }
-
-  resourceTransformIncomingRestData(data) {
-    data['initiators'] = data['initiators'].join(' ');
-    data['auth_network'] = data['auth_network'].join(' ');
-    return data;
-  }
-
-  beforeSubmit(data) {
-    data.initiators = data.initiators.split(' ');
-    data.auth_network = data.auth_network.split(' ');
-  }
-
-  customEditCall(value) {
-    this.loader.open();
-    this.ws.call(this.editCall, [this.pk, value]).subscribe(
-      (res) => {
-        this.loader.close();
-        this.router.navigate(new Array('/').concat(this.route_success));
-      },
-      (err) => {
-        this.loader.close();
-        new EntityUtils().handleWSError(this.entityForm, err);
+      parent.source.deselectAll();
+    }
+  };
+  public authnetworkField = {
+    type : 'input-list',
+    name : 'auth_network',
+    placeholder : helptext_sharing_iscsi.initiator_form_placeholder_auth_network,
+    tooltip: helptext_sharing_iscsi.initiator_form_placeholder_auth_network,
+    onDrop: (parent) => {
+      for (let i = 0; i < parent.source.selectedOptions.selected.length; i++) {
+        parent.listControl.value.add(parent.source.selectedOptions.selected[i].value.initiator_addr);
       }
-    );
+      parent.source.deselectAll();
+    }
+  };
+
+  public commentField = {
+    type : 'input',
+    name : 'comment',
+    placeholder : helptext_sharing_iscsi.initiator_form_placeholder_comment,
+    tooltip: helptext_sharing_iscsi.initiator_form_tooltip_comment,
+  };
+
+  public formGroup;
+  public connectedInitiators;
+
+  constructor(protected router: Router, protected aroute: ActivatedRoute, protected loader: AppLoaderService, protected ws: WebSocketService,
+    protected entityFormService: EntityFormService,) {}
+
+  ngOnInit() {
+    this.ws.call('iscsi.global.sessions').subscribe((res) => {
+      console.log(res);
+      this.connectedInitiators = [...res, ...res, ...res, ...res, ...res];
+    })
+    this.formGroup = this.entityFormService.createFormGroup([this.allowAllInitiatorsField, this.initiatorsField, this.authnetworkField, this.commentField]);
+  }
+
+  onSubmit(event) {
+    console.log('submit', this.formGroup.value);
+    let value = this.formGroup.value;
+    
   }
 }
