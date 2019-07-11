@@ -4,9 +4,6 @@ div.dynamic-list {
     width: 100%;
     border: 1px solid var(--bg1);
 }
-div.input-add {
-    padding-left: 74px;
-}
 mat-list-item.dynamic-list {
     height: 48px !important;
 }
