@@ -5,7 +5,7 @@
                 [group]="group" [fieldShow]="'show'"></div>
         </div>
         <div>
-            <button mat-flat-button color="primary">
+            <button mat-flat-button color="primary" type="button" (click)="add()">
                 <mat-icon>add</mat-icon>
             </button>
         </div>
@@ -18,9 +18,9 @@
         </div>
         <div class="dynamic-list">
             <mat-list>
-                <mat-list-item *ngFor="let item of lists" class="dynamic-list">
+                <mat-list-item *ngFor="let item of lists; let i = index" class="dynamic-list">
                     <h4 mat-line>{{item}}</h4>
-                    <button mat-flat-button (click)="save()" color="accent">
+                    <button mat-flat-button (click)="delete(i)" color="accent">
                         <mat-icon mat-list-icon>remove</mat-icon>
                     </button>
                 </mat-list-item>
