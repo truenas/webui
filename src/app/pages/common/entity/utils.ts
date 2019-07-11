@@ -39,7 +39,7 @@ export class EntityUtils {
                 entity.conf.isBasicMode = false;
               }
             if (!scroll) {
-              element.scrollIntoView({behavior: "instant", block: "end", inline: "nearest"});
+              element.scrollIntoView({behavior: "auto", block: "end", inline: "nearest"});
               scroll = true;
             }
           }
@@ -83,7 +83,7 @@ export class EntityUtils {
                 entity.conf.isBasicMode = false;
               }
             if (!scroll) {
-              element.scrollIntoView({behavior: "instant", block: "end", inline: "nearest"});
+              element.scrollIntoView({behavior: "auto", block: "end", inline: "nearest"});
               scroll = true;
             }
           }
@@ -133,5 +133,9 @@ export class EntityUtils {
                    v === "0"
                ? false
                : !!v;
+  }
+
+  array1DToLabelValuePair(arr: any[]): { label: string, value: any }[] {
+    return arr.map(value => ({ label: value.toString(), value }))
   }
 }

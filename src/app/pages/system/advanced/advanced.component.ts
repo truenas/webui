@@ -189,7 +189,7 @@ export class AdvancedComponent implements OnDestroy {
 // This tooltip wraps to the next line when uncommented.
 // Erin said it's more than likely the CSS. Commented out for now and
 // linking to the user guide from the test instead.
-//  tooltip: T('See the <a href="%%docurl%%/system.html#self-encrypting-drives"\
+//  tooltip: T('See the <a href="--docurl--/system.html#self-encrypting-drives"\
 //                target="_blank"> Self Encrypting Drives</a> section of\
 //                the user guide for more information.'),
 //
@@ -271,10 +271,10 @@ export class AdvancedComponent implements OnDestroy {
       this.adv_serialport['isHidden'] = !value;
     });
     entityEdit.ws.call('system.advanced.serial_port_choices').subscribe((serial_port_choices)=>{
-      for(let i=0; i<serial_port_choices.length; i++){
+      for(const k in serial_port_choices){
         this.adv_serialport.options.push(
           {
-            label: serial_port_choices[i], value: serial_port_choices[i]
+            label: k, value: serial_port_choices[k]
           }
         )}
     });

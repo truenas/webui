@@ -41,7 +41,7 @@
 ul.schedule-list{
     margin-top: 16px;
     list-style-type: none;
-    max-height: 241px;
+    max-height: 231px;
     
     overflow-y: auto;
 }
@@ -200,6 +200,11 @@ mat-form-field.cron-presets{
 }
 ::ng-deep .mat-calendar-body-today{
   border-color:var(--green) !important;
+}
+#no-spaces {
+  position: relative;
+  top: -9px;
+  font-size: 75%;
 }
 @media screen and (max-height:700px){
   .advanced-date-picker.mat-card{

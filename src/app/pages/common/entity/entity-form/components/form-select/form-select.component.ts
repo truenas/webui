@@ -19,8 +19,8 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   fieldShow: string;
   control:any;
 
-  @ViewChild('selectTrigger') matSelect;
-  @ViewChild('field') field;
+  @ViewChild('selectTrigger', { static: true}) matSelect;
+  @ViewChild('field', { static: true}) field;
 
   public formReady:boolean = false;
   public initialValue:any;

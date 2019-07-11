@@ -71,6 +71,28 @@ export class DatasetAclComponent implements OnDestroy {
       readonly: true
     },
     {
+      type: 'combobox',
+      name: 'uid',
+      placeholder: helptext.dataset_acl_uid_placeholder,
+      tooltip: helptext.dataset_acl_uid_tooltip,
+      updateLocal: true,
+      options: [],
+      searchOptions: [],
+      parent: this,
+      updater: this.updateUserSearchOptions,
+    },
+    {
+      type: 'combobox',
+      name: 'gid',
+      placeholder: helptext.dataset_acl_gid_placeholder,
+      tooltip: helptext.dataset_acl_gid_tooltip,
+      updateLocal: true,
+      options: [],
+      searchOptions: [],
+      parent: this,
+      updater: this.updateGroupSearchOptions,
+    },
+    {
       type: 'list',
       name: 'aces',
       width: '100%',
@@ -82,6 +104,7 @@ export class DatasetAclComponent implements OnDestroy {
           placeholder: helptext.dataset_acl_tag_placeholder,
           options: helptext.dataset_acl_tag_options,
           tooltip: helptext.dataset_acl_tag_tooltip,
+          required: true,
         },
         {
           type: 'combobox',
@@ -94,6 +117,7 @@ export class DatasetAclComponent implements OnDestroy {
           parent: this,
           updater: this.updateUserSearchOptions,
           isHidden: true,
+          required: true,
         },
         {
           type: 'combobox',
@@ -106,6 +130,7 @@ export class DatasetAclComponent implements OnDestroy {
           parent: this,
           updater: this.updateGroupSearchOptions,
           isHidden: true,
+          required: true,
         },
         {
           type: 'select',
@@ -113,17 +138,21 @@ export class DatasetAclComponent implements OnDestroy {
           placeholder: helptext.dataset_acl_type_placeholder,
           tooltip: helptext.dataset_acl_type_tooltip,
           options: helptext.dataset_acl_type_options,
+          required: true,
         },
         {
           type: 'select',
           name: 'perms_type',
+          required: true,
           placeholder: helptext.dataset_acl_perms_type_placeholder,
           tooltip: helptext.dataset_acl_perms_type_placeholder,
           options: helptext.dataset_acl_perms_type_options,
+          value: 'BASIC'
         },
         {
           type: 'select',
           name: 'basic_perms',
+          required: true,
           placeholder: helptext.dataset_acl_perms_placeholder,
           tooltip: helptext.dataset_acl_perms_tooltip,
           options: helptext.dataset_acl_basic_perms_options,
@@ -132,6 +161,7 @@ export class DatasetAclComponent implements OnDestroy {
           type: 'select',
           multiple: true,
           isHidden: true,
+          required: true,
           name: 'advanced_perms',
           placeholder: helptext.dataset_acl_perms_placeholder,
           tooltip: helptext.dataset_acl_perms_tooltip,
@@ -140,6 +170,7 @@ export class DatasetAclComponent implements OnDestroy {
         {
           type: 'select',
           name: 'flags_type',
+          required: true,
           placeholder: helptext.dataset_acl_flags_type_placeholder,
           tooltip: helptext.dataset_acl_flags_type_placeholder,
           options: helptext.dataset_acl_flags_type_options,
@@ -147,6 +178,8 @@ export class DatasetAclComponent implements OnDestroy {
         {
           type: 'select',
           name: 'basic_flags',
+          required: true,
+          isHidden: true,
           placeholder: helptext.dataset_acl_flags_placeholder,
           tooltip: helptext.dataset_acl_flags_tooltip,
           options: helptext.dataset_acl_basic_flags_options,
@@ -155,6 +188,7 @@ export class DatasetAclComponent implements OnDestroy {
           type: 'select',
           multiple: true,
           isHidden: true,
+          required: true,
           name: 'advanced_flags',
           placeholder: helptext.dataset_acl_flags_placeholder,
           tooltip: helptext.dataset_acl_flags_tooltip,
@@ -210,22 +244,26 @@ export class DatasetAclComponent implements OnDestroy {
       this.pk = this.path;
     });
 
-    this.userService.listAllUsers().subscribe(res => {
+    this.userService.userQueryDSCache().subscribe(items => {
       const users = [];
-      const items = res.data.items;
       for (let i = 0; i < items.length; i++) {
-        users.push({label: items[i].label, value: items[i].id});
+        users.push({label: items[i].username, value: items[i].username});
       }
       this.userOptions = users;
+
+      const uid_fc = _.find(this.fieldConfig, {"name": "uid"});
+      uid_fc.options = this.userOptions;
     });
 
-    this.userService.listAllGroups().subscribe(res => {
+    this.userService.groupQueryDSCache().subscribe(items => {
       const groups = [];
-      const items = res.data.items;
       for (let i = 0; i < items.length; i++) {
-        groups.push({label: items[i].label, value: items[i].id});
+        groups.push({label: items[i].group, value: items[i].group});
       }
       this.groupOptions = groups;
+
+      const gid_fc = _.find(this.fieldConfig, {"name": "gid"});
+      gid_fc.options = this.groupOptions;
     });
   }
 
@@ -286,22 +324,32 @@ export class DatasetAclComponent implements OnDestroy {
             }
             if (res[i].tag === 'USER') {
               user_fc.isHidden = false;
+              user_fc.disabled = false;
               group_fc.isHidden = true;
+              group_fc.disabled = true;
             } else if (res[i].tag === 'GROUP') {
               user_fc.isHidden = true;
+              user_fc.disabled = true;
               group_fc.isHidden = false;
+              group_fc.disabled = false;
             } else {
               user_fc.isHidden = true;
+              user_fc.disabled = true;
               group_fc.isHidden = true;
+              group_fc.disabled = true;
             }
             adv_perms_fc = _.find(controls, {"name": "advanced_perms"});
             basic_perms_fc = _.find(controls, {"name": "basic_perms"});
             if (res[i].perms_type === "ADVANCED") {
               adv_perms_fc.isHidden = false;
+              adv_perms_fc.required = true;
               basic_perms_fc.isHidden = true;
+              basic_perms_fc.required = false;
             } else {
               adv_perms_fc.isHidden = true;
+              adv_perms_fc.required = false;
               basic_perms_fc.isHidden = false;
+              basic_perms_fc.required = true;
               if (res[i].basic_perms === "OTHER") {
                 basic_perms_fc.warnings = helptext.dataset_acl_basic_perms_other_warning;
                 canSave = false;
@@ -313,10 +361,14 @@ export class DatasetAclComponent implements OnDestroy {
             basic_flags_fc = _.find(controls, {"name": "basic_flags"});
             if (res[i].flags_type === "ADVANCED") {
               adv_flags_fc.isHidden = false;
+              adv_flags_fc.required = true;
               basic_flags_fc.isHidden = true;
+              basic_flags_fc.required = false;
             } else {
               adv_flags_fc.isHidden = true;
+              adv_flags_fc.required = false;
               basic_flags_fc.isHidden = false;
+              basic_flags_fc.required = true;
             }
           }
         }
@@ -330,7 +382,23 @@ export class DatasetAclComponent implements OnDestroy {
   }
 
   async dataHandler(entityForm) {
-    let data = entityForm.queryResponse;
+    this.loader.open();
+    const res = entityForm.queryResponse;
+    await this.userService.getUserByUID(res.uid).toPromise().then(userObj => {
+      if (userObj && userObj.length > 0) {
+        entityForm.formGroup.controls['uid'].setValue(userObj[0].username);
+      }
+    }, err => {
+      console.error(err);
+    });
+    await this.userService.getGroupByGID(res.gid).toPromise().then(groupObj => {
+      if (groupObj && groupObj.length > 0) {
+        entityForm.formGroup.controls['gid'].setValue(groupObj[0].group);
+      }
+    }, err => {
+      console.error(err);
+    });
+    let data = res.acl;
     let acl;
     if (!data.length) {
       data = [data];
@@ -340,17 +408,17 @@ export class DatasetAclComponent implements OnDestroy {
       acl.type = data[i].type;
       acl.tag = data[i].tag;
       if (acl.tag === 'USER') {
-        await this.ws.call('notifier.get_user_object', [data[i].id]).toPromise().then(userObj => {
-          if (userObj && userObj.length > 2) {
-            acl.user = userObj[0];
+        await this.userService.getUserByUID(data[i].id).toPromise().then(userObj => {
+          if (userObj && userObj.length > 0) {
+            acl.user = userObj[0].username;
           }
         }, err => {
           console.error(err);
         });
       } else if (acl.tag === 'GROUP') {
-        await this.ws.call('notifier.get_group_object', [data[i].id]).toPromise().then(groupObj => {
+        await this.userService.getGroupByGID(data[i].id).toPromise().then(groupObj => {
           if (groupObj && groupObj.length > 2) {
-            acl.group = groupObj[0];
+            acl.group = groupObj[0].group;
           }
         }, err => {
           console.error(err);
@@ -361,14 +429,26 @@ export class DatasetAclComponent implements OnDestroy {
         acl.basic_flags = data[i].flags['BASIC'];
       } else {
         acl.flags_type = 'ADVANCED';
-        acl.advanced_flags = data[i].flags;
+        const flags = data[i].flags;
+        acl.advanced_flags = []
+        for (const flag in flags) {
+          if (flags.hasOwnProperty(flag) && flags[flag]) {
+            acl.advanced_flags.push(flag);
+          }
+        }
       }
       if (data[i].perms.hasOwnProperty('BASIC')) {
         acl.perms_type = 'BASIC';
         acl.basic_perms = data[i].perms['BASIC'];
       } else {
-        acl.flags_perms = 'ADVANCED';
-        acl.advanced_perms = data[i].perms;
+        acl.perms_type = 'ADVANCED';
+        const perms = data[i].perms;
+        acl.advanced_perms = []
+        for (const perm in perms) {
+          if (perms.hasOwnProperty(perm) && perms[perm]) {
+            acl.advanced_perms.push(perm);
+          }
+        }
       }
 
       const propName = "aces";
@@ -393,6 +473,7 @@ export class DatasetAclComponent implements OnDestroy {
         }
       }
     }
+    this.loader.close();
   }
 
   ngOnDestroy() {
@@ -417,19 +498,25 @@ export class DatasetAclComponent implements OnDestroy {
       if (acl.perms_type === "BASIC") {
         d['perms'] = {'BASIC':acl.basic_perms};
       } else {
+        d['perms'] = {};
         const adv_perm_options = helptext.dataset_acl_advanced_perms_options;
         for (let j = 0; j < adv_perm_options.length; j++) {
           const perm = adv_perm_options[j].value;
-          d['perms'][perm] = acl.advanced_perms.hasOwnProperty(perm);
+          if (_.indexOf(acl.advanced_perms, perm) > -1) {
+            d['perms'][perm] = true;
+          }
         }
       }
       if (acl.flags_type === "BASIC") {
         d['flags'] = {'BASIC':acl.basic_flags};
       } else {
+        d['flags'] = {};
         const adv_flag_options = helptext.dataset_acl_advanced_flags_options;
         for (let j = 0; j < adv_flag_options.length; j++) {
           const flag = adv_flag_options[j].value;
-          d['flags'][flag] = acl.advanced_flags.hasOwnProperty(flag);
+          if (_.indexOf(acl.advanced_flags, flag) > -1) {
+            d['flags'][flag] = true;
+          }
         }
       }
       dacl.push(d);
@@ -444,20 +531,36 @@ export class DatasetAclComponent implements OnDestroy {
     if (body.stripacl) {
       dacl = [];
     }
+    await this.userService.getUserByName(body.uid).toPromise().then(userObj => {
+      if (userObj && userObj.hasOwnProperty('pw_uid')) {
+        body.uid = userObj.pw_uid;
+      }
+    }, err => {
+      console.error(err);
+    });
+
+    await this.userService.getGroupByName(body.gid).toPromise().then(groupObj => {
+      if (groupObj && groupObj.hasOwnProperty('gr_gid')) {
+        body.gid = groupObj.gr_gid;
+      }
+    }, err => {
+      console.error(err);
+    });
+
     for (let i = 0; i < dacl.length; i++) {
       if (dacl[i].tag === 'USER') {
-        await this.ws.call('notifier.get_user_object', [dacl[i].id]).toPromise().then(userObj => {
-          if (userObj && userObj.length > 2) {
-            dacl[i]['id'] = userObj[2];
+        await this.userService.getUserByName(dacl[i].id).toPromise().then(userObj => {
+          if (userObj && userObj.hasOwnProperty('pw_uid')) {
+            dacl[i]['id'] = userObj.pw_uid;
           }
         }, err => {
           console.error(err);
         });
 
       } else if (dacl[i].tag === 'GROUP') {
-        await this.ws.call('notifier.get_group_object', [dacl[i].id]).toPromise().then(groupObj => {
-          if (groupObj && groupObj.length > 2) {
-            dacl[i]['id'] = groupObj[2];
+        await this.userService.getGroupByName(dacl[i].id).toPromise().then(groupObj => {
+          if (groupObj && groupObj.hasOwnProperty('gr_gid')) {
+            dacl[i]['id'] = groupObj.gr_gid;
           }
         }, err => {
           console.error(err);
@@ -465,12 +568,13 @@ export class DatasetAclComponent implements OnDestroy {
       }
     }
     this.dialogRef.componentInstance.setCall(this.updateCall,
-      [body.path, dacl,
-        {'recursive': body.recursive,
+      [{'path': body.path, 'dacl': dacl,
+        'uid': body.uid, 'gid': body.gid,
+        'options' : {'recursive': body.recursive,
          'traverse': body.traverse,
          'stripacl': body.stripacl
         }
-      ]);
+      }]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
       this.entityForm.success = true;
@@ -483,22 +587,20 @@ export class DatasetAclComponent implements OnDestroy {
   }
 
   updateGroupSearchOptions(value = "", parent, config) {
-    parent.userService.listAllGroups(value).subscribe(res => {
+    parent.userService.groupQueryDSCache(value).subscribe(items => {
       const groups = [];
-      const items = res.data.items;
       for (let i = 0; i < items.length; i++) {
-        groups.push({label: items[i].label, value: items[i].id});
+        groups.push({label: items[i].group, value: items[i].group});
       }
-        config.searchOptions = groups;
+      config.searchOptions = groups;
     });
   }
 
   updateUserSearchOptions(value = "", parent, config) {
-    parent.userService.listAllUsers(value).subscribe(res => {
+    parent.userService.userQueryDSCache(value).subscribe(items => {
       const users = [];
-      const items = res.data.items;
       for (let i = 0; i < items.length; i++) {
-        users.push({label: items[i].label, value: items[i].id});
+        users.push({label: items[i].username, value: items[i].username});
       }
       config.searchOptions = users;
     });

@@ -11,7 +11,6 @@ import { routing } from './system.routing';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { GeneralComponent } from './general/general.component';
-import { ConfigResetComponent } from './general/config-reset/config-reset.component';
 import { AdvancedComponent } from './advanced/';
 import { DatasetComponent } from './dataset/';
 import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/';
@@ -66,7 +65,6 @@ import { EnclosureModule } from './viewenclosure/enclosure.module'
   ],
   declarations: [
     GeneralComponent,
-    ConfigResetComponent,
     AdvancedComponent,
     DatasetComponent,
     BootEnvironmentListComponent,

@@ -831,7 +831,7 @@ export class CloudCredentialsFormComponent {
   public custActions: Array<any> = [
     {
       id: 'authenticate',
-      name: T('Authenticate'),
+      name: T('LOGIN TO PROVIDER'),
       function: () => {
         window.open(this.oauthURL+ "?origin=" + encodeURIComponent(window.location.toString()), "_blank", "width=640,height=480");
         const controls = this.entityForm.formGroup.controls;
@@ -864,6 +864,7 @@ export class CloudCredentialsFormComponent {
       function : () => {
         const attributes = {};
         const value = _.cloneDeep(this.entityForm.formGroup.value);
+        this.beforeSubmit(value);
         let attr_name: string;
 
         for (const item in value) {
@@ -968,9 +969,6 @@ export class CloudCredentialsFormComponent {
 
       this.oauthURL = _.find(this.providers, {'name': res}).credentials_oauth;
       this.credentialsOauth = this.oauthURL == null ? false : true;
-
-      entityForm.setDisabled(this.oauthClentIdField.name, !this.credentialsOauth, !this.credentialsOauth);
-      entityForm.setDisabled(this.oauthClentSecretField.name, !this.credentialsOauth, !this.credentialsOauth);
     });
     // preview service_account_credentials
     entityForm.formGroup.controls['service_account_credentials-GOOGLE_CLOUD_STORAGE'].valueChanges.subscribe((value)=>{
@@ -991,9 +989,15 @@ export class CloudCredentialsFormComponent {
     });
   }
 
-  submitFunction() {
+  beforeSubmit(value) {
+    if (!this.credentialsOauth) {
+      delete value['client_id'];
+      delete value['client_secret'];
+    }
+  }
+
+  submitFunction(value) {
     const attributes = {};
-    const value = _.cloneDeep(this.formGroup.value);
     let attr_name: string;
 
     for (let item in value) {

@@ -139,9 +139,18 @@ export class ApiService {
       apiCall:{
         protocol:"websocket",
         version:"2.0",
-        namespace:"interfaces.websocket_interface",
+        namespace:"interface.websocket_interface",
         args: [],
         responseEvent: "PrimaryNicInfo"
+      }
+    },
+    NicInfoRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        namespace:"interface.query",
+        args: [],
+        responseEvent: "NicInfo"
       }
     },
     NetInfoRequest:{

@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormArray, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
 import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
@@ -83,6 +82,21 @@ export class AlertServiceComponent implements OnInit {
       }],
       value: 'AWSSNS',
     },
+    {
+      type: 'select',
+      name: 'level',
+      placeholder: 'Level',
+      tooltip: 'Select the level of severity.',
+      options: [
+        {label : 'Info', value : 'INFO'},
+        {label : 'Notice', value : 'NOTICE'},
+        {label : 'Warning', value : 'WARNING'},
+        {label : 'Error', value : 'ERROR'},
+        {label : 'Critical', value : 'CRITICAL'},
+        {label : 'Alert', value : 'ALERT'},
+        {label : 'Emergency', value : 'EMERGENCY'}
+      ]
+    }
   ];
 
   public awssnsFieldConfig: FieldConfig[] = [

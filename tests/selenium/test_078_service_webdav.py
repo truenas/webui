@@ -23,7 +23,8 @@ xpaths = {
     'breadcrumbBar1': "//div[@id='breadcrumb-bar']/ul/li/a",
     'breadcrumbBar2': "//*[@id='breadcrumb-bar']/ul/li[2]/a",
     'theEnd': "//a[contains(text(),'2')]",
-    'toDashboard': "//span[contains(.,'Dashboard')]"
+    'toDashboard': "//span[contains(.,'Dashboard')]",
+    'scrollToWebDav': "//datatable-row-wrapper[9]/datatable-body-row/div[2]/datatable-body-cell/div/div"
 }
 
 
@@ -39,8 +40,10 @@ def test_01_turnon_webdav(wb_driver):
     # assert response
     assert "Services" in page_data, page_data
     # scroll down
-    wb_driver.find_element_by_xpath(xpaths['theEnd']).click()
-    time.sleep(2)
+    scroll = wb_driver.find_element_by_xpath(xpaths['scrollToWebDav'])
+    time.sleep(1)
+    wb_driver.execute_script("arguments[0].scrollIntoView(true);", scroll)
+    time.sleep(1)
     status_change(wb_driver, "webdav")
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
@@ -80,7 +83,10 @@ def test_04_turnoff_webdav(wb_driver):
     # Click Service Menu
     wb_driver.find_element_by_xpath(xpaths['navService']).click()
     # scroll down
-    wb_driver.find_element_by_xpath(xpaths['theEnd']).click()
+    scroll = wb_driver.find_element_by_xpath(xpaths['scrollToWebDav'])
+    time.sleep(1)
+    wb_driver.execute_script("arguments[0].scrollIntoView(true);", scroll)
+    time.sleep(1)
     time.sleep(2)
     status_change(wb_driver, "webdav")
     # taking screenshot

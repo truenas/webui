@@ -11,7 +11,7 @@ import { ES24 } from 'app/core/classes/hardware/es24';
 import { ES60 } from 'app/core/classes/hardware/es60';
 import { DiskComponent } from './components/disk.component';
 import { TabContentComponent } from './components/tab-content/tab-content.component';
-import { SystemProfiler } from './system-profiler';
+import { SystemProfiler } from 'app/core/classes/system-profiler';
 import { tween, easing, styler, value, keyframes } from 'popmotion';
 import { Subject } from 'rxjs';
 import { ExampleData } from './example-data';
@@ -24,9 +24,9 @@ import { ExampleData } from './example-data';
 
 export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnDestroy {
 
-  @ViewChild('disksoverview') overview: ElementRef;
-  @ViewChild('diskdetails') details: ElementRef;
-  @ViewChild('domLabels') domLabels: ElementRef;
+  @ViewChild('disksoverview', { static: true}) overview: ElementRef;
+  @ViewChild('diskdetails', { static: false}) details: ElementRef;
+  @ViewChild('domLabels', { static: false}) domLabels: ElementRef;
   @Input('system-profiler') system: SystemProfiler;
   @Input('selected-enclosure') selectedEnclosure: any;
   @Input('current-tab') currentTab: any;

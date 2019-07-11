@@ -2,11 +2,11 @@ import {ModuleWithProviders} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 
 import {ServiceAFPComponent} from './components/service-afp/';
-import {ServiceCIFSComponent} from './components/service-cifs/';
 import {ServiceDDNSComponent} from './components/service-dynamicdns/';
 import {ServiceFTPComponent} from './components/service-ftp/';
 import {ServiceLLDPComponent} from './components/service-lldp/';
 import {ServiceNFSComponent} from './components/service-nfs/';
+import {ServiceNetDataComponent} from './components/service-netdata';
 import {ServiceRSYNCComponent} from './components/service-rsync/';
 import {CconfigureRYSNCComponent} from './components/service-rsync/rsyncconfiguration/configure_rsync';
 import {RSYNCconfigurationListComponent} from './components/service-rsync/rsyncconfiguration/rsyncconfiguration-list/';
@@ -20,7 +20,6 @@ import {ServiceTFTPComponent} from './components/service-tftp/';
 import {ServiceUPSComponent} from './components/service-ups/';
 import {ServiceWebdavComponent} from './components/service-webdav/';
 import {Services} from './services.component';
-import { ServiceAsigraComponent } from './components/service-asigra';
 
 export const routes: Routes = [
   {
@@ -37,11 +36,6 @@ export const routes: Routes = [
     data: { title: 'AFP', breadcrumb: 'AFP'},
     path : 'afp',
     component : ServiceAFPComponent,
-  },
-  {
-    data: { title: 'Asigra', breadcrumb: 'Asigra'},
-    path : 'asigra',
-    component : ServiceAsigraComponent,
   },
   {
     data: { title: 'FTP', breadcrumb: 'FTP'},
@@ -92,6 +86,11 @@ export const routes: Routes = [
     data: { title: 'NFS', breadcrumb: 'NFS'},
     path : 'nfs',
     component : ServiceNFSComponent,
+  },
+  {
+    data: { title: 'Netdata', breadcrumb: 'Netdata'},
+    path : 'netdata',
+    component : ServiceNetDataComponent,
   },
   {
     data: { title: 'TFTP', breadcrumb: 'TFTP'},

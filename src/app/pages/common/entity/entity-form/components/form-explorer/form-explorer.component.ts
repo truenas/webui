@@ -76,6 +76,7 @@ export class FormExplorerComponent implements Field, OnInit {
       if (!this.config.customTemplateStringOptions.actionMapping) {
         this.config.customTemplateStringOptions.actionMapping = this.actionMapping;
       }
+      this.config.customTemplateStringOptions.explorerComponent = this;
       this.customTemplateStringOptions = this.config.customTemplateStringOptions;
       this.config.customTemplateStringOptions.explorer = this;
     }
@@ -107,6 +108,9 @@ export class FormExplorerComponent implements Field, OnInit {
       }
       else if(this.config.explorerType === "file") {
         resolve(this.entityFormService.getFilesystemListdirChildren(node));
+      }
+      else if (this.config.explorerType === "dataset") {
+        resolve(this.entityFormService.getPoolDatasets());
       }
       else {
         resolve(this.entityFormService.getFilesystemListdirChildren(node));

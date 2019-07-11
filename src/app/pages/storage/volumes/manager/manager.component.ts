@@ -6,7 +6,6 @@ import {
   ViewChild,
   ViewChildren,
   AfterViewInit,
-  Query,
 } from '@angular/core';
 import * as _ from 'lodash';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -49,10 +48,10 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public original_disks: Array < any >;
   public orig_suggestable_disks: Array < any >;
   public error: string;
-  @ViewChild('disksdnd') disksdnd;
+  @ViewChild('disksdnd', { static: true}) disksdnd;
   @ViewChildren(VdevComponent) vdevComponents: QueryList < VdevComponent > ;
   @ViewChildren(DiskComponent) diskComponents: QueryList < DiskComponent > ;
-  @ViewChild(DatatableComponent) table: DatatableComponent;
+  @ViewChild(DatatableComponent, { static: false}) table: DatatableComponent;
   public temp = [];
 
   public name: string;
@@ -70,6 +69,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   protected existing_pools = [];
   public poolError = null;
   public isFooterConsoleOpen: boolean;
+  public loaderOpen = false;
 
   public submitTitle = T("Create");
   protected extendedSubmitTitle = T("Extend");
@@ -107,6 +107,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public suggested_layout_tooltip = helptext.manager_suggested_layout_tooltip;
 
   public encryption_message = helptext.manager_encryption_message;
+
+  public startingHeight: any;
+  public expandedRows: any;
 
   constructor(
     private rest: RestService,
@@ -185,7 +188,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       },
       (err) => {
-        new EntityUtils().handleError(this, err);
+        new EntityUtils().handleWSError(this, err, this.dialog);
       }
     );
     this.rest.get(this.resource_name + this.pk, {}).subscribe((res) => {
@@ -226,11 +229,29 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     this.nameFilter = new RegExp('');
     this.capacityFilter = new RegExp('');
-    this.ws.call("notifier.get_disks", [true]).subscribe((res) => {
+
+  }
+
+  ngAfterViewInit() {
+    this.loader.open();
+    this.loaderOpen = true;
+    this.ws.call("disk.get_unused", [true]).subscribe((res) => {
+      this.loader.close();
+      this.loaderOpen = false;
       this.disks = [];
       for (let i in res) {
-        res[i]['real_capacity'] = res[i]['capacity'];
-        res[i]['capacity'] = (<any>window).filesize(res[i]['capacity'], {standard : "iec"});
+        res[i]['real_capacity'] = res[i]['size'];
+        res[i]['capacity'] = (<any>window).filesize(res[i]['size'], {standard : "iec"});
+        const details = [];
+        if (res[i]['rotationrate']) {
+          details.push({label:T('Rotation Rate'), value:res[i]['rotationrate']});
+        }
+        details.push({label:T('Model'), value:res[i]['model']});
+        details.push({label:T('Serial'), value:res[i]['serial']});
+        if (res[i]['enclosure']) {
+          details.push({label:T('Enclosure'), value:res[i]['enclosure']['number']});
+        }
+        res[i]['details'] = details;
         this.disks.push(res[i]);
       }
 
@@ -254,20 +275,25 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       this. can_suggest = this.suggestable_disks.length < 11;
 
       this.temp = [...this.disks];
+    }, (err) => {
+      this.loader.close();
+      new EntityUtils().handleWSError(this, err, this.dialog)
     });
     this.ws.call('system.advanced.config').subscribe((res)=> {
       if (res) {
         this.isFooterConsoleOpen = res.consolemsg;
       }
     });
-  }
 
-  ngAfterViewInit() {
     if (!this.isNew) {
       setTimeout(() => { // goofy workaround for stupid angular error
         this.dialog.confirm(T("Warning"), helptext.manager_extend_warning, 
             false, T("Continue")).subscribe((res) => {
           if (!res) {
+            if (this.loaderOpen) {
+              this.loader.close();
+              this.loaderOpen = false;
+            }
             this.goBack();
           }
         });
@@ -596,5 +622,20 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     let sort = event.sorts[0],
       rows = this.disks;
     this.sorter.tableSorter(rows, sort.prop, sort.dir);
+  }
+
+  toggleExpandRow(row) {
+    //console.log('Toggled Expand Row!', row);
+    if (!this.startingHeight) {
+      this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
+    }  
+    this.table.rowDetail.toggleExpandRow(row);
+    setTimeout(() => {
+      this.expandedRows = (document.querySelectorAll('.datatable-row-detail').length);
+      const newHeight = (this.expandedRows * 100) + this.startingHeight;
+      const heightStr = `height: ${newHeight}px`;
+      document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
+    }, 100)
+    
   }
 }

@@ -1,0 +1,169 @@
+.widget{
+  width:600px;
+  height:400px;
+}
+
+.widget mat-card-content{
+  width: 100%;
+}
+
+/*:host ::ng-deep .c3-axis-y g:nth-child(2n){
+  visibility:hidden;
+}*/
+
+
+.carousel{
+  position:absolute;
+  top:48px;
+  width:300%;
+  height:calc(100% - 96px);
+  /*background:var(--alt-bg2);*/
+}
+
+/*.carousel.lagg{
+  width:400%;
+}*/
+
+.slide{
+  /*position:absolute;
+  top:48px;*/
+  display:inline;
+  width:100%;
+  /*height:calc(100% - 96px);*/
+  height:100%;
+  border-left:solid 1px var(--bg1);
+}
+
+.slide .hidden{
+  display:none;
+}
+
+.slide .left,
+.slide .right{
+  width:50%;
+  height:100%;
+  display:inline-block;
+  padding:32px 0;
+}
+
+.slide.overview .right > div{
+  width:100%;
+}
+
+.slide.overview .right{
+  padding:0;
+}
+
+.slide.overview .left{
+  background-color:var(--alt-bg1);
+}
+
+.slide .right{
+  text-align:left;
+}
+ 
+.slide .right li{
+  font-size: 115%;
+  padding: 6px;
+  margin-left: 8px;
+}
+
+.nic-name{
+  font-size:300%;
+}
+
+.link-state .icon-wrapper{
+  display: inline-block;
+  font-size: 175%;
+  top: 3px;
+  position: relative;
+}
+
+.nic-name .icon-wrapper{
+  display: inline;
+  font-size: 75%;
+}
+
+.nic-name.up .icon-wrapper,
+.link-state.up .icon-wrapper{
+  color: var(--green);
+}
+
+.nic-name.down .icon-wrapper,
+.link-state.down .icon-wrapper{
+  color: var(--red);
+}
+
+.carousel-nav{
+  position:absolute;
+  bottom:0;
+  width:100%;
+  height:48px;
+  padding:6px;
+  border-top:solid 1px var(--bg1);
+  background:var(--bg2);
+  text-align:left;
+}
+
+.carousel-nav .btn{
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  display:inline-block;
+  margin:0 4px;
+  background-color:var(--fg1);
+  opacity:0.5;
+  cursor:pointer;
+}
+
+.carousel-nav .back-arrow.mat-icon{
+  margin-top: -3px;
+}
+
+.carousel-nav .btn.active{
+  opacity:1;
+}
+
+.nic-traffic{
+  /*font-size: 150%;*/
+}
+
+.stat{
+  /*font-size: 250%;*/
+}
+
+.slide{
+  overflow:auto;
+}
+
+.slide .mat-list-item.clickable{
+  cursor:pointer;
+}
+
+.slide .mat-icon.next-slide{
+  position:absolute;
+  right:0;
+}
+
+.mat-list-base .mat-list-item{
+  border-bottom:solid 1px var(--bg1);
+}
+
+.mat-list-base {
+  border-left:solid 1px var(--bg1);
+}
+
+.list-subheader{
+  text-transform:capitalize;
+  font-weight:700;
+  padding:8px 8px 0 16px;
+  text-align:left;
+  font-size: 90%;
+  color: var(--fg1);
+}
+
+/* NARROW SCREENS */
+.xs.widget{
+  width:100%;
+  max-height:320px;
+}

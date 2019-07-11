@@ -87,11 +87,10 @@ export class ServiceTFTPComponent {
   }
 
   preInit(entityEdit: any) {
-    this.userService.listAllUsers().subscribe(res => {
-      let users = [];
-      let items = res.data.items;
+    this.userService.userQueryDSCache().subscribe(items => {
+      const users = [];
       for (let i = 0; i < items.length; i++) {
-        users.push({label: items[i].label, value: items[i].id});
+        users.push({label: items[i].username, value: items[i].username});
       }
       this.tftp_username = _.find(this.fieldConfig, {'name' : 'tftp_username'});
       this.tftp_username.options = users;
@@ -101,11 +100,10 @@ export class ServiceTFTPComponent {
   afterInit(entityEdit: any) { }
 
   updateUserSearchOptions(value = "", parent) {
-    parent.userService.listAllUsers(value).subscribe(res => {
-      let users = [];
-      let items = res.data.items;
+    parent.userService.userQueryDSCache(value).subscribe(items => {
+      const users = [];
       for (let i = 0; i < items.length; i++) {
-        users.push({label: items[i].label, value: items[i].id});
+        users.push({label: items[i].username, value: items[i].username});
       }
       parent.tftp_username.searchOptions = users;
     });

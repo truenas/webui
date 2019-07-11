@@ -6,12 +6,14 @@ import { Http } from '@angular/http';
 import { matchOtherValidator } from '../../../pages/common/entity/entity-form/validators/password-validation';
 import { TranslateService } from '@ngx-translate/core';
 import globalHelptext from '../../../helptext/global-helptext';
+import productText from '../../../helptext/product';
 
 import { T } from '../../../translate-marker';
 import {WebSocketService} from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { ApiService } from 'app/core/services/api.service';
+import product from '../../../helptext/product';
 
 @Component({
   selector: 'app-signin',
@@ -19,12 +21,13 @@ import { ApiService } from 'app/core/services/api.service';
   styleUrls: ['./signin.component.scss']
 })
 export class SigninComponent implements OnInit {
-  @ViewChild(MatProgressBar) progressBar: MatProgressBar;
-  @ViewChild(MatButton) submitButton: MatButton;
+  @ViewChild(MatProgressBar, { static: false}) progressBar: MatProgressBar;
+  @ViewChild(MatButton, { static: false}) submitButton: MatButton;
 
   private failed: Boolean = false;
   public is_freenas: Boolean = false;
   public logo_ready: Boolean = false;
+  public product = productText.product;
   public showPassword = false;
   public ha_info_ready = false;
   public checking_status = false;
@@ -74,9 +77,12 @@ export class SigninComponent implements OnInit {
         if (this.interval) {
           clearInterval(this.interval);
         }
-        setInterval(() => {
+        if (!this.is_freenas) {
           this.getHAStatus();
-        }, 5000);
+          setInterval(() => {
+            this.getHAStatus();
+          }, 6000);
+        }
         window.localStorage.setItem('is_freenas', res);
       });
     }

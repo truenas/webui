@@ -22,6 +22,7 @@ export class AvailablePluginsComponent implements OnInit {
     public selectedPlugin: any;
     public isSelectedOffical = true;
     public engineerMode: boolean;
+    public isFreenas = window.localStorage['is_freenas'] === 'true';
     public availableBranches = [];
     public selectedBranch: any;
     public installedPlugins: any = {};
@@ -34,13 +35,18 @@ export class AvailablePluginsComponent implements OnInit {
         });
         this.jailService.getBranches().subscribe(
             (res) => {
-                for (let i = 0; i < res.length; i++) {
-                    const branchIndexObj = _.find(this.availableBranches, { name: res[i].repo });
-                    if (branchIndexObj === undefined) {
-                        this.availableBranches.push({ name: res[i].repo, branches: [{ label: res[i].name, value: res[i].name }] })
-                    } else {
-                        branchIndexObj.branches.push({ label: res[i].name, value: res[i].name });
+                if (res.result) {
+                    for (let i = 0; i < res.result.length; i++) {
+                        const branchIndexObj = _.find(this.availableBranches, { name: res.result[i].repo });
+                        if (branchIndexObj === undefined) {
+                            this.availableBranches.push({ name: res.result[i].repo, branches: [{ label: res.result[i].name, value: res.result[i].name }] })
+                        } else {
+                            branchIndexObj.branches.push({ label: res.result[i].name, value: res.result[i].name });
+                        }
                     }
+                }
+                if (res.error) {
+                    this.parent.dialogService.errorReport('Get Branches Failed', res.error, res.exception);
                 }
             }
         )
@@ -71,10 +77,16 @@ export class AvailablePluginsComponent implements OnInit {
     }
 
     getPlugin() {
-        this.ws.call(this.queryCall, this.queryCallOption).subscribe(
+        this.ws.job(this.queryCall, this.queryCallOption).subscribe(
             (res) => {
-                this.plugins = res;
-                this.selectedPlugin = res[0];
+                if (res.result) {
+                    this.plugins = res.result;
+                    this.selectedPlugin = res.result[0];
+                    this.parent.cardHeaderReady = true;
+                }
+                if (res.error) {
+                    this.parent.dialogService.errorReport('Get Plugins Failed', res.error, res.exception);
+                }
             },
             (err) => {
                 new EntityUtils().handleWSError(this.parent, err, this.parent.dialogService);

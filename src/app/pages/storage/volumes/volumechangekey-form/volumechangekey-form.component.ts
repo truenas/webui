@@ -12,8 +12,10 @@ import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
 import { DialogService } from 'app/services/dialog.service';
+import { MatSnackBar, MatDialog } from '@angular/material';
 import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/storage/volumes/volume-key';
 
@@ -40,6 +42,10 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
       type : 'input',
       name : 'name',
       isHidden: true
+    },{
+      type: 'paragraph',
+      name: 'changekey-instructions',
+      paraText: helptext.changekey_instructions2
     },{
       type : 'input',
       inputType: 'password',
@@ -89,7 +95,9 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
       protected _injector: Injector,
       protected _appRef: ApplicationRef,
       protected dialogService: DialogService,
-      protected loader: AppLoaderService
+      protected loader: AppLoaderService,
+      public mdDialog: MatDialog,
+      public snackBar: MatSnackBar
   ) {
 
   }
@@ -132,10 +140,15 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
     this.loader.open();
     this.ws.call('pool.passphrase', params).subscribe(() => {
       this.loader.close();
-      this.dialogService.Info(T("Change Pool Passphrase"), T("Passphrase " + success_msg + " pool ") + value.name)
-        .subscribe(() => {
-          this.router.navigate(new Array('/').concat(this.route_success));
-        })
+      this.snackBar.open(T('Passphrase changed for pool ' + value.name), T("Close"), {
+        duration: 5000,
+      });
+        let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
+        dialogRef.componentInstance.volumeId = this.pk;
+        dialogRef.afterClosed().subscribe(result => {
+          this.router.navigate(new Array('/').concat(
+            this.route_success));
+        });
     },(err) => {
       this.loader.close();
       this.dialogService.errorReport(T("Error changing passphrase for pool ") + value.name, err.reason, err.trace.formatted);

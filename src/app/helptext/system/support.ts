@@ -94,7 +94,18 @@ export const helptext_system_support = {
   },
 
   screenshot: {
-  placeholder: T( "Attach screenshot(s)."),
+  placeholder: T( "Attach screenshots."),
   tooltip: T( "Select one or more screenshots that illustrate the problem.")
+  },
+
+  update_license: {
+    open_dialog_button: T('Update License'),
+    user_guide_button: T('User Guide (pdf)'),
+    dialog_title: T('Update License'),
+    license_placeholder: T('License'),
+    save_button: T('Save License'),
+    success_message: T('License has been updated.'),
+    error_dialog_title: T('Error Unlocking'),
+    snackbar_action: T('close')
   }
 };

@@ -4,7 +4,7 @@
       {{ "Shell" | translate }}
     </div>
   </mat-card-title>
-  <div id="terminal" [ngStyle]="{'font-size' : font_size+'px'}" #terminal></div>
+  <div id="terminal" [ngStyle]="{'font-size' : font_size+'px'}" #terminal (contextmenu)="onShellRightClick()"></div>
   <mat-card-content>
     <mat-divider class="mb-1"></mat-divider>
     {{ "Set font size" | translate }}
