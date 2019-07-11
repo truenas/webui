@@ -345,9 +345,16 @@ export class VolumesListTableConfig implements InputTableConf {
           this.loader.open();
           this.ws.call('pool.attachments', [row1.id]).subscribe((res) => {
             if (res.length > 0) {
-              p1 = 'The following processes depend on this pool: ';
+              p1 = 'The following services depend on this pool:';
               res.forEach((item) => {
-                p1 += `${item.type}(s): ${item.attachments}; `
+                p1 += `<br><br>${item.type}:`;
+                item.attachments.forEach((i) => {
+                  let tempArr = i.split(',');
+                  tempArr.forEach((i) => {
+                    p1 += `<br> - ${i};`
+                  }) 
+                })
+
               })
             }
           
@@ -360,15 +367,14 @@ export class VolumesListTableConfig implements InputTableConf {
                   }
                 })
                 if (services.length > 0) {
-                  p2 = 'The following services are using this pool: ';
+                  p2 = 'The following running services are using this pool:<br>';
                   services.forEach((service) =>  {
-                    p2 += `${service.service}; `
+                    p2 += `<br>${service.service};`
                   })
                 }
               }
+              // unknown processes?
               this.loader.close();
-              console.log(p1)
-              console.log(p2)
 
           let encryptedStatus = row1.vol_encryptkey,
             localParentVol = this.parentVolumesListComponent,
