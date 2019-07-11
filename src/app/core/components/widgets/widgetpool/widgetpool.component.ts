@@ -117,6 +117,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     level: "safe"
   };
 
+  public currentMultipathDetails: any;
   public currentDiskDetails:Disk;
   get currentDiskDetailsKeys(){
     return this.currentDiskDetails ? Object.keys(this.currentDiskDetails) : [];
@@ -152,24 +153,61 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   ngAfterViewInit(){
+    this.core.register({observerClass:this,eventName:"MultipathData"}).subscribe((evt:CoreEvent) => {
+      this.currentMultipathDetails = evt.data[0];
+      console.log(this.currentMultipathDetails);
+      const activeDisk = evt.data[0].children.filter(prop => prop.status == "ACTIVE");
+      this.core.emit({name:"DisksRequest", data:[[["name", "=", activeDisk[0].name]]]});
+    });
+
     this.core.register({observerClass:this,eventName:"DisksData"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
       delete evt.data[0].enclosure;
       delete evt.data[0].name;
       delete evt.data[0].devname;
+      delete evt.data[0].multipath_name;
+      delete evt.data[0].multipath_member;
       this.currentDiskDetails = evt.data[0];
     });
   }
 
-  getDiskDetails(key:string, value:string){
-    this.core.emit({name:"DisksRequest", data:[[[key, "=", value]]]});
+  getDiskDetails(key:string, value:string, isMultipath?:boolean){
+    if(isMultipath && key == 'name'){
+     
+      let v = "multipath/" + this.checkMultipathLabel(value);
+      this.core.emit({name:"MultipathRequest", data:[[[key, "=", v]]]});
+    
+    } else if(!isMultipath) {
+
+      delete this.currentMultipathDetails
+      this.core.emit({name:"DisksRequest", data:[[[key, "=", value]]]});
+
+    } else {
+      console.warn("If this is a multipath disk, you must query by name!")
+    }
+  }
+
+  checkMultipathLabel(name){
+    const truth = this.checkMultipath(name);
+    let diskName = name;
+    if(truth){
+
+      let str = name.replace("multipath/","");
+      let spl = str.split("p");
+      diskName = spl[0];
+    }
+    return diskName;
+  }
+
+  checkMultipath(name:string){
+    const truth = name.startsWith("multipath/");
+    return truth;
   }
 
   updateSlide(name:string,verified: boolean, slideIndex:number, dataIndex?: number, dataSource?:any){
     if(name !=="overview" && !verified){ return; }
     const direction = parseInt(this.currentSlide) < slideIndex ? 'forward' : 'back';
-    console.log(this.path);
-    console.log('name:' + name + ', verified: ' + verified + ', slideIndex: ' + slideIndex + ', dataIndex: ' + dataIndex + ', dataSource: ' + dataSource);
+    //console.log(this.path);
+    //console.log('name:' + name + ', verified: ' + verified + ', slideIndex: ' + slideIndex + ', dataIndex: ' + dataIndex + ', dataSource: ' + dataSource);
 
     if(direction == 'forward'){
       // Setup next path segment

@@ -155,12 +155,15 @@
 }
 
 .list-subheader{
-  text-transform:capitalize;
   font-weight:700;
   padding:48px 8px 0 16px;
   text-align:left;
   font-size: 90%;
   color: var(--fg1);
+}
+
+span.capitalize{
+  text-transform:capitalize;
 }
 
 .list-subheader:first-child{

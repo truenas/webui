@@ -11,12 +11,6 @@
               &nbsp;{{title | translate}} 
             </div>
           </h3>
-          <!--<ng-template #backBtn>
-            <button class="mat-card-title-text" *ngIf="currentSlide !== '0'" mat-button color="default" (click)="updateSlide(path[previousSlide].name, true, previousSlide)">
-              <mat-icon class="back-arrow">chevron_left</mat-icon>
-            </button>
-            &nbsp;&nbsp; {{title | translate}}
-            </ng-template>-->
 
           <!--<ng-template *ngIf="configurable === true">
             <button mat-icon-button (click)="toggleConfig()">
@@ -24,7 +18,10 @@
             </button>
             </ng-template>-->
             <!--<button mat-button color="primary" class="" (click)="router.navigate(['reportsdashboard/cpu'])">CPU REPORTS</button>-->
+
         </mat-toolbar-row>
+
+
         <!-- Carousel -->
         <div id="" class="carousel" #carousel >
           <div fxFlex="100" class="slide overview" fxLayout="row" fxLayoutAlign="space-between">
@@ -81,7 +78,7 @@
 
             <div class="right" fxFlex="50" fxLayout="column" fxLayoutAlign="space-around center">
               <div fxFlex="100">
-                <div class="list-subheader">{{currentSlideName}}</div>
+                <div class="list-subheader">  <span class="capitalize">{{currentSlideName}}</span></div>
                 <mat-list>
                   <mat-list-item><strong>Path: </strong>&nbsp;&nbsp; {{poolState.path}}</mat-list-item>
                   <mat-list-item (click)="updateSlide('topology', poolState.topology.data.length > 0, 1)" [ngClass]="{'clickable': poolState.topology.data.length > 0}">
@@ -112,7 +109,7 @@
 
 
           <div class="slide topology" *ngIf="path[1].name == 'topology' && currentSlide == '1'; else emptySlide" fxFlex="100">
-            <div class="list-subheader">{{currentSlideName}}</div>
+            <div class="list-subheader"><span class="capitalize">{{currentSlideName}}</span></div>
             <mat-list *ngIf="poolState && poolState.topology.data">
               <mat-list-item role="listitem"*ngFor="let vdev of poolState.topology.data; let i=index"
                  (click)="updateSlide('disks', true, currentSlideIndex + 1, i, vdev)" 
@@ -122,44 +119,33 @@
                     <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
                   </span>
 
-                <!--<div *ngIf="vdev.type == 'DISK'"
-                 (click)="updateSlide('disk details', true, currentSlideIndex + 1, i, vdev)" 
-                 (click)="getDiskDetails('name', vdev.disk)" 
-                 [ngClass]="{'clickable': true}">
-                  <strong>({{currentSlideIndex + 1}}) {{vdev.type}}:</strong>&nbsp;&nbsp; {{vdev.status}}
-                  <span *ngIf="vdev.status == 'ONLINE'" class="{{poolHealth.level}} healthy" >
-                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
-                  </span>
-                  </div>-->
-
                 <mat-icon class="next-slide">chevron_right</mat-icon>
               </mat-list-item>
             </mat-list>
           </div>
         
 
-          <!--<div class="slide empty" *ngIf="path[1].name == 'empty'" fxFlex="100">
-            </div>-->
-
           <div class="slide disks" *ngIf="path[2].name == 'disks' && currentSlide == '2'; else emptySlide"  fxFlex="100">
-            <div class="list-subheader">Disks</div>
-            <mat-list *ngIf="path[2].dataSource.type !== 'DISK'">
+            <div class="list-subheader"><span class="capitalize">Disks</span></div>
+            <mat-list *ngIf="path[currentSlideIndex].dataSource.type !== 'DISK'">
+
               <mat-list-item role="listitem" *ngFor="let disk of path[2].dataSource.children; let i=index" 
-                 (click)="updateSlide('disk details', true, 3, i, disk)" 
-                 (click)="getDiskDetails('name', disk.disk)" 
+                 (click)="updateSlide('disk details', true, currentSlideIndex + 1, i, disk )" 
+                 (click)="getDiskDetails('name', disk.disk, checkMultipath(disk.disk))" 
                  [ngClass]="{'clickable': true}">
-                <strong>{{disk.disk}}:</strong>&nbsp;&nbsp; {{disk.status}}
+                <strong>{{checkMultipathLabel(disk.disk)}}<span *ngIf="checkMultipath(disk.disk)">&nbsp;(multipath)</span>:</strong>&nbsp;&nbsp; {{disk.status}}
                 <span *ngIf="disk.status == 'ONLINE'" class="{{poolHealth.level}} healthy" >
                   <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
                 </span>
                 <mat-icon class="next-slide">chevron_right</mat-icon>
               </mat-list-item>
+
             </mat-list>
 
-            <mat-list *ngIf="path[2].dataSource.type == 'DISK'">
+            <mat-list *ngIf="path[currentSlideIndex].dataSource.type == 'DISK'">
               <mat-list-item role="listitem" 
-                 (click)="updateSlide('disk details', true, 3, i, path[2].dataSource)" 
-                 (click)="getDiskDetails('name', path[2].dataSource.disk)" 
+                 (click)="updateSlide('disk details', true, currentSlideIndex + 1, i, path[currentSlideIndex].dataSource)" 
+                 (click)="getDiskDetails('name', path[currentSlideIndex].dataSource.disk, checkMultipath(path[currentSlideIndex].dataSource.disk))" 
                  [ngClass]="{'clickable': true}">
                 <strong>{{path[2].dataSource.disk}}:</strong>&nbsp;&nbsp; {{path[2].dataSource.status}}
                 <span *ngIf="path[2].dataSource.status == 'ONLINE'" class="{{poolHealth.level}} healthy" >
@@ -168,17 +154,28 @@
                 <mat-icon class="next-slide">chevron_right</mat-icon>
               </mat-list-item>
             </mat-list>
+
           </div>
 
-          <!--<div class="slide empty" *ngIf="path[2].name == 'empty'" fxFlex="100">
-            </div>-->
 
           <div class="slide disk-details" *ngIf="path[currentSlideIndex].name == 'disk details'; else emptySlide"  fxFlex="100">
-            <div class="list-subheader">Details for {{path[currentSlideIndex].dataSource.disk}}</div>
+            <div *ngIf="!currentMultipathDetails" class="list-subheader"><span class="capitalize">Details</span> for {{path[currentSlideIndex].dataSource.disk}}</div>
+            <div *ngIf="currentMultipathDetails" class="list-subheader"><span class="capitalize">Details</span> for multipath device {{checkMultipathLabel(path[currentSlideIndex].dataSource.disk)}} &nbsp;&nbsp;</div>
             <mat-list >
-              <mat-list-item role="listitem">
-                <strong> Name:</strong>&nbsp;&nbsp; {{path[currentSlideIndex].dataSource.disk}}
+              <mat-list-item *ngIf="!currentMultipathDetails" role="listitem">
+                <strong> Name:</strong>&nbsp;&nbsp; {{currentMultipathDetails ? checkMultipathLabel(path[currentSlideIndex].dataSource.disk) : path[currentSlideIndex].dataSource.disk}}
               </mat-list-item>
+
+            <ng-template [ngIf]="currentMultipathDetails">
+              <mat-list-item role="listitem">
+                <strong> Multipath Name:</strong>&nbsp;&nbsp; {{currentMultipathDetails ? checkMultipathLabel(path[currentSlideIndex].dataSource.disk) : path[currentSlideIndex].dataSource.disk}}
+              </mat-list-item>
+
+              <mat-list-item *ngFor="let child of currentMultipathDetails.children" role="listitem">
+                <strong class="multipath-detail-label"><span class="capitalize">{{child.status.toLowerCase()}}</span> Disk:</strong>&nbsp;&nbsp; {{child.name}}
+              </mat-list-item>
+            </ng-template>
+
               <mat-list-item role="listitem">
                 <strong> GUID:</strong>&nbsp;&nbsp; {{path[currentSlideIndex].dataSource.guid}}
               </mat-list-item>
@@ -193,6 +190,14 @@
               </mat-list-item>
             </mat-list>
             
+            <!-- Multipath disk details-->
+            <!--<div *ngIf="currentMultipathDetails" class="list-subheader">Multipath Details</div>
+            <mat-list *ngIf="currentMultipathDetails">
+              <mat-list-item *ngFor="let child of currentMultipathDetails.children" role="listitem">
+                <strong class="multipath-detail-label"><span class="capitalize">{{child.status.toLowerCase()}}</span> Disk:</strong>&nbsp;&nbsp; {{child.name}}
+              </mat-list-item>
+              </mat-list>-->
+            
             <!-- Dynamic disk details-->
             <div class="list-subheader">Advanced Details</div>
             <mat-list >
@@ -202,8 +207,6 @@
             </mat-list>
           </div>
 
-          <!--<div class="slide empty" *ngIf="path[3].name == 'empty'" fxFlex="100">
-            </div>-->
 
           <ng-template #emptySlide>
             <div class="slide empty" fxFlex="100">
