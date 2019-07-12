@@ -20,11 +20,11 @@ export class DynamciListComponent implements OnInit {
     ngOnInit() {
         // define input config and control
         this.inputConfig = {
-            type : 'input',
-            name : this.config.name + '_input',
-            placeholder : this.config.placeholder,
+            type: 'input',
+            name: this.config.name + '_input',
+            placeholder: this.config.placeholder,
             tooltip: this.config.tooltip,
-        },
+        };
         this.group.controls[this.inputConfig.name] = new FormControl();
 
         this.inputControl = this.group.controls[this.inputConfig.name];
@@ -32,7 +32,7 @@ export class DynamciListComponent implements OnInit {
         if (this.listControl.value === undefined) {
             this.listControl.setValue(new Set([]));
         }
-        this.listControl.statusChanges.subscribe((res)=> {
+        this.listControl.statusChanges.subscribe((res) => {
             const method = res === 'DISABLED' ? 'disable' : 'enable';
             this.inputControl[method]();
         })
@@ -46,6 +46,6 @@ export class DynamciListComponent implements OnInit {
         this.listControl.value.delete(item);
     }
     drop() {
-        this.config.onDrop(this);
+        this.config.customEventMethod(this);
     }
 }
