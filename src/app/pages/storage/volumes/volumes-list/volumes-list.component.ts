@@ -359,25 +359,37 @@ export class VolumesListTableConfig implements InputTableConf {
               })
             }
             this.ws.call('pool.processes', [row1.id]).subscribe((res) => {
-              let services = [];
+              let running_processes = [];
+              let running_unknown_processes = [];
               if (res.length > 0) {
                 res.forEach((item) => {
-                  if (item.service) {
-                    services.push(item);
+                  if (!item.service) {
+                    if (item.name && item.name !== '') {
+                      running_processes.push(item);
+                    } else {
+                      running_unknown_processes.push(item);
+                    }
                   }
-                })
-                if (services.length > 0) {
-                  p1 += '<br>The following running services are using this pool:<br>';
-                  services.forEach((service) =>  {
-                    p1 += `<br> - ${service.service}`
-                  })
+                });
+                if (running_processes.length > 0) {
+                  p1 += '<br><br>The following running services are using this pool:';
+                  running_processes.forEach((process) =>  {
+                    if (process.name) {
+                      p1 += `<br> - ${process.name}`
+                    }
+                    
+                  });
+                };
+                if (running_unknown_processes.length > 0) {
+                  p1 += '<br><br>The following unknown processes are using this pool:';
+                  running_unknown_processes.forEach((process) => {
+                    if (process.pid) {
+                      p1 += `<br> - ${process.pid} - ${process.cmdline.substring(0,40)}`;
+                    }
+                  });
+                  p1 += `<br><br>WARNING: These unknown processes will be terminated while exporting the pool.`;
                 }
-              }
-              // Following unknown processes are using this pool:
-              //  * 12648 /usr/local/bin/zsh
-              // WARNING: These unknown processes will be terminated while exporting the pool.
-              // (we need to make clear that this warning only relates to unknown processes
-              //   and services will continue functioning without interruption)
+              };
               this.loader.close();
 
           let encryptedStatus = row1.vol_encryptkey,
