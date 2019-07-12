@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit,OnDestroy, Input, ViewChild, Renderer2, ElementRef, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, Input, ViewChild, Renderer2, ElementRef,TemplateRef, AfterViewChecked, OnChanges, SimpleChanges } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { Router } from '@angular/router';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
@@ -49,6 +49,7 @@ interface Slide {
   name: string;
   index?: string;
   dataSource?: any;
+  template: TemplateRef<any>;
 }
 
 interface PoolDiagnosis {
@@ -79,11 +80,19 @@ export interface Disk {
   templateUrl:'./widgetpool.component.html',
   styleUrls: ['./widgetpool.component.css']
 })
-export class WidgetPoolComponent extends WidgetComponent implements OnInit, AfterViewInit,OnDestroy, OnChanges {
+export class WidgetPoolComponent extends WidgetComponent implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy, OnChanges {
 
   @Input() poolState;
   @ViewChild('carousel', {static:true}) carousel:ElementRef;
   @ViewChild('carouselparent', {static:true}) carouselParent:ElementRef;
+
+  @ViewChild('overview', {static:false}) overview:TemplateRef<any>;
+  @ViewChild('topology', {static:false}) topology:TemplateRef<any>;
+  @ViewChild('disks', {static:false}) disks:TemplateRef<any>;
+  @ViewChild('disk_details', {static:false}) disk_details:TemplateRef<any>;
+  @ViewChild('empty', {static:false}) empty:TemplateRef<any>;
+  public templates:any;
+  public tpl = this.overview;
 
   // NAVIGATION
   public currentSlide:string = "0";
@@ -100,12 +109,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     return this.currentSlide == '0' ? 0 : parseInt(this.currentSlide) - 1;
   }
 
-  path: Slide[] = [
-    { name: "overview"},
-    { name: "empty"},
-    { name: "empty"},
-    { name: "empty"}
-  ];
+  path: Slide[] = [];
 
   public title: string = this.poolState ? this.poolState.name : "Pool";
 
@@ -152,7 +156,27 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
   }
 
+  ngAfterViewChecked(){
+    
+  }
+
   ngAfterViewInit(){
+    this.templates = {
+      overview: this.overview,
+      topology: this.topology,
+      disks: this.disks,
+      empty: this.empty,
+      'disk details': this.disk_details
+    }
+      console.log(this.templates);
+
+    this.path = [
+      { name: "overview",template: this.overview},
+      { name: "empty", template: this.empty},
+      { name: "empty", template: this.empty},
+      { name: "empty", template: this.empty}
+    ];
+
     this.core.register({observerClass:this,eventName:"MultipathData"}).subscribe((evt:CoreEvent) => {
       this.currentMultipathDetails = evt.data[0];
       console.log(this.currentMultipathDetails);
@@ -206,21 +230,24 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   updateSlide(name:string,verified: boolean, slideIndex:number, dataIndex?: number, dataSource?:any){
     if(name !=="overview" && !verified){ return; }
     const direction = parseInt(this.currentSlide) < slideIndex ? 'forward' : 'back';
-    //console.log(this.path);
-    //console.log('name:' + name + ', verified: ' + verified + ', slideIndex: ' + slideIndex + ', dataIndex: ' + dataIndex + ', dataSource: ' + dataSource);
-
     if(direction == 'forward'){
       // Setup next path segment
       let slide: Slide = {
         name: name,
         index: typeof dataIndex !== 'undefined' ? dataIndex.toString() : null,
-        dataSource: typeof dataSource !== 'undefined' ? dataSource : null
+        dataSource: typeof dataSource !== 'undefined' ? dataSource : null,
+        template: this.templates[name]
       }
   
       this.path[slideIndex] = slide;
     } else if(direction == 'back'){
       // empty the path segment
-      this.path[parseInt(this.currentSlide)] = { name: "empty"};
+      this.path[parseInt(this.currentSlide)] = { name: "empty", template: this.empty}
+    }
+
+    if(name == 'disks'){
+      console.log(this.path);
+      console.log('name:' + name + ', verified: ' + verified + ', slideIndex: ' + slideIndex + ', dataIndex: ' + dataIndex + ', dataSource: ' + dataSource);
     }
 
     this.updateSlidePosition(slideIndex);
@@ -238,6 +265,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     }).start(el.set);
     
     this.currentSlide = value.toString();
+    //console.log(this.path[this.currentSlideIndex].name);
     
   }
 

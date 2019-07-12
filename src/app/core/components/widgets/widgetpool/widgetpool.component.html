@@ -23,8 +23,15 @@
 
 
         <!-- Carousel -->
-        <div id="" class="carousel" #carousel >
-          <div fxFlex="100" class="slide overview" fxLayout="row" fxLayoutAlign="space-between">
+        <div *ngIf="poolState" id="" class="carousel" #carousel >
+
+          <!--<ng-container *ngTemplateOutlet="path[0].template"></ng-container>-->
+          <div *ngFor="let slide of path;" fxFlex="100" class="slide {{slide.name}}" >
+            <ng-content *ngTemplateOutlet="slide.template"></ng-content>
+          </div>
+          
+          <ng-template #overview>
+            <div fxFlex="100" class="overview-inner" fxLayout="row" fxLayoutAlign="space-between">
             <div class="left {{poolHealth.selector}}" fxFlex="50" fxLayout="column" fxLayoutAlign="space-around center">
 
               <div fxFlex="95">
@@ -86,17 +93,17 @@
                     <mat-icon *ngIf="poolState.topology.data.length > 0" class="next-slide">chevron_right</mat-icon>
                   </mat-list-item>
 
-                  <mat-list-item (click)="updateSlide('caches', poolState.topology.cache.length > 0, 1)" [ngClass]="{'clickable': poolState.topology.cache.length > 0}">
+                  <mat-list-item (click)="updateSlide('disks', poolState.topology.cache.length > 0, 1, 0, { children: poolState.topology.cache})" [ngClass]="{'clickable': poolState.topology.cache.length > 0}">
                     <strong>Caches: </strong>&nbsp;&nbsp; {{poolState.topology.cache.length}}
                     <mat-icon *ngIf="poolState.topology.cache.length > 0" class="next-slide">chevron_right</mat-icon>
                   </mat-list-item>
 
-                  <mat-list-item (click)="updateSlide('spares', poolState.topology.spare.length > 0, 1)" [ngClass]="{'clickable': poolState.topology.spare.length > 0}">
+                  <mat-list-item (click)="updateSlide('disks', poolState.topology.spare.length > 0, 1, 0, {children: poolState.topology.spare})" [ngClass]="{'clickable': poolState.topology.spare.length > 0}">
                     <strong>Spares: </strong>&nbsp;&nbsp; {{poolState.topology.spare.length}}
                     <mat-icon *ngIf="poolState.topology.spare.length > 0" class="next-slide">chevron_right</mat-icon>
                   </mat-list-item>
 
-                  <mat-list-item (click)="updateSlide('logs', poolState.topology.log.length > 0, 1)" [ngClass]="{'clickable': poolState.topology.log.length > 0}">
+                  <mat-list-item (click)="updateSlide('disks', poolState.topology.log.length > 0, 1, 0, {children: poolState.topology.log})" [ngClass]="{'clickable': poolState.topology.log.length > 0}">
                     <strong>Logs: </strong>&nbsp;&nbsp; {{poolState.topology.log.length}}
                     <mat-icon *ngIf="poolState.topology.log.length > 0" class="next-slide">chevron_right</mat-icon>
                   </mat-list-item>
@@ -105,10 +112,12 @@
               </div>
             </div>
 
-          </div>
+            </div>
+          </ng-template>
 
 
-          <div class="slide topology" *ngIf="path[1].name == 'topology' && currentSlide == '1'; else emptySlide" fxFlex="100">
+          <ng-template #topology>
+            <!--<div class="slide topology" *ngIf="path[currentSlideIndex].name == 'topology'" fxFlex="100">-->
             <div class="list-subheader"><span class="capitalize">{{currentSlideName}}</span></div>
             <mat-list *ngIf="poolState && poolState.topology.data">
               <mat-list-item role="listitem"*ngFor="let vdev of poolState.topology.data; let i=index"
@@ -122,14 +131,16 @@
                 <mat-icon class="next-slide">chevron_right</mat-icon>
               </mat-list-item>
             </mat-list>
-          </div>
-        
+            <!--</div>-->
+          </ng-template>
 
-          <div class="slide disks" *ngIf="path[2].name == 'disks' && currentSlide == '2'; else emptySlide"  fxFlex="100">
+          <ng-template #disks>
+            <!--<div #disks class="slide disks" *ngIf="path[currentSlideIndex].name == 'disks'; else emptySlide"  fxFlex="100">-->
             <div class="list-subheader"><span class="capitalize">Disks</span></div>
-            <mat-list *ngIf="path[currentSlideIndex].dataSource.type !== 'DISK'">
 
-              <mat-list-item role="listitem" *ngFor="let disk of path[2].dataSource.children; let i=index" 
+            <mat-list *ngIf="!path[currentSlideIndex].dataSource.type || path[currentSlideIndex].dataSource.type !== 'DISK'">
+              
+              <mat-list-item role="listitem" *ngFor="let disk of path[currentSlideIndex].dataSource.children; let i=index" 
                  (click)="updateSlide('disk details', true, currentSlideIndex + 1, i, disk )" 
                  (click)="getDiskDetails('name', disk.disk, checkMultipath(disk.disk))" 
                  [ngClass]="{'clickable': true}">
@@ -139,7 +150,7 @@
                 </span>
                 <mat-icon class="next-slide">chevron_right</mat-icon>
               </mat-list-item>
-
+              
             </mat-list>
 
             <mat-list *ngIf="path[currentSlideIndex].dataSource.type == 'DISK'">
@@ -155,10 +166,12 @@
               </mat-list-item>
             </mat-list>
 
-          </div>
+            <!--</div>-->
+          </ng-template>
 
 
-          <div class="slide disk-details" *ngIf="path[currentSlideIndex].name == 'disk details'; else emptySlide"  fxFlex="100">
+          <ng-template #disk_details>
+            <!--<div #disk_details class="slide disk-details" *ngIf="path[currentSlideIndex].name == 'disk details'; else emptySlide"  fxFlex="100">-->
             <div class="list-subheader"><span class="capitalize">Disk Details</span></div>
             <!--<div *ngIf="!currentMultipathDetails" class="list-subheader"><span class="capitalize">Details</span> for {{path[currentSlideIndex].dataSource.disk}}</div>
               <div *ngIf="currentMultipathDetails" class="list-subheader"><span class="capitalize">Details</span> for multipath device {{checkMultipathLabel(path[currentSlideIndex].dataSource.disk)}} &nbsp;&nbsp;</div>-->
@@ -206,12 +219,14 @@
                 <strong class="detail-key"> {{key}}:</strong>&nbsp;&nbsp; {{currentDiskDetails[key]}}
               </mat-list-item>
             </mat-list>
-          </div>
+            <!--</div>-->
+          </ng-template>
 
 
-          <ng-template #emptySlide>
-            <div class="slide empty" fxFlex="100">
-            </div>
+          <ng-template #empty>
+            <div class="empty"></div>
+            <!--<div class="slide empty" fxFlex="100">
+              </div>-->
           </ng-template>
 
         </div>
