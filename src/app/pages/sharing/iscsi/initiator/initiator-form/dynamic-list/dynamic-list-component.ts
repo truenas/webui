@@ -36,7 +36,7 @@ export class DynamciListComponent implements OnInit {
 
     add() {
         this.listControl.value.add(this.inputControl.value);
-        this.inputControl.setValue(undefined);
+        this.inputControl.setValue(null);
     }
     remove(item) {
         this.listControl.value.delete(item);
