@@ -91,6 +91,8 @@ export class VolumesListTableConfig implements InputTableConf {
   private vmware_res_status: boolean;
   private recursiveIsChecked: boolean = false;
   public dialogConf: DialogFormConfiguration;
+  public restartServices = false;
+  public tempDialogFormValue: any;
 
   constructor(
     private parentVolumesListComponent: VolumesListComponent,
@@ -334,7 +336,6 @@ export class VolumesListTableConfig implements InputTableConf {
       rowDataPathSplit = rowData.path.split('/');
     }
     let p1 = '';
-    let p2 = '';
     const actions = [];
     //workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
     if (rowData.type === 'zpool') {
@@ -367,9 +368,9 @@ export class VolumesListTableConfig implements InputTableConf {
                   }
                 })
                 if (services.length > 0) {
-                  p2 = 'The following running services are using this pool:<br>';
+                  p1 += '<br>The following running services are using this pool:<br>';
                   services.forEach((service) =>  {
-                    p2 += `<br>${service.service};`
+                    p1 += `<br> - ${service.service};`
                   })
                 }
               }
@@ -381,7 +382,7 @@ export class VolumesListTableConfig implements InputTableConf {
             localDialogService = this.dialogService,
             localDialog = this.mdDialog
 
-          const conf: DialogFormConfiguration = { 
+          const conf: DialogFormConfiguration = {
             title: "Export/disconnect pool: '" + row1.name + "'",
             fieldConfig: [{
               type: 'paragraph',
@@ -394,12 +395,7 @@ export class VolumesListTableConfig implements InputTableConf {
               name: 'pool_processes',
               paraText: p1,
               isHidden: p1 === '' ? true : false
-            }, {
-              type: 'paragraph',
-              name: 'pool_services',
-              paraText: p2,
-              isHidden: p2 === '' ? true : false
-            }, {
+            },{
               type: 'paragraph',
               name: 'pool_detach_warning',
               paraText: "'" + row1.name + helptext.detachDialog_pool_detach_warning__encrypted_paratext,
@@ -415,6 +411,12 @@ export class VolumesListTableConfig implements InputTableConf {
               value: true,
               placeholder: helptext.detachDialog_pool_detach_cascade_checkbox_placeholder,
             }, {
+              type: 'checkbox',
+              name: 'restart_services',
+              value: this.restartServices,
+              placeholder: 'Restart services',
+              isHidden: !this.restartServices
+            },{
               type: 'checkbox',
               name: 'confirm',
               placeholder: helptext.detachDialog_pool_detach_confim_checkbox_placeholder,
@@ -439,10 +441,11 @@ export class VolumesListTableConfig implements InputTableConf {
               }],
             customSubmit: function (entityDialog) {
               const value = entityDialog.formValue;
+              console.log(value)
 
               let dialogRef = localDialog.open(EntityJobComponent, {data: {"title":"Exporting Pool"}, disableClose: true});
               dialogRef.componentInstance.setDescription(T("Exporting Pool..."));
-              dialogRef.componentInstance.setCall("pool.export", [row1.id, { destroy: value.destroy, cascade: value.cascade }]);
+              dialogRef.componentInstance.setCall("pool.export", [row1.ibd, { destroy: value.destroy, cascade: value.cascade, restart: this.restartServices }]);
               dialogRef.componentInstance.submit();
               dialogRef.componentInstance.success.subscribe(res=>{
                 entityDialog.dialogRef.close(true);
@@ -456,8 +459,40 @@ export class VolumesListTableConfig implements InputTableConf {
                 localParentVol.repaintMe();
               }),
               dialogRef.componentInstance.failure.subscribe((res) => {
-                dialogRef.close(false);
-                localDialogService.errorReport(T("Error exporting/disconnecting pool."), res.error, res.exception);
+                let conditionalErrMessage = '';
+                console.log(res)
+                if (res.error.includes('EBUSY')) {
+                  if (res.exc_info && res.exc_info.extra && res.exc_info.extra['code'] === 'services_restart') {
+                    conditionalErrMessage = 
+                    `Warning: these services have to be restarted in order to export pool: ${res.exc_info.extra['services']}`;
+                    // entityDialog.dialogRef.close(true);
+                    // do the odd thing here
+                    localDialogService.confirm(T("Error exporting/disconnecting pool."),conditionalErrMessage, false, 
+                      T('Proceed With Export')).subscribe((res) => {
+                        if (res) {
+                          this.restartServices = true;
+                          this.customSubmit()
+                        }
+                      })
+                  } else if (res.exc_info && res.exc_info.extra && res.exc_info.extra['code'] === 'unstoppable_processes') {
+                    conditionalErrMessage = 
+                    `Unable to terminate following processes using this pool: ${res.exc_info.extra['processes']}`;
+                    dialogRef.close(false);
+                    localDialogService.errorReport(T("Error exporting/disconnecting pool."), conditionalErrMessage, res.exception);
+                  }
+                } else {
+                  dialogRef.close(false);
+                  // localDialogService.errorReport(T("Error exporting/disconnecting pool."), res.error, res.exception);
+                  conditionalErrMessage = 
+                    `Warning: these services have to be restarted in order to export pool:`;
+                  localDialogService.confirm(T("Error exporting/disconnecting pool."),conditionalErrMessage, false, 
+                  T('Proceed With Export')).subscribe((res) => {
+                    if (res) {
+                      this.restartServices = true;
+                      
+                    }
+                  })
+                }           
               });
             }
             
