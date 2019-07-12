@@ -5,15 +5,15 @@
                 <div id="dynamicField_allow_all_initiators" dynamicField [config]="allowAllInitiatorsField"
                     [group]="formGroup" [fieldShow]="'show'"></div>
             </div>
-            <div [ngClass]="'form-inline'" fxFlex="100%" fxFlex.gt-xs="calc(50% - 16px)" class="connected-initiators-container">
-                <span>{{'Connected Initiators'}}</span>
-                <mat-selection-list class="connected-initiators-list" #connectedInitiatorsList>
+            <div fxFlex="100%" fxFlex.gt-xs="calc(50% - 16px)" class="connected-initiators-container form-inline" [ngClass]="connectedInitiatorsDisabled ? 'disabled' : ''">
+                <label>{{'Connected Initiators'}}</label>
+                <mat-selection-list class="connected-initiators-list" #connectedInitiatorsList [disabled]="connectedInitiatorsDisabled">
                     <mat-list-option *ngFor="let initiator of connectedInitiators" [value]="initiator">
                         {{initiator['initiator']}} ({{initiator['initiator_addr']}})
                     </mat-list-option>
                 </mat-selection-list>
                 <div fxLayoutAlign="end center">
-                    <button mat-flat-button color="primary" type="button" (click)="getConnectedInitiators()">
+                    <button mat-flat-button color="primary" type="button" (click)="getConnectedInitiators()" [disabled]="connectedInitiatorsDisabled">
                         <mat-icon>refresh</mat-icon> {{'REFRESH'}}
                     </button>
                 </div>
