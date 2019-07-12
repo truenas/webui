@@ -92,7 +92,6 @@ export class VolumesListTableConfig implements InputTableConf {
   private recursiveIsChecked: boolean = false;
   public dialogConf: DialogFormConfiguration;
   public restartServices = false;
-  public tempDialogFormValue: any;
 
   constructor(
     private parentVolumesListComponent: VolumesListComponent,
@@ -263,8 +262,8 @@ export class VolumesListTableConfig implements InputTableConf {
     localRest = this.rest,
     localParentVol = this.parentVolumesListComponent,
     localDialogService = this.dialogService,
-    localSnackBar = this.snackBar;
-
+    localSnackBar = this.snackBar
+    
     this.storageService.poolUnlockServiceChoices().pipe(
       map(serviceChoices => {
         return {
@@ -332,6 +331,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
   getActions(rowData: any) {
     let rowDataPathSplit = [];
+    let localRestartServices = this.restartServices;
     if (rowData.path) {
       rowDataPathSplit = rowData.path.split('/');
     }
@@ -352,13 +352,12 @@ export class VolumesListTableConfig implements InputTableConf {
                 item.attachments.forEach((i) => {
                   let tempArr = i.split(',');
                   tempArr.forEach((i) => {
-                    p1 += `<br> - ${i};`
+                    p1 += `<br> - ${i}`
                   }) 
                 })
 
               })
             }
-          
             this.ws.call('pool.processes', [row1.id]).subscribe((res) => {
               let services = [];
               if (res.length > 0) {
@@ -370,11 +369,15 @@ export class VolumesListTableConfig implements InputTableConf {
                 if (services.length > 0) {
                   p1 += '<br>The following running services are using this pool:<br>';
                   services.forEach((service) =>  {
-                    p1 += `<br> - ${service.service};`
+                    p1 += `<br> - ${service.service}`
                   })
                 }
               }
-              // unknown processes?
+              // Following unknown processes are using this pool:
+              //  * 12648 /usr/local/bin/zsh
+              // WARNING: These unknown processes will be terminated while exporting the pool.
+              // (we need to make clear that this warning only relates to unknown processes
+              //   and services will continue functioning without interruption)
               this.loader.close();
 
           let encryptedStatus = row1.vol_encryptkey,
@@ -410,12 +413,6 @@ export class VolumesListTableConfig implements InputTableConf {
               name: 'cascade',
               value: true,
               placeholder: helptext.detachDialog_pool_detach_cascade_checkbox_placeholder,
-            }, {
-              type: 'checkbox',
-              name: 'restart_services',
-              value: this.restartServices,
-              placeholder: 'Restart services',
-              isHidden: !this.restartServices
             },{
               type: 'checkbox',
               name: 'confirm',
@@ -441,11 +438,9 @@ export class VolumesListTableConfig implements InputTableConf {
               }],
             customSubmit: function (entityDialog) {
               const value = entityDialog.formValue;
-              console.log(value)
-
               let dialogRef = localDialog.open(EntityJobComponent, {data: {"title":"Exporting Pool"}, disableClose: true});
               dialogRef.componentInstance.setDescription(T("Exporting Pool..."));
-              dialogRef.componentInstance.setCall("pool.export", [row1.ibd, { destroy: value.destroy, cascade: value.cascade, restart: this.restartServices }]);
+              dialogRef.componentInstance.setCall("pool.export", [row1.id, { destroy: value.destroy, cascade: value.cascade, restart_services: localRestartServices }]);
               dialogRef.componentInstance.submit();
               dialogRef.componentInstance.success.subscribe(res=>{
                 entityDialog.dialogRef.close(true);
@@ -460,42 +455,37 @@ export class VolumesListTableConfig implements InputTableConf {
               }),
               dialogRef.componentInstance.failure.subscribe((res) => {
                 let conditionalErrMessage = '';
-                console.log(res)
                 if (res.error.includes('EBUSY')) {
                   if (res.exc_info && res.exc_info.extra && res.exc_info.extra['code'] === 'services_restart') {
+                    entityDialog.dialogRef.close(true);
+                    dialogRef.close(true);
                     conditionalErrMessage = 
-                    `Warning: these services have to be restarted in order to export pool: ${res.exc_info.extra['services']}`;
-                    // entityDialog.dialogRef.close(true);
-                    // do the odd thing here
-                    localDialogService.confirm(T("Error exporting/disconnecting pool."),conditionalErrMessage, false, 
-                      T('Proceed With Export')).subscribe((res) => {
-                        if (res) {
-                          this.restartServices = true;
-                          this.customSubmit()
-                        }
-                      })
+                    `Warning: These services have to be restarted in order to export pool: 
+                      ${res.exc_info.extra['services']}
+                      Services will now be restarted and then exporting/disconnecting will continue.`;
+                      localDialogService.confirm(T("Error exporting/disconnecting pool."),
+                        conditionalErrMessage, true, 'Restart Services and Continue')
+                          .subscribe((res) => {
+                            if (res) {
+                              this.restartServices = true;
+                              this.customSubmit(entityDialog);
+                            }
+                        })
                   } else if (res.exc_info && res.exc_info.extra && res.exc_info.extra['code'] === 'unstoppable_processes') {
+                    entityDialog.dialogRef.close(true);
+
                     conditionalErrMessage = 
                     `Unable to terminate following processes using this pool: ${res.exc_info.extra['processes']}`;
-                    dialogRef.close(false);
+                    dialogRef.close(true);
                     localDialogService.errorReport(T("Error exporting/disconnecting pool."), conditionalErrMessage, res.exception);
                   }
                 } else {
-                  dialogRef.close(false);
-                  // localDialogService.errorReport(T("Error exporting/disconnecting pool."), res.error, res.exception);
-                  conditionalErrMessage = 
-                    `Warning: these services have to be restarted in order to export pool:`;
-                  localDialogService.confirm(T("Error exporting/disconnecting pool."),conditionalErrMessage, false, 
-                  T('Proceed With Export')).subscribe((res) => {
-                    if (res) {
-                      this.restartServices = true;
-                      
-                    }
-                  })
-                }           
+                  entityDialog.dialogRef.close(true);
+                  dialogRef.close(true);
+                  localDialogService.errorReport(T("Error exporting/disconnecting pool."), res.error, res.exception);
+                };  
               });
             }
-            
           }
           this.dialogService.dialogFormWide(conf);
         })
