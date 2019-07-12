@@ -6,7 +6,7 @@ import { EntityFormService } from '../../../../common/entity/entity-form/service
 import { FieldRelationService } from '../../../../common/entity/entity-form/services/field-relation.service';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../../common/entity/utils';
-import { WebSocketService } from '../../../../../services/';
+import { WebSocketService, DialogService } from '../../../../../services/';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import * as _ from 'lodash';
 
@@ -81,6 +81,7 @@ export class InitiatorFormComponent implements OnInit {
   public formGroup;
   public connectedInitiators;
   public connectedInitiatorsDisabled = false;
+  public error;
 
   constructor(
     protected router: Router,
@@ -88,12 +89,17 @@ export class InitiatorFormComponent implements OnInit {
     protected loader: AppLoaderService,
     protected ws: WebSocketService,
     protected entityFormService: EntityFormService,
-    protected fieldRelationService: FieldRelationService) { }
+    protected fieldRelationService: FieldRelationService,
+    protected dialog: DialogService) { }
 
   getConnectedInitiators() {
-    this.ws.call('iscsi.global.sessions').subscribe((res) => {
-      this.connectedInitiators = res;
-    })
+    this.ws.call('iscsi.global.sessions').subscribe(
+      (res) => {
+        this.connectedInitiators = _.unionBy(res, (item) => item['initiator'] && item['initiator_addr']);
+      },
+      (err) => {
+        new EntityUtils().handleWSError(this, err);
+      })
   }
   ngOnInit() {
     this.getConnectedInitiators();
@@ -141,6 +147,7 @@ export class InitiatorFormComponent implements OnInit {
   }
 
   onSubmit(event) {
+    this.error = null;
     const value = _.cloneDeep(this.formGroup.value);
 
     value['initiators'] = value['all'] ? [] : Array.from(value['initiators']);

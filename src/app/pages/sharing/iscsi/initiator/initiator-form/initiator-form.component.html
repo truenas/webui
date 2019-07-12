@@ -39,5 +39,6 @@
             <button *ngIf="route_success" (click)="goBack()" type="button" mat-button
                 color="accent">{{ "Cancel" | translate }}</button>
         </mat-card-actions>
+        <mat-error *ngIf="error" type="danger" id="error_message"><div [innerHTML]="error"></div></mat-error>
     </form>
 </mat-card>
