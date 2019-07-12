@@ -67,7 +67,15 @@ export class InitiatorFormComponent implements OnInit{
   constructor(protected router: Router, protected aroute: ActivatedRoute, protected loader: AppLoaderService, protected ws: WebSocketService,
     protected entityFormService: EntityFormService,) {}
 
+  getConnectedInitiators() {
+    this.ws.call('iscsi.global.sessions').subscribe((res) => {
+      console.log(res);
+      this.connectedInitiators = res;
+    })
+  }
   ngOnInit() {
+    this.getConnectedInitiators();
+
     this.aroute.params.subscribe(params => {
       if (params['pk']) {
         this.pk = params['pk'];
@@ -75,10 +83,6 @@ export class InitiatorFormComponent implements OnInit{
       }
     });
 
-    this.ws.call('iscsi.global.sessions').subscribe((res) => {
-      console.log(res);
-      this.connectedInitiators = [...res, ...res, ...res, ...res, ...res];
-    })
     this.formGroup = this.entityFormService.createFormGroup([this.allowAllInitiatorsField, this.initiatorsField, this.authnetworkField, this.commentField]);
 
     if (this.pk) {
