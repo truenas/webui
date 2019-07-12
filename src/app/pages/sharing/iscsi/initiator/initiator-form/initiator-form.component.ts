@@ -130,6 +130,9 @@ export class InitiatorFormComponent implements OnInit {
               }
             }
           }
+          if (res[0]['initiators'].length === 0 && res[0]['auth_network'].length === 0) {
+            this.formGroup.controls['all'].setValue(true);
+          }
         },
         (err) => {
           new EntityUtils().handleWSError(this, err);
@@ -140,10 +143,12 @@ export class InitiatorFormComponent implements OnInit {
   onSubmit(event) {
     const value = _.cloneDeep(this.formGroup.value);
 
-    value['initiators'] = Array.from(value['initiators']);
-    value['auth_network'] = Array.from(value['auth_network']);
+    value['initiators'] = value['all'] ? [] : Array.from(value['initiators']);
+    value['auth_network'] = value['all'] ? [] : Array.from(value['auth_network']);
     delete value['initiators_input'];
     delete value['auth_network_input'];
+    delete value['all'];
+
     let submitFunction;
     if (this.pk === undefined) {
       submitFunction = this.ws.call(this.addCall, [value]);
