@@ -13,3 +13,7 @@ div.dynamic-list-container {
 div.move-to-action {
     padding-right: 10px;
 }
+div.dynamic-list-container.disabled label.dynamic-list-item {
+    opacity: 0.38;
+    cursor: default;
+}

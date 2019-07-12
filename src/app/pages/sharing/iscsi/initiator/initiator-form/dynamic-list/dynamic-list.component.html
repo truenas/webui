@@ -1,6 +1,7 @@
-<div class="dynamic-list-container" fxLayout="row">
+<div class="dynamic-list-container" fxLayout="row" [ngClass]="this.listControl.disabled ? 'disabled' : ''">
     <div fxFlexAlign="center" class="move-to-action">
-        <button mat-flat-button color="primary" class="move-to-btn" type="button" (click)="drop()">
+        <button mat-flat-button color="primary" class="move-to-btn" type="button" (click)="drop()"
+            [disabled]="this.listControl.disabled">
             <mat-icon>arrow_forward</mat-icon>
         </button>
     </div>
@@ -11,17 +12,19 @@
                     [fieldShow]="'show'"></div>
             </div>
             <div>
-                <button mat-flat-button color="primary" type="button" (click)="add()">
+                <button mat-flat-button color="primary" type="button" (click)="add()"
+                    [disabled]="this.listControl.disabled">
                     <mat-icon>add</mat-icon>
                 </button>
             </div>
         </div>
         <div fxLayout="row">
             <div class="dynamic-list">
-                <mat-list>
+                <mat-list class="dynamic-list">
                     <mat-list-item *ngFor="let item of this.listControl.value" class="dynamic-list">
-                        <h4 mat-line>{{item}}</h4>
-                        <button mat-flat-button type="button" (click)="remove(item)" color="accent">
+                        <label mat-line class="dynamic-list-item">{{item}}</label>
+                        <button mat-flat-button type="button" (click)="remove(item)" color="accent"
+                            [disabled]="this.listControl.disabled">
                             <mat-icon mat-list-icon>remove</mat-icon>
                         </button>
                     </mat-list-item>

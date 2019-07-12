@@ -32,6 +32,10 @@ export class DynamciListComponent implements OnInit {
         if (this.listControl.value === undefined) {
             this.listControl.setValue(new Set([]));
         }
+        this.listControl.statusChanges.subscribe((res)=> {
+            const method = res === 'DISABLED' ? 'disable' : 'enable';
+            this.inputControl[method]();
+        })
     }
 
     add() {
