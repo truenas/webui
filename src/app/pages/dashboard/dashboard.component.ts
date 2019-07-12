@@ -180,7 +180,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
     this.core.register({observerClass: this, eventName: 'PoolData'}).subscribe((evt:CoreEvent) => {
       //this.system.pools = evt.data;
       this.pools = evt.data;
-      console.log(this.pools);
+      //console.log(this.pools);
     });
 
     this.core.register({observerClass: this, eventName: 'SysInfo'}).subscribe((evt:CoreEvent) => {

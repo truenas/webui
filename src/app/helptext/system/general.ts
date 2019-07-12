@@ -5,8 +5,7 @@ export const helptext_system_general = {
 
   stg_guicertificate: {
     placeholder: T("GUI SSL Certificate"),
-    tooltip: T(
-      'Required for <i>HTTPS</i>. Browse to the location of\
+    tooltip: T('Required for <i>HTTPS</i>. Browse to the location of\
  the certificate to use for encrypted connections. If\
  there are no certificates, create a <a\
  href="--docurl--/system.html#cas"\
@@ -64,8 +63,7 @@ export const helptext_system_general = {
     placeholder: T("WebGUI HTTP -> HTTPS Redirect"),
     tooltip: T(
       "Check this to redirect <i>HTTP</i> connections to\
-        <i>HTTPS</i>. <i>HTTPS</i> must be selected in\
-        <b>Protocol</b>."
+ <i>HTTPS</i>. A <i>GUI SSL Certificate</i> must be selected."
     )
   },
 
@@ -113,7 +111,9 @@ export const helptext_system_general = {
 
   crash_reporting: {
     placeholder: T("Crash reporting"),
-    tooltip: T("Enable sending anonymous crash reports to iXsystems")
+    tooltip: T("Send failed HTTP request data which can include client\
+ and server IP addresses, failed method call tracebacks, and\
+ middleware log file contents to iXsystems.")
   },
 
   usage_collection: {

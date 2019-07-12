@@ -5,7 +5,6 @@ import {
 } from '@angular/core';
 
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material';
 import * as _ from 'lodash';
 
 import { RestService, WebSocketService, StorageService } from '../../../../services/';
@@ -13,9 +12,11 @@ import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
 import { DialogService } from 'app/services/dialog.service';
+import { MatSnackBar, MatDialog } from '@angular/material';
 import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../translate-marker';
+import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component';
 import helptext from '../../../../helptext/storage/volumes/volume-key';
 
 @Component({
@@ -36,6 +37,11 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
   };
 
   fieldConfig: FieldConfig[] = [
+    {
+      type: 'paragraph',
+      name: 'addkey-instructions',
+      paraText: helptext.add_key_instructions,
+    },
     {
       type : 'input',
       name : 'name',
@@ -68,7 +74,8 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
       protected dialogService: DialogService,
       protected loader: AppLoaderService,
       protected storage: StorageService,
-      protected snackBar: MatSnackBar
+      protected snackBar: MatSnackBar,
+      protected mdDialog: MatDialog
   ) {
 
   }
@@ -90,9 +97,12 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
         this.rest.post(this.resource_name + "/" + this.pk + "/recoverykey/", {}).subscribe((restPostResp) => {
           this.loader.close();
           this.snackBar.open(T("Recovery key added to pool ") + value.name, 'close', { duration: 5000 });
-          this.storage.downloadFile('geli_recovery.key', restPostResp.data.content, 'application/octet-stream');
-          this.router.navigate(new Array('/').concat(
-            this.route_success));
+          let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
+          dialogRef.componentInstance.volumeId = this.pk;
+          dialogRef.afterClosed().subscribe(result => {
+            this.router.navigate(new Array('/').concat(
+              this.route_success));
+          })
         }, (res) => {
           this.loader.close();
           this.dialogService.errorReport(T("Error adding recovery key to pool."), res.error.error_message, res.error.traceback);

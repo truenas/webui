@@ -168,7 +168,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       empty: this.empty,
       'disk details': this.disk_details
     }
-      console.log(this.templates);
 
     this.path = [
       { name: "overview",template: this.overview},
@@ -243,11 +242,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     } else if(direction == 'back'){
       // empty the path segment
       this.path[parseInt(this.currentSlide)] = { name: "empty", template: this.empty}
-    }
-
-    if(name == 'disks'){
-      console.log(this.path);
-      console.log('name:' + name + ', verified: ' + verified + ', slideIndex: ' + slideIndex + ', dataIndex: ' + dataIndex + ', dataSource: ' + dataSource);
     }
 
     this.updateSlidePosition(slideIndex);

@@ -1,6 +1,5 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { RestService, WebSocketService } from '../../../services/';
@@ -35,7 +34,7 @@ export class SupportComponent {
   public saveSubmitText = "Submit";
   public password_fc: any;
   public username_fc: any;
-  public is_freenas: string = window.localStorage['is_freenas'];
+  public is_freenas: boolean;
   public product_image = '';
   public scrshot: any;
   public subs: any;
@@ -99,18 +98,15 @@ export class SupportComponent {
         {
           type: 'paragraph',
           name: 'support_text',
-          paraText: this.sanitizer.bypassSecurityTrustHtml(
+          paraText: 
             'Search the <a href="https://jira.ixsystems.com/projects/NAS/issues/" \
-              target="_blank" style="text-decoration:underline;">FreeNAS issue tracker</a> \
+              target="_blank">FreeNAS issue tracker</a> \
               to ensure the issue has not already been reported before \
               filing a bug report or feature request. If an issue has \
               already been created, add a comment to the existing issue. \
-              Please visit the <a href="http://www.ixsystems.com/storage/" target="_blank" \
-              style="text-decoration:underline;">iXsystems storage page</a> \
-              for enterprise-grade storage solutions and support.<br><br> \
-              <a href="https://jira.ixsystems.com/secure/Signup!default.jspa" target="_blank" \
-              style="text-decoration:underline;">Create a Jira account</a> to file an issue. Use a valid \
-              email address when registering to receive issue status updates.')
+              Please visit the <a href="http://www.ixsystems.com/storage/" target="_blank"> \
+              iXsystems storage page</a> \
+              for enterprise-grade storage solutions and support.'
         }
       ]
     },
@@ -163,6 +159,13 @@ export class SupportComponent {
           type: 'paragraph',
           name: 'FN_col2',
           paraText: '<i class="material-icons">mail</i>Contact Support'
+        },
+        {
+          type: 'paragraph',
+          name: 'FN_jira-info',
+          paraText: '<a href="https://jira.ixsystems.com/secure/Signup!default.jspa" target="_blank">\
+          Create a Jira account</a> to file an issue. Use a valid \
+          email address when registering to receive issue status updates.'
         },
         {
           type : 'input',
@@ -226,6 +229,17 @@ export class SupportComponent {
         },
         {
           type : 'select',
+          name : 'category',
+          placeholder : helptext.category.placeholder,
+          tooltip : helptext.category.tooltip,
+          required: true,
+          validation : helptext.category.validation,
+          options:[],
+          disabled: true,
+          isLoading: false
+        },
+        {
+          type : 'select',
           name : 'TNCategory',
           placeholder : helptext.type.placeholder,
           tooltip : helptext.type.tooltip,
@@ -275,15 +289,6 @@ export class SupportComponent {
           value: 'inquiry'
         },
         {
-          type : 'select',
-          name : 'category',
-          placeholder : helptext.category.placeholder,
-          tooltip : helptext.category.tooltip,
-          required: true,
-          validation : helptext.category.validation,
-          options:[]
-        },
-        {
           type : 'checkbox',
           name : 'attach_debug',
           placeholder : helptext.attach_debug.placeholder,
@@ -303,7 +308,8 @@ export class SupportComponent {
           placeholder : helptext.body.placeholder,
           tooltip : helptext.body.tooltip,
           required: true,
-          validation : helptext.body.validation
+          validation : helptext.body.validation,
+          textAreaRows: 8
         },
         {
           type: 'upload',
@@ -323,6 +329,7 @@ export class SupportComponent {
 
   private freeNASFields: Array<any> = [
     'FN_col1',
+    'FN_jira-info',
     'FN_version',
     'FN_model',
     'FN_memory',
@@ -349,7 +356,6 @@ export class SupportComponent {
     'TNCategory',
     'environment',
     'criticality',
-    'screenshot'
   ];
 
   public custActions: Array<any> = [];
@@ -357,14 +363,17 @@ export class SupportComponent {
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected _injector: Injector,
               protected _appRef: ApplicationRef, protected dialog: MatDialog,
-              private sanitizer: DomSanitizer, protected dialogService: DialogService,
+              protected dialogService: DialogService,
               public loader: AppLoaderService, private snackbar: SnackbarService)
               {}
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
     this.category = _.find(this.fieldConfig, {name: "category"});
-    if (this.is_freenas === 'true') {
+    if (window.localStorage['is_freenas'] === 'true') {
+      this.is_freenas = true;
+    };
+    if (this.is_freenas) {
       for (let i in this.trueNASFields) {
         this.hideField(this.trueNASFields[i], true, entityEdit);
       }
@@ -375,9 +384,9 @@ export class SupportComponent {
         _.find(this.fieldConfig, {name : "FN_model"}).paraText += res.system_product;
         _.find(this.fieldConfig, {name : "FN_memory"}).paraText += Number(res.physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB';
         _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText ? 
-        _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText += res.system_serial :
-        _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText = '';
-        _.find(this.fieldConfig, {name : "pic"}).paraText = `<img src="../../../assets/images/${this.product_image}" height="350">`;
+          _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText += res.system_serial :
+          _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText = '';
+        _.find(this.fieldConfig, {name : "pic"}).paraText = `<img src="assets/images/${this.product_image}" height="350">`;
       })
     } else {
       for (let i in this.freeNASFields) {
@@ -506,7 +515,7 @@ export class SupportComponent {
   }
 
   customSubmit(entityEdit): void{
-    if (this.is_freenas === 'true') {
+    if (this.is_freenas) {
       this.payload['username'] = entityEdit.username;
       this.payload['password'] = entityEdit.password;
       this.payload['category'] = entityEdit.category;
@@ -530,35 +539,41 @@ export class SupportComponent {
 
   openDialog() {
     const dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Ticket","CloseOnClickOutside":true}});
+    let url;
     dialogRef.componentInstance.setCall('support.new_ticket', [this.payload]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.subscribe(res=>{
-      const url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
-      if (this.is_freenas === 'true') {
-        dialogRef.componentInstance.setDescription(url);
-      } else {
-        if (this.subs.length > 0) {
-          this.subs.forEach((item) => {
-            const formData: FormData = new FormData();
+      if (res.result) {
+        url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
+      }
+      if (res.method === 'support.new_ticket' && this.subs.length > 0) {
+        this.subs.forEach((item) => {
+          const formData: FormData = new FormData();
+          if (this.is_freenas) {
             formData.append('data', JSON.stringify({
               "method": "support.attach_ticket",
-              "params": [{'ticket': (res.result.ticket).toString(), 'filename': item.file.name}]
+              "params": [{'ticket': (res.result.ticket), 'filename': item.file.name, 'username': this.payload['username'], 'password': this.payload['password'] }]
             }));
-            formData.append('file', item.file);
-            dialogRef.componentInstance.wspost(item.apiEndPoint, formData);
-            dialogRef.componentInstance.success.subscribe(res=>{
-              // console.info(res);
-            }),
-            dialogRef.componentInstance.failure.subscribe((res) => {
-              dialogRef.componentInstance.setDescription(res.error);
-            });
+          } else { // TrueNAS support form doesn't ask for sign-in creds
+            formData.append('data', JSON.stringify({
+              "method": "support.attach_ticket",
+              "params": [{'ticket': (res.result.ticket), 'filename': item.file.name }]
+            }));
+          }
+          formData.append('file', item.file, item.apiEndPoint);
+          dialogRef.componentInstance.wspost(item.apiEndPoint, formData);
+          dialogRef.componentInstance.success.subscribe(res=>{
+            // console.info(res);
+          }),
+          dialogRef.componentInstance.failure.subscribe((res) => {
+            dialogRef.componentInstance.setDescription(res.error);
           });
-          dialogRef.componentInstance.setDescription(url);
-        } else {
-          dialogRef.componentInstance.setDescription(url);
-        }
+        });
+        dialogRef.componentInstance.setDescription(url);
+      } else {
+        dialogRef.componentInstance.setDescription(url);
       }
-    }),
+    })
     dialogRef.componentInstance.failure.subscribe((res) => {
       dialogRef.componentInstance.setDescription(res.error);
     });
@@ -580,14 +595,24 @@ export class SupportComponent {
           this.category.options = [];
         }
         if(this.category.options.length === 0 && this.username !== '' && this.password !== ''){
+          this.category.isLoading = true;
           parent.ws.call('support.fetch_categories',[this.username,this.password]).subscribe((res)=>{
+            this.category.isLoading = false;
+            parent.entityEdit.setDisabled('category', false);
             for (const property in res) {
               if (res.hasOwnProperty(property)) {
                 this.category.options.push({label : property, value : res[property]});
               }
             }},(error)=>{
+              if (error.reason[0] === '[') {
+                while (error.reason[0] !== ' ') {
+                  error.reason = error.reason.slice(1);
+                }
+              }
+              parent.entityEdit.setDisabled('category', true);
+              this.category.isLoading = false;
               this.password_fc['hasErrors'] = true;
-              this.password_fc['errors'] = 'Incorrect Username/Password.';
+              this.password_fc['errors'] = error.reason;
             });
         }
       }

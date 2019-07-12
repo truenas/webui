@@ -23,7 +23,7 @@
 
 
         <!-- Carousel -->
-        <div *ngIf="poolState" id="" class="carousel" #carousel >
+        <div *ngIf="poolState && path" id="" class="carousel" #carousel >
 
           <!--<ng-container *ngTemplateOutlet="path[0].template"></ng-container>-->
           <div *ngFor="let slide of path;" fxFlex="100" class="slide {{slide.name}}" >
