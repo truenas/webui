@@ -25,7 +25,7 @@ export class InitiatorFormComponent implements OnInit {
   public route_success: string[] = ['sharing', 'iscsi', 'initiator'];
   protected pk: any;
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     {
       type: 'checkbox',
       name: 'all',

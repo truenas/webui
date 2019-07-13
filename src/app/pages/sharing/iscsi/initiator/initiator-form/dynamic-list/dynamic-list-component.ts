@@ -11,7 +11,7 @@ export class DynamciListComponent implements OnInit {
     @Input() group: FormGroup;
     @Input() source: any;
 
-    protected listControl: AbstractControl;
+    public listControl: AbstractControl;
     protected inputConfig: any;
     protected inputControl: AbstractControl;
 
