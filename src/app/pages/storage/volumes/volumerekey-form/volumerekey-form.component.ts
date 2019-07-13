@@ -12,8 +12,10 @@ import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
 import { DialogService } from 'app/services/dialog.service';
+import { MatSnackBar, MatDialog } from '@angular/material';
 import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/storage/volumes/volume-key';
 
@@ -40,6 +42,10 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
       name : 'name',
       isHidden: true
     },{
+      type: 'paragraph',
+      name: 'rekey-instructions',
+      paraText: helptext.rekey_instructions
+    },{
       type : 'input',
       inputType: 'password',
       name : 'passphrase',
@@ -64,7 +70,9 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
       protected _injector: Injector,
       protected _appRef: ApplicationRef,
       protected dialogService: DialogService,
-      protected loader: AppLoaderService
+      protected loader: AppLoaderService,
+      protected snackBar: MatSnackBar,
+      protected mdDialog: MatDialog
   ) {
 
   }
@@ -82,12 +90,18 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
   customSubmit(value) {
     this.loader.open();
 
-    return this.rest.post(this.resource_name + "/" + this.pk + "/rekey/", { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
-      this.loader.close();
-      this.dialogService.Info(T("Re-keyed Pool"), T("Successfully re-keyed pool ") + value.name);
-
-      this.router.navigate(new Array('/').concat(
-        this.route_success));
+    return this.rest.post(this.resource_name + "/" + this.pk + "/rekey/", 
+      { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
+        this.loader.close();
+        this.snackBar.open(T('Successfully re-keyed pool ') + value.name, T("Close"), {
+          duration: 5000,
+      });
+        let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
+        dialogRef.componentInstance.volumeId = this.pk;
+        dialogRef.afterClosed().subscribe(result => {
+          this.router.navigate(new Array('/').concat(
+            this.route_success));
+        });
     }, (res) => {
       this.loader.close();
       this.dialogService.errorReport(T("Error re-keying pool"), res.error, res.trace.formatted);

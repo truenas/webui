@@ -57,6 +57,7 @@ vcpus_tooltip: T('Number of virtual CPUs to allocate to the virtual\
  might also have operational or licensing\
  restrictions on the number of CPUs.'),
 
+memory_limitation: T('Available memory'),
 memory_placeholder: T('Memory Size (MiB)'),
 memory_validation : [ Validators.required, Validators.min(128)],
 memory_tooltip: T('Allocate a number of megabytes of RAM for the VM.'),

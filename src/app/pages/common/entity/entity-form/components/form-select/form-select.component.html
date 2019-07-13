@@ -1,5 +1,11 @@
 <div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" [hidden]="config.isHidden">
   <mat-form-field class="full-width" value="fromFormField" #field>
+      <mat-spinner
+        diameter='40'
+        class="form-select-spinner"
+        id="{{config.name}}_form-select-spinner"
+        *ngIf="config.isLoading">
+      </mat-spinner>
     <mat-select 
       #selectTrigger
       [value]="formValue"

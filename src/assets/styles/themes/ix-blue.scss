@@ -1250,6 +1250,21 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     .mat-card-actions {
       margin-left: 15px;
     }
+
+    #FN_jira-info {
+      margin-bottom: 10px;
+    }
+
+    #category_form-select-spinner {
+      position: absolute;
+      top: -20px;
+      right: 45%;
+    }
+
+    .mat-card-actions {
+      margin-top: -54px;
+      width: 50%
+    }
   }
 
   entity-form form-combobox mat-form-field {
@@ -1301,6 +1316,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-card{
     border-radius: 6px;
     //overflow: hidden; // This clips tooltips
+  }
+
+  app-support a {
+    text-decoration: underline;
   }
 
  } // end of ix theme
