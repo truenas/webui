@@ -31,7 +31,7 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
   private _globalPreview:boolean = false;
   public baseThemes: Theme[];
   public snapshot:FormSnapshot;
-  customThemeFormConfig:FormConfig = {};// see if we can use this instead of passing this whole component in 
+  customThemeFormConfig:FormConfig = {};// see if we can use this instead of passing this whole component in
   protected isEntity: boolean = true; // was true
 
   // EXAMPLE THEME
@@ -124,7 +124,7 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
           tooltip: "Choose the color to display next to the Menu Label \
                     in the Favorites menu.",
           class:'inline'
-                   
+
         },
         { type: 'input',
           name : 'description',
@@ -430,7 +430,9 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
           case "UpdatePreview":
             this.snapshot = {theme:evt.data, baseTheme:this.baseTheme}
             if(this.globalPreview){
-              this.updateGlobal(this.snapshot);
+              setTimeout(() => {
+                this.updateGlobal(this.snapshot);
+              })
             }
             this.updatePreview(evt.data);
           break;
