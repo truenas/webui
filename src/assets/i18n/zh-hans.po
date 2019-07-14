@@ -716,6 +716,11 @@ msgid ""
 "the chosen topology. Existing data on the pool is kept intact."
 msgstr "添加的磁盘被擦除，然后存储池将被扩展到新磁盘使用选择的拓扑。在存储池上的现有数据依旧被保留。"
 
+msgid ""
+"Adding a recovery key invalidates any previous recovery key. A dialog will "
+"open to save a backup of the new recovery key."
+msgstr ""
+
 msgid "Adding data vdevs of different types is not supported."
 msgstr ""
 
@@ -1213,14 +1218,11 @@ msgstr ""
 msgid "Attach NIC"
 msgstr "连接网卡"
 
-msgid "Attach screenshot(s)."
+msgid "Attach screenshots."
 msgstr ""
 
 msgid "Auth Method"
 msgstr "捡到方式"
-
-msgid "Authenticate"
-msgstr ""
 
 msgid "Authentication Group number"
 msgstr "认证组编号"
@@ -1311,6 +1313,9 @@ msgstr "可用磁盘"
 
 msgid "Available Themes"
 msgstr "可用主题"
+
+msgid "Available memory"
+msgstr ""
 
 msgid "Available space threshold (%)"
 msgstr "可用空间阈值 (%)"
@@ -1618,9 +1623,6 @@ msgstr "修改密码短语"
 msgid "Change Password"
 msgstr "修改密码"
 
-msgid "Change Pool Passphrase"
-msgstr "修改存储池密码短语"
-
 msgid "Change User & Group Ownership"
 msgstr "变更用户和群组的所有人"
 
@@ -1687,6 +1689,11 @@ msgstr ""
 "train and boot into it to switch to that train."
 
 msgid ""
+"Changing the passphrase requires the creation of a new recovery key. A "
+"dialog will open to save a backup of the new recovery key."
+msgstr ""
+
+msgid ""
 "Changing to a nightly train is one-way. Changing back to a stable train is "
 "not supported!"
 msgstr "切换到Nightly分支是单向的。改回到稳定分支是不被支持的！"
@@ -1737,9 +1744,9 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Check this to redirect <i>HTTP</i> connections to        <i>HTTPS</i>. "
-"<i>HTTPS</i> must be selected in        <b>Protocol</b>."
-msgstr "选择此选项来重定向<i>HTTP</i>连接到<i>HTTPS</i>。<i>HTTPS</i>必须在<b>协议</b>中被选择。"
+"Check this to redirect <i>HTTP</i> connections to <i>HTTPS</i>. A <i>GUI "
+"SSL Certificate</i> must be selected."
+msgstr ""
 
 msgid "Check-in"
 msgstr ""
@@ -1832,6 +1839,14 @@ msgstr "选择颜色主题"
 
 msgid "Choose a location to store the installer image file."
 msgstr "选择一个位置来保存安装镜像文件。"
+
+msgid ""
+"Choose a path to the user's home directory. If the directory exists and "
+"matches the username, it is set as the user's home directory. When the path "
+"does not end with a subdirectory matching the username, a new subdirectory "
+"is created. The full path to the user's home directory is shown here when "
+"editing a user."
+msgstr ""
 
 msgid "Choose a pool or dataset for jail storage"
 msgstr "选择一个存储池或数据集作为Jail的存储"
@@ -2040,6 +2055,13 @@ msgid "Cipher"
 msgstr ""
 
 msgid ""
+"Classification for each S3 object. Choose a class based on the specific use "
+"case or performance requirements. See <a "
+"href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-class-intro."
+"html\" target=\"_blank\">Amazon S3 Storage Classes</a> for more information."
+msgstr ""
+
+msgid ""
 "Click <b>Browse</b> to select a recovery key to upload. This allows the "
 "system to decrypt the disks."
 msgstr "点击<b>浏览</b>以选择一个恢复密钥来上传。这允许系统解密磁盘。"
@@ -2187,6 +2209,9 @@ msgstr "设置"
 msgid "Config Pool for Jail Manager"
 msgstr ""
 
+msgid "Configure ACL"
+msgstr ""
+
 msgid ""
 "Configure IPv4 networking or internet access for the jail. Enter the IPv4 "
 "address for <a href=\"https://www.freebsd.org/cgi/man.cgi?query=vnet\" "
@@ -2238,6 +2263,12 @@ msgid ""
 "Configure an external program to perform ID mapping. See <a "
 "href=\"http://samba.org.ru/samba/docs/man/manpages/idmap_script.8.html\" "
 "target=\"_blank\">idmap_script(8)</a> for more details."
+msgstr ""
+
+msgid "Configure now"
+msgstr ""
+
+msgid "Configure permissions for this share's dataset now?"
 msgstr ""
 
 msgid "Configure the root user email address."
@@ -2390,9 +2421,6 @@ msgstr "创建密码短语"
 msgid "Create Pool"
 msgstr "创建存储池"
 
-msgid "Create Pool Passphrase"
-msgstr "创建存储池密码短语"
-
 msgid "Create Snapshot"
 msgstr "创建快照"
 
@@ -2437,6 +2465,11 @@ msgstr "创建Jail"
 
 msgid "Creating Jail..."
 msgstr "创建Jail中..."
+
+msgid ""
+"Creating a passphrase requires the creation of a new recovery key. A dialog "
+"will open to save a backup of the new recovery key."
+msgstr ""
 
 msgid ""
 "Creating or editing a <i>sysctl</i> immediately updates the Variable to the "
@@ -2578,11 +2611,6 @@ msgstr ""
 
 msgid "Define a time to start the replication task."
 msgstr "定义一个启动复制任务的时间。"
-
-msgid ""
-"Define an <b>existing</b> pool or dataset as the user home directory and "
-"adjust the permissions."
-msgstr "定义一个<b>现有</b>的存储池或数据集用于用户Home目录和修改权限。"
 
 msgid ""
 "Define an <i>IP address or hostname:optional_port_number</i> to send logs. "
@@ -3174,9 +3202,6 @@ msgstr ""
 msgid "Enable running services that require mlock() in a jail."
 msgstr ""
 
-msgid "Enable sending anonymous crash reports to iXsystems"
-msgstr ""
-
 msgid "Enable sending anonymous usage statistics to iXsystems"
 msgstr ""
 
@@ -3598,9 +3623,6 @@ msgstr "输入IPv4地址。覆盖DHCP分配的默认网关"
 msgid "Enter an IPv6 address. This overrides the default gateway provided by DHCP."
 msgstr "输入IPv6地址。覆盖DHCP分配的默认网关"
 
-msgid "Enter an alias. Limited to 15 characters."
-msgstr "输入一个别名。限制15个字符。"
-
 msgid ""
 "Enter an alphanumeric name for the certificate. Underscore (_), and dash "
 "(-) characters are allowed."
@@ -3631,6 +3653,11 @@ msgid ""
 "Enter any additional parameters from <a "
 "href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\" "
 "target=\"_blank\">rsyncd.conf(5)</a>."
+msgstr ""
+
+msgid ""
+"Enter any aliases, separated by spaces. Each alias can be up to 15 "
+"characters long."
 msgstr ""
 
 msgid ""
@@ -4343,6 +4370,12 @@ msgid "Generate Keypair"
 msgstr ""
 
 msgid ""
+"Generate a new GELI key, replacing the old one on the disks in the pool. "
+"Passphrases will be removed by this operation. <br>A dialog will open to "
+"save a backup of the new recovery key."
+msgstr ""
+
+msgid ""
 "Give this user permission to use <a href=\"https://www.sudo.ws/\" "
 "target=\"_blank\">sudo</a>."
 msgstr ""
@@ -4915,7 +4948,16 @@ msgstr "Jail核心转储大小(bytes)。"
 msgid "Jail data size in bytes."
 msgstr ""
 
+msgid "Jail restarted successfully"
+msgstr ""
+
 msgid "Jail stack size in bytes."
+msgstr ""
+
+msgid "Jail started successfully"
+msgstr ""
+
+msgid "Jail stopped successfully"
 msgstr ""
 
 msgid "Jails"
@@ -5018,6 +5060,9 @@ msgstr ""
 msgid "LEGACY WEB INTERFACE"
 msgstr "经典用户界面"
 
+msgid "LOGIN TO PROVIDER"
+msgstr ""
+
 msgid "LUN ID"
 msgstr "LUN ID"
 
@@ -5084,11 +5129,11 @@ msgstr ""
 msgid "Lifetime"
 msgstr "有效期(天)"
 
-msgid "Limit (kbps)"
+msgid "Limit (KiB/s)"
 msgstr ""
 
 msgid ""
-"Limit replication speed to the specified value in kilobits/second. The "
+"Limit replication speed to the specified value in kilobytes/second. The "
 "default 0 is unlimited."
 msgstr ""
 
@@ -6366,9 +6411,6 @@ msgstr "原始文件大小"
 msgid "Re-key Pool"
 msgstr ""
 
-msgid "Re-keyed Pool"
-msgstr ""
-
 msgid "Read Only"
 msgstr "只读"
 
@@ -6627,6 +6669,12 @@ msgstr "重启网络服务"
 
 msgid "Restart the system?"
 msgstr "重启系统？"
+
+msgid "Restarting"
+msgstr ""
+
+msgid "Restarting Jail"
+msgstr ""
 
 msgid "Restore default"
 msgstr "重置为默认"
@@ -7356,6 +7404,12 @@ msgid "Send Test Alert"
 msgstr "发送测试警报"
 
 msgid "Send Test Mail"
+msgstr ""
+
+msgid ""
+"Send failed HTTP request data which can include client and server IP "
+"addresses, failed method call tracebacks, and middleware log file contents "
+"to iXsystems."
 msgstr ""
 
 msgid "Serial"
@@ -8430,6 +8484,12 @@ msgid ""
 "task completes."
 msgstr ""
 
+msgid "Starting"
+msgstr ""
+
+msgid "Starting Jail"
+msgstr ""
+
 msgid "Starting job..."
 msgstr "开始任务..."
 
@@ -8459,6 +8519,12 @@ msgstr ""
 
 msgid "Stopped the scrub on pool <i>"
 msgstr "已停止数据校验在存储池<i>"
+
+msgid "Stopping"
+msgstr ""
+
+msgid "Stopping Jail"
+msgstr ""
 
 msgid "Stopping scrub on pool <i>"
 msgstr "正在停止数据校验在存储池 <i>"

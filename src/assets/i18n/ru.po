@@ -828,6 +828,11 @@ msgstr ""
 "Добавленные диски стираются, затем пул расширяется на новые диски с "
 "выбранной топологией. Существующие данные в пуле сохраняются."
 
+msgid ""
+"Adding a recovery key invalidates any previous recovery key. A dialog will "
+"open to save a backup of the new recovery key."
+msgstr ""
+
 msgid "Adding data vdevs of different types is not supported."
 msgstr "Добавление vdev данных разных типов не поддерживается."
 
@@ -1430,14 +1435,11 @@ msgstr "Прикрепить отладку"
 msgid "Attach NIC"
 msgstr "Подключить NIC"
 
-msgid "Attach screenshot(s)."
-msgstr "Прикрепить скриншот(ы)."
+msgid "Attach screenshots."
+msgstr ""
 
 msgid "Auth Method"
 msgstr "Метод аутентификации"
-
-msgid "Authenticate"
-msgstr "Аутентифицировать"
 
 msgid "Authentication Group number"
 msgstr "Номер группы аутентификации"
@@ -1537,6 +1539,9 @@ msgstr "Доступные диски"
 
 msgid "Available Themes"
 msgstr "Доступные темы"
+
+msgid "Available memory"
+msgstr ""
 
 msgid "Available space threshold (%)"
 msgstr "Порог свободного пространства (%)"
@@ -1877,9 +1882,6 @@ msgstr "Сменить пароль"
 msgid "Change Password"
 msgstr "Сменить пароль"
 
-msgid "Change Pool Passphrase"
-msgstr "Сменить пароль пула"
-
 msgid "Change User & Group Ownership"
 msgstr "Сменить владельца и группу"
 
@@ -1957,6 +1959,11 @@ msgstr ""
 "поезд, и загрузиться в него, чтобы перейти на этот поезд."
 
 msgid ""
+"Changing the passphrase requires the creation of a new recovery key. A "
+"dialog will open to save a backup of the new recovery key."
+msgstr ""
+
+msgid ""
 "Changing to a nightly train is one-way. Changing back to a stable train is "
 "not supported!"
 msgstr ""
@@ -2019,11 +2026,9 @@ msgstr ""
 "системе существует CSR"
 
 msgid ""
-"Check this to redirect <i>HTTP</i> connections to        <i>HTTPS</i>. "
-"<i>HTTPS</i> must be selected in        <b>Protocol</b>."
+"Check this to redirect <i>HTTP</i> connections to <i>HTTPS</i>. A <i>GUI "
+"SSL Certificate</i> must be selected."
 msgstr ""
-"Отметьте это, чтобы перенаправить <i>HTTP</i> соединения на <i>HTTPS</i>. "
-"<i>HTTPS</i> должен быть выбран в поле <b>Протокол</b>."
 
 msgid "Check-in"
 msgstr ""
@@ -2134,6 +2139,14 @@ msgstr "Выберите цветовую схему."
 
 msgid "Choose a location to store the installer image file."
 msgstr "Выберите место для сохранения файла образа установщика."
+
+msgid ""
+"Choose a path to the user's home directory. If the directory exists and "
+"matches the username, it is set as the user's home directory. When the path "
+"does not end with a subdirectory matching the username, a new subdirectory "
+"is created. The full path to the user's home directory is shown here when "
+"editing a user."
+msgstr ""
 
 msgid "Choose a pool or dataset for jail storage"
 msgstr "Выберите пул или набор данных для хранения jail"
@@ -2422,6 +2435,13 @@ msgid "Cipher"
 msgstr "Шифр"
 
 msgid ""
+"Classification for each S3 object. Choose a class based on the specific use "
+"case or performance requirements. See <a "
+"href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-class-intro."
+"html\" target=\"_blank\">Amazon S3 Storage Classes</a> for more information."
+msgstr ""
+
+msgid ""
 "Click <b>Browse</b> to select a recovery key to upload. This allows the "
 "system to decrypt the disks."
 msgstr ""
@@ -2595,6 +2615,9 @@ msgstr "Настроить"
 msgid "Config Pool for Jail Manager"
 msgstr ""
 
+msgid "Configure ACL"
+msgstr ""
+
 msgid ""
 "Configure IPv4 networking or internet access for the jail. Enter the IPv4 "
 "address for <a href=\"https://www.freebsd.org/cgi/man.cgi?query=vnet\" "
@@ -2630,6 +2653,12 @@ msgid ""
 "Configure an external program to perform ID mapping. See <a "
 "href=\"http://samba.org.ru/samba/docs/man/manpages/idmap_script.8.html\" "
 "target=\"_blank\">idmap_script(8)</a> for more details."
+msgstr ""
+
+msgid "Configure now"
+msgstr ""
+
+msgid "Configure permissions for this share's dataset now?"
 msgstr ""
 
 msgid "Configure the root user email address."
@@ -2794,9 +2823,6 @@ msgstr "Задать пароль"
 msgid "Create Pool"
 msgstr "Создать пул"
 
-msgid "Create Pool Passphrase"
-msgstr "Задать пароль пула"
-
 msgid "Create Snapshot"
 msgstr "Создать снимок"
 
@@ -2841,6 +2867,11 @@ msgstr "Создать jail"
 
 msgid "Creating Jail..."
 msgstr "Создается jail..."
+
+msgid ""
+"Creating a passphrase requires the creation of a new recovery key. A dialog "
+"will open to save a backup of the new recovery key."
+msgstr ""
 
 msgid ""
 "Creating or editing a <i>sysctl</i> immediately updates the Variable to the "
@@ -2999,13 +3030,6 @@ msgstr "Определите время начала, когда задача р
 
 msgid "Define a time to start the replication task."
 msgstr "Определите время для запуска задачи репликации."
-
-msgid ""
-"Define an <b>existing</b> pool or dataset as the user home directory and "
-"adjust the permissions."
-msgstr ""
-"Определите <b>существующий</b> пул или набор данных в качестве домашнего "
-"каталога пользователя и настройте разрешения."
 
 msgid ""
 "Define an <i>IP address or hostname:optional_port_number</i> to send logs. "
@@ -3680,9 +3704,6 @@ msgstr "Включить службы, для которых требуется 
 msgid "Enable running services that require mlock() in a jail."
 msgstr "Включите запуск служб, которые требуют mlock() в jail."
 
-msgid "Enable sending anonymous crash reports to iXsystems"
-msgstr "Включить отправку анонимных отчетов о сбоях в iXsystems"
-
 msgid "Enable sending anonymous usage statistics to iXsystems"
 msgstr "Включить отправку анонимной статистики использования в iXsystems"
 
@@ -4074,9 +4095,6 @@ msgstr ""
 msgid "Enter an IPv6 address. This overrides the default gateway provided by DHCP."
 msgstr ""
 
-msgid "Enter an alias. Limited to 15 characters."
-msgstr ""
-
 msgid ""
 "Enter an alphanumeric name for the certificate. Underscore (_), and dash "
 "(-) characters are allowed."
@@ -4107,6 +4125,11 @@ msgid ""
 "Enter any additional parameters from <a "
 "href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\" "
 "target=\"_blank\">rsyncd.conf(5)</a>."
+msgstr ""
+
+msgid ""
+"Enter any aliases, separated by spaces. Each alias can be up to 15 "
+"characters long."
 msgstr ""
 
 msgid ""
@@ -4811,6 +4834,12 @@ msgid "Generate Keypair"
 msgstr "Генерировать пару ключей"
 
 msgid ""
+"Generate a new GELI key, replacing the old one on the disks in the pool. "
+"Passphrases will be removed by this operation. <br>A dialog will open to "
+"save a backup of the new recovery key."
+msgstr ""
+
+msgid ""
 "Give this user permission to use <a href=\"https://www.sudo.ws/\" "
 "target=\"_blank\">sudo</a>."
 msgstr ""
@@ -5377,7 +5406,16 @@ msgstr ""
 msgid "Jail data size in bytes."
 msgstr ""
 
+msgid "Jail restarted successfully"
+msgstr ""
+
 msgid "Jail stack size in bytes."
+msgstr ""
+
+msgid "Jail started successfully"
+msgstr ""
+
+msgid "Jail stopped successfully"
 msgstr ""
 
 msgid "Jails"
@@ -5478,6 +5516,9 @@ msgstr ""
 msgid "LEGACY WEB INTERFACE"
 msgstr "СТАРЫЙ WEB ИНТЕРФЕЙС"
 
+msgid "LOGIN TO PROVIDER"
+msgstr ""
+
 msgid "LUN ID"
 msgstr "LUN ID"
 
@@ -5544,11 +5585,11 @@ msgstr ""
 msgid "Lifetime"
 msgstr "Время жизни"
 
-msgid "Limit (kbps)"
+msgid "Limit (KiB/s)"
 msgstr ""
 
 msgid ""
-"Limit replication speed to the specified value in kilobits/second. The "
+"Limit replication speed to the specified value in kilobytes/second. The "
 "default 0 is unlimited."
 msgstr ""
 
@@ -6793,9 +6834,6 @@ msgstr ""
 msgid "Re-key Pool"
 msgstr ""
 
-msgid "Re-keyed Pool"
-msgstr ""
-
 msgid "Read Only"
 msgstr "Только чтение"
 
@@ -7051,6 +7089,12 @@ msgstr "Перезапустить службу Web"
 
 msgid "Restart the system?"
 msgstr "Перезапустить систему?"
+
+msgid "Restarting"
+msgstr ""
+
+msgid "Restarting Jail"
+msgstr ""
 
 msgid "Restore default"
 msgstr "Восстановить по умолчанию"
@@ -7765,6 +7809,12 @@ msgid "Send Test Alert"
 msgstr ""
 
 msgid "Send Test Mail"
+msgstr ""
+
+msgid ""
+"Send failed HTTP request data which can include client and server IP "
+"addresses, failed method call tracebacks, and middleware log file contents "
+"to iXsystems."
 msgstr ""
 
 msgid "Serial"
@@ -8788,6 +8838,12 @@ msgid ""
 "task completes."
 msgstr ""
 
+msgid "Starting"
+msgstr ""
+
+msgid "Starting Jail"
+msgstr ""
+
 msgid "Starting job..."
 msgstr "Запускается задание..."
 
@@ -8816,6 +8872,12 @@ msgid "Stop this cloud sync?"
 msgstr ""
 
 msgid "Stopped the scrub on pool <i>"
+msgstr ""
+
+msgid "Stopping"
+msgstr ""
+
+msgid "Stopping Jail"
 msgstr ""
 
 msgid "Stopping scrub on pool <i>"
