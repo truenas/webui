@@ -30,6 +30,7 @@
 		class="disabled-select" 
 		[value]="config.netmaskPreset"
 		[placeholder]="Netmask | translate"
+		(selectionChange)="setNetmask($event)"
 		disabled
 		>
 		<mat-option [value]="config.netmaskPreset">
