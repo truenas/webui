@@ -346,7 +346,7 @@ export class VolumesListTableConfig implements InputTableConf {
           this.loader.open();
           this.ws.call('pool.attachments', [row1.id]).subscribe((res) => {
             if (res.length > 0) {
-              p1 = 'The following services depend on this pool:';
+              p1 = `The following services depend on <b>${row1.name}</b> and will be disrupted when the volume is detached:`;
               res.forEach((item) => {
                 p1 += `<br><br>${item.type}:`;
                 item.attachments.forEach((i) => {
@@ -372,7 +372,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   }
                 });
                 if (running_processes.length > 0) {
-                  p1 += '<br><br>The following running services are using this pool:';
+                  p1 += `<br><br>The following running services are using <b>${row1.name}</b>:`;
                   running_processes.forEach((process) =>  {
                     if (process.name) {
                       p1 += `<br> - ${process.name}`
