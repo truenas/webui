@@ -12,7 +12,7 @@ export class DynamciListComponent implements OnInit {
     @Input() source: any;
 
     public listControl: AbstractControl;
-    protected inputConfig: any;
+    public inputConfig: any;
     protected inputControl: AbstractControl;
 
     constructor() { }
