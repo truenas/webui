@@ -128,7 +128,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public showSpinner: boolean = false;
   public cardHeaderReady = false;
   public showActions: boolean = true;
-  public detailRowHeight = 100;
   public entityTableRowDetailsComponent = EntityTableRowDetailsComponent;
   private _multiActionsIconsOnly: boolean = false;
   get multiActionsIconsOnly(){
@@ -943,20 +942,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   toggleExpandRow(row) {
-    console.log(row);
-    if (!this.startingHeight) {
-      this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
-    }  
+    // console.log(row);
+    // if (!this.startingHeight) {
+    //   this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
+    // }  
     this.table.rowDetail.toggleExpandRow(row);
-    setTimeout(() => {
-      this.expandedRows = (document.querySelectorAll('.datatable-row-detail').length);
-      let newHeight = (this.expandedRows * 100) + this.startingHeight;
-      let heightStr = `height: ${newHeight}px`;
-      document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
-    }, 100)
-  }
-
-  onDetailToggle(event) {
-    //console.log('Detail Toggled', event);
+    // setTimeout(() => {
+    //   this.expandedRows = (document.querySelectorAll('.datatable-row-detail').length);
+    //   let newHeight = (this.expandedRows * 100) + this.startingHeight;
+    //   let heightStr = `height: ${newHeight}px`;
+    //   document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
+    // }, 100)
   }
 }

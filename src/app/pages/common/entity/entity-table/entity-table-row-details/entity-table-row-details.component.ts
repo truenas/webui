@@ -14,7 +14,6 @@ export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
     public columns = [];
 
     ngOnInit() {
-        console.log(this.parent);
         this.buildColumns();
     }
 

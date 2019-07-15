@@ -1,7 +1,8 @@
 <div
     class="entity-table-expanded-panel"
-    fxLayout="row wrap"
+    fxLayoutAlign="start start"
     fxLayoutGap="36px"
+    [style.overflow-x]="'auto'"
 >
     <div *ngFor="let column of this.columns">
         <h4>{{ column.name }}</h4>
