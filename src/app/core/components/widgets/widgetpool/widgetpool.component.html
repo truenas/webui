@@ -88,8 +88,8 @@
                 <div class="list-subheader">  <span class="capitalize">{{currentSlideName}}</span></div>
                 <mat-list>
                   <mat-list-item><strong>Path: </strong>&nbsp;&nbsp; {{poolState.path}}</mat-list-item>
-                  <mat-list-item (click)="updateSlide('topology', poolState.topology.data.length > 0, 1)" [ngClass]="{'clickable': poolState.topology.data.length > 0}">
-                    <strong>Topology: </strong>&nbsp;&nbsp; {{poolState.topology.data.length}} vdev<span *ngIf="poolState.topology.data.length > 1">s</span>
+                  <mat-list-item (click)="updateSlide('layout', poolState.topology.data.length > 0, 1)" [ngClass]="{'clickable': poolState.topology.data.length > 0}">
+                    <strong>Layout: </strong>&nbsp;&nbsp; {{poolState.topology.data.length}} vdev<span *ngIf="poolState.topology.data.length > 1">s</span>
                     <mat-icon *ngIf="poolState.topology.data.length > 0" class="next-slide">chevron_right</mat-icon>
                   </mat-list-item>
 
@@ -116,7 +116,7 @@
           </ng-template>
 
 
-          <ng-template #topology>
+          <ng-template #layout>
             <!--<div class="slide topology" *ngIf="path[currentSlideIndex].name == 'topology'" fxFlex="100">-->
             <div class="list-subheader"><span class="capitalize">{{currentSlideName}}</span></div>
             <mat-list *ngIf="poolState && poolState.topology.data">

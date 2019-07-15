@@ -87,7 +87,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   @ViewChild('carouselparent', {static:true}) carouselParent:ElementRef;
 
   @ViewChild('overview', {static:false}) overview:TemplateRef<any>;
-  @ViewChild('topology', {static:false}) topology:TemplateRef<any>;
+  @ViewChild('layout', {static:false}) layout:TemplateRef<any>;
   @ViewChild('disks', {static:false}) disks:TemplateRef<any>;
   @ViewChild('disk_details', {static:false}) disk_details:TemplateRef<any>;
   @ViewChild('empty', {static:false}) empty:TemplateRef<any>;
@@ -163,7 +163,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   ngAfterViewInit(){
     this.templates = {
       overview: this.overview,
-      topology: this.topology,
+      layout: this.layout,
       disks: this.disks,
       empty: this.empty,
       'disk details': this.disk_details
