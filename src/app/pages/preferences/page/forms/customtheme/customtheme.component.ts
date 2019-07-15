@@ -467,7 +467,7 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
 
       let ct = Object.assign({},theme);
       let palette = Object.keys(ct);
-      palette.splice(0,6);
+      palette.splice(0,4);
 
       palette.forEach((color)=>{
         values[color] = ct[color];
@@ -479,7 +479,7 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
     updatePreview(theme:Theme){
       let palette = Object.keys(theme);
       palette.splice(0,5);
-
+      
       palette.forEach((color)=>{
       let swatch = theme[color];
       (<any>document).querySelector('#theme-preview').style.setProperty("--" + color, theme[color]);
