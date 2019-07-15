@@ -1318,8 +1318,32 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     //overflow: hidden; // This clips tooltips
   }
 
+
+  // Scrollbars need separate rules for firefox and webkit
+ 
+  *{
+    scrollbar-width:8px;
+    scrollbar-height:8px;
+  }
+ 
+  *::-webkit-scrollbar{
+    width:8px;
+    height:8px;
+  }
+
+  *::-webkit-scrollbar-track{
+    background-color:var(--bg2);
+  }
+
+  *::-webkit-scrollbar-thumb{
+    background-color: rgba(127,127,127,0.5);
+    border-radius:4px;
+  }
+
+
   app-support a {
     text-decoration: underline;
   }
+
 
  } // end of ix theme
