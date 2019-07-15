@@ -19,6 +19,7 @@ export class ExtentListComponent {
     {
       name : 'Extent Name',
       prop : 'name',
+      always_display: true
     },
     {
       name : 'Serial',

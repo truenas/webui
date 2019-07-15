@@ -28,7 +28,7 @@ export class VmListComponent {
   public title = "Virtual Machines"
 
   public columns: Array<any> = [
-    {name : 'Name', prop : 'name', card: true},
+    {name : 'Name', prop : 'name', card: true, always_display: true },
     {name : 'Description', prop : 'description'},
     {name : 'Info', prop : 'info', card: true},
     {name : 'Virtual CPUs', prop : 'vcpus'},

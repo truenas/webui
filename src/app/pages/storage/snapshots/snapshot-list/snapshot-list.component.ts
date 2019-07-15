@@ -27,8 +27,8 @@ export class SnapshotListComponent {
   public busy: Subscription;
   public sub: Subscription;
   public columns: Array<any> = [
-    {name : 'Dataset', prop : 'dataset', minWidth: 355},
-    {name : 'Snapshot', prop : 'snapshot', minWidth: 355},
+    {name : 'Dataset', prop : 'dataset', always_display: true, minWidth: 355},
+    {name : 'Snapshot', prop : 'snapshot', always_display: true, minWidth: 355},
   ];
   public config: any = {
     paging: true,

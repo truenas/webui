@@ -23,6 +23,7 @@ export class TargetListComponent {
     {
       name : 'Target Name',
       prop : 'name',
+      always_display: true
     },
     {
       name : 'Target Alias',

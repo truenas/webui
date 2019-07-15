@@ -21,7 +21,7 @@ export class SMBListComponent {
   protected entityList: EntityTableComponent;
 
   public columns: any[] = [
-    {name: helptext_sharing_smb.column_name, prop: 'cifs_name'},
+    {name: helptext_sharing_smb.column_name, prop: 'cifs_name', always_display: true },
     {name: helptext_sharing_smb.column_path, prop: 'cifs_path'},
   ];
   public config: any = {

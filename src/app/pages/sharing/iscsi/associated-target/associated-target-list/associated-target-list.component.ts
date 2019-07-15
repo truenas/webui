@@ -25,6 +25,7 @@ export class AssociatedTargetListComponent {
     {
       name : 'Target',
       prop : 'target',
+      always_display: true
     },
     {
       name : 'LUN ID',

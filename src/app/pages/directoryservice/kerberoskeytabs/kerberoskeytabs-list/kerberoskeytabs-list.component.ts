@@ -17,7 +17,7 @@ export class KerberosKeytabsListComponent {
   protected entityList: any;
 
   public columns: Array < any > = [
-    { name: 'Name', prop: 'keytab_name' },
+    { name: 'Name', prop: 'keytab_name', always_display: true },
   ];
   public config: any = {
     paging: true,

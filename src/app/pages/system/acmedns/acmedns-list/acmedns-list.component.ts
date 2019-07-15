@@ -26,7 +26,7 @@ export class AcmednsListComponent implements OnInit {
 
   public columns: Array < any > = [
     { name: T('Authenticator'), prop: 'authenticator' },
-    { name: T('Name'), prop: 'name' }
+    { name: T('Name'), prop: 'name', always_display: true }
   ];
 
   public config: any = {

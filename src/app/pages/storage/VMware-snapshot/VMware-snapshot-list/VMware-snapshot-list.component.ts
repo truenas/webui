@@ -17,7 +17,7 @@ export class VMwareSnapshotListComponent {
   protected entityList: any;
 
   public columns: Array<any> = [
-    {name : 'Hostname', prop : 'hostname'}, {name : 'Username', prop : 'username'},
+    {name : 'Hostname', prop : 'hostname', always_display: true }, {name : 'Username', prop : 'username'},
     {name : 'filesystem', prop : 'filesystem'}, {name : 'datastore', prop : 'datastore'}
   ];
   public config: any = {

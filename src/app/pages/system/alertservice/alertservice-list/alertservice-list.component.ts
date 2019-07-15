@@ -16,7 +16,7 @@ export class AlertServiceListComponent {
   protected route_edit: string[] = ['system', 'alertservice','edit'];
 
   public columns: Array<any> = [
-    { name: 'Service Name', prop: 'name' },
+    { name: 'Service Name', prop: 'name', always_display: true },
     { name: 'Type', prop: 'type'},
     { name: 'Level', prop: 'level'},
     { name: 'Enabled', prop: 'enabled' },

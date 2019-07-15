@@ -20,7 +20,7 @@ export class AFPListComponent {
   //constructor(_rest: RestService, _router: Router,) {}
 
   public columns: any[] = [
-    {name : T('Name'), prop : 'afp_name'},
+    {name : T('Name'), prop : 'afp_name', always_display: true},
     {name : T('Path'), prop : 'afp_path'},
   ];
   public config: any = {
