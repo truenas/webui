@@ -54,8 +54,8 @@ dataset_acl_uid_tooltip: T('User who controls the dataset. This user\
 
 dataset_acl_gid_placeholder: T('Group'),
 dataset_acl_gid_tooltip: T('The group which controls the dataset. This\
- group always has permissions to read or write the ACL and read or write\
- attributes. Groups created manually or imported from a directory\
+ group has whatever permissions are granted to the <i>@group</i>\
+ <b>Tag</b>. Groups created manually or imported from a directory\
  service appear in the drop-down menu.'),
 
 dataset_acl_perms_placeholder: T('Permissions'),
