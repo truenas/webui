@@ -23,16 +23,10 @@ import { StorageService } from '../../services/storage.service';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { WidgetChartComponent } from 'app/core/components/widgets/widgetchart/widgetchart.component';
 import { WidgetSysInfoComponent } from 'app/core/components/widgets/widgetsysinfo/widgetsysinfo.component';
-import { WidgetNetInfoComponent } from 'app/core/components/widgets/widgetnetinfo/widgetnetinfo.component';
 import { WidgetNicComponent } from 'app/core/components/widgets/widgetnic/widgetnic.component';
 import { WidgetCpuComponent } from 'app/core/components/widgets/widgetcpu/widgetcpu.component';
-import { WidgetCpuHistoryComponent } from 'app/core/components/widgets/widgetcpuhistory/widgetcpuhistory.component';
-import { WidgetCpuTempsComponent } from 'app/core/components/widgets/widgetcputemps/widgetcputemps.component';
-import { WidgetLoadHistoryComponent } from 'app/core/components/widgets/widgetloadhistory/widgetloadhistory.component';
-import { WidgetLoadComponent } from 'app/core/components/widgets/widgetload/widgetload.component';
-import { WidgetMemoryHistoryComponent } from 'app/core/components/widgets/widgetmemoryhistory/widgetmemoryhistory.component';
+
 import { WidgetMemoryComponent } from 'app/core/components/widgets/widgetmemory/widgetmemory.component';
-import { WidgetStorageComponent } from 'app/core/components/widgets/widgetstorage/widgetstorage.component';
 import { WidgetNoteComponent } from 'app/core/components/widgets/widgetnote/widgetnote.component';
 import { WidgetNotesCollectionComponent } from 'app/core/components/widgets/widgetnotescollection/widgetnotescollection.component';
 import { WidgetPoolComponent } from 'app/core/components/widgets/widgetpool/widgetpool.component';
@@ -78,16 +72,9 @@ import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.co
     WidgetComponent,
     WidgetChartComponent,
     WidgetSysInfoComponent,
-    WidgetNetInfoComponent,
     WidgetNicComponent,
     WidgetCpuComponent,
-    WidgetCpuHistoryComponent,
-    WidgetCpuTempsComponent,
-    WidgetLoadHistoryComponent,
-    WidgetLoadComponent,
-    WidgetMemoryHistoryComponent,
     WidgetMemoryComponent,
-    WidgetStorageComponent,
     WidgetNoteComponent,
     WidgetNotesCollectionComponent,
     WidgetPoolComponent
@@ -116,16 +103,9 @@ import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.co
     WidgetComponent,
     WidgetChartComponent,
     WidgetSysInfoComponent,
-    WidgetNetInfoComponent,
     WidgetNicComponent,
     WidgetCpuComponent,
-    WidgetCpuHistoryComponent,
-    WidgetCpuTempsComponent,
-    WidgetLoadHistoryComponent,
-    WidgetLoadComponent,
-    WidgetMemoryHistoryComponent,
     WidgetMemoryComponent,
-    WidgetStorageComponent,
     WidgetNoteComponent,
     WidgetNotesCollectionComponent,
     WidgetPoolComponent
@@ -149,16 +129,9 @@ import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.co
     WidgetComponent,
     WidgetChartComponent,
     WidgetSysInfoComponent,
-    WidgetNetInfoComponent,
     WidgetNicComponent,
     WidgetCpuComponent,
-    WidgetCpuHistoryComponent,
-    WidgetCpuTempsComponent,
-    WidgetLoadHistoryComponent,
-    WidgetLoadComponent,
-    WidgetMemoryHistoryComponent,
     WidgetMemoryComponent,
-    WidgetStorageComponent,
     WidgetNoteComponent,
     WidgetNotesCollectionComponent,
     WidgetPoolComponent

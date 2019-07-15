@@ -1,8 +1,6 @@
 import { Component, OnInit, AfterViewInit, ViewChild,OnDestroy } from '@angular/core';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
-//import { StatsService } from 'app/services/stats.service';
 import { SystemProfiler } from 'app/core/classes/system-profiler';
-//import { StatsUtils } from 'app/core/classes/stats-utils';
 
 import { Subject } from 'rxjs';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component'; // POC
@@ -46,14 +44,6 @@ export class DashboardComponent implements OnInit,OnDestroy {
   public showSpinner: boolean = true;
 
   constructor(protected core:CoreService, /*stats: StatsService,*/ protected ws: WebSocketService){
-    //this.core.emit({name:"StatsAddListener", data:{name:"CpuAggregate", key:"sum", obj:this }});
-    //this.core.emit({name:"StatsAddListener", data:{name:"CpuAggregate", key:"average", obj:this }});
-    //this.core.emit({name:"StatsAddListener", data:{name:"CpuAggregate", key:"test", obj:this }});
-    /*this.core.emit({name:"StatsAddListener", data:{name:"Cpu", obj:this }});
-    setTimeout(() => {
-      this.core.emit({name:"StatsRemoveListener", data:{name:"Cpu", obj:this} });
-    }, 20000);*/
-
     this.statsDataEvents = new Subject<CoreEvent>();
   }
 
@@ -70,12 +60,8 @@ export class DashboardComponent implements OnInit,OnDestroy {
   }
 
   ngOnDestroy(){
-    //this.core.emit({name:"StatsKillAll", sender:this});
-    //this.ws.unsub();
-    //this.statsEvents.unsubscribe();
     this.statsEvents.complete();
     this.statsEventsTC.complete();
-    //this.statsEventsTC.unsubscribe();
     this.statsDataEvents.complete();
     this.core.unregister({observerClass:this});
   }
@@ -83,11 +69,6 @@ export class DashboardComponent implements OnInit,OnDestroy {
   init(){
 
     this.statsEvents = this.ws.sub("reporting.realtime").subscribe((evt)=>{
-      if(evt.memory_summary){
-        console.log("LEAK!!");
-        return;
-      }
-      
       if(evt.cpu){
         this.statsDataEvents.next({name:"CpuStats", data:evt.cpu});
       }
@@ -102,10 +83,6 @@ export class DashboardComponent implements OnInit,OnDestroy {
       evt.network_usage.forEach((item, index) => {
         this.statsDataEvents.next({name:"NetTraffic_" + item.name, data:item});
       });
-
-      if(evt.memory_summary){
-
-      } 
     });
 
     this.core.register({observerClass:this,eventName:"NicInfo"}).subscribe((evt:CoreEvent) => {
@@ -170,7 +147,6 @@ export class DashboardComponent implements OnInit,OnDestroy {
     });
 
     this.core.emit({name:"VolumeDataRequest"});
-    //this.core.emit({name:"DisksInfoRequest"});
     this.core.emit({name:"NicInfoRequest"});
     this.getDisksData();
   }
