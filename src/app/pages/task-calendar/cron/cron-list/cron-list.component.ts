@@ -6,7 +6,6 @@ import { Moment } from 'moment';
 import { DialogService, RestService } from '../../../../services';
 import { TaskService } from '../../../../services/';
 import { T } from '../../../../translate-marker';
-import { CronDetailsComponent } from './components/cron-details.component';
 import { filter, switchMap } from 'rxjs/operators';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 
@@ -23,12 +22,9 @@ export class CronListComponent {
   protected route_add_tooltip = "Add Cron Job";
   protected route_edit: string[] = ['tasks', 'cron', 'edit'];
   public entityList: any;
-  protected showActions = false;
-  protected hasDetails = true;
-  protected rowDetailComponent = CronDetailsComponent;
 
   public columns: Array < any > = [
-    { name: T('Users'), prop: 'cron_user' },
+    { name: T('Users'), prop: 'cron_user', always_display: true },
     { name: T('Command'), prop: 'cron_command' },
     { name: T('Description'), prop: 'cron_description' },
     { name: T('Schedule'), prop: 'cron_schedule' },
