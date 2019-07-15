@@ -175,7 +175,7 @@
       <!-- Row Detail Template -->
       <ngx-datatable-row-detail [rowHeight]="100" #myDetailRow>
         <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
-          <div dynamicComponent [component]="entityTableRowDetailsComponent" [config]="row" [parent]="this"></div>
+          <div dynamicComponent [component]="conf.rowDetailComponent || entityTableRowDetailsComponent" [config]="row" [parent]="this"></div>
         </ng-template>
       </ngx-datatable-row-detail>
 

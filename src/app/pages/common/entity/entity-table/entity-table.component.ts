@@ -142,7 +142,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private interval: any;
 
-  public hasDetails = () => this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length;
+  public hasDetails = () => this.conf.rowDetailComponent || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
 
   constructor(protected core: CoreService, protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService, 
@@ -942,16 +942,15 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   toggleExpandRow(row) {
-    // console.log(row);
-    // if (!this.startingHeight) {
-    //   this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
-    // }  
+    if (!this.startingHeight) {
+      this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
+    }  
     this.table.rowDetail.toggleExpandRow(row);
-    // setTimeout(() => {
-    //   this.expandedRows = (document.querySelectorAll('.datatable-row-detail').length);
-    //   let newHeight = (this.expandedRows * 100) + this.startingHeight;
-    //   let heightStr = `height: ${newHeight}px`;
-    //   document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
-    // }, 100)
+    setTimeout(() => {
+      this.expandedRows = (document.querySelectorAll('.datatable-row-detail').length);
+      let newHeight = (this.expandedRows * 100) + this.startingHeight;
+      let heightStr = `height: ${newHeight}px`;
+      document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
+    }, 100)
   }
 }

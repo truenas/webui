@@ -10,7 +10,6 @@ import { StorageService } from '../../../services/storage.service';
 import { T } from '../../../translate-marker';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../common/entity/utils';
-import { JailDetailsComponent } from './components/jail-details.component';
 
 @Component({
   selector: 'app-jail-list',
@@ -32,9 +31,6 @@ export class JailListComponent implements OnInit {
   protected route_add = ["jails", "add", "wizard"];
   protected route_add_tooltip = "Add Jail";
   public toActivatePool: boolean = false;
-  public showActions = false;
-  protected hasDetails = true;
-  protected rowDetailComponent = JailDetailsComponent;
   public legacyWarning = T("Note: Legacy jails created before FreeNAS 11.2 must be managed from the");
   public legacyWarningLink = T("legacy web interface");
 
@@ -43,6 +39,11 @@ export class JailListComponent implements OnInit {
     { name: T('Boot'), prop: 'boot_readble', hidden: true},
     { name: T('State'), prop: 'state'},
     { name: T('Release'), prop: 'release' },
+    { name: T("IPv4"), prop: 'ip4_addr', hidden: true },
+    { name: T("IPv6"), prop: 'ip6_addr', hidden: true },
+    { name: T("Type"), prop: 'type', hidden: true },
+    { name: T("Template"), prop: 'template', hidden: true },
+    { name: T("Basejail"), prop: 'basejail_readble', hidden: true }
   ];
   public config: any = {
     paging: true,

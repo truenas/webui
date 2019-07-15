@@ -6,6 +6,7 @@ import { RestService } from '../../../../services/rest.service';
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../../../common/entity/utils';
 import { SnapshotDetailsComponent } from './components/snapshot-details.component';
+import helptext from './../../../../helptext/storage/snapshots/snapshots';
 
 @Component({
   selector: 'app-snapshot-list',
@@ -19,7 +20,6 @@ export class SnapshotListComponent {
   protected route_add: string[] = ['storage', 'snapshots', 'add'];
   protected route_add_tooltip = "Add Snapshot";
   protected wsDelete = 'zfs.snapshot.remove';
-  protected showActions = false;
   protected loaderOpen = false;
   protected entityList: any;
   protected hasDetails = true;
@@ -71,6 +71,33 @@ export class SnapshotListComponent {
       default:
         return row[attr];
     }
+  }
+
+  getActions() {
+    return [
+      {
+        id: "delete",
+        icon: "delete",
+        name: this.config.name,
+        label: helptext.label_delete,
+        onClick: snapshot => this.doDelete(snapshot)
+      },
+      {
+        id: "clone",
+        icon: "filter_none",
+        name: this.config.name,
+        label: helptext.label_clone,
+        onClick: snapshot =>
+          this._router.navigate(new Array("/").concat(["storage", "snapshots", "clone", snapshot.name]))
+      },
+      {
+        id: "rollback",
+        icon: "history",
+        name: this.config.name,
+        label: helptext.label_rollback,
+        onClick: snapshot => this.doRollback(snapshot)
+      }
+    ];
   }
 
   afterInit(entityList: any) {
