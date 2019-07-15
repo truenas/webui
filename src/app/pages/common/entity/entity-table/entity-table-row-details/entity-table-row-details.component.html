@@ -1,30 +1,10 @@
-<div class="entity-table-expanded-panel">
-    <section class="info">
-        <div fxLayout="row" *ngIf="direction == 'horizontal'">
-            <div *ngFor="let column of this.columns; let i = index">
-                <div *ngIf="column.isHidden == undefined ? true : !column.isHidden" class="layout-gap">
-                    <h6><strong>{{ column.name }}</strong></h6>
-                    {{ getPropValue(column.prop) }}
-                </div>
-            </div>
-        </div>
-        <div fxLayout="column" *ngIf="direction == 'vertical'">
-            <div *ngFor="let column of this.columns; let i = index">
-                <div *ngIf="column.isHidden == undefined ? true : !column.isHidden">
-                    <strong>{{ column.name }}:</strong>
-                    {{ getPropValue(column.prop) }}
-                </div>
-            </div>
-        </div>
-    </section>
-    <mat-divider *ngIf="showActions"></mat-divider>
-    <section class="action-buttons" fxLayout="row" *ngIf="showActions">
-        <div *ngFor="let action of actions">
-            <button *ngIf="action.visible" mat-menu-item (click)="action.onClick(config)"
-                id="plugins_{{action.name}}_{{action.id}}" class="row-details-action-button" fxFlex>
-                <mat-icon *ngIf="action.icon">{{action.icon}}</mat-icon>
-                <span>{{action.label | translate}}</span>
-            </button>
-        </div>
-    </section>
+<div
+    class="entity-table-expanded-panel"
+    fxLayout="row wrap"
+    fxLayoutGap="36px"
+>
+    <div *ngFor="let column of this.columns">
+        <h4>{{ column.name }}</h4>
+        <p>{{ getPropValue(column.prop) }}</p>
+    </div>
 </div>

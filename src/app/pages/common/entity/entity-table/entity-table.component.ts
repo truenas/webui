@@ -143,6 +143,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private interval: any;
 
+  public hasDetails = () => this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length;
+
   constructor(protected core: CoreService, protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService, 
     protected erdService: ErdService, protected translate: TranslateService, protected snackBar: MatSnackBar,
@@ -941,6 +943,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   toggleExpandRow(row) {
+    console.log(row);
     if (!this.startingHeight) {
       this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
     }  
