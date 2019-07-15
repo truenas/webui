@@ -3,33 +3,29 @@ import * as _ from 'lodash';
 import { EntityTableComponent } from '../entity-table.component';
 
 @Component({
-    selector: 'app-entity-table-row-details',
-    templateUrl: './entity-table-row-details.component.html',
-    styleUrls: ['./entity-table-row-details.component.scss']
+  selector: 'app-entity-table-row-details',
+  templateUrl: './entity-table-row-details.component.html',
+  styleUrls: ['./entity-table-row-details.component.scss']
 })
 export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
-    @Input() config: any;
-    @Input() parent: EntityTableComponent & { conf: any };
+  @Input() config: any;
+  @Input() parent: EntityTableComponent & { conf: any };
 
-    public columns = [];
+  public columns = [];
 
-    ngOnInit() {
-        this.buildColumns();
-    }
+  ngOnInit() {
+    this.buildColumns();
+  }
 
-    ngOnChanges() {
-        this.buildColumns();
-    }
+  ngOnChanges() {
+    this.buildColumns();
+  }
 
-    getPropValue(prop) {
-        return _.get(this.config, prop.split('.'));
-    }
+  getPropValue(prop) {
+    return _.get(this.config, prop.split('.')) || 'N/A';
+  }
 
-    buildColumns(): void {
-        this.columns = this.parent.allColumns.filter(
-          col =>
-            (typeof this.config[col.prop] === 'boolean' || !!this.config[col.prop]) &&
-            !this.parent.conf.columns.some(c => c.prop === col.prop)
-        );
-    }
+  buildColumns(): void {
+    this.columns = this.parent.allColumns.filter(col => !this.parent.conf.columns.some(c => c.prop === col.prop));
+  }
 }

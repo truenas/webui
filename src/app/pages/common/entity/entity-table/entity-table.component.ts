@@ -75,6 +75,8 @@ export interface TableConfig {
   sorting: SortingConfig;
 }
 
+const DETAIL_HEIGHT = 24;
+
 @Component({
   selector: 'entity-table',
   templateUrl: './entity-table.component.html',
@@ -142,7 +144,13 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private interval: any;
 
-  public hasDetails = () => this.conf.rowDetailComponent || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
+  public hasDetails = () =>
+    this.conf.rowDetailComponent || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
+  public getRowDetailHeight = () => 
+     this.hasDetails()
+      ? (this.allColumns.length - this.conf.columns.length) * DETAIL_HEIGHT + 32 // add space for padding
+      : 100;
+  
 
   constructor(protected core: CoreService, protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService, 

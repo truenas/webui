@@ -1,11 +1,8 @@
 <div
-    class="entity-table-expanded-panel"
-    fxLayoutAlign="start start"
-    fxLayoutGap="36px"
-    [style.overflow-x]="'auto'"
+    *ngFor="let column of this.columns"
+    fxLayoutAlign="start center"
+    fxLayoutGap="16px"
 >
-    <div *ngFor="let column of this.columns">
-        <h4>{{ column.name }}</h4>
-        <p>{{ getPropValue(column.prop) }}</p>
-    </div>
+    <h4>{{ column.name }}:</h4>
+    <p>{{ getPropValue(column.prop) }}</p>
 </div>

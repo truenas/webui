@@ -1,14 +1,15 @@
 :host {
+    display: block;
+    padding: 16px;
+
     h4 {
         font-style: bold;
+        line-height: 24px;
+        margin-bottom: 0;
     }
 
     p {
+        line-height: 24px;
         margin: 0;
-    }
-
-    .entity-table-expanded-panel {
-        overflow-x: auto;
-        padding: 16px;
     }
 }
