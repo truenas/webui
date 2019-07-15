@@ -467,14 +467,14 @@ export class VolumesListTableConfig implements InputTableConf {
               }),
               dialogRef.componentInstance.failure.subscribe((res) => {
                 let conditionalErrMessage = '';
-                if (res.error.includes('EBUSY')) {
-                  if (res.exc_info && res.exc_info.extra && res.exc_info.extra['code'] === 'services_restart') {
+                if (res.reason.includes('EBUSY')) {
+                  if (res.extra && res.extra['code'] === 'services_restart') {
                     entityDialog.dialogRef.close(true);
                     dialogRef.close(true);
                     conditionalErrMessage = 
                     `Warning: These services have to be restarted in order to export pool: 
-                      ${res.exc_info.extra['services']}
-                      Services will now be restarted and then exporting/disconnecting will continue.`;
+                      ${res.extra['services']}
+                      <br><br>Services will now be restarted and then exporting/disconnecting will continue.`;
                       localDialogService.confirm(T("Error exporting/disconnecting pool."),
                         conditionalErrMessage, true, 'Restart Services and Continue')
                           .subscribe((res) => {
@@ -483,11 +483,11 @@ export class VolumesListTableConfig implements InputTableConf {
                               this.customSubmit(entityDialog);
                             }
                         })
-                  } else if (res.exc_info && res.exc_info.extra && res.exc_info.extra['code'] === 'unstoppable_processes') {
+                  } else if (res.extra && res.extra['code'] === 'unstoppable_processes') {
                     entityDialog.dialogRef.close(true);
 
                     conditionalErrMessage = 
-                    `Unable to terminate following processes using this pool: ${res.exc_info.extra['processes']}`;
+                    `Unable to terminate following processes using this pool: ${res.extra['processes']}`;
                     dialogRef.close(true);
                     localDialogService.errorReport(T("Error exporting/disconnecting pool."), conditionalErrMessage, res.exception);
                   }
