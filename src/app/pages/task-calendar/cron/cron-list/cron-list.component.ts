@@ -1,12 +1,14 @@
-import { RestService, DialogService } from '../../../../services';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-
-import * as _ from 'lodash';
+import * as cronParser from 'cron-parser';
+import { Moment } from 'moment';
+import { DialogService, RestService } from '../../../../services';
 import { TaskService } from '../../../../services/';
-import { EntityUtils } from '../../../common/entity/utils';
 import { T } from '../../../../translate-marker';
+import { CronDetailsComponent } from './components/cron-details.component';
+import { filter, switchMap } from 'rxjs/operators';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 
 @Component({
   selector: 'app-cron-list',
@@ -20,20 +22,25 @@ export class CronListComponent {
   protected route_add: string[] = ['tasks', 'cron', 'add'];
   protected route_add_tooltip = "Add Cron Job";
   protected route_edit: string[] = ['tasks', 'cron', 'edit'];
-  protected entityList: any;
+  public entityList: any;
+  protected showActions = false;
+  protected hasDetails = true;
+  protected rowDetailComponent = CronDetailsComponent;
 
   public columns: Array < any > = [
     { name: T('Users'), prop: 'cron_user' },
     { name: T('Command'), prop: 'cron_command' },
     { name: T('Description'), prop: 'cron_description' },
-    { name: T('Minute'), prop: 'cron_minute' },
-    { name: T('Hour'), prop: 'cron_hour' },
-    { name: T('Day of Month'), prop: 'cron_daymonth' },
-    { name: T('Month'), prop: 'cron_month' },
-    { name: T('Day of Week'), prop: 'cron_dayweek' },
-    { name: T('Hide Stdout'), prop: 'cron_stdout', hidden: true },
-    { name: T('Hide Stderr'), prop: 'cron_stderr', hidden: true },
+    { name: T('Schedule'), prop: 'cron_schedule' },
     { name: T('Enabled'), prop: 'cron_enabled' },
+    { name: T('Next Run'), prop: 'cron_next_run', hidden: true },
+    { name: T('Minute'), prop: 'cron_minute', hidden: true },
+    { name: T('Hour'), prop: 'cron_hour', hidden: true },
+    { name: T('Day of Month'), prop: 'cron_daymonth', hidden: true },
+    { name: T('Month'), prop: 'cron_month', hidden: true },
+    { name: T('Day of Week'), prop: 'cron_dayweek', hidden: true },
+    { name: T('Hide Stdout'), prop: 'cron_stdout', hidden: true },
+    { name: T('Hide Stderr'), prop: 'cron_stderr', hidden: true }
   ];
   public config: any = {
     paging: true,
@@ -45,45 +52,61 @@ export class CronListComponent {
   };
 
   protected month_choice: any;
-  constructor(protected router: Router, protected rest: RestService, protected translate: TranslateService,
-    protected taskService: TaskService, protected dialog: DialogService) {}
+  constructor(public router: Router, public rest: RestService, public translate: TranslateService,
+    protected taskService: TaskService, public dialog: DialogService) {}
 
   afterInit(entityList: any) { this.entityList = entityList; }
 
-  getActions(row) {
-    const actions = [];
-    actions.push({
-      label : T("Run Now"),
-      id: "run",
-      onClick : (members) => {
-        this.dialog.confirm(T("Run Now"), T("Run this cron job now?"), true).subscribe((run) => {
-          if (run) {
-            this.rest.post(this.resource_name + '/' + row.id + '/run/', {} ).subscribe((res) => {
-              this.translate.get("close").subscribe((close) => {
-                this.entityList.snackBar.open(res.data, close, { duration: 5000 });
-              });
-            }, (err) => {
-              new EntityUtils().handleError(this, err);
-            });
-          }
-        });
-      }
-    });
-    actions.push({
-      label : T("Edit"),
-      id: "edit",
-      onClick : (task_edit) => {
-        this.router.navigate(new Array('/').concat(
-          [ 'tasks', 'cron', 'edit', row.id ]));
-      }
-    })
-    actions.push({
-      label : T("Delete"),
-      onClick : (task_delete) => {
-        this.entityList.doDelete(row);
+  getActions() {
+    return [
+      {
+        name: this.config.name,
+        label: T("Run Now"),
+        id: "run",
+        icon: "play_arrow",
+        onClick: row =>
+          this.dialog
+            .confirm(T("Run Now"), T("Run this cron job now?"), true)
+            .pipe(
+              filter(run => !!run),
+              switchMap(() =>
+                this.rest.post(this.resource_name + "/" + row.id + "/run/", {})
+              )
+            )
+            .subscribe(
+              res =>
+                this.translate.get("close").subscribe(close => {
+                  this.entityList.snackBar.open(res.data, close, { duration: 5000 });
+                }),
+              err => new EntityUtils().handleError(this, err)
+            )
       },
-    });
+      {
+        name: this.config.name,
+        label: T("Edit"),
+        icon: "edit",
+        id: "edit",
+        onClick: row => this.router.navigate(new Array("/").concat(["tasks", "cron", "edit", row.id]))
+      },
+      {
+        id: "delete",
+        name: this.config.name,
+        icon: "delete",
+        label: T("Delete"),
+        onClick: row => this.entityList.doDelete(row)
+      }
+    ];
+  }
 
-    return actions;
+  resourceTransformIncomingRestData(data: any): any {
+    for (const job of data) {
+      job.cron_schedule = `${job.cron_minute} ${job.cron_hour} ${job.cron_daymonth} ${job.cron_month} ${job.cron_dayweek}`;
+
+      /* Weird type assertions are due to a type definition error in the cron-parser library */
+      job.cron_next_run = ((cronParser.parseExpression(job.cron_schedule, { iterator: true }).next() as unknown) as {
+        value: { _date: Moment };
+      }).value._date.fromNow();
+    }
+    return data;
   }
 }
