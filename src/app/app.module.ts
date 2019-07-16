@@ -41,7 +41,6 @@ import { MarkdownModule } from 'ngx-markdown';
 import { CoreServices} from 'app/core/services/coreservices.module';
 import { setCoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreComponents } from 'app/core/components/corecomponents.module';
-import { StatsService } from 'app/services/stats.service';
 
 import { ErdService } from 'app/services/erd.service';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -93,7 +92,6 @@ export function createTranslateLoader(http: HttpClient) {
     RestService,
     AppLoaderService, 
     NotificationsService,
-    StatsService,
     ErdService,
     ENV_PROVIDERS],
   bootstrap: [
