@@ -5,7 +5,7 @@ export default {
 hostname_placeholder : T('Hostname'),
 hostname_tooltip : T('System hostname.'),
 
-hostname_b_placeholder : T('Hostname (Storage Controller 2)'),
+hostname_b_placeholder : T('Hostname (TrueNAS Controller 2)'),
 hostname_b_tooltip : T(''),
 
 hostname_virtual_placeholder : T('Hostname (Virtual)'),
