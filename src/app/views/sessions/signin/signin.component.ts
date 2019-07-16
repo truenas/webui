@@ -43,9 +43,9 @@ export class SigninComponent implements OnInit {
   public failover_status = '';
   public failover_statuses = {
     'SINGLE': "",
-    'MASTER': T("Active storage controller."),
-    'BACKUP': T("Passive storage controller."),
-    'ELECTING': T("Electing storage controller."),
+    'MASTER': T("Active TrueNAS Controller."),
+    'BACKUP': T("Passive TrueNAS Controller."),
+    'ELECTING': T("Electing TrueNAS Controller."),
     'IMPORTING': T("Importing pools."),
     'ERROR': T("Failover is in an error state.")
   }
