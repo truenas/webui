@@ -281,28 +281,24 @@ export class PluginsComponent {
     return new Promise((resolve, reject) => {
       this.ws.call('plugin.query').subscribe(
         (res) => {
-          if (res.result) {
             for (const row of rows) {
-              const targetIndex = _.findIndex(res.result, function (o) { return o['name'] === row.name });
+              const targetIndex = _.findIndex(res, function (o) { return o['name'] === row.name });
               if (targetIndex === -1) {
                 reject(false);
               }
               for (const i in row) {
-                row[i] = ((i === 'ip4' || i === 'ip6') && res.result[targetIndex][i] != null) ? res.result[targetIndex][i]
+                row[i] = ((i === 'ip4' || i === 'ip6') && res[targetIndex][i] != null) ? res[targetIndex][i]
                   .split(',')
                   .map(function (e) {
                     return _.split(e, '|').length > 1 ? _.split(e, '|')[1] : e;
                   })
-                  .join(',') : res.result[targetIndex][i];
+                  .join(',') : res[targetIndex][i];
               }
             }
             resolve(true);
-          }
-          if (res.error) {
-            reject(res);
-          }
         },
         (err) => {
+          new EntityUtils().handleWSError(this, err, this.dialogService);
           reject(err);
         }
       )
