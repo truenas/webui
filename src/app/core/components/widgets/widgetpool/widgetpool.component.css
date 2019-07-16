@@ -16,7 +16,7 @@
   position:absolute;
   top:48px;
   width:400%;
-  height:calc(100% - 96px);
+  height:calc(100% - 48px);
   /*background:var(--alt-bg2);*/
 }
 
