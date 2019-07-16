@@ -90,7 +90,7 @@ export const helptext_sharing_nfs = {
 
   dialog_enable_service_title: T("Enable service"),
   dialog_enable_service_message: T("Enable this service?"),
-  dialog_enable_service_button: T("Enable Service"),    
+  dialog_enable_service_button: T("Enable Service"),
 
   snackbar_service_started: T("Service started"),
   snackbar_close: T("close")
