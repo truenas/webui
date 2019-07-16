@@ -138,12 +138,6 @@ export const helptext_sharing_afp = {
   dialog_message: T("Enable this service?"),
   dialog_button: T("Enable Service"),
 
-  dialog_delete_title: T("Delete"),
-  dialog_delete_message: T(
-    "Stop sharing AFP (Apple File Protocol)? The sharing configuration\
- will be deleted (but the underlying dataset will not)."
-  ),
-
   snackbar_message: T("Service started"),
   snackbar_close: T("close")
 };
