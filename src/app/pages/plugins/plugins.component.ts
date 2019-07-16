@@ -26,9 +26,7 @@ export class PluginsComponent {
       })
     }
   };
-  protected queryCall = 'jail.list_resource';
-  protected queryCallOption = ["PLUGIN"];
-  protected queryCallJob = true;
+  protected queryCall = 'plugin.query';
   protected wsDelete = 'jail.do_delete';
   protected wsMultiDelete = 'core.bulk';
   protected entityList: any;
@@ -281,7 +279,7 @@ export class PluginsComponent {
 
   updateRows(rows: Array<any>): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      this.ws.job('jail.list_resource', ["PLUGIN"]).subscribe(
+      this.ws.call('plugin.query').subscribe(
         (res) => {
           if (res.result) {
             for (const row of rows) {

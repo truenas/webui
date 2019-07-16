@@ -47,7 +47,7 @@ export class AvailablePluginsComponent implements OnInit {
     }
 
     getInstances() {
-        this.jailService.getInstalledPlugins().subscribe(
+        this.ws.job('plugin.query').subscribe(
             (res) => {
                 for (const item of res) {
                     const name = _.split(item[1],'_')[0];
