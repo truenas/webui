@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { helptext_sharing_smb } from 'app/helptext/sharing';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
-import { DialogService, WebSocketService } from 'app/services';
-import { map } from 'rxjs/operators';
+import { DialogService, WebSocketService, AppLoaderService } from 'app/services';
+import { map, filter, switchMap, tap } from 'rxjs/operators';
 import { EntityUtils } from 'app/pages/common/entity/utils';
  
 @Component({
@@ -14,6 +14,7 @@ export class SMBListComponent {
 
   public title = "Samba";
   protected resource_name: string = 'sharing/cifs/';
+  protected wsDelete = 'sharing.smb.delete';
   protected route_add: string[] = [ 'sharing', 'smb', 'add' ];
   protected route_add_tooltip: string = "Add Windows (SMB) Share";
   protected route_edit: string[] = [ 'sharing', 'smb', 'edit' ];
@@ -64,9 +65,19 @@ export class SMBListComponent {
         }
       },
       {
-        id: "delete",
-        label: "Delete",
-        onClick: row => this.entityList.doDelete(row)
+        id: 'delete',
+        label: 'Delete',
+        onClick: row =>
+          this.dialogService
+            .confirm(
+              helptext_sharing_smb.dialog_delete_title,
+              helptext_sharing_smb.dialog_delete_message.replace('?', ` ${row.cifs_name}?`)
+            )
+            .pipe(filter(ok => !!ok))
+            .subscribe(
+              () => this.entityList.delete(row.id),
+              error => new EntityUtils().handleWSError(this, error, this.dialogService)
+            )
       }
     ];
   }

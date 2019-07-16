@@ -113,6 +113,9 @@ export const helptext_sharing_smb = {
     dialog_edit_acl_title: T("Configure ACL"),
     dialog_edit_acl_message: T("Configure permissions for this share's dataset now?"),
     dialog_edit_acl_button: T("Configure now"),
+
+    dialog_delete_title: T("Delete"),
+    dialog_delete_message: T("Stop sharing Windows (SMB)? The sharing configuration will be deleted."),
     
     snackbar_close: T('close'),
     snackbar_service_started: T("Service started")
