@@ -2,15 +2,15 @@
   <div class="card-container  front">
     <mat-card style="overflow:hidden" class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-card-content #carouselparent>
-        <mat-toolbar-row >
+        <mat-toolbar-row class="view-{{path.length > 0 ? currentSlideName : 'Pool'}}">
           <button class="mat-card-title-text" *ngIf="currentSlide !== '0'" mat-icon-button color="default" (click)="updateSlide(path[previousSlide].name, true, previousSlide)">
             <mat-icon class="back-arrow">chevron_left</mat-icon>
           </button>
-          <h3 class="mat-card-title-text">
-            <div class="card-title-text">
-              &nbsp;{{title | translate}} 
-            </div>
-          </h3>
+          <span class="mat-card-title-text primary-nav">
+            <span class="card-title-text">
+              &nbsp;<span>{{title | translate}}</span>
+            </span>
+          </span>
 
           <!--<ng-template *ngIf="configurable === true">
             <button mat-icon-button (click)="toggleConfig()">
@@ -32,7 +32,7 @@
           
           <ng-template #overview>
             <div fxFlex="100" class="overview-inner" fxLayout="row" fxLayoutAlign="space-between">
-            <div class="left {{poolHealth.selector}}" fxFlex="50" fxLayout="column" fxLayoutAlign="space-around center">
+            <div class="left {{poolHealth.selector}}" fxFlex="40" fxLayout="column" fxLayoutAlign="space-around center">
 
               <div fxFlex="95">
                 <div class="pool-name" >
@@ -83,7 +83,7 @@
               </div>
             </div>
 
-            <div class="right" fxFlex="50" fxLayout="column" fxLayoutAlign="space-around center">
+            <div class="right" fxFlex="60" fxLayout="column" fxLayoutAlign="space-around center">
               <div fxFlex="100">
                 <div class="list-subheader">  <span class="capitalize">{{currentSlideName}}</span></div>
                 <mat-list>

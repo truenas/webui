@@ -2,15 +2,15 @@
   <div class="card-container  front">
     <mat-card style="overflow:hidden" class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-card-content #carouselparent>
-        <mat-toolbar-row >
-          <button class="mat-card-title-text" *ngIf="currentSlide !== '0'" mat-icon-button color="default" (click)="updateSlide(path[previousSlide].name, true, previousSlide)">
+        <mat-toolbar-row class="view-{{currentSlideName}}">
+          <button class="mat-card-title-text primary-nav" *ngIf="currentSlide !== '0'" mat-icon-button color="default" (click)="updateSlide(path[previousSlide].name, true, previousSlide)">
             <mat-icon class="back-arrow">chevron_left</mat-icon>
           </button>
-          <h3 class="mat-card-title-text">
-            <div class="card-title-text">
-              &nbsp;{{title | translate}} 
-            </div>
-          </h3>
+          <span class="mat-card-title-text primary-nav">
+            <span class="card-title-text">
+              &nbsp;<span>{{title | translate}} </span>
+            </span>
+          </span>
           <!--<ng-template #backBtn>
             <button class="mat-card-title-text" *ngIf="currentSlide !== '0'" mat-button color="default" (click)="updateSlide(path[previousSlide].name, true, previousSlide)">
               <mat-icon class="back-arrow">chevron_left</mat-icon>
@@ -28,9 +28,10 @@
         <!-- Carousel -->
         <div id="" class="carousel" #carousel [ngClass]="{'lagg': nicState.lagg_ports}" >
           <div fxFlex="100" class="slide overview" fxLayout="row" fxLayoutAlign="space-between">
-            <div class="left" fxFlex="50" fxLayout="column" fxLayoutAlign="space-around center">
+            <div class="left" fxFlex="40">
+              <div class="overlay" fxFlex="100" fxLayout="column" fxLayoutAlign="space-around center">
 
-              <div fxFlex="95">
+              <div fxFlex="100">
                 <div class="nic-name" [ngClass]="{ 'up': nicState.link_state == 'LINK_STATE_UP', 'down': nicState.link_state !== 'LINK_STATE_UP' }">
                   {{nicState.name}}
                   <div class="icon-wrapper">
@@ -57,9 +58,10 @@
                 </div>
 
               </div>
+              </div>
             </div>
 
-            <div class="right" fxFlex="50" fxLayout="column" fxLayoutAlign="space-around center">
+            <div class="right" fxFlex="60" fxLayout="column" fxLayoutAlign="space-around center">
               <div fxFlex="100">
                 <div class="list-subheader">{{currentSlideName}}</div>
                 <mat-list>
