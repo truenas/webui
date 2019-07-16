@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { delete_share_message, helptext_sharing_smb } from 'app/helptext/sharing';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { T } from 'app/translate-marker';
  
 @Component({
   selector : 'app-smb-list',
@@ -29,8 +30,12 @@ export class SMBListComponent {
       key_props: ['cifs_name']
     },
   };
+  
   public confirmDeleteDialog = {
-    message: delete_share_message + ' '
+    title: T('Unshare'),
+    message: delete_share_message,
+    button: T('Unshare'),
+    isMessageComplete: true
   }
 
   afterInit(entityList: any) {

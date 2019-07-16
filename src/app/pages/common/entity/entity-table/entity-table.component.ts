@@ -40,7 +40,7 @@ export interface InputTableConf {
   multiActions?:any[];
   multiActionsIconsOnly?:boolean;
   config?: any;
-  confirmDeleteDialog?: Object;
+  confirmDeleteDialog?: any;
   checkbox_confirm?: any;
   checkbox_confirm_show?: any;
   hasDetails?:boolean;
@@ -605,7 +605,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   doDelete(item) {
-    let deleteMsg = this.getDeleteMessage(item);
+    const deleteMsg =
+      this.conf.confirmDeleteDialog && this.conf.confirmDeleteDialog.isMessageComplete
+        ? ''
+        : this.getDeleteMessage(item);
     let id;
     if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.id_prop) {
       id = item[this.conf.config.deleteMsg.id_prop];

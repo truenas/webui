@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { delete_share_message, helptext_sharing_nfs } from 'app/helptext/sharing';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector : 'app-nfs-list',
@@ -31,7 +32,10 @@ export class NFSListComponent {
   };
 
   public confirmDeleteDialog = {
-    message: delete_share_message + ' '
+    title: T('Unshare'),
+    message: delete_share_message,
+    button: T('Unshare'),
+    isMessageComplete: true
   }
 
   public afterInit(entityList: EntityTableComponent) {

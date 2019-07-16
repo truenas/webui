@@ -30,8 +30,12 @@ export class AFPListComponent {
       key_props: ['afp_name']
     },
   };
+
   public confirmDeleteDialog = {
-    message: delete_share_message + ' '
+    title: T('Unshare'),
+    message: delete_share_message,
+    button: T('Unshare'),
+    isMessageComplete: true
   }
   
   public afterInit(entityList: EntityTableComponent) {
