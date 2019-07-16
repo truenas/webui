@@ -92,13 +92,17 @@
   font-size:80%;
 }
 
-/*.reports-btn{
+.controls{
   position:absolute;
   right:16px;
-  bottom:16px;
-  font-weight:500;
-  text-transform:capitalize;
-}*/
+  color: var(--fg2);
+  /*font-weight:500;
+  text-transform:capitalize;*/
+}
+
+.controls button{
+  display:inline-block;
+}
 
 .chart-wrapper{
   position:relative;
