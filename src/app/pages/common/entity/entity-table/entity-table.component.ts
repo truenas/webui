@@ -146,7 +146,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public hasDetails = () =>
     this.conf.rowDetailComponent || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
-  public getRowDetailHeight = () => 
+  public getRowDetailHeight = (row: any, index: number) => 
      this.hasDetails() && !this.conf.rowDetailComponent
       ? (this.allColumns.length - this.conf.columns.length) * DETAIL_HEIGHT + 32 // add space for padding
       : 100;

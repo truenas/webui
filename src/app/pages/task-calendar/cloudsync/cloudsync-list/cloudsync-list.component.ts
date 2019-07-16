@@ -6,8 +6,8 @@ import * as _ from 'lodash';
 import { T } from '../../../../translate-marker';
 import { TranslateService } from '@ngx-translate/core';
 import { EntityUtils } from '../../../common/entity/utils';
-import { Moment } from 'moment';
 import * as cronParser from 'cron-parser';
+import { Moment } from 'moment';
 
 @Component({
   selector: 'app-cloudsync-list',
@@ -27,11 +27,11 @@ export class CloudsyncListComponent {
 
   public columns: Array < any > = [
     { name: T('Description'), prop: 'description' },
-    { name: T('Schedule'), prop: 'cron', hidden: true },
-    { name: T('Next Run'), prop: 'next_run', hidden: true },
     { name: T('Credential'), prop: 'credential', hidden: true },
     { name: T('Direction'), prop: 'direction', hidden: true},
     { name: T('Path'), prop: 'path', hidden: true},
+    { name: T('Schedule'), prop: 'cron', hidden: true},
+    { name: T('Next Run'), prop: 'next_run', hidden: true},
     { name: T('Minute'), prop: 'minute', hidden: true },
     { name: T('Hour'), prop: 'hour', hidden: true },
     { name: T('Day of Month'), prop: 'dom', hidden: true },
@@ -49,25 +49,6 @@ export class CloudsyncListComponent {
     },
   };
 
-  public hasDetails = true;
-  public detailsConf = {
-    direction: 'horizontal',
-    showAction: false,
-  };
-  public detailColumns: Array < any > = [
-    { name: T('Direction'), prop: 'direction'},
-    { name: T('Path'), prop: 'path'},
-    { name: T('Schedule'), prop: 'cron' },
-    { name: T('Next Run'), prop: 'next_run' },
-    { name: T('Minute'), prop: 'minute' },
-    { name: T('Hour'), prop: 'hour' },
-    { name: T('Day of Month'), prop: 'dom' },
-    { name: T('Month'), prop: 'month' },
-    { name: T('Day of Week'), prop: 'dow' },
-    { name: T('Auxiliary arguments'), prop: 'args', isHidden: true},
-    { name: T('Credential'), prop: 'credentials.name' },
-  ];
-
   constructor(protected router: Router,
               protected ws: WebSocketService,
               protected translateService: TranslateService,
@@ -80,10 +61,10 @@ export class CloudsyncListComponent {
     if (localStorage.getItem('engineerMode') === 'true') {
       this.columns.splice(9, 0, { name: T('Auxiliary arguments'), prop: 'args' });
     }
-    const argsColumn = _.find(this.detailColumns, {prop: 'args'});
-    this.engineerModeService.engineerMode.subscribe((res) => {
-      argsColumn.isHidden = res === 'true' ? false : true;
-    });
+    // const argsColumn = _.find(this.detailColumns, {prop: 'args'});
+    // this.engineerModeService.engineerMode.subscribe((res) => {
+    //   argsColumn.isHidden = res === 'true' ? false : true;
+    // });
 
   }
 
@@ -167,42 +148,41 @@ export class CloudsyncListComponent {
 
   dataHandler(entityList: any) {
     for (let i = 0; i < entityList.rows.length; i++) {
-      const task = entityList.rows[i];
-
-      task.minute = task.schedule['minute'];
-      task.hour = task.schedule['hour'];
-      task.dom = task.schedule['dom'];
-      task.month = task.schedule['month'];
-      task.dow = task.schedule['dow'];
-      task.credential = task.credentials['name'];
-
-      task.cron = `${task.minute} ${task.hour} ${task.dom} ${task.month} ${task.dow}`;
-
+      entityList.rows[i].minute = entityList.rows[i].schedule['minute'];
+      entityList.rows[i].hour = entityList.rows[i].schedule['hour'];
+      entityList.rows[i].dom = entityList.rows[i].schedule['dom'];
+      entityList.rows[i].month = entityList.rows[i].schedule['month'];
+      entityList.rows[i].dow = entityList.rows[i].schedule['dow'];
+      entityList.rows[i].credential = entityList.rows[i].credentials['name'];
+      
+      entityList.rows[i].cron = `${entityList.rows[i].minute} ${entityList.rows[i].hour} ${entityList.rows[i].dom} ${entityList.rows[i].month} ${entityList.rows[i].dow}`;
+      
       /* Weird type assertions are due to a type definition error in the cron-parser library */
-      task.next_run = ((cronParser.parseExpression(task.cron, { iterator: true }).next() as unknown) as {
+      entityList.rows[i].next_run = ((cronParser.parseExpression(entityList.rows[i].cron, { iterator: true }).next() as unknown) as {
         value: { _date: Moment };
       }).value._date.fromNow();
 
-      if (task.job == null) {
-        task.status = T("Not run since last boot");
+      if (entityList.rows[i].job == null) {
+        entityList.rows[i].status = T("Not run since last boot");
       } else {
-        task.state = task.job.state;
-        task.status = task.job.state;
-        if (task.job.error) {
-          task.status += ":" + task.job.error;
+        entityList.rows[i].state = entityList.rows[i].job.state;
+        entityList.rows[i].status = entityList.rows[i].job.state;
+        if (entityList.rows[i].job.error) {
+          entityList.rows[i].status += ":" + entityList.rows[i].job.error;
         }
-        this.job.getJobStatus(task.job.id).subscribe((t) => {
-          task.state = task.job.state;
-          task.status = t.state;
-          if (t.error) {
-            task.status += ":" + t.error;
+        this.job.getJobStatus(entityList.rows[i].job.id).subscribe((task) => {
+          entityList.rows[i].state = entityList.rows[i].job.state;
+          entityList.rows[i].status = task.state;
+          if (task.error) {
+            entityList.rows[i].status += ":" + task.error;
           }
-          if (t.progress.description && t.state !== 'SUCCESS') {
-            task.status += ':' + t.progress.description;
+          if (task.progress.description && task.state != 'SUCCESS') {
+            entityList.rows[i].status += ':' + task.progress.description;
           }
         });
       }
     }
+
   }
 
   stateButton(row) {
