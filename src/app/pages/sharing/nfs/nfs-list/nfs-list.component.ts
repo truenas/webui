@@ -1,9 +1,6 @@
 import { Component } from '@angular/core';
-import { helptext_sharing_nfs } from 'app/helptext/sharing';
+import { delete_share_message, helptext_sharing_nfs } from 'app/helptext/sharing';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { DialogService } from 'app/services';
-import { filter } from 'rxjs/operators';
 
 @Component({
   selector : 'app-nfs-list',
@@ -33,34 +30,11 @@ export class NFSListComponent {
     },
   };
 
-  constructor(private dialogService: DialogService) {}
+  public confirmDeleteDialog = {
+    message: delete_share_message + ' '
+  }
 
   public afterInit(entityList: EntityTableComponent) {
     this.entityList = entityList;
-  }
-
-  public getActions() {
-    return [
-      {
-        id: 'edit',
-        label: 'Edit',
-        onClick: share => this.entityList.doEdit(share.id)
-      },
-      {
-        id: 'delete',
-        label: 'Delete',
-        onClick: share =>
-          this.dialogService
-            .confirm(
-              helptext_sharing_nfs.dialog_delete_title,
-              helptext_sharing_nfs.dialog_delete_message.replace('?', ` ${share.nfs_paths}?`)
-            )
-            .pipe(filter(ok => !!ok))
-            .subscribe(
-              () => this.entityList.delete(share.id),
-              error => new EntityUtils().handleWSError(this, error, this.dialogService)
-            )
-      }
-    ];
   }
 }
