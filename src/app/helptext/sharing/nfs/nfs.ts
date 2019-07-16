@@ -90,7 +90,11 @@ export const helptext_sharing_nfs = {
 
   dialog_enable_service_title: T("Enable service"),
   dialog_enable_service_message: T("Enable this service?"),
-  dialog_enable_service_button: T("Enable Service"),
+  dialog_enable_service_button: T("Enable Service"),    
+  
+  dialog_delete_title: T("Delete"),
+  dialog_delete_message: T("Stop sharing NFS? The sharing configuration will be deleted\
+(but the underlying dataset will not)."),
 
   snackbar_service_started: T("Service started"),
   snackbar_close: T("close")
