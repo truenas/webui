@@ -398,7 +398,7 @@ export class PluginAddComponent implements OnInit {
 
   goAdvanced() {
     this.router.navigate(
-      new Array('').concat(["plugins", "advanced", this.pluginName])
+      new Array('').concat(["plugins", "advanced", this.pluginName, {'plugin_repository': this.pluginRepository}])
     );
   }
 }

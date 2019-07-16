@@ -96,7 +96,7 @@ export class AvailablePluginsComponent implements OnInit {
     }
 
     install(plugin) {
-        this.router.navigate(new Array('').concat(["plugins", "add", plugin]));
+        this.router.navigate(new Array('').concat(["plugins", "add", plugin, {'plugin_repository': this.selectedRepo}]));
     }
 
 }
