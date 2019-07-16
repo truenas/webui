@@ -173,8 +173,6 @@ export class InterfacesFormComponent implements OnDestroy {
         placeholder: helptext.alias_address_placeholder,
         tooltip: helptext.alias_address_tooltip,
         type: 'ipwithnetmask',
-        netmaskPreset: 22,
-
         validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
       },
       {
@@ -193,7 +191,7 @@ export class InterfacesFormComponent implements OnDestroy {
         disabled: true,
         isHidden: true,
         type: 'ipwithnetmask',
-        // netmaskPreset: 32,
+        netmaskPreset: 32,
         validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
       },
       {
@@ -384,7 +382,7 @@ export class InterfacesFormComponent implements OnDestroy {
           !!data.aliases[i]['address']) {
         const strings = data.aliases[i]['address'].split('/');
         aliases.push({address:strings[0],
-                      netmask:22});
+                      netmask:parseInt(strings[1],10)});
         if (!!data.aliases[i]['failover_address'] &&
             !!data.aliases[i]['failover_virtual_address']) {
           const f_strings = data.aliases[i]['failover_address'].split('/');
@@ -396,7 +394,7 @@ export class InterfacesFormComponent implements OnDestroy {
           }
       }
     }
-  
+
     data.aliases = aliases;
     if (failover_aliases.length > 0) {
       data.failover_aliases = failover_aliases;
@@ -444,10 +442,6 @@ export class InterfacesFormComponent implements OnDestroy {
     }
 
     return data;
-  }
-
-  customSubmit(data) {
-    console.log(data)
   }
 
   ngOnDestroy() {

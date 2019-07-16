@@ -33,9 +33,7 @@ export class FormIpWithNetmaskComponent implements Field, OnInit, OnDestroy {
 
   ngOnInit() {
     this.control = this.group.controls[this.config.name];
-    console.log(this.control)
     this.valueSubscription = this.control.valueChanges.subscribe((res) => {
-      console.log(res)
       this.setAddressAndNetmask(res);
     });
     if (this.control.value) {
@@ -48,7 +46,6 @@ export class FormIpWithNetmaskComponent implements Field, OnInit, OnDestroy {
   }
 
   setAddress($event){
-    console.log($event)
     const address = $event.target.value;
     this.setAddressAndNetmask(address);
   }
@@ -62,7 +59,6 @@ export class FormIpWithNetmaskComponent implements Field, OnInit, OnDestroy {
   }
 
   setNetmask($event){
-    console.log($event)
     this.netmask = $event.value;
     this.setValue();
   }
@@ -76,13 +72,12 @@ export class FormIpWithNetmaskComponent implements Field, OnInit, OnDestroy {
   }
 
   setAddressAndNetmask(value) {
-console.log('hey', value)
     const strings = value.split('/');
+    this.address = strings[0];
     if (strings.length > 1) {
-      this.address = strings[0];
       this.netmask = strings[1];
-    } else {
-      this.address = strings[0];
+    } else if (this.config.netmaskPreset) {
+      this.netmask = (this.config.netmaskPreset).toString();
     }
     this.setNetmaskOptions();
     this.setValue();
