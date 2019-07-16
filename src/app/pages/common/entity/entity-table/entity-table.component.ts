@@ -438,7 +438,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.setPaginationInfo();
       this.showDefaults = true;
     }
-    if (this.expandedRows == 0 && this.filter.nativeElement.value === '') {
+    if ((this.expandedRows == 0 || !this.asyncView) && this.filter.nativeElement.value === '') {
       this.currentRows = this.rows;
       this.paginationPageIndex  = 0;
       this.setPaginationInfo();
