@@ -115,15 +115,15 @@
   font-size: 75%;
 }
 
-.pool-name .icon-wrapper .error .mat-icon{
+span.error {
   color: var(--red);
 }
 
-.pool-status .icon-wrapper .warn .mat-icon{
+span.warn{
   color: var(--yellow);
 }
 
-.pool-status .icon-wrapper .safe .mat-icon{
+span.safe{
   color: var(--green);
 }
 /*
