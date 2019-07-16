@@ -24,8 +24,8 @@ import { T } from '../../../translate-marker';
   </mat-spinner>
   <mat-select *ngIf="is_ha" #storageController name="controller" placeholder="Controller" (selectionChange)="loadData()" [(ngModel)]="remoteController">
 
-    <mat-option [value]="false">Current Controller: TrueNAS Controller {{currentControllerLabel}}</mat-option>
-    <mat-option [value]="true">Failover Controller: TrueNAS Controller {{failoverControllerLabel}}</mat-option>
+    <mat-option [value]="false">Active: TrueNAS Controller {{currentControllerLabel}}</mat-option>
+    <mat-option [value]="true">Standby: TrueNAS Controller {{failoverControllerLabel}}</mat-option>
   </mat-select><br/>
   <mat-select #selectedChannel name="channel" placeholder="Channel" (selectionChange)="switchChannel()" [(ngModel)]="selectedValue">
     <mat-option *ngFor="let channel of channels" [value]="channel.value">
@@ -143,15 +143,10 @@ export class IPMIComponent {
         this.is_ha = is_ha;
         if (this.is_ha) {
           this.ws.call('failover.node').subscribe((node) => {
-            if (node === 'A') {
-              this.currentControllerLabel = '1';
-              this.failoverControllerLabel = '2';
-            } else if (node === 'B') {
-              this.currentControllerLabel = '2';
-              this.failoverControllerLabel = '1';
-            }
-          })
-        }
+            this.currentControllerLabel  = (node === 'A') ? '1' : '2';
+            this.failoverControllerLabel = (node === 'A') ? '2' : '1';
+          });
+        };
       });
     }
   }
