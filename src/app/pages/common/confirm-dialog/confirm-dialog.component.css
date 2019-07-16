@@ -2,11 +2,11 @@
     padding-right: 10px;
 }
 
-#confirm-label {
+/* #confirm-label {
     margin-left: 15px !important;
     position: relative;
     top: -2px;
-}
+} */
 
 #confirm-label:hover {
     cursor: pointer;

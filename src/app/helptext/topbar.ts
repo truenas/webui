@@ -8,10 +8,10 @@ export default {
     ha_disabled_reasons : {
         NO_VOLUME : T('No pools are configured.'),
         NO_VIP : T('No interfaces configured with Virtual IP.'),
-        NO_SYSTEM_READY : T('Other TrueNAS Controller has not finished booting.'),
-        NO_PONG : T('Other TrueNAS Controller cannot be reached.'),
+        NO_SYSTEM_READY : T('Other TrueNAS controller has not finished booting.'),
+        NO_PONG : T('Other TrueNAS controller cannot be reached.'),
         NO_FAILOVER : T('Failover is administratively disabled.'),
-        NO_LICENSE: T('Other TrueNAS Controller has no license.'),
-        MISMATCH_DISKS : T('The TrueNAS Controllers do not have the same quantity of disks.')
+        NO_LICENSE: T('Other TrueNAS controller has no license.'),
+        MISMATCH_DISKS : T('The TrueNAS controllers do not have the same quantity of disks.')
     }
 }
