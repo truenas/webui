@@ -26,6 +26,8 @@ export class InterfacesFormComponent implements OnDestroy {
   protected route_success: string[] = [ 'network', 'interfaces' ];
   protected isEntity = true;
   protected is_ha = false;
+  protected ipPlaceholder: string;
+  protected failoverPlaceholder: string;
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -304,6 +306,21 @@ export class InterfacesFormComponent implements OnDestroy {
           failover_virtual_address['isHidden'] = false;
           failover_address['disabled'] = false;
           failover_address['isHidden'] = false;
+          this.ws.call('failover.node').subscribe((node) => {
+            if (node === 'A') {
+              this.ipPlaceholder = ' (This Controller)';
+              this.failoverPlaceholder = ' (TrueNAS Controller 2)';
+            } else if (node === 'B') {
+              this.ipPlaceholder = ' (TrueNAS Controller 1)';
+              this.failoverPlaceholder = ' (This Controller)';
+            } else {
+              this.ipPlaceholder = ' The active controller cannot be detected.';
+              this.failoverPlaceholder = ''
+            }
+            _.find(this.iparrayControl.formarray, {"name":"address"}).placeholder += this.ipPlaceholder;
+            failover_address.placeholder += this.failoverPlaceholder;
+          })
+          
         }
       });
     }

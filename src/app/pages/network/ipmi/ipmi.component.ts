@@ -16,9 +16,16 @@ import { T } from '../../../translate-marker';
   selector : 'app-ipmi',
   template : `
   <mat-card class="ipmi-card">
+  <mat-spinner
+    diameter='25'
+    class="form-select-spinner"
+    id="ipmi_controller-spinner"
+    *ngIf="!currentControllerLabel">
+  </mat-spinner>
   <mat-select *ngIf="is_ha" #storageController name="controller" placeholder="Controller" (selectionChange)="loadData()" [(ngModel)]="remoteController">
-    <mat-option [value]="false">Current controller</mat-option>
-    <mat-option [value]="true">Failover controller</mat-option>
+
+    <mat-option [value]="false">Current Controller: TrueNAS Controller {{currentControllerLabel}}</mat-option>
+    <mat-option [value]="true">Failover Controller: TrueNAS Controller {{failoverControllerLabel}}</mat-option>
   </mat-select><br/>
   <mat-select #selectedChannel name="channel" placeholder="Channel" (selectionChange)="switchChannel()" [(ngModel)]="selectedValue">
     <mat-option *ngFor="let channel of channels" [value]="channel.value">
@@ -45,6 +52,8 @@ export class IPMIComponent {
   protected entityEdit: any;
   public remoteController = false;
   public is_ha = false;
+  public currentControllerLabel: string;
+  public failoverControllerLabel: string;
   private options: Array<any> = [
     {label:'Indefinitely', value: 'force'},
     {label:'15 seconds', value: 15},
@@ -132,6 +141,17 @@ export class IPMIComponent {
     if (window.localStorage.getItem('is_freenas') === 'false') {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         this.is_ha = is_ha;
+        if (this.is_ha) {
+          this.ws.call('failover.node').subscribe((node) => {
+            if (node === 'A') {
+              this.currentControllerLabel = '1';
+              this.failoverControllerLabel = '2';
+            } else if (node === 'B') {
+              this.currentControllerLabel = '2';
+              this.failoverControllerLabel = '1';
+            }
+          })
+        }
       });
     }
   }
