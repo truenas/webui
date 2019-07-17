@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormGroup, AbstractControl, FormControl } from '@angular/forms';
+import { FormGroup, AbstractControl } from '@angular/forms';
 
+import { EntityFormService } from '../../../../../common/entity/entity-form/services/entity-form.service';
 @Component({
     selector: 'app-dynamic-list',
     templateUrl: './dynamic-list.component.html',
@@ -13,9 +14,9 @@ export class DynamciListComponent implements OnInit {
 
     public listControl: AbstractControl;
     public inputConfig: any;
-    protected inputControl: AbstractControl;
-
-    constructor() { }
+    public inputControl: AbstractControl;
+    public formGroup: FormGroup;
+    constructor(private entityFormService: EntityFormService) { }
 
     ngOnInit() {
         // define input config and control
@@ -24,11 +25,18 @@ export class DynamciListComponent implements OnInit {
             name: this.config.name + '_input',
             placeholder: this.config.placeholder,
             tooltip: this.config.tooltip,
+            validation: this.config.validation ? this.config.validation : [],
         };
-        this.group.controls[this.inputConfig.name] = new FormControl();
+        this.formGroup = this.entityFormService.createFormGroup([this.inputConfig]);
+        this.inputControl = this.formGroup.controls[this.inputConfig.name]
 
-        this.inputControl = this.group.controls[this.inputConfig.name];
         this.listControl = this.group.controls[this.config.name];
+
+        if (this.config.validation) {
+            this.inputControl.setValidators(this.inputConfig.validation);
+            this.inputControl.updateValueAndValidity();
+        }
+
         if (this.listControl.value === undefined) {
             this.listControl.setValue(new Set([]));
         }

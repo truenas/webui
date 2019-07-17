@@ -8,12 +8,12 @@
     <div fxFlex="100%">
         <div fxLayout="row" class="input-add">
             <div fxFlex="100%">
-                <div id="dynamicField_auth_network_add" dynamicField [config]="inputConfig" [group]="group"
+                <div id="dynamicField_auth_network_add" dynamicField [config]="inputConfig" [group]="formGroup"
                     [fieldShow]="'show'"></div>
             </div>
             <div>
                 <button mat-flat-button color="primary" type="button" (click)="add()"
-                    [disabled]="this.listControl.disabled">
+                    [disabled]="this.listControl.disabled || !this.inputControl.valid">
                     <mat-icon>add</mat-icon>
                 </button>
             </div>
