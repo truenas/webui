@@ -1,6 +1,7 @@
 import { T } from "app/translate-marker";
 import { Validators } from "@angular/forms";
 import { matchOtherValidator } from "app/pages/common/entity/entity-form/validators/password-validation";
+import globalHelptext from '../../../helptext/global-helptext';
 
 export const helptext_sharing_iscsi = {
   target_form_placeholder_name: T("Target Name"),
@@ -130,9 +131,9 @@ export const helptext_sharing_iscsi = {
   ),
 
   globalconf_placeholder_alua: T('Enable iSCSI ALUA'),
-  globalconf_tooltip_alua: T('Set for the initiator to discover paths\
- to both storage controllers on the target and increase storage traffic\
- efficiency. Requires ALUA-capable, High Availability (HA) hardware.'),
+  globalconf_tooltip_alua: T(`Set for the initiator to discover paths\
+ to both ${globalHelptext.ctrlrs} on the target and increase storage traffic\
+ efficiency. Requires ALUA-capable, High Availability (HA) hardware.`),
 
   globalconf_dialog_title: T("Enable service"),
   globalconf_dialog_message: T("Enable this service?"),
