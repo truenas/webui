@@ -20,13 +20,17 @@
               </button>
             </div>
         </mat-toolbar-row>
+        <div class="cpu-model">{{cpuModel ? cpuModel : 'gathering info...'}}</div>
         <!--<viewchartline fxFlex="100" fxFlexAlign="end" #chartCpu width="600" height="160" [style.display]="isFlipped ? 'none': 'block'"></viewchartline>-->
         <!-- Chart -->
         <div id="cpu-load-wrapper" fxLayout="row wrap" fxLayoutAlign="space-around center">
           <h3 fxFlex="33" id="cpu-load-label">LOAD</h3>
           <!--<div *ngIf="cpuAvg && cpuAvg.data" id="cpu-load-value">{{cpuAvg.data[1]}}%</div>-->
           <viewchartgauge fxFlex="34" *ngIf="cpuAvg && cpuAvg.data" [config]="cpuAvg" #load class=""></viewchartgauge>
-          <h4 fxFlex="33" id="cpu-load-cores">{{coreCount}} Cores</h4>
+          <div fxFlex="33" id="cpu-load-cores">
+            <h3 class="core-count">{{coreCount}}</h3>
+            <h4 class="core-count-label">Cores</h4>
+          </div>
         </div>
 
 

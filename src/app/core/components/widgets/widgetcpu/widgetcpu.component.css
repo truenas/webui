@@ -56,9 +56,15 @@
   text-align:right;
 }
 
-#cpu-load-label{
+.cpu-model{
+  opacity:0.5;
+}
+
+#cpu-load-label,
+.core-count{
   margin-bottom:0;
   font-weight:400;
+  font-size:1.65rem;
 }
 
 #cpu-load-value{
