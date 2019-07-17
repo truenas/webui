@@ -36,9 +36,10 @@ export class SMBListComponent {
   };
 
   public confirmDeleteDialog = {
-    title: T('Unshare'),
+    message: delete_share_message,
+    isMessageComplete: true,
     button: T('Unshare'),
-    buildMessage: share => delete_share_message(share.cifs_name)
+    buildTitle: share => `${T('Unshare')} ${share.cifs_name}`
   }
 
   constructor(private ws: WebSocketService, private router: Router, private dialogService: DialogService) {}

@@ -30,8 +30,9 @@ export class AFPListComponent {
   };
 
   public confirmDeleteDialog = {
-    title: T('Unshare'),
+    message: delete_share_message,
+    isMessageComplete: true,
     button: T('Unshare'),
-    buildMessage: share => delete_share_message(share.afp_name)
+    buildTitle: share => `${T('Unshare')} ${share.afp_name}`
   }
 }
