@@ -13,6 +13,16 @@
           </span>
 
             <div class="controls">
+
+              <button mat-icon-button class="" (click)="router.navigate(['network/interfaces/edit/'+nicState.name])">
+                <mat-icon role="img"
+                  matTooltip="Configure Interface"
+                  matTooltipPosition="above"
+                  aria-label="Configure Interface">
+                    settings
+                </mat-icon>
+              </button>
+
               <button mat-icon-button class="" (click)="router.navigate(['reportsdashboard/network'])">
                 <mat-icon role="img"
                   matTooltip="Network Reports"
@@ -21,6 +31,7 @@
                     insert_chart
                 </mat-icon>
               </button>
+
             </div>
 
           <!--<ng-template #backBtn>

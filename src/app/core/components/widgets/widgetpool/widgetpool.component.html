@@ -18,7 +18,17 @@
             </button>
             </ng-template>-->
             <!--<button mat-button color="primary" class="" (click)="router.navigate(['reportsdashboard/cpu'])">CPU REPORTS</button>-->
+
             <div class="controls">
+              <button mat-icon-button class="" (click)="router.navigate(['storage/pools'])">
+                <mat-icon role="img"
+                  matTooltip="Configure Pools"
+                  matTooltipPosition="above"
+                  aria-label="Configure Pools">
+                    settings
+                </mat-icon>
+              </button>
+
               <button mat-icon-button class="" (click)="router.navigate(['reportsdashboard/disk'])">
                 <mat-icon role="img"
                   matTooltip="Disk Reports"
