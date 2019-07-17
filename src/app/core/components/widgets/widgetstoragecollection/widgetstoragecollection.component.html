@@ -1,5 +1,0 @@
-<div class="widget-collection" *ngIf="volumes.length > 0 && widgetFlex" fxLayout="collectionLayout" fxLayoutAlign="space-around center" fxLayoutWrap>
-  <ng-container *ngFor="let volume of volumes; let i=index">
-    <widget-pool [volumeData]="volumes[i]" [fxFlex]="widgetFlex" [widgetSize]="widgetSize" configurable="false"></widget-pool>
-  </ng-container>
-</div>
