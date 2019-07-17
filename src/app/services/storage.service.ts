@@ -225,16 +225,11 @@ export class StorageService {
   }
 
   /**
-   * Accepts a path which must include the dataset's pool
    * @param path The path of the dataset excluding "/mnt/"
    */
   isDatasetTopLevel(path: string): boolean {
     if (typeof path !== 'string') {
       throw new Error('isDatasetTopLevel received "path" parameter that is not of type "string."');
-    }
-
-    if (path.indexOf('/') < 0) {
-      throw new Error("isDatasetTopLevel received a path that does not include the dataset's pool.");
     }
 
     /**
@@ -243,6 +238,6 @@ export class StorageService {
      */
     path = path.indexOf('/') === 0 ? path.substr(1) : path;
 
-    return path.split('/').length === 2;
+    return path.indexOf('/') < 0;
   }
 }
