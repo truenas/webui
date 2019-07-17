@@ -605,10 +605,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   doDelete(item) {
-    const deleteMsg =
-      this.conf.confirmDeleteDialog && this.conf.confirmDeleteDialog.isMessageComplete
-        ? ''
-        : this.getDeleteMessage(item);
+    let deleteMsg;
+    if (this.conf.confirmDeleteDialog && this.conf.confirmDeleteDialog.buildMessage) {
+      deleteMsg = this.conf.confirmDeleteDialog.buildMessage(item);
+    } else {
+      deleteMsg = this.getDeleteMessage(item);
+    }
     let id;
     if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.id_prop) {
       id = item[this.conf.config.deleteMsg.id_prop];

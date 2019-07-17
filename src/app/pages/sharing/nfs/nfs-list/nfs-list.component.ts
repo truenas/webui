@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { delete_share_message, helptext_sharing_nfs } from 'app/helptext/sharing';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { T } from 'app/translate-marker';
 
 @Component({
@@ -16,7 +15,6 @@ export class NFSListComponent {
   protected route_add_tooltip: string = "Add Unix (NFS) Share";
   protected route_edit: string[] = [ 'sharing', 'nfs', 'edit' ];
   protected route_delete: string[] = [ 'sharing', 'nfs', 'delete' ];
-  protected entityList: EntityTableComponent;
 
   public columns: any[] = [
     {name: helptext_sharing_nfs.column_path, prop: 'nfs_paths'},
@@ -33,12 +31,7 @@ export class NFSListComponent {
 
   public confirmDeleteDialog = {
     title: T('Unshare'),
-    message: delete_share_message,
     button: T('Unshare'),
-    isMessageComplete: true
-  }
-
-  public afterInit(entityList: EntityTableComponent) {
-    this.entityList = entityList;
+    buildMessage: share => delete_share_message(share.nfs_paths)
   }
 }

@@ -6,4 +6,6 @@ export * from "./nfs/nfs";
 export * from "./smb/smb";
 export * from "./webdav/webdav";
 
-export const delete_share_message = T('The sharing configuration will be deleted. Data in the former share dataset will not be affected.');
+export const delete_share_message = (shareName: string) =>
+  T(`Stop sharing. The sharing configuration will be removed.\
+ Data in the share dataset will not be affected.`).replace('sharing.', `sharing ${shareName}.`);

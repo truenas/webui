@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { delete_share_message } from 'app/helptext/sharing';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { T } from '../../../../translate-marker';
 
 @Component({
@@ -16,7 +15,6 @@ export class AFPListComponent {
   protected route_add_tooltip: string = "Add Apple (AFP) Share";
   protected route_edit: string[] = [ 'sharing', 'afp', 'edit' ];
   protected route_delete: string[] = [ 'sharing', 'afp', 'delete' ];
-  protected entityList: EntityTableComponent;
 
   public columns: any[] = [
     {name : T('Name'), prop : 'afp_name'},
@@ -33,12 +31,7 @@ export class AFPListComponent {
 
   public confirmDeleteDialog = {
     title: T('Unshare'),
-    message: delete_share_message,
     button: T('Unshare'),
-    isMessageComplete: true
-  }
-  
-  public afterInit(entityList: EntityTableComponent) {
-    this.entityList = entityList;
+    buildMessage: share => delete_share_message(share.afp_name)
   }
 }

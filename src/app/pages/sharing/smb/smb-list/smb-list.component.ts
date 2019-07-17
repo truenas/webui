@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { delete_share_message, helptext_sharing_smb } from 'app/helptext/sharing';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { T } from 'app/translate-marker';
  
 @Component({
@@ -16,7 +15,6 @@ export class SMBListComponent {
   protected route_add_tooltip: string = "Add Windows (SMB) Share";
   protected route_edit: string[] = [ 'sharing', 'smb', 'edit' ];
   protected route_delete: string[] = [ 'sharing', 'smb', 'delete' ];
-  protected entityList: EntityTableComponent;
 
   public columns: any[] = [
     {name: helptext_sharing_smb.column_name, prop: 'cifs_name'},
@@ -30,15 +28,10 @@ export class SMBListComponent {
       key_props: ['cifs_name']
     },
   };
-  
+
   public confirmDeleteDialog = {
     title: T('Unshare'),
-    message: delete_share_message,
     button: T('Unshare'),
-    isMessageComplete: true
-  }
-
-  afterInit(entityList: any) {
-    this.entityList = entityList;
+    buildMessage: share => delete_share_message(share.cifs_name)
   }
 }
