@@ -225,7 +225,6 @@ export class StorageService {
   }
 
   /**
-   * Accepts a path which must include the dataset's pool
    * @param path The path of the dataset excluding "/mnt/"
    */
   isDatasetTopLevel(path: string): boolean {
