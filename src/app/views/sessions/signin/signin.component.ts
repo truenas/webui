@@ -235,6 +235,7 @@ export class SigninComponent implements OnInit {
     this.ws.call('auth.generate_token', [300]).subscribe((result) => {
       if (result) {
         this.ws.token = result;
+        this.redirect()
       }
     });
   }
