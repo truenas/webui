@@ -6,15 +6,16 @@ import { EntityFormService } from '../../../../common/entity/entity-form/service
 import { FieldRelationService } from '../../../../common/entity/entity-form/services/field-relation.service';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../../common/entity/utils';
-import { WebSocketService, DialogService } from '../../../../../services/';
+import { WebSocketService, DialogService, NetworkService } from '../../../../../services/';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import * as _ from 'lodash';
+import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 
 @Component({
   selector: 'app-iscsi-initiator-form',
   templateUrl: './initiator-form.component.html',
   styleUrls: ['./initiator-form.component.css', '../../../../common/entity/entity-form/entity-form.component.scss'],
-  providers: [FieldRelationService]
+  providers: [FieldRelationService, NetworkService]
 })
 export class InitiatorFormComponent implements OnInit {
 
@@ -56,6 +57,7 @@ export class InitiatorFormComponent implements OnInit {
       name: 'auth_network',
       placeholder: helptext_sharing_iscsi.initiator_form_placeholder_auth_network,
       tooltip: helptext_sharing_iscsi.initiator_form_placeholder_auth_network,
+      validation: [regexValidator(this.networkService.ipv4_or_ipv6)],
       customEventMethod: (parent) => {
         for (let i = 0; i < parent.source.selectedOptions.selected.length; i++) {
           parent.listControl.value.add(parent.source.selectedOptions.selected[i].value.initiator_addr);
@@ -90,7 +92,8 @@ export class InitiatorFormComponent implements OnInit {
     protected ws: WebSocketService,
     protected entityFormService: EntityFormService,
     protected fieldRelationService: FieldRelationService,
-    protected dialog: DialogService) { }
+    protected dialog: DialogService,
+    protected networkService: NetworkService) { }
 
   getConnectedInitiators() {
     this.ws.call('iscsi.global.sessions').subscribe(
