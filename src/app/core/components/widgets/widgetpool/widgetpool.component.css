@@ -56,8 +56,7 @@
   top:48px;*/
   display:inline;
   width:100%;
-  /*height:calc(100% - 96px);*/
-  height:100%;
+  height:calc(100% - 48px);
   /*border-left:solid 1px var(--bg1);*/
 }
 
@@ -70,6 +69,10 @@
   height:100%;
   display:inline-block;
   padding:32px 0;
+}
+
+.slide.overview {
+  height:100%;
 }
 
 .slide.overview .right > div{
