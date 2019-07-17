@@ -11,6 +11,18 @@
               &nbsp;<span>{{title | translate}} </span>
             </span>
           </span>
+
+            <div class="controls">
+              <button mat-icon-button class="" (click)="router.navigate(['reportsdashboard/network'])">
+                <mat-icon role="img"
+                  matTooltip="Network Reports"
+                  matTooltipPosition="above"
+                  aria-label="Network Reports">
+                    insert_chart
+                </mat-icon>
+              </button>
+            </div>
+
           <!--<ng-template #backBtn>
             <button class="mat-card-title-text" *ngIf="currentSlide !== '0'" mat-button color="default" (click)="updateSlide(path[previousSlide].name, true, previousSlide)">
               <mat-icon class="back-arrow">chevron_left</mat-icon>
