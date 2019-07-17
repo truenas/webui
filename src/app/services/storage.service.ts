@@ -233,16 +233,12 @@ export class StorageService {
       throw new Error('isDatasetTopLevel received "path" parameter that is not of type "string."');
     }
 
-    if (path.indexOf('/') < 0) {
-      throw new Error("isDatasetTopLevel received a path that does not include the dataset's pool.");
-    }
-
     /**
      * Strip leading forward slash if present
      * /zpool/d0 -> zpool/d0
      */
     path = path.indexOf('/') === 0 ? path.substr(1) : path;
 
-    return path.split('/').length === 2;
+    return path.indexOf('/') < 0;
   }
 }
