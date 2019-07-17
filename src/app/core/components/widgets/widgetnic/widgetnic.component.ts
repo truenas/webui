@@ -87,7 +87,7 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
     let result = this.nicState.aliases.filter((item) => {
       return item.type == 'INET' ;
     });
-
+    
     return result;
   }
 

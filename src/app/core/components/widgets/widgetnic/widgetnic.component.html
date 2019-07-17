@@ -90,9 +90,9 @@
                 <mat-list>
                   <mat-list-item><strong>Media Type: </strong>&nbsp;&nbsp;{{nicState.active_media_type}}</mat-list-item>
                   <mat-list-item><strong>Media Subtype: </strong>&nbsp;&nbsp;{{nicState.active_media_subtype}}</mat-list-item>
-                  <mat-list-item (click)="updateSlide('addresses', ipAddresses.length > 0, 1)" [ngClass]="{'clickable': ipAddresses.length > 0}">
-                      <strong>IP Addresses: </strong>&nbsp;&nbsp;  {{ipAddresses.length}}
-                      <mat-icon *ngIf="ipAddresses.length > 0" class="next-slide">chevron_right</mat-icon>
+                  <mat-list-item (click)="updateSlide('addresses', ipAddresses.length > 1, 1)" [ngClass]="{'clickable': ipAddresses.length > 1}">
+                    <strong>IP Addresses: </strong>&nbsp;&nbsp;  {{ipAddresses.length > 0 ? ipAddresses[0].address : ipAddresses.length}}<span *ngIf="ipAddresses.length > 0">/{{ipAddresses[0].netmask}}</span> &nbsp;&nbsp;<span class="more-addresses" *ngIf="ipAddresses.length > 1">({{ipAddresses.length - 1}} more)</span>
+                      <mat-icon *ngIf="ipAddresses.length > 1" class="next-slide">chevron_right</mat-icon>
                   </mat-list-item>
                   <mat-list-item (click)="updateSlide('vlans', nicState.vlans.length > 0, 1)" [ngClass]="{'clickable': nicState.vlans.length > 0}">
                       <strong>VLANs: </strong>&nbsp;&nbsp;  {{nicState.vlans.length}}
