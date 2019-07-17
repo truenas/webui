@@ -120,6 +120,9 @@ dataset_acl_stripacl_tooltip: T("Setting this will strip ACLs from the current d
   hose options"),
 
 dataset_acl_stripacl_dialog_warning: T('Warning'),
-dataset_acl_stripacl_dialog_warning_message: T('Stripping ACLs will reset the permissions\
- of this dataset. This may make data inaccessible.')
+dataset_acl_stripacl_dialog_warning_message: T('Stripping the ACL resets dataset\
+ permissions. This can make data inaccessible until new permissions are created.'),
+
+dataset_acl_toplevel_dialog_message: T('Editing top-level datasets can prevent users\
+ from accessing data in child datasets.')
 }
