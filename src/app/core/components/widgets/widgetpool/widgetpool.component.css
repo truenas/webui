@@ -132,6 +132,19 @@ span.safe{
   color: var(--red);
 }*/
 
+.controls{
+  position:absolute;
+  top:0;
+  right:16px;
+  color: var(--fg2);
+  /*font-weight:500;
+  text-transform:capitalize;*/
+}
+
+.controls button{
+  display:inline-block;
+}
+
 .carousel-nav{
   position:absolute;
   bottom:0;
