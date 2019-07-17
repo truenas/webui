@@ -11,6 +11,7 @@ import { regexValidator } from '../../../common/entity/entity-form/validators/re
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from '../../../common/entity/utils';
 import helptext from '../../../../helptext/network/interfaces/interfaces-form';
+import globalHelptext from '../../../../helptext/global-helptext';
 
 @Component({
   selector : 'app-interfaces-form',
@@ -309,9 +310,9 @@ export class InterfacesFormComponent implements OnDestroy {
           this.ws.call('failover.node').subscribe((node) => {
             if (node === 'A') {
               this.ipPlaceholder = ' (This Controller)';
-              this.failoverPlaceholder = ' (TrueNAS Controller 2)';
+              this.failoverPlaceholder = ` (${globalHelptext.Ctrlr} 2)`;
             } else if (node === 'B') {
-              this.ipPlaceholder = ' (TrueNAS Controller 1)';
+              this.ipPlaceholder = ` (${globalHelptext.Ctrlr} 1)`;
               this.failoverPlaceholder = ' (This Controller)';
             } else {
               this.ipPlaceholder = ' The active controller cannot be detected.';

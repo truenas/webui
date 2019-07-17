@@ -7,6 +7,7 @@ import { FormGroup } from '@angular/forms';
 
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../helptext/network/ipmi/ipmi';
+import globalHelptext from '../../../helptext/global-helptext';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../common/entity/utils';
 import { T } from '../../../translate-marker';
@@ -24,8 +25,8 @@ import { T } from '../../../translate-marker';
   </mat-spinner>
   <mat-select *ngIf="is_ha" #storageController name="controller" placeholder="Controller" (selectionChange)="loadData()" [(ngModel)]="remoteController">
 
-    <mat-option [value]="false">Active: TrueNAS Controller {{currentControllerLabel}}</mat-option>
-    <mat-option [value]="true">Standby: TrueNAS Controller {{failoverControllerLabel}}</mat-option>
+    <mat-option [value]="false">Active: {{controllerName}} {{currentControllerLabel}}</mat-option>
+    <mat-option [value]="true">Standby: {{controllerName}} {{failoverControllerLabel}}</mat-option>
   </mat-select><br/>
   <mat-select #selectedChannel name="channel" placeholder="Channel" (selectionChange)="switchChannel()" [(ngModel)]="selectedValue">
     <mat-option *ngFor="let channel of channels" [value]="channel.value">
@@ -52,6 +53,7 @@ export class IPMIComponent {
   protected entityEdit: any;
   public remoteController = false;
   public is_ha = false;
+  public controllerName = globalHelptext.Ctrlr;
   public currentControllerLabel: string;
   public failoverControllerLabel: string;
   private options: Array<any> = [
