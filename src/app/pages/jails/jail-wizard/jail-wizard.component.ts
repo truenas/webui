@@ -306,10 +306,10 @@ export class JailWizardComponent {
     this.releaseField = _.find(this.wizardConfig[0].fieldConfig, { 'name': 'release' });
     this.template_list = new Array<string>();
     this.jailService.getTemplates().subscribe(
-      (res) => {
-        for (let i = 0; i < res.length; i++) {
-          this.template_list.push(res[i].host_hostuuid);
-          this.releaseField.options.push({ label: res[i].host_hostuuid + ' (template)', value: res[i].host_hostuuid });
+      (templates) => {
+        for (const template of templates) {
+          this.template_list.push(template.host_hostuuid);
+          this.releaseField.options.push({ label: template.host_hostuuid + ' (template)', value: template.host_hostuuid });
         }
       },
       (err) => {
