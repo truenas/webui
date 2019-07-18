@@ -2,6 +2,10 @@
     display: block;
     padding: 16px;
 
+    button {
+        padding: 8px 16px;
+    }
+
     h4 {
         font-style: bold;
         line-height: 24px;
@@ -11,5 +15,13 @@
     p {
         line-height: 24px;
         margin: 0;
+    }
+
+    .wrapper__details {
+        padding-bottom: 12px;
+    }
+
+    .wrapper__action-buttons {
+        padding: 4px 0;
     }
 }

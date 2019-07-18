@@ -1,25 +1,22 @@
 
-import {fromEvent as observableFromEvent,  Observable ,  BehaviorSubject ,  Subscription, of } from 'rxjs';
-
-import {distinctUntilChanged, debounceTime, filter, switchMap, tap, catchError, take} from 'rxjs/operators';
-import { Component, OnInit, OnDestroy ,Input, ElementRef, ViewEncapsulation, ViewChild, AfterViewInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
+import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash';
-
-//local libs
-import { EntityTableRowDetailsComponent } from './entity-table-row-details/entity-table-row-details.component';
-import { RestService } from '../../../../services/rest.service';
-import { WebSocketService } from '../../../../services/ws.service';
-import { EntityUtils } from '../utils';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { DialogService, JobService } from '../../../../services';
-import { ErdService } from '../../../../services/erd.service';
-import { StorageService } from '../../../../services/storage.service'
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreEvent, CoreService } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
+import * as _ from 'lodash';
+import { fromEvent as observableFromEvent, Observable, of, Subscription } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, filter, switchMap, take, tap } from 'rxjs/operators';
+import { DialogService, JobService } from '../../../../services';
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { ErdService } from '../../../../services/erd.service';
+import { RestService } from '../../../../services/rest.service';
+import { StorageService } from '../../../../services/storage.service';
+import { WebSocketService } from '../../../../services/ws.service';
 import { T } from '../../../../translate-marker';
+import { EntityUtils } from '../utils';
+import { EntityTableRowDetailsComponent } from './entity-table-row-details/entity-table-row-details.component';
 
 export interface InputTableConf {
   prerequisite?: any;
@@ -31,7 +28,7 @@ export interface InputTableConf {
   queryCallOption?: any;
   queryCallJob?: any;
   resource_name?: string;
-  route_edit?: string;
+  route_edit?: string | string[];
   route_add?: string[];
   queryRes?: any [];
   showActions?: boolean;
@@ -47,16 +44,16 @@ export interface InputTableConf {
   rowDetailComponent?: any;
   cardHeaderComponent?: any;
   asyncView?: boolean;
+  wsDelete?: string;
   addRows?(entity: EntityTableComponent);
   changeEvent?(entity: EntityTableComponent);
   preInit?(entity: EntityTableComponent);
   afterInit?(entity: EntityTableComponent);
   dataHandler?(entity: EntityTableComponent);
   resourceTransformIncomingRestData?(data);
-  getActions?(row): any [];
+  getActions?(row: any): EntityTableAction[];
   getAddActions?(): any [];
   rowValue?(row, attr): any;
-  wsDelete?(resp): any;
   wsMultiDelete?(resp): any;
   wsMultiDeleteParams?(selected): any;
   updateMultiAction?(selected): any;
@@ -64,6 +61,14 @@ export interface InputTableConf {
   onCheckboxChange?(row): any;
   onSliderChange?(row): any;
   callGetFunction?(entity: EntityTableComponent): any;
+}
+
+export interface EntityTableAction {
+  id: string | number;
+  actionName: string;
+  icon: string;
+  label: string;
+  onClick: (row: any) => void;
 }
 
 export interface SortingConfig {
@@ -148,7 +153,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.conf.rowDetailComponent || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
   public getRowDetailHeight = () => 
      this.hasDetails() && !this.conf.rowDetailComponent
-      ? (this.allColumns.length - this.conf.columns.length) * DETAIL_HEIGHT + 32 // add space for padding
+      ? (this.allColumns.length - this.conf.columns.length) * DETAIL_HEIGHT + 76 // add space for padding
       : 100;
   
 
@@ -906,6 +911,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   // resets col view to the default set in the table's component
   resetColViewToDefaults() {
     this.conf.columns = this.originalConfColumns;
+    this.updateTableHeightAfterDetailToggle();
     this.selectColumnsToShowOrHide();
   }
 
@@ -921,12 +927,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.conf.columns.length < this.allColumns.length) {
       this.conf.columns = this.allColumns;
       this.selectColumnsToShowOrHide();
-      return this.conf.columns
     } else {
       this.conf.columns = [];
       this.selectColumnsToShowOrHide();
-      return this.conf.columns;
     }
+    this.updateTableHeightAfterDetailToggle();
+    return this.conf.columns
   }
 
   // Used by the select all checkbox to determine whether it should be checked

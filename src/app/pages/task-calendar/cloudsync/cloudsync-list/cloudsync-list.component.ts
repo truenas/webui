@@ -1,29 +1,28 @@
-import { WebSocketService, DialogService, JobService, EngineerModeService} from '../../../../services';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-
-import * as _ from 'lodash';
-import { T } from '../../../../translate-marker';
 import { TranslateService } from '@ngx-translate/core';
-import { EntityUtils } from '../../../common/entity/utils';
+import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import * as cronParser from 'cron-parser';
 import { Moment } from 'moment';
+import { DialogService, EngineerModeService, JobService, WebSocketService } from '../../../../services';
+import { T } from '../../../../translate-marker';
+import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
   selector: 'app-cloudsync-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
   providers: [JobService],
 })
-export class CloudsyncListComponent {
+export class CloudsyncListComponent implements InputTableConf {
 
   public title = "Cloud Sync Tasks";
-  protected queryCall = 'cloudsync.query';
-  protected route_add: string[] = ['tasks', 'cloudsync', 'add'];
-  protected route_add_tooltip = "Add Cloud Sync Task";
-  protected route_edit: string[] = ['tasks', 'cloudsync', 'edit'];
-  protected wsDelete = "cloudsync.delete";
+  public queryCall = 'cloudsync.query';
+  public route_add: string[] = ['tasks', 'cloudsync', 'add'];
+  public route_add_tooltip = "Add Cloud Sync Task";
+  public route_edit: string[] = ['tasks', 'cloudsync', 'edit'];
+  public wsDelete = "cloudsync.delete";
   protected entityList: any;
-  protected asyncView = true;
+  public asyncView = true;
 
   public columns: Array < any > = [
     { name: T('Description'), prop: 'description' },
@@ -110,8 +109,10 @@ export class CloudsyncListComponent {
 
   getActions(parentrow) {
     return [{
-      id: "start",
+      id: parentrow.description,
+      actionName: 'run_now',
       label: T("Run Now"),
+      icon: 'play_arrow',
       onClick: (row) => {
         this.dialog.confirm(T("Run Now"), T("Run this cloud sync now?"), true).subscribe((res) => {
           if (res) {
@@ -140,8 +141,10 @@ export class CloudsyncListComponent {
         });
       },
     }, {
-      id: "stop",
+      id: parentrow.description,
+      actionName: 'stop',
       label: T("Stop"),
+      icon: 'stop',
       onClick: (row) => {
         this.dialog.confirm(T("Stop"), T("Stop this cloud sync?"), true).subscribe((res) => {
           if (res) {
@@ -158,15 +161,19 @@ export class CloudsyncListComponent {
         });
       },
     }, {
-      id: "edit",
+      actionName: "edit",
+      id: parentrow.description,
+      icon: 'edit',
       label: T("Edit"),
       onClick: (row) => {
         this.route_edit.push(row.id);
         this.router.navigate(this.route_edit);
       },
     }, {
-      id: "delete",
+      id: parentrow.description,
+      actionName: "delete",
       label: T("Delete"),
+      icon: 'delete',
       onClick: (row) => {
         this.entityList.doDelete(row);
       },

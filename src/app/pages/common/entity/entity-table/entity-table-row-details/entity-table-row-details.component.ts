@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import * as _ from 'lodash';
-import { EntityTableComponent } from '../entity-table.component';
+import { EntityTableAction, EntityTableComponent } from '../entity-table.component';
 
 @Component({
   selector: 'app-entity-table-row-details',
@@ -12,13 +12,16 @@ export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
   @Input() parent: EntityTableComponent & { conf: any };
 
   public columns = [];
+  public actions: EntityTableAction[] = [];
 
   ngOnInit() {
     this.buildColumns();
+    this.actions = this.getActions();
   }
 
   ngOnChanges() {
     this.buildColumns();
+    this.actions = this.getActions();
   }
 
   getPropValue(prop) {
@@ -27,5 +30,9 @@ export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
 
   buildColumns(): void {
     this.columns = this.parent.allColumns.filter(col => !this.parent.conf.columns.some(c => c.prop === col.prop));
+  }
+
+  getActions(): EntityTableAction[] {
+    return this.parent.conf.getActions ? this.parent.conf.getActions(this.config) : this.parent.getActions(this.config);
   }
 }

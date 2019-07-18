@@ -1,8 +1,33 @@
+<section class="wrapper__details">
+    <div
+        *ngFor="let column of this.columns"
+        fxLayoutAlign="start center"
+        fxLayoutGap="16px"
+    >
+        <h4>{{ column.name }}:</h4>
+        <p>{{ getPropValue(column.prop) }}</p>
+    </div>
+</section>
+
+<mat-divider></mat-divider>
+
 <div
-    *ngFor="let column of this.columns"
     fxLayoutAlign="start center"
-    fxLayoutGap="16px"
+    fxLayoutGap="8px"
+    class="wrapper__action-buttons"
 >
-    <h4>{{ column.name }}:</h4>
-    <p>{{ getPropValue(column.prop) }}</p>
+    <ng-container *ngFor="let action of actions">
+        <button
+            mat-button
+            (click)="action.onClick(this.config)"
+        >
+            <div
+                fxLayoutAlign="center center"
+                fxLayoutGap="8px"
+            >
+                <mat-icon>{{ action.icon }}</mat-icon>
+                <p>{{ action.label }}</p>
+            </div>
+        </button>
+    </ng-container>
 </div>
