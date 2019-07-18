@@ -21,7 +21,7 @@ export class IscsiWizardComponent {
 
     public route_success: string[] = ['sharing', 'iscsi'];
     public isLinear = true;
-    public summary_title = "ISCSI Summary";
+    public summary_title = "iSCSI Summary";
     public summaryObj = {
         'name': null,
         'type': null,
