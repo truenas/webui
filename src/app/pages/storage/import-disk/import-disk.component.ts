@@ -75,6 +75,7 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
   public msdosfs_locale: any;
   private entityForm: any;
   protected dialogRef: any;
+  public custActions: any[];
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected dialog: MatDialog,
@@ -142,6 +143,7 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
   }
 
   customSubmit(payload){
+    this.custActions = [];
     const fs_options = {}
     if (payload.fs_type === "msdosfs" && payload.msdosfs_locale) {
       fs_options["locale"] = payload.msdosfs_locale;
@@ -154,6 +156,15 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
       this.dialogRef.close();
       this.entityForm.success = true;
       this.job.showLogs(job_res.id, T('Disk Imported: Log Summary'), T('Close'));
+      this.custActions = [
+        {
+          id: 'view_import_log',
+          name: 'View Import Log',
+          function: () => {
+            this.job.showLogs(job_res.id, T('Logs'), T('Close'));
+          }
+        }
+      ];
     });
     this.dialogRef.componentInstance.failure.subscribe((err) => {
       new EntityUtils().handleWSError(this.entityForm, err);
