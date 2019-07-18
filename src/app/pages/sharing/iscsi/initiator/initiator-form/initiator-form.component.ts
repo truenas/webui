@@ -36,8 +36,8 @@ export class InitiatorFormComponent implements OnInit {
     {
       type: 'input-list',
       name: 'initiators',
-      placeholder: 'Allowed Initiators (IQN)',
-      tooltip: helptext_sharing_iscsi.initiator_form_placeholder_initiators,
+      placeholder: helptext_sharing_iscsi.initiator_form_placeholder_initiators,
+      tooltip: helptext_sharing_iscsi.initiator_form_tooltip_initiators,
       customEventMethod: (parent) => {
         for (let i = 0; i < parent.source.selectedOptions.selected.length; i++) {
           parent.listControl.value.add(parent.source.selectedOptions.selected[i].value.initiator);
@@ -56,8 +56,8 @@ export class InitiatorFormComponent implements OnInit {
       type: 'input-list',
       name: 'auth_network',
       placeholder: helptext_sharing_iscsi.initiator_form_placeholder_auth_network,
-      tooltip: helptext_sharing_iscsi.initiator_form_placeholder_auth_network,
-      validation: [regexValidator(this.networkService.ipv4_or_ipv6)],
+      tooltip: helptext_sharing_iscsi.initiator_form_tooltip_auth_network,
+      validation: [regexValidator(this.networkService.ipv4_or_ipv6_cidr_optional)],
       customEventMethod: (parent) => {
         for (let i = 0; i < parent.source.selectedOptions.selected.length; i++) {
           parent.listControl.value.add(parent.source.selectedOptions.selected[i].value.initiator_addr);

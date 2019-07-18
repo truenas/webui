@@ -7,7 +7,7 @@ import { EntityFormService } from '../../../../../common/entity/entity-form/serv
     templateUrl: './dynamic-list.component.html',
     styleUrls: ['./dynamic-list.component.css']
 })
-export class DynamciListComponent implements OnInit {
+export class DynamicListComponent implements OnInit {
     @Input() config: any;
     @Input() group: FormGroup;
     @Input() source: any;

@@ -24,7 +24,7 @@ import { IscsiWizardComponent } from './iscsi/iscsi-wizard/iscsi-wizard.componen
 import { GlobalconfigurationComponent } from './iscsi/globalconfiguration/';
 import { PortalListComponent } from './iscsi/portal/portal-list/';
 import { PortalFormComponent } from './iscsi/portal/portal-form/';
-import { DynamciListComponent } from './iscsi/initiator/initiator-form/dynamic-list/dynamic-list-component';
+import { DynamicListComponent } from './iscsi/initiator/initiator-form/dynamic-list/dynamic-list-component';
 import { InitiatorListComponent } from './iscsi/initiator/initiator-list/';
 import { InitiatorFormComponent } from './iscsi/initiator/initiator-form/';
 import { AuthorizedAccessListComponent } from './iscsi/authorizedaccess/authorizedaccess-list/';
@@ -63,7 +63,7 @@ import { FibreChannelPortComponent } from './iscsi/fibre-channel-ports/fibre-cha
     GlobalconfigurationComponent,
     PortalListComponent,
     PortalFormComponent,
-    DynamciListComponent,
+    DynamicListComponent,
     InitiatorListComponent,
     InitiatorFormComponent,
     AuthorizedAccessListComponent,
