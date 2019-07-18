@@ -146,7 +146,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public hasDetails = () =>
     this.conf.rowDetailComponent || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
-  public getRowDetailHeight = (row: any, index: number) => 
+  public getRowDetailHeight = () => 
      this.hasDetails() && !this.conf.rowDetailComponent
       ? (this.allColumns.length - this.conf.columns.length) * DETAIL_HEIGHT + 32 // add space for padding
       : 100;
@@ -883,7 +883,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.conf.columns = [...this.conf.columns, col];
     }
-
+    this.updateTableHeightAfterDetailToggle();
     this.selectColumnsToShowOrHide();
   }
 
@@ -954,9 +954,13 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
     }  
     this.table.rowDetail.toggleExpandRow(row);
+    this.updateTableHeightAfterDetailToggle();
+  }
+
+  updateTableHeightAfterDetailToggle() {
     setTimeout(() => {
       this.expandedRows = (document.querySelectorAll('.datatable-row-detail').length);
-      let newHeight = (this.expandedRows * 100) + this.startingHeight;
+      let newHeight = (this.expandedRows * this.getRowDetailHeight()) + this.startingHeight;
       let heightStr = `height: ${newHeight}px`;
       document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
     }, 100)
