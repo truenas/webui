@@ -1027,15 +1027,13 @@ export class JailAddComponent implements OnInit, AfterViewInit {
     // get jail templates as release options
     this.jailService.getTemplates().subscribe(
       (res) => {
-        if (res.result) {
-          for (const i in res.result) {
-            this.template_list.push(res.result[i][1]);
-            this.releaseField.options.push({ label: res.result[i][1] + '(template)', value: res.result[i][1] });
-          }
+        for (let i = 0; i < res.length; i++) {
+          this.template_list.push(res[i].host_hostuuid);
+          this.releaseField.options.push({ label: res[i].host_hostuuid + ' (template)', value: res[i].host_hostuuid });
         }
-        if (res.error) {
-          this.dialogService.errorReport(T('Error: Displaying templates failed.'), res.error, res.exception);
-        }
+      },
+      (err) => {
+        new EntityUtils().handleWSError(this, err, this.dialogService);
       }
     )
 

@@ -109,6 +109,6 @@ export class JailService {
   }
 
   getTemplates() {
-    return this.ws.job('jail.list_resource', ["TEMPLATE"]);
+    return this.ws.call('jail.query', [[['type', '=' , 'template']]]);
   }
 }
