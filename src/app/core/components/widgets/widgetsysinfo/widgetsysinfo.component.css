@@ -17,10 +17,9 @@
   width:calc(100% - 16px);
   z-index:2;
   background:unset;
-  padding: 0 8px;
+  padding:0 8px;
   left:0;
   text-align:left;
-  border:none;
 
   font-size: 1.5rem;
   line-height: 180%;
@@ -30,22 +29,29 @@
   color:#efefef;
 }
 
+.view-overview .mat-card-title-text{
+  margin-left:calc(40% + 16px) !important;
+}
+
+.view-overview .primary-nav .card-title-text{
+  /*display:none;*/
+}
+
 .primary-nav .card-title-text{
   font-size:1.5rem;
-  font-weight:500;
+  font-weight: 500;
   display:inline-block;
   vertical-align:middle;
   position: relative;
   top: 2px;
 }
 
-.view-overview .primary-nav .card-title-text{
-}
-
 .carousel{
   position:absolute;
-  width:400%;
+  /*top:48px;*/
+  width:100%;
   height:100%;
+  /*height:calc(100% - 48px);*/
   /*background:var(--alt-bg2);*/
 }
 
@@ -58,7 +64,8 @@
   top:48px;*/
   display:inline;
   width:100%;
-  height:calc(100% - 48px);
+  /*height:calc(100% - 96px);*/
+  height:100%;
   /*border-left:solid 1px var(--bg1);*/
 }
 
@@ -68,13 +75,10 @@
 
 .slide .left,
 .slide .right{
+  width:50%;
   height:100%;
   display:inline-block;
   padding:32px 0;
-}
-
-.slide.overview {
-  height:100%;
 }
 
 .slide.overview .right > div{
@@ -86,12 +90,40 @@
 }
 
 .slide.overview .left{
-  /*background-color:var(--alt-bg1);*/
-  background-size:cover;
-  background-image:url('assets/images/backgrounds/hard_drive_1.jpg');
+  background-color:var(--primary);
+  /*background-color:#303437;*/
+  /*background-size:cover;
+  background-image:url('https://cdn.pixabay.com/photo/2017/09/06/11/41/clean-2721104_960_720.jpg');
+  background-position-y:center;
+  background-position-x:65%;
+  background-blend-mode: overlay;*/
   color:#efefef;
-  /*background-position-y:center;
-  background-position-x:50%;*/
+  position:relative;
+  padding:0;
+}
+
+.slide.overview .left .overlay{
+  position:absolute;
+  /*background:linear-gradient(180deg,rgba(0,0,0,0.65),rgba(0,0,0,0.5), rgba(0,0,0,0.15));*/
+  width:100%;
+  height:100%;
+  padding:48px 0;
+  text-shadow:0 0px 48px #000;
+}
+
+.data-container{
+  position: absolute;
+  top: 0;
+  height: 100%;
+}
+
+.product-image.truenas img,
+.product-image.ix-logo img {
+  width:80%;
+}
+
+.product-image img{
+  width:60%;
 }
 
 .slide .right{
@@ -105,38 +137,31 @@
   margin-left: 8px;
 }
 
-.pool-name{
+.nic-name{
   font-size:300%;
 }
 
-.pool-status .icon-wrapper{
+.link-state .icon-wrapper{
   display: inline-block;
   font-size: 175%;
   top: 3px;
   position: relative;
 }
 
-.pool-name .icon-wrapper{
+.nic-name .icon-wrapper{
   display: inline;
   font-size: 75%;
 }
 
-span.error {
-  color: var(--red);
-}
-
-span.warn{
-  color: var(--yellow);
-}
-
-span.safe{
+.nic-name.up .icon-wrapper,
+.link-state.up .icon-wrapper{
   color: var(--green);
 }
-/*
-.pool-name.down .icon-wrapper,
-.pool-status.down .icon-wrapper{
+
+.nic-name.down .icon-wrapper,
+.link-state.down .icon-wrapper{
   color: var(--red);
-}*/
+}
 
 .controls{
   position:absolute;
@@ -191,16 +216,8 @@ span.safe{
 
 .slide{
   overflow:auto;
-  position:relative;
-  top:48px;
 }
 
-.slide.overview{
-  height:100%;
-  top:0;
-}
-
-.slide div.clickable,
 .slide .mat-list-item.clickable{
   cursor:pointer;
 }
@@ -217,45 +234,33 @@ span.safe{
 .mat-list-base {
 }
 
-.overview .right .list-subheader{
-  margin-top:48px;
-}
-
 .list-subheader{
+  margin-top:48px;
+  text-transform:capitalize;
   font-weight:700;
-  padding:48px 8px 0 16px;
+  padding:8px 8px 0 16px;
   text-align:left;
   font-size: 90%;
   color: var(--fg1);
 }
 
-span.capitalize{
-  text-transform:capitalize;
+.platform-logo-wrapper{
+  padding-top:12px;
 }
 
-.list-subheader:first-child{
-  padding:8px 8px 0 16px;
+.product-image.truenas ,
+.product-image.ix-logo{
+  padding-bottom:15%;
 }
 
-.detail-key{
-  text-transform:capitalize;
+img.platform-logo{
+  width: 70%;
 }
 
-.healthy {
-  color:var(--green);
+.update-action{
+  
 }
 
-.warning {
-  color:var(--yellow);
-}
-
-.error {
-  color:var(--red);
-}
-
-.error, .warning , .healthy {
-  font-size: 120%;
-}
 /* NARROW SCREENS */
 .xs.widget{
   width:100%;
