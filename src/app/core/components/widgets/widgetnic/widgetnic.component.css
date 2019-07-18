@@ -31,7 +31,7 @@
   width:100%;
   /*height:calc(100% - 96px);*/
   height:100%;
-  border-left:solid 1px var(--bg1);
+  /*border-left:solid 1px var(--bg1);*/
 }
 
 .slide .hidden{
@@ -60,6 +60,7 @@
 
 .slide .right{
   text-align:left;
+  border-left:solid 1px rgba(0,0,0,0.1);
 }
  
 .slide .right li{
@@ -146,11 +147,10 @@
 }
 
 .mat-list-base .mat-list-item{
-  border-bottom:solid 1px var(--bg1);
+  border-bottom:solid 1px rgba(0,0,0,0.1);
 }
 
 .mat-list-base {
-  border-left:solid 1px var(--bg1);
 }
 
 .list-subheader{

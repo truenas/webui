@@ -1,10 +1,10 @@
 <div> <!-- Important wrapper div. Removing this will break flex layout -->
-  <mat-spinner 
+  <!--<mat-spinner 
     [diameter]='40' 
     id="dashboard-spinner"
     *ngIf="showSpinner"
-  >
-  </mat-spinner> 
+    >
+    </mat-spinner> -->
   
   <div class="widgets-wrapper"
        fxLayout="row wrap"
@@ -15,24 +15,14 @@
     <widget-sysinfo fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"></widget-sysinfo>
     <widget-cpu fxFlex="600px" fxFlex.xs="100" *ngIf="statsDataEvents" [data]="statsDataEvents" [widgetSize]="medium"   configurable="false"></widget-cpu>
     <widget-memory fxFlex="600px" fxFlex.xs="100" *ngIf="statsDataEvents" [data]="statsDataEvents" [widgetSize]="medium"   configurable="false"></widget-memory>
-    <!--<widget-nic fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"></widget-nic>-->
+
+    <ng-container  *ngIf="pools && pools.length > 0">
+      <widget-pool *ngFor="let pool of pools; let i=index" [poolState]="pool" fxFlex.xs="100" fxFlex="600px" [widgetSize]="medium"   configurable="false"></widget-pool>
+    </ng-container>
 
     <ng-container  *ngFor="let nic of nics; let i=index">
       <widget-nic *ngIf="statsDataEvents" [nicState]="nics[i].state" [stats]="statsDataEvents" fxFlex.xs="100" fxFlex="600px" [widgetSize]="medium"   configurable="false"></widget-nic>
     </ng-container>
-
-    <!-- OLD WIDGETS -->
-    <!--<widget-netinfo fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"></widget-netinfo>
-
-      <ng-container  *ngFor="let volume of volumes; let i=index">
-        <widget-pool [volumeData]="volumes[i]" fxFlex.xs="100" fxFlex="600px" [widgetSize]="medium"   configurable="false"></widget-pool>
-      </ng-container>
-
-    <widget-cpu-history fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"   configurable="false"></widget-cpu-history>
-    <widget-cpu-temps fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"   configurable="false"></widget-cpu-temps>
-    <widget-load fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"   configurable="false"></widget-load>-->
-
-
 
     <!--<widget-notes-collection fxFlex="98" [widgetSize]="medium" [widgetFlex]="noteFlex" [collectionLayout]="'row'"></widget-notes-collection>-->
 

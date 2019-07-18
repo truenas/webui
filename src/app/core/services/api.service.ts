@@ -86,6 +86,15 @@ export class ApiService {
         responseEvent: "DisksData"
       }
     },
+    MultipathRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        args: [],
+        namespace: "multipath.query",
+        responseEvent: "MultipathData"
+      }
+    },
     EnclosureDataRequest:{
       apiCall:{
         protocol:"websocket",

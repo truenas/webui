@@ -88,7 +88,7 @@
             <div class="list-subheader">{{currentSlideName}}</div>
             <mat-list *ngIf="nicState && nicState.aliases.length > 0"> 
               <mat-list-item role="listitem"*ngFor="let ip of nicState.aliases;" [ngClass]="{'hidden': ip.type !== 'INET'}">
-                {{ip.type}}: {{ip.address}}/{{ip.netmask}}
+                <strong>{{ip.type}}:</strong>&nbsp;&nbsp; {{ip.address}}/{{ip.netmask}}
               </mat-list-item>
             </mat-list>
           </div>
