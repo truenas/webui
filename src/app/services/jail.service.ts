@@ -92,8 +92,12 @@ export class JailService {
     return this.ws.job('jail.list_resource', ["RELEASE", true]);
   };
 
+  getReleaseChoices() {
+    return this.ws.call('jail.releases_choices');
+  }
+
   getBranches() {
-    return this.ws.job('jail.list_resource', ["BRANCHES"]);
+    return this.ws.job('plugin.official_repositories');
   }
 
   getVersion() {
@@ -101,7 +105,7 @@ export class JailService {
   }
 
   getInstalledPlugins() {
-    return this.ws.job('jail.list_resource', ["PLUGIN"]);
+    return this.ws.job('plugin.query');
   }
 
   getTemplates() {

@@ -1,13 +1,13 @@
 <mat-card-content class="plugin-info">
     <section *ngIf="engineerMode || isFreenas">
-        <mat-label>{{ "Browse a Collection" | translate}}</mat-label>
-        <mat-select [(ngModel)]="selectedBranch" (selectionChange)="switchBranch($event)">
-            <mat-optgroup *ngFor="let branchIndex of availableBranches" [label]="branchIndex.name">
-                <mat-option *ngFor="let branch of branchIndex.branches" [value]="branch.value">
-                    {{branch.label}}
+        <mat-form-field>
+            <mat-label fxFlex>{{ "Browse a Collection" | translate}}</mat-label>
+            <mat-select [(ngModel)]="selectedRepo" (selectionChange)="switchRepo($event)">
+                <mat-option *ngFor="let repo of availableRepo" [value]="repo.git_repository">
+                    {{repo.name}}
                 </mat-option>
-            </mat-optgroup>
-        </mat-select>
+            </mat-select>
+        </mat-form-field>
     </section>
     <div fxLayout="row wrap" fxLayoutAlign="space-around center" *ngIf="selectedPlugin">
         <div fxFlex fxFlex.xs="100">

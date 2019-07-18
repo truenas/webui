@@ -6,6 +6,8 @@ export default {
 
 wizard_step1_label: T('Name Jail and Choose FreeBSD Release'),
 
+plugin_name_placeholder: T('Plugin Name'),
+
 uuid_placeholder: T('Name'),
 uuid_tooltip: T('Required. Can only contain alphanumeric\
  characters (Aa-Zz 0-9), dashes (-), or underscores (_).'),
