@@ -89,11 +89,11 @@ export const helptext_sharing_iscsi = {
   initiator_form_placeholder_auth_network: T("Authorized Networks"),
   initiator_form_tooltip_auth_network: T(
     'Network addresses which can use this initiator. Use\
- <i>ALL</i> or list network addresses with a\
+ <i>ALL</i> or list allowed IPv4 and IPv6 network addresses\
+ separated by spaces: \
+ <i>192.168.2.0/24 192.168.2.1/12</i>. Addresses can include a \
  <a href="https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing"\
- target="_blank">CIDR</a> mask. Separate multiple\
- addresses with a space:\
- <i>192.168.2.0/24 192.168.2.1/12</i>.'
+ target="_blank">CIDR</a> mask.'
   ),
 
   initiator_form_placeholder_comment: T("Comment"),
