@@ -200,10 +200,9 @@ export class RsyncFormComponent implements OnDestroy {
   preInit() {
     this.user_field = _.find(this.fieldSets[0].config, { 'name': 'user' });
     
-    this.userService.listAllUsers().subscribe((res) => {
-      let items = res.data.items;
+    this.userService.userQueryDSCache().subscribe((items) => {
       for (let i = 0; i < items.length; i++) {
-         this.user_field.options.push({label: items[i].label, value: items[i].id});
+         this.user_field.options.push({label: items[i].username, value: items[i].username});
        }
     });
   }
@@ -238,11 +237,10 @@ export class RsyncFormComponent implements OnDestroy {
   }
 
   updateUserSearchOptions(value = "", parent) {
-    parent.userService.listAllUsers(value).subscribe(res => {
-      let users = [];
-      let items = res.data.items;
+    parent.userService.userQueryDSCache(value).subscribe(items => {
+      const users = [];
       for (let i = 0; i < items.length; i++) {
-        users.push({label: items[i].label, value: items[i].id});
+        users.push({label: items[i].username, value: items[i].username});
       }
       parent.user_field.searchOptions = users;
     });

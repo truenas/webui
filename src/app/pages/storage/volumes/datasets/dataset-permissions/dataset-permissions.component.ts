@@ -131,21 +131,19 @@ export class DatasetPermissionsComponent implements OnDestroy {
       this.mp_path.value = this.path;
     });
 
-    this.userService.listAllUsers().subscribe(res => {
-      let users = [];
-      let items = res.data.items;
+    this.userService.userQueryDSCache().subscribe(items => {
+      const users = [];
       for (let i = 0; i < items.length; i++) {
-        users.push({label: items[i].label, value: items[i].id});
+        users.push({label: items[i].username, value: items[i].username});
       }
       this.mp_user = _.find(this.fieldConfig, {'name' : 'mp_user'});
       this.mp_user.options = users;
     });
 
-    this.userService.listAllGroups().subscribe(res => {
-      let groups = [];
-      let items = res.data.items;
+    this.userService.groupQueryDSCache().subscribe(items => {
+      const groups = [];
       for (let i = 0; i < items.length; i++) {
-        groups.push({label: items[i].label, value: items[i].id});
+        groups.push({label: items[i].group, value: items[i].group});
       }
       this.mp_group = _.find(this.fieldConfig, {'name' : 'mp_group'});
         this.mp_group.options = groups;
@@ -213,22 +211,20 @@ export class DatasetPermissionsComponent implements OnDestroy {
   }
 
   updateGroupSearchOptions(value = "", parent) {
-    parent.userService.listAllGroups(value).subscribe(res => {
-      let groups = [];
-      let items = res.data.items;
+    parent.userService.groupQueryDSCache(value).subscribe(items => {
+      const groups = [];
       for (let i = 0; i < items.length; i++) {
-        groups.push({label: items[i].label, value: items[i].id});
+        groups.push({label: items[i].group, value: items[i].group});
       }
         parent.mp_group.searchOptions = groups;
     });
   }
 
   updateUserSearchOptions(value = "", parent) {
-    parent.userService.listAllUsers(value).subscribe(res => {
-      let users = [];
-      let items = res.data.items;
+    parent.userService.userQueryDSCache(value).subscribe(items => {
+      const users = [];
       for (let i = 0; i < items.length; i++) {
-        users.push({label: items[i].label, value: items[i].id});
+        users.push({label: items[i].username, value: items[i].username});
       }
       parent.mp_user.searchOptions = users;
     });

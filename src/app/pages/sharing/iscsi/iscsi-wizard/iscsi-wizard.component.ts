@@ -21,7 +21,7 @@ export class IscsiWizardComponent {
 
     public route_success: string[] = ['sharing', 'iscsi'];
     public isLinear = true;
-    public summary_title = "ISCSI Summary";
+    public summary_title = "iSCSI Summary";
     public summaryObj = {
         'name': null,
         'type': null,
@@ -115,8 +115,8 @@ export class IscsiWizardComponent {
                 // zvol creation group
                 {
                     type: 'explorer',
-                    explorerType: 'directory',
-                    initial: '/mnt',
+                    explorerType: 'dataset',
+                    initial: '',
                     name: 'dataset',
                     placeholder: helptext.dataset_placeholder,
                     tooltip: helptext.dataset_tooltip,
@@ -552,9 +552,9 @@ export class IscsiWizardComponent {
 
         this.iscsiService.getIpChoices().subscribe((res) => {
             const field = _.find(this.wizardConfig[1].fieldConfig, { 'name': 'ip' });
-            res.forEach((item) => {
-                field.options.push({ label: item[1], value: item[0] });
-            });
+            for (let i = 0; i < res.length; i++) {
+                field.options.push({ label: res[i][1], value: res[i][0] });
+            }
         });
 
         this.iscsiService.getAuth().subscribe((res) => {
@@ -698,13 +698,6 @@ export class IscsiWizardComponent {
         const datasetField = _.find(this.wizardConfig[0].fieldConfig, { 'name': 'dataset' });
         datasetField.hasErrors = false;
 
-        if (!_.startsWith(dataset, '/mnt/')) {
-            datasetField.hasErrors = true;
-            return;
-        } else {
-            dataset = dataset.substring(5);
-        }
-
         const pool = dataset.split("/")[0];
         this.ws.call('pool.dataset.query', [[["id", "=", dataset]]]).subscribe(
             (res) => {
@@ -782,7 +775,7 @@ export class IscsiWizardComponent {
         let payload;
         if (item === 'zvol') {
             payload = {
-                name: value['dataset'].substring(5) + '/' + value['name'],
+                name: value['dataset'] + '/' + value['name'],
                 type: 'VOLUME',
                 volblocksize: value['volblocksize'],
                 volsize: this.getRoundVolsize(value),

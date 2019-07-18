@@ -66,8 +66,12 @@ user_form_dirs_explorer_name: 'home',
 user_form_dirs_explorer_class: 'meExplorer',
 user_form_dirs_explorer_placeholder: T('Home Directory'),
 user_form_dirs_explorer_value: '/nonexistent',
-user_form_dirs_explorer_tooltip : T('Define an <b>existing</b> pool or dataset as\
- the user home directory and adjust the permissions.'),
+user_form_dirs_explorer_tooltip : T('Choose a path to the user\'s\
+ home directory. If the directory exists and matches the username,\
+ it is set as the user\'s home directory. When the path does not\
+ end with a subdirectory matching the username, a new subdirectory is\
+ created. The full path to the user\'s home directory is shown\
+ here when editing a user.'),
 user_form_home_dir_permissions_name: 'home_mode',
 user_form_home_dir_permissions_placeholder : T('Home Directory Permissions'),
 user_form_home_dir_permissions_tooltip : T('Sets default Unix permissions of the user home\

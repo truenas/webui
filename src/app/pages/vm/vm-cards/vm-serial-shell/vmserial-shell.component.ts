@@ -1,21 +1,10 @@
-import {
-  Component,
-  OnInit,
-  ViewChild,
-  ElementRef,
-  OnChanges,
-  Input,
-  SimpleChange,
-  OnDestroy
-} from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core'
-//import { Terminal } from 'vscode-xterm';
-//import * as fit from 'vscode-xterm/lib/addons/fit';
-//import * as attach from 'vscode-xterm/lib/addons/attach';
-
-import { WebSocketService, ShellService } from '../../../../services/';
+import { Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, ViewChild } from '@angular/core';
+import { MatSnackBar } from '@angular/material';
+import { ActivatedRoute } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
 import helptext from '../../../../helptext/vm/vm-cards/vm-cards';
+import { ShellService, WebSocketService } from '../../../../services/';
 
 @Component({
   selector: 'app-vmserial-shell',
@@ -42,9 +31,8 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
   constructor(private ws: WebSocketService,
               public ss: ShellService,
               protected aroute: ActivatedRoute,
-              public translate: TranslateService) {
-                //Terminal.applyAddon(fit);
-                //Terminal.applyAddon(attach);
+              public translate: TranslateService,
+              private snackbar: MatSnackBar) {
               }
 
 
@@ -118,5 +106,9 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
     return this.ws.call('auth.generate_token');
   }
 
-
+  onShellRightClick(): false {
+    this.snackbar.openFromComponent(CopyPasteMessageComponent);
+    
+    return false;
+  }
 }

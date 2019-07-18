@@ -9,7 +9,7 @@ import replicationHelptext from '../../../../helptext/task-calendar/replication/
 import sshConnectionsHelptex from '../../../../helptext/system/ssh-connections';
 import snapshotHelptext from '../../../../helptext/task-calendar/snapshot/snapshot-form';
 
-import { DialogService, KeychainCredentialService, WebSocketService, ReplicationService, TaskService } from '../../../../services';
+import { DialogService, KeychainCredentialService, WebSocketService, ReplicationService, TaskService, StorageService } from '../../../../services';
 import { EntityUtils } from '../../../common/entity/utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 
@@ -46,7 +46,10 @@ export class ReplicationWizardComponent {
                     placeholder: helptext.name_placeholder,
                     tooltip: helptext.name_tooltip,
                     required: true,
-                    validation: [Validators.required]
+                    validation: [Validators.required],
+                    blurStatus: true,
+                    blurEvent: this.blurEvent,
+                    parent: this
                 },
                 {
                     type: 'select',
@@ -296,13 +299,14 @@ export class ReplicationWizardComponent {
                 },
                 {
                     type: 'explorer',
-                    initial: '/mnt',
-                    explorerType: 'directory',
+                    initial: '',
+                    explorerType: 'dataset',
                     multiple: true,
                     name: 'source_datasets_PUSH',
                     placeholder: replicationHelptext.source_datasets_placeholder,
                     tooltip: replicationHelptext.source_datasets_tooltip,
                     options: [],
+                    disabled: false,
                     required: true,
                     validation: [Validators.required],
                     isHidden: true,
@@ -323,6 +327,7 @@ export class ReplicationWizardComponent {
                         allowDrag: false,
                         useVirtualScroll: false,
                     },
+                    disabled: false,
                     required: true,
                     validation: [Validators.required],
                     isHidden: true,
@@ -349,8 +354,8 @@ export class ReplicationWizardComponent {
                 },
                 {
                     type: 'explorer',
-                    initial: '/mnt',
-                    explorerType: 'directory',
+                    initial: '',
+                    explorerType: 'dataset',
                     name: 'target_dataset_PULL',
                     placeholder: replicationHelptext.target_dataset_placeholder,
                     tooltip: replicationHelptext.target_dataset_placeholder,
@@ -544,11 +549,13 @@ export class ReplicationWizardComponent {
     }
 
     protected availSnapshottasks: any;
+    protected targetDatasetPush: any;
+    protected sourceDatasetPull: any;
 
     constructor(private router: Router, private keychainCredentialService: KeychainCredentialService,
         private loader: AppLoaderService, private dialogService: DialogService,
         private ws: WebSocketService, private replicationService: ReplicationService,
-        private taskService: TaskService) { }
+        private taskService: TaskService, private storageService: StorageService) { }
 
     isCustActionVisible(id, stepperIndex) {
         if (stepperIndex == 0) {
@@ -591,10 +598,16 @@ export class ReplicationWizardComponent {
                 this.disablefieldGroup(['cipher'], !this.entityWizard.formArray.controls[0].controls['ssh_credentials'].disabled, 0);
             }
         });
+
+        this.targetDatasetPush = _.find(this.wizardConfig[1].fieldConfig, { 'name': 'target_dataset_PUSH' });
+        this.sourceDatasetPull = _.find(this.wizardConfig[1].fieldConfig, { 'name': 'source_datasets_PULL' });
         this.entityWizard.formArray.controls[0].controls['ssh_credentials'].valueChanges.subscribe((value) => {
             const newSSH = value == 'NEW' ? true : false;
             this.disablefieldGroup([...this.sshFieldGroup, ...this.semiSSHFieldGroup, ...this.manualSSHFieldGroup], !newSSH, 0);
+            this.targetDatasetPush.disabled = newSSH;
+            this.sourceDatasetPull.disabled = newSSH;
             if (newSSH) {
+                this.blurEvent(this);
                 this.disablefieldGroup(['cipher'], this.entityWizard.formArray.controls[0].controls['transport'].value === 'SSH+NETCAT', 0);
                 this.entityWizard.formArray.controls[0].controls['setup_method'].setValue(this.entityWizard.formArray.controls[0].controls['setup_method'].value);
             }
@@ -616,7 +629,11 @@ export class ReplicationWizardComponent {
             this.disablefieldGroup(this.semiSSHFieldGroup, manual, 0);
             this.disablefieldGroup(this.manualSSHFieldGroup, !manual, 0);
         });
-
+        this.entityWizard.formArray.controls[0].controls['private_key'].valueChanges.subscribe((value) => {
+            if (value == 'NEW') {
+                this.blurEvent(this);
+            }
+        });
         this.entityWizard.formArray.controls[0].controls['setup_method'].setValue('semiautomatic');
         this.entityWizard.formArray.controls[0].controls['ssh_credentials'].setValue('');
         this.entityWizard.formArray.controls[0].controls['transport'].setValue('SSH');
@@ -635,15 +652,12 @@ export class ReplicationWizardComponent {
         )
 
         const datasetField = _.find(this.wizardConfig[1].fieldConfig, { 'name': 'dataset' });
-        this.taskService.getVolumeList().subscribe((res) => {
-            for (let i = 0; i < res.data.length; i++) {
-                const volume_list = new EntityUtils().flattenData(res.data[i].children);
-                for (const j in volume_list) {
-                    datasetField.options.push({ label: volume_list[j].path, value: volume_list[j].path });
-                }
-            }
-            datasetField.options = _.sortBy(datasetField.options, [function (o) { return o.label; }]);
-        });
+        this.storageService.getDatasetNameOptions().subscribe(
+            options => {
+                datasetField.options = _.sortBy(options, [o => o.label]);
+            },
+            error => new EntityUtils().handleWSError(this, error, this.dialogService)
+        )
 
         const snapshot_begin_field = _.find(this.wizardConfig[1].fieldConfig, { name: 'snapshot_begin' });
         const snapshot_end_field = _.find(this.wizardConfig[1].fieldConfig, { name: 'snapshot_end' });
@@ -665,6 +679,8 @@ export class ReplicationWizardComponent {
 
             this.disablefieldGroup(['source_datasets_PUSH', 'target_dataset_PUSH'], !disablePull, 1);
             this.disablefieldGroup(['source_datasets_PULL', 'target_dataset_PULL'], disablePull, 1);
+            this.targetDatasetPush.disabled = this.entityWizard.formArray.controls[0].controls['ssh_credentials'].value == 'NEW' ? true : false;
+            this.sourceDatasetPull.disabled = this.entityWizard.formArray.controls[0].controls['ssh_credentials'].value == 'NEW' ? true : false;
         });
 
         this.entityWizard.formArray.controls[1].controls['periodic_snapshot_tasks'].valueChanges.subscribe((value) => {
@@ -983,7 +999,53 @@ export class ReplicationWizardComponent {
         const transport = this.entityWizard.formArray.controls[0].controls['transport'].value;
         const sshCredentials = this.entityWizard.formArray.controls[0].controls['ssh_credentials'].value;
         return new Promise((resolve, reject) => {
-            resolve(this.replicationService.getRemoteDataset(transport,sshCredentials, this));
+            this.replicationService.getRemoteDataset(transport,sshCredentials, this).then(
+                (res) => {
+                    resolve(res);
+                },
+                (err) => {
+                    node.collapse();
+                })
         });
+    }
+
+    blurEvent(parent){
+        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['hasErrors'] = false;
+        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['errors'] = '';
+        const name = parent.entityWizard.formGroup.value.formArray[0].name;
+        const privateKey = parent.entityWizard.formGroup.controls.formArray.controls[0].controls.private_key.value;
+        const sshConnection = parent.entityWizard.formGroup.controls.formArray.controls[0].controls.ssh_credentials.value;
+
+        const typeLabel = {
+            'SSH_CREDENTIALS': 'SSH Connection',
+            'SSH_KEY_PAIR': 'Private Key',
+        }
+        parent.ws.call('replication.query', [[['name', '=', name]]]).subscribe((res) => {
+            if (res.length > 0) {
+                _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['errors'] = `Replication '${res[0].name}' already exists.`;
+                showError();
+            }
+        });
+        if (sshConnection == 'NEW') {
+            parent.ws.call('keychaincredential.query', [[['name', '=', name]]]).subscribe((res) => {
+                if (res.length > 0) {
+                    _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['errors'] = `${typeLabel[res[0].type]} '${res[0].name}' already exists.`;
+                    showError();
+                }
+            });
+        }
+        if (privateKey == 'NEW') {
+            parent.ws.call('keychaincredential.query', [[['name', '=', name + ' Key']]]).subscribe((res) => {
+                if (res.length > 0) {
+                    _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['errors'] = `${typeLabel[res[0].type]} '${res[0].name}' already exists.`;
+                    showError();
+                }
+            });
+        }
+
+        function showError() {
+            _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['hasErrors'] = true;
+            parent.entityWizard.formGroup.controls.formArray.controls[0].controls.name.setValue("");
+        }
     }
 }

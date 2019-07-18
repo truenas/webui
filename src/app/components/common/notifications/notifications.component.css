@@ -26,3 +26,7 @@ a:hover {
 .mat-list-base .mat-list-item {
     height: unset;
 }
+
+.dismissed {
+  opacity: .6;
+}

@@ -1,4 +1,4 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { MaterialModule } from '../../appMaterial.module';
 import { CommonModule } from '@angular/common';
 
@@ -16,26 +16,24 @@ import { ViewChartComponent } from 'app/core/components/viewchart/viewchart.comp
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
 import { ViewChartGaugeComponent } from './viewchartgauge/viewchartgauge.component';
+import { ViewChartBarComponent } from './viewchartbar/viewchartbar.component';
 import { ViewChartLineComponent } from './viewchartline/viewchartline.component';
 import { StorageService } from '../../services/storage.service';
 
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { WidgetChartComponent } from 'app/core/components/widgets/widgetchart/widgetchart.component';
 import { WidgetSysInfoComponent } from 'app/core/components/widgets/widgetsysinfo/widgetsysinfo.component';
-import { WidgetNetInfoComponent } from 'app/core/components/widgets/widgetnetinfo/widgetnetinfo.component';
-import { WidgetCpuHistoryComponent } from 'app/core/components/widgets/widgetcpuhistory/widgetcpuhistory.component';
-import { WidgetCpuTempsComponent } from 'app/core/components/widgets/widgetcputemps/widgetcputemps.component';
-import { WidgetLoadHistoryComponent } from 'app/core/components/widgets/widgetloadhistory/widgetloadhistory.component';
-import { WidgetLoadComponent } from 'app/core/components/widgets/widgetload/widgetload.component';
-import { WidgetMemoryHistoryComponent } from 'app/core/components/widgets/widgetmemoryhistory/widgetmemoryhistory.component';
-import { WidgetStorageComponent } from 'app/core/components/widgets/widgetstorage/widgetstorage.component';
-import { WidgetStorageCollectionComponent } from 'app/core/components/widgets/widgetstoragecollection/widgetstoragecollection.component';
+import { WidgetNicComponent } from 'app/core/components/widgets/widgetnic/widgetnic.component';
+import { WidgetCpuComponent } from 'app/core/components/widgets/widgetcpu/widgetcpu.component';
+
+import { WidgetMemoryComponent } from 'app/core/components/widgets/widgetmemory/widgetmemory.component';
 import { WidgetNoteComponent } from 'app/core/components/widgets/widgetnote/widgetnote.component';
 import { WidgetNotesCollectionComponent } from 'app/core/components/widgets/widgetnotescollection/widgetnotescollection.component';
 import { WidgetPoolComponent } from 'app/core/components/widgets/widgetpool/widgetpool.component';
 
-
 import { TranslateModule } from '@ngx-translate/core';
+import { ContextMenuComponent } from './context-menu/context-menu.component';
+import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
 
 /*
  *
@@ -54,6 +52,8 @@ import { TranslateModule } from '@ngx-translate/core';
     TranslateModule
   ],
   declarations: [
+    ContextMenuComponent,
+    CopyPasteMessageComponent,
     PageComponent,
     ViewComponent,
     CardComponent,
@@ -67,18 +67,14 @@ import { TranslateModule } from '@ngx-translate/core';
     ViewChartDonutComponent,
     ViewChartPieComponent,
     ViewChartGaugeComponent,
+    ViewChartBarComponent,
     ViewChartLineComponent,
     WidgetComponent,
     WidgetChartComponent,
     WidgetSysInfoComponent,
-    WidgetNetInfoComponent,
-    WidgetCpuHistoryComponent,
-    WidgetCpuTempsComponent,
-    WidgetLoadHistoryComponent,
-    WidgetLoadComponent,
-    WidgetMemoryHistoryComponent,
-    WidgetStorageComponent,
-    WidgetStorageCollectionComponent,
+    WidgetNicComponent,
+    WidgetCpuComponent,
+    WidgetMemoryComponent,
     WidgetNoteComponent,
     WidgetNotesCollectionComponent,
     WidgetPoolComponent
@@ -89,12 +85,15 @@ import { TranslateModule } from '@ngx-translate/core';
     FlexLayoutModule,
     Display,
     DisplayContainer,
+    ContextMenuComponent,
+    CopyPasteMessageComponent,
     PageComponent,
     ViewComponent,
     C3ChartComponent,
     ViewChartComponent,
     ViewChartDonutComponent,
     ViewChartGaugeComponent,
+    ViewChartBarComponent,
     ViewChartPieComponent,
     ViewChartLineComponent,
     ViewControlComponent,
@@ -104,25 +103,23 @@ import { TranslateModule } from '@ngx-translate/core';
     WidgetComponent,
     WidgetChartComponent,
     WidgetSysInfoComponent,
-    WidgetNetInfoComponent,
-    WidgetCpuHistoryComponent,
-    WidgetCpuTempsComponent,
-    WidgetLoadHistoryComponent,
-    WidgetLoadComponent,
-    WidgetMemoryHistoryComponent,
-    WidgetStorageComponent,
-    WidgetStorageCollectionComponent,
+    WidgetNicComponent,
+    WidgetCpuComponent,
+    WidgetMemoryComponent,
     WidgetNoteComponent,
     WidgetNotesCollectionComponent,
     WidgetPoolComponent
   ],
   entryComponents:[
+    ContextMenuComponent,
+    CopyPasteMessageComponent,
     DisplayContainer,
     ViewComponent,
     C3ChartComponent,
     ViewChartComponent,
     ViewChartDonutComponent,
     ViewChartGaugeComponent,
+    ViewChartBarComponent,
     ViewChartPieComponent,
     ViewChartLineComponent,
     ViewControlComponent,
@@ -132,14 +129,9 @@ import { TranslateModule } from '@ngx-translate/core';
     WidgetComponent,
     WidgetChartComponent,
     WidgetSysInfoComponent,
-    WidgetNetInfoComponent,
-    WidgetCpuHistoryComponent,
-    WidgetCpuTempsComponent,
-    WidgetLoadHistoryComponent,
-    WidgetLoadComponent,
-    WidgetMemoryHistoryComponent,
-    WidgetStorageComponent,
-    WidgetStorageCollectionComponent,
+    WidgetNicComponent,
+    WidgetCpuComponent,
+    WidgetMemoryComponent,
     WidgetNoteComponent,
     WidgetNotesCollectionComponent,
     WidgetPoolComponent

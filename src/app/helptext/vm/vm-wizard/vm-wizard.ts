@@ -57,6 +57,7 @@ vcpus_tooltip: T('Number of virtual CPUs to allocate to the virtual\
  might also have operational or licensing\
  restrictions on the number of CPUs.'),
 
+memory_limitation: T('Available memory'),
 memory_placeholder: T('Memory Size (MiB)'),
 memory_validation : [ Validators.required, Validators.min(128)],
 memory_tooltip: T('Allocate a number of megabytes of RAM for the VM.'),
@@ -75,9 +76,8 @@ volsize_tooltip: T('Allocate a number of gigabytes of space for the\
  new zvol.'),
 volsize_validation: [Validators.required, Validators.min(1)],
 
-pool_detach_warning_paraText: T("Select zvol"),
-
-datastore_tooltip: T('Choose a pool or dataset for the new zvol.'),
+datastore_tooltip: T('Select a dataset for the new zvol.'),
+datastore_placeholder: T('Zvol Dataset Location'),
 
 hdd_type_placeholder: T('Select Disk Type'),
 hdd_type_tooltip: T('Select desired disk type.'),

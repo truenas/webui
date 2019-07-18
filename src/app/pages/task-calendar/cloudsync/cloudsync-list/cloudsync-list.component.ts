@@ -25,16 +25,15 @@ export class CloudsyncListComponent {
 
   public columns: Array < any > = [
     { name: T('Description'), prop: 'description' },
-    { name: T('Direction'), prop: 'direction'},
-    { name: T('Path'), prop: 'path'},
+    { name: T('Credential'), prop: 'credential', hidden: true },
+    { name: T('Direction'), prop: 'direction', hidden: true},
+    { name: T('Path'), prop: 'path', hidden: true},
+    { name: T('Minute'), prop: 'minute', hidden: true },
+    { name: T('Hour'), prop: 'hour', hidden: true },
+    { name: T('Day of Month'), prop: 'daymonth', hidden: true },
+    { name: T('Month'), prop: 'month', hidden: true },
+    { name: T('Day of Week'), prop: 'dayweek', hidden: true },
     { name: T('Status'), prop: 'status', state: 'state'},
-    { name: T('Minute'), prop: 'minute' },
-    { name: T('Hour'), prop: 'hour' },
-    { name: T('Day of Month'), prop: 'daymonth' },
-    { name: T('Month'), prop: 'month' },
-    { name: T('Day of Week'), prop: 'dayweek' },
-    // { name: T('Auxiliary arguments'), prop: 'args' },
-    { name: T('Credential'), prop: 'credential' },
     { name: T('Enabled'), prop: 'enabled' },
   ];
   public config: any = {
@@ -45,6 +44,23 @@ export class CloudsyncListComponent {
       key_props: ['description']
     },
   };
+
+  public hasDetails = true;
+  public detailsConf = {
+    direction: 'horizontal',
+    showAction: false,
+  };
+  public detailColumns: Array < any > = [
+    { name: T('Direction'), prop: 'direction'},
+    { name: T('Path'), prop: 'path'},
+    { name: T('Minute'), prop: 'schedule.minute' },
+    { name: T('Hour'), prop: 'schedule.hour' },
+    { name: T('Day of Month'), prop: 'schedule.dom' },
+    { name: T('Month'), prop: 'schedule.month' },
+    { name: T('Day of Week'), prop: 'schedule.dow' },
+    { name: T('Auxiliary arguments'), prop: 'args', isHidden: true},
+    { name: T('Credential'), prop: 'credentials.name' },
+  ];
 
   constructor(protected router: Router,
               protected ws: WebSocketService,
@@ -58,15 +74,9 @@ export class CloudsyncListComponent {
     if (localStorage.getItem('engineerMode') === 'true') {
       this.columns.splice(9, 0, { name: T('Auxiliary arguments'), prop: 'args' });
     }
-
+    const argsColumn = _.find(this.detailColumns, {prop: 'args'});
     this.engineerModeService.engineerMode.subscribe((res) => {
-      if (res === 'true') {
-        this.columns.splice(9, 0, { name: T('Auxiliary arguments'), prop: 'args' });
-      } else {
-        if (this.columns.length === 12) {
-          this.columns.splice(9, 1);
-        }
-      }
+      argsColumn.isHidden = res === 'true' ? false : true;
     });
 
   }
@@ -157,6 +167,7 @@ export class CloudsyncListComponent {
       entityList.rows[i].month = entityList.rows[i].schedule['month'];
       entityList.rows[i].dayweek = entityList.rows[i].schedule['dow'];
       entityList.rows[i].credential = entityList.rows[i].credentials['name'];
+
       if (entityList.rows[i].job == null) {
         entityList.rows[i].status = T("Not run since last boot");
       } else {

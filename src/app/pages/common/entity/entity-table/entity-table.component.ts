@@ -4,12 +4,12 @@ import {fromEvent as observableFromEvent,  Observable ,  BehaviorSubject ,  Subs
 import {distinctUntilChanged, debounceTime, filter, switchMap, tap, catchError, take} from 'rxjs/operators';
 import { Component, OnInit, OnDestroy ,Input, ElementRef, ViewEncapsulation, ViewChild, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { DataSource } from '@angular/cdk/collections';
-import { MatPaginator, MatSort, PageEvent, MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 
 //local libs
+import { EntityTableRowDetailsComponent } from './entity-table-row-details/entity-table-row-details.component';
 import { RestService } from '../../../../services/rest.service';
 import { WebSocketService } from '../../../../services/ws.service';
 import { EntityUtils } from '../utils';
@@ -18,6 +18,7 @@ import { DialogService, JobService } from '../../../../services';
 import { ErdService } from '../../../../services/erd.service';
 import { StorageService } from '../../../../services/storage.service'
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { PreferencesService } from 'app/core/services/preferences.service';
 import { T } from '../../../../translate-marker';
 
 export interface InputTableConf {
@@ -28,6 +29,7 @@ export interface InputTableConf {
   hideTopActions?: boolean;
   queryCall?: string;
   queryCallOption?: any;
+  queryCallJob?: any;
   resource_name?: string;
   route_edit?: string;
   route_add?: string[];
@@ -38,7 +40,7 @@ export interface InputTableConf {
   multiActions?:any[];
   multiActionsIconsOnly?:boolean;
   config?: any;
-  confirmDeleteDialog?: Object;
+  confirmDeleteDialog?: any;
   checkbox_confirm?: any;
   checkbox_confirm_show?: any;
   hasDetails?:boolean;
@@ -107,9 +109,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public columnFilter = true; // show the column filters by default
   public filterColumns: Array<any> = []; // ...for the filter function - becomes THE complete list of all columns, diplayed or not
   public alwaysDisplayedCols: Array<any> = []; // For cols the user can't turn off
-  public presetDisplayedCols: Array<any> = []; // to store only the index of preset cols
-  public currentPreferredCols: Array<any> = []; // to store current choice of what cols to view
   public anythingClicked: boolean = false; // stores a pristine/touched state for checkboxes
+  public originalConfColumns: any; // The 'factory setting
 
   public startingHeight: number;
   public expandedRows = 0;
@@ -127,6 +128,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public showSpinner: boolean = false;
   public cardHeaderReady = false;
   public showActions: boolean = true;
+  public detailRowHeight = 100;
+  public entityTableRowDetailsComponent = EntityTableRowDetailsComponent;
   private _multiActionsIconsOnly: boolean = false;
   get multiActionsIconsOnly(){
     return this._multiActionsIconsOnly;
@@ -143,7 +146,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(protected core: CoreService, protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService, 
     protected erdService: ErdService, protected translate: TranslateService, protected snackBar: MatSnackBar,
-    public sorter: StorageService, protected job: JobService) { 
+    public sorter: StorageService, protected job: JobService, protected prefService: PreferencesService) { 
       this.core.register({observerClass:this, eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
         this.multiActionsIconsOnly = evt.data.preferIconsOnly;
       });
@@ -185,6 +188,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     })
     this.asyncView = this.conf.asyncView ? this.conf.asyncView : false;
+
     this.conf.columns.forEach((column) => {
       this.displayedColumns.push(column.prop);
       if (!column.always_display) {
@@ -197,6 +201,38 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showActions = this.conf.showActions === undefined ? true : this.conf.showActions ;
     this.filterColumns = this.conf.columns;
     this.conf.columns = this.allColumns; // Remove any alwaysDisplayed cols from the official list
+    this.originalConfColumns = this.conf.columns; // to go back to defaults
+
+    // Keep track of original layout
+    if (this.originalConfColumns) {
+      this.originalConfColumns = [];
+
+      for (let item of this.allColumns) {
+        if (!item.hidden) {
+          this.originalConfColumns.push(item);
+        }
+      }
+    }
+
+    // Get preferred list of columns from pref service
+    let preferredCols = this.prefService.preferences.tableDisplayedColumns;
+    // No preferences set for any table, show 'default' configuration
+    if (preferredCols.length === 0) {
+      this.conf.columns = this.originalConfColumns;  
+    } else {
+      preferredCols.forEach((i) => {
+        let match = 0;
+        // If preferred columns have been set for THIS table...
+        if (i.title === this.title) {
+          this.conf.columns = i.cols;
+          match++;
+        }
+        // If no preferred columns for THIS table, show 'default' configuration
+        if (match === 0) {
+          this.conf.columns = this.originalConfColumns;
+        }
+      });
+    }
 
     this.displayedColumns.push("action");
     if (this.conf.changeEvent) {
@@ -207,24 +243,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.hideTopActions = this.conf.hideTopActions;
     }
 
+    // Delay spinner 500ms so it won't show up on a fast-loading page
+    setTimeout(() => { this.setShowSpinner(); }, 500);
 
-      // Delay spinner 500ms so it won't show up on a fast-loading page
-      setTimeout(() => { this.setShowSpinner(); }, 500);
 
-      // Next section sets the checked/displayed columns
-      if (this.conf.columns && this.conf.columns.length > 9) {
-        this.conf.columns = [];
-
-        for (let item of this.allColumns) {
-          if (!item.hidden) {
-            this.conf.columns.push(item);
-            this.presetDisplayedCols.push(item);
-          }
-        }
-
-        this.currentPreferredCols = this.conf.columns;
-      }
-        // End of checked/display section ------------                 
+      // End of layout section ------------                 
 
     this.erdService.attachResizeEventToElement("entity-table-component");
   }
@@ -272,25 +295,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.currentRows = newData;
         this.paginationPageIndex  = 0;
         this.setPaginationInfo();
-      });
-
-      // Delay spinner 500ms so it won't show up on a fast-loading page
-      setTimeout(() => { this.setShowSpinner(); }, 500);
-
-      // Next section sets the checked/displayed columns
-      if (this.conf.columns && this.conf.columns.length > 10) {
-        this.conf.columns = [];
-
-        for (let item of this.allColumns) {
-          if (!item.hidden) {
-            this.conf.columns.push(item);
-            this.presetDisplayedCols.push(item);
-          }
-        }
-
-        this.currentPreferredCols = this.conf.columns;
-      }
-        // End of checked/display section ------------                 
+      });              
   }
 
   setTableHeight() {
@@ -347,10 +352,18 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     if (this.conf.queryCall) {
-      if (this.conf.queryCallOption) {
-        this.getFunction = this.ws.call(this.conf.queryCall, this.conf.queryCallOption);
+      if (this.conf.queryCallJob) {
+        if (this.conf.queryCallOption) {
+          this.getFunction = this.ws.job(this.conf.queryCall, this.conf.queryCallOption);
+        } else {
+          this.getFunction = this.ws.job(this.conf.queryCall, []);
+        }
       } else {
-        this.getFunction = this.ws.call(this.conf.queryCall, []);
+        if (this.conf.queryCallOption) {
+          this.getFunction = this.ws.call(this.conf.queryCall, this.conf.queryCallOption);
+        } else {
+          this.getFunction = this.ws.call(this.conf.queryCall, []);
+        }
       }
     } else {
       this.getFunction = this.rest.get(this.conf.resource_name, options);
@@ -419,11 +432,18 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.conf.addRows) {
       this.conf.addRows(this);
     }
+    if (!this.showDefaults) {
+      this.currentRows = this.filter.nativeElement.value === '' ? this.rows : this.currentRows;
+      this.paginationPageIndex  = 0;
+      this.setPaginationInfo();
+      this.showDefaults = true;
+    }
+    if (this.expandedRows == 0 && this.filter.nativeElement.value === '') {
+      this.currentRows = this.rows;
+      this.paginationPageIndex  = 0;
+      this.setPaginationInfo();
+    }
 
-    this.currentRows = this.filter.nativeElement.value === '' ? this.rows : this.currentRows;
-    this.paginationPageIndex  = 0;
-    this.setPaginationInfo();
-    this.showDefaults = true;
     return res;
 
   }
@@ -436,7 +456,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     if (res.data) {
-      rows = new EntityUtils().flattenData(res.data);
+      if (res.data.result) {
+        rows = new EntityUtils().flattenData(res.data.result);
+      } else {
+        rows = new EntityUtils().flattenData(res.data);
+      }
     } else {
       rows = new EntityUtils().flattenData(res);
     }
@@ -458,14 +482,14 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.conf.queryRes = rows;
       }
     } else {
-      const newCurrentRows = this.currentRows;
-      for (let i = 0; i < newCurrentRows.length; i++) {
-        const index = _.findIndex(rows, {id: newCurrentRows[i].id});
+      for (let i = 0; i < this.currentRows.length; i++) {
+        const index = _.findIndex(rows, {id: this.currentRows[i].id});
         if (index > -1) {
-          newCurrentRows[i] = rows[index];
+          for (let prop in rows[index]) {
+            this.currentRows[i][prop] = rows[index][prop];
+          }
         }
       }
-      this.currentRows = newCurrentRows;
 
       const newRows = [];
       for (let i = 0; i < this.rows.length; i++) {
@@ -581,20 +605,25 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   doDelete(item) {
-    let deleteMsg = this.getDeleteMessage(item);
+    const deleteMsg =
+      this.conf.confirmDeleteDialog && this.conf.confirmDeleteDialog.isMessageComplete
+        ? ''
+        : this.getDeleteMessage(item);
+    
     let id;
     if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.id_prop) {
       id = item[this.conf.config.deleteMsg.id_prop];
     } else {
       id = item.id;
     }
-    let dialog = {};
     if (this.conf.checkbox_confirm && this.conf.checkbox_confirm_show && this.conf.checkbox_confirm_show(id)) {
       this.conf.checkbox_confirm(id, deleteMsg);
       return;
     }
-    if (this.conf.confirmDeleteDialog) {
-      dialog = this.conf.confirmDeleteDialog;
+
+    const dialog = this.conf.confirmDeleteDialog;
+    if (dialog.buildTitle) {
+      dialog.title = dialog.buildTitle(item);
     }
 
     this.dialogService.confirm(
@@ -603,30 +632,43 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : false, 
         dialog.hasOwnProperty("button") ? dialog['button'] : T("Delete")).subscribe((res) => {
       if (res) {
-        this.loader.open();
-        this.loaderOpen = true;
-        const data = {};
-        if (this.conf.wsDelete) {
-          this.busy = this.ws.call(this.conf.wsDelete, [id]).subscribe(
-            (resinner) => { this.getData() },
-            (resinner) => {
-              new EntityUtils().handleWSError(this, resinner, this.dialogService);
-              this.loader.close();
+        if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.doubleConfirm) {
+          // double confirm: input delete item's name to confirm deletion
+          this.conf.config.deleteMsg.doubleConfirm(item).subscribe((doubleConfirmDialog) => {
+            if (doubleConfirmDialog) {
+              this.delete(id);
             }
-          );
+          });
         } else {
-          this.busy = this.rest.delete(this.conf.resource_name + '/' + id, data).subscribe(
-            (resinner) => {
-              this.getData();
-            },
-            (resinner) => {
-              new EntityUtils().handleError(this, resinner);
-              this.loader.close();
-            }
-          );
+          this.delete(id);
         }
       }
     })
+  }
+
+  delete(id) {
+    this.loader.open();
+    this.loaderOpen = true;
+    const data = {};
+    if (this.conf.wsDelete) {
+      this.busy = this.ws.call(this.conf.wsDelete, [id]).subscribe(
+        (resinner) => { this.getData() },
+        (resinner) => {
+          new EntityUtils().handleWSError(this, resinner, this.dialogService);
+          this.loader.close();
+        }
+      );
+    } else {
+      this.busy = this.rest.delete(this.conf.resource_name + '/' + id, data).subscribe(
+        (resinner) => {
+          this.getData();
+        },
+        (resinner) => {
+          new EntityUtils().handleError(this, resinner);
+          this.loader.close();
+        }
+      );
+    }
   }
 
   doDeleteJob(item: any): Observable<{ state: 'SUCCESS' | 'FAILURE' } | false> {
@@ -681,7 +723,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   paginationUpdate($pageEvent: any) {
-
     this.paginationPageEvent = $pageEvent;
     this.paginationPageIndex = (typeof(this.paginationPageEvent.offset) !== "undefined" ) 
     ? this.paginationPageEvent.offset : this.paginationPageEvent.pageIndex;
@@ -690,7 +731,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   protected setPaginationInfo() {
-
     const beginIndex = this.paginationPageIndex * this.paginationPageSize;
     const endIndex = beginIndex + this.paginationPageSize ;
 
@@ -839,6 +879,30 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.conf.columns = [...this.conf.columns, col];
     }
+
+    this.selectColumnsToShowOrHide();
+  }
+
+  // Stores currently selected columns in preference service
+  selectColumnsToShowOrHide() {
+    let obj = {};
+    obj['title'] = this.title;
+    obj['cols'] = this.conf.columns;
+  
+    let preferredCols = this.prefService.preferences.tableDisplayedColumns;
+    preferredCols.forEach((i) => {
+      if (i.title === this.title) {
+        preferredCols.splice(preferredCols.indexOf(i), 1); 
+      }
+    });
+    preferredCols.push(obj);
+    this.prefService.savePreferences(this.prefService.preferences);
+  }
+
+  // resets col view to the default set in the table's component
+  resetColViewToDefaults() {
+    this.conf.columns = this.originalConfColumns;
+    this.selectColumnsToShowOrHide();
   }
 
   isChecked(col:any) {
@@ -847,21 +911,25 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }) !=undefined;
   }
 
-  // Toggle between all cols selected and the current stored preference
+  // Toggle between all/none cols selected
   checkAll() {
     this.anythingClicked = true;
     if (this.conf.columns.length < this.allColumns.length) {
-
       this.conf.columns = this.allColumns;
+      this.selectColumnsToShowOrHide();
       return this.conf.columns
     } else {
-      return this.conf.columns = this.currentPreferredCols;
+      this.conf.columns = [];
+      this.selectColumnsToShowOrHide();
+      return this.conf.columns;
     }
   }
 
   // Used by the select all checkbox to determine whether it should be checked
-  checkLength() {
-    return this.conf.columns.length === this.allColumns.length;
+  checkLength() { 
+    if (this.allColumns && this.conf.columns) {
+      return this.conf.columns.length === this.allColumns.length;
+    }
   }
 
   onGoToLegacy() {
@@ -871,14 +939,13 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
   }
-
   // End checkbox section -----------------------
+  
   toggleLabels(){
     this.multiActionsIconsOnly = !this.multiActionsIconsOnly;
   }
 
   toggleExpandRow(row) {
-    //console.log('Toggled Expand Row!', row);
     if (!this.startingHeight) {
       this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
     }  
@@ -889,10 +956,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       let heightStr = `height: ${newHeight}px`;
       document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
     }, 100)
-    
   }
 
   onDetailToggle(event) {
     //console.log('Detail Toggled', event);
-}
+  }
 }

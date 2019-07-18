@@ -31,13 +31,23 @@ dataset_acl_perms_type_options: [
                           
 dataset_acl_user_placeholder: T('User'),
 dataset_acl_user_tooltip: T('Select the user to control the pool/dataset. Users\
-                           manually created or imported from a directory service\
-                           will appear in the drop-down menu.'),
+ manually created or imported from a directory service\
+ will appear in the drop-down menu.'),
                           
 dataset_acl_group_placeholder: T('Group'),
 dataset_acl_group_tooltip: T('Select the group to control the pool/dataset. Groups\
-                           manually created or imported from a directory service\
-                           will appear in the drop-down menu.'),
+ manually created or imported from a directory service\
+ will appear in the drop-down menu.'),
+
+dataset_acl_uid_placeholder: T('User'),
+dataset_acl_uid_tooltip: T('Select the user to control the pool/dataset. Users\
+ manually created or imported from a directory service\
+ will appear in the drop-down menu.'),
+
+dataset_acl_gid_placeholder: T('Group'),
+dataset_acl_gid_tooltip: T('Select the group to control the pool/dataset. Groups\
+ manually created or imported from a directory service\
+ will appear in the drop-down menu.'),
 
 dataset_acl_perms_placeholder: T('Permissions'),
 dataset_acl_perms_tooltip: T(''),
@@ -106,10 +116,13 @@ dataset_acl_recursive_dialog_warning_message: T("Setting permissions recursively
  affect this directory and any others below it. This might make data inaccessible."),
 dataset_acl_stripacl_placeholder: T('Strip ACLs'),
 dataset_acl_stripacl_tooltip: T("Setting this will strip ACLs from the current dataset.\
-  ACLs will also be stripped recursively to directories and child datasets if paired with\
-  those options"),
+ ACLs will also be stripped recursively to directories and child datasets if paired with\
+  hose options"),
 
 dataset_acl_stripacl_dialog_warning: T('Warning'),
-dataset_acl_stripacl_dialog_warning_message: T('Stripping ACLs will reset the permissions\
-  of this dataset. This may make data inaccessible.')
+dataset_acl_stripacl_dialog_warning_message: T('Stripping the ACL resets dataset\
+ permissions. This can make data inaccessible until new permissions are created.'),
+
+dataset_acl_toplevel_dialog_message: T('Editing top-level datasets can prevent users\
+ from accessing data in child datasets.')
 }

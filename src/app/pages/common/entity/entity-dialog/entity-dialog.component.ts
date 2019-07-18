@@ -21,7 +21,7 @@ import { DatePipe } from '@angular/common';
 })
 export class EntityDialogComponent implements OnInit {
 
-  @Input('conf') conf: DialogFormConfiguration;
+  @Input() conf: DialogFormConfiguration;
 
   public title: string;
   public warning: string;
@@ -35,7 +35,7 @@ export class EntityDialogComponent implements OnInit {
   public formValue: any;
   public showPassword = false;
   public parent: any;
-  
+  public submitEnabled = true;
 
   constructor(public dialogRef: MatDialogRef < EntityDialogComponent >,
     protected translate: TranslateService,
@@ -67,6 +67,9 @@ export class EntityDialogComponent implements OnInit {
       this.cancelButtonText = this.conf.cancelButtonText;
     }
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
+    if(this.conf.afterInit) {
+      this.conf.afterInit(this);
+    }
   }
 
   submit() {

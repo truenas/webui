@@ -10,12 +10,12 @@ location_validation : [ Validators.required ],
 
 contact_placeholder : T('Contact'),
 contact_tooltip: T('Enter an email address to receive messages from the\
- <a href="%%docurl%%/services.html#snmp"\
+ <a href="--docurl--/services.html#snmp"\
  target="_blank">SNMP service</a>.'),
 contact_validation: [Validators.required, Validators.email],
 
 community_placeholder : T('Community'),
-community_tooltip: T('Change from <i>public</i to increase system security.\
+community_tooltip: T('Change from <i>public</i> to increase system security.\
  Can only contain alphanumeric characters, underscores,\
  dashes, periods, and spaces. This can be left empty\
  for <i>SNMPv3</i> networks.'),

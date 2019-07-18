@@ -1,24 +1,24 @@
-import { Component, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
-import * as _ from 'lodash';
-
-import { RestService, WebSocketService, DialogService } from '../../../../services/';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { helptext_sharing_smb } from 'app/helptext/sharing';
+import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { Router } from '@angular/router';
+import { helptext_sharing_smb } from 'app/helptext/sharing';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import * as _ from 'lodash';
+import { of, combineLatest } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { DialogService, RestService, WebSocketService } from '../../../../services/';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
   selector : 'app-smb-form',
   template : `<entity-form [conf]="this"></entity-form>`
 })
-export class SMBFormComponent implements OnDestroy {
+export class SMBFormComponent {
 
   protected resource_name: string = 'sharing/cifs/';
   protected route_success: string[] = [ 'sharing', 'smb' ];
   protected isEntity: boolean = true;
   protected isBasicMode: boolean = true;
-  public cifs_default_permissions: any;
-  public cifs_default_permissions_subscription: any;
 
   protected fieldConfig: FieldConfig[] = [
     {
@@ -51,13 +51,6 @@ export class SMBFormComponent implements OnDestroy {
       name: 'cifs_timemachine',
       placeholder: helptext_sharing_smb.placeholder_timemachine,
       tooltip: helptext_sharing_smb.tooltip_timemachine,
-    },
-    {
-      type: 'checkbox',
-      name: 'cifs_default_permissions',
-      placeholder: helptext_sharing_smb.placeholder_default_permissions,
-      tooltip: helptext_sharing_smb.tooltip_default_permissions,
-      value: false
     },
     {
       type: 'checkbox',
@@ -147,7 +140,6 @@ export class SMBFormComponent implements OnDestroy {
     'cifs_showhiddenfiles',
     'cifs_recyclebin',
     'cifs_browsable',
-    'cifs_default_permissions',
     'cifs_ro',
   ];
 
@@ -177,60 +169,81 @@ export class SMBFormComponent implements OnDestroy {
   }
 
   afterSave(entityForm) {
-    this.ws.call('service.query', [[]]).subscribe((res) => {
-      const service = _.find(res, {"service": "cifs"});
-      if (service['enable']) {
-        this.router.navigate(new Array('/').concat(
-          this.route_success));
-      } else {
-          this.dialog.confirm(helptext_sharing_smb.dialog_enable_service_title,
-            helptext_sharing_smb.dialog_enable_service_message,
-          true, helptext_sharing_smb.dialog_enable_service_button).subscribe((dialogRes) => {
-            if (dialogRes) {
-              entityForm.loader.open();
-              this.ws.call('service.update', [service['id'], { enable: true }]).subscribe((updateRes) => {
-                this.ws.call('service.start', [service.service]).subscribe((startRes) => {
-                  entityForm.loader.close();
-                  entityForm.snackBar.open(helptext_sharing_smb.snackbar_service_started, helptext_sharing_smb.snackbar_close);
-                  this.router.navigate(new Array('/').concat(
-                   this.route_success));
-                }, (err) => {
-                  entityForm.loader.close();
-                  this.dialog.errorReport(err.error, err.reason, err.trace.formatted);
-                  this.router.navigate(new Array('/').concat(
-                    this.route_success));
-                });
-               }, (err) => {
-                entityForm.loader.close();
-                this.dialog.errorReport(err.error, err.reason, err.trace.formatted);
-                this.router.navigate(new Array('/').concat(
-                  this.route_success));
-               });
-           } else {
-            this.router.navigate(new Array('/').concat(
-              this.route_success));
-            }
-        });
-      }
+    const datasetId = entityForm.formGroup.get('cifs_path').value.replace('/mnt/', '');
 
-    });
+    /**
+     * Check if user wants to edit dataset permissions. If not,
+     * nav to SMB shares list view.
+     */
+    const promptUserACLEdit = () =>
+      combineLatest(
+        this.dialog.confirm(
+          helptext_sharing_smb.dialog_edit_acl_title,
+          helptext_sharing_smb.dialog_edit_acl_message,
+          true,
+          helptext_sharing_smb.dialog_edit_acl_button
+        ),
+        this.ws.call("pool.dataset.query", [[["id", "=", datasetId]]]).pipe(map(datasets => datasets[0]))
+      ).pipe(
+        tap(([doConfigureACL, dataset]) =>
+          doConfigureACL
+            ? this.router.navigate(
+                ["/"].concat(["storage", "pools", "id", dataset.pool, "dataset", "acl", datasetId])
+              )
+            : this.router.navigate(["/"].concat(this.route_success))
+        )
+      );
+
+    this.ws
+      .call("service.query", [])
+      .pipe(
+        map(response => _.find(response, { service: "cifs" })),
+        switchMap(cifsService => {
+          if (cifsService.enable) {
+            return promptUserACLEdit();
+          }
+
+          /**
+           * Allow user to enable cifs service, then ask about editing
+           * dataset ACL.
+           */
+          return this.dialog
+            .confirm(
+              helptext_sharing_smb.dialog_enable_service_title,
+              helptext_sharing_smb.dialog_enable_service_message,
+              true,
+              helptext_sharing_smb.dialog_enable_service_button
+            )
+            .pipe(
+              switchMap(doEnableService => {
+                if (doEnableService) {
+                  entityForm.loader.open();
+                  return this.ws.call("service.update", [cifsService.id, { enable: true }]).pipe(
+                    switchMap(() => this.ws.call("service.start", [cifsService.service])),
+                    tap(() => {
+                      entityForm.loader.close();
+                      entityForm.snackBar.open(
+                        helptext_sharing_smb.snackbar_service_started,
+                        helptext_sharing_smb.snackbar_close
+                      );
+                    }),
+                    catchError(error => {
+                      entityForm.loader.close();
+                      this.dialog.errorReport(error.error, error.reason, error.trace.formatted);
+                      return of(error);
+                    })
+                  );
+                }
+                return of(true);
+              }),
+              switchMap(promptUserACLEdit)
+            );
+        })
+      )
+      .subscribe(() => {}, error => new EntityUtils().handleWSError(this, error, this.dialog));
   }
 
   afterInit(entityForm: any) {
-    this.cifs_default_permissions = entityForm.formGroup.controls['cifs_default_permissions'];
-    if (entityForm.isNew) {
-      this.cifs_default_permissions.setValue(true);
-    }
-    this.cifs_default_permissions_subscription = this.cifs_default_permissions.valueChanges.subscribe((value) => {
-      if (value === true) {
-        this.dialog.confirm(helptext_sharing_smb.dialog_warning, helptext_sharing_smb.dialog_warning_message)
-        .subscribe((res) => {
-          if (!res) {
-            this.cifs_default_permissions.setValue(false);
-          }
-        });
-      }
-    });
     entityForm.ws.call('sharing.smb.vfsobjects_choices', [])
         .subscribe((res) => {
           this.cifs_vfsobjects =
@@ -257,9 +270,5 @@ export class SMBFormComponent implements OnDestroy {
       return {'nameIsForbidden': true}
     }
     return null;
-  }
-
-  ngOnDestroy() {
-    this.cifs_default_permissions_subscription.unsubscribe();
   }
 }

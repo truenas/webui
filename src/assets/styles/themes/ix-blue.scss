@@ -414,6 +414,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   .toggle-children {
     filter: invert(50%);
+    top: 5px;
+    left: 4px;
   }
 
   .mat-menu-item[disabled] {
@@ -520,6 +522,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   .mat-checkbox {
     margin: 4px;
+  }
+  .form-line .mat-checkbox {
+    margin-left: 0;
   }
 
   .ngx-datatable .mat-checkbox-inner-container {
@@ -703,7 +708,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   // Style file trees to be highlighted with a theme color
   .node-content-wrapper:hover,
   .node-content-wrapper-focused{
-      @include variable(background, --bg1, $bg1);
+      background-color: var(--bg2);
   }
 
   // Give vdev arrow buttons theme colors
@@ -717,6 +722,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   .vdev-action-btn:disabled {
     opacity: 0.38;
+  }
+
+  #vdev__close-button {
+    color: var(--primary) !important;
   }
 
   // style nav chevrons on datatable pager w/regard to theme
@@ -1241,6 +1250,21 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     .mat-card-actions {
       margin-left: 15px;
     }
+
+    #FN_jira-info {
+      margin-bottom: 10px;
+    }
+
+    #category_form-select-spinner {
+      position: absolute;
+      top: -20px;
+      right: 45%;
+    }
+
+    .mat-card-actions {
+      margin-top: -54px;
+      width: 50%
+    }
   }
 
   entity-form form-combobox mat-form-field {
@@ -1248,10 +1272,78 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     min-width: 180px;
   }
 
+  app-service-netdata form-paragraph {
+    font-size: larger;
+    font-weight: 700;
+    margin-bottom: 7px;
+  }
+  
+  app-replication-wizard #adjustme {
+    top: -70px;
+  }
+
+  jail-wizard .tooltiptext {
+    top: -1px;
+  }
+
   mat-radio-group .tooltip .material-icons,
   mat-radio-group .tooltip .material-icons {
     position: relative;
     top: 4px;
   }
+
+  .navigation-hold#scroll-area .ps__scrollbar-y-rail {
+    top: 50px !important;
+  }
+
+  .tooltiptext samp {
+      background: rgba(255, 255, 255, 0.25);
+  }
+
+  .node-content-wrapper {
+    margin-left: 2px;
+    padding-left: 3px;
+  }
+  tree-node-content mat-icon {
+     vertical-align: top;
+  }
+  tree-node-content span {
+    vertical-align: top;
+    line-height: 25px;
+    padding-left: 3px;
+  }
+
+  .mat-card{
+    border-radius: 6px;
+    //overflow: hidden; // This clips tooltips
+  }
+
+
+  // Scrollbars need separate rules for firefox and webkit
+ 
+  *{
+    scrollbar-width:8px;
+    scrollbar-height:8px;
+  }
+ 
+  *::-webkit-scrollbar{
+    width:8px;
+    height:8px;
+  }
+
+  *::-webkit-scrollbar-track{
+    background-color:var(--bg2);
+  }
+
+  *::-webkit-scrollbar-thumb{
+    background-color: rgba(127,127,127,0.5);
+    border-radius:4px;
+  }
+
+
+  app-support a {
+    text-decoration: underline;
+  }
+
 
  } // end of ix theme

@@ -22,7 +22,7 @@ export default {
  been replicated to other systems are not affected.'),
 
     naming_schema_placeholder: T('Naming Schema'),
-    naming_schema_tooltip: T('Snapshot name format string. The default is <i>snap-%Y-%m-%d-%H-%M</i>.\
+    naming_schema_tooltip: T('Snapshot name format string. The default is <i><textarea disabled>snap-%Y-%m-%d-%H-%M</textarea></i>.\
  Must include the strings <i>%Y</i>, <i>%m</i>, <i>%d</i>, <i>%H</i>, and <i>%M</i>, which are replaced with the four-digit year,\
  month, day of month, hour, and minute as defined in <a href="https://www.freebsd.org/cgi/man.cgi?query=strftime" target="_blank">strftime(3)</a>. A string showing the snapshot\
  lifetime is appended to the name. For example, snapshots of <i>pool1</i> with a Naming Schema of\
@@ -40,8 +40,10 @@ export default {
     snapshot_picker_tooltip: T('Choose one of the presets\
  or choose <i>Custom</i> to use the advanced scheduler.'),
 
-    allow_empty_placeholder: T('Allow taking empty snapshots'),
-    allow_empty_tooltip: T(''),
+    allow_empty_placeholder: T('Allow Taking Empty Snapshots'),
+    allow_empty_tooltip: T('Creates dataset snapshots when there are no\
+ changes. Set to support periodic snapshot schedules and replications\
+ created in version 11.2 and earlier.'),
 
     enabled_placeholder: T('Enabled'),
     enabled_tooltip: T('Unset to disable this task without deleting it.'),
