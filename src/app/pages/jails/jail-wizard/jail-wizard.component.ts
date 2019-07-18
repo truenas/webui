@@ -332,12 +332,11 @@ export class JailWizardComponent {
     this.ip6_interfaceField = _.find(this.wizardConfig[1].fieldConfig, {'name': 'ip6_interface'});
     this.ip6_prefixField = _.find(this.wizardConfig[1].fieldConfig, {'name': 'ip6_prefix'});
 
-    // get interface options
-    this.ws.call('jail.interface_choices').subscribe(
+    this.jailService.getInterfaceChoice().subscribe(
       (res)=>{
-        for (let i in res) {
-          this.ip4_interfaceField.options.push({ label: res[i].name, value: res[i].name});
-          this.ip6_interfaceField.options.push({ label: res[i].name, value: res[i].name});
+        for (const i in res) {
+          this.ip4_interfaceField.options.push({ label: res[i], value: res[i]});
+          this.ip6_interfaceField.options.push({ label: res[i], value: res[i]});
         }
       },
       (res)=>{

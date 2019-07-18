@@ -1127,13 +1127,12 @@ export class JailEditComponent implements OnInit, AfterViewInit {
     this.ip6_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip6_addr'}).templateListField[0];
     this.vnet_default_interfaceField = _.find(this.networkfieldConfig, {'name': 'vnet_default_interface'});
 
-    // get interface options
-    this.ws.call('interface.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
+    this.jailService.getInterfaceChoice().subscribe(
       (res)=>{
-        for (let i in res) {
-          this.ip4_interfaceField.options.push({ label: res[i].name, value: res[i].name});
-          this.ip6_interfaceField.options.push({ label: res[i].name, value: res[i].name});
-          this.vnet_default_interfaceField.options.push({ label: res[i].name, value: res[i].name});
+        for (const i in res) {
+          this.ip4_interfaceField.options.push({ label: res[i], value: res[i]});
+          this.ip6_interfaceField.options.push({ label: res[i], value: res[i]});
+          this.vnet_default_interfaceField.options.push({ label: res[i], value: res[i]});
         }
       },
       (res)=>{

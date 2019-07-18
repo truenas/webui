@@ -103,4 +103,8 @@ export class JailService {
   getTemplates() {
     return this.ws.call('jail.query', [[['type', '=' , 'template']]]);
   }
+
+  getInterfaceChoice() {
+    return this.ws.call('jail.interface_choices');
+  }
 }
