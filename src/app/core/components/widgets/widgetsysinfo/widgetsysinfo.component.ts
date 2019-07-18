@@ -47,8 +47,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
 
   ngAfterViewInit(){
     this.core.register({observerClass:this,eventName:"SysInfo"}).subscribe((evt:CoreEvent) => {
-      //DEBUG: console.log("******** SysInfo ********");
-      console.log(evt.data);
       this.loader = false;
       this.data = evt.data;
 
@@ -77,22 +75,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
         this.isFN = false;
       }    
 
-      // Hardware detection
-      /*console.log(evt.data.system_product)
-      switch(evt.data.system_product){
-        case "FREENAS-MINI-2.0":
-          this.cardBg = 'freenas_mini.png';
-        break;
-        case "FREENAS-MINI-XL":
-          this.cardBg = 'freenas_mini_xl.png';
-        break;
-        case "TRUENAS-Z20-HA-D":
-          this.cardBg = 'Z20.png';
-        break;
-        default:
-          this.cardBg = this.systemLogo;
-        break;
-      }*/
     });
 
     this.core.register({observerClass:this,eventName:"UpdateChecked"}).subscribe((evt:CoreEvent) => {
@@ -111,10 +93,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   ngOnDestroy(){
     this.core.unregister({observerClass:this});
   }
-
-  /*getCardBg(){
-    return "url('" + this.imagePath + this.cardBg + "')";
-  }*/
 
   get themeAccentColors(){
     let theme = this.themeService.currentTheme();
