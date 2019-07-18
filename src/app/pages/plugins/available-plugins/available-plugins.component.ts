@@ -36,9 +36,9 @@ export class AvailablePluginsComponent implements OnInit {
         this.ws.call('plugin.official_repositories').subscribe(
             (res) => {
                 for (const repo in res) {
-                    this.availableRepo.push({ label: repo, value: res[repo]});
+                    this.availableRepo.push(res[repo]);
                 }
-                this.selectedRepo = this.availableRepo[0].value;
+                this.selectedRepo = this.availableRepo[0].git_repository;
             },
             (err) => {
                 new EntityUtils().handleWSError(this.parent, err, this.parent.dialogService);

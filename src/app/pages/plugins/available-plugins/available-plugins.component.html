@@ -2,8 +2,8 @@
     <section *ngIf="engineerMode || isFreenas">
         <mat-label>{{ "Browse a Collection" | translate}}</mat-label>
         <mat-select [(ngModel)]="selectedRepo" (selectionChange)="switchRepo($event)">
-            <mat-option *ngFor="let repo of availableRepo" [value]="repo.value">
-                {{repo.label}}
+            <mat-option *ngFor="let repo of availableRepo" [value]="repo.git_repository">
+                {{repo.name}}
             </mat-option>
         </mat-select>
     </section>
