@@ -249,8 +249,14 @@
 }
 
 .product-image.truenas ,
-.product-image.ix-logo{
+.product-image.ix-logo,
+.freenas .generic{
   padding-bottom:15%;
+}
+
+.freenas .mat-icon.generic{
+  width:50%;
+  height:auto;
 }
 
 img.platform-logo{

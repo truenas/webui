@@ -145,6 +145,12 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   }
 
   getFreeNASImage(sys_product) {
+
+    if (sys_product.includes('CERTIFIED')) {
+      this.product_image = 'ix-original.svg';
+      return;
+    }
+    
     switch(sys_product){
       case "FREENAS-MINI-2.0":
         this.product_image = 'freenas_mini_cropped.png';
@@ -153,7 +159,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
         this.product_image = 'freenas_mini_xl_cropped.png';
       break;
       default:
-        this.product_image = 'ix-original.svg';
+        this.product_image = '';
       break;
     }
   }
