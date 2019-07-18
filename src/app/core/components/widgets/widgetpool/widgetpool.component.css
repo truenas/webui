@@ -35,6 +35,8 @@
   font-weight:500;
   display:inline-block;
   vertical-align:middle;
+  position: relative;
+  top: 2px;
 }
 
 .view-overview .primary-nav .card-title-text{
