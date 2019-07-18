@@ -30,13 +30,17 @@ export class JobService {
     return source;
   }
 
-  showLogs(job_id) {
+  showLogs(job_id, title?, cancelMsg?) {
+    let dialog_title, cancelButtonMsg;
+    title ? dialog_title = title : dialog_title = T("Logs");
+    cancelMsg ? cancelButtonMsg = cancelMsg : cancelButtonMsg = T('Cancel');
     this.ws.call("core.get_jobs").subscribe((res) => {
       for(var i = 0; i < res.length; i++) {
         if (res[i].id == job_id) {
           if (res[i].logs_path && res[i].logs_excerpt) {
             let target_job = res[i];
-            this.dialog.confirm(T('Logs'), `<pre>${res[i].logs_excerpt}</pre>`, true, T('Download Logs')).subscribe(
+            this.dialog.confirm(dialog_title, `<pre>${res[i].logs_excerpt}</pre>`, true, T('Download Logs'),
+              false, '', '', '', '', false, cancelButtonMsg).subscribe(
               (dialog_res) => {
                 if (dialog_res) {
                   this.ws.call('core.download', ['filesystem.get', [target_job.logs_path], target_job.id + '.log']).subscribe(

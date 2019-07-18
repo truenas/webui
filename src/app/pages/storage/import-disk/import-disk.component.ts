@@ -75,9 +75,6 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
   public msdosfs_locale: any;
   private entityForm: any;
   protected dialogRef: any;
-  public custActions: any[];
-  public custActionDisabled = true;
-  public importJobId: any;
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected dialog: MatDialog,
@@ -142,17 +139,6 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
       this.initialized = true;
     });
 
-    this.custActions = [
-      {
-        id: 'view_import_log',
-        name: 'View Import Log',
-        disabled: this.custActionDisabled,
-        function: () => {
-          this.job.showLogs(this.importJobId);
-        }
-      }
-    ];
-
   }
 
   customSubmit(payload){
@@ -164,15 +150,13 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
     this.dialogRef.componentInstance.setDescription(T("Importing Disk..."));
     this.dialogRef.componentInstance.setCall('pool.import_disk', [payload.volume, payload.fs_type, fs_options ,payload.dst_path]);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe((res) => {
-      console.log(res)
-      this.custActionDisabled = false;
-      this.importJobId = res.id;
+    this.dialogRef.componentInstance.success.subscribe((job_res) => {
+      this.dialogRef.close();
       this.entityForm.success = true;
-      this.entityForm.snackBar.open(T("Disk successfully imported"), T("Success"));
+      this.job.showLogs(job_res.id, T('Disk Imported: Log Summary'), T('Close'));
     });
-    this.dialogRef.componentInstance.failure.subscribe((res) => {
-      new EntityUtils().handleWSError(this.entityForm, res);
+    this.dialogRef.componentInstance.failure.subscribe((err) => {
+      new EntityUtils().handleWSError(this.entityForm, err);
     });
 
   }
