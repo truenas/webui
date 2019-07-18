@@ -61,15 +61,51 @@ export class CloudsyncListComponent {
     if (localStorage.getItem('engineerMode') === 'true') {
       this.columns.splice(9, 0, { name: T('Auxiliary arguments'), prop: 'args' });
     }
-    // const argsColumn = _.find(this.detailColumns, {prop: 'args'});
-    // this.engineerModeService.engineerMode.subscribe((res) => {
-    //   argsColumn.isHidden = res === 'true' ? false : true;
-    // });
 
   }
 
   afterInit(entityList: any) {
     this.entityList = entityList;
+  }
+
+  resourceTransformIncomingRestData(data) {
+    return data.map(task =>  {
+      task.minute = task.schedule['minute'];
+      task.hour = task.schedule['hour'];
+      task.dom = task.schedule['dom'];
+      task.month = task.schedule['month'];
+      task.dow = task.schedule['dow'];
+      task.credential = task.credentials['name'];
+      
+      task.cron = `${task.minute} ${task.hour} ${task.dom} ${task.month} ${task.dow}`;
+      
+      /* Weird type assertions are due to a type definition error in the cron-parser library */
+      task.next_run = ((cronParser.parseExpression(task.cron, { iterator: true }).next() as unknown) as {
+        value: { _date: Moment };
+      }).value._date.fromNow();
+
+      if (task.job == null) {
+        task.status = T("Not run since last boot");
+      } else {
+        task.state = task.job.state;
+        task.status = task.job.state;
+        if (task.job.error) {
+          task.status += ":" + task.job.error;
+        }
+        this.job.getJobStatus(task.job.id).subscribe((t) => {
+          t.state = t.job.state;
+          t.status = t.state;
+          if (t.error) {
+            t.status += ":" + t.error;
+          }
+          if (t.progress.description && t.state !== 'SUCCESS') {
+            t.status += ':' + t.progress.description;
+          }
+        });
+      }
+
+      return task;
+    });
   }
 
   getActions(parentrow) {
@@ -144,45 +180,6 @@ export class CloudsyncListComponent {
       return false;
     }
     return true;
-  }
-
-  dataHandler(entityList: any) {
-    for (let i = 0; i < entityList.rows.length; i++) {
-      entityList.rows[i].minute = entityList.rows[i].schedule['minute'];
-      entityList.rows[i].hour = entityList.rows[i].schedule['hour'];
-      entityList.rows[i].dom = entityList.rows[i].schedule['dom'];
-      entityList.rows[i].month = entityList.rows[i].schedule['month'];
-      entityList.rows[i].dow = entityList.rows[i].schedule['dow'];
-      entityList.rows[i].credential = entityList.rows[i].credentials['name'];
-      
-      entityList.rows[i].cron = `${entityList.rows[i].minute} ${entityList.rows[i].hour} ${entityList.rows[i].dom} ${entityList.rows[i].month} ${entityList.rows[i].dow}`;
-      
-      /* Weird type assertions are due to a type definition error in the cron-parser library */
-      entityList.rows[i].next_run = ((cronParser.parseExpression(entityList.rows[i].cron, { iterator: true }).next() as unknown) as {
-        value: { _date: Moment };
-      }).value._date.fromNow();
-
-      if (entityList.rows[i].job == null) {
-        entityList.rows[i].status = T("Not run since last boot");
-      } else {
-        entityList.rows[i].state = entityList.rows[i].job.state;
-        entityList.rows[i].status = entityList.rows[i].job.state;
-        if (entityList.rows[i].job.error) {
-          entityList.rows[i].status += ":" + entityList.rows[i].job.error;
-        }
-        this.job.getJobStatus(entityList.rows[i].job.id).subscribe((task) => {
-          entityList.rows[i].state = entityList.rows[i].job.state;
-          entityList.rows[i].status = task.state;
-          if (task.error) {
-            entityList.rows[i].status += ":" + task.error;
-          }
-          if (task.progress.description && task.state != 'SUCCESS') {
-            entityList.rows[i].status += ':' + task.progress.description;
-          }
-        });
-      }
-    }
-
   }
 
   stateButton(row) {
