@@ -22,7 +22,7 @@ export default {
  been replicated to other systems are not affected.'),
 
     naming_schema_placeholder: T('Naming Schema'),
-    naming_schema_tooltip: T('Snapshot name format string. The default is <i>snap-%Y-%m-%d-%H-%M</i>.\
+    naming_schema_tooltip: T('Snapshot name format string. The default is <i><textarea disabled>snap-%Y-%m-%d-%H-%M</textarea></i>.\
  Must include the strings <i>%Y</i>, <i>%m</i>, <i>%d</i>, <i>%H</i>, and <i>%M</i>, which are replaced with the four-digit year,\
  month, day of month, hour, and minute as defined in <a href="https://www.freebsd.org/cgi/man.cgi?query=strftime" target="_blank">strftime(3)</a>. A string showing the snapshot\
  lifetime is appended to the name. For example, snapshots of <i>pool1</i> with a Naming Schema of\
