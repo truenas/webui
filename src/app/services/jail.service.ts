@@ -97,7 +97,6 @@ export class JailService {
   }
 
   getBranches() {
-    // return this.ws.job('jail.list_resource', ["BRANCHES"]);
     return this.ws.job('plugin.official_repositories');
   }
 

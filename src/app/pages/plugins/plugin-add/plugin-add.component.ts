@@ -318,7 +318,7 @@ export class PluginAddComponent implements OnInit {
     }
 
     for (let i in value) {
-      if (value.hasOwnProperty(i) && i != 'jail_name') {
+      if (value.hasOwnProperty(i) && i !== 'jail_name') {
         if (value[i] != undefined && value[i] != '') {
           if (value[i] == true) {
             if (i == 'dhcp') {

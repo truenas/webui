@@ -324,48 +324,13 @@ export class JailWizardComponent {
       this.currentServerVersion = Number(_.split(res.version, '-')[1]);
       this.jailService.getReleaseChoices().subscribe(
         (releases) => {
-          console.log(releases);
           for (const item in releases) {
-            console.log(item);
-            
             this.releaseField.options.push({ label: item, value: releases[item] });
           }
-        }
-      )
-      // this.jailService.getLocalReleaseChoices().subscribe(
-      //   (res_local) => {
-      //     if (res_local.result) {
-      //       for (const j in res_local.result) {
-      //         const rlVersion = Number(_.split(res_local.result[j], '-')[0]);
-      //         if (this.currentServerVersion >= Math.floor(rlVersion)) {
-      //           this.releaseField.options.push({ label: res_local.result[j] + '(fetched)', value: res_local.result[j] });
-      //         }
-      //       }
-
-      //       this.jailService.getRemoteReleaseChoices().subscribe(
-      //         (res_remote) => {
-      //           if (res_remote.result) {
-      //             for (const i in res_remote.result) {
-      //               if (_.indexOf(res_local.result, res_remote.result[i]) < 0) {
-      //                 const rmVersion = Number(_.split(res_remote.result[i], '-')[0]);
-      //                 if (this.currentServerVersion >= Math.floor(rmVersion)) {
-      //                   this.releaseField.options.push({ label: res_remote.result[i], value: res_remote.result[i] });
-      //                   this.unfetchedRelease.push(res_remote.result[i]);
-      //                 }
-      //               }
-      //             }
-      //           }
-
-      //           if (res_remote.error) {
-      //             this.dialogService.errorReport(T('Error: Fetching remote release choices failed.'), res_remote.error, res_remote.exception);
-      //           }
-      //         });
-      //     }
-
-      //     if (res_local.error) {
-      //       this.dialogService.errorReport(T('Error: Displaying local fetched releases failed.'), res_local.error, res_local.exception);
-      //     }
-      //   });
+        },
+        (err) => {
+          new EntityUtils().handleError(this, res);
+        });
       },
       (res) => {
         new EntityUtils().handleError(this, res);

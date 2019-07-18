@@ -1101,7 +1101,7 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
                 res[0][i] = false;
               }
             }
-            if (i !== 'dhcp' && i !== 'vnet' && i !== 'bpf' && i != 'nat' && i != 'plugin_name') {
+            if (i !== 'dhcp' && i !== 'vnet' && i !== 'bpf' && i !== 'nat' && i !== 'plugin_name') {
               this.formGroup.controls[i].setValue(res[0][i]);
             }
           }
@@ -1229,7 +1229,7 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
             }
             delete value[i];
           } else {
-            if (i != 'jail_name') {
+            if (i !== 'jail_name') {
               property.push(i + '=' + value[i]);
               delete value[i];
             }
