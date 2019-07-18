@@ -281,7 +281,6 @@ export class JailWizardComponent {
   ]
 
   protected releaseField: any;
-  protected currentServerVersion: any;
   protected ip4_interfaceField: any;
   protected ip4_netmaskField: any;
   protected ip6_interfaceField: any;
@@ -317,22 +316,16 @@ export class JailWizardComponent {
         new EntityUtils().handleWSError(this, err, this.dialogService);
       }
     )
-
-    this.ws.call('system.info').subscribe((res) => {
-      this.currentServerVersion = Number(_.split(res.version, '-')[1]);
-      this.jailService.getReleaseChoices().subscribe(
-        (releases) => {
-          for (const item in releases) {
-            this.releaseField.options.push({ label: item, value: releases[item] });
-          }
-        },
-        (err) => {
-          new EntityUtils().handleError(this, res);
-        });
+    this.jailService.getReleaseChoices().subscribe(
+      (releases) => {
+        for (const item in releases) {
+          this.releaseField.options.push({ label: item, value: releases[item] });
+        }
       },
-      (res) => {
-        new EntityUtils().handleError(this, res);
-      });
+      (err) => {
+        new EntityUtils().handleWSError(this, err, this.dialogService);
+      }
+    );
 
     this.ip4_interfaceField = _.find(this.wizardConfig[1].fieldConfig, {'name': 'ip4_interface'});
     this.ip4_netmaskField = _.find(this.wizardConfig[1].fieldConfig, {'name': 'ip4_netmask'});
