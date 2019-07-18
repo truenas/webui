@@ -36,7 +36,7 @@ export class JobService {
         if (res[i].id == job_id) {
           if (res[i].logs_path && res[i].logs_excerpt) {
             let target_job = res[i];
-            this.dialog.confirm(T('Logs'), res[i].logs_excerpt, true, T('Download Logs')).subscribe(
+            this.dialog.confirm(T('Logs'), `<pre>${res[i].logs_excerpt}</pre>`, true, T('Download Logs')).subscribe(
               (dialog_res) => {
                 if (dialog_res) {
                   this.ws.call('core.download', ['filesystem.get', [target_job.logs_path], target_job.id + '.log']).subscribe(
@@ -53,6 +53,9 @@ export class JobService {
                 }
               });
           }
+          else if (res[i].error) {
+            this.dialog.errorReport(T('Error'), res[i].error, res[i].exception);
+          } 
         }
       }
     });

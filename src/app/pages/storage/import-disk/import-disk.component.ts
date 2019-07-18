@@ -5,7 +5,8 @@ import helptext from '../../../helptext/storage/import-disk/import-disk';
 
 import {
   RestService,
-  WebSocketService
+  WebSocketService,
+  JobService
 } from '../../../services/';
 import {
   FieldConfig
@@ -74,10 +75,14 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
   public msdosfs_locale: any;
   private entityForm: any;
   protected dialogRef: any;
+  public custActions: any[];
+  public custActionDisabled = true;
+  public importJobId: any;
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected dialog: MatDialog,
-              protected _injector: Injector, protected _appRef: ApplicationRef, protected dialogService: DialogService
+              protected _injector: Injector, protected _appRef: ApplicationRef, protected dialogService: DialogService,
+              protected job: JobService
               ) {}
 
   preInit(entityForm: any) {
@@ -137,6 +142,17 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
       this.initialized = true;
     });
 
+    this.custActions = [
+      {
+        id: 'view_import_log',
+        name: 'View Import Log',
+        disabled: this.custActionDisabled,
+        function: () => {
+          this.job.showLogs(this.importJobId);
+        }
+      }
+    ];
+
   }
 
   customSubmit(payload){
@@ -149,6 +165,9 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
     this.dialogRef.componentInstance.setCall('pool.import_disk', [payload.volume, payload.fs_type, fs_options ,payload.dst_path]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
+      console.log(res)
+      this.custActionDisabled = false;
+      this.importJobId = res.id;
       this.entityForm.success = true;
       this.entityForm.snackBar.open(T("Disk successfully imported"), T("Success"));
     });
