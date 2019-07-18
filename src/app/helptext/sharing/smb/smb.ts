@@ -62,10 +62,10 @@ export const helptext_sharing_smb = {
  Existing files are not affected.'),
 
     placeholder_guestok: T('Allow Guest Access'),
-    tooltip_guestok: T('Set to allow access to this share without a password.\
- See the <a href="%%docurl%%/services.html#smb"\
- target="_blank">SMB</a> service documentation for more\
- information about guest user permissions.'),
+    tooltip_guestok: T('Privileges are the same as the guest account.\
+ Guest access is disabled by default in Windows 10 version 1709 and\
+ Windows Server version 1903. Additional client-side configuration is\
+ required to provide guest access to these clients.'),
 
     placeholer_guestonly: T('Only Allow Guest Access'),
     tooltip_guestonly: T('Requires <b>Allow guest access</b> to also be set.\
