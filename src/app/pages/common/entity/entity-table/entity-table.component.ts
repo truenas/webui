@@ -621,7 +621,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    const dialog = this.conf.confirmDeleteDialog;
+    const dialog = this.conf.confirmDeleteDialog || {};
     if (dialog.buildTitle) {
       dialog.title = dialog.buildTitle(item);
     }
