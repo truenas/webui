@@ -533,14 +533,11 @@ export class IscsiWizardComponent {
     step1Init() {
         const authGroupField = _.find(this.wizardConfig[1].fieldConfig, { 'name': 'discovery_authgroup' });
 
-        this.iscsiService.listPortals().subscribe((res) => {
+        this.iscsiService.listPortals().subscribe((portals) => {
             const field = _.find(this.wizardConfig[1].fieldConfig, { 'name': 'portal' });
-            for (const i in res) {
-                let label = res[i].tag;
-                if (res[i].comment) {
-                    label += ' (' + res[i].comment + ')';
-                }
-                field.options.push({ label: label, value: res[i].id })
+            for (const portal of portals) {
+                const ips = portal.listen.map(ip => ip.ip + ':' + ip.port);
+                field.options.push({ label: portal.tag + ' (' + ips + ')', value: portal.id })
             }
         });
 
