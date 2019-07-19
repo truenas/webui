@@ -16,13 +16,13 @@ changekey_adminpw_tooltip: T('Enter the root password.'),
 changekey_adminpw_validation: [Validators.required],
 
 changekey_instructions: T('Creating a passphrase requires the creation of a new\
- recovery key. A dialog will open to save a backup of the new recovery key.'),
+ encryption key. A dialog will open to save a backup of the new encryption key.'),
 changekey_passphrase_placeholder: T('Passphrase'),
 changekey_passphrase_tooltip: T('Enter the GELI passphrase.'),
 changekey_passphrase_validation: [Validators.required],
 
 changekey_instructions2: T('Changing the passphrase requires the creation of a new\
- recovery key. A dialog will open to save a backup of the new recovery key.'),
+ encryption key. A dialog will open to save a backup of the new encryption key.'),
 changekey_passphrase2_placeholder: T('Verify passphrase'),
 changekey_passphrase2_tooltip: T('Confirm the GELI passphrase.'),
 changekey_passphrase2_validation: [Validators.required],

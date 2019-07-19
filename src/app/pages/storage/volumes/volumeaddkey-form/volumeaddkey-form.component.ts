@@ -91,21 +91,26 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
   }
 
   customSubmit(value) {
+    console.log(this.pk, typeof(this.pk), value.password);
+    let fileName = 'me_geli';
     this.loader.open();
     this.ws.call('auth.check_user', ['root', value.password]).subscribe(res => {
       if (res) {
-        this.rest.post(this.resource_name + "/" + this.pk + "/recoverykey/", {}).subscribe((restPostResp) => {
+        this.ws.call('core.download', ['pool.recoverykey_add', [parseInt(this.pk)], fileName]).subscribe((res) => {
+        // this.ws.call('pool.recoverykey_add', [parseInt(this.pk), {'admin_password' : value.password}]).subscribe((res) => {
+          console.log(res)
+          window.open(res[1]);
           this.loader.close();
           this.snackBar.open(T("Recovery key added to pool ") + value.name, 'close', { duration: 5000 });
-          let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
-          dialogRef.componentInstance.volumeId = this.pk;
-          dialogRef.afterClosed().subscribe(result => {
+          // let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
+          // dialogRef.componentInstance.volumeId = this.pk;
+          // dialogRef.afterClosed().subscribe(result => {
             this.router.navigate(new Array('/').concat(
               this.route_success));
-          })
+          // })
         }, (res) => {
           this.loader.close();
-          this.dialogService.errorReport(T("Error adding recovery key to pool."), res.error.error_message, res.error.traceback);
+          this.dialogService.errorReport(T("Error adding recovery key to pool."), res.reason, res.trace.formatted);
         });
       }
       else {
