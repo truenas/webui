@@ -83,21 +83,19 @@ export const helptext_sharing_iscsi = {
 
   initiator_form_placeholder_initiators: T("Allowed Initiators (IQN)"),
   initiator_form_tooltip_initiators: T(
-    "Use <i>ALL</i> keyword or a list of initiator hostnames separated by spaces."
+    "Initiator hostnames. Enter an initiator hostname and press the\
+ <b>+</b> button to add a host."
   ),
 
   initiator_form_placeholder_auth_network: T("Authorized Networks"),
   initiator_form_tooltip_auth_network: T(
-    'Network addresses which can use this initiator. Use\
- <i>ALL</i> or list allowed IPv4 and IPv6 network addresses\
- separated by spaces: \
- <i>192.168.2.0/24 192.168.2.1/12</i>. Addresses can include a \
- <a href="https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing"\
- target="_blank">CIDR</a> mask.'
+    'Network addresses which can use this initiator. Enter an IPv4 or\
+ IPv6 network address and press the <b>+</b> button to add the address\
+ to the list.'
   ),
 
   initiator_form_placeholder_comment: T("Comment"),
-  initiator_form_tooltip_comment: T("Optional description."),
+  initiator_form_tooltip_comment: T("Optional notes about initiators."),
 
   globalconf_placeholder_basename: T("Base Name"),
   globalconf_tooltip_basename: T(
