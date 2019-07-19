@@ -1122,43 +1122,17 @@ export class JailEditComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.releaseField = _.find(this.basicfieldConfig, { 'name': 'release' });
-    // disabled upgrade for now
-    // this.ws.call('system.info').subscribe((res) => {
-    //   this.currentServerVersion = Number(_.split(res.version, '-')[1]);
-    //   this.jailService.getLocalReleaseChoices().subscribe((res_local) => {
-    //     for (let j in res_local) {
-    //       let rlVersion = Number(_.split(res_local[j], '-')[0]);
-    //       if (!this.isLowerVersion(rlVersion) && this.currentServerVersion >= Math.floor(rlVersion)) {
-    //         this.releaseField.options.push({ label: res_local[j] + '(fetched)', value: res_local[j] });
-    //       }
-    //     }
-    //     this.jailService.getRemoteReleaseChoices().subscribe((res_remote) => {
-    //       for (let i in res_remote) {
-    //         if (_.indexOf(res_local, res_remote[i]) < 0) {
-    //           let rsVersion = Number(_.split(res_remote[i], '-')[0]);
-    //           if (!this.isLowerVersion(rsVersion) && this.currentServerVersion >= Math.floor(rsVersion)) {
-    //             this.releaseField.options.push({ label: res_remote[i], value: res_remote[i] });
-    //           }
-    //         }
-    //       }
-    //     });
-    //   });
-    // },
-    // (res) => {
-    //   new EntityUtils().handleWSError(this, res, this.dialogService);
-    // });
 
     this.ip4_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip4_addr'}).templateListField[0];
     this.ip6_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip6_addr'}).templateListField[0];
     this.vnet_default_interfaceField = _.find(this.networkfieldConfig, {'name': 'vnet_default_interface'});
 
-    // get interface options
-    this.ws.call('interface.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
+    this.jailService.getInterfaceChoice().subscribe(
       (res)=>{
-        for (let i in res) {
-          this.ip4_interfaceField.options.push({ label: res[i].name, value: res[i].name});
-          this.ip6_interfaceField.options.push({ label: res[i].name, value: res[i].name});
-          this.vnet_default_interfaceField.options.push({ label: res[i].name, value: res[i].name});
+        for (const i in res) {
+          this.ip4_interfaceField.options.push({ label: res[i], value: res[i]});
+          this.ip6_interfaceField.options.push({ label: res[i], value: res[i]});
+          this.vnet_default_interfaceField.options.push({ label: res[i], value: res[i]});
         }
       },
       (res)=>{

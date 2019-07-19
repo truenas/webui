@@ -49,6 +49,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     }
   }
 
+  public cpuModel;
   public cpuAvg: any;
   public title:string = T("CPU");
   public subtitle:string = T("% of all cores");
@@ -71,6 +72,10 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   }
 
   ngAfterViewInit(){
+
+    this.core.register({observerClass: this, eventName:"SysInfo"}).subscribe((evt: CoreEvent) => {
+      this.cpuModel = evt.data.model;
+    });
 
     this.core.register({observerClass: this, eventName:"ThemeChanged"}).subscribe((evt: CoreEvent) => {
       d3.select('#grad1 .begin')
@@ -164,7 +169,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       bindto: '#cpu-cores-chart',
       size: {
         width: 536,
-        height: 160
+        height: 140//160
       },
       tooltip:{
         show: true,

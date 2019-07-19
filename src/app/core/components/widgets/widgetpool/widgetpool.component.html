@@ -2,15 +2,15 @@
   <div class="card-container  front">
     <mat-card style="overflow:hidden" class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-card-content #carouselparent>
-        <mat-toolbar-row >
+        <mat-toolbar-row class="view-{{path.length > 0 ? currentSlideName : 'Pool'}}">
           <button class="mat-card-title-text" *ngIf="currentSlide !== '0'" mat-icon-button color="default" (click)="updateSlide(path[previousSlide].name, true, previousSlide)">
             <mat-icon class="back-arrow">chevron_left</mat-icon>
           </button>
-          <h3 class="mat-card-title-text">
-            <div class="card-title-text">
-              &nbsp;{{title | translate}} 
-            </div>
-          </h3>
+          <span class="mat-card-title-text primary-nav">
+            <span class="card-title-text">
+              &nbsp;<span>{{title | translate}}</span>
+            </span>
+          </span>
 
           <!--<ng-template *ngIf="configurable === true">
             <button mat-icon-button (click)="toggleConfig()">
@@ -18,6 +18,26 @@
             </button>
             </ng-template>-->
             <!--<button mat-button color="primary" class="" (click)="router.navigate(['reportsdashboard/cpu'])">CPU REPORTS</button>-->
+
+            <div class="controls">
+              <button mat-icon-button class="" (click)="router.navigate(['storage/pools'])">
+                <mat-icon role="img"
+                  matTooltip="Configure Pools"
+                  matTooltipPosition="above"
+                  aria-label="Configure Pools">
+                    settings
+                </mat-icon>
+              </button>
+
+              <button mat-icon-button class="" (click)="router.navigate(['reportsdashboard/disk'])">
+                <mat-icon role="img"
+                  matTooltip="Disk Reports"
+                  matTooltipPosition="above"
+                  aria-label="Disk Reports">
+                    insert_chart
+                </mat-icon>
+              </button>
+            </div>
 
         </mat-toolbar-row>
 
@@ -32,9 +52,9 @@
           
           <ng-template #overview>
             <div fxFlex="100" class="overview-inner" fxLayout="row" fxLayoutAlign="space-between">
-            <div class="left {{poolHealth.selector}}" fxFlex="50" fxLayout="column" fxLayoutAlign="space-around center">
+            <div class="left" fxFlex="40" fxLayout="column" fxLayoutAlign="space-around center">
 
-              <div fxFlex="95">
+              <div fxFlex="66">
                 <div class="pool-name" >
                   {{poolState.name | translate}}
                   <div class="icon-wrapper">
@@ -83,7 +103,7 @@
               </div>
             </div>
 
-            <div class="right" fxFlex="50" fxLayout="column" fxLayoutAlign="space-around center">
+            <div class="right" fxFlex="60" fxLayout="column" fxLayoutAlign="space-around center">
               <div fxFlex="100">
                 <div class="list-subheader">  <span class="capitalize">{{currentSlideName}}</span></div>
                 <mat-list>
@@ -214,10 +234,12 @@
             
             <!-- Dynamic disk details-->
             <div class="list-subheader">Advanced Details</div>
-            <mat-list >
-              <mat-list-item *ngFor="let key of currentDiskDetailsKeys" role="listitem">
-                <strong class="detail-key"> {{key}}:</strong>&nbsp;&nbsp; {{currentDiskDetails[key]}}
-              </mat-list-item>
+            <mat-list>
+              <ng-container *ngFor="let key of currentDiskDetailsKeys">
+                <mat-list-item *ngIf="currentDiskDetails[key]" role="listitem">
+                  <strong class="detail-key"> {{key}}:</strong>&nbsp;&nbsp; {{currentDiskDetails[key]}}
+                </mat-list-item>
+              </ng-container>
             </mat-list>
             <!--</div>-->
           </ng-template>
@@ -231,14 +253,10 @@
 
         </div>
 
-        <div class="carousel-nav">
+        <!--<div class="carousel-nav">
           <div class="btn-wrapper">
-
-            <!--<button *ngIf="currentSlide == '0'" mat-button color="default" (click)="updateSlide('overview', 0, previousSlide)">Overview</button>
-              <button *ngIf="currentSlide !== '0'" mat-button color="default" (click)="updateSlide(path[previousSlide].name, true, previousSlide)"><mat-icon class="back-arrow">chevron_left</mat-icon>&nbsp; {{currentSlideName}}</button>-->
-
           </div>
-        </div>
+          </div>-->
 
         <!-- DETAILS -->
         <!--<div class="title-wrapper fn-theme-primary" fxFlex="100">

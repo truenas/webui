@@ -1277,7 +1277,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     font-weight: 700;
     margin-bottom: 7px;
   }
-  
+
   app-replication-wizard #adjustme {
     top: -70px;
   }
@@ -1320,12 +1320,12 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
 
   // Scrollbars need separate rules for firefox and webkit
- 
+
   *{
     scrollbar-width:8px;
     scrollbar-height:8px;
   }
- 
+
   *::-webkit-scrollbar{
     width:8px;
     height:8px;
@@ -1349,5 +1349,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     display: inline-block !important;
   }
 
+  app-interfaces-form .disabled-select .mat-select-arrow {
+    opacity: 0.38;
+  }
 
  } // end of ix theme
