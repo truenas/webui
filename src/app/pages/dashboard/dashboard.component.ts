@@ -33,6 +33,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
   public system: any;
   public system_product: string = "Generic";
   public pools: any[] = [];
+  public volumeData:any = {};
   //public volumes: VolumeData[] = [];
   //public disks:Disk[] = [];
 
@@ -151,12 +152,42 @@ export class DashboardComponent implements OnInit,OnDestroy {
     this.getDisksData();
   }
 
+  setVolumeData(evt:CoreEvent){
+    //let result = [];
+    for(let i in evt.data){
+      let avail = null;
+      if (evt.data[i].children && evt.data[i].children[0]) {
+        avail = evt.data[i].children[0].avail;
+      }
+      let zvol = {
+        avail: avail,
+        id:evt.data[i].id,
+        is_decrypted:evt.data[i].is_decrypted,
+        is_upgraded:evt.data[i].is_upgraded,
+        mountpoint:evt.data[i].mountpoint,
+        name:evt.data[i].name,
+        status:evt.data[i].status, // RETURNS HEALTHY, LOCKED, UNKNOWN, DEGRADED, FAULTED, OFFLINE, REMOVED
+        used:evt.data[i].used,
+        used_pct:evt.data[i].used_pct,
+        vol_encrypt:evt.data[i].vol_encrypted,
+        vol_encryptkey:evt.data[i].vol_encryptkey,
+        vol_guid:evt.data[i].vol_guid,
+        vol_name:evt.data[i].vol_name
+      }
+      this.volumeData[zvol.id] = zvol;
+      //result.push(zvol);
+    }
+  }
+
   getDisksData(){
 
     this.core.register({observerClass: this, eventName: 'PoolData'}).subscribe((evt:CoreEvent) => {
       //this.system.pools = evt.data;
       this.pools = evt.data;
-      //console.log(this.pools);
+    });
+
+    this.core.register({observerClass: this, eventName: 'VolumeData'}).subscribe((evt:CoreEvent) => {
+      this.setVolumeData(evt);
     });
 
     this.core.register({observerClass: this, eventName: 'SysInfo'}).subscribe((evt:CoreEvent) => {
@@ -173,10 +204,4 @@ export class DashboardComponent implements OnInit,OnDestroy {
     }
   }
 
-  updateData(data){
-    // Do Something
-    }
-
-  updateDataAll(data){
-  }
 }
