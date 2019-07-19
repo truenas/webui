@@ -20,9 +20,9 @@
             <!--<button mat-button color="primary" class="" (click)="router.navigate(['reportsdashboard/cpu'])">CPU REPORTS</button>-->
 
             <div class="controls">
-              <button mat-icon-button class="" (click)="router.navigate(['storage/pools'])">
+              <button mat-icon-button class="" (click)="router.navigate(['storage/pools/status/' + poolState.id.toString()])">
                 <mat-icon role="img"
-                  matTooltip="Configure Pools"
+                  matTooltip="Pool Status"
                   matTooltipPosition="above"
                   aria-label="Configure Pools">
                     settings
@@ -86,18 +86,6 @@
 
                 <div class="pool-status" >
                   {{poolState.status}}
-                  <!--<div *ngIf="traffic && poolState.link_state == 'LINK_STATE_UP'" class="nic-traffic">
-                    <div><strong>In: </strong><span class="stat">{{traffic["KB/s in"]}}</span> KB/s</div>
-                    <div><strong>Out: </strong><span class="stat">{{traffic["KB/s out"]}}</span> KB/s</div>
-                    </div>
-
-                  <div *ngIf="!traffic && poolState.link_state == 'LINK_STATE_UP'" class="nic-traffic-gathering">
-                    Gathering data...
-                  </div> 
-
-                  <div *ngIf="poolState.link_state !== 'LINK_STATE_UP'" class="no-nic-traffic">
-                    No Traffic
-                    </div> -->
                 </div>
 
               </div>
@@ -108,6 +96,18 @@
                 <div class="list-subheader">  <span class="capitalize">{{currentSlideName}}</span></div>
                 <mat-list>
                   <mat-list-item><strong>Path: </strong>&nbsp;&nbsp; {{poolState.path}}</mat-list-item>
+
+                  <mat-list-item>
+                    <strong>Available Space: </strong>&nbsp;&nbsp; 
+                    <span *ngIf="voldataavail;else unavail">
+                      <span class="value">{{diskSize}}</span>
+                      <span class="value-units">{{diskSizeLabel}}</span>&nbsp;&nbsp;
+                    </span>
+                    <ng-template #unavail>
+                      <span class="value">Gathering data...</span>
+                    </ng-template>
+                  </mat-list-item>
+                  
                   <mat-list-item (click)="updateSlide('data', poolState.topology.data.length > 0, 1)" [ngClass]="{'clickable': poolState.topology.data.length > 0}">
                     <strong>Data: </strong>&nbsp;&nbsp; {{poolState.topology.data.length}} vdev<span *ngIf="poolState.topology.data.length > 1">s</span>
                     <mat-icon *ngIf="poolState.topology.data.length > 0" class="next-slide">chevron_right</mat-icon>
