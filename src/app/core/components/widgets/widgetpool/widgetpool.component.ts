@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, Input, ViewChild, Renderer2, ElementRef,TemplateRef, AfterViewChecked, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, Input, ViewChild, Renderer2, ElementRef,TemplateRef, ChangeDetectorRef, OnChanges, SimpleChanges } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { Router } from '@angular/router';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
@@ -80,7 +80,7 @@ export interface Disk {
   templateUrl:'./widgetpool.component.html',
   styleUrls: ['./widgetpool.component.css']
 })
-export class WidgetPoolComponent extends WidgetComponent implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy, OnChanges {
+export class WidgetPoolComponent extends WidgetComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
 
   @Input() poolState;
   @ViewChild('carousel', {static:true}) carousel:ElementRef;
@@ -98,7 +98,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   public currentSlide:string = "0";
 
   get currentSlideIndex(){
-    return parseInt(this.currentSlide);
+    return this.path.length > 0 ? parseInt(this.currentSlide) : this.title;
   }
   
   get currentSlideName(){
@@ -111,7 +111,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
   path: Slide[] = [];
 
-  public title: string = this.poolState ? this.poolState.name : "Pool";
+  public title: string = this.path.length > 0 && this.poolState && this.currentSlide !== "0" ? this.poolState.name : "Pool";
 
   public poolHealth: PoolDiagnosis = {
     isHealthy: true,
@@ -128,7 +128,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
   
 
-  constructor(public router: Router, public translate: TranslateService){
+  constructor(public router: Router, public translate: TranslateService, private cdr: ChangeDetectorRef){
     super(translate);
     this.configurable = false;
   }
@@ -156,7 +156,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
   }
 
-  ngAfterViewChecked(){
+  ngAfterContentInit(){
     
   }
 
@@ -175,6 +175,8 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       { name: "empty", template: this.empty},
       { name: "empty", template: this.empty}
     ];
+
+    this.cdr.detectChanges();
 
     this.core.register({observerClass:this,eventName:"MultipathData"}).subscribe((evt:CoreEvent) => {
       this.currentMultipathDetails = evt.data[0];
@@ -259,6 +261,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     }).start(el.set);
     
     this.currentSlide = value.toString();
+    this.title = this.currentSlide == "0" ? "Pool" : this.poolState.name;
     //console.log(this.path[this.currentSlideIndex].name);
     
   }

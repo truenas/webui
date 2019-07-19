@@ -87,7 +87,7 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
     let result = this.nicState.aliases.filter((item) => {
       return item.type == 'INET' ;
     });
-
+    
     return result;
   }
 
@@ -120,8 +120,8 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
   }
 
   ngOnChanges(changes: SimpleChanges){
-    if(changes.nicState){
-      this.title = this.nicState.name;
+    if(changes.nicState ){
+      this.title = this.currentSlide == "0" ? "Interface" : this.nicState.name;
     }
   }
 
@@ -169,6 +169,7 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
     }).start(el.set);
     
     this.currentSlide = value.toString();
+    this.title = this.currentSlide == "0" ? "Interface" : this.nicState.name;
     
   }
 
