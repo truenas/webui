@@ -189,7 +189,7 @@ export class IscsiWizardComponent {
                     ]
                 },
                 {
-                    type: 'select',
+                    type: 'input',
                     name: 'blocksize',
                     isHidden: true,
                 },
@@ -277,7 +277,9 @@ export class IscsiWizardComponent {
                             tooltip: helptext.ip_tooltip,
                             options: [],
                             class: 'inline',
-                            width: '60%'
+                            width: '60%',
+                            required: true,
+                            validation : [ Validators.required ],
                         },
                         {
                             type: 'input',
