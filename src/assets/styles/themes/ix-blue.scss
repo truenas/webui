@@ -1345,5 +1345,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     text-decoration: underline;
   }
 
+  app-interfaces-form form-ipwithnetmask tooltip {
+    display: inline-block !important;
+  }
+
 
  } // end of ix theme
