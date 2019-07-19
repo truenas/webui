@@ -54,8 +54,8 @@ dataset_acl_uid_tooltip: T('User who controls the dataset. This user\
 
 dataset_acl_gid_placeholder: T('Group'),
 dataset_acl_gid_tooltip: T('The group which controls the dataset. This\
- group always has permissions to read or write the ACL and read or write\
- attributes. Groups created manually or imported from a directory\
+ group has whatever permissions are granted to the <i>@group</i>\
+ <b>Tag</b>. Groups created manually or imported from a directory\
  service appear in the drop-down menu.'),
 
 dataset_acl_perms_placeholder: T('Permissions'),
@@ -126,8 +126,8 @@ dataset_acl_recursive_tooltip: T('Apply permissions recursively to all\
  directories and files in the current dataset.'),
 
 dataset_acl_traverse_placeholder: T('Apply permissions to child datasets'),
-dataset_acl_traverse_tooltip: T('Apply permissions recursively all child\
- datasets within the current dataset'),
+dataset_acl_traverse_tooltip: T('Apply permissions recursively to all child\
+ datasets of the current dataset'),
 
 dataset_acl_dialog_warning: T('Warning'),
 dataset_acl_dialog_warning_message: T('Changing dataset permission mode\
