@@ -214,8 +214,10 @@ export class InterfacesFormComponent implements OnDestroy {
   private type_fg: any;
   private type_subscription: any;
   private entityForm: any;
+  //
   protected ipListControl: any;
   protected failover_group: any;
+  //
   public confirmSubmit = false;
   public confirmSubmitDialog = {
     title: T("Save Network Interface Changes"),
@@ -270,11 +272,11 @@ export class InterfacesFormComponent implements OnDestroy {
     this.vlan_pint = _.find(this.fieldConfig, {'name' : 'vlan_parent_interface'});
     this.bridge_members = _.find(this.fieldConfig, {'name' : 'bridge_members'});
     this.lag_ports = _.find(this.fieldConfig, {'name' : 'lag_ports'});
-    this.route.params.subscribe(params => {
-      if(!params['pk']) {
-        this.type.type = 'select';
-      }
-    });
+    // this.route.params.subscribe(params => {
+    //   if(!params['pk']) {
+    //     this.type.type = 'select';
+    //   }
+    // });
   }
 
   afterInit(entityForm: any) {
@@ -309,7 +311,7 @@ export class InterfacesFormComponent implements OnDestroy {
       });
     } else {
       entityForm.setDisabled('name', true);
-      entityForm.setDisabled('type', true, true );
+      entityForm.setDisabled('type', true, true);
     }
     this.ws.call('notifier.choices', ['VLAN_PCP_CHOICES']).subscribe((res) => {
       this.vlan_pcp = _.find(this.fieldConfig, {'name' : 'vlan_pcp'});
@@ -352,7 +354,6 @@ export class InterfacesFormComponent implements OnDestroy {
   }
 
   resourceTransformIncomingRestData(data) {
-    console.log(data)
     const aliases = data['aliases'];
     const a = [];
     const failover_aliases = data['failover_aliases'];
@@ -392,31 +393,36 @@ export class InterfacesFormComponent implements OnDestroy {
   }
 
   async dataHandler(entityForm) {
+    const propNames = ['aliases', 'failover_aliases', 'failover_virtual_aliases'];
     if (!entityForm.isNew) {
       let data = entityForm.queryResponse[0];
       for (const prop in data) {
-        if (entityForm.formGroup.controls[prop] && prop !== 'aliases') {
+        if (entityForm.formGroup.controls[prop] && !propNames.includes(prop)) {
           entityForm.formGroup.controls[prop].setValue(data[prop]);
         }
       }
-    
-      const propName = "aliases";
-      const aliases_fg = entityForm.formGroup.controls[propName];
-      let aliasList = data.aliases;
-      console.log(aliasList, aliasList.length)
-      for (let i = 0; i < aliasList.length; i++) {
-        if (aliases_fg.controls[i] === undefined) { 
-          // add controls;
-          const templateListField = _.cloneDeep(_.find(this.fieldConfig, {'name': propName}).templateListField);
-          console.log(templateListField)
-          aliases_fg.push(entityForm.entityFormService.createFormGroup(templateListField));
-          this.aliases_fc.listFields.push(templateListField);
-        } 
-        aliases_fg.controls[i].setValue(aliasList[i]);
-      }
+      const aliases_fg = entityForm.formGroup.controls['aliases'];
+      
+        let aliasList = data['aliases'];
+        propNames.forEach((propName) => {
+          for (let i = 0; i < aliasList.length; i++) {
+            if (aliases_fg.controls[i] === undefined) { 
+              const templateListField = _.cloneDeep(_.find(this.fieldConfig, {'name': propName}).templateListField);
+              aliases_fg.push(entityForm.entityFormService.createFormGroup(templateListField));
+              this.aliases_fc.listFields.push(templateListField);
+            } 
+  
+            aliases_fg.controls[i].controls['address'].setValue(aliasList[0]['address']);
+            aliases_fg.controls[i].controls['failover_address'].setValue(aliasList[0]['failover_address']);
+            aliases_fg.controls[i].controls['failover_virtual_address'].setValue(aliasList[0]['failover_virtual_address']);
+          }          
+        })
+
+ 
+
     }
   }
-
+  
   ngOnDestroy() {
     if (this.type_subscription) {
       this.type_subscription.unsubscribe();
