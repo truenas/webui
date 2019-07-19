@@ -81,6 +81,8 @@ export const helptext_sharing_iscsi = {
 
   portal_form_placeholder_delete: T("Delete"),
 
+  initiator_form_tooltip_connected_initiators: T(''),
+
   initiator_form_placeholder_initiators: T("Allowed Initiators (IQN)"),
   initiator_form_tooltip_initiators: T(
     "Initiator hostnames. Enter an initiator hostname and press the\

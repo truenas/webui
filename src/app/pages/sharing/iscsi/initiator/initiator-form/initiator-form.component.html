@@ -5,9 +5,10 @@
                 <div id="dynamicField_allow_all_initiators" dynamicField [config]="fieldConfig[0]" [group]="formGroup"
                     [fieldShow]="'show'"></div>
             </div>
-            <div fxFlex="100%" fxFlex.gt-xs="calc(50% - 16px)" class="connected-initiators-container form-inline"
+            <div fxFlex="100%" fxFlex.gt-xs="calc(50% - 16px)" class="connected-initiators-container form-inline has-tooltip"
                 [ngClass]="connectedInitiatorsDisabled ? 'disabled' : ''">
-                <label>{{'Connected Initiators'}}</label>
+                <label>{{'Connected Initiators' | translate}}</label>
+                <tooltip [message]="connectedInitiatorsTooltip"></tooltip>
                 <mat-selection-list class="connected-initiators-list" #connectedInitiatorsList
                     [disabled]="connectedInitiatorsDisabled">
                     <mat-list-option *ngFor="let initiator of connectedInitiators" [value]="initiator">

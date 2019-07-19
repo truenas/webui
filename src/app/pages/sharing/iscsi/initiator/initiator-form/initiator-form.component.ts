@@ -83,6 +83,7 @@ export class InitiatorFormComponent implements OnInit {
   public formGroup;
   public connectedInitiators;
   public connectedInitiatorsDisabled = false;
+  public connectedInitiatorsTooltip = helptext_sharing_iscsi.initiator_form_tooltip_connected_initiators;
   public error;
 
   constructor(
