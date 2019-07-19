@@ -102,6 +102,7 @@
                     <span *ngIf="voldataavail;else unavail">
                       <span class="value">{{diskSize}}</span>
                       <span class="value-units">{{diskSizeLabel}}</span>&nbsp;&nbsp;
+                      <span class="value-used">({{volumeData.used_pct}} used)</span>&nbsp;&nbsp;
                     </span>
                     <ng-template #unavail>
                       <span class="value">Gathering data...</span>
