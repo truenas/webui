@@ -56,9 +56,15 @@
   text-align:right;
 }
 
-#cpu-load-label{
+.cpu-model{
+  opacity:0.5;
+}
+
+#cpu-load-label,
+.core-count{
   margin-bottom:0;
   font-weight:400;
+  font-size:1.65rem;
 }
 
 #cpu-load-value{
@@ -92,13 +98,17 @@
   font-size:80%;
 }
 
-/*.reports-btn{
+.controls{
   position:absolute;
   right:16px;
-  bottom:16px;
-  font-weight:500;
-  text-transform:capitalize;
-}*/
+  color: var(--fg2);
+  /*font-weight:500;
+  text-transform:capitalize;*/
+}
+
+.controls button{
+  display:inline-block;
+}
 
 .chart-wrapper{
   position:relative;

@@ -1,192 +1,289 @@
-<div class="widget splitv" ngClass.xs="double-height xs">
+<div class="widget stats-widget" ngClass.xs="double-height xs">
   <div class="card-container  front">
-    <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
-    <mat-progress-bar class="widget-loader" *ngIf="loader" mode="indeterminate"></mat-progress-bar>
-      <!--<mat-toolbar-row fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between center" fxFlex="100" class="mat-card-toolbar">
-        <span class="mat-card-title-text">
-          <div class="card-title-text">
-          </div>
-        </span>
-        <ng-template *ngIf="configurable">
-          <button mat-icon-button (click)="toggleConfig()">
-            <mat-icon>settings</mat-icon>
+    <mat-card style="overflow:hidden" class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
+      <mat-card-content #carouselparent>
+        <mat-toolbar-row class="view-{{path.length > 0 ? currentSlideName : 'Pool'}}">
+          <button class="mat-card-title-text" *ngIf="currentSlide !== '0'" mat-icon-button color="default" (click)="updateSlide(path[previousSlide].name, true, previousSlide)">
+            <mat-icon class="back-arrow">chevron_left</mat-icon>
           </button>
-        </ng-template>
-        </mat-toolbar-row>-->
-      <mat-card-content fxLayout="column" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-around center" fxFlex="100">
-        <!-- SUMMARY -->
-        <div fxFlex.gt-xs="45" fxFlex.xs="100" class="card-bg-wrapper {{volumeHealth.selector}}">
+          <span class="mat-card-title-text primary-nav">
+            <span class="card-title-text">
+              &nbsp;<span>{{title | translate}}</span>
+            </span>
+          </span>
 
-          <div class="pool-summary">
-            <p class="pool-status"><span>{{volumeData.status}}</span>
-              <!--<span *ngIf="!volumeData.is_decrypted">-->
-              <span *ngIf="volumeData.status == 'LOCKED' || !volumeData.is_decrypted" class="{{volumeHealth.level}}">
-                <mat-icon>lock</mat-icon>
-              </span>
-              <span *ngIf="volumeData.status == 'HEALTHY'" class="{{volumeHealth.level}}">
-                <mat-icon>check_circle</mat-icon>
-              </span>
-              <span *ngIf="volumeHealth.level == 'error'" class="{{volumeHealth.level}}">
-                <!--<mat-icon>close-circle</mat-icon>-->
-                <mat-icon class="volumeHealth.level" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
-              </span>
-              <span *ngIf="volumeHealth.level == 'warn' && volumeData.status == 'UNKNOWN'" class="{{volumeHealth.level}}">
-                <!--<mat-icon>alert</mat-icon>-->
-                <mat-icon role="img">help</mat-icon>
-              </span>
-              <span *ngIf="volumeHealth.level == 'warn' && volumeData.status !== 'UNKNOWN'" class="{{volumeHealth.level}}">
-                <!--<mat-icon>alert</mat-icon>-->
-                <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
-              </span>
-            </p>
-            <div class="pool-data">
-              <div class="inner">
-                <span *ngIf="voldataavail;else unavail">
-                  <div fxLayoutAlign="center end" fxLayoutGap="8px" [style.margin-bottom.px]="8">
-                    <div>
-                      <span class="value">{{diskSize}}</span>
-                      <span>{{diskSizeLabel}}</span>
-                    </div>
-                    <span class="value">/</span>
-                    <div>
-                      <span class="value">{{diskSizeTotal}}</span>
-                      <span>{{diskSizeTotalLabel}}</span>
-                    </div>
+          <!--<ng-template *ngIf="configurable === true">
+            <button mat-icon-button (click)="toggleConfig()">
+            <mat-icon>settings</mat-icon>
+            </button>
+            </ng-template>-->
+            <!--<button mat-button color="primary" class="" (click)="router.navigate(['reportsdashboard/cpu'])">CPU REPORTS</button>-->
+
+            <div class="controls">
+              <button mat-icon-button class="" (click)="router.navigate(['storage/pools'])">
+                <mat-icon role="img"
+                  matTooltip="Configure Pools"
+                  matTooltipPosition="above"
+                  aria-label="Configure Pools">
+                    settings
+                </mat-icon>
+              </button>
+
+              <button mat-icon-button class="" (click)="router.navigate(['reportsdashboard/disk'])">
+                <mat-icon role="img"
+                  matTooltip="Disk Reports"
+                  matTooltipPosition="above"
+                  aria-label="Disk Reports">
+                    insert_chart
+                </mat-icon>
+              </button>
+            </div>
+
+        </mat-toolbar-row>
+
+
+        <!-- Carousel -->
+        <div *ngIf="poolState && path" id="" class="carousel" #carousel >
+
+          <!--<ng-container *ngTemplateOutlet="path[0].template"></ng-container>-->
+          <div *ngFor="let slide of path;" fxFlex="100" class="slide {{slide.name}}" >
+            <ng-content *ngTemplateOutlet="slide.template"></ng-content>
+          </div>
+          
+          <ng-template #overview>
+            <div fxFlex="100" class="overview-inner" fxLayout="row" fxLayoutAlign="space-between">
+            <div class="left" fxFlex="40" fxLayout="column" fxLayoutAlign="space-around center">
+
+              <div fxFlex="66">
+                <div class="pool-name" >
+                  {{poolState.name | translate}}
+                  <div class="icon-wrapper">
+                    <span *ngIf="poolState.status == 'LOCKED' || !poolState.is_decrypted" class="{{poolHealth.level}}">
+                      <mat-icon>lock</mat-icon>
+                    </span>
+                    <span *ngIf="poolState.status == 'HEALTHY'" class="{{poolHealth.level}}">
+                      <mat-icon>check_circle</mat-icon>
+                    </span>
+                    <span *ngIf="poolHealth.level == 'error'" class="{{poolHealth.level}}">
+                      <!--<mat-icon>close-circle</mat-icon>-->
+                      <mat-icon class="poolHealth.level" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
+                    </span>
+                    <span *ngIf="poolHealth.level == 'warn' && poolState.status == 'UNKNOWN'" class="{{poolHealth.level}}">
+                      <!--<mat-icon>alert</mat-icon>-->
+                      <mat-icon role="img">help</mat-icon>
+                    </span>
+                    <span *ngIf="poolHealth.level == 'warn' && poolState.status !== 'UNKNOWN'" class="{{poolHealth.level}}">
+                      <!--<mat-icon>alert</mat-icon>-->
+                      <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                    </span>
+                    <span *ngIf="poolState.status == 'ONLINE'" class="{{poolHealth.level}}">
+                      <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
+                    </span>
+                    <!--<mat-icon *ngIf="poolState.link_state == 'LINK_STATE_UP' " role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
+                      <mat-icon *ngIf="poolState.link_state !== 'LINK_STATE_UP' " role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>-->
                   </div>
-                  <p class="label">Available / Total</p>
-                </span>
-                <ng-template #unavail>
-                  <span class="value">{{volumeData.avail}}</span>
-                </ng-template>
+                </div> 
+
+                <div class="pool-status" >
+                  {{poolState.status}}
+                  <!--<div *ngIf="traffic && poolState.link_state == 'LINK_STATE_UP'" class="nic-traffic">
+                    <div><strong>In: </strong><span class="stat">{{traffic["KB/s in"]}}</span> KB/s</div>
+                    <div><strong>Out: </strong><span class="stat">{{traffic["KB/s out"]}}</span> KB/s</div>
+                    </div>
+
+                  <div *ngIf="!traffic && poolState.link_state == 'LINK_STATE_UP'" class="nic-traffic-gathering">
+                    Gathering data...
+                  </div> 
+
+                  <div *ngIf="poolState.link_state !== 'LINK_STATE_UP'" class="no-nic-traffic">
+                    No Traffic
+                    </div> -->
+                </div>
+
               </div>
             </div>
-          </div>
 
-          <div class="title-wrapper">
-            <p class="title">{{volumeData.vol_name}}</p>
-            <p class="subtitle">{{title | translate}} </p>
-            <button class="reports-btn" mat-button (click)="router.navigate(['reportsdashboard/disk'])">REPORTS</button>
-          </div>
+            <div class="right" fxFlex="60" fxLayout="column" fxLayoutAlign="space-around center">
+              <div fxFlex="100">
+                <div class="list-subheader">  <span class="capitalize">{{currentSlideName}}</span></div>
+                <mat-list>
+                  <mat-list-item><strong>Path: </strong>&nbsp;&nbsp; {{poolState.path}}</mat-list-item>
+                  <mat-list-item (click)="updateSlide('data', poolState.topology.data.length > 0, 1)" [ngClass]="{'clickable': poolState.topology.data.length > 0}">
+                    <strong>Data: </strong>&nbsp;&nbsp; {{poolState.topology.data.length}} vdev<span *ngIf="poolState.topology.data.length > 1">s</span>
+                    <mat-icon *ngIf="poolState.topology.data.length > 0" class="next-slide">chevron_right</mat-icon>
+                  </mat-list-item>
+
+                  <mat-list-item (click)="updateSlide('disks', poolState.topology.cache.length > 0, 1, 0, { children: poolState.topology.cache})" [ngClass]="{'clickable': poolState.topology.cache.length > 0}">
+                    <strong>Caches: </strong>&nbsp;&nbsp; {{poolState.topology.cache.length}}
+                    <mat-icon *ngIf="poolState.topology.cache.length > 0" class="next-slide">chevron_right</mat-icon>
+                  </mat-list-item>
+
+                  <mat-list-item (click)="updateSlide('disks', poolState.topology.spare.length > 0, 1, 0, {children: poolState.topology.spare})" [ngClass]="{'clickable': poolState.topology.spare.length > 0}">
+                    <strong>Spares: </strong>&nbsp;&nbsp; {{poolState.topology.spare.length}}
+                    <mat-icon *ngIf="poolState.topology.spare.length > 0" class="next-slide">chevron_right</mat-icon>
+                  </mat-list-item>
+
+                  <mat-list-item (click)="updateSlide('disks', poolState.topology.log.length > 0, 1, 0, {children: poolState.topology.log})" [ngClass]="{'clickable': poolState.topology.log.length > 0}">
+                    <strong>Logs: </strong>&nbsp;&nbsp; {{poolState.topology.log.length}}
+                    <mat-icon *ngIf="poolState.topology.log.length > 0" class="next-slide">chevron_right</mat-icon>
+                  </mat-list-item>
+
+                </mat-list>
+              </div>
+            </div>
+
+            </div>
+          </ng-template>
+
+
+          <ng-template #data>
+            <!--<div class="slide topology" *ngIf="path[currentSlideIndex].name == 'topology'" fxFlex="100">-->
+            <div class="list-subheader"><span class="capitalize">{{currentSlideName}}</span></div>
+            <mat-list *ngIf="poolState && poolState.topology.data">
+              <mat-list-item role="listitem"*ngFor="let vdev of poolState.topology.data; let i=index"
+                 (click)="updateSlide('disks', true, currentSlideIndex + 1, i, vdev)" 
+                 [ngClass]="{'clickable': true}">
+                  <strong>{{vdev.type}}:</strong>&nbsp;&nbsp; {{vdev.status}}
+                  <span *ngIf="vdev.status == 'ONLINE'" class="{{poolHealth.level}} healthy" >
+                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
+                  </span>
+
+                <mat-icon class="next-slide">chevron_right</mat-icon>
+              </mat-list-item>
+            </mat-list>
+            <!--</div>-->
+          </ng-template>
+
+          <ng-template #disks>
+            <!--<div #disks class="slide disks" *ngIf="path[currentSlideIndex].name == 'disks'; else emptySlide"  fxFlex="100">-->
+            <div class="list-subheader"><span class="capitalize">Disks</span></div>
+
+            <mat-list *ngIf="!path[currentSlideIndex].dataSource.type || path[currentSlideIndex].dataSource.type !== 'DISK'">
+              
+              <mat-list-item role="listitem" *ngFor="let disk of path[currentSlideIndex].dataSource.children; let i=index" 
+                 (click)="updateSlide('disk details', true, currentSlideIndex + 1, i, disk )" 
+                 (click)="getDiskDetails('name', disk.disk, checkMultipath(disk.disk))" 
+                 [ngClass]="{'clickable': true}">
+                <strong>{{checkMultipathLabel(disk.disk)}}<span *ngIf="checkMultipath(disk.disk)">&nbsp;(multipath)</span>:</strong>&nbsp;&nbsp; {{disk.status}}
+                <span *ngIf="disk.status == 'ONLINE'" class="{{poolHealth.level}} healthy" >
+                  <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
+                </span>
+                <mat-icon class="next-slide">chevron_right</mat-icon>
+              </mat-list-item>
+              
+            </mat-list>
+
+            <mat-list *ngIf="path[currentSlideIndex].dataSource.type == 'DISK'">
+              <mat-list-item role="listitem" 
+                 (click)="updateSlide('disk details', true, currentSlideIndex + 1, i, path[currentSlideIndex].dataSource)" 
+                 (click)="getDiskDetails('name', path[currentSlideIndex].dataSource.disk, checkMultipath(path[currentSlideIndex].dataSource.disk))" 
+                 [ngClass]="{'clickable': true}">
+                <strong>{{path[2].dataSource.disk}}:</strong>&nbsp;&nbsp; {{path[2].dataSource.status}}
+                <span *ngIf="path[2].dataSource.status == 'ONLINE'" class="{{poolHealth.level}} healthy" >
+                  <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
+                </span>
+                <mat-icon class="next-slide">chevron_right</mat-icon>
+              </mat-list-item>
+            </mat-list>
+
+            <!--</div>-->
+          </ng-template>
+
+
+          <ng-template #disk_details>
+            <!--<div #disk_details class="slide disk-details" *ngIf="path[currentSlideIndex].name == 'disk details'; else emptySlide"  fxFlex="100">-->
+            <div class="list-subheader"><span class="capitalize">Disk Details</span></div>
+            <!--<div *ngIf="!currentMultipathDetails" class="list-subheader"><span class="capitalize">Details</span> for {{path[currentSlideIndex].dataSource.disk}}</div>
+              <div *ngIf="currentMultipathDetails" class="list-subheader"><span class="capitalize">Details</span> for multipath device {{checkMultipathLabel(path[currentSlideIndex].dataSource.disk)}} &nbsp;&nbsp;</div>-->
+            <mat-list >
+              <mat-list-item *ngIf="!currentMultipathDetails" role="listitem">
+                <strong> Name:</strong>&nbsp;&nbsp; {{currentMultipathDetails ? checkMultipathLabel(path[currentSlideIndex].dataSource.disk) : path[currentSlideIndex].dataSource.disk}}
+              </mat-list-item>
+
+            <ng-template [ngIf]="currentMultipathDetails">
+              <mat-list-item role="listitem">
+                <strong> Multipath Name:</strong>&nbsp;&nbsp; {{currentMultipathDetails ? checkMultipathLabel(path[currentSlideIndex].dataSource.disk) : path[currentSlideIndex].dataSource.disk}}
+              </mat-list-item>
+
+              <mat-list-item *ngFor="let child of currentMultipathDetails.children" role="listitem">
+                <strong class="multipath-detail-label"><span class="capitalize">{{child.status.toLowerCase()}}</span> Disk:</strong>&nbsp;&nbsp; {{child.name}}
+              </mat-list-item>
+            </ng-template>
+
+              <mat-list-item role="listitem">
+                <strong> GUID:</strong>&nbsp;&nbsp; {{path[currentSlideIndex].dataSource.guid}}
+              </mat-list-item>
+              <mat-list-item role="listitem">
+                <strong> Read Errors:</strong>&nbsp;&nbsp; {{path[currentSlideIndex].dataSource.stats.read_errors}}
+              </mat-list-item>
+              <mat-list-item role="listitem">
+                <strong> Write Errors:</strong>&nbsp;&nbsp; {{path[currentSlideIndex].dataSource.stats.write_errors}}
+              </mat-list-item>
+              <mat-list-item role="listitem">
+                <strong> Self Healed:</strong>&nbsp;&nbsp; {{path[currentSlideIndex].dataSource.stats.self_healed}}
+              </mat-list-item>
+            </mat-list>
+            
+            <!-- Multipath disk details-->
+            <!--<div *ngIf="currentMultipathDetails" class="list-subheader">Multipath Details</div>
+            <mat-list *ngIf="currentMultipathDetails">
+              <mat-list-item *ngFor="let child of currentMultipathDetails.children" role="listitem">
+                <strong class="multipath-detail-label"><span class="capitalize">{{child.status.toLowerCase()}}</span> Disk:</strong>&nbsp;&nbsp; {{child.name}}
+              </mat-list-item>
+              </mat-list>-->
+            
+            <!-- Dynamic disk details-->
+            <div class="list-subheader">Advanced Details</div>
+            <mat-list>
+              <ng-container *ngFor="let key of currentDiskDetailsKeys">
+                <mat-list-item *ngIf="currentDiskDetails[key]" role="listitem">
+                  <strong class="detail-key"> {{key}}:</strong>&nbsp;&nbsp; {{currentDiskDetails[key]}}
+                </mat-list-item>
+              </ng-container>
+            </mat-list>
+            <!--</div>-->
+          </ng-template>
+
+
+          <ng-template #empty>
+            <div class="empty"></div>
+            <!--<div class="slide empty" fxFlex="100">
+              </div>-->
+          </ng-template>
+
         </div>
+
+        <!--<div class="carousel-nav">
+          <div class="btn-wrapper">
+          </div>
+          </div>-->
 
         <!-- DETAILS -->
-        <div fxFlex.xs="100" fxFlex.gt-xs="55" class="disk-array-ui" ngClass.xs="column">
-          <!--<ng-template *ngIf="disks.length > 0">-->
-            <!-- Header and Pagination Controls -->
-            <mat-grid-list [cols]="gridCols" rowHeight="24px" role="list" *ngIf="disks.length > 0" [ngClass]="{'high-density': gridCols == 8}">
-              <mat-grid-tile [colspan]="gridCols" >
-                <span class="disk-grid-header">{{"Disks in Use" | translate}}</span>
-                <ng-container *ngIf="diskSets.length > 1">
-                  <div class="disk-grid-controls">
-                    <button class="previous" mat-icon-button [disabled]="currentDiskSet < 1"  (click)="setCurrentDiskSet(currentDiskSet - 1)">
-                      <mat-icon>keyboard_arrow_left</mat-icon>
-                    </button>
-                    <!--<span *ngFor="let set of diskSets; let i = index;" class="disk-grid-control" (click)="setCurrentDiskSet(i)">{{i+1}}</span>-->
-                    <span class="page">{{(currentDiskSet+1)}}/{{diskSets.length}}</span>
-                    <button class="next" mat-icon-button [disabled]="currentDiskSet >= (diskSets.length - 1)" (click)="setCurrentDiskSet(currentDiskSet + 1)">
-                      <mat-icon>keyboard_arrow_right</mat-icon>
-                    </button>
-                  </div>
-                </ng-container>
-              </mat-grid-tile>
-            </mat-grid-list>
-
-            <!-- Sets of Disks -->
-            <div class="diskset-wrapper-mask">
-              <div class="diskset-wrapper" [ngStyle]="{width: diskSets.length*100+'%', 'margin-left':currentDiskSet*-100+'%'}">
-                <div *ngFor="let set of diskSets; let s = index;" [ngStyle]="{width: 100/diskSets.length+'%'}" class="diskset">
-                  <mat-grid-list  [cols]="gridCols" role="list" [ngClass]="{'high-density': gridCols == 8}">
-                    <mat-grid-tile *ngFor="let disk of diskSets[s]; let i=index" class="disk-tile" (click)="setSelectedDisk(disk)" >
-                      <!--<mat-icon class="disk-icon" role="img">local_laundry_service</mat-icon>-->
-                      <!--<mat-icon class="disk-icon" role="img" svgIcon="mdi:harddisk"></mat-icon>-->
-                      <mat-icon class="disk-icon" *ngIf="diskSets[s][i]" role="img" fontSet="mdi-set" fontIcon="mdi-harddisk"></mat-icon>
-                        <span class="disk-name">{{diskSets[s][i]}}</span>
-                    </mat-grid-tile>
-                  </mat-grid-list>
-                </div>
-              </div>
-            </div>
-            <!--</ng-template>-->
-
-          <div class="disk-details" fxLayout="row wrap" fxLayoutAlign="space-between stretch">
-            <ng-container *ngIf="selectedDisk == -1">
-              <div class="zero-state">
-                <h4>Disk details not available</h4>
-              </div>
-            </ng-container>
-            <ng-container *ngIf="selectedDisk !== -1 && disks.length > 0 ">
-            <div class="disk-detail disk-detail-header" fxFlex="60" fxLayout="row wrap" fxLayoutAlign="space-between stretch" *ngIf="selectedDisk > -1">
-              <!--<span fxFlex="100" class="disk-detail-title">{{diskDetails[selectedDisk].name}}</span>-->
-              <div class="disk-detail-section">
-
-                <div class="disk-detail-item">
-                  <p class="label">{{"Disk" | translate}} :</p>
-                  <p class="value">{{diskDetails[selectedDisk].name}} ({{diskDetails[selectedDisk].displaysize}})</p>
-                </div>
-
-                <div class="disk-detail-item">
-                  <div>
-                    <p class="label">{{"Serial" | translate}}: </p>
-                    <p class="value">{{diskDetails[selectedDisk].serial ? diskDetails[selectedDisk].serial : 'N/A'}}</p>
-                  </div>
-                </div>
-
-                <div class="disk-detail-item" *ngIf="diskDetails[selectedDisk].description">
-                  <div>
-                    <p class="label">{{"Description:" | translate}} </p>
-                    <p class="value">{{diskDetails[selectedDisk].description}}</p>
-                  </div>
-                </div>
-
-                <div class="disk-detail-item" *ngIf="diskDetails[selectedDisk].model">
-                  <p class="label">{{"Model" | translate}} :</p>
-                  <p class="value">{{diskDetails[selectedDisk].model}}</p>
-                </div>
-            </div>
-          </div>
-
-            <div class="disk-detail" fxFlex="40" fxLayout="column" fxLayout="space-between stretch"  *ngIf="selectedDisk > -1">
-
-              <div fxFlex="calc(100% - 32px)" *ngIf="diskDetails.length > 0" class="disk-detail-temp-label" style="margin-top:16px;"[ngClass]="{hot: diskDetails[selectedDisk].temp >= 55}">
-                <div class="label">{{"Temperature" | translate}}:</div>
-                <span class="value">{{diskDetails[selectedDisk].temp ? (diskDetails[selectedDisk].temp).toFixed(1) : 'N/A'}} </span>
-                <span class="temp-units">{{diskDetails[selectedDisk].temp ? '&deg;C' : ''}}</span>
-              </div>
-
-              <div *ngIf="diskDetails && diskDetails[selectedDisk].temp" fxFlex="calc(100% - 32px)" class="disk-detail-temp" fxLayout="row wrap" >
-                <mat-progress-bar fxFlex="100" class="disk-detail-temps-bar" mode="determinate" [value]="diskDetails && diskDetails[selectedDisk].temp ? diskDetails[selectedDisk].temp : 'N/A'" [color]="diskDetails[selectedDisk].temp >= 55 ? 'warn' : 'primary'"></mat-progress-bar>
-                <div  class="temps-bar-label freeze" fxFlex="50" style="text-align:left;">0</div>
-                <div class="temps-bar-label boil" fxFlex="50" style="text-align:right;">100</div>
-              </div>
-            </div>
-            </ng-container>
-          </div>
-
-        </div>
-
-      <div fxFlex="100" class="xs-footer">
-        <button class="reports-btn" mat-button (click)="router.navigate(['reportsdashbaord'])">REPORTS</button>
-      </div>
+        <!--<div class="title-wrapper fn-theme-primary" fxFlex="100">
+          <mat-progress-bar class="widget-loader" *ngIf="loader" mode="indeterminate"></mat-progress-bar>
+          <ng-container *ngIf="showLegendValues">
+          <p class="title">{{altTitle}}</p>
+          <p class="subtitle">{{altSubtitle}}</p>
+          </ng-container>
+          <ng-container *ngIf="!showLegendValues">
+          <p class="title">{{title}}</p>
+          <p class="subtitle">{{subtitle}}</p>
+          </ng-container>
+          <button mat-button class="reports-btn" (click)="router.navigate(['reportsdashboard/cpu'])">REPORTS</button>
+          </div>-->
       </mat-card-content>
     </mat-card>
 
-    <!-- Back Face -->
-    <ng-template *ngIf="configurable">
-    <mat-card class="back">
+    <!--<ng-template *ngIf="configurable">
+      <mat-card class="back">
       <mat-card-content fxLayout="column" fxLayoutAlign="start stretch" fxFlex="100">
-        <form (ngSubmit)="setPreferences(f)" #f="ngForm" id="preferences" *ngIf="chartZvol.legend.length > 0">
-          <ng-container *ngFor="let legend of chartZvol.legend; let i=index">
-            <mat-checkbox ngModel name="Something">
-             Something
-            </mat-checkbox><br>
-          </ng-container>
-        </form>
       </mat-card-content>
       <div class="widget-footer">
-        <button mat-button color="accent" (click)="toggleConfig()">{{"Cancel" | translate}}</button>
-        <button mat-button color="primary" type="submit" form="preferences" (click)="toggleConfig()">{{"Save" | translate}}</button>
+      <button mat-button color="accent" (click)="toggleConfig()">{{"Cancel" | translate}}</button>
+      <button mat-button color="primary" type="submit" form="preferences" (click)="toggleConfig()">{{"Save" | translate}}</button>
       </div>
-    </mat-card>
-    </ng-template>
+      </mat-card>
+      </ng-template>-->
+
   </div>
 </div>

@@ -144,6 +144,10 @@ dataset_acl_stripacl_tooltip: T("Set to remove all ACLs from the current\
  datasets when those options are set."),
 
 dataset_acl_stripacl_dialog_warning: T('Warning'),
-dataset_acl_stripacl_dialog_warning_message: T('Stripping ACLs resets\
- the permissions of this dataset. This can make data inaccessible.')
+dataset_acl_stripacl_dialog_warning_message: T('Stripping the ACL resets\
+ dataset permissions. This can make data inaccessible until new\
+ permissions are created.'),
+
+dataset_acl_toplevel_dialog_message: T('Editing top-level datasets can\
+ prevent users from accessing data in child datasets.')
 }

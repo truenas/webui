@@ -11,12 +11,43 @@
   visibility:hidden;
 }*/
 
+.widget mat-toolbar-row{
+  position:absolute;
+  height:48px;
+  width:calc(100% - 16px);
+  z-index:2;
+  background:unset;
+  padding:0 8px;
+  left:0;
+  text-align:left;
+
+  font-size: 1.5rem;
+  line-height: 180%;
+}
+
+.widget mat-toolbar-row.view-overview .primary-nav{
+  color:#efefef;
+}
+
+.view-overview .primary-nav .card-title-text{
+  /*display:none;*/
+}
+
+.primary-nav .card-title-text{
+  font-size:1.5rem;
+  font-weight: 500;
+  display:inline-block;
+  vertical-align:middle;
+  position: relative;
+  top: 2px;
+}
 
 .carousel{
   position:absolute;
-  top:48px;
+  /*top:48px;*/
   width:300%;
-  height:calc(100% - 96px);
+  height:100%;
+  /*height:calc(100% - 48px);*/
   /*background:var(--alt-bg2);*/
 }
 
@@ -31,7 +62,7 @@
   width:100%;
   /*height:calc(100% - 96px);*/
   height:100%;
-  border-left:solid 1px var(--bg1);
+  /*border-left:solid 1px var(--bg1);*/
 }
 
 .slide .hidden{
@@ -55,11 +86,30 @@
 }
 
 .slide.overview .left{
-  background-color:var(--alt-bg1);
+  /*background-color:var(--primary);*/
+  background-color:#303437;
+  background-size:cover;
+  background-image:url('assets/images/backgrounds/rj45.jpg');
+  background-position-y:center;
+  background-position-x:65%;
+  background-blend-mode: overlay;
+  color:#efefef;
+  position:relative;
+  padding:0;
+}
+
+.slide.overview .left .overlay{
+  position:absolute;
+  /*background:linear-gradient(180deg,rgba(0,0,0,0.65),rgba(0,0,0,0.5), rgba(0,0,0,0.15));*/
+  width:100%;
+  height:100%;
+  padding:48px 0;
+  text-shadow:0 0px 48px #000;
 }
 
 .slide .right{
   text-align:left;
+  border-left:solid 1px rgba(0,0,0,0.1);
 }
  
 .slide .right li{
@@ -92,6 +142,19 @@
 .nic-name.down .icon-wrapper,
 .link-state.down .icon-wrapper{
   color: var(--red);
+}
+
+.controls{
+  position:absolute;
+  top:0;
+  right:16px;
+  color: var(--fg2);
+  /*font-weight:500;
+  text-transform:capitalize;*/
+}
+
+.controls button{
+  display:inline-block;
 }
 
 .carousel-nav{
@@ -146,14 +209,14 @@
 }
 
 .mat-list-base .mat-list-item{
-  border-bottom:solid 1px var(--bg1);
+  border-bottom:solid 1px rgba(0,0,0,0.1);
 }
 
 .mat-list-base {
-  border-left:solid 1px var(--bg1);
 }
 
 .list-subheader{
+  margin-top:48px;
   text-transform:capitalize;
   font-weight:700;
   padding:8px 8px 0 16px;

@@ -1,6 +1,5 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { RestService, WebSocketService } from '../../../services/';
@@ -99,15 +98,15 @@ export class SupportComponent {
         {
           type: 'paragraph',
           name: 'support_text',
-          paraText: this.sanitizer.bypassSecurityTrustHtml(
+          paraText: 
             'Search the <a href="https://jira.ixsystems.com/projects/NAS/issues/" \
-              target="_blank" style="text-decoration:underline;">FreeNAS issue tracker</a> \
+              target="_blank">FreeNAS issue tracker</a> \
               to ensure the issue has not already been reported before \
               filing a bug report or feature request. If an issue has \
               already been created, add a comment to the existing issue. \
-              Please visit the <a href="http://www.ixsystems.com/storage/" target="_blank" \
-              style="text-decoration:underline;">iXsystems storage page</a> \
-              for enterprise-grade storage solutions and support.')
+              Please visit the <a href="http://www.ixsystems.com/storage/" target="_blank"> \
+              iXsystems storage page</a> \
+              for enterprise-grade storage solutions and support.'
         }
       ]
     },
@@ -164,9 +163,9 @@ export class SupportComponent {
         {
           type: 'paragraph',
           name: 'FN_jira-info',
-          paraText: this.sanitizer.bypassSecurityTrustHtml('<a href="https://jira.ixsystems.com/secure/Signup!default.jspa" target="_blank" \
-          style="text-decoration:underline;">Create a Jira account</a> to file an issue. Use a valid \
-          email address when registering to receive issue status updates.')
+          paraText: '<a href="https://jira.ixsystems.com/secure/Signup!default.jspa" target="_blank">\
+          Create a Jira account</a> to file an issue. Use a valid \
+          email address when registering to receive issue status updates.'
         },
         {
           type : 'input',
@@ -364,7 +363,7 @@ export class SupportComponent {
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected _injector: Injector,
               protected _appRef: ApplicationRef, protected dialog: MatDialog,
-              private sanitizer: DomSanitizer, protected dialogService: DialogService,
+              protected dialogService: DialogService,
               public loader: AppLoaderService, private snackbar: SnackbarService)
               {}
 
@@ -544,7 +543,6 @@ export class SupportComponent {
     dialogRef.componentInstance.setCall('support.new_ticket', [this.payload]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.subscribe(res=>{
-      console.log(res)
       if (res.result) {
         url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
       }

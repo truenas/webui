@@ -12,9 +12,11 @@ import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
 import { DialogService } from 'app/services/dialog.service';
+import { MatSnackBar, MatDialog } from '@angular/material';
 import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../translate-marker';
+import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component';
 import helptext from '../../../../helptext/storage/volumes/volume-key';
 
 @Component({
@@ -40,6 +42,10 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
       type : 'input',
       name : 'name',
       isHidden: true
+    },{
+      type: 'paragraph',
+      name: 'createkey-instructions',
+      paraText: helptext.changekey_instructions
     },{
       type : 'input',
       inputType: 'password',
@@ -73,7 +79,9 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
       protected _injector: Injector,
       protected _appRef: ApplicationRef,
       protected dialogService: DialogService,
-      protected loader: AppLoaderService
+      protected loader: AppLoaderService,
+      private snackBar: MatSnackBar,
+      private mdDialog: MatDialog
   ) {
 
   }
@@ -90,13 +98,17 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
 
   customSubmit(value) {
     this.loader.open();
-
     return this.rest.post(this.resource_name + "/" + this.pk + "/keypassphrase/", { body: JSON.stringify({passphrase: value.passphrase, passphrase2: value.passphrase2}) }).subscribe((restPostResp) => {
       this.loader.close();
-      this.dialogService.Info(T("Create Pool Passphrase"), T("Passphrase created for pool ") + value.name);
-
-      this.router.navigate(new Array('/').concat(
-        this.route_success));
+      this.snackBar.open(T('Passphrase created for pool ') + value.name, T("Close"), {
+        duration: 5000,
+      });
+      let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
+      dialogRef.componentInstance.volumeId = this.pk;
+      dialogRef.afterClosed().subscribe(result => {
+        this.router.navigate(new Array('/').concat(
+          this.route_success));
+      });
     }, (res) => {
       this.loader.close();
       this.dialogService.errorReport(T("Error creating passphrase for pool ") + value.name, res.error.message, res.error.traceback);
