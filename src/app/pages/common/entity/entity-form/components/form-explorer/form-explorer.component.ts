@@ -10,7 +10,7 @@ import {Field} from '../../models/field.interface';
 @Component({
   selector : 'form-explorer',
   templateUrl : './form-explorer.component.html',
-  styleUrls : [ 
+  styleUrls : [
                 '../dynamic-field/dynamic-field.css',
                 './form-explorer.component.scss'
               ],
@@ -44,7 +44,7 @@ export class FormExplorerComponent implements Field, OnInit {
     keys: {
       [KEYS.ENTER]: (tree, node, $event) => {
         this.setPath(node);
-        TREE_ACTIONS.FOCUS(tree, node, $event);  
+        TREE_ACTIONS.FOCUS(tree, node, $event);
       }
     }
   }
@@ -59,6 +59,7 @@ export class FormExplorerComponent implements Field, OnInit {
     nodeHeight: 23,
     allowDrag: true,
     useVirtualScroll: false,
+    useTriState: true
   }
 
 
@@ -70,6 +71,7 @@ export class FormExplorerComponent implements Field, OnInit {
 
     if (this.config.multiple) {
       this.customTemplateStringOptions.useCheckbox = this.config.multiple;
+      this.customTemplateStringOptions.useTriState = this.config.tristate;
     }
 
     if (this.config.customTemplateStringOptions) {
@@ -114,11 +116,11 @@ export class FormExplorerComponent implements Field, OnInit {
       }
       else {
         resolve(this.entityFormService.getFilesystemListdirChildren(node));
-      }     
+      }
     });
   }
-  
-  
+
+
   private toggleTree() {
     this.treeVisible = !this.treeVisible;
   }

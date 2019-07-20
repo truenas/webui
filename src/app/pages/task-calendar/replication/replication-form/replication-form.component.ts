@@ -164,6 +164,7 @@ export class ReplicationFormComponent {
             initial: '',
             explorerType: 'dataset',
             multiple: true,
+            tristate: false,
             name: 'source_datasets_PUSH',
             placeholder: helptext.source_datasets_placeholder,
             tooltip: helptext.source_datasets_tooltip,
