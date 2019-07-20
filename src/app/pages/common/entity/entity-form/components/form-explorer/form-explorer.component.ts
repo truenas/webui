@@ -146,7 +146,6 @@ export class FormExplorerComponent implements Field, OnInit {
   }
 
   valueHandler(selectedTreeNodes) {
-    console.log(selectedTreeNodes)
     let res = [];
     for (let i = 0; i < selectedTreeNodes.length; i++) {
         if (selectedTreeNodes[i].parent.isAllSelected && this.config.tristate) {
@@ -161,10 +160,6 @@ export class FormExplorerComponent implements Field, OnInit {
           res.push(selectedTreeNodes[i].data.name);
         }
     }
-    let str = '';
-    res.forEach((item) => {
-      res.indexOf(item) !== res.length - 1 ? str += `${item}, ` : str += `${item}`
-    })
-    this.group.controls[this.config.name].setValue(str);
+    this.group.controls[this.config.name].setValue(res);
   }
 }

@@ -845,7 +845,6 @@ export class ReplicationFormComponent {
 
     beforeSubmit(data) {
         if (data['direction'] == 'PUSH') {
-            data['source_datasets_PUSH'] = data['source_datasets_PUSH'].replace(/\s/g, '').split(',');
             for (let i = 0; i < data['source_datasets_PUSH'].length; i++) {
                 if (_.startsWith(data['source_datasets_PUSH'][i], '/mnt/')) {
                     data['source_datasets_PUSH'][i] = data['source_datasets_PUSH'][i].substring(5);
