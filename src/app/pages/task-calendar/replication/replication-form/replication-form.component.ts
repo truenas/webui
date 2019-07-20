@@ -506,13 +506,6 @@ export class ReplicationFormComponent {
                 }
             ],
             value: 'NONE',
-            relation: [{
-                action: 'HIDE',
-                when: [{
-                    name: 'transport',
-                    value: 'LEGACY',
-                }]
-            }],
         }, {
             type: 'input',
             inputType: 'number',
@@ -583,9 +576,13 @@ export class ReplicationFormComponent {
             value: 'DISABLED',
             relation: [{
                 action: 'SHOW',
+                connective: 'OR',
                 when: [{
                     name: 'transport',
                     value: 'SSH',
+                }, {
+                    name: 'transport',
+                    value: 'LEGACY',
                 }]
             }],
         }, {
@@ -596,9 +593,13 @@ export class ReplicationFormComponent {
             tooltip: helptext.speed_limit_tooltip,
             relation: [{
                 action: 'SHOW',
+                connective: 'OR',
                 when: [{
                     name: 'transport',
                     value: 'SSH',
+                }, {
+                    name: 'transport',
+                    value: 'LEGACY',
                 }]
             }],
         },
@@ -694,6 +695,13 @@ export class ReplicationFormComponent {
                 }
             ],
             value: 'DEFAULT',
+            relation: [{
+                action: 'HIDE',
+                when: [{
+                    name: 'transport',
+                    value: 'LEGACY',
+                }]
+            }],
         }, {
             type: 'checkbox',
             name: 'enabled',
