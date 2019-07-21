@@ -165,7 +165,6 @@ export class InterfacesFormComponent implements OnDestroy {
     {
       type: 'list',
       name: 'aliases',
-      width: '90%',
       placeholder: 'Aliases',
       label: 'Aliases',
       templateListField: [
@@ -174,6 +173,7 @@ export class InterfacesFormComponent implements OnDestroy {
             placeholder: helptext.alias_address_placeholder,
             tooltip: helptext.alias_address_tooltip,
             type: 'ipwithnetmask',
+            width: '55%',
             validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ],
           },
           {
@@ -394,35 +394,32 @@ export class InterfacesFormComponent implements OnDestroy {
 
   async dataHandler(entityForm) {
     const propNames = ['aliases', 'failover_aliases', 'failover_virtual_aliases'];
+    const propValues = ['address', 'failover_address', 'failover_virtual_address'];
     if (!entityForm.isNew) {
-      let data = entityForm.queryResponse[0];
+      const data = entityForm.queryResponse[0];
       for (const prop in data) {
         if (entityForm.formGroup.controls[prop] && !propNames.includes(prop)) {
           entityForm.formGroup.controls[prop].setValue(data[prop]);
         }
       }
-      const aliases_fg = entityForm.formGroup.controls['aliases'];
-      
-        let aliasList = data['aliases'];
-        propNames.forEach((propName) => {
+      propNames.forEach((propName) => {
+        if (Object.keys(data).includes(propName)) {
+          const aliases_fg = entityForm.formGroup.controls[propName];
+          const aliasList = data[propName];
           for (let i = 0; i < aliasList.length; i++) {
-            if (aliases_fg.controls[i] === undefined) { 
+            if (aliases_fg.controls[i] === undefined) {
               const templateListField = _.cloneDeep(_.find(this.fieldConfig, {'name': propName}).templateListField);
               aliases_fg.push(entityForm.entityFormService.createFormGroup(templateListField));
               this.aliases_fc.listFields.push(templateListField);
-            } 
-  
-            aliases_fg.controls[i].controls['address'].setValue(aliasList[0]['address']);
-            aliases_fg.controls[i].controls['failover_address'].setValue(aliasList[0]['failover_address']);
-            aliases_fg.controls[i].controls['failover_virtual_address'].setValue(aliasList[0]['failover_virtual_address']);
-          }          
-        })
-
- 
-
+            }
+            aliases_fg.controls[i].controls[propValues[propNames.indexOf(propName)]]
+              .setValue(aliasList[i][propValues[propNames.indexOf(propName)]]);
+          }
+        }
+      })
     }
   }
-  
+
   ngOnDestroy() {
     if (this.type_subscription) {
       this.type_subscription.unsubscribe();
