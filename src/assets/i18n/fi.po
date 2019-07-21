@@ -474,6 +474,9 @@ msgstr ""
 msgid "ATA Security User"
 msgstr ""
 
+msgid "AUTOSTART"
+msgstr ""
+
 msgid "About"
 msgstr ""
 
@@ -560,9 +563,6 @@ msgid "Active Media Subtype"
 msgstr ""
 
 msgid "Active Media Type"
-msgstr ""
-
-msgid "Active storage controller."
 msgstr ""
 
 msgid "Adapter Type"
@@ -658,6 +658,11 @@ msgstr ""
 msgid ""
 "Added disks are erased, then the pool is extended onto the new disks with "
 "the chosen topology. Existing data on the pool is kept intact."
+msgstr ""
+
+msgid ""
+"Adding a recovery key invalidates any previous recovery key. A dialog will "
+"open to save a backup of the new recovery key."
 msgstr ""
 
 msgid "Adding data vdevs of different types is not supported."
@@ -792,9 +797,6 @@ msgid "Alert Services"
 msgstr ""
 
 msgid "Alert Settings"
-msgstr ""
-
-msgid "Aliases"
 msgstr ""
 
 msgid "All Disks"
@@ -1118,13 +1120,10 @@ msgstr ""
 msgid "Attach NIC"
 msgstr ""
 
-msgid "Attach screenshot(s)."
+msgid "Attach screenshots."
 msgstr ""
 
 msgid "Auth Method"
-msgstr ""
-
-msgid "Authenticate"
 msgstr ""
 
 msgid "Authentication Group number"
@@ -1217,10 +1216,10 @@ msgstr ""
 msgid "Available Themes"
 msgstr ""
 
-msgid "Available space threshold (%)"
+msgid "Available memory"
 msgstr ""
 
-msgid "Average of all cores"
+msgid "Available space threshold (%)"
 msgstr ""
 
 msgid "Awesome! Now let's explore FreeNAS's cool features."
@@ -1449,10 +1448,10 @@ msgstr ""
 msgid "CN Realm"
 msgstr ""
 
-msgid "CPU"
+msgid "COLLECTION"
 msgstr ""
 
-msgid "CPU Temperatures"
+msgid "CPU"
 msgstr ""
 
 msgid "CPU Usage"
@@ -1503,9 +1502,6 @@ msgid "Change Passphrase"
 msgstr ""
 
 msgid "Change Password"
-msgstr ""
-
-msgid "Change Pool Passphrase"
 msgstr ""
 
 msgid "Change User & Group Ownership"
@@ -1564,6 +1560,11 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Changing the passphrase requires the creation of a new recovery key. A "
+"dialog will open to save a backup of the new recovery key."
+msgstr ""
+
+msgid ""
 "Changing to a nightly train is one-way. Changing back to a stable train is "
 "not supported!"
 msgstr ""
@@ -1614,8 +1615,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Check this to redirect <i>HTTP</i> connections to        <i>HTTPS</i>. "
-"<i>HTTPS</i> must be selected in        <b>Protocol</b>."
+"Check this to redirect <i>HTTP</i> connections to <i>HTTPS</i>. A <i>GUI "
+"SSL Certificate</i> must be selected."
 msgstr ""
 
 msgid "Check-in"
@@ -1696,6 +1697,14 @@ msgid "Choose a color scheme."
 msgstr ""
 
 msgid "Choose a location to store the installer image file."
+msgstr ""
+
+msgid ""
+"Choose a path to the user's home directory. If the directory exists and "
+"matches the username, it is set as the user's home directory. When the path "
+"does not end with a subdirectory matching the username, a new subdirectory "
+"is created. The full path to the user's home directory is shown here when "
+"editing a user."
 msgstr ""
 
 msgid "Choose a pool or dataset for jail storage"
@@ -1898,6 +1907,13 @@ msgid "Cipher"
 msgstr ""
 
 msgid ""
+"Classification for each S3 object. Choose a class based on the specific use "
+"case or performance requirements. See <a "
+"href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-class-intro."
+"html\" target=\"_blank\">Amazon S3 Storage Classes</a> for more information."
+msgstr ""
+
+msgid ""
 "Click <b>Browse</b> to select a recovery key to upload. This allows the "
 "system to decrypt the disks."
 msgstr ""
@@ -2038,6 +2054,9 @@ msgstr ""
 msgid "Config Pool for Jail Manager"
 msgstr ""
 
+msgid "Configure ACL"
+msgstr ""
+
 msgid ""
 "Configure IPv4 networking or internet access for the jail. Enter the IPv4 "
 "address for <a href=\"https://www.freebsd.org/cgi/man.cgi?query=vnet\" "
@@ -2073,6 +2092,12 @@ msgid ""
 "Configure an external program to perform ID mapping. See <a "
 "href=\"http://samba.org.ru/samba/docs/man/manpages/idmap_script.8.html\" "
 "target=\"_blank\">idmap_script(8)</a> for more details."
+msgstr ""
+
+msgid "Configure now"
+msgstr ""
+
+msgid "Configure permissions for this share's dataset now?"
 msgstr ""
 
 msgid "Configure the root user email address."
@@ -2221,9 +2246,6 @@ msgstr ""
 msgid "Create Pool"
 msgstr ""
 
-msgid "Create Pool Passphrase"
-msgstr ""
-
 msgid "Create Snapshot"
 msgstr ""
 
@@ -2267,6 +2289,11 @@ msgid "Creating Jail"
 msgstr ""
 
 msgid "Creating Jail..."
+msgstr ""
+
+msgid ""
+"Creating a passphrase requires the creation of a new recovery key. A dialog "
+"will open to save a backup of the new recovery key."
 msgstr ""
 
 msgid ""
@@ -2405,11 +2432,6 @@ msgid "Define a starting time when the replication task cannot run."
 msgstr ""
 
 msgid "Define a time to start the replication task."
-msgstr ""
-
-msgid ""
-"Define an <b>existing</b> pool or dataset as the user home directory and "
-"adjust the permissions."
 msgstr ""
 
 msgid ""
@@ -2589,9 +2611,6 @@ msgstr ""
 msgid "Description of the lagg interface."
 msgstr ""
 
-msgid "Description:"
-msgstr ""
-
 msgid "Destination"
 msgstr ""
 
@@ -2760,9 +2779,6 @@ msgstr ""
 msgid "Disks"
 msgstr ""
 
-msgid "Disks in Use"
-msgstr ""
-
 msgid "Dismiss"
 msgstr ""
 
@@ -2877,12 +2893,14 @@ msgid "Editing the following disks:"
 msgstr ""
 
 msgid ""
+"Editing top-level datasets can prevent users from accessing data in child "
+"datasets."
+msgstr ""
+
+msgid ""
 "Either single bandwidth limit or bandwidth limit schedule in rclone "
 "format.<br /> Example: \"08:00,512 12:00,10MB 13:00,512 18:00,30MB "
 "23:00,off\".<br /> Default unit is kilobytes."
-msgstr ""
-
-msgid "Electing storage controller."
 msgstr ""
 
 msgid "Email"
@@ -2984,9 +3002,6 @@ msgid ""
 msgstr ""
 
 msgid "Enable running services that require mlock() in a jail."
-msgstr ""
-
-msgid "Enable sending anonymous crash reports to iXsystems"
 msgstr ""
 
 msgid "Enable sending anonymous usage statistics to iXsystems"
@@ -3380,9 +3395,6 @@ msgstr ""
 msgid "Enter an IPv6 address. This overrides the default gateway provided by DHCP."
 msgstr ""
 
-msgid "Enter an alias. Limited to 15 characters."
-msgstr ""
-
 msgid ""
 "Enter an alphanumeric name for the certificate. Underscore (_), and dash "
 "(-) characters are allowed."
@@ -3413,6 +3425,11 @@ msgid ""
 "Enter any additional parameters from <a "
 "href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\" "
 "target=\"_blank\">rsyncd.conf(5)</a>."
+msgstr ""
+
+msgid ""
+"Enter any aliases, separated by spaces. Each alias can be up to 15 "
+"characters long."
 msgstr ""
 
 msgid ""
@@ -3855,15 +3872,6 @@ msgstr ""
 msgid "Error: "
 msgstr ""
 
-msgid "Error: Displaying local fetched releases failed."
-msgstr ""
-
-msgid "Error: Displaying templates failed."
-msgstr ""
-
-msgid "Error: Fetching remote release choices failed."
-msgstr ""
-
 msgid "Estimated data capacity available after extension."
 msgstr ""
 
@@ -4117,6 +4125,12 @@ msgid "Generate Keypair"
 msgstr ""
 
 msgid ""
+"Generate a new GELI key, replacing the old one on the disks in the pool. "
+"Passphrases will be removed by this operation. <br>A dialog will open to "
+"save a backup of the new recovery key."
+msgstr ""
+
+msgid ""
 "Give this user permission to use <a href=\"https://www.sudo.ws/\" "
 "target=\"_blank\">sudo</a>."
 msgstr ""
@@ -4292,9 +4306,6 @@ msgid "HostName"
 msgstr ""
 
 msgid "Hostname"
-msgstr ""
-
-msgid "Hostname (Storage Controller 2)"
 msgstr ""
 
 msgid "Hostname (Virtual)"
@@ -4683,7 +4694,16 @@ msgstr ""
 msgid "Jail data size in bytes."
 msgstr ""
 
+msgid "Jail restarted successfully"
+msgstr ""
+
 msgid "Jail stack size in bytes."
+msgstr ""
+
+msgid "Jail started successfully"
+msgstr ""
+
+msgid "Jail stopped successfully"
 msgstr ""
 
 msgid "Jails"
@@ -4784,6 +4804,9 @@ msgstr ""
 msgid "LEGACY WEB INTERFACE"
 msgstr ""
 
+msgid "LOGIN TO PROVIDER"
+msgstr ""
+
 msgid "LUN ID"
 msgstr ""
 
@@ -4850,11 +4873,11 @@ msgstr ""
 msgid "Lifetime"
 msgstr ""
 
-msgid "Limit (kbps)"
+msgid "Limit (KiB/s)"
 msgstr ""
 
 msgid ""
-"Limit replication speed to the specified value in kilobits/second. The "
+"Limit replication speed to the specified value in kilobytes/second. The "
 "default 0 is unlimited."
 msgstr ""
 
@@ -4862,9 +4885,6 @@ msgid "Link State"
 msgstr ""
 
 msgid "List of system services to restart when the pool is unlocked."
-msgstr ""
-
-msgid "Load Average"
 msgstr ""
 
 msgid "Local"
@@ -5089,9 +5109,6 @@ msgstr ""
 msgid "Memory Size (MiB)"
 msgstr ""
 
-msgid "Memory Usage"
-msgstr ""
-
 msgid ""
 "Memory overcommitment allows multiple VMs to be launched when there is not "
 "enough free memory for configured RAM of all VMs. Use with caution."
@@ -5258,9 +5275,6 @@ msgstr ""
 msgid "Name Jail and Choose FreeBSD Release"
 msgstr ""
 
-msgid "Name Servers"
-msgstr ""
-
 msgid "Name and Naming Schema cannot be provided at the same time."
 msgstr ""
 
@@ -5317,9 +5331,6 @@ msgid "NetBIOS alias"
 msgstr ""
 
 msgid "Netbios Name"
-msgstr ""
-
-msgid "Netbios Name (Storage Controller 2)"
 msgstr ""
 
 msgid ""
@@ -5559,9 +5570,6 @@ msgstr ""
 msgid "OK"
 msgstr ""
 
-msgid "OS Version"
-msgstr ""
-
 msgid ""
 "Off by default. When set, <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=smbd\" "
@@ -5692,15 +5700,6 @@ msgstr ""
 msgid "Organizational unit of the entity."
 msgstr ""
 
-msgid "Other storage controller cannot be reached."
-msgstr ""
-
-msgid "Other storage controller has no license."
-msgstr ""
-
-msgid "Other storage controller has not finished booting."
-msgstr ""
-
 msgid "Outgoing Mail Server"
 msgstr ""
 
@@ -5710,13 +5709,13 @@ msgstr ""
 msgid "Owner of the jail. Can be any string."
 msgstr ""
 
+msgid "PLUGIN"
+msgstr ""
+
 msgid "Parent Interface"
 msgstr ""
 
 msgid "Partition"
-msgstr ""
-
-msgid "Passive storage controller."
 msgstr ""
 
 msgid "Passphrase"
@@ -5817,6 +5816,9 @@ msgid "Phone"
 msgstr ""
 
 msgid "Physical interface of the selected member."
+msgstr ""
+
+msgid "Platform"
 msgstr ""
 
 msgid "Please accept terms of service for the given ACME Server."
@@ -5982,9 +5984,6 @@ msgstr ""
 msgid "Primary Group"
 msgstr ""
 
-msgid "Primary NIC"
-msgstr ""
-
 msgid "Priority Code Point"
 msgstr ""
 
@@ -5998,6 +5997,13 @@ msgid "Private Key"
 msgstr ""
 
 msgid "Private Key ID"
+msgstr ""
+
+msgid ""
+"Privileges are the same as the guest account. Guest access is disabled by "
+"default in Windows 10 version 1709 and Windows Server version 1903. "
+"Additional client-side configuration is required to provide guest access to "
+"these clients."
 msgstr ""
 
 msgid "Proactive Support"
@@ -6015,9 +6021,6 @@ msgid ""
 "Proceed with upgrading the pool? WARNING: Upgrading a pool is a one-way "
 "operation that might make some features of the pool incompatible with older "
 "versions of FreeNAS: "
-msgstr ""
-
-msgid "Processor"
 msgstr ""
 
 msgid "Promote Dataset"
@@ -6066,10 +6069,13 @@ msgstr ""
 msgid "REGISTER"
 msgstr ""
 
+msgid "RELEASE"
+msgstr ""
+
 msgid "RESTART"
 msgstr ""
 
-msgid "RRDTool load5"
+msgid "REVISION"
 msgstr ""
 
 msgid "Raid-z"
@@ -6099,9 +6105,6 @@ msgstr ""
 msgid "Re-key Pool"
 msgstr ""
 
-msgid "Re-keyed Pool"
-msgstr ""
-
 msgid "Read Only"
 msgstr ""
 
@@ -6121,12 +6124,6 @@ msgid "Realm"
 msgstr ""
 
 msgid "Reboot After Update"
-msgstr ""
-
-msgid "Reboot Standby Storage Controller"
-msgstr ""
-
-msgid "Reboot current storage controller?"
 msgstr ""
 
 msgid "Rebuild Directory Service Cache"
@@ -6358,6 +6355,12 @@ msgstr ""
 msgid "Restart the system?"
 msgstr ""
 
+msgid "Restarting"
+msgstr ""
+
+msgid "Restarting Jail"
+msgstr ""
+
 msgid "Restore default"
 msgstr ""
 
@@ -6425,12 +6428,6 @@ msgid "Run this cron job now?"
 msgstr ""
 
 msgid "Run this rsync now?"
-msgstr ""
-
-msgid "S.M.A.R.T. Enabled"
-msgstr ""
-
-msgid "S.M.A.R.T. Options"
 msgstr ""
 
 msgid "S.M.A.R.T. Tests"
@@ -7073,6 +7070,12 @@ msgstr ""
 msgid "Send Test Mail"
 msgstr ""
 
+msgid ""
+"Send failed HTTP request data which can include client and server IP "
+"addresses, failed method call tracebacks, and middleware log file contents "
+"to iXsystems."
+msgstr ""
+
 msgid "Serial"
 msgstr ""
 
@@ -7149,12 +7152,6 @@ msgstr ""
 msgid ""
 "Set for the default configuration to listen on all interfaces using the "
 "known values of user: <i>upsmon</i> and password: <i>fixmepass</i>."
-msgstr ""
-
-msgid ""
-"Set for the initiator to discover paths to both storage controllers on the "
-"target and increase storage traffic efficiency. Requires ALUA-capable, High "
-"Availability (HA) hardware."
 msgstr ""
 
 msgid "Set for ypbind to bind to the server that responds the fastest."
@@ -7263,12 +7260,6 @@ msgid ""
 "Set to allow access to other protocol stacks beyond IPv4, IPv6, local "
 "(UNIX), and route.<br> <b>Warning:</b> jail functionality does not exist "
 "for all protocol stacks."
-msgstr ""
-
-msgid ""
-"Set to allow access to this share without a password. See the <a "
-"href=\"--docurl--/services.html#smb\" target=\"_blank\">SMB</a> service "
-"documentation for more information about guest user permissions."
 msgstr ""
 
 msgid ""
@@ -7977,11 +7968,11 @@ msgid "Snapshot directory"
 msgstr ""
 
 msgid ""
-"Snapshot name format string. The default is <i>snap-%Y-%m-%d-%H-%M</i>. "
-"Must include the strings <i>%Y</i>, <i>%m</i>, <i>%d</i>, <i>%H</i>, and "
-"<i>%M</i>, which are replaced with the four-digit year, month, day of "
-"month, hour, and minute as defined in <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=strftime\" "
+"Snapshot name format string. The default is <i><textarea "
+"disabled>snap-%Y-%m-%d-%H-%M</textarea></i>. Must include the strings "
+"<i>%Y</i>, <i>%m</i>, <i>%d</i>, <i>%H</i>, and <i>%M</i>, which are "
+"replaced with the four-digit year, month, day of month, hour, and minute as "
+"defined in <a href=\"https://www.freebsd.org/cgi/man.cgi?query=strftime\" "
 "target=\"_blank\">strftime(3)</a>. A string showing the snapshot lifetime "
 "is appended to the name. For example, snapshots of <i>pool1</i> with a "
 "Naming Schema of <i>customsnap-%Y%m%d.%H%M</i> and lifetime of two weeks "
@@ -8094,6 +8085,12 @@ msgid ""
 "task completes."
 msgstr ""
 
+msgid "Starting"
+msgstr ""
+
+msgid "Starting Jail"
+msgstr ""
+
 msgid "Starting job..."
 msgstr ""
 
@@ -8122,6 +8119,12 @@ msgid "Stop this cloud sync?"
 msgstr ""
 
 msgid "Stopped the scrub on pool <i>"
+msgstr ""
+
+msgid "Stopping"
+msgstr ""
+
+msgid "Stopping Jail"
 msgstr ""
 
 msgid "Stopping scrub on pool <i>"
@@ -8157,8 +8160,8 @@ msgid "Stripe"
 msgstr ""
 
 msgid ""
-"Stripping ACLs will reset the permissions of this dataset. This may make "
-"data inaccessible."
+"Stripping the ACL resets dataset permissions. This can make data "
+"inaccessible until new permissions are created."
 msgstr ""
 
 msgid "Subject"
@@ -8271,9 +8274,6 @@ msgstr ""
 msgid "System Info"
 msgstr ""
 
-msgid "System Load"
-msgstr ""
-
 msgid "System Processes"
 msgstr ""
 
@@ -8383,9 +8383,6 @@ msgid "Team Drive ID"
 msgstr ""
 
 msgid "Temp tooltip"
-msgstr ""
-
-msgid "Temperature"
 msgstr ""
 
 msgid "Terms of Service"
@@ -8572,13 +8569,15 @@ msgid ""
 "device.<br /> <br />"
 msgstr ""
 
+msgid ""
+"The sharing configuration will be removed. Data in the share dataset will "
+"not be affected."
+msgstr ""
+
 msgid "The specified permissions of that group are used by all clients."
 msgstr ""
 
 msgid "The specified permissions of that user are used by all clients."
-msgstr ""
-
-msgid "The storage controllers do not have the same quantity of disks."
 msgstr ""
 
 msgid ""
@@ -8676,6 +8675,9 @@ msgid "Time Machine Quota"
 msgstr ""
 
 msgid "Time remaining until changes reverted:"
+msgstr ""
+
+msgid "TimeZone"
 msgstr ""
 
 msgid "Timeout"
@@ -8789,6 +8791,9 @@ msgid ""
 "Unset to require key-based authentication for all users. This requires <a "
 "href=\"http://the.earth.li/%7Esgtatham/putty/0.55/htmldoc/Chapter8.html\" "
 "target=\"_blank\">additional setup</a> on both the SSH client and server."
+msgstr ""
+
+msgid "Unshare"
 msgstr ""
 
 msgid "Until"
@@ -9033,6 +9038,9 @@ msgstr ""
 msgid "Users & Groups"
 msgstr ""
 
+msgid "VERSION"
+msgstr ""
+
 msgid "VFS Objects"
 msgstr ""
 
@@ -9093,6 +9101,9 @@ msgid "Verify Deletion of "
 msgstr ""
 
 msgid "Verify passphrase"
+msgstr ""
+
+msgid "Version"
 msgstr ""
 
 msgid "View"
@@ -9306,9 +9317,6 @@ msgid "ZFS Deduplication"
 msgstr ""
 
 msgid "ZFS Filesystem"
-msgstr ""
-
-msgid "ZFS Pool"
 msgstr ""
 
 msgid "ZFS deduplication"
