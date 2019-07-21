@@ -65,13 +65,17 @@ export class AssociatedTargetListComponent {
       });
     });
   }
-  getActions() {
+  getActions(row) {
     return [{
-      id: "edit",
+      id: row.target,
+      name: 'edit',
+      icon: 'edit',
       label: "Edit",
       onClick: (rowinner) => { this.entityList.doEdit(rowinner.id); },
     }, {
-      id: "delete",
+      id: row.target,
+      name: 'delete',
+      icon: 'delete',
       label: "Delete",
       onClick: (rowinner) => {
         let deleteMsg = this.entityList.getDeleteMessage(rowinner);

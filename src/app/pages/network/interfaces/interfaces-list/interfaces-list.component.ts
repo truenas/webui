@@ -106,7 +106,9 @@ export class InterfacesListComponent implements OnDestroy {
 
   getActions(row) {
     return [{
-      id: "edit",
+      id: row.name,
+      icon: 'edit',
+      name: "edit",
       label: T("Edit"),
       onClick: (rowinner) => { 
         if(this.ha_enabled) {
@@ -116,7 +118,9 @@ export class InterfacesListComponent implements OnDestroy {
         }
       },
     }, {
-      id: "delete",
+      id: row.name,
+      icon: 'delete',
+      name: "delete",
       label: T("Delete"),
       onClick: (rowinner) => {
         if(this.ha_enabled) {
