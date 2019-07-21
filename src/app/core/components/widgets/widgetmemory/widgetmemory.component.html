@@ -9,7 +9,16 @@
             <mat-icon>settings</mat-icon>
             </button>
             </ng-template>-->
-            <!--<button mat-button color="primary" class="" (click)="router.navigate(['reportsdashboard/cpu'])">CPU REPORTS</button>-->
+            <div class="controls">
+              <button mat-icon-button class="" (click)="router.navigate(['reportsdashboard/memory'])">
+                <mat-icon role="img"
+                  matTooltip="Memory Reports"
+                  matTooltipPosition="above"
+                  aria-label="Memory Reports">
+                    insert_chart
+                </mat-icon>
+              </button>
+            </div>
         </mat-toolbar-row>
         <!--<viewchartline fxFlex="100" fxFlexAlign="end" #chartCpu width="600" height="160" [style.display]="isFlipped ? 'none': 'block'"></viewchartline>-->
         <!-- Chart -->

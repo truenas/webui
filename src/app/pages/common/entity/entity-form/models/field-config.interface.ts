@@ -16,7 +16,7 @@ export interface FieldConfig {
   noexec?: boolean, blurStatus?:boolean,blurEvent?:any,noMinutes?:boolean,
   warnings?: string, hideButton?:boolean, searchOptions?: any[], hideDirs?: any,
   listFields?: Array<FieldConfig>[], templateListField?: FieldConfig[],
-  updateLocal?: boolean, isLoading?: boolean, textAreaRows?: number
+  updateLocal?: boolean, isLoading?: boolean, textAreaRows?: number, netmaskPreset?: number,
   customEventMethod?(data:any), onChangeOption?(data:any), 
   
 }

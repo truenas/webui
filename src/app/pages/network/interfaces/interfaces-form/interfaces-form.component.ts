@@ -191,6 +191,7 @@ export class InterfacesFormComponent implements OnDestroy {
         disabled: true,
         isHidden: true,
         type: 'ipwithnetmask',
+        netmaskPreset: 32,
         validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
       },
       {
@@ -393,7 +394,7 @@ export class InterfacesFormComponent implements OnDestroy {
           }
       }
     }
-  
+
     data.aliases = aliases;
     if (failover_aliases.length > 0) {
       data.failover_aliases = failover_aliases;

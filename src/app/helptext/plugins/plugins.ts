@@ -2,7 +2,9 @@ import { T } from '../../translate-marker';
 
 export default {
 
-name_placeholder: T('Plugin Name'),
+plugin_name_placeholder: T('Plugin Name'),
+
+jail_name_placeholder: T('Jail Name'),
 
 https_placeholder: T('Fetch Method'),
 https_tooltip: T('Use encrypted connection for increased security (preferred).'),

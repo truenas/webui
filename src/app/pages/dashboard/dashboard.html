@@ -17,7 +17,7 @@
     <widget-memory fxFlex="600px" fxFlex.xs="100" *ngIf="statsDataEvents" [data]="statsDataEvents" [widgetSize]="medium"   configurable="false"></widget-memory>
 
     <ng-container  *ngIf="pools && pools.length > 0">
-      <widget-pool *ngFor="let pool of pools; let i=index" [poolState]="pool" fxFlex.xs="100" fxFlex="600px" [widgetSize]="medium"   configurable="false"></widget-pool>
+      <widget-pool *ngFor="let pool of pools; let i=index" [poolState]="pool" [volumeData]="volumeData[pool.id]" fxFlex.xs="100" fxFlex="600px" [widgetSize]="medium"   configurable="false"></widget-pool>
     </ng-container>
 
     <ng-container  *ngFor="let nic of nics; let i=index">
