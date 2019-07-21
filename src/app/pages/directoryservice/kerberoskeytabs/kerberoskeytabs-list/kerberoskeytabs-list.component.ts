@@ -36,7 +36,9 @@ export class KerberosKeytabsListComponent {
 
   getActions(parentRow) {
     return [{
-      id: helptext.kkt_list_actions_delete_id,
+      id: parentRow.keytab_name,
+      icon: 'delete',
+      name: helptext.kkt_list_actions_delete_id,
       label: helptext.kkt_list_actions_delete_label,
       onClick: (row) => {
         this.entityList.doDelete(row);

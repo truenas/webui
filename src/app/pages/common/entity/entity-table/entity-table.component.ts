@@ -536,12 +536,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       return this.conf.getActions(row);
     } else {
       return [{
+        name: 'edit',
         id: "edit",
-        label: "Edit",
+        icon: 'edit',
+        label: T("Edit"),
         onClick: (rowinner) => { this.doEdit(rowinner.id); },
       }, {
+        name: 'delete',
         id: "delete",
-        label: "Delete",
+        icon: 'delete',
+        label: T("Delete"),
         onClick: (rowinner) => { this.doDelete(rowinner); },
       },]
     }
@@ -893,8 +897,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.conf.columns = [...this.conf.columns, col];
     }
-    this.updateTableHeightAfterDetailToggle();
     this.selectColumnsToShowOrHide();
+    this.updateTableHeightAfterDetailToggle();
   }
 
   // Stores currently selected columns in preference service
@@ -968,12 +972,20 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.updateTableHeightAfterDetailToggle();
   }
 
+  resetTableToStartingHeight() {
+    const heightStr = `height: ${this.startingHeight}px`;
+    document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
+  }
+
   updateTableHeightAfterDetailToggle() {
     setTimeout(() => {
-      this.expandedRows = (document.querySelectorAll('.datatable-row-detail').length);
-      let newHeight = (this.expandedRows * this.getRowDetailHeight()) + this.startingHeight;
-      let heightStr = `height: ${newHeight}px`;
+      this.expandedRows = document.querySelectorAll('.datatable-row-detail').length;
+      if (this.expandedRows === 0) {
+        return this.resetTableToStartingHeight();
+      }
+      const newHeight = this.expandedRows * this.getRowDetailHeight() + this.startingHeight;
+      const heightStr = `height: ${newHeight}px`;
       document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
-    }, 100)
+    }, 100);
   }
 }

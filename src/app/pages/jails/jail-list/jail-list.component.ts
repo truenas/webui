@@ -214,7 +214,9 @@ export class JailListComponent implements OnInit {
   }
   getActions(parentRow) {
     return [{
-        id: "edit",
+        id: parentRow.host_hostuuid,
+        icon: 'edit',
+        name: "edit",
         label: T("Edit"),
         onClick: (row) => {
           this.router.navigate(
@@ -222,7 +224,9 @@ export class JailListComponent implements OnInit {
         }
       },
       {
-        id: "mount",
+        id: parentRow.host_hostuuid,
+        icon: 'device_hub',
+        name: "mount",
         label: T("Mount points"),
         onClick: (row) => {
           this.router.navigate(
@@ -231,7 +235,9 @@ export class JailListComponent implements OnInit {
         }
       },
       {
-        id: "start",
+        id: parentRow.host_hostuuid,
+        icon: 'play_arrow',
+        name: "start",
         label: T("Start"),
         onClick: (row) => {
           this.entityList.busy =
@@ -250,7 +256,9 @@ export class JailListComponent implements OnInit {
         }
       },
       {
-        id: "restart",
+        id: parentRow.host_hostuuid,
+        icon: 'cached',
+        name: "restart",
         label: T("Restart"),
         onClick: (row) => {
           this.entityList.busy =
@@ -270,7 +278,9 @@ export class JailListComponent implements OnInit {
         }
       },
       {
-        id: "stop",
+        id: parentRow.host_hostuuid,
+        icon: 'stop',
+        name: "stop",
         label: T("Stop"),
         onClick: (row) => {
           let dialog = {};
@@ -295,7 +305,9 @@ export class JailListComponent implements OnInit {
         }
       },
       {
-        id: "update",
+        id: parentRow.host_hostuuid,
+        icon: 'update',
+        name: "update",
         label: T("Update"),
         onClick: (row) => {
           const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Updating Jail") }, disableClose: true });
@@ -308,7 +320,9 @@ export class JailListComponent implements OnInit {
         }
       },
       {
-        id: "shell",
+        id: parentRow.host_hostuuid,
+        icon: 'keyboard_arrow_right',
+        name: "shell",
         label: T("Shell"),
         onClick: (row) => {
           this.router.navigate(
@@ -316,7 +330,9 @@ export class JailListComponent implements OnInit {
         }
       },
       {
-        id: "delete",
+        id: parentRow.host_hostuuid,
+        icon: 'delete',
+        name: "delete",
         label: T("Delete"),
         onClick: (row) => {
           this.entityList.doDelete(row);
