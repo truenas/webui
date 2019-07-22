@@ -16,6 +16,7 @@ import { JailAddComponent } from './jail-add/';
 import { JailEditComponent } from './jail-edit/';
 import { JailWizardComponent } from './jail-wizard/';
 import { JailShellComponent } from './jail-shell/';
+import { JailDeleteDialogComponent } from './components/jail-delete-dialog/jail-delete-dialog.component';
 
 @NgModule({
   imports : [
@@ -28,8 +29,10 @@ import { JailShellComponent } from './jail-shell/';
     JailAddComponent,
     JailEditComponent,
     JailWizardComponent,
-    JailShellComponent
+    JailShellComponent,
+    JailDeleteDialogComponent,
   ],
+  entryComponents: [JailDeleteDialogComponent],
   providers : [
     JailService,
   ]

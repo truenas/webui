@@ -1,0 +1,35 @@
+<h1 mat-dialog-title>{{ ('Delete' | translate) + ' ' + data?.jail?.host_hostuuid }}</h1>
+
+<p>{{ deleteMessage }}</p>
+
+<mat-checkbox [(ngModel)]="data.force">{{ 'Force deletion' | translate }}</mat-checkbox>
+
+<div mat-dialog-actions>
+    <mat-checkbox
+        id="confirm-dialog__confirm-checkbox"
+        (change)="isConfirmed = $event;"
+    >
+        {{ "Confirm" | translate }}
+    </mat-checkbox>
+    <span fxFlex></span>
+    <button
+        *ngIf="!hideCancel"
+        id="confirm-dialog__cancel-button"
+        mat-button
+        name="cancel_button"
+        class="mat-button mat-accent"
+        (click)="dialogRef.close(false)"
+    >
+        {{ "Cancel" | translate | uppercase }}
+    </button>
+    <button
+        id="confirm-dialog__action-button"
+        mat-button
+        name="ok_button"
+        class="mat-button mat-primary"
+        [disabled]="!isConfirmed"
+        (click)="dialogRef.close(true)"
+    >
+        {{ 'Delete' | translate | uppercase }}
+    </button>
+</div>
