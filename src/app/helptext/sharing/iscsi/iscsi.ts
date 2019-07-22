@@ -92,15 +92,20 @@ export const helptext_sharing_iscsi = {
 
   initiator_form_placeholder_initiators: T("Allowed Initiators (IQN)"),
   initiator_form_tooltip_initiators: T(
-    "Initiator hostnames. Enter an initiator hostname and press the\
- <b>+</b> button to add a host."
+    'Initiators allowed access to this system. Enter an\
+ <a href="https://tools.ietf.org/html/rfc3720#section-3.2.6"\
+ target="_blank">iSCSI Qualified Name (IQN)</a> and press <b>+</b> to\
+ add it to the list. Example:\
+ <i>iqn.1994-09.org.freebsd:freenas.local</i>'
   ),
 
   initiator_form_placeholder_auth_network: T("Authorized Networks"),
   initiator_form_tooltip_auth_network: T(
-    'Network addresses which can use this initiator. Enter an IPv4 or\
- IPv6 network address and press the <b>+</b> button to add the address\
- to the list.'
+    'Network addresses which can use this initiator. Enter a network\
+ address with a\
+ <a href="https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing"\
+ target="_blank">CIDR</a> mask and press <b>+</b> to add it to the list.\
+ Example: <i>192.168.2.0/24</i>.'
   ),
 
   initiator_form_placeholder_comment: T("Comment"),
