@@ -160,7 +160,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
   ngOnChanges(changes: SimpleChanges){
     if(changes.poolState){
-      this.title = this.poolState.name;
     } else if(changes.volumeData){
       this.getAvailableSpace();
     }
