@@ -965,27 +965,26 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   toggleExpandRow(row) {
-    if (!this.startingHeight) {
-      this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
-    }  
+    if (this.expandedRows === 0) {
+      this.resetTableToStartingHeight();
+    }
     this.table.rowDetail.toggleExpandRow(row);
     this.updateTableHeightAfterDetailToggle();
   }
 
   resetTableToStartingHeight() {
-    const heightStr = `height: ${this.startingHeight}px`;
-    document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
+    if (!this.startingHeight) {
+      this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
+    }
+    document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', `height: ${this.startingHeight}px`);
   }
 
   updateTableHeightAfterDetailToggle() {
     setTimeout(() => {
       this.expandedRows = document.querySelectorAll('.datatable-row-detail').length;
-      if (this.expandedRows === 0) {
-        return this.resetTableToStartingHeight();
-      }
       const newHeight = this.expandedRows * this.getRowDetailHeight() + this.startingHeight;
       const heightStr = `height: ${newHeight}px`;
       document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
-    }, 100);
+    }, 0);
   }
 }

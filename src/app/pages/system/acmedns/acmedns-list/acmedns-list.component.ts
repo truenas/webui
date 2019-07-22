@@ -44,7 +44,9 @@ export class AcmednsListComponent implements OnInit {
 
   getActions(row) {
     return [{
-      id: "edit",
+      id: row.name,
+      icon: 'edit',
+      name: 'edit',
       label: T("Edit"),
       onClick: (row) => {
         this.router.navigate(
@@ -52,7 +54,9 @@ export class AcmednsListComponent implements OnInit {
       }
     },
     {
-      id: "delete",
+      id: row.name,
+      icon: 'delete',
+      name: 'delete',
       label: T("Delete"),
       onClick: (row) => {
         this.entityList.doDelete(row);

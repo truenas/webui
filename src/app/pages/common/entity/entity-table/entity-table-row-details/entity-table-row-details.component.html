@@ -19,6 +19,7 @@
     <ng-container *ngFor="let action of actions">
         <button
             mat-button
+            id="action_button_{{ action?.name }}__{{action.id}}"
             (click)="action.onClick(this.config)"
         >
             <div
