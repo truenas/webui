@@ -165,6 +165,7 @@ export class InterfacesFormComponent implements OnDestroy {
     {
       type: 'list',
       name: 'aliases',
+      width: '100%',
       placeholder: 'Aliases',
       label: 'Aliases',
       templateListField: [
@@ -173,15 +174,16 @@ export class InterfacesFormComponent implements OnDestroy {
             placeholder: helptext.alias_address_placeholder,
             tooltip: helptext.alias_address_tooltip,
             type: 'ipwithnetmask',
-            width: '55%',
+            // width: '55%',
             validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ],
           },
           {
             name: 'failover_address',
             placeholder: helptext.failover_alias_address_placeholder,
             tooltip: helptext.failover_alias_address_tooltip,
-            disabled: true,
-            isHidden: true,
+            disabled: false,
+            isHidden: false,
+            // width: '55%',
             type: 'ipwithnetmask',
             validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ],
 
@@ -190,8 +192,9 @@ export class InterfacesFormComponent implements OnDestroy {
             name: 'failover_virtual_address',
             placeholder: helptext.failover_virtual_alias_address_placeholder,
             tooltip: helptext.failover_virtual_alias_address_tooltip,
-            disabled: true,
-            isHidden: true,
+            disabled: false,
+            isHidden: false,
+            // width: '55%',
             type: 'ipwithnetmask',
             netmaskPreset: 32,
             validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ],
@@ -392,7 +395,7 @@ export class InterfacesFormComponent implements OnDestroy {
     return data;
   }
 
-  async dataHandler(entityForm) {
+  dataHandler(entityForm) {
     const propNames = ['aliases', 'failover_aliases', 'failover_virtual_aliases'];
     const propValues = ['address', 'failover_address', 'failover_virtual_address'];
     if (!entityForm.isNew) {
@@ -404,11 +407,11 @@ export class InterfacesFormComponent implements OnDestroy {
       }
       propNames.forEach((propName) => {
         if (Object.keys(data).includes(propName)) {
-          const aliases_fg = entityForm.formGroup.controls[propName];
-          const aliasList = data[propName];
+          const aliases_fg = entityForm.formGroup.controls['aliases'];
+          const aliasList = data['aliases'];
           for (let i = 0; i < aliasList.length; i++) {
             if (aliases_fg.controls[i] === undefined) {
-              const templateListField = _.cloneDeep(_.find(this.fieldConfig, {'name': propName}).templateListField);
+              let templateListField = _.cloneDeep(_.find(this.fieldConfig, {'name': 'aliases'}).templateListField[propNames.indexOf(propName)]);
               aliases_fg.push(entityForm.entityFormService.createFormGroup(templateListField));
               this.aliases_fc.listFields.push(templateListField);
             }
