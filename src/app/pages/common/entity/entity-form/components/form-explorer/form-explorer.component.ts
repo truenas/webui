@@ -157,7 +157,9 @@ export class FormExplorerComponent implements Field, OnInit {
             res.push(parent.data.name);
           }
         } else if (selectedTreeNodes[i].isAllSelected) {
-          res.push(selectedTreeNodes[i].data.name);
+          if (selectedTreeNodes[i].data.name !== '') {
+            res.push(selectedTreeNodes[i].data.name);
+          }
         }
     }
     this.group.controls[this.config.name].setValue(res);
