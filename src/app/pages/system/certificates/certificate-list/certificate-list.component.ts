@@ -26,7 +26,7 @@ export class CertificateListComponent {
   }
 
   public columns: Array < any > = [
-    { name: helptext_system_certificates.list.column_name, prop: 'name'},
+    { name: helptext_system_certificates.list.column_name, prop: 'name', always_display: true },
     { name: helptext_system_certificates.list.column_issuer, prop: 'issuer'},
     { name: helptext_system_certificates.list.column_distinguished_name, prop: 'DN'},
     { name: helptext_system_certificates.list.column_from, prop: 'from'},

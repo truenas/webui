@@ -22,7 +22,7 @@ export class WebdavListComponent {
     protected route_delete: string[] = [ 'sharing', 'webdav', 'delete'];
 
     public columns: Array<any> = [
-        {prop: 'webdav_name', name: helptext_sharing_webdav.column_name},
+        {prop: 'webdav_name', name: helptext_sharing_webdav.column_name, always_display: true },
         {prop: 'webdav_comment', name: helptext_sharing_webdav.column_comment},
         {prop: 'webdav_path', name:  helptext_sharing_webdav.column_path},
         {prop: 'webdav_ro', name:  helptext_sharing_webdav.column_ro},

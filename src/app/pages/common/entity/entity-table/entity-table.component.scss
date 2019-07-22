@@ -115,4 +115,10 @@
     z-index: 10;
   }
 
+:host {
+    ::ng-deep datatable-row-wrapper {
+        width: auto;
+    }
+}
+
 
