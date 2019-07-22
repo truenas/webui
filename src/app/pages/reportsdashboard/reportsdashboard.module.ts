@@ -8,6 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from '../../appMaterial.module';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 
 
 import { ReportComponent } from './components/report/report.component';
@@ -25,7 +26,8 @@ import {LineChartService} from '../../components/common/lineChart/lineChart.serv
     AppCommonModule,
     TranslateModule,
     EntityModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    CommonDirectivesModule
   ],
   declarations : [
     ReportsDashboardComponent,

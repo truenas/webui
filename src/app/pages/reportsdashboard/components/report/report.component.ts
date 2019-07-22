@@ -6,6 +6,7 @@ import { Subject } from 'rxjs/Subject';
 import { NgForm } from '@angular/forms';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { LineChartComponent } from 'app/components/common/lineChart/lineChart.component';
+import { Report } from '../../reportsdashboard.component';
 
 import { Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
@@ -48,8 +49,14 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   @ViewChild(LineChartComponent, { static: true}) lineChart:LineChartComponent;
 
   // Labels
-  @Input() title:string = T("CPU Usage");
-  @Input() lineChartConfig;
+  @Input() localControls?: boolean; 
+  @Input() report: Report;
+  @Input() identifier?: string;
+  
+  get reportTitle(){
+    return this.identifier ? this.report.title.replace(/{identifier}/, this.identifier) : this.report.title;
+  }
+
   public legendLabels: Subject<any> = new Subject();
   public subtitle:string = T("% of all cores");
   public altTitle: string = '';
@@ -120,7 +127,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     const rrdOptions = this.convertTimespan(zoom.timespan)
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
-    this.lineChart.fetchData(rrdOptions, zoom.timeformat, zoom.culling);
+    //this.lineChart.fetchData(rrdOptions, zoom.timeformat, zoom.culling);
   }
 
   ngOnChanges(changes){

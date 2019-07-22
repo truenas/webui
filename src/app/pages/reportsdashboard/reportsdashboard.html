@@ -1,132 +1,26 @@
-<div> <!-- Is this needed for flex layout? -->
-  <mat-spinner 
-    [diameter]='40' 
-    id="reporting-spinner"
-    *ngIf="showSpinner"
-    >
-  </mat-spinner> 
+<button *ngFor="let tab of allTabs;" mat-button color="primary" (click)="navigateToTab(tab.value)">{{tab.label}}</button>
+<div lazyViewer view=".report .chart-wrapper"> 
     <div id="dashboardcontainerdiv">
 
-      <!-- Tab Navigation -->
-      <!--
-      <nav mat-tab-nav-bar *ngIf="drawTabs && activeTab && tabChartsMappingDataArray.length > 0" (selectChange)="tabSelectChangeHandler($event)">
-        <a mat-tab-link *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray"
-          [active]="isActiveTab(tabChartsMappingDataItem.keyName)"
-          (click)="updateActiveTab(tabChartsMappingDataItem.keyName)">
-            {{ tabChartsMappingDataItem.keyName | translate }} 
-        </a>
-      </nav>
-      -->
+      <!-- Report Cards -->
+      <ng-container *ngFor="let report of activeReports; let counter=index">
 
-  <nav style="background-color:var(--alt-bg1); padding:0 0 0 32px;" fxLayout="row wrap" fxLayoutAlign="space-between center" fxLayoutGap="32px">
-
-      <!-- Layout and Report Builder -->
-      <div class="reports-dash-global-controls" fxFlex fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="32px">
-  <!-- START TAB REPLACEMENT-->
-  <div *ngIf="tabChartsMappingDataArray && tabChartsMappingDataArray.length > 0">
-  <button mat-button [matMenuTriggerFor]="categoryMenu" color="default" class="menu-toggle" style="color:var(--fg2);">
-    <span>{{ activeTab ? activeTab : 'Category'}} <mat-icon class="menu-caret">arrow_drop_down</mat-icon> </span>
-  </button>
-
-  <mat-menu #categoryMenu="matMenu" overlapTrigger="false"> 
-    <div>
-      <button mat-menu-item *ngFor="let cat of tabChartsMappingDataArray" (click)="updateActiveTab(cat.keyName);">
-        <span>{{cat.keyName}}</span>
-      </button>
-    </div>
-  </mat-menu>
-  </div>
-  <!-- END TAB REPLACEMENT -->
-
-
-        
-
-        <!-- Report builder was 632px wide -->
-        <ng-container *ngIf="tabChartsMappingDataSelected && tabChartsMappingDataSelected.keyName == 'Disk'">
-          <!--<entity-form-embedded fxFlex="100" fxFlex.gt-xs="632px" [target]="target" [data]="values" [conf]="this" ></entity-form-embedded>-->
-          <entity-toolbar *ngIf="toolbarConfig.length > 0" fxFlex [target]="target" [conf]="toolbarConfig"></entity-toolbar>
+        <!-- Reports with identifiers -->
+        <ng-container *ngIf="report.identifiers">
+          <div style="display:none">{{report.title}} has identifiers...</div>
+          <ng-container *ngFor="let state of report.isRendered; let i=index">
+            <report *ngIf="report.name !== 'df' || report.name !== 'uptime' || !report.name.startsWith('disk')" [report]="report" [identifier]="report.identifiers[i]"></report>
+          </ng-container>
         </ng-container>
 
-        <!-- SPACER -->
-        <div fxFlex></div>
-      
-        <!-- Layout Switcher -->
-        <!--<div fxFlex="100" fxFlex.gt-xs="116px">
-          <mat-button-toggle-group 
-            #chartWidth="matButtonToggleGroup" *ngIf="tabChartsMappingDataSelected">
-            <mat-button-toggle checked="true" value="800px">
-              <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-view-parallel"></mat-icon>
-            </mat-button-toggle>
-            <mat-button-toggle value="100%">
-              <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-view-sequential"></mat-icon>
-            </mat-button-toggle>
-          </mat-button-toggle-group>
-          </div>-->
+        <!-- Reports without identifiers -->
+        <ng-container *ngIf="!report.identifiers">
+          <report [report]="report"></report>
+        </ng-container>
 
-        <div fxFlex="114px">
-        <button mat-button [matMenuTriggerFor]="layoutMenu" color="default" class="menu-toggle" style="color:var(--fg2);">
-          <span>{{ chartLayout ? chartLayout : 'Layout'}} <mat-icon class="menu-caret">arrow_drop_down</mat-icon> </span>
-        </button>
-      
-        <mat-menu #layoutMenu="matMenu" overlapTrigger="false"> 
-          <div>
-            <button mat-menu-item (click)="setChartLayout('Grid');">
-              <span>Grid</span>
-            </button>
-            <button mat-menu-item (click)="setChartLayout('Column');">
-              <span>Column</span>
-            </button>
-          </div>
-        </mat-menu>
-        </div>
-        
-        <!-- End Layout-Switcher-->
-
-          <!-- Pager -->
-          <!--<div fxFlex="100" fxFlex.gt-xs="420px" *ngIf="tabChartsMappingDataSelected && tabChartsMappingDataSelected.keyName == 'Disk'">-->
-          <div fxFlex="100" fxFlex.gt-xs="420px" *ngIf="tabChartsMappingDataSelected">
-            <!--<div>-->
-            <!--<h4 class="fieldset-label">Pager</h4>-->
-            <mat-paginator #pager 
-              [length]="tabChartsMappingDataSelected && tabChartsMappingDataSelected.keyName == 'Disk' ? filteredData.length :  paginationLength" 
-              [pageSize]="paginationPageSize" 
-              [pageSizeOptions]="paginationPageSizeOptions" 
-              (page)="paginationUpdate($event)">
-            </mat-paginator>
-          </div> <!--End Pager-->
-        </div>
-
-        <!-- Report builder was 632px wide -->
-        <!--<ng-container *ngIf="tabChartsMappingDataSelected && tabChartsMappingDataSelected.keyName == 'Disk'">
-          <entity-form-embedded fxFlex="100" fxFlex.gt-xs="632px" [target]="target" [data]="values" [conf]="this" ></entity-form-embedded>
-          </ng-container>-->
-      
- 
-    </nav>
-
-
-      <!-- Report Cards -->
-      <div *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray;">
-        <div *ngIf="tabChartsMappingDataSelected && tabChartsMappingDataSelected.keyName === tabChartsMappingDataItem.keyName">
-
-          <!-- Cards from Filtered List-->
-          <div fxLayout="row wrap" fxLayoutAlign="space-between start" *ngIf="diskReportConfigReady && tabChartsMappingDataSelected.keyName == 'Disk' && filteredData.length > 0"> 
-            <div  [fxFlex]="chartLayout && chartLayout == 'Column' ? '100%' : '800px'" *ngFor="let chartConfigData of filteredPaginatedData; let i=index;">
-              <report [title]="chartConfigData.title" [lineChartConfig]="chartConfigData"></report>
-            </div>
-          </div>
-          
-          <!-- All Cards unfiltered list -->
-          <div fxLayout="row wrap" fxLayoutAlign="space-around start" *ngIf="tabChartsMappingDataSelected.keyName !== 'Disk'">
-            <div  [fxFlex]="chartLayout && chartLayout == 'Column' ? '100%' : '800px'" *ngFor="let chartConfigData of tabChartsMappingDataSelected.paginatedChartConfigData">
-              <report [title]="chartConfigData.title" [lineChartConfig]="chartConfigData"></report>
-            </div>
-          </div>
-
-        </div>
-      </div>
+      </ng-container>
 
     </div>
-      <div [style.height.px]="30" *ngIf="isFooterConsoleOpen"></div>
+    <div [style.height.px]="30" *ngIf="isFooterConsoleOpen"></div>
 </div>
 
