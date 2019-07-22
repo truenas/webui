@@ -81,7 +81,14 @@ export const helptext_sharing_iscsi = {
 
   portal_form_placeholder_delete: T("Delete"),
 
-  initiator_form_tooltip_connected_initiators: T(''),
+  initiator_form_tooltip_connected_initiators: T(
+	'Initiators currently connected to the system. Shown\
+ in IQN format and IP address. Set initiators and click an\
+ <b>-> (arrow)</b> to add that initiator to either the\
+ <i>Allowed Initiators</i> or <i>Authorized Networks</i>\
+ lists. Clicking <b>Refresh</b> updates the\
+ <i>Connected Initiators</i> list.'
+  ),
 
   initiator_form_placeholder_initiators: T("Allowed Initiators (IQN)"),
   initiator_form_tooltip_initiators: T(
