@@ -4,13 +4,13 @@ import { ActivatedRoute } from '@angular/router';
 
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/task-calendar/replication/replication';
-import { WebSocketService, TaskService, KeychainCredentialService, ReplicationService } from 'app/services';
+import { WebSocketService, TaskService, KeychainCredentialService, ReplicationService, StorageService } from 'app/services';
 import * as _ from 'lodash';
 
 @Component({
     selector: 'app-replication-list',
     template: `<entity-form [conf]='this'></entity-form>`,
-    providers: [TaskService, KeychainCredentialService, ReplicationService]
+    providers: [TaskService, KeychainCredentialService, ReplicationService, StorageService]
 })
 export class ReplicationFormComponent {
 
@@ -590,7 +590,6 @@ export class ReplicationFormComponent {
             }],
         }, {
             type: 'input',
-            inputType: 'number',
             name: 'speed_limit',
             placeholder: helptext.speed_limit_placeholder,
             tooltip: helptext.speed_limit_tooltip,
@@ -706,6 +705,7 @@ export class ReplicationFormComponent {
     constructor(
         private ws: WebSocketService,
         protected taskService: TaskService,
+        protected storageService: StorageService,
         private aroute: ActivatedRoute,
         private keychainCredentialService: KeychainCredentialService,
         private replicationService: ReplicationService) {
@@ -843,6 +843,7 @@ export class ReplicationFormComponent {
     }
 
     beforeSubmit(data) {
+        data['speed_limit'] = this.storageService.convertDataMeasurementStrings(data['speed_limit']);
         if (data['direction'] == 'PUSH') {
             for (let i = 0; i < data['source_datasets_PUSH'].length; i++) {
                 if (_.startsWith(data['source_datasets_PUSH'][i], '/mnt/')) {

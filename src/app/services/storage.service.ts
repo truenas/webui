@@ -240,4 +240,26 @@ export class StorageService {
 
     return path.indexOf('/') < 0;
   }
+
+  // Takes a string with fuzzy units like 20Mib, 20k, 20Gb, returns number in bytes
+  convertDataMeasurementStrings(str: string) {
+    if(!str) { return 0}; // if empty, return the default 0, which is unlimited
+    const values = {b: 1, k:1024, m:Math.pow(1024, 2), g:Math.pow(1024, 3), t: Math.pow(1024, 4)};
+    const letters = str.replace( /[^a-zA-Z]/g, '');
+    const number = parseInt(str.replace(/\D/g,''));
+    let tempArr = [];
+    let multiplier;
+
+    if (letters === '') {
+      multiplier = 1;
+    } else {
+      Object.keys(values).forEach((i) => {
+        if (letters.toLowerCase().charAt(0) === i) {
+            tempArr.push(values[i])
+        }
+     })
+     tempArr.length > 0 ? multiplier = tempArr[0] : multiplier = 'x';
+    }
+    return number * multiplier;
+  }
 }
