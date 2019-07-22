@@ -6,7 +6,7 @@ export default {
 add_key_name_validation: [Validators.required],
 add_key_instructions: T('Adding a recovery key invalidates any previous recovery key.\
  A dialog will open to save a backup of the new recovery key.'),
-add_key_password_placeholder: T('Root password'),
+add_key_password_placeholder: T('Administrator password'),
 add_key_password_tooltip: T('Enter the root password to authorize this operation.'),
 add_key_password_validation: [Validators.required],
 
@@ -42,8 +42,7 @@ createkey_passphrase2_validation: [Validators.required],
 // Rekey form
 rekey_instructions: T('Generate a new GELI key, replacing the old one on the disks in the pool.\
  Passphrases will be removed by this operation. <br>A dialog will open to save a backup of the new recovery key.'),
-rekey_password_label: T('Passphrase'),
-rekey_password_placeholder: T('Root password'),
+rekey_password_placeholder: T('Administrator Password'),
 rekey_password_tooltip: T('Enter the root password to authorize this operation.'),
 rekey_password_validation: [Validators.required]
 }
