@@ -6,7 +6,7 @@ export default {
 add_key_name_validation: [Validators.required],
 add_key_instructions: T('Adding a recovery key invalidates any previous recovery key.\
  A dialog will open to save a backup of the new recovery key.'),
-add_key_password_placeholder: T('Administrator password'),
+add_key_password_placeholder: T('Administrator Password'),
 add_key_password_tooltip: T('Enter the root password to authorize this operation.'),
 add_key_password_validation: [Validators.required],
 
