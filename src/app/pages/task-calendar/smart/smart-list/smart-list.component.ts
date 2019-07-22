@@ -14,7 +14,7 @@ export class SmartListComponent {
   protected wsDelete = "smart.test.delete";
 
   public columns: Array<any> = [
-    { name: helptext.smartlist_column_type, prop: 'type' },
+    { name: helptext.smartlist_column_type, prop: 'type', always_display: true },
     { name: helptext.smartlist_column_description, prop: 'desc' },
     { name: helptext.smartlist_column_schedule, prop: 'schedule' }
   ];
