@@ -42,6 +42,7 @@ export class InterfacesListComponent implements OnDestroy {
 
   public columns: Array<any> = [
     {name : T('Name'), prop : 'name', always_display: true },
+    {name : T('Type'), prop : 'type' },
     {name : T('Link State'), prop : 'link_state'},
     {name : T('DHCP'), prop : 'ipv4_dhcp'},
     {name : T('IPv6 Auto Configure'), prop: 'ipv6_auto'},
@@ -67,7 +68,7 @@ export class InterfacesListComponent implements OnDestroy {
   constructor(private ws: WebSocketService, private router: Router, private networkService: NetworkService,
               private snackBar: MatSnackBar, private dialog: DialogService) {}
 
-  dataHandler(res) {
+  dataHandler(res) { console.log(res)
     const rows = res.rows;
     for (let i=0; i<rows.length; i++) {
       rows[i]['link_state'] = rows[i]['state']['link_state'].replace('LINK_STATE_', '');
