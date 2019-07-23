@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog, MatSnackBar, MatDialogRef } from '@angular/material';
+import { MatDialog, MatSnackBar } from '@angular/material';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import * as _ from 'lodash';
+import { filter, take } from 'rxjs/operators';
 import { DialogService } from '../../../../app/services';
 import { RestService, WebSocketService } from '../../../services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
@@ -10,8 +12,6 @@ import { StorageService } from '../../../services/storage.service';
 import { T } from '../../../translate-marker';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../common/entity/utils';
-import { ConfirmDialog } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
-import { filter, take } from 'rxjs/operators';
 import { JailDeleteDialogComponent } from '../components/jail-delete-dialog/jail-delete-dialog.component';
 
 @Component({
@@ -30,7 +30,7 @@ export class JailListComponent implements OnInit {
   protected queryCall = 'jail.query';
   protected wsDelete = 'jail.delete';
   protected wsMultiDelete = 'core.bulk';
-  public entityList;
+  public entityList: EntityTableComponent;
   protected route_add = ["jails", "add", "wizard"];
   protected route_add_tooltip = "Add Jail";
   public toActivatePool: boolean = false;
@@ -345,12 +345,14 @@ export class JailListComponent implements OnInit {
             .pipe(filter(ok => !!ok))
             .subscribe(() => {
               this.loader.open();
-              console.log({ payload: [jail.host_hostuuid, dialog.componentInstance.data.force] });
               this.ws
                 .call(this.wsDelete, [jail.host_hostuuid, { force: dialog.componentInstance.data.force }])
                 .pipe(take(1))
                 .subscribe(
-                  () => this.loader.close(),
+                  () => {
+                    this.loader.close();
+                    this.entityList.getData()
+                  },
                   error => {
                     new EntityUtils().handleWSError(this, error, this.dialogService);
                     this.loader.close();

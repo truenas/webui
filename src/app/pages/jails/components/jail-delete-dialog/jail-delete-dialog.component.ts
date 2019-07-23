@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import helptext from './../../../../helptext/jails/storage';
 
 @Component({
   selector: 'app-jail-delete-dialog',
@@ -7,7 +8,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 })
 export class JailDeleteDialogComponent {
   public isConfirmed = false;
-  public deleteMessage = 'The jail will be deleted. Are you sure?';
+  public deleteMessage = `Delete jail <b>${this.data.jail.host_hostuuid}</b>?`;
+  public forceTooltip = helptext.jail_force_delete_tooltip;
 
   constructor(
     public dialogRef: MatDialogRef<JailDeleteDialogComponent>,

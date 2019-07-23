@@ -1,8 +1,18 @@
-<h1 mat-dialog-title>{{ ('Delete' | translate) + ' ' + data?.jail?.host_hostuuid }}</h1>
+<h1 mat-dialog-title>{{ 'Delete' | translate }}</h1>
 
-<p>{{ deleteMessage }}</p>
+<p [innerHTML]="deleteMessage"></p>
 
-<mat-checkbox [(ngModel)]="data.force">{{ 'Force deletion' | translate }}</mat-checkbox>
+<div
+    fxLayoutAlign="start center"
+    fxLayoutGap="8px"
+    [style.margin-bottom.px]="16"
+>
+    <mat-checkbox [(ngModel)]="data.force">{{ 'Force deletion' | translate }}</mat-checkbox>
+    <tooltip
+        [message]="forceTooltip"
+        [style.height.px]="19"
+    ></tooltip>
+</div>
 
 <div mat-dialog-actions>
     <mat-checkbox
