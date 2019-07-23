@@ -19,9 +19,22 @@ export class ReportingComponent {
   protected queryCall = 'reporting.config';
   public entityForm: any;
   private settings_saved = T("Settings saved.");
-  public graphAge = [];
-  public graphPoints = [];
   public rrd_checkbox: any;
+  custActions: any[] = [
+    {
+      id:'reset',
+      name:'Reset',
+      function : () => {
+        for (let i in this.entityForm.wsResponse) {
+          if (this.entityForm.formGroup.controls[i]) {
+            this.entityForm.formGroup.controls[i].setValue(this.entityForm.wsResponse[i]);
+          }
+        }
+        _.find(this.fieldConfig, {'name' : 'confirm_rrd_destroy'})['isHidden'] = true;
+        this.entityForm.formGroup.controls['confirm_rrd_destroy'].setValue(false);
+      }
+    }
+  ]
 
   public fieldConfig: FieldConfig[] = [{
     type: 'checkbox',
@@ -69,32 +82,35 @@ export class ReportingComponent {
     this.entityForm = entityEdit;
     this.rrd_checkbox = _.find(this.fieldConfig, {'name' : 'confirm_rrd_destroy'});
     entityEdit.formGroup.controls['graph_age'].valueChanges.subscribe((res) => {
-      this.graphAge.push(res);
-      if (parseInt(res) !== this.graphAge[0]) {
-        this.rrd_checkbox['isHidden'] = false;
-      } else {
+      let graphPointsValue = parseInt(entityEdit.formGroup.controls['graph_points'].value);
+      if (parseInt(res) === entityEdit.wsResponse['graph_age'] 
+        && graphPointsValue === entityEdit.wsResponse['graph_points'] ) {
         this.rrd_checkbox['isHidden'] = true;
+      } else {
+        this.rrd_checkbox['isHidden'] = false;
       }
     });
       entityEdit.formGroup.controls['graph_points'].valueChanges.subscribe((res) => {
-        this.graphPoints.push(res);
-        if (parseInt(res) !== this.graphPoints[0]) {
-          this.rrd_checkbox['isHidden'] = false;
-        } else {
+        let graphAgeValue = parseInt(entityEdit.formGroup.controls['graph_age'].value);
+        if (parseInt(res) === entityEdit.wsResponse['graph_points'] 
+          && graphAgeValue === entityEdit.wsResponse['graph_age']) {
           this.rrd_checkbox['isHidden'] = true;
+        } else {
+          this.rrd_checkbox['isHidden'] = false;
         }
-      });
+      }); 
+  }
+
+  resetForm() {
+    console.log('reset')
   }
 
   public customSubmit(body) {
     this.load.open();
-
     return this.ws.call('reporting.update', [body]).subscribe((res) => {
       this.load.close();
       this.rrd_checkbox['isHidden'] = true;
       this.entityForm.formGroup.controls['confirm_rrd_destroy'].setValue(false)
-      this.graphAge = [parseInt(body.graph_age)];
-      this.graphPoints = [parseInt(body.graph_points)];
       this.snackBar.open(this.settings_saved, T('close'), { duration: 5000 });
     }, (res) => {
       this.load.close();
