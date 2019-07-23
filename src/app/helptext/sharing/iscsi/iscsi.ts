@@ -83,10 +83,10 @@ export const helptext_sharing_iscsi = {
 
   initiator_form_tooltip_connected_initiators: T(
 	'Initiators currently connected to the system. Shown\
- in IQN format and IP address. Set initiators and click an\
- <b>-> (arrow)</b> to add the initiators to either the\
+ in IQN format with an IP address. Set initiators and click an\
+ <b>-></b> (arrow) to add the initiators to either the\
  <i>Allowed Initiators</i> or <i>Authorized Networks</i>\
- lists. Clicking <b>Refresh</b> updates the\
+ lists. Clicking <i>Refresh</i> updates the\
  <i>Connected Initiators</i> list.'
   ),
 
@@ -94,7 +94,7 @@ export const helptext_sharing_iscsi = {
   initiator_form_tooltip_initiators: T(
     'Initiators allowed access to this system. Enter an\
  <a href="https://tools.ietf.org/html/rfc3720#section-3.2.6"\
- target="_blank">iSCSI Qualified Name (IQN)</a> and press <b>+</b> to\
+ target="_blank">iSCSI Qualified Name (IQN)</a> and click <i>+</i> to\
  add it to the list. Example:\
  <i>iqn.1994-09.org.freebsd:freenas.local</i>'
   ),
@@ -102,14 +102,14 @@ export const helptext_sharing_iscsi = {
   initiator_form_placeholder_auth_network: T("Authorized Networks"),
   initiator_form_tooltip_auth_network: T(
     'Network addresses which can use this initiator. Enter a network\
- address with a\
+ address. The address can include an optional\
  <a href="https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing"\
- target="_blank">CIDR</a> mask and press <b>+</b> to add it to the list.\
+ target="_blank">CIDR</a> netmask. Click <i>+</i> to add the network address to the list.\
  Example: <i>192.168.2.0/24</i>.'
   ),
 
   initiator_form_placeholder_comment: T("Comment"),
-  initiator_form_tooltip_comment: T("Optional notes about initiators."),
+  initiator_form_tooltip_comment: T("Any notes about initiators."),
 
   globalconf_placeholder_basename: T("Base Name"),
   globalconf_tooltip_basename: T(
