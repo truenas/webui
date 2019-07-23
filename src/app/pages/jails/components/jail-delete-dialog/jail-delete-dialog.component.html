@@ -7,7 +7,7 @@
     fxLayoutGap="8px"
     [style.margin-bottom.px]="16"
 >
-    <mat-checkbox [(ngModel)]="data.force">{{ 'Force deletion' | translate }}</mat-checkbox>
+    <mat-checkbox [(ngModel)]="data.force">{{ forcePlaceholder }}</mat-checkbox>
     <tooltip
         [message]="forceTooltip"
         [style.height.px]="19"
@@ -23,7 +23,6 @@
     </mat-checkbox>
     <span fxFlex></span>
     <button
-        *ngIf="!hideCancel"
         id="confirm-dialog__cancel-button"
         mat-button
         name="cancel_button"

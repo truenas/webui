@@ -8,7 +8,8 @@ import helptext from './../../../../helptext/jails/storage';
 })
 export class JailDeleteDialogComponent {
   public isConfirmed = false;
-  public deleteMessage = `Delete jail <b>${this.data.jail.host_hostuuid}</b>?`;
+  public deleteMessage = helptext.jail_delete_message + ` <b>${this.data.jail.host_hostuuid}</b>?`;
+  public forcePlaceholder = helptext.jail_force_delete_placeholder;
   public forceTooltip = helptext.jail_force_delete_tooltip;
 
   constructor(

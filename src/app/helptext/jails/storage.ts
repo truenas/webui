@@ -3,7 +3,9 @@ import { T } from '../../translate-marker';
 export default {
 
 jail_placeholder: T('Jail'),
-jail_force_delete_tooltip: T('Force flag placeholder tooltip.'),
+jail_delete_message: T('Delete jail'),
+jail_force_delete_placeholder: T('Force deletion'),
+jail_force_delete_tooltip: T('Destroy the jail even if it is in use.'),
 
 source_placeholder: T('Source'),
 source_tooltip: T('Browse to the directory on the system which will \
