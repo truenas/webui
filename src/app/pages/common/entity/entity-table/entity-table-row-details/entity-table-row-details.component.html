@@ -5,7 +5,28 @@
         fxLayoutGap="16px"
     >
         <h4>{{ column.name }}:</h4>
-        <p>{{ getPropValue(column.prop) }}</p>
+        <div
+            fxLayoutAlign="start center"
+            fxLayoutGap="8px"
+        >
+            <ng-container *ngIf="column?.widget?.component">
+                <mat-icon
+                    [style.cursor]="'pointer'"
+                    [matMenuTriggerFor]="widget"
+                >
+                    {{ column.widget.icon }}
+                </mat-icon>
+                <mat-menu #widget="matMenu">
+                    <div
+                        dynamicComponent
+                        [component]="column.widget.component"
+                        [config]="config"
+                        [parent]="parent"
+                    ></div>
+                </mat-menu>
+            </ng-container>
+            <p>{{ getPropValue(column.prop) }}</p>
+        </div>
     </div>
 </section>
 

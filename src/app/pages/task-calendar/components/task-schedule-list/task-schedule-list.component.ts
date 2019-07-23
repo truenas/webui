@@ -14,7 +14,7 @@ import { TaskService } from 'app/services';
 })
 export class TaskScheduleListComponent implements OnInit {
   private static readonly LIST_LENGTH = 5;
-  @Input() public config: { schedule?: string; cron_schedule: string };
+  @Input() public config: { schedule?: string; cron_schedule?: string; cron?: string; scrub_schedule?: string };
   @Input() public parent: EntityTableComponent & { conf: any };
 
   public futureRuns: string[];
@@ -22,8 +22,11 @@ export class TaskScheduleListComponent implements OnInit {
   constructor(private _taskService: TaskService) {}
 
   public ngOnInit(): void {
+    const scheduleExpression =
+      this.config.cron_schedule || this.config.cron || this.config.scrub_schedule || this.config.schedule;
+
     this.futureRuns = this._taskService
-      .getTaskNextRuns(this.config.cron_schedule || this.config.schedule, TaskScheduleListComponent.LIST_LENGTH)
+      .getTaskNextRuns(scheduleExpression, TaskScheduleListComponent.LIST_LENGTH)
       .map(run => run.toLocaleString());
   }
 }

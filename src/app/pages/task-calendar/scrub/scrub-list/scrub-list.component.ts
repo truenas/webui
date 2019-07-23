@@ -7,6 +7,7 @@ import { RestService } from '../../../../services';
 import { TaskService } from '../../../../services/';
 import * as cronParser from 'cron-parser';
 import { Moment } from 'moment';
+import { TaskScheduleListComponent } from '../../components/task-schedule-list/task-schedule-list.component';
 
 
 @Component({
@@ -27,7 +28,7 @@ export class ScrubListComponent {
     { name: 'Pool', prop: 'scrub_volume' },
     { name: 'Threshold days', prop: 'scrub_threshold' },
     { name: 'Description', prop: 'scrub_description' },
-    { name: 'Schedule', prop: 'scrub_schedule' },
+    { name: 'Schedule', prop: 'scrub_schedule', widget: { icon: 'date_range', component: TaskScheduleListComponent } },
     { name: 'Next Run', prop: 'scrub_next_run' },
     { name: 'Enabled', prop: 'scrub_enabled' },
   ];
