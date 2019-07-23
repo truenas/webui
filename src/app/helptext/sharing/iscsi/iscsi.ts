@@ -101,8 +101,8 @@ export const helptext_sharing_iscsi = {
 
   initiator_form_placeholder_auth_network: T("Authorized Networks"),
   initiator_form_tooltip_auth_network: T(
-    'Network addresses which can use this initiator. Enter a network\
- address. The address can include an optional\
+    'Network addresses which are allowed use this initiator. Each\
+  address can include an optional\
  <a href="https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing"\
  target="_blank">CIDR</a> netmask. Click <i>+</i> to add the network address to the list.\
  Example: <i>192.168.2.0/24</i>.'
