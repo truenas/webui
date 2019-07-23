@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatSnackBar } from '@angular/material';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import * as _ from 'lodash';
 import { filter, take } from 'rxjs/operators';
 import { DialogService } from '../../../../app/services';
@@ -30,7 +29,7 @@ export class JailListComponent implements OnInit {
   protected queryCall = 'jail.query';
   protected wsDelete = 'jail.delete';
   protected wsMultiDelete = 'core.bulk';
-  public entityList: EntityTableComponent;
+  public entityList;
   protected route_add = ["jails", "add", "wizard"];
   protected route_add_tooltip = "Add Jail";
   public toActivatePool: boolean = false;
