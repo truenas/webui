@@ -4,10 +4,10 @@ import { T } from '../../../translate-marker';
 export default {
 // Add key form
 add_key_name_validation: [Validators.required],
-add_key_instructions: T('Adding a recovery key invalidates any previous recovery key.'),
+add_key_instructions: T('Adding a recovery key invalidates any previous recovery key. The new recovery\
+ key will download automatically. Back up this key. No copy of the key is stored by the system.'),
 add_key_password_placeholder: T('Root password'),
-add_key_password_tooltip: T('Enter the root password to authorize this operation. The new recovery\
- key will download automatically.'),
+add_key_password_tooltip: T('Enter the root password to authorize this operation.'),
 add_key_password_validation: [Validators.required],
 
 // Change key form

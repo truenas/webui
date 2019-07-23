@@ -7,7 +7,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 
-import { RestService, WebSocketService, StorageService } from '../../../../services/';
+import { WebSocketService, StorageService } from '../../../../services/';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -66,7 +66,6 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
   constructor(
       protected router: Router,
       protected route: ActivatedRoute,
-      protected rest: RestService,
       protected ws: WebSocketService,
       protected _injector: Injector,
       protected _appRef: ApplicationRef,
