@@ -16,7 +16,6 @@ import { MatSnackBar, MatDialog } from '@angular/material';
 import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../translate-marker';
-import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component';
 import helptext from '../../../../helptext/storage/volumes/volume-key';
 
 @Component({
@@ -76,9 +75,7 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
       protected storage: StorageService,
       protected snackBar: MatSnackBar,
       protected mdDialog: MatDialog
-  ) {
-
-  }
+  ) {}
 
   preInit(entityForm: any) {
     this.route.params.subscribe(params => {
@@ -86,28 +83,15 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
     });
   }
 
-  afterInit(entityForm: any) {
-
-  }
-
-  customSubmit(value) {
-    console.log(this.pk, typeof(this.pk), value.password);
-    let fileName = 'me_geli';
+  customSubmit(value) { 
     this.loader.open();
     this.ws.call('auth.check_user', ['root', value.password]).subscribe(res => {
       if (res) {
-        this.ws.call('core.download', ['pool.recoverykey_add', [parseInt(this.pk)], fileName]).subscribe((res) => {
-        // this.ws.call('pool.recoverykey_add', [parseInt(this.pk), {'admin_password' : value.password}]).subscribe((res) => {
-          console.log(res)
-          window.open(res[1]);
+        this.ws.call('core.download', ['pool.recoverykey_add', [parseInt(this.pk)], 'pool_' + value.name + '_recovery.key']).subscribe((res) => {
           this.loader.close();
           this.snackBar.open(T("Recovery key added to pool ") + value.name, 'close', { duration: 5000 });
-          // let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
-          // dialogRef.componentInstance.volumeId = this.pk;
-          // dialogRef.afterClosed().subscribe(result => {
-            this.router.navigate(new Array('/').concat(
-              this.route_success));
-          // })
+          window.open(res[1]);
+          this.router.navigate(new Array('/').concat(this.route_success));
         }, (res) => {
           this.loader.close();
           this.dialogService.errorReport(T("Error adding recovery key to pool."), res.reason, res.trace.formatted);
@@ -122,5 +106,4 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
       this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
     });
   }
-
 }
