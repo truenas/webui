@@ -22,6 +22,7 @@ export class LazyViewerDirective  implements OnInit{
   }
 
   @HostListener('mouseenter') onMouseEnter() {
+    //console.log(this.el.nativeElement.querySelectorAll(this.view));
   }
  
   @HostListener('mouseleave') onMouseLeave() {

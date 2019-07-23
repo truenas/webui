@@ -45,5 +45,24 @@ ul.ct-legend {
 #dashboardcontainerdiv{
   // Adjustment should really be applied to .rightside-content-hold (margin-top 90px instead of 104px), 
   // but didn't want to risk breaking layouts of other pages so I applied this instead
-  margin-top: -14px; 
+  margin-top: -14px;
+}
+
+.master-container{
+  position:relative;
+}
+
+.reports-navigation,
+.reports-navigation-spacer{
+  width: 250px;
+}
+
+.reports-navigation{
+  position:fixed;
+  top:150;
+  right:0;
+}
+
+.reports-navigation .mat-list-item.onscreen{
+  border-left:solid 3px var(--primary);
 }

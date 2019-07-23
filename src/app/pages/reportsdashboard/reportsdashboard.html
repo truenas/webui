@@ -1,25 +1,40 @@
 <button *ngFor="let tab of allTabs;" mat-button color="primary" (click)="navigateToTab(tab.value)">{{tab.label}}</button>
-<div lazyViewer view=".report .chart-wrapper"> 
-    <div id="dashboardcontainerdiv">
+<div class="master-container" lazyViewer view=".report" fxLayout="row wrap" fxLayoutAlign="space-evenly"> 
+    <div fxFlex="48px" class="position:relative;">
+      <mat-slider style="position:fixed; left:16px; top:160px;" 
+        vertical
+        invert
+        thumbLabel
+        min="0"
+        [max]="activeReports.length"></mat-slider>
+    </div>
+    <div id="dashboardcontainerdiv" fxFlex>
 
       <!-- Report Cards -->
-      <ng-container *ngFor="let report of activeReports; let counter=index">
-
-        <!-- Reports with identifiers -->
-        <ng-container *ngIf="report.identifiers">
-          <div style="display:none">{{report.title}} has identifiers...</div>
-          <ng-container *ngFor="let state of report.isRendered; let i=index">
-            <report *ngIf="report.name !== 'df' || report.name !== 'uptime' || !report.name.startsWith('disk')" [report]="report" [identifier]="report.identifiers[i]"></report>
-          </ng-container>
+      <!--<ng-container *ngFor="let report of activeReports; let counter=index">-->
+      <ng-container *ngFor="let key of visibleReports">
+        <ng-container *ngIf="key < activeReports.length">
+          <!-- Reports without identifiers -->
+          <report *ngIf="activeReports[key].identifiers.length > 0" [report]="activeReports[key]" [identifier]="activeReports[key].identifiers[0]"></report>
+          <report *ngIf="activeReports[key].identifiers.length == 0" [report]="activeReports[key]"></report>
         </ng-container>
-
-        <!-- Reports without identifiers -->
-        <ng-container *ngIf="!report.identifiers">
-          <report [report]="report"></report>
-        </ng-container>
-
       </ng-container>
 
+    </div>
+    <div class="reports-navigation-spacer" fxFlex="250px"></div>
+
+    <div fxFlex="100" class="reports-navigation">
+      <mat-list>
+      <ng-container *ngFor="let report of activeReports; let key=index">
+        <mat-list-item [ngClass]="{'onscreen': getVisibility(key)}">
+          <!--<span>
+            <mat-icon *ngIf="getVisibility(key)" role="img">check_circle</mat-icon>
+            <mat-icon *ngIf="!getVisibility(key)" role="img">close_circle</mat-icon>
+            </span>-->
+          {{report.title}}
+        </mat-list-item>
+      </ng-container>
+      </mat-list>
     </div>
     <div [style.height.px]="30" *ngIf="isFooterConsoleOpen"></div>
 </div>

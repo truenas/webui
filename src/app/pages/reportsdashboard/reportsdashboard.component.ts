@@ -25,7 +25,7 @@ export interface Report {
   name: string;
   title: string;
   vertical_label: string;
-  isRendered: boolean[];
+  isRendered?: boolean[];
 }
 
 interface Tab {
@@ -42,11 +42,16 @@ interface Tab {
 export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleChartConfigDataFunc,*/ AfterViewInit {
 
   public isFooterConsoleOpen;
+
   public diskReports: Report[];
   public otherReports: Report[];
   public activeReports: Report[] = [];
+
   public activeTab: string = "CPU"; // Tabs (lower case only): CPU, Disk, Memory, Network, NFS, Partition?, System, Target, UPS, ZFS
   public allTabs: Tab[] = [];
+
+  public visibleReports:number[] = [];
+  public totalVisibleReports:number = 5;
 
   constructor(private erdService: ErdService, 
     public translate: TranslateService, private router:Router, private core:CoreService, 
@@ -74,6 +79,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
 
   ngOnInit() { 
     this.generateTabs();
+    this.initReportVisbility(this.totalVisibleReports);
 
     this.core.register({observerClass: this, eventName:"CacheConfigData"}).subscribe((evt:CoreEvent) => {
       // Not sure what this does
@@ -101,10 +107,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
         });
 
         this.diskReports = allReports.filter((report) => report.name.startsWith('disk'));
-        console.log(this.diskReports);
 
         this.otherReports = allReports.filter((report) => !report.name.startsWith('disk') /*&& name !== 'df' && report.name !== 'uptime'*/);
-        console.log(this.otherReports);
        
         this.activateTabFromUrl();
 
@@ -123,11 +127,24 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
     //this.setupSubscriptions();
   }
 
+  getVisibility(key){
+    const test = this.visibleReports.indexOf(key);
+    return test == -1 ? false : true;
+  }
+
   generateTabs(){
       let labels = ['CPU', 'Disk', 'Memory', 'Network', 'NFS', 'Partition', 'System', 'Target', 'UPS', 'ZFS'];
       labels.forEach((item) =>{
         this.allTabs.push({label:item, value:item.toLowerCase()});
       })
+  }
+
+  initReportVisbility(total:number){
+    let result = [];
+    for(let i = 0; i < total; i++){
+      result.push(i);
+    }
+    this.visibleReports = result;
   }
 
   activateTabFromUrl (){ 
@@ -136,7 +153,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
       //return tab.path === subpath[1];
       return tab.value === subpath[1];
     });
-    console.warn(tabFound);
     this.updateActiveTab(tabFound);
   }
 
@@ -188,14 +204,13 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
 
   navigateToTab(tabName){
     const link = '/reportsdashboard/' + tabName.toLowerCase();
-    console.log(tabName + " = " + link);
     this.router.navigate([link]);
   }
 
 
   activateTab(name:string){
 
-    this.activeReports = name == 'Disk' ? this.diskReports : this.otherReports.filter((report) => {
+    let reportCategories = name == 'Disk' ? this.diskReports : this.otherReports.filter((report) => {
       // Tabs: CPU, Disk, Memory, Network, NFS, Partition, System, Target, UPS, ZFS
       let condition;
       switch(name){
@@ -232,11 +247,49 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
 
       return condition;
     });
-    console.log(name);
+
+    this.activeReports = this.flattenReports(reportCategories);
+    console.log(this.activeReports);
+    console.log(this.visibleReports);
   }
 
-  fetchReportData(report:Report){
-    this.ws.call('reporting.get_data',[[{"name": report.name}]] ).subscribe((res)=> {
+  flattenReports(list:Report[]){
+    // Based on identifiers, create a single dimensional array of reports to render
+    let result = [];
+    list.forEach((report) => {
+      // Without identifiers
+    
+      // With identifiers
+      if(report.identifiers){
+        report.identifiers.forEach((item,index) => {
+          let r = Object.assign({}, report);
+          r.title = r.title.replace(/{identifier}/, item );
+
+          r.identifiers = [item];
+          if(report.isRendered[index]){
+            r.isRendered = [true];
+            result.push(r);
+          }
+        });
+      } else if(!report.identifiers && report.isRendered[0]) {
+        let r = Object.assign({}, report);
+        r.identifiers = [];
+        result.push(r);
+      }
+    });
+   
+    console.log("FLATTENED!");
+    console.log(list);
+    console.log(result);
+    this.fetchReportData(result[0], result[0].identifiers[0]);
+    return result;
+  }
+
+  fetchReportData(report:Report, identifier?: string){
+    console.warn(identifier);
+    this.ws.call('reporting.get_data',[[
+      {"name": report.name, "identifier":identifier}
+    ]] ).subscribe((res)=> {
       if (res) {
         console.log(res);
       }
