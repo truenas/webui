@@ -23,7 +23,7 @@ export class SMBListComponent {
   private entityList: EntityTableComponent;
 
   public columns: any[] = [
-    {name: helptext_sharing_smb.column_name, prop: 'cifs_name'},
+    {name: helptext_sharing_smb.column_name, prop: 'cifs_name', always_display: true },
     {name: helptext_sharing_smb.column_path, prop: 'cifs_path'},
   ];
   public config: any = {
@@ -48,15 +48,19 @@ export class SMBListComponent {
     this.entityList = entityList;
   }
 
-  getActions(): any[] {
+  getActions(row): any[] {
     return [
       {
-        id: "edit",
+        id: row.cifs_name,
+        icon: 'edit',
+        name: "edit",
         label: "Edit",
         onClick: row => this.entityList.doEdit(row.id)
       },
       {
-        id: "edit_acl",
+        id: row.cifs_name,
+        icon: 'security',
+        name: "edit_acl",
         label: helptext_sharing_smb.action_edit_acl,
         onClick: row => {
           const datasetId = row.cifs_path.replace("/mnt/", "");
@@ -73,7 +77,9 @@ export class SMBListComponent {
         }
       },
       {
-        id: "delete",
+        id: row.cifs_name,
+        icon: 'delete',
+        name: "delete",
         label: "Delete",
         onClick: row => this.entityList.doDelete(row)
       }

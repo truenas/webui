@@ -517,6 +517,9 @@ msgstr ""
 msgid "ATA Security User"
 msgstr "ATA安全用户"
 
+msgid "AUTOSTART"
+msgstr ""
+
 msgid "About"
 msgstr "关于"
 
@@ -608,9 +611,6 @@ msgid "Active Media Subtype"
 msgstr ""
 
 msgid "Active Media Type"
-msgstr ""
-
-msgid "Active storage controller."
 msgstr ""
 
 msgid "Adapter Type"
@@ -715,6 +715,11 @@ msgid ""
 "Added disks are erased, then the pool is extended onto the new disks with "
 "the chosen topology. Existing data on the pool is kept intact."
 msgstr "添加的磁盘被擦除，然后存储池将被扩展到新磁盘使用选择的拓扑。在存储池上的现有数据依旧被保留。"
+
+msgid ""
+"Adding a recovery key invalidates any previous recovery key. A dialog will "
+"open to save a backup of the new recovery key."
+msgstr ""
 
 msgid "Adding data vdevs of different types is not supported."
 msgstr ""
@@ -866,9 +871,6 @@ msgstr "警告服务"
 
 msgid "Alert Settings"
 msgstr "警告设置"
-
-msgid "Aliases"
-msgstr "别名"
 
 msgid "All Disks"
 msgstr ""
@@ -1213,14 +1215,11 @@ msgstr ""
 msgid "Attach NIC"
 msgstr "连接网卡"
 
-msgid "Attach screenshot(s)."
+msgid "Attach screenshots."
 msgstr ""
 
 msgid "Auth Method"
 msgstr "捡到方式"
-
-msgid "Authenticate"
-msgstr ""
 
 msgid "Authentication Group number"
 msgstr "认证组编号"
@@ -1312,11 +1311,11 @@ msgstr "可用磁盘"
 msgid "Available Themes"
 msgstr "可用主题"
 
+msgid "Available memory"
+msgstr ""
+
 msgid "Available space threshold (%)"
 msgstr "可用空间阈值 (%)"
-
-msgid "Average of all cores"
-msgstr "所有核心平均"
 
 msgid "Awesome! Now let's explore FreeNAS's cool features."
 msgstr "Awesome!现在一起来探索Freenas的新特性吧。"
@@ -1562,11 +1561,11 @@ msgstr ""
 msgid "CN Realm"
 msgstr "CN Realm"
 
+msgid "COLLECTION"
+msgstr ""
+
 msgid "CPU"
 msgstr "处理器"
-
-msgid "CPU Temperatures"
-msgstr "处理器温度"
 
 msgid "CPU Usage"
 msgstr "处理器使用量"
@@ -1617,9 +1616,6 @@ msgstr "修改密码短语"
 
 msgid "Change Password"
 msgstr "修改密码"
-
-msgid "Change Pool Passphrase"
-msgstr "修改存储池密码短语"
 
 msgid "Change User & Group Ownership"
 msgstr "变更用户和群组的所有人"
@@ -1687,6 +1683,11 @@ msgstr ""
 "train and boot into it to switch to that train."
 
 msgid ""
+"Changing the passphrase requires the creation of a new recovery key. A "
+"dialog will open to save a backup of the new recovery key."
+msgstr ""
+
+msgid ""
 "Changing to a nightly train is one-way. Changing back to a stable train is "
 "not supported!"
 msgstr "切换到Nightly分支是单向的。改回到稳定分支是不被支持的！"
@@ -1737,9 +1738,9 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Check this to redirect <i>HTTP</i> connections to        <i>HTTPS</i>. "
-"<i>HTTPS</i> must be selected in        <b>Protocol</b>."
-msgstr "选择此选项来重定向<i>HTTP</i>连接到<i>HTTPS</i>。<i>HTTPS</i>必须在<b>协议</b>中被选择。"
+"Check this to redirect <i>HTTP</i> connections to <i>HTTPS</i>. A <i>GUI "
+"SSL Certificate</i> must be selected."
+msgstr ""
 
 msgid "Check-in"
 msgstr ""
@@ -1832,6 +1833,14 @@ msgstr "选择颜色主题"
 
 msgid "Choose a location to store the installer image file."
 msgstr "选择一个位置来保存安装镜像文件。"
+
+msgid ""
+"Choose a path to the user's home directory. If the directory exists and "
+"matches the username, it is set as the user's home directory. When the path "
+"does not end with a subdirectory matching the username, a new subdirectory "
+"is created. The full path to the user's home directory is shown here when "
+"editing a user."
+msgstr ""
 
 msgid "Choose a pool or dataset for jail storage"
 msgstr "选择一个存储池或数据集作为Jail的存储"
@@ -2040,6 +2049,13 @@ msgid "Cipher"
 msgstr ""
 
 msgid ""
+"Classification for each S3 object. Choose a class based on the specific use "
+"case or performance requirements. See <a "
+"href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-class-intro."
+"html\" target=\"_blank\">Amazon S3 Storage Classes</a> for more information."
+msgstr ""
+
+msgid ""
 "Click <b>Browse</b> to select a recovery key to upload. This allows the "
 "system to decrypt the disks."
 msgstr "点击<b>浏览</b>以选择一个恢复密钥来上传。这允许系统解密磁盘。"
@@ -2187,6 +2203,9 @@ msgstr "设置"
 msgid "Config Pool for Jail Manager"
 msgstr ""
 
+msgid "Configure ACL"
+msgstr ""
+
 msgid ""
 "Configure IPv4 networking or internet access for the jail. Enter the IPv4 "
 "address for <a href=\"https://www.freebsd.org/cgi/man.cgi?query=vnet\" "
@@ -2238,6 +2257,12 @@ msgid ""
 "Configure an external program to perform ID mapping. See <a "
 "href=\"http://samba.org.ru/samba/docs/man/manpages/idmap_script.8.html\" "
 "target=\"_blank\">idmap_script(8)</a> for more details."
+msgstr ""
+
+msgid "Configure now"
+msgstr ""
+
+msgid "Configure permissions for this share's dataset now?"
 msgstr ""
 
 msgid "Configure the root user email address."
@@ -2390,9 +2415,6 @@ msgstr "创建密码短语"
 msgid "Create Pool"
 msgstr "创建存储池"
 
-msgid "Create Pool Passphrase"
-msgstr "创建存储池密码短语"
-
 msgid "Create Snapshot"
 msgstr "创建快照"
 
@@ -2437,6 +2459,11 @@ msgstr "创建Jail"
 
 msgid "Creating Jail..."
 msgstr "创建Jail中..."
+
+msgid ""
+"Creating a passphrase requires the creation of a new recovery key. A dialog "
+"will open to save a backup of the new recovery key."
+msgstr ""
 
 msgid ""
 "Creating or editing a <i>sysctl</i> immediately updates the Variable to the "
@@ -2578,11 +2605,6 @@ msgstr ""
 
 msgid "Define a time to start the replication task."
 msgstr "定义一个启动复制任务的时间。"
-
-msgid ""
-"Define an <b>existing</b> pool or dataset as the user home directory and "
-"adjust the permissions."
-msgstr "定义一个<b>现有</b>的存储池或数据集用于用户Home目录和修改权限。"
 
 msgid ""
 "Define an <i>IP address or hostname:optional_port_number</i> to send logs. "
@@ -2772,9 +2794,6 @@ msgstr "VLAN描述"
 msgid "Description of the lagg interface."
 msgstr "链路聚合接口描述"
 
-msgid "Description:"
-msgstr "描述:"
-
 msgid "Destination"
 msgstr "目标"
 
@@ -2943,9 +2962,6 @@ msgstr "擦除磁盘。"
 msgid "Disks"
 msgstr "磁盘"
 
-msgid "Disks in Use"
-msgstr "使用中的磁盘"
-
 msgid "Dismiss"
 msgstr ""
 
@@ -3060,12 +3076,14 @@ msgid "Editing the following disks:"
 msgstr "修改以下磁盘："
 
 msgid ""
+"Editing top-level datasets can prevent users from accessing data in child "
+"datasets."
+msgstr ""
+
+msgid ""
 "Either single bandwidth limit or bandwidth limit schedule in rclone "
 "format.<br /> Example: \"08:00,512 12:00,10MB 13:00,512 18:00,30MB "
 "23:00,off\".<br /> Default unit is kilobytes."
-msgstr ""
-
-msgid "Electing storage controller."
 msgstr ""
 
 msgid "Email"
@@ -3172,9 +3190,6 @@ msgid ""
 msgstr ""
 
 msgid "Enable running services that require mlock() in a jail."
-msgstr ""
-
-msgid "Enable sending anonymous crash reports to iXsystems"
 msgstr ""
 
 msgid "Enable sending anonymous usage statistics to iXsystems"
@@ -3598,9 +3613,6 @@ msgstr "输入IPv4地址。覆盖DHCP分配的默认网关"
 msgid "Enter an IPv6 address. This overrides the default gateway provided by DHCP."
 msgstr "输入IPv6地址。覆盖DHCP分配的默认网关"
 
-msgid "Enter an alias. Limited to 15 characters."
-msgstr "输入一个别名。限制15个字符。"
-
 msgid ""
 "Enter an alphanumeric name for the certificate. Underscore (_), and dash "
 "(-) characters are allowed."
@@ -3631,6 +3643,11 @@ msgid ""
 "Enter any additional parameters from <a "
 "href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\" "
 "target=\"_blank\">rsyncd.conf(5)</a>."
+msgstr ""
+
+msgid ""
+"Enter any aliases, separated by spaces. Each alias can be up to 15 "
+"characters long."
 msgstr ""
 
 msgid ""
@@ -4081,15 +4098,6 @@ msgstr "更新磁盘错误。"
 msgid "Error: "
 msgstr "错误： "
 
-msgid "Error: Displaying local fetched releases failed."
-msgstr "错误： Displaying local fetched releases failed."
-
-msgid "Error: Displaying templates failed."
-msgstr ""
-
-msgid "Error: Fetching remote release choices failed."
-msgstr ""
-
 msgid "Estimated data capacity available after extension."
 msgstr ""
 
@@ -4343,6 +4351,12 @@ msgid "Generate Keypair"
 msgstr ""
 
 msgid ""
+"Generate a new GELI key, replacing the old one on the disks in the pool. "
+"Passphrases will be removed by this operation. <br>A dialog will open to "
+"save a backup of the new recovery key."
+msgstr ""
+
+msgid ""
 "Give this user permission to use <a href=\"https://www.sudo.ws/\" "
 "target=\"_blank\">sudo</a>."
 msgstr ""
@@ -4519,9 +4533,6 @@ msgstr "主机名"
 
 msgid "Hostname"
 msgstr "主机名"
-
-msgid "Hostname (Storage Controller 2)"
-msgstr ""
 
 msgid "Hostname (Virtual)"
 msgstr ""
@@ -4915,7 +4926,16 @@ msgstr "Jail核心转储大小(bytes)。"
 msgid "Jail data size in bytes."
 msgstr ""
 
+msgid "Jail restarted successfully"
+msgstr ""
+
 msgid "Jail stack size in bytes."
+msgstr ""
+
+msgid "Jail started successfully"
+msgstr ""
+
+msgid "Jail stopped successfully"
 msgstr ""
 
 msgid "Jails"
@@ -5018,6 +5038,9 @@ msgstr ""
 msgid "LEGACY WEB INTERFACE"
 msgstr "经典用户界面"
 
+msgid "LOGIN TO PROVIDER"
+msgstr ""
+
 msgid "LUN ID"
 msgstr "LUN ID"
 
@@ -5084,11 +5107,11 @@ msgstr ""
 msgid "Lifetime"
 msgstr "有效期(天)"
 
-msgid "Limit (kbps)"
+msgid "Limit (KiB/s)"
 msgstr ""
 
 msgid ""
-"Limit replication speed to the specified value in kilobits/second. The "
+"Limit replication speed to the specified value in kilobytes/second. The "
 "default 0 is unlimited."
 msgstr ""
 
@@ -5097,9 +5120,6 @@ msgstr ""
 
 msgid "List of system services to restart when the pool is unlocked."
 msgstr ""
-
-msgid "Load Average"
-msgstr "平均负载"
 
 msgid "Local"
 msgstr ""
@@ -5331,9 +5351,6 @@ msgstr "内存"
 msgid "Memory Size (MiB)"
 msgstr "内存大小(MiB)"
 
-msgid "Memory Usage"
-msgstr "内存使用量"
-
 msgid ""
 "Memory overcommitment allows multiple VMs to be launched when there is not "
 "enough free memory for configured RAM of all VMs. Use with caution."
@@ -5507,9 +5524,6 @@ msgstr ""
 msgid "Name Jail and Choose FreeBSD Release"
 msgstr ""
 
-msgid "Name Servers"
-msgstr "域名服务器"
-
 msgid "Name and Naming Schema cannot be provided at the same time."
 msgstr ""
 
@@ -5567,9 +5581,6 @@ msgstr "NetBIOS 别名"
 
 msgid "Netbios Name"
 msgstr "NetBIOS 名称"
-
-msgid "Netbios Name (Storage Controller 2)"
-msgstr ""
 
 msgid ""
 "Netbios Name of this NAS. This name must differ from the <i>Workgroup</i> "
@@ -5815,9 +5826,6 @@ msgstr ""
 msgid "OK"
 msgstr "是"
 
-msgid "OS Version"
-msgstr "系统版本"
-
 msgid ""
 "Off by default. When set, <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=smbd\" "
@@ -5955,15 +5963,6 @@ msgstr ""
 msgid "Organizational unit of the entity."
 msgstr ""
 
-msgid "Other storage controller cannot be reached."
-msgstr ""
-
-msgid "Other storage controller has no license."
-msgstr ""
-
-msgid "Other storage controller has not finished booting."
-msgstr ""
-
 msgid "Outgoing Mail Server"
 msgstr ""
 
@@ -5973,14 +5972,14 @@ msgstr ""
 msgid "Owner of the jail. Can be any string."
 msgstr ""
 
+msgid "PLUGIN"
+msgstr ""
+
 msgid "Parent Interface"
 msgstr "父接口"
 
 msgid "Partition"
 msgstr "分区"
-
-msgid "Passive storage controller."
-msgstr ""
 
 msgid "Passphrase"
 msgstr "密码短语"
@@ -6083,6 +6082,9 @@ msgstr ""
 
 msgid "Physical interface of the selected member."
 msgstr "选择成员的物理接口。"
+
+msgid "Platform"
+msgstr ""
 
 msgid "Please accept terms of service for the given ACME Server."
 msgstr ""
@@ -6247,9 +6249,6 @@ msgstr "主要DNS服务器"
 msgid "Primary Group"
 msgstr "主用户组"
 
-msgid "Primary NIC"
-msgstr "主要网卡"
-
 msgid "Priority Code Point"
 msgstr ""
 
@@ -6263,6 +6262,13 @@ msgid "Private Key"
 msgstr "私钥"
 
 msgid "Private Key ID"
+msgstr ""
+
+msgid ""
+"Privileges are the same as the guest account. Guest access is disabled by "
+"default in Windows 10 version 1709 and Windows Server version 1903. "
+"Additional client-side configuration is required to provide guest access to "
+"these clients."
 msgstr ""
 
 msgid "Proactive Support"
@@ -6283,9 +6289,6 @@ msgid ""
 msgstr ""
 "继续并升级存储池？警告: Upgrading a pool is a one-way operation that might make some "
 "features of the pool incompatible with older versions of FreeNAS: "
-
-msgid "Processor"
-msgstr "处理器"
 
 msgid "Promote Dataset"
 msgstr ""
@@ -6333,10 +6336,13 @@ msgstr ""
 msgid "REGISTER"
 msgstr ""
 
+msgid "RELEASE"
+msgstr ""
+
 msgid "RESTART"
 msgstr ""
 
-msgid "RRDTool load5"
+msgid "REVISION"
 msgstr ""
 
 msgid "Raid-z"
@@ -6366,9 +6372,6 @@ msgstr "原始文件大小"
 msgid "Re-key Pool"
 msgstr ""
 
-msgid "Re-keyed Pool"
-msgstr ""
-
 msgid "Read Only"
 msgstr "只读"
 
@@ -6389,12 +6392,6 @@ msgstr "Realm"
 
 msgid "Reboot After Update"
 msgstr "更新后重启"
-
-msgid "Reboot Standby Storage Controller"
-msgstr ""
-
-msgid "Reboot current storage controller?"
-msgstr ""
 
 msgid "Rebuild Directory Service Cache"
 msgstr "重建目录服务缓存"
@@ -6628,6 +6625,12 @@ msgstr "重启网络服务"
 msgid "Restart the system?"
 msgstr "重启系统？"
 
+msgid "Restarting"
+msgstr ""
+
+msgid "Restarting Jail"
+msgstr ""
+
 msgid "Restore default"
 msgstr "重置为默认"
 
@@ -6699,12 +6702,6 @@ msgstr "现在运行这个计划任务？"
 
 msgid "Run this rsync now?"
 msgstr "现在运行这个Rsync？"
-
-msgid "S.M.A.R.T. Enabled"
-msgstr "S.M.A.R.T. 启用"
-
-msgid "S.M.A.R.T. Options"
-msgstr "S.M.A.R.T. 选项"
 
 msgid "S.M.A.R.T. Tests"
 msgstr "S.M.A.R.T. 测试"
@@ -7358,6 +7355,12 @@ msgstr "发送测试警报"
 msgid "Send Test Mail"
 msgstr ""
 
+msgid ""
+"Send failed HTTP request data which can include client and server IP "
+"addresses, failed method call tracebacks, and middleware log file contents "
+"to iXsystems."
+msgstr ""
+
 msgid "Serial"
 msgstr "序列号"
 
@@ -7434,12 +7437,6 @@ msgstr ""
 msgid ""
 "Set for the default configuration to listen on all interfaces using the "
 "known values of user: <i>upsmon</i> and password: <i>fixmepass</i>."
-msgstr ""
-
-msgid ""
-"Set for the initiator to discover paths to both storage controllers on the "
-"target and increase storage traffic efficiency. Requires ALUA-capable, High "
-"Availability (HA) hardware."
 msgstr ""
 
 msgid "Set for ypbind to bind to the server that responds the fastest."
@@ -7553,12 +7550,6 @@ msgid ""
 "Set to allow access to other protocol stacks beyond IPv4, IPv6, local "
 "(UNIX), and route.<br> <b>Warning:</b> jail functionality does not exist "
 "for all protocol stacks."
-msgstr ""
-
-msgid ""
-"Set to allow access to this share without a password. See the <a "
-"href=\"--docurl--/services.html#smb\" target=\"_blank\">SMB</a> service "
-"documentation for more information about guest user permissions."
 msgstr ""
 
 msgid ""
@@ -8307,11 +8298,11 @@ msgid "Snapshot directory"
 msgstr "快照目录"
 
 msgid ""
-"Snapshot name format string. The default is <i>snap-%Y-%m-%d-%H-%M</i>. "
-"Must include the strings <i>%Y</i>, <i>%m</i>, <i>%d</i>, <i>%H</i>, and "
-"<i>%M</i>, which are replaced with the four-digit year, month, day of "
-"month, hour, and minute as defined in <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=strftime\" "
+"Snapshot name format string. The default is <i><textarea "
+"disabled>snap-%Y-%m-%d-%H-%M</textarea></i>. Must include the strings "
+"<i>%Y</i>, <i>%m</i>, <i>%d</i>, <i>%H</i>, and <i>%M</i>, which are "
+"replaced with the four-digit year, month, day of month, hour, and minute as "
+"defined in <a href=\"https://www.freebsd.org/cgi/man.cgi?query=strftime\" "
 "target=\"_blank\">strftime(3)</a>. A string showing the snapshot lifetime "
 "is appended to the name. For example, snapshots of <i>pool1</i> with a "
 "Naming Schema of <i>customsnap-%Y%m%d.%H%M</i> and lifetime of two weeks "
@@ -8430,6 +8421,12 @@ msgid ""
 "task completes."
 msgstr ""
 
+msgid "Starting"
+msgstr ""
+
+msgid "Starting Jail"
+msgstr ""
+
 msgid "Starting job..."
 msgstr "开始任务..."
 
@@ -8459,6 +8456,12 @@ msgstr ""
 
 msgid "Stopped the scrub on pool <i>"
 msgstr "已停止数据校验在存储池<i>"
+
+msgid "Stopping"
+msgstr ""
+
+msgid "Stopping Jail"
+msgstr ""
 
 msgid "Stopping scrub on pool <i>"
 msgstr "正在停止数据校验在存储池 <i>"
@@ -8493,8 +8496,8 @@ msgid "Stripe"
 msgstr ""
 
 msgid ""
-"Stripping ACLs will reset the permissions of this dataset. This may make "
-"data inaccessible."
+"Stripping the ACL resets dataset permissions. This can make data "
+"inaccessible until new permissions are created."
 msgstr ""
 
 msgid "Subject"
@@ -8607,9 +8610,6 @@ msgstr "系统数据集池"
 msgid "System Info"
 msgstr "系统信息"
 
-msgid "System Load"
-msgstr "系统负载"
-
 msgid "System Processes"
 msgstr "系统进程"
 
@@ -8720,9 +8720,6 @@ msgstr ""
 
 msgid "Temp tooltip"
 msgstr ""
-
-msgid "Temperature"
-msgstr "温度"
 
 msgid "Terms of Service"
 msgstr ""
@@ -8928,13 +8925,15 @@ msgid ""
 "device.<br /> <br />"
 msgstr ""
 
+msgid ""
+"The sharing configuration will be removed. Data in the share dataset will "
+"not be affected."
+msgstr ""
+
 msgid "The specified permissions of that group are used by all clients."
 msgstr ""
 
 msgid "The specified permissions of that user are used by all clients."
-msgstr ""
-
-msgid "The storage controllers do not have the same quantity of disks."
 msgstr ""
 
 msgid ""
@@ -9041,6 +9040,9 @@ msgid "Time Machine Quota"
 msgstr "时间机器 Quota"
 
 msgid "Time remaining until changes reverted:"
+msgstr ""
+
+msgid "TimeZone"
 msgstr ""
 
 msgid "Timeout"
@@ -9159,6 +9161,9 @@ msgid ""
 "Unset to require key-based authentication for all users. This requires <a "
 "href=\"http://the.earth.li/%7Esgtatham/putty/0.55/htmldoc/Chapter8.html\" "
 "target=\"_blank\">additional setup</a> on both the SSH client and server."
+msgstr ""
+
+msgid "Unshare"
 msgstr ""
 
 msgid "Until"
@@ -9407,6 +9412,9 @@ msgstr "用户"
 msgid "Users & Groups"
 msgstr "用户与群组"
 
+msgid "VERSION"
+msgstr ""
+
 msgid "VFS Objects"
 msgstr "VFS 对像"
 
@@ -9468,6 +9476,9 @@ msgstr ""
 
 msgid "Verify passphrase"
 msgstr "确认密码"
+
+msgid "Version"
+msgstr ""
 
 msgid "View"
 msgstr "查看"
@@ -9684,9 +9695,6 @@ msgstr "ZFS复制"
 
 msgid "ZFS Filesystem"
 msgstr "ZFS文件系统"
-
-msgid "ZFS Pool"
-msgstr "ZFS存储池"
 
 msgid "ZFS deduplication"
 msgstr "ZFS复制"

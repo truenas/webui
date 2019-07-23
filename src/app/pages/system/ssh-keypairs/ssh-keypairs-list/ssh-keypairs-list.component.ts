@@ -20,7 +20,7 @@ export class SshKeypairsListComponent {
     protected entityList: any;
 
     public columns: Array<any> = [
-        { name: 'Name', prop: 'name' },
+        { name: 'Name', prop: 'name', always_display: true },
     ];
     public config: any = {
         paging: true,

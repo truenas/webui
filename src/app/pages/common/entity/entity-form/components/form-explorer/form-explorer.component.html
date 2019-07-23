@@ -1,7 +1,7 @@
 <div id="{{config.name}}" class="dynamic-field form-explorer" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
     <div class="form-ex-flex-container" id="form-ex-flex-container">
         <div id="box1">
-            <button mat-icon-button aria-label="Toggle Tree" (click)="toggleTree()" [disabled]="config.disabled">
+            <button mat-icon-button aria-label="Toggle Tree" type="button"(click)="toggleTree()" [disabled]="config.disabled">
                 <mat-icon class="explorer-folder">folder</mat-icon>
             </button>
         </div>
@@ -28,7 +28,7 @@
             </ng-template>
         </tree-root>
     </div>
-    
+
     <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
     <mat-error *ngIf="config.warnings">{{config.warnings | translate}}</mat-error>
 </div>

@@ -129,25 +129,31 @@ export class DiskListComponent {
 	}
 
 	getActions(parentRow) {
-   	const actions = [{
-      label: T("Edit"),
-      onClick: (row) => {
-        this.router.navigate(new Array('/').concat([
-          "storage", "disks", "edit", row.identifier
-        ]));
-      }
-    }];
+		const actions = [{
+			id: parentRow.name,
+			icon: 'edit',
+			name: 'edit',
+			label: T("Edit"),
+			onClick: (row) => {
+				this.router.navigate(new Array('/').concat([
+				"storage", "disks", "edit", row.identifier
+				]));
+			}
+		}];
 		if (_.find(this.unused, {"name": parentRow.name})) {
-	   	actions.push({
-	   		label: T("Wipe"),
-	       onClick: (row) => {
-	        this.router.navigate(new Array('/').concat([
-	          "storage", "disks", "wipe", row.name
-	        ]));
-	      }
-	  	})
-	  }
-    return actions;
+			actions.push({
+				id: parentRow.name,
+				icon: 'delete_sweep',
+				name: 'wipe',
+				label: T("Wipe"),
+				onClick: (row) => {
+					this.router.navigate(new Array('/').concat([
+					"storage", "disks", "wipe", row.name
+					]));
+				}
+			})
+		}
+		return actions;
   }
 
 	dataHandler(entityList: any) {

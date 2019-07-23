@@ -1,30 +1,34 @@
-<div class="entity-table-expanded-panel">
-    <section class="info">
-        <div fxLayout="row" *ngIf="direction == 'horizontal'">
-            <div *ngFor="let column of this.columns; let i = index">
-                <div *ngIf="column.isHidden == undefined ? true : !column.isHidden" class="layout-gap">
-                    <h6><strong>{{ column.name }}</strong></h6>
-                    {{ getPropValue(column.prop) }}
-                </div>
+<section class="wrapper__details">
+    <div
+        *ngFor="let column of this.columns"
+        fxLayoutAlign="start center"
+        fxLayoutGap="16px"
+    >
+        <h4>{{ column.name }}:</h4>
+        <p>{{ getPropValue(column.prop) }}</p>
+    </div>
+</section>
+
+<mat-divider></mat-divider>
+
+<div
+    fxLayoutAlign="start center"
+    fxLayoutGap="8px"
+    class="wrapper__action-buttons"
+>
+    <ng-container *ngFor="let action of actions">
+        <button
+            mat-button
+            id="action_button_{{ action?.name }}__{{action.id}}"
+            (click)="action.onClick(this.config)"
+        >
+            <div
+                fxLayoutAlign="center center"
+                fxLayoutGap="8px"
+            >
+                <mat-icon>{{ action.icon }}</mat-icon>
+                <p>{{ action.label }}</p>
             </div>
-        </div>
-        <div fxLayout="column" *ngIf="direction == 'vertical'">
-            <div *ngFor="let column of this.columns; let i = index">
-                <div *ngIf="column.isHidden == undefined ? true : !column.isHidden">
-                    <strong>{{ column.name }}:</strong>
-                    {{ getPropValue(column.prop) }}
-                </div>
-            </div>
-        </div>
-    </section>
-    <mat-divider *ngIf="showActions"></mat-divider>
-    <section class="action-buttons" fxLayout="row" *ngIf="showActions">
-        <div *ngFor="let action of actions">
-            <button *ngIf="action.visible" mat-menu-item (click)="action.onClick(config)"
-                id="plugins_{{action.name}}_{{action.id}}" class="row-details-action-button" fxFlex>
-                <mat-icon *ngIf="action.icon">{{action.icon}}</mat-icon>
-                <span>{{action.label | translate}}</span>
-            </button>
-        </div>
-    </section>
+        </button>
+    </ng-container>
 </div>

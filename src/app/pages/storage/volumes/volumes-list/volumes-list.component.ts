@@ -64,15 +64,15 @@ export class VolumesListTableConfig implements InputTableConf {
   public resource_name = 'storage/volume';
   public tableData: TreeNode[] = [];
   public columns: Array < any > = [
-    { name: 'Name', prop: 'name', },
+    { name: 'Name', prop: 'name', always_display: true  },
     { name: 'Type', prop: 'type', },
     { name: 'Used', prop: 'used', filesizePipe: true},
     { name: 'Available', prop: 'avail', filesizePipe: true},
-    { name: 'Compression', prop: 'compression', },
-    { name: 'Compression Ratio', prop: 'compressratio', },
+    { name: 'Compression', prop: 'compression', hidden: true },
+    { name: 'Compression Ratio', prop: 'compressratio', hidden: true },
     { name: 'Readonly', prop: 'readonly', },
-    { name: 'Dedup', prop: 'dedup', },
-    { name: 'Comments', prop: 'comments', },
+    { name: 'Dedup', prop: 'dedup', hidden: true },
+    { name: 'Comments', prop: 'comments', hidden: true }
   ];
 
   public config: any = {
@@ -89,7 +89,6 @@ export class VolumesListTableConfig implements InputTableConf {
   public encryptedStatus: any;
   public custActions: Array<any> = [];
   private vmware_res_status: boolean;
-  private recursiveIsChecked: boolean = false;
   public dialogConf: DialogFormConfiguration;
 
   constructor(
