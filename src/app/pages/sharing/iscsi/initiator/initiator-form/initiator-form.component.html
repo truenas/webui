@@ -1,0 +1,45 @@
+<mat-card>
+    <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup">
+        <div class="form-wrap">
+            <div [ngClass]="'form-line'" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)">
+                <div id="dynamicField_allow_all_initiators" dynamicField [config]="fieldConfig[0]" [group]="formGroup"
+                    [fieldShow]="'show'"></div>
+            </div>
+            <div fxFlex="100%" fxFlex.gt-xs="calc(50% - 16px)" class="connected-initiators-container form-inline has-tooltip"
+                [ngClass]="connectedInitiatorsDisabled ? 'disabled' : ''">
+                <label>{{'Connected Initiators' | translate}}</label>
+                <tooltip [message]="connectedInitiatorsTooltip"></tooltip>
+                <mat-selection-list class="connected-initiators-list" #connectedInitiatorsList
+                    [disabled]="connectedInitiatorsDisabled">
+                    <mat-list-option *ngFor="let initiator of connectedInitiators" [value]="initiator">
+                        {{initiator['initiator']}} ({{initiator['initiator_addr']}})
+                    </mat-list-option>
+                </mat-selection-list>
+                <div fxLayoutAlign="end center">
+                    <button mat-flat-button color="primary" type="button" (click)="getConnectedInitiators()"
+                        [disabled]="connectedInitiatorsDisabled">
+                        <mat-icon>refresh</mat-icon> {{'REFRESH'}}
+                    </button>
+                </div>
+            </div>
+
+            <div [ngClass]="'form-inline'" fxFlex="100%" fxFlex.gt-xs="calc(50% - 16px)">
+                <app-dynamic-list [config]="fieldConfig[1]" [group]="formGroup" [source]="connectedInitiatorsList">
+                </app-dynamic-list>
+                <app-dynamic-list [config]="fieldConfig[2]" [group]="formGroup" [source]="connectedInitiatorsList">
+                </app-dynamic-list>
+            </div>
+            <div [ngClass]="'form-line'" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)">
+                <div id="dynamicField_comment" dynamicField [config]="fieldConfig[3]" [group]="formGroup"
+                    [fieldShow]="'show'"></div>
+            </div>
+        </div>
+        <mat-card-actions>
+            <button class="btn btn-block btn-warning" type="submit" mat-button color="primary"
+                [disabled]="!formGroup.valid">{{ "Save" | translate }} </button>
+            <button *ngIf="route_success" (click)="goBack()" type="button" mat-button
+                color="accent">{{ "Cancel" | translate }}</button>
+        </mat-card-actions>
+        <mat-error *ngIf="error" type="danger" id="error_message"><div [innerHTML]="error"></div></mat-error>
+    </form>
+</mat-card>

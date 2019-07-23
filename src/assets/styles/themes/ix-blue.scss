@@ -887,8 +887,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-primary .mat-pseudo-checkbox-checked, .mat-primary .mat-pseudo-checkbox-indeterminate {
     @include variable(background, --accent, $accent !important);
   }
-
-  .mat-pseudo-checkbox{
+  // for multi-selection only
+  .mat-option-pseudo-checkbox.mat-pseudo-checkbox{
     display:none ;
   }
 
