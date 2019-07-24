@@ -144,7 +144,7 @@ def pool_detach(wb_driver, name, scriptname, testname):
     # Wait for xpath to be available
     wait_on_element(wb_driver, pool_xpath, scriptname, testname)
     wb_driver.find_element_by_xpath(pool_xpath).click()
-    xpath = xpaths['poolDetach'] + name + "']/span"
+    xpath = "//button[@id='action_button___']/span"
     wb_driver.find_element_by_xpath(xpath).click()
     wb_driver.find_element_by_xpath(xpaths['pooldestroyCheckbox']).click()
     wb_driver.find_element_by_xpath(xpaths['poolconfirmCheckbox']).click()
