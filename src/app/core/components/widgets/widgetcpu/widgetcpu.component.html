@@ -9,15 +9,28 @@
             <mat-icon>settings</mat-icon>
             </button>
             </ng-template>-->
-            <!--<button mat-button color="primary" class="" (click)="router.navigate(['reportsdashboard/cpu'])">CPU REPORTS</button>-->
+            <div class="controls">
+              <button mat-icon-button class="" (click)="router.navigate(['reportsdashboard/cpu'])">
+                <mat-icon role="img"
+                  matTooltip="CPU Reports"
+                  matTooltipPosition="above"
+                  aria-label="CPU Reports">
+                    insert_chart
+                </mat-icon>
+              </button>
+            </div>
         </mat-toolbar-row>
+        <div class="cpu-model">{{cpuModel ? cpuModel : 'gathering info...'}}</div>
         <!--<viewchartline fxFlex="100" fxFlexAlign="end" #chartCpu width="600" height="160" [style.display]="isFlipped ? 'none': 'block'"></viewchartline>-->
         <!-- Chart -->
         <div id="cpu-load-wrapper" fxLayout="row wrap" fxLayoutAlign="space-around center">
           <h3 fxFlex="33" id="cpu-load-label">LOAD</h3>
           <!--<div *ngIf="cpuAvg && cpuAvg.data" id="cpu-load-value">{{cpuAvg.data[1]}}%</div>-->
           <viewchartgauge fxFlex="34" *ngIf="cpuAvg && cpuAvg.data" [config]="cpuAvg" #load class=""></viewchartgauge>
-          <h4 fxFlex="33" id="cpu-load-cores">{{coreCount}} Cores</h4>
+          <div fxFlex="33" id="cpu-load-cores">
+            <h3 class="core-count">{{coreCount}}</h3>
+            <h4 class="core-count-label">Threads</h4>
+          </div>
         </div>
 
 
@@ -26,21 +39,32 @@
             
             <div fxFlex="100" id="cpu-load-cores-legend" fxLayout="row wrap">
               <div *ngIf="legendData; else noLegend" id="cpu-load-cores-legend-values" fxFlex fxLayout="row" fxLayoutAlign="space-around center">
-                <div fxFlex="26" class="legend-item core-number"><span class="label">Core number:</span> {{legendData[0].index}}</div>
+
+                <div fxFlex="26" class="legend-item core-number"><span class="label">Thread number:</span> {{legendData[0].index}}</div>
                 <div fxFlex="26" class="legend-item usage">
                   <div class="legend-swatch" style="background-color:var(--primary);"></div><span class="label">{{legendData[0].name}}:</span> {{legendData[0].value}}%
                 </div>
                 <div fxFlex="26" *ngIf="legendData[1]" class="legend-item temperature">
                   <div class="legend-swatch" style="background-color: var(--accent)"></div><span class="label">{{legendData[1].name}}:</span> {{legendData[1].value}}°C
                 </div>
+              
               </div>
             </div>
 
             <ng-template #noLegend>
               <div id="cpu-load-cores-legend-values" fxFlex fxLayout="row" fxLayoutAlign="space-around center">
-                <div fxFlex="100" class="legend-item chart-label">
-                  <span class="label">CPU Usage/Temperature per Core</span>
+
+                <div fxFlex="26" class="legend-item core-number"><span class="label">Stats Per Thread</span></div>
+                <div fxFlex="26" class="legend-item usage">
+                  <div class="legend-swatch" style="background-color:var(--primary);"></div><span class="label">Usage:</span> 
                 </div>
+                <div fxFlex="26" class="legend-item temperature">
+                  <div class="legend-swatch" style="background-color: var(--accent)"></div><span class="label">Temperature:</span> 
+                </div>
+
+                <!--<div fxFlex="100" class="legend-item chart-label">
+                  <span class="label">CPU Usage/Temperature per Core</span>
+                  </div>-->
               </div>
             </ng-template>
 

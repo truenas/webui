@@ -23,6 +23,17 @@ export class ReplicationFormComponent {
     protected entityForm: any;
     protected queryRes: any;
 
+    protected retentionPolicyChoice = [{
+        label: 'Same as Source',
+        value: 'SOURCE',
+    }, {
+        label: 'Custom',
+        value: 'CUSTOM',
+    }, {
+        label: 'None',
+        value: 'NONE',
+    }];
+
     protected fieldConfig: FieldConfig[] = [
         {
             type: 'input',
@@ -164,6 +175,7 @@ export class ReplicationFormComponent {
             initial: '',
             explorerType: 'dataset',
             multiple: true,
+            tristate: false,
             name: 'source_datasets_PUSH',
             placeholder: helptext.source_datasets_placeholder,
             tooltip: helptext.source_datasets_tooltip,
@@ -493,26 +505,8 @@ export class ReplicationFormComponent {
             name: 'retention_policy',
             placeholder: helptext.retention_policy_placeholder,
             tooltip: helptext.retention_policy_tooltip,
-            options: [
-                {
-                    label: 'Same as Source',
-                    value: 'SOURCE',
-                }, {
-                    label: 'Custom',
-                    value: 'CUSTOM',
-                }, {
-                    label: 'None',
-                    value: 'NONE',
-                }
-            ],
+            options: this.retentionPolicyChoice,
             value: 'NONE',
-            relation: [{
-                action: 'HIDE',
-                when: [{
-                    name: 'transport',
-                    value: 'LEGACY',
-                }]
-            }],
         }, {
             type: 'input',
             inputType: 'number',
@@ -583,9 +577,13 @@ export class ReplicationFormComponent {
             value: 'DISABLED',
             relation: [{
                 action: 'SHOW',
+                connective: 'OR',
                 when: [{
                     name: 'transport',
                     value: 'SSH',
+                }, {
+                    name: 'transport',
+                    value: 'LEGACY',
                 }]
             }],
         }, {
@@ -596,9 +594,13 @@ export class ReplicationFormComponent {
             tooltip: helptext.speed_limit_tooltip,
             relation: [{
                 action: 'SHOW',
+                connective: 'OR',
                 when: [{
                     name: 'transport',
                     value: 'SSH',
+                }, {
+                    name: 'transport',
+                    value: 'LEGACY',
                 }]
             }],
         },
@@ -694,6 +696,13 @@ export class ReplicationFormComponent {
                 }
             ],
             value: 'DEFAULT',
+            relation: [{
+                action: 'HIDE',
+                when: [{
+                    name: 'transport',
+                    value: 'LEGACY',
+                }]
+            }],
         }, {
             type: 'checkbox',
             name: 'enabled',
@@ -754,6 +763,22 @@ export class ReplicationFormComponent {
 
     afterInit(entityForm) {
         this.entityForm = entityForm;
+        const retentionPolicyField = _.find(this.fieldConfig, {name: 'retention_policy'});
+        entityForm.formGroup.controls['transport'].valueChanges.subscribe(
+            (res) => {
+                if (res !== 'LEGACY' && retentionPolicyField.options !== this.retentionPolicyChoice) {
+                    retentionPolicyField.options = this.retentionPolicyChoice;
+                } else if (res === 'LEGACY') {
+                    const options = [...this.retentionPolicyChoice];
+                    options.splice(1, 1);
+                    retentionPolicyField.options = options;
+                    if (entityForm.formGroup.controls['retention_policy'].value === 'CUSTOM') {
+                        entityForm.formGroup.controls['retention_policy'].setValue('NONE');
+                    }
+                }
+            }
+        )
+
         entityForm.formGroup.controls['periodic_snapshot_tasks'].valueChanges.subscribe(
             (res) => {
                 if (entityForm.formGroup.controls['transport'].value !== 'LEGACY') {

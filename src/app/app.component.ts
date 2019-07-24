@@ -83,6 +83,19 @@ export class AppComponent {
       "truenas_logo_full",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_logo_full.svg")
     );
+    this.matIconRegistry.addSvgIcon(
+      "freenas_logomark",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/logo.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "freenas_logotype",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/logo-text.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "freenas_logo_full",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/logo-full.svg")
+    );
+
 
     const product = productText.product.trim();
     this.title.setTitle(product + ' - ' + window.location.hostname);

@@ -173,17 +173,9 @@
       #entityTable>
 
       <!-- Row Detail Template -->
-      <ngx-datatable-row-detail *ngIf="conf.hasDetails" [rowHeight]="conf.detailRowHeight || detailRowHeight" #myDetailRow (toggle)="onDetailToggle($event)">
+      <ngx-datatable-row-detail [rowHeight]="getRowDetailHeight" #myDetailRow>
         <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
-          <!-- default -->
-          <div *ngFor="let detail of row.details" style="padding-left:35px;">
-            <strong>{{detail.label | translate}}:</strong> {{detail.value}}
-          </div>
-          <!-- customized -->
-          <div *ngIf="conf.rowDetailComponent; else defaultRowDetail" dynamicComponent [component]="conf.rowDetailComponent" [config]="row" [parent]="this"></div>
-          <ng-template #defaultRowDetail>
-            <div dynamicComponent [component]="entityTableRowDetailsComponent" [config]="row" [parent]="this"></div>
-          </ng-template>
+          <div dynamicComponent [component]="conf.rowDetailComponent || entityTableRowDetailsComponent" [config]="row" [parent]="this"></div>
         </ng-template>
       </ngx-datatable-row-detail>
 
@@ -229,22 +221,6 @@
           <div>
             <mat-checkbox [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></mat-checkbox>
           </div>
-        </ng-template>
-      </ngx-datatable-column>
-      <ngx-datatable-column *ngIf="conf.hasDetails && showActions"
-        [width]="50"
-        [resizeable]="false"
-        [sortable]="false"
-        [draggable]="false"
-        [canAutoResize]="false">
-        <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
-          <a
-            href="javascript:void(0)"
-            [class.datatable-icon-right]="!expanded"
-            [class.datatable-icon-down]="expanded"
-            title="Expand/Collapse Row"
-            (click)="toggleExpandRow(row)">
-          </a>
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column
@@ -303,14 +279,8 @@
         </ng-template>
       </ngx-datatable-column>
 
-      <ngx-datatable-column *ngIf="showActions">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-          <app-entity-table-actions [entity]="this" [row]="row">
-          </app-entity-table-actions>
-        </ng-template>
-      </ngx-datatable-column>
-
-      <ngx-datatable-column *ngIf="conf.hasDetails && !showActions"
+      <!-- detail toggle -->
+      <ngx-datatable-column *ngIf="hasDetails()"
         [width]="50"
         [resizeable]="false"
         [sortable]="false"
@@ -324,6 +294,14 @@
             title="Expand/Collapse Row"
             (click)="toggleExpandRow(row)">
           </a>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <!-- three-dot actions menu -->
+      <ngx-datatable-column *ngIf="!hasDetails()">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <app-entity-table-actions [entity]="this" [row]="row">
+          </app-entity-table-actions>
         </ng-template>
       </ngx-datatable-column>
     </ngx-datatable>

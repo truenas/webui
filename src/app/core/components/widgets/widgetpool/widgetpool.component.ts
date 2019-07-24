@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, Input, ViewChild, Renderer2, ElementRef,TemplateRef, AfterViewChecked, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, Input, ViewChild, Renderer2, ElementRef,TemplateRef, ChangeDetectorRef, OnChanges, SimpleChanges } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { Router } from '@angular/router';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
@@ -6,6 +6,7 @@ import { MaterialModule } from 'app/appMaterial.module';
 
 import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
+import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { environment } from 'app/../environments/environment';
 
 import { TranslateService } from '@ngx-translate/core';
@@ -75,14 +76,31 @@ export interface Disk {
   displaysize?: string;
 }
 
+export interface VolumeData {
+  avail:number;
+  id:number;
+  is_decrypted:boolean;
+  is_upgraded:boolean;
+  mountpoint:string;
+  name:string;
+  status:string;
+  used:number;
+  used_pct:string;
+  vol_encrypt:number;
+  vol_encryptkey:string;
+  vol_guid:string;
+  vol_name:string;
+}
+
 @Component({
   selector: 'widget-pool',
   templateUrl:'./widgetpool.component.html',
   styleUrls: ['./widgetpool.component.css']
 })
-export class WidgetPoolComponent extends WidgetComponent implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy, OnChanges {
+export class WidgetPoolComponent extends WidgetComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
 
   @Input() poolState;
+  @Input() volumeData?:VolumeData;
   @ViewChild('carousel', {static:true}) carousel:ElementRef;
   @ViewChild('carouselparent', {static:true}) carouselParent:ElementRef;
 
@@ -98,7 +116,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   public currentSlide:string = "0";
 
   get currentSlideIndex(){
-    return parseInt(this.currentSlide);
+    return this.path.length > 0 ? parseInt(this.currentSlide) : this.title;
   }
   
   get currentSlideName(){
@@ -111,8 +129,11 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
   path: Slide[] = [];
 
-  public title: string = this.poolState ? this.poolState.name : "Pool";
-
+  public title: string = this.path.length > 0 && this.poolState && this.currentSlide !== "0" ? this.poolState.name : "Pool";
+  public voldataavail = false;
+  public displayValue: any;
+  public diskSize: any;
+  public diskSizeLabel: string;
   public poolHealth: PoolDiagnosis = {
     isHealthy: true,
     warnings: [],
@@ -128,7 +149,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
   
 
-  constructor(public router: Router, public translate: TranslateService){
+  constructor(public router: Router, public translate: TranslateService, private cdr: ChangeDetectorRef){
     super(translate);
     this.configurable = false;
   }
@@ -138,8 +159,9 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   ngOnChanges(changes: SimpleChanges){
-    if(changes.nicState){
-      this.title = this.poolState.name;
+    if(changes.poolState){
+    } else if(changes.volumeData){
+      this.getAvailableSpace();
     }
   }
 
@@ -156,7 +178,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
   }
 
-  ngAfterViewChecked(){
+  ngAfterContentInit(){
     
   }
 
@@ -176,6 +198,8 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       { name: "empty", template: this.empty}
     ];
 
+    this.cdr.detectChanges();
+
     this.core.register({observerClass:this,eventName:"MultipathData"}).subscribe((evt:CoreEvent) => {
       this.currentMultipathDetails = evt.data[0];
       console.log(this.currentMultipathDetails);
@@ -192,6 +216,57 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       this.currentDiskDetails = evt.data[0];
     });
   }
+
+  getAvailableSpace(){
+    let usedValue;
+    if (isNaN(this.volumeData.used)) {
+      usedValue = this.volumeData.used;
+    } else {
+      let usedObj = (<any>window).filesize(this.volumeData.used, {output: "object", exponent:3});
+      usedValue = usedObj.value;
+    }
+    let used: ChartData = {
+      legend: 'Used', 
+      data: [usedValue]
+    };
+
+    if(usedValue == "Locked"){
+      // When Locked, Bail before we try to get details. 
+      // (errors start after this...)
+      return 0;
+    }
+
+    let availableValue;
+    if (isNaN(this.volumeData.avail)) {
+      availableValue = this.volumeData.avail;
+    } else {
+      let availableObj = (<any>window).filesize(this.volumeData.avail, {output: "object", exponent:3});
+      availableValue = availableObj.value;
+      this.voldataavail = true;
+    }
+    let available: ChartData = {
+      legend:'Available', 
+      data: [availableValue]
+    };
+
+    let percentage = this.volumeData.used_pct.split("%");
+    this.core.emit({name:"PoolDisksRequest",data:[this.volumeData.id]});
+
+    this.displayValue = (<any>window).filesize(this.volumeData.avail, {standard: "iec"});
+    if (this.displayValue.slice(-2) === ' B') {
+      this.diskSizeLabel = this.displayValue.slice(-1);
+      this.diskSize = new Intl.NumberFormat().format(parseFloat(this.displayValue.slice(0, -2)))
+    } else {
+      this.diskSizeLabel = this.displayValue.slice(-3);
+      this.diskSize = new Intl.NumberFormat().format(parseFloat(this.displayValue.slice(0, -4)))
+    }
+    // Adds a zero to numbers with one (and only one) digit after the decimal
+    if (this.diskSize.charAt(this.diskSize.length - 2) === '.' || this.diskSize.charAt(this.diskSize.length - 2) === ',') {
+      this.diskSize = this.diskSize.concat('0')
+    };
+
+    this.checkVolumeHealth();
+  };
 
   getDiskDetails(key:string, value:string, isMultipath?:boolean){
     if(isMultipath && key == 'name'){
@@ -259,6 +334,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     }).start(el.set);
     
     this.currentSlide = value.toString();
+    this.title = this.currentSlide == "0" ? "Pool" : this.poolState.name;
     //console.log(this.path[this.currentSlideIndex].name);
     
   }
@@ -317,7 +393,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
   nextPath(obj:any, index:number|string){
     if(typeof index == 'string'){ index = parseInt(index) }
-    console.log(obj[index]);
     return obj[index];
   }
 

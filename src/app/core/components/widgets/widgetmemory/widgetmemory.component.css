@@ -136,6 +136,16 @@ h1.memory-used span.memory-used-units{
   right:8px;
 }
 
+.controls{
+  position:absolute;
+  right:16px;
+  color:var(--fg2);
+}
+
+.controls button{
+  display:inline-block;
+}
+
 /*:host ::ng-deep .c3-axis-y g:nth-child(2n){
   visibility:hidden;
 }*/

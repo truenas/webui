@@ -11,12 +11,41 @@
   visibility:hidden;
 }*/
 
+.widget mat-toolbar-row{
+  position:absolute;
+  height:48px;
+  width:calc(100% - 16px);
+  z-index:2;
+  background:unset;
+  padding: 0 8px;
+  left:0;
+  text-align:left;
+  border:none;
+
+  font-size: 1.5rem;
+  line-height: 180%;
+}
+
+.widget mat-toolbar-row.view-overview .primary-nav{
+  color:#efefef;
+}
+
+.primary-nav .card-title-text{
+  font-size:1.5rem;
+  font-weight:500;
+  display:inline-block;
+  vertical-align:middle;
+  position: relative;
+  top: 2px;
+}
+
+.view-overview .primary-nav .card-title-text{
+}
 
 .carousel{
   position:absolute;
-  top:48px;
   width:400%;
-  height:calc(100% - 96px);
+  height:100%;
   /*background:var(--alt-bg2);*/
 }
 
@@ -29,8 +58,7 @@
   top:48px;*/
   display:inline;
   width:100%;
-  /*height:calc(100% - 96px);*/
-  height:100%;
+  height:calc(100% - 48px);
   /*border-left:solid 1px var(--bg1);*/
 }
 
@@ -40,10 +68,13 @@
 
 .slide .left,
 .slide .right{
-  width:50%;
   height:100%;
   display:inline-block;
   padding:32px 0;
+}
+
+.slide.overview {
+  height:100%;
 }
 
 .slide.overview .right > div{
@@ -56,6 +87,11 @@
 
 .slide.overview .left{
   /*background-color:var(--alt-bg1);*/
+  background-size:cover;
+  background-image:url('assets/images/backgrounds/hard_drive_1.jpg');
+  color:#efefef;
+  /*background-position-y:center;
+  background-position-x:50%;*/
 }
 
 .slide .right{
@@ -85,14 +121,38 @@
   font-size: 75%;
 }
 
-.pool-name.up .icon-wrapper,
-.pool-status.up .icon-wrapper{
-  color: var(--green);
+.pool-space .value{
+  font-weight:500;
 }
 
+span.error {
+  color: var(--red);
+}
+
+span.warn{
+  color: var(--yellow);
+}
+
+span.safe{
+  color: var(--green);
+}
+/*
 .pool-name.down .icon-wrapper,
 .pool-status.down .icon-wrapper{
   color: var(--red);
+}*/
+
+.controls{
+  position:absolute;
+  top:0;
+  right:16px;
+  color: var(--fg2);
+  /*font-weight:500;
+  text-transform:capitalize;*/
+}
+
+.controls button{
+  display:inline-block;
 }
 
 .carousel-nav{
@@ -135,6 +195,13 @@
 
 .slide{
   overflow:auto;
+  position:relative;
+  top:48px;
+}
+
+.slide.overview{
+  height:100%;
+  top:0;
 }
 
 .slide div.clickable,
@@ -152,6 +219,10 @@
 }
 
 .mat-list-base {
+}
+
+.overview .right .list-subheader{
+  margin-top:48px;
 }
 
 .list-subheader{

@@ -39,7 +39,7 @@ export class EntityFormService {
         } else {
           formGroup[controls[i].name] = new FormControl(
               {value : controls[i].value, disabled : controls[i].disabled},
-              controls[i].validation);
+              controls[i].type === 'input-list' ? [] : controls[i].validation);
         }
 
         controls[i].relation =

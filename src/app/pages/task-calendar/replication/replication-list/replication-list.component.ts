@@ -19,7 +19,6 @@ export class ReplicationListComponent {
     protected route_edit: string[] = ['tasks', 'replication', 'edit'];
     protected route_success: string[] = ['tasks', 'replication'];
     public entityList: any;
-    protected hasDetails = true;
     protected asyncView = true;
 
     public columns: Array<any> = [
@@ -34,19 +33,6 @@ export class ReplicationListComponent {
         { name: 'Enabled', prop: 'enabled' },
         { name: 'State', prop: 'task_state', state: 'state' },
         { name: 'Last Snapshot', prop: 'task_last_snapshot' },
-    ];
-    public detailsConf = {
-      direction: 'horizontal',
-      showAction: false
-    };
-    public detailColumns: Array < any > = [
-        { name: 'Direction', prop: 'direction'},
-        { name: 'Transport', prop: 'transport'},
-        { name: 'SSH Connection', prop: 'ssh_connection'},
-        { name: 'Source Dataset', prop: 'source_datasets'},
-        { name: 'Target Dataset', prop: 'target_dataset'},
-        { name: 'Recursive', prop: 'recursive'},
-        { name: 'Auto', prop: 'auto'}
     ];
 
     public config: any = {
@@ -82,7 +68,9 @@ export class ReplicationListComponent {
 
     getActions(parentrow) {
         return [{
-            id: "run",
+            id: parentrow.name,
+            icon: 'play_arrow',
+            name: "run",
             label: T("Run Now"),
             onClick: (row) => {
                 this.dialog.confirm(T("Run Now"), T("Replicate <i>") + row.name + T("</i> now?"), true).subscribe((res) => {
@@ -99,14 +87,18 @@ export class ReplicationListComponent {
                 });
             },
         }, {
-            id: "edit",
+            id: parentrow.name,
+            icon: 'edit',
+            name: "edit",
             label: T("Edit"),
             onClick: (row) => {
                 this.route_edit.push(row.id);
                 this.router.navigate(this.route_edit);
             },
         }, {
-            id: "delete",
+            id: parentrow.name,
+            icon: 'delete',
+            name: "delete",
             label: T("Delete"),
             onClick: (row) => {
                 this.entityList.doDelete(row);
