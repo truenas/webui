@@ -46,6 +46,7 @@ export class InterfacesListComponent implements OnDestroy {
     {name : T('DHCP'), prop : 'ipv4_dhcp'},
     {name : T('IPv6 Auto Configure'), prop: 'ipv6_auto'},
     {name : T('IP Addresses'), prop : 'addresses'},,
+    {name : T('Description'), prop : 'description', hidden: true},
     {name : T('Active Media Type'), prop: 'active_media_type', hidden: true},
     {name : T('Active Media Subtype'), prop: 'active_media_subtype', hidden: true},
     {name : T('VLAN Tag'), prop: 'vlan_tag', hidden: true},
