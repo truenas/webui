@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { TaskService } from 'app/services';
 
@@ -12,7 +12,7 @@ import { TaskService } from 'app/services';
     </mat-list>
   `
 })
-export class TaskScheduleListComponent implements OnInit {
+export class TaskScheduleListComponent implements OnInit, OnChanges {
   private static readonly LIST_LENGTH = 5;
   @Input() public config: { schedule?: string; cron_schedule?: string; cron?: string; scrub_schedule?: string };
   @Input() public parent: EntityTableComponent & { conf: any };
@@ -22,6 +22,15 @@ export class TaskScheduleListComponent implements OnInit {
   constructor(private _taskService: TaskService) {}
 
   public ngOnInit(): void {
+    this._buildFutureRuns();
+  }
+
+  public ngOnChanges(): void {
+    console.log('changed');
+    this._buildFutureRuns();
+  }
+
+  private _buildFutureRuns(): void {
     const scheduleExpression =
       this.config.cron_schedule || this.config.cron || this.config.scrub_schedule || this.config.schedule;
 
