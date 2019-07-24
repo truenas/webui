@@ -52,7 +52,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
   public allTabs: Tab[] = [];
 
   public visibleReports:number[] = [];
-  public totalVisibleReports:number = 5;
+  public totalVisibleReports:number = 10;
 
   constructor(private erdService: ErdService, 
     public translate: TranslateService, private router:Router, private core:CoreService, 
