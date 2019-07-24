@@ -78,10 +78,12 @@ export class ActiveDirectoryComponent {
     },
     {
       type : 'input',
+      inputType : 'password',
       name : helptext.activedirectory_bindpw_name,
       placeholder : helptext.activedirectory_bindpw_placeholder,
       tooltip : helptext.activedirectory_bindpw_tooltip,
-      inputType : 'password',
+      validation : helptext.activedirectory_bindpw_validation,
+      required: true,
       togglePw: true,
       disabled: false,
       isHidden:false
