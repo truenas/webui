@@ -1,12 +1,15 @@
 import { Component, AfterViewInit, Input, ViewChild, OnDestroy, OnChanges} from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { WebSocketService } from 'app/services/';
 import { MaterialModule } from 'app/appMaterial.module';
 import { Subject } from 'rxjs/Subject';
 import { NgForm } from '@angular/forms';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
-import { LineChartComponent } from 'app/components/common/lineChart/lineChart.component';
-import { Report } from '../../reportsdashboard.component';
+//import { ViewChartLineComponent } from 'app/core/components/viewchartline/viewchartline.component';
+//import { LineChartComponent } from 'app/components/common/lineChart/lineChart.component';
+import { LineChartComponent } from '../lineChart/lineChart.component';
+//import { Report } from '../../reportsdashboard.component';
 
 import { Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
@@ -38,6 +41,25 @@ interface LineChartConfig {
   legends:any;
 }
 
+export interface Report {
+  name: string;
+  title: string;
+  vertical_label: string;
+  identifiers?: string[];
+  isRendered?: boolean[];
+}
+
+export interface ReportData {
+  identifier?: string;
+  start: number;
+  end: number;
+  aggregations: any;
+  legend: string[];
+  name: string;
+  step: number;
+  data: number[];
+}
+
 @Component({
   selector: 'report',
   templateUrl:'./report.component.html',
@@ -46,12 +68,15 @@ interface LineChartConfig {
 export class ReportComponent extends WidgetComponent implements AfterViewInit, OnChanges ,OnDestroy {
 
   //Chart
-  @ViewChild(LineChartComponent, { static: true}) lineChart:LineChartComponent;
+  //@ViewChild(LineChartComponent, { static: true}) lineChart:LineChartComponent;
+  //@ViewChild(ViewChartLineComponent, { static: true}) lineChart:ViewChartLineComponent;
 
   // Labels
   @Input() localControls?: boolean; 
   @Input() report: Report;
   @Input() identifier?: string;
+
+  public data: ReportData;
   
   get reportTitle(){
     return this.identifier ? this.report.title.replace(/{identifier}/, this.identifier) : this.report.title;
@@ -107,14 +132,15 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   public startTime;
   public endTime;
 
-  constructor(public router: Router, public translate: TranslateService){
+  constructor(public router: Router, public translate: TranslateService, private ws: WebSocketService){
     super(translate); 
+    this.loader = true;
 
-    setTimeout(() => {
+    /*setTimeout(() => {
       if(!this.dataRcvd){
         this.loader = true;
       }
-    }, 5000)
+    }, 5000)*/
   }
 
   ngOnDestroy(){
@@ -131,8 +157,10 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   }
 
   ngOnChanges(changes){
-    /*if(changes.lineChartConfig){
-    }*/
+    if(changes.report){
+      let identifier = changes.report.currentValue.identifiers ? changes.report.currentValue.identifiers[0] : null;
+      this.fetchReportData(changes.report.currentValue, identifier);
+    }
   }
 
   setChartInteractive(value:boolean){
@@ -148,7 +176,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     const rrdOptions = this.convertTimespan(zoom.timespan);
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
-    this.lineChart.fetchData(rrdOptions, zoom.timeformat, zoom.culling);
+    //this.lineChart.fetchData(rrdOptions, zoom.timeformat, zoom.culling);
   }
 
   timeZoomOut(){
@@ -160,7 +188,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     const rrdOptions = this.convertTimespan(zoom.timespan);
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
-    this.lineChart.fetchData(rrdOptions, zoom.timeformat, zoom.culling);
+    //this.lineChart.fetchData(rrdOptions, zoom.timeformat, zoom.culling);
   }
 
   stepBack(){
@@ -168,7 +196,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     const rrdOptions = this.convertTimespan(zoom.timespan, 'backward', this.currentStartDate);
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
-    this.lineChart.fetchData(rrdOptions, zoom.timeformat, zoom.culling);  
+    //this.lineChart.fetchData(rrdOptions, zoom.timeformat, zoom.culling);  
   }
 
   stepForward(){
@@ -177,7 +205,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     const rrdOptions = this.convertTimespan(zoom.timespan, 'forward', this.currentEndDate);
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
-    this.lineChart.fetchData(rrdOptions, zoom.timeformat, zoom.culling);
+    //this.lineChart.fetchData(rrdOptions, zoom.timeformat, zoom.culling);
   }
 
   // Convert timespan to start/end options for RRDTool
@@ -251,7 +279,11 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     }
   }
 
-  setChartData(evt:CoreEvent){
+  fetchReportData(report:Report, identifier?: string){
+    let params = identifier ? { name: report.name, identifier: identifier} : { name: report.name };
+    this.ws.call('reporting.get_data', [[params]]).subscribe((res) =>{
+      this.data = res[0];
+    });
   }
 
   // Will be used for back of flip card

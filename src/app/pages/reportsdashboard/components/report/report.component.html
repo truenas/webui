@@ -31,6 +31,14 @@
           <!--<viewchartline fxFlex="100" fxFlexAlign="end" #chartCpu width="600" height="160" [style.display]="isFlipped ? 'none': 'block'"></viewchartline>-->
           <!-- Chart -->
           <div class="chart-wrapper" fxFlex="100">
+            <linechart
+              *ngIf="data"
+              [data]="data"
+              [title]="report.title"
+              [labelY]="report.vertical_label"
+              type="line"
+              interactive="false">
+              </linechart>
             <!--<line-chart 
               [dataList]="lineChartConfig.dataList"
               [title]="title"

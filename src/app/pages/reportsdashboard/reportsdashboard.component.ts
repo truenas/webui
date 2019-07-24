@@ -9,6 +9,7 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { ReportComponent, Report } from './components/report/report.component';
 
 //import { PageEvent } from '@angular/material';
 import { ErdService } from 'app/services/erd.service';
@@ -20,13 +21,13 @@ import {
   WebSocketService
 } from '../../services/';
 
-export interface Report {
+/*export interface Report {
   identifiers?: string[];
   name: string;
   title: string;
   vertical_label: string;
   isRendered?: boolean[];
-}
+}*/
 
 interface Tab {
   label: string;
@@ -112,7 +113,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
        
         this.activateTabFromUrl();
 
-        this.fetchReportData(this.otherReports[0]);
+        //this.fetchReportData(this.otherReports[0]);
       }
     });
 
@@ -249,8 +250,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
     });
 
     this.activeReports = this.flattenReports(reportCategories);
-    console.log(this.activeReports);
-    console.log(this.visibleReports);
+    //console.log(this.activeReports);
+    //console.log(this.visibleReports);
   }
 
   flattenReports(list:Report[]){
@@ -278,22 +279,21 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
       }
     });
    
-    console.log("FLATTENED!");
+    /*console.log("FLATTENED!");
     console.log(list);
     console.log(result);
-    this.fetchReportData(result[0], result[0].identifiers[0]);
+    this.fetchReportData(result[0], result[0].identifiers[0]);*/
     return result;
   }
 
-  fetchReportData(report:Report, identifier?: string){
-    console.warn(identifier);
+  /*fetchReportData(report:Report, identifier?: string){
     this.ws.call('reporting.get_data',[[
       {"name": report.name, "identifier":identifier}
     ]] ).subscribe((res)=> {
       if (res) {
-        console.log(res);
+        //console.log(res);
       }
     });
-  }
+  }*/
 
 }

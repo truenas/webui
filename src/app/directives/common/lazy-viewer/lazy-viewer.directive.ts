@@ -17,8 +17,8 @@ export class LazyViewerDirective  implements OnInit{
   }
 
   ngOnInit(){
-    console.log(this.view);
-    console.log(this.el);
+    /*console.log(this.view);
+    console.log(this.el);*/
   }
 
   @HostListener('mouseenter') onMouseEnter() {

@@ -1,19 +1,20 @@
+import {Component, Input, OnInit, AfterViewInit, OnDestroy, OnChanges, SimpleChanges} from '@angular/core';
 import 'style-loader!./lineChart.scss';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { ViewComponent } from 'app/core/components/view/view.component';
+import { Report, ReportData } from '../report/report.component';
 
-import {Component, Input, OnInit, AfterViewInit, OnDestroy} from '@angular/core';
-import * as ChartistLegend from 'chartist-plugin-legend';
+//import * as ChartistLegend from 'chartist-plugin-legend';
 import {UUID} from 'angular2-uuid';
 import * as c3 from 'c3';
 
-import { LineChartService, HandleDataFunc, LineChartData,LineChartMetadata, DataListItem } from './lineChart.service';
+//import { LineChartService, HandleDataFunc, LineChartData,LineChartMetadata, DataListItem } from './lineChart.service';
 
 
-export interface ChartFormatter {
+/*export interface ChartFormatter {
   format (value, ratio, id);
-}
+}*/
 
 export interface Analytics {
   label:string;
@@ -24,13 +25,22 @@ export interface Analytics {
   total?:number;
 }
 
-@Component({
-  selector: 'line-chart', 
-  template: `<div id="{{controlUid}}"></div>`
-})
-export class LineChartComponent extends ViewComponent implements OnInit, AfterViewInit, OnDestroy/*, HandleDataFunc*/ {
+interface TimeData {
+  start: number;
+  end: number;
+  step: number;
+  legend?: string;
+}
 
-  @Input() dataList: DataListItem[];
+@Component({
+  selector: 'linechart', 
+  template: `<div id="{{controlUid}}" style="height:160px">{{test}}</div>`
+})
+export class LineChartComponent extends ViewComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges/*, HandleDataFunc*/ {
+  public test: string = 'NOTHING YET...';
+  //@Input() dataList: DataListItem[];
+  @Input() data: ReportData;
+  @Input() report: Report;
   @Input() title: string;
 
   /**   First element is Name of the Field a string
@@ -41,16 +51,16 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
      *       ["nameOfField_2", number, number, number, number]
      *     ]
    */
-  @Input() series: any[][];
-  @Input() legends: string[]; 
+  //@Input() series: any[][];
+  @Input() legends?: string[]; 
   @Input() type: string;
-  @Input() divideBy: number;
+  //@Input() divideBy: number;
   @Input() convertToCelsius?: true;
-  @Input() chartFormatter: ChartFormatter;
+  //@Input() chartFormatter: ChartFormatter;
   @Input() minY?: number = 0;
   @Input() maxY?: number = 100;
   @Input() labelY?: string = 'Label Y';
-  @Input() interactive: boolean;
+  @Input() interactive: boolean = false;;
 
   public chart:any;
   public conf:any;
@@ -62,19 +72,20 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
   public legendEvents: BehaviorSubject<any>;
   public legendLabels: BehaviorSubject<any>;
   public legendAnalytics: BehaviorSubject<any>;
-  data: LineChartData = {
+  /*data: LineChartData = {
     labels: [],
     series: [],
     //meta: {}
-  };
+  };*/
   colorPattern = ["#2196f3", "#009688", "#ffc107", "#9c27b0", "#607d8b", "#00bcd4", "#8bc34a", "#ffeb3b", "#e91e63", "#3f51b5"];
   timeFormat: string = "%H:%M";
   culling:number = 6;
   controlUid: string;
 
 
-  constructor(private core:CoreService, private _lineChartService: LineChartService) {
+  constructor(private core:CoreService/*, private _lineChartService: LineChartService*/) {
     super();
+    this.controlUid = "chart_" + UUID.UUID();
     this.legendEvents = new BehaviorSubject(false);
     this.legendLabels = new BehaviorSubject([]);
     this.legendAnalytics = new BehaviorSubject([]);
@@ -98,7 +109,8 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
       pattern: colors
     }
     conf.color = color;
-    this.chart = c3.generate(conf);
+    //console.warn(conf);
+    //this.chart = c3.generate(conf);
   }
 
     //this.chart = c3.generate({
@@ -112,9 +124,10 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
        pattern: this.colorPattern
       },*/
       data: {
-        columns: this.columns,
+        rows: this.makeTimeAxis(this.data),
+        //columns: this.columns,
         //colors: this.createColorObject(),
-        x: 'xValues',
+        x: 'x',
         //xFormat: '%H:%M',
         type: 'line',
         onmouseout: (d) => {
@@ -136,10 +149,10 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
         },
         y:{
           tick: {
-            format: (y) => { return y.toFixed(2) + this.linechartData.meta.units}
+            //format: (y) => { return y.toFixed(2)} // Bring back units?
           },
           label: {
-            text:this.linechartData.meta. labelY,
+            text: this.labelY, //this.linechartData.meta. labelY,
             position: 'outer-middle',
           }
           //default: [this.minY,this.maxY],
@@ -183,6 +196,26 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
     return conf;
   }
 
+  protected makeTimeAxis(rd:ReportData, axis?: string):any[]{
+    if(!axis){ axis = 'x';}
+
+    // Push dates to row based data...
+    let rows = [];
+    // Add legend with axis to beginning of array
+    let legend = Object.assign([],rd.legend);
+    legend.unshift(axis);
+    rows.push(legend);
+
+    for(let i = 0; i < rd.data.length; i++){ 
+      let item = Object.assign([], rd.data[i]);
+      let date = new Date(rd.start * 1000 + i * rd.step * 1000);
+      item.unshift(date);
+      rows.push(item);
+    }
+
+    return rows;
+  }
+
   private processThemeColors(theme):string[]{
     let colors: string[] = [];
     theme.accentColors.map((color) => {
@@ -214,37 +247,49 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
     }
 
     // This is the time portion of the API call.  
-    this._lineChartService.getData(this.title, this.dataList, this.legends, rrdOptions);
+    //this._lineChartService.getData(this.title, this.dataList, this.legends, rrdOptions);
   }
 
   // LifeCycle Hooks
   ngOnInit() {
-    this.core.register({ observerClass:this, eventName:"LineChartData:" + this.title }).subscribe((evt:CoreEvent)=>{ 
+    /*this.core.register({ observerClass:this, eventName:"LineChartData:" + this.title }).subscribe((evt:CoreEvent)=>{ 
       this.data = evt.data.dataObj;
       this.applyHandledData(evt.data.columns, evt.data.linechartData, evt.data.legendLabels);
       this.legendAnalytics.next(evt.data.legendAnalytics)
-    });
+    });*/
 
     this.core.register({ observerClass:this, eventName:"ThemeData" }).subscribe((evt:CoreEvent)=>{ 
       this.colorPattern = this.processThemeColors(evt.data);
       
-      if(this.linechartData){ 
+      if(this.data || this.linechartData){ 
         this.render();
       }
     });
 
     this.core.register({ observerClass:this, eventName:"ThemeChanged" }).subscribe((evt:CoreEvent)=>{ 
       this.colorPattern = this.processThemeColors(evt.data);
-      if(this.linechartData){ 
+      if(this.data || this.linechartData){ 
         this.render();
       }
     });
 
     this.core.emit({name:"ThemeDataRequest"});
-    this.controlUid = "chart_" + UUID.UUID();
   }
 
   ngAfterViewInit() {
+  }
+
+  ngOnChanges(changes:SimpleChanges){
+    if(changes.data){
+      //if(changes.data.currentValue.name == 'cpu'){console.log(changes.data.currentValue);}
+      if(this.chart){
+        this.render();
+      } else {
+        this.render();// make an update method?
+      }
+      const conf = this.makeConfig();
+      this.test = conf.data.rows[0][1];
+    }
   }
 
   ngOnDestroy(){

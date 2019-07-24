@@ -13,9 +13,9 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 
 import { ReportComponent } from './components/report/report.component';
 
-import {ReportsDashboardComponent} from './reportsdashboard.component';
-import {routing} from './reportsdashboard.routing';
-import {LineChartService} from '../../components/common/lineChart/lineChart.service';
+import { ReportsDashboardComponent } from './reportsdashboard.component';
+import { routing } from './reportsdashboard.routing';
+import { LineChartComponent } from './components/lineChart/lineChart.component';
 
 @NgModule({
   imports : [ 
@@ -31,7 +31,8 @@ import {LineChartService} from '../../components/common/lineChart/lineChart.serv
   ],
   declarations : [
     ReportsDashboardComponent,
-    ReportComponent
+    ReportComponent,
+    LineChartComponent
   ],
   providers : [
     
