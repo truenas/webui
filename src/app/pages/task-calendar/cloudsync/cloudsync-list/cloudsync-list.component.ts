@@ -28,6 +28,7 @@ export class CloudsyncListComponent implements InputTableConf {
     { name: T('Description'), prop: 'description' },
     { name: T('Credential'), prop: 'credential', hidden: true },
     { name: T('Direction'), prop: 'direction', hidden: true},
+    { name: T('Transfer Mode'), prop: 'transfer_mode', hidden: true },
     { name: T('Path'), prop: 'path', hidden: true},
     { name: T('Schedule'), prop: 'cron', hidden: true},
     { name: T('Next Run'), prop: 'next_run', hidden: true},

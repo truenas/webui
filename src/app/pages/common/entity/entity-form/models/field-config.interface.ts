@@ -17,6 +17,7 @@ export interface FieldConfig {
   warnings?: string, hideButton?:boolean, searchOptions?: any[], hideDirs?: any,
   listFields?: Array<FieldConfig>[], templateListField?: FieldConfig[],
   updateLocal?: boolean, isLoading?: boolean, textAreaRows?: number, netmaskPreset?: number,
+  isLargeText?: boolean, paragraphIcon?: string,
   customEventMethod?(data:any), onChangeOption?(data:any),
 
 }

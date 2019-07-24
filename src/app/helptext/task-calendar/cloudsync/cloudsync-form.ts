@@ -67,6 +67,16 @@ transfer_mode_tooltip: T('<i>SYNC</i> makes files on the destination system iden
 
 transfer_mode_validation : [ Validators.required ],
 
+transfer_mode_warning_sync: T('<b>SYNC</b>: Files on the destination are <i>changed</i> to match those on the\
+ source. If a file does not exist on the source, it is also <i>deleted</i>\
+ from the destination.'),
+
+transfer_mode_warning_copy: T('<b>COPY</b>: Files from the source are <i>copied</i> to the destination. If files with\
+ the same names are present on the destination, they are <i>overwritten</i>.'),
+
+transfer_mode_warning_move: T('<b>MOVE</b>: After files are <i>copied</i> from the source to the destination, they are\
+ <i>deleted</i> from the source. Files with the same names on the destination are <i>overwritten</i>.'),
+
 snapshot_placeholder: T('Take Snapshot'),
 snapshot_tooltip: T('Set to take a snapshot of the dataset before a\
  <i>PUSH</i> or <i>PULL</i>.'),
