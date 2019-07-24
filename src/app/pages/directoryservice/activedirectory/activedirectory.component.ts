@@ -370,6 +370,7 @@ export class ActiveDirectoryComponent {
       data.bindname = ""
       data.bindpw = ""
     }
+    data['site'] = data['site'] === null ? '' : data['site'];
   }
 
   submitFunction(body: any) {
