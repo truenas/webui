@@ -136,7 +136,7 @@ export class PluginComponent implements OnInit {
       }
     }];
 
-    if (row.name.startsWith('asigra')) {
+    if (row.plugin === 'asigra') {
       actions.push({
         name: row.name,
         id: "register",
