@@ -4,8 +4,9 @@ import { T } from '../../../translate-marker';
 export default {
 // Add key form
 add_key_name_validation: [Validators.required],
-add_key_instructions: T('Adding a recovery key invalidates any previous recovery key. The new recovery\
- key will download automatically. Back up this key. No copy of the key is stored by the system.'),
+add_key_instructions: T('Adding a recovery key invalidates any previous recovery key. The new recovery \
+ key will download automatically. Back up this key. No copy of the key is stored by the system. This \
+ key can be used instead of the password to unlock this pool.'),
 add_key_password_placeholder: T('Root password'),
 add_key_password_tooltip: T('Enter the root password to authorize this operation.'),
 add_key_password_validation: [Validators.required],
@@ -15,14 +16,18 @@ changekey_adminpw_placeholder: T('Root Password'),
 changekey_adminpw_tooltip: T('Enter the root password.'),
 changekey_adminpw_validation: [Validators.required],
 
-changekey_instructions: T('Creating a passphrase requires the creation of a new\
- encryption key. A dialog will open to save a backup of the new encryption key.'),
+changekey_instructions: T('Creating a passphrase requires the creation of a new \
+ encryption key and invalidates any existing recovery key. A dialog will open to save \
+ a backup of the new encryption key. A new recovery key, if desired, can be added \
+ from the encryption menu.'),
 changekey_passphrase_placeholder: T('Passphrase'),
 changekey_passphrase_tooltip: T('Enter the new passphrase for the encryption key.'),
 changekey_passphrase_validation: [Validators.required],
 
-changekey_instructions2: T('Changing the passphrase requires the creation of a new\
- encryption key. A dialog will open to save a backup of the new encryption key.'),
+changekey_instructions2: T('Changing a passphrase requires the creation of a new \
+ encryption key and invalidates any existing recovery key. A dialog will open to save \
+ a backup of the new encryption key. A new recovery key, if desired, can be added \
+ from the encryption menu.'),
 changekey_passphrase2_placeholder: T('Verify passphrase'),
 changekey_passphrase2_tooltip: T('Confirm the encryption key passphrase.'),
 changekey_passphrase2_validation: [Validators.required],
