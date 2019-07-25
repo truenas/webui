@@ -17,12 +17,14 @@
                     {{ column.widget.icon }}
                 </mat-icon>
                 <mat-menu #widget="matMenu">
-                    <div
-                        dynamicComponent
-                        [component]="column.widget.component"
-                        [config]="config"
-                        [parent]="parent"
-                    ></div>
+                    <!-- column widgets need to be registered with this switch case -->
+                    <ng-container [ngSwitch]="column.widget.component">
+                        <app-task-schedule-list
+                            *ngSwitchCase="'TaskScheduleListComponent'"
+                            [config]="config"
+                            [parent]="parent"
+                        ></app-task-schedule-list>
+                    </ng-container>
                 </mat-menu>
             </ng-container>
             <p>{{ getPropValue(column.prop) }}</p>

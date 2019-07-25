@@ -5,6 +5,10 @@ import { TaskService } from 'app/services';
 @Component({
   selector: 'app-task-schedule-list',
   template: `
+    <h4 [style.margin]="'6px 16px 12px'">{{ 'Upcoming tasks' | translate }}</h4>
+
+    <mat-divider></mat-divider>
+
     <mat-list>
       <mat-list-item *ngFor="let run of futureRuns">
         {{ run }}
