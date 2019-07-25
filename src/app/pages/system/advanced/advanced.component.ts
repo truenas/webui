@@ -34,6 +34,7 @@ export class AdvancedComponent implements OnDestroy {
   public swapondrive_subscription: any;
   public entityForm: any;
   protected dialogRef: any;
+  public is_freenas = false;
   public custActions: Array < any > = [{
     id: 'save_debug',
     name: 'Save Debug',
@@ -142,6 +143,13 @@ export class AdvancedComponent implements OnDestroy {
     inputType: 'number',
     validation : helptext_system_advanced.swapondrive_validation,
     required: true,
+  },{
+    type: 'checkbox',
+    name: 'legacy_ui',
+    placeholder: helptext_system_advanced.enable_legacy_placeholder,
+    tooltip: helptext_system_advanced.enable_legacy_tooltip,
+    isHidden: true,
+    value: false
   }, {
     type: 'checkbox',
     name: 'autotune',
@@ -246,42 +254,47 @@ export class AdvancedComponent implements OnDestroy {
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
-    this.swapondrive = _.find(this.fieldConfig, { 'name': 'swapondrive' });
-    this.swapondrive_subscription = entityEdit.formGroup.controls['swapondrive'].valueChanges.subscribe((value) => {
-      if (parseInt(value) === 0) {
-        this.swapondrive.warnings = helptext_system_advanced.swapondrive_warning;
-      } else {
-        this.swapondrive.warnings = null;
-      }
-    });
-
-    this.ws.call(this.queryCall).subscribe((adv_values)=>{
-      entityEdit.formGroup.controls['sed_passwd2'].setValue(adv_values.sed_passwd);
+    this.ws.call('system.is_freenas').subscribe((res)=>{
+      this.is_freenas = res;
+      _.find(this.fieldConfig, { 'name': 'legacy_ui' })['isHidden'] = this.is_freenas;
+      this.swapondrive = _.find(this.fieldConfig, { 'name': 'swapondrive' });
+      this.swapondrive_subscription = entityEdit.formGroup.controls['swapondrive'].valueChanges.subscribe((value) => {
+        if (parseInt(value) === 0) {
+          this.swapondrive.warnings = helptext_system_advanced.swapondrive_warning;
+        } else {
+          this.swapondrive.warnings = null;
+        }
+      });
+  
+      this.ws.call(this.queryCall).subscribe((adv_values)=>{
+        entityEdit.formGroup.controls['sed_passwd2'].setValue(adv_values.sed_passwd);
+      })
+      this.adv_serialport =
+      _.find(this.fieldConfig, { 'name': 'serialport' });
+      this.adv_serialspeed =
+      _.find(this.fieldConfig, { 'name': 'serialspeed' });
+      this.adv_serialconsole =
+      entityEdit.formGroup.controls['serialconsole'];
+      this.adv_serialspeed['isHidden'] = !this.adv_serialconsole.value;
+      this.adv_serialport['isHidden'] = !this.adv_serialconsole.value;
+      this.adv_serialconsole_subscription = this.adv_serialconsole.valueChanges.subscribe((value) => {
+        this.adv_serialspeed['isHidden'] = !value;
+        this.adv_serialport['isHidden'] = !value;
+      });
+      entityEdit.ws.call('system.advanced.serial_port_choices').subscribe((serial_port_choices)=>{
+        for(const k in serial_port_choices){
+          this.adv_serialport.options.push(
+            {
+              label: k, value: serial_port_choices[k]
+            }
+          )}
+      });
     })
-    this.adv_serialport =
-    _.find(this.fieldConfig, { 'name': 'serialport' });
-    this.adv_serialspeed =
-    _.find(this.fieldConfig, { 'name': 'serialspeed' });
-    this.adv_serialconsole =
-    entityEdit.formGroup.controls['serialconsole'];
-    this.adv_serialspeed['isHidden'] = !this.adv_serialconsole.value;
-    this.adv_serialport['isHidden'] = !this.adv_serialconsole.value;
-    this.adv_serialconsole_subscription = this.adv_serialconsole.valueChanges.subscribe((value) => {
-      this.adv_serialspeed['isHidden'] = !value;
-      this.adv_serialport['isHidden'] = !value;
-    });
-    entityEdit.ws.call('system.advanced.serial_port_choices').subscribe((serial_port_choices)=>{
-      for(const k in serial_port_choices){
-        this.adv_serialport.options.push(
-          {
-            label: k, value: serial_port_choices[k]
-          }
-        )}
-    });
-
   }
 
   public customSubmit(body) {
+    body.legacy_ui ? window.localStorage.setItem('exposeLegacyUI', body.legacy_ui) :
+      window.localStorage.setItem('exposeLegacyUI', 'false');
     delete body.sed_passwd2;
     this.load.open();
     return this.ws.call('system.advanced.update', [body]).subscribe((res) => {

@@ -36,6 +36,10 @@ export const helptext_system_advanced = {
  DISCOURAGED</b>'),
   swapondrive_validation: [ Validators.required, Validators.min(0), Validators.max(99) ],
 
+  enable_legacy_placeholder: T('Enable Legacy UI'),
+  enable_legacy_tooltip: T('WARNING: The Legacy UI is deprecated and may lack functionality. Please perform \
+ all management through the new UI.'),
+
   autotune_placeholder: T('Enable autotune'),
   autotune_tooltip: T('Enables the autotune script which attempts to optimize\
  the system depending on the installed hardware.\

@@ -86,7 +86,7 @@
           <mat-icon>info_outline</mat-icon>
           <span>{{'About' | translate}}</span>
         </button>
-        <button name="settings-legacy-ui" mat-menu-item (click)="onGoToLegacy()">
+        <button *ngIf="" name="settings-legacy-ui" mat-menu-item (click)="onGoToLegacy()">
           <mat-icon>keyboard_return</mat-icon>
           <span>{{'Legacy Web Interface' | translate}}</span>
         </button>

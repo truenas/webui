@@ -55,6 +55,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   dirServicesMonitor: MatDialogRef<DirectoryServicesMonitorComponent>;
   dirServicesStatus = [];
   showDirServicesIcon = false;
+  exposeLegacyUI = false;
 
   ha_status_text: string;
   ha_disabled_reasons = [];
@@ -140,6 +141,10 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
     this.ws.call('system.info').subscribe((res) => {
       this.hostname = res.hostname;
+    });
+
+    this.ws.call('system.advanced.config').subscribe((res) => {
+      this.exposeLegacyUI = res.legacy_ui;
     })
   }
 
