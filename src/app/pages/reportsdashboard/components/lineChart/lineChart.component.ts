@@ -136,6 +136,14 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
        }
 
        let options = {
+         tooltips:{
+           enabled: true,
+             callbacks: { 
+               label: (evt, data) =>{
+               console.log(evt);
+             }
+           }
+         },
          responsive:true,
          maintainAspectRatio: false,
          legend: {
