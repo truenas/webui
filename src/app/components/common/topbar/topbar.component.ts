@@ -143,9 +143,13 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.hostname = res.hostname;
     });
 
+    this.checkLegacyUISetting();
+  }
+
+  checkLegacyUISetting() {
     this.ws.call('system.advanced.config').subscribe((res) => {
       this.exposeLegacyUI = res.legacy_ui;
-    })
+    });
   }
 
   ngOnDestroy() {

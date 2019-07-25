@@ -1,5 +1,4 @@
 import { Component, OnDestroy } from '@angular/core';
-import { Validators } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import * as _ from 'lodash';
 import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
@@ -9,7 +8,6 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
 import { EntityUtils } from '../../common/entity/utils';
 import { RestService, WebSocketService } from '../../../services/';
 import {AdminLayoutComponent} from '../../../components/common/layouts/admin-layout/admin-layout.component';
-import { matchOtherValidator } from '../../common/entity/entity-form/validators/password-validation';
 import { T } from '../../../translate-marker';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
@@ -265,6 +263,20 @@ export class AdvancedComponent implements OnDestroy {
           this.swapondrive.warnings = null;
         }
       });
+      setTimeout(() => {
+        entityEdit.formGroup.controls['legacy_ui'].valueChanges.subscribe((value) => {
+          if (value) {
+            this.dialog.confirm('Warning', 'The Legacy UI is deprecated and may \
+             lack functionality. Please perform all management through the new UI.', true,
+             'I accept the risks').subscribe((res) => {
+               if (!res) {
+                entityEdit.formGroup.controls['legacy_ui'].setValue(false);
+               }
+             })
+          }
+        });
+      }, 50)
+
   
       this.ws.call(this.queryCall).subscribe((adv_values)=>{
         entityEdit.formGroup.controls['sed_passwd2'].setValue(adv_values.sed_passwd);
