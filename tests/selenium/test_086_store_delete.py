@@ -76,8 +76,8 @@ def test_02_wait_for_pool1_to_appear(wb_driver):
 def test_03_click_on_pool1_operation(wb_driver):
     test_name = sys._getframe().f_code.co_name
     # Wait for xpath to be available
-    wait = wait_on_element(wb_driver, xpaths['poolID'], script_name, test_name)
-    assert wait, 'wait on pool ID timeout'
+    element_present = is_element_present(wb_driver, xpaths['poolID'])
+    assert element_present, f'XPath Not Found: {xpaths["poolID"]}'
     pool_xpath = f"//mat-icon[@id='table_actions_menu_button__name_{pool1}']"
     element_present = is_element_present(wb_driver, pool_xpath)
     assert element_present, f'XPath Not Found: {pool_xpath}'
@@ -111,7 +111,7 @@ def test_05_set_destroy_data_and_Confirm_press_export_disconnect(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['confirmButton']).click()
 
 
-def test_06_close_diesconnect(wb_driver):
+def test_06_close_disconnect_pool1_window(wb_driver):
     test_name = sys._getframe().f_code.co_name
     # Wait for xpath to be available
     wait = wait_on_element(
@@ -142,8 +142,8 @@ def test_07_looking_for_pool2(wb_driver):
 def test_08_click_on_pool2_operation(wb_driver):
     test_name = sys._getframe().f_code.co_name
     # Wait for xpath to be available
-    wait = wait_on_element(wb_driver, xpaths['poolID'], script_name, test_name)
-    assert wait, 'wait on pool ID timeout'
+    element_present = is_element_present(wb_driver, xpaths['poolID'])
+    assert element_present, f'XPath Not Found: {xpaths["poolID"]}'
     pool_xpath = f"//mat-icon[@id='table_actions_menu_button__name_{pool2}']"
     element_present = is_element_present(wb_driver, pool_xpath)
     assert element_present, f'XPath Not Found: {pool_xpath}'
