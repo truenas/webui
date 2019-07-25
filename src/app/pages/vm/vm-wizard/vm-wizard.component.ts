@@ -13,6 +13,7 @@ import { MatDialog } from '@angular/material';
 import { T } from '../../../translate-marker';
 import { DialogService } from '../../../services/dialog.service';
 import helptext from '../../../helptext/vm/vm-wizard/vm-wizard';
+import add_edit_helptext from '../../../helptext/vm/devices/device-add-edit';
 import { filter, map } from 'rxjs/operators';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 
@@ -86,6 +87,13 @@ export class VMWizardComponent {
       tooltip : helptext.enable_vnc_tooltip,
       value: true,
       isHidden: false
+      },
+      {
+        name : 'wait',
+        placeholder : add_edit_helptext.wait_placeholder,
+        tooltip : add_edit_helptext.wait_tooltip,
+        type: 'checkbox',
+        value: false
       },
       {
         type: 'select',
@@ -321,16 +329,27 @@ export class VMWizardComponent {
     ( < FormGroup > entityWizard.formArray.get([0]).get('bootloader')).valueChanges.subscribe((bootloader) => {
       if(bootloader === "UEFI_CSM"){
         _.find(this.wizardConfig[0].fieldConfig, {name : 'enable_vnc'})['isHidden'] = true;
+        _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'})['isHidden'] = true;
+
       } else {
         _.find(this.wizardConfig[0].fieldConfig, {name : 'enable_vnc'})['isHidden'] = false;
+        _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'})['isHidden'] = false;
+
       }
 
 
     });
 
     ( < FormGroup > entityWizard.formArray.get([0]).get('enable_vnc')).valueChanges.subscribe((res) => {
+      _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'}).isHidden = !res;
       _.find(this.wizardConfig[0].fieldConfig, {name : 'vnc_bind'}).isHidden = !res;
-      res ? ( < FormGroup > entityWizard.formArray.get([0]).get('vnc_bind')).enable() : ( < FormGroup > entityWizard.formArray.get([0]).get('vnc_bind')).disable();
+      if (res) {
+        ( < FormGroup > entityWizard.formArray.get([0]).get('wait')).enable();
+        ( < FormGroup > entityWizard.formArray.get([0]).get('vnc_bind')).enable()
+      } else {
+        ( < FormGroup > entityWizard.formArray.get([0]).get('wait')).disable();
+        ( < FormGroup > entityWizard.formArray.get([0]).get('vnc_bind')).disable();
+      }
     });
 
 
@@ -593,11 +612,11 @@ async customSubmit(value) {
         {"dtype": "DISK", "attributes": {"path": hdd, "type": value.hdd_type, "sectorsize": 0}},
       ]
     }
-
+    
     if(value.enable_vnc &&value.bootloader !== "UEFI_CSM"){
       vm_payload["devices"].push({
           "dtype": "VNC", "attributes": {
-            "wait": true,
+            "wait": value.wait,
             "vnc_port": String(this.getRndInteger(5553,6553)),
             "vnc_resolution": "1024x768",
             "vnc_bind": value.vnc_bind,
