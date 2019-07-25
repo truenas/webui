@@ -72,7 +72,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   //@ViewChild(ViewChartLineComponent, { static: true}) lineChart:ViewChartLineComponent;
 
   // Labels
-  @Input() localControls?: boolean; 
+  @Input() localControls?: boolean = true;; 
   @Input() report: Report;
   @Input() identifier?: string;
 
@@ -158,8 +158,10 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
 
   ngOnChanges(changes){
     if(changes.report){
+      const zoom = this.zoomLevels[this.timeZoomIndex];
+      const rrdOptions = this.convertTimespan(zoom.timespan)
       let identifier = changes.report.currentValue.identifiers ? changes.report.currentValue.identifiers[0] : null;
-      this.fetchReportData(changes.report.currentValue, identifier);
+      this.fetchReportData(rrdOptions, changes.report.currentValue, identifier);
     }
   }
 
@@ -177,6 +179,9 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
     //this.lineChart.fetchData(rrdOptions, zoom.timeformat, zoom.culling);
+    
+    let identifier = this.report.identifiers ? this.report.identifiers[0] : null;
+    this.fetchReportData(rrdOptions, this.report, identifier);
   }
 
   timeZoomOut(){
@@ -189,6 +194,9 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
     //this.lineChart.fetchData(rrdOptions, zoom.timeformat, zoom.culling);
+    
+    let identifier = this.report.identifiers ? this.report.identifiers[0] : null;
+    this.fetchReportData(rrdOptions, this.report, identifier);
   }
 
   stepBack(){
@@ -197,6 +205,9 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
     //this.lineChart.fetchData(rrdOptions, zoom.timeformat, zoom.culling);  
+    
+    let identifier = this.report.identifiers ? this.report.identifiers[0] : null;
+    this.fetchReportData(rrdOptions, this.report, identifier);
   }
 
   stepForward(){
@@ -206,6 +217,9 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
     //this.lineChart.fetchData(rrdOptions, zoom.timeformat, zoom.culling);
+    
+    let identifier = this.report.identifiers ? this.report.identifiers[0] : null;
+    this.fetchReportData(rrdOptions, this.report, identifier);
   }
 
   // Convert timespan to start/end options for RRDTool
@@ -279,10 +293,18 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     }
   }
 
-  fetchReportData(report:Report, identifier?: string){
+  fetchReportData(rrdOptions, report:Report, identifier?: string){
+    // Report options
     let params = identifier ? { name: report.name, identifier: identifier} : { name: report.name };
-    this.ws.call('reporting.get_data', [[params]]).subscribe((res) =>{
+
+    // Time scale options
+    const start = Math.floor(rrdOptions.start / 1000);
+    const end = Math.floor(rrdOptions.end / 1000);
+    let timeFrame = {"start": start, "end": end}; // 'HOUR', 'DAY', 'WEEK', 'MONTH', 'YEAR'
+
+    this.ws.call('reporting.get_data', [[params],timeFrame]).subscribe((res) =>{
       this.data = res[0];
+      //console.log(res[0]);
     });
   }
 

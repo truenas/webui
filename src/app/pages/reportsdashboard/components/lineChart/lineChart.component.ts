@@ -10,6 +10,7 @@ import {UUID} from 'angular2-uuid';
 import * as c3 from 'c3';
 import * as moment from 'moment';
 import Chart from 'chart.js';
+import 'chartjs-plugin-crosshair';
 
 //import { LineChartService, HandleDataFunc, LineChartData,LineChartMetadata, DataListItem } from './lineChart.service';
 
@@ -136,14 +137,29 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
        }
 
        let options = {
+         plugins: {
+           crosshair: {
+             line: {
+               width: 1,
+               color: '#666'
+             },
+             sync: {
+               enabled: true
+             },
+             zoom : {
+               enabled: false
+             }
+           }
+         },
          tooltips:{
            enabled: true,
              callbacks: { 
                label: (evt, data) =>{
-               console.log(evt);
+                 //console.log(evt);
              }
            }
          },
+         //showLines: false,
          responsive:true,
          maintainAspectRatio: false,
          legend: {
@@ -166,7 +182,7 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
             type: 'time',
             display: true,
             scaleLabel: {
-              display: true,
+              display: false,
               labelString: 'Date'
             }
             /*time: {
@@ -190,6 +206,17 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
          data:data,
          options
        });
+
+     } else {
+
+       const ds = this.makeDatasets(this.data, this.dataStructure);
+       let data = {
+         labels: this.makeTimeAxis(this.data, 'columns'),//this.data.legend,
+         datasets: ds ,
+       }
+       this.chart.data = data;
+
+       this.chart.update();
 
      }
    }
