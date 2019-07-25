@@ -7,6 +7,7 @@ import time
 cwd = str(os.getcwd())
 sys.path.append(cwd)
 from function import take_screenshot, pool1, pool2, wait_on_element
+from function import is_element_present
 
 skip_mesages = "Skipping first run"
 script_name = os.path.basename(__file__).partition('.')[0]
@@ -29,7 +30,8 @@ xpaths = {
     'foldPoolTable': "//mat-panel-title",
     'topPoolTable': '//td',
     'noPool': '//mat-card-content',
-    'toDashboard': "//span[contains(.,'Dashboard')]"
+    'toDashboard': "//span[contains(.,'Dashboard')]",
+    'disconnect': "//button[@id='action_button___']/span"
 }
 
 
@@ -57,7 +59,7 @@ def test_01_nav_store_pool(wb_driver):
     take_screenshot(wb_driver, script_name, test_name)
 
 
-def test_02_looking_for_pool1(wb_driver):
+def test_02_wait_for_pool1_to_appear(wb_driver):
     test_name = sys._getframe().f_code.co_name
     xpath = xpaths['foldPoolTable']
     wait = wait_on_element(wb_driver, xpath, script_name, test_name)
@@ -71,19 +73,59 @@ def test_02_looking_for_pool1(wb_driver):
     take_screenshot(wb_driver, script_name, test_name)
 
 
-def test_03_delete_pool1(wb_driver):
+def test_03_click_on_pool1_operation(wb_driver):
     test_name = sys._getframe().f_code.co_name
     # Wait for xpath to be available
-    wait_on_element(wb_driver, xpaths['poolID'], script_name, test_name)
-    # wb_driver.find_element_by_xpath(xpaths['poolID']).click()
-    time.sleep(1)
-    pool_detach(wb_driver, pool1, script_name, test_name)
-    # taking screenshot
-    test_name = sys._getframe().f_code.co_name
+    wait = wait_on_element(wb_driver, xpaths['poolID'], script_name, test_name)
+    assert wait, 'wait on pool ID timeout'
+    pool_xpath = f"//mat-icon[@id='table_actions_menu_button__name_{pool1}']"
+    element_present = is_element_present(wb_driver, pool_xpath)
+    assert element_present, f'XPath Not Found: {pool_xpath}'
+    wb_driver.find_element_by_xpath(pool_xpath).click()
+    wait_on_element(wb_driver, xpaths['disconnect'], script_name, test_name)
     take_screenshot(wb_driver, script_name, test_name)
+    element_present = is_element_present(wb_driver, pool_xpath)
+    assert element_present, f'XPath Not Found: {xpaths["disconnect"]}'
 
 
-def test_04_looking_for_pool2(wb_driver):
+def test_04_click_disconect_pool(wb_driver):
+    test_name = sys._getframe().f_code.co_name
+    wb_driver.find_element_by_xpath(xpaths['disconnect']).click()
+    wait = wait_on_element(
+        wb_driver,
+        xpaths['pooldestroyCheckbox'],
+        script_name,
+        test_name
+    )
+    take_screenshot(wb_driver, script_name, test_name)
+    assert wait is True, f'XPath Not Found: {xpaths["pooldestroyCheckbox"]}'
+
+
+def test_05_set_destroy_data_and_Confirm_press_export_disconnect(wb_driver):
+    test_name = sys._getframe().f_code.co_name
+    wb_driver.find_element_by_xpath(xpaths['pooldestroyCheckbox']).click()
+    wb_driver.find_element_by_xpath(xpaths['poolconfirmCheckbox']).click()
+    element_present = is_element_present(wb_driver, xpaths['confirmButton'])
+    take_screenshot(wb_driver, script_name, test_name)
+    assert element_present, f'XPath Not Found: {xpaths["confirmButton"]}'
+    wb_driver.find_element_by_xpath(xpaths['confirmButton']).click()
+
+
+def test_06_close_widget(wb_driver):
+    test_name = sys._getframe().f_code.co_name
+    # Wait for xpath to be available
+    wait = wait_on_element(
+        wb_driver,
+        xpaths['closeButton'],
+        script_name,
+        test_name
+    )
+    take_screenshot(wb_driver, script_name, test_name)
+    assert wait is True, f'XPath Not Found: {xpaths["closeButton"]}'
+    wb_driver.find_element_by_xpath(xpaths['closeButton']).click()
+
+
+def test_06_looking_for_pool2(wb_driver):
     test_name = sys._getframe().f_code.co_name
     xpath = xpaths['topPoolTable']
     wait = wait_on_element(wb_driver, xpath, script_name, test_name)
@@ -97,14 +139,14 @@ def test_04_looking_for_pool2(wb_driver):
     take_screenshot(wb_driver, script_name, test_name)
 
 
-def test_05_delete_pool2(wb_driver):
+def test_08_delete_pool2(wb_driver):
     test_name = sys._getframe().f_code.co_name
     pool_detach(wb_driver, pool2, script_name, test_name)
     # taking screenshot
     take_screenshot(wb_driver, script_name, test_name)
 
 
-def test_06_looking_for_pool2(wb_driver):
+def test_09_looking_for_pool2(wb_driver):
     test_name = sys._getframe().f_code.co_name
     xpath = xpaths['noPool']
     wait = wait_on_element(wb_driver, xpath, script_name, test_name)
@@ -118,13 +160,13 @@ def test_06_looking_for_pool2(wb_driver):
     take_screenshot(wb_driver, script_name, test_name)
 
 
-def test_07_close_navStorage(wb_driver):
+def test_10_close_navStorage(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['navStorage']).click()
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
 
 
-def test_08_return_to_dashboard(wb_driver):
+def test_11_return_to_dashboard(wb_driver):
     # Close the System Tab
     wb_driver.find_element_by_xpath(xpaths['toDashboard']).click()
     time.sleep(1)
