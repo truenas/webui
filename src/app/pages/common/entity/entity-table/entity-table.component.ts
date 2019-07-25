@@ -249,7 +249,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     }
 
-
     this.displayedColumns.push("action");
     if (this.conf.changeEvent) {
       this.conf.changeEvent(this);
