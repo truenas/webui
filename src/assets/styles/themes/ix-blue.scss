@@ -1345,6 +1345,17 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     text-decoration: underline;
   }
 
+  confirm-dialog pre {
+      overflow-x: auto;
+      white-space: pre-wrap;
+      white-space: -moz-pre-wrap;
+      white-space: -pre-wrap;
+      white-space: -o-pre-wrap;
+      word-wrap: break-word;
+      background: rgba(0, 0, 0, 0.096);
+      padding: 5px;
+  }
+
   app-interfaces-form .disabled-select .mat-select-arrow {
     opacity: 0.38;
   }
@@ -1352,9 +1363,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   iscsi .mat-tab-links {
     flex-wrap: wrap;
   }
-
-
-
 
 
  } // end of ix theme

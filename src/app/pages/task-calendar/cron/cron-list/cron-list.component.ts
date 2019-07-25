@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import * as cronParser from 'cron-parser';
 import { Moment } from 'moment';
+import { filter, switchMap } from 'rxjs/operators';
 import { DialogService, RestService } from '../../../../services';
 import { TaskService } from '../../../../services/';
 import { T } from '../../../../translate-marker';
-import { filter, switchMap } from 'rxjs/operators';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { TaskScheduleListComponent } from '../../components/task-schedule-list/task-schedule-list.component';
 
 @Component({
   selector: 'app-cron-list',
@@ -27,7 +28,7 @@ export class CronListComponent {
     { name: T('Users'), prop: 'cron_user', always_display: true },
     { name: T('Command'), prop: 'cron_command' },
     { name: T('Description'), prop: 'cron_description' },
-    { name: T('Schedule'), prop: 'cron_schedule' },
+    { name: T('Schedule'), prop: 'cron_schedule', widget: { icon: 'date_range', component: TaskScheduleListComponent } },
     { name: T('Enabled'), prop: 'cron_enabled' },
     { name: T('Next Run'), prop: 'cron_next_run', hidden: true },
     { name: T('Minute'), prop: 'cron_minute', hidden: true },
