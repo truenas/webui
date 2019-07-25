@@ -18,6 +18,7 @@ import { TaskService } from 'app/services';
 })
 export class TaskScheduleListComponent implements OnInit, OnChanges {
   private static readonly LIST_LENGTH = 5;
+  @Input() public value: string;
   @Input() public config: { schedule?: string; cron_schedule?: string; cron?: string; scrub_schedule?: string };
   @Input() public parent: EntityTableComponent & { conf: any };
 

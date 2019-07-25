@@ -173,9 +173,12 @@
       #entityTable>
 
       <!-- Row Detail Template -->
-      <ngx-datatable-row-detail [rowHeight]="getRowDetailHeight" #myDetailRow>
+      <ngx-datatable-row-detail [rowHeight]="getRowDetailHeight">
         <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
-          <div dynamicComponent [component]="conf.rowDetailComponent || entityTableRowDetailsComponent" [config]="row" [parent]="this"></div>
+          <div *ngIf="conf.rowDetailComponent; else default;" dynamicComponent [component]="conf.rowDetailComponent" [config]="row" [parent]="this"></div>
+          <ng-template #default>
+            <app-entity-table-row-details [config]="row" [parent]="this"></app-entity-table-row-details>
+          </ng-template>
         </ng-template>
       </ngx-datatable-row-detail>
 
@@ -267,7 +270,7 @@
                 <mat-menu #widget="matMenu" xPosition="before" yPosition="below">
                   <!-- column widgets need to be registered with this switch case -->
                   <ng-container [ngSwitch]="col.widget.component">
-                    <app-task-schedule-list *ngSwitchCase="'TaskScheduleListComponent'" [config]="row" [parent]="this"></app-task-schedule-list>
+                    <app-task-schedule-list *ngSwitchCase="'TaskScheduleListComponent'" [value]="row[col.prop]" [config]="row" [parent]="this"></app-task-schedule-list>
                   </ng-container>
                 </mat-menu>
             </ng-container>

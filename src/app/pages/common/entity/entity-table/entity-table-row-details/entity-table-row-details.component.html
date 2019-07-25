@@ -21,6 +21,7 @@
                     <ng-container [ngSwitch]="column.widget.component">
                         <app-task-schedule-list
                             *ngSwitchCase="'TaskScheduleListComponent'"
+                            [value]="getPropValue(column.prop)"
                             [config]="config"
                             [parent]="parent"
                         ></app-task-schedule-list>
