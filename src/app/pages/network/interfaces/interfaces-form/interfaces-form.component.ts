@@ -180,9 +180,10 @@ export class InterfacesFormComponent implements OnDestroy {
             name: 'failover_address',
             placeholder: helptext.failover_alias_address_placeholder,
             tooltip: helptext.failover_alias_address_tooltip,
-            disabled: true,
-            isHidden: true,
+            // disabled: true,
+            // isHidden: true,
             type: 'ipwithnetmask',
+            width: '55%',
             validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ],
 
           },
@@ -190,9 +191,10 @@ export class InterfacesFormComponent implements OnDestroy {
             name: 'failover_virtual_address',
             placeholder: helptext.failover_virtual_alias_address_placeholder,
             tooltip: helptext.failover_virtual_alias_address_tooltip,
-            disabled: true,
-            isHidden: true,
+            // disabled: true,
+            // isHidden: true,
             type: 'ipwithnetmask',
+            width: '55%',
             netmaskPreset: 32,
             validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ],
 
@@ -354,6 +356,7 @@ export class InterfacesFormComponent implements OnDestroy {
   }
 
   resourceTransformIncomingRestData(data) {
+    console.log(data)
     const aliases = data['aliases'];
     const a = [];
     const failover_aliases = data['failover_aliases'];
@@ -397,16 +400,19 @@ export class InterfacesFormComponent implements OnDestroy {
     const propValues = ['address', 'failover_address', 'failover_virtual_address'];
     if (!entityForm.isNew) {
       const data = entityForm.queryResponse[0];
+      // console.log(data)
       for (const prop in data) {
         if (entityForm.formGroup.controls[prop] && !propNames.includes(prop)) {
           entityForm.formGroup.controls[prop].setValue(data[prop]);
         }
       }
-      propNames.forEach((propName) => {
-        if (Object.keys(data).includes(propName)) {
-          const aliases_fg = entityForm.formGroup.controls[propName];
-          const aliasList = data[propName];
+      
+      //   if (Object.keys(data).includes(propName)) {
+          const aliases_fg = entityForm.formGroup.controls['aliases'];
+          const aliasList = data['aliases'];
           for (let i = 0; i < aliasList.length; i++) {
+            propNames.forEach((propName) => {
+              if (Object.keys(data).includes(propName)) {
             if (aliases_fg.controls[i] === undefined) {
               const templateListField = _.cloneDeep(_.find(this.fieldConfig, {'name': propName}).templateListField);
               aliases_fg.push(entityForm.entityFormService.createFormGroup(templateListField));
@@ -414,9 +420,13 @@ export class InterfacesFormComponent implements OnDestroy {
             }
             aliases_fg.controls[i].controls[propValues[propNames.indexOf(propName)]]
               .setValue(aliasList[i][propValues[propNames.indexOf(propName)]]);
+            // console.log(aliasList[i][propValues[propNames.indexOf(propName)]])
+            console.log(aliases_fg.controls[i].controls[propValues[propNames.indexOf(propName)]])
+              }
+            })
           }
-        }
-      })
+          // console.log(aliases_fg.controls)
+     
     }
   }
 

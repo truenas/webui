@@ -1353,4 +1353,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     opacity: 0.38;
   }
 
+  app-interfaces-form entity-form-list .form-list div  {
+    flex-direction: column;
+  }
+
  } // end of ix theme
