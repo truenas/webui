@@ -265,7 +265,10 @@
             <ng-container *ngIf="col?.widget?.component">
                 <mat-icon [style.cursor]="'pointer'" [matMenuTriggerFor]="widget">{{ col.widget.icon }}</mat-icon>
                 <mat-menu #widget="matMenu" xPosition="before" yPosition="below">
-                  <div dynamicComponent [component]="col.widget.component" [config]="row" [parent]="this"></div>
+                  <!-- column widgets need to be registered with this switch case -->
+                  <ng-container [ngSwitch]="col.widget.component">
+                    <app-task-schedule-list *ngSwitchCase="'TaskScheduleListComponent'" [config]="row" [parent]="this"></app-task-schedule-list>
+                  </ng-container>
                 </mat-menu>
             </ng-container>
             <div id="{{col.prop}}_{{row[col.prop]}}" 

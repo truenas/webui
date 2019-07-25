@@ -26,7 +26,6 @@ export class TaskScheduleListComponent implements OnInit, OnChanges {
   }
 
   public ngOnChanges(): void {
-    console.log('changed');
     this._buildFutureRuns();
   }
 

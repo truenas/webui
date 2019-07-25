@@ -29,7 +29,6 @@ import { ScrubFormComponent } from './scrub/scrub-form/scrub-form.component';
 import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
 import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
 import { ResilverComponent } from './resilver/resilver.component';
-import { TaskScheduleListComponent } from './components/task-schedule-list/task-schedule-list.component';
 
 @NgModule({
   imports: [
@@ -48,7 +47,6 @@ import { TaskScheduleListComponent } from './components/task-schedule-list/task-
   ],
   declarations: [
     TaskCalendarComponent,
-    TaskScheduleListComponent,
     CronFormComponent,
     CronListComponent,
     InitshutdownListComponent,
@@ -67,7 +65,6 @@ import { TaskScheduleListComponent } from './components/task-schedule-list/task-
     CloudsyncListComponent,
     CloudsyncFormComponent,
     ResilverComponent
-  ],
-  entryComponents: [TaskScheduleListComponent]
+  ]
 })
 export class TaskCalendarModule {}

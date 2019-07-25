@@ -229,7 +229,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     // Get preferred list of columns from pref service
-      const preferredCols = this.prefService.preferences.tableDisplayedColumns;
+    const preferredCols = this.prefService.preferences.tableDisplayedColumns;
 
     // No preferences set for any table, show 'default' configuration
     if (preferredCols.length === 0) {
