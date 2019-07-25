@@ -872,7 +872,7 @@ export class CloudCredentialsFormComponent {
             if (!this.entityForm.formGroup.controls[item].valid) {
               this.entityForm.formGroup.controls[item].markAsTouched();
             }
-            if (item != 'preview-GOOGLE_CLOUD_STORAGE') {
+            if (item !== 'preview-GOOGLE_CLOUD_STORAGE' && item !== 'advanced-S3') {
               attr_name = item.split("-")[0];
               attributes[attr_name] = value[item];
             }
@@ -891,7 +891,7 @@ export class CloudCredentialsFormComponent {
             }
           },
           (err) => {
-            new EntityUtils().handleWSError(this.entityForm.conf, err);
+            new EntityUtils().handleWSError(this.entityForm, err, this.dialog);
           })
       }
     }
