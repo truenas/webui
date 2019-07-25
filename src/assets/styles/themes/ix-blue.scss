@@ -1349,4 +1349,12 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     opacity: 0.38;
   }
 
+  iscsi .mat-tab-links {
+    flex-wrap: wrap;
+  }
+
+
+
+
+
  } // end of ix theme
