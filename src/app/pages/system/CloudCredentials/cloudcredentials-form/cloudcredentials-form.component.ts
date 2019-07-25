@@ -862,6 +862,8 @@ export class CloudCredentialsFormComponent {
       id : 'validCredential',
       name : T('Verify Credential'),
       function : () => {
+        this.entityForm.loader.open();
+        this.entityForm.error = '';
         const attributes = {};
         const value = _.cloneDeep(this.entityForm.formGroup.value);
         this.beforeSubmit(value);
@@ -884,6 +886,7 @@ export class CloudCredentialsFormComponent {
 
         this.ws.call('cloudsync.credentials.verify', [value]).subscribe(
           (res) => {
+            this.entityForm.loader.close();
             if (res.valid) {
               this.snackBar.open(T('The Credential is valid.'), T('Close'), { duration: 5000 });
             } else {
@@ -891,6 +894,7 @@ export class CloudCredentialsFormComponent {
             }
           },
           (err) => {
+            this.entityForm.loader.close();
             new EntityUtils().handleWSError(this.entityForm, err, this.dialog);
           })
       }
@@ -964,7 +968,13 @@ export class CloudCredentialsFormComponent {
     this.entityForm = entityForm;
     entityForm.submitFunction = this.submitFunction;
 
+    const providerField = _.find(this.fieldConfig, {'name' : 'provider'});
     entityForm.formGroup.controls['provider'].valueChanges.subscribe((res) => {
+      if (providerField.hasErrors) {
+        providerField.hasErrors = false;
+        providerField.errors = '';
+      }
+
       this.selectedProvider = res;
 
       this.oauthURL = _.find(this.providers, {'name': res}).credentials_oauth;
