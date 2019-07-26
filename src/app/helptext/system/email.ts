@@ -13,6 +13,11 @@ export const helptext_system_email = {
     )
   },
 
+  fromname: {
+    placeholder: T("From Name"),
+    tooltip: T('')
+  },
+
   outgoingserver: {
     placeholder: T("Outgoing Mail Server"),
     tooltip: T(
