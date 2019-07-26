@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 import { T } from '../../../translate-marker';
 import { EntityUtils } from '../../common/entity/utils';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { DialogService } from '../../../services/dialog.service';
 
 @Component({
   selector: 'app-single-plugin',
@@ -19,7 +20,7 @@ export class PluginComponent implements OnInit {
   public actions: any[];
   protected publicIp = '';
 
-  constructor(protected matDialog: MatDialog) { }
+  constructor(protected matDialog: MatDialog, protected dialogService: DialogService) { }
 
   ngOnInit() {
     this.actions = this.getActions(this.config);
@@ -145,6 +146,22 @@ export class PluginComponent implements OnInit {
         visible: this.isActionVisible('register'),
         onClick: () => {
           this.getRegistrationLink();
+        }
+      });
+    }
+    if (row.plugin_info) {
+      actions.push({
+        name: row.name,
+        id: "postinstall",
+        label: T('POST INSTALL NOTES'),
+        icon: 'description',
+        visible: this.isActionVisible('postinstal'),
+        onClick: () => {
+          let install_notes = '';
+          for (const msg of row.plugin_info.split('\n')) {
+            install_notes += '<p>' + msg + '</p>';
+          }
+          this.dialogService.Info(T('Post Install Notes'), install_notes, '500px', 'description', true);
         }
       });
     }
