@@ -31,7 +31,7 @@
           <!--<viewchartline fxFlex="100" fxFlexAlign="end" #chartCpu width="600" height="160" [style.display]="isFlipped ? 'none': 'block'"></viewchartline>-->
           <!-- Chart -->
           <div class="chart-wrapper" fxFlex="100">
-            <linechart
+            <linechart 
               *ngIf="data"
               [data]="data"
               [title]="report.title"
@@ -52,40 +52,41 @@
           <!-- Legend Section -->
           <div fxFlex="100" class="legend-wrapper">         
           <!-- Time Stamp -->
-          <!--<div class="legend-timestamp">
-            <div *ngIf="lineChart.showLegendValues">
-              <span *ngIf="lineChart.legendEvents | async as timestamp">
-                <h4><strong>Time:</strong> <span style="font-weight:normal;">{{timestamp[0].x}}</span></h4>
+          <div class="legend-timestamp">
+            <div >
+              <span *ngIf="lineChart && lineChart.legendEvents | async as timestamp">
+                <h4><strong>Time:</strong> <span style="font-weight:normal;">&nbsp;&nbsp;{{timestamp.xHTML}}</span></h4>
               </span>
             </div>
-            </div>-->
           </div>
+        </div>
         </mat-card-content>
-          <mat-card-footer>
-            <section class="legend" fxLayout="column" fxLayoutAlign="none"  >
-            <!--<div class="legend-group" fxFlex="38px" fxLayout="row wrap" fxLayoutAlign="space-between start" fxLayoutGap="16px" *ngFor="let legendItem of legendLabels; let i=index">
+          <mat-card-footer *ngIf="data">
+            <section class="legend" fxLayout="row wrap" fxLayoutAlign="none"  >
+            <div class="legend-group" fxFlex="calc(50% - 32px)" fxLayout="row wrap" fxLayoutAlign="start start" fxLayoutGap="16px" *ngFor="let legendItem of data.legend; let i=index">
 
-                <div fxFlex="150px" class="legend-label" >
-                   Legend Label 
-                  <div class="swatch" [style.background-color]="lineChart.colorPattern[i]" ></div>
-                  <span class="legend-item">{{legendItem}}</span> 
+                <div fxFlex="200px" class="legend-label" >
+                  <!-- Legend Label -->
+                  <div *ngIf="lineChart && lineChart.colorPattern" class="swatch" [style.background-color]="lineChart.colorPattern[i]" ></div>
+                  <span class="legend-item"><strong>{{legendItem}}</strong></span> 
 
-                  <span *ngIf="lineChart.legendEvents | async as tooltip">
-                    <span  *ngIf="lineChart.showLegendValues && tooltip[i]" class="tooltip-value" >
-                      : <span style="font-weight:normal;">{{tooltip[i].value}} {{lineChart.units}}</span>
+                  <span *ngIf="lineChart && lineChart.legendEvents | async as tooltip">
+                    <span  class="tooltip-value" >
+                       : <span style="font-weight:normal;">{{tooltip.series[i].yHTML}}</span>
                     </span>
                   </span>
                 </div>
 
-                   Analytics 
-                  <div fxFlex class="report-analytics" *ngIf="lineChart.legendAnalytics | async as analytics" fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="16px">
-                    <span fxFlex="105px"><strong>Min:</strong>  {{analytics[i].min}}<span *ngIf="analytics[i].min !== 'N/A'">{{lineChart.units}}</span></span>
-                      <span fxFlex="105px"><strong>Max:</strong>  {{analytics[i].max}}<span *ngIf="analytics[i].max !== 'N/A'">{{lineChart.units}}</span></span>
-                        <span fxFlex="105px"><strong>Avg:</strong>  {{analytics[i].avg}}<span *ngIf="analytics[i].avg !== 'N/A'">{{lineChart.units}}</span></span>
-                          <span *ngIf="analytics[i].total" fxFlex=""><strong>Total:</strong>  {{analytics[i].total}}<span *ngIf="analytics[i].total !== 'N/A'">{{lineChart.units}}</span></span>
+                <!-- Aggregations -->
+                  <div style="opacity:0.75; border:red;" fxFlex class="report-analytics" *ngIf="data && data.aggregations" fxLayout="row" fxLayoutAlign="start start" fxLayoutGap="16px">
+                    
+                   
+                    <span *ngFor="let key of aggregationKeys" fxFlex><strong>{{key}}:</strong>  {{data.aggregations[key][i] ? data.aggregations[key][i].toFixed(2) : 'null'}}<span></span></span>
+                   
+
                   </div>
 
-            </div>-->
+            </div>
             </section>
 
           </mat-card-footer>

@@ -6,14 +6,10 @@ import { MaterialModule } from 'app/appMaterial.module';
 import { Subject } from 'rxjs/Subject';
 import { NgForm } from '@angular/forms';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
-//import { ViewChartLineComponent } from 'app/core/components/viewchartline/viewchartline.component';
-//import { LineChartComponent } from 'app/components/common/lineChart/lineChart.component';
 import { LineChartComponent } from '../lineChart/lineChart.component';
-//import { Report } from '../../reportsdashboard.component';
 
 import { Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
-
 
 import * as moment from 'moment';
 import filesize from 'filesize';
@@ -67,19 +63,20 @@ export interface ReportData {
 })
 export class ReportComponent extends WidgetComponent implements AfterViewInit, OnChanges ,OnDestroy {
 
-  //Chart
-  //@ViewChild(LineChartComponent, { static: true}) lineChart:LineChartComponent;
-  //@ViewChild(ViewChartLineComponent, { static: true}) lineChart:ViewChartLineComponent;
-
   // Labels
   @Input() localControls?: boolean = true;; 
   @Input() report: Report;
   @Input() identifier?: string;
+  @ViewChild(LineChartComponent, {static: false}) lineChart:LineChartComponent;
 
   public data: ReportData;
   
   get reportTitle(){
     return this.identifier ? this.report.title.replace(/{identifier}/, this.identifier) : this.report.title;
+  }
+
+  get aggregationKeys (){
+    return Object.keys(this.data.aggregations);
   }
 
   public legendLabels: Subject<any> = new Subject();
@@ -126,7 +123,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   }
 
   // Chart Options
-  //public showLegendValues:boolean = false;
+  public showLegendValues:boolean = false;
   public chartId = "chart-" + UUID.UUID();
 
   public startTime;
@@ -135,12 +132,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   constructor(public router: Router, public translate: TranslateService, private ws: WebSocketService){
     super(translate); 
     this.loader = true;
-
-    /*setTimeout(() => {
-      if(!this.dataRcvd){
-        this.loader = true;
-      }
-    }, 5000)*/
   }
 
   ngOnDestroy(){
@@ -153,7 +144,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     const rrdOptions = this.convertTimespan(zoom.timespan)
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
-    //this.lineChart.fetchData(rrdOptions, zoom.timeformat, zoom.culling);
   }
 
   ngOnChanges(changes){
@@ -178,7 +168,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     const rrdOptions = this.convertTimespan(zoom.timespan);
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
-    //this.lineChart.fetchData(rrdOptions, zoom.timeformat, zoom.culling);
     
     let identifier = this.report.identifiers ? this.report.identifiers[0] : null;
     this.fetchReportData(rrdOptions, this.report, identifier);
@@ -193,7 +182,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     const rrdOptions = this.convertTimespan(zoom.timespan);
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
-    //this.lineChart.fetchData(rrdOptions, zoom.timeformat, zoom.culling);
     
     let identifier = this.report.identifiers ? this.report.identifiers[0] : null;
     this.fetchReportData(rrdOptions, this.report, identifier);
@@ -204,7 +192,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     const rrdOptions = this.convertTimespan(zoom.timespan, 'backward', this.currentStartDate);
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
-    //this.lineChart.fetchData(rrdOptions, zoom.timeformat, zoom.culling);  
     
     let identifier = this.report.identifiers ? this.report.identifiers[0] : null;
     this.fetchReportData(rrdOptions, this.report, identifier);
@@ -216,7 +203,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     const rrdOptions = this.convertTimespan(zoom.timespan, 'forward', this.currentEndDate);
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
-    //this.lineChart.fetchData(rrdOptions, zoom.timeformat, zoom.culling);
     
     let identifier = this.report.identifiers ? this.report.identifiers[0] : null;
     this.fetchReportData(rrdOptions, this.report, identifier);
@@ -300,7 +286,8 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     // Time scale options
     const start = Math.floor(rrdOptions.start / 1000);
     const end = Math.floor(rrdOptions.end / 1000);
-    let timeFrame = {"start": start, "end": end}; // 'HOUR', 'DAY', 'WEEK', 'MONTH', 'YEAR'
+    let timeFrame = {"start": start, "end": end}; 
+    //let timeFrame = {"unit": "WEEK"};// 'HOUR', 'DAY', 'WEEK', 'MONTH', 'YEAR'
 
     this.ws.call('reporting.get_data', [[params],timeFrame]).subscribe((res) =>{
       this.data = res[0];

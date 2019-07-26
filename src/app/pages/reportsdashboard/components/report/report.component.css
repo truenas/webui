@@ -46,6 +46,11 @@
   margin-right:8px;
 }
 
+span.tooltip-value{
+  color: var(--fg2);
+  font-weight: 700;
+}
+
 .legend .tooltip-wrapper{
   padding-left:8px;
   height:20px;
@@ -352,7 +357,7 @@ height:calc(100% - 48px);
     height:calc(100% - 64px);
   }*/
   .chart-wrapper{
-    height:120px;
+    height:180px;
   }
 
   .card-bg-wrapper{
@@ -542,6 +547,7 @@ p.value{
   width: 220px !important;
   max-width: 220px !important;*/
   margin-right: 20px;
+  max-width: calc(50% - 32px) !important;
 }
 
 h3 {
