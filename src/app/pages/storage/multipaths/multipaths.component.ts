@@ -10,7 +10,7 @@ export class MultipathsComponent {
 
     public treeTableConfig: EntityTreeTable = {
         columns: [
-            { name: 'Name', prop: 'name', },
+            { name: 'Name', prop: 'name' },
             { name: 'Status', prop: 'status', },
             { name: 'LUN ID', prop: 'lun_id', },
         ],

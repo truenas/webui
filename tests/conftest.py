@@ -41,6 +41,7 @@ def webDriverFirefox():
         capabilities=caps,
         firefox_binary=binary
     )
+    driver.set_window_size(1470, 900)
     return driver
 
 

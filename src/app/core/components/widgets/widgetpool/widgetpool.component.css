@@ -121,6 +121,10 @@
   font-size: 75%;
 }
 
+.pool-space .value{
+  font-weight:500;
+}
+
 span.error {
   color: var(--red);
 }

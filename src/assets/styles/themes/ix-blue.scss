@@ -247,12 +247,12 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   .mat-select-panel .mat-option:hover,
-  .ngx-datatable .datatable-body .datatable-row-wrapper:nth-child(odd){
+  .ngx-datatable .datatable-body .datatable-row-wrapper:nth-child(odd) datatable-body-row{
     @include variable(background, --alt-bg1, $alt-bg1);
     @include variable(color, --alt-fg1, $alt-fg1);
   }
 
-  .ngx-datatable .datatable-body .datatable-row-wrapper:nth-child(even){
+  .ngx-datatable .datatable-body .datatable-row-wrapper:nth-child(even) datatable-body-row{
     //@include variable(background, --alt-bg1, $alt-bg1);
     background-color:rgba(123,123,123,0.2);
     @include variable(color, --alt-fg1, $alt-fg1);
@@ -887,8 +887,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-primary .mat-pseudo-checkbox-checked, .mat-primary .mat-pseudo-checkbox-indeterminate {
     @include variable(background, --accent, $accent !important);
   }
-
-  .mat-pseudo-checkbox{
+  // for multi-selection only
+  .mat-option-pseudo-checkbox.mat-pseudo-checkbox{
     display:none ;
   }
 
@@ -1343,6 +1343,17 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   app-support a {
     text-decoration: underline;
+  }
+
+  confirm-dialog pre {
+      overflow-x: auto;
+      white-space: pre-wrap;
+      white-space: -moz-pre-wrap;
+      white-space: -pre-wrap;
+      white-space: -o-pre-wrap;
+      word-wrap: break-word;
+      background: rgba(0, 0, 0, 0.096);
+      padding: 5px;
   }
 
   app-interfaces-form .disabled-select .mat-select-arrow {

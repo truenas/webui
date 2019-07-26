@@ -17,7 +17,7 @@ export class AFPListComponent {
   protected route_delete: string[] = [ 'sharing', 'afp', 'delete' ];
 
   public columns: any[] = [
-    {name : T('Name'), prop : 'afp_name'},
+    {name : T('Name'), prop : 'afp_name', always_display: true},
     {name : T('Path'), prop : 'afp_path'},
   ];
   public config: any = {

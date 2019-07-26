@@ -35,7 +35,7 @@ export class PluginsComponent {
   public activatedPool: any;
 
   public columns: Array<any> = [
-    { name: T('Jail'), prop: 'name' },
+    { name: T('Jail'), prop: 'name', always_display: true },
     { name: T('Status'), prop: 'state' },
     { name: T('IPv4 Address'), prop: 'ip4' },
     { name: T('IPv6 Address'), prop: 'ip6' },
