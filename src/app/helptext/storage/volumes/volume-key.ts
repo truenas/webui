@@ -45,8 +45,10 @@ createkey_passphrase2_tooltip: T('Confirm the encryption key passphrase.'),
 createkey_passphrase2_validation: [Validators.required],
 
 // Rekey form
-rekey_instructions: T('Generate a new encryption key, replacing the old one on the disks in the pool.\
- Passphrases will be removed by this operation. <br>A dialog will open to save a backup of the new encryption key.'),
+rekey_instructions: T('Rekeying generates a new encryption key, replacing the old one on the disks in the pool.\
+ Passphrases will be removed by this operation, and any existing recovery key will be invalidated. \
+ A dialog will open to save a backup of the new encryption key. A new recovery key, if desired, \
+ can be added from the encryption menu.'),
 rekey_password_label: T('Passphrase'),
 rekey_password_placeholder: T('Root password'),
 rekey_password_tooltip: T('Enter the root password to authorize this operation.'),
