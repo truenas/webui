@@ -5,9 +5,9 @@
     </div>
   </div>
   <div>
-    <mat-list *ngIf="poolScan && poolScan.function">
+    <mat-list *ngIf="poolScan">
       <mat-list-item><b>{{poolScan.function}}</b></mat-list-item>
-      <mat-list-item>Status: {{poolScan.pause != null ? 'PAUSED' : poolScan.state ? poolScan.state : 'None requested'}}</mat-list-item>
+      <mat-list-item>{{poolScan.function === null ? 'Scan ' : ''}}Status: {{poolScan.pause != null ? 'PAUSED' : poolScan.state ? poolScan.state : 'None requested'}}</mat-list-item>
       <mat-list-item *ngIf="poolScan.total_secs_left != null">Time Remaining: {{poolScan.total_secs_left}} Seconds</mat-list-item>
       <mat-list-item *ngIf="poolScan['errors'] != null">Errors: {{poolScan['errors']}}</mat-list-item>
       <mat-list-item *ngIf="poolScan.start_time != null">Date: {{getReadableDate(poolScan.start_time)}}</mat-list-item>
