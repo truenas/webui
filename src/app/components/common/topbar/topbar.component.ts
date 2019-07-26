@@ -323,8 +323,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   onGoToLegacy() {
     this.dialogService.confirm(T("Warning:"), 
-      T("The Legacy User Interface is deprecated. The system should be managed from the new UI."), 
-      true, T("I understand")).subscribe((res) => {
+      helptext.legacyUIWarning, 
+      true, T("Continue to Legacy UI")).subscribe((res) => {
       if (res) {
         window.location.href = '/legacy/';
       }

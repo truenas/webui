@@ -7,5 +7,8 @@ export default {
     ctrlr: 'TrueNAS controller',
     ctrlrs: 'TrueNAS controllers',
     Ctrlr: 'TrueNAS Controller',
-    Ctrlrs: 'TrueNAS Controllers'
+    Ctrlrs: 'TrueNAS Controllers',
+
+    legacyUIWarning: T('The legacy user interface is deprecated and may lack functionality. Please manage \
+ the system with the new user interface.')
 }

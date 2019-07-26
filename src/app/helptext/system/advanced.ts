@@ -1,6 +1,7 @@
 import { Validators } from "@angular/forms";
 import { matchOtherValidator } from "app/pages/common/entity/entity-form/validators/password-validation";
 import { T } from "app/translate-marker";
+import global_helptext from '../global-helptext';
 
 export const helptext_system_advanced = {
   dialog_generate_debug_title: T("Generate Debug File"),
@@ -37,8 +38,8 @@ export const helptext_system_advanced = {
   swapondrive_validation: [ Validators.required, Validators.min(0), Validators.max(99) ],
 
   enable_legacy_placeholder: T('Enable Legacy UI'),
-  enable_legacy_tooltip: T('WARNING: The Legacy UI is deprecated and may lack functionality. Please perform \
- all management through the new UI.'),
+  enable_legacy_tooltip: T('WARNING: ') + global_helptext.legacyUIWarning,
+  enable_legacy_dialog: global_helptext.legacyUIWarning,
 
   autotune_placeholder: T('Enable autotune'),
   autotune_tooltip: T('Enables the autotune script which attempts to optimize\

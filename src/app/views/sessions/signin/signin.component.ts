@@ -264,8 +264,8 @@ export class SigninComponent implements OnInit {
 
   onGoToLegacy() {
     this.dialogService.confirm(T("Warning:"), 
-      "The Legacy User Interface is deprecated. The system should be managed from the new UI.",
-       true, T('I understand')).subscribe((res) => {
+      globalHelptext.legacyUIWarning,
+       true, T('Continue to Legacy UI')).subscribe((res) => {
       if (res) {
         window.location.href = '/legacy/';
       }

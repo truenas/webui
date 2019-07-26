@@ -266,8 +266,7 @@ export class AdvancedComponent implements OnDestroy {
       setTimeout(() => {
         entityEdit.formGroup.controls['legacy_ui'].valueChanges.subscribe((value) => {
           if (value) {
-            this.dialog.confirm('Warning', 'The Legacy UI is deprecated and may \
-             lack functionality. Please perform all management through the new UI.', true,
+            this.dialog.confirm('Warning', `${helptext_system_advanced.enable_legacy_dialog}`, true,
              'I accept the risks').subscribe((res) => {
                if (!res) {
                 entityEdit.formGroup.controls['legacy_ui'].setValue(false);
