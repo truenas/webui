@@ -7,7 +7,7 @@ import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { TaskService, StorageService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import helptext from '../../../../helptext/task-calendar/smart/smart-form';
+import helptext from '../../../../helptext/task-calendar/smart/smart';
 
 @Component({
   selector: 'smart-test-add',

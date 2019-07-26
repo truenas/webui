@@ -47,8 +47,10 @@ export class RsyncListComponent {
   getActions(row) {
     const actions = [];
     actions.push({
+      id: row.path,
+      icon: 'play_arrow',
       label : T("Run Now"),
-      id: "run",
+      name: "run",
       onClick : (members) => {
         this.dialog.confirm(T("Run Now"), T("Run this rsync now?"), true).subscribe((run) => {
           if (run) {
@@ -62,14 +64,19 @@ export class RsyncListComponent {
       }
     });
     actions.push({
+      id: row.path,
+      icon: 'edit',
       label : T("Edit"),
-      id: "edit",
+      name: "edit",
       onClick : (task_edit) => {
         this.router.navigate(new Array('/').concat(
           [ 'tasks', 'rsync', 'edit', row.id ]));
       }
     })
     actions.push({
+      id: row.path,
+      icon: 'delete',
+      name: 'delete',
       label : T("Delete"),
       onClick : (task_delete) => {
         this.entityList.doDelete(row);

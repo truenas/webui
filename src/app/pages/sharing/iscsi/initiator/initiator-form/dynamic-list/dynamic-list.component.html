@@ -1,0 +1,35 @@
+<div class="dynamic-list-container" fxLayout="row" [ngClass]="this.listControl.disabled ? 'disabled' : ''">
+    <div fxFlexAlign="center" class="move-to-action">
+        <button mat-flat-button color="primary" class="move-to-btn" type="button" (click)="drop()"
+            [disabled]="this.listControl.disabled">
+            <mat-icon>arrow_forward</mat-icon>
+        </button>
+    </div>
+    <div fxFlex="100%">
+        <div fxLayout="row" class="input-add">
+            <div fxFlex="100%">
+                <div id="dynamicField_auth_network_add" dynamicField [config]="inputConfig" [group]="formGroup"
+                    [fieldShow]="'show'"></div>
+            </div>
+            <div>
+                <button mat-flat-button color="primary" type="button" (click)="add()"
+                    [disabled]="this.listControl.disabled || !this.inputControl.valid">
+                    <mat-icon>add</mat-icon>
+                </button>
+            </div>
+        </div>
+        <div fxLayout="row">
+            <div class="dynamic-list">
+                <mat-list class="dynamic-list">
+                    <mat-list-item *ngFor="let item of this.listControl.value" class="dynamic-list">
+                        <label mat-line class="dynamic-list-item">{{item}}</label>
+                        <button mat-flat-button type="button" (click)="remove(item)" color="accent"
+                            [disabled]="this.listControl.disabled">
+                            <mat-icon mat-list-icon>remove</mat-icon>
+                        </button>
+                    </mat-list-item>
+                </mat-list>
+            </div>
+        </div>
+    </div>
+</div>

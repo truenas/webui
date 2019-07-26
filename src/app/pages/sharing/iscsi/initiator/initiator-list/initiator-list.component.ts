@@ -19,6 +19,7 @@ export class InitiatorListComponent {
     {
       name : 'Group ID',
       prop : 'tag',
+      always_display: true
     },
     {
       name : 'Initiators',

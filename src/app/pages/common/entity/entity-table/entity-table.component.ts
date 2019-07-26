@@ -1,25 +1,22 @@
 
-import {fromEvent as observableFromEvent,  Observable ,  BehaviorSubject ,  Subscription, of } from 'rxjs';
-
-import {distinctUntilChanged, debounceTime, filter, switchMap, tap, catchError, take} from 'rxjs/operators';
-import { Component, OnInit, OnDestroy ,Input, ElementRef, ViewEncapsulation, ViewChild, AfterViewInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
+import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash';
-
-//local libs
-import { EntityTableRowDetailsComponent } from './entity-table-row-details/entity-table-row-details.component';
-import { RestService } from '../../../../services/rest.service';
-import { WebSocketService } from '../../../../services/ws.service';
-import { EntityUtils } from '../utils';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { DialogService, JobService } from '../../../../services';
-import { ErdService } from '../../../../services/erd.service';
-import { StorageService } from '../../../../services/storage.service'
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreEvent, CoreService } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
+import * as _ from 'lodash';
+import { fromEvent as observableFromEvent, Observable, of, Subscription } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, filter, switchMap, take, tap } from 'rxjs/operators';
+import { DialogService, JobService } from '../../../../services';
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { ErdService } from '../../../../services/erd.service';
+import { RestService } from '../../../../services/rest.service';
+import { StorageService } from '../../../../services/storage.service';
+import { WebSocketService } from '../../../../services/ws.service';
 import { T } from '../../../../translate-marker';
+import { EntityUtils } from '../utils';
+import { EntityTableRowDetailsComponent } from './entity-table-row-details/entity-table-row-details.component';
 
 export interface InputTableConf {
   prerequisite?: any;
@@ -31,7 +28,7 @@ export interface InputTableConf {
   queryCallOption?: any;
   queryCallJob?: any;
   resource_name?: string;
-  route_edit?: string;
+  route_edit?: string | string[];
   route_add?: string[];
   queryRes?: any [];
   showActions?: boolean;
@@ -47,16 +44,16 @@ export interface InputTableConf {
   rowDetailComponent?: any;
   cardHeaderComponent?: any;
   asyncView?: boolean;
+  wsDelete?: string;
   addRows?(entity: EntityTableComponent);
   changeEvent?(entity: EntityTableComponent);
   preInit?(entity: EntityTableComponent);
   afterInit?(entity: EntityTableComponent);
   dataHandler?(entity: EntityTableComponent);
   resourceTransformIncomingRestData?(data);
-  getActions?(row): any [];
+  getActions?(row: any): EntityTableAction[];
   getAddActions?(): any [];
   rowValue?(row, attr): any;
-  wsDelete?(resp): any;
   wsMultiDelete?(resp): any;
   wsMultiDeleteParams?(selected): any;
   updateMultiAction?(selected): any;
@@ -64,6 +61,14 @@ export interface InputTableConf {
   onCheckboxChange?(row): any;
   onSliderChange?(row): any;
   callGetFunction?(entity: EntityTableComponent): any;
+}
+
+export interface EntityTableAction {
+  id: string | number;
+  actionName: string;
+  icon: string;
+  label: string;
+  onClick: (row: any) => void;
 }
 
 export interface SortingConfig {
@@ -74,6 +79,8 @@ export interface TableConfig {
   paging: boolean;
   sorting: SortingConfig;
 }
+
+const DETAIL_HEIGHT = 24;
 
 @Component({
   selector: 'entity-table',
@@ -128,7 +135,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public showSpinner: boolean = false;
   public cardHeaderReady = false;
   public showActions: boolean = true;
-  public detailRowHeight = 100;
   public entityTableRowDetailsComponent = EntityTableRowDetailsComponent;
   private _multiActionsIconsOnly: boolean = false;
   get multiActionsIconsOnly(){
@@ -142,6 +148,14 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public selected = [];
 
   private interval: any;
+
+  public hasDetails = () =>
+    this.conf.rowDetailComponent || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
+  public getRowDetailHeight = () => 
+     this.hasDetails() && !this.conf.rowDetailComponent
+      ? (this.allColumns.length - this.conf.columns.length) * DETAIL_HEIGHT + 76 // add space for padding
+      : 100;
+  
 
   constructor(protected core: CoreService, protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService, 
@@ -215,7 +229,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     // Get preferred list of columns from pref service
-    let preferredCols = this.prefService.preferences.tableDisplayedColumns;
+    const preferredCols = this.prefService.preferences.tableDisplayedColumns;
+
     // No preferences set for any table, show 'default' configuration
     if (preferredCols.length === 0) {
       this.conf.columns = this.originalConfColumns;  
@@ -522,12 +537,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       return this.conf.getActions(row);
     } else {
       return [{
+        name: 'edit',
         id: "edit",
-        label: "Edit",
+        icon: 'edit',
+        label: T("Edit"),
         onClick: (rowinner) => { this.doEdit(rowinner.id); },
       }, {
+        name: 'delete',
         id: "delete",
-        label: "Delete",
+        icon: 'delete',
+        label: T("Delete"),
         onClick: (rowinner) => { this.doDelete(rowinner); },
       },]
     }
@@ -621,7 +640,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    const dialog = this.conf.confirmDeleteDialog;
+    const dialog = this.conf.confirmDeleteDialog || {};
     if (dialog.buildTitle) {
       dialog.title = dialog.buildTitle(item);
     }
@@ -879,8 +898,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.conf.columns = [...this.conf.columns, col];
     }
-
     this.selectColumnsToShowOrHide();
+    this.updateTableHeightAfterDetailToggle();
   }
 
   // Stores currently selected columns in preference service
@@ -902,6 +921,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   // resets col view to the default set in the table's component
   resetColViewToDefaults() {
     this.conf.columns = this.originalConfColumns;
+    this.updateTableHeightAfterDetailToggle();
     this.selectColumnsToShowOrHide();
   }
 
@@ -917,12 +937,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.conf.columns.length < this.allColumns.length) {
       this.conf.columns = this.allColumns;
       this.selectColumnsToShowOrHide();
-      return this.conf.columns
     } else {
       this.conf.columns = [];
       this.selectColumnsToShowOrHide();
-      return this.conf.columns;
     }
+    this.updateTableHeightAfterDetailToggle();
+    return this.conf.columns
   }
 
   // Used by the select all checkbox to determine whether it should be checked
@@ -946,19 +966,26 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   toggleExpandRow(row) {
-    if (!this.startingHeight) {
-      this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
-    }  
     this.table.rowDetail.toggleExpandRow(row);
-    setTimeout(() => {
-      this.expandedRows = (document.querySelectorAll('.datatable-row-detail').length);
-      let newHeight = (this.expandedRows * 100) + this.startingHeight;
-      let heightStr = `height: ${newHeight}px`;
-      document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
-    }, 100)
+    this.updateTableHeightAfterDetailToggle();
   }
 
-  onDetailToggle(event) {
-    //console.log('Detail Toggled', event);
+  resetTableToStartingHeight() {
+    if (!this.startingHeight) {
+      this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
+    }
+    document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', `height: ${this.startingHeight}px`);
+  }
+
+  updateTableHeightAfterDetailToggle() {
+    if (!this.startingHeight) {
+      this.resetTableToStartingHeight();
+    }
+    setTimeout(() => {
+      this.expandedRows = document.querySelectorAll('.datatable-row-detail').length;
+      const newHeight = this.expandedRows * this.getRowDetailHeight() + this.startingHeight;
+      const heightStr = `height: ${newHeight}px`;
+      document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
+    }, 0);
   }
 }

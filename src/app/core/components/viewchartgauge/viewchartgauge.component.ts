@@ -99,6 +99,10 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
     let g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
     
     let text = svg.append("text");
+    if(!text.node()){
+      // Avoid console errors if text.node isn't available yet.
+      return;
+    }
     let bbox = text.node().getBBox();
     
     text.style("fill", "var(--fg2)")
