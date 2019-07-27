@@ -27,4 +27,5 @@ figcaption {
 button.plugin-button {
     background: var(--primary);
     color: white;
+    margin-left: 16px;
 }
