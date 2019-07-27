@@ -7,7 +7,7 @@ export interface FieldConfig {
   inputType?: string, validation?: any[] | ValidatorFn | ValidatorFn[],
   value?: any, multiple?: boolean, tristate?: boolean, tooltip?: string,
   relation?: RelationGroup[], isHidden?: boolean, formarray?: any,
-  initialCount?: number, readonly?: boolean, initial?: string,
+  initialCount?: number, readonly?: boolean, initial?: string, rootSelectable?: boolean,
   min?: number, max?: number, tabs?: any[], tabName?: string, class?: string,
   customEventActionLabel?: string, explorerType?: string, customTemplateStringOptions?: any,
   required?: boolean,
