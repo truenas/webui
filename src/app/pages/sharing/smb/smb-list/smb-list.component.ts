@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { helptext_sharing_smb } from 'app/helptext/sharing';
+import { delete_share_message, helptext_sharing_smb } from 'app/helptext/sharing';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
-import { DialogService, WebSocketService } from 'app/services';
-import { map } from 'rxjs/operators';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogService, WebSocketService } from 'app/services';
+import { T } from 'app/translate-marker';
+import { map } from 'rxjs/operators';
  
 @Component({
   selector : 'app-smb-list',
@@ -14,14 +15,15 @@ export class SMBListComponent {
 
   public title = "Samba";
   protected resource_name: string = 'sharing/cifs/';
+  protected wsDelete = 'sharing.smb.delete';
   protected route_add: string[] = [ 'sharing', 'smb', 'add' ];
   protected route_add_tooltip: string = "Add Windows (SMB) Share";
   protected route_edit: string[] = [ 'sharing', 'smb', 'edit' ];
   protected route_delete: string[] = [ 'sharing', 'smb', 'delete' ];
-  protected entityList: EntityTableComponent;
+  private entityList: EntityTableComponent;
 
   public columns: any[] = [
-    {name: helptext_sharing_smb.column_name, prop: 'cifs_name'},
+    {name: helptext_sharing_smb.column_name, prop: 'cifs_name', always_display: true },
     {name: helptext_sharing_smb.column_path, prop: 'cifs_path'},
   ];
   public config: any = {
@@ -33,21 +35,32 @@ export class SMBListComponent {
     },
   };
 
+  public confirmDeleteDialog = {
+    message: delete_share_message,
+    isMessageComplete: true,
+    button: T('Unshare'),
+    buildTitle: share => `${T('Unshare')} ${share.cifs_name}`
+  }
+
   constructor(private ws: WebSocketService, private router: Router, private dialogService: DialogService) {}
 
   afterInit(entityList: any) {
     this.entityList = entityList;
   }
 
-  getActions(): any[] {
+  getActions(row): any[] {
     return [
       {
-        id: "edit",
+        id: row.cifs_name,
+        icon: 'edit',
+        name: "edit",
         label: "Edit",
         onClick: row => this.entityList.doEdit(row.id)
       },
       {
-        id: "edit_acl",
+        id: row.cifs_name,
+        icon: 'security',
+        name: "edit_acl",
         label: helptext_sharing_smb.action_edit_acl,
         onClick: row => {
           const datasetId = row.cifs_path.replace("/mnt/", "");
@@ -64,7 +77,9 @@ export class SMBListComponent {
         }
       },
       {
-        id: "delete",
+        id: row.cifs_name,
+        icon: 'delete',
+        name: "delete",
         label: "Delete",
         onClick: row => this.entityList.doDelete(row)
       }

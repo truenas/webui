@@ -1,5 +1,6 @@
 import { T } from '../../translate-marker';
 import { Validators } from '@angular/forms';
+import globalHelptext from '../../helptext/global-helptext';
 
 export default {
 activedirectory_custactions_basic_id: 'basic_mode',
@@ -27,6 +28,7 @@ activedirectory_bindname_validation: [ Validators.required ],
 activedirectory_bindpw_name: 'bindpw',
 activedirectory_bindpw_placeholder: T('Domain Account Password'),
 activedirectory_bindpw_tooltip: T('Enter the administrator account password.'),
+activedirectory_bindpw_validation: [ Validators.required ],
 
 activedirectory_monitor_frequency_name: 'monitor_frequency',
 activedirectory_monitor_frequency_placeholder: T('Connectivity Check'),
@@ -138,7 +140,7 @@ activedirectory_netbiosname_a_tooltip : T('Netbios Name of this NAS. This name m
 activedirectory_netbiosname_a_validation : [Validators.required, Validators.maxLength(15)],
 
 activedirectory_netbiosname_b_name: 'netbiosname_b',
-activedirectory_netbiosname_b_placeholder : T('Netbios Name (Storage Controller 2)'),
+activedirectory_netbiosname_b_placeholder : T(`Netbios Name (${globalHelptext.Ctrlr} 2)`),
 activedirectory_netbiosname_b_tooltip : T('Netbios Name of this NAS. This name must differ from\
  the <i>Workgroup</i> name and be no greater than 15 characters.'),
 activedirectory_netbiosname_b_validation : [Validators.required, Validators.maxLength(15)],

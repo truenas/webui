@@ -1,6 +1,7 @@
 import { T } from "app/translate-marker";
 import { Validators } from "@angular/forms";
 import { matchOtherValidator } from "app/pages/common/entity/entity-form/validators/password-validation";
+import globalHelptext from '../../../helptext/global-helptext';
 
 export const helptext_sharing_iscsi = {
   target_form_placeholder_name: T("Target Name"),
@@ -81,23 +82,35 @@ export const helptext_sharing_iscsi = {
 
   portal_form_placeholder_delete: T("Delete"),
 
-  initiator_form_placeholder_initiators: T("Initiators"),
+  initiator_form_tooltip_connected_initiators: T(
+	'Initiators currently connected to the system. Shown\
+ in IQN format with an IP address. Set initiators and click an\
+ <b>-></b> (arrow) to add the initiators to either the\
+ <i>Allowed Initiators</i> or <i>Authorized Networks</i>\
+ lists. Clicking <i>Refresh</i> updates the\
+ <i>Connected Initiators</i> list.'
+  ),
+
+  initiator_form_placeholder_initiators: T("Allowed Initiators (IQN)"),
   initiator_form_tooltip_initiators: T(
-    "Use <i>ALL</i> keyword or a list of initiator hostnames separated by spaces."
+    'Initiators allowed access to this system. Enter an\
+ <a href="https://tools.ietf.org/html/rfc3720#section-3.2.6"\
+ target="_blank">iSCSI Qualified Name (IQN)</a> and click <i>+</i> to\
+ add it to the list. Example:\
+ <i>iqn.1994-09.org.freebsd:freenas.local</i>'
   ),
 
   initiator_form_placeholder_auth_network: T("Authorized Networks"),
   initiator_form_tooltip_auth_network: T(
-    'Network addresses which can use this initiator. Use\
- <i>ALL</i> or list network addresses with a\
+    'Network addresses which are allowed use this initiator. Each\
+  address can include an optional\
  <a href="https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing"\
- target="_blank">CIDR</a> mask. Separate multiple\
- addresses with a space:\
- <i>192.168.2.0/24 192.168.2.1/12</i>.'
+ target="_blank">CIDR</a> netmask. Click <i>+</i> to add the network address to the list.\
+ Example: <i>192.168.2.0/24</i>.'
   ),
 
   initiator_form_placeholder_comment: T("Comment"),
-  initiator_form_tooltip_comment: T("Optional description."),
+  initiator_form_tooltip_comment: T("Any notes about initiators."),
 
   globalconf_placeholder_basename: T("Base Name"),
   globalconf_tooltip_basename: T(
@@ -130,9 +143,9 @@ export const helptext_sharing_iscsi = {
   ),
 
   globalconf_placeholder_alua: T('Enable iSCSI ALUA'),
-  globalconf_tooltip_alua: T('Set for the initiator to discover paths\
- to both storage controllers on the target and increase storage traffic\
- efficiency. Requires ALUA-capable, High Availability (HA) hardware.'),
+  globalconf_tooltip_alua: T(`Set for the initiator to discover paths\
+ to both ${globalHelptext.ctrlrs} on the target and increase storage traffic\
+ efficiency. Requires ALUA-capable, High Availability (HA) hardware.`),
 
   globalconf_dialog_title: T("Enable service"),
   globalconf_dialog_message: T("Enable this service?"),

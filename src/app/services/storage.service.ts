@@ -223,4 +223,21 @@ export class StorageService {
       .call("pool.filesystem_choices")
       .pipe(map(response => response.map(value => ({ label: value, value }))));
   }
+
+  /**
+   * @param path The path of the dataset excluding "/mnt/"
+   */
+  isDatasetTopLevel(path: string): boolean {
+    if (typeof path !== 'string') {
+      throw new Error('isDatasetTopLevel received "path" parameter that is not of type "string."');
+    }
+
+    /**
+     * Strip leading forward slash if present
+     * /zpool/d0 -> zpool/d0
+     */
+    path = path.indexOf('/') === 0 ? path.substr(1) : path;
+
+    return path.indexOf('/') < 0;
+  }
 }

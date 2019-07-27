@@ -21,6 +21,7 @@ import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-a
 import { MatDialog } from '@angular/material';
 import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-job.component';
 import {EntityUtils} from '../../../../common/entity/utils';
+import { ConfirmDialog } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
 
 
 @Component({
@@ -145,7 +146,7 @@ export class DatasetAclComponent implements OnDestroy {
           name: 'perms_type',
           required: true,
           placeholder: helptext.dataset_acl_perms_type_placeholder,
-          tooltip: helptext.dataset_acl_perms_type_placeholder,
+          tooltip: helptext.dataset_acl_perms_type_tooltip,
           options: helptext.dataset_acl_perms_type_options,
           value: 'BASIC'
         },
@@ -172,7 +173,7 @@ export class DatasetAclComponent implements OnDestroy {
           name: 'flags_type',
           required: true,
           placeholder: helptext.dataset_acl_flags_type_placeholder,
-          tooltip: helptext.dataset_acl_flags_type_placeholder,
+          tooltip: helptext.dataset_acl_flags_type_tooltip,
           options: helptext.dataset_acl_flags_type_options,
         },
         {
@@ -525,6 +526,16 @@ export class DatasetAclComponent implements OnDestroy {
   }
 
   async customSubmit(body) {
+    const doesNotWantToEditDataset =
+      this.storageService.isDatasetTopLevel(body.path.replace("mnt/", "")) &&
+      !(await this.dialogService
+        .confirm(helptext.dataset_acl_dialog_warning, helptext.dataset_acl_toplevel_dialog_message)
+        .toPromise());
+
+    if (doesNotWantToEditDataset) {
+      return;
+    }
+  
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Saving ACLs") }});
     this.dialogRef.componentInstance.setDescription(T("Saving ACLs..."));
     let dacl = body.dacl;
@@ -571,8 +582,8 @@ export class DatasetAclComponent implements OnDestroy {
       [{'path': body.path, 'dacl': dacl,
         'uid': body.uid, 'gid': body.gid,
         'options' : {'recursive': body.recursive,
-         'traverse': body.traverse,
-         'stripacl': body.stripacl
+        'traverse': body.traverse,
+        'stripacl': body.stripacl
         }
       }]);
     this.dialogRef.componentInstance.submit();
@@ -583,7 +594,7 @@ export class DatasetAclComponent implements OnDestroy {
         this.route_success));
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
-    });
+    }); 
   }
 
   updateGroupSearchOptions(value = "", parent, config) {

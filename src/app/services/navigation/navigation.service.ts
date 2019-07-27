@@ -146,11 +146,11 @@ export class NavigationService {
       icon: 'folder_shared',
       state: 'sharing',
       sub: [
-        { name: T('Apple (AFP) Shares'), state: 'afp' },
-        { name: T('Unix (NFS) Shares'), state: 'nfs' },
+        { name: T('Apple Shares (AFP)'), state: 'afp' },
+        { name: T('Block Shares (iSCSI)'), state: 'iscsi' },
+        { name: T('Unix Shares (NFS)'), state: 'nfs' },
         { name: T('WebDAV Shares'), state: 'webdav' },
-        { name: T('Windows (SMB) Shares'), state: 'smb' },
-        { name: T('Block (iSCSI)'), state: 'iscsi' },
+        { name: T('Windows Shares (SMB)'), state: 'smb' },
       ]
     },
     {
