@@ -72,8 +72,9 @@
 }
 
 #filter .mat-icon{
-  position:absolute;
-  top:24px;
+  position:relative;
+  left:25px;
+  top: 8px;
 }
 
 #filter .mat-form-field{
@@ -118,6 +119,23 @@
 :host {
     ::ng-deep datatable-row-wrapper {
         width: auto;
+    }
+}
+
+
+.entity-table-controls {
+    width: 460px;
+    min-width: 460px;
+}
+
+@media (max-width: 600px) {
+    .entity-table-controls {
+        width: 300px;
+        min-width: 300px;
+        
+        button, #filter {
+        margin-bottom: 5px;
+        }
     }
 }
 
