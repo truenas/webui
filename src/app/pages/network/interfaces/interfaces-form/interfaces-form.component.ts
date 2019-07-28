@@ -15,7 +15,6 @@ import helptext from '../../../../helptext/network/interfaces/interfaces-form';
   template : `<entity-form [conf]="this"></entity-form>`
 })
 export class InterfacesFormComponent implements OnDestroy {
-
   protected queryCall = 'interface.query';
   protected addCall = 'interface.create';
   protected editCall = 'interface.update';
@@ -250,19 +249,6 @@ export class InterfacesFormComponent implements OnDestroy {
   }
 
   preInit(entityForm: any) {
-    if (window.localStorage.getItem('is_freenas') === 'false') {
-      this.ws.call('failover.licensed').subscribe((is_ha) => {
-        this.is_ha = is_ha;
-        if (this.is_ha) {
-          const failover_virtual_address = _.find(this.ipListControl.templateListField, {"name":"failover_virtual_address"});
-          const failover_address = _.find(this.ipListControl.templateListField, {'name': 'failover_address'});
-          failover_virtual_address['disabled'] = false;
-          failover_virtual_address['isHidden'] = false;
-          failover_address['disabled'] = false;
-          failover_address['isHidden'] = false;
-        }
-      });
-    }
     this.entityForm = entityForm;
     this.type = _.find(this.fieldConfig, {'name' : 'type'});
     this.ipListControl = _.find(this.fieldConfig, {'name' : 'aliases'});
@@ -274,20 +260,25 @@ export class InterfacesFormComponent implements OnDestroy {
     this.vlan_pint = _.find(this.fieldConfig, {'name' : 'vlan_parent_interface'});
     this.bridge_members = _.find(this.fieldConfig, {'name' : 'bridge_members'});
     this.lag_ports = _.find(this.fieldConfig, {'name' : 'lag_ports'});
-    // this.route.params.subscribe(params => {
-    //   if(!params['pk']) {
-    //     this.type.type = 'select';
-    //   }
-    // });
   }
 
   afterInit(entityForm: any) {
+    if (window.localStorage.getItem('is_freenas') !== 'false' &&
+      window.localStorage.getItem('alias_ips') === 'show') {
+        const failover_virtual_address = _.find(this.ipListControl.templateListField, {"name":"failover_virtual_address"});
+        const failover_address = _.find(this.ipListControl.templateListField, {'name': 'failover_address'});
+        failover_virtual_address['disabled'] = false;
+        failover_virtual_address['isHidden'] = false;
+        failover_address['disabled'] = false;
+        failover_address['isHidden'] = false;
+      }
     this.aliases_fc = _.find(this.fieldConfig, {"name": "aliases"});
 
     if (window.localStorage.getItem('is_freenas') === 'false') {
-      this.ws.call('failover.licensed').subscribe((is_ha) => { //fixme, stupid race condition makes me need to call this again
+      this.ws.call('failover.licensed').subscribe((is_ha) => {
         for (let i = 0; i < this.failover_fields.length; i++) {
           entityForm.setDisabled(this.failover_fields[i], !is_ha, !is_ha);
+          this.is_ha ? window.localStorage.setItem('alias_ips', 'show') : window.localStorage.setItem('alias_ips', '0');
         }
       });
     }
@@ -420,6 +411,10 @@ export class InterfacesFormComponent implements OnDestroy {
         })
       }
     }
+  }
+
+  beforeSubmit(data) {
+    console.log(this.is_ha, data)
   }
 
   ngOnDestroy() {
