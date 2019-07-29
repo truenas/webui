@@ -22,6 +22,7 @@ export class ReplicationFormComponent {
     protected isEntity = true;
     protected entityForm: any;
     protected queryRes: any;
+    public speedLimitField: any;
 
     protected fieldConfig: FieldConfig[] = [
         {
@@ -593,6 +594,7 @@ export class ReplicationFormComponent {
             name: 'speed_limit',
             placeholder: helptext.speed_limit_placeholder,
             tooltip: helptext.speed_limit_tooltip,
+            hasErrors: false,
             relation: [{
                 action: 'SHOW',
                 when: [{
@@ -784,6 +786,18 @@ export class ReplicationFormComponent {
                 }
             }
         )
+
+        entityForm.formGroup.controls['speed_limit'].valueChanges.subscribe((value) => {
+            const speedLimitField = _.find(this.fieldConfig, {name: "speed_limit"});
+            const filteredValue = this.storageService.convertDataMeasurementStrings(value);
+                    if (isNaN(filteredValue)) {
+                        speedLimitField['hasErrors'] = true;
+                        speedLimitField['errors'] = 'Invalid value'
+                    } else {
+                        speedLimitField['hasErrors'] = false;
+                        speedLimitField['errors'] = '';
+                    }
+        })
     }
 
     resourceTransformIncomingRestData(wsResponse) {
