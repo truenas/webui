@@ -93,19 +93,19 @@ def test_04_navigate_to_account_group(wb_driver):
     take_screenshot(wb_driver, script_name, test_name)
 
 
-def test_05_edit_groupNAS_sudo(wb_driver):
-    time.sleep(2)
-    wb_driver.find_element_by_xpath(xpaths['submenuGroup']).click()
-    # wait till the list is loaded
-    time.sleep(2)
-    xpath1 = f"//*[@id='table_actions_menu_button__bsdgrp_group_{newusername}']"
-    xpath2 = f"//*[@id='action_button_edit__{newusername}']"
-
+def test_05_press_edit(wb_driver):
+    xpath1 = f"//*[@id='table_actions_menu_button__bsdgrp_group_{newgroupname}']"
+    xpath2 = f"//*[@id='action_button_edit__{newgroupname}']"
     assert is_element_present(wb_driver, xpath1)
     wb_driver.find_element_by_xpath(xpath1).click()
     assert is_element_present(wb_driver, xpath2)
     wb_driver.find_element_by_xpath(xpath2).click()
-    # user_edit(wb_driver, "group", newgroupname)
+    # taking screenshot
+    test_name = sys._getframe().f_code.co_name
+    take_screenshot(wb_driver, script_name, test_name)
+
+
+def test_06_edit_groupNAS_sudo(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['group']).click()
     wb_driver.find_element_by_xpath('//*[@id="save_button"]').click()
     time.sleep(5)
