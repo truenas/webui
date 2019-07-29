@@ -228,7 +228,10 @@ def user_delete_old(driver, type, name):
         driver.find_element_by_xpath('//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(delNum) + ']/div/app-entity-table-actions/div/mat-icon').click()
         time.sleep(1)
         # click on delete option
-        driver.find_element_by_xpath('//*[@id="action_button_Delete"]').click()
+        if type == 'Group':
+            driver.find_element_by_xpath("//button[@id='action_button_delete__usernas']/span").click()
+        else:
+            driver.find_element_by_xpath('//*[@id="action_button_Delete"]').click()
         if (driver.find_element_by_xpath(xpaths['confirmCheckbox'])):
             driver.find_element_by_xpath(xpaths['confirmCheckbox']).click()
             time.sleep(1)
