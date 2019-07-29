@@ -263,7 +263,7 @@ export class InterfacesFormComponent implements OnDestroy {
   }
 
   afterInit(entityForm: any) {
-    if (window.localStorage.getItem('is_freenas') !== 'false' &&
+    if (window.localStorage.getItem('is_freenas') === 'false' &&
       window.localStorage.getItem('alias_ips') === 'show') {
         const failover_virtual_address = _.find(this.ipListControl.templateListField, {"name":"failover_virtual_address"});
         const failover_address = _.find(this.ipListControl.templateListField, {'name': 'failover_address'});
@@ -278,7 +278,6 @@ export class InterfacesFormComponent implements OnDestroy {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         for (let i = 0; i < this.failover_fields.length; i++) {
           entityForm.setDisabled(this.failover_fields[i], !is_ha, !is_ha);
-          this.is_ha ? window.localStorage.setItem('alias_ips', 'show') : window.localStorage.setItem('alias_ips', '0');
         }
       });
     }
@@ -411,10 +410,6 @@ export class InterfacesFormComponent implements OnDestroy {
         })
       }
     }
-  }
-
-  beforeSubmit(data) {
-    console.log(this.is_ha, data)
   }
 
   ngOnDestroy() {
