@@ -124,8 +124,7 @@ snapshots will be stored. Example: Poolname/Datasetname, not the mountpoint or f
     compression_tooltip: T('Select a compression algorithm to reduce the size of the data being replicated.'),
 
     speed_limit_placeholder: T('Limit (Ex. 500 KiB/s, 500M, 2 TB)'),
-    speed_limit_tooltip: T('Limit replication speed to the specified value. Use a label to specify units. A\
- value with no label defaults to bytes/second. The default 0 is unlimited.'),
+    speed_limit_tooltip: T('Limit replication speed to this number of bytes per second.'),
 
     dedup_placeholder: T('Send Deduplicated Stream'),
     dedup_tooltip: T('Deduplicate the stream to avoid sending redundant data blocks. The destination system\
