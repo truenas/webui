@@ -19,6 +19,7 @@ export class AuthorizedAccessListComponent {
     {
       name : 'Group ID',
       prop : 'tag',
+      always_display: true
     },
     {
       name : 'User',

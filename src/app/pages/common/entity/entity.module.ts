@@ -76,6 +76,7 @@ import { ToolbarButtonComponent } from './entity-toolbar/components/toolbar-butt
 import { ToolbarMenuComponent } from './entity-toolbar/components/toolbar-menu/toolbar-menu.component';
 import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-multimenu/toolbar-multimenu.component';
 import { EntityRowDetailsComponent } from './entity-table/entity-row-details.component';
+import { TaskScheduleListComponent } from 'app/pages/task-calendar/components/task-schedule-list/task-schedule-list.component';
 
 @NgModule({
   imports: [
@@ -85,6 +86,7 @@ import { EntityRowDetailsComponent } from './entity-table/entity-row-details.com
     OverlayModule, A11yModule, TreeTableModule, FileSizeModule
   ],
   declarations: [
+    TaskScheduleListComponent,
     EntityTableComponent,
     EntityTableRowDetailsComponent,
     EntityRowDetailsComponent,
@@ -190,6 +192,7 @@ import { EntityRowDetailsComponent } from './entity-table/entity-row-details.com
     EntityToolbarComponent,
     EntitySnackbarComponent,
     EntityTableRowDetailsComponent,
+    TaskScheduleListComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [

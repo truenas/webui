@@ -29,7 +29,7 @@
           <viewchartgauge fxFlex="34" *ngIf="cpuAvg && cpuAvg.data" [config]="cpuAvg" #load class=""></viewchartgauge>
           <div fxFlex="33" id="cpu-load-cores">
             <h3 class="core-count">{{coreCount}}</h3>
-            <h4 class="core-count-label">Cores</h4>
+            <h4 class="core-count-label">Threads</h4>
           </div>
         </div>
 
@@ -40,7 +40,7 @@
             <div fxFlex="100" id="cpu-load-cores-legend" fxLayout="row wrap">
               <div *ngIf="legendData; else noLegend" id="cpu-load-cores-legend-values" fxFlex fxLayout="row" fxLayoutAlign="space-around center">
 
-                <div fxFlex="26" class="legend-item core-number"><span class="label">Core number:</span> {{legendData[0].index}}</div>
+                <div fxFlex="26" class="legend-item core-number"><span class="label">Thread number:</span> {{legendData[0].index}}</div>
                 <div fxFlex="26" class="legend-item usage">
                   <div class="legend-swatch" style="background-color:var(--primary);"></div><span class="label">{{legendData[0].name}}:</span> {{legendData[0].value}}%
                 </div>
@@ -54,7 +54,7 @@
             <ng-template #noLegend>
               <div id="cpu-load-cores-legend-values" fxFlex fxLayout="row" fxLayoutAlign="space-around center">
 
-                <div fxFlex="26" class="legend-item core-number"><span class="label">Stats Per Core</span></div>
+                <div fxFlex="26" class="legend-item core-number"><span class="label">Stats Per Thread</span></div>
                 <div fxFlex="26" class="legend-item usage">
                   <div class="legend-swatch" style="background-color:var(--primary);"></div><span class="label">Usage:</span> 
                 </div>

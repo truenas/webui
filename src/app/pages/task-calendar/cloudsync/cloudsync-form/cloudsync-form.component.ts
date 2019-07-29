@@ -97,6 +97,7 @@ export class CloudsyncFormComponent implements OnInit {
     placeholder: helptext.folder_placeholder,
     tooltip: helptext.folder_tooltip,
     initial: '/',
+    value: '/',
     explorerType: 'directory',
     customTemplateStringOptions: {
       displayField: 'Path',

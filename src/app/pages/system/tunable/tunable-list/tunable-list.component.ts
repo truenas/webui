@@ -27,7 +27,7 @@ export class TunableListComponent {
     protected _injector: Injector, protected _appRef: ApplicationRef) {}
 
   public columns: Array < any > = [
-    { name: 'Variable', prop: 'tun_var' },
+    { name: 'Variable', prop: 'tun_var', always_display: true },
     { name: 'Value', prop: 'tun_value' },
     { name: 'Type', prop: 'tun_type' },
     { name: 'Comment', prop: 'tun_comment' },

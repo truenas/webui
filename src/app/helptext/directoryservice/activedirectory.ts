@@ -28,6 +28,7 @@ activedirectory_bindname_validation: [ Validators.required ],
 activedirectory_bindpw_name: 'bindpw',
 activedirectory_bindpw_placeholder: T('Domain Account Password'),
 activedirectory_bindpw_tooltip: T('Enter the administrator account password.'),
+activedirectory_bindpw_validation: [ Validators.required ],
 
 activedirectory_monitor_frequency_name: 'monitor_frequency',
 activedirectory_monitor_frequency_placeholder: T('Connectivity Check'),

@@ -10,7 +10,6 @@ import { StorageService } from '../../../services/storage.service';
 import { T } from '../../../translate-marker';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../common/entity/utils';
-import { JailDetailsComponent } from './components/jail-details.component';
 
 @Component({
   selector: 'app-jail-list',
@@ -32,17 +31,19 @@ export class JailListComponent implements OnInit {
   protected route_add = ["jails", "add", "wizard"];
   protected route_add_tooltip = "Add Jail";
   public toActivatePool: boolean = false;
-  public showActions = false;
-  protected hasDetails = true;
-  protected rowDetailComponent = JailDetailsComponent;
   public legacyWarning = T("Note: Legacy jails created before FreeNAS 11.2 must be managed from the");
   public legacyWarningLink = T("legacy web interface");
 
   public columns: Array < any > = [
-    { name: T('Name'), prop: 'host_hostuuid'},
+    { name: T('Name'), prop: 'host_hostuuid', always_display: true },
     { name: T('Boot'), prop: 'boot_readble', hidden: true},
     { name: T('State'), prop: 'state'},
     { name: T('Release'), prop: 'release' },
+    { name: T("IPv4"), prop: 'ip4_addr', hidden: true },
+    { name: T("IPv6"), prop: 'ip6_addr', hidden: true },
+    { name: T("Type"), prop: 'type', hidden: true },
+    { name: T("Template"), prop: 'template', hidden: true },
+    { name: T("Basejail"), prop: 'basejail_readble', hidden: true }
   ];
   public config: any = {
     paging: true,
@@ -213,7 +214,9 @@ export class JailListComponent implements OnInit {
   }
   getActions(parentRow) {
     return [{
-        id: "edit",
+        id: parentRow.host_hostuuid,
+        icon: 'edit',
+        name: "edit",
         label: T("Edit"),
         onClick: (row) => {
           this.router.navigate(
@@ -221,7 +224,9 @@ export class JailListComponent implements OnInit {
         }
       },
       {
-        id: "mount",
+        id: parentRow.host_hostuuid,
+        icon: 'device_hub',
+        name: "mount",
         label: T("Mount points"),
         onClick: (row) => {
           this.router.navigate(
@@ -230,7 +235,9 @@ export class JailListComponent implements OnInit {
         }
       },
       {
-        id: "start",
+        id: parentRow.host_hostuuid,
+        icon: 'play_arrow',
+        name: "start",
         label: T("Start"),
         onClick: (row) => {
           this.entityList.busy =
@@ -249,7 +256,9 @@ export class JailListComponent implements OnInit {
         }
       },
       {
-        id: "restart",
+        id: parentRow.host_hostuuid,
+        icon: 'cached',
+        name: "restart",
         label: T("Restart"),
         onClick: (row) => {
           this.entityList.busy =
@@ -269,7 +278,9 @@ export class JailListComponent implements OnInit {
         }
       },
       {
-        id: "stop",
+        id: parentRow.host_hostuuid,
+        icon: 'stop',
+        name: "stop",
         label: T("Stop"),
         onClick: (row) => {
           let dialog = {};
@@ -294,7 +305,9 @@ export class JailListComponent implements OnInit {
         }
       },
       {
-        id: "update",
+        id: parentRow.host_hostuuid,
+        icon: 'update',
+        name: "update",
         label: T("Update"),
         onClick: (row) => {
           const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Updating Jail") }, disableClose: true });
@@ -307,7 +320,9 @@ export class JailListComponent implements OnInit {
         }
       },
       {
-        id: "shell",
+        id: parentRow.host_hostuuid,
+        icon: 'keyboard_arrow_right',
+        name: "shell",
         label: T("Shell"),
         onClick: (row) => {
           this.router.navigate(
@@ -315,7 +330,9 @@ export class JailListComponent implements OnInit {
         }
       },
       {
-        id: "delete",
+        id: parentRow.host_hostuuid,
+        icon: 'delete',
+        name: "delete",
         label: T("Delete"),
         onClick: (row) => {
           this.entityList.doDelete(row);
