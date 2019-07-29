@@ -68,7 +68,7 @@ export class InterfacesListComponent implements OnDestroy {
   constructor(private ws: WebSocketService, private router: Router, private networkService: NetworkService,
               private snackBar: MatSnackBar, private dialog: DialogService) {}
 
-  dataHandler(res) { console.log(res)
+  dataHandler(res) {
     const rows = res.rows;
     for (let i=0; i<rows.length; i++) {
       rows[i]['link_state'] = rows[i]['state']['link_state'].replace('LINK_STATE_', '');
