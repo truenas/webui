@@ -155,7 +155,7 @@ export class PluginComponent implements OnInit {
         id: "postinstall",
         label: T('POST INSTALL NOTES'),
         icon: 'description',
-        visible: this.isActionVisible('postinstal'),
+        visible: this.isActionVisible('postinstall'),
         onClick: () => {
           let install_notes = '';
           for (const msg of row.plugin_info.split('\n')) {
