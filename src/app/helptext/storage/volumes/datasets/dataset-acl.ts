@@ -9,7 +9,7 @@ dataset_acl_path_placeholder: T('Path'),
 
 dataset_acl_aces_placeholder: T('Access Control Entries'),
 
-dataset_acl_tag_placeholder: T('Tag'),
+dataset_acl_tag_placeholder: T('Who'),
 dataset_acl_tag_tooltip: T('Access Control Entry (ACE) user or group.\
  Select a specific <i>User</i> or <i>Group</i> for this entry,\
  <i>owner@</i> to apply this entry to the user that owns the dataset,\
