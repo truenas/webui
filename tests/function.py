@@ -135,30 +135,6 @@ def status_change(driver, which):
         time.sleep(2)
 
 
-def user_edit(driver, type, name):
-    # the convention is set in such a way that a single function can cleanup
-    # both type:user/group, name:name of the group or user
-    # path plugs in the xpath of user or group , sub-menu{User/Group}
-    if (type == "user"):
-        path = "User"
-        fix = 'usr_username_'
-    elif (type == "group"):
-        path = "Group"
-        fix = 'grp_group_'
-    # Click User submenu
-    driver.find_element_by_xpath(xpaths['submenu' + path]).click()
-    # wait till the list is loaded
-    time.sleep(2)
-    xpath1 = '//*[@id="table_actions_menu_button__bsd' + fix + name + '\"]'
-    xpath2 = '//*[@id="action_button_Edit__bsd' + fix + name + '\"]'
-
-    if (is_element_present(driver, xpath1)):
-        driver.find_element_by_xpath(xpath1).click()
-        driver.find_element_by_xpath(xpath2).click()
-    else:
-        print(name + " " + type + " doesnt exist")
-
-
 def user_delete(driver, type, name):
     # the convention is set in such a way that a single function can cleanup
     # both type:user/group, name:name of the group or user
@@ -187,59 +163,6 @@ def user_delete(driver, type, name):
         print("clicking delete")
         driver.find_element_by_xpath(xpaths['deleteButton']).click()
         time.sleep(20)
-
-
-def user_delete_old(driver, type, name):
-    # the convention is set in such a way that a single function can cleanup
-    # both type:user/group, name:name of the group or user path plugs in the
-    # xpath of user or group , sub-menu{User/Group} num specifies the column of
-    # the 3 dots which is different in user/group delNum specifies the option
-    # number where del is after clicking on the 3 dots
-    if (type == "user"):
-        num = 2
-        delNum = 6
-        path = "User"
-        plug = "bsdusr_username"
-    elif (type == "group"):
-        num = 2
-        delNum = 5
-        path = "Group"
-        plug = "bsdgrp_group"
-
-    # Click User submenu
-    driver.find_element_by_xpath(xpaths['submenu' + path]).click()
-    # wait till the list is loaded
-    time.sleep(2)
-    index = 1
-    ui_text = "null"
-    if (is_element_present(driver, '//*[@id="' + plug + '_' + name + '\"]' )):
-        print("username/groupname- " + name + " exists")
-        for x in range(0, 10):
-            if is_element_present(driver, '//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div'):
-                ui_element = driver.find_element_by_xpath('//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div')
-                ui_text = ui_element.text
-            if (ui_text == name):
-                index = x
-                break
-            ui_element = " "
-        print("index, delNum, num: " + str(x) + ", " + str(delNum) + "," + str(num))
-        time.sleep(1)
-        # click on the 3 dots
-        driver.find_element_by_xpath('//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(delNum) + ']/div/app-entity-table-actions/div/mat-icon').click()
-        time.sleep(1)
-        # click on delete option
-        if type == 'Group':
-            driver.find_element_by_xpath("//button[@id='action_button_delete__usernas']/span").click()
-        else:
-            driver.find_element_by_xpath('//*[@id="action_button_Delete"]').click()
-        if (driver.find_element_by_xpath(xpaths['confirmCheckbox'])):
-            driver.find_element_by_xpath(xpaths['confirmCheckbox']).click()
-            time.sleep(1)
-            print("clicking delete once")
-            driver.find_element_by_xpath(xpaths['deleteButton']).click()
-            time.sleep(20)
-    else:
-        print("username/groupname- " + name + " does not exists..skipping")
 
 
 def plugin_install(driver, action, name):
