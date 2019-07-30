@@ -24,7 +24,7 @@ xpaths = {
     'breadcrumbBar1': "//div[@id='breadcrumb-bar']/ul/li/a",
     'breadcrumbBar2': "//*[@id='breadcrumb-bar']/ul/li[2]/a",
     'toDashboard': "//span[contains(.,'Dashboard')]",
-    'newuserGrourMenu': f"//mat-icon[@id='table_actions_menu_button__bsdgrp_group_{newuser}']",
+    'newuserGroupMenu': f"//mat-icon[@id='table_actions_menu_button__bsdgrp_group_{newuser}']",
     'superuserGroupMenu': f"//mat-icon[@id='table_actions_menu_button__bsdgrp_group_{superuser}']",
     'newgroupGroupMenu': f"//mat-icon[@id='table_actions_menu_button__bsdgrp_group_{newgroup}']",
     'supergroupGroupMenu': f"//mat-icon[@id='table_actions_menu_button__bsdgrp_group_{supergroup}']",
