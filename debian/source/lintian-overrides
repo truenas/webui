@@ -1,0 +1,8 @@
+source-is-missing scripts/setup_prod.js
+source-is-missing config/electron/webpack.electron.prod.js
+source-is-missing config/electron/webpack.renderer.prod.js
+source-is-missing config/modules/angular2-hmr-prod.js
+source-is-missing config/webpack.prod.js
+source-is-missing src/vendor/Chart.min.js
+source-is-missing src/assets/scripts/ie-support/ie-polyfills.min.js
+truenas-webui source: source-is-missing src/assets/iconfont/mdi/preview.html *
