@@ -65,7 +65,10 @@ export class AvailablePluginsComponent implements OnInit {
         this.getPlugin();
     }
 
-    getPlugin() {
+    getPlugin(cache = true) {
+        this.parent.cardHeaderReady = false;
+        this.queryCallOption['cache'] = cache;
+
         this.ws.job(this.queryCall, [this.queryCallOption]).subscribe(
             (res) => {
                 if (res.result) {
