@@ -46,7 +46,7 @@ export default {
 
     target_dataset_placeholder: T('Target Dataset'),
     target_dataset_tooltip: T('Enter the dataset on the remote or destination system where\
-snapshots will be stored. Example: Poolname/Datasetname, not the mountpoint or filesystem path'),
+ snapshots will be stored. Example: Poolname/Datasetname, not the mountpoint or filesystem path'),
 
     recursive_placeholder: T('Recursive'),
     recursive_tooltip: T('Replicate all child dataset snapshots.'),
