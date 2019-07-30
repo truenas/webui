@@ -51,6 +51,9 @@
 </div>
 
 <div mat-dialog-actions>
-  <span fxFlex class="copyright-txt">FreeNAS® © {{copyrightYear}} - <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.</span>
+	<span *ngIf="is_freenas; else isTruenasCopyright" fxFlex class="copyright-txt">FreeNAS® © {{copyrightYear}} - <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.</span>
+	<ng-template #isTruenasCopyright>
+		<span fxFlex class="copyright-txt">TrueNAS® © {{copyrightYear}} - <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.</span>
+	</ng-template>
   <button mat-button class="mat-button mat-primary" (click)="dialogRef.close(false)">{{"Close" | translate}}</button>
 </div>

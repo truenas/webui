@@ -1371,4 +1371,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   #recovery_key span {
     margin-right: 5px;
   }
+  iscsi .mat-tab-links {
+    flex-wrap: wrap;
+  }
+
  } // end of ix theme

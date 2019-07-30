@@ -240,6 +240,7 @@ export class GeneralComponent {
     this.https_port = value['ui_httpsport'];
     this.redirect = value['ui_httpsredirect'];
     this.guicertificate = value['ui_certificate'].id;
+    value['ui_certificate'] = value['ui_certificate'].id.toString();
     this.addresses = value['ui_address'];
     this.v6addresses = value['ui_v6address'];
     return value;
@@ -264,10 +265,7 @@ export class GeneralComponent {
     entityEdit.ws.call('system.general.ui_certificate_choices')
       .subscribe((res) => {
         for (const id in res) {
-          if(res.hasOwnProperty(id)) {
-            const value = parseInt(id, 10); //fixme: we shouldn't have to convert this value after we switch to websocket
-            this.ui_certificate.options.push({ label: res[id], value: value });
-          }
+          this.ui_certificate.options.push({ label: res[id], value: id });
         }
       });
 
