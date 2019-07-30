@@ -26,7 +26,8 @@ xpaths = {
     'newuserUserMenu': f"(.//*[normalize-space(text()) and normalize-space(.)='{newuserfn}'])[1]/following::a[1]",
     'newuserUserEdit': f"//button[@id='action_button_edit__{newuser}']/span/div/p",
     'newgroupGroupMenu': f"//*[@id='table_actions_menu_button__bsdgrp_group_{newgroup}']",
-    'newgroupGroupEdit': f"//*[@id='action_button_edit__{newgroup}']"
+    'newgroupGroupEdit': f"//*[@id='action_button_edit__{newgroup}']",
+    'newgroupPermitSudo': f"(.//*[normalize-space(text()) and normalize-space(.)='{newgroup}'])[1]/following::span[3]"
 }
 
 
@@ -106,17 +107,25 @@ def test_05_press_edit(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['newgroupGroupMenu']).click()
     assert is_element_present(wb_driver, xpaths['newgroupGroupEdit'])
     wb_driver.find_element_by_xpath(xpaths['newgroupGroupEdit']).click()
+    assert is_element_present(wb_driver, xpaths['groupSudo'])
+    wb_driver.find_element_by_xpath(xpaths['groupSudo']).click()
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
-
-
-def test_06_edit_groupNAS_sudo(wb_driver):
-    wb_driver.find_element_by_xpath(xpaths['groupSudo']).click()
+    # click save
     wb_driver.find_element_by_xpath('//*[@id="save_button"]').click()
     time.sleep(5)
+    no_error = error_check(wb_driver)
+    assert no_error['result'], no_error['traceback']
+
+
+def test_06_verify_permit_sudo_is_yes(wb_driver):
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(wb_driver, script_name, test_name)
-    no_error = error_check(wb_driver)
-    assert no_error['result'], no_error['traceback']
+
+    ui_element = wb_driver.find_element_by_xpath(xpaths['newgroupPermitSudo'])
+    # get the weather data
+    page_data = ui_element.text
+    # assert response
+    assert page_data == "yes", page_data
