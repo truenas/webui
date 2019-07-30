@@ -5,7 +5,6 @@
 
 import sys
 import os
-import time
 from selenium.webdriver.common.keys import Keys
 cwd = str(os.getcwd())
 sys.path.append(cwd)
@@ -72,10 +71,10 @@ def test_02_create_newuser(wb_driver):
     # Click create new user option
     wb_driver.find_element_by_xpath(xpaths['fabAction']).click()
     # Enter User Full name
-    wb_driver.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfname)
+    wb_driver.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfn)
     # clear user name and enter new Username
     wb_driver.find_element_by_xpath(xpaths['newUser']).clear()
-    wb_driver.find_element_by_xpath(xpaths['newUser']).send_keys(newusername)
+    wb_driver.find_element_by_xpath(xpaths['newUser']).send_keys(newuser)
     # Enter User email id
     wb_driver.find_element_by_xpath(xpaths['newUserEmail']).send_keys(newuseremail)
     # Enter Password
@@ -103,10 +102,10 @@ def test_03_create_newuser_primarygroup_uncheck(wb_driver):
     # Click create new user option
     wb_driver.find_element_by_xpath(xpaths['fabAction']).click()
     # Enter User Full name
-    wb_driver.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfnameuncheck)
+    wb_driver.find_element_by_xpath(xpaths['newUserName']).send_keys(uncheckuserfn)
     # clear user name and enter new Username
     wb_driver.find_element_by_xpath(xpaths['newUser']).clear()
-    wb_driver.find_element_by_xpath(xpaths['newUser']).send_keys(newusernameuncheck)
+    wb_driver.find_element_by_xpath(xpaths['newUser']).send_keys(uncheckuser)
 
     # Enter Password
     wb_driver.find_element_by_xpath(xpaths['newUserPass']).send_keys(newuserpassword)
@@ -135,10 +134,10 @@ def test_04_create_superuser(wb_driver):
     # Click create new user option
     wb_driver.find_element_by_xpath(xpaths['fabAction']).click()
     # Enter User Full name
-    wb_driver.find_element_by_xpath(xpaths['newUserName']).send_keys(superuserfname)
+    wb_driver.find_element_by_xpath(xpaths['newUserName']).send_keys(superuserfn)
     # clear user name and enter new Username
     wb_driver.find_element_by_xpath(xpaths['newUser']).clear()
-    wb_driver.find_element_by_xpath(xpaths['newUser']).send_keys(superusername)
+    wb_driver.find_element_by_xpath(xpaths['newUser']).send_keys(superuser)
 
     # Enter Password
     wb_driver.find_element_by_xpath(xpaths['newUserPass']).send_keys(superuserpassword)
@@ -168,10 +167,10 @@ def test_05_create_duplicateuser(wb_driver):
     # Click create new user option
     wb_driver.find_element_by_xpath(xpaths['fabAction']).click()
     # Enter User Full name
-    wb_driver.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfname)
+    wb_driver.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfn)
     # clear user name and enter new Username
     wb_driver.find_element_by_xpath(xpaths['newUser']).clear()
-    wb_driver.find_element_by_xpath(xpaths['newUser']).send_keys(newusername)
+    wb_driver.find_element_by_xpath(xpaths['newUser']).send_keys(newuser)
 
     # Enter Password
     wb_driver.find_element_by_xpath(xpaths['newUserPass']).send_keys(newuserpassword)
@@ -199,7 +198,7 @@ def test_06_create_newuser_suggestedname(wb_driver):
     # Click create new user option
     wb_driver.find_element_by_xpath(xpaths['fabAction']).click()
     # Enter User Full name
-    wb_driver.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfname)
+    wb_driver.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfn)
 
     wb_driver.find_element_by_xpath(xpaths['newUserEmail']).send_keys(newuseremail)
     # Enter Password

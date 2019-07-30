@@ -5,34 +5,24 @@
 # ACCOUNTS
 # username for the machine
 username = "root"
-# password for the machine
 password = "testing"
 
 # new user with create primary group check
-newusername = "usernas"
-# new user full name
-newuserfname = "user nas"
-# new user email
+newuser = "usernas"
+newuserfn = "user nas"
 newuseremail = "test@ixsystems.com"
-# userpassword
 newuserpassword = "abcd1234"
-# usergroupname
-newgroupname = "groupnas"
+newgroup = "groupnas"
 
 # new user with create primary group UNcheck
-newusernameuncheck = "usernasuncheck"
-# new user full name
-newuserfnameuncheck = "user nasuncheck"
-
+uncheckuser = "usernasuncheck"
+uncheckuserfn = "user nasuncheck"
 
 # new user with sudo permit
-superusername = "supernas"
-
-superuserfname = "super nas"
-
+superuser = "supernas"
+superuserfn = "super nas"
 superuserpassword = "abcd1234"
-
-supergroupname = "supergroupnas"
+supergroup = "supergroupnas"
 
 # STORAGE
 pool1 = "testPool1"

@@ -9,7 +9,7 @@ import time
 cwd = str(os.getcwd())
 sys.path.append(cwd)
 from function import take_screenshot, user_edit, error_check, is_element_present
-from source import newusername, newgroupname
+from source import newuser, newgroup
 
 skip_mesages = "Skipping first run"
 script_name = os.path.basename(__file__).partition('.')[0]
@@ -53,7 +53,7 @@ def test_01_navigate_to_account_user(wb_driver):
 def test_02_edit_userNAS_email(wb_driver):
     time.sleep(2)
     # call edit funtion on the userNAS
-    user_edit(wb_driver, "user", newusername)
+    user_edit(wb_driver, "user", newuser)
     # get the ui element
     ui_email = wb_driver.find_element_by_xpath(xpaths['email'])
     ui_email.clear()
@@ -68,7 +68,7 @@ def test_02_edit_userNAS_email(wb_driver):
 
 def test_03_edit_userNAS_sudo(wb_driver):
     # Changing permission to sudo
-    user_edit(wb_driver, "user", newusername)
+    user_edit(wb_driver, "user", newuser)
     wb_driver.find_element_by_xpath('//*[@id="save_button"]').click()
     time.sleep(5)
     # taking screenshot
@@ -93,19 +93,19 @@ def test_04_navigate_to_account_group(wb_driver):
     take_screenshot(wb_driver, script_name, test_name)
 
 
-def test_05_edit_groupNAS_sudo(wb_driver):
-    time.sleep(2)
-    wb_driver.find_element_by_xpath(xpaths['submenuGroup']).click()
-    # wait till the list is loaded
-    time.sleep(2)
-    xpath1 = f"//*[@id='table_actions_menu_button__bsdgrp_group_{newusername}']"
-    xpath2 = f"//*[@id='action_button_edit__{newusername}']"
-
+def test_05_press_edit(wb_driver):
+    xpath1 = f"//*[@id='table_actions_menu_button__bsdgrp_group_{newgroup}']"
+    xpath2 = f"//*[@id='action_button_edit__{newgroup}']"
     assert is_element_present(wb_driver, xpath1)
     wb_driver.find_element_by_xpath(xpath1).click()
     assert is_element_present(wb_driver, xpath2)
     wb_driver.find_element_by_xpath(xpath2).click()
-    # user_edit(wb_driver, "group", newgroupname)
+    # taking screenshot
+    test_name = sys._getframe().f_code.co_name
+    take_screenshot(wb_driver, script_name, test_name)
+
+
+def test_06_edit_groupNAS_sudo(wb_driver):
     wb_driver.find_element_by_xpath(xpaths['group']).click()
     wb_driver.find_element_by_xpath('//*[@id="save_button"]').click()
     time.sleep(5)

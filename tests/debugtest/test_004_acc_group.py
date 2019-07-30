@@ -10,7 +10,7 @@ import time
 cwd = str(os.getcwd())
 sys.path.append(cwd)
 from function import take_screenshot, error_check, wait_on_element
-from source import newgroupname, supergroupname
+from source import newgroup, supergroup
 
 
 skip_mesages = "Skipping first run"
@@ -59,7 +59,7 @@ def test_02_create_newgroup(wb_driver):
     # Click create new group option
     wb_driver.find_element_by_xpath(xpaths['fabAction']).click()
     # Enter New Groupname
-    wb_driver.find_element_by_xpath(xpaths['newGroupName']).send_keys(newgroupname)
+    wb_driver.find_element_by_xpath(xpaths['newGroupName']).send_keys(newgroup)
     # Click on save new Group button
     wb_driver.find_element_by_xpath(xpaths['saveButton']).click()
     # wait on the fabAction
@@ -77,7 +77,7 @@ def test_03_create_supergroup(wb_driver):
     # Click create new group option
     wb_driver.find_element_by_xpath(xpaths['fabAction']).click()
     # Enter New Groupname
-    wb_driver.find_element_by_xpath(xpaths['newGroupName']).send_keys(supergroupname)
+    wb_driver.find_element_by_xpath(xpaths['newGroupName']).send_keys(supergroup)
     # Check Permit sudo  checkbox
     wb_driver.find_element_by_xpath(xpaths['permitsudoCheckbox']).click()
     # Click on save new Group button
@@ -97,7 +97,7 @@ def test_04_create_duplicategroup(wb_driver):
     # Click create new group option
     wb_driver.find_element_by_xpath(xpaths['fabAction']).click()
     # Enter New Groupname
-    wb_driver.find_element_by_xpath(xpaths['newGroupName']).send_keys(newgroupname)
+    wb_driver.find_element_by_xpath(xpaths['newGroupName']).send_keys(newgroup)
     # Click on save new Group button
     if wb_driver.find_element_by_xpath(xpaths['saveButton']):
         print("found the save button")
