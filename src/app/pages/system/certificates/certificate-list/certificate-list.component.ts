@@ -21,10 +21,6 @@ export class CertificateListComponent {
 
   protected entityList: any;
 
-  constructor(protected router: Router, protected aroute: ActivatedRoute,
-    protected ws: WebSocketService, public snackBar: MatSnackBar) {
-  }
-
   public columns: Array < any > = [
     { name: helptext_system_certificates.list.column_name, prop: 'name', always_display: true },
     { name: helptext_system_certificates.list.column_issuer, prop: 'issuer'},
@@ -40,6 +36,10 @@ export class CertificateListComponent {
       title: 'Certificate',
       key_props: ['name']
     },
+  }
+
+  constructor(protected router: Router, protected aroute: ActivatedRoute,
+    protected ws: WebSocketService, public snackBar: MatSnackBar) {
   }
 
   afterInit(entityList: any) {
@@ -129,7 +129,16 @@ export class CertificateListComponent {
         id: "delete",
         label: helptext_system_certificates.list.action_delete,
         onClick: (row) => {
-          this.entityList.doDelete(row);
+          this.entityList.doDeleteJob(row).subscribe(
+            (progress) => {
+            },
+            (err) => {
+              new EntityUtils().handleWSError(this.entityList, err);
+            },
+            () => {
+              this.entityList.getData();
+            }
+          );
         }
       }];
   }
