@@ -5,9 +5,9 @@ export default {
 unlockDialog_password_placeholder: T('Passphrase'),
 
 unlockDialog_recovery_key_placeholder: T('Recovery Key'),
-unlockDialog_recovery_key_tooltip: T('Unlock the pool with a recovery key file instead \
- of a passphrase. Select a recovery key file to \
- upload. This decrypts the disks and unlocks the pools.'),
+unlockDialog_recovery_key_tooltip: T('Unlock the pool with a recovery \
+ key file instead of a passphrase. Select a recovery key file to upload \
+ from the local system.'),
 
 unlockDialog_services_placeholder: T('Restart Services'),
 unlockDialog_services_tooltip: T('List of system services to restart when the pool is unlocked.'),
