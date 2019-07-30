@@ -113,7 +113,7 @@ export class InterfacesListComponent implements OnDestroy {
       label: T("Edit"),
       onClick: (rowinner) => { 
         if(this.ha_enabled) {
-          this.dialog.Info(helptext.ha_enabled_edit_title, helptext.ha_enabled_delete_msg);
+          this.dialog.Info(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
         } else {
           this.entityList.doEdit(rowinner.id);
         }
