@@ -135,36 +135,6 @@ def status_change(driver, which):
         time.sleep(2)
 
 
-def user_delete(driver, type, name):
-    # the convention is set in such a way that a single function can cleanup
-    # both type:user/group, name:name of the group or user
-    # path plugs in the xpath of user or group , sub-menu{User/Group}
-    if (type == "user"):
-        path = "User"
-        fix = 'usr_username_'
-    elif (type == "group"):
-        path = "Group"
-        fix = 'grp_group_'
-    # Click User submenu
-    driver.find_element_by_xpath(xpaths['submenu' + path]).click()
-    # wait till the list is loaded
-    time.sleep(2)
-
-    if (is_element_present(driver, '//*[@id="table_actions_menu_button__bsd' + fix + name + '\"]')):
-        driver.find_element_by_xpath('//*[@id="table_actions_menu_button__bsd' + fix + name + '\"]').click()
-        driver.find_element_by_xpath('//*[@id="action_button_Delete__bsd' + fix + name + '\"]').click()
-    else:
-        print(name + " " + type + " doesnt exist")
-
-    if (is_element_present(driver, xpaths['confirmCheckbox'])):
-        driver.find_element_by_xpath(xpaths['confirmsecondaryCheckbox']).click()
-        driver.find_element_by_xpath(xpaths['confirmCheckbox']).click()
-        time.sleep(1)
-        print("clicking delete")
-        driver.find_element_by_xpath(xpaths['deleteButton']).click()
-        time.sleep(20)
-
-
 def plugin_install(driver, action, name):
     # the convention is set in such a way that a single function can cleanup
     # both type:user/group, name:name of the group or user path plugs in
