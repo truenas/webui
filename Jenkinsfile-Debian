@@ -7,6 +7,7 @@ node('FreeNAS-webui') {
     stage('Cleanup') {
       sh 'cd $WORKSPACE/src ; rm -rf node_modules ; rm -f package-lock.json'
       sh 'rm truenas-webui* || true'
+      sh 'rm src/debian/files || true'
     }
     stage('Build') {
       sh 'cd "$WORKSPACE/src" && sh mk-deb.sh 92B8B783F95A684C0A3B643073CF445610D143A1'
