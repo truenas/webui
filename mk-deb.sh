@@ -10,6 +10,6 @@ tar cvzf node_files.tgz node_modules/
 rm -rf node_modules
 
 DATESTAMP=$(date +%Y%m%d%H%M)
-dch -v ${DATESTAMP}~truenas+1 --force-distribution --distribution bullseye-truenas-unstable "Auto Update from Jenkins CI"
+dch -M -v ${DATESTAMP}~truenas+1 --force-distribution --distribution bullseye-truenas-unstable "Auto Update from Jenkins CI"
 
 dpkg-buildpackage --sign-key=${1}
