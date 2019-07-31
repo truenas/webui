@@ -11,7 +11,7 @@ add_key_password_tooltip: T('Enter the root password to authorize this operation
 add_key_password_validation: [Validators.required],
 
 // Change key form
-changekey_adminpw_placeholder: T('Root Password'),
+changekey_adminpw_placeholder: T('Administrator Password'),
 changekey_adminpw_tooltip: T('Enter the root password.'),
 changekey_adminpw_validation: [Validators.required],
 
