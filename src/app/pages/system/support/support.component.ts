@@ -11,7 +11,7 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { SnackbarService } from '../../../services/snackbar.service';
-
+import { InfoDialog } from 'app/pages/common/info-dialog/info-dialog.component';
 
 @Component({
   selector : 'app-support',
@@ -38,6 +38,7 @@ export class SupportComponent {
   public product_image = '';
   public scrshot: any;
   public subs: any;
+  private serial: any;
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
     {
@@ -131,7 +132,31 @@ export class SupportComponent {
           type: 'paragraph',
           name: 'TN_addhardware',
           paraText: '<h4>Additional Hardware: </h4>'
-        }
+        },
+        {
+          type: 'checkbox',
+          name: 'TN_is_production',
+          placeholder: 'This is a production system',
+          class: 'lowerme',
+          tooltip: 'Sends a message to iXsystems that this system has been put into production.'
+        },
+        // {
+        //   type: 'checkbox',
+        //   name: 'TN_send_debug',
+        //   placeholder: 'Send initial debug',
+        //   tooltip: 'Attach a debug file showing the initial state of the system.',
+        //   disabled: true,
+        //   relation : [
+        //     {
+        //       action : 'ENABLE',
+        //       when : [ {
+        //         name : 'TN_is_production',
+        //         value : true,
+        //       } ]
+        //     },
+        //   ]
+        // }
+
       ]
     },
     {
@@ -350,6 +375,8 @@ export class SupportComponent {
     'TN_contracttype',
     'TN_contractdate',
     'TN_addhardware',
+    'TN_is_production',
+    // 'TN_send_debug',
     'name',
     'email',
     'phone',
@@ -441,13 +468,17 @@ export class SupportComponent {
         }
       ]
       this.ws.call('system.info').subscribe((res) => {
+        this.serial = res.system_serial;
+        this.entityEdit.formGroup.controls['TN_is_production'].valueChanges.subscribe((res) => {
+          this.setProductionStatus();
+        });
         let now = new Date();
         let then = new Date(res.license.contract_end.$value);
         let daysLeft = this.daysTillExpiration(now, then);
         this.getTrueNASImage(res.system_product)
         _.find(this.fieldConfig, {name : "pic"}).paraText = `<img src="assets/images/${this.product_image}">`;
         _.find(this.fieldConfig, {name : "TN_model"}).paraText += res.system_product;
-        _.find(this.fieldConfig, {name : "TN_custname"}).paraText += res.license.customer || '---';
+        _.find(this.fieldConfig, {name : "TN_custname"}).paraText += res.license.customer_name || '---';
 
         res.license.system_serial_ha ?
           _.find(this.fieldConfig, {name : "TN_sysserial"}).paraText += res.license.system_serial + ' / ' + res.license.system_serial_ha :
@@ -468,9 +499,68 @@ export class SupportComponent {
         }
         _.find(this.fieldConfig, {name : "TN_contracttype"}).paraText += res.license.contract_type;
         _.find(this.fieldConfig, {name : "TN_contractdate"}).paraText += res.license.contract_end.$value + ` (expires in ${daysLeft} days)` || '';
-        _.find(this.fieldConfig, {name : "TN_addhardware"}).paraText += res.license.add_hardware || 'NONE'; 
+        let addhw;
+        res.license.addhw.length === 0 ? addhw = 'NONE' : addhw = res.license.addhw.join(', ');
+        _.find(this.fieldConfig, {name : "TN_addhardware"}).paraText += addhw; 
       })
     }
+  }
+
+  setProductionStatus() {
+    let localSerial = this.serial;
+    let localDialog = this.dialog;
+    let localSnackbar = this.snackbar;
+    const isProductionForm: DialogFormConfiguration = {
+      title: helptext.is_production_dialog.dialog_title,
+      fieldConfig: [
+        {
+          type: 'paragraph',
+          name: 'instructions',
+          paraText: helptext.is_production_dialog.instructions
+        },
+        {
+          type: 'checkbox',
+          name: 'production_status',
+          placeholder: helptext.is_production_dialog.debug_placeholder,
+          tooltip: helptext.is_production_dialog.debug_tooltip,
+          value: true
+        },
+        {
+          type: 'checkbox',
+          name: 'send_debug',
+          placeholder: helptext.is_production_dialog.debug_placeholder,
+          tooltip: helptext.is_production_dialog.debug_tooltip,
+          value: true
+        }
+      ],
+      saveButtonText: helptext.is_production_dialog.save_button,
+      customSubmit: function (entityDialog) {
+        const send_debug = entityDialog.formValue.send_debug;
+        this.payload = {
+          "title": "System has been just put into production (" + localSerial + ")",
+          "body": "This system has been just put into production",
+          "attach_debug": send_debug,
+          "category": "Installation/Setup",
+          "criticality": "Inquiry",
+          "environment": "Production",
+          "name": "Automatic Alert",
+          "email": "auto-support@ixsystems.com",
+          "phone": "-"
+        };
+        const dialogRef = localDialog.open(EntityJobComponent, {data: {"title":"Registering System","CloseOnClickOutside":true}});
+        dialogRef.componentInstance.setCall('support.new_ticket', [this.payload]);
+        dialogRef.componentInstance.submit();
+        entityDialog.dialogRef.close(true);
+        dialogRef.componentInstance.success.subscribe(res=>{
+          dialogRef.close();
+          localSnackbar.open(helptext.is_production_dialog.snackbar_message, helptext.is_production_dialog.snackbar_action, { duration: 6000 } );
+        })
+        dialogRef.componentInstance.failure.subscribe((res) => {
+          dialogRef.componentInstance.setDescription(res.error);
+        });
+      }
+    }
+    this.dialogService.dialogForm(isProductionForm);
   }
 
   getTrueNASImage(sys_product) {

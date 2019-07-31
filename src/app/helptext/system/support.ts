@@ -107,5 +107,16 @@ export const helptext_system_support = {
     success_message: T('License has been updated.'),
     error_dialog_title: T('Error Unlocking'),
     snackbar_action: T('close')
+  },
+
+  is_production_dialog: {
+    dialog_title: T('Register Production Status'),
+    instructions: 'Press Register to submit this system\'s production status to iXsystems Support.',
+    debug_placeholder: T('Send initial debug'),
+    debug_tooltip: T('Send an initial debug report to iXsystems Support.'),
+    save_button: T('Register'),
+    error_dialog_title: T('Error submitting form'),
+    snackbar_message: T('Production status successfully uptated'),
+    snackbar_action: T('close')
   }
 };

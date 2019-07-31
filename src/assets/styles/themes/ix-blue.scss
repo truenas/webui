@@ -1383,4 +1383,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     flex-wrap: wrap;
   }
 
+  app-support #TN_is_production {
+    margin-top: 10px;
+  }
+
  } // end of ix theme
