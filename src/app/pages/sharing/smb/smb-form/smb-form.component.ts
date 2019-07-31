@@ -178,7 +178,6 @@ export class SMBFormComponent {
      */
     const promptUserACLEdit = () =>
       this.ws.call('filesystem.acl_is_trivial', [sharePath]).pipe(
-        tap(isTrivialACL => console.log({ isTrivialACL })),
         switchMap((isTrivialACL: boolean) =>
           /* If share has trivial ACL, move on. Otherwise, perform some async data-gathering operations */
           isTrivialACL
