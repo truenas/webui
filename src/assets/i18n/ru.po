@@ -643,6 +643,15 @@ msgstr "Перечисление ресурсов на основе доступ
 msgid "Access Control Entries"
 msgstr "Записи контроля доступа"
 
+msgid ""
+"Access Control Entry (ACE) user or group. Select a specific <i>User</i> or "
+"<i>Group</i> for this entry, <i>owner@</i> to apply this entry to the user "
+"that owns the dataset, <i>group@</i> to apply this entry to the group that "
+"owns the dataset, or <i>everyone@</i> to apply this entry to all users and "
+"groups. See <a href=\"https://www.freebsd.org/cgi/man.cgi?query=setfacl\" "
+"target=\"_blank\">setfacl(1) NFSv4 ACL ENTRIES</a>."
+msgstr ""
+
 msgid "Access ID Key"
 msgstr ""
 
@@ -1274,6 +1283,9 @@ msgstr ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=vmm\" "
 "target=\"_blank\">vmm(4)</a>."
 
+msgid "Allowed Initiators (IQN)"
+msgstr ""
+
 msgid ""
 "Allows different groups to be configured with different authentication "
 "profiles. Example: all users with a group ID of 1 will inherit the "
@@ -1356,6 +1368,9 @@ msgstr "Полоса скачивания анонимного пользова�
 msgid "Anonymous User Upload Bandwidth"
 msgstr "Полоса закачки анонимного пользователя"
 
+msgid "Any notes about initiators."
+msgstr ""
+
 msgid "Appdefaults Auxiliary Parameters"
 msgstr "Вспомогательный параметры Appdefaults"
 
@@ -1366,8 +1381,8 @@ msgstr ""
 "Добавлять <i>@realm</i> к <i>cn</i> в запросах LDAP для групп и "
 "пользователей, если задан User CN)."
 
-msgid "Apple (AFP) Shares"
-msgstr "Общие ресурсы Apple (AFP)"
+msgid "Apple Shares (AFP)"
+msgstr ""
 
 msgid "Application Client Secret"
 msgstr "Секрет Клиента Приложения"
@@ -1396,10 +1411,13 @@ msgstr "Применить сетевые изменения? Сетевое п�
 msgid "Apply permissions recursively"
 msgstr "Применить разрешения рекурсивно"
 
-msgid "Apply permissions recursively all child datasets within the current dataset"
+msgid "Apply permissions recursively to all child datasets of the current dataset"
 msgstr ""
-"Применить разрешения рекурсивно ко всем дочерним наборам данных внутри "
-"текущего набора данных"
+
+msgid ""
+"Apply permissions recursively to all directories and files in the current "
+"dataset."
+msgstr ""
 
 msgid ""
 "Apply permissions recursively to all directories and files within the "
@@ -1609,6 +1627,9 @@ msgstr "Базовое имя"
 msgid "Base64 encoded key for the Azure account."
 msgstr "Ключ в кодировке Base64 для учетной записи Azure."
 
+msgid "Basejail"
+msgstr ""
+
 msgid "Basic Mode"
 msgstr "Основной режим"
 
@@ -1655,8 +1676,8 @@ msgstr "Привязка к"
 msgid "Bind to Port"
 msgstr "Привязка к порту"
 
-msgid "Block (iSCSI)"
-msgstr "Блочное хранилище (iSCSI)"
+msgid "Block Shares (iSCSI)"
+msgstr ""
 
 msgid "Block Size"
 msgstr "Размер блока"
@@ -2412,6 +2433,11 @@ msgstr ""
 "несколькими сетями. Link Aggregation объединяет несколько сетевых "
 "подключений в единый интерфейс. Виртуальная локальная сеть (VLAN) разделяет "
 "и изолирует сегмент соединения."
+
+msgid ""
+"Choose the type of permissions. <i>Basic</i> shows general permissions. "
+"<i>Advanced</i> shows each specific type of permission for finer control."
+msgstr ""
 
 msgid "Choose the type that matches the type of client accessing the pool/dataset."
 msgstr ""
@@ -3461,17 +3487,20 @@ msgstr "Метод аутентификации обнаружения"
 msgid "Disk"
 msgstr "Диск"
 
+msgid "Disk Imported: Log Summary"
+msgstr ""
+
 msgid "Disk Selection Required"
 msgstr "Требуется выбор диска"
 
 msgid "Disk Size"
 msgstr "Размер диска"
 
+msgid "Disk Type"
+msgstr ""
+
 msgid "Disk sector size"
 msgstr "Размер сектора диска"
-
-msgid "Disk successfully imported"
-msgstr "Диск успешно импортирован"
 
 msgid "Disk to wipe."
 msgstr "Диск стереть."
@@ -5174,6 +5203,9 @@ msgstr ""
 "=</i>. <i>$</i> может использоваться только как последний символ имени "
 "пользователя."
 
+msgid "Group to which this ACL entry applies."
+msgstr ""
+
 msgid "Groups"
 msgstr "Группы"
 
@@ -5363,6 +5395,22 @@ msgstr ""
 msgid "How often the IP is checked in seconds."
 msgstr "Как часто IP проверяется в секундах."
 
+msgid ""
+"How the <b>Permissions</b> are applied to the chosen <b>Tag</b>. Choose "
+"<i>Allow</i> to grant the specified permissions and <i>Deny</i> to restrict "
+"the specified permissions."
+msgstr ""
+
+msgid ""
+"How this ACE is applied to newly created directories and files within the "
+"dataset. Basic flags enable or disable ACE inheritance. Advanced flags "
+"allow further control of how the ACE is applied to files and directories in "
+"the dataset. See the <a "
+"href=\"--docurl--/storage.html#ace-inheritance-flags\" "
+"target=\"_blank\">inheritance flags list</a> for descriptions of Advanced "
+"inheritance flags."
+msgstr ""
+
 msgid "I Agree"
 msgstr "Я согласен"
 
@@ -5397,6 +5445,9 @@ msgstr ""
 msgid "IPMI"
 msgstr "IPMI"
 
+msgid "IPv4"
+msgstr ""
+
 msgid "IPv4 Address"
 msgstr "Адрес IPv4"
 
@@ -5430,6 +5481,9 @@ msgstr "Интерфейс IPv4 для jail."
 
 msgid "IPv4 netmask for the jail."
 msgstr "Маска сети IPv4 для jail."
+
+msgid "IPv6"
+msgstr ""
 
 msgid "IPv6 Address"
 msgstr "Адрес IPv6"
@@ -5659,6 +5713,21 @@ msgstr "Идентификатор группы инициаторов"
 msgid "Initiators"
 msgstr "Инициаторы"
 
+msgid ""
+"Initiators allowed access to this system. Enter an <a "
+"href=\"https://tools.ietf.org/html/rfc3720#section-3.2.6\" "
+"target=\"_blank\">iSCSI Qualified Name (IQN)</a> and click <i>+</i> to add "
+"it to the list. Example: <i>iqn.1994-09.org.freebsd:freenas.local</i>"
+msgstr ""
+
+msgid ""
+"Initiators currently connected to the system. Shown in IQN format with an "
+"IP address. Set initiators and click an <b>-></b> (arrow) to add the "
+"initiators to either the <i>Allowed Initiators</i> or <i>Authorized "
+"Networks</i> lists. Clicking <i>Refresh</i> updates the <i>Connected "
+"Initiators</i> list."
+msgstr ""
+
 msgid "Input the pre-defined S3 bucket to use."
 msgstr "Введите предопределенный S3 bucket для использования."
 
@@ -5764,17 +5833,8 @@ msgstr "Размер дампа ядра jail в байтах."
 msgid "Jail data size in bytes."
 msgstr "Размер данных jail в байтах."
 
-msgid "Jail restarted successfully"
-msgstr ""
-
 msgid "Jail stack size in bytes."
 msgstr "Размер стека jail в байтах."
-
-msgid "Jail started successfully"
-msgstr ""
-
-msgid "Jail stopped successfully"
-msgstr ""
 
 msgid "Jails"
 msgstr "Jail"
@@ -5842,6 +5902,12 @@ msgstr "Длина ключа"
 msgid "Key Type"
 msgstr "Тип Ключа"
 
+msgid "LAGG Ports"
+msgstr ""
+
+msgid "LAGG Protocol"
+msgstr ""
+
 msgid "LDAP"
 msgstr "LDAP"
 
@@ -5905,9 +5971,6 @@ msgstr "Интерфейсы lagg"
 
 msgid "Lagg Physical NIC"
 msgstr "Физический адаптер lagg"
-
-msgid "Lagg Ports"
-msgstr "Порты lagg"
 
 msgid "Lagg Priority Number"
 msgstr "Приоритет lagg"
@@ -6577,11 +6640,11 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Network addresses which can use this initiator. Use <i>ALL</i> or list "
-"network addresses with a <a "
+"Network addresses which are allowed use this initiator. Each  address can "
+"include an optional <a "
 "href=\"https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing\" "
-"target=\"_blank\">CIDR</a> mask. Separate multiple addresses with a space: "
-"<i>192.168.2.0/24 192.168.2.1/12</i>."
+"target=\"_blank\">CIDR</a> netmask. Click <i>+</i> to add the network "
+"address to the list. Example: <i>192.168.2.0/24</i>."
 msgstr ""
 
 msgid "Network changes applied successfully."
@@ -6625,6 +6688,9 @@ msgstr ""
 
 msgid "Next"
 msgstr "Следующая"
+
+msgid "Next Run"
+msgstr ""
 
 msgid "Nic to attach:"
 msgstr ""
@@ -6852,9 +6918,6 @@ msgid "Operation"
 msgstr ""
 
 msgid "Optional comment."
-msgstr ""
-
-msgid "Optional description."
 msgstr ""
 
 msgid "Optional description. Portals are automatically assigned a numeric group ID."
@@ -7545,12 +7608,6 @@ msgstr "Перезапустить службу Web"
 msgid "Restart the system?"
 msgstr "Перезапустить систему?"
 
-msgid "Restarting"
-msgstr ""
-
-msgid "Restarting Jail"
-msgstr ""
-
 msgid "Restore default"
 msgstr "Восстановить по умолчанию"
 
@@ -7579,6 +7636,9 @@ msgstr "Пароль администратора"
 
 msgid "Rotation Rate"
 msgstr "Частота вращения"
+
+msgid "Rotation Rate (RPM)"
+msgstr ""
 
 msgid "Rsync Tasks"
 msgstr "Задания Rsync"
@@ -7618,6 +7678,9 @@ msgid "Run this cron job now?"
 msgstr ""
 
 msgid "Run this rsync now?"
+msgstr ""
+
+msgid "S.M.A.R.T. Test"
 msgstr ""
 
 msgid "S.M.A.R.T. Tests"
@@ -7988,6 +8051,13 @@ msgstr ""
 msgid "Select one or more screenshots that illustrate the problem."
 msgstr ""
 
+msgid ""
+"Select permissions to apply to the chosen <b>Tag</b>. Choices change "
+"depending on the <b>Permissions Type</b>. See the <a "
+"href=\"--docurl--/storage.html#ace-permissions\" target=\"_blank\">ACL "
+"permissions list</a> for descriptions of each permission."
+msgstr ""
+
 msgid "Select pool to import"
 msgstr ""
 
@@ -8188,6 +8258,12 @@ msgid ""
 msgstr ""
 
 msgid "Select the serial port address in hex."
+msgstr ""
+
+msgid ""
+"Select the set of ACE inheritance <b>Flags</b> to display. <i>Basic</i> "
+"shows unspecific inheritance options. <i>Advanced</i> shows specific "
+"inheritance settings for finer control."
 msgstr ""
 
 msgid "Select the shell to use for local and SSH logins."
@@ -8848,6 +8924,11 @@ msgid ""
 "slow connections."
 msgstr ""
 
+msgid ""
+"Set to remove all ACLs from the current dataset. ACLs are also recursively "
+"stripped from directories and child datasets when those options are set."
+msgstr ""
+
 msgid "Set to run resilver tasks between the configured times."
 msgstr ""
 
@@ -8992,6 +9073,11 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Setting permissions recursively affects this directory and any others below "
+"it. This can make data inaccessible."
+msgstr ""
+
+msgid ""
 "Setting permissions recursively will affect this directory and any others "
 "below it. This might make data inaccessible."
 msgstr ""
@@ -9014,12 +9100,6 @@ msgstr ""
 msgid ""
 "Setting this option will result in timeouts if <b>identd</b> is not running "
 "on the client."
-msgstr ""
-
-msgid ""
-"Setting this will strip ACLs from the current dataset. ACLs will also be "
-"stripped recursively to directories and child datasets if paired with  hose "
-"options"
 msgstr ""
 
 msgid "Settings saved."
@@ -9275,12 +9355,6 @@ msgid ""
 "task completes."
 msgstr ""
 
-msgid "Starting"
-msgstr ""
-
-msgid "Starting Jail"
-msgstr ""
-
 msgid "Starting job..."
 msgstr "Запускается задание..."
 
@@ -9309,12 +9383,6 @@ msgid "Stop this cloud sync?"
 msgstr ""
 
 msgid "Stopped the scrub on pool <i>"
-msgstr ""
-
-msgid "Stopping"
-msgstr ""
-
-msgid "Stopping Jail"
 msgstr ""
 
 msgid "Stopping scrub on pool <i>"
@@ -9575,6 +9643,9 @@ msgstr ""
 msgid "Temp tooltip"
 msgstr ""
 
+msgid "Template"
+msgstr ""
+
 msgid "Terms of Service"
 msgstr ""
 
@@ -9689,6 +9760,12 @@ msgid ""
 msgstr ""
 
 msgid "The filesystem "
+msgstr ""
+
+msgid ""
+"The group which controls the dataset. This group has whatever permissions "
+"are granted to the <i>@group</i> <b>Tag</b>. Groups created manually or "
+"imported from a directory service appear in the drop-down menu."
 msgstr ""
 
 msgid "The hostname or IP address of the LDAP server."
@@ -9945,8 +10022,8 @@ msgstr ""
 msgid "Unique LUN ID. The default is generated from the MAC address of the system."
 msgstr ""
 
-msgid "Unix (NFS) Shares"
-msgstr "Общие ресурсы Unix (NFS)"
+msgid "Unix Shares (NFS)"
+msgstr ""
 
 msgid "Unlock"
 msgstr "Разблокировать"
@@ -9990,6 +10067,9 @@ msgid "Until"
 msgstr "До"
 
 msgid "Unused"
+msgstr ""
+
+msgid "Upcoming tasks"
 msgstr ""
 
 msgid "Update"
@@ -10083,9 +10163,6 @@ msgid ""
 "Use <a href=\"https://www.freebsd.org/cgi/man.cgi?query=rtsold\" "
 "target=\"_blank\">rtsold(8)</a> as part of IPv6 autoconfiguration. Send "
 "ICMPv6 Router Solicitation messages to interfaces to discover new routers."
-msgstr ""
-
-msgid "Use <i>ALL</i> keyword or a list of initiator hostnames separated by spaces."
 msgstr ""
 
 msgid "Use DHCP. Unset to manually configure a static IPv4 connection."
@@ -10191,12 +10268,21 @@ msgstr "Идентификатор пользователя"
 msgid "User Suffix"
 msgstr "Суффикс пользователя"
 
+msgid "User account to which this ACL entry applies."
+msgstr ""
+
 msgid ""
 "User accounts have an ID greater than 1000 and system accounts have an ID "
 "equal to the default port number used by the service."
 msgstr ""
 
 msgid "User passed to <i>camcontrol security -u</i> to unlock SEDs"
+msgstr ""
+
+msgid ""
+"User who controls the dataset. This user always has permissions to read or "
+"write the ACL and read or write attributes. Users created manually or "
+"imported from a directory service appear in the drop-down menu."
 msgstr ""
 
 msgid "Username"
@@ -10464,8 +10550,8 @@ msgstr ""
 msgid "Winbind NSS Info"
 msgstr "Информация Winbind NSS"
 
-msgid "Windows (SMB) Shares"
-msgstr "Общие ресурсы Windows (SMB)"
+msgid "Windows Shares (SMB)"
+msgstr ""
 
 msgid "Wipe"
 msgstr "Стереть"
