@@ -1,0 +1,22 @@
+node('FreeNAS-webui') {
+    stage('Checkout') {
+      dir('src') {
+         checkout scm
+      }
+    }
+    stage('Cleanup') {
+      echo 'Cleaning environment'
+      sh 'cd $WORKSPACE/src ; rm -rf node_modules ; rm -f package-lock.json'
+      sh 'rm truenas-webui* || true'
+    }
+    stage('Build') {
+      sh 'cd "$WORKSPACE/src" && sh mk-deb.sh 92B8B783F95A684C0A3B643073CF445610D143A1'
+    }
+    stage('Push to buildd') {
+      withCredentials([file(credentialsId: 'dput.cf', variable: 'dputfile') {
+        sh "cp \$dputfile \"${WORKSPACE}/.dput.cf\""
+      }
+      echo 'dput freenas truenas-webui*.changes'
+      sh 'dput freenas truenas-webui*.changes'
+    }
+}
