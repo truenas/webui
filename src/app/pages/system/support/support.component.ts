@@ -39,6 +39,8 @@ export class SupportComponent {
   public scrshot: any;
   public subs: any;
   private serial: any;
+  public production: boolean;
+  public isProductionForm: DialogFormConfiguration;
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
     {
@@ -136,27 +138,9 @@ export class SupportComponent {
         {
           type: 'checkbox',
           name: 'TN_is_production',
-          placeholder: 'This is a production system',
-          class: 'lowerme',
-          tooltip: 'Sends a message to iXsystems that this system has been put into production.'
-        },
-        // {
-        //   type: 'checkbox',
-        //   name: 'TN_send_debug',
-        //   placeholder: 'Send initial debug',
-        //   tooltip: 'Attach a debug file showing the initial state of the system.',
-        //   disabled: true,
-        //   relation : [
-        //     {
-        //       action : 'ENABLE',
-        //       when : [ {
-        //         name : 'TN_is_production',
-        //         value : true,
-        //       } ]
-        //     },
-        //   ]
-        // }
-
+          placeholder: helptext.is_production_checkbox.placeholder,
+          tooltip: helptext.is_production_checkbox.tooltip
+        }
       ]
     },
     {
@@ -376,7 +360,6 @@ export class SupportComponent {
     'TN_contractdate',
     'TN_addhardware',
     'TN_is_production',
-    // 'TN_send_debug',
     'name',
     'email',
     'phone',
@@ -395,6 +378,7 @@ export class SupportComponent {
               {}
 
   afterInit(entityEdit: any) {
+    window.localStorage.registered_production_system === 'true' ? this.production = true : this.production = false;
     this.entityEdit = entityEdit;
     this.category = _.find(this.fieldConfig, {name: "category"});
     if (window.localStorage['is_freenas'] === 'true') {
@@ -419,6 +403,7 @@ export class SupportComponent {
       for (let i in this.freeNASFields) {
         this.hideField(this.freeNASFields[i], true, entityEdit);
       }  
+      this.entityEdit.formGroup.controls['TN_is_production'].setValue(this.production);
       this.custActions = [
         {
           id : 'update_license',
@@ -470,7 +455,7 @@ export class SupportComponent {
       this.ws.call('system.info').subscribe((res) => {
         this.serial = res.system_serial;
         this.entityEdit.formGroup.controls['TN_is_production'].valueChanges.subscribe((res) => {
-          this.setProductionStatus();
+          this.setProductionStatus(res);
         });
         let now = new Date();
         let then = new Date(res.license.contract_end.$value);
@@ -506,61 +491,75 @@ export class SupportComponent {
     }
   }
 
-  setProductionStatus() {
+  setProductionStatus(val: boolean) {
     let localSerial = this.serial;
     let localDialog = this.dialog;
     let localSnackbar = this.snackbar;
-    const isProductionForm: DialogFormConfiguration = {
+    this.isProductionForm = {
       title: helptext.is_production_dialog.dialog_title,
       fieldConfig: [
         {
           type: 'paragraph',
           name: 'instructions',
-          paraText: helptext.is_production_dialog.instructions
         },
         {
           type: 'checkbox',
           name: 'production_status',
-          placeholder: helptext.is_production_dialog.debug_placeholder,
-          tooltip: helptext.is_production_dialog.debug_tooltip,
-          value: true
+          placeholder: helptext.is_production_dialog.production_status_placeholder,
+          value: val,
+          parent: this,
+          updater: this.updater_checkbox,
         },
         {
           type: 'checkbox',
           name: 'send_debug',
           placeholder: helptext.is_production_dialog.debug_placeholder,
           tooltip: helptext.is_production_dialog.debug_tooltip,
-          value: true
+          value: false, 
+          isHidden: true
         }
       ],
       saveButtonText: helptext.is_production_dialog.save_button,
       customSubmit: function (entityDialog) {
+        const registered_for_prod = entityDialog.formValue.production_status;
         const send_debug = entityDialog.formValue.send_debug;
-        this.payload = {
-          "title": "System has been just put into production (" + localSerial + ")",
-          "body": "This system has been just put into production",
-          "attach_debug": send_debug,
-          "category": "Installation/Setup",
-          "criticality": "Inquiry",
-          "environment": "Production",
-          "name": "Automatic Alert",
-          "email": "auto-support@ixsystems.com",
-          "phone": "-"
-        };
-        const dialogRef = localDialog.open(EntityJobComponent, {data: {"title":"Registering System","CloseOnClickOutside":true}});
-        dialogRef.componentInstance.setCall('support.new_ticket', [this.payload]);
-        dialogRef.componentInstance.submit();
-        entityDialog.dialogRef.close(true);
-        dialogRef.componentInstance.success.subscribe(res=>{
-          dialogRef.close();
-          localSnackbar.open(helptext.is_production_dialog.snackbar_message, helptext.is_production_dialog.snackbar_action, { duration: 6000 } );
-        })
-        dialogRef.componentInstance.failure.subscribe((res) => {
-          dialogRef.componentInstance.setDescription(res.error);
-        });
+        window.localStorage.setItem('registered_production_system', registered_for_prod);
+        if (registered_for_prod) {
+          this.payload = {
+            "title": "System has been just put into production (" + localSerial + ")",
+            "body": "This system has been just put into production",
+            "attach_debug": send_debug,
+            "category": "Installation/Setup",
+            "criticality": "Inquiry",
+            "environment": "Production",
+            "name": "Automatic Alert",
+            "email": "auto-support@ixsystems.com",
+            "phone": "-"
+          };
+          const dialogRef = localDialog.open(EntityJobComponent, {data: {"title":"Registering System","CloseOnClickOutside":true}});
+          dialogRef.componentInstance.setCall('support.new_ticket', [this.payload]);
+          dialogRef.componentInstance.submit();
+          entityDialog.dialogRef.close(true);
+          dialogRef.componentInstance.success.subscribe(res=>{
+            dialogRef.close();
+            localSnackbar.open(helptext.is_production_dialog.snackbar_message, helptext.is_production_dialog.snackbar_action, { duration: 6000 } );
+          })
+          dialogRef.componentInstance.failure.subscribe((res) => {
+            dialogRef.componentInstance.setDescription(res.error);
+          });
+        } else {
+          entityDialog.dialogRef.close(true);
+        }
       }
     }
-    this.dialogService.dialogForm(isProductionForm);
+    this.dialogService.dialogForm(this.isProductionForm);
+  }
+
+  updater_checkbox(parent: any) {
+    let field = _.find(parent.isProductionForm.fieldConfig, {name : "send_debug"});
+    let status =field['isHidden'];
+    status = !status;
+    field['isHidden'] = status;
   }
 
   getTrueNASImage(sys_product) {
