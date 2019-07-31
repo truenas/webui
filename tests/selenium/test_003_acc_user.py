@@ -162,7 +162,7 @@ def test_04_create_superuser(wb_driver):
     assert no_error['result'], no_error['traceback']
 
 
-def test_05_create_duplicateuser(wb_driver):
+def test_05_create_duplicate_user(wb_driver):
     test_name = sys._getframe().f_code.co_name
     # Click create new user option
     wb_driver.find_element_by_xpath(xpaths['fabAction']).click()
@@ -193,12 +193,12 @@ def test_05_create_duplicateuser(wb_driver):
     assert no_error['result'], no_error['traceback']
 
 
-def test_06_create_newuser_suggestedname(wb_driver):
+def test_06_create_newuser_suggested_name(wb_driver):
     test_name = sys._getframe().f_code.co_name
     # Click create new user option
     wb_driver.find_element_by_xpath(xpaths['fabAction']).click()
     # Enter User Full name
-    wb_driver.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfn)
+    wb_driver.find_element_by_xpath(xpaths['newUserName']).send_keys(nouserfn)
 
     wb_driver.find_element_by_xpath(xpaths['newUserEmail']).send_keys(newuseremail)
     # Enter Password

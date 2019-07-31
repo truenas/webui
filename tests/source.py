@@ -24,6 +24,7 @@ superuserfn = "super nas"
 superuserpassword = "abcd1234"
 supergroup = "supergroupnas"
 
+nouserfn = "No User"
 # STORAGE
 pool1 = "testPool1"
 pool2 = "testPool2"
