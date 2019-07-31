@@ -1,6 +1,8 @@
 pipeline {
-  node {
-    label 'FreeNAS-webui'
+  agent {
+    node {
+       label 'FreeNAS-webui'
+    }
   }
   stages {
     stage('Checkout') {
