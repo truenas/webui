@@ -6,21 +6,29 @@ pipeline {
   }
   stages {
     stage('Checkout') {
-      dir('src') {
-         checkout scm
+      steps {
+        dir('src') {
+           checkout scm
+        }
       }
     }
     stage('Cleanup') {
-      sh 'cd $WORKSPACE/src ; rm -rf node_modules ; rm -f package-lock.json'
-      sh 'rm truenas-webui* || true'
-      sh 'rm src/debian/files || true'
+      steps {
+        sh 'cd $WORKSPACE/src ; rm -rf node_modules ; rm -f package-lock.json'
+        sh 'rm truenas-webui* || true'
+        sh 'rm src/debian/files || true'
+      }
     }
     stage('Build') {
-      sh 'cd "$WORKSPACE/src" && sh mk-deb.sh 92B8B783F95A684C0A3B643073CF445610D143A1'
+      steps {
+        sh 'cd "$WORKSPACE/src" && sh mk-deb.sh 92B8B783F95A684C0A3B643073CF445610D143A1'
+      }
     }
     stage('Push to buildd') {
-      withCredentials([file(credentialsId: 'dput.cf', variable: 'dputcfg')]) {
-        sh "dput -c \"${dputcfg}\" freenas truenas-webui*.changes"
+      steps {
+        withCredentials([file(credentialsId: 'dput.cf', variable: 'dputcfg')]) {
+          sh "dput -c \"${dputcfg}\" freenas truenas-webui*.changes"
+        }
       }
     }
   }
