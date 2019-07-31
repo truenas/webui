@@ -9,7 +9,8 @@ export const helptext_system_failover = {
 
   dialog_sync_to_peer_title: T("Sync to Peer"),
   dialog_sync_to_peer_message: T("Are you sure you want to sync to peer?"),
-  dialog_sync_to_peer_checkbox: T(`Reboot Standby ${globalHelptext.ctrlr}?`),
+
+  dialog_sync_to_peer_checkbox: T(`Reboot standby ${globalHelptext.ctrlr}?`),
   dialog_button_ok: T('Proceed'),
 
   dialog_sync_from_peer_title: T("Sync from Peer"),

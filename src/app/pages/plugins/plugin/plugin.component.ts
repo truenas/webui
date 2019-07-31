@@ -165,6 +165,18 @@ export class PluginComponent implements OnInit {
         }
       });
     }
+    if (row.doc_url) {
+      actions.push({
+        name: row.name,
+        id: "docurl",
+        label: T('DOCUMENTATION'),
+        icon: 'info',
+        visible: this.isActionVisible('docurl'),
+        onClick: () => {
+          window.open(row.doc_url);
+        }
+      });
+    }
     return actions;
   }
 

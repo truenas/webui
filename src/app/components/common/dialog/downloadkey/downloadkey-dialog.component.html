@@ -1,13 +1,13 @@
 <h1 mat-dialog-title>WARNING!</h1>
 <div mat-dialog-content>
-	<p>Back up the recovery key now! If the key is lost, the data on the disks will also be lost with no hope of recovery.</p>
-	<p>>>> Click <b>Download Recovery Key</b> to begin the download. <<<</p>
+	<p>Back up the encryption key now! If the key is lost, the data on the disks will also be lost with no hope of recovery.</p>
+	<p>>>> Click <b>Download Encryption Key</b> to begin the download. <<<</p>
 	<p>This type of encryption is for users storing sensitive data. Encrypted disks can be removed from the pool and reused or disposed of without being erased.
 	iXsystems, Inc. cannot be held responsible for any lost or unrecoverable data as a consequence of using this feature.</p>
 </div>
 <div mat-dialog-actions>
   &nbsp;
   <span fxFlex></span>
-	<button class="mat-button download-link red-warning-button" (click)="downloadKey()">Download Recovery Key</button>
+	<button class="mat-button download-link red-warning-button" (click)="downloadKey()">Download Encryption Key</button>
 	<button class="mat-button mat-primary" [disabled]="!isDownloaded" (click)="dialogRef.close(true)">{{"Done" | translate}}</button>
 </div>

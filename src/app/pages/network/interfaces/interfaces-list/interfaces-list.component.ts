@@ -42,6 +42,7 @@ export class InterfacesListComponent implements OnDestroy {
 
   public columns: Array<any> = [
     {name : T('Name'), prop : 'name', always_display: true },
+    {name : T('Type'), prop : 'type' },
     {name : T('Link State'), prop : 'link_state'},
     {name : T('DHCP'), prop : 'ipv4_dhcp'},
     {name : T('IPv6 Auto Configure'), prop: 'ipv6_auto'},
