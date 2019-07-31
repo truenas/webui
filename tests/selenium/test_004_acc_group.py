@@ -34,97 +34,97 @@ xpaths = {
 
 # Test navigation Account>Users>Hover>New User and enter user-name, full-name,
 # password, confirmation and wait till user is  visible in the list
-def test_01_navigate_to_account_groups(wb_driver):
+def test_01_navigate_to_account_groups(browser):
     # Click User submenu
-    wb_driver.find_element_by_xpath(xpaths['submenuGroup']).click()
+    browser.find_element_by_xpath(xpaths['submenuGroup']).click()
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar1'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert "Account" in page_data, page_data
     # get the ui element
-    ui_element1 = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
+    ui_element1 = browser.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     page_data = ui_element1.text
     # assert response
     assert "Group" in page_data, page_data
     # Taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
 
 
-def test_02_create_newgroup(wb_driver):
+def test_02_create_newgroup(browser):
     test_name = sys._getframe().f_code.co_name
     # Click create new group option
-    wb_driver.find_element_by_xpath(xpaths['fabAction']).click()
+    browser.find_element_by_xpath(xpaths['fabAction']).click()
     # Enter New Groupname
-    wb_driver.find_element_by_xpath(xpaths['newGroupName']).send_keys(newgroup)
+    browser.find_element_by_xpath(xpaths['newGroupName']).send_keys(newgroup)
     # Click on save new Group button
-    wb_driver.find_element_by_xpath(xpaths['saveButton']).click()
+    browser.find_element_by_xpath(xpaths['saveButton']).click()
     # wait on the fabAction
     xpath = xpaths['fabAction']
-    wait = wait_on_element(wb_driver, xpath, script_name, test_name)
+    wait = wait_on_element(browser, xpath, script_name, test_name)
     assert wait, f'Loading Users page timeout'
     # taking screenshot
-    take_screenshot(wb_driver, script_name, test_name)
-    no_error = error_check(wb_driver)
+    take_screenshot(browser, script_name, test_name)
+    no_error = error_check(browser)
     assert no_error['result'], no_error['traceback']
 
 
-def test_03_create_supergroup(wb_driver):
+def test_03_create_supergroup(browser):
     test_name = sys._getframe().f_code.co_name
     # Click create new group option
-    wb_driver.find_element_by_xpath(xpaths['fabAction']).click()
+    browser.find_element_by_xpath(xpaths['fabAction']).click()
     # Enter New Groupname
-    wb_driver.find_element_by_xpath(xpaths['newGroupName']).send_keys(supergroup)
+    browser.find_element_by_xpath(xpaths['newGroupName']).send_keys(supergroup)
     # Check Permit sudo  checkbox
-    wb_driver.find_element_by_xpath(xpaths['permitsudoCheckbox']).click()
+    browser.find_element_by_xpath(xpaths['permitsudoCheckbox']).click()
     # Click on save new Group button
-    wb_driver.find_element_by_xpath(xpaths['saveButton']).click()
+    browser.find_element_by_xpath(xpaths['saveButton']).click()
     # wait on the fabAction
     xpath = xpaths['fabAction']
-    wait = wait_on_element(wb_driver, xpath, script_name, test_name)
+    wait = wait_on_element(browser, xpath, script_name, test_name)
     assert wait, f'Loading Users page timeout'
     # taking screenshot
-    take_screenshot(wb_driver, script_name, test_name)
-    no_error = error_check(wb_driver)
+    take_screenshot(browser, script_name, test_name)
+    no_error = error_check(browser)
     assert no_error['result'], no_error['traceback']
 
 
-def test_04_create_duplicategroup(wb_driver):
+def test_04_create_duplicategroup(browser):
     test_name = sys._getframe().f_code.co_name
     # Click create new group option
-    wb_driver.find_element_by_xpath(xpaths['fabAction']).click()
+    browser.find_element_by_xpath(xpaths['fabAction']).click()
     # Enter New Groupname
-    wb_driver.find_element_by_xpath(xpaths['newGroupName']).send_keys(newgroup)
+    browser.find_element_by_xpath(xpaths['newGroupName']).send_keys(newgroup)
     # Click on save new Group button
-    if wb_driver.find_element_by_xpath(xpaths['saveButton']):
+    if browser.find_element_by_xpath(xpaths['saveButton']):
         print("found the save button")
-        wb_driver.find_element_by_xpath(xpaths['saveButton']).click()
+        browser.find_element_by_xpath(xpaths['saveButton']).click()
     else:
         print("could not find the save button and clicking")
-    wb_driver.find_element_by_xpath(xpaths['cancelButton']).click()
+    browser.find_element_by_xpath(xpaths['cancelButton']).click()
     # wait on the fabAction
     xpath = xpaths['fabAction']
-    wait = wait_on_element(wb_driver, xpath, script_name, test_name)
+    wait = wait_on_element(browser, xpath, script_name, test_name)
     assert wait, f'Loading Users page timeout'
     # taking screenshot
-    take_screenshot(wb_driver, script_name, test_name)
-    no_error = error_check(wb_driver)
+    take_screenshot(browser, script_name, test_name)
+    no_error = error_check(browser)
     assert no_error['result'], no_error['traceback']
 
 
-def test_05_return_to_dashboard(wb_driver):
+def test_05_return_to_dashboard(browser):
     # Close the System Tab
-    wb_driver.find_element_by_xpath(xpaths['toDashboard']).click()
+    browser.find_element_by_xpath(xpaths['toDashboard']).click()
     time.sleep(1)
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar1'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert page_data == "Dashboard", page_data
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)

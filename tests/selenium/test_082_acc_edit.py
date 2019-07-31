@@ -33,127 +33,127 @@ xpaths = {
 }
 
 
-def test_01_navigate_to_account_user(wb_driver):
+def test_01_navigate_to_account_user(browser):
     # Click  Account menu
-    wb_driver.find_element_by_xpath(xpaths['navAccount']).click()
+    browser.find_element_by_xpath(xpaths['navAccount']).click()
     # allowing the button to load
     time.sleep(1)
     # Click User submenu
-    wb_driver.find_element_by_xpath(xpaths['submenuUser']).click()
+    browser.find_element_by_xpath(xpaths['submenuUser']).click()
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar1'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert "Account" in page_data, page_data
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert "User" in page_data, page_data
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
 
 
-def test_02_edit_usernas_email(wb_driver):
-    assert is_element_present(wb_driver, xpaths['newuserUserMenu'])
-    wb_driver.find_element_by_xpath(xpaths['newuserUserMenu']).click()
-    assert is_element_present(wb_driver, xpaths['newuserUserEdit'])
-    wb_driver.find_element_by_xpath(xpaths['newuserUserEdit']).click()
-    ui_email = wb_driver.find_element_by_xpath(xpaths['email'])
+def test_02_edit_usernas_email(browser):
+    assert is_element_present(browser, xpaths['newuserUserMenu'])
+    browser.find_element_by_xpath(xpaths['newuserUserMenu']).click()
+    assert is_element_present(browser, xpaths['newuserUserEdit'])
+    browser.find_element_by_xpath(xpaths['newuserUserEdit']).click()
+    ui_email = browser.find_element_by_xpath(xpaths['email'])
     ui_email.clear()
     ui_email.send_keys("test2@ixsystems.com")
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
     # click save
-    wb_driver.find_element_by_xpath('//*[@id="save_button"]').click()
-    no_error = error_check(wb_driver)
+    browser.find_element_by_xpath('//*[@id="save_button"]').click()
+    no_error = error_check(browser)
     assert no_error['result'], no_error['traceback']
 
 
-def test_03_verify_usernas_email_changed(wb_driver):
-    assert is_element_present(wb_driver, xpaths['newuserUserMenu'])
-    wb_driver.find_element_by_xpath(xpaths['newuserUserMenu']).click()
+def test_03_verify_usernas_email_changed(browser):
+    assert is_element_present(browser, xpaths['newuserUserMenu'])
+    browser.find_element_by_xpath(xpaths['newuserUserMenu']).click()
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
-    ui_element = wb_driver.find_element_by_xpath(xpaths['newuserEmail'])
+    take_screenshot(browser, script_name, test_name)
+    ui_element = browser.find_element_by_xpath(xpaths['newuserEmail'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert page_data == "test2@ixsystems.com", page_data
-    wb_driver.find_element_by_xpath(xpaths['newuserUserMenu']).click()
+    browser.find_element_by_xpath(xpaths['newuserUserMenu']).click()
 
 
-def test_04_edit_usernas_permit_sudo(wb_driver):
-    assert is_element_present(wb_driver, xpaths['newuserUserMenu'])
-    wb_driver.find_element_by_xpath(xpaths['newuserUserMenu']).click()
-    assert is_element_present(wb_driver, xpaths['newuserUserEdit'])
-    wb_driver.find_element_by_xpath(xpaths['newuserUserEdit']).click()
-    wb_driver.find_element_by_xpath(xpaths['permitSudo']).click()
+def test_04_edit_usernas_permit_sudo(browser):
+    assert is_element_present(browser, xpaths['newuserUserMenu'])
+    browser.find_element_by_xpath(xpaths['newuserUserMenu']).click()
+    assert is_element_present(browser, xpaths['newuserUserEdit'])
+    browser.find_element_by_xpath(xpaths['newuserUserEdit']).click()
+    browser.find_element_by_xpath(xpaths['permitSudo']).click()
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
     # click save
-    wb_driver.find_element_by_xpath('//*[@id="save_button"]').click()
-    no_error = error_check(wb_driver)
+    browser.find_element_by_xpath('//*[@id="save_button"]').click()
+    no_error = error_check(browser)
     assert no_error['result'], no_error['traceback']
 
 
-def test_05_verify_usernas_permit_sudo_is_true(wb_driver):
-    assert is_element_present(wb_driver, xpaths['newuserUserMenu'])
-    wb_driver.find_element_by_xpath(xpaths['newuserUserMenu']).click()
+def test_05_verify_usernas_permit_sudo_is_true(browser):
+    assert is_element_present(browser, xpaths['newuserUserMenu'])
+    browser.find_element_by_xpath(xpaths['newuserUserMenu']).click()
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
-    ui_element = wb_driver.find_element_by_xpath(xpaths['newuserPermitSudo'])
+    take_screenshot(browser, script_name, test_name)
+    ui_element = browser.find_element_by_xpath(xpaths['newuserPermitSudo'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert page_data == "true", page_data
-    wb_driver.find_element_by_xpath(xpaths['newuserUserMenu']).click()
+    browser.find_element_by_xpath(xpaths['newuserUserMenu']).click()
 
 
-def test_06_navigate_to_account_group(wb_driver):
+def test_06_navigate_to_account_group(browser):
     # Click User submenu
-    wb_driver.find_element_by_xpath(xpaths['submenuGroup']).click()
+    browser.find_element_by_xpath(xpaths['submenuGroup']).click()
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert "Group" in page_data, page_data
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
 
 
-def test_07_edit_groupnas_permit_sudo(wb_driver):
-    assert is_element_present(wb_driver, xpaths['newgroupGroupMenu'])
-    wb_driver.find_element_by_xpath(xpaths['newgroupGroupMenu']).click()
-    assert is_element_present(wb_driver, xpaths['newgroupGroupEdit'])
-    wb_driver.find_element_by_xpath(xpaths['newgroupGroupEdit']).click()
-    assert is_element_present(wb_driver, xpaths['groupSudo'])
-    wb_driver.find_element_by_xpath(xpaths['groupSudo']).click()
+def test_07_edit_groupnas_permit_sudo(browser):
+    assert is_element_present(browser, xpaths['newgroupGroupMenu'])
+    browser.find_element_by_xpath(xpaths['newgroupGroupMenu']).click()
+    assert is_element_present(browser, xpaths['newgroupGroupEdit'])
+    browser.find_element_by_xpath(xpaths['newgroupGroupEdit']).click()
+    assert is_element_present(browser, xpaths['groupSudo'])
+    browser.find_element_by_xpath(xpaths['groupSudo']).click()
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
     # click save
-    wb_driver.find_element_by_xpath('//*[@id="save_button"]').click()
+    browser.find_element_by_xpath('//*[@id="save_button"]').click()
     time.sleep(5)
-    no_error = error_check(wb_driver)
+    no_error = error_check(browser)
     assert no_error['result'], no_error['traceback']
 
 
-def test_08_verify_groupnas_permit_sudo_is_yes(wb_driver):
+def test_08_verify_groupnas_permit_sudo_is_yes(browser):
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
 
-    ui_element = wb_driver.find_element_by_xpath(xpaths['newgroupPermitSudo'])
+    ui_element = browser.find_element_by_xpath(xpaths['newgroupPermitSudo'])
     # get the weather data
     page_data = ui_element.text
     # assert response

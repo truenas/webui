@@ -50,88 +50,88 @@ user_list = ['newuser', 'uncheckuser', 'nouser']
 group_list = ['superuser', 'newgroup', 'supergroup']
 
 
-def test_01_nav_acc_user(wb_driver):
+def test_01_nav_acc_user(browser):
     # Click  Account menu
     # allowing the button to load
     time.sleep(1)
     # Click User sub-menu
-    wb_driver.find_element_by_xpath(xpaths['submenuUser']).click()
+    browser.find_element_by_xpath(xpaths['submenuUser']).click()
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar1'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert "Account" in page_data, page_data
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert "User" in page_data, page_data
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
 
 
 @pytest.mark.parametrize('user', user_list)
-def test_02_delete_user_(wb_driver, user):
-    assert is_element_present(wb_driver, xpaths[f'{user}UserMenu']) is True
-    wb_driver.find_element_by_xpath(xpaths[f'{user}UserMenu']).click()
-    assert is_element_present(wb_driver, xpaths[f'{user}UserDelete']) is True
-    wb_driver.find_element_by_xpath(xpaths[f'{user}UserDelete']).click()
-    assert is_element_present(wb_driver, xpaths['confirmCheckbox']) is True
-    wb_driver.find_element_by_xpath(xpaths['confirmsecondaryCheckbox']).click()
-    wb_driver.find_element_by_xpath(xpaths['confirmCheckbox']).click()
+def test_02_delete_user_(browser, user):
+    assert is_element_present(browser, xpaths[f'{user}UserMenu']) is True
+    browser.find_element_by_xpath(xpaths[f'{user}UserMenu']).click()
+    assert is_element_present(browser, xpaths[f'{user}UserDelete']) is True
+    browser.find_element_by_xpath(xpaths[f'{user}UserDelete']).click()
+    assert is_element_present(browser, xpaths['confirmCheckbox']) is True
+    browser.find_element_by_xpath(xpaths['confirmsecondaryCheckbox']).click()
+    browser.find_element_by_xpath(xpaths['confirmCheckbox']).click()
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, f"{test_name}_before")
-    wb_driver.find_element_by_xpath(xpaths['deleteButton']).click()
+    take_screenshot(browser, script_name, f"{test_name}_before")
+    browser.find_element_by_xpath(xpaths['deleteButton']).click()
     time.sleep(5)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, f"{test_name}_after")
+    take_screenshot(browser, script_name, f"{test_name}_after")
 
 
-def test_03_nav_acc_group(wb_driver):
+def test_03_nav_acc_group(browser):
     # Click User submenu
-    wb_driver.find_element_by_xpath(xpaths['submenuGroup']).click()
+    browser.find_element_by_xpath(xpaths['submenuGroup']).click()
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert "Group" in page_data, page_data
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
 
 
 @pytest.mark.parametrize('group', group_list)
-def test_04_delete_group_(wb_driver, group):
-    assert is_element_present(wb_driver, xpaths[f'{group}GroupMenu']) is True
-    wb_driver.find_element_by_xpath(xpaths[f'{group}GroupMenu']).click()
-    wb_driver.find_element_by_xpath(xpaths[f'{group}GroupDelete']).click()
-    assert is_element_present(wb_driver, xpaths['confirmCheckbox']) is True
-    wb_driver.find_element_by_xpath(xpaths['confirmsecondaryCheckbox']).click()
-    wb_driver.find_element_by_xpath(xpaths['confirmCheckbox']).click()
+def test_04_delete_group_(browser, group):
+    assert is_element_present(browser, xpaths[f'{group}GroupMenu']) is True
+    browser.find_element_by_xpath(xpaths[f'{group}GroupMenu']).click()
+    browser.find_element_by_xpath(xpaths[f'{group}GroupDelete']).click()
+    assert is_element_present(browser, xpaths['confirmCheckbox']) is True
+    browser.find_element_by_xpath(xpaths['confirmsecondaryCheckbox']).click()
+    browser.find_element_by_xpath(xpaths['confirmCheckbox']).click()
     time.sleep(1)
-    wb_driver.find_element_by_xpath(xpaths['deleteButton']).click()
+    browser.find_element_by_xpath(xpaths['deleteButton']).click()
     time.sleep(5)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
 
 
-def test_05_return_to_dashboard(wb_driver):
+def test_05_return_to_dashboard(browser):
     # Close the System Tab
-    wb_driver.find_element_by_xpath(xpaths['toDashboard']).click()
+    browser.find_element_by_xpath(xpaths['toDashboard']).click()
     time.sleep(1)
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar1'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert page_data == "Dashboard", page_data
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)

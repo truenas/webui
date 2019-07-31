@@ -20,15 +20,15 @@ xpaths = {
 }
 
 
-def test_01_nav_net_linkagg(wb_driver):
+def test_01_nav_net_linkagg(browser):
     # Click on the link aggregations submenu
-    wb_driver.find_element_by_xpath(xpaths['submenuLink']).click()
+    browser.find_element_by_xpath(xpaths['submenuLink']).click()
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert "Link Aggregations" in page_data, page_data
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
