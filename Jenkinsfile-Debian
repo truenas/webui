@@ -13,7 +13,7 @@ node('FreeNAS-webui') {
     }
     stage('Push to buildd') {
       withCredentials([file(credentialsId: 'dput.cf', variable: 'dputcfg')]) {
-        sh "dput -c "${dputcfg}" freenas truenas-webui*.changes"
+        sh "dput -c \"${dputcfg}\" freenas truenas-webui*.changes"
       }
     }
 }
