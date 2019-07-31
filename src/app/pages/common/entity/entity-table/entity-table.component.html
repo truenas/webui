@@ -173,9 +173,12 @@
       #entityTable>
 
       <!-- Row Detail Template -->
-      <ngx-datatable-row-detail [rowHeight]="getRowDetailHeight" #myDetailRow>
+      <ngx-datatable-row-detail [rowHeight]="getRowDetailHeight">
         <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
-          <div dynamicComponent [component]="conf.rowDetailComponent || entityTableRowDetailsComponent" [config]="row" [parent]="this"></div>
+          <div *ngIf="conf.rowDetailComponent; else default;" dynamicComponent [component]="conf.rowDetailComponent" [config]="row" [parent]="this"></div>
+          <ng-template #default>
+            <app-entity-table-row-details [config]="row" [parent]="this"></app-entity-table-row-details>
+          </ng-template>
         </ng-template>
       </ngx-datatable-row-detail>
 
@@ -261,47 +264,54 @@
                [minWidth]="col.minWidth"
                [maxWidth]="col.maxWidth">
         <ng-template let-row="row" ngx-datatable-cell-template>
-          <div id="{{col.prop}}_{{row[col.prop]}}" 
-               title="{{convertDisplayValue(row[col.prop])}}" [ngClass]="col.icon ? 'IconCell' : ''">
-            <img *ngIf="col.icon" width="20" src="{{row[col.icon]}}"/>
-            <mat-checkbox id="{{row.name}}_{{col.name}}-checkbox" 
-              *ngIf="col.selectable" 
-              [checked]="row[col.prop]" 
-              (change)="conf.onCheckboxChange(row)"
-            ></mat-checkbox>
-            <button mat-button *ngIf="col.state; else colInfo" (click)="conf.stateButton(row)">
-              {{convertDisplayValue(row[col.prop])}}
-            </button>
-            <ng-template #colInfo>
-              <span *ngIf="!col.selectable">{{convertDisplayValue(row[col.prop])}}</span>
-            </ng-template>
+          <div fxLayoutAlign="start center" fxLayoutGap="8px">
+            <ng-container *ngIf="col?.widget?.component">
+                <mat-icon [style.cursor]="'pointer'" [matMenuTriggerFor]="widget">{{ col.widget.icon }}</mat-icon>
+                <mat-menu #widget="matMenu" xPosition="before" yPosition="below">
+                  <!-- column widgets need to be registered with this switch case -->
+                  <ng-container [ngSwitch]="col.widget.component">
+                    <app-task-schedule-list *ngSwitchCase="'TaskScheduleListComponent'" [value]="row[col.prop]" [config]="row" [parent]="this"></app-task-schedule-list>
+                  </ng-container>
+                </mat-menu>
+            </ng-container>
+            <div id="{{col.prop}}_{{row[col.prop]}}" 
+                 title="{{convertDisplayValue(row[col.prop])}}" [ngClass]="col.icon ? 'IconCell' : ''">
+              <img *ngIf="col.icon" width="20" src="{{row[col.icon]}}"/>
+              <mat-checkbox id="{{row.name}}_{{col.name}}-checkbox" 
+                *ngIf="col.selectable" 
+                [checked]="row[col.prop]" 
+                (change)="conf.onCheckboxChange(row)"
+              ></mat-checkbox>
+              <button mat-button *ngIf="col.state; else colInfo" (click)="conf.stateButton(row)">
+                {{convertDisplayValue(row[col.prop])}}
+              </button>
+              <ng-template #colInfo>
+                <span *ngIf="!col.selectable">{{convertDisplayValue(row[col.prop])}}</span>
+              </ng-template>
+            </div>
           </div>
         </ng-template>
       </ngx-datatable-column>
 
-      <!-- detail toggle -->
-      <ngx-datatable-column *ngIf="hasDetails()"
-        [width]="50"
+      <!-- detail toggle / three-dot menu -->
+      <ngx-datatable-column
+        [width]="60"
         [resizeable]="false"
         [sortable]="false"
         [draggable]="false"
         [canAutoResize]="false">
         <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
           <a
+            *ngIf="hasDetails(); else threeDot"
             href="javascript:void(0)"
             [class.datatable-icon-right]="!expanded"
             [class.datatable-icon-down]="expanded"
             title="Expand/Collapse Row"
             (click)="toggleExpandRow(row)">
           </a>
-        </ng-template>
-      </ngx-datatable-column>
-
-      <!-- three-dot actions menu -->
-      <ngx-datatable-column *ngIf="!hasDetails()">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-          <app-entity-table-actions [entity]="this" [row]="row">
-          </app-entity-table-actions>
+          <ng-template #threeDot>
+            <app-entity-table-actions [entity]="this" [row]="row"></app-entity-table-actions>
+          </ng-template>
         </ng-template>
       </ngx-datatable-column>
     </ngx-datatable>

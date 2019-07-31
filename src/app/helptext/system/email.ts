@@ -5,12 +5,15 @@ import { matchOtherValidator } from "app/pages/common/entity/entity-form/validat
 export const helptext_system_email = {
   fromemail: {
     placeholder: T("From E-mail"),
-    tooltip: T(
-      'The envelope <i>From</i> address shown in the email.\
- This can be set to make filtering mail on the\
- receiving system easier. The friendly name is set like this:\
- <i>"Friendly Name" &ltaddress@example.com&gt</i>'
-    )
+    tooltip: T('The user account <i>Email</i> address to use for the \
+ envelope <i>From</i> email address. The user account <i>Email</i> in \
+ <b>Accounts > Users > Edit</b> must be configured first.')
+  },
+
+  fromname: {
+    placeholder: T("From Name"),
+    tooltip: T('The friendly name to show in front of the sending email \
+ address. Example: <i>Storage System 01</i>&ltit@example.com&gt')
   },
 
   outgoingserver: {

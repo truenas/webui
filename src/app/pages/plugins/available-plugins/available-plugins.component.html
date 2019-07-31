@@ -8,6 +8,10 @@
                 </mat-option>
             </mat-select>
         </mat-form-field>
+        <button mat-flat-button id="plugin-refresh-button" (click)="getPlugin(false)" class="plugin-button">
+            <mat-icon>refresh</mat-icon>
+            {{ "REFRESH INDEX" | translate }}
+        </button>
     </section>
     <div fxLayout="row wrap" fxLayoutAlign="space-around center" *ngIf="selectedPlugin">
         <div fxFlex fxFlex.xs="100">
@@ -24,7 +28,7 @@
                 <p>Version: {{selectedPlugin.revision}}</p>
                 <p>Installed Instances: {{installedPlugins[selectedPlugin.plugin] || 0}}</p>
             </div>
-            <button mat-flat-button id="plugin-install-button" (click)="install(selectedPlugin.plugin);">
+            <button mat-flat-button id="plugin-install-button" (click)="install(selectedPlugin.plugin);" class="plugin-button">
                 {{ "INSTALL" | translate }}
             </button>
         </div>

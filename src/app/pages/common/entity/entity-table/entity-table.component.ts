@@ -229,27 +229,25 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     // Get preferred list of columns from pref service
-    setTimeout(() => {
-      const preferredCols = this.prefService.preferences.tableDisplayedColumns;
+    const preferredCols = this.prefService.preferences.tableDisplayedColumns;
 
-      // No preferences set for any table, show 'default' configuration
-      if (preferredCols.length === 0) {
-        this.conf.columns = this.originalConfColumns;  
-      } else {
-        preferredCols.forEach((i) => {
-          let match = 0;
-          // If preferred columns have been set for THIS table...
-          if (i.title === this.title) {
-            this.conf.columns = i.cols;
-            match++;
-          }
-          // If no preferred columns for THIS table, show 'default' configuration
-          if (match === 0) {
-            this.conf.columns = this.originalConfColumns;
-          }
-        });
-      }
-    }, this.prefService.preferences.tableDisplayedColumns.length === 0 ? 1500 : 0);
+    // No preferences set for any table, show 'default' configuration
+    if (preferredCols.length === 0) {
+      this.conf.columns = this.originalConfColumns;  
+    } else {
+      preferredCols.forEach((i) => {
+        let match = 0;
+        // If preferred columns have been set for THIS table...
+        if (i.title === this.title) {
+          this.conf.columns = i.cols;
+          match++;
+        }
+        // If no preferred columns for THIS table, show 'default' configuration
+        if (match === 0) {
+          this.conf.columns = this.originalConfColumns;
+        }
+      });
+    }
 
     this.displayedColumns.push("action");
     if (this.conf.changeEvent) {

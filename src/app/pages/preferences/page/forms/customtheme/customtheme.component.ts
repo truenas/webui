@@ -31,7 +31,7 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
   private _globalPreview:boolean = false;
   public baseThemes: Theme[];
   public snapshot:FormSnapshot;
-  customThemeFormConfig:FormConfig = {};// see if we can use this instead of passing this whole component in 
+  customThemeFormConfig:FormConfig = {};// see if we can use this instead of passing this whole component in
   protected isEntity: boolean = true; // was true
 
   // EXAMPLE THEME
@@ -111,6 +111,20 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
           required:true,
           tooltip: 'Enter a short name for the theme. The Menu Label is \
                     shown when the theme is listed in Preferences.'
+        },
+        // Not using this now, but theme preview breaks if it isn't here...
+        {
+          type: 'select',
+          name: 'labelSwatch',
+          width:'100%',
+          placeholder: 'Menu Swatch',
+          required:false,
+          isHidden: true,
+          options:this.colorOptions,
+          tooltip: "Choose the color to display next to the Menu Label \
+                    in the Favorites menu.",
+          class:'inline'
+
         },
         { type: 'input',
           name : 'description',
@@ -416,7 +430,9 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
           case "UpdatePreview":
             this.snapshot = {theme:evt.data, baseTheme:this.baseTheme}
             if(this.globalPreview){
-              this.updateGlobal(this.snapshot);
+              setTimeout(() => {
+                this.updateGlobal(this.snapshot);
+              })
             }
             this.updatePreview(evt.data);
           break;
@@ -451,7 +467,7 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
 
       let ct = Object.assign({},theme);
       let palette = Object.keys(ct);
-      palette.splice(0,6);
+      palette.splice(0,4);
 
       palette.forEach((color)=>{
         values[color] = ct[color];
@@ -463,7 +479,7 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
     updatePreview(theme:Theme){
       let palette = Object.keys(theme);
       palette.splice(0,5);
-
+      
       palette.forEach((color)=>{
       let swatch = theme[color];
       (<any>document).querySelector('#theme-preview').style.setProperty("--" + color, theme[color]);
