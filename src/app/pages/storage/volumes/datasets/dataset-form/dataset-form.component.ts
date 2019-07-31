@@ -783,7 +783,7 @@ export class DatasetFormComponent implements Formconfiguration{
         share_type: this.getFieldValueOrRaw(wsResponse.share_type),
         aclmode: this.getFieldValueOrRaw(wsResponse.aclmode),
         casesensitivity: this.getFieldValueOrRaw(wsResponse.casesensitivity),
-        comments: this.getFieldValueOrRaw(wsResponse.comments),
+        comments: wsResponse.comments === undefined ? wsResponse.comments : (wsResponse.comments.source === 'LOCAL' ? wsResponse.comments.value : undefined),
         compression: this.getFieldValueOrRaw(wsResponse.compression),
         copies: this.getFieldValueOrRaw(wsResponse.copies),
         deduplication: this.getFieldValueOrRaw(wsResponse.deduplication),
