@@ -13,8 +13,7 @@ node('FreeNAS-webui') {
     }
     stage('Push to buildd') {
       withCredentials([file(credentialsId: 'dput.cf', variable: 'dputfile')]) {
-        sh "cp \$dputfile \"${WORKSPACE}\""
-	sh "cp dput.cf .dput.cf"
+        sh 'cp ${dputfile} "${WORKSPACE}/.dput.cf"'
       }
       sh "dput freenas truenas-webui*.changes"
     }
