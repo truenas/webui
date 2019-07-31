@@ -5,7 +5,6 @@ node('FreeNAS-webui') {
       }
     }
     stage('Cleanup') {
-      echo 'Cleaning environment'
       sh 'cd $WORKSPACE/src ; rm -rf node_modules ; rm -f package-lock.json'
       sh 'rm truenas-webui* || true'
     }
@@ -16,7 +15,6 @@ node('FreeNAS-webui') {
       withCredentials([file(credentialsId: 'dput.cf', variable: 'dputfile') {
         sh "cp \$dputfile \"${WORKSPACE}/.dput.cf\""
       }
-      echo 'dput freenas truenas-webui*.changes'
-      sh 'dput freenas truenas-webui*.changes'
+      sh "dput freenas truenas-webui*.changes"
     }
 }
