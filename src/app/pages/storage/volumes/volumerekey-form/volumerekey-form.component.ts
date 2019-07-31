@@ -7,7 +7,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 
-import {RestService, WebSocketService} from '../../../../services/';
+import { WebSocketService } from '../../../../services/';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -65,7 +65,6 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
   constructor(
       protected router: Router,
       protected route: ActivatedRoute,
-      protected rest: RestService,
       protected ws: WebSocketService,
       protected _injector: Injector,
       protected _appRef: ApplicationRef,
@@ -73,9 +72,7 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
       protected loader: AppLoaderService,
       protected snackBar: MatSnackBar,
       protected mdDialog: MatDialog
-  ) {
-
-  }
+  ) {}
 
   preInit(entityForm: any) {
     this.route.params.subscribe(params => {
@@ -83,29 +80,27 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
     });
   }
 
-  afterInit(entityForm: any) {
-
-  }
-
   customSubmit(value) {
     this.loader.open();
-
-    return this.rest.post(this.resource_name + "/" + this.pk + "/rekey/", 
-      { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
+    this.ws.call('pool.rekey', [parseInt(this.pk), {'admin_password': value.passphrase}])
+      .subscribe((res) => {
         this.loader.close();
         this.snackBar.open(T('Successfully re-keyed pool ') + value.name, T("Close"), {
           duration: 5000,
-      });
+        });
         let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
         dialogRef.componentInstance.volumeId = this.pk;
         dialogRef.afterClosed().subscribe(result => {
           this.router.navigate(new Array('/').concat(
             this.route_success));
         });
-    }, (res) => {
-      this.loader.close();
-      this.dialogService.errorReport(T("Error re-keying pool"), res.error, res.trace.formatted);
-    });
+        (err) => {
+          this.loader.close();
+          this.dialogService.errorReport(T("Error re-keying pool"), res.error, res.trace.formatted);
+        };
+      });
+
+
   }
 
 }

@@ -320,12 +320,6 @@ export class AlertServiceComponent implements OnInit {
       placeholder: 'Icon URL',
       tooltip: 'Enter a URL to an image to use for notification icons.\
                 This overrides the incoming webhook setting.',
-    }, {
-      type: 'checkbox',
-      name: 'detailed',
-      placeholder: 'Detailed',
-      tooltip: 'Set to enable more verbose Slack notifications.',
-      value: true,
     }
   ];
   public snmpTrapFieldConfig: FieldConfig[] = [];
