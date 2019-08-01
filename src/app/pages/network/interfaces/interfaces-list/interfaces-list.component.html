@@ -2,7 +2,7 @@
     <div *ngIf="!checkinWaiting;else checkIn">
       <p> {{pending_changes_text}} </p>
       <p> {{checkin_text }}
-      <mat-form-field floatPlaceholder="never">
+      <mat-form-field floatPlaceholder="never" id="timeout-field">
         <input matInput [(ngModel)]="checkin_timeout" [pattern]="checkin_timeout_pattern">
       </mat-form-field>
         {{ checkin_text_2 }}

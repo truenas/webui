@@ -32,8 +32,8 @@ export class InterfacesListComponent implements OnDestroy {
   public checkinWaiting = false;
   pending_changes_text: string;
   pending_checkin_text: string;
-  checkin_text: string = T("Changes will revert after ");
-  checkin_text_2: string = T(" seconds unless kept permanently.");
+  checkin_text: string = T("Once applied, changes will revert after ");
+  checkin_text_2: string = T(" seconds unless kept permanently. Adjust this amount to allow for testing.");
   public checkin_timeout = 60;
   public checkin_timeout_pattern = /\d+/;
   public checkin_remaining = null;
