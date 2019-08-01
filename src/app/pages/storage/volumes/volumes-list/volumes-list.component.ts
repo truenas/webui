@@ -235,7 +235,7 @@ export class VolumesListTableConfig implements InputTableConf {
       });
 
       actions.push({
-        label: T("Encryption Rekey"),
+        label: T("Reset Encryption"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
             ["storage", "pools", "rekey", row1.id]));

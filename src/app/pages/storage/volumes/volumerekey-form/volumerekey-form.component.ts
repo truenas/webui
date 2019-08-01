@@ -67,14 +67,14 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
     },{
       type : 'input',
       inputType: 'password',
-      name : 'encryptionkey-passphrase',
+      name : 'encryptionkey_passphrase',
       placeholder: helptext.encryptionkey_passphrase_placeholder,
       tooltip: helptext.encryptionkey_passphrase_tooltip,
       togglePw : true
     },{
       type: 'paragraph',
       name: 'set_recoverykey-instructions',
-      paraText: helptext.set_recoverykey_instructions
+      paraText: helptext.set_recoverykey_instructions,
     },{
       type : 'checkbox',
       name : 'set_recoverykey',
@@ -108,32 +108,73 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
     });
   }
 
-  afterInit(entityForm: any) {
-    console.log(entityForm)
-    
-  }
-
   customSubmit(value) {
     this.loader.open();
     this.ws.call('pool.rekey', [parseInt(this.pk), {'admin_password': value.passphrase}])
       .subscribe((res) => {
-        this.loader.close();
-        this.snackBar.open(T('Successfully reset encryption for pool: ') + value.name, T("Close"), {
-          duration: 5000,
-        });
-        let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
-        dialogRef.componentInstance.volumeId = this.pk;
-        dialogRef.afterClosed().subscribe(result => {
-          this.router.navigate(new Array('/').concat(
-            this.route_success));
-        });
+        switch (true) 
+          {
+            case value.encryptionkey_passphrase && !value.set_recoverykey:
+              this.ws.call('pool.passphrase', [parseInt(this.pk), {'passphrase': value.encryptionkey_passphrase, 
+                'admin_password': value.passphrase}]).subscribe((res) => {
+                  this.loader.close();
+                  this.snackBar.open(T('Encryption reset & passphrase created for ') + value.name, T("Close"), {
+                    duration: 5000,
+                  });
+                this.openEncryptDialog();
+                (err) => {
+                  this.loader.close();
+                  this.dialogService.errorReport(T("Error creating passphrase for pool ") + value.name, err.error.message, err.error.traceback);
+                };
+              })
+              console.log('num 1');
+              break;
+
+            case !value.encryptionkey_passphrase && value.set_recoverykey:
+              console.log('num2');
+              this.ws.call('core.download', ['pool.recoverykey_add', [parseInt(this.pk)], 'pool_' + value.name + '_recovery.key']).subscribe((res) => {
+                this.loader.close();
+                this.snackBar.open(T("Encryption reset & recovery key added to ") + value.name, 'close', { duration: 5000 });
+                window.open(res[1]);
+                this.openEncryptDialog();
+              }, (res) => {
+                this.loader.close();
+                this.dialogService.errorReport(T("Error adding recovery key to pool."), res.reason, res.trace.formatted);
+              });
+              break;
+
+            case !value.encryptionkey_passphrase && value.set_recoverykey:
+              console.log('3');
+              break;
+
+            default:
+              console.log('four');
+              this.loader.close();
+              this.snackBar.open(T('Successfully reset encryption for pool: ') + value.name, T("Close"), {
+                duration: 5000,
+              });
+              this.openEncryptDialog();
+          }
+     
         (err) => {
           this.loader.close();
           this.dialogService.errorReport(T("Error resetting encryption for pool: " + value.name), res.error, res.trace.formatted);
         };
       });
-
-
   }
+
+  openEncryptDialog() {
+    let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
+    dialogRef.componentInstance.volumeId = this.pk;
+    dialogRef.afterClosed().subscribe(result => {
+      this.router.navigate(new Array('/').concat(
+      this.route_success));
+    })
+  }
+
+  customSubmit2(value) {
+    this.loader.open();
+
+ }
 
 }
