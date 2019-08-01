@@ -23,7 +23,7 @@ dataset_permissions_mp_group_tooltip: T('Select the group to control the pool/da
  manually created or imported from a directory service\
  will appear in the drop-down menu.'),
 
-dataset_permissions_mp_mode_en_placeholder: T('Apply Mode'),
+dataset_permissions_mp_mode_en_placeholder: T('Apply Access Mode'),
 dataset_permissions_mp_mode_en_tooltip: T('Set to apply changes to the mode'),
 
 dataset_permissions_mp_mode_placeholder: T('Access Mode'),
