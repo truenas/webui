@@ -24,7 +24,8 @@ figcaption {
     color: var(--fg1);
 }
 
-#plugin-install-button {
+button.plugin-button {
     background: var(--primary);
     color: white;
+    margin-left: 16px;
 }

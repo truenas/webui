@@ -63,6 +63,12 @@ export class EmailComponent implements OnDestroy {
     },
     {
       type : 'input',
+      name : 'fromname',
+      placeholder : helptext_system_email.fromname.placeholder,
+      tooltip : helptext_system_email.fromname.tooltip,
+    },
+    {
+      type : 'input',
       name : 'outgoingserver',
       placeholder : helptext_system_email.outgoingserver.placeholder,
       tooltip : helptext_system_email.outgoingserver.tooltip,

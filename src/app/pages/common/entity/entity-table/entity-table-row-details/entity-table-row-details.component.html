@@ -5,7 +5,32 @@
         fxLayoutGap="16px"
     >
         <h4>{{ column.name }}:</h4>
-        <p>{{ getPropValue(column.prop) }}</p>
+        <div
+            fxLayoutAlign="start center"
+            fxLayoutGap="4px"
+        >
+            <ng-container *ngIf="column?.widget?.component">
+                <mat-icon
+                    class="widget-icon"
+                    [matMenuTriggerFor]="widget"
+                    role="img"
+                    fontSet="mdi-set"
+                    fontIcon="mdi-{{ column.widget.icon }}"
+                ></mat-icon>
+                <mat-menu #widget="matMenu">
+                    <!-- column widgets need to be registered with this switch case -->
+                    <ng-container [ngSwitch]="column.widget.component">
+                        <app-task-schedule-list
+                            *ngSwitchCase="'TaskScheduleListComponent'"
+                            [value]="getPropValue(column.prop)"
+                            [config]="config"
+                            [parent]="parent"
+                        ></app-task-schedule-list>
+                    </ng-container>
+                </mat-menu>
+            </ng-container>
+            <p>{{ getPropValue(column.prop) }}</p>
+        </div>
     </div>
 </section>
 
@@ -18,6 +43,7 @@
 >
     <ng-container *ngFor="let action of actions">
         <button
+            *ngIf="!parent.conf.isActionVisible || parent.conf.isActionVisible.bind(parent.conf)(action.name, row)"
             mat-button
             id="action_button_{{ action?.name }}__{{action.id}}"
             (click)="action.onClick(this.config)"

@@ -42,10 +42,12 @@ export class InterfacesListComponent implements OnDestroy {
 
   public columns: Array<any> = [
     {name : T('Name'), prop : 'name', always_display: true },
+    {name : T('Type'), prop : 'type' },
     {name : T('Link State'), prop : 'link_state'},
     {name : T('DHCP'), prop : 'ipv4_dhcp'},
     {name : T('IPv6 Auto Configure'), prop: 'ipv6_auto'},
     {name : T('IP Addresses'), prop : 'addresses'},,
+    {name : T('Description'), prop : 'description', hidden: true},
     {name : T('Active Media Type'), prop: 'active_media_type', hidden: true},
     {name : T('Active Media Subtype'), prop: 'active_media_subtype', hidden: true},
     {name : T('VLAN Tag'), prop: 'vlan_tag', hidden: true},
@@ -112,7 +114,7 @@ export class InterfacesListComponent implements OnDestroy {
       label: T("Edit"),
       onClick: (rowinner) => { 
         if(this.ha_enabled) {
-          this.dialog.Info(helptext.ha_enabled_edit_title, helptext.ha_enabled_delete_msg);
+          this.dialog.Info(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
         } else {
           this.entityList.doEdit(rowinner.id);
         }

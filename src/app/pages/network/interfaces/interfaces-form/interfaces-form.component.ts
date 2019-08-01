@@ -11,6 +11,7 @@ import { regexValidator } from '../../../common/entity/entity-form/validators/re
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from '../../../common/entity/utils';
 import helptext from '../../../../helptext/network/interfaces/interfaces-form';
+import globalHelptext from '../../../../helptext/global-helptext';
 
 @Component({
   selector : 'app-interfaces-form',
@@ -26,6 +27,8 @@ export class InterfacesFormComponent implements OnDestroy {
   protected route_success: string[] = [ 'network', 'interfaces' ];
   protected isEntity = true;
   protected is_ha = false;
+  protected ipPlaceholder: string;
+  protected failoverPlaceholder: string;
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -305,6 +308,21 @@ export class InterfacesFormComponent implements OnDestroy {
           failover_virtual_address['isHidden'] = false;
           failover_address['disabled'] = false;
           failover_address['isHidden'] = false;
+          this.ws.call('failover.node').subscribe((node) => {
+            if (node === 'A') {
+              this.ipPlaceholder = ' (This Controller)';
+              this.failoverPlaceholder = ` (${globalHelptext.Ctrlr} 2)`;
+            } else if (node === 'B') {
+              this.ipPlaceholder = ` (${globalHelptext.Ctrlr} 1)`;
+              this.failoverPlaceholder = ' (This Controller)';
+            } else {
+              this.ipPlaceholder = ' The active controller cannot be detected.';
+              this.failoverPlaceholder = ''
+            }
+            _.find(this.iparrayControl.formarray, {"name":"address"}).placeholder += this.ipPlaceholder;
+            failover_address.placeholder += this.failoverPlaceholder;
+          })
+          
         }
       });
     }

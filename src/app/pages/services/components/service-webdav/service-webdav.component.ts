@@ -60,7 +60,6 @@ export class ServiceWebdavComponent implements OnInit, OnDestroy {
       togglePw: true,
       tooltip : helptext.password_tooltip,
       inputType : 'password',
-      value : 'davtest',
       validation : helptext.password_validation
     },
     {

@@ -21,48 +21,48 @@ xpaths = {
 }
 
 
-def test_01_turnon_lldp(wb_driver):
+def test_01_turnon_lldp(browser):
     # Click Service Menu
-    wb_driver.find_element_by_xpath(xpaths['navService']).click()
+    browser.find_element_by_xpath(xpaths['navService']).click()
     # check if the Service page is opens
     time.sleep(1)
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar1'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert"Services" in page_data, page_data
     # scroll down
-    wb_driver.find_element_by_tag_name('html').send_keys(Keys.PAGE_DOWN)
-    status_change(wb_driver, "lldp")
+    browser.find_element_by_tag_name('html').send_keys(Keys.PAGE_DOWN)
+    status_change(browser, "lldp")
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
 
 
-def test_02_checkif_lldp_on(wb_driver):
+def test_02_checkif_lldp_on(browser):
     time.sleep(2)
     # status check
-    status_check(wb_driver, "lldp")
+    status_check(browser, "lldp")
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
 
 
-def test_03_turnoff_lldp(wb_driver):
+def test_03_turnoff_lldp(browser):
     time.sleep(2)
-    status_change(wb_driver, "lldp")
+    status_change(browser, "lldp")
     # lldp takes almost 7 sec to turn off
     time.sleep(7)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
 
 
-def test_04_checkif_lldp_off(wb_driver):
+def test_04_checkif_lldp_off(browser):
     time.sleep(2)
     # status check
-    status_check(wb_driver, "lldp")
+    status_check(browser, "lldp")
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)

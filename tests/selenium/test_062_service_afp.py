@@ -21,53 +21,53 @@ xpaths = {
 }
 
 
-def test_01_nav_services(wb_driver):
+def test_01_nav_services(browser):
     # Click  Service menu
-    wb_driver.find_element_by_xpath(xpaths['navService']).click()
+    browser.find_element_by_xpath(xpaths['navService']).click()
     # allowing the button to load
     time.sleep(1)
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar1'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert "Services" in page_data, page_data
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
 
 
-def test_02_turn_on_afp(wb_driver):
+def test_02_turn_on_afp(browser):
     # scroll down
-    wb_driver.find_element_by_tag_name('body').send_keys(Keys.HOME)
+    browser.find_element_by_tag_name('body').send_keys(Keys.HOME)
     time.sleep(2)
-    status_change(wb_driver, "afp")
+    status_change(browser, "afp")
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
 
 
-def test_03_checkif_afp_on(wb_driver):
-    time.sleep(2)
-    # status check
-    status_check(wb_driver, "afp")
-    # taking screenshot
-    test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
-
-
-def test_04_turnoff_afp(wb_driver):
-    time.sleep(2)
-    status_change(wb_driver, "afp")
-    # taking screenshot
-    test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
-
-
-def test_05_checkif_afp_off(wb_driver):
+def test_03_checkif_afp_on(browser):
     time.sleep(2)
     # status check
-    status_check(wb_driver, "afp")
+    status_check(browser, "afp")
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
+
+
+def test_04_turnoff_afp(browser):
+    time.sleep(2)
+    status_change(browser, "afp")
+    # taking screenshot
+    test_name = sys._getframe().f_code.co_name
+    take_screenshot(browser, script_name, test_name)
+
+
+def test_05_checkif_afp_off(browser):
+    time.sleep(2)
+    # status check
+    status_check(browser, "afp")
+    # taking screenshot
+    test_name = sys._getframe().f_code.co_name
+    take_screenshot(browser, script_name, test_name)

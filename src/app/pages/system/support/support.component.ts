@@ -416,6 +416,7 @@ export class SupportComponent {
                 const value = entityDialog.formValue.license;
                 localLoader.open();
                 localWS.call('system.license_update', [value]).subscribe((res) => {
+                  entityDialog.dialogRef.close(true);
                   localLoader.close();
                   localSnackbar.open(helptext.update_license.success_message, 
                     helptext.update_license.snackbar_action, { duration: 5000 });

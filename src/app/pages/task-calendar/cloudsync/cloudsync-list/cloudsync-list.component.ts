@@ -4,14 +4,15 @@ import { TranslateService } from '@ngx-translate/core';
 import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import * as cronParser from 'cron-parser';
 import { Moment } from 'moment';
-import { DialogService, EngineerModeService, JobService, WebSocketService } from '../../../../services';
+import { DialogService, EngineerModeService, JobService, TaskService, WebSocketService } from '../../../../services';
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../../../common/entity/utils';
+import { TaskScheduleListComponent } from '../../components/task-schedule-list/task-schedule-list.component';
 
 @Component({
   selector: 'app-cloudsync-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
-  providers: [JobService],
+  providers: [JobService, TaskService],
 })
 export class CloudsyncListComponent implements InputTableConf {
 
@@ -29,7 +30,7 @@ export class CloudsyncListComponent implements InputTableConf {
     { name: T('Credential'), prop: 'credential', hidden: true },
     { name: T('Direction'), prop: 'direction', hidden: true},
     { name: T('Path'), prop: 'path', hidden: true},
-    { name: T('Schedule'), prop: 'cron', hidden: true},
+    { name: T('Schedule'), prop: 'cron', hidden: true, widget: { icon: 'calendar-range', component: 'TaskScheduleListComponent' }},
     { name: T('Next Run'), prop: 'next_run', hidden: true},
     { name: T('Minute'), prop: 'minute', hidden: true },
     { name: T('Hour'), prop: 'hour', hidden: true },

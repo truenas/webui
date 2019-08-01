@@ -20,12 +20,17 @@ export class AboutModalDialog {
   public copyrightYear = globalHelptext.copyright_year;
   public info: any = {};
   public ipAddress: any = [];
+  public is_freenas: false;
 
   constructor(
     public dialogRef: MatDialogRef<AboutModalDialog>,
     private ws: WebSocketService,
     protected translate: TranslateService,
-    protected systemGeneralService: SystemGeneralService) { }
+    protected systemGeneralService: SystemGeneralService) { 
+      this.ws.call('system.is_freenas').subscribe((res)=>{
+        this.is_freenas = res;
+      });
+    }
 
   ngOnInit() {
     this.ws.call('system.info').subscribe((res) => {

@@ -7,7 +7,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 
-import { RestService, WebSocketService } from '../../../../services/';
+import { WebSocketService } from '../../../../services/';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -49,6 +49,15 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
     },{
       type : 'input',
       inputType: 'password',
+      togglePw : true,
+      name : 'adminpw',
+      placeholder: helptext.changekey_adminpw_placeholder,
+      tooltip: helptext.changekey_adminpw_tooltip,
+      validation: helptext.changekey_adminpw_validation,
+      required: true
+    },{
+      type : 'input',
+      inputType: 'password',
       name : 'passphrase',
       placeholder: helptext.createkey_passphrase_placeholder,
       tooltip: helptext.createkey_passphrase_tooltip,
@@ -74,7 +83,6 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
   constructor(
       protected router: Router,
       protected route: ActivatedRoute,
-      protected rest: RestService,
       protected ws: WebSocketService,
       protected _injector: Injector,
       protected _appRef: ApplicationRef,
@@ -82,9 +90,7 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
       protected loader: AppLoaderService,
       private snackBar: MatSnackBar,
       private mdDialog: MatDialog
-  ) {
-
-  }
+  ) {}
 
   preInit(entityForm: any) {
     this.route.params.subscribe(params => {
@@ -92,27 +98,25 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
     });
   }
 
-  afterInit(entityForm: any) {
-
-  }
-
   customSubmit(value) {
     this.loader.open();
-    return this.rest.post(this.resource_name + "/" + this.pk + "/keypassphrase/", { body: JSON.stringify({passphrase: value.passphrase, passphrase2: value.passphrase2}) }).subscribe((restPostResp) => {
-      this.loader.close();
-      this.snackBar.open(T('Passphrase created for pool ') + value.name, T("Close"), {
-        duration: 5000,
-      });
-      let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
-      dialogRef.componentInstance.volumeId = this.pk;
-      dialogRef.afterClosed().subscribe(result => {
-        this.router.navigate(new Array('/').concat(
-          this.route_success));
-      });
-    }, (res) => {
-      this.loader.close();
-      this.dialogService.errorReport(T("Error creating passphrase for pool ") + value.name, res.error.message, res.error.traceback);
-    });
-  }
+    this.ws.call('pool.passphrase', [parseInt(this.pk), {'passphrase': value.passphrase, 
+      'admin_password': value.adminpw}]).subscribe((res) => {
+        this.loader.close();
+        this.snackBar.open(T('Passphrase created for pool ') + value.name, T("Close"), {
+          duration: 5000,
+        });
+        let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
+        dialogRef.componentInstance.volumeId = this.pk;
+        dialogRef.afterClosed().subscribe(result => {
+          this.router.navigate(new Array('/').concat(
+            this.route_success));
+        });
+        (err) => {
+          this.loader.close();
+          this.dialogService.errorReport(T("Error creating passphrase for pool ") + value.name, err.error.message, err.error.traceback);
+        };
+      })
+ }
 
 }

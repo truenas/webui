@@ -1,12 +1,10 @@
 
 
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
-import { Observable, Subject, Subscription } from 'rxjs/Rx';
-
-import { EntityUtils } from '../pages/common/entity/utils'
 import { RestService } from './rest.service';
 import { WebSocketService } from './ws.service';
+import * as cronParser from 'cron-parser';
+import { Moment } from 'moment';
 
 @Injectable()
 export class TaskService {
@@ -150,4 +148,19 @@ export class TaskService {
   getSmarttestTypeChoices() {
     return this.ws.call('notifier.choices', ['SMART_TEST', [true, false]]);
   };
+
+  /**
+   * Takes a cron expression and returns an array of Moment objects
+   * representing future scheduled runs.
+   * @param scheduleExpression A cron expression such as `0 0 * * mon`
+   * @param count The desired number of future runs
+   */
+  getTaskNextRuns(scheduleExpression: string, count = 10): Moment[] {
+    const schedule = cronParser.parseExpression(scheduleExpression, { iterator: true });
+
+    /* Nasty type assertions due to type definition error in cron-parser lib */
+    return new Array(count)
+      .fill(null)
+      .map(() => ((schedule.next() as unknown) as { value: { _date: Moment } }).value._date);
+  }
 }
