@@ -26,8 +26,8 @@ dataset_permissions_mp_group_tooltip: T('Select the group to control the pool/da
 dataset_permissions_mp_mode_en_placeholder: T('Apply Mode'),
 dataset_permissions_mp_mode_en_tooltip: T('Set to apply changes to the mode'),
 
-dataset_permissions_mp_mode_placeholder: T('Mode'),
-dataset_permissions_mp_mode_tooltip: T('Only applies to Unix or Mac permission types.'),
+dataset_permissions_mp_mode_placeholder: T('Access Mode'),
+dataset_permissions_mp_mode_tooltip: T('Set the read, write and execute permissions for the dataset.'),
 
 dataset_permissions_mp_recursive_placeholder: T('Apply permissions recursively'),
 dataset_permissions_mp_recursive_tooltip: T('Apply permissions recursively to all directories\
@@ -35,5 +35,10 @@ dataset_permissions_mp_recursive_tooltip: T('Apply permissions recursively to al
 
 dataset_permissions_dialog_warning: T('Warning'),
 dataset_permissions_dialog_warning_message: T('Changing dataset permission mode can severely\
- affect existing permissions, particularly when going from Windows to Unix permissions.')
+ affect existing permissions, particularly when going from Windows to Unix permissions.'),
+
+heading_dataset_path: T('Dataset Path'),
+heading_who: T('Who'),
+heading_access: T('Access'),
+heading_advanced: T('Advanced')
 }
