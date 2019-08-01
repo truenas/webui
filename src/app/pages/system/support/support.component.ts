@@ -564,13 +564,14 @@ export class SupportComponent {
           formData.append('file', item.file, item.apiEndPoint);
           dialogRef.componentInstance.wspost(item.apiEndPoint, formData);
           dialogRef.componentInstance.success.subscribe(res=>{
-            // console.info(res);
+            this.resetForm();
           }),
           dialogRef.componentInstance.failure.subscribe((res) => {
             dialogRef.componentInstance.setDescription(res.error);
           });
         });
         dialogRef.componentInstance.setDescription(url);
+        this.resetForm();
       } else {
         dialogRef.componentInstance.setDescription(url);
         this.resetForm();
@@ -583,10 +584,11 @@ export class SupportComponent {
 
   resetForm () {
     this.entityEdit.formGroup.reset();
-    this.entityEdit.formGroup.controls['TNCategory'].setValue('BUG');
-    this.entityEdit.formGroup.controls['environment'].setValue('production');
-    this.entityEdit.formGroup.controls['criticality'].setValue('inquiry');
-    this.entityEdit.formGroup.controls['attach_debug'].setValue(false);
+    if (!this.is_freenas) {
+      this.entityEdit.formGroup.controls['TNCategory'].setValue('BUG');
+      this.entityEdit.formGroup.controls['environment'].setValue('production');
+      this.entityEdit.formGroup.controls['criticality'].setValue('inquiry');
+    }
   };
 
   blurEvent(parent){
