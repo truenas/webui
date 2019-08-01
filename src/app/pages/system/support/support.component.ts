@@ -369,7 +369,6 @@ export class SupportComponent {
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
-    console.log(this.entityEdit.formGroup.controls)
     this.category = _.find(this.fieldConfig, {name: "category"});
     if (window.localStorage['is_freenas'] === 'true') {
       this.is_freenas = true;
