@@ -52,7 +52,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
   public allTabs: Tab[] = [];
 
   public visibleReports:number[] = [];
-  public totalVisibleReports:number = 6;
+  public totalVisibleReports:number = 4;
 
   constructor(private erdService: ErdService, 
     public translate: TranslateService, private router:Router, private core:CoreService, 
@@ -94,6 +94,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
 
     this.ws.call('reporting.graphs').subscribe((res)=> {
       if (res) {
+        console.log(res);
         let allReports = res.map((report) => {
           let list = [];
           if(report.identifiers){

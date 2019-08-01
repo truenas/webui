@@ -288,10 +288,10 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     const end = Math.floor(rrdOptions.end / 1000);
     let timeFrame = {"start": start, "end": end}; 
     //let timeFrame = {"unit": "WEEK"};// 'HOUR', 'DAY', 'WEEK', 'MONTH', 'YEAR'
+    //console.log([[params], timeFrame]);
 
     this.ws.call('reporting.get_data', [[params],timeFrame]).subscribe((res) =>{
       this.data = res[0];
-      //console.log(res[0]);
     });
   }
 

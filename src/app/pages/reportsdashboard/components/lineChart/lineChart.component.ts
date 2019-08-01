@@ -13,12 +13,8 @@ import Chart from 'chart.js';
 import 'chartjs-plugin-crosshair';
 import * as simplify from 'simplify-js';
 
-/*export interface ChartFormatter {
- format (value, ratio, id);
-}*/
-
 // Deprecate this
-export interface Analytics {
+/*export interface Analytics {
   label:string;
   min?:number;
   max?:number;
@@ -33,7 +29,7 @@ interface TimeData {
   end: number;
   step: number;
   legend?: string;
-}
+}*/
 
 // For Chart.js
 interface DataSet {
@@ -77,6 +73,7 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
   public linechartData:any;
 
   public units: string = '';
+  public yLabelPrefix: string;
   public showLegendValues: boolean = false;
   public legendEvents: BehaviorSubject<any>;
   public legendLabels: BehaviorSubject<any>;
@@ -114,12 +111,13 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
     } 
   }
 
+  // dygraph renderer
   public renderGraph(){
     let data = this.makeTimeAxis(this.data);
     let labels = data.shift();
 
     let fg2RGB = this.themeService.hexToRGB(this.themeService.currentTheme().fg2);
-    let gridLineColor = 'rgba(' + fg2RGB[0] + ', ' + fg2RGB[1]+ ', ' + fg2RGB[2]+ ', 0.5)'
+    let gridLineColor = 'rgba(' + fg2RGB.rgb[0] + ', ' + fg2RGB.rgb[1]+ ', ' + fg2RGB.rgb[2]+ ', 0.25)'
 
       let options = {
         /*drawHighlightPointCallback: (g, seriesName, canvasContext, cx, cy, color, pointSize) => {
@@ -131,13 +129,29 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
          strokeWidth:1,
          colors: this.colorPattern,
          labels: labels,// time axis
-         ylabel: this.labelY,
+         ylabel: this.yLabelPrefix + this.labelY,
          gridLineColor: gridLineColor,
          showLabelsOnHighlight: false,
          labelsSeparateLines: true,
+         axes: {
+           y:{
+             yRangePad: 24,
+             axisLabelFormatter: ( numero, granularity, opts, dygraph  ) => {
+               let test = this.formatLabelValue(numero, this.inferUnits(this.labelY), true,1);
+               //console.log(dygraph);
+               return test[0];
+             },
+           }
+         },
          legendFormatter: (data) => {
-           //console.log(data);
-           this.legendEvents.next(data);
+           let clone = Object.assign({}, data);
+           clone.series.forEach((item, index) => {
+             if(!item.y){ return; }
+             let formatted = this.formatLabelValue(item.y, this.inferUnits(this.labelY), true, 1);
+             clone.series[index].yHTML = formatted[0].toString();
+          
+           });
+           this.legendEvents.next(clone);
            return "";
          },
          series: () => {
@@ -148,11 +162,27 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
 
            return s;
          },
-         //labelsDiv: '#dygraph-legend',//this.el.nativeElement.querySelector('.legend')
+         drawCallback: (dygraph, is_initial) =>{
+           if(dygraph.axes_){
+            let numero = dygraph.axes_[0].maxyval;
+            let test = this.formatLabelValue(numero, this.inferUnits(this.labelY));
+            if(test[1]){
+              //console.log(dygraph);
+              this.yLabelPrefix = test[1];
+            } else {
+              this.yLabelPrefix = '';
+            }
+           } else {
+            console.warn("axes not found");
+            //console.warn(dygraph);
+           }
          }
+       }
+      //console.log(this.data);
       this.chart = new Dygraph(this.el.nativeElement, data, options);
   }
 
+  // chart.js renderer
   public renderChart(){
     if(!this.ctx){
       const el = this.el.nativeElement.querySelector('canvas');
@@ -377,6 +407,85 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
 
   }
 
+  inferUnits(label:string){
+    // Figures out from the label what the unit is
+    let units = label;
+    if(label.includes('%')){
+      units = '%';
+    } else if(label.includes('°')){
+      units = "°";
+    } else if(label.toLowerCase().includes("bytes")){
+      units = "bytes";
+    } else if(label.toLowerCase().includes("bits")){
+      units = "bits";
+    }
+
+    if(typeof units == 'undefined'){
+      console.warn("Could not infer units from " + this.labelY);
+    } 
+    
+    return units;
+  }
+
+  formatLabelValue(value: number, units: string, prefixRules?: boolean, fixed?: number){
+    let result;
+    if(!fixed){ fixed = -1; }
+    
+    switch(units.toLowerCase()){
+      case "bits":
+        result  = this.convertKMGT(value, prefixRules, fixed);
+        break;
+      case "bytes":
+        result = this.convertKMGT(value, prefixRules, fixed);
+        break;
+      case "%":
+      case "°":
+      default:
+        result = [value];
+        return [this.limitDecimals(value), ''];
+        //break;
+    }
+
+    return result ? result : [value];
+  }
+
+  limitDecimals(numero: number){
+    let subZero = numero.toString().split(".");
+    let decimalPlaces = subZero && subZero[1] ? subZero[1].length : 0;
+    return decimalPlaces > 2 ? numero.toFixed(2) : numero;
+  }
+
+  convertKMGT(value: number, prefixRules?: boolean, fixed?: number): string[]{
+    const kilo = 1024;
+    const mega = kilo * 1024;
+    const giga = mega * 1024;
+    const tera = giga * 1024;
+
+    let prefix: string = '';
+    let converted: number = value;
+
+    if(value > tera || (prefixRules && this.yLabelPrefix == 'Tera')){
+      prefix = "Tera";
+      converted = value / tera;
+    } else if((value < tera && value > giga) || (prefixRules && this.yLabelPrefix == 'Giga')){
+      prefix = "Giga";
+      converted = value / giga;
+    } else if((value < giga && value > mega) || (prefixRules && this.yLabelPrefix == 'Mega')){
+      prefix = "Mega";
+      converted = value / mega;
+    } else if((value < mega && value > kilo || (prefixRules && this.yLabelPrefix == 'Kilo'))){
+      prefix = "Kilo";
+      converted = value / kilo;
+    }
+ 
+    if(fixed && fixed !== -1){
+      return [converted.toFixed(fixed), prefix];
+    } else {
+      return [converted.toString(), prefix];
+    }
+  }
+
+
   // LifeCycle Hooks
   ngOnInit() {
     /*this.core.register({ observerClass:this, eventName:"LineChartData:" + this.title }).subscribe((evt:CoreEvent)=>{ 
@@ -409,7 +518,7 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
 
   ngOnChanges(changes:SimpleChanges){
     if(changes.data){
-      console.log(this.data);
+      //console.log(this.data);
       //if(changes.data.currentValue.name == 'cpu'){console.log(changes.data.currentValue);}
       if(this.chart){
         this.render();
