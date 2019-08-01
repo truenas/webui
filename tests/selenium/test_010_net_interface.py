@@ -22,21 +22,21 @@ xpaths = {
 }
 
 
-def test_01_nav_net_interface(wb_driver):
+def test_01_nav_net_interface(browser):
     # Click on the vlan submenu
-    wb_driver.find_element_by_xpath(xpaths['submenuInterface']).click()
+    browser.find_element_by_xpath(xpaths['submenuInterface']).click()
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar1'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert "Network" in page_data, page_data
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert "Interfaces" in page_data, page_data
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)

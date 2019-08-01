@@ -24,33 +24,33 @@ xpaths = {
 }
 
 
-def test_01_nav_system_email(wb_driver):
+def test_01_nav_system_email(browser):
     # driver.find_element_by_xpath(xpaths['navSystem']).click()
     time.sleep(1)
-    wb_driver.find_element_by_xpath(xpaths['submenuEmail']).click()
+    browser.find_element_by_xpath(xpaths['submenuEmail']).click()
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar1'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert "System" in page_data, page_data
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert "Email" in page_data, page_data
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
 
 
-def test_02_configure_email(wb_driver):
+def test_02_configure_email(browser):
     # Close the System Tab
-    wb_driver.find_element_by_xpath(xpaths['outgoingMail']).clear()
-    wb_driver.find_element_by_xpath(xpaths['outgoingMail']).send_keys("test@ixsystems.com")
-    wb_driver.find_element_by_xpath('//*[@id="save_button"]').click()
+    browser.find_element_by_xpath(xpaths['outgoingMail']).clear()
+    browser.find_element_by_xpath(xpaths['outgoingMail']).send_keys("test@ixsystems.com")
+    browser.find_element_by_xpath('//*[@id="save_button"]').click()
     time.sleep(5)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
