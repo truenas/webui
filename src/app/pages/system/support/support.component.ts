@@ -369,6 +369,7 @@ export class SupportComponent {
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
+    console.log(this.entityEdit.formGroup.controls)
     this.category = _.find(this.fieldConfig, {name: "category"});
     if (window.localStorage['is_freenas'] === 'true') {
       this.is_freenas = true;
@@ -547,7 +548,7 @@ export class SupportComponent {
       if (res.result) {
         url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
       }
-      if (res.method === 'support.new_ticket' && this.subs.length > 0) {
+      if (res.method === 'support.new_ticket' && this.subs && this.subs.length > 0) {
         this.subs.forEach((item) => {
           const formData: FormData = new FormData();
           if (this.is_freenas) {
@@ -573,12 +574,21 @@ export class SupportComponent {
         dialogRef.componentInstance.setDescription(url);
       } else {
         dialogRef.componentInstance.setDescription(url);
+        this.resetForm();
       }
     })
     dialogRef.componentInstance.failure.subscribe((res) => {
       dialogRef.componentInstance.setDescription(res.error);
     });
   }
+
+  resetForm () {
+    this.entityEdit.formGroup.reset();
+    this.entityEdit.formGroup.controls['TNCategory'].setValue('BUG');
+    this.entityEdit.formGroup.controls['environment'].setValue('production');
+    this.entityEdit.formGroup.controls['criticality'].setValue('inquiry');
+    this.entityEdit.formGroup.controls['attach_debug'].setValue(false);
+  };
 
   blurEvent(parent){
     this.category = _.find(parent.fieldConfig, {name: "category"});
