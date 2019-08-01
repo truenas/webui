@@ -373,7 +373,7 @@ exec_fib_tooltip: T('Enter the routing table (<a\
  href="https://www.freebsd.org/cgi/man.cgi?query=setfib"\
  target="_blank">FIB</a>) to use when running commands inside the jail.'),
 
-ip4_saddrsel_placeholder: T('ip4_saddrsel'),
+ip4_saddrsel_placeholder: T('ip4.saddrsel'),
 ip4_saddrsel_tooltip: T('Only available when the jail is not configured\
  to use VNET. Disables IPv4 source address selection for the jail in\
  favor of the primary IPv4 address of the jail.'),
