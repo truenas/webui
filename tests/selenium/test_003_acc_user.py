@@ -82,11 +82,9 @@ def test_02_create_newuser(browser):
     # Enter Password Conf
     browser.find_element_by_xpath(xpaths['newUserPassConf']).send_keys(newuserpassword)
     # Click on create new User button
-    if browser.find_element_by_xpath(xpaths['saveButton']):
-        print("found the save button")
-        browser.find_element_by_xpath(xpaths['saveButton']).click()
-    else:
-        print("could not find the save button and clicking")
+    assert is_element_present(browser, xpaths['saveButton']) is True
+    print("found the save button")
+    browser.find_element_by_xpath(xpaths['saveButton']).click()
     # wait on the fabAction
     xpath = xpaths['fabAction']
     wait = wait_on_element(browser, xpath, script_name, test_name)
@@ -112,11 +110,8 @@ def test_03_create_newuser_primarygroup_uncheck(browser):
     # Enter Password Conf
     browser.find_element_by_xpath(xpaths['newUserPassConf']).send_keys(newuserpassword)
     # Click on create new User button
-    if browser.find_element_by_xpath(xpaths['saveButton']):
-        print("found the save button")
-        browser.find_element_by_xpath(xpaths['saveButton']).click()
-    else:
-        print("could not find the save button and clicking")
+    assert is_element_present(browser, xpaths['saveButton']) is True
+    browser.find_element_by_xpath(xpaths['saveButton']).click()
     # wait on the fabAction
     xpath = xpaths['fabAction']
     wait = wait_on_element(browser, xpath, script_name, test_name)
@@ -146,11 +141,8 @@ def test_04_create_superuser(browser):
     # check Permit Sudo Checkbox
     browser.find_element_by_xpath(xpaths['permitSudocheckbox']).click()
     # Click on create new User button
-    if browser.find_element_by_xpath(xpaths['saveButton']):
-        print("found the save button")
-        browser.find_element_by_xpath(xpaths['saveButton']).click()
-    else:
-        print("could not find the save button and clicking")
+    assert is_element_present(browser, xpaths['saveButton']) is True
+    browser.find_element_by_xpath(xpaths['saveButton']).click()
     # wait on the fabAction
     xpath = xpaths['fabAction']
     wait = wait_on_element(browser, xpath, script_name, test_name)
@@ -177,11 +169,8 @@ def test_05_create_duplicate_user(browser):
     # Enter Password Conf
     browser.find_element_by_xpath(xpaths['newUserPassConf']).send_keys(newuserpassword)
     # Click on create new User button
-    if browser.find_element_by_xpath(xpaths['saveButton']):
-        print("found the save button")
-        browser.find_element_by_xpath(xpaths['saveButton']).click()
-    else:
-        print("could not find the save button and clicking")
+    assert is_element_present(browser, xpaths['saveButton']) is True
+    browser.find_element_by_xpath(xpaths['saveButton']).click()
     browser.find_element_by_xpath(xpaths['cancelButton']).click()
     # wait on the fabAction
     xpath = xpaths['fabAction']
@@ -206,11 +195,8 @@ def test_06_create_newuser_suggested_name(browser):
     # Enter Password Conf
     browser.find_element_by_xpath(xpaths['newUserPassConf']).send_keys(newuserpassword)
     # Click on create new User button
-    if browser.find_element_by_xpath(xpaths['saveButton']):
-        print("found the save button")
-        browser.find_element_by_xpath(xpaths['saveButton']).click()
-    else:
-        print("could not find the save button and clicking")
+    assert is_element_present(browser, xpaths['saveButton']) is True
+    browser.find_element_by_xpath(xpaths['saveButton']).click()
     # wait on the fabAction
     xpath = xpaths['fabAction']
     wait = wait_on_element(browser, xpath, script_name, test_name)
