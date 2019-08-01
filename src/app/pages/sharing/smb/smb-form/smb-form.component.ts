@@ -4,8 +4,8 @@ import { Router } from '@angular/router';
 import { helptext_sharing_smb } from 'app/helptext/sharing';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import * as _ from 'lodash';
-import { of, combineLatest } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { combineLatest, of } from 'rxjs';
+import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
 import { DialogService, RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
@@ -169,30 +169,40 @@ export class SMBFormComponent {
   }
 
   afterSave(entityForm) {
-    const datasetId = entityForm.formGroup.get('cifs_path').value.replace('/mnt/', '');
+    const sharePath: string = entityForm.formGroup.get('cifs_path').value;
+    const datasetId = sharePath.replace('/mnt/', '');
 
     /**
-     * Check if user wants to edit dataset permissions. If not,
+     * If share does not have trivial ACL, check if user wants to edit dataset permissions. If not,
      * nav to SMB shares list view.
      */
     const promptUserACLEdit = () =>
-      combineLatest(
-        this.dialog.confirm(
-          helptext_sharing_smb.dialog_edit_acl_title,
-          helptext_sharing_smb.dialog_edit_acl_message,
-          true,
-          helptext_sharing_smb.dialog_edit_acl_button
+      this.ws.call('filesystem.acl_is_trivial', [sharePath]).pipe(
+        switchMap((isTrivialACL: boolean) =>
+          /* If share has trivial ACL, move on. Otherwise, perform some async data-gathering operations */
+          isTrivialACL
+            ? combineLatest(of(false), of({}))
+            : combineLatest(
+                /* Check if user wants to edit the share's ACL */
+                this.dialog.confirm(
+                  helptext_sharing_smb.dialog_edit_acl_title,
+                  helptext_sharing_smb.dialog_edit_acl_message,
+                  true,
+                  helptext_sharing_smb.dialog_edit_acl_button
+                ),
+                /* Fetch more info about the dataset (we need its pool ID) */
+                this.ws.call('pool.dataset.query', [[['id', '=', datasetId]]]).pipe(map(datasets => datasets[0]))
+              )
         ),
-        this.ws.call("pool.dataset.query", [[["id", "=", datasetId]]]).pipe(map(datasets => datasets[0]))
-      ).pipe(
         tap(([doConfigureACL, dataset]) =>
           doConfigureACL
             ? this.router.navigate(
-                ["/"].concat(["storage", "pools", "id", dataset.pool, "dataset", "acl", datasetId])
+                ['/'].concat(['storage', 'pools', 'id', dataset.pool, 'dataset', 'acl', datasetId])
               )
-            : this.router.navigate(["/"].concat(this.route_success))
+            : this.router.navigate(['/'].concat(this.route_success))
         )
       );
+      
 
     this.ws
       .call("service.query", [])
