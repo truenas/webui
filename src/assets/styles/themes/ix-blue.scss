@@ -1385,4 +1385,29 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     width: 400px;
   }
 
+  // Reset Encryption form
+  #rekey-headline p {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: .7rem;
+
+    i {
+      margin-right: 5px;
+      position: relative;
+      top: 3px;
+    }
+  }
+
+  #encryptionkey-passphrase-instructions p,
+  #set_recoverykey-instructions p {
+    margin-top: 1rem;
+    font-size: .9rem;
+  }
+
+  #encryptionkey-passphrase {
+    max-width: 640px;
+  }
+
+  // end of reset encryption form
+
  } // end of ix theme

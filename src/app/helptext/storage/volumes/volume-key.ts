@@ -51,15 +51,24 @@ createkey_passphrase2_tooltip: T('Confirm the encryption key passphrase.'),
 createkey_passphrase2_validation: [Validators.required],
 
 // Rekey form
-rekey_instructions: T('Re-keying the pool resets the encryption on the \
- GELI master key of each encrypted disk in this pool. <b>This invalidates \
- all existing encryption and recovery key files, as well as any configured \
- passphrase.</b><br /> \
- A new encryption key file is generated and an option opens to save a \
- backup of this file. Adding a passphrase or recovery key file is done \
- from the Encryption Operations menu.'),
+rekey_headline: T('Reset Encryption for Pool: '),
+rekey_instructions: T('Reset the master key encryption used by this pool. Invalidates \
+ any current encryption key file, recovery key file, and passphrase for the pool. \
+ Clicking "RESET ENCRYPTION" also generates a new encryption key file and opens a dialog \
+ to download a backup of the new key. Set "Add Recovery Key" to also generate new \
+ recovery key file for the pool and open a dialog to download it.'),
 rekey_password_label: T('Passphrase'),
-rekey_password_placeholder: T('Root password'),
-rekey_password_tooltip: T('Enter the root password to authorize this operation.'),
-rekey_password_validation: [Validators.required]
+rekey_password_placeholder: T('Administrator password'),
+rekey_password_tooltip: T('Enter the administrator password to authorize this operation.'),
+rekey_password_validation: [Validators.required],
+
+encryptionkey_passphrase_instructions: T('Optional: Generate the new encryption key with a \
+ passphrase already added '),
+encryptionkey_passphrase_placeholder: T('Encryption Key Passphrase'),
+encryptionkey_passphrase_tooltip: T('Add a passphrase to the new encryption key. This can \
+ be used to lock and unlock the pool.'),
+
+ set_recoverykey_instructions: 'Optional: Generate a new recovery key.',
+ set_recoverykey_checkbox_placeholder: 'Add Recovery Key',
+ set_recoverykey_checkbox_tooltip: 'Generate a new recovery key file for the pool.'
 }

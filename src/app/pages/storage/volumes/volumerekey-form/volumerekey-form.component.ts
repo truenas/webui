@@ -25,12 +25,13 @@ import helptext from '../../../../helptext/storage/volumes/volume-key';
 })
 export class VolumeRekeyFormComponent  implements Formconfiguration {
 
-  saveSubmitText = T("Re-key Pool");
+  saveSubmitText = T("Reset Encryption");
 
   resource_name = 'storage/volume';
   route_success: string[] = [ 'storage', 'pools'];
   isNew = false;
   isEntity = true;
+  poolName: string;
   entityData = {
     name: "",
     passphrase: ""
@@ -43,6 +44,10 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
       isHidden: true
     },{
       type: 'paragraph',
+      name: 'rekey-headline',
+      paraText: '<i class="material-icons">lock</i>' + helptext.rekey_headline
+    },{
+      type: 'paragraph',
       name: 'rekey-instructions',
       paraText: helptext.rekey_instructions
     },{
@@ -53,11 +58,34 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
       placeholder: helptext.rekey_password_placeholder,
       tooltip: helptext.rekey_password_tooltip,
       validation: helptext.rekey_password_validation,
-      required: true
+      required: true,
+      togglePw : true
+    },{
+      type: 'paragraph',
+      name: 'encryptionkey-passphrase-instructions',
+      paraText: helptext.encryptionkey_passphrase_instructions
+    },{
+      type : 'input',
+      inputType: 'password',
+      name : 'encryptionkey-passphrase',
+      placeholder: helptext.encryptionkey_passphrase_placeholder,
+      tooltip: helptext.encryptionkey_passphrase_tooltip,
+      togglePw : true
+    },{
+      type: 'paragraph',
+      name: 'set_recoverykey-instructions',
+      paraText: helptext.set_recoverykey_instructions
+    },{
+      type : 'checkbox',
+      name : 'set_recoverykey',
+      placeholder: helptext.set_recoverykey_checkbox_placeholder,
+      tooltip: helptext.set_recoverykey_checkbox_tooltip,
     }
   ];
 
   resourceTransformIncomingRestData(data:any): any {
+    this.poolName = data.name;
+    _.find(this.fieldConfig, {name : "rekey-headline"}).paraText += this.poolName;
     return data;
   };
 
@@ -80,12 +108,17 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
     });
   }
 
+  afterInit(entityForm: any) {
+    console.log(entityForm)
+    
+  }
+
   customSubmit(value) {
     this.loader.open();
     this.ws.call('pool.rekey', [parseInt(this.pk), {'admin_password': value.passphrase}])
       .subscribe((res) => {
         this.loader.close();
-        this.snackBar.open(T('Successfully re-keyed pool ') + value.name, T("Close"), {
+        this.snackBar.open(T('Successfully reset encryption for pool: ') + value.name, T("Close"), {
           duration: 5000,
         });
         let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
@@ -96,7 +129,7 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
         });
         (err) => {
           this.loader.close();
-          this.dialogService.errorReport(T("Error re-keying pool"), res.error, res.trace.formatted);
+          this.dialogService.errorReport(T("Error resetting encryption for pool: " + value.name), res.error, res.trace.formatted);
         };
       });
 

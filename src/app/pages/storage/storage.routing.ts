@@ -91,7 +91,7 @@ export const routes: Routes = [
           },
           {
             path: 'rekey/:pk', component: VolumeRekeyFormComponent,
-            data: { title: 'Rekey Pool', breadcrumb: 'Rekey Pool' }
+            data: { title: 'Reset Encryption', breadcrumb: 'Reset Encryption' }
           },
           {
             path: 'addkey/:pk', component: VolumeAddkeyFormComponent,
