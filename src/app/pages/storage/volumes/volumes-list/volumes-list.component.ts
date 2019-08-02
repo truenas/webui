@@ -341,7 +341,8 @@ export class VolumesListTableConfig implements InputTableConf {
 
       actions.push({
         id: rowData.name,
-        name: 'export_disconnect',
+        name: 'Export/Disconnect',
+        label: T(rowData.name),
         label: T("Export/Disconnect"),
         onClick: (row1) => {
           this.loader.open();
