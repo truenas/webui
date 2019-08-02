@@ -340,6 +340,8 @@ export class VolumesListTableConfig implements InputTableConf {
     if (rowData.type === 'zpool') {
 
       actions.push({
+        id: rowData.name,
+        name: 'export_disconnect',
         label: T("Export/Disconnect"),
         onClick: (row1) => {
           this.loader.open();
@@ -506,6 +508,8 @@ export class VolumesListTableConfig implements InputTableConf {
 
       if (rowData.is_decrypted) {
         actions.push({
+          id: rowData.name,
+          name: 'extend',
           label: T("Extend"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat(
@@ -513,6 +517,8 @@ export class VolumesListTableConfig implements InputTableConf {
           }
         });
         actions.push({
+          id: rowData.name,
+          name: 'scrub',
           label: T("Scrub Pool"),
           onClick: (row1) => {
             this.getPoolData(row1.id).subscribe((res) => {
@@ -562,6 +568,8 @@ export class VolumesListTableConfig implements InputTableConf {
           }
         });
         actions.push({
+          id: rowData.name,
+          name: 'status',
           label: T("Status"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat(
@@ -572,6 +580,8 @@ export class VolumesListTableConfig implements InputTableConf {
         if (rowData.is_upgraded === false) {
 
           actions.push({
+            id: rowData.name,
+            name: 'upgrade',
             label: T("Upgrade Pool"),
             onClick: (row1) => {
 
@@ -600,6 +610,8 @@ export class VolumesListTableConfig implements InputTableConf {
 
     if (rowData.type === "dataset") {
       actions.push({
+        id: rowData.name,
+        name: 'add_dataset',
         label: T("Add Dataset"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat([
@@ -609,6 +621,8 @@ export class VolumesListTableConfig implements InputTableConf {
         }
       });
       actions.push({
+        id: rowData.name,
+        name: 'add_zvol',
         label: T("Add Zvol"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat([
@@ -618,6 +632,8 @@ export class VolumesListTableConfig implements InputTableConf {
         }
       });
       actions.push({
+        id: rowData.name,
+        name: 'edit_options',
         label: T("Edit Options"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat([
@@ -628,6 +644,8 @@ export class VolumesListTableConfig implements InputTableConf {
       });
       if (rowDataPathSplit[1] !== "iocage") {
         actions.push({
+          id: rowData.name,
+          name: 'edit_permissions',
           label: T("Edit Permissions"),
           onClick: (row1) => {
             this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + row1.path]).subscribe(acl_is_trivial => {
@@ -653,6 +671,8 @@ export class VolumesListTableConfig implements InputTableConf {
           }
         },
         {
+          id: rowData.name,
+          name: 'edit_acl',
           label: T("Edit ACL"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat([
@@ -666,6 +686,8 @@ export class VolumesListTableConfig implements InputTableConf {
 
       if (rowData.path.indexOf('/') !== -1) {
         actions.push({
+          id: rowData.name,
+          name: 'delete_dataset',
           label: T("Delete Dataset"),
           onClick: (row1) => {
             this.dialogService.confirm(T("Delete"), 
@@ -719,6 +741,8 @@ export class VolumesListTableConfig implements InputTableConf {
     }
     if (rowData.type === "zvol") {
       actions.push({
+        id: rowData.name,
+        name: 'delete_zvol',
         label: T("Delete zvol"),
         onClick: (row1) => {
           this.dialogService.confirm(T("Delete "),
@@ -741,6 +765,8 @@ export class VolumesListTableConfig implements InputTableConf {
         }
       });
       actions.push({
+        id: rowData.name,
+        name: 'edit_zvol',
         label: T("Edit Zvol"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat([
@@ -754,6 +780,8 @@ export class VolumesListTableConfig implements InputTableConf {
     }
     if (rowData.type === "zvol" || rowData.type === "dataset") {
       actions.push({
+        id: rowData.name,
+        name: 'create_snapshot',
         label: T("Create Snapshot"),
         onClick: (row) => {
           this.ws.call('vmware.dataset_has_vms',[row.path, false]).subscribe((vmware_res)=>{
@@ -809,6 +837,8 @@ export class VolumesListTableConfig implements InputTableConf {
       let rowDataset = _.find(this.datasetData, { id: rowData.path });
       if (rowDataset && rowDataset['origin'] && !!rowDataset['origin'].parsed) {
         actions.push({
+          id: rowData.name,
+          name: 'promote_dataset',
           label: T("Promote Dataset"),
           onClick: (row1) => {
             this.loader.open();
