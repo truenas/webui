@@ -263,7 +263,7 @@ export class SigninComponent implements OnInit {
   }
 
   onGoToLegacy() {
-    this.dialogService.confirm(T("Warning:"), 
+    this.dialogService.confirm(T("Warning"),
       globalHelptext.legacyUIWarning,
        true, T('Continue to Legacy UI')).subscribe((res) => {
       if (res) {

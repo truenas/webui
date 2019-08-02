@@ -322,7 +322,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   onGoToLegacy() {
-    this.dialogService.confirm(T("Warning:"), 
+    this.dialogService.confirm(T("Warning"),
       helptext.legacyUIWarning, 
       true, T("Continue to Legacy UI")).subscribe((res) => {
       if (res) {
