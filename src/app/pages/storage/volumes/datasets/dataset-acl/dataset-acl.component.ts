@@ -462,7 +462,6 @@ export class DatasetAclComponent implements OnDestroy {
         }
       }
     }
-    console.log('end of datahandler routine');
     this.loader.close();
   }
 
