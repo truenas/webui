@@ -1387,4 +1387,18 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     margin-top: 10px;
   }
 
+  app-support #cust_button_Update {
+    position: absolute;
+    left: 480px;
+    top: 260px;
+  }
+
+  app-support #TN_is_production {
+    margin-bottom: unset;
+  }
+
+  app-support form {
+    min-width: 860px;
+  }
+
  } // end of ix theme

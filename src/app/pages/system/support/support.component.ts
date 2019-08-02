@@ -11,7 +11,6 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { SnackbarService } from '../../../services/snackbar.service';
-import { InfoDialog } from 'app/pages/common/info-dialog/info-dialog.component';
 
 @Component({
   selector : 'app-support',
@@ -40,7 +39,6 @@ export class SupportComponent {
   public subs: any;
   private serial: any;
   public production: boolean;
-  public isProductionForm: DialogFormConfiguration;
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
     {
@@ -140,6 +138,22 @@ export class SupportComponent {
           name: 'TN_is_production',
           placeholder: helptext.is_production_checkbox.placeholder,
           tooltip: helptext.is_production_checkbox.tooltip
+        },
+        {
+          type: 'checkbox',
+          name: 'TN_send_debug',
+          placeholder: 'Send initial debug',
+          tooltip: 'Send initial debug',
+          value: false,
+          relation : [
+            {
+              action : 'SHOW',
+              when : [ {
+                name : 'TN_is_production',
+                value : true,
+              } ]
+            },
+          ]
         }
       ]
     },
@@ -360,6 +374,7 @@ export class SupportComponent {
     'TN_contractdate',
     'TN_addhardware',
     'TN_is_production',
+    'TN_send_debug',
     'name',
     'email',
     'phone',
@@ -450,13 +465,37 @@ export class SupportComponent {
             // TODO: Need updated address before release
             window.open('https://www.ixsystems.com/blog/knowledgebase_category/truenas/')
           }
+        },
+        {
+          id : 'change_prod_status',
+          name: 'Update',
+          function : () => {
+            let prod_status = this.entityEdit.formGroup.controls['TN_is_production'].value;
+            let debug_status = this.entityEdit.formGroup.controls['TN_send_debug'].value;
+            window.localStorage.setItem('registered_production_system', prod_status);
+            if (prod_status) {
+              this.dialogService.confirm('Update Status', 'Send a message to iXsystems Support that this system is in production.',
+                true, 'Send').subscribe((res) => {
+                  this.payload = {
+                    "title": "One more test...System has been just put into production (" + this.serial + ")",
+                    "body": "This system has been just put into production",
+                    "attach_debug": debug_status,
+                    "category": "Installation/Setup",
+                    "criticality": "Inquiry",
+                    "environment": "Production",
+                    "name": "Automatic Alert",
+                    "email": "auto-support@ixsystems.com",
+                    "phone": "-"
+                  };
+                  this.openDialog()
+                })
+            } else {
+              this.snackbar.open(helptext.is_production_dialog.snackbar_message, helptext.is_production_dialog.snackbar_action, { duration: 6000 } );
+            }
+          }
         }
       ]
       this.ws.call('system.info').subscribe((res) => {
-        this.serial = res.system_serial;
-        this.entityEdit.formGroup.controls['TN_is_production'].valueChanges.subscribe((res) => {
-          this.setProductionStatus(res);
-        });
         let now = new Date();
         let then = new Date(res.license.contract_end.$value);
         let daysLeft = this.daysTillExpiration(now, then);
@@ -466,8 +505,9 @@ export class SupportComponent {
         _.find(this.fieldConfig, {name : "TN_custname"}).paraText += res.license.customer_name || '---';
 
         res.license.system_serial_ha ?
-          _.find(this.fieldConfig, {name : "TN_sysserial"}).paraText += res.license.system_serial + ' / ' + res.license.system_serial_ha :
-          _.find(this.fieldConfig, {name : "TN_sysserial"}).paraText += res.license.system_serial;          
+        this.serial = res.license.system_serial + ' / ' + res.license.system_serial_ha :
+          this.serial = res.license.system_serial;
+        _.find(this.fieldConfig, {name : "TN_sysserial"}).paraText += this.serial;
         
         let featureList = res.license.features;
         if (featureList.length === 0) {
@@ -489,77 +529,6 @@ export class SupportComponent {
         _.find(this.fieldConfig, {name : "TN_addhardware"}).paraText += addhw; 
       })
     }
-  }
-
-  setProductionStatus(val: boolean) {
-    let localSerial = this.serial;
-    let localDialog = this.dialog;
-    let localSnackbar = this.snackbar;
-    this.isProductionForm = {
-      title: helptext.is_production_dialog.dialog_title,
-      fieldConfig: [
-        {
-          type: 'paragraph',
-          name: 'instructions',
-        },
-        {
-          type: 'checkbox',
-          name: 'production_status',
-          placeholder: helptext.is_production_dialog.production_status_placeholder,
-          value: val,
-          parent: this,
-          updater: this.updater_checkbox,
-        },
-        {
-          type: 'checkbox',
-          name: 'send_debug',
-          placeholder: helptext.is_production_dialog.debug_placeholder,
-          tooltip: helptext.is_production_dialog.debug_tooltip,
-          value: false, 
-          isHidden: true
-        }
-      ],
-      saveButtonText: helptext.is_production_dialog.save_button,
-      customSubmit: function (entityDialog) {
-        const registered_for_prod = entityDialog.formValue.production_status;
-        const send_debug = entityDialog.formValue.send_debug;
-        window.localStorage.setItem('registered_production_system', registered_for_prod);
-        if (registered_for_prod) {
-          this.payload = {
-            "title": "System has been just put into production (" + localSerial + ")",
-            "body": "This system has been just put into production",
-            "attach_debug": send_debug,
-            "category": "Installation/Setup",
-            "criticality": "Inquiry",
-            "environment": "Production",
-            "name": "Automatic Alert",
-            "email": "auto-support@ixsystems.com",
-            "phone": "-"
-          };
-          const dialogRef = localDialog.open(EntityJobComponent, {data: {"title":"Registering System","CloseOnClickOutside":true}});
-          dialogRef.componentInstance.setCall('support.new_ticket', [this.payload]);
-          dialogRef.componentInstance.submit();
-          entityDialog.dialogRef.close(true);
-          dialogRef.componentInstance.success.subscribe(res=>{
-            dialogRef.close();
-            localSnackbar.open(helptext.is_production_dialog.snackbar_message, helptext.is_production_dialog.snackbar_action, { duration: 6000 } );
-          })
-          dialogRef.componentInstance.failure.subscribe((res) => {
-            dialogRef.componentInstance.setDescription(res.error);
-          });
-        } else {
-          entityDialog.dialogRef.close(true);
-        }
-      }
-    }
-    this.dialogService.dialogForm(this.isProductionForm);
-  }
-
-  updater_checkbox(parent: any) {
-    let field = _.find(parent.isProductionForm.fieldConfig, {name : "send_debug"});
-    let status =field['isHidden'];
-    status = !status;
-    field['isHidden'] = status;
   }
 
   getTrueNASImage(sys_product) {
@@ -636,7 +605,7 @@ export class SupportComponent {
       if (res.result) {
         url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
       }
-      if (res.method === 'support.new_ticket' && this.subs.length > 0) {
+      if (res.method === 'support.new_ticket' && this.subs && this.subs.length > 0) {
         this.subs.forEach((item) => {
           const formData: FormData = new FormData();
           if (this.is_freenas) {
