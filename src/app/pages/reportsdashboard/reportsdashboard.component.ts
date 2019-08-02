@@ -57,6 +57,20 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
   constructor(private erdService: ErdService, 
     public translate: TranslateService, private router:Router, private core:CoreService, 
     protected ws: WebSocketService) {
+
+    // Testing Worker
+    if(typeof Worker !== 'undefined'){
+      //const worker = new Worker('./reports-utils.worker'); 
+      const worker = new Worker('./reports-utils.worker',{ type: 'module' }); 
+      
+      worker.onmessage = ({data}) => {
+        let evt = data;
+        console.log(evt);
+      };
+      worker.postMessage({name:'SayHello', data:'Hello', sender: 'chartID'})
+      //worker.postMessage('message');
+    }
+    // END Worker test
   }
 
   diskReportBuilderSetup(){
