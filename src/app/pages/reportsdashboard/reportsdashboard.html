@@ -15,8 +15,8 @@
       <ng-container *ngFor="let key of visibleReports">
         <ng-container *ngIf="key < activeReports.length">
           <!-- Reports without identifiers -->
-          <report *ngIf="activeReports[key].identifiers.length > 0" [report]="activeReports[key]" [identifier]="activeReports[key].identifiers[0]"></report>
-          <report *ngIf="activeReports[key].identifiers.length == 0" [report]="activeReports[key]"></report>
+          <report *ngIf="activeReports[key].identifiers.length > 0 && reportsUtils" [report]="activeReports[key]" [utils]="reportsUtils" [identifier]="activeReports[key].identifiers[0]"></report>
+          <report *ngIf="activeReports[key].identifiers.length == 0 && reportsUtils" [report]="activeReports[key]" [utils]="reportsUtils"></report>
         </ng-container>
       </ng-container>
 

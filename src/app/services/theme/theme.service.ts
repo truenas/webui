@@ -57,7 +57,7 @@ export class ThemeService {
       logoPath:'assets/images/light-logo.svg',
       logoTextPath:'light-logo-text.svg',
       favorite:false,
-      accentColors:['violet', 'orange', 'cyan', 'magenta', 'red', 'yellow', 'blue', 'green'],
+      accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
       //secondary:"var(--bg1)",
       accent:"var(--cyan)",

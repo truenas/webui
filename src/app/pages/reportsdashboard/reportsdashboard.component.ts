@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy, AfterViewInit, EventEmitter, Output, View
 import { Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 import * as _ from 'lodash';
-//import {LineChartService, ChartConfigData, HandleChartConfigDataFunc} from '../../components/common/lineChart/lineChart.service';
 import { Subject } from 'rxjs'; 
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -21,13 +20,16 @@ import {
   WebSocketService
 } from '../../services/';
 
-/*export interface Report {
-  identifiers?: string[];
-  name: string;
-  title: string;
-  vertical_label: string;
-  isRendered?: boolean[];
-}*/
+export interface Command {
+  command: string;
+  input: any;
+  options?: CommandOption[];
+}
+
+export interface CommandOption {
+  flag: string;
+  value?: any;
+}
 
 interface Tab {
   label: string;
@@ -42,6 +44,8 @@ interface Tab {
 })
 export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleChartConfigDataFunc,*/ AfterViewInit {
 
+  public reportsUtils: Worker; //= new Worker('./reports-utils.worker',{ type: 'module' }); 
+      
   public isFooterConsoleOpen;
 
   public diskReports: Report[];
@@ -60,15 +64,32 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
 
     // Testing Worker
     if(typeof Worker !== 'undefined'){
-      //const worker = new Worker('./reports-utils.worker'); 
-      const worker = new Worker('./reports-utils.worker',{ type: 'module' }); 
+      //@ts-ignore
+      this.reportsUtils = new Worker('./reports-utils.worker',{ type: 'module' }); 
       
-      worker.onmessage = ({data}) => {
+      this.reportsUtils.onmessage = ({data}) => {
         let evt = data;
         console.log(evt);
       };
-      worker.postMessage({name:'SayHello', data:'Hello', sender: 'chartID'})
-      //worker.postMessage('message');
+
+      //this.reportUtils = worker;
+
+      //worker.postMessage({name:'SayHello', data:'Hello', sender: 'chartID'})
+
+      let pipeLine: Command[] = [
+        {
+          command: 'maxDecimals',
+          input: 3.145679156,// Use 'pipe' to use the output of previous command as input
+          //options: [{flag:'max', value: 3}]
+        }//,
+        /*{
+          command: 'toLowerCase',
+          input: '|' // Use 'pipe' to use the output of previous command as input
+        }*/
+      ]
+        
+      this.reportsUtils.postMessage({name:'ProcessCommands', data: pipeLine, sender: 'chartID'})
+      
     }
     // END Worker test
   }

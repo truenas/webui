@@ -66,6 +66,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   // Labels
   @Input() localControls?: boolean = true;; 
   @Input() report: Report;
+  @Input() utils: Worker;
   @Input() identifier?: string;
   @ViewChild(LineChartComponent, {static: false}) lineChart:LineChartComponent;
 
@@ -291,7 +292,18 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     //console.log([[params], timeFrame]);
 
     this.ws.call('reporting.get_data', [[params],timeFrame]).subscribe((res) =>{
-      this.data = res[0];
+      if(this.report.name == "cputemp"){
+        console.log(res);
+        let command = [{
+          command: 'avgCpuTempReport',
+          input: res[0]
+        }]
+
+        this.utils.postMessage({name:'ProcessCommands', data: command, sender: this.chartId});
+        
+      } else {
+        this.data = res[0];
+      }
     });
   }
 
