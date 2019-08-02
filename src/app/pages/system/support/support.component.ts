@@ -68,11 +68,6 @@ export class SupportComponent {
         },
         {
           type: 'paragraph',
-          name: 'TN_features',
-          paraText: '<h4>Features: </h4>'
-        },
-        {
-          type: 'paragraph',
           name: 'TN_contracttype',
           paraText: '<h4>Contract Type: </h4>'
         },
@@ -80,6 +75,28 @@ export class SupportComponent {
           type: 'paragraph',
           name: 'TN_contractdate',
           paraText: '<h4>Expiration Date: </h4>'
+        },
+        {
+          type: 'checkbox',
+          name: 'TN_is_production',
+          placeholder: helptext.is_production_checkbox.placeholder,
+          tooltip: helptext.is_production_checkbox.tooltip
+        },
+        {
+          type: 'checkbox',
+          name: 'TN_send_debug',
+          placeholder: 'Send initial debug',
+          tooltip: 'Send initial debug',
+          value: false,
+          relation : [
+            {
+              action : 'SHOW',
+              when : [ {
+                name : 'TN_is_production',
+                value : true,
+              } ]
+            },
+          ]
         },
         {
           type: 'paragraph',
@@ -130,31 +147,14 @@ export class SupportComponent {
         },
         {
           type: 'paragraph',
+          name: 'TN_features',
+          paraText: '<h4>Features: </h4>'
+        },
+        {
+          type: 'paragraph',
           name: 'TN_addhardware',
           paraText: '<h4>Additional Hardware: </h4>'
         },
-        {
-          type: 'checkbox',
-          name: 'TN_is_production',
-          placeholder: helptext.is_production_checkbox.placeholder,
-          tooltip: helptext.is_production_checkbox.tooltip
-        },
-        {
-          type: 'checkbox',
-          name: 'TN_send_debug',
-          placeholder: 'Send initial debug',
-          tooltip: 'Send initial debug',
-          value: false,
-          relation : [
-            {
-              action : 'SHOW',
-              when : [ {
-                name : 'TN_is_production',
-                value : true,
-              } ]
-            },
-          ]
-        }
       ]
     },
     {
@@ -393,6 +393,7 @@ export class SupportComponent {
               {}
 
   afterInit(entityEdit: any) {
+    // temp - waiting on a middleware API to register production status
     window.localStorage.registered_production_system === 'true' ? this.production = true : this.production = false;
     this.entityEdit = entityEdit;
     this.category = _.find(this.fieldConfig, {name: "category"});

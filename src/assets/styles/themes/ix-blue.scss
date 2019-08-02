@@ -1265,6 +1265,38 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       margin-top: -54px;
       width: 50%
     }
+
+    a {
+      text-decoration: underline;
+    }
+
+    #TN_is_production {
+      margin-top: 10px;
+    }
+  
+    #cust_button_Update {
+      top: -435px;
+    }
+  
+    #TN_is_production {
+      margin-bottom: unset;
+    }
+  
+    form {
+      min-width: 860px;
+    }
+  
+    .mat-divider {
+      position: relative;
+      top: 30px;
+      margin-bottom: 25px;
+    }
+  }
+
+  @media (max-width: 599px) {
+    app-support #cust_button_Update {
+      top: -1135px;
+    }
   }
 
   entity-form form-combobox mat-form-field {
@@ -1340,11 +1372,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     border-radius:4px;
   }
 
-
-  app-support a {
-    text-decoration: underline;
-  }
-
   app-entity-dialog #pool_processes p {
     max-height: 170px;
     overflow-y: auto; 
@@ -1381,24 +1408,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
   iscsi .mat-tab-links {
     flex-wrap: wrap;
-  }
-
-  app-support #TN_is_production {
-    margin-top: 10px;
-  }
-
-  app-support #cust_button_Update {
-    position: absolute;
-    left: 480px;
-    top: 260px;
-  }
-
-  app-support #TN_is_production {
-    margin-bottom: unset;
-  }
-
-  app-support form {
-    min-width: 860px;
   }
 
  } // end of ix theme
