@@ -273,7 +273,10 @@ export class InterfacesListComponent implements OnDestroy {
       }
     )
   }*/
-
+  goToHA() {
+    this.router.navigate(new Array('/').concat('system', 'failover'));
+  }
+  
   ngOnDestroy() {
     this.checkChangesSubscription.unsubscribe();
   }
