@@ -13,24 +13,6 @@ import Chart from 'chart.js';
 import 'chartjs-plugin-crosshair';
 import * as simplify from 'simplify-js';
 
-// Deprecate this
-/*export interface Analytics {
-  label:string;
-  min?:number;
-  max?:number;
-  avg?:number;
-  last?:number;
-  total?:number;
-}
-
-// Deprecate this
-interface TimeData {
-  start: number;
-  end: number;
-  step: number;
-  legend?: string;
-}*/
-
 // For Chart.js
 interface DataSet {
   label: string;
@@ -42,10 +24,6 @@ interface DataSet {
 
 @Component({
   selector: 'linechart', 
-  /*template: `<div id="{{controlUid}}" #wrapper style="height:180px; max-height:180px;">
-   <canvas *ngIf="library == 'chart.js'"></canvas>
-   <div class="legend" *ngIf="library == 'dygraph'"></div>
-     </div>`,*/
      templateUrl:'./lineChart.component.html',
      styleUrls:['./lineChart.component.css']
 })
@@ -119,66 +97,59 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
     let fg2RGB = this.themeService.hexToRGB(this.themeService.currentTheme().fg2);
     let gridLineColor = 'rgba(' + fg2RGB.rgb[0] + ', ' + fg2RGB.rgb[1]+ ', ' + fg2RGB.rgb[2]+ ', 0.25)'
 
-      let options = {
-        /*drawHighlightPointCallback: (g, seriesName, canvasContext, cx, cy, color, pointSize) => {
-         },*/
-         //plotter: smoothPlotter,
-         drawPoints:false,// Must be disabled for smoothPlotter
-         pointSize:1,
-         highlightCircleSize:4,
-         strokeWidth:1,
-         colors: this.colorPattern,
-         labels: labels,// time axis
-         ylabel: this.yLabelPrefix + this.labelY,
-         gridLineColor: gridLineColor,
-         showLabelsOnHighlight: false,
-         labelsSeparateLines: true,
-         axes: {
-           y:{
-             yRangePad: 24,
-             axisLabelFormatter: ( numero, granularity, opts, dygraph  ) => {
-               let test = this.formatLabelValue(numero, this.inferUnits(this.labelY), true,1);
-               //console.log(dygraph);
-               return test[0];
-             },
-           }
-         },
-         legendFormatter: (data) => {
-           let clone = Object.assign({}, data);
-           clone.series.forEach((item, index) => {
-             if(!item.y){ return; }
-             let formatted = this.formatLabelValue(item.y, this.inferUnits(this.labelY), true, 1);
-             clone.series[index].yHTML = formatted[0].toString();
-          
-           });
-           this.legendEvents.next(clone);
-           return "";
-         },
-         series: () => {
-           let s = {};
-           this.data.legend.forEach((item, index) => {
-             s[item] = {plotter: smoothPlotter};
-           });
+    let options = {
+       drawPoints:false,// Must be disabled for smoothPlotter
+       pointSize:1,
+       highlightCircleSize:4,
+       strokeWidth:1,
+       colors: this.colorPattern,
+       labels: labels,// time axis
+       ylabel: this.yLabelPrefix + this.labelY,
+       gridLineColor: gridLineColor,
+       showLabelsOnHighlight: false,
+       labelsSeparateLines: true,
+       axes: {
+         y:{
+           yRangePad: 24,
+           axisLabelFormatter: ( numero, granularity, opts, dygraph  ) => {
+             let test = this.formatLabelValue(numero, this.inferUnits(this.labelY), true,1);
+             return test[0];
+           },
+         }
+       },
+       legendFormatter: (data) => {
+         let clone = Object.assign({}, data);
+         clone.series.forEach((item, index) => {
+           if(!item.y){ return; }
+           let formatted = this.formatLabelValue(item.y, this.inferUnits(this.labelY), true, 1);
+           clone.series[index].yHTML = formatted[0].toString();
+        
+         });
+         this.legendEvents.next(clone);
+         return "";
+       },
+       series: () => {
+         let s = {};
+         this.data.legend.forEach((item, index) => {
+           s[item] = {plotter: smoothPlotter};
+         });
 
-           return s;
-         },
-         drawCallback: (dygraph, is_initial) =>{
-           if(dygraph.axes_){
-            let numero = dygraph.axes_[0].maxyval;
-            let test = this.formatLabelValue(numero, this.inferUnits(this.labelY));
-            if(test[1]){
-              //console.log(dygraph);
-              this.yLabelPrefix = test[1];
-            } else {
-              this.yLabelPrefix = '';
-            }
-           } else {
-            console.warn("axes not found");
-            //console.warn(dygraph);
-           }
+         return s;
+       },
+       drawCallback: (dygraph, is_initial) =>{
+         if(dygraph.axes_){
+          let numero = dygraph.axes_[0].maxyval;
+          let test = this.formatLabelValue(numero, this.inferUnits(this.labelY));
+          if(test[1]){
+            this.yLabelPrefix = test[1];
+          } else {
+            this.yLabelPrefix = '';
+          }
+         } else {
+          console.warn("axes not found");
          }
        }
-      //console.log(this.data);
+     }
       this.chart = new Dygraph(this.el.nativeElement, data, options);
   }
 
@@ -193,7 +164,6 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
 
       let data = {
         labels: this.makeTimeAxis(this.data),//this.data.legend,
-        //labels: this.makeTimeAxis(this.data, ds[0].data),//this.data.legend,
         datasets: ds ,
       }
 
@@ -212,8 +182,6 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
             },
             callbacks: {
               afterZoom: (start, end) => {
-                //console.log("START: " + start + ", END: " + end);
-                console.log(this.title);
               }
             }
           }
@@ -252,13 +220,6 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
               display: false,
               labelString: 'Date'
             },
-            /*time: {
-             min: this.data.start,
-             max: this.data.end
-            },
-            ticks: {
-              source: 'auto'
-            }*/
           }],
           yAxes: [{
             ticks: {
@@ -290,14 +251,11 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
 
   makeColumn(data:ReportData, legendKey): number[]{
     let result = [];
-    //let legend = Object.assign([],data.legend);
 
-    //data.legend.forEach((item, index) => {
     for(let i = 0; i < data.data.length; i++){
       const value = data.data[i][legendKey];
       result.push(value);
     }
-    //});
 
     return result;
   }
@@ -318,27 +276,11 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
         borderWidth: 1
       }
 
-      /*for(let i = 0; i < data.data.length; i++){
-       const value = data.data[i][index];
-       ds.data.push(value);
-      }*/
-
-      //ds.data = this.decimate(ds.data);
-
       datasets.push(ds);
     });
 
     return datasets
   }
-
-  /*decimate(data){
-   let points = data.map((item, index) => {
-     return {x: index, y: item};
-   });
-
-   let result =  simplify(points, 0.05 , true).map((v) => v.y);
-   return result;
-  }*/
 
   protected makeTimeAxis(rd:ReportData, data?: number[]):any[]{
     if(!data){ data = rd.data; }
@@ -488,11 +430,6 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
 
   // LifeCycle Hooks
   ngOnInit() {
-    /*this.core.register({ observerClass:this, eventName:"LineChartData:" + this.title }).subscribe((evt:CoreEvent)=>{ 
-     this.data = evt.data.dataObj;
-     this.applyHandledData(evt.data.columns, evt.data.linechartData, evt.data.legendLabels);
-     this.legendAnalytics.next(evt.data.legendAnalytics)
-    });*/
 
     this.core.register({ observerClass:this, eventName:"ThemeData" }).subscribe((evt:CoreEvent)=>{ 
       this.colorPattern = this.processThemeColors(evt.data);
@@ -518,8 +455,6 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
 
   ngOnChanges(changes:SimpleChanges){
     if(changes.data){
-      //console.log(this.data);
-      //if(changes.data.currentValue.name == 'cpu'){console.log(changes.data.currentValue);}
       if(this.chart){
         this.render();
       } else {
@@ -530,6 +465,9 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
 
   ngOnDestroy(){
     this.core.unregister({observerClass:this});
+    if(this.library == 'dygraph'){
+      this.chart.destroy();
+    }
   }
 
 }

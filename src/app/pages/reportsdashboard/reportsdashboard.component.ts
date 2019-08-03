@@ -152,6 +152,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
 
   ngOnDestroy() {
     this.core.unregister({observerClass:this});
+    this.reportsUtils.terminate();
   }
 
   ngAfterViewInit(): void {
