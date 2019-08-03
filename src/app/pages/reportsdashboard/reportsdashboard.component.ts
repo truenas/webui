@@ -21,14 +21,9 @@ import {
 } from '../../services/';
 
 export interface Command {
-  command: string;
+  command: string; // Use '|' or '--pipe' to use the output of previous command as input
   input: any;
-  options?: CommandOption[];
-}
-
-export interface CommandOption {
-  flag: string;
-  value?: any;
+  options?: any[]; // Function parameters
 }
 
 interface Tab {
@@ -79,8 +74,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
       let pipeLine: Command[] = [
         {
           command: 'maxDecimals',
-          input: 3.145679156,// Use 'pipe' to use the output of previous command as input
-          //options: [{flag:'max', value: 3}]
+          input: 3.145679156,
+          options: [3]
         }//,
         /*{
           command: 'toLowerCase',

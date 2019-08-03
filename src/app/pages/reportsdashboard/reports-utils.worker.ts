@@ -5,8 +5,10 @@
 // and add it to our commands below
 const debug:boolean = true;
 
-function maxDecimals(input, max?){
-  if(!max){ max = 2; }
+const maxDecimals = (input, max?) => {
+  if(!max){ 
+    max = 2; 
+  }
   const str = input.toString().split(".");
   if(!str[1]){
     console.warn("not a float...")
@@ -14,7 +16,7 @@ function maxDecimals(input, max?){
     return input;
   }
   const decimals = str[1].length;
-  const output = decimals > max ? input.toFixed(2): input;
+  const output = decimals > max ? input.toFixed(max): input;
   return parseFloat(output);
 }
 
@@ -81,8 +83,8 @@ const commands = {
     let output = arrayAvg(input);
     return output;
   },
-  maxDecimals: (input) => {
-    let output = maxDecimals(input);
+  maxDecimals: (input, options?) => {
+    let output = options ? maxDecimals(input, ...options) : maxDecimals(input);
     return output;
   },
 }
@@ -92,7 +94,7 @@ function processCommands(list){
   list.forEach((item, index) => {
     console.log(item);
     let input = item.input == '--pipe' || item.input == '|' ? output : item.input;
-    output = commands[item.command](input);
+    output = item.options ? commands[item.command](input, item.options) : commands[item.command](input);
 
   });
 
