@@ -73,7 +73,7 @@ export class EntityUtils {
       for (let i = 0; i < res.extra.length; i++) {
         const field = res.extra[i][0].split('.').pop();
         const error = res.extra[i][1];
-        const fc = _.find(entity.fieldConfig, {'name' : field});
+        const fc = _.find(entity.fieldConfig, {'name' : field}) || entity.getErrorField(field) || undefined;
         if (fc && !fc['isHidden']) {
           const element = document.getElementById(field);
           if (element) {
