@@ -193,7 +193,9 @@ export class AlertServiceComponent {
           name: "type",
           value: 'HipChat',
         }]
-      }]
+      }],
+      required: true,
+      validation: [Validators.required],
     }, {
       type: 'input',
       name: 'HipChat-cluster_name',
@@ -229,7 +231,9 @@ export class AlertServiceComponent {
           name: "type",
           value: 'HipChat',
         }]
-      }]
+      }],
+      required: true,
+      validation: [Validators.required],
     }, {
       type: 'input',
       name: 'HipChat-auth_token',
@@ -241,7 +245,9 @@ export class AlertServiceComponent {
           name: "type",
           value: 'HipChat',
         }]
-      }]
+      }],
+      required: true,
+      validation: [Validators.required],
     },
     // InfluxDB
     {
@@ -257,7 +263,9 @@ export class AlertServiceComponent {
           name: "type",
           value: 'InfluxDB',
         }]
-      }]
+      }],
+      required: true,
+      validation: [Validators.required],
     }, {
       type: 'input',
       name: 'InfluxDB-username',
@@ -269,7 +277,9 @@ export class AlertServiceComponent {
           name: "type",
           value: 'InfluxDB',
         }]
-      }]
+      }],
+      required: true,
+      validation: [Validators.required],
     }, {
       type: 'input',
       name: 'InfluxDB-password',
@@ -283,7 +293,9 @@ export class AlertServiceComponent {
           name: "type",
           value: 'InfluxDB',
         }]
-      }]
+      }],
+      required: true,
+      validation: [Validators.required],
     }, {
       type: 'input',
       name: 'InfluxDB-database',
@@ -295,7 +307,9 @@ export class AlertServiceComponent {
           name: "type",
           value: 'InfluxDB',
         }]
-      }]
+      }],
+      required: true,
+      validation: [Validators.required],
     }, {
       type: 'input',
       name: 'InfluxDB-series_name',
@@ -307,7 +321,9 @@ export class AlertServiceComponent {
           name: "type",
           value: 'InfluxDB',
         }]
-      }]
+      }],
+      required: true,
+      validation: [Validators.required],
     },
     // Mattermost
     {
@@ -338,7 +354,9 @@ export class AlertServiceComponent {
           name: "type",
           value: 'Mattermost',
         }]
-      }]
+      }],
+      required: true,
+      validation: [Validators.required],
     }, {
       type: 'input',
       name: 'Mattermost-username',
@@ -350,7 +368,9 @@ export class AlertServiceComponent {
           name: "type",
           value: 'Mattermost',
         }]
-      }]
+      }],
+      required: true,
+      validation: [Validators.required],
     }, {
       type: 'input',
       inputType: 'password',
@@ -394,7 +414,9 @@ export class AlertServiceComponent {
           name: "type",
           value: 'Mattermost',
         }]
-      }]
+      }],
+      required: true,
+      validation: [Validators.required],
     },
     // OpsGenie
     {
@@ -430,7 +452,9 @@ export class AlertServiceComponent {
           name: "type",
           value: 'OpsGenie',
         }]
-      }]
+      }],
+      required: true,
+      validation: [Validators.required],
     }, {
       type: 'input',
       name: 'OpsGenie-api_url',
@@ -459,7 +483,9 @@ export class AlertServiceComponent {
           name: "type",
           value: 'PagerDuty',
         }]
-      }]
+      }],
+      required: true,
+      validation: [Validators.required],
     }, {
       type: 'input',
       name: 'PagerDuty-client_name',
@@ -471,7 +497,9 @@ export class AlertServiceComponent {
           name: "type",
           value: 'PagerDuty',
         }]
-      }]
+      }],
+      required: true,
+      validation: [Validators.required],
     },
     // Slack
     {
@@ -500,7 +528,9 @@ export class AlertServiceComponent {
           name: "type",
           value: 'Slack',
         }]
-      }]
+      }],
+      required: true,
+      validation: [Validators.required],
     }, {
       type: 'input',
       name: 'Slack-channel',
@@ -554,7 +584,9 @@ export class AlertServiceComponent {
           name: "type",
           value: 'VictorOps',
         }]
-      }]
+      }],
+      required: true,
+      validation: [Validators.required],
     }, {
       type: 'input',
       name: 'VictorOps-routing_key',
@@ -568,7 +600,9 @@ export class AlertServiceComponent {
           name: "type",
           value: 'VictorOps',
         }]
-      }]
+      }],
+      required: true,
+      validation: [Validators.required],
     }
   ];
 
