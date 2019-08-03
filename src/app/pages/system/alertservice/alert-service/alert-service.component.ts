@@ -570,6 +570,216 @@ export class AlertServiceComponent {
         }]
       }]
     },
+    // SNMPTrap
+    {
+      type: 'input',
+      name: 'SNMPTrap-host',
+      placeholder: 'Hostname',
+      tooltip: '',
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'SNMPTrap',
+        }]
+      }],
+      required: true,
+      validation: [Validators.required],
+    },
+    {
+      type: 'input',
+      inputType: 'number',
+      name: 'SNMPTrap-port',
+      placeholder: 'Port',
+      tooltip: '',
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'SNMPTrap',
+        }]
+      }],
+      value: 162,
+    },
+    {
+      type: 'checkbox',
+      name: 'SNMPTrap-v3',
+      placeholder: 'SNMPv3 Security Model',
+      tooltip: '',
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'SNMPTrap',
+        }]
+      }],
+      value: false,
+    },
+    {
+      type: 'input',
+      name: 'SNMPTrap-v3_username',
+      placeholder: 'Username',
+      tooltip: '',
+      relation: [{
+        action: "SHOW",
+        connective: 'AND',
+        when: [{
+          name: "type",
+          value: 'SNMPTrap',
+        }, {
+          name: "SNMPTrap-v3",
+          value: true,
+        }]
+      }]
+    },
+    {
+      type: 'input',
+      name: 'SNMPTrap-v3_authkey',
+      placeholder: 'Secret authentication key',
+      tooltip: '',
+      relation: [{
+        action: "SHOW",
+        connective: 'AND',
+        when: [{
+          name: "type",
+          value: 'SNMPTrap',
+        }, {
+          name: "SNMPTrap-v3",
+          value: true,
+        }]
+      }]
+    },
+    {
+      type: 'input',
+      name: 'SNMPTrap-v3_privkey',
+      placeholder: 'Secret encryption key',
+      tooltip: '',
+      relation: [{
+        action: "SHOW",
+        connective: 'AND',
+        when: [{
+          name: "type",
+          value: 'SNMPTrap',
+        }, {
+          name: "SNMPTrap-v3",
+          value: true,
+        }]
+      }]
+    },
+    {
+      type: 'select',
+      name: 'SNMPTrap-v3_authprotocol',
+      placeholder: 'Authentication protocol',
+      tooltip: '',
+      options: [
+        {
+          label: 'Disabled',
+          value: '',
+        },
+        {
+          label: 'MD5',
+          value: 'MD5',
+        },
+        {
+          label: 'SHA',
+          value: 'SHA',
+        },
+        {
+          label: 'HMAC128SHA224',
+          value: '128SHA224',
+        },
+        {
+          label: 'HMAC192SHA256',
+          value: '192SHA256',
+        },
+        {
+          label: 'HMAC256SHA384',
+          value: '256SHA384',
+        },
+        {
+          label: 'HMAC384SHA512',
+          value: '384SHA512',
+        }
+      ],
+      value: '',
+      relation: [{
+        action: "SHOW",
+        connective: 'AND',
+        when: [{
+          name: "type",
+          value: 'SNMPTrap',
+        }, {
+          name: "SNMPTrap-v3",
+          value: true,
+        }]
+      }],
+    },
+    {
+      type: 'select',
+      name: 'SNMPTrap-v3_privprotocol',
+      placeholder: 'Encryption protocol',
+      tooltip: '',
+      options: [
+        {
+          label: 'Disabled',
+          value: '',
+        },
+        {
+          label: 'DES',
+          value: 'DES',
+        },
+        {
+          label: '3DES-EDE',
+          value: '3DESEDE',
+        },
+        {
+          label: 'CFB128-AES-128',
+          value: 'AESCFB128',
+        },
+        {
+          label: 'CFB128-AES-192',
+          value: 'AESCFB192',
+        },
+        {
+          label: 'CFB128-AES-256',
+          value: 'AESCFB256',
+        },
+        {
+          label: 'CFB128-AES-192 Blumenthal',
+          value: 'AESBLUMENTHALCFB192',
+        },
+        {
+          label: 'CFB128-AES-256 Blumenthal',
+          value: 'AESBLUMENTHALCFB256',
+        }
+      ],
+      value: '',
+      relation: [{
+        action: "SHOW",
+        connective: 'AND',
+        when: [{
+          name: "type",
+          value: 'SNMPTrap',
+        }, {
+          name: "SNMPTrap-v3",
+          value: true,
+        }]
+      }]
+    },
+    {
+      type: 'input',
+      name: 'SNMPTrap-community',
+      placeholder: 'SNMP Community',
+      tooltip: '',
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'SNMPTrap',
+        }]
+      }],
+      value: 'public',
+    },
     // VictorOps
     {
       type: 'input',
@@ -657,6 +867,9 @@ export class AlertServiceComponent {
     for (const i in entityForm.wsResponseIdx) {
       const field_name = type + '-' + i;
       if (entityForm.formGroup.controls[field_name]) {
+        if ((i === 'v3_authprotocol' || i === 'v3_privprotocol') && entityForm.wsResponseIdx[i] === null) {
+          entityForm.wsResponseIdx[i] = '';
+        }
         entityForm.formGroup.controls[field_name].setValue(entityForm.wsResponseIdx[i]);
       }
     }
@@ -669,6 +882,9 @@ export class AlertServiceComponent {
       if (i === 'name' || i === 'type' || i === 'enabled' || i === 'level') {
         payload[i] = data[i];
       } else {
+        if (data[i] === '' && (i === 'SNMPTrap-v3_authprotocol' || i === 'SNMPTrap-v3_privprotocol')) {
+          data[i] = null;
+        }
         payload['attributes'][i.split('-')[1]] = data[i];
       }
     }
