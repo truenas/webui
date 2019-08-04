@@ -32,7 +32,9 @@
           <!-- Chart -->
           <div class="chart-wrapper" fxFlex="100">
             <linechart 
-              *ngIf="data"
+              *ngIf="data chartColors"
+              [chartId]="chartId"
+              [chartColors]="chartColors"
               [data]="data"
               [title]="report.title"
               [labelY]="report.vertical_label"
@@ -54,8 +56,8 @@
           <!-- Time Stamp -->
           <div class="legend-timestamp">
             <div >
-              <span *ngIf="data && lineChart && lineChart.legendEvents | async as timestamp">
-                <h4 *ngIf="timestamp"><strong>Time:</strong> <span style="font-weight:normal;">&nbsp;&nbsp;{{timestamp.xHTML}}</span></h4>
+              <span *ngIf="data && legendData">
+                <h4 *ngIf="legendData.xHTML"><strong>Time:</strong> <span style="font-weight:normal;">&nbsp;&nbsp;{{legendData.xHTML}}</span></h4>
               </span>
             </div>
           </div>
@@ -63,16 +65,21 @@
         </mat-card-content>
           <mat-card-footer *ngIf="data && data.legend">
             <section class="legend" fxLayout="row wrap" fxLayoutAlign="none"  >
-            <div class="legend-group" fxFlex="calc(50% - 32px)" fxLayout="row wrap" fxLayoutAlign="start start" fxLayoutGap="16px" *ngFor="let legendItem of data.legend; let i=index">
+            <div class="legend-group" 
+              fxFlex="calc(50% - 32px)" fxLayout="row wrap" fxLayoutAlign="start start" fxLayoutGap="16px" 
+              *ngFor="let legendItem of data.legend; let i=index">
 
                 <div fxFlex="200px" class="legend-label" >
                   <!-- Legend Label -->
-                  <div *ngIf="lineChart && lineChart.colorPattern && lineChart.legendEvents && legendItem" class="swatch" [style.background-color]="lineChart.colorPattern[i]" ></div>
+                  <div *ngIf="chartColors && legendItem" 
+                    class="swatch" 
+                    [style.background-color]="chartColors[i]" >
+                    </div>
                   <span class="legend-item"><strong>{{legendItem}}</strong></span> 
 
-                  <span *ngIf="lineChart && lineChart.legendEvents | async as tooltip">
+                  <span *ngIf="legendData && legendData.series">
                     <span  class="tooltip-value" >
-                       : <span style="font-weight:normal;">{{tooltip.series[i].yHTML}}</span>
+                       : <span style="font-weight:normal;">{{legendData.series[i].yHTML}}</span>
                     </span>
                   </span>
                 </div>

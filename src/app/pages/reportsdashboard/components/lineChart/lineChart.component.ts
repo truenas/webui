@@ -29,6 +29,8 @@ interface DataSet {
 })
 export class LineChartComponent extends ViewComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   @ViewChild('wrapper', {static: true}) el: ElementRef;
+  @Input() chartId: string;
+  @Input() chartColors: string[];
   @Input() data: ReportData;
   @Input() report: Report;
   @Input() title: string;
@@ -57,7 +59,16 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
   public legendLabels: BehaviorSubject<any>;
   public legendAnalytics: BehaviorSubject<any>;
 
-  public colorPattern = ["#2196f3", "#009688", "#ffc107", "#9c27b0", "#607d8b", "#00bcd4", "#8bc34a", "#ffeb3b", "#e91e63", "#3f51b5"];
+  public _colorPattern: string[] = ["#2196f3", "#009688", "#ffc107", "#9c27b0", "#607d8b", "#00bcd4", "#8bc34a", "#ffeb3b", "#e91e63", "#3f51b5"];
+  get colorPattern(){
+    //return this.chartColors ? this.chartColors : this._colorPattern;
+    return this.chartColors;
+  }
+
+  set colorPattern(value){
+    this._colorPattern = value;
+  }
+
   public theme: Theme;
   public timeFormat: string = "%H:%M";
   public culling:number = 6;
@@ -66,7 +77,7 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
   constructor(private core:CoreService, public themeService:ThemeService) {
     super();
     this.controlUid = "chart_" + UUID.UUID();
-    this.legendEvents = new BehaviorSubject(false);
+    this.legendEvents = new BehaviorSubject({xHTML:''});
     this.legendLabels = new BehaviorSubject([]);
     this.legendAnalytics = new BehaviorSubject([]);
   } 
@@ -125,7 +136,8 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
            clone.series[index].yHTML = formatted[0].toString();
         
          });
-         this.legendEvents.next(clone);
+         //this.legendEvents.next(clone);
+         this.core.emit({name: "LegendEvent-" + this.chartId,data:clone, sender: this})
          return "";
        },
        series: () => {
@@ -431,8 +443,10 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
   // LifeCycle Hooks
   ngOnInit() {
 
-    this.core.register({ observerClass:this, eventName:"ThemeData" }).subscribe((evt:CoreEvent)=>{ 
-      this.colorPattern = this.processThemeColors(evt.data);
+    /*this.core.register({ observerClass:this, eventName:"ThemeData" }).subscribe((evt:CoreEvent)=>{ 
+      if(!this.chartColors){
+        this.colorPattern = this.processThemeColors(evt.data);
+      }
 
       if(this.data || this.linechartData){ 
         this.render();
@@ -440,13 +454,16 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
     });
 
     this.core.register({ observerClass:this, eventName:"ThemeChanged" }).subscribe((evt:CoreEvent)=>{ 
-      this.colorPattern = this.processThemeColors(evt.data);
+      if(!this.chartColors){
+        this.colorPattern = this.processThemeColors(evt.data);
+      }
+
       if(this.data || this.linechartData){ 
         this.render();
       }
     });
 
-    this.core.emit({name:"ThemeDataRequest"});
+    this.core.emit({name:"ThemeDataRequest"});*/
   }
 
   ngAfterViewInit() {
@@ -454,6 +471,10 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
   }
 
   ngOnChanges(changes:SimpleChanges){
+    if(changes.data){
+      this.render();
+    }
+
     if(changes.data){
       if(this.chart){
         this.render();

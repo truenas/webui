@@ -70,6 +70,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   @Input() identifier?: string;
   @ViewChild(LineChartComponent, {static: false}) lineChart:LineChartComponent;
 
+
   public data: ReportData;
   
   get reportTitle(){
@@ -81,6 +82,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   }
 
   public legendLabels: Subject<any> = new Subject();
+  public legendData: any = {};
   public subtitle:string = T("% of all cores");
   public altTitle: string = '';
   public altSubtitle: string = '';
@@ -126,6 +128,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   // Chart Options
   public showLegendValues:boolean = false;
   public chartId = "chart-" + UUID.UUID();
+  public chartColors: string[];
 
   public startTime;
   public endTime;
@@ -139,6 +142,20 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     this.core.register({observerClass:this, eventName:"ReportData-" + this.chartId}).subscribe((evt:CoreEvent) => {
       this.data = evt.data;
     });
+    
+    this.core.register({observerClass:this, eventName:"LegendEvent-" + this.chartId}).subscribe((evt:CoreEvent) => {
+      this.legendData = evt.data;
+    });
+
+    this.core.register({ observerClass:this, eventName:"ThemeData" }).subscribe((evt:CoreEvent)=>{ 
+      this.chartColors = this.processThemeColors(evt.data);
+    });
+
+    this.core.register({ observerClass:this, eventName:"ThemeChanged" }).subscribe((evt:CoreEvent)=>{ 
+      this.chartColors = this.processThemeColors(evt.data);
+    });
+
+    this.core.emit({name:"ThemeDataRequest", sender:this});
   }
 
   ngOnDestroy(){
@@ -160,6 +177,15 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
       let identifier = changes.report.currentValue.identifiers ? changes.report.currentValue.identifiers[0] : null;
       this.fetchReportData(rrdOptions, changes.report.currentValue, identifier);
     }
+  }
+
+  private processThemeColors(theme):string[]{
+    //this.theme = theme;
+    let colors: string[] = [];
+    theme.accentColors.map((color) => {
+      colors.push(theme[color]);
+    }); 
+    return colors;
   }
 
   setChartInteractive(value:boolean){
