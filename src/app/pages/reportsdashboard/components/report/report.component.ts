@@ -48,6 +48,7 @@ export interface Report {
 
 export interface ReportData {
   identifier?: string;
+  //units?: string;
   start: number;
   end: number;
   aggregations: any;
@@ -322,21 +323,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     let timeFrame = {"start": start, "end": end}; 
   
     this.core.emit({name:"ReportDataRequest", data:{report: report, params: params, timeFrame: timeFrame}, sender: this});
-
-    //let timeFrame = {"unit": "WEEK"};// 'HOUR', 'DAY', 'WEEK', 'MONTH', 'YEAR'
-    //console.log([[params], timeFrame]);
-
-    /*this.ws.call('reporting.get_data', [[params],timeFrame]).subscribe((res) =>{
-      if(this.report.name == "cputemp"){
-        console.log(res);
-        let command = [{
-          command: 'avgCpuTempReport',
-          input: res[0]
-        }]
-      } else {
-        this.data = res[0];
-      }
-    });*/
   }
 
   // Will be used for back of flip card

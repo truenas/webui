@@ -34,6 +34,128 @@ function avgFromReportData(input){
   return output;
 }
 
+function inferUnits(label:string){
+  // Figures out from the label what the unit is
+  let units = label;
+  if(label.includes('%')){
+    units = '%';
+  } else if(label.includes('°')){
+    units = "°";
+  } else if(label.toLowerCase().includes("bytes")){
+    units = "bytes";
+  } else if(label.toLowerCase().includes("bits")){
+    units = "bits";
+  }
+
+  if(typeof units == 'undefined'){
+    console.warn("Could not infer units from " + label);
+  }
+
+  return units;
+}
+
+function  convertKMGT(input: number, units: string, fixed?: number){
+  const kilo = 1024;
+  const mega = kilo * 1024;
+  const giga = mega * 1024;
+  const tera = giga * 1024;
+
+  let prefix: string = '';
+  let shortName: string = '';
+  let output: number = input;
+
+  if(input > tera){
+    prefix = "Tera";
+    shortName = "TiB"
+    output = input / tera;
+  } else if(input < tera && input > giga ){
+    prefix = "Giga";
+    shortName = "GiB"
+    output = input / giga;
+  } else if(input < giga && input > mega){
+    prefix = "Mega";
+    shortName = "MiB"
+    output = input / mega;
+  } else if(input < mega && input > kilo){
+    prefix = "Kilo";
+    shortName = "KB"
+    output = input / kilo;
+  }
+
+  console.warn(units);
+  if(units == 'bits'){
+    shortName = shortName.replace(/i/, '');
+    shortName = shortName.toLowerCase();
+  }
+ 
+  //if(fixed && fixed !== -1){
+  //  return [output.toFixed(fixed), prefix];
+  //} else {
+  //  return [output.toString(), prefix];
+  //}
+  
+  return { value: output, prefix: prefix, shortName: shortName }; 
+}
+
+function convertByKilo(input){
+  if(typeof input !== 'number'){return input}
+  let output = input;
+  let prefix: string = ''; 
+  let suffix = '';
+
+  if(input >= 1000000){    
+    output = input / 1000000;
+    suffix = 'm';
+  } else if(input < 1000000 && input >= 1000 ){
+    output = input / 1000;
+    suffix = 'k';
+  } 
+
+  return { value: output, suffix: suffix };
+}
+
+function formatValue(value: number, units: string, fixed?: number){
+  let output = value;
+  if(!fixed){ fixed = -1; }
+  if(typeof value !== 'number'){ return value;}
+
+  let converted;
+  switch(units.toLowerCase()){
+    case "bits":
+      converted  = convertKMGT(value, units, fixed);
+      output = maxDecimals(converted.value).toString() + converted.shortName;
+      break;
+    case "bytes":
+      converted = convertKMGT(value, units, fixed);
+      output = maxDecimals(converted.value).toString() + converted.shortName;
+      break;
+    case "%":
+    case "°":
+    default:
+      console.log(output);
+      converted = convertByKilo(output);
+      return typeof output == 'number' ? maxDecimals(converted.value).toString() + converted.suffix : value ;//[this.limitDecimals(value), ''];
+      break;
+  }
+
+  return output; //? output : value;
+}
+
+function convertAggregations(input, labelY?){
+  let output = Object.assign({}, input);
+  const units = inferUnits(labelY);
+  const keys = Object.keys(output.aggregations);
+
+  keys.forEach((key) => {
+    //output.aggregations[key].map((v) => formatValue(v , units) )
+    output.aggregations[key].forEach((v, index) => { 
+      output.aggregations[key][index] = formatValue(v , units) ;
+    });
+  });
+  console.warn(output);
+  return output;
+}
+
 function optimizeLegend(input){
   console.warn(input);
   let output = input;
@@ -134,6 +256,13 @@ const commands = {
   },
   optimizeLegend: (input) => {
     let output = optimizeLegend(input);
+    return output;
+  },
+  convertAggregations: (input, options?) => {
+    let output = options ? convertAggregations(input, ...options) : input;
+    if(!options) {
+      console.warn("You must specify a label to parse. (Usually the Y axis label). Returning input value instead");
+    }
     return output;
   },
   avgCpuTempReport: (input) => {

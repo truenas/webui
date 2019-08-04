@@ -32,6 +32,11 @@ export class ReportsService implements OnDestroy {
           {
             command: 'optimizeLegend',
             input: res[0]
+          },
+          {
+            command: 'convertAggregations',
+            input: '|',
+            options: [evt.data.report.vertical_label] // units
           }
         ]
 
@@ -55,7 +60,9 @@ export class ReportsService implements OnDestroy {
 
     this.reportsUtils.onmessage = ({data}) => {
       //console.log(data);
-      this.core.emit({name: "ReportData-" + data.sender, data: data.data, sender:this});
+      if(data.name == 'ReportData'){
+        this.core.emit({name: "ReportData-" + data.sender, data: data.data, sender:this});
+      }
     };
 
   }

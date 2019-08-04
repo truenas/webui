@@ -361,7 +361,20 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
 
   }
 
+  convertAggregations(agg){
+    //let converted = this.formatLabelValue(numero, this.inferUnits(this.labelY));
+    let keys = Object.keys(agg);
+    let clone = Object.assign({}, agg);
+
+    keys.forEach((key, index) =>{
+      clone[key] = this.formatLabelValue(clone[key], this.inferUnits(this.labelY))
+    });
+
+    return clone;
+  }
+
   inferUnits(label:string){
+    //if(this.report.units){ return this.report.units; }
     // Figures out from the label what the unit is
     let units = label;
     if(label.includes('%')){
@@ -442,28 +455,6 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
 
   // LifeCycle Hooks
   ngOnInit() {
-
-    /*this.core.register({ observerClass:this, eventName:"ThemeData" }).subscribe((evt:CoreEvent)=>{ 
-      if(!this.chartColors){
-        this.colorPattern = this.processThemeColors(evt.data);
-      }
-
-      if(this.data || this.linechartData){ 
-        this.render();
-      }
-    });
-
-    this.core.register({ observerClass:this, eventName:"ThemeChanged" }).subscribe((evt:CoreEvent)=>{ 
-      if(!this.chartColors){
-        this.colorPattern = this.processThemeColors(evt.data);
-      }
-
-      if(this.data || this.linechartData){ 
-        this.render();
-      }
-    });
-
-    this.core.emit({name:"ThemeDataRequest"});*/
   }
 
   ngAfterViewInit() {

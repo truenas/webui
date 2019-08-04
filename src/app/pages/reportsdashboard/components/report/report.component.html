@@ -88,7 +88,7 @@
                   <div style="opacity:0.75; border:red;" fxFlex class="report-analytics" *ngIf="data && data.aggregations" fxLayout="row" fxLayoutAlign="start start" fxLayoutGap="16px">
                     
                    
-                    <span *ngFor="let key of aggregationKeys" fxFlex><strong>{{key}}:</strong>  {{data.aggregations[key][i] ? data.aggregations[key][i].toFixed(2) : 'null'}}<span></span></span>
+                    <span *ngFor="let key of aggregationKeys" fxFlex><strong>{{key}}:</strong>  {{data.aggregations[key][i] ? data.aggregations[key][i] : 'null'}}<span></span></span>
                    
 
                   </div>
