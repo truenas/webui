@@ -11,7 +11,6 @@ const maxDecimals = (input, max?) => {
   }
   const str = input.toString().split(".");
   if(!str[1]){
-    console.warn("not a float...")
     // Not a float
     return input;
   }
@@ -32,6 +31,64 @@ function avgFromReportData(input){
     let avg = arrayAvg(item);
     output.push([avg]);
   });
+  return output;
+}
+
+function optimizeLegend(input){
+  console.warn(input);
+  let output = input;
+  // Do stuff
+  switch(input.name){
+    case 'load':
+      output.legend = output.legend.map((label) => label.replace(/load_/, ''))
+      break;
+    case 'disktemp':
+      output.legend = ['temperature'];
+      break;
+    case 'memory':
+      output.legend = output.legend.map((label) => label.replace(/memory-/, ''))
+      output.legend = output.legend.map((label) => label.replace(/_value/, ''))
+      break;
+    case 'swap':
+      output.legend = output.legend.map((label) => label.replace(/swap-/, ''))
+      output.legend = output.legend.map((label) => label.replace(/_value/, ''))
+      break;
+    case 'interface':
+      output.legend = output.legend.map((label) => label.replace(/if_/, ''))
+      output.legend = output.legend.map((label) => label.replace(/octets_/, 'octets '))
+      break;
+    case 'nfsstat':
+      output.legend = output.legend.map((label) => label.replace(/nfsstat-/, ''))
+      output.legend = output.legend.map((label) => label.replace(/_value/, ''))
+      break;
+    case 'df':
+      output.legend = output.legend.map((label) => label.replace(/df_complex-/, ''))
+      output.legend = output.legend.map((label) => label.replace(/_value/, ''))
+      break;
+    case 'processes':
+      output.legend = output.legend.map((label) => label.replace(/ps_state-/, ''))
+      output.legend = output.legend.map((label) => label.replace(/_value/, ''))
+      break;
+    case 'uptime':
+      output.legend = output.legend.map((label) => label.replace(/_value/, ''))
+      break;
+    case 'ctl':
+      output.legend = output.legend.map((label) => label.replace(/disk_octets_/, ''))
+      break;
+    case 'arcsize':
+      output.legend = output.legend.map((label) => label.replace(/cache_size-/, ''))
+      output.legend = output.legend.map((label) => label.replace(/_value/, ''))
+      break;
+    case 'arcratio':
+      output.legend = output.legend.map((label) => label.replace(/cache_ratio-/, ''))
+      output.legend = output.legend.map((label) => label.replace(/_value/, ''))
+      break;
+    case 'arcresult':
+      output.legend = output.legend.map((label) => label.replace(/cache_result-demand_data-/, ''))
+      output.legend = output.legend.map((label) => label.replace(/cache_result-demand_metadata-/, ''))
+      output.legend = output.legend.map((label) => label.replace(/_value/, ''))
+      break;
+  }
   return output;
 }
 
@@ -75,6 +132,10 @@ const commands = {
     let output = avgFromReportData(input);
     return output;
   },
+  optimizeLegend: (input) => {
+    let output = optimizeLegend(input);
+    return output;
+  },
   avgCpuTempReport: (input) => {
     let output = avgCpuTempReport(input);
     return output;
@@ -92,13 +153,11 @@ const commands = {
 function processCommands(list){
   let output;
   list.forEach((item, index) => {
-    console.log(item);
     let input = item.input == '--pipe' || item.input == '|' ? output : item.input;
     output = item.options ? commands[item.command](input, item.options) : commands[item.command](input);
 
   });
 
-  console.log(output);
   return output;
 }
 
@@ -111,8 +170,8 @@ addEventListener('message', ({ data }) => {
   let evt = data;
   let output;
   if(debug){
-    console.warn("RCVD");
-    console.warn(evt);
+    //console.warn("RCVD");
+    //console.warn(evt);
   }
 
   switch(evt.name){

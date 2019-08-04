@@ -28,21 +28,27 @@ export class ReportsService implements OnDestroy {
 
     core.register({observerClass: this, eventName:"ReportDataRequest"}).subscribe((evt:CoreEvent) => {
       ws.call('reporting.get_data', [[evt.data.params],evt.data.timeFrame]).subscribe((res) =>{
-        console.log(res);
+        let commands = [
+          {
+            command: 'optimizeLegend',
+            input: res[0]
+          }
+        ]
+
+        // We average out cputemps for v11.3. 
+        // Move this to backend for 12.
         if(evt.data.report.name == "cputemp"){
-          let command = [
-            {
-              command: 'avgCpuTempReport',
-              input: res[0]
-            }
-          ]
+          // Do a complete replacement instead...
+          const repl = [{
+            command: 'avgCpuTempReport',
+            input: res[0]
+          }]
   
-          //this.reportsUtils.postMessage({name:'ProcessCommands', data: command, sender: evt.sender.chartId});
-          this.reportsUtils.postMessage({name:'ProcessCommandsAsReportData', data: command, sender: evt.sender.chartId});
+          this.reportsUtils.postMessage({name:'ProcessCommandsAsReportData', data: repl, sender: evt.sender.chartId});
   
         } else {
-          //this.data = res[0];
-          this.core.emit({name:"ReportData-" + evt.sender.chartId, data: res[0], sender:this});
+          //this.core.emit({name:"ReportData-" + evt.sender.chartId, data: res[0], sender:this});
+          this.reportsUtils.postMessage({name:'ProcessCommandsAsReportData', data: commands, sender: evt.sender.chartId});
         }
       });
     });
