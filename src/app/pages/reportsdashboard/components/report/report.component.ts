@@ -2,6 +2,7 @@ import { Component, AfterViewInit, Input, ViewChild, OnDestroy, OnChanges} from 
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { WebSocketService } from 'app/services/';
+import { ReportsService } from '../../reports.service';
 import { MaterialModule } from 'app/appMaterial.module';
 import { Subject } from 'rxjs/Subject';
 import { NgForm } from '@angular/forms';
@@ -66,7 +67,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   // Labels
   @Input() localControls?: boolean = true;; 
   @Input() report: Report;
-  @Input() utils: Worker;
   @Input() identifier?: string;
   @ViewChild(LineChartComponent, {static: false}) lineChart:LineChartComponent;
 
@@ -130,9 +130,15 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   public startTime;
   public endTime;
 
-  constructor(public router: Router, public translate: TranslateService, private ws: WebSocketService){
+  constructor(public router: Router, 
+    public translate: TranslateService,
+    private rs: ReportsService,
+    private ws: WebSocketService){
     super(translate); 
-    this.loader = true;
+    
+    this.core.register({observerClass:this, eventName:"ReportData-" + this.chartId}).subscribe((evt:CoreEvent) => {
+      this.data = evt.data;
+    });
   }
 
   ngOnDestroy(){
@@ -288,23 +294,23 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     const start = Math.floor(rrdOptions.start / 1000);
     const end = Math.floor(rrdOptions.end / 1000);
     let timeFrame = {"start": start, "end": end}; 
+  
+    this.core.emit({name:"ReportDataRequest", data:{report: report, params: params, timeFrame: timeFrame}, sender: this});
+
     //let timeFrame = {"unit": "WEEK"};// 'HOUR', 'DAY', 'WEEK', 'MONTH', 'YEAR'
     //console.log([[params], timeFrame]);
 
-    this.ws.call('reporting.get_data', [[params],timeFrame]).subscribe((res) =>{
+    /*this.ws.call('reporting.get_data', [[params],timeFrame]).subscribe((res) =>{
       if(this.report.name == "cputemp"){
         console.log(res);
         let command = [{
           command: 'avgCpuTempReport',
           input: res[0]
         }]
-
-        this.utils.postMessage({name:'ProcessCommands', data: command, sender: this.chartId});
-        
       } else {
         this.data = res[0];
       }
-    });
+    });*/
   }
 
   // Will be used for back of flip card

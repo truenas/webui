@@ -9,6 +9,7 @@ import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embe
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { ReportComponent, Report } from './components/report/report.component';
+import { ReportsService } from './reports.service';
 
 //import { PageEvent } from '@angular/material';
 import { ErdService } from 'app/services/erd.service';
@@ -19,12 +20,6 @@ import {
   SystemGeneralService,
   WebSocketService
 } from '../../services/';
-
-export interface Command {
-  command: string; // Use '|' or '--pipe' to use the output of previous command as input
-  input: any;
-  options?: any[]; // Function parameters
-}
 
 interface Tab {
   label: string;
@@ -39,8 +34,6 @@ interface Tab {
 })
 export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleChartConfigDataFunc,*/ AfterViewInit {
 
-  public reportsUtils: Worker; //= new Worker('./reports-utils.worker',{ type: 'module' }); 
-      
   public isFooterConsoleOpen;
 
   public diskReports: Report[];
@@ -54,39 +47,11 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
   public totalVisibleReports:number = 4;
 
   constructor(private erdService: ErdService, 
-    public translate: TranslateService, private router:Router, private core:CoreService, 
+    public translate: TranslateService, 
+    private router:Router, 
+    private core:CoreService,
+    private rs: ReportsService,
     protected ws: WebSocketService) {
-
-    // Testing Worker
-    if(typeof Worker !== 'undefined'){
-      //@ts-ignore
-      this.reportsUtils = new Worker('./reports-utils.worker',{ type: 'module' }); 
-      
-      this.reportsUtils.onmessage = ({data}) => {
-        let evt = data;
-        console.log(evt);
-      };
-
-      //this.reportUtils = worker;
-
-      //worker.postMessage({name:'SayHello', data:'Hello', sender: 'chartID'})
-
-      let pipeLine: Command[] = [
-        {
-          command: 'maxDecimals',
-          input: 3.145679156,
-          options: [3]
-        }//,
-        /*{
-          command: 'toLowerCase',
-          input: '|' // Use 'pipe' to use the output of previous command as input
-        }*/
-      ]
-        
-      this.reportsUtils.postMessage({name:'ProcessCommands', data: pipeLine, sender: 'chartID'})
-      
-    }
-    // END Worker test
   }
 
   diskReportBuilderSetup(){
@@ -122,10 +87,11 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
       }
     });
 
-    this.ws.call('reporting.graphs').subscribe((res)=> {
-      if (res) {
-        console.log(res);
-        let allReports = res.map((report) => {
+    //this.ws.call('reporting.graphs').subscribe((res)=> {
+    this.core.register({observerClass: this, eventName:"ReportingGraphs"}).subscribe((evt:CoreEvent) => { 
+      if (evt.data) {
+        console.log(evt.data);
+        let allReports = evt.data.map((report) => {
           let list = [];
           if(report.identifiers){
             for(let i = 0; i < report.identifiers.length; i++){
@@ -148,11 +114,12 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
       }
     });
 
+    this.core.emit({name:"ReportingGraphsRequest"});
+
   }
 
   ngOnDestroy() {
     this.core.unregister({observerClass:this});
-    this.reportsUtils.terminate();
   }
 
   ngAfterViewInit(): void {

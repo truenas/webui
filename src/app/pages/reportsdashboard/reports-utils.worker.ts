@@ -109,6 +109,7 @@ function emit(evt){
 
 addEventListener('message', ({ data }) => {
   let evt = data;
+  let output;
   if(debug){
     console.warn("RCVD");
     console.warn(evt);
@@ -120,8 +121,12 @@ addEventListener('message', ({ data }) => {
       emit({name: 'Response', data: response});
     break;
     case 'ProcessCommands':
-      let output = processCommands(evt.data);
+      output = processCommands(evt.data);
       emit({name: 'Response', data: output, sender: evt.sender });
+    break;
+    case 'ProcessCommandsAsReportData':
+      output = processCommands(evt.data);
+      emit({name: 'ReportData', data: output, sender: evt.sender });
     break;
   }
 });
