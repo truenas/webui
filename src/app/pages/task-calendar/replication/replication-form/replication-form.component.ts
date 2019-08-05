@@ -789,15 +789,14 @@ export class ReplicationFormComponent {
 
         entityForm.formGroup.controls['speed_limit'].valueChanges.subscribe((value) => {
             const speedLimitField = _.find(this.fieldConfig, {name: "speed_limit"});
-            const filteredValue = this.storageService.convertDataMeasurementStrings(value);
-                    if (isNaN(filteredValue)) {
-                        speedLimitField['hasErrors'] = true;
-                        speedLimitField['errors'] = 'Invalid value'
-                    } else {
-                        speedLimitField['hasErrors'] = false;
-                        speedLimitField['errors'] = '';
-                    }
-        })
+            const filteredValue = this.storageService.convertHumanStringtoNum(value);
+            speedLimitField['hasErrors'] = false;
+            speedLimitField['errors'] = '';
+                if (isNaN(filteredValue)) {
+                    speedLimitField['hasErrors'] = true;
+                    speedLimitField['errors'] = helptext.speed_limit_errors;
+                };
+        });
     }
 
     resourceTransformIncomingRestData(wsResponse) {
@@ -857,7 +856,7 @@ export class ReplicationFormComponent {
     }
 
     beforeSubmit(data) {
-        data['speed_limit'] = this.storageService.convertDataMeasurementStrings(data['speed_limit']);
+        data['speed_limit'] = this.storageService.convertHumanStringtoNum(data['speed_limit']);
         if (data['direction'] == 'PUSH') {
             for (let i = 0; i < data['source_datasets_PUSH'].length; i++) {
                 if (_.startsWith(data['source_datasets_PUSH'][i], '/mnt/')) {

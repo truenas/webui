@@ -242,14 +242,15 @@ export class StorageService {
   }
 
   // Takes a string with fuzzy units like 20Mib, 20k, 20Gb, returns number in bytes
-  convertDataMeasurementStrings(str: string) {
+  convertHumanStringtoNum(str: string) {
     if(!str) { return 0 }; // if empty, return the default 0, which is unlimited
     if(str[0] && !str[0].match(/[0-9]/)) { return NaN };
     const letters = str.replace( /[^a-zA-Z]/g, '');
-    if (letters[0] && !letters[0].toLowerCase().match(/b|k|m|g|t/i)) { return NaN };
+    if (letters[0] && !letters[0].toLowerCase().match(/b|k|m|g|t/)) { return NaN };
     const powersOf1024 = {b: 1, k: 1024, m: 1024**2, g: 1024**3, t: 1024**4};
     const unit = str.toLowerCase().match(/[b|k|m|g|t]/i) || 'b';
-    const value = str.match(/^\D*(\d+)/) ? str.match(/^\D*(\d+)/)[1] : '0';
+    let num;
+    const value = (num = str.match(/^\s*(\d+)/)) ? num[1] : '0';
     return parseInt(value) * powersOf1024[unit.toString()];
   }
 }
