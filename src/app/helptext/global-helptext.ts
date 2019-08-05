@@ -9,7 +9,6 @@ export default {
     Ctrlr: 'TrueNAS Controller',
     Ctrlrs: 'TrueNAS Controllers',
 
-    legacyUIWarning: T('The legacy user interface no longer \
- receives functionality improvements and lacks software features. Please \
- manage the system with this UI to enjoy the latest software improvements and features.')
+    legacyUIWarning: T('The legacy user interface is deprecated. \
+ All management should be performed through the new user interface.')
 }

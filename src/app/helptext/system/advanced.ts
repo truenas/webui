@@ -37,7 +37,7 @@ export const helptext_system_advanced = {
  DISCOURAGED</b>'),
   swapondrive_validation: [ Validators.required, Validators.min(0), Validators.max(99) ],
 
-  enable_legacy_placeholder: T('Enable Legacy UI'),
+  enable_legacy_placeholder: T('Enable Legacy User Interface'),
   enable_legacy_tooltip: T('WARNING: ') + global_helptext.legacyUIWarning,
   enable_legacy_dialog: global_helptext.legacyUIWarning,
 
