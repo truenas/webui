@@ -9,6 +9,7 @@ import { EntityFormService } from '../../../common/entity/entity-form/services/e
 import { MatSnackBar } from '@angular/material';
 import { EntityUtils } from '../../../common/entity/utils';
 import { T } from '../../../../translate-marker';
+import helptext from '../../../../helptext/system/alert-service';
 
 @Component({
   selector: 'app-alertservice',
@@ -31,24 +32,23 @@ export class AlertServiceComponent {
     {
       type: 'input',
       name: 'name',
-      placeholder: 'Name',
-      tooltip: 'Enter a name for the new alert service.',
+      placeholder: helptext.name_placeholder,
+      tooltip: helptext.name_tooltip,
       required: true,
       validation: [Validators.required],
     },
     {
       type: 'checkbox',
       name: 'enabled',
-      placeholder: 'Enabled',
-      tooltip: 'Unset to disable this service without deleting it.',
+      placeholder: helptext.enabled_placeholder,
+      tooltip: helptext.enabled_tooltip,
       value: true,
     },
     {
       type: 'select',
       name: 'type',
-      placeholder: 'Type',
-      tooltip: 'Choose an alert service to display options for that\
-                service.',
+      placeholder: helptext.type_placeholder,
+      tooltip: helptext.type_tooltip,
       options: [{
         label: 'AWS SNS',
         value: 'AWSSNS',
@@ -85,8 +85,8 @@ export class AlertServiceComponent {
     {
       type: 'select',
       name: 'level',
-      placeholder: 'Level',
-      tooltip: 'Select the level of severity.',
+      placeholder: helptext.level_placeholder,
+      tooltip: helptext.level_tooltip,
       options: [
         { label: 'Info', value: 'INFO' },
         { label: 'Notice', value: 'NOTICE' },
@@ -102,11 +102,9 @@ export class AlertServiceComponent {
     {
       type: 'input',
       name: 'AWSSNS-region',
-      placeholder: 'AWS Region',
+      placeholder: helptext.AWSSNS_region_placeholder,
       togglePw: true,
-      tooltip: 'Enter the <a\
-                href="https://docs.aws.amazon.com/sns/latest/dg/sms_supported-countries.html"\
-                target="_blank">AWS account region</a>.',
+      tooltip: helptext.AWSSNS_region_tooltip,
       required: true,
       validation: [Validators.required],
       relation: [{
@@ -119,12 +117,8 @@ export class AlertServiceComponent {
     }, {
       type: 'input',
       name: 'AWSSNS-topic_arn',
-      placeholder: 'ARN',
-      tooltip: 'Enter the topic <a\
-                href="https://docs.aws.amazon.com/sns/latest/dg/CreateTopic.html"\
-                target="_blank">Amazon Resource Name (ARN)</a> for\
-                publishing. Example:\
-                <b>arn:aws:sns:us-west-2:111122223333:MyTopic</b>.',
+      placeholder: helptext.AWSSNS_topic_arn_placeholder,
+      tooltip: helptext.AWSSNS_topic_arn_tooltip,
       required: true,
       validation: [Validators.required],
       relation: [{
@@ -137,8 +131,8 @@ export class AlertServiceComponent {
     }, {
       type: 'input',
       name: 'AWSSNS-aws_access_key_id',
-      placeholder: 'Key ID',
-      tooltip: 'Enter the Access Key ID for the linked AWS account.',
+      placeholder: helptext.AWSSNS_aws_access_key_id_placeholder,
+      tooltip: helptext.AWSSNS_aws_access_key_id_tooltip,
       required: true,
       validation: [Validators.required],
       relation: [{
@@ -151,10 +145,10 @@ export class AlertServiceComponent {
     }, {
       type: 'input',
       name: 'AWSSNS-aws_secret_access_key',
-      placeholder: 'Secret Key',
+      placeholder: helptext.AWSSNS_aws_secret_access_key_placeholder,
       inputType: 'password',
       togglePw: true,
-      tooltip: 'Enter the Secret Access Key for the linked AWS account.',
+      tooltip: helptext.AWSSNS_aws_secret_access_key_tooltip,
       required: true,
       validation: [Validators.required],
       relation: [{
@@ -170,9 +164,8 @@ export class AlertServiceComponent {
       type: 'input',
       inputType: 'email',
       name: 'Mail-email',
-      placeholder: 'Email Address',
-      tooltip: 'Enter a valid email address to receive alerts from this\
-                system.',
+      placeholder: helptext.Mail_email_placeholder,
+      tooltip: helptext.Mail_email_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -185,8 +178,8 @@ export class AlertServiceComponent {
     {
       type: 'input',
       name: 'HipChat-hfrom',
-      placeholder: 'From',
-      tooltip: 'Enter a name to send alerts',
+      placeholder: helptext.HipChat_hfrom_placeholder,
+      tooltip: helptext.HipChat_hfrom_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -199,8 +192,8 @@ export class AlertServiceComponent {
     }, {
       type: 'input',
       name: 'HipChat-cluster_name',
-      placeholder: 'Cluster Name',
-      tooltip: 'Enter the HipChat cluster name.',
+      placeholder: helptext.HipChat_cluster_name_placeholder,
+      tooltip: helptext.HipChat_cluster_name_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -211,8 +204,8 @@ export class AlertServiceComponent {
     }, {
       type: 'input',
       name: 'HipChat-base_url',
-      placeholder: 'URL',
-      tooltip: 'Enter the HipChat base URL.',
+      placeholder: helptext.HipChat_base_url_placeholder,
+      tooltip: helptext.HipChat_base_url_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -223,8 +216,8 @@ export class AlertServiceComponent {
     }, {
       type: 'input',
       name: 'HipChat-room_id',
-      placeholder: 'Room',
-      tooltip: 'Enter the name of the room.',
+      placeholder: helptext.HipChat_room_id_placeholder,
+      tooltip: helptext.HipChat_room_id_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -237,8 +230,8 @@ export class AlertServiceComponent {
     }, {
       type: 'input',
       name: 'HipChat-auth_token',
-      placeholder: 'Auth Token',
-      tooltip: 'Enter or paste an Authentication token.',
+      placeholder: helptext.HipChat_auth_token_placeholder
+      tooltip: helptext.HipChat_auth_token_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -253,10 +246,8 @@ export class AlertServiceComponent {
     {
       type: 'input',
       name: 'InfluxDB-host',
-      placeholder: 'Host',
-      tooltip: 'Enter the <a\
-                href="https://docs.influxdata.com/influxdb/v1.5/introduction/getting-started/"\
-                target="_blank">InfluxDB</a> hostname.',
+      placeholder: helptext.InfluxDB_host_placeholder,
+      tooltip: helptext.InfluxDB_host_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -269,8 +260,8 @@ export class AlertServiceComponent {
     }, {
       type: 'input',
       name: 'InfluxDB-username',
-      placeholder: 'Username',
-      tooltip: 'Enter the username for this service.',
+      placeholder: helptext.InfluxDB_username_placeholder,
+      tooltip: helptext.InfluxDB_username_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -283,10 +274,10 @@ export class AlertServiceComponent {
     }, {
       type: 'input',
       name: 'InfluxDB-password',
-      placeholder: 'Password',
+      placeholder: helptext.InfluxDB_password_placeholder,
       inputType: 'password',
       togglePw: true,
-      tooltip: 'Enter password.',
+      tooltip: helptext.InfluxDB_password_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -299,8 +290,8 @@ export class AlertServiceComponent {
     }, {
       type: 'input',
       name: 'InfluxDB-database',
-      placeholder: 'Database',
-      tooltip: 'Enter the name of the InfluxDB database.',
+      placeholder: helptext.InfluxDB_database_placeholder,
+      tooltip: helptext.InfluxDB_database_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -313,8 +304,8 @@ export class AlertServiceComponent {
     }, {
       type: 'input',
       name: 'InfluxDB-series_name',
-      placeholder: 'Series',
-      tooltip: 'Enter InfluxDB time series name for collected points.',
+      placeholder: helptext.InfluxDB_series_name_placeholder,
+      tooltip: helptext.InfluxDB_series_name_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -329,10 +320,8 @@ export class AlertServiceComponent {
     {
       type: 'input',
       name: 'Mattermost-cluster_name',
-      placeholder: 'Cluster Name',
-      tooltip: 'Enter the name of the <a\
-                href="https://docs.mattermost.com/overview/index.html"\
-                target="_blank">Mattermost</a> cluster to join.',
+      placeholder: helptext.Mattermost_cluster_name_placeholder,
+      tooltip: helptext.Mattermost_cluster_name_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -343,11 +332,8 @@ export class AlertServiceComponent {
     }, {
       type: 'input',
       name: 'Mattermost-url',
-      placeholder: 'Webhook URL',
-      tooltip: 'Enter or paste the <a\
-               href="https://docs.mattermost.com/developer/webhooks-incoming.html"\
-               target="_blank">incoming webhook</a> URL associated with\
-               this service.',
+      placeholder: helptext.Mattermost_url_placeholder,
+      tooltip: helptext.Mattermost_url_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -360,8 +346,8 @@ export class AlertServiceComponent {
     }, {
       type: 'input',
       name: 'Mattermost-username',
-      placeholder: 'Username',
-      tooltip: 'Enter the Mattermost username.',
+      placeholder: helptext.Mattermost_username_placeholder,
+      tooltip: helptext.Mattermost_username_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -375,9 +361,9 @@ export class AlertServiceComponent {
       type: 'input',
       inputType: 'password',
       name: 'Mattermost-password',
-      placeholder: 'Password',
+      placeholder: helptext.Mattermost_password_placeholder,
       togglePw: true,
-      tooltip: 'Enter the Mattermost password.',
+      tooltip: helptext.Mattermost_password_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -388,10 +374,8 @@ export class AlertServiceComponent {
     }, {
       type: 'input',
       name: 'Mattermost-team',
-      placeholder: 'Team',
-      tooltip: 'Enter the Mattermost <a\
-                href="https://docs.mattermost.com/help/getting-started/creating-teams.html"\
-                target="_blank">team name</a>.',
+      placeholder: helptext.Mattermost_team_placeholder,
+      tooltip: helptext.Mattermost_team_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -402,12 +386,8 @@ export class AlertServiceComponent {
     }, {
       type: 'input',
       name: 'Mattermost-channel',
-      placeholder: 'Channel',
-      tooltip: 'Enter the name of the <a\
-                href="https://docs.mattermost.com/help/getting-started/organizing-conversations.html#managing-channels"\
-                target="_blank">channel</a> to receive notifications.\
-                This overrides the default channel in the incoming\
-                webhook settings.',
+      placeholder: helptext.Mattermost_channel_placeholder,
+      tooltip: helptext.Mattermost_channel_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -422,13 +402,8 @@ export class AlertServiceComponent {
     {
       type: 'input',
       name: 'OpsGenie-cluster_name',
-      placeholder: 'Cluster Name',
-      tooltip: 'Enter the name of the <a\
-                href="https://docs.opsgenie.com/docs"\
-                target="_blank">OpsGenie</a> cluster. Find the Cluster\
-                Name by signing into the OpsGenie web interface and\
-                going to Integrations/Configured Integrations. Click the\
-                desired integration, Settings, and read the Name field.',
+      placeholder: helptext.OpsGenie_cluster_name_placeholder,
+      tooltip: helptext.OpsGenie_cluster_name_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -439,13 +414,8 @@ export class AlertServiceComponent {
     }, {
       type: 'input',
       name: 'OpsGenie-api_key',
-      placeholder: 'API Key',
-      tooltip: 'Enter or paste the <a\
-                href="https://docs.opsgenie.com/v1.0/docs/api-integration"\
-                target="_blank">API key</a>. Find the API key by signing\
-                into the OpsGenie web interface and going to\
-                Integrations/Configured Integrations. Click the desired\
-                integration, Settings, and read the API Key field.',
+      placeholder: helptext.OpsGenie_api_key_placeholder,
+      tooltip: helptext.OpsGenie_api_key_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -458,8 +428,8 @@ export class AlertServiceComponent {
     }, {
       type: 'input',
       name: 'OpsGenie-api_url',
-      placeholder: 'API URL',
-      tooltip: 'Leave empty for default (<a href="https://api.opsgenie.com" target="_blank">OpsGenie API</a>)',
+      placeholder: helptext.OpsGenie_api_url_placeholder,
+      tooltip: helptext.OpsGenie_api_url_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -472,11 +442,8 @@ export class AlertServiceComponent {
     {
       type: 'input',
       name: 'PagerDuty-service_key',
-      placeholder: 'Service Key',
-      tooltip: 'Enter or paste the "integration/service" key for this\
-                system to access the <a\
-                href="https://v2.developer.pagerduty.com/v2/docs/events-api"\
-                target="_blank">PagerDuty API</a>.',
+      placeholder: helptext.PagerDuty_service_key_placeholder,
+      tooltip: helptext.PagerDuty_service_key_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -489,8 +456,8 @@ export class AlertServiceComponent {
     }, {
       type: 'input',
       name: 'PagerDuty-client_name',
-      placeholder: 'Client Name',
-      tooltip: 'Enter the PagerDuty client name.',
+      placeholder: helptext.PagerDuty_client_name_placeholder,
+      tooltip: helptext.PagerDuty_client_name_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -505,8 +472,8 @@ export class AlertServiceComponent {
     {
       type: 'input',
       name: 'Slack-cluster_name',
-      placeholder: 'Cluster Name',
-      tooltip: 'Enter the name of the cluster.',
+      placeholder: helptext.Slack_cluster_name_placeholder,
+      tooltip: helptext.Slack_cluster_name_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -517,11 +484,8 @@ export class AlertServiceComponent {
     }, {
       type: 'input',
       name: 'Slack-url',
-      placeholder: 'Webhook URL',
-      tooltip: 'Paste the <a\
-                href="https://api.slack.com/incoming-webhooks"\
-                target="_blank">incoming webhook</a> URL associated with\
-                this service.',
+      placeholder: helptext.Slack_url_placeholder,
+      tooltip: helptext.Slack_url_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -534,9 +498,8 @@ export class AlertServiceComponent {
     }, {
       type: 'input',
       name: 'Slack-channel',
-      placeholder: 'Channel',
-      tooltip: 'Enter a Slack channel name. The service will post all\
-                messages to this channel.',
+      placeholder: helptext.Slack_channel_placeholder,
+      tooltip: helptext.Slack_channel_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -547,8 +510,8 @@ export class AlertServiceComponent {
     }, {
       type: 'input',
       name: 'Slack-username',
-      placeholder: 'Username',
-      tooltip: 'Enter a Slack username for this service.',
+      placeholder: helptext.Slack_username_placeholder,
+      tooltip: helptext.Slack_username_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -559,9 +522,8 @@ export class AlertServiceComponent {
     }, {
       type: 'input',
       name: 'Slack-icon_url',
-      placeholder: 'Icon URL',
-      tooltip: 'Enter a URL to an image to use for notification icons.\
-                This overrides the incoming webhook setting.',
+      placeholder: helptext.Slack_icon_url_placeholder,
+      tooltip: helptext.Slack_icon_url_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -574,8 +536,8 @@ export class AlertServiceComponent {
     {
       type: 'input',
       name: 'SNMPTrap-host',
-      placeholder: 'Hostname',
-      tooltip: '',
+      placeholder: helptext.SNMPTrap_host_placeholder,
+      tooltip: helptext.SNMPTrap_host_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -590,8 +552,8 @@ export class AlertServiceComponent {
       type: 'input',
       inputType: 'number',
       name: 'SNMPTrap-port',
-      placeholder: 'Port',
-      tooltip: '',
+      placeholder: helptext.SNMPTrap_port_placeholder,
+      tooltip: helptext.SNMPTrap_port_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -604,8 +566,8 @@ export class AlertServiceComponent {
     {
       type: 'checkbox',
       name: 'SNMPTrap-v3',
-      placeholder: 'SNMPv3 Security Model',
-      tooltip: '',
+      placeholder: helptext.SNMPTrap_v3_placeholder,
+      tooltip: helptext.SNMPTrap_v3_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -618,8 +580,8 @@ export class AlertServiceComponent {
     {
       type: 'input',
       name: 'SNMPTrap-v3_username',
-      placeholder: 'Username',
-      tooltip: '',
+      placeholder: helptext.SNMPTrap_v3_username_placeholder,
+      tooltip: helptext.SNMPTrap_v3_username_tooltip,
       relation: [{
         action: "SHOW",
         connective: 'AND',
@@ -635,8 +597,8 @@ export class AlertServiceComponent {
     {
       type: 'input',
       name: 'SNMPTrap-v3_authkey',
-      placeholder: 'Secret authentication key',
-      tooltip: '',
+      placeholder: helptext.SNMPTrap_v3_authkey_placeholder,
+      tooltip: helptext.SNMPTrap_v3_authkey_tooltip,
       relation: [{
         action: "SHOW",
         connective: 'AND',
@@ -652,8 +614,8 @@ export class AlertServiceComponent {
     {
       type: 'input',
       name: 'SNMPTrap-v3_privkey',
-      placeholder: 'Secret encryption key',
-      tooltip: '',
+      placeholder: helptext.SNMPTrap_v3_privkey_placeholder,
+      tooltip: helptext.SNMPTrap_v3_privkey_tooltip,
       relation: [{
         action: "SHOW",
         connective: 'AND',
@@ -669,8 +631,8 @@ export class AlertServiceComponent {
     {
       type: 'select',
       name: 'SNMPTrap-v3_authprotocol',
-      placeholder: 'Authentication protocol',
-      tooltip: '',
+      placeholder: helptext.SNMPTrap_v3_authprotocol_placeholder,
+      tooltip: helptext.SNMPTrap_v3_authprotocol_tooltip,
       options: [
         {
           label: 'Disabled',
@@ -717,8 +679,8 @@ export class AlertServiceComponent {
     {
       type: 'select',
       name: 'SNMPTrap-v3_privprotocol',
-      placeholder: 'Encryption protocol',
-      tooltip: '',
+      placeholder: helptext.SNMPTrap_v3_privprotocol_placeholder,
+      tooltip: helptext.SNMPTrap_v3_privprotocol_tooltip,
       options: [
         {
           label: 'Disabled',
@@ -769,8 +731,8 @@ export class AlertServiceComponent {
     {
       type: 'input',
       name: 'SNMPTrap-community',
-      placeholder: 'SNMP Community',
-      tooltip: '',
+      placeholder: helptext.SNMPTrap_community_placeholder,
+      tooltip: helptext.SNMPTrap_community_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -784,10 +746,8 @@ export class AlertServiceComponent {
     {
       type: 'input',
       name: 'VictorOps-api_key',
-      placeholder: 'API Key',
-      tooltip: 'Enter or paste the <a\
-                href="https://help.victorops.com/knowledge-base/api/"\
-                target="_blank">VictorOps API key</a>.',
+      placeholder: helptext.VictorOps_api_key_placeholder,
+      tooltip: helptext.VictorOps_api_key_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -800,10 +760,8 @@ export class AlertServiceComponent {
     }, {
       type: 'input',
       name: 'VictorOps-routing_key',
-      placeholder: 'Routing Key',
-      tooltip: 'Enter or paste the <a\
-                href="https://portal.victorops.com/public/api-docs.html#/Routing32Keys"\
-                target="_blank">VictorOps routing key</a>.',
+      placeholder: helptext.VictorOps_routing_key_placeholder,
+      tooltip: helptext.VictorOps_routing_key_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
