@@ -38,7 +38,7 @@ export class SupportComponent {
   public scrshot: any;
   public subs: any;
   private serial: any;
-  public production: boolean;
+  public isProduction: boolean;
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
     {
@@ -393,8 +393,6 @@ export class SupportComponent {
               {}
 
   afterInit(entityEdit: any) {
-    // temp - waiting on a middleware API to register production status
-    window.localStorage.registered_production_system === 'true' ? this.production = true : this.production = false;
     this.entityEdit = entityEdit;
     this.category = _.find(this.fieldConfig, {name: "category"});
     if (window.localStorage['is_freenas'] === 'true') {
@@ -418,8 +416,11 @@ export class SupportComponent {
     } else {
       for (let i in this.freeNASFields) {
         this.hideField(this.freeNASFields[i], true, entityEdit);
-      }  
-      this.entityEdit.formGroup.controls['TN_is_production'].setValue(this.production);
+      }
+      this.ws.call('truenas.is_production').subscribe((res) => {
+        this.isProduction = res;
+        this.entityEdit.formGroup.controls['TN_is_production'].setValue(this.isProduction);
+      })  
       this.custActions = [
         {
           id : 'update_license',
@@ -473,12 +474,11 @@ export class SupportComponent {
           function : () => {
             let prod_status = this.entityEdit.formGroup.controls['TN_is_production'].value;
             let debug_status = this.entityEdit.formGroup.controls['TN_send_debug'].value;
-            window.localStorage.setItem('registered_production_system', prod_status);
             if (prod_status) {
               this.dialogService.confirm('Update Status', 'Send a message to iXsystems Support that this system is in production.',
                 true, 'Send').subscribe((res) => {
                   this.payload = {
-                    "title": "One more test...System has been just put into production (" + this.serial + ")",
+                    "title": "System has been just put into production (" + this.serial + ")",
                     "body": "This system has been just put into production",
                     "attach_debug": debug_status,
                     "category": "Installation/Setup",
@@ -488,10 +488,13 @@ export class SupportComponent {
                     "email": "auto-support@ixsystems.com",
                     "phone": "-"
                   };
-                  this.openDialog()
+                  let prod_status = true;
+                  this.openDialog(prod_status)
                 })
             } else {
-              this.snackbar.open(helptext.is_production_dialog.snackbar_message, helptext.is_production_dialog.snackbar_action, { duration: 6000 } );
+              this.ws.call('truenas.set_production', false).subscribe(() => {
+                this.snackbar.open(helptext.is_production_dialog.snackbar_message, helptext.is_production_dialog.snackbar_action, { duration: 6000 } );
+              })
             }
           }
         }
@@ -597,7 +600,7 @@ export class SupportComponent {
     this.openDialog();
   };
 
-  openDialog() {
+  openDialog(prod_status?) {
     const dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Ticket","CloseOnClickOutside":true}});
     let url;
     dialogRef.componentInstance.setCall('support.new_ticket', [this.payload]);
@@ -630,6 +633,10 @@ export class SupportComponent {
           });
         });
         dialogRef.componentInstance.setDescription(url);
+      } else if (prod_status) {
+        this.ws.call('truenas.set_production', true).subscribe(() => {
+          dialogRef.componentInstance.setDescription(url);
+        }) 
       } else {
         dialogRef.componentInstance.setDescription(url);
       }
