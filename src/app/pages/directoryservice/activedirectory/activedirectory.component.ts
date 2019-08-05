@@ -89,18 +89,6 @@ export class ActiveDirectoryComponent {
       isHidden:false
     },
     {
-      type : 'input',
-      name : helptext.activedirectory_monitor_frequency_name,
-      placeholder : helptext.activedirectory_monitor_frequency_placeholder,
-      tooltip : helptext.activedirectory_monitor_frequency_tooltip,
-    },
-    {
-      type : 'input',
-      name : helptext.activedirectory_recover_retry_name,
-      placeholder : helptext.activedirectory_recover_retry_placeholder,
-      tooltip : helptext.activedirectory_recover_retry_tooltip,
-    },
-    {
       type : 'select',
       name : helptext.activedirectory_ssl_name,
       placeholder : helptext.activedirectory_ssl_placeholder,
