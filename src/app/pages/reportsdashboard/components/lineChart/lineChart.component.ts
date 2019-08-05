@@ -13,6 +13,13 @@ import Chart from 'chart.js';
 import 'chartjs-plugin-crosshair';
 import * as simplify from 'simplify-js';
 
+interface Conversion {
+  value: number;
+  prefix?: string;
+  suffix?: string;
+  shortName?: string;
+}
+
 // For Chart.js
 interface DataSet {
   label: string;
@@ -123,8 +130,9 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
          y:{
            yRangePad: 24,
            axisLabelFormatter: ( numero, granularity, opts, dygraph  ) => {
-             let test = this.formatLabelValue(numero, this.inferUnits(this.labelY), true,1);
-             return test[0];
+             let converted = this.formatLabelValue(numero, this.inferUnits(this.labelY), 1, true);
+             let suffix = converted.suffix ? converted.suffix : '';
+             return this.limitDecimals(converted.value).toString() + suffix;
            },
          }
        },
@@ -132,8 +140,9 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
          let clone = Object.assign({}, data);
          clone.series.forEach((item, index) => {
            if(!item.y){ return; }
-           let formatted = this.formatLabelValue(item.y, this.inferUnits(this.labelY), true, 1);
-           clone.series[index].yHTML = formatted[0].toString();
+           let converted = this.formatLabelValue(item.y, this.inferUnits(this.labelY), 1, true);
+           let suffix = converted.shortName ? converted.shortName : converted.suffix;
+           clone.series[index].yHTML = this.limitDecimals(converted.value).toString() + suffix;
         
          });
          //this.legendEvents.next(clone);
@@ -151,9 +160,9 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
        drawCallback: (dygraph, is_initial) =>{
          if(dygraph.axes_){
           let numero = dygraph.axes_[0].maxyval;
-          let test = this.formatLabelValue(numero, this.inferUnits(this.labelY));
-          if(test[1]){
-            this.yLabelPrefix = test[1];
+          let converted = this.formatLabelValue(numero, this.inferUnits(this.labelY));
+          if(converted.prefix){
+            this.yLabelPrefix = converted.prefix;
           } else {
             this.yLabelPrefix = '';
           }
@@ -361,7 +370,7 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
 
   }
 
-  convertAggregations(agg){
+  /*convertAggregations(agg){
     //let converted = this.formatLabelValue(numero, this.inferUnits(this.labelY));
     let keys = Object.keys(agg);
     let clone = Object.assign({}, agg);
@@ -371,7 +380,7 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
     });
 
     return clone;
-  }
+  }*/
 
   inferUnits(label:string){
     //if(this.report.units){ return this.report.units; }
@@ -394,26 +403,47 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
     return units;
   }
 
-  formatLabelValue(value: number, units: string, prefixRules?: boolean, fixed?: number){
-    let result;
+  formatLabelValue(value: number, units: string, fixed?: number, prefixRules?: boolean): Conversion{
+    let output:Conversion = {value: value};
     if(!fixed){ fixed = -1; }
+    if(typeof value !== 'number'){ return value; }
     
+    //let converted: Conversion;
     switch(units.toLowerCase()){
       case "bits":
-        result  = this.convertKMGT(value, prefixRules, fixed);
-        break;
       case "bytes":
-        result = this.convertKMGT(value, prefixRules, fixed);
+        output = this.convertKMGT(value, units.toLowerCase(), fixed, prefixRules);
+        //converted  = this.convertKMGT(value, units, fixed);
+        //output = this.limitDecimals(converted.value).toString() + converted.shortName;
         break;
       case "%":
       case "°":
       default:
-        result = [value];
-        return [this.limitDecimals(value), ''];
+        //output = [value];
+        output = this.convertByKilo(value);
+        //return //[this.limitDecimals(converted.value).toString() + converted.suffix, ''];
+        //return [this.limitDecimals(value), ''];
         //break;
     }
 
-    return result ? result : [value];
+    return output;
+  }
+
+  convertByKilo(input): Conversion{
+    if(typeof input !== 'number'){return input}
+    let output = input;
+    let prefix: string = ''; 
+    let suffix = '';
+  
+    if(input >= 1000000){    
+      output = input / 1000000;
+      suffix = 'm';
+    } else if(input < 1000000 && input >= 1000 ){
+      output = input / 1000;
+      suffix = 'k';
+    } 
+  
+    return { value: output, suffix: suffix };  
   }
 
   limitDecimals(numero: number){
@@ -422,34 +452,46 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
     return decimalPlaces > 2 ? numero.toFixed(2) : numero;
   }
 
-  convertKMGT(value: number, prefixRules?: boolean, fixed?: number): string[]{
+  convertKMGT(value: number, units:string, fixed?: number, prefixRules?: boolean): Conversion{
     const kilo = 1024;
     const mega = kilo * 1024;
     const giga = mega * 1024;
     const tera = giga * 1024;
 
     let prefix: string = '';
-    let converted: number = value;
+    let output: number = value;
+    let shortName: string = '';
 
     if(value > tera || (prefixRules && this.yLabelPrefix == 'Tera')){
       prefix = "Tera";
-      converted = value / tera;
+      shortName = "TiB";
+      output = value / tera;
     } else if((value < tera && value > giga) || (prefixRules && this.yLabelPrefix == 'Giga')){
       prefix = "Giga";
-      converted = value / giga;
+      shortName = "GiB";
+      output = value / giga;
     } else if((value < giga && value > mega) || (prefixRules && this.yLabelPrefix == 'Mega')){
       prefix = "Mega";
-      converted = value / mega;
+      shortName = "MiB";
+      output = value / mega;
     } else if((value < mega && value > kilo || (prefixRules && this.yLabelPrefix == 'Kilo'))){
       prefix = "Kilo";
-      converted = value / kilo;
+      shortName = "KB";
+      output = value / kilo;
+    }
+
+    if(units == 'bits'){
+      shortName = shortName.replace(/i/, '');
+      shortName = shortName.toLowerCase();
     }
  
-    if(fixed && fixed !== -1){
-      return [converted.toFixed(fixed), prefix];
+    /*if(fixed && fixed !== -1){
+      return [output.toFixed(fixed), prefix];
     } else {
-      return [converted.toString(), prefix];
-    }
+      return [output.toString(), prefix];
+    }*/
+
+    return { value: output, prefix: prefix, shortName: shortName };
   }
 
 

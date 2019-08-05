@@ -111,7 +111,7 @@ function convertByKilo(input){
     suffix = 'k';
   } 
 
-  return { value: output, suffix: suffix };
+  return { value: output, suffix: suffix , shortName:''};
 }
 
 function formatValue(value: number, units: string, fixed?: number){
@@ -132,7 +132,6 @@ function formatValue(value: number, units: string, fixed?: number){
     case "%":
     case "°":
     default:
-      console.log(output);
       converted = convertByKilo(output);
       return typeof output == 'number' ? maxDecimals(converted.value).toString() + converted.suffix : value ;//[this.limitDecimals(value), ''];
       break;
@@ -152,12 +151,10 @@ function convertAggregations(input, labelY?){
       output.aggregations[key][index] = formatValue(v , units) ;
     });
   });
-  console.warn(output);
   return output;
 }
 
 function optimizeLegend(input){
-  console.warn(input);
   let output = input;
   // Do stuff
   switch(input.name){
