@@ -25,6 +25,13 @@ msgstr ""
 "открытого сетевого порта <i>ведущей</i> системы ИБП. Порт по умолчанию - "
 "<i>3493</i>."
 
+msgid ""
+" a passphrase creates a new encryption key  file and invalidates any "
+"existing recovery key or encryption key files.  A dialog opens to save a "
+"backup of the new encryption key. A new  recovery key can be added from the "
+"Encryption Operations menu."
+msgstr ""
+
 msgid " and all snapshots of it?"
 msgstr " и все снимки этого?"
 
@@ -59,11 +66,9 @@ msgstr "% от всех ядер"
 msgid ""
 "' is encrypted! If the passphrase for this encrypted pool has been lost, "
 "the data will be PERMANENTLY UNRECOVERABLE! Before exporting/disconnecting "
-"encrypted pools, download and safely store the recovery key."
+"encrypted pools, download and safely store the encryption key and any "
+"passphrase associated with it."
 msgstr ""
-"' зашифрован! Если пароль для этого зашифрованного пула будет утерян, "
-"данные будут БЕЗВОЗВРАТНО НЕВОССТАНОВИМЫ! Перед экспортом/отключением "
-"зашифрованных пулов, скачайте и надежно сохраните ключ восстановления."
 
 msgid ""
 "'%h' will be replaced with your hostname and '%i' will be replaced with "
@@ -859,11 +864,6 @@ msgid ""
 msgstr ""
 "Добавленные диски стираются, затем пул расширяется на новые диски с "
 "выбранной топологией. Существующие данные в пуле сохраняются."
-
-msgid ""
-"Adding a recovery key invalidates any previous recovery key. A dialog will "
-"open to save a backup of the new recovery key."
-msgstr ""
 
 msgid "Adding data vdevs of different types is not supported."
 msgstr "Добавление vdev данных разных типов не поддерживается."
@@ -1948,6 +1948,9 @@ msgstr "Изменения отправлены"
 msgid "Changes will revert after "
 msgstr "Изменения будут отменены через "
 
+msgid "Changing"
+msgstr ""
+
 msgid ""
 "Changing SDK version is not a supported operation. Activate an existing "
 "boot environment that uses the desired train and boot into it to switch to "
@@ -1995,11 +1998,6 @@ msgstr ""
 "Изменение этой минорной версии считается понижением и не поддерживается. "
 "Активирeqnt существующее окуждение загрузки, которое использует нужный "
 "поезд, и загрузиться в него, чтобы перейти на этот поезд."
-
-msgid ""
-"Changing the passphrase requires the creation of a new recovery key. A "
-"dialog will open to save a backup of the new recovery key."
-msgstr ""
 
 msgid ""
 "Changing to a nightly train is one-way. Changing back to a stable train is "
@@ -2485,13 +2483,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Click <b>Browse</b> to select a recovery key to upload. This allows the "
-"system to decrypt the disks."
-msgstr ""
-"Нажмите <b>Обзор</b>, чтобы выбрать ключ восстановления для загрузки. Это "
-"позволяет системе дешифровать диски."
-
-msgid ""
 "Click <b>Browse</b> to select an encryption key to upload. This allows the "
 "system to decrypt the disks."
 msgstr ""
@@ -2743,8 +2734,8 @@ msgstr "Подтвердите, что все в порядке, чтобы пр
 msgid "Confirm password"
 msgstr "Подтвердите пароль"
 
-msgid "Confirm the GELI passphrase."
-msgstr "Подтвердите парольную фразу GELI."
+msgid "Confirm the encryption key passphrase."
+msgstr ""
 
 msgid "Confirm these settings."
 msgstr "Подтвердите эти настройки."
@@ -2760,9 +2751,6 @@ msgstr "Подключаюсь к "
 
 msgid "Connections"
 msgstr "Соединения"
-
-msgid "Connectivity Check"
-msgstr "Проверка подключения"
 
 msgid "Console Keyboard Map"
 msgstr "Раскладка клавиатуры консоли"
@@ -2913,16 +2901,14 @@ msgstr ""
 "поддержки заданий периодических снимков и репликаций, созданных в версии "
 "11.2 и более ранних."
 
+msgid "Creating"
+msgstr ""
+
 msgid "Creating Jail"
 msgstr "Создать jail"
 
 msgid "Creating Jail..."
 msgstr "Создается jail..."
-
-msgid ""
-"Creating a passphrase requires the creation of a new recovery key. A dialog "
-"will open to save a backup of the new recovery key."
-msgstr ""
 
 msgid ""
 "Creating or editing a <i>sysctl</i> immediately updates the Variable to the "
@@ -2985,6 +2971,9 @@ msgid "DNS timeout in seconds. Increase this value if DNS queries timeout."
 msgstr ""
 "Тайм-аут DNS в секундах. Увеличьте это значение, если время DNS-запроса "
 "истекло."
+
+msgid "DOCUMENTATION"
+msgstr ""
 
 msgid "Dashboard"
 msgstr "Панель приборов"
@@ -4045,13 +4034,6 @@ msgstr ""
 "какой-либо ИБП. Предупреждения продолжаются пока ситуация не исправлена."
 
 msgid ""
-"Enter a number of times to attempt reconnecting to the Active directory "
-"server. Tries forever when set to <i>0</i>."
-msgstr ""
-"Введите число попыток переподключения к сереверу Active directory. Пытаться "
-"вечно если установлено в <i>0</i>."
-
-msgid ""
 "Enter a number of virtual CPUs to allocate to the VM. The maximum is 16 "
 "unless the host CPU also limits the maximum. The VM operating system can "
 "also have operational or licensing restrictions on the number of CPUs."
@@ -4366,13 +4348,6 @@ msgstr ""
 "пользователя."
 
 msgid ""
-"Enter how often in seconds for the system to verify Active Directory "
-"services are functioning."
-msgstr ""
-"Введите, как часто в секундах система должна проверять работают ли службы "
-"Active Directory."
-
-msgid ""
 "Enter name of user account to use for CHAP authentication with the user on "
 "the remote system. Many initiators default to the initiator name as the "
 "user."
@@ -4425,9 +4400,6 @@ msgid ""
 msgstr ""
 "Введите имя устройства FreeBSD интерфейса. Это нельзя изменить после "
 "создания интерфейса."
-
-msgid "Enter the GELI passphrase."
-msgstr "Введите пароль GELI."
 
 msgid ""
 "Enter the IP address of a DNS forwarder. Required for recursive queries "
@@ -4510,13 +4482,10 @@ msgid "Enter the command with any options."
 msgstr "Введите команду с любыми опциями."
 
 msgid ""
-"Enter the dataset on the remote or destination system wheresnapshots will "
+"Enter the dataset on the remote or destination system where snapshots will "
 "be stored. Example: Poolname/Datasetname, not the mountpoint or filesystem "
-"path"
+"path."
 msgstr ""
-"Введите набор данных на удаленной или целевой системе, где будут сохранены "
-"снимки. Пример: имя_пула/имя_набора_данных, а не точка монтирования или "
-"путь к файловой системе"
 
 msgid "Enter the decryption passphrase."
 msgstr "Введите пароль расшифровки."
@@ -4617,6 +4586,9 @@ msgstr ""
 
 msgid "Enter the name of the realm."
 msgstr "Введите название области."
+
+msgid "Enter the new encryption key passphrase."
+msgstr ""
 
 msgid "Enter the numeric tag configured in the switched network."
 msgstr "Введите числовой тег, настроенный в коммутируемой сети."
@@ -5102,6 +5074,9 @@ msgstr "От"
 msgid "From E-mail"
 msgstr "От E-mail"
 
+msgid "From Name"
+msgstr ""
+
 msgid "Full Name"
 msgstr "Полное Имя"
 
@@ -5136,12 +5111,6 @@ msgstr "Создать файл отладки"
 
 msgid "Generate Keypair"
 msgstr "Генерировать пару ключей"
-
-msgid ""
-"Generate a new GELI key, replacing the old one on the disks in the pool. "
-"Passphrases will be removed by this operation. <br>A dialog will open to "
-"save a backup of the new recovery key."
-msgstr ""
 
 msgid ""
 "Give this user permission to use <a href=\"https://www.sudo.ws/\" "
@@ -5778,6 +5747,12 @@ msgstr "Неверный пароль"
 
 msgid "Invalid regex filter"
 msgstr "Неверное регулярное выражение фильтра"
+
+msgid ""
+"Invalidate the existing  passphrase by generating a new encryption key. "
+"Also invalidates any  existing encryption or recovery key files. A dialog "
+"opens to save a  copy of the new encryption key."
+msgstr ""
 
 msgid "Is the pool encrypted?"
 msgstr "Зашифрован ли пул?"
@@ -6721,6 +6696,9 @@ msgid ""
 "for storing them. Please create a pool first."
 msgstr ""
 
+msgid "No snapshots sent yet"
+msgstr ""
+
 msgid "No update found."
 msgstr ""
 
@@ -6965,6 +6943,9 @@ msgstr ""
 msgid "PLUGIN"
 msgstr ""
 
+msgid "POST INSTALL NOTES"
+msgstr ""
+
 msgid "Parent Interface"
 msgstr "Исходный интерфейс"
 
@@ -7164,6 +7145,9 @@ msgstr "Портал"
 msgid "Portal Group ID"
 msgstr "Идентификатор гуппы порталов"
 
+msgid "Post Install Notes"
+msgstr ""
+
 msgid "Post-script"
 msgstr ""
 
@@ -7319,6 +7303,9 @@ msgstr ""
 msgid "RCTL Limits"
 msgstr ""
 
+msgid "REFRESH INDEX"
+msgstr ""
+
 msgid "REGISTER"
 msgstr ""
 
@@ -7356,6 +7343,15 @@ msgid "Raw filesize"
 msgstr ""
 
 msgid "Re-key Pool"
+msgstr ""
+
+msgid ""
+"Re-keying the pool resets the encryption on the  GELI master key of each "
+"encrypted disk in this pool. <b>This invalidates  all existing encryption "
+"and recovery key files, as well as any configured  passphrase.</b><br />  A "
+"new encryption key file is generated and an option opens to save a  backup "
+"of this file. Adding a passphrase or recovery key file is done  from the "
+"Encryption Operations menu."
 msgstr ""
 
 msgid "Read Only"
@@ -7399,9 +7395,6 @@ msgstr ""
 
 msgid "Record Size"
 msgstr "Размер записи"
-
-msgid "Recovery Attempts"
-msgstr ""
 
 msgid "Recovery Key"
 msgstr "Ключ восстановления"
@@ -7631,6 +7624,9 @@ msgstr "Откатить"
 msgid "Root Password"
 msgstr "Пароль администратора"
 
+msgid "Root node is not a valid value"
+msgstr ""
+
 msgid "Root password"
 msgstr "Пароль администратора"
 
@@ -7775,9 +7771,6 @@ msgstr ""
 msgid "Saving ACLs..."
 msgstr ""
 
-msgid "Saving Debug"
-msgstr ""
-
 msgid "Schedule"
 msgstr ""
 
@@ -7900,7 +7893,8 @@ msgstr ""
 msgid ""
 "Select <i>UEFI</i> for newer operating systems or <i>UEFI-CSM</i> "
 "(Compatibility Support Mode) for older operating systems that only support "
-"BIOS booting."
+"BIOS booting. <i>Grub</i> is not recommended but can be used when the other "
+"options do not work."
 msgstr ""
 
 msgid "Select Authenticator"
@@ -8302,9 +8296,6 @@ msgstr ""
 msgid ""
 "Select to automatically set the contents of the share to the <i>webdav</i> "
 "user and group."
-msgstr ""
-
-msgid "Select to remove the passphrase from this pool."
 msgstr ""
 
 msgid ""
@@ -9748,18 +9739,17 @@ msgid ""
 msgstr ""
 
 msgid ""
-"The envelope <i>From</i> address shown in the email. This can be set to "
-"make filtering mail on the receiving system easier. The friendly name is "
-"set like this: <i>\"Friendly Name\" &ltaddress@example.com&gt</i>"
-msgstr ""
-
-msgid ""
 "The file used to manually update the system. Browse to the update file "
 "stored on the system logged into the web interface to upload and apply. "
 "Update file names end with <i>-manual-update-unsigned.tar</i>"
 msgstr ""
 
 msgid "The filesystem "
+msgstr ""
+
+msgid ""
+"The friendly name to show in front of the sending email  address. Example: "
+"<i>Storage System 01</i>&ltit@example.com&gt"
 msgstr ""
 
 msgid ""
@@ -9861,6 +9851,12 @@ msgid "The update file is temporarily stored here before being applied."
 msgstr "Файл обновления будет временно сохранен здесь до момента применения."
 
 msgid ""
+"The user account <i>Email</i> address to use for the  envelope <i>From</i> "
+"email address. The user account <i>Email</i> in  <b>Accounts > Users > "
+"Edit</b> must be configured first."
+msgstr ""
+
+msgid ""
 "The value of the jail <a "
 "href=\"https://www.freebsd.org/doc/faq/security.html#idp60202568\" "
 "target=\"_blank\">securelevel</a> sysctl. A jail never has a lower "
@@ -9912,6 +9908,15 @@ msgid ""
 "This field remains empty until a valid <b>Username</b> and <b>Password</b> "
 "is entered. Choose the category that best describes the bug or feature "
 "being reported."
+msgstr ""
+
+msgid ""
+"This is an additional key file that can be used  to unlock the pool instead "
+"of the passphrase or encryption key file. <br /> <br />  Entering the "
+"administrator password and clicking <b>ADD RECOVERY KEY</b>  generates a "
+"single recovery key file and downloads it to the local system. Store the "
+"recovery key file in a secure location!<br />  Adding a new recovery key "
+"invalidates any previously downloaded  recovery key file for this pool."
 msgstr ""
 
 msgid "This is the FreeBSD device name for the disk."
@@ -10027,6 +10032,11 @@ msgstr ""
 
 msgid "Unlock"
 msgstr "Разблокировать"
+
+msgid ""
+"Unlock the pool with a recovery  key file instead of a passphrase. Select a "
+"recovery key file to upload  from the local system."
+msgstr ""
 
 msgid ""
 "Unmask is used for newly created files. Default is <i>000</i> (anyone can "
