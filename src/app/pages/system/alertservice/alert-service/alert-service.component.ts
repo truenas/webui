@@ -230,7 +230,7 @@ export class AlertServiceComponent {
     }, {
       type: 'input',
       name: 'HipChat-auth_token',
-      placeholder: helptext.HipChat_auth_token_placeholder
+      placeholder: helptext.HipChat_auth_token_placeholder,
       tooltip: helptext.HipChat_auth_token_tooltip,
       relation: [{
         action: "SHOW",
