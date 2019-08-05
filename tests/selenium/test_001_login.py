@@ -14,16 +14,16 @@ skip_mesages = "Skipping first run"
 script_name = os.path.basename(__file__).partition('.')[0]
 
 
-def test_00_open_web_browser(wb_driver, ui_url):
-    wb_driver.get(ui_url)
+def test_00_open_web_browser(browser, ui_url):
+    browser.get(ui_url)
     time.sleep(1)
     # setup implicit wait
-    wb_driver.implicitly_wait(1)
+    browser.implicitly_wait(1)
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
 
 
-def test_01_login(wb_driver, login_json):
+def test_01_login(browser, login_json):
     for dictionary in login_json["tests"][0]["commands"]:
         command = dictionary['command']
         comment = dictionary['comment']
@@ -33,15 +33,15 @@ def test_01_login(wb_driver, login_json):
         if command == 'open' or command == 'setWindowSize':
             pass
         elif command == 'click' and comment == "":
-            wb_driver.find_element_by_xpath(target).click()
+            browser.find_element_by_xpath(target).click()
         elif command == 'type':
-            wb_driver.find_element_by_xpath(target).clear()
-            wb_driver.find_element_by_xpath(target).send_keys(value)
+            browser.find_element_by_xpath(target).clear()
+            browser.find_element_by_xpath(target).send_keys(value)
         elif command == 'click' and comment == "verify":
             time.sleep(2)
-            ui_element = wb_driver.find_element_by_xpath(target)
+            ui_element = browser.find_element_by_xpath(target)
             page_data = ui_element.text
             assert "Dashboard" in page_data, page_data
         time.sleep(0.10)
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
