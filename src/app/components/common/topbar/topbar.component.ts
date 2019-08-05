@@ -1,5 +1,5 @@
 
-import {interval as observableInterval,  Observable ,  Subscription } from 'rxjs';
+import {interval as observableInterval,  Subscription } from 'rxjs';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as domHelper from '../../../helpers/dom.helper';
@@ -13,7 +13,6 @@ import { TaskManagerComponent } from '../dialog/task-manager/task-manager.compon
 import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
 import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
-import * as hopscotch from 'hopscotch';
 import { RestService } from "../../../services/rest.service";
 import { LanguageService } from "../../../services/language.service"
 import { TranslateService } from '@ngx-translate/core';
@@ -89,6 +88,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.getHAStatus();
       });
       this.sysName = 'TrueNAS';
+      this.checkLegacyUISetting();
     }
     let theme = this.themeService.currentTheme();
     this.currentTheme = theme.name;
@@ -142,13 +142,14 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.ws.call('system.info').subscribe((res) => {
       this.hostname = res.hostname;
     });
-
-    this.checkLegacyUISetting();
   }
 
   checkLegacyUISetting() {
     this.ws.call('system.advanced.config').subscribe((res) => {
-      this.exposeLegacyUI = res.legacy_ui;
+      if (res.legacy_ui) {
+        this.exposeLegacyUI = res.legacy_ui;
+        window.localStorage.setItem('exposeLegacyUI', res.legacy_ui);
+      }
     });
   }
 
