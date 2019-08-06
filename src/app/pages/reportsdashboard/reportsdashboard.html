@@ -1,5 +1,35 @@
 <!--<button *ngFor="let tab of allTabs;" mat-button color="primary" (click)="navigateToTab(tab.value)">{{tab.label}}</button>-->
+<nav class="reports-toolbar" style="background-color:var(--alt-bg1); padding:0 0 0 32px;" fxLayout="row wrap" fxLayoutAlign="space-between center" fxLayoutGap="32px">
+<!-- Layout and Report Builder -->
+<div class="reports-dash-global-controls" fxFlex fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="32px">
+  <!-- START TAB REPLACEMENT-->
+  <div *ngIf="activeTab">
+    <button mat-button [matMenuTriggerFor]="categoryMenu" color="default" class="menu-toggle" style="color:var(--fg2);">
+      <span>{{ activeTabVerified ? activeTab : ''}} <mat-icon class="menu-caret">arrow_drop_down</mat-icon> </span>
+    </button>
+  
+    <mat-menu #categoryMenu="matMenu" overlapTrigger="false"> 
+      <div>
+        <button mat-menu-item *ngFor="let tab of allTabs" (click)="navigateToTab(tab.value);">
+          <span>{{tab.label}}</span>
+        </button>
+      </div>
+    </mat-menu>
+  </div>
+
+</div>
+<!-- END TAB REPLACEMENT -->
+
+<!-- Report builder was 632px wide -->
+<ng-container *ngIf="activeTab == 'Disk'">
+  <!--<entity-form-embedded fxFlex="100" fxFlex.gt-xs="632px" [target]="target" [data]="values" [conf]="this" ></entity-form-embedded>-->
+  <entity-toolbar *ngIf="true" fxFlex [target]="target" [conf]="toolbarConfig"></entity-toolbar>
+</ng-container>
+
+</nav>
+  
 <div *ngIf="visibleReports && activeReports" class="master-container" [ngClass]="{'with-footer-console': isFooterConsoleOpen}" lazyViewer view=".report" fxLayout="row wrap" fxLayoutAlign="space-evenly"> 
+  
     <div fxFlex="48px" class="">
       <!-- GLOBAL CONTROLS -->
       <!--<mat-slider style="position:fixed; left:16px; top:160px;" 

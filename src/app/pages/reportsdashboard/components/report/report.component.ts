@@ -74,7 +74,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
 
   public data: ReportData;
   public ready: boolean = false;
-  private delay: number = 1500; // delayed chart render time
+  private delay: number = 1000; // delayed chart render time
   
   get reportTitle(){
     return this.identifier ? this.report.title.replace(/{identifier}/, this.identifier) : this.report.title;
@@ -183,7 +183,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
       if(changes.report.previousValue){
         this.setupData(changes); 
       } else if(!changes.report.previousValue){
-        console.log("DELAY!!");
         setTimeout(() => {
           this.ready = true;
           this.setupData(changes); 

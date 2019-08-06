@@ -578,15 +578,16 @@ h3 {
 }
 
 .report .mat-card.zero-state{
-  min-height:500px;
-  background-color:rgba(0,0,0,0.0);
+  min-height:375px;
+  /*background-color:rgba(0,0,0,0.0);*/
   position:relative;
 }
 
 .report .mat-card.zero-state .mat-icon{
   width:120px;
   height:120px;
-  color: rgba(0,0,0,0.05);
+  color: var(--fg2);
+  opacity:0.1;
 }
 
 /*.report .mat-card.zero-state div.logo-wrapper:before{

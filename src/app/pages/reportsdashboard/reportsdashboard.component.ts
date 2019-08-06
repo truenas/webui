@@ -46,6 +46,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
   public activeReports: Report[] = [];
 
   public activeTab: string = "CPU"; // Tabs (lower case only): CPU, Disk, Memory, Network, NFS, Partition?, System, Target, UPS, ZFS
+  public activeTabVerified: boolean = false;
   public allTabs: Tab[] = [];
   public loadingReports: boolean = false;
 
@@ -108,8 +109,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
         this.isFooterConsoleOpen = res.consolemsg;
       }
     });
-
-    //this.ws.call('reporting.graphs').subscribe((res)=> {
+ 
     this.core.register({observerClass: this, eventName:"ReportingGraphs"}).subscribe((evt:CoreEvent) => { 
       if (evt.data) {
         console.log(evt.data);
@@ -176,102 +176,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
     return i;
   }
 
-  /*onScroll(e){
-    let buffer = 6;
-   
-    let el = this.scrollContainer;
-  
-    const threshold = 12;
-    const reload = () => {
-      return el.scrollTop > this.lastScrollPosition - threshold && el.scrollTop < this.lastScrollPosition + threshold;
-    }
-
-    if((el.scrollHeight - el.scrollTop) == el.offsetHeight){
-      if(this.loadingReports){
-        return;
-      }
-      el.scroll(0, el.scrollHeight - 120);// back off from bottom to avoid retriggering
-      
-      this.lastScrollPosition = el.scrollTop - buffer * 430; //(el.offsetHeight / 2);
-      
-
-      let next = this.nextBatch(buffer);
-      
-      this.visibleReports = next;
-      this.loadingReports = true;
-      setTimeout(()=>{
-        this.loadingReports = false;
-      }, 1000);
-
-    } else if(el.scrollTop == 0){
-      //console.warn("TOP!!");
-    } else if(el.scrollTop <  this.lastScrollPosition){
-      this.lastScrollPosition = el.scrollTop - el.offsetHeight;
-      let previous = this.previousBatch(buffer);
-      this.visibleReports = previous;
-      this.loadingReports = true;
-      setTimeout(()=>{
-        this.loadingReports = false;
-        //console.log(previous)
-      }, 1000);
-    }
-  }
-
-  nextBatch(buffer){
-    let clone = Object.assign([], this.visibleReports);
-    //let buffer = 2;
-    if(this.activeReports.length <= this.totalVisibleReports){
-      return this.visibleReports;
-    } 
-    
-    //add to bottom 
-    let last = clone[clone.length - 1];
-    let lastActiveReport = this.activeReports[this.activeReports.length - 1];
-
-    if((last + this.totalVisibleReports) >= this.activeReports.length){
-      buffer = this.activeReports.length - last;
-    }
-
-    //remove from top
-    clone.splice(0, buffer);
-
-    for(let i = 1 ; i <= buffer; i++){
-      let nextReport = last + i;
-      if(nextReport >= lastActiveReport){
-        break;
-      };
-      clone.push(last + i);
-    }
-    return clone;
-  }
-
-  previousBatch(buffer){
-    let clone = Object.assign([], this.visibleReports);
-    //let buffer = 2;
-    if(this.activeReports.length <= this.totalVisibleReports){
-      return this.visibleReports;
-    } 
-    
-    //remove from bottom 
-    if(clone[0] - buffer < 0){
-      clone = [];
-      for(let i = 0; i < this.totalVisibleReports; i++){clone.push(i)};
-      return clone;
-    }
-    clone.splice(clone.length - buffer, buffer);
-
-    //add to top
-    for(let i = 1; i <= buffer; i++){
-      let prevReport = this.visibleReports[0] - i;
-      if(prevReport < 0){
-        console.log("skip..")
-        continue;
-      }
-      clone.unshift(prevReport);
-    }
-    
-    return clone;
-  }*/
 
   generateTabs(){
       let labels = ['CPU', 'Disk', 'Memory', 'Network', 'NFS', 'Partition', 'System', 'Target', 'UPS', 'ZFS'];
@@ -330,7 +234,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
       }
     ]
     
-
+    console.log("updateActiveTab");
     this.core.emit({name: "PseudoRouteChange", data: pseudoRouteEvent});
 
     // Simulate tab eventl
@@ -339,6 +243,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
         textLabel: tab.value
       }
     }*/
+
     this.activateTab(tab.label); 
     //this.tabSelectChangeHandler(evt);
 
@@ -352,6 +257,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
 
 
   activateTab(name:string){
+    this.activeTab = name;
+    this.activeTabVerified = true;
 
     let reportCategories = name == 'Disk' ? this.diskReports : this.otherReports.filter((report) => {
       // Tabs: CPU, Disk, Memory, Network, NFS, Partition, System, Target, UPS, ZFS

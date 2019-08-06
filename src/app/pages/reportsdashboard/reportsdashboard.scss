@@ -52,16 +52,21 @@ ul.ct-legend {
   margin-top: -14px;
 }
 
+nav.reports-toolbar{
+  position:relative;
+  top: -15px;
+}
+
 .master-container{
   top: -15px;
-  height: calc(100vh - 92px);
+  height: calc(100vh - 92px - 48px); /* 92 is for the topbar && 48 is for the entity-toolbar */
   /*top:92px;*/
   position:relative;
 
 }
 
 .master-container.with-footer-console {
-  height: calc(100vh - 92px - 45px);
+  height: calc(100vh - 92px - 48px - 45px);
 }
 
 .reports-navigation-spacer{
