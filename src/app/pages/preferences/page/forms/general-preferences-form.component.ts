@@ -13,7 +13,7 @@ import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'general-preferences-form',
-  template:`<entity-form-embedded fxFlex="100" fxFlex.gt-xs="300px" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>`
+  template:`<entity-form-embedded fxFlex="100" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>`
 })
 export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDestroy {
 
@@ -47,22 +47,19 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
         name:'General Preferences',
         class:'preferences',
         label:true,
-        width:'400px',
         config:[
           {
             type: 'select',
             name: 'userTheme',
-            width:'300px',
             placeholder: 'Choose Theme',
             options: this.themeOptions,
-            value:this.themeService.activeTheme,
+            value:this.prefs.preferences.userTheme,
             tooltip:'Choose a preferred theme.',
             class:'inline'
           },
           {
             type: 'checkbox',
             name: 'preferIconsOnly',
-            width:'300px',
             placeholder: 'Prefer buttons with icons only',
             value:this.preferIconsOnly,
             tooltip: 'Preserve screen space with icons and tooltips instead of text labels.',
@@ -71,7 +68,6 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
           {
             type: 'checkbox',
             name: 'showTooltips',
-            width: '300px',
             placeholder: 'Enable Help Text in Forms',
             value: this.showTooltips,
             tooltip: 'Display help icons in forms.',
@@ -80,7 +76,6 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
           {
             type: 'checkbox',
             name: 'allowPwToggle',
-            width: '300px',
             placeholder: 'Enable Password Toggle',
             value:this.allowPwToggle,
             tooltip: 'This option enables/disables a password toggle button.',
@@ -89,7 +84,6 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
           {
             type: 'checkbox',
             name: 'enableWarning',
-            width: '330px',
             placeholder: 'Enable "Save Configuration" Dialog Before Upgrade',
             value:this.enableWarning,
             tooltip: T('Show or hide a dialog to save the system\
@@ -100,14 +94,6 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
         ]
       }
     ]
-
-    /*custActions: any[] = [
-      {
-        id: 'create-theme-link',
-        name: 'Create Theme',
-        eventName:"CreateTheme"
-      }
-    ]*/
 
     constructor(
       protected router: Router,

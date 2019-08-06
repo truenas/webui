@@ -6,6 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import {FieldConfig} from '../../models/field-config.interface';
 import {Field} from '../../models/field.interface';
+import { T } from '../../../../../../translate-marker';
 
 @Component({
   selector : 'form-explorer',
@@ -23,6 +24,7 @@ export class FormExplorerComponent implements Field, OnInit {
 
   private treeVisible: boolean = false;
   private displayFieldName: string;
+  private rootSelectable: boolean;
 
   private actionMapping:IActionMapping = {
     mouse: {
@@ -33,6 +35,11 @@ export class FormExplorerComponent implements Field, OnInit {
         TREE_ACTIONS.TOGGLE_EXPANDED(tree, node, $event);
       },
       click: (tree, node, $event) => {
+        if (node.isRoot && !this.rootSelectable) {
+          this.config.warnings = T('Root node is not a valid value');
+          return;
+        }
+        this.config.warnings = null;
         if (this.config.multiple) {
           TREE_ACTIONS.TOGGLE_SELECTED(tree, node, $event);
         } else {
@@ -68,6 +75,7 @@ export class FormExplorerComponent implements Field, OnInit {
 
   ngOnInit() {
     this.treeVisible = false;
+    this.rootSelectable = this.config.rootSelectable === undefined ? true : this.config.rootSelectable;
 
     if (this.config.multiple) {
       this.customTemplateStringOptions.useCheckbox = this.config.multiple;

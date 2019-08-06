@@ -40,126 +40,126 @@ xpaths = {
 }
 
 
-def test_01_nav_store_pool(wb_driver):
+def test_01_nav_store_pool(browser):
     # Click  Storage menu
-    a = wb_driver.find_element_by_xpath(xpaths['navStorage'])
+    a = browser.find_element_by_xpath(xpaths['navStorage'])
     a.click()
     # allowing the button to load
     time.sleep(1)
     # Click Pool sub-menu
-    wb_driver.find_element_by_xpath(xpaths['submenuPool']).click()
+    browser.find_element_by_xpath(xpaths['submenuPool']).click()
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar1'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert "Storage" in page_data, page_data
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert "Pools" in page_data, page_data
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
 
 
-def test_02_create_a_pool(wb_driver):
+def test_02_create_a_pool(browser):
     test_name = sys._getframe().f_code.co_name
     time.sleep(1)
     # Click create new pool option
-    wb_driver.find_element_by_xpath(xpaths['addAction']).click()
+    browser.find_element_by_xpath(xpaths['addAction']).click()
     # Click create Pool Button
-    wb_driver.find_element_by_xpath(xpaths['forwardButton']).click()
+    browser.find_element_by_xpath(xpaths['forwardButton']).click()
     # Enter User Full name
-    wb_driver.find_element_by_xpath(xpaths['newpoolName']).send_keys(pool1)
+    browser.find_element_by_xpath(xpaths['newpoolName']).send_keys(pool1)
     # Select the disk
-    wb_driver.find_element_by_xpath(xpaths['disk1Checkbox']).click()
+    browser.find_element_by_xpath(xpaths['disk1Checkbox']).click()
     # Select the disk
-    wb_driver.find_element_by_xpath(xpaths['diskselectedmoveButton']).click()
+    browser.find_element_by_xpath(xpaths['diskselectedmoveButton']).click()
     # Click on create new Pool button
-    wb_driver.find_element_by_xpath(xpaths['createButton']).click()
+    browser.find_element_by_xpath(xpaths['createButton']).click()
     # checkbox confirmation
-    wb_driver.find_element_by_xpath(xpaths['confirmCheckbox']).click()
+    browser.find_element_by_xpath(xpaths['confirmCheckbox']).click()
     # Click Ok Button
-    wb_driver.find_element_by_xpath(xpaths['createpoolButton']).click()
+    browser.find_element_by_xpath(xpaths['createpoolButton']).click()
     xpath = xpaths['addAction']
-    wait = wait_on_element(wb_driver, xpath, script_name, test_name)
+    wait = wait_on_element(browser, xpath, script_name, test_name)
     assert wait, f'Creating the new pool {pool1} timeout'
     # taking screenshot
-    take_screenshot(wb_driver, script_name, test_name)
-    no_error = error_check(wb_driver)
+    take_screenshot(browser, script_name, test_name)
+    no_error = error_check(browser)
     assert no_error['result'], no_error['traceback']
 
 
-def test_03_looking_if_the_new_pool_exist(wb_driver):
+def test_03_looking_if_the_new_pool_exist(browser):
     test_name = sys._getframe().f_code.co_name
     xpath = xpaths['pool1Table']
-    wait = wait_on_element(wb_driver, xpath, script_name, test_name)
+    wait = wait_on_element(browser, xpath, script_name, test_name)
     assert wait, 'Loading pool table timeout'
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['pool1Table'])
+    ui_element = browser.find_element_by_xpath(xpaths['pool1Table'])
     element_text = ui_element.text
     # assert response
     assert pool1 in element_text, element_text
     # taking screenshot
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
 
 
-def test_04_create_newpool2(wb_driver):
+def test_04_create_newpool2(browser):
     test_name = sys._getframe().f_code.co_name
     time.sleep(1)
     # Click create new pool option
-    wb_driver.find_element_by_xpath(xpaths['addAction']).click()
+    browser.find_element_by_xpath(xpaths['addAction']).click()
     # Click create Pool Button
-    wb_driver.find_element_by_xpath(xpaths['forwardButton']).click()
+    browser.find_element_by_xpath(xpaths['forwardButton']).click()
     # Enter User Full name
-    wb_driver.find_element_by_xpath(xpaths['newpoolName']).send_keys(pool2)
+    browser.find_element_by_xpath(xpaths['newpoolName']).send_keys(pool2)
     # Select the 2 disks
-    wb_driver.find_element_by_xpath(xpaths['disk2Checkbox']).click()
-    wb_driver.find_element_by_xpath(xpaths['disk3Checkbox']).click()
+    browser.find_element_by_xpath(xpaths['disk2Checkbox']).click()
+    browser.find_element_by_xpath(xpaths['disk3Checkbox']).click()
     # Select the disk
-    wb_driver.find_element_by_xpath(xpaths['diskselectedmoveButton']).click()
+    browser.find_element_by_xpath(xpaths['diskselectedmoveButton']).click()
     # Click on create new Pool button
-    wb_driver.find_element_by_xpath(xpaths['createButton']).click()
+    browser.find_element_by_xpath(xpaths['createButton']).click()
     # check box confirmation
-    wb_driver.find_element_by_xpath(xpaths['confirmCheckbox']).click()
+    browser.find_element_by_xpath(xpaths['confirmCheckbox']).click()
     # Click OK Button
-    wb_driver.find_element_by_xpath(xpaths['createpoolButton']).click()
+    browser.find_element_by_xpath(xpaths['createpoolButton']).click()
     xpath = xpaths['addAction']
-    wait = wait_on_element(wb_driver, xpath, script_name, test_name)
+    wait = wait_on_element(browser, xpath, script_name, test_name)
     assert wait, f'Creating the new pool {pool2} timeout'
     # taking screenshot
-    take_screenshot(wb_driver, script_name, test_name)
-    no_error = error_check(wb_driver)
+    take_screenshot(browser, script_name, test_name)
+    no_error = error_check(browser)
     assert no_error['result'], no_error['traceback']
 
 
-def test_05_looking_if_the_new_pool_exist(wb_driver):
+def test_05_looking_if_the_new_pool_exist(browser):
     test_name = sys._getframe().f_code.co_name
     xpath = xpaths['pool2Table']
-    wait = wait_on_element(wb_driver, xpath, script_name, test_name)
+    wait = wait_on_element(browser, xpath, script_name, test_name)
     assert wait, 'Loading pool table timeout'
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['pool2Table'])
+    ui_element = browser.find_element_by_xpath(xpaths['pool2Table'])
     element_text = ui_element.text
     # assert response
     assert pool2 in element_text, element_text
     # taking screenshot
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
 
 
-def test_06_return_to_dashboard(wb_driver):
+def test_06_return_to_dashboard(browser):
     # Close the System Tab
-    wb_driver.find_element_by_xpath(xpaths['toDashboard']).click()
+    browser.find_element_by_xpath(xpaths['toDashboard']).click()
     time.sleep(1)
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar1'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert page_data == "Dashboard", page_data
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)

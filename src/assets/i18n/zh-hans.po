@@ -24,6 +24,13 @@ msgstr ""
 " 当<b>UPS模式</b>被设置为<i>slave</i>。Enter the open network port number of the "
 "UPS <i>Master</i> system. 默认端口是<i>3493</i>。"
 
+msgid ""
+" a passphrase creates a new encryption key  file and invalidates any "
+"existing recovery key or encryption key files.  A dialog opens to save a "
+"backup of the new encryption key. A new  recovery key can be added from the "
+"Encryption Operations menu."
+msgstr ""
+
 msgid " and all snapshots of it?"
 msgstr " 和所有它的快照？"
 
@@ -56,8 +63,9 @@ msgstr "%所有核心"
 msgid ""
 "' is encrypted! If the passphrase for this encrypted pool has been lost, "
 "the data will be PERMANENTLY UNRECOVERABLE! Before exporting/disconnecting "
-"encrypted pools, download and safely store the recovery key."
-msgstr "’已加密！如果加密存储池的密码短语丢失，数据将会无法恢复！导出/断开加密存储池前请下载保存恢复密钥。"
+"encrypted pools, download and safely store the encryption key and any "
+"passphrase associated with it."
+msgstr ""
 
 msgid ""
 "'%h' will be replaced with your hostname and '%i' will be replaced with "
@@ -529,6 +537,15 @@ msgstr ""
 msgid "Access Control Entries"
 msgstr ""
 
+msgid ""
+"Access Control Entry (ACE) user or group. Select a specific <i>User</i> or "
+"<i>Group</i> for this entry, <i>owner@</i> to apply this entry to the user "
+"that owns the dataset, <i>group@</i> to apply this entry to the group that "
+"owns the dataset, or <i>everyone@</i> to apply this entry to all users and "
+"groups. See <a href=\"https://www.freebsd.org/cgi/man.cgi?query=setfacl\" "
+"target=\"_blank\">setfacl(1) NFSv4 ACL ENTRIES</a>."
+msgstr ""
+
 msgid "Access ID Key"
 msgstr ""
 
@@ -715,11 +732,6 @@ msgid ""
 "Added disks are erased, then the pool is extended onto the new disks with "
 "the chosen topology. Existing data on the pool is kept intact."
 msgstr "添加的磁盘被擦除，然后存储池将被扩展到新磁盘使用选择的拓扑。在存储池上的现有数据依旧被保留。"
-
-msgid ""
-"Adding a recovery key invalidates any previous recovery key. A dialog will "
-"open to save a backup of the new recovery key."
-msgstr ""
 
 msgid "Adding data vdevs of different types is not supported."
 msgstr ""
@@ -1066,6 +1078,9 @@ msgid ""
 "target=\"_blank\">vmm(4)</a> kernel module loaded."
 msgstr ""
 
+msgid "Allowed Initiators (IQN)"
+msgstr ""
+
 msgid ""
 "Allows different groups to be configured with different authentication "
 "profiles. Example: all users with a group ID of 1 will inherit the "
@@ -1129,6 +1144,9 @@ msgstr "匿名用户下载速度"
 msgid "Anonymous User Upload Bandwidth"
 msgstr "匿名用户上传速度"
 
+msgid "Any notes about initiators."
+msgstr ""
+
 msgid "Appdefaults Auxiliary Parameters"
 msgstr ""
 
@@ -1137,8 +1155,8 @@ msgid ""
 "when User CN is set)."
 msgstr ""
 
-msgid "Apple (AFP) Shares"
-msgstr "苹果(AFP)共享"
+msgid "Apple Shares (AFP)"
+msgstr ""
 
 msgid "Application Client Secret"
 msgstr ""
@@ -1167,7 +1185,12 @@ msgstr ""
 msgid "Apply permissions recursively"
 msgstr "递归的应用权限"
 
-msgid "Apply permissions recursively all child datasets within the current dataset"
+msgid "Apply permissions recursively to all child datasets of the current dataset"
+msgstr ""
+
+msgid ""
+"Apply permissions recursively to all directories and files in the current "
+"dataset."
 msgstr ""
 
 msgid ""
@@ -1359,6 +1382,9 @@ msgstr "Base Name"
 msgid "Base64 encoded key for the Azure account."
 msgstr ""
 
+msgid "Basejail"
+msgstr ""
+
 msgid "Basic Mode"
 msgstr "基本模式"
 
@@ -1403,8 +1429,8 @@ msgstr ""
 msgid "Bind to Port"
 msgstr ""
 
-msgid "Block (iSCSI)"
-msgstr "块级存储(iSCSI)"
+msgid "Block Shares (iSCSI)"
+msgstr ""
 
 msgid "Block Size"
 msgstr ""
@@ -1640,6 +1666,9 @@ msgstr ""
 msgid "Changes will revert after "
 msgstr ""
 
+msgid "Changing"
+msgstr ""
+
 msgid ""
 "Changing SDK version is not a supported operation. Activate an existing "
 "boot environment that uses the desired train and boot into it to switch to "
@@ -1681,11 +1710,6 @@ msgstr ""
 "Changing the minor version is considered a downgrade and is not a supported "
 "operation. Activate an existing boot environment that uses the desired "
 "train and boot into it to switch to that train."
-
-msgid ""
-"Changing the passphrase requires the creation of a new recovery key. A "
-"dialog will open to save a backup of the new recovery key."
-msgstr ""
 
 msgid ""
 "Changing to a nightly train is one-way. Changing back to a stable train is "
@@ -2022,6 +2046,11 @@ msgid ""
 "segment of the connection."
 msgstr ""
 
+msgid ""
+"Choose the type of permissions. <i>Basic</i> shows general permissions. "
+"<i>Advanced</i> shows each specific type of permission for finer control."
+msgstr ""
+
 msgid "Choose the type that matches the type of client accessing the pool/dataset."
 msgstr ""
 
@@ -2054,11 +2083,6 @@ msgid ""
 "href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-class-intro."
 "html\" target=\"_blank\">Amazon S3 Storage Classes</a> for more information."
 msgstr ""
-
-msgid ""
-"Click <b>Browse</b> to select a recovery key to upload. This allows the "
-"system to decrypt the disks."
-msgstr "点击<b>浏览</b>以选择一个恢复密钥来上传。这允许系统解密磁盘。"
 
 msgid ""
 "Click <b>Browse</b> to select an encryption key to upload. This allows the "
@@ -2304,8 +2328,8 @@ msgstr "确认可以继续分离。"
 msgid "Confirm password"
 msgstr "确认密码"
 
-msgid "Confirm the GELI passphrase."
-msgstr "确认GELI密码短语。"
+msgid "Confirm the encryption key passphrase."
+msgstr ""
 
 msgid "Confirm these settings."
 msgstr "确认这些设置。"
@@ -2321,9 +2345,6 @@ msgstr ""
 
 msgid "Connections"
 msgstr "连接"
-
-msgid "Connectivity Check"
-msgstr "连接性测试"
 
 msgid "Console Keyboard Map"
 msgstr "控制台键盘映射"
@@ -2454,16 +2475,14 @@ msgid ""
 "earlier."
 msgstr ""
 
+msgid "Creating"
+msgstr ""
+
 msgid "Creating Jail"
 msgstr "创建Jail"
 
 msgid "Creating Jail..."
 msgstr "创建Jail中..."
-
-msgid ""
-"Creating a passphrase requires the creation of a new recovery key. A dialog "
-"will open to save a backup of the new recovery key."
-msgstr ""
 
 msgid ""
 "Creating or editing a <i>sysctl</i> immediately updates the Variable to the "
@@ -2522,6 +2541,9 @@ msgstr "DNS超时"
 
 msgid "DNS timeout in seconds. Increase this value if DNS queries timeout."
 msgstr "DNS超时（秒）。Increase this value if DNS queries timeout."
+
+msgid "DOCUMENTATION"
+msgstr ""
 
 msgid "Dashboard"
 msgstr "仪表"
@@ -2944,17 +2966,20 @@ msgstr "发现认证方法"
 msgid "Disk"
 msgstr "磁盘"
 
+msgid "Disk Imported: Log Summary"
+msgstr ""
+
 msgid "Disk Selection Required"
 msgstr ""
 
 msgid "Disk Size"
 msgstr "磁盘容量"
 
+msgid "Disk Type"
+msgstr ""
+
 msgid "Disk sector size"
 msgstr "磁盘块大小"
-
-msgid "Disk successfully imported"
-msgstr "磁盘导入成功"
 
 msgid "Disk to wipe."
 msgstr "擦除磁盘。"
@@ -3440,13 +3465,6 @@ msgstr ""
 "reach any UPS. 警告持续直到问题被解决。"
 
 msgid ""
-"Enter a number of times to attempt reconnecting to the Active directory "
-"server. Tries forever when set to <i>0</i>."
-msgstr ""
-"Enter a number of times to attempt reconnecting to the Active directory "
-"server. 在设置为<i>0</i>时持续尝试。"
-
-msgid ""
 "Enter a number of virtual CPUs to allocate to the VM. The maximum is 16 "
 "unless the host CPU also limits the maximum. The VM operating system can "
 "also have operational or licensing restrictions on the number of CPUs."
@@ -3691,11 +3709,6 @@ msgid ""
 msgstr "输入<i>root</i>或其他有效的<i>用户名</i>。Inside the jail, commands run as this user."
 
 msgid ""
-"Enter how often in seconds for the system to verify Active Directory "
-"services are functioning."
-msgstr ""
-
-msgid ""
 "Enter name of user account to use for CHAP authentication with the user on "
 "the remote system. Many initiators default to the initiator name as the "
 "user."
@@ -3732,9 +3745,6 @@ msgstr ""
 msgid ""
 "Enter the FreeBSD device name of the interface. This cannot be changed "
 "after the interface is created."
-msgstr ""
-
-msgid "Enter the GELI passphrase."
 msgstr ""
 
 msgid ""
@@ -3800,9 +3810,9 @@ msgid "Enter the command with any options."
 msgstr ""
 
 msgid ""
-"Enter the dataset on the remote or destination system wheresnapshots will "
+"Enter the dataset on the remote or destination system where snapshots will "
 "be stored. Example: Poolname/Datasetname, not the mountpoint or filesystem "
-"path"
+"path."
 msgstr ""
 
 msgid "Enter the decryption passphrase."
@@ -3894,6 +3904,9 @@ msgid ""
 msgstr ""
 
 msgid "Enter the name of the realm."
+msgstr ""
+
+msgid "Enter the new encryption key passphrase."
 msgstr ""
 
 msgid "Enter the numeric tag configured in the switched network."
@@ -4318,6 +4331,9 @@ msgstr "来自"
 msgid "From E-mail"
 msgstr "来自邮件"
 
+msgid "From Name"
+msgstr ""
+
 msgid "Full Name"
 msgstr "全名"
 
@@ -4348,12 +4364,6 @@ msgid "Generate Debug File"
 msgstr "生成调试文件"
 
 msgid "Generate Keypair"
-msgstr ""
-
-msgid ""
-"Generate a new GELI key, replacing the old one on the disks in the pool. "
-"Passphrases will be removed by this operation. <br>A dialog will open to "
-"save a backup of the new recovery key."
 msgstr ""
 
 msgid ""
@@ -4406,6 +4416,9 @@ msgid ""
 "Group name cannot begin with a hyphen (<i>-</i>) or contain a space, tab, "
 "or these characters: <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i>. <i>$</i> can "
 "only be used as the last character of the username."
+msgstr ""
+
+msgid "Group to which this ACL entry applies."
 msgstr ""
 
 msgid "Groups"
@@ -4581,6 +4594,22 @@ msgstr ""
 msgid "How often the IP is checked in seconds."
 msgstr ""
 
+msgid ""
+"How the <b>Permissions</b> are applied to the chosen <b>Tag</b>. Choose "
+"<i>Allow</i> to grant the specified permissions and <i>Deny</i> to restrict "
+"the specified permissions."
+msgstr ""
+
+msgid ""
+"How this ACE is applied to newly created directories and files within the "
+"dataset. Basic flags enable or disable ACE inheritance. Advanced flags "
+"allow further control of how the ACE is applied to files and directories in "
+"the dataset. See the <a "
+"href=\"--docurl--/storage.html#ace-inheritance-flags\" "
+"target=\"_blank\">inheritance flags list</a> for descriptions of Advanced "
+"inheritance flags."
+msgstr ""
+
 msgid "I Agree"
 msgstr ""
 
@@ -4613,6 +4642,9 @@ msgstr ""
 msgid "IPMI"
 msgstr "IPMI"
 
+msgid "IPv4"
+msgstr ""
+
 msgid "IPv4 Address"
 msgstr "IPv4 地址"
 
@@ -4644,6 +4676,9 @@ msgstr "Jail的IPv4接口"
 
 msgid "IPv4 netmask for the jail."
 msgstr "Jail的IPv4子网掩码"
+
+msgid "IPv6"
+msgstr ""
 
 msgid "IPv6 Address"
 msgstr "IPv6 地址"
@@ -4827,6 +4862,21 @@ msgstr "Initiator 组 ID"
 msgid "Initiators"
 msgstr "Initiator"
 
+msgid ""
+"Initiators allowed access to this system. Enter an <a "
+"href=\"https://tools.ietf.org/html/rfc3720#section-3.2.6\" "
+"target=\"_blank\">iSCSI Qualified Name (IQN)</a> and click <i>+</i> to add "
+"it to the list. Example: <i>iqn.1994-09.org.freebsd:freenas.local</i>"
+msgstr ""
+
+msgid ""
+"Initiators currently connected to the system. Shown in IQN format with an "
+"IP address. Set initiators and click an <b>-></b> (arrow) to add the "
+"initiators to either the <i>Allowed Initiators</i> or <i>Authorized "
+"Networks</i> lists. Clicking <i>Refresh</i> updates the <i>Connected "
+"Initiators</i> list."
+msgstr ""
+
 msgid "Input the pre-defined S3 bucket to use."
 msgstr ""
 
@@ -4870,6 +4920,12 @@ msgid "Invalid password"
 msgstr "密码错误"
 
 msgid "Invalid regex filter"
+msgstr ""
+
+msgid ""
+"Invalidate the existing  passphrase by generating a new encryption key. "
+"Also invalidates any  existing encryption or recovery key files. A dialog "
+"opens to save a  copy of the new encryption key."
 msgstr ""
 
 msgid "Is the pool encrypted?"
@@ -4926,16 +4982,7 @@ msgstr "Jail核心转储大小(bytes)。"
 msgid "Jail data size in bytes."
 msgstr ""
 
-msgid "Jail restarted successfully"
-msgstr ""
-
 msgid "Jail stack size in bytes."
-msgstr ""
-
-msgid "Jail started successfully"
-msgstr ""
-
-msgid "Jail stopped successfully"
 msgstr ""
 
 msgid "Jails"
@@ -4998,6 +5045,12 @@ msgstr "密钥长度"
 msgid "Key Type"
 msgstr ""
 
+msgid "LAGG Ports"
+msgstr ""
+
+msgid "LAGG Protocol"
+msgstr ""
+
 msgid "LDAP"
 msgstr ""
 
@@ -5058,9 +5111,6 @@ msgstr "链路聚合接口"
 
 msgid "Lagg Physical NIC"
 msgstr "链路聚合物理网卡"
-
-msgid "Lagg Ports"
-msgstr ""
 
 msgid "Lagg Priority Number"
 msgstr "链路聚合优先级"
@@ -5638,11 +5688,11 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Network addresses which can use this initiator. Use <i>ALL</i> or list "
-"network addresses with a <a "
+"Network addresses which are allowed use this initiator. Each  address can "
+"include an optional <a "
 "href=\"https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing\" "
-"target=\"_blank\">CIDR</a> mask. Separate multiple addresses with a space: "
-"<i>192.168.2.0/24 192.168.2.1/12</i>."
+"target=\"_blank\">CIDR</a> netmask. Click <i>+</i> to add the network "
+"address to the list. Example: <i>192.168.2.0/24</i>."
 msgstr ""
 
 msgid "Network changes applied successfully."
@@ -5687,6 +5737,9 @@ msgstr ""
 msgid "Next"
 msgstr "下一步"
 
+msgid "Next Run"
+msgstr ""
+
 msgid "Nic to attach:"
 msgstr ""
 
@@ -5715,6 +5768,9 @@ msgid ""
 "No pools exist. Jails cannot be created or managed until a pool is present "
 "for storing them. Please create a pool first."
 msgstr "没有存储池被创建。Jails不能被创建或管理直到一个保存它们的存储池被设定。请先创建一个存储池"
+
+msgid "No snapshots sent yet"
+msgstr ""
 
 msgid "No update found."
 msgstr "未找到更新"
@@ -5927,9 +5983,6 @@ msgstr ""
 msgid "Optional comment."
 msgstr "可选评论。"
 
-msgid "Optional description."
-msgstr "可选说明。"
-
 msgid "Optional description. Portals are automatically assigned a numeric group ID."
 msgstr "可选说明。Portals are automatically assigned a numeric group ID."
 
@@ -5973,6 +6026,9 @@ msgid "Owner of the jail. Can be any string."
 msgstr ""
 
 msgid "PLUGIN"
+msgstr ""
+
+msgid "POST INSTALL NOTES"
 msgstr ""
 
 msgid "Parent Interface"
@@ -6176,6 +6232,9 @@ msgstr ""
 msgid "Portal Group ID"
 msgstr "Portal 组 ID"
 
+msgid "Post Install Notes"
+msgstr ""
+
 msgid "Post-script"
 msgstr ""
 
@@ -6333,6 +6392,9 @@ msgstr ""
 msgid "RCTL Limits"
 msgstr ""
 
+msgid "REFRESH INDEX"
+msgstr ""
+
 msgid "REGISTER"
 msgstr ""
 
@@ -6370,6 +6432,15 @@ msgid "Raw filesize"
 msgstr "原始文件大小"
 
 msgid "Re-key Pool"
+msgstr ""
+
+msgid ""
+"Re-keying the pool resets the encryption on the  GELI master key of each "
+"encrypted disk in this pool. <b>This invalidates  all existing encryption "
+"and recovery key files, as well as any configured  passphrase.</b><br />  A "
+"new encryption key file is generated and an option opens to save a  backup "
+"of this file. Adding a passphrase or recovery key file is done  from the "
+"Encryption Operations menu."
 msgstr ""
 
 msgid "Read Only"
@@ -6413,9 +6484,6 @@ msgstr "重新连接"
 
 msgid "Record Size"
 msgstr "记录大小"
-
-msgid "Recovery Attempts"
-msgstr "回复尝试"
 
 msgid "Recovery Key"
 msgstr "Recovery Key"
@@ -6625,12 +6693,6 @@ msgstr "重启网络服务"
 msgid "Restart the system?"
 msgstr "重启系统？"
 
-msgid "Restarting"
-msgstr ""
-
-msgid "Restarting Jail"
-msgstr ""
-
 msgid "Restore default"
 msgstr "重置为默认"
 
@@ -6657,10 +6719,16 @@ msgstr "回滚"
 msgid "Root Password"
 msgstr "Root密码"
 
+msgid "Root node is not a valid value"
+msgstr ""
+
 msgid "Root password"
 msgstr "Root密码"
 
 msgid "Rotation Rate"
+msgstr ""
+
+msgid "Rotation Rate (RPM)"
 msgstr ""
 
 msgid "Rsync Tasks"
@@ -6702,6 +6770,9 @@ msgstr "现在运行这个计划任务？"
 
 msgid "Run this rsync now?"
 msgstr "现在运行这个Rsync？"
+
+msgid "S.M.A.R.T. Test"
+msgstr ""
 
 msgid "S.M.A.R.T. Tests"
 msgstr "S.M.A.R.T. 测试"
@@ -6793,9 +6864,6 @@ msgid "Saving ACLs"
 msgstr ""
 
 msgid "Saving ACLs..."
-msgstr ""
-
-msgid "Saving Debug"
 msgstr ""
 
 msgid "Schedule"
@@ -6924,8 +6992,9 @@ msgstr ""
 msgid ""
 "Select <i>UEFI</i> for newer operating systems or <i>UEFI-CSM</i> "
 "(Compatibility Support Mode) for older operating systems that only support "
-"BIOS booting."
-msgstr "选择<i>UEFI</i>用于较新的操作系统，<i>UEFI-CSM</i>（兼容支持模式）用于只支持BIOS引导的操作系统。"
+"BIOS booting. <i>Grub</i> is not recommended but can be used when the other "
+"options do not work."
+msgstr ""
 
 msgid "Select Authenticator"
 msgstr ""
@@ -7079,6 +7148,13 @@ msgid "Select one or more disks to decrypt."
 msgstr ""
 
 msgid "Select one or more screenshots that illustrate the problem."
+msgstr ""
+
+msgid ""
+"Select permissions to apply to the chosen <b>Tag</b>. Choices change "
+"depending on the <b>Permissions Type</b>. See the <a "
+"href=\"--docurl--/storage.html#ace-permissions\" target=\"_blank\">ACL "
+"permissions list</a> for descriptions of each permission."
 msgstr ""
 
 msgid "Select pool to import"
@@ -7285,6 +7361,12 @@ msgstr ""
 msgid "Select the serial port address in hex."
 msgstr ""
 
+msgid ""
+"Select the set of ACE inheritance <b>Flags</b> to display. <i>Basic</i> "
+"shows unspecific inheritance options. <i>Advanced</i> shows specific "
+"inheritance settings for finer control."
+msgstr ""
+
 msgid "Select the shell to use for local and SSH logins."
 msgstr ""
 
@@ -7321,9 +7403,6 @@ msgstr ""
 msgid ""
 "Select to automatically set the contents of the share to the <i>webdav</i> "
 "user and group."
-msgstr ""
-
-msgid "Select to remove the passphrase from this pool."
 msgstr ""
 
 msgid ""
@@ -7983,6 +8062,11 @@ msgid ""
 "slow connections."
 msgstr "设置来减少发送的数据大小。在低速连接推荐。"
 
+msgid ""
+"Set to remove all ACLs from the current dataset. ACLs are also recursively "
+"stripped from directories and child datasets when those options are set."
+msgstr ""
+
 msgid "Set to run resilver tasks between the configured times."
 msgstr ""
 
@@ -8127,6 +8211,11 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Setting permissions recursively affects this directory and any others below "
+"it. This can make data inaccessible."
+msgstr ""
+
+msgid ""
 "Setting permissions recursively will affect this directory and any others "
 "below it. This might make data inaccessible."
 msgstr ""
@@ -8154,12 +8243,6 @@ msgstr ""
 msgid ""
 "Setting this option will result in timeouts if <b>identd</b> is not running "
 "on the client."
-msgstr ""
-
-msgid ""
-"Setting this will strip ACLs from the current dataset. ACLs will also be "
-"stripped recursively to directories and child datasets if paired with  hose "
-"options"
 msgstr ""
 
 msgid "Settings saved."
@@ -8421,12 +8504,6 @@ msgid ""
 "task completes."
 msgstr ""
 
-msgid "Starting"
-msgstr ""
-
-msgid "Starting Jail"
-msgstr ""
-
 msgid "Starting job..."
 msgstr "开始任务..."
 
@@ -8456,12 +8533,6 @@ msgstr ""
 
 msgid "Stopped the scrub on pool <i>"
 msgstr "已停止数据校验在存储池<i>"
-
-msgid "Stopping"
-msgstr ""
-
-msgid "Stopping Jail"
-msgstr ""
 
 msgid "Stopping scrub on pool <i>"
 msgstr "正在停止数据校验在存储池 <i>"
@@ -8721,6 +8792,9 @@ msgstr ""
 msgid "Temp tooltip"
 msgstr ""
 
+msgid "Template"
+msgstr ""
+
 msgid "Terms of Service"
 msgstr ""
 
@@ -8838,12 +8912,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"The envelope <i>From</i> address shown in the email. This can be set to "
-"make filtering mail on the receiving system easier. The friendly name is "
-"set like this: <i>\"Friendly Name\" &ltaddress@example.com&gt</i>"
-msgstr ""
-
-msgid ""
 "The file used to manually update the system. Browse to the update file "
 "stored on the system logged into the web interface to upload and apply. "
 "Update file names end with <i>-manual-update-unsigned.tar</i>"
@@ -8853,6 +8921,17 @@ msgstr ""
 "<i>-manual-update-unsigned.tar</i>"
 
 msgid "The filesystem "
+msgstr ""
+
+msgid ""
+"The friendly name to show in front of the sending email  address. Example: "
+"<i>Storage System 01</i>&ltit@example.com&gt"
+msgstr ""
+
+msgid ""
+"The group which controls the dataset. This group has whatever permissions "
+"are granted to the <i>@group</i> <b>Tag</b>. Groups created manually or "
+"imported from a directory service appear in the drop-down menu."
 msgstr ""
 
 msgid "The hostname or IP address of the LDAP server."
@@ -8952,6 +9031,12 @@ msgid "The update file is temporarily stored here before being applied."
 msgstr ""
 
 msgid ""
+"The user account <i>Email</i> address to use for the  envelope <i>From</i> "
+"email address. The user account <i>Email</i> in  <b>Accounts > Users > "
+"Edit</b> must be configured first."
+msgstr ""
+
+msgid ""
 "The value of the jail <a "
 "href=\"https://www.freebsd.org/doc/faq/security.html#idp60202568\" "
 "target=\"_blank\">securelevel</a> sysctl. A jail never has a lower "
@@ -9010,6 +9095,15 @@ msgid ""
 "This field remains empty until a valid <b>Username</b> and <b>Password</b> "
 "is entered. Choose the category that best describes the bug or feature "
 "being reported."
+msgstr ""
+
+msgid ""
+"This is an additional key file that can be used  to unlock the pool instead "
+"of the passphrase or encryption key file. <br /> <br />  Entering the "
+"administrator password and clicking <b>ADD RECOVERY KEY</b>  generates a "
+"single recovery key file and downloads it to the local system. Store the "
+"recovery key file in a secure location!<br />  Adding a new recovery key "
+"invalidates any previously downloaded  recovery key file for this pool."
 msgstr ""
 
 msgid "This is the FreeBSD device name for the disk."
@@ -9125,11 +9219,16 @@ msgstr "未加密存储池可以被直接导入。"
 msgid "Unique LUN ID. The default is generated from the MAC address of the system."
 msgstr "独特的LUN ID。The default is generated from the MAC address of the system."
 
-msgid "Unix (NFS) Shares"
-msgstr "Unix (NFS) 共享列表"
+msgid "Unix Shares (NFS)"
+msgstr ""
 
 msgid "Unlock"
 msgstr "解锁"
+
+msgid ""
+"Unlock the pool with a recovery  key file instead of a passphrase. Select a "
+"recovery key file to upload  from the local system."
+msgstr ""
 
 msgid ""
 "Unmask is used for newly created files. Default is <i>000</i> (anyone can "
@@ -9171,6 +9270,9 @@ msgstr "直到"
 
 msgid "Unused"
 msgstr "未使用"
+
+msgid "Upcoming tasks"
+msgstr ""
 
 msgid "Update"
 msgstr "更新"
@@ -9267,9 +9369,6 @@ msgid ""
 "Use <a href=\"https://www.freebsd.org/cgi/man.cgi?query=rtsold\" "
 "target=\"_blank\">rtsold(8)</a> as part of IPv6 autoconfiguration. Send "
 "ICMPv6 Router Solicitation messages to interfaces to discover new routers."
-msgstr ""
-
-msgid "Use <i>ALL</i> keyword or a list of initiator hostnames separated by spaces."
 msgstr ""
 
 msgid "Use DHCP. Unset to manually configure a static IPv4 connection."
@@ -9375,12 +9474,21 @@ msgstr "用户 ID"
 msgid "User Suffix"
 msgstr "用户后缀"
 
+msgid "User account to which this ACL entry applies."
+msgstr ""
+
 msgid ""
 "User accounts have an ID greater than 1000 and system accounts have an ID "
 "equal to the default port number used by the service."
 msgstr ""
 
 msgid "User passed to <i>camcontrol security -u</i> to unlock SEDs"
+msgstr ""
+
+msgid ""
+"User who controls the dataset. This user always has permissions to read or "
+"write the ACL and read or write attributes. Users created manually or "
+"imported from a directory service appear in the drop-down menu."
 msgstr ""
 
 msgid "Username"
@@ -9648,8 +9756,8 @@ msgstr ""
 msgid "Winbind NSS Info"
 msgstr "Winbind NSS 信息"
 
-msgid "Windows (SMB) Shares"
-msgstr "Windows (SMB) 共享"
+msgid "Windows Shares (SMB)"
+msgstr ""
 
 msgid "Wipe"
 msgstr "擦除"
