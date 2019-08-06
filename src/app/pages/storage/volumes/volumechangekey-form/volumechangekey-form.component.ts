@@ -146,6 +146,6 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
     params.push(payload);
 
     this.encryptionService.setPassphrase(this.pk, value.passphrase, value.adminpw,
-      value.name, this.route_success, false);
+      value.name, this.route_success, false, true, success_msg);
   }
 }

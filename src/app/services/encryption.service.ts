@@ -6,6 +6,7 @@ import { MatSnackBar, MatDialog } from '@angular/material';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { T } from 'app/translate-marker';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
+import helptext from '../helptext/storage/volumes/volume-key'
 
 @Injectable({
   providedIn: 'root'
@@ -16,14 +17,13 @@ export class EncryptionService {
         protected snackBar: MatSnackBar, protected loader: AppLoaderService,
         protected mdDialog: MatDialog, protected router: Router) {}
 
-
     setPassphrase(row, encryptKeyPassphrase, adminPassphrase, poolName, route_success, 
-        addRecoveryKey?: boolean, downloadEncrytpKey?: boolean) {
+        addRecoveryKey?: boolean, downloadEncrytpKey?: boolean, success_message?) {
         this.loader.open();
         this.ws.call('pool.passphrase', [parseInt(row), {'passphrase': encryptKeyPassphrase, 
-          'admin_password': adminPassphrase}]).subscribe((res) => {
+          'admin_password': adminPassphrase}]).subscribe(() => {
             this.loader.close();
-            this.snackBar.open(T('Encryption reset & passphrase created for ') + poolName, T("Close"), {
+            this.snackBar.open(T(`Passphrase ${success_message} `) + poolName, T("Close"), {
               duration: 5000,
             });
             this.loader.close();
@@ -39,11 +39,9 @@ export class EncryptionService {
         this.loader.open();
         this.ws.call('core.download', ['pool.recoverykey_add', [parseInt(row)], 'pool_' + poolName + '_recovery.key']).subscribe((res) => {
           this.loader.close();
-          this.snackBar.open(T("Encryption reset & recovery key added to ") + poolName, 'close', { duration: 5000 });
-          this.dialogService.confirm(T('WARNING!'), 
-            T('The recovery key can be used instead of the passphrase to unlock the pool. \
-            Store the key in a secrure location! This key invalidates any previously downloaded recovery keys for this pool.'), 
-            true, T('Download Recovery Key'), false, '', '', '', '', true).subscribe(() => {
+          this.snackBar.open(T("Recovery key added to ") + poolName, 'close', { duration: 5000 });
+          this.dialogService.confirm(helptext.set_recoverykey_dialog_title, helptext.set_recoverykey_dialog_message, 
+            true, helptext.set_recoverykey_dialog_button, false, '', '', '', '', true).subscribe(() => {
               window.open(res[1]);
               downloadEncryptKey ? this.openEncryptDialog(row, route_success) : this.router.navigate(new Array('/').concat(
                 route_success));

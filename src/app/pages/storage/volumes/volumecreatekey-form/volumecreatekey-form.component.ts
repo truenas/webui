@@ -108,7 +108,7 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
 
   customSubmit(value) {
     this.encryptionService.setPassphrase(this.pk, value.passphrase, value.adminpw, 
-      value.name, this.route_success, false);
+      value.name, this.route_success, false, true, 'created for');
  }
 
 }

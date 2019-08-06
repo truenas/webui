@@ -71,7 +71,13 @@ encryptionkey_passphrase_placeholder: T('Encryption Key Passphrase'),
 encryptionkey_passphrase_tooltip: T('Add a passphrase to the new encryption key. This can \
  be used to lock and unlock the pool.'),
 
- set_recoverykey_instructions: 'Optional: Generate a new recovery key.',
- set_recoverykey_checkbox_placeholder: 'Add Recovery Key',
- set_recoverykey_checkbox_tooltip: 'Generate a new recovery key file for the pool.'
+set_recoverykey_instructions: 'Optional: Generate a new recovery key.',
+set_recoverykey_checkbox_placeholder: 'Add Recovery Key',
+set_recoverykey_checkbox_tooltip: 'Generate a new recovery key file for the pool.',
+
+set_recoverykey_dialog_title: T('WARNING!'),
+set_recoverykey_dialog_message: T('The recovery key can be used instead of the passphrase to unlock the pool. \
+ Download the key and store it in a secure location! This key invalidates any previously downloaded \
+ recovery keys for this pool.'),
+set_recoverykey_dialog_button: T('Download Recovery Key')
 }
