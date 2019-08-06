@@ -125,7 +125,7 @@ snapshots will be stored. Example: Poolname/Datasetname, not the mountpoint or f
 
     speed_limit_placeholder: T('Limit (Ex. 500 KiB/s, 500M, 2 TB)'),
     speed_limit_tooltip: T('Limit replication speed to this number of bytes per second.'),
-    speed_limit_errors: T('Invalid value. Valid values are numbers followed by unit letters, \
+    speed_limit_errors: T('Invalid value. Valid values are numbers followed by optional unit letters, \
  like <samp>256k</samp> or <samp>1G</samp>.'),
 
     dedup_placeholder: T('Send Deduplicated Stream'),

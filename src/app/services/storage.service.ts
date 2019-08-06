@@ -5,6 +5,7 @@ import { RestService } from './rest.service';
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { parse } from 'url';
 
 @Injectable()
 export class StorageService {
@@ -245,9 +246,10 @@ export class StorageService {
   convertHumanStringtoNum(str: string) {
     if(!str) { return 0 }; // if empty, return the default 0, which is unlimited
     const letters = str.replace( /[^a-zA-Z]/g, '');
-    if (letters[0] && !letters[0].toLowerCase().match(/b|k|m|g|t/)) { return NaN };
+    if (letters[0] && !letters[0].toLowerCase().match(/[bkmgt]/)) { return NaN };
     const powersOf1024 = {b: 1, k: 1024, m: 1024**2, g: 1024**3, t: 1024**4};
-    const unit = str.toLowerCase().match(/[b|k|m|g|t]/) || 'b';
+    const unit = str.toLowerCase().match(/[bkmgt]/) || 'b';
+    console.log(unit.toString())
     let num;
     const value = (num = str.match(/^\s*(\d+)/)) ? num[1] : NaN;
     return parseInt(value) * powersOf1024[unit.toString()];
