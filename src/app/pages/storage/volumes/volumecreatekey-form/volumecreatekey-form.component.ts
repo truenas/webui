@@ -31,6 +31,7 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
   route_success: string[] = [ 'storage', 'pools'];
   isNew = false;
   isEntity = true;
+  poolName: string;
   entityData = {
     name: "",
     passphrase: "",
@@ -42,6 +43,10 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
       type : 'input',
       name : 'name',
       isHidden: true
+    },{
+      type: 'paragraph',
+      name: 'encrypt-headline',
+      paraText: '<i class="material-icons">lock</i>' + helptext.changekey_headline
     },{
       type: 'paragraph',
       name: 'createkey-instructions',
@@ -76,6 +81,8 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
   ];
 
   resourceTransformIncomingRestData(data:any): any {
+    this.poolName = data.name;
+    _.find(this.fieldConfig, {name : "encrypt-headline"}).paraText += this.poolName;
     return data;
   };
 

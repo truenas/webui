@@ -1386,9 +1386,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   // Reset Encryption form
-  #rekey-headline p {
+  #encrypt-headline p {
     font-size: 1.5rem;
-    font-weight: 700;
+    font-weight: 500;
     margin-bottom: .7rem;
 
     i {

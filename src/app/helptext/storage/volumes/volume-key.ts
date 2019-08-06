@@ -8,6 +8,7 @@ const passphrase_msg = T(' a passphrase creates a new encryption key \
 
 export default {
 // Add key form
+add_key_headline: T('Add Recovery Key for Pool: '),
 add_key_name_validation: [Validators.required],
 add_key_instructions: T('This is an additional key file that can be used \
  to unlock the pool instead of the passphrase or encryption key file. <br /> <br /> \
@@ -25,11 +26,13 @@ changekey_adminpw_placeholder: T('Root Password'),
 changekey_adminpw_tooltip: T('Enter the root password.'),
 changekey_adminpw_validation: [Validators.required],
 
+changekey_headline: T('Create Passphrase for Pool: '),
 changekey_instructions: T('Creating') + passphrase_msg,
 changekey_passphrase_placeholder: T('Passphrase'),
 changekey_passphrase_tooltip: T('Enter the new encryption key passphrase.'),
 changekey_passphrase_validation: [Validators.required],
 
+changekey2_headline: T('Change Passphrase for Pool: '),
 changekey_instructions2: T('Changing') + passphrase_msg,
 changekey_passphrase2_placeholder: T('Verify passphrase'),
 changekey_passphrase2_tooltip: T('Confirm the encryption key passphrase.'),

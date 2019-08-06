@@ -44,7 +44,7 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
       isHidden: true
     },{
       type: 'paragraph',
-      name: 'rekey-headline',
+      name: 'encrypt-headline',
       paraText: '<i class="material-icons">lock</i>' + helptext.rekey_headline
     },{
       type: 'paragraph',
@@ -85,7 +85,7 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
 
   resourceTransformIncomingRestData(data:any): any {
     this.poolName = data.name;
-    _.find(this.fieldConfig, {name : "rekey-headline"}).paraText += this.poolName;
+    _.find(this.fieldConfig, {name : "encrypt-headline"}).paraText += this.poolName;
     return data;
   };
 
@@ -111,58 +111,65 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
   customSubmit(value) {
     this.loader.open();
     this.ws.call('pool.rekey', [parseInt(this.pk), {'admin_password': value.passphrase}])
-      .subscribe((res) => {
+      .subscribe(() => {
         switch (true) 
           {
             case value.encryptionkey_passphrase && !value.set_recoverykey:
-              this.ws.call('pool.passphrase', [parseInt(this.pk), {'passphrase': value.encryptionkey_passphrase, 
-                'admin_password': value.passphrase}]).subscribe((res) => {
-                  this.loader.close();
-                  this.snackBar.open(T('Encryption reset & passphrase created for ') + value.name, T("Close"), {
-                    duration: 5000,
-                  });
-                this.openEncryptDialog();
-                (err) => {
-                  this.loader.close();
-                  this.dialogService.errorReport(T("Error creating passphrase for pool ") + value.name, err.error.message, err.error.traceback);
-                };
-              })
-              console.log('num 1');
+              this.setPassphrase(value.encryptionkey_passphrase, value.passphrase, value.name, false);
               break;
 
             case !value.encryptionkey_passphrase && value.set_recoverykey:
-              console.log('num2');
-              this.ws.call('core.download', ['pool.recoverykey_add', [parseInt(this.pk)], 'pool_' + value.name + '_recovery.key']).subscribe((res) => {
-                this.loader.close();
-                this.snackBar.open(T("Encryption reset & recovery key added to ") + value.name, 'close', { duration: 5000 });
-                window.open(res[1]);
-                this.openEncryptDialog();
-              }, (res) => {
-                this.loader.close();
-                this.dialogService.errorReport(T("Error adding recovery key to pool."), res.reason, res.trace.formatted);
-              });
+              this.makeRecoveryKey(value.name)
               break;
 
-            case !value.encryptionkey_passphrase && value.set_recoverykey:
-              console.log('3');
+            case value.encryptionkey_passphrase && value.set_recoverykey:
+              this.setPassphrase(value.encryptionkey_passphrase, value.passphrase, value.name, true);
               break;
 
             default:
-              console.log('four');
               this.loader.close();
               this.snackBar.open(T('Successfully reset encryption for pool: ') + value.name, T("Close"), {
                 duration: 5000,
               });
               this.openEncryptDialog();
           }
-     
         (err) => {
           this.loader.close();
-          this.dialogService.errorReport(T("Error resetting encryption for pool: " + value.name), res.error, res.trace.formatted);
+          this.dialogService.errorReport(T("Error resetting encryption for pool: " + value.name), err.error, err.trace.formatted);
         };
       });
   }
 
+  setPassphrase(encryptKeyPassphrase, adminPassphrase, poolName, addRecoveryKey?: boolean) {
+    this.ws.call('pool.passphrase', [parseInt(this.pk), {'passphrase': encryptKeyPassphrase, 
+      'admin_password': adminPassphrase}]).subscribe((res) => {
+        this.loader.close();
+        this.snackBar.open(T('Encryption reset & passphrase created for ') + poolName, T("Close"), {
+          duration: 5000,
+        });
+        addRecoveryKey ? this.makeRecoveryKey(poolName) : this.openEncryptDialog();
+      (err) => {
+        this.loader.close();
+        this.dialogService.errorReport(T("Error creating passphrase for pool ") + poolName, err.error.message, err.error.traceback);
+      };
+    })
+  }
+
+  makeRecoveryKey(poolName) {
+    this.ws.call('core.download', ['pool.recoverykey_add', [parseInt(this.pk)], 'pool_' + poolName + '_recovery.key']).subscribe((res) => {
+      this.loader.close();
+      this.snackBar.open(T("Encryption reset & recovery key added to ") + poolName, 'close', { duration: 5000 });
+      this.dialogService.confirm('WARNING!', 'Back up the recovery key and store it in a safe place.', 
+        true, 'Download Recovery Key', false, '', '', '', '', true).subscribe(() => {
+          window.open(res[1]);
+          this.openEncryptDialog();
+        })
+    }, (res) => {
+      this.loader.close();
+      this.dialogService.errorReport(T("Error adding recovery key to pool."), res.reason, res.trace.formatted);
+    });
+  }
+ 
   openEncryptDialog() {
     let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
     dialogRef.componentInstance.volumeId = this.pk;
@@ -171,10 +178,4 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
       this.route_success));
     })
   }
-
-  customSubmit2(value) {
-    this.loader.open();
-
- }
-
 }

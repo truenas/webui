@@ -30,6 +30,7 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
   route_success: string[] = [ 'storage', 'pools'];
   isNew = false;
   isEntity = true;
+  poolName: string;
   entityData = {
     name: "",
     passphrase: ""
@@ -37,6 +38,10 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
 
   fieldConfig: FieldConfig[] = [
     {
+      type: 'paragraph',
+      name: 'encrypt-headline',
+      paraText: '<i class="material-icons">lock</i>' + helptext.add_key_headline
+    },{
       type: 'paragraph',
       name: 'addkey-instructions',
       paraText: helptext.add_key_instructions,
@@ -59,6 +64,8 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
   ];
 
   resourceTransformIncomingRestData(data:any): any {
+    this.poolName = data.name;
+    _.find(this.fieldConfig, {name : "encrypt-headline"}).paraText += this.poolName;
     return data;
   };
 
