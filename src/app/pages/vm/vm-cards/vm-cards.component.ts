@@ -48,6 +48,7 @@ export class VmCardsComponent  implements OnDestroy {
     { name: T("Virtual CPUs"), prop: 'vcpus', hidden: true },
     { name: T("Memory Size (MiB)"), prop: 'memory', hidden: true },
     { name: T("Boot Loader Type"), prop: 'bootloader', hidden: true },
+    {name : 'System Clock', prop : 'time', hidden: true},
     { name: T("VNC Port"), prop: 'port', hidden: true },
     { name: T("Com Port"), prop: 'com_port', hidden: true }
   ];
@@ -66,6 +67,7 @@ export class VmCardsComponent  implements OnDestroy {
               ) {}
 
   resourceTransformIncomingRestData(vms) {
+    console.log({vms})
     for (let vm_index = 0; vm_index<vms.length; vm_index++){
       vms[vm_index]['state'] = vms[vm_index]['status']['state'];
       vms[vm_index]['com_port'] = `/dev/nmdm${vms[vm_index]['id']}B`;
