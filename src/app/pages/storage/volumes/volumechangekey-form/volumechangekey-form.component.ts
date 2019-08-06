@@ -12,10 +12,10 @@ import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
 import { DialogService } from 'app/services/dialog.service';
+import { EncryptionService } from '../../../../../app/services/encryption.service';
 import { MatSnackBar, MatDialog } from '@angular/material';
 import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/storage/volumes/volume-key';
 
@@ -104,7 +104,8 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
       protected dialogService: DialogService,
       protected loader: AppLoaderService,
       public mdDialog: MatDialog,
-      public snackBar: MatSnackBar
+      public snackBar: MatSnackBar,
+      protected encryptionService: EncryptionService
   ) {
 
   }
@@ -144,21 +145,7 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
     };
     params.push(payload);
 
-    this.loader.open();
-    this.ws.call('pool.passphrase', params).subscribe(() => {
-      this.loader.close();
-      this.snackBar.open(T('Passphrase changed for pool ' + value.name), T("Close"), {
-        duration: 5000,
-      });
-        let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
-        dialogRef.componentInstance.volumeId = this.pk;
-        dialogRef.afterClosed().subscribe(result => {
-          this.router.navigate(new Array('/').concat(
-            this.route_success));
-        });
-    },(err) => {
-      this.loader.close();
-      this.dialogService.errorReport(T("Error changing passphrase for pool ") + value.name, err.reason, err.trace.formatted);
-    })
+    this.encryptionService.setPassphrase(this.pk, value.passphrase, value.adminpw,
+      value.name, this.route_success, false);
   }
 }

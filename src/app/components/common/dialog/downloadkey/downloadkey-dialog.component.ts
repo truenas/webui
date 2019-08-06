@@ -1,10 +1,9 @@
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material';
 import { Component } from '@angular/core';
 import {
   WebSocketService
 } from '../../../../services/';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import {environment} from '../../../../../environments/environment';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({

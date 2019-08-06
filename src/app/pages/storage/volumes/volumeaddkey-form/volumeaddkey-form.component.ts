@@ -8,6 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 
 import { WebSocketService, StorageService } from '../../../../services/';
+import { EncryptionService } from '../../../../../app/services/encryption.service';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -80,7 +81,8 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
       protected loader: AppLoaderService,
       protected storage: StorageService,
       protected snackBar: MatSnackBar,
-      protected mdDialog: MatDialog
+      protected mdDialog: MatDialog,
+      protected encryptionService: EncryptionService
   ) {}
 
   preInit(entityForm: any) {
@@ -90,26 +92,6 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
   }
 
   customSubmit(value) { 
-    this.loader.open();
-    this.ws.call('auth.check_user', ['root', value.password]).subscribe(res => {
-      if (res) {
-        this.ws.call('core.download', ['pool.recoverykey_add', [parseInt(this.pk)], 'pool_' + value.name + '_recovery.key']).subscribe((res) => {
-          this.loader.close();
-          this.snackBar.open(T("Recovery key added to pool ") + value.name, 'close', { duration: 5000 });
-          window.open(res[1]);
-          this.router.navigate(new Array('/').concat(this.route_success));
-        }, (res) => {
-          this.loader.close();
-          this.dialogService.errorReport(T("Error adding recovery key to pool."), res.reason, res.trace.formatted);
-        });
-      }
-      else {
-        this.loader.close();
-        this.dialogService.Info(T("Invalid password"), T("Please enter the correct password."));
-      }
-    }, (res) => {
-      this.loader.close();
-      this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
-    });
+    this.encryptionService.makeRecoveryKey(this.pk, value.name, this.route_success, false);
   }
 }

@@ -8,6 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 
 import { WebSocketService } from '../../../../services/';
+import { EncryptionService } from '../../../../../app/services/encryption.service';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -16,7 +17,6 @@ import { MatSnackBar, MatDialog } from '@angular/material';
 import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../translate-marker';
-import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component';
 import helptext from '../../../../helptext/storage/volumes/volume-key';
 
 @Component({
@@ -96,7 +96,8 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
       protected dialogService: DialogService,
       protected loader: AppLoaderService,
       private snackBar: MatSnackBar,
-      private mdDialog: MatDialog
+      private mdDialog: MatDialog,
+      private encryptionService: EncryptionService
   ) {}
 
   preInit(entityForm: any) {
@@ -106,24 +107,8 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
   }
 
   customSubmit(value) {
-    this.loader.open();
-    this.ws.call('pool.passphrase', [parseInt(this.pk), {'passphrase': value.passphrase, 
-      'admin_password': value.adminpw}]).subscribe((res) => {
-        this.loader.close();
-        this.snackBar.open(T('Passphrase created for pool ') + value.name, T("Close"), {
-          duration: 5000,
-        });
-        let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
-        dialogRef.componentInstance.volumeId = this.pk;
-        dialogRef.afterClosed().subscribe(result => {
-          this.router.navigate(new Array('/').concat(
-            this.route_success));
-        });
-        (err) => {
-          this.loader.close();
-          this.dialogService.errorReport(T("Error creating passphrase for pool ") + value.name, err.error.message, err.error.traceback);
-        };
-      })
+    this.encryptionService.setPassphrase(this.pk, value.passphrase, value.adminpw, 
+      value.name, this.route_success, false);
  }
 
 }
