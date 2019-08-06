@@ -7,5 +7,6 @@ export default {
     ctrlr: 'TrueNAS controller',
     ctrlrs: 'TrueNAS controllers',
     Ctrlr: 'TrueNAS Controller',
-    Ctrlrs: 'TrueNAS Controllers'
+    Ctrlrs: 'TrueNAS Controllers',
+    thisCtlr: 'This Controller'
 }

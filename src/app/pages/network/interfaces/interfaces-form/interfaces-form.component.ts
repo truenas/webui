@@ -267,11 +267,11 @@ export class InterfacesFormComponent implements OnDestroy {
     if (window.localStorage.getItem('is_freenas') === 'false') {
       this.ws.call('failover.node').subscribe((node) => {
         if (node === 'A') {
-          this.ipPlaceholder = ' (This Controller)';
+          this.ipPlaceholder = ` (${globalHelptext.thisCtlr})`;
           this.failoverPlaceholder = ` (${globalHelptext.Ctrlr} 2)`;
         } else if (node === 'B') {
           this.ipPlaceholder = ` (${globalHelptext.Ctrlr} 1)`;
-          this.failoverPlaceholder = ' (This Controller)';
+          this.failoverPlaceholder = ` (${globalHelptext.thisCtlr})`;
         } else {
           this.ipPlaceholder = ' The active controller cannot be detected.';
           this.failoverPlaceholder = ''
