@@ -7,4 +7,4 @@ source-is-missing src/vendor/Chart.min.js
 source-is-missing src/assets/scripts/ie-support/ie-polyfills.min.js
 truenas-webui source: source-is-missing src/assets/iconfont/mdi/preview.html *
 truenas-webui source: source-is-missing assets/iconfont/mdi/preview.html *
-truenas-webui source: source-is-missing vendor/Chart.min.js *
+truenas-webui source: source-is-missing vendor/Chart.min.js
