@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RestService, WebSocketService } from '../../../../services';
 import { AbstractControl, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
@@ -12,7 +12,7 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar, MatStepper } from '@angular/material';
 import { DialogService } from '../../../../services/';
 import { EntityUtils } from '../utils';
 
@@ -23,8 +23,8 @@ import { EntityUtils } from '../utils';
   providers: [EntityFormService, FieldRelationService]
 })
 export class EntityWizardComponent implements OnInit {
-
   @Input('conf') conf: any;
+  @ViewChild('stepper', {static: true}) stepper: MatStepper;
 
   public formGroup: FormGroup;
 

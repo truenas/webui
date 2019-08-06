@@ -10,6 +10,7 @@ export default {
 // Add key form
 add_key_headline: T('Add Recovery Key for Pool: '),
 add_key_name_validation: [Validators.required],
+
 add_key_instructions: T('This is an additional key file that can be used \
  to unlock the pool instead of the passphrase or encryption key file. <br /> <br /> \
  Entering the administrator password and clicking <b>ADD RECOVERY KEY</b> \
@@ -17,12 +18,13 @@ add_key_instructions: T('This is an additional key file that can be used \
  system. Store the recovery key file in a secure location!<br /> \
  Adding a new recovery key invalidates any previously downloaded \
  recovery key file for this pool.'),
-add_key_password_placeholder: T('Root password'),
+add_key_password_placeholder: T('Administrator Password'),
+
 add_key_password_tooltip: T('Enter the root password to authorize this operation.'),
 add_key_password_validation: [Validators.required],
 
 // Change key form
-changekey_adminpw_placeholder: T('Root Password'),
+changekey_adminpw_placeholder: T('Administrator Password'),
 changekey_adminpw_tooltip: T('Enter the root password.'),
 changekey_adminpw_validation: [Validators.required],
 
@@ -80,4 +82,5 @@ set_recoverykey_dialog_message: T('The recovery key can be used instead of the p
  Download the key and store it in a secure location! This key invalidates any previously downloaded \
  recovery keys for this pool.'),
 set_recoverykey_dialog_button: T('Download Recovery Key')
+
 }
