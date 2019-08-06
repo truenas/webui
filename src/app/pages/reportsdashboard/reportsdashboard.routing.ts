@@ -36,6 +36,12 @@ export const routes: Routes = [
     component : ReportsDashboardComponent,
   },
   {
+    path : 'nfs',
+    pathMatch : 'full',
+    data:{title:'NFS', breadcrumb:'NFS'},
+    component : ReportsDashboardComponent,
+  },
+  {
     path : 'partition',
     pathMatch : 'full',
     data:{title:'Partition', breadcrumb:'Partition'},
@@ -51,6 +57,12 @@ export const routes: Routes = [
     path : 'target',
     pathMatch : 'full',
     data:{title:'Target', breadcrumb:'Target'},
+    component : ReportsDashboardComponent,
+  },
+  {
+    path : 'ups',
+    pathMatch : 'full',
+    data:{title:'UPS', breadcrumb:'UPS'},
     component : ReportsDashboardComponent,
   },
   {
