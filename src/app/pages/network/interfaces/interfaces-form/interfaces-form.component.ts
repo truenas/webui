@@ -263,6 +263,23 @@ export class InterfacesFormComponent implements OnDestroy {
     this.vlan_pint = _.find(this.fieldConfig, {'name' : 'vlan_parent_interface'});
     this.bridge_members = _.find(this.fieldConfig, {'name' : 'bridge_members'});
     this.lag_ports = _.find(this.fieldConfig, {'name' : 'lag_ports'});
+
+    if (window.localStorage.getItem('is_freenas') === 'false') {
+      this.ws.call('failover.node').subscribe((node) => {
+        if (node === 'A') {
+          this.ipPlaceholder = ' (This Controller)';
+          this.failoverPlaceholder = ` (${globalHelptext.Ctrlr} 2)`;
+        } else if (node === 'B') {
+          this.ipPlaceholder = ` (${globalHelptext.Ctrlr} 1)`;
+          this.failoverPlaceholder = ' (This Controller)';
+        } else {
+          this.ipPlaceholder = ' The active controller cannot be detected.';
+          this.failoverPlaceholder = ''
+        }
+        _.find(this.ipListControl.templateListField, {'name': 'address'}).placeholder += this.ipPlaceholder;
+        _.find(this.ipListControl.templateListField, {'name': 'failover_address'}).placeholder += this.failoverPlaceholder;
+      })
+    }
   }
 
   afterInit(entityForm: any) {
@@ -275,20 +292,7 @@ export class InterfacesFormComponent implements OnDestroy {
         failover_address['disabled'] = false;
         failover_address['isHidden'] = false;
 
-        this.ws.call('failover.node').subscribe((node) => {
-          if (node === 'A') {
-            this.ipPlaceholder = ' (This Controller)';
-            this.failoverPlaceholder = ` (${globalHelptext.Ctrlr} 2)`;
-          } else if (node === 'B') {
-            this.ipPlaceholder = ` (${globalHelptext.Ctrlr} 1)`;
-            this.failoverPlaceholder = ' (This Controller)';
-          } else {
-            this.ipPlaceholder = ' The active controller cannot be detected.';
-            this.failoverPlaceholder = ''
-          }
-          failover_virtual_address.placeholder += this.ipPlaceholder;
-          failover_address.placeholder += this.failoverPlaceholder;
-        })
+
       }
     this.aliases_fc = _.find(this.fieldConfig, {"name": "aliases"});
 
