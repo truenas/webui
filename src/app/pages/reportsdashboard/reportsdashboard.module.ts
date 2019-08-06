@@ -8,13 +8,14 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from '../../appMaterial.module';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 
-
+import { ScrollingModule } from '@angular/cdk/scrolling'; 
 import { ReportComponent } from './components/report/report.component';
 
-import {ReportsDashboardComponent} from './reportsdashboard.component';
-import {routing} from './reportsdashboard.routing';
-import {LineChartService} from '../../components/common/lineChart/lineChart.service';
+import { ReportsDashboardComponent } from './reportsdashboard.component';
+import { routing } from './reportsdashboard.routing';
+import { LineChartComponent } from './components/lineChart/lineChart.component';
 
 @NgModule({
   imports : [ 
@@ -22,14 +23,17 @@ import {LineChartService} from '../../components/common/lineChart/lineChart.serv
     FormsModule, 
     routing, 
     MaterialModule,
+    ScrollingModule,
     AppCommonModule,
     TranslateModule,
     EntityModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    CommonDirectivesModule
   ],
   declarations : [
     ReportsDashboardComponent,
-    ReportComponent
+    ReportComponent,
+    LineChartComponent
   ],
   providers : [
     

@@ -36,6 +36,10 @@ ul.ct-legend {
   //margin-bottom:32px;
 }
 
+.mat-card.ghost-card{
+  min-height:430px;
+}
+
 .mat-button-toggle .mat-icon{
   font-size:24px;
   line-height: normal;
@@ -45,5 +49,58 @@ ul.ct-legend {
 #dashboardcontainerdiv{
   // Adjustment should really be applied to .rightside-content-hold (margin-top 90px instead of 104px), 
   // but didn't want to risk breaking layouts of other pages so I applied this instead
-  margin-top: -14px; 
+  margin-top: -14px;
+}
+
+nav.reports-toolbar{
+  position:relative;
+  z-index:2;
+  top: -15px;
+  box-shadow: 0 2px 3px rgba(0,0,0,0.5);
+  padding:4px 0 4px 32px;
+  background-color: var(--alt-bg1);
+}
+
+.master-container{
+  top: -15px;
+  height: calc(100vh - 92px - 48px); /* 92 is for the topbar && 48 is for the entity-toolbar */
+  /*top:92px;*/
+  position:relative;
+
+}
+
+.master-container.with-footer-console {
+  height: calc(100vh - 92px - 48px - 45px);
+}
+
+.reports-navigation-spacer{
+  width: 282px;
+}
+
+.reports-navigation{
+  width: 270px;
+}
+
+.reports-navigation{
+  position:fixed;
+  height:100%;
+  top:150;
+  right:0;
+  overflow: auto;
+  background-color: var(--bg2);
+  color:var(--fg2);
+  box-shadow:2px 0 3px rgba(0,0,0,0.1) ;
+}
+
+.reports-navigation .mat-list-item.onscreen{
+  border-left:solid 3px var(--primary);
+}
+
+cdk-virtual-scroll-viewport{
+  height: 100%;
+  width: calc(100% - 48px /*- 282px*/);
+
+  .report-container {
+    height:600px;
+  }
 }
