@@ -340,6 +340,20 @@ export class JailListComponent implements OnInit {
       }
     ]
   }
+  
+  public isActionVisible(actionId: string, row): boolean {
+    if (actionId === "start" && row.state === "up") {
+      return false;
+    } else if (actionId === "stop" && row.state === "down") {
+      return false;
+    } else if (actionId === "shell" && row.state === "down") {
+      return false;
+    } else if (actionId === "restart" && row.state === "down") {
+      return false;
+    }
+
+    return true;
+  }
 
   getSelectedNames(selectedJails) {
     let selected: any = [];
