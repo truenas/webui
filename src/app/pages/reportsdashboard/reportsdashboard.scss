@@ -56,7 +56,7 @@ nav.reports-toolbar{
   position:relative;
   z-index:2;
   top: -15px;
-  box-shadow:0 1px 3px #000;
+  box-shadow: 0 2px 3px rgba(0,0,0,0.5);
   padding:4px 0 4px 32px;
   background-color: var(--alt-bg1);
 }
@@ -101,6 +101,6 @@ cdk-virtual-scroll-viewport{
   width: calc(100% - 48px /*- 282px*/);
 
   .report-container {
-    height:500px;
+    height:600px;
   }
 }

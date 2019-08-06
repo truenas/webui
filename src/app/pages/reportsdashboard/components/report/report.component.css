@@ -27,7 +27,10 @@
 
 .legend {
   display:table; 
-  margin-left:16px;
+  /*margin-left:16px;*/
+  /*border:solid 1px rgba(0,0,0,0);
+  border-radius:4px;*/
+  overflow:hidden;
 }
 
 .legend-label  {
@@ -58,7 +61,7 @@ span.tooltip-value{
 
 .legend-timestamp{
   height:20px;
-  margin:16px;
+  margin:16px 16px 0;
 }
 
 .legend-item{
@@ -543,11 +546,13 @@ p.value{
 }
 
 .legend-group {
-  /*min-width: 220px !important;
-  width: 220px !important;
-  max-width: 220px !important;*/
-  margin-right: 20px;
-  max-width: calc(50% - 32px) !important;
+  /*margin-right: 20px;*/
+  max-width: calc(50% - 16px) !important;
+  background-color: rgba(0,0,0,0.1);
+  padding: 12px;
+  margin: 4px;
+  border: solid 1px rgba(0,0,0,0);
+  border-radius:4px;
 }
 
 h3 {
@@ -573,12 +578,16 @@ h3 {
   margin:0;
 }
 
+.report .mat-card-footer{
+  width:100%;
+}
+
 .report .mat-toolbar-row{
     margin-bottom: 16px;
 }
 
 .report .mat-card.zero-state{
-  min-height:375px;
+  min-height:475px;
   /*background-color:rgba(0,0,0,0.0);*/
   position:relative;
 }
@@ -590,14 +599,3 @@ h3 {
   opacity:0.1;
 }
 
-/*.report .mat-card.zero-state div.logo-wrapper:before{
-  width:100%;
-  height:100%;
-  display:inline-block;
-  vertical-align:middle;
-  text-align:center;
-}*/
-
-/*.report .mat-divider{
-  top:72px;
-}*/

@@ -88,11 +88,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
     this.scrollContainer.style.overflow = 'hidden';
     
     this.generateTabs();
-    //this.initReportVisbility(this.totalVisibleReports);
-
-    this.core.register({observerClass: this, eventName:"CacheConfigData"}).subscribe((evt:CoreEvent) => {
-      // Not sure what this does
-    });
 
     this.ws.call('system.advanced.config').subscribe((res)=> {
       if (res) {
@@ -151,15 +146,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
 
   nextBatch(evt, offset){
     this.scrolledIndex = evt;
-    /*if (this.viewportEnd){
-      return;
-    }
-
-    const end = this.viewport.getRenderedRange().end;
-    const total = this.viewport.getDataLength();
-    if(end === total){
-      this.viewportOffset.next(offset);//fetch more data;
-    }*/
   }
 
   trackByIndex(i){
@@ -174,15 +160,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
       })
   }
 
-  /*initReportVisbility(total:number){
-    //this.displayList = this.activeReports.map((r) => -1);
-    let result = [];
-    for(let i = 0; i < total; i++){
-      result.push(i);
-      //this.displayList[i]
-    }
-    this.visibleReports = result;
-  }*/
 
   activateTabFromUrl (){ 
     let subpath = this.router.url.split("/reportsdashboard/"); 
@@ -285,8 +262,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
       const keys = Object.keys(this.activeReports);
       this.visibleReports = keys.map((v) => parseInt(v));
     }
-    //console.log(this.activeReports);
-    //console.log(this.visibleReports);
   }
 
   flattenReports(list:Report[]){
@@ -314,10 +289,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
       }
     });
    
-    /*console.log("FLATTENED!");
-    console.log(list);
-    console.log(result);
-    this.fetchReportData(result[0], result[0].identifiers[0]);*/
     return result;
   }
 
@@ -361,7 +332,6 @@ diskReportBuilderSetup(){
             width:'calc(50% - 16px)',
             placeholder: 'Choose a Device',
             options: this.diskDevices, // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
-            //value:[this.diskDevices[0]],
             required: true,
             multiple: true,
             tooltip:'Choose a device for your report.',
@@ -387,11 +357,8 @@ diskReportBuilderSetup(){
   }
 
   generateValues(){
-    //let tab = this.allTabs.find(item => item.label == 'Disk');
-    let devices = [];
-    //let deviceNames = [];
+    let devices = [];  
     let metrics = [];
-    //let metricNames = [];
 
     this.diskReports[0].identifiers.forEach((item) => {
       devices.push({label: item, value: item});

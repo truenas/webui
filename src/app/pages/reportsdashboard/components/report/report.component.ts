@@ -134,8 +134,12 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   public chartId = "chart-" + UUID.UUID();
   public chartColors: string[];
 
-  public startTime;
-  public endTime;
+  get startTime(){
+    return new Date(this.currentStartDate);
+  }
+  get endTime(){
+    return new Date(this.currentEndDate);
+  }
 
   constructor(public router: Router, 
     public translate: TranslateService,
@@ -167,11 +171,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   }
 
   ngAfterViewInit(){
-    // Delay chart render for smoother scrolling
-    /*setTimeout(() => {
-      this.ready = true
-    }, this.delay); */
-
     this.stepForwardDisabled = true;
     const zoom =  this.zoomLevels[this.timeZoomIndex];
     const rrdOptions = this.convertTimespan(zoom.timespan)
