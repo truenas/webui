@@ -193,11 +193,8 @@ export class TargetFormComponent {
     } else if (groupModel.name == 'initiator') {
       groupModel.options.push({label : 'None', value : null});
       for (let i = 0; i < this.initiators.length; i++) {
-        var label = this.initiators[i].tag;
-        if (this.initiators[i].comment) {
-          label += ' (' + this.initiators[i].comment + ')';
-        }
-        groupModel.options.push({label : label, value : this.initiators[i].id})
+        const optionLabel = this.initiators[i].id + ' (' + (this.initiators[i].initiators.length === 0 ? 'ALL Initiators Allowed' : this.initiators[i].initiators.toString()) + ')';
+        groupModel.options.push({label : optionLabel, value : this.initiators[i].id})
       }
     } else if (groupModel.name == 'auth') {
       groupModel.options.push({label : 'None', value : null});
