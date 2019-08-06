@@ -101,7 +101,8 @@
 
     <mat-card *ngIf="!ready" class="front zero-state" fxLayout="row wrap" fxlayoutGap="16px" fxLayoutAlign="center center">
       <!--<div class="logo-wrapper">-->
-        <mat-icon svgIcon="truenas_logomark"></mat-icon>
+        <mat-icon *ngIf="!isFN" svgIcon="truenas_logo_full"></mat-icon>
+        <mat-icon *ngIf="isFN" class="generic" svgIcon="freenas_logo_full"></mat-icon>
         <!--</div>-->
     </mat-card>
 

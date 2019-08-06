@@ -102,7 +102,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
  
     this.core.register({observerClass: this, eventName:"ReportingGraphs"}).subscribe((evt:CoreEvent) => { 
       if (evt.data) {
-        console.log(evt.data);
         let allReports = evt.data.map((report) => {
           let list = [];
           if(report.identifiers){
@@ -335,7 +334,7 @@ diskReportBuilderSetup(){
             name: 'devices',
             label: 'Devices',
             disabled:false,
-            options: this.diskDevices.map((v) => v.value), // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
+            options: this.diskDevices.map((v) => v), // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
             //tooltip:'Choose a device for your report.',
           },
           {
@@ -343,7 +342,7 @@ diskReportBuilderSetup(){
             name: 'metrics',
             label: 'Metrics',
             disabled: false,
-            options: this.diskMetrics ? this.diskMetrics.map((v) => v.value) : ['Not Available'], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
+            options: this.diskMetrics ? this.diskMetrics.map((v) => v) : ['Not Available'], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
             //tooltip:'Choose a metric to display.',
           }
     ]
@@ -403,7 +402,7 @@ diskReportBuilderSetup(){
       let formatted = item.title.replace(/ \(.*\)/, '');// remove placeholders for identifiers eg. '({identifier})'
       formatted = formatted.replace(/identifier/, '');
       formatted = formatted.replace(/[{][}]/, '');
-      formatted = formatted.replace(/requests on /, '');
+      formatted = formatted.replace(/requests on/, '');
       metrics.push({label: formatted, value: item.name});
     });
 
@@ -423,7 +422,6 @@ diskReportBuilderSetup(){
 
   setupSubscriptions(){
     this.target.subscribe((evt: CoreEvent) => {
-
       switch(evt.name){
         case 'FormSubmitted':
           this.buildDiskReport(evt.data.devices, evt.data.metrics);
@@ -439,16 +437,23 @@ diskReportBuilderSetup(){
     this.target.next({name:"Refresh"});
   }
 
-  buildDiskReport(device: string | string[], metric: string | string[]){
+  buildDiskReport(device: string | any[], metric: string | any[]){
     
     // Convert strings to arrays
-    if(typeof device == "string"){ device = [device];}
-    if(typeof metric == "string"){ metric = [metric];}
+    if(typeof device == "string"){
+      device = [device];
+    } else {
+      device = device.map((v) => v.value);
+    }
+    
+    if(typeof metric == "string"){ 
+      metric = [metric];
+    } else {
+      metric = metric.map((v) => v.value);
+    }
 
-    //let clone = Object.assign([], this.activeReports);
     let visible = [];
     this.activeReports.forEach((item, index) => {
-      //const condition = item.identifiers[0] == device[0] && item.name == metric[0];
       const deviceMatch = device.indexOf(item.identifiers[0]) !== -1;
       const metricMatch = metric.indexOf(item.name) !== -1;
       const condition = (deviceMatch && metricMatch)

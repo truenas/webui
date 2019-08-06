@@ -74,6 +74,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
 
   public data: ReportData;
   public ready: boolean = false;
+  public isFN: string = window.localStorage['is_freenas'];
   private delay: number = 1000; // delayed chart render time
   
   get reportTitle(){

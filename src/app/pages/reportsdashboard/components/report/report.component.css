@@ -584,8 +584,8 @@ h3 {
 }
 
 .report .mat-card.zero-state .mat-icon{
-  width:120px;
-  height:120px;
+  width:auto;
+  height:180px;
   color: var(--fg2);
   opacity:0.1;
 }
