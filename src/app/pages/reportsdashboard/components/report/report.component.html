@@ -1,6 +1,6 @@
 <div class="report" ngClass.xs="double-height xs">
   <div class="card-container  front" (mouseenter)="setChartInteractive(true)" (mouseleave)="setChartInteractive(false)" >
-    <mat-card class="front" fxLayout="row wrap" fxlayoutGap="16px" fxLayoutAlign="space-between stretch">
+    <mat-card *ngIf="ready" class="front" fxLayout="row wrap" fxlayoutGap="16px" fxLayoutAlign="space-between stretch">
       <mat-toolbar-row fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" fxFlex="100" class="mat-card-toolbar">
         <mat-card-title fxFlex="65%"><h3>{{reportTitle}} <!--<span *ngIf="isActive">(active)</span>--></h3></mat-card-title>
         <!-- Controls/Tools -->
@@ -32,7 +32,7 @@
           <!-- Chart -->
           <div class="chart-wrapper" fxFlex="100">
             <linechart 
-              *ngIf="data chartColors"
+              *ngIf="report && data && chartColors"
               [chartId]="chartId"
               [chartColors]="chartColors"
               [data]="data"
@@ -97,6 +97,12 @@
             </section>
 
           </mat-card-footer>
+    </mat-card>
+
+    <mat-card *ngIf="!ready" class="front zero-state" fxLayout="row wrap" fxlayoutGap="16px" fxLayoutAlign="center center">
+      <!--<div class="logo-wrapper">-->
+        <mat-icon svgIcon="truenas_logomark"></mat-icon>
+        <!--</div>-->
     </mat-card>
 
     <ng-template *ngIf="configurable">

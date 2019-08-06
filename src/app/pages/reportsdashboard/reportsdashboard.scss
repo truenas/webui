@@ -36,6 +36,10 @@ ul.ct-legend {
   //margin-bottom:32px;
 }
 
+.mat-card.ghost-card{
+  min-height:430px;
+}
+
 .mat-button-toggle .mat-icon{
   font-size:24px;
   line-height: normal;
@@ -49,20 +53,45 @@ ul.ct-legend {
 }
 
 .master-container{
+  top: -15px;
+  height: calc(100vh - 92px);
+  /*top:92px;*/
   position:relative;
+
 }
 
-.reports-navigation,
+.master-container.with-footer-console {
+  height: calc(100vh - 92px - 45px);
+}
+
 .reports-navigation-spacer{
-  width: 250px;
+  width: 282px;
+}
+
+.reports-navigation{
+  width: 270px;
 }
 
 .reports-navigation{
   position:fixed;
+  height:100%;
   top:150;
   right:0;
+  overflow: auto;
+  background-color: var(--bg2);
+  color:var(--fg2);
+  box-shadow:2px 0 3px rgba(0,0,0,0.1) ;
 }
 
 .reports-navigation .mat-list-item.onscreen{
   border-left:solid 3px var(--primary);
+}
+
+cdk-virtual-scroll-viewport{
+  height: 100%;
+  width: calc(100% - 48px /*- 282px*/);
+
+  .report-container {
+    height:500px;
+  }
 }

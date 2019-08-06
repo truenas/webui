@@ -82,7 +82,6 @@ function  convertKMGT(input: number, units: string, fixed?: number){
     output = input / kilo;
   }
 
-  console.warn(units);
   if(units == 'bits'){
     shortName = shortName.replace(/i/, '');
     shortName = shortName.toLowerCase();
@@ -134,7 +133,7 @@ function formatValue(value: number, units: string, fixed?: number){
     default:
       converted = convertByKilo(output);
       return typeof output == 'number' ? maxDecimals(converted.value).toString() + converted.suffix : value ;//[this.limitDecimals(value), ''];
-      break;
+      //break;
   }
 
   return output; //? output : value;
@@ -192,7 +191,32 @@ function optimizeLegend(input){
       output.legend = output.legend.map((label) => label.replace(/_value/, ''))
       break;
     case 'ctl':
+    case 'disk':
       output.legend = output.legend.map((label) => label.replace(/disk_octets_/, ''))
+      break;
+    case 'diskgeombusy':
+      output.legend = output.legend.map((label) => 'busy')
+      break;
+    case 'diskgeomlatency':
+      output.legend = output.legend.map((label) => label.replace(/geom_latency-/, ''));
+      output.legend = output.legend.map((label) => {
+        let spl = label.split('_');
+        return spl[1]
+      })
+      break;
+    case 'diskgeomopsrwd':
+      output.legend = output.legend.map((label) => label.replace(/geom_ops_rwd-/, ''));
+      output.legend = output.legend.map((label) => {
+        let spl = label.split('_');
+        return spl[1]
+      })
+      break;
+    case 'diskgeomqueue':
+      output.legend = output.legend.map((label) => label.replace(/geom_queue-/, ''));
+      output.legend = output.legend.map((label) => {
+        let spl = label.split('_');
+        return spl[1]
+      })
       break;
     case 'arcsize':
       output.legend = output.legend.map((label) => label.replace(/cache_size-/, ''))
@@ -203,9 +227,16 @@ function optimizeLegend(input){
       output.legend = output.legend.map((label) => label.replace(/_value/, ''))
       break;
     case 'arcresult':
-      output.legend = output.legend.map((label) => label.replace(/cache_result-demand_data-/, ''))
-      output.legend = output.legend.map((label) => label.replace(/cache_result-demand_metadata-/, ''))
-      output.legend = output.legend.map((label) => label.replace(/_value/, ''))
+      output.legend = output.legend.map((label) => {
+        let noPrefix = label.replace(/cache_result-/, '');
+        let noSuffix = noPrefix.replace(/_value/, '');
+        if(noSuffix == 'total'){
+          return noSuffix;
+        } else {
+          let spl = noSuffix.split('-');
+          return spl[1];
+        }
+      });
       break;
   }
   return output;

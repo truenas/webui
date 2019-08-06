@@ -1,41 +1,39 @@
-<button *ngFor="let tab of allTabs;" mat-button color="primary" (click)="navigateToTab(tab.value)">{{tab.label}}</button>
-<div class="master-container" lazyViewer view=".report" fxLayout="row wrap" fxLayoutAlign="space-evenly"> 
-    <div fxFlex="48px" class="position:relative;">
-      <mat-slider style="position:fixed; left:16px; top:160px;" 
+<!--<button *ngFor="let tab of allTabs;" mat-button color="primary" (click)="navigateToTab(tab.value)">{{tab.label}}</button>-->
+<div *ngIf="visibleReports && activeReports" class="master-container" [ngClass]="{'with-footer-console': isFooterConsoleOpen}" lazyViewer view=".report" fxLayout="row wrap" fxLayoutAlign="space-evenly"> 
+    <div fxFlex="48px" class="">
+      <!-- GLOBAL CONTROLS -->
+      <!--<mat-slider style="position:fixed; left:16px; top:160px;" 
         vertical
         invert
         thumbLabel
         min="0"
-        [max]="activeReports.length"></mat-slider>
+        [max]="activeReports.length"></mat-slider>-->
     </div>
-    <div id="dashboardcontainerdiv" fxFlex>
 
+    <!-- Cards Container -->
+    <cdk-virtual-scroll-viewport itemSize="500" (scrolledIndexChange)="nextBatch($event, visibleReports[visibleReports.length - 1])">
       <!-- Report Cards -->
-      <!--<ng-container *ngFor="let report of activeReports; let counter=index">-->
-      <ng-container *ngFor="let key of visibleReports">
-        <ng-container *ngIf="key < activeReports.length">
-          <!-- Reports without identifiers -->
-          <report *ngIf="activeReports[key].identifiers.length > 0 " [report]="activeReports[key]" [identifier]="activeReports[key].identifiers[0]"></report>
-          <report *ngIf="activeReports[key].identifiers.length == 0 " [report]="activeReports[key]"></report>
-        </ng-container>
-      </ng-container>
-
-    </div>
-    <div class="reports-navigation-spacer" fxFlex="250px"></div>
-
+      <div class="report-container" *cdkVirtualFor="let key of activeReports; let i = index;">
+          <report *ngIf="activeReports[i].identifiers.length > 0 " [report]="activeReports[i]" [identifier]="activeReports[i].identifiers[0]"></report>
+          <report *ngIf="activeReports[i].identifiers.length == 0 " [report]="activeReports[i]"></report>
+      </div>
+      <div class="bottom-spacer"></div>
+    </cdk-virtual-scroll-viewport>
+    <!-- /Cards Container -->
+    
+    
+    <!--<div class="reports-navigation-spacer" fxFlex="282px"></div>
     <div fxFlex="100" class="reports-navigation">
       <mat-list>
       <ng-container *ngFor="let report of activeReports; let key=index">
-        <mat-list-item [ngClass]="{'onscreen': getVisibility(key)}">
-          <!--<span>
-            <mat-icon *ngIf="getVisibility(key)" role="img">check_circle</mat-icon>
-            <mat-icon *ngIf="!getVisibility(key)" role="img">close_circle</mat-icon>
-            </span>-->
+        <mat-list-item [ngClass]="{'onscreen': key == scrolledIndex }">
           {{report.title}}
         </mat-list-item>
       </ng-container>
       </mat-list>
-    </div>
+      </div>-->
+    
+
     <div [style.height.px]="30" *ngIf="isFooterConsoleOpen"></div>
 </div>
 

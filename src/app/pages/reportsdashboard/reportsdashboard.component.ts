@@ -1,8 +1,8 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, OnDestroy, AfterViewInit, EventEmitter, Output, ViewChild } from '@angular/core';
 import { Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 import * as _ from 'lodash';
-import { Subject } from 'rxjs'; 
+import { Subject, BehaviorSubject } from 'rxjs'; 
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
@@ -10,6 +10,7 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { ReportComponent, Report } from './components/report/report.component';
 import { ReportsService } from './reports.service';
+import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 
 //import { PageEvent } from '@angular/material';
 import { ErdService } from 'app/services/erd.service';
@@ -34,6 +35,10 @@ interface Tab {
 })
 export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleChartConfigDataFunc,*/ AfterViewInit {
 
+  @ViewChild(CdkVirtualScrollViewport, {static:false}) viewport:CdkVirtualScrollViewport;
+  @ViewChild('container', {static:true}) container:ElementRef;
+  public scrollContainer:HTMLElement;
+  public scrolledIndex: number = 0;
   public isFooterConsoleOpen;
 
   public diskReports: Report[];
@@ -42,9 +47,19 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
 
   public activeTab: string = "CPU"; // Tabs (lower case only): CPU, Disk, Memory, Network, NFS, Partition?, System, Target, UPS, ZFS
   public allTabs: Tab[] = [];
+  public loadingReports: boolean = false;
 
+  public displayList: number[] = [];
   public visibleReports:number[] = [];
+
   public totalVisibleReports:number = 4;
+  public viewportEnd: boolean = false;
+  public viewportOffset = new BehaviorSubject(null);
+
+  /*get topOffset(){
+    return (this.visibleReports[0] * 430).toString();
+  }*/
+  //public lastScrollPosition:number = 0;
 
   constructor(private erdService: ErdService, 
     public translate: TranslateService, 
@@ -52,6 +67,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
     private core:CoreService,
     private rs: ReportsService,
     protected ws: WebSocketService) {
+
+    // EXAMPLE METHOD
+    //this.viewport.scrollToIndex(5);
   }
 
   diskReportBuilderSetup(){
@@ -74,6 +92,10 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
 
 
   ngOnInit() { 
+    this.scrollContainer = document.querySelector('.rightside-content-hold ');//this.container.nativeElement;
+    this.scrollContainer.style.overflow = 'hidden';
+    //this.scrollContainer.addEventListener('scroll', this.onScroll.bind(this) );
+    
     this.generateTabs();
     this.initReportVisbility(this.totalVisibleReports);
 
@@ -109,8 +131,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
         this.otherReports = allReports.filter((report) => !report.name.startsWith('disk') /*&& name !== 'df' && report.name !== 'uptime'*/);
        
         this.activateTabFromUrl();
-
-        //this.fetchReportData(this.otherReports[0]);
       }
     });
 
@@ -119,6 +139,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
   }
 
   ngOnDestroy() {
+    this.scrollContainer.style.overflow = 'auto';
     this.core.unregister({observerClass:this});
   }
 
@@ -132,6 +153,126 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
     return test == -1 ? false : true;
   }
 
+  getBatch(lastSeen: string){
+    // Do Stuff
+    console.log("getBatch Method");
+    return this.visibleReports;
+  }
+
+  nextBatch(evt, offset){
+    this.scrolledIndex = evt;
+    /*if (this.viewportEnd){
+      return;
+    }
+
+    const end = this.viewport.getRenderedRange().end;
+    const total = this.viewport.getDataLength();
+    if(end === total){
+      this.viewportOffset.next(offset);//fetch more data;
+    }*/
+  }
+
+  trackByIndex(i){
+    return i;
+  }
+
+  /*onScroll(e){
+    let buffer = 6;
+   
+    let el = this.scrollContainer;
+  
+    const threshold = 12;
+    const reload = () => {
+      return el.scrollTop > this.lastScrollPosition - threshold && el.scrollTop < this.lastScrollPosition + threshold;
+    }
+
+    if((el.scrollHeight - el.scrollTop) == el.offsetHeight){
+      if(this.loadingReports){
+        return;
+      }
+      el.scroll(0, el.scrollHeight - 120);// back off from bottom to avoid retriggering
+      
+      this.lastScrollPosition = el.scrollTop - buffer * 430; //(el.offsetHeight / 2);
+      
+
+      let next = this.nextBatch(buffer);
+      
+      this.visibleReports = next;
+      this.loadingReports = true;
+      setTimeout(()=>{
+        this.loadingReports = false;
+      }, 1000);
+
+    } else if(el.scrollTop == 0){
+      //console.warn("TOP!!");
+    } else if(el.scrollTop <  this.lastScrollPosition){
+      this.lastScrollPosition = el.scrollTop - el.offsetHeight;
+      let previous = this.previousBatch(buffer);
+      this.visibleReports = previous;
+      this.loadingReports = true;
+      setTimeout(()=>{
+        this.loadingReports = false;
+        //console.log(previous)
+      }, 1000);
+    }
+  }
+
+  nextBatch(buffer){
+    let clone = Object.assign([], this.visibleReports);
+    //let buffer = 2;
+    if(this.activeReports.length <= this.totalVisibleReports){
+      return this.visibleReports;
+    } 
+    
+    //add to bottom 
+    let last = clone[clone.length - 1];
+    let lastActiveReport = this.activeReports[this.activeReports.length - 1];
+
+    if((last + this.totalVisibleReports) >= this.activeReports.length){
+      buffer = this.activeReports.length - last;
+    }
+
+    //remove from top
+    clone.splice(0, buffer);
+
+    for(let i = 1 ; i <= buffer; i++){
+      let nextReport = last + i;
+      if(nextReport >= lastActiveReport){
+        break;
+      };
+      clone.push(last + i);
+    }
+    return clone;
+  }
+
+  previousBatch(buffer){
+    let clone = Object.assign([], this.visibleReports);
+    //let buffer = 2;
+    if(this.activeReports.length <= this.totalVisibleReports){
+      return this.visibleReports;
+    } 
+    
+    //remove from bottom 
+    if(clone[0] - buffer < 0){
+      clone = [];
+      for(let i = 0; i < this.totalVisibleReports; i++){clone.push(i)};
+      return clone;
+    }
+    clone.splice(clone.length - buffer, buffer);
+
+    //add to top
+    for(let i = 1; i <= buffer; i++){
+      let prevReport = this.visibleReports[0] - i;
+      if(prevReport < 0){
+        console.log("skip..")
+        continue;
+      }
+      clone.unshift(prevReport);
+    }
+    
+    return clone;
+  }*/
+
   generateTabs(){
       let labels = ['CPU', 'Disk', 'Memory', 'Network', 'NFS', 'Partition', 'System', 'Target', 'UPS', 'ZFS'];
       labels.forEach((item) =>{
@@ -140,9 +281,11 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
   }
 
   initReportVisbility(total:number){
+    //this.displayList = this.activeReports.map((r) => -1);
     let result = [];
     for(let i = 0; i < total; i++){
       result.push(i);
+      //this.displayList[i]
     }
     this.visibleReports = result;
   }

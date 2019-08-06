@@ -73,6 +73,8 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
 
 
   public data: ReportData;
+  public ready: boolean = false;
+  private delay: number = 1500; // delayed chart render time
   
   get reportTitle(){
     return this.identifier ? this.report.title.replace(/{identifier}/, this.identifier) : this.report.title;
@@ -164,6 +166,11 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   }
 
   ngAfterViewInit(){
+    // Delay chart render for smoother scrolling
+    /*setTimeout(() => {
+      this.ready = true
+    }, this.delay); */
+
     this.stepForwardDisabled = true;
     const zoom =  this.zoomLevels[this.timeZoomIndex];
     const rrdOptions = this.convertTimespan(zoom.timespan)
@@ -173,11 +180,23 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
 
   ngOnChanges(changes){
     if(changes.report){
+      if(changes.report.previousValue){
+        this.setupData(changes); 
+      } else if(!changes.report.previousValue){
+        console.log("DELAY!!");
+        setTimeout(() => {
+          this.ready = true;
+          this.setupData(changes); 
+        }, this.delay);
+      }
+    } 
+  }
+
+  private setupData(changes){
       const zoom = this.zoomLevels[this.timeZoomIndex];
       const rrdOptions = this.convertTimespan(zoom.timespan)
       let identifier = changes.report.currentValue.identifiers ? changes.report.currentValue.identifiers[0] : null;
       this.fetchReportData(rrdOptions, changes.report.currentValue, identifier);
-    }
   }
 
   private processThemeColors(theme):string[]{

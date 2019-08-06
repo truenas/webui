@@ -577,6 +577,26 @@ h3 {
     margin-bottom: 16px;
 }
 
+.report .mat-card.zero-state{
+  min-height:500px;
+  background-color:rgba(0,0,0,0.0);
+  position:relative;
+}
+
+.report .mat-card.zero-state .mat-icon{
+  width:120px;
+  height:120px;
+  color: rgba(0,0,0,0.05);
+}
+
+/*.report .mat-card.zero-state div.logo-wrapper:before{
+  width:100%;
+  height:100%;
+  display:inline-block;
+  vertical-align:middle;
+  text-align:center;
+}*/
+
 /*.report .mat-divider{
   top:72px;
 }*/
