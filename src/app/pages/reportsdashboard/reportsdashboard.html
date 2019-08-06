@@ -1,5 +1,5 @@
 <!--<button *ngFor="let tab of allTabs;" mat-button color="primary" (click)="navigateToTab(tab.value)">{{tab.label}}</button>-->
-<nav class="reports-toolbar" style="background-color:var(--alt-bg1); padding:0 0 0 32px;" fxLayout="row wrap" fxLayoutAlign="space-between center" fxLayoutGap="32px">
+<nav class="reports-toolbar" fxLayout="row wrap" fxLayoutAlign="space-between center" fxLayoutGap="32px">
 <!-- Layout and Report Builder -->
 <div class="reports-dash-global-controls" fxFlex fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="32px">
   <!-- START TAB REPLACEMENT-->
@@ -23,7 +23,7 @@
 <!-- Report builder was 632px wide -->
 <ng-container *ngIf="activeTab == 'Disk'">
   <!--<entity-form-embedded fxFlex="100" fxFlex.gt-xs="632px" [target]="target" [data]="values" [conf]="this" ></entity-form-embedded>-->
-  <entity-toolbar *ngIf="true" fxFlex [target]="target" [conf]="toolbarConfig"></entity-toolbar>
+  <entity-toolbar fxFlex [target]="target" [conf]="toolbarConfig"></entity-toolbar>
 </ng-container>
 
 </nav>
@@ -43,9 +43,12 @@
     <!-- Cards Container -->
     <cdk-virtual-scroll-viewport itemSize="500" (scrolledIndexChange)="nextBatch($event, visibleReports[visibleReports.length - 1])">
       <!-- Report Cards -->
-      <div class="report-container" *cdkVirtualFor="let key of activeReports; let i = index;">
-          <report *ngIf="activeReports[i].identifiers.length > 0 " [report]="activeReports[i]" [identifier]="activeReports[i].identifiers[0]"></report>
-          <report *ngIf="activeReports[i].identifiers.length == 0 " [report]="activeReports[i]"></report>
+      <div class="report-container" *cdkVirtualFor="let key of visibleReports; let i = index;">
+          <report *ngIf="activeReports[key] && activeReports[key].identifiers.length > 0" 
+            [report]="activeReports[key]" 
+            [identifier]="activeReports[key].identifiers[0]">
+          </report>
+          <report *ngIf="activeReports[key].identifiers.length == 0" [report]="activeReports[key]"></report>
       </div>
       <div class="bottom-spacer"></div>
     </cdk-virtual-scroll-viewport>

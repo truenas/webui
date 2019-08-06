@@ -57,10 +57,20 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
   public viewportEnd: boolean = false;
   public viewportOffset = new BehaviorSubject(null);
 
-  /*get topOffset(){
-    return (this.visibleReports[0] * 430).toString();
-  }*/
-  //public lastScrollPosition:number = 0;
+  // Report Builder Options (entity-form-embedded)
+  public target: Subject<CoreEvent> = new Subject();
+  public values = [];
+  public toolbarConfig: any[] = [];
+  protected isEntity: boolean = true;
+  public diskDevices = [];
+  public diskMetrics = [];
+  public categoryDevices = [];
+  public categoryMetrics = [];
+  public saveSubmitText = "Generate Reports";
+  public actionButtonsAlign = "left";
+  public fieldConfig:FieldConfig[] = [];
+  public fieldSets: FieldSet[];
+  public diskReportConfigReady: boolean = false;
 
   constructor(private erdService: ErdService, 
     public translate: TranslateService, 
@@ -73,32 +83,12 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
     //this.viewport.scrollToIndex(5);
   }
 
-  diskReportBuilderSetup(){
-    // Entity-Toolbar Config
-    let toolbarConfig = [
-          {
-            type: 'multimenu',
-            name: 'devices',
-            label: 'Devices',
-            disabled:false,
-          },
-          {
-            type: 'multimenu',
-            name: 'metrics',
-            label: 'Metrics',
-            disabled: false,
-          }
-    ]
-  }
-
-
   ngOnInit() { 
     this.scrollContainer = document.querySelector('.rightside-content-hold ');//this.container.nativeElement;
     this.scrollContainer.style.overflow = 'hidden';
-    //this.scrollContainer.addEventListener('scroll', this.onScroll.bind(this) );
     
     this.generateTabs();
-    this.initReportVisbility(this.totalVisibleReports);
+    //this.initReportVisbility(this.totalVisibleReports);
 
     this.core.register({observerClass: this, eventName:"CacheConfigData"}).subscribe((evt:CoreEvent) => {
       // Not sure what this does
@@ -145,7 +135,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
 
   ngAfterViewInit(): void {
     this.erdService.attachResizeEventToElement("dashboardcontainerdiv"); 
-    //this.setupSubscriptions();
+    
+    this.setupSubscriptions();
   }
 
   getVisibility(key){
@@ -184,7 +175,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
       })
   }
 
-  initReportVisbility(total:number){
+  /*initReportVisbility(total:number){
     //this.displayList = this.activeReports.map((r) => -1);
     let result = [];
     for(let i = 0; i < total; i++){
@@ -192,7 +183,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
       //this.displayList[i]
     }
     this.visibleReports = result;
-  }
+  }*/
 
   activateTabFromUrl (){ 
     let subpath = this.router.url.split("/reportsdashboard/"); 
@@ -234,20 +225,11 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
       }
     ]
     
-    console.log("updateActiveTab");
     this.core.emit({name: "PseudoRouteChange", data: pseudoRouteEvent});
 
-    // Simulate tab eventl
-    /*let evt = {
-      tab: {
-        textLabel: tab.value
-      }
-    }*/
-
     this.activateTab(tab.label); 
-    //this.tabSelectChangeHandler(evt);
 
-    //if(tab.label == 'Disk'){ this.diskReportBuilderSetup() }
+    if(tab.label == 'Disk'){ this.diskReportBuilderSetup() }
   }
 
   navigateToTab(tabName){
@@ -299,6 +281,11 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
     });
 
     this.activeReports = this.flattenReports(reportCategories);
+    
+    if(name !== 'Disk'){
+      const keys = Object.keys(this.activeReports);
+      this.visibleReports = keys.map((v) => parseInt(v));
+    }
     //console.log(this.activeReports);
     //console.log(this.visibleReports);
   }
@@ -335,14 +322,143 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
     return result;
   }
 
-  /*fetchReportData(report:Report, identifier?: string){
-    this.ws.call('reporting.get_data',[[
-      {"name": report.name, "identifier":identifier}
-    ]] ).subscribe((res)=> {
-      if (res) {
-        //console.log(res);
+// Disk Report Filtering
+
+diskReportBuilderSetup(){
+
+    this.generateValues();
+    
+    // Entity-Toolbar Config
+    this.toolbarConfig = [
+          {
+            type: 'multimenu',
+            name: 'devices',
+            label: 'Devices',
+            disabled:false,
+            options: this.diskDevices.map((v) => v.value), // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
+            //tooltip:'Choose a device for your report.',
+          },
+          {
+            type: 'multimenu',
+            name: 'metrics',
+            label: 'Metrics',
+            disabled: false,
+            options: this.diskMetrics ? this.diskMetrics.map((v) => v.value) : ['Not Available'], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
+            //tooltip:'Choose a metric to display.',
+          }
+    ]
+
+    // Entity-Form Config
+    this.fieldSets = [
+      {
+        name:'Report Options',
+        class:'preferences',
+        label:false,
+        width:'600px',
+        config:[
+          {
+            type: 'select',
+            name: 'devices',
+            width:'calc(50% - 16px)',
+            placeholder: 'Choose a Device',
+            options: this.diskDevices, // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
+            //value:[this.diskDevices[0]],
+            required: true,
+            multiple: true,
+            tooltip:'Choose a device for your report.',
+            class:'inline'
+          },
+          {
+            type: 'select',
+            name: 'metrics',
+            width:'calc(50% - 16px)',
+            placeholder: 'Choose a metric',
+            options: this.diskMetrics ? this.diskMetrics : [{label:'None available', value:'negative'}], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
+            //value:[this.diskMetrics[0]],
+            required: true,
+            multiple: true,
+            tooltip:'Choose a metric to display.',
+            class:'inline'
+          }
+        ]
+      }
+    ]
+
+    this.generateFieldConfig();
+  }
+
+  generateValues(){
+    //let tab = this.allTabs.find(item => item.label == 'Disk');
+    let devices = [];
+    //let deviceNames = [];
+    let metrics = [];
+    //let metricNames = [];
+
+    this.diskReports[0].identifiers.forEach((item) => {
+      devices.push({label: item, value: item});
+    });
+
+    this.diskReports.forEach((item) => {
+      //if(item.name == 'disk'){ devices = item.identifiers }
+      let formatted = item.title.replace(/ \(.*\)/, '');// remove placeholders for identifiers eg. '({identifier})'
+      formatted = formatted.replace(/identifier/, '');
+      formatted = formatted.replace(/[{][}]/, '');
+      formatted = formatted.replace(/requests on /, '');
+      metrics.push({label: formatted, value: item.name});
+    });
+
+    this.diskDevices = devices;
+    this.diskMetrics = metrics;
+
+  }
+
+  generateFieldConfig(){
+    for(let i in this.fieldSets){
+      for(let ii in this.fieldSets[i].config){
+        this.fieldConfig.push(this.fieldSets[i].config[ii]);
+      }
+    }
+    this.diskReportConfigReady = true;
+  }
+
+  setupSubscriptions(){
+    this.target.subscribe((evt: CoreEvent) => {
+
+      switch(evt.name){
+        case 'FormSubmitted':
+          this.buildDiskReport(evt.data.devices, evt.data.metrics);
+        break;
+        case 'ToolbarChanged':
+          if(evt.data.devices && evt.data.metrics){
+            this.buildDiskReport(evt.data.devices, evt.data.metrics);
+          }
+        break;
       }
     });
-  }*/
+
+    this.target.next({name:"Refresh"});
+  }
+
+  buildDiskReport(device: string | string[], metric: string | string[]){
+    
+    // Convert strings to arrays
+    if(typeof device == "string"){ device = [device];}
+    if(typeof metric == "string"){ metric = [metric];}
+
+    //let clone = Object.assign([], this.activeReports);
+    let visible = [];
+    this.activeReports.forEach((item, index) => {
+      //const condition = item.identifiers[0] == device[0] && item.name == metric[0];
+      const deviceMatch = device.indexOf(item.identifiers[0]) !== -1;
+      const metricMatch = metric.indexOf(item.name) !== -1;
+      const condition = (deviceMatch && metricMatch)
+      if(condition){
+        visible.push(index);
+      }
+    });
+
+    this.visibleReports = visible;
+
+  }
 
 }
