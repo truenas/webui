@@ -512,7 +512,8 @@ export class CloudsyncFormComponent implements OnInit {
       if (res!=null) {
         this.credentials_list.forEach((item)=>{
           if (item.id == res) {
-            if (_.find(this.providers, {"name": item.provider})['buckets']) {
+            const targetProvider = _.find(this.providers, {"name": item.provider});
+            if (targetProvider && targetProvider['buckets']) {
               this.loader.open();
               // update bucket fields name and tooltips based on provider
               if (item.provider == "AZUREBLOB" || item.provider == "HUBIC" ) {
@@ -556,13 +557,18 @@ export class CloudsyncFormComponent implements OnInit {
               this.setDisabled('bucket_input', true, true);
             }
 
-            const task_schema = _.find(this.providers, {"name": item.provider})['task_schema'];
+            const task_schema = _.find(this.providers, {"name": item.provider}) ?  _.find(this.providers, {"name": item.provider})['task_schema'] : [];
+
             for (const i of this.taskSchemas) {
               const tobeDisable = _.findIndex(task_schema, {property: i}) > -1 ? false : true;
               this.setDisabled(i === 'encryption' ? 'task_encryption' : i, tobeDisable, tobeDisable);
             }
           }
         });
+      } else {
+        for (const i of this.taskSchemas) {
+          this.setDisabled(i === 'encryption' ? 'task_encryption' : i, true, true);
+        }
       }
     })
 
