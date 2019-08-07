@@ -602,6 +602,9 @@ export class ReplicationFormComponent {
                     value: 'SSH',
                 }]
             }],
+            blurStatus : true,
+            blurEvent : this.blurEvent,
+            parent : this,
         },
         {
             type: 'checkbox',
@@ -756,6 +759,12 @@ export class ReplicationFormComponent {
 
     afterInit(entityForm) {
         this.entityForm = entityForm;
+        if (this.entityForm.formGroup.controls['speed_limit'].value) {
+            let presetSpeed = (this.entityForm.formGroup.controls['speed_limit'].value).toString() + 'b';
+            this.storageService.humanReadable = presetSpeed;
+            this.entityForm.formGroup.controls['speed_limit'].setValue(presetSpeed);
+        }
+
         entityForm.formGroup.controls['periodic_snapshot_tasks'].valueChanges.subscribe(
             (res) => {
                 if (entityForm.formGroup.controls['transport'].value !== 'LEGACY') {
@@ -953,5 +962,13 @@ export class ReplicationFormComponent {
         return new Promise((resolve, reject) => {
             resolve(this.replicationService.getRemoteDataset(transport,sshCredentials, this));
         });
+    }
+
+    blurEvent(parent){
+        if (parent.entityForm) {
+            parent.entityForm.formGroup.controls['speed_limit'].setValue(parent.storageService.humanReadable)
+        }
+
+
     }
 }

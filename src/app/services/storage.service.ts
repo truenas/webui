@@ -18,6 +18,7 @@ export class StorageService {
   public SMARToptions: any;
   public advPowerMgt: any;
   public acousticLevel: any;
+  public humanReadable: any;
 
   constructor(protected ws: WebSocketService, protected rest: RestService) {}
 
@@ -242,16 +243,35 @@ export class StorageService {
     return path.indexOf('/') < 0;
   }
 
-  // Takes a string with fuzzy units like 20Mib, 20k, 20Gb, returns number in bytes
-  convertHumanStringtoNum(str: string) {
-    if(!str) { return 0 }; // if empty, return the default 0, which is unlimited
-    const letters = str.replace( /[^a-zA-Z]/g, '');
-    if (letters[0] && !letters[0].toLowerCase().match(/[bkmgt]/)) { return NaN };
+  convertHumanStringtoNum(str) {
     const powersOf1024 = {b: 1, k: 1024, m: 1024**2, g: 1024**3, t: 1024**4};
-    const unit = str.toLowerCase().match(/[bkmgt]/) || 'b';
-    console.log(unit.toString())
-    let num;
-    const value = (num = str.match(/^\s*(\d+)/)) ? num[1] : NaN;
-    return parseInt(value) * powersOf1024[unit.toString()];
+    let results, num, unit;
+    str = str.toLowerCase();
+    if(!str) { 
+      let values = [0, '0'];
+      this.humanReadable = values[1];
+      return values[0];
+    };
+
+    const letters = str.replace( /[^a-zA-Z]/g, '');
+    if (letters[0] && !letters[0].toLowerCase().match(/[bkmgt]/)) { 
+      let values = [NaN, ''];
+      this.humanReadable = values;
+      return this.humanReadable[0];
+    };
+
+    if(results = str.match(/^\s*(\d+)\s*([bkmgt])*/)) {
+      num = parseInt(results[1]);
+    } else {
+      let values = [NaN, ''];
+      this.humanReadable = values[1];
+      return values[0];
+    };
+
+    unit = (results[2]) ? results[2] : 'b';
+    console.log(results)
+    let values = [num * parseInt(powersOf1024[unit]), num.toString() + unit];
+    this.humanReadable = values[1];
+    return values[0];
   }
 }
