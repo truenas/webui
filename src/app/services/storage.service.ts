@@ -243,34 +243,40 @@ export class StorageService {
     return path.indexOf('/') < 0;
   }
 
-  convertHumanStringtoNum(str) {
+  convertUnitToNum(unit) {
     const powersOf1024 = {b: 1, k: 1024, m: 1024**2, g: 1024**3, t: 1024**4};
-    let results, num, unit;
+    unit = unit.toString();
+    if (!unit) { return 1 };
+    unit = unit.toLowerCase();
+    return parseInt(powersOf1024[unit]);
+  }
+
+  convertHumanStringtoNum(str) {
+    let results, num, values;
     str = str.toLowerCase();
     if(!str) { 
-      let values = [0, '0'];
+      values = [0, '0'];
       this.humanReadable = values[1];
       return values[0];
     };
 
-    const letters = str.replace( /[^a-zA-Z]/g, '');
-    if (letters[0] && !letters[0].toLowerCase().match(/[bkmgt]/)) { 
+    const letters = str.replace( /[0-9]/g, '');
+    if (letters[0] && !letters[0].match(/[bkmgt]/)) { 
       let values = [NaN, ''];
-      this.humanReadable = values;
+      this.humanReadable = values[1];
       return this.humanReadable[0];
     };
 
-    if(results = str.match(/^\s*(\d+)\s*([bkmgt])*/)) {
+    if(results = str.match(/^\s*(\d+)\s*([bkmgt]*)/)) {
       num = parseInt(results[1]);
     } else {
-      let values = [NaN, ''];
+      values = [NaN, ''];
       this.humanReadable = values[1];
       return values[0];
     };
 
-    unit = (results[2]) ? results[2] : 'b';
-    console.log(results)
-    let values = [num * parseInt(powersOf1024[unit]), num.toString() + unit];
+    let unit = (results[2]).slice(0, 1) || 'b';
+    values = [num * this.convertUnitToNum(unit), num.toString() + unit];
     this.humanReadable = values[1];
     return values[0];
   }
