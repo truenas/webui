@@ -336,6 +336,7 @@ export class CloudsyncFormComponent implements OnInit {
   protected cloudcredential_query = 'cloudsync.credentials.query';
 
   protected providers: any;
+  protected taskSchemas = ['encryption', 'fast_list', 'b2-chunk-size', 'storage_class'];
 
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
@@ -493,7 +494,8 @@ export class CloudsyncFormComponent implements OnInit {
       if (res!=null) {
         this.credentials_list.forEach((item)=>{
           if (item.id == res) {
-            if (_.find(this.providers, {"name": item.provider})['buckets']) {
+            const targetProvider = _.find(this.providers, {"name": item.provider});
+            if (targetProvider && targetProvider['buckets']) {
               this.loader.open();
               // update bucket fields name and tooltips based on provider
               if (item.provider == "AZUREBLOB" || item.provider == "HUBIC" ) {
@@ -536,26 +538,19 @@ export class CloudsyncFormComponent implements OnInit {
               this.setDisabled('bucket', true, true);
               this.setDisabled('bucket_input', true, true);
             }
-            // enable/disable task schema properties
-            if (_.find(this.providers, {"name": item.provider})['task_schema']) {
-              const task_schema = _.find(this.providers, {"name": item.provider})['task_schema'];
-              if (task_schema.length == 0) {
-                this.setDisabled('task_encryption', true, true);
-                this.setDisabled('fast_list', true, true);
-                this.setDisabled('b2-chunk-size', true, true);
-                this.setDisabled('storage_class', true, true);
-              } else {
-                for (const i in task_schema) {
-                  if (task_schema[i].property == 'encryption') {
-                    this.setDisabled('task_encryption', false, false);
-                  } else {
-                    this.setDisabled(task_schema[i].property, false, false);
-                  }
-                }
-              }
+
+            const task_schema = _.find(this.providers, {"name": item.provider}) ?  _.find(this.providers, {"name": item.provider})['task_schema'] : [];
+
+            for (const i of this.taskSchemas) {
+              const tobeDisable = _.findIndex(task_schema, {property: i}) > -1 ? false : true;
+              this.setDisabled(i === 'encryption' ? 'task_encryption' : i, tobeDisable, tobeDisable);
             }
           }
         });
+      } else {
+        for (const i of this.taskSchemas) {
+          this.setDisabled(i === 'encryption' ? 'task_encryption' : i, true, true);
+        }
       }
     })
 
