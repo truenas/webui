@@ -64,7 +64,7 @@ export const helptext_system_cloudcredentials = {
     placeholder: T("Endpoint URL"),
     tooltip: T(
       '<a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteEndpoints.html"\
- target="_blank">S3 API endpoint URL</a> When using AWS, the endpoint\
+ target="_blank">S3 API endpoint URL</a>. When using AWS, the endpoint\
  field can be left empty to use the default endpoint for the region.\
  Available buckets are automatically fetched.<br>\
  Refer to the AWS Documentation for a list of\
