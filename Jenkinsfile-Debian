@@ -26,7 +26,7 @@ pipeline {
     }
     stage('Lint') {
       steps {
-        sh "lintian truenas-webui*.changes"
+        sh "lintian --suppress-tags bad-distribution-in-changes-file truenas-webui*.changes"
       }
     }
     stage('Push to buildd') {
