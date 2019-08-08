@@ -2,7 +2,7 @@
     <div *ngIf="!checkinWaiting;else checkIn">
       <p> {{pending_changes_text}} </p>
       <p> {{checkin_text }}
-      <mat-form-field floatPlaceholder="never">
+      <mat-form-field floatPlaceholder="never" id="timeout-field">
         <input matInput [(ngModel)]="checkin_timeout" [pattern]="checkin_timeout_pattern">
       </mat-form-field>
         {{ checkin_text_2 }}
@@ -12,9 +12,10 @@
       <p> {{pending_checkin_text}} {{checkin_remaining}}</p>
     </ng-template>
     <mat-card-actions class="buttons">
-      <button *ngIf="!checkinWaiting" mat-button type="button" (click)="commitPendingChanges()" class="btn btn-block btn-warning mat-primary" mat-button color="primary">{{"Commit" | translate}}</button>
-      <button *ngIf="checkinWaiting" mat-button type="button" (click)="checkInNow()" class="btn btn-block btn-warning mat-primary" mat-button color="primary">{{"Check-in" | translate}}</button>
-      <button mat-button type="button" (click)="rollbackPendingChanges()" class="btn  btn-block btn-lg mat-accent" mat-button color="accent">{{"Discard" | translate}}</button>
+      <button *ngIf="!checkinWaiting" [disabled]="ha_enabled" mat-button type="button" (click)="commitPendingChanges()" class="btn btn-block btn-warning mat-primary" mat-button color="primary">{{"Commit" | translate}}</button>
+      <button *ngIf="checkinWaiting" [disabled]="ha_enabled" mat-button type="button" (click)="checkInNow()" class="btn btn-block btn-warning mat-primary" mat-button color="primary">{{"Check-in" | translate}}</button>
+      <button mat-button type="button" [disabled]="ha_enabled" (click)="rollbackPendingChanges()" class="btn  btn-block btn-lg mat-accent" mat-button color="accent">{{"Discard" | translate}}</button>
     </mat-card-actions>
+    <div class="disabled-notice" *ngIf="ha_enabled">Cannot edit while HA is enabled. (<span class="pseudolink" (click)="goToHA()">Go to HA settings</span>).</div>
 </mat-card>
 <entity-table [title]="title" [conf]="this"></entity-table>

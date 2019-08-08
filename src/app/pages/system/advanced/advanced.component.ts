@@ -54,9 +54,20 @@ export class AdvancedComponent implements OnDestroy {
                 } else {
                   window.location.href = res[1];
                 }
+
+                this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Saving Debug") }, disableClose: true });
+                this.dialogRef.componentInstance.jobId = res[0];
+                this.dialogRef.componentInstance.wsshow();
+                this.dialogRef.componentInstance.success.subscribe((save_debug) => {
+                  this.dialogRef.close();
+                });
+                this.dialogRef.componentInstance.failure.subscribe((save_debug_err) => {
+                  this.dialogRef.close();
+                  this.openSnackBar(helptext_system_advanced.snackbar_generate_debug_message_failure, helptext_system_advanced.snackbar_generate_debug_action);
+                });
               },
               (err) => {
-                this.openSnackBar(helptext_system_advanced.snackbar_network_error_message, helptext_system_advanced.snackbar_network_error_action);
+                new EntityUtils().handleWSError(this, err, this.dialog);
               });
           }
         })
