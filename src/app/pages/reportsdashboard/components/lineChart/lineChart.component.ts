@@ -96,11 +96,11 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
 
   }
 
-  public render(){
+  public render(option?:string){
 
     if(this.library == 'dygraph'){
       // Use dygraph for line graphs with large data sets
-      this.renderGraph();
+      this.renderGraph(option);
     } else if(this.library == 'chart.js'){
       // Use chart.js for everything else
       this.renderChart();
@@ -108,7 +108,7 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
   }
 
   // dygraph renderer
-  public renderGraph(){
+  public renderGraph(option){
     let data = this.makeTimeAxis(this.data);
     let labels = data.shift();
 
@@ -171,7 +171,13 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
          }
        }
      }
-      this.chart = new Dygraph(this.el.nativeElement, data, options);
+
+     if(option == 'update'){
+       this.chart.updateOptions(/*this.el.nativeElement, data,*/ options);
+     } else {
+       this.chart = new Dygraph(this.el.nativeElement, data, options);
+     }
+
   }
 
   // chart.js renderer
@@ -510,7 +516,8 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
 
     if(changes.data){
       if(this.chart){
-        this.render();
+        //this.chart.destroy();
+        this.render('update');
       } else {
         this.render();// make an update method?
       }
