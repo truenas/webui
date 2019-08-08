@@ -163,6 +163,7 @@ activedirectory_netbiosalias_tooltip : T('Alternative names that SMB clients can
 'gcname',
 'kerberos_realm',
 'kerberos_principal',
+'createcomputer',
 'timeout',
 'dns_timeout',
 'idmap_backend',

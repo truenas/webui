@@ -274,9 +274,9 @@ export class ActiveDirectoryComponent {
 
     this.ws.call('kerberos.keytab.kerberos_principal_choices').subscribe((res) => {
       this.kerberos_principal = _.find(this.fieldConfig, {name : 'kerberos_principal'});
-      res.data.forEach((item) => {
+      res.forEach((item) => {
         this.kerberos_principal.options.push(
-            {label : item.principal_name, value : item.id});
+            {label : item, value : item});
       });
     });
 
@@ -363,7 +363,6 @@ export class ActiveDirectoryComponent {
       data.netbiosalias = [];
     }
     if(data.kerberos_principal){
-      data.bindname = ""
       data.bindpw = ""
     }
     data['site'] = data['site'] === null ? '' : data['site'];
