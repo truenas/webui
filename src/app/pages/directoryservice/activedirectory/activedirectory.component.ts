@@ -158,6 +158,12 @@ export class ActiveDirectoryComponent {
     },
     {
       type : 'input',
+      name : helptext.computer_account_OU_name,
+      placeholder : helptext.computer_account_OU_placeholder,
+      tooltip : helptext.computer_account_OU_tooltip,
+    },
+    {
+      type : 'input',
       name : helptext.activedirectory_timeout_name,
       placeholder : helptext.activedirectory_timeout_placeholder,
       tooltip : helptext.activedirectory_timeout_tooltip,
@@ -266,7 +272,7 @@ export class ActiveDirectoryComponent {
       });
     });
 
-    this.rest.get("directoryservice/kerberosprincipal", {}).subscribe((res) => {
+    this.ws.call('kerberos.keytab.kerberos_principal_choices').subscribe((res) => {
       this.kerberos_principal = _.find(this.fieldConfig, {name : 'kerberos_principal'});
       res.data.forEach((item) => {
         this.kerberos_principal.options.push(
