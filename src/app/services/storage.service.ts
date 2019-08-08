@@ -20,6 +20,11 @@ export class StorageService {
   public acousticLevel: any;
   public humanReadable: any;
 
+  unitLetters  = 'bkmgtp';
+  powersOf1024 = {b: 1, k: 1024, m: 1024**2, g: 1024**3, t: 1024**4, p: 1024**5};
+  IECUnitsRE   = 'kib|mib|gib|tib|pib';
+  shortUnitsRE = 'kb|mb|gb|tb|pb';
+
   constructor(protected ws: WebSocketService, protected rest: RestService) {}
 
   filesystemStat(path: string) {
@@ -244,40 +249,70 @@ export class StorageService {
   }
 
   convertUnitToNum(unit) {
-    const powersOf1024 = {b: 1, k: 1024, m: 1024**2, g: 1024**3, t: 1024**4};
-    unit = unit.toString();
-    if (!unit) { return 1 };
-    unit = unit.toLowerCase();
-    return parseInt(powersOf1024[unit]);
+    unit = unit.toString().toLowerCase();
+    let unitRe = new RegExp(`[${this.unitLetters}]`);
+    // return a multiplier of one if it is not a known unit
+    if (!unit.match(unitRe)) {
+        return 1;
+    }
+    return parseInt(this.powersOf1024[unit]);
   }
 
-  convertHumanStringtoNum(str) {
-    let results, num, values;
-    str = str.toLowerCase();
-    if(!str) { 
-      values = [0, '0'];
-      this.humanReadable = values[1];
-      return values[0];
-    };
+  convertIECUnitsToHuman(unitStr) {
+    // convert IEC units like "MiB", "GiB" to "m" and "g"
+    let unitStrRE = new RegExp(this.IECUnitsRE);
+    unitStr = unitStr.toLowerCase();
+    if (unitStr.match(unitStrRE)) {
+        unitStr = unitStr.replace('ib', '');
+    }
+    return unitStr;
+  }
 
-    const letters = str.replace( /[0-9]/g, '');
-    if (letters[0] && !letters[0].match(/[bkmgt]/)) { 
-      let values = [NaN, ''];
-      this.humanReadable = values[1];
-      return this.humanReadable[0];
-    };
+  convertShortUnitsToHuman(unitStr) {
+    // convert human units like "MB", "GB" to "m" and "g"
+    let unitStrRE = new RegExp(this.shortUnitsRE);
+    unitStr = unitStr.toLowerCase();
+    if (unitStr.match(unitStrRE)) {
+        unitStr = unitStr.replace('b', '');
+    }
+    return unitStr;
+  }
 
-    if(results = str.match(/^\s*(\d+)\s*([bkmgt]*)/)) {
-      num = parseInt(results[1]);
+  convertHumanStringtoNum(hstr) {
+    // return values are an array:
+    // values[0] is the numeric value
+    // values[1] is the normalized string
+
+    let values, results, num;
+
+    hstr = hstr.toLowerCase()
+    hstr = this.convertIECUnitsToHuman(hstr);
+    hstr = this.convertShortUnitsToHuman(hstr);
+
+    if (!hstr) {
+        values = [0, '0']
+        this.humanReadable = values[1];
+        return values[0];
+    }
+
+    // input must include numbers
+    // RE must use double backslashes because of backtick and interpolation here
+    var valueRe = new RegExp(`^\\s*(\\d+)\\s*([${this.unitLetters}]*)\\s*$`);
+    if ( results = hstr.match(valueRe) ) {
+        // has at least a number
+        num = parseInt(results[1]);
     } else {
-      values = [NaN, ''];
-      this.humanReadable = values[1];
-      return values[0];
-    };
+        values = [NaN, ''];
+        this.humanReadable = values[1];
+        return values[0];
+    }
 
-    let unit = (results[2]).slice(0, 1) || 'b';
+    var unit = results[2];
+    // ignore 'b' for bytes
+    unit = (unit === 'b') ? '' : unit;
     values = [num * this.convertUnitToNum(unit), num.toString() + unit];
     this.humanReadable = values[1];
     return values[0];
   }
+
 }
