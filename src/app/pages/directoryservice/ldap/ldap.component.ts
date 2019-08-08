@@ -263,7 +263,7 @@ export class LdapComponent {
       });
     });
 
-    this.rest.get("directoryservice/kerberosprincipal", {}).subscribe((res) => {
+    this.ws.call('kerberos.keytab.kerberos_principal_choices').subscribe((res) => {
       this.ldap_kerberos_principal = _.find(this.fieldConfig, {name : 'ldap_kerberos_principal'});
       res.data.forEach((item) => {
         this.ldap_kerberos_principal.options.push(
