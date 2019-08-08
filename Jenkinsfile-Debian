@@ -24,6 +24,11 @@ pipeline {
         sh 'cd src && sh mk-deb.sh 92B8B783F95A684C0A3B643073CF445610D143A1'
       }
     }
+    stage('Lint') {
+      steps {
+        sh "lintian truenas-webui*.changes"
+      }
+    }
     stage('Push to buildd') {
       steps {
         withCredentials([file(credentialsId: 'dput.cf', variable: 'dputcfg')]) {
