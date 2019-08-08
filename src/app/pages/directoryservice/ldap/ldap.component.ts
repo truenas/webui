@@ -265,9 +265,9 @@ export class LdapComponent {
 
     this.ws.call('kerberos.keytab.kerberos_principal_choices').subscribe((res) => {
       this.ldap_kerberos_principal = _.find(this.fieldConfig, {name : 'ldap_kerberos_principal'});
-      res.data.forEach((item) => {
+      res.forEach((item) => {
         this.ldap_kerberos_principal.options.push(
-          {label : item.principal_name, value : item.id});
+          {label : item, value : item});
       });
     });
 
