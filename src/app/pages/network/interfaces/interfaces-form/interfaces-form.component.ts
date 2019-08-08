@@ -167,8 +167,8 @@ export class InterfacesFormComponent implements OnDestroy {
     {
       type: 'list',
       name: 'aliases',
-      placeholder: 'Aliases',
-      label: 'Aliases',
+      placeholder: helptext.alias_list_placeholder,
+      label: helptext.alias_list_label,
       templateListField: [
           {
             name: 'address',
@@ -273,7 +273,7 @@ export class InterfacesFormComponent implements OnDestroy {
           this.ipPlaceholder = ` (${globalHelptext.Ctrlr} 1)`;
           this.failoverPlaceholder = ` (${globalHelptext.thisCtlr})`;
         } else {
-          this.ipPlaceholder = ' The active controller cannot be detected.';
+          this.ipPlaceholder = ` ${globalHelptext.unknownCtrl}`;
           this.failoverPlaceholder = ''
         }
         _.find(this.ipListControl.templateListField, {'name': 'address'}).placeholder += this.ipPlaceholder;
