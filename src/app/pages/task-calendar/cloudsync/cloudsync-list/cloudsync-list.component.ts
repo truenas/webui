@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import * as cronParser from 'cron-parser';
 import { Moment } from 'moment';
-import { DialogService, EngineerModeService, JobService, TaskService, WebSocketService } from '../../../../services';
+import { DialogService, JobService, TaskService, WebSocketService } from '../../../../services';
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../../../common/entity/utils';
 import { TaskScheduleListComponent } from '../../components/task-schedule-list/task-schedule-list.component';
@@ -53,16 +53,8 @@ export class CloudsyncListComponent implements InputTableConf {
               protected ws: WebSocketService,
               protected translateService: TranslateService,
               protected dialog: DialogService,
-              protected job: JobService,
-              protected engineerModeService: EngineerModeService) {
+              protected job: JobService) {
               }
-
-  preInit(entityList) {
-    if (localStorage.getItem('engineerMode') === 'true') {
-      this.columns.splice(9, 0, { name: T('Auxiliary arguments'), prop: 'args' });
-    }
-
-  }
 
   afterInit(entityList: any) {
     this.entityList = entityList;
