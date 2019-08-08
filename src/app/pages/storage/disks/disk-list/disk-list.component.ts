@@ -21,6 +21,7 @@ export class DiskListComponent {
 		{ name: T('Disk Size'), prop: 'readable_size' },
 		{ name: T('Disk Type'), prop: 'type', hidden: true },
 	  { name: T('Description'), prop: 'description', hidden: true },
+	  { name: T('Model'), prop: 'model', hidden: true },
 		{ name: T('Transfer Mode'), prop: 'transfermode', hidden: true },
 		{ name: T("Rotation Rate (RPM)"), prop: 'rotationrate', hidden: true },
 	  { name: T('HDD Standby'), prop: 'hddstandby', hidden: true },
