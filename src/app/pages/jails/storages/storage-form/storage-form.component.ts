@@ -1,15 +1,10 @@
-import { Component } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 
-import { EntityFormComponent } from '../../../common/entity/entity-form';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { WebSocketService } from '../../../../services/';
-import { DialogService } from '../../../../services/';
+import { AppLoaderService, WebSocketService, DialogService, JailService } from '../../../../services/';
 import { EntityUtils } from '../../../common/entity/utils';
-
-import { JailService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker'
 import helptext from '../../../../helptext/jails/storage';
@@ -22,13 +17,13 @@ interface MountPoint {
   fsoptions: string,
   dump: string,
   pass: string,
-  index ? : string,
+  index ?: string,
 }
 @Component({
   selector: 'app-storage-add',
   template: `<entity-form *ngIf="isReady" [conf]="this"></entity-form>`
 })
-export class StorageFormComponent {
+export class StorageFormComponent implements OnInit{
 
   protected queryCall = "jail.fstab";
   protected route_success: string[] = ['jails', 'storage'];
@@ -69,6 +64,8 @@ export class StorageFormComponent {
       placeholder: helptext.source_placeholder,
       tooltip: helptext.source_tooltip,
       disabled: false,
+      required: true,
+      validation: [ Validators.required ]
     },
     {
       type: 'explorer',
@@ -78,6 +75,9 @@ export class StorageFormComponent {
       placeholder: helptext.destination_placeholder,
       tooltip: helptext.destination_tooltip,
       disabled: false,
+      rootSelectable: false,
+      required: true,
+      validation: [ Validators.required ]
     },
     {
       type: 'checkbox',

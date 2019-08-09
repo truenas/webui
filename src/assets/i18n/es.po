@@ -22,6 +22,13 @@ msgid ""
 "<i>3493</i>."
 msgstr ""
 
+msgid ""
+" a passphrase creates a new encryption key  file and invalidates any "
+"existing recovery key or encryption key files.  A dialog opens to save a "
+"backup of the new encryption key. A new  recovery key can be added from the "
+"Encryption Operations menu."
+msgstr ""
+
 msgid " and all snapshots of it?"
 msgstr " y todas sus instantaneas (snapshots)?"
 
@@ -56,11 +63,9 @@ msgstr "% de todos los núcleos"
 msgid ""
 "' is encrypted! If the passphrase for this encrypted pool has been lost, "
 "the data will be PERMANENTLY UNRECOVERABLE! Before exporting/disconnecting "
-"encrypted pools, download and safely store the recovery key."
+"encrypted pools, download and safely store the encryption key and any "
+"passphrase associated with it."
 msgstr ""
-"' está encriptado! Si la clave de este pool encriptado se perdiera, ¡los "
-"datos serían IRRECUPERABLES PERMANENTEMENTE! antes de exportar/desconectar "
-"pools encriptados, descarga y guarda la llave de recuperación."
 
 msgid ""
 "'%h' will be replaced with your hostname and '%i' will be replaced with "
@@ -482,6 +487,9 @@ msgstr ""
 msgid "ATA Security User"
 msgstr ""
 
+msgid "AUTOSTART"
+msgstr ""
+
 msgid "About"
 msgstr ""
 
@@ -489,6 +497,15 @@ msgid "Access Based Share Enumeration"
 msgstr ""
 
 msgid "Access Control Entries"
+msgstr ""
+
+msgid ""
+"Access Control Entry (ACE) user or group. Select a specific <i>User</i> or "
+"<i>Group</i> for this entry, <i>owner@</i> to apply this entry to the user "
+"that owns the dataset, <i>group@</i> to apply this entry to the group that "
+"owns the dataset, or <i>everyone@</i> to apply this entry to all users and "
+"groups. See <a href=\"https://www.freebsd.org/cgi/man.cgi?query=setfacl\" "
+"target=\"_blank\">setfacl(1) NFSv4 ACL ENTRIES</a>."
 msgstr ""
 
 msgid "Access ID Key"
@@ -568,9 +585,6 @@ msgid "Active Media Subtype"
 msgstr ""
 
 msgid "Active Media Type"
-msgstr ""
-
-msgid "Active storage controller."
 msgstr ""
 
 msgid "Adapter Type"
@@ -802,9 +816,6 @@ msgstr ""
 msgid "Alert Settings"
 msgstr ""
 
-msgid "Aliases"
-msgstr ""
-
 msgid "All Disks"
 msgstr ""
 
@@ -980,6 +991,9 @@ msgid ""
 "target=\"_blank\">vmm(4)</a> kernel module loaded."
 msgstr ""
 
+msgid "Allowed Initiators (IQN)"
+msgstr ""
+
 msgid ""
 "Allows different groups to be configured with different authentication "
 "profiles. Example: all users with a group ID of 1 will inherit the "
@@ -1040,6 +1054,9 @@ msgstr ""
 msgid "Anonymous User Upload Bandwidth"
 msgstr ""
 
+msgid "Any notes about initiators."
+msgstr ""
+
 msgid "Appdefaults Auxiliary Parameters"
 msgstr ""
 
@@ -1048,7 +1065,7 @@ msgid ""
 "when User CN is set)."
 msgstr ""
 
-msgid "Apple (AFP) Shares"
+msgid "Apple Shares (AFP)"
 msgstr ""
 
 msgid "Application Client Secret"
@@ -1078,7 +1095,12 @@ msgstr ""
 msgid "Apply permissions recursively"
 msgstr ""
 
-msgid "Apply permissions recursively all child datasets within the current dataset"
+msgid "Apply permissions recursively to all child datasets of the current dataset"
+msgstr ""
+
+msgid ""
+"Apply permissions recursively to all directories and files in the current "
+"dataset."
 msgstr ""
 
 msgid ""
@@ -1126,13 +1148,10 @@ msgstr ""
 msgid "Attach NIC"
 msgstr ""
 
-msgid "Attach screenshot(s)."
+msgid "Attach screenshots."
 msgstr ""
 
 msgid "Auth Method"
-msgstr ""
-
-msgid "Authenticate"
 msgstr ""
 
 msgid "Authentication Group number"
@@ -1225,10 +1244,10 @@ msgstr ""
 msgid "Available Themes"
 msgstr ""
 
-msgid "Available space threshold (%)"
+msgid "Available memory"
 msgstr ""
 
-msgid "Average of all cores"
+msgid "Available space threshold (%)"
 msgstr ""
 
 msgid "Awesome! Now let's explore FreeNAS's cool features."
@@ -1262,6 +1281,9 @@ msgid "Base Name"
 msgstr ""
 
 msgid "Base64 encoded key for the Azure account."
+msgstr ""
+
+msgid "Basejail"
 msgstr ""
 
 msgid "Basic Mode"
@@ -1308,7 +1330,7 @@ msgstr ""
 msgid "Bind to Port"
 msgstr ""
 
-msgid "Block (iSCSI)"
+msgid "Block Shares (iSCSI)"
 msgstr ""
 
 msgid "Block Size"
@@ -1457,10 +1479,10 @@ msgstr ""
 msgid "CN Realm"
 msgstr ""
 
-msgid "CPU"
+msgid "COLLECTION"
 msgstr ""
 
-msgid "CPU Temperatures"
+msgid "CPU"
 msgstr ""
 
 msgid "CPU Usage"
@@ -1513,9 +1535,6 @@ msgstr ""
 msgid "Change Password"
 msgstr ""
 
-msgid "Change Pool Passphrase"
-msgstr ""
-
 msgid "Change User & Group Ownership"
 msgstr ""
 
@@ -1537,6 +1556,9 @@ msgid "Changes Submitted"
 msgstr ""
 
 msgid "Changes will revert after "
+msgstr ""
+
+msgid "Changing"
 msgstr ""
 
 msgid ""
@@ -1622,8 +1644,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Check this to redirect <i>HTTP</i> connections to        <i>HTTPS</i>. "
-"<i>HTTPS</i> must be selected in        <b>Protocol</b>."
+"Check this to redirect <i>HTTP</i> connections to <i>HTTPS</i>. A <i>GUI "
+"SSL Certificate</i> must be selected."
 msgstr ""
 
 msgid "Check-in"
@@ -1704,6 +1726,14 @@ msgid "Choose a color scheme."
 msgstr ""
 
 msgid "Choose a location to store the installer image file."
+msgstr ""
+
+msgid ""
+"Choose a path to the user's home directory. If the directory exists and "
+"matches the username, it is set as the user's home directory. When the path "
+"does not end with a subdirectory matching the username, a new subdirectory "
+"is created. The full path to the user's home directory is shown here when "
+"editing a user."
 msgstr ""
 
 msgid "Choose a pool or dataset for jail storage"
@@ -1879,6 +1909,11 @@ msgid ""
 "segment of the connection."
 msgstr ""
 
+msgid ""
+"Choose the type of permissions. <i>Basic</i> shows general permissions. "
+"<i>Advanced</i> shows each specific type of permission for finer control."
+msgstr ""
+
 msgid "Choose the type that matches the type of client accessing the pool/dataset."
 msgstr ""
 
@@ -1906,8 +1941,10 @@ msgid "Cipher"
 msgstr ""
 
 msgid ""
-"Click <b>Browse</b> to select a recovery key to upload. This allows the "
-"system to decrypt the disks."
+"Classification for each S3 object. Choose a class based on the specific use "
+"case or performance requirements. See <a "
+"href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-class-intro."
+"html\" target=\"_blank\">Amazon S3 Storage Classes</a> for more information."
 msgstr ""
 
 msgid ""
@@ -2046,6 +2083,9 @@ msgstr ""
 msgid "Config Pool for Jail Manager"
 msgstr ""
 
+msgid "Configure ACL"
+msgstr ""
+
 msgid ""
 "Configure IPv4 networking or internet access for the jail. Enter the IPv4 "
 "address for <a href=\"https://www.freebsd.org/cgi/man.cgi?query=vnet\" "
@@ -2081,6 +2121,12 @@ msgid ""
 "Configure an external program to perform ID mapping. See <a "
 "href=\"http://samba.org.ru/samba/docs/man/manpages/idmap_script.8.html\" "
 "target=\"_blank\">idmap_script(8)</a> for more details."
+msgstr ""
+
+msgid "Configure now"
+msgstr ""
+
+msgid "Configure permissions for this share's dataset now?"
 msgstr ""
 
 msgid "Configure the root user email address."
@@ -2122,7 +2168,7 @@ msgstr ""
 msgid "Confirm password"
 msgstr ""
 
-msgid "Confirm the GELI passphrase."
+msgid "Confirm the encryption key passphrase."
 msgstr ""
 
 msgid "Confirm these settings."
@@ -2138,9 +2184,6 @@ msgid "Connecting to "
 msgstr ""
 
 msgid "Connections"
-msgstr ""
-
-msgid "Connectivity Check"
 msgstr ""
 
 msgid "Console Keyboard Map"
@@ -2229,9 +2272,6 @@ msgstr ""
 msgid "Create Pool"
 msgstr ""
 
-msgid "Create Pool Passphrase"
-msgstr ""
-
 msgid "Create Snapshot"
 msgstr ""
 
@@ -2269,6 +2309,9 @@ msgid ""
 "Creates dataset snapshots when there are no changes. Set to support "
 "periodic snapshot schedules and replications created in version 11.2 and "
 "earlier."
+msgstr ""
+
+msgid "Creating"
 msgstr ""
 
 msgid "Creating Jail"
@@ -2330,6 +2373,9 @@ msgid "DNS timeout"
 msgstr ""
 
 msgid "DNS timeout in seconds. Increase this value if DNS queries timeout."
+msgstr ""
+
+msgid "DOCUMENTATION"
 msgstr ""
 
 msgid "Dashboard"
@@ -2413,11 +2459,6 @@ msgid "Define a starting time when the replication task cannot run."
 msgstr ""
 
 msgid "Define a time to start the replication task."
-msgstr ""
-
-msgid ""
-"Define an <b>existing</b> pool or dataset as the user home directory and "
-"adjust the permissions."
 msgstr ""
 
 msgid ""
@@ -2597,9 +2638,6 @@ msgstr ""
 msgid "Description of the lagg interface."
 msgstr ""
 
-msgid "Description:"
-msgstr ""
-
 msgid "Destination"
 msgstr ""
 
@@ -2750,26 +2788,26 @@ msgstr ""
 msgid "Disk"
 msgstr "Disco"
 
+msgid "Disk Imported: Log Summary"
+msgstr ""
+
 msgid "Disk Selection Required"
 msgstr ""
 
 msgid "Disk Size"
 msgstr "Tamaño del disco"
 
+msgid "Disk Type"
+msgstr ""
+
 msgid "Disk sector size"
 msgstr "Tamaño de los sectores del disco"
-
-msgid "Disk successfully imported"
-msgstr "Disco importado correctamente"
 
 msgid "Disk to wipe."
 msgstr "Disco a borrar."
 
 msgid "Disks"
 msgstr "Discos"
-
-msgid "Disks in Use"
-msgstr "Discos en uso"
 
 msgid "Dismiss"
 msgstr ""
@@ -2885,12 +2923,14 @@ msgid "Editing the following disks:"
 msgstr ""
 
 msgid ""
+"Editing top-level datasets can prevent users from accessing data in child "
+"datasets."
+msgstr ""
+
+msgid ""
 "Either single bandwidth limit or bandwidth limit schedule in rclone "
 "format.<br /> Example: \"08:00,512 12:00,10MB 13:00,512 18:00,30MB "
 "23:00,off\".<br /> Default unit is kilobytes."
-msgstr ""
-
-msgid "Electing storage controller."
 msgstr ""
 
 msgid "Email"
@@ -2992,9 +3032,6 @@ msgid ""
 msgstr ""
 
 msgid "Enable running services that require mlock() in a jail."
-msgstr ""
-
-msgid "Enable sending anonymous crash reports to iXsystems"
 msgstr ""
 
 msgid "Enable sending anonymous usage statistics to iXsystems"
@@ -3233,11 +3270,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Enter a number of times to attempt reconnecting to the Active directory "
-"server. Tries forever when set to <i>0</i>."
-msgstr ""
-
-msgid ""
 "Enter a number of virtual CPUs to allocate to the VM. The maximum is 16 "
 "unless the host CPU also limits the maximum. The VM operating system can "
 "also have operational or licensing restrictions on the number of CPUs."
@@ -3388,9 +3420,6 @@ msgstr ""
 msgid "Enter an IPv6 address. This overrides the default gateway provided by DHCP."
 msgstr ""
 
-msgid "Enter an alias. Limited to 15 characters."
-msgstr ""
-
 msgid ""
 "Enter an alphanumeric name for the certificate. Underscore (_), and dash "
 "(-) characters are allowed."
@@ -3421,6 +3450,11 @@ msgid ""
 "Enter any additional parameters from <a "
 "href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\" "
 "target=\"_blank\">rsyncd.conf(5)</a>."
+msgstr ""
+
+msgid ""
+"Enter any aliases, separated by spaces. Each alias can be up to 15 "
+"characters long."
 msgstr ""
 
 msgid ""
@@ -3464,11 +3498,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Enter how often in seconds for the system to verify Active Directory "
-"services are functioning."
-msgstr ""
-
-msgid ""
 "Enter name of user account to use for CHAP authentication with the user on "
 "the remote system. Many initiators default to the initiator name as the "
 "user."
@@ -3505,9 +3534,6 @@ msgstr ""
 msgid ""
 "Enter the FreeBSD device name of the interface. This cannot be changed "
 "after the interface is created."
-msgstr ""
-
-msgid "Enter the GELI passphrase."
 msgstr ""
 
 msgid ""
@@ -3573,9 +3599,9 @@ msgid "Enter the command with any options."
 msgstr ""
 
 msgid ""
-"Enter the dataset on the remote or destination system wheresnapshots will "
+"Enter the dataset on the remote or destination system where snapshots will "
 "be stored. Example: Poolname/Datasetname, not the mountpoint or filesystem "
-"path"
+"path."
 msgstr ""
 
 msgid "Enter the decryption passphrase."
@@ -3661,6 +3687,9 @@ msgid ""
 msgstr ""
 
 msgid "Enter the name of the realm."
+msgstr ""
+
+msgid "Enter the new encryption key passphrase."
 msgstr ""
 
 msgid "Enter the numeric tag configured in the switched network."
@@ -3861,15 +3890,6 @@ msgid "Error updating disks."
 msgstr ""
 
 msgid "Error: "
-msgstr ""
-
-msgid "Error: Displaying local fetched releases failed."
-msgstr ""
-
-msgid "Error: Displaying templates failed."
-msgstr ""
-
-msgid "Error: Fetching remote release choices failed."
 msgstr ""
 
 msgid "Estimated data capacity available after extension."
@@ -4092,6 +4112,9 @@ msgstr ""
 msgid "From E-mail"
 msgstr ""
 
+msgid "From Name"
+msgstr ""
+
 msgid "Full Name"
 msgstr ""
 
@@ -4174,6 +4197,9 @@ msgid ""
 "Group name cannot begin with a hyphen (<i>-</i>) or contain a space, tab, "
 "or these characters: <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i>. <i>$</i> can "
 "only be used as the last character of the username."
+msgstr ""
+
+msgid "Group to which this ACL entry applies."
 msgstr ""
 
 msgid "Groups"
@@ -4302,9 +4328,6 @@ msgstr ""
 msgid "Hostname"
 msgstr ""
 
-msgid "Hostname (Storage Controller 2)"
-msgstr ""
-
 msgid "Hostname (Virtual)"
 msgstr ""
 
@@ -4352,6 +4375,22 @@ msgstr ""
 msgid "How often the IP is checked in seconds."
 msgstr ""
 
+msgid ""
+"How the <b>Permissions</b> are applied to the chosen <b>Tag</b>. Choose "
+"<i>Allow</i> to grant the specified permissions and <i>Deny</i> to restrict "
+"the specified permissions."
+msgstr ""
+
+msgid ""
+"How this ACE is applied to newly created directories and files within the "
+"dataset. Basic flags enable or disable ACE inheritance. Advanced flags "
+"allow further control of how the ACE is applied to files and directories in "
+"the dataset. See the <a "
+"href=\"--docurl--/storage.html#ace-inheritance-flags\" "
+"target=\"_blank\">inheritance flags list</a> for descriptions of Advanced "
+"inheritance flags."
+msgstr ""
+
 msgid "I Agree"
 msgstr ""
 
@@ -4384,6 +4423,9 @@ msgstr ""
 msgid "IPMI"
 msgstr ""
 
+msgid "IPv4"
+msgstr ""
+
 msgid "IPv4 Address"
 msgstr ""
 
@@ -4414,6 +4456,9 @@ msgid "IPv4 interface for the jail."
 msgstr ""
 
 msgid "IPv4 netmask for the jail."
+msgstr ""
+
+msgid "IPv6"
 msgstr ""
 
 msgid "IPv6 Address"
@@ -4598,6 +4643,21 @@ msgstr ""
 msgid "Initiators"
 msgstr ""
 
+msgid ""
+"Initiators allowed access to this system. Enter an <a "
+"href=\"https://tools.ietf.org/html/rfc3720#section-3.2.6\" "
+"target=\"_blank\">iSCSI Qualified Name (IQN)</a> and click <i>+</i> to add "
+"it to the list. Example: <i>iqn.1994-09.org.freebsd:freenas.local</i>"
+msgstr ""
+
+msgid ""
+"Initiators currently connected to the system. Shown in IQN format with an "
+"IP address. Set initiators and click an <b>-></b> (arrow) to add the "
+"initiators to either the <i>Allowed Initiators</i> or <i>Authorized "
+"Networks</i> lists. Clicking <i>Refresh</i> updates the <i>Connected "
+"Initiators</i> list."
+msgstr ""
+
 msgid "Input the pre-defined S3 bucket to use."
 msgstr ""
 
@@ -4641,6 +4701,12 @@ msgid "Invalid password"
 msgstr ""
 
 msgid "Invalid regex filter"
+msgstr ""
+
+msgid ""
+"Invalidate the existing  passphrase by generating a new encryption key. "
+"Also invalidates any  existing encryption or recovery key files. A dialog "
+"opens to save a  copy of the new encryption key."
 msgstr ""
 
 msgid "Is the pool encrypted?"
@@ -4754,6 +4820,12 @@ msgstr ""
 msgid "Key Type"
 msgstr ""
 
+msgid "LAGG Ports"
+msgstr ""
+
+msgid "LAGG Protocol"
+msgstr ""
+
 msgid "LDAP"
 msgstr ""
 
@@ -4792,6 +4864,9 @@ msgstr ""
 msgid "LEGACY WEB INTERFACE"
 msgstr ""
 
+msgid "LOGIN TO PROVIDER"
+msgstr ""
+
 msgid "LUN ID"
 msgstr ""
 
@@ -4808,9 +4883,6 @@ msgid "Lagg Interfaces"
 msgstr ""
 
 msgid "Lagg Physical NIC"
-msgstr ""
-
-msgid "Lagg Ports"
 msgstr ""
 
 msgid "Lagg Priority Number"
@@ -4858,11 +4930,11 @@ msgstr ""
 msgid "Lifetime"
 msgstr ""
 
-msgid "Limit (kbps)"
+msgid "Limit (KiB/s)"
 msgstr ""
 
 msgid ""
-"Limit replication speed to the specified value in kilobits/second. The "
+"Limit replication speed to the specified value in kilobytes/second. The "
 "default 0 is unlimited."
 msgstr ""
 
@@ -4870,9 +4942,6 @@ msgid "Link State"
 msgstr ""
 
 msgid "List of system services to restart when the pool is unlocked."
-msgstr ""
-
-msgid "Load Average"
 msgstr ""
 
 msgid "Local"
@@ -5097,9 +5166,6 @@ msgstr ""
 msgid "Memory Size (MiB)"
 msgstr ""
 
-msgid "Memory Usage"
-msgstr ""
-
 msgid ""
 "Memory overcommitment allows multiple VMs to be launched when there is not "
 "enough free memory for configured RAM of all VMs. Use with caution."
@@ -5266,9 +5332,6 @@ msgstr ""
 msgid "Name Jail and Choose FreeBSD Release"
 msgstr ""
 
-msgid "Name Servers"
-msgstr ""
-
 msgid "Name and Naming Schema cannot be provided at the same time."
 msgstr ""
 
@@ -5327,9 +5390,6 @@ msgstr ""
 msgid "Netbios Name"
 msgstr ""
 
-msgid "Netbios Name (Storage Controller 2)"
-msgstr ""
-
 msgid ""
 "Netbios Name of this NAS. This name must differ from the <i>Workgroup</i> "
 "name and be no greater than 15 characters."
@@ -5384,11 +5444,11 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Network addresses which can use this initiator. Use <i>ALL</i> or list "
-"network addresses with a <a "
+"Network addresses which are allowed use this initiator. Each  address can "
+"include an optional <a "
 "href=\"https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing\" "
-"target=\"_blank\">CIDR</a> mask. Separate multiple addresses with a space: "
-"<i>192.168.2.0/24 192.168.2.1/12</i>."
+"target=\"_blank\">CIDR</a> netmask. Click <i>+</i> to add the network "
+"address to the list. Example: <i>192.168.2.0/24</i>."
 msgstr ""
 
 msgid "Network changes applied successfully."
@@ -5433,6 +5493,9 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
+msgid "Next Run"
+msgstr ""
+
 msgid "Nic to attach:"
 msgstr ""
 
@@ -5460,6 +5523,9 @@ msgstr ""
 msgid ""
 "No pools exist. Jails cannot be created or managed until a pool is present "
 "for storing them. Please create a pool first."
+msgstr ""
+
+msgid "No snapshots sent yet"
 msgstr ""
 
 msgid "No update found."
@@ -5567,9 +5633,6 @@ msgstr ""
 msgid "OK"
 msgstr ""
 
-msgid "OS Version"
-msgstr ""
-
 msgid ""
 "Off by default. When set, <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=smbd\" "
@@ -5664,9 +5727,6 @@ msgstr ""
 msgid "Optional comment."
 msgstr ""
 
-msgid "Optional description."
-msgstr ""
-
 msgid "Optional description. Portals are automatically assigned a numeric group ID."
 msgstr ""
 
@@ -5700,15 +5760,6 @@ msgstr ""
 msgid "Organizational unit of the entity."
 msgstr ""
 
-msgid "Other storage controller cannot be reached."
-msgstr ""
-
-msgid "Other storage controller has no license."
-msgstr ""
-
-msgid "Other storage controller has not finished booting."
-msgstr ""
-
 msgid "Outgoing Mail Server"
 msgstr ""
 
@@ -5718,13 +5769,16 @@ msgstr ""
 msgid "Owner of the jail. Can be any string."
 msgstr ""
 
+msgid "PLUGIN"
+msgstr ""
+
+msgid "POST INSTALL NOTES"
+msgstr ""
+
 msgid "Parent Interface"
 msgstr ""
 
 msgid "Partition"
-msgstr ""
-
-msgid "Passive storage controller."
 msgstr ""
 
 msgid "Passphrase"
@@ -5827,6 +5881,9 @@ msgstr ""
 msgid "Physical interface of the selected member."
 msgstr ""
 
+msgid "Platform"
+msgstr ""
+
 msgid "Please accept terms of service for the given ACME Server."
 msgstr ""
 
@@ -5917,6 +5974,9 @@ msgstr ""
 msgid "Portal Group ID"
 msgstr ""
 
+msgid "Post Install Notes"
+msgstr ""
+
 msgid "Post-script"
 msgstr ""
 
@@ -5990,9 +6050,6 @@ msgstr ""
 msgid "Primary Group"
 msgstr ""
 
-msgid "Primary NIC"
-msgstr ""
-
 msgid "Priority Code Point"
 msgstr ""
 
@@ -6006,6 +6063,13 @@ msgid "Private Key"
 msgstr ""
 
 msgid "Private Key ID"
+msgstr ""
+
+msgid ""
+"Privileges are the same as the guest account. Guest access is disabled by "
+"default in Windows 10 version 1709 and Windows Server version 1903. "
+"Additional client-side configuration is required to provide guest access to "
+"these clients."
 msgstr ""
 
 msgid "Proactive Support"
@@ -6023,9 +6087,6 @@ msgid ""
 "Proceed with upgrading the pool? WARNING: Upgrading a pool is a one-way "
 "operation that might make some features of the pool incompatible with older "
 "versions of FreeNAS: "
-msgstr ""
-
-msgid "Processor"
 msgstr ""
 
 msgid "Promote Dataset"
@@ -6071,13 +6132,19 @@ msgstr ""
 msgid "RCTL Limits"
 msgstr ""
 
+msgid "REFRESH INDEX"
+msgstr ""
+
 msgid "REGISTER"
+msgstr ""
+
+msgid "RELEASE"
 msgstr ""
 
 msgid "RESTART"
 msgstr ""
 
-msgid "RRDTool load5"
+msgid "REVISION"
 msgstr ""
 
 msgid "Raid-z"
@@ -6107,7 +6174,13 @@ msgstr ""
 msgid "Re-key Pool"
 msgstr ""
 
-msgid "Re-keyed Pool"
+msgid ""
+"Re-keying the pool resets the encryption on the  GELI master key of each "
+"encrypted disk in this pool. <b>This invalidates  all existing encryption "
+"and recovery key files, as well as any configured  passphrase.</b><br />  A "
+"new encryption key file is generated and an option opens to save a  backup "
+"of this file. Adding a passphrase or recovery key file is done  from the "
+"Encryption Operations menu."
 msgstr ""
 
 msgid "Read Only"
@@ -6131,12 +6204,6 @@ msgstr ""
 msgid "Reboot After Update"
 msgstr ""
 
-msgid "Reboot Standby Storage Controller"
-msgstr ""
-
-msgid "Reboot current storage controller?"
-msgstr ""
-
 msgid "Rebuild Directory Service Cache"
 msgstr ""
 
@@ -6156,9 +6223,6 @@ msgid "Reconnect"
 msgstr ""
 
 msgid "Record Size"
-msgstr ""
-
-msgid "Recovery Attempts"
 msgstr ""
 
 msgid "Recovery Key"
@@ -6389,10 +6453,16 @@ msgstr ""
 msgid "Root Password"
 msgstr ""
 
+msgid "Root node is not a valid value"
+msgstr ""
+
 msgid "Root password"
 msgstr ""
 
 msgid "Rotation Rate"
+msgstr ""
+
+msgid "Rotation Rate (RPM)"
 msgstr ""
 
 msgid "Rsync Tasks"
@@ -6435,10 +6505,7 @@ msgstr ""
 msgid "Run this rsync now?"
 msgstr ""
 
-msgid "S.M.A.R.T. Enabled"
-msgstr ""
-
-msgid "S.M.A.R.T. Options"
+msgid "S.M.A.R.T. Test"
 msgstr ""
 
 msgid "S.M.A.R.T. Tests"
@@ -6531,9 +6598,6 @@ msgid "Saving ACLs"
 msgstr ""
 
 msgid "Saving ACLs..."
-msgstr ""
-
-msgid "Saving Debug"
 msgstr ""
 
 msgid "Schedule"
@@ -6658,7 +6722,8 @@ msgstr ""
 msgid ""
 "Select <i>UEFI</i> for newer operating systems or <i>UEFI-CSM</i> "
 "(Compatibility Support Mode) for older operating systems that only support "
-"BIOS booting."
+"BIOS booting. <i>Grub</i> is not recommended but can be used when the other "
+"options do not work."
 msgstr ""
 
 msgid "Select Authenticator"
@@ -6807,6 +6872,13 @@ msgid "Select one or more disks to decrypt."
 msgstr ""
 
 msgid "Select one or more screenshots that illustrate the problem."
+msgstr ""
+
+msgid ""
+"Select permissions to apply to the chosen <b>Tag</b>. Choices change "
+"depending on the <b>Permissions Type</b>. See the <a "
+"href=\"--docurl--/storage.html#ace-permissions\" target=\"_blank\">ACL "
+"permissions list</a> for descriptions of each permission."
 msgstr ""
 
 msgid "Select pool to import"
@@ -7011,6 +7083,12 @@ msgstr ""
 msgid "Select the serial port address in hex."
 msgstr ""
 
+msgid ""
+"Select the set of ACE inheritance <b>Flags</b> to display. <i>Basic</i> "
+"shows unspecific inheritance options. <i>Advanced</i> shows specific "
+"inheritance settings for finer control."
+msgstr ""
+
 msgid "Select the shell to use for local and SSH logins."
 msgstr ""
 
@@ -7049,9 +7127,6 @@ msgid ""
 "user and group."
 msgstr ""
 
-msgid "Select to remove the passphrase from this pool."
-msgstr ""
-
 msgid ""
 "Select when the command or script runs:<br>     <i>Pre Init</i> is early in "
 "the boot process, after mounting     filesystems and starting "
@@ -7079,6 +7154,12 @@ msgid "Send Test Alert"
 msgstr ""
 
 msgid "Send Test Mail"
+msgstr ""
+
+msgid ""
+"Send failed HTTP request data which can include client and server IP "
+"addresses, failed method call tracebacks, and middleware log file contents "
+"to iXsystems."
 msgstr ""
 
 msgid "Serial"
@@ -7157,12 +7238,6 @@ msgstr ""
 msgid ""
 "Set for the default configuration to listen on all interfaces using the "
 "known values of user: <i>upsmon</i> and password: <i>fixmepass</i>."
-msgstr ""
-
-msgid ""
-"Set for the initiator to discover paths to both storage controllers on the "
-"target and increase storage traffic efficiency. Requires ALUA-capable, High "
-"Availability (HA) hardware."
 msgstr ""
 
 msgid "Set for ypbind to bind to the server that responds the fastest."
@@ -7271,12 +7346,6 @@ msgid ""
 "Set to allow access to other protocol stacks beyond IPv4, IPv6, local "
 "(UNIX), and route.<br> <b>Warning:</b> jail functionality does not exist "
 "for all protocol stacks."
-msgstr ""
-
-msgid ""
-"Set to allow access to this share without a password. See the <a "
-"href=\"--docurl--/services.html#smb\" target=\"_blank\">SMB</a> service "
-"documentation for more information about guest user permissions."
 msgstr ""
 
 msgid ""
@@ -7675,6 +7744,11 @@ msgid ""
 "slow connections."
 msgstr ""
 
+msgid ""
+"Set to remove all ACLs from the current dataset. ACLs are also recursively "
+"stripped from directories and child datasets when those options are set."
+msgstr ""
+
 msgid "Set to run resilver tasks between the configured times."
 msgstr ""
 
@@ -7819,6 +7893,11 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Setting permissions recursively affects this directory and any others below "
+"it. This can make data inaccessible."
+msgstr ""
+
+msgid ""
 "Setting permissions recursively will affect this directory and any others "
 "below it. This might make data inaccessible."
 msgstr ""
@@ -7841,12 +7920,6 @@ msgstr ""
 msgid ""
 "Setting this option will result in timeouts if <b>identd</b> is not running "
 "on the client."
-msgstr ""
-
-msgid ""
-"Setting this will strip ACLs from the current dataset. ACLs will also be "
-"stripped recursively to directories and child datasets if paired with  hose "
-"options"
 msgstr ""
 
 msgid "Settings saved."
@@ -7985,11 +8058,11 @@ msgid "Snapshot directory"
 msgstr ""
 
 msgid ""
-"Snapshot name format string. The default is <i>snap-%Y-%m-%d-%H-%M</i>. "
-"Must include the strings <i>%Y</i>, <i>%m</i>, <i>%d</i>, <i>%H</i>, and "
-"<i>%M</i>, which are replaced with the four-digit year, month, day of "
-"month, hour, and minute as defined in <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=strftime\" "
+"Snapshot name format string. The default is <i><textarea "
+"disabled>snap-%Y-%m-%d-%H-%M</textarea></i>. Must include the strings "
+"<i>%Y</i>, <i>%m</i>, <i>%d</i>, <i>%H</i>, and <i>%M</i>, which are "
+"replaced with the four-digit year, month, day of month, hour, and minute as "
+"defined in <a href=\"https://www.freebsd.org/cgi/man.cgi?query=strftime\" "
 "target=\"_blank\">strftime(3)</a>. A string showing the snapshot lifetime "
 "is appended to the name. For example, snapshots of <i>pool1</i> with a "
 "Naming Schema of <i>customsnap-%Y%m%d.%H%M</i> and lifetime of two weeks "
@@ -8165,8 +8238,8 @@ msgid "Stripe"
 msgstr ""
 
 msgid ""
-"Stripping ACLs will reset the permissions of this dataset. This may make "
-"data inaccessible."
+"Stripping the ACL resets dataset permissions. This can make data "
+"inaccessible until new permissions are created."
 msgstr ""
 
 msgid "Subject"
@@ -8277,9 +8350,6 @@ msgid "System Dataset Pool"
 msgstr ""
 
 msgid "System Info"
-msgstr ""
-
-msgid "System Load"
 msgstr ""
 
 msgid "System Processes"
@@ -8393,7 +8463,7 @@ msgstr ""
 msgid "Temp tooltip"
 msgstr ""
 
-msgid "Temperature"
+msgid "Template"
 msgstr ""
 
 msgid "Terms of Service"
@@ -8498,18 +8568,23 @@ msgid ""
 msgstr ""
 
 msgid ""
-"The envelope <i>From</i> address shown in the email. This can be set to "
-"make filtering mail on the receiving system easier. The friendly name is "
-"set like this: <i>\"Friendly Name\" &ltaddress@example.com&gt</i>"
-msgstr ""
-
-msgid ""
 "The file used to manually update the system. Browse to the update file "
 "stored on the system logged into the web interface to upload and apply. "
 "Update file names end with <i>-manual-update-unsigned.tar</i>"
 msgstr ""
 
 msgid "The filesystem "
+msgstr ""
+
+msgid ""
+"The friendly name to show in front of the sending email  address. Example: "
+"<i>Storage System 01</i>&ltit@example.com&gt"
+msgstr ""
+
+msgid ""
+"The group which controls the dataset. This group has whatever permissions "
+"are granted to the <i>@group</i> <b>Tag</b>. Groups created manually or "
+"imported from a directory service appear in the drop-down menu."
 msgstr ""
 
 msgid "The hostname or IP address of the LDAP server."
@@ -8580,13 +8655,15 @@ msgid ""
 "device.<br /> <br />"
 msgstr ""
 
+msgid ""
+"The sharing configuration will be removed. Data in the share dataset will "
+"not be affected."
+msgstr ""
+
 msgid "The specified permissions of that group are used by all clients."
 msgstr ""
 
 msgid "The specified permissions of that user are used by all clients."
-msgstr ""
-
-msgid "The storage controllers do not have the same quantity of disks."
 msgstr ""
 
 msgid ""
@@ -8600,6 +8677,12 @@ msgid ""
 msgstr ""
 
 msgid "The update file is temporarily stored here before being applied."
+msgstr ""
+
+msgid ""
+"The user account <i>Email</i> address to use for the  envelope <i>From</i> "
+"email address. The user account <i>Email</i> in  <b>Accounts > Users > "
+"Edit</b> must be configured first."
 msgstr ""
 
 msgid ""
@@ -8656,6 +8739,15 @@ msgid ""
 "being reported."
 msgstr ""
 
+msgid ""
+"This is an additional key file that can be used  to unlock the pool instead "
+"of the passphrase or encryption key file. <br /> <br />  Entering the "
+"administrator password and clicking <b>ADD RECOVERY KEY</b>  generates a "
+"single recovery key file and downloads it to the local system. Store the "
+"recovery key file in a secure location!<br />  Adding a new recovery key "
+"invalidates any previously downloaded  recovery key file for this pool."
+msgstr ""
+
 msgid "This is the FreeBSD device name for the disk."
 msgstr ""
 
@@ -8684,6 +8776,9 @@ msgid "Time Machine Quota"
 msgstr ""
 
 msgid "Time remaining until changes reverted:"
+msgstr ""
+
+msgid "TimeZone"
 msgstr ""
 
 msgid "Timeout"
@@ -8761,10 +8856,15 @@ msgstr ""
 msgid "Unique LUN ID. The default is generated from the MAC address of the system."
 msgstr ""
 
-msgid "Unix (NFS) Shares"
+msgid "Unix Shares (NFS)"
 msgstr ""
 
 msgid "Unlock"
+msgstr ""
+
+msgid ""
+"Unlock the pool with a recovery  key file instead of a passphrase. Select a "
+"recovery key file to upload  from the local system."
 msgstr ""
 
 msgid ""
@@ -8799,10 +8899,16 @@ msgid ""
 "target=\"_blank\">additional setup</a> on both the SSH client and server."
 msgstr ""
 
+msgid "Unshare"
+msgstr ""
+
 msgid "Until"
 msgstr ""
 
 msgid "Unused"
+msgstr ""
+
+msgid "Upcoming tasks"
 msgstr ""
 
 msgid "Update"
@@ -8896,9 +9002,6 @@ msgid ""
 "Use <a href=\"https://www.freebsd.org/cgi/man.cgi?query=rtsold\" "
 "target=\"_blank\">rtsold(8)</a> as part of IPv6 autoconfiguration. Send "
 "ICMPv6 Router Solicitation messages to interfaces to discover new routers."
-msgstr ""
-
-msgid "Use <i>ALL</i> keyword or a list of initiator hostnames separated by spaces."
 msgstr ""
 
 msgid "Use DHCP. Unset to manually configure a static IPv4 connection."
@@ -9004,12 +9107,21 @@ msgstr ""
 msgid "User Suffix"
 msgstr ""
 
+msgid "User account to which this ACL entry applies."
+msgstr ""
+
 msgid ""
 "User accounts have an ID greater than 1000 and system accounts have an ID "
 "equal to the default port number used by the service."
 msgstr ""
 
 msgid "User passed to <i>camcontrol security -u</i> to unlock SEDs"
+msgstr ""
+
+msgid ""
+"User who controls the dataset. This user always has permissions to read or "
+"write the ACL and read or write attributes. Users created manually or "
+"imported from a directory service appear in the drop-down menu."
 msgstr ""
 
 msgid "Username"
@@ -9039,6 +9151,9 @@ msgid "Users"
 msgstr "Usuarios"
 
 msgid "Users & Groups"
+msgstr ""
+
+msgid "VERSION"
 msgstr ""
 
 msgid "VFS Objects"
@@ -9101,6 +9216,9 @@ msgid "Verify Deletion of "
 msgstr ""
 
 msgid "Verify passphrase"
+msgstr ""
+
+msgid "Version"
 msgstr ""
 
 msgid "View"
@@ -9271,7 +9389,7 @@ msgstr ""
 msgid "Winbind NSS Info"
 msgstr ""
 
-msgid "Windows (SMB) Shares"
+msgid "Windows Shares (SMB)"
 msgstr ""
 
 msgid "Wipe"
@@ -9314,9 +9432,6 @@ msgid "ZFS Deduplication"
 msgstr ""
 
 msgid "ZFS Filesystem"
-msgstr ""
-
-msgid "ZFS Pool"
 msgstr ""
 
 msgid "ZFS deduplication"

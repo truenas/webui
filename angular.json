@@ -73,7 +73,8 @@
               "node_modules/pixi.js/dist/pixi.min.js",
               "node_modules/pixi-filters/dist/pixi-filters.js",
               "node_modules/pixi-projection/dist/pixi-projection.js"
-            ]
+            ],
+            "webWorkerTsConfig": "tsconfig.worker.json"
           },
           "configurations": {
             "production": {
@@ -170,7 +171,8 @@
           "options": {
             "tsConfig": [
               "src/tsconfig.app.json",
-              "src/tsconfig.spec.json"
+              "src/tsconfig.spec.json",
+              "tsconfig.worker.json"
             ],
             "exclude": []
           }

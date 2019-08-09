@@ -19,7 +19,6 @@ export class ReplicationListComponent {
     protected route_edit: string[] = ['tasks', 'replication', 'edit'];
     protected route_success: string[] = ['tasks', 'replication'];
     public entityList: any;
-    protected hasDetails = true;
     protected asyncView = true;
 
     public columns: Array<any> = [
@@ -33,20 +32,7 @@ export class ReplicationListComponent {
         { name: 'Auto', prop: 'auto', hidden: true},
         { name: 'Enabled', prop: 'enabled' },
         { name: 'State', prop: 'task_state', state: 'state' },
-        { name: 'Last Snapshot', prop: 'task_last_snapshot' },
-    ];
-    public detailsConf = {
-      direction: 'horizontal',
-      showAction: false
-    };
-    public detailColumns: Array < any > = [
-        { name: 'Direction', prop: 'direction'},
-        { name: 'Transport', prop: 'transport'},
-        { name: 'SSH Connection', prop: 'ssh_connection'},
-        { name: 'Source Dataset', prop: 'source_datasets'},
-        { name: 'Target Dataset', prop: 'target_dataset'},
-        { name: 'Recursive', prop: 'recursive'},
-        { name: 'Auto', prop: 'auto'}
+        { name: 'Last Snapshot', prop: 'task_last_snapshot' }
     ];
 
     public config: any = {
@@ -69,20 +55,25 @@ export class ReplicationListComponent {
         this.entityList = entityList;
     }
 
-    dataHandler(entityList) {
-        for (const task of entityList.rows) {
+    resourceTransformIncomingRestData(tasks: any[]): any[] {
+        return tasks.map(task => {
             task.task_state = task.state.state;
             task.ssh_connection = task.ssh_credentials ? task.ssh_credentials.name : '-';
             if (task.state.job && task.state.job.time_finished) {
                 const d = moment(task.state.job.time_finished.$date);
                 task.task_last_snapshot = d.format('MM/D/YYYY h:mma') + ` (${d.fromNow()})`;
+            } else {
+                task.task_last_snapshot = T('No snapshots sent yet');
             }
-        }
+            return task;
+        });
     }
 
     getActions(parentrow) {
         return [{
-            id: "run",
+            id: parentrow.name,
+            icon: 'play_arrow',
+            name: "run",
             label: T("Run Now"),
             onClick: (row) => {
                 this.dialog.confirm(T("Run Now"), T("Replicate <i>") + row.name + T("</i> now?"), true).subscribe((res) => {
@@ -99,14 +90,18 @@ export class ReplicationListComponent {
                 });
             },
         }, {
-            id: "edit",
+            id: parentrow.name,
+            icon: 'edit',
+            name: "edit",
             label: T("Edit"),
             onClick: (row) => {
                 this.route_edit.push(row.id);
                 this.router.navigate(this.route_edit);
             },
         }, {
-            id: "delete",
+            id: parentrow.name,
+            icon: 'delete',
+            name: "delete",
             label: T("Delete"),
             onClick: (row) => {
                 this.entityList.doDelete(row);

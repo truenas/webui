@@ -42,41 +42,33 @@ export class AdvancedComponent implements OnDestroy {
         let fileName = "";
         if (res) {
           const hostname = res.hostname.split('.')[0];
-          const date = this.datePipe.transform(new Date(),"yyyyMMddHHmmss");
+          const date = this.datePipe.transform(new Date(), "yyyyMMddHHmmss");
           fileName = `debug-${hostname}-${date}.tgz`;
         }
         this.dialog.confirm(helptext_system_advanced.dialog_generate_debug_title, helptext_system_advanced.dialog_generate_debug_message, true, helptext_system_advanced.dialog_button_ok).subscribe((ires) => {
           if (ires) {
-            this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Saving Debug") }, disableClose: true });
-            this.dialogRef.componentInstance.setCall('system.debug', []);
-            this.dialogRef.componentInstance.submit();
-            this.dialogRef.componentInstance.success.subscribe((system_debug) => {
-              this.dialogRef.close(true);
-              this.ws.call('core.download', ['filesystem.get', [system_debug.result], fileName]).subscribe(
-                (system_debug_result) => {
-                  if (window.navigator.userAgent.search("Firefox")>0) {
-                    window.open(system_debug_result[1]);
+            this.ws.call('core.download', ['system.debug', [], fileName]).subscribe(
+              (res) => {
+                if (window.navigator.userAgent.search("Firefox") > 0) {
+                  window.open(res[1]);
+                } else {
+                  window.location.href = res[1];
                 }
-                  else {
-                    window.location.href = system_debug_result[1];
-                  }
-                },
-                (err) => {
+
+                this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Saving Debug") }, disableClose: true });
+                this.dialogRef.componentInstance.jobId = res[0];
+                this.dialogRef.componentInstance.wsshow();
+                this.dialogRef.componentInstance.success.subscribe((save_debug) => {
+                  this.dialogRef.close();
+                });
+                this.dialogRef.componentInstance.failure.subscribe((save_debug_err) => {
+                  this.dialogRef.close();
                   this.openSnackBar(helptext_system_advanced.snackbar_generate_debug_message_failure, helptext_system_advanced.snackbar_generate_debug_action);
-                }
-              ); 
-            }),
-            () => {
-              this.dialogRef.close();
-            }, 
-            () => {
-              this.dialogRef.close();
-              if (this.job.state === 'SUCCESS') {} else if (this.job.state === 'FAILED') {
-                this.openSnackBar(helptext_system_advanced.snackbar_network_error_message, helptext_system_advanced.snackbar_network_error_action);
-              } else {
-                console.log("User canceled");
-              }
-            }
+                });
+              },
+              (err) => {
+                new EntityUtils().handleWSError(this, err, this.dialog);
+              });
           }
         })
       })

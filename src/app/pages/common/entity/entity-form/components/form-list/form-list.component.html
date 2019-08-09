@@ -1,4 +1,4 @@
-<div id="{{config.name}}" class="dynamic-field form-list" [formGroup]="group" [ngClass]="fieldShow">
+<div id="{{config.name}}" class="dynamic-field form-list" [formGroup]="group" [ngClass]="fieldShow" *ngIf="!config['isHidden']">
     <ng-container *ngIf="listsFromArray?.controls">
         <div *ngFor="let liControl of listsFromArray.controls; let i = index" [fxLayout]="config.width == '100%' ? 'row wrap' : (default)">
             <div *ngFor="let field of config.listFields[i]; let ii = index" fxFlex="100%"

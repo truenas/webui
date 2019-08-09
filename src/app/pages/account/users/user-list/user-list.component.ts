@@ -77,8 +77,10 @@ export class UserListComponent implements OnInit {
   getActions(row) {
     const actions = [];
     actions.push({
+      id: row.bsdusr_username,
+      icon: 'edit',
       label : helptext.user_list_actions_edit_label,
-      id: helptext.user_list_actions_edit_id,
+      name: helptext.user_list_actions_edit_id,
       onClick : (users_edit) => {
         this.router.navigate(new Array('/').concat(
           [ "account", "users", "edit", users_edit.id ]));
@@ -87,6 +89,9 @@ export class UserListComponent implements OnInit {
     if (row.bsdusr_builtin !== true){
 
       actions.push({
+        id: row.bsdusr_username,
+        icon: 'edit',
+        name: 'edit',
         label : helptext.user_list_actions_delete_label,
         onClick : (users_edit) => {
           this.entityList.doDelete(users_edit);

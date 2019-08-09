@@ -18,7 +18,7 @@ export class KerberosRealmsListComponent {
   protected route_edit: string[] = ['directoryservice', 'kerberosrealms', 'edit'];
 
   public columns: Array < any > = [
-    { name: T('Realm'), prop: 'krb_realm' },
+    { name: T('Realm'), prop: 'krb_realm', always_display: true },
     { name: T('KDC'), prop: 'krb_kdc' },
     { name: T('Admin Server'), prop: 'krb_admin_server' },
     { name: T('Password Server'), prop: 'krb_kpasswd_server' },

@@ -146,7 +146,7 @@ export class DatasetAclComponent implements OnDestroy {
           name: 'perms_type',
           required: true,
           placeholder: helptext.dataset_acl_perms_type_placeholder,
-          tooltip: helptext.dataset_acl_perms_type_placeholder,
+          tooltip: helptext.dataset_acl_perms_type_tooltip,
           options: helptext.dataset_acl_perms_type_options,
           value: 'BASIC'
         },
@@ -173,7 +173,7 @@ export class DatasetAclComponent implements OnDestroy {
           name: 'flags_type',
           required: true,
           placeholder: helptext.dataset_acl_flags_type_placeholder,
-          tooltip: helptext.dataset_acl_flags_type_placeholder,
+          tooltip: helptext.dataset_acl_flags_type_tooltip,
           options: helptext.dataset_acl_flags_type_options,
         },
         {

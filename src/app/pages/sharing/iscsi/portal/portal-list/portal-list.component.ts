@@ -19,6 +19,7 @@ export class PortalListComponent {
     {
       name : 'Portal Group ID',
       prop : 'tag',
+      always_display: true
     },
     {
       name : 'Listen',

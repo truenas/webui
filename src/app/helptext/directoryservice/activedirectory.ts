@@ -28,16 +28,7 @@ activedirectory_bindname_validation: [ Validators.required ],
 activedirectory_bindpw_name: 'bindpw',
 activedirectory_bindpw_placeholder: T('Domain Account Password'),
 activedirectory_bindpw_tooltip: T('Enter the administrator account password.'),
-
-activedirectory_monitor_frequency_name: 'monitor_frequency',
-activedirectory_monitor_frequency_placeholder: T('Connectivity Check'),
-activedirectory_monitor_frequency_tooltip: T('Enter how often in seconds for the system to verify\
- Active Directory services are functioning.'),
-
-activedirectory_recover_retry_name: 'recover_retry',
-activedirectory_recover_retry_placeholder: T('Recovery Attempts'),
-activedirectory_recover_retry_tooltip: T('Enter a number of times to attempt reconnecting to the\
- Active directory server. Tries forever when set to <i>0</i>.'),
+activedirectory_bindpw_validation: [ Validators.required ],
 
 activedirectory_ssl_name: 'ssl',
 activedirectory_ssl_placeholder: T('Encryption Mode'),

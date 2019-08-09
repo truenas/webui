@@ -395,6 +395,15 @@ export class ApiService {
         responseEvent:"StatsSources"
       }
     },
+    ReportingGraphsRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2",
+        namespace:"reporting.graphs",
+        args:[],
+        responseEvent:"ReportingGraphs"
+      }
+    },
     StatsCpuRequest:{
       apiCall:{
         protocol:"websocket",

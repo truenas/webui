@@ -1,17 +1,12 @@
 import { Component } from '@angular/core';
-import { Validators } from '@angular/forms';
 import * as _ from 'lodash';
 import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
-import { DialogService } from "../../../services/dialog.service";
 import { MatSnackBar } from '@angular/material';
 import { EntityUtils } from '../../common/entity/utils';
 import { RestService, WebSocketService } from '../../../services/';
-import { rangeValidator } from '../../common/entity/entity-form/validators/range-validation';
-import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 import { T } from '../../../translate-marker';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { helptext } from 'app/helptext/system/reporting';
-
 
 @Component({
   selector: 'app-system-reporting',
@@ -23,7 +18,23 @@ export class ReportingComponent {
   public job: any = {};
   protected queryCall = 'reporting.config';
   public entityForm: any;
-  private settings_saved = T("Settings saved.")
+  private settings_saved = T("Settings saved.");
+  public rrd_checkbox: any;
+  custActions: any[] = [
+    {
+      id:'reset',
+      name:'Reset',
+      function : () => {
+        for (let i in this.entityForm.wsResponse) {
+          if (this.entityForm.formGroup.controls[i]) {
+            this.entityForm.formGroup.controls[i].setValue(this.entityForm.wsResponse[i]);
+          }
+        }
+        _.find(this.fieldConfig, {'name' : 'confirm_rrd_destroy'})['isHidden'] = true;
+        this.entityForm.formGroup.controls['confirm_rrd_destroy'].setValue(false);
+      }
+    }
+  ]
 
   public fieldConfig: FieldConfig[] = [{
     type: 'checkbox',
@@ -42,20 +53,22 @@ export class ReportingComponent {
     name: 'graph_age',
     placeholder: helptext.graph_age_placeholder,
     tooltip: helptext.graph_age_tooltip,
-//    validation: rangeValidator(0)
+    validation: helptext.graph_age_validation
   },
   {
     type: 'input',
     name: 'graph_points',
     placeholder: helptext.graph_points_placeholder,
     tooltip: helptext.graph_points_tooltip,
-//    validation: rangeValidator(0)
+    validation: helptext.graph_points_validation
   },
   {
     type: 'checkbox',
     name: 'confirm_rrd_destroy',
     placeholder: helptext.confirm_rrd_destroy_placeholder,
-    tooltip: helptext.confirm_rrd_destroy_tooltip
+    tooltip: helptext.confirm_rrd_destroy_tooltip,
+    isHidden: true,
+    value: false
   }
 ];
 
@@ -65,22 +78,43 @@ export class ReportingComponent {
     public snackBar: MatSnackBar,
   ) {}
 
-
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
+    this.rrd_checkbox = _.find(this.fieldConfig, {'name' : 'confirm_rrd_destroy'});
+    entityEdit.formGroup.controls['graph_age'].valueChanges.subscribe((res) => {
+      let graphPointsValue = parseInt(entityEdit.formGroup.controls['graph_points'].value);
+      if (parseInt(res) === entityEdit.wsResponse['graph_age'] 
+        && graphPointsValue === entityEdit.wsResponse['graph_points'] ) {
+        this.rrd_checkbox['isHidden'] = true;
+      } else {
+        this.rrd_checkbox['isHidden'] = false;
+      }
+    });
+      entityEdit.formGroup.controls['graph_points'].valueChanges.subscribe((res) => {
+        let graphAgeValue = parseInt(entityEdit.formGroup.controls['graph_age'].value);
+        if (parseInt(res) === entityEdit.wsResponse['graph_points'] 
+          && graphAgeValue === entityEdit.wsResponse['graph_age']) {
+          this.rrd_checkbox['isHidden'] = true;
+        } else {
+          this.rrd_checkbox['isHidden'] = false;
+        }
+      }); 
+  }
+
+  resetForm() {
+    console.log('reset')
   }
 
   public customSubmit(body) {
     this.load.open();
-
     return this.ws.call('reporting.update', [body]).subscribe((res) => {
       this.load.close();
+      this.rrd_checkbox['isHidden'] = true;
+      this.entityForm.formGroup.controls['confirm_rrd_destroy'].setValue(false)
       this.snackBar.open(this.settings_saved, T('close'), { duration: 5000 });
     }, (res) => {
       this.load.close();
       new EntityUtils().handleWSError(this.entityForm, res);
     });
   }
-
-
 }

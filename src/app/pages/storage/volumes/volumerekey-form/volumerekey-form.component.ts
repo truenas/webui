@@ -1,34 +1,25 @@
-import {
-  ApplicationRef,
-  Component,
-  Injector
-} from '@angular/core';
-
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import * as _ from 'lodash';
-
-import {RestService, WebSocketService} from '../../../../services/';
-import {
-  FieldConfig
-} from '../../../common/entity/entity-form/models/field-config.interface';
-import { DialogService } from 'app/services/dialog.service';
 import { MatSnackBar, MatDialog } from '@angular/material';
+
+import * as _ from 'lodash';
+import { WebSocketService, AppLoaderService, DialogService } from '../../../../services/';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/storage/volumes/volume-key';
 
 @Component({
-  selector : 'app-volumeunlock-form',
-  template : `<entity-form [conf]="this"></entity-form>`
+  selector: 'app-volumeunlock-form',
+  template: `<entity-form [conf]="this"></entity-form>`
 })
-export class VolumeRekeyFormComponent  implements Formconfiguration {
+export class VolumeRekeyFormComponent implements Formconfiguration {
 
   saveSubmitText = T("Re-key Pool");
 
   resource_name = 'storage/volume';
-  route_success: string[] = [ 'storage', 'pools'];
+  route_success: string[] = ['storage', 'pools'];
   isNew = false;
   isEntity = true;
   entityData = {
@@ -38,18 +29,18 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
 
   fieldConfig: FieldConfig[] = [
     {
-      type : 'input',
-      name : 'name',
+      type: 'input',
+      name: 'name',
       isHidden: true
-    },{
+    }, {
       type: 'paragraph',
       name: 'rekey-instructions',
       paraText: helptext.rekey_instructions
-    },{
-      type : 'input',
+    }, {
+      type: 'input',
       inputType: 'password',
-      name : 'passphrase',
-      label : helptext.rekey_password_label,
+      name: 'passphrase',
+      label: helptext.rekey_password_label,
       placeholder: helptext.rekey_password_placeholder,
       tooltip: helptext.rekey_password_tooltip,
       validation: helptext.rekey_password_validation,
@@ -57,25 +48,20 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
     }
   ];
 
-  resourceTransformIncomingRestData(data:any): any {
+  resourceTransformIncomingRestData(data: any): any {
     return data;
   };
 
   pk: any;
   constructor(
-      protected router: Router,
-      protected route: ActivatedRoute,
-      protected rest: RestService,
-      protected ws: WebSocketService,
-      protected _injector: Injector,
-      protected _appRef: ApplicationRef,
-      protected dialogService: DialogService,
-      protected loader: AppLoaderService,
-      protected snackBar: MatSnackBar,
-      protected mdDialog: MatDialog
-  ) {
-
-  }
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected ws: WebSocketService,
+    protected dialogService: DialogService,
+    protected loader: AppLoaderService,
+    protected snackBar: MatSnackBar,
+    protected mdDialog: MatDialog
+  ) { }
 
   preInit(entityForm: any) {
     this.route.params.subscribe(params => {
@@ -83,29 +69,25 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
     });
   }
 
-  afterInit(entityForm: any) {
-
-  }
-
   customSubmit(value) {
     this.loader.open();
-
-    return this.rest.post(this.resource_name + "/" + this.pk + "/rekey/", 
-      { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
-        this.loader.close();
-        this.snackBar.open(T('Successfully re-keyed pool ') + value.name, T("Close"), {
-          duration: 5000,
-      });
-        let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
-        dialogRef.componentInstance.volumeId = this.pk;
-        dialogRef.afterClosed().subscribe(result => {
-          this.router.navigate(new Array('/').concat(
-            this.route_success));
+    this.ws.call('pool.rekey', [parseInt(this.pk), { 'admin_password': value.passphrase }])
+      .subscribe(
+        (res) => {
+          this.loader.close();
+          this.snackBar.open(T('Successfully re-keyed pool ') + value.name, T("Close"), {
+            duration: 5000,
+          });
+          let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
+          dialogRef.componentInstance.volumeId = this.pk;
+          dialogRef.afterClosed().subscribe(result => {
+            this.router.navigate(new Array('/').concat(
+              this.route_success));
+          });
+        },
+        (err) => {
+          this.loader.close();
+          this.dialogService.errorReport(T("Error re-keying pool"), err.error, err.trace.formatted);
         });
-    }, (res) => {
-      this.loader.close();
-      this.dialogService.errorReport(T("Error re-keying pool"), res.error, res.trace.formatted);
-    });
   }
-
 }

@@ -78,25 +78,15 @@ export class ActiveDirectoryComponent {
     },
     {
       type : 'input',
+      inputType : 'password',
       name : helptext.activedirectory_bindpw_name,
       placeholder : helptext.activedirectory_bindpw_placeholder,
       tooltip : helptext.activedirectory_bindpw_tooltip,
-      inputType : 'password',
+      validation : helptext.activedirectory_bindpw_validation,
+      required: true,
       togglePw: true,
       disabled: false,
       isHidden:false
-    },
-    {
-      type : 'input',
-      name : helptext.activedirectory_monitor_frequency_name,
-      placeholder : helptext.activedirectory_monitor_frequency_placeholder,
-      tooltip : helptext.activedirectory_monitor_frequency_tooltip,
-    },
-    {
-      type : 'input',
-      name : helptext.activedirectory_recover_retry_name,
-      placeholder : helptext.activedirectory_recover_retry_placeholder,
-      tooltip : helptext.activedirectory_recover_retry_tooltip,
     },
     {
       type : 'select',
@@ -370,6 +360,7 @@ export class ActiveDirectoryComponent {
       data.bindname = ""
       data.bindpw = ""
     }
+    data['site'] = data['site'] === null ? '' : data['site'];
   }
 
   submitFunction(body: any) {
