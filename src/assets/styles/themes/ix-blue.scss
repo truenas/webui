@@ -1357,16 +1357,25 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       padding: 5px;
   }
 
-  app-interfaces-form .disabled-select .mat-select-arrow {
-    opacity: 0.38;
-  }
-
-  app-interfaces-form entity-form-list .form-list > div  {
-    flex-direction: column !important;
-    padding: 15px;
-    background-color: rgba(127,127,127,0.1);
-    margin-bottom: 10px;
-
+  app-interfaces-form {
+    .disabled-select .mat-select-arrow {
+      opacity: 0.38;
+    }
+    entity-form-list .form-list > div  {
+      flex-direction: column !important;
+      padding: 15px;
+      background-color: rgba(127,127,127,0.1);
+      margin-bottom: 10px;
+    }
+     #address, #failover_address, #failover_virtual_address {
+      width: 85%;
+    }
+    .listBtn {
+      bottom: 40px;
+    }
+    .list-action {
+      height: 1px;
+    }
   }
 
   app-createpassphrase-form #changekey-instructions,
