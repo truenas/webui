@@ -41,7 +41,7 @@
     </div>
 
     <!-- Cards Container -->
-    <cdk-virtual-scroll-viewport itemSize="600" (scrolledIndexChange)="nextBatch($event, visibleReports[visibleReports.length - 1])">
+    <cdk-virtual-scroll-viewport itemSize="600" templateCacheSize="4" (scrolledIndexChange)="nextBatch($event, visibleReports[visibleReports.length - 1])">
       <!-- Report Cards -->
       <div class="report-container" *cdkVirtualFor="let key of visibleReports; let i = index;">
           <report *ngIf="activeReports[key] && activeReports[key].identifiers.length > 0" 
