@@ -366,6 +366,11 @@ export class ActiveDirectoryComponent {
       data.bindpw = ""
     }
     data['site'] = data['site'] === null ? '' : data['site'];
+    for (let i in data) {
+      if(data[i]===null) {
+        delete data[i];
+      }
+    }
   }
 
   submitFunction(body: any) {
