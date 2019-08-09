@@ -32,7 +32,7 @@ pipeline {
     stage('Push to buildd') {
       steps {
         withCredentials([file(credentialsId: 'dput.cf', variable: 'dputcfg')]) {
-          sh "dput -c \"${dputcfg}\" freenas truenas-webui*.changes"
+          sh "dput -c \"${dputcfg}\" mini-buildd-mini-buildd-host truenas-webui*.changes"
         }
       }
     }
