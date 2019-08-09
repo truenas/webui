@@ -176,7 +176,7 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'select',
     name: 'transfer_mode',
     placeholder: helptext.transfer_mode_placeholder,
-    tooltip: helptext.transfer_mode_tooltip,
+    tooltip: helptext.transfer_mode_warning_sync + ' ' + helptext.transfer_mode_warning_copy + ' ' + helptext.transfer_mode_warning_move,
     options: [
       { label: 'SYNC', value: 'SYNC' },
       { label: 'COPY', value: 'COPY' },
