@@ -59,6 +59,11 @@ export class VMWizardComponent {
         blurEvent: this.blurEvent,
         parent: this
       },
+      { type: 'input',
+        name : 'description',
+        placeholder : helptext.description_placeholder,
+        tooltip : helptext.description_tooltip,
+      },
       {
         name: 'time',
         type: 'select',
@@ -594,6 +599,7 @@ async customSubmit(value) {
 
     vm_payload["memory"]= value.memory;
     vm_payload["name"] = value.name;
+    vm_payload["description"] = value.description;
     vm_payload["time"]= value.time;
     vm_payload["vcpus"] = value.vcpus;
     vm_payload["memory"] = value.memory;
