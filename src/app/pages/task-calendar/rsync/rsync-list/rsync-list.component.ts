@@ -27,8 +27,15 @@ export class RsyncListComponent {
   public columns: Array < any > = [
     { name: T('Path'), prop: 'path' },
     { name: T('Remote Host'), prop: 'remotehost' },
+    { name: T('Remote SSH Port'), prop: 'remoteport', hidden: true },
     { name: T('Remote Module Name'), prop: 'remotemodule' },
+    { name: T('Remote Path'), prop: 'path', hidden: true },
+    { name: T('Direction'), prop: 'direction', hidden: true },
+    { name: T('Schedule'), prop: 'cron', hidden: true, widget: { icon: 'calendar-range', component: 'TaskScheduleListComponent' }},
+    { name: T('Short Description'), prop: 'desc', hidden: true },
     { name: T('User'), prop: 'user' },
+    { name: T('Delay Updates'), prop: 'delayupdates', hidden: true },
+    { name: T('Enabled'), prop: 'enabled', hidden: true },
   ];
   public config: any = {
     paging: true,
@@ -84,5 +91,18 @@ export class RsyncListComponent {
     });
 
     return actions;
+  }
+
+  resourceTransformIncomingRestData(data) {
+    return data.map(task =>  {
+      task.minute = task.schedule['minute'];
+      task.hour = task.schedule['hour'];
+      task.dom = task.schedule['dom'];
+      task.month = task.schedule['month'];
+      task.dow = task.schedule['dow'];
+
+      task.cron = `${task.minute} ${task.hour} ${task.dom} ${task.month} ${task.dow}`;
+      return task;
+    })
   }
 }
