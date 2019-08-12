@@ -55,18 +55,19 @@ path_tooltip: T('Select the directories or files to be sent to the cloud\
 path_validation : [ Validators.required ],
 
 transfer_mode_placeholder: T('Transfer Mode'),
-transfer_mode_tooltip: T('<i>SYNC</i> makes files on the destination system identical\
- to those on the source. Files that have been removed from\
- the source are removed from the destination, similar to\
- <i>rsync --delete</i>.\
- <i>COPY</i> copies files from source to destination,\
- skipping files that are identical, similar to <i>rsync</i>.\
- <i>MOVE</i> copies files from source to destination,\
- deleting files from the source after the copy, similar\
- to <i>mv</i>.'),
 
 transfer_mode_validation : [ Validators.required ],
 
+transfer_mode_warning_sync: T('<b>SYNC</b>: Files on the destination are <i><u>changed</u></i> to match those on the\
+ source. If a file does not exist on the source, it is also <i><u>deleted</u></i>\
+ from the destination.'),
+
+transfer_mode_warning_copy: T('<b>COPY</b>: Files from the source are <i><u>copied</u></i> to the destination. If files with\
+ the same names are present on the destination, they are <i><u>overwritten</u></i>.'),
+
+transfer_mode_warning_move: T('<b>MOVE</b>: After files are <i><u>copied</u></i> from the source to the destination, they are\
+ <i><u>deleted</u></i> from the source. Files with the same names on the destination are <i><u>overwritten</u></i>.'),
+  
 snapshot_placeholder: T('Take Snapshot'),
 snapshot_tooltip: T('Set to take a snapshot of the dataset before a\
  <i>PUSH</i> or <i>PULL</i>.'),

@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { WebSocketService, EngineerModeService, JailService } from '../../../services';
+import { WebSocketService, JailService } from '../../../services';
 import * as _ from 'lodash';
 import { EntityUtils } from '../../common/entity/utils';
 
@@ -21,18 +21,12 @@ export class AvailablePluginsComponent implements OnInit {
     public plugins: any;
     public selectedPlugin: any;
     public isSelectedOffical = true;
-    public engineerMode: boolean;
-    public isFreenas = window.localStorage['is_freenas'] === 'true';
     public availableRepo = [];
     public selectedRepo: any;
     public installedPlugins: any = {};
 
-    constructor(private ws: WebSocketService, protected engineerModeService: EngineerModeService, protected jailService: JailService,
+    constructor(private ws: WebSocketService, protected jailService: JailService,
                 private router: Router) {
-        this.engineerMode = localStorage.getItem('engineerMode') === 'true' ? true : false;
-        this.engineerModeService.engineerMode.subscribe((res) => {
-            this.engineerMode = res === 'true' ? true : false;
-        });
         this.ws.call('plugin.official_repositories').subscribe(
             (res) => {
                 for (const repo in res) {

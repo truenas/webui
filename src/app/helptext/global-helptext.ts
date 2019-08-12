@@ -9,5 +9,9 @@ export default {
     Ctrlr: T('TrueNAS Controller'),
     Ctrlrs: T('TrueNAS Controllers'),
     thisCtlr: T('This Controller'),
-    unknownCtrl: T('The active controller cannot be detected.')
+    unknownCtrl: T('The active controller cannot be detected.'),
+
+    legacyUIWarning: T('The legacy user interface is deprecated.\
+ All management should be performed through the new user interface.')
+
 }

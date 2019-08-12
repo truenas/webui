@@ -547,7 +547,7 @@ export class SupportComponent {
       if (res.result) {
         url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
       }
-      if (res.method === 'support.new_ticket' && this.subs.length > 0) {
+      if (res.method === 'support.new_ticket' && this.subs && this.subs.length > 0) {
         this.subs.forEach((item) => {
           const formData: FormData = new FormData();
           if (this.is_freenas) {
@@ -564,21 +564,32 @@ export class SupportComponent {
           formData.append('file', item.file, item.apiEndPoint);
           dialogRef.componentInstance.wspost(item.apiEndPoint, formData);
           dialogRef.componentInstance.success.subscribe(res=>{
-            // console.info(res);
+            this.resetForm();
           }),
           dialogRef.componentInstance.failure.subscribe((res) => {
             dialogRef.componentInstance.setDescription(res.error);
           });
         });
         dialogRef.componentInstance.setDescription(url);
+        this.resetForm();
       } else {
         dialogRef.componentInstance.setDescription(url);
+        this.resetForm();
       }
     })
     dialogRef.componentInstance.failure.subscribe((res) => {
       dialogRef.componentInstance.setDescription(res.error);
     });
   }
+
+  resetForm () {
+    this.entityEdit.formGroup.reset();
+    if (!this.is_freenas) {
+      this.entityEdit.formGroup.controls['TNCategory'].setValue('BUG');
+      this.entityEdit.formGroup.controls['environment'].setValue('production');
+      this.entityEdit.formGroup.controls['criticality'].setValue('inquiry');
+    }
+  };
 
   blurEvent(parent){
     this.category = _.find(parent.fieldConfig, {name: "category"});

@@ -14,5 +14,6 @@ export default {
         NO_FAILOVER : T('Failover is administratively disabled.'),
         NO_LICENSE: T(`Other ${globalHelptext.ctrlr} has no license.`),
         MISMATCH_DISKS : T(`The ${globalHelptext.ctrlrs} do not have the same quantity of disks.`)
-    }
+    },
+    legacyUIWarning: `${globalHelptext.legacyUIWarning}`
 }

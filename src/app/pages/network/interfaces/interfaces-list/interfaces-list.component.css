@@ -1,3 +1,11 @@
 .buttons {
     margin-left: 1px;
 }
+.disabled-notice {
+    font-size: small;
+    margin-top: -10px;
+}
+.pseudolink {
+    text-decoration: underline;
+    cursor: pointer;
+}

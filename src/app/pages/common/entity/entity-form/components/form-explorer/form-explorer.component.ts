@@ -95,7 +95,8 @@ export class FormExplorerComponent implements Field, OnInit {
       this.nodes = [{
         mountpoint: this.config.initial,
         name: this.config.initial,
-        hasChildren: true
+        hasChildren: true,
+        expanded: !this.rootSelectable,
       }];
     }
     else {
@@ -103,7 +104,8 @@ export class FormExplorerComponent implements Field, OnInit {
       this.nodes = [{
         name: this.config.initial,
         subTitle: this.config.initial,
-        hasChildren: true
+        hasChildren: true,
+        expanded: !this.rootSelectable,
       }];
     }
   }
