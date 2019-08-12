@@ -41,6 +41,10 @@
     transition-delay: 0s;
 }
 
+.tooltiptext:hover {
+    cursor: grab;
+}
+
 .pin {
     position: absolute;
     right: -8px;
