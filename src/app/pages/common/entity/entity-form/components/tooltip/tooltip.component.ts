@@ -59,10 +59,16 @@ export class TooltipComponent {
     }
   }
 
-  toggleVis() {
-    this.isLockTooltip = !this.isLockTooltip;
-    if (this.isLockTooltip === false) {
-      this.isShowTooltip = false;
+  toggleVis(state?) {
+    console.log(state)
+    if (state ==='lock') {
+      this.isLockTooltip = true;
+      this.isShowTooltip = true;
+    } else {
+      this.isLockTooltip = !this.isLockTooltip;
+      if (this.isLockTooltip === false) {
+        this.isShowTooltip = false;
+      }
     }
   }
 }
