@@ -6,6 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../appMaterial.module';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { MatSortHeader, MatSort } from '@angular/material';
+import {DragDropModule} from '@angular/cdk/drag-drop';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TreeModule } from 'angular-tree-component';
 import { NgUploaderModule } from 'ngx-uploader';
@@ -80,7 +81,7 @@ import { TaskScheduleListComponent } from 'app/pages/task-calendar/components/ta
 
 @NgModule({
   imports: [
-    CommonModule, FormsModule, ReactiveFormsModule,
+    CommonModule, FormsModule, ReactiveFormsModule, DragDropModule,
     MaterialModule, ColorPickerModule, NgxDatatableModule, CdkTableModule, TreeModule.forRoot(),
     Ng2DropdownModule, NgUploaderModule, FlexLayoutModule, TranslateModule,
     OverlayModule, A11yModule, TreeTableModule, FileSizeModule
