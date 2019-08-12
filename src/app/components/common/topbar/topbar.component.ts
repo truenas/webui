@@ -85,9 +85,12 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.checkEULA();
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         this.is_ha = is_ha;
+        this.is_ha ? window.localStorage.setItem('alias_ips', 'show') : window.localStorage.setItem('alias_ips', '0');
         this.getHAStatus();
       });
       this.sysName = 'TrueNAS';
+    } else {
+      window.localStorage.setItem('alias_ips', '0');
       this.checkLegacyUISetting();
     }
     let theme = this.themeService.currentTheme();
@@ -243,7 +246,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.pendingNetworkChanges = res;
     });
   }
-  
+
   checkNetworkCheckinWaiting() {
     this.ws.call('interface.checkin_waiting').subscribe(res => {
       if (res != null) {
@@ -271,7 +274,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
             this.dialogService.Info(
               network_interfaces_helptext.checkin_complete_title,
               network_interfaces_helptext.checkin_complete_message);
-            this.waitingNetworkCheckin = false; 
+            this.waitingNetworkCheckin = false;
           }, (err) => {
             this.loader.close();
             new EntityUtils().handleWSError(null, err, this.dialogService);
@@ -401,7 +404,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.translate.get(reason_text).subscribe(reason => {
           reasons = reasons + '<li>' + reason_text + '</li>\n';
         });
-      } 
+      }
     } else {
       ha_status = helptext.ha_status_text_enabled;
       this.translate.get(helptext.ha_is_enabled).subscribe(ha_is_enabled => {
@@ -426,7 +429,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
           this.dirServicesStatus.forEach((item) => {
             if (item.state !== 'DISABLED') {
               counter ++;
-            } 
+            }
           });
           counter > 0 ? this.showDirServicesIcon = true : this.showDirServicesIcon = false;
         });
