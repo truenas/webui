@@ -16,3 +16,14 @@
   justify-content: center;
   border: 2px dashed #c0c4c7
 }
+
+:host mat-icon.paragraph-icon {
+  font-size: 40px;
+  height: 40px;
+  width: 40px;
+}
+
+:host p.large {
+  font-size: 16px;
+  margin-bottom: 16px;
+}
