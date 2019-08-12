@@ -89,7 +89,7 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
 
   resourceTransformIncomingRestData(data:any): any {
     this.poolName = data.name;
-    _.find(this.fieldConfig, {name : "encrypt-headline"}).paraText += this.poolName;
+    _.find(this.fieldConfig, {name : "encrypt-headline"}).paraText += ` <em>${this.poolName}</em>`;
     return data;
   };
 

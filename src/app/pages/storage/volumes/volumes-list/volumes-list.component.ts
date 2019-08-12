@@ -215,7 +215,7 @@ export class VolumesListTableConfig implements InputTableConf {
       actions.push({
         label: T("Delete Recovery Key"),
         onClick: (row1) => {
-          this.dialogService.confirm(T("Delete Recovery Key"), T("Delete recovery key for ") + row1.name + "?").subscribe((confirmResult) => {
+          this.dialogService.confirm(T("Delete Recovery Key"), T("Delete recovery key for ") + `<em>${row1.name}</em>` + "?").subscribe((confirmResult) => {
             if (confirmResult === true) {
               this.loader.open();
 

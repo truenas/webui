@@ -8,7 +8,7 @@ const passphrase_msg = T(' a passphrase creates a new encryption key \
 
 export default {
 // Add key form
-add_key_headline: T('Add Recovery Key for Pool: '),
+add_key_headline: T('Add Recovery Key for Pool '),
 add_key_name_validation: [Validators.required],
 
 add_key_instructions: T('This is an additional key file that can be used \
@@ -28,13 +28,13 @@ changekey_adminpw_placeholder: T('Administrator Password'),
 changekey_adminpw_tooltip: T('Enter the root password.'),
 changekey_adminpw_validation: [Validators.required],
 
-changekey_headline: T('Create Passphrase for Pool: '),
+changekey_headline: T('Create Passphrase for Pool '),
 changekey_instructions: T('Creating') + passphrase_msg,
 changekey_passphrase_placeholder: T('Passphrase'),
 changekey_passphrase_tooltip: T('Enter the new encryption key passphrase.'),
 changekey_passphrase_validation: [Validators.required],
 
-changekey2_headline: T('Change Passphrase for Pool: '),
+changekey2_headline: T('Change Passphrase for Pool '),
 changekey_instructions2: T('Changing') + passphrase_msg,
 changekey_passphrase2_placeholder: T('Verify passphrase'),
 changekey_passphrase2_tooltip: T('Confirm the encryption key passphrase.'),
@@ -56,11 +56,11 @@ createkey_passphrase2_tooltip: T('Confirm the encryption key passphrase.'),
 createkey_passphrase2_validation: [Validators.required],
 
 // Rekey form
-rekey_headline: T('Reset Encryption for Pool: '),
+rekey_headline: T('Reset Encryption for Pool '),
 rekey_instructions: T('Reset the master key encryption used by this pool. Invalidates \
  any current encryption key file, recovery key file, and passphrase for the pool. \
  Clicking "RESET ENCRYPTION" also generates a new encryption key file and opens a dialog \
- to download a backup of the new key. Set "Add Recovery Key" to also generate new \
+ to download a backup of the new key. Set <i>Add Recovery Key</i> to also generate new \
  recovery key file for the pool and open a dialog to download it.'),
 rekey_password_label: T('Passphrase'),
 rekey_password_placeholder: T('Administrator password'),
