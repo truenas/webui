@@ -593,6 +593,7 @@ export class ReplicationFormComponent {
             placeholder: helptext.speed_limit_placeholder,
             tooltip: helptext.speed_limit_tooltip,
             hasErrors: false,
+            value: 1235,
             relation: [{
                 action: 'SHOW',
                 connective: 'OR',
@@ -769,9 +770,8 @@ export class ReplicationFormComponent {
     afterInit(entityForm) {
         this.entityForm = entityForm;
         if (this.entityForm.formGroup.controls['speed_limit'].value) {
-            let presetSpeed = (this.entityForm.formGroup.controls['speed_limit'].value).toString() + 'b';
+            let presetSpeed = (this.entityForm.formGroup.controls['speed_limit'].value).toString();
             this.storageService.humanReadable = presetSpeed;
-            this.entityForm.formGroup.controls['speed_limit'].setValue(presetSpeed);
         }
         
         const retentionPolicyField = _.find(this.fieldConfig, {name: 'retention_policy'});
@@ -823,7 +823,7 @@ export class ReplicationFormComponent {
 
         entityForm.formGroup.controls['speed_limit'].valueChanges.subscribe((value) => {
             const speedLimitField = _.find(this.fieldConfig, {name: "speed_limit"});
-            const filteredValue = this.storageService.convertHumanStringtoNum(value);
+            const filteredValue = this.storageService.convertHumanStringToNum(value);
             speedLimitField['hasErrors'] = false;
             speedLimitField['errors'] = '';
                 if (isNaN(filteredValue)) {
@@ -890,7 +890,7 @@ export class ReplicationFormComponent {
     }
 
     beforeSubmit(data) {
-        data['speed_limit'] = this.storageService.convertHumanStringtoNum(data['speed_limit']);
+        data['speed_limit'] = this.storageService.convertHumanStringToNum(data['speed_limit']);
         if (data['direction'] == 'PUSH') {
             for (let i = 0; i < data['source_datasets_PUSH'].length; i++) {
                 if (_.startsWith(data['source_datasets_PUSH'][i], '/mnt/')) {

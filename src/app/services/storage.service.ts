@@ -5,7 +5,6 @@ import { RestService } from './rest.service';
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { parse } from 'url';
 
 @Injectable()
 export class StorageService {
@@ -19,11 +18,7 @@ export class StorageService {
   public advPowerMgt: any;
   public acousticLevel: any;
   public humanReadable: any;
-
-  unitLetters  = 'bkmgtp';
-  powersOf1024 = {b: 1, k: 1024, m: 1024**2, g: 1024**3, t: 1024**4, p: 1024**5};
-  IECUnitsRE   = 'kib|mib|gib|tib|pib';
-  shortUnitsRE = 'kb|mb|gb|tb|pb';
+  public IECUnits = ['KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
 
   constructor(protected ws: WebSocketService, protected rest: RestService) {}
 
@@ -248,71 +243,90 @@ export class StorageService {
     return path.indexOf('/') < 0;
   }
 
-  convertUnitToNum(unit) {
-    unit = unit.toString().toLowerCase();
-    let unitRe = new RegExp(`[${this.unitLetters}]`);
-    // return a multiplier of one if it is not a known unit
-    if (!unit.match(unitRe)) {
-        return 1;
-    }
-    return parseInt(this.powersOf1024[unit]);
-  }
+  // ----------------------- //
 
-  convertIECUnitsToHuman(unitStr) {
-    // convert IEC units like "MiB", "GiB" to "m" and "g"
-    let unitStrRE = new RegExp(this.IECUnitsRE);
-    unitStr = unitStr.toLowerCase();
-    if (unitStr.match(unitStrRE)) {
-        unitStr = unitStr.replace('ib', '');
-    }
-    return unitStr;
-  }
+  normalizeUnit(unitStr) {
+    // normalize short units ("MB") or human units ("M") to IEC units ("MiB")
+    // unknown values return undefined
 
-  convertShortUnitsToHuman(unitStr) {
-    // convert human units like "MB", "GB" to "m" and "g"
-    let unitStrRE = new RegExp(this.shortUnitsRE);
-    unitStr = unitStr.toLowerCase();
-    if (unitStr.match(unitStrRE)) {
-        unitStr = unitStr.replace('b', '');
-    }
-    return unitStr;
-  }
-
-  convertHumanStringtoNum(hstr) {
-    // return values are an array:
-    // values[0] is the numeric value
-    // values[1] is the normalized string
-
-    let values, results, num;
-
-    hstr = hstr.toLowerCase()
-    hstr = this.convertIECUnitsToHuman(hstr);
-    hstr = this.convertShortUnitsToHuman(hstr);
-
-    if (!hstr) {
-        values = [0, '0']
-        this.humanReadable = values[1];
-        return values[0];
+    // empty unit is valid, just return
+    if (!unitStr) {
+        return '';
     }
 
-    // input must include numbers
-    // RE must use double backslashes because of backtick and interpolation here
-    var valueRe = new RegExp(`^\\s*(\\d+)\\s*([${this.unitLetters}]*)\\s*$`);
-    if ( results = hstr.match(valueRe) ) {
-        // has at least a number
-        num = parseInt(results[1]);
+    const IECUnitsStr   = this.IECUnits.join('|');
+    const shortUnitsStr = this.IECUnits.map(unit => unit.charAt(0) + unit.charAt(2)).join('|');
+    const humanUnitsStr = this.IECUnits.map(unit => unit.charAt(0)).join('|');
+    const allUnitsStr   = (IECUnitsStr + '|' + shortUnitsStr + '|' + humanUnitsStr).toUpperCase();
+    const unitsRE = new RegExp('^\\s*(' + allUnitsStr + '){1}\\s*$');
+
+    unitStr = unitStr.toUpperCase();
+    let results = unitStr.match(unitsRE);
+    if (unitStr.match(unitsRE)) {
+        // always return IEC units
+        // could take a parameter to return short or human units
+        return unitStr.charAt(0).toUpperCase() + 'iB';
     } else {
-        values = [NaN, ''];
-        this.humanReadable = values[1];
-        return values[0];
+        return undefined;
     }
-
-    var unit = results[2];
-    // ignore 'b' for bytes
-    unit = (unit === 'b') ? '' : unit;
-    values = [num * this.convertUnitToNum(unit), num.toString() + unit];
-    this.humanReadable = values[1];
-    return values[0];
   }
 
+  convertUnitToNum(unitStr) {
+      // convert IEC ("MiB"), short ("MB"), or human ("M") units to numbers
+      // unknown units are evaluated as 1
+
+      unitStr = this.normalizeUnit(unitStr);
+      if (!unitStr) {
+          return 1;
+      }
+      return (1024**( this.IECUnits.indexOf(unitStr)+1) );
+  }
+
+  convertHumanStringToNum(hstr) {
+      // return values are an array:
+      // values[0] is the numeric value
+      // values[1] is the normalized unit string
+
+      const IECUnitLetters = this.IECUnits.map(unit => unit.charAt(0).toUpperCase()).join('');
+      const allowedChars = '0-9' + IECUnitLetters;
+
+      let values, spacer;
+      var num = 0;
+      var unit = '';
+
+      // empty value is evaluated as zero
+      if (!hstr) {
+        let values = [0, '0'];
+          this.humanReadable = values[1];
+          return values[0];
+      }
+
+      // remove whitespace
+      hstr = hstr.replace(/\s+/g, '');
+
+      // get leading number
+      if ( num = hstr.match(/^(\d+)/) ) {
+          num = num[1];
+      } else {
+          // leading number is required
+          values = [NaN, ''];
+          this.humanReadable = values[1];
+          return values[0];
+      }
+
+      // get optional unit
+      unit = hstr.replace(num, '');
+      if ( (unit) && !(unit = this.normalizeUnit(unit)) ) {
+          // error when unit is present but not recognized
+          values = [NaN, ''];
+          this.humanReadable = values[1];
+          return values[0];
+      }
+
+      spacer = (unit) ? ' ' : '';
+
+      values = [num * this.convertUnitToNum(unit), num.toString() + spacer + unit];
+      this.humanReadable = values[1];
+      return values[0];
+  }
 }
