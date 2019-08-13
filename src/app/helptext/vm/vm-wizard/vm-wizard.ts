@@ -27,7 +27,7 @@ name_tooltip : T('Enter an alphanumeric name for the virtual machine.'),
 name_validation : [ Validators.required ],
 
 description_placeholder : T('Description'),
-description_tooltip : T('Enter an optional description.'),
+description_tooltip : T('Description (optional).'),
 
 time_placeholder : T('System clock'),
 time_tooltip: T('VM system time. Default is <i>Local</i>.'),
