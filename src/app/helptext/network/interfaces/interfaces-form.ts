@@ -4,7 +4,12 @@ import { rangeValidator } from '../../../pages/common/entity/entity-form/validat
 
 export default {
 int_type_placeholder: T('Type'),
-int_type_tooltip: T('Choose the type of interface. <i>Bridge</i> creates a logical link between multiple networks. Link Aggregation combines multiple network connections into a single interface. A virtual LAN (VLAN) partitions and isolates a segment of the connection.'),
+int_type_tooltip: T('Choose the\
+ type of interface. <i>Bridge</i> creates a logical link between\
+ multiple networks. <i>Link Aggregation</i> combines multiple network\
+ connections into a single interface. A <i>Virtual LAN (VLAN)</i> partitions\
+ and isolates a segment of the connection. Read-only when editing an\
+ interface.'),
 int_type_options: [
     {label: "Bridge", value: "BRIDGE"},
     {label: "Link Aggregation", value: "LINK_AGGREGATION"},
@@ -12,15 +17,19 @@ int_type_options: [
 ],
 
 int_interface_placeholder : T('NIC'),
-int_interface_tooltip : T('Enter the FreeBSD device name of the interface. This\
- cannot be changed after the interface is created.'),
+int_interface_tooltip : T('Enter the FreeBSD device name of the\
+ interface. This cannot be changed after the interface is created.'),
 int_interface_validation : [ Validators.required ],
 
 int_description_placeholder : T('Description'),
 int_description_tooltip : T('Enter a description of the interface.'),
 
 int_name_placeholder : T('Name'),
-int_name_tooltip : T('Enter a name to use for the the interface. Use the format laggX, vlanX, or bridgeX where X is a number representing a non-parent interface.'),
+int_name_tooltip : T('Enter a name for the interface.\
+ Use the format <samp>lagg<i>X</i></samp>,\
+ <samp>vlan<i>X</i></samp>, or <samp>bridge<i>X</i></samp> where\
+ <i>X</i> is a number representing a non-parent interface. Read-only\
+ when editing an interface.'),
 int_name_validation : [ Validators.required ],
 
 int_dhcp_placeholder : T('DHCP'),
