@@ -280,6 +280,30 @@ export class StorageService {
       }
       return (1024**( this.IECUnits.indexOf(unitStr)+1) );
   }
+  
+  // sample data, input and return values
+  // input       normalized       number value
+  // '12345'     '12345'          12345
+  // '512x'      ''               NaN
+  // '0'         '0'              0
+  // '0b'        ''               NaN
+  // '',         '0'              0
+  // '4MB',      '4 MiB'          4*1024**2 (4,194,304)
+  // '16KiB'     '16 KiB'         16*1024   (16,384)
+  // 'g'         ''               NaN
+  // ' t1'       ''               NaN
+  // '   5   m'  '5 MiB'          5*1024**2 (5,242,880)
+  // '1m',       '1 MiB'          1024**2   (1,048,576)
+  // '    T'     ''               NaN
+  // '2 MiB  '   '2 MiB'          2*1024**2 (2,097,152)
+  // '2 MiB x8'  ''               NaN
+  // '256 k'     '256 KiB'        256*1024  (262,144)
+  // 'm4m k'     ''               NaN
+  // '4m k'      ''               NaN
+  // '1.2m'      ''               NaN
+  // '12k4'      ''               NaN
+  // '12.4k'     ''               NaN
+  // ' 10G'      '10 GiB'         10*1024**3 (10,737,418,240)
 
   convertHumanStringToNum(hstr) {
 
