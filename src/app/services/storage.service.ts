@@ -261,7 +261,6 @@ export class StorageService {
     const unitsRE = new RegExp('^\\s*(' + allUnitsStr + '){1}\\s*$');
 
     unitStr = unitStr.toUpperCase();
-    let results = unitStr.match(unitsRE);
     if (unitStr.match(unitsRE)) {
         // always return IEC units
         // could take a parameter to return short or human units
@@ -283,22 +282,16 @@ export class StorageService {
   }
 
   convertHumanStringToNum(hstr) {
-      // return values are an array:
-      // values[0] is the numeric value
-      // values[1] is the normalized unit string
 
       const IECUnitLetters = this.IECUnits.map(unit => unit.charAt(0).toUpperCase()).join('');
-      const allowedChars = '0-9' + IECUnitLetters;
 
-      let values, spacer;
-      var num = 0;
-      var unit = '';
+      let num = 0;
+      let unit = '';
 
       // empty value is evaluated as zero
       if (!hstr) {
-          let values = [0, '0'];
-          this.humanReadable = values[1];
-          return values[0];
+          this.humanReadable = '0';
+          return 0;
       }
 
       // remove whitespace
@@ -309,24 +302,21 @@ export class StorageService {
           num = num[1];
       } else {
           // leading number is required
-          values = [NaN, ''];
-          this.humanReadable = values[1];
-          return values[0];
+          this.humanReadable = '';
+          return NaN;
       }
 
       // get optional unit
       unit = hstr.replace(num, '');
       if ( (unit) && !(unit = this.normalizeUnit(unit)) ) {
           // error when unit is present but not recognized
-          values = [NaN, ''];
-          this.humanReadable = values[1];
-          return values[0];
+          this.humanReadable = '';
+          return NaN;
       }
 
-      spacer = (unit) ? ' ' : '';
+      let spacer = (unit) ? ' ' : '';
 
-      values = [num * this.convertUnitToNum(unit), num.toString() + spacer + unit];
-      this.humanReadable = values[1];
-      return values[0];
+      this.humanReadable = num.toString() + spacer + unit;
+      return num * this.convertUnitToNum(unit);
   }
 }
