@@ -296,7 +296,7 @@ export class StorageService {
 
       // empty value is evaluated as zero
       if (!hstr) {
-        let values = [0, '0'];
+          let values = [0, '0'];
           this.humanReadable = values[1];
           return values[0];
       }
