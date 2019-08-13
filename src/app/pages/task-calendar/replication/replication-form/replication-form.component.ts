@@ -593,7 +593,6 @@ export class ReplicationFormComponent {
             placeholder: helptext.speed_limit_placeholder,
             tooltip: helptext.speed_limit_tooltip,
             hasErrors: false,
-            value: 1235,
             relation: [{
                 action: 'SHOW',
                 connective: 'OR',
