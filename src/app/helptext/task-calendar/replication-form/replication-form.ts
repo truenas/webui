@@ -30,9 +30,9 @@ export default {
                  of the data being replicated.'),
 
     name : 'repl_limit',
-    repl_limit_placeholder : T('Limit (kpbs)'),
-    repl_limit_tooltip : T('Limit replication speed to the specified value in\
-                 kilobits/second. The default <i>0</i> is unlimited.'),
+    repl_limit_placeholder : T('Limit (KB/s)'),
+    repl_limit_tooltip : T('Limit replication speed to the specified\
+ value in Kbytes/second. Zero means no limit.'),
     inputType : 'number',
     value : 0,
     repl_limit_validation : [Validators.min(0)],
