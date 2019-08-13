@@ -2,7 +2,7 @@ import { T } from '../../translate-marker';
 
 export default {
     name_placeholder: T('Name'),
-    name_tooltip: T('Enter a name for the new alert service.'),
+    name_tooltip: T('Name of the new alert service.'),
 
     enabled_placeholder: T('Enabled'),
     enabled_tooltip: T('Unset to disable this service without deleting it.'),
@@ -20,16 +20,16 @@ export default {
  target="_blank">AWS account region</a>.'),
 
     AWSSNS_topic_arn_placeholder: T('ARN'),
-    AWSSNS_topic_arn_tooltip: T('Enter the topic <a\
+    AWSSNS_topic_arn_tooltip: T('Topic <a\
  href="https://docs.aws.amazon.com/sns/latest/dg/CreateTopic.html"\
  target="_blank">Amazon Resource Name (ARN)</a> for\
  publishing. Example: <b>arn:aws:sns:us-west-2:111122223333:MyTopic</b>.'),
 
     AWSSNS_aws_access_key_id_placeholder: T('Key ID'),
-    AWSSNS_aws_access_key_id_tooltip: T('Enter the Access Key ID for the linked AWS account.'),
+    AWSSNS_aws_access_key_id_tooltip: T('Access Key ID for the linked AWS account.'),
 
     AWSSNS_aws_secret_access_key_placeholder: T('Secret Key'),
-    AWSSNS_aws_secret_access_key_tooltip: T('Enter the Secret Access Key for the linked AWS account.'),
+    AWSSNS_aws_secret_access_key_tooltip: T('Secret Access Key for the linked AWS account.'),
 
     Mail_email_placeholder: T('Email Address'),
     Mail_email_tooltip: T('Enter a valid email address to receive alerts from this system.'),
@@ -39,13 +39,13 @@ export default {
     HipChat_hfrom_tooltip: T('Enter a name to send alerts'),
 
     HipChat_cluster_name_placeholder: T('Cluster Name'),
-    HipChat_cluster_name_tooltip: T('Enter the HipChat cluster name.'),
+    HipChat_cluster_name_tooltip: T('HipChat cluster name.'),
 
     HipChat_base_url_placeholder: T('URL'),
-    HipChat_base_url_tooltip: T('Enter the HipChat base URL.'),
+    HipChat_base_url_tooltip: T('HipChat base URL.'),
 
     HipChat_room_id_placeholder: T('Room'),
-    HipChat_room_id_tooltip: T('Enter the name of the room.'),
+    HipChat_room_id_tooltip: T('Name of the room.'),
 
     HipChat_auth_token_placeholder: T('Auth Token'),
     HipChat_auth_token_tooltip: T('Enter or paste an Authentication token.'),
@@ -56,19 +56,19 @@ export default {
  target="_blank">InfluxDB</a> hostname.'),
 
     InfluxDB_username_placeholder: T('Username'),
-    InfluxDB_username_tooltip: T('Enter the username for this service.'),
+    InfluxDB_username_tooltip: T('Username for this service.'),
 
     InfluxDB_password_placeholder: T('Password'),
     InfluxDB_password_tooltip: T('Enter password.'),
 
     InfluxDB_database_placeholder: T('Database'),
-    InfluxDB_database_tooltip: T('Enter the name of the InfluxDB database.'),
+    InfluxDB_database_tooltip: T('Name of the InfluxDB database.'),
 
     InfluxDB_series_name_placeholder: T('Series'),
-    InfluxDB_series_name_tooltip: T('Enter InfluxDB time series name for collected points.'),
+    InfluxDB_series_name_tooltip: T('InfluxDB time series name for collected points.'),
 
     Mattermost_cluster_name_placeholder: T('Cluster Name'),
-    Mattermost_cluster_name_tooltip: T('Enter the name of the <a\
+    Mattermost_cluster_name_tooltip: T('Name of the <a\
  href="https://docs.mattermost.com/overview/index.html"\
  target="_blank">Mattermost</a> cluster to join.'),
 
@@ -79,25 +79,25 @@ export default {
  this service.'),
 
     Mattermost_username_placeholder: T('Username'),
-    Mattermost_username_tooltip: T('Enter the Mattermost username.'),
+    Mattermost_username_tooltip: T('Mattermost username.'),
 
     Mattermost_password_placeholder: T('Password'),
-    Mattermost_password_tooltip: T('Enter the Mattermost password.'),
+    Mattermost_password_tooltip: T('Mattermost password.'),
 
     Mattermost_team_placeholder: T('Team'),
-    Mattermost_team_tooltip: T('Enter the Mattermost <a\
+    Mattermost_team_tooltip: T('Mattermost <a\
  href="https://docs.mattermost.com/help/getting-started/creating-teams.html"\
  target="_blank">team name</a>.'),
 
     Mattermost_channel_placeholder: T('Channel'),
-    Mattermost_channel_tooltip: T('Enter the name of the <a\
+    Mattermost_channel_tooltip: T('Name of the <a\
  href="https://docs.mattermost.com/help/getting-started/organizing-conversations.html#managing-channels"\
  target="_blank">channel</a> to receive notifications.\
  This overrides the default channel in the incoming\
  webhook settings.'),
 
     OpsGenie_cluster_name_placeholder: T('Cluster Name'),
-    OpsGenie_cluster_name_tooltip: T('Enter the name of the <a\
+    OpsGenie_cluster_name_tooltip: T('Name of the <a\
  href="https://docs.opsgenie.com/docs"\
  target="_blank">OpsGenie</a> cluster. Find the Cluster\
  Name by signing into the OpsGenie web interface and\
@@ -122,10 +122,10 @@ export default {
  target="_blank">PagerDuty API</a>.'),
 
     PagerDuty_client_name_placeholder: T('Client Name'),
-    PagerDuty_client_name_tooltip: T('Enter the PagerDuty client name.'),
+    PagerDuty_client_name_tooltip: T('PagerDuty client name.'),
 
     Slack_cluster_name_placeholder: T('Cluster Name'),
-    Slack_cluster_name_tooltip: T('Enter the name of the cluster.'),
+    Slack_cluster_name_tooltip: T('Name of the cluster.'),
 
     Slack_url_placeholder: T('Webhook URL'),
     Slack_url_tooltip: T('Paste the <a\
@@ -134,14 +134,14 @@ export default {
  this service.'),
 
     Slack_channel_placeholder: T('Channel'),
-    Slack_channel_tooltip: T('Enter a Slack channel name. The service will post all\
+    Slack_channel_tooltip: T('Slack channel name. The service will post all\
  messages to this channel.'),
 
     Slack_username_placeholder: T('Username'),
-    Slack_username_tooltip: T('Enter a Slack username for this service.'),
+    Slack_username_tooltip: T('Slack username for this service.'),
 
     Slack_icon_url_placeholder: T('Icon URL'),
-    Slack_icon_url_tooltip: T('Enter a URL to an image to use for notification icons.\
+    Slack_icon_url_tooltip: T('URL to an image to use for notification icons.\
  This overrides the incoming webhook setting.'),
 
     SNMPTrap_host_placeholder: T('Hostname'),
