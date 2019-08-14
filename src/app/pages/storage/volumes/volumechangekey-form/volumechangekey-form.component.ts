@@ -28,7 +28,7 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
   saveSubmitText = T("Change Passphrase");
 
   resource_name = 'storage/volume';
-  route_success: string[] = [ 'storage', 'pools'];
+  route_return: string[] = [ 'storage', 'pools'];
   isNew = false;
   isEntity = true;
   poolName: string;
@@ -86,6 +86,23 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
       tooltip: helptext.changekey_remove_passphrase_tooltip
     }
   ];
+
+  public custActions: Array<any> = [
+    {
+      id : 'download_encrypt_key',
+      name : 'Download Encryption Key',
+      function : () => {
+        this.encryptionService.openEncryptDialog(this.pk, this.route_return);
+      }
+    },
+    {
+      id : 'custom_cancel',
+      name : 'Cancel',
+      function : () => {
+        this.router.navigate(new Array('/').concat(
+          this.route_return));
+    }
+  }];
 
   resourceTransformIncomingRestData(data:any): any {
     this.poolName = data.name;
@@ -146,6 +163,6 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
     params.push(payload);
 
     this.encryptionService.setPassphrase(this.pk, value.passphrase, value.adminpw,
-      value.name, this.route_success, false, true, success_msg);
+      value.name, this.route_return, false, true, success_msg);
   }
 }

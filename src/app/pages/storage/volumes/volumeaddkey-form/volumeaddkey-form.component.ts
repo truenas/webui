@@ -28,7 +28,7 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
   saveSubmitText = T("Add Recovery Key");
 
   resource_name = 'storage/volume';
-  route_success: string[] = [ 'storage', 'pools'];
+  route_return: string[] = [ 'storage', 'pools'];
   isNew = false;
   isEntity = true;
   poolName: string;
@@ -64,6 +64,23 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
     }
   ];
 
+  public custActions: Array<any> = [
+    {
+      id : 'delete_recovery_key',
+      name : T('Delete Recovery Key'),
+      function : () => {
+        this.encryptionService.openEncryptDialog(this.pk, this.route_return);
+      }
+    },
+    {
+      id : 'custom_cancel',
+      name : 'Cancel',
+      function : () => {
+        this.router.navigate(new Array('/').concat(
+          this.route_return));
+    }
+  }];
+
   resourceTransformIncomingRestData(data:any): any {
     this.poolName = data.name;
     _.find(this.fieldConfig, {name : "encrypt-headline"}).paraText += ` <em>${this.poolName}</em>`;
@@ -88,10 +105,16 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
   preInit(entityForm: any) {
     this.route.params.subscribe(params => {
       this.pk = params['pk'];
+      this.ws.call('pool.query', 
+        [
+          ["id", "=", this.pk]
+        ]).subscribe((res => {
+        console.log(res)
+      }))
     });
   }
 
   customSubmit(value) { 
-    this.encryptionService.makeRecoveryKey(this.pk, value.name, this.route_success, false);
+    this.encryptionService.makeRecoveryKey(this.pk, value.name, this.route_return, false);
   }
 }

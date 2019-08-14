@@ -184,7 +184,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
       if (rowData.is_decrypted) {
         actions.push({
-          label: T("Change Passphrase"),
+          label: T("Encryption Key"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat(
               ["storage", "pools", "changekey", row1.id]));
@@ -194,7 +194,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
     } else if (rowData.vol_encrypt === 1 && rowData.is_decrypted && localParentVolumesList.systemdatasetPool != rowData.name) {
       actions.push({
-        label: T("Create Passphrase"),
+        label: T("Encryption Key"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
             ["storage", "pools", "createkey", row1.id]));
@@ -235,19 +235,10 @@ export class VolumesListTableConfig implements InputTableConf {
       });
 
       actions.push({
-        label: T("Reset Encryption"),
+        label: T("Reset Keys"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
             ["storage", "pools", "rekey", row1.id]));
-
-        }
-      });
-
-      actions.push({
-        label: T("Download Encrypt Key"),
-        onClick: (row1) => {
-          const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
-          dialogRef.componentInstance.volumeId = row1.id;
 
         }
       });
