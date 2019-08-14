@@ -54,6 +54,19 @@ export class EncryptionService {
         });
       }
 
+      deleteRecoveryKey(row, adminPassphrase, poolName, route_success) {
+        this.loader.open();
+        this.ws.call('pool.recoverykey_rm', [parseInt(row), {'admin_password': adminPassphrase}]).subscribe(() => {
+          this.loader.close();
+          this.snackbarService.open(T(`Recovery key deleted from pool <i>${poolName}</i>`), 'close', { duration: 5000 });
+          this.router.navigate(new Array('/').concat(route_success));
+        },
+        (err) => {
+          this.loader.close();
+          this.dialogService.errorReport(T(`Error deleting recovery key for pool <i>${poolName}</i>`), err.error.message, err.error.traceback);
+        });
+      }
+
       openEncryptDialog(row, route_success) {
         let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
         dialogRef.componentInstance.volumeId = row;

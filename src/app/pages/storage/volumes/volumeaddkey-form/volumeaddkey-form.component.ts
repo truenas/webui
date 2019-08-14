@@ -32,6 +32,7 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
   isNew = false;
   isEntity = true;
   poolName: string;
+  passphrase: string;
   entityData = {
     name: "",
     passphrase: ""
@@ -69,7 +70,7 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
       id : 'delete_recovery_key',
       name : T('Delete Recovery Key'),
       function : () => {
-        this.encryptionService.openEncryptDialog(this.pk, this.route_return);
+        this.encryptionService.deleteRecoveryKey(this.pk, this.passphrase, this.poolName, this.route_return);
       }
     },
     {
@@ -105,14 +106,16 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
   preInit(entityForm: any) {
     this.route.params.subscribe(params => {
       this.pk = params['pk'];
-      this.ws.call('pool.query', 
-        [
-          ["id", "=", this.pk]
-        ]).subscribe((res => {
-        console.log(res)
-      }))
     });
   }
+
+  afterInit(entityForm: any) {
+    entityForm.formGroup.controls['password'].valueChanges.subscribe((res) => {
+      this.passphrase = res;
+    })
+  }
+    
+  
 
   customSubmit(value) { 
     this.encryptionService.makeRecoveryKey(this.pk, value.name, this.route_return, false);
