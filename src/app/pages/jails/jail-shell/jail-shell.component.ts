@@ -28,7 +28,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
   private shellSubscription: any;
 
   public shell_tooltip = T('<b>Ctrl+C</b> kills a foreground process.<br>\
-                            Many utilities are built-in:<br> b>Iperf</b>,\
+                            Many utilities are built-in:<br> <b>Iperf</b>,\
                             <b>Netperf</b>, <b>IOzone</b>, <b>arcsat</b>,\
                             <b>tw_cli</b>, <br><b>MegaCli</b>,\
                             <b>freenas-debug</b>, <b>tmux</b>,\
