@@ -385,20 +385,14 @@ export class DatasetAclComponent implements OnDestroy {
   async dataHandler(entityForm) {
     this.loader.open();
     const res = entityForm.queryResponse;
-    await this.userService.getUserByUID(res.uid).toPromise().then(userObj => {
-      if (userObj && userObj.length > 0) {
-        entityForm.formGroup.controls['uid'].setValue(userObj[0].username);
-      }
-    }, err => {
-      console.error(err);
-    });
-    await this.userService.getGroupByGID(res.gid).toPromise().then(groupObj => {
-      if (groupObj && groupObj.length > 0) {
-        entityForm.formGroup.controls['gid'].setValue(groupObj[0].group);
-      }
-    }, err => {
-      console.error(err);
-    });
+    const user = await this.userService.getUserObject(res.uid);
+    if (user && user.pw_name) {
+      entityForm.formGroup.controls['uid'].setValue(user.pw_name);
+    }
+    const group = await this.userService.getGroupObject(res.gid);
+    if (group && group.gr_name) {
+      entityForm.formGroup.controls['gid'].setValue(group.gr_name);
+    }
     let data = res.acl;
     let acl;
     if (!data.length) {
@@ -409,21 +403,15 @@ export class DatasetAclComponent implements OnDestroy {
       acl.type = data[i].type;
       acl.tag = data[i].tag;
       if (acl.tag === 'USER') {
-        await this.userService.getUserByUID(data[i].id).toPromise().then(userObj => {
-          if (userObj && userObj.length > 0) {
-            acl.user = userObj[0].username;
-          }
-        }, err => {
-          console.error(err);
-        });
+        const usr = await this.userService.getUserObject(data[i].id);
+        if (usr && usr.pw_name) {
+          acl.user = usr.pw_name;
+        }
       } else if (acl.tag === 'GROUP') {
-        await this.userService.getGroupByGID(data[i].id).toPromise().then(groupObj => {
-          if (groupObj && groupObj.length > 2) {
-            acl.group = groupObj[0].group;
-          }
-        }, err => {
-          console.error(err);
-        });
+        const grp = await this.userService.getGroupObject(data[i].id);
+        if (grp && grp.gr_name) {
+          acl.group = grp.gr_name;
+        }
       }
       if (data[i].flags.hasOwnProperty('BASIC')) {
         acl.flags_type = 'BASIC';
