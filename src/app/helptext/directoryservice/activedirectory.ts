@@ -94,12 +94,13 @@ activedirectory_kerberos_principal_tooltip : T('Select the keytab created in\
 
 computer_account_OU_name: T('createcomputer'),
 computer_account_OU_placeholder: T('Computer Account OU'),
-computer_account_OU_tooltip: T('If blank, then the default OU is used during computer \
- account creation. Precreate the computer account in a specific OU. The OU string read \
- from top to bottom without RDNs and delimited by a "/". \
- E.g. <samp>"createcomputer=Computers/Servers/Unix NB:</samp> A backslash "" is used \
- as escape at multiple levels and may need to be doubled or even quadrupled. It is not \
- used as a separator.'),
+computer_account_OU_tooltip: T('The OU in which new computer accounts are created. \
+ The OU string is read from top to bottom without RDNs. Slashes ("/") are used as \
+ delimiters, like <samp>Computers/Servers/NAS</samp>. The backslash ("\\") is \
+ used to escape characters but not as a separator. Backslashes are interpreted at \
+ multiple levels and might require doubling or even quadrupling to take effect. \
+ When this field is blank, new computer accounts are created in the Active Directory \
+ default OU.'),
 
 activedirectory_timeout_name: 'timeout',
 activedirectory_timeout_placeholder : T('AD Timeout'),
