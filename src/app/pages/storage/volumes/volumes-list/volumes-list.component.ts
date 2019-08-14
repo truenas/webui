@@ -205,32 +205,10 @@ export class VolumesListTableConfig implements InputTableConf {
     if (rowData.is_decrypted) {
 
       actions.push({
-        label: T("Add Recovery Key"),
+        label: T("Recovery Key"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
             ["storage", "pools", "addkey", row1.id]));
-        }
-      });
-
-      actions.push({
-        label: T("Delete Recovery Key"),
-        onClick: (row1) => {
-          this.dialogService.confirm(T("Delete Recovery Key"), T("Delete recovery key for ") + `<em>${row1.name}</em>` + "?").subscribe((confirmResult) => {
-            if (confirmResult === true) {
-              this.loader.open();
-
-              this.rest.delete(this.resource_name + "/" + row1.id + "/recoverykey/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-                this.loader.close();
-
-                this.dialogService.Info(T("Deleted Recovery Key"), T("Successfully deleted recovery key for ") + row1.name).subscribe((infoResult) => {
-                  this.parentVolumesListComponent.repaintMe();
-                });
-              }, (res) => {
-                this.loader.close();
-                this.dialogService.errorReport(T("Error Deleting Key"), res.message, res.stack);
-              });
-            }
-          });
         }
       });
 

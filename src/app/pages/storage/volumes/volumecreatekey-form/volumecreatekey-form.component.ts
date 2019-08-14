@@ -69,14 +69,6 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
       validation: helptext.createkey_passphrase_validation,
       required: true,
       togglePw: true
-    },{
-      type : 'input',
-      inputType: 'password',
-      name : 'passphrase2',
-      placeholder: helptext.createkey_passphrase2_placeholder,
-      tooltip: helptext.createkey_passphrase2_tooltip,
-      validation: helptext.createkey_passphrase2_validation,
-      required: true
     }
   ];
 

@@ -30,11 +30,11 @@ export class EncryptionService {
             });
             this.loader.close();
             addRecoveryKey ? this.makeRecoveryKey(row, poolName, route_success, downloadEncrytpKey) : this.openEncryptDialog(row, route_success);
-          (err) => {
-            this.loader.close();
-            this.dialogService.errorReport(T(`Error creating passphrase for pool <i>${poolName}</i>`), err.error.message, err.error.traceback);
-          };
-        })
+        },
+        (err) => {
+          this.loader.close();
+          this.dialogService.errorReport(T(`Error creating passphrase for pool ${poolName}`), err.reason, err.trace.formatted);
+        });
       }
     
       makeRecoveryKey(row, poolName, route_success, downloadEncryptKey?) {
@@ -50,21 +50,26 @@ export class EncryptionService {
             })
         }, (res) => {
           this.loader.close();
-          this.dialogService.errorReport(T(`Error adding recovery key to pool <i>${poolName}</i>`), res.reason, res.trace.formatted);
+          this.dialogService.errorReport(T(`Error adding recovery key to pool ${poolName}`), res.reason, res.trace.formatted);
         });
       }
 
       deleteRecoveryKey(row, adminPassphrase, poolName, route_success) {
-        this.loader.open();
-        this.ws.call('pool.recoverykey_rm', [parseInt(row), {'admin_password': adminPassphrase}]).subscribe(() => {
-          this.loader.close();
-          this.snackbarService.open(T(`Recovery key deleted from pool <i>${poolName}</i>`), 'close', { duration: 5000 });
-          this.router.navigate(new Array('/').concat(route_success));
-        },
-        (err) => {
-          this.loader.close();
-          this.dialogService.errorReport(T(`Error deleting recovery key for pool <i>${poolName}</i>`), err.error.message, err.error.traceback);
-        });
+        this.dialogService.confirm(helptext.delete_recovery_key_title, helptext.delete_recovery_key_message, true, T('Delete Key'))
+          .subscribe((res) => {
+            if (res) {
+              this.loader.open();
+              this.ws.call('pool.recoverykey_rm', [parseInt(row), {'admin_password': adminPassphrase}]).subscribe(() => {
+                this.loader.close();
+                this.snackbarService.open(T(`Recovery key deleted from pool <i>${poolName}</i>`), 'close', { duration: 5000 });
+                this.router.navigate(new Array('/').concat(route_success));
+              },
+              (err) => {
+                this.loader.close();
+                this.dialogService.errorReport(T(`Error deleting recovery key for pool ${poolName}`), err.error.message, err.error.traceback);
+              });
+            }
+          })
       }
 
       openEncryptDialog(row, route_success) {

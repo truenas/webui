@@ -68,16 +68,8 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
       tooltip: helptext.changekey_passphrase_tooltip,
       validation: helptext.changekey_passphrase_validation,
       required: true,
-      disabled: false
-    },{
-      type : 'input',
-      inputType: 'password',
-      name : 'passphrase2',
-      placeholder: helptext.changekey_passphrase2_placeholder,
-      tooltip: helptext.changekey_passphrase2_tooltip,
-      validation: helptext.changekey_passphrase2_validation,
-      required: true,
-      disabled: false
+      disabled: false,
+      togglePw: true
     },
     {
       type: 'checkbox',
