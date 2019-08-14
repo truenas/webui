@@ -32,7 +32,7 @@ export default {
     name : 'repl_limit',
     repl_limit_placeholder : T('Limit (KiB/s)'),
     repl_limit_tooltip : T('Limit replication speed to the specified\
- value in Kib per second. Zero means no limit.'),
+ value in KiB per second. Zero means no limit.'),
     inputType : 'number',
     value : 0,
     repl_limit_validation : [Validators.min(0)],
