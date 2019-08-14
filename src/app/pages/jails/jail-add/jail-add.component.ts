@@ -547,7 +547,7 @@ export class JailAddComponent implements OnInit {
         value: 'new',
       }, {
         label: 'Disable',
-        value: 'disable',
+        value: 'none',
       }]
     },
     {
@@ -569,7 +569,7 @@ export class JailAddComponent implements OnInit {
         value: 'new',
       }, {
         label: 'Disable',
-        value: 'disable',
+        value: 'none',
       }]
     },
     {

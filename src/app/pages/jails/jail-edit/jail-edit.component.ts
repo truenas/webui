@@ -603,7 +603,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
         value: 'new',
       }, {
         label: 'Disable',
-        value: 'disable',
+        value: 'none',
       }],
       disabled: false,
     },
@@ -627,7 +627,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
         value: 'new',
       }, {
         label: 'Disable',
-        value: 'disable',
+        value: 'none',
       }],
       disabled: false,
     },
