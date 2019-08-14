@@ -86,6 +86,8 @@ export class VolumeStatusComponent implements OnInit {
     placeholder: "Force",
   }];
 
+  protected pool: any;
+
   constructor(protected aroute: ActivatedRoute,
     protected ws: WebSocketService,
     protected rest: RestService,
@@ -113,6 +115,7 @@ export class VolumeStatusComponent implements OnInit {
       ]
     ]).subscribe(
       (res) => {
+        this.pool = res[0];
         if (res[0]) {
           // if pool is passphrase protected, abled passphrase field.
           if (res[0].encrypt === 2) {
@@ -175,6 +178,8 @@ export class VolumeStatusComponent implements OnInit {
     }, {
       label: T("Offline"),
       onClick: (row) => {
+        const encryptPoolWarning = T('<br><b>Warnning: online disk is not supported for encrypted pool!</b></br>');
+
         let name = row.name;
         // if use path as name, show the full path
         if (!_.startsWith(name, '/')) {
@@ -183,7 +188,7 @@ export class VolumeStatusComponent implements OnInit {
         }
         this.dialogService.confirm(
           "Offline",
-          "Offline disk " + name + "?", false, T('Offline')
+          "Offline disk " + name + "?" + (this.pool.encrypt == 0 ? '' : encryptPoolWarning), false, T('Offline')
         ).subscribe((res) => {
           if (res) {
             this.loader.open();
@@ -228,7 +233,7 @@ export class VolumeStatusComponent implements OnInit {
           }
         });
       },
-      isHidden: data.status == "ONLINE" ? true : false,
+      isHidden: data.status == "ONLINE" || this.pool.encrypt !== 0 ? true : false,
     }, {
       label: "Replace",
       onClick: (row) => {
