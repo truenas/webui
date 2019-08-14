@@ -145,6 +145,7 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
       });
         let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
         dialogRef.componentInstance.volumeId = this.pk;
+        dialogRef.componentInstance.fileName = 'pool_' + value.name + '_encryption.key';
         dialogRef.afterClosed().subscribe(result => {
           this.router.navigate(new Array('/').concat(
             this.route_success));

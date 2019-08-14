@@ -248,6 +248,7 @@ export class VolumesListTableConfig implements InputTableConf {
         onClick: (row1) => {
           const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
           dialogRef.componentInstance.volumeId = row1.id;
+          dialogRef.componentInstance.fileName = 'pool_' + row1.name + '_encryption.key';
 
         }
       });
@@ -447,6 +448,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 function: () => {
                   const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
                   dialogRef.componentInstance.volumeId = row1.id;
+                  dialogRef.componentInstance.fileName = 'pool_' + row1.name + '_encryption.key';;
                 }
               }],
             customSubmit: function (entityDialog) {
