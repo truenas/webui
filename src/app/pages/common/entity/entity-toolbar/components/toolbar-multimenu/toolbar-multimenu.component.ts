@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, OnChanges, SimpleChanges} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -11,13 +11,18 @@ import { Control} from '../../models/control.interface';
   styleUrls : [ 'toolbar-multimenu.component.scss' ],
   templateUrl: 'toolbar-multimenu.component.html'
 })
-export class ToolbarMultimenuComponent implements OnInit {
+export class ToolbarMultimenuComponent implements OnInit, OnChanges {
   @Input() config?: ControlConfig; 
   @Input() controller: Subject<any>;
   allSelected:boolean = false;
   public values: any[] = [];
   private selectStates: boolean [] = [];
   constructor(public translate: TranslateService) {}
+
+  ngOnChanges(changes:SimpleChanges){
+    if(changes.config){
+    }
+  }
 
   ngOnInit(){
     this.selectStates.length = this.config.options.length;

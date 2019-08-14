@@ -1,7 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
-import { FormArray } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { NetworkService, RestService, DialogService, WebSocketService } from '../../../../services';
 
@@ -9,7 +8,6 @@ import { T } from '../../../../translate-marker';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { EntityUtils } from '../../../common/entity/utils';
 import helptext from '../../../../helptext/network/interfaces/interfaces-form';
 import globalHelptext from '../../../../helptext/global-helptext';
 
@@ -18,8 +16,6 @@ import globalHelptext from '../../../../helptext/global-helptext';
   template : `<entity-form [conf]="this"></entity-form>`
 })
 export class InterfacesFormComponent implements OnDestroy {
-
-  //protected resource_name = 'network/interface/';
   protected queryCall = 'interface.query';
   protected addCall = 'interface.create';
   protected editCall = 'interface.update';
@@ -27,6 +23,7 @@ export class InterfacesFormComponent implements OnDestroy {
   protected route_success: string[] = [ 'network', 'interfaces' ];
   protected isEntity = true;
   protected is_ha = false;
+  private aliases_fc: any;
   protected ipPlaceholder: string;
   protected failoverPlaceholder: string;
 
@@ -168,78 +165,63 @@ export class InterfacesFormComponent implements OnDestroy {
       tooltip : helptext.int_options_tooltip,
     },
     {
-      type: 'array',
-      name : 'aliases',
-      initialCount: 1,
-      formarray: [{
-        name: 'address',
-        placeholder: helptext.alias_address_placeholder,
-        tooltip: helptext.alias_address_tooltip,
-        type: 'ipwithnetmask',
-        validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
-      },
-      {
-        name: 'failover_address',
-        placeholder: helptext.failover_alias_address_placeholder,
-        tooltip: helptext.failover_alias_address_tooltip,
-        disabled: true,
-        isHidden: true,
-        type: 'ipwithnetmask',
-        validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
-      },
-      {
-        name: 'failover_virtual_address',
-        placeholder: helptext.failover_virtual_alias_address_placeholder,
-        tooltip: helptext.failover_virtual_alias_address_tooltip,
-        disabled: true,
-        isHidden: true,
-        type: 'ipwithnetmask',
-        netmaskPreset: 32,
-        validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ]
-      },
-      {
-        type: 'checkbox',
-        name: 'delete',
-        placeholder: helptext.delete_placeholder,
-        tooltip: helptext.delete_tooltip,
-        isHidden: true,
-        disabled: true,
-      }]
-    },
+      type: 'list',
+      name: 'aliases',
+      placeholder: helptext.alias_list_placeholder,
+      label: helptext.alias_list_label,
+      templateListField: [
+          {
+            name: 'address',
+            placeholder: helptext.alias_address_placeholder,
+            tooltip: helptext.alias_address_tooltip,
+            type: 'ipwithnetmask',
+            width: '55%',
+            validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ],
+          },
+          {
+            name: 'failover_address',
+            placeholder: helptext.failover_alias_address_placeholder,
+            tooltip: helptext.failover_alias_address_tooltip,
+            disabled: true,
+            isHidden: true,
+            type: 'ipwithnetmask',
+            width: '55%',
+            validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ],
+
+          },
+          {
+            name: 'failover_virtual_address',
+            placeholder: helptext.failover_virtual_alias_address_placeholder,
+            tooltip: helptext.failover_virtual_alias_address_tooltip,
+            disabled: true,
+            isHidden: true,
+            type: 'ipwithnetmask',
+            width: '55%',
+            netmaskPreset: 32,
+            validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ],
+
+          }
+      ],
+      listFields: []
+    }
   ];
 
   private vlan_fields = ['vlan_tag', 'vlan_pcp', 'vlan_parent_interface'];
   private lagg_fields = ['lag_protocol', 'lag_ports'];
   private bridge_fields = ['bridge_members'];
   private failover_fields = ['failover_critical', 'failover_group', 'failover_vhid'];
-  private physical_fields;
-  /*private int_dhcp: any;
-  private int_dhcp_subscription: any;
-  private int_ipv6auto: any;
-  private int_ipv6auto_subscription: any;*/
   private vlan_pcp:any;
   private vlan_pint:any;
-  private lag_protocol: any;
   private lag_ports: any;
   private bridge_members: any;
   private type: any;
   private type_fg: any;
   private type_subscription: any;
-  /*private int_interface: any;
-  private int_interface_fg: any;
-  private int_interface_fg_sub: any;
-  private int_interface_warning: string;*/
-  private wsint: string;
   private entityForm: any;
-  protected ipformArray: FormArray;
-  protected iparrayControl: any;
+  //
+  protected ipListControl: any;
   protected failover_group: any;
-  protected failover_formArray: FormArray;
-  protected failover_arrayControl: any;
-  protected failover_virtual_formArray: FormArray;
-  protected failover_virtual_arrayControl:any;
-  protected initialCount = {'aliases':1};
-  protected initialCount_default = {'aliases':1};
+  //
   public confirmSubmit = false;
   public confirmSubmitDialog = {
     title: T("Save Network Interface Changes"),
@@ -247,38 +229,10 @@ export class InterfacesFormComponent implements OnDestroy {
     hideCheckbox: false
   }
 
-  public custActions: Array<any> = [
-    {
-      id : 'add_alias',
-      name : T('Add Additional Alias'),
-      function : () => {
-        this.initialCount.aliases += 1;
-        this.entityFormService.insertFormArrayGroup(
-            this.initialCount.aliases, this.ipformArray, this.iparrayControl.formarray);
-      }
-    },
-    {
-      id : 'remove_alias',
-      name : T('Remove Additional Alias'),
-      function : () => {
-        this.initialCount.aliases -= 1;
-        this.entityFormService.removeFormArrayGroup(this.initialCount.aliases,
-                                                    this.ipformArray);
-      }
-    },
-  ]
-
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected entityFormService: EntityFormService,
               protected networkService: NetworkService, protected dialog: DialogService,
               protected ws: WebSocketService, protected translate: TranslateService) {}
-
-  isCustActionVisible(actionId: string) {
-    if (actionId == 'remove_alias' && this.initialCount['aliases'] <= this.initialCount_default['aliases']) {
-      return false;
-    }
-    return true;
-  }
 
   setType(type: string) {
     const is_physical = (type === "PHYSICAL");
@@ -298,37 +252,9 @@ export class InterfacesFormComponent implements OnDestroy {
   }
 
   preInit(entityForm: any) {
-    if (window.localStorage.getItem('is_freenas') === 'false') {
-      this.ws.call('failover.licensed').subscribe((is_ha) => {
-        this.is_ha = is_ha;
-        if (this.is_ha) {
-          const failover_virtual_address = _.find(this.iparrayControl.formarray, {"name":"failover_virtual_address"});
-          const failover_address = _.find(this.iparrayControl.formarray, {"name":"failover_address"});
-          failover_virtual_address['disabled'] = false;
-          failover_virtual_address['isHidden'] = false;
-          failover_address['disabled'] = false;
-          failover_address['isHidden'] = false;
-          this.ws.call('failover.node').subscribe((node) => {
-            if (node === 'A') {
-              this.ipPlaceholder = ' (This Controller)';
-              this.failoverPlaceholder = ` (${globalHelptext.Ctrlr} 2)`;
-            } else if (node === 'B') {
-              this.ipPlaceholder = ` (${globalHelptext.Ctrlr} 1)`;
-              this.failoverPlaceholder = ' (This Controller)';
-            } else {
-              this.ipPlaceholder = ' The active controller cannot be detected.';
-              this.failoverPlaceholder = ''
-            }
-            _.find(this.iparrayControl.formarray, {"name":"address"}).placeholder += this.ipPlaceholder;
-            failover_address.placeholder += this.failoverPlaceholder;
-          })
-          
-        }
-      });
-    }
     this.entityForm = entityForm;
     this.type = _.find(this.fieldConfig, {'name' : 'type'});
-    this.iparrayControl = _.find(this.fieldConfig, {'name' : 'aliases'});
+    this.ipListControl = _.find(this.fieldConfig, {'name' : 'aliases'});
     this.failover_group = _.find(this.fieldConfig, {'name': 'failover_group'});
     for (let i = 1; i <= 32; i++) {
       this.failover_group.options.push({label:i, value:i});
@@ -337,22 +263,41 @@ export class InterfacesFormComponent implements OnDestroy {
     this.vlan_pint = _.find(this.fieldConfig, {'name' : 'vlan_parent_interface'});
     this.bridge_members = _.find(this.fieldConfig, {'name' : 'bridge_members'});
     this.lag_ports = _.find(this.fieldConfig, {'name' : 'lag_ports'});
-    this.route.params.subscribe(params => {
-      if(!params['pk']) {
-        this.type.type = 'select';
-      } else {
-        this.iparrayControl.initialCount = this.initialCount['aliases']
-          = this.initialCount_default['aliases'] = 0;
 
-        this.iparrayControl.formarray[3]['isHidden'] = false;
-        this.iparrayControl.formarray[3].disabled = false;
-      }
-    });
+    if (window.localStorage.getItem('is_freenas') === 'false') {
+      this.ws.call('failover.node').subscribe((node) => {
+        if (node === 'A') {
+          this.ipPlaceholder = ` (${globalHelptext.thisCtlr})`;
+          this.failoverPlaceholder = ` (${globalHelptext.Ctrlr} 2)`;
+        } else if (node === 'B') {
+          this.ipPlaceholder = ` (${globalHelptext.Ctrlr} 1)`;
+          this.failoverPlaceholder = ` (${globalHelptext.thisCtlr})`;
+        } else {
+          this.ipPlaceholder = ` ${globalHelptext.unknownCtrl}`;
+          this.failoverPlaceholder = ''
+        }
+        _.find(this.ipListControl.templateListField, {'name': 'address'}).placeholder += this.ipPlaceholder;
+        _.find(this.ipListControl.templateListField, {'name': 'failover_address'}).placeholder += this.failoverPlaceholder;
+      })
+    }
   }
 
   afterInit(entityForm: any) {
+    if (window.localStorage.getItem('is_freenas') === 'false' &&
+      window.localStorage.getItem('alias_ips') === 'show') {
+        const failover_virtual_address = _.find(this.ipListControl.templateListField, {"name":"failover_virtual_address"});
+        const failover_address = _.find(this.ipListControl.templateListField, {'name': 'failover_address'});
+        failover_virtual_address['disabled'] = false;
+        failover_virtual_address['isHidden'] = false;
+        failover_address['disabled'] = false;
+        failover_address['isHidden'] = false;
+
+
+      }
+    this.aliases_fc = _.find(this.fieldConfig, {"name": "aliases"});
+
     if (window.localStorage.getItem('is_freenas') === 'false') {
-      this.ws.call('failover.licensed').subscribe((is_ha) => { //fixme, stupid race condition makes me need to call this again
+      this.ws.call('failover.licensed').subscribe((is_ha) => {
         for (let i = 0; i < this.failover_fields.length; i++) {
           entityForm.setDisabled(this.failover_fields[i], !is_ha, !is_ha);
         }
@@ -380,7 +325,7 @@ export class InterfacesFormComponent implements OnDestroy {
       });
     } else {
       entityForm.setDisabled('name', true);
-      entityForm.setDisabled('type', true, true );
+      entityForm.setDisabled('type', true, true);
     }
     this.ws.call('notifier.choices', ['VLAN_PCP_CHOICES']).subscribe((res) => {
       this.vlan_pcp = _.find(this.fieldConfig, {'name' : 'vlan_pcp'});
@@ -388,7 +333,6 @@ export class InterfacesFormComponent implements OnDestroy {
         this.vlan_pcp.options.push({label : item[1], value : item[0]});
       });
     });
-    this.ipformArray = entityForm.formGroup.controls['aliases'];
   }
 
   clean(data) {
@@ -460,6 +404,34 @@ export class InterfacesFormComponent implements OnDestroy {
     }
 
     return data;
+  }
+
+  async dataHandler(entityForm) {
+    const propNames = ['aliases', 'failover_aliases', 'failover_virtual_aliases'];
+    const propValues = ['address', 'failover_address', 'failover_virtual_address'];
+    if (!entityForm.isNew) {
+      const data = entityForm.queryResponse[0];
+      for (const prop in data) {
+        if (entityForm.formGroup.controls[prop] && !propNames.includes(prop)) {
+          entityForm.formGroup.controls[prop].setValue(data[prop]);
+        }
+      }
+      const aliases_fg = entityForm.formGroup.controls['aliases'];
+      const aliasList = data['aliases'];
+      for (let i = 0; i < aliasList.length; i++) {
+        propNames.forEach((propName) => {
+          if (Object.keys(data).includes(propName)) {
+        if (aliases_fg.controls[i] === undefined) {
+          const templateListField = _.cloneDeep(_.find(this.fieldConfig, {'name': propName}).templateListField);
+          aliases_fg.push(entityForm.entityFormService.createFormGroup(templateListField));
+          this.aliases_fc.listFields.push(templateListField);
+        }
+        aliases_fg.controls[i].controls[propValues[propNames.indexOf(propName)]]
+          .setValue(aliasList[i][propValues[propNames.indexOf(propName)]]);
+          }
+        })
+      }
+    }
   }
 
   ngOnDestroy() {

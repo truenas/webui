@@ -48,8 +48,10 @@ export class VmCardsComponent  implements OnDestroy {
     { name: T("Virtual CPUs"), prop: 'vcpus', hidden: true },
     { name: T("Memory Size (MiB)"), prop: 'memory', hidden: true },
     { name: T("Boot Loader Type"), prop: 'bootloader', hidden: true },
+    {name : 'System Clock', prop : 'time', hidden: true},
     { name: T("VNC Port"), prop: 'port', hidden: true },
-    { name: T("Com Port"), prop: 'com_port', hidden: true }
+    { name: T("Com Port"), prop: 'com_port', hidden: true },
+    { name: T("Description"), prop: 'description', hidden: true }
   ];
   public config: any = {
     paging : true,

@@ -5,6 +5,7 @@ import { EqualValidatorDirective } from './equal-validator.directive';
 import { SideNavAccordionDirective } from './sidenav-accordion.directive';
 import { AppAccordionDirective } from './app-accordion.directive';
 import { FontSizeDirective } from './font-size.directive';
+import { LazyViewerDirective } from './lazy-viewer/lazy-viewer.directive';
 
 @NgModule({
   imports: [
@@ -14,13 +15,15 @@ import { FontSizeDirective } from './font-size.directive';
     EqualValidatorDirective,
     SideNavAccordionDirective,
     AppAccordionDirective,
-    FontSizeDirective
+    FontSizeDirective,
+    LazyViewerDirective
   ],
   exports: [
     EqualValidatorDirective,
     SideNavAccordionDirective,
     AppAccordionDirective,
-    FontSizeDirective
+    FontSizeDirective,
+    LazyViewerDirective
   ]
 })
 export class CommonDirectivesModule { }

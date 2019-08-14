@@ -1,7 +1,6 @@
 import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs/Subscription';
 
 import {
   RestService,
@@ -210,18 +209,6 @@ export class LdapComponent {
       name : helptext.ldap_enable_name,
       placeholder : helptext.ldap_enable_placeholder,
       tooltip: helptext.ldap_enable_tooltip
-    },
-    {
-      type : 'input',
-      name : helptext.ldap_netbiosname_a_name,
-      placeholder : helptext.ldap_netbiosname_a_placeholder,
-      tooltip: helptext.ldap_netbiosname_a_tooltip
-    },
-    {
-      type : 'input',
-      name : helptext.ldap_netbiosalias_name,
-      placeholder : helptext.ldap_netbiosalias_placeholder,
-      tooltip: helptext.ldap_netbiosalias_tooltip
     }
   ];
 
@@ -263,11 +250,11 @@ export class LdapComponent {
       });
     });
 
-    this.rest.get("directoryservice/kerberosprincipal", {}).subscribe((res) => {
+    this.ws.call('kerberos.keytab.kerberos_principal_choices').subscribe((res) => {
       this.ldap_kerberos_principal = _.find(this.fieldConfig, {name : 'ldap_kerberos_principal'});
-      res.data.forEach((item) => {
+      res.forEach((item) => {
         this.ldap_kerberos_principal.options.push(
-          {label : item.principal_name, value : item.id});
+          {label : item, value : item});
       });
     });
 

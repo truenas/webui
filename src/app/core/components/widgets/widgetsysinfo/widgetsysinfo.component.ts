@@ -28,6 +28,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   public imagePath:string = "assets/images/";
   //public cardBg:string = "";
   public product_image = '';
+  public certified = false;
   public updateAvailable:boolean = false;
   private _updateBtnStatus:string = "default";
   public updateBtnLabel:string = T("Check for Updates")
@@ -147,7 +148,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   getFreeNASImage(sys_product) {
 
     if (sys_product.includes('CERTIFIED')) {
-      this.product_image = 'ix-original.svg';
+      //this.product_image = 'ix-original.svg';
+      this.product_image = '';
+      this.certified = true;
       return;
     }
     

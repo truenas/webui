@@ -180,7 +180,8 @@ export class SystemProfiler {
           disks: {}
         }
 
-        if(vdev.children.length == 0){
+        if(vdev.children.length == 0 && vdev.device){
+            
             let spl = vdev.device.split('p');
             let name = spl[0]
             v.disks[name] = -1; // no children so we use this as placeholder

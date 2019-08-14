@@ -73,7 +73,7 @@ export class EntityUtils {
       for (let i = 0; i < res.extra.length; i++) {
         const field = res.extra[i][0].split('.').pop();
         const error = res.extra[i][1];
-        let fc = _.find(entity.fieldConfig, {'name' : field});
+        let fc = _.find(entity.fieldConfig, {'name' : field}) || entity.getErrorField(field) || undefined;
         let stepIndex;
         if (entity.wizardConfig) {
             _.find(entity.wizardConfig, function(step, index) {

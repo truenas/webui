@@ -16,7 +16,7 @@
 			(blur)="setAddress($event)"
 			[pattern]="network.ipv4_or_ipv6_cidr_optional"
 			>
-	</mat-form-field>
+	</mat-form-field>/
 	<mat-select *ngIf="!config.netmaskPreset" style="width: 15%"
 		[value]="netmask"
 		[placeholder]="Netmask | translate"

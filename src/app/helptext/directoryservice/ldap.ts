@@ -131,16 +131,6 @@ ldap_enable_placeholder : T('Enable'),
 ldap_enable_tooltip: T('Activates the configuration. Unset to disable the\
  configuration without deleting it.'),
 
-ldap_netbiosname_a_name : 'ldap_netbiosname_a',
-ldap_netbiosname_a_placeholder : T('Netbios Name'),
-ldap_netbiosname_a_tooltip: T('Netbios Name of this NAS. This name must differ from\
- the <i>Workgroup</i> name and be no greater than 15 characters.'),
-
-ldap_netbiosalias_name : 'ldap_netbiosalias',
-ldap_netbiosalias_placeholder : T('NetBIOS alias'),
-ldap_netbiosalias_tooltip: T('Alternative names that SMB clients can use when\
- connecting to this NAS. Can be no greater than 15 characters.'),
-
 ldap_advanced_fields : 
 [
 'ldap_anonbind',
@@ -159,8 +149,6 @@ ldap_advanced_fields :
 'ldap_idmap_backend',
 'ldap_has_samba_schema',
 'ldap_auxiliary_parameters',
-'ldap_schema',
-'ldap_netbiosalias',
-'ldap_netbiosname_a'
+'ldap_schema'
 ]
 }

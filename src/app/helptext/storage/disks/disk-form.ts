@@ -15,7 +15,8 @@ disk_form_hddstandby_tooltip : T('Indicates the time of inactivity in minutes be
  the drive enters standby mode. This <a\
  href="https://forums.freenas.org/index.php?threads/how-to-find-out-if-a-drive-is-spinning-down-properly.2068/"\
  target="_blank">forum post</a> demonstrates how to\
- determine if a drive has spun down.'),
+ determine if a drive has spun down. Temperature monitoring is \
+ disabled if the disk is set to enter standby.'),
 
 disk_form_advpowermgmt_placeholder: T('Advanced Power Management'),
 disk_form_advpowermgmt_tooltip : T('Select a power management profile from the menu.'),

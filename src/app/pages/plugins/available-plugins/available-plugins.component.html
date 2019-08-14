@@ -1,5 +1,5 @@
 <mat-card-content class="plugin-info">
-    <section *ngIf="engineerMode || isFreenas">
+    <section>
         <mat-form-field>
             <mat-label fxFlex>{{ "Browse a Collection" | translate}}</mat-label>
             <mat-select [(ngModel)]="selectedRepo" (selectionChange)="switchRepo($event)">

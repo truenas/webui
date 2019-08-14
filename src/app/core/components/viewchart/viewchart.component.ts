@@ -4,7 +4,7 @@ import { ViewComponent } from 'app/core/components/view/view.component';
 import {UUID} from 'angular2-uuid';
 import * as c3 from 'c3';
 //import { ChartConfiguration, LegendOptions, TooltipOptions } from 'c3';
-import { ChartConfiguration, LegendOptions, TooltipOptions } from './viewchart.component.types';
+import { /*ChartConfiguration,*/ LegendOptions, TooltipOptions } from './viewchart.component.types';
 
 export interface ChartData {
   legend: string;
@@ -96,7 +96,7 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
     }
   }
 
-  protected chartConfig: ChartConfiguration;
+  protected chartConfig: any;//ChartConfiguration;
 
   constructor() { 
     super();

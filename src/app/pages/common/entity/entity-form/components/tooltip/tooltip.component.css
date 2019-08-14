@@ -35,10 +35,18 @@
     font-size: 20px;
 }
 
+.tooltip-icon {
+    cursor: pointer;
+}
+
 .tooltip .tooltiptext.lock {
     visibility: visible !important;
     opacity: 1;
     transition-delay: 0s;
+}
+
+.tooltiptext:hover {
+    cursor: grab;
 }
 
 .pin {
