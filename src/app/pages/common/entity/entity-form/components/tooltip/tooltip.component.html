@@ -1,5 +1,5 @@
 <div #tooltip class="tooltip" (mouseenter)="showTooltip(true)" (mouseleave)="showTooltip(false)">
-  <i class="material-icons">help_outline</i>
+  <i class="material-icons tooltip-icon" (click)="toggleVis('toggle')">help_outline</i>
   <div cdkDrag class="tooltiptext" [class.show]="isShowTooltip" [class.lock]="isLockTooltip" [ngStyle]="tooltipMsgStyle">
     <div (click)="toggleVis('lock')" [innerHTML]="message | translate | docreplace"></div>
     <div class="pin" 

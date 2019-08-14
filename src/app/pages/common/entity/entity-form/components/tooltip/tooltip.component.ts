@@ -60,7 +60,6 @@ export class TooltipComponent {
   }
 
   toggleVis(state?) {
-    console.log(state)
     if (state ==='lock') {
       this.isLockTooltip = true;
       this.isShowTooltip = true;
