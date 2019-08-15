@@ -62,7 +62,7 @@ export const routes: Routes = [
             data: { title: 'Edit Zvol', breadcrumb: 'Edit Zvol' }
           },
           {
-            path: 'id/:pk/dataset/permissions/:path', component: DatasetPermissionsComponent,
+            path: 'permissions/:pk', component: DatasetPermissionsComponent,
             data: { title: 'Edit Permissions', breadcrumb: 'Edit Permissions' }
           },
           {
