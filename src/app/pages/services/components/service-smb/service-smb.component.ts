@@ -26,7 +26,6 @@ export class ServiceSMBComponent {
   protected idmap_type = 'tdb'
   protected targetDS = '5';
 
-
   public fieldConfig: FieldConfig[] = [{
       type: 'input',
       name: 'cifs_srv_netbiosname',
@@ -34,6 +33,16 @@ export class ServiceSMBComponent {
       tooltip: helptext.cifs_srv_netbiosname_tooltip,
       required: true,
       validation : helptext.cifs_srv_netbiosname_validation
+    },
+    {
+      type : 'input',
+      name : 'cifs_srv_netbiosname_b',
+      placeholder : helptext.cifs_srv_netbiosname_b_placeholder,
+      tooltip : helptext.cifs_srv_netbiosname_b_tooltip,
+      validation : helptext.cifs_srv_netbiosname_b_validation,
+      required : true,
+      isHidden: true,
+      disabled: true
     },
     {
       type: 'input',
@@ -217,6 +226,11 @@ export class ServiceSMBComponent {
 
       });
     });
+    if (window.localStorage.getItem('is_freenas') === 'false') {
+      this.ws.call('failover.licensed').subscribe((is_ha) => { //fixme, stupid race condition makes me need to call this again
+        entityEdit.setDisabled('cifs_srv_netbiosname_b', !is_ha, !is_ha);
+      });
+    }
   }
 
   updateGroupSearchOptions(value = "", parent) {
