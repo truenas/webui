@@ -10,16 +10,18 @@ graphite_tooltip: T('Destination hostname or IP address for collectd data sent\
  by the Graphite plugin.'),
 
 graph_age_placeholder: T('Graph Age'),
-graph_age_tooltip: T(' Maximum age a graph is stored in months. \
- Changing the value requires that the reporting database be \
- destroyed.'),
+graph_age_tooltip: T('Maximum age a graph is stored in months. \
+ Changing this value causes the <i>Confirm RRD Destroy</i> checkbox \
+ to appear. Changes do not take effect until the existing reporting \
+ database is destroyed.'),
 graph_age_validation: [regexValidator(/^\d+$/) ],
 
 graph_points_placeholder: T('Graph Points'),
 graph_points_tooltip: T('Number of points for each hourly, daily, \
  weekly, monthly, or yearly graph. Do not set this less than the \
- width of the graphs in pixels. Changing the value requires that the \
- reporting database be destroyed.'),
+ width of the graphs in pixels. Changing this value causes the \
+ <i>Confirm RRD Destroy</i> checkbox to appear. Changes do not \
+ take effect until the existing reporting database is destroyed.'),
 graph_points_validation: [regexValidator(/^\d+$/) ],
 
 confirm_rrd_destroy_placeholder: T('Confirm RRD Destroy'),
