@@ -182,20 +182,16 @@ export const helptext_sharing_iscsi = {
 
   extent_placeholder_path: T("Path to the extent"),
   extent_tooltip_path: T(
-    "Browse to an existing file and use <i>0</i> as the\
- <b>Extent size</b>, or browse to the pool or dataset,\
- click <b>Close</b>, append the <b>Extent Name</b> to\
- the path, and specify a value in <b>Extent Size</b>.\
- Extents cannot be created inside the jail\
- root directory."
+    "Browse to an existing file. Create a new file by browsing to a\
+ dataset and appending the file name to the path. Extents cannot be\
+ created inside a jail root directory."
   ),
   extent_validators_path: [Validators.required],
 
   extent_placeholder_filesize: T("Extent size"),
   extent_tooltip_filesize: T(
-    "If the size is specified as <i>0</i>, the file must\
- already exist and the actual file size will be used.\
- Otherwise, specify the size of the file to create."
+    "Entering <i>0</i> uses the actual file size and requires that the\
+ file already exists. Otherwise, specify the file size for the new file."
   ),
   extent_validators_filesize: [Validators.required],
 
