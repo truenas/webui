@@ -121,7 +121,7 @@ export class VolumeRekeyFormComponent implements Formconfiguration {
               this.snackBar.open(T('Successfully reset encryption for pool: ') + value.name, T("Close"), {
                 duration: 5000,
               });
-              this.encryptionService.openEncryptDialog(this.pk, this.route_success);
+              this.encryptionService.openEncryptDialog(this.pk, this.route_success, this.poolName);
           }
         (err) => {
           this.dialogService.errorReport(T("Error resetting encryption for pool: " + value.name), err.error, err.trace.formatted);

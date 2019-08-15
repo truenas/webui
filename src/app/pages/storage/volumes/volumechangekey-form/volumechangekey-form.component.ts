@@ -84,7 +84,7 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
       id : 'download_encrypt_key',
       name : 'Download Encryption Key',
       function : () => {
-        this.encryptionService.openEncryptDialog(this.pk, this.route_return);
+        this.encryptionService.openEncryptDialog(this.pk, this.route_return, this.poolName);
       }
     },
     {

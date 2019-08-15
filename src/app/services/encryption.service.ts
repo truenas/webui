@@ -29,7 +29,8 @@ export class EncryptionService {
               duration: 5000,
             });
             this.loader.close();
-            addRecoveryKey ? this.makeRecoveryKey(row, poolName, route_success, downloadEncrytpKey) : this.openEncryptDialog(row, route_success);
+            addRecoveryKey ? this.makeRecoveryKey(row, poolName, route_success, downloadEncrytpKey) : 
+              this.openEncryptDialog(row, route_success, poolName);
         },
         (err) => {
           this.loader.close();
@@ -45,7 +46,7 @@ export class EncryptionService {
           this.dialogService.confirm(helptext.set_recoverykey_dialog_title, helptext.set_recoverykey_dialog_message, 
             true, helptext.set_recoverykey_dialog_button, false, '', '', '', '', true).subscribe(() => {
               window.open(res[1]);
-              downloadEncryptKey ? this.openEncryptDialog(row, route_success) : this.router.navigate(new Array('/').concat(
+              downloadEncryptKey ? this.openEncryptDialog(row, route_success, poolName) : this.router.navigate(new Array('/').concat(
                 route_success));
             })
         }, (res) => {
@@ -72,9 +73,10 @@ export class EncryptionService {
           })
       }
 
-      openEncryptDialog(row, route_success) {
+      openEncryptDialog(row, route_success, poolName) {
         let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
         dialogRef.componentInstance.volumeId = row;
+        dialogRef.componentInstance.fileName = 'pool_' + poolName + '_encryption.key';
         dialogRef.afterClosed().subscribe(result => {
           this.router.navigate(new Array('/').concat(
           route_success));
