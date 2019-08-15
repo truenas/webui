@@ -502,6 +502,10 @@ export class VolumesListTableConfig implements InputTableConf {
           }
           this.dialogService.dialogFormWide(conf);
         })
+      },
+      (err) => {
+        this.loader.close();
+        this.dialogService.errorReport(T("Error exporting/disconnecting pool."), err.reason, err.trace.formatted);
       })
         }
       });
