@@ -1,12 +1,15 @@
 import { T } from '../../../../translate-marker';
 
 export default {
-dataset_acl_title_name: T('ACL Manager'),
+dataset_acl_title_file: T('File Information'),
+dataset_acl_title_list: T('Access Control List'),
+dataset_acl_title_advanced: T('Advanced'),
+
 dataset_acl_path_placeholder: T('Path'),
 
 dataset_acl_aces_placeholder: T('Access Control Entries'),
 
-dataset_acl_tag_placeholder: T('Tag'),
+dataset_acl_tag_placeholder: T('Who'),
 dataset_acl_tag_tooltip: T('Access Control Entry (ACE) user or group.\
  Select a specific <i>User</i> or <i>Group</i> for this entry,\
  <i>owner@</i> to apply this entry to the user that owns the dataset,\
@@ -22,8 +25,8 @@ dataset_acl_tag_options: [
                          ],
 
 dataset_acl_type_placeholder: T('ACL Type'),
-dataset_acl_type_tooltip: T('How the <b>Permissions</b> are applied to\
- the chosen <b>Tag</b>. Choose <i>Allow</i> to grant the specified\
+dataset_acl_type_tooltip: T('How the <i>Permissions</i> are applied to\
+ the chosen <i>Who</>. Choose <i>Allow</i> to grant the specified\
  permissions and <i>Deny</i> to restrict the specified permissions.'),
 dataset_acl_type_options: [
                            {label: 'Allow', value: 'ALLOW'},
@@ -54,13 +57,13 @@ dataset_acl_uid_tooltip: T('User who controls the dataset. This user\
 
 dataset_acl_gid_placeholder: T('Group'),
 dataset_acl_gid_tooltip: T('The group which controls the dataset. This\
- group has whatever permissions are granted to the <i>@group</i>\
- <b>Tag</b>. Groups created manually or imported from a directory\
+ group has the same permissions as granted to the <i>group@</i>\
+ <i>Who</i>. Groups created manually or imported from a directory\
  service appear in the drop-down menu.'),
 
 dataset_acl_perms_placeholder: T('Permissions'),
 dataset_acl_perms_tooltip: T('Select permissions to apply to the chosen\
- <b>Tag</b>. Choices change depending on the <b>Permissions Type</b>.\
+ <i>Who</i>. Choices change depending on the <i>Permissions Type</i>.\
  See the\
  <a href="--docurl--/storage.html#ace-permissions" target="_blank">ACL permissions list</a>\
  for descriptions of each permission.'),
@@ -93,7 +96,7 @@ dataset_acl_advanced_perms_options: [
 
 dataset_acl_flags_type_placeholder: T('Flags Type'),
 dataset_acl_flags_type_tooltip: T('Select the set of ACE inheritance\
- <b>Flags</b> to display. <i>Basic</i> shows unspecific inheritance\
+ <i>Flags</i> to display. <i>Basic</i> shows nonspecific inheritance\
  options. <i>Advanced</i> shows specific inheritance settings for finer\
  control.'),
 dataset_acl_flags_type_options: [

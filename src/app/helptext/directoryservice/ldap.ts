@@ -23,7 +23,11 @@ ldap_hostname_validation: [Validators.required],
 
 ldap_hostname_noreq_name : 'ldap_hostname_noreq',
 ldap_hostname_noreq_placeholder : T('Hostname'),
-ldap_hostname_noreq_tooltip: T('The hostname or IP address of the LDAP server.'),
+ldap_hostname_noreq_tooltip: T('LDAP server hostnames or IP addresses.\
+ Separate entries with an empty space. Multiple hostnames or IP\
+ addresses can be entered to create an LDAP failover priority list. If a\
+ host does not respond, the next host in the list is tried until a new\
+ connection is established.'),
 
 ldap_basedn_name : 'ldap_basedn',
 ldap_basedn_placeholder : T('Base DN'),

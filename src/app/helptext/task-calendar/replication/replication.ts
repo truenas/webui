@@ -190,9 +190,11 @@ export default {
     compression_tooltip: T('Select a compression algorithm to reduce the\
  size of the data being replicated.'),
 
-    speed_limit_placeholder: T('Limit (KiB/s)'),
-    speed_limit_tooltip: T('Limit replication speed to the specified\
- value in Kbytes/second. Zero means no limit.'),
+    speed_limit_placeholder: T('Limit (Ex. 500 KiB/s, 500M, 2 TB)'),
+    speed_limit_tooltip: T('Limit replication speed to this number of bytes per second.'),
+    speed_limit_errors: T('Invalid value. Valid values are numbers followed by optional unit letters, \
+ like <samp>256k</samp> or <samp>1G</samp>.'),
+
 
     dedup_placeholder: T('Send Deduplicated Stream'),
     dedup_tooltip: T('Deduplicate the stream to avoid sending redundant\
