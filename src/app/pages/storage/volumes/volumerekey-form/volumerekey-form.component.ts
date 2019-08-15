@@ -64,13 +64,13 @@ export class VolumeRekeyFormComponent implements Formconfiguration {
       togglePw : true
     },{
       type: 'paragraph',
-      name: 'set_recoverykey-instructions',
-      paraText: helptext.set_recoverykey_instructions,
+      name: 'set_recoverykey-instructions'
     },{
       type : 'checkbox',
       name : 'set_recoverykey',
       placeholder: helptext.set_recoverykey_checkbox_placeholder,
       tooltip: helptext.set_recoverykey_checkbox_tooltip,
+      disabled: true
     }
   ];
 
@@ -98,6 +98,14 @@ export class VolumeRekeyFormComponent implements Formconfiguration {
     });
   }
 
+  afterInit(entityForm: any) {
+    entityForm.formGroup.controls['encryptionkey_passphrase'].valueChanges.subscribe((res) => {
+      let instructions = _.find(this.fieldConfig, {'name' : 'set_recoverykey-instructions'});
+      let field = _.find(this.fieldConfig, {'name' : 'set_recoverykey'});
+      res !== '' ? entityForm.setDisabled('set_recoverykey', false) : entityForm.setDisabled('set_recoverykey', true);
+    })
+  }
+ 
   customSubmit(value) {
     this.ws.call('pool.rekey', [parseInt(this.pk), {'admin_password': value.passphrase}])
       .subscribe(() => {

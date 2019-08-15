@@ -59,7 +59,7 @@ rekey_instructions: T('Reset the master key encryption used by this pool. Invali
  any current encryption key file, recovery key file, and passphrase for the pool. \
  Clicking <b>RESET ENCRYPTION</b> also generates a new encryption key file and opens a dialog \
  to download a backup of the new key. Set <i>Add Recovery Key</i> to also generate new \
- recovery key file for the pool and open a dialog to download it.'),
+ recovery key file for the pool (in addition to a password) and open a dialog to download it.'),
 rekey_password_label: T('Passphrase'),
 rekey_password_placeholder: T('Administrator password'),
 rekey_password_tooltip: T('Enter the administrator password to authorize this operation.'),
@@ -71,8 +71,7 @@ encryptionkey_passphrase_placeholder: T('Encryption Key Passphrase'),
 encryptionkey_passphrase_tooltip: T('Add a passphrase to the new encryption key. This can \
  be used to lock and unlock the pool.'),
 
-set_recoverykey_instructions: 'Optional: Generate a new recovery key.',
-set_recoverykey_checkbox_placeholder: 'Add Recovery Key',
+set_recoverykey_checkbox_placeholder: 'Add Optional Recovery Key',
 set_recoverykey_checkbox_tooltip: 'Generate a new recovery key file for the pool.',
 
 set_recoverykey_dialog_title: T('WARNING!'),
