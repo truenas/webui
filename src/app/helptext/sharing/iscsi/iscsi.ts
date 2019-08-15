@@ -45,8 +45,8 @@ export const helptext_sharing_iscsi = {
 
   portal_form_placeholder_comment: T("Comment"),
   portal_form_tooltip_comment: T(
-    "Optional description. Portals are automatically\
- assigned a numeric group ID."
+    "Optional description. Portals are automatically assigned a numeric\
+ group."
   ),
 
   portal_form_placeholder_discovery_authmethod: T("Discovery Auth Method"),
@@ -61,9 +61,9 @@ export const helptext_sharing_iscsi = {
 
   portal_form_placeholder_discovery_authgroup: T("Discovery Auth Group"),
   portal_form_tooltip_discovery_authgroup: T(
-    "Select a user created in <b>Authorized Access</b> if\
- the <b>Discovery Auth Method</b> is set to\
- <i>CHAP</i> or <i>Mutual CHAP</i>."
+    "Select a user created in <b>Authorized Access</b> if the\
+ <b>Discovery Auth Method</b> is set to <i>CHAP</i> or\
+ <i>Mutual CHAP</i>."
   ),
 
   portal_form_placeholder_ip: T("IP Address"),
@@ -83,12 +83,11 @@ export const helptext_sharing_iscsi = {
   portal_form_placeholder_delete: T("Delete"),
 
   initiator_form_tooltip_connected_initiators: T(
-	'Initiators currently connected to the system. Shown\
- in IQN format with an IP address. Set initiators and click an\
- <b>-></b> (arrow) to add the initiators to either the\
- <i>Allowed Initiators</i> or <i>Authorized Networks</i>\
- lists. Clicking <i>Refresh</i> updates the\
- <i>Connected Initiators</i> list.'
+	'Initiators currently connected to the system. Shown in IQN\
+ format with an IP address. Set initiators and click an <b>-></b>\
+ (arrow) to add the initiators to either the <i>Allowed Initiators</i>\
+ or <i>Authorized Networks</i> lists. Clicking <i>Refresh</i> updates\
+ the <i>Connected Initiators</i> list.'
   ),
 
   initiator_form_placeholder_initiators: T("Allowed Initiators (IQN)"),
@@ -105,8 +104,8 @@ export const helptext_sharing_iscsi = {
     'Network addresses which are allowed use this initiator. Each\
   address can include an optional\
  <a href="https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing"\
- target="_blank">CIDR</a> netmask. Click <i>+</i> to add the network address to the list.\
- Example: <i>192.168.2.0/24</i>.'
+ target="_blank">CIDR</a> netmask. Click <i>+</i> to add the network\
+ address to the list. Example: <i>192.168.2.0/24</i>.'
   ),
 
   initiator_form_placeholder_comment: T("Comment"),
@@ -143,8 +142,8 @@ export const helptext_sharing_iscsi = {
   ),
 
   globalconf_placeholder_alua: T('Enable iSCSI ALUA'),
-  globalconf_tooltip_alua: T(`Set for the initiator to discover paths\
- to both ${globalHelptext.ctrlrs} on the target and increase storage traffic\
+  globalconf_tooltip_alua: T(`Allow initiator to discover paths to both\
+ ${globalHelptext.ctrlrs} on the target and increase storage traffic\
  efficiency. Requires ALUA-capable, High Availability (HA) hardware.`),
 
   globalconf_dialog_title: T("Enable service"),
@@ -156,8 +155,8 @@ export const helptext_sharing_iscsi = {
 
   extent_placeholder_name: T("Extent name"),
   extent_tooltip_name: T(
-    "Name of the extent. If <i>Extent size</i> is non-zero,\
- this cannot be the name of a file that already exists."
+    "Name of the extent. If the <i>Extent size</i> is not <i>0</i>,\
+ it cannot be an existing file within the pool or dataset."
   ),
   extent_validators_name: [Validators.required],
 
@@ -197,14 +196,15 @@ export const helptext_sharing_iscsi = {
 
   extent_placeholder_blocksize: T("Logical block size"),
   extent_tooltip_blocksize: T(
-    "Do not override the default unless the initiator\
- requires a specific block size."
+    "Maximum size for individual file blocks in the file system. Only\
+ override the default unless the initiator requires a specific block\
+ size."
   ),
 
   extent_placeholder_pblocksize: T("Disable physical block size reporting"),
   extent_tooltip_pblocksize: T(
-    "Set if the initiator does not support physical block\
- size values over 4K (MS SQL)."
+    "Set if the initiator does not support physical block size values\
+ over 4K (MS SQL)."
   ),
 
   extent_placeholder_avail_threshold: T("Available space threshold (%)"),
@@ -217,7 +217,7 @@ export const helptext_sharing_iscsi = {
   ),
 
   extent_placeholder_comment: T("Comment"),
-  extent_tooltip_comment: T("Enter any notes."),
+  extent_tooltip_comment: T("Notes about this extent."),
 
   extent_placeholder_insecure_tpc: T("Enable TPC"),
   extent_tooltip_insecure_tpc: T(
@@ -258,13 +258,14 @@ export const helptext_sharing_iscsi = {
 
   authaccess_placeholder_user: T("User"),
   authaccess_tooltip_user: T(
-    "Name of user account on remote system for CHAP authentication.\
- Many initiators use the initiator name as the user name."
+    "User account to create for CHAP authentication with the user on the\
+ remote system. Many initiators use the initiator name as the user name."
   ),
 
   authaccess_placeholder_secret: T("Secret"),
   authaccess_tooltip_secret: T(
-    "Password. Must be at least 12 and no more than 16 characters long."
+    "User password. Must be at least 12 and no more than 16 characters\
+ long."
   ),
 
   authaccess_placeholder_secret_confirm: T("Secret (Confirm)"),
@@ -277,7 +278,8 @@ export const helptext_sharing_iscsi = {
 
   authaccess_placeholder_peersecret: T("Peer Secret"),
   authaccess_tooltip_peersecret: T(
-    "Mutual secret password. Must be different than <i>Secret</i>."
+    "Mutual secret password. Required when Peer User is set. Must be\
+ different than the <i>Secret</i>."
   ),
   authaccess_error_peersecret: T('Must match Peer Secret (Confirm) and be\
  between 12 and 16 characters in length. Cannot be the same as\
