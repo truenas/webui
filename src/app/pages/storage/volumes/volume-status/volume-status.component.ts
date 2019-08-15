@@ -178,7 +178,7 @@ export class VolumeStatusComponent implements OnInit {
     }, {
       label: T("Offline"),
       onClick: (row) => {
-        const encryptPoolWarning = T('<br><b>Warnning: online disk is not supported for encrypted pool!</b></br>');
+        const encryptPoolWarning = T('<br><b>Warning: Disks cannot be onlined in encrypted pools.</b></br>');
 
         let name = row.name;
         // if use path as name, show the full path
