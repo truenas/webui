@@ -34,7 +34,6 @@
         <mat-icon class="movement">content_copy</mat-icon>
       </button>
       <!-- HA Status -->
-      <span>{{node}}</span>
       <span *ngIf="is_ha && ha_status_text">
       <button *ngIf="ha_disabled_reasons.length === 0" mat-icon-button id="ha" [matTooltip]="ha_status_text" (click)="showHAStatus()">
         <mat-icon svgIcon="ha_enabled"></mat-icon>

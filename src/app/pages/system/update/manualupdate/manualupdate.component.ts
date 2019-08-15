@@ -193,7 +193,7 @@ updater(file: any, parent: any){
     const formData: FormData = new FormData();
     if (parent.isHA) {
       formData.append('data', JSON.stringify({
-        "method": 'failover.update'
+        "method": 'failover.upgrade'
       }));
     } else {
       formData.append('data', JSON.stringify({

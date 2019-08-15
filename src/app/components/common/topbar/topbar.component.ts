@@ -55,9 +55,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   dirServicesMonitor: MatDialogRef<DirectoryServicesMonitorComponent>;
   dirServicesStatus = [];
   showDirServicesIcon = false;
-
-  node: string;
-
   ha_status_text: string;
   ha_disabled_reasons = [];
   ha_pending = false;
@@ -121,10 +118,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.checkNetworkChangesPending();
     this.checkNetworkCheckinWaiting();
     this.getDirServicesStatus();
-    this.ws.call('failover.node').subscribe((res) => {
-      this.node = res;
-    })
-
     this.continuosStreaming = observableInterval(10000).subscribe(x => {
       this.showReplicationStatus();
       if (this.is_ha) {

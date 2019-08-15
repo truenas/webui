@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { interval as observableInterval, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { RestService, WebSocketService } from '../../../services/';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { MatDialog, MatSnackBar } from '@angular/material';
@@ -12,7 +12,6 @@ import { FieldConfig } from '../../common/entity/entity-form/models/field-config
 import { EntityUtils } from '../../../pages/common/entity/utils';
 
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { SelectControlValueAccessor } from '@angular/forms';
 
 @Component({
   selector: 'app-update',
@@ -277,7 +276,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
         this.dialogRef.componentInstance.setCall('failover.upgrade_finish');
         this.dialogRef.componentInstance.submit();
         this.dialogRef.componentInstance.success.subscribe((success) => {
-          console.log('success', success)
+          console.info('success', success)
           this.failover_upgrade_pending = false;
           this.dialogRef.close(false);
         });
@@ -512,6 +511,13 @@ export class UpdateComponent implements OnInit, OnDestroy {
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: true });
     if (!this.isHA) {
       this.dialogRef.componentInstance.setCall('update.update', [{ train: this.train, reboot: false }]);
+      this.dialogRef.componentInstance.submit();
+      this.dialogRef.componentInstance.success.subscribe((res) => {
+        this.router.navigate(['/others/reboot']);
+      });
+      this.dialogRef.componentInstance.failure.subscribe((res) => {
+        this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
+      });
     } else {
       this.ws.call('update.set_train', [this.train]).subscribe(() => { 
         this.dialogRef.componentInstance.setCall('failover.upgrade');
@@ -525,8 +531,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
           new EntityUtils().handleWSError(this, err, this.dialogService);
         })
       })
-    }
-;
+    };
   }
 
   ApplyPendingUpdate() {
