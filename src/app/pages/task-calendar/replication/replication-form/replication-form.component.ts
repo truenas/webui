@@ -4,13 +4,13 @@ import { ActivatedRoute } from '@angular/router';
 
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/task-calendar/replication/replication';
-import { WebSocketService, TaskService, KeychainCredentialService, ReplicationService } from 'app/services';
+import { WebSocketService, TaskService, KeychainCredentialService, ReplicationService, StorageService } from 'app/services';
 import * as _ from 'lodash';
 
 @Component({
     selector: 'app-replication-list',
     template: `<entity-form [conf]='this'></entity-form>`,
-    providers: [TaskService, KeychainCredentialService, ReplicationService]
+    providers: [TaskService, KeychainCredentialService, ReplicationService, StorageService]
 })
 export class ReplicationFormComponent {
 
@@ -22,6 +22,7 @@ export class ReplicationFormComponent {
     protected isEntity = true;
     protected entityForm: any;
     protected queryRes: any;
+    public speedLimitField: any;
 
     protected retentionPolicyChoice = [{
         label: 'Same as Source',
@@ -588,10 +589,10 @@ export class ReplicationFormComponent {
             }],
         }, {
             type: 'input',
-            inputType: 'number',
             name: 'speed_limit',
             placeholder: helptext.speed_limit_placeholder,
             tooltip: helptext.speed_limit_tooltip,
+            hasErrors: false,
             relation: [{
                 action: 'SHOW',
                 connective: 'OR',
@@ -603,6 +604,9 @@ export class ReplicationFormComponent {
                     value: 'LEGACY',
                 }]
             }],
+            blurStatus : true,
+            blurEvent : this.blurEvent,
+            parent : this,
         },
         {
             type: 'checkbox',
@@ -715,6 +719,7 @@ export class ReplicationFormComponent {
     constructor(
         private ws: WebSocketService,
         protected taskService: TaskService,
+        protected storageService: StorageService,
         private aroute: ActivatedRoute,
         private keychainCredentialService: KeychainCredentialService,
         private replicationService: ReplicationService) {
@@ -763,6 +768,11 @@ export class ReplicationFormComponent {
 
     afterInit(entityForm) {
         this.entityForm = entityForm;
+        if (this.entityForm.formGroup.controls['speed_limit'].value) {
+            let presetSpeed = (this.entityForm.formGroup.controls['speed_limit'].value).toString();
+            this.storageService.humanReadable = presetSpeed;
+        }
+        
         const retentionPolicyField = _.find(this.fieldConfig, {name: 'retention_policy'});
         entityForm.formGroup.controls['transport'].valueChanges.subscribe(
             (res) => {
@@ -809,6 +819,17 @@ export class ReplicationFormComponent {
                 }
             }
         )
+
+        entityForm.formGroup.controls['speed_limit'].valueChanges.subscribe((value) => {
+            const speedLimitField = _.find(this.fieldConfig, {name: "speed_limit"});
+            const filteredValue = this.storageService.convertHumanStringToNum(value);
+            speedLimitField['hasErrors'] = false;
+            speedLimitField['errors'] = '';
+                if (isNaN(filteredValue)) {
+                    speedLimitField['hasErrors'] = true;
+                    speedLimitField['errors'] = helptext.speed_limit_errors;
+                };
+        });
     }
 
     resourceTransformIncomingRestData(wsResponse) {
@@ -868,6 +889,7 @@ export class ReplicationFormComponent {
     }
 
     beforeSubmit(data) {
+        data['speed_limit'] = this.storageService.convertHumanStringToNum(data['speed_limit']);
         if (data['direction'] == 'PUSH') {
             for (let i = 0; i < data['source_datasets_PUSH'].length; i++) {
                 if (_.startsWith(data['source_datasets_PUSH'][i], '/mnt/')) {
@@ -964,5 +986,11 @@ export class ReplicationFormComponent {
         return new Promise((resolve, reject) => {
             resolve(this.replicationService.getRemoteDataset(transport,sshCredentials, this));
         });
+    }
+
+    blurEvent(parent){
+        if (parent.entityForm) {
+            parent.entityForm.formGroup.controls['speed_limit'].setValue(parent.storageService.humanReadable)
+        }
     }
 }
