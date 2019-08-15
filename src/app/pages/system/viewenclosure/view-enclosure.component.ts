@@ -35,7 +35,8 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
       id: 0,
       showInNavbar: true
   }
-    
+   
+  public scrollContainer: HTMLElement;
   public system: SystemProfiler;
   public system_product;
   public selectedEnclosure: any;
@@ -91,13 +92,16 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
   }
 
   ngAfterContentInit(){
+    this.scrollContainer = document.querySelector('.rightside-content-hold');
+    this.scrollContainer.style.overflow = 'hidden';
   }
 
   ngOnChanges(changes:SimpleChanges){
   }
 
   ngOnDestroy(){
-    this.core.unregister({observerClass:this})
+    this.core.unregister({observerClass:this});
+    this.scrollContainer.style.overflow = 'auto';
   }
 
   selectEnclosure(value){
