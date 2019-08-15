@@ -186,7 +186,7 @@ export const helptext_system_certificates = {
 
   list: {
       tooltip_add: T('Create Certificate'),
-    
+
       column_name: T('Name'),
       column_issuer: T('Issuer'),
       column_distinguished_name: T('Distinguished Name'),
@@ -207,25 +207,30 @@ export const helptext_system_certificates = {
 
   acme: {
     identifier: {
-      placeholder: T("identifier"),
-      tooltip: T('Internal identifier of the certificate. Only alphanumeric, "_" and "-" are allowed.')
+      placeholder: T("Identifier"),
+      tooltip: T('Internal identifier of the certificate. Only\
+ alphanumeric characters, dash (<b>-</b>), and underline (<b>_</b>) are\
+ allowed.')
     },
     tos: {
       placeholder: T("Terms of Service"),
-      tooltip: T("Please accept terms of service for the given ACME Server.")
+      tooltip: T("Please accept the terms of service for the given ACME\
+ Server.")
     },
     renew_day: {
-      placeholder: T("Renew certificate day"),
-      tooltip: T("Number of days to renew certificate before expiring"),
+      placeholder: T("Renew Certificate Day"),
+      tooltip: T("Number of days to renew certificate before expiring."),
       validation: [Validators.required, Validators.min(0)]
     },
     dir_uri: {
       placeholder: T("ACME Server Directory URI"),
-      tooltip: T("Please specify URI of ACME Server Directory.")
+      tooltip: T("URI of the ACME Server Directory. Choose a\
+ preconfigured URI or enter a custom URI.")
     },
     authenticator: {
       placeholder: T("Authenticator"),
-      tooltip: T("Specify Authenticator to be used")
+      tooltip: T("Authenticator to validate the Domain. Choose a\
+ previously configured ACME DNS authenticator.")
     }
   }
 };
