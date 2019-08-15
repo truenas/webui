@@ -123,9 +123,9 @@ export class VolumeRekeyFormComponent implements Formconfiguration {
               });
               this.encryptionService.openEncryptDialog(this.pk, this.route_success, this.poolName);
           }
-        (err) => {
-          this.dialogService.errorReport(T("Error resetting encryption for pool: " + value.name), err.error, err.trace.formatted);
-        };
+      },
+      (err) => {
+        this.dialogService.errorReport(T("Error resetting encryption for pool: " + value.name), err.reason, err.trace.formatted);
       });
   }
 }

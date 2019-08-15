@@ -49,9 +49,9 @@ export class EncryptionService {
               downloadEncryptKey ? this.openEncryptDialog(row, route_success, poolName) : this.router.navigate(new Array('/').concat(
                 route_success));
             })
-        }, (res) => {
+        }, (err) => {
           this.loader.close();
-          this.dialogService.errorReport(T(`Error adding recovery key to pool ${poolName}`), res.reason, res.trace.formatted);
+          this.dialogService.errorReport(T(`Error adding recovery key to pool ${poolName}`), err.reason, err.trace.formatted);
         });
       }
 
@@ -82,4 +82,5 @@ export class EncryptionService {
           route_success));
         })
       }
+
 }

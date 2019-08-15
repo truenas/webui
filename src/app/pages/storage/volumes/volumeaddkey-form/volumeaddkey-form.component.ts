@@ -32,7 +32,8 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
   isNew = false;
   isEntity = true;
   poolName: string;
-  passphrase: string;
+  passphrase = '';
+  button_disabled = true;
   entityData = {
     name: "",
     passphrase: ""
@@ -68,14 +69,15 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
   public custActions: Array<any> = [
     {
       id : 'delete_recovery_key',
-      name : T('Delete Recovery Key'),
+      name : helptext.add_key_invalid_button,
+      disabled : this.button_disabled,
       function : () => {
         this.encryptionService.deleteRecoveryKey(this.pk, this.passphrase, this.poolName, this.route_return);
       }
     },
     {
       id : 'custom_cancel',
-      name : 'Cancel',
+      name : helptext.add_key_custom_cancel,
       function : () => {
         this.router.navigate(new Array('/').concat(
           this.route_return));
@@ -112,11 +114,11 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
   afterInit(entityForm: any) {
     entityForm.formGroup.controls['password'].valueChanges.subscribe((res) => {
       this.passphrase = res;
+      let btn = <HTMLInputElement> document.getElementById('cust_button_Invalidate Existing Key')
+      this.passphrase !== '' ? btn.disabled = false : btn.disabled = true;
     })
   }
     
-  
-
   customSubmit(value) { 
     this.encryptionService.makeRecoveryKey(this.pk, value.name, this.route_return, false);
   }

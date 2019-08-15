@@ -9,17 +9,20 @@ const passphrase_msg = T(' a passphrase creates a new encryption key \
 
 export default {
 // Add key form
-add_key_headline: T('Add Recovery Key for Pool '),
+add_key_headline: T('Recovery Key for Pool '),
 add_key_name_validation: [Validators.required],
 
-add_key_instructions: T('This is an additional key file that can be used \
+add_key_instructions: T('The recovery key is an additional key file that can be used \
  to unlock the pool instead of the passphrase or encryption key file. <br /> <br /> \
  Entering the administrator password and clicking <b>ADD RECOVERY KEY</b> \
  generates a single recovery key file and downloads it to the local\
  system. Store the recovery key file in a secure location!<br /> \
  Adding a new recovery key invalidates any previously downloaded \
- recovery key file for this pool.'),
+ recovery key file for this pool. <br /> <br />Clicking <b>INVALIDATE EXISTING KEY</b> \
+ also invalidates any previously downloaded key for this pool without creating a new key.'),
 add_key_password_placeholder: T('Administrator Password'),
+add_key_invalid_button: T('Invalidate Existing Key'),
+add_key_custom_cancel: T('Cancel'),
 
 add_key_password_tooltip: T('Enter the administrator password to authorize this operation.'),
 add_key_password_validation: [Validators.required],
