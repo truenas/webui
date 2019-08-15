@@ -48,7 +48,7 @@ msgid ""
 "system performance."
 msgstr " 是最小推荐记录数据大小。选择一个更小的大小可能会降低系统性能。"
 
-msgid " seconds unless kept permanently."
+msgid " seconds unless kept permanently. Adjust this amount to allow for testing."
 msgstr ""
 
 msgid " system is powered on and connected to the network."
@@ -132,6 +132,18 @@ msgid ""
 msgstr ""
 
 msgid ""
+"<a "
+"href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteEndpoints."
+"html\" target=\"_blank\">S3 API endpoint URL</a>. When using AWS, the "
+"endpoint field can be left empty to use the default endpoint for the "
+"region. Available buckets are automatically fetched.<br> Refer to the AWS "
+"Documentation for a list of <a "
+"href=\"https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_website_"
+"region_endpoints\" target=\"_blank\">Simple Storage Service Website "
+"Endpoints</a>."
+msgstr ""
+
+msgid ""
 "<a href=\"https://docs.pcloud.com/methods/intro/authentication.html\" "
 "target=\"_blank\">pCloud Access Token</a>. These tokens can expire and "
 "require extension."
@@ -194,6 +206,9 @@ msgid ""
 "<b>freenas-debug</b>, <b>tmux</b>,    <b>Dmidecode</b>.<br> Refer to the <a "
 "   href=\"--docurl--/cli.html\"    target=\"_blank\">Command Line "
 "Utilities</a>    chapter in the guide for usage information    and examples."
+msgstr ""
+
+msgid "<b>Current Version:</b> "
 msgstr ""
 
 msgid "<b>Not recommended.</b> Allow multiple groups to share the same group ID."
@@ -618,6 +633,9 @@ msgid ""
 "option."
 msgstr ""
 
+msgid "Activates the replication schedule."
+msgstr ""
+
 msgid "Active Directory"
 msgstr "活动目录"
 
@@ -815,6 +833,19 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Additional snapshots to include in the replication with the periodic "
+"snapshot schedule. Enter the <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=strftime\" "
+"target=\"_blank\">strftime(3)</a> strings that match the snapshots to "
+"include in the replication.<br><br> When a periodic snapshot is not linked "
+"to the replication, enter the naming schema for manually created snapshots. "
+"Has the same <i>%Y</i>, <i>%m</i>, <i>%d</i>, <i>%H</i>, and <i>%M</i> "
+"string requirements as the <b>Naming Schema</b> in a <a "
+"href=\"--docurl--/tasks.html#periodic-snapshot-tasks\" "
+"target=\"_blank\">periodic snapshot task."
+msgstr ""
+
+msgid ""
 "Additional space-delimited domains to search. Adding search domains can "
 "cause slow DNS lookups."
 msgstr "Additional space-delimited domains to search. 添加搜索域会拖慢DNS查询。"
@@ -940,9 +971,6 @@ msgstr "启用断点续传"
 
 msgid "Allow Trusted Domains"
 msgstr "允许可信域名"
-
-msgid "Allow WRITE_EMBEDDED Records"
-msgstr ""
 
 msgid ""
 "Allow configuring a non-standard port to access the GUI over <i>HTTP</i>. "
@@ -1322,9 +1350,6 @@ msgstr "附加参数 （ups.conf）"
 msgid "Auxiliary Parameters (upsd.conf)"
 msgstr "附加参数 （upsd.conf）"
 
-msgid "Auxiliary arguments"
-msgstr ""
-
 msgid "Auxiliary parameters"
 msgstr "附加参数"
 
@@ -1663,9 +1688,6 @@ msgstr "修改默认密码以提高系统安全性。新的密码不能包含空
 msgid "Changes Submitted"
 msgstr ""
 
-msgid "Changes will revert after "
-msgstr ""
-
 msgid "Changing"
 msgstr ""
 
@@ -1781,11 +1803,6 @@ msgstr "CheckIP服务器SSL"
 msgid "Checking HA status"
 msgstr ""
 
-msgid ""
-"Child datasets to exclude from the recursive replication. Example: "
-"Poolname/Datasetname/childdataset, not the mountpoint or filesystem path."
-msgstr ""
-
 msgid "Chmod Request"
 msgstr "Chmod请求"
 
@@ -1855,6 +1872,13 @@ msgstr ""
 msgid "Choose a color scheme."
 msgstr "选择颜色主题"
 
+msgid ""
+"Choose a dataset on the destination system where snapshots are stored. "
+"Click the <b>Folder icon</b> to see all datasets on the destination system "
+"and click on a dataset to set it as the target. An SSH connection must be "
+"selected for the browser to display datasets from a remote system."
+msgstr ""
+
 msgid "Choose a location to store the installer image file."
 msgstr "选择一个位置来保存安装镜像文件。"
 
@@ -1894,6 +1918,11 @@ msgid ""
 "administrative GUI. The built-in HTTP server binds to the wildcard address "
 "of <i>0.0.0.0</i> (any address) and issues an alert if the specified "
 "address becomes unavailable."
+msgstr ""
+
+msgid ""
+"Choose a system (<i>LOCAL</i> or <i>REMOTE</i>) to open TCP ports and allow "
+"the connection between both systems."
 msgstr ""
 
 msgid ""
@@ -1954,7 +1983,14 @@ msgstr ""
 
 msgid ""
 "Choose one or more datasets on the source system to be replicated. Each "
-"dataset must have an enabled periodic snapshot task."
+"dataset must have an associated periodic snapshot task or "
+"previously-created snapshots for a one-time replication. A valid SSH "
+"connection must be selected when the source datasets are on a remote system."
+msgstr ""
+
+msgid ""
+"Choose the <a href=\"--docurl--/system.html#ssh-connection\" "
+"target=\"_blank\">SSH connection</a>."
 msgstr ""
 
 msgid ""
@@ -1966,13 +2002,6 @@ msgid ""
 "Choose the FreeBSD release to use as the jail operating system. Releases "
 "that have already been downloaded show <b>(fetched)</b>."
 msgstr "选择用于Jail操作系统的FreeBSD发行版。已下载的发行版会被标注为<b>(fetched)</b>。"
-
-msgid ""
-"Choose the SSH connection to use for the replication. Choose from a list of "
-"connections configured in System > <a "
-"href=\"--docurl--/system.html#ssh-connection\" target=\"_blank\">SSH "
-"connection</a>."
-msgstr ""
 
 msgid "Choose the VM operating system type."
 msgstr "选择虚拟机操作系统类型"
@@ -1992,11 +2021,6 @@ msgstr ""
 msgid ""
 "Choose the hour and minute when resilver tasks can be                "
 "started."
-msgstr ""
-
-msgid ""
-"Choose the level in the system log for messages related to this replication "
-"task."
 msgstr ""
 
 msgid ""
@@ -2365,6 +2389,9 @@ msgstr ""
 msgid "Continue"
 msgstr "继续"
 
+msgid "Continue to Legacy UI"
+msgstr ""
+
 msgid "Continue with download?"
 msgstr "继续并下载？"
 
@@ -2622,11 +2649,10 @@ msgid ""
 "any tests are configured to run."
 msgstr ""
 
-msgid "Define a starting time when the replication task cannot run."
+msgid ""
+"Define a starting time when the replication cannot run. A replication that "
+"is in progress can continue to run past this time."
 msgstr ""
-
-msgid "Define a time to start the replication task."
-msgstr "定义一个启动复制任务的时间。"
 
 msgid ""
 "Define an <i>IP address or hostname:optional_port_number</i> to send logs. "
@@ -2636,8 +2662,8 @@ msgstr ""
 "console and remote server."
 
 msgid ""
-"Define an ending time for the replication task restriction. The task is "
-"allowed to run after the specified time."
+"Define an ending time for the restriction on activating replication "
+"schedules."
 msgstr ""
 
 msgid ""
@@ -2663,8 +2689,9 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Define specific times to automatically start the replication task. Disables "
-"running the replication immediately after the periodic snapshot task."
+"Define specific times to start snapshotting the <b>Source Datasets</b>. "
+"Disables running the replication immediately after the periodic snapshot "
+"task. Adds the <b>Begin</b> and <b>End</b> fields."
 msgstr ""
 
 msgid ""
@@ -2692,11 +2719,6 @@ msgstr ""
 "Define the number of days to prevent a scrub from                running "
 "after the last has completed. 忽略任何其他的计划日历。默认是一个7的倍数以保证Scrub总是在一周里的同一天发生。"
 
-msgid ""
-"Define the point in time by which replication must start. A started "
-"replication task continues until it is finished."
-msgstr ""
-
 msgid "Define the server where all changes to the database are performed."
 msgstr ""
 
@@ -2705,14 +2727,6 @@ msgstr ""
 
 msgid "Define the size of the raw file in GiB."
 msgstr "定义原始文件大小，以GiB为单位。"
-
-msgid ""
-"Define when snapshots are deleted from the destination system:<ul> "
-"<li><i>Same as Source</i>: duplicate the snapshot lifetime setting from the "
-"source system.</li> <li><i>Custom</i>: define a snapshot lifetime for the "
-"destination system.</li> <li><i>None</i>: never delete snapshots from the "
-"destination system.</li>"
-msgstr ""
 
 msgid "Delay Updates"
 msgstr "延迟更新"
@@ -2908,8 +2922,8 @@ msgid "Direction"
 msgstr "方向"
 
 msgid ""
-"Direction of travel. <i>Push</i> sends snapshots to a remote system. "
-"<i>Pull</i> receives snapshots from a remote system."
+"Direction of travel. <i>Push</i> sends snapshots to a destination system. "
+"<i>Pull</i> receives snapshots from a destination system."
 msgstr ""
 
 msgid "Directories & Permissions"
@@ -3142,6 +3156,9 @@ msgstr "启用Debug内核"
 msgid "Enable FXP"
 msgstr "启用FXP"
 
+msgid "Enable Legacy User Interface"
+msgstr ""
+
 msgid "Enable NFSv4"
 msgstr "启用NFSv4"
 
@@ -3324,6 +3341,11 @@ msgid "End User License Agreement - TrueNAS"
 msgstr ""
 
 msgid "End User License Agreement Accepted"
+msgstr ""
+
+msgid ""
+"End time for the replication task. A replication that is in progress can "
+"continue to run past this time."
 msgstr ""
 
 msgid ""
@@ -3809,12 +3831,6 @@ msgstr ""
 msgid "Enter the command with any options."
 msgstr ""
 
-msgid ""
-"Enter the dataset on the remote or destination system where snapshots will "
-"be stored. Example: Poolname/Datasetname, not the mountpoint or filesystem "
-"path."
-msgstr ""
-
 msgid "Enter the decryption passphrase."
 msgstr "输入解密密码短语。"
 
@@ -4124,6 +4140,14 @@ msgid "Exclude"
 msgstr ""
 
 msgid "Exclude Child Datasets"
+msgstr ""
+
+msgid ""
+"Exclude specific child dataset snapshots from the replication. Use with "
+"<b>Recursive</b> snapshots. List child dataset names to exclude. Example: "
+"<i>pool1/dataset1/child1</i>. A recursive replication of "
+"<i>pool1/dataset1</i> snapshots includes all child dataset snapshots except "
+"<i>child1</i>."
 msgstr ""
 
 msgid ""
@@ -4511,7 +4535,10 @@ msgid ""
 "to run the command."
 msgstr ""
 
-msgid "Highest port number open to connections."
+msgid ""
+"Highest port number of the active side listen address that is open to "
+"connections. The first available port between the minimum and maximum is "
+"used."
 msgstr ""
 
 msgid "History"
@@ -4557,6 +4584,13 @@ msgid "Hostname or IP address of SMTP server to use for sending this email."
 msgstr ""
 
 msgid ""
+"Hostname or IP address used to connect to the active side system. When the "
+"active side is <i>LOCAL</i>, this defaults to the <i>SSH_CLIENT</i> "
+"environment variable. When the active side is <i>REMOTE</i>, this defaults "
+"to the SSH connection hostname."
+msgstr ""
+
+msgid ""
 "Hostnames or IP addresses of the ISNS servers to be registered with the "
 "iSCSI targets and portals of the system. Separate each entry with a space."
 msgstr ""
@@ -4582,13 +4616,8 @@ msgid "Hover to expand"
 msgstr ""
 
 msgid ""
-"How long a snapshot will remain on the destination system. Enter a number "
-"and choose a measure of time from the drop-down."
-msgstr ""
-
-msgid ""
-"How many times the replication task will be attempted before stopping and "
-"marking it failed."
+"How long a snapshot remains on the destination system. Enter a number and "
+"choose a measure of time from the drop-down."
 msgstr ""
 
 msgid "How often the IP is checked in seconds."
@@ -4637,6 +4666,11 @@ msgstr ""
 msgid ""
 "IP address of the remote system with <i>UPS Mode</i> set as <i>Master</i>. "
 "Enter a valid IP address in the format <i>192.168.0.1</i>."
+msgstr ""
+
+msgid ""
+"IP address on which the connection <b>Active Side</b> listens. Defaults to "
+"<i>0.0.0.0</i>."
 msgstr ""
 
 msgid "IPMI"
@@ -4758,6 +4792,13 @@ msgstr ""
 msgid ""
 "If the IPMI out-of-band management interface is on a different VLAN from "
 "the management network, enter the IPMI VLAN."
+msgstr ""
+
+msgid ""
+"If the destination system has snapshots but they do not have any data in "
+"common with the source snapshots, destroy all destination snapshots and do "
+"a full replication. <b>Warning:</b> enabling this option can cause data "
+"loss or excessive data transfer if the replication is misconfigured."
 msgstr ""
 
 msgid ""
@@ -5121,18 +5162,6 @@ msgstr "链路聚合协议"
 msgid "Language"
 msgstr "语言"
 
-msgid ""
-"Leave blank when using AWS. The available buckets are fetched  dynamically. "
-"Enter a  <a "
-"href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteEndpoints."
-"html\" target=\"_blank\">Endpoint URL</a> if not using AWS. URL  general "
-"format: <i>bucket-name.s3-website.region.amazonaws.com</i>. Refer to the "
-"AWS Documentation for a list of <a "
-"href=\"https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_website_"
-"region_endpoints\" target=\"_blank\">Simple Storage Service Website "
-"Endpoints</a>."
-msgstr ""
-
 msgid "Leave empty or select number of existing portal to use."
 msgstr ""
 
@@ -5161,8 +5190,8 @@ msgid "Limit (KiB/s)"
 msgstr ""
 
 msgid ""
-"Limit replication speed to the specified value in kilobytes/second. The "
-"default 0 is unlimited."
+"Limit replication speed to the specified value in Kbytes/second. Zero means "
+"no limit."
 msgstr ""
 
 msgid "Link State"
@@ -5245,7 +5274,9 @@ msgstr ""
 "target=\"_blank\">RFC3721</a>的<i>Constructing iSCSI names using the "
 "iqn.format</i>章节。"
 
-msgid "Lowest port number open to connections."
+msgid ""
+"Lowest port number of the active side listen address that is open to "
+"connections."
 msgstr ""
 
 msgid "MAC Address"
@@ -5406,22 +5437,25 @@ msgid ""
 "enough free memory for configured RAM of all VMs. Use with caution."
 msgstr ""
 
+msgid "Message verbosity level in the replication task log."
+msgstr ""
+
 msgid "Method"
 msgstr "方式"
 
 msgid ""
-"Method for snapshot transfer:<ul> <li><i>SSH</i> is supported by most "
+"Method of snapshot transfer:<ul> <li><i>SSH</i> is supported by most "
 "systems. It requires a previously created <a "
 "href=\"--docurl--/system.html#ssh-connection\" target=\"_blank\">SSH "
 "connection</a>.</li> <li><i>SSH+NETCAT</i> uses SSH to establish a "
-"connection to the remote system, then uses <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=nc\" "
-"target=\"_blank\">nc(1)</a> to send an unencrypted data stream for higher "
-"transfer speeds. This is only an option when replicating to a FreeBSD "
-"system that has <a href=\"https://github.com/freenas/py-libzfs\" "
-"target=\"_blank\">py-libzfs</a> installed.</li> <li><i>LOCAL</i> replicates "
-"snapshots to another dataset on the same system.</li> <li><i>LEGACY</i> "
-"uses the legacy replication engine from FreeNAS 11.2 and earlier.</li></ul>"
+"connection to the destination system, then uses <a "
+"href=\"https://github.com/freenas/py-libzfs\" "
+"target=\"_blank\">py-libzfs</a> to send an unencrypted data stream for "
+"higher transfer speeds. This only works when replicating to a FreeNAS, "
+"TrueNAS, or other system with <i>py-libzfs</i> installed.</li> "
+"<li><i>LOCAL</i> replicates snapshots to another dataset on the same "
+"system.</li> <li><i>LEGACY</i> uses the legacy replication engine from "
+"FreeNAS 11.2 and earlier.</li></ul>"
 msgstr ""
 
 msgid "Microsoft Account"
@@ -5851,6 +5885,11 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Number of times the replication is attempted before stopping and marking "
+"the task as failed."
+msgstr ""
+
+msgid ""
 "Number of virtual CPUs to allocate to the virtual machine. The maximum is "
 "16, or fewer if the host CPU limits the maximum. The VM operating system "
 "might also have operational or licensing restrictions on the number of CPUs."
@@ -5901,6 +5940,9 @@ msgstr "离线"
 
 msgid "Ok"
 msgstr "是"
+
+msgid "Once applied, changes will revert after "
+msgstr ""
 
 msgid "One or more IP addresses to which to bind the Netdata service."
 msgstr ""
@@ -6033,9 +6075,6 @@ msgstr ""
 
 msgid "Parent Interface"
 msgstr "父接口"
-
-msgid "Partition"
-msgstr "分区"
 
 msgid "Passphrase"
 msgstr "密码短语"
@@ -6290,7 +6329,7 @@ msgstr "保留权限"
 
 msgid ""
 "Prevent source system snapshots that have failed replication from being "
-"automatically removed by the snapshot retention policy."
+"automatically removed by the <b>Snapshot Retention Policy</b>."
 msgstr ""
 
 msgid "Preview JSON Service Account Key"
@@ -6557,7 +6596,9 @@ msgstr ""
 msgid "Replicate <i>"
 msgstr ""
 
-msgid "Replicate all child dataset snapshots."
+msgid ""
+"Replicate all child dataset snapshots. Set to make <b>Exclude Child "
+"Datasets</b> visible."
 msgstr ""
 
 msgid "Replicate from scratch if incremental is not possible"
@@ -6716,14 +6757,8 @@ msgstr ""
 msgid "Rollback"
 msgstr "回滚"
 
-msgid "Root Password"
-msgstr "Root密码"
-
 msgid "Root node is not a valid value"
 msgstr ""
-
-msgid "Root password"
-msgstr "Root密码"
 
 msgid "Rotation Rate"
 msgstr ""
@@ -6866,6 +6901,9 @@ msgstr ""
 msgid "Saving ACLs..."
 msgstr ""
 
+msgid "Saving Debug"
+msgstr ""
+
 msgid "Schedule"
 msgstr ""
 
@@ -6886,6 +6924,15 @@ msgstr "安排S.M.A.R.T。测试"
 
 msgid "Schedule the Scrub Task"
 msgstr "安排数据校验任务"
+
+msgid ""
+"Schedule which periodic snapshots are replicated. All snapshots are "
+"replicated by default. To choose which snapshots are replicated, set the "
+"checkbox and select a schedule from the drop-down menu. For example, the "
+"periodic snapshot task takes a snapshot every hour, but only every other "
+"snapshot is needed for replication. The scheduler is set to even hours and "
+"only snapshots taken at those times are replicated."
+msgstr ""
 
 msgid "Schema"
 msgstr ""
@@ -7046,6 +7093,12 @@ msgid "Select a power management profile from the menu."
 msgstr "从菜单中选择一个电源管理"
 
 msgid ""
+"Select a preset schedule or choose <i>Custom</i> to use the advanced "
+"scheduler. Spaces are not allowed in <b>Minutes</b>, <b>Hours</b>, or "
+"<b>Days</b> of the custom scheduler."
+msgstr ""
+
+msgid ""
 "Select a previously imported or created <a "
 "href=\"--docurl--/system.html#cas\" target=\"_blank\">CA</a>."
 msgstr ""
@@ -7058,9 +7111,6 @@ msgstr ""
 msgid ""
 "Select a schedule preset or choose <i>Custom</i> to open the advanced "
 "scheduler."
-msgstr ""
-
-msgid "Select a schedule preset or choose Custom to open the advanced scheduler."
 msgstr ""
 
 msgid "Select a schema when Samba Schema is set."
@@ -7870,6 +7920,18 @@ msgid "Set to display image upload options."
 msgstr "设置来显示镜像上传选项。"
 
 msgid ""
+"Set to either start this replication task immediately after the linked "
+"periodic snapshot task completes or see options to create a separate "
+"<b>Schedule</b> for this replication."
+msgstr ""
+
+msgid ""
+"Set to either use the <b>Schedule</b> in place of the <b>Snapshot "
+"Replication Schedule</b> or add the <b>Schedule</b> values to the "
+"<b>Snapshot Replication Schedule</b>."
+msgstr ""
+
+msgid ""
 "Set to enable <i>receive</i> mode. Any received peer information is saved "
 "in interface descriptions."
 msgstr ""
@@ -8155,11 +8217,6 @@ msgid ""
 "fashion."
 msgstr ""
 
-msgid ""
-"Set to use the replication task schedule as part of the Snapshot "
-"Replication Schedule."
-msgstr ""
-
 msgid "Set up Users and Groups."
 msgstr "配置用户和群组。"
 
@@ -8393,11 +8450,12 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Snapshot source for this replication task. Choose from configured <a "
+"Snapshot schedule for this replication task. Choose from configured <a "
 "href=\"--docurl--/tasks.html#periodic-snapshot-tasks\" "
-"target=\"_blank\">Periodic Snapshot Tasks</a>. The replication task must "
-"have the same Recursive and Exclude Child Datasets as the chosen periodic "
-"snapshot task."
+"target=\"_blank\">Periodic Snapshot Tasks</a>. This replication task must "
+"have the same <b>Recursive</b> and <b>Exclude Child Datasets</b> values as "
+"the chosen periodic snapshot task. Selecting a periodic snapshot schedule "
+"hides the <b>Schedule</b> field."
 msgstr ""
 
 msgid "Snapshot successfully taken."
@@ -8499,9 +8557,7 @@ msgstr "开机启动"
 msgid "Start scrub on pool <i>"
 msgstr "启动数据校验在存储池<i>"
 
-msgid ""
-"Start this replication task immediately after the linked periodic snapshot "
-"task completes."
+msgid "Start time for the replication task."
 msgstr ""
 
 msgid "Starting job..."
@@ -8639,9 +8695,6 @@ msgstr "交换空间容量(GiB)"
 msgid "Switch Train"
 msgstr "切换分支"
 
-msgid "Switch to Legacy User Interface?"
-msgstr "切换到经典用户界面？"
-
 msgid "Switch update trains?"
 msgstr "切换更新分支？"
 
@@ -8704,9 +8757,6 @@ msgstr "系统重启中..."
 
 msgid "System is shutting down..."
 msgstr "系统关机中..."
-
-msgid "System that will open ports for the direct connection"
-msgstr ""
 
 msgid "TCP Port"
 msgstr "TCP端口"
@@ -8935,6 +8985,11 @@ msgid ""
 msgstr ""
 
 msgid "The hostname or IP address of the LDAP server."
+msgstr ""
+
+msgid ""
+"The legacy user interface is deprecated.  All management should be "
+"performed through the new user interface."
 msgstr ""
 
 msgid "The lifetime of the CA specified in days."
@@ -9244,9 +9299,6 @@ msgstr ""
 msgid "Unset to disable the scheduled scrub without                 deleting it."
 msgstr ""
 
-msgid "Unset to disable this replication task without deleting it."
-msgstr ""
-
 msgid "Unset to disable this task without deleting it."
 msgstr ""
 
@@ -9383,15 +9435,6 @@ msgstr ""
 msgid "Use Signature Version 2"
 msgstr ""
 
-msgid ""
-"Use WRITE_EMBEDDED records to make the stream more efficient. The "
-"destination system must also support WRITE_EMBEDDED records. When the "
-"source system is using lz4 compression, the destination system must use the "
-"same compression. See <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\" "
-"target=\"_blank\">zfs(8)</a>."
-msgstr ""
-
 msgid "Use all disk space"
 msgstr "使用所有的磁盘空间"
 
@@ -9415,14 +9458,6 @@ msgid "Use syslog only"
 msgstr ""
 
 msgid "Use the format <i>A.B.C.D/E</i> where <i>E</i> is the CIDR mask."
-msgstr ""
-
-msgid ""
-"Use the scheduler to define which periodic snapshots are replicated. All "
-"snapshots are replicated by default. For example, the periodic snapshot "
-"task takes a snapshot every hour, but only every other snapshot is needed "
-"for replication. The scheduler is set to even hours and only snapshots "
-"taken at those times are replicated."
 msgstr ""
 
 msgid ""
@@ -9621,6 +9656,9 @@ msgstr "虚拟化"
 msgid "Vlan Tag"
 msgstr "VLAN 标签"
 
+msgid "WARNING: "
+msgstr ""
+
 msgid ""
 "WARNING: Adding data vdevs with different numbers of disks is not "
 "recommended."
@@ -9706,6 +9744,14 @@ msgid ""
 msgstr ""
 
 msgid ""
+"When replicated snapshots are deleted from the destination system:<ul> "
+"<li><i>Same as Source</i>: duplicate the <b>Snapshot Lifetime</b> setting "
+"from the source system.</li> <li><i>Custom</i>: define a <b>Snapshot "
+"Lifetime</b> for the destination system.</li> <li><i>None</i>: never delete "
+"snapshots from the destination system.</li>"
+msgstr ""
+
+msgid ""
 "When set, a local user is only allowed access to their home directory if "
 "they are a member of the <i>wheel</i> group."
 msgstr ""
@@ -9737,12 +9783,6 @@ msgid ""
 "names to be prepended to user names. One possible reason for unsetting this "
 "value is to prevent username collisions when Allow Trusted Domains is set "
 "and there are identical usernames in more than one domain."
-msgstr ""
-
-msgid ""
-"When source snapshots are out of sync with the destination system, destroy "
-"destination system snapshots and do a full copy of all configured source "
-"system snapshots."
 msgstr ""
 
 msgid ""
@@ -9794,9 +9834,6 @@ msgstr "是"
 
 msgid "Yes, decrypt the disks"
 msgstr "是，解密磁盘"
-
-msgid "ZFS"
-msgstr "ZFS"
 
 msgid "ZFS Deduplication"
 msgstr "ZFS复制"

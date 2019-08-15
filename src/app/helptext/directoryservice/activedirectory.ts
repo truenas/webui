@@ -92,6 +92,16 @@ activedirectory_kerberos_principal_tooltip : T('Select the keytab created in\
  <a href="--docurl--/directoryservices.html#kerberos-keytabs"\
  target="_blank">Kerberos Keytabs</a>.'),
 
+computer_account_OU_name: T('createcomputer'),
+computer_account_OU_placeholder: T('Computer Account OU'),
+computer_account_OU_tooltip: T('The OU in which new computer accounts are created. \
+ The OU string is read from top to bottom without RDNs. Slashes ("/") are used as \
+ delimiters, like <samp>Computers/Servers/NAS</samp>. The backslash ("\\") is \
+ used to escape characters but not as a separator. Backslashes are interpreted at \
+ multiple levels and might require doubling or even quadrupling to take effect. \
+ When this field is blank, new computer accounts are created in the Active Directory \
+ default OU.'),
+
 activedirectory_timeout_name: 'timeout',
 activedirectory_timeout_placeholder : T('AD Timeout'),
 activedirectory_timeout_tooltip : T('Number of seconds before timeout. If the AD service\
@@ -154,6 +164,7 @@ activedirectory_netbiosalias_tooltip : T('Alternative names that SMB clients can
 'gcname',
 'kerberos_realm',
 'kerberos_principal',
+'createcomputer',
 'timeout',
 'dns_timeout',
 'idmap_backend',

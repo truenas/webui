@@ -13,6 +13,7 @@ import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/task-calendar/cloudsync/cloudsync-form';
 import { EntityUtils } from '../../../common/entity/utils';
 import { Validators } from '@angular/forms';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'cloudsync-add',
@@ -45,7 +46,7 @@ export class CloudsyncFormComponent implements OnInit {
       { label: 'PUSH', value: 'PUSH' },
       { label: 'PULL', value: 'PULL' },
     ],
-    value: 'PUSH',
+    value: 'PULL',
     required: true,
     validation : helptext.direction_validation,
   }, {
@@ -176,15 +177,22 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'select',
     name: 'transfer_mode',
     placeholder: helptext.transfer_mode_placeholder,
-    tooltip: helptext.transfer_mode_tooltip,
+    tooltip: helptext.transfer_mode_warning_sync + ' ' + helptext.transfer_mode_warning_copy + ' ' + helptext.transfer_mode_warning_move,
     options: [
       { label: 'SYNC', value: 'SYNC' },
       { label: 'COPY', value: 'COPY' },
       { label: 'MOVE', value: 'MOVE' },
     ],
-    value: 'SYNC',
+    value: 'COPY',
     required: true,
     validation : helptext.transfer_mode_validation
+  },
+  {
+    type: 'paragraph',
+    name: 'transfer_mode_warning',
+    paraText: helptext.transfer_mode_warning_copy,
+    isLargeText: true,
+    paragraphIcon: 'add_to_photos'
   },
   {
     type: 'checkbox',
@@ -569,6 +577,31 @@ export class CloudsyncFormComponent implements OnInit {
       _.find(this.fieldConfig, {name: 'bwlimit'}).errors = null;
       this.formGroup.controls['bwlimit'].errors = null;
     });
+
+    // When user interacts with direction dropdown, change transfer_mode to COPY
+    this.formGroup
+      .get('direction')
+      .valueChanges.pipe(filter(() => this.formGroup.get('transfer_mode').value !== 'COPY'))
+      .subscribe(() => this.formGroup.get('transfer_mode').setValue('COPY'));
+
+    // Update transfer_mode paragraphs when the mode is changed
+    this.formGroup.get('transfer_mode').valueChanges.subscribe(mode => {
+      const paragraph = this.fieldConfig.find(config => config.name === 'transfer_mode_warning');
+      switch (mode) {
+        case 'SYNC':
+          paragraph.paraText = helptext.transfer_mode_warning_sync;
+          paragraph.paragraphIcon = 'sync';
+          break;
+        case 'MOVE':
+          paragraph.paraText = helptext.transfer_mode_warning_move;
+          paragraph.paragraphIcon = 'move_to_inbox';
+          break;
+        default:
+          paragraph.paraText = helptext.transfer_mode_warning_copy;
+          paragraph.paragraphIcon = 'add_to_photos';
+      }
+    });
+
     // get cloud credentials
     this.ws.call(this.cloudcredential_query, {}).subscribe(res => {
       res.forEach((item) => {
