@@ -61,7 +61,7 @@ export const helptext_sharing_iscsi = {
 
   portal_form_placeholder_discovery_authgroup: T("Discovery Auth Group"),
   portal_form_tooltip_discovery_authgroup: T(
-    "Select a user created in <b>Authorized Access</b> if the\
+    "Select a Group ID created in <b>Authorized Access</b> if the\
  <b>Discovery Auth Method</b> is set to <i>CHAP</i> or\
  <i>Mutual CHAP</i>."
   ),
@@ -101,8 +101,8 @@ export const helptext_sharing_iscsi = {
 
   initiator_form_placeholder_auth_network: T("Authorized Networks"),
   initiator_form_tooltip_auth_network: T(
-    'Network addresses which are allowed use this initiator. Each\
-  address can include an optional\
+    'Network addresses allowed use this initiator. Each address can\
+ include an optional\
  <a href="https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing"\
  target="_blank">CIDR</a> netmask. Click <i>+</i> to add the network\
  address to the list. Example: <i>192.168.2.0/24</i>.'
@@ -272,8 +272,8 @@ export const helptext_sharing_iscsi = {
 
   authaccess_placeholder_peeruser: T("Peer User"),
   authaccess_tooltip_peeruser: T(
-    "Only entered when configuring mutual CHAP.\
- Usually this is the same value as <i>User</i>."
+    "Only entered when configuring mutual CHAP. Usually the same value\
+ as <i>User</i>."
   ),
 
   authaccess_placeholder_peersecret: T("Peer Secret"),
