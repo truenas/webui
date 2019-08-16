@@ -169,6 +169,11 @@ export class ServiceSMBComponent {
   public entityEdit: any;
 
   preInit(entityForm: any) {
+    if (window.localStorage.getItem('is_freenas') === 'false') {
+      this.ws.call('failover.licensed').subscribe((is_ha) => {
+        entityForm.setDisabled('cifs_srv_netbiosname_b', !is_ha, !is_ha);
+      });
+    }
     this.cifs_srv_unixcharset = _.find(this.fieldConfig, {"name": "cifs_srv_unixcharset"});
     this.ws.call("smb.unixcharset_choices").subscribe((res) => {
       const values = Object.values(res);
@@ -222,15 +227,8 @@ export class ServiceSMBComponent {
         this.idNumber = idmap_res.id;
         entityEdit.formGroup.controls['idmap_tdb_range_high'].setValue(idmap_res.range_high);
         entityEdit.formGroup.controls['idmap_tdb_range_low'].setValue(idmap_res.range_low);
-
-
       });
     });
-    if (window.localStorage.getItem('is_freenas') === 'false') {
-      this.ws.call('failover.licensed').subscribe((is_ha) => { //fixme, stupid race condition makes me need to call this again
-        entityEdit.setDisabled('cifs_srv_netbiosname_b', !is_ha, !is_ha);
-      });
-    }
   }
 
   updateGroupSearchOptions(value = "", parent) {
