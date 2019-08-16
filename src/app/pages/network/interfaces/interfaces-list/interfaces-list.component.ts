@@ -73,22 +73,30 @@ export class InterfacesListComponent implements OnDestroy {
     const rows = res.rows;
     for (let i=0; i<rows.length; i++) {
       rows[i]['link_state'] = rows[i]['state']['link_state'].replace('LINK_STATE_', '');
-      const addresses = [];
+      const addresses = new Set([]);
       for (let j=0; j<rows[i]['aliases'].length; j++) {
         const alias = rows[i]['aliases'][j];
         if (alias.type.startsWith('INET')) {
-          addresses.push(alias.address + '/' + alias.netmask);
+          addresses.add(alias.address + '/' + alias.netmask);
+        }
+      }
+      if (rows[i]['ipv4_dhcp']) {
+        for (let j = 0; j < rows[i]['state']['aliases'].length; j++) {
+          const alias = rows[i]['state']['aliases'][j];
+          if (alias.type.startsWith('INET')) {
+            addresses.add(alias.address + '/' + alias.netmask);
+          }
         }
       }
       if (rows[i].hasOwnProperty('failover_aliases')) {
         for (let j=0; j<rows[i]['failover_aliases'].length; j++) {
           const alias = rows[i]['failover_aliases'][j];
           if (alias.type.startsWith('INET')) {
-            addresses.push(alias.address + '/' + alias.netmask);
+            addresses.add(alias.address + '/' + alias.netmask);
           }
         }
       }
-      rows[i]['addresses'] = addresses.join(', ');
+      rows[i]['addresses'] = Array.from(addresses).join(', ');
       if (rows[i].type === "PHYSICAL") {
         rows[i].active_media_type = rows[i]["state"]["active_media_type"];
         rows[i].active_media_subtype = rows[i]["state"]["active_media_subtype"];
