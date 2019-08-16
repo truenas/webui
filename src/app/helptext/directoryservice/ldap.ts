@@ -96,7 +96,7 @@ ldap_certificate_tooltip: T('Select the LDAP CA certificate. The certificate for
  LDAP server CA must first be imported using the System/Certificates menu.'),
 
 ldap_disable_fn_cache_name : 'ldap_disable_freenas_cache',
-ldap_disable_fn_cache_placeholder : T('Disable LDAP user/group cache'),
+ldap_disable_fn_cache_placeholder : T('Disable LDAP User/Group cache'),
 ldap_disable_fn_cache_tooltip: T('Set to disable caching LDAP users and groups in large LDAP environments. \
  When caching is disabled, LDAP users and groups do not appear in dropdown \
  menus, but are still accepted when manually entered.'),
