@@ -66,7 +66,7 @@ export class VolumeStatusComponent implements OnInit {
   }, {
     type: 'input',
     inputType: 'password',
-    name: 'pass',
+    name: 'passphrase',
     placeholder: T('Passphrase'),
     required: true,
     isHidden: true,
@@ -74,9 +74,9 @@ export class VolumeStatusComponent implements OnInit {
   }, {
     type: 'input',
     inputType: 'password',
-    name: 'pass2',
+    name: 'passphrase2',
     placeholder: T('Confirm Passphrase'),
-    validation : [ matchOtherValidator('pass') ],
+    validation : [ matchOtherValidator('passphrase') ],
     required: true,
     isHidden: true,
     disabled: true,
@@ -116,10 +116,10 @@ export class VolumeStatusComponent implements OnInit {
         if (res[0]) {
           // if pool is passphrase protected, abled passphrase field.
           if (res[0].encrypt === 2) {
-            _.find(this.replaceDiskFormFields, { name: 'pass' })['isHidden'] = false;
-            _.find(this.replaceDiskFormFields, { name: 'pass' }).disabled = false;
-            _.find(this.replaceDiskFormFields, { name: 'pass2' })['isHidden'] = false;
-            _.find(this.replaceDiskFormFields, { name: 'pass2' }).disabled = false;
+            _.find(this.replaceDiskFormFields, { name: 'passphrase' })['isHidden'] = false;
+            _.find(this.replaceDiskFormFields, { name: 'passphrase' }).disabled = false;
+            _.find(this.replaceDiskFormFields, { name: 'passphrase2' })['isHidden'] = false;
+            _.find(this.replaceDiskFormFields, { name: 'passphrase2' }).disabled = false;
           }
           this.poolScan = res[0].scan;
           // subscribe zfs.pool.scan to get scrub job info
@@ -246,6 +246,8 @@ export class VolumeStatusComponent implements OnInit {
           saveButtonText: "Replace Disk",
           parent: this,
           customSubmit: function (entityDialog: any) {
+            delete entityDialog.formValue['passphrase2'];
+
             const dialogRef = entityDialog.parent.matDialog.open(EntityJobComponent, {data: {"title":"Replacing Disk"}, disableClose: true});
             dialogRef.componentInstance.setDescription(T("Replacing disk..."));
             dialogRef.componentInstance.setCall('pool.replace', [pk, entityDialog.formValue]);
