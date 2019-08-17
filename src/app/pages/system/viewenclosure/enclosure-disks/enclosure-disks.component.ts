@@ -96,6 +96,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     core.register({observerClass: this, eventName: 'ThemeChanged'}).subscribe((evt:CoreEvent) => {
       this.theme = evt.data;
       this.setCurrentView(this.currentView);
+      if(this.labels && this.labels.events){
+        this.labels.events.next(evt);
+      }
     });
 
     core.emit({name: 'ThemeDataRequest', sender: this});
@@ -623,6 +626,49 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
 
   }
+
+  toggleHighlightMode(mode:string){
+    this.labels.events.next({
+      name: mode == 'on' ? 'EnableHighlightMode' : 'DisableHighlightMode',
+      sender:this
+    })
+  }
+
+  showPath(devname){
+    // show the svg path
+    this.labels.events.next({
+      name:'ShowPath', 
+      data:{ devname:devname, overlay: this.domLabels}, 
+      sender: this
+    });
+  }
+
+  hidePath(devname){
+    this.labels.events.next({
+      name:'HidePath',
+      data:{devname: devname, overlay: this.domLabels},
+      sender: this
+    });
+  }
+
+  highlightPath(devname){
+    // show the svg path
+    this.labels.events.next({
+      name:'HighlightPath', 
+      data:{ devname:devname, overlay: this.domLabels}, 
+      sender: this
+    });
+  }
+
+  unhighlightPath(devname){
+    // show the svg path
+    this.labels.events.next({
+      name:'UnhighlightPath', 
+      data:{ devname:devname, overlay: this.domLabels}, 
+      sender: this
+    });
+  }
+  
 
   toggleSlotStatus(kill?: boolean){
     let enclosure_id = this.system.enclosures[this.selectedEnclosure.enclosureKey].id;

@@ -72,10 +72,10 @@
           </div>
           
           <div #domLabels *ngIf="currentView == 'details' || exitingView == 'details'" class="details stage-right dom-overlay">
-            <div class="content">
+            <div class="content" (mouseenter)="toggleHighlightMode('on')" (mouseleave)="toggleHighlightMode('off')">
 
               <div *ngIf="selectedVdevDisks; else noVdevDisks;" class="legend">
-                <div *ngFor="let disk of selectedVdevDisks; let i = index" class="vdev-disk {{disk}}"><div class="swatch" [style.background]="selectedDisk.devname == disk ? theme.cyan : theme.blue"></div>{{disk}} <span> {{ selectedEnclosure.disks[disk] }}</span></div>
+                <div *ngFor="let disk of selectedVdevDisks; let i = index" class="vdev-disk {{disk}}"(mouseenter)="highlightPath(disk)" (mouseleave)="unhighlightPath(disk)"><div class="swatch" [style.background]="selectedDisk.devname == disk ? theme.cyan : theme.blue"></div>{{disk}} <span> {{ selectedEnclosure.disks[disk] }}</span></div>
               </div>
 
               <ng-template #noVdevDisks>

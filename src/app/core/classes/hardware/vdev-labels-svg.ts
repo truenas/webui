@@ -54,6 +54,8 @@ export class VDevLabelsSVG {
   //protected domLabels: any;
   public color: string;
   public selectedDiskColor: string;
+  public highlightColor: string;
+  public highlightedDiskName: string;
   public selectedDisk: any;
   public ClickByProxy;
   
@@ -62,8 +64,9 @@ export class VDevLabelsSVG {
 
   constructor(chassis, app, theme, disk){
     this.selectedDisk = disk;
-    this.color = theme.blue;
-    this.selectedDiskColor = theme.cyan;
+    this.color = 'var(--blue)';//theme.blue;
+    this.selectedDiskColor = 'var(--cyan)';//theme.cyan;
+    this.highlightColor = theme.yellow;
 
     this.onInit(chassis, app);
   }
@@ -73,21 +76,73 @@ export class VDevLabelsSVG {
     this.app = app;
     this.mainStage = this.app.stage;
     this.d3Init();
+    let paths = this.getParent().querySelectorAll('svg path');
 
     //this.defineTextAreas();
-
+    let tiles;
     this.events = new Subject<CoreEvent>();
     this.events.subscribe((evt:CoreEvent) => {
       switch(evt.name){
+        case "ThemeChanged":
+          let theme = evt.data;
+          this.color = theme.blue;
+          this.selectedDiskColor = theme.cyan;
+          this.highlightColor = theme.yellow;
+        break;
         case "LabelDrives":
           //console.log(evt);
           this.createVdevLabels(evt.data);
-          break
+        break
         case "OverlayReady":
           if(evt.data.vdev.disks){
             this.traceElements(evt.data.vdev, evt.data.overlay);
           }
-          break
+        break;
+        case "ShowPath":
+          this.showTrace(evt.data.devname, evt.data.overlay);
+        break;
+        case "HidePath":
+          //let paths = this.getParent().querySelectorAll('svg path');
+          this.hideAllTraces(paths,[this.selectedDisk.devname]);
+        break;
+        case 'EnableHighlightMode':
+          //console.log('ENABLED')
+          // Hide all the things
+          paths = this.getParent().querySelectorAll('path');
+          this.unhighlightAllTraces(paths,[this.selectedDisk.devname]);
+          tiles = this.getParent().querySelectorAll('rect.tile');
+          this.hideAllTiles(tiles, ['tile tile_' + this.selectedDisk.devname])
+        break;
+        case 'DisableHighlightMode':
+          //console.log('DISABLED')
+          tiles = this.getParent().querySelectorAll('rect.tile')
+          this.showAllTiles(tiles);
+          paths = this.getParent().querySelectorAll('path');
+          this.unhighlightAllTraces(paths,[this.selectedDisk.devname]);
+        break;
+        case 'HighlightPath':
+          // Unhighlight the previously highlighted disk
+          //this.highlightTrace(this.highlightedDiskName, evt.data.overlay, this.color);
+          if(this.highlightedDiskName){
+            //this.getParent().querySelector('path.' + this.highlightedDiskName).setAttribute('stroke-opacity', 0.25);
+          } 
+          this.highlightedDiskName = evt.data.devname;
+          this.highlightTrace(evt.data.devname/*, evt.data.overlay*/);
+          this.showTile(evt.data.devname);
+        break;
+        case 'UnhighlightPath':
+          this.unhighlightTrace(evt.data.devname);
+          this.hideTile(evt.data.devname);
+          
+          /*if(this.highlightedDiskName){
+            const tile = this.getParent().querySelector('rect.tile_' + evt.data.devname);
+            tile.style.opacity = 0;
+          } else {
+            tiles = this.getParent().querySelectorAll('rect.tile');
+            this.showAllTiles(tiles);
+            this.unhighlightAllTraces(paths, [this.selectedDisk.devname])
+          }*/
+        break;
       }
     });
 
@@ -136,6 +191,8 @@ export class VDevLabelsSVG {
 
   createVdevLabelTile(x,y,w,h, className, diskName){
     let color = diskName == this.selectedDisk.devname ? this.selectedDiskColor : this.color;
+    let opacity = diskName == this.selectedDisk.devname ? 1 : 0.5;
+    opacity = 1;
     this.svg.append("rect")
       .attr('class', className)
       .attr("y", y)
@@ -144,6 +201,7 @@ export class VDevLabelsSVG {
       .attr("height", h)
       .attr("fill", color)
       .attr("stroke",color)
+      .attr("stroke-opacity", opacity)
       .attr("style", "fill-opacity:0.25; stroke-width:1");
   }
 
@@ -173,7 +231,7 @@ export class VDevLabelsSVG {
 
   calculateParentOffsets(el){
     // Template uses CSS to center and align text so 
-    // wee need to compensate with absolute positions
+    // we need to compensate with absolute positions
     // of wrapper elements
     
     // 1 up
@@ -185,7 +243,7 @@ export class VDevLabelsSVG {
     const xOffset = el.nativeElement.offsetLeft + legend.offsetLeft + content.offsetLeft;
     const yOffset = el.nativeElement.offsetTop + legend.offsetTop + content.offsetTop;
 
-    return {x: xOffset, y: yOffset}
+    return {x: xOffset, y: yOffset - 6}
   }
 
   traceElements(vdev, overlay){
@@ -213,13 +271,90 @@ export class VDevLabelsSVG {
 
   createTrace(startX,startY, endX, endY, diskName){
     let color = diskName == this.selectedDisk.devname ? this.selectedDiskColor : this.color;
+    let opacity = diskName == this.selectedDisk.devname ? 1 : 0.25;
   
     let svgPath = "M" + startX + " " + startY + " L" + endX + " " + endY + " Z"
 
     this.svg.append("path")
       .attr('d', svgPath)
-      .attr('stroke', color)
+      .attr('stroke', color)//.attr('style', 'stroke-opacity:' + opacity.toString() + ';')
+      .attr('stroke-opacity', opacity)
+      .attr('class', diskName)
 
+  }
+
+  highlightTrace(devname/*, overlay, color?: string*/){
+    if(devname == this.selectedDisk.devname){ return; }
+
+    let targetEl = this.getParent().querySelector('svg path.' + devname);
+    targetEl.setAttribute('stroke-opacity', 1);
+  }
+
+  unhighlightTrace(devname){
+    if(devname == this.selectedDisk.devname){ return; }
+
+    let targetEl = this.getParent().querySelector('svg path.' + devname);
+    targetEl.setAttribute('stroke-opacity', 0.25);
+  }
+
+  unhighlightAllTraces(traces, exceptions: string[]){
+    if(!exceptions){ exceptions = [];}
+
+    traces.forEach((item, index) => {
+      if(exceptions.includes(item.className.baseVal)){ return; }
+      item.setAttribute('stroke-opacity', 0.25);
+    });
+    let tiles = this.getParent().querySelectorAll('rect.tile');
+    this.showAllTiles(tiles);
+  }
+
+  showTrace(devname, overlay){
+    let labels = overlay.nativeElement.querySelectorAll('.vdev-disk');
+    let paths = this.getParent().querySelectorAll('svg path');
+    this.hideAllTraces(paths, [this.selectedDisk.devname, devname]);
+    let op = this.getParent();
+    let targetEl = op.querySelector('svg path.' + devname);
+    targetEl.style['stroke-opacity'] = 1;
+  }
+
+  hideAllTraces(traces, exceptions: string[]){
+    if(!exceptions){ exceptions = []; }
+
+    traces.forEach((item, index)=>{
+      if(exceptions.includes(item.className.baseVal)){ return; }
+      item.style['stroke-opacity'] = 0;
+    });
+  }
+
+  showTile(devname){
+    if(devname == this.selectedDisk.devname){ return; }
+    let targetEl = this.getParent().querySelector('rect.tile_' + devname);
+    targetEl.style.opacity = 1;
+  }
+
+  hideTile(devname){
+    if(devname == this.selectedDisk.devname){ return; }
+    let targetEl = this.getParent().querySelector('rect.tile_' + devname);
+    targetEl.style.opacity = 0;
+  }
+
+  hideAllTiles(tiles, exceptions?:string[]){
+    if(!exceptions){ exceptions = []; }
+
+    tiles.forEach((item, index) => {
+      if(exceptions.includes(item.className.baseVal)){ return; }
+      item.style.opacity = 0;
+    });
+  }
+
+  showAllTiles(tiles, exceptions?: string[]){
+    if(!exceptions){ exceptions = []}
+    //console.log('SHOWING ALL TILES');
+    tiles.forEach((item, index) => {
+      if(exceptions.includes(item.className.baseVal)){ return; }
+      //console.log('PING');
+      item.style.opacity = 1;
+    })
   }
 
 
