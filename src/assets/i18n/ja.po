@@ -5,7 +5,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid " Dataset"
-msgstr ""
+msgstr "データセット"
 
 msgid " First vdev has "
 msgstr ""
@@ -14,7 +14,7 @@ msgid " First vdev is a "
 msgstr ""
 
 msgid " Plugin"
-msgstr ""
+msgstr "プラグイン"
 
 msgid ""
 " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network "
@@ -56,7 +56,7 @@ msgid " updated."
 msgstr ""
 
 msgid "% of all cores"
-msgstr ""
+msgstr "% (全コア中)"
 
 msgid ""
 "' is encrypted! If the passphrase for this encrypted pool has been lost, "
@@ -71,7 +71,7 @@ msgid ""
 msgstr ""
 
 msgid "'. All data on that pool was destroyed."
-msgstr ""
+msgstr "'. このプールの全データは削除されました。"
 
 msgid ""
 "'. Exporting/disconnecting a pool makes the data unavailable. The pool data "
@@ -89,22 +89,22 @@ msgid ", new vdev is "
 msgstr ""
 
 msgid ". All data on that pool was destroyed."
-msgstr ""
+msgstr ". このプールの全データは削除されました。"
 
 msgid ". Is this correct?"
-msgstr ""
+msgstr ". 正しいですか?"
 
 msgid "... Make sure the "
 msgstr ""
 
 msgid "0=Disabled, blank=inherit"
-msgstr ""
+msgstr "0=無効、空欄=継承"
 
 msgid "20 characters is the maximum length."
-msgstr ""
+msgstr "最大20文字"
 
 msgid ": Automatic update check failed. Please check system network settings."
-msgstr ""
+msgstr ": 自動更新チェックに失敗しました。ネットワークの設定を確認してください。"
 
 msgid ""
 "</b> dataset and all snapshots stored with it, please type the name of the "
@@ -199,7 +199,7 @@ msgid ""
 msgstr ""
 
 msgid "<b>Current Version:</b> "
-msgstr ""
+msgstr "<b>現在のバージョン:</b> "
 
 msgid "<b>Not recommended.</b> Allow multiple groups to share the same group ID."
 msgstr ""
@@ -468,31 +468,31 @@ msgid ""
 msgstr ""
 
 msgid "ACL Manager"
-msgstr ""
+msgstr "ACLマネージャー"
 
 msgid "ACL Mode"
-msgstr ""
+msgstr "ACLモード"
 
 msgid "ACL Type"
-msgstr ""
+msgstr "ACLタイプ"
 
 msgid "ACME DNS"
-msgstr ""
+msgstr "ACME DNS"
 
 msgid "ACME Server Directory URI"
 msgstr ""
 
 msgid "AD Timeout"
-msgstr ""
+msgstr "ADタイムアウト"
 
 msgid "AFP3 Unix Privs"
 msgstr ""
 
 msgid "API Key"
-msgstr ""
+msgstr "APIキー"
 
 msgid "APPLY CHANGES"
-msgstr ""
+msgstr "変更を適用"
 
 msgid "ATA Security User"
 msgstr ""
@@ -519,16 +519,16 @@ msgid ""
 msgstr ""
 
 msgid "Access ID Key"
-msgstr ""
+msgstr "アクセスIDキー"
 
 msgid "Access Key"
-msgstr ""
+msgstr "アクセスキー"
 
 msgid "Access Key ID"
-msgstr ""
+msgstr "アクセスキーID"
 
 msgid "Access Token"
-msgstr ""
+msgstr "アクセストークン"
 
 msgid ""
 "Access Token <a href=\"https://api.hubic.com/sandbox/\" "
@@ -543,16 +543,16 @@ msgid ""
 msgstr ""
 
 msgid "Account"
-msgstr ""
+msgstr "アカウント"
 
 msgid "Account ID or Application Key ID"
 msgstr ""
 
 msgid "Account Key"
-msgstr ""
+msgstr "アカウントキー"
 
 msgid "Account Name"
-msgstr ""
+msgstr "アカウント名"
 
 msgid ""
 "Account to be used for guest access. Default is nobody. Account is required "
@@ -561,10 +561,10 @@ msgid ""
 msgstr ""
 
 msgid "Accounts"
-msgstr ""
+msgstr "アカウント"
 
 msgid "Acoustic Level"
-msgstr ""
+msgstr "騒音レベル"
 
 msgid "Activate"
 msgstr ""
@@ -589,7 +589,7 @@ msgid "Activates the replication schedule."
 msgstr ""
 
 msgid "Active Directory"
-msgstr ""
+msgstr "Active Directory"
 
 msgid "Active Directory IDMAP change!"
 msgstr ""
@@ -613,34 +613,34 @@ msgid "Add Additional Path"
 msgstr ""
 
 msgid "Add Cache"
-msgstr ""
+msgstr "キャッシュの追加"
 
 msgid "Add Cloud Credential"
 msgstr ""
 
 msgid "Add Data"
-msgstr ""
+msgstr "データを追加"
 
 msgid "Add Dataset"
-msgstr ""
+msgstr "データセットを追加"
 
 msgid "Add Log"
-msgstr ""
+msgstr "ログを追加"
 
 msgid "Add Recovery Key"
-msgstr ""
+msgstr "リカバリーキーを追加"
 
 msgid "Add Spare"
-msgstr ""
+msgstr "スペアを追加"
 
 msgid "Add Zvol"
-msgstr ""
+msgstr "Zvolを追加"
 
 msgid "Add a name for the new snapshot"
-msgstr ""
+msgstr "新しいスナップショットに名前を追加"
 
 msgid "Add a name for the new snapshot."
-msgstr ""
+msgstr "新しいスナップショットに名前を追加します。"
 
 msgid "Add a naming schema for the new snapshot"
 msgstr ""
@@ -659,7 +659,7 @@ msgid ""
 msgstr ""
 
 msgid "Add any notes about this zvol."
-msgstr ""
+msgstr "このzvolに関する補足を追加します。"
 
 msgid ""
 "Add lines to the jail <b>resolv.conf</b>. <b>Example:</b> <i>nameserver "
@@ -802,10 +802,10 @@ msgid ""
 msgstr ""
 
 msgid "Administrator Password"
-msgstr ""
+msgstr "管理者パスワード"
 
 msgid "Administrators Group"
-msgstr ""
+msgstr "管理者グループ"
 
 msgid "Adv. Power Management"
 msgstr ""
@@ -823,7 +823,7 @@ msgid "Advanced Power Management"
 msgstr ""
 
 msgid "Advanced Settings"
-msgstr ""
+msgstr "詳細設定"
 
 msgid ""
 "After entering the <b>Hostname, Username</b>, and <b>Password</b>, click "
@@ -831,22 +831,22 @@ msgid ""
 msgstr ""
 
 msgid "Alarms"
-msgstr ""
+msgstr "アラーム"
 
 msgid "Alert"
-msgstr ""
+msgstr "アラート"
 
 msgid "Alert Services"
-msgstr ""
+msgstr "アラートサービス"
 
 msgid "Alert Settings"
-msgstr ""
+msgstr "アラート設定"
 
 msgid "All Disks"
-msgstr ""
+msgstr "全ディスク"
 
 msgid "All dirs"
-msgstr ""
+msgstr "全ディレクトリ"
 
 msgid "Allocate a number of gigabytes of space for the new zvol."
 msgstr ""
@@ -861,43 +861,43 @@ msgid "Allow Anonymous Binding"
 msgstr ""
 
 msgid "Allow Anonymous Login"
-msgstr ""
+msgstr "匿名ログインを許可する"
 
 msgid "Allow Blocks Larger than 128KB"
-msgstr ""
+msgstr "128KBを超えるブロックを許可する"
 
 msgid "Allow Compressed WRITE Records"
 msgstr ""
 
 msgid "Allow DNS updates"
-msgstr ""
+msgstr "DNSの更新を許可する"
 
 msgid "Allow Guest Access"
-msgstr ""
+msgstr "ゲストアクセスを許可する"
 
 msgid "Allow Kerberos authentication"
-msgstr ""
+msgstr "ケルベロス認証を許可する"
 
 msgid "Allow Local User Login"
-msgstr ""
+msgstr "ローカルユーザーログインを許可する"
 
 msgid "Allow New Files"
-msgstr ""
+msgstr "新しいファイルを許可する"
 
 msgid "Allow Root Login"
-msgstr ""
+msgstr "rootログインを許可する"
 
 msgid "Allow TCP port forwarding"
-msgstr ""
+msgstr "TCPポートフォワーディングを許可する"
 
 msgid "Allow Taking Empty Snapshots"
-msgstr ""
+msgstr "空のスナップショットの取得を許可する"
 
 msgid "Allow Transfer Resumption"
 msgstr ""
 
 msgid "Allow Trusted Domains"
-msgstr ""
+msgstr "信頼済みドメインを許可する"
 
 msgid ""
 "Allow configuring a non-standard port to access the GUI over <i>HTTP</i>. "
@@ -986,7 +986,7 @@ msgid ""
 msgstr ""
 
 msgid "Allow password authentication"
-msgstr ""
+msgstr "パスワード認証を許可する"
 
 msgid "Allow repeated GIDs"
 msgstr ""
@@ -1069,13 +1069,13 @@ msgid "Amount of locked memory in bytes for the jail."
 msgstr ""
 
 msgid "An update is already applied. Please reboot the system."
-msgstr ""
+msgstr "更新は適用済みです。システムを再起動してください。"
 
 msgid "Anonymous User Download Bandwidth"
-msgstr ""
+msgstr "匿名ユーザーのダウンロード帯域"
 
 msgid "Anonymous User Upload Bandwidth"
-msgstr ""
+msgstr "匿名ユーザーのアップロード帯域"
 
 msgid "Any notes about initiators."
 msgstr ""
@@ -1095,31 +1095,31 @@ msgid "Application Client Secret"
 msgstr ""
 
 msgid "Apply Group"
-msgstr ""
+msgstr "グループを適用"
 
 msgid "Apply Mode"
-msgstr ""
+msgstr "モードを適用"
 
 msgid "Apply Network Changes"
-msgstr ""
+msgstr "ネットワークの変更を適用"
 
 msgid "Apply Pending Updates"
-msgstr ""
+msgstr "保留中の更新を適用"
 
 msgid "Apply Pending update"
-msgstr ""
+msgstr "保留中の更新を適用"
 
 msgid "Apply User"
-msgstr ""
+msgstr "ユーザーを適用"
 
 msgid "Apply network changes? Network connectivity will be interrupted."
-msgstr ""
+msgstr "ネットワークの変更を適用しますか？ ネットワーク接続は一時中断されます。"
 
 msgid "Apply permissions recursively"
-msgstr ""
+msgstr "再帰的に権限を適用"
 
 msgid "Apply permissions recursively to all child datasets of the current dataset"
-msgstr ""
+msgstr "このデータセットのすべての子データセットに対して再帰的に権限を適用"
 
 msgid ""
 "Apply permissions recursively to all directories and files in the current "
@@ -1132,13 +1132,13 @@ msgid ""
 msgstr ""
 
 msgid "Apply permissions to child datasets"
-msgstr ""
+msgstr "子データセットに対して権限を適用"
 
 msgid "Apply updates and reboot system after downloading."
-msgstr ""
+msgstr "ダウンロード後、アップデートを適用して再起動する"
 
 msgid "Archive"
-msgstr ""
+msgstr "アーカイブ"
 
 msgid "Are you sure you want to sync from peer?"
 msgstr ""
@@ -1147,7 +1147,7 @@ msgid "Are you sure you want to sync to peer?"
 msgstr ""
 
 msgid "Are you sure?"
-msgstr ""
+msgstr "正しいですか？"
 
 msgid ""
 "Assigning a directory to Minio changes the permissions                      "
@@ -1175,13 +1175,13 @@ msgid "Attach screenshots."
 msgstr ""
 
 msgid "Auth Method"
-msgstr ""
+msgstr "認証方法"
 
 msgid "Authentication Group number"
 msgstr ""
 
 msgid "Authentication Type"
-msgstr ""
+msgstr "認証タイプ"
 
 msgid ""
 "Authentication only functions when a Certificate is selected with either "
@@ -1204,7 +1204,7 @@ msgid "Authorized Networks"
 msgstr ""
 
 msgid "Auto configure IPv6"
-msgstr ""
+msgstr "IPv6自動設定"
 
 msgid ""
 "Auto-populates with information from the <b>Realm</b> when the settings in "
@@ -1212,10 +1212,10 @@ msgid ""
 msgstr ""
 
 msgid "Auto-start"
-msgstr ""
+msgstr "自動スタート"
 
 msgid "Autoconfigure IPv6"
-msgstr ""
+msgstr "IPv6自動設定"
 
 msgid "Autoconfigure IPv6 with rtsold"
 msgstr ""
@@ -1238,43 +1238,43 @@ msgid "Automatically stop the script or command after the specified seconds."
 msgstr ""
 
 msgid "Autostart"
-msgstr ""
+msgstr "自動スタート"
 
 msgid "Auxiliary Arguments"
-msgstr ""
+msgstr "追加引数"
 
 msgid "Auxiliary Groups"
 msgstr ""
 
 msgid "Auxiliary Parameters"
-msgstr ""
+msgstr "追加パラメーター"
 
 msgid "Auxiliary Parameters (ups.conf)"
-msgstr ""
+msgstr "追加パラメーター(ups.conf)"
 
 msgid "Auxiliary Parameters (upsd.conf)"
-msgstr ""
+msgstr "追加パラメーター(upsd.conf)"
 
 msgid "Auxiliary parameters"
-msgstr ""
+msgstr "追加パラメーター"
 
 msgid "Available Disks"
-msgstr ""
+msgstr "利用可能なディスク"
 
 msgid "Available Themes"
-msgstr ""
+msgstr "利用可能なテーマ"
 
 msgid "Available memory"
-msgstr ""
+msgstr "利用可能メモリ"
 
 msgid "Available space threshold (%)"
-msgstr ""
+msgstr "利用可能容量のしきい値(%)"
 
 msgid "Awesome! Now let's explore FreeNAS's cool features."
 msgstr ""
 
 msgid "Back"
-msgstr ""
+msgstr "戻る"
 
 msgid ""
 "Backblaze B2 Application Key. Log in to the B2 account and generate a key "
@@ -1292,7 +1292,7 @@ msgid ""
 msgstr ""
 
 msgid "Bandwidth Limit"
-msgstr ""
+msgstr "帯域制限"
 
 msgid "Base DN"
 msgstr ""
@@ -1313,10 +1313,10 @@ msgid "Basic Properties"
 msgstr ""
 
 msgid "Begin"
-msgstr ""
+msgstr "始める"
 
 msgid "Begin Time"
-msgstr ""
+msgstr "開始時間"
 
 msgid ""
 "Beginning UID/GID number for which this system is authoritative. UID/GID "
@@ -1354,10 +1354,10 @@ msgid "Block Shares (iSCSI)"
 msgstr ""
 
 msgid "Block Size"
-msgstr ""
+msgstr "ブロックサイズ"
 
 msgid "Block size"
-msgstr ""
+msgstr "ブロックサイズ"
 
 msgid "Boot"
 msgstr ""
@@ -1494,7 +1494,7 @@ msgid "CD-ROM Path"
 msgstr ""
 
 msgid "CLOSE"
-msgstr ""
+msgstr "閉じる"
 
 msgid "CN Realm"
 msgstr ""
@@ -1503,13 +1503,13 @@ msgid "COLLECTION"
 msgstr ""
 
 msgid "CPU"
-msgstr ""
+msgstr "CPU"
 
 msgid "CPU Usage"
-msgstr ""
+msgstr "CPU使用率"
 
 msgid "CPU and Memory"
-msgstr ""
+msgstr "CPUとメモリ"
 
 msgid "CSR exists on this system"
 msgstr ""
@@ -1526,7 +1526,7 @@ msgid ""
 msgstr ""
 
 msgid "Cancel"
-msgstr ""
+msgstr "キャンセル"
 
 msgid "Cannot Delete while HA is Enabled"
 msgstr ""
@@ -1535,10 +1535,10 @@ msgid "Cannot Edit while HA is Enabled"
 msgstr ""
 
 msgid "Case Sensitivity"
-msgstr ""
+msgstr "大文字・小文字の区別"
 
 msgid "Category"
-msgstr ""
+msgstr "カテゴリー"
 
 msgid "Certificate"
 msgstr ""
@@ -1547,13 +1547,13 @@ msgid "Certificates"
 msgstr ""
 
 msgid "Change Device Order"
-msgstr ""
+msgstr "デバイス順の変更"
 
 msgid "Change Passphrase"
-msgstr ""
+msgstr "パスフレーズの変更"
 
 msgid "Change Password"
-msgstr ""
+msgstr "パスワードの変更"
 
 msgid "Change User & Group Ownership"
 msgstr ""
@@ -1565,7 +1565,7 @@ msgid ""
 msgstr ""
 
 msgid "Change log"
-msgstr ""
+msgstr "変更履歴"
 
 msgid ""
 "Change the default password to improve system security. The new password "
@@ -1576,7 +1576,7 @@ msgid "Changes Submitted"
 msgstr ""
 
 msgid "Changing"
-msgstr ""
+msgstr "変更中"
 
 msgid ""
 "Changing SDK version is not a supported operation. Activate an existing "
@@ -1616,19 +1616,19 @@ msgid ""
 msgstr ""
 
 msgid "Check Interval"
-msgstr ""
+msgstr "確認間隔"
 
 msgid "Check Now"
-msgstr ""
+msgstr "今すぐ確認"
 
 msgid "Check Release Notes"
-msgstr ""
+msgstr "リリースノートを確認"
 
 msgid "Check for Updates"
-msgstr ""
+msgstr "更新を確認"
 
 msgid "Check for Updates Daily and Download if Available"
-msgstr ""
+msgstr "更新を毎日確認し、ダウンロードする"
 
 msgid ""
 "Check the <i>hostid</i> property of the jail. If not the same as the host, "
@@ -1641,10 +1641,10 @@ msgid ""
 msgstr ""
 
 msgid "Check the network connection"
-msgstr ""
+msgstr "ネットワークの接続を確認する"
 
 msgid "Check the network connection."
-msgstr ""
+msgstr "ネットワークの接続を確認してください。"
 
 msgid ""
 "Check the update server daily for                                   any "
@@ -1798,13 +1798,13 @@ msgid ""
 msgstr ""
 
 msgid "Choose an authentication method."
-msgstr ""
+msgstr "認証方法を選択してください。"
 
 msgid "Choose an encryption mode to use with LDAP."
 msgstr ""
 
 msgid "Choose an encryption mode."
-msgstr ""
+msgstr "暗号化方式を選択してください。"
 
 msgid ""
 "Choose between <i>Off</i>, <a "
@@ -1954,7 +1954,7 @@ msgid ""
 msgstr ""
 
 msgid "Choose your language."
-msgstr ""
+msgstr "言語を選択してください。"
 
 msgid "Cipher"
 msgstr ""
@@ -1984,13 +1984,13 @@ msgid "Client secret for the Amazon Drive account."
 msgstr ""
 
 msgid "Clients"
-msgstr ""
+msgstr "クライアント"
 
 msgid "Clone"
-msgstr ""
+msgstr "クローン"
 
 msgid "Close"
-msgstr ""
+msgstr "閉じる"
 
 msgid "Cloud Credentials"
 msgstr ""
@@ -2036,7 +2036,7 @@ msgid ""
 msgstr ""
 
 msgid "Command"
-msgstr ""
+msgstr "コマンド"
 
 msgid ""
 "Commands to run in the jail environment before the jail is removed and "
@@ -2073,19 +2073,19 @@ msgid "Commands to run in the system environment before a jail is stopped."
 msgstr ""
 
 msgid "Comment"
-msgstr ""
+msgstr "コメント"
 
 msgid "Comments"
-msgstr ""
+msgstr "コメント"
 
 msgid "Commit"
-msgstr ""
+msgstr "コミット"
 
 msgid "Common Name"
-msgstr ""
+msgstr "共通名"
 
 msgid "Community"
-msgstr ""
+msgstr "コミュニティー"
 
 msgid "Compress"
 msgstr ""
@@ -2094,16 +2094,16 @@ msgid "Compress connections"
 msgstr ""
 
 msgid "Compression level"
-msgstr ""
+msgstr "圧縮レベル"
 
 msgid "Config"
-msgstr ""
+msgstr "設定"
 
 msgid "Config Pool for Jail Manager"
 msgstr ""
 
 msgid "Configure ACL"
-msgstr ""
+msgstr "ACL設定"
 
 msgid ""
 "Configure IPv4 networking or internet access for the jail. Enter the IPv4 "
@@ -2127,7 +2127,7 @@ msgid ""
 msgstr ""
 
 msgid "Configure Networking"
-msgstr ""
+msgstr "ネットワーク設定"
 
 msgid ""
 "Configure an external program for ID mapping instead of using the "
@@ -2152,16 +2152,16 @@ msgid "Configure the root user email address."
 msgstr ""
 
 msgid "Confirm"
-msgstr ""
+msgstr "確認"
 
 msgid "Confirm Options"
 msgstr ""
 
 msgid "Confirm Passphrase"
-msgstr ""
+msgstr "パスフレーズの確認"
 
 msgid "Confirm Password"
-msgstr ""
+msgstr "パスワードの確認"
 
 msgid "Confirm Privacy Passphrase"
 msgstr ""
@@ -2185,7 +2185,7 @@ msgid "Confirm it is okay to proceed with Detach."
 msgstr ""
 
 msgid "Confirm password"
-msgstr ""
+msgstr "パスワードの確認"
 
 msgid "Confirm the encryption key passphrase."
 msgstr ""
@@ -2222,7 +2222,7 @@ msgid ""
 msgstr ""
 
 msgid "Continue"
-msgstr ""
+msgstr "続ける"
 
 msgid "Continue to Legacy UI"
 msgstr ""
@@ -2268,55 +2268,55 @@ msgid "Could not delete boot environment."
 msgstr ""
 
 msgid "Country"
-msgstr ""
+msgstr "国"
 
 msgid "Country Code"
-msgstr ""
+msgstr "国名コード"
 
 msgid "Crash reporting"
-msgstr ""
+msgstr "クラッシュの報告"
 
 msgid "Create"
-msgstr ""
+msgstr "作成"
 
 msgid "Create ACME Certificate"
 msgstr ""
 
 msgid "Create CA"
-msgstr ""
+msgstr "CAの作成"
 
 msgid "Create Certificate"
 msgstr ""
 
 msgid "Create Passphrase"
-msgstr ""
+msgstr "パスフレーズの作成"
 
 msgid "Create Pool"
-msgstr ""
+msgstr "プールの作成"
 
 msgid "Create Snapshot"
-msgstr ""
+msgstr "スナップショットを作成"
 
 msgid "Create a new Pool."
-msgstr ""
+msgstr "新しいプールを作成します。"
 
 msgid "Create a new, empty pool."
-msgstr ""
+msgstr "新しい空のプールを作成します。"
 
 msgid "Create a pool:"
-msgstr ""
+msgstr "プールの作成:"
 
 msgid "Create a recommended formation of vdevs in a pool."
 msgstr ""
 
 msgid "Create new Pool"
-msgstr ""
+msgstr "新しいプールの作成"
 
 msgid "Create new disk image"
-msgstr ""
+msgstr "新しいディスクイメージの作成"
 
 msgid "Create new pool"
-msgstr ""
+msgstr "新しいプールの作成"
 
 msgid "Create or Choose Block Device"
 msgstr ""
@@ -2334,7 +2334,7 @@ msgid ""
 msgstr ""
 
 msgid "Creating"
-msgstr ""
+msgstr "作成中"
 
 msgid "Creating Jail"
 msgstr ""
