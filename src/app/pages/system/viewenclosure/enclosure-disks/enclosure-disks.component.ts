@@ -7,6 +7,7 @@ import 'pixi-projection';
 import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
 import { DriveTray } from 'app/core/classes/hardware/drivetray';
 import { M50 } from 'app/core/classes/hardware/m50';
+import { E16 } from 'app/core/classes/hardware/e16';
 import { ES24 } from 'app/core/classes/hardware/es24';
 import { ES60 } from 'app/core/classes/hardware/es60';
 import { DiskComponent } from './components/disk.component';
@@ -43,7 +44,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   private _expanders: any[] = [];
   get expanders () {
     if(this.system.enclosures){
-      let enclosureNumber =  this.selectedEnclosure.disks[0].enclosure.number;
+      let enclosureNumber =  Number(this.selectedEnclosure.disks[0].enclosure.number);
       return this.system.getEnclosureExpanders(enclosureNumber);
     } else {
       return this._expanders;
@@ -240,17 +241,24 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   createEnclosure(){
+
     switch(this.selectedEnclosure.model){
       case "M Series":
         this.enclosure = new M50();
         break;
+      case 'E16':
+        this.enclosure = new E16();
+      break;
       case "ES24":
+      case "E24":
         this.enclosure = new ES24();
         break;
       case "ES60":
+      case "E60":
         this.enclosure = new ES60();
         break;
       default:
+        console.warn("DEFAULT ENCLOSURE")
         this.enclosure = new M50();
     }
     //this.enclosure = new ES24();
@@ -300,14 +308,20 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case "M Series":
         enclosure = new M50();
         break;
+      case 'E16':
+        enclosure = new E16();
+        break;
       case "ES24":
+      case "E24":
         enclosure = new ES24();
         break;
       case "ES60":
+      case "E60":
         enclosure = new ES60();
         break;
       default:
-        enclosure = new M50();
+        console.log(profile.model);
+        enclosure = new ES24();
     }
     //enclosure = new ES24();
     enclosure.events.subscribe((evt) => {
@@ -569,9 +583,17 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   setDiskHealthState(disk: any, enclosure?: any){
-      if(!enclosure){enclosure = this.enclosure}
+      if(!enclosure){
+        enclosure = this.enclosure
+      }
+      
       let index = disk.enclosure.slot - 1;
-      enclosure.driveTrayObjects[index].enabled = disk.enclosure.slot ? true : false;
+      if(!enclosure.driveTrayObjects[index]){
+        console.warn("There is no driveTray at index " + index + " on model " + enclosure.model + "!");
+        return;
+      } else {
+        enclosure.driveTrayObjects[index].enabled = disk.enclosure.slot ? true : false;
+      }
 
       if(disk && disk.status){
         switch(disk.status){

@@ -137,7 +137,7 @@
             <button mat-button color="primary" (click)="setCurrentView('status')">SHOW STATUS</button>
           </div>
   
-          <div *ngIf="system; else loading" fxFlex class="tiles" [class.active]="currentView == 'expanders' " fxLayout="column" fxLayoutAlign="center center">
+          <div *ngIf="system && expanders; else loading" fxFlex class="tiles" [class.active]="currentView == 'expanders' " fxLayout="column" fxLayoutAlign="center center">
             <div class="primary-number" >{{expanders.length}}</div>
             <div class="title">SAS Expanders</div>
             <div class="subtitle">on this enclosure</div>

@@ -30,7 +30,8 @@
 <!-- Enclosure Selector -->
 <div fxFlex="240px" #navigation  *ngIf="events && system && system.pools && system.enclosures && system.enclosures.length > 1" class="enclosure-selector">
   <div *ngFor="let enclosure of system.enclosures; let i = index" (click)="selectEnclosure(i)" class="enclosure enclosure-{{i}} {{selectedEnclosure.enclosureKey == i ? 'active' : '' }} ">
-    <div>{{enclosure.model}} ({{i}})</div>
+    <div *ngIf="i < 1">{{system.platform}} ({{i}})</div>
+    <div *ngIf="i > 0">{{enclosure.model}} ({{i}})</div>
   </div>
 </div>
 </div>

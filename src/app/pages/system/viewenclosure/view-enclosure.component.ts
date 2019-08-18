@@ -84,7 +84,8 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     });
 
     core.register({observerClass: this, eventName: 'SysInfo'}).subscribe((evt:CoreEvent) => {
-      this.system_product = 'M50'; // Just for testing on my FreeNAS box
+      console.log(evt);
+      this.system_product = evt.data.license.model;
       core.emit({name: 'EnclosureDataRequest', sender: this});
     });
 
