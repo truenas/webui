@@ -216,8 +216,14 @@ msgstr ""
 "аутентификации."
 
 msgid ""
+"<b>COPY</b>: Files from the source are <i><u>copied</u></i> to the "
+"destination. If files with the same names are present on the destination, "
+"they are <i><u>overwritten</u></i>."
+msgstr ""
+
+msgid ""
 "<b>Ctrl+C</b> kills a foreground process.<br>                            "
-"Many utilities are built-in:<br> b>Iperf</b>,                            "
+"Many utilities are built-in:<br> <b>Iperf</b>,                            "
 "<b>Netperf</b>, <b>IOzone</b>, <b>arcsat</b>,                            "
 "<b>tw_cli</b>, <br><b>MegaCli</b>,                            "
 "<b>freenas-debug</b>, <b>tmux</b>,                            "
@@ -240,6 +246,12 @@ msgstr ""
 msgid "<b>Current Version:</b> "
 msgstr ""
 
+msgid ""
+"<b>MOVE</b>: After files are <i><u>copied</u></i> from the source to the "
+"destination, they are <i><u>deleted</u></i> from the source. Files with the "
+"same names on the destination are <i><u>overwritten</u></i>."
+msgstr ""
+
 msgid "<b>Not recommended.</b> Allow multiple groups to share the same group ID."
 msgstr ""
 "<b>Не рекомендуется.</b> Разрешить нескольким группам использовать один и "
@@ -260,6 +272,12 @@ msgid ""
 msgstr ""
 "<b>Параметры SED (<a href=\"--docurl--/system.html#self-encrypting-drives\" "
 "target=\"_blank\">Само-Шифрующих Дисков</a>)</b>"
+
+msgid ""
+"<b>SYNC</b>: Files on the destination are <i><u>changed</u></i> to match "
+"those on the source. If a file does not exist on the source, it is also "
+"<i><u>deleted</u></i> from the destination."
+msgstr ""
 
 msgid ""
 "<b>WARNING:</b> Rolling back to this snapshot will permanently delete later "
@@ -286,6 +304,9 @@ msgstr ""
 
 msgid "<b>rsyncd</b> listens on this port."
 msgstr "<b>rsyncd</b> слушает на этом порту."
+
+msgid "<br><b>Warning: Disks cannot be onlined in encrypted pools.</b></br>"
+msgstr ""
 
 msgid "<br><br>Roll back to snapshot <i>"
 msgstr "<br><br>Откат к снимку <i>"
@@ -434,21 +455,6 @@ msgstr ""
 "других старых данных. <i>Заполнить нулями</i> перезаписывает весь диск "
 "нулями. <i>Заполнить случайными данными</i> перезаписывает весь "
 "дискслучайными двоичными данными."
-
-msgid ""
-"<i>SYNC</i> makes files on the destination system identical to those on the "
-"source. Files that have been removed from the source are removed from the "
-"destination, similar to <i>rsync --delete</i>. <i>COPY</i> copies files "
-"from source to destination, skipping files that are identical, similar to "
-"<i>rsync</i>. <i>MOVE</i> copies files from source to destination, deleting "
-"files from the source after the copy, similar to <i>mv</i>."
-msgstr ""
-"<i>SYNC</i> делает файлы на целевой системе идентичными файлам на "
-"источнике. Файлы, которые были удалены на источнике, удаляются с целевой "
-"системы, аналогично <i>rsync --delete</i>. <i>COPY</i> копирует файлы из "
-"источника в место назначения, пропуская идентичные файлы, аналогично "
-"<i>rsync</i>. <i>MOVE</i> копирует файлы из источника в место назначения, "
-"удаляя файлы из источника после копирования, по аналогии с <i>mv</i>."
 
 msgid ""
 "<i>Sensitive</i> assumes filenames are case sensitive. <i>Insensitive</i> "
@@ -621,9 +627,6 @@ msgstr ""
 "умолчанию IPv6.<br> <b>Jail без маршрута по умолчанию не сможет получить "
 "доступ ни к каким сетям.</b>"
 
-msgid "ACL Manager"
-msgstr "Менеджер ACL"
-
 msgid "ACL Mode"
 msgstr "Режим ACL"
 
@@ -645,8 +648,14 @@ msgstr ""
 msgid "API Key"
 msgstr "Ключ API"
 
+msgid "API URL"
+msgstr ""
+
 msgid "APPLY CHANGES"
 msgstr "ПРИМЕНИТЬ ИЗМЕНЕНИЯ"
+
+msgid "ARN"
+msgstr ""
 
 msgid "ATA Security User"
 msgstr "Пользователь ATA Security"
@@ -654,8 +663,14 @@ msgstr "Пользователь ATA Security"
 msgid "AUTOSTART"
 msgstr ""
 
+msgid "AWS Region"
+msgstr ""
+
 msgid "About"
 msgstr "О продукте"
+
+msgid "Access"
+msgstr ""
 
 msgid "Access Based Share Enumeration"
 msgstr "Перечисление ресурсов на основе доступа"
@@ -672,6 +687,9 @@ msgid ""
 "target=\"_blank\">setfacl(1) NFSv4 ACL ENTRIES</a>."
 msgstr ""
 
+msgid "Access Control List"
+msgstr ""
+
 msgid "Access ID Key"
 msgstr ""
 
@@ -680,6 +698,12 @@ msgstr "Ключ доступа"
 
 msgid "Access Key ID"
 msgstr "ID ключа доступа"
+
+msgid "Access Key ID for the linked AWS account."
+msgstr ""
+
+msgid "Access Mode"
+msgstr ""
 
 msgid "Access Token"
 msgstr "Токен доступа"
@@ -773,9 +797,6 @@ msgstr "Тип адаптера"
 
 msgid "Adapter Type:"
 msgstr "Тип адаптера:"
-
-msgid "Add Additional Alias"
-msgstr "Добавить дополнительный псевдоним"
 
 msgid "Add Additional Path"
 msgstr "Добавить дополнительный путь"
@@ -1068,6 +1089,9 @@ msgstr "Службы оповещения"
 
 msgid "Alert Settings"
 msgstr "Настройки оповещения"
+
+msgid "Aliases"
+msgstr ""
 
 msgid "All Disks"
 msgstr "Все диски"
@@ -1415,11 +1439,11 @@ msgstr ""
 msgid "Application Client Secret"
 msgstr "Секрет Клиента Приложения"
 
+msgid "Apply Access Mode"
+msgstr ""
+
 msgid "Apply Group"
 msgstr "Применить группу"
-
-msgid "Apply Mode"
-msgstr "Применить режим"
 
 msgid "Apply Network Changes"
 msgstr "Применить изменения сети"
@@ -1430,8 +1454,20 @@ msgstr "Применить ожидающие обновления"
 msgid "Apply Pending update"
 msgstr "Применить ожидающее обновление"
 
+msgid "Apply Permissions Recursively"
+msgstr ""
+
 msgid "Apply User"
 msgstr "Применить пользователя"
+
+msgid "Apply changes to the group."
+msgstr ""
+
+msgid "Apply changes to the mode."
+msgstr ""
+
+msgid "Apply changes to the user."
+msgstr ""
 
 msgid "Apply network changes? Network connectivity will be interrupted."
 msgstr "Применить сетевые изменения? Сетевое подключение будет прервано."
@@ -1449,10 +1485,8 @@ msgstr ""
 
 msgid ""
 "Apply permissions recursively to all directories and files within the "
-"current dataset"
+"current dataset."
 msgstr ""
-"Рекурсивно применять разрешения ко всем каталогам и файлам в текущем наборе "
-"данных"
 
 msgid "Apply permissions to child datasets"
 msgstr "Применить разрешения к дочерним наборам данных"
@@ -1507,6 +1541,9 @@ msgstr ""
 msgid "Auth Method"
 msgstr "Метод аутентификации"
 
+msgid "Auth Token"
+msgstr ""
+
 msgid "Authentication Group number"
 msgstr "Номер группы аутентификации"
 
@@ -1519,6 +1556,9 @@ msgid ""
 msgstr ""
 "Аутентификация работает только в том случае, если сертификат выбран с "
 "опцией <i>SSL</i> или <i>TLS</i>."
+
+msgid "Authentication protocol"
+msgstr ""
 
 msgid "Authenticator"
 msgstr "Аутентификатор"
@@ -1773,22 +1813,17 @@ msgstr ""
 "структуре каталога jail. Это ссылка на область хранения <b>Source</b>."
 
 msgid ""
-"Browse to an existing file and use <i>0</i> as the <b>Extent size</b>, or "
-"browse to the pool or dataset, click <b>Close</b>, append the <b>Extent "
-"Name</b> to the path, and specify a value in <b>Extent Size</b>. Extents "
-"cannot be created inside the jail root directory."
-msgstr ""
-"Найдите существующий файл и используйте <i>0</i> в качестве <b>Размера "
-"Экстента</b> или перейдите к пулу или набору данных, нажмите <b>Закрыть</b> "
-"и добавьте <b>Имя экстента</b> для пути и укажите значение в <b>Размер "
-"экстента</b>. Экстенты нельзя создать внутри корневого каталога jail."
-
-msgid ""
 "Browse to an existing file. Create a new file by browsing to a dataset and "
 "appending /<i>{filename.ext}</i> to the path."
 msgstr ""
 "Перейдите к существующему файлу. Создайте новый файл, перейдя к набору "
 "данных и добавив /<i>{filename.ext}</i> к пути."
+
+msgid ""
+"Browse to an existing file. Create a new file by browsing to a dataset and "
+"appending the file name to the path. Extents cannot be created inside a "
+"jail root directory."
+msgstr ""
 
 msgid "Browse to an existing pool or dataset to store the new zvol."
 msgstr ""
@@ -2028,6 +2063,9 @@ msgstr ""
 "Переход на ночной поезд - односторонняя операция. Переход обратно не "
 "поддерживается!"
 
+msgid "Channel"
+msgstr ""
+
 msgid "Check Interval"
 msgstr "Интервал проверки"
 
@@ -2263,6 +2301,9 @@ msgstr ""
 "диска</i>. Rclone <a href=\"https://rclone.org/onedrive\" "
 "target=\"_blank\">документация OneDrive</a> описывает процесс настройки."
 
+msgid "Choose an alert service to display options for that service."
+msgstr ""
+
 msgid "Choose an authentication method."
 msgstr "Выберите метод аутентификации."
 
@@ -2435,14 +2476,11 @@ msgstr ""
 
 msgid ""
 "Choose the type of interface. <i>Bridge</i> creates a logical link between "
-"multiple networks. Link Aggregation combines multiple network connections "
-"into a single interface. A virtual LAN (VLAN) partitions and isolates a "
-"segment of the connection."
+"multiple networks. <i>Link Aggregation</i> combines multiple network "
+"connections into a single interface. A <i>Virtual LAN (VLAN)</i> partitions "
+"and isolates a segment of the connection. Read-only when editing an "
+"interface."
 msgstr ""
-"Выберите тип интерфейса. <i>Bridge</i> создает логическую связь между "
-"несколькими сетями. Link Aggregation объединяет несколько сетевых "
-"подключений в единый интерфейс. Виртуальная локальная сеть (VLAN) разделяет "
-"и изолирует сегмент соединения."
 
 msgid ""
 "Choose the type of permissions. <i>Basic</i> shows general permissions. "
@@ -2513,6 +2551,9 @@ msgstr ""
 "href=\"https://developer.amazon.com/docs/amazon-drive/ad-get-started.html\" "
 "target=\"_blank\">учетной записи Amazon Drive</a>."
 
+msgid "Client Name"
+msgstr ""
+
 msgid "Client secret for the Amazon Drive account."
 msgstr "Секрет клиента для учетной записи Amazon Drive."
 
@@ -2536,6 +2577,9 @@ msgstr "Облачная синхронизация начата."
 
 msgid "Cloud sync stopped."
 msgstr "Облачная синхронизация остановлена."
+
+msgid "Cluster Name"
+msgstr ""
 
 msgid "Com Port"
 msgstr "Com порт"
@@ -2654,6 +2698,9 @@ msgstr "Сжимать соединения"
 
 msgid "Compression level"
 msgstr "Степень сжатия"
+
+msgid "Computer Account OU"
+msgstr ""
 
 msgid "Config"
 msgstr "Настроить"
@@ -2999,11 +3046,17 @@ msgstr "VDev данных"
 msgid "Data collection frequency, in seconds."
 msgstr "Частота сбора данных, в секундах."
 
+msgid "Database"
+msgstr ""
+
 msgid "Database Path"
 msgstr "Путь к базе данных"
 
 msgid "Dataset"
 msgstr "Набор данных"
+
+msgid "Dataset Path"
+msgstr ""
 
 msgid "Dataset has complex ACLs"
 msgstr "Набор данных имеет сложные ACL"
@@ -3273,6 +3326,9 @@ msgstr "Описание"
 msgid "Description (max. 25 characters)"
 msgstr "Описание (не более 25 символов)"
 
+msgid "Description (optional)."
+msgstr ""
+
 msgid "Description of the VLAN."
 msgstr "Описание VLAN."
 
@@ -3296,11 +3352,10 @@ msgid "Destroy data on this pool?"
 msgstr "Уничтожить данные в этом пуле?"
 
 msgid ""
-"Destroy the reporting database. Required for changes to <i>Graph Age</i> "
-"and <i>Graph Points</i> to take effect."
+"Destroy the reporting database. Only  appears when <i>Graph Age</i> or "
+"<i>Graph Points</i> are  changed. Required for changes to <i>Graph Age</i> "
+"or  <i>Graph Points</i> to take effect."
 msgstr ""
-"Уничтожить базу данных отчетов. Требуется для вступления в силу изменений "
-"<i>Возраста графика</i> и <i>Точек графика</i>."
 
 msgid "Detach"
 msgstr "Отсоединить"
@@ -3435,8 +3490,26 @@ msgstr "Отключить аварийной переключение"
 msgid "Disable FreeNAS Cache"
 msgstr "Отключить кэш FreeNAS"
 
-msgid "Disable LDAP user/group cache"
-msgstr "Отключить кэш пользователей/групп LDAP"
+msgid ""
+"Disable IPv4 source address selection for  the jail in favor of the primary "
+"IPv4 address of the jail.  Only available when the jail is not configured "
+"to use VNET."
+msgstr ""
+
+msgid ""
+"Disable IPv6 source address selection for  the jail in favor of the primary "
+"IPv6 address of the jail.  Only available when the jail is not configured "
+"to use VNET."
+msgstr ""
+
+msgid "Disable LDAP User/Group Cache"
+msgstr ""
+
+msgid ""
+"Disable caching LDAP users and groups in large LDAP environments.  When "
+"caching is disabled, LDAP users and groups do not appear in dropdown  "
+"menus, but are still accepted when manually entered."
+msgstr ""
 
 msgid "Disable physical block size reporting"
 msgstr "Отключить сообщение размера физического блока"
@@ -3512,13 +3585,6 @@ msgstr ""
 "инициатора. Изменять нужно только в больших средах, где для точной "
 "статистики отчетов необходимо количество систем, использующих определенный "
 "RPM."
-
-msgid ""
-"Do not override the default unless the initiator requires a specific block "
-"size."
-msgstr ""
-"Не переопределяйте значение по умолчанию, если инициатор не требует "
-"определенного размера блока."
 
 msgid "Do not set this if the Serial Port is disabled."
 msgstr "Не устанавливайте это, если последовательный порт отключен."
@@ -3623,6 +3689,9 @@ msgstr ""
 
 msgid "Email"
 msgstr "Электронная почта"
+
+msgid "Email Address"
+msgstr ""
 
 msgid "Email Subject"
 msgstr "Тема письма"
@@ -3853,6 +3922,9 @@ msgstr "Сменить ключ шифрования"
 msgid "Encryption Salt"
 msgstr "Соль шифрования"
 
+msgid "Encryption protocol"
+msgstr ""
+
 msgid "End"
 msgstr "Конец"
 
@@ -3997,6 +4069,13 @@ msgstr "Введите имя для клона этого окружения з
 msgid "Enter a name for the cloned snapshot."
 msgstr "Введите имя для клонированного снимка."
 
+msgid ""
+"Enter a name for the interface. Use the format <samp>lagg<i>X</i></samp>, "
+"<samp>vlan<i>X</i></samp>, or <samp>bridge<i>X</i></samp> where <i>X</i> is "
+"a number representing a non-parent interface. Read-only when editing an "
+"interface."
+msgstr ""
+
 msgid "Enter a name for the new credential."
 msgstr "Введите имя для новых полномочий."
 
@@ -4006,12 +4085,8 @@ msgstr "Введите имя для ресурса."
 msgid "Enter a name for this Keytab."
 msgstr "Введите имя для этого Keytab."
 
-msgid ""
-"Enter a name to use for the the interface. Use the format laggX, vlanX, or "
-"bridgeX where X is a number representing a non-parent interface."
+msgid "Enter a name to send alerts"
 msgstr ""
-"Введите имя для этого интерфейса. Используйте формат laggX, vlanX, или "
-"bridgeX, где X - число представляющее не-родительский интерфейс."
 
 msgid "Enter a netmask."
 msgstr "Введите маску сети."
@@ -4118,15 +4193,6 @@ msgstr ""
 "<i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>"
 
 msgid ""
-"Enter a threshold temperature in Celsius. If the drive temperature is "
-"higher than this value, a LOG_CRIT level log entry is created and an email "
-"is sent. Entering 0 disables this check."
-msgstr ""
-"Введите пороговую температуру в градусах Цельсия. Если температура диска "
-"выше этого значения, в журнале создается запись уровня LOG_CRIT и шлется "
-"email. Ввод 0 отключает эту проверку."
-
-msgid ""
 "Enter a threshold temperature in Celsius. SMART will message with a log "
 "level of LOG_CRIT and send an email if the temperature is higher than the "
 "threshold."
@@ -4171,6 +4237,9 @@ msgstr "Введите пользователя для регистрации н
 
 msgid "Enter a valid MAC address vendor prefix. <b>Example:</b> <i>E4F4C6</i>"
 msgstr "Введите действительный префикс MAC адреса. <b>Пример:</b> <i>E4F4C6</i>"
+
+msgid "Enter a valid email address to receive alerts from this system."
+msgstr ""
 
 msgid ""
 "Enter a valid username for the <a "
@@ -4330,9 +4399,6 @@ msgstr "Введите любые заметки об этом наборе да
 msgid "Enter any notes about this disk."
 msgstr "Введите любые заметки об этом диске."
 
-msgid "Enter any notes."
-msgstr "Введите любые заметки."
-
 msgid "Enter comments about the jail."
 msgstr "Введите комментарии о jail."
 
@@ -4362,6 +4428,41 @@ msgstr ""
 "<i>http://my.proxy.server:3128</i> or "
 "<i>http://user:password@my.proxy.server:3128</i>"
 
+msgid "Enter or paste an Authentication token."
+msgstr ""
+
+msgid ""
+"Enter or paste the \"integration/service\" key for this system to access "
+"the <a href=\"https://v2.developer.pagerduty.com/v2/docs/events-api\" "
+"target=\"_blank\">PagerDuty API</a>."
+msgstr ""
+
+msgid ""
+"Enter or paste the <a "
+"href=\"https://docs.mattermost.com/developer/webhooks-incoming.html\" "
+"target=\"_blank\">incoming webhook</a> URL associated with this service."
+msgstr ""
+
+msgid ""
+"Enter or paste the <a "
+"href=\"https://docs.opsgenie.com/v1.0/docs/api-integration\" "
+"target=\"_blank\">API key</a>. Find the API key by signing into the "
+"OpsGenie web interface and going to Integrations/Configured Integrations. "
+"Click the desired integration, Settings, and read the API Key field."
+msgstr ""
+
+msgid ""
+"Enter or paste the <a "
+"href=\"https://help.victorops.com/knowledge-base/api/\" "
+"target=\"_blank\">VictorOps API key</a>."
+msgstr ""
+
+msgid ""
+"Enter or paste the <a "
+"href=\"https://portal.victorops.com/public/api-docs.html#/Routing32Keys\" "
+"target=\"_blank\">VictorOps routing key</a>."
+msgstr ""
+
 msgid ""
 "Enter or paste the <b>public</b> SSH key of the user for any key-based "
 "authentication. <b>Do not paste the private key.</b>"
@@ -4371,6 +4472,21 @@ msgstr ""
 
 msgid "Enter passphrase to lock pool "
 msgstr "Введите пароль для блокировки пула "
+
+msgid "Enter password."
+msgstr ""
+
+msgid ""
+"Enter the <a "
+"href=\"https://docs.aws.amazon.com/sns/latest/dg/sms_supported-countries."
+"html\" target=\"_blank\">AWS account region</a>."
+msgstr ""
+
+msgid ""
+"Enter the <a "
+"href=\"https://docs.influxdata.com/influxdb/v1.5/introduction/getting-"
+"started/\" target=\"_blank\">InfluxDB</a> hostname."
+msgstr ""
 
 msgid ""
 "Enter the <a href=\"https://kb.iu.edu/d/aiuv\" "
@@ -4719,6 +4835,11 @@ msgstr ""
 "Введите действительные учетные данные VMware ESXI/vSphere для получения "
 "хранилищ данных."
 
+msgid ""
+"Entering <i>0</i> uses the actual file size and requires that the file "
+"already exists. Otherwise, specify the file size for the new file."
+msgstr ""
+
 msgid "Environment"
 msgstr "Окружение"
 
@@ -4956,6 +5077,9 @@ msgstr "Скачать и установить обновления"
 
 msgid "File"
 msgstr "Файл"
+
+msgid "File Information"
+msgstr ""
 
 msgid "File Permission"
 msgstr "Права доступа к файлу"
@@ -5276,6 +5400,12 @@ msgid ""
 "used."
 msgstr ""
 
+msgid "HipChat base URL."
+msgstr ""
+
+msgid "HipChat cluster name."
+msgstr ""
+
 msgid "History"
 msgstr "История"
 
@@ -5365,7 +5495,7 @@ msgid "How often the IP is checked in seconds."
 msgstr "Как часто IP проверяется в секундах."
 
 msgid ""
-"How the <b>Permissions</b> are applied to the chosen <b>Tag</b>. Choose "
+"How the <i>Permissions</i> are applied to the chosen <i>Who</>. Choose "
 "<i>Allow</i> to grant the specified permissions and <i>Deny</i> to restrict "
 "the specified permissions."
 msgstr ""
@@ -5492,6 +5622,9 @@ msgstr "Префикс IPv4 для jail."
 msgid "ISNS Servers"
 msgstr "Сервера ISNS"
 
+msgid "Icon URL"
+msgstr ""
+
 msgid "Id"
 msgstr ""
 
@@ -5562,15 +5695,6 @@ msgid ""
 "a full replication. <b>Warning:</b> enabling this option can cause data "
 "loss or excessive data transfer if the replication is misconfigured."
 msgstr ""
-
-msgid ""
-"If the size is specified as <i>0</i>, the file must already exist and the "
-"actual file size will be used. Otherwise, specify the size of the file to "
-"create."
-msgstr ""
-"Если размер указан как <i>0</i>, файл должен уже существовать, и будет "
-"использоваться фактический размер файла. В противном случае укажите размер "
-"файла для создания."
 
 msgid "Ignore Builtin"
 msgstr "Игнорировать BUILTIN"
@@ -5660,14 +5784,12 @@ msgid ""
 "mode. This <a "
 "href=\"https://forums.freenas.org/index.php?threads/how-to-find-out-if-a-"
 "drive-is-spinning-down-properly.2068/\" target=\"_blank\">forum post</a> "
-"demonstrates how to determine if a drive has spun down."
+"demonstrates how to determine if a drive has spun down. Temperature "
+"monitoring is  disabled if the disk is set to enter standby."
 msgstr ""
-"Указывает время бездействия в минутах до перехода привода в режим ожидания. "
-"Этот <a                   "
-"href=\"https://forums.freenas.org/index.php?threads/how-to-find-out-if-a-"
-"drive-is-spinning-down-properly.2068/\"                   "
-"target=\"_blank\">forum post</a> демонстрирует, как определить, отключился "
-"ли диск."
+
+msgid "InfluxDB time series name for collected points."
+msgstr ""
 
 msgid "Informational"
 msgstr "Информационные"
@@ -5759,6 +5881,11 @@ msgstr "Неверный пароль"
 
 msgid "Invalid regex filter"
 msgstr "Неверное регулярное выражение фильтра"
+
+msgid ""
+"Invalid value. Valid values are numbers followed by optional unit letters,  "
+"like <samp>256k</samp> or <samp>1G</samp>."
+msgstr ""
 
 msgid ""
 "Invalidate the existing  passphrase by generating a new encryption key. "
@@ -5883,6 +6010,9 @@ msgstr "Области Kerberos"
 msgid "Kerberos Settings"
 msgstr "Настройки Kerberos"
 
+msgid "Key ID"
+msgstr ""
+
 msgid "Key Length"
 msgstr "Длина ключа"
 
@@ -5915,6 +6045,13 @@ msgstr "LDAP User DN"
 
 msgid "LDAP User DN Password"
 msgstr "Пароль LDAP User DN"
+
+msgid ""
+"LDAP server hostnames or IP addresses. Separate entries with an empty "
+"space. Multiple hostnames or IP addresses can be entered to create an LDAP "
+"failover priority list. If a host does not respond, the next host in the "
+"list is tried until a new connection is established."
+msgstr ""
 
 msgid ""
 "LDAP server to use for SID/uid/gid map entries. When undefined, idmap_ldap "
@@ -5968,6 +6105,11 @@ msgstr "Протокол lagg"
 msgid "Language"
 msgstr "Язык"
 
+msgid ""
+"Leave empty for default (<a href=\"https://api.opsgenie.com\" "
+"target=\"_blank\">OpsGenie API</a>)"
+msgstr ""
+
 msgid "Leave empty or select number of existing portal to use."
 msgstr "Оставьте пустым или выберите номер существующего портала."
 
@@ -5984,6 +6126,9 @@ msgstr ""
 msgid "Legacy Web Interface"
 msgstr "Старый Web интерфейс"
 
+msgid "Level"
+msgstr ""
+
 msgid "Libdefaults Auxiliary Parameters"
 msgstr "Вспомогательные параметры Libdefaults"
 
@@ -5996,12 +6141,10 @@ msgstr "Лицензия была обновлена."
 msgid "Lifetime"
 msgstr "Время жизни"
 
-msgid "Limit (KiB/s)"
+msgid "Limit (Ex. 500 KiB/s, 500M, 2 TB)"
 msgstr ""
 
-msgid ""
-"Limit replication speed to the specified value in Kbytes/second. Zero means "
-"no limit."
+msgid "Limit replication speed to this number of bytes per second."
 msgstr ""
 
 msgid "Link State"
@@ -6149,6 +6292,18 @@ msgstr ""
 "Соответствие фиксированного размера данных, как в базе данных, может "
 "привести к повышению производительности."
 
+msgid ""
+"Mattermost <a "
+"href=\"https://docs.mattermost.com/help/getting-started/creating-teams.html\""
+" target=\"_blank\">team name</a>."
+msgstr ""
+
+msgid "Mattermost password."
+msgstr ""
+
+msgid "Mattermost username."
+msgstr ""
+
 msgid "Max. Connections"
 msgstr "Макс. количество соединений"
 
@@ -6170,9 +6325,6 @@ msgstr ""
 "может быть передан. Наибольший работоспособный размер MTU зависит от "
 "сетевых интерфейсов и оборудования. *1500* и *9000* - это стандартные "
 "размеры Ethernet MTU."
-
-msgid "Maximum age of graph stored, in months."
-msgstr "Максимальный возраст хранимого графика в месяцах."
 
 msgid ""
 "Maximum amount of CPU time a jail process may consume. The kernel "
@@ -6241,8 +6393,19 @@ msgstr ""
 "Максимальное количество одновременных подключений, разрешенных через AFP. "
 "Предел по умолчанию составляет 50."
 
+msgid ""
+"Maximum size for individual file blocks in the file system. Only override "
+"the default unless the initiator requires a specific block size."
+msgstr ""
+
 msgid "Maximum swap space to use for the jail."
 msgstr "Максимальное пространство подкачки для jail."
+
+msgid ""
+"Maximum time a graph is stored in months.  Changing this value causes the "
+"<i>Confirm RRD Destroy</i>  checkbox to appear. Changes do not take effect "
+"until the existing  reporting database is destroyed."
+msgstr ""
 
 msgid "Member Disk"
 msgstr "Диск-участник"
@@ -6429,8 +6592,10 @@ msgstr ""
 "href=\"--docurl--/directoryservices.html#ldap\" target=\"_blank\">LDAP</a> "
 "не запущена."
 
-msgid "Mutual secret password. Must be different than <i>Secret</i>."
-msgstr "Взаимный секретный пароль. Должен отличаться от <i>Секрет</i>."
+msgid ""
+"Mutual secret password. Required when Peer User is set. Must be different "
+"than the <i>Secret</i>."
+msgstr ""
 
 msgid "NAT"
 msgstr "NAT"
@@ -6486,23 +6651,46 @@ msgstr ""
 "href=\"https://docs.microsoft.com/en-us/azure/storage/common/storage-create-"
 "storage-account\" target=\"_blank\">Microsoft Azure</a>"
 
+msgid ""
+"Name of the <a "
+"href=\"https://docs.mattermost.com/help/getting-started/organizing-"
+"conversations.html#managing-channels\" target=\"_blank\">channel</a> to "
+"receive notifications. This overrides the default channel in the incoming "
+"webhook settings."
+msgstr ""
+
+msgid ""
+"Name of the <a href=\"https://docs.mattermost.com/overview/index.html\" "
+"target=\"_blank\">Mattermost</a> cluster to join."
+msgstr ""
+
+msgid ""
+"Name of the <a href=\"https://docs.opsgenie.com/docs\" "
+"target=\"_blank\">OpsGenie</a> cluster. Find the Cluster Name by signing "
+"into the OpsGenie web interface and going to Integrations/Configured "
+"Integrations. Click the desired integration, Settings, and read the Name "
+"field."
+msgstr ""
+
+msgid "Name of the InfluxDB database."
+msgstr ""
+
 msgid "Name of the WebDAV site, service, or software being used."
 msgstr "Название сайта, службы или программного обеспечения WebDAV."
 
-msgid ""
-"Name of the extent. If <i>Extent size</i> is non-zero, this cannot be the "
-"name of a file that already exists."
+msgid "Name of the cluster."
 msgstr ""
-"Наименование экстента. Если <i>Размер экстента</i> не равен нулю, это не "
-"может быть именем файла, который уже существует."
 
 msgid ""
-"Name of user account on remote system for CHAP authentication. Many "
-"initiators use the initiator name as the user name."
+"Name of the extent. If the <i>Extent size</i> is not <i>0</i>, it cannot be "
+"an existing file within the pool or dataset."
 msgstr ""
-"Имя учетной записи пользователя в удаленной системе для аутентификации "
-"CHAP. Многие инициаторы используют имя инициатора в качестве имени "
-"пользователя."
+
+msgid "Name of the new alert service."
+msgstr ""
+
+msgid "Name of the room."
+msgstr ""
 
 msgid "Name or Naming Schema is required. Only one field can be used at a time."
 msgstr ""
@@ -6592,17 +6780,17 @@ msgid "Network Summary"
 msgstr "Сводка сети"
 
 msgid ""
-"Network addresses that can use this initiator. Enter <i>ALL</i> or list "
-"network addresses with a CIDR mask. Separate multiple addresses with a "
-"space: <i>192.168.2.0/24 192.168.2.1/12</i>."
-msgstr ""
-
-msgid ""
-"Network addresses which are allowed use this initiator. Each  address can "
-"include an optional <a "
+"Network addresses allowed use this initiator. Each address can include an "
+"optional <a "
 "href=\"https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing\" "
 "target=\"_blank\">CIDR</a> netmask. Click <i>+</i> to add the network "
 "address to the list. Example: <i>192.168.2.0/24</i>."
+msgstr ""
+
+msgid ""
+"Network addresses that can use this initiator. Enter <i>ALL</i> or list "
+"network addresses with a CIDR mask. Separate multiple addresses with a "
+"space: <i>192.168.2.0/24 192.168.2.1/12</i>."
 msgstr ""
 
 msgid "Network changes applied successfully."
@@ -6703,6 +6891,9 @@ msgstr ""
 msgid "Notes"
 msgstr ""
 
+msgid "Notes about this extent."
+msgstr ""
+
 msgid "Number of CPUs"
 msgstr ""
 
@@ -6730,8 +6921,10 @@ msgid "Number of days to renew certificate before expiring"
 msgstr ""
 
 msgid ""
-"Number of points for each hourly, daily, weekly, monthly, or yearly graph. "
-"Set this to no less than the width of the graphs in pixels."
+"Number of points for each hourly, daily,  weekly, monthly, or yearly graph. "
+"Do not set this less than the  width of the graphs in pixels. Changing this "
+"value causes the  <i>Confirm RRD Destroy</i> checkbox to appear. Changes do "
+"not take  effect until the existing reporting database is destroyed."
 msgstr ""
 
 msgid "Number of queued SysV messages allowed for the jail."
@@ -6834,9 +7027,6 @@ msgid ""
 "Warning."
 msgstr ""
 
-msgid "Only applies to Unix or Mac permission types."
-msgstr ""
-
 msgid ""
 "Only available when the jail is not configured to use VNET. Disables IPv4 "
 "source address selection for the jail in favor of the primary IPv4 address "
@@ -6850,8 +7040,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Only entered when configuring mutual CHAP. Usually this is the same value "
-"as <i>User</i>."
+"Only entered when configuring mutual CHAP. Usually the same value as "
+"<i>User</i>."
 msgstr ""
 
 msgid ""
@@ -6889,7 +7079,7 @@ msgstr ""
 msgid "Optional comment."
 msgstr ""
 
-msgid "Optional description. Portals are automatically assigned a numeric group ID."
+msgid "Optional description. Portals are automatically assigned a numeric group."
 msgstr ""
 
 msgid "Optional user-friendly name."
@@ -6937,6 +7127,9 @@ msgstr ""
 msgid "POST INSTALL NOTES"
 msgstr ""
 
+msgid "PagerDuty client name."
+msgstr ""
+
 msgid "Parent Interface"
 msgstr "Исходный интерфейс"
 
@@ -6975,9 +7168,6 @@ msgstr ""
 msgid "Password for the username."
 msgstr ""
 
-msgid "Password. Must be at least 12 and no more than 16 characters long."
-msgstr ""
-
 msgid ""
 "Passwords cannot contain a <b>?</b>. Passwords should be at least eight "
 "characters and contain a mix of lower and upper case, numbers, and special "
@@ -6986,6 +7176,11 @@ msgstr ""
 
 msgid "Passwords do not match"
 msgstr "Пароли не совпадают"
+
+msgid ""
+"Paste the <a href=\"https://api.slack.com/incoming-webhooks\" "
+"target=\"_blank\">incoming webhook</a> URL associated with this service."
+msgstr ""
 
 msgid "Paste the certificate for the CA."
 msgstr ""
@@ -7432,9 +7627,6 @@ msgstr "Удаленный порт SSH"
 msgid "Remove"
 msgstr "Удалить"
 
-msgid "Remove Additional Alias"
-msgstr ""
-
 msgid "Remove Additional Path"
 msgstr ""
 
@@ -7487,12 +7679,12 @@ msgstr ""
 
 msgid ""
 "Report if drive temperature is at or above this temperature in Celsius. "
-"Entering 0 disables the report."
+"<i>0</i> disables the report."
 msgstr ""
 
 msgid ""
 "Report if the temperature of a drive has changed by this many degrees "
-"Celsius since the last report. Entering 0 disables the report."
+"Celsius since the last report. <i>0</i> disables the report."
 msgstr ""
 
 msgid "Reporting"
@@ -7611,6 +7803,9 @@ msgstr ""
 msgid "Rollback"
 msgstr "Откатить"
 
+msgid "Room"
+msgstr ""
+
 msgid "Root node is not a valid value"
 msgstr ""
 
@@ -7618,6 +7813,9 @@ msgid "Rotation Rate"
 msgstr "Частота вращения"
 
 msgid "Rotation Rate (RPM)"
+msgstr ""
+
+msgid "Routing Key"
 msgstr ""
 
 msgid "Rsync Tasks"
@@ -7678,6 +7876,9 @@ msgstr "СОХРАНИТЬ КОНФИГУРАЦИЮ"
 msgid "SED Password"
 msgstr "Пароль SED"
 
+msgid "SEND TEST ALERT"
+msgstr ""
+
 msgid "SFTP log facility"
 msgstr ""
 
@@ -7692,8 +7893,14 @@ msgid ""
 "(submission)."
 msgstr ""
 
+msgid "SNMP Community"
+msgstr ""
+
 msgid "SNMP v3 Support"
 msgstr "Поддержка SNMP v3"
+
+msgid "SNMPv3 Security Model"
+msgstr ""
 
 msgid "SSH Connection"
 msgstr "SSH соединение"
@@ -7830,8 +8037,17 @@ msgstr "Секрет (Подтверждение)"
 msgid "Secret Access Key"
 msgstr ""
 
+msgid "Secret Access Key for the linked AWS account."
+msgstr ""
+
 msgid "Secret Key"
 msgstr "Секретный ключ"
+
+msgid "Secret authentication key"
+msgstr ""
+
+msgid "Secret encryption key"
+msgstr ""
 
 msgid "Secure mode"
 msgstr "Безопасный режим"
@@ -7914,6 +8130,11 @@ msgid "Select VM wizard type"
 msgstr ""
 
 msgid ""
+"Select a Group ID created in <b>Authorized Access</b> if the <b>Discovery "
+"Auth Method</b> is set to <i>CHAP</i> or <i>Mutual CHAP</i>."
+msgstr ""
+
+msgid ""
 "Select a compression algorithm to reduce the size of the data being "
 "replicated."
 msgstr ""
@@ -7986,11 +8207,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Select a user created in <b>Authorized Access</b> if the <b>Discovery Auth "
-"Method</b> is set to <i>CHAP</i> or <i>Mutual CHAP</i>."
-msgstr ""
-
-msgid ""
 "Select a user created in Authorized Access if the Discovery Auth Method is "
 "set to CHAP or Mutual CHAP."
 msgstr ""
@@ -8045,8 +8261,8 @@ msgid "Select one or more screenshots that illustrate the problem."
 msgstr ""
 
 msgid ""
-"Select permissions to apply to the chosen <b>Tag</b>. Choices change "
-"depending on the <b>Permissions Type</b>. See the <a "
+"Select permissions to apply to the chosen <i>Who</i>. Choices change "
+"depending on the <i>Permissions Type</i>. See the <a "
 "href=\"--docurl--/storage.html#ace-permissions\" target=\"_blank\">ACL "
 "permissions list</a> for descriptions of each permission."
 msgstr ""
@@ -8191,8 +8407,8 @@ msgid "Select the disks to monitor."
 msgstr ""
 
 msgid ""
-"Select the group to control the pool/dataset. Groups manually created or "
-"imported from a directory service will appear in the drop-down menu."
+"Select the group to control the dataset. Groups created manually or "
+"imported from a directory service appear in the drop-down menu."
 msgstr ""
 
 msgid ""
@@ -8204,6 +8420,9 @@ msgid ""
 "Select the keytab created in <a "
 "href=\"--docurl--/directoryservices.html#kerberos-keytabs\" "
 "target=\"_blank\">Kerberos Keytabs</a>."
+msgstr ""
+
+msgid "Select the level of severity."
 msgstr ""
 
 msgid ""
@@ -8254,8 +8473,8 @@ msgid "Select the serial port address in hex."
 msgstr ""
 
 msgid ""
-"Select the set of ACE inheritance <b>Flags</b> to display. <i>Basic</i> "
-"shows unspecific inheritance options. <i>Advanced</i> shows specific "
+"Select the set of ACE inheritance <i>Flags</i> to display. <i>Basic</i> "
+"shows nonspecific inheritance options. <i>Advanced</i> shows specific "
 "inheritance settings for finer control."
 msgstr ""
 
@@ -8267,7 +8486,7 @@ msgid ""
 "by the Active Directory server or a stand-alone LDAP server."
 msgstr ""
 
-msgid "Select the type that matches the type of client accessing the pool/dataset."
+msgid "Select the type that matches the type of client accessing the dataset."
 msgstr ""
 
 msgid ""
@@ -8276,8 +8495,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Select the user to control the pool/dataset. Users manually created or "
-"imported from a directory service will appear in the drop-down menu."
+"Select the user to control the dataset. Users created manually or imported "
+"from a directory service appear in the drop-down menu."
 msgstr ""
 
 msgid ""
@@ -8320,9 +8539,6 @@ msgstr ""
 msgid "Send Email Status Updates"
 msgstr "Присылать сообщения об изменении статуса"
 
-msgid "Send Test Alert"
-msgstr ""
-
 msgid "Send Test Mail"
 msgstr ""
 
@@ -8344,6 +8560,9 @@ msgstr ""
 msgid "Serial Speed"
 msgstr ""
 
+msgid "Series"
+msgstr ""
+
 msgid "Serve UDP NFS clients"
 msgstr "Обслуживать клиентов NFS по протоколу UDP"
 
@@ -8354,6 +8573,9 @@ msgid "Server Side Encryption"
 msgstr ""
 
 msgid "Service Account"
+msgstr ""
+
+msgid "Service Key"
 msgstr ""
 
 msgid "Service failed to start"
@@ -8466,6 +8688,9 @@ msgid "Set the number of data copies on this dataset."
 msgstr ""
 
 msgid "Set the port the FTP service listens on."
+msgstr ""
+
+msgid "Set the read, write, and execute permissions for the dataset."
 msgstr ""
 
 msgid "Set the root directory for anonymous FTP connections."
@@ -8631,15 +8856,6 @@ msgstr ""
 msgid "Set to always show advanced fields, when available."
 msgstr ""
 
-msgid "Set to apply changes to the group"
-msgstr ""
-
-msgid "Set to apply changes to the mode"
-msgstr ""
-
-msgid "Set to apply changes to the user."
-msgstr ""
-
 msgid "Set to attempt to reduce latency over slow networks."
 msgstr ""
 
@@ -8704,12 +8920,6 @@ msgstr ""
 msgid ""
 "Set to disable caching AD users and groups. This can help when unable to "
 "bind to a domain with a large number of users or groups."
-msgstr ""
-
-msgid ""
-"Set to disable caching LDAP users and groups in large LDAP environments.  "
-"When caching is disabled, LDAP users and groups do not appear in dropdown  "
-"menus, but are still accepted when manually entered."
 msgstr ""
 
 msgid "Set to disable logging in to this user account."
@@ -9169,9 +9379,6 @@ msgstr ""
 msgid "Show tracebacks in case of fatal error"
 msgstr "Показывать стек в случае фатальной ошибки"
 
-msgid "Show/Hide Passwords"
-msgstr ""
-
 msgid "Shut Down"
 msgstr "Выключить"
 
@@ -9220,6 +9427,12 @@ msgstr "Размер этого zvol"
 msgid ""
 "Skip automatic detection of the Endpoint URL region. Set this when "
 "configuring a custom Endpoint URL."
+msgstr ""
+
+msgid "Slack channel name. The service will post all messages to this channel."
+msgstr ""
+
+msgid "Slack username for this service."
 msgstr ""
 
 msgid "Snapshot Lifetime"
@@ -9603,9 +9816,6 @@ msgstr ""
 msgid "TLS Policy"
 msgstr ""
 
-msgid "Tag"
-msgstr ""
-
 msgid "Take Snapshot"
 msgstr ""
 
@@ -9626,6 +9836,9 @@ msgstr ""
 
 msgid "Tasks"
 msgstr "Задания"
+
+msgid "Team"
+msgstr ""
 
 msgid "Team Drive ID"
 msgstr ""
@@ -9675,11 +9888,24 @@ msgid ""
 msgstr ""
 
 msgid ""
+"The OU in which new computer accounts are created.  The OU string is read "
+"from top to bottom without RDNs. Slashes (\"/\") are used as  delimiters, "
+"like <samp>Computers/Servers/NAS</samp>. The backslash (\"\\\") is  used to "
+"escape characters but not as a separator. Backslashes are interpreted at  "
+"multiple levels and might require doubling or even quadrupling to take "
+"effect.  When this field is blank, new computer accounts are created in the "
+"Active Directory  default OU."
+msgstr ""
+
+msgid ""
 "The SSL certificate to be used for TLS FTP connections. To create a "
 "certificate, use <b>System --> Certificates</b>."
 msgstr ""
 
 msgid "The UDP port number that listens for TFTP requests. Example: 8050"
+msgstr ""
+
+msgid "The active controller cannot be detected."
 msgstr ""
 
 msgid ""
@@ -9752,8 +9978,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"The group which controls the dataset. This group has whatever permissions "
-"are granted to the <i>@group</i> <b>Tag</b>. Groups created manually or "
+"The group which controls the dataset. This group has the same permissions "
+"as granted to the <i>group@</i> <i>Who</i>. Groups created manually or "
 "imported from a directory service appear in the drop-down menu."
 msgstr ""
 
@@ -9761,8 +9987,8 @@ msgid "The hostname or IP address of the LDAP server."
 msgstr ""
 
 msgid ""
-"The legacy user interface is deprecated.  All management should be "
-"performed through the new user interface."
+"The legacy user interface is deprecated. All management should be performed "
+"through the new user interface."
 msgstr ""
 
 msgid "The lifetime of the CA specified in days."
@@ -9900,6 +10126,9 @@ msgstr ""
 msgid "Third DNS server."
 msgstr ""
 
+msgid "This Controller"
+msgstr ""
+
 msgid ""
 "This dataset has ACLs that are too complex to be edited with                "
 "     the permissions editor.  Open in ACL editor instead?"
@@ -9944,6 +10173,12 @@ msgstr ""
 msgid "Threshold days"
 msgstr "Порог дней"
 
+msgid ""
+"Threshold temperature in Celsius. If the drive temperature is higher than "
+"this value, a LOG_CRIT level log entry is created and an email is sent. "
+"<i>0</i> disables this check."
+msgstr ""
+
 msgid "Time Machine"
 msgstr "Машина времени"
 
@@ -9986,6 +10221,13 @@ msgid ""
 "resources. Example: <i>dc=test,dc=org</i>."
 msgstr ""
 
+msgid ""
+"Topic <a "
+"href=\"https://docs.aws.amazon.com/sns/latest/dg/CreateTopic.html\" "
+"target=\"_blank\">Amazon Resource Name (ARN)</a> for publishing. Example: "
+"<b>arn:aws:sns:us-west-2:111122223333:MyTopic</b>."
+msgstr ""
+
 msgid "Train"
 msgstr "Поезд"
 
@@ -9996,6 +10238,18 @@ msgid "Transfers"
 msgstr ""
 
 msgid "Transport"
+msgstr ""
+
+msgid "TrueNAS Controller"
+msgstr ""
+
+msgid "TrueNAS Controllers"
+msgstr ""
+
+msgid "TrueNAS controller"
+msgstr ""
+
+msgid "TrueNAS controllers"
 msgstr ""
 
 msgid "Tunables"
@@ -10020,6 +10274,11 @@ msgid "URL"
 msgstr "Ссылка (URL)"
 
 msgid "URL of the HTTP host to connect to."
+msgstr ""
+
+msgid ""
+"URL to an image to use for notification icons. This overrides the incoming "
+"webhook setting."
 msgstr ""
 
 msgid "UUID"
@@ -10054,6 +10313,9 @@ msgid "Unset to disable the configuration without deleting it."
 msgstr ""
 
 msgid "Unset to disable the scheduled scrub without                 deleting it."
+msgstr ""
+
+msgid "Unset to disable this service without deleting it."
 msgstr ""
 
 msgid "Unset to disable this task without deleting it."
@@ -10262,6 +10524,11 @@ msgstr "Идентификатор пользователя"
 msgid "User Suffix"
 msgstr "Суффикс пользователя"
 
+msgid ""
+"User account to create for CHAP authentication with the user on the remote "
+"system. Many initiators use the initiator name as the user name."
+msgstr ""
+
 msgid "User account to which this ACL entry applies."
 msgstr ""
 
@@ -10271,6 +10538,9 @@ msgid ""
 msgstr ""
 
 msgid "User passed to <i>camcontrol security -u</i> to unlock SEDs"
+msgstr ""
+
+msgid "User password. Must be at least 12 and no more than 16 characters long."
 msgstr ""
 
 msgid ""
@@ -10285,6 +10555,9 @@ msgstr "Имя пользователя"
 msgid ""
 "Username for a <a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> "
 "account."
+msgstr ""
+
+msgid "Username for this service."
 msgstr ""
 
 msgid ""
@@ -10471,6 +10744,9 @@ msgstr "Пароль WebDAV"
 msgid "Webdav SSL Certificate"
 msgstr "WebDAV SSL сертификат"
 
+msgid "Webhook URL"
+msgstr ""
+
 msgid "What are you using this for"
 msgstr "Для чего вы это используете"
 
@@ -10541,6 +10817,9 @@ msgstr ""
 msgid ""
 "When the file already exists, enter a size of 0 to use the actual file "
 "size. For new files, enter the size of the file to create."
+msgstr ""
+
+msgid "Who"
 msgstr ""
 
 msgid "Widget Base Class"
@@ -10687,6 +10966,9 @@ msgstr ""
 msgid "cputime"
 msgstr ""
 
+msgid "createcomputer"
+msgstr ""
+
 msgid "datasize"
 msgstr ""
 
@@ -10768,7 +11050,7 @@ msgstr ""
 msgid "ip4"
 msgstr ""
 
-msgid "ip4_saddrsel"
+msgid "ip4.saddrsel"
 msgstr ""
 
 msgid "ip6"
