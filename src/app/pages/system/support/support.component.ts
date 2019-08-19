@@ -39,6 +39,7 @@ export class SupportComponent {
   public subs: any;
   private serial: any;
   public isProduction: boolean;
+  public updateButton: any;
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
     {
@@ -420,7 +421,14 @@ export class SupportComponent {
       this.ws.call('truenas.is_production').subscribe((res) => {
         this.isProduction = res;
         this.entityEdit.formGroup.controls['TN_is_production'].setValue(this.isProduction);
-      })  
+        this.updateButton = <HTMLInputElement> document.getElementById('cust_button_Update');
+        this.entityEdit.formGroup.controls['TN_is_production'].valueChanges.subscribe(() => {
+          this.updateButton.disabled = false;
+        });
+        this.entityEdit.formGroup.controls['TN_send_debug'].valueChanges.subscribe(() => {
+          this.updateButton.disabled = false;
+        });
+      });
       this.custActions = [
         {
           id : 'update_license',
@@ -471,30 +479,32 @@ export class SupportComponent {
         {
           id : 'change_prod_status',
           name: 'Update',
+          disabled: true,
           function : () => {
             let prod_status = this.entityEdit.formGroup.controls['TN_is_production'].value;
             let debug_status = this.entityEdit.formGroup.controls['TN_send_debug'].value;
+            this.loader.open();
             if (prod_status) {
-              this.dialogService.confirm('Update Status', 'Send a message to iXsystems Support that this system is in production.',
-                true, 'Send').subscribe((res) => {
-                  this.payload = {
-                    "title": "System has been just put into production (" + this.serial + ")",
-                    "body": "This system has been just put into production",
-                    "attach_debug": debug_status,
-                    "category": "Installation/Setup",
-                    "criticality": "Inquiry",
-                    "environment": "Production",
-                    "name": "Automatic Alert",
-                    "email": "auto-support@ixsystems.com",
-                    "phone": "-"
-                  };
-                  let prod_status = true;
-                  this.openDialog(prod_status)
-                })
+              this.ws.call('truenas.set_production',[true, debug_status]).subscribe(() => {
+                this.loader.close();
+                this.updateButton.disabled = true;
+                this.snackbar.open(helptext.is_production_snackbar.message, helptext.is_production_snackbar.action,
+                  { duration: 6000 } );
+              },
+              (err) => {
+                this.loader.close();
+                this.dialogService.errorReport(helptext.is_production_error_dialog.title, err.reason, err.trace.formatted);
+              });
             } else {
-              this.ws.call('truenas.set_production', false).subscribe(() => {
-                this.snackbar.open(helptext.is_production_dialog.snackbar_message, helptext.is_production_dialog.snackbar_action, { duration: 6000 } );
-              })
+              this.ws.call('truenas.set_production', [false]).subscribe(() => {
+                this.loader.close();
+                this.updateButton.disabled = true;
+                this.snackbar.open(helptext.is_production_snackbar.message, helptext.is_production_snackbar.action,
+                  { duration: 6000 } );              },
+              (err) => {
+                this.loader.close();
+                this.dialogService.errorReport(helptext.is_production_error_dialog.title, err.reason, err.trace.formatted);
+              });
             }
           }
         }
@@ -592,7 +602,7 @@ export class SupportComponent {
     this.openDialog();
   };
 
-  openDialog(prod_status?) {
+  openDialog() {
     const dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Ticket","CloseOnClickOutside":true}});
     let url;
     dialogRef.componentInstance.setCall('support.new_ticket', [this.payload]);
@@ -625,11 +635,6 @@ export class SupportComponent {
           });
         });
         dialogRef.componentInstance.setDescription(url);
-      } else if (prod_status) {
-        this.ws.call('truenas.set_production', true).subscribe(() => {
-          dialogRef.componentInstance.setDescription(url);
-        }) 
-        this.resetForm();
       } else {
         dialogRef.componentInstance.setDescription(url);
         this.resetForm();

@@ -111,17 +111,15 @@ export const helptext_system_support = {
 
   is_production_checkbox: {
     placeholder: 'This is a production system.',
-    tooltip: 'Send a message to iXsystems support when this system goes into production.'
+    tooltip: 'Set system production state and optionally send initial debug.'
   },
 
-  is_production_dialog: {
-    dialog_title: T('Register Production Status'),
-    production_status_placeholder: 'This is a production system.',
-    debug_placeholder: T('Send initial debug'),
-    debug_tooltip: T('Send an initial debug report to iXsystems Support.'),
-    save_button: T('Register'),
-    error_dialog_title: T('Error submitting form'),
-    snackbar_message: T('Production status successfully uptated'),
-    snackbar_action: T('close')
+  is_production_error_dialog: {
+    title: T('Error Updating Production Status'),
+  },
+
+  is_production_snackbar: {
+    message: T('Production status successfully uptated'),
+    action: T('Close')
   }
 };
