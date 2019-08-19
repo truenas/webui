@@ -1,5 +1,5 @@
 <mat-card-content class="plugin-info">
-    <section *ngIf="engineerMode || isFreenas">
+    <section>
         <mat-form-field>
             <mat-label fxFlex>{{ "Browse a Collection" | translate}}</mat-label>
             <mat-select [(ngModel)]="selectedRepo" (selectionChange)="switchRepo($event)">
@@ -25,7 +25,7 @@
         <div fxFlex="25" fxFlexOffset="3" fxFlex.xs="100">
             <div class="plugin-vinfo">
                 <p *ngIf="isSelectedOffical">Official Plugin <mat-icon class="official-plugin">verified_user</mat-icon></p>
-                <p>Version: {{selectedPlugin.revision}}</p>
+                <p>Version: {{selectedPlugin.version}} Revision: {{selectedPlugin.revision}}</p>
                 <p>Installed Instances: {{installedPlugins[selectedPlugin.plugin] || 0}}</p>
             </div>
             <button mat-flat-button id="plugin-install-button" (click)="install(selectedPlugin.plugin);" class="plugin-button">

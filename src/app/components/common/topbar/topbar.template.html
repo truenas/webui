@@ -55,7 +55,7 @@
         <span *ngIf="notifications.length > 0" class="notification-number mat-bg-warn">{{notifications.length}}</span>
       </button>
       <!-- User and UI menu -->
-      <button name="Settings" mat-icon-button matTooltip="Settings" [matMenuTriggerFor]="accountMenu" class="topbar-button-right">
+      <button name="Settings" mat-icon-button matTooltip="Settings" [matMenuTriggerFor]="accountMenu" class="topbar-button-right" (click)="checkLegacyUISetting()">
           <mat-icon>settings</mat-icon>
       </button>
       <mat-menu #accountMenu="matMenu">
@@ -86,7 +86,7 @@
           <mat-icon>info_outline</mat-icon>
           <span>{{'About' | translate}}</span>
         </button>
-        <button name="settings-legacy-ui" mat-menu-item (click)="onGoToLegacy()">
+        <button *ngIf="exposeLegacyUI" name="settings-legacy-ui" mat-menu-item (click)="onGoToLegacy()">
           <mat-icon>keyboard_return</mat-icon>
           <span>{{'Legacy Web Interface' | translate}}</span>
         </button>

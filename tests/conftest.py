@@ -62,7 +62,7 @@ elif browser == "Chrome":
 
 
 @pytest.fixture
-def wb_driver():
+def browser():
     global driver
     return driver
 

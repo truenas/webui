@@ -20,23 +20,23 @@ xpaths = {
 }
 
 
-def test_01_nav_tasks_cron(wb_driver):
+def test_01_nav_tasks_cron(browser):
     # Navigating to System>General page
-    wb_driver.find_element_by_xpath(xpaths['navTasks']).click()
+    browser.find_element_by_xpath(xpaths['navTasks']).click()
     # allowing page to load by giving explicit time(in seconds)
-    wb_driver.find_element_by_xpath(xpaths['submenuCron']).click()
+    browser.find_element_by_xpath(xpaths['submenuCron']).click()
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar1'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert "Tasks" in page_data, page_data
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert "Cron Jobs" in page_data, page_data
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)

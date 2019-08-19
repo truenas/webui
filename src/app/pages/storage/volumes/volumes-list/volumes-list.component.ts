@@ -338,64 +338,77 @@ export class VolumesListTableConfig implements InputTableConf {
     const actions = [];
     //workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
     if (rowData.type === 'zpool') {
-
       actions.push({
+        id: rowData.name,
+        name: 'Export/Disconnect',
         label: T("Export/Disconnect"),
         onClick: (row1) => {
-          this.loader.open();
-          this.ws.call('pool.attachments', [row1.id]).subscribe((res) => {
-            if (res.length > 0) {
-              p1 = `These services depend on <b>${row1.name}</b> and will be disrupted when the volume is detached:`;
-              res.forEach((item) => {
-                p1 += `<br><br>${item.type}:`;
-                item.attachments.forEach((i) => {
-                  let tempArr = i.split(',');
-                  tempArr.forEach((i) => {
-                    p1 += `<br> - ${i}`
-                  }) 
-                })
-
-              })
-            }
-            this.ws.call('pool.processes', [row1.id]).subscribe((res) => {
-              let running_processes = [];
-              let running_unknown_processes = [];
-              if (res.length > 0) {
-                res.forEach((item) => {
-                  if (!item.service) {
-                    if (item.name && item.name !== '') {
-                      running_processes.push(item);
-                    } else {
-                      running_unknown_processes.push(item);
-                    }
-                  }
-                });
-                if (running_processes.length > 0) {
-                  p1 += `<br><br>These running services are using <b>${row1.name}</b>:`;
-                  running_processes.forEach((process) =>  {
-                    if (process.name) {
-                      p1 += `<br> - ${process.name}`
-                    }
-                    
-                  });
-                };
-                if (running_unknown_processes.length > 0) {
-                  p1 += '<br><br>These unknown processes are using this pool:';
-                  running_unknown_processes.forEach((process) => {
-                    if (process.pid) {
-                      p1 += `<br> - ${process.pid} - ${process.cmdline.substring(0,40)}`;
-                    }
-                  });
-                  p1 += `<br><br>WARNING: These unknown processes will be terminated while exporting the pool.`;
-                }
-              };
-              this.loader.close();
-
           let encryptedStatus = row1.vol_encryptkey,
-            localParentVol = this.parentVolumesListComponent,
-            localDialogService = this.dialogService,
-            localDialog = this.mdDialog
+          localParentVol = this.parentVolumesListComponent,
+          localDialogService = this.dialogService,
+          localDialog = this.mdDialog
 
+          if (rowData.is_decrypted) {
+            this.loader.open();
+            this.ws.call('pool.attachments', [row1.id]).subscribe((res) => {
+              if (res.length > 0) {
+                p1 = `These services depend on <b>${row1.name}</b> and will be disrupted when the volume is detached:`;
+                res.forEach((item) => {
+                  p1 += `<br><br>${item.type}:`;
+                  item.attachments.forEach((i) => {
+                    let tempArr = i.split(',');
+                    tempArr.forEach((i) => {
+                      p1 += `<br> - ${i}`
+                    }) 
+                  })
+  
+                })
+              }
+              this.ws.call('pool.processes', [row1.id]).subscribe((res) => {
+                let running_processes = [];
+                let running_unknown_processes = [];
+                if (res.length > 0) {
+                  res.forEach((item) => {
+                    if (!item.service) {
+                      if (item.name && item.name !== '') {
+                        running_processes.push(item);
+                      } else {
+                        running_unknown_processes.push(item);
+                      }
+                    }
+                  });
+                  if (running_processes.length > 0) {
+                    p1 += `<br><br>These running services are using <b>${row1.name}</b>:`;
+                    running_processes.forEach((process) =>  {
+                      if (process.name) {
+                        p1 += `<br> - ${process.name}`
+                      }
+                      
+                    });
+                  };
+                  if (running_unknown_processes.length > 0) {
+                    p1 += '<br><br>These unknown processes are using this pool:';
+                    running_unknown_processes.forEach((process) => {
+                      if (process.pid) {
+                        p1 += `<br> - ${process.pid} - ${process.cmdline.substring(0,40)}`;
+                      }
+                    });
+                    p1 += `<br><br>WARNING: These unknown processes will be terminated while exporting the pool.`;
+                  }
+                };
+                this.loader.close();
+                doDetach();
+            })
+          },
+          (err) => {
+            this.loader.close();
+            this.dialogService.errorReport(T("Error exporting/disconnecting pool."), err.reason, err.trace.formatted);
+          })
+        } else {
+          doDetach();
+        }
+
+        function doDetach() {
           const conf: DialogFormConfiguration = {
             title: "Export/disconnect pool: '" + row1.name + "'",
             fieldConfig: [{
@@ -443,7 +456,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 id: 'download_key',
                 name: 'Download Key',
                 function: () => {
-                  const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
+                  const dialogRef = localDialog.open(DownloadKeyModalDialog, { disableClose: true });
                   dialogRef.componentInstance.volumeId = row1.id;
                 }
               }],
@@ -478,7 +491,7 @@ export class VolumesListTableConfig implements InputTableConf {
                         conditionalErrMessage, true, 'Restart Services and Continue')
                           .subscribe((res) => {
                             if (res) {
-                              this.restartServices = true;
+                              localRestartServices = true;
                               this.customSubmit(entityDialog);
                             }
                         })
@@ -498,14 +511,15 @@ export class VolumesListTableConfig implements InputTableConf {
               });
             }
           }
-          this.dialogService.dialogFormWide(conf);
-        })
-      })
+          localDialogService.dialogFormWide(conf);
         }
-      });
+      }
+    });
 
       if (rowData.is_decrypted) {
         actions.push({
+          id: rowData.name,
+          name: 'extend',
           label: T("Extend"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat(
@@ -513,6 +527,8 @@ export class VolumesListTableConfig implements InputTableConf {
           }
         });
         actions.push({
+          id: rowData.name,
+          name: 'scrub',
           label: T("Scrub Pool"),
           onClick: (row1) => {
             this.getPoolData(row1.id).subscribe((res) => {
@@ -562,6 +578,8 @@ export class VolumesListTableConfig implements InputTableConf {
           }
         });
         actions.push({
+          id: rowData.name,
+          name: 'status',
           label: T("Status"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat(
@@ -572,6 +590,8 @@ export class VolumesListTableConfig implements InputTableConf {
         if (rowData.is_upgraded === false) {
 
           actions.push({
+            id: rowData.name,
+            name: 'upgrade',
             label: T("Upgrade Pool"),
             onClick: (row1) => {
 
@@ -600,6 +620,8 @@ export class VolumesListTableConfig implements InputTableConf {
 
     if (rowData.type === "dataset") {
       actions.push({
+        id: rowData.name,
+        name: 'add_dataset',
         label: T("Add Dataset"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat([
@@ -609,6 +631,8 @@ export class VolumesListTableConfig implements InputTableConf {
         }
       });
       actions.push({
+        id: rowData.name,
+        name: 'add_zvol',
         label: T("Add Zvol"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat([
@@ -618,6 +642,8 @@ export class VolumesListTableConfig implements InputTableConf {
         }
       });
       actions.push({
+        id: rowData.name,
+        name: 'edit_options',
         label: T("Edit Options"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat([
@@ -628,6 +654,8 @@ export class VolumesListTableConfig implements InputTableConf {
       });
       if (rowDataPathSplit[1] !== "iocage") {
         actions.push({
+          id: rowData.name,
+          name: 'edit_permissions',
           label: T("Edit Permissions"),
           onClick: (row1) => {
             this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + row1.path]).subscribe(acl_is_trivial => {
@@ -653,6 +681,8 @@ export class VolumesListTableConfig implements InputTableConf {
           }
         },
         {
+          id: rowData.name,
+          name: 'edit_acl',
           label: T("Edit ACL"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat([
@@ -666,6 +696,8 @@ export class VolumesListTableConfig implements InputTableConf {
 
       if (rowData.path.indexOf('/') !== -1) {
         actions.push({
+          id: rowData.name,
+          name: 'delete_dataset',
           label: T("Delete Dataset"),
           onClick: (row1) => {
             this.dialogService.confirm(T("Delete"), 
@@ -719,6 +751,8 @@ export class VolumesListTableConfig implements InputTableConf {
     }
     if (rowData.type === "zvol") {
       actions.push({
+        id: rowData.name,
+        name: 'delete_zvol',
         label: T("Delete zvol"),
         onClick: (row1) => {
           this.dialogService.confirm(T("Delete "),
@@ -741,6 +775,8 @@ export class VolumesListTableConfig implements InputTableConf {
         }
       });
       actions.push({
+        id: rowData.name,
+        name: 'edit_zvol',
         label: T("Edit Zvol"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat([
@@ -754,6 +790,8 @@ export class VolumesListTableConfig implements InputTableConf {
     }
     if (rowData.type === "zvol" || rowData.type === "dataset") {
       actions.push({
+        id: rowData.name,
+        name: 'create_snapshot',
         label: T("Create Snapshot"),
         onClick: (row) => {
           this.ws.call('vmware.dataset_has_vms',[row.path, false]).subscribe((vmware_res)=>{
@@ -809,6 +847,8 @@ export class VolumesListTableConfig implements InputTableConf {
       let rowDataset = _.find(this.datasetData, { id: rowData.path });
       if (rowDataset && rowDataset['origin'] && !!rowDataset['origin'].parsed) {
         actions.push({
+          id: rowData.name,
+          name: 'promote_dataset',
           label: T("Promote Dataset"),
           onClick: (row1) => {
             this.loader.open();

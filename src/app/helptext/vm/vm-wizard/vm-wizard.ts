@@ -26,6 +26,9 @@ name_placeholder : T('Name'),
 name_tooltip : T('Enter an alphanumeric name for the virtual machine.'),
 name_validation : [ Validators.required ],
 
+description_placeholder : T('Description'),
+description_tooltip : T('Description (optional).'),
+
 time_placeholder : T('System clock'),
 time_tooltip: T('VM system time. Default is <i>Local</i>.'),
 time_local_text: T('Local'),
@@ -34,7 +37,8 @@ bootloader_placeholder : T('Boot Method'),
 bootloader_tooltip : T('Select <i>UEFI</i> for newer operating systems or\
  <i>UEFI-CSM</i> (Compatibility Support Mode) for\
  older operating systems that only support BIOS\
- booting.'),
+ booting. <i>Grub</i> is not recommended but can be\
+ used when the other options do not work.'),
 
 autostart_placeholder : T('Start on Boot'),
 autostart_tooltip : T('Set to start this VM when the system boots.'),

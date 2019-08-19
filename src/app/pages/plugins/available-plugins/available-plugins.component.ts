@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { WebSocketService, EngineerModeService, JailService } from '../../../services';
+import { WebSocketService, JailService } from '../../../services';
 import * as _ from 'lodash';
 import { EntityUtils } from '../../common/entity/utils';
 
@@ -21,18 +21,12 @@ export class AvailablePluginsComponent implements OnInit {
     public plugins: any;
     public selectedPlugin: any;
     public isSelectedOffical = true;
-    public engineerMode: boolean;
-    public isFreenas = window.localStorage['is_freenas'] === 'true';
     public availableRepo = [];
     public selectedRepo: any;
     public installedPlugins: any = {};
 
-    constructor(private ws: WebSocketService, protected engineerModeService: EngineerModeService, protected jailService: JailService,
+    constructor(private ws: WebSocketService, protected jailService: JailService,
                 private router: Router) {
-        this.engineerMode = localStorage.getItem('engineerMode') === 'true' ? true : false;
-        this.engineerModeService.engineerMode.subscribe((res) => {
-            this.engineerMode = res === 'true' ? true : false;
-        });
         this.ws.call('plugin.official_repositories').subscribe(
             (res) => {
                 for (const repo in res) {
@@ -47,14 +41,13 @@ export class AvailablePluginsComponent implements OnInit {
     }
 
     getInstances() {
-        this.ws.job('plugin.query').subscribe(
+        this.ws.call('plugin.query').subscribe(
             (res) => {
                 for (const item of res) {
-                    const name = _.split(item[1],'_')[0];
-                    if (this.installedPlugins[name] == undefined) {
-                        this.installedPlugins[name] = 0;
+                    if (this.installedPlugins[item.plugin] == undefined) {
+                        this.installedPlugins[item.plugin] = 0;
                     }
-                    this.installedPlugins[name]++;
+                    this.installedPlugins[item.plugin]++;
                 }
             }
         )

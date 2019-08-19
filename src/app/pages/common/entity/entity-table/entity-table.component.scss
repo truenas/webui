@@ -120,6 +120,12 @@
     ::ng-deep datatable-row-wrapper {
         width: auto;
     }
+
+    mat-icon.widget-icon {
+        cursor: pointer;
+        font-size: 24px;
+        line-height: 24px;
+    }
 }
 
 

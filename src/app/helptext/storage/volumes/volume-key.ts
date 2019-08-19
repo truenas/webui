@@ -9,6 +9,7 @@ const passphrase_msg = T(' a passphrase creates a new encryption key \
 export default {
 // Add key form
 add_key_name_validation: [Validators.required],
+
 add_key_instructions: T('This is an additional key file that can be used \
  to unlock the pool instead of the passphrase or encryption key file. <br /> <br /> \
  Entering the administrator password and clicking <b>ADD RECOVERY KEY</b> \
@@ -16,12 +17,13 @@ add_key_instructions: T('This is an additional key file that can be used \
  system. Store the recovery key file in a secure location!<br /> \
  Adding a new recovery key invalidates any previously downloaded \
  recovery key file for this pool.'),
-add_key_password_placeholder: T('Root password'),
+add_key_password_placeholder: T('Administrator Password'),
+
 add_key_password_tooltip: T('Enter the root password to authorize this operation.'),
 add_key_password_validation: [Validators.required],
 
 // Change key form
-changekey_adminpw_placeholder: T('Root Password'),
+changekey_adminpw_placeholder: T('Administrator Password'),
 changekey_adminpw_tooltip: T('Enter the root password.'),
 changekey_adminpw_validation: [Validators.required],
 
@@ -59,7 +61,7 @@ rekey_instructions: T('Re-keying the pool resets the encryption on the \
  backup of this file. Adding a passphrase or recovery key file is done \
  from the Encryption Operations menu.'),
 rekey_password_label: T('Passphrase'),
-rekey_password_placeholder: T('Root password'),
+rekey_password_placeholder: T('Administrator Password'),
 rekey_password_tooltip: T('Enter the root password to authorize this operation.'),
 rekey_password_validation: [Validators.required]
 }

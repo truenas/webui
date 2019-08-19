@@ -160,4 +160,11 @@ export class EntityFormService {
       return nodes;
     })
   }
+
+  clearFormError(fieldConfig) {
+    for (let f = 0; f < fieldConfig.length; f++) {
+      fieldConfig[f]['errors'] = '';
+      fieldConfig[f]['hasErrors'] = false;
+    }
+  }
 }

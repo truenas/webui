@@ -117,7 +117,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public filterColumns: Array<any> = []; // ...for the filter function - becomes THE complete list of all columns, diplayed or not
   public alwaysDisplayedCols: Array<any> = []; // For cols the user can't turn off
   public anythingClicked: boolean = false; // stores a pristine/touched state for checkboxes
-  public originalConfColumns: any; // The 'factory setting
+  public originalConfColumns = []; // The 'factory setting
 
   public startingHeight: number;
   public expandedRows = 0;
@@ -215,39 +215,25 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showActions = this.conf.showActions === undefined ? true : this.conf.showActions ;
     this.filterColumns = this.conf.columns;
     this.conf.columns = this.allColumns; // Remove any alwaysDisplayed cols from the official list
-    this.originalConfColumns = this.conf.columns; // to go back to defaults
 
-    // Keep track of original layout
-    if (this.originalConfColumns) {
-      this.originalConfColumns = [];
-
-      for (let item of this.allColumns) {
-        if (!item.hidden) {
-          this.originalConfColumns.push(item);
-        }
+    for (let item of this.allColumns) {
+      if (!item.hidden) {
+        this.originalConfColumns.push(item);
       }
     }
+    this.conf.columns = this.originalConfColumns;
 
-    // Get preferred list of columns from pref service
-    const preferredCols = this.prefService.preferences.tableDisplayedColumns;
-
-    // No preferences set for any table, show 'default' configuration
-    if (preferredCols.length === 0) {
-      this.conf.columns = this.originalConfColumns;  
-    } else {
-      preferredCols.forEach((i) => {
-        let match = 0;
-        // If preferred columns have been set for THIS table...
-        if (i.title === this.title) {
-          this.conf.columns = i.cols;
-          match++;
-        }
-        // If no preferred columns for THIS table, show 'default' configuration
-        if (match === 0) {
-          this.conf.columns = this.originalConfColumns;
-        }
-      });
-    }
+    setTimeout(() => {
+      const preferredCols = this.prefService.preferences.tableDisplayedColumns;
+      if (preferredCols.length > 0) {
+        preferredCols.forEach((i) => {
+          // If preferred columns have been set for THIS table...
+          if (i.title === this.title) {
+            this.conf.columns = i.cols;
+          }
+        });
+      }
+    }, this.prefService.preferences.tableDisplayedColumns.length === 0 ? 2000 : 0)
 
     this.displayedColumns.push("action");
     if (this.conf.changeEvent) {

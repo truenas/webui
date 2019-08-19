@@ -45,6 +45,13 @@
         <!-- Carousel -->
         <div *ngIf="poolState && path" id="" class="carousel" #carousel >
 
+          <ng-template #locked>
+            <div fxFlex="50" class="locked offline">
+              <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-lock-alert"></mat-icon>
+              <h4>Data not available <span *ngIf="!poolState.is_decrypted"><br>while pool is encrypted</span>.</h4>
+            </div>
+          </ng-template>
+
           <!--<ng-container *ngTemplateOutlet="path[0].template"></ng-container>-->
           <div *ngFor="let slide of path;" fxFlex="100" class="slide {{slide.name}}" >
             <ng-content *ngTemplateOutlet="slide.template"></ng-content>
@@ -92,7 +99,7 @@
             </div>
 
             <div class="right" fxFlex="60" fxLayout="column" fxLayoutAlign="space-around center">
-              <div fxFlex="100">
+              <div fxFlex="100" *ngIf="poolState.topology && poolState.topology.data; else locked;">
                 <div class="list-subheader">  <span class="capitalize">{{currentSlideName}}</span></div>
                 <mat-list>
                   <mat-list-item><strong>Path: </strong>&nbsp;&nbsp; {{poolState.path}}</mat-list-item>

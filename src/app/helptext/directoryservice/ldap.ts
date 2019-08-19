@@ -23,7 +23,11 @@ ldap_hostname_validation: [Validators.required],
 
 ldap_hostname_noreq_name : 'ldap_hostname_noreq',
 ldap_hostname_noreq_placeholder : T('Hostname'),
-ldap_hostname_noreq_tooltip: T('The hostname or IP address of the LDAP server.'),
+ldap_hostname_noreq_tooltip: T('LDAP server hostnames or IP addresses.\
+ Separate entries with an empty space. Multiple hostnames or IP\
+ addresses can be entered to create an LDAP failover priority list. If a\
+ host does not respond, the next host in the list is tried until a new\
+ connection is established.'),
 
 ldap_basedn_name : 'ldap_basedn',
 ldap_basedn_placeholder : T('Base DN'),
@@ -92,8 +96,8 @@ ldap_certificate_tooltip: T('Select the LDAP CA certificate. The certificate for
  LDAP server CA must first be imported using the System/Certificates menu.'),
 
 ldap_disable_fn_cache_name : 'ldap_disable_freenas_cache',
-ldap_disable_fn_cache_placeholder : T('Disable LDAP user/group cache'),
-ldap_disable_fn_cache_tooltip: T('Set to disable caching LDAP users and groups in large LDAP environments. \
+ldap_disable_fn_cache_placeholder : T('Disable LDAP User/Group Cache'),
+ldap_disable_fn_cache_tooltip: T('Disable caching LDAP users and groups in large LDAP environments. \
  When caching is disabled, LDAP users and groups do not appear in dropdown \
  menus, but are still accepted when manually entered.'),
 
@@ -131,16 +135,6 @@ ldap_enable_placeholder : T('Enable'),
 ldap_enable_tooltip: T('Activates the configuration. Unset to disable the\
  configuration without deleting it.'),
 
-ldap_netbiosname_a_name : 'ldap_netbiosname_a',
-ldap_netbiosname_a_placeholder : T('Netbios Name'),
-ldap_netbiosname_a_tooltip: T('Netbios Name of this NAS. This name must differ from\
- the <i>Workgroup</i> name and be no greater than 15 characters.'),
-
-ldap_netbiosalias_name : 'ldap_netbiosalias',
-ldap_netbiosalias_placeholder : T('NetBIOS alias'),
-ldap_netbiosalias_tooltip: T('Alternative names that SMB clients can use when\
- connecting to this NAS. Can be no greater than 15 characters.'),
-
 ldap_advanced_fields : 
 [
 'ldap_anonbind',
@@ -159,8 +153,6 @@ ldap_advanced_fields :
 'ldap_idmap_backend',
 'ldap_has_samba_schema',
 'ldap_auxiliary_parameters',
-'ldap_schema',
-'ldap_netbiosalias',
-'ldap_netbiosname_a'
+'ldap_schema'
 ]
 }

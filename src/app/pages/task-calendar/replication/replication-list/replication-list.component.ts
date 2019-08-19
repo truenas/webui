@@ -23,16 +23,16 @@ export class ReplicationListComponent {
 
     public columns: Array<any> = [
         { name: 'Name', prop: 'name' },
-        { name: 'Direction', prop: 'direction', hidden: true},
+        { name: 'Direction', prop: 'direction'},
         { name: 'Transport', prop: 'transport', hidden: true},
         { name: 'SSH Connection', prop: 'ssh_connection', hidden: true},
         { name: 'Source Dataset', prop: 'source_datasets', hidden: true},
         { name: 'Target Dataset', prop: 'target_dataset', hidden: true},
         { name: 'Recursive', prop: 'recursive', hidden: true},
         { name: 'Auto', prop: 'auto', hidden: true},
-        { name: 'Enabled', prop: 'enabled' },
+        { name: 'Enabled', prop: 'enabled', hidden: true },
         { name: 'State', prop: 'task_state', state: 'state' },
-        { name: 'Last Snapshot', prop: 'task_last_snapshot' },
+        { name: 'Last Snapshot', prop: 'task_last_snapshot' }
     ];
 
     public config: any = {
@@ -55,15 +55,18 @@ export class ReplicationListComponent {
         this.entityList = entityList;
     }
 
-    dataHandler(entityList) {
-        for (const task of entityList.rows) {
+    resourceTransformIncomingRestData(tasks: any[]): any[] {
+        return tasks.map(task => {
             task.task_state = task.state.state;
             task.ssh_connection = task.ssh_credentials ? task.ssh_credentials.name : '-';
             if (task.state.job && task.state.job.time_finished) {
                 const d = moment(task.state.job.time_finished.$date);
                 task.task_last_snapshot = d.format('MM/D/YYYY h:mma') + ` (${d.fromNow()})`;
+            } else {
+                task.task_last_snapshot = T('No snapshots sent yet');
             }
-        }
+            return task;
+        });
     }
 
     getActions(parentrow) {

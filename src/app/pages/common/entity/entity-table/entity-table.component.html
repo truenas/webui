@@ -264,9 +264,15 @@
                [minWidth]="col.minWidth"
                [maxWidth]="col.maxWidth">
         <ng-template let-row="row" ngx-datatable-cell-template>
-          <div fxLayoutAlign="start center" fxLayoutGap="8px">
+          <div fxLayoutAlign="start center" fxLayoutGap="4px">
             <ng-container *ngIf="col?.widget?.component">
-                <mat-icon [style.cursor]="'pointer'" [matMenuTriggerFor]="widget">{{ col.widget.icon }}</mat-icon>
+                <mat-icon
+                  [matMenuTriggerFor]="widget"
+                  class="widget-icon"
+                  role="img"
+                  fontSet="mdi-set"
+                  fontIcon="mdi-{{ col.widget.icon }}"
+                ></mat-icon>
                 <mat-menu #widget="matMenu" xPosition="before" yPosition="below">
                   <!-- column widgets need to be registered with this switch case -->
                   <ng-container [ngSwitch]="col.widget.component">

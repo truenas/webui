@@ -248,10 +248,13 @@
   padding-top:12px;
 }
 
-.product-image.truenas ,
+.product-image.truenas{
+  padding-bottom:0;
+}
+
 .product-image.ix-logo,
 .freenas .generic{
-  padding-bottom:15%;
+  padding-bottom:10%;
 }
 
 .freenas .mat-icon.generic{
@@ -263,8 +266,17 @@ img.platform-logo{
   width: 70%;
 }
 
-.update-action{
-  
+.product-image img.certified-badge{
+  position: absolute;
+  left: 54%;
+  bottom: 30%;
+  width: auto !important;
+  height: 16%;
+  border-radius:5px;
+}
+
+.content-left{
+  position:relative;
 }
 
 /* NARROW SCREENS */

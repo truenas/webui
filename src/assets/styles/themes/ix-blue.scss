@@ -810,17 +810,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   // Keeps buttons on UI prefs form from overflowing page
-  @media (min-width: 600px) and (max-width:740px) {
+  @media (max-width:450px) {
     .prefs-form button {
       display: block;
       margin-bottom: 10px !important;
-    }
-  }
-
-  // Adds space above Manage Themes section in 1 col view on UI Pref
-  @media (max-width: 599px) {
-    custom-theme-manager-form {
-      margin-top: 30px !important;
     }
   }
 
@@ -1391,8 +1384,25 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       padding: 5px;
   }
 
-  app-interfaces-form .disabled-select .mat-select-arrow {
-    opacity: 0.38;
+  app-interfaces-form {
+    .disabled-select .mat-select-arrow {
+      opacity: 0.38;
+    }
+    entity-form-list .form-list > div  {
+      flex-direction: column !important;
+      padding: 15px;
+      background-color: rgba(127,127,127,0.1);
+      margin-bottom: 10px;
+    }
+     #address, #failover_address, #failover_virtual_address {
+      width: 85%;
+    }
+    .listBtn {
+      bottom: 40px;
+    }
+    .list-action {
+      height: 1px;
+    }
   }
 
   app-createpassphrase-form #changekey-instructions,
@@ -1408,6 +1418,19 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
   iscsi .mat-tab-links {
     flex-wrap: wrap;
+  }
+
+  general-preferences-form #enableWarning tooltip {
+    position: absolute;
+    left: 370px;
+  }
+
+  general-preferences-form #userTheme {
+    width: 400px;
+  }
+  app-interfaces-list #timeout-field {
+    width: 50px;
+    text-align: center;
   }
 
  } // end of ix theme

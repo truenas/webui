@@ -18,7 +18,7 @@ export class FormIpWithNetmaskComponent implements Field, OnInit, OnDestroy {
   fieldShow: string;
 
   address = '';
-  netmask: string;
+  netmask = '24';
   netmaskOptions = this.network.getV4Netmasks();
   value: string;
   netmaskPreset: number

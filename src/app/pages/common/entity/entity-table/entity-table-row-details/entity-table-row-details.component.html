@@ -7,15 +7,16 @@
         <h4>{{ column.name }}:</h4>
         <div
             fxLayoutAlign="start center"
-            fxLayoutGap="8px"
+            fxLayoutGap="4px"
         >
             <ng-container *ngIf="column?.widget?.component">
                 <mat-icon
-                    [style.cursor]="'pointer'"
+                    class="widget-icon"
                     [matMenuTriggerFor]="widget"
-                >
-                    {{ column.widget.icon }}
-                </mat-icon>
+                    role="img"
+                    fontSet="mdi-set"
+                    fontIcon="mdi-{{ column.widget.icon }}"
+                ></mat-icon>
                 <mat-menu #widget="matMenu">
                     <!-- column widgets need to be registered with this switch case -->
                     <ng-container [ngSwitch]="column.widget.component">
@@ -42,6 +43,7 @@
 >
     <ng-container *ngFor="let action of actions">
         <button
+            *ngIf="!parent.conf.isActionVisible || parent.conf.isActionVisible.bind(parent.conf)(action.name, this.config)"
             mat-button
             id="action_button_{{ action?.name }}__{{action.id}}"
             (click)="action.onClick(this.config)"

@@ -11,7 +11,7 @@ import { Display,DisplayContainer } from 'app/core/components/display/display.co
 import { ViewButtonComponent } from './viewbutton/viewbutton.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule }   from '@angular/forms';
-import { C3ChartComponent } from 'app/core/components/c3chart/c3chart.component';
+//import { C3ChartComponent } from 'app/core/components/c3chart/c3chart.component';
 import { ViewChartComponent } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
@@ -62,7 +62,7 @@ import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.co
     Display,
     DisplayContainer,
     ViewButtonComponent,
-    C3ChartComponent,
+    //C3ChartComponent,
     ViewChartComponent,
     ViewChartDonutComponent,
     ViewChartPieComponent,
@@ -89,7 +89,7 @@ import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.co
     CopyPasteMessageComponent,
     PageComponent,
     ViewComponent,
-    C3ChartComponent,
+    //C3ChartComponent,
     ViewChartComponent,
     ViewChartDonutComponent,
     ViewChartGaugeComponent,
@@ -115,7 +115,7 @@ import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.co
     CopyPasteMessageComponent,
     DisplayContainer,
     ViewComponent,
-    C3ChartComponent,
+    //C3ChartComponent,
     ViewChartComponent,
     ViewChartDonutComponent,
     ViewChartGaugeComponent,

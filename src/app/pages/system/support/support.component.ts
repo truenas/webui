@@ -513,21 +513,13 @@ export class SupportComponent {
           this.serial = res.license.system_serial;
         _.find(this.fieldConfig, {name : "TN_sysserial"}).paraText += this.serial;
         
-        let featureList = res.license.features;
-        if (featureList.length === 0) {
-          _.find(this.fieldConfig, {name : "TN_features"}).paraText += 'NONE';
-        } else {
-          let tempStr = '';
-          for (let i = 0; i < featureList.length; i++) {
-            tempStr += featureList[i];
-            if (i < featureList.length - 1) {
-              tempStr += ', ';
-            }
-          }
-          _.find(this.fieldConfig, {name : "TN_features"}).paraText += tempStr;
-        }
+        let featureList;
+        res.license.features.length === 0 ? featureList = 'NONE' : featureList = res.license.features.join(', ');
+        _.find(this.fieldConfig, {name : "TN_features"}).paraText += featureList;
+
         _.find(this.fieldConfig, {name : "TN_contracttype"}).paraText += res.license.contract_type;
         _.find(this.fieldConfig, {name : "TN_contractdate"}).paraText += res.license.contract_end.$value + ` (expires in ${daysLeft} days)` || '';
+
         let addhw;
         res.license.addhw.length === 0 ? addhw = 'NONE' : addhw = res.license.addhw.join(', ');
         _.find(this.fieldConfig, {name : "TN_addhardware"}).paraText += addhw; 
@@ -626,7 +618,7 @@ export class SupportComponent {
           formData.append('file', item.file, item.apiEndPoint);
           dialogRef.componentInstance.wspost(item.apiEndPoint, formData);
           dialogRef.componentInstance.success.subscribe(res=>{
-            // console.info(res);
+            this.resetForm();
           }),
           dialogRef.componentInstance.failure.subscribe((res) => {
             dialogRef.componentInstance.setDescription(res.error);
@@ -637,14 +629,25 @@ export class SupportComponent {
         this.ws.call('truenas.set_production', true).subscribe(() => {
           dialogRef.componentInstance.setDescription(url);
         }) 
+        this.resetForm();
       } else {
         dialogRef.componentInstance.setDescription(url);
+        this.resetForm();
       }
     })
     dialogRef.componentInstance.failure.subscribe((res) => {
       dialogRef.componentInstance.setDescription(res.error);
     });
   }
+
+  resetForm () {
+    this.entityEdit.formGroup.reset();
+    if (!this.is_freenas) {
+      this.entityEdit.formGroup.controls['TNCategory'].setValue('BUG');
+      this.entityEdit.formGroup.controls['environment'].setValue('production');
+      this.entityEdit.formGroup.controls['criticality'].setValue('inquiry');
+    }
+  };
 
   blurEvent(parent){
     this.category = _.find(parent.fieldConfig, {name: "category"});

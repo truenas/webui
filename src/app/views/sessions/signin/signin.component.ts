@@ -13,7 +13,6 @@ import {WebSocketService} from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { ApiService } from 'app/core/services/api.service';
-import product from '../../../helptext/product';
 
 @Component({
   selector: 'app-signin',
@@ -33,6 +32,7 @@ export class SigninComponent implements OnInit {
   public checking_status = false;
   public copyrightYear = globalHelptext.copyright_year;
   private interval: any;
+  public exposeLegacyUI = false;
 
   signinData = {
     username: '',
@@ -84,6 +84,9 @@ export class SigninComponent implements OnInit {
           }, 6000);
         }
         window.localStorage.setItem('is_freenas', res);
+        if (!this.is_freenas && window.localStorage.exposeLegacyUI === 'true') {
+          this.exposeLegacyUI = true;
+        }
       });
     }
   }
@@ -260,7 +263,9 @@ export class SigninComponent implements OnInit {
   }
 
   onGoToLegacy() {
-    this.dialogService.confirm(T("Log in to Legacy User Interface?"), "", true, T('Continue')).subscribe((res) => {
+    this.dialogService.confirm(T("Warning"),
+      globalHelptext.legacyUIWarning,
+       true, T('Continue to Legacy UI')).subscribe((res) => {
       if (res) {
         window.location.href = '/legacy/';
       }
