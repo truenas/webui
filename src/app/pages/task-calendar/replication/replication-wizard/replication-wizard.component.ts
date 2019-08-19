@@ -77,7 +77,7 @@ export class ReplicationWizardComponent {
             this.replicationService.getReplicationTasks().subscribe(
                 (res) => {
                     for (const task of res) {
-                        const lable = task.name + ((task.state && task.state.datetime) ? '(last run ' + this.datePipe.transform(new Date(task.state.datetime.$date), 'MM/dd/yyyy') + ')' : '');
+                        const lable = task.name + ' (' + ((task.state && task.state.datetime) ? 'last run ' + this.datePipe.transform(new Date(task.state.datetime.$date), 'MM/dd/yyyy') : 'never ran') + ')';
                         exist_replicationField.options.push({label: lable, value: task.id});
                     }
                 } 
