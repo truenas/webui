@@ -7632,16 +7632,16 @@ msgid ""
 msgstr ""
 
 msgid "This operation might take a long time. Proceed?"
-msgstr ""
+msgstr "Dieser Vorgang kann sehr lange dauern. Fortfahren? "
 
 msgid "Threshold days"
 msgstr ""
 
 msgid "Time Machine"
-msgstr ""
+msgstr "ime Machine"
 
 msgid "Time Machine Quota"
-msgstr ""
+msgstr "Time Machine Quota"
 
 msgid "Time Server For Domain"
 msgstr ""
@@ -7653,7 +7653,7 @@ msgid "Times"
 msgstr ""
 
 msgid "Timezone"
-msgstr ""
+msgstr "Zeitzone"
 
 msgid ""
 "Token created with <a "
@@ -7668,37 +7668,37 @@ msgid ""
 msgstr ""
 
 msgid "Train"
-msgstr ""
+msgstr "Zug"
 
 msgid "Transfer Mode"
-msgstr ""
+msgstr "Übertragungsmodus"
 
 msgid "Tunables"
 msgstr ""
 
 msgid "Type"
-msgstr ""
+msgstr "Typ"
 
 msgid "UNIX Charset"
-msgstr ""
+msgstr "UNIX-Zeichensatz"
 
 msgid "UNIX Extensions"
-msgstr ""
+msgstr "Unix-Erweiterungen"
 
 msgid "UNIX extensions"
-msgstr ""
+msgstr "Unix-Erweiterungen"
 
 msgid "UPS Mode"
 msgstr ""
 
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 msgid "URL of the HTTP host to connect to."
 msgstr ""
 
 msgid "UUID"
-msgstr ""
+msgstr "UUID"
 
 msgid "Unencrypted pools can be imported directly."
 msgstr ""
@@ -7707,13 +7707,13 @@ msgid "Unique LUN ID. The default is generated from the MAC address of the syste
 msgstr ""
 
 msgid "Unix (NFS) Shares"
-msgstr ""
+msgstr "Unix (NFS)-Freigaben"
 
 msgid "Unix Extensions"
-msgstr ""
+msgstr "Unix-Erweiterungen"
 
 msgid "Unlock"
-msgstr ""
+msgstr "Freischalten"
 
 msgid ""
 "Unmask is used for newly created files. Default is <i>000</i> (anyone can "
@@ -7759,37 +7759,37 @@ msgid ""
 msgstr ""
 
 msgid "Until"
-msgstr ""
+msgstr "Bis um"
 
 msgid "Unused"
-msgstr ""
+msgstr "Ungebraucht"
 
 msgid "Update"
-msgstr ""
+msgstr "Aktualisieren"
 
 msgid "Update File"
-msgstr ""
+msgstr "Aktualisierungsdatei"
 
 msgid "Update File Temporary Storage Location"
 msgstr ""
 
 msgid "Update Period"
-msgstr ""
+msgstr "Aktualisierungszeitraum"
 
 msgid "Update successful. Please reboot for the update to take effect. Reboot now?"
-msgstr ""
+msgstr "Aktualisierung erfolgreich. Bitte starten Sie den Computer neu, damit das Update wirksam wird. Jetzt neustarten?"
 
 msgid "Updates Available"
-msgstr ""
+msgstr "Aktualisierung verfügbar"
 
 msgid "Updates successfully downloaded"
-msgstr ""
+msgstr "Aktualisierung erfolgreich heruntergeladen"
 
 msgid "Updating Jail"
-msgstr ""
+msgstr "Aktualisiere Jail"
 
 msgid "Updating Plugin"
-msgstr ""
+msgstr "Aktualisiere Plugin"
 
 msgid "Updating group members"
 msgstr ""
@@ -7810,10 +7810,10 @@ msgid "Upgraded"
 msgstr ""
 
 msgid "Upload"
-msgstr ""
+msgstr "Hochladen"
 
 msgid "Upload Config"
-msgstr ""
+msgstr "Konfig hochladen"
 
 msgid "Upload an installer image file"
 msgstr ""
@@ -7881,7 +7881,7 @@ msgid ""
 msgstr ""
 
 msgid "User"
-msgstr ""
+msgstr "Benutzer"
 
 msgid "User Bind Path"
 msgstr ""
@@ -7893,7 +7893,7 @@ msgid "User Controls"
 msgstr ""
 
 msgid "User DN"
-msgstr ""
+msgstr "Benutzer DN"
 
 msgid "User Distinguished Name (DN) to use for authentication."
 msgstr ""
@@ -7902,7 +7902,7 @@ msgid "User Distinguished Name to use for authentication."
 msgstr ""
 
 msgid "User ID"
-msgstr ""
+msgstr "Benuzter-ID"
 
 msgid "User Suffix"
 msgstr ""
@@ -7916,7 +7916,7 @@ msgid "User passed to <i>camcontrol security -u</i> to unlock SEDs"
 msgstr ""
 
 msgid "Username"
-msgstr ""
+msgstr "Benutzername"
 
 msgid ""
 "Username for a <a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> "
@@ -7939,28 +7939,28 @@ msgid ""
 msgstr ""
 
 msgid "Users"
-msgstr ""
+msgstr "Benutzer"
 
 msgid "Users & Groups"
-msgstr ""
+msgstr "Benutzer & Gruppen"
 
 msgid "VFS Objects"
-msgstr ""
+msgstr "VFS Objekte"
 
 msgid "VLAN ID"
-msgstr ""
+msgstr "VLAN ID"
 
 msgid "VLANs"
-msgstr ""
+msgstr "VLANs"
 
 msgid "VM Snapshot"
-msgstr ""
+msgstr "VM Schnappschuss"
 
 msgid "VMWare Sync"
-msgstr ""
+msgstr "VMWare Sync"
 
 msgid "VMware-Snapshots"
-msgstr ""
+msgstr "VMware-Schnappschüsse"
 
 msgid ""
 "VNC network interface IP address. The primary interface IP address is the "
@@ -7968,55 +7968,55 @@ msgid ""
 msgstr ""
 
 msgid "VNET"
-msgstr ""
+msgstr "VNET"
 
 msgid "VNET Virtual Networking"
-msgstr ""
+msgstr "VNET virtuelles Netzwerk"
 
 msgid "Validate Remote Path"
-msgstr ""
+msgstr "Remote-Pfad validieren"
 
 msgid "Value"
-msgstr ""
+msgstr "Wert"
 
 msgid "Variable"
-msgstr ""
+msgstr "Variable"
 
 msgid "Verbose logging"
-msgstr ""
+msgstr "Loglevel erhöhen"
 
 msgid "Verify passphrase"
-msgstr ""
+msgstr "Überprüfen Sie die Passphrase"
 
 msgid "Version"
-msgstr ""
+msgstr "Version"
 
 msgid "View"
-msgstr ""
+msgstr "Aussicht"
 
 msgid "View the contents of the Service Account JSON file."
 msgstr ""
 
 msgid "Virtual CPUs"
-msgstr ""
+msgstr "Virtuelle CPUs"
 
 msgid "Virtual Interface"
-msgstr ""
+msgstr "Virtuelles Interface"
 
 msgid "Virtual Machine (VM) Wizard type."
 msgstr ""
 
 msgid "Virtual Machines"
-msgstr ""
+msgstr "Virtuelle Maschinen"
 
 msgid "Virtualization"
-msgstr ""
+msgstr "Virtualisierung"
 
 msgid "Vlan Tag"
-msgstr ""
+msgstr "Vlan Tag"
 
 msgid "WARNING"
-msgstr ""
+msgstr "WARNUNG"
 
 msgid ""
 "WARNING: Adding data vdevs with different numbers of disks is not "
@@ -8024,52 +8024,52 @@ msgid ""
 msgstr ""
 
 msgid "WARNING: Based on the pool topology, "
-msgstr ""
+msgstr "WARNUNG: Basierend auf der Pool-Topologie, "
 
 msgid "WARNING: Exporting/disconnecting '"
-msgstr ""
+msgstr "WARNUNG: Exportieren / Trennen '"
 
 msgid "Wait to start VM until VNC client connects."
 msgstr ""
 
 msgid "Wallclock time in seconds."
-msgstr ""
+msgstr "Wanduhrzeit in Sekunden."
 
 msgid "Warning"
-msgstr ""
+msgstr "Warnung"
 
 msgid "Web Interface"
-msgstr ""
+msgstr "Webinterface"
 
 msgid "WebDAV Shares"
-msgstr ""
+msgstr "WebDAV-Freigaben"
 
 msgid "WebDAV account password."
-msgstr ""
+msgstr "WebDAV-Konto Passwort"
 
 msgid "WebDAV account username."
-msgstr ""
+msgstr "WebDAV-Konto Benutzername"
 
 msgid "WebDAV service"
-msgstr ""
+msgstr "WebDAV Service"
 
 msgid "WebGUI HTTP -> HTTPS Redirect"
-msgstr ""
+msgstr "WebGUI HTTP -> HTTPS Umleitung"
 
 msgid "WebGUI HTTP Port"
-msgstr ""
+msgstr "WebGUI HTTP Port"
 
 msgid "WebGUI HTTPS Port"
-msgstr ""
+msgstr "WebGUI HTTPS Port"
 
 msgid "WebGUI IPv4 Address"
-msgstr ""
+msgstr "WebGUI IPv4 Adresse"
 
 msgid "WebGUI IPv6 Address"
-msgstr ""
+msgstr "WebGUI IPv6 Adresse"
 
 msgid "Webdav Password"
-msgstr ""
+msgstr "Webdav Passwort"
 
 msgid "Webdav SSL Certificate"
 msgstr ""
@@ -8123,7 +8123,6 @@ msgstr ""
 msgid ""
 "When set, the common name in the certificate must match the FQDN of the "
 "host."
-msgstr ""
 
 msgid ""
 "When set, usernames do not include a domain name. Unset to force domain "
@@ -8133,13 +8132,13 @@ msgid ""
 msgstr ""
 
 msgid "Widget Base Class"
-msgstr ""
+msgstr "Widget-Basisklasse"
 
 msgid "Winbind NSS Info"
-msgstr ""
+msgstr "Winbind NSS Info"
 
 msgid "Windows (SMB) Shares"
-msgstr ""
+msgstr "Windows (SMB) Freigaben"
 
 msgid "Wipe"
 msgstr ""
@@ -8154,7 +8153,7 @@ msgid "Wiping Disk..."
 msgstr ""
 
 msgid "Workgroup"
-msgstr ""
+msgstr "Arbeitsgruppe"
 
 msgid "Write a percentage limit of a single CPU core."
 msgstr ""
@@ -8167,24 +8166,27 @@ msgid ""
 "href=\"https://tech.yandex.com/direct/doc/dg-v4/concepts/auth-token-docpage/"
 "\" target=\"_blank\">Access Token</a>."
 msgstr ""
+"Yandex <a "
+"href=\"https://tech.yandex.com/direct/doc/dg-v4/concepts/auth-token-docpage/"
+"\" target=\"_blank\">Zuganstoken</a>."
 
 msgid "Yes"
-msgstr ""
+msgstr "Ja"
 
 msgid "Yes, decrypt the disks"
-msgstr ""
+msgstr "Ja, entschlüsseln Sie die Festplatten"
 
 msgid "ZFS"
-msgstr ""
+msgstr "ZFS"
 
 msgid "ZFS Deduplication"
-msgstr ""
+msgstr "ZFS Deduplikation"
 
 msgid "ZFS Filesystem"
-msgstr ""
+msgstr "ZFS Dateisystem"
 
 msgid "ZFS Pool"
-msgstr ""
+msgstr "ZFS Pool"
 
 msgid "ZFS deduplication"
 msgstr ""
@@ -8475,7 +8477,7 @@ msgid "sysvshm"
 msgstr ""
 
 msgid "template"
-msgstr ""
+msgstr "Vorlage"
 
 msgid "vmemoryuse"
 msgstr ""
