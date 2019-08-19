@@ -218,7 +218,7 @@ export const helptext_system_certificates = {
  Server.")
     },
     renew_day: {
-      placeholder: T("Renew Certificate Day"),
+      placeholder: T("Renew Certificate Days"),
       tooltip: T("Number of days to renew certificate before expiring."),
       validation: [Validators.required, Validators.min(0)]
     },
