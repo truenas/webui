@@ -87,7 +87,7 @@ export class SupportComponent {
           type: 'checkbox',
           name: 'TN_send_debug',
           placeholder: 'Send initial debug',
-          tooltip: 'Send initial debug',
+          tooltip: 'Send initial debug.',
           value: false,
           relation : [
             {
