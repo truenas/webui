@@ -661,8 +661,7 @@ export class VolumesListTableConfig implements InputTableConf {
             this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + row1.path]).subscribe(acl_is_trivial => {
               if (acl_is_trivial) {
                 this._router.navigate(new Array('/').concat([
-                  "storage", "pools", "id", row1.path.split('/')[0], "dataset",
-                  "permissions", row1.path
+                  "storage", "pools", "permissions", row1.path
                 ]));
               } else {
                 this.dialogService.confirm(T("Dataset has complex ACLs"),
