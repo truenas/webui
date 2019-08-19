@@ -14,5 +14,8 @@ export default {
     public_key_tooltip: T('See <i>Public key authentication</i> in <a href="https://www.freebsd.org/cgi/man.cgi?query=ssh"\
  target="_blank">SSH/Authentication</a>.'),
 
-    generate_key_button: T('Generate Keypair')
+    generate_key_button: T('Generate Keypair'),
+
+    key_instructions: T('Use this form to create a keypair or import a keypair by pasting it in. \
+ Imported keypairs must be UNENCRYPTED (created WITHOUT a passphrase).')
 }

@@ -24,6 +24,10 @@ export class SshKeypairsFormComponent {
 
     protected fieldConfig: FieldConfig[] = [
         {
+            type: 'paragraph',
+            name: 'key_instructions',
+            paraText: helptext.key_instructions
+        }, {
             type: 'input',
             name: 'name',
             placeholder: helptext.name_placeholder,
