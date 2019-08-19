@@ -35,7 +35,7 @@ export class SnapshotFormComponent {
     name: 'recursive',
     placeholder: helptext.recursive_placeholder,
     tooltip: helptext.recursive_tooltip,
-    value: false,
+    value: true,
   }, {
     type: 'textarea',
     name: 'exclude',
