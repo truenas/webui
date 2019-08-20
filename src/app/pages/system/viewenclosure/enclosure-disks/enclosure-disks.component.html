@@ -1,6 +1,7 @@
 <mat-card class="view-card" id="{{currentTab.alias}}">
   <mat-toolbar id="Disks-toolbar">
-    <div class="mat-card-title-text">{{currentTab.alias}} on {{selectedEnclosure ? selectedEnclosure.model + ' (' + selectedEnclosure.enclosureKey + ')' : '...'}}</div>
+    <div *ngIf="selectedEnclosure.enclosureKey > 0" class="mat-card-title-text">{{currentTab.alias}} on {{selectedEnclosure ? selectedEnclosure.model + ' (' + selectedEnclosure.enclosureKey + ')' : '...'}}</div>
+    <div *ngIf="selectedEnclosure.enclosureKey < 1" class="mat-card-title-text">{{currentTab.alias}} on {{selectedEnclosure ? system.platform + ' (' + selectedEnclosure.enclosureKey + ')' : '...'}}</div>
 
     <!-- ENCLOSURE MODEL -->
     <div class="model dom-overlay" style="opacity:0.75;">

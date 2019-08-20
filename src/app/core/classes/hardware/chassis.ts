@@ -42,6 +42,7 @@ export class Chassis {
    public container:Container;
    public events: Subject<CoreEvent>;
    public model: string;
+   protected driveTraysOffset: number = 0; // if drives don't start at top.
    public driveTrays: any;
    public driveTrayObjects: DriveTray[] = [];
    public chassis:Sprite;
@@ -131,7 +132,7 @@ export class Chassis {
        let dt = this.makeDriveTray();
        dt.id = i.toString();
        //dt.background.tint = 0x666666;
-       let position = this.generatePosition(dt.container, i);
+       let position = this.generatePosition(dt.container, i, this.driveTraysOffset);
        dt.container.x = position.x;
        dt.container.y = position.y;
        dt.background.alpha = 0;
@@ -265,12 +266,12 @@ export class Chassis {
      return dt;
    }
 
-   generatePosition(displayObject, index): Position{
+   generatePosition(displayObject, index, yOffset: number = 0): Position{
      let gapX = 10;
      let gapY = 2;
      let mod = index % this.columns;
      let nextPositionX = mod * (displayObject.width + gapX);
-     let nextPositionY = Math.floor(index / this.columns) * (displayObject.height + gapY);
+     let nextPositionY = Math.floor(index / this.columns) * (displayObject.height + gapY) + yOffset;
 
      return {x: nextPositionX, y: nextPositionY}
    }

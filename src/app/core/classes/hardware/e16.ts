@@ -12,6 +12,7 @@ export class E16 extends Chassis {
     this.driveTrayBackgroundPath = "assets/images/hardware/e16/e16_960w_drivetray_bg.png" 
     this.driveTrayHandlePath = "assets/images/hardware/e16/e16_960w_drivetray_handle.png"
     this.totalDriveTrays = 16;
+    this.driveTraysOffset = 32;
     //this.load();
   }
 
