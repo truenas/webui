@@ -13,6 +13,7 @@ import { FieldConfig } from '../../../../common/entity/entity-form/models/field-
 import { EntityFormComponent } from '../../../../common/entity/entity-form';
 import { EntityUtils } from '../../../../common/entity/utils';
 import helptext from '../../../../../helptext/storage/volumes/zvol-form';
+import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 
 interface ZvolFormData {
   name: string;
@@ -99,7 +100,7 @@ export class ZvolFormComponent {
       name: 'name',
       placeholder: helptext.zvol_name_placeholder,
       tooltip: helptext.zvol_name_tooltip,
-      validation: helptext.zvol_name_validation,
+      validation: [Validators.required, forbiddenValues(this.namesInUse)],
       required: true,
       isHidden: false,
       blurStatus : true,
