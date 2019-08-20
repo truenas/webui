@@ -16,6 +16,7 @@ export default {
 
     generate_key_button: T('Generate Keypair'),
 
-    key_instructions: T('Use this form to create a keypair or import a keypair by pasting it in. \
- Imported keypairs must be UNENCRYPTED (created WITHOUT a passphrase).')
+    key_instructions: T('To import an SSH keypair, paste the private and/or public key values. To \
+ create a new keypair, click <b>Generate Keypair</b>. Encrypted keypairs or keypairs with a passphrase \
+ are not supported.')
 }

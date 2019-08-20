@@ -7,6 +7,7 @@ import helptext from 'app/helptext/system/ssh-keypairs';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../common/entity/utils';
 import { WebSocketService, DialogService } from '../../../../services';
+import { atLeastOne } from 'app/pages/common/entity/entity-form/validators/at-least-one-validation';
 
 @Component({
     selector: 'app-ssh-keypairs-form',
@@ -38,16 +39,13 @@ export class SshKeypairsFormComponent {
             type: 'textarea',
             name: 'private_key',
             placeholder: helptext.private_key_placeholder,
-            tooltip: helptext.private_key_tooltip,
-            required: true,
-            validation: [Validators.required]
+            tooltip: helptext.private_key_tooltip
         }, {
             type: 'textarea',
             name: 'public_key',
             placeholder: helptext.public_key_placeholder,
             tooltip: helptext.public_key_tooltip,
-            required: true,
-            validation: [Validators.required]
+            validation: [atLeastOne('private_key')]
         }
     ]
 
@@ -57,6 +55,9 @@ export class SshKeypairsFormComponent {
             name: helptext.generate_key_button,
             function: () => {
                 this.loader.open();
+                this.clearPreviousErrors();
+                let elements = document.getElementsByTagName('mat-error');
+                while (elements[0]) elements[0].parentNode.removeChild(elements[0]);
                 this.ws.call('keychaincredential.generate_ssh_key_pair').subscribe(
                     (res) => {
                         this.loader.close();
@@ -85,6 +86,19 @@ export class SshKeypairsFormComponent {
 
     afterInit(entityForm) {
         this.entityForm = entityForm;
+        this.entityForm.formGroup.controls['private_key'].valueChanges.subscribe((res) => {
+            this.clearPreviousErrors();
+        });
+        this.entityForm.formGroup.controls['public_key'].valueChanges.subscribe((res) => {
+            this.clearPreviousErrors();
+        });
+
+    }
+
+    clearPreviousErrors() {
+        // Clears error messages from MW from previous attempts to Save
+        let elements = document.getElementsByTagName('mat-error');
+        while (elements[0]) elements[0].parentNode.removeChild(elements[0]);
     }
 
     resourceTransformIncomingRestData(wsResponse) {
@@ -95,6 +109,7 @@ export class SshKeypairsFormComponent {
     }
 
     beforeSubmit(data) {
+        delete data['key_instructions'];
         if (this.entityForm.isNew) {
             data['type'] = 'SSH_KEY_PAIR';
         }
