@@ -53,6 +53,7 @@ export class ZvolFormComponent {
   public edit_data: any;
   protected entityForm: any;
   public minimum_recommended_zvol_volblocksize: string;
+  public namesInUse = [];
 
   protected origVolSize;
   protected origVolSizeUnit;
@@ -100,7 +101,10 @@ export class ZvolFormComponent {
       tooltip: helptext.zvol_name_tooltip,
       validation: helptext.zvol_name_validation,
       required: true,
-      isHidden: false
+      isHidden: false,
+      blurStatus : true,
+      blurEvent : this.blurEvent,
+      parent : this
     },
     {
       type: 'input',
@@ -268,6 +272,12 @@ export class ZvolFormComponent {
 
 
     await this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).toPromise().then((pk_dataset)=>{
+      let children = (pk_dataset[0].children);
+      if (children.length > 0) {
+        for (let i in children) {
+          this.namesInUse.push(/[^/]*$/.exec(children[i].name)[0]);
+        };
+      }
 
       if(pk_dataset && pk_dataset[0].type ==="FILESYSTEM"){
 
@@ -488,6 +498,20 @@ export class ZvolFormComponent {
       });
     } else{
       this.editSubmit(body);
+    }
+  }
+
+  blurEvent(parent) {
+    if (parent.entityForm) {
+      let field = _.find(parent.fieldConfig, {name: "name"});;
+      let fieldValue = parent.entityForm.formGroup.controls['name'].value;
+      if (parent.namesInUse.includes(fieldValue)) {
+        field['hasErrors'] = true;
+        field['errors'] = T(`The name <em>${fieldValue}</em> is already in use.`)
+      } else {
+        field['hasErrors'] = false;
+        field['errors'] = null;  
+      }
     }
   }
 
