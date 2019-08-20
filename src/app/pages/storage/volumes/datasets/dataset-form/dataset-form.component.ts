@@ -100,9 +100,6 @@ export class DatasetFormComponent implements Formconfiguration{
       readonly: true,
       required: true,
       validation: [Validators.required, forbiddenValues(this.namesInUse)],
-      blurStatus : true,
-      blurEvent : this.blurEvent,
-      parent : this
     },
     {
       type: 'input',
@@ -571,6 +568,15 @@ export class DatasetFormComponent implements Formconfiguration{
       _.find(this.fieldConfig, {name:'name'}).tooltip = "Dataset name (read-only)."
     } else {
       entityForm.setDisabled('share_type', false, false);
+      entityForm.formGroup.controls['name'].valueChanges.subscribe((value) => {
+        const field = _.find(this.fieldConfig, {name: "name"});
+        field['hasErrors'] = false;
+        field['errors'] = '';
+        if (this.namesInUse.includes(value)) {
+          field['hasErrors'] = true;
+          field['errors'] = T(`The name <em>${value}</em> is already in use.`)
+        }
+      })
     }
     this.recordsize_fg = this.entityForm.formGroup.controls['recordsize'];
 
@@ -905,20 +911,6 @@ export class DatasetFormComponent implements Formconfiguration{
       this.loader.close();
       new EntityUtils().handleWSError(this.entityForm, res);
     });
-  }
-
-  blurEvent(parent) {
-    if (parent.entityForm) {
-      let field = _.find(parent.fieldConfig, {name: "name"});;
-      let fieldValue = parent.entityForm.formGroup.controls['name'].value;
-      if (parent.namesInUse.includes(fieldValue)) {
-        field['hasErrors'] = true;
-        field['errors'] = T(`The name <em>${fieldValue}</em> is already in use.`)
-      } else {
-        field['hasErrors'] = false;
-        field['errors'] = null;  
-      }
-    }
   }
 
 }
