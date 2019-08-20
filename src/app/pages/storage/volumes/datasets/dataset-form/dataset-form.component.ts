@@ -12,6 +12,8 @@ import { EntityFormComponent } from '../../../../common/entity/entity-form';
 import { DialogService } from 'app/services/dialog.service';
 import { T } from '../../../../../translate-marker';
 import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-form';
+import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
+import { Validators } from '@angular/forms';
 
 interface DatasetFormData {
   name: string;
@@ -97,7 +99,7 @@ export class DatasetFormComponent implements Formconfiguration{
       tooltip: helptext.dataset_form_name_tooltip,
       readonly: true,
       required: true,
-      validation: helptext.dataset_form_name_validation,
+      validation: [Validators.required, forbiddenValues(this.namesInUse)],
       blurStatus : true,
       blurEvent : this.blurEvent,
       parent : this
