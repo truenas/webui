@@ -102,10 +102,7 @@ export class ZvolFormComponent {
       tooltip: helptext.zvol_name_tooltip,
       validation: [Validators.required, forbiddenValues(this.namesInUse)],
       required: true,
-      isHidden: false,
-      blurStatus : true,
-      blurEvent : this.blurEvent,
-      parent : this
+      isHidden: false
     },
     {
       type: 'input',
@@ -411,7 +408,18 @@ export class ZvolFormComponent {
           _.find(this.fieldConfig, {name:'volblocksize'}).warnings = null;
         };
       };
-    });  }
+    }); 
+
+    entityForm.formGroup.controls['name'].valueChanges.subscribe((value) => {
+      const field = _.find(this.fieldConfig, {name: "name"});
+      field['hasErrors'] = false;
+      field['errors'] = '';
+      if (this.namesInUse.includes(value)) {
+        field['hasErrors'] = true;
+        field['errors'] = T(`The name <em>${value}</em> is already in use.`)
+      }
+    })
+  }
 
   addSubmit(body: any) {
     const data: any = this.sendAsBasicOrAdvanced(body);
@@ -501,19 +509,4 @@ export class ZvolFormComponent {
       this.editSubmit(body);
     }
   }
-
-  blurEvent(parent) {
-    if (parent.entityForm) {
-      let field = _.find(parent.fieldConfig, {name: "name"});;
-      let fieldValue = parent.entityForm.formGroup.controls['name'].value;
-      if (parent.namesInUse.includes(fieldValue)) {
-        field['hasErrors'] = true;
-        field['errors'] = T(`The name <em>${fieldValue}</em> is already in use.`)
-      } else {
-        field['hasErrors'] = false;
-        field['errors'] = null;  
-      }
-    }
-  }
-
 }
