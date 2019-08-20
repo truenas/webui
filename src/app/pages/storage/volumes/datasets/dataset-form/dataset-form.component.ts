@@ -64,7 +64,7 @@ export class DatasetFormComponent implements Formconfiguration{
   protected recordsize_fg: any;
   protected recommended_size_number: any;
   protected recordsize_warning: any;
-
+  public namesInUse = [];
 
   public parent: string;
   public data: any;
@@ -97,7 +97,10 @@ export class DatasetFormComponent implements Formconfiguration{
       tooltip: helptext.dataset_form_name_tooltip,
       readonly: true,
       required: true,
-      validation: helptext.dataset_form_name_validation
+      validation: helptext.dataset_form_name_validation,
+      blurStatus : true,
+      blurEvent : this.blurEvent,
+      parent : this
     },
     {
       type: 'input',
@@ -612,6 +615,13 @@ export class DatasetFormComponent implements Formconfiguration{
         this.recommended_size_number = parseInt(this.reverseRecordSizeMap[this.minimum_recommended_dataset_recordsize],0);
       });
       this.ws.call('pool.dataset.query', [[["id", "=", this.pk]]]).subscribe((pk_dataset)=>{
+        let children = (pk_dataset[0].children);
+        if (children.length > 0) {
+          for (let i in children) {
+            this.namesInUse.push(/[^/]*$/.exec(children[i].name)[0]);
+          };
+        }
+ 
       if(this.isNew){
         const sync = _.find(this.fieldConfig, {name:'sync'});
         const compression = _.find(this.fieldConfig, {name:'compression'});
@@ -893,6 +903,20 @@ export class DatasetFormComponent implements Formconfiguration{
       this.loader.close();
       new EntityUtils().handleWSError(this.entityForm, res);
     });
+  }
+
+  blurEvent(parent) {
+    if (parent.entityForm) {
+      let field = _.find(parent.fieldConfig, {name: "name"});;
+      let fieldValue = parent.entityForm.formGroup.controls['name'].value;
+      if (parent.namesInUse.includes(fieldValue)) {
+        field['hasErrors'] = true;
+        field['errors'] = T(`The name <em>${fieldValue}</em> is already in use.`)
+      } else {
+        field['hasErrors'] = false;
+        field['errors'] = null;  
+      }
+    }
   }
 
 }

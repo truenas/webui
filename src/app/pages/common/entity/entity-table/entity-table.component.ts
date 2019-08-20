@@ -254,6 +254,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
+    if (this.filter) {
     observableFromEvent(this.filter.nativeElement, 'keyup').pipe(
       debounceTime(150),
       distinctUntilChanged(),)
@@ -296,7 +297,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.currentRows = newData;
         this.paginationPageIndex  = 0;
         this.setPaginationInfo();
-      });              
+      });      
+    };        
   }
 
   setTableHeight() {
