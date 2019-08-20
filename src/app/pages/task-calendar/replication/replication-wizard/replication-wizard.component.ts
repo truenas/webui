@@ -48,16 +48,96 @@ export class ReplicationWizardComponent {
                     placeholder: helptext.exist_replication_placeholder,
                     tooltip: helptext.exist_replication_tooltip,
                     options: [],
-                }
-                // {
-                //     type: 'input',
-                //     name: 'name', //for new ssh connection and new snapshot task and replication
-                //     placeholder: helptext.name_placeholder,
-                //     tooltip: helptext.name_tooltip,
-                //     required: true,
-                //     validation: [Validators.required],
-                //     parent: this
-                // },
+                },
+                {
+                    type: 'select',
+                    name: 'source_datasets',
+                    placeholder: helptext.source_datasets_placeholder,
+                    tooltip: helptext.source_datasets_tooltip,
+                    options: [{
+                        label: 'On this System',
+                        value: 'local',
+                    }, {
+                        label: 'On a Different System',
+                        value: 'remote',
+                    }],
+                    class: 'inline',
+                    width: '50%',
+                },
+                {
+                    type: 'select',
+                    name: 'target_datasets',
+                    placeholder: helptext.target_dataset_placeholder,
+                    tooltip: helptext.target_dataset_tooltip,
+                    options: [{
+                        label: 'On this System',
+                        value: 'local',
+                    }, {
+                        label: 'On a Different System',
+                        value: 'remote',
+                    }],
+                    class: 'inline',
+                    width: '50%',
+                },
+                {
+                    type: 'select',
+                    name: 'ssh_credentials_source',
+                    placeholder: helptext.ssh_credentials_placeholder,
+                    tooltip: helptext.ssh_credentials_tooltip,
+                    options: [],
+                    class: 'inline',
+                    width: '50%',
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                          name: 'source_datasets',
+                          value: 'remote',
+                        }]
+                    }],
+                    isHidden: true,
+                },
+                {
+                    type: 'select',
+                    name: 'ssh_credentials_target',
+                    placeholder: helptext.ssh_credentials_placeholder,
+                    tooltip: helptext.ssh_credentials_tooltip,
+                    options: [],
+                    class: 'inline',
+                    width: '50%',
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                          name: 'target_datasets',
+                          value: 'remote',
+                        }]
+                    }],
+                    isHidden: true,
+                },
+                {
+                    type: 'radio',
+                    name: 'encryption',
+                    placeholder: helptext.encryption_placeholder,
+                    tooltip: helptext.encryption_tooltip,
+                    options: [
+                        {
+                            label: 'Encryption (more secure, but slower)',
+                            value: true,
+                        },
+                        {
+                            label: 'No Encryption (less secure, but faster)',
+                            value: false,
+                        }
+                    ],
+                    value: true,
+                },
+                {
+                    type: 'input',
+                    name: 'name',
+                    placeholder: helptext.name_placeholder,
+                    tooltip: helptext.name_tooltip,
+                    required: true,
+                    validation: [Validators.required],
+                },
             ]
         },
         {
@@ -82,6 +162,17 @@ export class ReplicationWizardComponent {
                     }
                 } 
             )
+
+            const ssh_credentials_source_field = _.find(this.wizardConfig[0].fieldConfig, { 'name': 'ssh_credentials_source' });
+            const ssh_credentials_target_field = _.find(this.wizardConfig[0].fieldConfig, { 'name': 'ssh_credentials_target' });
+            this.keychainCredentialService.getSSHConnections().subscribe((res) => {
+                for (const i in res) {
+                    ssh_credentials_source_field.options.push({ label: res[i].name, value: res[i].id });
+                    ssh_credentials_target_field.options.push({ label: res[i].name, value: res[i].id });
+                }
+                ssh_credentials_source_field.options.push({ label: 'Create New', value: 'NEW' });
+                ssh_credentials_target_field.options.push({ label: 'Create New', value: 'NEW' });
+            })
         }
 
     isCustActionVisible(id, stepperIndex) {
