@@ -51,7 +51,7 @@ export class ReplicationWizardComponent {
                 },
                 {
                     type: 'select',
-                    name: 'source_datasets',
+                    name: 'source_datasets_from',
                     placeholder: helptext.source_datasets_placeholder,
                     tooltip: helptext.source_datasets_tooltip,
                     options: [{
@@ -66,7 +66,7 @@ export class ReplicationWizardComponent {
                 },
                 {
                     type: 'select',
-                    name: 'target_datasets',
+                    name: 'target_datasets_from',
                     placeholder: helptext.target_dataset_placeholder,
                     tooltip: helptext.target_dataset_tooltip,
                     options: [{
@@ -90,8 +90,8 @@ export class ReplicationWizardComponent {
                     relation: [{
                         action: 'SHOW',
                         when: [{
-                          name: 'source_datasets',
-                          value: 'remote',
+                            name: 'source_datasets_from',
+                            value: 'remote',
                         }]
                     }],
                     isHidden: true,
@@ -107,11 +107,54 @@ export class ReplicationWizardComponent {
                     relation: [{
                         action: 'SHOW',
                         when: [{
-                          name: 'target_datasets',
-                          value: 'remote',
+                            name: 'target_datasets_from',
+                            value: 'remote',
                         }]
                     }],
                     isHidden: true,
+                },
+                {
+                    type: 'explorer',
+                    name: 'source_datasets',
+                    placeholder: replicationHelptext.source_datasets_placeholder,
+                    tooltip: replicationHelptext.source_datasets_placeholder,
+                    initial: '',
+                    explorerType: 'directory',
+                    customTemplateStringOptions: {
+                        displayField: 'Path',
+                        isExpandedField: 'expanded',
+                        idField: 'uuid',
+                        getChildren: this.getChildren.bind(this),
+                        nodeHeight: 23,
+                        allowDrag: false,
+                        useVirtualScroll: false,
+                    },
+                    required: true,
+                    validation: [Validators.required],
+                    class: 'inline',
+                    width: '50%',
+                },
+                {
+                    type: 'explorer',
+                    name: 'target_dataset',
+                    placeholder: replicationHelptext.target_dataset_placeholder,
+                    tooltip: replicationHelptext.target_dataset_placeholder,
+                    initial: '',
+                    explorerType: 'directory',
+                    // customTemplateStringOptions: {
+                    //     displayField: 'Path',
+                    //     isExpandedField: 'expanded',
+                    //     idField: 'uuid',
+                    //     getChildren: this.getChildren.bind(this),
+                    //     nodeHeight: 23,
+                    //     allowDrag: false,
+                    //     useVirtualScroll: false,
+                    // },
+                    required: true,
+                    validation: [Validators.required],
+                    isHidden: true,
+                    class: 'inline',
+                    width: '50%',
                 },
                 {
                     type: 'radio',
@@ -143,37 +186,20 @@ export class ReplicationWizardComponent {
         {
             label: helptext.step2_label,
             fieldConfig: [
-                
+
             ]
         }
     ];
+
+    protected entityWizard: any;
 
     constructor(private router: Router, private keychainCredentialService: KeychainCredentialService,
         private loader: AppLoaderService, private dialogService: DialogService,
         private ws: WebSocketService, private replicationService: ReplicationService,
         private taskService: TaskService, private storageService: StorageService,
         private datePipe: DatePipe) {
-            const exist_replicationField = _.find(this.wizardConfig[0].fieldConfig, {name: 'exist_replication'});
-            this.replicationService.getReplicationTasks().subscribe(
-                (res) => {
-                    for (const task of res) {
-                        const lable = task.name + ' (' + ((task.state && task.state.datetime) ? 'last run ' + this.datePipe.transform(new Date(task.state.datetime.$date), 'MM/dd/yyyy') : 'never ran') + ')';
-                        exist_replicationField.options.push({label: lable, value: task.id});
-                    }
-                } 
-            )
 
-            const ssh_credentials_source_field = _.find(this.wizardConfig[0].fieldConfig, { 'name': 'ssh_credentials_source' });
-            const ssh_credentials_target_field = _.find(this.wizardConfig[0].fieldConfig, { 'name': 'ssh_credentials_target' });
-            this.keychainCredentialService.getSSHConnections().subscribe((res) => {
-                for (const i in res) {
-                    ssh_credentials_source_field.options.push({ label: res[i].name, value: res[i].id });
-                    ssh_credentials_target_field.options.push({ label: res[i].name, value: res[i].id });
-                }
-                ssh_credentials_source_field.options.push({ label: 'Create New', value: 'NEW' });
-                ssh_credentials_target_field.options.push({ label: 'Create New', value: 'NEW' });
-            })
-        }
+    }
 
     isCustActionVisible(id, stepperIndex) {
         if (stepperIndex == 0) {
@@ -182,5 +208,45 @@ export class ReplicationWizardComponent {
         return false;
     }
 
+    afterInit(entityWizard) {
+        this.entityWizard = entityWizard;
 
+        this.step0Init();
+    }
+
+    step0Init() {
+        const exist_replicationField = _.find(this.wizardConfig[0].fieldConfig, { name: 'exist_replication' });
+        this.replicationService.getReplicationTasks().subscribe(
+            (res) => {
+                for (const task of res) {
+                    const lable = task.name + ' (' + ((task.state && task.state.datetime) ? 'last run ' + this.datePipe.transform(new Date(task.state.datetime.$date), 'MM/dd/yyyy') : 'never ran') + ')';
+                    exist_replicationField.options.push({ label: lable, value: task.id });
+                }
+            }
+        )
+
+        const ssh_credentials_source_field = _.find(this.wizardConfig[0].fieldConfig, { 'name': 'ssh_credentials_source' });
+        const ssh_credentials_target_field = _.find(this.wizardConfig[0].fieldConfig, { 'name': 'ssh_credentials_target' });
+        this.keychainCredentialService.getSSHConnections().subscribe((res) => {
+            for (const i in res) {
+                ssh_credentials_source_field.options.push({ label: res[i].name, value: res[i].id });
+                ssh_credentials_target_field.options.push({ label: res[i].name, value: res[i].id });
+            }
+            ssh_credentials_source_field.options.push({ label: 'Create New', value: 'NEW' });
+            ssh_credentials_target_field.options.push({ label: 'Create New', value: 'NEW' });
+        })
+    }
+
+    getChildren(node) {
+        const sshCredentials = this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].value;
+        return new Promise((resolve, reject) => {
+            this.replicationService.getRemoteDataset('SSH', sshCredentials, this).then(
+                (res) => {
+                    resolve(res);
+                },
+                (err) => {
+                    node.collapse();
+                })
+        });
+    }
 }
