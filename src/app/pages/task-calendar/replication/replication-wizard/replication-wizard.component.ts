@@ -25,6 +25,7 @@ export class ReplicationWizardComponent {
     public route_success: string[] = ['tasks', 'replication'];
     public isLinear = true;
     public summary_title = "Replication Summary";
+    protected entityWizard: any;
 
     protected custActions: Array<any> = [
         {
@@ -52,8 +53,8 @@ export class ReplicationWizardComponent {
                 {
                     type: 'select',
                     name: 'source_datasets_from',
-                    placeholder: helptext.source_datasets_placeholder,
-                    tooltip: helptext.source_datasets_tooltip,
+                    placeholder: helptext.source_datasets_from_placeholder,
+                    tooltip: helptext.source_datasets_from_tooltip,
                     options: [{
                         label: 'On this System',
                         value: 'local',
@@ -67,8 +68,8 @@ export class ReplicationWizardComponent {
                 {
                     type: 'select',
                     name: 'target_datasets_from',
-                    placeholder: helptext.target_dataset_placeholder,
-                    tooltip: helptext.target_dataset_tooltip,
+                    placeholder: helptext.target_dataset_from_placeholder,
+                    tooltip: helptext.target_dataset_from_tooltip,
                     options: [{
                         label: 'On this System',
                         value: 'local',
@@ -82,8 +83,8 @@ export class ReplicationWizardComponent {
                 {
                     type: 'select',
                     name: 'ssh_credentials_source',
-                    placeholder: helptext.ssh_credentials_placeholder,
-                    tooltip: helptext.ssh_credentials_tooltip,
+                    placeholder: helptext.ssh_credentials_source_placeholder,
+                    tooltip: helptext.ssh_credentials_source_tooltip,
                     options: [],
                     class: 'inline',
                     width: '50%',
@@ -99,8 +100,8 @@ export class ReplicationWizardComponent {
                 {
                     type: 'select',
                     name: 'ssh_credentials_target',
-                    placeholder: helptext.ssh_credentials_placeholder,
-                    tooltip: helptext.ssh_credentials_tooltip,
+                    placeholder: helptext.ssh_credentials_target_placeholder,
+                    tooltip: helptext.ssh_credentials_target_tooltip,
                     options: [],
                     class: 'inline',
                     width: '50%',
@@ -116,15 +117,39 @@ export class ReplicationWizardComponent {
                 {
                     type: 'explorer',
                     name: 'source_datasets',
-                    placeholder: replicationHelptext.source_datasets_placeholder,
-                    tooltip: replicationHelptext.source_datasets_placeholder,
+                    placeholder: helptext.source_datasets_placeholder,
+                    tooltip: helptext.source_datasets_placeholder,
+                    initial: '',
+                    explorerType: 'directory',
+                    multiple: true,
+                    customTemplateStringOptions: {
+                        displayField: 'Path',
+                        isExpandedField: 'expanded',
+                        idField: 'uuid',
+                        getChildren: this.getSourceChildren.bind(this),
+                        nodeHeight: 23,
+                        allowDrag: false,
+                        useVirtualScroll: false,
+                        useCheckbox: true,
+                        useTriState: true,
+                    },
+                    required: true,
+                    validation: [Validators.required],
+                    class: 'inline',
+                    width: '50%',
+                },
+                {
+                    type: 'explorer',
+                    name: 'target_dataset',
+                    placeholder: helptext.target_dataset_placeholder,
+                    tooltip: helptext.target_dataset_placeholder,
                     initial: '',
                     explorerType: 'directory',
                     customTemplateStringOptions: {
                         displayField: 'Path',
                         isExpandedField: 'expanded',
                         idField: 'uuid',
-                        getChildren: this.getChildren.bind(this),
+                        getChildren: this.getTargetChildren.bind(this),
                         nodeHeight: 23,
                         allowDrag: false,
                         useVirtualScroll: false,
@@ -135,26 +160,11 @@ export class ReplicationWizardComponent {
                     width: '50%',
                 },
                 {
-                    type: 'explorer',
-                    name: 'target_dataset',
-                    placeholder: replicationHelptext.target_dataset_placeholder,
-                    tooltip: replicationHelptext.target_dataset_placeholder,
-                    initial: '',
-                    explorerType: 'directory',
-                    // customTemplateStringOptions: {
-                    //     displayField: 'Path',
-                    //     isExpandedField: 'expanded',
-                    //     idField: 'uuid',
-                    //     getChildren: this.getChildren.bind(this),
-                    //     nodeHeight: 23,
-                    //     allowDrag: false,
-                    //     useVirtualScroll: false,
-                    // },
-                    required: true,
-                    validation: [Validators.required],
-                    isHidden: true,
-                    class: 'inline',
-                    width: '50%',
+                    type: 'checkbox',
+                    name: 'recursive',
+                    placeholder: helptext.recursive_placeholder,
+                    tooltip: helptext.recursive_tooltip,
+                    value: true,
                 },
                 {
                     type: 'radio',
@@ -191,7 +201,8 @@ export class ReplicationWizardComponent {
         }
     ];
 
-    protected entityWizard: any;
+
+    protected directions = ['PULL', 'PUSH'];
 
     constructor(private router: Router, private keychainCredentialService: KeychainCredentialService,
         private loader: AppLoaderService, private dialogService: DialogService,
@@ -235,9 +246,34 @@ export class ReplicationWizardComponent {
             ssh_credentials_source_field.options.push({ label: 'Create New', value: 'NEW' });
             ssh_credentials_target_field.options.push({ label: 'Create New', value: 'NEW' });
         })
+
+        for (const i of ['source', 'target']) {
+            const credentialName = 'ssh_credentials_' + i;
+            const datasetName = i === 'source' ? 'source_datasets' : 'target_dataset';
+
+            this.entityWizard.formArray.controls[0].controls[credentialName].valueChanges.subscribe((value) => {
+                console.log(value);
+                const explorerComponent = _.find(this.wizardConfig[0].fieldConfig, {name: datasetName}).customTemplateStringOptions.explorerComponent;
+                if (explorerComponent) {
+                    explorerComponent.nodes = [{
+                        mountpoint: explorerComponent.config.initial,
+                        name: explorerComponent.config.initial,
+                        hasChildren: true
+                    }];
+                    this.entityWizard.formArray.controls[0].controls[datasetName].setValue('');
+                }
+            });
+        }
+
+        this.entityWizard.formArray.controls[0].controls['recursive'].valueChanges.subscribe((value) => {
+            const explorerComponent = _.find(this.wizardConfig[0].fieldConfig, {name: 'source_datasets'}).customTemplateStringOptions;
+            if (explorerComponent) {
+                explorerComponent.useTriState = value;
+            }
+        });
     }
 
-    getChildren(node) {
+    getSourceChildren(node) {
         const sshCredentials = this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].value;
         return new Promise((resolve, reject) => {
             this.replicationService.getRemoteDataset('SSH', sshCredentials, this).then(
@@ -249,4 +285,18 @@ export class ReplicationWizardComponent {
                 })
         });
     }
+
+    getTargetChildren(node) {
+        const sshCredentials = this.entityWizard.formArray.controls[0].controls['ssh_credentials_target'].value;
+        return new Promise((resolve, reject) => {
+            this.replicationService.getRemoteDataset('SSH', sshCredentials, this).then(
+                (res) => {
+                    resolve(res);
+                },
+                (err) => {
+                    node.collapse();
+                })
+        });
+    }
+
 }
