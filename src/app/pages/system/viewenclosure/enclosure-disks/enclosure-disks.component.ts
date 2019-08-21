@@ -7,7 +7,9 @@ import 'pixi-projection';
 import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
 import { DriveTray } from 'app/core/classes/hardware/drivetray';
 import { M50 } from 'app/core/classes/hardware/m50';
+import { ES12 } from 'app/core/classes/hardware/es12';
 import { E16 } from 'app/core/classes/hardware/e16';
+import { E24 } from 'app/core/classes/hardware/e24';
 import { ES24 } from 'app/core/classes/hardware/es24';
 import { ES60 } from 'app/core/classes/hardware/es60';
 import { DiskComponent } from './components/disk.component';
@@ -246,12 +248,18 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case "M Series":
         this.enclosure = new M50();
         break;
+      case "X Series":
+      case 'ES12':
+        this.enclosure = new ES12();
+        break;
       case 'E16':
         this.enclosure = new E16();
       break;
       case "ES24":
-      case "E24":
         this.enclosure = new ES24();
+        break;
+      case "E24":
+        this.enclosure = new E24();
         break;
       case "ES60":
       case "E60":
@@ -308,11 +316,17 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case "M Series":
         enclosure = new M50();
         break;
+      case "X Series":
+      case 'ES12':
+        enclosure = new ES12();
+        break;
       case 'E16':
         enclosure = new E16();
         break;
-      case "ES24":
       case "E24":
+        enclosure = new E24();
+        break;
+      case "ES24":
         enclosure = new ES24();
         break;
       case "ES60":
