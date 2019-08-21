@@ -167,7 +167,13 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
     };
     params.push(payload);
 
-    this.encryptionService.setPassphrase(this.pk, value.passphrase, value.adminpw,
-      value.name, this.route_return, false, true, success_msg);
+    this.ws.call('auth.check_user', ['root', value.adminpw]).subscribe((res) => {
+      if (res) {
+        this.encryptionService.setPassphrase(this.pk, value.passphrase, value.adminpw,
+          value.name, this.route_return, false, true, success_msg);
+      } else {
+        this.dialogService.Info('Error', 'The administrator password is incorrect.', '340px');
+      }
+    });
   }
 }

@@ -107,33 +107,39 @@ export class VolumeRekeyFormComponent implements Formconfiguration {
   }
  
   customSubmit(value) {
-    this.ws.call('pool.rekey', [parseInt(this.pk), {'admin_password': value.passphrase}])
-      .subscribe(() => {
-        switch (true) 
-          {
-            case value.encryptionkey_passphrase && !value.set_recoverykey:
-              this.encryptionService.setPassphrase(this.pk, value.encryptionkey_passphrase, 
-                value.passphrase, value.name, this.route_success,false);
-              break;
-
-            case !value.encryptionkey_passphrase && value.set_recoverykey:
-              this.encryptionService.openEncryptDialog(this.pk, this.route_success, value.name, true);
-              break;
-
-            case value.encryptionkey_passphrase && value.set_recoverykey:
+    this.ws.call('auth.check_user', ['root', value.passphrase]).subscribe((res) => {
+      if (!res) {
+        this.dialogService.Info('Error', 'The administrator password is incorrect.', '340px');
+      } else {
+        this.ws.call('pool.rekey', [parseInt(this.pk), {'admin_password': value.passphrase}])
+        .subscribe(() => {
+          switch (true) 
+            {
+              case value.encryptionkey_passphrase && !value.set_recoverykey:
                 this.encryptionService.setPassphrase(this.pk, value.encryptionkey_passphrase, 
-                  value.passphrase, value.name, this.route_success, true, true);
-              break;
-
-            default:
-              this.snackBar.open(T('Successfully reset encryption for pool: ') + value.name, T("Close"), {
-                duration: 5000,
-              });
-              this.encryptionService.openEncryptDialog(this.pk, this.route_success, this.poolName);
-          }
-      },
-      (err) => {
-        this.dialogService.errorReport(T("Error resetting encryption for pool: " + value.name), err.reason, err.trace.formatted);
-      });
+                  value.passphrase, value.name, this.route_success,false);
+                break;
+  
+              case !value.encryptionkey_passphrase && value.set_recoverykey:
+                this.encryptionService.openEncryptDialog(this.pk, this.route_success, value.name, true);
+                break;
+  
+              case value.encryptionkey_passphrase && value.set_recoverykey:
+                  this.encryptionService.setPassphrase(this.pk, value.encryptionkey_passphrase, 
+                    value.passphrase, value.name, this.route_success, true, true);
+                break;
+  
+              default:
+                this.snackBar.open(T('Successfully reset encryption for pool: ') + value.name, T("Close"), {
+                  duration: 5000,
+                });
+                this.encryptionService.openEncryptDialog(this.pk, this.route_success, this.poolName);
+            }
+        },
+        (err) => {
+          this.dialogService.errorReport(T("Error resetting encryption for pool: " + value.name), err.reason, err.trace.formatted);
+        });       
+      }
+    });
   }
 }
