@@ -13,12 +13,13 @@ import snapshotHelptext from '../../../../helptext/task-calendar/snapshot/snapsh
 
 import { DialogService, KeychainCredentialService, WebSocketService, ReplicationService, TaskService, StorageService } from '../../../../services';
 import { EntityUtils } from '../../../common/entity/utils';
+import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 
 @Component({
     selector: 'app-replication-wizard',
     template: `<entity-wizard [conf]="this"></entity-wizard>`,
-    providers: [KeychainCredentialService, ReplicationService, TaskService, DatePipe]
+    providers: [KeychainCredentialService, ReplicationService, TaskService, DatePipe, EntityFormService]
 })
 export class ReplicationWizardComponent {
 
@@ -67,7 +68,7 @@ export class ReplicationWizardComponent {
                 },
                 {
                     type: 'select',
-                    name: 'target_datasets_from',
+                    name: 'target_dataset_from',
                     placeholder: helptext.target_dataset_from_placeholder,
                     tooltip: helptext.target_dataset_from_tooltip,
                     options: [{
@@ -108,7 +109,7 @@ export class ReplicationWizardComponent {
                     relation: [{
                         action: 'SHOW',
                         when: [{
-                            name: 'target_datasets_from',
+                            name: 'target_dataset_from',
                             value: 'remote',
                         }]
                     }],
@@ -137,6 +138,17 @@ export class ReplicationWizardComponent {
                     validation: [Validators.required],
                     class: 'inline',
                     width: '50%',
+                    relation: [{
+                        action: 'SHOW',
+                        connective: 'OR',
+                        when: [{
+                            name: 'source_datasets_from',
+                            value: 'remote',
+                        }, {
+                            name: 'source_datasets_from',
+                            value: 'local',
+                        }]
+                    }],
                 },
                 {
                     type: 'explorer',
@@ -158,6 +170,17 @@ export class ReplicationWizardComponent {
                     validation: [Validators.required],
                     class: 'inline',
                     width: '50%',
+                    relation: [{
+                        action: 'SHOW',
+                        connective: 'OR',
+                        when: [{
+                            name: 'target_dataset_from',
+                            value: 'remote',
+                        }, {
+                            name: 'target_dataset_from',
+                            value: 'local',
+                        }]
+                    }],
                 },
                 {
                     type: 'checkbox',
@@ -165,6 +188,17 @@ export class ReplicationWizardComponent {
                     placeholder: helptext.recursive_placeholder,
                     tooltip: helptext.recursive_tooltip,
                     value: true,
+                    relation: [{
+                        action: 'SHOW',
+                        connective: 'OR',
+                        when: [{
+                            name: 'source_datasets_from',
+                            value: 'remote',
+                        }, {
+                            name: 'source_datasets_from',
+                            value: 'local',
+                        }]
+                    }],
                 },
                 {
                     type: 'radio',
@@ -208,7 +242,7 @@ export class ReplicationWizardComponent {
         private loader: AppLoaderService, private dialogService: DialogService,
         private ws: WebSocketService, private replicationService: ReplicationService,
         private taskService: TaskService, private storageService: StorageService,
-        private datePipe: DatePipe) {
+        private datePipe: DatePipe, private entityFormService: EntityFormService) {
 
     }
 
@@ -274,29 +308,43 @@ export class ReplicationWizardComponent {
     }
 
     getSourceChildren(node) {
+        const fromLocal = this.entityWizard.formArray.controls[0].controls['source_datasets_from'].value === 'local' ? true : false;
         const sshCredentials = this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].value;
-        return new Promise((resolve, reject) => {
-            this.replicationService.getRemoteDataset('SSH', sshCredentials, this).then(
-                (res) => {
-                    resolve(res);
-                },
-                (err) => {
-                    node.collapse();
-                })
-        });
+
+        if (fromLocal) {
+            return new Promise((resolve, reject) => {
+                resolve(this.entityFormService.getPoolDatasets());
+            });
+        } else {
+            return new Promise((resolve, reject) => {
+                this.replicationService.getRemoteDataset('SSH', sshCredentials, this).then(
+                    (res) => {
+                        resolve(res);
+                    },
+                    (err) => {
+                        node.collapse();
+                    })
+            });
+        }
     }
 
     getTargetChildren(node) {
+        const fromLocal = this.entityWizard.formArray.controls[0].controls['target_dataset_from'].value === 'local' ? true : false;
         const sshCredentials = this.entityWizard.formArray.controls[0].controls['ssh_credentials_target'].value;
-        return new Promise((resolve, reject) => {
-            this.replicationService.getRemoteDataset('SSH', sshCredentials, this).then(
-                (res) => {
-                    resolve(res);
-                },
-                (err) => {
-                    node.collapse();
-                })
-        });
+        if (fromLocal) {
+            return new Promise((resolve, reject) => {
+                resolve(this.entityFormService.getPoolDatasets());
+            });
+        } else {
+            return new Promise((resolve, reject) => {
+                this.replicationService.getRemoteDataset('SSH', sshCredentials, this).then(
+                    (res) => {
+                        resolve(res);
+                    },
+                    (err) => {
+                        node.collapse();
+                    })
+            });
+        }
     }
-
 }
