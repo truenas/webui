@@ -67,6 +67,7 @@ export class DatasetFormComponent implements Formconfiguration{
   protected recommended_size_number: any;
   protected recordsize_warning: any;
   public namesInUse = [];
+  public nameCaseSensitivity = true;
 
   public parent: string;
   public data: any;
@@ -99,7 +100,7 @@ export class DatasetFormComponent implements Formconfiguration{
       tooltip: helptext.dataset_form_name_tooltip,
       readonly: true,
       required: true,
-      validation: [Validators.required, forbiddenValues(this.namesInUse)],
+      validation: [Validators.required, forbiddenValues(this.namesInUse, this.nameCaseSensitivity)],
     },
     {
       type: 'input',
@@ -569,9 +570,13 @@ export class DatasetFormComponent implements Formconfiguration{
     } else {
       entityForm.setDisabled('share_type', false, false);
       entityForm.formGroup.controls['name'].valueChanges.subscribe((value) => {
+        this.nameCaseSensitivity = this.nameCaseSensitivity;
         const field = _.find(this.fieldConfig, {name: "name"});
         field['hasErrors'] = false;
         field['errors'] = '';
+        if (!this.nameCaseSensitivity) {
+          value = value.toLowerCase();
+        }
         if (this.namesInUse.includes(value)) {
           field['hasErrors'] = true;
           field['errors'] = T(`The name <em>${value}</em> is already in use.`)
@@ -624,11 +629,21 @@ export class DatasetFormComponent implements Formconfiguration{
       });
       this.ws.call('pool.dataset.query', [[["id", "=", this.pk]]]).subscribe((pk_dataset)=>{
         let children = (pk_dataset[0].children);
+        if (pk_dataset[0].casesensitivity.value === 'SENSITIVE') {
+          this.nameCaseSensitivity = true;
+        } else {
+          this.nameCaseSensitivity = false;
+          
+        }
         if (children.length > 0) {
           for (let i in children) {
-            this.namesInUse.push(/[^/]*$/.exec(children[i].name)[0]);
+            if (this.nameCaseSensitivity) {
+              this.namesInUse.push(/[^/]*$/.exec(children[i].name)[0]);
+            } else {
+              this.namesInUse.push(/[^/]*$/.exec(children[i].name)[0].toLowerCase());
+            }
           };
-        }
+        };
  
       if(this.isNew){
         const sync = _.find(this.fieldConfig, {name:'sync'});
