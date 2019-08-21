@@ -49,7 +49,11 @@ export class ReplicationWizardComponent {
                     name: 'exist_replication',
                     placeholder: helptext.exist_replication_placeholder,
                     tooltip: helptext.exist_replication_tooltip,
-                    options: [],
+                    options: [{
+                        label: '---------',
+                        value: '',
+                    }],
+                    value: '',
                 },
                 {
                     type: 'select',
@@ -216,6 +220,17 @@ export class ReplicationWizardComponent {
                         }
                     ],
                     value: true,
+                    relation: [{
+                        action: 'SHOW',
+                        connective: 'OR',
+                        when: [{
+                            name: 'source_datasets_from',
+                            value: 'remote',
+                        }, {
+                            name: 'target_dataset_from',
+                            value: 'remote',
+                        }]
+                    }],
                 },
                 {
                     type: 'input',
@@ -332,6 +347,7 @@ export class ReplicationWizardComponent {
 
 
     protected directions = ['PULL', 'PUSH'];
+    protected selectedReplicationTask: any;
 
     constructor(private router: Router, private keychainCredentialService: KeychainCredentialService,
         private loader: AppLoaderService, private dialogService: DialogService,
@@ -360,7 +376,7 @@ export class ReplicationWizardComponent {
             (res) => {
                 for (const task of res) {
                     const lable = task.name + ' (' + ((task.state && task.state.datetime) ? 'last run ' + this.datePipe.transform(new Date(task.state.datetime.$date), 'MM/dd/yyyy') : 'never ran') + ')';
-                    exist_replicationField.options.push({ label: lable, value: task.id });
+                    exist_replicationField.options.push({ label: lable, value: task });
                 }
             }
         )
@@ -376,6 +392,18 @@ export class ReplicationWizardComponent {
             ssh_credentials_target_field.options.push({ label: 'Create New', value: 'NEW' });
         })
 
+        this.entityWizard.formArray.controls[0].controls['exist_replication'].valueChanges.subscribe((value) => {
+            if (value !== undefined && value !== '') {
+                this.loadReplicationTask(value);
+            } else {
+                if (this.selectedReplicationTask !== undefined && this.selectedReplicationTask !== '') {
+                    // reset form
+                    this.clearReplicationTask();
+
+                }
+            }
+            this.selectedReplicationTask = value;
+        });
 
         for (const i of ['source', 'target']) {
             const credentialName = 'ssh_credentials_' + i;
@@ -384,9 +412,16 @@ export class ReplicationWizardComponent {
 
             this.entityWizard.formArray.controls[0].controls[datasetFrom].valueChanges.subscribe((value) => {
                 if (value === 'remote') {
+                    if (datasetFrom === 'source_datasets_from') {
+                        this.entityWizard.formArray.controls[0].controls['target_dataset_from'].setValue('local');
+                        this.setDisable('target_dataset_from', true, false, 0);
+                    }
                     const disabled = this.entityWizard.formArray.controls[0].controls[credentialName].value ? false : true;
                     this.setDisable(datasetName, disabled, false, 0);
                 } else {
+                    if (datasetFrom === 'source_datasets_from' && this.entityWizard.formArray.controls[0].controls['target_dataset_from'].disabled) {
+                        this.setDisable('target_dataset_from', false, false, 0);
+                    }
                     this.setDisable(datasetName, false, false, 0);
                 }
             });
@@ -460,5 +495,15 @@ export class ReplicationWizardComponent {
         control['isHidden'] = isHidden;
         control.disabled = disabled;
         disabled ? this.entityWizard.formArray.controls[stepIndex].controls[field].disable() : this.entityWizard.formArray.controls[stepIndex].controls[field].enable();
+    }
+
+    loadReplicationTask(task) {
+        console.log(task);
+        
+    }
+
+    clearReplicationTask() {
+        console.log('clear replication task');
+        
     }
 }
