@@ -92,7 +92,7 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
           } else {
             this.dialogService.Info('Error', 'The administrator password is incorrect.', '340px');
           }
-        })
+        });
       }
     },
     {

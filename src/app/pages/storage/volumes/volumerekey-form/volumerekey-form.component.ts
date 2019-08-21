@@ -117,7 +117,7 @@ export class VolumeRekeyFormComponent implements Formconfiguration {
               break;
 
             case !value.encryptionkey_passphrase && value.set_recoverykey:
-              this.encryptionService.makeRecoveryKey(this.pk, value.name, this.route_success, true);
+              this.encryptionService.openEncryptDialog(this.pk, this.route_success, value.name, true);
               break;
 
             case value.encryptionkey_passphrase && value.set_recoverykey:
