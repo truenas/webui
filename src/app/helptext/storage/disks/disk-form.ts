@@ -38,17 +38,18 @@ disk_form_smartoptions_tooltip : T('Additional <a\
  target="_blank">smartctl(8)</a> options.'),
 
 disk_form_critical_placeholder: T('Critical'),
-disk_form_critical_tooltip: T('Enter a threshold temperature in Celsius. If the\
- drive temperature is higher than this value, a LOG_CRIT level log entry is created\
- and an email is sent. Entering 0 disables this check.'),
+disk_form_critical_tooltip: T('Threshold temperature in Celsius. If the\
+ drive temperature is higher than this value, a LOG_CRIT level log entry\
+ is created and an email is sent. <i>0</i> disables this check.'),
 
 disk_form_difference_placeholder: T('Difference'),
-disk_form_difference_tooltip: T('Report if the temperature of a drive has changed by\
- this many degrees Celsius since the last report. Entering 0 disables the report.'),
+disk_form_difference_tooltip: T('Report if the temperature of a drive\
+ has changed by this many degrees Celsius since the last report.\
+ <i>0</i> disables the report.'),
 
 disk_form_informational_placeholder: T('Informational'),
-disk_form_informational_tooltip: T('Report if drive temperature is at or above\
- this temperature in Celsius. Entering 0 disables the report.'),
+disk_form_informational_tooltip: T('Report if drive temperature is at or\
+ above this temperature in Celsius. <i>0</i> disables the report.'),
 
 disk_form_passwd_placeholder: T('SED Password'),
 disk_form_passwd_tooltip: T('Password for SED'),

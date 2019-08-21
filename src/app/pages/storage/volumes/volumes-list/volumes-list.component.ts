@@ -338,66 +338,77 @@ export class VolumesListTableConfig implements InputTableConf {
     const actions = [];
     //workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
     if (rowData.type === 'zpool') {
-
       actions.push({
         id: rowData.name,
         name: 'Export/Disconnect',
         label: T("Export/Disconnect"),
         onClick: (row1) => {
-          this.loader.open();
-          this.ws.call('pool.attachments', [row1.id]).subscribe((res) => {
-            if (res.length > 0) {
-              p1 = `These services depend on <b>${row1.name}</b> and will be disrupted when the volume is detached:`;
-              res.forEach((item) => {
-                p1 += `<br><br>${item.type}:`;
-                item.attachments.forEach((i) => {
-                  let tempArr = i.split(',');
-                  tempArr.forEach((i) => {
-                    p1 += `<br> - ${i}`
-                  }) 
-                })
-
-              })
-            }
-            this.ws.call('pool.processes', [row1.id]).subscribe((res) => {
-              let running_processes = [];
-              let running_unknown_processes = [];
-              if (res.length > 0) {
-                res.forEach((item) => {
-                  if (!item.service) {
-                    if (item.name && item.name !== '') {
-                      running_processes.push(item);
-                    } else {
-                      running_unknown_processes.push(item);
-                    }
-                  }
-                });
-                if (running_processes.length > 0) {
-                  p1 += `<br><br>These running services are using <b>${row1.name}</b>:`;
-                  running_processes.forEach((process) =>  {
-                    if (process.name) {
-                      p1 += `<br> - ${process.name}`
-                    }
-                    
-                  });
-                };
-                if (running_unknown_processes.length > 0) {
-                  p1 += '<br><br>These unknown processes are using this pool:';
-                  running_unknown_processes.forEach((process) => {
-                    if (process.pid) {
-                      p1 += `<br> - ${process.pid} - ${process.cmdline.substring(0,40)}`;
-                    }
-                  });
-                  p1 += `<br><br>WARNING: These unknown processes will be terminated while exporting the pool.`;
-                }
-              };
-              this.loader.close();
-
           let encryptedStatus = row1.vol_encryptkey,
-            localParentVol = this.parentVolumesListComponent,
-            localDialogService = this.dialogService,
-            localDialog = this.mdDialog
+          localParentVol = this.parentVolumesListComponent,
+          localDialogService = this.dialogService,
+          localDialog = this.mdDialog
 
+          if (rowData.is_decrypted) {
+            this.loader.open();
+            this.ws.call('pool.attachments', [row1.id]).subscribe((res) => {
+              if (res.length > 0) {
+                p1 = `These services depend on <b>${row1.name}</b> and will be disrupted when the volume is detached:`;
+                res.forEach((item) => {
+                  p1 += `<br><br>${item.type}:`;
+                  item.attachments.forEach((i) => {
+                    let tempArr = i.split(',');
+                    tempArr.forEach((i) => {
+                      p1 += `<br> - ${i}`
+                    }) 
+                  })
+  
+                })
+              }
+              this.ws.call('pool.processes', [row1.id]).subscribe((res) => {
+                let running_processes = [];
+                let running_unknown_processes = [];
+                if (res.length > 0) {
+                  res.forEach((item) => {
+                    if (!item.service) {
+                      if (item.name && item.name !== '') {
+                        running_processes.push(item);
+                      } else {
+                        running_unknown_processes.push(item);
+                      }
+                    }
+                  });
+                  if (running_processes.length > 0) {
+                    p1 += `<br><br>These running services are using <b>${row1.name}</b>:`;
+                    running_processes.forEach((process) =>  {
+                      if (process.name) {
+                        p1 += `<br> - ${process.name}`
+                      }
+                      
+                    });
+                  };
+                  if (running_unknown_processes.length > 0) {
+                    p1 += '<br><br>These unknown processes are using this pool:';
+                    running_unknown_processes.forEach((process) => {
+                      if (process.pid) {
+                        p1 += `<br> - ${process.pid} - ${process.cmdline.substring(0,40)}`;
+                      }
+                    });
+                    p1 += `<br><br>WARNING: These unknown processes will be terminated while exporting the pool.`;
+                  }
+                };
+                this.loader.close();
+                doDetach();
+            })
+          },
+          (err) => {
+            this.loader.close();
+            this.dialogService.errorReport(T("Error exporting/disconnecting pool."), err.reason, err.trace.formatted);
+          })
+        } else {
+          doDetach();
+        }
+
+        function doDetach() {
           const conf: DialogFormConfiguration = {
             title: "Export/disconnect pool: '" + row1.name + "'",
             fieldConfig: [{
@@ -445,7 +456,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 id: 'download_key',
                 name: 'Download Key',
                 function: () => {
-                  const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
+                  const dialogRef = localDialog.open(DownloadKeyModalDialog, { disableClose: true });
                   dialogRef.componentInstance.volumeId = row1.id;
                 }
               }],
@@ -480,7 +491,7 @@ export class VolumesListTableConfig implements InputTableConf {
                         conditionalErrMessage, true, 'Restart Services and Continue')
                           .subscribe((res) => {
                             if (res) {
-                              this.restartServices = true;
+                              localRestartServices = true;
                               this.customSubmit(entityDialog);
                             }
                         })
@@ -500,11 +511,10 @@ export class VolumesListTableConfig implements InputTableConf {
               });
             }
           }
-          this.dialogService.dialogFormWide(conf);
-        })
-      })
+          localDialogService.dialogFormWide(conf);
         }
-      });
+      }
+    });
 
       if (rowData.is_decrypted) {
         actions.push({
@@ -651,8 +661,7 @@ export class VolumesListTableConfig implements InputTableConf {
             this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + row1.path]).subscribe(acl_is_trivial => {
               if (acl_is_trivial) {
                 this._router.navigate(new Array('/').concat([
-                  "storage", "pools", "id", row1.path.split('/')[0], "dataset",
-                  "permissions", row1.path
+                  "storage", "pools", "permissions", row1.path
                 ]));
               } else {
                 this.dialogService.confirm(T("Dataset has complex ACLs"),

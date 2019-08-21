@@ -248,7 +248,10 @@
   padding-top:12px;
 }
 
-/*.product-image.truenas ,*/
+.product-image.truenas{
+  padding-bottom:0;
+}
+
 .product-image.ix-logo,
 .freenas .generic{
   padding-bottom:10%;
