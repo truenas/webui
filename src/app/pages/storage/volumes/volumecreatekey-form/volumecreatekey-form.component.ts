@@ -32,6 +32,7 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
   isNew = false;
   isEntity = true;
   poolName: string;
+  admin_pw = '';
   entityData = {
     name: "",
     passphrase: "",
@@ -76,8 +77,15 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
     {
       id : 'download_encrypt_key',
       name : 'Download Encryption Key',
+      disabled: true,
       function : () => {
-        this.encryptionService.openEncryptDialog(this.pk, this.route_return, this.poolName);
+        this.ws.call('auth.check_user', ['root', this.admin_pw]).subscribe((res) => {
+          if (res) {
+            this.encryptionService.openEncryptDialog(this.pk, this.route_return, this.poolName);
+          } else {
+            this.dialogService.Info('Error', 'The administrator password is incorrect.', '340px')
+          }
+        })
       }
     },
     {
@@ -113,6 +121,14 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
     this.route.params.subscribe(params => {
       this.pk = params['pk'];
     });
+  }
+
+  afterInit(entityForm: any) {
+    entityForm.formGroup.controls['adminpw'].valueChanges.subscribe((res) => {
+      this.admin_pw = res;
+      let btn = <HTMLInputElement> document.getElementById('cust_button_Download Encryption Key')
+      this.admin_pw !== '' ? btn.disabled = false : btn.disabled = true;
+    })
   }
 
   customSubmit(value) {
