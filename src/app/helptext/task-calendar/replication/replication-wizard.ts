@@ -6,14 +6,26 @@ export default {
     exist_replication_placeholder: T('Load Previous Replication Task'),
     exist_replication_tooltip: T(''),
 
-    source_datasets_placeholder: T('Source Datasets'),
+    source_datasets_from_placeholder: T('Source Datasets'),
+    source_datasets_from_tooltip: T(''),
+
+    target_dataset_from_placeholder: T('Destination Datasets'),
+    target_dataset_from_tooltip: T(''),
+
+    ssh_credentials_source_placeholder: T('SSH Connections'),
+    ssh_credentials_source_tooltip: T(''),
+
+    ssh_credentials_target_placeholder: T('SSH Connections'),
+    ssh_credentials_target_tooltip: T(''),
+
+    source_datasets_placeholder: T(''),
     source_datasets_tooltip: T(''),
 
-    target_dataset_placeholder: T('Destination Datasets'),
+    target_dataset_placeholder: T(''),
     target_dataset_tooltip: T(''),
 
-    ssh_credentials_placeholder: T('SSH Connections'),
-    ssh_credentials_tooltip: T(''),
+    recursive_placeholder: T('Recursive'),
+    recursive_tooltip: T(''),
 
     encryption_placeholder: T('SSH Transfer Security'),
     encryption_tooltip: T('Data transfer security. The connection is authenticated with SSH,\
