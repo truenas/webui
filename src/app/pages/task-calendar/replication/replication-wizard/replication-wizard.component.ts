@@ -281,12 +281,22 @@ export class ReplicationWizardComponent {
             ssh_credentials_target_field.options.push({ label: 'Create New', value: 'NEW' });
         })
 
+
         for (const i of ['source', 'target']) {
             const credentialName = 'ssh_credentials_' + i;
             const datasetName = i === 'source' ? 'source_datasets' : 'target_dataset';
+            const datasetFrom = datasetName + '_from';
+
+            this.entityWizard.formArray.controls[0].controls[datasetFrom].valueChanges.subscribe((value) => {
+                if (value === 'remote') {
+                    const disabled = this.entityWizard.formArray.controls[0].controls[credentialName].value ? false : true;
+                    this.setDisable(datasetName, disabled, false, 0);
+                } else {
+                    this.setDisable(datasetName, false, false, 0);
+                }
+            });
 
             this.entityWizard.formArray.controls[0].controls[credentialName].valueChanges.subscribe((value) => {
-                console.log(value);
                 const explorerComponent = _.find(this.wizardConfig[0].fieldConfig, {name: datasetName}).customTemplateStringOptions.explorerComponent;
                 if (explorerComponent) {
                     explorerComponent.nodes = [{
@@ -296,6 +306,8 @@ export class ReplicationWizardComponent {
                     }];
                     this.entityWizard.formArray.controls[0].controls[datasetName].setValue('');
                 }
+
+                this.setDisable(datasetName, false, false, 0);
             });
         }
 
@@ -346,5 +358,12 @@ export class ReplicationWizardComponent {
                     })
             });
         }
+    }
+
+    setDisable(field: any, disabled: boolean, isHidden: boolean, stepIndex: number) {
+        const control: any = _.find(this.wizardConfig[stepIndex].fieldConfig, { 'name': field });
+        control['isHidden'] = isHidden;
+        control.disabled = disabled;
+        disabled ? this.entityWizard.formArray.controls[stepIndex].controls[field].disable() : this.entityWizard.formArray.controls[stepIndex].controls[field].enable();
     }
 }
