@@ -39,6 +39,7 @@ export class DatasetAclComponent implements OnDestroy {
   protected groupOptions: any[];
   protected userSearchOptions: [];
   protected groupSearchOptions: [];
+  protected defaults: any;
   protected recursive: any;
   protected recursive_subscription: any;
   protected stripacl: any;
@@ -95,6 +96,13 @@ export class DatasetAclComponent implements OnDestroy {
           searchOptions: [],
           parent: this,
           updater: this.updateGroupSearchOptions,
+        },
+        {
+          type: 'select',
+          name: 'default_acl_choices',
+          placeholder: 'Default ACL Options',
+          tooltip: 'Set default options on this ACL.',
+          options: []
         }
       ]
     },
@@ -292,6 +300,13 @@ export class DatasetAclComponent implements OnDestroy {
       const gid_fc = _.find(this.fieldConfig, {"name": "gid"});
       gid_fc.options = this.groupOptions;
     });
+    this.ws.call('filesystem.default_acl_choices').subscribe((res) => {
+      this.defaults = _.find(this.fieldConfig, {"name": "default_acl_choices"});
+      res.forEach((item) => {
+        this.defaults.options.push(
+            {label : item, value : item});
+      });
+    });
   }
 
   afterInit(entityEdit: any) {
@@ -401,6 +416,11 @@ export class DatasetAclComponent implements OnDestroy {
         }
       }
       this.save_button_enabled = canSave;
+    });
+    this.entityForm.formGroup.controls['default_acl_choices'].valueChanges.subscribe((value) => {
+      this.ws.call('filesystem.get_default_acl', [value]).subscribe((res) => {
+        console.log(res);
+      });
     });
   }
 
