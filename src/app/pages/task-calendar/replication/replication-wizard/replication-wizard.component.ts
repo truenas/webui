@@ -230,7 +230,102 @@ export class ReplicationWizardComponent {
         {
             label: helptext.step2_label,
             fieldConfig: [
-
+                {
+                    type: 'radio',
+                    name: 'schedule_method',
+                    placeholder: helptext.schedule_method_placeholder,
+                    tooltip: helptext.schedule_method_tooltip,
+                    options: [{
+                        label: 'Run On a Schedule',
+                        value: 'corn',
+                    }, {
+                        label: 'Run Once',
+                        value: 'once',
+                    }],
+                    class: 'inline',
+                    width: '50%',
+                },
+                {
+                    type: 'scheduler',
+                    name: 'schedule',
+                    placeholder: helptext.schedule_placeholder,
+                    tooltip: helptext.schedule_tooltip,
+                    class: 'inline',
+                    width: '50%',
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'schedule_method',
+                            value: 'corn',
+                        }]
+                    }]
+                },
+                {
+                    type: 'radio',
+                    name: 'snapshot_lifetime',
+                    placeholder: helptext.snapshot_lifetime_placeholder,
+                    tooltip: helptext.snapshot_lifetime_tooltip,
+                    options: [{
+                        label: 'Same as Source',
+                        value: 'same_as_source',
+                    }, {
+                        label: 'Never Delete',
+                        value: 'never_delete',
+                    }, {
+                        label: 'Custom',
+                        value: 'custom',
+                    }],
+                    class: 'inline',
+                    width: '50%',
+                },
+                {
+                    placeholder: helptext.lifetime_value_placeholder,
+                    type: 'input',
+                    name: 'lifetime_value',
+                    inputType: 'number',
+                    value: 2,
+                    validation: [Validators.min(0)],
+                    class: 'inline',
+                    width: '25%',
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'snapshot_lifetime',
+                            value: 'custom',
+                        }]
+                    }]
+                },
+                {
+                    type: 'select',
+                    name: 'lifetime_unit',
+                    tooltip: helptext.lifetime_unit_tooltip,
+                    options: [{
+                        label: 'Hours',
+                        value: 'HOUR',
+                    }, {
+                        label: 'Days',
+                        value: 'DAY',
+                    }, {
+                        label: 'Weeks',
+                        value: 'WEEK',
+                    }, {
+                        label: 'Months',
+                        value: 'MONTH',
+                    }, {
+                        label: 'Years',
+                        value: 'YEAR',
+                    }],
+                    value: 'WEEK',
+                    class: 'inline',
+                    width: '25%',
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'snapshot_lifetime',
+                            value: 'custom',
+                        }]
+                    }]
+                },
             ]
         }
     ];
