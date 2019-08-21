@@ -184,7 +184,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
       if (rowData.is_decrypted) {
         actions.push({
-          label: T("Encryption Key"),
+          label: T("Encryption Key/Passphrase"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat(
               ["storage", "pools", "changekey", row1.id]));
