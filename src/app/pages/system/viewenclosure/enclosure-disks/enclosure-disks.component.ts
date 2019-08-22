@@ -263,6 +263,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         this.enclosure = new E24();
         break;
       case "ES60":
+        this.enclosure = new ES60();
+        break;
       case "E60":
         this.enclosure = new E60();
         break;
@@ -331,6 +333,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         enclosure = new ES24();
         break;
       case "ES60":
+        enclosure = new ES60();
+        break;
       case "E60":
         enclosure = new E60();
         break;
