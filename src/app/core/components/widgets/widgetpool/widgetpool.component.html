@@ -46,7 +46,7 @@
         <div *ngIf="poolState && path" id="" class="carousel" #carousel >
 
           <ng-template #locked>
-            <div fxFlex="50" class="locked offline">
+            <div fxFlex="40" class="locked offline">
               <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-lock-alert"></mat-icon>
               <h4>Data not available <span *ngIf="!poolState.is_decrypted"><br>while pool is encrypted</span>.</h4>
             </div>
