@@ -187,8 +187,14 @@ msgid ""
 msgstr ""
 
 msgid ""
+"<b>COPY</b>: Files from the source are <i><u>copied</u></i> to the "
+"destination. If files with the same names are present on the destination, "
+"they are <i><u>overwritten</u></i>."
+msgstr ""
+
+msgid ""
 "<b>Ctrl+C</b> kills a foreground process.<br>                            "
-"Many utilities are built-in:<br> b>Iperf</b>,                            "
+"Many utilities are built-in:<br> <b>Iperf</b>,                            "
 "<b>Netperf</b>, <b>IOzone</b>, <b>arcsat</b>,                            "
 "<b>tw_cli</b>, <br><b>MegaCli</b>,                            "
 "<b>freenas-debug</b>, <b>tmux</b>,                            "
@@ -211,6 +217,12 @@ msgstr ""
 msgid "<b>Current Version:</b> "
 msgstr ""
 
+msgid ""
+"<b>MOVE</b>: After files are <i><u>copied</u></i> from the source to the "
+"destination, they are <i><u>deleted</u></i> from the source. Files with the "
+"same names on the destination are <i><u>overwritten</u></i>."
+msgstr ""
+
 msgid "<b>Not recommended.</b> Allow multiple groups to share the same group ID."
 msgstr "<b>不推荐。</b> 允许多个群组共享相同的群组ID。"
 
@@ -223,6 +235,12 @@ msgstr ""
 msgid ""
 "<b>SED (<a href=\"--docurl--/system.html#self-encrypting-drives\" "
 "target=\"_blank\">Self-Encrypting Drives</a>) Options</b>"
+msgstr ""
+
+msgid ""
+"<b>SYNC</b>: Files on the destination are <i><u>changed</u></i> to match "
+"those on the source. If a file does not exist on the source, it is also "
+"<i><u>deleted</u></i> from the destination."
 msgstr ""
 
 msgid ""
@@ -243,6 +261,9 @@ msgstr "<b>警告：</b> 这个配置文件包含系统密码以及其他系统�
 
 msgid "<b>rsyncd</b> listens on this port."
 msgstr "<b>rsyncd</b> 在此端口侦听。"
+
+msgid "<br><b>Warning: Disks cannot be onlined in encrypted pools.</b></br>"
+msgstr ""
 
 msgid "<br><br>Roll back to snapshot <i>"
 msgstr "<br><br>回滚到快照<i>"
@@ -368,18 +389,6 @@ msgid ""
 msgstr ""
 "<i>快速</i>只擦除磁盘的分区信息，不删除其他旧的数据。<i>用0填充</i>用0覆盖整个磁盘。<i>使用随机数据填充</i> "
 "用随机二进制数据覆盖整个磁盘。"
-
-msgid ""
-"<i>SYNC</i> makes files on the destination system identical to those on the "
-"source. Files that have been removed from the source are removed from the "
-"destination, similar to <i>rsync --delete</i>. <i>COPY</i> copies files "
-"from source to destination, skipping files that are identical, similar to "
-"<i>rsync</i>. <i>MOVE</i> copies files from source to destination, deleting "
-"files from the source after the copy, similar to <i>mv</i>."
-msgstr ""
-"<i>同步</i>使目标系统的文件和源的文件相同。从源地址中删除的文件也将会从目标地址中删除，类似于<i>rsync --delete</i>. "
-"<i>拷贝</i>从源地址拷贝文件到目标地址，略过相同的文件，类似于<i>rsync</i>. "
-"<i>移动</i>从源地址拷贝文件到目标地址，拷贝后删除源地址的文件，类似于<i>mv</i>。"
 
 msgid ""
 "<i>Sensitive</i> assumes filenames are case sensitive. <i>Insensitive</i> "
@@ -510,9 +519,6 @@ msgid ""
 "default route will not be able to access any networks.</b>"
 msgstr ""
 
-msgid "ACL Manager"
-msgstr ""
-
 msgid "ACL Mode"
 msgstr ""
 
@@ -534,7 +540,13 @@ msgstr "AFP3 UNIX 权限"
 msgid "API Key"
 msgstr ""
 
+msgid "API URL"
+msgstr ""
+
 msgid "APPLY CHANGES"
+msgstr ""
+
+msgid "ARN"
 msgstr ""
 
 msgid "ATA Security User"
@@ -543,8 +555,14 @@ msgstr "ATA安全用户"
 msgid "AUTOSTART"
 msgstr ""
 
+msgid "AWS Region"
+msgstr ""
+
 msgid "About"
 msgstr "关于"
+
+msgid "Access"
+msgstr ""
 
 msgid "Access Based Share Enumeration"
 msgstr ""
@@ -561,6 +579,9 @@ msgid ""
 "target=\"_blank\">setfacl(1) NFSv4 ACL ENTRIES</a>."
 msgstr ""
 
+msgid "Access Control List"
+msgstr ""
+
 msgid "Access ID Key"
 msgstr ""
 
@@ -569,6 +590,12 @@ msgstr "访问密钥"
 
 msgid "Access Key ID"
 msgstr "访问密钥ID"
+
+msgid "Access Key ID for the linked AWS account."
+msgstr ""
+
+msgid "Access Mode"
+msgstr ""
 
 msgid "Access Token"
 msgstr "访问令牌"
@@ -653,9 +680,6 @@ msgstr "适配器类型"
 
 msgid "Adapter Type:"
 msgstr "适配器类型："
-
-msgid "Add Additional Alias"
-msgstr ""
 
 msgid "Add Additional Path"
 msgstr "添加额外路径"
@@ -914,6 +938,9 @@ msgstr "警告服务"
 
 msgid "Alert Settings"
 msgstr "警告设置"
+
+msgid "Aliases"
+msgstr ""
 
 msgid "All Disks"
 msgstr ""
@@ -1189,11 +1216,11 @@ msgstr ""
 msgid "Application Client Secret"
 msgstr ""
 
+msgid "Apply Access Mode"
+msgstr ""
+
 msgid "Apply Group"
 msgstr "应用群组"
-
-msgid "Apply Mode"
-msgstr "应用模式"
 
 msgid "Apply Network Changes"
 msgstr ""
@@ -1204,8 +1231,20 @@ msgstr "应用待决更新"
 msgid "Apply Pending update"
 msgstr "应用待决更新"
 
+msgid "Apply Permissions Recursively"
+msgstr ""
+
 msgid "Apply User"
 msgstr "应用用户"
+
+msgid "Apply changes to the group."
+msgstr ""
+
+msgid "Apply changes to the mode."
+msgstr ""
+
+msgid "Apply changes to the user."
+msgstr ""
 
 msgid "Apply network changes? Network connectivity will be interrupted."
 msgstr ""
@@ -1223,8 +1262,8 @@ msgstr ""
 
 msgid ""
 "Apply permissions recursively to all directories and files within the "
-"current dataset"
-msgstr "递归的应用权限到所有当前数据集内的文件夹和文件。"
+"current dataset."
+msgstr ""
 
 msgid "Apply permissions to child datasets"
 msgstr ""
@@ -1272,6 +1311,9 @@ msgstr ""
 msgid "Auth Method"
 msgstr "捡到方式"
 
+msgid "Auth Token"
+msgstr ""
+
 msgid "Authentication Group number"
 msgstr "认证组编号"
 
@@ -1281,6 +1323,9 @@ msgstr "验证类型"
 msgid ""
 "Authentication only functions when a Certificate is selected with either "
 "the <i>SSL</i> or <i>TLS</i> option."
+msgstr ""
+
+msgid "Authentication protocol"
 msgstr ""
 
 msgid "Authenticator"
@@ -1519,15 +1564,14 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Browse to an existing file and use <i>0</i> as the <b>Extent size</b>, or "
-"browse to the pool or dataset, click <b>Close</b>, append the <b>Extent "
-"Name</b> to the path, and specify a value in <b>Extent Size</b>. Extents "
-"cannot be created inside the jail root directory."
+"Browse to an existing file. Create a new file by browsing to a dataset and "
+"appending /<i>{filename.ext}</i> to the path."
 msgstr ""
 
 msgid ""
 "Browse to an existing file. Create a new file by browsing to a dataset and "
-"appending /<i>{filename.ext}</i> to the path."
+"appending the file name to the path. Extents cannot be created inside a "
+"jail root directory."
 msgstr ""
 
 msgid "Browse to an existing pool or dataset to store the new zvol."
@@ -1738,6 +1782,9 @@ msgid ""
 "not supported!"
 msgstr "切换到Nightly分支是单向的。改回到稳定分支是不被支持的！"
 
+msgid "Channel"
+msgstr ""
+
 msgid "Check Interval"
 msgstr "检查间隔"
 
@@ -1932,6 +1979,9 @@ msgid ""
 "documentation</a> walks through the configuration process."
 msgstr ""
 
+msgid "Choose an alert service to display options for that service."
+msgstr ""
+
 msgid "Choose an authentication method."
 msgstr "选择一个验证方式。"
 
@@ -2065,9 +2115,10 @@ msgstr ""
 
 msgid ""
 "Choose the type of interface. <i>Bridge</i> creates a logical link between "
-"multiple networks. Link Aggregation combines multiple network connections "
-"into a single interface. A virtual LAN (VLAN) partitions and isolates a "
-"segment of the connection."
+"multiple networks. <i>Link Aggregation</i> combines multiple network "
+"connections into a single interface. A <i>Virtual LAN (VLAN)</i> partitions "
+"and isolates a segment of the connection. Read-only when editing an "
+"interface."
 msgstr ""
 
 msgid ""
@@ -2122,6 +2173,9 @@ msgid ""
 "target=\"_blank\">Amazon Drive account</a>."
 msgstr ""
 
+msgid "Client Name"
+msgstr ""
+
 msgid "Client secret for the Amazon Drive account."
 msgstr ""
 
@@ -2144,6 +2198,9 @@ msgid "Cloud sync has started."
 msgstr "云同步已启动"
 
 msgid "Cloud sync stopped."
+msgstr ""
+
+msgid "Cluster Name"
 msgstr ""
 
 msgid "Com Port"
@@ -2244,6 +2301,9 @@ msgstr "压缩连接"
 
 msgid "Compression level"
 msgstr "压缩级别"
+
+msgid "Computer Account OU"
+msgstr ""
 
 msgid "Config"
 msgstr "设置"
@@ -2581,10 +2641,16 @@ msgstr ""
 msgid "Data collection frequency, in seconds."
 msgstr ""
 
+msgid "Database"
+msgstr ""
+
 msgid "Database Path"
 msgstr "数据库路径"
 
 msgid "Dataset"
+msgstr ""
+
+msgid "Dataset Path"
 msgstr ""
 
 msgid "Dataset has complex ACLs"
@@ -2824,6 +2890,9 @@ msgstr "描述"
 msgid "Description (max. 25 characters)"
 msgstr "描述（限制25个字符）"
 
+msgid "Description (optional)."
+msgstr ""
+
 msgid "Description of the VLAN."
 msgstr "VLAN描述"
 
@@ -2845,8 +2914,9 @@ msgid "Destroy data on this pool?"
 msgstr "销毁这个池里的数据？"
 
 msgid ""
-"Destroy the reporting database. Required for changes to <i>Graph Age</i> "
-"and <i>Graph Points</i> to take effect."
+"Destroy the reporting database. Only  appears when <i>Graph Age</i> or "
+"<i>Graph Points</i> are  changed. Required for changes to <i>Graph Age</i> "
+"or  <i>Graph Points</i> to take effect."
 msgstr ""
 
 msgid "Detach"
@@ -2950,7 +3020,25 @@ msgstr ""
 msgid "Disable FreeNAS Cache"
 msgstr "禁用FreeNas缓存"
 
-msgid "Disable LDAP user/group cache"
+msgid ""
+"Disable IPv4 source address selection for  the jail in favor of the primary "
+"IPv4 address of the jail.  Only available when the jail is not configured "
+"to use VNET."
+msgstr ""
+
+msgid ""
+"Disable IPv6 source address selection for  the jail in favor of the primary "
+"IPv6 address of the jail.  Only available when the jail is not configured "
+"to use VNET."
+msgstr ""
+
+msgid "Disable LDAP User/Group Cache"
+msgstr ""
+
+msgid ""
+"Disable caching LDAP users and groups in large LDAP environments.  When "
+"caching is disabled, LDAP users and groups do not appear in dropdown  "
+"menus, but are still accepted when manually entered."
 msgstr ""
 
 msgid "Disable physical block size reporting"
@@ -3020,11 +3108,6 @@ msgid ""
 "Do <b>NOT</b> change this setting when using Windows as the initiator. Only "
 "needs to be changed in large environments where the number of systems using "
 "a specific RPM is needed for accurate reporting statistics."
-msgstr ""
-
-msgid ""
-"Do not override the default unless the initiator requires a specific block "
-"size."
 msgstr ""
 
 msgid "Do not set this if the Serial Port is disabled."
@@ -3127,6 +3210,9 @@ msgstr ""
 
 msgid "Email"
 msgstr "邮件"
+
+msgid "Email Address"
+msgstr ""
 
 msgid "Email Subject"
 msgstr "邮件主题"
@@ -3331,6 +3417,9 @@ msgstr ""
 msgid "Encryption Salt"
 msgstr "加密盐"
 
+msgid "Encryption protocol"
+msgstr ""
+
 msgid "End"
 msgstr "结束"
 
@@ -3455,6 +3544,13 @@ msgstr "给这个启动环境的克隆取个名字。"
 msgid "Enter a name for the cloned snapshot."
 msgstr "给这个快照克隆取个名字。"
 
+msgid ""
+"Enter a name for the interface. Use the format <samp>lagg<i>X</i></samp>, "
+"<samp>vlan<i>X</i></samp>, or <samp>bridge<i>X</i></samp> where <i>X</i> is "
+"a number representing a non-parent interface. Read-only when editing an "
+"interface."
+msgstr ""
+
 msgid "Enter a name for the new credential."
 msgstr "给这个新的身份取个名字。"
 
@@ -3464,9 +3560,7 @@ msgstr "给这个共享取个名字。"
 msgid "Enter a name for this Keytab."
 msgstr ""
 
-msgid ""
-"Enter a name to use for the the interface. Use the format laggX, vlanX, or "
-"bridgeX where X is a number representing a non-parent interface."
+msgid "Enter a name to send alerts"
 msgstr ""
 
 msgid "Enter a netmask."
@@ -3557,12 +3651,6 @@ msgid ""
 msgstr "如果没有配置DHCP，输入一个静态IPv6地址。例子：<i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>"
 
 msgid ""
-"Enter a threshold temperature in Celsius. If the drive temperature is "
-"higher than this value, a LOG_CRIT level log entry is created and an email "
-"is sent. Entering 0 disables this check."
-msgstr ""
-
-msgid ""
 "Enter a threshold temperature in Celsius. SMART will message with a log "
 "level of LOG_CRIT and send an email if the temperature is higher than the "
 "threshold."
@@ -3600,6 +3688,9 @@ msgstr "输入一个用户名来注册这个服务。"
 
 msgid "Enter a valid MAC address vendor prefix. <b>Example:</b> <i>E4F4C6</i>"
 msgstr "Enter a valid MAC address vendor prefix. <b>例子：</b> <i>E4F4C6</i>"
+
+msgid "Enter a valid email address to receive alerts from this system."
+msgstr ""
 
 msgid ""
 "Enter a valid username for the <a "
@@ -3719,9 +3810,6 @@ msgstr "输入这个数据集的备注。"
 msgid "Enter any notes about this disk."
 msgstr "输入这个磁盘的备注。"
 
-msgid "Enter any notes."
-msgstr "输入备注。"
-
 msgid "Enter comments about the jail."
 msgstr "输入Jail的注释。"
 
@@ -3742,12 +3830,62 @@ msgid ""
 "<i>http://user:password@my.proxy.server:3128</i>"
 msgstr ""
 
+msgid "Enter or paste an Authentication token."
+msgstr ""
+
+msgid ""
+"Enter or paste the \"integration/service\" key for this system to access "
+"the <a href=\"https://v2.developer.pagerduty.com/v2/docs/events-api\" "
+"target=\"_blank\">PagerDuty API</a>."
+msgstr ""
+
+msgid ""
+"Enter or paste the <a "
+"href=\"https://docs.mattermost.com/developer/webhooks-incoming.html\" "
+"target=\"_blank\">incoming webhook</a> URL associated with this service."
+msgstr ""
+
+msgid ""
+"Enter or paste the <a "
+"href=\"https://docs.opsgenie.com/v1.0/docs/api-integration\" "
+"target=\"_blank\">API key</a>. Find the API key by signing into the "
+"OpsGenie web interface and going to Integrations/Configured Integrations. "
+"Click the desired integration, Settings, and read the API Key field."
+msgstr ""
+
+msgid ""
+"Enter or paste the <a "
+"href=\"https://help.victorops.com/knowledge-base/api/\" "
+"target=\"_blank\">VictorOps API key</a>."
+msgstr ""
+
+msgid ""
+"Enter or paste the <a "
+"href=\"https://portal.victorops.com/public/api-docs.html#/Routing32Keys\" "
+"target=\"_blank\">VictorOps routing key</a>."
+msgstr ""
+
 msgid ""
 "Enter or paste the <b>public</b> SSH key of the user for any key-based "
 "authentication. <b>Do not paste the private key.</b>"
 msgstr ""
 
 msgid "Enter passphrase to lock pool "
+msgstr ""
+
+msgid "Enter password."
+msgstr ""
+
+msgid ""
+"Enter the <a "
+"href=\"https://docs.aws.amazon.com/sns/latest/dg/sms_supported-countries."
+"html\" target=\"_blank\">AWS account region</a>."
+msgstr ""
+
+msgid ""
+"Enter the <a "
+"href=\"https://docs.influxdata.com/influxdb/v1.5/introduction/getting-"
+"started/\" target=\"_blank\">InfluxDB</a> hostname."
 msgstr ""
 
 msgid ""
@@ -4031,6 +4169,11 @@ msgstr ""
 msgid "Enter valid VMware ESXI/vSphere credentials to fetch datastores."
 msgstr ""
 
+msgid ""
+"Entering <i>0</i> uses the actual file size and requires that the file "
+"already exists. Otherwise, specify the file size for the new file."
+msgstr ""
+
 msgid "Environment"
 msgstr ""
 
@@ -4257,6 +4400,9 @@ msgid "Fetch and Install Updates"
 msgstr ""
 
 msgid "File"
+msgstr ""
+
+msgid "File Information"
 msgstr ""
 
 msgid "File Permission"
@@ -4541,6 +4687,12 @@ msgid ""
 "used."
 msgstr ""
 
+msgid "HipChat base URL."
+msgstr ""
+
+msgid "HipChat cluster name."
+msgstr ""
+
 msgid "History"
 msgstr ""
 
@@ -4624,7 +4776,7 @@ msgid "How often the IP is checked in seconds."
 msgstr ""
 
 msgid ""
-"How the <b>Permissions</b> are applied to the chosen <b>Tag</b>. Choose "
+"How the <i>Permissions</i> are applied to the chosen <i>Who</>. Choose "
 "<i>Allow</i> to grant the specified permissions and <i>Deny</i> to restrict "
 "the specified permissions."
 msgstr ""
@@ -4747,6 +4899,9 @@ msgstr "Jail的IPv6前缀"
 msgid "ISNS Servers"
 msgstr "ISNS 服务器"
 
+msgid "Icon URL"
+msgstr ""
+
 msgid "Id"
 msgstr ""
 
@@ -4799,12 +4954,6 @@ msgid ""
 "common with the source snapshots, destroy all destination snapshots and do "
 "a full replication. <b>Warning:</b> enabling this option can cause data "
 "loss or excessive data transfer if the replication is misconfigured."
-msgstr ""
-
-msgid ""
-"If the size is specified as <i>0</i>, the file must already exist and the "
-"actual file size will be used. Otherwise, specify the size of the file to "
-"create."
 msgstr ""
 
 msgid "Ignore Builtin"
@@ -4877,7 +5026,11 @@ msgid ""
 "mode. This <a "
 "href=\"https://forums.freenas.org/index.php?threads/how-to-find-out-if-a-"
 "drive-is-spinning-down-properly.2068/\" target=\"_blank\">forum post</a> "
-"demonstrates how to determine if a drive has spun down."
+"demonstrates how to determine if a drive has spun down. Temperature "
+"monitoring is  disabled if the disk is set to enter standby."
+msgstr ""
+
+msgid "InfluxDB time series name for collected points."
 msgstr ""
 
 msgid "Informational"
@@ -4961,6 +5114,11 @@ msgid "Invalid password"
 msgstr "密码错误"
 
 msgid "Invalid regex filter"
+msgstr ""
+
+msgid ""
+"Invalid value. Valid values are numbers followed by optional unit letters,  "
+"like <samp>256k</samp> or <samp>1G</samp>."
 msgstr ""
 
 msgid ""
@@ -5080,6 +5238,9 @@ msgstr "Kerberos Realm"
 msgid "Kerberos Settings"
 msgstr "Kerberos 设置"
 
+msgid "Key ID"
+msgstr ""
+
 msgid "Key Length"
 msgstr "密钥长度"
 
@@ -5112,6 +5273,13 @@ msgstr "LDAP 用户 DN"
 
 msgid "LDAP User DN Password"
 msgstr "LDAP 用户 DN 密码"
+
+msgid ""
+"LDAP server hostnames or IP addresses. Separate entries with an empty "
+"space. Multiple hostnames or IP addresses can be entered to create an LDAP "
+"failover priority list. If a host does not respond, the next host in the "
+"list is tried until a new connection is established."
+msgstr ""
 
 msgid ""
 "LDAP server to use for SID/uid/gid map entries. When undefined, idmap_ldap "
@@ -5162,6 +5330,11 @@ msgstr "链路聚合协议"
 msgid "Language"
 msgstr "语言"
 
+msgid ""
+"Leave empty for default (<a href=\"https://api.opsgenie.com\" "
+"target=\"_blank\">OpsGenie API</a>)"
+msgstr ""
+
 msgid "Leave empty or select number of existing portal to use."
 msgstr ""
 
@@ -5173,6 +5346,9 @@ msgstr ""
 
 msgid "Legacy Web Interface"
 msgstr "经典用户界面"
+
+msgid "Level"
+msgstr ""
 
 msgid "Libdefaults Auxiliary Parameters"
 msgstr ""
@@ -5186,12 +5362,10 @@ msgstr ""
 msgid "Lifetime"
 msgstr "有效期(天)"
 
-msgid "Limit (KiB/s)"
+msgid "Limit (Ex. 500 KiB/s, 500M, 2 TB)"
 msgstr ""
 
-msgid ""
-"Limit replication speed to the specified value in Kbytes/second. Zero means "
-"no limit."
+msgid "Limit replication speed to this number of bytes per second."
 msgstr ""
 
 msgid "Link State"
@@ -5335,6 +5509,18 @@ msgid ""
 "performance."
 msgstr ""
 
+msgid ""
+"Mattermost <a "
+"href=\"https://docs.mattermost.com/help/getting-started/creating-teams.html\""
+" target=\"_blank\">team name</a>."
+msgstr ""
+
+msgid "Mattermost password."
+msgstr ""
+
+msgid "Mattermost username."
+msgstr ""
+
 msgid "Max. Connections"
 msgstr "最大连接"
 
@@ -5351,9 +5537,6 @@ msgid ""
 "Maximum Transmission Unit, the largest protocol data unit that can be "
 "communicated. The largest workable MTU size varies with network interfaces "
 "and equipment. *1500* and *9000* are standard Ethernet MTU sizes."
-msgstr ""
-
-msgid "Maximum age of graph stored, in months."
 msgstr ""
 
 msgid ""
@@ -5408,8 +5591,19 @@ msgid ""
 "limit is 50."
 msgstr "Maximum number of simultaneous connections permitted via AFP. 默认限制是50。"
 
+msgid ""
+"Maximum size for individual file blocks in the file system. Only override "
+"the default unless the initiator requires a specific block size."
+msgstr ""
+
 msgid "Maximum swap space to use for the jail."
 msgstr "可用于Jail的最大Swap空间。"
+
+msgid ""
+"Maximum time a graph is stored in months.  Changing this value causes the "
+"<i>Confirm RRD Destroy</i>  checkbox to appear. Changes do not take effect "
+"until the existing  reporting database is destroyed."
+msgstr ""
 
 msgid "Member Disk"
 msgstr "成员磁盘"
@@ -5566,8 +5760,10 @@ msgid ""
 "service is running."
 msgstr ""
 
-msgid "Mutual secret password. Must be different than <i>Secret</i>."
-msgstr "Mutual secret password. 必须和<i>Secret</i>不同。"
+msgid ""
+"Mutual secret password. Required when Peer User is set. Must be different "
+"than the <i>Secret</i>."
+msgstr ""
 
 msgid "NAT"
 msgstr ""
@@ -5620,17 +5816,45 @@ msgid ""
 "storage-account\" target=\"_blank\">Microsoft Azure</a> account."
 msgstr ""
 
+msgid ""
+"Name of the <a "
+"href=\"https://docs.mattermost.com/help/getting-started/organizing-"
+"conversations.html#managing-channels\" target=\"_blank\">channel</a> to "
+"receive notifications. This overrides the default channel in the incoming "
+"webhook settings."
+msgstr ""
+
+msgid ""
+"Name of the <a href=\"https://docs.mattermost.com/overview/index.html\" "
+"target=\"_blank\">Mattermost</a> cluster to join."
+msgstr ""
+
+msgid ""
+"Name of the <a href=\"https://docs.opsgenie.com/docs\" "
+"target=\"_blank\">OpsGenie</a> cluster. Find the Cluster Name by signing "
+"into the OpsGenie web interface and going to Integrations/Configured "
+"Integrations. Click the desired integration, Settings, and read the Name "
+"field."
+msgstr ""
+
+msgid "Name of the InfluxDB database."
+msgstr ""
+
 msgid "Name of the WebDAV site, service, or software being used."
 msgstr ""
 
-msgid ""
-"Name of the extent. If <i>Extent size</i> is non-zero, this cannot be the "
-"name of a file that already exists."
+msgid "Name of the cluster."
 msgstr ""
 
 msgid ""
-"Name of user account on remote system for CHAP authentication. Many "
-"initiators use the initiator name as the user name."
+"Name of the extent. If the <i>Extent size</i> is not <i>0</i>, it cannot be "
+"an existing file within the pool or dataset."
+msgstr ""
+
+msgid "Name of the new alert service."
+msgstr ""
+
+msgid "Name of the room."
 msgstr ""
 
 msgid "Name or Naming Schema is required. Only one field can be used at a time."
@@ -5716,17 +5940,17 @@ msgid "Network Summary"
 msgstr "网络概要"
 
 msgid ""
-"Network addresses that can use this initiator. Enter <i>ALL</i> or list "
-"network addresses with a CIDR mask. Separate multiple addresses with a "
-"space: <i>192.168.2.0/24 192.168.2.1/12</i>."
-msgstr ""
-
-msgid ""
-"Network addresses which are allowed use this initiator. Each  address can "
-"include an optional <a "
+"Network addresses allowed use this initiator. Each address can include an "
+"optional <a "
 "href=\"https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing\" "
 "target=\"_blank\">CIDR</a> netmask. Click <i>+</i> to add the network "
 "address to the list. Example: <i>192.168.2.0/24</i>."
+msgstr ""
+
+msgid ""
+"Network addresses that can use this initiator. Enter <i>ALL</i> or list "
+"network addresses with a CIDR mask. Separate multiple addresses with a "
+"space: <i>192.168.2.0/24 192.168.2.1/12</i>."
 msgstr ""
 
 msgid "Network changes applied successfully."
@@ -5827,6 +6051,9 @@ msgstr "备注：管理在FreeNas 11.2 之前版本创建的经典Jail必须从"
 msgid "Notes"
 msgstr "备注"
 
+msgid "Notes about this extent."
+msgstr ""
+
 msgid "Number of CPUs"
 msgstr "处理器数量"
 
@@ -5854,8 +6081,10 @@ msgid "Number of days to renew certificate before expiring"
 msgstr ""
 
 msgid ""
-"Number of points for each hourly, daily, weekly, monthly, or yearly graph. "
-"Set this to no less than the width of the graphs in pixels."
+"Number of points for each hourly, daily,  weekly, monthly, or yearly graph. "
+"Do not set this less than the  width of the graphs in pixels. Changing this "
+"value causes the  <i>Confirm RRD Destroy</i> checkbox to appear. Changes do "
+"not take  effect until the existing reporting database is destroyed."
 msgstr ""
 
 msgid "Number of queued SysV messages allowed for the jail."
@@ -5970,9 +6199,6 @@ msgid ""
 "Warning."
 msgstr ""
 
-msgid "Only applies to Unix or Mac permission types."
-msgstr ""
-
 msgid ""
 "Only available when the jail is not configured to use VNET. Disables IPv4 "
 "source address selection for the jail in favor of the primary IPv4 address "
@@ -5986,8 +6212,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Only entered when configuring mutual CHAP. Usually this is the same value "
-"as <i>User</i>."
+"Only entered when configuring mutual CHAP. Usually the same value as "
+"<i>User</i>."
 msgstr ""
 
 msgid ""
@@ -6025,8 +6251,8 @@ msgstr ""
 msgid "Optional comment."
 msgstr "可选评论。"
 
-msgid "Optional description. Portals are automatically assigned a numeric group ID."
-msgstr "可选说明。Portals are automatically assigned a numeric group ID."
+msgid "Optional description. Portals are automatically assigned a numeric group."
+msgstr ""
 
 msgid "Optional user-friendly name."
 msgstr "可选用户友好别名"
@@ -6073,6 +6299,9 @@ msgstr ""
 msgid "POST INSTALL NOTES"
 msgstr ""
 
+msgid "PagerDuty client name."
+msgstr ""
+
 msgid "Parent Interface"
 msgstr "父接口"
 
@@ -6111,9 +6340,6 @@ msgstr "SSH用户名的密码"
 msgid "Password for the username."
 msgstr "用户名的密码"
 
-msgid "Password. Must be at least 12 and no more than 16 characters long."
-msgstr "密码。Must be at least 12 and no more than 16 characters long."
-
 msgid ""
 "Passwords cannot contain a <b>?</b>. Passwords should be at least eight "
 "characters and contain a mix of lower and upper case, numbers, and special "
@@ -6124,6 +6350,11 @@ msgstr ""
 
 msgid "Passwords do not match"
 msgstr "密码不匹配"
+
+msgid ""
+"Paste the <a href=\"https://api.slack.com/incoming-webhooks\" "
+"target=\"_blank\">incoming webhook</a> URL associated with this service."
+msgstr ""
 
 msgid "Paste the certificate for the CA."
 msgstr "粘贴CA证书"
@@ -6572,9 +6803,6 @@ msgstr "远程 SSH 端口"
 msgid "Remove"
 msgstr "移除"
 
-msgid "Remove Additional Alias"
-msgstr ""
-
 msgid "Remove Additional Path"
 msgstr "移除额外路径"
 
@@ -6627,12 +6855,12 @@ msgstr "以百分比显示处理器使用率"
 
 msgid ""
 "Report if drive temperature is at or above this temperature in Celsius. "
-"Entering 0 disables the report."
+"<i>0</i> disables the report."
 msgstr ""
 
 msgid ""
 "Report if the temperature of a drive has changed by this many degrees "
-"Celsius since the last report. Entering 0 disables the report."
+"Celsius since the last report. <i>0</i> disables the report."
 msgstr ""
 
 msgid "Reporting"
@@ -6757,6 +6985,9 @@ msgstr ""
 msgid "Rollback"
 msgstr "回滚"
 
+msgid "Room"
+msgstr ""
+
 msgid "Root node is not a valid value"
 msgstr ""
 
@@ -6764,6 +6995,9 @@ msgid "Rotation Rate"
 msgstr ""
 
 msgid "Rotation Rate (RPM)"
+msgstr ""
+
+msgid "Routing Key"
 msgstr ""
 
 msgid "Rsync Tasks"
@@ -6824,6 +7058,9 @@ msgstr "保存配置"
 msgid "SED Password"
 msgstr "SED密码"
 
+msgid "SEND TEST ALERT"
+msgstr ""
+
 msgid "SFTP log facility"
 msgstr "SFTP日志设备"
 
@@ -6838,8 +7075,14 @@ msgid ""
 "(submission)."
 msgstr "SMTP端口号。Typically <i>25,465</i> (secure SMTP), or <i>587</i> (submission)."
 
+msgid "SNMP Community"
+msgstr ""
+
 msgid "SNMP v3 Support"
 msgstr "SNMP v3支持"
+
+msgid "SNMPv3 Security Model"
+msgstr ""
 
 msgid "SSH Connection"
 msgstr ""
@@ -6976,8 +7219,17 @@ msgstr "密码 (确认)"
 msgid "Secret Access Key"
 msgstr "秘密访问密钥"
 
+msgid "Secret Access Key for the linked AWS account."
+msgstr ""
+
 msgid "Secret Key"
 msgstr "秘密密钥"
+
+msgid "Secret authentication key"
+msgstr ""
+
+msgid "Secret encryption key"
+msgstr ""
 
 msgid "Secure mode"
 msgstr "安全模式"
@@ -7064,6 +7316,11 @@ msgid "Select VM wizard type"
 msgstr ""
 
 msgid ""
+"Select a Group ID created in <b>Authorized Access</b> if the <b>Discovery "
+"Auth Method</b> is set to <i>CHAP</i> or <i>Mutual CHAP</i>."
+msgstr ""
+
+msgid ""
 "Select a compression algorithm to reduce the size of the data being "
 "replicated."
 msgstr ""
@@ -7138,11 +7395,6 @@ msgstr ""
 "to run                the command or script."
 
 msgid ""
-"Select a user created in <b>Authorized Access</b> if the <b>Discovery Auth "
-"Method</b> is set to <i>CHAP</i> or <i>Mutual CHAP</i>."
-msgstr ""
-
-msgid ""
 "Select a user created in Authorized Access if the Discovery Auth Method is "
 "set to CHAP or Mutual CHAP."
 msgstr ""
@@ -7201,8 +7453,8 @@ msgid "Select one or more screenshots that illustrate the problem."
 msgstr ""
 
 msgid ""
-"Select permissions to apply to the chosen <b>Tag</b>. Choices change "
-"depending on the <b>Permissions Type</b>. See the <a "
+"Select permissions to apply to the chosen <i>Who</i>. Choices change "
+"depending on the <i>Permissions Type</i>. See the <a "
 "href=\"--docurl--/storage.html#ace-permissions\" target=\"_blank\">ACL "
 "permissions list</a> for descriptions of each permission."
 msgstr ""
@@ -7349,8 +7601,8 @@ msgid "Select the disks to monitor."
 msgstr ""
 
 msgid ""
-"Select the group to control the pool/dataset. Groups manually created or "
-"imported from a directory service will appear in the drop-down menu."
+"Select the group to control the dataset. Groups created manually or "
+"imported from a directory service appear in the drop-down menu."
 msgstr ""
 
 msgid ""
@@ -7362,6 +7614,9 @@ msgid ""
 "Select the keytab created in <a "
 "href=\"--docurl--/directoryservices.html#kerberos-keytabs\" "
 "target=\"_blank\">Kerberos Keytabs</a>."
+msgstr ""
+
+msgid "Select the level of severity."
 msgstr ""
 
 msgid ""
@@ -7412,8 +7667,8 @@ msgid "Select the serial port address in hex."
 msgstr ""
 
 msgid ""
-"Select the set of ACE inheritance <b>Flags</b> to display. <i>Basic</i> "
-"shows unspecific inheritance options. <i>Advanced</i> shows specific "
+"Select the set of ACE inheritance <i>Flags</i> to display. <i>Basic</i> "
+"shows nonspecific inheritance options. <i>Advanced</i> shows specific "
 "inheritance settings for finer control."
 msgstr ""
 
@@ -7425,7 +7680,7 @@ msgid ""
 "by the Active Directory server or a stand-alone LDAP server."
 msgstr ""
 
-msgid "Select the type that matches the type of client accessing the pool/dataset."
+msgid "Select the type that matches the type of client accessing the dataset."
 msgstr ""
 
 msgid ""
@@ -7434,8 +7689,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Select the user to control the pool/dataset. Users manually created or "
-"imported from a directory service will appear in the drop-down menu."
+"Select the user to control the dataset. Users created manually or imported "
+"from a directory service appear in the drop-down menu."
 msgstr ""
 
 msgid ""
@@ -7478,9 +7733,6 @@ msgstr ""
 msgid "Send Email Status Updates"
 msgstr "状态更新时发送邮件"
 
-msgid "Send Test Alert"
-msgstr "发送测试警报"
-
 msgid "Send Test Mail"
 msgstr ""
 
@@ -7502,6 +7754,9 @@ msgstr "串口"
 msgid "Serial Speed"
 msgstr "波特率"
 
+msgid "Series"
+msgstr ""
+
 msgid "Serve UDP NFS clients"
 msgstr "伺服 UDP NFS 客户端"
 
@@ -7513,6 +7768,9 @@ msgstr "服务器端加密"
 
 msgid "Service Account"
 msgstr "服务账户"
+
+msgid "Service Key"
+msgstr ""
 
 msgid "Service failed to start"
 msgstr "服务启动失败"
@@ -7627,6 +7885,9 @@ msgstr ""
 
 msgid "Set the port the FTP service listens on."
 msgstr "设置FTP服务监听的端口。"
+
+msgid "Set the read, write, and execute permissions for the dataset."
+msgstr ""
 
 msgid "Set the root directory for anonymous FTP connections."
 msgstr "设置匿名FTP连接的根目录。"
@@ -7809,15 +8070,6 @@ msgstr ""
 msgid "Set to always show advanced fields, when available."
 msgstr ""
 
-msgid "Set to apply changes to the group"
-msgstr "设置来应用对组的更改"
-
-msgid "Set to apply changes to the mode"
-msgstr "设置来应用对模式的更改"
-
-msgid "Set to apply changes to the user."
-msgstr "设置来应用对用户的更改"
-
 msgid "Set to attempt to reduce latency over slow networks."
 msgstr "设置来尝试降低低速网络下的延迟。"
 
@@ -7889,12 +8141,6 @@ msgstr ""
 msgid ""
 "Set to disable caching AD users and groups. This can help when unable to "
 "bind to a domain with a large number of users or groups."
-msgstr ""
-
-msgid ""
-"Set to disable caching LDAP users and groups in large LDAP environments.  "
-"When caching is disabled, LDAP users and groups do not appear in dropdown  "
-"menus, but are still accepted when manually entered."
 msgstr ""
 
 msgid "Set to disable logging in to this user account."
@@ -8372,9 +8618,6 @@ msgstr ""
 msgid "Show tracebacks in case of fatal error"
 msgstr ""
 
-msgid "Show/Hide Passwords"
-msgstr "显示/隐藏密码"
-
 msgid "Shut Down"
 msgstr "关机"
 
@@ -8423,6 +8666,12 @@ msgstr "zvol容量"
 msgid ""
 "Skip automatic detection of the Endpoint URL region. Set this when "
 "configuring a custom Endpoint URL."
+msgstr ""
+
+msgid "Slack channel name. The service will post all messages to this channel."
+msgstr ""
+
+msgid "Slack username for this service."
 msgstr ""
 
 msgid "Snapshot Lifetime"
@@ -8812,9 +9061,6 @@ msgstr ""
 msgid "TLS Policy"
 msgstr ""
 
-msgid "Tag"
-msgstr ""
-
 msgid "Take Snapshot"
 msgstr "创建快照快照"
 
@@ -8835,6 +9081,9 @@ msgstr ""
 
 msgid "Tasks"
 msgstr "任务"
+
+msgid "Team"
+msgstr ""
 
 msgid "Team Drive ID"
 msgstr ""
@@ -8887,12 +9136,25 @@ msgid ""
 msgstr ""
 
 msgid ""
+"The OU in which new computer accounts are created.  The OU string is read "
+"from top to bottom without RDNs. Slashes (\"/\") are used as  delimiters, "
+"like <samp>Computers/Servers/NAS</samp>. The backslash (\"\\\") is  used to "
+"escape characters but not as a separator. Backslashes are interpreted at  "
+"multiple levels and might require doubling or even quadrupling to take "
+"effect.  When this field is blank, new computer accounts are created in the "
+"Active Directory  default OU."
+msgstr ""
+
+msgid ""
 "The SSL certificate to be used for TLS FTP connections. To create a "
 "certificate, use <b>System --> Certificates</b>."
 msgstr ""
 
 msgid "The UDP port number that listens for TFTP requests. Example: 8050"
 msgstr "监听TFTP请求的UDP端口号。例子：8050"
+
+msgid "The active controller cannot be detected."
+msgstr ""
 
 msgid ""
 "The base name is automatically prepended if the target name does not start "
@@ -8979,8 +9241,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"The group which controls the dataset. This group has whatever permissions "
-"are granted to the <i>@group</i> <b>Tag</b>. Groups created manually or "
+"The group which controls the dataset. This group has the same permissions "
+"as granted to the <i>group@</i> <i>Who</i>. Groups created manually or "
 "imported from a directory service appear in the drop-down menu."
 msgstr ""
 
@@ -8988,8 +9250,8 @@ msgid "The hostname or IP address of the LDAP server."
 msgstr ""
 
 msgid ""
-"The legacy user interface is deprecated.  All management should be "
-"performed through the new user interface."
+"The legacy user interface is deprecated. All management should be performed "
+"through the new user interface."
 msgstr ""
 
 msgid "The lifetime of the CA specified in days."
@@ -9138,6 +9400,9 @@ msgstr ""
 msgid "Third DNS server."
 msgstr ""
 
+msgid "This Controller"
+msgstr ""
+
 msgid ""
 "This dataset has ACLs that are too complex to be edited with                "
 "     the permissions editor.  Open in ACL editor instead?"
@@ -9181,6 +9446,12 @@ msgstr "这项操作可能会需要很长时间。继续？"
 
 msgid "Threshold days"
 msgstr "阈值天数"
+
+msgid ""
+"Threshold temperature in Celsius. If the drive temperature is higher than "
+"this value, a LOG_CRIT level log entry is created and an email is sent. "
+"<i>0</i> disables this check."
+msgstr ""
 
 msgid "Time Machine"
 msgstr "时间机器"
@@ -9229,6 +9500,13 @@ msgstr ""
 "Top level of the LDAP directory tree to be used when searching for "
 "resources. 例子：<i>dc=test,dc=org</i>."
 
+msgid ""
+"Topic <a "
+"href=\"https://docs.aws.amazon.com/sns/latest/dg/CreateTopic.html\" "
+"target=\"_blank\">Amazon Resource Name (ARN)</a> for publishing. Example: "
+"<b>arn:aws:sns:us-west-2:111122223333:MyTopic</b>."
+msgstr ""
+
 msgid "Train"
 msgstr "分支"
 
@@ -9239,6 +9517,18 @@ msgid "Transfers"
 msgstr "传输"
 
 msgid "Transport"
+msgstr ""
+
+msgid "TrueNAS Controller"
+msgstr ""
+
+msgid "TrueNAS Controllers"
+msgstr ""
+
+msgid "TrueNAS controller"
+msgstr ""
+
+msgid "TrueNAS controllers"
 msgstr ""
 
 msgid "Tunables"
@@ -9263,6 +9553,11 @@ msgid "URL"
 msgstr "URL"
 
 msgid "URL of the HTTP host to connect to."
+msgstr ""
+
+msgid ""
+"URL to an image to use for notification icons. This overrides the incoming "
+"webhook setting."
 msgstr ""
 
 msgid "UUID"
@@ -9297,6 +9592,9 @@ msgid "Unset to disable the configuration without deleting it."
 msgstr ""
 
 msgid "Unset to disable the scheduled scrub without                 deleting it."
+msgstr ""
+
+msgid "Unset to disable this service without deleting it."
 msgstr ""
 
 msgid "Unset to disable this task without deleting it."
@@ -9509,6 +9807,11 @@ msgstr "用户 ID"
 msgid "User Suffix"
 msgstr "用户后缀"
 
+msgid ""
+"User account to create for CHAP authentication with the user on the remote "
+"system. Many initiators use the initiator name as the user name."
+msgstr ""
+
 msgid "User account to which this ACL entry applies."
 msgstr ""
 
@@ -9518,6 +9821,9 @@ msgid ""
 msgstr ""
 
 msgid "User passed to <i>camcontrol security -u</i> to unlock SEDs"
+msgstr ""
+
+msgid "User password. Must be at least 12 and no more than 16 characters long."
 msgstr ""
 
 msgid ""
@@ -9532,6 +9838,9 @@ msgstr "用户名"
 msgid ""
 "Username for a <a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> "
 "account."
+msgstr ""
+
+msgid "Username for this service."
 msgstr ""
 
 msgid ""
@@ -9718,6 +10027,9 @@ msgstr "WebDav密码"
 msgid "Webdav SSL Certificate"
 msgstr "WebDav SSL证书"
 
+msgid "Webhook URL"
+msgstr ""
+
 msgid "What are you using this for"
 msgstr ""
 
@@ -9788,6 +10100,9 @@ msgstr ""
 msgid ""
 "When the file already exists, enter a size of 0 to use the actual file "
 "size. For new files, enter the size of the file to create."
+msgstr ""
+
+msgid "Who"
 msgstr ""
 
 msgid "Widget Base Class"
@@ -9940,6 +10255,9 @@ msgstr ""
 msgid "cputime"
 msgstr ""
 
+msgid "createcomputer"
+msgstr ""
+
 msgid "datasize"
 msgstr ""
 
@@ -10021,7 +10339,7 @@ msgstr ""
 msgid "ip4"
 msgstr ""
 
-msgid "ip4_saddrsel"
+msgid "ip4.saddrsel"
 msgstr ""
 
 msgid "ip6"

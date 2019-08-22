@@ -41,14 +41,13 @@ export class AvailablePluginsComponent implements OnInit {
     }
 
     getInstances() {
-        this.ws.job('plugin.query').subscribe(
+        this.ws.call('plugin.query').subscribe(
             (res) => {
                 for (const item of res) {
-                    const name = _.split(item[1],'_')[0];
-                    if (this.installedPlugins[name] == undefined) {
-                        this.installedPlugins[name] = 0;
+                    if (this.installedPlugins[item.plugin] == undefined) {
+                        this.installedPlugins[item.plugin] = 0;
                     }
-                    this.installedPlugins[name]++;
+                    this.installedPlugins[item.plugin]++;
                 }
             }
         )
