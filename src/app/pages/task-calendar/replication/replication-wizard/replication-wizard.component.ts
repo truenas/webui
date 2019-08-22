@@ -206,17 +206,17 @@ export class ReplicationWizardComponent {
                 },
                 {
                     type: 'radio',
-                    name: 'encryption',
+                    name: 'transport',
                     placeholder: helptext.encryption_placeholder,
                     tooltip: helptext.encryption_tooltip,
                     options: [
                         {
                             label: 'Encryption (more secure, but slower)',
-                            value: true,
+                            value: 'SSH',
                         },
                         {
                             label: 'No Encryption (less secure, but faster)',
-                            value: false,
+                            value: 'SSH+NETCAT',
                         }
                     ],
                     value: true,
@@ -499,7 +499,28 @@ export class ReplicationWizardComponent {
 
     loadReplicationTask(task) {
         console.log(task);
+        if (task.direction === 'PUSH') {
+            task['source_datasets_from'] = 'local';
+            task['target_dataset_from'] = 'remote';
+        } else {
+            task['source_datasets_from'] = 'remote';
+            task['target_dataset_from'] = 'local';
+        }
         
+        if (task['source_datasets_from'] === 'remote') {
+            task['ssh_credentials_source'] = task.ssh_credentials.id;
+        }
+        if (task['target_dataset_from'] === 'remote') {
+            task['ssh_credentials_target'] = task.ssh_credentials.id;
+        }
+
+        for (let i of ['source_datasets_from','target_dataset_from', 'ssh_credentials_source', 'ssh_credentials_target', 'transport', 'source_datasets', 'target_dataset', 'name']) {
+            const ctrl = this.entityWizard.formArray.controls[0].controls[i];
+            if (ctrl && !ctrl.disabled) {
+                ctrl.setValue(task[i]);
+            }
+        }
+
     }
 
     clearReplicationTask() {
