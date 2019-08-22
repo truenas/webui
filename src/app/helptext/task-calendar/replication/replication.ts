@@ -81,7 +81,7 @@ export default {
  child dataset snapshots except <i>child1</i>.'),
 
     properties_placeholder: T('Properties'),
-    properties_tooltip: T('Send dataset properties along with snapshots'),
+    properties_tooltip: T('Send dataset properties along with snapshots.'),
 
     periodic_snapshot_tasks_placeholder: T('Periodic Snapshot Tasks'),
     periodic_snapshot_tasks_tooltip: T('Snapshot schedule for this\
