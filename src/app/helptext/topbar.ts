@@ -15,5 +15,10 @@ export default {
         NO_LICENSE: T(`Other ${globalHelptext.ctrlr} has no license.`),
         MISMATCH_DISKS : T(`The ${globalHelptext.ctrlrs} do not have the same quantity of disks.`)
     },
-    legacyUIWarning: `${globalHelptext.legacyUIWarning}`
+    legacyUIWarning: `${globalHelptext.legacyUIWarning}`,
+    updateRunning_dialog_title: T('Update in Progress'),
+    updateRunning_dialog_message: T('A system update is in progress. It may have been \
+ launched in another window, via an API, or by an external source such as TrueCommand. \
+ <b>This system may restart soon.</b>')
 }
+

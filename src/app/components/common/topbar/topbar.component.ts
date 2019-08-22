@@ -89,11 +89,13 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.is_ha = is_ha;
         this.is_ha ? window.localStorage.setItem('alias_ips', 'show') : window.localStorage.setItem('alias_ips', '0');
         this.getHAStatus();
+        this.isUpdateRunning();
       });
       this.sysName = 'TrueNAS';
     } else {
       window.localStorage.setItem('alias_ips', '0');
       this.checkLegacyUISetting();
+      this.isUpdateRunning();
     }
     let theme = this.themeService.currentTheme();
     this.currentTheme = theme.name;
@@ -119,7 +121,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.checkNetworkChangesPending();
     this.checkNetworkCheckinWaiting();
     this.getDirServicesStatus();
-    this.isUpdateRunning();
 
     this.continuosStreaming = observableInterval(10000).subscribe(x => {
       this.showReplicationStatus();
@@ -442,15 +443,19 @@ export class TopbarComponent implements OnInit, OnDestroy {
   };
 
   isUpdateRunning() {
-    this.ws.call('core.get_jobs', [[["method", "=", "update.update"], ["state", "=", "RUNNING"]]]).subscribe(
+    let method;
+    this.is_ha ? method = 'failover.upgrade' : method = 'update.update';
+    this.ws.call('core.get_jobs', [[["method", "=", method], ["state", "=", "RUNNING"]]]).subscribe(
       (res) => {
-        if (res && res.length === 0) {
-          this.sysGenService.updateRunning.emit();
+        if (res && res.length > 0) {
+          this.sysGenService.updateRunning.emit('true');
           if (!this.updateNotificationSent) {
-            this.dialogService.Info(T('Update in Progress'), T('A system update is in progress. It may have been \
- launched in another window, via an API, or by an eternal source such as TrueCommand. This system may restart soon.'));
+            this.dialogService.confirm(helptext.updateRunning_dialog_title, helptext.updateRunning_dialog_message,
+              true, T('Close'), false, '', '', '', '', true);
             this.updateNotificationSent = true;
-          }        
+          }      
+        } else {
+          this.sysGenService.updateRunning.emit('false');
         }
       },
       (err) => {

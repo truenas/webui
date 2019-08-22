@@ -95,6 +95,14 @@
     margin-top: -12px;
 }
 
+#update-running-msg {
+    margin-left: 10px;
+    font-size: larger;
+    font-weight: 500;
+    position: relative;
+    bottom: 3px;
+}
+
 @media screen and (max-width: 1270px) {
     #train-selector, #single-train-name {
         max-width: 75%;

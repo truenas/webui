@@ -43,12 +43,16 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   public systemLogo: any;
   public isFN: boolean;
   public isUpdateRunning = false;
+  public is_ha: boolean;
+  public updateMethod = 'update.update';
 
   constructor(public router: Router, public translate: TranslateService, private ws: WebSocketService,
     public sysGenService: SystemGeneralService){
     super(translate);
     this.configurable = false;
-    this.sysGenService.updateRunning.subscribe(() => { this.isUpdateRunning = true; });
+    this.sysGenService.updateRunning.subscribe((res) => { 
+      res === 'true' ? this.isUpdateRunning = true : this.isUpdateRunning = false;
+    });
   }
 
   ngAfterViewInit(){
@@ -75,12 +79,19 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
         this.systemLogo = 'logo.svg';
         this.getFreeNASImage(evt.data.system_product);
         this.isFN = true;
+        this.checkForRunningUpdate();
       } else {
         this.systemLogo = 'TrueNAS_Logomark_Black.svg';
         this.getTrueNASImage(evt.data.system_product);
         this.isFN = false;
+        this.ws.call('failover.licensed').subscribe((res) => {
+          if (res) {
+            this.updateMethod = 'failover.upgrade';
+            this.is_ha = true;
+          };
+          this.checkForRunningUpdate();
+        });
       }    
-
     });
 
     this.core.register({observerClass:this,eventName:"UpdateChecked"}).subscribe((evt:CoreEvent) => {
@@ -94,7 +105,10 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   }
 
   ngOnInit(){
-    this.ws.call('core.get_jobs', [[["method", "=", "update.update"], ["state", "=", "RUNNING"]]]).subscribe(
+  }
+
+  checkForRunningUpdate() {
+    this.ws.call('core.get_jobs', [[["method", "=", this.updateMethod], ["state", "=", "RUNNING"]]]).subscribe(
       (res) => {
         if (res && res.length > 0) {
           this.isUpdateRunning = true;
@@ -104,7 +118,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
         console.error(err);
       });
   }
-
+ 
   ngOnDestroy(){
     this.core.unregister({observerClass:this});
   }

@@ -49,7 +49,9 @@ export class UpdateComponent implements OnInit {
   public fullTrainList: any[];
   public isFooterConsoleOpen: boolean;
   public isUpdateRunning = false;
-
+  public updateMethod: string = 'update.update';
+  public is_ha = false;
+  public isfreenas: boolean;
   public busy: Subscription;
   public busy2: Subscription;
   public showSpinner: boolean = false;
@@ -87,7 +89,8 @@ export class UpdateComponent implements OnInit {
   constructor(protected router: Router, protected route: ActivatedRoute, protected snackBar: MatSnackBar,
     protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog, public sysGenService: SystemGeneralService,
     protected loader: AppLoaderService, protected dialogService: DialogService, public translate: TranslateService) {
-      this.sysGenService.updateRunning.subscribe(() => { this.isUpdateRunning = true });
+      this.sysGenService.updateRunning.subscribe((res) => { 
+        res === 'true' ? this.isUpdateRunning = true : this.isUpdateRunning = false });
   }
 
   parseTrainName(name) {
@@ -191,6 +194,7 @@ export class UpdateComponent implements OnInit {
   }
 
   ngOnInit() {
+    window.localStorage.getItem('is_freenas') === 'true' ? this.isfreenas = true : this.isfreenas = false;
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures) => {
       if(ures[0].attributes.preferences !== undefined && ures[0].attributes.preferences.enableWarning) {
         ures[0].attributes.preferences['enableWarning'] = true;
@@ -244,9 +248,22 @@ export class UpdateComponent implements OnInit {
         this.isFooterConsoleOpen = res.consolemsg;
       }
     });
-    this.ws.call('core.get_jobs', [[["method", "=", "update.update"], ["state", "=", "RUNNING"]]]).subscribe(
+    if (!this.isfreenas) {
+      this.ws.call('failover.licensed').subscribe((res) => {
+        if (res) {
+          this.updateMethod = 'failover.upgrade';
+          this.is_ha = true;
+        };
+        this.checkForUpdateRunning();
+      });
+    } else {
+      this.checkForUpdateRunning();
+    }
+  }
+
+  checkForUpdateRunning() {
+    this.ws.call('core.get_jobs', [[["method", "=", this.updateMethod], ["state", "=", "RUNNING"]]]).subscribe(
       (res) => {
-        console.log(res)
         if (res && res.length > 0) {
           this.isUpdateRunning = true;
         }
