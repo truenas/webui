@@ -7,7 +7,11 @@ import 'pixi-projection';
 import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
 import { DriveTray } from 'app/core/classes/hardware/drivetray';
 import { M50 } from 'app/core/classes/hardware/m50';
+import { ES12 } from 'app/core/classes/hardware/es12';
+import { E16 } from 'app/core/classes/hardware/e16';
+import { E24 } from 'app/core/classes/hardware/e24';
 import { ES24 } from 'app/core/classes/hardware/es24';
+import { E60 } from 'app/core/classes/hardware/e60';
 import { ES60 } from 'app/core/classes/hardware/es60';
 import { DiskComponent } from './components/disk.component';
 import { TabContentComponent } from './components/tab-content/tab-content.component';
@@ -43,7 +47,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   private _expanders: any[] = [];
   get expanders () {
     if(this.system.enclosures){
-      let enclosureNumber =  this.selectedEnclosure.disks[0].enclosure.number;
+      let enclosureNumber =  Number(this.selectedEnclosure.disks[0].enclosure.number);
       return this.system.getEnclosureExpanders(enclosureNumber);
     } else {
       return this._expanders;
@@ -96,6 +100,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     core.register({observerClass: this, eventName: 'ThemeChanged'}).subscribe((evt:CoreEvent) => {
       this.theme = evt.data;
       this.setCurrentView(this.currentView);
+      if(this.labels && this.labels.events){
+        this.labels.events.next(evt);
+      }
     });
 
     core.emit({name: 'ThemeDataRequest', sender: this});
@@ -237,17 +244,32 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   createEnclosure(){
+
     switch(this.selectedEnclosure.model){
       case "M Series":
         this.enclosure = new M50();
         break;
+      case "X Series":
+      case 'ES12':
+        this.enclosure = new ES12();
+        break;
+      case 'E16':
+        this.enclosure = new E16();
+      break;
       case "ES24":
         this.enclosure = new ES24();
+        break;
+      case "E24":
+        this.enclosure = new E24();
         break;
       case "ES60":
         this.enclosure = new ES60();
         break;
+      case "E60":
+        this.enclosure = new E60();
+        break;
       default:
+        console.warn("DEFAULT ENCLOSURE")
         this.enclosure = new M50();
     }
     //this.enclosure = new ES24();
@@ -297,14 +319,28 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case "M Series":
         enclosure = new M50();
         break;
+      case "X Series":
+      case 'ES12':
+        enclosure = new ES12();
+        break;
+      case 'E16':
+        enclosure = new E16();
+        break;
+      case "E24":
+        enclosure = new E24();
+        break;
       case "ES24":
         enclosure = new ES24();
         break;
       case "ES60":
         enclosure = new ES60();
         break;
+      case "E60":
+        enclosure = new E60();
+        break;
       default:
-        enclosure = new M50();
+        console.log(profile.model);
+        enclosure = new ES24();
     }
     //enclosure = new ES24();
     enclosure.events.subscribe((evt) => {
@@ -566,9 +602,17 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   setDiskHealthState(disk: any, enclosure?: any){
-      if(!enclosure){enclosure = this.enclosure}
+      if(!enclosure){
+        enclosure = this.enclosure
+      }
+      
       let index = disk.enclosure.slot - 1;
-      enclosure.driveTrayObjects[index].enabled = disk.enclosure.slot ? true : false;
+      if(!enclosure.driveTrayObjects[index]){
+        console.warn("There is no driveTray at index " + index + " on model " + enclosure.model + "!");
+        return;
+      } else {
+        enclosure.driveTrayObjects[index].enabled = disk.enclosure.slot ? true : false;
+      }
 
       if(disk && disk.status){
         switch(disk.status){
@@ -623,6 +667,49 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
 
   }
+
+  toggleHighlightMode(mode:string){
+    this.labels.events.next({
+      name: mode == 'on' ? 'EnableHighlightMode' : 'DisableHighlightMode',
+      sender:this
+    })
+  }
+
+  showPath(devname){
+    // show the svg path
+    this.labels.events.next({
+      name:'ShowPath', 
+      data:{ devname:devname, overlay: this.domLabels}, 
+      sender: this
+    });
+  }
+
+  hidePath(devname){
+    this.labels.events.next({
+      name:'HidePath',
+      data:{devname: devname, overlay: this.domLabels},
+      sender: this
+    });
+  }
+
+  highlightPath(devname){
+    // show the svg path
+    this.labels.events.next({
+      name:'HighlightPath', 
+      data:{ devname:devname, overlay: this.domLabels}, 
+      sender: this
+    });
+  }
+
+  unhighlightPath(devname){
+    // show the svg path
+    this.labels.events.next({
+      name:'UnhighlightPath', 
+      data:{ devname:devname, overlay: this.domLabels}, 
+      sender: this
+    });
+  }
+  
 
   toggleSlotStatus(kill?: boolean){
     let enclosure_id = this.system.enclosures[this.selectedEnclosure.enclosureKey].id;
