@@ -263,7 +263,7 @@ export class ReplicationWizardComponent {
                 },
                 {
                     type: 'scheduler',
-                    name: 'schedule',
+                    name: 'schedule_picker',
                     placeholder: helptext.schedule_placeholder,
                     tooltip: helptext.schedule_tooltip,
                     class: 'inline',
@@ -278,18 +278,18 @@ export class ReplicationWizardComponent {
                 },
                 {
                     type: 'radio',
-                    name: 'snapshot_lifetime',
-                    placeholder: helptext.snapshot_lifetime_placeholder,
-                    tooltip: helptext.snapshot_lifetime_tooltip,
+                    name: 'retention_policy',
+                    placeholder: helptext.retention_policy_placeholder,
+                    tooltip: helptext.retention_policy_tooltip,
                     options: [{
                         label: 'Same as Source',
-                        value: 'same_as_source',
+                        value: 'SOURCE',
                     }, {
                         label: 'Never Delete',
-                        value: 'never_delete',
+                        value: 'NONE',
                     }, {
                         label: 'Custom',
-                        value: 'custom',
+                        value: 'CUSTOM',
                     }],
                     value: 'same_as_source',
                     class: 'inline',
@@ -308,11 +308,11 @@ export class ReplicationWizardComponent {
                         action: 'SHOW',
                         connective: 'OR',
                         when: [{
-                            name: 'snapshot_lifetime',
-                            value: 'custom',
+                            name: 'retention_policy',
+                            value: 'CUSTOM',
                         }, {
-                            name: 'snapshot_lifetime',
-                            value: 'same_as_source',
+                            name: 'retention_policy',
+                            value: 'SOURCE',
                         }]
                     }]
                 },
@@ -343,11 +343,11 @@ export class ReplicationWizardComponent {
                         action: 'SHOW',
                         connective: 'OR',
                         when: [{
-                            name: 'snapshot_lifetime',
-                            value: 'custom',
+                            name: 'retention_policy',
+                            value: 'CUSTOM',
                         }, {
-                            name: 'snapshot_lifetime',
-                            value: 'same_as_source',
+                            name: 'retention_policy',
+                            value: 'SOURCE',
                         }]
                     }]
                 },
@@ -355,9 +355,10 @@ export class ReplicationWizardComponent {
         }
     ];
 
-
+    protected saveSubmitText = 'START REPLICATION';
     protected directions = ['PULL', 'PUSH'];
     protected selectedReplicationTask: any;
+
 
     constructor(private router: Router, private keychainCredentialService: KeychainCredentialService,
         private loader: AppLoaderService, private dialogService: DialogService,
@@ -385,6 +386,8 @@ export class ReplicationWizardComponent {
         const exist_replicationField = _.find(this.wizardConfig[0].fieldConfig, { name: 'exist_replication' });
         this.replicationService.getReplicationTasks().subscribe(
             (res) => {
+                console.log(res);
+                
                 for (const task of res) {
                     const lable = task.name + ' (' + ((task.state && task.state.datetime) ? 'last run ' + this.datePipe.transform(new Date(task.state.datetime.$date), 'MM/dd/yyyy') : 'never ran') + ')';
                     exist_replicationField.options.push({ label: lable, value: task });
@@ -461,8 +464,8 @@ export class ReplicationWizardComponent {
     }
 
     step1Init() {
-        this.entityWizard.formArray.controls[1].controls['snapshot_lifetime'].valueChanges.subscribe((value) => {
-            let disable = value === 'same_as_source' ? true : false;
+        this.entityWizard.formArray.controls[1].controls['retention_policy'].valueChanges.subscribe((value) => {
+            let disable = value === 'SOURCE' ? true : false;
             disable ? this.entityWizard.formArray.controls[1].controls['lifetime_value'].disable() : this.entityWizard.formArray.controls[1].controls['lifetime_value'].enable();
             disable ? this.entityWizard.formArray.controls[1].controls['lifetime_unit'].disable() : this.entityWizard.formArray.controls[1].controls['lifetime_unit'].enable();
         });
@@ -521,36 +524,35 @@ export class ReplicationWizardComponent {
         if (task.direction === 'PUSH') {
             task['source_datasets_from'] = 'local';
             task['target_dataset_from'] = 'remote';
+            task['ssh_credentials_target'] = task.ssh_credentials.id;
         } else {
             task['source_datasets_from'] = 'remote';
             task['target_dataset_from'] = 'local';
-        }
-        
-        if (task['source_datasets_from'] === 'remote') {
             task['ssh_credentials_source'] = task.ssh_credentials.id;
         }
-        if (task['target_dataset_from'] === 'remote') {
-            task['ssh_credentials_target'] = task.ssh_credentials.id;
-        }
 
-        for (let i of ['source_datasets_from','target_dataset_from', 'ssh_credentials_source', 'ssh_credentials_target', 'transport', 'source_datasets', 'target_dataset', 'name']) {
+        for (let i of ['source_datasets_from','target_dataset_from', 'ssh_credentials_source', 'ssh_credentials_target', 'transport', 'source_datasets', 'target_dataset']) {
             const ctrl = this.entityWizard.formArray.controls[0].controls[i];
             if (ctrl && !ctrl.disabled) {
                 ctrl.setValue(task[i]);
             }
         }
 
-        if (task.periodic_snapshot_tasks) {
-            let scheduleData = task.periodic_snapshot_tasks[0];
-            console.log(task.periodic_snapshot_tasks);
+        if (task.schedule || task.periodic_snapshot_tasks ) {
+            let scheduleData = task.periodic_snapshot_tasks[0] || task;
             task['schedule_method'] = 'corn';
-            task['schedule'] = scheduleData.schedule.minute + " " +scheduleData.schedule.hour + " " + scheduleData.schedule.dom + " " + scheduleData.schedule.month + " " + scheduleData.schedule.dow;
-            task['snapshot_lifetime'] = 'same_as_source',
-            task['lifetime_value'] = scheduleData['lifetime_value'];
-            task['lifetime_unit'] = scheduleData['lifetime_unit'];
+            task['schedule_picker'] = scheduleData.schedule.minute + " " +scheduleData.schedule.hour + " " + scheduleData.schedule.dom + " " + scheduleData.schedule.month + " " + scheduleData.schedule.dow;
+            
+            if (scheduleData['lifetime_value'] === null && scheduleData['lifetime_unit'] === null) {
+                task['retention_policy'] = 'NONE';
+            } else {
+                task['lifetime_value'] = scheduleData['lifetime_value'];
+                task['lifetime_unit'] = scheduleData['lifetime_unit'];
+                task['retention_policy'] = task.schedule !== null ? 'CUSTOM' : 'SOURCE';
+            }
         }
         // periodic_snapshot_tasks
-        for (let i of ['schedule_method', 'schedule', 'snapshot_lifetime', 'lifetime_value', 'lifetime_unit']) {
+        for (let i of ['schedule_method', 'schedule_picker', 'retention_policy', 'lifetime_value', 'lifetime_unit']) {
             const ctrl = this.entityWizard.formArray.controls[1].controls[i];
             if (ctrl && !ctrl.disabled) {
                 ctrl.setValue(task[i]);
@@ -561,6 +563,78 @@ export class ReplicationWizardComponent {
 
     clearReplicationTask() {
         console.log('clear replication task');
+        this.entityWizard.formArray.reset();
+    }
+
+    parsePickerTime(picker) {
+        const spl = picker.split(" ");
+        return {
+            minute: spl[0],
+            hour: spl[1],
+            dom: spl[2],
+            month: spl[3],
+            dow: spl[4],
+        };
+    }
+
+    getPayload(data) {
+        console.log(data['transport']);
         
+        const payload = {
+            name: data['name'],
+            direction: data['source_datasets_from'] === 'remote' ? 'PULL' : 'PUSH',
+            source_datasets: data['source_datasets'],
+            target_dataset: data['target_dataset'],
+            ssh_credentials: data['ssh_credentials_source'] || data['ssh_credentials_target'],
+            transport: data['transport'] ? data['transport'] : 'LOCAL',
+            retention_policy: data['retention_policy'],
+        }
+        payload['recursive'] = data['recursive'];
+        payload['auto'] = data['schedule_method'] === 'corn' ? true : false;
+        if (data['schedule_method'] === 'corn') {
+            payload['schedule'] = this.parsePickerTime(data['schedule_picker']);
+        } else {
+            payload['also_include_naming_schema'] = ['auto-%Y-%m-%d_%H-%M'];
+        }
+
+        if (data['retention_policy'] === 'CUSTOM') {
+            payload['lifetime_value'] = data['lifetime_value'];
+            payload['lifetime_unit'] = data['lifetime_unit'];
+        }
+        
+        // payload["periodic_snapshot_tasks"] = value['periodic_snapshot_tasks'].toString().split(' ');
+
+
+        // if (payload['direction'] == 'PUSH') {
+        //     payload['source_datasets'] = this.parseLocalDS(value, 'source_datasets_PUSH');
+        //     payload['target_dataset'] = value['target_dataset_PUSH'];
+
+        //     payload["periodic_snapshot_tasks"] = value['periodic_snapshot_tasks'].toString().split(' ');
+        // } else {
+        //     payload['source_datasets'] =  value['source_datasets_PULL'].split(' ');
+        //     payload['target_dataset'] = this.parseLocalDS(value, 'target_dataset_PULL').join(' ');
+
+        //     payload['naming_schema'] = value['naming_schema'].split(' ');
+        //     if (value['schedule_picker']) {
+        //         payload['schedule'] = this.parsePickerTime(value['schedule_picker'], value['begin'], value['end']);
+        //     }
+        // }
+        return payload;
+    }
+    customSubmit(value) {
+        console.log('submit', value);
+        const payload = this.getPayload(value);
+        console.log(payload);
+        
+        this.ws.call('replication.create', [payload]).subscribe(
+            (res) => {
+                console.log(res);
+                this.router.navigate(new Array('/').concat(this.route_success));
+            },
+            (err) => {
+                console.log(err);
+                new EntityUtils().handleWSError(this, err);
+            }
+        );
     }
 }
