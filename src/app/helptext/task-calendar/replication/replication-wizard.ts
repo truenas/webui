@@ -37,4 +37,18 @@ export default {
     name_tooltip: T(''),
 
     step2_label: T('When'),
+
+    schedule_method_placeholder: T('Replication Schedule'),
+    schedule_method_tooltip: T(''),
+
+    schedule_placeholder: T('Scheduling'),
+    schedule_tooltip: T(''),
+
+    snapshot_lifetime_placeholder: T('Destination Snapshot Lifetime'),
+    snapshot_lifetime_tooltip: T(''),
+
+    lifetime_value_placeholder: T(''),
+    lifetime_value_tooltip: T(''),
+
+    lifetime_unit_tooltip: T(''),
 }
