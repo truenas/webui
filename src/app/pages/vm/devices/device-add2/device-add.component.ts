@@ -240,7 +240,8 @@ export class DeviceAddComponent implements OnInit {
       placeholder : helptext.vnc_resolution_placeholder,
       tooltip : helptext.vnc_resolution_tooltip,
       type: 'select',
-      options : helptext.vnc_resolution_options
+      options : helptext.vnc_resolution_options,
+      value: '1024x768'
     },
     {
       name : 'vnc_bind',
