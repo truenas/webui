@@ -84,7 +84,6 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     });
 
     core.register({observerClass: this, eventName: 'SysInfo'}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
       this.system_product = evt.data.license.model;
       core.emit({name: 'EnclosureDataRequest', sender: this});
     });
