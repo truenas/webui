@@ -23,7 +23,7 @@
     <ng-template #trainName>
       <div class="train-card-row train-select-row">
         <div id="single-train-name">Current Train: {{ train }} - {{ singleDescription }}</div>
-        <button mat-mini-fab color="primary" id="single-train-refresh-button" matTooltip="Refresh" (click)="check()">
+        <button mat-mini-fab color="primary" [disabled]="isUpdateRunning" id="single-train-refresh-button" matTooltip="Refresh" (click)="check()">
           <mat-icon>refresh</mat-icon>
         </button>
       </div>
@@ -113,13 +113,20 @@
   </div>
 </mat-card>
 
-<mat-card id="button-card">
+<mat-card id="button-card" *ngIf="!isUpdateRunning">
   <div class="row">
     <div class="col-md-12">
       <button mat-button class="btn btn-success update-button mat-basic" *ngIf="updates_available" (click)="downloadUpdate()" [disabled]="status == 'REBOOT_REQUIRED'">{{"Fetch and Install Updates" | translate}}</button>
       <button mat-button class="btn btn-success update-button mat-basic" *ngIf="update_downloaded && status !== 'UNAVAILABLE'" (click)="ApplyPendingUpdate()">{{"Apply Pending update" | translate}}</button>
       <button mat-button class="btn btn-success update-button mat-basic" (click)="ManualUpdate()" >{{"Install Manual Update File" | translate}}</button>
       <p><font color ="red">{{general_update_error}}</font></p>
+    </div>
+  </div>
+</mat-card>
+<mat-card id="update-in-progress-card" *ngIf="isUpdateRunning">
+  <div class="row">
+    <div class="col-md-12">
+      <p>An update is currently in progress.</p>
     </div>
   </div>
 </mat-card>

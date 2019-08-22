@@ -7,6 +7,8 @@ import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
 import { ViewChartLineComponent } from 'app/core/components/viewchartline/viewchartline.component';
+import { WebSocketService } from '../../../../services/';
+
 
 import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
@@ -40,8 +42,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   public is_freenas: string = window.localStorage['is_freenas'];
   public systemLogo: any;
   public isFN: boolean;
+  public isUpdateRunning = false;
 
-  constructor(public router: Router, public translate: TranslateService){
+  constructor(public router: Router, public translate: TranslateService, private ws: WebSocketService){
     super(translate);
     this.configurable = false;
   }
@@ -89,6 +92,16 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   }
 
   ngOnInit(){
+    this.ws.call('core.get_jobs', [[["method", "=", "update.update"], ["state", "=", "RUNNING"]]]).subscribe(
+      (res) => {
+        console.log(res)
+        if (res && res.length > 0) {
+          this.isUpdateRunning = true;
+        }
+      },
+      (err) => {
+        console.error(err);
+      });
   }
 
   ngOnDestroy(){
@@ -107,7 +120,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   get updateBtnStatus(){
     if(this.updateAvailable){
       this._updateBtnStatus = "default";
-      this.updateBtnLabel = T("Updates Available");
+      this.isUpdateRunning ? this.updateBtnLabel = T("Update In Progress") : this.updateBtnLabel = T("Updates Available");
     }
     return this._updateBtnStatus;
   }

@@ -62,6 +62,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   is_ha = false;
   sysName: string = 'FreeNAS';
   hostname: string;
+  public updateNotificationSent = false;
   private user_check_in_prompted = false;
 
   constructor(
@@ -76,7 +77,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private dialogService: DialogService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
-
     public translate: TranslateService,
     protected loader: AppLoaderService, ) {}
 
@@ -117,6 +117,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.checkNetworkChangesPending();
     this.checkNetworkCheckinWaiting();
     this.getDirServicesStatus();
+    this.isUpdateRunning();
 
     this.continuosStreaming = observableInterval(10000).subscribe(x => {
       this.showReplicationStatus();
@@ -126,6 +127,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.checkNetworkCheckinWaiting();
       this.checkNetworkChangesPending();
       this.getDirServicesStatus();
+      this.isUpdateRunning();
     });
 
     this.ws.subscribe('zfs.pool.scan').subscribe(res => {
@@ -435,5 +437,19 @@ export class TopbarComponent implements OnInit, OnDestroy {
         });
       });
     });
+  };
+
+  isUpdateRunning() {
+    this.ws.call('core.get_jobs', [[["method", "=", "update.update"], ["state", "=", "RUNNING"]]]).subscribe(
+      (res) => {
+        if (res && res.length === 0 && !this.updateNotificationSent) {
+          this.dialogService.Info(T('Update in Progress'), T('A system update is in progress. It may have been \
+ launched in another window, via an API, or by an eternal source such as TrueCommand.'));
+          this.updateNotificationSent = true;
+        }
+      },
+      (err) => {
+        console.error(err);
+      });
   }
 }

@@ -48,6 +48,7 @@ export class UpdateComponent implements OnInit {
   public trainDescriptionOnPageLoad: string;
   public fullTrainList: any[];
   public isFooterConsoleOpen: boolean;
+  public isUpdateRunning = false;
 
   public busy: Subscription;
   public busy2: Subscription;
@@ -242,6 +243,16 @@ export class UpdateComponent implements OnInit {
         this.isFooterConsoleOpen = res.consolemsg;
       }
     });
+    this.ws.call('core.get_jobs', [[["method", "=", "update.update"], ["state", "=", "RUNNING"]]]).subscribe(
+      (res) => {
+        console.log(res)
+        if (res && res.length > 0) {
+          this.isUpdateRunning = true;
+        }
+      },
+      (err) => {
+        console.error(err);
+      });
   }
 
   onTrainChanged(event) {
