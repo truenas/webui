@@ -80,7 +80,14 @@ export class TopbarComponent implements OnInit, OnDestroy {
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
     public translate: TranslateService,
-    protected loader: AppLoaderService, ) {}
+    protected loader: AppLoaderService, ) {
+      this.sysGenService.updateRunningNoticeSent.subscribe(() => {
+        this.updateNotificationSent = true;
+        setTimeout(() => {
+          this.updateNotificationSent = false;
+        }, 600000);
+      });
+    }
 
   ngOnInit() {
     if (window.localStorage.getItem('is_freenas') === 'false') {
@@ -453,6 +460,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
             this.dialogService.confirm(helptext.updateRunning_dialog_title, helptext.updateRunning_dialog_message,
               true, T('Close'), false, '', '', '', '', true);
             this.updateNotificationSent = true;
+            setTimeout(() => {
+              this.updateNotificationSent = false;
+            }, 600000);
           }      
         } else {
           this.sysGenService.updateRunning.emit('false');

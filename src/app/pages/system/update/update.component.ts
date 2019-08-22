@@ -266,6 +266,7 @@ export class UpdateComponent implements OnInit {
       (res) => {
         if (res && res.length > 0) {
           this.isUpdateRunning = true;
+          this.showRunningUpdate(res[0].id);
         }
       },
       (err) => {
@@ -449,6 +450,7 @@ export class UpdateComponent implements OnInit {
   }
 
   downloadUpdate() {
+    this.sysGenService.updateRunningNoticeSent.emit();
     this.ws.call('core.get_jobs', [[["method", "=", "update.update"], ["state", "=", "RUNNING"]]]).subscribe(
       (res) => {
         if (res[0]) {
@@ -475,6 +477,7 @@ export class UpdateComponent implements OnInit {
   }
 
   ApplyPendingUpdate() {
+    this.sysGenService.updateRunningNoticeSent.emit();
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
       if(ures[0].attributes.preferences !== undefined && !ures[0].attributes.preferences.enableWarning) {
         this.dialogService.confirm(
@@ -500,6 +503,7 @@ export class UpdateComponent implements OnInit {
   };
 
   ManualUpdate() {
+    this.sysGenService.updateRunningNoticeSent.emit();
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
       if(ures[0].attributes.preferences !== undefined && !ures[0].attributes.preferences.enableWarning) {
         this.router.navigate([this.router.url +'/manualupdate']);

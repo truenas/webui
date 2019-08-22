@@ -150,6 +150,7 @@ export class ManualUpdateComponent {
     entityForm.submitFunction = this.customSubmit;
   }
   customSubmit(entityForm: any) {
+    this.systemService.updateRunningNoticeSent.emit();
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
       this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Manual Update" }, disableClose: true });
       this.dialogRef.componentInstance.wspost(this.subs.apiEndPoint, this.subs.formData);
