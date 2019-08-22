@@ -11,6 +11,7 @@ import { ES12 } from 'app/core/classes/hardware/es12';
 import { E16 } from 'app/core/classes/hardware/e16';
 import { E24 } from 'app/core/classes/hardware/e24';
 import { ES24 } from 'app/core/classes/hardware/es24';
+import { E60 } from 'app/core/classes/hardware/e60';
 import { ES60 } from 'app/core/classes/hardware/es60';
 import { DiskComponent } from './components/disk.component';
 import { TabContentComponent } from './components/tab-content/tab-content.component';
@@ -263,7 +264,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         break;
       case "ES60":
       case "E60":
-        this.enclosure = new ES60();
+        this.enclosure = new E60();
         break;
       default:
         console.warn("DEFAULT ENCLOSURE")
@@ -331,7 +332,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         break;
       case "ES60":
       case "E60":
-        enclosure = new ES60();
+        enclosure = new E60();
         break;
       default:
         console.log(profile.model);
