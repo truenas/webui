@@ -12,10 +12,10 @@ import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
 import { DialogService } from 'app/services/dialog.service';
+import { EncryptionService } from '../../../../../app/services/encryption.service';
 import { MatSnackBar, MatDialog } from '@angular/material';
 import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/storage/volumes/volume-key';
 
@@ -28,9 +28,11 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
   saveSubmitText = T("Change Passphrase");
 
   resource_name = 'storage/volume';
-  route_success: string[] = [ 'storage', 'pools'];
+  route_return: string[] = [ 'storage', 'pools'];
   isNew = false;
   isEntity = true;
+  poolName: string;
+  admin_pw = '';
   entityData = {
     name: "",
     passphrase: "",
@@ -42,6 +44,10 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
       type : 'input',
       name : 'name',
       isHidden: true
+    },{
+      type: 'paragraph',
+      name: 'encrypt-headline',
+      paraText: '<i class="material-icons">lock</i>' + helptext.changekey2_headline
     },{
       type: 'paragraph',
       name: 'changekey-instructions',
@@ -63,16 +69,8 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
       tooltip: helptext.changekey_passphrase_tooltip,
       validation: helptext.changekey_passphrase_validation,
       required: true,
-      disabled: false
-    },{
-      type : 'input',
-      inputType: 'password',
-      name : 'passphrase2',
-      placeholder: helptext.changekey_passphrase2_placeholder,
-      tooltip: helptext.changekey_passphrase2_tooltip,
-      validation: helptext.changekey_passphrase2_validation,
-      required: true,
-      disabled: false
+      disabled: false,
+      togglePw: true
     },
     {
       type: 'checkbox',
@@ -82,7 +80,33 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
     }
   ];
 
+  public custActions: Array<any> = [
+    {
+      id : 'download_encrypt_key',
+      name : 'Download Encryption Key',
+      disabled: true,
+      function : () => {
+        this.ws.call('auth.check_user', ['root', this.admin_pw]).subscribe((res) => {
+          if (res) {
+            this.encryptionService.openEncryptDialog(this.pk, this.route_return, this.poolName);
+          } else {
+            this.dialogService.Info('Error', 'The administrator password is incorrect.', '340px');
+          }
+        });
+      }
+    },
+    {
+      id : 'custom_cancel',
+      name : 'Cancel',
+      function : () => {
+        this.router.navigate(new Array('/').concat(
+          this.route_return));
+    }
+  }];
+
   resourceTransformIncomingRestData(data:any): any {
+    this.poolName = data.name;
+    _.find(this.fieldConfig, {name : "encrypt-headline"}).paraText += ` <em>${this.poolName}</em>`;
     return data;
   };
 
@@ -97,7 +121,8 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
       protected dialogService: DialogService,
       protected loader: AppLoaderService,
       public mdDialog: MatDialog,
-      public snackBar: MatSnackBar
+      public snackBar: MatSnackBar,
+      protected encryptionService: EncryptionService
   ) {
 
   }
@@ -117,6 +142,11 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
         entityForm.setDisabled('passphrase', false);
         entityForm.setDisabled('passphrase2', false);
       }
+    });
+    entityForm.formGroup.controls['adminpw'].valueChanges.subscribe((res) => {
+      this.admin_pw = res;
+      let btn = <HTMLInputElement> document.getElementById('cust_button_Download Encryption Key')
+      this.admin_pw !== '' ? btn.disabled = false : btn.disabled = true;
     })
   }
 
@@ -137,21 +167,13 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
     };
     params.push(payload);
 
-    this.loader.open();
-    this.ws.call('pool.passphrase', params).subscribe(() => {
-      this.loader.close();
-      this.snackBar.open(T('Passphrase changed for pool ' + value.name), T("Close"), {
-        duration: 5000,
-      });
-        let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
-        dialogRef.componentInstance.volumeId = this.pk;
-        dialogRef.afterClosed().subscribe(result => {
-          this.router.navigate(new Array('/').concat(
-            this.route_success));
-        });
-    },(err) => {
-      this.loader.close();
-      this.dialogService.errorReport(T("Error changing passphrase for pool ") + value.name, err.reason, err.trace.formatted);
-    })
+    this.ws.call('auth.check_user', ['root', value.adminpw]).subscribe((res) => {
+      if (res) {
+        this.encryptionService.setPassphrase(this.pk, value.passphrase, value.adminpw,
+          value.name, this.route_return, false, true, success_msg);
+      } else {
+        this.dialogService.Info('Error', 'The administrator password is incorrect.', '340px');
+      }
+    });
   }
 }

@@ -184,7 +184,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
       if (rowData.is_decrypted) {
         actions.push({
-          label: T("Change Passphrase"),
+          label: T("Encryption Key/Passphrase"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat(
               ["storage", "pools", "changekey", row1.id]));
@@ -194,7 +194,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
     } else if (rowData.vol_encrypt === 1 && rowData.is_decrypted && localParentVolumesList.systemdatasetPool != rowData.name) {
       actions.push({
-        label: T("Create Passphrase"),
+        label: T("Encryption Key"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
             ["storage", "pools", "createkey", row1.id]));
@@ -205,7 +205,7 @@ export class VolumesListTableConfig implements InputTableConf {
     if (rowData.is_decrypted) {
 
       actions.push({
-        label: T("Add Recovery Key"),
+        label: T("Recovery Key"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
             ["storage", "pools", "addkey", row1.id]));
@@ -213,41 +213,10 @@ export class VolumesListTableConfig implements InputTableConf {
       });
 
       actions.push({
-        label: T("Delete Recovery Key"),
-        onClick: (row1) => {
-          this.dialogService.confirm(T("Delete Recovery Key"), T("Delete recovery key for ") + row1.name + "?").subscribe((confirmResult) => {
-            if (confirmResult === true) {
-              this.loader.open();
-
-              this.rest.delete(this.resource_name + "/" + row1.id + "/recoverykey/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-                this.loader.close();
-
-                this.dialogService.Info(T("Deleted Recovery Key"), T("Successfully deleted recovery key for ") + row1.name).subscribe((infoResult) => {
-                  this.parentVolumesListComponent.repaintMe();
-                });
-              }, (res) => {
-                this.loader.close();
-                this.dialogService.errorReport(T("Error Deleting Key"), res.message, res.stack);
-              });
-            }
-          });
-        }
-      });
-
-      actions.push({
-        label: T("Encryption Rekey"),
+        label: T("Reset Keys"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
             ["storage", "pools", "rekey", row1.id]));
-
-        }
-      });
-
-      actions.push({
-        label: T("Download Encrypt Key"),
-        onClick: (row1) => {
-          const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
-          dialogRef.componentInstance.volumeId = row1.id;
 
         }
       });
@@ -458,6 +427,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 function: () => {
                   const dialogRef = localDialog.open(DownloadKeyModalDialog, { disableClose: true });
                   dialogRef.componentInstance.volumeId = row1.id;
+                  dialogRef.componentInstance.fileName = 'pool_' + row1.name + '_encryption.key';
                 }
               }],
             customSubmit: function (entityDialog) {

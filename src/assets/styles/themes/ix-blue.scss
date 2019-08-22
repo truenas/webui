@@ -1386,6 +1386,13 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     margin-bottom: 1rem;
   }
 
+  app-createpassphrase-form, app-addkey-form {
+    #cust_button_Cancel {
+      background-color: var(--accent);
+      color: black !important;
+    }
+  }
+
   #recovery_key span {
     margin-right: 5px;
   }
@@ -1405,5 +1412,30 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     width: 50px;
     text-align: center;
   }
+
+  // Reset Encryption form
+  #encrypt-headline p {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: .7rem;
+
+    i {
+      margin-right: 5px;
+      position: relative;
+      top: 3px;
+    }
+  }
+
+  #encryptionkey-passphrase-instructions p,
+  #set_recoverykey-instructions p {
+    margin-top: 1rem;
+    font-size: .9rem;
+  }
+
+  #encryptionkey-passphrase {
+    max-width: 640px;
+  }
+
+  // end of reset encryption form
 
  } // end of ix theme
