@@ -8,6 +8,7 @@ import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { WebSocketService } from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { SystemGeneralService } from '../../../services/system-general.service';
 import { AboutModalDialog } from '../dialog/about/about-dialog.component';
 import { TaskManagerComponent } from '../dialog/task-manager/task-manager.component';
 import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
@@ -75,6 +76,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private rest: RestService,
     public language: LanguageService,
     private dialogService: DialogService,
+    public sysGenService: SystemGeneralService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
     public translate: TranslateService,
@@ -442,10 +444,13 @@ export class TopbarComponent implements OnInit, OnDestroy {
   isUpdateRunning() {
     this.ws.call('core.get_jobs', [[["method", "=", "update.update"], ["state", "=", "RUNNING"]]]).subscribe(
       (res) => {
-        if (res && res.length === 0 && !this.updateNotificationSent) {
-          this.dialogService.Info(T('Update in Progress'), T('A system update is in progress. It may have been \
- launched in another window, via an API, or by an eternal source such as TrueCommand.'));
-          this.updateNotificationSent = true;
+        if (res && res.length === 0) {
+          this.sysGenService.updateRunning.emit();
+          if (!this.updateNotificationSent) {
+            this.dialogService.Info(T('Update in Progress'), T('A system update is in progress. It may have been \
+ launched in another window, via an API, or by an eternal source such as TrueCommand. This system may restart soon.'));
+            this.updateNotificationSent = true;
+          }        
         }
       },
       (err) => {

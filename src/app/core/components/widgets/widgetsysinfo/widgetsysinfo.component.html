@@ -35,7 +35,8 @@
             </div>
 
             <div fxFlex="18" class="update-action">
-              <button class="" mat-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])">{{updateBtnLabel | translate}}</button>
+              <button *ngIf="!isUpdateRunning" class="" mat-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])">{{updateBtnLabel | translate}}</button>
+              <p [style.font-weight]='500' *ngIf="isUpdateRunning" class="">{{'UPDATE IN PROGRESS' | translate}}</p>
             </div>
   
           </div>
