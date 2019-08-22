@@ -257,6 +257,7 @@ export class ReplicationWizardComponent {
                         label: 'Run Once',
                         value: 'once',
                     }],
+                    value: 'corn',
                     class: 'inline',
                     width: '50%',
                 },
@@ -290,6 +291,7 @@ export class ReplicationWizardComponent {
                         label: 'Custom',
                         value: 'custom',
                     }],
+                    value: 'same_as_source',
                     class: 'inline',
                     width: '50%',
                 },
@@ -304,9 +306,13 @@ export class ReplicationWizardComponent {
                     width: '25%',
                     relation: [{
                         action: 'SHOW',
+                        connective: 'OR',
                         when: [{
                             name: 'snapshot_lifetime',
                             value: 'custom',
+                        }, {
+                            name: 'snapshot_lifetime',
+                            value: 'same_as_source',
                         }]
                     }]
                 },
@@ -335,9 +341,13 @@ export class ReplicationWizardComponent {
                     width: '25%',
                     relation: [{
                         action: 'SHOW',
+                        connective: 'OR',
                         when: [{
                             name: 'snapshot_lifetime',
                             value: 'custom',
+                        }, {
+                            name: 'snapshot_lifetime',
+                            value: 'same_as_source',
                         }]
                     }]
                 },
@@ -368,6 +378,7 @@ export class ReplicationWizardComponent {
         this.entityWizard = entityWizard;
 
         this.step0Init();
+        this.step1Init();
     }
 
     step0Init() {
@@ -449,6 +460,14 @@ export class ReplicationWizardComponent {
         });
     }
 
+    step1Init() {
+        this.entityWizard.formArray.controls[1].controls['snapshot_lifetime'].valueChanges.subscribe((value) => {
+            let disable = value === 'same_as_source' ? true : false;
+            disable ? this.entityWizard.formArray.controls[1].controls['lifetime_value'].disable() : this.entityWizard.formArray.controls[1].controls['lifetime_value'].enable();
+            disable ? this.entityWizard.formArray.controls[1].controls['lifetime_unit'].disable() : this.entityWizard.formArray.controls[1].controls['lifetime_unit'].enable();
+        });
+    }
+
     getSourceChildren(node) {
         const fromLocal = this.entityWizard.formArray.controls[0].controls['source_datasets_from'].value === 'local' ? true : false;
         const sshCredentials = this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].value;
@@ -516,6 +535,23 @@ export class ReplicationWizardComponent {
 
         for (let i of ['source_datasets_from','target_dataset_from', 'ssh_credentials_source', 'ssh_credentials_target', 'transport', 'source_datasets', 'target_dataset', 'name']) {
             const ctrl = this.entityWizard.formArray.controls[0].controls[i];
+            if (ctrl && !ctrl.disabled) {
+                ctrl.setValue(task[i]);
+            }
+        }
+
+        if (task.periodic_snapshot_tasks) {
+            let scheduleData = task.periodic_snapshot_tasks[0];
+            console.log(task.periodic_snapshot_tasks);
+            task['schedule_method'] = 'corn';
+            task['schedule'] = scheduleData.schedule.minute + " " +scheduleData.schedule.hour + " " + scheduleData.schedule.dom + " " + scheduleData.schedule.month + " " + scheduleData.schedule.dow;
+            task['snapshot_lifetime'] = 'same_as_source',
+            task['lifetime_value'] = scheduleData['lifetime_value'];
+            task['lifetime_unit'] = scheduleData['lifetime_unit'];
+        }
+        // periodic_snapshot_tasks
+        for (let i of ['schedule_method', 'schedule', 'snapshot_lifetime', 'lifetime_value', 'lifetime_unit']) {
+            const ctrl = this.entityWizard.formArray.controls[1].controls[i];
             if (ctrl && !ctrl.disabled) {
                 ctrl.setValue(task[i]);
             }
