@@ -145,12 +145,13 @@ span.safe{
 .pool-status span.safe .mat-icon{
   width:auto;
   height:auto;
-  font-size:18px;
+  font-size: 18px;
+  position: relative;
+  top: 2px;
 }
 
 .pool-status span.safe.lock-icon-wrapper{
-  position:relative;
-  top:2px;
+  top:1px;
 }
 
 .controls{

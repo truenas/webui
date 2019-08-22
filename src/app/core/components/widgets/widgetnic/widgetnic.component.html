@@ -54,17 +54,19 @@
             <div class="left" fxFlex="40">
               <div class="overlay" fxFlex="100" fxLayout="column" fxLayoutAlign="space-around center">
 
-              <div fxFlex="66">
+              <div fxFlex="66" class="left-content">
                 <div class="nic-name" [ngClass]="{ 'up': nicState.link_state == 'LINK_STATE_UP', 'down': nicState.link_state !== 'LINK_STATE_UP' }">
                   {{nicState.name}}
-                  <div class="icon-wrapper">
+                  <!--<div class="icon-wrapper">
                     <mat-icon *ngIf="nicState.link_state == 'LINK_STATE_UP' " role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
                     <mat-icon *ngIf="nicState.link_state !== 'LINK_STATE_UP' " role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
-                  </div>
+                    </div>-->
                 </div> 
 
                 <div class="link-state" [ngClass]="{'up': nicState.link_state == 'LINK_STATE_UP', 'down': nicState.link_state !== 'LINK_STATE_UP'}">
                   {{linkState}}
+                    <mat-icon *ngIf="nicState.link_state == 'LINK_STATE_UP' " role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
+                    <mat-icon *ngIf="nicState.link_state !== 'LINK_STATE_UP' " role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
 
                   <div *ngIf="traffic && nicState.link_state == 'LINK_STATE_UP'" class="nic-traffic">
                     <div><strong>In: </strong><span class="stat">{{traffic["KB/s in"]}}</span> KB/s</div>
