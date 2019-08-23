@@ -56,9 +56,13 @@ export const helptext_system_cloudcredentials = {
 
   endpoint_s3: {
     placeholder: T("Endpoint URL"),
-    tooltip: T('When using AWS, the endpoint field can be empty to \
- use the default endpoint for the region, and available buckets \
- are automatically fetched.')
+    tooltip: T('S3 API. When using AWS, the endpoint field can be \
+ empty to use the default endpoint for the region, and available \
+ buckets are automatically fetched. Refer to the AWS Documentation \
+ for a list of \
+ <a href="https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_website_region_endpoints \
+ target="_blank">Simple Storage Service Website Endpoints</a>.'
+    )
   },
 
   skip_region_s3: {
