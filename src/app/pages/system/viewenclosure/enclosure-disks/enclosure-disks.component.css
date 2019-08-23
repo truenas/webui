@@ -128,6 +128,7 @@ nav.view-nav-bar{
   font-weight:300;
   font-size: 120%;
   line-height: 85%;
+  word-break: break-word;
 /*
     text-align: left;
     font-weight: 300;
@@ -159,6 +160,7 @@ nav.view-nav-bar{
   opacity:0; /* animations will change this */
   text-align:center;
   position:absolute;
+  padding:3px;
 }
 
 .view-card .dom-overlay .content .legend{

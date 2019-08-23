@@ -3,7 +3,10 @@ import { MatSnackBar, MatSnackBarConfig } from '@angular/material';
 
 import { EntitySnackbarComponent } from 'app/pages/common/entity/entity-snackbar/entity-snackbar.component';
 
-@Injectable()
+@Injectable({
+providedIn: 'root'
+})
+
 export class SnackbarService {
 
     constructor(private snackbar: MatSnackBar) { }

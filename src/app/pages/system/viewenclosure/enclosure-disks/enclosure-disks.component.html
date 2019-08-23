@@ -1,6 +1,7 @@
 <mat-card class="view-card" id="{{currentTab.alias}}">
   <mat-toolbar id="Disks-toolbar">
-    <div class="mat-card-title-text">{{currentTab.alias}} on {{selectedEnclosure ? selectedEnclosure.model + ' (' + selectedEnclosure.enclosureKey + ')' : '...'}}</div>
+    <div *ngIf="selectedEnclosure.enclosureKey > 0" class="mat-card-title-text">{{currentTab.alias}} on {{selectedEnclosure ? selectedEnclosure.model + ' (' + selectedEnclosure.enclosureKey + ')' : '...'}}</div>
+    <div *ngIf="selectedEnclosure.enclosureKey < 1" class="mat-card-title-text">{{currentTab.alias}} on {{selectedEnclosure ? system.platform + ' (' + selectedEnclosure.enclosureKey + ')' : '...'}}</div>
 
     <!-- ENCLOSURE MODEL -->
     <div class="model dom-overlay" style="opacity:0.75;">
@@ -72,10 +73,10 @@
           </div>
           
           <div #domLabels *ngIf="currentView == 'details' || exitingView == 'details'" class="details stage-right dom-overlay">
-            <div class="content">
+            <div class="content" (mouseenter)="toggleHighlightMode('on')" (mouseleave)="toggleHighlightMode('off')">
 
               <div *ngIf="selectedVdevDisks; else noVdevDisks;" class="legend">
-                <div *ngFor="let disk of selectedVdevDisks; let i = index" class="vdev-disk {{disk}}"><div class="swatch" [style.background]="selectedDisk.devname == disk ? theme.cyan : theme.blue"></div>{{disk}} <span> {{ selectedEnclosure.disks[disk] }}</span></div>
+                <div *ngFor="let disk of selectedVdevDisks; let i = index" class="vdev-disk {{disk}}"(mouseenter)="highlightPath(disk)" (mouseleave)="unhighlightPath(disk)"><div class="swatch" [style.background]="selectedDisk.devname == disk ? theme.cyan : theme.blue"></div>{{disk}} <span> {{ selectedEnclosure.disks[disk] }}</span></div>
               </div>
 
               <ng-template #noVdevDisks>
@@ -137,7 +138,7 @@
             <button mat-button color="primary" (click)="setCurrentView('status')">SHOW STATUS</button>
           </div>
   
-          <div *ngIf="system; else loading" fxFlex class="tiles" [class.active]="currentView == 'expanders' " fxLayout="column" fxLayoutAlign="center center">
+          <div *ngIf="system && expanders; else loading" fxFlex class="tiles" [class.active]="currentView == 'expanders' " fxLayout="column" fxLayoutAlign="center center">
             <div class="primary-number" >{{expanders.length}}</div>
             <div class="title">SAS Expanders</div>
             <div class="subtitle">on this enclosure</div>
