@@ -60,7 +60,7 @@ export default {
         placeholder : T('Destination'),
         tooltip: T('Enter a line- or space-separated list of\
  destinations where the collected metrics are to be sent. Use the format\
- HOST:PORT (port is optional). Netdata uses the first working\
+ <samp>HOST:PORT</samp> (port is optional). Netdata uses the first working\
  destination.'),
         validation: [Validators.required]
     },
