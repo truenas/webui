@@ -201,7 +201,6 @@ export class UpdateComponent implements OnInit {
       this.autoCheck = res.data.upd_autocheck;
 
       this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
-        console.log(res)
         this.fullTrainList = res.trains;
   
         // On page load, make sure we are working with train of the current OS
