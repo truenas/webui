@@ -31,7 +31,8 @@ xpaths = {
     'topPoolTable': '//td',
     'noPool': '//mat-card-content',
     'toDashboard': "//span[contains(.,'Dashboard')]",
-    'disconnect': "//button[@id='action_button___']/span"
+    'disconnectPool1': f"//button[@id='action_button_Export/Disconnect__{pool1}']/span",
+    'disconnectPool2': f"//button[@id='action_button_Export/Disconnect__{pool2}']/span"
 }
 
 
@@ -82,15 +83,15 @@ def test_03_click_on_pool1_operation(browser):
     element_present = is_element_present(browser, pool_xpath)
     assert element_present, f'XPath Not Found: {pool_xpath}'
     browser.find_element_by_xpath(pool_xpath).click()
-    wait_on_element(browser, xpaths['disconnect'], script_name, test_name)
+    wait_on_element(browser, xpaths['disconnectPool1'], script_name, test_name)
     take_screenshot(browser, script_name, test_name)
     element_present = is_element_present(browser, pool_xpath)
-    assert element_present, f'XPath Not Found: {xpaths["disconnect"]}'
+    assert element_present, f'XPath Not Found: {xpaths["disconnectPool1"]}'
 
 
 def test_04_click_disconect_pool(browser):
     test_name = sys._getframe().f_code.co_name
-    browser.find_element_by_xpath(xpaths['disconnect']).click()
+    browser.find_element_by_xpath(xpaths['disconnectPool1']).click()
     wait = wait_on_element(
         browser,
         xpaths['pooldestroyCheckbox'],
@@ -148,15 +149,15 @@ def test_08_click_on_pool2_operation(browser):
     element_present = is_element_present(browser, pool_xpath)
     assert element_present, f'XPath Not Found: {pool_xpath}'
     browser.find_element_by_xpath(pool_xpath).click()
-    wait_on_element(browser, xpaths['disconnect'], script_name, test_name)
+    wait_on_element(browser, xpaths['disconnectPool2'], script_name, test_name)
     take_screenshot(browser, script_name, test_name)
     element_present = is_element_present(browser, pool_xpath)
-    assert element_present, f'XPath Not Found: {xpaths["disconnect"]}'
+    assert element_present, f'XPath Not Found: {xpaths["disconnectPool2"]}'
 
 
 def test_09_click_disconect_pool(browser):
     test_name = sys._getframe().f_code.co_name
-    browser.find_element_by_xpath(xpaths['disconnect']).click()
+    browser.find_element_by_xpath(xpaths['disconnectPool2']).click()
     wait = wait_on_element(
         browser,
         xpaths['pooldestroyCheckbox'],
